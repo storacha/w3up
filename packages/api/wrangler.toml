@@ -1,0 +1,21 @@
+# Development
+
+name = "auth-dev"
+account_id = "fffa4b4363a7e5250af8357087263b3a"
+workers_dev = true
+type = "javascript"
+
+# Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
+compatibility_date = "2021-08-23"
+compatibility_flags = [ "formdata_parser_supports_files" ]
+
+[vars]
+ENV = "dev"
+
+[build]
+command = "scripts/cli.js build"
+watch_dir = "src"
+
+[build.upload]
+format = "service-worker"
+

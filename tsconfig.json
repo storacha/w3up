@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "dist",
+    // project options
+    "allowJs": true,
+    "checkJs": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2021", "ES2021.Promise", "ES2021.String", "DOM"],
+    "noEmit": false,
+    "noEmitOnError": true,
+    "emitDeclarationOnly": false,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "composite": true,
+    "isolatedModules": true,
+    "removeComments": false,
+    // module resolution
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    // linter checks
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    // advanced
+    "importsNotUsedAsValues": "error",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "stripInternal": true,
+    "resolveJsonModule": true
+  }
+}
