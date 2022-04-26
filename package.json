@@ -1,0 +1,36 @@
+{
+  "name": "auth-protocol",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "format": "prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
+    "format:check": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
+    "clean": "rm -rf docs node_modules pnpm-lock.yaml packages/*/{pnpm-lock.yaml,coverage,.nyc_output,dist,node_modules}",
+    "lint": "pnpm run lint -r",
+    "test": "pnpm run test -r",
+    "docs": "pnpm run lint && typedoc packages/* --entryPointStrategy packages --out docs"
+  },
+  "devDependencies": {
+    "hd-scripts": "^1.1.1",
+    "lint-staged": "^12.3.7",
+    "prettier": "2.6.1",
+    "simple-git-hooks": "^2.7.0",
+    "typedoc": "^0.22.13",
+    "typedoc-plugin-missing-exports": "^0.22.6",
+    "typescript": "4.6.3"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,yml,json}": "prettier --write",
+    "*.js": "eslint --fix"
+  },
+  "prettier": "./node_modules/hd-scripts/prettier.config.js",
+  "engines": {
+    "node": ">=14"
+  }
+}
