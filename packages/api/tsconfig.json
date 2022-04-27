@@ -2,7 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
+    "noEmit": true,
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM.Iterable"],
     "types": ["@cloudflare/workers-types"]
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "src/bindings.d.ts",
+    "node_modules/@cloudflare/workers-types/index.d.ts"
+  ]
 }
