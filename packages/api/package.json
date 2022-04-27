@@ -6,13 +6,11 @@
   "type": "module",
   "main": "dist/worker.js",
   "scripts": {
+    "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,md,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish --env production",
-    "predev": "./scripts/cli.js db --start && ./scripts/cli.js db-sql --cargo --testing --reset",
     "dev": "miniflare --watch --debug --env ../../.env",
-    "clean": "./scripts/cli.js db --clean && rm -rf docker/compose",
     "build": "scripts/cli.js build",
-    "test": "tsc && mocha",
-    "db-types": "./scripts/cli.js db-types"
+    "test": "tsc && mocha"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",

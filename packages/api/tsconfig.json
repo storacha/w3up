@@ -3,13 +3,11 @@
   "compilerOptions": {
     "outDir": "dist",
     "noEmit": true,
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM.Iterable"],
-    "types": ["@cloudflare/workers-types"]
+    // "target": "ESNext",
+    "lib": ["ESNext"],
+    "types": ["@cloudflare/workers-types"],
+    "skipLibCheck": true
   },
-  "include": [
-    "src",
-    "src/bindings.d.ts",
-    "node_modules/@cloudflare/workers-types/index.d.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["**/node_modules/**"]
 }

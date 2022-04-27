@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 import path from 'path'
 import dotenv from 'dotenv'
 import fs from 'fs'
@@ -19,6 +20,7 @@ dotenv.config({
 })
 
 const pkg = JSON.parse(
+  // eslint-disable-next-line unicorn/prefer-json-parse-buffer
   fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8')
 )
 
@@ -60,7 +62,7 @@ prog
           BRANCH: JSON.stringify(git.branch(__dirname)),
           global: 'globalThis',
         },
-        minify: opts.env === 'dev' ? false : true,
+        minify: opts.env !== 'dev',
         sourcemap: true,
       })
 
@@ -88,8 +90,8 @@ prog
           env: opts.env,
         })
       }
-    } catch (err) {
-      console.error(err)
+    } catch (error) {
+      console.error(error)
       process.exit(1)
     }
   })
