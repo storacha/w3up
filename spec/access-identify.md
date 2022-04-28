@@ -26,7 +26,9 @@ To do so the _accounting_ service must delegate a capability to a _verifier_ ser
 }
 ```
 
-Now if Alice goes to web3.app on first load app will generate local keypair and encode public key as `did:key:zAlice` DID. web3.app supports email login through `did:key:zVerify` service so when Alice enters her email address web3.app will send request to `did:key:zVerify`
+Alice uses an example service _web3.app_. On first load, the app generates a keypair for Alice locally, and encodes the public key as `did:key:zAlice` DID. 
+
+_web3.app_ supports email login through the `did:key:zVerify` service. When Alice provides an email address, the app will send a request to `did:key:zVerify`.
 
 ```js
 {
