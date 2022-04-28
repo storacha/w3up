@@ -1,4 +1,4 @@
-# Web3 Storage Auth Protocol
+# Web3 Storage Ucan Protocol
 
 ## Contributing
 
