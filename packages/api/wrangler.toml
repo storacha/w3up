@@ -2,15 +2,16 @@
 
 name = "auth-dev"
 account_id = "fffa4b4363a7e5250af8357087263b3a"
-workers_dev = true
+zone_id = "f2f8a5b1c557202c6e3d0ce0e98e4c8e"
+route = "auth-dev.dag.haus/*"
 type = "javascript"
 
 # Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
-compatibility_date = "2021-08-23"
-compatibility_flags = [ "formdata_parser_supports_files" ]
+compatibility_date = "2022-04-26"
 
 [vars]
 ENV = "dev"
+DEBUG = "true"
 
 [build]
 command = "scripts/cli.js build"

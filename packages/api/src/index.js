@@ -1,16 +1,22 @@
-/**
- *
- * @param {Request} request
- * @returns
- */
-async function handleRequest(request) {
-  return new Response(JSON.stringify({ msg: 'hello world!' }), {
-    headers: {
-      'content-type': 'application/json;charset=UTF-8',
-    },
-  })
-}
+import { Router } from './utils/router.js'
+import { getContext } from './utils/context.js'
+import { HTTPError } from './utils/errors.js'
+import { cors, postCors } from './utils/cors.js'
+// import { Service } from './service.js'
+import { version } from './routes/version.js'
+import { notFound } from './utils/responses.js'
 
-addEventListener('fetch', (/** @type {FetchEvent} */ event) => {
-  return event.respondWith(handleRequest(event.request))
+const r = new Router(getContext, {
+  onError(req, err, ctx) {
+    return HTTPError.respond(err, ctx)
+  },
 })
+
+// CORS
+r.add('options', '*', cors)
+
+// Version
+r.add('get', '/version', version, [postCors])
+
+r.add('all', '*', notFound)
+addEventListener('fetch', r.listen.bind(r))
