@@ -2,8 +2,6 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { Miniflare } from 'miniflare'
 import dotenv from 'dotenv'
-import { build } from 'ucan-storage/ucan'
-import { KeyPair } from 'ucan-storage/keypair'
 import anyTest from 'ava'
 
 /**
@@ -29,18 +27,7 @@ test.before((t) => {
 
 test('should work', async (t) => {
   const { mf } = t.context
-  const kpService = await KeyPair.fromExportedKey(process.env._PRIVATE_KEY)
-  const jwt = await build({
-    audience: kpService.did(),
-    issuer: await KeyPair.create(),
-    lifetimeInSeconds: 1000,
-    capabilities: [
-      { with: 'did:email:alice@mail.com', can: 'access/identify' },
-    ],
-  })
-  const res = await mf.dispatchFetch('http://localhost:8787/version', {
-    headers: { Authorization: `Bearer ${jwt.jwt}` },
-  })
+  const res = await mf.dispatchFetch('http://localhost:8787/version')
   const rsp = await res.json()
   t.truthy(rsp.branch)
 })
