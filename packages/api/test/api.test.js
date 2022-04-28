@@ -38,8 +38,9 @@ test('should work', async (t) => {
       { with: 'did:email:alice@mail.com', can: 'access/identify' },
     ],
   })
-  const res = await mf.dispatchFetch('http://localhost:8787', {
+  const res = await mf.dispatchFetch('http://localhost:8787/version', {
     headers: { Authorization: `Bearer ${jwt.jwt}` },
   })
-  t.deepEqual(await res.json(), { msg: process.env._PRIVATE_KEY })
+  const rsp = await res.json()
+  t.truthy(rsp.branch)
 })
