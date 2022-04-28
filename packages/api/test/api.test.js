@@ -1,7 +1,4 @@
-import path from 'path'
-import { fileURLToPath } from 'url'
 import { Miniflare } from 'miniflare'
-import dotenv from 'dotenv'
 import anyTest from 'ava'
 
 /**
@@ -10,15 +7,9 @@ import anyTest from 'ava'
 
 /** @type {TestFn} */
 const test = anyTest
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const envPath = path.join(__dirname, '..', '..', '..', '.env')
-dotenv.config({
-  path: envPath,
-})
 
 test.before((t) => {
   const mf = new Miniflare({
-    envPath,
     packagePath: true,
     wranglerConfigPath: true,
   })
