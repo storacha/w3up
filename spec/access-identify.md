@@ -14,6 +14,7 @@ To do so the _accounting_ service must delegate a capability to a _verifier_ ser
 **Accounting must trust the verifier service. A malicious verifier could get control of other accounts.**
 
 ```js
+// The account service signs this with it's key, and sends it to the verifier service
 {
   issuer: "did:key:zAccount",
   audience: "did:key:zVerify",
