@@ -8,8 +8,8 @@ Upload protocol defines [access/identify][] capability which is very flexible ye
 
 To do so the _accounting_ service must delegate a capability to a _verifier_ service which will allow it to:
 
-1. To create an accounts under `did:email:` namespace.
-2. To associate other DIDs with accounts under `did:email:` namespace.
+1. Create accounts under the `did:email:` namespace.
+2. Associate other DIDs with accounts under `did:email:` namespace.
 
 :::danger
 It is important to call out that accounting needs to put a lot of trust into such service, as malicious verifier could get control of other accounts
