@@ -31,6 +31,7 @@ Alice uses an example service _web3.app_. On first load, the app generates a key
 _web3.app_ supports email login through the `did:key:zVerify` service. When Alice provides an email address, the app will send a request to `did:key:zVerify`.
 
 ```js
+// web3.app signs this with Alice's key and sends it to the verifier service
 {
   issuer: "did:key:zAlice",
   audience: "did:key:zVerify",
