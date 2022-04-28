@@ -4,18 +4,17 @@ Upload protocol defines [access/identify][] capability which is very flexible ye
 
 #### identify with email
 
-"Accounting" service MAY delegate other "verifier" service(s) to do out of bound user verification e.g. sign-in via email link style flow.
+"Accounting" service MAY delegate to other "verifier" service(s) to do out of band user verification e.g. sign-in via email link style flow.
 
-To do so _accounting_ must delegate a capability to _verifier_ service which will allows it:
+To do so the _accounting_ service must delegate a capability to a _verifier_ service which will allow it to:
 
-1. To create an accounts under `did:email:` namespace.
-2. To associate other DIDs with accounts under `did:email:` namespace.
+1. Create accounts under the `did:email:` namespace.
+2. Associate other DIDs with accounts under `did:email:` namespace.
 
-:::danger
-It is important to call out that accounting needs to put a lot of trust into such service, as malicious verifier could get control of other accounts
-:::
+**Accounting must trust the verifier service. A malicious verifier could get control of other accounts.**
 
 ```js
+// The account service signs this with it's key, and sends it to the verifier service
 {
   issuer: "did:key:zAccount",
   audience: "did:key:zVerify",
@@ -28,9 +27,12 @@ It is important to call out that accounting needs to put a lot of trust into suc
 }
 ```
 
-Now if Alice goes to web3.app on first load app will generate local keypair and encode public key as `did:key:zAlice` DID. web3.app supports email login through `did:key:zVerify` service so when Alice enters her email address web3.app will send request to `did:key:zVerify`
+Alice uses an example service _web3.app_. On first load, the app generates a keypair for Alice locally, and encodes the public key as `did:key:zAlice` DID. 
+
+_web3.app_ supports email login through the `did:key:zVerify` service. When Alice provides an email address, the app will send a request to `did:key:zVerify`.
 
 ```js
+// web3.app signs this with Alice's key and sends it to the verifier service
 {
   issuer: "did:key:zAlice",
   audience: "did:key:zVerify",
