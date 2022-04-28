@@ -4,7 +4,7 @@ Upload protocol defines [access/identify][] capability which is very flexible ye
 
 #### identify with email
 
-"Accounting" service MAY delegate other "verifier" service(s) to do out of bound user verification e.g. sign-in via email link style flow.
+"Accounting" service MAY delegate to other "verifier" service(s) to do out of band user verification e.g. sign-in via email link style flow.
 
 To do so _accounting_ must delegate a capability to _verifier_ service which will allows it:
 
