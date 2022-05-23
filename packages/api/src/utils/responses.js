@@ -2,7 +2,7 @@ export class JSONResponse extends Response {
   /**
    *
    * @param {unknown} body
-   * @param {ResponseInitializerDict} [init]
+   * @param {ResponseInit} [init]
    */
   constructor(body, init = {}) {
     const headers = {

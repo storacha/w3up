@@ -1,4 +1,6 @@
 import { Logging } from './logging.js'
+import * as ucans from 'ucans'
+import { PRIVATE_KEY } from '../constants.js'
 // import Toucan from 'toucan-js'
 // import pkg from '../../package.json'
 
@@ -31,5 +33,7 @@ export async function getContext(event, params) {
     debug: DEBUG === 'true',
   })
 
-  return { params, log }
+  const keypair = ucans.EdKeypair.fromSecretKey(PRIVATE_KEY)
+
+  return { params, log, keypair }
 }

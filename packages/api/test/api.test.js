@@ -1,18 +1,6 @@
-import { Miniflare } from 'miniflare'
-import anyTest from 'ava'
-
-/**
- * @typedef {import("ava").TestFn<{mf: Miniflare}} TestFn
- */
-
-/** @type {TestFn} */
-const test = anyTest
+import { mf, test } from './helpers/setup.js'
 
 test.before((t) => {
-  const mf = new Miniflare({
-    packagePath: true,
-    wranglerConfigPath: true,
-  })
   t.context = { mf }
 })
 
