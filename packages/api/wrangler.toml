@@ -11,7 +11,7 @@ compatibility_date = "2022-04-26"
 
 [vars]
 ENV = "dev"
-DEBUG = "true"
+DEBUG = "false"
 
 [build]
 command = "scripts/cli.js build"

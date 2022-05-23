@@ -1,4 +1,5 @@
 import type { Logging } from './utils/logging'
+import type * as ucans from 'ucans'
 
 export {}
 
@@ -14,6 +15,7 @@ declare global {
 export interface RouteContext {
   params: Record<string, string>
   log: Logging
+  keypair: ucans.EdKeypair
 }
 
 export interface Handler {

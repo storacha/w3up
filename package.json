@@ -9,8 +9,8 @@
     "format": "prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "format:check": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "clean": "rm -rf docs node_modules pnpm-lock.yaml packages/*/{pnpm-lock.yaml,coverage,.nyc_output,dist,node_modules}",
-    "lint": "pnpm run lint -r",
-    "test": "pnpm run test -r"
+    "lint": "pnpm  -r run lint",
+    "test": "pnpm -r run test"
   },
   "devDependencies": {
     "hd-scripts": "^1.1.2",
