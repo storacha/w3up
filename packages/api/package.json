@@ -7,7 +7,7 @@
   "main": "dist/worker.js",
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,md,yml,json}' --ignore-path ../../.gitignore",
-    "deploy": "wrangler publish --env production",
+    "deploy": "wrangler publish",
     "dev": "miniflare --watch --debug --env ../../.env",
     "build": "scripts/cli.js build",
     "test": "tsc && ava"
