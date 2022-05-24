@@ -1,0 +1,18 @@
+name: Manual Deploy
+on:
+  workflow_dispatch:
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.32.x
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -r --filter website run build
+      - run: npx wrangler pages publish --project-name ucan-protocol --branch master ./packages/website/out

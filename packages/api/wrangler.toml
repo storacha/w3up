@@ -2,9 +2,7 @@
 
 name = "auth-dev"
 account_id = "fffa4b4363a7e5250af8357087263b3a"
-zone_id = "f2f8a5b1c557202c6e3d0ce0e98e4c8e"
-route = "auth-dev.dag.haus/*"
-type = "javascript"
+main = "./dist/worker.js"
 
 # Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
 compatibility_date = "2022-04-26"
@@ -16,7 +14,4 @@ DEBUG = "false"
 [build]
 command = "scripts/cli.js build"
 watch_dir = "src"
-
-[build.upload]
-format = "service-worker"
 
