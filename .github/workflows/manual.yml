@@ -2,7 +2,7 @@ name: Manual Deploy
 on:
   workflow_dispatch:
 jobs:
-  deploy-api:
+  deploy-website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,6 +13,12 @@ jobs:
         with:
           node-version: 16
           cache: 'pnpm'
+      - uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('packages/website/**.[jt]s', 'packages/website/**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - run: pnpm install
       - run: pnpm -r --filter website run build
       - run: npx wrangler pages publish --project-name ucan-protocol --branch master ./packages/website/out
