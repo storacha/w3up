@@ -18,6 +18,7 @@ export interface RouteContext {
   keypair: ucans.EdKeypair
 }
 
-export interface Handler {
-  (event: FetchEvent, ctx: RouteContext): Promise<Response> | Response
-}
+export type Handler = (
+  event: FetchEvent,
+  ctx: RouteContext
+) => Promise<Response> | Response

@@ -3,11 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "noEmit": true,
-    // "target": "ESNext",
     "lib": ["ESNext"],
-    "types": ["@cloudflare/workers-types"],
-    "skipLibCheck": true
+    "types": ["@cloudflare/workers-types"]
   },
-  "include": ["src"],
+  "include": ["src", "scripts", "test"],
   "exclude": ["**/node_modules/**"]
 }

@@ -11,6 +11,8 @@ coverage
 dist
 docs
 .env
+.next
+out
 
 # debug
 npm-debug.log*
