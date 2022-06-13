@@ -10,6 +10,7 @@ declare global {
   const COMMITHASH: string
   const ENV: string
   const DEBUG: string
+  const ACCOUNTS: KVNamespace
 }
 
 export interface RouteContext {

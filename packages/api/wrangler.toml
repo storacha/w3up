@@ -7,6 +7,10 @@ main = "./dist/worker.js"
 # Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
 compatibility_date = "2022-04-26"
 
+kv_namespaces = [
+  { binding = "ACCOUNTS", id = "<ignored>", preview_id = "<ignored>" },
+]
+
 [vars]
 ENV = "dev"
 DEBUG = "false"
