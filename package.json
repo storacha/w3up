@@ -15,8 +15,8 @@
   "devDependencies": {
     "lint-staged": "^12.4.0",
     "prettier": "2.6.2",
-    "simple-git-hooks": "^2.7.0",
-    "wrangler": "^2.0.6"
+    "simple-git-hooks": "^2.8.0",
+    "wrangler": "^2.0.8"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"

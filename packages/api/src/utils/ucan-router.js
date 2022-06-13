@@ -6,31 +6,24 @@ import * as ucans from 'ucans'
  * request: Request,
  * cap: ucans.Capability,
  * ucan: ucans.Chained,
- * segment: string
  * }} AbilityHandlerInput
+ *
+ * @typedef {Record<string, Record<string, AbilityHandler>>} Service
  */
 
 /**
  * Ucan Routes
+ *
  */
 export class UcanRouter {
   /**
    *
    * @param {import('./router').RouteContext} context
+   * @param {Service} service
    */
-  constructor(context) {
-    /** @type {Map<string, AbilityHandler>} */
-    this.routes = new Map()
+  constructor(context, service) {
     this.context = context
-  }
-
-  /**
-   *
-   * @param {string} namespace
-   * @param {AbilityHandler} fn
-   */
-  add(namespace, fn) {
-    this.routes.set(namespace, fn)
+    this.service = service
   }
 
   /**
@@ -54,7 +47,7 @@ export class UcanRouter {
       const cap = ucan.attenuation()[0]
 
       if (cap.can !== '*') {
-        const fn = this.routes.get(cap.can.namespace)
+        const fn = this.service[cap.can.namespace][cap.can.segments[0]]
 
         if (!fn) {
           throw new Error('invocation not suppported.')
@@ -65,7 +58,6 @@ export class UcanRouter {
             cap,
             ucan,
             request: event.request,
-            segment: cap.can.segments[0],
           },
           this.context
         )
