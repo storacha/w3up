@@ -6,7 +6,7 @@ import {
   identityIdentify,
   identityRegister,
   identityValidate,
-} from './capabilities.js'
+} from '@web3-storage/w3access/capabilities'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -29,21 +29,20 @@ export function service(ctx) {
             })
             .delegate()
 
-          // For testing
-          if (process.env.NODE_ENV === 'development') {
-            // console.log(
-            //   '🚀 ~ file: service.js ~ line 34 ~ Server.UCAN.format(delegation.data)',
-            //   Server.UCAN.format(delegation.data)
-            // )
+          const url = `${ctx.url.protocol}//${
+            ctx.url.host
+          }/validate?ucan=${UCAN.format(delegation.data)}`
 
+          // For testing
+          if (ctx.config.ENV === 'test') {
             return {
-              delegation: UCAN.format(delegation.data),
+              delegation: url,
             }
           }
 
           await sendEmail({
             to: capability.caveats.as.replace('mailto:', ''),
-            ucan: UCAN.format(delegation.data),
+            url,
             token: ctx.config.POSTMARK_TOKEN,
           })
         }
@@ -66,7 +65,7 @@ export function service(ctx) {
         return result?.account
       }),
     },
-    // @ts-expect-error just for tests
+    // @ts-ignore
     testing: {
       pass() {
         return 'test pass'

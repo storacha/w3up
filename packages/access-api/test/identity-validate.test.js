@@ -7,7 +7,7 @@ import {
 } from './helpers/setup.js'
 import * as UCAN from '@ipld/dag-ucan'
 import { SigningAuthority } from '@ucanto/authority'
-import * as caps from '../src/ucanto/capabilities.js'
+import * as caps from '@web3-storage/w3access/capabilities'
 
 test.before((t) => {
   t.context = { mf }
@@ -59,8 +59,8 @@ test.skip('should fail with bad scheme', async (t) => {
 })
 
 test('should route correctly to identity/validate', async (t) => {
-  const con = connection()
   const kp = await SigningAuthority.generate()
+  const con = connection(kp)
 
   const validate = caps.identityValidate.invoke({
     audience: serviceAuthority,
@@ -75,7 +75,10 @@ test('should route correctly to identity/validate', async (t) => {
   if (out?.error || !out) {
     return t.fail()
   }
-  const ucan = UCAN.parse(out.delegation)
+  const ucan = UCAN.parse(
+    // @ts-ignore
+    out.delegation.replace('http://localhost:8787/validate?ucan=', '')
+  )
   t.is(ucan.audience.did(), kp.did())
   t.is(ucan.issuer.did(), serviceAuthority.did())
   t.deepEqual(ucan.capabilities, [

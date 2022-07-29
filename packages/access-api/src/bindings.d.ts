@@ -6,6 +6,7 @@ export {}
 
 declare global {
   const ACCOUNTS: KVNamespace
+  const VALIDATIONS: KVNamespace
 }
 
 export interface RouteContext {
@@ -13,6 +14,7 @@ export interface RouteContext {
   log: Logging
   keypair: SigningAuthority
   config: typeof config
+  url: URL
 }
 
 export type Handler = (

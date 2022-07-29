@@ -47,9 +47,13 @@ export async function send(ucan) {
   })
 }
 
-export function connection() {
+/**
+ * @param {import("@ucanto/interface").SigningAuthority<237> } id
+ */
+export function connection(id) {
   return w3connection({
-    id: serviceAuthority,
+    id,
     url: new URL('http://localhost:8787'),
+    fetch: mf.dispatchFetch.bind(mf),
   })
 }

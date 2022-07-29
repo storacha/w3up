@@ -10,11 +10,14 @@ import { corsHeaders, preflight } from '@web3-storage/worker-utils/cors'
 import { errorHandler } from '@web3-storage/worker-utils/error'
 import { notFound } from '@web3-storage/worker-utils/response'
 import { Router } from '@web3-storage/worker-utils/router'
+import { validate } from './routes/validate.js'
 
 /** @type Router<import('./bindings.js').RouteContext> */
 const r = new Router({ onNotFound: notFound })
 r.add('options', '*', preflight)
 r.add('get', '/version', version)
+
+r.add('get', '/validate', validate)
 r.add('post', '/', async (request, env) => {
   const server = Server.create({
     id: env.keypair,

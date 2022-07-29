@@ -2,16 +2,18 @@ import * as UCAN from '@ipld/dag-ucan'
 import { SigningAuthority } from '@ucanto/authority'
 import { Delegation } from '@ucanto/core'
 import { Accounts } from '../src/kvs/accounts.js'
-import * as caps from '../src/ucanto/capabilities.js'
+import * as caps from '@web3-storage/w3access/capabilities'
 import { connection, mf, serviceAuthority, test } from './helpers/setup.js'
+// eslint-disable-next-line no-unused-vars
+import * as Types from '@ucanto/interface'
 
 test.before((t) => {
   t.context = { mf }
 })
 
 test('register', async (t) => {
-  const con = connection()
   const kp = await SigningAuthority.generate()
+  const con = connection(kp)
 
   const validate = caps.identityValidate.invoke({
     audience: serviceAuthority,
@@ -26,16 +28,21 @@ test('register', async (t) => {
   if (out?.error || !out) {
     return t.fail()
   }
-  const ucan = UCAN.parse(out.delegation)
+  // @ts-ignore
+  const ucan = UCAN.parse(
+    // @ts-ignore
+    out.delegation.replace('http://localhost:8787/validate?ucan=', '')
+  )
   const root = await UCAN.write(ucan)
-  /** @type {import('@ucanto/interface').Delegation<[import('../src/ucanto/capabilities.js').IdentityRegister]>} */
   const proof = Delegation.create({ root })
 
   const register = caps.identityRegister.invoke({
     audience: serviceAuthority,
     issuer: kp,
+    // @ts-ignore
     with: proof.capabilities[0].with,
     caveats: {
+      // @ts-ignore
       as: proof.capabilities[0].as,
     },
     proofs: [proof],
@@ -54,8 +61,8 @@ test('register', async (t) => {
 })
 
 test('identify', async (t) => {
-  const con = connection()
   const kp = await SigningAuthority.generate()
+  const con = connection(kp)
 
   const validate = caps.identityValidate.invoke({
     audience: serviceAuthority,
@@ -70,10 +77,12 @@ test('identify', async (t) => {
   if (out?.error || !out) {
     return
   }
-  const ucan = UCAN.parse(out.delegation)
+  /** @type {Types.UCAN.JWT<import('@web3-storage/w3access/types').IdentityRegister>} */
+  // @ts-ignore
+  const jwt = out.delegation.replace('http://localhost:8787/validate?ucan=', '')
+  const ucan = UCAN.parse(jwt)
   const root = await UCAN.write(ucan)
-
-  /** @type {import('@ucanto/interface').Delegation<[{can: "identity/register", as: `did:${string}`, with: `mailto:${string}`}]>} */
+  /** @type {Types.Delegation<[import('@web3-storage/w3access/types').IdentityRegister]>} */
   const proof = Delegation.create({ root })
 
   const register = caps.identityRegister.invoke({

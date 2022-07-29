@@ -21,6 +21,10 @@ export class Accounts {
    * @param {import('@ucanto/interface').LinkedProof} proof
    */
   async register(issuerDID, resourceDID, proof) {
+    const did = await this.get(issuerDID)
+    if (did) {
+      throw new Error(`did: ${issuerDID} already registered.`)
+    }
     const account = `did:ipld:${proof}`
     await this.kv.put(
       issuerDID,
