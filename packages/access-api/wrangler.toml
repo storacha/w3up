@@ -1,0 +1,22 @@
+# Development
+
+name = "auth-dev"
+account_id = "fffa4b4363a7e5250af8357087263b3a"
+main = "./dist/worker.js"
+
+# Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
+compatibility_date = "2022-06-26"
+compatibility_flags = ["url_standard"]
+no_bundle = true
+
+kv_namespaces = [
+  { binding = "ACCOUNTS", id = "e9fad7e04b254bf49206e08e50074387", preview_id = "e9fad7e04b254bf49206e08e50074387" },
+]
+
+[vars]
+ENV = "dev"
+DEBUG = "true"
+
+[build]
+command = "scripts/cli.js build"
+watch_dir = "src"
