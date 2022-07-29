@@ -29,6 +29,9 @@
       ],
       "types": [
         "dist/src/types"
+      ],
+      "capabilities": [
+        "dist/src/capabilities.d.ts"
       ]
     }
   },
@@ -45,7 +48,11 @@
     "@ucanto/interface": "link:/Users/hd/code/ucanto/packages/interface",
     "@ucanto/server": "link:/Users/hd/code/ucanto/packages/server",
     "@ucanto/transport": "link:/Users/hd/code/ucanto/packages/transport",
-    "@ucanto/validator": "link:/Users/hd/code/ucanto/packages/validator"
+    "@ucanto/validator": "link:/Users/hd/code/ucanto/packages/validator",
+    "@web-std/fetch": "^4.1.0",
+    "conf": "^10.1.2",
+    "ora": "^6.1.2",
+    "p-retry": "^5.1.1"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",

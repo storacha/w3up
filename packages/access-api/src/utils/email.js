@@ -1,5 +1,5 @@
 /**
- * @param {{ to: string; ucan: string; token: string }} opts
+ * @param {{ to: string; url: string; token: string }} opts
  */
 export async function sendEmail(opts) {
   const rsp = await fetch('https://api.postmarkapp.com/email', {
@@ -13,7 +13,7 @@ export async function sendEmail(opts) {
       From: 'noreply@dag.house',
       To: opts.to,
       Subject: 'Hello',
-      HtmlBody: `<strong>Hello</strong> <br/><hr/> <code> ${opts.ucan}</code><hr/>`,
+      HtmlBody: `<strong>Hello</strong><br/>Click <a href="${opts.url}"> here </a><hr/>`,
       MessageStream: 'outbound',
     }),
   })

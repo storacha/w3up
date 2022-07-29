@@ -4,18 +4,7 @@
   "description": "Auth API",
   "type": "module",
   "main": "dist/worker.js",
-  "types": "dist/src/index.d.ts",
-  "files": [
-    "dist/src/*.d.ts",
-    "dist/src/*.d.ts.map"
-  ],
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/src/*"
-      ]
-    }
-  },
+  "private": "true",
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,md,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
@@ -37,6 +26,7 @@
     "@web3-storage/w3access": "workspace:^",
     "@web3-storage/worker-utils": "0.2.0-dev",
     "multiformats": "^9.6.5",
+    "nanoid": "^4.0.0",
     "toucan-js": "^2.6.0"
   },
   "devDependencies": {
@@ -74,7 +64,8 @@
       "COMMITHASH": "readonly",
       "BRANCH": "readonly",
       "DEBUG": "readonly",
-      "ACCOUNTS": "writable"
+      "ACCOUNTS": "writable",
+      "VALIDATIONS": "writable"
     }
   },
   "eslintIgnore": [
@@ -84,6 +75,9 @@
     "docs"
   ],
   "ava": {
+    "files": [
+      "test/**/*.test.js"
+    ],
     "ignoredByWatcher": [
       "./dist/*"
     ]

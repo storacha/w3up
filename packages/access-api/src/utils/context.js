@@ -45,5 +45,6 @@ export function getContext(event, params) {
   )
 
   const keypair = SigningAuthority.parse(config.PRIVATE_KEY)
-  return { params, log, keypair, config }
+  const url = new URL(event.request.url)
+  return { params, log, keypair, config, url }
 }

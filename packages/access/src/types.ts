@@ -7,7 +7,6 @@ import type {
   ServiceMethod,
 } from '@ucanto/interface'
 
-import type { JWT } from '@ipld/dag-ucan'
 import * as Types from '@ucanto/interface'
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
@@ -45,10 +44,51 @@ export interface Service {
   identity: {
     validate: ServiceMethod<
       IdentityValidate,
-      { delegation: JWT } | undefined,
+      // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+      { delegation: string } | void,
       never
     >
     register: ServiceMethod<IdentityRegister, void, never>
     identify: ServiceMethod<IdentityIdentify, string | undefined, never>
   }
+}
+
+export interface ValidateOptions {
+  url?: URL
+  audience?: Types.UCAN.Identity
+  issuer: Types.SigningAuthority
+  with?: Types.UCAN.DID
+  caveats: {
+    as: `mailto:${string}`
+  }
+  lifetimeInSeconds?: number
+  expiration?: number
+  notBefore?: number
+
+  nonce?: string
+
+  facts?: Types.Fact[]
+  proofs?: Types.Proof[]
+}
+
+export interface ValidateAndRegisterOptions extends ValidateOptions {
+  onAwait: () => void
+}
+
+export interface RegisterOptions {
+  url?: URL
+  audience?: Types.UCAN.Identity
+  issuer: Types.SigningAuthority
+  with?: `mailto:${string}`
+  caveats?: {
+    as: Types.UCAN.DID
+  }
+  lifetimeInSeconds?: number
+  expiration?: number
+  notBefore?: number
+
+  nonce?: string
+
+  facts?: Types.Fact[]
+  proof: Types.Delegation<[import('./types.js').IdentityRegister]>
 }

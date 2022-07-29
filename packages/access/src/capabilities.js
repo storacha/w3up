@@ -1,4 +1,5 @@
 import { Link, Failure, capability, URI } from '@ucanto/server'
+// @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 import { canDelegateURI, derives, equalWith } from './capabilities-utils.js'
