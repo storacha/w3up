@@ -7,6 +7,7 @@ export {}
 declare global {
   const ACCOUNTS: KVNamespace
   const VALIDATIONS: KVNamespace
+  const BUCKET: R2Bucket
 }
 
 export interface RouteContext {
@@ -15,6 +16,7 @@ export interface RouteContext {
   keypair: SigningAuthority
   config: typeof config
   url: URL
+  event: FetchEvent
 }
 
 export type Handler = (

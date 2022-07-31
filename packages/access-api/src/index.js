@@ -11,11 +11,13 @@ import { errorHandler } from '@web3-storage/worker-utils/error'
 import { notFound } from '@web3-storage/worker-utils/response'
 import { Router } from '@web3-storage/worker-utils/router'
 import { validate } from './routes/validate.js'
+import { upload } from './routes/upload.js'
 
 /** @type Router<import('./bindings.js').RouteContext> */
 const r = new Router({ onNotFound: notFound })
 r.add('options', '*', preflight)
 r.add('get', '/version', version)
+r.add('post', '/upload', upload)
 
 r.add('get', '/validate', validate)
 r.add('post', '/', async (request, env) => {
@@ -26,20 +28,6 @@ r.add('post', '/', async (request, env) => {
     service: service(env),
     catch: (/** @type {string | Error} */ err) => {
       env.log.error(err)
-    },
-    canIssue: (
-      /** @type {{ with: any; can: string; }} */ capability,
-      /** @type {import("@ucanto/interface").DID<unknown>} */ issuer
-    ) => {
-      if (capability.with === issuer || issuer === env.keypair.did()) {
-        return true
-      }
-
-      if (capability.can === 'identity/validate') {
-        return true
-      }
-
-      return false
     },
   })
 

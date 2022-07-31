@@ -71,29 +71,19 @@ const run =
   }
 
 /**
- *
- * @param {import("./types").ValidateAndRegisterOptions} opts
+ * @param {import('./types').PullRegisterOptions} opts
  */
-export async function validateAndRegister(opts) {
+export async function pullRegisterDelegation(opts) {
   const url = opts.url || Service.url
-  await validate(opts)
-
-  opts.onAwait()
-
-  /** @type {Types.UCAN.JWT<import('./types.js').IdentityRegister>} */
+  /** @type {Types.UCAN.JWT<import('./capabilities-types').IdentityRegister>} */
   const registerProof = await pRetry(run(opts.issuer.did(), url.toString()), {
     retries: 100,
   })
 
   const ucan = UCAN.parse(registerProof)
   const root = await UCAN.write(ucan)
-  /** @type {Types.Delegation<[import('./types.js').IdentityRegister]>} */
+  /** @type {Types.Delegation<[import('./capabilities-types').IdentityRegister]>} */
   const proof = Delegation.create({ root })
 
-  await register({
-    url: opts.url,
-    issuer: opts.issuer,
-    proof,
-  })
   return proof
 }
