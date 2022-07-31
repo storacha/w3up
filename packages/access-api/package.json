@@ -1,7 +1,7 @@
 {
-  "name": "@web3-storage/w3access-api",
+  "name": "@web3-storage/access-api",
   "version": "0.0.1",
-  "description": "Auth API",
+  "description": "Access API",
   "type": "module",
   "main": "dist/worker.js",
   "private": "true",
