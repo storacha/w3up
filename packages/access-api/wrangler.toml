@@ -9,6 +9,10 @@ compatibility_date = "2022-06-26"
 compatibility_flags = ["url_standard"]
 no_bundle = true
 
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "access-test"
+
 kv_namespaces = [
   { binding = "ACCOUNTS", id = "e9fad7e04b254bf49206e08e50074387", preview_id = "e9fad7e04b254bf49206e08e50074387" },
   { binding = "VALIDATIONS", id = "62e57652625c44a3b1fef2f840ffc882", preview_id = "62e57652625c44a3b1fef2f840ffc882" },
@@ -21,3 +25,6 @@ DEBUG = "true"
 [build]
 command = "scripts/cli.js build"
 watch_dir = "src"
+
+[miniflare]
+r2_persist = "./data/" # Defaults to ./.mf/r2

@@ -20,13 +20,13 @@ importers:
       '@types/assert': ^1.5.6
       '@types/mocha': ^9.1.1
       '@types/node': ^18.6.2
-      '@ucanto/authority': link:/Users/hd/code/ucanto/packages/authority
-      '@ucanto/client': link:/Users/hd/code/ucanto/packages/client
-      '@ucanto/core': link:/Users/hd/code/ucanto/packages/core
-      '@ucanto/interface': link:/Users/hd/code/ucanto/packages/interface
-      '@ucanto/server': link:/Users/hd/code/ucanto/packages/server
-      '@ucanto/transport': link:/Users/hd/code/ucanto/packages/transport
-      '@ucanto/validator': link:/Users/hd/code/ucanto/packages/validator
+      '@ucanto/authority': ^0.4.5
+      '@ucanto/client': ^0.5.4
+      '@ucanto/core': ^0.5.4
+      '@ucanto/interface': ^0.6.2
+      '@ucanto/server': ^0.6.4
+      '@ucanto/transport': ^0.6.3
+      '@ucanto/validator': ^0.5.5
       '@web-std/fetch': ^4.1.0
       assert: ^2.0.0
       conf: ^10.1.2
@@ -36,24 +36,26 @@ importers:
       p-retry: ^5.1.1
       sade: ^1.7.4
       typescript: 4.7.4
+      undici: ^5.8.0
       watch: ^1.0.2
     dependencies:
       '@ipld/dag-ucan': 1.7.0-beta
-      '@ucanto/authority': link:../../../ucanto/packages/authority
-      '@ucanto/client': link:../../../ucanto/packages/client
-      '@ucanto/core': link:../../../ucanto/packages/core
-      '@ucanto/interface': link:../../../ucanto/packages/interface
-      '@ucanto/server': link:../../../ucanto/packages/server
-      '@ucanto/transport': link:../../../ucanto/packages/transport
-      '@ucanto/validator': link:../../../ucanto/packages/validator
+      '@ucanto/authority': 0.4.5
+      '@ucanto/client': 0.5.4
+      '@ucanto/core': 0.5.4
+      '@ucanto/interface': 0.6.2
+      '@ucanto/server': 0.6.4
+      '@ucanto/transport': 0.6.3
+      '@ucanto/validator': 0.5.5
       '@web-std/fetch': 4.1.0
-      conf: 10.1.2
+      conf: 10.2.0
       ora: 6.1.2
       p-retry: 5.1.1
+      undici: 5.8.0
     devDependencies:
       '@types/assert': 1.5.6
       '@types/mocha': 9.1.1
-      '@types/node': 18.6.2
+      '@types/node': 18.6.3
       assert: 2.0.0
       hd-scripts: 2.0.1
       mocha: 10.0.0
@@ -70,13 +72,13 @@ importers:
       '@types/assert': ^1.5.6
       '@types/git-rev-sync': ^2.0.0
       '@types/node': ^18.6.2
-      '@ucanto/authority': link:/Users/hd/code/ucanto/packages/authority
-      '@ucanto/client': link:/Users/hd/code/ucanto/packages/client
-      '@ucanto/core': link:/Users/hd/code/ucanto/packages/core
-      '@ucanto/interface': link:/Users/hd/code/ucanto/packages/interface
-      '@ucanto/server': link:/Users/hd/code/ucanto/packages/server
-      '@ucanto/transport': link:/Users/hd/code/ucanto/packages/transport
-      '@ucanto/validator': link:/Users/hd/code/ucanto/packages/validator
+      '@ucanto/authority': ^0.4.5
+      '@ucanto/client': ^0.5.4
+      '@ucanto/core': ^0.5.4
+      '@ucanto/interface': ^0.6.2
+      '@ucanto/server': ^0.6.4
+      '@ucanto/transport': ^0.6.3
+      '@ucanto/validator': ^0.5.5
       '@web3-storage/w3access': workspace:^
       '@web3-storage/worker-utils': 0.2.0-dev
       assert: ^2.0.0
@@ -99,13 +101,13 @@ importers:
       wrangler: ^2.0.23
     dependencies:
       '@ipld/dag-ucan': 1.7.0-beta
-      '@ucanto/authority': link:../../../ucanto/packages/authority
-      '@ucanto/client': link:../../../ucanto/packages/client
-      '@ucanto/core': link:../../../ucanto/packages/core
-      '@ucanto/interface': link:../../../ucanto/packages/interface
-      '@ucanto/server': link:../../../ucanto/packages/server
-      '@ucanto/transport': link:../../../ucanto/packages/transport
-      '@ucanto/validator': link:../../../ucanto/packages/validator
+      '@ucanto/authority': 0.4.5
+      '@ucanto/client': 0.5.4
+      '@ucanto/core': 0.5.4
+      '@ucanto/interface': 0.6.2
+      '@ucanto/server': 0.6.4
+      '@ucanto/transport': 0.6.3
+      '@ucanto/validator': 0.5.5
       '@web3-storage/w3access': link:../access
       '@web3-storage/worker-utils': 0.2.0-dev
       multiformats: 9.7.1
@@ -117,7 +119,7 @@ importers:
       '@sentry/webpack-plugin': 1.19.0
       '@types/assert': 1.5.6
       '@types/git-rev-sync': 2.0.0
-      '@types/node': 18.6.2
+      '@types/node': 18.6.3
       assert: 2.0.0
       ava: 4.3.1
       buffer: 6.0.3
@@ -151,7 +153,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
-      '@types/node': 18.6.2
+      '@types/node': 18.6.3
       '@types/react': 18.0.15
       eslint: 8.20.0
       eslint-config-next: 12.2.3_he2ccbldppg44uulnyq4rwocfa
@@ -186,7 +188,7 @@ packages:
     resolution: {integrity: sha512-qZEWeccZCrHA2Au4/X05QW5CMdm4VjUDCrGq5gf1ZDcM4hRqreKrtwAn7yci9zfgAS9apvnsFXiGBHBAxZdK9A==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      core-js-pure: 3.24.0
+      core-js-pure: 3.24.1
       regenerator-runtime: 0.13.9
     dev: true
 
@@ -269,6 +271,15 @@ packages:
   /@iarna/toml/2.2.5:
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
     dev: true
+
+  /@ipld/car/4.1.3:
+    resolution: {integrity: sha512-m1dIx3IRHN57cRtodFfOgvPGlF9wl4nGPLt6HzJQupusP0A0eHcYNH1dbe+0t25aStSFHWkAoGa7rUWqdFscNA==}
+    dependencies:
+      '@ipld/dag-cbor': 7.0.2
+      cborg: 1.9.4
+      multiformats: 9.7.1
+      varint: 6.0.0
+    dev: false
 
   /@ipld/dag-cbor/7.0.2:
     resolution: {integrity: sha512-V9EhJVWXqzjjRs0kiZfUXOaq8y6R2C4AAmfGoMeszqGOBgfACr5tFAgAwZY0e8z/OpmJWpCrZhzPRTZV0c/gjA==}
@@ -572,6 +583,10 @@ packages:
     dev: false
     optional: true
 
+  /@noble/ed25519/1.6.1:
+    resolution: {integrity: sha512-Gptpue6qPmg7p1E5LBO5GDtXw5WMc2DVtUmu4EQequOcoCvum1dT9sY6s9M8aSJWq9YopCN4jmTOAvqMdw3q7w==}
+    dev: false
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -723,8 +738,8 @@ packages:
     resolution: {integrity: sha512-Z61JK7DKDtdKTWwLeElSEBcWGRLY8g95ic5FoQqI9CMx0ns/Ghep3B4DfcEimiKMvtamNVULVNKEsiwV3aQmXw==}
     dev: true
 
-  /@types/node/18.6.2:
-    resolution: {integrity: sha512-KcfkBq9H4PI6Vpu5B/KoPeuVDAbmi+2mDBqGPGUgoL7yXQtcWGu2vJWmmRkneWK3Rh0nIAX192Aa87AqKHYChQ==}
+  /@types/node/18.6.3:
+    resolution: {integrity: sha512-6qKpDtoaYLM+5+AFChLhHermMQxc3TOEFIDzrZLPRGHPrLEwqFkkT5Kx3ju05g6X7uDPazz3jHbKPX0KzCjntg==}
     dev: true
 
   /@types/normalize-package-data/2.4.1:
@@ -903,6 +918,67 @@ packages:
       '@typescript-eslint/types': 5.31.0
       eslint-visitor-keys: 3.3.0
     dev: true
+
+  /@ucanto/authority/0.4.5:
+    resolution: {integrity: sha512-8hCD5zv0Wc+V1hX9JCgKarkwPhyDpLpHqkeVxS74dgsaORKtLcO7CISi1rzp0vEIiuK3iyyQfGOY5PIh1diESg==}
+    dependencies:
+      '@ipld/dag-ucan': 1.7.0-beta
+      '@noble/ed25519': 1.6.1
+      '@ucanto/interface': 0.6.2
+      multiformats: 9.7.1
+    dev: false
+
+  /@ucanto/client/0.5.4:
+    resolution: {integrity: sha512-mMtCQR11PeVZ6xt5YVlOpqW2Ujohfnqe7R26b43926QPiZdEXbIOlVux61JdUSo6jmqxvhQpz05aPzJ5H09xpA==}
+    dependencies:
+      '@ucanto/interface': 0.6.2
+      multiformats: 9.7.1
+    dev: false
+
+  /@ucanto/core/0.5.4:
+    resolution: {integrity: sha512-Gopye/etahzXY00ROSkeIvp+5k6EL9YDeh5kWZ8LxEwKp+nJ5pgHDE4yCIL0mMNepekkDin9Fk/DgWCLUe1/VQ==}
+    dependencies:
+      '@ipld/car': 4.1.3
+      '@ipld/dag-cbor': 7.0.2
+      '@ipld/dag-ucan': 1.7.0-beta
+      '@ucanto/interface': 0.6.2
+      multiformats: 9.7.1
+    dev: false
+
+  /@ucanto/interface/0.6.2:
+    resolution: {integrity: sha512-Tphtp1RjcNWESTswaWSUVEjHYKvQvABUm1v9EA5xvxCQ6IAHsVOUKldcRx3kG0SyYVQ8vgphXL3ydvWsy6XPwQ==}
+    dependencies:
+      '@ipld/dag-ucan': 1.7.0-beta
+      multiformats: 9.7.1
+    dev: false
+
+  /@ucanto/server/0.6.4:
+    resolution: {integrity: sha512-ixqNDyaHF23TAXCdGbV3WcZhhvZDPtasyD8ZcvYAdvY6xPwf4g9DP7Lt0IXGlwq11EgjU4fsrdai8KsXSgAyeQ==}
+    dependencies:
+      '@ucanto/core': 0.5.4
+      '@ucanto/interface': 0.6.2
+      '@ucanto/validator': 0.5.5
+    dev: false
+
+  /@ucanto/transport/0.6.3:
+    resolution: {integrity: sha512-7aectEK22X0dyZdoCAdMASfHt2TGGf59TRgqT0KH/G8IJzrEC9I4r1KkfJkO3Fp90ZOCMB0T/xxojqSjGZH1nQ==}
+    dependencies:
+      '@ipld/car': 4.1.3
+      '@ipld/dag-cbor': 7.0.2
+      '@ucanto/core': 0.5.4
+      '@ucanto/interface': 0.6.2
+      multiformats: 9.7.1
+    dev: false
+
+  /@ucanto/validator/0.5.5:
+    resolution: {integrity: sha512-z1Ibx5pa1rucpLgenzTG8g3aX9HcFA+S73qVZ815gexeZBLjvU6OgpTvdRDUxq4kPWdtUndN3kNVeuzd1r+1CQ==}
+    dependencies:
+      '@ipld/car': 4.1.3
+      '@ipld/dag-cbor': 7.0.2
+      '@ucanto/core': 0.5.4
+      '@ucanto/interface': 0.6.2
+      multiformats: 9.7.1
+    dev: false
 
   /@ungap/promise-all-settled/1.1.2:
     resolution: {integrity: sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q==}
@@ -1109,9 +1185,9 @@ packages:
       readable-stream: 2.3.7
     dev: true
 
-  /are-we-there-yet/3.0.0:
-    resolution: {integrity: sha512-0GWpv50YSOcLXaN6/FAKY3vfRbllXWV2xvfA/oKJF8pzFhWXPV+yjhJXDBbjscDYowv7Yw1A3uigpzn5iEGTyw==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16}
+  /are-we-there-yet/3.0.1:
+    resolution: {integrity: sha512-QZW4EDmGwlYur0Yyf/b2uGucHQMa8aFUP7eu9ddR73vvhFyt4V0Vl3QHPcTNJ8l6qYOBdxgXdnBXQrHilfRQBg==}
+    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
     dependencies:
       delegates: 1.0.0
       readable-stream: 3.6.0
@@ -1382,8 +1458,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /caniuse-lite/1.0.30001370:
-    resolution: {integrity: sha512-3PDmaP56wz/qz7G508xzjx8C+MC2qEm4SYhSEzC9IBROo+dGXFWRuaXkWti0A9tuI00g+toiriVqxtWMgl350g==}
+  /caniuse-lite/1.0.30001373:
+    resolution: {integrity: sha512-pJYArGHrPp3TUqQzFYRmP/lwJlj8RCbVe3Gd3eJQkAV8SAC6b19XS9BjMvRdvaS8RMkaTN8ZhoHP6S1y8zzwEQ==}
     dev: false
 
   /cbor/8.1.0:
@@ -1592,8 +1668,8 @@ packages:
       well-known-symbols: 2.0.0
     dev: true
 
-  /conf/10.1.2:
-    resolution: {integrity: sha512-o9Fv1Mv+6A0JpoayQ8JleNp3hhkbOJP/Re/Q+QqxMPHPkABVsRjQGWZn9A5GcqLiTNC6d89p2PB5ZhHVDSMwyg==}
+  /conf/10.2.0:
+    resolution: {integrity: sha512-8fLl9F04EJqjSqH+QjITQfJF8BrOVaYr1jewVgSRAEWePfxT0sku4w2hrGQ60BC/TNLGQ2pgxNlTbWQmMPFvXg==}
     engines: {node: '>=12'}
     dependencies:
       ajv: 8.11.0
@@ -1627,8 +1703,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
-  /core-js-pure/3.24.0:
-    resolution: {integrity: sha512-uzMmW8cRh7uYw4JQtzqvGWRyC2T5+4zipQLQdi2FmiRqP83k3d6F3stv2iAlNhOs6cXN401FCD5TL0vvleuHgA==}
+  /core-js-pure/3.24.1:
+    resolution: {integrity: sha512-r1nJk41QLLPyozHUUPmILCEMtMw24NG4oWK6RbsDdjzQgg9ZvrUsPBj1MnG0wXXp1DCDU6j+wUvEmBSrtRbLXg==}
     requiresBuild: true
     dev: true
 
@@ -2586,8 +2662,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-jsdoc/39.3.3_eslint@8.20.0:
-    resolution: {integrity: sha512-K/DAjKRUNaUTf0KQhI9PvsF+Y3mGDx/j0pofXsJCQe/tmRsRweBIXR353c8nAro0lytZYEf7l0PluBpzKDiHxw==}
+  /eslint-plugin-jsdoc/39.3.4_eslint@8.20.0:
+    resolution: {integrity: sha512-dYWXhMMHJaq++bY2hyByhgiRzt5qQ7XdfQGiHrU9f3APSSVZ/HuOnXuvUUX7W0jO55Udsu4/7iRlpF/yLFQdSA==}
     engines: {node: ^14 || ^16 || ^17 || ^18}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
@@ -2702,7 +2778,7 @@ packages:
       eslint-utils: 3.0.0_eslint@8.20.0
       esquery: 1.4.0
       indent-string: 4.0.0
-      is-builtin-module: 3.1.0
+      is-builtin-module: 3.2.0
       lodash: 4.17.21
       pluralize: 8.0.0
       read-pkg-up: 7.0.1
@@ -3231,7 +3307,7 @@ packages:
       eslint-config-standard: 17.0.0_aabay5xq26dqolh67bnodxi5n4
       eslint-plugin-etc: 2.0.2_he2ccbldppg44uulnyq4rwocfa
       eslint-plugin-import: 2.26.0_ficupzxy3q6nk56ibvavehtzue
-      eslint-plugin-jsdoc: 39.3.3_eslint@8.20.0
+      eslint-plugin-jsdoc: 39.3.4_eslint@8.20.0
       eslint-plugin-n: 15.2.4_eslint@8.20.0
       eslint-plugin-no-only-tests: 2.6.0
       eslint-plugin-promise: 6.0.0_eslint@8.20.0
@@ -3378,8 +3454,8 @@ packages:
       call-bind: 1.0.2
       has-tostringtag: 1.0.0
 
-  /is-builtin-module/3.1.0:
-    resolution: {integrity: sha512-OV7JjAgOTfAFJmHZLvpSTb4qi0nIILDV1gWPYDnDJUTNFM5aGlRAhk4QcT8i7TuAleeEV5Fdkqn3t4mS+Q11fg==}
+  /is-builtin-module/3.2.0:
+    resolution: {integrity: sha512-phDA4oSGt7vl1n5tJvTWooWWAsXLY+2xCnxNqvKhGEzujg+A43wPlPOyDg3C8XQHN+6k/JTQWJ/j0dQh/qr+Hw==}
     engines: {node: '>=6'}
     dependencies:
       builtin-modules: 3.3.0
@@ -4034,7 +4110,7 @@ packages:
     dependencies:
       '@next/env': 12.2.3
       '@swc/helpers': 0.4.3
-      caniuse-lite: 1.0.30001370
+      caniuse-lite: 1.0.30001373
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -4122,7 +4198,7 @@ packages:
     resolution: {integrity: sha512-/vBvz5Jfr9dT/aFWd0FIRf+T/Q2WBsLENygUaFUqstqsycmZAP/t5BvFJTK0viFmSUxiUKTUplWy5vt+rvKIxg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
     dependencies:
-      are-we-there-yet: 3.0.0
+      are-we-there-yet: 3.0.1
       console-control-strings: 1.1.0
       gauge: 4.0.4
       set-blocking: 2.0.0
@@ -5295,6 +5371,11 @@ packages:
     engines: {node: '>=12.18'}
     dev: true
 
+  /undici/5.8.0:
+    resolution: {integrity: sha512-1F7Vtcez5w/LwH2G2tGnFIihuWUlc58YidwLiCv+jR2Z50x0tNXpRRw7eOIJ+GvqCqIkg9SB7NWAJ/T9TLfv8Q==}
+    engines: {node: '>=12.18'}
+    dev: false
+
   /uri-js/4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
     dependencies:
@@ -5335,6 +5416,10 @@ packages:
       spdx-correct: 3.1.1
       spdx-expression-parse: 3.0.1
     dev: true
+
+  /varint/6.0.0:
+    resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
+    dev: false
 
   /watch/1.0.2:
     resolution: {integrity: sha512-1u+Z5n9Jc1E2c7qDO8SinPoZuHj7FgbgU1olSFoyaklduDvvtX7GMMtlE6OC9FTXq4KvNAOfj6Zu4vI1e9bAKA==}
