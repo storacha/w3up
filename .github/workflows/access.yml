@@ -1,0 +1,65 @@
+name: Access SDK
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'packages/access/**'
+      - '.github/workflows/access.yml'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    paths:
+      - 'packages/access/**'
+      - '.github/workflows/access.yml'
+      - 'pnpm-lock.yaml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7.0.x
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -r --filter @web3-storage/access run lint
+      - run: pnpm -r --filter @web3-storage/access run test
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+    steps:
+      - uses: GoogleCloudPlatform/release-please-action@v3
+        id: release
+        with:
+          path: packages/access
+          release-type: node
+          monorepo-tags: true
+          package-name: '@web3-storage/access'
+  publish:
+    needs: release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.release.outputs.releases_created
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7.0.x
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -r --filter @web3-storage/access exec tsc
+      - run: pnpm -r --filter @web3-storage/access publish --tag next --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
