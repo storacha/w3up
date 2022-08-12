@@ -24,6 +24,7 @@
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
-    "ipjs": "^5.2.0"
+    "ipjs": "^5.2.0",
+    "jsdoc-to-markdown": "^7.1.1"
   }
 }
