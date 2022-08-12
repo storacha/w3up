@@ -1,0 +1,29 @@
+{
+  "name": "w3up-client",
+  "version": "0.1.0",
+  "description": "",
+  "license": "Apache-2.0 OR MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "ipjs build",
+    "build:api_docs": "jsdoc2md -f src/index.js > API.md"
+  },
+  "dependencies": {
+    "@ucanto/authority": "^0.4.5",
+    "@ucanto/client": "0.5.4",
+    "@ucanto/core": "^0.5.4",
+    "@ucanto/interface": "^0.6.2",
+    "@ucanto/transport": "^0.6.3",
+    "@ucanto/validator": "^0.5.5",
+    "cross-fetch": "^3.1.5",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "ipjs": "^5.2.0"
+  }
+}
