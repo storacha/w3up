@@ -3,7 +3,7 @@ import { SigningAuthority, Authority } from '@ucanto/authority';
 import { Delegation, UCAN } from '@ucanto/core';
 import { Failure } from '@ucanto/validator';
 import fetch from 'cross-fetch';
-import { Store, Identity } from './store/index.js';
+import { Store, Identity, Access } from './store/index.js';
 
 /**
  * A string representing a link to another object in IPLD
@@ -14,6 +14,8 @@ import { Store, Identity } from './store/index.js';
  * @typedef {object} ClientOptions
  * @property {string} serviceDID - The DID of the service to talk to.
  * @property {string} serviceURL - The URL of the service to talk to.
+ * @property {string} accessURL - The URL of the access service.
+ * @property {string} accessDID - The DID of the access service.
  * @property {Map<string, any>} settings - A map/db of settings to use for the client.
  */
 
@@ -46,14 +48,23 @@ class Client {
    * Create an instance of the w3 client.
    * @param {ClientOptions} options
    */
-  constructor({ serviceDID, serviceURL, settings }) {
+  constructor({ serviceDID, serviceURL, accessURL, accessDID, settings }) {
     this.serviceURL = new URL(serviceURL);
     this.serviceDID = serviceDID;
+
+    this.accessURL = new URL(accessURL);
+    this.accessDID = accessDID;
     this.settings = settings;
 
     this.client = Store.connect({
       id: this.serviceDID,
       url: this.serviceURL,
+      fetch,
+    });
+
+    this.accessClient = Access.connect({
+      id: this.accessDID,
+      url: this.accessURL,
       fetch,
     });
   }
@@ -90,22 +101,62 @@ class Client {
     if (!email) {
       throw `Invalid email provided for registration: ${email}`;
     }
-
     const issuer = await this.identity();
-    const result = await Identity.Validate.invoke({
+    const result = await Access.Validate.invoke({
       issuer,
-      audience: this.client.id,
+      audience: this.accessClient.id,
       with: issuer.did(),
       caveats: {
         as: `mailto:${email}`,
       },
-    }).execute(this.client);
+    }).execute(this.accessClient);
 
-    if (result?.error) {
-      throw result;
+    const proofString = await this.checkRegistration();
+    const ucan = UCAN.parse(proofString);
+    const root = await UCAN.write(ucan);
+    const proof = Delegation.create({ root });
+
+    const validate = await Access.Register.invoke({
+      issuer,
+      audience: this.accessClient.id,
+      with: proof.capabilities[0].with,
+      caveats: {
+        as: proof.capabilities[0].as,
+      },
+      proofs: [proof],
+    }).execute(this.accessClient);
+
+    if (validate.error) {
+      throw new Error(validate?.cause?.message);
     }
-
     return `Email registered ${email}`;
+  }
+
+  async checkRegistration() {
+    const issuer = await this.identity();
+    let count = 0;
+
+    const check = async () => {
+      if (count > 100) {
+        throw new Error('Could not validate.');
+      } else {
+        count++;
+        const result = await fetch(
+          `${this.accessURL}validate?did=${issuer.did()}`
+        );
+
+        if (!result.ok) {
+          await new Promise((resolve, reject) =>
+            setTimeout(() => resolve(), 1000)
+          );
+          return await check();
+        } else {
+          return await result.text();
+        }
+      }
+    };
+
+    return await check();
   }
 
   /**
@@ -114,56 +165,56 @@ class Client {
    * @param {string|undefined} token - The token.
    * @return {Promise<string|undefined>}
    */
-  async validate(token) {
-    let savedEmail = this.settings.get('email');
-    if (!savedEmail) {
-      throw 'No email setup, please do so.';
-    }
-
-    if (!token) {
-      throw 'Token is missing, please provide one for validation.';
-    }
-
-    if (this.settings.get('validated') == true) {
-      throw 'Already validated';
-    }
-
-    const issuer = await this.identity();
-    const proof = await importToken(token);
-
-    if (proof.error) {
-      throw 'Validation failed: ' + proof.message;
-    }
-
-    if (proof.audience.did() !== issuer.did()) {
-      throw `Wrong token: addressed to ${proof.audience.did()} instead of ${issuer.did()}`;
-    }
-
-    const result = await Identity.Register.invoke({
-      issuer,
-      audience: this.client.id,
-      with: proof.capabilities[0].with,
-      caveats: {
-        as: proof.capabilities[0].as,
-      },
-      proofs: [proof],
-    }).execute(this.client);
-
-    if (result?.error) {
-      throw `🎫 Registration failed: ${result.message}`;
-    } else {
-      this.settings.set('validated', true);
-    }
-    return 'Validating with token succeeded.';
-  }
+  //   async validate(token) {
+  //     let savedEmail = this.settings.get('email');
+  //     if (!savedEmail) {
+  //       throw 'No email setup, please do so.';
+  //     }
+  //
+  //     if (!token) {
+  //       throw 'Token is missing, please provide one for validation.';
+  //     }
+  //
+  //     if (this.settings.get('validated') == true) {
+  //       throw 'Already validated';
+  //     }
+  //
+  //     const issuer = await this.identity();
+  //     const proof = await importToken(token);
+  //
+  //     if (proof.error) {
+  //       throw 'Validation failed: ' + proof.message;
+  //     }
+  //
+  //     if (proof.audience.did() !== issuer.did()) {
+  //       throw `Wrong token: addressed to ${proof.audience.did()} instead of ${issuer.did()}`;
+  //     }
+  //
+  //     const result = await Identity.Register.invoke({
+  //       issuer,
+  //       audience: this.client.id,
+  //       with: proof.capabilities[0].with,
+  //       caveats: {
+  //         as: proof.capabilities[0].as,
+  //       },
+  //       proofs: [proof],
+  //     }).execute(this.client);
+  //
+  //     if (result?.error) {
+  //       throw `🎫 Registration failed: ${result.message}`;
+  //     } else {
+  //       this.settings.set('validated', true);
+  //     }
+  //     return 'Validating with token succeeded.';
+  //   }
 
   async whoami() {
     const issuer = await this.identity();
-    return Identity.Identify.invoke({
+    return await Access.Identify.invoke({
       issuer,
-      audience: this.client.id,
+      audience: this.accessClient.id,
       with: issuer.did(),
-    }).execute(this.client);
+    }).execute(this.accessClient);
   }
 
   /**
@@ -185,14 +236,7 @@ class Client {
   async upload(bytes) {
     try {
       const id = await this.identity();
-      //       const file = await fetch(url)
-      //       const bytes = new Uint8Array(await file.arrayBuffer())
-      //       console.log('tyring to upload butes', bytes)
       const link = await CAR.codec.link(bytes);
-      //       const link = '123'
-
-      console.log('what', link.toString());
-
       const result = await Store.Add.invoke({
         issuer: id,
         audience: this.client.id,
