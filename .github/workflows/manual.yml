@@ -15,12 +15,12 @@ jobs:
           cache: 'pnpm'
       - uses: actions/cache@v2
         with:
-          path: ${{ github.workspace }}/packages/website/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('packages/website/**.[jt]s', 'packages/website/**.[jt]sx') }}
+          path: ${{ github.workspace }}/packages/wallet/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('packages/wallet/**.[jt]s', 'packages/wallet/**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - run: pnpm install
-      - run: pnpm -r --filter website run build
+      - run: pnpm -r --filter wallet run build
       - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch master ./packages/wallet/out
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
