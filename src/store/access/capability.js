@@ -1,4 +1,4 @@
-import { capability, URI } from '@ucanto/validator';
+import { capability, URI, Failure } from '@ucanto/validator';
 import * as Store from '../store/capability.js';
 import { equalWith, derivesURIPattern } from '../validation.js';
 
