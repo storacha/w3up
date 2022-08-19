@@ -23,7 +23,7 @@ const config = new Conf({
 })
 
 const prog = sade(NAME)
-const url = 'https://auth-dev.dag.haus'
+const url = process.env.URL || 'https://auth-dev.dag.haus'
 
 prog.version(pkg.version)
 
