@@ -10,7 +10,7 @@
     "deploy": "wrangler publish",
     "dev": "miniflare --watch --debug --env ../../.env",
     "build": "scripts/cli.js build",
-    "test": "tsc && ava"
+    "test": "tsc --build && ava"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
