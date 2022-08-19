@@ -204,7 +204,7 @@ class Client {
       }
 
       if (result.error) {
-        throw new Error(result);
+        throw new Error(JSON.stringify(result));
       }
 
       // Get the returned signed URL, and upload to it.
@@ -217,10 +217,10 @@ class Client {
 
       if (!response.ok) {
         throw new Error(
-          `S3Upload failed with ${response.status}: ${response.statusText}`
+          `Failed uploading ${link} with ${response.status}: ${response.statusText}`
         );
       }
-      return `S3Upload succeeded with ${response.status}: ${response.statusText}`;
+      return `Succeeded uploading ${link} with ${response.status}: ${response.statusText}`;
     } catch (error) {
       console.log(error);
     }
