@@ -21,7 +21,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - run: pnpm install
       - run: pnpm -r --filter website run build
-      - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch master ./packages/website/out
+      - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch master ./packages/wallet/out
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
