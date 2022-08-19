@@ -126,9 +126,10 @@ class Client {
       proofs: [proof],
     }).execute(this.accessClient);
 
-    if (validate.error) {
+    if (validate?.error) {
       throw new Error(validate?.cause?.message);
     }
+
     return `Email registered ${email}`;
   }
 
@@ -158,55 +159,6 @@ class Client {
 
     return await check();
   }
-
-  /**
-   * Validate an email to token.
-   * @async
-   * @param {string|undefined} token - The token.
-   * @return {Promise<string|undefined>}
-   */
-  //   async validate(token) {
-  //     let savedEmail = this.settings.get('email');
-  //     if (!savedEmail) {
-  //       throw 'No email setup, please do so.';
-  //     }
-  //
-  //     if (!token) {
-  //       throw 'Token is missing, please provide one for validation.';
-  //     }
-  //
-  //     if (this.settings.get('validated') == true) {
-  //       throw 'Already validated';
-  //     }
-  //
-  //     const issuer = await this.identity();
-  //     const proof = await importToken(token);
-  //
-  //     if (proof.error) {
-  //       throw 'Validation failed: ' + proof.message;
-  //     }
-  //
-  //     if (proof.audience.did() !== issuer.did()) {
-  //       throw `Wrong token: addressed to ${proof.audience.did()} instead of ${issuer.did()}`;
-  //     }
-  //
-  //     const result = await Identity.Register.invoke({
-  //       issuer,
-  //       audience: this.client.id,
-  //       with: proof.capabilities[0].with,
-  //       caveats: {
-  //         as: proof.capabilities[0].as,
-  //       },
-  //       proofs: [proof],
-  //     }).execute(this.client);
-  //
-  //     if (result?.error) {
-  //       throw `🎫 Registration failed: ${result.message}`;
-  //     } else {
-  //       this.settings.set('validated', true);
-  //     }
-  //     return 'Validating with token succeeded.';
-  //   }
 
   async whoami() {
     const issuer = await this.identity();
