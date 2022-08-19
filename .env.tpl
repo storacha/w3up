@@ -1,7 +1,7 @@
 # This file is used as-is to run tests
 
 # Worker secrets
-PRIVATE_KEY=MgCaVbo9CIphj0oV3INFKfxPRkzxDYCBh4uy5ca4jH5EsHO0B537/FZybYPc57qGV3MglRFGQKQgwLC2T1anpDNW0Ylg=KeXR1pQU36k1yoIBqTsmT+D8=
+PRIVATE_KEY=MgCYWjE6vp0cn3amPan2xPO+f6EZ3I+KwuN1w2vx57vpJ9O0Bn4ci4jn8itwc121ujm7lDHkCW24LuKfZwIdmsifVysY=
 POSTMARK_TOKEN=secret
 SENTRY_DSN=https://000000@0000000.ingest.sentry.io/00000
 
