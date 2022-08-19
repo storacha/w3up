@@ -7,7 +7,7 @@ import {
 } from './helpers/setup.js'
 import * as UCAN from '@ipld/dag-ucan'
 import { SigningAuthority } from '@ucanto/authority'
-import * as caps from '@web3-storage/w3access/capabilities'
+import * as caps from '@web3-storage/access/capabilities'
 
 test.before((t) => {
   t.context = { mf }

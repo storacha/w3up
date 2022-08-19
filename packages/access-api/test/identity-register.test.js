@@ -2,7 +2,7 @@ import * as UCAN from '@ipld/dag-ucan'
 import { SigningAuthority } from '@ucanto/authority'
 import { Delegation } from '@ucanto/core'
 import { Accounts } from '../src/kvs/accounts.js'
-import * as caps from '@web3-storage/w3access/capabilities'
+import * as caps from '@web3-storage/access/capabilities'
 import { connection, mf, serviceAuthority, test } from './helpers/setup.js'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -77,12 +77,12 @@ test('identify', async (t) => {
   if (out?.error || !out) {
     return
   }
-  /** @type {Types.UCAN.JWT<import('@web3-storage/w3access/types').IdentityRegister>} */
+  /** @type {Types.UCAN.JWT<import('@web3-storage/access/types').IdentityRegister>} */
   // @ts-ignore
   const jwt = out.delegation.replace('http://localhost:8787/validate?ucan=', '')
   const ucan = UCAN.parse(jwt)
   const root = await UCAN.write(ucan)
-  /** @type {Types.Delegation<[import('@web3-storage/w3access/types').IdentityRegister]>} */
+  /** @type {Types.Delegation<[import('@web3-storage/access/types').IdentityRegister]>} */
   const proof = Delegation.create({ root })
 
   const register = caps.identityRegister.invoke({

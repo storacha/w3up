@@ -60,7 +60,7 @@ test('should fail with 0 caps', async (t) => {
     {
       name: 'InvocationCapabilityError',
       error: true,
-      message: 'Invocation is required to have one single capability.',
+      message: 'Invocation is required to have a single capability.',
       capabilities: [],
     },
   ])
@@ -119,7 +119,7 @@ test('should fail with with more than 1 cap', async (t) => {
     {
       name: 'InvocationCapabilityError',
       error: true,
-      message: 'Invocation is required to have one single capability.',
+      message: 'Invocation is required to have a single capability.',
       capabilities: [
         { can: 'identity/validate', with: 'mailto:admin@dag.house' },
         { can: 'identity/register', with: 'mailto:admin@dag.house' },
