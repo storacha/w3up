@@ -6,11 +6,11 @@ import {
   identityIdentify,
   identityRegister,
   identityValidate,
-} from '@web3-storage/w3access/capabilities'
+} from '@web3-storage/access/capabilities'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
- * @returns {import('@web3-storage/w3access/types').Service}
+ * @returns {import('@web3-storage/access/types').Service}
  */
 export function service(ctx) {
   return {

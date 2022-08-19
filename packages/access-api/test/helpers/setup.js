@@ -1,7 +1,7 @@
 import * as UCAN from '@ipld/dag-ucan'
 import { SigningAuthority } from '@ucanto/authority'
 import anyTest from 'ava'
-import { connection as w3connection } from '@web3-storage/w3access/connection'
+import { connection as w3connection } from '@web3-storage/access/connection'
 import { Miniflare } from 'miniflare'
 import dotenv from 'dotenv'
 import path from 'path'

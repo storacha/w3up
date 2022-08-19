@@ -13,10 +13,15 @@ no_bundle = true
 binding = "BUCKET"
 bucket_name = "access-test"
 
-kv_namespaces = [
-  { binding = "ACCOUNTS", id = "e9fad7e04b254bf49206e08e50074387", preview_id = "e9fad7e04b254bf49206e08e50074387" },
-  { binding = "VALIDATIONS", id = "62e57652625c44a3b1fef2f840ffc882", preview_id = "62e57652625c44a3b1fef2f840ffc882" },
-]
+[[kv_namespaces]]
+binding = "ACCOUNTS"
+id = "e9fad7e04b254bf49206e08e50074387"
+preview_id = "e9fad7e04b254bf49206e08e50074387"
+
+[[kv_namespaces]] 
+binding = "VALIDATIONS"
+id = "62e57652625c44a3b1fef2f840ffc882"
+preview_id = "62e57652625c44a3b1fef2f840ffc882"
 
 [vars]
 ENV = "dev"
