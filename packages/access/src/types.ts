@@ -15,6 +15,8 @@ import type {
   IdentityValidate,
 } from './capabilities-types.js'
 
+export * from './capabilities-types.js'
+
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
 
 export interface Service {
