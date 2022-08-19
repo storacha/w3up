@@ -80,15 +80,16 @@ class Client {
    */
   async register(email) {
     let savedEmail = this.settings.get('email');
-    if (savedEmail) {
-      return;
-      //       throw 'Already registered an email, please validate the token.'
+    if (!savedEmail) {
+      this.settings.set('email', email);
+    } else if (email != savedEmail) {
+      throw new Error(
+        'Trying to register a second email, this is not supported yet.'
+      );
     }
     if (!email) {
       throw `Invalid email provided for registration: ${email}`;
     }
-
-    this.settings.set('email', email);
 
     const issuer = await this.identity();
     const result = await Identity.Validate.invoke({
@@ -284,28 +285,15 @@ class Client {
     const processResponse = await fetch(insightsAPI + '/insights', {
       method: 'POST',
       body: JSON.stringify({ cid: link }),
-    }).then((res) => {
-      if (res.status == 200) {
-        console.log('OK');
-      }
-      return res.json();
-    });
-
-    console.log('process', processResponse);
+    }).then((res) => res.json());
 
     await sleep(1000);
 
     const insights = await fetch(insightsAPI + '/insights', {
       method: 'POST',
       body: JSON.stringify({ cid: link }),
-    }).then((res) => {
-      if (res.status == 200) {
-        console.log('OK');
-      }
-      return res.json();
-    });
+    }).then((res) => res.json());
 
-    console.log('insights', insights);
     return insights;
   }
 }
