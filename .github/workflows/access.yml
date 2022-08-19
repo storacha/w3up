@@ -10,11 +10,13 @@ on:
       - 'packages/access/**'
       - '.github/workflows/access.yml'
       - 'pnpm-lock.yaml'
+      - '.env.tpl'
   pull_request:
     paths:
       - 'packages/access/**'
       - '.github/workflows/access.yml'
       - 'pnpm-lock.yaml'
+      - '.env.tpl'
 jobs:
   test:
     runs-on: ubuntu-latest
