@@ -44,7 +44,7 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_TOKEN }}
-          # accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages publish --project-name=ucan-protocol ./packages/wallet/out
       # - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch master ./packages/wallet/out
       #   env:
