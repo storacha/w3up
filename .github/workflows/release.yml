@@ -9,8 +9,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    outputs:
-      releases_created: ${{ steps.release.outputs.releases_created }}
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
