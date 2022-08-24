@@ -40,13 +40,13 @@ jobs:
       #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   cf-pages:
     needs: release
-    if: needs.release.outputs.release.['packages/wallet--release_created']
+    if: needs.release.outputs.release['packages/wallet--release_created']
     runs-on: ubuntu-latest
     steps:
       - run: echo 'pages'
   cf-worker:
     needs: release
-    if: needs.release.outputs.release.['packages/access-api--release_created']
+    if: needs.release.outputs.release['packages/access-api--release_created']
     runs-on: ubuntu-latest
     steps:
       - run: echo 'worker'
