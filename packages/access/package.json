@@ -11,7 +11,7 @@
     "w3access": "./src/cli.js"
   },
   "scripts": {
-    "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,md,yml,json}' --ignore-path ../../.gitignore",
+    "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "test": "mocha",
     "testw": "watch 'pnpm test' src test --interval 1"
