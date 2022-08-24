@@ -1,0 +1,52 @@
+name: Release
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+    steps:
+      - uses: GoogleCloudPlatform/release-please-action@v3
+        id: release
+        with:
+          command: manifest
+          config-file: .github/release-please-config.json
+          manifest-file: .github/release-please-manifest.json
+  publish:
+    needs: release
+    if: needs.release.outputs.releases_created
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -r build
+      - run: echo 'npm'
+      # - run: pnpm -r publish --tag next --access public
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  cf-pages:
+    needs: release
+    if: steps.release.outputs['packages/wallet--release_created']
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'pages'
+  cf-worker:
+    needs: release
+    if: steps.release.outputs['packages/access-api--release_created']
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'worker'
