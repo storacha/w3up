@@ -9,6 +9,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.release.outputs }}
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
@@ -18,7 +20,7 @@ jobs:
           manifest-file: .github/release-please-manifest.json
   publish:
     needs: release
-    if: needs.release.outputs.releases_created
+    if: needs.release.outputs.release.releases_created
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -38,13 +40,13 @@ jobs:
       #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   cf-pages:
     needs: release
-    if: needs.release.outputs['packages/wallet--release_created']
+    if: needs.release.outputs.release.['packages/wallet--release_created']
     runs-on: ubuntu-latest
     steps:
       - run: echo 'pages'
   cf-worker:
     needs: release
-    if: needs.release.outputs['packages/access-api--release_created']
+    if: needs.release.outputs.release.['packages/access-api--release_created']
     runs-on: ubuntu-latest
     steps:
       - run: echo 'worker'
