@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/web3-storage/ucan-protocol/compare/wallet-v0.2.2...wallet-v0.2.3) (2022-08-24)
+
+
+### Bug Fixes
+
+* **wallet:** yo ([c76d82d](https://github.com/web3-storage/ucan-protocol/commit/c76d82deb561527163d17664973318648e351097))
+
 ## [0.2.2](https://github.com/web3-storage/ucan-protocol/compare/wallet-v0.2.1...wallet-v0.2.2) (2022-08-24)
 
 
