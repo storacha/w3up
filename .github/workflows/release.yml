@@ -24,7 +24,7 @@ jobs:
           manifest-file: .github/release-please-manifest.json
   publish:
     needs: release
-    if: contains(need.release.outputs.paths_released, 'packages/access')
+    if: contains(needs.release.outputs.paths_released, 'packages/access')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -44,13 +44,13 @@ jobs:
       #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   cf-pages:
     needs: release
-    if: contains(need.release.outputs.paths_released, 'packages/wallet')
+    if: contains(needs.release.outputs.paths_released, 'packages/wallet')
     runs-on: ubuntu-latest
     steps:
       - run: echo 'pages'
   cf-worker:
     needs: release
-    if: contains(need.release.outputs.paths_released, 'packages/access-api')
+    if: contains(needs.release.outputs.paths_released, 'packages/access-api')
     runs-on: ubuntu-latest
     steps:
       - run: echo 'worker'
