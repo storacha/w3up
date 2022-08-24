@@ -18,7 +18,7 @@ binding = "ACCOUNTS"
 id = "e9fad7e04b254bf49206e08e50074387"
 preview_id = "e9fad7e04b254bf49206e08e50074387"
 
-[[kv_namespaces]] 
+[[kv_namespaces]]
 binding = "VALIDATIONS"
 id = "62e57652625c44a3b1fef2f840ffc882"
 preview_id = "62e57652625c44a3b1fef2f840ffc882"
@@ -33,3 +33,24 @@ watch_dir = "src"
 
 [miniflare]
 r2_persist = "./data/" # Defaults to ./.mf/r2
+
+# Production
+[env.production]
+routes = [{ pattern = "subdomain.example.com", custom_domain = true }]
+
+[env.production.vars]
+ENV = "production"
+DEBUG = "false"
+
+[env.production.build]
+command = "scripts/cli.js build --env production"
+watch_dir = "src"
+
+# TODO make new KV for prod
+[[env.production.kv_namespaces]]
+binding = "ACCOUNTS"
+id = "e9fad7e04b254bf49206e08e50074387"
+
+[[env.production.kv_namespaces]]
+binding = "VALIDATIONS"
+id = "62e57652625c44a3b1fef2f840ffc882"

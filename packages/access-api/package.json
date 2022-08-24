@@ -4,7 +4,7 @@
   "description": "Access API",
   "type": "module",
   "main": "dist/worker.js",
-  "private": "true",
+  "private": true,
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,md,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
