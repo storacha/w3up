@@ -10,7 +10,11 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      release: ${{ steps.release.outputs }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      # 'packages/wallet--release_created': ${{ steps.release.outputs['packages/wallet--release_created'] }}
+      # 'packages/access--release_created': ${{ steps.release.outputs['packages/access--release_created'] }}
+      # 'packages/access-api--release_created': ${{ steps.release.outputs['packages/access-api--release_created'] }}
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
@@ -20,7 +24,7 @@ jobs:
           manifest-file: .github/release-please-manifest.json
   publish:
     needs: release
-    if: needs.release.outputs.release.releases_created
+    if: contains(need.release.outputs.paths_released, 'packages/access')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -40,13 +44,13 @@ jobs:
       #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   cf-pages:
     needs: release
-    if: needs.release.outputs.release['packages/wallet--release_created']
+    if: contains(need.release.outputs.paths_released, 'packages/wallet')
     runs-on: ubuntu-latest
     steps:
       - run: echo 'pages'
   cf-worker:
     needs: release
-    if: needs.release.outputs.release['packages/access-api--release_created']
+    if: contains(need.release.outputs.paths_released, 'packages/access-api')
     runs-on: ubuntu-latest
     steps:
       - run: echo 'worker'
