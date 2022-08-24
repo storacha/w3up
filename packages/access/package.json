@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "w3access SDK",
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
@@ -11,7 +11,7 @@
     "w3access": "./src/cli.js"
   },
   "scripts": {
-    "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,md,yml,json}' --ignore-path ../../.gitignore",
+    "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "test": "mocha",
     "testw": "watch 'pnpm test' src test --interval 1"

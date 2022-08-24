@@ -1,12 +1,12 @@
 {
   "name": "@web3-storage/access-api",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Access API",
   "type": "module",
   "main": "dist/worker.js",
   "private": true,
   "scripts": {
-    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,md,yml,json}' --ignore-path ../../.gitignore",
+    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
     "dev": "miniflare --watch --debug --env ../../.env",
     "build": "scripts/cli.js build",
