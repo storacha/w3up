@@ -1,4 +1,4 @@
-# Web3 Storage Ucan Protocol
+# w3access API
 
 ## Contributing
 
