@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.2...access-api-v0.1.3) (2022-08-25)
+
+
+### Bug Fixes
+
+* test api ([9597c44](https://github.com/web3-storage/ucan-protocol/commit/9597c4486abb1c21a0d8a504d4bb8632581e4800))
+
 ## [0.1.2](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.1...access-api-v0.1.2) (2022-08-25)
 
 
