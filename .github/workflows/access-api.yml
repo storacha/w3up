@@ -67,7 +67,7 @@ jobs:
   deploy-dev:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main'
+    if: github.event_name == 'pull_request' && !contains(github.head_ref, 'release-please--branches')
     environment: dev
     steps:
       - uses: actions/checkout@v2
