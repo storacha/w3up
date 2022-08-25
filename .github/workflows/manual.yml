@@ -52,7 +52,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
   deploy-api:
     if: github.event.inputs.package == 'api'
-    uses: '.github/workflows/reuse-deploy-api.yml'
+    uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: ${{ github.event.inputs.environment }}
     secrets:
