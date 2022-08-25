@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.0...access-api-v0.1.1) (2022-08-24)
+
+
+### Bug Fixes
+
+* add readme ([25a01f5](https://github.com/web3-storage/ucan-protocol/commit/25a01f54c4db8f5af75e23c924d86a7a67823beb))
+* add readme text ([088273e](https://github.com/web3-storage/ucan-protocol/commit/088273e97a72f7ec85c60a5cb5dd6a8754603064))
+
 ## [0.1.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.0.1...access-api-v0.1.0) (2022-08-24)
 
 
