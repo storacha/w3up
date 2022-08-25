@@ -50,7 +50,7 @@ id = "ea17f472b37a43d29c1faf7af9512e03"
 # Staging
 [env.staging]
 name = "w3access-staging"
-routes = [{ pattern = "access-api-stating.web3.storage", custom_domain = true }]
+routes = [{ pattern = "access-api-staging.web3.storage", custom_domain = true }]
 
 [env.staging.vars]
 ENV = "staging"
