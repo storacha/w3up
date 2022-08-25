@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access-api",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Access API",
   "type": "module",
   "main": "dist/worker.js",
