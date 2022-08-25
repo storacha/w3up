@@ -64,23 +64,34 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
           SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
-  # publish:
-  #   needs: test
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: pnpm/action-setup@v2.0.1
-  #       with:
-  #         version: 7
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: 18
-  #         cache: 'pnpm'
-  #     - run: pnpm install
-
-  #     # Publish worker to cloudflare
-  #     - uses: cloudflare/wrangler-action@2.0.0
-  #       with:
-  #         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  #         workingDirectory: 'packages/access-api'
+  deploy-dev:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main'
+    environment: dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install
+      # Publish worker to cloudflare
+      - uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_TOKEN }}
+          workingDirectory: 'packages/access-api'
+          environment: dev
+          secrets: |
+            POSTMARK_TOKEN
+            PRIVATE_KEY
+            SENTRY_DSN
+        env:
+          POSTMARK_TOKEN: ${{ secrets.POSTMARK_TOKEN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
+          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
