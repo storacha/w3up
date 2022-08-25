@@ -1,6 +1,6 @@
 # w3access API
 
-## Contributinggg
+## Contributing
 
 We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
 
