@@ -20,7 +20,7 @@ on:
         required: true
 
 jobs:
-  deploy_api:
+  deploy-api:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:

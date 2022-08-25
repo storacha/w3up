@@ -33,64 +33,14 @@ jobs:
       - run: pnpm -r --filter @web3-storage/access-api run lint
       - run: pnpm -r --filter @web3-storage/access-api run test
   deploy-staging:
-    needs: test
-    runs-on: ubuntu-latest
     if: github.head_ref == 'release-please--branches--master--components--access-api'
-    environment: staging
-    steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 7
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 18
-          cache: 'pnpm'
-      - run: pnpm install
-      # Publish worker to cloudflare
-      - uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_TOKEN }}
-          workingDirectory: 'packages/access-api'
-          environment: staging
-          secrets: |
-            POSTMARK_TOKEN
-            PRIVATE_KEY
-            SENTRY_DSN
-        env:
-          POSTMARK_TOKEN: ${{ secrets.POSTMARK_TOKEN }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
-          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
+    uses: './.github/workflows/reuse-deploy-api.yml'
+    with:
+      environment: staging
+    secrets: inherit
   deploy-dev:
-    needs: test
-    runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && !contains(github.head_ref, 'release-please--branches')
-    environment: dev
-    steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 7
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 18
-          cache: 'pnpm'
-      - run: pnpm install
-      # Publish worker to cloudflare
-      - uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_TOKEN }}
-          workingDirectory: 'packages/access-api'
-          environment: dev
-          secrets: |
-            POSTMARK_TOKEN
-            PRIVATE_KEY
-            SENTRY_DSN
-        env:
-          POSTMARK_TOKEN: ${{ secrets.POSTMARK_TOKEN }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
-          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
+    uses: './.github/workflows/reuse-deploy-api.yml'
+    with:
+      environment: dev
+    secrets: inherit
