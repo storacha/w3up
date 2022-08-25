@@ -1,0 +1,52 @@
+name: Reusable deploy api
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      CF_TOKEN:
+        required: true
+      POSTMARK_TOKEN:
+        required: true
+      PRIVATE_KEY:
+        required: true
+      SENTRY_DSN:
+        required: true
+      SENTRY_UPLOAD:
+        required: true
+      SENTRY_TOKEN:
+        required: true
+
+jobs:
+  deploy_api:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install
+      # Publish worker to cloudflare
+      - uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_TOKEN }}
+          workingDirectory: 'packages/access-api'
+          environment: ${{ inputs.environment }}
+          secrets: |
+            POSTMARK_TOKEN
+            PRIVATE_KEY
+            SENTRY_DSN
+        env:
+          POSTMARK_TOKEN: ${{ secrets.POSTMARK_TOKEN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
+          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
