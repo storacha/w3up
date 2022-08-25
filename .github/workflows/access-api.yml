@@ -33,12 +33,14 @@ jobs:
       - run: pnpm -r --filter @web3-storage/access-api run lint
       - run: pnpm -r --filter @web3-storage/access-api run test
   deploy-staging:
+    needs: test
     if: github.head_ref == 'release-please--branches--master--components--access-api'
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: staging
     secrets: inherit
   deploy-dev:
+    needs: test
     if: github.event_name == 'pull_request' && !contains(github.head_ref, 'release-please--branches')
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
