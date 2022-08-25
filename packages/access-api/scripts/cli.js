@@ -48,7 +48,7 @@ prog
     try {
       const version = `${pkg.name}@${pkg.version}-${opts.env}+${git.short(
         __dirname
-      )}`
+      )}`.replace('/', '__')
       await build({
         entryPoints: [path.join(__dirname, '../src/index.js')],
         bundle: true,
