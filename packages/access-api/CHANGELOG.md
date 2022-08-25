@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.4](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.3...access-api-v0.1.4) (2022-08-25)
+
+
+### Bug Fixes
+
+* api ([4e70483](https://github.com/web3-storage/ucan-protocol/commit/4e7048316d3ed95f5b7606830d75420c5020bf53))
+* route for staging ([8d5866f](https://github.com/web3-storage/ucan-protocol/commit/8d5866f2bf870eaf2bb26bddef02ee8a0b6d1386))
+* staging ([29db547](https://github.com/web3-storage/ucan-protocol/commit/29db547848e8a5cab4d5c91a72010ed4aec5d09c))
+* staging ([53f62b0](https://github.com/web3-storage/ucan-protocol/commit/53f62b0269a7c3def5c22afb2b888d5886683f05))
+
 ## [0.1.3](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.2...access-api-v0.1.3) (2022-08-25)
 
 
