@@ -1,3 +1,4 @@
+name: Reusesable Deploy API
 on:
   workflow_call:
     inputs:
