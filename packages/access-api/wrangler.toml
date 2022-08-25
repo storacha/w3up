@@ -1,6 +1,6 @@
 # Development
 
-name = "auth-dev"
+name = "w3access-test"
 account_id = "fffa4b4363a7e5250af8357087263b3a"
 main = "./dist/worker.js"
 
@@ -9,19 +9,13 @@ compatibility_date = "2022-06-26"
 compatibility_flags = ["url_standard"]
 no_bundle = true
 
-[[r2_buckets]]
-binding = "BUCKET"
-bucket_name = "access-test"
-
 [[kv_namespaces]]
 binding = "ACCOUNTS"
 id = "e9fad7e04b254bf49206e08e50074387"
-preview_id = "e9fad7e04b254bf49206e08e50074387"
 
 [[kv_namespaces]]
 binding = "VALIDATIONS"
 id = "62e57652625c44a3b1fef2f840ffc882"
-preview_id = "62e57652625c44a3b1fef2f840ffc882"
 
 [vars]
 ENV = "dev"
@@ -31,12 +25,55 @@ DEBUG = "true"
 command = "scripts/cli.js build"
 watch_dir = "src"
 
-[miniflare]
-r2_persist = "./data/" # Defaults to ./.mf/r2
+
+# Dev
+[env.dev]
+name = "w3access-dev"
+workers_dev = true
+
+[env.dev.vars]
+ENV = "dev"
+DEBUG = "false"
+
+[env.dev.build]
+command = "scripts/cli.js build --env dev"
+watch_dir = "src"
+
+[[env.dev.kv_namespaces]]
+binding = "ACCOUNTS"
+id = "e9fad7e04b254bf49206e08e50074387"
+
+[[env.dev.kv_namespaces]]
+binding = "VALIDATIONS"
+id = "62e57652625c44a3b1fef2f840ffc882"
+
+# Staging
+[env.staging]
+name = "w3access-staging"
+routes = [{ pattern = "access-api-stating.web3.storage", custom_domain = true }]
+
+[env.staging.vars]
+ENV = "staging"
+DEBUG = "false"
+
+[env.staging.build]
+command = "scripts/cli.js build --env staging"
+watch_dir = "src"
+
+# TODO make new KV for prod
+[[env.staging.kv_namespaces]]
+binding = "ACCOUNTS"
+id = "e9fad7e04b254bf49206e08e50074387"
+
+[[env.staging.kv_namespaces]]
+binding = "VALIDATIONS"
+id = "62e57652625c44a3b1fef2f840ffc882"
+
 
 # Production
 [env.production]
-routes = [{ pattern = "access.web3.storage", custom_domain = true }]
+name = "w3access"
+routes = [{ pattern = "access-api.web3.storage", custom_domain = true }]
 
 [env.production.vars]
 ENV = "production"

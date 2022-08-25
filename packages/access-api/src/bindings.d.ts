@@ -7,7 +7,6 @@ export {}
 declare global {
   const ACCOUNTS: KVNamespace
   const VALIDATIONS: KVNamespace
-  const BUCKET: R2Bucket
 }
 
 export interface RouteContext {

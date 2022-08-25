@@ -16,7 +16,7 @@
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
     "simple-git-hooks": "^2.8.0",
-    "wrangler": "^2.0.26"
+    "wrangler": "^2.0.27"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
