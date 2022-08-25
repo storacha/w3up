@@ -67,7 +67,7 @@ jobs:
       # Publish worker to cloudflare
       - uses: cloudflare/wrangler-action@2.0.0
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          apiToken: ${{ secrets.CF_TOKEN }}
           workingDirectory: 'packages/access-api'
           environment: ${{ github.event.inputs.environment }}
           secrets: |
