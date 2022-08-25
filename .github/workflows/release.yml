@@ -21,7 +21,7 @@ jobs:
           manifest-file: .github/release-please-manifest.json
   publish:
     needs: release
-    if: contains(needs.release.outputs.paths_released, 'packages/access')
+    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -41,13 +41,13 @@ jobs:
       #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   pages:
     needs: release
-    if: contains(needs.release.outputs.paths_released, 'packages/wallet')
+    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/wallet')
     runs-on: ubuntu-latest
     steps:
       - run: echo 'pages'
   worker:
     needs: release
-    if: contains(needs.release.outputs.paths_released, 'packages/access-api')
+    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access-api')
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: production
