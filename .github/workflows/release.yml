@@ -12,9 +12,6 @@ jobs:
     outputs:
       paths_released: ${{ steps.release.outputs.paths_released }}
       releases_created: ${{ steps.release.outputs.releases_created }}
-      # 'packages/wallet--release_created': ${{ steps.release.outputs['packages/wallet--release_created'] }}
-      # 'packages/access--release_created': ${{ steps.release.outputs['packages/access--release_created'] }}
-      # 'packages/access-api--release_created': ${{ steps.release.outputs['packages/access-api--release_created'] }}
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
@@ -43,13 +40,13 @@ jobs:
       # - run: pnpm -r publish --tag next --access public
       #   env:
       #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-  cf-pages:
+  pages:
     needs: release
     if: contains(needs.release.outputs.paths_released, 'packages/wallet')
     runs-on: ubuntu-latest
     steps:
       - run: echo 'pages'
-  cf-worker:
+  worker:
     needs: release
     if: contains(needs.release.outputs.paths_released, 'packages/access-api')
     runs-on: ubuntu-latest

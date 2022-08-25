@@ -10,5 +10,6 @@ export function version(event, env) {
     commit: env.config.COMMITHASH,
     branch: env.config.BRANCH,
     did: env.keypair.did(),
+    dsn: env.config.SENTRY_DSN,
   })
 }
