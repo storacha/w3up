@@ -1,5 +1,3 @@
-name: Reusable deploy api
-
 on:
   workflow_call:
     inputs:
