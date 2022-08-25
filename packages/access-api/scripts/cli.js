@@ -48,7 +48,7 @@ prog
     try {
       const version = `${pkg.name}@${pkg.version}-${opts.env}+${git.short(
         __dirname
-      )}`
+      )}`.replace('/', '__')
       await build({
         entryPoints: [path.join(__dirname, '../src/index.js')],
         bundle: true,
@@ -71,7 +71,7 @@ prog
         const cli = new Sentry(undefined, {
           authToken: process.env.SENTRY_TOKEN,
           org: 'protocol-labs-it',
-          project: 'w3account-api',
+          project: 'w3access-api',
           // @ts-ignore
           dist: git.short(__dirname),
         })

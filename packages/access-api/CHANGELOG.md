@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.1.4](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.3...access-api-v0.1.4) (2022-08-25)
+
+
+### Bug Fixes
+
+* api ([4e70483](https://github.com/web3-storage/ucan-protocol/commit/4e7048316d3ed95f5b7606830d75420c5020bf53))
+* route for staging ([8d5866f](https://github.com/web3-storage/ucan-protocol/commit/8d5866f2bf870eaf2bb26bddef02ee8a0b6d1386))
+* staging ([29db547](https://github.com/web3-storage/ucan-protocol/commit/29db547848e8a5cab4d5c91a72010ed4aec5d09c))
+* staging ([53f62b0](https://github.com/web3-storage/ucan-protocol/commit/53f62b0269a7c3def5c22afb2b888d5886683f05))
+
+## [0.1.3](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.2...access-api-v0.1.3) (2022-08-25)
+
+
+### Bug Fixes
+
+* test api ([9597c44](https://github.com/web3-storage/ucan-protocol/commit/9597c4486abb1c21a0d8a504d4bb8632581e4800))
+
+## [0.1.2](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.1...access-api-v0.1.2) (2022-08-25)
+
+
+### Bug Fixes
+
+* **access-api:** add kvs ([e241d62](https://github.com/web3-storage/ucan-protocol/commit/e241d6290d93bfc20986591398ab20af6173ef78))
+* **access-api:** test error in staging ([1a97a57](https://github.com/web3-storage/ucan-protocol/commit/1a97a5797678d242db5849d9f10b8bc1907873d6))
+* change sentry name ([ad69e47](https://github.com/web3-storage/ucan-protocol/commit/ad69e47cb01ad1acedccf95798eacd9a649659bd))
+* proper envs and update deps ([d5dccb6](https://github.com/web3-storage/ucan-protocol/commit/d5dccb6e9c23b5ddbdffa4c67c04d195524b38f2))
+* remove error ([1ba180b](https://github.com/web3-storage/ucan-protocol/commit/1ba180b2c8a2da5dd9d3a69f23bcd93022500d6e))
+
 ## [0.1.1](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.0...access-api-v0.1.1) (2022-08-24)
 
 

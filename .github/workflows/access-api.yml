@@ -32,23 +32,17 @@ jobs:
       - run: pnpm install
       - run: pnpm -r --filter @web3-storage/access-api run lint
       - run: pnpm -r --filter @web3-storage/access-api run test
-  # publish:
-  #   needs: test
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: pnpm/action-setup@v2.0.1
-  #       with:
-  #         version: 7
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: 18
-  #         cache: 'pnpm'
-  #     - run: pnpm install
-
-  #     # Publish worker to cloudflare
-  #     - uses: cloudflare/wrangler-action@2.0.0
-  #       with:
-  #         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  #         workingDirectory: 'packages/access-api'
+  deploy-staging:
+    needs: test
+    if: github.head_ref == 'release-please--branches--master--components--access-api'
+    uses: './.github/workflows/reuse-deploy-api.yml'
+    with:
+      environment: staging
+    secrets: inherit
+  deploy-dev:
+    needs: test
+    if: github.event_name == 'pull_request' && !contains(github.head_ref, 'release-please--branches')
+    uses: './.github/workflows/reuse-deploy-api.yml'
+    with:
+      environment: dev
+    secrets: inherit

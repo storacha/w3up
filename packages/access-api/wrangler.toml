@@ -41,16 +41,16 @@ watch_dir = "src"
 
 [[env.dev.kv_namespaces]]
 binding = "ACCOUNTS"
-id = "e9fad7e04b254bf49206e08e50074387"
+id = "5697e95e1aaa436788e6d697fd3350be"
 
 [[env.dev.kv_namespaces]]
 binding = "VALIDATIONS"
-id = "62e57652625c44a3b1fef2f840ffc882"
+id = "ea17f472b37a43d29c1faf7af9512e03"
 
 # Staging
 [env.staging]
 name = "w3access-staging"
-routes = [{ pattern = "access-api-stating.web3.storage", custom_domain = true }]
+routes = [{ pattern = "access-api-staging.web3.storage", custom_domain = true }]
 
 [env.staging.vars]
 ENV = "staging"
@@ -60,14 +60,13 @@ DEBUG = "false"
 command = "scripts/cli.js build --env staging"
 watch_dir = "src"
 
-# TODO make new KV for prod
 [[env.staging.kv_namespaces]]
 binding = "ACCOUNTS"
-id = "e9fad7e04b254bf49206e08e50074387"
+id = "b0e5ca990dda4e3784a1741dfa28a52e"
 
 [[env.staging.kv_namespaces]]
 binding = "VALIDATIONS"
-id = "62e57652625c44a3b1fef2f840ffc882"
+id = "b13f07c88fe848db9ccf651a0fea3fb6"
 
 
 # Production
@@ -83,11 +82,10 @@ DEBUG = "false"
 command = "scripts/cli.js build --env production"
 watch_dir = "src"
 
-# TODO make new KV for prod
 [[env.production.kv_namespaces]]
 binding = "ACCOUNTS"
-id = "e9fad7e04b254bf49206e08e50074387"
+id = "5437954e8cfd4f7d98557132b0a2e93f"
 
 [[env.production.kv_namespaces]]
 binding = "VALIDATIONS"
-id = "62e57652625c44a3b1fef2f840ffc882"
+id = "fb7cf10c725f45948321e88b8cb168ad"
