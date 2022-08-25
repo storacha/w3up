@@ -32,11 +32,11 @@ jobs:
       - run: pnpm install
       - run: pnpm -r --filter @web3-storage/access-api run lint
       - run: pnpm -r --filter @web3-storage/access-api run test
-      - run: echo ${{ github.ref }}
+      - run: echo ${{ github.head_ref }}
   deploy-staging:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/release-please--branches--master--components--access-api'
+    if: github.head_ref == 'release-please--branches--master--components--access-api'
     environment: staging
     steps:
       - uses: actions/checkout@v2
