@@ -78,3 +78,5 @@ jobs:
           POSTMARK_TOKEN: ${{ secrets.POSTMARK_TOKEN }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
+          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
