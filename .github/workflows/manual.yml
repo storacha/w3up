@@ -69,7 +69,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_TOKEN }}
           workingDirectory: 'packages/access-api'
-          environment: ${{ github.event.inputs.environment === 'dev' && '' || github.event.inputs.environment }}
+          environment: ${{ github.event.inputs.environment == 'dev' && '' || github.event.inputs.environment }}
           secrets: |
             POSTMARK_TOKEN
             PRIVATE_KEY
