@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/web3-storage/ucan-protocol/compare/access-v0.1.0...access-v0.1.1) (2022-08-25)
+
+
+### Bug Fixes
+
+* proper envs and update deps ([d5dccb6](https://github.com/web3-storage/ucan-protocol/commit/d5dccb6e9c23b5ddbdffa4c67c04d195524b38f2))
+
 ## [0.1.0](https://github.com/web3-storage/ucan-protocol/compare/access-v0.0.1...access-v0.1.0) (2022-08-24)
 
 
