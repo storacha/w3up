@@ -36,7 +36,7 @@ r2_persist = "./data/" # Defaults to ./.mf/r2
 
 # Production
 [env.production]
-routes = [{ pattern = "subdomain.example.com", custom_domain = true }]
+routes = [{ pattern = "access.web3.storage", custom_domain = true }]
 
 [env.production.vars]
 ENV = "production"
