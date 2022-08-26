@@ -24,6 +24,7 @@ export const bindings = {
   PRIVATE_KEY: process.env.PRIVATE_KEY || '',
   POSTMARK_TOKEN: process.env.POSTMARK_TOKEN || '',
   SENTRY_DSN: process.env.SENTRY_DSN || '',
+  LOGTAIL_TOKEN: process.env.LOGTAIL_TOKEN || '',
 }
 
 export const mf = new Miniflare({
