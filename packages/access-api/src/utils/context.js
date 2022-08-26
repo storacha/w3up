@@ -1,8 +1,8 @@
 import { SigningAuthority } from '@ucanto/authority'
-import { config } from '../config.js'
 import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
+import { config } from '../config.js'
 
 const sentryOptions = {
   dsn: config.SENTRY_DSN,
