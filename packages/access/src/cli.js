@@ -23,7 +23,8 @@ const config = new Conf({
 })
 
 const prog = sade(NAME)
-const url = process.env.URL || 'https://auth-dev.dag.haus'
+const url = process.env.URL || 'https://access-api.web3.storage'
+// const did = process.env.DID || 'did:key:z6MksafxoiEHyRF6RsorjrLrEyFQPFDdN6psxtAfEsRcvDqx'
 
 prog.version(pkg.version)
 
