@@ -19,7 +19,7 @@ test('register', async (t) => {
     audience: serviceAuthority,
     issuer: kp,
     caveats: {
-      as: 'mailto:hugo@dag.house',
+      as: 'mailto:hugo+register@dag.house',
     },
     with: kp.did(),
   })
@@ -53,7 +53,7 @@ test('register', async (t) => {
   // @ts-ignore
   const accounts = new Accounts(await mf.getKVNamespace('ACCOUNTS'))
 
-  const email = await accounts.get('mailto:hugo@dag.house')
+  const email = await accounts.get('mailto:hugo+register@dag.house')
   t.is(email?.proof, invocation.cid.toString())
 
   const did = await accounts.get(kp.did())
