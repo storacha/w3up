@@ -2,7 +2,7 @@
  * @param {{ to: string; url: string; token: string }} opts
  */
 export async function sendEmail(opts) {
-  const rsp = await fetch('https://api.postmarkapp.com/email', {
+  const rsp = await fetch('https://api.postmarkapp.com/email/withTemplate', {
     method: 'POST',
     headers: {
       Accept: 'text/json',
@@ -12,9 +12,13 @@ export async function sendEmail(opts) {
     body: JSON.stringify({
       From: 'noreply@dag.house',
       To: opts.to,
-      Subject: 'Hello',
-      HtmlBody: `<strong>Hello</strong><br/>Click <a href="${opts.url}"> here </a><hr/>`,
-      MessageStream: 'outbound',
+      TemplateAlias: 'welcome',
+      TemplateModel: {
+        product_url: 'https://web3.storage',
+        product_name: 'Web3 Storage',
+        email: opts.to,
+        action_url: opts.url,
+      },
     }),
   })
   const out = await rsp.json()
