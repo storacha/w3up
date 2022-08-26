@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.4...access-api-v0.2.0) (2022-08-26)
+
+
+### Features
+
+* **access-api:** add logtail ([1246ab0](https://github.com/web3-storage/ucan-protocol/commit/1246ab0846f49f9adce734cf4f651d22f7ac7536))
+* **access-api:** new email template ([cc19320](https://github.com/web3-storage/ucan-protocol/commit/cc193202e385d8079144aa90e989af07cf743b0b))
+
+
+### Bug Fixes
+
+* **access-api:** add logtail to tests ([546152a](https://github.com/web3-storage/ucan-protocol/commit/546152aea75aff393935d866cbd9c1a818e81725))
+* **access-api:** use different email for tests ([1a01504](https://github.com/web3-storage/ucan-protocol/commit/1a0150429253afc572c9689f0a09a4c26499bd03))
+
 ## [0.1.4](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.3...access-api-v0.1.4) (2022-08-25)
 
 
