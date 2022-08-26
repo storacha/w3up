@@ -34,11 +34,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm -r build
-      - run: echo 'npm'
-      # - run: pnpm -r publish --tag next --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: pnpm -r --filter @web3-storage/access build
+      - run: pnpm -r publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   pages:
     needs: release
     if: contains(fromJson(needs.release.outputs.paths_released), 'packages/wallet')

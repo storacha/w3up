@@ -6,11 +6,11 @@ on:
         description: 'Package to deploy'
         required: true
         type: choice
-        default: 'website'
+        default: 'access-api'
         options:
-          - website
-          - api
-          - sdk
+          - access-api
+          - access
+          - wallet
       environment:
         description: 'Environment to deploy'
         required: true
@@ -21,9 +21,9 @@ on:
           - staging
           - dev
 jobs:
-  deploy-website:
+  deploy-wallet:
     runs-on: ubuntu-latest
-    if: github.event.inputs.package == 'website'
+    if: github.event.inputs.package == 'wallet'
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.0.1
@@ -45,15 +45,15 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-  deploy-api:
-    if: github.event.inputs.package == 'api'
+  deploy-access-api:
+    if: github.event.inputs.package == 'access-api'
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
-  deploy-sdk:
+  deploy-access:
     runs-on: ubuntu-latest
-    if: github.event.inputs.package == 'sdk'
+    if: github.event.inputs.package == 'access'
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.0.1
@@ -61,7 +61,7 @@ jobs:
           version: 7
       - uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 18
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
       - run: pnpm install
