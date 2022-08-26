@@ -10,6 +10,7 @@ on:
         options:
           - website
           - api
+          - sdk
       environment:
         description: 'Environment to deploy'
         required: true
@@ -40,12 +41,6 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - run: pnpm install
       - run: pnpm -r --filter wallet run build
-      # - name: Publish
-      #   uses: cloudflare/wrangler-action@2.0.0
-      #   with:
-      #     apiToken: ${{ secrets.CF_TOKEN }}
-      #     accountId: ${{ secrets.CF_ACCOUNT_ID }}
-      #     command: pages publish --project-name=ucan-protocol ./packages/wallet/out
       - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch master ./packages/wallet/out
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_TOKEN }}
@@ -56,3 +51,22 @@ jobs:
     with:
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
+  deploy-sdk:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.package == 'sdk'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -r --filter @web3-storage/access build
+      - run: pnpm -r --filter @web3-storage/access run rc
+      - run: pnpm -r --filter @web3-storage/access publish --tag next --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
