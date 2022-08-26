@@ -36,6 +36,7 @@ export function getContext(event, params) {
       waitUntil: event.waitUntil.bind(event),
     },
     {
+      token: config.LOGTAIL_TOKEN,
       debug: config.DEBUG,
       sentry: ['test', 'dev'].includes(config.ENV) ? undefined : sentry,
       branch: config.BRANCH,
