@@ -67,6 +67,9 @@ jobs:
       - run: pnpm install
       - run: pnpm -r --filter @web3-storage/access build
       - run: pnpm -r --filter @web3-storage/access run rc || true # this fails because npm does not support workspace protocol so we force it to exit 0
-      - run: pnpm -r --filter @web3-storage/access publish --tag next --access public --no-git-checks
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'chore(access): Bump access sdk pre release version'
+      - run: pnpm -r --filter @web3-storage/access publish --tag next --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
