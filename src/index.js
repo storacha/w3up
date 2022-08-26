@@ -200,7 +200,7 @@ class Client {
 
       // Return early if it was already uploaded.
       if (result.status === 'done') {
-        return `🚗 Car ${link} is added to ${id.did()}`;
+        return `Car ${link} is added to ${result.with}`;
       }
 
       if (result.error) {
