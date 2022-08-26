@@ -18,6 +18,7 @@ export function loadConfigVariables() {
     'PRIVATE_KEY',
     'SENTRY_DSN',
     'POSTMARK_TOKEN',
+    'LOGTAIL_TOKEN',
   ]
 
   for (const name of required) {
@@ -38,6 +39,7 @@ export function loadConfigVariables() {
     PRIVATE_KEY: vars.PRIVATE_KEY,
     POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
     SENTRY_DSN: vars.SENTRY_DSN,
+    LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
 
     // These are injected in esbuild
     // @ts-ignore
