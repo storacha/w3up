@@ -73,6 +73,11 @@ id = "b0e5ca990dda4e3784a1741dfa28a52e"
 binding = "VALIDATIONS"
 id = "b13f07c88fe848db9ccf651a0fea3fb6"
 
+[[env.staging.unsafe.bindings]]
+type = "analytics_engine"
+dataset = "W3ACCESS_METRICS"
+name = "W3ACCESS_METRICS"
+
 
 # Production
 [env.production]
@@ -94,3 +99,8 @@ id = "5437954e8cfd4f7d98557132b0a2e93f"
 [[env.production.kv_namespaces]]
 binding = "VALIDATIONS"
 id = "fb7cf10c725f45948321e88b8cb168ad"
+
+[[env.production.unsafe.bindings]]
+type = "analytics_engine"
+dataset = "W3ACCESS_METRICS"
+name = "W3ACCESS_METRICS"
