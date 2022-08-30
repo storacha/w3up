@@ -47,6 +47,11 @@ id = "5697e95e1aaa436788e6d697fd3350be"
 binding = "VALIDATIONS"
 id = "ea17f472b37a43d29c1faf7af9512e03"
 
+[[env.dev.unsafe.bindings]]
+type = "analytics_engine"
+dataset = "W3ACCESS_METRICS"
+name = "W3ACCESS_METRICS"
+
 # Staging
 [env.staging]
 name = "w3access-staging"

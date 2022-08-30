@@ -4,6 +4,8 @@ import {
   test,
   send,
   connection,
+  validateEmail,
+  register,
 } from './helpers/setup.js'
 import * as UCAN from '@ipld/dag-ucan'
 import { SigningAuthority } from '@ucanto/authority'
@@ -84,6 +86,25 @@ test('should route correctly to identity/validate', async (t) => {
   t.deepEqual(ucan.capabilities, [
     { can: 'identity/register', with: 'mailto:hugo@dag.house', as: kp.did() },
   ])
+})
+
+test('should fail to identity/validate with a know email', async (t) => {
+  const kp = await SigningAuthority.generate()
+  const con = connection(kp)
+
+  const proof = await validateEmail(con, kp, 'test-validate-fail@dag.house')
+  await register(con, kp, proof)
+
+  try {
+    await validateEmail(con, kp, 'test-validate-fail@dag.house')
+    t.fail('should not validate')
+  } catch (error) {
+    t.deepEqual(
+      // @ts-ignore
+      error.message,
+      'service handler {can: "identity/validate"} error: Email already registered.'
+    )
+  }
 })
 
 // test('should route correctly to identity/validate and fail with proof', async (t) => {
