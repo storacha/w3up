@@ -30,27 +30,27 @@
     "toucan-js": "^2.6.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.14.0",
+    "@cloudflare/workers-types": "^3.15.0",
     "@sentry/cli": "^2.5.2",
     "@sentry/webpack-plugin": "^1.16.0",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
-    "@types/node": "^18.7.13",
+    "@types/node": "^18.7.14",
     "assert": "^2.0.0",
     "ava": "^4.3.3",
     "buffer": "^6.0.3",
     "delay": "^5.0.0",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.15.5",
+    "esbuild": "^0.15.6",
     "execa": "^6.1.0",
     "git-rev-sync": "^3.0.1",
-    "hd-scripts": "^2.0.1",
+    "hd-scripts": "^2.1.0",
     "miniflare": "^2.7.1",
     "process": "^0.11.10",
     "readable-stream": "^4.1.0",
     "sade": "^1.7.4",
-    "typescript": "4.7.4",
-    "wrangler": "^2.0.27"
+    "typescript": "4.8.2",
+    "wrangler": "^2.0.28"
   },
   "eslintConfig": {
     "extends": [
