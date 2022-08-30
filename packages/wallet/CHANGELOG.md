@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/web3-storage/ucan-protocol/compare/wallet-v0.2.4...wallet-v0.3.0) (2022-08-30)
+
+
+### Features
+
+* update deps ([d276375](https://github.com/web3-storage/ucan-protocol/commit/d2763750159ad56132f0b002ff5f50cc36fce20c))
+
 ## [0.2.4](https://github.com/web3-storage/ucan-protocol/compare/wallet-v0.2.3...wallet-v0.2.4) (2022-08-25)
 
 
