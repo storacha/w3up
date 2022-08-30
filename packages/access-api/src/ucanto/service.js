@@ -7,7 +7,6 @@ import {
   identityRegister,
   identityValidate,
 } from '@web3-storage/access/capabilities'
-import { HTTPError } from '@web3-storage/worker-utils/error'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -19,13 +18,6 @@ export function service(ctx) {
       validate: Server.provide(
         identityValidate,
         async ({ capability, context, invocation }) => {
-          const accounts = new Accounts()
-
-          const email = await accounts.get(capability.caveats.as)
-          if (email) {
-            throw new HTTPError('Email already registered.', { status: 400 })
-          }
-
           const delegation = await identityRegister
             .invoke({
               audience: invocation.issuer,
