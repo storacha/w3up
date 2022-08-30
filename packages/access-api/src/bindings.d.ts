@@ -4,9 +4,20 @@ import type { config } from './config'
 
 export {}
 
+// CF Analytics Engine types not available yet
+export interface AnalyticsEngine {
+  writeDataPoint: (event: AnalyticsEngineEvent) => void
+}
+
+export interface AnalyticsEngineEvent {
+  readonly doubles?: number[]
+  readonly blobs?: Array<ArrayBuffer | string | null>
+}
+
 declare global {
   const ACCOUNTS: KVNamespace
   const VALIDATIONS: KVNamespace
+  const W3ACCESS_METRICS: AnalyticsEngine
 }
 
 export interface RouteContext {

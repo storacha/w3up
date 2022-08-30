@@ -66,7 +66,8 @@
       "DEBUG": "readonly",
       "ACCOUNTS": "writable",
       "VALIDATIONS": "writable",
-      "BUCKET": "writable"
+      "BUCKET": "writable",
+      "W3ACCESS_METRICS": "writable"
     }
   },
   "eslintIgnore": [

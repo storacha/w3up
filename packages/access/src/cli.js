@@ -9,6 +9,8 @@ import * as Access from './index.js'
 import path from 'path'
 import undici from 'undici'
 import { Transform } from 'stream'
+// @ts-ignore
+import * as DID from '@ipld/dag-ucan/did'
 
 const NAME = 'w3access'
 const pkg = JSON.parse(
@@ -23,8 +25,11 @@ const config = new Conf({
 })
 
 const prog = sade(NAME)
-const url = process.env.URL || 'https://access-api.web3.storage'
-// const did = process.env.DID || 'did:key:z6MksafxoiEHyRF6RsorjrLrEyFQPFDdN6psxtAfEsRcvDqx'
+const url = process.env.URL || 'https://w3access-dev.protocol-labs.workers.dev'
+const did = DID.parse(
+  // @ts-ignore - https://github.com/ipld/js-dag-ucan/issues/49
+  process.env.DID || 'did:key:z6MksafxoiEHyRF6RsorjrLrEyFQPFDdN6psxtAfEsRcvDqx'
+)
 
 prog.version(pkg.version)
 
@@ -90,6 +95,7 @@ prog
       const issuer = Keypair.parse(config.get('private-key'))
       const url = new URL(opts.url)
       await Access.validate({
+        audience: did,
         url,
         issuer,
         caveats: {
@@ -104,6 +110,7 @@ prog
       })
 
       await Access.register({
+        audience: did,
         url,
         issuer,
         proof,
