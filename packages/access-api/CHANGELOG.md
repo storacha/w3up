@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.2.0...access-api-v0.3.0) (2022-08-30)
+
+
+### Features
+
+* fail validate for register email and add metrics ([0916ba6](https://github.com/web3-storage/ucan-protocol/commit/0916ba6bda8ad46ccc4f6bb0c6f4a48dd99db0c8))
+* update deps ([d276375](https://github.com/web3-storage/ucan-protocol/commit/d2763750159ad56132f0b002ff5f50cc36fce20c))
+
+
+### Bug Fixes
+
+* add analytics to staging and prod ([14941d9](https://github.com/web3-storage/ucan-protocol/commit/14941d901e48e92896cc962b3e93488731afa381))
+* revert fail email validation ([389784b](https://github.com/web3-storage/ucan-protocol/commit/389784bb995b18683ca71af63816db123880d3eb))
+
 ## [0.2.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.1.4...access-api-v0.2.0) (2022-08-26)
 
 
