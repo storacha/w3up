@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.3.0...access-api-v0.4.0) (2022-08-31)
+
+
+### Features
+
+* **access-api:** add email notifications ([40b5332](https://github.com/web3-storage/ucan-protocol/commit/40b53323b9c569b191f35d62d32aac844de18fdd))
+
+
+### Bug Fixes
+
+* new email for notifications ([57b6845](https://github.com/web3-storage/ucan-protocol/commit/57b6845a56f534505eeabdf5ab2e20f8b37c9532))
+* reconfigure ava to avoid ci problems ([ce2006e](https://github.com/web3-storage/ucan-protocol/commit/ce2006eb8f02153618c2e483a5bb5983443ff89a))
+* remove it@dag.house ([8d319fe](https://github.com/web3-storage/ucan-protocol/commit/8d319fef315fa5dd3a0b88b8bf23f5576e8adc28))
+
 ## [0.3.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.2.0...access-api-v0.3.0) (2022-08-30)
 
 
