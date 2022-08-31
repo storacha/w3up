@@ -25,10 +25,10 @@ const config = new Conf({
 })
 
 const prog = sade(NAME)
-const url = process.env.URL || 'https://access-api-staging.web3.storage'
+const url = process.env.URL || 'http://127.0.0.1:8787'
 const did = DID.parse(
   // @ts-ignore - https://github.com/ipld/js-dag-ucan/issues/49
-  process.env.DID || 'did:key:z6MknemWKfRSfnprfijbQ2mn67KrnV44SWSuct3WLDanX2Ji'
+  process.env.DID || 'did:key:z6MksafxoiEHyRF6RsorjrLrEyFQPFDdN6psxtAfEsRcvDqx'
 )
 
 prog.version(pkg.version)

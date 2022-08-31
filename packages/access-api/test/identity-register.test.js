@@ -68,7 +68,7 @@ test('identify', async (t) => {
     audience: serviceAuthority,
     issuer: kp,
     caveats: {
-      as: 'mailto:hugo@dag.house',
+      as: 'mailto:hugo+identify@dag.house',
     },
     with: kp.did(),
   })
