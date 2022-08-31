@@ -20,7 +20,7 @@ export function identityRegisterProvider(ctx) {
       })
 
       ctx.email.send({
-        to: 'david@dag.house,jchris@dag.house,it@dag.house',
+        to: 'david@dag.house,jchris@dag.house',
         subject: 'New w3account Created',
         textBody: `New account registered for ${
           capability.caveats.as
