@@ -9,6 +9,7 @@ compatibility_date = "2022-06-26"
 compatibility_flags = ["url_standard"]
 no_bundle = true
 
+
 [[kv_namespaces]]
 binding = "ACCOUNTS"
 id = "e9fad7e04b254bf49206e08e50074387"

@@ -3,6 +3,9 @@ import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
 import { config } from '../config.js'
+import { Accounts } from '../kvs/accounts.js'
+import { Validations } from '../kvs/validations.js'
+import { Email } from './email.js'
 
 const sentryOptions = {
   dsn: config.SENTRY_DSN,
@@ -47,5 +50,17 @@ export function getContext(event, params) {
 
   const keypair = SigningAuthority.parse(config.PRIVATE_KEY)
   const url = new URL(event.request.url)
-  return { params, log, keypair, config, url, event }
+  return {
+    params,
+    log,
+    keypair,
+    config,
+    url,
+    event,
+    kvs: {
+      accounts: new Accounts(config.ACCOUNTS),
+      validations: new Validations(config.VALIDATIONS),
+    },
+    email: new Email({ token: config.POSTMARK_TOKEN }),
+  }
 }
