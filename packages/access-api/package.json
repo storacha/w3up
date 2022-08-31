@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
-    "dev": "miniflare --watch --debug --env ../../.env",
+    "dev": "miniflare --watch --debug --env ../../.env --wrangler-env dev",
     "build": "scripts/cli.js build",
     "test": "tsc --build && ava"
   },

@@ -51,6 +51,14 @@ export function loadConfigVariables() {
     // @ts-ignore
     // eslint-disable-next-line no-undef
     COMMITHASH: ACCOUNT_COMMITHASH,
+
+    // bindings
+    METRICS:
+      /** @type {import("./bindings").AnalyticsEngine} */ (
+        globals.W3ACCESS_METRICS
+      ) || createAnalyticsEngine(),
+    ACCOUNTS,
+    VALIDATIONS,
   }
 }
 
@@ -78,5 +86,22 @@ function parseRuntimeEnv(s) {
       return s
     default:
       throw new Error('invalid runtime environment name: ' + s)
+  }
+}
+
+export function createAnalyticsEngine() {
+  /** @type {Map<string,import("./bindings").AnalyticsEngineEvent>} */
+  const store = new Map()
+
+  return {
+    writeDataPoint: (
+      /** @type {import("./bindings").AnalyticsEngineEvent} */ event
+    ) => {
+      store.set(
+        `${Date.now()}${(Math.random() + 1).toString(36).slice(7)}`,
+        event
+      )
+    },
+    _store: store,
   }
 }

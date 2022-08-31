@@ -1,58 +1,21 @@
-import * as Server from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
-import { version } from './routes/version.js'
-import { serverCodec } from './ucanto/server-codec.js'
-import { service } from './ucanto/service.js'
-import { getContext } from './utils/context.js'
-
 import { corsHeaders, preflight } from '@web3-storage/worker-utils/cors'
 import { errorHandler } from '@web3-storage/worker-utils/error'
 import { notFound } from '@web3-storage/worker-utils/response'
 import { Router } from '@web3-storage/worker-utils/router'
+import { postRaw } from './routes/raw.js'
+import { postRoot } from './routes/root.js'
 import { validate } from './routes/validate.js'
+import { version } from './routes/version.js'
+import { getContext } from './utils/context.js'
 
 /** @type Router<import('./bindings.js').RouteContext> */
 const r = new Router({ onNotFound: notFound })
+
 r.add('options', '*', preflight)
 r.add('get', '/version', version)
-
 r.add('get', '/validate', validate)
-r.add('post', '/', async (request, env) => {
-  const server = Server.create({
-    id: env.keypair,
-    encoder: CBOR,
-    decoder: CAR,
-    service: service(env),
-    catch: (/** @type {string | Error} */ err) => {
-      env.log.error(err)
-    },
-  })
-
-  const rsp = await server.request({
-    body: new Uint8Array(await request.arrayBuffer()),
-    headers: Object.fromEntries(request.headers.entries()),
-  })
-  return new Response(rsp.body, { headers: rsp.headers })
-})
-
-r.add('post', '/raw', async (request, env) => {
-  const server = Server.create({
-    id: env.keypair,
-    encoder: serverCodec,
-    decoder: serverCodec,
-    service: service(env),
-    catch: (/** @type {string | Error} */ err) => {
-      env.log.error(err)
-    },
-  })
-
-  const rsp = await server.request({
-    body: new Uint8Array(await request.arrayBuffer()),
-    headers: Object.fromEntries(request.headers.entries()),
-  })
-  return new Response(rsp.body, { headers: rsp.headers })
-})
+r.add('post', '/', postRoot)
+r.add('post', '/raw', postRaw)
 
 addEventListener('fetch', (event) => {
   const env = getContext(event, {})

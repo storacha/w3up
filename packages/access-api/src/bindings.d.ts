@@ -1,6 +1,9 @@
 import type { Logging } from '@web3-storage/worker-utils/logging'
 import type { SigningAuthority } from '@ucanto/interface'
 import type { config } from './config'
+import { Email } from './utils/email.js'
+import { Accounts } from './kvs/accounts.js'
+import { Validations } from './kvs/validations.js'
 
 export {}
 
@@ -27,6 +30,11 @@ export interface RouteContext {
   config: typeof config
   url: URL
   event: FetchEvent
+  email: Email
+  kvs: {
+    accounts: Accounts
+    validations: Validations
+  }
 }
 
 export type Handler = (
