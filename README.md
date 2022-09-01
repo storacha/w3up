@@ -23,7 +23,7 @@ yarn add git@github.com:web3-storage/w3up-client.git
 
 ## Basic Usage
 
-This section shows some of the basic operations available in the `w3up-client` package. For a full API reference, see [API.md](./API.md), or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
+This section shows some of the basic operations available in the `w3up-client` package. For a full API reference, see [API.md](./API.md) or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
 
 ### Creating a client object
 
@@ -70,7 +70,7 @@ const client = createClient({
 })
 ```
 
-Note that we're providing an empty `settings` map, which means that our client won't have an associated identity keypair. See [Registration and identity](#registration-and-identity) below to lean about registration.
+Note that we're providing an empty `settings` map, which means that our client won't have an associated identity keypair. See [Registration and identity](#registration-and-identity) below to learn about registration.
 
 Once you've registered an identity, `client.settings` will contain your secret identity key and the registered email address, along with some other important information. To use the identity in the future, you'll need to persist the settings map to disk somehow and pass in the saved settings to `createClient`. Note that the settings map contains several binary `Uint8Array` values, so whatever you use to serialize to disk must support binary data (e.g. [CBOR](https://cbor.io), JSON with base64-encoded binary support, etc).
 
