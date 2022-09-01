@@ -80,7 +80,7 @@ importers:
       '@ucanto/transport': ^0.7.0
       '@ucanto/validator': ^0.6.0
       '@web3-storage/access': workspace:^
-      '@web3-storage/worker-utils': 0.4.2-dev
+      '@web3-storage/worker-utils': 0.4.3-dev
       assert: ^2.0.0
       ava: ^4.3.3
       buffer: ^6.0.3
@@ -109,7 +109,7 @@ importers:
       '@ucanto/transport': 0.7.0
       '@ucanto/validator': 0.6.0
       '@web3-storage/access': link:../access
-      '@web3-storage/worker-utils': 0.4.2-dev
+      '@web3-storage/worker-utils': 0.4.3-dev
       multiformats: 9.7.1
       nanoid: 4.0.0
       toucan-js: 2.6.1
@@ -1106,8 +1106,8 @@ packages:
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
     dev: false
 
-  /@web3-storage/worker-utils/0.4.2-dev:
-    resolution: {integrity: sha512-ZqWpOHsEpDaavtH3J02gFqBzGDktnXr0nYuf6ILLIKjoNC53Ex9ZzjpV5T+h7PyGFRaB4btkwldNMmvi2JbwIA==}
+  /@web3-storage/worker-utils/0.4.3-dev:
+    resolution: {integrity: sha512-PJ30KkwtyNoTkVEQjrNhNYQw3JdDRd23GnVfega114m2TIge33qBfD2/X2+Pn1uC4WKpOHKnCmR6tXHmRLgYig==}
     dependencies:
       '@web-std/fetch': 4.1.0
       nanoid: 4.0.0
