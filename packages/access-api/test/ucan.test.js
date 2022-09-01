@@ -214,3 +214,43 @@ test('should fail with missing proofs', async (t) => {
     },
   })
 })
+
+test('should multiple invocation should pass', async (t) => {
+  const { mf } = t.context
+
+  const alice = await SigningAuthority.generate()
+  const bob = await SigningAuthority.generate()
+  const proof1 = await UCAN.issue({
+    issuer: alice,
+    audience: bob,
+    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+  })
+
+  const cid1 = await UCAN.link(proof1)
+  const ucan1 = await UCAN.issue({
+    issuer: bob,
+    audience: serviceAuthority,
+    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+    proofs: [cid1],
+  })
+
+  const ucan2 = await UCAN.issue({
+    issuer: bob,
+    audience: serviceAuthority,
+    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+    proofs: [cid1],
+  })
+
+  const headers = new Headers()
+  headers.append('Authorization', `Bearer ${UCAN.format(ucan1)}`)
+  headers.append('Authorization', `Bearer ${UCAN.format(ucan2)}`)
+  headers.append('ucan', `${cid1.toString()} ${UCAN.format(proof1)}`)
+
+  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+    method: 'POST',
+    headers,
+  })
+
+  const rsp = await res.json()
+  t.deepEqual(rsp, ['test pass', 'test pass'])
+})
