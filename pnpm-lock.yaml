@@ -65,7 +65,7 @@ importers:
 
   packages/access-api:
     specifiers:
-      '@cloudflare/workers-types': ^3.15.0
+      '@cloudflare/workers-types': ^3.16.0
       '@ipld/dag-ucan': 1.7.0-beta
       '@sentry/cli': ^2.5.2
       '@sentry/webpack-plugin': ^1.16.0
@@ -80,12 +80,12 @@ importers:
       '@ucanto/transport': ^0.7.0
       '@ucanto/validator': ^0.6.0
       '@web3-storage/access': workspace:^
-      '@web3-storage/worker-utils': 0.2.0-dev
+      '@web3-storage/worker-utils': 0.4.2-dev
       assert: ^2.0.0
       ava: ^4.3.3
       buffer: ^6.0.3
       delay: ^5.0.0
-      dotenv: ^16.0.0
+      dotenv: ^16.0.2
       esbuild: ^0.15.6
       execa: ^6.1.0
       git-rev-sync: ^3.0.1
@@ -109,12 +109,12 @@ importers:
       '@ucanto/transport': 0.7.0
       '@ucanto/validator': 0.6.0
       '@web3-storage/access': link:../access
-      '@web3-storage/worker-utils': 0.2.0-dev
+      '@web3-storage/worker-utils': 0.4.2-dev
       multiformats: 9.7.1
       nanoid: 4.0.0
       toucan-js: 2.6.1
     devDependencies:
-      '@cloudflare/workers-types': 3.15.0
+      '@cloudflare/workers-types': 3.16.0
       '@sentry/cli': 2.5.2
       '@sentry/webpack-plugin': 1.19.0
       '@types/assert': 1.5.6
@@ -124,7 +124,7 @@ importers:
       ava: 4.3.3
       buffer: 6.0.3
       delay: 5.0.0
-      dotenv: 16.0.1
+      dotenv: 16.0.2
       esbuild: 0.15.6
       execa: 6.1.0
       git-rev-sync: 3.0.2
@@ -205,8 +205,8 @@ packages:
       mime: 3.0.0
     dev: true
 
-  /@cloudflare/workers-types/3.15.0:
-    resolution: {integrity: sha512-meL/Afy5qdIsgfdnlbVfcYUh/YjHk23EWUvgmULf6iDrDbrBcd+fse2os3CC7rxSfScdP1OqJVTHgRSEjUm/Pw==}
+  /@cloudflare/workers-types/3.16.0:
+    resolution: {integrity: sha512-gaBUSaKS65mN3iKZEgichbXYEmAa/pXkc5Gbt+1BptYphdGkj09ggdsiE4w8g0F/uI1g36QaTKrzVnBAWMipvQ==}
     dev: true
 
   /@es-joy/jsdoccomment/0.31.0:
@@ -1106,8 +1106,8 @@ packages:
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
     dev: false
 
-  /@web3-storage/worker-utils/0.2.0-dev:
-    resolution: {integrity: sha512-oQ+PlZNPRg9S/fuA3z52o2OK/eKlsuRsNoH3ZhO8qW9cNwP5vzXG4tdaiCX/4+sLe0o6sUvCJEKS2gBfVqTeOg==}
+  /@web3-storage/worker-utils/0.4.2-dev:
+    resolution: {integrity: sha512-ZqWpOHsEpDaavtH3J02gFqBzGDktnXr0nYuf6ILLIKjoNC53Ex9ZzjpV5T+h7PyGFRaB4btkwldNMmvi2JbwIA==}
     dependencies:
       '@web-std/fetch': 4.1.0
       nanoid: 4.0.0
@@ -1983,8 +1983,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /dotenv/16.0.1:
-    resolution: {integrity: sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==}
+  /dotenv/16.0.2:
+    resolution: {integrity: sha512-JvpYKUmzQhYoIFgK2MOnF3bciIZoItIIoryihy0rIA+H4Jy0FmgyKYAHCTN98P5ybGSJcIFbh6QKeJdtZd1qhA==}
     engines: {node: '>=12'}
     dev: true
 

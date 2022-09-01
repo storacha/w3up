@@ -10,7 +10,7 @@
     "deploy": "wrangler publish",
     "dev": "miniflare --watch --debug --env ../../.env --wrangler-env dev",
     "build": "scripts/cli.js build",
-    "test": "tsc --build && ava"
+    "test": "tsc --build && ava --serial"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
@@ -24,13 +24,13 @@
     "@ucanto/transport": "^0.7.0",
     "@ucanto/validator": "^0.6.0",
     "@web3-storage/access": "workspace:^",
-    "@web3-storage/worker-utils": "0.2.0-dev",
+    "@web3-storage/worker-utils": "0.4.2-dev",
     "multiformats": "^9.6.5",
     "nanoid": "^4.0.0",
     "toucan-js": "^2.6.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.15.0",
+    "@cloudflare/workers-types": "^3.16.0",
     "@sentry/cli": "^2.5.2",
     "@sentry/webpack-plugin": "^1.16.0",
     "@types/assert": "^1.5.6",
@@ -40,7 +40,7 @@
     "ava": "^4.3.3",
     "buffer": "^6.0.3",
     "delay": "^5.0.0",
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.0.2",
     "esbuild": "^0.15.6",
     "execa": "^6.1.0",
     "git-rev-sync": "^3.0.1",
