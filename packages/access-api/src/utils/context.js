@@ -45,6 +45,7 @@ export function getContext(event, params) {
       branch: config.BRANCH,
       version: config.VERSION,
       commit: config.COMMITHASH,
+      env: config.ENV,
     }
   )
 
