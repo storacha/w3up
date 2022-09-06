@@ -105,7 +105,27 @@ The final identity-related client method is `whoami`, which queries the access s
 
 ### Uploading data
 
-Coming soon...
+The `upload` method sends your data to the w3up service, making it available for retreival on [Elastic IPFS][elastic-ipfs].
+
+```js
+import { createClient } from 'w3up-client'
+
+async function uploadCAR(carData) {
+  // CLIENT_OPTS should be defined as described in "Creating a client object"
+  const client = createClient(CLIENT_OPTS)
+
+  try {
+    const successMessage = await client.upload(carData)
+    console.log(successMessage)
+  } catch (err) {
+    console.error(`upload error: ${err}`)
+  }
+}
+```
+
+Currently, the `upload` method accepts data in [CAR][car-spec] format. CARs are "content archives" that contain blocks of content-addressed data in an "IPFS native" format. 
+
+We expect to add CAR generation as a feature of this library in a future release. In the meantime, please see the guide to [working with Content Archives][web3storage-docs-cars] on the [Web3.Storage docs](https://web3.storage/docs) site for ways to prepare CAR data. You can also use the [`w3up-cli` tool][w3up-cli-github] to generate CAR data using the `generate-car` command.
 
 ### Listing uploads
 
@@ -114,7 +134,7 @@ The `list` method returns an array of CID strings for each upload you've made to
 ```js
 import { createClient } from 'w3up-client'
 
-async listUploads() {
+async function listUploads() {
   // CLIENT_OPTS should be defined as described in "Creating a client object"
   const client = createClient(CLIENT_OPTS)
   const cids = await client.list()
@@ -131,7 +151,7 @@ The `remove` method takes a CID string and "unlinks" it from your account.
 ```js
 import { createClient } from 'w3up-client'
 
-async tryRemove(cid) {
+async function tryRemove(cid) {
   // CLIENT_OPTS should be defined as described in "Creating a client object"
   const client = createClient(CLIENT_OPTS)
 
@@ -149,3 +169,5 @@ async tryRemove(cid) {
 [w3up-cli-github]: https://github.com/web3-storage/w3up-cli
 [elastic-ipfs]: https://github.com/elastic-ipfs/elastic-ipfs 
 [ucanto]: https://github.com/web3-storage/ucanto
+[car-spec]: https://ipld.io/specs/transport/car/
+[web3storage-docs-cars]: https://web3.storage/docs/how-tos/work-with-car-files/
