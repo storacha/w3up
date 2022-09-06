@@ -61,6 +61,7 @@ And here's an example of calling `createClient` with the correct values for the 
 
 ```js
 import { createClient } from 'w3up-client'
+
 const client = createClient({
   serviceDID: 'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z',
   serviceURL 'https://8609r1772a.execute-api.us-east-1.amazonaws.com',
@@ -83,8 +84,11 @@ To do this, call the async `register` method, which takes an email address as in
 Note that registration may fail, for example, if the user does not click the link before it expires. Be sure to check for errors when calling `client.register`.
 
 ```js
+import { createClient } from 'w3up-client'
+
 async function tryToRegister(emailAddress) {
-  const client = createClient(CLIENT_OPTS) // pretend CLIENT_OPTS is defined elsewhere :)
+  // CLIENT_OPTS should be defined as described in "Creating a client object"
+  const client = createClient(CLIENT_OPTS) 
   try {
     const successMessage = await client.register(emailAddress)
     console.log('Success: ', successMessage)
@@ -105,11 +109,41 @@ Coming soon...
 
 ### Listing uploads
 
-Coming soon...
+The `list` method returns an array of CID strings for each upload you've made to your account.
+
+```js
+import { createClient } from 'w3up-client'
+
+async listUploads() {
+  // CLIENT_OPTS should be defined as described in "Creating a client object"
+  const client = createClient(CLIENT_OPTS)
+  const cids = await client.list()
+  for (const cid of cids) {
+    console.log('CID:', cid)
+  }
+}
+```
 
 ### Removing / unlinking uploads from your account
 
-Coming soon.
+The `remove` method takes a CID string and "unlinks" it from your account.
+
+```js
+import { createClient } from 'w3up-client'
+
+async tryRemove(cid) {
+  // CLIENT_OPTS should be defined as described in "Creating a client object"
+  const client = createClient(CLIENT_OPTS)
+
+  try {
+    client.remove(cid)
+  } catch (err) {
+    console.error(`error removing CID ${cid}: ${err}`)
+  }
+}
+```
+
+**Important:** the `remove` method does not delete your data from the public IPFS network, Filecoin, or other decentralized storage systems used by w3up. Data that has been `remove`d and is not linked to any other accounts _may_ eventually be deleted from the internal storage systems used by the w3up service, but there are no guarantees about when (or whether) that will occur, and you should not depend on data being permanently deleted.
 
 
 [w3up-cli-github]: https://github.com/web3-storage/w3up-cli
