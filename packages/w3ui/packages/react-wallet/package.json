@@ -1,0 +1,11 @@
+{
+  "name": "@w3ui/react-wallet",
+  "version": "0.0.0",
+  "description": "React adapter for w3ui wallet.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT"
+}
