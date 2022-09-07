@@ -4,8 +4,12 @@
   "description": "React adapter for w3ui wallet.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
+  "files": [
+    "build/*",
+    "src"
+  ],
   "author": "Alan Shaw",
   "license": "Apache-2.0 OR MIT"
 }

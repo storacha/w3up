@@ -1,0 +1,32 @@
+{
+  "name": "react-uploader",
+  "version": "0.0.0",
+  "description": "React adapter for w3ui uploader.",
+  "module": "build/esm/index.js",
+  "main": "build/cjs/react-uploader/src/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/packages/react-uploader/src/index.d.ts",
+  "scripts": {
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "files": [
+    "build/*",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3ui/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3ui#readme",
+  "dependencies": {
+    "w3up-client": "github:web3-storage/w3up-client"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  }
+}

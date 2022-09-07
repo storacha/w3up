@@ -1,0 +1,7 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/react-uploader" },
+    { "path": "packages/react-wallet" }
+  ]
+}
