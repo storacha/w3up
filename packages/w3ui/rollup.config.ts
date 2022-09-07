@@ -111,7 +111,7 @@ function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
       format: 'cjs',
       sourcemap: true,
       dir: `${packageDir}/build/cjs`,
-      preserveModules: true,
+      // preserveModules: true,
       exports: 'named',
       banner,
     },
