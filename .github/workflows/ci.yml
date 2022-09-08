@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  semantic_release:
+    name: semantic_release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+    - name: Run semantic release
+      env: # Or as an environment variable
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        NPM_TOKEN: ${{secrets.NPM_TOKEN}} 
+      run: |
+        npm run typecheck
+        npx semantic-release
