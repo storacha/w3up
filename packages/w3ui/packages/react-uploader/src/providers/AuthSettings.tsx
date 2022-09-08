@@ -6,12 +6,22 @@ const init = {
   unloadUserSettings: () => {}
 }
 
-export const AuthSettingsContext = createContext(init)
+export interface AuthSettingsContextValue {
+  settings: Map<string, any>
+  loadUserSettings: () => void
+  unloadUserSettings: () => void
+}
 
-export function AuthSettingsProvider ({ children }: { children: ReactNode }) {
+export const AuthSettingsContext = createContext<AuthSettingsContextValue>(init)
+
+export interface AuthSettingsProviderProps {
+  children?: ReactNode
+}
+
+export function AuthSettingsProvider ({ children }: AuthSettingsProviderProps): ReactNode {
   const [settings, setSettings] = useState(init.settings)
 
-  const loadUserSettings = () => {
+  const loadUserSettings = (): void => {
     // try {
     //   let parsed = defaultSettings
     //   const secret = Uint8Array.from(Buffer.from(parsed.secret, 'base64'))
@@ -28,7 +38,7 @@ export function AuthSettingsProvider ({ children }: { children: ReactNode }) {
     // TODO: load settings from secure storage
   }
 
-  const unloadUserSettings = () => {
+  const unloadUserSettings = (): void => {
     setSettings(init.settings)
   }
 

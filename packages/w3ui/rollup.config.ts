@@ -1,4 +1,4 @@
-import { RollupOptions } from 'rollup'
+import { Plugin, RollupOptions } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
@@ -10,7 +10,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import path from 'path'
 
-type Options = {
+interface Options {
   input: string
   packageDir: string
   external: RollupOptions['external']
@@ -20,7 +20,7 @@ type Options = {
   globals: Record<string, string>
 }
 
-const umdDevPlugin = (type: 'development' | 'production') =>
+const umdDevPlugin = (type: 'development' | 'production'): Plugin =>
   replace({
     'process.env.NODE_ENV': `"${type}"`,
     delimiters: ['', ''],
@@ -54,7 +54,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
   ]
 }
 
-function buildConfigs(opts: {
+function buildConfigs (opts: {
   packageDir: string
   name: string
   jsName: string
@@ -65,7 +65,7 @@ function buildConfigs(opts: {
   const input = path.resolve(opts.packageDir, opts.entryFile)
   const externalDeps = Object.keys(opts.globals)
 
-  const external = (moduleName) => externalDeps.includes(moduleName)
+  const external = (moduleName): boolean => externalDeps.includes(moduleName)
   const banner = createBanner(opts.name)
 
   const options: Options = {
@@ -81,7 +81,7 @@ function buildConfigs(opts: {
   return [esm(options), cjs(options), umdDev(options), umdProd(options)]
 }
 
-function esm({ input, packageDir, external, banner }: Options): RollupOptions {
+function esm ({ input, packageDir, external, banner }: Options): RollupOptions {
   return {
     // ESM
     external,
@@ -90,19 +90,19 @@ function esm({ input, packageDir, external, banner }: Options): RollupOptions {
       format: 'esm',
       sourcemap: true,
       dir: `${packageDir}/build/esm`,
-      banner,
+      banner
     },
     plugins: [
       svelte(),
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx'] })
     ]
   }
 }
 
-function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
+function cjs ({ input, external, packageDir, banner }: Options): RollupOptions {
   return {
     // CJS
     external,
@@ -113,26 +113,26 @@ function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
       dir: `${packageDir}/build/cjs`,
       // preserveModules: true,
       exports: 'named',
-      banner,
+      banner
     },
     plugins: [
       svelte(),
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx'] })
     ]
   }
 }
 
-function umdDev({
+function umdDev ({
   input,
   external,
   packageDir,
   outputFile,
   globals,
   banner,
-  jsName,
+  jsName
 }: Options): RollupOptions {
   return {
     // UMD (Dev)
@@ -144,7 +144,7 @@ function umdDev({
       file: `${packageDir}/build/umd/index.development.js`,
       name: jsName,
       globals,
-      banner,
+      banner
     },
     plugins: [
       svelte(),
@@ -152,19 +152,19 @@ function umdDev({
       json(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
-      umdDevPlugin('development'),
+      umdDevPlugin('development')
     ]
   }
 }
 
-function umdProd({
+function umdProd ({
   input,
   external,
   packageDir,
   outputFile,
   globals,
   banner,
-  jsName,
+  jsName
 }: Options): RollupOptions {
   return {
     // UMD (Prod)
@@ -176,7 +176,7 @@ function umdProd({
       file: `${packageDir}/build/umd/index.production.js`,
       name: jsName,
       globals,
-      banner,
+      banner
     },
     plugins: [
       svelte(),
@@ -187,23 +187,23 @@ function umdProd({
       umdDevPlugin('production'),
       terser({
         mangle: true,
-        compress: true,
+        compress: true
       }),
       size({}),
       visualizer({
         filename: `${packageDir}/build/stats-html.html`,
-        gzipSize: true,
+        gzipSize: true
       }),
       visualizer({
         filename: `${packageDir}/build/stats.json`,
         json: true,
-        gzipSize: true,
-      }),
+        gzipSize: true
+      })
     ]
   }
 }
 
-function createBanner (libraryName: string) {
+function createBanner (libraryName: string): string {
   return `/**
  * ${libraryName}
  *

@@ -6,25 +6,33 @@ import { AuthSettingsContext } from './AuthSettings.js'
 const W3_STORE_DID = 'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z'
 const SERVICE_URL = 'https://mk00d0sf0h.execute-api.us-east-1.amazonaws.com/'
 
-function createUploader (settings: Map<string, any>) {
-  if (!settings || !settings.has('email')) {
+function createUploader (settings?: Map<string, any>): Client {
+  if (settings == null || !settings.has('email')) {
     return null
   }
   return new Client({
     settings,
     serviceURL: SERVICE_URL,
-    serviceDID: W3_STORE_DID,
+    serviceDID: W3_STORE_DID
   })
 }
 
-const UploaderContext = createContext(null)
+export interface UploaderContextValue {
+  uploader?: Client
+}
 
-export function UploaderProvider ({ children }: { children: ReactNode }) {
+const UploaderContext = createContext<UploaderContextValue>({ uploader: null })
+
+export interface UploaderProviderProps {
+  children?: ReactNode
+}
+
+export function UploaderProvider ({ children }: UploaderProviderProps): ReactNode {
   const { settings, loadUserSettings } = useContext(AuthSettingsContext)
   const [uploader, setUploader] = useState(null)
 
   useEffect(() => {
-    if (settings) {
+    if (settings != null) {
       setUploader(createUploader(settings))
     } else {
       loadUserSettings()
@@ -32,12 +40,12 @@ export function UploaderProvider ({ children }: { children: ReactNode }) {
   }, [settings, uploader])
 
   return (
-    <UploaderContext.Provider value={uploader}>
+    <UploaderContext.Provider value={{ uploader }}>
       {children}
     </UploaderContext.Provider>
   )
 }
 
-export function useUploader () {
+export function useUploader (): UploaderContextValue {
   return useContext(UploaderContext)
 }
