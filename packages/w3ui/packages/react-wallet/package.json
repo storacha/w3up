@@ -14,5 +14,10 @@
     "src"
   ],
   "author": "Alan Shaw",
-  "license": "Apache-2.0 OR MIT"
+  "license": "Apache-2.0 OR MIT",
+  "dependencies": {
+    "@ucanto/authority": "^0.5.0",
+    "@ucanto/interface": "^0.7.0",
+    "@web3-storage/access": "^0.1.2-rc.0"
+  }
 }

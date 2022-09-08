@@ -13,9 +13,10 @@
     "typecheck": "tsc -b"
   },
   "workspaces": [
-    "packages/react-wallet",
+    "examples/react/sign-up-in",
+    "examples/react/template",
     "packages/react-uploader",
-    "examples/react/template"
+    "packages/react-wallet"
   ],
   "devDependencies": {
     "@babel/preset-env": "^7.19.0",
