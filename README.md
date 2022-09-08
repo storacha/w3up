@@ -65,8 +65,8 @@ import { createClient } from 'w3up-client'
 const client = createClient({
   serviceDID: 'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z',
   serviceURL 'https://8609r1772a.execute-api.us-east-1.amazonaws.com',
-  accessDID: 'https://access-api.web3.storage',
-  accessURL: 'did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9',
+  accessDID: 'did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9',
+  accessURL: 'https://access-api.web3.storage',
   settings: new Map(),
 })
 ```
