@@ -1,3 +1,4 @@
+import * as API from '@ucanto/interface';
 import * as CAR from './patches/@ucanto/transport/car.js';
 import { SigningAuthority, Authority } from '@ucanto/authority';
 import { Delegation, UCAN } from '@ucanto/core';
@@ -8,27 +9,35 @@ import { Store, Identity, Access } from './store/index.js';
 /**
  * A string representing a link to another object in IPLD
  * @typedef {string} Link
+ * @typedef {API.Result<unknown|string, {error:true}|API.HandlerExecutionError|API.Failure>} Result
  */
 
 /**
  * @typedef {object} ClientOptions
- * @property {string} serviceDID - The DID of the service to talk to.
+ * @property {API.DID} serviceDID - The DID of the service to talk to.
  * @property {string} serviceURL - The URL of the service to talk to.
  * @property {string} accessURL - The URL of the access service.
- * @property {string} accessDID - The DID of the access service.
+ * @property {API.DID} accessDID - The DID of the access service.
  * @property {Map<string, any>} settings - A map/db of settings to use for the client.
  */
 
-const wssInightsUrl =
-  'wss://bur1whjtc7.execute-api.us-east-1.amazonaws.com/staging'; //staging url
-const insightsAPI = 'https://rwj50bhvk9.execute-api.us-east-1.amazonaws.com';
-
+/**
+ * Create a promise that resolves in ms.
+ * @async
+ * @param {number} ms - The number of milliseconds to sleep for.
+ * @returns {Promise<void>}
+ */
 async function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
+/**
+ * @async
+ * @param {UCAN.JWT} input
+ * @returns {Promise<API.Delegation|Failure>}
+ */
 export const importToken = async (input) => {
   try {
     const ucan = UCAN.parse(input);
@@ -39,16 +48,34 @@ export const importToken = async (input) => {
   }
 };
 
+/**
+ * @param {ClientOptions} options
+ * @returns Client
+ */
 export function createClient(options) {
   return new Client(options);
 }
+
+const DefaultClientOptions = {
+  accessURL: '',
+  accessDID: '',
+  serviceDID: '',
+  serviceURL: '',
+  settings: new Map(),
+};
 
 class Client {
   /**
    * Create an instance of the w3 client.
    * @param {ClientOptions} options
    */
-  constructor({ serviceDID, serviceURL, accessURL, accessDID, settings }) {
+  constructor({
+    serviceDID,
+    serviceURL,
+    accessURL,
+    accessDID,
+    settings,
+  } = DefaultClientOptions) {
     this.serviceURL = new URL(serviceURL);
     this.serviceDID = serviceDID;
 
@@ -72,10 +99,10 @@ class Client {
   /**
    * Get the current "machine" DID
    * @async
-   * @returns {Promise<Authority>}
+   * @returns {Promise<API.SigningAuthority>}
    */
   async identity() {
-    const secret = this.settings.get('secret') || new Uint8Array();
+    const secret = this.settings.get('secret') || null;
     try {
       return SigningAuthority.decode(secret);
     } catch (error) {
@@ -137,6 +164,11 @@ class Client {
     const issuer = await this.identity();
     let count = 0;
 
+    /**
+     * @async
+     * @throws {Error}
+     * @returns {Promise<string>}
+     */
     const check = async () => {
       if (count > 100) {
         throw new Error('Could not validate.');
@@ -147,9 +179,7 @@ class Client {
         );
 
         if (!result.ok) {
-          await new Promise((resolve, reject) =>
-            setTimeout(() => resolve(), 1000)
-          );
+          await sleep(1000);
           return await check();
         } else {
           return await result.text();
@@ -160,6 +190,10 @@ class Client {
     return await check();
   }
 
+  /**
+   * @async
+   * @returns {Promise<Result>}
+   */
   async whoami() {
     const issuer = await this.identity();
     return await Access.Identify.invoke({
@@ -171,6 +205,8 @@ class Client {
 
   /**
    * List all of the uploads connected to this user.
+   * @async
+   * @returns {Promise<Result>}
    */
   async list() {
     const id = await this.identity();
@@ -182,8 +218,10 @@ class Client {
   }
 
   /**
-   * Upload a file by URL.
-   * @param {URL} url - the url to upload
+   * Upload a car via bytes.
+   * @async
+   * @param {Uint8Array} bytes - the url to upload
+   * @returns {Promise<Result|undefined>}
    */
   async upload(bytes) {
     try {
@@ -228,7 +266,7 @@ class Client {
 
   /**
    * Remove an uploaded file by CID
-   * @param {string} link - the CID to remove
+   * @param {API.Link} link - the CID to remove
    */
   async remove(link) {
     const id = await this.identity();
@@ -240,6 +278,52 @@ class Client {
         link,
       },
     }).execute(this.client);
+  }
+
+  /**
+   * Remove an uploaded file by CID
+   * @param {string} root - the CID to link as root.
+   * @param {Array<string>} links - the CIDs to link as 'children'
+   */
+  async linkroot(root, links) {
+    if (!root) {
+      throw 'no root CID provided';
+    }
+    if (!links || !links.length) {
+      throw 'no links provided';
+    }
+    console.log('calling link with ', root, links);
+    const id = await this.identity();
+    return await Store.LinkRoot.invoke({
+      issuer: id,
+      audience: this.client.id,
+      with: id.did(),
+      caveats: {
+        rootLink: root,
+        links: links,
+      },
+    }).execute(this.client);
+  }
+
+  /**
+   * @async
+   * @param {Link} link - the CID to get insights for
+   * @returns {Promise<object>}
+   */
+  async insights(link) {
+    const processResponse = await fetch(insightsAPI + '/insights', {
+      method: 'POST',
+      body: JSON.stringify({ cid: link }),
+    }).then((res) => res.json());
+
+    await sleep(1000);
+
+    const insights = await fetch(insightsAPI + '/insights', {
+      method: 'POST',
+      body: JSON.stringify({ cid: link }),
+    }).then((res) => res.json());
+
+    return insights;
   }
 
   /**
@@ -271,27 +355,6 @@ class Client {
   //       });
   //     });
   //   }
-
-  /**
-   * @async
-   * @param {Link} link - the CID to get insights for
-   * @returns {Promise<object>}
-   */
-  async insights(link) {
-    const processResponse = await fetch(insightsAPI + '/insights', {
-      method: 'POST',
-      body: JSON.stringify({ cid: link }),
-    }).then((res) => res.json());
-
-    await sleep(1000);
-
-    const insights = await fetch(insightsAPI + '/insights', {
-      method: 'POST',
-      body: JSON.stringify({ cid: link }),
-    }).then((res) => res.json());
-
-    return insights;
-  }
 }
 
 export default Client;

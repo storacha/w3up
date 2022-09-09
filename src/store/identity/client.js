@@ -1,3 +1,4 @@
+import * as API from '@ucanto/interface';
 import { Authority } from '@ucanto/authority'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
