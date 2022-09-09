@@ -1,37 +1,23 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-import sade from 'sade'
-import fs from 'fs'
-import Conf from 'conf'
-import ora from 'ora'
 import * as Keypair from '@ucanto/authority'
-import * as Access from './index.js'
+import fs from 'fs'
+import ora from 'ora'
 import path from 'path'
-import undici from 'undici'
+import sade from 'sade'
 import { Transform } from 'stream'
-// @ts-ignore
-import * as DID from '@ipld/dag-ucan/did'
-
-const NAME = 'w3access'
-const pkg = JSON.parse(
-  // eslint-disable-next-line unicorn/prefer-json-parse-buffer
-  fs.readFileSync(new URL('../package.json', import.meta.url), {
-    encoding: 'utf8',
-  })
-)
-const config = new Conf({
-  projectName: NAME,
-  projectSuffix: '',
-})
+import undici from 'undici'
+import * as Access from '../index.js'
+import { linkCmd } from './cmd-link.js'
+import { getConfig, NAME, pkg } from './config.js'
+import { getService } from './utils.js'
+import inquirer from 'inquirer'
 
 const prog = sade(NAME)
-const url = process.env.URL || 'http://127.0.0.1:8787'
-const did = DID.parse(
-  // @ts-ignore - https://github.com/ipld/js-dag-ucan/issues/49
-  process.env.DID || 'did:key:z6MksafxoiEHyRF6RsorjrLrEyFQPFDdN6psxtAfEsRcvDqx'
-)
-
-prog.version(pkg.version)
+prog
+  .version(pkg.version)
+  .option('-p, --profile', 'Select the config profile to use.', 'main')
+  .option('--env', 'Env', 'production')
 
 prog
   .command('init')
@@ -39,6 +25,7 @@ prog
   .option('--force', 'Override config with new keypair.', false)
   .option('--private-key', 'Create new keypair with private key.')
   .action(async (opts) => {
+    const config = getConfig(opts.profile)
     const spinner = ora('Creating new keypair').start()
     try {
       const privateKey = /** @type {string | undefined} */ (
@@ -80,8 +67,9 @@ prog
 prog
   .command('register')
   .describe("Register with the service using config's keypair.")
-  .option('--url', 'Service URL.', url)
   .action(async (opts) => {
+    const config = getConfig(opts.profile)
+    const { audience, url } = await getService(opts.env)
     const spinner = ora('Registering with the service').start()
     try {
       if (!config.get('private-key')) {
@@ -91,15 +79,20 @@ prog
         process.exit(1)
       }
 
+      const { email } = await inquirer.prompt({
+        type: 'input',
+        name: 'email',
+        message: 'Input your email to validate:',
+      })
+
       // @ts-ignore
       const issuer = Keypair.parse(config.get('private-key'))
-      const url = new URL(opts.url)
       await Access.validate({
-        audience: did,
+        audience,
         url,
         issuer,
         caveats: {
-          as: 'mailto:hugo@dag.house',
+          as: email,
         },
       })
 
@@ -110,7 +103,7 @@ prog
       })
 
       await Access.register({
-        audience: did,
+        audience,
         url,
         issuer,
         proof,
@@ -128,8 +121,9 @@ prog
 prog
   .command('upload <file>')
   .describe("Register with the service using config's keypair.")
-  .option('--url', 'Service URL.', url)
   .action(async (file, opts) => {
+    const config = getConfig(opts.profile)
+    const { url } = await getService(opts.env)
     const spinner = ora('Registering with the service').start()
     try {
       if (!config.get('private-key')) {
@@ -138,9 +132,6 @@ prog
         )
         process.exit(1)
       }
-
-      // @ts-ignore
-      const url = new URL(opts.url)
 
       const stream = fs.createReadStream(path.resolve(file))
       const checkStream = new Transform({
@@ -169,16 +160,12 @@ prog
 prog
   .command('config')
   .describe('Print config file content.')
-  .action(async () => {
-    console.log(config.path)
-    try {
-      for (const [key, value] of config) {
-        console.log(`${key}: ${value}`)
-      }
-    } catch (error) {
-      console.error(error)
-      process.exit(1)
-    }
+  .action(async (opts) => {
+    const config = getConfig(opts.profile)
+    console.log('Path:', config.path)
+    console.log(JSON.stringify(config.store, undefined, 2))
   })
+
+prog.command('link [channel]').describe('Link.').action(linkCmd)
 
 prog.parse(process.argv)

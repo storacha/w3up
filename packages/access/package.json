@@ -8,7 +8,7 @@
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",
   "bin": {
-    "w3access": "./src/cli.js"
+    "w3access": "./src/cli/index.js"
   },
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
@@ -43,7 +43,8 @@
     "dist/src/*.d.ts.map"
   ],
   "dependencies": {
-    "@ipld/dag-ucan": "1.7.0-beta",
+    "@ipld/dag-ucan": "link:/Users/hd/code/js-dag-ucan",
+    "@types/ws": "^8.5.3",
     "@ucanto/authority": "^0.5.0",
     "@ucanto/client": "^0.6.0",
     "@ucanto/core": "^0.6.0",
@@ -52,13 +53,24 @@
     "@ucanto/transport": "^0.7.0",
     "@ucanto/validator": "^0.6.0",
     "@web-std/fetch": "^4.1.0",
+    "bigint-mod-arith": "^3.1.0",
     "conf": "^10.1.2",
+    "inquirer": "^9.1.1",
+    "isomorphic-ws": "^5.0.0",
+    "multiformats": "^9.7.1",
+    "nanoid": "^4.0.0",
+    "one-webcrypto": "^1.0.3",
     "ora": "^6.1.2",
     "p-retry": "^5.1.1",
-    "undici": "^5.10.0"
+    "p-wait-for": "^5.0.0",
+    "uint8arrays": "^3.1.0",
+    "undici": "^5.10.0",
+    "ws": "^8.8.1",
+    "zod": "^3.19.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
+    "@types/inquirer": "^9.0.1",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.14",
     "assert": "^2.0.0",

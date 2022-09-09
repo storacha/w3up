@@ -1,34 +1,28 @@
 {
-  "name": "@web3-storage/access-api",
-  "version": "0.4.0",
-  "description": "Access API",
+  "name": "@web3-storage/access-ws",
+  "version": "0.3.0",
+  "description": "Access Websocket API",
   "type": "module",
   "main": "dist/worker.js",
+  "module": "dist/worker.js",
   "private": true,
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
-    "dev": "miniflare --watch --debug --env ../../.env --wrangler-env dev",
+    "dev": "miniflare --watch --debug --env ../../.env --wrangler-env dev -m",
     "build": "scripts/cli.js build",
-    "check": "tsc --build",
     "test": "tsc --build && ava --serial"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
   "dependencies": {
-    "@ipld/dag-ucan": "link:/Users/hd/code/js-dag-ucan",
-    "@ucanto/authority": "^0.5.0",
-    "@ucanto/client": "^0.6.0",
-    "@ucanto/core": "^0.6.0",
-    "@ucanto/interface": "^0.7.0",
-    "@ucanto/server": "^0.7.0",
-    "@ucanto/transport": "^0.7.0",
-    "@ucanto/validator": "^0.6.0",
-    "@web3-storage/access": "workspace:^",
+    "@types/ws": "^8.5.3",
     "@web3-storage/worker-utils": "0.4.3-dev",
+    "isomorphic-ws": "^5.0.0",
     "multiformats": "^9.6.5",
     "nanoid": "^4.0.0",
-    "toucan-js": "^2.6.0"
+    "toucan-js": "^2.6.0",
+    "ws": "^8.8.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.16.0",
@@ -47,6 +41,7 @@
     "git-rev-sync": "^3.0.1",
     "hd-scripts": "^2.1.0",
     "miniflare": "^2.7.1",
+    "p-wait-for": "^5.0.0",
     "process": "^0.11.10",
     "readable-stream": "^4.1.0",
     "sade": "^1.7.4",
@@ -68,7 +63,8 @@
       "ACCOUNTS": "writable",
       "VALIDATIONS": "writable",
       "BUCKET": "writable",
-      "W3ACCESS_METRICS": "writable"
+      "W3ACCESS_METRICS": "writable",
+      "WebSocketPair": "readonly"
     }
   },
   "eslintIgnore": [
@@ -81,6 +77,9 @@
     "concurrency": 1,
     "failFast": true,
     "workerThreads": false,
+    "nodeArguments": [
+      "--experimental-vm-modules"
+    ],
     "files": [
       "test/**/*.test.js"
     ],

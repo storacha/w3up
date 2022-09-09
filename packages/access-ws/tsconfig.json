@@ -2,9 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "lib": ["ESNext", "DOM"],
-    "emitDeclarationOnly": true
+    "lib": ["ESNext"],
+    "types": ["@cloudflare/workers-types"]
   },
   "include": ["src", "scripts", "test", "package.json"],
-  "exclude": ["**/node_modules/**"]
+  "exclude": ["**/node_modules/**"],
+  "references": [{ "path": "../access" }]
 }
