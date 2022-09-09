@@ -5,6 +5,7 @@ import { Delegation, UCAN } from '@ucanto/core';
 import { Failure } from '@ucanto/validator';
 import fetch from 'cross-fetch';
 import { Store, Identity, Access } from './store/index.js';
+import { insightsAPI } from './defaults.js';
 
 /**
  * A string representing a link to another object in IPLD
