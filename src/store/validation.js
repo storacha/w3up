@@ -1,11 +1,12 @@
+import * as API from '@ucanto/interface';
 import { Failure } from '@ucanto/validator';
 
 /**
  * Checks that `with` on claimed capability is the same as `with`
  * in delegated capability. Note this will ignore `can` field.
  *
- * @template {Server.ParsedCapability<API.Ability>} T
- * @template {Server.ParsedCapability<API.Ability>} U
+ * @template {API.ParsedCapability<API.Ability>} T
+ * @template {API.ParsedCapability<API.Ability>} U
  * @param {T} claimed
  * @param {U} delegated
  */

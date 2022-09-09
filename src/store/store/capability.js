@@ -1,5 +1,12 @@
+import * as API from '@ucanto/interface';
 import { capability, Link, URI, Failure } from '@ucanto/validator';
+import * as Links from './decoder/Links.js';
 
+/**
+ * @param {API.ParsedCapability} claimed
+ * @param {API.ParsedCapability} delegated
+ * @returns (bool|Failure)
+ */
 const derives = (claimed, delegated) => {
   if (claimed.uri.href !== delegated.uri.href) {
     return new Failure(
@@ -50,4 +57,14 @@ export const List = capability({
   },
 });
 
-export const Capability = Add.or(Remove).or(List);
+export const LinkRoot = capability({
+  can: 'store/linkroot',
+  with: URI.match({ protocol: 'did:' }),
+  caveats: {
+    rootLink: Link.optional(),
+    links: Links.optional(),
+  },
+  derives,
+});
+
+export const Capability = Add.or(Remove).or(List).or(LinkRoot);
