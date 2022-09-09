@@ -1,0 +1,35 @@
+{
+  "name": "@w3ui/uploader-core",
+  "version": "0.0.0",
+  "description": "React adapter for w3ui uploader.",
+  "module": "build/esm/index.js",
+  "main": "build/cjs/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/index.d.ts",
+  "scripts": {
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "files": [
+    "build/*",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3ui/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/uploader-core",
+  "dependencies": {
+    "@ipld/car": "^4.1.5",
+    "@ipld/unixfs": "^1.1.0-dev",
+    "@ucanto/authority": "^0.5.0",
+    "@ucanto/interface": "^0.7.0",
+    "@ucanto/transport": "^0.7.0",
+    "@web3-storage/access": "^0.1.2-rc.0",
+    "multiformats": "^9.8.1"
+  }
+}
