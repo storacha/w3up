@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "ipjs build",
+    "build": "npm run build:api_docs && npm run build:types",
     "build:types": "tsc",
     "build:api_docs": "jsdoc2md -f src/index.js > API.md"
   },
