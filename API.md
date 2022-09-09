@@ -5,10 +5,27 @@
 <dd></dd>
 </dl>
 
+## Constants
+
+<dl>
+<dt><a href="#importToken">importToken</a> ⇒ <code>Promise.&lt;(API.Delegation|Failure)&gt;</code></dt>
+<dd></dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#sleep">sleep(ms)</a> ⇒ <code>Promise.&lt;void&gt;</code></dt>
+<dd><p>Create a promise that resolves in ms.</p>
+</dd>
+<dt><a href="#createClient">createClient(options)</a> ⇒</dt>
+<dd></dd>
+</dl>
+
 ## Typedefs
 
 <dl>
-<dt><a href="#Link">Link</a> : <code>string</code></dt>
+<dt><a href="#Result">Result</a> : <code>string</code></dt>
 <dd><p>A string representing a link to another object in IPLD</p>
 </dd>
 <dt><a href="#ClientOptions">ClientOptions</a> : <code>object</code></dt>
@@ -22,12 +39,13 @@
 
 * [Client](#Client)
     * [new Client(options)](#new_Client_new)
-    * [.identity()](#Client+identity) ⇒ <code>Promise.&lt;Authority&gt;</code>
+    * [.identity()](#Client+identity) ⇒ <code>Promise.&lt;API.SigningAuthority&gt;</code>
     * [.register(email)](#Client+register)
-    * [.validate(token)](#Client+validate) ⇒ <code>Promise.&lt;(string\|undefined)&gt;</code>
-    * [.list()](#Client+list)
-    * [.upload(url)](#Client+upload)
+    * [.whoami()](#Client+whoami) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
+    * [.list()](#Client+list) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
+    * [.upload(bytes)](#Client+upload) ⇒ <code>Promise.&lt;(Result\|undefined)&gt;</code>
     * [.remove(link)](#Client+remove)
+    * [.linkroot(root, links)](#Client+linkroot)
     * [.insights(link)](#Client+insights) ⇒ <code>Promise.&lt;object&gt;</code>
 
 <a name="new_Client_new"></a>
@@ -42,7 +60,7 @@ Create an instance of the w3 client.
 
 <a name="Client+identity"></a>
 
-### client.identity() ⇒ <code>Promise.&lt;Authority&gt;</code>
+### client.identity() ⇒ <code>Promise.&lt;API.SigningAuthority&gt;</code>
 Get the current "machine" DID
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
@@ -57,33 +75,26 @@ Register a user by email.
 | --- | --- | --- |
 | email | <code>string</code> \| <code>undefined</code> | The email address to register with. |
 
-<a name="Client+validate"></a>
+<a name="Client+whoami"></a>
 
-### client.validate(token) ⇒ <code>Promise.&lt;(string\|undefined)&gt;</code>
-Validate an email to token.
-
+### client.whoami() ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
 **Kind**: instance method of [<code>Client</code>](#Client)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| token | <code>string</code> \| <code>undefined</code> | The token. |
-
 <a name="Client+list"></a>
 
-### client.list()
+### client.list() ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
 List all of the uploads connected to this user.
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
 <a name="Client+upload"></a>
 
-### client.upload(url)
-Upload a file by URL.
+### client.upload(bytes) ⇒ <code>Promise.&lt;(Result\|undefined)&gt;</code>
+Upload a car via bytes.
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>URL</code> | the url to upload |
+| bytes | <code>Uint8Array</code> | the url to upload |
 
 <a name="Client+remove"></a>
 
@@ -94,7 +105,19 @@ Remove an uploaded file by CID
 
 | Param | Type | Description |
 | --- | --- | --- |
-| link | <code>string</code> | the CID to remove |
+| link | <code>API.Link</code> | the CID to remove |
+
+<a name="Client+linkroot"></a>
+
+### client.linkroot(root, links)
+Remove an uploaded file by CID
+
+**Kind**: instance method of [<code>Client</code>](#Client)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| root | <code>string</code> | the CID to link as root. |
+| links | <code>Array.&lt;string&gt;</code> | the CIDs to link as 'children' |
 
 <a name="Client+insights"></a>
 
@@ -103,11 +126,41 @@ Remove an uploaded file by CID
 
 | Param | Type | Description |
 | --- | --- | --- |
-| link | [<code>Link</code>](#Link) | the CID to get insights for |
+| link | <code>Link</code> | the CID to get insights for |
 
-<a name="Link"></a>
+<a name="importToken"></a>
 
-## Link : <code>string</code>
+## importToken ⇒ <code>Promise.&lt;(API.Delegation\|Failure)&gt;</code>
+**Kind**: global constant  
+
+| Param | Type |
+| --- | --- |
+| input | <code>UCAN.JWT</code> | 
+
+<a name="sleep"></a>
+
+## sleep(ms) ⇒ <code>Promise.&lt;void&gt;</code>
+Create a promise that resolves in ms.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ms | <code>number</code> | The number of milliseconds to sleep for. |
+
+<a name="createClient"></a>
+
+## createClient(options) ⇒
+**Kind**: global function  
+**Returns**: Client  
+
+| Param | Type |
+| --- | --- |
+| options | [<code>ClientOptions</code>](#ClientOptions) | 
+
+<a name="Result"></a>
+
+## Result : <code>string</code>
 A string representing a link to another object in IPLD
 
 **Kind**: global typedef  
@@ -119,7 +172,9 @@ A string representing a link to another object in IPLD
 
 | Name | Type | Description |
 | --- | --- | --- |
-| serviceDID | <code>string</code> | The DID of the service to talk to. |
+| serviceDID | <code>API.DID</code> | The DID of the service to talk to. |
 | serviceURL | <code>string</code> | The URL of the service to talk to. |
+| accessURL | <code>string</code> | The URL of the access service. |
+| accessDID | <code>API.DID</code> | The DID of the access service. |
 | settings | <code>Map.&lt;string, any&gt;</code> | A map/db of settings to use for the client. |
 
