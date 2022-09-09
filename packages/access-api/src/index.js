@@ -28,7 +28,9 @@ addEventListener('fetch', (event) => {
         return env.log.end(corsHeaders(event.request, rsp))
       })
       .catch((error) => {
-        return env.log.end(errorHandler(error, env.log))
+        return env.log.end(
+          corsHeaders(event.request, errorHandler(error, env.log))
+        )
       })
   )
 })
