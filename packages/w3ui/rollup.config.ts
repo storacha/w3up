@@ -41,7 +41,9 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       jsName: 'ReactWallet',
       outputFile: 'react-wallet',
       entryFile: 'src/index.ts',
-      globals: {}
+      globals: {
+        react: 'React'
+      }
     }),
     ...buildConfigs({
       name: 'react-uploader',
@@ -49,7 +51,9 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       jsName: 'ReactUploader',
       outputFile: 'react-uploader',
       entryFile: 'src/index.ts',
-      globals: {}
+      globals: {
+        react: 'React'
+      }
     })
   ]
 }
@@ -97,7 +101,7 @@ function esm ({ input, packageDir, external, banner }: Options): RollupOptions {
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] })
+      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true })
     ]
   }
 }
@@ -120,7 +124,7 @@ function cjs ({ input, external, packageDir, banner }: Options): RollupOptions {
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] })
+      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true })
     ]
   }
 }
@@ -151,7 +155,7 @@ function umdDev ({
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true }),
       umdDevPlugin('development')
     ]
   }
@@ -183,7 +187,7 @@ function umdProd ({
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true }),
       umdDevPlugin('production'),
       terser({
         mangle: true,

@@ -4,8 +4,12 @@ import * as API from '@ucanto/interface'
 import { Authority } from '@ucanto/authority'
 import * as Access from '@web3-storage/access'
 
-const accessApiUrl = new URL('https://access-api.web3.storage')
-const accessDid = Authority.parse('did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9')
+// Production
+// const accessApiUrl = new URL('https://access-api.web3.storage')
+// const accessDid = Authority.parse('did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9')
+// Staging
+const accessApiUrl = new URL('https://access-api-staging.web3.storage')
+const accessDid = Authority.parse('did:key:z6MknemWKfRSfnprfijbQ2mn67KrnV44SWSuct3WLDanX2Ji')
 
 export interface Identity {
   email: string
@@ -55,7 +59,7 @@ export function AuthProvider ({ children }: AuthProviderProps): ReactNode {
     }
     if (identity != null) {
       if (identity.email === email) return
-      throw new Error('Unload current identity before registering a new one')
+      throw new Error('unload current identity before registering a new one')
     }
 
     const signingAuthority = await Keypair.SigningAuthority.generate()

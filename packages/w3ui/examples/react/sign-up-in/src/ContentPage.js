@@ -9,7 +9,7 @@ export default function ContentPage () {
 
   if (authStatus === AuthStatus.SignedIn) {
     return (
-      <div style={{ textAlign: 'center' }}>
+      <div>
         <h1>Welcome {identity.email}!</h1>
         <p>You are logged in!!</p>
       </div>
@@ -18,7 +18,7 @@ export default function ContentPage () {
 
   if (authStatus === AuthStatus.EmailVerification) {
     return (
-      <div style={{ textAlign: 'center' }}>
+      <div>
         <h1>Verify your email address!</h1>
         <p>Click the link in the email we sent to {email} to sign in.</p>
       </div>
@@ -35,9 +35,12 @@ export default function ContentPage () {
   }
 
   return (
-    <form onSubmit={handleRegisterSubmit}>
-      <input type='email' value={email} onChange={e => setEmail(e.target.value)} required />
-      <button type='submit'>Register</button>
+    <form onSubmit={handleRegisterSubmit} className='w-25'>
+      <div className='db mb3'>
+        <label htmlFor='email' className='db mb2'>Email address:</label>
+        <input id='email' className='db pa2 w-100' type='email' value={email} onChange={e => setEmail(e.target.value)} required />
+      </div>
+      <button type='submit' className='ph3 pv2'>Register</button>
     </form>
   )
 }
