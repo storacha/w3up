@@ -36,6 +36,14 @@ const babelPlugin = babel({
 export default function rollup (options: RollupOptions): RollupOptions[] {
   return [
     ...buildConfigs({
+      name: 'uploader-core',
+      packageDir: 'packages/uploader-core',
+      jsName: 'UploaderCore',
+      outputFile: 'uploader-core',
+      entryFile: 'src/index.ts',
+      globals: {}
+    }),
+    ...buildConfigs({
       name: 'react-wallet',
       packageDir: 'packages/react-wallet',
       jsName: 'ReactWallet',

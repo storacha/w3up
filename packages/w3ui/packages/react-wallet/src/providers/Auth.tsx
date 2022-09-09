@@ -5,11 +5,11 @@ import { Authority } from '@ucanto/authority'
 import * as Access from '@web3-storage/access'
 
 // Production
-// const accessApiUrl = new URL('https://access-api.web3.storage')
-// const accessDid = Authority.parse('did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9')
+const accessApiUrl = new URL('https://access-api.web3.storage')
+const accessDid = Authority.parse('did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9')
 // Staging
-const accessApiUrl = new URL('https://access-api-staging.web3.storage')
-const accessDid = Authority.parse('did:key:z6MknemWKfRSfnprfijbQ2mn67KrnV44SWSuct3WLDanX2Ji')
+// const accessApiUrl = new URL('https://access-api-staging.web3.storage')
+// const accessDid = Authority.parse('did:key:z6MknemWKfRSfnprfijbQ2mn67KrnV44SWSuct3WLDanX2Ji')
 
 export interface Identity {
   email: string

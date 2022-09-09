@@ -13,8 +13,16 @@
     "build/*",
     "src"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
   "author": "Alan Shaw",
   "license": "Apache-2.0 OR MIT",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3ui/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-wallet",
   "dependencies": {
     "@ucanto/authority": "^0.5.0",
     "@ucanto/interface": "^0.7.0",

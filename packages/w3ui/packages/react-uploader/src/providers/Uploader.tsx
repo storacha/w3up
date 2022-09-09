@@ -1,16 +1,17 @@
 import React, { useContext, createContext, useState, useEffect, ReactNode } from 'react'
-// @ts-expect-error https://github.com/web3-storage/w3up-client/issues/2
-import Client from 'w3up-client'
+import { encodeFile, uploadCarBytes, EncodeResult } from '@w3ui/uploader-core'
 import { useAuth } from '@w3ui/react-wallet'
 
-const W3_STORE_DID = 'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z'
-const SERVICE_URL = 'https://mk00d0sf0h.execute-api.us-east-1.amazonaws.com/'
-
-export interface UploaderContextValue {
-  uploader?: Client
+export interface Uploader {
+  encodeFile: (data: Blob) => Promise<EncodeResult>
+  uploadCar: (car: AsyncIterable<Uint8Array>) => Promise<void>
 }
 
-const UploaderContext = createContext<UploaderContextValue>({ uploader: null })
+export interface UploaderContextValue {
+  uploader?: Uploader
+}
+
+const UploaderContext = createContext<UploaderContextValue>({})
 
 export interface UploaderProviderProps {
   children?: ReactNode
@@ -18,15 +19,21 @@ export interface UploaderProviderProps {
 
 export function UploaderProvider ({ children }: UploaderProviderProps): ReactNode {
   const { identity } = useAuth()
-  const [uploader, setUploader] = useState(null)
+  const [uploader, setUploader] = useState<Uploader|undefined>(undefined)
 
   useEffect(() => {
     if (identity != null) {
-      setUploader(new Client({
-        settings: identity,
-        serviceURL: SERVICE_URL,
-        serviceDID: W3_STORE_DID
-      }))
+      setUploader({
+        encodeFile,
+        async uploadCar (car: AsyncIterable<Uint8Array>) {
+          const chunks: Uint8Array[] = []
+          for await (const chunk of car) {
+            chunks.push(chunk)
+          }
+          const bytes = new Uint8Array(await new Blob(chunks).arrayBuffer())
+          await uploadCarBytes(identity.signingAuthority, bytes)
+        }
+      })
     }
   }, [identity, uploader])
 

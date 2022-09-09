@@ -1,5 +1,5 @@
 {
-  "name": "react-uploader",
+  "name": "@w3ui/react-uploader",
   "version": "0.0.0",
   "description": "React adapter for w3ui uploader.",
   "module": "build/esm/index.js",
@@ -22,9 +22,9 @@
   "bugs": {
     "url": "https://github.com/web3-storage/w3ui/issues"
   },
-  "homepage": "https://github.com/web3-storage/w3ui#readme",
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-uploader",
   "dependencies": {
-    "w3up-client": "github:web3-storage/w3up-client"
+    "@w3ui/uploader-core": "^0.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

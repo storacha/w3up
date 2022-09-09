@@ -16,7 +16,8 @@
     "examples/react/sign-up-in",
     "examples/react/template",
     "packages/react-uploader",
-    "packages/react-wallet"
+    "packages/react-wallet",
+    "packages/uploader-core"
   ],
   "devDependencies": {
     "@babel/preset-env": "^7.19.0",
