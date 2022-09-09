@@ -10,8 +10,8 @@ import { insightsAPI } from './defaults.js';
 /**
  * A string representing a link to another object in IPLD
  * @typedef {string} Link
- * @typedef {API.Result<unknown|string, {error:true}|API.HandlerExecutionError|API.Failure>} Result
  */
+/** @typedef {API.Result<unknown|string, {error:true}|API.HandlerExecutionError|API.Failure>} Result */
 
 /**
  * @typedef {object} ClientOptions

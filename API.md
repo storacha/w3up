@@ -25,9 +25,11 @@
 ## Typedefs
 
 <dl>
-<dt><a href="#Result">Result</a> : <code>string</code></dt>
+<dt><a href="#Link">Link</a> : <code>string</code></dt>
 <dd><p>A string representing a link to another object in IPLD</p>
 </dd>
+<dt><a href="#Result">Result</a> : <code>API.Result.&lt;(unknown|string), ({error: true}|API.HandlerExecutionError|API.Failure)&gt;</code></dt>
+<dd></dd>
 <dt><a href="#ClientOptions">ClientOptions</a> : <code>object</code></dt>
 <dd></dd>
 </dl>
@@ -126,7 +128,7 @@ Remove an uploaded file by CID
 
 | Param | Type | Description |
 | --- | --- | --- |
-| link | <code>Link</code> | the CID to get insights for |
+| link | [<code>Link</code>](#Link) | the CID to get insights for |
 
 <a name="importToken"></a>
 
@@ -158,11 +160,15 @@ Create a promise that resolves in ms.
 | --- | --- |
 | options | [<code>ClientOptions</code>](#ClientOptions) | 
 
-<a name="Result"></a>
+<a name="Link"></a>
 
-## Result : <code>string</code>
+## Link : <code>string</code>
 A string representing a link to another object in IPLD
 
+**Kind**: global typedef  
+<a name="Result"></a>
+
+## Result : <code>API.Result.&lt;(unknown\|string), ({error: true}\|API.HandlerExecutionError\|API.Failure)&gt;</code>
 **Kind**: global typedef  
 <a name="ClientOptions"></a>
 

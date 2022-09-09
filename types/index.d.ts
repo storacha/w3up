@@ -9,9 +9,6 @@ export default Client;
  * A string representing a link to another object in IPLD
  */
 export type Link = string;
-/**
- * A string representing a link to another object in IPLD
- */
 export type Result = API.Result<unknown | string, {
     error: true;
 } | API.HandlerExecutionError | API.Failure>;
