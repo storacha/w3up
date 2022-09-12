@@ -60,8 +60,13 @@ export async function register(opts) {
 }
 
 const run =
-  (/** @type {string} */ did, /** @type {string} */ host) => async () => {
-    const response = await fetch(`${host}validate?did=${did}`)
+  (
+    /** @type {string} */ did,
+    /** @type {string} */ host,
+    /** @type {AbortSignal?} */ signal
+  ) =>
+  async () => {
+    const response = await fetch(`${host}validate?did=${did}`, { signal })
 
     if (!response.ok) {
       throw new Error(response.statusText)
@@ -76,9 +81,13 @@ const run =
 export async function pullRegisterDelegation(opts) {
   const url = opts.url || Service.url
   /** @type {Types.UCAN.JWT<import('./capabilities-types').IdentityRegister>} */
-  const registerProof = await pRetry(run(opts.issuer.did(), url.toString()), {
-    retries: 100,
-  })
+  const registerProof = await pRetry(
+    run(opts.issuer.did(), url.toString(), opts.signal),
+    {
+      retries: 100,
+      signal: opts.signal,
+    }
+  )
 
   const ucan = UCAN.parse(registerProof)
   const root = await UCAN.write(ucan)

@@ -71,4 +71,5 @@ export interface RegisterOptions {
 export interface PullRegisterOptions {
   url?: URL
   issuer: SigningAuthority
+  signal: AbortSignal
 }
