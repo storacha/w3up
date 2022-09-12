@@ -5,7 +5,7 @@
   "module": "build/esm/index.js",
   "main": "build/cjs/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/index.d.ts",
+  "types": "build/types/react-wallet/src/index.d.ts",
   "scripts": {
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
@@ -24,8 +24,6 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-wallet",
   "dependencies": {
-    "@ucanto/authority": "^0.5.0",
-    "@ucanto/interface": "^0.7.0",
-    "@web3-storage/access": "^0.1.2-rc.0"
+    "@w3ui/wallet-core": "^0.0.0"
   }
 }

@@ -1,35 +1,14 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react'
-import * as Keypair from '@ucanto/authority'
-import * as API from '@ucanto/interface'
-import { Authority } from '@ucanto/authority'
-import * as Access from '@web3-storage/access'
+import { registerIdentity, Identity, AuthStatus } from '@w3ui/wallet-core'
 
-// Production
-const accessApiUrl = new URL('https://access-api.web3.storage')
-const accessDid = Authority.parse('did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9')
-// Staging
-// const accessApiUrl = new URL('https://access-api-staging.web3.storage')
-// const accessDid = Authority.parse('did:key:z6MknemWKfRSfnprfijbQ2mn67KrnV44SWSuct3WLDanX2Ji')
-
-export interface Identity {
-  email: string
-  signingAuthority: API.SigningAuthority
-}
-
-export enum AuthStatus {
-  SignedIn,
-  SignedOut,
-  /**
-   * Email verification email has been sent.
-   */
-  EmailVerification
-}
+export { AuthStatus }
 
 export interface AuthContextValue {
   identity?: Identity
   loadIdentity: () => void
   unloadIdentity: () => void
   registerIdentity: (email: string) => Promise<void>
+  cancelRegisterIdentity: () => void
   authStatus: AuthStatus
 }
 
@@ -38,6 +17,7 @@ export const AuthContext = createContext<AuthContextValue>({
   loadIdentity: () => {},
   unloadIdentity: () => {},
   registerIdentity: async () => {},
+  cancelRegisterIdentity: () => {},
   authStatus: AuthStatus.SignedOut
 })
 
@@ -46,58 +26,51 @@ export interface AuthProviderProps {
 }
 
 export function AuthProvider ({ children }: AuthProviderProps): ReactNode {
-  const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.SignedOut)
-  const [identity, setIdentity] = useState<Identity|undefined>(undefined)
+  const [authStatus, setAuthStatus] = useState(AuthStatus.SignedOut)
+  const [identity, setIdentity] = useState<Identity>()
+  const [registerAbortController, setRegisterAbortController] = useState<AbortController>()
 
-  const loadIdentity = (): void => {
+  const load = (): void => {
     // TODO: load identity from secure storage
   }
 
-  const registerIdentity = async (email: string): Promise<void> => {
-    if (email == null || email === '') {
-      throw new Error('missing email address')
-    }
+  const cancel = () => {
+    registerAbortController && registerAbortController.abort()
+  }
+
+  const register = async (email: string): Promise<void> => {
     if (identity != null) {
       if (identity.email === email) return
       throw new Error('unload current identity before registering a new one')
     }
 
-    const signingAuthority = await Keypair.SigningAuthority.generate()
-
-    await Access.validate({
-      audience: accessDid,
-      url: accessApiUrl,
-      issuer: signingAuthority,
-      caveats: { as: `mailto:${email}` }
-    })
-
-    setAuthStatus(AuthStatus.EmailVerification)
+    const controller = new AbortController()
+    setRegisterAbortController(controller)
 
     try {
-      // TODO: can we cancel this?
-      const proof = await Access.pullRegisterDelegation({
-        issuer: signingAuthority,
-        url: accessApiUrl
+      const id = await registerIdentity(email, {
+        onAuthStatusChange: setAuthStatus,
+        signal: controller.signal
       })
-
-      await Access.register({
-        audience: accessDid,
-        url: accessApiUrl,
-        issuer: signingAuthority,
-        proof
-      })
-
-      // TODO: save to storage
-      setIdentity({ email, signingAuthority })
-      setAuthStatus(AuthStatus.SignedIn)
+      setIdentity(id)
     } catch (err) {
       setAuthStatus(AuthStatus.SignedOut)
+      if (!controller.signal.aborted) {
+        throw err
+      }
     }
   }
 
-  const unloadIdentity = (): void => setIdentity(undefined)
+  const unload = () => setIdentity(undefined)
 
-  const value = { authStatus, identity, loadIdentity, unloadIdentity, registerIdentity }
+  const value = {
+    authStatus,
+    identity,
+    loadIdentity: load,
+    unloadIdentity: unload,
+    registerIdentity: register,
+    cancelRegisterIdentity: cancel
+  }
 
   return (
     <AuthContext.Provider value={value}>
