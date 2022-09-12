@@ -5,7 +5,7 @@
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "files": [
     "src",
     "dist"

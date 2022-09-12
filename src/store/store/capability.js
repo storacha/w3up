@@ -61,7 +61,7 @@ export const LinkRoot = capability({
   can: 'store/linkroot',
   with: URI.match({ protocol: 'did:' }),
   caveats: {
-    rootLink: Link.optional(),
+    rootLink: Link.match({}),
     links: Links.optional(),
   },
   derives,

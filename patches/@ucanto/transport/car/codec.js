@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as API from '@ucanto/interface';
 import * as CARWriter from '../../../@ipld/car/buffer-writer.js';
 import { CarReader } from '@ipld/car/reader';

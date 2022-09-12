@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as API from '@ucanto/interface'
 import * as CAR from './car/codec.js'
 import { Delegation } from '@ucanto/core'

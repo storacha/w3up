@@ -1,17 +1,18 @@
 import * as API from '@ucanto/interface';
-import * as CAR from './patches/@ucanto/transport/car.js';
-import { SigningAuthority, Authority } from '@ucanto/authority';
+import * as CAR from '../patches/@ucanto/transport/car';
+import { SigningAuthority } from '@ucanto/authority';
 import { Delegation, UCAN } from '@ucanto/core';
 import { Failure } from '@ucanto/validator';
 import fetch from 'cross-fetch';
-import { Store, Identity, Access } from './store/index.js';
+import { Store, Access } from './store/index.js';
 import { insightsAPI } from './defaults.js';
 
 /**
  * A string representing a link to another object in IPLD
- * @typedef {string} Link
+ * @typedef {API.Link} Link
  */
-/** @typedef {API.Result<unknown|string, {error:true}|API.HandlerExecutionError|API.Failure>} Result */
+/** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
+/** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
 
 /**
  * @typedef {object} ClientOptions
@@ -58,9 +59,11 @@ export function createClient(options) {
 }
 
 const DefaultClientOptions = {
+  /** @type {API.DID} */
+  accessDID: 'did:',
   accessURL: '',
-  accessDID: '',
-  serviceDID: '',
+  /** @type {API.DID} */
+  serviceDID: 'did:',
   serviceURL: '',
   settings: new Map(),
 };
@@ -84,7 +87,7 @@ class Client {
     this.accessDID = accessDID;
     this.settings = settings;
 
-    this.client = Store.connect({
+    this.storeClient = Store.connect({
       id: this.serviceDID,
       url: this.serviceURL,
       fetch,
@@ -130,7 +133,7 @@ class Client {
       throw `Invalid email provided for registration: ${email}`;
     }
     const issuer = await this.identity();
-    const result = await Access.Validate.invoke({
+    await Access.Validate.invoke({
       issuer,
       audience: this.accessClient.id,
       with: issuer.did(),
@@ -144,23 +147,35 @@ class Client {
     const root = await UCAN.write(ucan);
     const proof = Delegation.create({ root });
 
+    // TODO: this should be better.
+    // Use access API/client to do all of this.
+    const first = proof.capabilities[0];
+
     const validate = await Access.Register.invoke({
       issuer,
       audience: this.accessClient.id,
-      with: proof.capabilities[0].with,
+      //@ts-ignore
+      with: first.with,
       caveats: {
-        as: proof.capabilities[0].as,
+        //@ts-ignore
+        as: first.as,
       },
       proofs: [proof],
     }).execute(this.accessClient);
 
     if (validate?.error) {
+      //@ts-ignore
       throw new Error(validate?.cause?.message);
     }
 
     return `Email registered ${email}`;
   }
 
+  /**
+   * @async
+   * @throws {Error}
+   * @returns {Promise<UCAN.JWT>}
+   */
   async checkRegistration() {
     const issuer = await this.identity();
     let count = 0;
@@ -168,7 +183,7 @@ class Client {
     /**
      * @async
      * @throws {Error}
-     * @returns {Promise<string>}
+     * @returns {Promise<UCAN.JWT>}
      */
     const check = async () => {
       if (count > 100) {
@@ -183,6 +198,7 @@ class Client {
           await sleep(1000);
           return await check();
         } else {
+          // @ts-ignore
           return await result.text();
         }
       }
@@ -213,16 +229,16 @@ class Client {
     const id = await this.identity();
     return Store.List.invoke({
       issuer: id,
-      audience: this.client.id,
+      audience: this.storeClient.id,
       with: id.did(),
-    }).execute(this.client);
+    }).execute(this.storeClient);
   }
 
   /**
    * Upload a car via bytes.
    * @async
    * @param {Uint8Array} bytes - the url to upload
-   * @returns {Promise<Result|undefined>}
+   * @returns {Promise<strResult>}
    */
   async upload(bytes) {
     try {
@@ -230,28 +246,32 @@ class Client {
       const link = await CAR.codec.link(bytes);
       const result = await Store.Add.invoke({
         issuer: id,
-        audience: this.client.id,
+        audience: this.storeClient.id,
         with: id.did(),
         caveats: {
           link,
         },
-      }).execute(this.client);
+      }).execute(this.storeClient);
 
-      // Return early if it was already uploaded.
-      if (result.status === 'done') {
-        return `Car ${link} is added to ${result.with}`;
-      }
-
-      if (result.error) {
+      if (result?.error != undefined) {
         throw new Error(JSON.stringify(result));
       }
 
+      const castResult =
+        /** @type {{status:string, with:API.DID, url:String, headers:HeadersInit}} */
+        (result);
+
+      // Return early if it was already uploaded.
+      if (castResult.status === 'done') {
+        return `Car ${link} is added to ${castResult.with}`;
+      }
+
       // Get the returned signed URL, and upload to it.
-      const response = await fetch(result.url, {
+      const response = await fetch(castResult.url, {
         method: 'PUT',
         mode: 'cors',
         body: bytes,
-        headers: result.headers,
+        headers: castResult.headers,
       });
 
       if (!response.ok) {
@@ -262,6 +282,7 @@ class Client {
       return `Succeeded uploading ${link} with ${response.status}: ${response.statusText}`;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 
@@ -273,37 +294,30 @@ class Client {
     const id = await this.identity();
     return await Store.Remove.invoke({
       issuer: id,
-      audience: this.client.id,
+      audience: this.storeClient.id,
       with: id.did(),
       caveats: {
         link,
       },
-    }).execute(this.client);
+    }).execute(this.storeClient);
   }
 
   /**
    * Remove an uploaded file by CID
-   * @param {string} root - the CID to link as root.
-   * @param {Array<string>} links - the CIDs to link as 'children'
+   * @param {Link} root - the CID to link as root.
+   * @param {Array<Link>} links - the CIDs to link as 'children'
    */
   async linkroot(root, links) {
-    if (!root) {
-      throw 'no root CID provided';
-    }
-    if (!links || !links.length) {
-      throw 'no links provided';
-    }
-    console.log('calling link with ', root, links);
     const id = await this.identity();
     return await Store.LinkRoot.invoke({
       issuer: id,
-      audience: this.client.id,
+      audience: this.storeClient.id,
       with: id.did(),
       caveats: {
         rootLink: root,
         links: links,
       },
-    }).execute(this.client);
+    }).execute(this.storeClient);
   }
 
   /**

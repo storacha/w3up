@@ -52,7 +52,7 @@ const validateCID = (input, options = {}) => {
 /**
  * @param {unknown} input
  * @param {LinkOptions} [options]
- * @returns {API.Result<Array<Link>, API.Failure>}
+ * @returns {Array<Link>|API.Failure}
  */
 export const decode = (input, options = {}) => {
   if (input == null) {
@@ -62,13 +62,15 @@ export const decode = (input, options = {}) => {
       return new Failure(`Expected ${input} to be iterable, but is not`);
     }
 
-    const cids = input.map(asLink);
+    const cids = input.map((cid) => validateCID(cid, options));
+    for (const cid of cids) {
+      if (cid instanceof Failure) {
+        return cid;
+      }
+    }
 
-    /** @param {unknown} input */
-    cids.forEach((cid) => validateCID(cid, options));
-
-    /** @param {Link} input */
-    return cids.filter((x) => x);
+    // @ts-ignore
+    return cids;
   }
 };
 
