@@ -23,6 +23,7 @@ function App () {
 
 function IdentityLoader ({ children }) {
   const { loadIdentity } = useAuth()
+  // eslint-disable-next-line
   useEffect(() => { loadIdentity() }, []) // try load current identity - once.
   return children
 }

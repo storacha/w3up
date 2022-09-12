@@ -3,6 +3,7 @@
   "references": [
     { "path": "packages/react-uploader" },
     { "path": "packages/react-wallet" },
-    { "path": "packages/uploader-core" }
+    { "path": "packages/uploader-core" },
+    { "path": "packages/wallet-core" }
   ]
 }

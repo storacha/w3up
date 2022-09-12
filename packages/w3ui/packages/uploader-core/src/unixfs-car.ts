@@ -1,6 +1,8 @@
 import * as UnixFS from '@ipld/unixfs'
+import type { Block } from '@ipld/unixfs'
 import type { CID } from 'multiformats/cid'
 import { CarWriter } from '@ipld/car'
+import { toIterable } from './streams'
 
 const queuingStrategy = UnixFS.withCapacity(1048576 * 175)
 
@@ -10,7 +12,7 @@ export interface EncodeResult {
 }
 
 export async function encodeFile (blob: Blob): Promise<EncodeResult> {
-  const { readable, writable } = new TransformStream<UnixFS.Block, UnixFS.Block>({}, queuingStrategy)
+  const { readable, writable } = new TransformStream<Block, Block>({}, queuingStrategy)
   const unixfsWriter = UnixFS.createWriter({ writable })
 
   const unixfsFileWriter = UnixFS.createFileWriter(unixfsWriter)
@@ -18,56 +20,43 @@ export async function encodeFile (blob: Blob): Promise<EncodeResult> {
 
   const { cid } = await unixfsFileWriter.close()
 
-  unixfsWriter.close()
-
-  // @ts-expect-error CarWriter expects a real CID instance
+  // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
   const { writer: carBlockWriter, out } = CarWriter.create(cid)
 
-  const carWriterPromise = (async () => {
-    for await (const block of toIterable(readable)) {
-      // @ts-expect-error expects a real CID instance
-      await carBlockWriter.put(block)
+  let error
+
+  ;(async () => {
+    try {
+      await unixfsWriter.close()
+    } catch (err) {
+      // @ts-expect-error
+      error = new Error('failed to close UnixFS writer stream', { cause: err })
     }
   })()
 
-  carWriterPromise
-    .catch(err => {
-      console.error(err)
-    })
-    .finally(() => {
-      carBlockWriter.close().catch(err => {
-        // @ts-expect-error no cause in error constructor yet
-        console.error(new Error('failed to close CAR writer', { cause: err }))
-      })
-    })
+  ;(async () => {
+    try {
+      for await (const block of toIterable(readable)) {
+        // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
+        await carBlockWriter.put(block)
+      }
+    } catch (err) {
+      error = err
+    } finally {
+      try {
+        await carBlockWriter.close()
+      } catch (err) {
+        error = err
+      }
+    }
+  })()
 
   return {
-    // @ts-expect-error not a real CID?!
+    // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
     root: cid,
-    car: out
+    car: async function * () {
+      yield * out
+      if (error != null) throw error
+    }()
   }
-}
-
-function toIterable<T> (readable: ReadableStream<T>): AsyncIterable<T> {
-  // @ts-expect-error
-  if (readable[Symbol.asyncIterator] != null) return readable
-
-  // Browser ReadableStream
-  if (readable.getReader != null) {
-    return (async function * () {
-      const reader = readable.getReader()
-
-      try {
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) return
-          yield value
-        }
-      } finally {
-        reader.releaseLock()
-      }
-    })()
-  }
-
-  throw new Error('unknown stream')
 }

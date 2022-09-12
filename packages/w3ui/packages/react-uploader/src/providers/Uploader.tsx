@@ -35,7 +35,7 @@ export function UploaderProvider ({ children }: UploaderProviderProps): ReactNod
         }
       })
     }
-  }, [identity, uploader])
+  }, [identity])
 
   return (
     <UploaderContext.Provider value={{ uploader }}>
