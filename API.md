@@ -25,10 +25,12 @@
 ## Typedefs
 
 <dl>
-<dt><a href="#Link">Link</a> : <code>string</code></dt>
+<dt><a href="#Link">Link</a> : <code>API.Link</code></dt>
 <dd><p>A string representing a link to another object in IPLD</p>
 </dd>
-<dt><a href="#Result">Result</a> : <code>API.Result.&lt;(unknown|string), ({error: true}|API.HandlerExecutionError|API.Failure)&gt;</code></dt>
+<dt><a href="#Result">Result</a> : <code>API.Result.&lt;unknown, ({error: true}|API.HandlerExecutionError|API.Failure)&gt;</code></dt>
+<dd></dd>
+<dt><a href="#strResult">strResult</a> : <code>API.Result.&lt;string, ({error: true}|API.HandlerExecutionError|API.Failure)&gt;</code></dt>
 <dd></dd>
 <dt><a href="#ClientOptions">ClientOptions</a> : <code>object</code></dt>
 <dd></dd>
@@ -43,9 +45,10 @@
     * [new Client(options)](#new_Client_new)
     * [.identity()](#Client+identity) ⇒ <code>Promise.&lt;API.SigningAuthority&gt;</code>
     * [.register(email)](#Client+register)
+    * [.checkRegistration()](#Client+checkRegistration) ⇒ <code>Promise.&lt;UCAN.JWT&gt;</code>
     * [.whoami()](#Client+whoami) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.list()](#Client+list) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
-    * [.upload(bytes)](#Client+upload) ⇒ <code>Promise.&lt;(Result\|undefined)&gt;</code>
+    * [.upload(bytes)](#Client+upload) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
     * [.remove(link)](#Client+remove)
     * [.linkroot(root, links)](#Client+linkroot)
     * [.insights(link)](#Client+insights) ⇒ <code>Promise.&lt;object&gt;</code>
@@ -77,6 +80,14 @@ Register a user by email.
 | --- | --- | --- |
 | email | <code>string</code> \| <code>undefined</code> | The email address to register with. |
 
+<a name="Client+checkRegistration"></a>
+
+### client.checkRegistration() ⇒ <code>Promise.&lt;UCAN.JWT&gt;</code>
+**Kind**: instance method of [<code>Client</code>](#Client)  
+**Throws**:
+
+- <code>Error</code> 
+
 <a name="Client+whoami"></a>
 
 ### client.whoami() ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
@@ -89,7 +100,7 @@ List all of the uploads connected to this user.
 **Kind**: instance method of [<code>Client</code>](#Client)  
 <a name="Client+upload"></a>
 
-### client.upload(bytes) ⇒ <code>Promise.&lt;(Result\|undefined)&gt;</code>
+### client.upload(bytes) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
 Upload a car via bytes.
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
@@ -118,8 +129,8 @@ Remove an uploaded file by CID
 
 | Param | Type | Description |
 | --- | --- | --- |
-| root | <code>string</code> | the CID to link as root. |
-| links | <code>Array.&lt;string&gt;</code> | the CIDs to link as 'children' |
+| root | [<code>Link</code>](#Link) | the CID to link as root. |
+| links | [<code>Array.&lt;Link&gt;</code>](#Link) | the CIDs to link as 'children' |
 
 <a name="Client+insights"></a>
 
@@ -162,13 +173,17 @@ Create a promise that resolves in ms.
 
 <a name="Link"></a>
 
-## Link : <code>string</code>
+## Link : <code>API.Link</code>
 A string representing a link to another object in IPLD
 
 **Kind**: global typedef  
 <a name="Result"></a>
 
-## Result : <code>API.Result.&lt;(unknown\|string), ({error: true}\|API.HandlerExecutionError\|API.Failure)&gt;</code>
+## Result : <code>API.Result.&lt;unknown, ({error: true}\|API.HandlerExecutionError\|API.Failure)&gt;</code>
+**Kind**: global typedef  
+<a name="strResult"></a>
+
+## strResult : <code>API.Result.&lt;string, ({error: true}\|API.HandlerExecutionError\|API.Failure)&gt;</code>
 **Kind**: global typedef  
 <a name="ClientOptions"></a>
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import varint from 'varint';
 import { Token, Type } from 'cborg';
 import { tokensToLength } from 'cborg/length';
