@@ -59,21 +59,20 @@ export async function register(opts) {
   }
 }
 
-const run =
-  (
-    /** @type {string} */ did,
-    /** @type {string} */ host,
-    /** @type {AbortSignal?} */ signal
-  ) =>
-  async () => {
-    const response = await fetch(`${host}validate?did=${did}`, { signal })
+/**
+ * @param {string} did
+ * @param {string} host
+ * @param {AbortSignal} [signal]
+ */
+const run = (did, host, signal) => async () => {
+  const response = await fetch(`${host}validate?did=${did}`, { signal })
 
-    if (!response.ok) {
-      throw new Error(response.statusText)
-    }
-
-    return response.text()
+  if (!response.ok) {
+    throw new Error(response.statusText)
   }
+
+  return response.text()
+}
 
 /**
  * @param {import('./types').PullRegisterOptions} opts
