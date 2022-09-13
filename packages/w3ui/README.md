@@ -16,9 +16,9 @@
 
 #### React
 
-* [Sign up / Sign in](examples/sign-up-in)
-* [File Upload](examples/file-upload)
-* [Multiple File Upload](examples/multi-file-upload)
+* [Sign up / Sign in](examples/react/sign-up-in)
+* [Single File Upload](examples/react/file-upload)
+* [Multiple File Upload](examples/react/multi-file-upload)
 
 ## Contributing
 
