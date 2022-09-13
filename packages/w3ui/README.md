@@ -12,6 +12,14 @@
 
 [beta.ui.web3.storage](https://beta.ui.web3.storage)
 
+### Examples
+
+#### React
+
+* [Sign up / Sign in](examples/sign-up-in)
+* [File Upload](examples/file-upload)
+* [Multiple File Upload](examples/multi-file-upload)
+
 ## Contributing
 
 Feel free to join in. All welcome. [Open an issue](https://github.com/web3-storage/w3ui/issues)!
