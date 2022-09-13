@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { useAuth, AuthStatus } from '@w3ui/react-wallet'
 
 export default function ContentPage () {
-  const { authStatus, identity, loadIdentity, registerIdentity } = useAuth()
+  const { authStatus, identity, loadDefaultIdentity, registerAndStoreIdentity, unloadIdentity } = useAuth()
   const [email, setEmail] = useState('')
 
-  useEffect(() => { loadIdentity() }, []) // try load current identity - once.
+  // eslint-disable-next-line
+  useEffect(() => { loadDefaultIdentity() }, []) // try load default identity - once.
 
   if (authStatus === AuthStatus.SignedIn) {
     return (
       <div>
         <h1>Welcome {identity.email}!</h1>
-        <p>You are logged in!!</p>
+        <p className=''>You are logged in!!</p>
+        <form onSubmit={e => { e.preventDefault(); unloadIdentity() }} className='w-25'>
+          <button type='submit' className='ph3 pv2'>Sign Out</button>
+        </form>
       </div>
     )
   }
@@ -28,7 +32,7 @@ export default function ContentPage () {
   const handleRegisterSubmit = async e => {
     e.preventDefault()
     try {
-      await registerIdentity(email)
+      await registerAndStoreIdentity(email)
     } catch (err) {
       throw new Error('failed to register', { cause: err })
     }

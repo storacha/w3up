@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAuth, AuthStatus } from '@w3ui/react-wallet'
 
 export default function Authenticator ({ children }) {
-  const { authStatus, registerIdentity } = useAuth()
+  const { authStatus, registerAndStoreIdentity } = useAuth()
   const [email, setEmail] = useState('')
 
   if (authStatus === AuthStatus.SignedIn) {
@@ -21,7 +21,7 @@ export default function Authenticator ({ children }) {
   const handleRegisterSubmit = async e => {
     e.preventDefault()
     try {
-      await registerIdentity(email)
+      await registerAndStoreIdentity(email)
     } catch (err) {
       throw new Error('failed to register', { cause: err })
     }
