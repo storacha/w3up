@@ -16,16 +16,16 @@ export async function encodeFile (blob: Blob): Promise<EncodeResult> {
   const unixfsWriter = UnixFS.createWriter({ writable })
 
   const unixfsFileWriter = UnixFS.createFileWriter(unixfsWriter)
-  unixfsFileWriter.write(new Uint8Array(await blob.arrayBuffer()))
+  await unixfsFileWriter.write(new Uint8Array(await blob.arrayBuffer()))
 
   const { cid } = await unixfsFileWriter.close()
 
   // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
   const { writer: carBlockWriter, out } = CarWriter.create(cid)
 
-  let error
+  let error: Error
 
-  ;(async () => {
+  void (async () => {
     try {
       await unixfsWriter.close()
     } catch (err) {
@@ -34,18 +34,18 @@ export async function encodeFile (blob: Blob): Promise<EncodeResult> {
     }
   })()
 
-  ;(async () => {
+  void (async () => {
     try {
       for await (const block of toIterable(readable)) {
         // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
         await carBlockWriter.put(block)
       }
-    } catch (err) {
+    } catch (err: any) {
       error = err
     } finally {
       try {
         await carBlockWriter.close()
-      } catch (err) {
+      } catch (err: any) {
         error = err
       }
     }
@@ -54,9 +54,10 @@ export async function encodeFile (blob: Blob): Promise<EncodeResult> {
   return {
     // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
     root: cid,
-    car: async function * () {
+    car: (async function * () {
       yield * out
+      // @ts-expect-error Variable 'error' is used before being assigned.
       if (error != null) throw error
-    }()
+    })()
   }
 }
