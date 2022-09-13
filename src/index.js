@@ -3,7 +3,9 @@ import { SigningAuthority, Authority } from '@ucanto/authority';
 import { Delegation, UCAN } from '@ucanto/core';
 import { Failure } from '@ucanto/validator';
 import fetch from 'cross-fetch';
-import { Store, Identity, Access } from './store/index.js';
+import { Store, Access } from './store/index.js';
+
+import * as capabilities from '@web3-storage/access/capabilities';
 
 /**
  * A string representing a link to another object in IPLD
@@ -102,29 +104,33 @@ class Client {
       throw `Invalid email provided for registration: ${email}`;
     }
     const issuer = await this.identity();
-    const result = await Access.Validate.invoke({
-      issuer,
-      audience: this.accessClient.id,
-      with: issuer.did(),
-      caveats: {
-        as: `mailto:${email}`,
-      },
-    }).execute(this.accessClient);
+    const result = await capabilities.identityValidate
+      .invoke({
+        issuer,
+        audience: this.accessClient.id,
+        with: issuer.did(),
+        caveats: {
+          as: `mailto:${email}`,
+        },
+      })
+      .execute(this.accessClient);
 
     const proofString = await this.checkRegistration();
     const ucan = UCAN.parse(proofString);
     const root = await UCAN.write(ucan);
     const proof = Delegation.create({ root });
 
-    const validate = await Access.Register.invoke({
-      issuer,
-      audience: this.accessClient.id,
-      with: proof.capabilities[0].with,
-      caveats: {
-        as: proof.capabilities[0].as,
-      },
-      proofs: [proof],
-    }).execute(this.accessClient);
+    const validate = await capabilities.identityRegister
+      .invoke({
+        issuer,
+        audience: this.accessClient.id,
+        with: proof.capabilities[0].with,
+        caveats: {
+          as: proof.capabilities[0].as,
+        },
+        proofs: [proof],
+      })
+      .execute(this.accessClient);
 
     if (validate?.error) {
       throw new Error(validate?.cause?.message);
@@ -162,11 +168,13 @@ class Client {
 
   async whoami() {
     const issuer = await this.identity();
-    return await Access.Identify.invoke({
-      issuer,
-      audience: this.accessClient.id,
-      with: issuer.did(),
-    }).execute(this.accessClient);
+    return await capabilities.identityIdentify
+      .invoke({
+        issuer,
+        audience: this.accessClient.id,
+        with: issuer.did(),
+      })
+      .execute(this.accessClient);
   }
 
   /**
@@ -174,11 +182,13 @@ class Client {
    */
   async list() {
     const id = await this.identity();
-    return Store.List.invoke({
-      issuer: id,
-      audience: this.client.id,
-      with: id.did(),
-    }).execute(this.client);
+    return capabilities.storeList
+      .invoke({
+        issuer: id,
+        audience: this.client.id,
+        with: id.did(),
+      })
+      .execute(this.client);
   }
 
   /**
@@ -189,14 +199,16 @@ class Client {
     try {
       const id = await this.identity();
       const link = await CAR.codec.link(bytes);
-      const result = await Store.Add.invoke({
-        issuer: id,
-        audience: this.client.id,
-        with: id.did(),
-        caveats: {
-          link,
-        },
-      }).execute(this.client);
+      const result = await capabilities.storeAdd
+        .invoke({
+          issuer: id,
+          audience: this.client.id,
+          with: id.did(),
+          caveats: {
+            link,
+          },
+        })
+        .execute(this.client);
 
       // Return early if it was already uploaded.
       if (result.status === 'done') {
@@ -232,14 +244,16 @@ class Client {
    */
   async remove(link) {
     const id = await this.identity();
-    return await Store.Remove.invoke({
-      issuer: id,
-      audience: this.client.id,
-      with: id.did(),
-      caveats: {
-        link,
-      },
-    }).execute(this.client);
+    return await capabilities.storeRemove
+      .invoke({
+        issuer: id,
+        audience: this.client.id,
+        with: id.did(),
+        caveats: {
+          link,
+        },
+      })
+      .execute(this.client);
   }
 
   /**

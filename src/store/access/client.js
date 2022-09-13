@@ -7,7 +7,6 @@ import webfetch from 'cross-fetch';
 // TODO: patch
 import * as CAR from '../../patches/@ucanto/transport/car.js';
 
-export * from './capability.js';
 
 /**
  * @param {object} options
