@@ -1,0 +1,19 @@
+name: Test
+description: 'Setup and test'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        registry-url: 'https://registry.npmjs.org'
+        node-version: 16
+        cache: 'npm'
+    - run: npm ci
+      shell: bash
+    - run: npm run compile
+      shell: bash
+    - run: npm run build
+      shell: bash
+    - run: npm test
+      shell: bash

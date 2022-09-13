@@ -10,6 +10,7 @@
     "clean": "npm exec --workspaces -c \"rm -rf build || true\"",
     "compile": "npm run --workspaces --if-present compile",
     "lint": "ts-standard",
+    "test": "npm run lint",
     "typecheck": "tsc -b"
   },
   "workspaces": [
