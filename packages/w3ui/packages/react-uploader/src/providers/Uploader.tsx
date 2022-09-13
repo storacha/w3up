@@ -1,9 +1,10 @@
 import React, { useContext, createContext, useState, useEffect, ReactNode } from 'react'
-import { encodeFile, uploadCarBytes, EncodeResult } from '@w3ui/uploader-core'
+import { encodeFile, encodeDirectory, uploadCarBytes, EncodeResult } from '@w3ui/uploader-core'
 import { useAuth } from '@w3ui/react-wallet'
 
 export interface Uploader {
   encodeFile: (data: Blob) => Promise<EncodeResult>
+  encodeDirectory: (files: Iterable<File>) => Promise<EncodeResult>
   uploadCar: (car: AsyncIterable<Uint8Array>) => Promise<void>
 }
 
@@ -25,6 +26,7 @@ export function UploaderProvider ({ children }: UploaderProviderProps): ReactNod
     if (identity != null) {
       setUploader({
         encodeFile,
+        encodeDirectory,
         async uploadCar (car: AsyncIterable<Uint8Array>) {
           const chunks: Uint8Array[] = []
           for await (const chunk of car) {
