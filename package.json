@@ -5,26 +5,29 @@
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "main": "src/index.js",
+  "types": "dist/types/src/index.d.ts",
   "files": [
     "src",
     "dist"
   ],
   "scripts": {
-    "build": "ipjs build",
+    "build": "npm run build:api_docs && npm run build:types",
+    "build:types": "tsc",
     "build:api_docs": "jsdoc2md -f src/index.js > API.md"
   },
   "dependencies": {
-    "@ucanto/authority": "^0.4.5",
-    "@ucanto/client": "0.5.4",
-    "@ucanto/core": "^0.5.4",
-    "@ucanto/interface": "^0.6.2",
-    "@ucanto/transport": "^0.6.3",
-    "@ucanto/validator": "^0.5.5",
+    "@ucanto/authority": "^0.5.0",
+    "@ucanto/client": "0.6.0",
+    "@ucanto/core": "^0.6.0",
+    "@ucanto/interface": "^0.7.0",
+    "@ucanto/transport": "^0.7.0",
+    "@ucanto/validator": "^0.6.0",
     "cross-fetch": "^3.1.5",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "ipjs": "^5.2.0",
-    "jsdoc-to-markdown": "^7.1.1"
+    "jsdoc-to-markdown": "^7.1.1",
+    "typescript": "^4.8.3"
   }
 }
