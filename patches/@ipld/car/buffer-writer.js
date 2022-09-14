@@ -1,8 +1,8 @@
 // @ts-nocheck
-import varint from 'varint';
-import { Token, Type } from 'cborg';
-import { tokensToLength } from 'cborg/length';
-import * as CBOR from '@ipld/dag-cbor';
+import * as CBOR from '@ipld/dag-cbor'
+import { Token, Type } from 'cborg'
+import { tokensToLength } from 'cborg/length'
+import varint from 'varint'
 
 /**
  * @typedef {import('@ipld/car/api').CID} CID
@@ -25,15 +25,15 @@ class CarBufferWriter {
    */
   constructor(bytes, headerSize) {
     /** @readonly */
-    this.bytes = bytes;
-    this.byteOffset = headerSize;
+    this.bytes = bytes
+    this.byteOffset = headerSize
 
     /**
      * @readonly
      * @type {CID[]}
      */
-    this.roots = [];
-    this.headerSize = headerSize;
+    this.roots = []
+    this.headerSize = headerSize
   }
 
   /**
@@ -45,8 +45,8 @@ class CarBufferWriter {
    * @returns {CarBufferWriter}
    */
   addRoot(root, options) {
-    addRoot(this, root, options);
-    return this;
+    addRoot(this, root, options)
+    return this
   }
 
   /**
@@ -57,8 +57,8 @@ class CarBufferWriter {
    * @returns {CarBufferWriter}
    */
   write(block) {
-    addBlock(this, block);
-    return this;
+    addBlock(this, block)
+    return this
   }
 
   /**
@@ -69,7 +69,7 @@ class CarBufferWriter {
    * @returns {Uint8Array}
    */
   close(options) {
-    return close(this, options);
+    return close(this, options)
   }
 }
 
@@ -79,29 +79,29 @@ class CarBufferWriter {
  * @param {{resize?:boolean}} options
  */
 export const addRoot = (writer, root, { resize = false } = {}) => {
-  const { bytes, headerSize, byteOffset, roots } = writer;
-  writer.roots.push(root);
-  const size = headerLength(writer);
+  const { bytes, headerSize, byteOffset, roots } = writer
+  writer.roots.push(root)
+  const size = headerLength(writer)
   // If there is not enough space for the new root
   if (size > headerSize) {
     // Check if we root would fit if we were to resize the head.
     if (size - headerSize + byteOffset < bytes.byteLength) {
       // If resize is enabled resize head
       if (resize) {
-        resizeHeader(writer, size);
+        resizeHeader(writer, size)
         // otherwise remove head and throw an error suggesting to resize
       } else {
-        roots.pop();
+        roots.pop()
         throw new RangeError(`Header of size ${headerSize} has no capacity for new root ${root}.
-  However there is a space in the buffer and you could call addRoot(root, { resize: root }) to resize header to make a space for this root.`);
+  However there is a space in the buffer and you could call addRoot(root, { resize: root }) to resize header to make a space for this root.`)
       }
       // If head would not fit even with resize pop new root and throw error
     } else {
-      roots.pop();
-      throw new RangeError(`Buffer has no capacity for a new root ${root}`);
+      roots.pop()
+      throw new RangeError(`Buffer has no capacity for a new root ${root}`)
     }
   }
-};
+}
 
 /**
  * Calculates number of bytes required for storing given block in CAR. Useful in
@@ -112,25 +112,25 @@ export const addRoot = (writer, root, { resize = false } = {}) => {
  * @returns {number}
  */
 export const blockLength = ({ cid, bytes }) => {
-  const size = cid.bytes.byteLength + bytes.byteLength;
-  return varint.encodingLength(size) + size;
-};
+  const size = cid.bytes.byteLength + bytes.byteLength
+  return varint.encodingLength(size) + size
+}
 
 /**
  * @param {CarBufferWriter} writer
  * @param {Block} block
  */
 export const addBlock = (writer, { cid, bytes }) => {
-  const byteLength = cid.bytes.byteLength + bytes.byteLength;
-  const size = varint.encode(byteLength);
+  const byteLength = cid.bytes.byteLength + bytes.byteLength
+  const size = varint.encode(byteLength)
   if (writer.byteOffset + size.length + byteLength > writer.bytes.byteLength) {
-    throw new RangeError('Buffer has no capacity for this block');
+    throw new RangeError('Buffer has no capacity for this block')
   } else {
-    writeBytes(writer, size);
-    writeBytes(writer, cid.bytes);
-    writeBytes(writer, bytes);
+    writeBytes(writer, size)
+    writeBytes(writer, cid.bytes)
+    writeBytes(writer, bytes)
   }
-};
+}
 
 /**
  * @param {CarBufferWriter} writer
@@ -138,42 +138,42 @@ export const addBlock = (writer, { cid, bytes }) => {
  * @param {boolean} [options.resize]
  */
 export const close = (writer, { resize = false } = {}) => {
-  const { roots, bytes, byteOffset, headerSize } = writer;
+  const { roots, bytes, byteOffset, headerSize } = writer
 
-  const headerBytes = CBOR.encode({ version: 1, roots });
-  const varintBytes = varint.encode(headerBytes.length);
+  const headerBytes = CBOR.encode({ version: 1, roots })
+  const varintBytes = varint.encode(headerBytes.length)
 
-  const size = varintBytes.length + headerBytes.byteLength;
-  const offset = headerSize - size;
+  const size = varintBytes.length + headerBytes.byteLength
+  const offset = headerSize - size
 
   // If header size estimate was accurate we just write header and return
   // view into buffer.
   if (offset === 0) {
-    writeHeader(writer, varintBytes, headerBytes);
-    return bytes.subarray(0, byteOffset);
+    writeHeader(writer, varintBytes, headerBytes)
+    return bytes.subarray(0, byteOffset)
     // If header was overestimated and `{resize: true}` is passed resize header
   } else if (resize) {
-    resizeHeader(writer, size);
-    writeHeader(writer, varintBytes, headerBytes);
-    return bytes.subarray(0, writer.byteOffset);
+    resizeHeader(writer, size)
+    writeHeader(writer, varintBytes, headerBytes)
+    return bytes.subarray(0, writer.byteOffset)
   } else {
     throw new RangeError(`Header size was overestimated.
-You can use close({ resize: true }) to resize header`);
+You can use close({ resize: true }) to resize header`)
   }
-};
+}
 
 /**
  * @param {CarBufferWriter} writer
  * @param {number} byteLength
  */
 export const resizeHeader = (writer, byteLength) => {
-  const { bytes, headerSize } = writer;
+  const { bytes, headerSize } = writer
   // Move data section to a new offset
-  bytes.set(bytes.subarray(headerSize, writer.byteOffset), byteLength);
+  bytes.set(bytes.subarray(headerSize, writer.byteOffset), byteLength)
   // Update header size & byteOffset
-  writer.byteOffset += byteLength - headerSize;
-  writer.headerSize = byteLength;
-};
+  writer.byteOffset += byteLength - headerSize
+  writer.headerSize = byteLength
+}
 
 /**
  * @param {CarBufferWriter} writer
@@ -181,27 +181,27 @@ export const resizeHeader = (writer, byteLength) => {
  */
 
 const writeBytes = (writer, bytes) => {
-  writer.bytes.set(bytes, writer.byteOffset);
-  writer.byteOffset += bytes.length;
-};
+  writer.bytes.set(bytes, writer.byteOffset)
+  writer.byteOffset += bytes.length
+}
 /**
  * @param {{bytes:Uint8Array}} writer
  * @param {number[]} varint
  * @param {Uint8Array} header
  */
 const writeHeader = ({ bytes }, varint, header) => {
-  bytes.set(varint);
-  bytes.set(header, varint.length);
-};
+  bytes.set(varint)
+  bytes.set(header, varint.length)
+}
 
 const headerPreludeTokens = [
   new Token(Type.map, 2),
   new Token(Type.string, 'version'),
   new Token(Type.uint, 1),
   new Token(Type.string, 'roots'),
-];
+]
 
-const CID_TAG = new Token(Type.tag, 42);
+const CID_TAG = new Token(Type.tag, 42)
 
 /**
  * Calculates header size given the array of byteLength for roots.
@@ -211,15 +211,15 @@ const CID_TAG = new Token(Type.tag, 42);
  * @returns {number}
  */
 export const calculateHeaderLength = (rootLengths) => {
-  const tokens = [...headerPreludeTokens];
-  tokens.push(new Token(Type.array, rootLengths.length));
+  const tokens = [...headerPreludeTokens]
+  tokens.push(new Token(Type.array, rootLengths.length))
   for (const rootLength of rootLengths) {
-    tokens.push(CID_TAG);
-    tokens.push(new Token(Type.bytes, { length: rootLength + 1 }));
+    tokens.push(CID_TAG)
+    tokens.push(new Token(Type.bytes, { length: rootLength + 1 }))
   }
-  const length = tokensToLength(tokens); // no options needed here because we have simple tokens
-  return varint.encodingLength(length) + length;
-};
+  const length = tokensToLength(tokens) // no options needed here because we have simple tokens
+  return varint.encodingLength(length) + length
+}
 
 /**
  * Calculates header size given the array of roots.
@@ -230,7 +230,7 @@ export const calculateHeaderLength = (rootLengths) => {
  * @returns {number}
  */
 export const headerLength = ({ roots }) =>
-  calculateHeaderLength(roots.map((cid) => cid.bytes.byteLength));
+  calculateHeaderLength(roots.map((cid) => cid.bytes.byteLength))
 
 /**
  * Estimates header size given a count of the roots and the expected byte length
@@ -243,7 +243,7 @@ export const headerLength = ({ roots }) =>
  * @returns {number}
  */
 export const estimateHeaderLength = (rootCount, rootByteLength = 36) =>
-  calculateHeaderLength(new Array(rootCount).fill(rootByteLength));
+  calculateHeaderLength(new Array(rootCount).fill(rootByteLength))
 
 /**
  * Creates synchronous CAR writer that can be used to encode blocks into a given
@@ -275,12 +275,12 @@ export const createWriter = (
     headerSize = headerLength({ roots }),
   } = {}
 ) => {
-  const bytes = new Uint8Array(buffer, byteOffset, byteLength);
+  const bytes = new Uint8Array(buffer, byteOffset, byteLength)
 
-  const writer = new CarBufferWriter(bytes, headerSize);
+  const writer = new CarBufferWriter(bytes, headerSize)
   for (const root of roots) {
-    writer.addRoot(root);
+    writer.addRoot(root)
   }
 
-  return writer;
-};
+  return writer
+}
