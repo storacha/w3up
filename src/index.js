@@ -197,7 +197,10 @@ class Client {
       } else {
         count++
         const result = await fetch(
-          `${this.accessURL}validate?did=${issuer.did()}`
+          `${this.accessURL}validate?did=${issuer.did()}`,
+          {
+            mode: 'cors'
+          }
         )
 
         if (!result.ok) {
