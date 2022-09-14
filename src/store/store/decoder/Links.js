@@ -1,8 +1,8 @@
-import * as API from '@ucanto/interface';
-import { Failure } from '@ucanto/validator';
-import { create, createV0, isLink, asLink, parse } from '@ucanto/core/link';
+import { asLink, create, createV0, isLink, parse } from '@ucanto/core/link'
+import * as API from '@ucanto/interface'
+import { Failure } from '@ucanto/validator'
 
-export { create, createV0, isLink, asLink, parse };
+export { create, createV0, isLink, asLink, parse }
 
 /**
  * @typedef {number} Code
@@ -21,33 +21,33 @@ export { create, createV0, isLink, asLink, parse };
  */
 const validateCID = (input, options = {}) => {
   if (input == null) {
-    return new Failure(`Expected link to be a CID instead of ${input}`);
+    return new Failure(`Expected link to be a CID instead of ${input}`)
   } else {
-    const cid = asLink(input);
+    const cid = asLink(input)
     if (cid == null) {
-      return new Failure(`Expected link to be a CID instead of ${input}`);
+      return new Failure(`Expected link to be a CID instead of ${input}`)
     }
     if (options.code != null && cid.code !== options.code) {
       return new Failure(
         `Expected link to be CID with 0x${options.code.toString(16)} codec`
-      );
+      )
     }
     if (options.algorithm != null && cid.multihash.code !== options.algorithm) {
       return new Failure(
         `Expected link to be CID with 0x${options.algorithm.toString(
           16
         )} hashing algorithm`
-      );
+      )
     }
 
     if (options.version != null && cid.version !== options.version) {
       return new Failure(
         `Expected link to be CID version ${options.version} instead of ${cid.version}`
-      );
+      )
     }
-    return cid;
+    return cid
   }
-};
+}
 
 /**
  * @param {unknown} input
@@ -56,23 +56,23 @@ const validateCID = (input, options = {}) => {
  */
 export const decode = (input, options = {}) => {
   if (input == null) {
-    return new Failure(`Expected links but got ${input} instead`);
+    return new Failure(`Expected links but got ${input} instead`)
   } else {
     if (!Array.isArray(input)) {
-      return new Failure(`Expected ${input} to be iterable, but is not`);
+      return new Failure(`Expected ${input} to be iterable, but is not`)
     }
 
-    const cids = input.map((cid) => validateCID(cid, options));
+    const cids = input.map((cid) => validateCID(cid, options))
     for (const cid of cids) {
       if (cid instanceof Failure) {
-        return cid;
+        return cid
       }
     }
 
     // @ts-ignore
-    return cids;
+    return cids
   }
-};
+}
 
 /**
  * @param {LinkOptions} options
@@ -81,7 +81,7 @@ export const decode = (input, options = {}) => {
 export const match = (options) => ({
   /** @param {unknown} input */
   decode: (input) => decode(input, options),
-});
+})
 
 /**
  * @param {LinkOptions} [options]
@@ -90,9 +90,9 @@ export const match = (options) => ({
 export const optional = (options) => ({
   decode: (input) => {
     if (input === undefined) {
-      return undefined;
+      return undefined
     } else {
-      return decode(input, options);
+      return decode(input, options)
     }
   },
-});
+})

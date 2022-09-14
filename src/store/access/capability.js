@@ -1,6 +1,7 @@
-import { capability, URI, Failure } from '@ucanto/validator';
-import * as Store from '../store/capability.js';
-import { equalWith, derivesURIPattern } from '../validation.js';
+import { URI, capability } from '@ucanto/validator'
+
+import * as Store from '../store/capability.js'
+import { derivesURIPattern, equalWith } from '../validation.js'
 
 export const Validate = capability({
   can: 'identity/validate',
@@ -11,7 +12,7 @@ export const Validate = capability({
   derives: (claimed, delegated) =>
     derivesURIPattern(claimed.caveats.as, delegated.caveats.as) &&
     equalWith(claimed, delegated),
-});
+})
 
 export const Register = capability({
   can: 'identity/register',
@@ -22,7 +23,7 @@ export const Register = capability({
   derives: (claimed, delegated) =>
     derivesURIPattern(claimed.caveats.as, delegated.caveats.as) &&
     derivesURIPattern(claimed.with, delegated.with),
-});
+})
 
 export const Link = capability({
   can: 'identity/link',
@@ -31,7 +32,7 @@ export const Link = capability({
     as: URI.string({ protocol: 'did:' }),
   },
   derives: equalWith,
-});
+})
 
 /**
  * `identity/identify` can be derived from any of the `store/*`
@@ -45,9 +46,9 @@ export const Identify = Store.Capability.derive({
     derives: equalWith,
   }),
   derives: equalWith,
-});
+})
 
 /**
  * Represents `identity/*` capability.
  */
-export const Capability = Register.or(Link).or(Identify);
+export const Capability = Register.or(Link).or(Identify)

@@ -1,6 +1,7 @@
-import * as API from '@ucanto/interface';
-import { capability, Link, URI, Failure } from '@ucanto/validator';
-import * as Links from './decoder/Links.js';
+import * as API from '@ucanto/interface'
+import { Failure, Link, URI, capability } from '@ucanto/validator'
+
+import * as Links from './decoder/Links.js'
 
 /**
  * @param {API.ParsedCapability} claimed
@@ -11,7 +12,7 @@ const derives = (claimed, delegated) => {
   if (claimed.uri.href !== delegated.uri.href) {
     return new Failure(
       `Expected 'with: "${delegated.uri.href}"' instead got '${claimed.uri.href}'`
-    );
+    )
   } else if (
     delegated.caveats.link &&
     `${delegated.caveats.link}` !== `${claimed.caveats.link}`
@@ -20,11 +21,11 @@ const derives = (claimed, delegated) => {
       `Link ${
         claimed.caveats.link == null ? '' : `${claimed.caveats.link} `
       }violates imposed ${delegated.caveats.link} constraint`
-    );
+    )
   } else {
-    return true;
+    return true
   }
-};
+}
 
 export const Add = capability({
   can: 'store/add',
@@ -33,7 +34,7 @@ export const Add = capability({
     link: Link.optional(),
   },
   derives,
-});
+})
 
 export const Remove = capability({
   can: 'store/remove',
@@ -42,7 +43,7 @@ export const Remove = capability({
     link: Link.optional(),
   },
   derives,
-});
+})
 
 export const List = capability({
   can: 'store/list',
@@ -51,11 +52,11 @@ export const List = capability({
     if (claimed.uri.href !== delegated.uri.href) {
       return new Failure(
         `Expected 'with: "${delegated.uri.href}"' instead got '${claimed.uri.href}'`
-      );
+      )
     }
-    return true;
+    return true
   },
-});
+})
 
 export const LinkRoot = capability({
   can: 'store/linkroot',
@@ -65,6 +66,6 @@ export const LinkRoot = capability({
     links: Links.optional(),
   },
   derives,
-});
+})
 
-export const Capability = Add.or(Remove).or(List).or(LinkRoot);
+export const Capability = Add.or(Remove).or(List).or(LinkRoot)
