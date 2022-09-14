@@ -70,63 +70,63 @@
   resolved "https://registry.yarnpkg.com/@types/mdurl/-/mdurl-1.0.2.tgz#e2ce9d83a613bacf284c7be7d491945e39e1f8e9"
   integrity sha512-eC4U9MlIcu2q0KQmXszyn5Akca/0jrQmwDRgpAMJai7qBWq4amIQhZyNau4VYGtCeALvW1/NtjzJJ567aZxfKA==
 
-"@ucanto/authority@^0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@ucanto/authority/-/authority-0.4.5.tgz#e3f80df3f98064d1f93cc821959b0115533207ac"
-  integrity sha512-8hCD5zv0Wc+V1hX9JCgKarkwPhyDpLpHqkeVxS74dgsaORKtLcO7CISi1rzp0vEIiuK3iyyQfGOY5PIh1diESg==
+"@ucanto/authority@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@ucanto/authority/-/authority-0.5.0.tgz#17be40763d65a4d53a41ed1ccba49006e07ffc90"
+  integrity sha512-TML+6Xqu8H3+Nti0ko3Sqi15uh6dXCUZQ4W+GFuGXyZ8yss6VxarK6uB7cG0KQlt3Nejok6cYHuzq5Hou5IsCA==
   dependencies:
     "@ipld/dag-ucan" "^1.7.0-beta"
     "@noble/ed25519" "^1.6.1"
-    "@ucanto/interface" "^0.6.2"
+    "@ucanto/interface" "^0.7.0"
     multiformats "^9.6.4"
 
-"@ucanto/client@0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@ucanto/client/-/client-0.5.4.tgz#b87f36d9a6a30968ec534dd015186d45bd0040da"
-  integrity sha512-mMtCQR11PeVZ6xt5YVlOpqW2Ujohfnqe7R26b43926QPiZdEXbIOlVux61JdUSo6jmqxvhQpz05aPzJ5H09xpA==
+"@ucanto/client@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@ucanto/client/-/client-0.6.0.tgz#51ce5e49bc750dc034c95c2f537ce64bdf308a66"
+  integrity sha512-TUYfclxZEMAqz9oKt0MWN06flSuUOEPG6AOAVirs1w1FelKap/fpeDzhVh36Gce9EQHrcucyv7NbpMpBaWVG1w==
   dependencies:
-    "@ucanto/interface" "^0.6.2"
+    "@ucanto/interface" "^0.7.0"
     multiformats "^9.6.4"
 
-"@ucanto/core@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@ucanto/core/-/core-0.5.4.tgz#3f8e7465d88c12f9288a55dc23c91c39b3a8339c"
-  integrity sha512-Gopye/etahzXY00ROSkeIvp+5k6EL9YDeh5kWZ8LxEwKp+nJ5pgHDE4yCIL0mMNepekkDin9Fk/DgWCLUe1/VQ==
+"@ucanto/core@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@ucanto/core/-/core-0.6.0.tgz#dabb948a25501820997b6acdd1c4ce8dabb94508"
+  integrity sha512-j1TIHAei56OiukA3YsE6mk4IX0KUSD/HINv50aUQu4w7XIrtmXk4RgUbDIVRxdat6QugKfjHZoXbjGehlTjPzA==
   dependencies:
     "@ipld/car" "^4.1.0"
     "@ipld/dag-cbor" "^7.0.1"
     "@ipld/dag-ucan" "^1.7.0-beta"
-    "@ucanto/interface" "^0.6.2"
+    "@ucanto/interface" "^0.7.0"
     multiformats "^9.6.4"
 
-"@ucanto/interface@^0.6.2":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@ucanto/interface/-/interface-0.6.2.tgz#f72ac49a4ec2c8908d3a192fb5c11607e573ff06"
-  integrity sha512-Tphtp1RjcNWESTswaWSUVEjHYKvQvABUm1v9EA5xvxCQ6IAHsVOUKldcRx3kG0SyYVQ8vgphXL3ydvWsy6XPwQ==
+"@ucanto/interface@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@ucanto/interface/-/interface-0.7.0.tgz#9d7b80a101e114e2c2e9b709f7c4c03a2fa9d51f"
+  integrity sha512-H6zxnq06ZUuyVfuDpoUTvlfN4YBt6DGa55yo9/MTn4W9YkUzsathfc8jXl3wLzpUnA17hejEZZbmymaDQm03uA==
   dependencies:
     "@ipld/dag-ucan" "^1.7.0-beta"
     multiformats "^9.6.4"
 
-"@ucanto/transport@^0.6.3":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@ucanto/transport/-/transport-0.6.3.tgz#e2f612dc392f3b5450361f9f111de8c53e87a793"
-  integrity sha512-7aectEK22X0dyZdoCAdMASfHt2TGGf59TRgqT0KH/G8IJzrEC9I4r1KkfJkO3Fp90ZOCMB0T/xxojqSjGZH1nQ==
+"@ucanto/transport@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@ucanto/transport/-/transport-0.7.0.tgz#e1019c738808ee70c9c45b02e752e357e76745d1"
+  integrity sha512-ORj80wMpjIwbd2xXx4qoTUS5Vm5KLFQcHAg6jGwX2FFTUm+pNo+adooZ3sU8AkvKk8qCzHxOYgD8cIY1Sk+FmA==
   dependencies:
     "@ipld/car" "^4.1.0"
     "@ipld/dag-cbor" "^7.0.1"
-    "@ucanto/core" "^0.5.4"
-    "@ucanto/interface" "^0.6.2"
+    "@ucanto/core" "^0.6.0"
+    "@ucanto/interface" "^0.7.0"
     multiformats "^9.6.4"
 
-"@ucanto/validator@^0.5.5":
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/@ucanto/validator/-/validator-0.5.5.tgz#ceb60936939323e85081cc0b38628aeb337a8c56"
-  integrity sha512-z1Ibx5pa1rucpLgenzTG8g3aX9HcFA+S73qVZ815gexeZBLjvU6OgpTvdRDUxq4kPWdtUndN3kNVeuzd1r+1CQ==
+"@ucanto/validator@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@ucanto/validator/-/validator-0.6.0.tgz#0745ef54b6b677e9692f138c05bdd408f41f9b9d"
+  integrity sha512-mUhdaWFN/amf/M2xOLzRSP9JjWgMK5G4/iDcfN0szMBkd6kgDk91i4d1pf38rMz2xof/69yqSLF1up1ZBv7p4Q==
   dependencies:
     "@ipld/car" "^4.1.0"
     "@ipld/dag-cbor" "^7.0.1"
-    "@ucanto/core" "^0.5.4"
-    "@ucanto/interface" "^0.6.2"
+    "@ucanto/core" "^0.6.0"
+    "@ucanto/interface" "^0.7.0"
     multiformats "^9.6.4"
 
 acorn@^8.0.5:
@@ -813,6 +813,11 @@ type-check@~0.3.2:
   integrity sha512-ZCmOJdvOWDBYJlzAoFkC+Q0+bUyEOS1ltgp1MGU03fqHG+dbi9tBFU2Rd9QKiDZFAYrhPh2JUf7rZRIuHRKtOg==
   dependencies:
     prelude-ls "~1.1.2"
+
+typescript@^4.8.3:
+  version "4.8.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.3.tgz#d59344522c4bc464a65a730ac695007fdb66dd88"
+  integrity sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==
 
 typical@^2.4.2, typical@^2.6.0, typical@^2.6.1:
   version "2.6.1"
