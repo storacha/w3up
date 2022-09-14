@@ -1,12 +1,14 @@
-import * as API from '@ucanto/interface'
-import * as CARWriter from '../../../@ipld/car/buffer-writer.js'
+// @ts-nocheck
 import { CarReader } from '@ipld/car/reader'
+import { createLink } from '@ucanto/core'
 import { base32 } from 'multiformats/bases/base32'
-import { UCAN, createLink } from '@ucanto/core'
 import { sha256 } from 'multiformats/hashes/sha2'
+
+import * as CARWriter from '../../../@ipld/car/buffer-writer.js'
 
 export const code = 0x0202
 
+/** @type {import('@ucanto/interface') API}
 /**
  * @typedef {API.UCAN.Block<unknown, number, number, 0|1>} Block
  * @typedef {{
@@ -25,6 +27,7 @@ class Writer {
     this.blocks = blocks
     this.byteLength = byteLength
   }
+
   /**
    * @param {Block[]} blocks
    */
@@ -41,6 +44,7 @@ class Writer {
     }
     return this
   }
+
   /**
    * @param {Block[]} rootBlocks
    */

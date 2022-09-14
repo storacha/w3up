@@ -1,48 +1,74 @@
-import * as CAR from './patches/@ucanto/transport/car.js';
-import { SigningAuthority, Authority } from '@ucanto/authority';
-import { Delegation, UCAN } from '@ucanto/core';
-import { Failure } from '@ucanto/validator';
-import fetch from 'cross-fetch';
-import { Store, Access } from './store/index.js';
+import { SigningAuthority } from '@ucanto/authority'
+import { Delegation, UCAN } from '@ucanto/core'
+import * as API from '@ucanto/interface'
+import { Failure } from '@ucanto/validator'
+// @ts-ignore
+import * as capabilities from '@web3-storage/access/capabilities'
+import fetch from 'cross-fetch'
 
-import * as capabilities from '@web3-storage/access/capabilities';
+import * as CAR from '../patches/@ucanto/transport/car'
+import { insightsAPI } from './defaults.js'
+import { Access, Store } from './store/index.js'
 
 /**
  * A string representing a link to another object in IPLD
- * @typedef {string} Link
+ * @typedef {API.Link} Link
  */
+/** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
+/** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
 
 /**
  * @typedef {object} ClientOptions
- * @property {string} serviceDID - The DID of the service to talk to.
+ * @property {API.DID} serviceDID - The DID of the service to talk to.
  * @property {string} serviceURL - The URL of the service to talk to.
  * @property {string} accessURL - The URL of the access service.
- * @property {string} accessDID - The DID of the access service.
+ * @property {API.DID} accessDID - The DID of the access service.
  * @property {Map<string, any>} settings - A map/db of settings to use for the client.
  */
 
-const wssInightsUrl =
-  'wss://bur1whjtc7.execute-api.us-east-1.amazonaws.com/staging'; //staging url
-const insightsAPI = 'https://rwj50bhvk9.execute-api.us-east-1.amazonaws.com';
-
+/**
+ * Create a promise that resolves in ms.
+ * @async
+ * @param {number} ms - The number of milliseconds to sleep for.
+ * @returns {Promise<void>}
+ */
 async function sleep(ms) {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+    setTimeout(resolve, ms)
+  })
 }
 
+/**
+ * @async
+ * @param {UCAN.JWT} input
+ * @returns {Promise<API.Delegation|Failure>}
+ */
 export const importToken = async (input) => {
   try {
-    const ucan = UCAN.parse(input);
-    const root = await UCAN.write(ucan);
-    return Delegation.create({ root });
+    const ucan = UCAN.parse(input)
+    const root = await UCAN.write(ucan)
+    return Delegation.create({ root })
   } catch (error) {
-    return new Failure(String(error));
+    return new Failure(String(error))
   }
-};
+}
 
+/**
+ * @param {ClientOptions} options
+ * @returns Client
+ */
 export function createClient(options) {
-  return new Client(options);
+  return new Client(options)
+}
+
+const DefaultClientOptions = {
+  /** @type {API.DID} */
+  accessDID: 'did:',
+  accessURL: '',
+  /** @type {API.DID} */
+  serviceDID: 'did:',
+  serviceURL: '',
+  settings: new Map(),
 }
 
 class Client {
@@ -50,40 +76,46 @@ class Client {
    * Create an instance of the w3 client.
    * @param {ClientOptions} options
    */
-  constructor({ serviceDID, serviceURL, accessURL, accessDID, settings }) {
-    this.serviceURL = new URL(serviceURL);
-    this.serviceDID = serviceDID;
+  constructor({
+    serviceDID,
+    serviceURL,
+    accessURL,
+    accessDID,
+    settings,
+  } = DefaultClientOptions) {
+    this.serviceURL = new URL(serviceURL)
+    this.serviceDID = serviceDID
 
-    this.accessURL = new URL(accessURL);
-    this.accessDID = accessDID;
-    this.settings = settings;
+    this.accessURL = new URL(accessURL)
+    this.accessDID = accessDID
+    this.settings = settings
 
-    this.client = Store.connect({
+    this.storeClient = Store.connect({
       id: this.serviceDID,
       url: this.serviceURL,
       fetch,
-    });
+    })
 
     this.accessClient = Access.connect({
       id: this.accessDID,
       url: this.accessURL,
       fetch,
-    });
+    })
   }
 
   /**
    * Get the current "machine" DID
    * @async
-   * @returns {Promise<Authority>}
+   * @returns {Promise<API.SigningAuthority>}
    */
   async identity() {
-    const secret = this.settings.get('secret') || new Uint8Array();
+    const secret = this.settings.get('secret') || null
     try {
-      return SigningAuthority.decode(secret);
+      return SigningAuthority.decode(secret)
     } catch (error) {
-      const id = await SigningAuthority.generate();
-      this.settings.set('secret', SigningAuthority.encode(id));
-      return id;
+      const id = await SigningAuthority.generate()
+      this.settings.set('secret', SigningAuthority.encode(id))
+      return id
     }
   }
 
@@ -92,18 +124,18 @@ class Client {
    * @param {string|undefined} email - The email address to register with.
    */
   async register(email) {
-    let savedEmail = this.settings.get('email');
+    const savedEmail = this.settings.get('email')
     if (!savedEmail) {
-      this.settings.set('email', email);
-    } else if (email != savedEmail) {
+      this.settings.set('email', email)
+    } else if (email !== savedEmail) {
       throw new Error(
         'Trying to register a second email, this is not supported yet.'
-      );
+      )
     }
     if (!email) {
-      throw `Invalid email provided for registration: ${email}`;
+      throw new Error(`Invalid email provided for registration: ${email}`)
     }
-    const issuer = await this.identity();
+    const issuer = await this.identity()
     const result = await capabilities.identityValidate
       .invoke({
         issuer,
@@ -113,147 +145,214 @@ class Client {
           as: `mailto:${email}`,
         },
       })
-      .execute(this.accessClient);
+      .execute(this.accessClient)
 
-    const proofString = await this.checkRegistration();
-    const ucan = UCAN.parse(proofString);
-    const root = await UCAN.write(ucan);
-    const proof = Delegation.create({ root });
+    const proofString = await this.checkRegistration()
+    const ucan = UCAN.parse(proofString)
+    const root = await UCAN.write(ucan)
+    const proof = Delegation.create({ root })
 
+    // TODO: this should be better.
+    // Use access API/client to do all of this.
+    const first = proof.capabilities[0]
     const validate = await capabilities.identityRegister
       .invoke({
         issuer,
         audience: this.accessClient.id,
-        with: proof.capabilities[0].with,
+        // @ts-ignore
+        with: first.with,
         caveats: {
-          as: proof.capabilities[0].as,
+          // @ts-ignore
+          as: first.as,
         },
         proofs: [proof],
       })
-      .execute(this.accessClient);
+      .execute(this.accessClient)
 
     if (validate?.error) {
-      throw new Error(validate?.cause?.message);
+      // @ts-ignore
+      throw new Error(validate?.cause?.message)
     }
 
-    return `Email registered ${email}`;
+    return `Email registered ${email}`
   }
 
+  /**
+   * @async
+   * @throws {Error}
+   * @returns {Promise<UCAN.JWT>}
+   */
   async checkRegistration() {
-    const issuer = await this.identity();
-    let count = 0;
+    const issuer = await this.identity()
+    let count = 0
 
+    /**
+     * @async
+     * @throws {Error}
+     * @returns {Promise<UCAN.JWT>}
+     */
     const check = async () => {
       if (count > 100) {
-        throw new Error('Could not validate.');
+        throw new Error('Could not validate.')
       } else {
-        count++;
+        count++
         const result = await fetch(
           `${this.accessURL}validate?did=${issuer.did()}`
-        );
+        )
 
         if (!result.ok) {
-          await new Promise((resolve, reject) =>
-            setTimeout(() => resolve(), 1000)
-          );
-          return await check();
+          await sleep(1000)
+          return await check()
         } else {
-          return await result.text();
+          // @ts-ignore
+          return await result.text()
         }
       }
-    };
+    }
 
-    return await check();
+    return await check()
   }
 
+  /**
+   * @async
+   * @returns {Promise<Result>}
+   */
   async whoami() {
-    const issuer = await this.identity();
+    const issuer = await this.identity()
     return await capabilities.identityIdentify
       .invoke({
         issuer,
         audience: this.accessClient.id,
         with: issuer.did(),
       })
-      .execute(this.accessClient);
+      .execute(this.accessClient)
   }
 
   /**
    * List all of the uploads connected to this user.
+   * @async
+   * @returns {Promise<Result>}
    */
   async list() {
-    const id = await this.identity();
+    const id = await this.identity()
     return capabilities.storeList
       .invoke({
         issuer: id,
-        audience: this.client.id,
+        audience: this.storeClient.id,
         with: id.did(),
       })
-      .execute(this.client);
+      .execute(this.storeClient)
   }
 
   /**
-   * Upload a file by URL.
-   * @param {URL} url - the url to upload
+   * Upload a car via bytes.
+   * @async
+   * @param {Uint8Array} bytes - the url to upload
+   * @returns {Promise<strResult>}
    */
   async upload(bytes) {
     try {
-      const id = await this.identity();
-      const link = await CAR.codec.link(bytes);
+      const id = await this.identity()
+      const link = await CAR.codec.link(bytes)
       const result = await capabilities.storeAdd
         .invoke({
           issuer: id,
-          audience: this.client.id,
+          audience: this.storeClient.id,
           with: id.did(),
           caveats: {
             link,
           },
         })
-        .execute(this.client);
+        .execute(this.storeClient)
 
-      // Return early if it was already uploaded.
-      if (result.status === 'done') {
-        return `Car ${link} is added to ${result.with}`;
+      if (result?.error !== undefined) {
+        throw new Error(JSON.stringify(result))
       }
 
-      if (result.error) {
-        throw new Error(JSON.stringify(result));
+      const castResult =
+        /** @type {{status:string, with:API.DID, url:String, headers:HeadersInit}} */
+        (result)
+
+      // Return early if it was already uploaded.
+      if (castResult.status === 'done') {
+        return `Car ${link} is added to ${castResult.with}`
       }
 
       // Get the returned signed URL, and upload to it.
-      const response = await fetch(result.url, {
+      const response = await fetch(castResult.url, {
         method: 'PUT',
         mode: 'cors',
         body: bytes,
-        headers: result.headers,
-      });
+        headers: castResult.headers,
+      })
 
       if (!response.ok) {
         throw new Error(
           `Failed uploading ${link} with ${response.status}: ${response.statusText}`
-        );
+        )
       }
-      return `Succeeded uploading ${link} with ${response.status}: ${response.statusText}`;
+      return `Succeeded uploading ${link} with ${response.status}: ${response.statusText}`
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      throw error
     }
   }
 
   /**
    * Remove an uploaded file by CID
-   * @param {string} link - the CID to remove
+   * @param {API.Link} link - the CID to remove
    */
   async remove(link) {
-    const id = await this.identity();
+    const id = await this.identity()
     return await capabilities.storeRemove
       .invoke({
         issuer: id,
-        audience: this.client.id,
+        audience: this.storeClient.id,
         with: id.did(),
         caveats: {
           link,
         },
       })
-      .execute(this.client);
+      .execute(this.storeClient)
+  }
+
+  /**
+   * Remove an uploaded file by CID
+   * @param {Link} root - the CID to link as root.
+   * @param {Array<Link>} links - the CIDs to link as 'children'
+   */
+  //   async linkroot(root, links) {
+  //     const id = await this.identity()
+  //     return await Store.LinkRoot.invoke({
+  //       issuer: id,
+  //       audience: this.storeClient.id,
+  //       with: id.did(),
+  //       caveats: {
+  //         rootLink: root,
+  //         links,
+  //       },
+  //     }).execute(this.storeClient)
+  //   }
+
+  /**
+   * @async
+   * @param {Link} link - the CID to get insights for
+   * @returns {Promise<object>}
+   */
+  async insights(link) {
+    await fetch(insightsAPI + '/insights', {
+      method: 'POST',
+      body: JSON.stringify({ cid: link }),
+    }).then((res) => res.json())
+
+    await sleep(1000)
+
+    const insights = await fetch(insightsAPI + '/insights', {
+      method: 'POST',
+      body: JSON.stringify({ cid: link }),
+    }).then((res) => res.json())
+
+    return insights
   }
 
   /**
@@ -285,27 +384,6 @@ class Client {
   //       });
   //     });
   //   }
-
-  /**
-   * @async
-   * @param {Link} link - the CID to get insights for
-   * @returns {Promise<object>}
-   */
-  async insights(link) {
-    const processResponse = await fetch(insightsAPI + '/insights', {
-      method: 'POST',
-      body: JSON.stringify({ cid: link }),
-    }).then((res) => res.json());
-
-    await sleep(1000);
-
-    const insights = await fetch(insightsAPI + '/insights', {
-      method: 'POST',
-      body: JSON.stringify({ cid: link }),
-    }).then((res) => res.json());
-
-    return insights;
-  }
 }
 
-export default Client;
+export default Client
