@@ -6,7 +6,7 @@ import { Failure } from '@ucanto/validator'
 import * as capabilities from '@web3-storage/access/capabilities'
 import fetch from 'cross-fetch'
 
-import * as CAR from '../patches/@ucanto/transport/car'
+import * as CAR from '../patches/@ucanto/transport/car.js'
 import { insightsAPI } from './defaults.js'
 import { Access, Store } from './store/index.js'
 
