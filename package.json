@@ -1,18 +1,18 @@
 {
   "name": "w3up-client",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "main": "src/index.js",
-  "types": "dist/types/src/index.d.ts",
+  "types": "types/src/index.d.ts",
   "files": [
     "src",
-    "dist"
+    "types"
   ],
   "scripts": {
     "build": "npm run build:api_docs && npm run build:types",
-    "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./dist/types",
+    "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./types",
     "build:api_docs": "jsdoc2md -f src/index.js > API.md",
     "test": "npm run typecheck && npm run prettier",
     "typecheck": "tsc --noEmit",
