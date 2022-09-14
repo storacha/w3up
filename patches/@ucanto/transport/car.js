@@ -1,6 +1,8 @@
-import * as API from '@ucanto/interface'
-import * as CAR from './car/codec.js'
+// @ts-nocheck
 import { Delegation } from '@ucanto/core'
+import * as API from '@ucanto/interface'
+
+import * as CAR from './car/codec.js'
 
 export { CAR as codec }
 
@@ -58,7 +60,7 @@ export const decode = async ({ headers, body }) => {
     invocations.push(
       Delegation.create({
         root,
-        blocks: /** @type {Map<string, API.Block>} */ (blocks),
+        blocks,
       })
     )
   }

@@ -1,14 +1,14 @@
-import varint from 'varint'
+// @ts-nocheck
+import * as CBOR from '@ipld/dag-cbor'
 import { Token, Type } from 'cborg'
 import { tokensToLength } from 'cborg/length'
-import * as CBOR from '@ipld/dag-cbor'
+import varint from 'varint'
 
 /**
- * @typedef {import('../api').CID} CID
- * @typedef {import('../api').Block} Block
- * @typedef {import('../api').CarBufferWriter} Writer
- * @typedef {import('../api').CarBufferWriterOptions} Options
- * @typedef {import('./coding').CarEncoder} CarEncoder
+ * @typedef {import('@ipld/car/api').CID} CID
+ * @typedef {import('@ipld/car/api').Block} Block
+ * @typedef {import('@ipld/car/api').CarBufferWriter} Writer
+ * @typedef {import('@ipld/car/api').CarBufferWriterOptions} Options
  */
 
 /**
@@ -76,7 +76,7 @@ class CarBufferWriter {
 /**
  * @param {CarBufferWriter} writer
  * @param {CID} root
- * @param {{resize?:boolean}} [options]
+ * @param {{resize?:boolean}} options
  */
 export const addRoot = (writer, root, { resize = false } = {}) => {
   const { bytes, headerSize, byteOffset, roots } = writer
