@@ -1,9 +1,9 @@
-export function toIterable<T> (readable: ReadableStream<T>): AsyncIterable<T> {
+export function toIterable<T> (readable: ReadableStream<T> | NodeJS.ReadableStream): AsyncIterable<T> {
   // @ts-expect-error
   if (readable[Symbol.asyncIterator] != null) return readable
 
   // Browser ReadableStream
-  if (readable.getReader != null) {
+  if ('getReader' in readable) {
     return (async function * () {
       const reader = readable.getReader()
 

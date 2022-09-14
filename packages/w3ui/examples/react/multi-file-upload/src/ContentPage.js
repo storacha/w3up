@@ -19,13 +19,13 @@ export function ContentPage () {
     try {
       // Build a DAG from the file data to obtain the root CID.
       setStatus('encoding')
-      const { root, car } = files.length > 1
+      const { cid, car } = files.length > 1
         ? await uploader.encodeDirectory(files)
         : wrapInDirectory
           ? await uploader.encodeDirectory(files)
           : await uploader.encodeFile(files[0])
 
-      setRootCid(root.toString())
+      setRootCid(cid.toString())
 
       // Upload the DAG to the service.
       setStatus('uploading')
