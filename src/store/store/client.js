@@ -1,12 +1,13 @@
-import * as API from '@ucanto/interface';
-import { Authority } from '@ucanto/authority';
-import * as CBOR from '@ucanto/transport/cbor';
-import * as HTTP from '@ucanto/transport/http';
-import * as Client from '@ucanto/client';
-import * as CAR from '../../../patches/@ucanto/transport/car';
-import webfetch from 'cross-fetch';
+import { Authority } from '@ucanto/authority'
+import * as Client from '@ucanto/client'
+import * as API from '@ucanto/interface'
+import * as CBOR from '@ucanto/transport/cbor'
+import * as HTTP from '@ucanto/transport/http'
+import webfetch from 'cross-fetch'
 
-export * from './capability.js';
+import * as CAR from '../../../patches/@ucanto/transport/car'
+
+export * from './capability.js'
 
 /**
  * @param {object} options
@@ -32,4 +33,4 @@ export const connect = ({
       fetch,
       method,
     }),
-  });
+  })
