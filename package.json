@@ -1,6 +1,6 @@
 {
   "name": "w3up-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
@@ -27,7 +27,8 @@
     "@ucanto/transport": "^0.7.0",
     "@ucanto/validator": "^0.6.0",
     "cross-fetch": "^3.1.5",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "@web3-storage/access": "^0.1.2-rc.2"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.3.0",

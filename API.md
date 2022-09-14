@@ -50,7 +50,6 @@
     * [.list()](#Client+list) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.upload(bytes)](#Client+upload) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
     * [.remove(link)](#Client+remove)
-    * [.linkroot(root, links)](#Client+linkroot)
     * [.insights(link)](#Client+insights) ⇒ <code>Promise.&lt;object&gt;</code>
 
 <a name="new_Client_new"></a>
@@ -119,18 +118,6 @@ Remove an uploaded file by CID
 | Param | Type | Description |
 | --- | --- | --- |
 | link | <code>API.Link</code> | the CID to remove |
-
-<a name="Client+linkroot"></a>
-
-### client.linkroot(root, links)
-Remove an uploaded file by CID
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| root | [<code>Link</code>](#Link) | the CID to link as root. |
-| links | [<code>Array.&lt;Link&gt;</code>](#Link) | the CIDs to link as 'children' |
 
 <a name="Client+insights"></a>
 

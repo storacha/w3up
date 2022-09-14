@@ -7,8 +7,6 @@ import webfetch from 'cross-fetch'
 
 import * as CAR from '../../../patches/@ucanto/transport/car'
 
-export * from './capability.js'
-
 /**
  * @param {object} options
  * @param {API.DID} options.id
