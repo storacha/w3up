@@ -1,7 +1,11 @@
 import * as UCAN from '@ipld/dag-ucan'
 import fetch from '@web-std/fetch'
 import pRetry from 'p-retry'
-import { identityRegister, identityValidate } from './capabilities.js'
+import {
+  identityIdentify,
+  identityRegister,
+  identityValidate,
+} from './capabilities.js'
 import { connection } from './connection.js'
 import * as Service from './service.js'
 // eslint-disable-next-line no-unused-vars
@@ -94,4 +98,28 @@ export async function pullRegisterDelegation(opts) {
   const proof = Delegation.create({ root })
 
   return proof
+}
+
+/**
+ *
+ * @param {import("./types").IdentifyOptions} opts
+ */
+export async function identify(opts) {
+  const conn = connection({
+    id: opts.issuer,
+    url: opts.url || Service.url,
+  })
+  const validate = identityIdentify.invoke({
+    audience: opts.audience || Service.identity,
+    issuer: opts.issuer,
+    with: opts.proof?.capabilities[0].with || opts.issuer.did(),
+    proofs: opts.proof && [opts.proof],
+  })
+  const out = await validate.execute(conn)
+
+  if (out?.error) {
+    throw out
+  }
+
+  return out
 }

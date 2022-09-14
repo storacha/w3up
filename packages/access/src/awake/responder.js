@@ -1,5 +1,3 @@
-import { EcdhKeypair } from '../crypto/p256-ecdh.js'
-import { Channel } from './channel.js'
 import * as UCAN from '@ipld/dag-ucan'
 import * as DID from '@ipld/dag-ucan/did'
 import * as u8 from 'uint8arrays'
@@ -10,7 +8,7 @@ import * as Messages from './messages.js'
 export class Responder {
   /**
    * @param {{
-   * channel: Channel;
+   * channel: import('./types').Channel;
    * agent: import('@ucanto/interface').SigningAuthority;
    * }} opts
    */
@@ -18,81 +16,86 @@ export class Responder {
     this.channel = opts.channel
     this.agent = opts.agent
     this.did = opts.agent.did()
-    this.challengeMsg = undefined
-    // this.channel.subscribe(
-    //   'awake/init',
-    //   (data) => {
-    //     console.log('yoo', data)
-    //   },
-    //   true
-    // )
-  }
-
-  /**
-   * @param {URL} host
-   * @param {import('@ucanto/interface').SigningAuthority} agent
-   */
-  static async create(host, agent) {
-    const channel = new Channel(host, agent.did(), await EcdhKeypair.create())
-
-    return new Responder({
-      channel,
-      agent,
-    })
+    this.challenge = undefined
+    this.nextdid = undefined
+    this.audience = undefined
   }
 
   async bootstrap() {
     // step 2 - awake/init receive
-    const msg = await this.channel.awaitMessage('awake/init')
-    const requesterDID = msg.did
+    const msg = await this.channel.awaitInit()
+    this.nextdid = msg.did
 
     // step3 - awake/res send
     const ucan = await UCAN.issue({
       issuer: this.agent,
-      audience: DID.parse(requesterDID),
+      audience: this.nextdid,
+      // @ts-ignore
       capabilities: [],
       facts: [
         { 'awake/challenge': 'oob-pin' },
-        { 'awake/nextdid': await this.channel.did() },
+        // TODO: this should be rotated for the next step
+        { 'awake/nextdid': this.channel.keypair.did },
       ],
+      // TODO: proof for caps requested
     })
 
-    const encrypted = await this.channel.keypair.encryptForDid(
-      UCAN.format(ucan),
-      requesterDID
-    )
-
-    this.channel.awakeRes(await this.channel.did(), requesterDID, encrypted)
+    this.channel.sendRes(this.nextdid, ucan)
 
     // step 4 - awake/msg receive
-    const pinMsg = await this.channel.awaitMessage('awake/msg')
-    const decryptedMsg = await this.channel.keypair.decryptFromDid(
-      pinMsg.msg,
-      requesterDID
-    )
-
-    this.challengeMsg = Messages.PinChallengeMessage.parse(
-      JSON.parse(decryptedMsg)
-    )
+    const challengeMsg = await this.channel.awaitMsg(this.nextdid)
+    const { did, sig } = Messages.PinChallengeMessage.parse(challengeMsg.msg)
+    this.audience = DID.parse(did)
+    this.challenge = sig
   }
 
   /**
+   * Acknowledgment for the PIN challenge
+   *
    * @param {string} pin
    */
-  async challenge(pin) {
-    if (!this.challengeMsg) {
+  async ack(pin) {
+    if (!this.challenge || !this.nextdid || !this.audience) {
       throw new Error('No challenge active.')
     }
 
     // step 5 - awake/ack challenge confirmation and send
-    const sig = u8.fromString(this.challengeMsg.sig, 'base64')
-    const verifier = Keypair.Authority.parse(this.challengeMsg.did)
-    const payload = u8.fromString((await this.channel.did()) + pin)
+    const sig = u8.fromString(this.challenge, 'base64')
+    // @ts-ignore
+    const verifier = Keypair.Authority.parse(this.audience.did())
+    const payload = u8.fromString(this.channel.keypair.did + pin)
     const payloadHash = await sha256.encode(payload)
 
     // @ts-ignore
-    const result = await verifier.verify(payloadHash, sig)
-    // eslint-disable-next-line no-console
-    console.log(result)
+    if (!(await verifier.verify(payloadHash, sig))) {
+      throw new Error(
+        `Challenge failed: ${pin} is not valid for the current challenge.`
+      )
+    }
+
+    // challenge response
+    this.channel.sendMsg(this.nextdid, {
+      'awake/ack': this.did,
+    })
+  }
+
+  async awaitLink() {
+    if (!this.nextdid || !this.audience) {
+      throw new Error('No challenge active.')
+    }
+    // request caps
+    // @ts-ignore
+    // eslint-disable-next-line no-unused-vars
+    const reqCap = await this.channel.awaitMsg(this.nextdid)
+    const delegation = await UCAN.issue({
+      audience: this.audience,
+      issuer: this.agent,
+      capabilities: [{ with: this.agent.did(), can: 'identity/identify' }],
+      lifetimeInSeconds: 8_600_000,
+    })
+
+    this.channel.sendMsg(this.nextdid, {
+      delegation: UCAN.format(delegation),
+    })
   }
 }

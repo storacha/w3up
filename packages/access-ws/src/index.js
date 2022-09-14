@@ -26,6 +26,7 @@ const worker = {
   fetch: async (request, env, ctx) => {
     try {
       const rsp = await r.fetch(request, env, ctx)
+      // return rsp
       return corsHeaders(request, rsp)
     } catch (error) {
       return errorHandler(/** @type {Error} */ (error))

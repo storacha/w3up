@@ -22,7 +22,7 @@ export async function getService(env) {
   if (audience) {
     return { url, did: audience }
   } else {
-    const rsp = await undici.fetch(url + '/version')
+    const rsp = await undici.fetch(url + 'version')
 
     // @ts-ignore
     const { did } = await rsp.json()

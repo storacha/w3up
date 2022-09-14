@@ -1,7 +1,17 @@
 /* eslint-disable no-console */
 import WS from 'isomorphic-ws'
 import pWaitFor from 'p-wait-for'
+import * as UCAN from '@ipld/dag-ucan'
+import * as DID from '@ipld/dag-ucan/did'
+import { concatEncode } from './encoding.js'
+import * as Messages from './messages.js'
 
+const AWAKE_VERSION = '0.1.0'
+
+/**
+ * @typedef {import('./types').Channel} ChannelType
+ * @implements {ChannelType}
+ */
 export class Channel {
   /**
    * @param {string | URL} host
@@ -25,10 +35,6 @@ export class Channel {
     this.keypair = keypair
   }
 
-  did() {
-    return this.keypair.did()
-  }
-
   connect() {
     if (this.attemps > 10) {
       return
@@ -45,14 +51,14 @@ export class Channel {
         }, 1000)
         console.log('WebSocket closed, reconnecting:', event.code, event.reason)
       } else {
-        console.log('WebSocket closed:', event.code, event.reason)
+        // console.log('WebSocket closed:', event.code, event.reason)
       }
     })
     ws.addEventListener('error', (event) => {
-      console.log('WebSocket error')
+      console.log('WebSocket error', event)
     })
     ws.addEventListener('open', (event) => {
-      console.log('WebSocket open')
+      // console.log('WebSocket open')
       clearTimeout(this.timeout)
       this.timeout = undefined
       this.isOpen = true
@@ -77,18 +83,6 @@ export class Channel {
   }
 
   /**
-   * @param {any} data
-   */
-  async send(data) {
-    if (!this.ws) {
-      return console.log('ws closed')
-    }
-
-    await pWaitFor(() => this.isOpen)
-    this.ws.send(JSON.stringify(data))
-  }
-
-  /**
    * @param {number} [code]
    * @param {string | Buffer } [reason]
    */
@@ -99,6 +93,7 @@ export class Channel {
     this.isOpen = false
     this.forceClose = true
     this.ws.close(code, reason)
+    this.ws = undefined
   }
 
   /**
@@ -154,17 +149,83 @@ export class Channel {
   }
 
   /**
-   *
-   * @param {import('./types').MessageType} message
+   * @type {ChannelType['awaitInit']}
    */
-  async awaitMessage(message) {
+  async awaitInit() {
     return new Promise((resolve, reject) => {
-      this.onMessage = (
-        /** @type {{ type: import('./types').MessageType; }} */ msg
-      ) => {
-        if (msg.type === message) {
+      this.onMessage = (/** @type {import('./types').AwakeMessage} */ msg) => {
+        if (msg.type === 'awake/init') {
           this.onMessage = undefined
-          console.log('receive', message)
+          console.log('receive', msg.type)
+
+          const result = Messages.InitResponse.safeParse(msg)
+          if (result.success) {
+            const { data } = result
+            resolve({
+              awv: data.awv,
+              type: data.type,
+              did: DID.parse(data.did),
+              caps: /** @type {UCAN.Capabilities} */ (data.caps),
+            })
+          }
+        }
+      }
+    })
+  }
+
+  /**
+   * @type {ChannelType['awaitRes']}
+   */
+  async awaitRes() {
+    return new Promise((resolve, reject) => {
+      this.onMessage = async (
+        /** @type {import('./types').AwakeMessage} */ msg
+      ) => {
+        if (msg.type === 'awake/res') {
+          this.onMessage = undefined
+          console.log('receive res', msg.type)
+
+          const result = Messages.ResResponse.safeParse(msg)
+          if (result.success) {
+            const { data } = result
+            const decryptedMsg = await this.keypair.decryptFromDid(
+              data.msg,
+              // @ts-ignore just a string...
+              data.iss
+            )
+            resolve({
+              awv: data.awv,
+              type: data.type,
+              iss: DID.parse(data.iss),
+              aud: DID.parse(data.aud),
+              ucan: UCAN.parse(decryptedMsg),
+            })
+          }
+        }
+      }
+    })
+  }
+
+  /**
+   *
+   * @type {ChannelType['awaitMsg']}
+   */
+  awaitMsg(did) {
+    return new Promise((resolve, reject) => {
+      this.onMessage = async (
+        /** @type {import('./types').AwakeMsg} */ msg
+      ) => {
+        if (
+          msg.type === 'awake/msg' &&
+          msg.msg &&
+          typeof msg.msg === 'string'
+        ) {
+          this.onMessage = undefined
+
+          msg.msg = JSON.parse(
+            await this.keypair.decryptFromDid(msg.msg, did.did())
+          )
+          console.log('receive', msg.type)
           resolve(msg)
         }
       }
@@ -172,46 +233,58 @@ export class Channel {
   }
 
   /**
-   * @param {string} iss
-   * @param {string} aud
-   * @param {string} msg
+   * @param {any} data
    */
-  awakeRes(iss, aud, msg) {
-    console.log('send awake/res')
-    this.send({
-      awv: '0.1.0',
-      type: 'awake/res',
-      iss,
-      aud,
-      msg,
-    })
+  async send(data) {
+    if (!this.ws) {
+      throw new Error('Websocket is not active.')
+    }
+
+    await pWaitFor(() => this.isOpen)
+    this.ws.send(JSON.stringify(data))
   }
 
   /**
-   * @param {string} did
-   * @param {import('@ipld/dag-ucan').Capability[]} caps
+   * @type {ChannelType['sendInit']}
    */
-  awakeInit(did, caps) {
+  async sendInit(caps) {
     console.log('send awake/init')
     this.send({
-      awv: '0.1.0',
+      awv: AWAKE_VERSION,
       type: 'awake/init',
-      did,
+      did: this.keypair.did,
       caps,
     })
   }
 
   /**
-   * @param {any} id
-   * @param {any} msg
+   * @type {ChannelType['sendRes']}
    */
-  awakeMsg(id, msg) {
-    console.log('send awake/msg')
+  async sendRes(aud, ucan) {
+    console.log('send awake/res')
+
+    const msg = await this.keypair.encryptForDid(UCAN.format(ucan), aud.did())
     this.send({
-      awv: '0.1.0',
+      awv: AWAKE_VERSION,
+      type: 'awake/res',
+      iss: this.keypair.did,
+      aud: aud.did(),
+      msg,
+    })
+  }
+
+  /**
+   * @type {ChannelType['sendMsg']}
+   */
+  async sendMsg(did, msg) {
+    console.log('send awake/msg')
+    const id = await concatEncode([await this.keypair.pubkey(), did])
+
+    this.send({
+      awv: AWAKE_VERSION,
       type: 'awake/msg',
       id,
-      msg,
+      msg: await this.keypair.encryptForDid(JSON.stringify(msg), did.did()),
     })
   }
 }

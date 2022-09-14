@@ -7,8 +7,9 @@ import type {
   ResponseDecoder,
   ServiceMethod,
   SigningAuthority,
-  UCAN,
 } from '@ucanto/interface'
+
+import * as UCAN from '@ipld/dag-ucan'
 import type {
   IdentityIdentify,
   IdentityRegister,
@@ -34,7 +35,7 @@ export interface Service {
 
 export interface ValidateOptions {
   url?: URL
-  audience?: UCAN.Identity
+  audience?: UCAN.Principal
   issuer: SigningAuthority
   with?: UCAN.DID
   caveats: {
@@ -52,7 +53,7 @@ export interface ValidateOptions {
 
 export interface RegisterOptions {
   url?: URL
-  audience?: UCAN.Identity
+  audience?: UCAN.Principal
   issuer: SigningAuthority
   with?: `mailto:${string}`
   caveats?: {
@@ -66,6 +67,24 @@ export interface RegisterOptions {
 
   facts?: Fact[]
   proof: Delegation<[IdentityRegister]>
+}
+
+export interface IdentifyOptions {
+  url?: URL
+  audience?: UCAN.Principal
+  issuer: SigningAuthority
+  with?: `mailto:${string}`
+  caveats?: {
+    as: UCAN.DID
+  }
+  lifetimeInSeconds?: number
+  expiration?: number
+  notBefore?: number
+
+  nonce?: string
+
+  facts?: Fact[]
+  proof?: Delegation<[IdentityIdentify]>
 }
 
 export interface PullRegisterOptions {

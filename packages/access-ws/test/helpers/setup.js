@@ -26,4 +26,5 @@ export const mf = new Miniflare({
   sourceMap: true,
   bindings,
   modules: true,
+  log: console,
 })

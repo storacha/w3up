@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import * as Keypair from '@ucanto/authority'
 import fs from 'fs'
+import * as UCAN from '@ipld/dag-ucan'
 import ora from 'ora'
 import path from 'path'
 import sade from 'sade'
@@ -12,6 +13,9 @@ import { linkCmd } from './cmd-link.js'
 import { getConfig, NAME, pkg } from './config.js'
 import { getService } from './utils.js'
 import inquirer from 'inquirer'
+// eslint-disable-next-line no-unused-vars
+import * as Types from '@ucanto/interface'
+import { Delegation } from '@ucanto/server'
 
 const prog = sade(NAME)
 prog
@@ -79,11 +83,14 @@ prog
         process.exit(1)
       }
 
+      spinner.stopAndPersist()
       const { email } = await inquirer.prompt({
         type: 'input',
         name: 'email',
         message: 'Input your email to validate:',
       })
+
+      spinner.start()
 
       // @ts-ignore
       const issuer = Keypair.parse(config.get('private-key'))
@@ -92,7 +99,7 @@ prog
         url,
         issuer,
         caveats: {
-          as: email,
+          as: `mailto:${email}`,
         },
       })
 
@@ -164,6 +171,27 @@ prog
     const config = getConfig(opts.profile)
     console.log('Path:', config.path)
     console.log(JSON.stringify(config.store, undefined, 2))
+    const { audience, url } = await getService(opts.env)
+
+    /** @type {Types.UCAN.JWT<import('../capabilities-types').IdentityIdentify>} */
+    const jwt = /** @type {string} */ (config.get('delegation'))
+    let proof
+    if (jwt) {
+      const ucan = UCAN.parse(jwt)
+      const root = await UCAN.write(ucan)
+      /** @type {Types.Delegation<[import('../capabilities-types').IdentityIdentify]>} */
+      proof = Delegation.create({ root })
+    }
+
+    // @ts-ignore
+    const issuer = Keypair.parse(config.get('private-key'))
+    const out = await Access.identify({
+      audience,
+      url,
+      issuer,
+      proof,
+    })
+    console.log('Account:', out)
   })
 
 prog.command('link [channel]').describe('Link.').action(linkCmd)
