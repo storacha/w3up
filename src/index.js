@@ -2,6 +2,8 @@ import { SigningAuthority } from '@ucanto/authority'
 import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
 import { Failure } from '@ucanto/validator'
+// @ts-ignore
+import * as capabilities from '@web3-storage/access/capabilities'
 import fetch from 'cross-fetch'
 
 import * as CAR from '../patches/@ucanto/transport/car'
@@ -134,14 +136,16 @@ class Client {
       throw new Error(`Invalid email provided for registration: ${email}`)
     }
     const issuer = await this.identity()
-    await Access.Validate.invoke({
-      issuer,
-      audience: this.accessClient.id,
-      with: issuer.did(),
-      caveats: {
-        as: `mailto:${email}`,
-      },
-    }).execute(this.accessClient)
+    const result = await capabilities.identityValidate
+      .invoke({
+        issuer,
+        audience: this.accessClient.id,
+        with: issuer.did(),
+        caveats: {
+          as: `mailto:${email}`,
+        },
+      })
+      .execute(this.accessClient)
 
     const proofString = await this.checkRegistration()
     const ucan = UCAN.parse(proofString)
@@ -151,18 +155,19 @@ class Client {
     // TODO: this should be better.
     // Use access API/client to do all of this.
     const first = proof.capabilities[0]
-
-    const validate = await Access.Register.invoke({
-      issuer,
-      audience: this.accessClient.id,
-      // @ts-ignore
-      with: first.with,
-      caveats: {
+    const validate = await capabilities.identityRegister
+      .invoke({
+        issuer,
+        audience: this.accessClient.id,
         // @ts-ignore
-        as: first.as,
-      },
-      proofs: [proof],
-    }).execute(this.accessClient)
+        with: first.with,
+        caveats: {
+          // @ts-ignore
+          as: first.as,
+        },
+        proofs: [proof],
+      })
+      .execute(this.accessClient)
 
     if (validate?.error) {
       // @ts-ignore
@@ -214,11 +219,13 @@ class Client {
    */
   async whoami() {
     const issuer = await this.identity()
-    return await Access.Identify.invoke({
-      issuer,
-      audience: this.accessClient.id,
-      with: issuer.did(),
-    }).execute(this.accessClient)
+    return await capabilities.identityIdentify
+      .invoke({
+        issuer,
+        audience: this.accessClient.id,
+        with: issuer.did(),
+      })
+      .execute(this.accessClient)
   }
 
   /**
@@ -228,11 +235,13 @@ class Client {
    */
   async list() {
     const id = await this.identity()
-    return Store.List.invoke({
-      issuer: id,
-      audience: this.storeClient.id,
-      with: id.did(),
-    }).execute(this.storeClient)
+    return capabilities.storeList
+      .invoke({
+        issuer: id,
+        audience: this.storeClient.id,
+        with: id.did(),
+      })
+      .execute(this.storeClient)
   }
 
   /**
@@ -245,14 +254,16 @@ class Client {
     try {
       const id = await this.identity()
       const link = await CAR.codec.link(bytes)
-      const result = await Store.Add.invoke({
-        issuer: id,
-        audience: this.storeClient.id,
-        with: id.did(),
-        caveats: {
-          link,
-        },
-      }).execute(this.storeClient)
+      const result = await capabilities.storeAdd
+        .invoke({
+          issuer: id,
+          audience: this.storeClient.id,
+          with: id.did(),
+          caveats: {
+            link,
+          },
+        })
+        .execute(this.storeClient)
 
       if (result?.error !== undefined) {
         throw new Error(JSON.stringify(result))
@@ -293,14 +304,16 @@ class Client {
    */
   async remove(link) {
     const id = await this.identity()
-    return await Store.Remove.invoke({
-      issuer: id,
-      audience: this.storeClient.id,
-      with: id.did(),
-      caveats: {
-        link,
-      },
-    }).execute(this.storeClient)
+    return await capabilities.storeRemove
+      .invoke({
+        issuer: id,
+        audience: this.storeClient.id,
+        with: id.did(),
+        caveats: {
+          link,
+        },
+      })
+      .execute(this.storeClient)
   }
 
   /**
@@ -308,18 +321,18 @@ class Client {
    * @param {Link} root - the CID to link as root.
    * @param {Array<Link>} links - the CIDs to link as 'children'
    */
-  async linkroot(root, links) {
-    const id = await this.identity()
-    return await Store.LinkRoot.invoke({
-      issuer: id,
-      audience: this.storeClient.id,
-      with: id.did(),
-      caveats: {
-        rootLink: root,
-        links,
-      },
-    }).execute(this.storeClient)
-  }
+  //   async linkroot(root, links) {
+  //     const id = await this.identity()
+  //     return await Store.LinkRoot.invoke({
+  //       issuer: id,
+  //       audience: this.storeClient.id,
+  //       with: id.did(),
+  //       caveats: {
+  //         rootLink: root,
+  //         links,
+  //       },
+  //     }).execute(this.storeClient)
+  //   }
 
   /**
    * @async
