@@ -8,7 +8,8 @@
   "types": "types/src/index.d.ts",
   "files": [
     "src",
-    "types"
+    "types",
+    "patches"
   ],
   "scripts": {
     "build": "npm run build:api_docs && npm run build:types",
