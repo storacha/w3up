@@ -50,5 +50,8 @@
     ],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
