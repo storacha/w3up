@@ -3,8 +3,8 @@ name: Run tests
 on: [pull_request]
 
 jobs:
-  semantic_release:
-    name: semantic_release
+  tests:
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -13,4 +13,5 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+      - run: yarn install --immutable --immutable-cache --check-cache
       - run: npm test
