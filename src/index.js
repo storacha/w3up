@@ -9,6 +9,7 @@ import fetch from 'cross-fetch'
 import * as CAR from '../patches/@ucanto/transport/car.js'
 import { insightsAPI } from './defaults.js'
 import { Access, Store } from './store/index.js'
+import { sleep } from './utils.js'
 
 /**
  * A string representing a link to another object in IPLD
@@ -25,18 +26,6 @@ import { Access, Store } from './store/index.js'
  * @property {API.DID} accessDID - The DID of the access service.
  * @property {Map<string, any>} settings - A map/db of settings to use for the client.
  */
-
-/**
- * Create a promise that resolves in ms.
- * @async
- * @param {number} ms - The number of milliseconds to sleep for.
- * @returns {Promise<void>}
- */
-async function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
 
 /**
  * @async
@@ -199,7 +188,7 @@ class Client {
         const result = await fetch(
           `${this.accessURL}validate?did=${issuer.did()}`,
           {
-            mode: 'cors'
+            mode: 'cors',
           }
         )
 
