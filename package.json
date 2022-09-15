@@ -27,15 +27,16 @@
     "@ucanto/interface": "^0.7.0",
     "@ucanto/transport": "^0.7.0",
     "@ucanto/validator": "^0.6.0",
+    "@web3-storage/access": "^0.1.2-rc.2",
     "cross-fetch": "^3.1.5",
-    "tweetnacl": "^1.0.3",
-    "@web3-storage/access": "^0.1.2-rc.2"
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.3.0",
     "ipjs": "^5.2.0",
     "jsdoc-to-markdown": "^7.1.1",
     "prettier": "^2.7.1",
+    "semantic-release": "^19.0.5",
     "standard": "^17.0.0",
     "tsc": "^2.0.4",
     "typescript": "^4.8.3"
