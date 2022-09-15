@@ -1,0 +1,16 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    paths:
+      - '**.js'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Run tests
+        run: yarn test
