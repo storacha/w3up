@@ -26,7 +26,7 @@ export async function encodeFile (blob: Blob): Promise<EncodeResult> {
   unixfsWriter.close().catch(err => console.error('failed to close UnixFS writer stream', err))
 
   // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
-  return { cid, car: createCar(cid, readable) }
+  return { cid, car: createCar(cid, toIterable(readable)) }
 }
 
 class UnixFsFileBuilder {
@@ -94,16 +94,16 @@ export async function encodeDirectory (files: Iterable<File>): Promise<EncodeRes
   unixfsWriter.close().catch(err => console.error('failed to close UnixFS writer stream', err))
 
   // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
-  return { cid, car: createCar(cid, readable) }
+  return { cid, car: createCar(cid, toIterable(readable)) }
 }
 
-function createCar (rootCid: CID, blocks: ReadableStream<UnixFS.Block>): AsyncIterable<Uint8Array> {
+function createCar (rootCid: CID, blocks: AsyncIterable<UnixFS.Block>): AsyncIterable<Uint8Array> {
   const { writer, out } = CarWriter.create(rootCid)
 
   let error: Error
   void (async () => {
     try {
-      for await (const block of toIterable(blocks)) {
+      for await (const block of blocks) {
         // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
         await writer.put(block)
       }
