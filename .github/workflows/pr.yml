@@ -2,7 +2,6 @@ name: Run tests
 
 on: [pull_request]
 
-  workflow_dispatch:
 jobs:
   semantic_release:
     name: semantic_release
