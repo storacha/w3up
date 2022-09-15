@@ -15,9 +15,6 @@
 ## Functions
 
 <dl>
-<dt><a href="#sleep">sleep(ms)</a> ⇒ <code>Promise.&lt;void&gt;</code></dt>
-<dd><p>Create a promise that resolves in ms.</p>
-</dd>
 <dt><a href="#createClient">createClient(options)</a> ⇒</dt>
 <dd></dd>
 </dl>
@@ -136,17 +133,6 @@ Remove an uploaded file by CID
 | Param | Type |
 | --- | --- |
 | input | <code>UCAN.JWT</code> | 
-
-<a name="sleep"></a>
-
-## sleep(ms) ⇒ <code>Promise.&lt;void&gt;</code>
-Create a promise that resolves in ms.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ms | <code>number</code> | The number of milliseconds to sleep for. |
 
 <a name="createClient"></a>
 
