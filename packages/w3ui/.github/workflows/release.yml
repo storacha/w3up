@@ -24,6 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/test
-      - run: npm publish --access=public --workspaces
+      - run: npm publish --workspaces
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
