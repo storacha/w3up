@@ -42,6 +42,7 @@
     "@vitest/coverage-c8": "^0.23.2",
     "ipjs": "^5.2.0",
     "jsdoc-to-markdown": "^7.1.1",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.5",
     "simple-git-hooks": "^2.8.0",
@@ -51,7 +52,7 @@
     "vitest": "^0.23.2"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "npx lint-staged && build"
   },
   "lint-staged": {
     "*.*": "prettier --ignore-unknown --write"
