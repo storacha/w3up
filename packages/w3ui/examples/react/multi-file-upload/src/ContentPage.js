@@ -51,12 +51,12 @@ export function ContentPage () {
   }
 
   return (
-    <form onSubmit={handleUploadSubmit} className='w-25'>
+    <form onSubmit={handleUploadSubmit}>
       <div className='mb3'>
-        <label htmlFor='files' className='db mb2'>File:</label>
+        <label htmlFor='files' className='db mb2'>Files:</label>
         {allowDirectory
-          ? <input id='file' className='db pa2 w-100' type='file' webkitdirectory='true' onChange={e => setFiles(Array.from(e.target.files))} required />
-          : <input id='file' className='db pa2 w-100' type='file' multiple onChange={e => setFiles(Array.from(e.target.files))} required />}
+          ? <input id='file' className='db pa2 w-100 ba br2' type='file' webkitdirectory='true' onChange={e => setFiles(Array.from(e.target.files))} required />
+          : <input id='file' className='db pa2 w-100 ba br2' type='file' multiple onChange={e => setFiles(Array.from(e.target.files))} required />}
       </div>
       <div className='mb3'>
         <label>
@@ -78,39 +78,35 @@ export function ContentPage () {
 }
 
 const Encoding = ({ files }) => (
-  <div className='w-50'>
-    <div className='flex items-center'>
-      <div className='spinner mr3' />
-      <div>
-        <p>Building DAG for {files.length > 1 ? `${files.length} files` : files[0].name}....</p>
-      </div>
+  <div className='flex items-center'>
+    <div className='spinner mr3 flex-none' />
+    <div className='flex-auto'>
+      <p className='truncate'>Building DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
     </div>
   </div>
 )
 
 const Uploading = ({ files, cid }) => (
-  <div className='w-50'>
-    <div className='flex items-center'>
-      <div className='spinner mr3' />
-      <div>
-        <p>Uploading DAG for {files.length > 1 ? `${files.length} files` : files[0].name}....</p>
-        <p>CID: <code>{cid}</code></p>
-      </div>
+  <div className='flex items-center'>
+    <div className='spinner mr3 flex-none' />
+    <div className='flex-auto'>
+      <p className='truncate'>Uploading DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
+      <p className='f6 code truncate'>{cid}</p>
     </div>
   </div>
 )
 
 const Errored = ({ error }) => (
-  <div className='w-50'>
+  <div>
     <h1>⚠️ Error: failed to upload file(s): {error.message}</h1>
     <p>Check the browser console for details.</p>
   </div>
 )
 
 const Done = ({ files, cid }) => (
-  <div className='w-50'>
+  <div>
     <h1>Done!</h1>
-    <p>CID: <code>{cid}</code></p>
+    <p className='f6 code truncate'>{cid}</p>
     <p><a href={`https://w3s.link/ipfs/${cid}`}>View {files.length > 1 ? 'files' : files[0].name} on IPFS Gateway.</a></p>
   </div>
 )

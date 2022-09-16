@@ -13,7 +13,7 @@ export default function ContentPage () {
       <div>
         <h1>Welcome {identity.email}!</h1>
         <p className=''>You are logged in!!</p>
-        <form onSubmit={e => { e.preventDefault(); unloadIdentity() }} className='w-25'>
+        <form onSubmit={e => { e.preventDefault(); unloadIdentity() }}>
           <button type='submit' className='ph3 pv2'>Sign Out</button>
         </form>
       </div>
@@ -39,7 +39,7 @@ export default function ContentPage () {
   }
 
   return (
-    <form onSubmit={handleRegisterSubmit} className='w-25'>
+    <form onSubmit={handleRegisterSubmit}>
       <div className='db mb3'>
         <label htmlFor='email' className='db mb2'>Email address:</label>
         <input id='email' className='db pa2 w-100' type='email' value={email} onChange={e => setEmail(e.target.value)} required />

@@ -13,7 +13,9 @@ function App () {
             <header className='mb3'>
               <img src={logo} width='125' alt='logo' />
             </header>
-            <ContentPage />
+            <div className='w-90 w-50-ns mw6'>
+              <ContentPage />
+            </div>
           </div>
         </IdentityLoader>
       </UploaderProvider>

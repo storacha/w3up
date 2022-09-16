@@ -44,10 +44,10 @@ export function ContentPage () {
   }
 
   return (
-    <form onSubmit={handleUploadSubmit} className='w-25'>
+    <form onSubmit={handleUploadSubmit}>
       <div className='db mb3'>
         <label htmlFor='file' className='db mb2'>File:</label>
-        <input id='file' className='db pa2 w-100' type='file' onChange={e => setFile(e.target.files[0])} required />
+        <input id='file' className='db pa2 w-100 ba br2' type='file' onChange={e => setFile(e.target.files[0])} required />
       </div>
       <button type='submit' className='ph3 pv2'>Upload</button>
     </form>
@@ -55,39 +55,35 @@ export function ContentPage () {
 }
 
 const Encoding = ({ file }) => (
-  <div className='w-50'>
-    <div className='flex items-center'>
-      <div className='spinner mr3' />
-      <div>
-        <p>Building DAG for {file.name}....</p>
-      </div>
+  <div className='flex items-center'>
+    <div className='spinner mr3 flex-none' />
+    <div className='flex-auto'>
+      <p className='truncate'>Building DAG for {file.name}</p>
     </div>
   </div>
 )
 
 const Uploading = ({ file, cid }) => (
-  <div className='w-50'>
-    <div className='flex items-center'>
-      <div className='spinner mr3' />
-      <div>
-        <p>Uploading DAG for {file.name}....</p>
-        <p>CID: <code>{cid}</code></p>
-      </div>
+  <div className='flex items-center'>
+    <div className='spinner mr3 flex-none' />
+    <div className='flex-auto'>
+      <p className='truncate'>Uploading DAG for {file.name}</p>
+      <p className='f6 code truncate'>{cid}</p>
     </div>
   </div>
 )
 
 const Errored = ({ error }) => (
-  <div className='w-50'>
+  <div>
     <h1>⚠️ Error: failed to upload file: {error.message}</h1>
     <p>Check the browser console for details.</p>
   </div>
 )
 
 const Done = ({ file, cid }) => (
-  <div className='w-50'>
+  <div>
     <h1>Done!</h1>
-    <p>CID: <code>{cid}</code></p>
+    <p className='f6 code truncate'>{cid}</p>
     <p><a href={`https://w3s.link/ipfs/${cid}`}>View {file.name} on IPFS Gateway.</a></p>
   </div>
 )
