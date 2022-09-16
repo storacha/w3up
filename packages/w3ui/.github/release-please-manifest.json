@@ -1,0 +1,9 @@
+{
+  "separate-pull-requests": true,
+  "packages": {
+    "packages/react-uploader": {},
+    "packages/react-wallet": {},
+    "packages/uploader-core": {},
+    "packages/wallet-core": {}
+  }
+}
