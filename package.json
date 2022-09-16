@@ -22,7 +22,6 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier -c '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
-    "prettier:fix": "prettier --write '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "test:coverage": "vitest run --coverage",
     "test:dev": "vitest"
   },
@@ -55,6 +54,6 @@
     "pre-commit": "npx lint-staged && npm run build"
   },
   "lint-staged": {
-    "*.*": "prettier --ignore-unknown --write"
+    "*.*": "prettier --write '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore"
   }
 }
