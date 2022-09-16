@@ -6,6 +6,9 @@
   "type": "module",
   "main": "src/index.js",
   "types": "types/src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "src",
     "types",
@@ -19,9 +22,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier -c '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
-    "prettier:fix": "prettier --write '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "test:coverage": "vitest run --coverage",
-    "test:dev": "vitest"
+    "test:dev": "vitest",
+    "setup:hooks": "simple-git-hooks"
   },
   "dependencies": {
     "@ucanto/authority": "^0.5.0",
@@ -39,24 +42,19 @@
     "@vitest/coverage-c8": "^0.23.2",
     "ipjs": "^5.2.0",
     "jsdoc-to-markdown": "^7.1.1",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.5",
+    "simple-git-hooks": "^2.8.0",
     "standard": "^17.0.0",
     "tsc": "^2.0.4",
     "typescript": "^4.8.3",
     "vitest": "^0.23.2"
   },
-  "prettier": {
-    "trailingComma": "es5",
-    "semi": false,
-    "singleQuote": true,
-    "importOrder": [
-      "^[./]"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged && npm run build && git add API.md && git add types"
   },
-  "publishConfig": {
-    "access": "public"
+  "lint-staged": {
+    "*.*": "prettier --write '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore"
   }
 }
