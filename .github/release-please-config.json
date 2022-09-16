@@ -3,6 +3,8 @@
   "packages": {
     "packages/access": {},
     "packages/access-api": {},
-    "packages/wallet": {}
+    "packages/wallet": {},
+    "packages/store": {},
+    "packages/sigv4": {}
   }
 }

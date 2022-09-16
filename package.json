@@ -9,14 +9,16 @@
     "format": "prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "format:check": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "clean": "rm -rf docs node_modules pnpm-lock.yaml packages/*/{pnpm-lock.yaml,coverage,.nyc_output,dist,node_modules,.next}",
-    "lint": "pnpm -r run lint",
-    "test": "pnpm -r run test"
+    "lint": "pnpm -r --if-present run lint",
+    "test": "pnpm -r --if-present run test",
+    "check": "pnpm -r --if-present run check"
   },
   "devDependencies": {
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
     "simple-git-hooks": "^2.8.0",
-    "wrangler": "^2.0.28"
+    "wrangler": "^2.0.28",
+    "typescript": "^4.8.3"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
