@@ -1,0 +1,78 @@
+name: w3-store
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'packages/sigv4/**'
+      - 'packages/store/**'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'packages/sigv4/**'
+      - 'packages/store/**'
+      - '.github/workflows/w3-store.yml'
+jobs:
+  check:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 16
+        project:
+          - store
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        uses: pnpm/action-setup@v2.0.1
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: true
+
+      - name: Typecheck
+        uses: gozala/typescript-error-reporter-action@v1.0.8
+        with:
+          project: packages/${{matrix.project}}/tsconfig.json
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version:
+          - 16
+        os:
+          - ubuntu-latest
+        project:
+          - store
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        uses: pnpm/action-setup@v2.0.1
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: true
+
+      - name: Test (Node)
+        run: pnpm run --if-present --dir packages/${{matrix.project}} test:node
