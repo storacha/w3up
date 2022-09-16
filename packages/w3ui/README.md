@@ -14,6 +14,10 @@
 
 [beta.ui.web3.storage](https://beta.ui.web3.storage)
 
+### API
+
+[API reference documentation](docs/README.md).
+
 ### Examples
 
 #### React

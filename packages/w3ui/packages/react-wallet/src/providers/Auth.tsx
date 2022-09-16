@@ -4,6 +4,9 @@ import { registerIdentity, loadDefaultIdentity, loadIdentity, storeIdentity, rem
 export { AuthStatus }
 
 export interface AuthContextValue {
+  /**
+   * The current identity
+   */
   identity?: Identity
   /**
    * Load the default identity from secure storage.
