@@ -11,6 +11,8 @@ module.exports = class extends JSDOMEnvironment {
       TextEncoder,
       TextDecoder,
       TransformStream,
+      ArrayBuffer: ArrayBuffer,
+      Uint8Array: Uint8Array,
       Blob,
       File
     })
