@@ -16,15 +16,15 @@
 
 ### API
 
-[API reference documentation](docs/README.md).
+[API Reference](https://github.com/web3-storage/w3ui/blob/main/docs/README.md)
 
 ### Examples
 
 #### React
 
-* [Sign up / Sign in](examples/react/sign-up-in)
-* [Single File Upload](examples/react/file-upload)
-* [Multiple File Upload](examples/react/multi-file-upload)
+* [Sign up / Sign in](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in)
+* [Single File Upload](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload)
+* [Multiple File Upload](https://github.com/web3-storage/w3ui/tree/main/examples/react/multi-file-upload)
 
 ## Contributing
 
