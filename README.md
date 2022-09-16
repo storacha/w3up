@@ -11,13 +11,13 @@
 You can add `w3up-client` to your JavaScript or TypeScript project with `npm`:
 
 ```sh
-npm install git@github.com:web3-storage/w3up-client.git
+npm install @web3-storage/w3up-client
 ```
 
 Or with `yarn`:
 
 ```
-yarn add git@github.com:web3-storage/w3up-client.git
+yarn add @web3-storage/w3up-client
 
 ```
 
