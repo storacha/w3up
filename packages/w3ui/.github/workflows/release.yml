@@ -8,6 +8,7 @@ jobs:
     name: Release Please
     runs-on: ubuntu-latest
     outputs:
+      releases_created: ${{steps.release.outputs.releases_created}}
       paths_released: ${{steps.release.outputs.paths_released}}
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v3
@@ -18,10 +19,11 @@ jobs:
   publish:
     name: Publish
     needs: release
+    if: ${{ needs.release.outputs.releases_created }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/test
-      - run: npm publish --workspaces --access public
+      - run: npm publish --access=public --workspaces
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
