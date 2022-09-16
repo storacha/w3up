@@ -60,7 +60,6 @@ export async function registerIdentity (email: string, options: RegisterIdentity
     const proof = await Access.pullRegisterDelegation({
       issuer: signingAuthority,
       url: accessApiUrl,
-      // @ts-expect-error
       signal: options.signal
     })
 
