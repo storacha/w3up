@@ -1,6 +1,5 @@
 import * as Provider from './provider.js'
 import { SigningAuthority, Authority } from '@ucanto/authority'
-export * from './capability.js'
 import * as API from '../type.js'
 import * as Service from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
@@ -8,6 +7,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import webfetch from '@web-std/fetch'
 import * as Client from '@ucanto/client'
+export * from './capability.js'
 
 /**
  * @param {object} options
