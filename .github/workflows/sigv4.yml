@@ -10,7 +10,8 @@ on:
       - 'packages/sigv4/**'
   pull_request:
     branches:
-      - packages
+      - main
+      - master
     paths:
       - 'packages/sigv4/**'
 jobs:
