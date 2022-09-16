@@ -1,6 +1,9 @@
 {
-  "packages/react-uploader": "0.0.0",
-  "packages/react-wallet": "0.0.0",
-  "packages/uploader-core": "0.0.0",
-  "packages/wallet-core": "0.0.0"
+  "separate-pull-requests": true,
+  "packages": {
+    "packages/react-uploader": {},
+    "packages/react-wallet": {},
+    "packages/uploader-core": {},
+    "packages/wallet-core": {}
+  }
 }
