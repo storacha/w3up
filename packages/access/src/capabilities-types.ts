@@ -10,6 +10,11 @@ export interface StoreRemove extends Capability<'store/remove', DID> {
 
 export interface StoreList extends Capability<'store/list', DID> {}
 
+export interface StoreLinkCars extends Capability<'store/linkCars', DID> {
+  root?: Link
+  links?: Link[]
+}
+
 export interface IdentityValidate extends Capability<'identity/validate', DID> {
   as: `mailto:${string}`
 }

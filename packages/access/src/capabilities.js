@@ -1,4 +1,5 @@
 import { Link, Failure, capability, URI } from '@ucanto/server'
+import * as Links from './decoder/links.js'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -35,7 +36,24 @@ export const storeList = capability({
   },
 })
 
-export const store = storeAdd.or(storeRemove).or(storeList)
+export const storeLinkCars = capability({
+  can: 'store/linkcars',
+  with: URI.match({ protocol: 'did:' }),
+  caveats: {
+    rootLink: Link.match({}),
+    links: Links.match({}),
+  },
+  derives: (claimed, delegated) => {
+    if (claimed.uri.href !== delegated.uri.href) {
+      return new Failure(
+        `Expected 'with: "${delegated.uri.href}"' instead got '${claimed.uri.href}'`
+      )
+    }
+    return true
+  },
+})
+
+export const store = storeAdd.or(storeRemove).or(storeList).or(storeLinkCars)
 
 export const identityValidate = capability({
   can: 'identity/validate',
