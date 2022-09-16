@@ -6,6 +6,9 @@
   "type": "module",
   "main": "src/index.js",
   "types": "types/src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "src",
     "types",
@@ -41,22 +44,16 @@
     "jsdoc-to-markdown": "^7.1.1",
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.5",
+    "simple-git-hooks": "^2.8.0",
     "standard": "^17.0.0",
     "tsc": "^2.0.4",
     "typescript": "^4.8.3",
     "vitest": "^0.23.2"
   },
-  "prettier": {
-    "trailingComma": "es5",
-    "semi": false,
-    "singleQuote": true,
-    "importOrder": [
-      "^[./]"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
   },
-  "publishConfig": {
-    "access": "public"
+  "lint-staged": {
+    "*.*": "prettier --ignore-unknown --write"
   }
 }
