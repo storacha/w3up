@@ -7,7 +7,7 @@ import * as capabilities from '@web3-storage/access/capabilities'
 import fetch from 'cross-fetch'
 
 import * as CAR from '../patches/@ucanto/transport/car.js'
-import { insightsAPI } from './defaults.js'
+import * as defaults from './defaults.js'
 import { Access, Store } from './store/index.js'
 import { sleep } from './utils.js'
 
@@ -52,11 +52,11 @@ export function createClient(options) {
 
 const DefaultClientOptions = {
   /** @type {API.DID} */
-  accessDID: 'did:',
-  accessURL: '',
+  accessDID: defaults.ACCESS_DID,
+  accessURL: defaults.ACCESS_URL,
   /** @type {API.DID} */
-  serviceDID: 'did:',
-  serviceURL: '',
+  serviceDID: defaults.W3_STORE_DID,
+  serviceURL: defaults.SERVICE_URL,
   settings: new Map(),
 }
 
@@ -332,14 +332,14 @@ class Client {
    * @returns {Promise<object>}
    */
   async insights(link) {
-    await fetch(insightsAPI + '/insights', {
+    await fetch(defaults.insightsAPI + '/insights', {
       method: 'POST',
       body: JSON.stringify({ cid: link }),
     }).then((res) => res.json())
 
     await sleep(1000)
 
-    const insights = await fetch(insightsAPI + '/insights', {
+    const insights = await fetch(defaults.insightsAPI + '/insights', {
       method: 'POST',
       body: JSON.stringify({ cid: link }),
     }).then((res) => res.json())
