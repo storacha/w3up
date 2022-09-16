@@ -5,7 +5,6 @@ import type {
   Resource,
   Failure,
 } from '@ucanto/server'
-import type { API, URI } from '@ucanto/interface'
 import type { ServiceError } from './error'
 
 export interface Identity {

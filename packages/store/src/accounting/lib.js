@@ -7,7 +7,7 @@ import * as API from '../type.js'
  * set(id:API.DID, value:CARSet):API.Await<unknown>
  * get(id:API.DID): API.Await<CARSet|undefined>
  * }} MetadataStore
- * @param {{db?:MetadataStore, cars?:FileStore}} [options]
+ * @param {{db?:MetadataStore, cars?:FileStore}} options
  * @returns {API.Accounting.Provider}
  */
 export const create = ({ db = new Map(), cars = new Map() } = {}) => ({
