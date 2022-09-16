@@ -14,16 +14,14 @@ import * as ReactUploader from '@w3ui/react-uploader'
 
 ## Exports
 
-* [UploaderProvider](#uploaderprovider)
-* [useUploader](#useuploader)
+* [`UploaderProvider`](#uploaderprovider)
+* [`useUploader`](#useuploader)
 
 ---
 
 ### `UploaderProvider`
 
-Provider for an `Uploader` which allows uploads to the service. Note that this
-provider uses [`useAuth`](./react-wallet#useauth) and provides an `uploader`
-only when a current identity is loaded.
+Provider for an `Uploader` which allows uploads to the service. Note that this provider uses [`useAuth`](./react-wallet#useauth) and provides an `uploader` only when a current identity is loaded.
 
 Example:
 

@@ -14,11 +14,11 @@ import * as WalletCore from '@w3ui/wallet-core'
 
 ## Exports
 
-* [loadDefaultIdentity](#loaddefaultidentity)
-* [loadIdentity](#loadidentity)
-* [registerIdentity](#registerrdentity)
-* [removeIdentity](#removeidentity)
-* [storeIdentity](#storeidentity)
+* [`loadDefaultIdentity`](#loaddefaultidentity)
+* [`loadIdentity`](#loadidentity)
+* [`registerIdentity`](#registerrdentity)
+* [`removeIdentity`](#removeidentity)
+* [`storeIdentity`](#storeidentity)
 
 ---
 

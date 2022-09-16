@@ -14,8 +14,8 @@ import * as ReactWallet from '@w3ui/react-wallet'
 
 ## Exports
 
-* [AuthProvider](#authprovider)
-* [useAuth](#useauth)
+* [`AuthProvider`](#authprovider)
+* [`useAuth`](#useauth)
 
 ---
 

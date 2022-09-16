@@ -14,9 +14,9 @@ import * as UploaderCore from '@w3ui/uploader-core'
 
 ## Exports
 
-* [encodeDirectory](#encodedirectory)
-* [encodeFile](#encodefile)
-* [uploadCarBytes](#uploadcarbytes)
+* [`encodeDirectory`](#encodedirectory)
+* [`encodeFile`](#encodefile)
+* [`uploadCarBytes`](#uploadcarbytes)
 
 ---
 
