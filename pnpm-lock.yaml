@@ -7,11 +7,13 @@ importers:
       lint-staged: ^13.0.3
       prettier: 2.7.1
       simple-git-hooks: ^2.8.0
+      typescript: ^4.8.3
       wrangler: ^2.0.28
     devDependencies:
       lint-staged: 13.0.3
       prettier: 2.7.1
       simple-git-hooks: 2.8.0
+      typescript: 4.8.3
       wrangler: 2.0.28
 
   packages/access:
@@ -183,7 +185,7 @@ importers:
       mocha: ^9.2.2
       multiformats: ^9.7.0
       playwright-test: ^7.3.0
-      typescript: ^4.7.2
+      typescript: ^4.8.3
     dependencies:
       '@ucanto/client': 0.6.0
       '@ucanto/interface': 0.7.0
@@ -202,7 +204,7 @@ importers:
       chai-subset: 1.6.0
       mocha: 9.2.2
       playwright-test: 7.4.1
-      typescript: 4.8.2
+      typescript: 4.8.3
 
   packages/wallet:
     specifiers:
@@ -6725,6 +6727,12 @@ packages:
 
   /typescript/4.8.2:
     resolution: {integrity: sha512-C0I1UsrrDHo2fYI5oaCGbSejwX4ch+9Y5jTQELvovfmFkK3HHSZJB8MSJcWLmCUBzQBchCrZ9rMRV6GuNrvGtw==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: true
+
+  /typescript/4.8.3:
+    resolution: {integrity: sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
