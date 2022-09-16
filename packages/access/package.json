@@ -13,6 +13,7 @@
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
+    "check": "tsc --build",
     "test": "mocha",
     "testw": "watch 'pnpm test' src test --interval 1",
     "rc": "npm version prerelease --preid rc"

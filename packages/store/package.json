@@ -24,9 +24,9 @@
     "testw": "watch 'pnpm test' src test --interval 1"
   },
   "dependencies": {
-    "@ucanto/server": "^0.6.0",
-    "@ucanto/client": "^0.5.0",
-    "@ucanto/interface": "^0.6.0",
+    "@ucanto/server": "^0.7.0",
+    "@ucanto/client": "^0.6.0",
+    "@ucanto/interface": "^0.7.0",
     "multiformats": "^9.7.0",
     "@web3-storage/sigv4": "^1.0.0",
     "@web-std/fetch": "^4.1.0"
