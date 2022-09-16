@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.0](https://github.com/web3-storage/ucan-protocol/compare/access-v0.1.1...access-v0.2.0) (2022-09-16)
+
+
+### Features
+
+* abortable pullRegisterDelegation ([#56](https://github.com/web3-storage/ucan-protocol/issues/56)) ([adc0568](https://github.com/web3-storage/ucan-protocol/commit/adc0568e9f521d978b9886f483c42e61d27515b6))
+* **access-api:** new email template ([cc19320](https://github.com/web3-storage/ucan-protocol/commit/cc193202e385d8079144aa90e989af07cf743b0b))
+* fail validate for register email and add metrics ([0916ba6](https://github.com/web3-storage/ucan-protocol/commit/0916ba6bda8ad46ccc4f6bb0c6f4a48dd99db0c8))
+* update deps ([d276375](https://github.com/web3-storage/ucan-protocol/commit/d2763750159ad56132f0b002ff5f50cc36fce20c))
+
+
+### Bug Fixes
+
+* add analytics to staging and prod ([14941d9](https://github.com/web3-storage/ucan-protocol/commit/14941d901e48e92896cc962b3e93488731afa381))
+* new email for notifications ([57b6845](https://github.com/web3-storage/ucan-protocol/commit/57b6845a56f534505eeabdf5ab2e20f8b37c9532))
+* temporary patch to allow fetch usage in browser ([#57](https://github.com/web3-storage/ucan-protocol/issues/57)) ([beff06e](https://github.com/web3-storage/ucan-protocol/commit/beff06ea5f4b0adb08f6fce59422373d818c3b9e))
+
 ## [0.1.1](https://github.com/web3-storage/ucan-protocol/compare/access-v0.1.0...access-v0.1.1) (2022-08-25)
 
 
