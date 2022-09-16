@@ -5,6 +5,7 @@ on:
       - main
 jobs:
   release:
+    name: Release Please
     runs-on: ubuntu-latest
     outputs:
       paths_released: ${{steps.release.outputs.paths_released}}
@@ -12,11 +13,12 @@ jobs:
       - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
         with:
-          token: ${{secrets.GH_TOKEN}}
+          token: ${{secrets.GITHUB_TOKEN}}
           command: manifest
           config-file: .github/release-please-config.json
           manifest-file: .github/release-please-manifest.json
   publish:
+    name: Publish
     needs: release
     runs-on: ubuntu-latest
     steps:
