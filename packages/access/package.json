@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "0.1.2-rc.2",
+  "version": "0.2.0",
   "description": "w3access SDK",
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
