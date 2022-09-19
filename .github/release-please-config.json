@@ -5,6 +5,8 @@
     "packages/access-api": {},
     "packages/wallet": {},
     "packages/store": {},
-    "packages/sigv4": {}
+    "packages/sigv4": {},
+    "packages/voucher": {},
+    "packages/account": {}
   }
 }
