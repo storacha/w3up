@@ -19,11 +19,14 @@ jobs:
   publish:
     name: Publish
     needs: release
-    if: ${{ needs.release.outputs.releases_created }}
+    if: ${{needs.release.outputs.releases_created}}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path_released: ${{needs.release.outputs.paths_released}}
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/test
-      - run: npm publish --workspaces
+      - run: npm publish --workspace ${{matrix.path_released}}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
