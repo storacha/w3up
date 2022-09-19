@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.0.1...wallet-core-v1.1.0) (2022-09-19)
+
+
+### Features
+
+* base for the wallet-core doc ([3190d13](https://github.com/web3-storage/w3ui/commit/3190d138e415b35a424d94e57b00f97d2d3d3e78))
+
 ## [1.0.1](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.0.0...wallet-core-v1.0.1) (2022-09-19)
 
 
