@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        path_released: ${{needs.release.outputs.paths_released}}
+        path_released: ${{fromJson(needs.release.outputs.paths_released)}}
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/test
