@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/uploader-core-v1.0.0...uploader-core-v1.0.1) (2022-09-19)
+
+
+### Bug Fixes
+
+* add license to published packages ([957178d](https://github.com/web3-storage/w3ui/commit/957178d72cb0051c2f798793a314acd23b8f3beb))
+
 ## 1.0.0 (2022-09-19)
 
 
