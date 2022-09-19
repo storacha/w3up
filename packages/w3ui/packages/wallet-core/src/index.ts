@@ -17,7 +17,13 @@ export interface Identity {
 }
 
 export enum AuthStatus {
+  /**
+   * Identity loaded.
+   */
   SignedIn,
+  /**
+   * Not authorized.
+   */
   SignedOut,
   /**
    * Email verification email has been sent.
