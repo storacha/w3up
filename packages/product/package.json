@@ -1,5 +1,5 @@
 {
-  "name": "w3-voucher",
+  "name": "w3-product",
   "description": "web3.storage voucher protocol",
   "version": "0.0.1",
   "types": "./dist/src/lib.d.ts",
@@ -31,8 +31,7 @@
     "@web-std/fetch": "^4.1.0",
     "@ucanto/transport": "^0.7.0",
     "@ucanto/authority": "^0.5.0",
-    "@ucanto/core": "^0.6.0",
-    "w3-product": "^0.0.1"
+    "@ucanto/core": "^0.6.0"
   },
   "devDependencies": {
     "typescript": "^4.8.3",

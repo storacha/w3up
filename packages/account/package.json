@@ -1,6 +1,6 @@
 {
-  "name": "w3-voucher",
-  "description": "web3.storage voucher protocol",
+  "name": "w3-account",
+  "description": "web3.storage account protocol",
   "version": "0.0.1",
   "types": "./dist/src/lib.d.ts",
   "main": "./src/lib.js",
