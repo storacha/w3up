@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/test
-      - name: npm publish
+      - name: Run npm publish
         run: |
           cd ${{ matrix.path_released }}
           npm install
