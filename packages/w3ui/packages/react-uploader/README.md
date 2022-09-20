@@ -1,16 +1,16 @@
-# uploader-core
+# react-uploader
 
-W3UI uploader core.
+React adapter for W3UI uploader.
 
 ## Install
 
 ```sh
-npm install @w3ui/uploader-core
+npm install @w3ui/react-uploader
 ```
 
 ## Usage
 
-[API Reference](https://github.com/web3-storage/w3ui/blob/main/docs/uploader-core.md)
+[API Reference](https://github.com/web3-storage/w3ui/blob/main/docs/react-uploader.md)
 
 ## Contributing
 

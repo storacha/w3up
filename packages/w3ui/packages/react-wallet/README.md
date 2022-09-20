@@ -1,16 +1,16 @@
-# uploader-core
+# react-wallet
 
-W3UI uploader core.
+React adapter for W3UI wallet.
 
 ## Install
 
 ```sh
-npm install @w3ui/uploader-core
+npm install @w3ui/react-wallet
 ```
 
 ## Usage
 
-[API Reference](https://github.com/web3-storage/w3ui/blob/main/docs/uploader-core.md)
+[API Reference](https://github.com/web3-storage/w3ui/blob/main/docs/react-wallet.md)
 
 ## Contributing
 
