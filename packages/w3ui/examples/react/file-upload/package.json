@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@w3ui/react-wallet": "^0.0.0",
-    "@w3ui/react-uploader": "^0.0.0",
+    "@w3ui/react-wallet": "^1.0.0",
+    "@w3ui/react-uploader": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1"
