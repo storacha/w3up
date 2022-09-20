@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v1.0.1...uploader-core-v1.1.0) (2022-09-20)
+
+
+### Features
+
+* add README for packages ([6d1690b](https://github.com/web3-storage/w3ui/commit/6d1690b3ba557a95c4203f6f22fe5c6700626766)), closes [#26](https://github.com/web3-storage/w3ui/issues/26)
+* base for uploader core doc ([7a19b77](https://github.com/web3-storage/w3ui/commit/7a19b77e2d2fbc599ad2cb3aa4e3e9ec800514a0))
+
 ## [1.0.1](https://github.com/web3-storage/w3ui/compare/uploader-core-v1.0.0...uploader-core-v1.0.1) (2022-09-19)
 
 

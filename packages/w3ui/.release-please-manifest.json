@@ -1,6 +1,6 @@
 {
   "packages/react-uploader": "0.0.0",
   "packages/react-wallet": "0.0.0",
-  "packages/uploader-core": "1.0.1",
+  "packages/uploader-core": "1.1.0",
   "packages/wallet-core": "1.2.0"
 }
