@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.1.0...wallet-core-v1.2.0) (2022-09-20)
+
+
+### Features
+
+* add README for packages ([6d1690b](https://github.com/web3-storage/w3ui/commit/6d1690b3ba557a95c4203f6f22fe5c6700626766)), closes [#26](https://github.com/web3-storage/w3ui/issues/26)
+
 ## [1.1.0](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.0.1...wallet-core-v1.1.0) (2022-09-19)
 
 
