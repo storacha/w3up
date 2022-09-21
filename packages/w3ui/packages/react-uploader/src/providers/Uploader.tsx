@@ -33,7 +33,7 @@ export function UploaderProvider ({ children }: UploaderProviderProps): ReactNod
             chunks.push(chunk)
           }
           const bytes = new Uint8Array(await new Blob(chunks).arrayBuffer())
-          await uploadCarBytes(identity.signingAuthority, bytes)
+          await uploadCarBytes(identity.signingPrincipal, bytes)
         }
       })
     }

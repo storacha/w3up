@@ -24,9 +24,9 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/wallet-core",
   "dependencies": {
-    "@ucanto/authority": "^0.5.0",
-    "@ucanto/interface": "^0.7.0",
-    "@web3-storage/access": "^0.2.0",
+    "@ucanto/interface": "^1.0.0",
+    "@ucanto/principal": "^1.0.1",
+    "@web3-storage/access": "^1.0.0",
     "multiformats": "^9.8.1"
   }
 }

@@ -38,7 +38,7 @@ Example:
 ```js
 const identity = await loadDefaultIdentity()
 if (identity) {
-  console.log(`DID: ${identity.signingAuthority.did()}`)
+  console.log(`DID: ${identity.signingPrincipal.did()}`)
 } else {
   console.log('No identity registered')
 }
@@ -57,7 +57,7 @@ Example:
 ```js
 const identity = await loadIdentity('test@example.com')
 if (identity) {
-  console.log(`DID: ${identity.signingAuthority.did()}`)
+  console.log(`DID: ${identity.signingPrincipal.did()}`)
 } else {
   console.log('Not found')
 }
@@ -71,10 +71,25 @@ createIdentity ({ email: string }): Promise<UnverifiedIdentity>
 
 Create a new identity.
 
+Example:
+
+```js
+const unverifiedIdentity = await createIdentity('test@example.com')
+console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
+```
+
 ### `sendVerificationEmail`
 
 ```ts
 function sendVerificationEmail (identity: UnverifiedIdentity): Promise<void>
+```
+
+Example:
+
+```js
+const unverifiedIdentity = await createIdentity('test@example.com')
+console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
+await sendVerificationEmail(unverifiedIdentity)
 ```
 
 ### `waitIdentityVerification`
@@ -84,6 +99,18 @@ function waitIdentityVerification (identity: UnverifiedIdentity, options?: { sig
 ```
 
 Wait for identity verification to complete (user must click link in email).
+
+Example:
+
+```js
+const unverifiedIdentity = await createIdentity('test@example.com')
+console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
+await sendVerificationEmail(unverifiedIdentity)
+const controller = new AbortController()
+const { identity, proof } = await waitIdentityVerification(unverifiedIdentity, {
+  signal: controller.signal
+})
+```
 
 ### `registerIdentity`
 
@@ -97,7 +124,7 @@ Example:
 
 ```js
 const unverifiedIdentity = await createIdentity('test@example.com')
-console.log(`DID: ${unverifiedIdentity.signingAuthority.did()}`)
+console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
 await sendVerificationEmail(unverifiedIdentity)
 const controller = new AbortController()
 const { identity, proof } = await waitIdentityVerification(unverifiedIdentity, {

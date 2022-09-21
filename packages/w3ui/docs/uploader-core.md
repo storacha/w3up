@@ -58,7 +58,7 @@ const { cid, car } = await encodeFile(new File(['data'], 'doc.txt'))
 ### `uploadCarBytes`
 
 ```ts
-uploadCarBytes (authority: SigningAuthority, bytes: Uint8Array): Promise<void>
+uploadCarBytes (principal: SigningPrincipal, bytes: Uint8Array): Promise<void>
 ```
 
-Upload CAR bytes to the service. The signing authority can be obtained from [`registerIdentity`](./wallet-core#registeridentity).
+Upload CAR bytes to the service. The principal can be obtained from [`createIdentity`](./wallet-core#createidentity).
