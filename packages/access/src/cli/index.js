@@ -1,37 +1,27 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-import sade from 'sade'
 import fs from 'fs'
-import Conf from 'conf'
 import ora from 'ora'
-import * as Keypair from '@ucanto/authority'
-import * as Access from './index.js'
 import path from 'path'
-import undici from 'undici'
+import sade from 'sade'
 import { Transform } from 'stream'
+import undici from 'undici'
+import * as Access from '../index.js'
+import { linkCmd } from './cmd-link.js'
+import { getConfig, NAME, pkg } from './config.js'
+import { getService } from './utils.js'
+import inquirer from 'inquirer'
 // @ts-ignore
-import * as DID from '@ipld/dag-ucan/did'
-
-const NAME = 'w3access'
-const pkg = JSON.parse(
-  // eslint-disable-next-line unicorn/prefer-json-parse-buffer
-  fs.readFileSync(new URL('../package.json', import.meta.url), {
-    encoding: 'utf8',
-  })
-)
-const config = new Conf({
-  projectName: NAME,
-  projectSuffix: '',
-})
+// eslint-disable-next-line no-unused-vars
+import * as Types from '@ucanto/interface'
+import { Agent } from '../agent.js'
+import { SigningPrincipal } from '@ucanto/principal'
 
 const prog = sade(NAME)
-const url = process.env.URL || 'http://127.0.0.1:8787'
-const did = DID.parse(
-  // @ts-ignore - https://github.com/ipld/js-dag-ucan/issues/49
-  process.env.DID || 'did:key:z6MksafxoiEHyRF6RsorjrLrEyFQPFDdN6psxtAfEsRcvDqx'
-)
-
-prog.version(pkg.version)
+prog
+  .version(pkg.version)
+  .option('-p, --profile', 'Select the config profile to use.', 'main')
+  .option('--env', 'Env', 'production')
 
 prog
   .command('init')
@@ -39,6 +29,7 @@ prog
   .option('--force', 'Override config with new keypair.', false)
   .option('--private-key', 'Create new keypair with private key.')
   .action(async (opts) => {
+    const config = getConfig(opts.profile)
     const spinner = ora('Creating new keypair').start()
     try {
       const privateKey = /** @type {string | undefined} */ (
@@ -47,7 +38,7 @@ prog
 
       // Save or override keypair
       if (opts['private-key']) {
-        const kp = Keypair.parse(opts['private-key'])
+        const kp = SigningPrincipal.parse(opts['private-key'])
         config.set('private-key', opts['private-key'])
         config.set('did', kp.did())
         spinner.succeed(`Keypair created and saved to ${config.path}`)
@@ -56,8 +47,8 @@ prog
 
       // Create or override keypair
       if (opts.force || !privateKey) {
-        const kp = await Keypair.SigningAuthority.generate()
-        config.set('private-key', Keypair.format(kp))
+        const kp = await SigningPrincipal.generate()
+        config.set('private-key', SigningPrincipal.format(kp))
         config.set('did', kp.did())
         spinner.succeed(`Keypair created and saved to ${config.path}`)
         return
@@ -80,8 +71,9 @@ prog
 prog
   .command('register')
   .describe("Register with the service using config's keypair.")
-  .option('--url', 'Service URL.', url)
   .action(async (opts) => {
+    const config = getConfig(opts.profile)
+    const { audience, url } = await getService(opts.env)
     const spinner = ora('Registering with the service').start()
     try {
       if (!config.get('private-key')) {
@@ -91,15 +83,23 @@ prog
         process.exit(1)
       }
 
+      spinner.stopAndPersist()
+      const { email } = await inquirer.prompt({
+        type: 'input',
+        name: 'email',
+        message: 'Input your email to validate:',
+      })
+
+      spinner.start()
+
       // @ts-ignore
-      const issuer = Keypair.parse(config.get('private-key'))
-      const url = new URL(opts.url)
+      const issuer = SigningPrincipal.parse(config.get('private-key'))
       await Access.validate({
-        audience: did,
+        audience,
         url,
         issuer,
         caveats: {
-          as: 'mailto:hugo@dag.house',
+          as: `mailto:${email}`,
         },
       })
 
@@ -110,7 +110,7 @@ prog
       })
 
       await Access.register({
-        audience: did,
+        audience,
         url,
         issuer,
         proof,
@@ -128,8 +128,9 @@ prog
 prog
   .command('upload <file>')
   .describe("Register with the service using config's keypair.")
-  .option('--url', 'Service URL.', url)
   .action(async (file, opts) => {
+    const config = getConfig(opts.profile)
+    const { url } = await getService(opts.env)
     const spinner = ora('Registering with the service').start()
     try {
       if (!config.get('private-key')) {
@@ -138,9 +139,6 @@ prog
         )
         process.exit(1)
       }
-
-      // @ts-ignore
-      const url = new URL(opts.url)
 
       const stream = fs.createReadStream(path.resolve(file))
       const checkStream = new Transform({
@@ -169,16 +167,57 @@ prog
 prog
   .command('config')
   .describe('Print config file content.')
-  .action(async () => {
-    console.log(config.path)
-    try {
-      for (const [key, value] of config) {
-        console.log(`${key}: ${value}`)
+  .action(async (opts) => {
+    const config = getConfig(opts.profile)
+    console.log('Path:', config.path)
+    // console.log(JSON.stringify(config.store, undefined, 2))
+    // const { audience, url } = await getService(opts.env)
+
+    const data = config.get('agent')
+    if (data) {
+      // @ts-ignore
+      const agent = await Agent.import(SigningPrincipal, config.get('agent'))
+      console.log('did:', agent.did())
+
+      // Delegations received
+      console.log('Delegations received')
+      for (const del of agent.delegations.received) {
+        console.log('From:', del.issuer.did())
+        for (const cap of del.capabilities) {
+          console.log(cap)
+        }
       }
-    } catch (error) {
-      console.error(error)
-      process.exit(1)
+
+      // Delegations created
+      console.log('Delegations created')
+      for (const c of agent.delegations.created) {
+        console.log('To:', c.audience.did())
+        for (const cap of c.capabilities) {
+          console.log(cap)
+        }
+      }
     }
+
+    // const jwt = /** @type {string} */ (config.get('delegation'))
+    // let proof
+    // if (jwt) {
+    //   const ucan = UCAN.parse(jwt)
+    //   const root = await UCAN.write(ucan)
+    //   /** @type {Types.Delegation<[import('../capabilities-types').IdentityIdentify]>} */
+    //   proof = Delegation.create({ root })
+    // }
+
+    // // @ts-ignore
+    // const issuer = Keypair.parse(config.get('private-key'))
+    // const out = await Access.identify({
+    //   audience,
+    //   url,
+    //   issuer,
+    //   proof,
+    // })
+    // console.log('Account:', out)
   })
+
+prog.command('link [channel]').describe('Link.').action(linkCmd)
 
 prog.parse(process.argv)

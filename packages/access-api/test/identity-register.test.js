@@ -1,5 +1,5 @@
 import * as UCAN from '@ipld/dag-ucan'
-import { SigningAuthority } from '@ucanto/authority'
+import { SigningPrincipal } from '@ucanto/principal'
 import { Delegation } from '@ucanto/core'
 import { Accounts } from '../src/kvs/accounts.js'
 import * as caps from '@web3-storage/access/capabilities'
@@ -12,7 +12,7 @@ test.before((t) => {
 })
 
 test('register', async (t) => {
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
   const con = connection(kp)
 
   const validate = caps.identityValidate.invoke({
@@ -61,7 +61,7 @@ test('register', async (t) => {
 })
 
 test('identify', async (t) => {
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
   const con = connection(kp)
 
   const validate = caps.identityValidate.invoke({
@@ -77,12 +77,11 @@ test('identify', async (t) => {
   if (out?.error || !out) {
     return
   }
-  /** @type {Types.UCAN.JWT<import('@web3-storage/access/types').IdentityRegister>} */
+  /** @type {Types.UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */
   // @ts-ignore
   const jwt = out.delegation.replace('http://localhost:8787/validate?ucan=', '')
   const ucan = UCAN.parse(jwt)
   const root = await UCAN.write(ucan)
-  /** @type {Types.Delegation<[import('@web3-storage/access/types').IdentityRegister]>} */
   const proof = Delegation.create({ root })
 
   const register = caps.identityRegister.invoke({

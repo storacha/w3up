@@ -75,7 +75,6 @@ export const identityIdentify = store.derive({
   }),
   derives: equalWith,
 })
-
 export const identity = identityRegister
   .or(identityValidate)
   .or(identityIdentify)
