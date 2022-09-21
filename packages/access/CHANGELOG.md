@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/web3-storage/ucan-protocol/compare/access-v0.2.0...access-v1.0.0) (2022-09-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* awake (#66)
+
+### Features
+
+* awake ([#66](https://github.com/web3-storage/ucan-protocol/issues/66)) ([bb66f57](https://github.com/web3-storage/ucan-protocol/commit/bb66f5772049e3363a753ea5b336c2fa1e42911e))
+
 ## [0.2.0](https://github.com/web3-storage/ucan-protocol/compare/access-v0.1.1...access-v0.2.0) (2022-09-16)
 
 
