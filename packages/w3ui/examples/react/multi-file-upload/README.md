@@ -2,5 +2,28 @@
 
 To run this example:
 
-- `npm install`
-- `npm start`
+- Clone the w3ui repository and enter the `w3ui` directory
+
+  ```sh
+  git clone https://github.com/web3-storage/w3ui
+  cd w3ui
+  ```
+- Build the w3ui packages in the repo root directory
+
+  ```sh
+  npm install
+  npm run build
+  ```
+
+- Change to this example directory and install dependencies
+
+  ```sh
+  cd examples/react/multi-file-upload
+  npm install
+  ```
+
+- Run the example
+
+  ```sh
+  npm start
+  ```
