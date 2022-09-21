@@ -1,7 +1,8 @@
 import * as Keypair from '@ucanto/authority'
 import { Authority } from '@ucanto/authority'
-import type { SigningAuthority } from '@ucanto/interface'
+import type { Delegation, SigningAuthority } from '@ucanto/interface'
 import * as Access from '@web3-storage/access'
+import { IdentityRegister } from '@web3-storage/access/types'
 import { base64pad } from 'multiformats/bases/base64'
 
 // Production
@@ -13,7 +14,16 @@ const accessDid = Authority.parse('did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1
 
 export interface Identity {
   email: string
+  verified: boolean
   signingAuthority: SigningAuthority
+}
+
+export interface UnverifiedIdentity extends Identity {
+  verified: false
+}
+
+export interface VerifiedIdentity extends Identity {
+  verified: true
 }
 
 export enum AuthStatus {
@@ -31,11 +41,7 @@ export enum AuthStatus {
   EmailVerification
 }
 
-export interface RegisterIdentityOptions {
-  /**
-   * Called when auth status changes during registration.
-   */
-  onAuthStatusChange?: (status: AuthStatus) => void
+export interface WaitIdentityVerificationOptions {
   /**
    * An AbortSignal that can be used to cancel the registration/email validation.
    */
@@ -43,57 +49,81 @@ export interface RegisterIdentityOptions {
 }
 
 /**
- * Register a new identity and verify the email address.
+ * Create a brand new identity.
  */
-export async function registerIdentity (email: string, options: RegisterIdentityOptions = {}): Promise<Identity> {
+export async function createIdentity ({ email }: { email: string }): Promise<UnverifiedIdentity> {
   if (email == null || email === '') {
     throw new Error('missing email address')
   }
 
-  const onAuthStatusChange = options.onAuthStatusChange ?? (() => {})
   const signingAuthority = await Keypair.SigningAuthority.generate()
 
+  return { email, verified: false, signingAuthority }
+}
+
+/**
+ * Send verification email.
+ */
+export async function sendVerificationEmail (identity: UnverifiedIdentity): Promise<void> {
+  if (identity.verified) {
+    throw new Error('already verified')
+  }
   await Access.validate({
     audience: accessDid,
     url: accessApiUrl,
-    issuer: signingAuthority,
-    caveats: { as: `mailto:${email}` }
+    issuer: identity.signingAuthority,
+    caveats: { as: `mailto:${identity.email}` }
+  })
+}
+
+/**
+ * Wait for the passed identity to be verified.
+ */
+export async function waitIdentityVerification (identity: UnverifiedIdentity, options: WaitIdentityVerificationOptions = {}): Promise<{ identity: VerifiedIdentity, proof: Delegation<[IdentityRegister]> }> {
+  if (identity.verified) {
+    throw new Error('already verified')
+  }
+  const proof = await Access.pullRegisterDelegation({
+    issuer: identity.signingAuthority,
+    url: accessApiUrl,
+    signal: options.signal
   })
 
-  onAuthStatusChange(AuthStatus.EmailVerification)
-
-  try {
-    const proof = await Access.pullRegisterDelegation({
-      issuer: signingAuthority,
-      url: accessApiUrl,
-      signal: options.signal
-    })
-
-    await Access.register({
-      audience: accessDid,
-      url: accessApiUrl,
-      issuer: signingAuthority,
-      proof
-    })
-
-    onAuthStatusChange(AuthStatus.SignedIn)
-    return { email, signingAuthority }
-  } catch (err) {
-    onAuthStatusChange(AuthStatus.SignedOut)
-    throw err
+  return {
+    identity: {
+      email: identity.email,
+      verified: true,
+      signingAuthority: identity.signingAuthority
+    },
+    proof
   }
+}
+
+/**
+ * Register a verified identity with the service.
+ */
+export async function registerIdentity (identity: VerifiedIdentity, proof: Delegation<[IdentityRegister]>): Promise<void> {
+  if (!identity.verified) {
+    throw new Error('identity must be verified')
+  }
+  await Access.register({
+    audience: accessDid,
+    url: accessApiUrl,
+    issuer: identity.signingAuthority,
+    proof
+  })
 }
 
 /**
  * Load an identity from secure storage.
  */
 export async function loadIdentity ({ email }: Pick<Identity, 'email'>): Promise<Identity | undefined> {
-  const item = localStorage.getItem(`__w3ui_identity.mailto:${email}`)
+  const item = localStorage.getItem(`__w3ui_id.mailto:${email}`)
   if (item == null) return
   try {
-    const { email, signingAuthorityBytes } = JSON.parse(item)
+    const { email, verified, signingAuthorityBytes } = JSON.parse(item)
     const signingAuthority = Keypair.SigningAuthority.decode(base64pad.decode(signingAuthorityBytes))
-    return { email, signingAuthority }
+    return { email, verified, signingAuthority }
   } catch (err) {
     console.warn('failed to load identity', err)
   }
@@ -103,7 +133,7 @@ export async function loadIdentity ({ email }: Pick<Identity, 'email'>): Promise
  * Load the default identity from secure storage.
  */
 export async function loadDefaultIdentity (): Promise<Identity | undefined> {
-  const email = localStorage.getItem('__w3ui_identity.default.email')
+  const email = localStorage.getItem('__w3ui_id.default.email')
   if (email == null) return
   return await loadIdentity({ email })
 }
@@ -112,10 +142,10 @@ export async function loadDefaultIdentity (): Promise<Identity | undefined> {
  * Remove the passed identity from secure storage (if exists).
  */
 export async function removeIdentity (identity: Identity): Promise<void> {
-  localStorage.removeItem(`__w3ui_identity.mailto:${identity.email}`)
-  const defaultEmail = localStorage.getItem('__w3ui_identity.default.email')
+  localStorage.removeItem(`__w3ui_id.mailto:${identity.email}`)
+  const defaultEmail = localStorage.getItem('__w3ui_id.default.email')
   if (identity.email === defaultEmail) {
-    localStorage.removeItem('__w3ui_identity.default.email')
+    localStorage.removeItem('__w3ui_id.default.email')
   }
 }
 
@@ -124,11 +154,11 @@ export async function removeIdentity (identity: Identity): Promise<void> {
  * TODO: CURRENTLY DOES NOT SAVE SECURELY - SAVES TO LOCALSTORAGE
  */
 export async function storeIdentity (identity: Identity): Promise<void> {
-  const { email, signingAuthority } = identity
+  const { email, verified, signingAuthority } = identity
   const signingAuthorityBytes = base64pad.encode(signingAuthority.bytes)
   localStorage.setItem(
-    `__w3ui_identity.mailto:${email}`,
-    JSON.stringify({ email, signingAuthorityBytes })
+    `__w3ui_id.mailto:${email}`,
+    JSON.stringify({ email, verified, signingAuthorityBytes })
   )
-  localStorage.setItem('__w3ui_identity.default.email', email)
+  localStorage.setItem('__w3ui_id.default.email', email)
 }

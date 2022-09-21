@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAuth, AuthStatus } from '@w3ui/react-wallet'
 
 export default function Authenticator ({ children }) {
-  const { authStatus, registerAndStoreIdentity } = useAuth()
+  const { identity, authStatus, registerAndStoreIdentity, cancelRegisterAndStoreIdentity } = useAuth()
   const [email, setEmail] = useState('')
 
   if (authStatus === AuthStatus.SignedIn) {
@@ -13,7 +13,10 @@ export default function Authenticator ({ children }) {
     return (
       <div>
         <h1>Verify your email address!</h1>
-        <p>Click the link in the email we sent to {email} to sign in.</p>
+        <p>Click the link in the email we sent to {identity && identity.email} to sign in.</p>
+        <form onSubmit={e => { e.preventDefault(); cancelRegisterAndStoreIdentity() }}>
+          <button type='submit' className='ph3 pv2'>Cancel</button>
+        </form>
       </div>
     )
   }

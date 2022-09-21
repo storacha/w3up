@@ -16,7 +16,10 @@ import * as WalletCore from '@w3ui/wallet-core'
 
 * [`loadDefaultIdentity`](#loaddefaultidentity)
 * [`loadIdentity`](#loadidentity)
-* [`registerIdentity`](#registerrdentity)
+* [`createIdentity`](#createidentity)
+* [`sendVerificationEmail`](#sendverificationemail)
+* [`waitIdentityVerification`](#waitidentityverification)
+* [`registerIdentity`](#registeridentity)
 * [`removeIdentity`](#removeidentity)
 * [`storeIdentity`](#storeidentity)
 
@@ -60,23 +63,47 @@ if (identity) {
 }
 ```
 
+### `createIdentity`
+
+```ts
+createIdentity ({ email: string }): Promise<UnverifiedIdentity>
+```
+
+Create a new identity.
+
+### `sendVerificationEmail`
+
+```ts
+function sendVerificationEmail (identity: UnverifiedIdentity): Promise<void>
+```
+
+### `waitIdentityVerification`
+
+```ts
+function waitIdentityVerification (identity: UnverifiedIdentity, options?: { signal: AbortSignal }): Promise<{ identity: VerifiedIdentity, proof: Delegation<[IdentityRegister]> }>
+```
+
+Wait for identity verification to complete (user must click link in email).
+
 ### `registerIdentity`
 
 ```ts
-registerIdentity (email: string, options: RegisterIdentityOptions = {}): Promise<Identity>
+registerIdentity (identity: VerifiedIdentity, proof: Delegation<[IdentityRegister]>): Promise<void>
 ```
 
-Register a new identity and verify the email address. Use the `onAuthStatusChange` callback in `options` to be notified of progress. Additionally, an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) can be passed in options to cancel the registration/verification.
+Register a verified identity with the service, passing the proof of verification (a delegation allowing registration).
 
 Example:
 
 ```js
+const unverifiedIdentity = await createIdentity('test@example.com')
+console.log(`DID: ${unverifiedIdentity.signingAuthority.did()}`)
+await sendVerificationEmail(unverifiedIdentity)
 const controller = new AbortController()
-const { email, signingAuthority } = await registerIdentity('test@example.com', {
-  onAuthStatusChange: console.log,
+const { identity, proof } = await waitIdentityVerification(unverifiedIdentity, {
   signal: controller.signal
 })
-console.log(`DID: ${signingAuthority.did()}`)
+await registerIdentity(identity, proof)
 ```
 
 ### `removeIdentity`
