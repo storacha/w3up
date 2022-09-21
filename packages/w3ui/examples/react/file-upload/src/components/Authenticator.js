@@ -28,8 +28,8 @@ export default function Authenticator ({ children }) {
   }
 
   return (
-    <form onSubmit={handleRegisterSubmit} className='w-25'>
-      <div className='db mb3'>
+    <form onSubmit={handleRegisterSubmit}>
+      <div className='mb3'>
         <label htmlFor='email' className='db mb2'>Email address:</label>
         <input id='email' className='db pa2 w-100' type='email' value={email} onChange={e => setEmail(e.target.value)} required />
       </div>
