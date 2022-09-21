@@ -88,13 +88,14 @@ export function AuthProvider ({ children }: AuthProviderProps): ReactNode {
       }
     }
 
+    setIdentity(id)
+
     if (id.verified) { // nothing to do
       setAuthStatus(AuthStatus.SignedIn)
       return
     }
 
     const unverifiedIdentity = id as UnverifiedIdentity
-    setIdentity(unverifiedIdentity)
     await sendVerificationEmail(unverifiedIdentity)
     await verifyAndRegisterAndStore(unverifiedIdentity)
   }
