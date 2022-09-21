@@ -18,7 +18,7 @@ export class Accounts {
    *
    * @param {string} issuerDID
    * @param {string} resourceDID
-   * @param {import('@ucanto/interface').LinkedProof} proof
+   * @param {import('@ucanto/interface').Link} proof
    */
   async register(issuerDID, resourceDID, proof) {
     const did = await this.get(issuerDID)

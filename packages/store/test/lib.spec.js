@@ -2,24 +2,24 @@ import { test, assert } from './test.js'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
-import { SigningAuthority } from '@ucanto/authority'
+import { SigningPrincipal } from '@ucanto/principal'
 import { Store, Identity, Accounting } from '../src/lib.js'
 import { alice, bob, service as validator } from './fixtures.js'
 import HTTP from 'node:http'
 
 test('main', async () => {
   const s3 = new Map()
-  const w3 = await SigningAuthority.generate()
+  const w3 = await SigningPrincipal.generate()
 
   // start w3-identity service
   const identityService = Identity.create({
-    keypair: SigningAuthority.format(w3),
+    keypair: SigningPrincipal.format(w3),
   })
   const identityServer = await listen(identityService)
 
   // start w3-store service
   const storeService = Store.create({
-    keypair: SigningAuthority.format(await SigningAuthority.generate()),
+    keypair: SigningPrincipal.format(await SigningPrincipal.generate()),
     identity: Identity.connect({
       id: w3.did(),
       url: identityServer.url,
@@ -130,6 +130,7 @@ test('main', async () => {
         link: car.cid,
       })
 
+      // eslint-disable-next-line unicorn/new-for-builtins
       assert.match(Object(result).url, /https:.*s3.*amazon/)
     }
 

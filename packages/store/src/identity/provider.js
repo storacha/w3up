@@ -2,32 +2,32 @@ import * as Capability from './capability.js'
 import * as Server from '@ucanto/server'
 import { delegate } from '@ucanto/client'
 import * as API from '../type.js'
-import { Authority } from '@ucanto/server'
+import { Principal } from '@ucanto/server'
 
 /**
- * @typedef {{account:API.DID, proof:Server.LinkedProof}} AccountLink
+ * @typedef {{account:API.DID, proof:Server.UCANLink}} AccountLink
  * @typedef {{
- *   set: (key:string, value:AccountLink) => API.Await<unknown>
- *   get: (key:string) => API.Await<AccountLink|undefined>
+ * set: (key:string, value:AccountLink) => API.Await<unknown>
+ * get: (key:string) => API.Await<AccountLink|undefined>
  * }} DB
  * @typedef {{
- *   send: (to:string, token:string) => API.Await<unknown>
+ * send: (to:string, token:string) => API.Await<unknown>
  * }} Email
  * @typedef {{
- * id: API.SigningAuthority
+ * id: API.SigningPrincipal
  * db: DB
  * email: Email
  * }} Context
  *
  * @param {Context} context
- * @return {{identity: API.Identity.Identity}}
+ * @returns {{identity: API.Identity.Identity}}
  */
 export const create = ({ id, db, email }) => ({
   identity: {
     validate: Server.provide(Capability.Validate, async ({ capability }) => {
       const delegation = await delegate({
         issuer: id,
-        audience: Authority.parse(capability.with),
+        audience: Principal.parse(capability.with),
         capabilities: [
           {
             can: 'identity/register',
@@ -65,13 +65,15 @@ export const create = ({ id, db, email }) => ({
       Capability.Link,
       async ({ capability, invocation }) => {
         const id = /** @type {API.Identity.ID} */ (capability.uri.href)
-        if (
-          await associate(db, capability.caveats.as, id, invocation.cid, false)
-        ) {
-          return null
-        } else {
-          return new NotRegistered([invocation.issuer.did(), id])
-        }
+        return (await associate(
+          db,
+          capability.caveats.as,
+          id,
+          invocation.cid,
+          false
+        ))
+          ? null
+          : new NotRegistered([invocation.issuer.did(), id])
       }
     ),
     identify: Server.provide(Capability.Identify, async ({ capability }) => {
@@ -86,7 +88,7 @@ export const create = ({ id, db, email }) => ({
  * @param {DB} db
  * @param {API.Identity.ID} from
  * @param {API.Identity.ID} to
- * @param {API.LinkedProof} proof
+ * @param {API.UCANLink} proof
  * @param {boolean} create
  * @returns {Promise<boolean>}
  */
@@ -159,22 +161,24 @@ export class NotRegistered {
   constructor(ids) {
     this.ids = ids
   }
+
   get message() {
-    if (this.ids.length > 1) {
-      return `No account is registered with such identifiers:\n - ${this.ids.join(
-        '\n - '
-      )}`
-    } else {
-      return `No account is registered for ${this.ids[0]}`
-    }
+    return this.ids.length > 1
+      ? `No account is registered with such identifiers:\n - ${this.ids.join(
+          '\n - '
+        )}`
+      : `No account is registered for ${this.ids[0]}`
   }
+
   get error() {
     return /** @type {true} */ (true)
   }
+
   /** @type {"NotRegistered"} */
   get name() {
     return 'NotRegistered'
   }
+
   toJSON() {
     const { name, message, ids, error } = this
 

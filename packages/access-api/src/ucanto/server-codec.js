@@ -108,7 +108,7 @@ export const serverCodec = {
       if (missing.length > 0) {
         throw new HTTPError('Missing Proofs', {
           status: 510,
-          // @ts-ignore - cause type is a mess
+          // @ts-ignore - Error.cause type is a mess
           cause: { prf: missing },
         })
       }

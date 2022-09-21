@@ -1,6 +1,6 @@
 import { mf, serviceAuthority, test } from './helpers/setup.js'
 import * as UCAN from '@ipld/dag-ucan'
-import { SigningAuthority } from '@ucanto/authority'
+import { SigningPrincipal } from '@ucanto/principal'
 
 test.before((t) => {
   t.context = { mf }
@@ -45,11 +45,12 @@ test('should fail with bad ucan', async (t) => {
 test('should fail with 0 caps', async (t) => {
   const { mf } = t.context
 
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
 
   const ucan = await UCAN.issue({
     issuer: kp,
     audience: serviceAuthority,
+    // @ts-ignore
     capabilities: [],
   })
   const res = await mf.dispatchFetch('http://localhost:8787/raw', {
@@ -72,11 +73,12 @@ test('should fail with 0 caps', async (t) => {
 test('should fail with bad service audience', async (t) => {
   const { mf } = t.context
 
-  const kp = await SigningAuthority.generate()
-  const audience = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
+  const audience = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
     issuer: kp,
     audience,
+    // @ts-ignore
     capabilities: [],
   })
   const res = await mf.dispatchFetch('http://localhost:8787/raw', {
@@ -102,7 +104,7 @@ test('should fail with bad service audience', async (t) => {
 test('should fail with with more than 1 cap', async (t) => {
   const { mf } = t.context
 
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
     issuer: kp,
     audience: serviceAuthority,
@@ -134,7 +136,7 @@ test('should fail with with more than 1 cap', async (t) => {
 test('should route to handler', async (t) => {
   const { mf } = t.context
 
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
     issuer: kp,
     audience: serviceAuthority,
@@ -153,7 +155,7 @@ test('should route to handler', async (t) => {
 test('should handle exception in route handler', async (t) => {
   const { mf } = t.context
 
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
     issuer: kp,
     audience: serviceAuthority,
@@ -175,8 +177,8 @@ test('should handle exception in route handler', async (t) => {
 test('should fail with missing proofs', async (t) => {
   const { mf } = t.context
 
-  const alice = await SigningAuthority.generate()
-  const bob = await SigningAuthority.generate()
+  const alice = await SigningPrincipal.generate()
+  const bob = await SigningPrincipal.generate()
   const proof1 = await UCAN.issue({
     issuer: alice,
     audience: bob,
@@ -218,8 +220,8 @@ test('should fail with missing proofs', async (t) => {
 test('should multiple invocation should pass', async (t) => {
   const { mf } = t.context
 
-  const alice = await SigningAuthority.generate()
-  const bob = await SigningAuthority.generate()
+  const alice = await SigningPrincipal.generate()
+  const bob = await SigningPrincipal.generate()
   const proof1 = await UCAN.issue({
     issuer: alice,
     audience: bob,

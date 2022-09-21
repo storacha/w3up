@@ -1,10 +1,10 @@
-import { DID, LinkedProof, Result, Await } from "@ucanto/interface"
-import * as API from "@ucanto/interface"
-import { ServiceError } from "./error"
+import { DID, UCANLink, Result, Await } from '@ucanto/interface'
+import * as API from '@ucanto/interface'
+import { ServiceError } from './error.js'
 export type Error = QuotaViolationError
 
 export interface QuotaViolationError
-  extends ServiceError<"QuotaViolationError", QuotaViolationError> {}
+  extends ServiceError<'QuotaViolationError', QuotaViolationError> {}
 
 export interface Link<
   T extends unknown = unknown,
@@ -23,17 +23,21 @@ export interface Provider {
    * @param link
    * @param proof
    */
-  add(
+  add: (
     group: DID,
     link: Link,
-    proof: LinkedProof
-  ): Await<Result<LinkState, Error>>
+    proof: UCANLink
+  ) => Await<Result<LinkState, Error>>
 
-  remove(group: DID, link: Link, proof: LinkedProof): Await<Result<null, never>>
+  remove: (
+    group: DID,
+    link: Link,
+    proof: UCANLink
+  ) => Await<Result<null, never>>
 
-  list(group: DID, proof: LinkedProof): Await<Result<Link[], never>>
+  list: (group: DID, proof: UCANLink) => Await<Result<Link[], never>>
 }
 
 interface LinkState {
-  status: "in-s3" | "not-in-s3"
+  status: 'in-s3' | 'not-in-s3'
 }

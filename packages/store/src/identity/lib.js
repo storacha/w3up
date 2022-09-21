@@ -1,13 +1,13 @@
-export * from './capability.js'
 import * as Provider from './provider.js'
 import * as API from '../type.js'
-import { SigningAuthority, Authority } from '@ucanto/authority'
+import { SigningPrincipal, Principal } from '@ucanto/principal'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import * as Service from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import webfetch from '@web-std/fetch'
+export * from './capability.js'
 
 /**
  * @param {object} options
@@ -16,7 +16,7 @@ import webfetch from '@web-std/fetch'
  * @param {Provider.Email} [options.email]
  */
 export const create = ({ keypair, db = new Map(), email = mail }) => {
-  const id = SigningAuthority.parse(keypair)
+  const id = SigningPrincipal.parse(keypair)
   const provider = Provider.create({
     id,
     db,
@@ -34,7 +34,7 @@ export const create = ({ keypair, db = new Map(), email = mail }) => {
     handleRequest: service.request.bind(service),
     connect: () =>
       Client.connect({
-        id: id.authority,
+        id: id.principal,
         encoder: CAR,
         decoder: CBOR,
         channel: service,
@@ -59,7 +59,7 @@ export const connect = ({
   method,
 }) =>
   Client.connect({
-    id: Authority.parse(id),
+    id: Principal.parse(id),
     ...transport,
     channel: HTTP.open({
       url,
@@ -71,6 +71,7 @@ export const connect = ({
 /** @type {Provider.Email} */
 const mail = {
   send(to, token) {
+    // eslint-disable-next-line no-console
     console.log(
       `Emailing registration token to mailto:${to}?subject=Verification&body=${token}\n`
     )

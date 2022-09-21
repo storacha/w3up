@@ -24,18 +24,14 @@ const equalWith = (claimed, delegated) =>
  */
 const derivesURIPattern = (claimed, delegated) => {
   if (delegated.endsWith('*')) {
-    if (claimed.startsWith(delegated.slice(0, -1))) {
-      return true
-    } else {
-      return new Failure(`${claimed} does not match ${delegated}`)
-    }
+    return claimed.startsWith(delegated.slice(0, -1))
+      ? true
+      : new Failure(`${claimed} does not match ${delegated}`)
   }
 
-  if (claimed === delegated) {
-    return true
-  } else {
-    return new Failure(`${claimed} is differnt from ${delegated}`)
-  }
+  return claimed === delegated
+    ? true
+    : new Failure(`${claimed} is differnt from ${delegated}`)
 }
 
 export const Validate = capability({

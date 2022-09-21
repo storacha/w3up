@@ -1,11 +1,11 @@
-import type { Capability, DID, Link } from '@ucanto/interface'
+import type { Capability, IPLDLink, DID } from '@ipld/dag-ucan'
 
 export interface StoreAdd extends Capability<'store/add', DID> {
-  link?: Link
+  link?: IPLDLink
 }
 
 export interface StoreRemove extends Capability<'store/remove', DID> {
-  link?: Link
+  link?: IPLDLink
 }
 
 export interface StoreList extends Capability<'store/list', DID> {}

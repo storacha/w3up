@@ -1,5 +1,5 @@
 import * as UCAN from '@ipld/dag-ucan'
-import { SigningAuthority } from '@ucanto/authority'
+import { SigningPrincipal } from '@ucanto/principal'
 import anyTest from 'ava'
 import { Delegation } from '@ucanto/core'
 import { connection as w3connection } from '@web3-storage/access/connection'
@@ -54,10 +54,10 @@ export function createAnalyticsEngine() {
   }
 }
 
-export const serviceAuthority = SigningAuthority.parse(bindings.PRIVATE_KEY)
+export const serviceAuthority = SigningPrincipal.parse(bindings.PRIVATE_KEY)
 
 /**
- * @param {UCAN.UCAN<UCAN.Capability<UCAN.Ability, `${string}:${string}`>>} ucan
+ * @param {UCAN.UCAN<[UCAN.Capability<UCAN.Ability, `${string}:${string}`>]>} ucan
  */
 export async function send(ucan) {
   return mf.dispatchFetch('http://localhost:8787', {
@@ -69,7 +69,7 @@ export async function send(ucan) {
 }
 
 /**
- * @param {import("@ucanto/interface").SigningAuthority<237> } id
+ * @param {import("@ucanto/interface").SigningPrincipal<237> } id
  */
 export function connection(id) {
   return w3connection({
@@ -81,7 +81,7 @@ export function connection(id) {
 
 /**
  * @param {import("@ucanto/interface").ConnectionView<import('@web3-storage/access/src/types').Service>} con
- * @param {import("@ucanto/interface").SigningAuthority<237>} kp
+ * @param {import("@ucanto/interface").SigningPrincipal<237>} kp
  * @param {string} email
  */
 export async function validateEmail(con, kp, email) {
@@ -111,7 +111,7 @@ export async function validateEmail(con, kp, email) {
 
 /**
  * @param {import("@ucanto/interface").ConnectionView<import('@web3-storage/access/src/types').Service>} con
- * @param {import("@ucanto/interface").SigningAuthority<237>} kp
+ * @param {import("@ucanto/interface").SigningPrincipal<237>} kp
  * @param {import("@ucanto/interface").Proof<[UCAN.Capability<UCAN.Ability, `${string}:${string}`>, ...UCAN.Capability<UCAN.Ability, `${string}:${string}`>[]]>} proof
  */
 export async function register(con, kp, proof) {

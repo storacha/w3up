@@ -6,9 +6,11 @@ import type {
   RequestEncoder,
   ResponseDecoder,
   ServiceMethod,
-  SigningAuthority,
-  UCAN,
+  SigningPrincipal,
+  Principal,
 } from '@ucanto/interface'
+
+import * as UCAN from '@ipld/dag-ucan'
 import type {
   IdentityIdentify,
   IdentityRegister,
@@ -34,8 +36,8 @@ export interface Service {
 
 export interface ValidateOptions {
   url?: URL
-  audience?: UCAN.Identity
-  issuer: SigningAuthority
+  audience?: Principal
+  issuer: SigningPrincipal
   with?: UCAN.DID
   caveats: {
     as: `mailto:${string}`
@@ -52,8 +54,8 @@ export interface ValidateOptions {
 
 export interface RegisterOptions {
   url?: URL
-  audience?: UCAN.Identity
-  issuer: SigningAuthority
+  audience?: Principal
+  issuer: SigningPrincipal
   with?: `mailto:${string}`
   caveats?: {
     as: UCAN.DID
@@ -68,8 +70,26 @@ export interface RegisterOptions {
   proof: Delegation<[IdentityRegister]>
 }
 
+export interface IdentifyOptions {
+  url?: URL
+  audience?: Principal
+  issuer: SigningPrincipal
+  with?: `mailto:${string}`
+  caveats?: {
+    as: UCAN.DID
+  }
+  lifetimeInSeconds?: number
+  expiration?: number
+  notBefore?: number
+
+  nonce?: string
+
+  facts?: Fact[]
+  proof?: Delegation<[IdentityIdentify]>
+}
+
 export interface PullRegisterOptions {
   url?: URL
-  issuer: SigningAuthority
+  issuer: SigningPrincipal
   signal?: AbortSignal
 }
