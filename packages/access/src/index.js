@@ -83,7 +83,7 @@ const run = (did, host, signal) => async () => {
  */
 export async function pullRegisterDelegation(opts) {
   const url = opts.url || Service.url
-  /** @type {Types.UCAN.JWT<import('./capabilities-types').IdentityRegister>} */
+  /** @type {Types.UCAN.JWT<[import('./capabilities-types').IdentityRegister]>} */
   const registerProof = await pRetry(
     run(opts.issuer.did(), url.toString(), opts.signal),
     {
