@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/react-wallet-v1.0.0...react-wallet-v1.0.1) (2022-09-21)
+
+
+### Bug Fixes
+
+* allow resume registration ([415a636](https://github.com/web3-storage/w3ui/commit/415a636443738d43380995d04d20690148ec6af3))
+* always set identity ([aa635d6](https://github.com/web3-storage/w3ui/commit/aa635d62dd26b76957b1ffab6f186e4e1e2b79c9))
+* set identity before send verification email ([376194c](https://github.com/web3-storage/w3ui/commit/376194c417eb41b863988b75ecc516fb567d7d22))
+
 ## 1.0.0 (2022-09-20)
 
 

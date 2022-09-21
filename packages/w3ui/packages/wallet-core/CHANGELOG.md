@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.2.0...wallet-core-v1.2.1) (2022-09-21)
+
+
+### Bug Fixes
+
+* allow resume registration ([415a636](https://github.com/web3-storage/w3ui/commit/415a636443738d43380995d04d20690148ec6af3))
+
 ## [1.2.0](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.1.0...wallet-core-v1.2.0) (2022-09-20)
 
 
