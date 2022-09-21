@@ -1,13 +1,13 @@
-import * as Provider from './provider.js'
-import { SigningAuthority, Authority } from '@ucanto/authority'
-export * from './capability.js'
-import * as API from '../type.js'
+import { Principal, SigningPrincipal } from '@ucanto/principal'
+import * as Client from '@ucanto/client'
 import * as Service from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import webfetch from '@web-std/fetch'
-import * as Client from '@ucanto/client'
+import * as API from '../type.js'
+import * as Provider from './provider.js'
+export * from './capability.js'
 
 /**
  * @param {object} options
@@ -26,7 +26,7 @@ export const create = ({
   transport = { decoder: CAR, encoder: CBOR },
   validator = {},
 }) => {
-  const id = SigningAuthority.parse(keypair)
+  const id = SigningPrincipal.parse(keypair)
   const provider = Provider.create({
     id,
     identity,
@@ -37,7 +37,7 @@ export const create = ({
   const service = Service.create({
     ...transport,
     ...validator,
-    id: id.authority,
+    id: id.principal,
     service: provider,
   })
 
@@ -45,7 +45,7 @@ export const create = ({
     handleRequest: service.request.bind(service),
     connect: () => {
       Client.connect({
-        id: id.authority,
+        id: id.principal,
         encoder: CAR,
         decoder: CBOR,
         channel: service,
@@ -71,7 +71,7 @@ export const connect = ({
   method,
 }) =>
   Client.connect({
-    id: Authority.parse(id),
+    id: Principal.parse(id),
     ...transport,
     channel: HTTP.open({
       url,

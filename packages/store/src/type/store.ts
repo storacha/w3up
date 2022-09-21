@@ -1,19 +1,16 @@
-import * as Server from '@ucanto/server'
 import type {
-  ServerView,
   ConnectionView,
-  SigningAuthority,
-  Audience,
-  MalformedCapability,
   InvocationError,
-  UCAN,
+  MalformedCapability,
+  SigningPrincipal,
 } from '@ucanto/interface'
-import type { Capability, ServiceMethod, DID, Failure } from '@ucanto/server'
-import * as Accounting from './accounting'
-import * as Identity from './identity'
-import * as Signer from '../signer/type'
 import * as API from '@ucanto/interface'
+import type { Capability, DID, ServiceMethod } from '@ucanto/server'
+import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
+import * as Signer from '../signer/type.js'
+import * as Accounting from './accounting.js'
+import * as Identity from './identity.js'
 
 export interface Link<
   T extends unknown = unknown,
@@ -23,10 +20,10 @@ export interface Link<
 > extends API.Link<T, C, A, V> {}
 
 export interface StoreService {
-  start(options: ServiceOptions): Server.ServerView<Store>
+  start: (options: ServiceOptions) => Server.ServerView<Store>
 }
 export interface ServiceOptions {
-  id: SigningAuthority
+  id: SigningPrincipal
   identity: ConnectionView<{ identity: Identity.Identity }>
 
   accounting: Accounting.Provider

@@ -14,7 +14,7 @@ export const create = ({ db = new Map(), cars = new Map() } = {}) => ({
   /**
    * @param {API.DID} group
    * @param {API.Accounting.Link} link
-   * @param {API.LinkedProof} proof
+   * @param {API.UCANLink} proof
    */
   async add(group, link, proof) {
     const [members, have] = await Promise.all([
@@ -34,7 +34,7 @@ export const create = ({ db = new Map(), cars = new Map() } = {}) => ({
   /**
    * @param {API.DID} group
    * @param {API.Accounting.Link} link
-   * @param {API.LinkedProof} proof
+   * @param {API.UCANLink} proof
    */
   async remove(group, link, proof) {
     const members = await db.get(group)
@@ -45,7 +45,7 @@ export const create = ({ db = new Map(), cars = new Map() } = {}) => ({
   },
   /**
    * @param {API.DID} group
-   * @param {API.LinkedProof} proof
+   * @param {API.UCANLink} proof
    */
   async list(group, proof) {
     const members = await db.get(group)

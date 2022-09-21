@@ -273,10 +273,10 @@ importers:
       '@types/chai': ^4.3.0
       '@types/chai-subset': ^1.3.3
       '@types/mocha': ^9.1.0
-      '@ucanto/authority': ^0.5.0
       '@ucanto/client': ^1.0.1
       '@ucanto/core': ^1.0.1
       '@ucanto/interface': ^1.0.0
+      '@ucanto/principal': ^1.0.1
       '@ucanto/server': ^1.0.2
       '@ucanto/transport': ^1.0.1
       '@web-std/fetch': ^4.1.0
@@ -289,10 +289,10 @@ importers:
       playwright-test: ^8.1.1
       typescript: ^4.8.3
     dependencies:
-      '@ucanto/authority': 0.5.0
       '@ucanto/client': 1.0.1
       '@ucanto/core': 1.0.1
       '@ucanto/interface': 1.0.0
+      '@ucanto/principal': 1.0.1
       '@ucanto/server': 1.0.2
       '@ucanto/transport': 1.0.1
       '@web-std/fetch': 4.1.0
@@ -499,14 +499,6 @@ packages:
     resolution: {integrity: sha512-Pea7JXeYHTWXRTIhBqBlhw7G53PJ7yta3G/sizGEZyzdeEwhZRr0od5IQ0r2ZxOt1Do+2czddjeEPp+YTxDwCA==}
     dependencies:
       cborg: 1.9.5
-      multiformats: 9.9.0
-    dev: false
-
-  /@ipld/dag-ucan/1.7.0-beta:
-    resolution: {integrity: sha512-QLGz2IyAiNlT09pwvC2RnZJ2dyUqil5aRN2KLvGpShaTWGlCpCFGJzkn9M1kA04M96S3pJaIV2uxPBSVnjgvcg==}
-    dependencies:
-      '@ipld/dag-cbor': 7.0.3
-      '@ipld/dag-json': 8.0.11
       multiformats: 9.9.0
     dev: false
 
@@ -1223,15 +1215,6 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@ucanto/authority/0.5.0:
-    resolution: {integrity: sha512-TML+6Xqu8H3+Nti0ko3Sqi15uh6dXCUZQ4W+GFuGXyZ8yss6VxarK6uB7cG0KQlt3Nejok6cYHuzq5Hou5IsCA==}
-    dependencies:
-      '@ipld/dag-ucan': 1.7.0-beta
-      '@noble/ed25519': 1.7.1
-      '@ucanto/interface': 0.7.0
-      multiformats: 9.9.0
-    dev: false
-
   /@ucanto/client/1.0.1:
     resolution: {integrity: sha512-ZWOCVDXdKhq0r5ZRUN5ubqpfjsQ2Nra2WFv2AyHZWSHA+maI4FA/btJBOWUPHW3BtWNDSt4waEfYXXh4iqkN0g==}
     dependencies:
@@ -1246,13 +1229,6 @@ packages:
       '@ipld/dag-cbor': 7.0.3
       '@ipld/dag-ucan': 3.0.0-beta
       '@ucanto/interface': 1.0.0
-      multiformats: 9.9.0
-    dev: false
-
-  /@ucanto/interface/0.7.0:
-    resolution: {integrity: sha512-H6zxnq06ZUuyVfuDpoUTvlfN4YBt6DGa55yo9/MTn4W9YkUzsathfc8jXl3wLzpUnA17hejEZZbmymaDQm03uA==}
-    dependencies:
-      '@ipld/dag-ucan': 1.7.0-beta
       multiformats: 9.9.0
     dev: false
 
