@@ -1,16 +1,23 @@
 import * as UCAN from '@ipld/dag-ucan'
+import { Ability, Resource } from '@ipld/dag-ucan'
+import WS from 'isomorphic-ws'
 import { z } from 'zod'
 import { KeyExchangeKeypair } from '../crypto/types.js'
+import { Handler } from './channel.js'
 import * as Messages from './messages.js'
 
 export interface Channel {
   keypair: KeyExchangeKeypair
+
+  ws?: WebSocket | WS
   /**
    * Sends a data as a message
    * Data should run through JSON.stringify
    */
-  send: (data: unknown) => Promise<void>
-  close: (code: number, reason: string) => void
+  send: (data: unknown) => void
+  open: () => Promise<Channel>
+  close: (code?: number, reason?: string) => Promise<Channel>
+  subscribe: (type: MessageType, fn: Handler, once?: boolean) => () => void
 
   /**
    * Send awake init message to responder
@@ -41,20 +48,19 @@ export interface Channel {
    * @param did - DID to encrypt for
    * @param msg - Message to be encrypted and sent
    */
-  sendMsg: (did: UCAN.DIDView, msg: unknown) => void
+  sendMsg: (did: UCAN.DIDView, msg: unknown) => Promise<void>
 
   /**
    * Awaits for a awake/msg and decrypts payload from sender DID
    */
   awaitMsg: (did: UCAN.DIDView) => Promise<import('./types').AwakeMsgDecrypted>
+
+  sendFin: (did: UCAN.DIDView) => Promise<void>
 }
 
 export type MessageType = z.infer<typeof Messages['MessageType']>
 
-export interface AwakeMessage {
-  awv: string
-  type: string
-}
+export type AwakeMessage = z.infer<typeof Messages['AwakeMessage']>
 
 export interface AwakeInit extends AwakeMessage {
   did: UCAN.DIDView
@@ -80,7 +86,7 @@ export interface AwakeMsg extends AwakeMessage {
  */
 export interface AwakeMsgDecrypted extends AwakeMessage {
   id: string
-  msg: unknown
+  msg: any
 }
 
 export type PinChallengeMessage = z.infer<
@@ -88,3 +94,38 @@ export type PinChallengeMessage = z.infer<
 > & {
   did: `did:${string}`
 }
+
+declare const Marker: unique symbol
+export interface Phantom<T> {
+  [Marker]?: T
+}
+
+export type Encrypted<In, Out extends string = string> = Out & Phantom<In>
+
+export interface PeerMeta {
+  name: string
+  description?: string
+  url?: URL
+  image?: URL
+  type: 'device' | 'app' | 'service'
+}
+
+export interface LinkRequest extends AwakeMsgDecrypted {
+  msg: {
+    type: 'link'
+    meta: PeerMeta
+    caps: Array<{
+      can: Ability
+      with?: Resource
+    }>
+  }
+}
+
+export interface LinkResponse extends AwakeMsgDecrypted {
+  msg: {
+    meta: PeerMeta
+    delegation: string
+  }
+}
+
+export type MetaMap = Map<string, PeerMeta>

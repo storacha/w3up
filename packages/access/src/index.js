@@ -94,7 +94,6 @@ export async function pullRegisterDelegation(opts) {
 
   const ucan = UCAN.parse(registerProof)
   const root = await UCAN.write(ucan)
-  /** @type {Types.Delegation<[import('./capabilities-types').IdentityRegister]>} */
   const proof = Delegation.create({ root })
 
   return proof

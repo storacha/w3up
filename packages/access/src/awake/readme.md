@@ -6,9 +6,9 @@
 - [ ] ucan store class
 - [ ] validate ucan https://github.com/ucan-wg/awake#331-validation-ucan in awake/res
 - [ ] timeout on messages sent
-- [ ] why does awake/res step send aud did ?
 - [ ] rotate chain keys - Double Ratchet
-  - [ ] nextdid needs to go in the encrypted field of the message ?
+- [ ] error over channel and disconnect during bad handshake
+- [ ] update according to latest spec
 
 ## Notes
 

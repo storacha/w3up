@@ -3,6 +3,7 @@ import { errorHandler } from '@web3-storage/worker-utils/error'
 import { notFound } from '@web3-storage/worker-utils/response'
 import { Router } from '@web3-storage/worker-utils/router'
 import { nanoid } from 'nanoid'
+import { loadConfig } from './config.js'
 
 /**
  * @typedef {{webSocket: WebSocket; quit?: boolean; id: string}} Session
@@ -25,9 +26,9 @@ r.add('get', '/connect/:id', (request, env, ctx) => {
 const worker = {
   fetch: async (request, env, ctx) => {
     try {
+      env.config = loadConfig(env)
       const rsp = await r.fetch(request, env, ctx)
-      // return rsp
-      return corsHeaders(request, rsp)
+      return env.config.ENV ? rsp : corsHeaders(request, rsp)
     } catch (error) {
       return errorHandler(/** @type {Error} */ (error))
     }

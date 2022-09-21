@@ -2,13 +2,14 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Keypair from '@ucanto/authority'
-import pWaitFor from 'p-wait-for'
-import { Requestor } from '../awake/requestor.js'
-import { Responder } from '../awake/responder.js'
-import { getConfig } from './config.js'
 import inquirer from 'inquirer'
+import pWaitFor from 'p-wait-for'
+import { Agent } from '../agent.js'
 import { Channel } from '../awake/channel.js'
+import { Peer } from '../awake/peer.js'
 import { EcdhKeypair } from '../crypto/p256-ecdh.js'
+import { getConfig } from './config.js'
+import * as Ed25519Signer from '../principal/signer-ed25519.js'
 
 /**
  * @param {string} channel
@@ -16,7 +17,7 @@ import { EcdhKeypair } from '../crypto/p256-ecdh.js'
  */
 export async function linkCmd(channel, opts) {
   const config = getConfig(opts.profile)
-  const issuer = Keypair.parse(
+  const issuer = Ed25519Signer.parse(
     /** @type {string} */ (config.get('private-key'))
   )
 
@@ -24,26 +25,55 @@ export async function linkCmd(channel, opts) {
   let done = false
   const host = new URL('ws://127.0.0.1:8788/connect')
   if (!channel) {
-    const ws = new Channel(host, issuer.did(), await EcdhKeypair.create())
-    const responder = await Responder.create(issuer, ws)
-    await responder.bootstrap()
+    const ws = await new Channel(
+      host,
+      issuer.did(),
+      await EcdhKeypair.create()
+    ).open()
+
+    const agent = await Agent.generate(issuer)
+    const responder = new Peer({ agent, channel: ws })
+    await responder.awaitBootstrap()
     const { pin } = await inquirer.prompt({
       type: 'input',
       name: 'pin',
       message: 'Input your pin:',
     })
 
-    responder.ack(pin)
+    await responder.ack(pin)
+    await responder.awaitLink()
+
+    config.set('agent', agent.export())
+    done = true
   } else {
-    const ws = new Channel(host, channel, await EcdhKeypair.create())
-    const requestor = await Requestor.create(issuer, ws)
+    const ws = await new Channel(
+      host,
+      channel,
+      await EcdhKeypair.create()
+    ).open()
+    const agent = await Agent.generate(issuer)
+    const requestor = new Peer({ agent, channel: ws })
     const pin = await requestor.bootstrap([
+      // @ts-ignore
       { with: channel, can: 'identity/*' },
     ])
 
     console.log(pin)
-    const delegation = await requestor.link()
-    config.set('delegation', delegation)
+    await requestor.awaitAck()
+    const link = await requestor.link({
+      caps: [{ can: 'identity/*' }],
+      meta: {
+        name: agent.did(),
+        type: 'device',
+      },
+    })
+    console.log('🚀 ~ file: cmd-link.js ~ line 70 ~ linkCmd ~ delegation', link)
+
+    console.log(link)
+
+    await agent.delegations.add(link.delegation)
+
+    config.set('agent', agent.export())
 
     done = true
   }

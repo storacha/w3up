@@ -6,7 +6,7 @@ import {
   connection,
 } from './helpers/setup.js'
 import * as UCAN from '@ipld/dag-ucan'
-import { SigningAuthority } from '@ucanto/authority'
+import { SigningPrincipal } from '@ucanto/principal'
 import * as caps from '@web3-storage/access/capabilities'
 
 test.before((t) => {
@@ -14,7 +14,7 @@ test.before((t) => {
 })
 
 test.skip('should route to validate without ucanto client', async (t) => {
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
 
   const ucan = await UCAN.issue({
     issuer: kp,
@@ -32,7 +32,7 @@ test.skip('should route to validate without ucanto client', async (t) => {
 })
 
 test.skip('should fail with bad scheme', async (t) => {
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
     issuer: kp,
     audience: serviceAuthority,
@@ -59,7 +59,7 @@ test.skip('should fail with bad scheme', async (t) => {
 })
 
 test('should route correctly to identity/validate', async (t) => {
-  const kp = await SigningAuthority.generate()
+  const kp = await SigningPrincipal.generate()
   const con = connection(kp)
 
   const validate = caps.identityValidate.invoke({

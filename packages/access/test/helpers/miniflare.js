@@ -15,6 +15,9 @@ export function getWebsocketServer() {
     // log: new Log(LogLevel.DEBUG),
     buildCommand: undefined,
     port: 8788,
+    bindings: {
+      ENV: 'test',
+    },
   })
 
   return mf.startServer()

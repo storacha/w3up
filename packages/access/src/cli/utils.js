@@ -1,5 +1,5 @@
-import * as DID from '@ipld/dag-ucan/did'
 import undici from 'undici'
+import { Principal } from '@ucanto/principal'
 
 /** @type {Record<string,string>} */
 const envs = {
@@ -10,7 +10,7 @@ const envs = {
 }
 
 /**
- * @type {import("@ipld/dag-ucan").DIDView}
+ * @type {import("@ucanto/interface").Principal}
  */
 let audience
 
@@ -26,7 +26,7 @@ export async function getService(env) {
 
     // @ts-ignore
     const { did } = await rsp.json()
-    audience = DID.parse(did)
+    audience = Principal.parse(did)
     return { url, audience }
   }
 }

@@ -64,6 +64,7 @@ export class AesKey {
     const dataBytes = uint8arrays.fromString(data, 'base64pad')
     const iv = dataBytes.slice(0, 12)
     const encrypted = dataBytes.slice(12)
+
     const buf = await webcrypto.subtle.decrypt(
       {
         name: 'AES-GCM',

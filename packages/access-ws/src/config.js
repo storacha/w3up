@@ -1,25 +1,17 @@
-export const config = loadConfigVariables()
-
 /**
  * Loads configuration variables from the global environment and returns a JS object
  * keyed by variable names.
  *
+ * @param {any} env
  */
-export function loadConfigVariables() {
+export function loadConfig(env) {
   /** @type Record<string, string> */
   const vars = {}
 
   /** @type Record<string, unknown> */
-  const globals = globalThis
+  const globals = env
 
-  const required = [
-    'ENV',
-    'DEBUG',
-    'PRIVATE_KEY',
-    'SENTRY_DSN',
-    'POSTMARK_TOKEN',
-    'LOGTAIL_TOKEN',
-  ]
+  const required = ['ENV', 'DEBUG']
 
   for (const name of required) {
     const val = globals[name]
@@ -36,11 +28,6 @@ export function loadConfigVariables() {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
 
-    PRIVATE_KEY: vars.PRIVATE_KEY,
-    POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
-    SENTRY_DSN: vars.SENTRY_DSN,
-    LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
-
     // These are injected in esbuild
     // @ts-ignore
     // eslint-disable-next-line no-undef
@@ -51,14 +38,6 @@ export function loadConfigVariables() {
     // @ts-ignore
     // eslint-disable-next-line no-undef
     COMMITHASH: ACCOUNT_COMMITHASH,
-
-    // bindings
-    METRICS:
-      /** @type {import("./bindings").AnalyticsEngine} */ (
-        globals.W3ACCESS_METRICS
-      ) || createAnalyticsEngine(),
-    ACCOUNTS,
-    VALIDATIONS,
   }
 }
 
@@ -86,22 +65,5 @@ function parseRuntimeEnv(s) {
       return s
     default:
       throw new Error('invalid runtime environment name: ' + s)
-  }
-}
-
-export function createAnalyticsEngine() {
-  /** @type {Map<string,import("./bindings").AnalyticsEngineEvent>} */
-  const store = new Map()
-
-  return {
-    writeDataPoint: (
-      /** @type {import("./bindings").AnalyticsEngineEvent} */ event
-    ) => {
-      store.set(
-        `${Date.now()}${(Math.random() + 1).toString(36).slice(7)}`,
-        event
-      )
-    },
-    _store: store,
   }
 }

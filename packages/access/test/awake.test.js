@@ -3,16 +3,21 @@ import assert from 'assert'
 import { Channel } from '../src/awake/channel.js'
 import { EcdhKeypair } from '../src/crypto/p256-ecdh.js'
 import { getWebsocketServer } from './helpers/miniflare.js'
-import * as Keypair from '@ucanto/authority'
-import { Responder } from '../src/awake/responder.js'
-import { Requestor } from '../src/awake/requestor.js'
 import PQueue from 'p-queue'
 import delay from 'delay'
+import pWaitFor from 'p-wait-for'
+import { Agent } from '../src/agent.js'
+import * as Ed25519Signer from '../src/principal/signer-ed25519.js'
 
 describe('awake', function () {
   const host = new URL('ws://127.0.0.1:8788/connect')
   /** @type {import('http').Server} */
   let server
+
+  /** @type {Channel} */
+  let ws1
+  /** @type {Channel} */
+  let ws2
 
   this.beforeAll(async () => {
     server = await getWebsocketServer()
@@ -22,25 +27,36 @@ describe('awake', function () {
     server.close()
   })
 
+  this.beforeEach(async () => {
+    ws1 = await new Channel(host, 'test', await EcdhKeypair.create()).open()
+    ws2 = await new Channel(host, 'test', await EcdhKeypair.create()).open()
+  })
+
+  this.afterEach(async () => {
+    await ws1.close()
+    await ws2.close()
+  })
+
   it('should send msgs', async function () {
-    const ws1 = new Channel(host, 'test', await EcdhKeypair.create())
-    const ws2 = new Channel(host, 'test', await EcdhKeypair.create())
-    const kp1 = await Keypair.SigningAuthority.generate()
-    const kp2 = await Keypair.SigningAuthority.generate()
-    const responder = new Responder({ agent: kp1, channel: ws1 })
-    const requestor = await Requestor.create(kp2, ws2)
+    const agent1 = await Agent.generate(await Ed25519Signer.generate())
+    const agent2 = await Agent.generate(await Ed25519Signer.generate())
+    const responder = agent1.peer(ws1)
+    const requestor = agent2.peer(ws2)
 
     const queue = new PQueue({ concurrency: 2 })
     queue.on('error', (error) => {
-      console.error(error.message)
+      console.error(error)
     })
 
     /**
      * @type {string | undefined}
      */
     let pin
-    let delegation
-    queue.add(async () => responder.bootstrap(), { priority: 0 })
+    /**
+     * @type {{delegation: import('@ucanto/interface').Delegation, meta: import('../src/awake/types.js').PeerMeta}}
+     */
+    let link
+    queue.add(async () => responder.awaitBootstrap(), { priority: 0 })
     queue.add(() => delay(300), { priority: 1 })
     await queue.add(
       async () => {
@@ -66,13 +82,25 @@ describe('awake', function () {
     })
 
     queue.add(async () => {
-      delegation = await requestor.link()
+      link = await requestor.link({
+        caps: [{ can: 'identity/*' }],
+        meta: {
+          name: requestor.did,
+          type: 'device',
+        },
+      })
     })
 
     await queue.onIdle()
-    console.log('🚀 ~ file: awake.test.js ~ line 49 ~ pin', delegation)
+    // @ts-ignore
+    if (link) {
+      assert.deepEqual(requestor.did, link.delegation.audience.did())
+      assert.deepEqual(responder.did, link.delegation.capabilities[0].with)
+      assert.deepEqual('identity/*', link.delegation.capabilities[0].can)
+    }
 
-    ws1.close()
-    ws2.close()
+    // they should close channel after link
+    await pWaitFor(() => responder.channel.ws?.readyState === 3)
+    await pWaitFor(() => responder.channel.ws?.readyState === 3)
   })
 })

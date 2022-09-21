@@ -1,18 +1,36 @@
 /* eslint-disable no-console */
-import WS from 'isomorphic-ws'
-import pWaitFor from 'p-wait-for'
 import * as UCAN from '@ipld/dag-ucan'
 import * as DID from '@ipld/dag-ucan/did'
+import WS from 'isomorphic-ws'
+import pWaitFor from 'p-wait-for'
 import { concatEncode } from './encoding.js'
 import * as Messages from './messages.js'
 
 const AWAKE_VERSION = '0.1.0'
 
 /**
+ * @template [T=unknown]
+ * @typedef {(event: T) => void} Handler
+ */
+
+/**
+ * @template [T=unknown]
+ * @typedef {Array<Handler<T>> } EventHandlerList
+ */
+
+/**
+ * @template {Record<import('./types').MessageType, unknown>} [Events=Record<import('./types').MessageType, unknown>]
+ * @typedef {Map<keyof Events, EventHandlerList<Events[keyof Events]>>} EventHandlerMap
+ */
+
+/**
  * @typedef {import('./types').Channel} ChannelType
  * @implements {ChannelType}
  */
 export class Channel {
+  /** @type {EventHandlerMap} */
+  #subs
+
   /**
    * @param {string | URL} host
    * @param {string} topic
@@ -20,19 +38,22 @@ export class Channel {
    */
   constructor(host, topic, keypair) {
     this.url = new URL('connect/' + topic, host)
-    this.ws = this.connect()
+    this.ws = undefined
+    this.keypair = keypair
+    this.#subs = new Map()
+    this.onMessage = undefined
     this.attemps = 0
     /**
      * @type {string | number | NodeJS.Timeout | undefined}
      */
     this.timeout = undefined
     this.forceClose = false
-    this.isOpen = false
-    /** @type {Record<string, Record<string, ((data: unknown) => void) | undefined>> } */
-    this.messageSubs = {}
-    this.lastUid = 0
-    this.onMessage = undefined
-    this.keypair = keypair
+  }
+
+  async open() {
+    this.ws = this.connect()
+    await pWaitFor(() => this.ws?.readyState === 1)
+    return this
   }
 
   connect() {
@@ -41,9 +62,9 @@ export class Channel {
     }
 
     const ws = new WS(this.url)
+    this.ws = ws
 
     ws.addEventListener('close', (event) => {
-      this.isOpen = false
       if (!this.forceClose && !this.timeout) {
         this.timeout = setTimeout(() => {
           this.attemps++
@@ -51,17 +72,18 @@ export class Channel {
         }, 1000)
         console.log('WebSocket closed, reconnecting:', event.code, event.reason)
       } else {
+        clearTimeout(this.timeout)
+        this.timeout = undefined
         // console.log('WebSocket closed:', event.code, event.reason)
       }
     })
     ws.addEventListener('error', (event) => {
-      console.log('WebSocket error', event)
+      // console.log('WebSocket error', event)
     })
     ws.addEventListener('open', (event) => {
       // console.log('WebSocket open')
       clearTimeout(this.timeout)
       this.timeout = undefined
-      this.isOpen = true
     })
     ws.addEventListener('message', (event) => {
       // @ts-ignore
@@ -86,64 +108,80 @@ export class Channel {
    * @param {number} [code]
    * @param {string | Buffer } [reason]
    */
-  close(code, reason) {
-    if (!this.ws) {
-      return console.log('ws closed')
+  async close(code, reason) {
+    if (this.ws) {
+      this.forceClose = true
+      this.ws.close(code, reason)
+      await pWaitFor(() => this.ws?.readyState === 3)
     }
-    this.isOpen = false
-    this.forceClose = true
-    this.ws.close(code, reason)
-    this.ws = undefined
+    return this
   }
 
   /**
-   * @param {import('./types').MessageType} message
-   * @param { (data: unknown) => void } fn
-   * @param {any} once
+   * @param {any} data
    */
-  subscribe(message, fn, once) {
-    const token = 'uid_' + String(this.lastUid++)
-
-    if (!this.messageSubs[message]) {
-      this.messageSubs[message] = {}
+  send(data) {
+    if (this.ws?.readyState !== 1) {
+      throw new Error('Websocket is not active.')
     }
+
+    this.ws.send(JSON.stringify(data))
+  }
+
+  /**
+   * @param {import('./types').MessageType} type
+   * @param { Handler } fn
+   * @param {boolean} [once]
+   */
+  subscribe(type, fn, once) {
+    let handlers = this.#subs.get(type)
+    let handler = fn
 
     if (once) {
-      this.messageSubs[message][token] = (data) => {
-        this.unsubscribe(token)
+      handler = (data) => {
+        handlers?.splice(handlers.indexOf(handler) >>> 0, 1)
         Reflect.apply(fn, this, [data])
       }
+    }
+
+    if (handlers) {
+      handlers.push(handler)
     } else {
-      this.messageSubs[message][token] = fn
+      handlers = [handler]
+      this.#subs.set(type, handlers)
+    }
+
+    return () => {
+      handlers?.splice(handlers.indexOf(handler) >>> 0, 1)
     }
   }
 
   /**
-   * @param {string} token
+   * @param {import('./types').MessageType} type
+   * @param { Handler } fn
    */
-  unsubscribe(token) {
-    for (const [key] of Object.entries(this.messageSubs)) {
-      if (this.messageSubs[key][token]) {
-        this.messageSubs[key][token] = undefined
+  unsubscribe(type, fn) {
+    const handlers = this.#subs.get(type)
+    if (handlers) {
+      if (fn) {
+        handlers.splice(handlers.indexOf(fn) >>> 0, 1)
+      } else {
+        this.#subs.set(type, [])
       }
     }
   }
 
   /**
+   * @private
    * @param {import('./types').AwakeMessage} data
    */
   publish(data) {
     const { type } = data
 
-    const topic = this.messageSubs[type]
-    if (!topic) {
-      // console.log('no subs on topic', type)
-      return
-    }
-
-    for (const [, value] of Object.entries(topic)) {
-      if (value) {
-        value(data)
+    const handlers = this.#subs.get(type)?.slice()
+    if (handlers) {
+      for (const h of handlers) {
+        h(data)
       }
     }
   }
@@ -151,16 +189,15 @@ export class Channel {
   /**
    * @type {ChannelType['awaitInit']}
    */
-  async awaitInit() {
+  awaitInit() {
     return new Promise((resolve, reject) => {
       this.onMessage = (/** @type {import('./types').AwakeMessage} */ msg) => {
-        if (msg.type === 'awake/init') {
-          this.onMessage = undefined
-          console.log('receive', msg.type)
+        try {
+          if (msg.type === 'awake/init') {
+            this.onMessage = undefined
+            console.log('receive', msg.type)
 
-          const result = Messages.InitResponse.safeParse(msg)
-          if (result.success) {
-            const { data } = result
+            const data = Messages.InitResponse.parse(msg)
             resolve({
               awv: data.awv,
               type: data.type,
@@ -168,6 +205,8 @@ export class Channel {
               caps: /** @type {UCAN.Capabilities} */ (data.caps),
             })
           }
+        } catch (error) {
+          reject(error)
         }
       }
     })
@@ -176,31 +215,32 @@ export class Channel {
   /**
    * @type {ChannelType['awaitRes']}
    */
-  async awaitRes() {
+  awaitRes() {
     return new Promise((resolve, reject) => {
       this.onMessage = async (
         /** @type {import('./types').AwakeMessage} */ msg
       ) => {
-        if (msg.type === 'awake/res') {
-          this.onMessage = undefined
-          console.log('receive res', msg.type)
+        try {
+          if (msg.type === 'awake/res') {
+            this.onMessage = undefined
+            console.log('receive', msg.type)
 
-          const result = Messages.ResResponse.safeParse(msg)
-          if (result.success) {
-            const { data } = result
+            const data = Messages.ResResponse.parse(msg)
+            const iss = DID.parse(data.iss)
             const decryptedMsg = await this.keypair.decryptFromDid(
               data.msg,
-              // @ts-ignore just a string...
-              data.iss
+              iss.did()
             )
             resolve({
               awv: data.awv,
               type: data.type,
-              iss: DID.parse(data.iss),
+              iss,
               aud: DID.parse(data.aud),
               ucan: UCAN.parse(decryptedMsg),
             })
           }
+        } catch (error) {
+          reject(error)
         }
       }
     })
@@ -215,33 +255,25 @@ export class Channel {
       this.onMessage = async (
         /** @type {import('./types').AwakeMsg} */ msg
       ) => {
-        if (
-          msg.type === 'awake/msg' &&
-          msg.msg &&
-          typeof msg.msg === 'string'
-        ) {
-          this.onMessage = undefined
+        try {
+          if (
+            msg.type === 'awake/msg' &&
+            msg.msg &&
+            typeof msg.msg === 'string'
+          ) {
+            this.onMessage = undefined
 
-          msg.msg = JSON.parse(
-            await this.keypair.decryptFromDid(msg.msg, did.did())
-          )
-          console.log('receive', msg.type)
-          resolve(msg)
+            msg.msg = JSON.parse(
+              await this.keypair.decryptFromDid(msg.msg, did.did())
+            )
+            console.log('receive', msg.type)
+            resolve(msg)
+          }
+        } catch (error) {
+          reject(error)
         }
       }
     })
-  }
-
-  /**
-   * @param {any} data
-   */
-  async send(data) {
-    if (!this.ws) {
-      throw new Error('Websocket is not active.')
-    }
-
-    await pWaitFor(() => this.isOpen)
-    this.ws.send(JSON.stringify(data))
   }
 
   /**
@@ -286,5 +318,16 @@ export class Channel {
       id,
       msg: await this.keypair.encryptForDid(JSON.stringify(msg), did.did()),
     })
+  }
+
+  /**
+   * @type {ChannelType['sendMsg']}
+   */
+  async sendFin(did) {
+    await this.sendMsg(did, {
+      'awake/fin': 'disconnect',
+    })
+
+    await this.close()
   }
 }

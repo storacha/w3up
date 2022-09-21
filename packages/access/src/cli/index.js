@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-import * as Keypair from '@ucanto/authority'
 import fs from 'fs'
-import * as UCAN from '@ipld/dag-ucan'
 import ora from 'ora'
 import path from 'path'
 import sade from 'sade'
@@ -13,9 +11,11 @@ import { linkCmd } from './cmd-link.js'
 import { getConfig, NAME, pkg } from './config.js'
 import { getService } from './utils.js'
 import inquirer from 'inquirer'
+// @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
-import { Delegation } from '@ucanto/server'
+import { Agent } from '../agent.js'
+import { SigningPrincipal } from '@ucanto/principal'
 
 const prog = sade(NAME)
 prog
@@ -38,7 +38,7 @@ prog
 
       // Save or override keypair
       if (opts['private-key']) {
-        const kp = Keypair.parse(opts['private-key'])
+        const kp = SigningPrincipal.parse(opts['private-key'])
         config.set('private-key', opts['private-key'])
         config.set('did', kp.did())
         spinner.succeed(`Keypair created and saved to ${config.path}`)
@@ -47,8 +47,8 @@ prog
 
       // Create or override keypair
       if (opts.force || !privateKey) {
-        const kp = await Keypair.SigningAuthority.generate()
-        config.set('private-key', Keypair.format(kp))
+        const kp = await SigningPrincipal.generate()
+        config.set('private-key', SigningPrincipal.format(kp))
         config.set('did', kp.did())
         spinner.succeed(`Keypair created and saved to ${config.path}`)
         return
@@ -93,7 +93,7 @@ prog
       spinner.start()
 
       // @ts-ignore
-      const issuer = Keypair.parse(config.get('private-key'))
+      const issuer = SigningPrincipal.parse(config.get('private-key'))
       await Access.validate({
         audience,
         url,
@@ -170,28 +170,52 @@ prog
   .action(async (opts) => {
     const config = getConfig(opts.profile)
     console.log('Path:', config.path)
-    console.log(JSON.stringify(config.store, undefined, 2))
-    const { audience, url } = await getService(opts.env)
+    // console.log(JSON.stringify(config.store, undefined, 2))
+    // const { audience, url } = await getService(opts.env)
 
-    /** @type {Types.UCAN.JWT<import('../capabilities-types').IdentityIdentify>} */
-    const jwt = /** @type {string} */ (config.get('delegation'))
-    let proof
-    if (jwt) {
-      const ucan = UCAN.parse(jwt)
-      const root = await UCAN.write(ucan)
-      /** @type {Types.Delegation<[import('../capabilities-types').IdentityIdentify]>} */
-      proof = Delegation.create({ root })
+    const data = config.get('agent')
+    if (data) {
+      // @ts-ignore
+      const agent = await Agent.import(SigningPrincipal, config.get('agent'))
+      console.log('did:', agent.did())
+
+      // Delegations received
+      console.log('Delegations received')
+      for (const del of agent.delegations.received) {
+        console.log('From:', del.issuer.did())
+        for (const cap of del.capabilities) {
+          console.log(cap)
+        }
+      }
+
+      // Delegations created
+      console.log('Delegations created')
+      for (const c of agent.delegations.created) {
+        console.log('To:', c.audience.did())
+        for (const cap of c.capabilities) {
+          console.log(cap)
+        }
+      }
     }
 
-    // @ts-ignore
-    const issuer = Keypair.parse(config.get('private-key'))
-    const out = await Access.identify({
-      audience,
-      url,
-      issuer,
-      proof,
-    })
-    console.log('Account:', out)
+    // const jwt = /** @type {string} */ (config.get('delegation'))
+    // let proof
+    // if (jwt) {
+    //   const ucan = UCAN.parse(jwt)
+    //   const root = await UCAN.write(ucan)
+    //   /** @type {Types.Delegation<[import('../capabilities-types').IdentityIdentify]>} */
+    //   proof = Delegation.create({ root })
+    // }
+
+    // // @ts-ignore
+    // const issuer = Keypair.parse(config.get('private-key'))
+    // const out = await Access.identify({
+    //   audience,
+    //   url,
+    //   issuer,
+    //   proof,
+    // })
+    // console.log('Account:', out)
   })
 
 prog.command('link [channel]').describe('Link.').action(linkCmd)

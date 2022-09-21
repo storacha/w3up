@@ -1,5 +1,6 @@
 import { UCAN } from '@ucanto/core'
 import * as Server from '@ucanto/server'
+import { Principal } from '@ucanto/principal'
 import {
   identityRegister,
   identityValidate,
@@ -14,7 +15,7 @@ export function identityValidateProvider(ctx) {
     async ({ capability, context, invocation }) => {
       const delegation = await identityRegister
         .invoke({
-          audience: invocation.issuer,
+          audience: Principal.parse(invocation.issuer.did()),
           issuer: ctx.keypair,
           with: capability.caveats.as,
           caveats: {
