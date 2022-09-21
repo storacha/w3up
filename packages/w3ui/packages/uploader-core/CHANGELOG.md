@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/web3-storage/w3ui/compare/uploader-core-v1.1.0...uploader-core-v1.1.1) (2022-09-21)
+
+
+### Bug Fixes
+
+* resolve call fetch on window object ([777df5d](https://github.com/web3-storage/w3ui/commit/777df5dbbd3aaa890a095c7eb39d74633505690e))
+
 ## [1.1.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v1.0.1...uploader-core-v1.1.0) (2022-09-20)
 
 
