@@ -2,5 +2,6 @@
   "packages/react-uploader": "1.0.1",
   "packages/react-wallet": "1.0.1",
   "packages/uploader-core": "1.1.1",
-  "packages/wallet-core": "1.2.2"
+  "packages/wallet-core": "1.2.2",
+  "packages/uploads-list-core": "1.0.0"
 }

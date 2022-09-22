@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/uploads-list-core",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "w3ui uploads list core.",
   "module": "build/esm/index.js",
   "main": "build/cjs/index.js",
