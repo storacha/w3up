@@ -1,6 +1,8 @@
-import { DID, UCANLink, Result, Await } from '@ucanto/interface'
+import { Await, DID, LinkedProof, Result } from '@ucanto/interface'
 import * as API from '@ucanto/interface'
-import { ServiceError } from './error.js'
+
+import { ServiceError } from './error'
+
 export type Error = QuotaViolationError
 
 export interface QuotaViolationError
@@ -23,19 +25,17 @@ export interface Provider {
    * @param link
    * @param proof
    */
-  add: (
+  add(
     group: DID,
     link: Link,
-    proof: UCANLink
-  ) => Await<Result<LinkState, Error>>
+    proof: LinkedProof
+  ): Await<Result<LinkState, Error>>
 
-  remove: (
-    group: DID,
-    link: Link,
-    proof: UCANLink
-  ) => Await<Result<null, never>>
+  link(rootCID: Link, links: Link[]): Await<Result>
 
-  list: (group: DID, proof: UCANLink) => Await<Result<Link[], never>>
+  remove(group: DID, link: Link, proof: LinkedProof): Await<Result<null, never>>
+
+  list(group: DID, proof: LinkedProof): Await<Result<Link[], never>>
 }
 
 interface LinkState {

@@ -5,14 +5,14 @@ export interface ServiceError<
   readonly name: Name
   readonly message: string
   readonly error: true
-  toJSON: () => JSONObject<JSON>
+  toJSON(): JSONObject<JSON>
 }
 
 export type ToJSON<T> = T extends undefined
   ? never
   : T extends number | null | string | boolean
   ? T
-  : T extends { toJSON: () => infer U }
+  : T extends { toJSON(): infer U }
   ? ToJSON<U>
   : T extends Array<infer U>
   ? Array<ToJSON<U>>

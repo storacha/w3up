@@ -1,10 +1,12 @@
+import type { API, URI } from '@ucanto/interface'
 import type {
   Capability,
-  ServiceMethod,
   DID,
-  Resource,
   Failure,
+  Resource,
+  ServiceMethod,
 } from '@ucanto/server'
+
 import type { ServiceError } from './error'
 
 export interface Identity {
@@ -15,7 +17,7 @@ export interface Identity {
    * (set) this MUST produce `NotRegistered`. If both UserIDs belong to two
    * different accounts they get joined into a single joint account (set).
    */
-  link: ServiceMethod<Link, null, NotRegistered>
+  //   link: ServiceMethod<Link, null, NotRegistered>
   /**
    * This is equivalent of `link` operation, only difference is unlike `link`
    * this MUST create a new account (set) if neither belong to a any account
@@ -47,9 +49,9 @@ export interface Validate extends Capability<'identity/validate', DID> {
   as: MailtoID
 }
 
-export interface Link extends Capability<'identity/link', DID> {
-  as: DID
-}
+// export interface Link extends Capability<'identity/link', DID> {
+//   as: DID
+// }
 
 export interface Identify extends Capability<'identity/identify', DID> {}
 

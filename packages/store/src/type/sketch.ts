@@ -1,14 +1,25 @@
 import type {
+  API,
   Ability,
+  Audience,
   Await,
+  Block,
   Capability,
   CapabilityMatch,
   Caveats,
+  ConnectionView,
+  InferCaveats,
   Invocation,
   InvocationError,
+  Link,
+  MalformedCapability,
   Match,
   ParsedCapability,
+  Resource,
+  Result,
+  ServerView,
   ServiceMethod,
+  SigningAuthority,
   TheCapabilityParser,
   URI,
 } from '@ucanto/interface'
@@ -34,30 +45,32 @@ interface Route<
   handler: CapabilityHandler<T, O, CTX>
 }
 
-type CapabilityHandler<
+interface CapabilityHandler<
   T extends ParsedCapability,
   O extends unknown = unknown,
   CTX extends {} = {}
-> = (
-  input: {
-    capability: T
-    invocation: Invocation<Capability<T['can'], T['with']> & T['caveats']>
-  },
-  context: CTX
-) => Await<O>
+> {
+  (
+    input: {
+      capability: T
+      invocation: Invocation<Capability<T['can'], T['with']> & T['caveats']>
+    },
+    context: CTX
+  ): Await<O>
+}
 
 interface Service<T extends { [Can in string]: Route }> {
   routes: T
 
-  provide: <C extends ParsedCapability, O extends unknown, CTX extends {}>(
+  provide<C extends ParsedCapability, O extends unknown, CTX extends {}>(
     capability: TheCapabilityParser<Match<C>>,
     handler: CapabilityHandler<C, O, CTX>
-  ) => Service<T & { [Can in C['can']]: Route<C, O, CTX> }>
+  ): Service<T & { [Can in C['can']]: Route<C, O, CTX> }>
 
-  invoke: <C extends ServiceCapability<T>>(
+  invoke<C extends ServiceCapability<T>>(
     capability: C,
     context: ServiceContext<T>
-  ) => ReturnType<T[C['can']]['handler']>
+  ): ReturnType<T[C['can']]['handler']>
 
   capability: ServiceCapability<T>
   context: ServiceContext<T>
@@ -105,9 +118,7 @@ interface Server<T extends { [key in string]: Method }> {
 
   capability: InferCapability<T>
 
-  invoke: <C extends InferCapability<T>>(
-    capbility: C
-  ) => ReturnType<T[C['can']]>
+  invoke<C extends InferCapability<T>>(capbility: C): ReturnType<T[C['can']]>
 }
 
 type InferCapability<T> = {
