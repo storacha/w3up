@@ -18,9 +18,12 @@
     "examples/react/multi-file-upload",
     "examples/react/sign-up-in",
     "examples/react/template",
+    "examples/react/uplaods-list",
     "packages/react-uploader",
+    "packages/react-uploads-list",
     "packages/react-wallet",
     "packages/uploader-core",
+    "packages/uploads-list-core",
     "packages/wallet-core"
   ],
   "devDependencies": {

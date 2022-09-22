@@ -44,6 +44,14 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {}
     }),
     ...buildConfigs({
+      name: 'uploads-list-core',
+      packageDir: 'packages/uploads-list-core',
+      jsName: 'UploadsListCore',
+      outputFile: 'uploads-list-core',
+      entryFile: 'src/index.ts',
+      globals: {}
+    }),
+    ...buildConfigs({
       name: 'wallet-core',
       packageDir: 'packages/wallet-core',
       jsName: 'WalletCore',
@@ -66,6 +74,17 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/react-uploader',
       jsName: 'ReactUploader',
       outputFile: 'react-uploader',
+      entryFile: 'src/index.ts',
+      globals: {
+        react: 'React',
+        '@w3ui/react-wallet': 'ReactWallet'
+      }
+    }),
+    ...buildConfigs({
+      name: 'react-uploads-list',
+      packageDir: 'packages/react-uploads-list',
+      jsName: 'ReactUploadsList',
+      outputFile: 'react-uploads-list',
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',

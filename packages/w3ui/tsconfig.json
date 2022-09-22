@@ -4,6 +4,7 @@
     { "path": "packages/react-uploader" },
     { "path": "packages/react-wallet" },
     { "path": "packages/uploader-core" },
+    { "path": "packages/uploads-list-core" },
     { "path": "packages/wallet-core" }
   ]
 }
