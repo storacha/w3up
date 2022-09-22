@@ -25,6 +25,7 @@
 * [Sign up / Sign in](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in)
 * [Single File Upload](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload)
 * [Multiple File Upload](https://github.com/web3-storage/w3ui/tree/main/examples/react/multi-file-upload)
+* [Uploads List](https://github.com/web3-storage/w3ui/tree/main/examples/react/uploads-list)
 
 ## Contributing
 

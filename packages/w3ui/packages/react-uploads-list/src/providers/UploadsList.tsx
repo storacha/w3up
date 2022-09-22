@@ -4,9 +4,21 @@ import { useAuth } from '@w3ui/react-wallet'
 import { CID } from 'multiformats/cid'
 
 export interface UploadsListContextValue {
+  /**
+   * True if the uploads list is currentky being retrieved from the service.
+   */
   loading: boolean
+  /**
+   * Set if an error occurred retrieving the uploads list.
+   */
   error?: Error
+  /**
+   * The content of the uploads list.
+   */
   data: CID[]
+  /**
+   * Call to reload the uploads list.
+   */
   reload: () => Promise<void>
 }
 
