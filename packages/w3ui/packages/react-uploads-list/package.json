@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/react-uploads-list",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "React adapter for w3ui uploads list.",
   "module": "build/esm/index.js",
   "main": "build/cjs/index.js",
