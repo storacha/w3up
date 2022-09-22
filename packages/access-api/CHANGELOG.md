@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.4.0...access-api-v1.0.0) (2022-09-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* awake (#66)
+
+### Features
+
+* awake ([#66](https://github.com/web3-storage/ucan-protocol/issues/66)) ([bb66f57](https://github.com/web3-storage/ucan-protocol/commit/bb66f5772049e3363a753ea5b336c2fa1e42911e))
+* support ucan as bearer ([#50](https://github.com/web3-storage/ucan-protocol/issues/50)) ([bc73755](https://github.com/web3-storage/ucan-protocol/commit/bc73755a308d116ba42f67cef2c7a6be5307c327))
+
+
+### Bug Fixes
+
+* **access-api:** cors on errors ([bb8e916](https://github.com/web3-storage/ucan-protocol/commit/bb8e91693be87186846bac166b1e5ab05c33a112))
+
 ## [0.4.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.3.0...access-api-v0.4.0) (2022-08-31)
 
 
