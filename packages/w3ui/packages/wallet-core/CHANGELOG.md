@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.2.1...wallet-core-v1.2.2) (2022-09-21)
+
+
+### Bug Fixes
+
+* resolve call fetch on window object ([777df5d](https://github.com/web3-storage/w3ui/commit/777df5dbbd3aaa890a095c7eb39d74633505690e))
+
 ## [1.2.1](https://github.com/web3-storage/w3ui/compare/wallet-core-v1.2.0...wallet-core-v1.2.1) (2022-09-21)
 
 
