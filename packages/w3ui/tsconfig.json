@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "packages/react-uploader" },
+    { "path": "packages/react-uploads-list" },
     { "path": "packages/react-wallet" },
     { "path": "packages/uploader-core" },
     { "path": "packages/uploads-list-core" },

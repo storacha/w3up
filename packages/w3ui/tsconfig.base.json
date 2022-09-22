@@ -21,8 +21,10 @@
     "baseUrl": ".",
     "paths": {
       "@w3ui/react-uploader": ["packages/react-uploader/src"],
+      "@w3ui/react-uploads-list": ["packages/react-uploads-list/src"],
       "@w3ui/react-wallet": ["packages/react-wallet/src"],
       "@w3ui/uploader-core": ["packages/uploader-core/src"],
+      "@w3ui/uploads-list-core": ["packages/uploads-list-core/src"],
       "@w3ui/wallet-core": ["packages/wallet-core/src"]
     }
   }
