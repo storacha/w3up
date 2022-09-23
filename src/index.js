@@ -1,6 +1,6 @@
-import { SigningAuthority } from '@ucanto/authority'
 import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
+import { SigningPrincipal } from '@ucanto/principal'
 import { Failure } from '@ucanto/validator'
 // @ts-ignore
 import * as capabilities from '@web3-storage/access/capabilities'
@@ -95,15 +95,15 @@ class Client {
   /**
    * Get the current "machine" DID
    * @async
-   * @returns {Promise<API.SigningAuthority>}
+   * @returns {Promise<API.SigningPrincipal>}
    */
   async identity() {
     const secret = this.settings.get('secret') || null
     try {
-      return SigningAuthority.decode(secret)
+      return SigningPrincipal.decode(secret)
     } catch (error) {
-      const id = await SigningAuthority.generate()
-      this.settings.set('secret', SigningAuthority.encode(id))
+      const id = await SigningPrincipal.generate()
+      this.settings.set('secret', SigningPrincipal.encode(id))
       return id
     }
   }

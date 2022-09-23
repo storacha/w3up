@@ -40,7 +40,7 @@
 
 * [Client](#Client)
     * [new Client(options)](#new_Client_new)
-    * [.identity()](#Client+identity) ⇒ <code>Promise.&lt;API.SigningAuthority&gt;</code>
+    * [.identity()](#Client+identity) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
     * [.register(email)](#Client+register)
     * [.checkRegistration()](#Client+checkRegistration) ⇒ <code>Promise.&lt;UCAN.JWT&gt;</code>
     * [.whoami()](#Client+whoami) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
@@ -61,7 +61,7 @@ Create an instance of the w3 client.
 
 <a name="Client+identity"></a>
 
-### client.identity() ⇒ <code>Promise.&lt;API.SigningAuthority&gt;</code>
+### client.identity() ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
 Get the current "machine" DID
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
