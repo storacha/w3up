@@ -20,6 +20,7 @@
     "examples/react/template",
     "examples/react/uploads-list",
     "examples/solid/file-upload",
+    "examples/solid/multi-file-upload",
     "examples/solid/sign-up-in",
     "examples/solid/template",
     "packages/react-uploader",
