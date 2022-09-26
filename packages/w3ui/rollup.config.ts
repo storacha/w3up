@@ -90,6 +90,17 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
         react: 'React',
         '@w3ui/react-wallet': 'ReactWallet'
       }
+    }),
+    ...buildConfigs({
+      name: 'solid-wallet',
+      packageDir: 'packages/solid-wallet',
+      jsName: 'SolidWallet',
+      outputFile: 'solid-wallet',
+      entryFile: 'src/index.ts',
+      globals: {
+        'solid-js': 'Solid',
+        'solid-js/store': 'SolidStore'
+      }
     })
   ]
 }
@@ -236,7 +247,7 @@ function umdProd ({
       }),
       visualizer({
         filename: `${packageDir}/build/stats.json`,
-        json: true,
+        template: 'raw-data',
         gzipSize: true
       })
     ]
