@@ -8,12 +8,6 @@ To run this example:
   git clone https://github.com/web3-storage/w3ui
   cd w3ui
   ```
-- Build the w3ui packages in the repo root directory
-
-  ```sh
-  npm install
-  npm run build
-  ```
 
 - Change to this example directory and install dependencies
 
