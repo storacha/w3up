@@ -3,7 +3,12 @@
 ## React
 
 * [`@w3ui/react-uploader`](./react-uploader.md)
+* [`@w3ui/react-uploads-list`](./react-uploads-list.md)
 * [`@w3ui/react-wallet`](./react-wallet.md)
+
+## Solid
+
+* [`@w3ui/solid-wallet`](./solid-wallet.md)
 
 ## Core
 
