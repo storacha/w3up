@@ -1,4 +1,4 @@
-import { createContext, useContext, createSignal, ParentComponent, createComponent } from 'solid-js'
+import { createContext, useContext, createSignal, createComponent, ParentComponent } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { registerIdentity, loadDefaultIdentity, loadIdentity, storeIdentity, removeIdentity, Identity, AuthStatus, createIdentity, sendVerificationEmail, waitIdentityVerification, UnverifiedIdentity } from '@w3ui/wallet-core'
 
@@ -51,10 +51,10 @@ const defaultState: AuthContextState = {
 export const AuthContext = createContext<AuthContextValue>([
   defaultState,
   {
-    loadDefaultIdentity: async () => { console.log('default loadDefaultIdentity') },
+    loadDefaultIdentity: async () => {},
     unloadIdentity: async () => {},
     unloadAndRemoveIdentity: async () => {},
-    registerAndStoreIdentity: async () => { console.log('default registerAndStoreIdentity') },
+    registerAndStoreIdentity: async () => {},
     cancelRegisterAndStoreIdentity: () => {}
   }
 ])
