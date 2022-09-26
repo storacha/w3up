@@ -3,8 +3,19 @@ import { encodeFile, encodeDirectory, uploadCarBytes, EncodeResult } from '@w3ui
 import { useAuth } from '@w3ui/react-wallet'
 
 export interface Uploader {
+  /**
+   * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
+   */
   encodeFile: (data: Blob) => Promise<EncodeResult>
+  /**
+   * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
+   * All files are added to a container directory, with paths in file names
+   * preserved.
+   */
   encodeDirectory: (files: Iterable<File>) => Promise<EncodeResult>
+  /**
+   * Upload CAR bytes to the service.
+   */
   uploadCar: (car: AsyncIterable<Uint8Array>) => Promise<void>
 }
 

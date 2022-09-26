@@ -8,9 +8,11 @@
 
 ## Solid
 
+* [`@w3ui/solid-uploader`](./solid-uploader.md)
 * [`@w3ui/solid-wallet`](./solid-wallet.md)
 
 ## Core
 
-* [`@w3ui/wallet-core`](./wallet-core.md)
 * [`@w3ui/uploader-core`](./uploader-core.md)
+* [`@w3ui/uploads-list-core`](./uploads-list-core.md)
+* [`@w3ui/wallet-core`](./wallet-core.md)

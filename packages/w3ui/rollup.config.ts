@@ -101,6 +101,18 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
         'solid-js': 'Solid',
         'solid-js/store': 'SolidStore'
       }
+    }),
+    ...buildConfigs({
+      name: 'solid-uploader',
+      packageDir: 'packages/solid-uploader',
+      jsName: 'SolidUploader',
+      outputFile: 'solid-uploader',
+      entryFile: 'src/index.ts',
+      globals: {
+        'solid-js': 'Solid',
+        'solid-js/store': 'SolidStore',
+        '@w3ui/solid-wallet': 'SolidWallet'
+      }
     })
   ]
 }

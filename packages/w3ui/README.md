@@ -20,8 +20,8 @@
 
 ### Examples
 
-* Sign up / Sign in [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in) / [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/sign-up-in)
-* Single File Upload [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload)
+* Sign up / Sign in [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/sign-up-in)
+* Single File Upload [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/file-upload)
 * Multiple File Upload [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/multi-file-upload)
 * Uploads List [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/uploads-list)
 

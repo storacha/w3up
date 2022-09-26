@@ -1,0 +1,33 @@
+{
+  "name": "@w3ui/solid-uploader",
+  "version": "0.0.0",
+  "description": "Solid adapter for w3ui uploader.",
+  "module": "build/esm/index.js",
+  "main": "build/cjs/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/solid-uploader/src/index.d.ts",
+  "scripts": {
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "files": [
+    "build/*",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3ui/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-uploader",
+  "dependencies": {
+    "@w3ui/uploader-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.5.0",
+    "@w3ui/solid-wallet": "^0.0.0"
+  }
+}
