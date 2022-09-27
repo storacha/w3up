@@ -37,7 +37,9 @@
 
 * [Client](#Client)
     * [new Client(options)](#new_Client_new)
-    * [.identity()](#Client+identity) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+    * [.agent()](#Client+agent) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+    * [.account()](#Client+account) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+    * [.delegation()](#Client+delegation) ⇒ <code>Promise.&lt;(API.Delegation\|undefined)&gt;</code>
     * [.setup()](#Client+setup) ⇒ <code>Promise.&lt;{issuer: API.SigningPrincipal, with: API.DID, proofs: Array.&lt;any&gt;}&gt;</code>
     * [.register(email)](#Client+register)
     * [.checkRegistration()](#Client+checkRegistration) ⇒ <code>Promise.&lt;UCAN.JWT&gt;</code>
@@ -59,17 +61,26 @@ Create an instance of the w3 client.
 | --- | --- |
 | options | [<code>ClientOptions</code>](#ClientOptions) | 
 
-<a name="Client+identity"></a>
+<a name="Client+agent"></a>
 
-### client.identity() ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+### client.agent() ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
 Get the current "machine" DID
 
+**Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="Client+account"></a>
+
+### client.account() ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+Get the current "account" DID
+
+**Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="Client+delegation"></a>
+
+### client.delegation() ⇒ <code>Promise.&lt;(API.Delegation\|undefined)&gt;</code>
 **Kind**: instance method of [<code>Client</code>](#Client)  
 <a name="Client+setup"></a>
 
 ### client.setup() ⇒ <code>Promise.&lt;{issuer: API.SigningPrincipal, with: API.DID, proofs: Array.&lt;any&gt;}&gt;</code>
 **Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: <code>Promise.&lt;{issuer: API.SigningPrincipal, with: API.DID, proofs: Array.&lt;any&gt;}&gt;</code> - [TODO:description]  
 <a name="Client+register"></a>
 
 ### client.register(email)
