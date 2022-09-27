@@ -125,6 +125,16 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
         'solid-js/store': 'SolidStore',
         '@w3ui/solid-wallet': 'SolidWallet'
       }
+    }),
+    ...buildConfigs({
+      name: 'vue-wallet',
+      packageDir: 'packages/vue-wallet',
+      jsName: 'VueWallet',
+      outputFile: 'vue-wallet',
+      entryFile: 'src/index.ts',
+      globals: {
+        vue: 'Vue'
+      }
     })
   ]
 }

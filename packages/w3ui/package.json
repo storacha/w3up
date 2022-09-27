@@ -24,12 +24,15 @@
     "examples/solid/sign-up-in",
     "examples/solid/template",
     "examples/solid/uploads-list",
+    "examples/vue/sign-up-in",
+    "examples/vue/template",
     "packages/react-uploader",
     "packages/react-uploads-list",
     "packages/react-wallet",
     "packages/solid-uploader",
     "packages/solid-uploads-list",
     "packages/solid-wallet",
+    "packages/vue-wallet",
     "packages/uploader-core",
     "packages/uploads-list-core",
     "packages/wallet-core"
@@ -56,6 +59,7 @@
     "solid-js": "^1.5.6",
     "ts-node": "^10.9.1",
     "ts-standard": "^11.0.0",
-    "typescript": "^4.8.2"
+    "typescript": "^4.8.2",
+    "vue": "^3.2.39"
   }
 }
