@@ -1,8 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react'
 import { registerIdentity, loadDefaultIdentity, loadIdentity, storeIdentity, removeIdentity, Identity, AuthStatus, createIdentity, sendVerificationEmail, waitIdentityVerification, UnverifiedIdentity } from '@w3ui/wallet-core'
 
-export { AuthStatus }
-
 export interface AuthContextValue {
   /**
    * The current identity

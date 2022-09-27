@@ -2,8 +2,6 @@ import { createContext, useContext, createSignal, createComponent, ParentCompone
 import { createStore } from 'solid-js/store'
 import { registerIdentity, loadDefaultIdentity, loadIdentity, storeIdentity, removeIdentity, Identity, AuthStatus, createIdentity, sendVerificationEmail, waitIdentityVerification, UnverifiedIdentity } from '@w3ui/wallet-core'
 
-export { AuthStatus }
-
 export interface AuthContextState {
   /**
    * The current identity
