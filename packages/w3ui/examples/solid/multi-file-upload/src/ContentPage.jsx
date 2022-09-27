@@ -41,20 +41,20 @@ export function ContentPage () {
       <Match when={status() === ''}>
         <form onSubmit={handleUploadSubmit}>
           <div className='db mb3'>
-            <label htmlFor='file' className='db mb2'>Files:</label>
+            <label htmlFor='file' className='db mb2 light-silver'>Files:</label>
             {allowDirectory()
-              ? <input id='file' className='db pa2 w-100 ba br2' type='file' webkitdirectory='true' onChange={e => setFiles(Array.from(e.target.files))} required />
-              : <input id='file' className='db pa2 w-100 ba br2' type='file' multiple onChange={e => setFiles(Array.from(e.target.files))} required />}
+              ? <input id='file' className='db pa2 w-100 ba br2 light-silver' type='file' webkitdirectory='true' onChange={e => setFiles(Array.from(e.target.files))} required />
+              : <input id='file' className='db pa2 w-100 ba br2 light-silver' type='file' multiple onChange={e => setFiles(Array.from(e.target.files))} required />}
           </div>
           <div className='mb3'>
-            <label>
+            <label className='light-silver'>
               <input type='checkbox' value={allowDirectory()} onChange={e => setAllowDirectory(e.target.checked)} /> Allow directory selection
             </label>
           </div>
           {files().length === 1
             ? (
               <div className='mb3'>
-                <label>
+                <label className='light-silver'>
                   <input type='checkbox' value={wrapInDirectory()} onChange={e => setWrapInDirectory(e.target.checked)} /> Wrap file in a directory
                 </label>
               </div>
@@ -80,7 +80,7 @@ const Encoding = ({ files }) => (
   <div className='flex items-center'>
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
-      <p className='truncate'>Building DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
+      <p className='truncate light-silver'>Building DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
     </div>
   </div>
 )
@@ -89,24 +89,24 @@ const Uploading = ({ files, cid }) => (
   <div className='flex items-center'>
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
-      <p className='truncate'>Uploading DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
-      <p className='f6 code truncate'>{cid}</p>
+      <p className='truncate light-silver'>Uploading DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
+      <p className='f6 code truncate light-silver'>{cid}</p>
     </div>
   </div>
 )
 
 const Errored = ({ error }) => (
   <div>
-    <h1>⚠️ Error: failed to upload file(s): {error.message}</h1>
-    <p>Check the browser console for details.</p>
+    <h1 className='near-white'>⚠️ Error: failed to upload file(s): {error.message}</h1>
+    <p className='light-silver'>Check the browser console for details.</p>
   </div>
 )
 
 const Done = ({ files, cid }) => (
   <div>
-    <h1>Done!</h1>
-    <p className='f6 code truncate'>{cid}</p>
-    <p><a href={`https://w3s.link/ipfs/${cid}`}>View {files.length > 1 ? 'files' : files[0].name} on IPFS Gateway.</a></p>
+    <h1 className='near-white'>Done!</h1>
+    <p className='f6 code truncate light-silver'>{cid}</p>
+    <p><a href={`https://w3s.link/ipfs/${cid}`} className='blue'>View {files.length > 1 ? 'files' : files[0].name} on IPFS Gateway.</a></p>
   </div>
 )
 

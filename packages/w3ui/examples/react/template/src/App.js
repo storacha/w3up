@@ -4,7 +4,7 @@ function App () {
   return (
     <div>
       <header style={{ textAlign: 'center', padding: 10 }}>
-        <img src={logo} width='125' alt='logo' />
+        <img src={logo} width='250' alt='logo' />
       </header>
     </div>
   )

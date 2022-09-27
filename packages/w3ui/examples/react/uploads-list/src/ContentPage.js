@@ -15,7 +15,7 @@ export function ContentPage () {
       <table className='mb3'>
         {data.map(cid => (
           <tr key={cid}>
-            <td>{cid}</td>
+            <td className='light-silver'>{cid}</td>
           </tr>
         ))}
       </table>
@@ -27,8 +27,8 @@ export function ContentPage () {
 
 const Errored = ({ error }) => (
   <div>
-    <h1>⚠️ Error: failed to list uploads: {error.message}</h1>
-    <p>Check the browser console for details.</p>
+    <h1 className='near-white'>⚠️ Error: failed to list uploads: {error.message}</h1>
+    <p className='light-silver'>Check the browser console for details.</p>
   </div>
 )
 

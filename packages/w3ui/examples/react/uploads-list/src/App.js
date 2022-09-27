@@ -10,8 +10,8 @@ function App () {
       <UploadsListProvider>
         <IdentityLoader>
           <div className='vh-100 flex flex-column justify-center items-center sans-serif'>
-            <header className='mb3'>
-              <img src={logo} width='125' alt='logo' />
+            <header>
+              <img src={logo} width='250' alt='logo' />
             </header>
             <div className='w-90 w-50-ns mw6'>
               <ContentPage />

@@ -46,8 +46,8 @@ export function ContentPage () {
   return (
     <form onSubmit={handleUploadSubmit}>
       <div className='db mb3'>
-        <label htmlFor='file' className='db mb2'>File:</label>
-        <input id='file' className='db pa2 w-100 ba br2' type='file' onChange={e => setFile(e.target.files[0])} required />
+        <label htmlFor='file' className='db mb2 light-silver'>File:</label>
+        <input id='file' className='db pa2 w-100 ba br2 light-silver' type='file' onChange={e => setFile(e.target.files[0])} required />
       </div>
       <button type='submit' className='ph3 pv2'>Upload</button>
     </form>
@@ -58,7 +58,7 @@ const Encoding = ({ file }) => (
   <div className='flex items-center'>
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
-      <p className='truncate'>Building DAG for {file.name}</p>
+      <p className='truncate light-silver'>Building DAG for {file.name}</p>
     </div>
   </div>
 )
@@ -67,7 +67,7 @@ const Uploading = ({ file, cid }) => (
   <div className='flex items-center'>
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
-      <p className='truncate'>Uploading DAG for {file.name}</p>
+      <p className='truncate light-silver'>Uploading DAG for {file.name}</p>
       <p className='f6 code truncate'>{cid}</p>
     </div>
   </div>
@@ -75,16 +75,16 @@ const Uploading = ({ file, cid }) => (
 
 const Errored = ({ error }) => (
   <div>
-    <h1>⚠️ Error: failed to upload file: {error.message}</h1>
-    <p>Check the browser console for details.</p>
+    <h1 className='near-white'>⚠️ Error: failed to upload file: {error.message}</h1>
+    <p className='light-silver'>Check the browser console for details.</p>
   </div>
 )
 
 const Done = ({ file, cid }) => (
   <div>
-    <h1>Done!</h1>
-    <p className='f6 code truncate'>{cid}</p>
-    <p><a href={`https://w3s.link/ipfs/${cid}`}>View {file.name} on IPFS Gateway.</a></p>
+    <h1 className='near-white'>Done!</h1>
+    <p className='f6 code truncate light-silver'>{cid}</p>
+    <p><a href={`https://w3s.link/ipfs/${cid}`} className='blue'>View {file.name} on IPFS Gateway.</a></p>
   </div>
 )
 
