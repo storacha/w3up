@@ -1,6 +1,6 @@
 import { CarBufferWriter, CarReader } from '@ipld/car'
-import { Authority } from '@ucanto/authority'
 import * as API from '@ucanto/interface'
+import { Principal } from '@ucanto/principal'
 import { Delegation, URI, capability } from '@ucanto/server'
 import {
   identityIdentify,
@@ -38,7 +38,7 @@ async function writeDelegationUCANtoCar(delegation) {
  * @returns {Promise<StoreDelegation>}
  */
 export async function generateDelegation(opts, includeAccountCaps = false) {
-  const delegatedTo = Authority.parse(opts.to)
+  const delegatedTo = Principal.parse(opts.to)
 
   let capabilities = [
     {
