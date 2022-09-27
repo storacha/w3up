@@ -1,4 +1,4 @@
-import { Authority } from '@ucanto/authority'
+import { Principal } from '@ucanto/principal'
 import * as Client from '@ucanto/client'
 import * as API from '@ucanto/interface'
 import * as CAR from '@ucanto/transport/car'
@@ -25,7 +25,7 @@ export const connect = ({
   method,
 }) =>
   Client.connect({
-    id: Authority.parse(id),
+    id: Principal.parse(id),
     ...transport,
     channel: HTTP.open({
       url,
