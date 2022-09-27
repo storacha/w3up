@@ -1,0 +1,22 @@
+{
+  "name": "@w3ui/example-solid-uploads-list",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^3.0.9",
+    "vite-plugin-solid": "^2.3.0"
+  },
+  "dependencies": {
+    "@w3ui/solid-wallet": "^0.0.0",
+    "@w3ui/solid-uploads-list": "^0.0.0",
+    "solid-js": "^1.5.1"
+  }
+}

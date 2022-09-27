@@ -4,8 +4,11 @@
     "packages/react-uploader": {},
     "packages/react-uploads-list": {},
     "packages/react-wallet": {},
+
     "packages/solid-uploader": {},
+    "packages/solid-uploads-list": {},
     "packages/solid-wallet": {},
+
     "packages/uploader-core": {},
     "packages/uploads-list-core": {},
     "packages/wallet-core": {}
