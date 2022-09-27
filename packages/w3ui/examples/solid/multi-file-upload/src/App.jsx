@@ -8,7 +8,7 @@ function App () {
     <AuthProvider>
       <UploaderProvider>
         <IdentityLoader>
-          <div className='vh-100 flex flex-column justify-center items-center sans-serif'>
+          <div className='vh-100 flex flex-column justify-center items-center sans-serif light-silver'>
             <header>
               <img src={logo} width='250' alt='logo' />
             </header>
