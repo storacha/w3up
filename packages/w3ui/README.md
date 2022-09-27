@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://beta.ui.web3.storage"><img width="202" src="https://bafybeibgtocen46y5pdlnu3pdxxfznmri33ybz55gz3imdigr5nldkkedm.ipfs.w3s.link/w3ui-logo-rounded.png" alt="Web3.Storage UI logo" /></a>
+  <a href="https://beta.ui.web3.storage"><img width="250" src="https://w3s.link/ipfs/bafybeignfkw6kvxbqxmbxhismdnhtf7stkfuyki5zoyhquqie5rm5zl4xa/logo.png" alt="Web3.Storage UI logo" /></a>
 </h1>
 
 <h3 align="center">Headless, type-safe, UI components for the next generation Web3.Storage APIs.</h3>
