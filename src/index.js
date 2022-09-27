@@ -1,20 +1,17 @@
 import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
+import * as CAR from '@ucanto/transport/car'
 import { Failure } from '@ucanto/validator'
 // @ts-ignore
 import * as capabilities from '@web3-storage/access/capabilities'
 import fetch from 'cross-fetch'
 
-import * as CAR from '../patches/@ucanto/transport/car.js'
 import * as defaults from './defaults.js'
+import * as delegation from './delegation.js'
 import { Access, Store } from './store/index.js'
 import { sleep } from './utils.js'
 
-/**
- * A string representing a link to another object in IPLD
- * @typedef {API.Link} Link
- */
 /** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
 /** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
 
@@ -108,6 +105,41 @@ class Client {
     }
   }
 
+  async delegation() {
+    const did = this.settings.has('delegation')
+      ? this.settings.get('delegation')
+      : null
+
+    const delegations = this.settings.has('delegations')
+      ? Object.values(this.settings.get('delegations')).map((x) =>
+          Delegation.import([x.ucan.root])
+        )
+      : []
+
+    const delegation = delegations.find((x) => x.issuer.did() == did)
+    return delegation
+  }
+
+  /**
+   * @async
+   * @returns {Promise<{
+   * issuer: API.SigningPrincipal,
+   * with: API.DID,
+   * proofs: Array<any>
+   * }>} [TODO:description]
+   */
+  async setup() {
+    const id = await this.identity()
+    const delegation = await this.delegation()
+
+    return {
+      issuer: id,
+      // @ts-ignore
+      with: delegation?.capabilities[0].with || id.did(),
+      proofs: delegation ? [delegation] : [],
+    }
+  }
+
   /**
    * Register a user by email.
    * @param {string|undefined} email - The email address to register with.
@@ -125,7 +157,7 @@ class Client {
       throw new Error(`Invalid email provided for registration: ${email}`)
     }
     const issuer = await this.identity()
-    const result = await capabilities.identityValidate
+    await capabilities.identityValidate
       .invoke({
         issuer,
         audience: this.accessClient.id,
@@ -226,14 +258,37 @@ class Client {
    * @returns {Promise<Result>}
    */
   async list() {
-    const id = await this.identity()
+    const opts = await this.setup()
     return capabilities.storeList
       .invoke({
-        issuer: id,
+        ...opts,
         audience: this.storeClient.id,
-        with: id.did(),
       })
       .execute(this.storeClient)
+  }
+
+  /**
+   * @param {any} did
+   * @returns {Promise<Uint8Array>}
+   */
+  async makeDelegation(did) {
+    const id = await this.identity()
+
+    return delegation.createDelegation({
+      issuer: await this.identity(),
+      did,
+    })
+  }
+
+  /**
+   * @param {Uint8Array} bytes
+   * @returns {Promise<any>}
+   */
+  async importDelegation(bytes) {
+    const id = await this.identity()
+    // TODO: save into settings.
+
+    return delegation.importDelegation(bytes)
   }
 
   /**
@@ -244,13 +299,12 @@ class Client {
    */
   async upload(bytes) {
     try {
-      const id = await this.identity()
+      const opts = await this.setup()
       const link = await CAR.codec.link(bytes)
       const result = await capabilities.storeAdd
         .invoke({
-          issuer: id,
+          ...opts,
           audience: this.storeClient.id,
-          with: id.did(),
           caveats: {
             link,
           },
@@ -295,12 +349,11 @@ class Client {
    * @param {API.Link} link - the CID to remove
    */
   async remove(link) {
-    const id = await this.identity()
+    const opts = await this.setup()
     return await capabilities.storeRemove
       .invoke({
-        issuer: id,
+        ...opts,
         audience: this.storeClient.id,
-        with: id.did(),
         caveats: {
           link,
         },
@@ -310,8 +363,8 @@ class Client {
 
   /**
    * Remove an uploaded file by CID
-   * @param {Link} root - the CID to link as root.
-   * @param {Array<Link>} links - the CIDs to link as 'children'
+   * @param {API.Link} root - the CID to link as root.
+   * @param {Array<API.Link>} links - the CIDs to link as 'children'
    */
   //   async linkroot(root, links) {
   //     const id = await this.identity()
@@ -328,7 +381,7 @@ class Client {
 
   /**
    * @async
-   * @param {Link} link - the CID to get insights for
+   * @param {API.Link} link - the CID to get insights for
    * @returns {Promise<object>}
    */
   async insights(link) {
@@ -349,7 +402,7 @@ class Client {
 
   /**
    * @async
-   * @param {Link} link - the CID to get insights for
+   * @param {API.Link} link - the CID to get insights for
    * @returns {Promise<object>}
    */
   //   async insightsWS(link) {

@@ -18,7 +18,7 @@
     "build": "npm run build:api_docs && npm run build:types",
     "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./dist",
     "build:api_docs": "jsdoc2md -f src/index.js > API.md",
-    "pretest": "npm run prettier && npm run typecheck",
+    "x-pretest": "npm run prettier && npm run typecheck",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier -c '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",

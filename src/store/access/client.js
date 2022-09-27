@@ -1,12 +1,12 @@
-// import * as CAR from '@ucanto/transport/car';
 import { Authority } from '@ucanto/authority'
 import * as Client from '@ucanto/client'
 import * as API from '@ucanto/interface'
+import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import webfetch from 'cross-fetch'
 
-import * as CAR from '../../../patches/@ucanto/transport/car.js'
+// import * as CAR from '../../../patches/@ucanto/transport/car.js'
 
 /**
  * @param {object} options
@@ -15,6 +15,7 @@ import * as CAR from '../../../patches/@ucanto/transport/car.js'
  * @param {string} [options.method]
  * @param {HTTP.Fetcher} [options.fetch]
  * @param {API.OutpboundTranpsortOptions} [options.transport]
+ * @returns { import('@ucanto/interface').ConnectionView<any> }
  */
 export const connect = ({
   id,
