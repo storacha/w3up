@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v1.0.0...react-uploads-list-v1.0.1) (2022-09-28)
+
+
+### Bug Fixes
+
+* type declarations path ([a56f6d3](https://github.com/web3-storage/w3ui/commit/a56f6d3acb4ebd1c1ba7635ebf88e138770627f6))
+
 ## 1.0.0 (2022-09-22)
 
 
