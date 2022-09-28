@@ -9,6 +9,9 @@
     "packages/solid-uploads-list": {},
     "packages/solid-wallet": {},
 
+    "packages/vue-uploader": {},
+    "packages/vue-wallet": {},
+
     "packages/uploader-core": {},
     "packages/uploads-list-core": {},
     "packages/wallet-core": {}

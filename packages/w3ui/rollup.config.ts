@@ -135,6 +135,17 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {
         vue: 'Vue'
       }
+    }),
+    ...buildConfigs({
+      name: 'vue-uploader',
+      packageDir: 'packages/vue-uploader',
+      jsName: 'VueUploader',
+      outputFile: 'vue-uploader',
+      entryFile: 'src/index.ts',
+      globals: {
+        vue: 'Vue',
+        '@w3ui/vue-wallet': 'VueWallet'
+      }
     })
   ]
 }

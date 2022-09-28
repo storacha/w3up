@@ -12,6 +12,11 @@
 * [`@w3ui/solid-uploads-list`](./solid-uploads-list.md)
 * [`@w3ui/solid-wallet`](./solid-wallet.md)
 
+## Vue
+
+* [`@w3ui/vue-uploader`](./vue-uploader.md)
+* [`@w3ui/vue-wallet`](./vue-wallet.md)
+
 ## Core
 
 * [`@w3ui/uploader-core`](./uploader-core.md)
