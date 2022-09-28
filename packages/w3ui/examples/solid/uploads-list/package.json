@@ -15,8 +15,8 @@
     "vite-plugin-solid": "^2.3.0"
   },
   "dependencies": {
-    "@w3ui/solid-wallet": "^0.0.0",
-    "@w3ui/solid-uploads-list": "^0.0.0",
+    "@w3ui/solid-wallet": "^1.0.0",
+    "@w3ui/solid-uploads-list": "^1.0.0",
     "solid-js": "^1.5.1"
   }
 }
