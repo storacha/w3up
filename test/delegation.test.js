@@ -1,8 +1,12 @@
-import { Delegation } from '@ucanto/core'
+import { Delegation, decodeLink } from '@ucanto/core'
 import { SigningPrincipal } from '@ucanto/principal'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { importDelegation, writeDelegation } from '../src/delegation.js'
+import {
+  generateDelegation,
+  importDelegation,
+  writeDelegation,
+} from '../src/delegation.js'
 import fixture from './fixture.js'
 
 // The two tests marked with concurrent will be run in parallel
@@ -21,6 +25,39 @@ describe('delegation', () => {
       expect(delegation).toBeDefined()
       expect(delegation).toBeInstanceOf(Uint8Array)
     })
+
+    it('should create a delegation with a given expiration', async () => {
+      const delegation = await writeDelegation({
+        issuer: await SigningPrincipal.generate(),
+        to: fixture.did,
+        expiration: 1000,
+      })
+
+      expect(delegation).toBeDefined()
+      expect(delegation).toBeInstanceOf(Uint8Array)
+    })
+  })
+
+  describe('#generateDelegation', () => {
+    beforeEach(async (context) => {
+      context.issuer = await SigningPrincipal.generate()
+    })
+
+    it('should create a delegation with a given expiration.', async ({
+      issuer,
+    }) => {
+      const now = Date.now()
+      const delegation = await generateDelegation({
+        issuer,
+        to: fixture.did,
+        expiration: 1000,
+      })
+
+      expect(delegation).toBeDefined()
+      expect(delegation.expiration).toBeGreaterThan(now + 999)
+      console.log('now', now)
+      console.log('exp', delegation.expiration)
+    })
   })
 
   describe('#importDelegation', () => {
@@ -37,7 +74,6 @@ describe('delegation', () => {
       const imported = await importDelegation(delegation)
       console.log('imported', imported)
       expect(imported).toBeDefined()
-      //       expect(imported).toBeInstanceOf(Delegation)
     })
   })
 

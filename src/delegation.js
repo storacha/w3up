@@ -68,13 +68,14 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
     ])
   }
 
+  const offset = opts?.expiration || 31_516_000
+
   const storeAllDelegated = await Delegation.delegate({
     issuer: opts.issuer,
     audience: delegatedTo,
     // @ts-ignore
     capabilities,
-    expiration: Date.now() + 31_526_000,
-    proofs: [],
+    expiration: Date.now() + offset,
   })
 
   return storeAllDelegated
