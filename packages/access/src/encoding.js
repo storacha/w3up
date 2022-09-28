@@ -3,6 +3,8 @@ import { CarReader } from '@ipld/car/reader'
 import { CarWriter } from '@ipld/car/writer'
 import { Delegation } from '@ucanto/core/delegation'
 import * as u8 from 'uint8arrays'
+// eslint-disable-next-line no-unused-vars
+import * as Types from '@ucanto/interface'
 
 /**
  * @param {AsyncIterable<Uint8Array>} iterable
@@ -19,9 +21,14 @@ function collector(iterable) {
 }
 
 /**
- * @param {import("@ucanto/interface").Delegation[]} delegations
+ * @param {Types.Delegation[]} delegations
+ * @param {import('uint8arrays/to-string').SupportedEncodings} encoding
  */
-export async function encodeDelegations(delegations) {
+export async function encodeDelegations(delegations, encoding = 'base64url') {
+  if (delegations.length === 0) {
+    return ''
+  }
+
   const roots = delegations.map((d) => d.root.cid)
 
   // @ts-ignore
@@ -38,17 +45,35 @@ export async function encodeDelegations(delegations) {
 
   const bytes = await collection
 
-  return u8.toString(bytes, 'base64')
+  return u8.toString(bytes, encoding)
 }
 
 /**
- * @param {string} raw
+ * Encode one {@link Types.Delegation Delegation} into a string
+ *
+ * @param {Types.Delegation<Types.Capabilities>} delegation
+ * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
-export async function decodeDelegations(raw) {
-  const bytes = u8.fromString(raw, 'base64')
+export function delegationToString(delegation, encoding) {
+  return encodeDelegations([delegation], encoding)
+}
+
+/**
+ * Decode string into {@link Types.Delegation Delegation}
+ *
+ * @template {Types.Capabilities} [T=Types.Capabilities]
+ * @param {import('./types').EncodedDelegation<T>} raw
+ * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
+ */
+export async function decodeDelegations(raw, encoding = 'base64url') {
+  if (!raw) {
+    return []
+  }
+  const bytes = u8.fromString(raw, encoding)
   const reader = await CarReader.fromBytes(bytes)
   const roots = await reader.getRoots()
 
+  /** @type {Types.Delegation<T>[]} */
   const delegations = []
 
   for (const root of roots) {
@@ -69,4 +94,17 @@ export async function decodeDelegations(raw) {
   }
 
   return delegations
+}
+
+/**
+ * Decode string into a {@link Types.Delegation Delegation}
+ *
+ * @template {Types.Capabilities} [T=Types.Capabilities]
+ * @param {import('./types').EncodedDelegation<T>} raw
+ * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
+ */
+export async function stringToDelegation(raw, encoding) {
+  const delegations = await decodeDelegations(raw, encoding)
+
+  return /** @type {Types.Delegation<T>} */ (delegations[0])
 }

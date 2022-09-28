@@ -1,9 +1,9 @@
-import { mf, serviceAuthority, test } from './helpers/setup.js'
 import * as UCAN from '@ipld/dag-ucan'
 import { SigningPrincipal } from '@ucanto/principal'
+import { context, test } from './helpers/context.js'
 
-test.before((t) => {
-  t.context = { mf }
+test.beforeEach(async (t) => {
+  t.context = await context()
 })
 
 test('should fail with no header', async (t) => {
@@ -43,13 +43,11 @@ test('should fail with bad ucan', async (t) => {
 })
 
 test('should fail with 0 caps', async (t) => {
-  const { mf } = t.context
-
-  const kp = await SigningPrincipal.generate()
+  const { mf, service, issuer } = t.context
 
   const ucan = await UCAN.issue({
-    issuer: kp,
-    audience: serviceAuthority,
+    issuer,
+    audience: service,
     // @ts-ignore
     capabilities: [],
   })
@@ -71,12 +69,11 @@ test('should fail with 0 caps', async (t) => {
 })
 
 test('should fail with bad service audience', async (t) => {
-  const { mf } = t.context
+  const { mf, issuer, service } = t.context
 
-  const kp = await SigningPrincipal.generate()
   const audience = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
-    issuer: kp,
+    issuer,
     audience,
     // @ts-ignore
     capabilities: [],
@@ -92,22 +89,21 @@ test('should fail with bad service audience', async (t) => {
     {
       name: 'InvalidAudience',
       error: true,
-      audience: serviceAuthority.did(),
+      audience: service.did(),
       delegation: {
         audience: audience.did(),
       },
-      message: `Delegates to '${audience.did()}' instead of '${serviceAuthority.did()}'`,
+      message: `Delegates to '${audience.did()}' instead of '${service.did()}'`,
     },
   ])
 })
 
 test('should fail with with more than 1 cap', async (t) => {
-  const { mf } = t.context
+  const { mf, service, issuer } = t.context
 
-  const kp = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
-    issuer: kp,
-    audience: serviceAuthority,
+    issuer,
+    audience: service,
     capabilities: [
       { can: 'identity/validate', with: 'mailto:admin@dag.house' },
       { can: 'identity/register', with: 'mailto:admin@dag.house' },
@@ -134,12 +130,11 @@ test('should fail with with more than 1 cap', async (t) => {
 })
 
 test('should route to handler', async (t) => {
-  const { mf } = t.context
+  const { mf, issuer, service } = t.context
 
-  const kp = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
-    issuer: kp,
-    audience: serviceAuthority,
+    issuer,
+    audience: service,
     capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
   })
   const res = await mf.dispatchFetch('http://localhost:8787/raw', {
@@ -153,12 +148,11 @@ test('should route to handler', async (t) => {
 })
 
 test('should handle exception in route handler', async (t) => {
-  const { mf } = t.context
+  const { mf, service, issuer } = t.context
 
-  const kp = await SigningPrincipal.generate()
   const ucan = await UCAN.issue({
-    issuer: kp,
-    audience: serviceAuthority,
+    issuer,
+    audience: service,
     capabilities: [{ can: 'testing/fail', with: 'mailto:admin@dag.house' }],
   })
   const res = await mf.dispatchFetch('http://localhost:8787/raw', {
@@ -175,7 +169,7 @@ test('should handle exception in route handler', async (t) => {
 })
 
 test('should fail with missing proofs', async (t) => {
-  const { mf } = t.context
+  const { mf, service } = t.context
 
   const alice = await SigningPrincipal.generate()
   const bob = await SigningPrincipal.generate()
@@ -194,7 +188,7 @@ test('should fail with missing proofs', async (t) => {
   const cid2 = await UCAN.link(proof2)
   const ucan = await UCAN.issue({
     issuer: bob,
-    audience: serviceAuthority,
+    audience: service,
     capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
     proofs: [cid1, cid2],
   })
@@ -218,7 +212,7 @@ test('should fail with missing proofs', async (t) => {
 })
 
 test('should multiple invocation should pass', async (t) => {
-  const { mf } = t.context
+  const { mf, service } = t.context
 
   const alice = await SigningPrincipal.generate()
   const bob = await SigningPrincipal.generate()
@@ -231,14 +225,14 @@ test('should multiple invocation should pass', async (t) => {
   const cid1 = await UCAN.link(proof1)
   const ucan1 = await UCAN.issue({
     issuer: bob,
-    audience: serviceAuthority,
+    audience: service,
     capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
     proofs: [cid1],
   })
 
   const ucan2 = await UCAN.issue({
     issuer: bob,
-    audience: serviceAuthority,
+    audience: service,
     capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
     proofs: [cid1],
   })

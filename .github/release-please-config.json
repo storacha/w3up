@@ -4,7 +4,6 @@
     "packages/access": {},
     "packages/access-api": {},
     "packages/wallet": {},
-    "packages/store": {},
-    "packages/sigv4": {}
+    "packages/store": {}
   }
 }

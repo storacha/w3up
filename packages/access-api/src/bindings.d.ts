@@ -1,9 +1,10 @@
 import type { Logging } from '@web3-storage/worker-utils/logging'
-import type { SigningAuthority } from '@ucanto/interface'
+import type { SigningPrincipal } from '@ucanto/interface'
 import type { config } from './config'
 import { Email } from './utils/email.js'
 import { Accounts } from './kvs/accounts.js'
 import { Validations } from './kvs/validations.js'
+import { D1QB } from 'workers-qb'
 
 export {}
 
@@ -21,12 +22,14 @@ declare global {
   const ACCOUNTS: KVNamespace
   const VALIDATIONS: KVNamespace
   const W3ACCESS_METRICS: AnalyticsEngine
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const __D1_BETA__: D1Database
 }
 
 export interface RouteContext {
   params: Record<string, string>
   log: Logging
-  keypair: SigningAuthority
+  keypair: SigningPrincipal
   config: typeof config
   url: URL
   event: FetchEvent
@@ -35,6 +38,7 @@ export interface RouteContext {
     accounts: Accounts
     validations: Validations
   }
+  db: D1QB
 }
 
 export type Handler = (
