@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.16.0",
-    "@sentry/cli": "^2.5.2",
+    "@sentry/cli": "^2.6.0",
     "@sentry/webpack-plugin": "^1.16.0",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
