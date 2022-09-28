@@ -1,20 +1,21 @@
-import { SigningAuthority } from '@ucanto/authority'
 import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
+import { SigningPrincipal } from '@ucanto/principal'
+import * as CAR from '@ucanto/transport/car'
 import { Failure } from '@ucanto/validator'
 // @ts-ignore
 import * as capabilities from '@web3-storage/access/capabilities'
 import fetch from 'cross-fetch'
 
-import * as CAR from '../patches/@ucanto/transport/car.js'
 import * as defaults from './defaults.js'
+import {
+  generateDelegation,
+  importDelegation,
+  writeDelegation,
+} from './delegation.js'
 import { Access, Store } from './store/index.js'
 import { sleep } from './utils.js'
 
-/**
- * A string representing a link to another object in IPLD
- * @typedef {API.Link} Link
- */
 /** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
 /** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
 
@@ -26,21 +27,6 @@ import { sleep } from './utils.js'
  * @property {API.DID} accessDID - The DID of the access service.
  * @property {Map<string, any>} settings - A map/db of settings to use for the client.
  */
-
-/**
- * @async
- * @param {UCAN.JWT} input
- * @returns {Promise<API.Delegation|Failure>}
- */
-export const importToken = async (input) => {
-  try {
-    const ucan = UCAN.parse(input)
-    const root = await UCAN.write(ucan)
-    return Delegation.create({ root })
-  } catch (error) {
-    return new Failure(String(error))
-  }
-}
 
 /**
  * @param {ClientOptions} options
@@ -95,16 +81,109 @@ class Client {
   /**
    * Get the current "machine" DID
    * @async
-   * @returns {Promise<API.SigningAuthority>}
+   * @returns {Promise<API.SigningPrincipal>}
+   */
+  async agent() {
+    let secret = this.settings.get('agent_secret') || null
+
+    try {
+      return SigningPrincipal.decode(secret)
+    } catch (error) {
+      const id = await SigningPrincipal.generate()
+      this.settings.set('agent_secret', SigningPrincipal.encode(id))
+      return id
+    }
+  }
+
+  /**
+   * Get the current "account" DID
+   * @async
+   * @returns {Promise<API.SigningPrincipal>}
+   */
+  async account() {
+    let secret = this.settings.get('account_secret') || null
+
+    // For now, move old secret value to new account_secret.
+    if (!secret && this.settings.has('secret')) {
+      secret = this.settings.get('secret')
+//       this.settings.delete('secret')
+    }
+    let id
+
+    try {
+      id = SigningPrincipal.decode(secret)
+    } catch (error) {
+      id = await SigningPrincipal.generate()
+    }
+
+    if (!this.settings.has('account_secret')) {
+      this.settings.set('account_secret', SigningPrincipal.encode(id))
+    }
+
+    return id
+  }
+
+  /**
+   * @async
+   * @returns {Promise<API.Delegation|null>}
+   */
+  async currentDelegation() {
+    let did = this.settings.has('delegation')
+      ? this.settings.get('delegation')
+      : null
+
+    let delegations = this.settings.has('delegations')
+      ? this.settings.get('delegations')
+      : {}
+
+    //Generate first delegation from account to agent.
+    if (did == null) {
+      const issuer = await this.account()
+      const to = (await this.agent()).did()
+      const del = await generateDelegation({ to, issuer }, true)
+
+      did = (await this.account()).did()
+
+      delegations[did] = { ucan: del, alias: 'self' }
+      this.settings.set('delegations', delegations)
+      this.settings.set('delegation', issuer.did())
+    }
+
+    delegations = this.settings.has('delegations')
+      ? this.settings.get('delegations')
+      : {}
+
+    try {
+      const ucan = delegations[did]?.ucan
+      const del = Delegation.import([ucan?.root])
+      return del
+    } catch (err) {
+      console.log('err', err)
+      return null
+    }
+  }
+
+  /** @typedef {object} IdentityInfo
+   * @property {API.SigningPrincipal} agent - The local agent principal
+   * @property {API.SigningPrincipal} account - The local account principal
+   * @property {API.DID} with - The current acccount (delegated) DID
+   * @property {Array<API.Delegation>} proofs - The current delegation as a proof set.
+   */
+  /**
+   * @async
+   * @returns {Promise<IdentityInfo>}
    */
   async identity() {
-    const secret = this.settings.get('secret') || null
-    try {
-      return SigningAuthority.decode(secret)
-    } catch (error) {
-      const id = await SigningAuthority.generate()
-      this.settings.set('secret', SigningAuthority.encode(id))
-      return id
+    const agent = await this.agent()
+    const account = await this.account()
+    const delegation = await this.currentDelegation()
+
+    return {
+      agent,
+      account,
+      //@ts-ignore
+      with: delegation?.capabilities[0].with || account.did(),
+      proofs: delegation ? [delegation] : [],
     }
   }
 
@@ -124,17 +203,28 @@ class Client {
     if (!email) {
       throw new Error(`Invalid email provided for registration: ${email}`)
     }
-    const issuer = await this.identity()
-    const result = await capabilities.identityValidate
-      .invoke({
-        issuer,
-        audience: this.accessClient.id,
-        with: issuer.did(),
-        caveats: {
-          as: `mailto:${email}`,
-        },
-      })
-      .execute(this.accessClient)
+    const identity = await this.identity()
+
+    try {
+      const result = await capabilities.identityValidate
+        .invoke({
+          issuer: identity.account,
+          with: identity.account.did(),
+          audience: this.accessClient.id,
+          caveats: {
+            as: `mailto:${email}`,
+          },
+          proofs: identity.proofs,
+        })
+        .execute(this.accessClient)
+      if (result?.error) {
+        console.log('hi', result)
+      }
+    } catch (err) {
+      if (err) {
+        console.log('error', err)
+      }
+    }
 
     const proofString = await this.checkRegistration()
     const ucan = UCAN.parse(proofString)
@@ -144,23 +234,27 @@ class Client {
     // TODO: this should be better.
     // Use access API/client to do all of this.
     const first = proof.capabilities[0]
-    const validate = await capabilities.identityRegister
-      .invoke({
-        issuer,
-        audience: this.accessClient.id,
-        // @ts-ignore
-        with: first.with,
-        caveats: {
+    try {
+      const validate = await capabilities.identityRegister
+        .invoke({
+          issuer: identity.account,
+          audience: this.accessClient.id,
           // @ts-ignore
-          as: first.as,
-        },
-        proofs: [proof],
-      })
-      .execute(this.accessClient)
+          with: first.with,
+          caveats: {
+            // @ts-ignore
+            as: first.as,
+          },
+          proofs: [proof],
+        })
+        .execute(this.accessClient)
 
-    if (validate?.error) {
-      // @ts-ignore
-      throw new Error(validate?.cause?.message)
+      if (validate?.error) {
+        // @ts-ignore
+        throw new Error(validate?.cause?.message)
+      }
+    } catch (err) {
+      console.log('error', err)
     }
 
     return `Email registered ${email}`
@@ -172,7 +266,7 @@ class Client {
    * @returns {Promise<UCAN.JWT>}
    */
   async checkRegistration() {
-    const issuer = await this.identity()
+    const { account } = await this.identity()
     let count = 0
 
     /**
@@ -186,7 +280,7 @@ class Client {
       } else {
         count++
         const result = await fetch(
-          `${this.accessURL}validate?did=${issuer.did()}`,
+          `${this.accessURL}validate?did=${account.did()}`,
           {
             mode: 'cors',
           }
@@ -210,12 +304,13 @@ class Client {
    * @returns {Promise<Result>}
    */
   async whoami() {
-    const issuer = await this.identity()
+    const identity = await this.identity()
     return await capabilities.identityIdentify
       .invoke({
-        issuer,
+        issuer: identity.agent,
+        with: identity.with,
+        proofs: identity.proofs,
         audience: this.accessClient.id,
-        with: issuer.did(),
       })
       .execute(this.accessClient)
   }
@@ -226,14 +321,60 @@ class Client {
    * @returns {Promise<Result>}
    */
   async list() {
-    const id = await this.identity()
+    const identity = await this.identity()
     return capabilities.storeList
       .invoke({
-        issuer: id,
+        issuer: identity.agent,
+        with: identity.with,
+        proofs: identity.proofs,
         audience: this.storeClient.id,
-        with: id.did(),
       })
       .execute(this.storeClient)
+  }
+
+  /**
+   * @typedef {object} DelegationOptions
+   * @property {API.DID} to
+   * @property {number} [expiration]
+   */
+
+  /**
+   * @param {DelegationOptions} opts
+   * @returns {Promise<Uint8Array>}
+   */
+  async makeDelegation(opts) {
+    return writeDelegation({
+      issuer: await this.account(),
+      to: opts.to,
+      expiration: opts.expiration,
+    })
+  }
+
+  /**
+   * @param {Uint8Array} bytes
+   * @param {string} alias
+   * @returns {Promise<API.Delegation>}
+   */
+  async importDelegation(bytes, alias = '') {
+    const imported = await importDelegation(bytes)
+    const did = imported.issuer.did()
+
+    const audience = imported.audience.did()
+    const id = (await this.agent()).did()
+    if (id != audience) {
+      throw new Error(
+        `Cannot import delegation, it was issued to ${audience} and your did is ${id}`
+      )
+    }
+
+    let delegations = this.settings.has('delegations')
+      ? this.settings.get('delegations')
+      : {}
+
+    delegations[did] = { ucan: imported, alias }
+    this.settings.set('delegations', delegations)
+
+    return imported
   }
 
   /**
@@ -244,21 +385,22 @@ class Client {
    */
   async upload(bytes) {
     try {
-      const id = await this.identity()
+      const identity = await this.identity()
       const link = await CAR.codec.link(bytes)
       const result = await capabilities.storeAdd
         .invoke({
-          issuer: id,
+          issuer: identity.agent,
+          with: identity.with,
           audience: this.storeClient.id,
-          with: id.did(),
           caveats: {
             link,
           },
+          proofs: identity.proofs,
         })
         .execute(this.storeClient)
 
       if (result?.error !== undefined) {
-        throw new Error(JSON.stringify(result))
+        throw new Error(JSON.stringify(result, null, 2))
       }
 
       const castResult =
@@ -295,12 +437,13 @@ class Client {
    * @param {API.Link} link - the CID to remove
    */
   async remove(link) {
-    const id = await this.identity()
+    const identity = await this.identity()
     return await capabilities.storeRemove
       .invoke({
-        issuer: id,
+        issuer: identity.agent,
+        with: identity.with,
         audience: this.storeClient.id,
-        with: id.did(),
+        proofs: identity.proofs,
         caveats: {
           link,
         },
@@ -309,26 +452,8 @@ class Client {
   }
 
   /**
-   * Remove an uploaded file by CID
-   * @param {Link} root - the CID to link as root.
-   * @param {Array<Link>} links - the CIDs to link as 'children'
-   */
-  //   async linkroot(root, links) {
-  //     const id = await this.identity()
-  //     return await Store.LinkRoot.invoke({
-  //       issuer: id,
-  //       audience: this.storeClient.id,
-  //       with: id.did(),
-  //       caveats: {
-  //         rootLink: root,
-  //         links,
-  //       },
-  //     }).execute(this.storeClient)
-  //   }
-
-  /**
    * @async
-   * @param {Link} link - the CID to get insights for
+   * @param {API.Link} link - the CID to get insights for
    * @returns {Promise<object>}
    */
   async insights(link) {
@@ -346,36 +471,54 @@ class Client {
 
     return insights
   }
-
-  /**
-   * @async
-   * @param {Link} link - the CID to get insights for
-   * @returns {Promise<object>}
-   */
-  //   async insightsWS(link) {
-  //     return new Promise((resolve, reject) => {
-  //       const ws = new WebSocket(wssInightsUrl, {});
-  //
-  //       ws.on('message', () => {
-  //         console.log('message');
-  //       });
-  //       ws.on('open', () => {
-  //         console.log('opened');
-  //         ws.send(
-  //           JSON.stringify({
-  //             action: 'cidsubscribe',
-  //             data: {
-  //               cids: 'abc,t',
-  //             },
-  //           })
-  //         );
-  //       });
-  //       ws.on('error', (err) => {
-  //         //         console.log('error', err.message)
-  //         reject(err);
-  //       });
-  //     });
-  //   }
 }
 
 export default Client
+
+/**
+ * Remove an uploaded file by CID
+ * @param {API.Link} root - the CID to link as root.
+ * @param {Array<API.Link>} links - the CIDs to link as 'children'
+ */
+//   async linkroot(root, links) {
+//     const id = await this.identity()
+//     return await Store.LinkRoot.invoke({
+//       issuer: id,
+//       audience: this.storeClient.id,
+//       with: id.did(),
+//       caveats: {
+//         rootLink: root,
+//         links,
+//       },
+//     }).execute(this.storeClient)
+//   }
+
+/**
+ * @async
+ * @param {API.Link} link - the CID to get insights for
+ * @returns {Promise<object>}
+ */
+//   async insightsWS(link) {
+//     return new Promise((resolve, reject) => {
+//       const ws = new WebSocket(wssInightsUrl, {});
+//
+//       ws.on('message', () => {
+//         console.log('message');
+//       });
+//       ws.on('open', () => {
+//         console.log('opened');
+//         ws.send(
+//           JSON.stringify({
+//             action: 'cidsubscribe',
+//             data: {
+//               cids: 'abc,t',
+//             },
+//           })
+//         );
+//       });
+//       ws.on('error', (err) => {
+//         //         console.log('error', err.message)
+//         reject(err);
+//       });
+//     });
+//   }

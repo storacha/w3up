@@ -9,7 +9,7 @@ describe('sleep', () => {
     return sleep(500).then(() => {
       const end = Date.now()
 
-      expect(end).toBeLessThan(start + 550)
+      expect(end).toBeLessThan(start + 600)
     })
   })
 
@@ -19,7 +19,7 @@ describe('sleep', () => {
     return sleep(500).then(() => {
       const end = Date.now()
 
-      expect(end).toBeGreaterThan(start + 500)
+      expect(end).toBeGreaterThanOrEqual(start + 500)
     })
   })
 })
