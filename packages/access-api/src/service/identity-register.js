@@ -1,12 +1,12 @@
 import * as Server from '@ucanto/server'
-import { identityRegister } from '@web3-storage/access/capabilities'
+import * as Identity from '@web3-storage/access/capabilities/identity'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
  */
 export function identityRegisterProvider(ctx) {
   return Server.provide(
-    identityRegister,
+    Identity.register,
     async ({ capability, context, invocation }) => {
       await ctx.kvs.accounts.register(
         capability.caveats.as,
@@ -19,13 +19,15 @@ export function identityRegisterProvider(ctx) {
         doubles: [1],
       })
 
-      ctx.email.send({
-        to: 'david@dag.house,jchris@dag.house',
-        subject: 'New w3account Created',
-        textBody: `New account registered for ${
-          capability.caveats.as
-        } with email ${capability.with.replace('mailto:', '')}`,
-      })
+      if (ctx.config.ENV === 'production') {
+        ctx.email.send({
+          to: 'david@dag.house,jchris@dag.house',
+          subject: 'New w3account Created',
+          textBody: `New account registered for ${
+            capability.caveats.as
+          } with email ${capability.with.replace('mailto:', '')}`,
+        })
+      }
     }
   )
 }

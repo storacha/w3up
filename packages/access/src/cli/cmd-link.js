@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import * as Keypair from '@ucanto/authority'
+import * as Keypair from '@ucanto/principal'
 import inquirer from 'inquirer'
 import pWaitFor from 'p-wait-for'
 import { Agent } from '../agent.js'

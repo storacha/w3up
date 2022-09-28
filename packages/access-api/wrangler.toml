@@ -1,22 +1,27 @@
 # Development
-
 name = "w3access-test"
 account_id = "fffa4b4363a7e5250af8357087263b3a"
 main = "./dist/worker.js"
 
 # Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
-compatibility_date = "2022-06-26"
+compatibility_date = "2022-09-28"
 compatibility_flags = ["url_standard"]
 no_bundle = true
-
 
 [[kv_namespaces]]
 binding = "ACCOUNTS"
 id = "e9fad7e04b254bf49206e08e50074387"
+preview_id = "e9fad7e04b254bf49206e08e50074387"
 
 [[kv_namespaces]]
 binding = "VALIDATIONS"
 id = "62e57652625c44a3b1fef2f840ffc882"
+preview_id = "62e57652625c44a3b1fef2f840ffc882"
+
+[[d1_databases]]
+binding = "__D1_BETA__"                              # i.e. available in your Worker on env.DB
+database_name = "accounts-dev"
+database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 
 [vars]
 ENV = "dev"
@@ -25,6 +30,11 @@ DEBUG = "true"
 [build]
 command = "scripts/cli.js build"
 watch_dir = "src"
+
+
+[miniflare]
+env_path = "../../.env"
+d1_persist = ".wrangler/miniflare"
 
 
 # Dev
@@ -43,15 +53,22 @@ watch_dir = "src"
 [[env.dev.kv_namespaces]]
 binding = "ACCOUNTS"
 id = "5697e95e1aaa436788e6d697fd3350be"
+preview_id = "5697e95e1aaa436788e6d697fd3350be"
 
 [[env.dev.kv_namespaces]]
 binding = "VALIDATIONS"
 id = "ea17f472b37a43d29c1faf7af9512e03"
+preview_id = "ea17f472b37a43d29c1faf7af9512e03"
 
 [[env.dev.unsafe.bindings]]
 type = "analytics_engine"
 dataset = "W3ACCESS_METRICS"
 name = "W3ACCESS_METRICS"
+
+[[env.dev.d1_databases]]
+binding = "__D1_BETA__"                              # i.e. available in your Worker on env.DB
+database_name = "accounts-dev"
+database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 
 # Staging
 [env.staging]

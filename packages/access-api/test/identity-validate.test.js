@@ -1,44 +1,38 @@
-import {
-  serviceAuthority,
-  mf,
-  test,
-  send,
-  connection,
-} from './helpers/setup.js'
+import { context, test } from './helpers/context.js'
 import * as UCAN from '@ipld/dag-ucan'
-import { SigningPrincipal } from '@ucanto/principal'
-import * as caps from '@web3-storage/access/capabilities'
+import * as Identity from '@web3-storage/access/capabilities/identity'
+import { send } from './helpers/utils.js'
 
-test.before((t) => {
-  t.context = { mf }
+test.before(async (t) => {
+  t.context = await context()
 })
 
 test.skip('should route to validate without ucanto client', async (t) => {
-  const kp = await SigningPrincipal.generate()
+  const { issuer, mf, service } = t.context
 
   const ucan = await UCAN.issue({
-    issuer: kp,
-    audience: serviceAuthority,
+    issuer,
+    audience: service,
     capabilities: [
       {
         can: 'identity/validate',
-        with: kp.did(),
+        with: issuer.did(),
         as: 'mailto:admin@dag.house',
       },
     ],
   })
-  const res = await send(ucan)
+  const res = await send(ucan, mf)
   t.deepEqual(res.ok, true)
 })
 
 test.skip('should fail with bad scheme', async (t) => {
-  const kp = await SigningPrincipal.generate()
+  const { issuer, mf, service } = t.context
   const ucan = await UCAN.issue({
-    issuer: kp,
-    audience: serviceAuthority,
+    issuer,
+    audience: service,
     capabilities: [{ can: 'identity/validate', with: 'mailt:admin@dag.house' }],
   })
-  const res = await send(ucan)
+  const res = await send(ucan, mf)
   const rsp = await res.json()
   t.deepEqual(rsp, [
     {
@@ -59,19 +53,18 @@ test.skip('should fail with bad scheme', async (t) => {
 })
 
 test('should route correctly to identity/validate', async (t) => {
-  const kp = await SigningPrincipal.generate()
-  const con = connection(kp)
+  const { issuer, service, conn } = t.context
 
-  const validate = caps.identityValidate.invoke({
-    audience: serviceAuthority,
-    issuer: kp,
+  const validate = Identity.validate.invoke({
+    audience: service,
+    issuer,
     caveats: {
       as: 'mailto:hugo@dag.house',
     },
-    with: kp.did(),
+    with: issuer.did(),
   })
 
-  const out = await validate.execute(con)
+  const out = await validate.execute(conn)
   if (out?.error || !out) {
     return t.fail()
   }
@@ -79,10 +72,14 @@ test('should route correctly to identity/validate', async (t) => {
     // @ts-ignore
     out.delegation.replace('http://localhost:8787/validate?ucan=', '')
   )
-  t.is(ucan.audience.did(), kp.did())
-  t.is(ucan.issuer.did(), serviceAuthority.did())
+  t.is(ucan.audience.did(), issuer.did())
+  t.is(ucan.issuer.did(), service.did())
   t.deepEqual(ucan.capabilities, [
-    { can: 'identity/register', with: 'mailto:hugo@dag.house', as: kp.did() },
+    {
+      can: 'identity/register',
+      with: 'mailto:hugo@dag.house',
+      as: issuer.did(),
+    },
   ])
 })
 

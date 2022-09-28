@@ -1,7 +1,7 @@
-import { mf, test } from './helpers/setup.js'
+import { context, test } from './helpers/context.js'
 
-test.before((t) => {
-  t.context = { mf }
+test.beforeEach(async (t) => {
+  t.context = await context()
 })
 
 test('should work', async (t) => {

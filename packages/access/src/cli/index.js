@@ -16,6 +16,8 @@ import inquirer from 'inquirer'
 import * as Types from '@ucanto/interface'
 import { Agent } from '../agent.js'
 import { SigningPrincipal } from '@ucanto/principal'
+import { StoreConf } from '../stores/store-conf.js'
+import { Websocket } from '../utils/ws.js'
 
 const prog = sade(NAME)
 prog
@@ -173,30 +175,30 @@ prog
     // console.log(JSON.stringify(config.store, undefined, 2))
     // const { audience, url } = await getService(opts.env)
 
-    const data = config.get('agent')
-    if (data) {
-      // @ts-ignore
-      const agent = await Agent.import(SigningPrincipal, config.get('agent'))
-      console.log('did:', agent.did())
+    // const data = config.get('agent')
+    // if (data) {
+    //   // @ts-ignore
+    //   const agent = await Agent.import(SigningPrincipal, config.get('agent'))
+    //   console.log('did:', agent.did())
 
-      // Delegations received
-      console.log('Delegations received')
-      for (const del of agent.delegations.received) {
-        console.log('From:', del.issuer.did())
-        for (const cap of del.capabilities) {
-          console.log(cap)
-        }
-      }
+    //   // Delegations received
+    //   console.log('Delegations received')
+    //   for (const del of agent.delegations.received) {
+    //     console.log('From:', del.issuer.did())
+    //     for (const cap of del.capabilities) {
+    //       console.log(cap)
+    //     }
+    //   }
 
-      // Delegations created
-      console.log('Delegations created')
-      for (const c of agent.delegations.created) {
-        console.log('To:', c.audience.did())
-        for (const cap of c.capabilities) {
-          console.log(cap)
-        }
-      }
-    }
+    //   // Delegations created
+    //   console.log('Delegations created')
+    //   for (const c of agent.delegations.created) {
+    //     console.log('To:', c.audience.did())
+    //     for (const cap of c.capabilities) {
+    //       console.log(cap)
+    //     }
+    //   }
+    // }
 
     // const jwt = /** @type {string} */ (config.get('delegation'))
     // let proof
@@ -219,5 +221,63 @@ prog
   })
 
 prog.command('link [channel]').describe('Link.').action(linkCmd)
+
+prog
+  .command('setup')
+  .describe('Print config file content.')
+  .action(async (opts) => {
+    const config = getConfig(opts.profile)
+    console.log('Path:', config.path)
+
+    const agent = await Agent.create({
+      store: new StoreConf({ profile: opts.profile }),
+    })
+
+    if (await agent.isSetup()) {
+      const { delegations } = await agent.import()
+
+      console.log('Agent', agent.did(), agent.meta)
+      console.log('Accounts:')
+      for (const acc of agent.accounts) {
+        console.log(acc.did())
+      }
+
+      console.log('Delegations created:')
+      for (const created of delegations.created) {
+        console.log(created)
+      }
+      console.log('Delegations received:')
+      for (const received of delegations.received) {
+        console.log(`${received.issuer.did()} -> ${received.audience.did()}`)
+        console.log(received.capabilities)
+      }
+    } else {
+      const info = await agent.setup({
+        name: 'cli-main',
+        type: 'device',
+      })
+
+      console.log(info)
+    }
+  })
+
+prog
+  .command('create-account')
+  .describe('Create new account.')
+  .action(async (opts) => {
+    const { url } = await getService(opts.env)
+    const agent = await Agent.create({
+      store: new StoreConf({ profile: opts.profile }),
+      url,
+    })
+
+    if (await agent.isSetup()) {
+      await agent.import()
+
+      await agent.createAccount('hugomrdias@gmail.com')
+    } else {
+      throw new Error('run setup command first.')
+    }
+  })
 
 prog.parse(process.argv)

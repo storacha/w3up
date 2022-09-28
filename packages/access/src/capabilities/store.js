@@ -1,8 +1,7 @@
-import { Link, Failure, capability, URI } from '@ucanto/server'
+import { capability, Failure, Link, URI } from '@ucanto/server'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
-import { canDelegateURI, derives, equalWith } from './capabilities-utils.js'
+import { canDelegateURI, derives, equalWith } from './utils.js'
 
 export const storeAdd = capability({
   can: 'store/add',

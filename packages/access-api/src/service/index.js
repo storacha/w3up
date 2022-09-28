@@ -1,7 +1,9 @@
 import * as Server from '@ucanto/server'
-import { identityIdentify } from '@web3-storage/access/capabilities'
+import * as Identity from '@web3-storage/access/capabilities/identity'
 import { identityRegisterProvider } from './identity-register.js'
 import { identityValidateProvider } from './identity-validate.js'
+import { voucherClaimProvider } from './voucher-claim.js'
+import { voucherRedeemProvider } from './voucher-redeem.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -12,10 +14,14 @@ export function service(ctx) {
     identity: {
       validate: identityValidateProvider(ctx),
       register: identityRegisterProvider(ctx),
-      identify: Server.provide(identityIdentify, async ({ capability }) => {
+      identify: Server.provide(Identity.identify, async ({ capability }) => {
         const result = await ctx.kvs.accounts.get(capability.with)
         return result?.account
       }),
+    },
+    voucher: {
+      claim: voucherClaimProvider(ctx),
+      redeem: voucherRedeemProvider(ctx),
     },
     // @ts-ignore
     testing: {
