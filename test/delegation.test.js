@@ -55,8 +55,6 @@ describe('delegation', () => {
 
       expect(delegation).toBeDefined()
       expect(delegation.expiration).toBeGreaterThan(now + 999)
-      console.log('now', now)
-      console.log('exp', delegation.expiration)
     })
   })
 
@@ -72,7 +70,6 @@ describe('delegation', () => {
 
     it('should import a delegation', async ({ delegation }) => {
       const imported = await importDelegation(delegation)
-      console.log('imported', imported)
       expect(imported).toBeDefined()
     })
   })
