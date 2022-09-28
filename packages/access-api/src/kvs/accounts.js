@@ -21,7 +21,6 @@ export class Accounts {
    * @param {import('@ucanto/interface').Link} proof
    */
   async register(issuerDID, resourceDID, proof) {
-    console.log('register', issuerDID, resourceDID, proof.toString())
     const did = await this.get(issuerDID)
     if (did) {
       throw new Error(`did: ${issuerDID} already registered.`)
