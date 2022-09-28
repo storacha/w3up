@@ -163,14 +163,15 @@ class Client {
     }
   }
 
+  /** @typedef {object} IdentityInfo
+   * @property {API.SigningPrincipal} agent - The local agent principal
+   * @property {API.SigningPrincipal} account - The local account principal
+   * @property {API.DID} with - The current acccount (delegated) DID
+   * @property {Array<API.Delegation>} proofs - The current delegation as a proof set.
+   */
   /**
    * @async
-   * @returns {Promise<{
-   * agent: API.SigningPrincipal,
-   * account: API.SigningPrincipal,
-   * with: API.DID,
-   * proofs: Array<any>
-   * }>}
+   * @returns {Promise<IdentityInfo>}
    */
   async identity() {
     const agent = await this.agent()
