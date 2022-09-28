@@ -13,15 +13,16 @@
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
-    "test": "pnpm -r --filter @web3-storage/access-ws run build && mocha -n experimental-vm-modules",
+    "test": "pnpm -r --filter @web3-storage/access-ws run build && mocha 'test/**/*.test.js' -n experimental-vm-modules",
     "testw": "watch 'pnpm test' src test --interval 1",
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
     ".": "./src/index.js",
-    "./capabilities": "./src/capabilities.js",
+    "./capabilities/*": "./src/capabilities/*.js",
     "./connection": "./src/connection.js",
-    "./types": "./src/types.js"
+    "./types": "./src/types.js",
+    "./encoding": "./src/encoding.js"
   },
   "typesVersions": {
     "*": {
@@ -31,8 +32,11 @@
       "types": [
         "dist/src/types"
       ],
-      "capabilities": [
-        "dist/src/capabilities"
+      "capabilities/*": [
+        "dist/src/capabilities/*"
+      ],
+      "encoding": [
+        "dist/src/encoding"
       ]
     }
   },
@@ -73,8 +77,8 @@
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/inquirer": "^9.0.1",
-    "@types/mocha": "^9.1.1",
-    "@types/node": "^18.7.18",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.7.23",
     "assert": "^2.0.0",
     "delay": "^5.0.0",
     "dotenv": "^16.0.2",

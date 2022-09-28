@@ -6,6 +6,7 @@ import { config } from '../config.js'
 import { Accounts } from '../kvs/accounts.js'
 import { Validations } from '../kvs/validations.js'
 import { Email } from './email.js'
+import { D1QB } from 'workers-qb'
 
 const sentryOptions = {
   dsn: config.SENTRY_DSN,
@@ -63,5 +64,6 @@ export function getContext(event, params) {
       validations: new Validations(config.VALIDATIONS),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),
+    db: new D1QB(config.DB),
   }
 }

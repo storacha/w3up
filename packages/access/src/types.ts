@@ -8,6 +8,9 @@ import type {
   ServiceMethod,
   SigningPrincipal,
   Principal,
+  Failure,
+  Phantom,
+  Capabilities,
 } from '@ucanto/interface'
 
 import * as UCAN from '@ipld/dag-ucan'
@@ -15,11 +18,15 @@ import type {
   IdentityIdentify,
   IdentityRegister,
   IdentityValidate,
-} from './capabilities-types.js'
+} from './capabilities/types'
+import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
 
-export * from './capabilities-types.js'
+export * from './capabilities/types.js'
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
+
+export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
+  Phantom<C>
 
 export interface Service {
   identity: {
@@ -32,6 +39,22 @@ export interface Service {
     register: ServiceMethod<IdentityRegister, void, never>
     identify: ServiceMethod<IdentityIdentify, string | undefined, never>
   }
+  voucher: {
+    claim: ServiceMethod<
+      VoucherClaim,
+      EncodedDelegation<[VoucherRedeem]> | undefined,
+      Failure
+    >
+    redeem: ServiceMethod<VoucherRedeem, void, Failure>
+  }
+}
+
+export interface AgentMeta {
+  name: string
+  description?: string
+  url?: URL
+  image?: URL
+  type: 'device' | 'app' | 'service'
 }
 
 export interface ValidateOptions {

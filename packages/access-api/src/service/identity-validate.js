@@ -1,19 +1,16 @@
 import { UCAN } from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import { Principal } from '@ucanto/principal'
-import {
-  identityRegister,
-  identityValidate,
-} from '@web3-storage/access/capabilities'
+import * as Identity from '@web3-storage/access/capabilities/identity'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
  */
 export function identityValidateProvider(ctx) {
   return Server.provide(
-    identityValidate,
+    Identity.validate,
     async ({ capability, context, invocation }) => {
-      const delegation = await identityRegister
+      const delegation = await Identity.register
         .invoke({
           audience: Principal.parse(invocation.issuer.did()),
           issuer: ctx.keypair,

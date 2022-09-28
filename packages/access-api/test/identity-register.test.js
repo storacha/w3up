@@ -1,30 +1,28 @@
 import * as UCAN from '@ipld/dag-ucan'
-import { SigningPrincipal } from '@ucanto/principal'
 import { Delegation } from '@ucanto/core'
+import * as Identity from '@web3-storage/access/capabilities/identity'
 import { Accounts } from '../src/kvs/accounts.js'
-import * as caps from '@web3-storage/access/capabilities'
-import { connection, mf, serviceAuthority, test } from './helpers/setup.js'
+import { context, test } from './helpers/context.js'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 
-test.before((t) => {
-  t.context = { mf }
+test.beforeEach(async (t) => {
+  t.context = await context()
 })
 
 test('register', async (t) => {
-  const kp = await SigningPrincipal.generate()
-  const con = connection(kp)
+  const { conn, issuer, mf, service } = t.context
 
-  const validate = caps.identityValidate.invoke({
-    audience: serviceAuthority,
-    issuer: kp,
+  const validate = Identity.validate.invoke({
+    audience: service,
+    issuer,
     caveats: {
       as: 'mailto:hugo+register@dag.house',
     },
-    with: kp.did(),
+    with: issuer.did(),
   })
 
-  const out = await validate.execute(con)
+  const out = await validate.execute(conn)
   if (out?.error || !out) {
     return t.fail()
   }
@@ -36,9 +34,9 @@ test('register', async (t) => {
   const root = await UCAN.write(ucan)
   const proof = Delegation.create({ root })
 
-  const register = caps.identityRegister.invoke({
-    audience: serviceAuthority,
-    issuer: kp,
+  const register = Identity.register.invoke({
+    audience: service,
+    issuer,
     // @ts-ignore
     with: proof.capabilities[0].with,
     caveats: {
@@ -48,7 +46,7 @@ test('register', async (t) => {
     proofs: [proof],
   })
 
-  await register.execute(con)
+  await register.execute(conn)
   const invocation = await register.delegate()
   // @ts-ignore
   const accounts = new Accounts(await mf.getKVNamespace('ACCOUNTS'))
@@ -56,24 +54,22 @@ test('register', async (t) => {
   const email = await accounts.get('mailto:hugo+register@dag.house')
   t.is(email?.proof, invocation.cid.toString())
 
-  const did = await accounts.get(kp.did())
+  const did = await accounts.get(issuer.did())
   t.is(did?.proof, invocation.cid.toString())
 })
 
 test('identify', async (t) => {
-  const kp = await SigningPrincipal.generate()
-  const con = connection(kp)
-
-  const validate = caps.identityValidate.invoke({
-    audience: serviceAuthority,
-    issuer: kp,
+  const { conn, issuer, mf, service } = t.context
+  const validate = Identity.validate.invoke({
+    audience: service,
+    issuer,
     caveats: {
       as: 'mailto:hugo+identify@dag.house',
     },
-    with: kp.did(),
+    with: issuer.did(),
   })
 
-  const out = await validate.execute(con)
+  const out = await validate.execute(conn)
   if (out?.error || !out) {
     return
   }
@@ -84,9 +80,9 @@ test('identify', async (t) => {
   const root = await UCAN.write(ucan)
   const proof = Delegation.create({ root })
 
-  const register = caps.identityRegister.invoke({
-    audience: serviceAuthority,
-    issuer: kp,
+  const register = Identity.register.invoke({
+    audience: service,
+    issuer,
     with: proof.capabilities[0].with,
     caveats: {
       as: proof.capabilities[0].as,
@@ -94,20 +90,20 @@ test('identify', async (t) => {
     proofs: [proof],
   })
 
-  await register.execute(con)
+  await register.execute(conn)
 
-  const identify = caps.identityIdentify.invoke({
-    audience: serviceAuthority,
-    issuer: kp,
-    with: kp.did(),
+  const identify = Identity.identify.invoke({
+    audience: service,
+    issuer,
+    with: issuer.did(),
   })
 
-  const identifyResult = await identify.execute(con)
+  const identifyResult = await identify.execute(conn)
   if (identifyResult?.error || !identifyResult) {
     return t.fail()
   }
   // @ts-ignore
   const accounts = new Accounts(await mf.getKVNamespace('ACCOUNTS'))
-  const did = await accounts.get(kp.did())
+  const did = await accounts.get(issuer.did())
   t.is(did?.account, identifyResult)
 })

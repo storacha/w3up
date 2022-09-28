@@ -59,6 +59,7 @@ export function loadConfigVariables() {
       ) || createAnalyticsEngine(),
     ACCOUNTS,
     VALIDATIONS,
+    DB: /** @type {D1Database} */ (globals.__D1_BETA__),
   }
 }
 

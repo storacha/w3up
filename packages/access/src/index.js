@@ -1,11 +1,7 @@
 import * as UCAN from '@ipld/dag-ucan'
 import fetch from '@web-std/fetch'
 import pRetry from 'p-retry'
-import {
-  identityIdentify,
-  identityRegister,
-  identityValidate,
-} from './capabilities.js'
+import * as Identity from './capabilities/identity.js'
 import { connection } from './connection.js'
 import * as Service from './service.js'
 // eslint-disable-next-line no-unused-vars
@@ -22,7 +18,7 @@ export async function validate(opts) {
     url: opts.url || Service.url,
   })
 
-  const validate = identityValidate.invoke({
+  const validate = Identity.validate.invoke({
     audience: opts.audience || Service.identity,
     issuer: opts.issuer,
     with: opts.issuer.did(),
@@ -47,7 +43,7 @@ export async function register(opts) {
     url: opts.url || Service.url,
   })
 
-  const validate = identityRegister.invoke({
+  const validate = Identity.register.invoke({
     audience: opts.audience || Service.identity,
     issuer: opts.issuer,
     with: opts.proof.capabilities[0].with,
@@ -83,7 +79,7 @@ const run = (did, host, signal) => async () => {
  */
 export async function pullRegisterDelegation(opts) {
   const url = opts.url || Service.url
-  /** @type {Types.UCAN.JWT<[import('./capabilities-types').IdentityRegister]>} */
+  /** @type {Types.UCAN.JWT<[import('./capabilities/types').IdentityRegister]>} */
   const registerProof = await pRetry(
     run(opts.issuer.did(), url.toString(), opts.signal),
     {
@@ -108,7 +104,7 @@ export async function identify(opts) {
     id: opts.issuer,
     url: opts.url || Service.url,
   })
-  const validate = identityIdentify.invoke({
+  const validate = Identity.identify.invoke({
     audience: opts.audience || Service.identity,
     issuer: opts.issuer,
     with: opts.proof?.capabilities[0].with || opts.issuer.did(),

@@ -20,7 +20,7 @@ export class Validations {
     // @ts-ignore
     const ucan = UCAN.parse(delegation)
     await this.kv.put(ucan.audience.did(), delegation, {
-      expirationTtl: 2 * 60,
+      expirationTtl: 20 * 60,
     })
 
     return ucan

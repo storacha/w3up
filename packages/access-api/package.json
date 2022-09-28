@@ -8,10 +8,10 @@
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
-    "dev": "miniflare --watch --debug --env ../../.env --wrangler-env dev",
+    "dev": "miniflare --watch --debug --wrangler-env dev --env ../../.env",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
-    "test": "tsc --build && ava --serial"
+    "test": "tsc --build && ava --timeout 10s"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
@@ -28,17 +28,20 @@
     "@web3-storage/worker-utils": "0.4.3-dev",
     "multiformats": "^9.8.1",
     "nanoid": "^4.0.0",
-    "toucan-js": "^2.6.0"
+    "p-retry": "^5.1.1",
+    "toucan-js": "^2.7.0",
+    "workers-qb": "^0.1.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.16.0",
-    "@sentry/cli": "^2.5.2",
+    "@sentry/cli": "^2.6.0",
     "@sentry/webpack-plugin": "^1.16.0",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
-    "@types/node": "^18.7.18",
+    "@types/node": "^18.7.23",
     "assert": "^2.0.0",
     "ava": "^4.3.3",
+    "better-sqlite3": "7.6.2",
     "buffer": "^6.0.3",
     "delay": "^5.0.0",
     "dotenv": "^16.0.2",
@@ -51,7 +54,7 @@
     "readable-stream": "^4.1.0",
     "sade": "^1.7.4",
     "typescript": "4.8.3",
-    "wrangler": "^2.1.6"
+    "wrangler": "^2.1.8"
   },
   "eslintConfig": {
     "extends": [
@@ -68,7 +71,8 @@
       "ACCOUNTS": "writable",
       "VALIDATIONS": "writable",
       "BUCKET": "writable",
-      "W3ACCESS_METRICS": "writable"
+      "W3ACCESS_METRICS": "writable",
+      "WebSocketPair": "readonly"
     }
   },
   "eslintIgnore": [
@@ -78,11 +82,12 @@
     "docs"
   ],
   "ava": {
-    "concurrency": 1,
     "failFast": true,
-    "workerThreads": false,
     "files": [
       "test/**/*.test.js"
+    ],
+    "nodeArguments": [
+      "--no-warnings"
     ],
     "ignoredByWatcher": [
       "./dist/*"

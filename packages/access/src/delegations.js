@@ -2,8 +2,10 @@ import { delegate } from '@ucanto/core'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as API from '@ucanto/interface'
-import { decodeDelegations, encodeDelegations } from './encoding.js'
 
+/**
+ * TODO: clear expired delegations
+ */
 export class Delegations {
   /**
    * @param {{
@@ -32,6 +34,16 @@ export class Delegations {
    */
   async add(delegation) {
     this.received.push(delegation)
+  }
+
+  /**
+   *
+   * @param {import('@ucanto/interface').Delegation[]} delegations
+   */
+  async addMany(delegations) {
+    for (const d of delegations) {
+      this.received.push(d)
+    }
   }
 
   async full() {
@@ -70,33 +82,5 @@ export class Delegations {
 
     this.created.push(delegation)
     return delegation
-  }
-
-  async export() {
-    const data = {
-      created: await encodeDelegations(this.created),
-      received: await encodeDelegations(this.received),
-      meta: [...this.meta.entries()],
-    }
-
-    return data
-  }
-
-  /**
-   * @param {API.SigningPrincipal} principal
-   * @param {{
-   * privateKey: string;
-   * created: string;
-   * received: string
-   * meta: [string, import('./awake/types').PeerMeta] []
-   * }} data
-   */
-  static async import(principal, data) {
-    return new Delegations({
-      principal,
-      created: await decodeDelegations(data.created),
-      received: await decodeDelegations(data.received),
-      meta: new Map(data.meta),
-    })
   }
 }
