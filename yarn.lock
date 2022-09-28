@@ -321,15 +321,6 @@
     "@ipld/dag-json" "^8.0.9"
     multiformats "^9.6.4"
 
-"@ipld/dag-ucan@^1.7.0-beta":
-  version "1.7.0-beta"
-  resolved "https://registry.npmjs.org/@ipld/dag-ucan/-/dag-ucan-1.7.0-beta.tgz"
-  integrity sha512-QLGz2IyAiNlT09pwvC2RnZJ2dyUqil5aRN2KLvGpShaTWGlCpCFGJzkn9M1kA04M96S3pJaIV2uxPBSVnjgvcg==
-  dependencies:
-    "@ipld/dag-cbor" "^7.0.1"
-    "@ipld/dag-json" "^8.0.9"
-    multiformats "^9.6.4"
-
 "@isaacs/string-locale-compare@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz"
@@ -380,7 +371,7 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@noble/ed25519@^1.6.1", "@noble/ed25519@^1.7.0", "@noble/ed25519@^1.7.1":
+"@noble/ed25519@^1.7.0", "@noble/ed25519@^1.7.1":
   version "1.7.1"
   resolved "https://registry.npmjs.org/@noble/ed25519/-/ed25519-1.7.1.tgz"
   integrity sha512-Rk4SkJFaXZiznFyC/t77Q0NKS4FL7TLJJsVG2V2oiEq3kJVeTdxysEe/yRWSpnWMe808XRDJ+VFh5pt/FN5plw==
@@ -853,16 +844,6 @@
   dependencies:
     "@types/node" "*"
 
-"@ucanto/authority@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@ucanto/authority/-/authority-0.5.0.tgz#17be40763d65a4d53a41ed1ccba49006e07ffc90"
-  integrity sha512-TML+6Xqu8H3+Nti0ko3Sqi15uh6dXCUZQ4W+GFuGXyZ8yss6VxarK6uB7cG0KQlt3Nejok6cYHuzq5Hou5IsCA==
-  dependencies:
-    "@ipld/dag-ucan" "^1.7.0-beta"
-    "@noble/ed25519" "^1.6.1"
-    "@ucanto/interface" "^0.7.0"
-    multiformats "^9.6.4"
-
 "@ucanto/client@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@ucanto/client/-/client-1.0.1.tgz#a4e3524fc4c5fb62a0a139d889d43309a6c4fb68"
@@ -881,14 +862,6 @@
     "@ipld/dag-ucan" "3.0.0-beta"
     "@ucanto/interface" "^1.0.0"
     multiformats "^9.8.1"
-
-"@ucanto/interface@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.npmjs.org/@ucanto/interface/-/interface-0.7.0.tgz"
-  integrity sha512-H6zxnq06ZUuyVfuDpoUTvlfN4YBt6DGa55yo9/MTn4W9YkUzsathfc8jXl3wLzpUnA17hejEZZbmymaDQm03uA==
-  dependencies:
-    "@ipld/dag-ucan" "^1.7.0-beta"
-    multiformats "^9.6.4"
 
 "@ucanto/interface@^1.0.0":
   version "1.0.0"
