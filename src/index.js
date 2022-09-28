@@ -333,7 +333,13 @@ class Client {
   }
 
   /**
-   * @param {{to: API.DID, expiration?:number}} opts
+   * @typedef {object} DelegationOptions
+   * @property {API.DID} to
+   * @property {number} [expiration]
+   */
+
+  /**
+   * @param {DelegationOptions} opts
    * @returns {Promise<Uint8Array>}
    */
   async makeDelegation(opts) {
