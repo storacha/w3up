@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/web3-storage/w3ui/compare/react-wallet-v1.0.1...react-wallet-v1.0.2) (2022-09-28)
+
+
+### Bug Fixes
+
+* export Identity type from framework specific wallet modules ([0d48102](https://github.com/web3-storage/w3ui/commit/0d4810294f28be6d3c9dfc80a832647945d191e4))
+* missing react peer dep ([7e6b516](https://github.com/web3-storage/w3ui/commit/7e6b516de733ef455cf5e39f0f373133306613b0))
+
 ## [1.0.1](https://github.com/web3-storage/w3ui/compare/react-wallet-v1.0.0...react-wallet-v1.0.1) (2022-09-21)
 
 
