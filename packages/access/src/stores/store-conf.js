@@ -6,15 +6,23 @@ import { Delegations } from '../delegations.js'
 import { decodeDelegations, encodeDelegations } from '../encoding.js'
 
 /**
- * @typedef {{
- * created: string;
- * received: string
- * meta: [string, import('../awake/types').PeerMeta] []
- * }} DelegationsRaw
+ * @typedef {import('./types').DelegationsAsJSON} DelegationsAsJSON
+ */
+
+/**
+ * @template T
+ * @typedef {import('./types').StoreData<237>} StoreData
+ */
+
+/**
+ * @template T
+ * @typedef {import('./types').Store<237>} Store
  */
 
 /**
  * Store implementation with "conf"
+ *
+ * @implements {Store<237>}
  */
 export class StoreConf {
   #config
@@ -30,19 +38,69 @@ export class StoreConf {
       projectSuffix: '',
       configName: opts.profile,
     })
+    this.path = this.#config.path
   }
 
   async open() {
     return this
   }
 
-  async isSetup() {
-    return this.#config.has('meta')
+  async close() {}
+
+  async exists() {
+    return this.#config.has('meta') && this.#config.has('principal')
+  }
+
+  /** @type {Store<237>['init']} */
+  async init(data) {
+    const principal = data.agent || (await SigningPrincipal.generate())
+    const delegations =
+      data.delegations ||
+      new Delegations({
+        principal,
+      })
+    /** @type {StoreData<237>} */
+    const storeData = {
+      accounts: data.accounts || [],
+      meta: data.meta || { name: 'agent', type: 'device' },
+      agent: principal,
+      delegations,
+    }
+
+    await this.save(storeData)
+    return storeData
   }
 
   /**
    *
-   * @param {import('../awake/types').PeerMeta} meta
+   * @param {StoreData<237>} data
+   */
+  async save(data) {
+    this.setAccounts(data.accounts)
+    this.setDelegations(data.delegations)
+    this.setMeta(data.meta)
+    this.setPrincipal(data.agent)
+    return this
+  }
+
+  /** @type {Store<237>['load']} */
+  async load() {
+    /** @type {StoreData<237>} */
+    return {
+      accounts: await this.getAccounts(),
+      meta: await this.getMeta(),
+      agent: await this.getPrincipal(),
+      delegations: await this.getDelegations(),
+    }
+  }
+
+  async createAccount() {
+    return await SigningPrincipal.generate()
+  }
+
+  /**
+   *
+   * @param {import('../types').AgentMeta} meta
    */
   async setMeta(meta) {
     this.#config.set('meta', meta)
@@ -88,17 +146,15 @@ export class StoreConf {
   }
 
   async getDelegations() {
-    const data = /** @type {DelegationsRaw} */ (this.#config.get('delegations'))
+    const data = /** @type {DelegationsAsJSON} */ (
+      this.#config.get('delegations')
+    )
     return new Delegations({
       principal: await this.getPrincipal(),
       created: await decodeDelegations(data.created || ''),
       received: await decodeDelegations(data.received || ''),
       meta: new Map(data.meta),
     })
-  }
-
-  async newAccount() {
-    return await SigningPrincipal.generate()
   }
 
   /**
@@ -118,7 +174,7 @@ export class StoreConf {
 
   async getAccounts() {
     const encoded = /** @type {string[]} */ (this.#config.get('accounts'))
-    /** @type {Types.SigningPrincipal[]} */
+    /** @type {Types.SigningPrincipal<237>[]} */
     const accounts = []
 
     if (!Array.isArray(encoded)) {
@@ -129,25 +185,5 @@ export class StoreConf {
     }
 
     return accounts
-  }
-
-  /**
-   *
-   * @param {import('../agent').Agent} agent
-   */
-  async save(agent) {
-    if (
-      !agent.meta ||
-      !agent.delegations ||
-      !agent.principal ||
-      !agent.accounts
-    ) {
-      throw new Error('Agent is not yet setup.')
-    }
-    // @ts-ignore
-    this.setAccounts(agent.accounts)
-    this.setDelegations(agent.delegations)
-    this.setMeta(agent.meta)
-    this.setPrincipal(agent.principal)
   }
 }

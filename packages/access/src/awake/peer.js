@@ -6,11 +6,14 @@ import * as u8 from 'uint8arrays'
 import { decodeDelegations, encodeDelegations } from '../encoding.js'
 import * as Messages from './messages.js'
 
+/**
+ * @template {number} T
+ */
 export class Peer {
   /**
    * @param {{
    * channel: import('./types').Channel;
-   * agent: import('../agent').Agent;
+   * agent: import('../agent').Agent<T>;
    * }} opts
    */
   constructor(opts) {
@@ -56,7 +59,7 @@ export class Peer {
 
     // step3 - awake/res send
     const ucan = await UCAN.issue({
-      issuer: this.agent.principal,
+      issuer: this.agent.data.agent,
       audience: this.nextdid,
       capabilities: [{ with: 'awake:', can: '*' }],
       facts: [
@@ -142,6 +145,8 @@ export class Peer {
 
     await this.channel.sendFin(this.nextdid)
 
+    await this.agent.addDelegation(delegations[0])
+
     return { delegation: delegations[0], meta: capsRsp.msg.meta }
   }
 
@@ -182,7 +187,7 @@ export class Peer {
 
     // Pin signature
     const bytes = u8.fromString(this.nextdid.did() + this.pin.toString())
-    const signed = await this.agent.principal.sign(await sha256.encode(bytes))
+    const signed = await this.agent.data.agent.sign(await sha256.encode(bytes))
     this.channel.sendMsg(this.nextdid, {
       did: this.did,
       sig: u8.toString(signed, 'base64'),

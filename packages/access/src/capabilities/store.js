@@ -3,7 +3,7 @@ import { capability, Failure, Link, URI } from '@ucanto/server'
 // eslint-disable-next-line no-unused-vars
 import { canDelegateURI, derives, equalWith } from './utils.js'
 
-export const storeAdd = capability({
+export const add = capability({
   can: 'store/add',
   with: URI.match({ protocol: 'did:' }),
   caveats: {
@@ -13,7 +13,7 @@ export const storeAdd = capability({
   derives,
 })
 
-export const storeRemove = capability({
+export const remove = capability({
   can: 'store/remove',
   with: URI.match({ protocol: 'did:' }),
   caveats: {
@@ -22,7 +22,7 @@ export const storeRemove = capability({
   derives,
 })
 
-export const storeList = capability({
+export const list = capability({
   can: 'store/list',
   with: URI.match({ protocol: 'did:' }),
   derives: (claimed, delegated) => {
@@ -35,46 +35,4 @@ export const storeList = capability({
   },
 })
 
-export const store = storeAdd.or(storeRemove).or(storeList)
-
-export const identityValidate = capability({
-  can: 'identity/validate',
-  with: URI.match({ protocol: 'did:' }),
-  caveats: {
-    as: URI.string({ protocol: 'mailto:' }),
-  },
-  derives: (child, parent) => {
-    return (
-      canDelegateURI(child.caveats.as, parent.caveats.as) &&
-      equalWith(child, parent)
-    )
-  },
-})
-
-export const identityRegister = capability({
-  can: 'identity/register',
-  with: URI.match({ protocol: 'mailto:' }),
-  caveats: {
-    as: URI.string({ protocol: 'did:' }),
-  },
-  derives: (child, parent) =>
-    canDelegateURI(child.caveats.as, parent.caveats.as) &&
-    canDelegateURI(child.with, parent.with),
-})
-
-/**
- * `identity/identify` can be derived from any of the `store/*`
- * capability that has matichng `with`. This allows store service
- * to identify account based on any user request.
- */
-export const identityIdentify = store.derive({
-  to: capability({
-    can: 'identity/identify',
-    with: URI.match({ protocol: 'did:' }),
-    derives: equalWith,
-  }),
-  derives: equalWith,
-})
-export const identity = identityRegister
-  .or(identityValidate)
-  .or(identityIdentify)
+export const store = add.or(remove).or(list)

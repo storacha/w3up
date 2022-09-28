@@ -42,4 +42,5 @@ export const identify = store.derive({
   }),
   derives: equalWith,
 })
+
 export const identity = register.or(validate).or(identify)

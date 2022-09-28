@@ -49,6 +49,14 @@ export interface Service {
   }
 }
 
+export interface AgentMeta {
+  name: string
+  description?: string
+  url?: URL
+  image?: URL
+  type: 'device' | 'app' | 'service'
+}
+
 export interface ValidateOptions {
   url?: URL
   audience?: Principal

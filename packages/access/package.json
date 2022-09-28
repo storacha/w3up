@@ -77,7 +77,7 @@
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/inquirer": "^9.0.1",
-    "@types/mocha": "^9.1.1",
+    "@types/mocha": "^10.0.0",
     "@types/node": "^18.7.23",
     "assert": "^2.0.0",
     "delay": "^5.0.0",

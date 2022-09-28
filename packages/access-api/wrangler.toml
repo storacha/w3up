@@ -33,7 +33,6 @@ watch_dir = "src"
 
 
 [miniflare]
-env_path = "../../.env"
 d1_persist = ".wrangler/miniflare"
 
 
