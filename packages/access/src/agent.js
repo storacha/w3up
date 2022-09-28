@@ -1,7 +1,6 @@
-import { Delegations } from './delegations.js'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
+import * as Ucanto from '@ucanto/interface'
 import { Principal } from '@ucanto/principal'
 import { Peer } from './awake/peer.js'
 import * as Client from '@ucanto/client'
@@ -14,36 +13,69 @@ import { Websocket } from './utils/ws.js'
 import { stringToDelegation } from './encoding.js'
 
 /**
+ * @template T
  * @typedef {{
- * store: import('./stores/store-conf').StoreConf
+ * store: import('./stores/types').Store<T>
+ * connection: Ucanto.ConnectionView<import('./types').Service>,
  * url?: URL,
  * fetch?: typeof fetch
+ * service: Ucanto.Principal
+ * data: import('./stores/types').StoreData<T>
  * }} AgentOptions
  */
 
-const HOST = 'https://access-api.web3.storage'
-
 /**
+ * @template T
+ * @typedef {{
+ * store: import('./stores/types').Store<T>
+ * url?: URL,
+ * fetch?: typeof fetch
+ * }} AgentCreateOptions
+ */
+
+const HOST = 'https://access-api.web3.storage'
+/**
+ * @template {number} T
+ * @param {Ucanto.Principal<T>} principal
+ * @param {typeof fetch} _fetch
+ * @param {URL} url
+ */
+async function buildConnection(principal, _fetch, url) {
+  const rsp = await _fetch(url + 'version')
+  // @ts-ignore
+  const { did } = await rsp.json()
+  // TODO how to parse any DID ????
+  const service = Principal.parse(did)
+
+  const connection = Client.connect({
+    id: principal,
+    encoder: CAR,
+    decoder: CBOR,
+    channel: HTTP.open({
+      url,
+      method: 'POST',
+      // @ts-ignore
+      fetch: _fetch,
+    }),
+  })
+
+  return { service, connection }
+}
+/**
+ * @template {number} T
  * Agent
  */
 export class Agent {
   /**
-   * @param {AgentOptions} opts
+   * @param {AgentOptions<T>} opts
    */
   constructor(opts) {
     this.store = opts.store
-    this.meta = undefined
-    this.delegations = undefined
-    this.principal = undefined
-    this.service = undefined
+    this.service = opts.service
     this.url = opts.url || new URL(HOST)
     this.fetch = opts.fetch
-
-    /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service> | undefined} */
-    this.connection = undefined
-
-    /** @type {Types.SigningPrincipal[]} */
-    this.accounts = []
+    this.connection = opts.connection
+    this.data = opts.data
 
     // validate fetch implementation
     if (!this.fetch) {
@@ -58,101 +90,53 @@ export class Agent {
   }
 
   /**
-   *
-   * @param {AgentOptions} opts
+   * @template {number} T
+   * @param {AgentCreateOptions<T>} opts
    */
   static async create(opts) {
-    return new Agent({
-      ...opts,
-      store: await opts.store.open(),
-    })
-  }
+    let _fetch = opts.fetch
+    const url = opts.url || new URL(HOST)
 
-  isSetup() {
-    return this.store.isSetup()
-  }
+    // validate fetch implementation
+    if (!_fetch) {
+      if (typeof globalThis.fetch !== 'undefined') {
+        _fetch = globalThis.fetch.bind(globalThis)
+      } else {
+        throw new TypeError(
+          `Agent got undefined \`fetch\`. Try passing in a \`fetch\` implementation explicitly.`
+        )
+      }
+    }
 
-  /**
-   * @param {Types.Principal} principal
-   */
-  async _connection(principal) {
-    const rsp = await this.fetch(this.url + 'version')
-    // @ts-ignore
-    const { did } = await rsp.json()
-    // TODO how to parse any DID ????
-    this.service = Principal.parse(did)
-
-    this.connection = Client.connect({
-      id: principal,
-      encoder: CAR,
-      decoder: CBOR,
-      channel: HTTP.open({
-        url: new URL(this.url),
-        method: 'POST',
-        // @ts-ignore
-        fetch: this.fetch,
-      }),
-    })
-  }
-
-  /**
-   *
-   * @param {import('./awake/types').PeerMeta} meta
-   */
-  async setup(meta) {
-    this.accounts = await this.store.setAccounts([])
-    this.meta = await this.store.setMeta(meta)
-    this.principal = await this.store.setPrincipal()
-    this.delegations = await this.store.setDelegations(
-      new Delegations({
-        principal: this.principal,
-      })
+    const data = await opts.store.load()
+    const { connection, service } = await buildConnection(
+      data.agent,
+      _fetch,
+      url
     )
-    await this._connection(this.principal)
-
-    return {
-      ...meta,
-      did: this.principal.did(),
-    }
-  }
-
-  async import() {
-    if (!this.isSetup()) {
-      throw new Error('Agent store is not setup yet.')
-    }
-
-    this.accounts = await this.store.getAccounts()
-    this.meta = await this.store.getMeta()
-    this.principal = await this.store.getPrincipal()
-    this.delegations = await this.store.getDelegations()
-    await this._connection(this.principal)
-
-    return {
-      ...this.meta,
-      did: this.principal.did(),
-      delegations: this.delegations,
-    }
+    return new Agent({
+      connection,
+      service,
+      fetch: _fetch,
+      url,
+      store: opts.store,
+      data,
+    })
   }
 
   did() {
-    if (!this.principal) {
-      throw new Error('Run setup or import first.')
-    }
-    return this.principal.did()
+    return this.data.agent.did()
   }
 
   /**
    * @param {string} email
    */
   async createAccount(email) {
-    if (!this.principal || !this.service || !this.connection) {
-      throw new Error('Run setup or import first.')
-    }
-    const account = await this.store.newAccount()
+    const account = await this.store.createAccount()
     const accDelegation = await delegate({
       // @ts-ignore
       issuer: account,
-      audience: this.principal,
+      audience: this.data.agent,
       capabilities: [
         {
           can: 'voucher/*',
@@ -164,7 +148,7 @@ export class Agent {
 
     const inv = await Voucher.claim
       .invoke({
-        issuer: this.principal,
+        issuer: this.data.agent,
         audience: this.service,
         with: account.did(),
         caveats: {
@@ -182,14 +166,9 @@ export class Agent {
 
     const voucherRedeem = await this._waitForVoucherRedeem()
 
-    this.delegations?.add(voucherRedeem)
-    this.delegations?.add(accDelegation)
-    this.accounts.push(account)
-    this.store.save(this)
-
     const accInv = await Voucher.redeem
       .invoke({
-        issuer: this.principal,
+        issuer: this.data.agent,
         audience: this.service,
         with: this.service.did(),
         caveats: {
@@ -204,6 +183,9 @@ export class Agent {
     if (accInv && accInv.error) {
       throw new Error('Account registration failed', { cause: accInv })
     }
+    this.data.delegations.addMany([voucherRedeem, accDelegation])
+    this.data.accounts.push(account)
+    this.store.save(this.data)
   }
 
   async _waitForVoucherRedeem() {
@@ -233,15 +215,28 @@ export class Agent {
 
   /**
    *
-   * @param {Types.UCAN.DIDView} audience
+   * @param {Ucanto.UCAN.DIDView} audience
    * @param {import('@ipld/dag-ucan').Capabilities} capabilities
    * @param {number} [lifetimeInSeconds]
    */
-  delegate(audience, capabilities, lifetimeInSeconds) {
-    if (!this.delegations) {
-      throw new Error('Run setup or import first.')
-    }
-    return this.delegations.delegate(audience, capabilities, lifetimeInSeconds)
+  async delegate(audience, capabilities, lifetimeInSeconds) {
+    const delegation = await this.data.delegations.delegate(
+      audience,
+      capabilities,
+      lifetimeInSeconds
+    )
+
+    await this.store.save(this.data)
+    return delegation
+  }
+
+  /**
+   *
+   * @param {import('@ucanto/interface').Delegation} delegation
+   */
+  async addDelegation(delegation) {
+    await this.data.delegations.add(delegation)
+    await this.store.save(this.data)
   }
 
   /**

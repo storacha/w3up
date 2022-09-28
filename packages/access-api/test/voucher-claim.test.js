@@ -7,7 +7,7 @@ test.before(async (t) => {
   t.context = await context()
 })
 
-test.only('should voucher/claim', async (t) => {
+test('should voucher/claim', async (t) => {
   const { issuer, service, conn } = t.context
 
   const inv = await Voucher.claim
@@ -23,8 +23,11 @@ test.only('should voucher/claim', async (t) => {
     })
     .execute(conn)
 
+  if (!inv) {
+    return t.fail('no output')
+  }
   if (inv.error) {
-    return t.fail(inv?.message)
+    return t.fail(inv.message)
   }
 
   const delegation = await stringToDelegation(inv)

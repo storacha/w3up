@@ -36,6 +36,16 @@ export class Delegations {
     this.received.push(delegation)
   }
 
+  /**
+   *
+   * @param {import('@ucanto/interface').Delegation[]} delegations
+   */
+  async addMany(delegations) {
+    for (const d of delegations) {
+      this.received.push(d)
+    }
+  }
+
   async full() {
     const delegation = await delegate({
       // @ts-ignore
