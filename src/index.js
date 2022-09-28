@@ -29,21 +29,6 @@ import { sleep } from './utils.js'
  */
 
 /**
- * @async
- * @param {UCAN.JWT} input
- * @returns {Promise<API.Delegation|Failure>}
- */
-export const importToken = async (input) => {
-  try {
-    const ucan = UCAN.parse(input)
-    const root = await UCAN.write(ucan)
-    return Delegation.create({ root })
-  } catch (error) {
-    return new Failure(String(error))
-  }
-}
-
-/**
  * @param {ClientOptions} options
  * @returns Client
  */
@@ -142,7 +127,7 @@ class Client {
    * @async
    * @returns {Promise<API.Delegation|null>}
    */
-  async delegation() {
+  async currentDelegation() {
     let did = this.settings.has('delegation')
       ? this.settings.get('delegation')
       : null
@@ -190,7 +175,7 @@ class Client {
   async identity() {
     const agent = await this.agent()
     const account = await this.account()
-    const delegation = await this.delegation()
+    const delegation = await this.currentDelegation()
 
     return {
       agent,
@@ -347,13 +332,14 @@ class Client {
   }
 
   /**
-   * @param {any} did
+   * @param {{to: API.DID, expiration?:number}} opts
    * @returns {Promise<Uint8Array>}
    */
-  async makeDelegation(did) {
+  async makeDelegation(opts) {
     return writeDelegation({
       issuer: await this.account(),
-      to: did,
+      to: opts.to,
+      expiration: opts.expiration,
     })
   }
 

@@ -1,12 +1,7 @@
 import { CarBufferWriter, CarReader } from '@ipld/car'
 import * as API from '@ucanto/interface'
 import { Principal } from '@ucanto/principal'
-import { Delegation, URI, capability } from '@ucanto/server'
-import {
-  identityIdentify,
-  identityRegister,
-  identityValidate,
-} from '@web3-storage/access/capabilities'
+import { Delegation } from '@ucanto/server'
 
 /**
  * @typedef {API.Delegation<API.Capabilities>} StoreDelegation
@@ -33,6 +28,7 @@ async function writeDelegationUCANtoCar(delegation) {
  * @param {{
  *   to: API.DID,
  *   issuer: API.SigningPrincipal
+ *   expiration?: number
  * }} opts
  * @param {boolean} [ includeAccountCaps ]
  * @returns {Promise<StoreDelegation>}
@@ -89,6 +85,7 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
  * @param {{
  *   to: API.DID,
  *   issuer: API.SigningPrincipal
+ *   expiration?: number
  * }} opts
  * @returns {Promise<Uint8Array>}
  */
