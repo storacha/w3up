@@ -5,41 +5,40 @@
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "main": "src/index.js",
-  "types": "types/src/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "files": [
     "src",
-    "types",
+    "dist",
     "patches"
   ],
   "scripts": {
     "build": "npm run build:api_docs && npm run build:types",
-    "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./types",
+    "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./dist",
     "build:api_docs": "jsdoc2md -f src/index.js > API.md",
-    "pretest": "npm run prettier && npm run typecheck",
+    "x-pretest": "npm run prettier && npm run typecheck",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prettier": "prettier -c '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "test:coverage": "vitest run --coverage",
-    "test:dev": "vitest",
-    "setup:hooks": "simple-git-hooks"
+    "test:dev": "vitest -w"
   },
   "dependencies": {
-    "@ucanto/authority": "^0.5.0",
-    "@ucanto/client": "0.6.0",
-    "@ucanto/core": "^0.6.0",
-    "@ucanto/interface": "^0.7.0",
-    "@ucanto/transport": "^0.7.0",
-    "@ucanto/validator": "^0.6.0",
-    "@web3-storage/access": "^0.1.2-rc.2",
+    "@ucanto/client": "^1.0.1",
+    "@ucanto/core": "^1.0.1",
+    "@ucanto/interface": "^1.0.0",
+    "@ucanto/principal": "^1.0.1",
+    "@ucanto/transport": "^1.0.1",
+    "@ucanto/validator": "^1.0.1",
+    "@web3-storage/access": "^1.0.0",
     "cross-fetch": "^3.1.5",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.3.0",
-    "@vitest/coverage-c8": "^0.23.2",
+    "@vitest/coverage-c8": "^0.23.4",
     "ipjs": "^5.2.0",
     "jsdoc-to-markdown": "^7.1.1",
     "lint-staged": "^13.0.3",
@@ -49,10 +48,7 @@
     "standard": "^17.0.0",
     "tsc": "^2.0.4",
     "typescript": "^4.8.3",
-    "vitest": "^0.23.2"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "npx lint-staged && npm run build && git add API.md && git add types"
+    "vitest": "^0.23.4"
   },
   "lint-staged": {
     "*.*": "prettier --write '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore"

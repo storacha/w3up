@@ -5,13 +5,6 @@
 <dd></dd>
 </dl>
 
-## Constants
-
-<dl>
-<dt><a href="#importToken">importToken</a> ⇒ <code>Promise.&lt;(API.Delegation|Failure)&gt;</code></dt>
-<dd></dd>
-</dl>
-
 ## Functions
 
 <dl>
@@ -22,14 +15,15 @@
 ## Typedefs
 
 <dl>
-<dt><a href="#Link">Link</a> : <code>API.Link</code></dt>
-<dd><p>A string representing a link to another object in IPLD</p>
-</dd>
 <dt><a href="#Result">Result</a> : <code>API.Result.&lt;unknown, ({error: true}|API.HandlerExecutionError|API.Failure)&gt;</code></dt>
 <dd></dd>
 <dt><a href="#strResult">strResult</a> : <code>API.Result.&lt;string, ({error: true}|API.HandlerExecutionError|API.Failure)&gt;</code></dt>
 <dd></dd>
 <dt><a href="#ClientOptions">ClientOptions</a> : <code>object</code></dt>
+<dd></dd>
+<dt><a href="#IdentityInfo">IdentityInfo</a> : <code>object</code></dt>
+<dd></dd>
+<dt><a href="#DelegationOptions">DelegationOptions</a> : <code>object</code></dt>
 <dd></dd>
 </dl>
 
@@ -40,11 +34,16 @@
 
 * [Client](#Client)
     * [new Client(options)](#new_Client_new)
-    * [.identity()](#Client+identity) ⇒ <code>Promise.&lt;API.SigningAuthority&gt;</code>
+    * [.agent()](#Client+agent) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+    * [.account()](#Client+account) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+    * [.currentDelegation()](#Client+currentDelegation) ⇒ <code>Promise.&lt;(API.Delegation\|null)&gt;</code>
+    * [.identity()](#Client+identity) ⇒ [<code>Promise.&lt;IdentityInfo&gt;</code>](#IdentityInfo)
     * [.register(email)](#Client+register)
     * [.checkRegistration()](#Client+checkRegistration) ⇒ <code>Promise.&lt;UCAN.JWT&gt;</code>
     * [.whoami()](#Client+whoami) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.list()](#Client+list) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
+    * [.makeDelegation(opts)](#Client+makeDelegation) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
+    * [.importDelegation(bytes, alias)](#Client+importDelegation) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
     * [.upload(bytes)](#Client+upload) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
     * [.remove(link)](#Client+remove)
     * [.insights(link)](#Client+insights) ⇒ <code>Promise.&lt;object&gt;</code>
@@ -59,11 +58,25 @@ Create an instance of the w3 client.
 | --- | --- |
 | options | [<code>ClientOptions</code>](#ClientOptions) | 
 
-<a name="Client+identity"></a>
+<a name="Client+agent"></a>
 
-### client.identity() ⇒ <code>Promise.&lt;API.SigningAuthority&gt;</code>
+### client.agent() ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
 Get the current "machine" DID
 
+**Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="Client+account"></a>
+
+### client.account() ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
+Get the current "account" DID
+
+**Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="Client+currentDelegation"></a>
+
+### client.currentDelegation() ⇒ <code>Promise.&lt;(API.Delegation\|null)&gt;</code>
+**Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="Client+identity"></a>
+
+### client.identity() ⇒ [<code>Promise.&lt;IdentityInfo&gt;</code>](#IdentityInfo)
 **Kind**: instance method of [<code>Client</code>](#Client)  
 <a name="Client+register"></a>
 
@@ -94,6 +107,25 @@ Register a user by email.
 List all of the uploads connected to this user.
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="Client+makeDelegation"></a>
+
+### client.makeDelegation(opts) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
+**Kind**: instance method of [<code>Client</code>](#Client)  
+
+| Param | Type |
+| --- | --- |
+| opts | [<code>DelegationOptions</code>](#DelegationOptions) | 
+
+<a name="Client+importDelegation"></a>
+
+### client.importDelegation(bytes, alias) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
+**Kind**: instance method of [<code>Client</code>](#Client)  
+
+| Param | Type |
+| --- | --- |
+| bytes | <code>Uint8Array</code> | 
+| alias | <code>string</code> | 
+
 <a name="Client+upload"></a>
 
 ### client.upload(bytes) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
@@ -123,16 +155,7 @@ Remove an uploaded file by CID
 
 | Param | Type | Description |
 | --- | --- | --- |
-| link | [<code>Link</code>](#Link) | the CID to get insights for |
-
-<a name="importToken"></a>
-
-## importToken ⇒ <code>Promise.&lt;(API.Delegation\|Failure)&gt;</code>
-**Kind**: global constant  
-
-| Param | Type |
-| --- | --- |
-| input | <code>UCAN.JWT</code> | 
+| link | <code>API.Link</code> | the CID to get insights for |
 
 <a name="createClient"></a>
 
@@ -144,12 +167,6 @@ Remove an uploaded file by CID
 | --- | --- |
 | options | [<code>ClientOptions</code>](#ClientOptions) | 
 
-<a name="Link"></a>
-
-## Link : <code>API.Link</code>
-A string representing a link to another object in IPLD
-
-**Kind**: global typedef  
 <a name="Result"></a>
 
 ## Result : <code>API.Result.&lt;unknown, ({error: true}\|API.HandlerExecutionError\|API.Failure)&gt;</code>
@@ -171,4 +188,28 @@ A string representing a link to another object in IPLD
 | accessURL | <code>string</code> | The URL of the access service. |
 | accessDID | <code>API.DID</code> | The DID of the access service. |
 | settings | <code>Map.&lt;string, any&gt;</code> | A map/db of settings to use for the client. |
+
+<a name="IdentityInfo"></a>
+
+## IdentityInfo : <code>object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| agent | <code>API.SigningPrincipal</code> | The local agent principal |
+| account | <code>API.SigningPrincipal</code> | The local account principal |
+| with | <code>API.DID</code> | The current acccount (delegated) DID |
+| proofs | <code>Array.&lt;API.Delegation&gt;</code> | The current delegation as a proof set. |
+
+<a name="DelegationOptions"></a>
+
+## DelegationOptions : <code>object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| to | <code>API.DID</code> | 
+| [expiration] | <code>number</code> | 
 
