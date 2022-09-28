@@ -8,6 +8,7 @@ export const add = capability({
   with: URI.match({ protocol: 'did:' }),
   caveats: {
     link: Link.optional(),
+    origin: Link.optional(),
   },
   derives,
 })
