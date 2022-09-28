@@ -8,10 +8,10 @@
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
-    "dev": "miniflare --watch --debug --wrangler-env dev",
+    "dev": "miniflare --watch --debug --wrangler-env dev --env ../../.env",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
-    "test": "tsc --build && ava --serial"
+    "test": "tsc --build && ava --timeout 10s"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
@@ -81,9 +81,7 @@
     "docs"
   ],
   "ava": {
-    "concurrency": 1,
     "failFast": true,
-    "workerThreads": false,
     "files": [
       "test/**/*.test.js"
     ],
