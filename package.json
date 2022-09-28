@@ -23,7 +23,7 @@
     "typecheck": "tsc --noEmit",
     "prettier": "prettier -c '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "test:coverage": "vitest run --coverage",
-    "test:dev": "vitest"
+    "test:dev": "vitest -w"
   },
   "dependencies": {
     "@ucanto/client": "^1.0.1",

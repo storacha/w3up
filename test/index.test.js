@@ -12,7 +12,15 @@ describe('client', () => {
   beforeEach(async (context) => {
     const settings = new Map()
     settings.set(
-      'secret',
+      'account_secret',
+      // secret is stored as bytes, so set it as bytes into settings.
+      SigningPrincipal.encode(
+        SigningPrincipal.parse(fixture.alice_account_secret)
+      )
+    )
+
+    settings.set(
+      'agent_secret',
       // secret is stored as bytes, so set it as bytes into settings.
       SigningPrincipal.encode(
         SigningPrincipal.parse(fixture.alice_account_secret)
@@ -45,10 +53,73 @@ describe('client', () => {
     })
   })
 
+  describe('#account', () => {
+    it('should return an account when it exists.', async (context) => {
+      const account = await context.client.account()
+      expect(account).toStrictEqual(context.parsedAliceAccountSecret)
+    })
+  })
+
+  describe('#agent', () => {
+    it('should return an agent when it exists.', async (context) => {
+      const agent = await context.client.agent()
+      expect(agent).toStrictEqual(context.parsedAliceAccountSecret)
+    })
+  })
+
+  describe('#delegation', () => {
+    it('should return the default delegation.', async (context) => {
+      const delegation = await context.client.currentDelegation()
+      expect(delegation).toBeTruthy()
+      expect(delegation).toHaveProperty('root')
+    })
+
+    it('should have account did as with.', async (context) => {
+      const delegation = await context.client.currentDelegation()
+      expect(delegation.capabilities[0].with).toStrictEqual(
+        (await context.client.account()).did()
+      )
+    })
+
+    it('should have agent did as audience.', async (context) => {
+      const delegation = await context.client.currentDelegation()
+      expect(delegation.audience.did()).toStrictEqual(
+        (await context.client.agent()).did()
+      )
+    })
+  })
+
   describe('#identity', () => {
-    it('should return a parsed id when it exists.', async (context) => {
-      const id = await context.client.identity()
-      expect(id).toStrictEqual(context.parsedAliceAccountSecret)
+    it('should return an account when it exists.', async (context) => {
+      const { account } = await context.client.identity()
+      expect(account).toStrictEqual(context.parsedAliceAccountSecret)
+    })
+
+    it('should return an agent when it exists.', async (context) => {
+      const { agent } = await context.client.identity()
+      expect(agent).toStrictEqual(context.parsedAliceAccountSecret)
+    })
+
+    it('should build the account from old secret if one exists.', async (context) => {
+      const settings = new Map()
+      settings.set(
+        'secret',
+        // secret is stored as bytes, so set it as bytes into settings.
+        SigningPrincipal.encode(
+          SigningPrincipal.parse(fixture.alice_account_secret)
+        )
+      )
+
+      const client = createClient({
+        serviceDID: fixture.did,
+        serviceURL: 'http://localhost',
+        accessDID: fixture.did,
+        accessURL: 'http://localhost',
+        settings,
+      })
+      const { account } = await client.identity()
+
+      expect(account).toStrictEqual(context.parsedAliceAccountSecret)
     })
 
     it('should return a new id when one is not stored.', async (context) => {
@@ -59,35 +130,35 @@ describe('client', () => {
         accessURL: 'http://localhost',
         settings: new Map(),
       })
-      const id = await client.identity()
+      const { account } = await client.identity()
 
-      expect(id).not.toStrictEqual(context.parsedAliceAccountSecret)
+      expect(account).not.toStrictEqual(context.parsedAliceAccountSecret)
     })
   })
 
-//   describe('#register', () => {
-//     it('should throw when invalid email passed.', async (context) => {
-//       expect(() => context.client.register()).rejects.toThrow(
-//         /^Invalid email provided for registration:.*/
-//       )
-//     })
-//     it('should throw when different email passed.', async (context) => {
-//       context.client.settings.set('email', 'banana@banana.com')
-//       expect(() => context.client.register('test@test.com')).rejects.toThrow(
-//         /^Trying to register a second email.*/
-//       )
-//     })
-//     it('should actually call service', async ({ client, accessServer }) => {
-//       client.settings.set('email', 'test@test.com')
-//
-//       const accessServerRequestSpy = vi.spyOn(
-//         accessServer.service,
-//         'handleRequest'
-//       )
-//
-//       const result = await client.register('test@test.com')
-//       console.log('result', result)
-//       expect(accessServerRequestSpy).toHaveBeenCalledOnce()
-//     })
-//   })
+  //   describe('#register', () => {
+  //     it('should throw when invalid email passed.', async (context) => {
+  //       expect(() => context.client.register()).rejects.toThrow(
+  //         /^Invalid email provided for registration:.*/
+  //       )
+  //     })
+  //     it('should throw when different email passed.', async (context) => {
+  //       context.client.settings.set('email', 'banana@banana.com')
+  //       expect(() => context.client.register('test@test.com')).rejects.toThrow(
+  //         /^Trying to register a second email.*/
+  //       )
+  //     })
+  //     it('should actually call service', async ({ client, accessServer }) => {
+  //       client.settings.set('email', 'test@test.com')
+  //
+  //       const accessServerRequestSpy = vi.spyOn(
+  //         accessServer.service,
+  //         'handleRequest'
+  //       )
+  //
+  //       const result = await client.register('test@test.com')
+  //       console.log('result', result)
+  //       expect(accessServerRequestSpy).toHaveBeenCalledOnce()
+  //     })
+  //   })
 })
