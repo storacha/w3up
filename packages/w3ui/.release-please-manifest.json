@@ -5,9 +5,9 @@
   "packages/wallet-core": "1.2.2",
   "packages/react-uploads-list": "1.0.0",
   "packages/uploads-list-core": "1.0.0",
-  "packages/vue-uploader": "1.0.0",
+  "packages/vue-uploader": "1.0.1",
   "packages/vue-wallet": "1.0.0",
-  "packages/solid-uploader": "1.0.0",
-  "packages/solid-uploads-list": "1.1.0",
+  "packages/solid-uploader": "1.0.1",
+  "packages/solid-uploads-list": "1.1.1",
   "packages/solid-wallet": "1.0.0"
 }
