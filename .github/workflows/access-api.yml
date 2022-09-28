@@ -30,7 +30,6 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - run: pnpm install
-      - run: npx --prefer-offline -y -p better-sqlite3@7.6.2
       - run: pnpm -r --filter @web3-storage/access-api run lint
       - run: pnpm -r --filter @web3-storage/access-api run test
   deploy-staging:
