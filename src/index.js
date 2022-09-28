@@ -106,7 +106,7 @@ class Client {
     // For now, move old secret value to new account_secret.
     if (!secret && this.settings.has('secret')) {
       secret = this.settings.get('secret')
-      this.settings.delete('secret')
+//       this.settings.delete('secret')
     }
     let id
 
