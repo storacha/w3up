@@ -2,7 +2,7 @@ import { Delegation } from '@ucanto/core'
 import { SigningPrincipal } from '@ucanto/principal'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { createDelegation, importDelegation } from '../src/delegation.js'
+import { importDelegation, writeDelegation } from '../src/delegation.js'
 import fixture from './fixture.js'
 
 // The two tests marked with concurrent will be run in parallel
@@ -11,9 +11,9 @@ describe('delegation', () => {
     beforeEach(async (context) => {
       const issuer = await SigningPrincipal.generate()
 
-      context.delegation = await createDelegation({
+      context.delegation = await writeDelegation({
         issuer,
-        did: fixture.did,
+        to: fixture.did,
       })
     })
 
@@ -27,9 +27,9 @@ describe('delegation', () => {
     beforeEach(async (context) => {
       const issuer = await SigningPrincipal.generate()
 
-      context.delegation = await createDelegation({
+      context.delegation = await writeDelegation({
         issuer,
-        did: fixture.did,
+        to: fixture.did,
       })
     })
 
