@@ -1,4 +1,4 @@
-import { defineComponent, reactive, provide, computed, InjectionKey, ComputedRef } from 'vue'
+import { defineComponent, provide, computed, InjectionKey, ComputedRef, shallowReactive } from 'vue'
 import { registerIdentity, loadDefaultIdentity, loadIdentity, storeIdentity, removeIdentity, Identity, AuthStatus, createIdentity, sendVerificationEmail, waitIdentityVerification, UnverifiedIdentity } from '@w3ui/wallet-core'
 
 /**
@@ -52,7 +52,7 @@ export interface AuthContextActions {
 
 export const AuthProvider = defineComponent({
   setup () {
-    const state = reactive<AuthContextState>({
+    const state = shallowReactive<AuthContextState>({
       identity: undefined,
       status: AuthStatus.SignedOut
     })

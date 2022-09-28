@@ -64,7 +64,7 @@ export default {
 
   <div v-if="status === 'done' && error == null">
     <h1 className='near-white'>Done!</h1>
-    <p className='f6 code truncate'>{cid}</p>
+    <p className='f6 code truncate'>{{rootCid}}</p>
     <p><a :href="'https://w3s.link/ipfs/' + rootCid" className='blue'>View {{file.name}} on IPFS Gateway.</a></p>
   </div>
 
