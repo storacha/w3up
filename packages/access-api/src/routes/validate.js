@@ -9,7 +9,10 @@ export async function validate(req, env) {
   if (req.query && req.query.ucan) {
     await validations.create(req.query.ucan)
 
-    return new Response('Done')
+    return new Response('Success', {
+      status: 307,
+      headers: { location: 'https://web3.storage/' },
+    })
   }
 
   if (req.query && req.query.did) {
