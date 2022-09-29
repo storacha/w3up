@@ -12,7 +12,7 @@ To run this example:
 - Change to this example directory and install dependencies
 
   ```sh
-  cd examples/solid/template
+  cd examples/vue/sign-up-in
   npm install
   ```
 
