@@ -310,7 +310,10 @@ export class Channel {
    */
   async sendMsg(did, msg) {
     console.log('send awake/msg')
-    const id = await concatEncode([await this.keypair.pubkey(), did])
+    const id = await concatEncode([
+      await this.keypair.pubkey(),
+      DID.encode(did),
+    ])
 
     this.send({
       awv: AWAKE_VERSION,

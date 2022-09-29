@@ -9,7 +9,7 @@ export function identityRegisterProvider(ctx) {
     Identity.register,
     async ({ capability, context, invocation }) => {
       await ctx.kvs.accounts.register(
-        capability.caveats.as,
+        capability.nb.as,
         capability.with,
         invocation.cid
       )
@@ -24,7 +24,7 @@ export function identityRegisterProvider(ctx) {
           to: 'david@dag.house,jchris@dag.house',
           subject: 'New w3account Created',
           textBody: `New account registered for ${
-            capability.caveats.as
+            capability.nb.as
           } with email ${capability.with.replace('mailto:', '')}`,
         })
       }

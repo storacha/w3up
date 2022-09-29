@@ -5,7 +5,7 @@ import { getWebsocketServer } from './helpers/miniflare.js'
 import pWaitFor from 'p-wait-for'
 import * as UCAN from '@ipld/dag-ucan'
 import * as DID from '@ipld/dag-ucan/did'
-import { SigningPrincipal } from '@ucanto/principal'
+import { Signer } from '@ucanto/principal/ed25519'
 
 describe('awake channel', function () {
   const host = new URL('ws://127.0.0.1:8788/connect')
@@ -55,7 +55,7 @@ describe('awake channel', function () {
         assert.deepEqual(data, { type: 'awake/init' })
         done = true
       })
-      await ws1.send({
+      ws1.send({
         type: 'awake/init',
       })
 
@@ -67,10 +67,10 @@ describe('awake channel', function () {
       ws2.subscribe('awake/init', (data) => {
         done++
       })
-      await ws1.send({
+      ws1.send({
         type: 'awake/init',
       })
-      await ws1.send({
+      ws1.send({
         type: 'awake/init',
       })
 
@@ -90,10 +90,10 @@ describe('awake channel', function () {
       ws2.subscribe('awake/init', () => {
         done++
       })
-      await ws1.send({
+      ws1.send({
         type: 'awake/init',
       })
-      await ws1.send({
+      ws1.send({
         type: 'awake/init',
       })
 
@@ -105,7 +105,7 @@ describe('awake channel', function () {
   describe('awake/res', function () {
     it('should send awake/res', async function () {
       const ucan = await UCAN.issue({
-        issuer: await SigningPrincipal.generate(),
+        issuer: await Signer.generate(),
         audience: DID.parse(ws2.keypair.did),
         capabilities: [{ with: 'awake:', can: '*' }],
       })
@@ -120,7 +120,7 @@ describe('awake channel', function () {
 
     it('should fail with wrong aud awake/res', async function () {
       const ucan = await UCAN.issue({
-        issuer: await SigningPrincipal.generate(),
+        issuer: await Signer.generate(),
         audience: DID.parse(ws2.keypair.did),
         capabilities: [{ with: 'awake:', can: '*' }],
       })

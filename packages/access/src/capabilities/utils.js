@@ -42,19 +42,19 @@ export function equalWith(child, parent) {
  * @param {T} delegated
  */
 export const derives = (claimed, delegated) => {
-  if (claimed.uri.href !== delegated.uri.href) {
+  if (claimed.with !== delegated.with) {
     return new Failure(
-      `Expected 'with: "${delegated.uri.href}"' instead got '${claimed.uri.href}'`
+      `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
     )
   } else if (
-    delegated.caveats.link &&
-    `${delegated.caveats.link}` !== `${claimed.caveats.link}`
+    delegated.nb.link &&
+    `${delegated.nb.link}` !== `${claimed.nb.link}`
   ) {
     return new Failure(
       `Link ${
         // eslint-disable-next-line unicorn/no-null
-        claimed.caveats.link == null ? '' : `${claimed.caveats.link} `
-      }violates imposed ${delegated.caveats.link} constraint`
+        claimed.nb.link == null ? '' : `${claimed.nb.link} `
+      }violates imposed ${delegated.nb.link} constraint`
     )
   } else {
     return true

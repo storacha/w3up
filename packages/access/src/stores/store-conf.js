@@ -1,28 +1,18 @@
 import Conf from 'conf'
-import { SigningPrincipal } from '@ucanto/principal'
-// eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
+import { Signer } from '@ucanto/principal/ed25519'
 import { Delegations } from '../delegations.js'
 import { decodeDelegations, encodeDelegations } from '../encoding.js'
 
 /**
  * @typedef {import('./types').DelegationsAsJSON} DelegationsAsJSON
- */
-
-/**
- * @template T
- * @typedef {import('./types').StoreData<237>} StoreData
- */
-
-/**
- * @template T
- * @typedef {import('./types').Store<237>} Store
+ * @typedef {import('./types').StoreDataKeyEd} StoreData
+ * @typedef {import('./types').StoreKeyEd} Store
  */
 
 /**
  * Store implementation with "conf"
  *
- * @implements {Store<237>}
+ * @implements {Store}
  */
 export class StoreConf {
   #config
@@ -51,15 +41,15 @@ export class StoreConf {
     return this.#config.has('meta') && this.#config.has('principal')
   }
 
-  /** @type {Store<237>['init']} */
+  /** @type {Store['init']} */
   async init(data) {
-    const principal = data.agent || (await SigningPrincipal.generate())
+    const principal = data.agent || (await Signer.generate())
     const delegations =
       data.delegations ||
       new Delegations({
         principal,
       })
-    /** @type {StoreData<237>} */
+    /** @type {StoreData} */
     const storeData = {
       accounts: data.accounts || [],
       meta: data.meta || { name: 'agent', type: 'device' },
@@ -73,7 +63,7 @@ export class StoreConf {
 
   /**
    *
-   * @param {StoreData<237>} data
+   * @param {StoreData} data
    */
   async save(data) {
     this.setAccounts(data.accounts)
@@ -83,9 +73,9 @@ export class StoreConf {
     return this
   }
 
-  /** @type {Store<237>['load']} */
+  /** @type {Store['load']} */
   async load() {
-    /** @type {StoreData<237>} */
+    /** @type {StoreData} */
     return {
       accounts: await this.getAccounts(),
       meta: await this.getMeta(),
@@ -95,7 +85,7 @@ export class StoreConf {
   }
 
   async createAccount() {
-    return await SigningPrincipal.generate()
+    return await Signer.generate()
   }
 
   /**
@@ -108,26 +98,26 @@ export class StoreConf {
   }
 
   /**
-   * @param {Types.SigningPrincipal<237>} [principal]
+   * @param {Signer.Signer} [principal]
    */
   async setPrincipal(principal) {
     let signer = principal
     if (!signer) {
-      signer = await SigningPrincipal.generate()
+      signer = await Signer.generate()
     }
-    this.#config.set('principal', SigningPrincipal.format(signer))
+    this.#config.set('principal', Signer.format(signer))
     return signer
   }
 
   async getPrincipal() {
     const raw = this.#config.get('principal')
-    return SigningPrincipal.parse(/** @type {string} */ (raw))
+    return Signer.parse(/** @type {string} */ (raw))
   }
 
   async getMeta() {
     const raw = this.#config.get('meta')
 
-    return /** @type {import('../awake/types').PeerMeta} */ (raw)
+    return /** @type {import('../types').AgentMeta} */ (raw)
   }
 
   /**
@@ -159,12 +149,12 @@ export class StoreConf {
 
   /**
    *
-   * @param {Types.SigningPrincipal<237>[]} accounts
+   * @param {Signer.Signer[]} accounts
    */
   async setAccounts(accounts) {
     const encoded = []
     for (const acc of accounts) {
-      encoded.push(SigningPrincipal.format(acc))
+      encoded.push(Signer.format(acc))
     }
 
     this.#config.set('accounts', encoded)
@@ -174,14 +164,14 @@ export class StoreConf {
 
   async getAccounts() {
     const encoded = /** @type {string[]} */ (this.#config.get('accounts'))
-    /** @type {Types.SigningPrincipal<237>[]} */
+    /** @type {Signer.Signer[]} */
     const accounts = []
 
     if (!Array.isArray(encoded)) {
       return accounts
     }
     for (const acc of encoded) {
-      accounts.push(SigningPrincipal.parse(acc))
+      accounts.push(Signer.parse(acc))
     }
 
     return accounts

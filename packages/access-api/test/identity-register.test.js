@@ -16,7 +16,7 @@ test('register', async (t) => {
   const validate = Identity.validate.invoke({
     audience: service,
     issuer,
-    caveats: {
+    nb: {
       as: 'mailto:hugo+register@dag.house',
     },
     with: issuer.did(),
@@ -39,7 +39,7 @@ test('register', async (t) => {
     issuer,
     // @ts-ignore
     with: proof.capabilities[0].with,
-    caveats: {
+    nb: {
       // @ts-ignore
       as: proof.capabilities[0].as,
     },
@@ -63,7 +63,7 @@ test('identify', async (t) => {
   const validate = Identity.validate.invoke({
     audience: service,
     issuer,
-    caveats: {
+    nb: {
       as: 'mailto:hugo+identify@dag.house',
     },
     with: issuer.did(),
@@ -84,8 +84,8 @@ test('identify', async (t) => {
     audience: service,
     issuer,
     with: proof.capabilities[0].with,
-    caveats: {
-      as: proof.capabilities[0].as,
+    nb: {
+      as: proof.capabilities[0].nb.as,
     },
     proofs: [proof],
   })
