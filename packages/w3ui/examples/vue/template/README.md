@@ -9,15 +9,16 @@ To run this example:
   cd w3ui
   ```
 
-- Change to this example directory and install dependencies
+- Install dependencies and build:
 
   ```sh
-  cd examples/solid/template
   npm install
+  npm run build
   ```
 
-- Run the example
+- Change to this example directory and run the example:
 
   ```sh
+  cd examples/vue/template
   npm start
   ```

@@ -9,15 +9,16 @@ To run this example:
   cd w3ui
   ```
 
-- Change to this example directory and install dependencies
+- Install dependencies and build:
+
+  ```sh
+  npm install
+  npm run build
+  ```
+
+- Change to this example directory and run the example:
 
   ```sh
   cd examples/react/template
-  npm install
-  ```
-
-- Run the example
-
-  ```sh
   npm start
   ```

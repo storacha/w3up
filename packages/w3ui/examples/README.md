@@ -14,6 +14,6 @@ This directory contains example projects that use w3ui in each of the supported 
 
     Slightly more complicated file and directory upload. Includes the auth flow from "Sign up / Sign in".
 
-* **Uploads List** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/uploads-list) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/uploads-list)
+* **Uploads List** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/uploads-list) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/uploads-list) | [Vue](https://github.com/web3-storage/w3ui/tree/main/examples/vue/uploads-list)
 
     A demo of the list of uploads that have been made to an account.
