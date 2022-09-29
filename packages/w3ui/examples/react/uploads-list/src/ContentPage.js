@@ -36,7 +36,7 @@ export function ContentPage () {
           </div>
           )
         : <p className='tc'>No uploads</p>}
-      <button type='button' onClick={reload} className='mr3'>🔄 Refresh</button>
+      <button type='button' onClick={reload} className='ph3 pv2 mr3'>Refresh</button>
       {loading ? <span className='spinner dib' /> : null}
     </div>
   )

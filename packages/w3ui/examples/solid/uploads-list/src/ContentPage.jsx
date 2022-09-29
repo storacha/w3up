@@ -41,7 +41,7 @@ export function ContentPage () {
             : <p className='tc'>No uploads</p>}
         </Match>
       </Switch>
-      <button type='button' onClick={refetch} className='mr3'>🔄 Refresh</button>
+      <button type='button' onClick={refetch} className='ph3 pv2 mr3'>Refresh</button>
       {data.loading ? <span className='spinner dib' /> : null}
     </div>
   )
