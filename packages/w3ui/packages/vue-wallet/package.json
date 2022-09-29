@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/vue-wallet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vue adapter for w3ui wallet.",
   "module": "build/esm/index.js",
   "main": "build/cjs/index.js",

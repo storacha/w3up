@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/vue-wallet-v1.0.0...vue-wallet-v1.0.1) (2022-09-29)
+
+
+### Bug Fixes
+
+* switch to non-writable Ref ([29a7649](https://github.com/web3-storage/w3ui/commit/29a7649a89987fd93b87ae8f475c8b57347d1fd8))
+
 ## 1.0.0 (2022-09-28)
 
 
