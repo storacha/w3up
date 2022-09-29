@@ -18,7 +18,7 @@ interface ServiceListPage {
   count: number
   page: number
   pagesize: number
-  results: ServiceListResult[]
+  results?: ServiceListResult[]
 }
 
 interface ServiceListResult {
@@ -61,10 +61,11 @@ export async function listUploads (principal: SigningPrincipal, _: { signal?: Ab
     throw new Error('failed to get uploads list', { cause: res.error })
   }
 
+  const results = res.results == null ? [] : res.results
   return {
     page: res.page,
     pageSize: res.pagesize,
-    results: res.results.map(r => ({
+    results: results.map(r => ({
       dataCid: r.rootContentCID,
       carCids: [r.carCID],
       uploadedAt: new Date(r.uploadedAt)
