@@ -1,4 +1,4 @@
-import { SigningPrincipal } from '@ucanto/principal'
+import { Signer } from '@ucanto/principal/ed25519'
 import { connection as w3connection } from '@web3-storage/access/connection'
 import anyTest from 'ava'
 import dotenv from 'dotenv'
@@ -27,10 +27,10 @@ export const bindings = {
   W3ACCESS_METRICS: createAnalyticsEngine(),
 }
 
-export const serviceAuthority = SigningPrincipal.parse(bindings.PRIVATE_KEY)
+export const serviceAuthority = Signer.parse(bindings.PRIVATE_KEY)
 
 export async function context() {
-  const principal = await SigningPrincipal.generate()
+  const principal = await Signer.generate()
   const mf = new Miniflare({
     packagePath: true,
     wranglerConfigPath: true,
@@ -46,7 +46,7 @@ export async function context() {
       url: new URL('http://localhost:8787'),
       fetch: mf.dispatchFetch.bind(mf),
     }),
-    service: SigningPrincipal.parse(bindings.PRIVATE_KEY),
+    service: Signer.parse(bindings.PRIVATE_KEY),
     issuer: principal,
   }
 }

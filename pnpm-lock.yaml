@@ -256,12 +256,13 @@ importers:
       '@types/chai': ^4.3.0
       '@types/chai-subset': ^1.3.3
       '@types/mocha': ^10.0.0
-      '@ucanto/client': ^1.0.1
-      '@ucanto/core': ^1.0.1
-      '@ucanto/interface': ^1.0.0
-      '@ucanto/principal': ^1.0.1
-      '@ucanto/server': ^1.0.2
-      '@ucanto/transport': ^1.0.1
+      '@ucanto/client': link:/Users/hd/code/ucanto/packages/client
+      '@ucanto/core': link:/Users/hd/code/ucanto/packages/core
+      '@ucanto/interface': link:/Users/hd/code/ucanto/packages/interface
+      '@ucanto/principal': link:/Users/hd/code/ucanto/packages/principal
+      '@ucanto/server': link:/Users/hd/code/ucanto/packages/server
+      '@ucanto/transport': link:/Users/hd/code/ucanto/packages/transport
+      '@ucanto/validator': link:/Users/hd/code/ucanto/packages/validator
       '@web-std/fetch': ^4.1.0
       '@web3-storage/sigv4': ^1.0.0
       chai: ^4.3.6
@@ -272,12 +273,13 @@ importers:
       playwright-test: ^8.1.1
       typescript: ^4.8.4
     dependencies:
-      '@ucanto/client': 1.0.1
-      '@ucanto/core': 1.0.1
-      '@ucanto/interface': 1.0.0
-      '@ucanto/principal': 1.0.1
-      '@ucanto/server': 1.0.2
-      '@ucanto/transport': 1.0.1
+      '@ucanto/client': link:../../../ucanto/packages/client
+      '@ucanto/core': link:../../../ucanto/packages/core
+      '@ucanto/interface': link:../../../ucanto/packages/interface
+      '@ucanto/principal': link:../../../ucanto/packages/principal
+      '@ucanto/server': link:../../../ucanto/packages/server
+      '@ucanto/transport': link:../../../ucanto/packages/transport
+      '@ucanto/validator': link:../../../ucanto/packages/validator
       '@web-std/fetch': 4.1.0
       '@web3-storage/sigv4': 1.0.2
       multiformats: 9.9.0
@@ -479,8 +481,8 @@ packages:
       multiformats: 9.9.0
     dev: false
 
-  /@ipld/dag-ucan/3.0.0-beta:
-    resolution: {integrity: sha512-WzKh4mDiUElslfI/cg9VjLNHsT+9r3XjwbDY/gck+1289sCU1Hywj1/9PMx0DMJoEEwd2OFy/bq5PX2IyQ20Cw==}
+  /@ipld/dag-ucan/4.0.0-beta:
+    resolution: {integrity: sha512-LNlTYutHn8fwJpempDFVKHpTG52hpz3QkHQJUkdh1yP79+cfpjGHP31R0lhUmYLouZb0d0r4wXKKJCrPnq7oVQ==}
     dependencies:
       '@ipld/dag-cbor': 7.0.3
       '@ipld/dag-json': 8.0.11

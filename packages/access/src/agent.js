@@ -1,7 +1,7 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import { Principal } from '@ucanto/principal'
+import * as DID from '@ipld/dag-ucan/did'
 import { Peer } from './awake/peer.js'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
@@ -34,8 +34,9 @@ import { stringToDelegation } from './encoding.js'
  */
 
 const HOST = 'https://access-api.web3.storage'
+
 /**
- * @template {number} T
+ * @template {string} T
  * @param {Ucanto.Principal<T>} principal
  * @param {typeof fetch} _fetch
  * @param {URL} url
@@ -45,7 +46,7 @@ async function buildConnection(principal, _fetch, url) {
   // @ts-ignore
   const { did } = await rsp.json()
   // TODO how to parse any DID ????
-  const service = Principal.parse(did)
+  const service = DID.parse(did)
 
   const connection = Client.connect({
     id: principal,
@@ -61,8 +62,9 @@ async function buildConnection(principal, _fetch, url) {
 
   return { service, connection }
 }
+
 /**
- * @template {number} T
+ * @template {Ucanto.Signer} T
  * Agent
  */
 export class Agent {
@@ -90,7 +92,7 @@ export class Agent {
   }
 
   /**
-   * @template {number} T
+   * @template {Ucanto.Signer} T
    * @param {AgentCreateOptions<T>} opts
    */
   static async create(opts) {
@@ -151,9 +153,9 @@ export class Agent {
         issuer: this.data.agent,
         audience: this.service,
         with: account.did(),
-        caveats: {
+        nb: {
           identity: `mailto:${email}`,
-          product: 'product:free',
+          product: 'free',
           service: this.service.did(),
         },
         proofs: [accDelegation],
@@ -171,13 +173,14 @@ export class Agent {
         issuer: this.data.agent,
         audience: this.service,
         with: this.service.did(),
-        caveats: {
+        nb: {
           account: account.did(),
-          identity: voucherRedeem.capabilities[0].identity,
-          product: voucherRedeem.capabilities[0].product,
+          identity: voucherRedeem.capabilities[0].nb.identity,
+          product: voucherRedeem.capabilities[0].nb.product,
         },
         proofs: [voucherRedeem],
       })
+
       .execute(this.connection)
 
     if (accInv && accInv.error) {
@@ -215,7 +218,7 @@ export class Agent {
 
   /**
    *
-   * @param {Ucanto.UCAN.DIDView} audience
+   * @param {Ucanto.Principal} audience
    * @param {import('@ipld/dag-ucan').Capabilities} capabilities
    * @param {number} [lifetimeInSeconds]
    */

@@ -9,9 +9,9 @@ export function voucherRedeemProvider(ctx) {
     await ctx.db.insert({
       tableName: 'accounts',
       data: {
-        did: capability.caveats.account,
-        product: capability.caveats.product,
-        email: capability.caveats.identity.replace('mailto:', ''),
+        did: capability.nb.account,
+        product: capability.nb.product,
+        email: capability.nb.identity.replace('mailto:', ''),
         agent: invocation.issuer.did(),
       },
     })
@@ -26,8 +26,8 @@ export function voucherRedeemProvider(ctx) {
         to: 'david@dag.house,jchris@dag.house',
         subject: 'New w3account Created',
         textBody: `New account v1 registered for ${
-          capability.caveats.account
-        } with email ${capability.caveats.identity.replace('mailto:', '')}`,
+          capability.nb.account
+        } with email ${capability.nb.identity.replace('mailto:', '')}`,
       })
     }
   })

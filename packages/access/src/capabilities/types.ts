@@ -1,73 +1,100 @@
-import type {
-  Capability,
-  IPLDLink,
-  DID,
-  ToString,
-  Phantom,
-} from '@ipld/dag-ucan'
-import type { Block as IPLDBlock } from '@ucanto/interface'
-import { codec as CARCodec } from '@ucanto/transport/car'
-
-type AccountDID = DID
-type AgentDID = DID
-type ServiceDID = DID
+import type { IPLDLink, Capability } from '@ipld/dag-ucan'
+import { InferInvokedCapability } from '@ucanto/interface'
+import { validate } from './identity.js'
+import { claim, redeem } from './voucher.js'
 
 // Voucher Protocol
-export interface VoucherClaim
-  extends Capability<'voucher/claim', AccountDID | AgentDID> {
-  /**
-   * Product ID/CID
-   */
-  product: `${string}:${string}`
+export interface VoucherClaim1
+  extends Capability<
+    'voucher/claim',
+    `did:${string}`,
+    {
+      /**
+       * Product ID/CID
+       */
+      product: string
 
-  /**
-   * URI for an identity to be validated
-   */
-  identity: `${string}:${string}`
+      /**
+       * URI for an identity to be validated
+       */
+      identity: string
 
-  /**
-   * DID of the service they wish to redeem voucher with
-   */
-  service: DID
-}
+      /**
+       * DID of the service they wish to redeem voucher with
+       */
+      service: `did:${string}`
+    }
+  > {}
 
 /**
  * Can be invoked to redeem voucher. These are always issued by the service
  */
-export interface VoucherRedeem
-  extends Capability<'voucher/redeem', ServiceDID> {
-  product: `${string}:${string}`
-  identity: `${string}:${string}`
-  account: AccountDID
+interface VoucherRedeemNB {
+  product: string
+  identity: string
+  account: `did:${string}`
+}
+export interface VoucherRedeem1
+  extends Capability<'voucher/redeem', `did:${string}`, VoucherRedeemNB> {
+  // nb: VoucherRedeemNB
 }
 
+// export type Capability<
+//   Can extends Ability = Ability,
+//   With extends Resource = Resource,
+//   Caveats extends unknown = unknown
+// > = {
+//   with: With
+//   can: Can
+//   // nb?: Caveats
+// } & (keyof Caveats extends never
+//   ? { nb?: { [key: string]: never } }
+//   : { nb: Caveats })
+
+// type InferCapability<T extends TheCapabilityParser<any>> =
+//   T extends TheCapabilityParser<infer M>
+//     ? Required<
+//         Capability<M['value']['can'], M['value']['with'], M['value']['nb']>
+//       >
+//     : never
+
+export type VoucherRedeem = InferInvokedCapability<typeof redeem>
+export type VoucherClaim = InferInvokedCapability<typeof claim>
+export type IdentityValidate = InferInvokedCapability<typeof validate>
+
 // Identity
-export interface IdentityValidate extends Capability<'identity/validate', DID> {
-  as: `mailto:${string}`
+export interface IdentityValidate1
+  extends Capability<'identity/validate', `did:${string}`, { as: string }> {
+  nb: { as: string }
 }
 
 export interface IdentityRegister
-  extends Capability<'identity/register', `mailto:${string}`> {
-  as: DID
+  extends Capability<
+    'identity/register',
+    `${string}:${string}`,
+    { as: `did:${string}` }
+  > {
+  nb: { as: `did:${string}` }
 }
 
 export interface IdentityIdentify
-  extends Capability<'identity/identify', DID> {}
+  extends Capability<'identity/identify', `did:${string}`, {}> {}
 
 export type integer = number & Phantom<{ kind: 'integer' }>
 
 // Store
-export interface StoreAdd extends Capability<'store/add', DID> {
-  link?: IPLDLink
-  origin?: IPLDLink
-  size?: integer
+export interface StoreAdd
+  extends Capability<'store/add', `did:${string}`, { link?: IPLDLink }> {
+  nb: { link?: IPLDLink }
 }
 
-export interface StoreRemove extends Capability<'store/remove', DID> {
-  link?: IPLDLink
+export interface StoreRemove
+  extends Capability<'store/remove', `did:${string}`, { link?: IPLDLink }> {
+  nb: { link?: IPLDLink }
 }
 
-export interface StoreList extends Capability<'store/list', DID> {}
+export interface StoreList
+  extends Capability<'store/list', `did:${string}`, {}> {}
 
 /**
  * Logical represenatation of the CAR.
