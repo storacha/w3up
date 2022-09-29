@@ -27,6 +27,7 @@
     "examples/vue/file-upload",
     "examples/vue/sign-up-in",
     "examples/vue/template",
+    "examples/vue/uploads-list",
     "packages/react-uploader",
     "packages/react-uploads-list",
     "packages/react-wallet",
