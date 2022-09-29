@@ -1,4 +1,4 @@
-import { SigningPrincipal } from '@ucanto/principal'
+import { Signer } from '@ucanto/principal/ed25519'
 import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
@@ -50,7 +50,7 @@ export function getContext(event, params) {
     }
   )
 
-  const keypair = SigningPrincipal.parse(config.PRIVATE_KEY)
+  const keypair = Signer.parse(config.PRIVATE_KEY)
   const url = new URL(event.request.url)
   return {
     params,

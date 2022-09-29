@@ -1,7 +1,7 @@
 import { delegate } from '@ucanto/core'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import * as API from '@ucanto/interface'
+import * as Ucanto from '@ucanto/interface'
 
 /**
  * TODO: clear expired delegations
@@ -9,19 +9,19 @@ import * as API from '@ucanto/interface'
 export class Delegations {
   /**
    * @param {{
-   * principal: API.SigningPrincipal;
-   * received?: import('@ucanto/interface').Delegation[]
-   * created?: import('@ucanto/interface').Delegation[]
+   * principal: Ucanto.Signer;
+   * received?: Ucanto.Delegation[]
+   * created?: Ucanto.Delegation[]
    * meta?: import('./awake/types').MetaMap
    * }} opts
    */
   constructor(opts) {
     this.principal = opts.principal
 
-    /** @type {import('@ucanto/interface').Delegation[]} */
+    /** @type {Ucanto.Delegation[]} */
     this.received = opts.received || []
 
-    /** @type {import('@ucanto/interface').Delegation[]} */
+    /** @type {Ucanto.Delegation[]} */
     this.created = opts.created || []
 
     /** @type {import('./awake/types').MetaMap} */
@@ -30,7 +30,7 @@ export class Delegations {
 
   /**
    *
-   * @param {import('@ucanto/interface').Delegation} delegation
+   * @param {Ucanto.Delegation} delegation
    */
   async add(delegation) {
     this.received.push(delegation)
@@ -38,7 +38,7 @@ export class Delegations {
 
   /**
    *
-   * @param {import('@ucanto/interface').Delegation[]} delegations
+   * @param {Ucanto.Delegation[]} delegations
    */
   async addMany(delegations) {
     for (const d of delegations) {
@@ -66,7 +66,7 @@ export class Delegations {
 
   /**
    *
-   * @param {import('@ucanto/interface').UCAN.DIDView} audience
+   * @param {import('@ucanto/interface').Principal} audience
    * @param {import('@ipld/dag-ucan').Capabilities} capabilities
    * @param {number} [lifetimeInSeconds]
    */

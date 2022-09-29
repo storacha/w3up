@@ -1,5 +1,5 @@
 import undici from 'undici'
-import { Principal } from '@ucanto/principal'
+import { Verifier } from '@ucanto/principal/ed25519'
 
 /** @type {Record<string,string>} */
 const envs = {
@@ -26,7 +26,7 @@ export async function getService(env) {
 
     // @ts-ignore
     const { did } = await rsp.json()
-    audience = Principal.parse(did)
+    audience = Verifier.parse(did)
     return { url, audience }
   }
 }

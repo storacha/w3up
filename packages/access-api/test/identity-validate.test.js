@@ -58,7 +58,7 @@ test('should route correctly to identity/validate', async (t) => {
   const validate = Identity.validate.invoke({
     audience: service,
     issuer,
-    caveats: {
+    nb: {
       as: 'mailto:hugo@dag.house',
     },
     with: issuer.did(),

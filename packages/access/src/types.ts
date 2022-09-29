@@ -1,19 +1,13 @@
 /* eslint-disable @typescript-eslint/indent */
 import type {
-  Delegation,
-  Fact,
-  Proof,
+  Capabilities,
+  Failure,
+  Phantom,
   RequestEncoder,
   ResponseDecoder,
   ServiceMethod,
-  SigningPrincipal,
-  Principal,
-  Failure,
-  Phantom,
-  Capabilities,
 } from '@ucanto/interface'
 
-import * as UCAN from '@ipld/dag-ucan'
 import type {
   IdentityIdentify,
   IdentityRegister,
@@ -55,64 +49,4 @@ export interface AgentMeta {
   url?: URL
   image?: URL
   type: 'device' | 'app' | 'service'
-}
-
-export interface ValidateOptions {
-  url?: URL
-  audience?: Principal
-  issuer: SigningPrincipal
-  with?: UCAN.DID
-  caveats: {
-    as: `mailto:${string}`
-  }
-  lifetimeInSeconds?: number
-  expiration?: number
-  notBefore?: number
-
-  nonce?: string
-
-  facts?: Fact[]
-  proofs?: Proof[]
-}
-
-export interface RegisterOptions {
-  url?: URL
-  audience?: Principal
-  issuer: SigningPrincipal
-  with?: `mailto:${string}`
-  caveats?: {
-    as: UCAN.DID
-  }
-  lifetimeInSeconds?: number
-  expiration?: number
-  notBefore?: number
-
-  nonce?: string
-
-  facts?: Fact[]
-  proof: Delegation<[IdentityRegister]>
-}
-
-export interface IdentifyOptions {
-  url?: URL
-  audience?: Principal
-  issuer: SigningPrincipal
-  with?: `mailto:${string}`
-  caveats?: {
-    as: UCAN.DID
-  }
-  lifetimeInSeconds?: number
-  expiration?: number
-  notBefore?: number
-
-  nonce?: string
-
-  facts?: Fact[]
-  proof?: Delegation<[IdentityIdentify]>
-}
-
-export interface PullRegisterOptions {
-  url?: URL
-  issuer: SigningPrincipal
-  signal?: AbortSignal
 }
