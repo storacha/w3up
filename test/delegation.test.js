@@ -56,6 +56,46 @@ describe('delegation', () => {
       expect(delegation).toBeDefined()
       expect(delegation.expiration).toBeGreaterThan(now + 999)
     })
+
+    it('should have any store capabilities by default', async ({ issuer }) => {
+      const now = Date.now()
+      const delegation = await generateDelegation({
+        issuer,
+        to: fixture.did,
+        expiration: 1000,
+      })
+
+      const capabilities = delegation.capabilities
+      const cans = capabilities?.map((x) => x.can)
+
+      expect(delegation).toBeDefined()
+      expect(capabilities).toBeDefined()
+      expect(cans).toContain('store/add')
+      expect(cans).toContain('store/remove')
+      expect(cans).toContain('store/list')
+    })
+
+    it('should NOT have any account capabilities by default', async ({
+      issuer,
+    }) => {
+      const now = Date.now()
+      const delegation = await generateDelegation({
+        issuer,
+        to: fixture.did,
+        expiration: 1000,
+      })
+
+      const capabilities = delegation.capabilities
+      const cans = capabilities?.map((x) => x.can)
+
+      expect(delegation).toBeDefined()
+      expect(capabilities).toBeDefined()
+      expect(cans).toContain('store/add')
+
+      expect(cans).not.toContain('identity/identify')
+      expect(cans).not.toContain('identity/register')
+      expect(cans).not.toContain('identity/validate')
+    })
   })
 
   describe('#importDelegation', () => {
