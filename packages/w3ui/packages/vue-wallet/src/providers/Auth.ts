@@ -1,12 +1,12 @@
-import { defineComponent, provide, computed, InjectionKey, ComputedRef, shallowReactive } from 'vue'
+import { defineComponent, provide, computed, InjectionKey, Ref, shallowReactive } from 'vue'
 import { registerIdentity, loadDefaultIdentity, loadIdentity, storeIdentity, removeIdentity, Identity, AuthStatus, createIdentity, sendVerificationEmail, waitIdentityVerification, UnverifiedIdentity } from '@w3ui/wallet-core'
 
 /**
  * Injection keys for auth provider context.
  */
 export const AuthProviderInjectionKey = {
-  identity: Symbol('w3ui wallet identity') as InjectionKey<ComputedRef<AuthContextState['identity']>>,
-  status: Symbol('w3ui wallet auth status') as InjectionKey<ComputedRef<AuthContextState['status']>>,
+  identity: Symbol('w3ui wallet identity') as InjectionKey<Ref<AuthContextState['identity']>>,
+  status: Symbol('w3ui wallet auth status') as InjectionKey<Ref<AuthContextState['status']>>,
   loadDefaultIdentity: Symbol('w3ui wallet loadDefaultIdentity') as InjectionKey<AuthContextActions['loadDefaultIdentity']>,
   cancelRegisterAndStoreIdentity: Symbol('w3ui wallet cancelRegisterAndStoreIdentityKey') as InjectionKey<AuthContextActions['cancelRegisterAndStoreIdentity']>,
   registerAndStoreIdentity: Symbol('w3ui wallet registerAndStoreIdentity') as InjectionKey<AuthContextActions['registerAndStoreIdentity']>,
