@@ -26,7 +26,7 @@
 
 * **Single File Upload** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/file-upload) | [Vue](https://github.com/web3-storage/w3ui/tree/main/examples/vue/file-upload)
 
-    The simplist file upload using a file input. Includes the auth flow from "Sign up / Sign in".
+    The simplest file upload using a file input. Includes the auth flow from "Sign up / Sign in".
 
 * **Multiple File Upload** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/multi-file-upload) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/multi-file-upload)
 
