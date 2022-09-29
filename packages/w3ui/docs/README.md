@@ -15,6 +15,7 @@
 ## Vue
 
 * [`@w3ui/vue-uploader`](./vue-uploader.md)
+* [`@w3ui/vue-uploads-list`](./vue-uploads-list.md)
 * [`@w3ui/vue-wallet`](./vue-wallet.md)
 
 ## Core

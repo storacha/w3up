@@ -1,11 +1,10 @@
 import React, { useContext, createContext, useState, useEffect, ReactNode } from 'react'
-import { listUploads } from '@w3ui/uploads-list-core'
+import { listUploads, ListPage } from '@w3ui/uploads-list-core'
 import { useAuth } from '@w3ui/react-wallet'
-import { CID } from 'multiformats/cid'
 
 export interface UploadsListContextValue {
   /**
-   * True if the uploads list is currentky being retrieved from the service.
+   * True if the uploads list is currently being retrieved from the service.
    */
   loading: boolean
   /**
@@ -15,7 +14,7 @@ export interface UploadsListContextValue {
   /**
    * The content of the uploads list.
    */
-  data: CID[]
+  data?: ListPage
   /**
    * Call to reload the uploads list.
    */
@@ -24,7 +23,6 @@ export interface UploadsListContextValue {
 
 const UploadsListContext = createContext<UploadsListContextValue>({
   loading: false,
-  data: [],
   reload: async () => {}
 })
 
@@ -35,8 +33,8 @@ export interface UploadsListProviderProps {
 export function UploadsListProvider ({ children }: UploadsListProviderProps): ReactNode {
   const { identity } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Error | undefined>(undefined)
-  const [data, setData] = useState<CID[]>([])
+  const [error, setError] = useState<Error>()
+  const [data, setData] = useState<ListPage>()
   const [controller, setController] = useState(new AbortController())
 
   const reload = async (): Promise<void> => {

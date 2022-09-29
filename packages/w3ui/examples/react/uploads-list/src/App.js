@@ -13,7 +13,7 @@ function App () {
             <header>
               <img src={logo} width='250' alt='logo' />
             </header>
-            <div className='w-90 w-50-ns mw6'>
+            <div className='w-90 mw9'>
               <ContentPage />
             </div>
           </div>

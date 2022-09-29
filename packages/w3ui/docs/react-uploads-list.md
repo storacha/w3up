@@ -58,11 +58,23 @@ interface UploadsListContextValue {
   /**
    * The content of the uploads list.
    */
-  data: CID[]
+  data?: ListPage
   /**
    * Call to reload the uploads list.
    */
   reload: () => Promise<void>
+}
+
+interface ListPage {
+    page: number;
+    pageSize: number;
+    results: ListResult[];
+}
+
+interface ListResult {
+    dataCid: CID;
+    carCids: CID[];
+    uploadedAt: Date;
 }
 ```
 

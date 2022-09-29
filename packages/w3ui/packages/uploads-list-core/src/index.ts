@@ -11,10 +11,35 @@ import { CID } from 'multiformats/cid'
 const storeApiUrl = new URL('https://8609r1772a.execute-api.us-east-1.amazonaws.com')
 const storeDid = Principal.parse('did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z')
 
-export interface Service { store: { list: ServiceMethod<StoreList, CID[], never> } }
-export interface StoreList extends Capability<'store/list', DID> {}
+interface Service { store: { list: ServiceMethod<StoreList, ServiceListPage, never> } }
+interface StoreList extends Capability<'store/list', DID> {}
 
-export async function listUploads (principal: SigningPrincipal, _: { signal?: AbortSignal } = {}): Promise<CID[]> {
+interface ServiceListPage {
+  count: number
+  page: number
+  pagesize: number
+  results: ServiceListResult[]
+}
+
+interface ServiceListResult {
+  carCID: CID
+  rootContentCID: CID
+  uploadedAt: number
+}
+
+export interface ListPage {
+  page: number
+  pageSize: number
+  results: ListResult[]
+}
+
+export interface ListResult {
+  dataCid: CID
+  carCids: CID[]
+  uploadedAt: Date
+}
+
+export async function listUploads (principal: SigningPrincipal, _: { signal?: AbortSignal } = {}): Promise<ListPage> {
   const conn = connect<Service>({
     id: storeDid,
     encoder: CAR,
@@ -25,16 +50,24 @@ export async function listUploads (principal: SigningPrincipal, _: { signal?: Ab
     })
   })
 
-  const results = await storeList.invoke({
+  const res = await storeList.invoke({
     issuer: principal,
     audience: storeDid,
     with: principal.did()
   }).execute(conn)
 
-  if (results.error != null) {
+  if (res.error != null) {
     // @ts-expect-error ts not know cause
-    throw new Error('failed to get uploads list', { cause: results.error })
+    throw new Error('failed to get uploads list', { cause: res.error })
   }
 
-  return results
+  return {
+    page: res.page,
+    pageSize: res.pagesize,
+    results: res.results.map(r => ({
+      dataCid: r.rootContentCID,
+      carCids: [r.carCID],
+      uploadedAt: new Date(r.uploadedAt)
+    }))
+  }
 }

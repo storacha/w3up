@@ -6,7 +6,7 @@ import './spinner.css'
 
 export function ContentPage () {
   const [auth] = useAuth()
-  const [data, { refetch }] = createUploadsListResource(() => auth.identity, { initialValue: [] })
+  const [data, { refetch }] = createUploadsListResource(() => auth.identity, { initialValue: { results: [] } })
 
   return (
     <div>
@@ -15,13 +15,30 @@ export function ContentPage () {
           <Errored error={data.error} />
         </Match>
         <Match when={data.state === 'ready'}>
-          <table className='mb3'>
-            {data().map(cid => (
-              <tr key={cid}>
-                <td>{cid}</td>
-              </tr>
-            ))}
-          </table>
+          {data().results.length
+            ? (
+              <div className='overflow-auto'>
+                <table className='w-100 mb3 collapse'>
+                  <thead className='near-white tl'>
+                    <tr>
+                      <th className='pa3'>Data CID</th>
+                      <th className='pa3'>CAR CID</th>
+                      <th className='pa3'>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data().results.map(({ dataCid, carCids, uploadedAt }) => (
+                      <tr key={dataCid} className='stripe-light'>
+                        <td className='pa3'>{dataCid}</td>
+                        <td className='pa3'>{carCids[0]}</td>
+                        <td className='pa3'>{uploadedAt.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              )
+            : <p className='tc'>No uploads</p>}
         </Match>
       </Switch>
       <button type='button' onClick={refetch} className='mr3'>🔄 Refresh</button>

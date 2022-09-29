@@ -53,7 +53,7 @@ type AuthProviderInjectionKey = {
   unloadAndRemoveIdentity: InjectionKey<AuthContextActions['unloadAndRemoveIdentity']>
 }
 
-export interface AuthContextState {
+interface AuthContextState {
   /**
    * The current identity
    */
@@ -64,7 +64,7 @@ export interface AuthContextState {
   status: AuthStatus
 }
 
-export interface AuthContextActions {
+interface AuthContextActions {
   /**
    * Load the default identity from secure storage. If the identity is not
    * verified, the registration flow will be automatically resumed.

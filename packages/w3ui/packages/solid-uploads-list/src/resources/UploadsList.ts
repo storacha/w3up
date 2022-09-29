@@ -1,10 +1,9 @@
 import { createResource, InitializedResourceReturn, ResourceOptions, ResourceReturn, ResourceSource } from 'solid-js'
-import { listUploads } from '@w3ui/uploads-list-core'
+import { listUploads, ListPage } from '@w3ui/uploads-list-core'
 import { Identity } from '@w3ui/solid-wallet'
-import { CID } from 'multiformats/cid'
 
-export function createUploadsListResource (source: ResourceSource<Identity>, options?: ResourceOptions<CID[], Identity>): ResourceReturn<CID[]> | InitializedResourceReturn<CID[]> {
-  return createResource<CID[], Identity>(
+export function createUploadsListResource (source: ResourceSource<Identity>, options?: ResourceOptions<ListPage, Identity>): ResourceReturn<ListPage> | InitializedResourceReturn<ListPage> {
+  return createResource<ListPage, Identity>(
     source,
     async identity => { return await listUploads(identity.signingPrincipal) },
     options

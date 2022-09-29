@@ -28,6 +28,8 @@
       "@w3ui/solid-uploads-list": ["packages/solid-uploads-list/src"],
       "@w3ui/solid-wallet": ["packages/solid-wallet/src"],
 
+      "@w3ui/vue-uploader": ["packages/vue-uploader/src"],
+      "@w3ui/vue-uploads-list": ["packages/vue-uploads-list/src"],
       "@w3ui/vue-wallet": ["packages/vue-wallet/src"],
 
       "@w3ui/uploader-core": ["packages/uploader-core/src"],
