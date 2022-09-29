@@ -12,7 +12,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="error == null">
+  <div v-if="error == null" className="w-90 mw9">
     <div v-if="data && data.results.length" className="overflow-auto">
       <table className="w-100 mb3 collapse">
         <thead className="near-white tl">

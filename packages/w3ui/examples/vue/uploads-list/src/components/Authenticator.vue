@@ -46,7 +46,7 @@ export default defineComponent({
     <slot></slot>
   </div>
 
-  <div v-if="status === AuthStatus.EmailVerification">
+  <div v-if="status === AuthStatus.EmailVerification" className="w-90 w-50-ns mw6">
     <h1 className="near-white">Verify your email address!</h1>
     <p>Click the link in the email we sent to {{identity.email}} to sign in.</p>
     <form @submit="handleCancelRegisterSubmit">
@@ -54,7 +54,7 @@ export default defineComponent({
     </form>
   </div>
 
-  <form v-if="status === AuthStatus.SignedOut" @submit="handleRegisterSubmit">
+  <form v-if="status === AuthStatus.SignedOut" @submit="handleRegisterSubmit" className="w-90 w-50-ns mw6">
     <div className="mb3">
       <label htmlFor="email" className="db mb2">Email address:</label>
       <input id="email" className="db pa2 w-100" type="email" v-model="email" required />

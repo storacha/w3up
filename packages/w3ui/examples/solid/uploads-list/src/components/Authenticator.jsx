@@ -24,7 +24,7 @@ function Authenticator ({ children }) {
         {children}
       </Match>
       <Match when={auth.status === AuthStatus.EmailVerification}>
-        <div>
+        <div className='w-90 w-50-ns mw6'>
           <h1>Verify your email address!</h1>
           <p>Click the link in the email we sent to {auth.identity.email} to sign in.</p>
           <form onSubmit={e => { e.preventDefault(); cancelRegisterAndStoreIdentity() }}>
@@ -33,7 +33,7 @@ function Authenticator ({ children }) {
         </div>
       </Match>
       <Match when={auth.status === AuthStatus.SignedOut}>
-        <form onSubmit={handleRegisterSubmit}>
+        <form className='w-90 w-50-ns mw6' onSubmit={handleRegisterSubmit}>
           <div className='mb3'>
             <label htmlFor='email' className='db mb2'>Email address:</label>
             <input id='email' className='db pa2 w-100' type='email' value={email()} onInput={e => setEmail(e.target.value)} required />

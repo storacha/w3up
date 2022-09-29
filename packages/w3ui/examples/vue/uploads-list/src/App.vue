@@ -16,11 +16,9 @@ export default {
         <header>
           <img src="./assets/logo.png" width="250" alt="logo" />
         </header>
-        <div className="w-90 mw9">
-          <Authenticator>
-            <ContentPage />
-          </Authenticator>
-        </div>
+        <Authenticator>
+          <ContentPage />
+        </Authenticator>
       </div>
     </UploadsListProvider>
   </AuthProvider>

@@ -11,7 +11,7 @@ export function ContentPage () {
   }
 
   return (
-    <div>
+    <div className='w-90 mw9'>
       {data && data.results.length
         ? (
           <div className='overflow-auto'>

@@ -9,7 +9,7 @@ export function ContentPage () {
   const [data, { refetch }] = createUploadsListResource(() => auth.identity, { initialValue: { results: [] } })
 
   return (
-    <div>
+    <div className='w-90 mw9'>
       <Switch>
         <Match when={data.state === 'errored'}>
           <Errored error={data.error} />
