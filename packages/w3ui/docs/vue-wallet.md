@@ -44,8 +44,8 @@ Once mounted, the `AuthProvider` provides the following injection keys:
 
 ```ts
 type AuthProviderInjectionKey = {
-  identity: InjectionKey<ComputedRef<AuthContextState['identity']>>
-  status: InjectionKey<ComputedRef<AuthContextState['status']>>
+  identity: InjectionKey<Ref<AuthContextState['identity']>>
+  status: InjectionKey<Ref<AuthContextState['status']>>
   loadDefaultIdentity: InjectionKey<AuthContextActions['loadDefaultIdentity']>
   cancelRegisterAndStoreIdentity: InjectionKey<AuthContextActions['cancelRegisterAndStoreIdentity']>
   registerAndStoreIdentity: InjectionKey<AuthContextActions['registerAndStoreIdentity']>
