@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v1.1.1...solid-uploads-list-v1.1.2) (2022-09-29)
+
+
+### Bug Fixes
+
+* uploads listings ([0763446](https://github.com/web3-storage/w3ui/commit/0763446f1d6d70b1c3adef8221b35396b133c01e))
+
 ## [1.1.1](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v1.1.0...solid-uploads-list-v1.1.1) (2022-09-28)
 
 
