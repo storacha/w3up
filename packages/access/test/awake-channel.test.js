@@ -128,10 +128,7 @@ describe('awake channel', function () {
       // const did2 = DID.parse(ws2.keypair.did)
       await ws1.sendRes(did1, ucan)
 
-      return assert.rejects(ws2.awaitRes(), {
-        name: 'OperationError',
-        message: 'The operation failed for an operation-specific reason',
-      })
+      return assert.rejects(ws2.awaitRes())
     })
   })
 
