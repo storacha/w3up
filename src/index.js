@@ -63,13 +63,13 @@ class Client {
     this.accessDID = accessDID
     this.settings = settings
 
-    this.storeClient = Store.connect({
+    this.storeClient = Store.createConnection({
       id: this.serviceDID,
       url: this.serviceURL,
       fetch,
     })
 
-    this.accessClient = Access.connect({
+    this.accessClient = Access.createConnection({
       id: this.accessDID,
       url: this.accessURL,
       fetch,
