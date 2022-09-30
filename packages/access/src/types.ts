@@ -11,6 +11,7 @@ import type {
   Failure,
   Phantom,
   Capabilities,
+  Link as IPLDLink,
 } from '@ucanto/interface'
 
 import * as UCAN from '@ipld/dag-ucan'
@@ -18,6 +19,9 @@ import type {
   IdentityIdentify,
   IdentityRegister,
   IdentityValidate,
+  UploadAdd,
+  UploadList,
+  UploadRemove,
 } from './capabilities/types'
 import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
 
@@ -46,6 +50,21 @@ export interface Service {
       Failure
     >
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
+  }
+  upload: {
+    add: ServiceMethod<UploadAdd, UploadAddOk, InvalidUpload>
+    /**
+     * Upload list has no defined failure conditions (apart from usual ucanto
+     * errors) which is why it's error is of type `never`. For unknown accounts
+     * list MUST be considered empty.
+     */
+    list: ServiceMethod<UploadList, UploadListOk, never>
+    /**
+     * Upload remove has no defined failure condition (apart from usual ucanto
+     * errors) which is why it's error is of type `never`. Removing an upload
+     * not in the list MUST be considered succesful NOOP.
+     */
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk, never>
   }
 }
 
@@ -116,3 +135,39 @@ export interface PullRegisterOptions {
   issuer: SigningPrincipal
   signal?: AbortSignal
 }
+
+/**
+ * Error MAY occur on `upload/add` if provided `shards` contain invalid CIDs e.g
+ * non CAR cids.
+ */
+
+export interface InvalidUpload extends Failure {
+  name: 'InvalidUpload'
+}
+
+/**
+ * On succeful upload/add provider will respond back with a `root` CID that
+ * was added.
+ */
+export interface UploadAddOk {
+  root: IPLDLink
+}
+
+/**
+ * On succesful upload/list provider returns `uploads` list of `{root}` elements.
+ * Please note that by wrapping list in an object we create an opportunity to
+ * extend type in backwards compatible way to accomodate for paging information
+ * in the future. Likewise list contains `{root}` objects which also would allow
+ * us to add more fields in a future like size, date etc...
+ */
+export interface UploadListOk {
+  uploads: Array<{ root: IPLDLink }>
+}
+
+/**
+ * On succesful upload/remove provider returns empty object. Please not that
+ * will allow us to extend result type with more things in the future in a
+ * backwards compatible way.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface UploadRemoveOk {}
