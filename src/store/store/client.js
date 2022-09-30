@@ -17,7 +17,7 @@ export * from '@web3-storage/access/capabilities/store'
  * @param {API.OutpboundTranpsortOptions} [options.transport]
  * @returns {API.ConnectionView<{store: API.Store, identity: API.Identity}>}
  */
-export const connect = ({
+export const createConnection = ({
   id,
   url,
   transport = { encoder: CAR, decoder: CBOR },

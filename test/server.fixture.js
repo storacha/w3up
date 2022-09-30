@@ -5,7 +5,6 @@ import { UCAN } from '@ucanto/server'
 import * as Service from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
-import * as Capabilities from '@web3-storage/access/capabilities'
 import HTTP from 'node:http'
 
 /** @typedef {{headers:Record<string, string>, body:Uint8Array}} Payload */
