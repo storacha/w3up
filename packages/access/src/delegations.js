@@ -26,6 +26,15 @@ export class Delegations {
 
     /** @type {import('./awake/types').MetaMap} */
     this.meta = new Map()
+
+    /**
+     * @type {Map<string, {cid: string, cap: Ucanto.Capability}[]>}
+     */
+    this.receivedByResource = new Map()
+    /**
+     * @type {Map<string, Ucanto.Delegation>}
+     */
+    this.receivedMap = new Map()
   }
 
   /**
@@ -33,16 +42,41 @@ export class Delegations {
    * @param {Ucanto.Delegation} delegation
    */
   async add(delegation) {
+    const cid = delegation.cid.toString()
+
+    for (const cap of delegation.capabilities) {
+      const byResource = this.receivedByResource.get(cap.with) ?? []
+
+      byResource.push({ cid: delegation.cid.toString(), cap })
+      this.receivedByResource.set(cap.with, byResource)
+    }
     this.received.push(delegation)
+
+    this.receivedMap.set(cid, delegation)
   }
 
   /**
+   * @param {string} resource
+   */
+  getByResource(resource) {
+    const byResource = this.receivedByResource.get(resource)
+    if (!byResource) {
+      return
+    }
+
+    return byResource.map((r) => {
+      return this.receivedMap.get(r.cid)
+    })
+  }
+
+  /**
+   * Add multiple received delegations
    *
    * @param {Ucanto.Delegation[]} delegations
    */
   async addMany(delegations) {
     for (const d of delegations) {
-      this.received.push(d)
+      this.add(d)
     }
   }
 
@@ -77,7 +111,8 @@ export class Delegations {
       audience,
       capabilities,
       lifetimeInSeconds,
-      proofs: this.received,
+      // be smarter about picking only the needs delegations
+      proofs: [...this.receivedMap.values()],
     })
 
     this.created.push(delegation)

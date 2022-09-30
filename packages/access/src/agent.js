@@ -9,6 +9,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import { delegate } from '@ucanto/core'
 import * as Voucher from './capabilities/voucher.js'
+import * as Account from './capabilities/account.js'
 import { Websocket } from './utils/ws.js'
 import { stringToDelegation } from './encoding.js'
 import { URI } from '@ucanto/validator'
@@ -45,9 +46,7 @@ const HOST = 'https://access-api.web3.storage'
  */
 export async function buildConnection(principal, _fetch, url) {
   const rsp = await _fetch(url + 'version')
-  // @ts-ignore
   const { did } = await rsp.json()
-  // TODO how to parse any DID ????
   const service = DID.parse(did)
 
   const connection = Client.connect({
@@ -57,7 +56,6 @@ export async function buildConnection(principal, _fetch, url) {
     channel: HTTP.open({
       url,
       method: 'POST',
-      // @ts-ignore
       fetch: _fetch,
     }),
   })
@@ -80,6 +78,7 @@ export class Agent {
     this.fetch = opts.fetch
     this.connection = opts.connection
     this.data = opts.data
+    this.issuer = opts.data.principal
 
     // validate fetch implementation
     if (!this.fetch) {
@@ -114,7 +113,7 @@ export class Agent {
 
     const data = await opts.store.load()
     const { connection, service } = await buildConnection(
-      data.agent,
+      data.principal,
       _fetch,
       url
     )
@@ -129,7 +128,7 @@ export class Agent {
   }
 
   did() {
-    return this.data.agent.did()
+    return this.data.principal.did()
   }
 
   /**
@@ -140,10 +139,14 @@ export class Agent {
     const accDelegation = await delegate({
       // @ts-ignore
       issuer: account,
-      audience: this.data.agent,
+      audience: this.data.principal,
       capabilities: [
         {
           can: 'voucher/*',
+          with: account.did(),
+        },
+        {
+          can: 'account/*',
           with: account.did(),
         },
       ],
@@ -152,7 +155,7 @@ export class Agent {
 
     const inv = await Voucher.claim
       .invoke({
-        issuer: this.data.agent,
+        issuer: this.data.principal,
         audience: this.service,
         with: account.did(),
         nb: {
@@ -172,7 +175,7 @@ export class Agent {
 
     const accInv = await Voucher.redeem
       .invoke({
-        issuer: this.data.agent,
+        issuer: this.data.principal,
         audience: this.service,
         with: this.service.did(),
         nb: {
@@ -251,4 +254,37 @@ export class Agent {
   peer(channel) {
     return new Peer({ agent: this, channel })
   }
+
+  /**
+   * @param {Ucanto.URI<"did:">} account
+   */
+  async getAccountInfo(account) {
+    const proofs = isEmpty(this.data.delegations.getByResource(account))
+    if (!proofs) {
+      throw new TypeError('No proofs for "account/info".')
+    }
+
+    const inv = await Account.info
+      .invoke({
+        issuer: this.issuer,
+        audience: this.service,
+        with: account,
+        proofs,
+      })
+      .execute(this.connection)
+
+    return inv
+  }
+}
+
+/**
+ * @template T
+ * @param { Array<T | undefined> | undefined} arr
+ */
+function isEmpty(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return
+  }
+
+  return /** @type {T[]} */ (arr)
 }

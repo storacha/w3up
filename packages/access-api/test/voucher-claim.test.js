@@ -42,11 +42,10 @@ test('should voucher/claim', async (t) => {
     t.deepEqual(delegation.proofs[0].issuer.did(), service.did())
     t.deepEqual(delegation.proofs[0].capabilities, [
       {
-        // TODO proof should have account
         with: service.did(),
         can: 'voucher/redeem',
         nb: {
-          account: service.did(),
+          account: 'did:*',
           identity: 'mailto:*',
           product: 'product:*',
         },

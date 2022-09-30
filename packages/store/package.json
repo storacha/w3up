@@ -18,7 +18,7 @@
   "homepage": "https://github.com/web3-storage/ucanto/tree/demo/upload-v2",
   "scripts": {
     "check": "tsc --build",
-    "test": "npm run test:node",
+    "testsss": "npm run test:node",
     "test:node": "mocha test",
     "test:browser": "pw-test test",
     "testw": "watch 'pnpm test' src test --interval 1",
