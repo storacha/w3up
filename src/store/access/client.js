@@ -1,10 +1,12 @@
-import { Principal } from '@ucanto/principal'
 import * as Client from '@ucanto/client'
 import * as API from '@ucanto/interface'
+import { Principal } from '@ucanto/principal'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import webfetch from 'cross-fetch'
+
+export * from '@web3-storage/access/capabilities/identity'
 
 // import * as CAR from '../../../patches/@ucanto/transport/car.js'
 
