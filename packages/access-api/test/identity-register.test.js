@@ -4,7 +4,7 @@ import * as Identity from '@web3-storage/access/capabilities/identity'
 import { Accounts } from '../src/kvs/accounts.js'
 import { context, test } from './helpers/context.js'
 // eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
+import * as Ucanto from '@ucanto/interface'
 
 test.beforeEach(async (t) => {
   t.context = await context()
@@ -26,22 +26,20 @@ test('register', async (t) => {
   if (out?.error || !out) {
     return t.fail()
   }
-  // @ts-ignore
-  const ucan = UCAN.parse(
-    // @ts-ignore
-    out.delegation.replace('http://localhost:8787/validate?ucan=', '')
-  )
+  const jwt =
+    /** @type UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */ (
+      out.delegation.replace('http://localhost:8787/validate?ucan=', '')
+    )
+  const ucan = UCAN.parse(jwt)
   const root = await UCAN.write(ucan)
   const proof = Delegation.create({ root })
 
   const register = Identity.register.invoke({
     audience: service,
     issuer,
-    // @ts-ignore
     with: proof.capabilities[0].with,
     nb: {
-      // @ts-ignore
-      as: proof.capabilities[0].as,
+      as: proof.capabilities[0].nb.as,
     },
     proofs: [proof],
   })
@@ -73,8 +71,7 @@ test('identify', async (t) => {
   if (out?.error || !out) {
     return
   }
-  /** @type {Types.UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */
-  // @ts-ignore
+  /** @type {Ucanto.UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */
   const jwt = out.delegation.replace('http://localhost:8787/validate?ucan=', '')
   const ucan = UCAN.parse(jwt)
   const root = await UCAN.write(ucan)

@@ -6,9 +6,13 @@ import type {
   RequestEncoder,
   ResponseDecoder,
   ServiceMethod,
+  UCAN,
+  URI,
 } from '@ucanto/interface'
 
 import type {
+  AccountAll,
+  AccountInfo,
   IdentityIdentify,
   IdentityRegister,
   IdentityValidate,
@@ -40,6 +44,21 @@ export interface Service {
       Failure
     >
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
+  }
+  account: {
+    all: ServiceMethod<AccountAll, any, Failure>
+    info: ServiceMethod<
+      AccountInfo,
+      {
+        did: UCAN.DID
+        agent: UCAN.DID
+        email: URI<'mailto:'>
+        product: URI<'product:'>
+        updated_at: string
+        inserted_at: string
+      },
+      Failure
+    >
   }
 }
 

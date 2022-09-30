@@ -43,7 +43,7 @@ export class StoreConf {
 
   /** @type {Store['init']} */
   async init(data) {
-    const principal = data.agent || (await Signer.generate())
+    const principal = data.principal || (await Signer.generate())
     const delegations =
       data.delegations ||
       new Delegations({
@@ -53,7 +53,7 @@ export class StoreConf {
     const storeData = {
       accounts: data.accounts || [],
       meta: data.meta || { name: 'agent', type: 'device' },
-      agent: principal,
+      principal,
       delegations,
     }
 
@@ -69,7 +69,7 @@ export class StoreConf {
     this.setAccounts(data.accounts)
     this.setDelegations(data.delegations)
     this.setMeta(data.meta)
-    this.setPrincipal(data.agent)
+    this.setPrincipal(data.principal)
     return this
   }
 
@@ -79,7 +79,7 @@ export class StoreConf {
     return {
       accounts: await this.getAccounts(),
       meta: await this.getMeta(),
-      agent: await this.getPrincipal(),
+      principal: await this.getPrincipal(),
       delegations: await this.getDelegations(),
     }
   }
@@ -139,12 +139,15 @@ export class StoreConf {
     const data = /** @type {DelegationsAsJSON} */ (
       this.#config.get('delegations')
     )
-    return new Delegations({
+    const delegations = new Delegations({
       principal: await this.getPrincipal(),
       created: await decodeDelegations(data.created || ''),
-      received: await decodeDelegations(data.received || ''),
       meta: new Map(data.meta),
     })
+
+    await delegations.addMany(await decodeDelegations(data.received || ''))
+
+    return delegations
   }
 
   /**

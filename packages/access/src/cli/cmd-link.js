@@ -14,7 +14,7 @@ import { getService } from './utils.js'
  * @param {string} channel
  * @param {{ profile: string; env: string }} opts
  */
-export async function linkCmd(channel, opts) {
+export async function cmdLink(channel, opts) {
   const { url } = await getService(opts.env)
   const store = new StoreConf({ profile: opts.profile })
 

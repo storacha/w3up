@@ -6,15 +6,19 @@ import path from 'path'
 import sade from 'sade'
 import { Transform } from 'stream'
 import undici from 'undici'
-import { linkCmd } from './cmd-link.js'
 import { getConfig, NAME, pkg } from './config.js'
 import { getService } from './utils.js'
-import inquirer from 'inquirer'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
-import { Agent } from '../agent.js'
+import { cmdCreateAccount } from './cmd-create-account.js'
+import { cmdLink } from './cmd-link.js'
+import { cmdSetup } from './cmd-setup.js'
+import { cmdWhoami } from './cmd-whoami.js'
 import { StoreConf } from '../stores/store-conf.js'
+import { Agent } from '../agent.js'
+import inquirer from 'inquirer'
+import { Verifier } from '@ucanto/principal/ed25519'
+import { delegationToString, stringToDelegation } from '../encoding.js'
 
 const prog = sade(NAME)
 prog
@@ -61,66 +65,49 @@ prog
     }
   })
 
-prog.command('link [channel]').describe('Link.').action(linkCmd)
+prog.command('link [channel]').describe('Link.').action(cmdLink)
+prog.command('setup').describe('Print config file content.').action(cmdSetup)
+prog.command('whoami').describe('Print config file content.').action(cmdWhoami)
+prog
+  .command('create-account')
+  .describe('Create new account.')
+  .action(cmdCreateAccount)
 
 prog
-  .command('setup')
-  .describe('Print config file content.')
+  .command('account')
+  .describe('Account info.')
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
-    console.log('Path:', store.path)
-
+    const { url } = await getService(opts.env)
     if (await store.exists()) {
-      console.log('Agent is already setup.')
-    } else {
-      const { name, type } = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'name',
-          default: 'cli',
-          message: 'Input the name for this device:',
-        },
-        {
-          type: 'list',
-          name: 'type',
-          default: 'device',
-          choices: [{ name: 'device' }, { name: 'app' }, { name: 'service' }],
-          message: 'Select this agent type:',
-        },
-      ])
-      await store.init({
-        meta: {
-          name,
-          type,
-        },
+      const agent = await Agent.create({
+        store,
+        url,
       })
 
-      console.log('Agent is ready to use.')
-    }
-  })
-
-prog
-  .command('whoami')
-  .describe('Print config file content.')
-  .action(async (opts) => {
-    const store = new StoreConf({ profile: opts.profile })
-    if (await store.exists()) {
-      const { delegations, meta, accounts, agent } = await store.load()
-
-      console.log('Agent', agent.did(), meta)
-      console.log('Accounts:')
-      for (const acc of accounts) {
-        console.log(acc.did())
+      const choices = []
+      for (const [key, value] of agent.data.delegations.receivedByResource) {
+        for (const d of value) {
+          if (d.cap.can === 'account/info' || d.cap.can === 'account/*') {
+            choices.push({ name: key })
+          }
+        }
       }
 
-      console.log('Delegations created:')
-      for (const created of delegations.created) {
-        console.log(created)
-      }
-      console.log('Delegations received:')
-      for (const received of delegations.received) {
-        console.log(`${received.issuer.did()} -> ${received.audience.did()}`)
-        console.log(received.capabilities)
+      const { account } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'account',
+          default: 'device',
+          choices,
+          message: 'Select account:',
+        },
+      ])
+      const result = await agent.getAccountInfo(account)
+      if (result.error) {
+        console.error(result.message)
+      } else {
+        console.log(result)
       }
     } else {
       console.error(`Run "${NAME} setup" first`)
@@ -128,42 +115,92 @@ prog
   })
 
 prog
-  .command('create-account')
-  .describe('Create new account.')
+  .command('delegate')
+  .describe('Delegation capabilities.')
   .action(async (opts) => {
-    const { url } = await getService(opts.env)
     const store = new StoreConf({ profile: opts.profile })
-
+    const { url } = await getService(opts.env)
     if (await store.exists()) {
-      const spinner = ora('Registering with the service').start()
       const agent = await Agent.create({
         store,
         url,
       })
 
-      spinner.stopAndPersist()
-      const { email } = await inquirer.prompt({
-        type: 'input',
-        name: 'email',
-        default: 'hugomrdias@gmail.com',
-        message: 'Input your email to validate:',
+      const accountDids = agent.data.accounts.map((acc) => {
+        return { name: acc.did() }
       })
-      spinner.start('Waiting for email validation...')
-      try {
-        await agent.createAccount(email)
-        spinner.succeed(
-          'Account has been created and register with the service.'
-        )
-      } catch (error) {
-        console.error(error)
-        // @ts-ignore
-        spinner.fail(error.message)
-        process.exit(1)
+      const { account } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'account',
+          choices: accountDids,
+          message: 'Select account:',
+        },
+      ])
+
+      const abilities = []
+      for (const [key, values] of agent.data.delegations.receivedByResource) {
+        if (key === account) {
+          for (const cap of values) {
+            abilities.push({ name: cap.cap.can })
+          }
+        }
       }
+      const { ability } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'ability',
+          choices: abilities,
+          message: 'Select ability:',
+        },
+      ])
+
+      const { audience } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'audience',
+          choices: abilities,
+          message: 'Input audience:',
+        },
+      ])
+
+      console.log(account, ability)
+
+      const delegation = await agent.delegate(
+        Verifier.parse(audience),
+        [
+          {
+            can: ability,
+            with: account,
+          },
+        ],
+        800_000
+      )
+
+      console.log(await delegationToString(delegation))
     } else {
-      console.error('run setup command first.')
-      process.exit(1)
+      console.error(`Run "${NAME} setup" first`)
     }
   })
 
+prog
+  .command('import')
+  .describe('Import delegation.')
+  .option('--delegation')
+  .action(async (opts) => {
+    const store = new StoreConf({ profile: opts.profile })
+    const { url } = await getService(opts.env)
+    if (await store.exists()) {
+      const agent = await Agent.create({
+        store,
+        url,
+      })
+
+      const del = fs.readFileSync('./delegation', { encoding: 'utf8' })
+
+      await agent.addDelegation(await stringToDelegation(del))
+    } else {
+      console.error(`Run "${NAME} setup" first`)
+    }
+  })
 prog.parse(process.argv)

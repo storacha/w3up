@@ -29,7 +29,7 @@ export class StoreMemory {
   async close() {}
 
   async exists() {
-    return this.data.meta !== undefined && this.data.agent !== undefined
+    return this.data.meta !== undefined && this.data.principal !== undefined
   }
 
   static async create() {
@@ -41,7 +41,7 @@ export class StoreMemory {
 
   /** @type {Store['init']} */
   async init(data) {
-    const principal = data.agent || (await Signer.generate())
+    const principal = data.principal || (await Signer.generate())
     const delegations =
       data.delegations ||
       new Delegations({
@@ -51,7 +51,7 @@ export class StoreMemory {
     const storeData = {
       accounts: data.accounts || [],
       meta: data.meta || { name: 'agent', type: 'device' },
-      agent: principal,
+      principal,
       delegations,
     }
 
