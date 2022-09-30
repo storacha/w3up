@@ -901,21 +901,10 @@
     "@ucanto/interface" "^1.0.0"
     multiformats "^9.8.1"
 
-"@ucanto/validator@1.0.2", "@ucanto/validator@^1.0.2":
+"@ucanto/validator@^1.0.1", "@ucanto/validator@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@ucanto/validator/-/validator-1.0.2.tgz#3230eea32977c192b6b42adeb7cd3ca00f584495"
   integrity sha512-SFjS/8FDOwzPNM29brT6wgbE+HXD8iQnHR3aeqEgzIUL7j56kluZykfVWD0xR8oLn8vYzNqJqf60YeFAbIBsqg==
-  dependencies:
-    "@ipld/car" "^4.1.5"
-    "@ipld/dag-cbor" "^7.0.3"
-    "@ucanto/core" "^1.0.1"
-    "@ucanto/interface" "^1.0.0"
-    multiformats "^9.8.1"
-
-"@ucanto/validator@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@ucanto/validator/-/validator-1.0.1.tgz#6244098126f1d1cff8a50247a6f0fd5e53022d1a"
-  integrity sha512-w8NTSPKkEhQRWDmnt8KjMg65/U7SZfVaiKyDlP46Ph0zRAAr16VfBFYVArucKu4V4kgh6gHT4qRBEaAUJ4U0zQ==
   dependencies:
     "@ipld/car" "^4.1.5"
     "@ipld/dag-cbor" "^7.0.3"
@@ -6075,11 +6064,6 @@ tslib@^2.1.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
-
-tweetnacl@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/tweetnacl/-/tweetnacl-1.0.3.tgz"
-  integrity sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
