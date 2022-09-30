@@ -23,7 +23,7 @@
     "@ucanto/principal": "^1.0.1",
     "@ucanto/server": "^1.0.2",
     "@ucanto/transport": "^1.0.1",
-    "@ucanto/validator": "^1.0.1",
+    "@ucanto/validator": "^1.0.2",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
     "multiformats": "^9.8.1",

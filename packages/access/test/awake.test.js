@@ -8,6 +8,7 @@ import delay from 'delay'
 import pWaitFor from 'p-wait-for'
 import { Agent } from '../src/agent.js'
 import { StoreMemory } from '../src/stores/store-memory.js'
+import { fetch } from '@web-std/fetch'
 
 describe('awake', function () {
   const host = new URL('ws://127.0.0.1:8788/connect')
@@ -38,8 +39,14 @@ describe('awake', function () {
   })
 
   it('should send msgs', async function () {
-    const agent1 = await Agent.create({ store: await StoreMemory.create() })
-    const agent2 = await Agent.create({ store: await StoreMemory.create() })
+    const agent1 = await Agent.create({
+      store: await StoreMemory.create(),
+      fetch: globalThis.fetch || fetch,
+    })
+    const agent2 = await Agent.create({
+      store: await StoreMemory.create(),
+      fetch: globalThis.fetch || fetch,
+    })
     const responder = agent1.peer(ws1)
     const requestor = agent2.peer(ws2)
 

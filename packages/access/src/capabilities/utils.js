@@ -60,3 +60,10 @@ export const derives = (claimed, delegated) => {
     return true
   }
 }
+
+/**
+ * @param {Types.Failure | true} value
+ */
+export function fail(value) {
+  return value === true ? undefined : value
+}
