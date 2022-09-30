@@ -32,12 +32,24 @@ export const claim = voucher.derive({
   derives: equalWith,
 })
 
-export const redeem = capability({
-  can: 'voucher/redeem',
-  with: URI.match({ protocol: 'did:' }),
-  nb: {
-    product: URI.match({ protocol: 'product:' }),
-    identity: URI.match({ protocol: 'mailto:' }),
-    account: URI.match({ protocol: 'did:' }),
-  },
+export const redeem = voucher.derive({
+  to: capability({
+    can: 'voucher/redeem',
+    with: URI.match({ protocol: 'did:' }),
+    nb: {
+      product: URI.match({ protocol: 'product:' }),
+      identity: URI.match({ protocol: 'mailto:' }),
+      account: URI.match({ protocol: 'did:' }),
+    },
+    derives: (child, parent) => {
+      return (
+        fail(equalWith(child, parent)) ||
+        fail(canDelegateURI(child.nb.identity, parent.nb.identity)) ||
+        fail(canDelegateURI(child.nb.product, parent.nb.product)) ||
+        fail(canDelegateURI(child.nb.account, parent.nb.account)) ||
+        true
+      )
+    },
+  }),
+  derives: equalWith,
 })

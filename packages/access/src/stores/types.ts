@@ -11,7 +11,7 @@ export interface DelegationsAsJSON {
 export interface StoreData<T> {
   accounts: T[]
   meta: AgentMeta
-  agent: T
+  principal: T
   delegations: Delegations
 }
 

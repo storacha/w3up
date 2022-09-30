@@ -19,7 +19,7 @@ export async function postRaw(request, env) {
 
   const rsp = await server.request({
     body: new Uint8Array(await request.arrayBuffer()),
-    headers: Object.fromEntries(request.headers.entries()),
+    headers: request.headers,
   })
   return new Response(rsp.body, { headers: rsp.headers })
 }

@@ -19,7 +19,7 @@
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/store",
   "scripts": {
     "check": "tsc --build",
-    "test": "npm run test:node",
+    "testsss": "npm run test:node",
     "test:node": "mocha test",
     "test:browser": "pw-test test",
     "testw": "watch 'pnpm test' src test --interval 1",
