@@ -1,6 +1,6 @@
 import type { IPLDLink, Capability } from '@ipld/dag-ucan'
 import { InferInvokedCapability } from '@ucanto/interface'
-import { validate } from './identity.js'
+import { identify, register, validate } from './identity.js'
 import { claim, redeem } from './voucher.js'
 
 // Voucher Protocol
@@ -61,6 +61,8 @@ export interface VoucherRedeem1
 export type VoucherRedeem = InferInvokedCapability<typeof redeem>
 export type VoucherClaim = InferInvokedCapability<typeof claim>
 export type IdentityValidate = InferInvokedCapability<typeof validate>
+export type IdentityRegister = InferInvokedCapability<typeof register>
+export type IdentityIdentify = InferInvokedCapability<typeof identify>
 
 // Identity
 export interface IdentityValidate1
@@ -68,7 +70,7 @@ export interface IdentityValidate1
   nb: { as: string }
 }
 
-export interface IdentityRegister
+export interface IdentityRegister1
   extends Capability<
     'identity/register',
     `${string}:${string}`,
@@ -77,7 +79,7 @@ export interface IdentityRegister
   nb: { as: `did:${string}` }
 }
 
-export interface IdentityIdentify
+export interface IdentityIdentify1
   extends Capability<'identity/identify', `did:${string}`, {}> {}
 
 export type integer = number & Phantom<{ kind: 'integer' }>

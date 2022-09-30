@@ -11,6 +11,7 @@ import { delegate } from '@ucanto/core'
 import * as Voucher from './capabilities/voucher.js'
 import { Websocket } from './utils/ws.js'
 import { stringToDelegation } from './encoding.js'
+import { URI } from '@ucanto/validator'
 
 /**
  * @template T
@@ -40,8 +41,9 @@ const HOST = 'https://access-api.web3.storage'
  * @param {Ucanto.Principal<T>} principal
  * @param {typeof fetch} _fetch
  * @param {URL} url
+ * @returns { Promise<{service: Ucanto.UCAN.PrincipalView, connection: import('@ucanto/interface').ConnectionView<import('./types').Service>}>}
  */
-async function buildConnection(principal, _fetch, url) {
+export async function buildConnection(principal, _fetch, url) {
   const rsp = await _fetch(url + 'version')
   // @ts-ignore
   const { did } = await rsp.json()
@@ -154,8 +156,8 @@ export class Agent {
         audience: this.service,
         with: account.did(),
         nb: {
-          identity: `mailto:${email}`,
-          product: 'free',
+          identity: URI.from(`mailto:${email}`),
+          product: 'product:free',
           service: this.service.did(),
         },
         proofs: [accDelegation],
