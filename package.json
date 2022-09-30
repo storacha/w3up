@@ -31,10 +31,10 @@
     "@ucanto/interface": "^1.0.0",
     "@ucanto/principal": "^1.0.1",
     "@ucanto/transport": "^1.0.1",
-    "@ucanto/validator": "1.0.2",
+    "@ucanto/server": "^1.0.2",
+    "@ucanto/validator": "^1.0.2",
     "@web3-storage/access": "^2.0.0",
-    "cross-fetch": "^3.1.5",
-    "tweetnacl": "^1.0.3"
+    "cross-fetch": "^3.1.5"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.3.0",
@@ -49,6 +49,9 @@
     "tsc": "^2.0.4",
     "typescript": "^4.8.3",
     "vitest": "^0.23.4"
+  },
+  "resolutions": {
+    "@ucanto/validator": "^1.0.2"
   },
   "lint-staged": {
     "*.*": "prettier --write '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore"
