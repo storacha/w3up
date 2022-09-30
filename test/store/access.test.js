@@ -1,23 +1,18 @@
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
-import * as Capabilities from '@web3-storage/access/capabilities'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { connect } from '../../src/store/access/client'
+import * as Identity from '../../src/store/access/client.js'
 import { makeMockServer } from '../server.fixture.js'
 
 // The two tests marked with concurrent will be run in parallel
 describe('access client', async () => {
   const accessServer = await makeMockServer({
-    capabilities: [
-      Capabilities.identityRegister,
-      Capabilities.identityValidate,
-      Capabilities.identityIdentify,
-    ],
+    capabilities: [Identity.register, Identity.validate, Identity.identify],
   })
 
   beforeEach(async (context) => {
-    context.client = connect({
+    context.client = Identity.createConnection({
       id: accessServer.service.id.did(),
       url: accessServer.url,
     })
@@ -32,7 +27,7 @@ describe('access client', async () => {
     it('should get null from mocked server.', async ({ client }) => {
       const issuer = await SigningPrincipal.generate()
 
-      const result = await Capabilities.identityValidate
+      const result = await Identity.validate
         .invoke({
           issuer,
           audience: client.id,
