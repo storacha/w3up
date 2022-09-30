@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3-protocol/compare/access-v1.0.0...access-v2.0.0) (2022-09-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* new accounts (#72)
+
+### Features
+
+* new accounts ([#72](https://github.com/web3-storage/w3-protocol/issues/72)) ([9f6cb41](https://github.com/web3-storage/w3-protocol/commit/9f6cb419d33b9446dd80f8541228096cf2677d45))
+
 ## [1.0.0](https://github.com/web3-storage/ucan-protocol/compare/access-v0.2.0...access-v1.0.0) (2022-09-21)
 
 
