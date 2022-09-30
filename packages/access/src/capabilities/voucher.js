@@ -1,4 +1,4 @@
-import { capability, URI, Text } from '@ucanto/validator'
+import { capability, URI } from '@ucanto/validator'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -22,8 +22,8 @@ export const claim = voucher.derive({
     can: 'voucher/claim',
     with: URI.match({ protocol: 'did:' }),
     nb: {
-      product: Text,
-      identity: Text,
+      product: URI.match({ protocol: 'product:' }),
+      identity: URI.match({ protocol: 'mailto:' }),
       service: URI.match({ protocol: 'did:' }),
     },
     derives: (child, parent) => {
@@ -44,7 +44,7 @@ export const redeem = capability({
   with: URI.match({ protocol: 'did:' }),
   nb: {
     product: URI.match({ protocol: 'product:' }),
-    identity: Text,
+    identity: URI.match({ protocol: 'mailto:' }),
     account: URI.match({ protocol: 'did:' }),
   },
 })

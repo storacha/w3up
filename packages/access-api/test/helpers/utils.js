@@ -1,4 +1,5 @@
 import * as UCAN from '@ipld/dag-ucan'
+import { URI } from '@ucanto/validator'
 import { Delegation } from '@ucanto/core'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -28,7 +29,7 @@ export async function validateEmail(con, issuer, audience, email) {
     audience,
     issuer,
     nb: {
-      as: `mailto:${email}`,
+      as: URI.from(`mailto:${email}`),
     },
     with: issuer.did(),
   })
