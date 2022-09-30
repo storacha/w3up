@@ -1,9 +1,9 @@
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
-import * as Capabilities from '@web3-storage/access/capabilities'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createClient } from '../src/index.js'
+import * as Identity from '../src/store/access/client.js'
 import fixture from './fixture.js'
 import { makeMockServer } from './server.fixture.js'
 
@@ -28,10 +28,7 @@ describe('client', () => {
     )
 
     context.accessServer = await makeMockServer({
-      capabilities: [
-        Capabilities.identityRegister,
-        Capabilities.identityValidate,
-      ],
+      capabilities: [Identity.register, Identity.validate],
     })
 
     context.client = createClient({

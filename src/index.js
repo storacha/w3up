@@ -2,9 +2,7 @@ import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
 import * as CAR from '@ucanto/transport/car'
-import { Failure } from '@ucanto/validator'
 // @ts-ignore
-import * as capabilities from '@web3-storage/access/capabilities'
 import fetch from 'cross-fetch'
 
 import * as defaults from './defaults.js'
@@ -65,13 +63,13 @@ class Client {
     this.accessDID = accessDID
     this.settings = settings
 
-    this.storeClient = Store.connect({
+    this.storeClient = Store.createConnection({
       id: this.serviceDID,
       url: this.serviceURL,
       fetch,
     })
 
-    this.accessClient = Access.connect({
+    this.accessClient = Access.createConnection({
       id: this.accessDID,
       url: this.accessURL,
       fetch,
@@ -106,7 +104,7 @@ class Client {
     // For now, move old secret value to new account_secret.
     if (!secret && this.settings.has('secret')) {
       secret = this.settings.get('secret')
-//       this.settings.delete('secret')
+      //       this.settings.delete('secret')
     }
     let id
 
@@ -206,7 +204,7 @@ class Client {
     const identity = await this.identity()
 
     try {
-      const result = await capabilities.identityValidate
+      const result = await Access.validate
         .invoke({
           issuer: identity.account,
           with: identity.account.did(),
@@ -235,7 +233,7 @@ class Client {
     // Use access API/client to do all of this.
     const first = proof.capabilities[0]
     try {
-      const validate = await capabilities.identityRegister
+      const validate = await Access.register
         .invoke({
           issuer: identity.account,
           audience: this.accessClient.id,
@@ -305,7 +303,7 @@ class Client {
    */
   async whoami() {
     const identity = await this.identity()
-    return await capabilities.identityIdentify
+    return await Access.identify
       .invoke({
         issuer: identity.agent,
         with: identity.with,
@@ -322,7 +320,7 @@ class Client {
    */
   async list() {
     const identity = await this.identity()
-    return capabilities.storeList
+    return Store.list
       .invoke({
         issuer: identity.agent,
         with: identity.with,
@@ -381,19 +379,21 @@ class Client {
    * Upload a car via bytes.
    * @async
    * @param {Uint8Array} bytes - the url to upload
+   * @param {string|undefined} [origin] - the CID of the previous car chunk.
    * @returns {Promise<strResult>}
    */
-  async upload(bytes) {
+  async upload(bytes, origin) {
     try {
       const identity = await this.identity()
       const link = await CAR.codec.link(bytes)
-      const result = await capabilities.storeAdd
+      const result = await Store.add
         .invoke({
           issuer: identity.agent,
           with: identity.with,
           audience: this.storeClient.id,
           caveats: {
             link,
+            origin,
           },
           proofs: identity.proofs,
         })
@@ -438,7 +438,7 @@ class Client {
    */
   async remove(link) {
     const identity = await this.identity()
-    return await capabilities.storeRemove
+    return await Store.remove
       .invoke({
         issuer: identity.agent,
         with: identity.with,
