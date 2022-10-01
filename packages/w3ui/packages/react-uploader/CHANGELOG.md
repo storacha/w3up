@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v1.1.0...react-uploader-v2.0.0) (2022-10-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* The uploader-core API has been augmented with a new method to support chunked CAR uploads `uploadCarChunks`. The static `encode*` functions are now exported directly from the `*-uploader` modules instead of being injected by the provider and have different signatures to allow for streaming DAG generation. The `uploadCar` method of the provider has been replaced with the more friendly `uploadFile` and `uploadDirectory` functions (and `uploadCarChunks` to allow for direct CAR uploads).
+
+### Features
+
+* add CAR splitting ([#66](https://github.com/web3-storage/w3ui/issues/66)) ([1c57dba](https://github.com/web3-storage/w3ui/commit/1c57dba9ef51845927432acd3836d4c576eb39fe))
+
 ## [1.1.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v1.0.1...react-uploader-v1.1.0) (2022-09-28)
 
 
