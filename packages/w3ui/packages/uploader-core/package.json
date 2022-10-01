@@ -30,7 +30,9 @@
     "@ucanto/principal": "^1.0.1",
     "@ucanto/transport": "^1.0.1",
     "@web3-storage/access": "^1.0.0",
-    "multiformats": "^9.8.1"
+    "multiformats": "^9.8.1",
+    "p-retry": "^5.1.1",
+    "streaming-iterables": "^7.1.0"
   },
   "devDependencies": {
     "@web-std/file": "^3.0.2",

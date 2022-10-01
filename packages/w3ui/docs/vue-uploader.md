@@ -46,27 +46,30 @@ export default {
 Once mounted, the `UploaderProvider` provides the following injection keys:
 
 ```ts
-type UploaderProviderInjectionKey = {
-  encodeFile: InjectionKey<UploaderContextActions['encodeFile']>
-  encodeDirectory: InjectionKey<UploaderContextActions['encodeDirectory']>
-  uploadCar: InjectionKey<UploaderContextActions['uploadCar']>
+const UploaderProviderInjectionKey = {
+  uploadFile: InjectionKey<UploaderContextActions['uploadFile']>,
+  uploadDirectory: InjectionKey<UploaderContextActions['uploadDirectory']>,
+  uploadCarChunks: InjectionKey<UploaderContextActions['uploadCarChunks']>,
+  uploadedCarChunks: InjectionKey<Ref<UploaderContextState['uploadedCarChunks']>>
 }
 
 interface UploaderContextActions {
   /**
-   * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
+   * Upload a single file to the service.
    */
-  encodeFile: (data: Blob) => Promise<EncodeResult>
+  uploadFile: (file: Blob) => Promise<CID>
   /**
-   * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
-   * All files are added to a container directory, with paths in file names
-   * preserved.
+   * Upload a directory of files to the service.
    */
-  encodeDirectory: (files: Iterable<File>) => Promise<EncodeResult>
+  uploadDirectory: (files: File[]) => Promise<CID>
   /**
    * Upload CAR bytes to the service.
    */
-  uploadCar: (car: AsyncIterable<Uint8Array>) => Promise<void>
+  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<void>
+}
+
+interface UploaderContextState {
+  uploadedCarChunks: CarChunkMeta[]
 }
 ```
 
@@ -78,8 +81,7 @@ import { UploaderProviderInjectionKey } from '@w3ui/vue-uploader'
 
 export default {
   inject: {
-    encodeFile: { from: UploaderProviderInjectionKey.encodeFile },
-    uploadCar: { from: UploaderProviderInjectionKey.uploadCar }
+    uploadFile: { from: UploaderProviderInjectionKey.uploadFile }
   },
   data () {
     return { file: null }
@@ -87,11 +89,8 @@ export default {
   methods: {
     async handleUploadSubmit (e) {
       e.preventDefault()
-      // Build a DAG from the file data to obtain the root CID.
-      const { cid, car } = await this.encodeFile(this.file)
+      const cid = await this.uploadFile(this.file)
       console.log('Data CID:', cid.toString())
-      // Upload the DAG to the service.
-      await this.uploadCar(car)
     },
     handleFileChange (e) {
       e.preventDefault()

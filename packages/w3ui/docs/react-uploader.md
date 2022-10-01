@@ -40,33 +40,34 @@ function App () {
 ### `useUploader`
 
 ```ts
-const { uploader } = useUploader()
-// Provides a value when an identity is loaded via react-wallet auth provider.
-if (!uploader) return
+const [progress, uploader] = useUploader()
 ```
 
 Hook to allow use of the [`UploaderProvider`](#uploaderprovider) value. The value returned is an `UploaderContextValue`:
 
 ```ts
-interface UploaderContextValue {
-  uploader?: Uploader
+type UploaderContextValue = [
+  state: UploaderContextState,
+  actions: UploaderContextActions
+]
+
+interface UploaderContextState {
+  uploadedCarChunks: CarChunkMeta[]
 }
 
-interface Uploader {
+interface UploaderContextActions {
   /**
-   * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
+   * Upload a single file to the service.
    */
-  encodeFile: (file: Blob) => Promise<{ cid: CID, car: AsyncIterable<Uint8Array> }>
+  uploadFile: (file: Blob) => Promise<CID>
   /**
-   * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
-   * All files are added to a container directory, with paths in file names
-   * preserved.
+   * Upload a directory of files to the service.
    */
-  encodeDirectory: (files: Iterable<File>) => Promise<{ cid: CID, car: AsyncIterable<Uint8Array> }>
+  uploadDirectory: (files: File[]) => Promise<CID>
   /**
    * Upload CAR bytes to the service.
    */
-  uploadCar: (car: AsyncIterable<Uint8Array>) => Promise<void>
+  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<void>
 }
 ```
 

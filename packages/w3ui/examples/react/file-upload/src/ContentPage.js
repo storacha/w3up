@@ -4,9 +4,9 @@ import { withIdentity } from './components/Authenticator'
 import './spinner.css'
 
 export function ContentPage () {
-  const { uploader } = useUploader()
+  const [{ uploadedCarChunks }, uploader] = useUploader()
   const [file, setFile] = useState(null)
-  const [rootCid, setRootCid] = useState('')
+  const [dataCid, setDataCid] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState(null)
 
@@ -15,14 +15,9 @@ export function ContentPage () {
   const handleUploadSubmit = async e => {
     e.preventDefault()
     try {
-      // Build a DAG from the file data to obtain the root CID.
-      setStatus('encoding')
-      const { cid, car } = await uploader.encodeFile(file)
-      setRootCid(cid.toString())
-
-      // Upload the DAG to the service.
       setStatus('uploading')
-      await uploader.uploadCar(car)
+      const cid = await uploader.uploadFile(file)
+      setDataCid(cid)
     } catch (err) {
       console.error(err)
       setError(err)
@@ -31,16 +26,12 @@ export function ContentPage () {
     }
   }
 
-  if (status === 'encoding') {
-    return <Encoding file={file} />
-  }
-
   if (status === 'uploading') {
-    return <Uploading file={file} cid={rootCid} />
+    return <Uploading file={file} uploadedCarChunks={uploadedCarChunks} />
   }
 
   if (status === 'done') {
-    return error ? <Errored error={error} /> : <Done file={file} cid={rootCid} />
+    return error ? <Errored error={error} /> : <Done file={file} dataCid={dataCid} uploadedCarChunks={uploadedCarChunks} />
   }
 
   return (
@@ -54,21 +45,16 @@ export function ContentPage () {
   )
 }
 
-const Encoding = ({ file }) => (
-  <div className='flex items-center'>
-    <div className='spinner mr3 flex-none' />
-    <div className='flex-auto'>
-      <p className='truncate'>Building DAG for {file.name}</p>
-    </div>
-  </div>
-)
-
-const Uploading = ({ file, cid }) => (
+const Uploading = ({ file, uploadedCarChunks }) => (
   <div className='flex items-center'>
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
       <p className='truncate'>Uploading DAG for {file.name}</p>
-      <p className='f6 code truncate'>{cid}</p>
+      {uploadedCarChunks.map(({ cid, size }) => (
+        <p key={cid.toString()} className='f7 truncate'>
+          {cid.toString()} ({size} bytes)
+        </p>
+      ))}
     </div>
   </div>
 )
@@ -80,11 +66,17 @@ const Errored = ({ error }) => (
   </div>
 )
 
-const Done = ({ file, cid }) => (
+const Done = ({ file, dataCid, uploadedCarChunks }) => (
   <div>
     <h1 className='near-white'>Done!</h1>
-    <p className='f6 code truncate'>{cid}</p>
-    <p><a href={`https://w3s.link/ipfs/${cid}`} className='blue'>View {file.name} on IPFS Gateway.</a></p>
+    <p className='f6 code truncate'>{dataCid.toString()}</p>
+    <p><a href={`https://w3s.link/ipfs/${dataCid}`} className='blue'>View {file.name} on IPFS Gateway.</a></p>
+    <p className='near-white'>Chunks ({uploadedCarChunks.length}):</p>
+    {uploadedCarChunks.map(({ cid, size }) => (
+      <p key={cid.toString()} className='f7 truncate'>
+        {cid.toString()} ({size} bytes)
+      </p>
+    ))}
   </div>
 )
 

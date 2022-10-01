@@ -40,29 +40,33 @@ function App () {
 ### `useUploader`
 
 ```ts
-const [, uploader] = useUploader()
+const [progress, uploader] = useUploader()
 ```
 
 Hook to allow use of the [`UploaderProvider`](#uploaderprovider) value. The value returned is an `UploaderContextValue`:
 
 ```ts
-type UploaderContextValue = [
-  state: {},
-  actions: {
-    /**
-     * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
-     */
-    encodeFile: (file: Blob) => Promise<{ cid: CID, car: AsyncIterable<Uint8Array> }>
-    /**
-     * Create a UnixFS DAG from the passed file data and serialize to a CAR file.
-     * All files are added to a container directory, with paths in file names
-     * preserved.
-     */
-    encodeDirectory: (files: Iterable<File>) => Promise<{ cid: CID, car: AsyncIterable<Uint8Array> }>
-    /**
-     * Upload CAR bytes to the service.
-     */
-    uploadCar: (car: AsyncIterable<Uint8Array>) => Promise<void>
-  }
+export type UploaderContextValue = [
+  state: UploaderContextState,
+  actions: UploaderContextActions
 ]
+
+export interface UploaderContextState {
+  uploadedCarChunks: CarChunkMeta[]
+}
+
+export interface UploaderContextActions {
+  /**
+   * Upload a single file to the service.
+   */
+  uploadFile: (file: Blob) => Promise<CID>
+  /**
+   * Upload a directory of files to the service.
+   */
+  uploadDirectory: (files: File[]) => Promise<CID>
+  /**
+   * Upload CAR bytes to the service.
+   */
+  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<void>
+}
 ```

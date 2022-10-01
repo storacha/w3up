@@ -1,38 +1,40 @@
 import * as UnixFS from '@ipld/unixfs'
 import type { Block } from '@ipld/unixfs'
 import type { CID } from 'multiformats/cid'
-import { CarWriter } from '@ipld/car'
 import { toIterable } from './streams'
 
 const queuingStrategy = UnixFS.withCapacity(1048576 * 175)
 
 export interface EncodeResult {
-  cid: CID
-  car: AsyncIterable<Uint8Array>
+  /**
+   * Root CID for the DAG, resolves when the DAG has been fully built (the
+   * blocks stream consumed).
+   */
+  cid: Promise<CID>
+  /**
+   * Blocks for the generated DAG.
+   */
+  blocks: ReadableStream<UnixFS.Block>
 }
 
-export async function encodeFile (blob: Blob): Promise<EncodeResult> {
+export function encodeFile (blob: Blob): EncodeResult {
   const { readable, writable } = new TransformStream<Block, Block>({}, queuingStrategy)
   const unixfsWriter = UnixFS.createWriter({ writable })
-
-  const unixfsFileWriter = UnixFS.createFileWriter(unixfsWriter)
-  const stream = toIterable<Uint8Array>(blob.stream())
-  for await (const chunk of stream) {
-    await unixfsFileWriter.write(chunk)
-  }
-
-  const { cid } = await unixfsFileWriter.close()
-
-  unixfsWriter.close().catch(err => console.error('failed to close UnixFS writer stream', err))
+  const fileBuilder = new UnixFsFileBuilder(blob)
+  const cidPromise = (async () => {
+    const { cid } = await fileBuilder.finalize(unixfsWriter)
+    await unixfsWriter.close()
+    return cid
+  })()
 
   // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
-  return { cid, car: createCar(cid, toIterable(readable)) }
+  return { cid: cidPromise, blocks: readable }
 }
 
 class UnixFsFileBuilder {
-  #file: File
+  #file: Blob
 
-  constructor (file: File) {
+  constructor (file: Blob) {
     this.#file = file
   }
 
@@ -61,7 +63,7 @@ class UnixFSDirectoryBuilder {
   }
 }
 
-export async function encodeDirectory (files: Iterable<File>): Promise<EncodeResult> {
+export function encodeDirectory (files: Iterable<File>): EncodeResult {
   const rootDir = new UnixFSDirectoryBuilder()
 
   for (const file of files) {
@@ -89,38 +91,12 @@ export async function encodeDirectory (files: Iterable<File>): Promise<EncodeRes
 
   const { readable, writable } = new TransformStream<Block, Block>({}, queuingStrategy)
   const unixfsWriter = UnixFS.createWriter({ writable })
-  const { cid } = await rootDir.finalize(unixfsWriter)
-
-  unixfsWriter.close().catch(err => console.error('failed to close UnixFS writer stream', err))
+  const cidPromise = (async () => {
+    const { cid } = await rootDir.finalize(unixfsWriter)
+    await unixfsWriter.close()
+    return cid
+  })()
 
   // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
-  return { cid, car: createCar(cid, toIterable(readable)) }
-}
-
-function createCar (rootCid: CID, blocks: AsyncIterable<UnixFS.Block>): AsyncIterable<Uint8Array> {
-  const { writer, out } = CarWriter.create(rootCid)
-
-  let error: Error
-  void (async () => {
-    try {
-      for await (const block of blocks) {
-        // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
-        await writer.put(block)
-      }
-    } catch (err: any) {
-      error = err
-    } finally {
-      try {
-        await writer.close()
-      } catch (err: any) {
-        error = err
-      }
-    }
-  })()
-
-  return (async function * () {
-    yield * out
-    // @ts-expect-error Variable 'error' is used before being assigned.
-    if (error != null) throw error
-  })()
+  return { cid: cidPromise, blocks: readable }
 }

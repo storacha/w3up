@@ -24,10 +24,11 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-uploader",
   "dependencies": {
-    "@w3ui/uploader-core": "^1.0.0"
+    "@w3ui/uploader-core": "^1.0.0",
+    "multiformats": "^9.9.0"
   },
   "peerDependencies": {
-    "solid-js": "^1.5.0",
-    "@w3ui/solid-wallet": "^1.0.0"
+    "@w3ui/solid-wallet": "^1.0.0",
+    "solid-js": "^1.5.0"
   }
 }

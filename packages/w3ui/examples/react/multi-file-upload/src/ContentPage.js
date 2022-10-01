@@ -4,11 +4,11 @@ import { withIdentity } from './components/Authenticator'
 import './spinner.css'
 
 export function ContentPage () {
-  const { uploader } = useUploader()
+  const [{ uploadedCarChunks }, uploader] = useUploader()
   const [files, setFiles] = useState([])
   const [allowDirectory, setAllowDirectory] = useState(false)
   const [wrapInDirectory, setWrapInDirectory] = useState(false)
-  const [rootCid, setRootCid] = useState('')
+  const [dataCid, setDataCid] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState(null)
 
@@ -17,19 +17,13 @@ export function ContentPage () {
   const handleUploadSubmit = async e => {
     e.preventDefault()
     try {
-      // Build a DAG from the file data to obtain the root CID.
-      setStatus('encoding')
-      const { cid, car } = files.length > 1
-        ? await uploader.encodeDirectory(files)
-        : wrapInDirectory
-          ? await uploader.encodeDirectory(files)
-          : await uploader.encodeFile(files[0])
-
-      setRootCid(cid.toString())
-
-      // Upload the DAG to the service.
       setStatus('uploading')
-      await uploader.uploadCar(car)
+      const cid = files.length > 1
+        ? await uploader.uploadDirectory(files)
+        : wrapInDirectory
+          ? await uploader.uploadDirectory(files)
+          : await uploader.uploadFile(files[0])
+      setDataCid(cid.toString())
     } catch (err) {
       console.error(err)
       setError(err)
@@ -38,16 +32,12 @@ export function ContentPage () {
     }
   }
 
-  if (status === 'encoding') {
-    return <Encoding files={files} />
-  }
-
   if (status === 'uploading') {
-    return <Uploading files={files} cid={rootCid} />
+    return <Uploading files={files} uploadedCarChunks={uploadedCarChunks} />
   }
 
   if (status === 'done') {
-    return error ? <Errored error={error} /> : <Done files={files} cid={rootCid} />
+    return error ? <Errored error={error} /> : <Done files={files} dataCid={dataCid} uploadedCarChunks={uploadedCarChunks} />
   }
 
   return (
@@ -77,21 +67,16 @@ export function ContentPage () {
   )
 }
 
-const Encoding = ({ files }) => (
-  <div className='flex items-center'>
-    <div className='spinner mr3 flex-none' />
-    <div className='flex-auto'>
-      <p className='truncate'>Building DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
-    </div>
-  </div>
-)
-
-const Uploading = ({ files, cid }) => (
+const Uploading = ({ files, dataCid, uploadedCarChunks }) => (
   <div className='flex items-center'>
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
       <p className='truncate'>Uploading DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
-      <p className='f6 code truncate'>{cid}</p>
+      {uploadedCarChunks.map(({ cid, size }) => (
+        <p key={cid.toString()} className='f7 truncate'>
+          {cid.toString()} ({size} bytes)
+        </p>
+      ))}
     </div>
   </div>
 )
@@ -103,11 +88,17 @@ const Errored = ({ error }) => (
   </div>
 )
 
-const Done = ({ files, cid }) => (
+const Done = ({ files, dataCid, uploadedCarChunks }) => (
   <div>
     <h1 className='near-white'>Done!</h1>
-    <p className='f6 code truncate'>{cid}</p>
-    <p><a href={`https://w3s.link/ipfs/${cid}`} className='blue'>View {files.length > 1 ? 'files' : files[0].name} on IPFS Gateway.</a></p>
+    <p className='f6 code truncate'>{dataCid.toString()}</p>
+    <p><a href={`https://w3s.link/ipfs/${dataCid}`} className='blue'>View {files.length > 1 ? 'files' : files[0].name} on IPFS Gateway.</a></p>
+    <p className='near-white'>Chunks ({uploadedCarChunks.length}):</p>
+    {uploadedCarChunks.map(({ cid, size }) => (
+      <p key={cid.toString()} className='f7 truncate'>
+        {cid.toString()} ({size} bytes)
+      </p>
+    ))}
   </div>
 )
 
