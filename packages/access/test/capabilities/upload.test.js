@@ -206,6 +206,7 @@ describe('upload capabilities', function () {
         return claim.with === issuer
       },
     })
+
     assert.equal(result.error, true)
     assert.match(
       String(result),
@@ -244,8 +245,11 @@ describe('upload capabilities', function () {
       },
     })
 
-    assert.equal(result.error, undefined)
-    assert.deepEqual(result.match.selected.value.caveats, {
+    if (result.error) {
+      assert.fail(result.message)
+    }
+
+    assert.deepEqual(result.capability.caveats, {
       root: cbor.cid,
     })
   })
