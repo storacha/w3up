@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v1.0.2...react-uploads-list-v1.0.3) (2022-10-03)
+
+
+### Bug Fixes
+
+* pull in nully value fix ([c3dd98f](https://github.com/web3-storage/w3ui/commit/c3dd98f860d63f9c653c4c2ca17d10e027c58a0a))
+
 ## [1.0.2](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v1.0.1...react-uploads-list-v1.0.2) (2022-09-29)
 
 
