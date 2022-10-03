@@ -213,6 +213,43 @@ describe('upload capabilities', function () {
     )
   })
 
+  it('upload/add should work when escalating root when caveats not imposed on proof', async () => {
+    const delegation = Upload.add
+      .invoke({
+        issuer: alice,
+        audience: bob,
+        with: account.did(),
+        caveats: {},
+        proofs: [await proof],
+      })
+      .delegate()
+
+    const cbor = await CBOR.write({ hello: 'world' })
+
+    const add = Upload.add.invoke({
+      issuer: bob,
+      audience: w3,
+      with: account.did(),
+      caveats: {
+        root: cbor.cid,
+      },
+      proofs: [await delegation],
+    })
+
+    const result = await access(await add.delegate(), {
+      capability: Upload.add,
+      principal: Principal,
+      canIssue: (claim, issuer) => {
+        return claim.with === issuer
+      },
+    })
+
+    assert.equal(result.error, undefined)
+    assert.deepEqual(result.match.selected.value.caveats, {
+      root: cbor.cid,
+    })
+  })
+
   it('upload/add should fail when escalating root', async () => {
     const delegation = Upload.add
       .invoke({
