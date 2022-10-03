@@ -1,5 +1,5 @@
 import { capability, Link, URI } from '@ucanto/server'
-import { code as CAR_CODE } from '@ucanto/transport/car/codec'
+import { codec } from '@ucanto/transport/car'
 import { equalWith, List, fail, equal } from './utils.js'
 import { any } from './any.js'
 
@@ -23,7 +23,7 @@ export const upload = any.derive({
 // `store/*`.
 const base = any.or(upload)
 
-const CARLink = Link.match({ code: CAR_CODE, version: 1 })
+const CARLink = Link.match({ code: codec.code, version: 1 })
 
 /**
  * `store/add` can be derived from the `store/*` capability
