@@ -37,6 +37,24 @@ export function equalWith(child, parent) {
 }
 
 /**
+ * @param {unknown} child
+ * @param {unknown} parent
+ * @param {string} constraint
+ */
+
+export function equal(child, parent, constraint) {
+  if (parent === undefined || parent === '*') {
+    return true
+  } else if (String(child) !== String(parent)) {
+    return new Failure(
+      `Contastraint vilation: ${child} violates imposed ${constraint} constraint ${parent}`
+    )
+  } else {
+    return true
+  }
+}
+
+/**
  * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
  * @param {T} claimed
  * @param {T} delegated
@@ -67,3 +85,41 @@ export const derives = (claimed, delegated) => {
 export function fail(value) {
   return value === true ? undefined : value
 }
+
+export const List = {
+  /**
+   * @template T
+   * @param {Types.Decoder<unknown, T>} decoder
+   * @returns {Types.Decoder<unknown, T[]> & { optional(): Types.Decoder<unknown, undefined|Array<T>>}}
+   */
+  of: (decoder) => ({
+    decode: (input) => {
+      if (!Array.isArray(input)) {
+        return new Failure(`Expected to be an array instead got ${input} `)
+      }
+      /** @type {T[]} */
+      const results = []
+      for (const item of input) {
+        const result = decoder.decode(item)
+        if (result?.error) {
+          return new Failure(
+            `Array containts invalid element: ${result.message}`
+          )
+        } else {
+          results.push(result)
+        }
+      }
+      return results
+    },
+    optional: () => optional(List.of(decoder)),
+  }),
+}
+
+/**
+ * @template T
+ * @param {Types.Decoder<unknown, T>} decoder
+ * @returns {Types.Decoder<unknown, undefined|T, Types.Failure>}
+ */
+export const optional = (decoder) => ({
+  decode: (input) => (input === undefined ? input : decoder.decode(input)),
+})
