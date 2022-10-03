@@ -1,6 +1,6 @@
 import type { Capability, IPLDLink, DID, ToString } from '@ipld/dag-ucan'
 import type { Block as IPLDBlock } from '@ucanto/interface'
-import { code as CAR_CODE } from '@ucanto/transport/car/codec'
+import { codec as CARCodec } from '@ucanto/transport/car'
 
 type AccountDID = DID
 type AgentDID = DID
@@ -67,7 +67,7 @@ export interface CAR {
   blocks: Map<ToString<IPLDLink>, IPLDBlock>
 }
 
-export type CARLink = IPLDLink<CAR, typeof CAR_CODE>
+export type CARLink = IPLDLink<CAR, typeof CARCodec.code>
 
 /**
  * Capability to add arbitrary CID into an account's upload listing.
