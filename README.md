@@ -60,7 +60,11 @@ Here are the values for the production w3up and access services:
 And here's an example of calling `createClient` with the correct values for the production services:
 
 ```js
+<<<<<<< Updated upstream
 import { createClient } from '@web3-storage/w3up-client/w3up-client'
+=======
+import { createClient } from '@web3-storage/w3up-client'
+>>>>>>> Stashed changes
 
 const client = createClient({
   serviceDID: 'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z',
@@ -84,7 +88,11 @@ To do this, call the async `register` method, which takes an email address as in
 Note that registration may fail, for example, if the user does not click the link before it expires. Be sure to check for errors when calling `client.register`.
 
 ```js
+<<<<<<< Updated upstream
 import { createClient } from '@web3-storage/w3up-client/w3up-client'
+=======
+import { createClient } from '@web3-storage/w3up-client'
+>>>>>>> Stashed changes
 
 async function tryToRegister(emailAddress) {
   // CLIENT_OPTS should be defined as described in "Creating a client object"
@@ -108,7 +116,11 @@ The final identity-related client method is `whoami`, which queries the access s
 The `upload` method sends your data to the w3up service, making it available for retreival on [Elastic IPFS][elastic-ipfs].
 
 ```js
+<<<<<<< Updated upstream
 import { createClient } from '@web3-storage/w3up-client/w3up-client'
+=======
+import { createClient } from '@web3-storage/w3up-client'
+>>>>>>> Stashed changes
 
 async function uploadCAR(carData) {
   // CLIENT_OPTS should be defined as described in "Creating a client object"
@@ -132,7 +144,11 @@ We expect to add CAR generation as a feature of this library in a future release
 The `list` method returns an array of CID strings for each upload you've made to your account.
 
 ```js
+<<<<<<< Updated upstream
 import { createClient } from '@web3-storage/w3up-client/w3up-client'
+=======
+import { createClient } from '@web3-storage/w3up-client'
+>>>>>>> Stashed changes
 
 async function listUploads() {
   // CLIENT_OPTS should be defined as described in "Creating a client object"
@@ -149,7 +165,11 @@ async function listUploads() {
 The `remove` method takes a CID string and "unlinks" it from your account.
 
 ```js
+<<<<<<< Updated upstream
 import { createClient } from '@web3-storage/w3up-client/w3up-client'
+=======
+import { createClient } from '@web3-storage/w3up-client'
+>>>>>>> Stashed changes
 
 async function tryRemove(cid) {
   // CLIENT_OPTS should be defined as described in "Creating a client object"
