@@ -1,7 +1,7 @@
 import { capability, Failure, Link, URI } from '@ucanto/server'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import { canDelegateURI, derives, equalWith } from './utils.js'
+import { canDelegateURI, derives, equalWith, Integer } from './utils.js'
 import { any } from './any.js'
 
 /**
@@ -35,6 +35,7 @@ export const add = base.derive({
     caveats: {
       link: Link.optional(),
       origin: Link.optional(),
+      size: Integer.optional(),
     },
     derives,
   }),
