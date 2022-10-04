@@ -45,7 +45,7 @@ export const add = base.derive({
       } else if (claim.caveats.size != null && from.caveats.size != null) {
         return claim.caveats.size > from.caveats.size
           ? new Failure(
-              `Size contastraint violation: ${claim.caveats.size} > ${from.caveats.size}`
+              `Size constraint violation: ${claim.caveats.size} > ${from.caveats.size}`
             )
           : true
       } else {
