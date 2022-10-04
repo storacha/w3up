@@ -1,7 +1,8 @@
+/* eslint-disable unicorn/no-null */
 import { capability, Failure, Link, URI } from '@ucanto/server'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import { canDelegateURI, derives, equalWith } from './utils.js'
+import { canDelegateURI, derives, equalWith, Integer } from './utils.js'
 import { any } from './any.js'
 
 /**
@@ -35,8 +36,22 @@ export const add = base.derive({
     caveats: {
       link: Link.optional(),
       origin: Link.optional(),
+      size: Integer.optional(),
     },
-    derives,
+    derives: (claim, from) => {
+      const result = derives(claim, from)
+      if (result.error) {
+        return result
+      } else if (claim.caveats.size != null && from.caveats.size != null) {
+        return claim.caveats.size > from.caveats.size
+          ? new Failure(
+              `Size constraint violation: ${claim.caveats.size} > ${from.caveats.size}`
+            )
+          : true
+      } else {
+        return true
+      }
+    },
   }),
   derives: equalWith,
 })

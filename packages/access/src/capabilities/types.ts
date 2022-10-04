@@ -1,4 +1,10 @@
-import type { Capability, IPLDLink, DID, ToString } from '@ipld/dag-ucan'
+import type {
+  Capability,
+  IPLDLink,
+  DID,
+  ToString,
+  Phantom,
+} from '@ipld/dag-ucan'
 import type { Block as IPLDBlock } from '@ucanto/interface'
 import { codec as CARCodec } from '@ucanto/transport/car'
 
@@ -48,9 +54,13 @@ export interface IdentityRegister
 export interface IdentityIdentify
   extends Capability<'identity/identify', DID> {}
 
+export type integer = number & Phantom<{ kind: 'integer' }>
+
 // Store
 export interface StoreAdd extends Capability<'store/add', DID> {
   link?: IPLDLink
+  origin?: IPLDLink
+  size?: integer
 }
 
 export interface StoreRemove extends Capability<'store/remove', DID> {

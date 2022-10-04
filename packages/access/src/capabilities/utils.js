@@ -58,6 +58,7 @@ export function equal(child, parent, constraint) {
  * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
  * @param {T} claimed
  * @param {T} delegated
+ * @returns {Types.Result<true, Types.Failure>}
  */
 export const derives = (claimed, delegated) => {
   if (claimed.uri.href !== delegated.uri.href) {
@@ -86,35 +87,6 @@ export function fail(value) {
   return value === true ? undefined : value
 }
 
-export const List = {
-  /**
-   * @template T
-   * @param {Types.Decoder<unknown, T>} decoder
-   * @returns {Types.Decoder<unknown, T[]> & { optional(): Types.Decoder<unknown, undefined|Array<T>>}}
-   */
-  of: (decoder) => ({
-    decode: (input) => {
-      if (!Array.isArray(input)) {
-        return new Failure(`Expected to be an array instead got ${input} `)
-      }
-      /** @type {T[]} */
-      const results = []
-      for (const item of input) {
-        const result = decoder.decode(item)
-        if (result?.error) {
-          return new Failure(
-            `Array containts invalid element: ${result.message}`
-          )
-        } else {
-          results.push(result)
-        }
-      }
-      return results
-    },
-    optional: () => optional(List.of(decoder)),
-  }),
-}
-
 /**
  * @template T
  * @param {Types.Decoder<unknown, T>} decoder
@@ -123,3 +95,156 @@ export const List = {
 export const optional = (decoder) => ({
   decode: (input) => (input === undefined ? input : decoder.decode(input)),
 })
+
+/**
+ * @template T
+ * @implements {Types.Decoder<unknown, T, Types.Failure>}
+ */
+class Never {
+  /**
+   * @param {unknown} input
+   * @returns {Types.Result<T, Types.Failure>}
+   */
+  decode(input) {
+    return new Failure(`Given input is not valid`)
+  }
+
+  /**
+   * @returns {Types.Decoder<unknown, undefined|T, Types.Failure>}
+   */
+  optional() {
+    return new Optional(this)
+  }
+}
+
+/**
+ * @template T
+ * @implements {Types.Decoder<unknown, T|undefined, Types.Failure>}
+ */
+class Optional {
+  /**
+   * @param {Types.Decoder<unknown, T, Types.Failure>} decoder
+   */
+  constructor(decoder) {
+    this.decoder = decoder
+  }
+
+  optional() {
+    return this
+  }
+
+  /**
+   * @param {unknown} input
+   */
+  decode(input) {
+    return input === undefined ? undefined : this.decoder.decode(input)
+  }
+}
+
+/**
+ * @template T
+ * @extends {Never<T[]>}
+ * @implements {Types.Decoder<unknown, T[], Types.Failure>}
+ */
+export class List extends Never {
+  /**
+   * @template T
+   * @param {Types.Decoder<unknown, T, Types.Failure>} decoder
+   */
+  static of(decoder) {
+    return new this(decoder)
+  }
+
+  /**
+   * @param {Types.Decoder<unknown, T, Types.Failure>} decoder
+   * @private
+   */
+  constructor(decoder) {
+    super()
+    this.decoder = decoder
+  }
+
+  /**
+   * @param {unknown} input
+   */
+  decode(input) {
+    if (!Array.isArray(input)) {
+      return new Failure(`Expected to be an array instead got ${input} `)
+    }
+    /** @type {T[]} */
+    const results = []
+    for (const item of input) {
+      const result = this.decoder.decode(item)
+      if (result?.error) {
+        return new Failure(`Array containts invalid element: ${result.message}`)
+      } else {
+        results.push(result)
+      }
+    }
+    return results
+  }
+}
+
+/**
+ * @typedef {Types.Phantom<{kind:"Int"}> & number} integer
+ * @extends {Never<integer>}
+ * @implements {Types.Decoder<unknown, integer, Types.Failure>}
+ */
+export class IntegerDecoder extends Never {
+  /**
+   * @param {{min?: number, max?: number}} options
+   */
+  // eslint-disable-next-line unicorn/prefer-number-properties
+  constructor({ min = -Infinity, max = Infinity } = {}) {
+    super()
+    this.min = min
+    this.max = max
+  }
+
+  /**
+   * @param {unknown} value
+   * @returns {value is integer}
+   */
+  static isInteger(value) {
+    return Number.isInteger(value)
+  }
+
+  /**
+   * @param {unknown} input
+   * @returns {Types.Result<integer, Types.Failure>}
+   */
+  decode(input) {
+    const { min, max } = this
+    if (!IntegerDecoder.isInteger(input)) {
+      return new Failure(
+        `Expecting an Integer but instead got: ${typeof input} ${input}`
+      )
+    } else if (min > input) {
+      return new Failure(
+        `Expecting an Integer > ${min} but instead got ${input}`
+      )
+    } else if (max < input) {
+      return new Failure(
+        `Expecting an Integer < ${max} but instead got ${input}`
+      )
+    } else {
+      return input
+    }
+  }
+
+  /**
+   * @param {number} min
+   */
+  greater(min) {
+    return new IntegerDecoder({ min, max: this.max })
+  }
+
+  /**
+   * @param {number} max
+   */
+  less(max) {
+    return new IntegerDecoder({ min: this.min, max })
+  }
+}
+
+export const Integer = new IntegerDecoder()
