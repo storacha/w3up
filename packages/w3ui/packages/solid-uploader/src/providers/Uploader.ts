@@ -37,6 +37,9 @@ const UploaderContext = createContext<UploaderContextValue>([
   }
 ])
 
+/**
+ * Provider for actions and state to facilitate uploads to the service.
+ */
 export const UploaderProvider: ParentComponent = props => {
   const [auth] = useAuth()
   const [state, setState] = createStore<UploaderContextState>({ uploadedCarChunks: [] })
@@ -74,6 +77,9 @@ export const UploaderProvider: ParentComponent = props => {
   })
 }
 
+/**
+ * Use the scoped uploader context state from a parent `UploaderProvider`.
+ */
 export function useUploader (): UploaderContextValue {
   return useContext(UploaderContext)
 }

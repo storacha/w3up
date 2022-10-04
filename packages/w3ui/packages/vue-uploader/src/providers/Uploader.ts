@@ -32,6 +32,9 @@ export interface UploaderContextActions {
   uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<void>
 }
 
+/**
+ * Provider for actions and state to facilitate uploads to the service.
+ */
 export const UploaderProvider = defineComponent({
   setup () {
     const identity = inject(AuthProviderInjectionKey.identity)

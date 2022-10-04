@@ -48,6 +48,9 @@ export interface AuthProviderProps {
   children?: ReactNode
 }
 
+/**
+ * Provider for authentication with the service.
+ */
 export function AuthProvider ({ children }: AuthProviderProps): ReactNode {
   const [authStatus, setAuthStatus] = useState(AuthStatus.SignedOut)
   const [identity, setIdentity] = useState<Identity>()
@@ -148,6 +151,9 @@ export function AuthProvider ({ children }: AuthProviderProps): ReactNode {
   )
 }
 
+/**
+ * Use the scoped auth context state from a parent AuthProvider.
+ */
 export function useAuth (): AuthContextValue {
   return useContext(AuthContext)
 }

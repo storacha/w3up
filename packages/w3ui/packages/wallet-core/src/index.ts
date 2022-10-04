@@ -17,10 +17,16 @@ export interface Identity {
   signingPrincipal: ISigningPrincipal
 }
 
+/**
+ * An identity that has NOT been verified by the service e.g. email verification.
+ */
 export interface UnverifiedIdentity extends Identity {
   verified: false
 }
 
+/**
+ * An identity that has been verified by the service e.g. email verification.
+ */
 export interface VerifiedIdentity extends Identity {
   verified: true
 }

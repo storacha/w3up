@@ -50,6 +50,9 @@ export interface AuthContextActions {
   cancelRegisterAndStoreIdentity: () => void
 }
 
+/**
+ * Provider for authentication with the service.
+ */
 export const AuthProvider = defineComponent({
   setup () {
     const state = shallowReactive<AuthContextState>({

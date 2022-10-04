@@ -57,6 +57,9 @@ export const AuthContext = createContext<AuthContextValue>([
   }
 ])
 
+/**
+ * Provider for authentication with the service.
+ */
 export const AuthProvider: ParentComponent = props => {
   const [state, setState] = createStore({
     identity: defaultState.identity,
@@ -160,6 +163,9 @@ export const AuthProvider: ParentComponent = props => {
   })
 }
 
+/**
+ * Use the scoped auth context state from a parent `AuthProvider`.
+ */
 export function useAuth (): AuthContextValue {
   return useContext(AuthContext)
 }

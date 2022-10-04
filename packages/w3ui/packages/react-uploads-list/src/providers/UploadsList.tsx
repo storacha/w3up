@@ -30,6 +30,9 @@ export interface UploadsListProviderProps {
   children?: ReactNode
 }
 
+/**
+ * Provider for a list of items uploaded by the current identity.
+ */
 export function UploadsListProvider ({ children }: UploadsListProviderProps): ReactNode {
   const { identity } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -65,6 +68,9 @@ export function UploadsListProvider ({ children }: UploadsListProviderProps): Re
   )
 }
 
+/**
+ * Use the scoped uploads list context state from a parent `UploadsListProvider`.
+ */
 export function useUploadsList (): UploadsListContextValue {
   return useContext(UploadsListContext)
 }

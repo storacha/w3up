@@ -34,6 +34,9 @@ export interface UploadsListContextActions {
   reload: () => Promise<void>
 }
 
+/**
+ * Provider for a list of items uploaded by the current identity.
+ */
 export const UploadsListProvider = defineComponent({
   setup () {
     const identity = inject(AuthProviderInjectionKey.identity)
