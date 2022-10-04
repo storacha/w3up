@@ -58,6 +58,7 @@ export function equal(child, parent, constraint) {
  * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
  * @param {T} claimed
  * @param {T} delegated
+ * @returns {Types.Result<true, Types.Failure>}
  */
 export const derives = (claimed, delegated) => {
   if (claimed.uri.href !== delegated.uri.href) {
@@ -215,7 +216,9 @@ export class IntegerDecoder extends Never {
   decode(input) {
     const { min, max } = this
     if (!IntegerDecoder.isInteger(input)) {
-      return new Failure(`Expecting an Integer but instead got: \`${input}\``)
+      return new Failure(
+        `Expecting an Integer but instead got: ${typeof input} ${input}`
+      )
     } else if (min > input) {
       return new Failure(
         `Expecting an Integer > ${min} but instead got ${input}`
