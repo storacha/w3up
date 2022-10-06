@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/web3-storage/w3-protocol/compare/access-v2.0.0...access-v2.1.0) (2022-10-04)
+
+
+### Features
+
+* implement store/add size constraint ([#89](https://github.com/web3-storage/w3-protocol/issues/89)) ([efd8a2f](https://github.com/web3-storage/w3-protocol/commit/efd8a2faa0348ba9d467ca0c306ddec95aa6d05f))
+* upload/* capabilities ([#81](https://github.com/web3-storage/w3-protocol/issues/81)) ([6c0e24f](https://github.com/web3-storage/w3-protocol/commit/6c0e24f50e08ece893666be2a5b46237df5cc83f))
+
 ## [2.0.0](https://github.com/web3-storage/w3-protocol/compare/access-v1.0.0...access-v2.0.0) (2022-09-30)
 
 
