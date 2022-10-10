@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3-protocol/compare/access-api-v1.0.0...access-api-v2.0.0) (2022-10-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* new accounts (#72)
+
+### Features
+
+* new accounts ([#72](https://github.com/web3-storage/w3-protocol/issues/72)) ([9f6cb41](https://github.com/web3-storage/w3-protocol/commit/9f6cb419d33b9446dd80f8541228096cf2677d45))
+
+
+### Bug Fixes
+
+* redirect on success ([#77](https://github.com/web3-storage/w3-protocol/issues/77)) ([0e67f3b](https://github.com/web3-storage/w3-protocol/commit/0e67f3be07118dd132770818486d2498416a300f))
+
 ## [1.0.0](https://github.com/web3-storage/ucan-protocol/compare/access-api-v0.4.0...access-api-v1.0.0) (2022-09-21)
 
 
