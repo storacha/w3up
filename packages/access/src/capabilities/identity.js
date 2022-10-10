@@ -1,7 +1,7 @@
 import { capability, URI } from '@ucanto/server'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import { store } from './store.js'
+import * as Store from './store.js'
 import { canDelegateURI, equalWith } from './utils.js'
 
 export const validate = capability({
@@ -34,7 +34,7 @@ export const register = capability({
  * capability that has matichng `with`. This allows store service
  * to identify account based on any user request.
  */
-export const identify = store.derive({
+export const identify = Store.all.derive({
   to: capability({
     can: 'identity/identify',
     with: URI.match({ protocol: 'did:' }),
