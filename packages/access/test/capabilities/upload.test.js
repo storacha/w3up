@@ -14,7 +14,7 @@ import {
 
 describe('upload capabilities', function () {
   // delegation from account to agent
-  const proof = delegate({
+  const any = delegate({
     issuer: account,
     audience: alice,
     capabilities: [
@@ -26,14 +26,23 @@ describe('upload capabilities', function () {
   })
 
   it('upload/add can be derived from upload/* derived from *', async () => {
+    const upload = await Upload.upload
+      .invoke({
+        issuer: alice,
+        audience: bob,
+        with: account.did(),
+        proofs: [await any],
+      })
+      .delegate()
+
     const add = Upload.add.invoke({
-      issuer: alice,
+      issuer: bob,
       audience: w3,
       with: account.did(),
       caveats: {
         root: parseLink('bafkqaaa'),
       },
-      proofs: [await proof],
+      proofs: [upload],
     })
 
     const result = await access(await add.delegate(), {
@@ -60,7 +69,7 @@ describe('upload capabilities', function () {
       issuer: alice,
       audience: bob,
       with: account.did(),
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const add = Upload.add.invoke({
@@ -93,7 +102,7 @@ describe('upload capabilities', function () {
   })
 
   it('creating upload/add throws if shards is contains non CAR cid', async () => {
-    const proofs = [await proof]
+    const proofs = [await any]
     assert.throws(() => {
       Upload.add.invoke({
         issuer: alice,
@@ -123,7 +132,7 @@ describe('upload capabilities', function () {
           shards: [parseLink('bafkqaaa')],
         },
       ],
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const result = await access(add, {
@@ -148,7 +157,7 @@ describe('upload capabilities', function () {
         root: parseLink('bafkqaaa'),
         shards: [shard.cid],
       },
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const result = await access(await add.delegate(), {
@@ -196,7 +205,7 @@ describe('upload capabilities', function () {
           root: parseLink('bafkqaaa'),
         },
       ],
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const result = await access(add, {
@@ -221,7 +230,7 @@ describe('upload capabilities', function () {
         audience: bob,
         with: account.did(),
         caveats: {},
-        proofs: [await proof],
+        proofs: [await any],
       })
       .delegate()
 
@@ -263,7 +272,7 @@ describe('upload capabilities', function () {
         caveats: {
           root: parseLink('bafkqaaa'),
         },
-        proofs: [await proof],
+        proofs: [await any],
       })
       .delegate()
 
@@ -305,7 +314,7 @@ describe('upload capabilities', function () {
         caveats: {
           shards: [shard.cid],
         },
-        proofs: [await proof],
+        proofs: [await any],
       })
       .delegate()
 
@@ -339,7 +348,7 @@ describe('upload capabilities', function () {
       issuer: alice,
       audience: w3,
       with: account.did(),
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const result = await access(await list.delegate(), {
@@ -364,7 +373,7 @@ describe('upload capabilities', function () {
       issuer: alice,
       audience: bob,
       with: account.did(),
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const list = Upload.list.invoke({
@@ -396,7 +405,7 @@ describe('upload capabilities', function () {
       issuer: alice,
       audience: bob,
       with: account.did(),
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const list = Upload.list.invoke({
@@ -445,7 +454,7 @@ describe('upload capabilities', function () {
           root: parseLink('bafkqaaa'),
         },
       ],
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const result = await access(list, {
@@ -467,7 +476,7 @@ describe('upload capabilities', function () {
       issuer: alice,
       audience: w3,
       with: account.did(),
-      proofs: [await proof],
+      proofs: [await any],
       caveats: {
         root: parseLink('bafkqaaa'),
       },
@@ -497,7 +506,7 @@ describe('upload capabilities', function () {
       issuer: alice,
       audience: bob,
       with: account.did(),
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const remove = Upload.remove.invoke({
@@ -534,7 +543,7 @@ describe('upload capabilities', function () {
       issuer: alice,
       audience: bob,
       with: account.did(),
-      proofs: [await proof],
+      proofs: [await any],
       caveats: {
         root: parseLink('bafkqaaa'),
       },
@@ -592,7 +601,7 @@ describe('upload capabilities', function () {
           root: parseLink('bafkqaaa'),
         },
       ],
-      proofs: [await proof],
+      proofs: [await any],
     })
 
     const result = await access(remove, {
@@ -618,7 +627,7 @@ describe('upload capabilities', function () {
         caveats: {
           root: parseLink('bafkqaaa'),
         },
-        proofs: [await proof],
+        proofs: [await any],
       })
       .delegate()
 

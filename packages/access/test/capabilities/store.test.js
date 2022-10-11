@@ -12,7 +12,7 @@ import {
 } from '../helpers/fixtures.js'
 
 describe('store capabilities', function () {
-  const proof = delegate({
+  const any = delegate({
     issuer: account,
     audience: alice,
     capabilities: [
@@ -23,7 +23,18 @@ describe('store capabilities', function () {
     ],
   })
 
-  it('should be able to derive from *', async () => {
+  const store = delegate({
+    issuer: account,
+    audience: alice,
+    capabilities: [
+      {
+        can: 'store/*',
+        with: account.did(),
+      },
+    ],
+  })
+
+  it('store/add can be derived from *', async () => {
     const add = Store.add.invoke({
       issuer: alice,
       audience: w3,
@@ -31,7 +42,90 @@ describe('store capabilities', function () {
       caveats: {
         link: parseLink('bafkqaaa'),
       },
-      proofs: [await proof],
+      proofs: [await any],
+    })
+
+    const result = await access(await add.delegate(), {
+      capability: Store.add,
+      principal: Principal,
+      canIssue: (claim, issuer) => {
+        return claim.with === issuer
+      },
+    })
+
+    if (result.error) {
+      assert.fail(result.message)
+    }
+
+    assert.deepEqual(result.audience.did(), w3.did())
+    assert.equal(result.capability.can, 'store/add')
+    assert.deepEqual(result.capability.caveats, {
+      link: parseLink('bafkqaaa'),
+    })
+  })
+
+  it('store/add can be derived from store/*', async () => {
+    const add = Store.add.invoke({
+      issuer: alice,
+      audience: w3,
+      with: account.did(),
+      caveats: {
+        link: parseLink('bafkqaaa'),
+      },
+      proofs: [await store],
+    })
+
+    const result = await access(await add.delegate(), {
+      capability: Store.add,
+      principal: Principal,
+      canIssue: (claim, issuer) => {
+        return claim.with === issuer
+      },
+    })
+
+    if (result.error) {
+      assert.fail(result.message)
+    }
+
+    assert.deepEqual(result.audience.did(), w3.did())
+    assert.equal(result.capability.can, 'store/add')
+    assert.deepEqual(result.capability.caveats, {
+      link: parseLink('bafkqaaa'),
+    })
+  })
+
+  it('store/add can be derived from store/* derived from *', async () => {
+    const any = await delegate({
+      issuer: account,
+      audience: alice,
+      capabilities: [
+        {
+          can: '*',
+          with: account.did(),
+        },
+      ],
+    })
+
+    const store = await delegate({
+      issuer: alice,
+      audience: bob,
+      capabilities: [
+        {
+          can: 'store/*',
+          with: account.did(),
+        },
+      ],
+      proofs: [any],
+    })
+
+    const add = Store.add.invoke({
+      issuer: bob,
+      audience: w3,
+      with: account.did(),
+      caveats: {
+        link: parseLink('bafkqaaa'),
+      },
+      proofs: [await store],
     })
 
     const result = await access(await add.delegate(), {
@@ -62,7 +156,7 @@ describe('store capabilities', function () {
         caveats: {
           size: 1024,
         },
-        proofs: [await proof],
+        proofs: [await any],
       })
       .delegate()
 
@@ -127,7 +221,7 @@ describe('store capabilities', function () {
   for (const size of fixtures) {
     const json = JSON.stringify(size)
     it(`store/add size must be an int not ${json}`, async () => {
-      const proofs = [await proof]
+      const proofs = [await any]
       assert.throws(() => {
         Store.add.invoke({
           issuer: alice,
@@ -154,7 +248,7 @@ describe('store capabilities', function () {
             size,
           },
         ],
-        proofs: [await proof],
+        proofs: [await any],
       })
 
       const result = await access(add, {
@@ -171,7 +265,7 @@ describe('store capabilities', function () {
   }
 
   it('store/add size must be an int', async () => {
-    const proofs = [await proof]
+    const proofs = [await any]
     assert.throws(() => {
       Store.add.invoke({
         issuer: alice,
