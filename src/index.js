@@ -3,16 +3,17 @@ import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
 import * as CAR from '@ucanto/transport/car'
 // @ts-ignore
+import * as Upload from '@web3-storage/access/capabilities/upload'
 import fetch from 'cross-fetch'
 
 import * as defaults from './defaults.js'
 import {
+  buildDelegationCar,
   generateDelegation,
   importDelegation,
-  writeDelegation,
 } from './delegation.js'
 import { Access, Store } from './store/index.js'
-import { sleep } from './utils.js'
+import { checkUrl, sleep } from './utils.js'
 
 /** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
 /** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
@@ -63,13 +64,13 @@ class Client {
     this.accessDID = accessDID
     this.settings = settings
 
-    this.storeClient = Store.createConnection({
+    this.w3upConnection = Store.createConnection({
       id: this.serviceDID,
       url: this.serviceURL,
       fetch,
     })
 
-    this.accessClient = Access.createConnection({
+    this.accessConnection = Access.createConnection({
       id: this.accessDID,
       url: this.accessURL,
       fetch,
@@ -78,7 +79,6 @@ class Client {
 
   /**
    * Get the current "machine" DID
-   * @async
    * @returns {Promise<API.SigningPrincipal>}
    */
   async agent() {
@@ -95,7 +95,6 @@ class Client {
 
   /**
    * Get the current "account" DID
-   * @async
    * @returns {Promise<API.SigningPrincipal>}
    */
   async account() {
@@ -122,7 +121,6 @@ class Client {
   }
 
   /**
-   * @async
    * @returns {Promise<API.Delegation|null>}
    */
   async currentDelegation() {
@@ -161,14 +159,15 @@ class Client {
     }
   }
 
-  /** @typedef {object} IdentityInfo
+  /**
+   * @typedef {object} IdentityInfo
    * @property {API.SigningPrincipal} agent - The local agent principal
    * @property {API.SigningPrincipal} account - The local account principal
    * @property {API.DID} with - The current acccount (delegated) DID
    * @property {Array<API.Delegation>} proofs - The current delegation as a proof set.
    */
+
   /**
-   * @async
    * @returns {Promise<IdentityInfo>}
    */
   async identity() {
@@ -204,19 +203,16 @@ class Client {
     const identity = await this.identity()
 
     try {
-      const result = await Access.validate
-        .invoke({
-          issuer: identity.account,
-          with: identity.account.did(),
-          audience: this.accessClient.id,
-          caveats: {
-            as: `mailto:${email}`,
-          },
-          proofs: identity.proofs,
-        })
-        .execute(this.accessClient)
-      if (result?.error) {
-        console.log('hi', result)
+      const validateResult = await this.invoke(
+        // @ts-ignore
+        Access.validate,
+        this.accessConnection,
+        {
+          as: `mailto:${email}`,
+        }
+      )
+      if (validateResult?.error) {
+        throw new Error(validateResult.toString())
       }
     } catch (err) {
       if (err) {
@@ -224,7 +220,8 @@ class Client {
       }
     }
 
-    const proofString = await this.checkRegistration()
+    const url = `${this.accessURL}validate?did=${identity.account.did()}`
+    const proofString = await checkUrl(url)
     const ucan = UCAN.parse(proofString)
     const root = await UCAN.write(ucan)
     const proof = Delegation.create({ root })
@@ -233,11 +230,11 @@ class Client {
     // Use access API/client to do all of this.
     const first = proof.capabilities[0]
     try {
+      // @ts-ignore
       const validate = await Access.register
         .invoke({
           issuer: identity.account,
-          audience: this.accessClient.id,
-          // @ts-ignore
+          audience: this.accessConnection.id,
           with: first.with,
           caveats: {
             // @ts-ignore
@@ -245,7 +242,7 @@ class Client {
           },
           proofs: [proof],
         })
-        .execute(this.accessClient)
+        .execute(this.accessConnection)
 
       if (validate?.error) {
         // @ts-ignore
@@ -259,75 +256,28 @@ class Client {
   }
 
   /**
-   * @async
-   * @throws {Error}
-   * @returns {Promise<UCAN.JWT>}
-   */
-  async checkRegistration() {
-    const { account } = await this.identity()
-    let count = 0
-
-    /**
-     * @async
-     * @throws {Error}
-     * @returns {Promise<UCAN.JWT>}
-     */
-    const check = async () => {
-      if (count > 100) {
-        throw new Error('Could not validate.')
-      } else {
-        count++
-        const result = await fetch(
-          `${this.accessURL}validate?did=${account.did()}`,
-          {
-            mode: 'cors',
-          }
-        )
-
-        if (!result.ok) {
-          await sleep(1000)
-          return await check()
-        } else {
-          // @ts-ignore
-          return await result.text()
-        }
-      }
-    }
-
-    return await check()
-  }
-
-  /**
-   * @async
    * @returns {Promise<Result>}
    */
   async whoami() {
-    const identity = await this.identity()
-    return await Access.identify
-      .invoke({
-        issuer: identity.agent,
-        with: identity.with,
-        proofs: identity.proofs,
-        audience: this.accessClient.id,
-      })
-      .execute(this.accessClient)
+    // @ts-ignore
+    return this.invoke(Access.identify, this.accessConnection, {})
+  }
+
+  /**
+   * List all of the cars connected to this user.
+   * @returns {Promise<Result>}
+   */
+  async stat() {
+    // @ts-ignore
+    return this.invoke(Store.list, this.w3upConnection, {})
   }
 
   /**
    * List all of the uploads connected to this user.
-   * @async
    * @returns {Promise<Result>}
    */
   async list() {
-    const identity = await this.identity()
-    return Store.list
-      .invoke({
-        issuer: identity.agent,
-        with: identity.with,
-        proofs: identity.proofs,
-        audience: this.storeClient.id,
-      })
-      .execute(this.storeClient)
+    return this.invoke(Upload.list, this.w3upConnection, {})
   }
 
   /**
@@ -341,7 +291,7 @@ class Client {
    * @returns {Promise<Uint8Array>}
    */
   async makeDelegation(opts) {
-    return writeDelegation({
+    return buildDelegationCar({
       issuer: await this.account(),
       to: opts.to,
       expiration: opts.expiration,
@@ -377,47 +327,35 @@ class Client {
 
   /**
    * Upload a car via bytes.
-   * @async
    * @param {Uint8Array} bytes - the url to upload
    * @param {string|undefined} [origin] - the CID of the previous car chunk.
    * @returns {Promise<strResult>}
    */
   async upload(bytes, origin) {
     try {
-      const identity = await this.identity()
       const link = await CAR.codec.link(bytes)
-      const result = await Store.add
-        .invoke({
-          issuer: identity.agent,
-          with: identity.with,
-          audience: this.storeClient.id,
-          caveats: {
-            link,
-            origin,
-          },
-          proofs: identity.proofs,
-        })
-        .execute(this.storeClient)
 
-      if (result?.error !== undefined) {
+      /** @type {{status:string, with:API.DID, url:String, headers:HeadersInit, error:boolean}} */
+      const result = await this.invoke(Upload.add, this.w3upConnection, {
+        link,
+        origin,
+      })
+
+      if (result.error) {
         throw new Error(JSON.stringify(result, null, 2))
       }
 
-      const castResult =
-        /** @type {{status:string, with:API.DID, url:String, headers:HeadersInit}} */
-        (result)
-
       // Return early if it was already uploaded.
-      if (castResult.status === 'done') {
-        return `Car ${link} is added to ${castResult.with}`
+      if (result.status === 'done') {
+        return `Car ${link} is added to ${result.with}`
       }
 
       // Get the returned signed URL, and upload to it.
-      const response = await fetch(castResult.url, {
+      const response = await fetch(result.url, {
         method: 'PUT',
         mode: 'cors',
         body: bytes,
-        headers: castResult.headers,
+        headers: result.headers,
       })
 
       if (!response.ok) {
@@ -433,26 +371,72 @@ class Client {
   }
 
   /**
+   * Add an upload to the list of uploads
+   * @param {API.Link} dataCID
+   * @param {Array<API.Link>} shardCIDs
+   */
+  async uploadAdd(dataCID, shardCIDs) {
+    const result = await this.invoke(Upload.add, this.w3upConnection, {
+      root: dataCID,
+      shards: shardCIDs,
+    })
+    if (result?.error !== undefined) {
+      throw new Error(JSON.stringify(result, null, 2))
+    }
+
+    return `Succeeded adding ${dataCID}`
+  }
+
+  /**
    * Remove an uploaded file by CID
    * @param {API.Link} link - the CID to remove
    */
   async remove(link) {
-    const identity = await this.identity()
-    return await Store.remove
-      .invoke({
-        issuer: identity.agent,
-        with: identity.with,
-        audience: this.storeClient.id,
-        proofs: identity.proofs,
-        caveats: {
-          link,
-        },
-      })
-      .execute(this.storeClient)
+    // @ts-ignore
+    const result = await this.invoke(Store.remove, this.w3upConnection, {
+      root: link,
+    })
+
+    if (result?.error !== undefined) {
+      throw new Error(JSON.stringify(result, null, 2))
+    }
+    return `Succeeded removing ${result}`
   }
 
   /**
-   * @async
+   * Remove an uploaded file by CID
+   * @param {API.Link} link - the CID to remove
+   */
+  async removeUpload(link) {
+    const result = await this.invoke(Upload.remove, this.w3upConnection, {
+      root: link,
+    })
+    if (result?.error !== undefined) {
+      throw new Error(JSON.stringify(result, null, 2))
+    }
+    return `Succeeded removing ${result}`
+  }
+
+  /**
+   * @param {any} capability
+   * @param {any} connection
+   * @param {any} caveats
+   * @returns {Promise<any>}
+   */
+  async invoke(capability, connection, caveats) {
+    const identity = await this.identity()
+    return await capability
+      .invoke({
+        issuer: identity.agent,
+        with: identity.with,
+        audience: connection.id,
+        proofs: identity.proofs,
+        caveats,
+      })
+      .execute(connection)
+  }
+
+  /**
    * @param {API.Link} link - the CID to get insights for
    * @returns {Promise<object>}
    */
@@ -494,7 +478,6 @@ export default Client
 //   }
 
 /**
- * @async
  * @param {API.Link} link - the CID to get insights for
  * @returns {Promise<object>}
  */

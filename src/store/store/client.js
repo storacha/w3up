@@ -6,6 +6,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import webfetch from 'cross-fetch'
 
+// @ts-ignore
 export * from '@web3-storage/access/capabilities/store'
 
 /**
@@ -15,7 +16,7 @@ export * from '@web3-storage/access/capabilities/store'
  * @param {string} [options.method]
  * @param {HTTP.Fetcher} [options.fetch]
  * @param {API.OutpboundTranpsortOptions} [options.transport]
- * @returns {API.ConnectionView<{store: API.Store, identity: API.Identity}>}
+ * @returns {API.ConnectionView<{store: API.Store}>}
  */
 export const createConnection = ({
   id,
