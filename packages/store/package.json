@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/store",
   "description": "web3.storage upload service",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "types": "./dist/src/lib.d.ts",
   "main": "./src/lib.js",
   "keywords": [
