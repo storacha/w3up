@@ -38,6 +38,10 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
 
   let capabilities = [
     {
+      can: 'store/*',
+      with: opts.issuer.did(),
+    },
+    {
       can: 'store/add',
       with: opts.issuer.did(),
     },
@@ -47,6 +51,22 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
     },
     {
       can: 'store/remove',
+      with: opts.issuer.did(),
+    },
+    {
+      can: 'upload/*',
+      with: opts.issuer.did(),
+    },
+    {
+      can: 'upload/add',
+      with: opts.issuer.did(),
+    },
+    {
+      can: 'upload/list',
+      with: opts.issuer.did(),
+    },
+    {
+      can: 'upload/remove',
       with: opts.issuer.did(),
     },
   ]
@@ -90,7 +110,7 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
  * }} opts
  * @returns {Promise<Uint8Array>}
  */
-export async function writeDelegation(opts) {
+export async function buildDelegationCar(opts) {
   return writeDelegationUCANtoCar(await generateDelegation(opts))
 }
 

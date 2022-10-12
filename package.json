@@ -11,8 +11,7 @@
   },
   "files": [
     "src",
-    "dist",
-    "patches"
+    "dist"
   ],
   "scripts": {
     "build": "npm run build:api_docs && npm run build:types",
@@ -30,10 +29,10 @@
     "@ucanto/core": "^1.0.1",
     "@ucanto/interface": "^1.0.0",
     "@ucanto/principal": "^1.0.1",
-    "@ucanto/transport": "^1.0.1",
     "@ucanto/server": "^1.0.2",
+    "@ucanto/transport": "^1.0.1",
     "@ucanto/validator": "^1.0.2",
-    "@web3-storage/access": "^2.0.0",
+    "@web3-storage/access": "^2.1.1",
     "cross-fetch": "^3.1.5"
   },
   "devDependencies": {
