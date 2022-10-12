@@ -25,11 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.inputs.package == 'wallet'
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.3
         with:
           version: 7
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: 'pnpm'
@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - run: pnpm install
       - run: pnpm -r --filter wallet run build
-      - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch master ./packages/wallet/out
+      - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch main ./packages/wallet/out
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
@@ -55,11 +55,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.inputs.package == 'access'
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.3
         with:
           version: 7
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'

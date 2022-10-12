@@ -55,6 +55,7 @@ export const connect = ({
   id,
   url,
   transport = { encoder: CAR, decoder: CBOR },
+  // @ts-ignore
   fetch = webfetch,
   method,
 }) =>
