@@ -1,19 +1,18 @@
-name: Access SDK
-env:
-  CI: true
-  FORCE_COLOR: 1
+name: Store API
+
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - 'packages/access/**'
-      - '.github/workflows/access.yml'
+      - 'packages/store/**'
+      - '.github/workflows/store.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
-      - 'packages/access/**'
-      - '.github/workflows/access.yml'
+      - 'packages/store/**'
+      - '.github/workflows/store.yml'
       - 'pnpm-lock.yaml'
 jobs:
   test:
@@ -28,5 +27,5 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm -r --filter @web3-storage/access run lint
-      - run: pnpm -r --filter @web3-storage/access run test
+      - run: pnpm -r --filter @web3-storage/store run lint
+      - run: pnpm -r --filter @web3-storage/store run test

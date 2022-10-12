@@ -1,5 +1,5 @@
 {
-  "name": "w3-store",
+  "name": "@web3-storage/store",
   "description": "web3.storage upload service",
   "version": "1.1.0",
   "types": "./dist/src/lib.d.ts",
@@ -13,9 +13,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/web3-storage/ucanto.git"
+    "url": "https://github.com/web3-storage/w3-protocol.git",
+    "directory": "packages/store"
   },
-  "homepage": "https://github.com/web3-storage/ucanto/tree/demo/upload-v2",
+  "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/store",
   "scripts": {
     "check": "tsc --build",
     "test": "npm run test:node",

@@ -13,6 +13,7 @@ export const sign = (link, { bucket, expires = 1000, ...options }) => {
     accessKeyId: options.accessKeyId,
     secretAccessKey: options.secretAccessKey,
     region: options.region,
+    // @ts-ignore
     sessionToken: options.sessionToken,
   })
 

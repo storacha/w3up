@@ -5,7 +5,7 @@ env:
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'packages/access-api/**'
       - '.github/workflows/access-api.yml'
@@ -21,11 +21,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.3
         with:
           version: 7
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
@@ -34,7 +34,7 @@ jobs:
       - run: pnpm -r --filter @web3-storage/access-api run test
   deploy-staging:
     needs: test
-    if: github.head_ref == 'release-please--branches--master--components--access-api'
+    if: github.head_ref == 'release-please--branches--main--components--access-api'
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: staging

@@ -2,6 +2,12 @@
   "name": "@web3-storage/access",
   "version": "2.1.1",
   "description": "w3access SDK",
+  "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3-protocol.git",
+    "directory": "packages/access"
+  },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
   "type": "module",
