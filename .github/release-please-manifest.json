@@ -2,5 +2,5 @@
   "packages/wallet": "1.0.0",
   "packages/access": "2.1.1",
   "packages/access-api": "1.0.0",
-  "packages/store": "1.1.0"
+  "packages/store": "2.0.0"
 }
