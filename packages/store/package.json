@@ -42,7 +42,7 @@
     "@types/mocha": "^10.0.0",
     "chai": "^4.3.6",
     "chai-subset": "^1.6.0",
-    "hd-scripts": "^2.1.0",
+    "hd-scripts": "^3.0.1",
     "mocha": "^10.0.0",
     "playwright-test": "^8.1.1",
     "typescript": "^4.8.4"

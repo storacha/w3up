@@ -1,0 +1,35 @@
+{
+  "name": "keyring",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "tsc && eslint '**/*.{js,jsx,ts}' && prettier --check '**/*.{js,jsx,ts,yml,json}' --ignore-path ../../.gitignore",
+    "check": "tsc"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.4.0",
+    "@types/node": "^18.8.4",
+    "hd-scripts": "^3.0.1",
+    "typescript": "4.8.4",
+    "vite": "^3.1.7",
+    "wrangler": "^2.1.11"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/hd-scripts/eslint/preact.js"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules",
+    ".next",
+    "out",
+    "dist"
+  ],
+  "dependencies": {
+    "preact": "^10.11.1"
+  }
+}
