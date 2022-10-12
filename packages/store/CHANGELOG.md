@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3-protocol/compare/w3-store-v1.1.0...w3-store-v2.0.0) (2022-10-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* new accounts (#72)
+* awake (#66)
+
+### Features
+
+* awake ([#66](https://github.com/web3-storage/w3-protocol/issues/66)) ([bb66f57](https://github.com/web3-storage/w3-protocol/commit/bb66f5772049e3363a753ea5b336c2fa1e42911e))
+* new accounts ([#72](https://github.com/web3-storage/w3-protocol/issues/72)) ([9f6cb41](https://github.com/web3-storage/w3-protocol/commit/9f6cb419d33b9446dd80f8541228096cf2677d45))
+
 ## [1.1.0](https://www.github.com/web3-storage/ucanto/compare/w3-store-v1.0.0...w3-store-v1.1.0) (2022-06-24)
 
 
