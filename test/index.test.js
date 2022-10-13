@@ -11,21 +11,8 @@ import { makeMockServer } from './server.fixture.js'
 describe('client', () => {
   beforeEach(async (context) => {
     const settings = new Map()
-    settings.set(
-      'account_secret',
-      // secret is stored as bytes, so set it as bytes into settings.
-      SigningPrincipal.encode(
-        SigningPrincipal.parse(fixture.alice_account_secret)
-      )
-    )
-
-    settings.set(
-      'agent_secret',
-      // secret is stored as bytes, so set it as bytes into settings.
-      SigningPrincipal.encode(
-        SigningPrincipal.parse(fixture.alice_account_secret)
-      )
-    )
+    settings.set('account_secret', fixture.alice_account_secret)
+    settings.set('agent_secret', fixture.alice_account_secret)
 
     context.accessServer = await makeMockServer({
       capabilities: [Identity.register, Identity.validate],
@@ -89,7 +76,9 @@ describe('client', () => {
   describe('#identity', () => {
     it('should return an account when it exists.', async (context) => {
       const { account } = await context.client.identity()
-      expect(account).toStrictEqual(context.parsedAliceAccountSecret)
+      expect(account.did()).toStrictEqual(
+        context.parsedAliceAccountSecret.did()
+      )
     })
 
     it('should return an agent when it exists.', async (context) => {
@@ -101,8 +90,7 @@ describe('client', () => {
       const settings = new Map()
       settings.set(
         'secret',
-        // secret is stored as bytes, so set it as bytes into settings.
-        SigningPrincipal.encode(
+        SigningPrincipal.format(
           SigningPrincipal.parse(fixture.alice_account_secret)
         )
       )
