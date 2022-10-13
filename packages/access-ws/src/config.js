@@ -61,9 +61,11 @@ function parseRuntimeEnv(s) {
     case 'test':
     case 'dev':
     case 'staging':
-    case 'production':
+    case 'production': {
       return s
-    default:
+    }
+    default: {
       throw new Error('invalid runtime environment name: ' + s)
+    }
   }
 }
