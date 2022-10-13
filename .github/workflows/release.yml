@@ -19,6 +19,7 @@ jobs:
           command: manifest
           config-file: .github/release-please-config.json
           manifest-file: .github/release-please-manifest.json
+          default-branch: main
   publish:
     needs: release
     if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access')
