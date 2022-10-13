@@ -22,7 +22,7 @@ export class Email {
       method: 'POST',
       headers: this.headers,
       body: JSON.stringify({
-        From: 'noreply@dag.house',
+        From: 'web3.storage <noreply@dag.house>',
         To: opts.to,
         TemplateAlias: 'welcome',
         TemplateModel: {
