@@ -1,7 +1,5 @@
 {
   "separate-pull-requests": true,
-  "bootstrap-sha": "88a381ae2077d24ccd762dc7fb47f91a58268e89",
-  "last-release-sha": "88a381ae2077d24ccd762dc7fb47f91a58268e89",
   "packages": {
     "packages/access": {},
     "packages/access-api": {},
