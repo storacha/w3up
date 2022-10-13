@@ -4,7 +4,7 @@
 
 We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
 
-### install dependencies.
+### Install dependencies.
 
 ```bash
 # Install all dependencies in the mono-repo
