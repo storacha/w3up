@@ -7,8 +7,8 @@ We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
 ### Install dependencies.
 
 ```bash
-# install all dependencies in the mono-repo
+# Install all dependencies in the mono-repo
 pnpm install
-# setup git hooks
+# Setup git hooks
 npx simple-git-hooks
 ```
