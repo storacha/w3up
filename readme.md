@@ -31,4 +31,4 @@ The history and the current deployed commits can be check at https://github.com/
 3. After merging an Access API release PR to `main` CI will deploy to `prodution`.
 
 #### Reverting a bad deployment
-When something bad is deployment to any environment it can be reverted by going to the [Manual Deploy Workflow](https://github.com/web3-storage/w3-protocol/actions/workflows/manual.yml) select a branch or tag, the package (in this case `access-api`) and the environment and run the workflow.
+When something bad is deployed to any environment it can be reverted by going to the [Manual Deploy Workflow](https://github.com/web3-storage/w3-protocol/actions/workflows/manual.yml) select a branch or tag, the package (in this case `access-api`) and the environment and run the workflow.
