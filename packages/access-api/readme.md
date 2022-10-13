@@ -1,10 +1,10 @@
 # w3access API
 
-## Contributing
+## contributing
 
 We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
 
-### Install dependencies.
+### install dependencies.
 
 ```bash
 # Install all dependencies in the mono-repo
