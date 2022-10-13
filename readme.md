@@ -18,9 +18,9 @@ npx simple-git-hooks
 ### Access API
 
 There's 3 environments prodution, staging and dev. The URLs are:
-- Prodution: `https://access-api.web3.storage`
-- Staging: `https://access-api-staging.web3.storage`
-- Dev: `https://w3access-dev.protocol-labs.workers.dev`
+- Prodution: https://access-api.web3.storage
+- Staging: https://access-api-staging.web3.storage
+- Dev: https://w3access-dev.protocol-labs.workers.dev
 
 The history and the current deployed commits can be check at https://github.com/web3-storage/w3-protocol/deployments. The deployed commit hash for each environment can also be checked directly in the API .ie [`https://access-api.web3.storage/version`](https://access-api.web3.storage/version).
 
