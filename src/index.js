@@ -11,8 +11,11 @@ import {
   importDelegation,
   writeDelegation,
 } from './delegation.js'
+import { toPrincipal } from './settings.js'
 import { Access, Store } from './store/index.js'
 import { sleep } from './utils.js'
+
+export * from './settings.js'
 
 /** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
 /** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
@@ -84,13 +87,16 @@ class Client {
   async agent() {
     let secret = this.settings.get('agent_secret') || null
 
-    try {
-      return SigningPrincipal.decode(secret)
-    } catch (error) {
-      const id = await SigningPrincipal.generate()
-      this.settings.set('agent_secret', SigningPrincipal.encode(id))
-      return id
+    let id = toPrincipal(secret)
+    if (!id) {
+      id = await SigningPrincipal.generate()
     }
+
+    if (!this.settings.has('agent_secret')) {
+      this.settings.set('agent_secret', SigningPrincipal.format(id))
+    }
+
+    return id
   }
 
   /**
@@ -106,16 +112,13 @@ class Client {
       secret = this.settings.get('secret')
       //       this.settings.delete('secret')
     }
-    let id
-
-    try {
-      id = SigningPrincipal.decode(secret)
-    } catch (error) {
+    let id = toPrincipal(secret)
+    if (!id) {
       id = await SigningPrincipal.generate()
     }
 
     if (!this.settings.has('account_secret')) {
-      this.settings.set('account_secret', SigningPrincipal.encode(id))
+      this.settings.set('account_secret', SigningPrincipal.format(id))
     }
 
     return id
@@ -135,7 +138,7 @@ class Client {
       : {}
 
     //Generate first delegation from account to agent.
-    if (did == null) {
+    if (!did) {
       const issuer = await this.account()
       const to = (await this.agent()).did()
       const del = await generateDelegation({ to, issuer }, true)
