@@ -22,7 +22,7 @@ There's 3 environments prodution, staging and dev. The URLs are:
 - Staging: https://access-api-staging.web3.storage
 - Dev: https://w3access-dev.protocol-labs.workers.dev
 
-The history and the current deployed commits can be check at https://github.com/web3-storage/w3-protocol/deployments. The deployed commit hash for each environment can also be checked directly in the API .ie [`https://access-api.web3.storage/version`](https://access-api.web3.storage/version).
+The history and the current deployed commits can be checked at https://github.com/web3-storage/w3-protocol/deployments. The deployed commit hash for each environment can also be checked directly in the API .ie [`https://access-api.web3.storage/version`](https://access-api.web3.storage/version).
 
 #### Deployment Flow
 1. Each PR deploys to `dev`, we should add support for unique deployments and remove `dev` completely.
