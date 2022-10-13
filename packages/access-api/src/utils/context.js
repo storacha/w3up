@@ -2,63 +2,53 @@ import { SigningPrincipal } from '@ucanto/principal'
 import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
-import { config } from '../config.js'
+import { loadConfig } from '../config.js'
 import { Accounts } from '../kvs/accounts.js'
 import { Validations } from '../kvs/validations.js'
 import { Email } from './email.js'
 import { D1QB } from 'workers-qb'
 
-const sentryOptions = {
-  dsn: config.SENTRY_DSN,
-  allowedHeaders: ['user-agent', 'x-client'],
-  allowedSearchParams: /(.*)/,
-  debug: false,
-  environment: config.ENV,
-  rewriteFrames: {
-    root: '/',
-  },
-  release: config.VERSION,
-  pkg,
-}
-
 /**
  * Obtains a route context object.
  *
- * @param {FetchEvent} event
- * @param {Record<string, string>} params - Parameters from the URL
+ * @param {Request} request
+ * @param {import('../bindings').Env} env
+ * @param {Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>} ctx
  * @returns {import('../bindings').RouteContext}
  */
-export function getContext(event, params) {
+export function getContext(request, env, ctx) {
+  const config = loadConfig(env)
   const sentry = new Toucan({
-    event,
-    ...sentryOptions,
-  })
-  const log = new Logging(
-    event.request,
-    {
-      passThroughOnException: event.passThroughOnException.bind(event),
-      waitUntil: event.waitUntil.bind(event),
+    context: ctx,
+    request,
+    dsn: config.SENTRY_DSN,
+    allowedHeaders: ['user-agent', 'x-client'],
+    allowedSearchParams: /(.*)/,
+    debug: false,
+    environment: config.ENV,
+    rewriteFrames: {
+      root: '/',
     },
-    {
-      token: config.LOGTAIL_TOKEN,
-      debug: config.DEBUG,
-      sentry: ['test', 'dev'].includes(config.ENV) ? undefined : sentry,
-      branch: config.BRANCH,
-      version: config.VERSION,
-      commit: config.COMMITHASH,
-      env: config.ENV,
-    }
-  )
+    release: config.VERSION,
+    pkg,
+  })
+  const log = new Logging(request, ctx, {
+    token: config.LOGTAIL_TOKEN,
+    debug: config.DEBUG,
+    sentry: ['test', 'dev'].includes(config.ENV) ? undefined : sentry,
+    branch: config.BRANCH,
+    version: config.VERSION,
+    commit: config.COMMITHASH,
+    env: config.ENV,
+  })
 
   const keypair = SigningPrincipal.parse(config.PRIVATE_KEY)
-  const url = new URL(event.request.url)
+  const url = new URL(request.url)
   return {
-    params,
     log,
     keypair,
     config,
     url,
-    event,
     kvs: {
       accounts: new Accounts(config.ACCOUNTS),
       validations: new Validations(config.VALIDATIONS),

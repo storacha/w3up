@@ -52,6 +52,7 @@ prog
       await build({
         entryPoints: [path.join(__dirname, '../src/index.js')],
         bundle: true,
+        format: 'esm',
         outfile: 'dist/worker.js',
         legalComments: 'external',
         inject: [path.join(__dirname, 'node-globals.js')],

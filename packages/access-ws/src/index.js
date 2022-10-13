@@ -95,8 +95,9 @@ export class ChatRoom {
         return new Response(undefined, { status: 101, webSocket: client })
       }
 
-      default:
+      default: {
         return new Response('Not found', { status: 404 })
+      }
     }
   }
 

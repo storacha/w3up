@@ -35,6 +35,7 @@ export async function context() {
     packagePath: true,
     wranglerConfigPath: true,
     sourceMap: true,
+    modules: true,
     bindings,
   })
 

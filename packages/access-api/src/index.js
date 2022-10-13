@@ -21,20 +21,23 @@ r.add('get', '/validate-ws', validateWS)
 r.add('post', '/', postRoot)
 r.add('post', '/raw', postRaw)
 
-addEventListener('fetch', (event) => {
-  const env = getContext(event, {})
-  env.log.time('request')
-  event.respondWith(
-    r
-      .handle(event, env)
-      .then((rsp) => {
-        env.log.timeEnd('request')
-        return env.log.end(corsHeaders(event.request, rsp))
-      })
-      .catch((error) => {
-        return env.log.end(
-          corsHeaders(event.request, errorHandler(error, env.log))
+/** @type {import('./bindings.js').ModuleWorker} */
+const worker = {
+  fetch: async (request, env, ctx) => {
+    const context = getContext(request, env, ctx)
+    context.log.time('request')
+    try {
+      const rsp = await r.fetch(request, context, ctx)
+      return context.log.end(corsHeaders(request, rsp))
+    } catch (error) {
+      return context.log.end(
+        corsHeaders(
+          request,
+          errorHandler(/** @type {Error} */ (error), context.log)
         )
-      })
-  )
-})
+      )
+    }
+  },
+}
+
+export default worker
