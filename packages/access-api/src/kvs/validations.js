@@ -8,7 +8,7 @@ export class Validations {
    *
    * @param {KVNamespace} kv
    */
-  constructor(kv = VALIDATIONS) {
+  constructor(kv) {
     this.kv = kv
   }
 

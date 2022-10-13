@@ -1,17 +1,14 @@
-export const config = loadConfigVariables()
-
 /**
  * Loads configuration variables from the global environment and returns a JS object
  * keyed by variable names.
  *
+ * @param {import("./bindings").Env} env
  */
-export function loadConfigVariables() {
+export function loadConfig(env) {
   /** @type Record<string, string> */
   const vars = {}
 
-  /** @type Record<string, unknown> */
-  const globals = globalThis
-
+  /** @type {Array<keyof env>} */
   const required = [
     'ENV',
     'DEBUG',
@@ -22,7 +19,7 @@ export function loadConfigVariables() {
   ]
 
   for (const name of required) {
-    const val = globals[name]
+    const val = env[name]
     if (typeof val === 'string' && val.length > 0) {
       vars[name] = val
     } else {
@@ -55,11 +52,11 @@ export function loadConfigVariables() {
     // bindings
     METRICS:
       /** @type {import("./bindings").AnalyticsEngine} */ (
-        globals.W3ACCESS_METRICS
+        env.W3ACCESS_METRICS
       ) || createAnalyticsEngine(),
-    ACCOUNTS,
-    VALIDATIONS,
-    DB: /** @type {D1Database} */ (globals.__D1_BETA__),
+    ACCOUNTS: env.ACCOUNTS,
+    VALIDATIONS: env.VALIDATIONS,
+    DB: /** @type {D1Database} */ (env.__D1_BETA__),
   }
 }
 
@@ -83,10 +80,12 @@ function parseRuntimeEnv(s) {
     case 'test':
     case 'dev':
     case 'staging':
-    case 'production':
+    case 'production': {
       return s
-    default:
+    }
+    default: {
       throw new Error('invalid runtime environment name: ' + s)
+    }
   }
 }
 

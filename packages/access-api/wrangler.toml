@@ -6,7 +6,9 @@ main = "./dist/worker.js"
 # Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
 compatibility_date = "2022-09-28"
 compatibility_flags = ["url_standard"]
-no_bundle = true
+
+# We need to let wrangler bundle while D1 is in Beta
+no_bundle = false
 
 [[kv_namespaces]]
 binding = "ACCOUNTS"
@@ -31,7 +33,6 @@ DEBUG = "true"
 command = "scripts/cli.js build"
 watch_dir = "src"
 
-
 [miniflare]
 d1_persist = ".wrangler/miniflare"
 
@@ -40,84 +41,51 @@ d1_persist = ".wrangler/miniflare"
 [env.dev]
 name = "w3access-dev"
 workers_dev = true
+vars = { ENV = "dev", DEBUG = "false" }
+build = { command = "scripts/cli.js build --env dev", watch_dir = "src" }
+kv_namespaces = [
+    { binding = "ACCOUNTS", id = "5697e95e1aaa436788e6d697fd3350be" },
+    { binding = "VALIDATIONS", id = "ea17f472b37a43d29c1faf7af9512e03" },
+]
+d1_databases = [
+    { binding = "__D1_BETA__", database_name = "accounts-dev", database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae" },
+]
+unsafe = { bindings = [
+    { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
+] }
 
-[env.dev.vars]
-ENV = "dev"
-DEBUG = "false"
-
-[env.dev.build]
-command = "scripts/cli.js build --env dev"
-watch_dir = "src"
-
-[[env.dev.kv_namespaces]]
-binding = "ACCOUNTS"
-id = "5697e95e1aaa436788e6d697fd3350be"
-preview_id = "5697e95e1aaa436788e6d697fd3350be"
-
-[[env.dev.kv_namespaces]]
-binding = "VALIDATIONS"
-id = "ea17f472b37a43d29c1faf7af9512e03"
-preview_id = "ea17f472b37a43d29c1faf7af9512e03"
-
-[[env.dev.unsafe.bindings]]
-type = "analytics_engine"
-dataset = "W3ACCESS_METRICS"
-name = "W3ACCESS_METRICS"
-
-[[env.dev.d1_databases]]
-binding = "__D1_BETA__"                              # i.e. available in your Worker on env.DB
-database_name = "accounts-dev"
-database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 
 # Staging
 [env.staging]
 name = "w3access-staging"
 routes = [{ pattern = "access-api-staging.web3.storage", custom_domain = true }]
-
-[env.staging.vars]
-ENV = "staging"
-DEBUG = "false"
-
-[env.staging.build]
-command = "scripts/cli.js build --env staging"
-watch_dir = "src"
-
-[[env.staging.kv_namespaces]]
-binding = "ACCOUNTS"
-id = "b0e5ca990dda4e3784a1741dfa28a52e"
-
-[[env.staging.kv_namespaces]]
-binding = "VALIDATIONS"
-id = "b13f07c88fe848db9ccf651a0fea3fb6"
-
-[[env.staging.unsafe.bindings]]
-type = "analytics_engine"
-dataset = "W3ACCESS_METRICS"
-name = "W3ACCESS_METRICS"
+vars = { ENV = "staging", DEBUG = "false" }
+build = { command = "scripts/cli.js build --env staging", watch_dir = "src" }
+kv_namespaces = [
+    { binding = "ACCOUNTS", id = "b0e5ca990dda4e3784a1741dfa28a52e" },
+    { binding = "VALIDATIONS", id = "b13f07c88fe848db9ccf651a0fea3fb6" },
+]
+d1_databases = [
+    { binding = "__D1_BETA__", database_name = "accounts-staging", database_id = "4c94bac0-76a7-4ce3-8f24-90ce50590d00" },
+]
+unsafe = { bindings = [
+    { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
+] }
 
 
 # Production
 [env.production]
 name = "w3access"
 routes = [{ pattern = "access-api.web3.storage", custom_domain = true }]
-
-[env.production.vars]
-ENV = "production"
-DEBUG = "false"
-
-[env.production.build]
-command = "scripts/cli.js build --env production"
-watch_dir = "src"
-
-[[env.production.kv_namespaces]]
-binding = "ACCOUNTS"
-id = "5437954e8cfd4f7d98557132b0a2e93f"
-
-[[env.production.kv_namespaces]]
-binding = "VALIDATIONS"
-id = "fb7cf10c725f45948321e88b8cb168ad"
-
-[[env.production.unsafe.bindings]]
-type = "analytics_engine"
-dataset = "W3ACCESS_METRICS"
-name = "W3ACCESS_METRICS"
+vars = { ENV = "production", DEBUG = "false" }
+build = { command = "scripts/cli.js build --env production", watch_dir = "src" }
+kv_namespaces = [
+    { binding = "ACCOUNTS", id = "5437954e8cfd4f7d98557132b0a2e93f" },
+    { binding = "VALIDATIONS", id = "fb7cf10c725f45948321e88b8cb168ad" },
+]
+d1_databases = [
+    { binding = "__D1_BETA__", database_name = "accounts", database_id = "5a016afe-2c65-4e10-9e8d-bced1b59814a" },
+]
+unsafe = { bindings = [
+    { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
+] }

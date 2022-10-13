@@ -10,7 +10,7 @@ export class Accounts {
    *
    * @param {KVNamespace} kv
    */
-  constructor(kv = ACCOUNTS) {
+  constructor(kv) {
     this.kv = kv
   }
 
