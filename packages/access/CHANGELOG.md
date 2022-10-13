@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/web3-storage/w3-protocol/compare/access-v2.1.0...access-v2.1.1) (2022-10-10)
+
+
+### Bug Fixes
+
+* regression from `store -> all` name change ([#90](https://github.com/web3-storage/w3-protocol/issues/90)) ([14a6a5b](https://github.com/web3-storage/w3-protocol/commit/14a6a5b72deca8391420aa0c2dba9eac2d912ef2))
+
 ## [2.1.0](https://github.com/web3-storage/w3-protocol/compare/access-v2.0.0...access-v2.1.0) (2022-10-04)
 
 

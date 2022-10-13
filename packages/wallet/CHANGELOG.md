@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0](https://github.com/web3-storage/w3-protocol/compare/wallet-v0.3.0...wallet-v1.0.0) (2022-10-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* new accounts (#72)
+* awake (#66)
+
+### Features
+
+* awake ([#66](https://github.com/web3-storage/w3-protocol/issues/66)) ([bb66f57](https://github.com/web3-storage/w3-protocol/commit/bb66f5772049e3363a753ea5b336c2fa1e42911e))
+* new accounts ([#72](https://github.com/web3-storage/w3-protocol/issues/72)) ([9f6cb41](https://github.com/web3-storage/w3-protocol/commit/9f6cb419d33b9446dd80f8541228096cf2677d45))
+
 ## [0.3.0](https://github.com/web3-storage/ucan-protocol/compare/wallet-v0.2.4...wallet-v0.3.0) (2022-08-30)
 
 

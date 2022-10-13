@@ -1,4 +1,5 @@
 import type { Logging } from '@web3-storage/worker-utils/logging'
+import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import type { SigningPrincipal } from '@ucanto/interface'
 import type { config } from './config'
 import { Email } from './utils/email.js'
@@ -18,21 +19,28 @@ export interface AnalyticsEngineEvent {
   readonly blobs?: Array<ArrayBuffer | string | null>
 }
 
-declare global {
-  const ACCOUNTS: KVNamespace
-  const VALIDATIONS: KVNamespace
-  const W3ACCESS_METRICS: AnalyticsEngine
+export interface Env {
+  // vars
+  ENV: string
+  DEBUG: string
+  // secrets
+  PRIVATE_KEY: string
+  SENTRY_DSN: string
+  POSTMARK_TOKEN: string
+  LOGTAIL_TOKEN: string
+  // bindings
+  ACCOUNTS: KVNamespace
+  VALIDATIONS: KVNamespace
+  W3ACCESS_METRICS: AnalyticsEngine
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const __D1_BETA__: D1Database
+  __D1_BETA__: D1Database
 }
 
 export interface RouteContext {
-  params: Record<string, string>
   log: Logging
   keypair: SigningPrincipal
   config: typeof config
   url: URL
-  event: FetchEvent
   email: Email
   kvs: {
     accounts: Accounts
@@ -41,7 +49,32 @@ export interface RouteContext {
   db: D1QB
 }
 
-export type Handler = (
-  event: FetchEvent,
-  ctx: RouteContext
-) => Promise<Response> | Response
+export type Handler = _Handler<RouteContext>
+
+export type Bindings = Record<
+  string,
+  | KVNamespace
+  | DurableObjectNamespace
+  | CryptoKey
+  | string
+  | D1Database
+  | AnalyticsEngine
+>
+declare namespace ModuleWorker {
+  type FetchHandler<Environment extends Bindings = Bindings> = (
+    request: Request,
+    env: Environment,
+    ctx: Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>
+  ) => Promise<Response> | Response
+
+  type CronHandler<Environment extends Bindings = Bindings> = (
+    event: Omit<ScheduledEvent, 'waitUntil'>,
+    env: Environment,
+    ctx: Pick<ScheduledEvent, 'waitUntil'>
+  ) => Promise<void> | void
+}
+
+export interface ModuleWorker {
+  fetch?: ModuleWorker.FetchHandler<Env>
+  scheduled?: ModuleWorker.CronHandler<Env>
+}

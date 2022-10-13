@@ -1,10 +1,4 @@
-import type {
-  Capability,
-  ServiceMethod,
-  DID,
-  Resource,
-  Failure,
-} from '@ucanto/server'
+import type { Capability, ServiceMethod, DID } from '@ucanto/server'
 import type { ServiceError } from './error'
 
 export interface Identity {
