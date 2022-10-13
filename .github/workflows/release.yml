@@ -20,6 +20,7 @@ jobs:
           config-file: .github/release-please-config.json
           manifest-file: .github/release-please-manifest.json
           target-branch: main
+          release-type: node
   publish:
     needs: release
     if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access')
