@@ -6,6 +6,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import webfetch from 'cross-fetch'
 
+// @ts-ignore
 export * from '@web3-storage/access/capabilities/store'
 
 /**
