@@ -8,7 +8,7 @@
 ## Functions
 
 <dl>
-<dt><a href="#createClient">createClient(options)</a> ⇒</dt>
+<dt><a href="#createClient">createClient(options)</a> ⇒ <code><a href="#Client">Client</a></code></dt>
 <dd></dd>
 </dl>
 
@@ -160,9 +160,8 @@ Remove an uploaded file by CID
 
 <a name="createClient"></a>
 
-## createClient(options) ⇒
+## createClient(options) ⇒ [<code>Client</code>](#Client)
 **Kind**: global function  
-**Returns**: Client  
 
 | Param | Type |
 | --- | --- |
