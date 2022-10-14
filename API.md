@@ -184,10 +184,10 @@ Remove an uploaded file by CID
 
 | Name | Type | Description |
 | --- | --- | --- |
-| serviceDID | <code>API.DID</code> | The DID of the service to talk to. |
-| serviceURL | <code>string</code> | The URL of the service to talk to. |
-| accessURL | <code>string</code> | The URL of the access service. |
-| accessDID | <code>API.DID</code> | The DID of the access service. |
+| [serviceDID] | <code>API.DID</code> | The DID of the service to talk to. |
+| [serviceURL] | <code>string</code> | The URL of the service to talk to. |
+| [accessURL] | <code>string</code> | The URL of the access service. |
+| [accessDID] | <code>API.DID</code> | The DID of the access service. |
 | settings | <code>Map.&lt;string, any&gt;</code> \| <code>string</code> \| <code>Settings.SettingsObject</code> | A map/db of settings to use for the client. |
 
 <a name="IdentityInfo"></a>
