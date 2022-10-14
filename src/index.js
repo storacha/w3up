@@ -22,10 +22,10 @@ export * from './settings.js'
 
 /**
  * @typedef {object} ClientOptions
- * @property {API.DID} serviceDID - The DID of the service to talk to.
- * @property {string} serviceURL - The URL of the service to talk to.
- * @property {string} accessURL - The URL of the access service.
- * @property {API.DID} accessDID - The DID of the access service.
+ * @property {API.DID} [ serviceDID ] - The DID of the service to talk to.
+ * @property {string} [ serviceURL ] - The URL of the service to talk to.
+ * @property {string} [ accessURL ] - The URL of the access service.
+ * @property {API.DID} [ accessDID ] - The DID of the access service.
  * @property {Map<string, any>|string|Settings.SettingsObject} settings - A map/db of settings to use for the client.
  */
 
@@ -53,10 +53,10 @@ class Client {
    * @param {ClientOptions} options
    */
   constructor({
-    serviceDID,
-    serviceURL,
-    accessURL,
-    accessDID,
+    serviceDID = defaults.W3_STORE_DID,
+    serviceURL = defaults.SERVICE_URL,
+    accessURL = defaults.ACCESS_URL,
+    accessDID = defaults.ACCESS_DID,
     settings,
   } = DefaultClientOptions) {
     this.serviceURL = new URL(serviceURL)
