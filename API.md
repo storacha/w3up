@@ -44,7 +44,7 @@
     * [.list()](#Client+list) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.makeDelegation(opts)](#Client+makeDelegation) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
     * [.importDelegation(bytes, alias)](#Client+importDelegation) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
-    * [.upload(bytes)](#Client+upload) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
+    * [.upload(bytes, [origin])](#Client+upload) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
     * [.remove(link)](#Client+remove)
     * [.insights(link)](#Client+insights) ⇒ <code>Promise.&lt;object&gt;</code>
 
@@ -128,7 +128,7 @@ List all of the uploads connected to this user.
 
 <a name="Client+upload"></a>
 
-### client.upload(bytes) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
+### client.upload(bytes, [origin]) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
 Upload a car via bytes.
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
@@ -136,6 +136,7 @@ Upload a car via bytes.
 | Param | Type | Description |
 | --- | --- | --- |
 | bytes | <code>Uint8Array</code> | the url to upload |
+| [origin] | <code>string</code> \| <code>undefined</code> | the CID of the previous car chunk. |
 
 <a name="Client+remove"></a>
 
@@ -187,7 +188,7 @@ Remove an uploaded file by CID
 | serviceURL | <code>string</code> | The URL of the service to talk to. |
 | accessURL | <code>string</code> | The URL of the access service. |
 | accessDID | <code>API.DID</code> | The DID of the access service. |
-| settings | <code>Map.&lt;string, any&gt;</code> | A map/db of settings to use for the client. |
+| settings | <code>Map.&lt;string, any&gt;</code> \| <code>string</code> \| <code>Settings.SettingsObject</code> | A map/db of settings to use for the client. |
 
 <a name="IdentityInfo"></a>
 

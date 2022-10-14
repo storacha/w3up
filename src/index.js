@@ -11,8 +11,11 @@ import {
   importDelegation,
   writeDelegation,
 } from './delegation.js'
+import * as Settings from './settings.js'
 import { Access, Store } from './store/index.js'
 import { sleep } from './utils.js'
+
+export * from './settings.js'
 
 /** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
 /** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
@@ -23,7 +26,7 @@ import { sleep } from './utils.js'
  * @property {string} [ serviceURL ] - The URL of the service to talk to.
  * @property {string} [ accessURL ] - The URL of the access service.
  * @property {API.DID} [ accessDID ] - The DID of the access service.
- * @property {Map<string, any>} settings - A map/db of settings to use for the client.
+ * @property {Map<string, any>|string|Settings.SettingsObject} settings - A map/db of settings to use for the client.
  */
 
 /**
@@ -61,7 +64,8 @@ class Client {
 
     this.accessURL = new URL(accessURL)
     this.accessDID = accessDID
-    this.settings = settings
+
+    this.settings = Settings.importSettings(settings)
 
     this.storeClient = Store.createConnection({
       id: this.serviceDID,
@@ -84,13 +88,16 @@ class Client {
   async agent() {
     let secret = this.settings.get('agent_secret') || null
 
-    try {
-      return SigningPrincipal.decode(secret)
-    } catch (error) {
-      const id = await SigningPrincipal.generate()
-      this.settings.set('agent_secret', SigningPrincipal.encode(id))
-      return id
+    let id = Settings.toPrincipal(secret)
+    if (!id) {
+      id = await SigningPrincipal.generate()
     }
+
+    if (!this.settings.has('agent_secret')) {
+      this.settings.set('agent_secret', SigningPrincipal.format(id))
+    }
+
+    return id
   }
 
   /**
@@ -106,16 +113,13 @@ class Client {
       secret = this.settings.get('secret')
       //       this.settings.delete('secret')
     }
-    let id
-
-    try {
-      id = SigningPrincipal.decode(secret)
-    } catch (error) {
+    let id = Settings.toPrincipal(secret)
+    if (!id) {
       id = await SigningPrincipal.generate()
     }
 
     if (!this.settings.has('account_secret')) {
-      this.settings.set('account_secret', SigningPrincipal.encode(id))
+      this.settings.set('account_secret', SigningPrincipal.format(id))
     }
 
     return id
@@ -135,7 +139,7 @@ class Client {
       : {}
 
     //Generate first delegation from account to agent.
-    if (did == null) {
+    if (!did) {
       const issuer = await this.account()
       const to = (await this.agent()).did()
       const del = await generateDelegation({ to, issuer }, true)
@@ -204,6 +208,7 @@ class Client {
     const identity = await this.identity()
 
     try {
+      // @ts-ignore
       const result = await Access.validate
         .invoke({
           issuer: identity.account,
@@ -233,6 +238,7 @@ class Client {
     // Use access API/client to do all of this.
     const first = proof.capabilities[0]
     try {
+      // @ts-ignore
       const validate = await Access.register
         .invoke({
           issuer: identity.account,
@@ -303,6 +309,7 @@ class Client {
    */
   async whoami() {
     const identity = await this.identity()
+    // @ts-ignore
     return await Access.identify
       .invoke({
         issuer: identity.agent,
@@ -320,6 +327,7 @@ class Client {
    */
   async list() {
     const identity = await this.identity()
+    // @ts-ignore
     return Store.list
       .invoke({
         issuer: identity.agent,
@@ -386,6 +394,7 @@ class Client {
     try {
       const identity = await this.identity()
       const link = await CAR.codec.link(bytes)
+      // @ts-ignore
       const result = await Store.add
         .invoke({
           issuer: identity.agent,
@@ -438,6 +447,7 @@ class Client {
    */
   async remove(link) {
     const identity = await this.identity()
+    // @ts-ignore
     return await Store.remove
       .invoke({
         issuer: identity.agent,
