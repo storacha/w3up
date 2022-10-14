@@ -1,5 +1,60 @@
 # Changelog
 
+## [3.0.0](https://github.com/web3-storage/w3-protocol/compare/access-api-v2.0.1...access-api-v3.0.0) (2022-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* new accounts (#72)
+* awake (#66)
+
+### Features
+
+* **access-api:** add email notifications ([40b5332](https://github.com/web3-storage/w3-protocol/commit/40b53323b9c569b191f35d62d32aac844de18fdd))
+* **access-api:** add logtail ([1246ab0](https://github.com/web3-storage/w3-protocol/commit/1246ab0846f49f9adce734cf4f651d22f7ac7536))
+* **access-api:** add prod config ([60707ec](https://github.com/web3-storage/w3-protocol/commit/60707ecef6ed1af8d8fe38f9ee0deb9761cb80a6))
+* **access-api:** new email template ([cc19320](https://github.com/web3-storage/w3-protocol/commit/cc193202e385d8079144aa90e989af07cf743b0b))
+* awake ([#66](https://github.com/web3-storage/w3-protocol/issues/66)) ([bb66f57](https://github.com/web3-storage/w3-protocol/commit/bb66f5772049e3363a753ea5b336c2fa1e42911e))
+* fail validate for register email and add metrics ([0916ba6](https://github.com/web3-storage/w3-protocol/commit/0916ba6bda8ad46ccc4f6bb0c6f4a48dd99db0c8))
+* new accounts ([#72](https://github.com/web3-storage/w3-protocol/issues/72)) ([9f6cb41](https://github.com/web3-storage/w3-protocol/commit/9f6cb419d33b9446dd80f8541228096cf2677d45))
+* resync ([5cae9cd](https://github.com/web3-storage/w3-protocol/commit/5cae9cd55cfcc06046eb23a2f33931299dd07ff5))
+* sdk ([305b2d3](https://github.com/web3-storage/w3-protocol/commit/305b2d317ba4b8743a1594e9dbe0d22bac90c229))
+* sdk and cli ([2373447](https://github.com/web3-storage/w3-protocol/commit/2373447db93ee16276f45fbfe40e4b98c28b6ab7))
+* support ucan as bearer ([#50](https://github.com/web3-storage/w3-protocol/issues/50)) ([bc73755](https://github.com/web3-storage/w3-protocol/commit/bc73755a308d116ba42f67cef2c7a6be5307c327))
+* update deps ([d276375](https://github.com/web3-storage/w3-protocol/commit/d2763750159ad56132f0b002ff5f50cc36fce20c))
+* use modules and setup ([#99](https://github.com/web3-storage/w3-protocol/issues/99)) ([b060c0b](https://github.com/web3-storage/w3-protocol/commit/b060c0b299ee55dbe7820231c63be90129a39652)), closes [#98](https://github.com/web3-storage/w3-protocol/issues/98)
+
+
+### Bug Fixes
+
+* **access-api:** add kvs ([e241d62](https://github.com/web3-storage/w3-protocol/commit/e241d6290d93bfc20986591398ab20af6173ef78))
+* **access-api:** add logtail to tests ([546152a](https://github.com/web3-storage/w3-protocol/commit/546152aea75aff393935d866cbd9c1a818e81725))
+* **access-api:** add name to emails and fix miniflare dev ([ad84b46](https://github.com/web3-storage/w3-protocol/commit/ad84b4696ec9078800d4bb99597bc1da5068abc1)), closes [#60](https://github.com/web3-storage/w3-protocol/issues/60)
+* **access-api:** changes names, update deps ([3f9e1f8](https://github.com/web3-storage/w3-protocol/commit/3f9e1f800728f57a9b194154c1b2e0133aa5bca4))
+* **access-api:** ci tests ([314cf63](https://github.com/web3-storage/w3-protocol/commit/314cf635aa632e05a79822c5f7ec012559ff4427))
+* **access-api:** cors on errors ([bb8e916](https://github.com/web3-storage/w3-protocol/commit/bb8e91693be87186846bac166b1e5ab05c33a112))
+* **access-api:** test error in staging ([1a97a57](https://github.com/web3-storage/w3-protocol/commit/1a97a5797678d242db5849d9f10b8bc1907873d6))
+* **access-api:** use different email for tests ([1a01504](https://github.com/web3-storage/w3-protocol/commit/1a0150429253afc572c9689f0a09a4c26499bd03))
+* add analytics to staging and prod ([14941d9](https://github.com/web3-storage/w3-protocol/commit/14941d901e48e92896cc962b3e93488731afa381))
+* add readme ([25a01f5](https://github.com/web3-storage/w3-protocol/commit/25a01f54c4db8f5af75e23c924d86a7a67823beb))
+* add readme text ([088273e](https://github.com/web3-storage/w3-protocol/commit/088273e97a72f7ec85c60a5cb5dd6a8754603064))
+* api ([4e70483](https://github.com/web3-storage/w3-protocol/commit/4e7048316d3ed95f5b7606830d75420c5020bf53))
+* bump api ([88a381a](https://github.com/web3-storage/w3-protocol/commit/88a381ae2077d24ccd762dc7fb47f91a58268e89))
+* change sentry name ([ad69e47](https://github.com/web3-storage/w3-protocol/commit/ad69e47cb01ad1acedccf95798eacd9a649659bd))
+* fix ci ([ce8f7a9](https://github.com/web3-storage/w3-protocol/commit/ce8f7a937a336c6f86d22a25fe4a4465f0c86c58))
+* new email for notifications ([57b6845](https://github.com/web3-storage/w3-protocol/commit/57b6845a56f534505eeabdf5ab2e20f8b37c9532))
+* proper envs and update deps ([d5dccb6](https://github.com/web3-storage/w3-protocol/commit/d5dccb6e9c23b5ddbdffa4c67c04d195524b38f2))
+* reconfigure ava to avoid ci problems ([ce2006e](https://github.com/web3-storage/w3-protocol/commit/ce2006eb8f02153618c2e483a5bb5983443ff89a))
+* redirect on success ([#77](https://github.com/web3-storage/w3-protocol/issues/77)) ([0e67f3b](https://github.com/web3-storage/w3-protocol/commit/0e67f3be07118dd132770818486d2498416a300f))
+* remove error ([1ba180b](https://github.com/web3-storage/w3-protocol/commit/1ba180b2c8a2da5dd9d3a69f23bcd93022500d6e))
+* remove it@dag.house ([8d319fe](https://github.com/web3-storage/w3-protocol/commit/8d319fef315fa5dd3a0b88b8bf23f5576e8adc28))
+* revert fail email validation ([389784b](https://github.com/web3-storage/w3-protocol/commit/389784bb995b18683ca71af63816db123880d3eb))
+* route for staging ([8d5866f](https://github.com/web3-storage/w3-protocol/commit/8d5866f2bf870eaf2bb26bddef02ee8a0b6d1386))
+* staging ([29db547](https://github.com/web3-storage/w3-protocol/commit/29db547848e8a5cab4d5c91a72010ed4aec5d09c))
+* staging ([53f62b0](https://github.com/web3-storage/w3-protocol/commit/53f62b0269a7c3def5c22afb2b888d5886683f05))
+* test api ([9597c44](https://github.com/web3-storage/w3-protocol/commit/9597c4486abb1c21a0d8a504d4bb8632581e4800))
+* update readme ([2f78a93](https://github.com/web3-storage/w3-protocol/commit/2f78a930ef46b1e80d63f8e9b3bce6e960d5e4d9))
+
 ## [2.0.1](https://github.com/web3-storage/w3-protocol/compare/access-api-v2.0.0...access-api-v2.0.1) (2022-10-13)
 
 
