@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>W3UI Example App</title>
+  </head>
+  <body style="background-color:#1d2027;">
+    <div id="app" class="vh-100 flex flex-column justify-center items-center sans-serif light-silver">
+      <header style="text-align: center; padding: 10px;">
+        <img alt="logo" src="/src/assets/logo.png" width="250" />
+      </header>
+      <div class="w-90 w-50-ns mw6">
+
+        <register-form id="register-form-component">
+          <form id="sign-up-in-form" class="auth__form" action="">
+            <div class="mb3">
+              <label htmlFor="email" class="db mb2">Email address:</label>
+              <input name="email" id="email" class="db pa2 w-100" type="email" required />
+            </div>
+            <button type="submit" class="ph3 pv2">Register</button>
+          </form>
+        </register-form>
+      </div>
+    </div>
+
+    <!-- Verification -->
+    <template id="verification-required-template">
+      <div>
+        <h1 class="near-white">Verify your email address!</h1>
+        <p>Click the link in the email we sent to <span data-email-slot></span> to sign in.</p>
+        <button type="button" id="cancel-registration" class="ph3 pv2">Cancel</button>
+      </div>
+    </template>
+
+    <!-- Logged in -->
+    <template id="registration-success-template">
+      <div>
+        <h1 class="near-white">Welcome <span data-email-slot></span>!</h1>
+        <p>You are logged in!!</p>
+        <button type="button" id="sign-out" class="ph3 pv2">Sign Out</button>
+      </div>
+    </template>
+
+    <!-- Upload form -->
+    <template id="upload-form-template">
+      <form id="upload-form">
+        <div class='db mb3'>
+          <label htmlFor='file' class='db mb2'>File:</label>
+          <input id='file' class='db pa2 w-100 ba br2' type='file' required />
+        </div>
+        <button type='submit' class='ph3 pv2'>Upload</button>
+      </form>
+    </template>
+
+    <!-- File Encoding -->
+    <template id="file-encoding-template">
+      <div class='flex items-center'>
+        <div class='spinner mr3 flex-none'></div>
+        <div class='flex-auto'>
+          <p class='truncate'>Building DAG for <span data-file-name-slot></span></p>
+        </div>
+      </div>
+    </template>
+
+    <!-- File Uploading -->
+    <template id="file-uploading-template">
+      <div class='flex items-center'>
+        <div class='spinner mr3 flex-none'></div>
+        <div class='flex-auto'>
+          <p class='truncate'>Uploading DAG for <span data-file-name-slot></span></p>
+          <p class='f6 code truncate'><span data-root-cid-slot></span></p>
+        </div>
+      </div>
+    </template>
+
+    <!-- File Upload error -->
+    <template id="upload-error-template">
+      <div>
+        <h1 class='near-white'>⚠️ Error: failed to upload file: <span data-error-messages-slot></span></h1>
+        <p>Check the browser console for details.</p>
+      </div>
+    </template>
+
+    <!-- Upload complete -->
+    <template id="upload-complete-template">
+      <div>
+        <h1 class='near-white'>Done!</h1>
+        <p class='f6 code truncate'><span data-root-cid-slot></span></p>
+        <p><a data-root-cid-href-slot href="" class='blue'>View <span data-file-name-slot></span> on IPFS Gateway.</a></p>
+      </div>
+    </template>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
