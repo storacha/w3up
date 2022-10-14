@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.1](https://github.com/web3-storage/w3-protocol/compare/access-api-v2.0.0...access-api-v2.0.1) (2022-10-13)
+
+
+### Bug Fixes
+
+* **access-api:** add name to emails and fix miniflare dev ([ad84b46](https://github.com/web3-storage/w3-protocol/commit/ad84b4696ec9078800d4bb99597bc1da5068abc1)), closes [#60](https://github.com/web3-storage/w3-protocol/issues/60)
+* bump api ([88a381a](https://github.com/web3-storage/w3-protocol/commit/88a381ae2077d24ccd762dc7fb47f91a58268e89))
+* fix ci ([ce8f7a9](https://github.com/web3-storage/w3-protocol/commit/ce8f7a937a336c6f86d22a25fe4a4465f0c86c58))
+* update readme ([2f78a93](https://github.com/web3-storage/w3-protocol/commit/2f78a930ef46b1e80d63f8e9b3bce6e960d5e4d9))
+
 ## [2.0.0](https://github.com/web3-storage/w3-protocol/compare/access-api-v1.0.0...access-api-v2.0.0) (2022-10-10)
 
 
