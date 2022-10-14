@@ -9,8 +9,6 @@ import webfetch from 'cross-fetch'
 // @ts-ignore
 export * from '@web3-storage/access/capabilities/identity'
 
-// import * as CAR from '../../../patches/@ucanto/transport/car.js'
-
 /**
  * @param {object} options
  * @param {API.DID} options.id

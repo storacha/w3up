@@ -6,6 +6,7 @@ import { SigningPrincipal } from '@ucanto/principal'
  * @property {string} [secret]
  * @property {string} [agent_secret]
  * @property {string} [account_secret]
+ * @property {string} [email]
  * @property {any} [delegations]
  */
 
@@ -32,40 +33,53 @@ export function toPrincipal(secret) {
 }
 
 /**
- * Takes a JSON string and builds a settings object from it.
- *
- * @param {string} settingsString - The settings string (typically from cli export-settings)
- * @returns {Promise<Map<string,any>>} The settings object.
+ * @param {Map<string, any>|SettingsObject} objectToParse
+ * @returns {Map<string, any>}
  */
-export async function importSettings(settingsString) {
-  const imported = JSON.parse(settingsString)
-  const settings = new Map()
+export function objectToMap(objectToParse) {
+  // TODO: CHANGE LATER, store check is only for CONF
+  if (objectToParse instanceof Map) {
+    /** @type Map<string, any> */
+    return objectToParse
+  }
 
-  if (imported) {
-    for (var key of Object.keys(imported)) {
-      if (key == 'secret' || key == 'agent_secret' || key == 'account_secret') {
-        const parsed = toPrincipal(imported[key])
-        if (parsed) {
-          const formatted = SigningPrincipal.format(parsed)
-          settings.set(key, formatted)
-        }
-      } else if (key == 'delegations') {
-        /** @type any */
-        const delegations = {}
+  const settings = 'store' in objectToParse ? objectToParse : new Map()
 
-        for (const [did, del] of Object.entries(imported.delegations)) {
-          const ucan = UCAN.parse(del?.ucan)
-          const root = await UCAN.write(ucan)
-          delegations[did] = {
-            ucan: Delegation.create({ root }),
-            alias: del.alias,
-          }
-        }
-
-        settings.set('delegations', delegations)
-      } else {
-        settings.set(key, imported[key])
+  if (objectToParse) {
+    if (objectToParse.secret) {
+      const principal = toPrincipal(objectToParse.secret)
+      if (principal) {
+        settings.set('secret', SigningPrincipal.format(principal))
       }
+    }
+    if (objectToParse.account_secret) {
+      const principal = toPrincipal(objectToParse.account_secret)
+      if (principal) {
+        settings.set('account_secret', SigningPrincipal.format(principal))
+      }
+    }
+    if (objectToParse.agent_secret) {
+      const principal = toPrincipal(objectToParse.agent_secret)
+      if (principal) {
+        settings.set('agent_secret', SigningPrincipal.format(principal))
+      }
+    }
+    if (objectToParse.email) {
+      settings.set('email', objectToParse.email)
+    }
+
+    if (objectToParse.delegations) {
+      const delegations = {}
+
+      for (const [did, del] of Object.entries(objectToParse.delegations)) {
+        // @ts-ignore
+        delegations[did] = {
+          ucan: UCAN.parse(del?.ucan),
+          alias: del.alias,
+        }
+      }
+
+      settings.set('delegations', delegations)
     }
   }
 
@@ -78,6 +92,23 @@ export async function importSettings(settingsString) {
 }
 
 /**
+ * Takes a JSON string and builds a settings object from it.
+ *
+ * @param {Map<string,any>|string|SettingsObject} settings - The settings string (typically from cli export-settings)
+ * @returns {Map<string,any>} The settings object.
+ */
+export function importSettings(settings) {
+  if (typeof settings == 'string') {
+    try {
+      return objectToMap(JSON.parse(settings))
+    } catch (err) {
+      throw new Error('Invalid settings json string.')
+    }
+  }
+  return objectToMap(settings)
+}
+
+/**
  * Takes a settings map and builds a POJO out of it.
  *
  * @param {Map<string, any>} settings - The settings object.
@@ -87,18 +118,29 @@ export function exportSettings(settings) {
   /** @type SettingsObject */
   const output = {}
 
+  if (settings.has('email')) {
+    output.email = settings.get('email')
+  }
+
   if (settings.has('secret')) {
-    output.secret = SigningPrincipal.format(settings.get('secret'))
+    const principal = toPrincipal(settings.get('secret'))
+    if (principal) {
+      output.secret = SigningPrincipal.format(principal)
+    }
   }
 
   if (settings.has('agent_secret')) {
-    const parsed = SigningPrincipal.parse(settings.get('agent_secret'))
-    output.agent_secret = SigningPrincipal.format(parsed)
+    const principal = toPrincipal(settings.get('agent_secret'))
+    if (principal) {
+      output.agent_secret = SigningPrincipal.format(principal)
+    }
   }
 
   if (settings.has('account_secret')) {
-    const parsed = SigningPrincipal.parse(settings.get('account_secret'))
-    output.account_secret = SigningPrincipal.format(parsed)
+    const principal = toPrincipal(settings.get('account_secret'))
+    if (principal) {
+      output.account_secret = SigningPrincipal.format(principal)
+    }
   }
 
   if (settings.has('delegations')) {
