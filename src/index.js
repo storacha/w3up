@@ -31,7 +31,7 @@ export * from './settings.js'
 
 /**
  * @param {ClientOptions} options
- * @returns Client
+ * @returns {Client}
  */
 export function createClient(options) {
   return new Client(options)
