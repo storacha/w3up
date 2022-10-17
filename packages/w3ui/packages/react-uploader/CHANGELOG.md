@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/web3-storage/w3ui/compare/react-uploader-v2.1.0...react-uploader-v2.1.1) (2022-10-17)
+
+
+### Bug Fixes
+
+* remove wallet modules ([17ae732](https://github.com/web3-storage/w3ui/commit/17ae7326b08b0129a64de4235d795a808e750514))
+
 ## [2.1.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v2.0.0...react-uploader-v2.1.0) (2022-10-17)
 
 
