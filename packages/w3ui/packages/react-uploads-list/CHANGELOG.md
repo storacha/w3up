@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v1.0.3...react-uploads-list-v1.1.0) (2022-10-17)
+
+
+### Features
+
+* use keyring modules ([083a9ce](https://github.com/web3-storage/w3ui/commit/083a9ce3c64b91cb3017308bdf71f046ec93bce0))
+
 ## [1.0.3](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v1.0.2...react-uploads-list-v1.0.3) (2022-10-03)
 
 
