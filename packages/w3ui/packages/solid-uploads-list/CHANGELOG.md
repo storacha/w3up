@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v1.1.3...solid-uploads-list-v1.2.0) (2022-10-17)
+
+
+### Features
+
+* use keyring modules ([083a9ce](https://github.com/web3-storage/w3ui/commit/083a9ce3c64b91cb3017308bdf71f046ec93bce0))
+
 ## [1.1.3](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v1.1.2...solid-uploads-list-v1.1.3) (2022-10-03)
 
 
