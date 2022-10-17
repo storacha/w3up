@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v1.2.0...solid-uploads-list-v1.2.1) (2022-10-17)
+
+
+### Bug Fixes
+
+* remove wallet modules ([17ae732](https://github.com/web3-storage/w3ui/commit/17ae7326b08b0129a64de4235d795a808e750514))
+
 ## [1.2.0](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v1.1.3...solid-uploads-list-v1.2.0) (2022-10-17)
 
 
