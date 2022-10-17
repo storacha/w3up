@@ -32,6 +32,7 @@
       "@w3ui/vue-uploads-list": ["packages/vue-uploads-list/src"],
       "@w3ui/vue-wallet": ["packages/vue-wallet/src"],
 
+      "@w3ui/keyring-core": ["packages/keyring-core/src"],
       "@w3ui/uploader-core": ["packages/uploader-core/src"],
       "@w3ui/uploads-list-core": ["packages/uploads-list-core/src"],
       "@w3ui/wallet-core": ["packages/wallet-core/src"]

@@ -42,6 +42,7 @@
     "packages/vue-uploader",
     "packages/vue-uploads-list",
     "packages/vue-wallet",
+    "packages/keyring-core",
     "packages/uploader-core",
     "packages/uploads-list-core",
     "packages/wallet-core"

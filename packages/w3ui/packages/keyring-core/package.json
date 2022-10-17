@@ -1,0 +1,32 @@
+{
+  "name": "@w3ui/keyring-core",
+  "version": "0.0.0",
+  "description": "w3ui keyring core.",
+  "module": "build/esm/index.js",
+  "main": "build/cjs/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/index.d.ts",
+  "scripts": {
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "files": [
+    "build/*",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3ui/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/wallet-core",
+  "dependencies": {
+    "@ucanto/interface": "^1.0.0",
+    "@ucanto/principal": "^1.0.1",
+    "@web3-storage/access": "^1.0.0",
+    "multiformats": "^9.8.1"
+  }
+}

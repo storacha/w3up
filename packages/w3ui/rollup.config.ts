@@ -60,6 +60,14 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {}
     }),
     ...buildConfigs({
+      name: 'keyring-core',
+      packageDir: 'packages/keyring-core',
+      jsName: 'KeyringCore',
+      outputFile: 'keyring-core',
+      entryFile: 'src/index.ts',
+      globals: {}
+    }),
+    ...buildConfigs({
       name: 'react-wallet',
       packageDir: 'packages/react-wallet',
       jsName: 'ReactWallet',

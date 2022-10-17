@@ -13,6 +13,7 @@
     { "path": "packages/vue-uploads-list" },
     { "path": "packages/vue-wallet" },
 
+    { "path": "packages/keyring-core" },
     { "path": "packages/uploader-core" },
     { "path": "packages/uploads-list-core" },
     { "path": "packages/wallet-core" }
