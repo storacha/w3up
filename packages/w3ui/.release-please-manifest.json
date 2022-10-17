@@ -12,6 +12,7 @@
   "packages/solid-wallet": "1.0.0",
   "packages/vue-uploads-list": "1.0.1",
   "packages/keyring-core": "1.0.1",
+  "packages/react-keyring": "1.0.0",
   "packages/solid-keyring": "1.0.0",
   "packages/vue-keyring": "1.0.0"
 }
