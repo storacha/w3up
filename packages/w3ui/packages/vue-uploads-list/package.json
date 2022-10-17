@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/vue-uploads-list",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Vue adapter for w3ui uploads list.",
   "module": "build/esm/index.js",
   "main": "build/cjs/index.js",
