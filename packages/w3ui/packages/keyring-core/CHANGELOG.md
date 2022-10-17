@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/keyring-core-v1.0.0...keyring-core-v1.0.1) (2022-10-17)
+
+
+### Bug Fixes
+
+* update homepage URL ([1be3a52](https://github.com/web3-storage/w3ui/commit/1be3a523d0fac469237ddf536090c028d4ed2eac))
+
 ## 1.0.0 (2022-10-17)
 
 
