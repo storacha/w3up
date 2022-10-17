@@ -52,30 +52,12 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {}
     }),
     ...buildConfigs({
-      name: 'wallet-core',
-      packageDir: 'packages/wallet-core',
-      jsName: 'WalletCore',
-      outputFile: 'wallet-core',
-      entryFile: 'src/index.ts',
-      globals: {}
-    }),
-    ...buildConfigs({
       name: 'keyring-core',
       packageDir: 'packages/keyring-core',
       jsName: 'KeyringCore',
       outputFile: 'keyring-core',
       entryFile: 'src/index.ts',
       globals: {}
-    }),
-    ...buildConfigs({
-      name: 'react-wallet',
-      packageDir: 'packages/react-wallet',
-      jsName: 'ReactWallet',
-      outputFile: 'react-wallet',
-      entryFile: 'src/index.ts',
-      globals: {
-        react: 'React'
-      }
     }),
     ...buildConfigs({
       name: 'react-keyring',
@@ -95,7 +77,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
-        '@w3ui/react-wallet': 'ReactWallet'
+        '@w3ui/react-keyring': 'ReactKeyring'
       }
     }),
     ...buildConfigs({
@@ -106,18 +88,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
-        '@w3ui/react-wallet': 'ReactWallet'
-      }
-    }),
-    ...buildConfigs({
-      name: 'solid-wallet',
-      packageDir: 'packages/solid-wallet',
-      jsName: 'SolidWallet',
-      outputFile: 'solid-wallet',
-      entryFile: 'src/index.ts',
-      globals: {
-        'solid-js': 'Solid',
-        'solid-js/store': 'SolidStore'
+        '@w3ui/react-keyring': 'ReactKeyring'
       }
     }),
     ...buildConfigs({
@@ -140,7 +111,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {
         'solid-js': 'Solid',
         'solid-js/store': 'SolidStore',
-        '@w3ui/solid-wallet': 'SolidWallet'
+        '@w3ui/solid-keyring': 'SolidKeyring'
       }
     }),
     ...buildConfigs({
@@ -152,17 +123,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {
         'solid-js': 'Solid',
         'solid-js/store': 'SolidStore',
-        '@w3ui/solid-wallet': 'SolidWallet'
-      }
-    }),
-    ...buildConfigs({
-      name: 'vue-wallet',
-      packageDir: 'packages/vue-wallet',
-      jsName: 'VueWallet',
-      outputFile: 'vue-wallet',
-      entryFile: 'src/index.ts',
-      globals: {
-        vue: 'Vue'
+        '@w3ui/solid-keyring': 'SolidKeyring'
       }
     }),
     ...buildConfigs({
@@ -183,7 +144,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         vue: 'Vue',
-        '@w3ui/vue-wallet': 'VueWallet'
+        '@w3ui/vue-keyring': 'VueKeyring'
       }
     }),
     ...buildConfigs({
@@ -194,7 +155,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         vue: 'Vue',
-        '@w3ui/vue-wallet': 'VueWallet'
+        '@w3ui/vue-keyring': 'VueKeyring'
       }
     })
   ]

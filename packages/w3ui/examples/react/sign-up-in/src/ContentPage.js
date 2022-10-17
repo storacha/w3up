@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth, AuthStatus } from '@w3ui/react-wallet'
+import { useAuth, AuthStatus } from '@w3ui/react-keyring'
 
 export default function ContentPage () {
   const { authStatus, identity, loadDefaultIdentity, registerAndStoreIdentity, unloadIdentity, cancelRegisterAndStoreIdentity } = useAuth()

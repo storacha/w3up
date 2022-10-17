@@ -1,6 +1,6 @@
 <script>
 import { defineComponent } from 'vue'
-import { AuthProviderInjectionKey, AuthStatus } from '@w3ui/vue-wallet'
+import { AuthProviderInjectionKey, AuthStatus } from '@w3ui/vue-keyring'
 
 /**
  * Authenticator displays it's slot when an identity exists.

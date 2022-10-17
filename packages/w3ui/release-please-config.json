@@ -4,21 +4,17 @@
     "packages/react-keyring": {},
     "packages/react-uploader": {},
     "packages/react-uploads-list": {},
-    "packages/react-wallet": {},
 
     "packages/solid-keyring": {},
     "packages/solid-uploader": {},
     "packages/solid-uploads-list": {},
-    "packages/solid-wallet": {},
 
     "packages/vue-keyring": {},
     "packages/vue-uploader": {},
     "packages/vue-uploads-list": {},
-    "packages/vue-wallet": {},
 
     "packages/keyring-core": {},
     "packages/uploader-core": {},
-    "packages/uploads-list-core": {},
-    "packages/wallet-core": {}
+    "packages/uploads-list-core": {}
   }
 }

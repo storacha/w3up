@@ -106,4 +106,4 @@ interface CarChunkMeta {
 uploadCarBytes (principal: SigningPrincipal, bytes: Uint8Array): Promise<void>
 ```
 
-Upload CAR bytes to the service. The principal can be obtained from [`createIdentity`](./wallet-core#createidentity).
+Upload CAR bytes to the service. The principal can be obtained from [`createIdentity`](./keyring-core#createidentity).

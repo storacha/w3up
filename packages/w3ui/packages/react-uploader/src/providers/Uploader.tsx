@@ -1,6 +1,6 @@
 import React, { useContext, createContext, useState, ReactNode } from 'react'
 import { encodeFile, encodeDirectory, chunkBlocks, uploadCarChunks, CarChunkMeta, CarData } from '@w3ui/uploader-core'
-import { useAuth } from '@w3ui/react-wallet'
+import { useAuth } from '@w3ui/react-keyring'
 import { CID } from 'multiformats/cid'
 
 export interface UploaderContextState {

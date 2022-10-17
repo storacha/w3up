@@ -21,7 +21,7 @@ import * as ReactUploadsList from '@w3ui/react-uploads-list'
 
 ### `UploadsListProvider`
 
-Provider for a list of items uploaded by the current identity. Note that this provider uses [`useAuth`](./react-wallet#useauth) to obtain the current identity.
+Provider for a list of items uploaded by the current identity. Note that this provider uses [`useAuth`](./react-keyring#useauth) to obtain the current identity.
 
 Example:
 

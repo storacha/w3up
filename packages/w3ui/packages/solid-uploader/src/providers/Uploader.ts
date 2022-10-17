@@ -1,7 +1,7 @@
 import { createContext, useContext, createComponent, ParentComponent } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { uploadCarChunks, CarChunkMeta, encodeFile, chunkBlocks, encodeDirectory } from '@w3ui/uploader-core'
-import { useAuth } from '@w3ui/solid-wallet'
+import { useAuth } from '@w3ui/solid-keyring'
 import { CID } from 'multiformats/cid'
 
 export interface UploaderContextState {

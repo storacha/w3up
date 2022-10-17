@@ -1,5 +1,5 @@
 import React from 'react'
-import { AuthProvider } from '@w3ui/react-wallet'
+import { AuthProvider } from '@w3ui/react-keyring'
 import ContentPage from './ContentPage'
 import logo from './logo.png'
 

@@ -8,7 +8,7 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "@w3ui/vue-wallet": "^1.0.0",
+    "@w3ui/vue-keyring": "^1.0.0",
     "vue": "^3.2.38"
   },
   "devDependencies": {

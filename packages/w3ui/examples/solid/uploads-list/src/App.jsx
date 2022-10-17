@@ -1,5 +1,5 @@
 import logo from './logo.png'
-import { AuthProvider, useAuth } from '@w3ui/solid-wallet'
+import { AuthProvider, useAuth } from '@w3ui/solid-keyring'
 import ContentPage from './ContentPage'
 
 function App () {

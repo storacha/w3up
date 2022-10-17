@@ -1,5 +1,5 @@
 import { createSignal, Switch, Match } from 'solid-js'
-import { useAuth, AuthStatus } from '@w3ui/solid-wallet'
+import { useAuth, AuthStatus } from '@w3ui/solid-keyring'
 
 export default function ContentPage () {
   const [auth, { loadDefaultIdentity, registerAndStoreIdentity, unloadIdentity, cancelRegisterAndStoreIdentity }] = useAuth()

@@ -1,4 +1,4 @@
-import { loadDefaultIdentity } from '@w3ui/wallet-core'
+import { loadDefaultIdentity } from '@w3ui/keyring-core'
 import { uploadCarChunks, encodeFile, encodeDirectory, chunkBlocks } from '@w3ui/uploader-core'
 
 const SELECTORS = {

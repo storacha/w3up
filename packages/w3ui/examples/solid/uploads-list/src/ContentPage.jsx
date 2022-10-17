@@ -1,5 +1,5 @@
 import { Switch, Match } from 'solid-js'
-import { useAuth } from '@w3ui/solid-wallet'
+import { useAuth } from '@w3ui/solid-keyring'
 import { createUploadsListResource } from '@w3ui/solid-uploads-list'
 import { withIdentity } from './components/Authenticator'
 import './spinner.css'

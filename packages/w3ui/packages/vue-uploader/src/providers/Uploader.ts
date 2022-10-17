@@ -1,5 +1,5 @@
 import { defineComponent, provide, InjectionKey, inject, Ref, shallowReactive, computed } from 'vue'
-import { AuthProviderInjectionKey } from '@w3ui/vue-wallet'
+import { AuthProviderInjectionKey } from '@w3ui/vue-keyring'
 import { uploadCarChunks, CarChunkMeta, CarData, encodeFile, chunkBlocks, encodeDirectory } from '@w3ui/uploader-core'
 import { CID } from 'multiformats/cid'
 

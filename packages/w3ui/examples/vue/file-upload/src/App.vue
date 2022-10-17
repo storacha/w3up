@@ -1,5 +1,5 @@
 <script>
-import { AuthProvider } from '@w3ui/vue-wallet'
+import { AuthProvider } from '@w3ui/vue-keyring'
 import { UploaderProvider } from '@w3ui/vue-uploader'
 import Authenticator from './components/Authenticator.vue'
 import ContentPage from './ContentPage.vue'

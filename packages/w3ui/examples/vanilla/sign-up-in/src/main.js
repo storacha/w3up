@@ -8,7 +8,7 @@ import {
   removeIdentity,
   storeIdentity,
   loadDefaultIdentity
-} from '@w3ui/wallet-core'
+} from '@w3ui/keyring-core'
 
 const SELECTORS = {
   authForm: '#sign-up-in-form',

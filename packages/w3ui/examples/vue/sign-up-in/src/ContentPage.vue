@@ -1,5 +1,5 @@
 <script>
-import { AuthProviderInjectionKey, AuthStatus } from '@w3ui/vue-wallet'
+import { AuthProviderInjectionKey, AuthStatus } from '@w3ui/vue-keyring'
 
 export default {
   inject: {

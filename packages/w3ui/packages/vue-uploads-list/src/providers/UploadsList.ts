@@ -1,5 +1,5 @@
 import { defineComponent, provide, InjectionKey, inject, shallowReactive, Ref, computed, watch } from 'vue'
-import { AuthProviderInjectionKey } from '@w3ui/vue-wallet'
+import { AuthProviderInjectionKey } from '@w3ui/vue-keyring'
 import { listUploads, ListPage } from '@w3ui/uploads-list-core'
 
 /**

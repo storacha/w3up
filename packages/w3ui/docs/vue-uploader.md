@@ -20,13 +20,13 @@ import * as VueUploader from '@w3ui/vue-uploader'
 
 ### `UploaderProvider`
 
-[Provider](https://vuejs.org/guide/components/provide-inject.html) for an `Uploader` which allows uploads to the service. Note that _this_ provider injects values from [`AuthProvider`](./vue-wallet#authprovider).
+[Provider](https://vuejs.org/guide/components/provide-inject.html) for an `Uploader` which allows uploads to the service. Note that _this_ provider injects values from [`AuthProvider`](./vue-keyring#authprovider).
 
 Example:
 
 ```vue
 <script>
-import { AuthProvider } from '@w3ui/vue-wallet'
+import { AuthProvider } from '@w3ui/vue-keyring'
 import { UploaderProvider } from '@w3ui/vue-uploader'
 
 export default {

@@ -20,13 +20,13 @@ import * as VueUploadsList from '@w3ui/vue-uploads-list'
 
 ### `UploadsListProvider`
 
-[Provider](https://vuejs.org/guide/components/provide-inject.html) for a list of items uploaded by the current identity. Note that _this_ provider injects values from [`AuthProvider`](./vue-wallet#authprovider).
+[Provider](https://vuejs.org/guide/components/provide-inject.html) for a list of items uploaded by the current identity. Note that _this_ provider injects values from [`AuthProvider`](./vue-keyring#authprovider).
 
 Example:
 
 ```vue
 <script>
-import { UploadsListProvider } from '@w3ui/vue-wallet'
+import { UploadsListProvider } from '@w3ui/vue-keyring'
 
 export default {
   components: { UploadsListProvider }

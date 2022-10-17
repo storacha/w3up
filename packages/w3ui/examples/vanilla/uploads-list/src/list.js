@@ -1,5 +1,5 @@
 import { listUploads } from '@w3ui/uploads-list-core'
-import { loadDefaultIdentity } from '@w3ui/wallet-core'
+import { loadDefaultIdentity } from '@w3ui/keyring-core'
 
 const SELECTORS = {
   listTemplate: '#list',

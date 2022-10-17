@@ -1,6 +1,6 @@
 import React, { useContext, createContext, useState, useEffect, ReactNode } from 'react'
 import { listUploads, ListPage } from '@w3ui/uploads-list-core'
-import { useAuth } from '@w3ui/react-wallet'
+import { useAuth } from '@w3ui/react-keyring'
 
 export interface UploadsListContextValue {
   /**

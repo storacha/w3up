@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAuth, AuthStatus } from '@w3ui/react-wallet'
+import { useAuth, AuthStatus } from '@w3ui/react-keyring'
 
 export default function Authenticator ({ children }) {
   const { authStatus, identity, registerAndStoreIdentity, cancelRegisterAndStoreIdentity } = useAuth()

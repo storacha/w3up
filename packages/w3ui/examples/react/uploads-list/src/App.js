@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { AuthProvider, useAuth } from '@w3ui/react-wallet'
+import { AuthProvider, useAuth } from '@w3ui/react-keyring'
 import { UploadsListProvider } from '@w3ui/react-uploads-list'
 import ContentPage from './ContentPage'
 import logo from './logo.png'

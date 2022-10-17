@@ -94,7 +94,7 @@ These keys may be used in child components e.g.
 
 ```vue
 <script>
-import { AuthProviderInjectionKey } from '@w3ui/vue-wallet'
+import { AuthProviderInjectionKey } from '@w3ui/vue-keyring'
 
 export default {
   inject: {

@@ -1,5 +1,5 @@
 <script>
-import { AuthProvider } from '@w3ui/vue-wallet'
+import { AuthProvider } from '@w3ui/vue-keyring'
 import ContentPage from './ContentPage.vue'
 
 export default {

@@ -29,7 +29,7 @@ Create a solid resource configured to fetch data from the service. Please see th
 Example:
 
 ```jsx
-import { AuthProvider } from '@w3ui/solid-wallet'
+import { AuthProvider } from '@w3ui/solid-keyring'
 import { createUploadsListResource } from '@w3ui/solid-uploads-list'
 
 function App () {

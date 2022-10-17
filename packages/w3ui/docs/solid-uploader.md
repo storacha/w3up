@@ -21,7 +21,7 @@ import * as SolidUploader from '@w3ui/solid-uploader'
 
 ### `UploaderProvider`
 
-Provider for an `Uploader` which allows uploads to the service. Note that this provider uses [`useAuth`](./solid-wallet#useauth) and provides an `uploader` that allows uploads only when a current identity is loaded.
+Provider for an `Uploader` which allows uploads to the service. Note that this provider uses [`useAuth`](./solid-keyring#useauth) and provides an `uploader` that allows uploads only when a current identity is loaded.
 
 Example:
 

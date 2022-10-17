@@ -1,6 +1,6 @@
 import { createResource, InitializedResourceReturn, ResourceOptions, ResourceReturn, ResourceSource } from 'solid-js'
 import { listUploads, ListPage } from '@w3ui/uploads-list-core'
-import { Identity } from '@w3ui/solid-wallet'
+import { Identity } from '@w3ui/solid-keyring'
 
 /**
  * Create a solid resource configured to fetch data from the service. Please
