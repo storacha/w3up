@@ -10,5 +10,6 @@
   "packages/solid-uploader": "2.0.0",
   "packages/solid-uploads-list": "1.1.3",
   "packages/solid-wallet": "1.0.0",
-  "packages/vue-uploads-list": "1.0.1"
+  "packages/vue-uploads-list": "1.0.1",
+  "packages/keyring-core": "1.0.0"
 }
