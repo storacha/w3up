@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/web3-storage/w3ui/issues"
   },
-  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/wallet-core",
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/keyring-core",
   "dependencies": {
     "@ucanto/interface": "^1.0.0",
     "@ucanto/principal": "^1.0.1",
