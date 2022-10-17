@@ -27,7 +27,7 @@
     "@w3ui/uploads-list-core": "^1.0.1"
   },
   "peerDependencies": {
-    "@w3ui/solid-wallet": "^1.0.0",
+    "@w3ui/solid-keyring": "^1.0.0",
     "solid-js": "^1.5.0"
   }
 }
