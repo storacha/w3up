@@ -1,5 +1,5 @@
 {
-  "name": "@w3ui/example-vanilla-template",
+  "name": "@w3ui/example-vanilla-multi-file-upload",
   "version": "0.0.0",
   "scripts": {
     "start": "vite",
