@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v2.0.0...react-uploader-v2.1.0) (2022-10-17)
+
+
+### Features
+
+* use keyring modules ([083a9ce](https://github.com/web3-storage/w3ui/commit/083a9ce3c64b91cb3017308bdf71f046ec93bce0))
+
 ## [2.0.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v1.1.0...react-uploader-v2.0.0) (2022-10-01)
 
 
