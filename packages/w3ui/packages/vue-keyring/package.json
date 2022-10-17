@@ -1,0 +1,32 @@
+{
+  "name": "@w3ui/vue-keyring",
+  "version": "1.0.1",
+  "description": "Vue adapter for w3ui keyring.",
+  "module": "build/esm/index.js",
+  "main": "build/cjs/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/vue-keyring/src/index.d.ts",
+  "scripts": {
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "files": [
+    "build/*",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3ui/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/vue-keyring",
+  "dependencies": {
+    "@w3ui/keyring-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  }
+}

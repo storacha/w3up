@@ -2,18 +2,21 @@
 
 ## React
 
+* [`@w3ui/react-keyring`](./react-keyring.md)
 * [`@w3ui/react-uploader`](./react-uploader.md)
 * [`@w3ui/react-uploads-list`](./react-uploads-list.md)
 * [`@w3ui/react-wallet`](./react-wallet.md)
 
 ## Solid
 
+* [`@w3ui/solid-keyring`](./solid-keyring.md)
 * [`@w3ui/solid-uploader`](./solid-uploader.md)
 * [`@w3ui/solid-uploads-list`](./solid-uploads-list.md)
 * [`@w3ui/solid-wallet`](./solid-wallet.md)
 
 ## Vue
 
+* [`@w3ui/vue-keyring`](./vue-keyring.md)
 * [`@w3ui/vue-uploader`](./vue-uploader.md)
 * [`@w3ui/vue-uploads-list`](./vue-uploads-list.md)
 * [`@w3ui/vue-wallet`](./vue-wallet.md)

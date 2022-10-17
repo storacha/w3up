@@ -78,6 +78,16 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       }
     }),
     ...buildConfigs({
+      name: 'react-keyring',
+      packageDir: 'packages/react-keyring',
+      jsName: 'ReactKeyring',
+      outputFile: 'react-keyring',
+      entryFile: 'src/index.ts',
+      globals: {
+        react: 'React'
+      }
+    }),
+    ...buildConfigs({
       name: 'react-uploader',
       packageDir: 'packages/react-uploader',
       jsName: 'ReactUploader',
@@ -104,6 +114,17 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/solid-wallet',
       jsName: 'SolidWallet',
       outputFile: 'solid-wallet',
+      entryFile: 'src/index.ts',
+      globals: {
+        'solid-js': 'Solid',
+        'solid-js/store': 'SolidStore'
+      }
+    }),
+    ...buildConfigs({
+      name: 'solid-keyring',
+      packageDir: 'packages/solid-keyring',
+      jsName: 'SolidKeyring',
+      outputFile: 'solid-keyring',
       entryFile: 'src/index.ts',
       globals: {
         'solid-js': 'Solid',
@@ -139,6 +160,16 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/vue-wallet',
       jsName: 'VueWallet',
       outputFile: 'vue-wallet',
+      entryFile: 'src/index.ts',
+      globals: {
+        vue: 'Vue'
+      }
+    }),
+    ...buildConfigs({
+      name: 'vue-keyring',
+      packageDir: 'packages/vue-keyring',
+      jsName: 'VueKeyring',
+      outputFile: 'vue-keyring',
       entryFile: 'src/index.ts',
       globals: {
         vue: 'Vue'
