@@ -130,7 +130,7 @@ export const serverCodec = {
    */
   encode(result) {
     return {
-      headers: new Headers(HEADERS),
+      headers: Object.fromEntries(new Headers(HEADERS).entries()),
       body: UTF8.encode(JSON.stringify(result)),
     }
   },

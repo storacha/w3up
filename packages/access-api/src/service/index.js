@@ -50,9 +50,9 @@ export function service(ctx) {
           inserted_at: results.inserted_at,
         }
       }),
-      all: Server.provide(Account.all, async ({ capability }) => {
-        return capability
-      }),
+      // all: Server.provide(Account.all, async ({ capability }) => {
+      //   return capability
+      // }),
     },
     // @ts-ignore
     testing: {

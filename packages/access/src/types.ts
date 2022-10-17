@@ -11,14 +11,10 @@ import type {
 } from '@ucanto/interface'
 
 import type {
-  AccountAll,
   AccountInfo,
   IdentityIdentify,
   IdentityRegister,
   IdentityValidate,
-  UploadAdd,
-  UploadList,
-  UploadRemove,
 } from './capabilities/types'
 import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
 
@@ -49,7 +45,6 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   account: {
-    all: ServiceMethod<AccountAll, any, Failure>
     info: ServiceMethod<
       AccountInfo,
       {

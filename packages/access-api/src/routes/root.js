@@ -20,7 +20,7 @@ export async function postRoot(request, env) {
 
   const rsp = await server.request({
     body: new Uint8Array(await request.arrayBuffer()),
-    headers: request.headers,
+    headers: Object.fromEntries(request.headers.entries()),
   })
   return new Response(rsp.body, { headers: rsp.headers })
 }

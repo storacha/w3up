@@ -1,16 +1,15 @@
 import assert from 'assert'
 import { access } from '@ucanto/validator'
-import { Principal } from '@ucanto/principal'
+import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
 import * as Upload from '../../src/capabilities/upload.js'
-import { codec as CARCodec } from '@ucanto/transport/car'
-import { codec as CBOR } from '@ucanto/transport/cbor'
 import {
   alice,
   bob,
   service as w3,
   mallory as account,
 } from '../helpers/fixtures.js'
+import { createCarCid, parseCarLink } from '../helpers/utils.js'
 
 describe('upload capabilities', function () {
   // delegation from account to agent
@@ -34,20 +33,21 @@ describe('upload capabilities', function () {
         proofs: [await any],
       })
       .delegate()
+    const root = await createCarCid('root')
 
     const add = Upload.add.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
-      caveats: {
-        root: parseLink('bafkqaaa'),
+      nb: {
+        root,
       },
       proofs: [upload],
     })
 
     const result = await access(await add.delegate(), {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -59,8 +59,8 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/add')
-    assert.deepEqual(result.capability.caveats, {
-      root: parseLink('bafkqaaa'),
+    assert.deepEqual(result.capability.nb, {
+      root,
     })
   })
 
@@ -72,19 +72,20 @@ describe('upload capabilities', function () {
       proofs: [await any],
     })
 
+    const root = await createCarCid('root')
     const add = Upload.add.invoke({
       audience: w3,
       issuer: bob,
       with: account.did(),
-      caveats: {
-        root: parseLink('bafkqaaa'),
+      nb: {
+        root,
       },
       proofs: [await upload.delegate()],
     })
 
     const result = await access(await add.delegate(), {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -96,8 +97,8 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/add')
-    assert.deepEqual(result.capability.caveats, {
-      root: parseLink('bafkqaaa'),
+    assert.deepEqual(result.capability.nb, {
+      root,
     })
   })
 
@@ -108,12 +109,9 @@ describe('upload capabilities', function () {
         issuer: alice,
         audience: w3,
         with: account.did(),
-        caveats: {
-          root: parseLink('bafkqaaa'),
-          shards: [
-            // @ts-expect-error - not a CAR cid
-            parseLink('bafkqaaa'),
-          ],
+        nb: {
+          root: parseCarLink('bafkqaaa'),
+          shards: [parseCarLink('bafkqaaa')],
         },
         proofs,
       })
@@ -128,8 +126,10 @@ describe('upload capabilities', function () {
         {
           can: 'upload/add',
           with: account.did(),
-          root: parseLink('bafkqaaa'),
-          shards: [parseLink('bafkqaaa')],
+          nb: {
+            root: parseCarLink('bafkqaaa'),
+            shards: [parseCarLink('bafkqaaa')],
+          },
         },
       ],
       proofs: [await any],
@@ -137,7 +137,7 @@ describe('upload capabilities', function () {
 
     const result = await access(add, {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -147,22 +147,22 @@ describe('upload capabilities', function () {
   })
 
   it('upload/add works with shards that are CAR cids', async () => {
-    const cbor = await CBOR.write({ hello: 'world' })
-    const shard = await CARCodec.write({ roots: [cbor] })
+    const shard = await createCarCid('shard')
+    const root = await createCarCid('root')
     const add = Upload.add.invoke({
       issuer: alice,
       audience: w3,
       with: account.did(),
-      caveats: {
-        root: parseLink('bafkqaaa'),
-        shards: [shard.cid],
+      nb: {
+        root,
+        shards: [shard],
       },
       proofs: [await any],
     })
 
     const result = await access(await add.delegate(), {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -174,9 +174,9 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/add')
-    assert.deepEqual(result.capability.caveats, {
-      root: parseLink('bafkqaaa'),
-      shards: [shard.cid],
+    assert.deepEqual(result.capability.nb, {
+      root,
+      shards: [shard],
     })
   })
 
@@ -187,8 +187,8 @@ describe('upload capabilities', function () {
         audience: w3,
         // @ts-expect-error - not a CAR cid
         with: 'mailto:alice@web.mail',
-        caveats: {
-          root: parseLink('bafkqaaa'),
+        nb: {
+          root: parseCarLink('bafkqaaa'),
         },
       })
     }, /Expected did: URI instead got mailto:alice@web.mail/)
@@ -208,9 +208,10 @@ describe('upload capabilities', function () {
       proofs: [await any],
     })
 
+    // @ts-expect-error testing error
     const result = await access(add, {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -229,26 +230,26 @@ describe('upload capabilities', function () {
         issuer: alice,
         audience: bob,
         with: account.did(),
-        caveats: {},
+        nb: {},
         proofs: [await any],
       })
       .delegate()
 
-    const cbor = await CBOR.write({ hello: 'world' })
+    const root = await createCarCid('hello')
 
     const add = Upload.add.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
-      caveats: {
-        root: cbor.cid,
+      nb: {
+        root,
       },
       proofs: [await delegation],
     })
 
     const result = await access(await add.delegate(), {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -258,8 +259,8 @@ describe('upload capabilities', function () {
       assert.fail(result.message)
     }
 
-    assert.deepEqual(result.capability.caveats, {
-      root: cbor.cid,
+    assert.deepEqual(result.capability.nb, {
+      root,
     })
   })
 
@@ -269,28 +270,28 @@ describe('upload capabilities', function () {
         issuer: alice,
         audience: bob,
         with: account.did(),
-        caveats: {
-          root: parseLink('bafkqaaa'),
+        nb: {
+          root: await createCarCid('hello'),
         },
         proofs: [await any],
       })
       .delegate()
 
-    const cbor = await CBOR.write({ hello: 'world' })
+    const root = await createCarCid('hello2')
 
-    const add = await Upload.add.invoke({
+    const add = Upload.add.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
-      caveats: {
-        root: cbor.cid,
+      nb: {
+        root,
       },
       proofs: [await delegation],
     })
 
     const result = await access(await add.delegate(), {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -299,38 +300,37 @@ describe('upload capabilities', function () {
     assert.equal(result.error, true)
     assert.match(
       String(result),
-      /bafyreidykglsfhoixmivffc5uwhcgshx4j465xwqntbmu43nb2dzqwfvae violates imposed root constraint bafkqaaa/
+      /bagbaieraubcexvgwca3dj3xzd7qfheu6wuuiqikqoaoya7bwfj24ta4eqwca violates imposed root constraint bagbaieratxbhji7b2gtwb7gojwmb5rxngrf66flidrobs3ijglyjmtyu4juq/
     )
   })
 
   it('upload/add should fail when escalating shards', async () => {
-    const cbor = await CBOR.write({ hello: 'world' })
-    const shard = await CARCodec.write({ roots: [cbor] })
+    const shard = await createCarCid('shard')
     const delegation = Upload.add
       .invoke({
         issuer: alice,
         audience: bob,
         with: account.did(),
-        caveats: {
-          shards: [shard.cid],
+        nb: {
+          shards: [shard],
         },
         proofs: [await any],
       })
       .delegate()
 
-    const add = await Upload.add.invoke({
+    const add = Upload.add.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
-      caveats: {
-        root: parseLink('bafkqaaa'),
+      nb: {
+        root: await createCarCid('world2'),
       },
       proofs: [await delegation],
     })
 
     const result = await access(await add.delegate(), {
       capability: Upload.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -339,7 +339,7 @@ describe('upload capabilities', function () {
     assert.equal(result.error, true)
     assert.match(
       String(result),
-      /imposed shards constraint bagbaieraha2ehrhh5ycdp76hijjo3eablsaikm5jlrbt4vmcn32p7reg3uiq/
+      /imposed shards constraint bagbaierar5jtiax76ossjdhyqshypwkkrztwp3zch7voido4pmuxrcoyq7za/
     )
   })
 
@@ -353,7 +353,7 @@ describe('upload capabilities', function () {
 
     const result = await access(await list.delegate(), {
       capability: Upload.list,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -365,7 +365,7 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/list')
-    assert.deepEqual(result.capability.caveats, {})
+    assert.deepEqual(result.capability.nb, {})
   })
 
   it('upload/list can be derived from *', async () => {
@@ -385,7 +385,7 @@ describe('upload capabilities', function () {
 
     const result = await access(await list.delegate(), {
       capability: Upload.list,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -397,7 +397,7 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/list')
-    assert.deepEqual(result.capability.caveats, {})
+    assert.deepEqual(result.capability.nb, {})
   })
 
   it('upload/list can be derived from upload/list', async () => {
@@ -417,7 +417,7 @@ describe('upload capabilities', function () {
 
     const result = await access(await list.delegate(), {
       capability: Upload.list,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -429,7 +429,7 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/list')
-    assert.deepEqual(result.capability.caveats, {})
+    assert.deepEqual(result.capability.nb, {})
   })
 
   it('upload/list capability requires with to be a did', () => {
@@ -457,9 +457,10 @@ describe('upload capabilities', function () {
       proofs: [await any],
     })
 
+    // @ts-ignore
     const result = await access(list, {
       capability: Upload.list,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -477,14 +478,14 @@ describe('upload capabilities', function () {
       audience: w3,
       with: account.did(),
       proofs: [await any],
-      caveats: {
+      nb: {
         root: parseLink('bafkqaaa'),
       },
     })
 
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -496,7 +497,7 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/remove')
-    assert.deepEqual(result.capability.caveats, {
+    assert.deepEqual(result.capability.nb, {
       root: parseLink('bafkqaaa'),
     })
   })
@@ -514,14 +515,14 @@ describe('upload capabilities', function () {
       issuer: bob,
       with: account.did(),
       proofs: [await upload.delegate()],
-      caveats: {
+      nb: {
         root: parseLink('bafkqaaa'),
       },
     })
 
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -533,7 +534,7 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/remove')
-    assert.deepEqual(result.capability.caveats, {
+    assert.deepEqual(result.capability.nb, {
       root: parseLink('bafkqaaa'),
     })
   })
@@ -544,7 +545,7 @@ describe('upload capabilities', function () {
       audience: bob,
       with: account.did(),
       proofs: [await any],
-      caveats: {
+      nb: {
         root: parseLink('bafkqaaa'),
       },
     })
@@ -554,14 +555,14 @@ describe('upload capabilities', function () {
       issuer: bob,
       with: account.did(),
       proofs: [await delegation.delegate()],
-      caveats: {
+      nb: {
         root: parseLink('bafkqaaa'),
       },
     })
 
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -573,7 +574,8 @@ describe('upload capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'upload/remove')
-    assert.deepEqual(result.capability.caveats, {
+    // @ts-ignore
+    assert.deepEqual(result.capability.nb, {
       root: parseLink('bafkqaaa'),
     })
   })
@@ -604,9 +606,10 @@ describe('upload capabilities', function () {
       proofs: [await any],
     })
 
+    // @ts-ignore
     const result = await access(remove, {
       capability: Upload.remove,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -624,28 +627,28 @@ describe('upload capabilities', function () {
         issuer: alice,
         audience: bob,
         with: account.did(),
-        caveats: {
+        nb: {
           root: parseLink('bafkqaaa'),
         },
         proofs: [await any],
       })
       .delegate()
 
-    const cbor = await CBOR.write({ hello: 'world' })
+    const root = await createCarCid('root')
 
-    const remove = await Upload.remove.invoke({
+    const remove = Upload.remove.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
-      caveats: {
-        root: cbor.cid,
+      nb: {
+        root,
       },
       proofs: [await delegation],
     })
 
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -654,7 +657,7 @@ describe('upload capabilities', function () {
     assert.equal(result.error, true)
     assert.match(
       String(result),
-      /bafyreidykglsfhoixmivffc5uwhcgshx4j465xwqntbmu43nb2dzqwfvae violates imposed root constraint bafkqaaa/
+      /bagbaieral6qo2fk7dph2ltggtw2qc6hda23hawvpc4duykdsh4soobxfe55a violates imposed root constraint bafkqaaa/
     )
   })
 })

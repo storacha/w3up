@@ -3,14 +3,20 @@ import { capability, URI } from '@ucanto/validator'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 import { canDelegateURI, equalWith, fail } from './utils.js'
+import { any } from './any.js'
 
-export const voucher = capability({
-  can: 'voucher/*',
-  with: URI.match({ protocol: 'did:' }),
+export const voucher = any.derive({
+  to: capability({
+    can: 'voucher/*',
+    with: URI.match({ protocol: 'did:' }),
+    derives: equalWith,
+  }),
   derives: equalWith,
 })
 
-export const claim = voucher.derive({
+const base = any.or(voucher)
+
+export const claim = base.derive({
   to: capability({
     can: 'voucher/claim',
     with: URI.match({ protocol: 'did:' }),

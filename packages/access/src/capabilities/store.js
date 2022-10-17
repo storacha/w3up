@@ -1,8 +1,5 @@
-/* eslint-disable unicorn/no-null */
-import { capability, Failure, Link, URI } from '@ucanto/server'
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
-import { canDelegateURI, derives, equalWith, Integer } from './utils.js'
+import { capability, Failure, Link, URI, Schema } from '@ucanto/validator'
+import { equalLink, equalWith } from './utils.js'
 import { any } from './any.js'
 
 /**
@@ -33,19 +30,19 @@ export const add = base.derive({
   to: capability({
     can: 'store/add',
     with: URI.match({ protocol: 'did:' }),
-    caveats: {
+    nb: {
       link: Link.optional(),
       origin: Link.optional(),
-      size: Integer.optional(),
+      size: Schema.integer().optional(),
     },
     derives: (claim, from) => {
-      const result = derives(claim, from)
+      const result = equalLink(claim, from)
       if (result.error) {
         return result
-      } else if (claim.caveats.size != null && from.caveats.size != null) {
-        return claim.caveats.size > from.caveats.size
+      } else if (claim.nb.size !== undefined && from.nb.size !== undefined) {
+        return claim.nb.size > from.nb.size
           ? new Failure(
-              `Size constraint violation: ${claim.caveats.size} > ${from.caveats.size}`
+              `Size constraint violation: ${claim.nb.size} > ${from.nb.size}`
             )
           : true
       } else {
@@ -60,10 +57,10 @@ export const remove = base.derive({
   to: capability({
     can: 'store/remove',
     with: URI.match({ protocol: 'did:' }),
-    caveats: {
+    nb: {
       link: Link.optional(),
     },
-    derives,
+    derives: equalLink,
   }),
   derives: equalWith,
 })
@@ -73,9 +70,9 @@ export const list = base.derive({
     can: 'store/list',
     with: URI.match({ protocol: 'did:' }),
     derives: (claimed, delegated) => {
-      if (claimed.uri.href !== delegated.uri.href) {
+      if (claimed.with !== delegated.with) {
         return new Failure(
-          `Expected 'with: "${delegated.uri.href}"' instead got '${claimed.uri.href}'`
+          `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
         )
       }
       return true

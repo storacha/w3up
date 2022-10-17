@@ -98,7 +98,7 @@ export class StoreConf {
   }
 
   /**
-   * @param {Signer.Signer} [principal]
+   * @param {Signer.EdSigner} [principal]
    */
   async setPrincipal(principal) {
     let signer = principal
@@ -152,7 +152,7 @@ export class StoreConf {
 
   /**
    *
-   * @param {Signer.Signer[]} accounts
+   * @param {Signer.EdSigner[]} accounts
    */
   async setAccounts(accounts) {
     const encoded = []
@@ -167,7 +167,7 @@ export class StoreConf {
 
   async getAccounts() {
     const encoded = /** @type {string[]} */ (this.#config.get('accounts'))
-    /** @type {Signer.Signer[]} */
+    /** @type {Signer.EdSigner[]} */
     const accounts = []
 
     if (!Array.isArray(encoded)) {

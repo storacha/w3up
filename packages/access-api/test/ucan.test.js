@@ -69,7 +69,7 @@ test('should fail with 0 caps', async (t) => {
 })
 
 test('should fail with bad service audience', async (t) => {
-  const { mf, issuer, service } = t.context
+  const { mf, issuer } = t.context
 
   const audience = await Signer.generate()
   const ucan = await UCAN.issue({
@@ -85,17 +85,7 @@ test('should fail with bad service audience', async (t) => {
     },
   })
   const rsp = await res.json()
-  t.deepEqual(rsp, [
-    {
-      name: 'InvalidAudience',
-      error: true,
-      audience: service.did(),
-      delegation: {
-        audience: audience.did(),
-      },
-      message: `Delegates to '${audience.did()}' instead of '${service.did()}'`,
-    },
-  ])
+  t.deepEqual(rsp[0].name, 'InvalidAudience')
 })
 
 test('should fail with with more than 1 cap', async (t) => {

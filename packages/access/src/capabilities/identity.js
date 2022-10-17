@@ -1,6 +1,4 @@
 import { capability, URI } from '@ucanto/validator'
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
 import * as Store from './store.js'
 import { canDelegateURI, equalWith } from './utils.js'
 

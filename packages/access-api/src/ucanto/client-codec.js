@@ -14,7 +14,10 @@ export const clientCodec = {
     // }
 
     headers.set('authorization', `bearer ${UCAN.format(chain.data)}`)
-    return { headers, body: new Uint8Array() }
+    return {
+      headers: Object.fromEntries(headers.entries()),
+      body: new Uint8Array(),
+    }
   },
 
   decode({ headers, body }) {

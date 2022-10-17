@@ -1,6 +1,6 @@
 import { AgentMeta } from '../types.js'
 import { Delegations } from '../delegations.js'
-import * as ed25519 from '@ucanto/principal/ed25519'
+import ed25519 from '@ucanto/principal/ed25519'
 
 export interface DelegationsAsJSON {
   created: string
@@ -25,5 +25,5 @@ export interface Store<T> {
   createAccount: () => Promise<T>
 }
 
-export interface StoreKeyEd extends Store<ed25519.Signer.Signer> {}
-export interface StoreDataKeyEd extends StoreData<ed25519.Signer.Signer> {}
+export interface StoreKeyEd extends Store<ed25519.Signer.EdSigner> {}
+export interface StoreDataKeyEd extends StoreData<ed25519.Signer.EdSigner> {}
