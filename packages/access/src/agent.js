@@ -35,7 +35,7 @@ import { URI } from '@ucanto/validator'
  * }} AgentCreateOptions
  */
 
-const HOST = 'https://access-api.web3.storage'
+const HOST = 'https://access.web3.storage'
 
 /**
  * @template {string} T

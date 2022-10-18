@@ -58,7 +58,7 @@ unsafe = { bindings = [
 # Staging
 [env.staging]
 name = "w3access-staging"
-routes = [{ pattern = "access-api-staging.web3.storage", custom_domain = true }]
+workers_dev = true
 vars = { ENV = "staging", DEBUG = "false" }
 build = { command = "scripts/cli.js build --env staging", watch_dir = "src" }
 kv_namespaces = [
@@ -76,7 +76,7 @@ unsafe = { bindings = [
 # Production
 [env.production]
 name = "w3access"
-routes = [{ pattern = "access-api.web3.storage", custom_domain = true }]
+routes = [{ pattern = "access.web3.storage", custom_domain = true }]
 vars = { ENV = "production", DEBUG = "false" }
 build = { command = "scripts/cli.js build --env production", watch_dir = "src" }
 kv_namespaces = [
