@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/web3-storage/w3ui/compare/uploader-core-v2.0.0...uploader-core-v2.0.1) (2022-10-18)
+
+
+### Bug Fixes
+
+* configure to use raw-leaves ([e875ddb](https://github.com/web3-storage/w3ui/commit/e875ddb6da931cf595e055b3049afd7f2e6f9622))
+
 ## [2.0.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v1.1.1...uploader-core-v2.0.0) (2022-10-01)
 
 

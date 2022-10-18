@@ -1,6 +1,6 @@
 {
   "packages/react-uploader": "2.1.1",
-  "packages/uploader-core": "2.0.0",
+  "packages/uploader-core": "2.0.1",
   "packages/react-uploads-list": "1.1.1",
   "packages/uploads-list-core": "1.0.2",
   "packages/vue-uploader": "2.1.1",
