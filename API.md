@@ -8,7 +8,7 @@
 ## Functions
 
 <dl>
-<dt><a href="#createClient">createClient(options)</a> ⇒</dt>
+<dt><a href="#createClient">createClient(options)</a> ⇒ <code><a href="#Client">Client</a></code></dt>
 <dd></dd>
 </dl>
 
@@ -195,9 +195,8 @@ Remove an uploaded file by CID
 
 <a name="createClient"></a>
 
-## createClient(options) ⇒
+## createClient(options) ⇒ [<code>Client</code>](#Client)
 **Kind**: global function  
-**Returns**: Client  
 
 | Param | Type |
 | --- | --- |
@@ -219,11 +218,11 @@ Remove an uploaded file by CID
 
 | Name | Type | Description |
 | --- | --- | --- |
-| serviceDID | <code>API.DID</code> | The DID of the service to talk to. |
-| serviceURL | <code>string</code> | The URL of the service to talk to. |
-| accessURL | <code>string</code> | The URL of the access service. |
-| accessDID | <code>API.DID</code> | The DID of the access service. |
-| settings | <code>Map.&lt;string, any&gt;</code> | A map/db of settings to use for the client. |
+| [serviceDID] | <code>API.DID</code> | The DID of the service to talk to. |
+| [serviceURL] | <code>string</code> | The URL of the service to talk to. |
+| [accessURL] | <code>string</code> | The URL of the access service. |
+| [accessDID] | <code>API.DID</code> | The DID of the access service. |
+| settings | <code>Map.&lt;string, any&gt;</code> \| <code>string</code> \| <code>Settings.SettingsObject</code> | A map/db of settings to use for the client. |
 
 <a name="IdentityInfo"></a>
 

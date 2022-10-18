@@ -12,24 +12,27 @@ import {
   generateDelegation,
   importDelegation,
 } from './delegation.js'
+import * as Settings from './settings.js'
 import { Access, Store } from './store/index.js'
 import { checkUrl, sleep } from './utils.js'
+
+export * from './settings.js'
 
 /** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
 /** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
 
 /**
  * @typedef {object} ClientOptions
- * @property {API.DID} serviceDID - The DID of the service to talk to.
- * @property {string} serviceURL - The URL of the service to talk to.
- * @property {string} accessURL - The URL of the access service.
- * @property {API.DID} accessDID - The DID of the access service.
- * @property {Map<string, any>} settings - A map/db of settings to use for the client.
+ * @property {API.DID} [ serviceDID ] - The DID of the service to talk to.
+ * @property {string} [ serviceURL ] - The URL of the service to talk to.
+ * @property {string} [ accessURL ] - The URL of the access service.
+ * @property {API.DID} [ accessDID ] - The DID of the access service.
+ * @property {Map<string, any>|string|Settings.SettingsObject} settings - A map/db of settings to use for the client.
  */
 
 /**
  * @param {ClientOptions} options
- * @returns Client
+ * @returns {Client}
  */
 export function createClient(options) {
   return new Client(options)
@@ -51,10 +54,10 @@ class Client {
    * @param {ClientOptions} options
    */
   constructor({
-    serviceDID,
-    serviceURL,
-    accessURL,
-    accessDID,
+    serviceDID = defaults.W3_STORE_DID,
+    serviceURL = defaults.SERVICE_URL,
+    accessURL = defaults.ACCESS_URL,
+    accessDID = defaults.ACCESS_DID,
     settings,
   } = DefaultClientOptions) {
     this.serviceURL = new URL(serviceURL)
@@ -62,7 +65,8 @@ class Client {
 
     this.accessURL = new URL(accessURL)
     this.accessDID = accessDID
-    this.settings = settings
+
+    this.settings = Settings.importSettings(settings)
 
     this.w3upConnection = Store.createConnection({
       id: this.serviceDID,
@@ -84,13 +88,16 @@ class Client {
   async agent() {
     let secret = this.settings.get('agent_secret') || null
 
-    try {
-      return SigningPrincipal.decode(secret)
-    } catch (error) {
-      const id = await SigningPrincipal.generate()
-      this.settings.set('agent_secret', SigningPrincipal.encode(id))
-      return id
+    let id = Settings.toPrincipal(secret)
+    if (!id) {
+      id = await SigningPrincipal.generate()
     }
+
+    if (!this.settings.has('agent_secret')) {
+      this.settings.set('agent_secret', SigningPrincipal.format(id))
+    }
+
+    return id
   }
 
   /**
@@ -105,16 +112,13 @@ class Client {
       secret = this.settings.get('secret')
       //       this.settings.delete('secret')
     }
-    let id
-
-    try {
-      id = SigningPrincipal.decode(secret)
-    } catch (error) {
+    let id = Settings.toPrincipal(secret)
+    if (!id) {
       id = await SigningPrincipal.generate()
     }
 
     if (!this.settings.has('account_secret')) {
-      this.settings.set('account_secret', SigningPrincipal.encode(id))
+      this.settings.set('account_secret', SigningPrincipal.format(id))
     }
 
     return id
@@ -133,7 +137,7 @@ class Client {
       : {}
 
     //Generate first delegation from account to agent.
-    if (did == null) {
+    if (!did) {
       const issuer = await this.account()
       const to = (await this.agent()).did()
       const del = await generateDelegation({ to, issuer }, true)
@@ -203,16 +207,20 @@ class Client {
     const identity = await this.identity()
 
     try {
-      const validateResult = await this.invoke(
-        // @ts-ignore
-        Access.validate,
-        this.accessConnection,
-        {
-          as: `mailto:${email}`,
-        }
-      )
-      if (validateResult?.error) {
-        throw new Error(validateResult.toString())
+      // @ts-ignore
+      const result = await Access.validate
+        .invoke({
+          issuer: identity.account,
+          with: identity.account.did(),
+          audience: this.accessConnection.id,
+          caveats: {
+            as: `mailto:${email}`,
+          },
+          proofs: identity.proofs,
+        })
+        .execute(this.accessConnection)
+      if (result?.error) {
+        throw new Error(result?.cause?.message)
       }
     } catch (err) {
       if (err) {
@@ -334,9 +342,9 @@ class Client {
   async upload(bytes, origin) {
     try {
       const link = await CAR.codec.link(bytes)
-
       /** @type {{status:string, with:API.DID, url:String, headers:HeadersInit, error:boolean}} */
-      const result = await this.invoke(Upload.add, this.w3upConnection, {
+      // @ts-ignore
+      const result = await this.invoke(Store.add, this.w3upConnection, {
         link,
         origin,
       })
@@ -458,24 +466,6 @@ class Client {
 }
 
 export default Client
-
-/**
- * Remove an uploaded file by CID
- * @param {API.Link} root - the CID to link as root.
- * @param {Array<API.Link>} links - the CIDs to link as 'children'
- */
-//   async linkroot(root, links) {
-//     const id = await this.identity()
-//     return await Store.LinkRoot.invoke({
-//       issuer: id,
-//       audience: this.storeClient.id,
-//       with: id.did(),
-//       caveats: {
-//         rootLink: root,
-//         links,
-//       },
-//     }).execute(this.storeClient)
-//   }
 
 /**
  * @param {API.Link} link - the CID to get insights for
