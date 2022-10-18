@@ -70,6 +70,7 @@ describe('awake', function () {
         pin = await requestor.bootstrap([
           { with: responder.did, can: 'identity/*' },
         ])
+        console.log(pin)
       },
       { priority: 2 }
     )

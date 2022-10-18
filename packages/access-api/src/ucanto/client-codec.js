@@ -5,17 +5,19 @@ import { UTF8 } from '@ucanto/transport'
 /** @type {import('./types.js').ClientCodec} */
 export const clientCodec = {
   async encode(invocations, options) {
-    /** @type {Record<string, string>} */
-    const headers = {}
+    const headers = new Headers()
     const chain = await Delegation.delegate(invocations[0])
 
     // TODO iterate over proofs and send them too
     // for (const ucan of chain.iterate()) {
     //   //
     // }
-    headers.authorization = `bearer ${UCAN.format(chain.data)}`
 
-    return { headers, body: new Uint8Array() }
+    headers.set('authorization', `bearer ${UCAN.format(chain.data)}`)
+    return {
+      headers: Object.fromEntries(headers.entries()),
+      body: new Uint8Array(),
+    }
   },
 
   decode({ headers, body }) {

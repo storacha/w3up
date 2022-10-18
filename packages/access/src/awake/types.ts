@@ -35,7 +35,7 @@ export interface Channel {
    * @param aud - The ECDH P-256 DID signalled by the Requestor in previous awake/init
    * @param ucan - Validation UCAN to be AES-GCM-encrypted
    */
-  sendRes: (aud: UCAN.DIDView, msg: UCAN.View) => Promise<void>
+  sendRes: (aud: UCAN.Principal, msg: UCAN.View) => Promise<void>
 
   /**
    * Awaits for awake/res msg and decrypts ucan payload from send DID
@@ -48,14 +48,16 @@ export interface Channel {
    * @param did - DID to encrypt for
    * @param msg - Message to be encrypted and sent
    */
-  sendMsg: (did: UCAN.DIDView, msg: unknown) => Promise<void>
+  sendMsg: (did: UCAN.Principal, msg: unknown) => Promise<void>
 
   /**
    * Awaits for a awake/msg and decrypts payload from sender DID
    */
-  awaitMsg: (did: UCAN.DIDView) => Promise<import('./types').AwakeMsgDecrypted>
+  awaitMsg: (
+    did: UCAN.Principal
+  ) => Promise<import('./types').AwakeMsgDecrypted>
 
-  sendFin: (did: UCAN.DIDView) => Promise<void>
+  sendFin: (did: UCAN.Principal) => Promise<void>
 }
 
 export type MessageType = z.infer<typeof Messages['MessageType']>
@@ -63,13 +65,13 @@ export type MessageType = z.infer<typeof Messages['MessageType']>
 export type AwakeMessage = z.infer<typeof Messages['AwakeMessage']>
 
 export interface AwakeInit extends AwakeMessage {
-  did: UCAN.DIDView
+  did: UCAN.Principal
   caps: UCAN.Capabilities
 }
 
 export interface AwakeRes extends AwakeMessage {
-  iss: UCAN.DIDView
-  aud: UCAN.DIDView
+  iss: UCAN.Principal
+  aud: UCAN.Principal
   ucan: UCAN.View
 }
 

@@ -16,9 +16,9 @@
   "devDependencies": {
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
-    "simple-git-hooks": "^2.8.0",
+    "simple-git-hooks": "^2.8.1",
     "typescript": "^4.8.4",
-    "wrangler": "^2.1.11"
+    "wrangler": "^2.1.12"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
@@ -34,14 +34,6 @@
     "singleQuote": true
   },
   "engines": {
-    "node": ">=14"
-  },
-  "pnpm": {
-    "overrides": {
-      "npx-import": "1.1.3"
-    },
-    "patchedDependencies": {
-      "npx-import@1.1.3": "patches/npx-import@1.1.3.patch"
-    }
+    "node": ">=16"
   }
 }

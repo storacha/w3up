@@ -1,4 +1,4 @@
-import { SigningPrincipal } from '@ucanto/principal'
+import { Signer } from '@ucanto/principal/ed25519'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -6,26 +6,18 @@ import { Delegations } from '../delegations.js'
 
 /**
  * @typedef {import('./types').DelegationsAsJSON} DelegationsAsJSON
- */
-
-/**
- * @template T
- * @typedef {import('./types').StoreData<237>} StoreData
- */
-
-/**
- * @template T
- * @typedef {import('./types').Store<237>} Store
+ * @typedef {import('./types').StoreDataKeyEd} StoreData
+ * @typedef {import('./types').StoreKeyEd} Store
  */
 
 /**
  * Store implementation with "conf"
  *
- * @implements {Store<237>}
+ * @implements {Store}
  */
 export class StoreMemory {
   constructor() {
-    /** @type {StoreData<237>} */
+    /** @type {StoreData} */
     // @ts-ignore
     this.data = {}
   }
@@ -37,7 +29,7 @@ export class StoreMemory {
   async close() {}
 
   async exists() {
-    return this.data.meta !== undefined && this.data.agent !== undefined
+    return this.data.meta !== undefined && this.data.principal !== undefined
   }
 
   static async create() {
@@ -47,19 +39,19 @@ export class StoreMemory {
     return store
   }
 
-  /** @type {Store<237>['init']} */
+  /** @type {Store['init']} */
   async init(data) {
-    const principal = data.agent || (await SigningPrincipal.generate())
+    const principal = data.principal || (await Signer.generate())
     const delegations =
       data.delegations ||
       new Delegations({
         principal,
       })
-    /** @type {StoreData<237>} */
+    /** @type {StoreData} */
     const storeData = {
       accounts: data.accounts || [],
       meta: data.meta || { name: 'agent', type: 'device' },
-      agent: principal,
+      principal,
       delegations,
     }
 
@@ -69,7 +61,7 @@ export class StoreMemory {
 
   /**
    *
-   * @param {StoreData<237>} data
+   * @param {StoreData} data
    */
   async save(data) {
     this.data = {
@@ -78,13 +70,13 @@ export class StoreMemory {
     return this
   }
 
-  /** @type {Store<237>['load']} */
+  /** @type {Store['load']} */
   async load() {
-    /** @type {StoreData<237>} */
+    /** @type {StoreData} */
     return this.data
   }
 
   async createAccount() {
-    return await SigningPrincipal.generate()
+    return await Signer.generate()
   }
 }

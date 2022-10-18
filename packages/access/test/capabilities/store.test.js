@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-null */
 import assert from 'assert'
 import { access } from '@ucanto/validator'
-import { Principal } from '@ucanto/principal'
+import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
 import * as Store from '../../src/capabilities/store.js'
 import {
@@ -10,6 +10,7 @@ import {
   mallory as account,
   bob,
 } from '../helpers/fixtures.js'
+import { createCarCid } from '../helpers/utils.js'
 
 describe('store capabilities', function () {
   const any = delegate({
@@ -39,7 +40,7 @@ describe('store capabilities', function () {
       issuer: alice,
       audience: w3,
       with: account.did(),
-      caveats: {
+      nb: {
         link: parseLink('bafkqaaa'),
       },
       proofs: [await any],
@@ -47,7 +48,7 @@ describe('store capabilities', function () {
 
     const result = await access(await add.delegate(), {
       capability: Store.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -59,7 +60,7 @@ describe('store capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'store/add')
-    assert.deepEqual(result.capability.caveats, {
+    assert.deepEqual(result.capability.nb, {
       link: parseLink('bafkqaaa'),
     })
   })
@@ -69,7 +70,7 @@ describe('store capabilities', function () {
       issuer: alice,
       audience: w3,
       with: account.did(),
-      caveats: {
+      nb: {
         link: parseLink('bafkqaaa'),
       },
       proofs: [await store],
@@ -77,7 +78,7 @@ describe('store capabilities', function () {
 
     const result = await access(await add.delegate(), {
       capability: Store.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -89,7 +90,7 @@ describe('store capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'store/add')
-    assert.deepEqual(result.capability.caveats, {
+    assert.deepEqual(result.capability.nb, {
       link: parseLink('bafkqaaa'),
     })
   })
@@ -122,15 +123,15 @@ describe('store capabilities', function () {
       issuer: bob,
       audience: w3,
       with: account.did(),
-      caveats: {
+      nb: {
         link: parseLink('bafkqaaa'),
       },
-      proofs: [await store],
+      proofs: [store],
     })
 
     const result = await access(await add.delegate(), {
       capability: Store.add,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -142,7 +143,7 @@ describe('store capabilities', function () {
 
     assert.deepEqual(result.audience.did(), w3.did())
     assert.equal(result.capability.can, 'store/add')
-    assert.deepEqual(result.capability.caveats, {
+    assert.deepEqual(result.capability.nb, {
       link: parseLink('bafkqaaa'),
     })
   })
@@ -153,7 +154,7 @@ describe('store capabilities', function () {
         issuer: alice,
         audience: bob,
         with: account.did(),
-        caveats: {
+        nb: {
           size: 1024,
         },
         proofs: [await any],
@@ -165,16 +166,16 @@ describe('store capabilities', function () {
         issuer: bob,
         audience: w3,
         with: account.did(),
-        caveats: {
+        nb: {
           size: 1000,
           link: parseLink('bafkqaaa'),
         },
-        proofs: [await delegation],
+        proofs: [delegation],
       })
 
       const result = await access(await add.delegate(), {
         capability: Store.add,
-        principal: Principal,
+        principal: Verifier,
         canIssue: (claim, issuer) => {
           return claim.with === issuer
         },
@@ -186,7 +187,7 @@ describe('store capabilities', function () {
 
       assert.deepEqual(result.audience.did(), w3.did())
       assert.equal(result.capability.can, 'store/add')
-      assert.deepEqual(result.capability.caveats, {
+      assert.deepEqual(result.capability.nb, {
         link: parseLink('bafkqaaa'),
         size: 1000,
       })
@@ -197,7 +198,7 @@ describe('store capabilities', function () {
         issuer: bob,
         audience: w3,
         with: account.did(),
-        caveats: {
+        nb: {
           size: 2048,
           link: parseLink('bafkqaaa'),
         },
@@ -206,7 +207,7 @@ describe('store capabilities', function () {
 
       const result = await access(await add.delegate(), {
         capability: Store.add,
-        principal: Principal,
+        principal: Verifier,
         canIssue: (claim, issuer) => {
           return claim.with === issuer
         },
@@ -227,13 +228,13 @@ describe('store capabilities', function () {
           issuer: alice,
           audience: w3,
           with: account.did(),
-          caveats: {
+          nb: {
             // @ts-expect-error
             size,
           },
           proofs,
         })
-      }, /Expecting an Integer but instead got/)
+      }, /Expected value of type/)
     })
 
     it(`store/add validation fails when size is ${json}`, async () => {
@@ -244,23 +245,26 @@ describe('store capabilities', function () {
           {
             can: 'store/add',
             with: account.did(),
-            root: parseLink('bafkqaaa'),
-            size,
+            nb: {
+              link: await createCarCid('bafkqaaa'),
+              size,
+            },
           },
         ],
         proofs: [await any],
       })
 
+      // @ts-expect-error - size type doesnt not match because we are testing fails
       const result = await access(add, {
         capability: Store.add,
-        principal: Principal,
+        principal: Verifier,
         canIssue: (claim, issuer) => {
           return claim.with === issuer
         },
       })
 
       assert.equal(result.error, true)
-      assert.match(String(result), /Expecting an Integer but instead got/)
+      assert.match(String(result), /Expected value of type/)
     })
   }
 
@@ -271,11 +275,11 @@ describe('store capabilities', function () {
         issuer: alice,
         audience: w3,
         with: account.did(),
-        caveats: {
+        nb: {
           size: 1024.2,
         },
         proofs,
       })
-    }, /Expecting an Integer but instead got: number 1024\.2/)
+    }, /Expected value of type integer instead got 1024\.2/)
   })
 })

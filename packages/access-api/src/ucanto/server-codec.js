@@ -25,7 +25,7 @@ function multiValueHeader(headers, name) {
 }
 
 /**
- * @param {Record<string, string>} headers
+ * @param {Record<string, string> | Headers} headers
  */
 async function parseHeaders(headers) {
   const h = new Headers(headers)
@@ -130,7 +130,7 @@ export const serverCodec = {
    */
   encode(result) {
     return {
-      headers: HEADERS,
+      headers: Object.fromEntries(new Headers(HEADERS).entries()),
       body: UTF8.encode(JSON.stringify(result)),
     }
   },

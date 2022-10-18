@@ -4,7 +4,7 @@ import * as Identity from '@web3-storage/access/capabilities/identity'
 import { Accounts } from '../src/kvs/accounts.js'
 import { context, test } from './helpers/context.js'
 // eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
+import * as Ucanto from '@ucanto/interface'
 
 test.beforeEach(async (t) => {
   t.context = await context()
@@ -16,7 +16,7 @@ test('register', async (t) => {
   const validate = Identity.validate.invoke({
     audience: service,
     issuer,
-    caveats: {
+    nb: {
       as: 'mailto:hugo+register@dag.house',
     },
     with: issuer.did(),
@@ -26,22 +26,20 @@ test('register', async (t) => {
   if (out?.error || !out) {
     return t.fail()
   }
-  // @ts-ignore
-  const ucan = UCAN.parse(
-    // @ts-ignore
-    out.delegation.replace('http://localhost:8787/validate?ucan=', '')
-  )
+  const jwt =
+    /** @type UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */ (
+      out.delegation.replace('http://localhost:8787/validate?ucan=', '')
+    )
+  const ucan = UCAN.parse(jwt)
   const root = await UCAN.write(ucan)
   const proof = Delegation.create({ root })
 
   const register = Identity.register.invoke({
     audience: service,
     issuer,
-    // @ts-ignore
     with: proof.capabilities[0].with,
-    caveats: {
-      // @ts-ignore
-      as: proof.capabilities[0].as,
+    nb: {
+      as: proof.capabilities[0].nb.as,
     },
     proofs: [proof],
   })
@@ -63,7 +61,7 @@ test('identify', async (t) => {
   const validate = Identity.validate.invoke({
     audience: service,
     issuer,
-    caveats: {
+    nb: {
       as: 'mailto:hugo+identify@dag.house',
     },
     with: issuer.did(),
@@ -73,8 +71,7 @@ test('identify', async (t) => {
   if (out?.error || !out) {
     return
   }
-  /** @type {Types.UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */
-  // @ts-ignore
+  /** @type {Ucanto.UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */
   const jwt = out.delegation.replace('http://localhost:8787/validate?ucan=', '')
   const ucan = UCAN.parse(jwt)
   const root = await UCAN.write(ucan)
@@ -84,8 +81,8 @@ test('identify', async (t) => {
     audience: service,
     issuer,
     with: proof.capabilities[0].with,
-    caveats: {
-      as: proof.capabilities[0].as,
+    nb: {
+      as: proof.capabilities[0].nb.as,
     },
     proofs: [proof],
   })
