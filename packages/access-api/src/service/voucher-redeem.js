@@ -17,7 +17,7 @@ export function voucherRedeemProvider(ctx) {
     })
 
     ctx.config.METRICS.writeDataPoint({
-      blobs: [ctx.config.ENV, 'new_account'],
+      blobs: [ctx.config.ENV, 'new_account_v1'],
       doubles: [1],
     })
 

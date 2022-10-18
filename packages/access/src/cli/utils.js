@@ -3,8 +3,8 @@ import { Verifier } from '@ucanto/principal/ed25519'
 
 /** @type {Record<string,string>} */
 const envs = {
-  production: 'https://access-api-staging.web3.storage',
-  staging: 'https://access-api.web3.storage',
+  production: 'https://access.web3.storage',
+  staging: 'https://w3access-staging.protocol-labs.workers.dev',
   dev: 'https://w3access-dev.protocol-labs.workers.dev',
   local: 'http://127.0.0.1:8787',
 }

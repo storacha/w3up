@@ -1,5 +1,5 @@
 import { Signer } from '@ucanto/principal/ed25519'
-import { buildConnection } from '@web3-storage/access'
+import { connection } from '@web3-storage/access'
 import anyTest from 'ava'
 import dotenv from 'dotenv'
 import { Miniflare } from 'miniflare'
@@ -38,15 +38,14 @@ export async function context() {
     modules: true,
     bindings,
   })
-  const { connection } = await buildConnection(
-    principal,
-    // @ts-ignore
-    mf.dispatchFetch.bind(mf),
-    new URL('http://localhost:8787')
-  )
   return {
     mf,
-    conn: connection,
+    conn: await connection(
+      principal,
+      // @ts-ignore
+      mf.dispatchFetch.bind(mf),
+      new URL('http://localhost:8787')
+    ),
     service: Signer.parse(bindings.PRIVATE_KEY),
     issuer: principal,
   }
