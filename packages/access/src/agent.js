@@ -1,18 +1,18 @@
+import * as DID from '@ipld/dag-ucan/did'
+import * as Client from '@ucanto/client'
+import { delegate } from '@ucanto/core'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import * as DID from '@ipld/dag-ucan/did'
-import { Peer } from './awake/peer.js'
-import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
-import { delegate } from '@ucanto/core'
-import * as Voucher from './capabilities/voucher.js'
-import * as Account from './capabilities/account.js'
-import { Websocket } from './utils/ws.js'
-import { stringToDelegation } from './encoding.js'
 import { URI } from '@ucanto/validator'
+import { Peer } from './awake/peer.js'
+import * as Account from './capabilities/account.js'
+import * as Voucher from './capabilities/voucher.js'
+import { stringToDelegation } from './encoding.js'
+import { Websocket } from './utils/ws.js'
 
 /**
  * @template T
@@ -20,8 +20,7 @@ import { URI } from '@ucanto/validator'
  * store: import('./stores/types').Store<T>
  * connection: Ucanto.ConnectionView<import('./types').Service>,
  * url?: URL,
- * fetch?: typeof fetch
- * service: Ucanto.Principal
+ * fetch: typeof fetch
  * data: import('./stores/types').StoreData<T>
  * }} AgentOptions
  */
@@ -42,13 +41,9 @@ const HOST = 'https://access.web3.storage'
  * @param {Ucanto.Principal<T>} principal
  * @param {typeof fetch} _fetch
  * @param {URL} url
- * @returns { Promise<{service: Ucanto.UCAN.PrincipalView, connection: import('@ucanto/interface').ConnectionView<import('./types').Service>}>}
+ * @returns { Promise<import('@ucanto/interface').ConnectionView<import('./types').Service>>}
  */
-export async function buildConnection(principal, _fetch, url) {
-  const rsp = await _fetch(url + 'version')
-  const { did } = await rsp.json()
-  const service = DID.parse(did)
-
+export async function connection(principal, _fetch, url) {
   const connection = Client.connect({
     id: principal,
     encoder: CAR,
@@ -60,7 +55,7 @@ export async function buildConnection(principal, _fetch, url) {
     }),
   })
 
-  return { service, connection }
+  return connection
 }
 
 /**
@@ -68,28 +63,25 @@ export async function buildConnection(principal, _fetch, url) {
  * Agent
  */
 export class Agent {
+  /** @type {Ucanto.Principal|undefined} */
+  #service
+
+  /** @type {typeof fetch} */
+  #fetch
+
   /**
    * @param {AgentOptions<T>} opts
    */
   constructor(opts) {
-    this.store = opts.store
-    this.service = opts.service
     this.url = opts.url || new URL(HOST)
-    this.fetch = opts.fetch
     this.connection = opts.connection
-    this.data = opts.data
     this.issuer = opts.data.principal
+    this.store = opts.store
+    this.data = opts.data
 
-    // validate fetch implementation
-    if (!this.fetch) {
-      if (typeof globalThis.fetch !== 'undefined') {
-        this.fetch = globalThis.fetch.bind(globalThis)
-      } else {
-        throw new TypeError(
-          `Agent got undefined \`fetch\`. Try passing in a \`fetch\` implementation explicitly.`
-        )
-      }
-    }
+    // private
+    this.#fetch = opts.fetch
+    this.#service = undefined
   }
 
   /**
@@ -112,19 +104,23 @@ export class Agent {
     }
 
     const data = await opts.store.load()
-    const { connection, service } = await buildConnection(
-      data.principal,
-      _fetch,
-      url
-    )
     return new Agent({
-      connection,
-      service,
+      connection: await connection(data.principal, _fetch, url),
       fetch: _fetch,
       url,
       store: opts.store,
       data,
     })
+  }
+
+  async service() {
+    if (this.#service) {
+      return this.#service
+    }
+    const rsp = await this.#fetch(this.url + 'version')
+    const { did } = await rsp.json()
+    this.#service = DID.parse(did)
+    return this.#service
   }
 
   did() {
@@ -136,6 +132,7 @@ export class Agent {
    */
   async createAccount(email) {
     const account = await this.store.createAccount()
+    const service = await this.service()
     const accDelegation = await delegate({
       // @ts-ignore
       issuer: account,
@@ -156,12 +153,12 @@ export class Agent {
     const inv = await Voucher.claim
       .invoke({
         issuer: this.data.principal,
-        audience: this.service,
+        audience: service,
         with: account.did(),
         nb: {
           identity: URI.from(`mailto:${email}`),
           product: 'product:free',
-          service: this.service.did(),
+          service: service.did(),
         },
         proofs: [accDelegation],
       })
@@ -171,13 +168,13 @@ export class Agent {
       throw new Error('Account creation failed', { cause: inv.error })
     }
 
-    const voucherRedeem = await this._waitForVoucherRedeem()
+    const voucherRedeem = await this.#waitForVoucherRedeem()
 
     const accInv = await Voucher.redeem
       .invoke({
         issuer: this.data.principal,
-        audience: this.service,
-        with: this.service.did(),
+        audience: service,
+        with: service.did(),
         nb: {
           account: account.did(),
           identity: voucherRedeem.capabilities[0].nb.identity,
@@ -196,7 +193,7 @@ export class Agent {
     this.store.save(this.data)
   }
 
-  async _waitForVoucherRedeem() {
+  async #waitForVoucherRedeem() {
     const ws = new Websocket(this.url, 'validate-ws')
     await ws.open()
     ws.send({
@@ -267,7 +264,7 @@ export class Agent {
     const inv = await Account.info
       .invoke({
         issuer: this.issuer,
-        audience: this.service,
+        audience: await this.service(),
         with: account,
         proofs,
       })
