@@ -1,6 +1,7 @@
 import * as UnixFS from '@ipld/unixfs'
-import type { Block } from '@ipld/unixfs'
+import { Block } from '@ipld/unixfs'
 import type { CID } from 'multiformats/cid'
+import * as raw from 'multiformats/codecs/raw'
 import { toIterable } from './streams'
 
 const queuingStrategy = UnixFS.withCapacity(1048576 * 175)
@@ -17,9 +18,15 @@ export interface EncodeResult {
   blocks: ReadableStream<UnixFS.Block>
 }
 
+// TODO: configure chunk size and max children https://github.com/ipld/js-unixfs/issues/36
+const settings = UnixFS.configure({
+  fileChunkEncoder: raw,
+  smallFileEncoder: raw
+})
+
 export function encodeFile (blob: Blob): EncodeResult {
   const { readable, writable } = new TransformStream<Block, Block>({}, queuingStrategy)
-  const unixfsWriter = UnixFS.createWriter({ writable })
+  const unixfsWriter = UnixFS.createWriter({ writable, settings })
   const fileBuilder = new UnixFsFileBuilder(blob)
   const cidPromise = (async () => {
     const { cid } = await fileBuilder.finalize(unixfsWriter)
@@ -90,7 +97,7 @@ export function encodeDirectory (files: Iterable<File>): EncodeResult {
   }
 
   const { readable, writable } = new TransformStream<Block, Block>({}, queuingStrategy)
-  const unixfsWriter = UnixFS.createWriter({ writable })
+  const unixfsWriter = UnixFS.createWriter({ writable, settings })
   const cidPromise = (async () => {
     const { cid } = await rootDir.finalize(unixfsWriter)
     await unixfsWriter.close()

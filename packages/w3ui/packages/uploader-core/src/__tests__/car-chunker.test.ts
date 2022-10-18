@@ -17,7 +17,8 @@ describe('CAR chunker', () => {
 
     for (const car of chunks) {
       const bytes = new Blob(await collect(car))
-      expect(bytes.size).toBeLessThanOrEqual(chunkSize)
+      // add 100 bytes leeway to the chunk size for encoded CAR data
+      expect(bytes.size).toBeLessThanOrEqual(chunkSize + 100)
     }
   })
 })

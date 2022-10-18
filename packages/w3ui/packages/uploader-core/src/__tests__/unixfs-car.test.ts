@@ -4,6 +4,7 @@ import { MemoryBlockstore } from 'blockstore-core/memory'
 import path from 'path'
 import { encodeFile, encodeDirectory } from '../unixfs-car'
 import { Block } from '@ipld/unixfs'
+import * as raw from 'multiformats/codecs/raw'
 import { toIterable } from '../streams'
 import { collect } from './helpers'
 
@@ -61,5 +62,12 @@ describe('UnixFS CAR encoder', () => {
     const actualPaths = entries.map(e => e.path)
 
     expectedPaths.forEach(p => expect(actualPaths).toContain(p))
+  })
+
+  it('configured to use raw leaves', async () => {
+    const file = new Blob(['test'])
+    const { cid, blocks } = encodeFile(file)
+    await blocksToBlockstore(blocks)
+    expect((await cid).code).toEqual(raw.code)
   })
 })
