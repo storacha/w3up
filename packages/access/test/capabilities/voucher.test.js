@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { access } from '@ucanto/validator'
-import { Principal } from '@ucanto/principal'
+import { Verifier } from '@ucanto/principal/ed25519'
 import { delegate } from '@ucanto/core'
 import * as Voucher from '../../src/capabilities/voucher.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
@@ -10,9 +10,9 @@ describe('voucher capabilities', function () {
     const account = mallory
     const claim = Voucher.claim.invoke({
       issuer: alice,
-      audience: service.principal,
+      audience: service,
       with: account.did(),
-      caveats: {
+      nb: {
         identity: 'mailto:alice@email.com',
         product: 'product:free',
         service: service.did(),
@@ -20,7 +20,7 @@ describe('voucher capabilities', function () {
       proofs: [
         await delegate({
           issuer: account,
-          audience: alice.principal,
+          audience: alice,
           capabilities: [
             {
               can: 'voucher/*',
@@ -33,7 +33,7 @@ describe('voucher capabilities', function () {
 
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -41,7 +41,7 @@ describe('voucher capabilities', function () {
     if (!result.error) {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'voucher/claim')
-      assert.deepEqual(result.capability.caveats, {
+      assert.deepEqual(result.capability.nb, {
         identity: 'mailto:alice@email.com',
         product: 'product:free',
         service: service.did(),
@@ -52,9 +52,9 @@ describe('voucher capabilities', function () {
   it('should delegate from claim to claim', async function () {
     const claim = Voucher.claim.invoke({
       issuer: bob,
-      audience: service.principal,
+      audience: service,
       with: alice.did(),
-      caveats: {
+      nb: {
         identity: 'mailto:alice@email.com',
         product: 'product:free',
         service: service.did(),
@@ -63,9 +63,9 @@ describe('voucher capabilities', function () {
         await Voucher.claim
           .invoke({
             issuer: alice,
-            audience: bob.principal,
+            audience: bob,
             with: alice.did(),
-            caveats: {
+            nb: {
               identity: 'mailto:alice@email.com',
               product: 'product:free',
               service: service.did(),
@@ -77,7 +77,7 @@ describe('voucher capabilities', function () {
 
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },
@@ -86,7 +86,7 @@ describe('voucher capabilities', function () {
     if (!result.error) {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'voucher/claim')
-      assert.deepEqual(result.capability.caveats, {
+      assert.deepEqual(result.capability.nb, {
         identity: 'mailto:alice@email.com',
         product: 'product:free',
         service: service.did(),
@@ -99,9 +99,9 @@ describe('voucher capabilities', function () {
   it('should error claim to claim when caveats are different', async function () {
     const claim = Voucher.claim.invoke({
       issuer: bob,
-      audience: service.principal,
+      audience: service,
       with: alice.did(),
-      caveats: {
+      nb: {
         identity: 'mailto:alice@email.com',
         product: 'product:freess',
         service: service.did(),
@@ -110,9 +110,9 @@ describe('voucher capabilities', function () {
         await Voucher.claim
           .invoke({
             issuer: alice,
-            audience: bob.principal,
+            audience: bob,
             with: alice.did(),
-            caveats: {
+            nb: {
               identity: 'mailto:alice@email.com',
               product: 'product:free',
               service: service.did(),
@@ -124,7 +124,7 @@ describe('voucher capabilities', function () {
 
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
-      principal: Principal,
+      principal: Verifier,
       canIssue: (claim, issuer) => {
         return claim.with === issuer
       },

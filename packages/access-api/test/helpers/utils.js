@@ -1,11 +1,12 @@
 import * as UCAN from '@ipld/dag-ucan'
+import { URI } from '@ucanto/validator'
 import { Delegation } from '@ucanto/core'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 import * as Identity from '@web3-storage/access/capabilities/identity'
 
 /**
- * @param {UCAN.UCAN<[UCAN.Capability<UCAN.Ability, `${string}:${string}`>]>} ucan
+ * @param {Types.UCAN.View} ucan
  * @param {import('miniflare').Miniflare} mf
  */
 export async function send(ucan, mf) {
@@ -19,7 +20,7 @@ export async function send(ucan, mf) {
 
 /**
  * @param {Types.ConnectionView<import('@web3-storage/access/src/types').Service>} con
- * @param {Types.SigningPrincipal<237>} issuer
+ * @param {Types.Signer} issuer
  * @param {Types.Principal} audience
  * @param {string} email
  */
@@ -27,8 +28,8 @@ export async function validateEmail(con, issuer, audience, email) {
   const validate = Identity.validate.invoke({
     audience,
     issuer,
-    caveats: {
-      as: `mailto:${email}`,
+    nb: {
+      as: URI.from(`mailto:${email}`),
     },
     with: issuer.did(),
   })
@@ -50,19 +51,17 @@ export async function validateEmail(con, issuer, audience, email) {
 
 /**
  * @param {Types.ConnectionView<import('@web3-storage/access/src/types').Service>} con
- * @param {Types.SigningPrincipal<237>} issuer
+ * @param {Types.Signer} issuer
  * @param {Types.Principal} audience
- * @param {Types.Proof<[UCAN.Capability<UCAN.Ability, `${string}:${string}`>, ...UCAN.Capability<UCAN.Ability, `${string}:${string}`>[]]>} proof
+ * @param {Types.Delegation<[import('@web3-storage/access/src/types').IdentityRegister]>} proof
  */
 export async function register(con, issuer, audience, proof) {
   const register = Identity.register.invoke({
     audience,
     issuer,
-    // @ts-ignore
     with: proof.capabilities[0].with,
-    caveats: {
-      // @ts-ignore
-      as: proof.capabilities[0].as,
+    nb: {
+      as: proof.capabilities[0].nb.as,
     },
     proofs: [proof],
   })

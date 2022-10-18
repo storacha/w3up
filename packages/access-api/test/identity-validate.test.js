@@ -58,7 +58,7 @@ test('should route correctly to identity/validate', async (t) => {
   const validate = Identity.validate.invoke({
     audience: service,
     issuer,
-    caveats: {
+    nb: {
       as: 'mailto:hugo@dag.house',
     },
     with: issuer.did(),
@@ -68,56 +68,21 @@ test('should route correctly to identity/validate', async (t) => {
   if (out?.error || !out) {
     return t.fail()
   }
-  const ucan = UCAN.parse(
-    // @ts-ignore
-    out.delegation.replace('http://localhost:8787/validate?ucan=', '')
-  )
+
+  const jwt =
+    /** @type UCAN.JWT<[import('@web3-storage/access/types').IdentityRegister]>} */ (
+      out.delegation.replace('http://localhost:8787/validate?ucan=', '')
+    )
+  const ucan = UCAN.parse(jwt)
   t.is(ucan.audience.did(), issuer.did())
   t.is(ucan.issuer.did(), service.did())
   t.deepEqual(ucan.capabilities, [
     {
       can: 'identity/register',
       with: 'mailto:hugo@dag.house',
-      as: issuer.did(),
+      nb: {
+        as: issuer.did(),
+      },
     },
   ])
 })
-
-// test('should route correctly to identity/validate and fail with proof', async (t) => {
-//   const { mf } = t.context
-//   const kp = await ucans.EdKeypair.create()
-//   const rootUcan = await ucans.build({
-//     audience: kp.did(),
-//     issuer: serviceKp,
-//     capabilities: [
-//       {
-//         can: { namespace: 'identity', segments: ['validate'] },
-//         with: { scheme: 'mailto', hierPart: '*' },
-//       },
-//     ],
-//     lifetimeInSeconds: 100,
-//   })
-//   const ucan = await ucans.build({
-//     audience: serviceKp.did(),
-//     issuer: kp,
-//     capabilities: [
-//       {
-//         can: { namespace: 'identity', segments: ['validate'] },
-//         with: { scheme: 'mailto', hierPart: 'alice@mail.com' },
-//       },
-//     ],
-//     lifetimeInSeconds: 100,
-//     proofs: [ucans.encode(rootUcan)],
-//   })
-//   const res = await mf.dispatchFetch('http://localhost:8787', {
-//     method: 'POST',
-//     headers: {
-//       Authorization: `Bearer ${ucans.encode(ucan)}`,
-//     },
-//   })
-//   const rsp = await res.json()
-//   t.deepEqual(rsp, {
-//     ok: false,
-//     error: { code: 'Error', message: 'Invalid capability' },
-//   })
-// })

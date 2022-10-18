@@ -1,6 +1,6 @@
-import { capability, Link, URI } from '@ucanto/server'
+import { capability, Link, URI } from '@ucanto/validator'
 import { codec } from '@ucanto/transport/car'
-import { equalWith, List, fail, equal } from './utils.js'
+import { equalWith, fail, equal } from './utils.js'
 import { any } from './any.js'
 
 /**
@@ -33,15 +33,15 @@ export const add = base.derive({
   to: capability({
     can: 'upload/add',
     with: URI.match({ protocol: 'did:' }),
-    caveats: {
-      root: Link.optional(),
-      shards: List.of(CARLink).optional(),
+    nb: {
+      root: CARLink.optional(),
+      shards: CARLink.array().optional(),
     },
     derives: (self, from) => {
       return (
         fail(equalWith(self, from)) ||
-        fail(equal(self.caveats.root, from.caveats.root, 'root')) ||
-        fail(equal(self.caveats.shards, from.caveats.shards, 'shards')) ||
+        fail(equal(self.nb.root, from.nb.root, 'root')) ||
+        fail(equal(self.nb.shards, from.nb.shards, 'shards')) ||
         true
       )
     },
@@ -53,13 +53,13 @@ export const remove = base.derive({
   to: capability({
     can: 'upload/remove',
     with: URI.match({ protocol: 'did:' }),
-    caveats: {
+    nb: {
       root: Link.optional(),
     },
     derives: (self, from) => {
       return (
         fail(equalWith(self, from)) ||
-        fail(equal(self.caveats.root, from.caveats.root, 'root')) ||
+        fail(equal(self.nb.root, from.nb.root, 'root')) ||
         true
       )
     },

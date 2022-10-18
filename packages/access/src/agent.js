@@ -1,7 +1,7 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import { Principal } from '@ucanto/principal'
+import * as DID from '@ipld/dag-ucan/did'
 import { Peer } from './awake/peer.js'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
@@ -9,8 +9,10 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import { delegate } from '@ucanto/core'
 import * as Voucher from './capabilities/voucher.js'
+import * as Account from './capabilities/account.js'
 import { Websocket } from './utils/ws.js'
 import { stringToDelegation } from './encoding.js'
+import { URI } from '@ucanto/validator'
 
 /**
  * @template T
@@ -34,18 +36,18 @@ import { stringToDelegation } from './encoding.js'
  */
 
 const HOST = 'https://access-api.web3.storage'
+
 /**
- * @template {number} T
+ * @template {string} T
  * @param {Ucanto.Principal<T>} principal
  * @param {typeof fetch} _fetch
  * @param {URL} url
+ * @returns { Promise<{service: Ucanto.UCAN.PrincipalView, connection: import('@ucanto/interface').ConnectionView<import('./types').Service>}>}
  */
-async function buildConnection(principal, _fetch, url) {
+export async function buildConnection(principal, _fetch, url) {
   const rsp = await _fetch(url + 'version')
-  // @ts-ignore
   const { did } = await rsp.json()
-  // TODO how to parse any DID ????
-  const service = Principal.parse(did)
+  const service = DID.parse(did)
 
   const connection = Client.connect({
     id: principal,
@@ -54,15 +56,15 @@ async function buildConnection(principal, _fetch, url) {
     channel: HTTP.open({
       url,
       method: 'POST',
-      // @ts-ignore
       fetch: _fetch,
     }),
   })
 
   return { service, connection }
 }
+
 /**
- * @template {number} T
+ * @template {Ucanto.Signer} T
  * Agent
  */
 export class Agent {
@@ -76,6 +78,7 @@ export class Agent {
     this.fetch = opts.fetch
     this.connection = opts.connection
     this.data = opts.data
+    this.issuer = opts.data.principal
 
     // validate fetch implementation
     if (!this.fetch) {
@@ -90,7 +93,7 @@ export class Agent {
   }
 
   /**
-   * @template {number} T
+   * @template {Ucanto.Signer} T
    * @param {AgentCreateOptions<T>} opts
    */
   static async create(opts) {
@@ -110,7 +113,7 @@ export class Agent {
 
     const data = await opts.store.load()
     const { connection, service } = await buildConnection(
-      data.agent,
+      data.principal,
       _fetch,
       url
     )
@@ -125,7 +128,7 @@ export class Agent {
   }
 
   did() {
-    return this.data.agent.did()
+    return this.data.principal.did()
   }
 
   /**
@@ -136,10 +139,14 @@ export class Agent {
     const accDelegation = await delegate({
       // @ts-ignore
       issuer: account,
-      audience: this.data.agent,
+      audience: this.data.principal,
       capabilities: [
         {
           can: 'voucher/*',
+          with: account.did(),
+        },
+        {
+          can: 'account/*',
           with: account.did(),
         },
       ],
@@ -148,11 +155,11 @@ export class Agent {
 
     const inv = await Voucher.claim
       .invoke({
-        issuer: this.data.agent,
+        issuer: this.data.principal,
         audience: this.service,
         with: account.did(),
-        caveats: {
-          identity: `mailto:${email}`,
+        nb: {
+          identity: URI.from(`mailto:${email}`),
           product: 'product:free',
           service: this.service.did(),
         },
@@ -168,16 +175,17 @@ export class Agent {
 
     const accInv = await Voucher.redeem
       .invoke({
-        issuer: this.data.agent,
+        issuer: this.data.principal,
         audience: this.service,
         with: this.service.did(),
-        caveats: {
+        nb: {
           account: account.did(),
-          identity: voucherRedeem.capabilities[0].identity,
-          product: voucherRedeem.capabilities[0].product,
+          identity: voucherRedeem.capabilities[0].nb.identity,
+          product: voucherRedeem.capabilities[0].nb.product,
         },
         proofs: [voucherRedeem],
       })
+
       .execute(this.connection)
 
     if (accInv && accInv.error) {
@@ -215,7 +223,7 @@ export class Agent {
 
   /**
    *
-   * @param {Ucanto.UCAN.DIDView} audience
+   * @param {Ucanto.Principal} audience
    * @param {import('@ipld/dag-ucan').Capabilities} capabilities
    * @param {number} [lifetimeInSeconds]
    */
@@ -246,4 +254,37 @@ export class Agent {
   peer(channel) {
     return new Peer({ agent: this, channel })
   }
+
+  /**
+   * @param {Ucanto.URI<"did:">} account
+   */
+  async getAccountInfo(account) {
+    const proofs = isEmpty(this.data.delegations.getByResource(account))
+    if (!proofs) {
+      throw new TypeError('No proofs for "account/info".')
+    }
+
+    const inv = await Account.info
+      .invoke({
+        issuer: this.issuer,
+        audience: this.service,
+        with: account,
+        proofs,
+      })
+      .execute(this.connection)
+
+    return inv
+  }
+}
+
+/**
+ * @template T
+ * @param { Array<T | undefined> | undefined} arr
+ */
+function isEmpty(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return
+  }
+
+  return /** @type {T[]} */ (arr)
 }

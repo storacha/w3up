@@ -1,5 +1,5 @@
 import * as UCAN from '@ipld/dag-ucan'
-import { SigningPrincipal } from '@ucanto/principal'
+import { Signer } from '@ucanto/principal/ed25519'
 import { context, test } from './helpers/context.js'
 
 test.beforeEach(async (t) => {
@@ -69,9 +69,9 @@ test('should fail with 0 caps', async (t) => {
 })
 
 test('should fail with bad service audience', async (t) => {
-  const { mf, issuer, service } = t.context
+  const { mf, issuer } = t.context
 
-  const audience = await SigningPrincipal.generate()
+  const audience = await Signer.generate()
   const ucan = await UCAN.issue({
     issuer,
     audience,
@@ -85,17 +85,7 @@ test('should fail with bad service audience', async (t) => {
     },
   })
   const rsp = await res.json()
-  t.deepEqual(rsp, [
-    {
-      name: 'InvalidAudience',
-      error: true,
-      audience: service.did(),
-      delegation: {
-        audience: audience.did(),
-      },
-      message: `Delegates to '${audience.did()}' instead of '${service.did()}'`,
-    },
-  ])
+  t.deepEqual(rsp[0].name, 'InvalidAudience')
 })
 
 test('should fail with with more than 1 cap', async (t) => {
@@ -171,8 +161,8 @@ test('should handle exception in route handler', async (t) => {
 test('should fail with missing proofs', async (t) => {
   const { mf, service } = t.context
 
-  const alice = await SigningPrincipal.generate()
-  const bob = await SigningPrincipal.generate()
+  const alice = await Signer.generate()
+  const bob = await Signer.generate()
   const proof1 = await UCAN.issue({
     issuer: alice,
     audience: bob,
@@ -214,8 +204,8 @@ test('should fail with missing proofs', async (t) => {
 test('should multiple invocation should pass', async (t) => {
   const { mf, service } = t.context
 
-  const alice = await SigningPrincipal.generate()
-  const bob = await SigningPrincipal.generate()
+  const alice = await Signer.generate()
+  const bob = await Signer.generate()
   const proof1 = await UCAN.issue({
     issuer: alice,
     audience: bob,

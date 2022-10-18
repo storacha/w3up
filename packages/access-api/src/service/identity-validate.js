@@ -1,6 +1,6 @@
 import { UCAN } from '@ucanto/core'
 import * as Server from '@ucanto/server'
-import { Principal } from '@ucanto/principal'
+import { Verifier } from '@ucanto/principal/ed25519'
 import * as Identity from '@web3-storage/access/capabilities/identity'
 
 /**
@@ -12,10 +12,10 @@ export function identityValidateProvider(ctx) {
     async ({ capability, context, invocation }) => {
       const delegation = await Identity.register
         .invoke({
-          audience: Principal.parse(invocation.issuer.did()),
+          audience: Verifier.parse(invocation.issuer.did()),
           issuer: ctx.keypair,
-          with: capability.caveats.as,
-          caveats: {
+          with: capability.nb.as,
+          nb: {
             as: capability.with,
           },
           lifetimeInSeconds: 300,
@@ -34,7 +34,7 @@ export function identityValidateProvider(ctx) {
       }
 
       await ctx.email.sendValidation({
-        to: capability.caveats.as.replace('mailto:', ''),
+        to: capability.nb.as.replace('mailto:', ''),
         url,
       })
     }

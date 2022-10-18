@@ -1,31 +1,26 @@
-import { capability, URI } from '@ucanto/server'
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
+import { capability, URI } from '@ucanto/validator'
 import * as Store from './store.js'
 import { canDelegateURI, equalWith } from './utils.js'
 
 export const validate = capability({
   can: 'identity/validate',
   with: URI.match({ protocol: 'did:' }),
-  caveats: {
-    as: URI.string({ protocol: 'mailto:' }),
+  nb: {
+    as: URI.match({ protocol: 'mailto:' }),
   },
   derives: (child, parent) => {
-    return (
-      canDelegateURI(child.caveats.as, parent.caveats.as) &&
-      equalWith(child, parent)
-    )
+    return canDelegateURI(child.nb.as, parent.nb.as) && equalWith(child, parent)
   },
 })
 
 export const register = capability({
   can: 'identity/register',
   with: URI.match({ protocol: 'mailto:' }),
-  caveats: {
-    as: URI.string({ protocol: 'did:' }),
+  nb: {
+    as: URI.match({ protocol: 'did:' }),
   },
   derives: (child, parent) =>
-    canDelegateURI(child.caveats.as, parent.caveats.as) &&
+    canDelegateURI(child.nb.as, parent.nb.as) &&
     canDelegateURI(child.with, parent.with),
 })
 

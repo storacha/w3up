@@ -1,5 +1,4 @@
 import * as Server from '@ucanto/server'
-import { Principal } from '@ucanto/principal'
 import * as Voucher from '@web3-storage/access/capabilities/voucher'
 import { delegationToString } from '@web3-storage/access/encoding'
 
@@ -14,11 +13,10 @@ export function voucherClaimProvider(ctx) {
         issuer: ctx.keypair,
         lifetimeInSeconds: 60 * 1000,
         with: ctx.keypair.did(),
-        caveats: {
+        nb: {
           product: 'product:*',
           identity: 'mailto:*',
-          // TODO remove this
-          account: ctx.keypair.did(),
+          account: 'did:*',
         },
       })
       .delegate()
@@ -26,14 +24,13 @@ export function voucherClaimProvider(ctx) {
     const inv = await Voucher.redeem
       .invoke({
         issuer: ctx.keypair,
-        // TODO: we should not need this parse
-        audience: Principal.parse(invocation.issuer.did()),
+        audience: invocation.issuer,
         with: ctx.keypair.did(),
         lifetimeInSeconds: 60 * 10, // 10 mins
-        caveats: {
+        nb: {
           account: capability.with,
-          identity: capability.caveats.identity,
-          product: capability.caveats.product,
+          identity: capability.nb.identity,
+          product: capability.nb.product,
         },
         proofs: [proof],
       })
@@ -49,7 +46,7 @@ export function voucherClaimProvider(ctx) {
       ctx.url.host
     }/validate-email?ucan=${encoded}&did=${invocation.issuer.did()}`
     await ctx.email.sendValidation({
-      to: capability.caveats.identity.replace('mailto:', ''),
+      to: capability.nb.identity.replace('mailto:', ''),
       url,
     })
   })

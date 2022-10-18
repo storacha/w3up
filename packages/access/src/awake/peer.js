@@ -1,13 +1,14 @@
 import * as UCAN from '@ipld/dag-ucan'
 import * as DID from '@ipld/dag-ucan/did'
-import { Principal } from '@ucanto/principal'
+import * as Signature from '@ipld/dag-ucan/signature'
+import { Verifier } from '@ucanto/principal/ed25519'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as u8 from 'uint8arrays'
 import { decodeDelegations, encodeDelegations } from '../encoding.js'
 import * as Messages from './messages.js'
 
 /**
- * @template {number} T
+ * @template {UCAN.Signer} T
  */
 export class Peer {
   /**
@@ -59,7 +60,7 @@ export class Peer {
 
     // step3 - awake/res send
     const ucan = await UCAN.issue({
-      issuer: this.agent.data.agent,
+      issuer: this.agent.data.principal,
       audience: this.nextdid,
       capabilities: [{ with: 'awake:', can: '*' }],
       facts: [
@@ -91,12 +92,12 @@ export class Peer {
 
     // step 5 - awake/ack challenge confirmation and send
     const sig = u8.fromString(this.challenge, 'base64')
-    const verifier = Principal.parse(this.audience.did())
+    const verifier = Verifier.parse(this.audience.did())
     const payload = u8.fromString(this.channel.keypair.did + pin)
     const payloadHash = await sha256.encode(payload)
 
     // @ts-ignore
-    if (!(await verifier.verify(payloadHash, sig))) {
+    if (!(await verifier.verify(payloadHash, Signature.decode(sig)))) {
       throw new Error(
         `Challenge failed: ${pin} is not valid for the current challenge.`
       )
@@ -187,7 +188,9 @@ export class Peer {
 
     // Pin signature
     const bytes = u8.fromString(this.nextdid.did() + this.pin.toString())
-    const signed = await this.agent.data.agent.sign(await sha256.encode(bytes))
+    const signed = await this.agent.data.principal.sign(
+      await sha256.encode(bytes)
+    )
     this.channel.sendMsg(this.nextdid, {
       did: this.did,
       sig: u8.toString(signed, 'base64'),
