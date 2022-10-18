@@ -42,10 +42,12 @@ describe('awake', function () {
     const agent1 = await Agent.create({
       store: await StoreMemory.create(),
       fetch: globalThis.fetch || fetch,
+      url: new URL('http://127.0.0.1:8787'),
     })
     const agent2 = await Agent.create({
       store: await StoreMemory.create(),
       fetch: globalThis.fetch || fetch,
+      url: new URL('http://127.0.0.1:8787'),
     })
     const responder = agent1.peer(ws1)
     const requestor = agent2.peer(ws2)

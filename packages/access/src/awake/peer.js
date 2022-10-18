@@ -60,7 +60,7 @@ export class Peer {
 
     // step3 - awake/res send
     const ucan = await UCAN.issue({
-      issuer: this.agent.data.principal,
+      issuer: this.agent.issuer,
       audience: this.nextdid,
       capabilities: [{ with: 'awake:', can: '*' }],
       facts: [
@@ -188,9 +188,7 @@ export class Peer {
 
     // Pin signature
     const bytes = u8.fromString(this.nextdid.did() + this.pin.toString())
-    const signed = await this.agent.data.principal.sign(
-      await sha256.encode(bytes)
-    )
+    const signed = await this.agent.issuer.sign(await sha256.encode(bytes))
     this.channel.sendMsg(this.nextdid, {
       did: this.did,
       sig: u8.toString(signed, 'base64'),
