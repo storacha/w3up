@@ -17,16 +17,16 @@ export const upload = any.derive({
 })
 
 // Right now ucanto does not yet has native `*` support, which means
-// `store/add` can not be derived from `*` event though it can be
-// derived from `store/*`. As a workaround we just define base capability
-// here so all store capabilities could be derived from either `*` or
-// `store/*`.
+// `upload/add` can not be derived from `*` event though it can be
+// derived from `upload/*`. As a workaround we just define base capability
+// here so all upload capabilities could be derived from either `*` or
+// `upload/*`.
 const base = any.or(upload)
 
 const CARLink = Link.match({ code: codec.code, version: 1 })
 
 /**
- * `store/add` can be derived from the `store/*` capability
+ * `upload/add` can be derived from the `upload/*` capability
  * as long as with fields match.
  */
 export const add = base.derive({

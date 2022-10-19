@@ -2,6 +2,8 @@ import { capability, URI } from '@ucanto/server'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import { store } from './store.js'
+import { upload } from './upload.js'
+
 import { canDelegateURI, equalWith } from './utils.js'
 
 export const validate = capability({
