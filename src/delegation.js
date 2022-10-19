@@ -42,31 +42,7 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
       with: opts.issuer.did(),
     },
     {
-      can: 'store/add',
-      with: opts.issuer.did(),
-    },
-    {
-      can: 'store/list',
-      with: opts.issuer.did(),
-    },
-    {
-      can: 'store/remove',
-      with: opts.issuer.did(),
-    },
-    {
       can: 'upload/*',
-      with: opts.issuer.did(),
-    },
-    {
-      can: 'upload/add',
-      with: opts.issuer.did(),
-    },
-    {
-      can: 'upload/list',
-      with: opts.issuer.did(),
-    },
-    {
-      can: 'upload/remove',
       with: opts.issuer.did(),
     },
   ]
