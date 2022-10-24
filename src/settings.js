@@ -7,6 +7,7 @@ import { SigningPrincipal } from '@ucanto/principal'
  * @property {string} [agent_secret]
  * @property {string} [account_secret]
  * @property {string} [email]
+ * @property {string} [delegation]
  * @property {any} [delegations]
  */
 
@@ -66,6 +67,10 @@ export function objectToMap(objectToParse) {
     }
     if (objectToParse.email) {
       settings.set('email', objectToParse.email)
+    }
+
+    if (objectToParse.delegation) {
+      settings.set('delegation', objectToParse.delegation)
     }
 
     if (objectToParse.delegations) {
@@ -141,6 +146,10 @@ export function exportSettings(settings) {
     if (principal) {
       output.account_secret = SigningPrincipal.format(principal)
     }
+  }
+
+  if (settings.has('delegation')) {
+    output.delegation = settings.get('delegation')
   }
 
   if (settings.has('delegations')) {

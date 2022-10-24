@@ -268,7 +268,7 @@ class Client {
    */
   async whoami() {
     // @ts-ignore
-    return this.invoke(Access.identify, this.accessConnection, {})
+    return await this.invoke(Access.identify, this.accessConnection)
   }
 
   /**
