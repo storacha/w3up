@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.0.0](https://github.com/web3-storage/w3-protocol/compare/access-v2.1.1...access-v3.0.0) (2022-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* bump to 0.9 (#116)
+
+### Features
+
+* bump to 0.9 ([#116](https://github.com/web3-storage/w3-protocol/issues/116)) ([3e0b63f](https://github.com/web3-storage/w3-protocol/commit/3e0b63f38aace3a86655a1aa40e529c1501dc136))
+* use modules and setup ([#99](https://github.com/web3-storage/w3-protocol/issues/99)) ([b060c0b](https://github.com/web3-storage/w3-protocol/commit/b060c0b299ee55dbe7820231c63be90129a39652)), closes [#98](https://github.com/web3-storage/w3-protocol/issues/98)
+
+
+### Bug Fixes
+
+* 0.9 ([#78](https://github.com/web3-storage/w3-protocol/issues/78)) ([1b1ed01](https://github.com/web3-storage/w3-protocol/commit/1b1ed01d537e88bbdeb5ea2aeb967b27bd11f87d))
+
 ## [2.1.1](https://github.com/web3-storage/w3-protocol/compare/access-v2.1.0...access-v2.1.1) (2022-10-10)
 
 
