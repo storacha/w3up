@@ -1,4 +1,5 @@
 import { UCAN } from '@ucanto/core'
+import fetch from 'cross-fetch'
 
 /**
  * Create a promise that resolves in ms.

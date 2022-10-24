@@ -3,9 +3,9 @@ import { SigningPrincipal } from '@ucanto/principal'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import {
+  buildDelegationCar,
   generateDelegation,
   importDelegation,
-  writeDelegation,
 } from '../src/delegation.js'
 import fixture from './fixture.js'
 
@@ -15,7 +15,7 @@ describe('delegation', () => {
     beforeEach(async (context) => {
       const issuer = await SigningPrincipal.generate()
 
-      context.delegation = await writeDelegation({
+      context.delegation = await buildDelegationCar({
         issuer,
         to: fixture.did,
       })
@@ -27,7 +27,7 @@ describe('delegation', () => {
     })
 
     it('should create a delegation with a given expiration', async () => {
-      const delegation = await writeDelegation({
+      const delegation = await buildDelegationCar({
         issuer: await SigningPrincipal.generate(),
         to: fixture.did,
         expiration: 1000,
@@ -70,9 +70,8 @@ describe('delegation', () => {
 
       expect(delegation).toBeDefined()
       expect(capabilities).toBeDefined()
-      expect(cans).toContain('store/add')
-      expect(cans).toContain('store/remove')
-      expect(cans).toContain('store/list')
+      expect(cans).toContain('store/*')
+      expect(cans).toContain('upload/*')
     })
 
     it('should NOT have any account capabilities by default', async ({
@@ -90,7 +89,8 @@ describe('delegation', () => {
 
       expect(delegation).toBeDefined()
       expect(capabilities).toBeDefined()
-      expect(cans).toContain('store/add')
+      expect(cans).toContain('store/*')
+      expect(cans).toContain('upload/*')
 
       expect(cans).not.toContain('identity/identify')
       expect(cans).not.toContain('identity/register')
@@ -102,7 +102,7 @@ describe('delegation', () => {
     beforeEach(async (context) => {
       const issuer = await SigningPrincipal.generate()
 
-      context.delegation = await writeDelegation({
+      context.delegation = await buildDelegationCar({
         issuer,
         to: fixture.did,
       })
