@@ -1,4 +1,4 @@
-import { importDAG } from '@ucanto/core/delegation.js'
+import { importDAG } from '@ucanto/core/delegation'
 import * as Signer from '@ucanto/principal/rsa'
 import defer from 'p-defer'
 import { Delegations } from '../delegations.js'
@@ -91,11 +91,14 @@ export class StoreIndexedDB {
   }
 
   /**
+   * Creates a new, opened and initialized store.
+   *
    * @param {string} dbName
    * @param {number} [dbVersion]
    */
   static async create(dbName, dbVersion) {
     const store = new StoreIndexedDB(dbName, dbVersion)
+    await store.open()
     await store.init({})
     return store
   }
@@ -121,7 +124,7 @@ export class StoreIndexedDB {
     const db = this.#db
     if (!db) throw new Error('Store is not open')
 
-    const putData = withObjectStore(db, 'readonly', async (store) => {
+    const putData = withObjectStore(db, 'readwrite', async (store) => {
       /** @type {import('p-defer').DeferredPromise<Store>} */
       const { resolve, reject, promise } = defer()
 

@@ -143,7 +143,7 @@ describe('upload capabilities', function () {
       },
     })
     assert.equal(result.error, true)
-    assert.match(String(result), /Expected link to be CID with 0x202 codec/)
+    assert(String(result).includes('Expected link to be CID with 0x202 codec'))
   })
 
   it('upload/add works with shards that are CAR cids', async () => {
@@ -218,9 +218,10 @@ describe('upload capabilities', function () {
     })
 
     assert.equal(result.error, true)
-    assert.match(
-      String(result),
-      /Expected did: URI instead got mailto:alice@web.mail/
+    assert(
+      String(result).includes(
+        'Expected did: URI instead got mailto:alice@web.mail'
+      )
     )
   })
 
@@ -298,9 +299,10 @@ describe('upload capabilities', function () {
     })
 
     assert.equal(result.error, true)
-    assert.match(
-      String(result),
-      /bagbaieraubcexvgwca3dj3xzd7qfheu6wuuiqikqoaoya7bwfj24ta4eqwca violates imposed root constraint bagbaieratxbhji7b2gtwb7gojwmb5rxngrf66flidrobs3ijglyjmtyu4juq/
+    assert(
+      String(result).includes(
+        'bagbaieraubcexvgwca3dj3xzd7qfheu6wuuiqikqoaoya7bwfj24ta4eqwca violates imposed root constraint bagbaieratxbhji7b2gtwb7gojwmb5rxngrf66flidrobs3ijglyjmtyu4juq'
+      )
     )
   })
 
@@ -337,9 +339,10 @@ describe('upload capabilities', function () {
     })
 
     assert.equal(result.error, true)
-    assert.match(
-      String(result),
-      /imposed shards constraint bagbaierar5jtiax76ossjdhyqshypwkkrztwp3zch7voido4pmuxrcoyq7za/
+    assert(
+      String(result).includes(
+        'imposed shards constraint bagbaierar5jtiax76ossjdhyqshypwkkrztwp3zch7voido4pmuxrcoyq7za'
+      )
     )
   })
 
@@ -466,9 +469,10 @@ describe('upload capabilities', function () {
       },
     })
     assert.equal(result.error, true)
-    assert.match(
-      String(result),
-      /Expected did: URI instead got mailto:alice@web.mail/
+    assert(
+      String(result).includes(
+        'Expected did: URI instead got mailto:alice@web.mail'
+      )
     )
   })
 
@@ -615,9 +619,10 @@ describe('upload capabilities', function () {
       },
     })
     assert.equal(result.error, true)
-    assert.match(
-      String(result),
-      /Expected did: URI instead got mailto:alice@web.mail/
+    assert(
+      String(result).includes(
+        'Expected did: URI instead got mailto:alice@web.mail'
+      )
     )
   })
 
@@ -655,9 +660,10 @@ describe('upload capabilities', function () {
     })
 
     assert.equal(result.error, true)
-    assert.match(
-      String(result),
-      /bagbaieral6qo2fk7dph2ltggtw2qc6hda23hawvpc4duykdsh4soobxfe55a violates imposed root constraint bafkqaaa/
+    assert(
+      String(result).includes(
+        'bagbaieral6qo2fk7dph2ltggtw2qc6hda23hawvpc4duykdsh4soobxfe55a violates imposed root constraint bafkqaaa'
+      )
     )
   })
 })

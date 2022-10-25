@@ -214,7 +214,7 @@ describe('store capabilities', function () {
       })
 
       assert.equal(result.error, true)
-      assert.match(String(result), /violation: 2048 > 1024/)
+      assert(String(result).includes('violation: 2048 > 1024'))
     }
   })
 
@@ -264,7 +264,7 @@ describe('store capabilities', function () {
       })
 
       assert.equal(result.error, true)
-      assert.match(String(result), /Expected value of type/)
+      assert(String(result).includes('Expected value of type'))
     })
   }
 
