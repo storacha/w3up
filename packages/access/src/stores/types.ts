@@ -35,10 +35,10 @@ export interface StoreDataKeyRsa extends StoreData<RSASigner> {}
 
 export interface IDBStoreData {
   id: number
-  accounts: SignerArchive<RSASigner>[]
+  accounts: Array<SignerArchive<RSASigner>>
   delegations: {
-    created: Array<import('@ucanto/interface').Block[]>
-    received: Array<import('@ucanto/interface').Block[]>
+    created: Array<Array<import('@ucanto/interface').Block>>
+    received: Array<Array<import('@ucanto/interface').Block>>
     meta: Array<[string, import('../awake/types').PeerMeta]>
   }
   meta: import('../types').AgentMeta
