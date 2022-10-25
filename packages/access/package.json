@@ -72,6 +72,7 @@
     "nanoid": "^4.0.0",
     "one-webcrypto": "^1.0.3",
     "ora": "^6.1.2",
+    "p-defer": "^4.0.0",
     "p-queue": "^7.3.0",
     "p-retry": "^5.1.1",
     "p-wait-for": "^5.0.0",
