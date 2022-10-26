@@ -19,7 +19,9 @@
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
-    "test": "pnpm -r --filter @web3-storage/access-ws run build && mocha 'test/**/*.test.js' -n experimental-vm-modules -n no-warnings",
+    "test": "pnpm -r --filter @web3-storage/access-ws run build && npm run test:node && npm run test:browser",
+    "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
+    "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "testw": "watch 'pnpm test' src test --interval 1",
     "rc": "npm version prerelease --preid rc"
   },
@@ -72,6 +74,7 @@
     "nanoid": "^4.0.0",
     "one-webcrypto": "^1.0.3",
     "ora": "^6.1.2",
+    "p-defer": "^4.0.0",
     "p-queue": "^7.3.0",
     "p-retry": "^5.1.1",
     "p-wait-for": "^5.0.0",
@@ -92,6 +95,7 @@
     "hd-scripts": "^3.0.2",
     "miniflare": "^2.9.0",
     "mocha": "^10.1.0",
+    "playwright-test": "^8.1.1",
     "sade": "^1.7.4",
     "typescript": "4.8.4",
     "watch": "^1.0.2"

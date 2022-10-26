@@ -48,9 +48,11 @@ importers:
       nanoid: ^4.0.0
       one-webcrypto: ^1.0.3
       ora: ^6.1.2
+      p-defer: ^4.0.0
       p-queue: ^7.3.0
       p-retry: ^5.1.1
       p-wait-for: ^5.0.0
+      playwright-test: ^8.1.1
       sade: ^1.7.4
       typescript: 4.8.4
       uint8arrays: ^4.0.2
@@ -79,6 +81,7 @@ importers:
       nanoid: 4.0.0
       one-webcrypto: 1.0.3
       ora: 6.1.2
+      p-defer: 4.0.0
       p-queue: 7.3.0
       p-retry: 5.1.1
       p-wait-for: 5.0.0
@@ -97,6 +100,7 @@ importers:
       hd-scripts: 3.0.2
       miniflare: 2.10.0
       mocha: 10.1.0
+      playwright-test: 8.1.1
       sade: 1.8.1
       typescript: 4.8.4
       watch: 1.0.2
@@ -5192,6 +5196,11 @@ packages:
     resolution: {integrity: sha512-wB3wfAxZpk2AzOfUMJNL+d36xothRSyj8EXOa4f6GMqYDN9BJaaSISbsk+wS9abmnebVw95C2Kb5t85UmpCxuw==}
     engines: {node: '>=4'}
     dev: true
+
+  /p-defer/4.0.0:
+    resolution: {integrity: sha512-Vb3QRvQ0Y5XnF40ZUWW7JfLogicVh/EnA5gBIvKDJoYpeI82+1E3AlB9yOcKFS0AhHrWVnAQO39fbR0G99IVEQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /p-event/4.2.0:
     resolution: {integrity: sha512-KXatOjCRXXkSePPb1Nbi0p0m+gQAwdlbhi4wQKJPI1HsMQS9g+Sqp2o+QHziPr7eYJyOZet836KoHEVM1mwOrQ==}
