@@ -1,20 +1,25 @@
 import * as Server from '@ucanto/server'
 import * as Voucher from '@web3-storage/access/capabilities/voucher'
-
+import { Delegation } from '@ucanto/core'
 /**
  * @param {import('../bindings').RouteContext} ctx
  */
 export function voucherRedeemProvider(ctx) {
   return Server.provide(Voucher.redeem, async ({ capability, invocation }) => {
-    await ctx.db.insert({
-      tableName: 'accounts',
-      data: {
-        did: capability.nb.account,
-        product: capability.nb.product,
-        email: capability.nb.identity.replace('mailto:', ''),
-        agent: invocation.issuer.did(),
-      },
-    })
+    // @ts-ignore - TODO fix this
+    await ctx.kvs.accounts.create(capability, invocation)
+
+    // We should only save delegation for redeems
+    if (capability.nb.identity.startsWith('mailto:')) {
+      for (const p of invocation.proofs) {
+        if (
+          Delegation.isDelegation(p) &&
+          p.audience.did() === ctx.signer.did()
+        ) {
+          await ctx.kvs.accounts.saveAccount(capability.nb.identity, p)
+        }
+      }
+    }
 
     ctx.config.METRICS.writeDataPoint({
       blobs: [ctx.config.ENV, 'new_account_v1'],

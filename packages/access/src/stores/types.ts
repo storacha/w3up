@@ -25,6 +25,7 @@ export interface Store<T> {
   save: (data: StoreData<T>) => Promise<Store<T>>
   load: () => Promise<StoreData<T>>
   createAccount: () => Promise<T>
+  reset: () => Promise<void>
 }
 
 export interface StoreKeyEd extends Store<ed25519.Signer.EdSigner> {}

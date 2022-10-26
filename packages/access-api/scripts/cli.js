@@ -65,6 +65,9 @@ prog
         },
         minify: opts.env !== 'dev',
         sourcemap: true,
+        jsxImportSource: 'preact',
+        jsx: 'automatic',
+        loader: { '.js': 'jsx' },
       })
 
       // Sentry release and sourcemap upload

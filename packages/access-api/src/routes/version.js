@@ -6,6 +6,6 @@ export async function version(event, env, ctx) {
     version: env.config.VERSION,
     commit: env.config.COMMITHASH,
     branch: env.config.BRANCH,
-    did: env.keypair.did(),
+    did: env.signer.did(),
   })
 }

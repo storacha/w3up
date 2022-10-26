@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "lib": ["ESNext"],
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
   },
   "include": ["src", "scripts", "test", "package.json"],
   "exclude": ["**/node_modules/**"],

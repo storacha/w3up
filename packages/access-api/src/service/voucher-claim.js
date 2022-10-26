@@ -7,25 +7,23 @@ import { delegationToString } from '@web3-storage/access/encoding'
  */
 export function voucherClaimProvider(ctx) {
   return Server.provide(Voucher.claim, async ({ capability, invocation }) => {
-    const proof = await Voucher.redeem
-      .invoke({
-        audience: ctx.keypair,
-        issuer: ctx.keypair,
-        lifetimeInSeconds: 60 * 1000,
-        with: ctx.keypair.did(),
-        nb: {
-          product: 'product:*',
-          identity: 'mailto:*',
-          account: 'did:*',
-        },
-      })
-      .delegate()
+    const proof = await Voucher.redeem.delegate({
+      audience: ctx.signer,
+      issuer: ctx.signer,
+      expiration: Infinity,
+      with: ctx.signer.did(),
+      nb: {
+        product: 'product:*',
+        identity: 'mailto:*',
+        account: 'did:*',
+      },
+    })
 
     const inv = await Voucher.redeem
       .invoke({
-        issuer: ctx.keypair,
+        issuer: ctx.signer,
         audience: invocation.issuer,
-        with: ctx.keypair.did(),
+        with: ctx.signer.did(),
         lifetimeInSeconds: 60 * 10, // 10 mins
         nb: {
           account: capability.with,
@@ -45,6 +43,7 @@ export function voucherClaimProvider(ctx) {
     const url = `${ctx.url.protocol}//${
       ctx.url.host
     }/validate-email?ucan=${encoded}&did=${invocation.issuer.did()}`
+
     await ctx.email.sendValidation({
       to: capability.nb.identity.replace('mailto:', ''),
       url,

@@ -1,11 +1,11 @@
 import type { Logging } from '@web3-storage/worker-utils/logging'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
-import type { SigningPrincipal } from '@ucanto/interface'
-import type { config } from './config'
+import type { Signer } from '@ucanto/interface'
 import { Email } from './utils/email.js'
 import { Accounts } from './kvs/accounts.js'
 import { Validations } from './kvs/validations.js'
 import { D1QB } from 'workers-qb'
+import { loadConfig } from './config.js'
 
 export {}
 
@@ -38,8 +38,8 @@ export interface Env {
 
 export interface RouteContext {
   log: Logging
-  keypair: SigningPrincipal
-  config: typeof config
+  signer: Signer
+  config: ReturnType<typeof loadConfig>
   url: URL
   email: Email
   kvs: {

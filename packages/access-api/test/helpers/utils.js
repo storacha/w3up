@@ -1,9 +1,11 @@
+/* eslint-disable unicorn/prefer-number-properties */
 import * as UCAN from '@ipld/dag-ucan'
-import { URI } from '@ucanto/validator'
-import { Delegation } from '@ucanto/core'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
-import * as Identity from '@web3-storage/access/capabilities/identity'
+import { StoreMemory } from '@web3-storage/access/stores/store-memory'
+import * as Any from '@web3-storage/access/capabilities/any'
+import * as Voucher from '@web3-storage/access/capabilities/voucher'
+import { stringToDelegation } from '@web3-storage/access/encoding'
 
 /**
  * @param {Types.UCAN.View} ucan
@@ -19,52 +21,60 @@ export async function send(ucan, mf) {
 }
 
 /**
- * @param {Types.ConnectionView<import('@web3-storage/access/src/types').Service>} con
  * @param {Types.Signer} issuer
- * @param {Types.Principal} audience
+ * @param {Types.Principal} service
+ * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
  * @param {string} email
  */
-export async function validateEmail(con, issuer, audience, email) {
-  const validate = Identity.validate.invoke({
-    audience,
-    issuer,
-    nb: {
-      as: URI.from(`mailto:${email}`),
-    },
-    with: issuer.did(),
-  })
-
-  const out = await validate.execute(con)
-  if (out?.error) {
-    throw out
+export async function createAccount(issuer, service, conn, email) {
+  const store = new StoreMemory()
+  const account = await store.createAccount()
+  const claim = await Voucher.claim
+    .invoke({
+      issuer,
+      audience: service,
+      with: account.did(),
+      nb: {
+        // @ts-ignore
+        identity: `mailto:${email}`,
+        product: 'product:free',
+        service: service.did(),
+      },
+      proofs: [
+        await Any.any.delegate({
+          issuer: account,
+          audience: issuer,
+          with: account.did(),
+          expiration: Infinity,
+        }),
+      ],
+    })
+    .execute(conn)
+  if (!claim || claim.error) {
+    throw new Error('failed to create account')
   }
-  // @ts-ignore
-  const ucan = UCAN.parse(
-    // @ts-ignore
-    out.delegation.replace('http://localhost:8787/validate?ucan=', '')
-  )
-  const root = await UCAN.write(ucan)
-  const proof = Delegation.create({ root })
 
-  return proof
-}
+  const delegation = await stringToDelegation(claim)
 
-/**
- * @param {Types.ConnectionView<import('@web3-storage/access/src/types').Service>} con
- * @param {Types.Signer} issuer
- * @param {Types.Principal} audience
- * @param {Types.Delegation<[import('@web3-storage/access/src/types').IdentityRegister]>} proof
- */
-export async function register(con, issuer, audience, proof) {
-  const register = Identity.register.invoke({
-    audience,
-    issuer,
-    with: proof.capabilities[0].with,
-    nb: {
-      as: proof.capabilities[0].nb.as,
-    },
-    proofs: [proof],
-  })
-
-  await register.execute(con)
+  await Voucher.redeem
+    .invoke({
+      issuer,
+      audience: service,
+      with: service.did(),
+      nb: {
+        account: account.did(),
+        identity: delegation.capabilities[0].nb.identity,
+        product: delegation.capabilities[0].nb.product,
+      },
+      proofs: [
+        delegation,
+        await Any.any.delegate({
+          issuer: account,
+          audience: service,
+          with: account.did(),
+          expiration: Infinity,
+        }),
+      ],
+    })
+    .execute(conn)
 }

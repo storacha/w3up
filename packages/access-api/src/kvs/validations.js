@@ -1,4 +1,4 @@
-import * as UCAN from '@ipld/dag-ucan'
+import { stringToDelegation } from '@web3-storage/access/encoding'
 
 /**
  * Validations
@@ -13,17 +13,19 @@ export class Validations {
   }
 
   /**
-   *
-   * @param {string} delegation
+   * @param {string} ucan
    */
-  async create(delegation) {
-    // @ts-ignore
-    const ucan = UCAN.parse(delegation)
-    await this.kv.put(ucan.audience.did(), delegation, {
-      expirationTtl: 20 * 60,
+  async put(ucan) {
+    const delegation =
+      /** @type {import('@ucanto/interface').Delegation<[import('@web3-storage/access/capabilities/types').VoucherClaim]>} */ (
+        await stringToDelegation(ucan)
+      )
+
+    await this.kv.put(delegation.audience.did(), ucan, {
+      expiration: delegation.expiration,
     })
 
-    return ucan
+    return delegation
   }
 
   /**

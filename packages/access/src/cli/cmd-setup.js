@@ -3,11 +3,15 @@ import inquirer from 'inquirer'
 import { StoreConf } from '../stores/store-conf.js'
 
 /**
- * @param {{ profile: any; }} opts
+ * @param {{ profile: string, force: boolean }} opts
  */
 export async function cmdSetup(opts) {
   const store = new StoreConf({ profile: opts.profile })
   console.log('Path:', store.path)
+
+  if (opts.force) {
+    await store.reset()
+  }
 
   if (await store.exists()) {
     console.log('Agent is already setup.')

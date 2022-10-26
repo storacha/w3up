@@ -84,14 +84,14 @@
     "p-wait-for": "^5.0.0",
     "uint8arrays": "^4.0.2",
     "undici": "^5.11.0",
-    "ws": "^8.8.1",
+    "ws": "^8.10.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/inquirer": "^9.0.2",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^18.11.0",
+    "@types/node": "^18.11.5",
     "@web-std/fetch": "^4.1.0",
     "assert": "^2.0.0",
     "delay": "^5.0.0",
@@ -106,10 +106,16 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "./node_modules/hd-scripts/eslint/preact.js"
     ],
     "parserOptions": {
-      "project": "./tsconfig.json"
+      "project": "./tsconfig.json",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "rules": {
+      "unicorn/prefer-number-properties": "off"
     },
     "env": {
       "mocha": true

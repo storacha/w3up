@@ -66,7 +66,11 @@ prog
   })
 
 prog.command('link [channel]').describe('Link.').action(cmdLink)
-prog.command('setup').describe('Print config file content.').action(cmdSetup)
+prog
+  .command('setup')
+  .option('--reset', 'Reset current store.', false)
+  .describe('Print config file content.')
+  .action(cmdSetup)
 prog.command('whoami').describe('Print config file content.').action(cmdWhoami)
 prog
   .command('create-account')
