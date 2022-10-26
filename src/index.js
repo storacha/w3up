@@ -1,6 +1,7 @@
 import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
+import { Link } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 // @ts-ignore
 import * as Upload from '@web3-storage/access/capabilities/upload'
@@ -342,12 +343,16 @@ class Client {
   async upload(bytes, origin) {
     try {
       const link = await CAR.codec.link(bytes)
+      const params = {
+        link,
+        size: bytes.byteLength,
+      }
+      if (origin) {
+        params.origin = origin
+      }
       /** @type {{status:string, with:API.DID, url:String, headers:HeadersInit, error:boolean}} */
       // @ts-ignore
-      const result = await this.invoke(Store.add, this.w3upConnection, {
-        link,
-        origin,
-      })
+      const result = await this.invoke(Store.add, this.w3upConnection, params)
 
       if (result.error) {
         throw new Error(JSON.stringify(result, null, 2))
