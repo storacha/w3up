@@ -94,6 +94,11 @@ export class Accounts {
    */
   async hasAccounts(email) {
     const r = await this.kv.get(email)
+    // eslint-disable-next-line no-console
+    console.log(
+      '🚀 ~ file: accounts.js ~ line 97 ~ Accounts ~ hasAccounts ~ r',
+      r
+    )
     return Boolean(r)
   }
 }

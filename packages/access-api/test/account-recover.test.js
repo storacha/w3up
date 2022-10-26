@@ -50,8 +50,8 @@ test('should return account/login', async (t) => {
   // eslint-disable-next-line no-console
   console.log('🚀 ~ file: account-recover.test.js ~ line 50 ~ test ~ inv', inv)
 
-  if (!inv) {
-    return t.fail()
+  if (!inv || inv.error) {
+    return t.fail('failed to recover')
   }
 
   const del = await stringToDelegation(
