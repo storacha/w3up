@@ -47,6 +47,8 @@ test('should return account/login', async (t) => {
       },
     })
     .execute(conn)
+  // eslint-disable-next-line no-console
+  console.log('🚀 ~ file: account-recover.test.js ~ line 50 ~ test ~ inv', inv)
 
   if (!inv) {
     return t.fail()
