@@ -39,13 +39,16 @@
     * [.currentDelegation()](#Client+currentDelegation) ⇒ <code>Promise.&lt;(API.Delegation\|null)&gt;</code>
     * [.identity()](#Client+identity) ⇒ [<code>Promise.&lt;IdentityInfo&gt;</code>](#IdentityInfo)
     * [.register(email)](#Client+register)
-    * [.checkRegistration()](#Client+checkRegistration) ⇒ <code>Promise.&lt;UCAN.JWT&gt;</code>
     * [.whoami()](#Client+whoami) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
+    * [.stat()](#Client+stat) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.list()](#Client+list) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.makeDelegation(opts)](#Client+makeDelegation) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
     * [.importDelegation(bytes, alias)](#Client+importDelegation) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
     * [.upload(bytes, [origin])](#Client+upload) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
+    * [.uploadAdd(dataCID, shardCIDs)](#Client+uploadAdd)
     * [.remove(link)](#Client+remove)
+    * [.removeUpload(link)](#Client+removeUpload)
+    * [.invoke(capability, connection, caveats)](#Client+invoke) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.insights(link)](#Client+insights) ⇒ <code>Promise.&lt;object&gt;</code>
 
 <a name="new_Client_new"></a>
@@ -89,17 +92,15 @@ Register a user by email.
 | --- | --- | --- |
 | email | <code>string</code> \| <code>undefined</code> | The email address to register with. |
 
-<a name="Client+checkRegistration"></a>
-
-### client.checkRegistration() ⇒ <code>Promise.&lt;UCAN.JWT&gt;</code>
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Throws**:
-
-- <code>Error</code> 
-
 <a name="Client+whoami"></a>
 
 ### client.whoami() ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
+**Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="Client+stat"></a>
+
+### client.stat() ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
+List all of the cars connected to this user.
+
 **Kind**: instance method of [<code>Client</code>](#Client)  
 <a name="Client+list"></a>
 
@@ -138,6 +139,18 @@ Upload a car via bytes.
 | bytes | <code>Uint8Array</code> | the url to upload |
 | [origin] | <code>string</code> \| <code>undefined</code> | the CID of the previous car chunk. |
 
+<a name="Client+uploadAdd"></a>
+
+### client.uploadAdd(dataCID, shardCIDs)
+Add an upload to the list of uploads
+
+**Kind**: instance method of [<code>Client</code>](#Client)  
+
+| Param | Type |
+| --- | --- |
+| dataCID | <code>API.Link</code> | 
+| shardCIDs | <code>Array.&lt;API.Link&gt;</code> | 
+
 <a name="Client+remove"></a>
 
 ### client.remove(link)
@@ -148,6 +161,28 @@ Remove an uploaded file by CID
 | Param | Type | Description |
 | --- | --- | --- |
 | link | <code>API.Link</code> | the CID to remove |
+
+<a name="Client+removeUpload"></a>
+
+### client.removeUpload(link)
+Remove an uploaded file by CID
+
+**Kind**: instance method of [<code>Client</code>](#Client)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| link | <code>API.Link</code> | the CID to remove |
+
+<a name="Client+invoke"></a>
+
+### client.invoke(capability, connection, caveats) ⇒ <code>Promise.&lt;any&gt;</code>
+**Kind**: instance method of [<code>Client</code>](#Client)  
+
+| Param | Type |
+| --- | --- |
+| capability | <code>any</code> | 
+| connection | <code>any</code> | 
+| caveats | <code>any</code> | 
 
 <a name="Client+insights"></a>
 

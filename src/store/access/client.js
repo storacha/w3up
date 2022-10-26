@@ -4,10 +4,14 @@ import { Principal } from '@ucanto/principal'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
-import webfetch from 'cross-fetch'
+import { fetch as defaultFetch } from 'cross-fetch'
 
 // @ts-ignore
 export * from '@web3-storage/access/capabilities/identity'
+// @ts-ignore
+export * from '@web3-storage/access/capabilities/account'
+// @ts-ignore
+export * from '@web3-storage/access/capabilities/voucher'
 
 /**
  * @param {object} options
@@ -18,14 +22,14 @@ export * from '@web3-storage/access/capabilities/identity'
  * @param {API.OutpboundTranpsortOptions} [options.transport]
  * @returns { import('@ucanto/interface').ConnectionView<any> }
  */
-export const createConnection = ({
+export function createConnection({
   id,
   url,
   transport = { encoder: CAR, decoder: CBOR },
-  fetch = webfetch,
+  fetch = defaultFetch,
   method,
-}) =>
-  Client.connect({
+}) {
+  return Client.connect({
     id: Principal.parse(id),
     ...transport,
     channel: HTTP.open({
@@ -34,3 +38,4 @@ export const createConnection = ({
       method,
     }),
   })
+}
