@@ -22,8 +22,7 @@ export function voucherRedeemProvider(ctx) {
           'DELEGATION',
           Delegation.isDelegation(p),
           // @ts-ignore
-          p.audience.did(),
-          ctx.signer.did()
+          p.audience.did() === ctx.signer.did()
         )
         if (
           Delegation.isDelegation(p) &&
