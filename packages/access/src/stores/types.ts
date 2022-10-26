@@ -30,8 +30,8 @@ export interface Store<T> {
 export interface StoreKeyEd extends Store<ed25519.Signer.EdSigner> {}
 export interface StoreDataKeyEd extends StoreData<ed25519.Signer.EdSigner> {}
 
-export interface StoreKeyRsa extends Store<RSASigner> {}
-export interface StoreDataKeyRsa extends StoreData<RSASigner> {}
+export interface StoreKeyRSA extends Store<RSASigner> {}
+export interface StoreDataKeyRSA extends StoreData<RSASigner> {}
 
 export interface IDBStoreData {
   id: number
