@@ -22,7 +22,7 @@ jobs:
           yarn install --immutable --immutable-cache --check-cache
           npm test
       - name: Build
-        run: npm build
+        run: npm run build
       - name: Run semantic release
         env: # Or as an environment variable
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
