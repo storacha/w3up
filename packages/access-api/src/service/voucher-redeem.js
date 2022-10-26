@@ -9,9 +9,22 @@ export function voucherRedeemProvider(ctx) {
     // @ts-ignore - TODO fix this
     await ctx.kvs.accounts.create(capability, invocation)
 
+    // eslint-disable-next-line no-console
+    console.log(
+      '🚀 ~ file: voucher-redeem.js ~ line 14 ~ returnServer.provide ~ capability.nb.identity',
+      capability.nb.identity
+    )
     // We should only save delegation for redeems
     if (capability.nb.identity.startsWith('mailto:')) {
       for (const p of invocation.proofs) {
+        // eslint-disable-next-line no-console
+        console.log(
+          'DELEGATION',
+          Delegation.isDelegation(p),
+          // @ts-ignore
+          p.audience.did(),
+          ctx.signer.did()
+        )
         if (
           Delegation.isDelegation(p) &&
           p.audience.did() === ctx.signer.did()

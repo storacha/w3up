@@ -73,12 +73,6 @@ export class Accounts {
    */
   async saveAccount(email, delegation) {
     const accs = await this.kv.get(email)
-
-    // eslint-disable-next-line no-console
-    console.log(
-      '🚀 ~ file: accounts.js ~ line 76 ~ Accounts ~ saveAccount ~ accs',
-      accs
-    )
     if (accs) {
       const parsed = JSON.parse(accs)
       parsed.push(await delegationToString(delegation))
