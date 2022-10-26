@@ -78,6 +78,11 @@ export class Accounts {
       })
     )
 
+    // eslint-disable-next-line no-console
+    console.log(
+      '🚀 ~ file: accounts.js ~ line 76 ~ Accounts ~ saveAccount ~ accs',
+      accs
+    )
     if (accs) {
       accs.push(await delegationToString(delegation))
       await this.kv.put(email, JSON.stringify(accs))

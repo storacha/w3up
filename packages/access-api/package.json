@@ -92,6 +92,8 @@
   ],
   "ava": {
     "failFast": true,
+    "concurrency": 1,
+    "workerThreads": false,
     "files": [
       "test/**/*.test.js"
     ],
