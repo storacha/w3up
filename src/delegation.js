@@ -38,15 +38,11 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
 
   let capabilities = [
     {
-      can: 'store/add',
+      can: 'store/*',
       with: opts.issuer.did(),
     },
     {
-      can: 'store/list',
-      with: opts.issuer.did(),
-    },
-    {
-      can: 'store/remove',
+      can: 'upload/*',
       with: opts.issuer.did(),
     },
   ]
@@ -90,7 +86,7 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
  * }} opts
  * @returns {Promise<Uint8Array>}
  */
-export async function writeDelegation(opts) {
+export async function buildDelegationCar(opts) {
   return writeDelegationUCANtoCar(await generateDelegation(opts))
 }
 

@@ -961,10 +961,10 @@
   dependencies:
     web-streams-polyfill "^3.1.1"
 
-"@web3-storage/access@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@web3-storage/access/-/access-2.0.0.tgz#0a749ef608a012c7a9a0cd191629e31b26d69b8d"
-  integrity sha512-8VfDXvAjp7CPSj4j/RogN+r0g5fZHL+CDJcQQW/ah/O31vPSV9El/Sk/HC3vbQWgF0Ype9ur8MsJv4Zq3UjOvg==
+"@web3-storage/access@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@web3-storage/access/-/access-2.1.1.tgz#8ba3f5f0aaf15a1703924a9e9d5471ae0e1fca96"
+  integrity sha512-8MGs3gY6dn/KrJE+X4GDnwrPXaPgm5lvGJKFJpMdYVBtTUjfWQx9mhdYErs2nE2JEt9tKubCfe1rgodZ1b+7gA==
   dependencies:
     "@ipld/car" "^4.1.5"
     "@ipld/dag-ucan" "3.0.0-beta"
