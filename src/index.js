@@ -348,6 +348,7 @@ class Client {
         size: bytes.byteLength,
       }
       if (origin) {
+        // @ts-ignore
         params.origin = origin
       }
       /** @type {{status:string, with:API.DID, url:String, headers:HeadersInit, error:boolean}} */
