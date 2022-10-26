@@ -56,7 +56,7 @@ export async function createAccount(issuer, service, conn, email) {
 
   const delegation = await stringToDelegation(claim)
 
-  await Voucher.redeem
+  const redeem = await Voucher.redeem
     .invoke({
       issuer,
       audience: service,
@@ -77,4 +77,10 @@ export async function createAccount(issuer, service, conn, email) {
       ],
     })
     .execute(conn)
+
+  if (redeem.error) {
+    // eslint-disable-next-line no-console
+    console.log(redeem)
+    throw new Error(redeem.message)
+  }
 }
