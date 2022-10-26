@@ -33,9 +33,20 @@ test('should fail before registering account', async (t) => {
 })
 
 test('should return account/login', async (t) => {
-  const { issuer, service, conn } = t.context
+  const { issuer, service, conn, mf } = t.context
 
   await createAccount(issuer, service, conn, 'account-login@dag.house')
+  const accounts = await mf.getKVNamespace('ACCOUNTS')
+  const delEncoded = /** @type {string[]|undefined} */ (
+    await accounts.get('mailto:account-login@dag.house', {
+      type: 'json',
+    })
+  )
+  // eslint-disable-next-line no-console
+  console.log(
+    '🚀 ~ file: account-recover.test.js ~ line 41 ~ test ~ delEncoded',
+    delEncoded
+  )
 
   const inv = await Account.recoverValidation
     .invoke({
