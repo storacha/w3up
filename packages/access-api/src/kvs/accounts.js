@@ -72,11 +72,7 @@ export class Accounts {
    * @param {Ucanto.Delegation<Ucanto.Capabilities>} delegation
    */
   async saveAccount(email, delegation) {
-    const accs = /** @type {string[] | undefined} */ (
-      await this.kv.get(email, {
-        type: 'json',
-      })
-    )
+    const accs = await this.kv.get(email)
 
     // eslint-disable-next-line no-console
     console.log(
@@ -84,7 +80,8 @@ export class Accounts {
       accs
     )
     if (accs) {
-      accs.push(await delegationToString(delegation))
+      const parsed = JSON.parse(accs)
+      parsed.push(await delegationToString(delegation))
       await this.kv.put(email, JSON.stringify(accs))
     } else {
       await this.kv.put(
