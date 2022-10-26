@@ -59,16 +59,8 @@ export class StoreIndexedDB {
     const db = this.#db
     if (!db) throw new Error('Store is not open')
 
-    /** @type {import('p-defer').DeferredPromise<void>} */
-    const { resolve, promise } = defer()
-
-    db.addEventListener('close', () => {
-      this.#db = undefined
-      resolve()
-    })
-
     db.close()
-    return promise
+    this.#db = undefined
   }
 
   async exists() {
