@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --experimental-vm-modules --no-warnings
 /* eslint-disable no-console */
 import path from 'path'
 import dotenv from 'dotenv'
@@ -8,8 +8,11 @@ import { fileURLToPath } from 'url'
 import { build } from 'esbuild'
 import Sentry from '@sentry/cli'
 import { createRequire } from 'module'
+import { Miniflare } from 'miniflare'
+
 // @ts-ignore
 import git from 'git-rev-sync'
+import { migrate } from '../sql/migrate.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const require = createRequire(__dirname)
@@ -101,4 +104,22 @@ prog
     }
   })
 
+prog
+  .command('dev')
+  .describe('Start dev server.')
+  .action(async () => {
+    const mf = new Miniflare({
+      packagePath: true,
+      wranglerConfigPath: true,
+      wranglerConfigEnv: 'dev',
+      sourceMap: true,
+      modules: true,
+      watch: true,
+      envPath: path.resolve(__dirname, '../../../.env'),
+    })
+
+    const binds = await mf.getBindings()
+    const db = /** @type {D1Database} */ (binds.__D1_BETA__)
+    await migrate(db)
+  })
 prog.parse(process.argv)

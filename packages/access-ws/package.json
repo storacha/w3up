@@ -30,7 +30,7 @@
     "@sentry/webpack-plugin": "^1.19.1",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
-    "@types/node": "^18.11.5",
+    "@types/node": "^18.11.7",
     "assert": "^2.0.0",
     "ava": "^5.0.1",
     "buffer": "^6.0.3",

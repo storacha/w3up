@@ -78,7 +78,7 @@ export async function createAccount(issuer, service, conn, email) {
     })
     .execute(conn)
 
-  if (redeem.error) {
+  if (redeem?.error) {
     // eslint-disable-next-line no-console
     console.log(redeem)
     throw new Error(redeem.message)

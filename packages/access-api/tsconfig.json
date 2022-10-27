@@ -6,7 +6,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "include": ["src", "scripts", "test", "package.json"],
+  "include": ["src", "scripts", "test", "package.json", "sql"],
   "exclude": ["**/node_modules/**"],
   "references": [{ "path": "../access" }]
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Signer } from '@ucanto/principal/ed25519'
 import { connection } from '@web3-storage/access'
 import anyTest from 'ava'
@@ -5,6 +6,8 @@ import dotenv from 'dotenv'
 import { Miniflare } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { migrate } from '../../sql/migrate.js'
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 dotenv.config({
@@ -37,7 +40,13 @@ export async function context() {
     sourceMap: true,
     modules: true,
     bindings,
+    d1Persist: undefined,
   })
+
+  const binds = await mf.getBindings()
+  const db = /** @type {D1Database} */ (binds.__D1_BETA__)
+  await migrate(db)
+
   return {
     mf,
     conn: await connection(

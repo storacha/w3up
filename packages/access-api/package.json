@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
-    "dev": "miniflare --modules --watch --debug --wrangler-env dev --env ../../.env",
+    "dev": "scripts/cli.js dev",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
     "test": "tsc --build && ava --timeout 10s"
@@ -39,11 +39,13 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.18.0",
+    "@databases/escape-identifier": "^1.0.3",
+    "@databases/sql": "^3.2.0",
     "@sentry/cli": "^2.8.0",
     "@sentry/webpack-plugin": "^1.19.1",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
-    "@types/node": "^18.11.5",
+    "@types/node": "^18.11.7",
     "@types/qrcode": "^1.5.0",
     "assert": "^2.0.0",
     "ava": "^5.0.1",
