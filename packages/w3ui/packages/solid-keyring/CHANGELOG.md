@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/solid-keyring-v1.0.0...solid-keyring-v1.0.1) (2022-10-27)
+
+
+### Bug Fixes
+
+* update dependencies ([e94f90d](https://github.com/web3-storage/w3ui/commit/e94f90d08e575f16ca4a91c6032bc3af6a613fcf))
+
 ## 1.0.0 (2022-10-17)
 
 
