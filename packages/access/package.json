@@ -28,6 +28,7 @@
   "exports": {
     ".": "./src/index.js",
     "./capabilities/*": "./src/capabilities/*.js",
+    "./stores/*": "./src/stores/*.js",
     "./connection": "./src/connection.js",
     "./types": "./src/types.js",
     "./encoding": "./src/encoding.js"
@@ -39,6 +40,9 @@
       ],
       "types": [
         "dist/src/types"
+      ],
+      "stores/*": [
+        "dist/src/stores/*"
       ],
       "capabilities/*": [
         "dist/src/capabilities/*"
