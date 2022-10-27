@@ -54,8 +54,8 @@
   },
   "files": [
     "src",
-    "dist/src/*.d.ts",
-    "dist/src/*.d.ts.map"
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
     "@ipld/car": "^4.1.5",
