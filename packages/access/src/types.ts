@@ -12,9 +12,8 @@ import type {
 
 import type {
   AccountInfo,
-  IdentityIdentify,
-  IdentityRegister,
-  IdentityValidate,
+  AccountRecover,
+  AccountRecoverValidation,
 } from './capabilities/types'
 import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
 
@@ -26,16 +25,6 @@ export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
   Phantom<C>
 
 export interface Service {
-  identity: {
-    validate: ServiceMethod<
-      IdentityValidate,
-      // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-      { delegation: string } | void,
-      never
-    >
-    register: ServiceMethod<IdentityRegister, void, never>
-    identify: ServiceMethod<IdentityIdentify, string | undefined, never>
-  }
   voucher: {
     claim: ServiceMethod<
       VoucherClaim,
@@ -45,19 +34,22 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   account: {
-    info: ServiceMethod<
-      AccountInfo,
-      {
-        did: UCAN.DID
-        agent: UCAN.DID
-        email: URI<'mailto:'>
-        product: URI<'product:'>
-        updated_at: string
-        inserted_at: string
-      },
+    info: ServiceMethod<AccountInfo, Account, Failure>
+    'recover-validation': ServiceMethod<
+      AccountRecoverValidation,
+      EncodedDelegation<[AccountRecover]> | undefined,
       Failure
     >
   }
+}
+
+export interface Account {
+  did: UCAN.DID
+  agent: UCAN.DID
+  email: URI<'mailto:'>
+  product: URI<'product:'>
+  updated_at: string
+  inserted_at: string
 }
 
 export interface AgentMeta {

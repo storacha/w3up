@@ -44,13 +44,14 @@ export function getContext(request, env, ctx) {
 
   const keypair = Signer.parse(config.PRIVATE_KEY)
   const url = new URL(request.url)
+  const db = new D1QB(config.DB)
   return {
     log,
-    keypair,
+    signer: keypair,
     config,
     url,
     kvs: {
-      accounts: new Accounts(config.ACCOUNTS),
+      accounts: new Accounts(config.ACCOUNTS, db),
       validations: new Validations(config.VALIDATIONS),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),

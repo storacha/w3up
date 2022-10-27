@@ -28,6 +28,11 @@ export class StoreMemory {
 
   async close() {}
 
+  async reset() {
+    // @ts-ignore
+    this.data = {}
+  }
+
   async exists() {
     return this.data.meta !== undefined && this.data.principal !== undefined
   }

@@ -1,25 +1,21 @@
 import pRetry from 'p-retry'
 
 const run = async (
-  /** @type {KVNamespace<string>} */ kv,
+  /** @type {import('../kvs/validations').Validations} */ kv,
   /** @type {WebSocket} */ server,
   /** @type {any} */ did
 ) => {
   const d = await kv.get(did)
 
-  if (!d) {
-    throw new Error('Not found.')
-  } else {
-    server.send(
-      JSON.stringify({
-        type: 'delegation',
-        delegation: d,
-      })
-    )
-    server.close()
-    await kv.delete(did)
-    return d
-  }
+  server.send(
+    JSON.stringify({
+      type: 'delegation',
+      delegation: d,
+    })
+  )
+  server.close()
+  await kv.delete(did)
+  return d
 }
 
 /**
@@ -33,13 +29,14 @@ export async function validateWS(req, env) {
   }
 
   const [client, server] = Object.values(new WebSocketPair())
+  // @ts-ignore
   server.accept()
   server.addEventListener('message', async (msg) => {
     // @ts-ignore
     const { did } = JSON.parse(msg.data)
 
     try {
-      await pRetry(() => run(env.config.VALIDATIONS, server, did), {
+      await pRetry(() => run(env.kvs.validations, server, did), {
         retries: 200,
         minTimeout: 1000,
         factor: 1,

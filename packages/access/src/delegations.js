@@ -80,24 +80,6 @@ export class Delegations {
     }
   }
 
-  async full() {
-    const delegation = await delegate({
-      // @ts-ignore
-      issuer: this.principal,
-      audience: this.principal,
-      capabilities: [
-        {
-          can: 'identify/*',
-          with: this.principal.did(),
-        },
-      ],
-      lifetimeInSeconds: 8_600_000,
-    })
-
-    this.received.push(delegation)
-    return this
-  }
-
   /**
    *
    * @param {import('@ucanto/interface').Principal} audience
