@@ -8,8 +8,8 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "@w3ui/uploads-list-core": "^1.0.2",
-    "@w3ui/keyring-core": "^1.0.1"
+    "@w3ui/uploads-list-core": "^1.0.3",
+    "@w3ui/keyring-core": "^1.0.2"
   },
   "devDependencies": {
     "vite": "^3.0.9"

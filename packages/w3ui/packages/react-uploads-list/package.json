@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-uploads-list",
   "dependencies": {
-    "@w3ui/uploads-list-core": "^1.0.1"
+    "@w3ui/uploads-list-core": "^1.0.3"
   },
   "peerDependencies": {
     "@w3ui/react-keyring": "^1.0.0",
