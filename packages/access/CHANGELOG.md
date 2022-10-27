@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/web3-storage/w3-protocol/compare/access-v3.0.0...access-v3.1.0) (2022-10-26)
+
+
+### Features
+
+* add IndexedDB Store implementation ([#120](https://github.com/web3-storage/w3-protocol/issues/120)) ([9d73a26](https://github.com/web3-storage/w3-protocol/commit/9d73a26f7ab81f5baf9e7486ab99c1404a3dfff4))
+
 ## [3.0.0](https://github.com/web3-storage/w3-protocol/compare/access-v2.1.1...access-v3.0.0) (2022-10-24)
 
 
