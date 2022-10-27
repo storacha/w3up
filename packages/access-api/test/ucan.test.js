@@ -234,7 +234,7 @@ test('should multiple invocation should pass', async (t) => {
 
   const res = await mf.dispatchFetch('http://localhost:8787/raw', {
     method: 'POST',
-    headers,
+    headers: Object.fromEntries(headers.entries()),
   })
 
   const rsp = await res.json()

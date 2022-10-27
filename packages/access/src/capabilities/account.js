@@ -27,3 +27,24 @@ export const info = base.or(store).derive({
   }),
   derives: equalWith,
 })
+
+export const recoverValidation = base.derive({
+  to: capability({
+    can: 'account/recover-validation',
+    with: URI.match({ protocol: 'did:' }),
+    nb: {
+      email: URI.match({ protocol: 'mailto:' }),
+    },
+    derives: equalWith,
+  }),
+  derives: equalWith,
+})
+
+export const recover = base.derive({
+  to: capability({
+    can: 'account/recover',
+    with: URI.match({ protocol: 'did:' }),
+    derives: equalWith,
+  }),
+  derives: equalWith,
+})

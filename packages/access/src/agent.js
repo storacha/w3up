@@ -1,6 +1,5 @@
 import * as DID from '@ipld/dag-ucan/did'
 import * as Client from '@ucanto/client'
-import { delegate } from '@ucanto/core'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
@@ -11,6 +10,7 @@ import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Account from './capabilities/account.js'
 import * as Voucher from './capabilities/voucher.js'
+import { any as Any } from './capabilities/any.js'
 import { stringToDelegation } from './encoding.js'
 import { Websocket } from './utils/ws.js'
 
@@ -133,26 +133,16 @@ export class Agent {
   async createAccount(email) {
     const account = await this.store.createAccount()
     const service = await this.service()
-    const accDelegation = await delegate({
-      // @ts-ignore
+    const delegationToAgent = await Any.delegate({
       issuer: account,
-      audience: this.data.principal,
-      capabilities: [
-        {
-          can: 'voucher/*',
-          with: account.did(),
-        },
-        {
-          can: 'account/*',
-          with: account.did(),
-        },
-      ],
-      lifetimeInSeconds: 8_600_000,
+      audience: this.issuer,
+      with: account.did(),
+      expiration: Infinity,
     })
 
     const inv = await Voucher.claim
       .invoke({
-        issuer: this.data.principal,
+        issuer: this.issuer,
         audience: service,
         with: account.did(),
         nb: {
@@ -160,7 +150,7 @@ export class Agent {
           product: 'product:free',
           service: service.did(),
         },
-        proofs: [accDelegation],
+        proofs: [delegationToAgent],
       })
       .execute(this.connection)
 
@@ -169,7 +159,13 @@ export class Agent {
     }
 
     const voucherRedeem = await this.#waitForVoucherRedeem()
-
+    // TODO save this delegation so we can revoke later
+    const delegationToService = await Any.delegate({
+      issuer: account,
+      audience: service,
+      with: account.did(),
+      expiration: Infinity,
+    })
     const accInv = await Voucher.redeem
       .invoke({
         issuer: this.data.principal,
@@ -180,7 +176,7 @@ export class Agent {
           identity: voucherRedeem.capabilities[0].nb.identity,
           product: voucherRedeem.capabilities[0].nb.product,
         },
-        proofs: [voucherRedeem],
+        proofs: [voucherRedeem, delegationToService],
       })
 
       .execute(this.connection)
@@ -188,7 +184,7 @@ export class Agent {
     if (accInv && accInv.error) {
       throw new Error('Account registration failed', { cause: accInv })
     }
-    this.data.delegations.addMany([voucherRedeem, accDelegation])
+    this.data.delegations.addMany([voucherRedeem, delegationToAgent])
     this.data.accounts.push(account)
     this.store.save(this.data)
   }

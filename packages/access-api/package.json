@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "deploy": "wrangler publish",
-    "dev": "miniflare --modules --watch --debug --wrangler-env dev --env ../../.env",
+    "dev": "scripts/cli.js dev",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
     "test": "tsc --build && ava --timeout 10s"
@@ -30,23 +30,29 @@
     "multiformats": "^9.8.1",
     "nanoid": "^4.0.0",
     "p-retry": "^5.1.1",
+    "preact": "^10.11.2",
+    "preact-render-to-string": "^5.2.6",
+    "qrcode": "^1.5.1",
     "toucan-js": "^2.7.0",
     "workers-qb": "^0.1.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.16.0",
-    "@sentry/cli": "^2.7.0",
+    "@cloudflare/workers-types": "^3.18.0",
+    "@databases/escape-identifier": "^1.0.3",
+    "@databases/sql": "^3.2.0",
+    "@sentry/cli": "^2.8.0",
     "@sentry/webpack-plugin": "^1.19.1",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
-    "@types/node": "^18.11.0",
+    "@types/node": "^18.11.7",
+    "@types/qrcode": "^1.5.0",
     "assert": "^2.0.0",
-    "ava": "^4.3.3",
+    "ava": "^5.0.1",
     "better-sqlite3": "7.6.2",
     "buffer": "^6.0.3",
     "delay": "^5.0.0",
     "dotenv": "^16.0.3",
-    "esbuild": "^0.15.10",
+    "esbuild": "^0.15.12",
     "execa": "^6.1.0",
     "git-rev-sync": "^3.0.1",
     "hd-scripts": "^3.0.2",
@@ -55,7 +61,7 @@
     "readable-stream": "^4.1.0",
     "sade": "^1.7.4",
     "typescript": "4.8.4",
-    "wrangler": "^2.1.12"
+    "wrangler": "^2.1.13"
   },
   "eslintConfig": {
     "extends": [
@@ -74,6 +80,9 @@
       "BUCKET": "writable",
       "W3ACCESS_METRICS": "writable",
       "WebSocketPair": "readonly"
+    },
+    "rules": {
+      "unicorn/prefer-number-properties": "off"
     }
   },
   "eslintIgnore": [
@@ -84,6 +93,8 @@
   ],
   "ava": {
     "failFast": true,
+    "concurrency": 1,
+    "workerThreads": false,
     "files": [
       "test/**/*.test.js"
     ],
@@ -92,7 +103,8 @@
       "--experimental-vm-modules"
     ],
     "ignoredByWatcher": [
-      "./dist/*"
+      "./dist/*",
+      "./wrangler/**"
     ]
   }
 }

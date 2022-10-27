@@ -217,6 +217,25 @@ export class StoreIndexedDB {
   async createAccount() {
     return await Signer.generate({ extractable: false })
   }
+
+  async reset() {
+    if (this.#db) {
+      withObjectStore(this.#db, 'readwrite', this.#dbStoreName, (s) => {
+        /** @type {import('p-defer').DeferredPromise<void>} */
+        const { resolve, reject, promise } = defer()
+        const req = s.clear()
+        req.addEventListener('success', () => {
+          resolve()
+        })
+
+        req.addEventListener('error', () =>
+          reject(new Error('failed to query DB', { cause: req.error }))
+        )
+
+        return promise
+      })
+    }
+  }
 }
 
 /**

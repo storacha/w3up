@@ -1,11 +1,10 @@
 import * as Server from '@ucanto/server'
-import * as Identity from '@web3-storage/access/capabilities/identity'
+import { Failure } from '@ucanto/server'
 import * as Account from '@web3-storage/access/capabilities/account'
-import { identityRegisterProvider } from './identity-register.js'
-import { identityValidateProvider } from './identity-validate.js'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
-import { Failure } from '@ucanto/server'
+import * as DID from '@ipld/dag-ucan/did'
+import { delegationToString } from '@web3-storage/access/encoding'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -13,46 +12,58 @@ import { Failure } from '@ucanto/server'
  */
 export function service(ctx) {
   return {
-    identity: {
-      validate: identityValidateProvider(ctx),
-      register: identityRegisterProvider(ctx),
-      identify: Server.provide(Identity.identify, async ({ capability }) => {
-        const result = await ctx.kvs.accounts.get(capability.with)
-        return result?.account
-      }),
-    },
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),
     },
 
     account: {
-      // @ts-expect-error - types from query dont match handler output
       info: Server.provide(Account.info, async ({ capability }) => {
-        const { results } = await ctx.db.fetchOne({
-          tableName: 'accounts',
-          fields: '*',
-          where: {
-            conditions: 'did =?1',
-            params: [capability.with],
-          },
-        })
-
+        const results = await ctx.kvs.accounts.get(capability.with)
         if (!results) {
           throw new Failure('Account not found...')
         }
-        return {
-          did: results.did,
-          agent: results.agent,
-          email: results.email,
-          product: results.product,
-          updated_at: results.update_at,
-          inserted_at: results.inserted_at,
-        }
+        return results
       }),
-      // all: Server.provide(Account.all, async ({ capability }) => {
-      //   return capability
-      // }),
+
+      'recover-validation': Server.provide(
+        Account.recoverValidation,
+        async ({ capability }) => {
+          // check if we have delegations in the KV for the email
+          // if yes send email with account/login
+          // if not error "no accounts for email X"
+
+          const email = capability.nb.email
+          if (!(await ctx.kvs.accounts.hasAccounts(email))) {
+            throw new Failure(
+              `No accounts found for email: ${email.replace('mailto:', '')}.`
+            )
+          }
+
+          const inv = await Account.recover
+            .invoke({
+              issuer: ctx.signer,
+              audience: DID.parse(capability.with),
+              with: ctx.signer.did(),
+              lifetimeInSeconds: 60 * 10,
+              proofs: [
+                await Account.recover.delegate({
+                  audience: ctx.signer,
+                  issuer: ctx.signer,
+                  lifetimeInSeconds: 60 * 1000,
+                  with: ctx.signer.did(),
+                }),
+              ],
+            })
+            .delegate()
+
+          const encoded = await delegationToString(inv)
+          // For testing
+          if (ctx.config.ENV === 'test') {
+            return encoded
+          }
+        }
+      ),
     },
     // @ts-ignore
     testing: {

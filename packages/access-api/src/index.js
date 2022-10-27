@@ -6,7 +6,6 @@ import { postRaw } from './routes/raw.js'
 import { postRoot } from './routes/root.js'
 import { validateEmail } from './routes/validate-email.js'
 import { validateWS } from './routes/validate-ws.js'
-import { validate } from './routes/validate.js'
 import { version } from './routes/version.js'
 import { getContext } from './utils/context.js'
 
@@ -15,7 +14,6 @@ const r = new Router({ onNotFound: notFound })
 
 r.add('options', '*', preflight)
 r.add('get', '/version', version)
-r.add('get', '/validate', validate)
 r.add('get', '/validate-email', validateEmail)
 r.add('get', '/validate-ws', validateWS)
 r.add('post', '/', postRoot)

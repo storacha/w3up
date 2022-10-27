@@ -37,6 +37,10 @@ export class StoreConf {
 
   async close() {}
 
+  async reset() {
+    this.#config.clear()
+  }
+
   async exists() {
     return this.#config.has('meta') && this.#config.has('principal')
   }
