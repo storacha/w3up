@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.2](https://github.com/web3-storage/w3-protocol/compare/access-v3.1.1...access-v3.1.2) (2022-10-27)
+
+
+### Bug Fixes
+
+* publish all dist ts files ([#127](https://github.com/web3-storage/w3-protocol/issues/127)) ([f705073](https://github.com/web3-storage/w3-protocol/commit/f70507305080c08665f51f7b75bd388048be86f7))
+
 ## [3.1.1](https://github.com/web3-storage/w3-protocol/compare/access-v3.1.0...access-v3.1.1) (2022-10-27)
 
 
