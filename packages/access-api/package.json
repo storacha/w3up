@@ -27,7 +27,6 @@
     "@ucanto/validator": "^2.0.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
-    "fflate": "^0.7.4",
     "multiformats": "^9.8.1",
     "nanoid": "^4.0.0",
     "p-retry": "^5.1.1",

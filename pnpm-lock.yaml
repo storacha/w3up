@@ -134,7 +134,6 @@ importers:
       dotenv: ^16.0.3
       esbuild: ^0.15.12
       execa: ^6.1.0
-      fflate: ^0.7.4
       git-rev-sync: ^3.0.1
       hd-scripts: ^3.0.2
       miniflare: ^2.10.0
@@ -162,7 +161,6 @@ importers:
       '@ucanto/validator': 2.0.0
       '@web3-storage/access': link:../access
       '@web3-storage/worker-utils': 0.4.3-dev
-      fflate: 0.7.4
       multiformats: 9.9.0
       nanoid: 4.0.0
       p-retry: 5.1.1
@@ -3898,10 +3896,6 @@ packages:
     dependencies:
       reusify: 1.0.4
     dev: true
-
-  /fflate/0.7.4:
-    resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
-    dev: false
 
   /figures/5.0.0:
     resolution: {integrity: sha512-ej8ksPF4x6e5wvK9yevct0UCXh8TTFlWGVLlgjZuoBH1HwjIfKE/IdL5mq89sFA7zELi1VhKpmtDnrs7zWyeyg==}
