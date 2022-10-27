@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/web3-storage/w3-protocol/compare/access-v3.1.0...access-v3.1.1) (2022-10-27)
+
+
+### Bug Fixes
+
+* export stores ([#125](https://github.com/web3-storage/w3-protocol/issues/125)) ([d3fa14d](https://github.com/web3-storage/w3-protocol/commit/d3fa14d6fe72c6b306b4a5b05276fbf137ab28f0))
+
 ## [3.1.0](https://github.com/web3-storage/w3-protocol/compare/access-v3.0.0...access-v3.1.0) (2022-10-26)
 
 
