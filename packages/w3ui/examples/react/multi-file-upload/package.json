@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@w3ui/react-keyring": "^1.0.0",
+    "@w3ui/react-keyring": "^1.0.1",
     "@w3ui/react-uploader": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

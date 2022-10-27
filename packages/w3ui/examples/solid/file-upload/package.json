@@ -15,7 +15,7 @@
     "vite-plugin-solid": "^2.3.0"
   },
   "dependencies": {
-    "@w3ui/solid-keyring": "^1.0.0",
+    "@w3ui/solid-keyring": "^1.0.1",
     "@w3ui/solid-uploader": "^2.0.0",
     "solid-js": "^1.5.1"
   }

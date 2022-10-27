@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@w3ui/vue-uploader": "^2.0.0",
-    "@w3ui/vue-keyring": "^1.0.0",
+    "@w3ui/vue-keyring": "^1.0.1",
     "vue": "^3.2.38"
   },
   "devDependencies": {

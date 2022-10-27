@@ -28,7 +28,7 @@
     "multiformats": "^9.9.0"
   },
   "peerDependencies": {
-    "@w3ui/react-keyring": "^1.0.0",
+    "@w3ui/react-keyring": "^1.0.1",
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   }
 }
