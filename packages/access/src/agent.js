@@ -266,6 +266,10 @@ export class Agent {
       })
       .execute(this.connection)
 
+    if (inv.error) {
+      throw inv
+    }
+
     return inv
   }
 }
