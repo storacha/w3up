@@ -26,7 +26,7 @@
   "dependencies": {
     "@ucanto/interface": "^1.0.0",
     "@ucanto/principal": "^1.0.1",
-    "@web3-storage/access": "^1.0.0",
+    "@web3-storage/access": "^2.1.1",
     "multiformats": "^9.8.1"
   }
 }

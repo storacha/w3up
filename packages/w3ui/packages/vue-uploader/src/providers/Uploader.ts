@@ -1,6 +1,6 @@
 import { defineComponent, provide, InjectionKey, inject, Ref, shallowReactive, computed } from 'vue'
 import { AuthProviderInjectionKey } from '@w3ui/vue-keyring'
-import { uploadCarChunks, CarChunkMeta, CarData, encodeFile, chunkBlocks, encodeDirectory } from '@w3ui/uploader-core'
+import { uploadCarChunks, CarChunkMeta, CarData, encodeFile, chunkBlocks, encodeDirectory, createUpload } from '@w3ui/uploader-core'
 import { CID } from 'multiformats/cid'
 
 /**
@@ -29,7 +29,7 @@ export interface UploaderContextActions {
   /**
    * Upload CAR bytes to the service.
    */
-  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<void>
+  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<CID[]>
 }
 
 /**
@@ -46,21 +46,36 @@ export const UploaderProvider = defineComponent({
 
     const actions: UploaderContextActions = {
       async uploadFile (file: Blob) {
-        const { cid, blocks } = encodeFile(file)
-        await actions.uploadCarChunks(chunkBlocks(blocks))
-        return await cid
+        if (identity?.value == null) {
+          throw new Error('missing identity')
+        }
+
+        const { cid: cidPromise, blocks } = encodeFile(file)
+        const carCids = await actions.uploadCarChunks(chunkBlocks(blocks))
+
+        const cid = await cidPromise
+        await createUpload(identity.value.signingPrincipal, cid, carCids)
+        return cid
       },
       async uploadDirectory (files: File[]) {
-        const { cid, blocks } = encodeDirectory(files)
-        await actions.uploadCarChunks(chunkBlocks(blocks))
-        return await cid
+        if (identity?.value == null) {
+          throw new Error('missing identity')
+        }
+
+        const { cid: cidPromise, blocks } = encodeDirectory(files)
+        const carCids = await actions.uploadCarChunks(chunkBlocks(blocks))
+
+        const cid = await cidPromise
+        await createUpload(identity.value.signingPrincipal, cid, carCids)
+        return cid
       },
       async uploadCarChunks (chunks) {
         if (identity?.value == null) {
           throw new Error('missing identity')
         }
+
         state.uploadedCarChunks = []
-        await uploadCarChunks(identity.value.signingPrincipal, chunks, {
+        return await uploadCarChunks(identity.value.signingPrincipal, chunks, {
           onChunkUploaded: e => {
             state.uploadedCarChunks = [...state.uploadedCarChunks, e.meta]
           }

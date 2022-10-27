@@ -4,26 +4,27 @@ import { Principal } from '@ucanto/principal'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
-import { storeList } from '@web3-storage/access/capabilities'
+// @ts-expect-error
+import { list } from '@web3-storage/access/capabilities/upload'
 import { CID } from 'multiformats/cid'
 
 // Production
-const storeApiUrl = new URL('https://8609r1772a.execute-api.us-east-1.amazonaws.com')
-const storeDid = Principal.parse('did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z')
+const serviceUrl = new URL('https://8609r1772a.execute-api.us-east-1.amazonaws.com')
+const serviceDid = Principal.parse('did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z')
 
-interface Service { store: { list: ServiceMethod<StoreList, ServiceListPage, never> } }
-interface StoreList extends Capability<'store/list', DID> {}
+interface Service { uploads: { list: ServiceMethod<UploadsList, ServiceListPage, never> } }
+interface UploadsList extends Capability<'uploads/list', DID> {}
 
 interface ServiceListPage {
   count: number
   page: number
-  pagesize: number
+  pageSize: number
   results?: ServiceListResult[]
 }
 
 interface ServiceListResult {
   carCID: CID
-  rootContentCID: CID
+  dataCID: CID
   uploadedAt: number
 }
 
@@ -41,18 +42,18 @@ export interface ListResult {
 
 export async function listUploads (principal: SigningPrincipal, _: { signal?: AbortSignal } = {}): Promise<ListPage> {
   const conn = connect<Service>({
-    id: storeDid,
+    id: serviceDid,
     encoder: CAR,
     decoder: CBOR,
     channel: HTTP.open({
-      url: storeApiUrl,
+      url: serviceUrl,
       method: 'POST'
     })
   })
 
-  const res = await storeList.invoke({
+  const res = await list.invoke({
     issuer: principal,
-    audience: storeDid,
+    audience: serviceDid,
     with: principal.did()
   }).execute(conn)
 
@@ -64,9 +65,10 @@ export async function listUploads (principal: SigningPrincipal, _: { signal?: Ab
   const results = res.results == null ? [] : res.results
   return {
     page: res.page,
-    pageSize: res.pagesize,
+    pageSize: res.pageSize,
+    // @ts-expect-error
     results: results.map(r => ({
-      dataCid: r.rootContentCID,
+      dataCid: r.dataCID,
       carCids: [r.carCID],
       uploadedAt: new Date(r.uploadedAt)
     }))

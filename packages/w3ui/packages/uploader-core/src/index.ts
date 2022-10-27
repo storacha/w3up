@@ -1,7 +1,10 @@
 import { SigningPrincipal } from '@ucanto/interface'
 import { Principal } from '@ucanto/principal'
 import { CAR } from '@ucanto/transport'
-import { storeAdd } from '@web3-storage/access/capabilities'
+// @ts-expect-error
+import { add as storeAdd } from '@web3-storage/access/capabilities/store'
+// @ts-expect-error
+import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
 import { connection } from '@web3-storage/access/connection'
 import retry, { AbortError } from 'p-retry'
 import { CID } from 'multiformats/cid'
@@ -11,8 +14,8 @@ export * from './unixfs-car'
 export * from './car-chunker'
 
 // Production
-const storeApiUrl = new URL('https://8609r1772a.execute-api.us-east-1.amazonaws.com')
-const storeDid = Principal.parse('did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z')
+const serviceUrl = new URL('https://8609r1772a.execute-api.us-east-1.amazonaws.com')
+const serviceDid = Principal.parse('did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z')
 
 const RETRIES = 3
 const CONCURRENT_UPLOADS = 3
@@ -59,28 +62,40 @@ export async function uploadCarChunks (principal: SigningPrincipal, chunks: Asyn
 
   const carCids = await collect(uploads)
 
-  if (carCids.length > 1) {
-    // TODO: link them!
-  }
-
   return carCids
+}
+
+export async function createUpload (principal: SigningPrincipal, rootCid: CID, carCids: CID[]): Promise<void> {
+  const conn = connection({
+    id: serviceDid,
+    url: serviceUrl
+  })
+  const result = await uploadAdd.invoke({
+    issuer: principal,
+    audience: serviceDid,
+    with: principal.did(),
+    caveats: {
+      root: rootCid,
+      shards: carCids
+    }
+  }).execute(conn)
+  if (result?.error === true) throw result
 }
 
 export async function uploadCarBytes (principal: SigningPrincipal, bytes: Uint8Array, options: Retryable = {}): Promise<CID> {
   const link = await CAR.codec.link(bytes)
   const conn = connection({
-    id: storeDid,
-    url: storeApiUrl
+    id: serviceDid,
+    url: serviceUrl
   })
   const result = await retry(async () => {
     const res = await storeAdd.invoke({
       issuer: principal,
-      audience: storeDid,
+      audience: serviceDid,
       with: principal.did(),
       caveats: {
         link
       }
-    // @ts-expect-error @web3-storage access does not know store/* in service types
     }).execute(conn)
     return res
   }, { onFailedAttempt: console.warn, retries: options.retries ?? RETRIES })

@@ -1,7 +1,8 @@
 import { Principal, SigningPrincipal } from '@ucanto/principal'
 import type { Delegation, SigningPrincipal as ISigningPrincipal } from '@ucanto/interface'
 import * as Access from '@web3-storage/access'
-import { IdentityRegister } from '@web3-storage/access/types'
+// @ts-expect-error
+import { IdentityRegister } from '@web3-storage/access/capabilities/types'
 import { base64pad } from 'multiformats/bases/base64'
 
 // Production

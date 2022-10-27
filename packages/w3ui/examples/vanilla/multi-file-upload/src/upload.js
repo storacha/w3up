@@ -1,5 +1,5 @@
 import { loadDefaultIdentity } from '@w3ui/keyring-core'
-import { uploadCarChunks, encodeFile, encodeDirectory, chunkBlocks } from '@w3ui/uploader-core'
+import { uploadCarChunks, encodeFile, encodeDirectory, chunkBlocks, createUpload } from '@w3ui/uploader-core'
 
 const SELECTORS = {
   uploadForm: '#upload-form',
@@ -68,15 +68,14 @@ export class UploadFileForm extends window.HTMLElement {
         encodeFunction = encodeFile
       }
 
-      const { cid, blocks } = encodeFunction(this.files)
-
-      cid.then(cid => {
-        this.cid = cid
-        this.toggleUploading()
-      })
-
+      const { cid: cidPromise, blocks } = encodeFunction(this.files)
       const chunks = chunkBlocks(blocks)
-      await uploadCarChunks(identity.signingPrincipal, chunks)
+      const carCids = await uploadCarChunks(identity.signingPrincipal, chunks)
+      const cid = await cidPromise
+      await createUpload(identity.signingPrincipal, cid, carCids)
+
+      this.cid = cid
+      this.toggleUploading()
     } catch (error) {
       console.log(error)
       this.toggleUploadError()
