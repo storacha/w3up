@@ -32,7 +32,7 @@ describe('settings', () => {
     it('should create a json object that contains the agent_secret and account_secret', async ({
       settings,
     }) => {
-      const exported = exportSettings(settings)
+      const exported = await exportSettings(settings)
 
       expect(exported).toHaveProperty('agent_secret')
       expect(exported).toHaveProperty('account_secret')
@@ -43,7 +43,7 @@ describe('settings', () => {
     it('should create a map that contains the agent_secret and account_secret', async ({
       settings,
     }) => {
-      const exported = exportSettings(settings)
+      const exported = await exportSettings(settings)
       const imported = await importSettings(JSON.stringify(exported))
 
       expect(imported.has('agent_secret')).toBeTruthy()
