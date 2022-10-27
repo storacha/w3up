@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/web3-storage/w3ui/compare/vue-uploads-list-v1.1.1...vue-uploads-list-v1.1.2) (2022-10-27)
+
+
+### Bug Fixes
+
+* update dependencies ([e94f90d](https://github.com/web3-storage/w3ui/commit/e94f90d08e575f16ca4a91c6032bc3af6a613fcf))
+
 ## [1.1.1](https://github.com/web3-storage/w3ui/compare/vue-uploads-list-v1.1.0...vue-uploads-list-v1.1.1) (2022-10-17)
 
 
