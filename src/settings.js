@@ -1,6 +1,8 @@
 import { Delegation, UCAN } from '@ucanto/core'
 import { SigningPrincipal } from '@ucanto/principal'
 
+import { delegationToString, stringToDelegation } from './encoding.js'
+
 /**
  * @typedef SettingsObject
  * @property {string} [secret]
@@ -35,9 +37,9 @@ export function toPrincipal(secret) {
 
 /**
  * @param {Map<string, any>|SettingsObject} objectToParse
- * @returns {Map<string, any>}
+ * @returns {Promise<Map<string, any>>}
  */
-export function objectToMap(objectToParse) {
+export async function objectToMap(objectToParse) {
   // TODO: CHANGE LATER, store check is only for CONF
   if (objectToParse instanceof Map) {
     /** @type Map<string, any> */
@@ -79,7 +81,7 @@ export function objectToMap(objectToParse) {
       for (const [did, del] of Object.entries(objectToParse.delegations)) {
         // @ts-ignore
         delegations[did] = {
-          ucan: UCAN.parse(del?.ucan),
+          ucan: await stringToDelegation(del?.ucan),
           alias: del.alias,
         }
       }
@@ -100,9 +102,9 @@ export function objectToMap(objectToParse) {
  * Takes a JSON string and builds a settings object from it.
  *
  * @param {Map<string,any>|string|SettingsObject} settings - The settings string (typically from cli export-settings)
- * @returns {Map<string,any>} The settings object.
+ * @returns {Promise<Map<string,any>>} The settings object.
  */
-export function importSettings(settings) {
+export async function importSettings(settings) {
   if (typeof settings == 'string') {
     try {
       return objectToMap(JSON.parse(settings))
@@ -117,9 +119,9 @@ export function importSettings(settings) {
  * Takes a settings map and builds a POJO out of it.
  *
  * @param {Map<string, any>} settings - The settings object.
- * @returns {SettingsObject} The settings object.
+ * @returns {Promise<SettingsObject>} The settings object.
  */
-export function exportSettings(settings) {
+export async function exportSettings(settings) {
   /** @type SettingsObject */
   const output = {}
 
@@ -156,11 +158,9 @@ export function exportSettings(settings) {
     output.delegations = {}
 
     for (const [did, del] of Object.entries(settings.get('delegations'))) {
-      const imported = Delegation.import([del?.ucan?.root])
-
       output.delegations[did] = {
         // @ts-ignore
-        ucan: UCAN.format(imported),
+        ucan: del.ucan,
         alias: del.alias,
       }
     }
