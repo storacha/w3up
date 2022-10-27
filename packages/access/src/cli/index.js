@@ -107,11 +107,12 @@ prog
           message: 'Select account:',
         },
       ])
-      const result = await agent.getAccountInfo(account)
-      if (result.error) {
-        console.error(result.message)
-      } else {
+      try {
+        const result = await agent.getAccountInfo(account)
         console.log(result)
+      } catch (error_) {
+        const error = /** @type {Error} */ (error_)
+        console.log(error.message)
       }
     } else {
       console.error(`Run "${NAME} setup" first`)
