@@ -223,7 +223,8 @@ export class Agent {
       }
     } catch (error) {
       if (error instanceof AbortError) {
-        ws.close()
+        await ws.close()
+        throw error
       }
     }
     throw new TypeError('Failed to get voucher/redeem')
