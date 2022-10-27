@@ -160,7 +160,7 @@ export class Agent {
       throw new Error('Account creation failed', { cause: inv.error })
     }
 
-    const voucherRedeem = await this.#waitForVoucherRedeem()
+    const voucherRedeem = await this.#waitForVoucherRedeem(opts)
     // TODO save this delegation so we can revoke later
     const delegationToService = await Any.delegate({
       issuer: account,
@@ -205,7 +205,7 @@ export class Agent {
     })
 
     try {
-      const msg = await ws.awaitMsg()
+      const msg = await ws.awaitMsg(opts)
 
       if (msg.type === 'timeout') {
         await ws.close()
@@ -224,7 +224,7 @@ export class Agent {
     } catch (error) {
       if (error instanceof AbortError) {
         await ws.close()
-        throw error
+        throw new TypeError('Failed to get voucher/redeem', { cause: error })
       }
     }
     throw new TypeError('Failed to get voucher/redeem')
