@@ -13,6 +13,7 @@ import {
   generateDelegation,
   importDelegation,
 } from './delegation.js'
+import { delegationToString, stringToDelegation } from './encoding.js'
 import * as Settings from './settings.js'
 import { Access, Store } from './store/index.js'
 import { checkUrl, sleep } from './utils.js'
@@ -87,15 +88,16 @@ class Client {
    * @returns {Promise<API.SigningPrincipal>}
    */
   async agent() {
-    let secret = this.settings.get('agent_secret') || null
+    const settings = await this.settings
+    let secret = settings.get('agent_secret') || null
 
     let id = Settings.toPrincipal(secret)
     if (!id) {
       id = await SigningPrincipal.generate()
     }
 
-    if (!this.settings.has('agent_secret')) {
-      this.settings.set('agent_secret', SigningPrincipal.format(id))
+    if (!settings.has('agent_secret')) {
+      settings.set('agent_secret', SigningPrincipal.format(id))
     }
 
     return id
@@ -106,11 +108,12 @@ class Client {
    * @returns {Promise<API.SigningPrincipal>}
    */
   async account() {
-    let secret = this.settings.get('account_secret') || null
+    const settings = await this.settings
+    let secret = settings.get('account_secret') || null
 
     // For now, move old secret value to new account_secret.
-    if (!secret && this.settings.has('secret')) {
-      secret = this.settings.get('secret')
+    if (!secret && settings.has('secret')) {
+      secret = settings.get('secret')
       //       this.settings.delete('secret')
     }
     let id = Settings.toPrincipal(secret)
@@ -118,8 +121,8 @@ class Client {
       id = await SigningPrincipal.generate()
     }
 
-    if (!this.settings.has('account_secret')) {
-      this.settings.set('account_secret', SigningPrincipal.format(id))
+    if (!settings.has('account_secret')) {
+      settings.set('account_secret', SigningPrincipal.format(id))
     }
 
     return id
@@ -129,39 +132,30 @@ class Client {
    * @returns {Promise<API.Delegation|null>}
    */
   async currentDelegation() {
-    let did = this.settings.has('delegation')
-      ? this.settings.get('delegation')
-      : null
+    const settings = await this.settings
+    let account = settings.has('account') ? settings.get('account') : null
 
-    let delegations = this.settings.has('delegations')
-      ? this.settings.get('delegations')
+    let delegations = settings.has('delegations')
+      ? settings.get('delegations')
       : {}
 
     //Generate first delegation from account to agent.
-    if (!did) {
-      const issuer = await this.account()
-      const to = (await this.agent()).did()
-      const del = await generateDelegation({ to, issuer }, true)
+    if (!account) {
+      const account = await this.account()
+      const agent = (await this.agent()).did()
+      const del = await generateDelegation({ to: agent, issuer: account }, true)
 
-      did = (await this.account()).did()
+      delegations[account.did()] = {
+        ucan: await delegationToString(del),
+        alias: 'self',
+      }
+      settings.set('delegations', delegations)
+      settings.set('account', account.did())
 
-      delegations[did] = { ucan: del, alias: 'self' }
-      this.settings.set('delegations', delegations)
-      this.settings.set('delegation', issuer.did())
-    }
-
-    delegations = this.settings.has('delegations')
-      ? this.settings.get('delegations')
-      : {}
-
-    try {
-      const ucan = delegations[did]?.ucan
-      const del = Delegation.import([ucan?.root])
       return del
-    } catch (err) {
-      console.log('err', err)
-      return null
     }
+
+    return stringToDelegation(delegations[account].ucan)
   }
 
   /**
@@ -194,9 +188,10 @@ class Client {
    * @param {string|undefined} email - The email address to register with.
    */
   async register(email) {
-    const savedEmail = this.settings.get('email')
+    const settings = await this.settings
+    const savedEmail = settings.get('email')
     if (!savedEmail) {
-      this.settings.set('email', email)
+      settings.set('email', email)
     } else if (email !== savedEmail) {
       throw new Error(
         'Trying to register a second email, this is not supported yet.'
@@ -313,6 +308,7 @@ class Client {
    * @returns {Promise<API.Delegation>}
    */
   async importDelegation(bytes, alias = '') {
+    const settings = await this.settings
     const imported = await importDelegation(bytes)
     const did = imported.issuer.did()
 
@@ -324,12 +320,12 @@ class Client {
       )
     }
 
-    let delegations = this.settings.has('delegations')
-      ? this.settings.get('delegations')
+    let delegations = settings.has('delegations')
+      ? settings.get('delegations')
       : {}
 
     delegations[did] = { ucan: imported, alias }
-    this.settings.set('delegations', delegations)
+    settings.set('delegations', delegations)
 
     return imported
   }

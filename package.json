@@ -25,6 +25,7 @@
     "test:dev": "vitest -w"
   },
   "dependencies": {
+    "@ipld/car": "^4.1.5",
     "@ucanto/client": "^1.0.1",
     "@ucanto/core": "^1.0.1",
     "@ucanto/interface": "^1.0.0",
