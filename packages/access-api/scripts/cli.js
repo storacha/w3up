@@ -1,4 +1,4 @@
-#!/usr/bin/env node --experimental-vm-modules --no-warnings
+#!/usr/bin/env -S node --experimental-vm-modules --no-warnings
 /* eslint-disable no-console */
 import path from 'path'
 import dotenv from 'dotenv'
