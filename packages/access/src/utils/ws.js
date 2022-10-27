@@ -181,8 +181,23 @@ export class Websocket {
     }
   }
 
-  awaitMsg() {
+  /**
+   *
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   */
+  awaitMsg(opts) {
     return new Promise((resolve, reject) => {
+      if (opts?.signal) {
+        opts.signal.addEventListener('abort', () => {
+          this.onMessage = undefined
+          reject(
+            new AbortError('Await message cancelled.', {
+              cause: opts.signal?.reason,
+            })
+          )
+        })
+      }
       this.onMessage = (/** @type {{ type: string; }} */ msg) => {
         try {
           this.onMessage = undefined
@@ -194,3 +209,17 @@ export class Websocket {
     })
   }
 }
+
+export class AbortError extends Error {
+  /**
+   * @param {string} message
+   * @param {ErrorOptions} [opts]
+   */
+  constructor(message, opts) {
+    super(message, opts)
+    this.name = 'AbortError'
+    this.message = message
+    this.code = AbortError.code
+  }
+}
+AbortError.code = 'ERR_AWAIT_MSG_CANCEL'
