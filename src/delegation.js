@@ -1,28 +1,35 @@
-import { CarBufferWriter, CarReader } from '@ipld/car'
 import * as API from '@ucanto/interface'
 import { Principal } from '@ucanto/principal'
 import { Delegation } from '@ucanto/server'
+import { codec as CAR } from '@ucanto/transport/car'
 
 /**
- * @typedef {API.Delegation<API.Capabilities>} StoreDelegation
+ * @typedef {{ roots: [API.UCANBlock], blocks: Map<string, API.Block> }} DelegationArchive
+ * @param {API.Delegation} delegation
+ * @return {Promise<API.ByteView<DelegationArchive>>}
  */
-
-/**
- * @async
- * @param {StoreDelegation} delegation
- * @returns {Promise<Uint8Array>}
- */
-async function writeDelegationUCANtoCar(delegation) {
-  const carWriter = CarBufferWriter.createWriter(Buffer.alloc(1024))
-  const delegationBlocks = delegation.export()
-
-  for (const block of delegationBlocks) {
-    carWriter.write(block)
-    carWriter.addRoot(block.cid, { resize: true })
+export const exportDelegation = async (delegation) => {
+  const { root } = delegation
+  /** @type {Map<string, API.Block>} */
+  const blocks = new Map()
+  for (const block of delegation.export()) {
+    blocks.set(block.cid.toString(), block)
   }
-
-  return carWriter.close({ resize: true })
+  return CAR.encode({ roots: [root], blocks })
 }
+
+/**
+ * @param {API.ByteView<DelegationArchive>} bytes
+ * @returns {Promise<API.Delegation>}
+ */
+export const importDelegation = async (bytes) => {
+  const { roots, blocks } = await CAR.decode(bytes)
+  const [root] = roots
+
+  // @ts-expect-error - typedefs missmatch but this is actually accurate
+  return Delegation.create({ root, blocks })
+}
+
 /**
  * @async
  * @param {{
@@ -31,7 +38,6 @@ async function writeDelegationUCANtoCar(delegation) {
  *   expiration?: number
  * }} opts
  * @param {boolean} [ includeAccountCaps ]
- * @returns {Promise<StoreDelegation>}
  */
 export async function generateDelegation(opts, includeAccountCaps = false) {
   const delegatedTo = Principal.parse(opts.to)
@@ -87,18 +93,5 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
  * @returns {Promise<Uint8Array>}
  */
 export async function buildDelegationCar(opts) {
-  return writeDelegationUCANtoCar(await generateDelegation(opts))
-}
-
-/**
- * @param {Uint8Array} bytes
- */
-export async function importDelegation(bytes) {
-  const reader = await CarReader.fromBytes(bytes)
-  const roots = await reader.getRoots()
-
-  const ucan = await reader.get(roots[0])
-  // @ts-ignore
-  const imported = Delegation.import([ucan])
-  return imported
+  return exportDelegation(await generateDelegation(opts))
 }
