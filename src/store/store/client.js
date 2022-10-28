@@ -16,7 +16,6 @@ export * from '@web3-storage/access/capabilities/store'
  * @param {string} [options.method]
  * @param {HTTP.Fetcher} [options.fetch]
  * @param {API.OutpboundTranpsortOptions} [options.transport]
- * @returns {API.ConnectionView<{store: API.Store}>}
  */
 export function createConnection({
   id,

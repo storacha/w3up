@@ -1,20 +1,14 @@
 import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
-import { Link } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 // @ts-ignore
 import * as Upload from '@web3-storage/access/capabilities/upload'
 import fetch from 'cross-fetch'
 
 import * as defaults from './defaults.js'
-import {
-  buildDelegationCar,
-  generateDelegation,
-  importDelegation,
-} from './delegation.js'
+import { generateDelegation } from './delegation.js'
 import { delegationToString, stringToDelegation } from './encoding.js'
-import * as Settings from './settings.js'
 import { Access, Store } from './store/index.js'
 import { checkUrl, sleep } from './utils.js'
 
@@ -29,7 +23,7 @@ export * from './settings.js'
  * @property {string} [ serviceURL ] - The URL of the service to talk to.
  * @property {string} [ accessURL ] - The URL of the access service.
  * @property {API.DID} [ accessDID ] - The DID of the access service.
- * @property {Map<string, any>|string|Settings.SettingsObject} settings - A map/db of settings to use for the client.
+ * @property {import('./types.js').SettingsRaw} settings - A map/db of settings to use for the client.
  */
 
 /**
@@ -40,35 +34,18 @@ export function createClient(options) {
   return new Client(options)
 }
 
-const DefaultClientOptions = {
-  /** @type {API.DID} */
-  accessDID: defaults.ACCESS_DID,
-  accessURL: defaults.ACCESS_URL,
-  /** @type {API.DID} */
-  serviceDID: defaults.W3_STORE_DID,
-  serviceURL: defaults.SERVICE_URL,
-  settings: new Map(),
-}
-
 class Client {
   /**
    * Create an instance of the w3 client.
    * @param {ClientOptions} options
    */
-  constructor({
-    serviceDID = defaults.W3_STORE_DID,
-    serviceURL = defaults.SERVICE_URL,
-    accessURL = defaults.ACCESS_URL,
-    accessDID = defaults.ACCESS_DID,
-    settings,
-  } = DefaultClientOptions) {
-    this.serviceURL = new URL(serviceURL)
-    this.serviceDID = serviceDID
+  constructor({ serviceDID, serviceURL, accessURL, accessDID, settings }) {
+    this.serviceURL = new URL(serviceURL || defaults.SERVICE_URL)
+    this.serviceDID = serviceDID || defaults.W3_STORE_DID
+    this.accessURL = new URL(accessURL || defaults.ACCESS_URL)
+    this.accessDID = accessDID || defaults.ACCESS_DID
 
-    this.accessURL = new URL(accessURL)
-    this.accessDID = accessDID
-
-    this.settings = Settings.importSettings(settings)
+    this.settings = settings
 
     this.w3upConnection = Store.createConnection({
       id: this.serviceDID,
@@ -83,24 +60,23 @@ class Client {
     })
   }
 
+  static async create() {}
+
   /**
    * Get the current "machine" DID
    * @returns {Promise<API.SigningPrincipal>}
    */
   async agent() {
-    const settings = await this.settings
-    let secret = settings.get('agent_secret') || null
+    let secret = this.settings.agent_secret
 
-    let id = Settings.toPrincipal(secret)
-    if (!id) {
-      id = await SigningPrincipal.generate()
+    if (secret) {
+      return SigningPrincipal.parse(secret)
     }
 
-    if (!settings.has('agent_secret')) {
-      settings.set('agent_secret', SigningPrincipal.format(id))
-    }
+    const principal = await SigningPrincipal.generate()
+    this.settings.agent_secret = SigningPrincipal.format(principal)
 
-    return id
+    return principal
   }
 
   /**
@@ -108,54 +84,38 @@ class Client {
    * @returns {Promise<API.SigningPrincipal>}
    */
   async account() {
-    const settings = await this.settings
-    let secret = settings.get('account_secret') || null
+    let secret = this.settings.account_secret
 
-    // For now, move old secret value to new account_secret.
-    if (!secret && settings.has('secret')) {
-      secret = settings.get('secret')
-      //       this.settings.delete('secret')
-    }
-    let id = Settings.toPrincipal(secret)
-    if (!id) {
-      id = await SigningPrincipal.generate()
+    if (secret) {
+      return SigningPrincipal.parse(secret)
     }
 
-    if (!settings.has('account_secret')) {
-      settings.set('account_secret', SigningPrincipal.format(id))
+    const account = await SigningPrincipal.generate()
+    const agent = await this.agent()
+    const del = await generateDelegation(
+      { to: agent.did(), issuer: account },
+      true
+    )
+    if (!this.settings.delegations) {
+      this.settings.delegations = {}
     }
-
-    return id
+    this.settings.account_secret = SigningPrincipal.format(account)
+    this.settings.account = account.did()
+    this.settings.delegations[account.did()] = {
+      alias: 'self',
+      ucan: await delegationToString(del),
+    }
+    return account
   }
 
-  /**
-   * @returns {Promise<API.Delegation|null>}
-   */
   async currentDelegation() {
-    const settings = await this.settings
-    let account = settings.has('account') ? settings.get('account') : null
-
-    let delegations = settings.has('delegations')
-      ? settings.get('delegations')
-      : {}
-
-    //Generate first delegation from account to agent.
+    const account = this.settings.account
     if (!account) {
-      const account = await this.account()
-      const agent = (await this.agent()).did()
-      const del = await generateDelegation({ to: agent, issuer: account }, true)
-
-      delegations[account.did()] = {
-        ucan: await delegationToString(del),
-        alias: 'self',
-      }
-      settings.set('delegations', delegations)
-      settings.set('account', account.did())
-
-      return del
+      throw new Error('No current account')
     }
+    const del = this.settings.delegations[account]
 
-    return stringToDelegation(delegations[account].ucan)
+    return stringToDelegation(del.ucan)
   }
 
   /**
@@ -174,12 +134,15 @@ class Client {
     const account = await this.account()
     const delegation = await this.currentDelegation()
 
+    if (!this.settings.account) {
+      throw new Error('No account selected.')
+    }
+
     return {
       agent,
       account,
-      //@ts-ignore
-      with: delegation?.capabilities[0].with || account.did(),
-      proofs: delegation ? [delegation] : [],
+      with: this.settings.account,
+      proofs: [delegation],
     }
   }
 
@@ -188,10 +151,9 @@ class Client {
    * @param {string|undefined} email - The email address to register with.
    */
   async register(email) {
-    const settings = await this.settings
-    const savedEmail = settings.get('email')
+    const savedEmail = this.settings.email
     if (!savedEmail) {
-      settings.set('email', email)
+      this.settings.email = email
     } else if (email !== savedEmail) {
       throw new Error(
         'Trying to register a second email, this is not supported yet.'
@@ -292,24 +254,31 @@ class Client {
 
   /**
    * @param {DelegationOptions} opts
-   * @returns {Promise<Uint8Array>}
    */
   async makeDelegation(opts) {
-    return buildDelegationCar({
-      issuer: await this.account(),
-      to: opts.to,
-      expiration: opts.expiration,
-    })
+    return generateDelegation(
+      {
+        issuer: await this.account(),
+        to: opts.to,
+        expiration: opts.expiration,
+      },
+      true
+    )
+  }
+  /**
+   * @param {DelegationOptions} opts
+   */
+  async exportDelegation(opts) {
+    return await delegationToString(await this.makeDelegation(opts))
   }
 
   /**
-   * @param {Uint8Array} bytes
+   * @param {string} delegationString
    * @param {string} alias
    * @returns {Promise<API.Delegation>}
    */
-  async importDelegation(bytes, alias = '') {
-    const settings = await this.settings
-    const imported = await importDelegation(bytes)
+  async importDelegation(delegationString, alias = '') {
+    const imported = await stringToDelegation(delegationString)
     const did = imported.issuer.did()
 
     const audience = imported.audience.did()
@@ -320,12 +289,7 @@ class Client {
       )
     }
 
-    let delegations = settings.has('delegations')
-      ? settings.get('delegations')
-      : {}
-
-    delegations[did] = { ucan: await delegationToString(imported), alias }
-    settings.set('delegations', delegations)
+    this.settings.delegations[did] = { ucan: delegationString, alias }
 
     return imported
   }

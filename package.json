@@ -5,7 +5,7 @@
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "main": "src/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -14,12 +14,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:api_docs && npm run build:types",
-    "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./dist",
+    "build": "npm run build:api_docs && npm run typecheck",
     "build:api_docs": "jsdoc2md -f src/index.js > API.md",
     "x-pretest": "npm run prettier && npm run typecheck",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc",
     "prettier": "prettier -c '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "test:coverage": "vitest run --coverage",
     "test:dev": "vitest -w"

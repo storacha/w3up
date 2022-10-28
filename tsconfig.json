@@ -1,14 +1,38 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "target": "es2016",
-    "moduleResolution": "node",
+    "strict": true,
+    "outDir": "dist",
+    // project options
     "allowJs": true,
     "checkJs": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "noEmit": false,
+    "noEmitOnError": true,
+    "emitDeclarationOnly": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "composite": true,
+    "isolatedModules": true,
+    "removeComments": false,
+    // module resolution
     "esModuleInterop": true,
+    "moduleResolution": "Node",
+    // linter checks
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    // advanced
+    "importsNotUsedAsValues": "remove",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "stripInternal": true,
+    "resolveJsonModule": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["**/node_modules/**"]
 }
