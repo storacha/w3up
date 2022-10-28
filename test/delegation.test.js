@@ -1,11 +1,12 @@
-import { Delegation, decodeLink } from '@ucanto/core'
-import { SigningPrincipal } from '@ucanto/principal'
+import { decodeLink, delegate, Delegation } from '@ucanto/core'
+import { SigningPrincipal, Principal } from '@ucanto/principal'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import {
   buildDelegationCar,
   generateDelegation,
   importDelegation,
+  exportDelegation,
 } from '../src/delegation.js'
 import fixture from './fixture.js'
 
@@ -102,16 +103,63 @@ describe('delegation', () => {
     beforeEach(async (context) => {
       const issuer = await SigningPrincipal.generate()
 
+      context.audience = fixture.did
+      context.issuer = issuer
       context.delegation = await buildDelegationCar({
         issuer,
         to: fixture.did,
       })
     })
 
-    it('should import a delegation', async ({ delegation }) => {
+    it('should import a delegation', async ({
+      delegation,
+      issuer,
+      audience,
+    }) => {
       const imported = await importDelegation(delegation)
+      expect(imported.issuer.did(), issuer.did())
+      expect(imported.audience.did(), audience)
+      expect(imported.capabilities.length).to.be.greaterThan(0)
       expect(imported).toBeDefined()
     })
+  })
+
+  it('should export 🔁 import delegation chain', async () => {
+    const issuer = await SigningPrincipal.generate()
+    const audience = Principal.parse(fixture.did)
+    const proof = await delegate({
+      issuer,
+      audience,
+      capabilities: [
+        {
+          can: 'store/*',
+          with: issuer.did(),
+        },
+        {
+          can: 'upload/*',
+          with: issuer.did(),
+        },
+      ],
+    })
+
+    const delegation = await delegate({
+      issuer: issuer,
+      audience,
+      capabilities: [
+        {
+          can: 'test/this',
+          with: issuer.did(),
+        },
+      ],
+      proofs: [proof],
+    })
+
+    const bytes = await exportDelegation(delegation)
+    expect(bytes).to.be.instanceOf(Uint8Array)
+
+    const imported = await importDelegation(bytes)
+    expect(imported).to.be.instanceOf(Delegation.Delegation)
+    expect(imported.proofs[0]).to.be.instanceOf(Delegation.Delegation)
   })
 
   //   describe('#register', () => {
