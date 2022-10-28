@@ -34,7 +34,8 @@
     "@ucanto/transport": "^1.0.1",
     "@ucanto/validator": "^1.0.2",
     "@web3-storage/access": "^2.1.1",
-    "cross-fetch": "^3.1.5"
+    "cross-fetch": "^3.1.5",
+    "uint8arrays": "^4.0.2"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.3.0",
