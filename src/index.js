@@ -324,7 +324,7 @@ class Client {
       ? settings.get('delegations')
       : {}
 
-    delegations[did] = { ucan: imported, alias }
+    delegations[did] = { ucan: await delegationToString(imported), alias }
     settings.set('delegations', delegations)
 
     return imported
