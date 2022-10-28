@@ -9,7 +9,7 @@ import { delegationToString, stringToDelegation } from './encoding.js'
  * @property {string} [agent_secret]
  * @property {string} [account_secret]
  * @property {string} [email]
- * @property {string} [delegation]
+ * @property {string} [account]
  * @property {any} [delegations]
  */
 
@@ -71,8 +71,8 @@ export async function objectToMap(objectToParse) {
       settings.set('email', objectToParse.email)
     }
 
-    if (objectToParse.delegation) {
-      settings.set('delegation', objectToParse.delegation)
+    if (objectToParse.account) {
+      settings.set('account', objectToParse.account)
     }
 
     if (objectToParse.delegations) {
@@ -150,8 +150,8 @@ export async function exportSettings(settings) {
     }
   }
 
-  if (settings.has('delegation')) {
-    output.delegation = settings.get('delegation')
+  if (settings.has('account')) {
+    output.account = settings.get('account')
   }
 
   if (settings.has('delegations')) {
