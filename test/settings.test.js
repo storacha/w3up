@@ -61,7 +61,7 @@ describe('settings', () => {
     //       expect(imported.has('agent_secret')).toBeTruthy()
     //     })
 
-    it('should, after put into client, auto-generate a delegation from account to agent', async ({
+    it.skip('should, after put into client, auto-generate a delegation from account to agent', async ({
       settings,
     }) => {
       const exported = exportSettings(settings)
