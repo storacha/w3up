@@ -1,7 +1,6 @@
-import { Delegation, UCAN } from '@ucanto/core'
 import { SigningPrincipal } from '@ucanto/principal'
 
-import { delegationToString, stringToDelegation } from './encoding.js'
+import { stringToDelegation } from './encoding.js'
 
 /**
  * @typedef SettingsObject
@@ -101,7 +100,7 @@ export async function objectToMap(objectToParse) {
 /**
  * Takes a JSON string and builds a settings object from it.
  *
- * @param {Map<string,any>|string|SettingsObject} settings - The settings string (typically from cli export-settings)
+ * @param {import('./types.js').SettingsRaw} settings - The settings string (typically from cli export-settings)
  * @returns {Promise<Map<string,any>>} The settings object.
  */
 export async function importSettings(settings) {
