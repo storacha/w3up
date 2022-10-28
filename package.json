@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:api_docs && npm run typecheck",
+    "build": "npm run typecheck",
     "build:api_docs": "jsdoc2md -f src/index.js > API.md",
     "x-pretest": "npm run prettier && npm run typecheck",
     "test": "vitest run",
