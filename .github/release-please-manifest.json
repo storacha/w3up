@@ -1,6 +1,6 @@
 {
   "packages/wallet": "1.0.0",
-  "packages/access": "3.1.2",
+  "packages/access": "4.0.0",
   "packages/access-api": "3.0.0",
   "packages/store": "2.0.0"
 }
