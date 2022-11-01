@@ -12,7 +12,7 @@ import * as Account from './capabilities/account.js'
 import * as Voucher from './capabilities/voucher.js'
 import { any as Any } from './capabilities/any.js'
 import { stringToDelegation } from './encoding.js'
-import { Websocket } from './utils/ws.js'
+import { Websocket, AbortError } from './utils/ws.js'
 
 /**
  * @template T
@@ -129,8 +129,10 @@ export class Agent {
 
   /**
    * @param {string} email
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
    */
-  async createAccount(email) {
+  async createAccount(email, opts) {
     const account = await this.store.createAccount()
     const service = await this.service()
     const delegationToAgent = await Any.delegate({
@@ -158,7 +160,7 @@ export class Agent {
       throw new Error('Account creation failed', { cause: inv.error })
     }
 
-    const voucherRedeem = await this.#waitForVoucherRedeem()
+    const voucherRedeem = await this.#waitForVoucherRedeem(opts)
     // TODO save this delegation so we can revoke later
     const delegationToService = await Any.delegate({
       issuer: account,
@@ -189,29 +191,43 @@ export class Agent {
     this.store.save(this.data)
   }
 
-  async #waitForVoucherRedeem() {
+  /**
+   *
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   */
+  async #waitForVoucherRedeem(opts) {
     const ws = new Websocket(this.url, 'validate-ws')
     await ws.open()
+
     ws.send({
       did: this.did(),
     })
-    const msg = await ws.awaitMsg()
-    if (msg.type === 'timeout') {
-      await ws.close()
-      throw new Error('Email validation timed out.')
-    }
 
-    if (msg.type === 'delegation') {
-      const delegation = await stringToDelegation(
-        /** @type {import('./types').EncodedDelegation<[import('./types').VoucherRedeem]>} */ (
-          msg.delegation
+    try {
+      const msg = await ws.awaitMsg(opts)
+
+      if (msg.type === 'timeout') {
+        await ws.close()
+        throw new Error('Email validation timed out.')
+      }
+
+      if (msg.type === 'delegation') {
+        const delegation = await stringToDelegation(
+          /** @type {import('./types').EncodedDelegation<[import('./types').VoucherRedeem]>} */ (
+            msg.delegation
+          )
         )
-      )
-      ws.close()
-      return delegation
+        ws.close()
+        return delegation
+      }
+    } catch (error) {
+      if (error instanceof AbortError) {
+        await ws.close()
+        throw new TypeError('Failed to get voucher/redeem', { cause: error })
+      }
     }
-
-    throw new Error('Failed to get voucher/redeem')
+    throw new TypeError('Failed to get voucher/redeem')
   }
 
   /**
