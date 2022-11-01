@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.0.0](https://github.com/web3-storage/w3-protocol/compare/access-v3.1.2...access-v4.0.0) (2022-11-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove 0.8 caps and add account delegation to the service (#123)
+
+### Features
+
+* add cancel create account ([#132](https://github.com/web3-storage/w3-protocol/issues/132)) ([feec113](https://github.com/web3-storage/w3-protocol/commit/feec113f04bd3b5c2eb570ba88e8c14274f91ed6))
+* Remove 0.8 caps and add account delegation to the service ([#123](https://github.com/web3-storage/w3-protocol/issues/123)) ([878f8c9](https://github.com/web3-storage/w3-protocol/commit/878f8c9a38f02dac509ef0b4437ab3d1b8467eb3)), closes [#117](https://github.com/web3-storage/w3-protocol/issues/117) [#121](https://github.com/web3-storage/w3-protocol/issues/121)
+
+
+### Bug Fixes
+
+* throw error or return value ([#131](https://github.com/web3-storage/w3-protocol/issues/131)) ([cddf7b9](https://github.com/web3-storage/w3-protocol/commit/cddf7b9884d5f7c83f734e1c9d8543a1fc0a80ad))
+
 ## [3.1.2](https://github.com/web3-storage/w3-protocol/compare/access-v3.1.1...access-v3.1.2) (2022-10-27)
 
 
