@@ -19,7 +19,7 @@ importers:
   packages/access:
     specifiers:
       '@ipld/car': ^5.0.0
-      '@ipld/dag-ucan': ^2.0.0
+      '@ipld/dag-ucan': ^2.0.1
       '@noble/ed25519': ^1.7.1
       '@types/assert': ^1.5.6
       '@types/inquirer': ^9.0.2
@@ -62,7 +62,7 @@ importers:
       zod: ^3.19.1
     dependencies:
       '@ipld/car': 5.0.0
-      '@ipld/dag-ucan': 2.0.0
+      '@ipld/dag-ucan': 2.0.1
       '@noble/ed25519': 1.7.1
       '@types/ws': 8.5.3
       '@ucanto/client': 3.0.1
@@ -521,11 +521,19 @@ packages:
       multiformats: 9.9.0
     dev: false
 
-  /@ipld/dag-ucan/2.0.0:
-    resolution: {integrity: sha512-Fep3MDup7nwistsRAt8fvcgY4QzUzp17atgfMQ9771DnCM1psbz3LITBBbKhhPphIQTxrscZlbK0A38D41/HiA==}
+  /@ipld/dag-json/9.0.1:
+    resolution: {integrity: sha512-dL5Xhrk0XXoq3lSsY2LNNraH2Nxx4nlgQwSarl2J3oir2jBDQEiBDW8bjgr30ni8/epdWDhXm5mdxat8dFWwGQ==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@ipld/dag-cbor': 7.0.3
-      '@ipld/dag-json': 8.0.11
+      cborg: 1.9.5
+      multiformats: 10.0.2
+    dev: false
+
+  /@ipld/dag-ucan/2.0.1:
+    resolution: {integrity: sha512-0cqnXPmjmFhz9JVtgU/wCaNvbnFr/HYzl4LaVm7Q7c8FsF9u671rOvNgCbSpJL6f+YTM4Q4fihxLYWPHaUSEww==}
+    dependencies:
+      '@ipld/dag-cbor': 8.0.0
+      '@ipld/dag-json': 9.0.1
       multiformats: 10.0.2
     dev: false
 
@@ -1456,7 +1464,7 @@ packages:
     dependencies:
       '@ipld/car': 5.0.0
       '@ipld/dag-cbor': 8.0.0
-      '@ipld/dag-ucan': 2.0.0
+      '@ipld/dag-ucan': 2.0.1
       '@ucanto/interface': 3.0.0
       multiformats: 10.0.2
     dev: false
@@ -1471,7 +1479,7 @@ packages:
   /@ucanto/interface/3.0.0:
     resolution: {integrity: sha512-CZ+wPD9Zxv3UL/0s3+d1Zf0LPktbkMLGtpdt08+/gKLVU95qxvHzEcpBp9toDYvbKNYBIKQtEc2VbOvwUlMLZA==}
     dependencies:
-      '@ipld/dag-ucan': 2.0.0
+      '@ipld/dag-ucan': 2.0.1
       multiformats: 10.0.2
     dev: false
 
@@ -1488,7 +1496,7 @@ packages:
   /@ucanto/principal/3.0.0:
     resolution: {integrity: sha512-7CwVbYQc+CdWta+lNuI6vRjVT+GkPwf2VQVXFBm8i4fQomFOTmOq8I/Be3TBS9N2OaIbL7b/eKy1WBdMMzfz5g==}
     dependencies:
-      '@ipld/dag-ucan': 2.0.0
+      '@ipld/dag-ucan': 2.0.1
       '@noble/ed25519': 1.7.1
       '@ucanto/interface': 3.0.0
       multiformats: 10.0.2
