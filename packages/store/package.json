@@ -26,16 +26,16 @@
     "lintss": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "@ucanto/client": "^2.0.0",
-    "@ucanto/core": "^2.0.0",
-    "@ucanto/interface": "^2.0.0",
-    "@ucanto/principal": "^2.0.0",
-    "@ucanto/server": "^2.0.0",
-    "@ucanto/transport": "^2.0.0",
-    "@ucanto/validator": "^2.0.0",
+    "@ucanto/client": "^3.0.1",
+    "@ucanto/core": "^3.0.1",
+    "@ucanto/interface": "^3.0.0",
+    "@ucanto/principal": "^3.0.0",
+    "@ucanto/server": "^3.0.1",
+    "@ucanto/transport": "^3.0.1",
+    "@ucanto/validator": "^3.0.1",
     "@web-std/fetch": "^4.1.0",
     "@web3-storage/sigv4": "^1.0.0",
-    "multiformats": "^9.7.0"
+    "multiformats": "^10.0.2"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",

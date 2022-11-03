@@ -19,7 +19,7 @@
     "@types/ws": "^8.5.3",
     "@web3-storage/worker-utils": "0.4.3-dev",
     "isomorphic-ws": "^5.0.0",
-    "multiformats": "^9.8.1",
+    "multiformats": "^10.0.2",
     "nanoid": "^4.0.0",
     "toucan-js": "^2.7.0",
     "ws": "^8.10.0"
