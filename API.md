@@ -36,14 +36,14 @@
     * [new Client(options)](#new_Client_new)
     * [.agent()](#Client+agent) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
     * [.account()](#Client+account) ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
-    * [.currentDelegation()](#Client+currentDelegation) ⇒ <code>Promise.&lt;(API.Delegation\|null)&gt;</code>
     * [.identity()](#Client+identity) ⇒ [<code>Promise.&lt;IdentityInfo&gt;</code>](#IdentityInfo)
     * [.register(email)](#Client+register)
     * [.whoami()](#Client+whoami) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.stat()](#Client+stat) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
     * [.list()](#Client+list) ⇒ [<code>Promise.&lt;Result&gt;</code>](#Result)
-    * [.makeDelegation(opts)](#Client+makeDelegation) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
-    * [.importDelegation(bytes, alias)](#Client+importDelegation) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
+    * [.makeDelegation(opts)](#Client+makeDelegation)
+    * [.exportDelegation(opts)](#Client+exportDelegation) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.importDelegation(delegationString, alias)](#Client+importDelegation) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
     * [.upload(bytes, [origin])](#Client+upload) ⇒ [<code>Promise.&lt;strResult&gt;</code>](#strResult)
     * [.uploadAdd(dataCID, shardCIDs)](#Client+uploadAdd)
     * [.remove(link)](#Client+remove)
@@ -72,10 +72,6 @@ Get the current "machine" DID
 ### client.account() ⇒ <code>Promise.&lt;API.SigningPrincipal&gt;</code>
 Get the current "account" DID
 
-**Kind**: instance method of [<code>Client</code>](#Client)  
-<a name="Client+currentDelegation"></a>
-
-### client.currentDelegation() ⇒ <code>Promise.&lt;(API.Delegation\|null)&gt;</code>
 **Kind**: instance method of [<code>Client</code>](#Client)  
 <a name="Client+identity"></a>
 
@@ -110,8 +106,18 @@ List all of the uploads connected to this user.
 **Kind**: instance method of [<code>Client</code>](#Client)  
 <a name="Client+makeDelegation"></a>
 
-### client.makeDelegation(opts) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
+### client.makeDelegation(opts)
 **Kind**: instance method of [<code>Client</code>](#Client)  
+
+| Param | Type |
+| --- | --- |
+| opts | [<code>DelegationOptions</code>](#DelegationOptions) | 
+
+<a name="Client+exportDelegation"></a>
+
+### client.exportDelegation(opts) ⇒ <code>Promise.&lt;string&gt;</code>
+**Kind**: instance method of [<code>Client</code>](#Client)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - delegation  
 
 | Param | Type |
 | --- | --- |
@@ -119,12 +125,12 @@ List all of the uploads connected to this user.
 
 <a name="Client+importDelegation"></a>
 
-### client.importDelegation(bytes, alias) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
+### client.importDelegation(delegationString, alias) ⇒ <code>Promise.&lt;API.Delegation&gt;</code>
 **Kind**: instance method of [<code>Client</code>](#Client)  
 
 | Param | Type |
 | --- | --- |
-| bytes | <code>Uint8Array</code> | 
+| delegationString | <code>string</code> | 
 | alias | <code>string</code> | 
 
 <a name="Client+upload"></a>
@@ -218,11 +224,11 @@ Remove an uploaded file by CID
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [serviceDID] | <code>API.DID</code> | The DID of the service to talk to. |
-| [serviceURL] | <code>string</code> | The URL of the service to talk to. |
+| [serviceDID] | <code>API.DID</code> | The DID of the w3up service. |
+| [serviceURL] | <code>string</code> | The URL of the w3up service. |
 | [accessURL] | <code>string</code> | The URL of the access service. |
 | [accessDID] | <code>API.DID</code> | The DID of the access service. |
-| settings | <code>Map.&lt;string, any&gt;</code> \| <code>string</code> \| <code>Settings.SettingsObject</code> | A map/db of settings to use for the client. |
+| settings | <code>SettingsRaw</code> | Settings to use for the client. |
 
 <a name="IdentityInfo"></a>
 

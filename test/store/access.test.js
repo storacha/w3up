@@ -1,9 +1,8 @@
+import * as Identity from '../../src/store/access/client.js'
+import { makeMockServer } from '../server.fixture.js'
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
 import { beforeEach, describe, expect, it } from 'vitest'
-
-import * as Identity from '../../src/store/access/client.js'
-import { makeMockServer } from '../server.fixture.js'
 
 // The two tests marked with concurrent will be run in parallel
 describe('access client', async () => {

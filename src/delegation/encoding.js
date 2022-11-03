@@ -62,7 +62,7 @@ export function delegationToString(delegation, encoding) {
  * Decode string into {@link Types.Delegation Delegation}
  *
  * @template {Types.Capabilities} [T=Types.Capabilities]
- * @param {import('./types').EncodedDelegation<T>} raw
+ * @param {import('../types').EncodedDelegation<T>} raw
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
 export async function decodeDelegations(raw, encoding = 'base64url') {
@@ -100,7 +100,7 @@ export async function decodeDelegations(raw, encoding = 'base64url') {
  * Decode string into a {@link Types.Delegation Delegation}
  *
  * @template {Types.Capabilities} [T=Types.Capabilities]
- * @param {import('./types').EncodedDelegation<T>} raw
+ * @param {import('../types').EncodedDelegation<T>} raw
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
 export async function stringToDelegation(raw, encoding) {
