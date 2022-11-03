@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest'
-
 import { sleep } from '../src/utils.js'
+import { describe, expect, it } from 'vitest'
 
 describe('sleep', () => {
   it.concurrent('it should resolve a promise before X time.', async () => {

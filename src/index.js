@@ -1,3 +1,11 @@
+import * as defaults from './defaults.js'
+import {
+  delegationToString,
+  stringToDelegation,
+} from './delegation/encoding.js'
+import { generateDelegation } from './delegation/generation.js'
+import { Access, Store } from './store/index.js'
+import { checkUrl, sleep } from './utils.js'
 import { Delegation, UCAN } from '@ucanto/core'
 import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
@@ -6,24 +14,18 @@ import * as CAR from '@ucanto/transport/car'
 import * as Upload from '@web3-storage/access/capabilities/upload'
 import fetch from 'cross-fetch'
 
-import * as defaults from './defaults.js'
-import { generateDelegation } from './delegation.js'
-import { delegationToString, stringToDelegation } from './encoding.js'
-import { Access, Store } from './store/index.js'
-import { checkUrl, sleep } from './utils.js'
-
-export * from './settings.js'
+export { stringToDelegation } from './delegation/encoding.js'
 
 /** @typedef {API.Result<unknown, ({error:true}|API.HandlerExecutionError|API.Failure)>} Result */
 /** @typedef {API.Result<string, ({error:true}|API.HandlerExecutionError|API.Failure)>} strResult */
 
 /**
  * @typedef {object} ClientOptions
- * @property {API.DID} [ serviceDID ] - The DID of the service to talk to.
- * @property {string} [ serviceURL ] - The URL of the service to talk to.
+ * @property {API.DID} [ serviceDID ] - The DID of the w3up service.
+ * @property {string} [ serviceURL ] - The URL of the w3up service.
  * @property {string} [ accessURL ] - The URL of the access service.
  * @property {API.DID} [ accessDID ] - The DID of the access service.
- * @property {import('./types.js').SettingsRaw} settings - A map/db of settings to use for the client.
+ * @property {import('./types.js').SettingsRaw} settings - Settings to use for the client.
  */
 
 /**
@@ -267,6 +269,7 @@ class Client {
   }
   /**
    * @param {DelegationOptions} opts
+   * @returns {Promise<string>} delegation
    */
   async exportDelegation(opts) {
     return await delegationToString(await this.makeDelegation(opts))

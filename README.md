@@ -2,7 +2,7 @@
 
 > A client SDK for the w3up service, providing content addressed storage for any application.
 
-`w3up-client` is a JavaScript libary that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network. 
+`w3up-client` is a JavaScript libary that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
 
 ## Install
 
@@ -32,16 +32,16 @@ The API provides a `createClient` function that returns a `Client` object. To ca
 ```ts
 type ClientOptions = {
   /** The DID of the w3up service */
-  serviceDID: string,
+  serviceDID: string
 
   /** The URL of the w3up service */
-  serviceURL: string,
+  serviceURL: string
 
   /** The DID of the access service */
-  accessDID: string,
+  accessDID: string
 
   /** The URL of the access service */
-  accessURL: string,
+  accessURL: string
 
   /** A Map of configuration settings for the client */
   settings: Map<string, any>
@@ -52,10 +52,10 @@ The client needs the URL and DID (Decentralized Identity Document) for two servi
 
 Here are the values for the production w3up and access services:
 
-| Service | URL | DID |
-|---------|-----|-----|
-| w3up | `https://8609r1772a.execute-api.us-east-1.amazonaws.com` | `did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z` |
-| access | `https://access-api.web3.storage` | `did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9` |
+| Service | URL                                                      | DID                                                        |
+| ------- | -------------------------------------------------------- | ---------------------------------------------------------- |
+| w3up    | `https://8609r1772a.execute-api.us-east-1.amazonaws.com` | `did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z` |
+| access  | `https://access-api.web3.storage`                        | `did:key:z6MkkHafoFWxxWVNpNXocFdU6PL2RVLyTEgS1qTnD3bRP7V9` |
 
 And here's an example of calling `createClient` with the correct values for the production services:
 
@@ -88,7 +88,7 @@ import { createClient } from '@web3-storage/w3up-client'
 
 async function tryToRegister(emailAddress) {
   // CLIENT_OPTS should be defined as described in "Creating a client object"
-  const client = createClient(CLIENT_OPTS) 
+  const client = createClient(CLIENT_OPTS)
   try {
     const successMessage = await client.register(emailAddress)
     console.log('Success: ', successMessage)
@@ -99,7 +99,6 @@ async function tryToRegister(emailAddress) {
 ```
 
 You can retrieve the identity keypair for the client by calling the `identity` method. This is an async method that will create the key if does not already exist in the client's `settings` map. The `identity` method returns an `Authority` from the [`ucanto` library][ucanto]. `ucanto` provides an RPC framework using UCANs, which `w3up-client` uses under the hood.
-
 
 The final identity-related client method is `whoami`, which queries the access service to see if your id has been registered, and returns the registered identity.
 
@@ -123,7 +122,7 @@ async function uploadCAR(carData) {
 }
 ```
 
-Currently, the `upload` method accepts data in [CAR][car-spec] format. CARs are "content archives" that contain blocks of content-addressed data in an "IPFS native" format. 
+Currently, the `upload` method accepts data in [CAR][car-spec] format. CARs are "content archives" that contain blocks of content-addressed data in an "IPFS native" format.
 
 We expect to add CAR generation as a feature of this library in a future release. In the meantime, please see the guide to [working with Content Archives][web3storage-docs-cars] on the [Web3.Storage docs](https://web3.storage/docs) site for ways to prepare CAR data. You can also use the [`w3up-cli` tool][w3up-cli-github] to generate CAR data using the `generate-car` command.
 
@@ -165,9 +164,8 @@ async function tryRemove(cid) {
 
 **Important:** the `remove` method does not delete your data from the public IPFS network, Filecoin, or other decentralized storage systems used by w3up. Data that has been `remove`d and is not linked to any other accounts _may_ eventually be deleted from the internal storage systems used by the w3up service, but there are no guarantees about when (or whether) that will occur, and you should not depend on data being permanently deleted.
 
-
 [w3up-cli-github]: https://github.com/web3-storage/w3up-cli
-[elastic-ipfs]: https://github.com/elastic-ipfs/elastic-ipfs 
+[elastic-ipfs]: https://github.com/elastic-ipfs/elastic-ipfs
 [ucanto]: https://github.com/web3-storage/ucanto
 [car-spec]: https://ipld.io/specs/transport/car/
 [web3storage-docs-cars]: https://web3.storage/docs/how-tos/work-with-car-files/

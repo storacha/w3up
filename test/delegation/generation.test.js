@@ -1,14 +1,13 @@
-import { decodeLink, delegate, Delegation } from '@ucanto/core'
-import { SigningPrincipal, Principal } from '@ucanto/principal'
-import { beforeEach, describe, expect, it } from 'vitest'
-
 import {
   buildDelegationCar,
+  exportDelegation,
   generateDelegation,
   importDelegation,
-  exportDelegation,
-} from '../src/delegation.js'
-import fixture from './fixture.js'
+} from '../../src/delegation/generation.js'
+import fixture from '../fixture.js'
+import { Delegation, delegate } from '@ucanto/core'
+import { Principal, SigningPrincipal } from '@ucanto/principal'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 // The two tests marked with concurrent will be run in parallel
 describe('delegation', () => {
