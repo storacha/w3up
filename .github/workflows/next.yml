@@ -19,7 +19,7 @@ jobs:
           node-version: 16
       - name: Run Tests
         run: |
-          yarn install --immutable --immutable-cache --check-cache
+          npm ci
           npm test
       - name: Run semantic release
         env: # Or as an environment variable
