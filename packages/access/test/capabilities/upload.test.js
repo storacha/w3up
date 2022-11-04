@@ -9,7 +9,7 @@ import {
   service as w3,
   mallory as account,
 } from '../helpers/fixtures.js'
-import { createCarCid, parseCarLink } from '../helpers/utils.js'
+import { createCarCid, parseCarLink, createCborCid } from '../helpers/utils.js'
 
 describe('upload capabilities', function () {
   // delegation from account to agent
@@ -33,7 +33,7 @@ describe('upload capabilities', function () {
         proofs: [await any],
       })
       .delegate()
-    const root = await createCarCid('root')
+    const root = await createCborCid('root')
 
     const add = Upload.add.invoke({
       issuer: bob,
@@ -72,7 +72,7 @@ describe('upload capabilities', function () {
       proofs: [await any],
     })
 
-    const root = await createCarCid('root')
+    const root = await createCborCid('root')
     const add = Upload.add.invoke({
       audience: w3,
       issuer: bob,
@@ -102,15 +102,16 @@ describe('upload capabilities', function () {
     })
   })
 
-  it('creating upload/add throws if shards is contains non CAR cid', async () => {
+  it('creating upload/add throws if shards contains a non CAR cid', async () => {
     const proofs = [await any]
+    const root = await createCborCid('root')
     assert.throws(() => {
       Upload.add.invoke({
         issuer: alice,
         audience: w3,
         with: account.did(),
         nb: {
-          root: parseCarLink('bafkqaaa'),
+          root,
           shards: [parseCarLink('bafkqaaa')],
         },
         proofs,
@@ -119,6 +120,7 @@ describe('upload capabilities', function () {
   })
 
   it('validator fails on upload/add if shard contains non CAR cid', async () => {
+    const root = await createCborCid('root')
     const add = await delegate({
       issuer: alice,
       audience: w3,
@@ -127,7 +129,7 @@ describe('upload capabilities', function () {
           can: 'upload/add',
           with: account.did(),
           nb: {
-            root: parseCarLink('bafkqaaa'),
+            root,
             shards: [parseCarLink('bafkqaaa')],
           },
         },
@@ -148,7 +150,7 @@ describe('upload capabilities', function () {
 
   it('upload/add works with shards that are CAR cids', async () => {
     const shard = await createCarCid('shard')
-    const root = await createCarCid('root')
+    const root = await createCborCid('root')
     const add = Upload.add.invoke({
       issuer: alice,
       audience: w3,
@@ -180,7 +182,8 @@ describe('upload capabilities', function () {
     })
   })
 
-  it('upload/add capability requires with to be a did', () => {
+  it('upload/add capability requires with to be a did', async () => {
+    const root = await createCborCid('root')
     assert.throws(() => {
       Upload.add.invoke({
         issuer: alice,
@@ -188,13 +191,14 @@ describe('upload capabilities', function () {
         // @ts-expect-error - not a CAR cid
         with: 'mailto:alice@web.mail',
         nb: {
-          root: parseCarLink('bafkqaaa'),
+          root,
         },
       })
     }, /Expected did: URI instead got mailto:alice@web.mail/)
   })
 
   it('upload/add validation requires with to be a did', async () => {
+    const root = await createCborCid('root')
     const add = await delegate({
       issuer: alice,
       audience: w3,
@@ -202,7 +206,7 @@ describe('upload capabilities', function () {
         {
           can: 'upload/add',
           with: 'mailto:alice@web.mail',
-          root: parseLink('bafkqaaa'),
+          root,
         },
       ],
       proofs: [await any],
@@ -236,7 +240,7 @@ describe('upload capabilities', function () {
       })
       .delegate()
 
-    const root = await createCarCid('hello')
+    const root = await createCborCid('root')
 
     const add = Upload.add.invoke({
       issuer: bob,
@@ -266,26 +270,27 @@ describe('upload capabilities', function () {
   })
 
   it('upload/add should fail when escalating root', async () => {
+    const root = await createCborCid('hello')
     const delegation = Upload.add
       .invoke({
         issuer: alice,
         audience: bob,
         with: account.did(),
         nb: {
-          root: await createCarCid('hello'),
+          root,
         },
         proofs: [await any],
       })
       .delegate()
 
-    const root = await createCarCid('hello2')
+    const root2 = await createCborCid('hello2')
 
     const add = Upload.add.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
       nb: {
-        root,
+        root: root2,
       },
       proofs: [await delegation],
     })
@@ -301,7 +306,7 @@ describe('upload capabilities', function () {
     assert.equal(result.error, true)
     assert(
       String(result).includes(
-        'bagbaieraubcexvgwca3dj3xzd7qfheu6wuuiqikqoaoya7bwfj24ta4eqwca violates imposed root constraint bagbaieratxbhji7b2gtwb7gojwmb5rxngrf66flidrobs3ijglyjmtyu4juq'
+        'bafyreig7xrtnfhkdu4wt3fbufl4bppd5r5ixrowmi5ekw5vjundxynmzj4 violates imposed root constraint bafyreiglqnkzhzh2gyz4zfy7zpi6wcamumrclarakshlocd35l4o63l76q'
       )
     )
   })
@@ -325,7 +330,7 @@ describe('upload capabilities', function () {
       audience: w3,
       with: account.did(),
       nb: {
-        root: await createCarCid('world2'),
+        root: await createCborCid('world2'),
       },
       proofs: [await delegation],
     })

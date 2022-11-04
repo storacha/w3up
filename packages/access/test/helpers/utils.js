@@ -12,6 +12,14 @@ export function parseCarLink(source) {
 }
 
 /**
+ * @param {any} data
+ */
+export async function createCborCid(data) {
+  const cbor = await CBOR.write(data)
+  return cbor.cid
+}
+
+/**
  * @param {string} source
  */
 export async function createCarCid(source) {
