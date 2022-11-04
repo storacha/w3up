@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/web3-storage/w3-protocol/compare/access-v4.0.1...access-v4.0.2) (2022-11-04)
+
+
+### Bug Fixes
+
+* upload/add capability root validation ([#136](https://github.com/web3-storage/w3-protocol/issues/136)) ([aae5b66](https://github.com/web3-storage/w3-protocol/commit/aae5b66112e6783054302b1f718f4c351aa80f3f))
+
 ## [4.0.1](https://github.com/web3-storage/w3-protocol/compare/access-v4.0.0...access-v4.0.1) (2022-11-04)
 
 
