@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "w3access SDK",
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access",
   "repository": {
