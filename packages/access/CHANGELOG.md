@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/web3-storage/w3-protocol/compare/access-v4.0.0...access-v4.0.1) (2022-11-04)
+
+
+### Bug Fixes
+
+* make multiformats 9 go away ([#133](https://github.com/web3-storage/w3-protocol/issues/133)) ([2668880](https://github.com/web3-storage/w3-protocol/commit/2668880a23c28ee45596fb1bc978564908a17e18))
+
 ## [4.0.0](https://github.com/web3-storage/w3-protocol/compare/access-v3.1.2...access-v4.0.0) (2022-11-01)
 
 
