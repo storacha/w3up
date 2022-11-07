@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import { build } from 'esbuild'
 import Sentry from '@sentry/cli'
 import { createRequire } from 'module'
-import { Miniflare } from 'miniflare'
+import { Log, LogLevel, Miniflare } from 'miniflare'
 
 // @ts-ignore
 import git from 'git-rev-sync'
@@ -116,10 +116,14 @@ prog
       modules: true,
       watch: true,
       envPath: path.resolve(__dirname, '../../../.env'),
+      log: new Log(LogLevel.DEBUG), // Enable --debug messages
     })
 
-    const binds = await mf.getBindings()
-    const db = /** @type {D1Database} */ (binds.__D1_BETA__)
-    await migrate(db)
+    const server = await mf.createServer() // Create http.Server instance
+    server.listen(8787, async () => {
+      const binds = await mf.getBindings()
+      const db = /** @type {D1Database} */ (binds.__D1_BETA__)
+      await migrate(db)
+    })
   })
 prog.parse(process.argv)
