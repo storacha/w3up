@@ -86,6 +86,13 @@ export const ValidateEmail = ({ delegation, ucan, qrcode }) => (
       {delegation.capabilities[0].nb.identity.replace('mailto:', '')} was
       confirmed. You may close this window.
     </p>
+    <p>
+      During the beta period, uploads via w3up will only appear via the beta 
+      APIs, and not on the website. Eventually, existing uploads from the old 
+      APIs will be migrated to this API. Please use a unique email address for 
+      beta accounts that you would like to link to NFT.Storage after the beta 
+      period.
+    </p>
     <details style={{ maxWidth: '80vw', overflow: 'overlay' }}>
       {' '}
       <summary>More details</summary>
