@@ -1,0 +1,32 @@
+name: Client
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/client/**'
+      - '.github/workflows/client.yml'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    paths:
+      - 'packages/client/**'
+      - '.github/workflows/client.yml'
+      - 'pnpm-lock.yaml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.3
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -r --filter @web3-storage/client run lint
+      - run: pnpm -r --filter @web3-storage/client run test

@@ -21,7 +21,7 @@ jobs:
           manifest-file: .github/release-please-manifest.json
           default-branch: main
           release-type: node
-  publish:
+  publish-access:
     needs: release
     if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access')
     runs-on: ubuntu-latest
@@ -37,6 +37,25 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm -r --filter @web3-storage/access build
+      - run: pnpm -r publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  publish-client:
+    needs: release
+    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/client')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.3
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm -r --filter @web3-storage/client build
       - run: pnpm -r publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

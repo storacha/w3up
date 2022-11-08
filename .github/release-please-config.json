@@ -3,6 +3,7 @@
   "packages": {
     "packages/access": {},
     "packages/access-api": {},
+    "packages/client": {},
     "packages/wallet": {},
     "packages/store": {}
   }
