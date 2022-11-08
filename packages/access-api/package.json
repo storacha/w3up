@@ -8,7 +8,6 @@
   "private": true,
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
-    "deploy": "wrangler publish",
     "dev": "scripts/cli.js dev",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
