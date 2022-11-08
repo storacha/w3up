@@ -1,14 +1,16 @@
 # w3access API
 
-## contributing
+## Development
 
-We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
-
-### Install dependencies.
+Run the root [instructions](../../readme.md#setup-a-development-environment) first.
 
 ```bash
-# Install all dependencies in the mono-repo
-pnpm install
-# Setup git hooks
-npx simple-git-hooks
+# Run api locally
+pnpm run dev
+
+# Lint and typecheck
+pnpm run lint
+
+# Run tests
+pnpm run test
 ```
