@@ -74,9 +74,9 @@ jobs:
       - run: pnpm -r --filter @web3-storage/access publish --tag next --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-  deploy-client:
+  deploy-upload-client:
     runs-on: ubuntu-latest
-    if: github.event.inputs.package == 'client'
+    if: github.event.inputs.package == 'upload-client'
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
