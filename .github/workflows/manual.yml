@@ -9,8 +9,8 @@ on:
         default: 'access-api'
         options:
           - access-api
-          - access
           - upload-client
+          - access-client
           - wallet
       environment:
         description: 'Environment to deploy'
@@ -52,9 +52,9 @@ jobs:
     with:
       environment: ${{ github.event.inputs.environment }}
     secrets: inherit
-  deploy-access:
+  deploy-access-client:
     runs-on: ubuntu-latest
-    if: github.event.inputs.package == 'access'
+    if: github.event.inputs.package == 'access-client'
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
