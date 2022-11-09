@@ -6,7 +6,7 @@
 Install the package using npm:
 
 ```console
-npm install @web3-storage/client
+npm install @web3-storage/upload-client
 ```
 
 ## Usage
@@ -14,13 +14,13 @@ npm install @web3-storage/client
 ### Uploading files
 
 ```js
-import { uploadFile } from '@web3-storage/client'
+import { uploadFile } from '@web3-storage/upload-client'
 
 const cid = await uploadFile(account, signer, new Blob(['Hello World!']))
 ```
 
 ```js
-import { uploadDirectory } from '@web3-storage/client'
+import { uploadDirectory } from '@web3-storage/upload-client'
 
 const cid = await uploadDirectory(account, signer, [
   new File(['doc0'], 'doc0.txt'),
@@ -36,7 +36,7 @@ const cid = await uploadDirectory(account, signer, [
 #### Buffering API
 
 ```js
-import { encodeFile, encodeCAR, storeDAG, registerUpload } from '@web3-storage/client'
+import { encodeFile, encodeCAR, storeDAG, registerUpload } from '@web3-storage/upload-client'
 
 // Encode a file as a DAG, get back a root data CID and a set of blocks
 const { cid, blocks } = await encodeFile(file)
@@ -51,7 +51,7 @@ await registerUpload(account, signer, cid, [carCID])
 #### Streaming API
 
 ```js
-import { createFileEncoderStream, ShardingStream, ShardStoringStream, registerUpload } from '@web3-storage/client'
+import { createFileEncoderStream, ShardingStream, ShardStoringStream, registerUpload } from '@web3-storage/upload-client'
 
 const cars = []
 // Encode a file as a DAG, get back a readable stream of blocks.

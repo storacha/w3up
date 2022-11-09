@@ -1,23 +1,11 @@
 import assert from 'assert'
 import { createFileEncoderStream } from '../src/unixfs.js'
-import { ShardingStream } from '../src/sharding.js'
-
-/**
- * @param {number} size
- */
-function randomBlob (size) {
-  const parts = []
-  while (size) {
-    const bytes = crypto.getRandomValues(new Uint8Array(Math.min(size, 65536)))
-    parts.push(bytes)
-    size -= bytes.length
-  }
-  return new Blob(parts)
-}
+import { ShardingStream } from '../src/car.js'
+import { randomBytes } from './helpers/random.js'
 
 describe('sharding', () => {
   it('creates shards from blocks', async () => {
-    const file = randomBlob(1024 * 1024)
+    const file = new Blob([randomBytes(1024 * 1024)])
     const shardSize = 512 * 1024
 
     /** @type {import('../src/types').CARFile[]} */

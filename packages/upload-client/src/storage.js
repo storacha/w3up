@@ -7,7 +7,7 @@ import retry, { AbortError } from 'p-retry'
 import Queue from 'p-queue'
 
 export * from './unixfs.js'
-export * from './sharding.js'
+export * from './car.js'
 
 // Production
 const serviceURL = new URL('https://8609r1772a.execute-api.us-east-1.amazonaws.com')
@@ -15,6 +15,8 @@ const serviceDID = parse('did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz
 
 const RETRIES = 3
 const CONCURRENT_UPLOADS = 3
+
+/** @typedef {import('./types').Abortable & import('./types').Retryable & import('./types').Connectable} RequestOptions */
 
 /**
  * Upload multiple DAG shards (encoded as CAR files) to the service.
@@ -31,7 +33,7 @@ export class ShardStoringStream extends TransformStream {
   /**
    * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
    * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
-   * @param {import('./types').Abortable & import('./types').Retryable} [options]
+   * @param {RequestOptions} [options]
    */
   constructor (account, signer, options = {}) {
     const queue = new Queue({ concurrency: CONCURRENT_UPLOADS })
@@ -68,11 +70,11 @@ export class ShardStoringStream extends TransformStream {
  * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
  * @param {import('multiformats/link').UnknownLink} root Root data CID for the DAG that was stored.
  * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
- * @param {import('./types').Abortable & import('./types').Retryable} [options]
+ * @param {RequestOptions} [options]
  */
 export async function registerUpload (account, signer, root, shards, options = {}) {
   /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
-  const conn = connect({
+  const conn = options.connection ?? connect({
     id: serviceDID,
     encoder: CAR,
     decoder: CBOR,
@@ -102,7 +104,7 @@ export async function registerUpload (account, signer, root, shards, options = {
  * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
  * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
  * @param {Blob} car CAR file data.
- * @param {import('./types').Abortable & import('./types').Retryable} [options]
+ * @param {RequestOptions} [options]
  * @returns {Promise<import('./types').CARLink>}
  */
 export async function storeDAG (account, signer, car, options = {}) {
@@ -110,7 +112,7 @@ export async function storeDAG (account, signer, car, options = {}) {
   const bytes = new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
   /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
-  const conn = connect({
+  const conn = options.connection ?? connect({
     id: serviceDID,
     encoder: CAR,
     decoder: CBOR,

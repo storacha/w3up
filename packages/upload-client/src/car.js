@@ -30,7 +30,7 @@ export class ShardingStream extends TransformStream {
           controller.enqueue(await encodeCAR(readyShard))
           readyShard = null
         }
-        if (size + block.bytes.length > shardSize) {
+        if (shard.length && size + block.bytes.length > shardSize) {
           readyShard = shard
           shard = []
           size = 0

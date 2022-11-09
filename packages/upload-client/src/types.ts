@@ -1,8 +1,10 @@
 import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
 import { CAR } from '@ucanto/transport'
-import { ServiceMethod } from '@ucanto/interface'
-import { UploadAdd, StoreAdd } from '@web3-storage/access/capabilities/types'
+import { ServiceMethod, ConnectionView } from '@ucanto/interface'
+import { StoreAdd, UploadAdd } from '@web3-storage/access/capabilities/types'
+
+export type { StoreAdd, UploadAdd }
 
 export interface Service {
   store: { add: ServiceMethod<StoreAdd, StoreAddResponse, never> }
@@ -70,6 +72,10 @@ export interface Retryable {
 
 export interface Abortable {
   signal?: AbortSignal
+}
+
+export interface Connectable {
+  connection?: ConnectionView<Service>
 }
 
 export interface FileLike {
