@@ -50,7 +50,7 @@
       "./node_modules/hd-scripts/eslint/index.js"
     ],
     "parserOptions": {
-      "project": "./tsconfig.json",
+      "project": "./tsconfig.json"
     },
     "rules": {
       "unicorn/prefer-number-properties": "off"
