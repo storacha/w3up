@@ -5,13 +5,14 @@ import { stringToDelegation } from '@web3-storage/access/encoding'
 import { StoreMemory } from '@web3-storage/access/stores/store-memory'
 import { context, test } from './helpers/context.js'
 import { createAccount } from './helpers/utils.js'
+import { Accounts } from '../src/kvs/accounts.js'
 
-test.before(async (t) => {
+test.beforeEach(async (t) => {
   t.context = await context()
 })
 
 test('should return account/redeem', async (t) => {
-  const { issuer, service, conn, mf } = t.context
+  const { issuer, service, conn, mf, db } = t.context
 
   const store = new StoreMemory()
   const account = await store.createAccount()
@@ -72,22 +73,24 @@ test('should return account/redeem', async (t) => {
     return t.fail()
   }
 
-  const accounts = await mf.getKVNamespace('ACCOUNTS')
+  const accounts = new Accounts(await mf.getKVNamespace('ACCOUNTS'), db)
 
-  const delEncoded = /** @type {string[]|undefined} */ (
-    await accounts.get('mailto:email@dag.house', {
-      type: 'json',
-    })
-  )
-  if (!delEncoded) {
+  // check db for account
+  t.like(await accounts.get(account.did()), {
+    did: account.did(),
+    product: 'product:free',
+    email: 'email@dag.house',
+    agent: issuer.did(),
+  })
+
+  // check account delegations
+  const delegations = await accounts.getDelegations('mailto:email@dag.house')
+
+  if (!delegations) {
     return t.fail('no delegation for email')
   }
 
-  const del = await stringToDelegation(
-    /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').Any]>} */ (
-      delEncoded[0]
-    )
-  )
+  const del = await stringToDelegation(delegations[0])
 
   t.deepEqual(del.audience.did(), service.did())
   t.deepEqual(del.capabilities[0].can, '*')
@@ -123,4 +126,31 @@ test('should save multiple account delegation', async (t) => {
 
   // @ts-ignore
   t.assert(delEncoded.length === 2)
+})
+
+test('should fail with wrong resource', async (t) => {
+  const { issuer, service, conn } = t.context
+
+  const redeem = await Voucher.redeem
+    .invoke({
+      issuer,
+      audience: service,
+      with: issuer.did(),
+      nb: {
+        account: issuer.did(),
+        identity: 'mailto:email@dag.house',
+        product: 'product:free',
+      },
+    })
+    .execute(conn)
+
+  if (redeem.error) {
+    t.true(redeem.error)
+    t.deepEqual(
+      redeem.message,
+      `Resource ${issuer.did()} does not service did ${service.did()}`
+    )
+  } else {
+    t.fail('should fail')
+  }
 })
