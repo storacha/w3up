@@ -51,9 +51,6 @@
     ],
     "parserOptions": {
       "project": "./tsconfig.json",
-      "ecmaFeatures": {
-        "jsx": true
-      }
     },
     "rules": {
       "unicorn/prefer-number-properties": "off"
