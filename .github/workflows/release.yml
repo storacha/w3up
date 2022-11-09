@@ -42,7 +42,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   publish-client:
     needs: release
-    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/client')
+    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -55,7 +55,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm -r --filter @web3-storage/client build
+      - run: pnpm -r --filter @web3-storage/upload-client build
       - run: pnpm -r publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

@@ -7,12 +7,12 @@ on:
     branches:
       - main
     paths:
-      - 'packages/client/**'
+      - 'packages/upload-client/**'
       - '.github/workflows/client.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
-      - 'packages/client/**'
+      - 'packages/upload-client/**'
       - '.github/workflows/client.yml'
       - 'pnpm-lock.yaml'
 jobs:
@@ -28,5 +28,5 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm -r --filter @web3-storage/client run lint
-      - run: pnpm -r --filter @web3-storage/client run test
+      - run: pnpm -r --filter @web3-storage/upload-client run lint
+      - run: pnpm -r --filter @web3-storage/upload-client run test

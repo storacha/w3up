@@ -1,12 +1,12 @@
 {
-  "name": "@web3-storage/client",
+  "name": "@web3-storage/upload-client",
   "version": "0.0.0",
   "description": "The web3.storage client",
-  "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/client",
+  "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client",
   "repository": {
     "type": "git",
-    "url": "https://github.com/web3-storage/w3-protocol.git",
-    "directory": "packages/client"
+    "url": "https://github.com/web3-storage/w3protocol.git",
+    "directory": "packages/upload-client"
   },
   "author": "Alan Shaw",
   "license": "Apache-2.0 OR MIT",

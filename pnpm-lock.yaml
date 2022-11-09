@@ -259,7 +259,7 @@ importers:
       typescript: 4.8.4
       wrangler: 2.1.15
 
-  packages/client:
+  packages/upload-client:
     specifiers:
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.0
