@@ -40,7 +40,7 @@ jobs:
       - run: pnpm -r publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-  publish-client:
+  publish-upload-client:
     needs: release
     if: contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client')
     runs-on: ubuntu-latest
