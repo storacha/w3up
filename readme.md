@@ -19,6 +19,45 @@ npx simple-git-hooks
 cp .env.tpl .env
 ```
 
+### Vscode config
+
+Install these extensions
+
+- https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+- https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+- Optional toggle for formatting https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle
+
+Add these lines to your package.json
+
+```json
+ "eslintConfig": {
+    "extends": [
+      "./node_modules/hd-scripts/eslint/index.js"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    // optional
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist"
+    ]
+  },
+```
+
+Add these lines to your vscode workspace settings at `.vscode/settings.json`
+
+```text
+  "javascript.format.enable": false,
+  "typescript.format.enable": false,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+```
+
 Each package has it's own readme with specific instructions.
 
 ## Release Process
