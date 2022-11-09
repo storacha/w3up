@@ -48,7 +48,7 @@ export class Accounts {
       tableName: 'accounts',
       fields: '*',
       where: {
-        conditions: 'did =?1',
+        conditions: 'did=?1',
         params: [did],
       },
     })
@@ -68,10 +68,12 @@ export class Accounts {
   }
 
   /**
-   * @param {string} email
+   * Save account delegation per email
+   *
+   * @param {`mailto:${string}`} email
    * @param {Ucanto.Delegation<Ucanto.Capabilities>} delegation
    */
-  async saveAccount(email, delegation) {
+  async saveDelegation(email, delegation) {
     const accs = /** @type {string[] | undefined} */ (
       await this.kv.get(email, {
         type: 'json',
@@ -90,10 +92,27 @@ export class Accounts {
   }
 
   /**
-   * @param {string} email
+   * Check if we have delegations for an email
+   *
+   * @param {`mailto:${string}`} email
    */
-  async hasAccounts(email) {
+  async hasDelegations(email) {
     const r = await this.kv.get(email)
     return Boolean(r)
+  }
+
+  /**
+   * @param {`mailto:${string}`} email
+   */
+  async getDelegations(email) {
+    const r = await this.kv.get(email, { type: 'json' })
+
+    if (!r) {
+      return
+    }
+
+    return /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Any]>[]} */ (
+      r
+    )
   }
 }

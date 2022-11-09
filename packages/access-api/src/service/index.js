@@ -4,7 +4,11 @@ import * as Account from '@web3-storage/access/capabilities/account'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as DID from '@ipld/dag-ucan/did'
-import { delegationToString } from '@web3-storage/access/encoding'
+import {
+  delegationToString,
+  stringToDelegation,
+} from '@web3-storage/access/encoding'
+import { any } from '@web3-storage/access/capabilities/any'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -18,13 +22,50 @@ export function service(ctx) {
     },
 
     account: {
-      info: Server.provide(Account.info, async ({ capability }) => {
+      info: Server.provide(Account.info, async ({ capability, invocation }) => {
         const results = await ctx.kvs.accounts.get(capability.with)
         if (!results) {
-          throw new Failure('Account not found...')
+          return new Failure('Account not found.')
         }
         return results
       }),
+      recover: Server.provide(
+        Account.recover,
+        async ({ capability, invocation }) => {
+          if (capability.with !== ctx.signer.did()) {
+            return new Failure(
+              `Resource ${
+                capability.with
+              } does not service did ${ctx.signer.did()}`
+            )
+          }
+
+          const encoded = await ctx.kvs.accounts.getDelegations(
+            capability.nb.identity
+          )
+          if (!encoded) {
+            return new Failure(
+              `No delegations found for ${capability.nb.identity}`
+            )
+          }
+
+          const results = []
+          for (const e of encoded) {
+            const proof = await stringToDelegation(e)
+            const del = await any.delegate({
+              audience: invocation.issuer,
+              issuer: ctx.signer,
+              with: proof.capabilities[0].with,
+              expiration: Infinity,
+              proofs: [proof],
+            })
+
+            results.push(await delegationToString(del))
+          }
+
+          return results
+        }
+      ),
 
       'recover-validation': Server.provide(
         Account.recoverValidation,
@@ -33,9 +74,9 @@ export function service(ctx) {
           // if yes send email with account/login
           // if not error "no accounts for email X"
 
-          const email = capability.nb.email
-          if (!(await ctx.kvs.accounts.hasAccounts(email))) {
-            throw new Failure(
+          const email = capability.nb.identity
+          if (!(await ctx.kvs.accounts.hasDelegations(email))) {
+            return new Failure(
               `No accounts found for email: ${email.replace('mailto:', '')}.`
             )
           }
@@ -46,21 +87,29 @@ export function service(ctx) {
               audience: DID.parse(capability.with),
               with: ctx.signer.did(),
               lifetimeInSeconds: 60 * 10,
+              nb: {
+                identity: email,
+              },
               proofs: [
                 await Account.recover.delegate({
                   audience: ctx.signer,
                   issuer: ctx.signer,
-                  lifetimeInSeconds: 60 * 1000,
+                  expiration: Infinity,
                   with: ctx.signer.did(),
+                  nb: {
+                    identity: 'mailto:*',
+                  },
                 }),
               ],
             })
             .delegate()
 
           const encoded = await delegationToString(inv)
+          const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}&mode=recover`
+
           // For testing
           if (ctx.config.ENV === 'test') {
-            return encoded
+            return url
           }
         }
       ),
