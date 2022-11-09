@@ -10,7 +10,7 @@ on:
         options:
           - access-api
           - access
-          - client
+          - upload-client
           - wallet
       environment:
         description: 'Environment to deploy'
