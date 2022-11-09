@@ -66,7 +66,7 @@ import {
   Storage,
 } from '@web3-storage/upload-client'
 
-const cars = []
+const metadatas = []
 // Encode a file as a DAG, get back a readable stream of blocks.
 await UnixFS.createFileEncoderStream(file)
   // Pipe blocks to a stream that yields CARs files - shards of the DAG.
@@ -78,15 +78,15 @@ await UnixFS.createFileEncoderStream(file)
   // and the root data CID (which can be found in the _last_ CAR file).
   .pipeTo(
     new WritableStream({
-      write: (car) => {
-        cars.push(car)
+      write: (meta) => {
+        metadatas.push(meta)
       },
     })
   )
 
 // The last CAR stored contains the root data CID
-const rootCID = cars[cars.length - 1].roots[0]
-const carCIDs = cars.map((car) => car.cid)
+const rootCID = metadatas[metadatas.length - 1].roots[0]
+const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
 await Storage.registerUpload(account, signer, rootCID, carCIDs)
