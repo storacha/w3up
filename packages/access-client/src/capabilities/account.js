@@ -1,7 +1,7 @@
 import { capability, URI } from '@ucanto/server'
 import { any } from './any.js'
 import { store } from './store.js'
-import { equalWith } from './utils.js'
+import { canDelegateURI, equalWith, fail } from './utils.js'
 
 export const account = any.derive({
   to: capability({
@@ -33,7 +33,7 @@ export const recoverValidation = base.derive({
     can: 'account/recover-validation',
     with: URI.match({ protocol: 'did:' }),
     nb: {
-      email: URI.match({ protocol: 'mailto:' }),
+      identity: URI.match({ protocol: 'mailto:' }),
     },
     derives: equalWith,
   }),
@@ -44,7 +44,16 @@ export const recover = base.derive({
   to: capability({
     can: 'account/recover',
     with: URI.match({ protocol: 'did:' }),
-    derives: equalWith,
+    nb: {
+      identity: URI.match({ protocol: 'mailto:' }),
+    },
+    derives: (child, parent) => {
+      return (
+        fail(equalWith(child, parent)) ||
+        fail(canDelegateURI(child.nb.identity, parent.nb.identity)) ||
+        true
+      )
+    },
   }),
   derives: equalWith,
 })

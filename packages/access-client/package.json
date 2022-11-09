@@ -1,12 +1,12 @@
 {
   "name": "@web3-storage/access",
   "version": "4.0.2",
-  "description": "w3access SDK",
-  "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access",
+  "description": "w3access client",
+  "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access-client",
   "repository": {
     "type": "git",
     "url": "https://github.com/web3-storage/w3-protocol.git",
-    "directory": "packages/access"
+    "directory": "packages/access-client"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
@@ -84,12 +84,12 @@
     "p-wait-for": "^5.0.0",
     "uint8arrays": "^4.0.2",
     "undici": "^5.12.0",
-    "ws": "^8.10.0",
+    "ws": "^8.11.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
-    "@types/inquirer": "^9.0.2",
+    "@types/inquirer": "^9.0.3",
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.11.7",
     "@web-std/fetch": "^4.1.0",

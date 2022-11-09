@@ -1,7 +1,7 @@
 {
   "separate-pull-requests": true,
   "packages": {
-    "packages/access": {},
+    "packages/access-client": {},
     "packages/access-api": {},
     "packages/upload-client": {},
     "packages/wallet": {},
