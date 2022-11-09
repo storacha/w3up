@@ -14,9 +14,9 @@ async function collectDir (dir) {
   for await (const entry of dir.content()) {
     if (entry.type === 'directory') {
       entries.push(...(await collectDir(entry)))
-      continue
+    } else {
+      entries.push(entry)
     }
-    entries.push(entry)
   }
   return entries
 }

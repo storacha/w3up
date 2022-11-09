@@ -20,7 +20,7 @@ describe('uploadFile', () => {
     const account = alice.did()
     const signer = await Signer.generate()
     const file = new Blob([randomBytes(128)])
-    /** @type {import('../src/types').CARLink?} */
+    /** @type {import('../src/types').CARLink|undefined} */
     let carCID = null
 
     const service = {

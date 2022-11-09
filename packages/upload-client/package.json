@@ -81,7 +81,12 @@
       }
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off"
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/no-null": "off",
+      "eqeqeq": "off",
+      "no-void": "off",
+      "no-console": "off",
+      "no-continue": "off"
     },
     "env": {
       "mocha": true
