@@ -4,11 +4,11 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
-import { registerUpload, storeDAG } from '../src/storage.js'
+import { registerUpload, store } from '../src/storage.js'
 import { service as id, alice } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 
-describe('storeDAG', () => {
+describe('Storage', () => {
   it('stores a DAG with the service', async () => {
     const res = {
       status: 'upload',
@@ -39,7 +39,7 @@ describe('storeDAG', () => {
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
 
-    const carCID = await storeDAG(account, signer, car, { connection })
+    const carCID = await store(account, signer, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -63,7 +63,7 @@ describe('storeDAG', () => {
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
 
-    const carCID = await storeDAG(account, signer, car, { connection })
+    const carCID = await store(account, signer, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -91,13 +91,11 @@ describe('storeDAG', () => {
     controller.abort() // already aborted
 
     await assert.rejects(
-      storeDAG(account, signer, car, { connection, signal: controller.signal }),
+      store(account, signer, car, { connection, signal: controller.signal }),
       { name: 'Error', message: 'upload aborted' }
     )
   })
-})
 
-describe('registerUpload', () => {
   it('registers an upload with the service', async () => {
     const account = alice.did()
     const signer = await Signer.generate()

@@ -1,10 +1,11 @@
 import assert from 'assert'
 import { exporter } from 'ipfs-unixfs-exporter'
 import { MemoryBlockstore } from 'blockstore-core/memory'
+import * as raw from 'multiformats/codecs/raw'
 import path from 'path'
 import { encodeFile, encodeDirectory } from '../src/unixfs.js'
-import * as raw from 'multiformats/codecs/raw'
 import { collect } from '../src/utils.js'
+import { File } from './helpers/shims.js'
 
 /** @param {import('ipfs-unixfs-exporter').UnixFSDirectory} dir */
 async function collectDir (dir) {
@@ -30,18 +31,7 @@ async function blocksToBlockstore (blocks) {
   return blockstore
 }
 
-class File extends Blob {
-  /**
-   * @param {BlobPart[]} blobParts 
-   * @param {string} name 
-   */
-  constructor (blobParts, name) {
-    super(blobParts)
-    this.name = name
-  }
-}
-
-describe('UnixFS CAR encoder', () => {
+describe('UnixFS', () => {
   it('encodes a file', async () => {
     const file = new Blob(['test'])
     const { cid, blocks } = await encodeFile(file)

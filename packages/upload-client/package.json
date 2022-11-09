@@ -24,7 +24,11 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./car": "./src/car.js",
+    "./sharding": "./src/sharding.js",
+    "./storage": "./src/storage.js",
+    "./unixfs": "./src/unixfs.js"
   },
   "typesVersions": {
     "*": {

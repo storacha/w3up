@@ -78,6 +78,8 @@ export interface Connectable {
   connection?: ConnectionView<Service>
 }
 
+export type RequestOptions = Retryable & Abortable & Connectable
+
 export interface FileLike {
   /**
    * Name of the file. May include path information.
