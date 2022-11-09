@@ -9,16 +9,16 @@ const CONCURRENT_UPLOADS = 3
 /**
  * Shard a set of blocks into a set of CAR files. The last block is assumed to
  * be the DAG root and becomes the CAR root CID for the last CAR output.
- * 
+ *
  * @extends {TransformStream<import('@ipld/unixfs').Block, import('./types').CARFile>}
  */
 export class ShardingStream extends TransformStream {
   /**
-   * @param {Object} [options]
+   * @param {object} [options]
    * @param {number} [options.shardSize] The target shard size. Actual size of
    * CAR output may be bigger due to CAR header and block encoding data.
    */
-  constructor (options = {}) {
+  constructor(options = {}) {
     const shardSize = options.shardSize ?? SHARD_SIZE
     /** @type {import('@ipld/unixfs').Block[]} */
     let shard = []
@@ -27,7 +27,7 @@ export class ShardingStream extends TransformStream {
     let size = 0
 
     super({
-      async transform (block, controller) {
+      async transform(block, controller) {
         if (readyShard != null) {
           controller.enqueue(await encode(readyShard))
           readyShard = null
@@ -41,7 +41,7 @@ export class ShardingStream extends TransformStream {
         size += block.bytes.length
       },
 
-      async flush (controller) {
+      async flush(controller) {
         if (readyShard != null) {
           controller.enqueue(await encode(readyShard))
         }
@@ -50,7 +50,7 @@ export class ShardingStream extends TransformStream {
         if (rootBlock != null) {
           controller.enqueue(await encode(shard, rootBlock.cid))
         }
-      }
+      },
     })
   }
 }
@@ -63,39 +63,42 @@ export class ShardingStream extends TransformStream {
  *
  * The writeable side of this transform stream accepts CAR files and the
  * readable side yields `CARMetadata`.
- * 
+ *
  * @extends {TransformStream<import('./types').CARFile, import('./types').CARMetadata>}
  */
- export class ShardStoringStream extends TransformStream {
+export class ShardStoringStream extends TransformStream {
   /**
    * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
    * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
    * @param {import('./types').RequestOptions} [options]
    */
-  constructor (account, signer, options = {}) {
+  constructor(account, signer, options = {}) {
     const queue = new Queue({ concurrency: CONCURRENT_UPLOADS })
     const abortController = new AbortController()
     super({
-      async transform (car, controller) {
-        void queue.add(async () => {
-          try {
-            const opts = { ...options, signal: abortController.signal }
-            const cid = await store(account, signer, car, opts)
-            const { version, roots } = car
-            controller.enqueue({ version, roots, cid, size: car.size })
-          } catch (err) {
-            controller.error(err)
-            abortController.abort(err)
-          }
-        }, { signal: abortController.signal })
+      async transform(car, controller) {
+        void queue.add(
+          async () => {
+            try {
+              const opts = { ...options, signal: abortController.signal }
+              const cid = await store(account, signer, car, opts)
+              const { version, roots, size } = car
+              controller.enqueue({ version, roots, cid, size })
+            } catch (err) {
+              controller.error(err)
+              abortController.abort(err)
+            }
+          },
+          { signal: abortController.signal }
+        )
 
         // retain backpressure by not returning until no items queued to be run
         await queue.onSizeLessThan(1)
       },
-      async flush () {
+      async flush() {
         // wait for queue empty AND pending items complete
         await queue.onIdle()
-      }
+      },
     })
   }
 }

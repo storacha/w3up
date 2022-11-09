@@ -14,26 +14,26 @@ describe('uploadFile', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000'
+      url: 'http://localhost:9000',
     }
 
     const account = alice.did()
     const signer = await Signer.generate()
     const file = new Blob([randomBytes(128)])
     /** @type {import('../src/types').CARLink|undefined} */
-    let carCID = null
+    let carCID
 
     const service = {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
-        add (invocation) {
+        add(invocation) {
           assert.equal(invocation.issuer.did(), signer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
           assert.equal(invCap.with, account)
           return res
-        }
+        },
       },
       upload: {
         /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
@@ -46,13 +46,23 @@ describe('uploadFile', () => {
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
           return null
-        }
-      }
+        },
+      },
     }
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
-    const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
-    const dataCID = await uploadFile(account, signer, file, { connection, onStoredShard: meta => { carCID = meta.cid } })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+    const dataCID = await uploadFile(account, signer, file, {
+      connection,
+      onStoredShard: (meta) => {
+        carCID = meta.cid
+      },
+    })
 
     assert(carCID)
     assert(dataCID)
@@ -64,14 +74,14 @@ describe('uploadDirectory', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000'
+      url: 'http://localhost:9000',
     }
 
     const account = alice.did()
     const signer = await Signer.generate()
     const files = [
       new File([randomBytes(128)], '1.txt'),
-      new File([randomBytes(32)], '2.txt')
+      new File([randomBytes(32)], '2.txt'),
     ]
     /** @type {import('../src/types').CARLink?} */
     let carCID = null
@@ -79,14 +89,14 @@ describe('uploadDirectory', () => {
     const service = {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
-        add (invocation) {
+        add(invocation) {
           assert.equal(invocation.issuer.did(), signer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
           assert.equal(invCap.with, account)
           return res
-        }
+        },
       },
       upload: {
         /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
@@ -99,13 +109,23 @@ describe('uploadDirectory', () => {
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
           return null
-        }
-      }
+        },
+      },
     }
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
-    const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
-    const dataCID = await uploadDirectory(account, signer, files, { connection, onStoredShard: meta => { carCID = meta.cid } })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+    const dataCID = await uploadDirectory(account, signer, files, {
+      connection,
+      onStoredShard: (meta) => {
+        carCID = meta.cid
+      },
+    })
 
     assert(carCID)
     assert(dataCID)

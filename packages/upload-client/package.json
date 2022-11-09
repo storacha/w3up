@@ -75,24 +75,29 @@
       "./node_modules/hd-scripts/eslint/index.js"
     ],
     "parserOptions": {
-      "project": "./tsconfig.json",
-      "ecmaFeatures": {
-        "jsx": true
-      }
+      "project": "./tsconfig.json"
     },
     "rules": {
       "unicorn/prefer-number-properties": "off",
       "unicorn/no-null": "off",
+      "unicorn/prefer-set-has": "off",
+      "unicorn/no-array-for-each": "off",
+      "unicorn/prefer-export-from": "off",
+      "unicorn/catch-error-name": "off",
+      "unicorn/explicit-length-check": "off",
+      "unicorn/prefer-type-error": "off",
       "eqeqeq": "off",
       "no-void": "off",
       "no-console": "off",
-      "no-continue": "off"
+      "no-continue": "off",
+      "jsdoc/require-hyphen-before-param-description": "off"
     },
     "env": {
       "mocha": true
     },
     "ignorePatterns": [
-      "dist"
+      "dist",
+      "coverage"
     ]
   }
 }

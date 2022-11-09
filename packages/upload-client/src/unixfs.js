@@ -2,19 +2,19 @@ import * as UnixFS from '@ipld/unixfs'
 import * as raw from 'multiformats/codecs/raw'
 import { toIterable, collect } from './utils.js'
 
-const queuingStrategy = UnixFS.withCapacity(1048576 * 175)
+const queuingStrategy = UnixFS.withCapacity(1_048_576 * 175)
 
 // TODO: configure chunk size and max children https://github.com/ipld/js-unixfs/issues/36
 const settings = UnixFS.configure({
   fileChunkEncoder: raw,
-  smallFileEncoder: raw
+  smallFileEncoder: raw,
 })
 
 /**
- * @param {Blob} blob 
+ * @param {Blob} blob
  * @returns {Promise<import('./types').UnixFSEncodeResult>}
  */
-export async function encodeFile (blob) {
+export async function encodeFile(blob) {
   const readable = createFileEncoderStream(blob)
   const blocks = await collect(toIterable(readable))
   const rootBlock = blocks.at(-1)
@@ -23,10 +23,10 @@ export async function encodeFile (blob) {
 }
 
 /**
- * @param {Blob} blob 
+ * @param {Blob} blob
  * @returns {ReadableStream<import('@ipld/unixfs').Block>}
  */
-export function createFileEncoderStream (blob) {
+export function createFileEncoderStream(blob) {
   /** @type {TransformStream<import('@ipld/unixfs').Block, import('@ipld/unixfs').Block>} */
   const { readable, writable } = new TransformStream({}, queuingStrategy)
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
@@ -42,12 +42,12 @@ class UnixFsFileBuilder {
   #file
 
   /** @param {{ stream: () => ReadableStream }} file */
-  constructor (file) {
+  constructor(file) {
     this.#file = file
   }
 
   /** @param {import('@ipld/unixfs').View} writer */
-  async finalize (writer) {
+  async finalize(writer) {
     const unixfsFileWriter = UnixFS.createFileWriter(writer)
     const stream = toIterable(this.#file.stream())
     for await (const chunk of stream) {
@@ -62,7 +62,7 @@ class UnixFSDirectoryBuilder {
   entries = new Map()
 
   /** @param {import('@ipld/unixfs').View} writer */
-  async finalize (writer) {
+  async finalize(writer) {
     const dirWriter = UnixFS.createDirectoryWriter(writer)
     for (const [name, entry] of this.entries) {
       const link = await entry.finalize(writer)
@@ -73,10 +73,10 @@ class UnixFSDirectoryBuilder {
 }
 
 /**
- * @param {Iterable<import('./types').FileLike>} files 
+ * @param {Iterable<import('./types').FileLike>} files
  * @returns {Promise<import('./types').UnixFSEncodeResult>}
  */
-export async function encodeDirectory (files) {
+export async function encodeDirectory(files) {
   const readable = createDirectoryEncoderStream(files)
   const blocks = await collect(toIterable(readable))
   const rootBlock = blocks.at(-1)
@@ -85,10 +85,10 @@ export async function encodeDirectory (files) {
 }
 
 /**
- * @param {Iterable<import('./types').FileLike>} files 
+ * @param {Iterable<import('./types').FileLike>} files
  * @returns {ReadableStream<import('@ipld/unixfs').Block>}
  */
-export function createDirectoryEncoderStream (files) {
+export function createDirectoryEncoderStream(files) {
   const rootDir = new UnixFSDirectoryBuilder()
 
   for (const file of files) {
