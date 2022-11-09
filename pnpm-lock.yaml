@@ -259,6 +259,24 @@ importers:
       typescript: 4.8.4
       wrangler: 2.1.15
 
+  packages/upload-client:
+    specifiers:
+      '@types/assert': ^1.5.6
+      '@types/mocha': ^10.0.0
+      assert: ^2.0.0
+      hd-scripts: ^3.0.2
+      mocha: ^10.1.0
+      playwright-test: ^8.1.1
+      typescript: ^4.8.4
+    devDependencies:
+      '@types/assert': 1.5.6
+      '@types/mocha': 10.0.0
+      assert: 2.0.0
+      hd-scripts: 3.0.2
+      mocha: 10.1.0
+      playwright-test: 8.1.1
+      typescript: 4.8.4
+
   packages/store:
     specifiers:
       '@types/chai': ^4.3.0
