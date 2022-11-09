@@ -19,7 +19,13 @@ describe('ShardingStream', () => {
 
     await createFileEncoderStream(file)
       .pipeThrough(new ShardingStream({ shardSize }))
-      .pipeTo(new WritableStream({ write: s => { shards.push(s) } }))
+      .pipeTo(
+        new WritableStream({
+          write: (s) => {
+            shards.push(s)
+          },
+        })
+      )
 
     assert(shards.length > 1)
 
@@ -35,7 +41,7 @@ describe('ShardStoringStream', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000'
+      url: 'http://localhost:9000',
     }
 
     const account = alice.did()
@@ -46,7 +52,7 @@ describe('ShardStoringStream', () => {
     const service = {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
-        add (invocation) {
+        add(invocation) {
           assert.equal(invocation.issuer.did(), signer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
@@ -55,29 +61,46 @@ describe('ShardStoringStream', () => {
           assert.equal(String(invCap.nb.link), cars[invokes].cid.toString())
           invokes++
           return res
-        }
+        },
       },
-      upload: { add: () => { throw new Server.Failure('not expected to be called') } }
+      upload: {
+        add: () => {
+          throw new Server.Failure('not expected to be called')
+        },
+      },
     }
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
-    const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
 
     let pulls = 0
     const carStream = new ReadableStream({
-      pull (controller) {
+      pull(controller) {
         if (pulls >= cars.length) return controller.close()
         controller.enqueue(cars[pulls])
         pulls++
-      }
+      },
     })
 
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
     await carStream
       .pipeThrough(new ShardStoringStream(account, signer, { connection }))
-      .pipeTo(new WritableStream({ write: ({ cid }) => { carCIDs.push(cid) } }))
+      .pipeTo(
+        new WritableStream({
+          write: ({ cid }) => {
+            carCIDs.push(cid)
+          },
+        })
+      )
 
-    cars.forEach(({ cid }, i) => assert.equal(cid.toString(), carCIDs[i].toString()))
+    cars.forEach(({ cid }, i) =>
+      assert.equal(cid.toString(), carCIDs[i].toString())
+    )
   })
 })

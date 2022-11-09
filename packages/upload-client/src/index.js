@@ -17,8 +17,13 @@ export * from './sharding.js'
  * @param {Blob} file File data.
  * @param {UploadOptions} [options]
  */
-export async function uploadFile (account, signer, file, options = {}) {
-  return await uploadBlockStream(account, signer, UnixFS.createFileEncoderStream(file), options)
+export async function uploadFile(account, signer, file, options = {}) {
+  return await uploadBlockStream(
+    account,
+    signer,
+    UnixFS.createFileEncoderStream(file),
+    options
+  )
 }
 
 /**
@@ -27,8 +32,13 @@ export async function uploadFile (account, signer, file, options = {}) {
  * @param {import('./types').FileLike[]} files File data.
  * @param {UploadOptions} [options]
  */
- export async function uploadDirectory (account, signer, files, options = {}) {
-  return await uploadBlockStream(account, signer, UnixFS.createDirectoryEncoderStream(files), options)
+export async function uploadDirectory(account, signer, files, options = {}) {
+  return await uploadBlockStream(
+    account,
+    signer,
+    UnixFS.createDirectoryEncoderStream(files),
+    options
+  )
 }
 
 /**
@@ -37,7 +47,7 @@ export async function uploadFile (account, signer, file, options = {}) {
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks UnixFS blocks.
  * @param {UploadOptions} [options]
  */
-async function uploadBlockStream (account, signer, blocks, options = {}) {
+async function uploadBlockStream(account, signer, blocks, options = {}) {
   const onStoredShard = options.onStoredShard ?? (() => {})
 
   /** @type {import('./types').CARLink[]} */
@@ -47,17 +57,18 @@ async function uploadBlockStream (account, signer, blocks, options = {}) {
   await blocks
     .pipeThrough(new ShardingStream())
     .pipeThrough(new ShardStoringStream(account, signer, options))
-    .pipeTo(new WritableStream({
-      write (meta) {
-        root = root || meta.roots[0]
-        shards.push(meta.cid)
-        onStoredShard(meta)
-      }
-    }))
+    .pipeTo(
+      new WritableStream({
+        write(meta) {
+          root = root || meta.roots[0]
+          shards.push(meta.cid)
+          onStoredShard(meta)
+        },
+      })
+    )
 
   if (root == null) throw new Error('missing root CID')
 
   await Storage.registerUpload(account, signer, root, shards, options)
   return root
 }
-

@@ -8,7 +8,7 @@ import { collect } from '../src/utils.js'
 import { File } from './helpers/shims.js'
 
 /** @param {import('ipfs-unixfs-exporter').UnixFSDirectory} dir */
-async function collectDir (dir) {
+async function collectDir(dir) {
   /** @type {import('ipfs-unixfs-exporter').UnixFSEntry[]} */
   const entries = []
   for await (const entry of dir.content()) {
@@ -22,7 +22,7 @@ async function collectDir (dir) {
 }
 
 /** @param {Iterable<import('@ipld/unixfs').Block>} blocks */
-async function blocksToBlockstore (blocks) {
+async function blocksToBlockstore(blocks) {
   const blockstore = new MemoryBlockstore()
   for (const block of blocks) {
     // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
@@ -50,7 +50,7 @@ describe('UnixFS', () => {
       new File(['another in a dir'], 'dir/three.txt'),
       new File(['in deeper in dir'], 'dir/deeper/four.png'),
       new File(['back in the parent'], 'dir/five.pdf'),
-      new File(['another in the child'], 'dir/deeper/six.mp4')
+      new File(['another in the child'], 'dir/deeper/six.mp4'),
     ]
 
     const { cid, blocks } = await encodeDirectory(files)
@@ -58,12 +58,12 @@ describe('UnixFS', () => {
     const dirEntry = await exporter(cid.toString(), blockstore)
     assert.equal(dirEntry.type, 'directory')
 
-    const expectedPaths = files.map(f => path.join((cid).toString(), f.name))
+    const expectedPaths = files.map((f) => path.join(cid.toString(), f.name))
     // @ts-expect-error
     const entries = await collectDir(dirEntry)
-    const actualPaths = entries.map(e => e.path)
+    const actualPaths = entries.map((e) => e.path)
 
-    expectedPaths.forEach(p => assert(actualPaths.includes(p)))
+    expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
   })
 
   it('configured to use raw leaves', async () => {

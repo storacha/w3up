@@ -1,15 +1,15 @@
 /**
  * @template T
- * @param {ReadableStream<T> | NodeJS.ReadableStream} readable 
+ * @param {ReadableStream<T> | NodeJS.ReadableStream} readable
  * @returns {AsyncIterable<T>}
  */
-export function toIterable (readable) {
+export function toIterable(readable) {
   // @ts-expect-error
   if (readable[Symbol.asyncIterator] != null) return readable
 
   // Browser ReadableStream
   if ('getReader' in readable) {
-    return (async function * () {
+    return (async function* () {
       const reader = readable.getReader()
 
       try {
@@ -32,7 +32,7 @@ export function toIterable (readable) {
  * @param {AsyncIterable<T>|Iterable<T>} collectable
  * @returns {Promise<T[]>}
  */
-export async function collect (collectable) {
+export async function collect(collectable) {
   const chunks = []
   for await (const chunk of collectable) chunks.push(chunk)
   return chunks

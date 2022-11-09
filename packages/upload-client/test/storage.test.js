@@ -13,7 +13,7 @@ describe('Storage', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000'
+      url: 'http://localhost:9000',
     }
 
     const account = alice.did()
@@ -23,7 +23,7 @@ describe('Storage', () => {
     const service = {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
-        add (invocation) {
+        add(invocation) {
           assert.equal(invocation.issuer.did(), signer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
@@ -31,13 +31,22 @@ describe('Storage', () => {
           assert.equal(invCap.with, account)
           assert.equal(String(invCap.nb.link), car.cid.toString())
           return res
-        }
+        },
       },
-      upload: { add: () => { throw new Server.Failure('not expected to be called') } }
+      upload: {
+        add: () => {
+          throw new Server.Failure('not expected to be called')
+        },
+      },
     }
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
-    const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
 
     const carCID = await store(account, signer, car, { connection })
     assert(carCID)
@@ -48,7 +57,7 @@ describe('Storage', () => {
     const res = {
       status: 'done',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9001' // will fail the test if called
+      url: 'http://localhost:9001', // will fail the test if called
     }
 
     const account = alice.did()
@@ -57,11 +66,20 @@ describe('Storage', () => {
 
     const service = {
       store: { add: () => res },
-      upload: { add: () => { throw new Server.Failure('not expected to be called') } }
+      upload: {
+        add: () => {
+          throw new Server.Failure('not expected to be called')
+        },
+      },
     }
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
-    const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
 
     const carCID = await store(account, signer, car, { connection })
     assert(carCID)
@@ -72,16 +90,25 @@ describe('Storage', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9001' // will fail the test if called
+      url: 'http://localhost:9001', // will fail the test if called
     }
 
     const service = {
       store: { add: () => res },
-      upload: { add: () => { throw new Server.Failure('not expected to be called') } }
+      upload: {
+        add: () => {
+          throw new Server.Failure('not expected to be called')
+        },
+      },
     }
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
-    const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
 
     const account = alice.did()
     const signer = await Signer.generate()
@@ -102,7 +129,11 @@ describe('Storage', () => {
     const car = await randomCAR(128)
 
     const service = {
-      store: { add: () => { throw new Server.Failure('not expected to be called') } },
+      store: {
+        add: () => {
+          throw new Server.Failure('not expected to be called')
+        },
+      },
       upload: {
         /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
@@ -115,13 +146,20 @@ describe('Storage', () => {
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), car.cid.toString())
           return null
-        }
-      }
+        },
+      },
     }
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
-    const connection = Client.connect({ id, encoder: CAR, decoder: CBOR, channel: server })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
 
-    await registerUpload(account, signer, car.roots[0], [car.cid], { connection })
+    await registerUpload(account, signer, car.roots[0], [car.cid], {
+      connection,
+    })
   })
 })
