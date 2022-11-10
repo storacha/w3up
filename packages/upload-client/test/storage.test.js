@@ -22,12 +22,14 @@ describe('Storage', () => {
     const signer = await Signer.generate()
     const car = await randomCAR(128)
 
-    const proof = await storeAdd.delegate({
-      issuer: account,
-      audience: id,
-      with: account.did(),
-      expiration: Infinity,
-    })
+    const proofs = [
+      await storeAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
 
     const service = {
       store: {
@@ -57,7 +59,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store(signer, proof, car, { connection })
+    const carCID = await store(signer, proofs, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -73,12 +75,14 @@ describe('Storage', () => {
     const signer = await Signer.generate()
     const car = await randomCAR(128)
 
-    const proof = await storeAdd.delegate({
-      issuer: account,
-      audience: id,
-      with: account.did(),
-      expiration: Infinity,
-    })
+    const proofs = [
+      await storeAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
 
     const service = {
       store: { add: () => res },
@@ -97,7 +101,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store(signer, proof, car, { connection })
+    const carCID = await store(signer, proofs, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -130,18 +134,20 @@ describe('Storage', () => {
     const signer = await Signer.generate()
     const car = await randomCAR(128)
 
-    const proof = await storeAdd.delegate({
-      issuer: account,
-      audience: id,
-      with: account.did(),
-      expiration: Infinity,
-    })
+    const proofs = [
+      await storeAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
 
     const controller = new AbortController()
     controller.abort() // already aborted
 
     await assert.rejects(
-      store(signer, proof, car, { connection, signal: controller.signal }),
+      store(signer, proofs, car, { connection, signal: controller.signal }),
       { name: 'Error', message: 'upload aborted' }
     )
   })
@@ -151,12 +157,14 @@ describe('Storage', () => {
     const signer = await Signer.generate()
     const car = await randomCAR(128)
 
-    const proof = await uploadAdd.delegate({
-      issuer: account,
-      audience: id,
-      with: account.did(),
-      expiration: Infinity,
-    })
+    const proofs = [
+      await uploadAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
 
     const service = {
       store: {
@@ -188,7 +196,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    await registerUpload(signer, proof, car.roots[0], [car.cid], {
+    await registerUpload(signer, proofs, car.roots[0], [car.cid], {
       connection,
     })
   })

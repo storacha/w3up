@@ -4,8 +4,10 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
+import { add as storeAdd } from '@web3-storage/access/capabilities/store'
+import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
 import { uploadFile, uploadDirectory } from '../src/index.js'
-import { service as id, alice } from './fixtures.js'
+import { service as id } from './fixtures.js'
 import { randomBytes } from './helpers/random.js'
 import { File } from './helpers/shims.js'
 
@@ -17,11 +19,26 @@ describe('uploadFile', () => {
       url: 'http://localhost:9000',
     }
 
-    const account = alice.did()
+    const account = await Signer.generate()
     const signer = await Signer.generate()
     const file = new Blob([randomBytes(128)])
     /** @type {import('../src/types').CARLink|undefined} */
     let carCID
+
+    const proofs = await Promise.all([
+      storeAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+      uploadAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ])
 
     const service = {
       store: {
@@ -31,7 +48,7 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
-          assert.equal(invCap.with, account)
+          assert.equal(invCap.with, account.did())
           return res
         },
       },
@@ -42,7 +59,7 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'upload/add')
-          assert.equal(invCap.with, account)
+          assert.equal(invCap.with, account.did())
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
           return null
@@ -57,7 +74,7 @@ describe('uploadFile', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadFile(account, signer, file, {
+    const dataCID = await uploadFile(signer, proofs, file, {
       connection,
       onStoredShard: (meta) => {
         carCID = meta.cid
@@ -77,7 +94,7 @@ describe('uploadDirectory', () => {
       url: 'http://localhost:9000',
     }
 
-    const account = alice.did()
+    const account = await Signer.generate()
     const signer = await Signer.generate()
     const files = [
       new File([randomBytes(128)], '1.txt'),
@@ -85,6 +102,21 @@ describe('uploadDirectory', () => {
     ]
     /** @type {import('../src/types').CARLink?} */
     let carCID = null
+
+    const proofs = await Promise.all([
+      storeAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+      uploadAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ])
 
     const service = {
       store: {
@@ -94,7 +126,7 @@ describe('uploadDirectory', () => {
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
-          assert.equal(invCap.with, account)
+          assert.equal(invCap.with, account.did())
           return res
         },
       },
@@ -105,7 +137,7 @@ describe('uploadDirectory', () => {
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'upload/add')
-          assert.equal(invCap.with, account)
+          assert.equal(invCap.with, account.did())
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
           return null
@@ -120,7 +152,7 @@ describe('uploadDirectory', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadDirectory(account, signer, files, {
+    const dataCID = await uploadDirectory(signer, proofs, files, {
       connection,
       onStoredShard: (meta) => {
         carCID = meta.cid

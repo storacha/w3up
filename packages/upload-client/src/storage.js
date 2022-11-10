@@ -1,7 +1,7 @@
 import { isDelegation } from '@ucanto/core'
 import { connect } from '@ucanto/client'
 import { CAR, CBOR, HTTP } from '@ucanto/transport'
-import { parse } from '@ipld/dag-ucan/did'
+import * as DID from '@ipld/dag-ucan/did'
 import { add as storeAdd } from '@web3-storage/access/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
 import retry, { AbortError } from 'p-retry'
@@ -10,7 +10,7 @@ import retry, { AbortError } from 'p-retry'
 const serviceURL = new URL(
   'https://8609r1772a.execute-api.us-east-1.amazonaws.com'
 )
-const serviceDID = parse(
+const serviceDID = DID.parse(
   'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z'
 )
 
@@ -29,21 +29,23 @@ const connection = connect({
 /**
  * Register an "upload" with the service.
  *
- * @param {import('@ucanto/interface').Signer} issuer Signing authority. Usually the user agent.
- * @param {import('@ucanto/interface').Proof} proof Proof the signer has the capability to perform the action.
+ * @param {import('@ucanto/interface').Signer} issuer Signing authority that is
+ * issuing the UCAN invocations. Typically the user _agent_.
+ * @param {import('@ucanto/interface').Proof[]} proofs Proof(s) the issuer
+ * has the capability to perform the action. At minimum the issuer needs the
+ * `upload/add` delegated capability.
  * @param {import('multiformats/link').UnknownLink} root Root data CID for the DAG that was stored.
  * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
  * @param {import('./types').RequestOptions} [options]
  */
 export async function registerUpload(
   issuer,
-  proof,
+  proofs,
   root,
   shards,
   options = {}
 ) {
-  validateProof(proof, serviceDID.did(), uploadAdd.can)
-
+  const capability = findCapability(proofs, serviceDID.did(), uploadAdd.can)
   /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
   const conn = options.connection ?? connection
   await retry(
@@ -52,10 +54,9 @@ export async function registerUpload(
         .invoke({
           issuer,
           audience: serviceDID,
-          // @ts-ignore expects did:${string} but cap with is ${string}:${string}
-          with: proof.capabilities[0].with,
+          // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
+          with: capability.with,
           nb: {
-            // @ts-expect-error should allow v0 CIDs!
             root,
             shards,
           },
@@ -70,15 +71,17 @@ export async function registerUpload(
 /**
  * Store a DAG encoded as a CAR file.
  *
- * @param {import('@ucanto/interface').Signer} issuer Signing authority. Usually the user agent.
- * @param {import('@ucanto/interface').Proof} proof Proof the signer has the capability to perform the action.
+ * @param {import('@ucanto/interface').Signer} issuer Signing authority that
+ * is issuing the UCAN invocations. Typically the user _agent_.
+ * @param {import('@ucanto/interface').Proof[]} proofs Proof(s) the
+ * issuer has the capability to perform the action. At minimum the issuer
+ * needs the `store/add` delegated capability.
  * @param {Blob} car CAR file data.
  * @param {import('./types').RequestOptions} [options]
  * @returns {Promise<import('./types').CARLink>}
  */
-export async function store(issuer, proof, car, options = {}) {
-  validateProof(proof, serviceDID.did(), storeAdd.can)
-
+export async function store(issuer, proofs, car, options = {}) {
+  const capability = findCapability(proofs, serviceDID.did(), storeAdd.can)
   // TODO: validate blob contains CAR data
   const bytes = new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
@@ -90,10 +93,10 @@ export async function store(issuer, proof, car, options = {}) {
         .invoke({
           issuer,
           audience: serviceDID,
-          // @ts-ignore expects did:${string} but cap with is ${string}:${string}
-          with: proof.capabilities[0].with,
+          // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
+          with: capability.with,
           nb: { link },
-          proofs: [proof],
+          proofs,
         })
         .execute(conn)
       return res
@@ -101,7 +104,7 @@ export async function store(issuer, proof, car, options = {}) {
     { onFailedAttempt: console.warn, retries: options.retries ?? RETRIES }
   )
 
-  if (result.error != null) {
+  if (result.error) {
     throw new Error(`failed ${storeAdd.can} invocation`, { cause: result })
   }
 
@@ -142,20 +145,28 @@ export async function store(issuer, proof, car, options = {}) {
 }
 
 /**
- * @param {import('@ucanto/interface').Proof} proof
+ * @param {import('@ucanto/interface').Proof[]} proofs
  * @param {import('@ucanto/interface').DID} audience
  * @param {import('@ucanto/interface').Ability} ability
  */
-function validateProof(proof, audience, ability) {
-  if (!isDelegation(proof)) {
-    throw new Error('Linked proofs not supported')
+function findCapability(proofs, audience, ability) {
+  let capability
+  for (const proof of proofs) {
+    if (!isDelegation(proof)) continue
+    if (proof.audience.did() !== audience) continue
+    capability = proof.capabilities.find((c) =>
+      capabilityMatches(c.can, ability)
+    )
+    if (capability) break
   }
-  if (proof.audience.did() !== audience) {
-    throw new Error(`Unexpected audience: ${proof.audience}`)
+  if (!capability) {
+    throw new Error(
+      `Missing proof of delegated capability "${
+        uploadAdd.can
+      }" for audience "${serviceDID.did()}"`
+    )
   }
-  if (!proof.capabilities.some((c) => capabilityMatches(c.can, ability))) {
-    throw new Error(`Missing proof of delegated capability: ${ability}`)
-  }
+  return capability
 }
 
 /**

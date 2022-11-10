@@ -13,20 +13,32 @@ npm install @web3-storage/upload-client
 
 [API Reference](#api)
 
-TODO: how to obtain account/signer
+### Step 0
+
+Obtain the issuer (the signing authority) and proofs that the issuer has been delegated the capabilities to store data and register uploads:
+
+```js
+import { Agent } from '@web3-storage/access-client'
+import { add as storeAdd } from '@web3-storage/access-client/capabilities/store'
+import { add as uploadAdd } from '@web3-storage/access-client/capabilities/upload'
+
+const agent = await Agent.create({ store })
+const issuer = agent.issuer
+const proofs = agent.getProofs([storeAdd, uploadAdd])
+```
 
 ### Uploading files
 
 ```js
 import { uploadFile } from '@web3-storage/upload-client'
 
-const cid = await uploadFile(account, signer, new Blob(['Hello World!']))
+const cid = await uploadFile(issuer, proofs, new Blob(['Hello World!']))
 ```
 
 ```js
 import { uploadDirectory } from '@web3-storage/upload-client'
 
-const cid = await uploadDirectory(account, signer, [
+const cid = await uploadDirectory(issuer, proofs, [
   new File(['doc0'], 'doc0.txt'),
   new File(['doc1'], 'dir/doc1.txt'),
 ])
@@ -49,9 +61,9 @@ const { cid, blocks } = await UnixFS.encodeFile(file)
 // Encode the DAG as a CAR file
 const car = await CAR.encode(blocks, cid)
 // Store the CAR file to the service
-const carCID = await Storage.store(account, signer, car)
+const carCID = await Storage.store(issuer, proofs, car)
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Storage.registerUpload(account, signer, cid, [carCID])
+await Storage.registerUpload(issuer, proofs, cid, [carCID])
 ```
 
 #### Streaming API
@@ -73,7 +85,7 @@ await UnixFS.createFileEncoderStream(file)
   .pipeThrough(new ShardingStream())
   // Pipe CARs to a stream that stores them to the service and yields metadata
   // about the CARs that were stored.
-  .pipeThrough(new ShardStoringStream(account, issuer))
+  .pipeThrough(new ShardStoringStream(issuer, proofs))
   // Collect the metadata, we're mostly interested in the CID of each CAR file
   // and the root data CID (which can be found in the _last_ CAR file).
   .pipeTo(
@@ -89,7 +101,7 @@ const rootCID = metadatas[metadatas.length - 1].roots[0]
 const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Storage.registerUpload(account, signer, rootCID, carCIDs)
+await Storage.registerUpload(issuer, proofs, rootCID, carCIDs)
 ```
 
 ## API
@@ -162,8 +174,8 @@ The writeable side of this transform stream accepts `CARFile`s and the readable 
 
 ```ts
 function registerUpload(
-  account: DID,
-  signer: Signer,
+  issuer: Signer,
+  proofs: Proof[],
   root: CID,
   shards: CID[],
   options: { retries?: number; signal?: AbortSignal } = {}
@@ -248,8 +260,8 @@ const { cid, blocks } = await encodeFile(new File(['data'], 'doc.txt'))
 
 ```ts
 function uploadDirectory(
-  account: DID,
-  signer: Signer,
+  issuer: Signer,
+  proofs: Proof[],
   files: File[],
   options: {
     retries?: number
@@ -265,8 +277,8 @@ Uploads a directory of files to the service and returns the root data CID for th
 
 ```ts
 function uploadFile(
-  account: DID,
-  signer: Signer,
+  issuer: Signer,
+  proofs: DID,
   file: Blob,
   options: {
     retries?: number

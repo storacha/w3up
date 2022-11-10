@@ -50,12 +50,14 @@ describe('ShardStoringStream', () => {
     const cars = await Promise.all([randomCAR(128), randomCAR(128)])
     let invokes = 0
 
-    const proof = await storeAdd.delegate({
-      issuer: account,
-      audience: id,
-      with: account.did(),
-      expiration: Infinity,
-    })
+    const proofs = [
+      await storeAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
 
     const service = {
       store: {
@@ -65,7 +67,7 @@ describe('ShardStoringStream', () => {
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
-          assert.equal(invCap.with, account)
+          assert.equal(invCap.with, account.did())
           assert.equal(String(invCap.nb.link), cars[invokes].cid.toString())
           invokes++
           return res
@@ -98,7 +100,7 @@ describe('ShardStoringStream', () => {
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
     await carStream
-      .pipeThrough(new ShardStoringStream(signer, proof, { connection }))
+      .pipeThrough(new ShardStoringStream(signer, proofs, { connection }))
       .pipeTo(
         new WritableStream({
           write: ({ cid }) => {
