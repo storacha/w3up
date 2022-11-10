@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import * as API from '@ucanto/interface'
 import { Principal } from '@ucanto/principal'
 import { Delegation } from '@ucanto/server'
@@ -39,34 +40,34 @@ export const importDelegation = async (bytes) => {
  * }} opts
  * @param {boolean} [ includeAccountCaps ]
  */
-export async function generateDelegation(opts, includeAccountCaps = false) {
+export async function generateDelegation (opts, includeAccountCaps = false) {
   const delegatedTo = Principal.parse(opts.to)
 
   let capabilities = [
     {
       can: 'store/*',
-      with: opts.issuer.did(),
+      with: opts.issuer.did()
     },
     {
       can: 'upload/*',
-      with: opts.issuer.did(),
-    },
+      with: opts.issuer.did()
+    }
   ]
 
   if (includeAccountCaps) {
     capabilities = capabilities.concat([
       {
         can: 'identity/identify',
-        with: opts.issuer.did(),
+        with: opts.issuer.did()
       },
       {
         can: 'identity/validate',
-        with: opts.issuer.did(),
+        with: opts.issuer.did()
       },
       {
         can: 'identity/register',
-        with: opts.issuer.did(),
-      },
+        with: opts.issuer.did()
+      }
     ])
   }
 
@@ -77,7 +78,7 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
     audience: delegatedTo,
     // @ts-ignore
     capabilities,
-    expiration: Date.now() + offset,
+    expiration: Date.now() + offset
   })
 
   return storeAllDelegated
@@ -92,6 +93,6 @@ export async function generateDelegation(opts, includeAccountCaps = false) {
  * }} opts
  * @returns {Promise<Uint8Array>}
  */
-export async function buildDelegationCar(opts) {
+export async function buildDelegationCar (opts) {
   return exportDelegation(await generateDelegation(opts))
 }
