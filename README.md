@@ -4,6 +4,8 @@
 
 `w3up-client` is a JavaScript libary that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
 
+Visit [w3up-client-examples](https://github.com/web3-storage/w3up-client-examples/tree/main/nodejs/simple-upload) for examples on how to use w3up-client in practice.
+
 ## Install
 
 `w3up-client` is currently available as an alpha release and should be installed directly from GitHub. These instructions will be updated once the package is available on `npm`.
