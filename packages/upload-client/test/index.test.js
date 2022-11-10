@@ -20,7 +20,7 @@ describe('uploadFile', () => {
     }
 
     const account = await Signer.generate()
-    const signer = await Signer.generate()
+    const issuer = await Signer.generate()
     const file = new Blob([await randomBytes(128)])
     /** @type {import('../src/types').CARLink|undefined} */
     let carCID
@@ -44,7 +44,7 @@ describe('uploadFile', () => {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
-          assert.equal(invocation.issuer.did(), signer.did())
+          assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
@@ -55,7 +55,7 @@ describe('uploadFile', () => {
       upload: {
         /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
-          assert.equal(invocation.issuer.did(), signer.did())
+          assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'upload/add')
@@ -74,7 +74,7 @@ describe('uploadFile', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadFile(signer, proofs, file, {
+    const dataCID = await uploadFile({ issuer, proofs }, file, {
       connection,
       onStoredShard: (meta) => {
         carCID = meta.cid
@@ -95,7 +95,7 @@ describe('uploadDirectory', () => {
     }
 
     const account = await Signer.generate()
-    const signer = await Signer.generate()
+    const issuer = await Signer.generate()
     const files = [
       new File([await randomBytes(128)], '1.txt'),
       new File([await randomBytes(32)], '2.txt'),
@@ -122,7 +122,7 @@ describe('uploadDirectory', () => {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
-          assert.equal(invocation.issuer.did(), signer.did())
+          assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
@@ -133,7 +133,7 @@ describe('uploadDirectory', () => {
       upload: {
         /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
-          assert.equal(invocation.issuer.did(), signer.did())
+          assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'upload/add')
@@ -152,7 +152,7 @@ describe('uploadDirectory', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadDirectory(signer, proofs, files, {
+    const dataCID = await uploadDirectory({ issuer, proofs }, files, {
       connection,
       onStoredShard: (meta) => {
         carCID = meta.cid

@@ -27,20 +27,27 @@ const connection = connect({
 })
 
 /**
- * Register an "upload" with the service.
+ * Register an "upload" with the service. The issuer needs the `upload/add`
+ * delegated capability.
  *
- * @param {import('@ucanto/interface').Signer} issuer Signing authority that is
- * issuing the UCAN invocations. Typically the user _agent_.
- * @param {import('@ucanto/interface').Proof[]} proofs Proof(s) the issuer
- * has the capability to perform the action. At minimum the issuer needs the
- * `upload/add` delegated capability.
+ * Required delegated capability proofs: `upload/add`
+ *
+ * @param {import('./types').InvocationConfig} invocationConfig Configuration
+ * for the UCAN invocation. An object with `issuer` and `proofs`.
+ *
+ * The `issuer` is the signing authority that is issuing the UCAN
+ * invocation(s). It is typically the user _agent_.
+ *
+ * The `proofs` are a set of capability delegations that prove the issuer
+ * has the capability to perform the action.
+ *
+ * The issuer needs the `upload/add` delegated capability.
  * @param {import('multiformats/link').UnknownLink} root Root data CID for the DAG that was stored.
  * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
  * @param {import('./types').RequestOptions} [options]
  */
 export async function registerUpload(
-  issuer,
-  proofs,
+  { issuer, proofs },
   root,
   shards,
   options = {}
@@ -69,18 +76,26 @@ export async function registerUpload(
 }
 
 /**
- * Store a DAG encoded as a CAR file.
+ * Store a DAG encoded as a CAR file. The issuer needs the `store/add`
+ * delegated capability.
  *
- * @param {import('@ucanto/interface').Signer} issuer Signing authority that
- * is issuing the UCAN invocations. Typically the user _agent_.
- * @param {import('@ucanto/interface').Proof[]} proofs Proof(s) the
- * issuer has the capability to perform the action. At minimum the issuer
- * needs the `store/add` delegated capability.
+ * Required delegated capability proofs: `store/add`
+ *
+ * @param {import('./types').InvocationConfig} invocationConfig Configuration
+ * for the UCAN invocation. An object with `issuer` and `proofs`.
+ *
+ * The `issuer` is the signing authority that is issuing the UCAN
+ * invocation(s). It is typically the user _agent_.
+ *
+ * The `proofs` are a set of capability delegations that prove the issuer
+ * has the capability to perform the action.
+ *
+ * The issuer needs the `store/add` delegated capability.
  * @param {Blob} car CAR file data.
  * @param {import('./types').RequestOptions} [options]
  * @returns {Promise<import('./types').CARLink>}
  */
-export async function store(issuer, proofs, car, options = {}) {
+export async function store({ issuer, proofs }, car, options = {}) {
   const capability = findCapability(proofs, serviceDID.did(), storeAdd.can)
   // TODO: validate blob contains CAR data
   const bytes = new Uint8Array(await car.arrayBuffer())

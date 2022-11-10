@@ -46,7 +46,7 @@ describe('ShardStoringStream', () => {
     }
 
     const account = await Signer.generate()
-    const signer = await Signer.generate()
+    const issuer = await Signer.generate()
     const cars = await Promise.all([randomCAR(128), randomCAR(128)])
     let invokes = 0
 
@@ -63,7 +63,7 @@ describe('ShardStoringStream', () => {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
-          assert.equal(invocation.issuer.did(), signer.did())
+          assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
@@ -100,7 +100,7 @@ describe('ShardStoringStream', () => {
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
     await carStream
-      .pipeThrough(new ShardStoringStream(signer, proofs, { connection }))
+      .pipeThrough(new ShardStoringStream({ issuer, proofs }, { connection }))
       .pipeTo(
         new WritableStream({
           write: ({ cid }) => {

@@ -15,7 +15,7 @@ npm install @web3-storage/upload-client
 
 ### Step 0
 
-Obtain the issuer (the signing authority) and proofs that the issuer has been delegated the capabilities to store data and register uploads:
+Obtain the invocation configuration. i.e. the issuer (the signing authority) and proofs that the issuer has been delegated the capabilities to store data and register uploads:
 
 ```js
 import { Agent } from '@web3-storage/access-client'
@@ -23,8 +23,10 @@ import { add as storeAdd } from '@web3-storage/access-client/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/access-client/capabilities/upload'
 
 const agent = await Agent.create({ store })
-const issuer = agent.issuer
-const proofs = agent.getProofs([storeAdd, uploadAdd])
+const conf = {
+  issuer: agent.issuer,
+  proofs: agent.getProofs([storeAdd, uploadAdd]),
+}
 ```
 
 ### Uploading files
@@ -32,13 +34,13 @@ const proofs = agent.getProofs([storeAdd, uploadAdd])
 ```js
 import { uploadFile } from '@web3-storage/upload-client'
 
-const cid = await uploadFile(issuer, proofs, new Blob(['Hello World!']))
+const cid = await uploadFile(conf, new Blob(['Hello World!']))
 ```
 
 ```js
 import { uploadDirectory } from '@web3-storage/upload-client'
 
-const cid = await uploadDirectory(issuer, proofs, [
+const cid = await uploadDirectory(conf, [
   new File(['doc0'], 'doc0.txt'),
   new File(['doc1'], 'dir/doc1.txt'),
 ])
@@ -61,9 +63,9 @@ const { cid, blocks } = await UnixFS.encodeFile(file)
 // Encode the DAG as a CAR file
 const car = await CAR.encode(blocks, cid)
 // Store the CAR file to the service
-const carCID = await Storage.store(issuer, proofs, car)
+const carCID = await Storage.store(conf, car)
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Storage.registerUpload(issuer, proofs, cid, [carCID])
+await Storage.registerUpload(conf, cid, [carCID])
 ```
 
 #### Streaming API
@@ -85,7 +87,7 @@ await UnixFS.createFileEncoderStream(file)
   .pipeThrough(new ShardingStream())
   // Pipe CARs to a stream that stores them to the service and yields metadata
   // about the CARs that were stored.
-  .pipeThrough(new ShardStoringStream(issuer, proofs))
+  .pipeThrough(new ShardStoringStream(conf))
   // Collect the metadata, we're mostly interested in the CID of each CAR file
   // and the root data CID (which can be found in the _last_ CAR file).
   .pipeTo(
@@ -174,8 +176,7 @@ The writeable side of this transform stream accepts `CARFile`s and the readable 
 
 ```ts
 function registerUpload(
-  issuer: Signer,
-  proofs: Proof[],
+  conf: InvocationConfig,
   root: CID,
   shards: CID[],
   options: { retries?: number; signal?: AbortSignal } = {}
@@ -184,20 +185,29 @@ function registerUpload(
 
 Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multipe CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
 
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
 Required delegated capability proofs: `upload/add`
 
 ### `Storage.store`
 
 ```ts
 function store(
-  account: DID,
-  signer: Signer,
+  conf: InvocationConfig,
   car: Blob,
   options: { retries?: number; signal?: AbortSignal } = {}
 ): Promise<CID>
 ```
 
 Store a CAR file to the service.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
 
 Required delegated capability proofs: `store/add`
 
@@ -264,8 +274,7 @@ const { cid, blocks } = await encodeFile(new File(['data'], 'doc.txt'))
 
 ```ts
 function uploadDirectory(
-  issuer: Signer,
-  proofs: Proof[],
+  conf: InvocationConfig,
   files: File[],
   options: {
     retries?: number
@@ -277,14 +286,18 @@ function uploadDirectory(
 
 Uploads a directory of files to the service and returns the root data CID for the generated DAG. All files are added to a container directory, with paths in file names preserved.
 
-Required delegated capability proofs: `store/add`, `uplaod/add`
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `store/add`, `upload/add`
 
 ### `uploadFile`
 
 ```ts
 function uploadFile(
-  issuer: Signer,
-  proofs: DID,
+  conf: InvocationConfig,
   file: Blob,
   options: {
     retries?: number
@@ -296,7 +309,12 @@ function uploadFile(
 
 Uploads a file to the service and returns the root data CID for the generated DAG.
 
-Required delegated capability proofs: `store/add`, `uplaod/add`
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `store/add`, `upload/add`
 
 ## Contributing
 

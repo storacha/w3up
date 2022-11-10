@@ -68,14 +68,19 @@ export class ShardingStream extends TransformStream {
  */
 export class ShardStoringStream extends TransformStream {
   /**
-   * @param {import('@ucanto/interface').Signer} issuer Signing authority that
-   * is issuing the UCAN invocations. Typically the user _agent_.
-   * @param {import('@ucanto/interface').Proof[]} proofs Proof(s) the
-   * issuer has the capability to perform the action. At minimum the issuer
-   * needs the `store/add` delegated capability.
+   * @param {import('./types').InvocationConfig} invocationConfig Configuration
+   * for the UCAN invocation. An object with `issuer` and `proofs`.
+   *
+   * The `issuer` is the signing authority that is issuing the UCAN
+   * invocation(s). It is typically the user _agent_.
+   *
+   * The `proofs` are a set of capability delegations that prove the issuer
+   * has the capability to perform the action.
+   *
+   * The issuer needs the `store/add` delegated capability.
    * @param {import('./types').RequestOptions} [options]
    */
-  constructor(issuer, proofs, options = {}) {
+  constructor({ issuer, proofs }, options = {}) {
     const queue = new Queue({ concurrency: CONCURRENT_UPLOADS })
     const abortController = new AbortController()
     super({
@@ -84,7 +89,7 @@ export class ShardStoringStream extends TransformStream {
           async () => {
             try {
               const opts = { ...options, signal: abortController.signal }
-              const cid = await store(issuer, proofs, car, opts)
+              const cid = await store({ issuer, proofs }, car, opts)
               const { version, roots, size } = car
               controller.enqueue({ version, roots, cid, size })
             } catch (err) {

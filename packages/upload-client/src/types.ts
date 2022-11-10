@@ -1,7 +1,7 @@
 import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
 import { CAR } from '@ucanto/transport'
-import { ServiceMethod, ConnectionView } from '@ucanto/interface'
+import { ServiceMethod, ConnectionView, Signer, Proof } from '@ucanto/interface'
 import { StoreAdd, UploadAdd } from '@web3-storage/access/capabilities/types'
 
 export type { StoreAdd, UploadAdd }
@@ -15,6 +15,17 @@ export interface StoreAddResponse {
   status: string
   headers: Record<string, string>
   url: string
+}
+
+export interface InvocationConfig {
+  /**
+   * Signing authority that is issuing the UCAN invocations.
+   */
+  issuer: Signer
+  /**
+   * Proof(s) the issuer has the capability to perform the action.
+   */
+  proofs: Proof[]
 }
 
 export interface UnixFSEncodeResult {

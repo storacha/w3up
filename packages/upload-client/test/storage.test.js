@@ -19,7 +19,7 @@ describe('Storage', () => {
     }
 
     const account = await Signer.generate()
-    const signer = await Signer.generate()
+    const issuer = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
@@ -35,7 +35,7 @@ describe('Storage', () => {
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
-          assert.equal(invocation.issuer.did(), signer.did())
+          assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
@@ -59,7 +59,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store(signer, proofs, car, { connection })
+    const carCID = await store({ issuer, proofs }, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -72,7 +72,7 @@ describe('Storage', () => {
     }
 
     const account = await Signer.generate()
-    const signer = await Signer.generate()
+    const issuer = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
@@ -101,7 +101,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store(signer, proofs, car, { connection })
+    const carCID = await store({ issuer, proofs }, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -131,7 +131,7 @@ describe('Storage', () => {
     })
 
     const account = await Signer.generate()
-    const signer = await Signer.generate()
+    const issuer = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
@@ -147,14 +147,14 @@ describe('Storage', () => {
     controller.abort() // already aborted
 
     await assert.rejects(
-      store(signer, proofs, car, { connection, signal: controller.signal }),
+      store({ issuer, proofs }, car, { connection, signal: controller.signal }),
       { name: 'Error', message: 'upload aborted' }
     )
   })
 
   it('registers an upload with the service', async () => {
     const account = await Signer.generate()
-    const signer = await Signer.generate()
+    const issuer = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
@@ -175,7 +175,7 @@ describe('Storage', () => {
       upload: {
         /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
-          assert.equal(invocation.issuer.did(), signer.did())
+          assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'upload/add')
@@ -196,7 +196,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    await registerUpload(signer, proofs, car.roots[0], [car.cid], {
+    await registerUpload({ issuer, proofs }, car.roots[0], [car.cid], {
       connection,
     })
   })
