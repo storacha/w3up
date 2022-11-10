@@ -12,42 +12,42 @@ export * from './sharding.js'
  */
 
 /**
- * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
- * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Signer} issuer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Delegation} proof Proof the signer has the capability to perform the action.
  * @param {Blob} file File data.
  * @param {UploadOptions} [options]
  */
-export async function uploadFile(account, signer, file, options = {}) {
+export async function uploadFile(issuer, proof, file, options = {}) {
   return await uploadBlockStream(
-    account,
-    signer,
+    issuer,
+    proof,
     UnixFS.createFileEncoderStream(file),
     options
   )
 }
 
 /**
- * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
- * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Signer} issuer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Delegation} proof Proof the signer has the capability to perform the action.
  * @param {import('./types').FileLike[]} files File data.
  * @param {UploadOptions} [options]
  */
-export async function uploadDirectory(account, signer, files, options = {}) {
+export async function uploadDirectory(issuer, proof, files, options = {}) {
   return await uploadBlockStream(
-    account,
-    signer,
+    issuer,
+    proof,
     UnixFS.createDirectoryEncoderStream(files),
     options
   )
 }
 
 /**
- * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
- * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
- * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks UnixFS blocks.
+ * @param {import('@ucanto/interface').Signer} issuer
+ * @param {import('@ucanto/interface').Delegation} proof
+ * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
  * @param {UploadOptions} [options]
  */
-async function uploadBlockStream(account, signer, blocks, options = {}) {
+async function uploadBlockStream(issuer, proof, blocks, options = {}) {
   const onStoredShard = options.onStoredShard ?? (() => {})
 
   /** @type {import('./types').CARLink[]} */
@@ -56,7 +56,7 @@ async function uploadBlockStream(account, signer, blocks, options = {}) {
   let root = null
   await blocks
     .pipeThrough(new ShardingStream())
-    .pipeThrough(new ShardStoringStream(account, signer, options))
+    .pipeThrough(new ShardStoringStream(issuer, proof, options))
     .pipeTo(
       new WritableStream({
         write(meta) {
@@ -69,6 +69,6 @@ async function uploadBlockStream(account, signer, blocks, options = {}) {
 
   if (root == null) throw new Error('missing root CID')
 
-  await Storage.registerUpload(account, signer, root, shards, options)
+  await Storage.registerUpload(issuer, proof, root, shards, options)
   return root
 }

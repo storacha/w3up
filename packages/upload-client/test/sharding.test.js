@@ -4,9 +4,10 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
+import { add as storeAdd } from '@web3-storage/access/capabilities/store'
 import { createFileEncoderStream } from '../src/unixfs.js'
 import { ShardingStream, ShardStoringStream } from '../src/sharding.js'
-import { service as id, alice } from './fixtures.js'
+import { service as id } from './fixtures.js'
 import { randomBytes, randomCAR } from './helpers/random.js'
 
 describe('ShardingStream', () => {
@@ -44,10 +45,17 @@ describe('ShardStoringStream', () => {
       url: 'http://localhost:9000',
     }
 
-    const account = alice.did()
+    const account = await Signer.generate()
     const signer = await Signer.generate()
     const cars = await Promise.all([randomCAR(128), randomCAR(128)])
     let invokes = 0
+
+    const proof = await storeAdd.delegate({
+      issuer: account,
+      audience: id,
+      with: account.did(),
+      expiration: Infinity,
+    })
 
     const service = {
       store: {
@@ -90,7 +98,7 @@ describe('ShardStoringStream', () => {
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
     await carStream
-      .pipeThrough(new ShardStoringStream(account, signer, { connection }))
+      .pipeThrough(new ShardStoringStream(signer, proof, { connection }))
       .pipeTo(
         new WritableStream({
           write: ({ cid }) => {

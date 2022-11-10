@@ -68,11 +68,11 @@ export class ShardingStream extends TransformStream {
  */
 export class ShardStoringStream extends TransformStream {
   /**
-   * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
-   * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
+   * @param {import('@ucanto/interface').Signer} issuer Signing authority. Usually the user agent.
+   * @param {import('@ucanto/interface').Delegation} proof Proof the signer has the capability to perform the action.
    * @param {import('./types').RequestOptions} [options]
    */
-  constructor(account, signer, options = {}) {
+  constructor(issuer, proof, options = {}) {
     const queue = new Queue({ concurrency: CONCURRENT_UPLOADS })
     const abortController = new AbortController()
     super({
@@ -81,7 +81,7 @@ export class ShardStoringStream extends TransformStream {
           async () => {
             try {
               const opts = { ...options, signal: abortController.signal }
-              const cid = await store(account, signer, car, opts)
+              const cid = await store(issuer, proof, car, opts)
               const { version, roots, size } = car
               controller.enqueue({ version, roots, cid, size })
             } catch (err) {

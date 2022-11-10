@@ -4,8 +4,10 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
+import { add as storeAdd } from '@web3-storage/access/capabilities/store'
+import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
 import { registerUpload, store } from '../src/storage.js'
-import { service as id, alice } from './fixtures.js'
+import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 
 describe('Storage', () => {
@@ -16,9 +18,16 @@ describe('Storage', () => {
       url: 'http://localhost:9000',
     }
 
-    const account = alice.did()
+    const account = await Signer.generate()
     const signer = await Signer.generate()
     const car = await randomCAR(128)
+
+    const proof = await storeAdd.delegate({
+      issuer: account,
+      audience: id,
+      with: account.did(),
+      expiration: Infinity,
+    })
 
     const service = {
       store: {
@@ -28,7 +37,7 @@ describe('Storage', () => {
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
-          assert.equal(invCap.with, account)
+          assert.equal(invCap.with, account.did())
           assert.equal(String(invCap.nb.link), car.cid.toString())
           return res
         },
@@ -48,7 +57,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store(account, signer, car, { connection })
+    const carCID = await store(signer, proof, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -60,9 +69,16 @@ describe('Storage', () => {
       url: 'http://localhost:9001', // will fail the test if called
     }
 
-    const account = alice.did()
+    const account = await Signer.generate()
     const signer = await Signer.generate()
     const car = await randomCAR(128)
+
+    const proof = await storeAdd.delegate({
+      issuer: account,
+      audience: id,
+      with: account.did(),
+      expiration: Infinity,
+    })
 
     const service = {
       store: { add: () => res },
@@ -81,7 +97,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store(account, signer, car, { connection })
+    const carCID = await store(signer, proof, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -110,23 +126,37 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const account = alice.did()
+    const account = await Signer.generate()
     const signer = await Signer.generate()
     const car = await randomCAR(128)
+
+    const proof = await storeAdd.delegate({
+      issuer: account,
+      audience: id,
+      with: account.did(),
+      expiration: Infinity,
+    })
 
     const controller = new AbortController()
     controller.abort() // already aborted
 
     await assert.rejects(
-      store(account, signer, car, { connection, signal: controller.signal }),
+      store(signer, proof, car, { connection, signal: controller.signal }),
       { name: 'Error', message: 'upload aborted' }
     )
   })
 
   it('registers an upload with the service', async () => {
-    const account = alice.did()
+    const account = await Signer.generate()
     const signer = await Signer.generate()
     const car = await randomCAR(128)
+
+    const proof = await uploadAdd.delegate({
+      issuer: account,
+      audience: id,
+      with: account.did(),
+      expiration: Infinity,
+    })
 
     const service = {
       store: {
@@ -141,7 +171,7 @@ describe('Storage', () => {
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'upload/add')
-          assert.equal(invCap.with, account)
+          assert.equal(invCap.with, account.did())
           assert.equal(String(invCap.nb.root), car.roots[0].toString())
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), car.cid.toString())
@@ -158,7 +188,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    await registerUpload(account, signer, car.roots[0], [car.cid], {
+    await registerUpload(signer, proof, car.roots[0], [car.cid], {
       connection,
     })
   })

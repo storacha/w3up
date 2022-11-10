@@ -310,6 +310,7 @@ importers:
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.0
       '@ucanto/client': ^3.0.1
+      '@ucanto/core': ^3.0.1
       '@ucanto/interface': ^3.0.0
       '@ucanto/principal': ^3.0.0
       '@ucanto/server': ^3.0.1
@@ -333,6 +334,7 @@ importers:
       '@ipld/dag-ucan': 2.0.1
       '@ipld/unixfs': 2.0.0
       '@ucanto/client': 3.0.1
+      '@ucanto/core': 3.0.1
       '@ucanto/interface': 3.0.0
       '@ucanto/transport': 3.0.1
       '@web3-storage/access': link:../access

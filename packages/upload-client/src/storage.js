@@ -1,3 +1,4 @@
+import { isDelegation } from '@ucanto/core'
 import { connect } from '@ucanto/client'
 import { CAR, CBOR, HTTP } from '@ucanto/transport'
 import { parse } from '@ipld/dag-ucan/did'
@@ -28,28 +29,31 @@ const connection = connect({
 /**
  * Register an "upload" with the service.
  *
- * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
- * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Signer} issuer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Proof} proof Proof the signer has the capability to perform the action.
  * @param {import('multiformats/link').UnknownLink} root Root data CID for the DAG that was stored.
  * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
  * @param {import('./types').RequestOptions} [options]
  */
 export async function registerUpload(
-  account,
-  signer,
+  issuer,
+  proof,
   root,
   shards,
   options = {}
 ) {
+  validateProof(proof, serviceDID.did(), uploadAdd.can)
+
   /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
   const conn = options.connection ?? connection
   await retry(
     async () => {
       const result = await uploadAdd
         .invoke({
-          issuer: signer,
+          issuer,
           audience: serviceDID,
-          with: account,
+          // @ts-ignore expects did:${string} but cap with is ${string}:${string}
+          with: proof.capabilities[0].with,
           nb: {
             // @ts-expect-error should allow v0 CIDs!
             root,
@@ -66,13 +70,15 @@ export async function registerUpload(
 /**
  * Store a DAG encoded as a CAR file.
  *
- * @param {import('@ucanto/interface').DID} account DID of the account that is receiving the upload.
- * @param {import('@ucanto/interface').Signer} signer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Signer} issuer Signing authority. Usually the user agent.
+ * @param {import('@ucanto/interface').Proof} proof Proof the signer has the capability to perform the action.
  * @param {Blob} car CAR file data.
  * @param {import('./types').RequestOptions} [options]
  * @returns {Promise<import('./types').CARLink>}
  */
-export async function store(account, signer, car, options = {}) {
+export async function store(issuer, proof, car, options = {}) {
+  validateProof(proof, serviceDID.did(), storeAdd.can)
+
   // TODO: validate blob contains CAR data
   const bytes = new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
@@ -82,10 +88,12 @@ export async function store(account, signer, car, options = {}) {
     async () => {
       const res = await storeAdd
         .invoke({
-          issuer: signer,
+          issuer,
           audience: serviceDID,
-          with: account,
+          // @ts-ignore expects did:${string} but cap with is ${string}:${string}
+          with: proof.capabilities[0].with,
           nb: { link },
+          proofs: [proof],
         })
         .execute(conn)
       return res
@@ -94,7 +102,7 @@ export async function store(account, signer, car, options = {}) {
   )
 
   if (result.error != null) {
-    throw new Error('failed store/add invocation', { cause: result })
+    throw new Error(`failed ${storeAdd.can} invocation`, { cause: result })
   }
 
   // Return early if it was already uploaded.
@@ -131,4 +139,31 @@ export async function store(account, signer, car, options = {}) {
   }
 
   return link
+}
+
+/**
+ * @param {import('@ucanto/interface').Proof} proof
+ * @param {import('@ucanto/interface').DID} audience
+ * @param {import('@ucanto/interface').Ability} ability
+ */
+function validateProof(proof, audience, ability) {
+  if (!isDelegation(proof)) {
+    throw new Error('Linked proofs not supported')
+  }
+  if (proof.audience.did() !== audience) {
+    throw new Error(`Unexpected audience: ${proof.audience}`)
+  }
+  if (!proof.capabilities.some((c) => capabilityMatches(c.can, ability))) {
+    throw new Error(`Missing proof of delegated capability: ${ability}`)
+  }
+}
+
+/**
+ * @param {string} can
+ * @param {import('@ucanto/interface').Ability} ability
+ */
+function capabilityMatches(can, ability) {
+  return can === ability
+    ? true
+    : can.endsWith('*') && ability.startsWith(can.split('*')[0])
 }
