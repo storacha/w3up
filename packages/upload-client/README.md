@@ -211,7 +211,7 @@ Note: `InvocationConfig` is configuration for the UCAN invocation. It's values c
 
 Required delegated capability proofs: `store/add`
 
-### `UnxiFS.createDirectoryEncoderStream`
+### `UnixFS.createDirectoryEncoderStream`
 
 ```ts
 function createDirectoryEncoderStream(
@@ -223,7 +223,7 @@ Creates a `ReadableStream` that yields UnixFS DAG blocks. All files are added to
 
 Note: you can use https://npm.im/files-from-path to read files from the filesystem in Nodejs.
 
-### `UnxiFS.createFileEncoderStream`
+### `UnixFS.createFileEncoderStream`
 
 ```ts
 function createFileEncoderStream(file: Blob): ReadableStream<Block>
@@ -231,7 +231,7 @@ function createFileEncoderStream(file: Blob): ReadableStream<Block>
 
 Creates a `ReadableStream` that yields UnixFS DAG blocks.
 
-### `UnxiFS.encodeDirectory`
+### `UnixFS.encodeDirectory`
 
 ```ts
 function encodeDirectory(
@@ -255,7 +255,7 @@ const { cid, blocks } = encodeDirectory([
 // bafybei.../dir/doc1.txt
 ```
 
-### `UnxiFS.encodeFile`
+### `UnixFS.encodeFile`
 
 ```ts
 function encodeFile(file: Blob): Promise<{ cid: CID; blocks: Block[] }>
