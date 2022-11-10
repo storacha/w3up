@@ -1,7 +1,6 @@
+// eslint-disable-next-line no-unused-vars
 import * as Client from '@ucanto/client'
-import * as API from '@ucanto/interface'
-import { Principal, SigningPrincipal } from '@ucanto/principal'
-import { UCAN } from '@ucanto/server'
+import { Principal } from '@ucanto/principal'
 import * as Service from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
@@ -12,14 +11,14 @@ import HTTP from 'node:http'
 // const jwt = new
 const fixture = {
   /** @type {import('@ucanto/interface').DID} */
-  did: 'did:key:z6MkrZ1r512345678912345678912345678912345678912z',
+  did: 'did:key:z6MkrZ1r512345678912345678912345678912345678912z'
 }
 
 /** @param {{
  * id: string,
  * handleRequest(request:Payload):Client.Await<Payload>
  * }} service */
-export async function listen(service) {
+export async function listen (service) {
   const server = HTTP.createServer(async (request, response) => {
     if (request.url.startsWith('/validate')) {
       response.writeHead(200)
@@ -36,7 +35,7 @@ export async function listen(service) {
       const { headers, body } = await service.handleRequest({
         // @ts-ignore - node type is Record<string, string|string[]|undefined>
         headers: request.headers,
-        body: Buffer.concat(chunks),
+        body: Buffer.concat(chunks)
       })
       response.writeHead(200, headers)
       response.write(body)
@@ -51,7 +50,7 @@ export async function listen(service) {
   const port = server.address().port
   return Object.assign(server, {
     url: new URL(`http://localhost:${port}`),
-    service: service,
+    service
   })
 }
 
@@ -60,12 +59,12 @@ export async function listen(service) {
  * @param {any} [handler]
  * @returns {object}
  */
-function MockCapability(capability, handler = () => null) {
+function MockCapability (capability, handler = () => null) {
   const handlerName = capability?.descriptor?.can || 'UNKNOWN/UNKNOWN'
   const route = handlerName.split('/')[1]
 
   return {
-    [route]: Service.provide(capability, handler),
+    [route]: Service.provide(capability, handler)
   }
 }
 
@@ -75,12 +74,12 @@ function MockCapability(capability, handler = () => null) {
  * @param {Array<any>} options.capabilities
  * @returns {Promise<object>}
  */
-export async function makeMockServer({ capabilities }) {
+export async function makeMockServer ({ capabilities }) {
   const identity = {
     ...capabilities.reduce(
       (acc, cur) => ({ ...acc, ...MockCapability(cur) }),
       {}
-    ),
+    )
   }
 
   const service = Service.create({
@@ -88,12 +87,12 @@ export async function makeMockServer({ capabilities }) {
     encoder: CBOR,
     id: Principal.parse(fixture.did),
     service: {
-      identity,
-    },
+      identity
+    }
   })
 
   return await listen({
     id: service.id,
-    handleRequest: service.request.bind(service),
+    handleRequest: service.request.bind(service)
   })
 }

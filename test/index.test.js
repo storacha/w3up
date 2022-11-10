@@ -2,9 +2,8 @@ import { createClient } from '../src/index.js'
 import * as Identity from '../src/store/access/client.js'
 import fixture from './fixture.js'
 import { makeMockServer } from './server.fixture.js'
-import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 // The two tests marked with concurrent will be run in parallel
 describe('client', () => {
@@ -14,7 +13,7 @@ describe('client', () => {
     settings.set('agent_secret', fixture.alice_account_secret)
 
     context.accessServer = await makeMockServer({
-      capabilities: [Identity.register, Identity.validate],
+      capabilities: [Identity.register, Identity.validate]
     })
 
     context.client = createClient({
@@ -22,7 +21,7 @@ describe('client', () => {
       serviceURL: 'http://localhost',
       accessDID: context.accessServer.service.id.did(),
       accessURL: context.accessServer.url,
-      settings,
+      settings
     })
 
     context.parsedAliceAccountSecret = SigningPrincipal.parse(
@@ -99,7 +98,7 @@ describe('client', () => {
         serviceURL: 'http://localhost',
         accessDID: fixture.did,
         accessURL: 'http://localhost',
-        settings,
+        settings
       })
       const { account } = await client.identity()
 
@@ -112,7 +111,7 @@ describe('client', () => {
         serviceURL: 'http://localhost',
         accessDID: fixture.did,
         accessURL: 'http://localhost',
-        settings: new Map(),
+        settings: new Map()
       })
       const { account } = await client.identity()
 
