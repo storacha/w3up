@@ -184,6 +184,8 @@ function registerUpload(
 
 Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multipe CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
 
+Required delegated capability proofs: `upload/add`
+
 ### `Storage.store`
 
 ```ts
@@ -196,6 +198,8 @@ function store(
 ```
 
 Store a CAR file to the service.
+
+Required delegated capability proofs: `store/add`
 
 ### `UnxiFS.createDirectoryEncoderStream`
 
@@ -273,6 +277,8 @@ function uploadDirectory(
 
 Uploads a directory of files to the service and returns the root data CID for the generated DAG. All files are added to a container directory, with paths in file names preserved.
 
+Required delegated capability proofs: `store/add`, `uplaod/add`
+
 ### `uploadFile`
 
 ```ts
@@ -289,6 +295,8 @@ function uploadFile(
 ```
 
 Uploads a file to the service and returns the root data CID for the generated DAG.
+
+Required delegated capability proofs: `store/add`, `uplaod/add`
 
 ## Contributing
 
