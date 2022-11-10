@@ -114,7 +114,7 @@ await Storage.registerUpload(issuer, proofs, rootCID, carCIDs)
 - [`ShardStoringStream`](#shardstoringstream)
 - `Storage`
   - [`registerUpload`](#storageregisterupload)
-  - [`store`](#storagestoredag)
+  - [`store`](#storagestore)
 - `UnixFS`
   - [`createDirectoryEncoderStream`](#unixfscreatedirectoryencoderstream)
   - [`createFileEncoderStream`](#unixfscreatefileencoderstream)
