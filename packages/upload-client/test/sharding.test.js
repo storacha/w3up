@@ -12,7 +12,7 @@ import { randomBytes, randomCAR } from './helpers/random.js'
 
 describe('ShardingStream', () => {
   it('creates shards from blocks', async () => {
-    const file = new Blob([randomBytes(1024 * 1024)])
+    const file = new Blob([await randomBytes(1024 * 1024)])
     const shardSize = 512 * 1024
 
     /** @type {import('../src/types').CARFile[]} */

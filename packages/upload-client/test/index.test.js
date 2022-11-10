@@ -21,7 +21,7 @@ describe('uploadFile', () => {
 
     const account = await Signer.generate()
     const signer = await Signer.generate()
-    const file = new Blob([randomBytes(128)])
+    const file = new Blob([await randomBytes(128)])
     /** @type {import('../src/types').CARLink|undefined} */
     let carCID
 
@@ -97,8 +97,8 @@ describe('uploadDirectory', () => {
     const account = await Signer.generate()
     const signer = await Signer.generate()
     const files = [
-      new File([randomBytes(128)], '1.txt'),
-      new File([randomBytes(32)], '2.txt'),
+      new File([await randomBytes(128)], '1.txt'),
+      new File([await randomBytes(32)], '2.txt'),
     ]
     /** @type {import('../src/types').CARLink?} */
     let carCID = null
