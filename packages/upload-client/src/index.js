@@ -1,3 +1,5 @@
+import { add as storeAdd } from '@web3-storage/access/capabilities/store'
+import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
 import * as Storage from './storage.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
@@ -10,6 +12,55 @@ export * from './sharding.js'
  * @typedef {(meta: import('./types').CARMetadata) => void} StoredShardCallback
  * @typedef {import('./types').RequestOptions & { onStoredShard?: StoredShardCallback }} UploadOptions
  */
+
+export class Client {
+  /** @type {import('./types').InvocationConfig} */
+  #conf
+
+  /**
+   * @param {import('./types').InvocationConfig} conf
+   */
+  constructor(conf) {
+    this.#conf = conf
+  }
+
+  /**
+   * Uploads a file to the service and returns the root data CID for the
+   * generated DAG.
+   *
+   * @param {Blob} file File data.
+   * @param {UploadOptions} [options]
+   */
+  async uploadFile(file, options = {}) {
+    return await uploadFile(this.#conf, file, options)
+  }
+
+  /**
+   * Uploads a directory of files to the service and returns the root data CID
+   * for the generated DAG. All files are added to a container directory, with
+   * paths in file names preserved.
+   *
+   * @param {import('./types').FileLike[]} files File data.
+   * @param {UploadOptions} [options]
+   */
+  async uploadDirectory(files, options = {}) {
+    return await uploadDirectory(this.#conf, files, options)
+  }
+
+  /**
+   * @param {import('@web3-storage/access').Agent<import('@ucanto/interface').Signer>} agent
+   */
+  static fromAgent(agent) {
+    return new Client({
+      get issuer() {
+        return agent.issuer
+      },
+      get proofs() {
+        return agent.getProofs([storeAdd, uploadAdd])
+      },
+    })
+  }
+}
 
 /**
  * Uploads a file to the service and returns the root data CID for the
