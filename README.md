@@ -4,6 +4,8 @@
 
 `w3up-client` is a JavaScript libary that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
 
+Visit [w3up-client-examples](https://github.com/web3-storage/w3up-client-examples/tree/main/nodejs/simple-upload) for examples on how to use w3up-client in practice.
+
 ## Install
 
 `w3up-client` is currently available as an alpha release and should be installed directly from GitHub. These instructions will be updated once the package is available on `npm`.
@@ -104,7 +106,7 @@ The final identity-related client method is `whoami`, which queries the access s
 
 ### Uploading data
 
-The `upload` method sends your data to the w3up service, making it available for retreival on [Elastic IPFS][elastic-ipfs].
+The `upload` method sends your data to the w3up service, making it available for retreival on the public IPFS network via our hosted [Elastic IPFS][elastic-ipfs] infrastructure. All data uploaded to web3.storage is available to anyone who requests it using the correct CID. Do not store any private or sensitive information in an unencrypted form using web3.storage.
 
 ```js
 import { createClient } from '@web3-storage/w3up-client'
