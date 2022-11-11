@@ -55,6 +55,7 @@ describe('store capabilities', function () {
     assert.equal(result.capability.can, 'store/add')
     assert.deepEqual(result.capability.nb, {
       link: parseLink('bafkqaaa'),
+      size: 0,
     })
   })
 
@@ -83,6 +84,7 @@ describe('store capabilities', function () {
     assert.equal(result.capability.can, 'store/add')
     assert.deepEqual(result.capability.nb, {
       link: parseLink('bafkqaaa'),
+      size: 0,
     })
   })
 
@@ -118,6 +120,7 @@ describe('store capabilities', function () {
     assert.equal(result.capability.can, 'store/add')
     assert.deepEqual(result.capability.nb, {
       link: parseLink('bafkqaaa'),
+      size: 0,
     })
   })
 
