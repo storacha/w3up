@@ -1,4 +1,5 @@
 import * as Client from '@ucanto/client'
+// eslint-disable-next-line no-unused-vars
 import * as API from '@ucanto/interface'
 import { Principal } from '@ucanto/principal'
 import * as CAR from '@ucanto/transport/car'
@@ -22,12 +23,12 @@ export * from '@web3-storage/access/capabilities/voucher'
  * @param {API.OutpboundTranpsortOptions} [options.transport]
  * @returns { import('@ucanto/interface').ConnectionView<any> }
  */
-export function createConnection({
+export function createConnection ({
   id,
   url,
   transport = { encoder: CAR, decoder: CBOR },
   fetch = defaultFetch,
-  method,
+  method
 }) {
   return Client.connect({
     id: Principal.parse(id),
@@ -35,7 +36,7 @@ export function createConnection({
     channel: HTTP.open({
       url,
       fetch,
-      method,
-    }),
+      method
+    })
   })
 }

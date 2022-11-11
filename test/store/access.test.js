@@ -1,19 +1,18 @@
 import * as Identity from '../../src/store/access/client.js'
 import { makeMockServer } from '../server.fixture.js'
-import * as API from '@ucanto/interface'
 import { SigningPrincipal } from '@ucanto/principal'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 // The two tests marked with concurrent will be run in parallel
 describe('access client', async () => {
   const accessServer = await makeMockServer({
-    capabilities: [Identity.register, Identity.validate, Identity.identify],
+    capabilities: [Identity.register, Identity.validate, Identity.identify]
   })
 
   beforeEach(async (context) => {
     context.client = Identity.createConnection({
       id: accessServer.service.id.did(),
-      url: accessServer.url,
+      url: accessServer.url
     })
   })
 
@@ -32,8 +31,8 @@ describe('access client', async () => {
           audience: client.id,
           with: issuer.did(),
           caveats: {
-            as: `mailto:test@test.com`,
-          },
+            as: 'mailto:test@test.com'
+          }
         })
         .execute(client)
 

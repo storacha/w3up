@@ -17,11 +17,11 @@
     "build": "npm run build:api_docs && npm run build:types",
     "build:api_docs": "jsdoc2md -c .jsdoc.json -f src/index.js > API.md",
     "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./dist",
-    "pretest": "npm run prettier && npm run typecheck",
+    "pretest": "npm run typecheck && npm run lint",
     "test": "vitest run",
+    "lint": "standard",
+    "lint:fix": "standard --fix",
     "typecheck": "tsc --noEmit",
-    "prettier": "prettier -c '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore",
-    "prettier:fix": "prettier --ignore-unknown --write --ignore-path .gitignore .",
     "test:coverage": "vitest run --coverage",
     "test:dev": "vitest -w"
   },
@@ -44,7 +44,6 @@
     "jsdoc-to-markdown": "^7.1.1",
     "jsdoc-tsimport-plugin": "^1.0.5",
     "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1",
     "semantic-release": "^19.0.5",
     "simple-git-hooks": "^2.8.0",
     "standard": "^17.0.0",
@@ -55,6 +54,6 @@
     "@ucanto/validator": "^1.0.2"
   },
   "lint-staged": {
-    "*.*": "prettier --write '{src,patches,test}/**/*.{js,ts,yml,json}' --ignore-path .gitignore"
+    "*.*": "npm run lint:fix"
   }
 }

@@ -2,7 +2,7 @@ import {
   buildDelegationCar,
   exportDelegation,
   generateDelegation,
-  importDelegation,
+  importDelegation
 } from '../../src/delegation/generation.js'
 import fixture from '../fixture.js'
 import { Delegation, delegate } from '@ucanto/core'
@@ -17,7 +17,7 @@ describe('delegation', () => {
 
       context.delegation = await buildDelegationCar({
         issuer,
-        to: fixture.did,
+        to: fixture.did
       })
     })
 
@@ -30,7 +30,7 @@ describe('delegation', () => {
       const delegation = await buildDelegationCar({
         issuer: await SigningPrincipal.generate(),
         to: fixture.did,
-        expiration: 1000,
+        expiration: 1000
       })
 
       expect(delegation).toBeDefined()
@@ -44,13 +44,13 @@ describe('delegation', () => {
     })
 
     it('should create a delegation with a given expiration.', async ({
-      issuer,
+      issuer
     }) => {
       const now = Date.now()
       const delegation = await generateDelegation({
         issuer,
         to: fixture.did,
-        expiration: 1000,
+        expiration: 1000
       })
 
       expect(delegation).toBeDefined()
@@ -58,11 +58,10 @@ describe('delegation', () => {
     })
 
     it('should have any store capabilities by default', async ({ issuer }) => {
-      const now = Date.now()
       const delegation = await generateDelegation({
         issuer,
         to: fixture.did,
-        expiration: 1000,
+        expiration: 1000
       })
 
       const capabilities = delegation.capabilities
@@ -75,13 +74,12 @@ describe('delegation', () => {
     })
 
     it('should NOT have any account capabilities by default', async ({
-      issuer,
+      issuer
     }) => {
-      const now = Date.now()
       const delegation = await generateDelegation({
         issuer,
         to: fixture.did,
-        expiration: 1000,
+        expiration: 1000
       })
 
       const capabilities = delegation.capabilities
@@ -106,14 +104,14 @@ describe('delegation', () => {
       context.issuer = issuer
       context.delegation = await buildDelegationCar({
         issuer,
-        to: fixture.did,
+        to: fixture.did
       })
     })
 
     it('should import a delegation', async ({
       delegation,
       issuer,
-      audience,
+      audience
     }) => {
       const imported = await importDelegation(delegation)
       expect(imported.issuer.did(), issuer.did())
@@ -132,25 +130,25 @@ describe('delegation', () => {
       capabilities: [
         {
           can: 'store/*',
-          with: issuer.did(),
+          with: issuer.did()
         },
         {
           can: 'upload/*',
-          with: issuer.did(),
-        },
-      ],
+          with: issuer.did()
+        }
+      ]
     })
 
     const delegation = await delegate({
-      issuer: issuer,
+      issuer,
       audience,
       capabilities: [
         {
           can: 'test/this',
-          with: issuer.did(),
-        },
+          with: issuer.did()
+        }
       ],
-      proofs: [proof],
+      proofs: [proof]
     })
 
     const bytes = await exportDelegation(delegation)

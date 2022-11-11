@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-spread */
 import { CarReader } from '@ipld/car/reader'
 import { CarWriter } from '@ipld/car/writer'
 import { Delegation } from '@ucanto/core/delegation'
@@ -9,7 +8,7 @@ import * as u8 from 'uint8arrays'
 /**
  * @param {AsyncIterable<Uint8Array>} iterable
  */
-function collector(iterable) {
+function collector (iterable) {
   const chunks = []
   const cfn = (async () => {
     for await (const chunk of iterable) {
@@ -24,7 +23,7 @@ function collector(iterable) {
  * @param {Types.Delegation[]} delegations
  * @param {import('uint8arrays/to-string').SupportedEncodings} encoding
  */
-export async function encodeDelegations(delegations, encoding = 'base64url') {
+export async function encodeDelegations (delegations, encoding = 'base64url') {
   if (delegations.length === 0) {
     return ''
   }
@@ -54,7 +53,7 @@ export async function encodeDelegations(delegations, encoding = 'base64url') {
  * @param {Types.Delegation<Types.Capabilities>} delegation
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
-export function delegationToString(delegation, encoding) {
+export function delegationToString (delegation, encoding) {
   return encodeDelegations([delegation], encoding)
 }
 
@@ -65,7 +64,7 @@ export function delegationToString(delegation, encoding) {
  * @param {import('../types').EncodedDelegation<T>} raw
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
-export async function decodeDelegations(raw, encoding = 'base64url') {
+export async function decodeDelegations (raw, encoding = 'base64url') {
   if (!raw) {
     return []
   }
@@ -82,8 +81,7 @@ export async function decodeDelegations(raw, encoding = 'base64url') {
     if (rootBlock) {
       const blocks = new Map()
       for (const block of reader._blocks) {
-        if (block.cid.toString() !== root.toString())
-          blocks.set(block.cid.toString(), block)
+        if (block.cid.toString() !== root.toString()) { blocks.set(block.cid.toString(), block) }
       }
 
       // @ts-ignore
@@ -103,7 +101,7 @@ export async function decodeDelegations(raw, encoding = 'base64url') {
  * @param {import('../types').EncodedDelegation<T>} raw
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
-export async function stringToDelegation(raw, encoding) {
+export async function stringToDelegation (raw, encoding) {
   const delegations = await decodeDelegations(raw, encoding)
 
   return /** @type {Types.Delegation<T>} */ (delegations[0])

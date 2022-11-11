@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import * as API from '@ucanto/interface'
 import { Failure } from '@ucanto/validator'
 
