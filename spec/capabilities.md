@@ -36,9 +36,13 @@ The `account/*` capability contains (can derive) all abilities in the `account/`
 
 > Request information about an account DID.
 
-### `account/recover-validation`
+The `account/info` capability can be invoked to request information about a user account. The `with` resource URI identifies the user account, usually with a `did:key` URI.
+
+See [services.md](./services.md) for a description of the result type and possible errors.
 
 ### `account/recover`
+
+### `account/recover-validation`
 
 ## CAR storage
 
@@ -89,7 +93,7 @@ Fields marked as "required" below must be present in the invocation, but may be 
 
 | field       | value         | required? | context                                                             |
 | ----------- | ------------- | --------- | ------------------------------------------------------------------- |
-| `can`       | `store/add`   | ✅         | The ability to add CAR data to an account.                          |
+| `can`       | `store/add`   | ✅         | The ability to add CAR data to a memory space.                      |
 | `with`      | `did:*`       | ✅         | The `did:key` URI for the CAR's destination memory space            |
 | `nb.link`   | `bagk123...`  | ✅         | CID of CAR that the user wants to store                             |
 | `nb.origin` | `bagkabc...`  | ⛔         | Optional link to related CARs. See below for more details.          |
@@ -101,9 +105,23 @@ The `nb.origin` field may be set to provide a link to a related CAR file. This i
 
 > Remove a stored CAR
 
-The `store/remove` capability can be invoked to remove the association between a previously stored CAR and an account.
+The `store/remove` capability can be invoked to remove a CAR file from a memory space, identified by the resource URI in the `with` field. 
 
+This may or may not cause the CAR to be removed completely from Elastic IPFS; for example, if the CAR exists in other memory spaces, it will not be removed. 
 
+`store/remove` will remove the CAR from the listing provided by [`store/list`](#storelist) for the memory space. Removal may also have billing implications, depending on the service provider (e.g. by affecting storage quotas).
+
+#### Derivations
+
+`store/remove` can be derived from a `store/*` or `*` capability with a matching `with` field.
+
+#### Caveats
+
+When invoking `store/remove`, the `link` caveat must be set to the CID of the CAR file to remove. 
+
+If a delegation contains a `link` caveat, an invocation derived from it must have the same CAR CID in it's `link` field. A delegation without a `link` caveat may be invoked with any `link` value.
+
+#### Invocation
 
 ```js
 {
@@ -114,6 +132,12 @@ The `store/remove` capability can be invoked to remove the association between a
   }
 }
 ```
+
+| field     | value          | required? | context                                             |
+| --------- | -------------- | --------- | --------------------------------------------------- |
+| `can`     | `store/remove` | ✅         | The ability to remove CAR data from a memory space. |
+| `with`    | `did:*`        | ✅         | The `did:key` URI for the CAR's memory space        |
+| `nb.link` | `bag...`       | ✅         | The CID of the CAR file to remove                   |
 
 ### `store/list`
 
