@@ -105,7 +105,7 @@ const rootCID = metadatas[metadatas.length - 1].roots[0]
 const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Upload.register(issuer, proofs, rootCID, carCIDs)
+await Upload.register(conf, rootCID, carCIDs)
 ```
 
 ## API
