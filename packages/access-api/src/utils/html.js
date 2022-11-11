@@ -87,11 +87,20 @@ export const ValidateEmail = ({ delegation, ucan, qrcode }) => (
       confirmed. You may close this window.
     </p>
     <p>
-      During the beta period, uploads via w3up will only appear via the beta 
-      APIs, and not on the website. Eventually, existing uploads from the old 
-      APIs will be migrated to this API. Please use a unique email address for 
-      beta accounts that you would like to link to NFT.Storage after the beta 
-      period.
+      During the beta period, uploads via w3up will only appear via the 
+      beta APIs, and not on the web3.storage or NFT.Storage websites, 
+      even if the associated email addresses are the same.
+    </p>
+    <p>
+      At the end of the beta period, web3.storage and NFT.Storage's upload 
+      APIs and existing accounts will be upgraded to use w3up. Uploads via 
+      the w3up beta be migrated to web3.storage by default and, if applicable, 
+      combined with the relevant existing web3.storage account (based on email 
+      address). If you would rather have your beta w3up account be associated 
+      with the NFT.Storage product (e.g., you are only storing off-chain NFT 
+      data), please email us at support@nft.storage. All w3up uploads associated 
+      with a given registered email will only be able to be associated with one 
+      of either web3.storage or NFT.Storage when these uploads are migrated.
     </p>
     <details style={{ maxWidth: '80vw', overflow: 'overlay' }}>
       {' '}
