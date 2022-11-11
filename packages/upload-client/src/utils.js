@@ -1,3 +1,5 @@
+import { isDelegation } from '@ucanto/core'
+
 /**
  * @template T
  * @param {ReadableStream<T> | NodeJS.ReadableStream} readable
@@ -36,4 +38,37 @@ export async function collect(collectable) {
   const chunks = []
   for await (const chunk of collectable) chunks.push(chunk)
   return chunks
+}
+
+/**
+ * @param {import('@ucanto/interface').Proof[]} proofs
+ * @param {import('@ucanto/interface').DID} audience
+ * @param {import('@ucanto/interface').Ability} ability
+ */
+export function findCapability(proofs, audience, ability) {
+  let capability
+  for (const proof of proofs) {
+    if (!isDelegation(proof)) continue
+    if (proof.audience.did() !== audience) continue
+    capability = proof.capabilities.find((c) =>
+      capabilityMatches(c.can, ability)
+    )
+    if (capability) break
+  }
+  if (!capability) {
+    throw new Error(
+      `Missing proof of delegated capability "${ability}" for audience "${audience}"`
+    )
+  }
+  return capability
+}
+
+/**
+ * @param {string} can
+ * @param {import('@ucanto/interface').Ability} ability
+ */
+function capabilityMatches(can, ability) {
+  return can === ability
+    ? true
+    : can.endsWith('*') && ability.startsWith(can.split('*')[0])
 }

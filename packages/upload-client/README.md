@@ -58,7 +58,7 @@ const cid = await uploadDirectory(conf, [
 The buffering API loads all data into memory so is suitable only for small files. The root data CID is obtained before any transfer to the service takes place.
 
 ```js
-import { UnixFS, CAR, Storage } from '@web3-storage/upload-client'
+import { UnixFS, CAR, Storage, Upload } from '@web3-storage/upload-client'
 
 // Encode a file as a DAG, get back a root data CID and a set of blocks
 const { cid, blocks } = await UnixFS.encodeFile(file)
@@ -67,7 +67,7 @@ const car = await CAR.encode(blocks, cid)
 // Store the CAR file to the service
 const carCID = await Storage.store(conf, car)
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Storage.registerUpload(conf, cid, [carCID])
+await Upload.register(conf, cid, [carCID])
 ```
 
 #### Streaming API
@@ -79,7 +79,7 @@ import {
   UnixFS,
   ShardingStream,
   ShardStoringStream,
-  Storage,
+  Upload,
 } from '@web3-storage/upload-client'
 
 const metadatas = []
@@ -105,7 +105,7 @@ const rootCID = metadatas[metadatas.length - 1].roots[0]
 const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Storage.registerUpload(issuer, proofs, rootCID, carCIDs)
+await Upload.register(issuer, proofs, rootCID, carCIDs)
 ```
 
 ## API
@@ -115,13 +115,14 @@ await Storage.registerUpload(issuer, proofs, rootCID, carCIDs)
 - [`ShardingStream`](#shardingstream)
 - [`ShardStoringStream`](#shardstoringstream)
 - `Storage`
-  - [`registerUpload`](#storageregisterupload)
   - [`store`](#storagestore)
 - `UnixFS`
   - [`createDirectoryEncoderStream`](#unixfscreatedirectoryencoderstream)
   - [`createFileEncoderStream`](#unixfscreatefileencoderstream)
   - [`encodeDirectory`](#unixfsencodedirectory)
   - [`encodeFile`](#unixfsencodefile)
+- `Upload`
+  - - [`register`](#uploadregister)
 - [`uploadDirectory`](#uploaddirectory)
 - [`uploadFile`](#uploadfile)
 
@@ -173,26 +174,6 @@ Stores multiple DAG shards (encoded as CAR files) to the service.
 Note: an "upload" must be registered in order to link multiple shards together as a complete upload.
 
 The writeable side of this transform stream accepts `CARFile`s and the readable side yields `CARMetadata`, which contains the CAR CID, it's size (in bytes) and it's roots (if it has any).
-
-### `Storage.registerUpload`
-
-```ts
-function registerUpload(
-  conf: InvocationConfig,
-  root: CID,
-  shards: CID[],
-  options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<void>
-```
-
-Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multipe CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
-
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
-Required delegated capability proofs: `upload/add`
 
 ### `Storage.store`
 
@@ -271,6 +252,26 @@ Example:
 const { cid, blocks } = await encodeFile(new File(['data'], 'doc.txt'))
 // Note: file name is not preserved - use encodeDirectory if required.
 ```
+
+### `Upload.register`
+
+```ts
+function register(
+  conf: InvocationConfig,
+  root: CID,
+  shards: CID[],
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<void>
+```
+
+Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multipe CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `upload/add`
 
 ### `uploadDirectory`
 

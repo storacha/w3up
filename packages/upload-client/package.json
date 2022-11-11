@@ -29,6 +29,7 @@
     ".": "./src/index.js",
     "./car": "./src/car.js",
     "./sharding": "./src/sharding.js",
+    "./upload": "./src/upload.js",
     "./storage": "./src/storage.js",
     "./unixfs": "./src/unixfs.js"
   },

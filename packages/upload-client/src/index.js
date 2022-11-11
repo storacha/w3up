@@ -1,9 +1,10 @@
 import * as Storage from './storage.js'
+import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, ShardStoringStream } from './sharding.js'
 
-export { Storage, UnixFS, CAR }
+export { Storage, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 /**
@@ -93,6 +94,6 @@ async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
 
   if (root == null) throw new Error('missing root CID')
 
-  await Storage.registerUpload({ issuer, proofs }, root, shards, options)
+  await Upload.register({ issuer, proofs }, root, shards, options)
   return root
 }
