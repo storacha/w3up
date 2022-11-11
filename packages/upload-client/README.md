@@ -23,6 +23,8 @@ import { add as storeAdd } from '@web3-storage/access-client/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/access-client/capabilities/upload'
 
 const agent = await Agent.create({ store })
+// Note: you need to create and register an account 1st time:
+// await agent.createAccount('you@youremail.com')
 const conf = {
   issuer: agent.issuer,
   proofs: agent.getProofs([storeAdd, uploadAdd]),
