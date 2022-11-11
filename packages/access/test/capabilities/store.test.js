@@ -4,6 +4,8 @@ import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
 import * as Store from '../../src/capabilities/store.js'
+import * as Capability from '../../src/capabilities/any.js'
+
 import {
   alice,
   service as w3,
@@ -12,29 +14,22 @@ import {
 } from '../helpers/fixtures.js'
 import { createCarCid } from '../helpers/utils.js'
 
+const any = async () =>
+  Capability.any.delegate({
+    issuer: account,
+    audience: alice,
+    with: account.did(),
+  })
+
+const store = async () =>
+  Store.store.delegate({
+    issuer: account,
+    audience: alice,
+    with: account.did(),
+    proofs: [await any()],
+  })
+
 describe('store capabilities', function () {
-  const any = delegate({
-    issuer: account,
-    audience: alice,
-    capabilities: [
-      {
-        can: '*',
-        with: account.did(),
-      },
-    ],
-  })
-
-  const store = delegate({
-    issuer: account,
-    audience: alice,
-    capabilities: [
-      {
-        can: 'store/*',
-        with: account.did(),
-      },
-    ],
-  })
-
   it('store/add can be derived from *', async () => {
     const add = Store.add.invoke({
       issuer: alice,
@@ -42,16 +37,14 @@ describe('store capabilities', function () {
       with: account.did(),
       nb: {
         link: parseLink('bafkqaaa'),
+        size: 0,
       },
-      proofs: [await any],
+      proofs: [await any()],
     })
 
     const result = await access(await add.delegate(), {
       capability: Store.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -72,16 +65,14 @@ describe('store capabilities', function () {
       with: account.did(),
       nb: {
         link: parseLink('bafkqaaa'),
+        size: 0,
       },
-      proofs: [await store],
+      proofs: [await store()],
     })
 
     const result = await access(await add.delegate(), {
       capability: Store.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -96,27 +87,11 @@ describe('store capabilities', function () {
   })
 
   it('store/add can be derived from store/* derived from *', async () => {
-    const any = await delegate({
-      issuer: account,
-      audience: alice,
-      capabilities: [
-        {
-          can: '*',
-          with: account.did(),
-        },
-      ],
-    })
-
-    const store = await delegate({
+    const store = await Store.store.delegate({
       issuer: alice,
       audience: bob,
-      capabilities: [
-        {
-          can: 'store/*',
-          with: account.did(),
-        },
-      ],
-      proofs: [any],
+      with: account.did(),
+      proofs: [await any()],
     })
 
     const add = Store.add.invoke({
@@ -125,6 +100,7 @@ describe('store capabilities', function () {
       with: account.did(),
       nb: {
         link: parseLink('bafkqaaa'),
+        size: 0,
       },
       proofs: [store],
     })
@@ -132,9 +108,6 @@ describe('store capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Store.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -149,17 +122,15 @@ describe('store capabilities', function () {
   })
 
   it('store/add sholud fail when escalating size constraint', async () => {
-    const delegation = await Store.add
-      .invoke({
-        issuer: alice,
-        audience: bob,
-        with: account.did(),
-        nb: {
-          size: 1024,
-        },
-        proofs: [await any],
-      })
-      .delegate()
+    const delegation = await Store.add.delegate({
+      issuer: alice,
+      audience: bob,
+      with: account.did(),
+      nb: {
+        size: 1024,
+      },
+      proofs: [await any()],
+    })
 
     {
       const add = Store.add.invoke({
@@ -176,9 +147,6 @@ describe('store capabilities', function () {
       const result = await access(await add.delegate(), {
         capability: Store.add,
         principal: Verifier,
-        canIssue: (claim, issuer) => {
-          return claim.with === issuer
-        },
       })
 
       if (result.error) {
@@ -208,9 +176,6 @@ describe('store capabilities', function () {
       const result = await access(await add.delegate(), {
         capability: Store.add,
         principal: Verifier,
-        canIssue: (claim, issuer) => {
-          return claim.with === issuer
-        },
       })
 
       assert.equal(result.error, true)
@@ -222,13 +187,14 @@ describe('store capabilities', function () {
   for (const size of fixtures) {
     const json = JSON.stringify(size)
     it(`store/add size must be an int not ${json}`, async () => {
-      const proofs = [await any]
+      const proofs = [await any()]
       assert.throws(() => {
         Store.add.invoke({
           issuer: alice,
           audience: w3,
           with: account.did(),
           nb: {
+            link: parseLink('bafkqaaa'),
             // @ts-expect-error
             size,
           },
@@ -251,16 +217,13 @@ describe('store capabilities', function () {
             },
           },
         ],
-        proofs: [await any],
+        proofs: [await any()],
       })
 
       // @ts-expect-error - size type doesnt not match because we are testing fails
       const result = await access(add, {
         capability: Store.add,
         principal: Verifier,
-        canIssue: (claim, issuer) => {
-          return claim.with === issuer
-        },
       })
 
       assert.equal(result.error, true)
@@ -269,13 +232,14 @@ describe('store capabilities', function () {
   }
 
   it('store/add size must be an int', async () => {
-    const proofs = [await any]
+    const proofs = [await any()]
     assert.throws(() => {
       Store.add.invoke({
         issuer: alice,
         audience: w3,
         with: account.did(),
         nb: {
+          link: parseLink('bafkqaaa'),
           size: 1024.2,
         },
         proofs,
