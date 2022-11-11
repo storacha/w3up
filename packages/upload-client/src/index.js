@@ -52,10 +52,9 @@ export class Client {
    */
   static fromAgent(agent) {
     return new Client({
-      get issuer() {
-        return agent.issuer
-      },
+      issuer: agent.issuer,
       get proofs() {
+        // always use proofs for the current account
         return agent.getProofs([storeAdd, uploadAdd])
       },
     })
