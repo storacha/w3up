@@ -55,7 +55,7 @@ export function equal(child, parent, constraint) {
 }
 
 /**
- * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
+ * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link: Types.Link<unknown, number, number, 0|1>}>} T
  * @param {T} claimed
  * @param {T} delegated
  * @returns {Types.Result<true, Types.Failure>}
