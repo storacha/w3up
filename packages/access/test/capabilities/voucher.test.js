@@ -34,9 +34,6 @@ describe('voucher capabilities', function () {
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
     if (!result.error) {
       assert.deepEqual(result.audience.did(), service.did())
@@ -60,27 +57,22 @@ describe('voucher capabilities', function () {
         service: service.did(),
       },
       proofs: [
-        await Voucher.claim
-          .invoke({
-            issuer: alice,
-            audience: bob,
-            with: alice.did(),
-            nb: {
-              identity: 'mailto:alice@email.com',
-              product: 'product:free',
-              service: service.did(),
-            },
-          })
-          .delegate(),
+        await Voucher.claim.delegate({
+          issuer: alice,
+          audience: bob,
+          with: alice.did(),
+          nb: {
+            identity: 'mailto:alice@email.com',
+            product: 'product:free',
+            service: service.did(),
+          },
+        }),
       ],
     })
 
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (!result.error) {
@@ -107,27 +99,22 @@ describe('voucher capabilities', function () {
         service: service.did(),
       },
       proofs: [
-        await Voucher.claim
-          .invoke({
-            issuer: alice,
-            audience: bob,
-            with: alice.did(),
-            nb: {
-              identity: 'mailto:alice@email.com',
-              product: 'product:free',
-              service: service.did(),
-            },
-          })
-          .delegate(),
+        await Voucher.claim.delegate({
+          issuer: alice,
+          audience: bob,
+          with: alice.did(),
+          nb: {
+            identity: 'mailto:alice@email.com',
+            product: 'product:free',
+            service: service.did(),
+          },
+        }),
       ],
     })
 
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
