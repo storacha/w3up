@@ -42,14 +42,14 @@ export async function collect(collectable) {
 
 /**
  * @param {import('@ucanto/interface').Proof[]} proofs
- * @param {import('@ucanto/interface').DID} audience
  * @param {import('@ucanto/interface').Ability} ability
+ * @param {import('@ucanto/interface').DID} [audience]
  */
-export function findCapability(proofs, audience, ability) {
+export function findCapability(proofs, ability, audience) {
   let capability
   for (const proof of proofs) {
     if (!isDelegation(proof)) continue
-    if (proof.audience.did() !== audience) continue
+    if (audience != null && proof.audience.did() !== audience) continue
     capability = proof.capabilities.find((c) =>
       capabilityMatches(c.can, ability)
     )

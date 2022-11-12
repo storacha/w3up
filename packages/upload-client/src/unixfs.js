@@ -11,7 +11,7 @@ const settings = UnixFS.configure({
 })
 
 /**
- * @param {Blob} blob
+ * @param {import('./types').BlobLike} blob
  * @returns {Promise<import('./types').UnixFSEncodeResult>}
  */
 export async function encodeFile(blob) {
@@ -23,7 +23,7 @@ export async function encodeFile(blob) {
 }
 
 /**
- * @param {Blob} blob
+ * @param {import('./types').BlobLike} blob
  * @returns {ReadableStream<import('@ipld/unixfs').Block>}
  */
 export function createFileEncoderStream(blob) {

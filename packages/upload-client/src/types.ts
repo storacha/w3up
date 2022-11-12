@@ -3,6 +3,8 @@ import { Block } from '@ipld/unixfs'
 import { CAR } from '@ucanto/transport'
 import { ServiceMethod, ConnectionView, Signer, Proof } from '@ucanto/interface'
 import { StoreAdd, UploadAdd } from '@web3-storage/access/capabilities/types'
+import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
+import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
 
 export type { StoreAdd, UploadAdd }
 
@@ -10,6 +12,16 @@ export interface Service {
   store: { add: ServiceMethod<StoreAdd, StoreAddResponse, never> }
   upload: { add: ServiceMethod<UploadAdd, null, never> }
 }
+
+export type ServiceAbilities =
+  | typeof StoreCapabilities.store.can
+  | typeof StoreCapabilities.add.can
+  | typeof StoreCapabilities.remove.can
+  | typeof StoreCapabilities.list.can
+  | typeof UploadCapabilities.upload.can
+  | typeof UploadCapabilities.add.can
+  | typeof UploadCapabilities.remove.can
+  | typeof UploadCapabilities.list.can
 
 export interface StoreAddResponse {
   status: string
@@ -91,14 +103,16 @@ export interface Connectable {
 
 export type RequestOptions = Retryable & Abortable & Connectable
 
-export interface FileLike {
+export interface BlobLike {
+  /**
+   * Returns a ReadableStream which yields the Blob data.
+   */
+  stream: () => ReadableStream
+}
+
+export interface FileLike extends BlobLike {
   /**
    * Name of the file. May include path information.
    */
   name: string
-  /**
-   * Returns a ReadableStream which upon reading returns the data contained
-   * within the File.
-   */
-  stream: () => ReadableStream
 }
