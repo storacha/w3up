@@ -71,6 +71,7 @@ export async function uploadDirectory({ issuer, proofs }, files, options = {}) {
  * @param {import('./types').InvocationConfig} invocationConfig
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
  * @param {UploadOptions} [options]
+ * @returns {Promise<import('multiformats').Link<unknown, number, number, import('multiformats').Version>>}
  */
 async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
   const onStoredShard = options.onStoredShard ?? (() => {})
