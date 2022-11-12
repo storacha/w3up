@@ -22,7 +22,7 @@ export async function send(ucan, mf) {
 
 /**
  * @param {Types.Signer} issuer
- * @param {Types.Principal} service
+ * @param {Types.Principal<"key">} service
  * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
  * @param {string} email
  */
@@ -37,8 +37,7 @@ export async function createAccount(issuer, service, conn, email) {
       nb: {
         // @ts-ignore
         identity: `mailto:${email}`,
-        product: 'product:free',
-        service: service.did(),
+        product: service.did(),
       },
       proofs: [
         await Any.any.delegate({
@@ -64,7 +63,6 @@ export async function createAccount(issuer, service, conn, email) {
       nb: {
         account: account.did(),
         identity: delegation.capabilities[0].nb.identity,
-        product: delegation.capabilities[0].nb.product,
       },
       proofs: [
         delegation,
