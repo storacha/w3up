@@ -52,11 +52,9 @@ export const claim = base.derive({
     with: URI.match({ protocol: 'did:' }),
     nb: {
       /**
-       * Optional link to the product agent is requesting a voucher of. If
-       * omitted service could delegate all vouchers it deems necessary or
-       * all none.
+       * URI of the product agent is requesting a voucher of.
        */
-      product: Product.optional(),
+      product: Product,
       /**
        * Verifiable identity on who's behalf behalf claim is made.
        */
