@@ -59,11 +59,11 @@ export async function connection(principal, _fetch, url) {
 }
 
 /**
- * @template {Ucanto.Signer} T
+ * @template {Ucanto.Signer<"key">} T
  * Agent
  */
 export class Agent {
-  /** @type {Ucanto.Principal|undefined} */
+  /** @type {Ucanto.Principal<"key">|undefined} */
   #service
 
   /** @type {typeof fetch} */
@@ -85,7 +85,7 @@ export class Agent {
   }
 
   /**
-   * @template {Ucanto.Signer} T
+   * @template {Ucanto.Signer<"key">} T
    * @param {AgentCreateOptions<T>} opts
    */
   static async create(opts) {
@@ -149,8 +149,7 @@ export class Agent {
         with: account.did(),
         nb: {
           identity: URI.from(`mailto:${email}`),
-          product: 'product:free',
-          service: service.did(),
+          product: service.did(),
         },
         proofs: [delegationToAgent],
       })
@@ -176,7 +175,6 @@ export class Agent {
         nb: {
           account: account.did(),
           identity: voucherRedeem.capabilities[0].nb.identity,
-          product: voucherRedeem.capabilities[0].nb.product,
         },
         proofs: [voucherRedeem, delegationToService],
       })
