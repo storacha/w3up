@@ -17,8 +17,7 @@ test('should voucher/claim', async (t) => {
       with: issuer.did(),
       nb: {
         identity: 'mailto:email@dag.house',
-        product: 'product:free',
-        service: service.did(),
+        product: service.did(),
       },
     })
     .execute(conn)
@@ -35,7 +34,7 @@ test('should voucher/claim', async (t) => {
   t.deepEqual(delegation.issuer.did(), service.did())
   t.deepEqual(delegation.audience.did(), issuer.did())
   t.deepEqual(delegation.capabilities[0].nb.account, issuer.did())
-  t.deepEqual(delegation.capabilities[0].nb.product, 'product:free')
+  t.deepEqual(delegation.capabilities[0].with, service.did())
   t.deepEqual(delegation.capabilities[0].nb.identity, 'mailto:email@dag.house')
 
   if (Delegation.isDelegation(delegation.proofs[0])) {
@@ -45,9 +44,7 @@ test('should voucher/claim', async (t) => {
         with: service.did(),
         can: 'voucher/redeem',
         nb: {
-          account: 'did:*',
           identity: 'mailto:*',
-          product: 'product:*',
         },
       },
     ])

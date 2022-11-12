@@ -22,8 +22,7 @@ test('should return account/redeem', async (t) => {
       with: account.did(),
       nb: {
         identity: 'mailto:email@dag.house',
-        product: 'product:free',
-        service: service.did(),
+        product: service.did(),
       },
       proofs: [
         await Any.any.delegate({
@@ -53,7 +52,6 @@ test('should return account/redeem', async (t) => {
       nb: {
         account: account.did(),
         identity: delegation.capabilities[0].nb.identity,
-        product: delegation.capabilities[0].nb.product,
       },
       proofs: [
         delegation,

@@ -3,9 +3,9 @@ import { equalWith, equal, fail } from './utils.js'
 import { any } from './any.js'
 
 /**
- * Products are identified by the CID of the DAG that describes them.
+ * Products are identified by a did:key identifier.
  */
-export const Product = URI.uri()
+export const Product = DID.match({ method: 'key' })
 
 /**
  * Verifiable identity to whom voucher is issued. Currently it is a `mailto:`
@@ -17,6 +17,10 @@ export const Identity = URI.match({ protocol: 'mailto:' })
  * Services are identified using did:key identifier.
  */
 export const Service = DID.match({ method: 'key' })
+/**
+ * Spaces are identified using did:key identifier.
+ */
+export const Account = DID.match({ method: 'key' })
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
@@ -39,37 +43,30 @@ const base = any.or(voucher)
 
 /**
  * Capability can be invoked by an agent to claim a voucher for a specific
- * user identifier (currently email address).
- *
- * The agent MAY issue claim with own DID or a DID it is delegate of. If `with`
- * is different from `iss`, it is implied that it voucher is claimed for the
- * DID in the `with` field. If `with` is same as `iss` it is implies that
- * voucher is claim for unspecified `did`.
+ * product (identified by `nb.product` DID) for a verifiable identifier
+ * (currently email address).
  */
 export const claim = base.derive({
   to: capability({
     can: 'voucher/claim',
-    with: URI.match({ protocol: 'did:' }),
+    with: Account,
     nb: {
       /**
-       * URI of the product agent is requesting a voucher of.
+       * DID of the product agent is requesting a voucher/redeem for.
        */
       product: Product,
       /**
        * Verifiable identity on who's behalf behalf claim is made.
        */
+      // Once we roll out DKIM based system we could consider just
+      // using did:mailto: in with field.
       identity: Identity,
-      /**
-       * Optional service DID who's voucher is been requested.
-       */
-      service: URI.match({ protocol: 'did:' }).optional(),
     },
     derives: (child, parent) => {
       return (
         fail(equalWith(child, parent)) ||
         fail(equal(child.nb.product, parent.nb.product, 'product')) ||
         fail(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
-        fail(equal(child.nb.service, parent.nb.service, 'service')) ||
         true
       )
     },
@@ -84,16 +81,15 @@ export const claim = base.derive({
 export const redeem = voucher.derive({
   to: capability({
     can: 'voucher/redeem',
-    with: URI.match({ protocol: 'did:' }),
+    /**
+     * DID of the product which can be installed into a space by invoking
+     * this capability.
+     */
+    with: Product,
     nb: {
       /**
-       * Link of the product voucher is for. Must be the same as `nb.product`
-       * of `voucher/claim` that requested this.
-       */
-      product: Product,
-      /**
        * Verifiable identity to whom voucher is issued. It is a `mailto:` URL
-       * where this delegation is typically sent.
+       * where this delegation was sent.
        */
       identity: Identity,
       /**
@@ -101,12 +97,11 @@ export const redeem = voucher.derive({
        * `vourche/redeem` to the user agent it may omit this field to allow
        * account to choose account.
        */
-      account: URI.match({ protocol: 'did:' }),
+      account: Account,
     },
     derives: (child, parent) => {
       return (
         fail(equalWith(child, parent)) ||
-        fail(equal(child.nb.product, parent.nb.product, 'product')) ||
         fail(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
         fail(equal(child.nb.account, parent.nb.account, 'account')) ||
         true
