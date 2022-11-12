@@ -31,7 +31,7 @@ export class Accounts {
       tableName: 'accounts',
       data: {
         did: capability.nb.account,
-        product: capability.nb.product,
+        product: capability.with,
         email: capability.nb.identity.replace('mailto:', ''),
         agent: invocation.issuer.did(),
       },

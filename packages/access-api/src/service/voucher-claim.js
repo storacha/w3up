@@ -6,29 +6,43 @@ import { delegationToString } from '@web3-storage/access/encoding'
  * @param {import('../bindings').RouteContext} ctx
  */
 export function voucherClaimProvider(ctx) {
+  // Provider should have access to delegated vouchers which it can
+  // redelegate. Currently however we just identify "free-tier" with a
+  // provider DID.
+  const products = new Map([
+    [
+      ctx.signer.did(),
+      Voucher.redeem.delegate({
+        audience: ctx.signer,
+        issuer: ctx.signer,
+        expiration: Infinity,
+        with: ctx.signer.did(),
+        nb: {
+          identity: 'mailto:*',
+        },
+      }),
+    ],
+  ])
+
   return Server.provide(Voucher.claim, async ({ capability, invocation }) => {
-    const proof = await Voucher.redeem.delegate({
-      audience: ctx.signer,
-      issuer: ctx.signer,
-      expiration: Infinity,
-      with: ctx.signer.did(),
-      nb: {
-        product: 'product:*',
-        identity: 'mailto:*',
-        account: 'did:*',
-      },
-    })
+    const productID = capability.nb.product
+    const proof = await products.get(productID)
+    if (!proof) {
+      return new Server.Failure(`Product ${capability.nb.product} is not known`)
+    }
 
     const inv = await Voucher.redeem
       .invoke({
         issuer: ctx.signer,
         audience: invocation.issuer,
-        with: ctx.signer.did(),
+        with: productID,
         lifetimeInSeconds: 60 * 10, // 10 mins
         nb: {
+          // currently we delegate back to the DID on whos behalf claim was
+          // issued. In the future will allow omitting this that voucher could
+          // be requested without specifying account it will be used on.
           account: capability.with,
           identity: capability.nb.identity,
-          product: capability.nb.product,
         },
         proofs: [proof],
       })

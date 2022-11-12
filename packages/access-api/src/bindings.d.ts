@@ -38,7 +38,7 @@ export interface Env {
 
 export interface RouteContext {
   log: Logging
-  signer: Signer
+  signer: Signer<'key'>
   config: ReturnType<typeof loadConfig>
   url: URL
   email: Email
