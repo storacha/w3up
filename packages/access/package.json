@@ -28,6 +28,7 @@
   "exports": {
     ".": "./src/index.js",
     "./capabilities/*": "./src/capabilities/*.js",
+    "./cli/*": "./src/cli/*.js",
     "./stores/*": "./src/stores/*.js",
     "./connection": "./src/connection.js",
     "./types": "./src/types.js",
@@ -46,6 +47,9 @@
       ],
       "capabilities/*": [
         "dist/src/capabilities/*"
+      ],
+      "cli/*": [
+        "dist/src/cli/*"
       ],
       "encoding": [
         "dist/src/encoding"

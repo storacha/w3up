@@ -24,13 +24,13 @@ export async function cmdCreateAccount(opts) {
     const { email } = await inquirer.prompt({
       type: 'input',
       name: 'email',
-      default: 'hugomrdias@gmail.com',
+      default: 'you@example.com',
       message: 'Input your email to validate:',
     })
     spinner.start('Waiting for email validation...')
     try {
       await agent.createAccount(email)
-      spinner.succeed('Account has been created and register with the service.')
+      spinner.succeed('Account has been created and registered with the service.')
     } catch (error) {
       console.error(error)
       // @ts-ignore

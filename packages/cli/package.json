@@ -1,0 +1,26 @@
+{
+  "name": "@web3-storage/cli",
+  "version": "0.0.0",
+  "description": "CLI for web3.storage",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "w3cli": "./src/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT",
+  "dependencies": {
+    "@web3-storage/access": "workspace:^",
+    "@web3-storage/upload-client": "workspace:^",
+    "conf": "^10.1.2",
+    "files-from-path": "^0.2.6",
+    "ora": "^6.1.2",
+    "sade": "^1.7.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.7"
+  }
+}
