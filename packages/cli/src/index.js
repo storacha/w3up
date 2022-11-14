@@ -1,26 +1,19 @@
 #!/usr/bin/env node
 import sade from 'sade'
-import { cmdSetup } from '@web3-storage/access/cli/cmd-setup'
-import { cmdCreateAccount } from '@web3-storage/access/cli/cmd-create-account'
 import { NAME, pkg } from './config.js'
+import { cmdAccountRegister } from './cmd-account-create.js'
 import { cmdUpload } from './cmd-upload.js'
 
 const prog = sade(NAME)
 
 prog
   .version(pkg.version)
-  .option('--env', 'Env', 'staging')
+  .option('--profile', 'Profile to use', 'main')
 
 prog
-  .command('setup')
-  .option('--reset', 'Reset current store.', false)
-  .describe('Setup the web3.storage CLI tool.')
-  .action(cmdSetup)
-
-prog
-  .command('account create')
-  .describe('Create a new account.')
-  .action(cmdCreateAccount)
+  .command('account register <email>')
+  .describe('Register a new account.')
+  .action(cmdAccountRegister)
 
 prog
   .command('upload <path>')

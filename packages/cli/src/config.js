@@ -6,3 +6,5 @@ export const pkg = JSON.parse(
 )
 
 export const NAME = pkg.name.split('/').pop()
+
+export const SERVICE_URL = new URL(process.env.SERVICE_URL ?? 'https://w3access-staging.protocol-labs.workers.dev')

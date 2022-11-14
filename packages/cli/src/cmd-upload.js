@@ -3,7 +3,6 @@ import fs from 'fs'
 import path from 'path'
 import { uploadFile, uploadDirectory, delegateCapabilities } from '@web3-storage/upload-client'
 import { Agent } from '@web3-storage/access'
-import { getService } from '@web3-storage/access/cli/utils'
 import { StoreConf } from '@web3-storage/access/stores/store-conf'
 import ora from 'ora'
 import { filesFromPath } from 'files-from-path'
@@ -28,7 +27,7 @@ export async function cmdUpload (firstPath, opts) {
 
   const exists = await store.exists()
   if (!exists) {
-    console.error('run setup command first.')
+    console.error('run account create command first.')
     process.exit(1)
   }
 

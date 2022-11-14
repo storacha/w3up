@@ -17,10 +17,12 @@
     "@web3-storage/upload-client": "workspace:^",
     "conf": "^10.1.2",
     "files-from-path": "^0.2.6",
+    "inquirer": "^9.1.4",
     "ora": "^6.1.2",
     "sade": "^1.7.4"
   },
   "devDependencies": {
+    "@types/inquirer": "^9.0.2",
     "@types/node": "^18.11.7"
   }
 }

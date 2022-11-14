@@ -261,11 +261,13 @@ importers:
 
   packages/cli:
     specifiers:
+      '@types/inquirer': ^9.0.2
       '@types/node': ^18.11.7
       '@web3-storage/access': workspace:^
       '@web3-storage/upload-client': workspace:^
       conf: ^10.1.2
       files-from-path: ^0.2.6
+      inquirer: ^9.1.4
       ora: ^6.1.2
       sade: ^1.7.4
     dependencies:
@@ -273,9 +275,11 @@ importers:
       '@web3-storage/upload-client': link:../upload-client
       conf: 10.2.0
       files-from-path: 0.2.6
+      inquirer: 9.1.4
       ora: 6.1.2
       sade: 1.8.1
     devDependencies:
+      '@types/inquirer': 9.0.2
       '@types/node': 18.11.9
 
   packages/store:
