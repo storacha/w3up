@@ -8,6 +8,7 @@ import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
 import * as Upload from '../src/upload.js'
 import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
+import { mockService } from './helpers/mocks.js'
 
 describe('Upload', () => {
   it('registers an upload with the service', async () => {
@@ -24,12 +25,7 @@ describe('Upload', () => {
       }),
     ]
 
-    const service = {
-      store: {
-        add: () => {
-          throw new Server.Failure('not expected to be called')
-        },
-      },
+    const service = mockService({
       upload: {
         /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
@@ -44,7 +40,7 @@ describe('Upload', () => {
           return null
         },
       },
-    }
+    })
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({

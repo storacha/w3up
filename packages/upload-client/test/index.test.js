@@ -10,6 +10,7 @@ import { uploadFile, uploadDirectory } from '../src/index.js'
 import { service as id } from './fixtures.js'
 import { randomBytes } from './helpers/random.js'
 import { File } from './helpers/shims.js'
+import { mockService } from './helpers/mocks.js'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -40,7 +41,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    const service = {
+    const service = mockService({
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
@@ -65,7 +66,7 @@ describe('uploadFile', () => {
           return null
         },
       },
-    }
+    })
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({
@@ -118,7 +119,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    const service = {
+    const service = mockService({
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
@@ -143,7 +144,7 @@ describe('uploadDirectory', () => {
           return null
         },
       },
-    }
+    })
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({

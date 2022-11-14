@@ -106,6 +106,7 @@
       "no-void": "off",
       "no-console": "off",
       "no-continue": "off",
+      "jsdoc/check-indentation": "off",
       "jsdoc/require-hyphen-before-param-description": "off"
     },
     "env": {

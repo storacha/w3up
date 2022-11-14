@@ -2,15 +2,37 @@ import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
 import { CAR } from '@ucanto/transport'
 import { ServiceMethod, ConnectionView, Signer, Proof } from '@ucanto/interface'
-import { StoreAdd, UploadAdd } from '@web3-storage/access/capabilities/types'
+import {
+  StoreAdd,
+  StoreList,
+  StoreRemove,
+  UploadAdd,
+  UploadList,
+  UploadRemove,
+} from '@web3-storage/access/capabilities/types'
 import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
 
-export type { StoreAdd, UploadAdd }
+export type {
+  StoreAdd,
+  StoreList,
+  StoreRemove,
+  UploadAdd,
+  UploadList,
+  UploadRemove,
+}
 
 export interface Service {
-  store: { add: ServiceMethod<StoreAdd, StoreAddResponse, never> }
-  upload: { add: ServiceMethod<UploadAdd, null, never> }
+  store: {
+    add: ServiceMethod<StoreAdd, StoreAddResponse, never>
+    list: ServiceMethod<StoreList, ListResponse<StoreListResult>, never>
+    remove: ServiceMethod<StoreRemove, null, never>
+  }
+  upload: {
+    add: ServiceMethod<UploadAdd, null, never>
+    list: ServiceMethod<UploadList, ListResponse<UploadListResult>, never>
+    remove: ServiceMethod<UploadRemove, null, never>
+  }
 }
 
 export type ServiceAbilities =
@@ -27,6 +49,25 @@ export interface StoreAddResponse {
   status: string
   headers: Record<string, string>
   url: string
+}
+
+export interface ListResponse<R> {
+  count: number
+  page: number
+  pageSize: number
+  results?: R[]
+}
+
+export interface StoreListResult {
+  payloadCID: CARLink
+  size: number
+  uploadedAt: number
+}
+
+export interface UploadListResult {
+  carCID: CARLink
+  dataCID: Link<unknown, number, number, Version>
+  uploadedAt: number
 }
 
 export interface InvocationConfig {

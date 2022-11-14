@@ -9,6 +9,7 @@ export const serviceDID = DID.parse(
   'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z'
 )
 
+/** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
 export const connection = connect({
   id: serviceDID,
   encoder: CAR,

@@ -1,5 +1,5 @@
 import { CAR } from '@ucanto/transport'
-import { add as storeAdd } from '@web3-storage/access/capabilities/store'
+import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
 import retry, { AbortError } from 'p-retry'
 import { serviceDID, connection } from './service.js'
 import { findCapability } from './utils.js'
@@ -26,15 +26,14 @@ import { REQUEST_RETRIES } from './constants.js'
  * @returns {Promise<import('./types').CARLink>}
  */
 export async function add({ issuer, proofs }, car, options = {}) {
-  const capability = findCapability(proofs, storeAdd.can)
+  const capability = findCapability(proofs, StoreCapabilities.add.can)
   // TODO: validate blob contains CAR data
   const bytes = new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
-  /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
   const conn = options.connection ?? connection
   const result = await retry(
     async () => {
-      const res = await storeAdd
+      const res = await StoreCapabilities.add
         .invoke({
           issuer,
           audience: serviceDID,
@@ -53,7 +52,9 @@ export async function add({ issuer, proofs }, car, options = {}) {
   )
 
   if (result.error) {
-    throw new Error(`failed ${storeAdd.can} invocation`, { cause: result })
+    throw new Error(`failed ${StoreCapabilities.add.can} invocation`, {
+      cause: result,
+    })
   }
 
   // Return early if it was already uploaded.
@@ -89,8 +90,72 @@ export async function add({ issuer, proofs }, car, options = {}) {
   )
 
   if (!res.ok) {
-    throw new Error('upload failed')
+    throw new Error('store failed')
   }
 
   return link
+}
+
+/**
+ * List CAR files stored by the issuer.
+ *
+ * @param {import('./types').InvocationConfig} invocationConfig Configuration
+ * for the UCAN invocation. An object with `issuer` and `proofs`.
+ *
+ * The `issuer` is the signing authority that is issuing the UCAN
+ * invocation(s). It is typically the user _agent_.
+ *
+ * The `proofs` are a set of capability delegations that prove the issuer
+ * has the capability to perform the action.
+ *
+ * The issuer needs the `store/list` delegated capability.
+ * @param {import('./types').RequestOptions} [options]
+ */
+export async function list({ issuer, proofs }, options = {}) {
+  const capability = findCapability(proofs, StoreCapabilities.list.can)
+  const conn = options.connection ?? connection
+
+  const result = await StoreCapabilities.list
+    .invoke({
+      issuer,
+      audience: serviceDID,
+      // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
+      with: capability.with,
+    })
+    .execute(conn)
+  if (result.error === true) throw result
+
+  return result
+}
+
+/**
+ * Remove a stored CAR file by CAR CID.
+ *
+ * @param {import('./types').InvocationConfig} invocationConfig Configuration
+ * for the UCAN invocation. An object with `issuer` and `proofs`.
+ *
+ * The `issuer` is the signing authority that is issuing the UCAN
+ * invocation(s). It is typically the user _agent_.
+ *
+ * The `proofs` are a set of capability delegations that prove the issuer
+ * has the capability to perform the action.
+ *
+ * The issuer needs the `store/remove` delegated capability.
+ * @param {import('./types').CARLink} link CID of CAR file to remove.
+ * @param {import('./types').RequestOptions} [options]
+ */
+export async function remove({ issuer, proofs }, link, options = {}) {
+  const capability = findCapability(proofs, StoreCapabilities.remove.can)
+  const conn = options.connection ?? connection
+
+  const result = await StoreCapabilities.remove
+    .invoke({
+      issuer,
+      audience: serviceDID,
+      // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
+      with: capability.with,
+      nb: { link },
+    })
+    .execute(conn)
+  if (result?.error === true) throw result
 }

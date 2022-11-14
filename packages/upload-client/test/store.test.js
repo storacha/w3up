@@ -8,6 +8,7 @@ import { add as storeAdd } from '@web3-storage/access/capabilities/store'
 import * as Store from '../src/store.js'
 import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
+import { mockService } from './helpers/mocks.js'
 
 describe('Storage', () => {
   it('stores a DAG with the service', async () => {
@@ -30,7 +31,7 @@ describe('Storage', () => {
       }),
     ]
 
-    const service = {
+    const service = mockService({
       store: {
         /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
@@ -43,12 +44,7 @@ describe('Storage', () => {
           return res
         },
       },
-      upload: {
-        add: () => {
-          throw new Server.Failure('not expected to be called')
-        },
-      },
-    }
+    })
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({
@@ -83,14 +79,7 @@ describe('Storage', () => {
       }),
     ]
 
-    const service = {
-      store: { add: () => res },
-      upload: {
-        add: () => {
-          throw new Server.Failure('not expected to be called')
-        },
-      },
-    }
+    const service = mockService({ store: { add: () => res } })
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({
@@ -112,14 +101,7 @@ describe('Storage', () => {
       url: 'http://localhost:9001', // will fail the test if called
     }
 
-    const service = {
-      store: { add: () => res },
-      upload: {
-        add: () => {
-          throw new Server.Failure('not expected to be called')
-        },
-      },
-    }
+    const service = mockService({ store: { add: () => res } })
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({
