@@ -43,7 +43,6 @@ describe('uploadFile', () => {
 
     const service = mockService({
       store: {
-        /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
@@ -54,7 +53,6 @@ describe('uploadFile', () => {
         },
       },
       upload: {
-        /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
@@ -121,7 +119,6 @@ describe('uploadDirectory', () => {
 
     const service = mockService({
       store: {
-        /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
@@ -132,7 +129,6 @@ describe('uploadDirectory', () => {
         },
       },
       upload: {
-        /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)

@@ -118,13 +118,17 @@ await Upload.add(conf, rootCID, carCIDs)
 - [`ShardStoringStream`](#shardstoringstream)
 - `Store`
   - [`add`](#storeadd)
+  - [`list`](#storelist)
+  - [`remove`](#storeremove)
 - `UnixFS`
   - [`createDirectoryEncoderStream`](#unixfscreatedirectoryencoderstream)
   - [`createFileEncoderStream`](#unixfscreatefileencoderstream)
   - [`encodeDirectory`](#unixfsencodedirectory)
   - [`encodeFile`](#unixfsencodefile)
 - `Upload`
-  - - [`add`](#uploadadd)
+  - [`add`](#uploadadd)
+  - [`list`](#uploadlist)
+  - [`remove`](#uploadremove)
 - [`uploadDirectory`](#uploaddirectory)
 - [`uploadFile`](#uploadfile)
 
@@ -195,6 +199,43 @@ Note: `InvocationConfig` is configuration for the UCAN invocation. It's values c
 - The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
 
 Required delegated capability proofs: `store/add`
+
+### `Store.list`
+
+```ts
+function list(
+  conf: InvocationConfig,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<ListResponse<StoreListResult>>
+```
+
+List CAR files stored by the issuer.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `store/list`
+
+### `Store.remove`
+
+```ts
+function remove(
+  conf: InvocationConfig,
+  link: CID,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<void>
+```
+
+Remove a stored CAR file by CAR CID.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `store/remove`
 
 ### `UnixFS.createDirectoryEncoderStream`
 
@@ -274,6 +315,43 @@ Note: `InvocationConfig` is configuration for the UCAN invocation. It's values c
 - The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
 
 Required delegated capability proofs: `upload/add`
+
+### `Upload.list`
+
+```ts
+function list(
+  conf: InvocationConfig,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<ListResponse<UploadListResult>>
+```
+
+List uploads created by the issuer.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `upload/list`
+
+### `Upload.remove`
+
+```ts
+function remove(
+  conf: InvocationConfig,
+  link: CID,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<void>
+```
+
+Remove a upload by root data CID.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `upload/remove`
 
 ### `uploadDirectory`
 

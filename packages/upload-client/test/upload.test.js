@@ -4,7 +4,7 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
-import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
+import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
 import * as Upload from '../src/upload.js'
 import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
@@ -17,7 +17,7 @@ describe('Upload', () => {
     const car = await randomCAR(128)
 
     const proofs = [
-      await uploadAdd.delegate({
+      await UploadCapabilities.add.delegate({
         issuer: account,
         audience: id,
         with: account.did(),
@@ -27,12 +27,11 @@ describe('Upload', () => {
 
     const service = mockService({
       upload: {
-        /** @param {Server.Invocation<import('../src/types').UploadAdd>} invocation */
         add: (invocation) => {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, 'upload/add')
+          assert.equal(invCap.can, UploadCapabilities.add.can)
           assert.equal(invCap.with, account.did())
           assert.equal(String(invCap.nb.root), car.roots[0].toString())
           assert.equal(invCap.nb.shards?.length, 1)
@@ -52,5 +51,106 @@ describe('Upload', () => {
 
     const root = car.roots[0]
     await Upload.add({ issuer, proofs }, root, [car.cid], { connection })
+  })
+
+  it('lists uploads', async () => {
+    const car = await randomCAR(128)
+    const res = {
+      page: 1,
+      pageSize: 1000,
+      count: 1,
+      results: [
+        {
+          carCID: car.cid,
+          dataCID: car.roots[0],
+          uploadedAt: Date.now(),
+        },
+      ],
+    }
+
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+
+    const proofs = [
+      await UploadCapabilities.list.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        list(invocation) {
+          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, UploadCapabilities.list.can)
+          assert.equal(invCap.with, account.did())
+          return res
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    const list = await Upload.list({ issuer, proofs }, { connection })
+
+    assert.equal(list.count, res.count)
+    assert.equal(list.page, res.page)
+    assert.equal(list.pageSize, res.pageSize)
+    assert(list.results)
+    assert.equal(list.results.length, res.results.length)
+    list.results.forEach((r, i) => {
+      assert.equal(r.carCID.toString(), res.results[i].carCID.toString())
+      assert.equal(r.dataCID.toString(), res.results[i].dataCID.toString())
+      assert.equal(r.uploadedAt, res.results[i].uploadedAt)
+    })
+  })
+
+  it('removes an upload', async () => {
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await UploadCapabilities.remove.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        remove(invocation) {
+          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, UploadCapabilities.remove.can)
+          assert.equal(invCap.with, account.did())
+          assert.equal(String(invCap.nb.root), car.roots[0].toString())
+          return null
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    await Upload.remove({ issuer, proofs }, car.roots[0], { connection })
   })
 })
