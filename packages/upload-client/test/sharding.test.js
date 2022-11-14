@@ -9,6 +9,7 @@ import { createFileEncoderStream } from '../src/unixfs.js'
 import { ShardingStream, ShardStoringStream } from '../src/sharding.js'
 import { service as id } from './fixtures.js'
 import { randomBytes, randomCAR } from './helpers/random.js'
+import { mockService } from './helpers/mocks.js'
 
 describe('ShardingStream', () => {
   it('creates shards from blocks', async () => {
@@ -59,9 +60,8 @@ describe('ShardStoringStream', () => {
       }),
     ]
 
-    const service = {
+    const service = mockService({
       store: {
-        /** @param {Server.Invocation<import('../src/types').StoreAdd>} invocation */
         add(invocation) {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
@@ -73,12 +73,7 @@ describe('ShardStoringStream', () => {
           return res
         },
       },
-      upload: {
-        add: () => {
-          throw new Server.Failure('not expected to be called')
-        },
-      },
-    }
+    })
 
     const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
     const connection = Client.connect({
