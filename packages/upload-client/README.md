@@ -18,7 +18,6 @@ npm install @web3-storage/upload-client
 Obtain the invocation configuration. i.e. the issuer (the signing authority) and proofs that the issuer has been delegated the capabilities to store data and register uploads:
 
 ```js
-import { delegateCapabilities } from '@web3-storage/upload-client'
 import { Agent } from '@web3-storage/access-client'
 import { add as storeAdd } from '@web3-storage/access-client/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/access-client/capabilities/upload'
