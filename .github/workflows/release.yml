@@ -71,4 +71,5 @@ jobs:
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: production
+      environment_url: https://access.web3.storage
     secrets: inherit
