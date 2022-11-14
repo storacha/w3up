@@ -42,9 +42,9 @@ const base = any.or(voucher)
  * user identifier (currently email address).
  *
  * The agent MAY issue claim with own DID or a DID it is delegate of. If `with`
- * is different from `iss`, it is implied that it voucher is claimed for the
+ * is different from `iss`, it is implied that the voucher is claimed for the
  * DID in the `with` field. If `with` is same as `iss` it is implies that
- * voucher is claim for unspecified `did`.
+ * voucher is claimed for an unspecified `did`.
  */
 export const claim = base.derive({
   to: capability({
@@ -62,7 +62,7 @@ export const claim = base.derive({
       /**
        * Optional service DID who's voucher is been requested.
        */
-      service: URI.match({ protocol: 'did:' }).optional(),
+      service: Service.optional(),
     },
     derives: (child, parent) => {
       return (
@@ -98,7 +98,7 @@ export const redeem = voucher.derive({
       identity: Identity,
       /**
        * Space identifier where voucher can be redeemed. When service delegates
-       * `vourche/redeem` to the user agent it may omit this field to allow
+       * `voucher/redeem` to the user agent it may omit this field to allow
        * account to choose account.
        */
       account: URI.match({ protocol: 'did:' }),

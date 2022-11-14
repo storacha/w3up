@@ -91,7 +91,7 @@ export const add = base.derive({
 
 /**
  * Capability removes an upload (identified by it's root CID) from the upload
- * list. Please not that removing an upload does not delete corresponding shards
+ * list. Please note that removing an upload does not delete corresponding shards
  * from the store, however that could be done via `store/remove` invocations.
  */
 export const remove = base.derive({

@@ -86,7 +86,7 @@ export const add = base.derive({
   }),
   /**
    * `store/add` can be derived from the `store/*` & `*` capability
-   * as long as with fields match.
+   * as long as the `with` fields match.
    */
   derives: equalWith,
 })
@@ -113,7 +113,7 @@ export const remove = base.derive({
   }),
   /**
    * `store/remove` can be derived from the `store/*` & `*` capability
-   * as long as with fields match.
+   * as long as the `with` fields match.
    */
   derives: equalWith,
 })
@@ -141,7 +141,7 @@ export const list = base.derive({
   }),
   /**
    * `store/list` can be derived from the `store/*` & `*` capability
-   * as long as with fields match.
+   * as long as the `with` fields match.
    */
   derives: equalWith,
 })
