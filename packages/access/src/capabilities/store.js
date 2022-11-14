@@ -65,7 +65,8 @@ export const add = base.derive({
        * across multiple CAR files and then link each shard with a previous one.
        *
        * Providing this relation tells service that given CAR is shard of the
-       * larger DAG as opposed to it being intentionally partial DAG.
+       * larger DAG as opposed to it being intentionally partial DAG. When DAG is
+       * not sharded, there will be only one `store/add` with `origin` left out.
        */
       origin: Link.optional(),
     },
