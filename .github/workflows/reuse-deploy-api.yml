@@ -5,6 +5,10 @@ on:
       environment:
         required: true
         type: string
+      environment_url:
+        description: URL of the deployed environment. If provided, this will be added to the GitHub environment.
+        required: false
+        type: string
     secrets:
       CF_TOKEN:
         required: true
@@ -24,7 +28,9 @@ on:
 jobs:
   deploy-api:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.environment_url }}
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
