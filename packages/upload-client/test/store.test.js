@@ -5,7 +5,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import { add as storeAdd } from '@web3-storage/access/capabilities/store'
-import { store } from '../src/storage.js'
+import * as Store from '../src/store.js'
 import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 
@@ -58,7 +58,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store({ issuer, proofs }, car, { connection })
+    const carCID = await Store.add({ issuer, proofs }, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -100,7 +100,7 @@ describe('Storage', () => {
       channel: server,
     })
 
-    const carCID = await store({ issuer, proofs }, car, { connection })
+    const carCID = await Store.add({ issuer, proofs }, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -146,7 +146,10 @@ describe('Storage', () => {
     controller.abort() // already aborted
 
     await assert.rejects(
-      store({ issuer, proofs }, car, { connection, signal: controller.signal }),
+      Store.add({ issuer, proofs }, car, {
+        connection,
+        signal: controller.signal,
+      }),
       { name: 'Error', message: 'upload aborted' }
     )
   })

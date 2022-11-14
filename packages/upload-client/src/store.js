@@ -25,7 +25,7 @@ import { REQUEST_RETRIES } from './constants.js'
  * @param {import('./types').RequestOptions} [options]
  * @returns {Promise<import('./types').CARLink>}
  */
-export async function store({ issuer, proofs }, car, options = {}) {
+export async function add({ issuer, proofs }, car, options = {}) {
   const capability = findCapability(proofs, storeAdd.can)
   // TODO: validate blob contains CAR data
   const bytes = new Uint8Array(await car.arrayBuffer())

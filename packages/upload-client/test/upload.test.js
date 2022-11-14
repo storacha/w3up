@@ -5,7 +5,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
-import { register } from '../src/upload.js'
+import * as Upload from '../src/upload.js'
 import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 
@@ -54,8 +54,7 @@ describe('Upload', () => {
       channel: server,
     })
 
-    await register({ issuer, proofs }, car.roots[0], [car.cid], {
-      connection,
-    })
+    const root = car.roots[0]
+    await Upload.add({ issuer, proofs }, root, [car.cid], { connection })
   })
 })

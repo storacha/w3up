@@ -1,6 +1,6 @@
 import Queue from 'p-queue'
 import { encode } from './car.js'
-import { store } from './storage.js'
+import { add } from './store.js'
 
 // most thing are < 30MB
 const SHARD_SIZE = 1024 * 1024 * 30
@@ -89,7 +89,7 @@ export class ShardStoringStream extends TransformStream {
           async () => {
             try {
               const opts = { ...options, signal: abortController.signal }
-              const cid = await store({ issuer, proofs }, car, opts)
+              const cid = await add({ issuer, proofs }, car, opts)
               const { version, roots, size } = car
               controller.enqueue({ version, roots, cid, size })
             } catch (err) {

@@ -30,7 +30,7 @@
     "./car": "./src/car.js",
     "./sharding": "./src/sharding.js",
     "./upload": "./src/upload.js",
-    "./storage": "./src/storage.js",
+    "./store": "./src/store.js",
     "./unixfs": "./src/unixfs.js"
   },
   "typesVersions": {
@@ -44,8 +44,8 @@
       "upload": [
         "dist/src/upload.d.ts"
       ],
-      "storage": [
-        "dist/src/storage.d.ts"
+      "store": [
+        "dist/src/store.d.ts"
       ],
       "unixfs": [
         "dist/src/unixfs.d.ts"

@@ -24,7 +24,7 @@ import { REQUEST_RETRIES } from './constants.js'
  * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
  * @param {import('./types').RequestOptions} [options]
  */
-export async function register({ issuer, proofs }, root, shards, options = {}) {
+export async function add({ issuer, proofs }, root, shards, options = {}) {
   const capability = findCapability(proofs, uploadAdd.can)
   /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
   const conn = options.connection ?? connection

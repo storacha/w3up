@@ -27,11 +27,6 @@ const agent = await Agent.create({ store })
 
 // // Note: you need to create and register an account 1st time:
 // await agent.createAccount('you@youremail.com')
-//
-// // ...and delegate capabilities from the account, to the agent, allowing it
-// // to use the upload API:
-// const delegation = await delegateCapabilities(agent.data.accounts[0], agent.issuer)
-// await agent.addDelegation(delegation)
 
 const conf = {
   issuer: agent.issuer,
@@ -66,16 +61,16 @@ const cid = await uploadDirectory(conf, [
 The buffering API loads all data into memory so is suitable only for small files. The root data CID is obtained before any transfer to the service takes place.
 
 ```js
-import { UnixFS, CAR, Storage, Upload } from '@web3-storage/upload-client'
+import { UnixFS, CAR, Store, Upload } from '@web3-storage/upload-client'
 
 // Encode a file as a DAG, get back a root data CID and a set of blocks
 const { cid, blocks } = await UnixFS.encodeFile(file)
 // Encode the DAG as a CAR file
 const car = await CAR.encode(blocks, cid)
 // Store the CAR file to the service
-const carCID = await Storage.store(conf, car)
+const carCID = await Store.add(conf, car)
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Upload.register(conf, cid, [carCID])
+await Upload.add(conf, cid, [carCID])
 ```
 
 #### Streaming API
@@ -113,7 +108,7 @@ const rootCID = metadatas[metadatas.length - 1].roots[0]
 const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Upload.register(conf, rootCID, carCIDs)
+await Upload.add(conf, rootCID, carCIDs)
 ```
 
 ## API
@@ -122,15 +117,15 @@ await Upload.register(conf, rootCID, carCIDs)
   - [`encode`](#carencode)
 - [`ShardingStream`](#shardingstream)
 - [`ShardStoringStream`](#shardstoringstream)
-- `Storage`
-  - [`store`](#storagestore)
+- `Store`
+  - [`add`](#storeadd)
 - `UnixFS`
   - [`createDirectoryEncoderStream`](#unixfscreatedirectoryencoderstream)
   - [`createFileEncoderStream`](#unixfscreatefileencoderstream)
   - [`encodeDirectory`](#unixfsencodedirectory)
   - [`encodeFile`](#unixfsencodefile)
 - `Upload`
-  - - [`register`](#uploadregister)
+  - - [`add`](#uploadadd)
 - [`uploadDirectory`](#uploaddirectory)
 - [`uploadFile`](#uploadfile)
 
@@ -183,10 +178,10 @@ Note: an "upload" must be registered in order to link multiple shards together a
 
 The writeable side of this transform stream accepts `CARFile`s and the readable side yields `CARMetadata`, which contains the CAR CID, it's size (in bytes) and it's roots (if it has any).
 
-### `Storage.store`
+### `Store.add`
 
 ```ts
-function store(
+function add(
   conf: InvocationConfig,
   car: Blob,
   options: { retries?: number; signal?: AbortSignal } = {}
@@ -261,10 +256,10 @@ const { cid, blocks } = await encodeFile(new File(['data'], 'doc.txt'))
 // Note: file name is not preserved - use encodeDirectory if required.
 ```
 
-### `Upload.register`
+### `Upload.add`
 
 ```ts
-function register(
+function add(
   conf: InvocationConfig,
   root: CID,
   shards: CID[],

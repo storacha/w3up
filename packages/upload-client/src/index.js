@@ -1,7 +1,4 @@
-import { delegate } from '@ucanto/core'
-import { store as storeStar } from '@web3-storage/access/capabilities/store'
-import { upload as uploadStar } from '@web3-storage/access/capabilities/upload'
-import * as Storage from './storage.js'
+import * as Storage from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
@@ -98,29 +95,6 @@ async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
 
   if (root == null) throw new Error('missing root CID')
 
-  await Upload.register({ issuer, proofs }, root, shards, options)
+  await Upload.add({ issuer, proofs }, root, shards, options)
   return root
-}
-
-/**
- * Delegate upload API capabilities from the issuer to the audience.
- *
- * @param {import('@ucanto/interface').Signer} issuer
- * @param {import('@ucanto/interface').Principal} audience
- * @param {import('@ucanto/interface').Tuple<import('./types').ServiceAbilities>} [abilities]
- */
-export async function delegateCapabilities(
-  issuer,
-  audience,
-  abilities = [storeStar.can, uploadStar.can]
-) {
-  const capabilities = abilities.map((can) => ({ can, with: issuer.did() }))
-  if (!capabilities.length) throw new Error('at least one ability is required')
-  return await delegate({
-    issuer,
-    audience,
-    // @ts-expect-error
-    capabilities,
-    expiration: Infinity,
-  })
 }
