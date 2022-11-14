@@ -10,8 +10,6 @@ import {
   UploadList,
   UploadRemove,
 } from '@web3-storage/access/capabilities/types'
-import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
-import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
 
 export type {
   StoreAdd,
@@ -34,16 +32,6 @@ export interface Service {
     remove: ServiceMethod<UploadRemove, null, never>
   }
 }
-
-export type ServiceAbilities =
-  | typeof StoreCapabilities.store.can
-  | typeof StoreCapabilities.add.can
-  | typeof StoreCapabilities.remove.can
-  | typeof StoreCapabilities.list.can
-  | typeof UploadCapabilities.upload.can
-  | typeof UploadCapabilities.add.can
-  | typeof UploadCapabilities.remove.can
-  | typeof UploadCapabilities.list.can
 
 export interface StoreAddResponse {
   status: string
