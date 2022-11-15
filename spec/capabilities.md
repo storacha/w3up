@@ -91,13 +91,13 @@ Example:
 
 Fields marked as "required" below must be present in the invocation, but may be absent in capability delegations. 
 
-| field       | value         | required? | context                                                             |
-| ----------- | ------------- | --------- | ------------------------------------------------------------------- |
-| `can`       | `store/add`   | ✅         | The ability to add CAR data to a memory space.                      |
-| `with`      | `did:*`       | ✅         | The `did:key` URI for the CAR's destination memory space            |
-| `nb.link`   | `bagk123...`  | ✅         | CID of CAR that the user wants to store                             |
-| `nb.origin` | `bagkabc...`  | ⛔         | Optional link to related CARs. See below for more details.          |
-| `nb.size`   | size in bytes | ✅         | If the `size` caveat is present, the uploaded CAR must be `<= size` |
+| field       | value                             | required? | context                                                             |
+| ----------- | --------------------------------- | --------- | ------------------------------------------------------------------- |
+| `can`       | `store/add`                       | ✅         | The ability to add CAR data to a memory space.                      |
+| `with`      | URI string, e.g. `did:key:123...` | ✅         | The `did:key` URI for the CAR's destination memory space            |
+| `nb.link`   | CAR CID string, e.g. `bag123...`  | ✅         | CID of CAR that the user wants to store                             |
+| `nb.origin` | CAR CID string, e.g. `bagabc...`  | ⛔         | Optional link to related CARs. See below for more details.          |
+| `nb.size`   | size in bytes                     | ✅         | If the `size` caveat is present, the uploaded CAR must be `<= size` |
 
 The `nb.origin` field may be set to provide a link to a related CAR file. This is useful when storing large DAGs that are sharded across multiple CAR files. In this case, the agent can link each uploaded shard with a previous one. Providing the `origin` field informs the service that the CAR being stored is a shard of the larger DAG, as opposed to an intentionally partial DAG. 
 
@@ -119,7 +119,7 @@ This may or may not cause the CAR to be removed completely from Elastic IPFS; fo
 
 When invoking `store/remove`, the `link` caveat must be set to the CID of the CAR file to remove. 
 
-If a delegation contains a `link` caveat, an invocation derived from it must have the same CAR CID in it's `link` field. A delegation without a `link` caveat may be invoked with any `link` value.
+If a delegation contains a `link` caveat, an invocation derived from it must have the same CAR CID in its `link` field. A delegation without a `link` caveat may be invoked with any `link` value.
 
 #### Invocation
 
@@ -133,11 +133,11 @@ If a delegation contains a `link` caveat, an invocation derived from it must hav
 }
 ```
 
-| field     | value          | required? | context                                             |
-| --------- | -------------- | --------- | --------------------------------------------------- |
-| `can`     | `store/remove` | ✅         | The ability to remove CAR data from a memory space. |
-| `with`    | `did:*`        | ✅         | The `did:key` URI for the CAR's memory space        |
-| `nb.link` | `bag...`       | ✅         | The CID of the CAR file to remove                   |
+| field     | value                             | required? | context                                             |
+| --------- | --------------------------------- | --------- | --------------------------------------------------- |
+| `can`     | `store/remove`                    | ✅         | The ability to remove CAR data from a memory space. |
+| `with`    | URI string, e.g. `did:key:123...` | ✅         | The `did:key` URI for the CAR's memory space        |
+| `nb.link` | CAR CID string, e.g. `bag...`     | ✅         | The CID of the CAR file to remove                   |
 
 ### `store/list`
 
@@ -155,18 +155,78 @@ The `with` field of the invocation must be set to the DID of the memory space to
 
 None currently, but this is expected to change once pagination is fully implemented.
 
-## `upload/*` namespace
+## `upload/` namespace
 
-Capabilities relating to "uploads", which consist of a root CID for some content, as well as links the the CARs containing the content blocks.
+Capabilities relating to "uploads", which represent user data that is contained in one or more CAR files that have previously been stored using [`store/add`](#storeadd).
+
+An upload is essentially an index that maps "data CIDs" to CAR CIDs. Data CIDs are the root CID of user-uploaded data items, for example, files that have been encoded into UnixFs. A given data item may be stored in a single CAR, or it may be split into multiple CAR "shards." 
+
+Similarly, a CAR can potentially contain many data items. This is true even if the CAR has only a single root CID. For example, when storing a CAR containing a nested directory structure, you could create one "upload" for the root of the directory structure, and a separate upload for a file nested inside.
+
+### `upload/*`
+
+The `upload/*` capability can be delegated to a user agent, but cannot be invoked directly. Instead, it allows the audience to derive any capability in the `upload/` namespace, provided the resource URI matches the one in the `upload/*` capability delegation.
+
+The `upload/*` capability (and all capabilities in the `upload/` namespace) can be derived from a `*` "super user" capability with a matching resource URI.
 
 ### `upload/add`
 
+> Add an upload to a memory space.
+
+Can be invoked to register a given "data CID" as being contained in a given set of CARs. The resulting "upload" will be associated with the memory space identified by the DID in the `with` field.
+
+#### Derivations
+
+`upload/add` can be derived from an `upload/*` or `*` capability with a matching `with` resource URI.
+
+#### Caveats
+
+When invoking `upload/add`, the `root` caveat must be set to the root CID of the data item. 
+
+The `shards` array must contain at least one CID of a CAR file, which is expected to have been previously stored. 
+
+Taken together, the CARs in the `shards` array should contain all the blocks in the DAG identified by the `root` CID.
+
+| field       | value                                                    | required? | context                                                         |
+| ----------- | -------------------------------------------------------- | --------- | --------------------------------------------------------------- |
+| `can`       | `upload/add`                                             | ✅         | The ability to add uploads to the index                         |
+| `with`      | URI string, e.g. `did:key:123...`                        | ✅         | The `did:` URI of the memory space to add to                    |
+| `nb.root`   | data CID string, e.g. `bafy...`                          | ✅         | The CID of the data item that was uploaded                      |
+| `nb.shards` | array of CID strings, e.g. `[ "bag123...", "bag234..."]` | ✅         | The CIDs of CAR files containing the full DAG for the data item |
+
+
 ### `upload/remove`
+
+> Remove an upload from a memory space.
+
+`upload/remove` can be invoked to remove the link between an uploaded data CID and the CARs containing the data. 
+
+Note that this will not remove the stored CARs; you will need to use [`store/remove`](#storeremove) to remove the CARs once all uploads referencing those CARs have been removed.
+
+#### Derivations
+
+`upload/remove` can be derived from an `upload/*` or `*` capability with a matching `with` resource URI.
+
+#### Caveats
+
+The `with` resource URI must be set to the DID of the memory space to remove the upload from.
+
+The `root` caveat must contain the root CID of the data item to remove.
+
+| field     | value                             | required? | context                                                      |
+| --------- | --------------------------------- | --------- | ------------------------------------------------------------ |
+| `can`     | `upload/remove`                   | ✅         | The ability to remove uploads from the index                 |
+| `with`    | URI string, e.g. `did:key:123...` | ✅         | The `did:` URI of the memory space to remove the upload from |
+| `nb.root` | data CID string, e.g. `bafy...`   | ✅         | The CID of the data item to remove                           |
+
 
 ### `upload/list`
 
+TODO
 
 ## `voucher/*` namespace
+
+TODO
 
 ### `voucher/claim`
 
