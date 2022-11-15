@@ -31,7 +31,7 @@ export const add = base.derive({
     can: 'store/add',
     with: URI.match({ protocol: 'did:' }),
     nb: {
-      link: Link.optional(),
+      link: Link.link(),
       origin: Link.optional(),
       size: Schema.integer().optional(),
     },

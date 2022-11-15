@@ -155,6 +155,7 @@ describe('store capabilities', function () {
         audience: bob,
         with: account.did(),
         nb: {
+          link: parseLink('bafkqaaa'),
           size: 1024,
         },
         proofs: [await any],
@@ -223,12 +224,14 @@ describe('store capabilities', function () {
     const json = JSON.stringify(size)
     it(`store/add size must be an int not ${json}`, async () => {
       const proofs = [await any]
+      const link = await createCarCid('bafkqaaa')
       assert.throws(() => {
         Store.add.invoke({
           issuer: alice,
           audience: w3,
           with: account.did(),
           nb: {
+            link,
             // @ts-expect-error
             size,
           },
@@ -276,6 +279,7 @@ describe('store capabilities', function () {
         audience: w3,
         with: account.did(),
         nb: {
+          link: parseLink('bafkqaaa'),
           size: 1024.2,
         },
         proofs,
