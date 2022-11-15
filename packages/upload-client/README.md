@@ -58,7 +58,7 @@ const cid = await uploadDirectory(conf, [
 
 #### Buffering API
 
-The buffering API loads all data into memory so is suitable only for small files. The root data CID is obtained before any transfer to the service takes place.
+The buffering API loads all data into memory so is suitable only for small files. The root data CID is derived from the data before any transfer to the service takes place.
 
 ```js
 import { UnixFS, CAR, Store, Upload } from '@web3-storage/upload-client'
