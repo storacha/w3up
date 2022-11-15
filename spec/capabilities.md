@@ -12,7 +12,7 @@ A capability consists of several components:
 
 In the definitions below, we identify capabilities by the ability name, which is used by the service provider to route invocations to the correct handler. The definitions include what kinds of resource URI are acceptable, as well as optional and required caveats that can be included in an invocation.
 
-The caveats are used for two complementary purposes. When used in an invocation, they act as "function parameters" for the remote procedure call, giving the capability provider the context they need to fulfil the request. For example, the `link` caveat in a `store/add` invocation specifies the CID of the CAR to be stored.
+The caveats are used for two complementary purposes. When used in an invocation, they act as "function parameters" for the remote procedure call, giving the capability provider the context they need to fulfill the request. For example, the `link` caveat in a `store/add` invocation specifies the CID of the CAR to be stored.
 
 When used in a delegation, caveats act as constraints on the values allowed in an invocation. For example, if a `store/add` delegation has a `size` caveat of 10MB, your invocation's `size` caveat must be less than or equal to 10MB.
 
