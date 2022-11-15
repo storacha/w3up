@@ -15,7 +15,7 @@ npm install @web3-storage/upload-client
 
 ### Create an Agent
 
-An Agent provides an `issuer` (a key linked to your account) and `proofs` to show your `issuer` has been delegated the capabilities to store data and register uploads. 
+An Agent provides an `issuer` (a key linked to your account) and `proofs` to show your `issuer` has been delegated the capabilities to store data and register uploads.
 
 ```js
 import { Agent } from '@web3-storage/access-client'
@@ -35,7 +35,7 @@ const conf = {
 
 ### Uploading files
 
-Once you have the `issuer` and `proofs`, you can upload a directory of files by passing that invocation config to `uploadDirectory` along with your list of files to upload. 
+Once you have the `issuer` and `proofs`, you can upload a directory of files by passing that invocation config to `uploadDirectory` along with your list of files to upload.
 
 You can get your list of Files from a [`<input type="file">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file) element in the browser or using [`files-from-path`](https://npm.im/files-from-path) in Node.js
 
@@ -113,6 +113,8 @@ await Upload.add(conf, rootCID, carCIDs)
 
 ## API
 
+- [`uploadDirectory`](#uploaddirectory)
+- [`uploadFile`](#uploadfile)
 - `CAR`
   - [`encode`](#carencode)
 - [`ShardingStream`](#shardingstream)
@@ -130,10 +132,54 @@ await Upload.add(conf, rootCID, carCIDs)
   - [`add`](#uploadadd)
   - [`list`](#uploadlist)
   - [`remove`](#uploadremove)
-- [`uploadDirectory`](#uploaddirectory)
-- [`uploadFile`](#uploadfile)
 
 ---
+
+### `uploadDirectory`
+
+```ts
+function uploadDirectory(
+  conf: InvocationConfig,
+  files: File[],
+  options: {
+    retries?: number
+    signal?: AbortSignal
+    onShardStored: ShardStoredCallback
+  } = {}
+): Promise<CID>
+```
+
+Uploads a directory of files to the service and returns the root data CID for the generated DAG. All files are added to a container directory, with paths in file names preserved.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `store/add`, `upload/add`
+
+### `uploadFile`
+
+```ts
+function uploadFile(
+  conf: InvocationConfig,
+  file: Blob,
+  options: {
+    retries?: number
+    signal?: AbortSignal
+    onShardStored: ShardStoredCallback
+  } = {}
+): Promise<CID>
+```
+
+Uploads a file to the service and returns the root data CID for the generated DAG.
+
+Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+
+- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+Required delegated capability proofs: `store/add`, `upload/add`
 
 ### `CAR.encode`
 
@@ -353,52 +399,6 @@ Note: `InvocationConfig` is configuration for the UCAN invocation. It's values c
 - The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
 
 Required delegated capability proofs: `upload/remove`
-
-### `uploadDirectory`
-
-```ts
-function uploadDirectory(
-  conf: InvocationConfig,
-  files: File[],
-  options: {
-    retries?: number
-    signal?: AbortSignal
-    onShardStored: ShardStoredCallback
-  } = {}
-): Promise<CID>
-```
-
-Uploads a directory of files to the service and returns the root data CID for the generated DAG. All files are added to a container directory, with paths in file names preserved.
-
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
-Required delegated capability proofs: `store/add`, `upload/add`
-
-### `uploadFile`
-
-```ts
-function uploadFile(
-  conf: InvocationConfig,
-  file: Blob,
-  options: {
-    retries?: number
-    signal?: AbortSignal
-    onShardStored: ShardStoredCallback
-  } = {}
-): Promise<CID>
-```
-
-Uploads a file to the service and returns the root data CID for the generated DAG.
-
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
-Required delegated capability proofs: `store/add`, `upload/add`
 
 ## Contributing
 
