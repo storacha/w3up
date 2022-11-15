@@ -13,9 +13,9 @@ npm install @web3-storage/upload-client
 
 [API Reference](#api)
 
-### Step 0
+### Create an Agent
 
-Obtain the invocation configuration. i.e. the issuer (the signing authority) and proofs that the issuer has been delegated the capabilities to store data and register uploads:
+An Agent provides an `issuer` (a key linked to your account) and `proofs` to show your `issuer` has been delegated the capabilities to store data and register uploads. 
 
 ```js
 import { Agent } from '@web3-storage/access-client'
