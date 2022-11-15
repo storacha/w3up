@@ -1,5 +1,5 @@
 {
   "packages/wallet": "1.0.0",
-  "packages/access": "4.0.2",
+  "packages/access": "5.0.0",
   "packages/access-api": "3.0.0"
 }
