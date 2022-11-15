@@ -151,12 +151,9 @@ function uploadDirectory(
 
 Uploads a directory of files to the service and returns the root data CID for the generated DAG. All files are added to a container directory, with paths in file names preserved.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
 Required delegated capability proofs: `store/add`, `upload/add`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `uploadFile`
 
@@ -174,12 +171,9 @@ function uploadFile(
 
 Uploads a file to the service and returns the root data CID for the generated DAG.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
 Required delegated capability proofs: `store/add`, `upload/add`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `CAR.encode`
 
@@ -189,11 +183,7 @@ function encode(blocks: Iterable<Block>, root?: CID): Promise<CARFile>
 
 Encode a DAG as a CAR file.
 
-Note: `CARFile` is just a `Blob` with two extra properties:
-
-```ts
-type CARFile = Blob & { version: 1; roots: CID[] }
-```
+More information: [`CARFile`](#carfile)
 
 Example:
 
@@ -210,11 +200,7 @@ class ShardingStream extends TransformStream<Block, CARFile>
 
 Shard a set of blocks into a set of CAR files. The last block written to the stream is assumed to be the DAG root and becomes the CAR root CID for the last CAR output.
 
-Note: `CARFile` is just a `Blob` with two extra properties:
-
-```ts
-type CARFile = Blob & { version: 1; roots: CID[] }
-```
+More information: [`CARFile`](#carfile)
 
 ### `ShardStoringStream`
 
@@ -240,12 +226,9 @@ function add(
 
 Store a CAR file to the service.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
 Required delegated capability proofs: `store/add`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Store.list`
 
@@ -258,12 +241,9 @@ function list(
 
 List CAR files stored by the issuer.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
 Required delegated capability proofs: `store/list`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Store.remove`
 
@@ -277,12 +257,9 @@ function remove(
 
 Remove a stored CAR file by CAR CID.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
 Required delegated capability proofs: `store/remove`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `UnixFS.createDirectoryEncoderStream`
 
@@ -356,12 +333,9 @@ function add(
 
 Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multipe CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
 Required delegated capability proofs: `upload/add`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Upload.list`
 
@@ -374,12 +348,9 @@ function list(
 
 List uploads created by the issuer.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
-
-- The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
 Required delegated capability proofs: `upload/list`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Upload.remove`
 
@@ -393,12 +364,26 @@ function remove(
 
 Remove a upload by root data CID.
 
-Note: `InvocationConfig` is configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Step 0](#step-0) for an example. It is an object with `issuer` and `proofs`:
+Required delegated capability proofs: `upload/remove`
+
+More information: [`InvocationConfig`](#invocationconfig)
+
+## Types
+
+### `CARFile`
+
+A `Blob` with two extra properties:
+
+```ts
+type CARFile = Blob & { version: 1; roots: CID[] }
+```
+
+### `InvocationConfig`
+
+This is the configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Create an Agent](#create-an-agent) for an example. It is an object with `issuer` and `proofs`:
 
 - The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
 - The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
-
-Required delegated capability proofs: `upload/remove`
 
 ## Contributing
 
