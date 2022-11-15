@@ -13,9 +13,9 @@ npm install @web3-storage/upload-client
 
 [API Reference](#api)
 
-### Step 0
+### Create an Agent
 
-Obtain the invocation configuration. i.e. the issuer (the signing authority) and proofs that the issuer has been delegated the capabilities to store data and register uploads:
+An Agent provides an `issuer` (a key linked to your account) and `proofs` to show your `issuer` has been delegated the capabilities to store data and register uploads. 
 
 ```js
 import { Agent } from '@web3-storage/access-client'
@@ -24,7 +24,7 @@ import { add as uploadAdd } from '@web3-storage/access-client/capabilities/uploa
 
 const agent = await Agent.create({ store })
 
-// // Note: you need to create and register an account 1st time:
+// Note: you need to create and register an account 1st time:
 // await agent.createAccount('you@youremail.com')
 
 const conf = {
@@ -34,6 +34,10 @@ const conf = {
 ```
 
 ### Uploading files
+
+Once you have the `issuer` and `proofs`, you can upload a directory of files by passing that invocation config to `uploadDirectory` along with your list of files to upload. 
+
+You can get your list of Files from a [`<input type="file">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file) element in the browser or using [`files-from-path`](https://npm.im/files-from-path) in Node.js
 
 ```js
 import { uploadFile } from '@web3-storage/upload-client'
@@ -48,16 +52,13 @@ const cid = await uploadDirectory(conf, [
   new File(['doc0'], 'doc0.txt'),
   new File(['doc1'], 'dir/doc1.txt'),
 ])
-
-// Note: you can use https://npm.im/files-from-path to read files from the
-// filesystem in Nodejs.
 ```
 
 ### Advanced usage
 
 #### Buffering API
 
-The buffering API loads all data into memory so is suitable only for small files. The root data CID is obtained before any transfer to the service takes place.
+The buffering API loads all data into memory so is suitable only for small files. The root data CID is derived from the data before any transfer to the service takes place.
 
 ```js
 import { UnixFS, CAR, Store, Upload } from '@web3-storage/upload-client'
@@ -103,7 +104,7 @@ await UnixFS.createFileEncoderStream(file)
   )
 
 // The last CAR stored contains the root data CID
-const rootCID = metadatas[metadatas.length - 1].roots[0]
+const rootCID = metadatas.at(-1).roots[0]
 const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
