@@ -143,6 +143,18 @@ If a delegation contains a `link` caveat, an invocation derived from it must hav
 
 > Obtain a list of stored CARs
 
+The `store/list` capability can be invoked to request a list of CARs in a given memory space.
+
+The `with` field of the invocation must be set to the DID of the memory space to be listed.
+
+#### Derivations
+
+`store/list` can be derived from a `store/*` or `*` capability with a matching `with` field.
+
+#### Caveats
+
+None currently, but this is expected to change once pagination is fully implemented.
+
 ## `upload/*` namespace
 
 Capabilities relating to "uploads", which consist of a root CID for some content, as well as links the the CARs containing the content blocks.
