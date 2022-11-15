@@ -104,7 +104,7 @@ await UnixFS.createFileEncoderStream(file)
   )
 
 // The last CAR stored contains the root data CID
-const rootCID = metadatas[metadatas.length - 1].roots[0]
+const rootCID = metadatas.at(-1).roots[0]
 const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
