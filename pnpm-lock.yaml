@@ -26,13 +26,13 @@ importers:
       '@types/mocha': ^10.0.0
       '@types/node': ^18.11.7
       '@types/ws': ^8.5.3
-      '@ucanto/client': ^3.0.1
-      '@ucanto/core': ^3.0.1
-      '@ucanto/interface': ^3.0.0
-      '@ucanto/principal': ^3.0.0
-      '@ucanto/server': ^3.0.1
-      '@ucanto/transport': ^3.0.1
-      '@ucanto/validator': ^3.0.1
+      '@ucanto/client': ^3.0.2
+      '@ucanto/core': ^3.0.2
+      '@ucanto/interface': ^3.0.1
+      '@ucanto/principal': ^3.0.1
+      '@ucanto/server': ^3.0.4
+      '@ucanto/transport': ^3.0.2
+      '@ucanto/validator': ^3.0.4
       '@web-std/fetch': ^4.1.0
       assert: ^2.0.0
       bigint-mod-arith: ^3.1.2
@@ -65,13 +65,13 @@ importers:
       '@ipld/dag-ucan': 2.0.1
       '@noble/ed25519': 1.7.1
       '@types/ws': 8.5.3
-      '@ucanto/client': 3.0.1
-      '@ucanto/core': 3.0.1
-      '@ucanto/interface': 3.0.0
-      '@ucanto/principal': 3.0.0
-      '@ucanto/server': 3.0.1
-      '@ucanto/transport': 3.0.1
-      '@ucanto/validator': 3.0.1
+      '@ucanto/client': 3.0.2
+      '@ucanto/core': 3.0.2
+      '@ucanto/interface': 3.0.1
+      '@ucanto/principal': 3.0.1
+      '@ucanto/server': 3.0.4
+      '@ucanto/transport': 3.0.2
+      '@ucanto/validator': 3.0.4
       '@web-std/fetch': 4.1.0
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
@@ -117,13 +117,13 @@ importers:
       '@types/git-rev-sync': ^2.0.0
       '@types/node': ^18.11.7
       '@types/qrcode': ^1.5.0
-      '@ucanto/client': ^3.0.1
-      '@ucanto/core': ^3.0.1
-      '@ucanto/interface': ^3.0.0
-      '@ucanto/principal': ^3.0.0
-      '@ucanto/server': ^3.0.1
-      '@ucanto/transport': ^3.0.1
-      '@ucanto/validator': ^3.0.1
+      '@ucanto/client': ^3.0.2
+      '@ucanto/core': ^3.0.2
+      '@ucanto/interface': ^3.0.1
+      '@ucanto/principal': ^3.0.1
+      '@ucanto/server': ^3.0.4
+      '@ucanto/transport': ^3.0.2
+      '@ucanto/validator': ^3.0.4
       '@web3-storage/access': workspace:^
       '@web3-storage/worker-utils': 0.4.3-dev
       assert: ^2.0.0
@@ -152,13 +152,13 @@ importers:
       wrangler: ^2.1.13
     dependencies:
       '@ipld/dag-ucan': 2.0.1
-      '@ucanto/client': 3.0.1
-      '@ucanto/core': 3.0.1
-      '@ucanto/interface': 3.0.0
-      '@ucanto/principal': 3.0.0
-      '@ucanto/server': 3.0.1
-      '@ucanto/transport': 3.0.1
-      '@ucanto/validator': 3.0.1
+      '@ucanto/client': 3.0.2
+      '@ucanto/core': 3.0.2
+      '@ucanto/interface': 3.0.1
+      '@ucanto/principal': 3.0.1
+      '@ucanto/server': 3.0.4
+      '@ucanto/transport': 3.0.2
+      '@ucanto/validator': 3.0.4
       '@web3-storage/access': link:../access
       '@web3-storage/worker-utils': 0.4.3-dev
       multiformats: 10.0.2
@@ -259,24 +259,6 @@ importers:
       typescript: 4.8.4
       wrangler: 2.1.15
 
-  packages/upload-client:
-    specifiers:
-      '@types/assert': ^1.5.6
-      '@types/mocha': ^10.0.0
-      assert: ^2.0.0
-      hd-scripts: ^3.0.2
-      mocha: ^10.1.0
-      playwright-test: ^8.1.1
-      typescript: ^4.8.4
-    devDependencies:
-      '@types/assert': 1.5.6
-      '@types/mocha': 10.0.0
-      assert: 2.0.0
-      hd-scripts: 3.0.2
-      mocha: 10.1.0
-      playwright-test: 8.1.1
-      typescript: 4.8.4
-
   packages/store:
     specifiers:
       '@types/chai': ^4.3.0
@@ -303,9 +285,9 @@ importers:
       '@ucanto/core': 3.0.1
       '@ucanto/interface': 3.0.0
       '@ucanto/principal': 3.0.0
-      '@ucanto/server': 3.0.1
+      '@ucanto/server': 3.0.4
       '@ucanto/transport': 3.0.1
-      '@ucanto/validator': 3.0.1
+      '@ucanto/validator': 3.0.4
       '@web-std/fetch': 4.1.0
       '@web3-storage/sigv4': 1.0.2
       multiformats: 10.0.2
@@ -315,6 +297,24 @@ importers:
       '@types/mocha': 10.0.0
       chai: 4.3.6
       chai-subset: 1.6.0
+      hd-scripts: 3.0.2
+      mocha: 10.1.0
+      playwright-test: 8.1.1
+      typescript: 4.8.4
+
+  packages/upload-client:
+    specifiers:
+      '@types/assert': ^1.5.6
+      '@types/mocha': ^10.0.0
+      assert: ^2.0.0
+      hd-scripts: ^3.0.2
+      mocha: ^10.1.0
+      playwright-test: ^8.1.1
+      typescript: ^4.8.4
+    devDependencies:
+      '@types/assert': 1.5.6
+      '@types/mocha': 10.0.0
+      assert: 2.0.0
       hd-scripts: 3.0.2
       mocha: 10.1.0
       playwright-test: 8.1.1
@@ -1425,7 +1425,14 @@ packages:
   /@ucanto/client/3.0.1:
     resolution: {integrity: sha512-rK0M3kqLHlvLTp6P9jyqjSOdzGbulawxzfFOh0cV4D6FLLjpHwNq5NpXZ7n6AbQ7H1EQeWla/gNgLKVGWXKrMQ==}
     dependencies:
-      '@ucanto/interface': 3.0.0
+      '@ucanto/interface': 3.0.1
+      multiformats: 10.0.2
+    dev: false
+
+  /@ucanto/client/3.0.2:
+    resolution: {integrity: sha512-viYv/fLPvH/POFIfVoIaK4B8KSYIBLNZeVFCdnhSbS4/m6t3h4G0Z7GMjNyP1mZG/CGjAOmHxeNvMUr0sNCyVQ==}
+    dependencies:
+      '@ucanto/interface': 3.0.1
       multiformats: 10.0.2
     dev: false
 
@@ -1435,7 +1442,17 @@ packages:
       '@ipld/car': 5.0.0
       '@ipld/dag-cbor': 8.0.0
       '@ipld/dag-ucan': 2.0.1
-      '@ucanto/interface': 3.0.0
+      '@ucanto/interface': 3.0.1
+      multiformats: 10.0.2
+    dev: false
+
+  /@ucanto/core/3.0.2:
+    resolution: {integrity: sha512-TEVCqAM/3v4fXLuZcIBgQZrPwD53yqoXqwmSChhd420FikFGkkAeWvj6JT6oR4VmCuiIPK5FnukaE2LL5h0Ekg==}
+    dependencies:
+      '@ipld/car': 5.0.0
+      '@ipld/dag-cbor': 8.0.0
+      '@ipld/dag-ucan': 2.0.1
+      '@ucanto/interface': 3.0.1
       multiformats: 10.0.2
     dev: false
 
@@ -1446,22 +1463,39 @@ packages:
       multiformats: 10.0.2
     dev: false
 
+  /@ucanto/interface/3.0.1:
+    resolution: {integrity: sha512-1UlyLMjJwgzAmhlqu/V1gz0xrE9MUiI3gdzxOJbIXwrS7zAWsbtUZqIS/SPpr1+PYnNO8PHSGyGekb+N0dqtWQ==}
+    dependencies:
+      '@ipld/dag-ucan': 2.0.1
+      multiformats: 10.0.2
+    dev: false
+
   /@ucanto/principal/3.0.0:
     resolution: {integrity: sha512-7CwVbYQc+CdWta+lNuI6vRjVT+GkPwf2VQVXFBm8i4fQomFOTmOq8I/Be3TBS9N2OaIbL7b/eKy1WBdMMzfz5g==}
     dependencies:
       '@ipld/dag-ucan': 2.0.1
       '@noble/ed25519': 1.7.1
-      '@ucanto/interface': 3.0.0
+      '@ucanto/interface': 3.0.1
       multiformats: 10.0.2
       one-webcrypto: 1.0.3
     dev: false
 
-  /@ucanto/server/3.0.1:
-    resolution: {integrity: sha512-PMBb9gPk+5+qKl7bANusPq9xCm2S0dVNIT33EmmtNhXWQSj8nLvWLInnxXYGc+ziyQonPZtDPgKi02uREFEdXw==}
+  /@ucanto/principal/3.0.1:
+    resolution: {integrity: sha512-0U0EF2ddfR55LKKc7FkzTkH8OFvjZvEeRqMkyV5FyeSsFEF7lXhgEXZrNgggK2zlriXjYC9VVCpPhsGb4cI72g==}
     dependencies:
-      '@ucanto/core': 3.0.1
-      '@ucanto/interface': 3.0.0
-      '@ucanto/validator': 3.0.1
+      '@ipld/dag-ucan': 2.0.1
+      '@noble/ed25519': 1.7.1
+      '@ucanto/interface': 3.0.1
+      multiformats: 10.0.2
+      one-webcrypto: 1.0.3
+    dev: false
+
+  /@ucanto/server/3.0.4:
+    resolution: {integrity: sha512-4a5ou5HZ8ymw39EeZ0024nu0JD916xTMpYsS4eXMxpnoWlOjgmoeWZ5e01dEiw5AlfnSa8e9+a0b1dzvSISQxQ==}
+    dependencies:
+      '@ucanto/core': 3.0.2
+      '@ucanto/interface': 3.0.1
+      '@ucanto/validator': 3.0.4
     dev: false
 
   /@ucanto/transport/3.0.1:
@@ -1469,18 +1503,28 @@ packages:
     dependencies:
       '@ipld/car': 5.0.0
       '@ipld/dag-cbor': 8.0.0
-      '@ucanto/core': 3.0.1
-      '@ucanto/interface': 3.0.0
+      '@ucanto/core': 3.0.2
+      '@ucanto/interface': 3.0.1
       multiformats: 10.0.2
     dev: false
 
-  /@ucanto/validator/3.0.1:
-    resolution: {integrity: sha512-LVirhuwMPOwATIDwlhGZt7C1BtrKp2+HJ7pALQcbC4+eHYyminniZEAzYjf0/EnjXtDj0SL3jnnBBvmpIJiWDQ==}
+  /@ucanto/transport/3.0.2:
+    resolution: {integrity: sha512-IyfI26VWPxCL2jnGiGP1i6mZblk8QORHzEVt5t+7Pic2k7pANQHoqbveQveRb9a8z6D/UdFogSPQxWYYtKaxWQ==}
     dependencies:
       '@ipld/car': 5.0.0
       '@ipld/dag-cbor': 8.0.0
-      '@ucanto/core': 3.0.1
-      '@ucanto/interface': 3.0.0
+      '@ucanto/core': 3.0.2
+      '@ucanto/interface': 3.0.1
+      multiformats: 10.0.2
+    dev: false
+
+  /@ucanto/validator/3.0.4:
+    resolution: {integrity: sha512-JG6y6yWPDUBoJuWP7auwMTZf9SJN9d2e7y/ZbVvluQBZC+WvhLq1Z2cjWCjA21Y2FJxWeI27leBjWzyIsHtYUA==}
+    dependencies:
+      '@ipld/car': 5.0.0
+      '@ipld/dag-cbor': 8.0.0
+      '@ucanto/core': 3.0.2
+      '@ucanto/interface': 3.0.1
       multiformats: 10.0.2
     dev: false
 

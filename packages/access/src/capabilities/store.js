@@ -1,17 +1,27 @@
+/* eslint-disable jsdoc/require-param */
 import { capability, Failure, Link, URI, Schema } from '@ucanto/validator'
 import { equalLink, equalWith } from './utils.js'
 import { any } from './any.js'
 
 /**
- * all the `store/*` capabilities which can also be derived
- * from any capability.
+ * Capability can only be delegated (but not invoked) allowing audience to
+ * derived any `store/` prefixed capability for the (memory) space identified
+ * by did:key in the `with` field.
  */
 export const store = any.derive({
   to: capability({
     can: 'store/*',
+    /**
+     * did:key identifier of the (memory) space where CAR is intended to
+     * be stored.
+     */
     with: URI.match({ protocol: 'did:' }),
     derives: equalWith,
   }),
+  /**
+   * `store/*` can be derived from the `*` capability as long as `with` field
+   * is the same.
+   */
   derives: equalWith,
 })
 
@@ -23,17 +33,42 @@ export const store = any.derive({
 const base = any.or(store)
 
 /**
- * `store/add` can be derived from the `store/*` capability
- * as long as with fields match.
+ * `store/add` capability allows agent to store a CAR file into a (memory) space
+ * identified by did:key in the `with` field. Agent must precompute CAR locally
+ * and provide it's CID and size using `nb.link` and `nb.size` fields, allowing
+ * a service to provision a write location for the agent to PUT or POST desired
+ * CAR into.
  */
 export const add = base.derive({
   to: capability({
     can: 'store/add',
+    /**
+     * did:key identifier of the (memory) space where CAR is intended to
+     * be stored.
+     */
     with: URI.match({ protocol: 'did:' }),
     nb: {
-      link: Link.optional(),
+      /**
+       * CID of the CAR file to be stored. Service will provision write target
+       * for this exact CAR file for agent to PUT or POST it. Attempt to write
+       * any other content will fail.
+       */
+      link: Link,
+      /**
+       * Size of the CAR file to be stored. Service will provision write target
+       * for this exact size. Attempt to write a larger CAR file will fail.
+       */
+      size: Schema.integer(),
+      /**
+       * Agent may optionally provide a link to a related CAR file using `origin`
+       * field. This is useful when storing large DAGs, agent could shard it
+       * across multiple CAR files and then link each shard with a previous one.
+       *
+       * Providing this relation tells service that given CAR is shard of the
+       * larger DAG as opposed to it being intentionally partial DAG. When DAG is
+       * not sharded, there will be only one `store/add` with `origin` left out.
+       */
       origin: Link.optional(),
-      size: Schema.integer().optional(),
     },
     derives: (claim, from) => {
       const result = equalLink(claim, from)
@@ -50,24 +85,51 @@ export const add = base.derive({
       }
     },
   }),
+  /**
+   * `store/add` can be derived from the `store/*` & `*` capability
+   * as long as the `with` fields match.
+   */
   derives: equalWith,
 })
 
+/**
+ * Capability can be used to remove the stored CAR file from the (memory)
+ * space identified by `with` field.
+ */
 export const remove = base.derive({
   to: capability({
     can: 'store/remove',
+    /**
+     * did:key identifier of the (memory) space where CAR is intended to
+     * be stored.
+     */
     with: URI.match({ protocol: 'did:' }),
     nb: {
-      link: Link.optional(),
+      /**
+       * CID of the CAR file to be removed from the store.
+       */
+      link: Link,
     },
     derives: equalLink,
   }),
+  /**
+   * `store/remove` can be derived from the `store/*` & `*` capability
+   * as long as the `with` fields match.
+   */
   derives: equalWith,
 })
 
+/**
+ * Capability can be invoked to request a list of stored CAR files in the
+ * (memory) space identified by `with` field.
+ */
 export const list = base.derive({
   to: capability({
     can: 'store/list',
+    /**
+     * did:key identifier of the (memory) space where CAR is intended to
+     * be stored.
+     */
     with: URI.match({ protocol: 'did:' }),
     derives: (claimed, delegated) => {
       if (claimed.with !== delegated.with) {
@@ -78,6 +140,10 @@ export const list = base.derive({
       return true
     },
   }),
+  /**
+   * `store/list` can be derived from the `store/*` & `*` capability
+   * as long as the `with` fields match.
+   */
   derives: equalWith,
 })
 
