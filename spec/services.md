@@ -28,6 +28,8 @@ See [capabilities.md](./capabilities.md) for more details about capabilities, in
 
 Provides the [`account/info` capability](./capabilities.md#accountinfo).
 
+#### Invocation
+
 The `with` field of the invocation must contain the `did:` URI for the account to be identified.
 
 #### Response
@@ -55,6 +57,34 @@ TODO: describe possible error types, how to distinguish between them
 ## Storage service
 
 ### `store/add`
+
+Provides the [`store/add` capability](./capabilities.md#storeadd), which can be invoked to store CAR files with the service.
+
+#### Invocation
+
+The `with` field of the invocation must contain the DID of a "memory space" that serves as the destination of the CAR. The invocation must contain proof that the caller posesses the `store/add` capability for the given space DID.
+
+The invocation must include a `link` caveat, whose value is the CID of the CAR to be stored. This implies that the caller must encode the CAR data and calculate the CID locally before invoking `store/add`.
+
+The invocation must also include a `size` caveat set to the size of the CAR in bytes.
+
+#### Response
+
+On success, the service will return an object containing status information, possibly including a signed URL for uploading CAR data.
+
+| field         | type     | description                                                 |
+| ------------- | -------- | ----------------------------------------------------------- |
+| `status` | `string` | One of `"upload"` or `"done"`, depending on whether the CAR is new to the service (see below) |
+| `with` | `string` | The DID of the memory space the CAR was added to |
+| `link` | `CID` | The CID of the added CAR file |
+| `url` | `string` | URL to send CAR data to. Only present if `status == "upload"` |
+| `headers` | `Record<string, string>` | Headers to include in POST request when sending CAR data. Only present if `status == "upload"`
+
+If the CID in the invocation's `link` caveat already exists on the service, e.g. because it was previously added by another agent, the `status` field in the response will be `"done"`, and the response will not include a URL for uploading.
+
+If the CAR has not been previously added, the `status` field will contain `"upload"`, and the `url` and `headers` fields will contain the information needed to send the CAR data to the storage backend.
+
+If the response contains `url` and `headers` fields, the client should issue an HTTP `POST` request to the URL and include the headers. The request body must be the CAR data, whose size and CID must match those in the invocation.
 
 ### `store/remove`
 
