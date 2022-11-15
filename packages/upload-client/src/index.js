@@ -74,8 +74,6 @@ export async function uploadDirectory({ issuer, proofs }, files, options = {}) {
  * @returns {Promise<import('multiformats').Link<unknown, number, number, import('multiformats').Version>>}
  */
 async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
-  const onStoredShard = options.onStoredShard ?? (() => {})
-
   /** @type {import('./types').CARLink[]} */
   const shards = []
   /** @type {import('multiformats').Link<unknown, number, number, import('multiformats').Version>?} */
@@ -88,12 +86,13 @@ async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
         write(meta) {
           root = root || meta.roots[0]
           shards.push(meta.cid)
-          onStoredShard(meta)
+          if (options.onStoredShard) options.onStoredShard(meta)
         },
       })
     )
 
-  if (root == null) throw new Error('missing root CID')
+  /* c8 ignore next */
+  if (!root) throw new Error('missing root CID')
 
   await Upload.add({ issuer, proofs }, root, shards, options)
   return root

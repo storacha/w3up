@@ -17,7 +17,7 @@ describe('uploadFile', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000',
+      url: 'http://localhost:9200',
     }
 
     const account = await Signer.generate()
@@ -90,7 +90,7 @@ describe('uploadDirectory', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000',
+      url: 'http://localhost:9200',
     }
 
     const account = await Signer.generate()

@@ -4,7 +4,6 @@ import { MemoryBlockstore } from 'blockstore-core/memory'
 import * as raw from 'multiformats/codecs/raw'
 import path from 'path'
 import { encodeFile, encodeDirectory } from '../src/unixfs.js'
-import { collect } from '../src/utils.js'
 import { File } from './helpers/shims.js'
 
 /** @param {import('ipfs-unixfs-exporter').UnixFSDirectory} dir */
@@ -37,7 +36,9 @@ describe('UnixFS', () => {
     const { cid, blocks } = await encodeFile(file)
     const blockstore = await blocksToBlockstore(blocks)
     const entry = await exporter(cid.toString(), blockstore)
-    const out = new Blob(await collect(entry.content()))
+    const chunks = []
+    for await (const chunk of entry.content()) chunks.push(chunk)
+    const out = new Blob(chunks)
     assert.equal(await out.text(), await file.text())
   })
 
@@ -65,6 +66,15 @@ describe('UnixFS', () => {
 
     expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
   })
+
+  it('throws then treating a file as a directory', () =>
+    assert.rejects(
+      encodeDirectory([
+        new File(['a file, not a directory'], 'file.txt'),
+        new File(['a file in a file!!!'], 'file.txt/another.txt'),
+      ]),
+      { message: '"file.txt" cannot be a file and a directory' }
+    ))
 
   it('configured to use raw leaves', async () => {
     const file = new Blob(['test'])

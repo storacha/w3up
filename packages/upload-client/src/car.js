@@ -1,5 +1,4 @@
 import { CarWriter } from '@ipld/car'
-import { collect } from './utils.js'
 
 /**
  * @param {Iterable<import('@ipld/unixfs').Block>|AsyncIterable<import('@ipld/unixfs').Block>} blocks
@@ -23,7 +22,8 @@ export async function encode(blocks, root) {
       await writer.close()
     }
   })()
-  const chunks = await collect(out)
+  const chunks = []
+  for await (const chunk of out) chunks.push(chunk)
   // @ts-expect-error
   if (error != null) throw error
   const roots = root != null ? [root] : []

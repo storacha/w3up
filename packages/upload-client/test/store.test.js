@@ -10,12 +10,12 @@ import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 
-describe('Storage', () => {
+describe('Store.add', () => {
   it('stores a DAG with the service', async () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000',
+      url: 'http://localhost:9200',
     }
 
     const account = await Signer.generate()
@@ -56,6 +56,76 @@ describe('Storage', () => {
     const carCID = await Store.add({ issuer, proofs }, car, { connection })
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
+  })
+
+  it('throws for bucket URL client error 4xx', async () => {
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9400',
+    }
+
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await StoreCapabilities.add.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({ store: { add: () => res } })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    assert.rejects(Store.add({ issuer, proofs }, car, { connection }), {
+      message: 'upload failed: 400',
+    })
+  })
+
+  it('throws for bucket URL server error 5xx', async () => {
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9500',
+    }
+
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await StoreCapabilities.add.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({ store: { add: () => res } })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    assert.rejects(Store.add({ issuer, proofs }, car, { connection }), {
+      message: 'upload failed: 500',
+    })
   })
 
   it('skips sending CAR if status = done', async () => {
@@ -134,7 +204,9 @@ describe('Storage', () => {
       { name: 'Error', message: 'upload aborted' }
     )
   })
+})
 
+describe('Store.list', () => {
   it('lists stored CAR files', async () => {
     const car = await randomCAR(128)
     const res = {
@@ -200,6 +272,42 @@ describe('Storage', () => {
     })
   })
 
+  it('throws on service error', async () => {
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+
+    const proofs = [
+      await StoreCapabilities.list.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      store: {
+        list: () => {
+          throw new Server.Failure('boom')
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    await assert.rejects(Store.list({ issuer, proofs }, { connection }), {
+      message: 'failed store/list invocation',
+    })
+  })
+})
+
+describe('Store.remove', () => {
   it('removes a stored CAR file', async () => {
     const account = await Signer.generate()
     const issuer = await Signer.generate()
@@ -237,5 +345,41 @@ describe('Storage', () => {
     })
 
     await Store.remove({ issuer, proofs }, car.cid, { connection })
+  })
+
+  it('throws on service error', async () => {
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await StoreCapabilities.remove.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      store: {
+        remove: () => {
+          throw new Server.Failure('boom')
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Store.remove({ issuer, proofs }, car.cid, { connection }),
+      { message: 'failed store/remove invocation' }
+    )
   })
 })

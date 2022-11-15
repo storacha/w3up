@@ -43,7 +43,7 @@ describe('ShardStoringStream', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9000',
+      url: 'http://localhost:9200',
     }
 
     const account = await Signer.generate()
@@ -106,6 +106,53 @@ describe('ShardStoringStream', () => {
 
     cars.forEach(({ cid }, i) =>
       assert.equal(cid.toString(), carCIDs[i].toString())
+    )
+  })
+
+  it('aborts on service failure', async () => {
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+    const cars = await Promise.all([randomCAR(128), randomCAR(128)])
+
+    const proofs = [
+      await storeAdd.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      store: {
+        add() {
+          throw new Server.Failure('boom')
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    let pulls = 0
+    const carStream = new ReadableStream({
+      pull(controller) {
+        if (pulls >= cars.length) return controller.close()
+        controller.enqueue(cars[pulls])
+        pulls++
+      },
+    })
+
+    await assert.rejects(
+      carStream
+        .pipeThrough(new ShardStoringStream({ issuer, proofs }, { connection }))
+        .pipeTo(new WritableStream()),
+      { message: 'failed store/add invocation' }
     )
   })
 })

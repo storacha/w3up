@@ -26,28 +26,31 @@ import { REQUEST_RETRIES } from './constants.js'
  */
 export async function add({ issuer, proofs }, root, shards, options = {}) {
   const capability = findCapability(proofs, UploadCapabilities.add.can)
+  /* c8 ignore next */
   const conn = options.connection ?? connection
-  await retry(
+  const result = await retry(
     async () => {
-      const result = await UploadCapabilities.add
+      return await UploadCapabilities.add
         .invoke({
           issuer,
           audience: serviceDID,
           // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
           with: capability.with,
-          nb: {
-            root,
-            shards,
-          },
+          nb: { root, shards },
         })
         .execute(conn)
-      if (result?.error === true) throw result
     },
     {
       onFailedAttempt: console.warn,
       retries: options.retries ?? REQUEST_RETRIES,
     }
   )
+
+  if (result?.error) {
+    throw new Error(`failed ${UploadCapabilities.add.can} invocation`, {
+      cause: result,
+    })
+  }
 }
 
 /**
@@ -67,6 +70,7 @@ export async function add({ issuer, proofs }, root, shards, options = {}) {
  */
 export async function list({ issuer, proofs }, options = {}) {
   const capability = findCapability(proofs, UploadCapabilities.list.can)
+  /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const result = await UploadCapabilities.list
@@ -77,7 +81,12 @@ export async function list({ issuer, proofs }, options = {}) {
       with: capability.with,
     })
     .execute(conn)
-  if (result.error === true) throw result
+
+  if (result.error) {
+    throw new Error(`failed ${UploadCapabilities.list.can} invocation`, {
+      cause: result,
+    })
+  }
 
   return result
 }
@@ -100,6 +109,7 @@ export async function list({ issuer, proofs }, options = {}) {
  */
 export async function remove({ issuer, proofs }, root, options = {}) {
   const capability = findCapability(proofs, UploadCapabilities.remove.can)
+  /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const result = await UploadCapabilities.remove
@@ -111,5 +121,10 @@ export async function remove({ issuer, proofs }, root, options = {}) {
       nb: { root },
     })
     .execute(conn)
-  if (result?.error === true) throw result
+
+  if (result?.error) {
+    throw new Error(`failed ${UploadCapabilities.remove.can} invocation`, {
+      cause: result,
+    })
+  }
 }

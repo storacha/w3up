@@ -1,6 +1,5 @@
 import * as UnixFS from '@ipld/unixfs'
 import * as raw from 'multiformats/codecs/raw'
-import { toIterable, collect } from './utils.js'
 
 const queuingStrategy = UnixFS.withCapacity(1_048_576 * 175)
 
@@ -16,10 +15,9 @@ const settings = UnixFS.configure({
  */
 export async function encodeFile(blob) {
   const readable = createFileEncoderStream(blob)
-  const blocks = await collect(toIterable(readable))
-  const rootBlock = blocks.at(-1)
-  if (rootBlock == null) throw new Error('missing root block')
-  return { cid: rootBlock.cid, blocks }
+  const blocks = await collect(readable)
+  // @ts-expect-error There is always a root block
+  return { cid: blocks.at(-1).cid, blocks }
 }
 
 /**
@@ -49,10 +47,13 @@ class UnixFsFileBuilder {
   /** @param {import('@ipld/unixfs').View} writer */
   async finalize(writer) {
     const unixfsFileWriter = UnixFS.createFileWriter(writer)
-    const stream = toIterable(this.#file.stream())
-    for await (const chunk of stream) {
-      await unixfsFileWriter.write(chunk)
-    }
+    await this.#file.stream().pipeTo(
+      new WritableStream({
+        async write(chunk) {
+          await unixfsFileWriter.write(chunk)
+        },
+      })
+    )
     return await unixfsFileWriter.close()
   }
 }
@@ -78,10 +79,9 @@ class UnixFSDirectoryBuilder {
  */
 export async function encodeDirectory(files) {
   const readable = createDirectoryEncoderStream(files)
-  const blocks = await collect(toIterable(readable))
-  const rootBlock = blocks.at(-1)
-  if (rootBlock == null) throw new Error('missing root block')
-  return { cid: rootBlock.cid, blocks }
+  const blocks = await collect(readable)
+  // @ts-expect-error There is always a root block
+  return { cid: blocks.at(-1).cid, blocks }
 }
 
 /**
@@ -123,4 +123,22 @@ export function createDirectoryEncoderStream(files) {
   })()
 
   return readable
+}
+
+/**
+ * @template T
+ * @param {ReadableStream<T>} collectable
+ * @returns {Promise<T[]>}
+ */
+async function collect(collectable) {
+  /** @type {T[]} */
+  const chunks = []
+  await collectable.pipeTo(
+    new WritableStream({
+      write(chunk) {
+        chunks.push(chunk)
+      },
+    })
+  )
+  return chunks
 }

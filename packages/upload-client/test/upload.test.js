@@ -10,7 +10,7 @@ import { service as id } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 
-describe('Upload', () => {
+describe('Upload.add', () => {
   it('registers an upload with the service', async () => {
     const account = await Signer.generate()
     const issuer = await Signer.generate()
@@ -53,6 +53,44 @@ describe('Upload', () => {
     await Upload.add({ issuer, proofs }, root, [car.cid], { connection })
   })
 
+  it('throws on service error', async () => {
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await UploadCapabilities.add.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        add: () => {
+          throw new Server.Failure('boom')
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Upload.add({ issuer, proofs }, car.roots[0], [car.cid], { connection }),
+      { message: 'failed upload/add invocation' }
+    )
+  })
+})
+
+describe('Upload.list', () => {
   it('lists uploads', async () => {
     const car = await randomCAR(128)
     const res = {
@@ -115,6 +153,42 @@ describe('Upload', () => {
     })
   })
 
+  it('throws on service error', async () => {
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+
+    const proofs = [
+      await UploadCapabilities.list.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        list: () => {
+          throw new Server.Failure('boom')
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    await assert.rejects(Upload.list({ issuer, proofs }, { connection }), {
+      message: 'failed upload/list invocation',
+    })
+  })
+})
+
+describe('Upload.remove', () => {
   it('removes an upload', async () => {
     const account = await Signer.generate()
     const issuer = await Signer.generate()
@@ -152,5 +226,41 @@ describe('Upload', () => {
     })
 
     await Upload.remove({ issuer, proofs }, car.roots[0], { connection })
+  })
+
+  it('throws on service error', async () => {
+    const account = await Signer.generate()
+    const issuer = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await UploadCapabilities.remove.delegate({
+        issuer: account,
+        audience: id,
+        with: account.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        remove: () => {
+          throw new Server.Failure('boom')
+        },
+      },
+    })
+
+    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const connection = Client.connect({
+      id,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Upload.remove({ issuer, proofs }, car.roots[0], { connection }),
+      { message: 'failed upload/remove invocation' }
+    )
   })
 })

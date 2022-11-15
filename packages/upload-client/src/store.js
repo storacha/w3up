@@ -30,10 +30,11 @@ export async function add({ issuer, proofs }, car, options = {}) {
   // TODO: validate blob contains CAR data
   const bytes = new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
+  /* c8 ignore next */
   const conn = options.connection ?? connection
   const result = await retry(
     async () => {
-      const res = await StoreCapabilities.add
+      return await StoreCapabilities.add
         .invoke({
           issuer,
           audience: serviceDID,
@@ -43,7 +44,6 @@ export async function add({ issuer, proofs }, car, options = {}) {
           proofs,
         })
         .execute(conn)
-      return res
     },
     {
       onFailedAttempt: console.warn,
@@ -90,7 +90,7 @@ export async function add({ issuer, proofs }, car, options = {}) {
   )
 
   if (!res.ok) {
-    throw new Error('store failed')
+    throw new Error(`upload failed: ${res.status}`)
   }
 
   return link
@@ -113,6 +113,7 @@ export async function add({ issuer, proofs }, car, options = {}) {
  */
 export async function list({ issuer, proofs }, options = {}) {
   const capability = findCapability(proofs, StoreCapabilities.list.can)
+  /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const result = await StoreCapabilities.list
@@ -123,7 +124,12 @@ export async function list({ issuer, proofs }, options = {}) {
       with: capability.with,
     })
     .execute(conn)
-  if (result.error === true) throw result
+
+  if (result.error) {
+    throw new Error(`failed ${StoreCapabilities.list.can} invocation`, {
+      cause: result,
+    })
+  }
 
   return result
 }
@@ -146,6 +152,7 @@ export async function list({ issuer, proofs }, options = {}) {
  */
 export async function remove({ issuer, proofs }, link, options = {}) {
   const capability = findCapability(proofs, StoreCapabilities.remove.can)
+  /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const result = await StoreCapabilities.remove
@@ -157,5 +164,10 @@ export async function remove({ issuer, proofs }, link, options = {}) {
       nb: { link },
     })
     .execute(conn)
-  if (result?.error === true) throw result
+
+  if (result?.error) {
+    throw new Error(`failed ${StoreCapabilities.remove.can} invocation`, {
+      cause: result,
+    })
+  }
 }
