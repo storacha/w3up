@@ -63,7 +63,7 @@ export async function connection(principal, _fetch, url) {
  * Agent
  */
 export class Agent {
-  /** @type {Ucanto.Principal|undefined} */
+  /** @type {Ucanto.Principal<"key">|undefined} */
   #service
 
   /** @type {typeof fetch} */
