@@ -222,15 +222,51 @@ The `root` caveat must contain the root CID of the data item to remove.
 
 ### `upload/list`
 
-TODO
+> Obtain a list of uploaded data items.
 
-## `voucher/*` namespace
+The `upload/list` capability can be invoked to request a list of metadata about uploads. See [services.md](./services.md#uploadlist) for details about the response.
 
-TODO
+The `with` field of the invocation must be set to the DID of the memory space to be listed.
+
+#### Derivations
+
+`upload/list` can be derived from a `upload/*` or `*` capability with a matching `with` field.
+
+#### Caveats
+
+None currently, but this is expected to change once pagination is fully implemented.
+
+## `voucher/` namespace
+
+TODO: more voucher docs when implementation details settle down a bit.
 
 ### `voucher/claim`
 
 Request a voucher that can be redeemed to activate features and/or products for an account or agent DID.
 
+<!-- 
+
+TODO: add context here:
+- what are valid product URIs? Or is that an opaque detail for the caller?
+- is `identity` always a mailto: URI? 
+- double check that `with` URI should be the DID of the service
+
+-->
+
+#### Caveats
+
+| field         | value                             | required? | context                                                              |
+| ------------- | --------------------------------- | --------- | -------------------------------------------------------------------- |
+| `can`         | `voucher/claim`                   | ✅         | The ability to claim a voucher.                                      |
+| `with`        | DID string, e.g. `did:key:123...` | ✅         | The DID of the service offering the product                          |
+| `nb.product`  | URI string with `product:` scheme | ✅         | A URI identifying the product                                        |
+| `nb.identity` | string, e.g. `mailto:`            | ✅         |                                                                      |
+| `nb.account`  | DID string                        | ✅         | The DID of the memory space or account that will receive the product |
+
 ### `voucher/redeem`
 
+Redeeem a voucher to activate features / products for an account or agent DID.
+
+<!--
+TODO: document this. currently, the implementation ignores caveats & creates a new account for every successful redemption. Might be changing?
+-->
