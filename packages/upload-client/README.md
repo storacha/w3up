@@ -24,7 +24,7 @@ import { add as uploadAdd } from '@web3-storage/access-client/capabilities/uploa
 
 const agent = await Agent.create({ store })
 
-// // Note: you need to create and register an account 1st time:
+// Note: you need to create and register an account 1st time:
 // await agent.createAccount('you@youremail.com')
 
 const conf = {
