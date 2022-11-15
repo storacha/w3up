@@ -35,6 +35,10 @@ const conf = {
 
 ### Uploading files
 
+Once you have the `issuer` and `proofs`, you can upload a directory of files by passing that invocation config to `uploadDirectory` along with your list of files to upload. 
+
+You can get your list of Files from a [`<input type="file">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file) element in the browser or using [`files-from-path`](https://npm.im/files-from-path) in Node.js
+
 ```js
 import { uploadFile } from '@web3-storage/upload-client'
 
@@ -48,9 +52,6 @@ const cid = await uploadDirectory(conf, [
   new File(['doc0'], 'doc0.txt'),
   new File(['doc1'], 'dir/doc1.txt'),
 ])
-
-// Note: you can use https://npm.im/files-from-path to read files from the
-// filesystem in Nodejs.
 ```
 
 ### Advanced usage
