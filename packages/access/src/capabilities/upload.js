@@ -137,3 +137,7 @@ export const list = base.derive({
    */
   derives: equalWith,
 })
+
+// ⚠️ We export imports here so they are not omited in generated typedes
+// @see https://github.com/microsoft/TypeScript/issues/51548
+export { Link }
