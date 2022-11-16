@@ -7,5 +7,5 @@
   },
   "include": ["src", "scripts", "test", "package.json"],
   "exclude": ["**/node_modules/**"],
-  "references": [{ "path": "../access" }]
+  "references": [{ "path": "../access-client" }]
 }

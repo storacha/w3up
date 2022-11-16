@@ -14,6 +14,7 @@ import type {
   AccountInfo,
   AccountRecover,
   AccountRecoverValidation,
+  Any,
 } from './capabilities/types'
 import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
 
@@ -38,6 +39,11 @@ export interface Service {
     'recover-validation': ServiceMethod<
       AccountRecoverValidation,
       EncodedDelegation<[AccountRecover]> | undefined,
+      Failure
+    >
+    recover: ServiceMethod<
+      AccountRecover,
+      Array<EncodedDelegation<[Any]>>,
       Failure
     >
   }

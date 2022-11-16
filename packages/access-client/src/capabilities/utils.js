@@ -5,11 +5,15 @@ import * as Types from '@ucanto/interface'
 /**
  * Check URI can be delegated
  *
- * @param {string} child
- * @param {string} parent
+ * @param {string} [child]
+ * @param {string} [parent]
  */
 export function canDelegateURI(child, parent) {
-  if (parent.endsWith('*')) {
+  if (parent === undefined) {
+    return true
+  }
+
+  if (child !== undefined && parent.endsWith('*')) {
     return child.startsWith(parent.slice(0, -1))
       ? true
       : new Failure(`${child} does not match ${parent}`)
