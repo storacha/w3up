@@ -30,7 +30,9 @@ export function findCapability(proofs, ability, audience) {
  * @param {import('@ucanto/interface').Ability} ability
  */
 function capabilityMatches(can, ability) {
-  return can === ability
-    ? true
-    : can.endsWith('*') && ability.startsWith(can.split('*')[0])
+  if (can === ability) return true
+  if (can === '*/*') return true
+  if (can === '*') return true
+  if (can.endsWith('*') && ability.startsWith(can.slice(0, -1)) return true
+  return false
 }
