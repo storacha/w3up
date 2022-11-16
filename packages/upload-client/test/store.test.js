@@ -71,7 +71,7 @@ describe('Store.add', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9400',
+      url: 'http://localhost:9400', // this bucket always returns a 400
     }
 
     const account = await Signer.generate()
@@ -111,7 +111,7 @@ describe('Store.add', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9500',
+      url: 'http://localhost:9500', // this bucket always returns a 500
     }
 
     const account = await Signer.generate()
