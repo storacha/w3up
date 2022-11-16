@@ -105,6 +105,11 @@ export interface CARFile extends CARHeaderInfo, Blob {}
 export type CARLink = Link<unknown, typeof CAR.codec.code>
 
 /**
+ * Any IPLD link.
+ */
+export type AnyLink = Link<unknown, number, number, Version>
+
+/**
  * Metadata pertaining to a CAR file.
  */
 export interface CARMetadata extends CARHeaderInfo {

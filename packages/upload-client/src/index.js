@@ -71,12 +71,12 @@ export async function uploadDirectory({ issuer, proofs }, files, options = {}) {
  * @param {import('./types').InvocationConfig} invocationConfig
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
  * @param {UploadOptions} [options]
- * @returns {Promise<import('multiformats').Link<unknown, number, number, import('multiformats').Version>>}
+ * @returns {Promise<import('./types').AnyLink>}
  */
 async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
   /** @type {import('./types').CARLink[]} */
   const shards = []
-  /** @type {import('multiformats').Link<unknown, number, number, import('multiformats').Version>?} */
+  /** @type {import('./types').AnyLink?} */
   let root = null
   await blocks
     .pipeThrough(new ShardingStream())

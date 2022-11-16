@@ -2,7 +2,7 @@ import { CarWriter } from '@ipld/car'
 
 /**
  * @param {Iterable<import('@ipld/unixfs').Block>|AsyncIterable<import('@ipld/unixfs').Block>} blocks
- * @param {import('multiformats').Link<unknown, number, number, import('multiformats').Version>} [root]
+ * @param {import('./types').AnyLink} [root]
  * @returns {Promise<import('./types').CARFile>}
  */
 export async function encode(blocks, root) {
