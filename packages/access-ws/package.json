@@ -22,7 +22,7 @@
     "multiformats": "^10.0.2",
     "nanoid": "^4.0.0",
     "toucan-js": "^2.7.0",
-    "ws": "^8.10.0"
+    "ws": "^8.11.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.18.0",

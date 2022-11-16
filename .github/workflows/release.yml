@@ -23,7 +23,7 @@ jobs:
           release-type: node
   publish-access:
     needs: release
-    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access')
+    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

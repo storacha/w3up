@@ -1,4 +1,4 @@
-name: Access SDK
+name: Access Client
 env:
   CI: true
   FORCE_COLOR: 1
@@ -7,12 +7,12 @@ on:
     branches:
       - main
     paths:
-      - 'packages/access/**'
+      - 'packages/access-client/**'
       - '.github/workflows/access.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
-      - 'packages/access/**'
+      - 'packages/access-client/**'
       - '.github/workflows/access.yml'
       - 'pnpm-lock.yaml'
 jobs:

@@ -7,6 +7,7 @@ import { Miniflare } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { migrate } from '../../sql/migrate.js'
+import { D1QB } from 'workers-qb'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -41,6 +42,7 @@ export async function context() {
     modules: true,
     bindings,
     d1Persist: undefined,
+    buildCommand: undefined,
   })
 
   const binds = await mf.getBindings()
@@ -57,6 +59,7 @@ export async function context() {
     ),
     service: Signer.parse(bindings.PRIVATE_KEY),
     issuer: principal,
+    db: new D1QB(db),
   }
 }
 

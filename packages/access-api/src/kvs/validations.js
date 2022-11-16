@@ -13,11 +13,12 @@ export class Validations {
   }
 
   /**
-   * @param {string} ucan
+   * @template {import('@ucanto/interface').Capabilities} [T=import('@ucanto/interface').Capabilities]
+   * @param {import('@web3-storage/access/src/types').EncodedDelegation<T>} ucan
    */
   async put(ucan) {
     const delegation =
-      /** @type {import('@ucanto/interface').Delegation<[import('@web3-storage/access/capabilities/types').VoucherClaim]>} */ (
+      /** @type {import('@ucanto/interface').Delegation<T>} */ (
         await stringToDelegation(ucan)
       )
 
