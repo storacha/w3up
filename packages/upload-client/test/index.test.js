@@ -20,23 +20,23 @@ describe('uploadFile', () => {
       url: 'http://localhost:9200',
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate() // The "user" that will ask the service to accept the upload
+    const space = await Signer.generate()
+    const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const file = new Blob([await randomBytes(128)])
     /** @type {import('../src/types').CARLink|undefined} */
     let carCID
 
     const proofs = await Promise.all([
       StoreCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
       UploadCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ])
@@ -44,21 +44,21 @@ describe('uploadFile', () => {
     const service = mockService({
       store: {
         add(invocation) {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.add.can)
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.with, space.did())
           return res
         },
       },
       upload: {
         add: (invocation) => {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, UploadCapabilities.add.can)
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.with, space.did())
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
           return null
@@ -78,7 +78,7 @@ describe('uploadFile', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadFile({ issuer, proofs }, file, {
+    const dataCID = await uploadFile({ issuer: agent, proofs }, file, {
       connection,
       onStoredShard: (meta) => {
         carCID = meta.cid
@@ -103,8 +103,8 @@ describe('uploadDirectory', () => {
       url: 'http://localhost:9200',
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const files = [
       new File([await randomBytes(128)], '1.txt'),
       new File([await randomBytes(32)], '2.txt'),
@@ -114,15 +114,15 @@ describe('uploadDirectory', () => {
 
     const proofs = await Promise.all([
       StoreCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
       UploadCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ])
@@ -130,21 +130,21 @@ describe('uploadDirectory', () => {
     const service = mockService({
       store: {
         add(invocation) {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, 'store/add')
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.can, StoreCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
           return res
         },
       },
       upload: {
         add: (invocation) => {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, 'upload/add')
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.can, UploadCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
           return null
@@ -164,7 +164,7 @@ describe('uploadDirectory', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadDirectory({ issuer, proofs }, files, {
+    const dataCID = await uploadDirectory({ issuer: agent, proofs }, files, {
       connection,
       onStoredShard: (meta) => {
         carCID = meta.cid
