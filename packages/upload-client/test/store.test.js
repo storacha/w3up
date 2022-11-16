@@ -107,7 +107,7 @@ describe('Store.add', () => {
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9500',
+      url: 'http://localhost:9500', // this bucket always returns a 500
     }
 
     const account = await Signer.generate()
