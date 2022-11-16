@@ -8,7 +8,6 @@ import delay from 'delay'
 import pWaitFor from 'p-wait-for'
 import { Agent } from '../src/agent.js'
 import { StoreMemory } from '../src/stores/store-memory.js'
-import { fetch } from '@web-std/fetch'
 
 describe('awake', function () {
   const host = new URL('ws://127.0.0.1:8788/connect')
@@ -41,12 +40,12 @@ describe('awake', function () {
   it('should send msgs', async function () {
     const agent1 = await Agent.create({
       store: await StoreMemory.create(),
-      fetch: globalThis.fetch || fetch,
       url: new URL('http://127.0.0.1:8787'),
     })
+    const account = await agent1.createAccount('responder')
+    await agent1.setCurrentAccount(account.did)
     const agent2 = await Agent.create({
       store: await StoreMemory.create(),
-      fetch: globalThis.fetch || fetch,
       url: new URL('http://127.0.0.1:8787'),
     })
     const responder = agent1.peer(ws1)
@@ -105,8 +104,8 @@ describe('awake', function () {
     // @ts-ignore
     if (link) {
       assert.deepEqual(requestor.did, link.delegation.audience.did())
-      assert.deepEqual(responder.did, link.delegation.capabilities[0].with)
-      assert.deepEqual('identity/*', link.delegation.capabilities[0].can)
+      assert.deepEqual(account.did, link.delegation.capabilities[0].with)
+      assert.deepEqual('*', link.delegation.capabilities[0].can)
     }
 
     // they should close channel after link

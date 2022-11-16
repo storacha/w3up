@@ -4,7 +4,7 @@ import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
 import * as Store from '../../src/capabilities/store.js'
-import * as Capability from '../../src/capabilities/any.js'
+import * as Capability from '../../src/capabilities/wildcard.js'
 
 import {
   alice,

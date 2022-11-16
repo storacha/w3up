@@ -2,8 +2,6 @@
 import * as Ucanto from '@ucanto/interface'
 import { parseLink } from '@ucanto/core'
 import * as Server from '@ucanto/server'
-// import { codec as CARCodec } from '@ucanto/transport/car'
-// import { codec as CBOR } from '@ucanto/transport/cbor'
 import * as Account from '../../src/capabilities/account.js'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'

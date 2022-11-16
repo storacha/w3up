@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { URI } from '@ucanto/validator'
-import { Agent } from '../src/index.js'
+import { Agent } from '../src/agent.js'
 import { StoreMemory } from '../src/stores/store-memory.js'
 import { collect } from 'streaming-iterables'
 import * as Account from '../src/capabilities/account.js'
@@ -148,6 +148,7 @@ describe('Agent', function () {
     })
 
     // mock service
+    // @ts-ignore
     agent.service = async () => server.id
 
     const account = await agent.createAccount('execute')
