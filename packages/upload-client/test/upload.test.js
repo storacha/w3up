@@ -6,7 +6,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
 import * as Upload from '../src/upload.js'
-import { service as id } from './fixtures.js'
+import { serviceSigner } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 
@@ -19,7 +19,7 @@ describe('Upload.add', () => {
     const proofs = [
       await UploadCapabilities.add.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -41,9 +41,14 @@ describe('Upload.add', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -61,7 +66,7 @@ describe('Upload.add', () => {
     const proofs = [
       await UploadCapabilities.add.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -75,9 +80,14 @@ describe('Upload.add', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -112,7 +122,7 @@ describe('Upload.list', () => {
     const proofs = [
       await UploadCapabilities.list.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -131,9 +141,14 @@ describe('Upload.list', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -160,7 +175,7 @@ describe('Upload.list', () => {
     const proofs = [
       await UploadCapabilities.list.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -174,9 +189,14 @@ describe('Upload.list', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -197,7 +217,7 @@ describe('Upload.remove', () => {
     const proofs = [
       await UploadCapabilities.remove.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -217,9 +237,14 @@ describe('Upload.remove', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -236,7 +261,7 @@ describe('Upload.remove', () => {
     const proofs = [
       await UploadCapabilities.remove.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -250,9 +275,14 @@ describe('Upload.remove', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,

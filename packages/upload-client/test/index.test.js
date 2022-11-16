@@ -7,7 +7,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import { add as storeAdd } from '@web3-storage/access/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
 import { uploadFile, uploadDirectory } from '../src/index.js'
-import { service as id } from './fixtures.js'
+import { serviceSigner } from './fixtures.js'
 import { randomBytes } from './helpers/random.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
@@ -29,13 +29,13 @@ describe('uploadFile', () => {
     const proofs = await Promise.all([
       storeAdd.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
       uploadAdd.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -66,9 +66,14 @@ describe('uploadFile', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -105,13 +110,13 @@ describe('uploadDirectory', () => {
     const proofs = await Promise.all([
       storeAdd.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
       uploadAdd.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -142,9 +147,14 @@ describe('uploadDirectory', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,

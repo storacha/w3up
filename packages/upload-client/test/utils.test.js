@@ -1,7 +1,7 @@
 import assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
-import { service as id } from './fixtures.js'
+import { serviceSigner } from './fixtures.js'
 import { findCapability } from '../src/utils.js'
 
 describe('findCapability', () => {
@@ -16,7 +16,7 @@ describe('findCapability', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer,
-        audience: id,
+        audience: serviceSigner,
         with: issuer.did(),
         expiration: Infinity,
       }),
@@ -32,7 +32,7 @@ describe('findCapability', () => {
     const proofs = [
       await StoreCapabilities.store.delegate({
         issuer,
-        audience: id,
+        audience: serviceSigner,
         with: issuer.did(),
         expiration: Infinity,
       }),
@@ -46,7 +46,7 @@ describe('findCapability', () => {
     const issuer = await Signer.generate()
     const delegation = await StoreCapabilities.store.delegate({
       issuer,
-      audience: id,
+      audience: serviceSigner,
       with: issuer.did(),
       expiration: Infinity,
     })

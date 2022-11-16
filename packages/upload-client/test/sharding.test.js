@@ -7,7 +7,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import { add as storeAdd } from '@web3-storage/access/capabilities/store'
 import { createFileEncoderStream } from '../src/unixfs.js'
 import { ShardingStream, ShardStoringStream } from '../src/sharding.js'
-import { service as id } from './fixtures.js'
+import { serviceSigner } from './fixtures.js'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 
@@ -54,7 +54,7 @@ describe('ShardStoringStream', () => {
     const proofs = [
       await storeAdd.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -75,9 +75,14 @@ describe('ShardStoringStream', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -117,7 +122,7 @@ describe('ShardStoringStream', () => {
     const proofs = [
       await storeAdd.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -131,9 +136,14 @@ describe('ShardStoringStream', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,

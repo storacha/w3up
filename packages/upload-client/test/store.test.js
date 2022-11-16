@@ -6,7 +6,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
 import * as Store from '../src/store.js'
-import { service as id } from './fixtures.js'
+import { serviceSigner } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 
@@ -25,7 +25,7 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -45,9 +45,14 @@ describe('Store.add', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -72,7 +77,7 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -80,9 +85,14 @@ describe('Store.add', () => {
 
     const service = mockService({ store: { add: () => res } })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -107,7 +117,7 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -115,9 +125,14 @@ describe('Store.add', () => {
 
     const service = mockService({ store: { add: () => res } })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -142,7 +157,7 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -150,9 +165,14 @@ describe('Store.add', () => {
 
     const service = mockService({ store: { add: () => res } })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -172,9 +192,14 @@ describe('Store.add', () => {
 
     const service = mockService({ store: { add: () => res } })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -187,7 +212,7 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -228,7 +253,7 @@ describe('Store.list', () => {
     const proofs = [
       await StoreCapabilities.list.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -247,9 +272,14 @@ describe('Store.list', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -279,7 +309,7 @@ describe('Store.list', () => {
     const proofs = [
       await StoreCapabilities.list.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -293,9 +323,14 @@ describe('Store.list', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -316,7 +351,7 @@ describe('Store.remove', () => {
     const proofs = [
       await StoreCapabilities.remove.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -336,9 +371,14 @@ describe('Store.remove', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
@@ -355,7 +395,7 @@ describe('Store.remove', () => {
     const proofs = [
       await StoreCapabilities.remove.delegate({
         issuer: account,
-        audience: id,
+        audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
@@ -369,9 +409,14 @@ describe('Store.remove', () => {
       },
     })
 
-    const server = Server.create({ id, service, decoder: CAR, encoder: CBOR })
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
     const connection = Client.connect({
-      id,
+      id: serviceSigner,
       encoder: CAR,
       decoder: CBOR,
       channel: server,
