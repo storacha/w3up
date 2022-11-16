@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.2](https://github.com/web3-storage/w3protocol/compare/access-v5.0.1...access-v5.0.2) (2022-11-16)
+
+
+### Bug Fixes
+
+* workaround for ts bug in upload capabilities ([#171](https://github.com/web3-storage/w3protocol/issues/171)) ([b8d05b2](https://github.com/web3-storage/w3protocol/commit/b8d05b2ebabafa3081378bbc186fc766dde256c3))
+
 ## [5.0.1](https://github.com/web3-storage/w3protocol/compare/access-v5.0.0...access-v5.0.1) (2022-11-16)
 
 
