@@ -146,4 +146,77 @@ The full response object returned by `store/list` currently looks like this, alt
 
 ## Uploads service
 
-TODO
+The uploads service provides capabilities that link "data CIDs" to "CAR CIDs". A data CID is the root of some user-provided DAG, e.g. a UnixFs directory tree or a dag-cbor object. An "upload" is an association between a data CID and one or more CARs that contain the blocks of the DAG.
+
+There is a many-to-many relationship between data CIDs and CAR CIDs. A single CAR can contain multiple data CIDs, and the DAG for a given data CID may be "sharded" across multiple CARs.
+
+### `upload/add`
+
+Provides the [`upload/add` capability](./capabilities.md#uploadadd), which adds an association between a root data CID and the set of CAR "shards" containing the data.
+
+#### Invocation
+
+The `with` field of the invocation must contain the DID of a "memory space," and the caller must provide proof that they possess the `upload/add` capability for that space.
+
+The `root` caveat must be set to the root CID string of the data item supplied by the user.
+
+The `shards` caveat must be set to an array of CID strings that identify the CARs containing the data blocks referenced by the `root` data CID. These CARs are expected to have been previously stored with [`store/add`](#storeadd).
+
+#### Response
+
+The current implementation returns `null` on success, but this may be changed in the future to return an object describing upload.
+
+#### Errors
+
+TODO: list error types
+
+### `upload/remove`
+
+Provides the [`upload/remove` capability](./capabilities.md#uploadremove), which removes an upload from a given "memory space".
+
+#### Invocation
+
+The `with` field of the invocation must contain the DID of a "memory space," and the caller must provide proof that they possess the `upload/remove` capability for that space.
+
+The `root` caveat must be set to the root "data CID" to be removed.
+
+#### Response
+
+The service currently returns no value on success.
+
+#### Errors
+
+TODO: list errors
+
+### `upload/list`
+
+Provides the [`upload/list` capability](./capabilities.md#uploadlist). Upon invocation, returns a list of metadata objects describing the uploads contained in a memory space.
+
+#### Invocation
+
+The `with` field of the invocation must contain the DID of a "memory space," and the caller must provide proof that they possess the `upload/list` capability for that space.
+
+#### Response
+
+On success, returns an object whose `results` field contains an array of `UploadItem` metadata objects for each upload.
+
+An `UploadItem` has the following fields:
+
+| field            | type             | description                                                    |
+| ---------------- | ---------------- | -------------------------------------------------------------- |
+| `uploaderDID`    | `string`         | The DID of the agent who uploaded the CAR                      |
+| `dataCID`     | `string` (`CID`) | The root CID of the stored data item                                             |
+| `carCID` | `string`         | The CID of a CAR associated with this upload. See below for notes about sharding.                                       |
+| `uploadedAt`     | `string`         | ISO 8601 timestamp of upload                                   |
+
+Note that each `UploadItem` contains a single `carCID`. For uploads that span multiple CARs, the response will contain multiple `UploadItem`s with the same `dataCID`, but with different `carCID`s, which should be collected on the client to get the full set of CAR CIDs for a "sharded" upload.
+
+The full response object returned by `upload/list` currently looks like this, although there may be changes when pagination is fully implemented. Currently, the service always returns all results in a single "page".
+
+| field      | type          | description                                               |
+| ---------- | ------------- | --------------------------------------------------------- |
+| `count`    | `number`      | The total number of CARs in the memory space              |
+| `pages`    | `number`      | The number of pages available in the listing              |
+| `page`     | `number`      | The index of the current page of results                  |
+| `pageSize` | `number`      | The max number of results in each page                    |
+| `results`  | `UploadItem[]` | An array of `UploadItem`s (see above) for the current page |
