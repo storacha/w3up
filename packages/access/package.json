@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "4.0.2",
+  "version": "5.0.1",
   "description": "w3access SDK",
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access",
   "repository": {
@@ -62,13 +62,13 @@
     "@ipld/dag-ucan": "^2.0.1",
     "@noble/ed25519": "^1.7.1",
     "@types/ws": "^8.5.3",
-    "@ucanto/client": "^3.0.1",
-    "@ucanto/core": "^3.0.1",
-    "@ucanto/interface": "^3.0.0",
-    "@ucanto/principal": "^3.0.0",
-    "@ucanto/server": "^3.0.1",
-    "@ucanto/transport": "^3.0.1",
-    "@ucanto/validator": "^3.0.1",
+    "@ucanto/client": "^3.0.2",
+    "@ucanto/core": "^3.0.2",
+    "@ucanto/interface": "^3.0.1",
+    "@ucanto/principal": "^3.0.1",
+    "@ucanto/server": "^3.0.4",
+    "@ucanto/transport": "^3.0.2",
+    "@ucanto/validator": "^3.0.4",
     "@web-std/fetch": "^4.1.0",
     "bigint-mod-arith": "^3.1.2",
     "conf": "^10.1.2",
@@ -115,7 +115,8 @@
       }
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off"
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/prefer-export-from": "off"
     },
     "env": {
       "mocha": true

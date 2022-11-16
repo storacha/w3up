@@ -1,6 +1,0 @@
-export * from '@ucanto/interface'
-export * as Identity from './type/identity.js'
-export * as Accounting from './type/accounting.js'
-export * as Store from './type/store.js'
-export * as Error from './type/error.js'
-export * from './signer/type.js'

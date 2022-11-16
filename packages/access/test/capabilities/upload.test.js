@@ -48,9 +48,6 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -86,9 +83,6 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -140,9 +134,6 @@ describe('upload capabilities', function () {
     const result = await access(add, {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
     assert.equal(result.error, true)
     assert(String(result).includes('Expected link to be CID with 0x202 codec'))
@@ -165,9 +156,6 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -216,9 +204,6 @@ describe('upload capabilities', function () {
     const result = await access(add, {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     assert.equal(result.error, true)
@@ -230,15 +215,12 @@ describe('upload capabilities', function () {
   })
 
   it('upload/add should work when escalating root when caveats not imposed on proof', async () => {
-    const delegation = Upload.add
-      .invoke({
-        issuer: alice,
-        audience: bob,
-        with: account.did(),
-        nb: {},
-        proofs: [await any],
-      })
-      .delegate()
+    const delegation = await Upload.add.delegate({
+      issuer: alice,
+      audience: bob,
+      with: account.did(),
+      proofs: [await any],
+    })
 
     const root = await createCborCid('root')
 
@@ -255,9 +237,6 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -298,9 +277,6 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     assert.equal(result.error, true)
@@ -313,17 +289,15 @@ describe('upload capabilities', function () {
 
   it('upload/add should fail when escalating shards', async () => {
     const shard = await createCarCid('shard')
-    const delegation = Upload.add
-      .invoke({
-        issuer: alice,
-        audience: bob,
-        with: account.did(),
-        nb: {
-          shards: [shard],
-        },
-        proofs: [await any],
-      })
-      .delegate()
+    const delegation = await Upload.add.delegate({
+      issuer: alice,
+      audience: bob,
+      with: account.did(),
+      nb: {
+        shards: [shard],
+      },
+      proofs: [await any],
+    })
 
     const add = Upload.add.invoke({
       issuer: bob,
@@ -338,9 +312,6 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     assert.equal(result.error, true)
@@ -362,9 +333,6 @@ describe('upload capabilities', function () {
     const result = await access(await list.delegate(), {
       capability: Upload.list,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -394,9 +362,6 @@ describe('upload capabilities', function () {
     const result = await access(await list.delegate(), {
       capability: Upload.list,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -426,9 +391,6 @@ describe('upload capabilities', function () {
     const result = await access(await list.delegate(), {
       capability: Upload.list,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -469,9 +431,6 @@ describe('upload capabilities', function () {
     const result = await access(list, {
       capability: Upload.list,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
     assert.equal(result.error, true)
     assert(
@@ -495,9 +454,6 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -532,9 +488,6 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -572,9 +525,6 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     if (result.error) {
@@ -619,9 +569,6 @@ describe('upload capabilities', function () {
     const result = await access(remove, {
       capability: Upload.remove,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
     assert.equal(result.error, true)
     assert(
@@ -659,9 +606,6 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
-      canIssue: (claim, issuer) => {
-        return claim.with === issuer
-      },
     })
 
     assert.equal(result.error, true)

@@ -1,5 +1,23 @@
 # Changelog
 
+## [5.0.1](https://github.com/web3-storage/w3protocol/compare/access-v5.0.0...access-v5.0.1) (2022-11-16)
+
+
+### Bug Fixes
+
+* workaround ts bug & generate valid typedefs ([#169](https://github.com/web3-storage/w3protocol/issues/169)) ([0b02d14](https://github.com/web3-storage/w3protocol/commit/0b02d14cc5b51ac0a0b8c879a917430ce0617dc7))
+
+## [5.0.0](https://github.com/web3-storage/w3protocol/compare/access-v4.0.2...access-v5.0.0) (2022-11-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* doc capabilities & make requierd nb non-optionals (#159)
+
+### Features
+
+* doc capabilities & make requierd nb non-optionals ([#159](https://github.com/web3-storage/w3protocol/issues/159)) ([6496773](https://github.com/web3-storage/w3protocol/commit/6496773f2a4977e06126ade37ae9dfc218b05f7f))
+
 ## [4.0.2](https://github.com/web3-storage/w3-protocol/compare/access-v4.0.1...access-v4.0.2) (2022-11-04)
 
 
