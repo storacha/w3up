@@ -112,6 +112,9 @@ describe('ShardStoringStream', () => {
     cars.forEach(({ cid }, i) =>
       assert.equal(cid.toString(), carCIDs[i].toString())
     )
+
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 2)
   })
 
   it('aborts on service failure', async () => {

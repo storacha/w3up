@@ -4,8 +4,8 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
-import { add as storeAdd } from '@web3-storage/access/capabilities/store'
-import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
+import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
+import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
 import { uploadFile, uploadDirectory } from '../src/index.js'
 import { serviceSigner } from './fixtures.js'
 import { randomBytes } from './helpers/random.js'
@@ -27,13 +27,13 @@ describe('uploadFile', () => {
     let carCID
 
     const proofs = await Promise.all([
-      storeAdd.delegate({
+      StoreCapabilities.add.delegate({
         issuer: account,
         audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
-      uploadAdd.delegate({
+      UploadCapabilities.add.delegate({
         issuer: account,
         audience: serviceSigner,
         with: account.did(),
@@ -47,7 +47,7 @@ describe('uploadFile', () => {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, 'store/add')
+          assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, account.did())
           return res
         },
@@ -57,7 +57,7 @@ describe('uploadFile', () => {
           assert.equal(invocation.issuer.did(), issuer.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, 'upload/add')
+          assert.equal(invCap.can, UploadCapabilities.add.can)
           assert.equal(invCap.with, account.did())
           assert.equal(invCap.nb.shards?.length, 1)
           assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
@@ -85,6 +85,11 @@ describe('uploadFile', () => {
       },
     })
 
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+    assert(service.upload.add.called)
+    assert.equal(service.upload.add.callCount, 1)
+
     assert(carCID)
     assert(dataCID)
   })
@@ -108,13 +113,13 @@ describe('uploadDirectory', () => {
     let carCID = null
 
     const proofs = await Promise.all([
-      storeAdd.delegate({
+      StoreCapabilities.add.delegate({
         issuer: account,
         audience: serviceSigner,
         with: account.did(),
         expiration: Infinity,
       }),
-      uploadAdd.delegate({
+      UploadCapabilities.add.delegate({
         issuer: account,
         audience: serviceSigner,
         with: account.did(),
@@ -165,6 +170,11 @@ describe('uploadDirectory', () => {
         carCID = meta.cid
       },
     })
+
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+    assert(service.upload.add.called)
+    assert.equal(service.upload.add.callCount, 1)
 
     assert(carCID)
     assert(dataCID)

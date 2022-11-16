@@ -9,19 +9,34 @@ const notImplemented = () => {
  *   store: Partial<import('../../src/types').Service['store']>
  *   upload: Partial<import('../../src/types').Service['upload']>
  * }>} impl
- * @returns {import('../../src/types').Service}
  */
 export function mockService(impl) {
   return {
     store: {
-      add: impl.store?.add ?? notImplemented,
-      list: impl.store?.list ?? notImplemented,
-      remove: impl.store?.remove ?? notImplemented,
+      add: withCallCount(impl.store?.add ?? notImplemented),
+      list: withCallCount(impl.store?.list ?? notImplemented),
+      remove: withCallCount(impl.store?.remove ?? notImplemented),
     },
     upload: {
-      add: impl.upload?.add ?? notImplemented,
-      list: impl.upload?.list ?? notImplemented,
-      remove: impl.upload?.remove ?? notImplemented,
+      add: withCallCount(impl.upload?.add ?? notImplemented),
+      list: withCallCount(impl.upload?.list ?? notImplemented),
+      remove: withCallCount(impl.upload?.remove ?? notImplemented),
     },
   }
+}
+
+/**
+ * @template {Function} T
+ * @param {T} fn
+ */
+function withCallCount(fn) {
+  /** @param {T extends (...args: infer A) => any ? A : never} args */
+  const countedFn = (...args) => {
+    countedFn.called = true
+    countedFn.callCount++
+    return fn(...args)
+  }
+  countedFn.called = false
+  countedFn.callCount = 0
+  return countedFn
 }

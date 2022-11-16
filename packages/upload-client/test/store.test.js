@@ -59,6 +59,10 @@ describe('Store.add', () => {
     })
 
     const carCID = await Store.add({ issuer, proofs }, car, { connection })
+
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -179,6 +183,10 @@ describe('Store.add', () => {
     })
 
     const carCID = await Store.add({ issuer, proofs }, car, { connection })
+
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
   })
@@ -287,6 +295,9 @@ describe('Store.list', () => {
 
     const list = await Store.list({ issuer, proofs }, { connection })
 
+    assert(service.store.list.called)
+    assert.equal(service.store.list.callCount, 1)
+
     assert.equal(list.count, res.count)
     assert.equal(list.page, res.page)
     assert.equal(list.pageSize, res.pageSize)
@@ -385,6 +396,9 @@ describe('Store.remove', () => {
     })
 
     await Store.remove({ issuer, proofs }, car.cid, { connection })
+
+    assert(service.store.remove.called)
+    assert.equal(service.store.remove.callCount, 1)
   })
 
   it('throws on service error', async () => {

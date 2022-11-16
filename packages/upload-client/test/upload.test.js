@@ -56,6 +56,9 @@ describe('Upload.add', () => {
 
     const root = car.roots[0]
     await Upload.add({ issuer, proofs }, root, [car.cid], { connection })
+
+    assert(service.upload.add.called)
+    assert.equal(service.upload.add.callCount, 1)
   })
 
   it('throws on service error', async () => {
@@ -156,6 +159,9 @@ describe('Upload.list', () => {
 
     const list = await Upload.list({ issuer, proofs }, { connection })
 
+    assert(service.upload.list.called)
+    assert.equal(service.upload.list.callCount, 1)
+
     assert.equal(list.count, res.count)
     assert.equal(list.page, res.page)
     assert.equal(list.pageSize, res.pageSize)
@@ -251,6 +257,9 @@ describe('Upload.remove', () => {
     })
 
     await Upload.remove({ issuer, proofs }, car.roots[0], { connection })
+
+    assert(service.upload.remove.called)
+    assert.equal(service.upload.remove.callCount, 1)
   })
 
   it('throws on service error', async () => {
