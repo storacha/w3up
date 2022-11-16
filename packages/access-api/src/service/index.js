@@ -8,7 +8,7 @@ import {
   delegationToString,
   stringToDelegation,
 } from '@web3-storage/access/encoding'
-import { any } from '@web3-storage/access/capabilities/any'
+import { any } from '@web3-storage/access/capabilities/wildcard'
 
 /**
  * @param {import('../bindings').RouteContext} ctx

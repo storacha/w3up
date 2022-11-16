@@ -2,10 +2,10 @@
 import * as UCAN from '@ipld/dag-ucan'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
-import { StoreMemory } from '@web3-storage/access/stores/store-memory'
-import * as Any from '@web3-storage/access/capabilities/any'
+import * as Any from '@web3-storage/access/capabilities/wildcard'
 import * as Voucher from '@web3-storage/access/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
+import { Signer } from '@ucanto/principal/ed25519'
 
 /**
  * @param {Types.UCAN.View} ucan
@@ -27,8 +27,7 @@ export async function send(ucan, mf) {
  * @param {string} email
  */
 export async function createAccount(issuer, service, conn, email) {
-  const store = new StoreMemory()
-  const account = await store.createAccount()
+  const account = await Signer.generate()
   const claim = await Voucher.claim
     .invoke({
       issuer,
