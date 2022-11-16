@@ -2,8 +2,7 @@ import Queue from 'p-queue'
 import { encode } from './car.js'
 import { add } from './store.js'
 
-// most thing are < 30MB
-const SHARD_SIZE = 1024 * 1024 * 30
+const SHARD_SIZE = 1024 * 1024 * 100
 const CONCURRENT_UPLOADS = 3
 
 /**
