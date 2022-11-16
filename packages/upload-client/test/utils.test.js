@@ -28,6 +28,21 @@ describe('findCapability', () => {
     })
   })
 
+  it('matches capability', async () => {
+    const issuer = await Signer.generate()
+    const proofs = [
+      await StoreCapabilities.add.delegate({
+        issuer,
+        audience: serviceSigner,
+        with: issuer.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const cap = findCapability(proofs, 'store/add')
+    assert.equal(cap.can, 'store/add')
+  })
+
   it('matches wildcard capability', async () => {
     const issuer = await Signer.generate()
     const proofs = [
@@ -40,6 +55,21 @@ describe('findCapability', () => {
     ]
 
     const cap = findCapability(proofs, 'store/add')
+    assert.equal(cap.can, 'store/*')
+  })
+
+  it('matches wildcard capability with audience', async () => {
+    const issuer = await Signer.generate()
+    const proofs = [
+      await StoreCapabilities.store.delegate({
+        issuer,
+        audience: serviceSigner,
+        with: issuer.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const cap = findCapability(proofs, 'store/add', serviceSigner.did())
     assert.equal(cap.can, 'store/*')
   })
 
