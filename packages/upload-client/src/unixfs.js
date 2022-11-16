@@ -1,7 +1,7 @@
 import * as UnixFS from '@ipld/unixfs'
 import * as raw from 'multiformats/codecs/raw'
 
-const queuingStrategy = UnixFS.withCapacity(1_048_576 * 175)
+const queuingStrategy = UnixFS.withCapacity()
 
 // TODO: configure chunk size and max children https://github.com/ipld/js-unixfs/issues/36
 const settings = UnixFS.configure({
