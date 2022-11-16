@@ -115,7 +115,8 @@
       }
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off"
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/prefer-export-from": "off"
     },
     "env": {
       "mocha": true
