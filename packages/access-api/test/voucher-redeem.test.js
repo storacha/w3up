@@ -1,11 +1,11 @@
 /* eslint-disable unicorn/prefer-number-properties */
-import * as Any from '@web3-storage/access/capabilities/any'
+import * as Any from '@web3-storage/access/capabilities/wildcard'
 import * as Voucher from '@web3-storage/access/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
-import { StoreMemory } from '@web3-storage/access/stores/store-memory'
 import { context, test } from './helpers/context.js'
 import { createAccount } from './helpers/utils.js'
 import { Accounts } from '../src/kvs/accounts.js'
+import { Signer } from '@ucanto/principal/ed25519'
 
 test.beforeEach(async (t) => {
   t.context = await context()
@@ -14,8 +14,7 @@ test.beforeEach(async (t) => {
 test('should return account/redeem', async (t) => {
   const { issuer, service, conn, mf, db } = t.context
 
-  const store = new StoreMemory()
-  const account = await store.createAccount()
+  const account = await Signer.generate()
   const claim = await Voucher.claim
     .invoke({
       issuer,
