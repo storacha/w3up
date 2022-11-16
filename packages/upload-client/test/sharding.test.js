@@ -46,16 +46,16 @@ describe('ShardStoringStream', () => {
       url: 'http://localhost:9200',
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const cars = await Promise.all([randomCAR(128), randomCAR(128)])
     let invokes = 0
 
     const proofs = [
       await storeAdd.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -63,11 +63,11 @@ describe('ShardStoringStream', () => {
     const service = mockService({
       store: {
         add(invocation) {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb.link), cars[invokes].cid.toString())
           invokes++
           return res
@@ -100,7 +100,9 @@ describe('ShardStoringStream', () => {
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
     await carStream
-      .pipeThrough(new ShardStoringStream({ issuer, proofs }, { connection }))
+      .pipeThrough(
+        new ShardStoringStream({ issuer: agent, proofs }, { connection })
+      )
       .pipeTo(
         new WritableStream({
           write: ({ cid }) => {
@@ -118,15 +120,15 @@ describe('ShardStoringStream', () => {
   })
 
   it('aborts on service failure', async () => {
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const cars = await Promise.all([randomCAR(128), randomCAR(128)])
 
     const proofs = [
       await storeAdd.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -163,7 +165,9 @@ describe('ShardStoringStream', () => {
 
     await assert.rejects(
       carStream
-        .pipeThrough(new ShardStoringStream({ issuer, proofs }, { connection }))
+        .pipeThrough(
+          new ShardStoringStream({ issuer: agent, proofs }, { connection })
+        )
         .pipeTo(new WritableStream()),
       { message: 'failed store/add invocation' }
     )

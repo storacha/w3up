@@ -18,15 +18,15 @@ describe('Store.add', () => {
       url: 'http://localhost:9200',
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -34,11 +34,11 @@ describe('Store.add', () => {
     const service = mockService({
       store: {
         add(invocation) {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.add.can)
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb.link), car.cid.toString())
           return res
         },
@@ -58,7 +58,9 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    const carCID = await Store.add({ issuer, proofs }, car, { connection })
+    const carCID = await Store.add({ issuer: agent, proofs }, car, {
+      connection,
+    })
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
@@ -74,15 +76,15 @@ describe('Store.add', () => {
       url: 'http://localhost:9400', // this bucket always returns a 400
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -102,7 +104,7 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    assert.rejects(Store.add({ issuer, proofs }, car, { connection }), {
+    assert.rejects(Store.add({ issuer: agent, proofs }, car, { connection }), {
       message: 'upload failed: 400',
     })
   })
@@ -114,15 +116,15 @@ describe('Store.add', () => {
       url: 'http://localhost:9500', // this bucket always returns a 500
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -142,7 +144,7 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    assert.rejects(Store.add({ issuer, proofs }, car, { connection }), {
+    assert.rejects(Store.add({ issuer: agent, proofs }, car, { connection }), {
       message: 'upload failed: 500',
     })
   })
@@ -154,15 +156,15 @@ describe('Store.add', () => {
       url: 'http://localhost:9001', // will fail the test if called
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -182,7 +184,9 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    const carCID = await Store.add({ issuer, proofs }, car, { connection })
+    const carCID = await Store.add({ issuer: agent, proofs }, car, {
+      connection,
+    })
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
@@ -213,15 +217,15 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.add.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -230,7 +234,7 @@ describe('Store.add', () => {
     controller.abort() // already aborted
 
     await assert.rejects(
-      Store.add({ issuer, proofs }, car, {
+      Store.add({ issuer: agent, proofs }, car, {
         connection,
         signal: controller.signal,
       }),
@@ -255,14 +259,14 @@ describe('Store.list', () => {
       ],
     }
 
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
 
     const proofs = [
       await StoreCapabilities.list.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -270,11 +274,11 @@ describe('Store.list', () => {
     const service = mockService({
       store: {
         list(invocation) {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.list.can)
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.with, space.did())
           return res
         },
       },
@@ -293,7 +297,7 @@ describe('Store.list', () => {
       channel: server,
     })
 
-    const list = await Store.list({ issuer, proofs }, { connection })
+    const list = await Store.list({ issuer: agent, proofs }, { connection })
 
     assert(service.store.list.called)
     assert.equal(service.store.list.callCount, 1)
@@ -314,14 +318,14 @@ describe('Store.list', () => {
   })
 
   it('throws on service error', async () => {
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
 
     const proofs = [
       await StoreCapabilities.list.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -347,23 +351,26 @@ describe('Store.list', () => {
       channel: server,
     })
 
-    await assert.rejects(Store.list({ issuer, proofs }, { connection }), {
-      message: 'failed store/list invocation',
-    })
+    await assert.rejects(
+      Store.list({ issuer: agent, proofs }, { connection }),
+      {
+        message: 'failed store/list invocation',
+      }
+    )
   })
 })
 
 describe('Store.remove', () => {
   it('removes a stored CAR file', async () => {
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.remove.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -371,11 +378,11 @@ describe('Store.remove', () => {
     const service = mockService({
       store: {
         remove(invocation) {
-          assert.equal(invocation.issuer.did(), issuer.did())
+          assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.remove.can)
-          assert.equal(invCap.with, account.did())
+          assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb.link), car.cid.toString())
           return null
         },
@@ -395,22 +402,22 @@ describe('Store.remove', () => {
       channel: server,
     })
 
-    await Store.remove({ issuer, proofs }, car.cid, { connection })
+    await Store.remove({ issuer: agent, proofs }, car.cid, { connection })
 
     assert(service.store.remove.called)
     assert.equal(service.store.remove.callCount, 1)
   })
 
   it('throws on service error', async () => {
-    const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
     const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.remove.delegate({
-        issuer: account,
+        issuer: space,
         audience: serviceSigner,
-        with: account.did(),
+        with: space.did(),
         expiration: Infinity,
       }),
     ]
@@ -437,7 +444,7 @@ describe('Store.remove', () => {
     })
 
     await assert.rejects(
-      Store.remove({ issuer, proofs }, car.cid, { connection }),
+      Store.remove({ issuer: agent, proofs }, car.cid, { connection }),
       { message: 'failed store/remove invocation' }
     )
   })
