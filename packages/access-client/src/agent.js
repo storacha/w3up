@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 import * as DID from '@ipld/dag-ucan/did'
 import * as Client from '@ucanto/client'
 // @ts-ignore
@@ -10,29 +11,19 @@ import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Account from './capabilities/account.js'
 import * as Voucher from './capabilities/voucher.js'
-import { any as Any } from './capabilities/any.js'
+import { any as Any } from './capabilities/wildcard.js'
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
+import { Signer } from '@ucanto/principal/ed25519'
+import { invoke, delegate } from '@ucanto/core'
+import {
+  isExpired,
+  isTooEarly,
+  validate,
+  canDelegateCapability,
+} from './delegations.js'
 
-/**
- * @template T
- * @typedef {{
- * store: import('./stores/types').Store<T>
- * connection: Ucanto.ConnectionView<import('./types').Service>,
- * url?: URL,
- * fetch: typeof fetch
- * data: import('./stores/types').StoreData<T>
- * }} AgentOptions
- */
-
-/**
- * @template T
- * @typedef {{
- * store: import('./stores/types').Store<T>
- * url?: URL,
- * fetch?: typeof fetch
- * }} AgentCreateOptions
- */
+import { collect } from 'streaming-iterables'
 
 const HOST = 'https://access.web3.storage'
 
@@ -41,18 +32,22 @@ const HOST = 'https://access.web3.storage'
  * @param {Ucanto.Principal<T>} principal
  * @param {typeof fetch} _fetch
  * @param {URL} url
- * @returns { Promise<import('@ucanto/interface').ConnectionView<import('./types').Service>>}
+ * @param {Ucanto.Transport.Channel<import('./types').Service>} [channel]
+ * @returns {Promise<Ucanto.ConnectionView<import('./types').Service>>}
  */
-export async function connection(principal, _fetch, url) {
+export async function connection(principal, _fetch, url, channel) {
+  const _channel =
+    channel ||
+    HTTP.open({
+      url,
+      method: 'POST',
+      fetch: _fetch,
+    })
   const connection = Client.connect({
     id: principal,
     encoder: CAR,
     decoder: CBOR,
-    channel: HTTP.open({
-      url,
-      method: 'POST',
-      fetch: _fetch,
-    }),
+    channel: _channel,
   })
 
   return connection
@@ -70,7 +65,7 @@ export class Agent {
   #fetch
 
   /**
-   * @param {AgentOptions<T>} opts
+   * @param {import('./types').AgentOptions<T>} opts
    */
   constructor(opts) {
     this.url = opts.url || new URL(HOST)
@@ -86,7 +81,7 @@ export class Agent {
 
   /**
    * @template {Ucanto.Signer} T
-   * @param {AgentCreateOptions<T>} opts
+   * @param {import('./types').AgentCreateOptions<T>} opts
    */
   static async create(opts) {
     let _fetch = opts.fetch
@@ -103,9 +98,12 @@ export class Agent {
       }
     }
 
+    if (!(await opts.store.exists())) {
+      throw new Error('Store is not initialized, run "Store.init()" first.')
+    }
     const data = await opts.store.load()
     return new Agent({
-      connection: await connection(data.principal, _fetch, url),
+      connection: await connection(data.principal, _fetch, url, opts.channel),
       fetch: _fetch,
       url,
       store: opts.store,
@@ -128,67 +126,225 @@ export class Agent {
   }
 
   /**
+   *
+   * @param {Ucanto.Delegation} delegation
+   */
+  async addProof(delegation) {
+    validate(delegation, {
+      checkAudience: this.issuer,
+      checkIsExpired: true,
+    })
+
+    this.data.dels.set(delegation.cid.toString(), {
+      delegation,
+    })
+
+    await this.store.save(this.data)
+  }
+
+  /**
+   * @param {import('@ucanto/interface').Capability[]} [caps]
+   */
+  async *#delegations(caps) {
+    const _caps = new Set(caps)
+    for (const [key, value] of this.data.dels) {
+      // check expiration
+      if (!isExpired(value.delegation)) {
+        // check if delegation can be used
+        if (!isTooEarly(value.delegation)) {
+          // check if we need to filter for caps
+          if (caps) {
+            for (const cap of _caps) {
+              if (canDelegateCapability(value.delegation, cap)) {
+                _caps.delete(cap)
+                yield value
+              }
+            }
+          } else {
+            yield value
+          }
+        }
+      } else {
+        // delete any expired delegation
+        this.data.dels.delete(key)
+      }
+    }
+
+    await this.store.save(this.data)
+  }
+
+  /**
+   * @param {import('@ucanto/interface').Capability[]} [caps]
+   */
+  async *proofs(caps) {
+    for await (const value of this.proofsWithMeta(caps)) {
+      yield value.delegation
+    }
+  }
+
+  /**
+   * @param {import('@ucanto/interface').Capability[]} [caps]
+   */
+  async *proofsWithMeta(caps) {
+    for await (const value of this.#delegations(caps)) {
+      if (value.delegation.audience.did() === this.issuer.did()) {
+        yield value
+      }
+    }
+  }
+
+  /**
+   * @param {import('@ucanto/interface').Capability[]} [caps]
+   */
+  async *delegations(caps) {
+    for await (const { delegation } of this.delegationsWithMeta(caps)) {
+      yield delegation
+    }
+  }
+
+  /**
+   * @param {import('@ucanto/interface').Capability[]} [caps]
+   */
+  async *delegationsWithMeta(caps) {
+    for await (const value of this.#delegations(caps)) {
+      if (value.delegation.audience.did() !== this.issuer.did()) {
+        yield value
+      }
+    }
+  }
+
+  /**
+   * @param {string} name
+   */
+  async createAccount(name) {
+    const signer = await Signer.generate()
+    const proof = await Any.delegate({
+      issuer: signer,
+      audience: this.issuer,
+      with: signer.did(),
+      expiration: Infinity,
+    })
+
+    this.data.accs.set(signer.did(), {
+      name,
+      registered: false,
+    })
+
+    await this.addProof(proof)
+
+    return {
+      did: signer.did(),
+      proof,
+    }
+  }
+
+  /**
+   *
+   * @param {Ucanto.DID} account
+   */
+  async setCurrentAccount(account) {
+    const proofs = await collect(
+      this.proofs([
+        {
+          can: 'account/info',
+          with: account,
+        },
+      ])
+    )
+
+    if (proofs.length === 0) {
+      throw new Error(`Agent has no proofs for ${account}.`)
+    }
+
+    this.data.currentAccount = account
+    await this.store.save(this.data)
+
+    return account
+  }
+
+  currentAccount() {
+    return this.data.currentAccount
+  }
+
+  async currentAccountWithMeta() {
+    if (!this.data.currentAccount) {
+      return
+    }
+
+    // TODO cache these
+    const proofs = await collect(
+      this.proofs([
+        {
+          can: 'account/info',
+          with: this.data.currentAccount,
+        },
+      ])
+    )
+
+    const caps = new Set()
+    for (const p of proofs) {
+      for (const cap of p.capabilities) {
+        caps.add(cap.can)
+      }
+    }
+
+    return {
+      did: this.data.currentAccount,
+      proofs,
+      capabilities: [...caps],
+    }
+  }
+
+  /**
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    */
-  async createAccount(email, opts) {
-    const account = await this.store.createAccount()
+  async registerAccount(email, opts) {
+    const account = this.currentAccount()
     const service = await this.service()
-    const delegationToAgent = await Any.delegate({
-      issuer: account,
-      audience: this.issuer,
-      with: account.did(),
-      expiration: Infinity,
-    })
 
-    const inv = await Voucher.claim
-      .invoke({
-        issuer: this.issuer,
-        audience: service,
-        with: account.did(),
-        nb: {
-          identity: URI.from(`mailto:${email}`),
-          product: 'product:free',
-          service: service.did(),
-        },
-        proofs: [delegationToAgent],
-      })
-      .execute(this.connection)
+    if (!account) {
+      throw new Error('No account selected')
+    }
+
+    const inv = await this.execute(Voucher.claim, {
+      nb: {
+        identity: URI.from(`mailto:${email}`),
+        product: 'product:free',
+        service: service.did(),
+      },
+    })
 
     if (inv && inv.error) {
       throw new Error('Account creation failed', { cause: inv.error })
     }
 
     const voucherRedeem = await this.#waitForVoucherRedeem(opts)
-    // TODO save this delegation so we can revoke later
-    const delegationToService = await Any.delegate({
-      issuer: account,
+    const delegationToService = await this.delegate({
+      abilities: ['*'],
       audience: service,
-      with: account.did(),
-      expiration: Infinity,
+      audienceMeta: {
+        name: 'w3access',
+        type: 'service',
+      },
     })
-    const accInv = await Voucher.redeem
-      .invoke({
-        issuer: this.data.principal,
-        audience: service,
-        with: service.did(),
-        nb: {
-          account: account.did(),
-          identity: voucherRedeem.capabilities[0].nb.identity,
-          product: voucherRedeem.capabilities[0].nb.product,
-        },
-        proofs: [voucherRedeem, delegationToService],
-      })
 
-      .execute(this.connection)
+    const accInv = await this.execute(Voucher.redeem, {
+      with: URI.from(service.did()),
+      nb: {
+        account,
+        identity: voucherRedeem.capabilities[0].nb.identity,
+        product: voucherRedeem.capabilities[0].nb.product,
+      },
+      proofs: [delegationToService],
+    })
 
     if (accInv && accInv.error) {
       throw new Error('Account registration failed', { cause: accInv })
     }
-    this.data.delegations.addMany([voucherRedeem, delegationToAgent])
-    this.data.accounts.push(account)
-    this.store.save(this.data)
+
+    await this.addProof(voucherRedeem)
   }
 
   /**
@@ -232,28 +388,87 @@ export class Agent {
 
   /**
    *
-   * @param {Ucanto.Principal} audience
-   * @param {import('@ipld/dag-ucan').Capabilities} capabilities
-   * @param {number} [lifetimeInSeconds]
+   * @param {import('./types').DelegationOptions} options
    */
-  async delegate(audience, capabilities, lifetimeInSeconds) {
-    const delegation = await this.data.delegations.delegate(
-      audience,
-      capabilities,
-      lifetimeInSeconds
+  async delegate(options) {
+    const account = await this.currentAccountWithMeta()
+    if (!account) {
+      throw new Error('there no account selected.')
+    }
+
+    const caps = /** @type {Ucanto.Capabilities} */ (
+      options.abilities.map((a) => {
+        return {
+          with: account.did,
+          can: a,
+        }
+      })
     )
 
+    const delegation = await delegate({
+      issuer: this.issuer,
+      capabilities: caps,
+      proofs: await collect(this.proofs(caps)),
+      ...options,
+    })
+
+    this.data.dels.set(delegation.cid.toString(), {
+      delegation,
+      meta: {
+        audience: options.audienceMeta,
+      },
+    })
     await this.store.save(this.data)
     return delegation
   }
 
   /**
-   *
-   * @param {import('@ucanto/interface').Delegation} delegation
+   * @template {Ucanto.Ability} A
+   * @template {Ucanto.URI} R
+   * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
+   * @template {Ucanto.Caveats} [C={}]
+   * @param {CAP} cap
+   * @param {import('./types').ExecuteOptions<A, R, CAP>} options
    */
-  async addDelegation(delegation) {
-    await this.data.delegations.add(delegation)
-    await this.store.save(this.data)
+  async execute(cap, options) {
+    const _with = options.with || this.currentAccount()
+    if (!_with) {
+      throw new Error('there no account selected so you need pass a resource.')
+    }
+
+    const proofs = await collect(
+      this.proofs([
+        {
+          with: _with,
+          can: cap.can,
+        },
+      ])
+    )
+
+    if (proofs.length === 0) {
+      throw new Error(
+        `no proofs available for resource ${_with} and ability ${cap.can}`
+      )
+    }
+
+    const extraProofs = options.proofs || []
+    const inv = invoke({
+      audience: options.audience || (await this.service()),
+      // @ts-ignore
+      capability: cap.create({
+        with: _with,
+        nb: options.nb,
+      }),
+      issuer: this.issuer,
+      proofs: [...proofs, ...extraProofs],
+    })
+
+    // @ts-ignore
+    const out = inv.execute(this.connection)
+
+    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<CAP>, import('./types').Service>>} */ (
+      out
+    )
   }
 
   /**
@@ -265,22 +480,12 @@ export class Agent {
   }
 
   /**
-   * @param {Ucanto.URI<"did:">} account
+   * @param {Ucanto.URI<"did:">} [account]
    */
   async getAccountInfo(account) {
-    const proofs = isEmpty(this.data.delegations.getByResource(account))
-    if (!proofs) {
-      throw new TypeError('No proofs for "account/info".')
-    }
-
-    const inv = await Account.info
-      .invoke({
-        issuer: this.issuer,
-        audience: await this.service(),
-        with: account,
-        proofs,
-      })
-      .execute(this.connection)
+    const inv = await this.execute(Account.info, {
+      with: account,
+    })
 
     if (inv.error) {
       throw inv
@@ -288,16 +493,4 @@ export class Agent {
 
     return inv
   }
-}
-
-/**
- * @template T
- * @param { Array<T | undefined> | undefined} arr
- */
-function isEmpty(arr) {
-  if (!Array.isArray(arr) || arr.length === 0) {
-    return
-  }
-
-  return /** @type {T[]} */ (arr)
 }

@@ -324,7 +324,7 @@ export class Channel {
   }
 
   /**
-   * @type {ChannelType['sendMsg']}
+   * @type {ChannelType['sendFin']}
    */
   async sendFin(did) {
     await this.sendMsg(did, {

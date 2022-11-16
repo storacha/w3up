@@ -146,7 +146,7 @@ export class Peer {
 
     await this.channel.sendFin(this.nextdid)
 
-    await this.agent.addDelegation(delegations[0])
+    await this.agent.addProof(delegations[0])
 
     return { delegation: delegations[0], meta: capsRsp.msg.meta }
   }
@@ -158,12 +158,12 @@ export class Peer {
     // request caps
     /** @type {import('./types').LinkRequest} */
     const reqCap = await this.channel.awaitMsg(this.nextdid)
-    const d = await this.agent.delegate(
-      this.audience,
-      [{ with: this.agent.did(), can: reqCap.msg.caps[0].can }],
-      8_600_000
-    )
-
+    const d = await this.agent.delegate({
+      abilities: ['*'], // TODO should be derived from reqCap
+      audience: this.audience,
+      expiration: Infinity,
+      audienceMeta: reqCap.msg.meta,
+    })
     this.channel.subscribe('awake/msg', (msg) => {
       this.channel.close()
     })

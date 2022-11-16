@@ -1,9 +1,19 @@
+/**
+ * Voucher Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/voucher'
+ * ```
+ *
+ * @module
+ */
 import { capability, URI } from '@ucanto/validator'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 import { canDelegateURI, equalWith, fail } from './utils.js'
-import { any } from './any.js'
+import { any } from './wildcard.js'
 
 export const voucher = any.derive({
   to: capability({

@@ -1,11 +1,10 @@
 import { importDAG } from '@ucanto/core/delegation'
 import * as Signer from '@ucanto/principal/rsa'
 import defer from 'p-defer'
-import { Delegations } from '../delegations.js'
 
 /**
- * @typedef {import('./types').StoreDataKeyRSA} StoreData
- * @typedef {import('./types').StoreKeyRSA} Store
+ * @typedef {import('./types').StoreData<Signer.RSASigner>} StoreData
+ * @typedef {import('./types').Store<Signer.RSASigner>} Store
  */
 
 const STORE_NAME = 'AccessStore'
@@ -112,14 +111,14 @@ export class StoreIndexedDB {
 
   /** @type {Store['init']} */
   async init(data) {
-    const principal =
-      data.principal || (await Signer.generate({ extractable: false }))
-    const delegations = data.delegations || new Delegations({ principal })
+    /** @type {StoreData} */
     const storeData = {
-      accounts: data.accounts || [],
       meta: data.meta || { name: 'agent', type: 'device' },
-      principal,
-      delegations,
+      principal:
+        data.principal || (await Signer.generate({ extractable: false })),
+      accs: data.accs || new Map(),
+      dels: data.dels || new Map(),
+      currentAccount: data.currentAccount,
     }
 
     await this.save(storeData)
@@ -139,16 +138,24 @@ export class StoreIndexedDB {
         /** @type {import('p-defer').DeferredPromise<Store>} */
         const { resolve, reject, promise } = defer()
 
+        const dels = []
+
+        for (const [key, value] of data.dels) {
+          dels.push([
+            key,
+            {
+              meta: value.meta,
+              delegation: [...value.delegation.export()],
+            },
+          ])
+        }
         const putReq = store.put({
           id: DATA_ID,
-          accounts: data.accounts.map((a) => a.toArchive()),
-          delegations: {
-            created: data.delegations.created.map((d) => [...d.export()]),
-            received: data.delegations.received.map((d) => [...d.export()]),
-            meta: [...data.delegations.meta.entries()],
-          },
           meta: data.meta,
           principal: data.principal.toArchive(),
+          currentAccount: data.currentAccount,
+          accs: data.accs,
+          dels,
         })
         putReq.addEventListener('success', () => resolve(this))
         putReq.addEventListener('error', () =>
@@ -178,25 +185,27 @@ export class StoreIndexedDB {
         const getReq = store.get(DATA_ID)
         getReq.addEventListener('success', () => {
           try {
-            /** @type {import('./types').IDBStoreData} */
+            /** @type {import('./types').StoreDataIDB} */
             const raw = getReq.result
             if (!raw) throw new Error('Store is not initialized')
 
-            const principal = Signer.from(raw.principal)
+            /** @type {StoreData['dels']} */
+            const dels = new Map()
+
+            for (const [key, value] of raw.dels) {
+              dels.set(key, {
+                delegation: importDAG(value.delegation),
+                meta: value.meta,
+              })
+            }
+
+            /** @type {StoreData} */
             const data = {
-              accounts: raw.accounts.map((a) => Signer.from(a)),
-              delegations: new Delegations({
-                principal,
-                received: raw.delegations.received.map((blocks) =>
-                  importDAG(blocks)
-                ),
-                created: raw.delegations.created.map((blocks) =>
-                  importDAG(blocks)
-                ),
-                meta: new Map(raw.delegations.meta),
-              }),
               meta: raw.meta,
-              principal,
+              principal: Signer.from(raw.principal),
+              currentAccount: raw.currentAccount,
+              accs: raw.accs,
+              dels,
             }
             resolve(data)
           } catch (error) {

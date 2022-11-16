@@ -1,20 +1,24 @@
 import { AgentMeta } from '../types.js'
-import { Delegations } from '../delegations.js'
-import ed25519 from '@ucanto/principal/ed25519'
 import { RSASigner } from '@ucanto/principal/rsa'
-import { SignerArchive } from '@ucanto/interface'
+import { Delegation, SignerArchive, DID } from '@ucanto/interface'
 
-export interface DelegationsAsJSON {
-  created: string
-  received: string
-  meta: Array<[string, AgentMeta]>
+export type CIDString = string
+
+export interface DelegationMeta {
+  audience: AgentMeta
+}
+
+export interface AccountMeta {
+  name: string
+  registered: boolean
 }
 
 export interface StoreData<T> {
-  accounts: T[]
   meta: AgentMeta
   principal: T
-  delegations: Delegations
+  currentAccount?: DID
+  accs: Map<DID, AccountMeta>
+  dels: Map<CIDString, { meta?: DelegationMeta; delegation: Delegation }>
 }
 
 export interface Store<T> {
@@ -24,24 +28,21 @@ export interface Store<T> {
   init: (data: Partial<StoreData<T>>) => Promise<StoreData<T>>
   save: (data: StoreData<T>) => Promise<Store<T>>
   load: () => Promise<StoreData<T>>
-  createAccount: () => Promise<T>
   reset: () => Promise<void>
 }
 
-export interface StoreKeyEd extends Store<ed25519.Signer.EdSigner> {}
-export interface StoreDataKeyEd extends StoreData<ed25519.Signer.EdSigner> {}
-
-export interface StoreKeyRSA extends Store<RSASigner> {}
-export interface StoreDataKeyRSA extends StoreData<RSASigner> {}
-
-export interface IDBStoreData {
+// Store IDB
+export interface StoreDataIDB {
   id: number
-  accounts: Array<SignerArchive<RSASigner>>
-  delegations: {
-    created: Array<Array<import('@ucanto/interface').Block>>
-    received: Array<Array<import('@ucanto/interface').Block>>
-    meta: Array<[string, import('../awake/types').PeerMeta]>
-  }
   meta: import('../types').AgentMeta
   principal: SignerArchive<RSASigner>
+  currentAccount?: DID
+  accs: Map<DID, AccountMeta>
+  dels: Map<
+    CIDString,
+    {
+      meta?: DelegationMeta
+      delegation: Array<import('@ucanto/interface').Block>
+    }
+  >
 }

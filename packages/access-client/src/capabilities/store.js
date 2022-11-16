@@ -1,6 +1,16 @@
+/**
+ * Store Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/store'
+ * ```
+ *
+ * @module
+ */
 import { capability, Failure, Link, URI, Schema } from '@ucanto/validator'
 import { equalLink, equalWith } from './utils.js'
-import { any } from './any.js'
+import { any } from './wildcard.js'
 
 /**
  * all the `store/*` capabilities which can also be derived

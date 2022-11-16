@@ -1,3 +1,8 @@
+/**
+ * @module awake-messages
+ * @packageDocumentation
+ * @ignore
+ */
 import { z } from 'zod'
 
 export const MessageType = z.enum(['awake/init', 'awake/res', 'awake/msg'])

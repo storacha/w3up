@@ -5,11 +5,14 @@ import * as Types from '@ucanto/interface'
 /**
  * Check URI can be delegated
  *
- * @param {string} child
- * @param {string} parent
+ * @param {string | undefined} child
+ * @param {string | undefined} parent
  */
 export function canDelegateURI(child, parent) {
-  if (parent.endsWith('*')) {
+  if (parent === undefined) {
+    return true
+  }
+  if (child !== undefined && parent.endsWith('*')) {
     return child.startsWith(parent.slice(0, -1))
       ? true
       : new Failure(`${child} does not match ${parent}`)
@@ -84,4 +87,63 @@ export const equalLink = (claimed, delegated) => {
  */
 export function fail(value) {
   return value === true ? undefined : value
+}
+
+/**
+ *
+ * @param {import('@ucanto/interface').Ability} ability
+ */
+function parseAbility(ability) {
+  switch (ability) {
+    case '*': {
+      return '*'
+    }
+    default: {
+      const [namespace, ...segments] = ability.split('/')
+      return { namespace, segments }
+    }
+  }
+}
+
+/**
+ *
+ * TODO: needs to account for caps derived from diferent namespaces like 'account/info' can be derived from 'store/add'
+ *
+ * @param {import('@ucanto/interface').Ability} parent
+ * @param {import('@ucanto/interface').Ability} child
+ */
+export function canDelegateAbility(parent, child) {
+  const parsedParent = parseAbility(parent)
+  const parsedChild = parseAbility(child)
+
+  // Parent is wildcard
+  if (parsedParent === '*') {
+    return true
+  }
+
+  // Child is wild card so it can not be delegated from anything
+  if (parsedChild === '*') {
+    return false
+  }
+
+  // namespaces dont match
+  if (parsedParent.namespace !== parsedChild.namespace) {
+    return false
+  }
+
+  // given namespaces match and parent first segment is wildcard
+  if (parsedParent.segments[0] === '*') {
+    return true
+  }
+
+  // Array equality
+  if (parsedParent.segments.length !== parsedChild.segments.length) {
+    return false
+  }
+
+  // all segments must match
+  return parsedParent.segments.reduce(
+    (acc, v, i) => acc && parsedChild.segments[i] === v,
+    true
+  )
 }
