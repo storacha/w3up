@@ -33,6 +33,6 @@ function capabilityMatches(can, ability) {
   if (can === ability) return true
   if (can === '*/*') return true
   if (can === '*') return true
-  if (can.endsWith('*') && ability.startsWith(can.slice(0, -1)) return true
+  if (can.endsWith('*') && ability.startsWith(can.slice(0, -1))) return true
   return false
 }

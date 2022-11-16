@@ -1,6 +1,9 @@
 import assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
+import { capability, URI } from '@ucanto/validator'
+import { any } from '@web3-storage/access/capabilities/any'
 import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
+import { equalWith } from '@web3-storage/access/capabilities/utils'
 import { serviceSigner } from './fixtures.js'
 import { findCapability } from '../src/utils.js'
 
@@ -41,6 +44,40 @@ describe('findCapability', () => {
 
     const cap = findCapability(proofs, 'store/add')
     assert.equal(cap.can, 'store/add')
+  })
+
+  it('matches any wildcard capability', async () => {
+    const issuer = await Signer.generate()
+    const proofs = [
+      await any.delegate({
+        issuer,
+        audience: serviceSigner,
+        with: issuer.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const cap = findCapability(proofs, 'store/add')
+    assert.equal(cap.can, '*')
+  })
+
+  it('matches top wildcard capability', async () => {
+    const issuer = await Signer.generate()
+    const proofs = [
+      await capability({
+        can: '*/*',
+        with: URI.match({ protocol: 'did:' }),
+        derives: equalWith,
+      }).delegate({
+        issuer,
+        audience: serviceSigner,
+        with: issuer.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const cap = findCapability(proofs, 'store/add')
+    assert.equal(cap.can, '*/*')
   })
 
   it('matches wildcard capability', async () => {

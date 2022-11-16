@@ -78,6 +78,7 @@
     "@types/mocha": "^10.0.0",
     "@ucanto/principal": "^3.0.0",
     "@ucanto/server": "^3.0.1",
+    "@ucanto/validator": "^3.0.1",
     "assert": "^2.0.0",
     "blockstore-core": "^2.0.2",
     "c8": "^7.12.0",
