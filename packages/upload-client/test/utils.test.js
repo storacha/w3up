@@ -22,6 +22,7 @@ describe('findCapability', () => {
       }),
     ]
 
+    // we match on `audience`. Passing in the issuer or any other DID here should fail.
     assert.throws(() => findCapability(proofs, 'store/add', issuer.did()), {
       message: `Missing proof of delegated capability "store/add" for audience "${issuer.did()}"`,
     })
