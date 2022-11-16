@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-param */
 import { capability, Failure, Link, URI, Schema } from '@ucanto/validator'
 import { equalLink, equalWith } from './utils.js'
 import { any } from './any.js'
@@ -148,3 +147,7 @@ export const list = base.derive({
 })
 
 export const all = add.or(remove).or(list)
+
+// ⚠️ We export imports here so they are not omited in generated typedes
+// @see https://github.com/microsoft/TypeScript/issues/51548
+export { Schema, Link }
