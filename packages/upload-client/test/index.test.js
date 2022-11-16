@@ -21,7 +21,7 @@ describe('uploadFile', () => {
     }
 
     const account = await Signer.generate()
-    const issuer = await Signer.generate()
+    const issuer = await Signer.generate() // The "user" that will ask the service to accept the upload
     const file = new Blob([await randomBytes(128)])
     /** @type {import('../src/types').CARLink|undefined} */
     let carCID
