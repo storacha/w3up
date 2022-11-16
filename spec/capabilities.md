@@ -30,19 +30,63 @@ There may be multiple delegations in a chain, for example: service `A` issues a 
 
 The `account/` namespace contains capabilities related to account identification and recovery.
 
+Note that we have recently begun referring to accounts as "memory spaces," because the word "account" has many meanings, none of which map precisely to our use case. The capabilities related to memory spaces still use the  `account/` namespace, but this may change in the future. If so, this doc will be updated to reflect the change.
+
 The `account/*` capability contains (can derive) all abilities in the `account/` namespace, so long as the derived capability has the same resource URI.
 
 ### `account/info`
 
-> Request information about an account DID.
+> Request information about a memory space DID.
 
-The `account/info` capability can be invoked to request information about a user account. The `with` resource URI identifies the user account, usually with a `did:key` URI.
+The `account/info` capability can be invoked to request information about a "memory space". The `with` resource URI identifies the space, usually with a `did:key` URI.
 
 See [services.md](./services.md) for a description of the result type and possible errors.
 
+#### Derivations
+
+`account/info` can be derived from an `account/*` or `*` capability with a matching `with` field.
+
+It can also be derived from any of the capabilities in the `store/` namespace, including [`store/*`](#store).
+
+#### Caveats
+
+`account/info` has no defined caveats.
+
 ### `account/recover`
 
+> Obtain a replacement capability delegation.
+
+In the event that an agent loses the UCAN that encodes their capability delegations for a memory space (e.g. due to accidental deletion, disk corruption, etc.), they may invoke the `account/recover` capability to obtain a new delegation of the capabilities they previously had access to.
+
+The `with` resource URI of the `account/recover` invocation must contain the DID of the memory space that the agent is attempting to recover access to.
+
+The invocation must contain proof that the agent possesses the `account/recover` capability. As the agent is presumably attempting to recover because they have lost their proofs, this implies that the service must have a way to verify the identity of the agent "out of band" (not using UCAN proofs).
+
+See the [`account/recover-validation`](#accountrecover-validation) capability for more on identity validation.
+
+#### Derivations
+
+`account/recover` can be derived from an `account/*` or `*` capability with an equal `with` field.
+
+#### Caveats
+
+`account/recover` has no defined caveats.
+
 ### `account/recover-validation`
+
+> Validate a registered external identity to initiate the recovery process.
+
+If an agent loses the UCAN that encodes their capability delegations for a memory space, they can initiate a recovery process by invoking the `account/recover-validation` capability.
+
+This is one of the few capabilities that can be invoked without inlcuding proof of delegation, as it is intended to be used when proofs have been lost. <!-- TODO: is this true? verify w/Hugo -->
+
+Instead, the service provider will verify a registered external identity (e.g. email), and will issue a delegation for the `account/recover` capability after verification is complete.
+
+#### Caveats
+
+The `account/recover-validation` invocation must include an `email` caveat containing an email address that has been previously registered (e.g. using [`voucher/redeem`](#voucherredeem)).
+
+In the future, the capability may allow validation of other types of external identity besides email. This doc will be updated to include the proper caveats when that change happens.
 
 ## CAR storage
 
