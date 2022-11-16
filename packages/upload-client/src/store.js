@@ -40,7 +40,7 @@ export async function add({ issuer, proofs }, car, options = {}) {
           audience: serviceDID,
           // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
           with: capability.with,
-          nb: { link },
+          nb: { link, size: car.size },
           proofs,
         })
         .execute(conn)
