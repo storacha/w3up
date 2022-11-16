@@ -1,6 +1,17 @@
-import { capability, URI } from '@ucanto/server'
-import { any } from './any.js'
+/**
+ * Account Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/account'
+ * ```
+ *
+ * @module
+ */
+
+import { any } from './wildcard.js'
 import { store } from './store.js'
+import { capability, URI } from '@ucanto/validator'
 import { canDelegateURI, equalWith, fail } from './utils.js'
 
 export const account = any.derive({

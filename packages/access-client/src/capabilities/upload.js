@@ -1,7 +1,17 @@
+/**
+ * Upload Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/upload'
+ * ```
+ *
+ * @module
+ */
 import { capability, Link, URI } from '@ucanto/validator'
 import { codec as CAR } from '@ucanto/transport/car'
 import { equalWith, fail, equal } from './utils.js'
-import { any } from './any.js'
+import { any } from './wildcard.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to

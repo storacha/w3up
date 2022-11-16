@@ -1,103 +1,74 @@
-import { delegate } from '@ucanto/core'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
+import { canDelegateAbility } from './capabilities/utils.js'
 
 /**
- * TODO: clear expired delegations
+ *
+ * @param {Ucanto.Delegation} delegation
  */
-export class Delegations {
-  /**
-   * @param {{
-   * principal: Ucanto.Signer;
-   * received?: Ucanto.Delegation[]
-   * created?: Ucanto.Delegation[]
-   * meta?: import('./awake/types').MetaMap
-   * }} opts
-   */
-  constructor(opts) {
-    this.principal = opts.principal
+export function isExpired(delegation) {
+  if (
+    delegation.expiration === undefined ||
+    delegation.expiration <= Math.floor(Date.now() / 1000)
+  ) {
+    return true
+  }
+  return false
+}
 
-    /** @type {Ucanto.Delegation[]} */
-    this.received = opts.received || []
+/**
+ *
+ * @param {Ucanto.Delegation} delegation
+ */
+export function isTooEarly(delegation) {
+  if (!delegation.notBefore) {
+    return false
+  }
+  return delegation.notBefore > Math.floor(Date.now() / 1000)
+}
 
-    /** @type {Ucanto.Delegation[]} */
-    this.created = opts.created || []
+/**
+ *
+ * @param {Ucanto.Delegation} delegation
+ * @param {object} [opts]
+ * @param {Ucanto.Principal} [opts.checkAudience]
+ * @param {boolean} [opts.checkIsExpired]
+ * @param {boolean} [opts.checkIsTooEarly]
+ */
+export function validate(delegation, opts) {
+  const {
+    checkAudience,
+    checkIsExpired = true,
+    checkIsTooEarly = true,
+  } = opts ?? {}
 
-    /** @type {import('./awake/types').MetaMap} */
-    this.meta = new Map()
-
-    /**
-     * @type {Map<string, {cid: string, cap: Ucanto.Capability}[]>}
-     */
-    this.receivedByResource = new Map()
-    /**
-     * @type {Map<string, Ucanto.Delegation>}
-     */
-    this.receivedMap = new Map()
+  if (checkAudience && delegation.audience.did() !== checkAudience.did()) {
+    throw new Error(`Delegation audience does not match required DID.`)
   }
 
-  /**
-   *
-   * @param {Ucanto.Delegation} delegation
-   */
-  async add(delegation) {
-    const cid = delegation.cid.toString()
-
-    for (const cap of delegation.capabilities) {
-      const byResource = this.receivedByResource.get(cap.with) ?? []
-
-      byResource.push({ cid: delegation.cid.toString(), cap })
-      this.receivedByResource.set(cap.with, byResource)
-    }
-    this.received.push(delegation)
-
-    this.receivedMap.set(cid, delegation)
+  if (checkIsExpired && isExpired(delegation)) {
+    throw new Error(`Delegation expired.`)
   }
 
-  /**
-   * @param {string} resource
-   */
-  getByResource(resource) {
-    const byResource = this.receivedByResource.get(resource)
-    if (!byResource) {
-      return
-    }
-
-    return byResource.map((r) => {
-      return this.receivedMap.get(r.cid)
-    })
+  if (checkIsTooEarly && isTooEarly(delegation)) {
+    throw new Error(`Delegation is not active yet (too early).`)
   }
+}
 
-  /**
-   * Add multiple received delegations
-   *
-   * @param {Ucanto.Delegation[]} delegations
-   */
-  async addMany(delegations) {
-    for (const d of delegations) {
-      this.add(d)
+/**
+ *
+ * @param {import('@ucanto/interface').Delegation} delegation
+ * @param {import('@ucanto/interface').Capability} child
+ */
+export function canDelegateCapability(delegation, child) {
+  for (const parent of delegation.capabilities) {
+    if (
+      parent.with === child.with &&
+      canDelegateAbility(parent.can, child.can)
+    ) {
+      return true
     }
   }
-
-  /**
-   *
-   * @param {import('@ucanto/interface').Principal} audience
-   * @param {import('@ipld/dag-ucan').Capabilities} capabilities
-   * @param {number} [lifetimeInSeconds]
-   */
-  async delegate(audience, capabilities, lifetimeInSeconds) {
-    const delegation = await delegate({
-      issuer: this.principal,
-      // @ts-ignore
-      audience,
-      capabilities,
-      lifetimeInSeconds,
-      // be smarter about picking only the needs delegations
-      proofs: [...this.receivedMap.values()],
-    })
-
-    this.created.push(delegation)
-    return delegation
-  }
+  return false
 }

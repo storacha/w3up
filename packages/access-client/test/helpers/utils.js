@@ -1,8 +1,13 @@
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
 import { parseLink } from '@ucanto/core'
-import { codec as CARCodec } from '@ucanto/transport/car'
-import { codec as CBOR } from '@ucanto/transport/cbor'
+import * as Server from '@ucanto/server'
+// import { codec as CARCodec } from '@ucanto/transport/car'
+// import { codec as CBOR } from '@ucanto/transport/cbor'
+import * as Account from '../../src/capabilities/account.js'
+import * as CAR from '@ucanto/transport/car'
+import * as CBOR from '@ucanto/transport/cbor'
+import { service } from './fixtures.js'
 
 /**
  * @param {string} source
@@ -15,7 +20,7 @@ export function parseCarLink(source) {
  * @param {any} data
  */
 export async function createCborCid(data) {
-  const cbor = await CBOR.write(data)
+  const cbor = await CBOR.codec.write(data)
   return cbor.cid
 }
 
@@ -23,7 +28,36 @@ export async function createCborCid(data) {
  * @param {string} source
  */
 export async function createCarCid(source) {
-  const cbor = await CBOR.write({ hello: source })
-  const shard = await CARCodec.write({ roots: [cbor] })
+  const cbor = await CBOR.codec.write({ hello: source })
+  const shard = await CAR.codec.write({ roots: [cbor] })
   return shard.cid
+}
+
+/**
+ *
+ * @returns {Ucanto.ServerView<import('../../src/types.js').Service>}
+ */
+export function createServer() {
+  const server = Server.create({
+    id: service,
+    encoder: CBOR,
+    decoder: CAR,
+    service: {
+      account: {
+        info: Server.provide(Account.info, async ({ capability }) => {
+          return {
+            did: 'did:key:sss',
+            agent: 'did:key:agent',
+            email: 'mail@mail.com',
+            product: 'product:free',
+            updated_at: 'sss',
+            inserted_at: 'date',
+          }
+        }),
+      },
+    },
+  })
+
+  // @ts-ignore
+  return server
 }

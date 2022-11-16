@@ -1,6 +1,19 @@
+/**
+ * Voucher Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/voucher'
+ * ```
+ *
+ * @module
+ */
 import { capability, URI, DID } from '@ucanto/validator'
-import { equalWith, equal, fail } from './utils.js'
-import { any } from './any.js'
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars
+import * as Types from '@ucanto/interface'
+import { equalWith, fail, equal } from './utils.js'
+import { any } from './wildcard.js'
 
 /**
  * Products are identified by the CID of the DAG that describes them.

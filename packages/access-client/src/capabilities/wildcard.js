@@ -1,3 +1,14 @@
+/**
+ * Wildcard Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/wildcard'
+ * ```
+ *
+ * @module
+ */
+
 import { capability, URI } from '@ucanto/validator'
 import { equalWith } from './utils.js'
 
