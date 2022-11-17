@@ -22,6 +22,42 @@ A `ucanto` service uses the ability string to dispatch an invocation to the corr
 
 See [capabilities.md](./capabilities.md) for more details about capabilities, including the optional and required caveats for each.
 
+## Error handling
+
+Most capability providers have error conditions that will result in a "failure" response instead of the expected success response.
+
+Ucanto's `Failure` type is a JavaScript `Error` subclass, from which custom error types are derived.
+
+When serialized to JSON, a `Failure` is represented as an object:
+
+```json
+{
+  "error": true,
+  "name": "TheNameOfTheError",
+  "message": "A short message with details about what went wrong",
+  "stack": "An optional stack trace."
+}
+```
+
+The table below lists `Failure` types that are [defined in ucanto](https://github.com/web3-storage/ucanto/blob/main/packages/validator/src/error.js). Many of the types below are returned by ucanto when validating invocations and delegations and are not specific to a particular capability or handler. 
+
+The most common "capability specific" error is `MalformedCapability`, which is returned when an invocation is structurally correct and includes valid proofs, but the capability handler cannot process it, for example, because it has missing or invalid caveats. 
+
+The `cause` field of a `MalformedCapabilty` object contains a `Failure` with details about the constraints that were violated.
+
+| name                  | description                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `EscalatedCapability` | A claimed capability exceeds the bounds of a delegation |
+| `InvalidClaim` | A claim is invalid for one or more reasons. Contains a `causes` field that contains the specific failures that occurred during validation. |
+| `InvalidSignature` | A signature is invalid |
+| `UnavailableProof` | A proof was referenced in a claim but could not be found by the validator. Applies only to proofs that are linked by CID, not those inlined into a UCAN. |
+| `InvalidAudience` | The audience of a delegation does not match the identity of the agent attempting to claim the capability |
+| `MalformedCapability` | An invocation lacks required caveats, or caveat values are invalid. Contains a `cause` field with a `Failure` describing the problem. |
+| `UnknownCapability` | An agent has tried to invoke a capability that the service is unaware of |
+| `Expired` | An agent is trying to claim a capability whose delegation has expired |
+| `NotValidBefore` | An agent is trying to claim a capability before the start of the delegation's validity period |
+
+
 ## Accounts service
 
 ### `account/info`
@@ -202,21 +238,21 @@ On success, returns an object whose `results` field contains an array of `Upload
 
 An `UploadItem` has the following fields:
 
-| field            | type             | description                                                    |
-| ---------------- | ---------------- | -------------------------------------------------------------- |
-| `uploaderDID`    | `string`         | The DID of the agent who uploaded the CAR                      |
-| `dataCID`     | `string` (`CID`) | The root CID of the stored data item                                             |
-| `carCID` | `string`         | The CID of a CAR associated with this upload. See below for notes about sharding.                                       |
-| `uploadedAt`     | `string`         | ISO 8601 timestamp of upload                                   |
+| field         | type             | description                                                                       |
+| ------------- | ---------------- | --------------------------------------------------------------------------------- |
+| `uploaderDID` | `string`         | The DID of the agent who uploaded the CAR                                         |
+| `dataCID`     | `string` (`CID`) | The root CID of the stored data item                                              |
+| `carCID`      | `string`         | The CID of a CAR associated with this upload. See below for notes about sharding. |
+| `uploadedAt`  | `string`         | ISO 8601 timestamp of upload                                                      |
 
 Note that each `UploadItem` contains a single `carCID`. For uploads that span multiple CARs, the response will contain multiple `UploadItem`s with the same `dataCID`, but with different `carCID`s, which should be collected on the client to get the full set of CAR CIDs for a "sharded" upload.
 
 The full response object returned by `upload/list` currently looks like this, although there may be changes when pagination is fully implemented. Currently, the service always returns all results in a single "page".
 
-| field      | type          | description                                               |
-| ---------- | ------------- | --------------------------------------------------------- |
-| `count`    | `number`      | The total number of CARs in the memory space              |
-| `pages`    | `number`      | The number of pages available in the listing              |
-| `page`     | `number`      | The index of the current page of results                  |
-| `pageSize` | `number`      | The max number of results in each page                    |
+| field      | type           | description                                                |
+| ---------- | -------------- | ---------------------------------------------------------- |
+| `count`    | `number`       | The total number of CARs in the memory space               |
+| `pages`    | `number`       | The number of pages available in the listing               |
+| `page`     | `number`       | The index of the current page of results                   |
+| `pageSize` | `number`       | The max number of results in each page                     |
 | `results`  | `UploadItem[]` | An array of `UploadItem`s (see above) for the current page |
