@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/upload-client",
-  "version": "0.0.0",
-  "description": "The web3.storage client",
+  "version": "1.0.0",
+  "description": "The web3.storage upload client",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client",
   "repository": {
     "type": "git",
@@ -14,20 +14,42 @@
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",
   "scripts": {
-    "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
-    "test": "npm run test:node && npm run test:browser",
-    "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
+    "test": "npm-run-all -p -r mock test:all",
+    "test:all": "run-s test:browser test:node",
+    "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
+    "mock": "run-p mock:*",
+    "mock:bucket-200": "PORT=9200 STATUS=200 node test/helpers/bucket-server.js",
+    "mock:bucket-401": "PORT=9400 STATUS=400 node test/helpers/bucket-server.js",
+    "mock:bucket-500": "PORT=9500 STATUS=500 node test/helpers/bucket-server.js",
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./car": "./src/car.js",
+    "./sharding": "./src/sharding.js",
+    "./upload": "./src/upload.js",
+    "./store": "./src/store.js",
+    "./unixfs": "./src/unixfs.js"
   },
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/*"
+      "car": [
+        "dist/src/car.d.ts"
+      ],
+      "sharding": [
+        "dist/src/sharding.d.ts"
+      ],
+      "upload": [
+        "dist/src/upload.d.ts"
+      ],
+      "store": [
+        "dist/src/store.d.ts"
+      ],
+      "unixfs": [
+        "dist/src/unixfs.d.ts"
       ]
     }
   },
@@ -36,12 +58,34 @@
     "dist/src/**/*.d.ts",
     "dist/src/**/*.d.ts.map"
   ],
+  "dependencies": {
+    "@ipld/car": "^5.0.0",
+    "@ipld/dag-ucan": "^2.0.1",
+    "@ipld/unixfs": "^2.0.0",
+    "@ucanto/client": "^3.0.1",
+    "@ucanto/core": "^3.0.1",
+    "@ucanto/interface": "^3.0.0",
+    "@ucanto/transport": "^3.0.1",
+    "@web3-storage/access": "workspace:^",
+    "multiformats": "^10.0.2",
+    "p-queue": "^7.3.0",
+    "p-retry": "^5.1.1"
+  },
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
+    "@ucanto/principal": "^3.0.0",
+    "@ucanto/server": "^3.0.1",
+    "@ucanto/validator": "^3.0.1",
     "assert": "^2.0.0",
+    "blockstore-core": "^2.0.2",
+    "c8": "^7.12.0",
     "hd-scripts": "^3.0.2",
+    "hundreds": "^0.0.9",
+    "ipfs-unixfs-exporter": "^9.0.1",
     "mocha": "^10.1.0",
+    "npm-run-all": "^4.1.5",
+    "path": "^0.12.7",
     "playwright-test": "^8.1.1",
     "typescript": "^4.8.4"
   },
@@ -53,13 +97,27 @@
       "project": "./tsconfig.json"
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off"
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/no-null": "off",
+      "unicorn/prefer-set-has": "off",
+      "unicorn/no-array-for-each": "off",
+      "unicorn/prefer-export-from": "off",
+      "unicorn/catch-error-name": "off",
+      "unicorn/explicit-length-check": "off",
+      "unicorn/prefer-type-error": "off",
+      "eqeqeq": "off",
+      "no-void": "off",
+      "no-console": "off",
+      "no-continue": "off",
+      "jsdoc/check-indentation": "off",
+      "jsdoc/require-hyphen-before-param-description": "off"
     },
     "env": {
       "mocha": true
     },
     "ignorePatterns": [
-      "dist"
+      "dist",
+      "coverage"
     ]
   }
 }

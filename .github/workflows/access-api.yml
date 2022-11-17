@@ -38,6 +38,7 @@ jobs:
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: staging
+      environment_url: https://w3access-staging.protocol-labs.workers.dev
     secrets: inherit
   deploy-dev:
     needs: test
@@ -45,4 +46,5 @@ jobs:
     uses: './.github/workflows/reuse-deploy-api.yml'
     with:
       environment: dev
+      environment_url: https://w3access-dev.protocol-labs.workers.dev
     secrets: inherit

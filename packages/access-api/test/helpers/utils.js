@@ -81,4 +81,8 @@ export async function createAccount(issuer, service, conn, email) {
     console.log(redeem)
     throw new Error(redeem.message)
   }
+
+  return {
+    account,
+  }
 }

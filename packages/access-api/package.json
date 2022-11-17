@@ -11,7 +11,7 @@
     "dev": "scripts/cli.js dev",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
-    "test": "tsc --build && ava --timeout 10s"
+    "test": "pnpm build && tsc --build && ava --timeout 10s"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
@@ -56,6 +56,7 @@
     "git-rev-sync": "^3.0.1",
     "hd-scripts": "^3.0.2",
     "miniflare": "^2.10.0",
+    "p-wait-for": "^5.0.0",
     "process": "^0.11.10",
     "readable-stream": "^4.1.0",
     "sade": "^1.7.4",
@@ -92,8 +93,6 @@
   ],
   "ava": {
     "failFast": true,
-    "concurrency": 1,
-    "workerThreads": false,
     "files": [
       "test/**/*.test.js"
     ],

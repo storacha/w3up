@@ -3,7 +3,7 @@ import pRetry from 'p-retry'
 const run = async (
   /** @type {import('../kvs/validations').Validations} */ kv,
   /** @type {WebSocket} */ server,
-  /** @type {any} */ did
+  /** @type {string} */ did
 ) => {
   const d = await kv.get(did)
 

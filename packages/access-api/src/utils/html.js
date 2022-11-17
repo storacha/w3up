@@ -1,4 +1,6 @@
 import { render } from 'preact-render-to-string'
+// eslint-disable-next-line no-unused-vars
+import * as Ucanto from '@ucanto/interface'
 
 /**
  * Build HTML document
@@ -70,7 +72,7 @@ export class HtmlResponse extends Response {
 /**
  *
  * @param {object} param0
- * @param {import('@ucanto/interface').Delegation<[import('@web3-storage/access/capabilities/types').VoucherClaim]>} param0.delegation
+ * @param {Ucanto.Delegation<[import('@web3-storage/access/capabilities/types').VoucherClaim]> | Ucanto.Delegation<[import('@web3-storage/access/capabilities/types').AccountRecover]>} param0.delegation
  * @param {string} param0.ucan
  * @param {string} param0.qrcode
  */
