@@ -15,27 +15,33 @@ npm install @web3-storage/upload-client
 
 ### Create an Agent
 
-An Agent provides an `issuer` (a key linked to your account) and `proofs` to show your `issuer` has been delegated the capabilities to store data and register uploads.
+An Agent provides:
+
+1. The key pair used to call the service and sign the payload (the `issuer`).
+2. A decentralized identifier (DID) of the "space" where data should be uploaded (the `with`).
+3. Proof showing your `issuer` has been delegated capabilities to store data and register uploads to the "space" (`proofs`).
 
 ```js
 import { Agent } from '@web3-storage/access'
-import { add as storeAdd } from '@web3-storage/access/capabilities/store'
-import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
+import { store } from '@web3-storage/access/capabilities/store'
+import { upload } from '@web3-storage/access/capabilities/upload'
 
-const agent = await Agent.create({ store })
+const agent = await Agent.create()
 
-// Note: you need to create and register an account 1st time:
-// await agent.createAccount('you@youremail.com')
+// Note: you need to create and register a space 1st time:
+// await agent.createSpace()
+// await agent.registerSpace('you@youremail.com')
 
 const conf = {
   issuer: agent.issuer,
-  proofs: agent.getProofs([storeAdd, uploadAdd]),
+  with: agent.currentSpace(),
+  proofs: agent.getProofs([store, upload]),
 }
 ```
 
 ### Uploading files
 
-Once you have the `issuer` and `proofs`, you can upload a directory of files by passing that invocation config to `uploadDirectory` along with your list of files to upload.
+Once you have the `issuer`, `with` and `proofs`, you can upload a directory of files by passing that invocation config to `uploadDirectory` along with your list of files to upload.
 
 You can get your list of Files from a [`<input type="file">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file) element in the browser or using [`files-from-path`](https://npm.im/files-from-path) in Node.js
 

@@ -67,11 +67,14 @@ export class ShardingStream extends TransformStream {
  */
 export class ShardStoringStream extends TransformStream {
   /**
-   * @param {import('./types').InvocationConfig} invocationConfig Configuration
-   * for the UCAN invocation. An object with `issuer` and `proofs`.
+   * @param {import('./types').InvocationConfig} conf Configuration
+   * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
    *
    * The `issuer` is the signing authority that is issuing the UCAN
    * invocation(s). It is typically the user _agent_.
+   *
+   * The `with` is the resource the invocation applies to. It is typically the
+   * DID of a space.
    *
    * The `proofs` are a set of capability delegations that prove the issuer
    * has the capability to perform the action.
@@ -79,7 +82,7 @@ export class ShardStoringStream extends TransformStream {
    * The issuer needs the `store/add` delegated capability.
    * @param {import('./types').RequestOptions} [options]
    */
-  constructor({ issuer, proofs }, options = {}) {
+  constructor(conf, options = {}) {
     const queue = new Queue({ concurrency: CONCURRENT_UPLOADS })
     const abortController = new AbortController()
     super({
@@ -88,7 +91,7 @@ export class ShardStoringStream extends TransformStream {
           async () => {
             try {
               const opts = { ...options, signal: abortController.signal }
-              const cid = await add({ issuer, proofs }, car, opts)
+              const cid = await add(conf, car, opts)
               const { version, roots, size } = car
               controller.enqueue({ version, roots, cid, size })
             } catch (err) {

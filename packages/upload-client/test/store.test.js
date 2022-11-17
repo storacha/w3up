@@ -1,6 +1,7 @@
 import assert from 'assert'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
+import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
@@ -25,7 +26,7 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -33,15 +34,15 @@ describe('Store.add', () => {
 
     const service = mockService({
       store: {
-        add(invocation) {
+        add: provide(StoreCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb.link), car.cid.toString())
+          assert.equal(String(invCap.nb?.link), car.cid.toString())
           return res
-        },
+        }),
       },
     })
 
@@ -58,9 +59,13 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    const carCID = await Store.add({ issuer: agent, proofs }, car, {
-      connection,
-    })
+    const carCID = await Store.add(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car,
+      {
+        connection,
+      }
+    )
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
@@ -83,13 +88,17 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
     ]
 
-    const service = mockService({ store: { add: () => res } })
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, () => res),
+      },
+    })
 
     const server = Server.create({
       id: serviceSigner,
@@ -104,9 +113,16 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    assert.rejects(Store.add({ issuer: agent, proofs }, car, { connection }), {
-      message: 'upload failed: 400',
-    })
+    assert.rejects(
+      Store.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car,
+        { connection }
+      ),
+      {
+        message: 'upload failed: 400',
+      }
+    )
   })
 
   it('throws for bucket URL server error 5xx', async () => {
@@ -123,13 +139,17 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
     ]
 
-    const service = mockService({ store: { add: () => res } })
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, () => res),
+      },
+    })
 
     const server = Server.create({
       id: serviceSigner,
@@ -144,9 +164,16 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    assert.rejects(Store.add({ issuer: agent, proofs }, car, { connection }), {
-      message: 'upload failed: 500',
-    })
+    assert.rejects(
+      Store.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car,
+        { connection }
+      ),
+      {
+        message: 'upload failed: 500',
+      }
+    )
   })
 
   it('skips sending CAR if status = done', async () => {
@@ -163,13 +190,17 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
     ]
 
-    const service = mockService({ store: { add: () => res } })
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, () => res),
+      },
+    })
 
     const server = Server.create({
       id: serviceSigner,
@@ -184,9 +215,13 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    const carCID = await Store.add({ issuer: agent, proofs }, car, {
-      connection,
-    })
+    const carCID = await Store.add(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car,
+      {
+        connection,
+      }
+    )
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
@@ -202,7 +237,11 @@ describe('Store.add', () => {
       url: 'http://localhost:9001', // will fail the test if called
     }
 
-    const service = mockService({ store: { add: () => res } })
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, () => res),
+      },
+    })
 
     const server = Server.create({
       id: serviceSigner,
@@ -224,7 +263,7 @@ describe('Store.add', () => {
     const proofs = [
       await StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -234,10 +273,14 @@ describe('Store.add', () => {
     controller.abort() // already aborted
 
     await assert.rejects(
-      Store.add({ issuer: agent, proofs }, car, {
-        connection,
-        signal: controller.signal,
-      }),
+      Store.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car,
+        {
+          connection,
+          signal: controller.signal,
+        }
+      ),
       { name: 'Error', message: 'upload aborted' }
     )
   })
@@ -265,7 +308,7 @@ describe('Store.list', () => {
     const proofs = [
       await StoreCapabilities.list.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -273,14 +316,14 @@ describe('Store.list', () => {
 
     const service = mockService({
       store: {
-        list(invocation) {
+        list: provide(StoreCapabilities.list, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.list.can)
           assert.equal(invCap.with, space.did())
           return res
-        },
+        }),
       },
     })
 
@@ -297,7 +340,10 @@ describe('Store.list', () => {
       channel: server,
     })
 
-    const list = await Store.list({ issuer: agent, proofs }, { connection })
+    const list = await Store.list(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      { connection }
+    )
 
     assert(service.store.list.called)
     assert.equal(service.store.list.callCount, 1)
@@ -324,7 +370,7 @@ describe('Store.list', () => {
     const proofs = [
       await StoreCapabilities.list.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -332,9 +378,9 @@ describe('Store.list', () => {
 
     const service = mockService({
       store: {
-        list: () => {
+        list: provide(StoreCapabilities.list, () => {
           throw new Server.Failure('boom')
-        },
+        }),
       },
     })
 
@@ -352,7 +398,10 @@ describe('Store.list', () => {
     })
 
     await assert.rejects(
-      Store.list({ issuer: agent, proofs }, { connection }),
+      Store.list(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        { connection }
+      ),
       {
         message: 'failed store/list invocation',
       }
@@ -369,7 +418,7 @@ describe('Store.remove', () => {
     const proofs = [
       await StoreCapabilities.remove.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -377,15 +426,15 @@ describe('Store.remove', () => {
 
     const service = mockService({
       store: {
-        remove(invocation) {
+        remove: provide(StoreCapabilities.remove, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb.link), car.cid.toString())
+          assert.equal(String(invCap.nb?.link), car.cid.toString())
           return null
-        },
+        }),
       },
     })
 
@@ -402,7 +451,11 @@ describe('Store.remove', () => {
       channel: server,
     })
 
-    await Store.remove({ issuer: agent, proofs }, car.cid, { connection })
+    await Store.remove(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car.cid,
+      { connection }
+    )
 
     assert(service.store.remove.called)
     assert.equal(service.store.remove.callCount, 1)
@@ -416,7 +469,7 @@ describe('Store.remove', () => {
     const proofs = [
       await StoreCapabilities.remove.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -424,9 +477,9 @@ describe('Store.remove', () => {
 
     const service = mockService({
       store: {
-        remove: () => {
+        remove: provide(StoreCapabilities.remove, () => {
           throw new Server.Failure('boom')
-        },
+        }),
       },
     })
 
@@ -444,7 +497,11 @@ describe('Store.remove', () => {
     })
 
     await assert.rejects(
-      Store.remove({ issuer: agent, proofs }, car.cid, { connection }),
+      Store.remove(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car.cid,
+        { connection }
+      ),
       { message: 'failed store/remove invocation' }
     )
   })
