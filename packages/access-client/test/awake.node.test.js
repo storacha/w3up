@@ -42,8 +42,8 @@ describe('awake', function () {
       store: await StoreMemory.create(),
       url: new URL('http://127.0.0.1:8787'),
     })
-    const account = await agent1.createAccount('responder')
-    await agent1.setCurrentAccount(account.did)
+    const account = await agent1.createSpace('responder')
+    await agent1.setCurrentSpace(account.did)
     const agent2 = await Agent.create({
       store: await StoreMemory.create(),
       url: new URL('http://127.0.0.1:8787'),

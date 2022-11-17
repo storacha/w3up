@@ -4,8 +4,8 @@ import { Signer } from '@ucanto/principal/ed25519'
 import * as Types from '@ucanto/interface'
 
 /**
- * @typedef {import('./types').StoreData<Signer.EdSigner>} StoreData
- * @typedef {import('./types').Store<Signer.EdSigner>} Store
+ * @typedef {import('../types').AgentData<Signer.EdSigner>} StoreData
+ * @typedef {import('./types').IStore<Signer.EdSigner>} Store
  */
 
 /**
@@ -38,6 +38,7 @@ export class StoreMemory {
   /**
    *
    * @param {Partial<StoreData>} [data]
+   * @returns {Promise<Store>}
    */
   static async create(data = {}) {
     const store = new StoreMemory()
@@ -53,9 +54,9 @@ export class StoreMemory {
     const storeData = {
       meta: data.meta || { name: 'agent', type: 'device' },
       principal,
-      accs: data.accs || new Map(),
-      dels: data.dels || new Map(),
-      currentAccount: data.currentAccount,
+      spaces: data.spaces || new Map(),
+      delegations: data.delegations || new Map(),
+      currentSpace: data.currentSpace,
     }
 
     await this.save(storeData)
@@ -65,6 +66,7 @@ export class StoreMemory {
   /**
    *
    * @param {StoreData} data
+   * @returns {Promise<Store>}
    */
   async save(data) {
     this.data = {

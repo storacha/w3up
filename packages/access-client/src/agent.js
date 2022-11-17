@@ -135,7 +135,7 @@ export class Agent {
       checkIsExpired: true,
     })
 
-    this.data.dels.set(delegation.cid.toString(), {
+    this.data.delegations.set(delegation.cid.toString(), {
       delegation,
     })
 
@@ -147,7 +147,7 @@ export class Agent {
    */
   async *#delegations(caps) {
     const _caps = new Set(caps)
-    for (const [key, value] of this.data.dels) {
+    for (const [key, value] of this.data.delegations) {
       // check expiration
       if (!isExpired(value.delegation)) {
         // check if delegation can be used
@@ -166,7 +166,7 @@ export class Agent {
         }
       } else {
         // delete any expired delegation
-        this.data.dels.delete(key)
+        this.data.delegations.delete(key)
       }
     }
 
@@ -214,9 +214,11 @@ export class Agent {
   }
 
   /**
+   * Creates a space signer and a delegation to the agent
+   *
    * @param {string} name
    */
-  async createAccount(name) {
+  async createSpace(name) {
     const signer = await Signer.generate()
     const proof = await Any.delegate({
       issuer: signer,
@@ -225,9 +227,9 @@ export class Agent {
       expiration: Infinity,
     })
 
-    this.data.accs.set(signer.did(), {
+    this.data.spaces.set(signer.did(), {
       name,
-      registered: false,
+      isRegistered: false,
     })
 
     await this.addProof(proof)
@@ -239,35 +241,44 @@ export class Agent {
   }
 
   /**
+   * Sets the current selected space
    *
-   * @param {Ucanto.DID} account
+   * Other methods will default to use the current space if no resource is defined
+   *
+   * @param {Ucanto.DID} space
    */
-  async setCurrentAccount(account) {
+  async setCurrentSpace(space) {
     const proofs = await collect(
       this.proofs([
         {
           can: 'account/info',
-          with: account,
+          with: space,
         },
       ])
     )
 
     if (proofs.length === 0) {
-      throw new Error(`Agent has no proofs for ${account}.`)
+      throw new Error(`Agent has no proofs for ${space}.`)
     }
 
-    this.data.currentAccount = account
+    this.data.currentSpace = space
     await this.store.save(this.data)
 
-    return account
+    return space
   }
 
-  currentAccount() {
-    return this.data.currentAccount
+  /**
+   * Get current space DID
+   */
+  currentSpace() {
+    return this.data.currentSpace
   }
 
-  async currentAccountWithMeta() {
-    if (!this.data.currentAccount) {
+  /**
+   * Get current space DID, proofs and abilities
+   */
+  async currentSpaceWithMeta() {
+    if (!this.data.currentSpace) {
       return
     }
 
@@ -276,7 +287,7 @@ export class Agent {
       this.proofs([
         {
           can: 'account/info',
-          with: this.data.currentAccount,
+          with: this.data.currentSpace,
         },
       ])
     )
@@ -289,19 +300,23 @@ export class Agent {
     }
 
     return {
-      did: this.data.currentAccount,
+      did: this.data.currentSpace,
       proofs,
       capabilities: [...caps],
     }
   }
 
   /**
+   * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
+   *
+   * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
+   *
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    */
-  async registerAccount(email, opts) {
-    const account = this.currentAccount()
+  async registerSpace(email, opts) {
+    const account = this.currentSpace()
     const service = await this.service()
 
     if (!account) {
@@ -391,15 +406,15 @@ export class Agent {
    * @param {import('./types').DelegationOptions} options
    */
   async delegate(options) {
-    const account = await this.currentAccountWithMeta()
-    if (!account) {
+    const space = await this.currentSpaceWithMeta()
+    if (!space) {
       throw new Error('there no account selected.')
     }
 
     const caps = /** @type {Ucanto.Capabilities} */ (
       options.abilities.map((a) => {
         return {
-          with: account.did,
+          with: space.did,
           can: a,
         }
       })
@@ -412,7 +427,7 @@ export class Agent {
       ...options,
     })
 
-    this.data.dels.set(delegation.cid.toString(), {
+    this.data.delegations.set(delegation.cid.toString(), {
       delegation,
       meta: {
         audience: options.audienceMeta,
@@ -431,15 +446,15 @@ export class Agent {
    * @param {import('./types').ExecuteOptions<A, R, CAP>} options
    */
   async execute(cap, options) {
-    const _with = options.with || this.currentAccount()
-    if (!_with) {
-      throw new Error('there no account selected so you need pass a resource.')
+    const space = options.with || this.currentSpace()
+    if (!space) {
+      throw new Error('No space selected, you need pass a resource.')
     }
 
     const proofs = await collect(
       this.proofs([
         {
-          with: _with,
+          with: space,
           can: cap.can,
         },
       ])
@@ -447,7 +462,7 @@ export class Agent {
 
     if (proofs.length === 0) {
       throw new Error(
-        `no proofs available for resource ${_with} and ability ${cap.can}`
+        `no proofs available for resource ${space} and ability ${cap.can}`
       )
     }
 
@@ -456,7 +471,7 @@ export class Agent {
       audience: options.audience || (await this.service()),
       // @ts-ignore
       capability: cap.create({
-        with: _with,
+        with: space,
         nb: options.nb,
       }),
       issuer: this.issuer,
@@ -480,11 +495,15 @@ export class Agent {
   }
 
   /**
-   * @param {Ucanto.URI<"did:">} [account]
+   * @param {Ucanto.URI<"did:">} [space]
    */
-  async getAccountInfo(account) {
+  async getSpaceInfo(space) {
+    const _space = space || this.currentSpace()
+    if (!_space) {
+      throw new Error('No space selected, you need pass a resource.')
+    }
     const inv = await this.execute(Account.info, {
-      with: account,
+      with: _space,
     })
 
     if (inv.error) {

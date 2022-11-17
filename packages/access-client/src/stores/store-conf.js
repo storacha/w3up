@@ -6,15 +6,15 @@ import { delegationToString, stringToDelegation } from '../encoding.js'
 import * as Ucanto from '@ucanto/interface'
 
 /**
- * @typedef {import('./types').StoreData<Signer.EdSigner>} StoreData
- * @typedef {import('./types').Store<Signer.EdSigner>} Store
+ * @typedef {import('../types').AgentData<Signer.EdSigner>} StoreData
+ * @typedef {import('./types').IStore<Signer.EdSigner>} Store
  * @typedef {{
  *    meta: import('../types.js').AgentMeta
  *    principal: string
- *    currentAccount?: Ucanto.DID
- *    accs: Array<[Ucanto.DID, import('./types').AccountMeta]>
- *    dels: Array<[import('./types').CIDString, {
- *      meta?: import('./types').DelegationMeta,
+ *    currentSpace?: Ucanto.DID
+ *    spaces: Array<[Ucanto.DID, import('../types').SpaceMeta]>
+ *    delegations: Array<[import('../types').CIDString, {
+ *      meta?: import('../types').DelegationMeta,
  *      delegation: import('../types.js').EncodedDelegation
  *    }]>
  * }} Data
@@ -45,6 +45,10 @@ export class StoreConf {
     this.path = this.#config.path
   }
 
+  /**
+   *
+   * @returns {Promise<Store>}
+   */
   async open() {
     return this
   }
@@ -66,10 +70,10 @@ export class StoreConf {
     /** @type {StoreData} */
     const storeData = {
       meta: data.meta || { name: 'agent', type: 'device' },
-      accs: data.accs || new Map(),
-      dels: data.dels || new Map(),
+      spaces: data.spaces || new Map(),
+      delegations: data.delegations || new Map(),
       principal,
-      currentAccount: data.currentAccount,
+      currentSpace: data.currentSpace,
     }
 
     await this.save(storeData)
@@ -79,12 +83,13 @@ export class StoreConf {
   /**
    *
    * @param {StoreData} data
+   * @returns {Promise<Store>}
    */
   async save(data) {
-    /** @type {Data['dels']} */
+    /** @type {Data['delegations']} */
     const dels = []
 
-    for (const [key, value] of data.dels) {
+    for (const [key, value] of data.delegations) {
       dels.push([
         key,
         {
@@ -95,11 +100,11 @@ export class StoreConf {
     }
     /** @type {Data} */
     const encodedData = {
-      currentAccount: data.currentAccount,
-      accs: [...data.accs.entries()],
+      currentSpace: data.currentSpace,
+      spaces: [...data.spaces.entries()],
       meta: data.meta,
       principal: Signer.format(data.principal),
-      dels,
+      delegations: dels,
     }
 
     this.#config.set(encodedData)
@@ -111,10 +116,10 @@ export class StoreConf {
   async load() {
     const data = this.#config.store
 
-    /** @type {StoreData['dels']} */
+    /** @type {StoreData['delegations']} */
     const dels = new Map()
 
-    for (const [key, value] of data.dels) {
+    for (const [key, value] of data.delegations) {
       dels.set(key, {
         delegation: await stringToDelegation(value.delegation),
         meta: value.meta,
@@ -123,10 +128,10 @@ export class StoreConf {
     /** @type {StoreData} */
     return {
       principal: Signer.parse(data.principal),
-      currentAccount: data.currentAccount,
+      currentSpace: data.currentSpace,
       meta: data.meta,
-      accs: new Map(data.accs),
-      dels,
+      spaces: new Map(data.spaces),
+      delegations: dels,
     }
   }
 }

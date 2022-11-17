@@ -37,7 +37,7 @@ describe('Agent', function () {
       store,
     })
 
-    const account = await agent.createAccount('test-create')
+    const account = await agent.createSpace('test-create')
 
     assert(typeof account.did === 'string')
     assert(account.proof)
@@ -49,7 +49,7 @@ describe('Agent', function () {
       store,
     })
 
-    const account = await agent.createAccount('test-add')
+    const account = await agent.createSpace('test-add')
 
     const delegations = await collect(agent.proofsWithMeta())
 
@@ -63,11 +63,11 @@ describe('Agent', function () {
       store,
     })
 
-    const account = await agent.createAccount('test')
+    const account = await agent.createSpace('test')
 
-    await agent.setCurrentAccount(account.did)
+    await agent.setCurrentSpace(account.did)
 
-    const accWithMeta = await agent.currentAccountWithMeta()
+    const accWithMeta = await agent.currentSpaceWithMeta()
     if (!accWithMeta) {
       assert.fail('should have account')
     }
@@ -84,7 +84,7 @@ describe('Agent', function () {
 
     await assert.rejects(
       () => {
-        return agent.setCurrentAccount(fixtures.alice.did())
+        return agent.setCurrentSpace(fixtures.alice.did())
       },
       {
         message: `Agent has no proofs for ${fixtures.alice.did()}.`,
@@ -99,8 +99,8 @@ describe('Agent', function () {
       channel: createServer(),
     })
 
-    const account = await agent.createAccount('execute')
-    await agent.setCurrentAccount(account.did)
+    const account = await agent.createSpace('execute')
+    await agent.setCurrentSpace(account.did)
 
     const out = await agent.execute(Account.info, {
       audience: fixtures.service,
@@ -151,10 +151,10 @@ describe('Agent', function () {
     // @ts-ignore
     agent.service = async () => server.id
 
-    const account = await agent.createAccount('execute')
-    await agent.setCurrentAccount(account.did)
+    const account = await agent.createSpace('execute')
+    await agent.setCurrentSpace(account.did)
 
-    const out = await agent.getAccountInfo()
+    const out = await agent.getSpaceInfo()
     assert.deepEqual(out, {
       did: 'did:key:sss',
       agent: 'did:key:agent',
@@ -173,8 +173,8 @@ describe('Agent', function () {
       channel: server,
     })
 
-    const account = await agent.createAccount('execute')
-    await agent.setCurrentAccount(account.did)
+    const account = await agent.createSpace('execute')
+    await agent.setCurrentSpace(account.did)
 
     const out = await agent.delegate({
       abilities: ['*'],

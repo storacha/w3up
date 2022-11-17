@@ -1,48 +1,63 @@
-import { AgentMeta } from '../types.js'
+import {
+  AgentData,
+  AgentMeta,
+  CIDString,
+  DelegationMeta,
+  SpaceMeta,
+} from '../types.js'
 import { RSASigner } from '@ucanto/principal/rsa'
-import { Delegation, SignerArchive, DID } from '@ucanto/interface'
+import { SignerArchive, DID, Block } from '@ucanto/interface'
 
-export type CIDString = string
-
-export interface DelegationMeta {
-  audience: AgentMeta
-}
-
-export interface AccountMeta {
-  name: string
-  registered: boolean
-}
-
-export interface StoreData<T> {
-  meta: AgentMeta
-  principal: T
-  currentAccount?: DID
-  accs: Map<DID, AccountMeta>
-  dels: Map<CIDString, { meta?: DelegationMeta; delegation: Delegation }>
-}
-
-export interface Store<T> {
-  open: () => Promise<Store<T>>
+/**
+ * Store interface that all stores need to implement
+ */
+export interface IStore<T> {
+  /**
+   * Open store
+   */
+  open: () => Promise<IStore<T>>
+  /**
+   * Clean up and close store
+   */
   close: () => Promise<void>
+  /**
+   * Check if store exists and is initialized
+   */
   exists: () => Promise<boolean>
-  init: (data: Partial<StoreData<T>>) => Promise<StoreData<T>>
-  save: (data: StoreData<T>) => Promise<Store<T>>
-  load: () => Promise<StoreData<T>>
+  /**
+   * Initilize store with data
+   *
+   * @param data
+   */
+  init: (data: Partial<AgentData<T>>) => Promise<AgentData<T>>
+  /**
+   * Persist data to the store's backend
+   *
+   * @param data
+   */
+  save: (data: AgentData<T>) => Promise<IStore<T>>
+  /**
+   * Loads data from the store's backend
+   */
+  load: () => Promise<AgentData<T>>
+  /**
+   * Clean all the data in the store's backend
+   */
   reset: () => Promise<void>
 }
 
 // Store IDB
 export interface StoreDataIDB {
   id: number
-  meta: import('../types').AgentMeta
+  meta: AgentMeta
   principal: SignerArchive<RSASigner>
-  currentAccount?: DID
-  accs: Map<DID, AccountMeta>
-  dels: Map<
+  currentSpace?: DID
+  spaces: Map<DID, SpaceMeta>
+  delegations: Map<
     CIDString,
     {
       meta?: DelegationMeta
-      delegation: Array<import('@ucanto/interface').Block>
+      delegation: Block[]
     }
   >
 }

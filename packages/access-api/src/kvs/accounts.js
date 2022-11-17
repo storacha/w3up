@@ -5,7 +5,7 @@ import { delegationToString } from '@web3-storage/access/encoding'
 
 /**
  * @typedef {{account: string, proof: string}} AccountValue
- * @typedef {import('@web3-storage/access/types').Account} Account
+ * @typedef {import('@web3-storage/access/types').SpaceD1} Account
  */
 
 /**

@@ -29,7 +29,7 @@ export async function cmdCreateAccount(opts) {
     })
     spinner.start('Waiting for email validation...')
     try {
-      await agent.registerAccount(email)
+      await agent.registerSpace(email)
       spinner.succeed('Account has been created and register with the service.')
     } catch (error) {
       console.error(error)

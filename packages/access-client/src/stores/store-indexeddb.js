@@ -3,8 +3,8 @@ import * as Signer from '@ucanto/principal/rsa'
 import defer from 'p-defer'
 
 /**
- * @typedef {import('./types').StoreData<Signer.RSASigner>} StoreData
- * @typedef {import('./types').Store<Signer.RSASigner>} Store
+ * @typedef {import('../types').AgentData<Signer.RSASigner>} StoreData
+ * @typedef {import('./types').IStore<Signer.RSASigner>} Store
  */
 
 const STORE_NAME = 'AccessStore'
@@ -40,6 +40,10 @@ export class StoreIndexedDB {
     this.#dbStoreName = options.dbStoreName ?? STORE_NAME
   }
 
+  /**
+   *
+   * @returns {Promise<Store>}
+   */
   async open() {
     /** @type {import('p-defer').DeferredPromise<Store>} */
     const { resolve, reject, promise } = defer()
@@ -101,6 +105,7 @@ export class StoreIndexedDB {
    * @param {object} [options]
    * @param {number} [options.dbVersion]
    * @param {string} [options.dbStoreName]
+   * @returns {Promise<Store>}
    */
   static async create(dbName, options) {
     const store = new StoreIndexedDB(dbName, options)
@@ -116,16 +121,19 @@ export class StoreIndexedDB {
       meta: data.meta || { name: 'agent', type: 'device' },
       principal:
         data.principal || (await Signer.generate({ extractable: false })),
-      accs: data.accs || new Map(),
-      dels: data.dels || new Map(),
-      currentAccount: data.currentAccount,
+      spaces: data.spaces || new Map(),
+      delegations: data.delegations || new Map(),
+      currentSpace: data.currentSpace,
     }
 
     await this.save(storeData)
     return storeData
   }
 
-  /** @param {StoreData} data */
+  /**
+   * @param {StoreData} data
+   * @returns {Promise<Store>}
+   */
   async save(data) {
     const db = this.#db
     if (!db) throw new Error('Store is not open')
@@ -140,7 +148,7 @@ export class StoreIndexedDB {
 
         const dels = []
 
-        for (const [key, value] of data.dels) {
+        for (const [key, value] of data.delegations) {
           dels.push([
             key,
             {
@@ -153,9 +161,9 @@ export class StoreIndexedDB {
           id: DATA_ID,
           meta: data.meta,
           principal: data.principal.toArchive(),
-          currentAccount: data.currentAccount,
-          accs: data.accs,
-          dels,
+          currentSpace: data.currentSpace,
+          spaces: data.spaces,
+          delegations: dels,
         })
         putReq.addEventListener('success', () => resolve(this))
         putReq.addEventListener('error', () =>
@@ -189,10 +197,10 @@ export class StoreIndexedDB {
             const raw = getReq.result
             if (!raw) throw new Error('Store is not initialized')
 
-            /** @type {StoreData['dels']} */
+            /** @type {StoreData['delegations']} */
             const dels = new Map()
 
-            for (const [key, value] of raw.dels) {
+            for (const [key, value] of raw.delegations) {
               dels.set(key, {
                 delegation: importDAG(value.delegation),
                 meta: value.meta,
@@ -203,9 +211,9 @@ export class StoreIndexedDB {
             const data = {
               meta: raw.meta,
               principal: Signer.from(raw.principal),
-              currentAccount: raw.currentAccount,
-              accs: raw.accs,
-              dels,
+              currentSpace: raw.currentSpace,
+              spaces: raw.spaces,
+              delegations: dels,
             }
             resolve(data)
           } catch (error) {
@@ -221,10 +229,6 @@ export class StoreIndexedDB {
     )
 
     return await getData()
-  }
-
-  async createAccount() {
-    return await Signer.generate({ extractable: false })
   }
 
   async reset() {

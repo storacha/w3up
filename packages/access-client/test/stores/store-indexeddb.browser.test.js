@@ -14,8 +14,8 @@ describe('IndexedDB store', () => {
     assert.equal(archive.key.extractable, false)
 
     // no accounts or delegations yet
-    assert.equal(data.accs.size, 0)
-    assert.equal(data.dels.size, 0)
+    assert.equal(data.spaces.size, 0)
+    assert.equal(data.delegations.size, 0)
 
     // default meta
     assert.equal(data.meta.name, 'agent')

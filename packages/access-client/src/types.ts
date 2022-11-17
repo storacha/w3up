@@ -19,6 +19,7 @@ import type {
   UnknownMatch,
   Transport,
   Delegation,
+  DID,
 } from '@ucanto/interface'
 
 import type {
@@ -29,17 +30,16 @@ import type {
   Any,
 } from './capabilities/types'
 import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
-import { Store, StoreData } from './stores/types.js'
+import { IStore } from './stores/types.js'
 import type { SetRequired } from 'type-fest'
 
-// export capabilities types
+// export other types
 export * from './capabilities/types.js'
+export * from './stores/types.js'
 
-export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
-
-export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
-  Phantom<C>
-
+/**
+ * Access api service definition type
+ */
 export interface Service {
   voucher: {
     claim: ServiceMethod<
@@ -50,7 +50,7 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   account: {
-    info: ServiceMethod<AccountInfo, Account, Failure>
+    info: ServiceMethod<AccountInfo, SpaceD1, Failure>
     'recover-validation': ServiceMethod<
       AccountRecoverValidation,
       EncodedDelegation<[AccountRecover]> | undefined,
@@ -64,15 +64,30 @@ export interface Service {
   }
 }
 
-export interface Account {
-  did: UCAN.DID
-  agent: UCAN.DID
-  email: URI<'mailto:'>
-  product: URI<'product:'>
-  updated_at: string
-  inserted_at: string
+/**
+ * Schema types
+ *
+ * Interfaces for data structures used in the client
+ *
+ */
+
+export type CIDString = string
+
+/**
+ * Data schema used by the agent and persisted by stores
+ */
+export interface AgentData<T> {
+  meta: AgentMeta
+  principal: T
+  currentSpace?: DID
+  spaces: Map<DID, SpaceMeta>
+  delegations: Map<CIDString, { meta?: DelegationMeta; delegation: Delegation }>
 }
 
+/**
+ * Agent metadata used to describe an agent ("audience")
+ * with a more human and UI friendly data
+ */
 export interface AgentMeta {
   name: string
   description?: string
@@ -81,17 +96,58 @@ export interface AgentMeta {
   type: 'device' | 'app' | 'service'
 }
 
+/**
+ * Delegation metadata
+ */
+export interface DelegationMeta {
+  /**
+   * Audience metadata to be easier to build UIs with human readable data
+   * Normally used with delegations issued to third parties or other devices.
+   */
+  audience: AgentMeta
+}
+
+/**
+ * Space metadata
+ */
+export interface SpaceMeta {
+  /**
+   * Human readable name for the space
+   */
+  name: string
+  /**
+   * Was this space already registered with the access-api using a voucher ?
+   */
+  isRegistered: boolean
+}
+
+/**
+ * Space schema in D1 database
+ */
+export interface SpaceD1 {
+  did: UCAN.DID
+  agent: UCAN.DID
+  email: URI<'mailto:'>
+  product: URI<'product:'>
+  updated_at: string
+  inserted_at: string
+}
+
+/**
+ * Agent class types
+ */
+
 export interface AgentOptions<T> {
-  store: Store<T>
+  store: IStore<T>
   connection: ConnectionView<Service>
   url?: URL
   fetch: typeof fetch
-  data: StoreData<T>
+  data: AgentData<T>
 }
 
 export interface AgentCreateOptions<T> {
   channel?: Transport.Channel<Service>
-  store: Store<T>
+  store: IStore<T>
   url?: URL
   fetch?: typeof fetch
 }
@@ -126,6 +182,10 @@ export type DelegationOptions = SetRequired<UCANBasicOptions, 'audience'> & {
    */
   audienceMeta: AgentMeta
 }
+
+/**
+ * Utility types
+ */
 
 export interface UCANBasicOptions {
   /**
@@ -184,3 +244,8 @@ export type InferNb<C extends {} | undefined> = keyof C extends never
        */
       nb: C
     }
+
+export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
+
+export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
+  Phantom<C>
