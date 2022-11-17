@@ -12,7 +12,7 @@ import { Log, LogLevel, Miniflare } from 'miniflare'
 
 // @ts-ignore
 import git from 'git-rev-sync'
-import { migrate } from '../sql/migrate.js'
+import { migrate } from './migrate.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const require = createRequire(__dirname)

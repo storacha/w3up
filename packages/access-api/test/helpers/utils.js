@@ -26,13 +26,13 @@ export async function send(ucan, mf) {
  * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
  * @param {string} email
  */
-export async function createAccount(issuer, service, conn, email) {
-  const account = await Signer.generate()
+export async function createSpace(issuer, service, conn, email) {
+  const space = await Signer.generate()
   const claim = await Voucher.claim
     .invoke({
       issuer,
       audience: service,
-      with: account.did(),
+      with: space.did(),
       nb: {
         // @ts-ignore
         identity: `mailto:${email}`,
@@ -41,16 +41,16 @@ export async function createAccount(issuer, service, conn, email) {
       },
       proofs: [
         await Any.any.delegate({
-          issuer: account,
+          issuer: space,
           audience: issuer,
-          with: account.did(),
+          with: space.did(),
           expiration: Infinity,
         }),
       ],
     })
     .execute(conn)
   if (!claim || claim.error) {
-    throw new Error('failed to create account')
+    throw new Error('failed to create space')
   }
 
   const delegation = await stringToDelegation(claim)
@@ -61,16 +61,16 @@ export async function createAccount(issuer, service, conn, email) {
       audience: service,
       with: service.did(),
       nb: {
-        account: account.did(),
+        space: space.did(),
         identity: delegation.capabilities[0].nb.identity,
         product: delegation.capabilities[0].nb.product,
       },
       proofs: [
         delegation,
         await Any.any.delegate({
-          issuer: account,
+          issuer: space,
           audience: service,
-          with: account.did(),
+          with: space.did(),
           expiration: Infinity,
         }),
       ],
@@ -84,6 +84,6 @@ export async function createAccount(issuer, service, conn, email) {
   }
 
   return {
-    account,
+    space,
   }
 }

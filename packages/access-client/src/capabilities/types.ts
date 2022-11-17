@@ -1,17 +1,18 @@
 import { InferInvokedCapability } from '@ucanto/interface'
-import { account, info, recover, recoverValidation } from './account.js'
+import { space, info, recover, recoverValidation } from './space.js'
 import { any } from './wildcard.js'
 import { add, list, remove } from './store.js'
 import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 
-// Account
-export type Account = InferInvokedCapability<typeof account>
-export type AccountInfo = InferInvokedCapability<typeof info>
-export type AccountRecoverValidation = InferInvokedCapability<
+// Space
+export type Space = InferInvokedCapability<typeof space>
+export type SpaceInfo = InferInvokedCapability<typeof info>
+export type SpaceRecoverValidation = InferInvokedCapability<
   typeof recoverValidation
 >
-export type AccountRecover = InferInvokedCapability<typeof recover>
+export type SpaceRecover = InferInvokedCapability<typeof recover>
+
 // Voucher Protocol
 export type VoucherRedeem = InferInvokedCapability<typeof redeem>
 export type VoucherClaim = InferInvokedCapability<typeof claim>
@@ -28,10 +29,10 @@ export type StoreList = InferInvokedCapability<typeof list>
 export type Any = InferInvokedCapability<typeof any>
 
 export type Abilities =
-  | Account['can']
-  | AccountInfo['can']
-  | AccountRecover['can']
-  | AccountRecoverValidation['can']
+  | Space['can']
+  | SpaceInfo['can']
+  | SpaceRecover['can']
+  | SpaceRecoverValidation['can']
   | VoucherClaim['can']
   | VoucherRedeem['can']
   | Upload['can']

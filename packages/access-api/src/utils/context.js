@@ -3,7 +3,7 @@ import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
 import { loadConfig } from '../config.js'
-import { Accounts } from '../kvs/accounts.js'
+import { Spaces } from '../kvs/spaces.js'
 import { Validations } from '../kvs/validations.js'
 import { Email } from './email.js'
 import { D1QB } from 'workers-qb'
@@ -51,7 +51,7 @@ export function getContext(request, env, ctx) {
     config,
     url,
     kvs: {
-      accounts: new Accounts(config.ACCOUNTS, db),
+      spaces: new Spaces(config.SPACES, db),
       validations: new Validations(config.VALIDATIONS),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),

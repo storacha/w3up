@@ -2,7 +2,7 @@
 export * from './agent.js'
 
 // Workaround for typedoc until 0.24 support export maps
-export * as Account from './capabilities/account.js'
+export * as Space from './capabilities/space.js'
 export * as Wildcard from './capabilities/wildcard.js'
 export * as Store from './capabilities/store.js'
 export * as Upload from './capabilities/upload.js'

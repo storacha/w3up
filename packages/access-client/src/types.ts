@@ -24,9 +24,9 @@ import type {
 
 import type {
   Abilities,
-  AccountInfo,
-  AccountRecover,
-  AccountRecoverValidation,
+  SpaceInfo,
+  SpaceRecover,
+  SpaceRecoverValidation,
   Any,
 } from './capabilities/types'
 import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
@@ -49,15 +49,15 @@ export interface Service {
     >
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
-  account: {
-    info: ServiceMethod<AccountInfo, SpaceD1, Failure>
+  space: {
+    info: ServiceMethod<SpaceInfo, SpaceD1, Failure>
     'recover-validation': ServiceMethod<
-      AccountRecoverValidation,
-      EncodedDelegation<[AccountRecover]> | undefined,
+      SpaceRecoverValidation,
+      EncodedDelegation<[SpaceRecover]> | undefined,
       Failure
     >
     recover: ServiceMethod<
-      AccountRecover,
+      SpaceRecover,
       Array<EncodedDelegation<[Any]>>,
       Failure
     >

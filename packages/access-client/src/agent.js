@@ -9,7 +9,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
-import * as Account from './capabilities/account.js'
+import * as Space from './capabilities/space.js'
 import * as Voucher from './capabilities/voucher.js'
 import { any as Any } from './capabilities/wildcard.js'
 import { stringToDelegation } from './encoding.js'
@@ -251,7 +251,7 @@ export class Agent {
     const proofs = await collect(
       this.proofs([
         {
-          can: 'account/info',
+          can: 'space/info',
           with: space,
         },
       ])
@@ -286,7 +286,7 @@ export class Agent {
     const proofs = await collect(
       this.proofs([
         {
-          can: 'account/info',
+          can: 'space/info',
           with: this.data.currentSpace,
         },
       ])
@@ -316,11 +316,11 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async registerSpace(email, opts) {
-    const account = this.currentSpace()
+    const space = this.currentSpace()
     const service = await this.service()
 
-    if (!account) {
-      throw new Error('No account selected')
+    if (!space) {
+      throw new Error('No space selected')
     }
 
     const inv = await this.execute(Voucher.claim, {
@@ -332,7 +332,7 @@ export class Agent {
     })
 
     if (inv && inv.error) {
-      throw new Error('Account creation failed', { cause: inv.error })
+      throw new Error('Voucher claim failed', { cause: inv.error })
     }
 
     const voucherRedeem = await this.#waitForVoucherRedeem(opts)
@@ -348,7 +348,7 @@ export class Agent {
     const accInv = await this.execute(Voucher.redeem, {
       with: URI.from(service.did()),
       nb: {
-        account,
+        space,
         identity: voucherRedeem.capabilities[0].nb.identity,
         product: voucherRedeem.capabilities[0].nb.product,
       },
@@ -356,7 +356,7 @@ export class Agent {
     })
 
     if (accInv && accInv.error) {
-      throw new Error('Account registration failed', { cause: accInv })
+      throw new Error('Space registration failed', { cause: accInv })
     }
 
     await this.addProof(voucherRedeem)
@@ -408,7 +408,7 @@ export class Agent {
   async delegate(options) {
     const space = await this.currentSpaceWithMeta()
     if (!space) {
-      throw new Error('there no account selected.')
+      throw new Error('there no space selected.')
     }
 
     const caps = /** @type {Ucanto.Capabilities} */ (
@@ -502,7 +502,7 @@ export class Agent {
     if (!_space) {
       throw new Error('No space selected, you need pass a resource.')
     }
-    const inv = await this.execute(Account.info, {
+    const inv = await this.execute(Space.info, {
       with: _space,
     })
 

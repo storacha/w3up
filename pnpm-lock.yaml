@@ -10,7 +10,7 @@ importers:
       typedoc: ^0.23.21
       typedoc-plugin-missing-exports: ^1.0.0
       typescript: 4.8.4
-      wrangler: ^2.3.2
+      wrangler: ^2.4.0
     dependencies:
       typedoc: 0.23.21_typescript@4.8.4
       typedoc-plugin-missing-exports: 1.0.0_typedoc@0.23.21
@@ -19,12 +19,13 @@ importers:
       prettier: 2.7.1
       simple-git-hooks: 2.8.1
       typescript: 4.8.4
-      wrangler: 2.3.2
+      wrangler: 2.4.0
 
   packages/access-api:
     specifiers:
       '@cloudflare/workers-types': ^3.18.0
       '@databases/escape-identifier': ^1.0.3
+      '@databases/split-sql-query': ^1.0.3
       '@databases/sql': ^3.2.0
       '@ipld/dag-ucan': ^2.0.1
       '@sentry/cli': ^2.9.0
@@ -66,7 +67,7 @@ importers:
       toucan-js: ^2.7.0
       typescript: 4.8.4
       workers-qb: ^0.1.2
-      wrangler: ^2.3.2
+      wrangler: ^2.4.0
     dependencies:
       '@ipld/dag-ucan': 2.0.1
       '@ucanto/client': 3.0.2
@@ -89,6 +90,7 @@ importers:
     devDependencies:
       '@cloudflare/workers-types': 3.18.0
       '@databases/escape-identifier': 1.0.3
+      '@databases/split-sql-query': 1.0.3_@databases+sql@3.2.0
       '@databases/sql': 3.2.0
       '@sentry/cli': 2.9.0
       '@sentry/webpack-plugin': 1.20.0
@@ -112,7 +114,7 @@ importers:
       readable-stream: 4.2.0
       sade: 1.8.1
       typescript: 4.8.4
-      wrangler: 2.3.2
+      wrangler: 2.4.0
 
   packages/access-client:
     specifiers:
@@ -232,7 +234,7 @@ importers:
       sade: ^1.8.1
       toucan-js: ^2.7.0
       typescript: 4.8.4
-      wrangler: ^2.3.2
+      wrangler: ^2.4.0
       ws: ^8.11.0
     dependencies:
       '@types/ws': 8.5.3
@@ -264,7 +266,7 @@ importers:
       readable-stream: 4.2.0
       sade: 1.8.1
       typescript: 4.8.4
-      wrangler: 2.3.2
+      wrangler: 2.4.0
 
   packages/upload-client:
     specifiers:
@@ -336,7 +338,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0
       typescript: 4.8.4
-      wrangler: ^2.3.2
+      wrangler: ^2.4.0
     dependencies:
       next: 13.0.3_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
@@ -348,7 +350,7 @@ importers:
       eslint-config-next: 13.0.3_rmayb2veg2btbq6mbmnyivgasy
       hd-scripts: 3.0.2
       typescript: 4.8.4
-      wrangler: 2.3.2
+      wrangler: 2.4.0
 
 packages:
 
@@ -411,6 +413,14 @@ packages:
     resolution: {integrity: sha512-Su36iSVzaHxpVdISVMViUX/32sLvzxVgjZpYhzhotxZUuLo11GVWsiHwqkvUZijTLUxcDmUqEwGJO3O/soLuZA==}
     dependencies:
       '@databases/validate-unicode': 1.0.0
+    dev: true
+
+  /@databases/split-sql-query/1.0.3_@databases+sql@3.2.0:
+    resolution: {integrity: sha512-Q3UYX85e34yE9KXa095AJtJhBQ0NpLfC0kS9ydFKuNB25cto4YddY52RuXN81m2t0pS1Atg31ylNpKfNCnUPdA==}
+    peerDependencies:
+      '@databases/sql': '*'
+    dependencies:
+      '@databases/sql': 3.2.0
     dev: true
 
   /@databases/sql/3.2.0:
@@ -7466,8 +7476,8 @@ packages:
     resolution: {integrity: sha512-y38RiVOEJPmqSSQniVPKQrWE8XocqeRWO9TwgfXTMARzQa3aGwsaBwUdOBn5MJukZwIkGOYsljK76kMGLu5aOA==}
     dev: false
 
-  /wrangler/2.3.2:
-    resolution: {integrity: sha512-PWqNJclB7SGIRpuJSrF9zuTfLAqrS1VPembhf6HPGJC6zL96hx3XcHC01VjChC0lsadUqGRa7/iEvWtwdUy6kw==}
+  /wrangler/2.4.0:
+    resolution: {integrity: sha512-iIz1dDLWuIIv79YnvdhY97FMie/cOBfX6WblMFzus/sdgBcnkhf7t0szxn7SYQWaeb+4Bszs+ReI4JZOnkxkqg==}
     engines: {node: '>=16.13.0'}
     hasBin: true
     dependencies:

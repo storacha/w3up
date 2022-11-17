@@ -2,7 +2,7 @@
 import * as Ucanto from '@ucanto/interface'
 import { parseLink } from '@ucanto/core'
 import * as Server from '@ucanto/server'
-import * as Account from '../../src/capabilities/account.js'
+import * as Space from '../../src/capabilities/space.js'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import { service } from './fixtures.js'
@@ -41,8 +41,8 @@ export function createServer() {
     encoder: CBOR,
     decoder: CAR,
     service: {
-      account: {
-        info: Server.provide(Account.info, async ({ capability }) => {
+      space: {
+        info: Server.provide(Space.info, async ({ capability }) => {
           return {
             did: 'did:key:sss',
             agent: 'did:key:agent',

@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 import { Miniflare } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { migrate } from '../../sql/migrate.js'
+import { migrate } from '../../scripts/migrate.js'
 import { D1QB } from 'workers-qb'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

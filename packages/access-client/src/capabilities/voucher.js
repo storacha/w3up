@@ -112,16 +112,16 @@ export const redeem = voucher.derive({
       /**
        * Space identifier where voucher can be redeemed. When service delegates
        * `voucher/redeem` to the user agent it may omit this field to allow
-       * account to choose account.
+       * agent to choose space.
        */
-      account: URI.match({ protocol: 'did:' }),
+      space: URI.match({ protocol: 'did:' }),
     },
     derives: (child, parent) => {
       return (
         fail(equalWith(child, parent)) ||
         fail(equal(child.nb.product, parent.nb.product, 'product')) ||
         fail(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
-        fail(equal(child.nb.account, parent.nb.account, 'account')) ||
+        fail(equal(child.nb.space, parent.nb.space, 'account')) ||
         true
       )
     },

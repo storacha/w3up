@@ -3,23 +3,23 @@ import * as Any from '@web3-storage/access/capabilities/wildcard'
 import * as Voucher from '@web3-storage/access/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { context, test } from './helpers/context.js'
-import { createAccount } from './helpers/utils.js'
-import { Accounts } from '../src/kvs/accounts.js'
+import { createSpace } from './helpers/utils.js'
+import { Spaces } from '../src/kvs/spaces.js'
 import { Signer } from '@ucanto/principal/ed25519'
 
 test.beforeEach(async (t) => {
   t.context = await context()
 })
 
-test('should return account/redeem', async (t) => {
+test('should return voucher/redeem', async (t) => {
   const { issuer, service, conn, mf, db } = t.context
 
-  const account = await Signer.generate()
+  const space = await Signer.generate()
   const claim = await Voucher.claim
     .invoke({
       issuer,
       audience: service,
-      with: account.did(),
+      with: space.did(),
       nb: {
         identity: 'mailto:email@dag.house',
         product: 'product:free',
@@ -27,9 +27,9 @@ test('should return account/redeem', async (t) => {
       },
       proofs: [
         await Any.any.delegate({
-          issuer: account,
+          issuer: space,
           audience: issuer,
-          with: account.did(),
+          with: space.did(),
           expiration: Infinity,
         }),
       ],
@@ -51,16 +51,16 @@ test('should return account/redeem', async (t) => {
       audience: service,
       with: service.did(),
       nb: {
-        account: account.did(),
+        space: space.did(),
         identity: delegation.capabilities[0].nb.identity,
         product: delegation.capabilities[0].nb.product,
       },
       proofs: [
         delegation,
         await Any.any.delegate({
-          issuer: account,
+          issuer: space,
           audience: service,
-          with: account.did(),
+          with: space.did(),
           expiration: Infinity,
         }),
       ],
@@ -72,18 +72,18 @@ test('should return account/redeem', async (t) => {
     return t.fail()
   }
 
-  const accounts = new Accounts(await mf.getKVNamespace('ACCOUNTS'), db)
+  const spaces = new Spaces(await mf.getKVNamespace('SPACES'), db)
 
-  // check db for account
-  t.like(await accounts.get(account.did()), {
-    did: account.did(),
+  // check db for space
+  t.like(await spaces.get(space.did()), {
+    did: space.did(),
     product: 'product:free',
     email: 'email@dag.house',
     agent: issuer.did(),
   })
 
-  // check account delegations
-  const delegations = await accounts.getDelegations('mailto:email@dag.house')
+  // check space delegations
+  const delegations = await spaces.getDelegations('mailto:email@dag.house')
 
   if (!delegations) {
     return t.fail('no delegation for email')
@@ -93,17 +93,17 @@ test('should return account/redeem', async (t) => {
 
   t.deepEqual(del.audience.did(), service.did())
   t.deepEqual(del.capabilities[0].can, '*')
-  t.deepEqual(del.capabilities[0].with, account.did())
+  t.deepEqual(del.capabilities[0].with, space.did())
 })
 
-test('should save first account delegation', async (t) => {
+test('should save first space delegation', async (t) => {
   const { issuer, service, conn, mf } = t.context
 
-  await createAccount(issuer, service, conn, 'first@dag.house')
+  await createSpace(issuer, service, conn, 'first@dag.house')
 
-  const accounts = await mf.getKVNamespace('ACCOUNTS')
+  const spaces = await mf.getKVNamespace('SPACES')
 
-  const delEncoded = await accounts.get('mailto:first@dag.house', {
+  const delEncoded = await spaces.get('mailto:first@dag.house', {
     type: 'json',
   })
 
@@ -111,15 +111,15 @@ test('should save first account delegation', async (t) => {
   t.assert(delEncoded.length === 1)
 })
 
-test('should save multiple account delegation', async (t) => {
+test('should save multiple space delegation', async (t) => {
   const { issuer, service, conn, mf } = t.context
 
-  await createAccount(issuer, service, conn, 'multiple@dag.house')
-  await createAccount(issuer, service, conn, 'multiple@dag.house')
+  await createSpace(issuer, service, conn, 'multiple@dag.house')
+  await createSpace(issuer, service, conn, 'multiple@dag.house')
 
-  const accounts = await mf.getKVNamespace('ACCOUNTS')
+  const spaces = await mf.getKVNamespace('SPACES')
 
-  const delEncoded = await accounts.get('mailto:multiple@dag.house', {
+  const delEncoded = await spaces.get('mailto:multiple@dag.house', {
     type: 'json',
   })
 
@@ -136,7 +136,7 @@ test('should fail with wrong resource', async (t) => {
       audience: service,
       with: issuer.did(),
       nb: {
-        account: issuer.did(),
+        space: issuer.did(),
         identity: 'mailto:email@dag.house',
         product: 'product:free',
       },

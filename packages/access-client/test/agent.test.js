@@ -3,7 +3,7 @@ import { URI } from '@ucanto/validator'
 import { Agent } from '../src/agent.js'
 import { StoreMemory } from '../src/stores/store-memory.js'
 import { collect } from 'streaming-iterables'
-import * as Account from '../src/capabilities/account.js'
+import * as Space from '../src/capabilities/space.js'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 
@@ -31,16 +31,16 @@ describe('Agent', function () {
     assert.ok(agent.did())
   })
 
-  it('should create account', async function () {
+  it('should create space', async function () {
     const store = await StoreMemory.create()
     const agent = await Agent.create({
       store,
     })
 
-    const account = await agent.createSpace('test-create')
+    const space = await agent.createSpace('test-create')
 
-    assert(typeof account.did === 'string')
-    assert(account.proof)
+    assert(typeof space.did === 'string')
+    assert(space.proof)
   })
 
   it('should add proof when creating acccount', async function () {
@@ -49,34 +49,34 @@ describe('Agent', function () {
       store,
     })
 
-    const account = await agent.createSpace('test-add')
+    const space = await agent.createSpace('test-add')
 
     const delegations = await collect(agent.proofsWithMeta())
 
-    assert.equal(account.proof.cid, delegations[0].delegation.cid)
+    assert.equal(space.proof.cid, delegations[0].delegation.cid)
     assert(!delegations[0].meta)
   })
 
-  it('should set current account', async function () {
+  it('should set current space', async function () {
     const store = await StoreMemory.create()
     const agent = await Agent.create({
       store,
     })
 
-    const account = await agent.createSpace('test')
+    const space = await agent.createSpace('test')
 
-    await agent.setCurrentSpace(account.did)
+    await agent.setCurrentSpace(space.did)
 
     const accWithMeta = await agent.currentSpaceWithMeta()
     if (!accWithMeta) {
-      assert.fail('should have account')
+      assert.fail('should have space')
     }
-    assert.equal(accWithMeta.did, account.did)
+    assert.equal(accWithMeta.did, space.did)
     assert(accWithMeta.proofs.length === 1)
     assert.deepStrictEqual(accWithMeta.capabilities, ['*'])
   })
 
-  it('fails set current account with no proofs', async function () {
+  it('fails set current space with no proofs', async function () {
     const store = await StoreMemory.create()
     const agent = await Agent.create({
       store,
@@ -99,10 +99,10 @@ describe('Agent', function () {
       channel: createServer(),
     })
 
-    const account = await agent.createSpace('execute')
-    await agent.setCurrentSpace(account.did)
+    const space = await agent.createSpace('execute')
+    await agent.setCurrentSpace(space.did)
 
-    const out = await agent.execute(Account.info, {
+    const out = await agent.execute(Space.info, {
       audience: fixtures.service,
     })
 
@@ -125,7 +125,7 @@ describe('Agent', function () {
 
     await assert.rejects(
       async () => {
-        await agent.execute(Account.info, {
+        await agent.execute(Space.info, {
           audience: fixtures.service,
           with: URI.from(fixtures.alice.did()),
         })
@@ -134,12 +134,12 @@ describe('Agent', function () {
         name: 'Error',
         message: `no proofs available for resource ${URI.from(
           fixtures.alice.did()
-        )} and ability account/info`,
+        )} and ability space/info`,
       }
     )
   })
 
-  it('should get account info', async function () {
+  it('should get space info', async function () {
     const store = await StoreMemory.create()
     const server = createServer()
     const agent = await Agent.create({
@@ -151,8 +151,8 @@ describe('Agent', function () {
     // @ts-ignore
     agent.service = async () => server.id
 
-    const account = await agent.createSpace('execute')
-    await agent.setCurrentSpace(account.did)
+    const space = await agent.createSpace('execute')
+    await agent.setCurrentSpace(space.did)
 
     const out = await agent.getSpaceInfo()
     assert.deepEqual(out, {
@@ -173,8 +173,8 @@ describe('Agent', function () {
       channel: server,
     })
 
-    const account = await agent.createSpace('execute')
-    await agent.setCurrentSpace(account.did)
+    const space = await agent.createSpace('execute')
+    await agent.setCurrentSpace(space.did)
 
     const out = await agent.delegate({
       abilities: ['*'],
@@ -189,7 +189,7 @@ describe('Agent', function () {
     assert.deepStrictEqual(out.capabilities, [
       {
         can: '*',
-        with: account.did,
+        with: space.did,
       },
     ])
   })

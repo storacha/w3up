@@ -1,9 +1,9 @@
 /**
- * Account Capabilities
+ * Space Capabilities
  *
  * These can be imported directly with:
  * ```js
- * import * as Account from '@web3-storage/access/capabilities/account'
+ * import * as Space from '@web3-storage/access/capabilities/space'
  * ```
  *
  * @module
@@ -14,7 +14,7 @@ import { store } from './store.js'
 import { capability, URI } from '@ucanto/validator'
 import { canDelegateURI, equalWith, fail } from './utils.js'
 
-export const account = any.derive({
+export const space = any.derive({
   to: capability({
     can: 'account/*',
     with: URI.match({ protocol: 'did:' }),
@@ -23,16 +23,16 @@ export const account = any.derive({
   derives: equalWith,
 })
 
-const base = any.or(account)
+const base = any.or(space)
 
 /**
- * `account/info` can be derived from any of the `store/*`
+ * `space/info` can be derived from any of the `store/*`
  * capability that has matching `with`. This allows store service
  * to identify account based on any user request.
  */
 export const info = base.or(store).derive({
   to: capability({
-    can: 'account/info',
+    can: 'space/info',
     with: URI.match({ protocol: 'did:' }),
     derives: equalWith,
   }),
@@ -41,7 +41,7 @@ export const info = base.or(store).derive({
 
 export const recoverValidation = base.derive({
   to: capability({
-    can: 'account/recover-validation',
+    can: 'space/recover-validation',
     with: URI.match({ protocol: 'did:' }),
     nb: {
       identity: URI.match({ protocol: 'mailto:' }),
@@ -53,7 +53,7 @@ export const recoverValidation = base.derive({
 
 export const recover = base.derive({
   to: capability({
-    can: 'account/recover',
+    can: 'space/recover',
     with: URI.match({ protocol: 'did:' }),
     nb: {
       identity: URI.match({ protocol: 'mailto:' }),
