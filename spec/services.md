@@ -83,7 +83,7 @@ On success, the service returns an `Account` object with the following fields:
 
 #### Errors
 
-TODO: describe possible error types, how to distinguish between them
+May fail with a `MalformedCapability` if the account does not exist.
 
 ### `account/recover`
 
@@ -124,7 +124,7 @@ If the response contains `url` and `headers` fields, the client should issue an 
 
 #### Errors
 
-TODO: list possible error types
+May fail with a `MalformedCapability` if no `link` caveat is provided.
 
 ### `store/remove`
 
@@ -142,7 +142,7 @@ On success, the service will echo back the CID of the removed CAR, as a string.
 
 #### Errors
 
-TODO: list possible errors
+May fail with a `MalformedCapability` if no `link` caveat is provided.
 
 ### `store/list`
 
@@ -204,7 +204,7 @@ The current implementation returns `null` on success, but this may be changed in
 
 #### Errors
 
-TODO: list error types
+May fail with a `MalformedCapability` if no `root` CID caveat is provided, or if the `shards` caveat is missing or contains an empty array.
 
 ### `upload/remove`
 
@@ -222,7 +222,7 @@ The service currently returns no value on success.
 
 #### Errors
 
-TODO: list errors
+May fail with a `MalformedCapability` if no `root` CID caveat was provided.
 
 ### `upload/list`
 
