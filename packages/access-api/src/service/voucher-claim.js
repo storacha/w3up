@@ -54,9 +54,7 @@ export function voucherClaimProvider(ctx) {
       return encoded
     }
 
-    const url = `${ctx.url.protocol}//${
-      ctx.url.host
-    }/validate-email?ucan=${encoded}&did=${invocation.issuer.did()}`
+    const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}`
 
     await ctx.email.sendValidation({
       to: capability.nb.identity.replace('mailto:', ''),

@@ -28,7 +28,7 @@ export async function migrate(db) {
   } catch (error) {
     const err = /** @type {Error} */ (error)
     // eslint-disable-next-line no-console
-    console.log({
+    console.error('D1 Error', {
       message: err.message,
       // @ts-ignore
       cause: err.cause?.message,

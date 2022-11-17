@@ -3,7 +3,7 @@ import * as Voucher from '@web3-storage/access/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { context, test } from './helpers/context.js'
 
-test.before(async (t) => {
+test.beforeEach(async (t) => {
   t.context = await context()
 })
 
