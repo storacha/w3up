@@ -5,7 +5,7 @@
 
 Install the package using npm:
 
-```console
+```bash
 npm install @web3-storage/upload-client
 ```
 
@@ -119,25 +119,34 @@ await Upload.add(conf, rootCID, carCIDs)
 
 ## API
 
-- [`uploadDirectory`](#uploaddirectory)
-- [`uploadFile`](#uploadfile)
-- `CAR`
-  - [`encode`](#carencode)
-- [`ShardingStream`](#shardingstream)
-- [`ShardStoringStream`](#shardstoringstream)
-- `Store`
-  - [`add`](#storeadd)
-  - [`list`](#storelist)
-  - [`remove`](#storeremove)
-- `UnixFS`
-  - [`createDirectoryEncoderStream`](#unixfscreatedirectoryencoderstream)
-  - [`createFileEncoderStream`](#unixfscreatefileencoderstream)
-  - [`encodeDirectory`](#unixfsencodedirectory)
-  - [`encodeFile`](#unixfsencodefile)
-- `Upload`
-  - [`add`](#uploadadd)
-  - [`list`](#uploadlist)
-  - [`remove`](#uploadremove)
+- [Install](#install)
+- [Usage](#usage)
+  - [Create an Agent](#create-an-agent)
+  - [Uploading files](#uploading-files)
+  - [Advanced usage](#advanced-usage)
+    - [Buffering API](#buffering-api)
+    - [Streaming API](#streaming-api)
+- [API](#api)
+  - [`uploadDirectory`](#uploaddirectory)
+  - [`uploadFile`](#uploadfile)
+  - [`CAR.encode`](#carencode)
+  - [`ShardingStream`](#shardingstream)
+  - [`ShardStoringStream`](#shardstoringstream)
+  - [`Store.add`](#storeadd)
+  - [`Store.list`](#storelist)
+  - [`Store.remove`](#storeremove)
+  - [`UnixFS.createDirectoryEncoderStream`](#unixfscreatedirectoryencoderstream)
+  - [`UnixFS.createFileEncoderStream`](#unixfscreatefileencoderstream)
+  - [`UnixFS.encodeDirectory`](#unixfsencodedirectory)
+  - [`UnixFS.encodeFile`](#unixfsencodefile)
+  - [`Upload.add`](#uploadadd)
+  - [`Upload.list`](#uploadlist)
+  - [`Upload.remove`](#uploadremove)
+- [Types](#types)
+  - [`CARFile`](#carfile)
+  - [`InvocationConfig`](#invocationconfig)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
