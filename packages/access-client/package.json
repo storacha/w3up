@@ -75,7 +75,6 @@
     "ora": "^6.1.2",
     "p-defer": "^4.0.0",
     "p-wait-for": "^5.0.0",
-    "streaming-iterables": "^7.1.0",
     "type-fest": "^3.2.0",
     "uint8arrays": "^4.0.2",
     "ws": "^8.11.0",

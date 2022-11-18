@@ -2,7 +2,6 @@ import assert from 'assert'
 import { URI } from '@ucanto/validator'
 import { Agent } from '../src/agent.js'
 import { StoreMemory } from '../src/stores/store-memory.js'
-import { collect } from 'streaming-iterables'
 import * as Space from '../src/capabilities/space.js'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
@@ -51,10 +50,9 @@ describe('Agent', function () {
 
     const space = await agent.createSpace('test-add')
 
-    const delegations = await collect(agent.proofsWithMeta())
+    const delegations = await agent.proofs()
 
-    assert.equal(space.proof.cid, delegations[0].delegation.cid)
-    assert(!delegations[0].meta)
+    assert.equal(space.proof.cid, delegations[0].cid)
   })
 
   it('should set current space', async function () {

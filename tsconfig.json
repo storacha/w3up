@@ -40,6 +40,7 @@
     "darkHighlightTheme": "github-dark",
     "navigationLinks": {
       "Github": "https://github.com/web3-storage/w3protocol"
-    }
+    },
+    "customCss": "./spec/docs.css"
   }
 }
