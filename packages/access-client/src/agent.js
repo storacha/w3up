@@ -23,8 +23,6 @@ import {
   canDelegateCapability,
 } from './delegations.js'
 
-import { collect } from 'streaming-iterables'
-
 const HOST = 'https://access.web3.storage'
 
 /**
@@ -126,6 +124,9 @@ export class Agent {
   }
 
   /**
+   * Add a proof to the agent store
+   *
+   * A proof is a delegation with an audience matching agent DID
    *
    * @param {Ucanto.Delegation} delegation
    */
@@ -143,6 +144,8 @@ export class Agent {
   }
 
   /**
+   * Query the delegations store for all the delegations matching the capabilities provided.
+   *
    * @param {import('@ucanto/interface').Capability[]} [caps]
    */
   async *#delegations(caps) {
@@ -153,7 +156,7 @@ export class Agent {
         // check if delegation can be used
         if (!isTooEarly(value.delegation)) {
           // check if we need to filter for caps
-          if (caps) {
+          if (Array.isArray(caps) && caps.length > 0) {
             for (const cap of _caps) {
               if (canDelegateCapability(value.delegation, cap)) {
                 _caps.delete(cap)
@@ -174,27 +177,27 @@ export class Agent {
   }
 
   /**
-   * @param {import('@ucanto/interface').Capability[]} [caps]
+   * Get all the proofs matching the capabilities
+   *
+   * Proofs are delegations with an audience matching agent DID.
+   *
+   * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
    */
-  async *proofs(caps) {
-    for await (const value of this.proofsWithMeta(caps)) {
-      yield value.delegation
-    }
-  }
-
-  /**
-   * @param {import('@ucanto/interface').Capability[]} [caps]
-   */
-  async *proofsWithMeta(caps) {
+  async proofs(caps) {
+    const arr = []
     for await (const value of this.#delegations(caps)) {
       if (value.delegation.audience.did() === this.issuer.did()) {
-        yield value
+        arr.push(value.delegation)
       }
     }
+
+    return arr
   }
 
   /**
-   * @param {import('@ucanto/interface').Capability[]} [caps]
+   * Get delegations created by the agent for others.
+   *
+   * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the delegations.
    */
   async *delegations(caps) {
     for await (const { delegation } of this.delegationsWithMeta(caps)) {
@@ -203,7 +206,9 @@ export class Agent {
   }
 
   /**
-   * @param {import('@ucanto/interface').Capability[]} [caps]
+   * Get delegations created by the agent for others and their metadata.
+   *
+   * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the delegations.
    */
   async *delegationsWithMeta(caps) {
     for await (const value of this.#delegations(caps)) {
@@ -248,14 +253,12 @@ export class Agent {
    * @param {Ucanto.DID} space
    */
   async setCurrentSpace(space) {
-    const proofs = await collect(
-      this.proofs([
-        {
-          can: 'space/info',
-          with: space,
-        },
-      ])
-    )
+    const proofs = await this.proofs([
+      {
+        can: 'space/info',
+        with: space,
+      },
+    ])
 
     if (proofs.length === 0) {
       throw new Error(`Agent has no proofs for ${space}.`)
@@ -283,14 +286,12 @@ export class Agent {
     }
 
     // TODO cache these
-    const proofs = await collect(
-      this.proofs([
-        {
-          can: 'space/info',
-          with: this.data.currentSpace,
-        },
-      ])
-    )
+    const proofs = await this.proofs([
+      {
+        can: 'space/info',
+        with: this.data.currentSpace,
+      },
+    ])
 
     const caps = new Set()
     for (const p of proofs) {
@@ -423,7 +424,7 @@ export class Agent {
     const delegation = await delegate({
       issuer: this.issuer,
       capabilities: caps,
-      proofs: await collect(this.proofs(caps)),
+      proofs: await this.proofs(caps),
       ...options,
     })
 
@@ -438,6 +439,8 @@ export class Agent {
   }
 
   /**
+   * Execute the given capability on the Access service connection
+   *
    * @template {Ucanto.Ability} A
    * @template {Ucanto.URI} R
    * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
@@ -451,14 +454,12 @@ export class Agent {
       throw new Error('No space selected, you need pass a resource.')
     }
 
-    const proofs = await collect(
-      this.proofs([
-        {
-          with: space,
-          can: cap.can,
-        },
-      ])
-    )
+    const proofs = await this.proofs([
+      {
+        with: space,
+        can: cap.can,
+      },
+    ])
 
     if (proofs.length === 0) {
       throw new Error(
@@ -495,6 +496,8 @@ export class Agent {
   }
 
   /**
+   * Get Space information from Access service
+   *
    * @param {Ucanto.URI<"did:">} [space]
    */
   async getSpaceInfo(space) {
