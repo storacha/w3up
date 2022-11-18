@@ -8,11 +8,6 @@ export { Storage, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 /**
- * @typedef {(meta: import('./types').CARMetadata) => void} StoredShardCallback
- * @typedef {import('./types').RequestOptions & { onStoredShard?: StoredShardCallback }} UploadOptions
- */
-
-/**
  * Uploads a file to the service and returns the root data CID for the
  * generated DAG.
  *
@@ -32,7 +27,7 @@ export * from './sharding.js'
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
  * @param {Blob} file File data.
- * @param {UploadOptions} [options]
+ * @param {import('./types').UploadOptions} [options]
  */
 export async function uploadFile(conf, file, options = {}) {
   return await uploadBlockStream(
@@ -63,7 +58,7 @@ export async function uploadFile(conf, file, options = {}) {
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
  * @param {import('./types').FileLike[]} files File data.
- * @param {UploadOptions} [options]
+ * @param {import('./types').UploadOptions} [options]
  */
 export async function uploadDirectory(conf, files, options = {}) {
   return await uploadBlockStream(
@@ -76,7 +71,7 @@ export async function uploadDirectory(conf, files, options = {}) {
 /**
  * @param {import('./types').InvocationConfig} conf
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
- * @param {UploadOptions} [options]
+ * @param {import('./types').UploadOptions} [options]
  * @returns {Promise<import('./types').AnyLink>}
  */
 async function uploadBlockStream(conf, blocks, options = {}) {
@@ -85,7 +80,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   /** @type {import('./types').AnyLink?} */
   let root = null
   await blocks
-    .pipeThrough(new ShardingStream())
+    .pipeThrough(new ShardingStream(options))
     .pipeThrough(new ShardStoringStream(conf, options))
     .pipeTo(
       new WritableStream({

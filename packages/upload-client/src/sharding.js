@@ -13,9 +13,7 @@ const CONCURRENT_UPLOADS = 3
  */
 export class ShardingStream extends TransformStream {
   /**
-   * @param {object} [options]
-   * @param {number} [options.shardSize] The target shard size. Actual size of
-   * CAR output may be bigger due to CAR header and block encoding data.
+   * @param {import('./types').ShardingOptions} [options]
    */
   constructor(options = {}) {
     const shardSize = options.shardSize ?? SHARD_SIZE

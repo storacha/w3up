@@ -150,7 +150,8 @@ function uploadDirectory(
   options: {
     retries?: number
     signal?: AbortSignal
-    onShardStored: ShardStoredCallback
+    onShardStored?: ShardStoredCallback
+    shardSize?: number
   } = {}
 ): Promise<CID>
 ```
@@ -170,7 +171,8 @@ function uploadFile(
   options: {
     retries?: number
     signal?: AbortSignal
-    onShardStored: ShardStoredCallback
+    onShardStored?: ShardStoredCallback
+    shardSize?: number
   } = {}
 ): Promise<CID>
 ```

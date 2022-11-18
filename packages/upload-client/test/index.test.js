@@ -98,6 +98,64 @@ describe('uploadFile', () => {
     assert(carCID)
     assert(dataCID)
   })
+
+  it('allows custom shard size to be set', async () => {
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+    }
+
+    const space = await Signer.generate()
+    const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
+    const file = new Blob([await randomBytes(500_000)])
+    /** @type {import('../src/types').CARLink[]} */
+    const carCIDs = []
+
+    const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      UploadCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ])
+
+    const service = mockService({
+      store: { add: provide(StoreCapabilities.add, () => res) },
+      upload: { add: provide(UploadCapabilities.add, () => null) },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+    await uploadFile(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      file,
+      {
+        connection,
+        shardSize: 400_000, // should end up with 2 CAR files
+        onStoredShard: (meta) => carCIDs.push(meta.cid),
+      }
+    )
+
+    assert.equal(carCIDs.length, 2)
+  })
 })
 
 describe('uploadDirectory', () => {
@@ -187,5 +245,63 @@ describe('uploadDirectory', () => {
 
     assert(carCID)
     assert(dataCID)
+  })
+
+  it('allows custom shard size to be set', async () => {
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+    }
+
+    const space = await Signer.generate()
+    const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
+    const files = [new File([await randomBytes(500_000)], '1.txt')]
+    /** @type {import('../src/types').CARLink[]} */
+    const carCIDs = []
+
+    const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      UploadCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ])
+
+    const service = mockService({
+      store: { add: provide(StoreCapabilities.add, () => res) },
+      upload: { add: provide(UploadCapabilities.add, () => null) },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+    await uploadDirectory(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      files,
+      {
+        connection,
+        shardSize: 400_000, // should end up with 2 CAR files
+        onStoredShard: (meta) => carCIDs.push(meta.cid),
+      }
+    )
+
+    assert.equal(carCIDs.length, 2)
   })
 })
