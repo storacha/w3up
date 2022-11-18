@@ -1,7 +1,6 @@
 import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
 import retry from 'p-retry'
-import { serviceDID, connection } from './service.js'
-import { findCapability } from './utils.js'
+import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
 
 /**
@@ -10,11 +9,14 @@ import { REQUEST_RETRIES } from './constants.js'
  *
  * Required delegated capability proofs: `upload/add`
  *
- * @param {import('./types').InvocationConfig} invocationConfig Configuration
- * for the UCAN invocation. An object with `issuer` and `proofs`.
+ * @param {import('./types').InvocationConfig} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
+ *
+ * The `with` is the resource the invocation applies to. It is typically the
+ * DID of a space.
  *
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
@@ -24,8 +26,12 @@ import { REQUEST_RETRIES } from './constants.js'
  * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
  * @param {import('./types').RequestOptions} [options]
  */
-export async function add({ issuer, proofs }, root, shards, options = {}) {
-  const capability = findCapability(proofs, UploadCapabilities.add.can)
+export async function add(
+  { issuer, with: resource, proofs, audience = servicePrincipal },
+  root,
+  shards,
+  options = {}
+) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
   const result = await retry(
@@ -33,10 +39,10 @@ export async function add({ issuer, proofs }, root, shards, options = {}) {
       return await UploadCapabilities.add
         .invoke({
           issuer,
-          audience: serviceDID,
-          // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
-          with: capability.with,
+          audience,
+          with: resource,
           nb: { root, shards },
+          proofs,
         })
         .execute(conn)
     },
@@ -56,11 +62,14 @@ export async function add({ issuer, proofs }, root, shards, options = {}) {
 /**
  * List uploads created by the issuer.
  *
- * @param {import('./types').InvocationConfig} invocationConfig Configuration
- * for the UCAN invocation. An object with `issuer` and `proofs`.
+ * @param {import('./types').InvocationConfig} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
+ *
+ * The `with` is the resource the invocation applies to. It is typically the
+ * DID of a space.
  *
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
@@ -68,17 +77,19 @@ export async function add({ issuer, proofs }, root, shards, options = {}) {
  * The issuer needs the `upload/list` delegated capability.
  * @param {import('./types').RequestOptions} [options]
  */
-export async function list({ issuer, proofs }, options = {}) {
-  const capability = findCapability(proofs, UploadCapabilities.list.can)
+export async function list(
+  { issuer, with: resource, proofs, audience = servicePrincipal },
+  options = {}
+) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const result = await UploadCapabilities.list
     .invoke({
       issuer,
-      audience: serviceDID,
-      // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
-      with: capability.with,
+      audience,
+      with: resource,
+      proofs,
     })
     .execute(conn)
 
@@ -94,11 +105,14 @@ export async function list({ issuer, proofs }, options = {}) {
 /**
  * Remove an upload by root data CID.
  *
- * @param {import('./types').InvocationConfig} invocationConfig Configuration
- * for the UCAN invocation. An object with `issuer` and `proofs`.
+ * @param {import('./types').InvocationConfig} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
+ *
+ * The `with` is the resource the invocation applies to. It is typically the
+ * DID of a space.
  *
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
@@ -107,18 +121,20 @@ export async function list({ issuer, proofs }, options = {}) {
  * @param {import('multiformats').UnknownLink} root Root data CID to remove.
  * @param {import('./types').RequestOptions} [options]
  */
-export async function remove({ issuer, proofs }, root, options = {}) {
-  const capability = findCapability(proofs, UploadCapabilities.remove.can)
+export async function remove(
+  { issuer, with: resource, proofs, audience = servicePrincipal },
+  root,
+  options = {}
+) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
-
   const result = await UploadCapabilities.remove
     .invoke({
       issuer,
-      audience: serviceDID,
-      // @ts-expect-error expects did:${string} but cap with is ${string}:${string}
-      with: capability.with,
+      audience,
+      with: resource,
       nb: { root },
+      proofs,
     })
     .execute(conn)
 

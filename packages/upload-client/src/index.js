@@ -18,11 +18,14 @@ export * from './sharding.js'
  *
  * Required delegated capability proofs: `store/add`, `upload/add`
  *
- * @param {import('./types').InvocationConfig} invocationConfig Configuration
- * for the UCAN invocation. An object with `issuer` and `proofs`.
+ * @param {import('./types').InvocationConfig} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
+ *
+ * The `with` is the resource the invocation applies to. It is typically the
+ * DID of a space.
  *
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
@@ -31,9 +34,9 @@ export * from './sharding.js'
  * @param {Blob} file File data.
  * @param {UploadOptions} [options]
  */
-export async function uploadFile({ issuer, proofs }, file, options = {}) {
+export async function uploadFile(conf, file, options = {}) {
   return await uploadBlockStream(
-    { issuer, proofs },
+    conf,
     UnixFS.createFileEncoderStream(file),
     options
   )
@@ -46,11 +49,14 @@ export async function uploadFile({ issuer, proofs }, file, options = {}) {
  *
  * Required delegated capability proofs: `store/add`, `upload/add`
  *
- * @param {import('./types').InvocationConfig} invocationConfig Configuration
- * for the UCAN invocation. An object with `issuer` and `proofs`.
+ * @param {import('./types').InvocationConfig} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
+ *
+ * The `with` is the resource the invocation applies to. It is typically the
+ * DID of a space.
  *
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
@@ -59,28 +65,28 @@ export async function uploadFile({ issuer, proofs }, file, options = {}) {
  * @param {import('./types').FileLike[]} files File data.
  * @param {UploadOptions} [options]
  */
-export async function uploadDirectory({ issuer, proofs }, files, options = {}) {
+export async function uploadDirectory(conf, files, options = {}) {
   return await uploadBlockStream(
-    { issuer, proofs },
+    conf,
     UnixFS.createDirectoryEncoderStream(files),
     options
   )
 }
 
 /**
- * @param {import('./types').InvocationConfig} invocationConfig
+ * @param {import('./types').InvocationConfig} conf
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
  * @param {UploadOptions} [options]
  * @returns {Promise<import('./types').AnyLink>}
  */
-async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
+async function uploadBlockStream(conf, blocks, options = {}) {
   /** @type {import('./types').CARLink[]} */
   const shards = []
   /** @type {import('./types').AnyLink?} */
   let root = null
   await blocks
     .pipeThrough(new ShardingStream())
-    .pipeThrough(new ShardStoringStream({ issuer, proofs }, options))
+    .pipeThrough(new ShardStoringStream(conf, options))
     .pipeTo(
       new WritableStream({
         write(meta) {
@@ -94,6 +100,6 @@ async function uploadBlockStream({ issuer, proofs }, blocks, options = {}) {
   /* c8 ignore next */
   if (!root) throw new Error('missing root CID')
 
-  await Upload.add({ issuer, proofs }, root, shards, options)
+  await Upload.add(conf, root, shards, options)
   return root
 }
