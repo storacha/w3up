@@ -1,6 +1,7 @@
 import assert from 'assert'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
+import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
@@ -29,13 +30,13 @@ describe('uploadFile', () => {
     const proofs = await Promise.all([
       StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
       UploadCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -43,26 +44,26 @@ describe('uploadFile', () => {
 
     const service = mockService({
       store: {
-        add(invocation) {
+        add: provide(StoreCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
           return res
-        },
+        }),
       },
       upload: {
-        add: (invocation) => {
+        add: provide(UploadCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, UploadCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(invCap.nb.shards?.length, 1)
-          assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
+          assert.equal(invCap.nb?.shards?.length, 1)
+          assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
           return null
-        },
+        }),
       },
     })
 
@@ -78,12 +79,16 @@ describe('uploadFile', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadFile({ issuer: agent, proofs }, file, {
-      connection,
-      onStoredShard: (meta) => {
-        carCID = meta.cid
-      },
-    })
+    const dataCID = await uploadFile(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      file,
+      {
+        connection,
+        onStoredShard: (meta) => {
+          carCID = meta.cid
+        },
+      }
+    )
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
@@ -115,13 +120,13 @@ describe('uploadDirectory', () => {
     const proofs = await Promise.all([
       StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
       UploadCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -129,26 +134,26 @@ describe('uploadDirectory', () => {
 
     const service = mockService({
       store: {
-        add(invocation) {
+        add: provide(StoreCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
           return res
-        },
+        }),
       },
       upload: {
-        add: (invocation) => {
+        add: provide(UploadCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, UploadCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(invCap.nb.shards?.length, 1)
-          assert.equal(String(invCap.nb.shards?.[0]), carCID?.toString())
+          assert.equal(invCap.nb?.shards?.length, 1)
+          assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
           return null
-        },
+        }),
       },
     })
 
@@ -164,12 +169,16 @@ describe('uploadDirectory', () => {
       decoder: CBOR,
       channel: server,
     })
-    const dataCID = await uploadDirectory({ issuer: agent, proofs }, files, {
-      connection,
-      onStoredShard: (meta) => {
-        carCID = meta.cid
-      },
-    })
+    const dataCID = await uploadDirectory(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      files,
+      {
+        connection,
+        onStoredShard: (meta) => {
+          carCID = meta.cid
+        },
+      }
+    )
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)

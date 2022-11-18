@@ -1,10 +1,11 @@
 import assert from 'assert'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
+import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
-import { add as storeAdd } from '@web3-storage/access/capabilities/store'
+import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
 import { createFileEncoderStream } from '../src/unixfs.js'
 import { ShardingStream, ShardStoringStream } from '../src/sharding.js'
 import { serviceSigner } from './fixtures.js'
@@ -52,9 +53,9 @@ describe('ShardStoringStream', () => {
     let invokes = 0
 
     const proofs = [
-      await storeAdd.delegate({
+      await StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -62,16 +63,16 @@ describe('ShardStoringStream', () => {
 
     const service = mockService({
       store: {
-        add(invocation) {
+        add: provide(StoreCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, 'store/add')
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb.link), cars[invokes].cid.toString())
+          assert.equal(String(invCap.nb?.link), cars[invokes].cid.toString())
           invokes++
           return res
-        },
+        }),
       },
     })
 
@@ -101,7 +102,10 @@ describe('ShardStoringStream', () => {
     const carCIDs = []
     await carStream
       .pipeThrough(
-        new ShardStoringStream({ issuer: agent, proofs }, { connection })
+        new ShardStoringStream(
+          { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+          { connection }
+        )
       )
       .pipeTo(
         new WritableStream({
@@ -125,9 +129,9 @@ describe('ShardStoringStream', () => {
     const cars = await Promise.all([randomCAR(128), randomCAR(128)])
 
     const proofs = [
-      await storeAdd.delegate({
+      await StoreCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -135,9 +139,9 @@ describe('ShardStoringStream', () => {
 
     const service = mockService({
       store: {
-        add() {
+        add: provide(StoreCapabilities.add, () => {
           throw new Server.Failure('boom')
-        },
+        }),
       },
     })
 
@@ -166,7 +170,15 @@ describe('ShardStoringStream', () => {
     await assert.rejects(
       carStream
         .pipeThrough(
-          new ShardStoringStream({ issuer: agent, proofs }, { connection })
+          new ShardStoringStream(
+            {
+              issuer: agent,
+              with: space.did(),
+              proofs,
+              audience: serviceSigner,
+            },
+            { connection }
+          )
         )
         .pipeTo(new WritableStream()),
       { message: 'failed store/add invocation' }

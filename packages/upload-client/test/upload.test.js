@@ -1,6 +1,7 @@
 import assert from 'assert'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
+import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
@@ -19,7 +20,7 @@ describe('Upload.add', () => {
     const proofs = [
       await UploadCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -27,17 +28,17 @@ describe('Upload.add', () => {
 
     const service = mockService({
       upload: {
-        add: (invocation) => {
+        add: provide(UploadCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, UploadCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb.root), car.roots[0].toString())
-          assert.equal(invCap.nb.shards?.length, 1)
-          assert.equal(String(invCap.nb.shards?.[0]), car.cid.toString())
+          assert.equal(String(invCap.nb?.root), car.roots[0].toString())
+          assert.equal(invCap.nb?.shards?.length, 1)
+          assert.equal(String(invCap.nb?.shards?.[0]), car.cid.toString())
           return null
-        },
+        }),
       },
     })
 
@@ -55,7 +56,12 @@ describe('Upload.add', () => {
     })
 
     const root = car.roots[0]
-    await Upload.add({ issuer: agent, proofs }, root, [car.cid], { connection })
+    await Upload.add(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      root,
+      [car.cid],
+      { connection }
+    )
 
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
@@ -69,7 +75,7 @@ describe('Upload.add', () => {
     const proofs = [
       await UploadCapabilities.add.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -77,9 +83,9 @@ describe('Upload.add', () => {
 
     const service = mockService({
       upload: {
-        add: () => {
+        add: provide(UploadCapabilities.add, () => {
           throw new Server.Failure('boom')
-        },
+        }),
       },
     })
 
@@ -97,9 +103,14 @@ describe('Upload.add', () => {
     })
 
     await assert.rejects(
-      Upload.add({ issuer: agent, proofs }, car.roots[0], [car.cid], {
-        connection,
-      }),
+      Upload.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car.roots[0],
+        [car.cid],
+        {
+          connection,
+        }
+      ),
       { message: 'failed upload/add invocation' }
     )
   })
@@ -127,7 +138,7 @@ describe('Upload.list', () => {
     const proofs = [
       await UploadCapabilities.list.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -135,14 +146,14 @@ describe('Upload.list', () => {
 
     const service = mockService({
       upload: {
-        list(invocation) {
+        list: provide(UploadCapabilities.list, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, UploadCapabilities.list.can)
           assert.equal(invCap.with, space.did())
           return res
-        },
+        }),
       },
     })
 
@@ -159,7 +170,10 @@ describe('Upload.list', () => {
       channel: server,
     })
 
-    const list = await Upload.list({ issuer: agent, proofs }, { connection })
+    const list = await Upload.list(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      { connection }
+    )
 
     assert(service.upload.list.called)
     assert.equal(service.upload.list.callCount, 1)
@@ -183,7 +197,7 @@ describe('Upload.list', () => {
     const proofs = [
       await UploadCapabilities.list.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -191,9 +205,9 @@ describe('Upload.list', () => {
 
     const service = mockService({
       upload: {
-        list: () => {
+        list: provide(UploadCapabilities.list, () => {
           throw new Server.Failure('boom')
-        },
+        }),
       },
     })
 
@@ -211,7 +225,10 @@ describe('Upload.list', () => {
     })
 
     await assert.rejects(
-      Upload.list({ issuer: agent, proofs }, { connection }),
+      Upload.list(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        { connection }
+      ),
       {
         message: 'failed upload/list invocation',
       }
@@ -228,7 +245,7 @@ describe('Upload.remove', () => {
     const proofs = [
       await UploadCapabilities.remove.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -236,15 +253,15 @@ describe('Upload.remove', () => {
 
     const service = mockService({
       upload: {
-        remove(invocation) {
+        remove: provide(UploadCapabilities.remove, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, UploadCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb.root), car.roots[0].toString())
+          assert.equal(String(invCap.nb?.root), car.roots[0].toString())
           return null
-        },
+        }),
       },
     })
 
@@ -261,7 +278,11 @@ describe('Upload.remove', () => {
       channel: server,
     })
 
-    await Upload.remove({ issuer: agent, proofs }, car.roots[0], { connection })
+    await Upload.remove(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car.roots[0],
+      { connection }
+    )
 
     assert(service.upload.remove.called)
     assert.equal(service.upload.remove.callCount, 1)
@@ -275,7 +296,7 @@ describe('Upload.remove', () => {
     const proofs = [
       await UploadCapabilities.remove.delegate({
         issuer: space,
-        audience: serviceSigner,
+        audience: agent,
         with: space.did(),
         expiration: Infinity,
       }),
@@ -283,9 +304,9 @@ describe('Upload.remove', () => {
 
     const service = mockService({
       upload: {
-        remove: () => {
+        remove: provide(UploadCapabilities.remove, () => {
           throw new Server.Failure('boom')
-        },
+        }),
       },
     })
 
@@ -303,7 +324,11 @@ describe('Upload.remove', () => {
     })
 
     await assert.rejects(
-      Upload.remove({ issuer: agent, proofs }, car.roots[0], { connection }),
+      Upload.remove(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car.roots[0],
+        { connection }
+      ),
       { message: 'failed upload/remove invocation' }
     )
   })
