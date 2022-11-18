@@ -128,8 +128,8 @@ describe('uploadFile', () => {
     ])
 
     const service = mockService({
-      store: { add: () => res },
-      upload: { add: () => null },
+      store: { add: provide(StoreCapabilities.add, () => res) },
+      upload: { add: provide(UploadCapabilities.add, () => null) },
     })
 
     const server = Server.create({
@@ -145,7 +145,6 @@ describe('uploadFile', () => {
       channel: server,
     })
     await uploadFile(
-      // @ts-expect-error https://github.com/web3-storage/w3protocol/pull/181
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       file,
       {
@@ -277,8 +276,8 @@ describe('uploadDirectory', () => {
     ])
 
     const service = mockService({
-      store: { add: () => res },
-      upload: { add: () => null },
+      store: { add: provide(StoreCapabilities.add, () => res) },
+      upload: { add: provide(UploadCapabilities.add, () => null) },
     })
 
     const server = Server.create({
@@ -294,7 +293,6 @@ describe('uploadDirectory', () => {
       channel: server,
     })
     await uploadDirectory(
-      // @ts-expect-error https://github.com/web3-storage/w3protocol/pull/181
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       files,
       {
