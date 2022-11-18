@@ -140,6 +140,18 @@ export const list = base.derive({
      * be stored.
      */
     with: URI.match({ protocol: 'did:' }),
+    nb: {
+      /**
+       * Item where a previous list operation stopped, inclusive of the previous
+       * result set. Use this value to start a new operation, inorder to paginate
+       * list.
+       */
+      cursor: Schema.string().optional(),
+      /**
+       * Size of the page being requested to list.
+       */
+      size: Schema.integer().optional(),
+    },
     derives: (claimed, delegated) => {
       if (claimed.with !== delegated.with) {
         return new Failure(
