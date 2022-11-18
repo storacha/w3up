@@ -144,8 +144,8 @@ describe('uploadFile', () => {
       decoder: CBOR,
       channel: server,
     })
-    // @ts-expect-error https://github.com/web3-storage/w3protocol/pull/181
     await uploadFile(
+      // @ts-expect-error https://github.com/web3-storage/w3protocol/pull/181
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       file,
       {
@@ -293,8 +293,8 @@ describe('uploadDirectory', () => {
       decoder: CBOR,
       channel: server,
     })
-    // @ts-expect-error https://github.com/web3-storage/w3protocol/pull/181
     await uploadDirectory(
+      // @ts-expect-error https://github.com/web3-storage/w3protocol/pull/181
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       files,
       {
