@@ -26,7 +26,7 @@ export * from './sharding.js'
  * has the capability to perform the action.
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
- * @param {Blob} file File data.
+ * @param {import('./types').BlobLike} file File data.
  * @param {import('./types').UploadOptions} [options]
  */
 export async function uploadFile(conf, file, options = {}) {
