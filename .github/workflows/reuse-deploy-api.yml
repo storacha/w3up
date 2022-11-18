@@ -41,6 +41,8 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - run: pnpm install
+      # Migration database
+      - run: pnpm -r --filter @web3-storage/access-api exec wrangler d1 migrations apply __D1_BETA__ --env ${{ inputs.environment }}
       # Publish worker to cloudflare
       - uses: cloudflare/wrangler-action@2.0.0
         with:
