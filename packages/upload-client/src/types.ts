@@ -150,7 +150,19 @@ export interface Connectable {
   connection?: ConnectionView<Service>
 }
 
-export type RequestOptions = Retryable & Abortable & Connectable
+export interface RequestOptions extends Retryable, Abortable, Connectable {}
+
+export interface ShardingOptions {
+  /**
+   * The target shard size. Actual size of CAR output may be bigger due to CAR
+   * header and block encoding data.
+   */
+  shardSize?: number
+}
+
+export interface UploadOptions extends RequestOptions, ShardingOptions {
+  onStoredShard?: (meta: CARMetadata) => void
+}
 
 export interface BlobLike {
   /**
