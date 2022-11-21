@@ -152,7 +152,7 @@ export interface AgentCreateOptions<T> {
   fetch?: typeof fetch
 }
 
-export type ExecuteOptions<
+export type InvokeOptions<
   A extends Ability,
   R extends Resource,
   CAP extends CapabilityParser<

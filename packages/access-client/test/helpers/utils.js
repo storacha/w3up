@@ -52,6 +52,11 @@ export function createServer() {
             inserted_at: 'date',
           }
         }),
+        recover: Server.provide(Space.recover, async ({ capability }) => {
+          return {
+            recover: true,
+          }
+        }),
       },
     },
   })

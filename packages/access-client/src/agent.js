@@ -324,7 +324,7 @@ export class Agent {
       throw new Error('No space selected')
     }
 
-    const inv = await this.execute(Voucher.claim, {
+    const inv = await this.invokeAndExecute(Voucher.claim, {
       nb: {
         identity: URI.from(`mailto:${email}`),
         product: 'product:free',
@@ -333,7 +333,7 @@ export class Agent {
     })
 
     if (inv && inv.error) {
-      throw new Error('Voucher claim failed', { cause: inv.error })
+      throw new Error('Voucher claim failed', { cause: inv })
     }
 
     const voucherRedeem = await this.#waitForVoucherRedeem(opts)
@@ -346,7 +346,7 @@ export class Agent {
       },
     })
 
-    const accInv = await this.execute(Voucher.redeem, {
+    const accInv = await this.invokeAndExecute(Voucher.redeem, {
       with: URI.from(service.did()),
       nb: {
         space,
@@ -439,16 +439,93 @@ export class Agent {
   }
 
   /**
-   * Execute the given capability on the Access service connection
+   * Invoke and execute the given capability on the Access service connection
+   *
+   * Sugar for :
+   *
+   * ```js
+   *
+   * await agent.invokeAndExecute(Space.recover, {
+   *   nb: {
+   *     identity: 'mailto: email@gmail.com',
+   *   },
+   * })
+   *
+   * // sugar for
+   * const recoverInvocation = await agent.invoke(Space.recover, {
+   *   nb: {
+   *     identity: 'mailto: email@gmail.com',
+   *   },
+   * })
+   *
+   * await recoverInvocation.execute(agent.connection)
+   * ```
    *
    * @template {Ucanto.Ability} A
    * @template {Ucanto.URI} R
    * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
    * @template {Ucanto.Caveats} [C={}]
    * @param {CAP} cap
-   * @param {import('./types').ExecuteOptions<A, R, CAP>} options
+   * @param {import('./types').InvokeOptions<A, R, CAP>} options
    */
-  async execute(cap, options) {
+  async invokeAndExecute(cap, options) {
+    const inv = await this.invoke(cap, options)
+
+    // @ts-ignore
+    const out = inv.execute(this.connection)
+
+    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<CAP>, import('./types').Service>>} */ (
+      out
+    )
+  }
+
+  /**
+   * Execute invocations on the agent's connection
+   *
+   * @example
+   * ```js
+   * const i1 = await agent.invoke(Space.info, {})
+   * const i2 = await agent.invoke(Space.recover, {
+   *   nb: {
+   *     identity: 'mailto:hello@web3.storage',
+   *   },
+   * })
+   *
+   * const results = await agent.execute2(i1, i2)
+   *
+   * ```
+   * @template {Ucanto.Capability} C
+   * @template {Ucanto.Tuple<Ucanto.ServiceInvocation<C, import('./types').Service>>} I
+   * @param {I} invocations
+   */
+  execute(...invocations) {
+    return this.connection.execute(...invocations)
+  }
+
+  /**
+   * Creates an invocation for the given capability with Agent's proofs, service, issuer and space.
+   *
+   * @example
+   * ```js
+   * const recoverInvocation = await agent.invoke(Space.recover, {
+   *   nb: {
+   *     identity: 'mailto: email@gmail.com',
+   *   },
+   * })
+   *
+   * await recoverInvocation.execute(agent.connection)
+   * // or
+   * await agent.execute(recoverInvocation)
+   * ```
+   *
+   * @template {Ucanto.Ability} A
+   * @template {Ucanto.URI} R
+   * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
+   * @template {Ucanto.Caveats} [C={}]
+   * @param {CAP} cap
+   * @param {import('./types').InvokeOptions<A, R, CAP>} options
+   */
+  async invoke(cap, options) {
     const space = options.with || this.currentSpace()
     if (!space) {
       throw new Error('No space selected, you need pass a resource.')
@@ -479,11 +556,8 @@ export class Agent {
       proofs: [...proofs, ...extraProofs],
     })
 
-    // @ts-ignore
-    const out = inv.execute(this.connection)
-
-    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<CAP>, import('./types').Service>>} */ (
-      out
+    return /** @type {Ucanto.IssuedInvocationView<Ucanto.InferInvokedCapability<CAP>>} */ (
+      inv
     )
   }
 
@@ -505,7 +579,7 @@ export class Agent {
     if (!_space) {
       throw new Error('No space selected, you need pass a resource.')
     }
-    const inv = await this.execute(Space.info, {
+    const inv = await this.invokeAndExecute(Space.info, {
       with: _space,
     })
 

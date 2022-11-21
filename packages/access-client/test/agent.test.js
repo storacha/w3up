@@ -90,7 +90,7 @@ describe('Agent', function () {
     )
   })
 
-  it('should execute', async function () {
+  it('should invoke and execute', async function () {
     const store = await StoreMemory.create()
     const agent = await Agent.create({
       store,
@@ -100,7 +100,7 @@ describe('Agent', function () {
     const space = await agent.createSpace('execute')
     await agent.setCurrentSpace(space.did)
 
-    const out = await agent.execute(Space.info, {
+    const out = await agent.invokeAndExecute(Space.info, {
       audience: fixtures.service,
     })
 
@@ -114,6 +114,43 @@ describe('Agent', function () {
     })
   })
 
+  it('should execute', async function () {
+    const store = await StoreMemory.create()
+    const agent = await Agent.create({
+      store,
+      channel: createServer(),
+    })
+
+    const space = await agent.createSpace('execute')
+    await agent.setCurrentSpace(space.did)
+
+    const i1 = await agent.invoke(Space.info, {
+      audience: fixtures.service,
+    })
+    const i2 = await agent.invoke(Space.recover, {
+      audience: fixtures.service,
+      nb: {
+        identity: 'mailto: email@gmail.com',
+      },
+    })
+
+    const out = await agent.execute(i1, i2)
+
+    assert.deepStrictEqual(out, [
+      {
+        did: 'did:key:sss',
+        agent: 'did:key:agent',
+        email: 'mail@mail.com',
+        product: 'product:free',
+        updated_at: 'sss',
+        inserted_at: 'date',
+      },
+      {
+        recover: true,
+      },
+    ])
+  })
+
   it('should fail execute with no proofs', async function () {
     const store = await StoreMemory.create()
     const agent = await Agent.create({
@@ -123,7 +160,7 @@ describe('Agent', function () {
 
     await assert.rejects(
       async () => {
-        await agent.execute(Space.info, {
+        await agent.invokeAndExecute(Space.info, {
           audience: fixtures.service,
           with: URI.from(fixtures.alice.did()),
         })
