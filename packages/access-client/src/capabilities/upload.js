@@ -8,7 +8,7 @@
  *
  * @module
  */
- import { capability, Link, URI, Schema } from '@ucanto/validator'
+import { capability, Link, URI, Schema } from '@ucanto/validator'
 import { codec as CAR } from '@ucanto/transport/car'
 import { equalWith, fail, equal } from './utils.js'
 import { top } from './top.js'
@@ -142,9 +142,8 @@ export const list = base.derive({
     with: URI.match({ protocol: 'did:' }),
     nb: {
       /**
-       * Item where a previous list operation stopped, inclusive of the previous
-       * result set. Use this value to start a new operation, in order to paginate
-       * list.
+       * A pointer that can be moved back and forth on the list.
+       * It can be used to paginate a list for instance.
        */
       cursor: Schema.string().optional(),
       /**
