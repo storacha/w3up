@@ -94,15 +94,8 @@ export function fail(value) {
  * @param {import('@ucanto/interface').Ability} ability
  */
 function parseAbility(ability) {
-  switch (ability) {
-    case '*': {
-      return '*'
-    }
-    default: {
-      const [namespace, ...segments] = ability.split('/')
-      return { namespace, segments }
-    }
-  }
+  const [namespace, ...segments] = ability.split('/')
+  return { namespace, segments }
 }
 
 /**
@@ -117,12 +110,12 @@ export function canDelegateAbility(parent, child) {
   const parsedChild = parseAbility(child)
 
   // Parent is wildcard
-  if (parsedParent === '*') {
+  if (parsedParent.namespace === '*' && parsedParent.segments.length === 0) {
     return true
   }
 
   // Child is wild card so it can not be delegated from anything
-  if (parsedChild === '*') {
+  if (parsedChild.namespace === '*' && parsedChild.segments.length === 0) {
     return false
   }
 
@@ -131,7 +124,7 @@ export function canDelegateAbility(parent, child) {
     return false
   }
 
-  // given namespaces match and parent first segment is wildcard
+  // given that namespaces match and parent first segment is wildcard
   if (parsedParent.segments[0] === '*') {
     return true
   }

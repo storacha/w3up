@@ -9,21 +9,21 @@
  * @module
  */
 
-import { any } from './wildcard.js'
+import { top } from './top.js'
 import { store } from './store.js'
 import { capability, URI } from '@ucanto/validator'
 import { canDelegateURI, equalWith, fail } from './utils.js'
 
-export const space = any.derive({
+export const space = top.derive({
   to: capability({
-    can: 'account/*',
+    can: 'space/*',
     with: URI.match({ protocol: 'did:' }),
     derives: equalWith,
   }),
   derives: equalWith,
 })
 
-const base = any.or(space)
+const base = top.or(space)
 
 /**
  * `space/info` can be derived from any of the `store/*`

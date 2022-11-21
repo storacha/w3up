@@ -13,7 +13,7 @@ import { capability, URI, DID } from '@ucanto/validator'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 import { equalWith, fail, equal } from './utils.js'
-import { any } from './wildcard.js'
+import { top } from './top.js'
 
 /**
  * Products are identified by the CID of the DAG that describes them.
@@ -39,7 +39,7 @@ export const Service = DID.match({ method: 'key' })
  * Currently DID in the `with` field will always be web3.storage DID since we
  * do not support other types of vouchers yet.
  */
-export const voucher = any.derive({
+export const voucher = top.derive({
   to: capability({
     can: 'voucher/*',
     with: URI.match({ protocol: 'did:' }),
@@ -48,7 +48,7 @@ export const voucher = any.derive({
   derives: equalWith,
 })
 
-const base = any.or(voucher)
+const base = top.or(voucher)
 
 /**
  * Capability can be invoked by an agent to claim a voucher for a specific

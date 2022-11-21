@@ -42,8 +42,8 @@ describe('awake', function () {
       store: await StoreMemory.create(),
       url: new URL('http://127.0.0.1:8787'),
     })
-    const account = await agent1.createSpace('responder')
-    await agent1.setCurrentSpace(account.did)
+    const space = await agent1.createSpace('responder')
+    await agent1.setCurrentSpace(space.did)
     const agent2 = await Agent.create({
       store: await StoreMemory.create(),
       url: new URL('http://127.0.0.1:8787'),
@@ -104,7 +104,7 @@ describe('awake', function () {
     // @ts-ignore
     if (link) {
       assert.deepEqual(requestor.did, link.delegation.audience.did())
-      assert.deepEqual(account.did, link.delegation.capabilities[0].with)
+      assert.deepEqual(space.did, link.delegation.capabilities[0].with)
       assert.deepEqual('*', link.delegation.capabilities[0].can)
     }
 

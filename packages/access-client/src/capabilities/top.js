@@ -1,9 +1,9 @@
 /**
- * Wildcard Capabilities
+ * Top Capabilities
  *
  * These can be imported directly with:
  * ```js
- * import * as Account from '@web3-storage/access/capabilities/wildcard'
+ * import * as Account from '@web3-storage/access/capabilities/top'
  * ```
  *
  * @module
@@ -13,10 +13,12 @@ import { capability, URI } from '@ucanto/validator'
 import { equalWith } from './utils.js'
 
 /**
- * Represents `{ can: '*', with: 'did:key:zAlice' }` capability, which we often
+ * Represents the top `{ can: '*', with: 'did:key:zAlice' }` capability, which we often
  * also call account linking.
+ *
+ * @see {@link https://github.com/ucan-wg/spec#52-top}
  */
-export const any = capability({
+export const top = capability({
   can: '*',
   with: URI.match({ protocol: 'did:' }),
   derives: equalWith,

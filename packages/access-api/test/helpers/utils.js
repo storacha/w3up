@@ -2,7 +2,7 @@
 import * as UCAN from '@ipld/dag-ucan'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
-import * as Any from '@web3-storage/access/capabilities/wildcard'
+import * as Top from '@web3-storage/access/capabilities/top'
 import * as Voucher from '@web3-storage/access/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { Signer } from '@ucanto/principal/ed25519'
@@ -40,7 +40,7 @@ export async function createSpace(issuer, service, conn, email) {
         service: service.did(),
       },
       proofs: [
-        await Any.any.delegate({
+        await Top.top.delegate({
           issuer: space,
           audience: issuer,
           with: space.did(),
@@ -67,7 +67,7 @@ export async function createSpace(issuer, service, conn, email) {
       },
       proofs: [
         delegation,
-        await Any.any.delegate({
+        await Top.top.delegate({
           issuer: space,
           audience: service,
           with: space.did(),

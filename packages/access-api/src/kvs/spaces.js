@@ -110,7 +110,7 @@ export class Spaces {
       return
     }
 
-    return /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Any]>[]} */ (
+    return /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Top]>[]} */ (
       r
     )
   }

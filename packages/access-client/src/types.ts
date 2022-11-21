@@ -27,7 +27,7 @@ import type {
   SpaceInfo,
   SpaceRecover,
   SpaceRecoverValidation,
-  Any,
+  Top,
 } from './capabilities/types'
 import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
 import { IStore } from './stores/types.js'
@@ -58,7 +58,7 @@ export interface Service {
     >
     recover: ServiceMethod<
       SpaceRecover,
-      Array<EncodedDelegation<[Any]>>,
+      Array<EncodedDelegation<[Top]>>,
       Failure
     >
   }

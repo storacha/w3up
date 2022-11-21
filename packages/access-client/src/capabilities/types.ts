@@ -1,7 +1,7 @@
 import { InferInvokedCapability } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
-import { any } from './wildcard.js'
-import { add, list, remove } from './store.js'
+import { top } from './top.js'
+import { add, list, remove, store } from './store.js'
 import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 
@@ -22,11 +22,12 @@ export type UploadAdd = InferInvokedCapability<typeof UploadCaps.add>
 export type UploadRemove = InferInvokedCapability<typeof UploadCaps.remove>
 export type UploadList = InferInvokedCapability<typeof UploadCaps.list>
 // Store
+export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
-// Any
-export type Any = InferInvokedCapability<typeof any>
+// Top
+export type Top = InferInvokedCapability<typeof top>
 
 export type Abilities =
   | Space['can']
@@ -39,7 +40,8 @@ export type Abilities =
   | UploadAdd['can']
   | UploadRemove['can']
   | UploadList['can']
+  | Store['can']
   | StoreAdd['can']
   | StoreRemove['can']
   | StoreList['can']
-  | Any['can']
+  | Top['can']
