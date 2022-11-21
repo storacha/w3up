@@ -143,12 +143,12 @@ export const list = base.derive({
     nb: {
       /**
        * Item where a previous list operation stopped, inclusive of the previous
-       * result set. Use this value to start a new operation, inorder to paginate
+       * result set. Use this value to start a new operation, in order to paginate
        * list.
        */
       cursor: Schema.string().optional(),
       /**
-       * Size of the page being requested to list.
+       * Maximum number of items per page.
        */
       size: Schema.integer().optional(),
     },
