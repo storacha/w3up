@@ -49,7 +49,7 @@ jobs:
       # Publish worker to cloudflare
       - uses: cloudflare/wrangler-action@2.0.0
         with:
-          preCommands: git config --global --add safe.directory "*"
+          # preCommands: git config --global --add safe.directory "*"
           apiToken: ${{ secrets.CF_TOKEN }}
           workingDirectory: 'packages/access-api'
           environment: ${{ inputs.environment }}
