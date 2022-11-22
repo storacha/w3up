@@ -14,29 +14,12 @@ describe('IndexedDB store', () => {
     assert.equal(archive.key.extractable, false)
 
     // no accounts or delegations yet
-    assert.equal(data.accounts.length, 0)
-    assert.equal(data.delegations.received.length, 0)
-    assert.equal(data.delegations.created.length, 0)
+    assert.equal(data.spaces.size, 0)
+    assert.equal(data.delegations.size, 0)
 
     // default meta
     assert.equal(data.meta.name, 'agent')
     assert.equal(data.meta.type, 'device')
-  })
-
-  it('should allow an account to be added', async () => {
-    const store = await StoreIndexedDB.create('test-access-db-' + Date.now())
-    let data = await store.load()
-    assert(data)
-
-    assert.equal(data.accounts.length, 0)
-
-    const account = await store.createAccount()
-    data.accounts.push(account)
-
-    await store.save(data)
-    data = await store.load()
-
-    assert.equal(data.accounts.length, 1)
   })
 
   it('should check existence', async () => {

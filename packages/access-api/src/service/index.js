@@ -1,6 +1,6 @@
 import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
-import * as Account from '@web3-storage/access/capabilities/account'
+import * as Space from '@web3-storage/access/capabilities/space'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as DID from '@ipld/dag-ucan/did'
@@ -8,7 +8,7 @@ import {
   delegationToString,
   stringToDelegation,
 } from '@web3-storage/access/encoding'
-import { any } from '@web3-storage/access/capabilities/any'
+import { top } from '@web3-storage/access/capabilities/top'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -21,16 +21,16 @@ export function service(ctx) {
       redeem: voucherRedeemProvider(ctx),
     },
 
-    account: {
-      info: Server.provide(Account.info, async ({ capability, invocation }) => {
-        const results = await ctx.kvs.accounts.get(capability.with)
+    space: {
+      info: Server.provide(Space.info, async ({ capability, invocation }) => {
+        const results = await ctx.kvs.spaces.get(capability.with)
         if (!results) {
-          return new Failure('Account not found.')
+          return new Failure('Space not found.')
         }
         return results
       }),
       recover: Server.provide(
-        Account.recover,
+        Space.recover,
         async ({ capability, invocation }) => {
           if (capability.with !== ctx.signer.did()) {
             return new Failure(
@@ -40,7 +40,7 @@ export function service(ctx) {
             )
           }
 
-          const encoded = await ctx.kvs.accounts.getDelegations(
+          const encoded = await ctx.kvs.spaces.getDelegations(
             capability.nb.identity
           )
           if (!encoded) {
@@ -52,7 +52,7 @@ export function service(ctx) {
           const results = []
           for (const e of encoded) {
             const proof = await stringToDelegation(e)
-            const del = await any.delegate({
+            const del = await top.delegate({
               audience: invocation.issuer,
               issuer: ctx.signer,
               with: proof.capabilities[0].with,
@@ -68,20 +68,20 @@ export function service(ctx) {
       ),
 
       'recover-validation': Server.provide(
-        Account.recoverValidation,
+        Space.recoverValidation,
         async ({ capability }) => {
           // check if we have delegations in the KV for the email
-          // if yes send email with account/login
-          // if not error "no accounts for email X"
+          // if yes send email with space/recover
+          // if not error "no spaces for email X"
 
           const email = capability.nb.identity
-          if (!(await ctx.kvs.accounts.hasDelegations(email))) {
+          if (!(await ctx.kvs.spaces.hasDelegations(email))) {
             return new Failure(
-              `No accounts found for email: ${email.replace('mailto:', '')}.`
+              `No spaces found for email: ${email.replace('mailto:', '')}.`
             )
           }
 
-          const inv = await Account.recover
+          const inv = await Space.recover
             .invoke({
               issuer: ctx.signer,
               audience: DID.parse(capability.with),
@@ -91,7 +91,7 @@ export function service(ctx) {
                 identity: email,
               },
               proofs: [
-                await Account.recover.delegate({
+                await Space.recover.delegate({
                   audience: ctx.signer,
                   issuer: ctx.signer,
                   expiration: Infinity,

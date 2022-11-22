@@ -15,7 +15,7 @@ export function voucherClaimProvider(ctx) {
       nb: {
         product: 'product:*',
         identity: 'mailto:*',
-        account: 'did:*',
+        space: 'did:*',
       },
     })
 
@@ -26,7 +26,7 @@ export function voucherClaimProvider(ctx) {
         with: ctx.signer.did(),
         lifetimeInSeconds: 60 * 10, // 10 mins
         nb: {
-          account: capability.with,
+          space: capability.with,
           identity: capability.nb.identity,
           product: capability.nb.product,
         },

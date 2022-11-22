@@ -2,10 +2,10 @@
 import * as UCAN from '@ipld/dag-ucan'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
-import { StoreMemory } from '@web3-storage/access/stores/store-memory'
-import * as Any from '@web3-storage/access/capabilities/any'
+import * as Top from '@web3-storage/access/capabilities/top'
 import * as Voucher from '@web3-storage/access/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
+import { Signer } from '@ucanto/principal/ed25519'
 
 /**
  * @param {Types.UCAN.View} ucan
@@ -26,14 +26,13 @@ export async function send(ucan, mf) {
  * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
  * @param {string} email
  */
-export async function createAccount(issuer, service, conn, email) {
-  const store = new StoreMemory()
-  const account = await store.createAccount()
+export async function createSpace(issuer, service, conn, email) {
+  const space = await Signer.generate()
   const claim = await Voucher.claim
     .invoke({
       issuer,
       audience: service,
-      with: account.did(),
+      with: space.did(),
       nb: {
         // @ts-ignore
         identity: `mailto:${email}`,
@@ -41,17 +40,17 @@ export async function createAccount(issuer, service, conn, email) {
         service: service.did(),
       },
       proofs: [
-        await Any.any.delegate({
-          issuer: account,
+        await Top.top.delegate({
+          issuer: space,
           audience: issuer,
-          with: account.did(),
+          with: space.did(),
           expiration: Infinity,
         }),
       ],
     })
     .execute(conn)
   if (!claim || claim.error) {
-    throw new Error('failed to create account')
+    throw new Error('failed to create space')
   }
 
   const delegation = await stringToDelegation(claim)
@@ -62,16 +61,16 @@ export async function createAccount(issuer, service, conn, email) {
       audience: service,
       with: service.did(),
       nb: {
-        account: account.did(),
+        space: space.did(),
         identity: delegation.capabilities[0].nb.identity,
         product: delegation.capabilities[0].nb.product,
       },
       proofs: [
         delegation,
-        await Any.any.delegate({
-          issuer: account,
+        await Top.top.delegate({
+          issuer: space,
           audience: service,
-          with: account.did(),
+          with: space.did(),
           expiration: Infinity,
         }),
       ],
@@ -85,6 +84,6 @@ export async function createAccount(issuer, service, conn, email) {
   }
 
   return {
-    account,
+    space,
   }
 }

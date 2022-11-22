@@ -12,7 +12,6 @@ export function canDelegateURI(child, parent) {
   if (parent === undefined) {
     return true
   }
-
   if (child !== undefined && parent.endsWith('*')) {
     return child.startsWith(parent.slice(0, -1))
       ? true
@@ -88,4 +87,56 @@ export const equalLink = (claimed, delegated) => {
  */
 export function fail(value) {
   return value === true ? undefined : value
+}
+
+/**
+ *
+ * @param {import('@ucanto/interface').Ability} ability
+ */
+function parseAbility(ability) {
+  const [namespace, ...segments] = ability.split('/')
+  return { namespace, segments }
+}
+
+/**
+ *
+ * TODO: needs to account for caps derived from diferent namespaces like 'account/info' can be derived from 'store/add'
+ *
+ * @param {import('@ucanto/interface').Ability} parent
+ * @param {import('@ucanto/interface').Ability} child
+ */
+export function canDelegateAbility(parent, child) {
+  const parsedParent = parseAbility(parent)
+  const parsedChild = parseAbility(child)
+
+  // Parent is wildcard
+  if (parsedParent.namespace === '*' && parsedParent.segments.length === 0) {
+    return true
+  }
+
+  // Child is wild card so it can not be delegated from anything
+  if (parsedChild.namespace === '*' && parsedChild.segments.length === 0) {
+    return false
+  }
+
+  // namespaces dont match
+  if (parsedParent.namespace !== parsedChild.namespace) {
+    return false
+  }
+
+  // given that namespaces match and parent first segment is wildcard
+  if (parsedParent.segments[0] === '*') {
+    return true
+  }
+
+  // Array equality
+  if (parsedParent.segments.length !== parsedChild.segments.length) {
+    return false
+  }
+
+  // all segments must match
+  return parsedParent.segments.reduce(
+    (acc, v, i) => acc && parsedChild.segments[i] === v,
+    true
+  )
 }

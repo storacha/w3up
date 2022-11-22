@@ -1,0 +1,3 @@
+a[href*='_internal_.html'] + ul {
+  display: none;
+}

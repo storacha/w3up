@@ -32,5 +32,15 @@
     "skipLibCheck": true,
     "stripInternal": true,
     "resolveJsonModule": true
+  },
+  "typedocOptions": {
+    "entryPointStrategy": "packages",
+    "entryPoints": ["packages/access-client", "packages/upload-client"],
+    "excludeExternals": true,
+    "darkHighlightTheme": "github-dark",
+    "navigationLinks": {
+      "Github": "https://github.com/web3-storage/w3protocol"
+    },
+    "customCss": "./spec/docs.css"
   }
 }

@@ -11,14 +11,15 @@
     "clean": "rm -rf docs node_modules pnpm-lock.yaml packages/*/{pnpm-lock.yaml,coverage,.nyc_output,dist,node_modules,.next}",
     "lint": "pnpm -r --if-present run lint",
     "test": "pnpm -r --if-present run test",
-    "check": "pnpm -r --if-present run check"
+    "check": "pnpm -r --if-present run check",
+    "docs": "typedoc --out docs"
   },
   "devDependencies": {
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
     "simple-git-hooks": "^2.8.1",
-    "typescript": "^4.8.4",
-    "wrangler": "^2.1.13"
+    "typescript": "4.8.4",
+    "wrangler": "^2.4.0"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
@@ -35,5 +36,9 @@
   },
   "engines": {
     "node": ">=16"
+  },
+  "dependencies": {
+    "typedoc": "^0.23.21",
+    "typedoc-plugin-missing-exports": "^1.0.0"
   }
 }

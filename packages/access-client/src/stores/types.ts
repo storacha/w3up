@@ -1,47 +1,63 @@
-import { AgentMeta } from '../types.js'
-import { Delegations } from '../delegations.js'
-import ed25519 from '@ucanto/principal/ed25519'
+import {
+  AgentData,
+  AgentMeta,
+  CIDString,
+  DelegationMeta,
+  SpaceMeta,
+} from '../types.js'
 import { RSASigner } from '@ucanto/principal/rsa'
-import { SignerArchive } from '@ucanto/interface'
+import { SignerArchive, DID, Block } from '@ucanto/interface'
 
-export interface DelegationsAsJSON {
-  created: string
-  received: string
-  meta: Array<[string, AgentMeta]>
-}
-
-export interface StoreData<T> {
-  accounts: T[]
-  meta: AgentMeta
-  principal: T
-  delegations: Delegations
-}
-
-export interface Store<T> {
-  open: () => Promise<Store<T>>
+/**
+ * Store interface that all stores need to implement
+ */
+export interface IStore<T> {
+  /**
+   * Open store
+   */
+  open: () => Promise<IStore<T>>
+  /**
+   * Clean up and close store
+   */
   close: () => Promise<void>
+  /**
+   * Check if store exists and is initialized
+   */
   exists: () => Promise<boolean>
-  init: (data: Partial<StoreData<T>>) => Promise<StoreData<T>>
-  save: (data: StoreData<T>) => Promise<Store<T>>
-  load: () => Promise<StoreData<T>>
-  createAccount: () => Promise<T>
+  /**
+   * Initilize store with data
+   *
+   * @param data
+   */
+  init: (data: Partial<AgentData<T>>) => Promise<AgentData<T>>
+  /**
+   * Persist data to the store's backend
+   *
+   * @param data
+   */
+  save: (data: AgentData<T>) => Promise<IStore<T>>
+  /**
+   * Loads data from the store's backend
+   */
+  load: () => Promise<AgentData<T>>
+  /**
+   * Clean all the data in the store's backend
+   */
   reset: () => Promise<void>
 }
 
-export interface StoreKeyEd extends Store<ed25519.Signer.EdSigner> {}
-export interface StoreDataKeyEd extends StoreData<ed25519.Signer.EdSigner> {}
-
-export interface StoreKeyRSA extends Store<RSASigner> {}
-export interface StoreDataKeyRSA extends StoreData<RSASigner> {}
-
-export interface IDBStoreData {
+// Store IDB
+export interface StoreDataIDB {
   id: number
-  accounts: Array<SignerArchive<RSASigner>>
-  delegations: {
-    created: Array<Array<import('@ucanto/interface').Block>>
-    received: Array<Array<import('@ucanto/interface').Block>>
-    meta: Array<[string, import('../awake/types').PeerMeta]>
-  }
-  meta: import('../types').AgentMeta
+  meta: AgentMeta
   principal: SignerArchive<RSASigner>
+  currentSpace?: DID
+  spaces: Map<DID, SpaceMeta>
+  delegations: Map<
+    CIDString,
+    {
+      meta?: DelegationMeta
+      delegation: Block[]
+    }
+  >
 }

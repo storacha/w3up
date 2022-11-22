@@ -1,13 +1,23 @@
+/**
+ * Store Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/store'
+ * ```
+ *
+ * @module
+ */
 import { capability, Failure, Link, URI, Schema } from '@ucanto/validator'
 import { equalLink, equalWith } from './utils.js'
-import { any } from './any.js'
+import { top } from './top.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
  * derived any `store/` prefixed capability for the (memory) space identified
  * by did:key in the `with` field.
  */
-export const store = any.derive({
+export const store = top.derive({
   to: capability({
     can: 'store/*',
     /**
@@ -29,7 +39,7 @@ export const store = any.derive({
 // derived from `store/*`. As a workaround we just define base capability
 // here so all store capabilities could be derived from either `*` or
 // `store/*`.
-const base = any.or(store)
+const base = top.or(store)
 
 /**
  * `store/add` capability allows agent to store a CAR file into a (memory) space
