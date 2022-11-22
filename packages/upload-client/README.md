@@ -399,10 +399,9 @@ type CARFile = Blob & { version: 1; roots: CID[] }
 
 ### `CARMetadata`
 
+Metadata pertaining to a CAR file.
+
 ```ts
-/**
- * Metadata pertaining to a CAR file.
- */
 export interface CARMetadata {
   /**
    * CAR version number.
