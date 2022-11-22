@@ -35,7 +35,7 @@ const agent = await Agent.create()
 const conf = {
   issuer: agent.issuer,
   with: agent.currentSpace(),
-  proofs: agent.getProofs([store, upload]),
+  proofs: await agent.proofs([store, upload]),
 }
 ```
 
