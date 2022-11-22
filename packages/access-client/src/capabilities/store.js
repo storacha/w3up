@@ -140,6 +140,17 @@ export const list = base.derive({
      * be stored.
      */
     with: URI.match({ protocol: 'did:' }),
+    nb: {
+      /**
+       * A pointer that can be moved back and forth on the list.
+       * It can be used to paginate a list for instance.
+       */
+      cursor: Schema.string().optional(),
+      /**
+       * Maximum number of items per page.
+       */
+      size: Schema.integer().optional(),
+    },
     derives: (claimed, delegated) => {
       if (claimed.with !== delegated.with) {
         return new Failure(

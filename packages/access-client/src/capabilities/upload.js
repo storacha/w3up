@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, Link, URI } from '@ucanto/validator'
+import { capability, Link, URI, Schema } from '@ucanto/validator'
 import { codec as CAR } from '@ucanto/transport/car'
 import { equalWith, fail, equal } from './utils.js'
 import { top } from './top.js'
@@ -140,6 +140,17 @@ export const list = base.derive({
   to: capability({
     can: 'upload/list',
     with: URI.match({ protocol: 'did:' }),
+    nb: {
+      /**
+       * A pointer that can be moved back and forth on the list.
+       * It can be used to paginate a list for instance.
+       */
+      cursor: Schema.string().optional(),
+      /**
+       * Maximum number of items per page.
+       */
+      size: Schema.integer().optional(),
+    },
   }),
   /**
    * `upload/list` can be derived from the `upload/*` & `*` capability
@@ -150,4 +161,4 @@ export const list = base.derive({
 
 // ⚠️ We export imports here so they are not omited in generated typedefs
 // @see https://github.com/microsoft/TypeScript/issues/51548
-export { Link }
+export { Link, Schema }
