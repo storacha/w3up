@@ -1,4 +1,5 @@
-# w3access API
+<h1 align="center">⁂<br/>web3.storage</h1>
+<p align="center">The access api for <a href="https://web3.storage">https://web3.storage</a></p>
 
 ## Development
 
