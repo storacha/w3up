@@ -130,6 +130,7 @@ export async function list(
       audience,
       with: resource,
       proofs,
+      nb: {},
     })
     .execute(conn)
 
