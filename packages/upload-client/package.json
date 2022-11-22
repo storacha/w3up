@@ -32,7 +32,8 @@
     "./sharding": "./src/sharding.js",
     "./upload": "./src/upload.js",
     "./store": "./src/store.js",
-    "./unixfs": "./src/unixfs.js"
+    "./unixfs": "./src/unixfs.js",
+    "./types": "./src/types.js"
   },
   "typesVersions": {
     "*": {
@@ -50,6 +51,9 @@
       ],
       "unixfs": [
         "dist/src/unixfs.d.ts"
+      ],
+      "types": [
+        "dist/src/types.d.ts"
       ]
     }
   },
