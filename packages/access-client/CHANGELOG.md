@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.1](https://github.com/web3-storage/w3protocol/compare/access-v6.0.0...access-v6.0.1) (2022-11-22)
+
+
+### Bug Fixes
+
+* make sure client dont break each other builds because of types. ([#195](https://github.com/web3-storage/w3protocol/issues/195)) ([ab395af](https://github.com/web3-storage/w3protocol/commit/ab395af2ec4c313025d036d83126ee933b027f60))
+
 ## [6.0.0](https://github.com/web3-storage/w3protocol/compare/access-v5.0.2...access-v6.0.0) (2022-11-22)
 
 
