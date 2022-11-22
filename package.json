@@ -12,6 +12,7 @@
     "lint": "pnpm -r --if-present run lint",
     "test": "pnpm -r --if-present run test",
     "check": "pnpm -r --if-present run check",
+    "build": "pnpm -r --if-present run build",
     "docs": "typedoc --out docs"
   },
   "devDependencies": {
