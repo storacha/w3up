@@ -35,7 +35,7 @@ jobs:
   deploy-staging:
     needs: test
     if: github.head_ref == 'release-please--branches--main--components--access-api'
-    uses: './.github/workflows/reuse-deploy-api.yml'
+    uses: './.github/workflows/reusable-deploy-api.yml'
     with:
       environment: staging
       environment_url: https://w3access-staging.protocol-labs.workers.dev
