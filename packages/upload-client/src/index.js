@@ -1,10 +1,10 @@
-import * as Storage from './store.js'
+import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, ShardStoringStream } from './sharding.js'
 
-export { Storage, Upload, UnixFS, CAR }
+export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 /**
