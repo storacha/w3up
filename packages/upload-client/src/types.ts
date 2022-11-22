@@ -161,7 +161,7 @@ export interface ShardingOptions {
 }
 
 export interface UploadOptions extends RequestOptions, ShardingOptions {
-  onStoredShard?: (meta: CARMetadata) => void
+  onShardStored?: (meta: CARMetadata) => void
 }
 
 export interface BlobLike {

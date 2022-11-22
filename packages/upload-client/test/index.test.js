@@ -84,7 +84,7 @@ describe('uploadFile', () => {
       file,
       {
         connection,
-        onStoredShard: (meta) => {
+        onShardStored: (meta) => {
           carCID = meta.cid
         },
       }
@@ -150,7 +150,7 @@ describe('uploadFile', () => {
       {
         connection,
         shardSize: 400_000, // should end up with 2 CAR files
-        onStoredShard: (meta) => carCIDs.push(meta.cid),
+        onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )
 
@@ -232,7 +232,7 @@ describe('uploadDirectory', () => {
       files,
       {
         connection,
-        onStoredShard: (meta) => {
+        onShardStored: (meta) => {
           carCID = meta.cid
         },
       }
@@ -298,7 +298,7 @@ describe('uploadDirectory', () => {
       {
         connection,
         shardSize: 400_000, // should end up with 2 CAR files
-        onStoredShard: (meta) => carCIDs.push(meta.cid),
+        onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )
 

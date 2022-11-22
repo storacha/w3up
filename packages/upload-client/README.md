@@ -144,7 +144,9 @@ await Upload.add(conf, rootCID, carCIDs)
   - [`Upload.remove`](#uploadremove)
 - [Types](#types)
   - [`CARFile`](#carfile)
+  - [`CARMetadata`](#carmetadata)
   - [`InvocationConfig`](#invocationconfig)
+  - [`ShardStoredCallback`](#shardstoredcallback)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -169,7 +171,7 @@ Uploads a directory of files to the service and returns the root data CID for th
 
 Required delegated capability proofs: `store/add`, `upload/add`
 
-More information: [`InvocationConfig`](#invocationconfig)
+More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
 
 ### `uploadFile`
 
@@ -395,12 +397,47 @@ A `Blob` with two extra properties:
 type CARFile = Blob & { version: 1; roots: CID[] }
 ```
 
+### `CARMetadata`
+
+Metadata pertaining to a CAR file.
+
+```ts
+export interface CARMetadata {
+  /**
+   * CAR version number.
+   */
+  version: number
+  /**
+   * Root CIDs present in the CAR header.
+   */
+  roots: CID[]
+  /**
+   * CID of the CAR file (not the data it contains).
+   */
+  cid: CID
+  /**
+   * Size of the CAR file in bytes.
+   */
+  size: number
+}
+```
+
 ### `InvocationConfig`
 
 This is the configuration for the UCAN invocation. It's values can be obtained from an `Agent`. See [Create an Agent](#create-an-agent) for an example. It is an object with `issuer` and `proofs`:
 
 - The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
 - The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+### `ShardStoredCallback`
+
+A function called after a DAG shard has been successfully stored by the service:
+
+```ts
+type ShardStoredCallback = (meta: CARMetadata) => void
+```
+
+More information: [`CARMetadata`](#carmetadata)
 
 ## Contributing
 
