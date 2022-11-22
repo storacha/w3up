@@ -1,5 +1,20 @@
 # Changelog
 
+## [6.0.0](https://github.com/web3-storage/w3protocol/compare/access-v5.0.2...access-v6.0.0) (2022-11-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **access-client:** bump to major
+* store/list and upload/list types now require nb object with optional properties
+
+### Features
+
+* [#153](https://github.com/web3-storage/w3protocol/issues/153) ([#177](https://github.com/web3-storage/w3protocol/issues/177)) ([d6d448c](https://github.com/web3-storage/w3protocol/commit/d6d448c16f188398c30f2d1b83f69e1d7becd450))
+* **access-client:** bump to major ([4d5899f](https://github.com/web3-storage/w3protocol/commit/4d5899f7ad7e7b4901dcc773d7348d3d09c4dca9))
+* account recover with email ([#149](https://github.com/web3-storage/w3protocol/issues/149)) ([6c659ba](https://github.com/web3-storage/w3protocol/commit/6c659ba68d23c3448d5150bc76f1ddcb91ae18d8))
+* add support for list pagination in list capability invocations ([#184](https://github.com/web3-storage/w3protocol/issues/184)) ([ced23db](https://github.com/web3-storage/w3protocol/commit/ced23db27f3b2a6122d4d0a684264f64b26ac95f))
+
 ## [5.0.2](https://github.com/web3-storage/w3protocol/compare/access-v5.0.1...access-v5.0.2) (2022-11-16)
 
 
