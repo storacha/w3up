@@ -3,7 +3,7 @@
 
 ## Install
 
-Install the package using npm:
+Install the package:
 
 ```bash
 npm install @web3-storage/access
