@@ -328,6 +328,7 @@ describe('upload capabilities', function () {
       audience: w3,
       with: account.did(),
       proofs: [await any],
+      nb: {},
     })
 
     const result = await access(await list.delegate(), {
@@ -357,6 +358,7 @@ describe('upload capabilities', function () {
       issuer: bob,
       with: account.did(),
       proofs: [await upload.delegate()],
+      nb: {},
     })
 
     const result = await access(await list.delegate(), {
@@ -379,6 +381,7 @@ describe('upload capabilities', function () {
       audience: bob,
       with: account.did(),
       proofs: [await any],
+      nb: {},
     })
 
     const list = Upload.list.invoke({
@@ -386,6 +389,7 @@ describe('upload capabilities', function () {
       issuer: bob,
       with: account.did(),
       proofs: [await delegation.delegate()],
+      nb: {},
     })
 
     const result = await access(await list.delegate(), {
