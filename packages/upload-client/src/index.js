@@ -87,7 +87,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
         write(meta) {
           root = root || meta.roots[0]
           shards.push(meta.cid)
-          if (options.onStoredShard) options.onStoredShard(meta)
+          if (options.onShardStored) options.onShardStored(meta)
         },
       })
     )
