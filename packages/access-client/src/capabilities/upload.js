@@ -1,14 +1,24 @@
+/**
+ * Upload Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/upload'
+ * ```
+ *
+ * @module
+ */
 import { capability, Link, URI } from '@ucanto/validator'
 import { codec as CAR } from '@ucanto/transport/car'
 import { equalWith, fail, equal } from './utils.js'
-import { any } from './any.js'
+import { top } from './top.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
  * derived any `upload/` prefixed capability for the (memory) space identified
  * by did:key in the `with` field.
  */
-export const upload = any.derive({
+export const upload = top.derive({
   to: capability({
     can: 'upload/*',
     /**
@@ -30,7 +40,7 @@ export const upload = any.derive({
 // derived from `upload/*`. As a workaround we just define base capability
 // here so all store capabilities could be derived from either `*` or
 // `upload/*`.
-const base = any.or(upload)
+const base = top.or(upload)
 
 /**
  * Schema representing a link (a.k.a CID) to a CAR file. Enforces CAR codec code and CID v1.

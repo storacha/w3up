@@ -54,7 +54,7 @@ export function loadConfig(env) {
       /** @type {import("./bindings").AnalyticsEngine} */ (
         env.W3ACCESS_METRICS
       ) || createAnalyticsEngine(),
-    ACCOUNTS: env.ACCOUNTS,
+    SPACES: env.SPACES,
     VALIDATIONS: env.VALIDATIONS,
     DB: /** @type {D1Database} */ (env.__D1_BETA__),
   }

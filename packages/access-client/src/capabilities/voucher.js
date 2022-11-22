@@ -1,6 +1,19 @@
+/**
+ * Voucher Capabilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Account from '@web3-storage/access/capabilities/voucher'
+ * ```
+ *
+ * @module
+ */
 import { capability, URI, DID } from '@ucanto/validator'
-import { equalWith, equal, fail } from './utils.js'
-import { any } from './any.js'
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars
+import * as Types from '@ucanto/interface'
+import { equalWith, fail, equal } from './utils.js'
+import { top } from './top.js'
 
 /**
  * Products are identified by the CID of the DAG that describes them.
@@ -26,7 +39,7 @@ export const Service = DID.match({ method: 'key' })
  * Currently DID in the `with` field will always be web3.storage DID since we
  * do not support other types of vouchers yet.
  */
-export const voucher = any.derive({
+export const voucher = top.derive({
   to: capability({
     can: 'voucher/*',
     with: URI.match({ protocol: 'did:' }),
@@ -35,7 +48,7 @@ export const voucher = any.derive({
   derives: equalWith,
 })
 
-const base = any.or(voucher)
+const base = top.or(voucher)
 
 /**
  * Capability can be invoked by an agent to claim a voucher for a specific
@@ -99,16 +112,16 @@ export const redeem = voucher.derive({
       /**
        * Space identifier where voucher can be redeemed. When service delegates
        * `voucher/redeem` to the user agent it may omit this field to allow
-       * account to choose account.
+       * agent to choose space.
        */
-      account: URI.match({ protocol: 'did:' }),
+      space: URI.match({ protocol: 'did:' }),
     },
     derives: (child, parent) => {
       return (
         fail(equalWith(child, parent)) ||
         fail(equal(child.nb.product, parent.nb.product, 'product')) ||
         fail(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
-        fail(equal(child.nb.account, parent.nb.account, 'account')) ||
+        fail(equal(child.nb.space, parent.nb.space, 'account')) ||
         true
       )
     },

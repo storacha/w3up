@@ -2,7 +2,7 @@ import type { Logging } from '@web3-storage/worker-utils/logging'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import type { Signer } from '@ucanto/interface'
 import { Email } from './utils/email.js'
-import { Accounts } from './kvs/accounts.js'
+import { Spaces } from './kvs/spaces.js'
 import { Validations } from './kvs/validations.js'
 import { D1QB } from 'workers-qb'
 import { loadConfig } from './config.js'
@@ -29,7 +29,7 @@ export interface Env {
   POSTMARK_TOKEN: string
   LOGTAIL_TOKEN: string
   // bindings
-  ACCOUNTS: KVNamespace
+  SPACES: KVNamespace
   VALIDATIONS: KVNamespace
   W3ACCESS_METRICS: AnalyticsEngine
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -43,7 +43,7 @@ export interface RouteContext {
   url: URL
   email: Email
   kvs: {
-    accounts: Accounts
+    spaces: Spaces
     validations: Validations
   }
   db: D1QB

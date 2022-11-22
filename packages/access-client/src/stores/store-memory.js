@@ -2,12 +2,10 @@ import { Signer } from '@ucanto/principal/ed25519'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
-import { Delegations } from '../delegations.js'
 
 /**
- * @typedef {import('./types').DelegationsAsJSON} DelegationsAsJSON
- * @typedef {import('./types').StoreDataKeyEd} StoreData
- * @typedef {import('./types').StoreKeyEd} Store
+ * @typedef {import('../types').AgentData<Signer.EdSigner>} StoreData
+ * @typedef {import('./types').IStore<Signer.EdSigner>} Store
  */
 
 /**
@@ -37,9 +35,14 @@ export class StoreMemory {
     return this.data.meta !== undefined && this.data.principal !== undefined
   }
 
-  static async create() {
+  /**
+   *
+   * @param {Partial<StoreData>} [data]
+   * @returns {Promise<Store>}
+   */
+  static async create(data = {}) {
     const store = new StoreMemory()
-    await store.init({})
+    await store.init(data)
 
     return store
   }
@@ -47,17 +50,13 @@ export class StoreMemory {
   /** @type {Store['init']} */
   async init(data) {
     const principal = data.principal || (await Signer.generate())
-    const delegations =
-      data.delegations ||
-      new Delegations({
-        principal,
-      })
     /** @type {StoreData} */
     const storeData = {
-      accounts: data.accounts || [],
       meta: data.meta || { name: 'agent', type: 'device' },
       principal,
-      delegations,
+      spaces: data.spaces || new Map(),
+      delegations: data.delegations || new Map(),
+      currentSpace: data.currentSpace,
     }
 
     await this.save(storeData)
@@ -67,6 +66,7 @@ export class StoreMemory {
   /**
    *
    * @param {StoreData} data
+   * @returns {Promise<Store>}
    */
   async save(data) {
     this.data = {
@@ -79,9 +79,5 @@ export class StoreMemory {
   async load() {
     /** @type {StoreData} */
     return this.data
-  }
-
-  async createAccount() {
-    return await Signer.generate()
   }
 }

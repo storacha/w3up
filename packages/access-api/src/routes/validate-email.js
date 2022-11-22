@@ -63,7 +63,7 @@ export async function validateEmail(req, env) {
 async function recover(req, env) {
   try {
     const delegation = await env.kvs.validations.put(
-      /** @type {import('@web3-storage/access/src/types.js').EncodedDelegation<[import('@web3-storage/access/src/types.js').AccountRecover]>} */ (
+      /** @type {import('@web3-storage/access/src/types.js').EncodedDelegation<[import('@web3-storage/access/src/types.js').SpaceRecover]>} */ (
         req.query.ucan
       )
     )

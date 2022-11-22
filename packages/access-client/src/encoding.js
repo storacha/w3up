@@ -1,3 +1,17 @@
+/**
+ * Encoding utilities
+ *
+ * These can be imported directly with:
+ * ```js
+ * import * as Encoding from '@web3-storage/access/encoding'
+ *
+ * // or
+ *
+ * import { encodeDelegations } from '@web3-storage/access/encoding'
+ * ```
+ *
+ * @module
+ */
 /* eslint-disable unicorn/prefer-spread */
 import { CarReader } from '@ipld/car/reader'
 import { CarWriter } from '@ipld/car/writer'

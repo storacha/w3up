@@ -1,4 +1,4 @@
-import assert from 'assert/strict'
+import assert from 'assert'
 import { Channel } from '../src/awake/channel.js'
 import { EcdhKeypair } from '../src/crypto/p256-ecdh.js'
 import { getWebsocketServer } from './helpers/miniflare.js'

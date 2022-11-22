@@ -1,4 +1,3 @@
-import undici from 'undici'
 import { Verifier } from '@ucanto/principal/ed25519'
 
 /** @type {Record<string,string>} */
@@ -22,7 +21,7 @@ export async function getService(env) {
   if (audience) {
     return { url, did: audience }
   } else {
-    const rsp = await undici.fetch(url + 'version')
+    const rsp = await fetch(url + 'version')
 
     // @ts-ignore
     const { did } = await rsp.json()

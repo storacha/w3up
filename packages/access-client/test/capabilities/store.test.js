@@ -4,7 +4,7 @@ import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
 import * as Store from '../../src/capabilities/store.js'
-import * as Capability from '../../src/capabilities/any.js'
+import * as Capability from '../../src/capabilities/top.js'
 
 import {
   alice,
@@ -14,8 +14,8 @@ import {
 } from '../helpers/fixtures.js'
 import { createCarCid } from '../helpers/utils.js'
 
-const any = async () =>
-  Capability.any.delegate({
+const top = async () =>
+  Capability.top.delegate({
     issuer: account,
     audience: alice,
     with: account.did(),
@@ -26,7 +26,7 @@ const store = async () =>
     issuer: account,
     audience: alice,
     with: account.did(),
-    proofs: [await any()],
+    proofs: [await top()],
   })
 
 describe('store capabilities', function () {
@@ -39,7 +39,7 @@ describe('store capabilities', function () {
         link: parseLink('bafkqaaa'),
         size: 0,
       },
-      proofs: [await any()],
+      proofs: [await top()],
     })
 
     const result = await access(await add.delegate(), {
@@ -93,7 +93,7 @@ describe('store capabilities', function () {
       issuer: alice,
       audience: bob,
       with: account.did(),
-      proofs: [await any()],
+      proofs: [await top()],
     })
 
     const add = Store.add.invoke({
@@ -132,7 +132,7 @@ describe('store capabilities', function () {
       nb: {
         size: 1024,
       },
-      proofs: [await any()],
+      proofs: [await top()],
     })
 
     {
@@ -190,7 +190,7 @@ describe('store capabilities', function () {
   for (const size of fixtures) {
     const json = JSON.stringify(size)
     it(`store/add size must be an int not ${json}`, async () => {
-      const proofs = [await any()]
+      const proofs = [await top()]
       assert.throws(() => {
         Store.add.invoke({
           issuer: alice,
@@ -220,7 +220,7 @@ describe('store capabilities', function () {
             },
           },
         ],
-        proofs: [await any()],
+        proofs: [await top()],
       })
 
       // @ts-expect-error - size type doesnt not match because we are testing fails
@@ -235,7 +235,7 @@ describe('store capabilities', function () {
   }
 
   it('store/add size must be an int', async () => {
-    const proofs = [await any()]
+    const proofs = [await top()]
     assert.throws(() => {
       Store.add.invoke({
         issuer: alice,

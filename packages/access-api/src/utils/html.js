@@ -72,7 +72,7 @@ export class HtmlResponse extends Response {
 /**
  *
  * @param {object} param0
- * @param {Ucanto.Delegation<[import('@web3-storage/access/capabilities/types').VoucherClaim]> | Ucanto.Delegation<[import('@web3-storage/access/capabilities/types').AccountRecover]>} param0.delegation
+ * @param {Ucanto.Delegation<[import('@web3-storage/access/capabilities/types').VoucherClaim]> | Ucanto.Delegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} param0.delegation
  * @param {string} param0.ucan
  * @param {string} param0.qrcode
  */
