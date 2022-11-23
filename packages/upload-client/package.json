@@ -101,20 +101,21 @@
       "project": "./tsconfig.json"
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/no-null": "off",
-      "unicorn/prefer-set-has": "off",
-      "unicorn/no-array-for-each": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/catch-error-name": "off",
-      "unicorn/explicit-length-check": "off",
-      "unicorn/prefer-type-error": "off",
       "eqeqeq": "off",
-      "no-void": "off",
+      "jsdoc/check-indentation": "off",
+      "jsdoc/require-hyphen-before-param-description": "off",
       "no-console": "off",
       "no-continue": "off",
-      "jsdoc/check-indentation": "off",
-      "jsdoc/require-hyphen-before-param-description": "off"
+      "no-void": "off",
+      "unicorn/catch-error-name": "off",
+      "unicorn/explicit-length-check": "off",
+      "unicorn/no-array-for-each": "off",
+      "unicorn/no-await-expression-member": "off",
+      "unicorn/no-null": "off",
+      "unicorn/prefer-export-from": "off",
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/prefer-set-has": "off",
+      "unicorn/prefer-type-error": "off"
     },
     "env": {
       "mocha": true

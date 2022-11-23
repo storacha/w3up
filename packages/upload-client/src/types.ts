@@ -47,22 +47,23 @@ export interface StoreAddResponse {
 }
 
 export interface ListResponse<R> {
-  count: number
-  page: number
-  pageSize: number
+  cursor?: string
+  size: number
   results?: R[]
 }
 
 export interface StoreListResult {
-  payloadCID: CARLink
+  payloadCID: string
+  origin?: string
   size: number
-  uploadedAt: number
+  uploadedAt: string
 }
 
 export interface UploadListResult {
-  carCID: CARLink
-  dataCID: Link<unknown, number, number, Version>
-  uploadedAt: number
+  uploaderDID: string
+  dataCID: string
+  carCID: string
+  uploadedAt: string
 }
 
 export interface InvocationConfig {
@@ -150,7 +151,21 @@ export interface Connectable {
   connection?: ConnectionView<Service>
 }
 
+export interface Pageable {
+  /**
+   * Opaque string specifying where to start retrival of the next page of
+   * results.
+   */
+  cursor?: string
+  /**
+   * Maximum number of items to return.
+   */
+  size?: number
+}
+
 export interface RequestOptions extends Retryable, Abortable, Connectable {}
+
+export interface ListRequestOptions extends RequestOptions, Pageable {}
 
 export interface ShardingOptions {
   /**
