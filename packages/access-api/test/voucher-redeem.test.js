@@ -153,3 +153,71 @@ test('should fail with wrong resource', async (t) => {
     t.fail('should fail')
   }
 })
+
+test('should fail multiple voucher/redeem with same space did', async (t) => {
+  const { issuer, service, conn } = t.context
+
+  const space = await Signer.generate()
+  const claim = await Voucher.claim
+    .invoke({
+      issuer,
+      audience: service,
+      with: space.did(),
+      nb: {
+        identity: 'mailto:email@dag.house',
+        product: 'product:free',
+        service: service.did(),
+      },
+      proofs: [
+        await Top.top.delegate({
+          issuer: space,
+          audience: issuer,
+          with: space.did(),
+          expiration: Infinity,
+        }),
+      ],
+    })
+    .execute(conn)
+
+  if (!claim) {
+    return t.fail('no output')
+  }
+  if (claim.error) {
+    return t.fail(claim.message)
+  }
+
+  const delegation = await stringToDelegation(claim)
+
+  const redeemInv = Voucher.redeem.invoke({
+    issuer,
+    audience: service,
+    with: service.did(),
+    nb: {
+      space: space.did(),
+      identity: delegation.capabilities[0].nb.identity,
+      product: delegation.capabilities[0].nb.product,
+    },
+    proofs: [
+      delegation,
+      await Top.top.delegate({
+        issuer: space,
+        audience: service,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ],
+  })
+
+  const redeem = await redeemInv.execute(conn)
+
+  if (redeem?.error) {
+    return t.fail()
+  }
+
+  const redeem2 = await redeemInv.execute(conn)
+
+  t.true(redeem2.error)
+  if (redeem2.error) {
+    t.deepEqual(redeem2.message, `Space ${space.did()} already registered.`)
+  }
+})

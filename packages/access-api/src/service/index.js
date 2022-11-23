@@ -35,7 +35,7 @@ export function service(ctx) {
             return new Failure(
               `Resource ${
                 capability.with
-              } does not service did ${ctx.signer.did()}`
+              } does not match service did ${ctx.signer.did()}`
             )
           }
 
@@ -110,6 +110,11 @@ export function service(ctx) {
           if (ctx.config.ENV === 'test') {
             return url
           }
+
+          await ctx.email.sendValidation({
+            to: capability.nb.identity.replace('mailto:', ''),
+            url,
+          })
         }
       ),
     },

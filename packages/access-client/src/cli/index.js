@@ -3,19 +3,19 @@
 import fs from 'fs'
 import sade from 'sade'
 import { NAME, pkg } from './config.js'
-import { getService } from './utils.js'
+import { getService, selectSpace } from './utils.js'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import { cmdCreateAccount } from './cmd-create-account.js'
+import { cmdCreateSpace } from './cmd-create-space.js'
 import { cmdLink } from './cmd-link.js'
 import { cmdSetup } from './cmd-setup.js'
 import { cmdWhoami } from './cmd-whoami.js'
 import { StoreConf } from '../stores/store-conf.js'
-import { Agent } from '../agent.js'
-import { stringToDelegation } from '../encoding.js'
-// import inquirer from 'inquirer'
-// import { Verifier } from '@ucanto/principal/ed25519'
-// import { delegationToString, stringToDelegation } from '../encoding.js'
+import { abilitiesAsStrings, Agent } from '../agent.js'
+import { delegationToString, stringToDelegation } from '../encoding.js'
+import inquirer from 'inquirer'
+import { Verifier } from '@ucanto/principal'
+import path from 'path'
 
 const prog = sade(NAME)
 prog
@@ -31,111 +31,104 @@ prog
   .action(cmdSetup)
 prog.command('whoami').describe('Print config file content.').action(cmdWhoami)
 prog
-  .command('create-account')
-  .describe('Create new account.')
-  .action(cmdCreateAccount)
+  .command('create-space')
+  .describe('Create new space and register with the service.')
+  .action(cmdCreateSpace)
 
 prog
-  .command('account')
-  .describe('Account info.')
+  .command('space')
+  .describe('Space info.')
   .action(async (opts) => {
-    // const store = new StoreConf({ profile: opts.profile })
-    // const { url } = await getService(opts.env)
-    // if (await store.exists()) {
-    //   const agent = await Agent.create({
-    //     store,
-    //     url,
-    //   })
-    //   const choices = []
-    //   for (const [key, value] of agent.data.delegations.receivedByResource) {
-    //     for (const d of value) {
-    //       if (d.cap.can === 'account/info' || d.cap.can === 'account/*') {
-    //         choices.push({ name: key })
-    //       }
-    //     }
-    //   }
-    //   const { account } = await inquirer.prompt([
-    //     {
-    //       type: 'list',
-    //       name: 'account',
-    //       default: 'device',
-    //       choices,
-    //       message: 'Select account:',
-    //     },
-    //   ])
-    //   try {
-    //     const result = await agent.getAccountInfo(account)
-    //     console.log(result)
-    //   } catch (error_) {
-    //     const error = /** @type {Error} */ (error_)
-    //     console.log(error.message)
-    //   }
-    // } else {
-    //   console.error(`Run "${NAME} setup" first`)
-    // }
+    const store = new StoreConf({ profile: opts.profile })
+    const { url } = await getService(opts.env)
+    if (await store.exists()) {
+      const agent = await Agent.create({
+        store,
+        url,
+      })
+      const space = await selectSpace(agent)
+      try {
+        const result = await agent.getSpaceInfo(space)
+        console.log(result)
+      } catch (error_) {
+        const error = /** @type {Error} */ (error_)
+        console.log(error.message)
+      }
+    } else {
+      console.error(`Run "${NAME} setup" first`)
+    }
   })
 
 prog
   .command('delegate')
   .describe('Delegation capabilities.')
+  .option('--file', 'File to write the delegation into.')
   .action(async (opts) => {
-    // const store = new StoreConf({ profile: opts.profile })
-    // const { url } = await getService(opts.env)
-    // if (await store.exists()) {
-    //   const agent = await Agent.create({
-    //     store,
-    //     url,
-    //   })
-    //   const accountDids = agent.data.accounts.map((acc) => {
-    //     return { name: acc.did() }
-    //   })
-    //   const { account } = await inquirer.prompt([
-    //     {
-    //       type: 'list',
-    //       name: 'account',
-    //       choices: accountDids,
-    //       message: 'Select account:',
-    //     },
-    //   ])
-    //   const abilities = []
-    //   for (const [key, values] of agent.data.delegations.receivedByResource) {
-    //     if (key === account) {
-    //       for (const cap of values) {
-    //         abilities.push({ name: cap.cap.can })
-    //       }
-    //     }
-    //   }
-    //   const { ability } = await inquirer.prompt([
-    //     {
-    //       type: 'list',
-    //       name: 'ability',
-    //       choices: abilities,
-    //       message: 'Select ability:',
-    //     },
-    //   ])
-    //   const { audience } = await inquirer.prompt([
-    //     {
-    //       type: 'input',
-    //       name: 'audience',
-    //       choices: abilities,
-    //       message: 'Input audience:',
-    //     },
-    //   ])
-    //   console.log(account, ability)
-    //   const delegation = await agent.delegate(
-    //     Verifier.parse(audience),
-    //     [
-    //       {
-    //         can: ability,
-    //         with: account,
-    //       },
-    //     ],
-    //     800_000
-    //   )
-    //   console.log(await delegationToString(delegation))
-    // } else {
-    //   console.error(`Run "${NAME} setup" first`)
-    // }
+    const store = new StoreConf({ profile: opts.profile })
+    const { url } = await getService(opts.env)
+    if (await store.exists()) {
+      const agent = await Agent.create({
+        store,
+        url,
+      })
+      const space = await selectSpace(agent)
+
+      await agent.setCurrentSpace(space)
+
+      const { audience, expiration, name, type, abilities } =
+        await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'audience',
+            message: 'Input audience DID:',
+          },
+          {
+            type: 'input',
+            name: 'name',
+            message: 'Input audience name:',
+          },
+          {
+            type: 'list',
+            name: 'type',
+            default: 'device',
+            choices: ['device', 'app', 'service'],
+            message: 'Input audience type:',
+          },
+          {
+            type: 'number',
+            name: 'expiration',
+            message: 'Input expiration in seconds:',
+          },
+          {
+            type: 'checkbox',
+            name: 'abilities',
+            message: 'Input abilities to delegate:',
+            choices: abilitiesAsStrings,
+          },
+        ])
+
+      const delegation = await agent.delegate({
+        audience: Verifier.parse(audience),
+        audienceMeta: {
+          name,
+          type,
+        },
+        lifetimeInSeconds: isNaN(expiration) ? Infinity : expiration,
+        abilities,
+      })
+
+      const delString = await delegationToString(delegation)
+
+      if (opts.file) {
+        fs.writeFileSync(path.join(process.cwd(), opts.file), delString, {
+          encoding: 'utf8',
+        })
+      } else {
+        console.log(delString)
+      }
+    } else {
+      console.error(`Run "${NAME} setup" first`)
+    }
   })
 
 prog
@@ -151,9 +144,55 @@ prog
         url,
       })
 
-      const del = fs.readFileSync('./delegation', { encoding: 'utf8' })
+      const del = fs.readFileSync(path.resolve(opts.delegation), {
+        encoding: 'utf8',
+      })
 
-      await agent.addProof(await stringToDelegation(del))
+      const { name, isRegistered } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'Input space name:',
+        },
+        {
+          type: 'confirm',
+          name: 'isRegistered',
+          message: 'Is this space already registered:',
+        },
+      ])
+
+      await agent.importSpaceFromDelegation(await stringToDelegation(del), {
+        name,
+        isRegistered,
+      })
+    } else {
+      console.error(`Run "${NAME} setup" first`)
+    }
+  })
+
+prog
+  .command('recover')
+  .describe('Recover spaces with email.')
+  .action(async (opts) => {
+    const store = new StoreConf({ profile: opts.profile })
+    const { url } = await getService(opts.env)
+    if (await store.exists()) {
+      const agent = await Agent.create({
+        store,
+        url,
+      })
+
+      const { email } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'email',
+          default: 'hugomrdias@gmail.com',
+          message: 'Input email:',
+        },
+      ])
+
+      const dels = await agent.recover(email)
+      console.log(dels)
     } else {
       console.error(`Run "${NAME} setup" first`)
     }

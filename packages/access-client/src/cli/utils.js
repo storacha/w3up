@@ -1,4 +1,8 @@
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars
+import * as Ucanto from '@ucanto/interface'
 import { Verifier } from '@ucanto/principal/ed25519'
+import inquirer from 'inquirer'
 
 /** @type {Record<string,string>} */
 const envs = {
@@ -28,4 +32,25 @@ export async function getService(env) {
     audience = Verifier.parse(did)
     return { url, audience }
   }
+}
+
+/**
+ * @template {Ucanto.Signer} T
+ * @param {import('../agent').Agent<T>} agent
+ */
+export async function selectSpace(agent) {
+  const choices = []
+  for (const [key, value] of agent.spaces) {
+    choices.push({ name: value.name, value: key })
+  }
+  const { space } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'space',
+      choices,
+      message: 'Select space:',
+    },
+  ])
+
+  return space
 }

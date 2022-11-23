@@ -14,6 +14,7 @@ import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
+import { Verifier } from '@ucanto/principal'
 import { invoke, delegate } from '@ucanto/core'
 import {
   isExpired,
@@ -23,6 +24,23 @@ import {
 } from './delegations.js'
 
 const HOST = 'https://access.web3.storage'
+
+/** @type {import('./types').Abilities[]} */
+export const abilitiesAsStrings = [
+  '*',
+  'space/*',
+  'space/info',
+  'space/recover',
+  'space/recover-validation',
+  'store/*',
+  'store/add',
+  'store/list',
+  'store/remove',
+  'upload/*',
+  'upload/add',
+  'upload/list',
+  'upload/remove',
+]
 
 /**
  * Creates a Ucanto connection for the w3access API
@@ -76,6 +94,9 @@ export class Agent {
   /** @type {typeof fetch} */
   #fetch
 
+  /** @type {import('./types').AgentData<T>} */
+  #data
+
   /**
    * @param {import('./types').AgentOptions<T>} opts
    */
@@ -83,10 +104,11 @@ export class Agent {
     this.url = opts.url || new URL(HOST)
     this.connection = opts.connection
     this.issuer = opts.data.principal
+    this.meta = opts.data.meta
     this.store = opts.store
-    this.data = opts.data
 
     // private
+    this.#data = opts.data
     this.#fetch = opts.fetch
     this.#service = undefined
   }
@@ -123,6 +145,10 @@ export class Agent {
     })
   }
 
+  get spaces() {
+    return this.#data.spaces
+  }
+
   async service() {
     if (this.#service) {
       return this.#service
@@ -134,7 +160,7 @@ export class Agent {
   }
 
   did() {
-    return this.data.principal.did()
+    return this.#data.principal.did()
   }
 
   /**
@@ -150,11 +176,12 @@ export class Agent {
       checkIsExpired: true,
     })
 
-    this.data.delegations.set(delegation.cid.toString(), {
+    this.#data.delegations.set(delegation.cid.toString(), {
       delegation,
+      meta: { audience: this.meta },
     })
 
-    await this.store.save(this.data)
+    await this.store.save(this.#data)
   }
 
   /**
@@ -164,7 +191,7 @@ export class Agent {
    */
   async *#delegations(caps) {
     const _caps = new Set(caps)
-    for (const [key, value] of this.data.delegations) {
+    for (const [key, value] of this.#data.delegations) {
       // check expiration
       if (!isExpired(value.delegation)) {
         // check if delegation can be used
@@ -183,11 +210,11 @@ export class Agent {
         }
       } else {
         // delete any expired delegation
-        this.data.delegations.delete(key)
+        this.#data.delegations.delete(key)
       }
     }
 
-    await this.store.save(this.data)
+    await this.store.save(this.#data)
   }
 
   /**
@@ -199,6 +226,7 @@ export class Agent {
    */
   async proofs(caps) {
     const arr = []
+
     for await (const value of this.#delegations(caps)) {
       if (value.delegation.audience.did() === this.issuer.did()) {
         arr.push(value.delegation)
@@ -246,17 +274,88 @@ export class Agent {
       expiration: Infinity,
     })
 
-    this.data.spaces.set(signer.did(), {
+    const meta = {
       name,
       isRegistered: false,
-    })
+    }
+    this.#data.spaces.set(signer.did(), meta)
 
     await this.addProof(proof)
 
     return {
       did: signer.did(),
+      meta,
       proof,
     }
+  }
+
+  /**
+   * Import a space from a '*' delegation
+   *
+   * @param {Ucanto.Delegation} delegation
+   * @param {import('./types').SpaceMeta} meta
+   */
+  async importSpaceFromDelegation(delegation, meta) {
+    if (delegation.capabilities[0].can !== '*') {
+      throw new Error(
+        'Space can only be import with full capabilities delegation.'
+      )
+    }
+
+    const del = /** @type {Ucanto.Delegation<[import('./types').Top]>} */ (
+      delegation
+    )
+    // @ts-ignore
+    const did = Verifier.parse(del.capabilities[0].with).did()
+
+    this.#data.spaces.set(did, meta)
+
+    await this.addProof(del)
+
+    return {
+      did,
+      meta,
+      proof: del,
+    }
+  }
+
+  /**
+   *
+   * @param {string} email
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   */
+  async recover(email, opts) {
+    const service = await this.service()
+    const inv = await this.invokeAndExecute(Space.recoverValidation, {
+      with: URI.from(this.did()),
+      nb: { identity: URI.from(`mailto:${email}`) },
+    })
+
+    if (inv && inv.error) {
+      throw new Error('Recover validation failed', { cause: inv })
+    }
+
+    const spaceRecover = await this.#waitForSpaceRecover(opts)
+    await this.addProof(spaceRecover)
+
+    const recoverInv = await this.invokeAndExecute(Space.recover, {
+      with: URI.from(service.did()),
+      nb: {
+        identity: URI.from(`mailto:${email}`),
+      },
+    })
+
+    if (recoverInv && recoverInv.error) {
+      throw new Error('Spaces recover failed', { cause: recoverInv })
+    }
+
+    const dels = []
+    for (const del of recoverInv) {
+      dels.push(await stringToDelegation(del))
+    }
+
+    return dels
   }
 
   /**
@@ -278,8 +377,8 @@ export class Agent {
       throw new Error(`Agent has no proofs for ${space}.`)
     }
 
-    this.data.currentSpace = space
-    await this.store.save(this.data)
+    this.#data.currentSpace = space
+    await this.store.save(this.#data)
 
     return space
   }
@@ -288,14 +387,14 @@ export class Agent {
    * Get current space DID
    */
   currentSpace() {
-    return this.data.currentSpace
+    return this.#data.currentSpace
   }
 
   /**
    * Get current space DID, proofs and abilities
    */
   async currentSpaceWithMeta() {
-    if (!this.data.currentSpace) {
+    if (!this.#data.currentSpace) {
       return
     }
 
@@ -303,7 +402,7 @@ export class Agent {
     const proofs = await this.proofs([
       {
         can: 'space/info',
-        with: this.data.currentSpace,
+        with: this.#data.currentSpace,
       },
     ])
 
@@ -315,9 +414,10 @@ export class Agent {
     }
 
     return {
-      did: this.data.currentSpace,
+      did: this.#data.currentSpace,
       proofs,
       capabilities: [...caps],
+      meta: this.#data.spaces.get(this.#data.currentSpace),
     }
   }
 
@@ -333,7 +433,7 @@ export class Agent {
   async registerSpace(email, opts) {
     const space = this.currentSpace()
     const service = await this.service()
-    const spaceMeta = space ? this.data.spaces.get(space) : undefined
+    const spaceMeta = this.#data.spaces.get(space)
 
     if (!space || !spaceMeta) {
       throw new Error('No space selected')
@@ -383,10 +483,10 @@ export class Agent {
 
     spaceMeta.isRegistered = true
 
-    this.data.spaces.set(space, spaceMeta)
-    this.data.delegations.delete(voucherRedeem.cid.toString())
+    this.#data.spaces.set(space, spaceMeta)
+    this.#data.delegations.delete(voucherRedeem.cid.toString())
 
-    this.store.save(this.data)
+    this.store.save(this.#data)
   }
 
   /**
@@ -430,6 +530,45 @@ export class Agent {
 
   /**
    *
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   */
+  async #waitForSpaceRecover(opts) {
+    const ws = new Websocket(this.url, 'validate-ws')
+    await ws.open()
+
+    ws.send({
+      did: this.did(),
+    })
+
+    try {
+      const msg = await ws.awaitMsg(opts)
+
+      if (msg.type === 'timeout') {
+        await ws.close()
+        throw new Error('Email validation timed out.')
+      }
+
+      if (msg.type === 'delegation') {
+        const delegation = await stringToDelegation(
+          /** @type {import('./types').EncodedDelegation<[import('./types').SpaceRecover]>} */ (
+            msg.delegation
+          )
+        )
+        ws.close()
+        return delegation
+      }
+    } catch (error) {
+      if (error instanceof AbortError) {
+        await ws.close()
+        throw new TypeError('Failed to get space/recover', { cause: error })
+      }
+    }
+    throw new TypeError('Failed to get space/recover')
+  }
+
+  /**
+   *
    * @param {import('./types').DelegationOptions} options
    */
   async delegate(options) {
@@ -454,13 +593,13 @@ export class Agent {
       ...options,
     })
 
-    this.data.delegations.set(delegation.cid.toString(), {
+    this.#data.delegations.set(delegation.cid.toString(), {
       delegation,
       meta: {
         audience: options.audienceMeta,
       },
     })
-    await this.store.save(this.data)
+    await this.store.save(this.#data)
     return delegation
   }
 
@@ -562,7 +701,7 @@ export class Agent {
       },
     ])
 
-    if (proofs.length === 0) {
+    if (proofs.length === 0 && options.with !== this.did()) {
       throw new Error(
         `no proofs available for resource ${space} and ability ${cap.can}`
       )

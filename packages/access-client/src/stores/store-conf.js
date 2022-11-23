@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-null */
 /* eslint-disable jsdoc/check-indentation */
 import Conf from 'conf'
 import { Signer } from '@ucanto/principal/ed25519'
@@ -11,10 +12,10 @@ import * as Ucanto from '@ucanto/interface'
  * @typedef {{
  *    meta: import('../types.js').AgentMeta
  *    principal: string
- *    currentSpace?: Ucanto.DID
- *    spaces: Array<[Ucanto.DID, import('../types').SpaceMeta]>
+ *    currentSpace: Ucanto.DID | null
+ *    spaces: Array<[Ucanto.DID | undefined, import('../types').SpaceMeta]>
  *    delegations: Array<[import('../types').CIDString, {
- *      meta?: import('../types').DelegationMeta,
+ *      meta: import('../types').DelegationMeta,
  *      delegation: import('../types.js').EncodedDelegation
  *    }]>
  * }} Data
@@ -106,7 +107,7 @@ export class StoreConf {
     }
     /** @type {Data} */
     const encodedData = {
-      currentSpace: data.currentSpace,
+      currentSpace: data.currentSpace || null,
       spaces: [...data.spaces.entries()],
       meta: data.meta,
       principal: Signer.format(data.principal),
@@ -134,7 +135,7 @@ export class StoreConf {
     /** @type {StoreData} */
     return {
       principal: Signer.parse(data.principal),
-      currentSpace: data.currentSpace,
+      currentSpace: data.currentSpace === null ? undefined : data.currentSpace,
       meta: data.meta,
       spaces: new Map(data.spaces),
       delegations: dels,
