@@ -290,14 +290,13 @@ describe('Store.list', () => {
   it('lists stored CAR files', async () => {
     const car = await randomCAR(128)
     const res = {
-      page: 1,
-      pageSize: 1000,
-      count: 1,
+      cursor: 'test',
+      size: 1000,
       results: [
         {
-          payloadCID: car.cid,
+          payloadCID: car.cid.toString(),
           size: 123,
-          uploadedAt: Date.now(),
+          uploadedAt: new Date().toISOString(),
         },
       ],
     }
@@ -348,18 +347,108 @@ describe('Store.list', () => {
     assert(service.store.list.called)
     assert.equal(service.store.list.callCount, 1)
 
-    assert.equal(list.count, res.count)
-    assert.equal(list.page, res.page)
-    assert.equal(list.pageSize, res.pageSize)
+    assert.equal(list.cursor, res.cursor)
+    assert.equal(list.size, res.size)
     assert(list.results)
     assert.equal(list.results.length, res.results.length)
     list.results.forEach((r, i) => {
-      assert.equal(
-        r.payloadCID.toString(),
-        res.results[i].payloadCID.toString()
-      )
+      assert.equal(r.payloadCID, res.results[i].payloadCID)
       assert.equal(r.size, res.results[i].size)
       assert.equal(r.uploadedAt, res.results[i].uploadedAt)
+    })
+  })
+
+  it('paginates', async () => {
+    const cursor = 'test'
+    const page0 = {
+      cursor,
+      size: 1,
+      results: [
+        {
+          payloadCID: (await randomCAR(128)).cid.toString(),
+          size: 123,
+          uploadedAt: new Date().toISOString(),
+        },
+      ],
+    }
+    const page1 = {
+      size: 1,
+      results: [
+        {
+          payloadCID: (await randomCAR(128)).cid.toString(),
+          size: 123,
+          uploadedAt: new Date().toISOString(),
+        },
+      ],
+    }
+
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+
+    const proofs = [
+      await StoreCapabilities.list.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      store: {
+        list: provide(StoreCapabilities.list, ({ invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, StoreCapabilities.list.can)
+          assert.equal(invCap.with, space.did())
+          assert.equal(invCap.nb?.size, 1)
+          return invCap.nb?.cursor === cursor ? page1 : page0
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    const results0 = await Store.list(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      { size: 1, connection }
+    )
+    const results1 = await Store.list(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      { size: 1, cursor: results0.cursor, connection }
+    )
+
+    assert(service.store.list.called)
+    assert.equal(service.store.list.callCount, 2)
+
+    assert.equal(results0.cursor, cursor)
+    assert(results0.results)
+    assert.equal(results0.results.length, page0.results.length)
+    results0.results.forEach((r, i) => {
+      assert.equal(r.payloadCID, page0.results[i].payloadCID)
+      assert.equal(r.size, page0.results[i].size)
+      assert.equal(r.uploadedAt, page0.results[i].uploadedAt)
+    })
+
+    assert(results1.results)
+    assert.equal(results1.cursor, undefined)
+    assert.equal(results1.results.length, page1.results.length)
+    results1.results.forEach((r, i) => {
+      assert.equal(r.payloadCID, page1.results[i].payloadCID)
+      assert.equal(r.size, page1.results[i].size)
+      assert.equal(r.uploadedAt, page1.results[i].uploadedAt)
     })
   })
 

@@ -118,23 +118,22 @@ describe('Upload.add', () => {
 
 describe('Upload.list', () => {
   it('lists uploads', async () => {
-    const car = await randomCAR(128)
-    const res = {
-      page: 1,
-      pageSize: 1000,
-      count: 1,
-      results: [
-        {
-          carCID: car.cid,
-          dataCID: car.roots[0],
-          uploadedAt: Date.now(),
-        },
-      ],
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate()
 
+    const car = await randomCAR(128)
+    const res = {
+      cursor: 'test',
+      size: 1000,
+      results: [
+        {
+          uploaderDID: agent.did(),
+          carCID: car.cid.toString(),
+          dataCID: car.roots[0].toString(),
+          uploadedAt: new Date().toISOString(),
+        },
+      ],
+    }
     const proofs = [
       await UploadCapabilities.list.delegate({
         issuer: space,
@@ -178,15 +177,113 @@ describe('Upload.list', () => {
     assert(service.upload.list.called)
     assert.equal(service.upload.list.callCount, 1)
 
-    assert.equal(list.count, res.count)
-    assert.equal(list.page, res.page)
-    assert.equal(list.pageSize, res.pageSize)
+    assert.equal(list.cursor, res.cursor)
+    assert.equal(list.size, res.size)
     assert(list.results)
     assert.equal(list.results.length, res.results.length)
     list.results.forEach((r, i) => {
       assert.equal(r.carCID.toString(), res.results[i].carCID.toString())
       assert.equal(r.dataCID.toString(), res.results[i].dataCID.toString())
       assert.equal(r.uploadedAt, res.results[i].uploadedAt)
+    })
+  })
+
+  it('paginates', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+
+    const cursor = 'test'
+    const car0 = await randomCAR(128)
+    const page0 = {
+      cursor,
+      size: 1,
+      results: [
+        {
+          uploaderDID: agent.did(),
+          carCID: car0.cid.toString(),
+          dataCID: car0.roots[0].toString(),
+          uploadedAt: new Date().toISOString(),
+        },
+      ],
+    }
+    const car1 = await randomCAR(128)
+    const page1 = {
+      size: 1,
+      results: [
+        {
+          uploaderDID: agent.did(),
+          carCID: car1.cid.toString(),
+          dataCID: car1.roots[0].toString(),
+          uploadedAt: new Date().toISOString(),
+        },
+      ],
+    }
+    const proofs = [
+      await UploadCapabilities.list.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        list: provide(UploadCapabilities.list, ({ invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, UploadCapabilities.list.can)
+          assert.equal(invCap.with, space.did())
+          assert.equal(invCap.nb?.size, 1)
+          return invCap.nb?.cursor === cursor ? page1 : page0
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    const results0 = await Upload.list(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      { size: 1, connection }
+    )
+    const results1 = await Upload.list(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      { size: 1, cursor: results0.cursor, connection }
+    )
+
+    assert(service.upload.list.called)
+    assert.equal(service.upload.list.callCount, 2)
+
+    assert.equal(results0.cursor, page0.cursor)
+    assert.equal(results0.size, page0.size)
+    assert(results0.results)
+    assert.equal(results0.results.length, page0.results.length)
+    results0.results.forEach((r, i) => {
+      assert.equal(r.carCID.toString(), page0.results[i].carCID.toString())
+      assert.equal(r.dataCID.toString(), page0.results[i].dataCID.toString())
+      assert.equal(r.uploadedAt, page0.results[i].uploadedAt)
+    })
+
+    assert.equal(results1.cursor, undefined)
+    assert.equal(results1.size, page1.size)
+    assert(results1.results)
+    assert.equal(results1.results.length, page1.results.length)
+    results1.results.forEach((r, i) => {
+      assert.equal(r.carCID.toString(), page1.results[i].carCID.toString())
+      assert.equal(r.dataCID.toString(), page1.results[i].dataCID.toString())
+      assert.equal(r.uploadedAt, page1.results[i].uploadedAt)
     })
   })
 

@@ -75,7 +75,8 @@ export async function add(
  * has the capability to perform the action.
  *
  * The issuer needs the `upload/list` delegated capability.
- * @param {import('./types').RequestOptions} [options]
+ * @param {import('./types').ListRequestOptions} [options]
+ * @returns {Promise<import('./types').ListResponse<import('./types').UploadListResult>>}
  */
 export async function list(
   { issuer, with: resource, proofs, audience = servicePrincipal },
@@ -90,7 +91,10 @@ export async function list(
       audience,
       with: resource,
       proofs,
-      nb: {},
+      nb: {
+        cursor: options.cursor,
+        size: options.size,
+      },
     })
     .execute(conn)
 
