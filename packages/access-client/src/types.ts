@@ -114,7 +114,7 @@ export interface SpaceMeta {
   /**
    * Human readable name for the space
    */
-  name: string
+  name?: string
   /**
    * Was this space already registered with the access-api using a voucher ?
    */

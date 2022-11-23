@@ -221,7 +221,7 @@ export class Agent {
   /**
    * Creates a space signer and a delegation to the agent
    *
-   * @param {string} name
+   * @param {string} [name]
    */
   async createSpace(name) {
     const signer = await Signer.generate()
