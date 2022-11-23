@@ -49,7 +49,7 @@ export interface StoreAddResponse {
 export interface ListResponse<R> {
   cursor?: string
   size: number
-  results?: R[]
+  results: R[]
 }
 
 export interface StoreListResult {
