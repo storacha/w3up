@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/web3-storage/w3protocol/compare/access-v6.0.1...access-v6.1.0) (2022-11-23)
+
+
+### Features
+
+* optional space name ([#202](https://github.com/web3-storage/w3protocol/issues/202)) ([4b7cf64](https://github.com/web3-storage/w3protocol/commit/4b7cf64a526930fdabf531adcb4b0198a37098d5))
+
 ## [6.0.1](https://github.com/web3-storage/w3protocol/compare/access-v6.0.0...access-v6.0.1) (2022-11-22)
 
 
