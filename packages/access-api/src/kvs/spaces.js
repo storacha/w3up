@@ -8,6 +8,28 @@ import { delegationToString } from '@web3-storage/access/encoding'
  */
 
 /**
+ * @implements {Ucanto.Failure}
+ */
+export class D1Error extends Error {
+  /** @type {true} */
+  get error() {
+    return true
+  }
+
+  /**
+   *
+   * @param {import('../bindings').D1ErrorRaw} error
+   */
+  constructor(error) {
+    super(`${error.cause.message} (${error.cause.code})`, {
+      cause: error.cause,
+    })
+    this.name = 'D1Error'
+    this.code = error.cause.code
+  }
+}
+
+/**
  * Spaces
  */
 export class Spaces {
@@ -26,15 +48,29 @@ export class Spaces {
    * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').VoucherRedeem>} invocation
    */
   async create(capability, invocation) {
-    await this.db.insert({
-      tableName: 'spaces',
-      data: {
-        did: capability.nb.space,
-        product: capability.nb.product,
-        email: capability.nb.identity.replace('mailto:', ''),
-        agent: invocation.issuer.did(),
-      },
-    })
+    try {
+      const result = await this.db.insert({
+        tableName: 'spaces',
+        data: {
+          did: capability.nb.space,
+          product: capability.nb.product,
+          email: capability.nb.identity.replace('mailto:', ''),
+          agent: invocation.issuer.did(),
+          metadata: JSON.stringify({
+            space: invocation.facts[0],
+            agent: invocation.facts[1],
+          }),
+          invocation: await delegationToString(invocation),
+        },
+      })
+      return { data: result }
+    } catch (error) {
+      return {
+        error: new D1Error(
+          /** @type {import('../bindings').D1ErrorRaw} */ (error)
+        ),
+      }
+    }
   }
 
   /**
@@ -63,6 +99,8 @@ export class Spaces {
       product: results.product,
       updated_at: results.update_at,
       inserted_at: results.inserted_at,
+      // @ts-ignore
+      metadata: JSON.parse(results.metadata),
     })
   }
 

@@ -27,6 +27,12 @@ export async function send(ucan, mf) {
  */
 export async function createSpace(issuer, service, conn, email) {
   const space = await Signer.generate()
+  const spaceDelegation = await Voucher.top.delegate({
+    issuer: space,
+    audience: issuer,
+    with: space.did(),
+    expiration: Infinity,
+  })
   const claim = await Voucher.claim
     .invoke({
       issuer,
@@ -38,14 +44,7 @@ export async function createSpace(issuer, service, conn, email) {
         product: 'product:free',
         service: service.did(),
       },
-      proofs: [
-        await Voucher.top.delegate({
-          issuer: space,
-          audience: issuer,
-          with: space.did(),
-          expiration: Infinity,
-        }),
-      ],
+      proofs: [spaceDelegation],
     })
     .execute(conn)
   if (!claim || claim.error) {
@@ -53,7 +52,12 @@ export async function createSpace(issuer, service, conn, email) {
   }
 
   const delegation = await stringToDelegation(claim)
-
+  const serviceDelegation = await Voucher.top.delegate({
+    issuer: space,
+    audience: service,
+    with: space.did(),
+    expiration: Infinity,
+  })
   const redeem = await Voucher.redeem
     .invoke({
       issuer,
@@ -64,25 +68,31 @@ export async function createSpace(issuer, service, conn, email) {
         identity: delegation.capabilities[0].nb.identity,
         product: delegation.capabilities[0].nb.product,
       },
-      proofs: [
-        delegation,
-        await Voucher.top.delegate({
-          issuer: space,
-          audience: service,
-          with: space.did(),
-          expiration: Infinity,
-        }),
+      facts: [
+        {
+          name: `name-${email}`,
+        },
+        {
+          name: 'testing-agent',
+          type: 'device',
+          description: 'testing',
+          url: 'https://dag.house',
+          image: 'https://dag.house/logo.jpg',
+        },
       ],
+
+      proofs: [delegation, serviceDelegation],
     })
     .execute(conn)
 
   if (redeem?.error) {
     // eslint-disable-next-line no-console
-    console.log(redeem)
+    console.log('create space util error', redeem)
     throw new Error(redeem.message)
   }
 
   return {
     space,
+    delegation: spaceDelegation,
   }
 }

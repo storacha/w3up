@@ -79,6 +79,6 @@ export interface ModuleWorker {
   scheduled?: ModuleWorker.CronHandler<Env>
 }
 
-export interface D1Error extends Error {
+export interface D1ErrorRaw extends Error {
   cause: Error & { code: string }
 }
