@@ -274,7 +274,7 @@ function withObjectStore(db, txnMode, storeName, fn) {
       reject(new Error('transaction error', { cause: tx.error }))
     )
     try {
-      result = await fn(tx.objectStore(STORE_NAME))
+      result = await fn(tx.objectStore(storeName))
       tx.commit()
     } catch (error) {
       reject(error)
