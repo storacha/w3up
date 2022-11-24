@@ -319,9 +319,14 @@ export class Agent {
   async registerSpace(email, opts) {
     const space = this.currentSpace()
     const service = await this.service()
+    const spaceMeta = space ? this.data.spaces.get(space) : undefined
 
-    if (!space) {
+    if (!space || !spaceMeta) {
       throw new Error('No space selected')
+    }
+
+    if (spaceMeta && spaceMeta.isRegistered) {
+      throw new Error('Space already registered with web3.storage.')
     }
 
     const inv = await this.invokeAndExecute(Voucher.claim, {
@@ -337,9 +342,11 @@ export class Agent {
     }
 
     const voucherRedeem = await this.#waitForVoucherRedeem(opts)
+    await this.addProof(voucherRedeem)
     const delegationToService = await this.delegate({
       abilities: ['*'],
       audience: service,
+      expiration: Infinity,
       audienceMeta: {
         name: 'w3access',
         type: 'service',
@@ -360,7 +367,12 @@ export class Agent {
       throw new Error('Space registration failed', { cause: accInv })
     }
 
-    await this.addProof(voucherRedeem)
+    spaceMeta.isRegistered = true
+
+    this.data.spaces.set(space, spaceMeta)
+    this.data.delegations.delete(voucherRedeem.cid.toString())
+
+    this.store.save(this.data)
   }
 
   /**
