@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/web3-storage/w3protocol/compare/access-v7.0.0...access-v7.0.1) (2022-11-24)
+
+
+### Bug Fixes
+
+* add proof of voucher redeem ([#213](https://github.com/web3-storage/w3protocol/issues/213)) ([f96f813](https://github.com/web3-storage/w3protocol/commit/f96f813e3e0656ef293bfb2191c7e97cb07e01bb))
+
 ## [7.0.0](https://github.com/web3-storage/w3protocol/compare/access-v6.1.0...access-v7.0.0) (2022-11-24)
 
 
