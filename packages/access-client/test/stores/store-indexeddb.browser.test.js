@@ -3,7 +3,7 @@ import { StoreIndexedDB } from '../../src/stores/store-indexeddb.js'
 
 describe('IndexedDB store', () => {
   it('should create and load data', async () => {
-    const store = await StoreIndexedDB.create('test-access-db-' + Date.now())
+    const store = await StoreIndexedDB.open('test-access-db-' + Date.now())
     const data = await store.load()
     assert(data)
 
@@ -23,7 +23,7 @@ describe('IndexedDB store', () => {
   })
 
   it('should allow custom store name', async () => {
-    const store = await StoreIndexedDB.create('test-access-db-' + Date.now(), {
+    const store = await StoreIndexedDB.open('test-access-db-' + Date.now(), {
       dbStoreName: `store-${Date.now()}`,
     })
     const data = await store.load()
@@ -44,7 +44,7 @@ describe('IndexedDB store', () => {
   })
 
   it('should close and disallow usage', async () => {
-    const store = await StoreIndexedDB.create('test-access-db-' + Date.now())
+    const store = await StoreIndexedDB.open('test-access-db-' + Date.now())
     const data = await store.load()
 
     await store.close()

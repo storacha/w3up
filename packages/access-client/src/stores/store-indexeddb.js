@@ -99,7 +99,7 @@ export class StoreIndexedDB {
   }
 
   /**
-   * Creates a new, opened and initialized store.
+   * Opens (or creates) a store and initializes it if not already initialized.
    *
    * @param {string} dbName
    * @param {object} [options]
@@ -107,10 +107,13 @@ export class StoreIndexedDB {
    * @param {string} [options.dbStoreName]
    * @returns {Promise<Store>}
    */
-  static async create(dbName, options) {
+  static async open(dbName, options) {
     const store = new StoreIndexedDB(dbName, options)
     await store.open()
-    await store.init({})
+    const exists = await store.exists()
+    if (!exists) {
+      await store.init({})
+    }
     return store
   }
 
