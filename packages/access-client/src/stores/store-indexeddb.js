@@ -110,7 +110,10 @@ export class StoreIndexedDB {
   static async create(dbName, options) {
     const store = new StoreIndexedDB(dbName, options)
     await store.open()
-    await store.init({})
+    const exists = await store.exists()
+    if (!exists) {
+      await store.init({})
+    }
     return store
   }
 
