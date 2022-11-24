@@ -32,6 +32,9 @@
     "./types": "./src/types.js",
     "./encoding": "./src/encoding.js"
   },
+  "browser": {
+    "./src/stores/store-conf.js": false
+  },
   "typesVersions": {
     "*": {
       "types": [
