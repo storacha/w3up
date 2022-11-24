@@ -1,5 +1,22 @@
 # Changelog
 
+## [7.0.0](https://github.com/web3-storage/w3protocol/compare/access-v6.1.0...access-v7.0.0) (2022-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename static indexeddb store method create to open ([#211](https://github.com/web3-storage/w3protocol/issues/211))
+
+### Features
+
+* rename static indexeddb store method create to open ([#211](https://github.com/web3-storage/w3protocol/issues/211)) ([8744a1e](https://github.com/web3-storage/w3protocol/commit/8744a1e12bd720cc373af6140ce5a18c6b094e2e))
+
+
+### Bug Fixes
+
+* allow custom store name ([81f27eb](https://github.com/web3-storage/w3protocol/commit/81f27ebdbbeedb7eaa258284cee2bd11d245d823))
+* export map for agent ([#212](https://github.com/web3-storage/w3protocol/issues/212)) ([a6367ee](https://github.com/web3-storage/w3protocol/commit/a6367eeaa1f9a368001078af498df3a536f6da62))
+
 ## [6.1.0](https://github.com/web3-storage/w3protocol/compare/access-v6.0.1...access-v6.1.0) (2022-11-23)
 
 
