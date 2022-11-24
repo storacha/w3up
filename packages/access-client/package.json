@@ -27,6 +27,7 @@
   },
   "exports": {
     ".": "./src/index.js",
+    "./agent": "./src/agent.js",
     "./capabilities/*": "./src/capabilities/*.js",
     "./stores/*": "./src/stores/*.js",
     "./types": "./src/types.js",
@@ -34,6 +35,9 @@
   },
   "typesVersions": {
     "*": {
+      "agent": [
+        "dist/src/agent"
+      ],
       "types": [
         "dist/src/types"
       ],
