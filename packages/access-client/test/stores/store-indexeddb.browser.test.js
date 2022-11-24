@@ -22,6 +22,14 @@ describe('IndexedDB store', () => {
     assert.equal(data.meta.type, 'device')
   })
 
+  it('should allow custom store name', async () => {
+    const store = await StoreIndexedDB.create('test-access-db-' + Date.now(), {
+      dbStoreName: `store-${Date.now()}`,
+    })
+    const data = await store.load()
+    assert(data)
+  })
+
   it('should check existence', async () => {
     const store = new StoreIndexedDB('test-access-db-' + Date.now())
     await store.open()
