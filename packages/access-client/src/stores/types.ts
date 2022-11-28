@@ -6,7 +6,7 @@ import {
   SpaceMeta,
 } from '../types.js'
 import { RSASigner } from '@ucanto/principal/rsa'
-import { SignerArchive, DID, Block } from '@ucanto/interface'
+import { SignerArchive, DID } from '@ucanto/interface'
 
 /**
  * Store interface that all stores need to implement
@@ -57,7 +57,7 @@ export interface StoreDataIDB {
     CIDString,
     {
       meta?: DelegationMeta
-      delegation: Block[]
+      delegation: Array<{ cid: CIDString; bytes: Uint8Array }>
     }
   >
 }

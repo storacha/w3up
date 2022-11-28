@@ -1,6 +1,7 @@
 import { importDAG } from '@ucanto/core/delegation'
 import * as Signer from '@ucanto/principal/rsa'
 import defer from 'p-defer'
+import { CID } from 'multiformats/cid'
 
 /**
  * @typedef {import('../types').AgentData<Signer.RSASigner>} StoreData
@@ -149,25 +150,26 @@ export class StoreIndexedDB {
         /** @type {import('p-defer').DeferredPromise<Store>} */
         const { resolve, reject, promise } = defer()
 
-        const dels = []
-
-        for (const [key, value] of data.delegations) {
-          dels.push([
-            key,
-            {
-              meta: value.meta,
-              delegation: [...value.delegation.export()],
-            },
-          ])
-        }
-        const putReq = store.put({
+        /** @type {import('./types').StoreDataIDB} */
+        const raw = {
           id: DATA_ID,
           meta: data.meta,
+          // @ts-ignore
           principal: data.principal.toArchive(),
           currentSpace: data.currentSpace,
           spaces: data.spaces,
-          delegations: dels,
-        })
+          delegations: new Map(),
+        }
+        for (const [key, value] of data.delegations) {
+          raw.delegations.set(key, {
+            meta: value.meta,
+            delegation: [...value.delegation.export()].map((b) => ({
+              cid: b.cid.toString(),
+              bytes: b.bytes,
+            })),
+          })
+        }
+        const putReq = store.put(raw)
         putReq.addEventListener('success', () => resolve(this))
         putReq.addEventListener('error', () =>
           reject(new Error('failed to query DB', { cause: putReq.error }))
@@ -205,7 +207,12 @@ export class StoreIndexedDB {
 
             for (const [key, value] of raw.delegations) {
               dels.set(key, {
-                delegation: importDAG(value.delegation),
+                delegation: importDAG(
+                  value.delegation.map((d) => ({
+                    cid: CID.parse(d.cid),
+                    bytes: d.bytes,
+                  }))
+                ),
                 meta: value.meta,
               })
             }
