@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.2](https://github.com/web3-storage/w3protocol/compare/access-v7.0.1...access-v7.0.2) (2022-11-28)
+
+
+### Bug Fixes
+
+* round trip delegations in IndexedDB store ([#216](https://github.com/web3-storage/w3protocol/issues/216)) ([e111ea3](https://github.com/web3-storage/w3protocol/commit/e111ea310ae8fbe88c33c87a82c3269a46dd2955))
+
 ## [7.0.1](https://github.com/web3-storage/w3protocol/compare/access-v7.0.0...access-v7.0.1) (2022-11-24)
 
 
