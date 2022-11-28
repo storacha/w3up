@@ -1,5 +1,7 @@
 import assert from 'assert'
+import { top } from '../../src/capabilities/top.js'
 import { StoreIndexedDB } from '../../src/stores/store-indexeddb.js'
+import { Signer } from '@ucanto/principal/ed25519'
 
 describe('IndexedDB store', () => {
   it('should create and load data', async () => {
@@ -54,5 +56,32 @@ describe('IndexedDB store', () => {
     await assert.rejects(store.save(data), { message: 'Store is not open' })
     await assert.rejects(store.exists(), { message: 'Store is not open' })
     await assert.rejects(store.close(), { message: 'Store is not open' })
+  })
+
+  it('should round trip delegations', async () => {
+    const store = await StoreIndexedDB.open('test-access-db-' + Date.now())
+    const data0 = await store.load()
+
+    const signer = await Signer.generate()
+    const del0 = await top.delegate({
+      issuer: signer,
+      audience: data0.principal,
+      with: signer.did(),
+      expiration: Infinity,
+    })
+
+    data0.delegations.set(del0.cid.toString(), { delegation: del0 })
+    await store.save(data0)
+
+    const data1 = await store.load()
+
+    const { delegation: del1 } =
+      data1.delegations.get(del0.cid.toString()) ?? {}
+    assert(del1)
+    assert.equal(del1.cid.toString(), del0.cid.toString())
+    assert.equal(del1.issuer.did(), del0.issuer.did())
+    assert.equal(del1.audience.did(), del0.audience.did())
+    assert.equal(del1.capabilities[0].can, del0.capabilities[0].can)
+    assert.equal(del1.capabilities[0].with, del0.capabilities[0].with)
   })
 })
