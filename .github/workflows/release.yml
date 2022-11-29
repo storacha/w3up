@@ -37,7 +37,10 @@ jobs:
     secrets: inherit
   npm:
     needs: release
-    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') || contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client')
+    if: |
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/capabilities') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -56,5 +59,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   docs:
     needs: release
-    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') || contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client')
+    if: |
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/capabilities') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client')
     uses: './.github/workflows/reusable-deploy-docs.yml'
