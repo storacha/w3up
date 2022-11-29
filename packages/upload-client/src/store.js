@@ -1,5 +1,5 @@
 import { CAR } from '@ucanto/transport'
-import * as StoreCapabilities from '@web3-storage/access/capabilities/store'
+import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'

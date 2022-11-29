@@ -1,4 +1,4 @@
-import * as UploadCapabilities from '@web3-storage/access/capabilities/upload'
+import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import retry from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'

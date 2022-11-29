@@ -16,7 +16,7 @@ import {
   UploadAdd,
   UploadList,
   UploadRemove,
-} from '@web3-storage/access/capabilities/types'
+} from '@web3-storage/capabilities/types'
 
 export type {
   StoreAdd,
