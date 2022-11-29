@@ -1,6 +1,6 @@
 import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
-import * as Space from '@web3-storage/access/capabilities/space'
+import * as Space from '@web3-storage/capabilities/space'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as DID from '@ipld/dag-ucan/did'
@@ -8,7 +8,7 @@ import {
   delegationToString,
   stringToDelegation,
 } from '@web3-storage/access/encoding'
-import { top } from '@web3-storage/access/capabilities/top'
+import { top } from '@web3-storage/capabilities/top'
 
 /**
  * @param {import('../bindings').RouteContext} ctx

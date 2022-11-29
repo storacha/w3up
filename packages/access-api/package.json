@@ -25,6 +25,7 @@
     "@ucanto/transport": "^3.0.2",
     "@ucanto/validator": "^3.0.4",
     "@web3-storage/access": "workspace:^",
+    "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
     "multiformats": "^10.0.2",
     "nanoid": "^4.0.0",

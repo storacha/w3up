@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/prefer-number-properties */
-import * as Top from '@web3-storage/access/capabilities/top'
-import * as Voucher from '@web3-storage/access/capabilities/voucher'
+import * as Top from '@web3-storage/capabilities/top'
+import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { context, test } from './helpers/context.js'
 import { createSpace } from './helpers/utils.js'

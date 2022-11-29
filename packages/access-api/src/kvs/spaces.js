@@ -22,8 +22,8 @@ export class Spaces {
   }
 
   /**
-   * @param {import('@web3-storage/access/capabilities/types').VoucherRedeem} capability
-   * @param {Ucanto.Invocation<import('@web3-storage/access/capabilities/types').VoucherRedeem>} invocation
+   * @param {import('@web3-storage/capabilities/types').VoucherRedeem} capability
+   * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').VoucherRedeem>} invocation
    */
   async create(capability, invocation) {
     await this.db.insert({
@@ -110,7 +110,7 @@ export class Spaces {
       return
     }
 
-    return /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Top]>[]} */ (
+    return /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').Top]>[]} */ (
       r
     )
   }

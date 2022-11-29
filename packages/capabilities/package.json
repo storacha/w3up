@@ -24,6 +24,7 @@
   "exports": {
     ".": "./src/index.js",
     "./types": "./dist/src/capabilities/types.d.ts",
+    "./space": "./src/capabilities/space.js",
     "./*": "./src/capabilities/*.js"
   },
   "typesVersions": {

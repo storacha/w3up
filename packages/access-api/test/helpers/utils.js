@@ -2,8 +2,8 @@
 import * as UCAN from '@ipld/dag-ucan'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
-import * as Top from '@web3-storage/access/capabilities/top'
-import * as Voucher from '@web3-storage/access/capabilities/voucher'
+import * as Top from '@web3-storage/capabilities/top'
+import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { Signer } from '@ucanto/principal/ed25519'
 

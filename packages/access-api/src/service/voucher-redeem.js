@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as Voucher from '@web3-storage/access/capabilities/voucher'
+import * as Voucher from '@web3-storage/capabilities/voucher'
 import { Delegation } from '@ucanto/core'
 import { Failure } from '@ucanto/server'
 /**
