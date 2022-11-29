@@ -1,3 +1,6 @@
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars
+import * as Ucanto from '@ucanto/interface'
 import * as Server from '@ucanto/server'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { Delegation } from '@ucanto/core'
@@ -14,26 +17,39 @@ export function voucherRedeemProvider(ctx) {
         } does not match service did ${ctx.signer.did()}`
       )
     }
-    // @ts-ignore - TODO fix this
-    const { error } = await ctx.kvs.spaces.create(capability, invocation)
+
+    /** @type {Ucanto.Delegation<Ucanto.Capabilities>[]} */
+    const delegations = []
+    // We should only save delegation for email identities
+    if (capability.nb.identity.startsWith('mailto:')) {
+      for (const p of invocation.proofs) {
+        if (
+          Delegation.isDelegation(p) &&
+          p.audience.did() === ctx.signer.did() &&
+          p.capabilities[0].with === capability.nb.space &&
+          p.capabilities[0].can === '*'
+        ) {
+          delegations.push(p)
+        }
+      }
+    }
+
+    if (delegations.length > 1) {
+      return new Failure('Multiple space delegations not suppported.')
+    }
+
+    const { error } = await ctx.kvs.spaces.create(
+      capability,
+      // @ts-ignore - TODO fix this
+      invocation,
+      delegations[0]
+    )
 
     if (error) {
       if (error.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
         return new Failure(`Space ${capability.nb.space} already registered.`)
       } else {
         throw error
-      }
-    }
-
-    // We should only save delegation for email identities
-    if (capability.nb.identity.startsWith('mailto:')) {
-      for (const p of invocation.proofs) {
-        if (
-          Delegation.isDelegation(p) &&
-          p.audience.did() === ctx.signer.did()
-        ) {
-          await ctx.kvs.spaces.saveDelegation(capability.nb.identity, p)
-        }
       }
     }
 

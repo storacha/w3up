@@ -148,23 +148,7 @@ prog
         encoding: 'utf8',
       })
 
-      const { name, isRegistered } = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Input space name:',
-        },
-        {
-          type: 'confirm',
-          name: 'isRegistered',
-          message: 'Is this space already registered:',
-        },
-      ])
-
-      await agent.importSpaceFromDelegation(await stringToDelegation(del), {
-        name,
-        isRegistered,
-      })
+      await agent.importSpaceFromDelegation(await stringToDelegation(del))
     } else {
       console.error(`Run "${NAME} setup" first`)
     }
@@ -192,7 +176,11 @@ prog
       ])
 
       const dels = await agent.recover(email)
-      console.log(dels)
+
+      for (const del of dels) {
+        const { did, meta } = await agent.importSpaceFromDelegation(del)
+        console.log(`Imported space ${meta.name} with DID: ${did}`)
+      }
     } else {
       console.error(`Run "${NAME} setup" first`)
     }

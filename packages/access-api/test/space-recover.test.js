@@ -176,6 +176,18 @@ describe('space-recover', function () {
     assert.deepEqual(spaceDelegation.audience.did(), issuer.did())
     assert.deepEqual(spaceDelegation.capabilities[0].can, '*')
     assert.deepEqual(spaceDelegation.capabilities[0].with, space.did())
+    assert.deepEqual(spaceDelegation.facts[0], {
+      agent: {
+        description: 'testing',
+        image: 'https://dag.house/logo.jpg',
+        name: 'testing-agent',
+        type: 'device',
+        url: 'https://dag.house',
+      },
+      space: {
+        name: 'name-' + email,
+      },
+    })
 
     const spaceInfo = await Space.info
       .invoke({

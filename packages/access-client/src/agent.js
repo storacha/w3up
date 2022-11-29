@@ -293,15 +293,17 @@ export class Agent {
    * Import a space from a '*' delegation
    *
    * @param {Ucanto.Delegation} delegation
-   * @param {import('./types').SpaceMeta} meta
    */
-  async importSpaceFromDelegation(delegation, meta) {
+  async importSpaceFromDelegation(delegation) {
     if (delegation.capabilities[0].can !== '*') {
       throw new Error(
         'Space can only be import with full capabilities delegation.'
       )
     }
 
+    const meta = /** @type {import('./types').SpaceMeta} */ (
+      delegation.facts[0].space
+    )
     const del = /** @type {Ucanto.Delegation<[import('./types').Top]>} */ (
       delegation
     )
@@ -475,6 +477,12 @@ export class Agent {
         product: voucherRedeem.capabilities[0].nb.product,
       },
       proofs: [delegationToService],
+      facts: [
+        {
+          space: spaceMeta,
+          agent: this.meta,
+        },
+      ],
     })
 
     if (accInv && accInv.error) {
@@ -590,6 +598,7 @@ export class Agent {
       issuer: this.issuer,
       capabilities: caps,
       proofs: await this.proofs(caps),
+      facts: [{ space: space.meta }],
       ...options,
     })
 
@@ -709,6 +718,7 @@ export class Agent {
 
     const extraProofs = options.proofs || []
     const inv = invoke({
+      ...options,
       audience: options.audience || (await this.service()),
       // @ts-ignore
       capability: cap.create({

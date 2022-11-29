@@ -13,9 +13,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({
   path: path.join(__dirname, '..', '..', '..', '..', '.env.tpl'),
 })
-/**
- * @typedef {import("ava").TestFn<Awaited<ReturnType<typeof context>>>} TestFn
- */
 
 export const bindings = {
   ENV: 'test',

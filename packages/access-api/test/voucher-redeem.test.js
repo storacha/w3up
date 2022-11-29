@@ -3,7 +3,6 @@ import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Top from '@web3-storage/capabilities/top'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { context } from './helpers/context.js'
-import { createSpace } from './helpers/utils.js'
 import { Spaces } from '../src/kvs/spaces.js'
 import { Signer } from '@ucanto/principal/ed25519'
 // @ts-ignore
@@ -23,7 +22,7 @@ describe('ucan', function () {
   })
 
   test('should return voucher/redeem', async function () {
-    const { issuer, service, conn, mf, db } = ctx
+    const { issuer, service, conn, db } = ctx
 
     const space = await Signer.generate()
     const claim = await Voucher.claim
@@ -75,6 +74,7 @@ describe('ucan', function () {
             expiration: Infinity,
           }),
         ],
+        facts: [{ space: { name: 'test' } }],
       })
 
       .execute(conn)
@@ -83,7 +83,7 @@ describe('ucan', function () {
       return t.fail()
     }
 
-    const spaces = new Spaces(await mf.getKVNamespace('SPACES'), db)
+    const spaces = new Spaces(db)
 
     // check db for space
     t.ok(
@@ -96,48 +96,23 @@ describe('ucan', function () {
     )
 
     // check space delegations
-    const delegations = await spaces.getDelegations('mailto:email@dag.house')
+    const results = await spaces.getByEmail('email@dag.house')
 
-    if (!delegations) {
+    if (!results) {
       return t.fail('no delegation for email')
     }
 
-    const del = await stringToDelegation(delegations[0])
+    if (!results[0].delegation) {
+      return t.fail('no delegation for email')
+    }
+
+    const del = results[0].delegation
 
     t.deepEqual(del.audience.did(), service.did())
     t.deepEqual(del.capabilities[0].can, '*')
     t.deepEqual(del.capabilities[0].with, space.did())
-  })
-
-  test('should save first space delegation', async function () {
-    const { issuer, service, conn, mf } = ctx
-
-    await createSpace(issuer, service, conn, 'first@dag.house')
-
-    const spaces = await mf.getKVNamespace('SPACES')
-
-    const delEncoded = await spaces.get('mailto:first@dag.house', {
-      type: 'json',
-    })
-
-    // @ts-ignore
-    t.ok(delEncoded.length === 1)
-  })
-
-  test('should save multiple space delegation', async function () {
-    const { issuer, service, conn, mf } = ctx
-
-    await createSpace(issuer, service, conn, 'multiple@dag.house')
-    await createSpace(issuer, service, conn, 'multiple@dag.house')
-
-    const spaces = await mf.getKVNamespace('SPACES')
-
-    const delEncoded = await spaces.get('mailto:multiple@dag.house', {
-      type: 'json',
-    })
-
-    // @ts-ignore
-    t.ok(delEncoded.length === 2)
+    // eslint-disable-next-line unicorn/no-null
+    t.deepEqual(del.facts[0], null)
   })
 
   test('should fail with wrong resource', async function () {
@@ -219,6 +194,7 @@ describe('ucan', function () {
           expiration: Infinity,
         }),
       ],
+      facts: [{ space: { name: 'test' } }],
     })
 
     const redeem = await redeemInv.execute(conn)

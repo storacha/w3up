@@ -70,14 +70,16 @@ export async function createSpace(issuer, service, conn, email) {
       },
       facts: [
         {
-          name: `name-${email}`,
-        },
-        {
-          name: 'testing-agent',
-          type: 'device',
-          description: 'testing',
-          url: 'https://dag.house',
-          image: 'https://dag.house/logo.jpg',
+          space: {
+            name: `name-${email}`,
+          },
+          agent: {
+            name: 'testing-agent',
+            type: 'device',
+            description: 'testing',
+            url: 'https://dag.house',
+            image: 'https://dag.house/logo.jpg',
+          },
         },
       ],
 
