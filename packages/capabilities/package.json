@@ -15,7 +15,7 @@
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
-    "test": "pnpm -r --filter @web3-storage/capabilities run build && npm run test:node",
+    "test": "pnpm -r --filter @web3-storage/capabilities run build && npm run test:node && npm run test:browser",
     "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "testw": "watch 'pnpm test' src test --interval 1",
