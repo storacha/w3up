@@ -30,7 +30,7 @@
     "./agent": "./src/agent.js",
     "./capabilities/*": "./src/capabilities/*.js",
     "./stores/*": "./src/stores/*.js",
-    "./types": "./src/types.ts",
+    "./types": "./src/types.js",
     "./encoding": "./src/encoding.js"
   },
   "typesVersions": {
