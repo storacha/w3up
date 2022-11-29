@@ -69,6 +69,7 @@
     "@ucanto/transport": "^3.0.2",
     "@ucanto/validator": "^3.0.4",
     "@web-std/fetch": "^4.1.0",
+    "@web3-storage/capabilities": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "^10.2.0",
     "inquirer": "^9.1.4",

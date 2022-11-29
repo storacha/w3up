@@ -23,13 +23,25 @@
   },
   "exports": {
     ".": "./src/index.js",
-    "./*": "./src/capabilities/*.js",
-    "./types": "./src/types.js"
+    "./types": "./dist/src/capabilities/types.d.ts",
+    "./*": "./src/capabilities/*.js"
   },
   "typesVersions": {
     "*": {
-      "./*": [
-        "dist/src/capabilities/*"
+      "space": [
+        "dist/src/capabilities/space"
+      ],
+      "types": [
+        "dist/src/capabilities/types"
+      ],
+      "top": [
+        "dist/src/capabilities/top"
+      ],
+      "utils": [
+        "dist/src/capabilities/utils"
+      ],
+      "voucher": [
+        "dist/src/capabilities/voucher"
       ]
     }
   },

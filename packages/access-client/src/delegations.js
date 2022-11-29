@@ -1,7 +1,7 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import { canDelegateAbility } from './capabilities/utils.js'
+import { canDelegateAbility } from '@web3-storage/capabilities/utils'
 
 /**
  *
