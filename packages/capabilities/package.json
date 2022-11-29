@@ -24,6 +24,7 @@
   "exports": {
     ".": "./src/index.js",
     "./types": "./dist/src/capabilities/types.d.ts",
+    "./test": "./test",
     "./*": "./src/capabilities/*.js"
   },
   "typesVersions": {
@@ -33,6 +34,9 @@
       ],
       "store": [
         "dist/src/capabilities/store"
+      ],
+      "test/*": [
+        "dist/test/*"
       ],
       "types": [
         "dist/src/capabilities/types"
