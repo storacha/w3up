@@ -338,7 +338,10 @@ export class Agent {
       throw new Error('Recover validation failed', { cause: inv })
     }
 
-    const spaceRecover = await this.#waitForSpaceRecover(opts)
+    const spaceRecover =
+      /** @type {Ucanto.Delegation<[import('./types').SpaceRecover]>} */ (
+        await this.#waitForDelegation(opts)
+      )
     await this.addProof(spaceRecover)
 
     const recoverInv = await this.invokeAndExecute(Space.recover, {
@@ -457,7 +460,10 @@ export class Agent {
       throw new Error('Voucher claim failed', { cause: inv })
     }
 
-    const voucherRedeem = await this.#waitForVoucherRedeem(opts)
+    const voucherRedeem =
+      /** @type {Ucanto.Delegation<[import('./types').VoucherRedeem]>} */ (
+        await this.#waitForDelegation(opts)
+      )
     await this.addProof(voucherRedeem)
     const delegationToService = await this.delegate({
       abilities: ['*'],
@@ -502,7 +508,7 @@ export class Agent {
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    */
-  async #waitForVoucherRedeem(opts) {
+  async #waitForDelegation(opts) {
     const ws = new Websocket(this.url, 'validate-ws')
     await ws.open()
 
@@ -519,60 +525,17 @@ export class Agent {
       }
 
       if (msg.type === 'delegation') {
-        const delegation = await stringToDelegation(
-          /** @type {import('./types').EncodedDelegation<[import('./types').VoucherRedeem]>} */ (
-            msg.delegation
-          )
-        )
+        const delegation = await stringToDelegation(msg.delegation)
         ws.close()
         return delegation
       }
     } catch (error) {
       if (error instanceof AbortError) {
         await ws.close()
-        throw new TypeError('Failed to get voucher/redeem', { cause: error })
+        throw new TypeError('Failed to get delegation', { cause: error })
       }
     }
-    throw new TypeError('Failed to get voucher/redeem')
-  }
-
-  /**
-   *
-   * @param {object} [opts]
-   * @param {AbortSignal} [opts.signal]
-   */
-  async #waitForSpaceRecover(opts) {
-    const ws = new Websocket(this.url, 'validate-ws')
-    await ws.open()
-
-    ws.send({
-      did: this.did(),
-    })
-
-    try {
-      const msg = await ws.awaitMsg(opts)
-
-      if (msg.type === 'timeout') {
-        await ws.close()
-        throw new Error('Email validation timed out.')
-      }
-
-      if (msg.type === 'delegation') {
-        const delegation = await stringToDelegation(
-          /** @type {import('./types').EncodedDelegation<[import('./types').SpaceRecover]>} */ (
-            msg.delegation
-          )
-        )
-        ws.close()
-        return delegation
-      }
-    } catch (error) {
-      if (error instanceof AbortError) {
-        await ws.close()
-        throw new TypeError('Failed to get space/recover', { cause: error })
-      }
-    }
-    throw new TypeError('Failed to get space/recover')
+    throw new TypeError('Failed to get delegation')
   }
 
   /**
