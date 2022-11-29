@@ -12,7 +12,7 @@ import * as Ucanto from '@ucanto/interface'
  * @typedef {{
  *    meta: import('../types.js').AgentMeta
  *    principal: string
- *    currentSpace: Ucanto.DID | null
+ *    currentSpace: Ucanto.DID | undefined
  *    spaces: Array<[Ucanto.DID | undefined, import('../types').SpaceMeta]>
  *    delegations: Array<[import('../types').CIDString, {
  *      meta: import('../types').DelegationMeta,
@@ -107,7 +107,7 @@ export class StoreConf {
     }
     /** @type {Data} */
     const encodedData = {
-      currentSpace: data.currentSpace || null,
+      currentSpace: data.currentSpace || undefined,
       spaces: [...data.spaces.entries()],
       meta: data.meta,
       principal: Signer.format(data.principal),

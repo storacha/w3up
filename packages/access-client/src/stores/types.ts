@@ -52,7 +52,7 @@ export interface StoreDataIDB {
   meta: AgentMeta
   principal: SignerArchive<RSASigner>
   currentSpace?: DID
-  spaces: Map<DID, SpaceMeta>
+  spaces: Map<DID | undefined, SpaceMeta>
   delegations: Map<
     CIDString,
     {
