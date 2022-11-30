@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/capabilities",
   "version": "0.0.0",
-  "description": "Capabilities for interacting with web3.storage",
+  "description": "Capabilities provided by web3.storage",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/capabilities",
   "repository": {
     "type": "git",
