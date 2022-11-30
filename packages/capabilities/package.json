@@ -1,0 +1,102 @@
+{
+  "name": "@web3-storage/capabilities",
+  "version": "0.0.0",
+  "description": "Capabilities provided by web3.storage",
+  "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/capabilities",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3protocol.git",
+    "directory": "packages/capabilities"
+  },
+  "license": "(Apache-2.0 OR MIT)",
+  "type": "module",
+  "types": "dist/src/index.d.ts",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "build": "tsc --build",
+    "test": "pnpm -r --filter @web3-storage/capabilities run build && npm run test:node && npm run test:browser",
+    "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
+    "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
+    "testw": "watch 'pnpm test' src test --interval 1",
+    "rc": "npm version prerelease --preid rc"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./types": "./dist/src/capabilities/types.d.ts",
+    "./*": "./src/capabilities/*.js"
+  },
+  "typesVersions": {
+    "*": {
+      "space": [
+        "dist/src/capabilities/space"
+      ],
+      "store": [
+        "dist/src/capabilities/store"
+      ],
+      "types": [
+        "dist/src/capabilities/types"
+      ],
+      "top": [
+        "dist/src/capabilities/top"
+      ],
+      "upload": [
+        "dist/src/capabilities/upload"
+      ],
+      "utils": [
+        "dist/src/capabilities/utils"
+      ],
+      "voucher": [
+        "dist/src/capabilities/voucher"
+      ]
+    }
+  },
+  "files": [
+    "src",
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.d.ts.map"
+  ],
+  "dependencies": {
+    "@ipld/car": "^5.0.1",
+    "@ipld/dag-ucan": "^2.0.1",
+    "@ucanto/client": "^3.0.2",
+    "@ucanto/core": "^3.0.2",
+    "@ucanto/interface": "^3.0.1",
+    "@ucanto/principal": "^3.0.1",
+    "@ucanto/server": "^3.0.4",
+    "@ucanto/transport": "^3.0.2",
+    "@ucanto/validator": "^3.0.4"
+  },
+  "devDependencies": {
+    "@types/assert": "^1.5.6",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.9",
+    "@web-std/fetch": "^4.1.0",
+    "assert": "^2.0.0",
+    "hd-scripts": "^3.0.2",
+    "mocha": "^10.1.0",
+    "playwright-test": "^8.1.1",
+    "typescript": "4.8.4",
+    "watch": "^1.0.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/hd-scripts/eslint/preact.js"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/prefer-export-from": "off",
+      "unicorn/no-array-reduce": "off"
+    },
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist",
+      "coverage"
+    ]
+  }
+}

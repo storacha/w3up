@@ -35,7 +35,11 @@
   },
   "typedocOptions": {
     "entryPointStrategy": "packages",
-    "entryPoints": ["packages/access-client", "packages/upload-client"],
+    "entryPoints": [
+      "packages/access-client",
+      "packages/capabilities",
+      "packages/upload-client"
+    ],
     "excludeExternals": true,
     "darkHighlightTheme": "github-dark",
     "navigationLinks": {

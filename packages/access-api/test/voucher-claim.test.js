@@ -1,5 +1,5 @@
 import { Delegation } from '@ucanto/core'
-import * as Voucher from '@web3-storage/access/capabilities/voucher'
+import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { context, test } from './helpers/context.js'
 

@@ -27,14 +27,15 @@ import type {
   SpaceInfo,
   SpaceRecover,
   SpaceRecoverValidation,
+  VoucherClaim,
+  VoucherRedeem,
   Top,
-} from './capabilities/types'
-import { VoucherClaim, VoucherRedeem } from './capabilities/types.js'
+} from '@web3-storage/capabilities/types'
 import { IStore } from './stores/types.js'
 import type { SetRequired } from 'type-fest'
 
 // export other types
-export * from './capabilities/types.js'
+export * from '@web3-storage/capabilities/types'
 export * from './stores/types.js'
 
 /**

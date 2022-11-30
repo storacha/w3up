@@ -3,6 +3,7 @@
   "packages": {
     "packages/access-client": {},
     "packages/access-api": {},
+    "packages/capabilities": {},
     "packages/upload-client": {},
     "packages/wallet": {}
   }

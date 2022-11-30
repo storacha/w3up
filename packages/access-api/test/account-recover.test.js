@@ -1,4 +1,4 @@
-import * as Space from '@web3-storage/access/capabilities/space'
+import * as Space from '@web3-storage/capabilities/space'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import pWaitFor from 'p-wait-for'
 import { context, test } from './helpers/context.js'
@@ -53,7 +53,7 @@ test('should return space/recover', async (t) => {
 
   const url = new URL(inv)
   const encoded =
-    /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+    /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
       url.searchParams.get('ucan')
     )
 
@@ -70,7 +70,7 @@ test('should return space/recover', async (t) => {
   // @ts-ignore
   const validations = new Validations(await mf.getKVNamespace('VALIDATIONS'))
   const recoverEncoded =
-    /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+    /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
       await validations.get(issuer.did())
     )
 
@@ -94,7 +94,7 @@ test('should return space/recover', async (t) => {
       const data = JSON.parse(event.data)
 
       const encoded =
-        /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+        /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
           data.delegation
         )
 
@@ -141,7 +141,7 @@ test('should invoke space/recover and get space delegation', async (t) => {
 
   const url = new URL(inv)
   const encoded =
-    /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+    /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
       url.searchParams.get('ucan')
     )
 

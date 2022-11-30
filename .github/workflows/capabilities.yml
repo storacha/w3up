@@ -1,0 +1,44 @@
+name: '@web3-storage/capabilities'
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/capabilities/**'
+      - '.github/workflows/capabilities.yml'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    paths:
+      - 'packages/capabilities/**'
+      - '.github/workflows/capabilities.yml'
+      - 'pnpm-lock.yaml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pnpm-version:
+          - 7
+        node-version:
+          - 18
+        package:
+          - capabilities
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.3
+        with:
+          version: ${{ matrix.pnpm-version }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      - run: pnpm install
+      - name: Typecheck
+        uses: gozala/typescript-error-reporter-action@v1.0.8
+        with:
+          project: packages/${{matrix.package}}/tsconfig.json
+      - run: pnpm -r --filter @web3-storage/${{matrix.package}} run lint
+      - run: pnpm -r --filter @web3-storage/${{matrix.package}} run test

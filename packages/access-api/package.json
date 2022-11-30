@@ -23,6 +23,7 @@
     "@ucanto/server": "^3.0.4",
     "@ucanto/transport": "^3.0.2",
     "@web3-storage/access": "workspace:^",
+    "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
     "p-retry": "^5.1.2",
     "preact": "^10.11.3",

@@ -9,9 +9,8 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
-import * as Space from './capabilities/space.js'
-import * as Voucher from './capabilities/voucher.js'
-import { top as Top } from './capabilities/top.js'
+import * as Space from '@web3-storage/capabilities/space'
+import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
@@ -225,7 +224,7 @@ export class Agent {
    */
   async createSpace(name) {
     const signer = await Signer.generate()
-    const proof = await Top.delegate({
+    const proof = await Space.top.delegate({
       issuer: signer,
       audience: this.issuer,
       with: signer.did(),

@@ -2,7 +2,7 @@ import assert from 'assert'
 import { URI } from '@ucanto/validator'
 import { Agent } from '../src/agent.js'
 import { StoreMemory } from '../src/stores/store-memory.js'
-import * as Space from '../src/capabilities/space.js'
+import * as Space from '@web3-storage/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 
