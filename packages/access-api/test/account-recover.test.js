@@ -67,6 +67,7 @@ test('should return space/recover', async (t) => {
 
   t.assert(html.includes(encoded))
 
+  // @ts-ignore
   const validations = new Validations(await mf.getKVNamespace('VALIDATIONS'))
   const recoverEncoded =
     /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (

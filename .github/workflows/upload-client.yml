@@ -31,3 +31,4 @@ jobs:
       - run: pnpm -r --filter @web3-storage/upload-client run build
       - run: pnpm -r --filter @web3-storage/upload-client run lint
       - run: pnpm -r --filter @web3-storage/upload-client run test
+      - run: pnpm --filter @web3-storage/access-api -r exec depcheck
