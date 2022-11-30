@@ -28,7 +28,7 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm run build
+      - run: pnpm -r --filter @web3-storage/access run build
       - run: pnpm -r --filter @web3-storage/access run lint
       - run: pnpm -r --filter @web3-storage/access run test
       - run: pnpm --filter @web3-storage/access -r exec depcheck

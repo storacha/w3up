@@ -14,6 +14,8 @@ import { store } from './store.js'
 import { capability, URI } from '@ucanto/validator'
 import { canDelegateURI, equalWith, fail } from './utils.js'
 
+export { top } from './top.js'
+
 export const space = top.derive({
   to: capability({
     can: 'space/*',

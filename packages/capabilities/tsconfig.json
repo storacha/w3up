@@ -6,6 +6,5 @@
     "emitDeclarationOnly": true
   },
   "include": ["src", "scripts", "test", "package.json"],
-  "exclude": ["**/node_modules/**"],
-  "references": [{ "path": "../access-client" }, { "path": "../capabilities" }]
+  "exclude": ["**/node_modules/**"]
 }

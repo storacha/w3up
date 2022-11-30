@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { top } from '../../src/capabilities/top.js'
+import { top } from '@web3-storage/capabilities/top'
 import { StoreIndexedDB } from '../../src/stores/store-indexeddb.js'
 import { Signer } from '@ucanto/principal/ed25519'
 
