@@ -1,4 +1,3 @@
-// import { escapeSQLiteIdentifier } from '@databases/escape-identifier'
 import split from '@databases/split-sql-query'
 import sql from '@databases/sql'
 import path from 'path'
@@ -8,9 +7,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 /** @type {import('@databases/sql').FormatConfig} */
 const sqliteFormat = {
-  // escapeIdentifier: (str) => escapeSQLiteIdentifier(str),
-  // formatValue: (value) => ({ placeholder: '?', value }),
-
   escapeIdentifier: (_) => '',
   formatValue: (_, __) => ({ placeholder: '', value: '' }),
 }
