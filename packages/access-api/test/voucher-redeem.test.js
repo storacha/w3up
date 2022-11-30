@@ -72,6 +72,7 @@ test('should return voucher/redeem', async (t) => {
     return t.fail()
   }
 
+  // @ts-ignore
   const spaces = new Spaces(await mf.getKVNamespace('SPACES'), db)
 
   // check db for space
