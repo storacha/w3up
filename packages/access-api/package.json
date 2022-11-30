@@ -41,7 +41,7 @@
     "@types/node": "^18.11.9",
     "@types/qrcode": "^1.5.0",
     "ava": "^5.1.0",
-    "better-sqlite3": "8.0.0",
+    "better-sqlite3": "7.6.2",
     "buffer": "^6.0.3",
     "dotenv": "^16.0.3",
     "esbuild": "^0.15.16",
