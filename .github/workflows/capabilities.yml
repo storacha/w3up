@@ -18,16 +18,27 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pnpm-version:
+          - 7
+        node-version:
+          - 18
+        package:
+          - capabilities
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
         with:
-          version: 7
+          version: ${{ matrix.pnpm-version }}
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm -r --filter @web3-storage/capabilities run build
-      - run: pnpm -r --filter @web3-storage/capabilities run lint
-      - run: pnpm -r --filter @web3-storage/capabilities run test
+      - name: Typecheck
+        uses: gozala/typescript-error-reporter-action@v1.0.8
+        with:
+          project: packages/${{matrix.package}}/tsconfig.json
+      - run: pnpm -r --filter @web3-storage/${{matrix.package}} run lint
+      - run: pnpm -r --filter @web3-storage/${{matrix.package}} run test
