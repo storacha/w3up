@@ -42,7 +42,7 @@ importers:
       '@web3-storage/access': workspace:^
       '@web3-storage/worker-utils': 0.4.3-dev
       ava: ^5.1.0
-      better-sqlite3: 8.0.0
+      better-sqlite3: 7.6.2
       buffer: ^6.0.3
       dotenv: ^16.0.3
       esbuild: ^0.15.16
@@ -86,7 +86,7 @@ importers:
       '@types/node': 18.11.9
       '@types/qrcode': 1.5.0
       ava: 5.1.0
-      better-sqlite3: 8.0.0
+      better-sqlite3: 7.6.2
       buffer: 6.0.3
       dotenv: 16.0.3
       esbuild: 0.15.16
@@ -2085,8 +2085,8 @@ packages:
   /base64-js/1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  /better-sqlite3/8.0.0:
-    resolution: {integrity: sha512-DhIPmhV+F3NBb9oGCNqNON8Cg4nP3/7NOwx412SL6JJUclYjAKmqNtbL6xBfG2RcG0uZWUS/TEHRy4AFLeq5Zg==}
+  /better-sqlite3/7.6.2:
+    resolution: {integrity: sha512-S5zIU1Hink2AH4xPsN0W43T1/AJ5jrPh7Oy07ocuW/AKYYY02GWzz9NH0nbSMn/gw6fDZ5jZ1QsHt1BXAwJ6Lg==}
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
