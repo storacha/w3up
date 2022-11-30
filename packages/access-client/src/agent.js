@@ -31,9 +31,9 @@ const HOST = 'https://access.web3.storage'
  * @param {typeof fetch} _fetch
  * @param {URL} url
  * @param {Ucanto.Transport.Channel<import('./types').Service>} [channel]
- * @returns {Promise<Ucanto.ConnectionView<import('./types').Service>>}
+ * @returns {Ucanto.ConnectionView<import('./types').Service>}
  */
-export async function connection(principal, _fetch, url, channel) {
+export function connection(principal, _fetch, url, channel) {
   const _channel =
     channel ||
     HTTP.open({
