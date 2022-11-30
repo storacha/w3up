@@ -8,7 +8,6 @@ import {
   delegationToString,
   stringToDelegation,
 } from '@web3-storage/access/encoding'
-import { top } from '@web3-storage/capabilities/top'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -52,7 +51,7 @@ export function service(ctx) {
           const results = []
           for (const e of encoded) {
             const proof = await stringToDelegation(e)
-            const del = await top.delegate({
+            const del = await Space.top.delegate({
               audience: invocation.issuer,
               issuer: ctx.signer,
               with: proof.capabilities[0].with,

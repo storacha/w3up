@@ -11,7 +11,6 @@ import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
-import { top as Top } from '@web3-storage/capabilities/top'
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
@@ -225,7 +224,7 @@ export class Agent {
    */
   async createSpace(name) {
     const signer = await Signer.generate()
-    const proof = await Top.delegate({
+    const proof = await Space.top.delegate({
       issuer: signer,
       audience: this.issuer,
       with: signer.did(),

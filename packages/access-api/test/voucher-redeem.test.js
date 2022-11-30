@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/prefer-number-properties */
-import * as Top from '@web3-storage/capabilities/top'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import { context, test } from './helpers/context.js'
@@ -26,7 +25,7 @@ test('should return voucher/redeem', async (t) => {
         service: service.did(),
       },
       proofs: [
-        await Top.top.delegate({
+        await Voucher.top.delegate({
           issuer: space,
           audience: issuer,
           with: space.did(),
@@ -57,7 +56,7 @@ test('should return voucher/redeem', async (t) => {
       },
       proofs: [
         delegation,
-        await Top.top.delegate({
+        await Voucher.top.delegate({
           issuer: space,
           audience: service,
           with: space.did(),

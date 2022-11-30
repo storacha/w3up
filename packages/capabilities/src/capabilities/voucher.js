@@ -15,6 +15,8 @@ import * as Types from '@ucanto/interface'
 import { equalWith, fail, equal } from './utils.js'
 import { top } from './top.js'
 
+export { top }
+
 /**
  * Products are identified by the CID of the DAG that describes them.
  */
