@@ -32,7 +32,6 @@ import type {
   VoucherRedeem,
   Top,
 } from '@web3-storage/capabilities/types'
-import { IStore } from './stores/types.js'
 import type { SetRequired } from 'type-fest'
 
 // export other types
@@ -89,7 +88,10 @@ export interface AgentData {
 /**
  * Agent data that is safe to pass to structuredClone() and persisted by stores.
  */
-export type AgentDataExport = Pick<AgentData, 'meta'|'currentSpace'|'spaces'> & {
+export type AgentDataExport = Pick<
+  AgentData,
+  'meta' | 'currentSpace' | 'spaces'
+> & {
   principal: SignerArchive<Signer>
   delegations: Map<
     CIDString,
