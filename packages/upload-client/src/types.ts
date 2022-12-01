@@ -34,7 +34,7 @@ export interface Service {
     remove: ServiceMethod<StoreRemove, null, never>
   }
   upload: {
-    add: ServiceMethod<UploadAdd, null, never>
+    add: ServiceMethod<UploadAdd, UploadAddResponse, never>
     list: ServiceMethod<UploadList, ListResponse<UploadListResult>, never>
     remove: ServiceMethod<UploadRemove, null, never>
   }
@@ -46,6 +46,11 @@ export interface StoreAddResponse {
   url: string
 }
 
+export interface UploadAddResponse {
+  root: AnyLink
+  shards: CARLink[]
+}
+
 export interface ListResponse<R> {
   cursor?: string
   size: number
@@ -53,18 +58,12 @@ export interface ListResponse<R> {
 }
 
 export interface StoreListResult {
-  payloadCID: string
-  origin?: string
+  link: CARLink
   size: number
-  uploadedAt: string
+  origin?: CARLink
 }
 
-export interface UploadListResult {
-  uploaderDID: string
-  dataCID: string
-  carCID: string
-  uploadedAt: string
-}
+export interface UploadListResult extends UploadAddResponse {}
 
 export interface InvocationConfig {
   /**

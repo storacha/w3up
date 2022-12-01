@@ -25,6 +25,7 @@ import { REQUEST_RETRIES } from './constants.js'
  * @param {import('multiformats/link').UnknownLink} root Root data CID for the DAG that was stored.
  * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
  * @param {import('./types').RequestOptions} [options]
+ * @returns {Promise<import('./types').UploadAddResponse>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience = servicePrincipal },
@@ -57,6 +58,8 @@ export async function add(
       cause: result,
     })
   }
+
+  return result
 }
 
 /**
