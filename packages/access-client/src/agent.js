@@ -13,8 +13,9 @@ import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
-import { Signer } from '@ucanto/principal/ed25519'
+import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { invoke, delegate } from '@ucanto/core'
+import { AgentData } from './agent-data.js'
 import {
   isExpired,
   isTooEarly,
@@ -22,103 +23,114 @@ import {
   canDelegateCapability,
 } from './delegations.js'
 
-const HOST = 'https://access.web3.storage'
+const HOST = 'https://w3access-staging.protocol-labs.workers.dev'
+const PRINCIPAL = DID.parse('did:key:z6MkwTYX2JHHd8bmaEuDdS1LJjrpFspirjDcQ4DvAiDP49Gm')
+const notInitialized = () => new Error('not initialized')
 
 /**
- * @template {string} T
- * @param {Ucanto.Principal<T>} principal
- * @param {typeof fetch} _fetch
- * @param {URL} url
- * @param {Ucanto.Transport.Channel<import('./types').Service>} [channel]
+ * @param {object} [options]
+ * @param {Ucanto.Principal} [options.principal]
+ * @param {URL} [options.url]
+ * @param {Ucanto.Transport.Channel<import('./types').Service>} [options.channel]
  * @returns {Ucanto.ConnectionView<import('./types').Service>}
  */
-export function connection(principal, _fetch, url, channel) {
-  const _channel =
-    channel ||
-    HTTP.open({
-      url,
-      method: 'POST',
-      fetch: _fetch,
-    })
-  const connection = Client.connect({
-    id: principal,
+export function connection(options = {}) {
+  return Client.connect({
+    id: options.principal ?? PRINCIPAL,
     encoder: CAR,
     decoder: CBOR,
-    channel: _channel,
+    channel: options.channel ?? HTTP.open({
+      url: options.url ?? new URL(HOST),
+      method: 'POST'
+    }),
   })
-
-  return connection
 }
 
-/**
- * @template {Ucanto.Signer} T
- * Agent
- */
 export class Agent {
   /** @type {Ucanto.Principal<"key">|undefined} */
   #service
 
-  /** @type {typeof fetch} */
-  #fetch
+  /** @type {import('./types').AgentOptions} */
+  #options
 
   /**
-   * @param {import('./types').AgentOptions<T>} opts
+   * @param {import('./types').AgentData} [data] Agent data
+   * @param {import('./types').AgentOptions} [options]
    */
-  constructor(opts) {
-    this.url = opts.url || new URL(HOST)
-    this.connection = opts.connection
-    this.issuer = opts.data.principal
-    this.store = opts.store
-    this.data = opts.data
+  constructor(data, options = {}) {
+    this.url = options.url ?? new URL(HOST)
+    this.connection = options.connection ?? connection({
+      principal: options.servicePrincipal,
+      url: this.url
+    })
+    this.data = data
 
     // private
-    this.#fetch = opts.fetch
     this.#service = undefined
+    this.#options = options
+  }
+
+  get issuer () {
+    if (this.data == null) throw notInitialized()
+    return this.data.principal
   }
 
   /**
-   * @template {Ucanto.Signer} T
-   * @param {import('./types').AgentCreateOptions<T>} opts
+   * Initialize the agent based on the passed data. Calls `save` to persist the
+   * fully initialized data.
+   *
+   * @param {Partial<import('./types').AgentData>} [initialData]
    */
-  static async create(opts) {
-    let _fetch = opts.fetch
-    const url = opts.url || new URL(HOST)
+  async init (initialData = {}) {
+    this.data = await AgentData.create(initialData)
+    await this.#save()
+    return this
+  }
 
-    // validate fetch implementation
-    if (!_fetch) {
-      if (typeof globalThis.fetch !== 'undefined') {
-        _fetch = globalThis.fetch.bind(globalThis)
-      } else {
-        throw new TypeError(
-          `Agent got undefined \`fetch\`. Try passing in a \`fetch\` implementation explicitly.`
-        )
-      }
-    }
+  async #save () {
+    if (!this.#options.save) return
+    if (this.data == null) throw notInitialized()
+    return await this.#options.save(AgentData.export(this.data))
+  }
 
-    if (!(await opts.store.exists())) {
-      throw new Error('Store is not initialized, run "Store.init()" first.')
-    }
-    const data = await opts.store.load()
-    return new Agent({
-      connection: await connection(data.principal, _fetch, url, opts.channel),
-      fetch: _fetch,
-      url,
-      store: opts.store,
-      data,
-    })
+  /**
+   * Create and initialize a new agent based on the provided data.
+   *
+   * @param {Partial<import('./types').AgentData>} [initialData] Agent data
+   * @param {import('./types').AgentOptions} [options]
+   */
+  static async create (initialData, options = {}) {
+    const agent = new Agent(undefined, options)
+    return await agent.init(initialData)
+  }
+
+  /**
+   * Instantiate an Agent, backed by data persisted in the passed store.
+   *
+   * @param {import('./types').IStore<import('./types').AgentDataExport>} store 
+   * @param {import('./types').AgentOptions & { initialData?: Partial<import('./types').AgentData> }} options
+   */
+  static async fromStore (store, options = {}) {
+    options = { ...options, save: data => { store.save(data) } }
+    await store.open()
+    const storedData = await store.load() // { ... } or null/undefined
+    return storedData
+      ? new Agent(AgentData.from(storedData), options)
+      : await Agent.create(options.initialData, options)
   }
 
   async service() {
     if (this.#service) {
       return this.#service
     }
-    const rsp = await this.#fetch(this.url + 'version')
+    const rsp = await fetch(this.url + 'version')
     const { did } = await rsp.json()
     this.#service = DID.parse(did)
     return this.#service
   }
 
   did() {
+    if (this.data == null) throw notInitialized()
     return this.data.principal.did()
   }
 
@@ -130,6 +142,8 @@ export class Agent {
    * @param {Ucanto.Delegation} delegation
    */
   async addProof(delegation) {
+    if (this.data == null) throw notInitialized()
+
     validate(delegation, {
       checkAudience: this.issuer,
       checkIsExpired: true,
@@ -139,7 +153,7 @@ export class Agent {
       delegation,
     })
 
-    await this.store.save(this.data)
+    await this.#save()
   }
 
   /**
@@ -148,6 +162,7 @@ export class Agent {
    * @param {import('@ucanto/interface').Capability[]} [caps]
    */
   async *#delegations(caps) {
+    if (this.data == null) throw notInitialized()
     const _caps = new Set(caps)
     for (const [key, value] of this.data.delegations) {
       // check expiration
@@ -172,7 +187,7 @@ export class Agent {
       }
     }
 
-    await this.store.save(this.data)
+    await this.#save()
   }
 
   /**
@@ -223,7 +238,8 @@ export class Agent {
    * @param {string} [name]
    */
   async createSpace(name) {
-    const signer = await Signer.generate()
+    if (this.data == null) throw notInitialized()
+    const signer = await EdSigner.generate()
     const proof = await Space.top.delegate({
       issuer: signer,
       audience: this.issuer,
@@ -252,6 +268,7 @@ export class Agent {
    * @param {Ucanto.DID} space
    */
   async setCurrentSpace(space) {
+    if (this.data == null) throw notInitialized()
     const proofs = await this.proofs([
       {
         can: 'space/info',
@@ -264,7 +281,7 @@ export class Agent {
     }
 
     this.data.currentSpace = space
-    await this.store.save(this.data)
+    await this.#save()
 
     return space
   }
@@ -273,6 +290,7 @@ export class Agent {
    * Get current space DID
    */
   currentSpace() {
+    if (this.data == null) throw notInitialized()
     return this.data.currentSpace
   }
 
@@ -280,6 +298,7 @@ export class Agent {
    * Get current space DID, proofs and abilities
    */
   async currentSpaceWithMeta() {
+    if (this.data == null) throw notInitialized()
     if (!this.data.currentSpace) {
       return
     }
@@ -316,6 +335,7 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async registerSpace(email, opts) {
+    if (this.data == null) throw notInitialized()
     const space = this.currentSpace()
     const service = await this.service()
     const spaceMeta = space ? this.data.spaces.get(space) : undefined
@@ -371,7 +391,7 @@ export class Agent {
     this.data.spaces.set(space, spaceMeta)
     this.data.delegations.delete(voucherRedeem.cid.toString())
 
-    this.store.save(this.data)
+    this.#save()
   }
 
   /**
@@ -418,6 +438,7 @@ export class Agent {
    * @param {import('./types').DelegationOptions} options
    */
   async delegate(options) {
+    if (this.data == null) throw notInitialized()
     const space = await this.currentSpaceWithMeta()
     if (!space) {
       throw new Error('there no space selected.')
@@ -445,7 +466,7 @@ export class Agent {
         audience: options.audienceMeta,
       },
     })
-    await this.store.save(this.data)
+    await this.#save()
     return delegation
   }
 
