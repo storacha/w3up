@@ -17,9 +17,10 @@ import type {
   Match,
   Ability,
   UnknownMatch,
-  Transport,
   Delegation,
   DID,
+  Signer,
+  SignerArchive,
 } from '@ucanto/interface'
 
 import type {
@@ -75,14 +76,28 @@ export interface Service {
 export type CIDString = string
 
 /**
- * Data schema used by the agent and persisted by stores
+ * Data schema used internally by the agent.
  */
-export interface AgentData<T> {
+export interface AgentData {
   meta: AgentMeta
-  principal: T
+  principal: Signer
   currentSpace?: DID
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta?: DelegationMeta; delegation: Delegation }>
+}
+
+/**
+ * Agent data that is safe to pass to structuredClone() and persisted by stores.
+ */
+export type AgentDataExport = Pick<AgentData, 'meta'|'currentSpace'|'spaces'> & {
+  principal: SignerArchive<Signer>
+  delegations: Map<
+    CIDString,
+    {
+      meta?: DelegationMeta
+      delegation: Array<{ cid: CIDString; bytes: Uint8Array }>
+    }
+  >
 }
 
 /**
@@ -138,19 +153,15 @@ export interface SpaceD1 {
  * Agent class types
  */
 
-export interface AgentOptions<T> {
-  store: IStore<T>
-  connection: ConnectionView<Service>
+export interface AgentOptions {
   url?: URL
-  fetch: typeof fetch
-  data: AgentData<T>
-}
-
-export interface AgentCreateOptions<T> {
-  channel?: Transport.Channel<Service>
-  store: IStore<T>
-  url?: URL
-  fetch?: typeof fetch
+  connection?: ConnectionView<Service>
+  servicePrincipal?: Principal
+  /**
+   * Called after agent data has been mutated and must be persisted. Data is
+   * provided in a format that is safe to be passed to structuredClone().
+   */
+  save?: (data: AgentDataExport) => Promise<void> | void
 }
 
 export type InvokeOptions<
