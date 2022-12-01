@@ -13,7 +13,7 @@ import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
-import { Signer as EdSigner } from '@ucanto/principal/ed25519'
+import { Signer } from '@ucanto/principal/ed25519'
 import { invoke, delegate } from '@ucanto/core'
 import { AgentData } from './agent-data.js'
 import {
@@ -239,7 +239,7 @@ export class Agent {
    */
   async createSpace(name) {
     if (this.data == null) throw notInitialized()
-    const signer = await EdSigner.generate()
+    const signer = await Signer.generate()
     const proof = await Space.top.delegate({
       issuer: signer,
       audience: this.issuer,

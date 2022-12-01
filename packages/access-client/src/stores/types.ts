@@ -1,13 +1,3 @@
-import {
-  AgentData,
-  AgentMeta,
-  CIDString,
-  DelegationMeta,
-  SpaceMeta,
-} from '../types.js'
-import { RSASigner } from '@ucanto/principal/rsa'
-import { SignerArchive, DID } from '@ucanto/interface'
-
 /**
  * Store interface that all stores need to implement
  */
