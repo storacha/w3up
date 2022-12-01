@@ -10,6 +10,7 @@ import { cmdCreateAccount } from './cmd-create-account.js'
 import { cmdLink } from './cmd-link.js'
 import { cmdSetup } from './cmd-setup.js'
 import { cmdWhoami } from './cmd-whoami.js'
+import { testUcantoConnection } from './cmd-test-ucanto-connection.js'
 import { StoreConf } from '../stores/store-conf.js'
 import { Agent } from '../agent.js'
 import { stringToDelegation } from '../encoding.js'
@@ -158,4 +159,13 @@ prog
       console.error(`Run "${NAME} setup" first`)
     }
   })
+
+prog
+  .command('test-ucanto-connection')
+  .describe('Test ucanto connection to the access service url')
+  .option('--url', 'URL to open a ucanto connection against')
+  .action(async (opts) => {
+    await testUcantoConnection(opts)
+  })
+
 prog.parse(process.argv)
