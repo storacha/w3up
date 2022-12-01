@@ -48,7 +48,7 @@ export interface StoreAddResponse {
 
 export interface UploadAddResponse {
   root: AnyLink
-  shards: CARLink[]
+  shards?: CARLink[]
 }
 
 export interface ListResponse<R> {

@@ -72,7 +72,7 @@ describe('Upload.add', () => {
     assert.equal(service.upload.add.callCount, 1)
     assert.equal(actual.root.toString(), res.root.toString())
     assert.deepEqual(
-      new Set(actual.shards.map((s) => s.toString())),
+      new Set(actual.shards?.map((s) => s.toString())),
       new Set(res.shards.map((s) => s.toString()))
     )
   })
@@ -192,7 +192,7 @@ describe('Upload.list', () => {
     list.results.forEach((r, i) => {
       assert.equal(r.root.toString(), res.results[i].root.toString())
       assert.deepStrictEqual(
-        new Set(r.shards.map((s) => s.toString())),
+        new Set(r.shards?.map((s) => s.toString())),
         new Set(res.results[i].shards.map((s) => s.toString()))
       )
     })
@@ -279,7 +279,7 @@ describe('Upload.list', () => {
     results0.results.forEach((r, i) => {
       assert.equal(r.root.toString(), page0.results[i].root.toString())
       assert.deepStrictEqual(
-        new Set(r.shards.map((s) => s.toString())),
+        new Set(r.shards?.map((s) => s.toString())),
         new Set(page0.results[i].shards.map((s) => s.toString()))
       )
     })
@@ -291,7 +291,7 @@ describe('Upload.list', () => {
     results1.results.forEach((r, i) => {
       assert.equal(r.root.toString(), page1.results[i].root.toString())
       assert.deepStrictEqual(
-        new Set(r.shards.map((s) => s.toString())),
+        new Set(r.shards?.map((s) => s.toString())),
         new Set(page1.results[i].shards.map((s) => s.toString()))
       )
     })
