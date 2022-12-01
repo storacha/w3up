@@ -1,11 +1,8 @@
-import { importDAG } from '@ucanto/core/delegation'
-import * as Signer from '@ucanto/principal/rsa'
 import defer from 'p-defer'
-import { CID } from 'multiformats/cid'
 
 /**
- * @typedef {import('../types').AgentData<Signer.RSASigner>} StoreData
- * @typedef {import('./types').IStore<Signer.RSASigner>} Store
+ * @template T
+ * @typedef {import('./types').IStore<T>} Store
  */
 
 const STORE_NAME = 'AccessStore'
@@ -20,7 +17,8 @@ const DATA_ID = 1
  * import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
  * ```
  *
- * @implements {Store}
+ * @template T
+ * @implements {Store<T>}
  */
 export class StoreIndexedDB {
   /** @type {string} */
@@ -48,11 +46,13 @@ export class StoreIndexedDB {
   }
 
   /**
-   *
-   * @returns {Promise<Store>}
+   * @returns {Promise<Store<T>>}
    */
   async open() {
-    /** @type {import('p-defer').DeferredPromise<Store>} */
+    const db = this.#db
+    if (db) return this
+
+    /** @type {import('p-defer').DeferredPromise<Store<T>>} */
     const { resolve, reject, promise } = defer()
     const openReq = indexedDB.open(this.#dbName, this.#dbVersion)
 
@@ -79,70 +79,9 @@ export class StoreIndexedDB {
     this.#db = undefined
   }
 
-  async exists() {
-    const db = this.#db
-    if (!db) throw new Error('Store is not open')
-
-    const getExists = withObjectStore(
-      db,
-      'readonly',
-      this.#dbStoreName,
-      async (store) => {
-        /** @type {import('p-defer').DeferredPromise<boolean>} */
-        const { resolve, reject, promise } = defer()
-
-        const getReq = store.get(DATA_ID)
-        getReq.addEventListener('success', () =>
-          resolve(Boolean(getReq.result))
-        )
-        getReq.addEventListener('error', () =>
-          reject(new Error('failed to query DB', { cause: getReq.error }))
-        )
-        return promise
-      }
-    )
-
-    return await getExists()
-  }
-
   /**
-   * Opens (or creates) a store and initializes it if not already initialized.
-   *
-   * @param {string} dbName
-   * @param {object} [options]
-   * @param {number} [options.dbVersion]
-   * @param {string} [options.dbStoreName]
-   * @returns {Promise<Store>}
-   */
-  static async open(dbName, options) {
-    const store = new StoreIndexedDB(dbName, options)
-    await store.open()
-    const exists = await store.exists()
-    if (!exists) {
-      await store.init({})
-    }
-    return store
-  }
-
-  /** @type {Store['init']} */
-  async init(data) {
-    /** @type {StoreData} */
-    const storeData = {
-      meta: data.meta || { name: 'agent', type: 'device' },
-      principal:
-        data.principal || (await Signer.generate({ extractable: false })),
-      spaces: data.spaces || new Map(),
-      delegations: data.delegations || new Map(),
-      currentSpace: data.currentSpace,
-    }
-
-    await this.save(storeData)
-    return storeData
-  }
-
-  /**
-   * @param {StoreData} data
-   * @returns {Promise<Store>}
+   * @param {T} data
+   * @returns {Promise<Store<T>>}
    */
   async save(data) {
     const db = this.#db
@@ -153,29 +92,9 @@ export class StoreIndexedDB {
       'readwrite',
       this.#dbStoreName,
       async (store) => {
-        /** @type {import('p-defer').DeferredPromise<Store>} */
+        /** @type {import('p-defer').DeferredPromise<Store<T>>} */
         const { resolve, reject, promise } = defer()
-
-        /** @type {import('./types').StoreDataIDB} */
-        const raw = {
-          id: DATA_ID,
-          meta: data.meta,
-          // @ts-expect-error
-          principal: data.principal.toArchive(),
-          currentSpace: data.currentSpace,
-          spaces: data.spaces,
-          delegations: new Map(),
-        }
-        for (const [key, value] of data.delegations) {
-          raw.delegations.set(key, {
-            meta: value.meta,
-            delegation: [...value.delegation.export()].map((b) => ({
-              cid: b.cid.toString(),
-              bytes: b.bytes,
-            })),
-          })
-        }
-        const putReq = store.put(raw)
+        const putReq = store.put({ id: DATA_ID, ...data })
         putReq.addEventListener('success', () => resolve(this))
         putReq.addEventListener('error', () =>
           reject(new Error('failed to query DB', { cause: putReq.error }))
@@ -188,7 +107,6 @@ export class StoreIndexedDB {
     return await putData()
   }
 
-  /** @type {Store['load']} */
   async load() {
     const db = this.#db
     if (!db) throw new Error('Store is not open')
@@ -198,44 +116,11 @@ export class StoreIndexedDB {
       'readonly',
       this.#dbStoreName,
       async (store) => {
-        /** @type {import('p-defer').DeferredPromise<StoreData>} */
+        /** @type {import('p-defer').DeferredPromise<T>} */
         const { resolve, reject, promise } = defer()
 
         const getReq = store.get(DATA_ID)
-        getReq.addEventListener('success', () => {
-          try {
-            /** @type {import('./types').StoreDataIDB} */
-            const raw = getReq.result
-            if (!raw) throw new Error('Store is not initialized')
-
-            /** @type {StoreData['delegations']} */
-            const dels = new Map()
-
-            for (const [key, value] of raw.delegations) {
-              dels.set(key, {
-                delegation: importDAG(
-                  value.delegation.map((d) => ({
-                    cid: CID.parse(d.cid),
-                    bytes: d.bytes,
-                  }))
-                ),
-                meta: value.meta,
-              })
-            }
-
-            /** @type {StoreData} */
-            const data = {
-              meta: raw.meta,
-              principal: Signer.from(raw.principal),
-              currentSpace: raw.currentSpace,
-              spaces: raw.spaces,
-              delegations: dels,
-            }
-            resolve(data)
-          } catch (error) {
-            reject(error)
-          }
-        })
+        getReq.addEventListener('success', () => resolve(getReq.result))
         getReq.addEventListener('error', () =>
           reject(new Error('failed to query DB', { cause: getReq.error }))
         )
