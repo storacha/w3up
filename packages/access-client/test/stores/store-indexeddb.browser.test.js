@@ -12,11 +12,10 @@ describe('IndexedDB store', () => {
     // principal private key is not extractable
     const archive = data.principal.toArchive()
     assert(!(archive instanceof Uint8Array))
-    const keys = [...Object.entries(archive.keys)]
-    assert.equal(keys.length, 1)
-    const firstKey = keys[0][1]
-    assert(firstKey instanceof CryptoKey)
-    assert.equal(firstKey.extractable, false)
+    const [[did, key], ...keys] = [...Object.entries(archive.keys)]
+    assert.deepEqual(keys, [])
+    assert(key instanceof CryptoKey)
+    assert.equal(key.extractable, false)
 
     // no accounts or delegations yet
     assert.equal(data.spaces.size, 0)
