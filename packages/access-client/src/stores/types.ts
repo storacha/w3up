@@ -5,7 +5,7 @@ import {
   DelegationMeta,
   SpaceMeta,
 } from '../types.js'
-import { SignerArchive, DID } from '@ucanto/interface'
+import { SignerArchive, DID, DIDKey } from '@ucanto/interface'
 import { RSA } from '@ucanto/principal'
 
 /**
