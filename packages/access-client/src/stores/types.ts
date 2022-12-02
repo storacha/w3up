@@ -50,7 +50,7 @@ export interface IStore<T> {
 export interface StoreDataIDB {
   id: number
   meta: AgentMeta
-  principal: SignerArchive<DID<'key'>, typeof RSA.signatureCode>
+  principal: SignerArchive<DIDKey, typeof RSA.signatureCode>
   currentSpace?: DID
   spaces: Map<DID, SpaceMeta>
   delegations: Map<
