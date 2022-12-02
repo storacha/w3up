@@ -116,7 +116,7 @@ export class StoreIndexedDB {
       'readonly',
       this.#dbStoreName,
       async (store) => {
-        /** @type {import('p-defer').DeferredPromise<T>} */
+        /** @type {import('p-defer').DeferredPromise<T|undefined>} */
         const { resolve, reject, promise } = defer()
 
         const getReq = store.get(DATA_ID)

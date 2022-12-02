@@ -16,7 +16,6 @@ import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
 import { invoke, delegate } from '@ucanto/core'
-import { AgentData } from './agent-data.js'
 import {
   isExpired,
   isTooEarly,
@@ -25,8 +24,9 @@ import {
 } from './delegations.js'
 
 const HOST = 'https://w3access-staging.protocol-labs.workers.dev'
-const PRINCIPAL = DID.parse('did:key:z6MkwTYX2JHHd8bmaEuDdS1LJjrpFspirjDcQ4DvAiDP49Gm')
-const notInitialized = () => new Error('not initialized')
+const PRINCIPAL = DID.parse(
+  'did:key:z6MkwTYX2JHHd8bmaEuDdS1LJjrpFspirjDcQ4DvAiDP49Gm'
+)
 
 /**
  * Creates a Ucanto connection for the w3access API
@@ -49,10 +49,12 @@ export function connection(options = {}) {
     id: options.principal ?? PRINCIPAL,
     encoder: CAR,
     decoder: CBOR,
-    channel: options.channel ?? HTTP.open({
-      url: options.url ?? new URL(HOST),
-      method: 'POST'
-    }),
+    channel:
+      options.channel ??
+      HTTP.open({
+        url: options.url ?? new URL(HOST),
+        method: 'POST',
+      }),
   })
 }
 
@@ -69,14 +71,11 @@ export class Agent {
   /** @type {Ucanto.Principal<"key">|undefined} */
   #service
 
-  /** @type {import('./types').AgentOptions} */
-  #options
-
-  /** @type {import('./types').AgentData<T>} */
+  /** @type {import('./agent-data').AgentData} */
   #data
 
   /**
-   * @param {import('./types').AgentData} [data] Agent data
+   * @param {import('./agent-data').AgentData} data - Agent data
    * @param {import('./types').AgentOptions} [options]
    */
   constructor(data, options = {}) {
@@ -87,60 +86,10 @@ export class Agent {
     })
     this.#data = data
     this.#service = undefined
-    this.#options = options
   }
 
-  get issuer () {
-    if (this.data == null) throw notInitialized()
+  get issuer() {
     return this.data.principal
-  }
-
-  /**
-   * Initialize the agent based on the passed data. Calls `save` to persist the
-   * fully initialized data.
-   *
-   * @param {Partial<import('./types').AgentData>} [initialData]
-   */
-  async init (initialData = {}) {
-    this.data = await AgentData.create(initialData)
-    await this.#save()
-    return this
-  }
-
-  async #save () {
-    if (!this.#options.save) return
-    if (this.data == null) throw notInitialized()
-    return await this.#options.save(AgentData.export(this.data))
-  }
-
-  /**
-   * Create and initialize a new agent based on the provided data.
-   *
-   * @param {Partial<import('./types').AgentData>} [initialData] Agent data
-   * @param {import('./types').AgentOptions} [options]
-   */
-  static async create (initialData, options = {}) {
-    const agent = new Agent(undefined, options)
-    return await agent.init(initialData)
-  }
-
-  /**
-   * Instantiate an Agent, backed by data persisted in the passed store.
-   *
-   * @param {import('./types').IStore<import('./types').AgentDataExport>} store 
-   * @param {import('./types').AgentOptions & { initialData?: Partial<import('./types').AgentData> }} options
-   */
-  static async fromStore (store, options = {}) {
-    options = { ...options, save: data => { store.save(data) } }
-    await store.open()
-    const storedData = await store.load() // { ... } or null/undefined
-    return storedData
-      ? new Agent(AgentData.from(storedData), options)
-      : await Agent.create(options.initialData, options)
-  }
-
-  get spaces() {
-    return this.#data.spaces
   }
 
   async service() {
@@ -154,7 +103,6 @@ export class Agent {
   }
 
   did() {
-    if (this.data == null) throw notInitialized()
     return this.data.principal.did()
   }
 
@@ -166,19 +114,11 @@ export class Agent {
    * @param {Ucanto.Delegation} delegation
    */
   async addProof(delegation) {
-    if (this.data == null) throw notInitialized()
-
     validate(delegation, {
       checkAudience: this.issuer,
       checkIsExpired: true,
     })
-
-    this.#data.delegations.set(delegation.cid.toString(), {
-      delegation,
-      meta: { audience: this.meta },
-    })
-
-    await this.#save()
+    await this.data.addDelegation(delegation, { audience: this.meta })
   }
 
   /**
@@ -187,9 +127,8 @@ export class Agent {
    * @param {import('@ucanto/interface').Capability[]} [caps]
    */
   async *#delegations(caps) {
-    if (this.data == null) throw notInitialized()
     const _caps = new Set(caps)
-    for (const [key, value] of this.#data.delegations) {
+    for (const [, value] of this.data.delegations) {
       // check expiration
       if (!isExpired(value.delegation)) {
         // check if delegation can be used
@@ -208,11 +147,9 @@ export class Agent {
         }
       } else {
         // delete any expired delegation
-        this.#data.delegations.delete(key)
+        await this.data.removeDelegation(value.delegation.cid)
       }
     }
-
-    await this.#save()
   }
 
   /**
@@ -264,7 +201,6 @@ export class Agent {
    * @param {string} [name]
    */
   async createSpace(name) {
-    if (this.data == null) throw notInitialized()
     const signer = await Signer.generate()
     const proof = await Space.top.delegate({
       issuer: signer,
@@ -273,13 +209,8 @@ export class Agent {
       expiration: Infinity,
     })
 
-    const meta = {
-      name,
-      isRegistered: false,
-    }
-    this.#data.spaces.set(signer.did(), meta)
-
-    await this.addProof(proof)
+    const meta = { name, isRegistered: false }
+    await this.data.addSpace(signer.did(), meta, proof)
 
     return {
       did: signer.did(),
@@ -370,7 +301,6 @@ export class Agent {
    * @param {Ucanto.DID} space
    */
   async setCurrentSpace(space) {
-    if (this.data == null) throw notInitialized()
     const proofs = await this.proofs([
       {
         can: 'space/info',
@@ -382,8 +312,7 @@ export class Agent {
       throw new Error(`Agent has no proofs for ${space}.`)
     }
 
-    this.data.currentSpace = space
-    await this.#save()
+    await this.data.setCurrentSpace(space)
 
     return space
   }
@@ -392,7 +321,6 @@ export class Agent {
    * Get current space DID
    */
   currentSpace() {
-    if (this.data == null) throw notInitialized()
     return this.data.currentSpace
   }
 
@@ -400,7 +328,6 @@ export class Agent {
    * Get current space DID, proofs and abilities
    */
   async currentSpaceWithMeta() {
-    if (this.data == null) throw notInitialized()
     if (!this.data.currentSpace) {
       return
     }
@@ -438,7 +365,6 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async registerSpace(email, opts) {
-    if (this.data == null) throw notInitialized()
     const space = this.currentSpace()
     const service = await this.service()
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
@@ -500,10 +426,8 @@ export class Agent {
 
     spaceMeta.isRegistered = true
 
-    this.#data.spaces.set(space, spaceMeta)
-    this.#data.delegations.delete(voucherRedeem.cid.toString())
-
-    this.#save()
+    this.data.addSpace(space, spaceMeta)
+    this.data.removeDelegation(voucherRedeem.cid)
   }
 
   /**
@@ -546,7 +470,6 @@ export class Agent {
    * @param {import('./types').DelegationOptions} options
    */
   async delegate(options) {
-    if (this.data == null) throw notInitialized()
     const space = await this.currentSpaceWithMeta()
     if (!space) {
       throw new Error('there no space selected.')
@@ -569,13 +492,10 @@ export class Agent {
       ...options,
     })
 
-    this.#data.delegations.set(delegation.cid.toString(), {
-      delegation,
-      meta: {
-        audience: options.audienceMeta,
-      },
+    await this.data.addDelegation(delegation, {
+      audience: options.audienceMeta,
     })
-    await this.#save()
+
     return delegation
   }
 

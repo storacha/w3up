@@ -1,40 +1,22 @@
 import assert from 'assert'
 import { URI } from '@ucanto/validator'
-import { Agent } from '../src/agent.js'
-import { StoreMemory } from '../src/stores/store-memory.js'
+import { Agent, connection } from '../src/agent.js'
+import { AgentData } from '../src/agent-data.js'
 import * as Space from '@web3-storage/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 
 describe('Agent', function () {
-  it('should fail if store is not initialized', async function () {
-    const store = new StoreMemory()
-
-    return assert.rejects(
-      Agent.create({
-        store,
-      }),
-      {
-        name: 'Error',
-        message: 'Store is not initialized, run "Store.init()" first.',
-      }
-    )
-  })
-
   it('should return did', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
+    const data = await AgentData.create()
+    const agent = new Agent(data)
 
     assert.ok(agent.did())
   })
 
   it('should create space', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
+    const data = await AgentData.create()
+    const agent = new Agent(data)
 
     const space = await agent.createSpace('test-create')
 
@@ -43,10 +25,8 @@ describe('Agent', function () {
   })
 
   it('should add proof when creating acccount', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
+    const data = await AgentData.create()
+    const agent = new Agent(data)
 
     const space = await agent.createSpace('test-add')
 
@@ -56,10 +36,8 @@ describe('Agent', function () {
   })
 
   it('should set current space', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
+    const data = await AgentData.create()
+    const agent = new Agent(data)
 
     const space = await agent.createSpace('test')
 
@@ -75,10 +53,8 @@ describe('Agent', function () {
   })
 
   it('fails set current space with no proofs', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
+    const data = await AgentData.create()
+    const agent = new Agent(data)
 
     await assert.rejects(
       () => {
@@ -91,10 +67,9 @@ describe('Agent', function () {
   })
 
   it('should invoke and execute', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-      channel: createServer(),
+    const data = await AgentData.create()
+    const agent = new Agent(data, {
+      connection: connection({ channel: createServer() }),
     })
 
     const space = await agent.createSpace('execute')
@@ -115,10 +90,9 @@ describe('Agent', function () {
   })
 
   it('should execute', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-      channel: createServer(),
+    const data = await AgentData.create()
+    const agent = new Agent(data, {
+      connection: connection({ channel: createServer() }),
     })
 
     const space = await agent.createSpace('execute')
@@ -152,10 +126,9 @@ describe('Agent', function () {
   })
 
   it('should fail execute with no proofs', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-      channel: createServer(),
+    const data = await AgentData.create()
+    const agent = new Agent(data, {
+      connection: connection({ channel: createServer() }),
     })
 
     await assert.rejects(
@@ -175,11 +148,10 @@ describe('Agent', function () {
   })
 
   it('should get space info', async function () {
-    const store = await StoreMemory.create()
     const server = createServer()
-    const agent = await Agent.create({
-      store,
-      channel: server,
+    const data = await AgentData.create()
+    const agent = new Agent(data, {
+      connection: connection({ channel: server }),
     })
 
     // mock service
@@ -201,11 +173,10 @@ describe('Agent', function () {
   })
 
   it('should delegate', async function () {
-    const store = await StoreMemory.create()
     const server = createServer()
-    const agent = await Agent.create({
-      store,
-      channel: server,
+    const data = await AgentData.create()
+    const agent = new Agent(data, {
+      connection: connection({ channel: server }),
     })
 
     const space = await agent.createSpace('execute')
