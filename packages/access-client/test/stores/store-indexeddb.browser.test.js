@@ -12,7 +12,8 @@ describe('IndexedDB store', () => {
     // principal private key is not extractable
     const archive = data.principal.toArchive()
     assert(!(archive instanceof Uint8Array))
-    const [[did, key], ...keys] = [...Object.entries(archive.keys)]
+    // eslint-disable-next-line no-unused-vars
+    const [[_, key], ...keys] = [...Object.entries(archive.keys)]
     assert.deepEqual(keys, [])
     assert(key instanceof CryptoKey)
     assert.equal(key.extractable, false)
