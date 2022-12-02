@@ -57,13 +57,9 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ipld/car": "^5.0.1",
-    "@ipld/dag-ucan": "^2.0.1",
-    "@ucanto/client": "^4.0.2",
     "@ucanto/core": "^4.0.2",
     "@ucanto/interface": "^4.0.2",
     "@ucanto/principal": "^4.0.2",
-    "@ucanto/server": "^4.0.2",
     "@ucanto/transport": "^4.0.2",
     "@ucanto/validator": "^4.0.2"
   },
