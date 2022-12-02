@@ -18,8 +18,8 @@
   "dependencies": {
     "@ipld/dag-ucan": "^2.0.1",
     "@ucanto/core": "^3.0.2",
-    "@ucanto/interface": "^3.0.1",
-    "@ucanto/principal": "^3.0.1",
+    "@ucanto/interface": "^4.0.0",
+    "@ucanto/principal": "^4.0.0",
     "@ucanto/server": "^3.0.4",
     "@ucanto/transport": "^3.0.2",
     "@web3-storage/access": "workspace:^",
