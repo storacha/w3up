@@ -60,12 +60,12 @@
     "@ipld/car": "^5.0.1",
     "@ipld/dag-ucan": "^2.0.1",
     "@ucanto/client": "^3.0.3",
-    "@ucanto/core": "^3.0.3",
+    "@ucanto/core": "^3.0.4",
     "@ucanto/interface": "^4.0.0",
-    "@ucanto/principal": "^4.0.0",
+    "@ucanto/principal": "^4.0.1",
     "@ucanto/server": "^3.0.6",
-    "@ucanto/transport": "^3.0.3",
-    "@ucanto/validator": "^3.0.5"
+    "@ucanto/transport": "^3.0.4",
+    "@ucanto/validator": "^3.0.6"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
