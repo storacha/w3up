@@ -25,11 +25,19 @@ import {
 const HOST = 'https://access.web3.storage'
 
 /**
- * @template {string} T
- * @param {Ucanto.Principal<T>} principal
- * @param {typeof fetch} _fetch
- * @param {URL} url
- * @param {Ucanto.Transport.Channel<import('./types').Service>} [channel]
+ * Creates a Ucanto connection for the w3access API
+ *
+ * Usage:
+ *
+ * ```js
+ * import { connection } from '@web3-storage/access/agent'
+ * ```
+ *
+ * @template {string} T - DID method
+ * @param {Ucanto.Principal<T>} principal - w3access API Principal
+ * @param {typeof fetch} _fetch - fetch implementation to use
+ * @param {URL} url - w3access API URL
+ * @param {Ucanto.Transport.Channel<import('./types').Service>} [channel] - Ucanto channel to use
  * @returns {Ucanto.ConnectionView<import('./types').Service>}
  */
 export function connection(principal, _fetch, url, channel) {
@@ -51,8 +59,15 @@ export function connection(principal, _fetch, url, channel) {
 }
 
 /**
- * @template {Ucanto.Signer} T
  * Agent
+ *
+ * Usage:
+ *
+ * ```js
+ * import { Agent } from '@web3-storage/access/agent'
+ * ```
+ *
+ * @template {Ucanto.Signer} T - Ucanto Signer ie. ed25519, RSA or others
  */
 export class Agent {
   /** @type {Ucanto.Principal<"key">|undefined} */
@@ -451,8 +466,6 @@ export class Agent {
 
   /**
    * Invoke and execute the given capability on the Access service connection
-   *
-   * Sugar for :
    *
    * ```js
    *

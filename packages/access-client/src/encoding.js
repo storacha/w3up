@@ -1,7 +1,7 @@
 /**
  * Encoding utilities
  *
- * These can be imported directly with:
+ * It is recommended that you import directly with:
  * ```js
  * import * as Encoding from '@web3-storage/access/encoding'
  *
