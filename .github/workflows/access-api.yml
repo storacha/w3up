@@ -32,7 +32,7 @@ jobs:
       - run: pnpm install
       - run: pnpm -r --filter @web3-storage/access-api run lint
       - run: pnpm -r --filter @web3-storage/access-api run test
-      - run: pnpm --filter @web3-storage/access-api -r exec depcheck
+      - run: pnpm -r --filter @web3-storage/access-api exec depcheck
   deploy-staging:
     needs: test
     if: github.head_ref == 'release-please--branches--main--components--access-api'

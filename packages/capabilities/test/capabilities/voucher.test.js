@@ -2,7 +2,7 @@ import assert from 'assert'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
 import { delegate } from '@ucanto/core'
-import * as Voucher from '../../src/capabilities/voucher.js'
+import * as Voucher from '../../src/voucher.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
 
 describe('voucher capabilities', function () {

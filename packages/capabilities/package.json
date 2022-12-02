@@ -15,39 +15,39 @@
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
-    "test": "pnpm -r --filter @web3-storage/capabilities run build && npm run test:node && npm run test:browser",
-    "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
-    "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
-    "testw": "watch 'pnpm test' src test --interval 1",
+    "test": "pnpm run test:node && pnpm run test:browser",
+    "test:node": "mocha 'test/**/*.test.js' -n experimental-vm-modules -n no-warnings",
+    "test:browser": "playwright-test",
+    "testw": "watch 'pnpm test:node' src test --interval 1",
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
     ".": "./src/index.js",
-    "./types": "./dist/src/capabilities/types.d.ts",
-    "./*": "./src/capabilities/*.js"
+    "./types": "./dist/src/types.d.ts",
+    "./*": "./src/*.js"
   },
   "typesVersions": {
     "*": {
       "space": [
-        "dist/src/capabilities/space"
+        "dist/src/space"
       ],
       "store": [
-        "dist/src/capabilities/store"
+        "dist/src/store"
       ],
       "types": [
-        "dist/src/capabilities/types"
+        "dist/src/types"
       ],
       "top": [
-        "dist/src/capabilities/top"
+        "dist/src/top"
       ],
       "upload": [
-        "dist/src/capabilities/upload"
+        "dist/src/upload"
       ],
       "utils": [
-        "dist/src/capabilities/utils"
+        "dist/src/utils"
       ],
       "voucher": [
-        "dist/src/capabilities/voucher"
+        "dist/src/voucher"
       ]
     }
   },
@@ -57,21 +57,16 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ipld/car": "^5.0.1",
-    "@ipld/dag-ucan": "^2.0.1",
-    "@ucanto/client": "^3.0.2",
     "@ucanto/core": "^3.0.2",
     "@ucanto/interface": "^3.0.1",
     "@ucanto/principal": "^3.0.1",
-    "@ucanto/server": "^3.0.4",
     "@ucanto/transport": "^3.0.2",
     "@ucanto/validator": "^3.0.4"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^18.11.9",
-    "@web-std/fetch": "^4.1.0",
+    "@types/node": "^18.11.10",
     "assert": "^2.0.0",
     "hd-scripts": "^3.0.2",
     "mocha": "^10.1.0",
@@ -81,7 +76,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/preact.js"
+      "./node_modules/hd-scripts/eslint/index.js"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
@@ -97,6 +92,16 @@
     "ignorePatterns": [
       "dist",
       "coverage"
+    ]
+  },
+  "depcheck": {
+    "specials": [
+      "bin"
+    ],
+    "ignores": [
+      "@types/*",
+      "hd-scripts",
+      "assert"
     ]
   }
 }

@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Account from '@web3-storage/access/capabilities/store'
+ * import * as Account from '@web3-storage/capabilities/store'
  * ```
  *
  * @module

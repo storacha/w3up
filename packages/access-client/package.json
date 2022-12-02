@@ -28,7 +28,6 @@
   "exports": {
     ".": "./src/index.js",
     "./agent": "./src/agent.js",
-    "./capabilities/*": "./src/capabilities/*.js",
     "./stores/*": "./src/stores/*.js",
     "./types": "./src/types.js",
     "./encoding": "./src/encoding.js"
@@ -43,9 +42,6 @@
       ],
       "stores/*": [
         "dist/src/stores/*"
-      ],
-      "capabilities/*": [
-        "dist/src/capabilities/*"
       ],
       "encoding": [
         "dist/src/encoding"
@@ -85,7 +81,7 @@
     "@types/assert": "^1.5.6",
     "@types/inquirer": "^9.0.3",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.10",
     "@types/ws": "^8.5.3",
     "@ucanto/server": "^3.0.4",
     "assert": "^2.0.0",
@@ -101,13 +97,10 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/preact.js"
+      "./node_modules/hd-scripts/eslint/index.js"
     ],
     "parserOptions": {
-      "project": "./tsconfig.json",
-      "ecmaFeatures": {
-        "jsx": true
-      }
+      "project": "./tsconfig.json"
     },
     "rules": {
       "unicorn/prefer-number-properties": "off",
