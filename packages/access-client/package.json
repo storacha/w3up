@@ -23,7 +23,8 @@
     "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "testw": "watch 'pnpm test' src test --interval 1",
-    "rc": "npm version prerelease --preid rc"
+    "rc": "npm version prerelease --preid rc",
+    "w3access": "./src/cli/index.js"
   },
   "exports": {
     ".": "./src/index.js",
@@ -56,12 +57,12 @@
   "dependencies": {
     "@ipld/car": "^5.0.1",
     "@ipld/dag-ucan": "^2.0.1",
-    "@ucanto/client": "^3.0.2",
-    "@ucanto/core": "^3.0.2",
-    "@ucanto/interface": "^3.0.1",
-    "@ucanto/principal": "^3.0.1",
-    "@ucanto/transport": "^3.0.2",
-    "@ucanto/validator": "^3.0.4",
+    "@ucanto/client": "^4.0.2",
+    "@ucanto/core": "^4.0.2",
+    "@ucanto/interface": "^4.0.2",
+    "@ucanto/principal": "^4.0.2",
+    "@ucanto/transport": "^4.0.2",
+    "@ucanto/validator": "^4.0.2",
     "@web3-storage/capabilities": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "^10.2.0",
@@ -83,7 +84,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.11.10",
     "@types/ws": "^8.5.3",
-    "@ucanto/server": "^3.0.4",
+    "@ucanto/server": "^4.0.2",
     "assert": "^2.0.0",
     "delay": "^5.0.0",
     "hd-scripts": "^3.0.2",

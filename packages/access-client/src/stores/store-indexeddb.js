@@ -160,7 +160,6 @@ export class StoreIndexedDB {
         const raw = {
           id: DATA_ID,
           meta: data.meta,
-          // @ts-expect-error
           principal: data.principal.toArchive(),
           currentSpace: data.currentSpace,
           spaces: data.spaces,

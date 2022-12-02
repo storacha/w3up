@@ -5,8 +5,8 @@ import {
   DelegationMeta,
   SpaceMeta,
 } from '../types.js'
-import { RSASigner } from '@ucanto/principal/rsa'
-import { SignerArchive, DID } from '@ucanto/interface'
+import { SignerArchive, DID, DIDKey } from '@ucanto/interface'
+import { RSA } from '@ucanto/principal'
 
 /**
  * Store interface that all stores need to implement
@@ -50,7 +50,7 @@ export interface IStore<T> {
 export interface StoreDataIDB {
   id: number
   meta: AgentMeta
-  principal: SignerArchive<RSASigner>
+  principal: SignerArchive<DIDKey, typeof RSA.signatureCode>
   currentSpace?: DID
   spaces: Map<DID, SpaceMeta>
   delegations: Map<
