@@ -77,7 +77,7 @@ export type CIDString = string
 /**
  * Data schema used internally by the agent.
  */
-export interface AgentData {
+export interface AgentDataModel {
   meta: AgentMeta
   principal: Signer
   currentSpace?: DID
@@ -89,7 +89,7 @@ export interface AgentData {
  * Agent data that is safe to pass to structuredClone() and persisted by stores.
  */
 export type AgentDataExport = Pick<
-  AgentData,
+  AgentDataModel,
   'meta' | 'currentSpace' | 'spaces'
 > & {
   principal: SignerArchive<Signer>
@@ -159,11 +159,17 @@ export interface AgentOptions {
   url?: URL
   connection?: ConnectionView<Service>
   servicePrincipal?: Principal
+}
+
+export interface AgentDataOptions {
+  store?: StorageDriver<AgentDataExport>
+}
+
+export interface StorageDriver<T> {
   /**
-   * Called after agent data has been mutated and must be persisted. Data is
-   * provided in a format that is safe to be passed to structuredClone().
+   * Data is in a format that is safe to be passed to structuredClone().
    */
-  save?: (data: AgentDataExport) => Promise<void> | void
+  save: (data: T) => Promise<void> | void
 }
 
 export type InvokeOptions<

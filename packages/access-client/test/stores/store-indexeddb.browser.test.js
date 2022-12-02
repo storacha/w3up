@@ -1,68 +1,77 @@
 import assert from 'assert'
 import { top } from '@web3-storage/capabilities/top'
+import { Signer as EdSigner } from '@ucanto/principal/ed25519'
+import * as RSASigner from '@ucanto/principal/rsa'
+import { AgentData } from '../../src/agent-data.js'
 import { StoreIndexedDB } from '../../src/stores/store-indexeddb.js'
-import { Signer } from '@ucanto/principal/ed25519'
 
 describe('IndexedDB store', () => {
   it('should create and load data', async () => {
-    const store = await StoreIndexedDB.open('test-access-db-' + Date.now())
-    const data = await store.load()
-    assert(data)
+    const data = await AgentData.create({
+      principal: await RSASigner.generate({ extractable: false }),
+    })
+
+    /** @type {StoreIndexedDB<import('../../src/types').AgentDataExport>} */
+    const store = new StoreIndexedDB('test-access-db-' + Date.now())
+    await store.open()
+    await store.save(data.export())
+
+    const exportData = await store.load()
+    assert(exportData)
 
     // principal private key is not extractable
-    const archive = data.principal.toArchive()
+    const archive = exportData.principal
     assert(!(archive instanceof Uint8Array))
     assert(archive.key instanceof CryptoKey)
     assert.equal(archive.key.extractable, false)
 
     // no accounts or delegations yet
-    assert.equal(data.spaces.size, 0)
-    assert.equal(data.delegations.size, 0)
+    assert.equal(exportData.spaces.size, 0)
+    assert.equal(exportData.delegations.size, 0)
 
     // default meta
-    assert.equal(data.meta.name, 'agent')
-    assert.equal(data.meta.type, 'device')
+    assert.equal(exportData.meta.name, 'agent')
+    assert.equal(exportData.meta.type, 'device')
   })
 
   it('should allow custom store name', async () => {
-    const store = await StoreIndexedDB.open('test-access-db-' + Date.now(), {
+    /** @type {StoreIndexedDB<import('../../src/types').AgentDataExport>} */
+    const store = new StoreIndexedDB('test-access-db-' + Date.now(), {
       dbStoreName: `store-${Date.now()}`,
     })
-    const data = await store.load()
-    assert(data)
-  })
-
-  it('should check existence', async () => {
-    const store = new StoreIndexedDB('test-access-db-' + Date.now())
     await store.open()
 
-    let exists = await store.exists()
-    assert.equal(exists, false)
+    const data0 = await AgentData.create()
+    await store.save(data0.export())
 
-    await store.init({})
+    await store.close()
+    await store.open()
 
-    exists = await store.exists()
-    assert(exists)
+    const exportedData = await store.load()
+    assert(exportedData)
+
+    const data1 = AgentData.fromExport(exportedData)
+    assert.equal(data1.principal.did(), data0.principal.did())
   })
 
   it('should close and disallow usage', async () => {
-    const store = await StoreIndexedDB.open('test-access-db-' + Date.now())
-    const data = await store.load()
-
+    const store = new StoreIndexedDB('test-access-db-' + Date.now())
+    await store.open()
+    await store.load()
     await store.close()
 
-    // should all fail
-    await assert.rejects(store.init({}), { message: 'Store is not open' })
-    await assert.rejects(store.save(data), { message: 'Store is not open' })
-    await assert.rejects(store.exists(), { message: 'Store is not open' })
+    // should fail
+    await assert.rejects(store.save({}), { message: 'Store is not open' })
     await assert.rejects(store.close(), { message: 'Store is not open' })
   })
 
   it('should round trip delegations', async () => {
-    const store = await StoreIndexedDB.open('test-access-db-' + Date.now())
-    const data0 = await store.load()
+    /** @type {StoreIndexedDB<import('../../src/types').AgentDataExport>} */
+    const store = new StoreIndexedDB('test-access-db-' + Date.now())
+    await store.open()
 
-    const signer = await Signer.generate()
+    const data0 = await AgentData.create()
+    const signer = await EdSigner.generate()
     const del0 = await top.delegate({
       issuer: signer,
       audience: data0.principal,
@@ -70,10 +79,13 @@ describe('IndexedDB store', () => {
       expiration: Infinity,
     })
 
-    data0.delegations.set(del0.cid.toString(), { delegation: del0 })
-    await store.save(data0)
+    data0.addDelegation(del0)
+    await store.save(data0.export())
 
-    const data1 = await store.load()
+    const exportData1 = await store.load()
+    assert(exportData1)
+
+    const data1 = AgentData.fromExport(exportData1)
 
     const { delegation: del1 } =
       data1.delegations.get(del0.cid.toString()) ?? {}
