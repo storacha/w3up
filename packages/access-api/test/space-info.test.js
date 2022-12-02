@@ -1,4 +1,4 @@
-import * as Space from '@web3-storage/access/capabilities/space'
+import * as Space from '@web3-storage/capabilities/space'
 import assert from 'assert'
 import { context } from './helpers/context.js'
 import { createSpace } from './helpers/utils.js'

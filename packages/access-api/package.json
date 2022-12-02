@@ -48,7 +48,6 @@
     "dotenv": "^16.0.3",
     "esbuild": "^0.15.16",
     "git-rev-sync": "^3.0.2",
-    "globby": "^13.1.2",
     "hd-scripts": "^3.0.2",
     "is-subset": "^0.1.1",
     "miniflare": "^2.11.0",

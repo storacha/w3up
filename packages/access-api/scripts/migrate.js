@@ -2,7 +2,7 @@ import split from '@databases/split-sql-query'
 import sql from '@databases/sql'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { globbySync } from 'globby'
+import fs from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -12,8 +12,11 @@ const sqliteFormat = {
   formatValue: (_, __) => ({ placeholder: '', value: '' }),
 }
 
-const files = globbySync(`${__dirname}/../migrations/*`)
-const migrations = files.map((f) => sql.file(f))
+// const files = globbySync(`${__dirname}/../migrations/*`)
+const dir = path.resolve(`${__dirname}/../migrations`)
+
+const files = fs.readdirSync(dir)
+const migrations = files.map((f) => sql.file(path.join(dir, f)))
 
 /**
  * Migrate from migration files
@@ -21,11 +24,11 @@ const migrations = files.map((f) => sql.file(f))
  * @param {D1Database} db
  */
 export async function migrate(db) {
-  const runnedMigrations = /** @type {number} */ (
+  const appliedMigrations = /** @type {number} */ (
     await db.prepare('PRAGMA user_version').first('user_version')
   )
 
-  migrations.splice(0, runnedMigrations)
+  migrations.splice(0, appliedMigrations)
   const remaining = migrations.length
   for (const m of migrations) {
     /** @type {import('@databases/sql').SQLQuery[]} */
@@ -38,7 +41,7 @@ export async function migrate(db) {
     )
 
     await db
-      .prepare(`PRAGMA user_version = ${runnedMigrations + remaining}`)
+      .prepare(`PRAGMA user_version = ${appliedMigrations + remaining}`)
       .all()
   }
 }

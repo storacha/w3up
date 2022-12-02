@@ -25,23 +25,6 @@ import {
 
 const HOST = 'https://access.web3.storage'
 
-/** @type {import('./types').Abilities[]} */
-export const abilitiesAsStrings = [
-  '*',
-  'space/*',
-  'space/info',
-  'space/recover',
-  'space/recover-validation',
-  'store/*',
-  'store/add',
-  'store/list',
-  'store/remove',
-  'upload/*',
-  'upload/add',
-  'upload/list',
-  'upload/remove',
-]
-
 /**
  * Creates a Ucanto connection for the w3access API
  *

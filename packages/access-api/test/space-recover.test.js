@@ -1,4 +1,4 @@
-import * as Space from '@web3-storage/access/capabilities/space'
+import * as Space from '@web3-storage/capabilities/space'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 import pWaitFor from 'p-wait-for'
 import assert from 'assert'
@@ -73,6 +73,7 @@ describe('space-recover', function () {
 
     assert(html.includes(encoded))
 
+    // @ts-ignore
     const validations = new Validations(await mf.getKVNamespace('VALIDATIONS'))
     const recoverEncoded =
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
