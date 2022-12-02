@@ -29,7 +29,7 @@ export const Product = URI.uri()
 export const Identity = URI.match({ protocol: 'mailto:' })
 
 /**
- * Services are identified using did:key identifier.
+ * Services are identified using a decentralized identifier.
  */
 export const Service = DID.match({})
 
