@@ -7,7 +7,13 @@ import * as JSON from '../utils/json.js'
  */
 
 /**
- * Store implementation with "conf"
+ * Store implementation with "[conf](https://github.com/sindresorhus/conf)"
+ *
+ * Usage:
+ *
+ * ```js
+ * import { StoreConf } from '@web3-storage/access/stores/store-conf'
+ * ```
  *
  * @template {Record<string, any>} T
  * @implements {Store<T>}

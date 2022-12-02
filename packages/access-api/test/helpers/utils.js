@@ -21,7 +21,7 @@ export async function send(ucan, mf) {
 
 /**
  * @param {Types.Signer} issuer
- * @param {Types.Principal<"key">} service
+ * @param {Types.Principal<UCAN.DID>} service
  * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
  * @param {string} email
  */
