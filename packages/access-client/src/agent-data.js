@@ -89,7 +89,6 @@ export class AgentData {
     return new AgentData(
       {
         meta: raw.meta,
-        // @ts-expect-error
         principal: Signer.from(raw.principal),
         currentSpace: raw.currentSpace,
         spaces: raw.spaces,
@@ -127,7 +126,7 @@ export class AgentData {
    */
   async addSpace(did, meta, proof) {
     this.spaces.set(did, meta)
-    await (proof ? this.addDelegation(proof) : this.#save(this.export()));
+    await (proof ? this.addDelegation(proof) : this.#save(this.export()))
   }
 
   /**
