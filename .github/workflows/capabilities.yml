@@ -1,4 +1,4 @@
-name: '@web3-storage/capabilities'
+name: Capabilities
 env:
   CI: true
   FORCE_COLOR: 1
