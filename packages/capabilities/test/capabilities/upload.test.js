@@ -2,7 +2,7 @@ import assert from 'assert'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
-import * as Upload from '../../src/capabilities/upload.js'
+import * as Upload from '../../src/upload.js'
 import {
   alice,
   bob,

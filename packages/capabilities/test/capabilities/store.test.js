@@ -3,8 +3,8 @@ import assert from 'assert'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
-import * as Store from '../../src/capabilities/store.js'
-import * as Capability from '../../src/capabilities/top.js'
+import * as Store from '../../src/store.js'
+import * as Capability from '../../src/top.js'
 
 import {
   alice,

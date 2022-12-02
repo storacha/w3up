@@ -28,10 +28,19 @@ const PRINCIPAL = DID.parse(
 )
 
 /**
+ * Creates a Ucanto connection for the w3access API
+ *
+ * Usage:
+ *
+ * ```js
+ * import { connection } from '@web3-storage/access/agent'
+ * ```
+ *
+ * @template {Ucanto.DID} T - DID method
  * @param {object} [options]
- * @param {Ucanto.Principal} [options.principal]
+ * @param {Ucanto.Principal<T>} [options.principal] - w3access API Principal
  * @param {URL} [options.url]
- * @param {Ucanto.Transport.Channel<import('./types').Service>} [options.channel]
+ * @param {Ucanto.Transport.Channel<import('./types').Service>} [options.channel] - Ucanto channel to use
  * @returns {Ucanto.ConnectionView<import('./types').Service>}
  */
 export function connection(options = {}) {
@@ -48,8 +57,17 @@ export function connection(options = {}) {
   })
 }
 
+/**
+ * Agent
+ *
+ * Usage:
+ *
+ * ```js
+ * import { Agent } from '@web3-storage/access/agent'
+ * ```
+ */
 export class Agent {
-  /** @type {Ucanto.Principal<"key">|undefined} */
+  /** @type {Ucanto.Principal<Ucanto.DID>|undefined} */
   #service
 
   /**
@@ -399,8 +417,6 @@ export class Agent {
 
   /**
    * Invoke and execute the given capability on the Access service connection
-   *
-   * Sugar for :
    *
    * ```js
    *

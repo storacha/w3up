@@ -11,6 +11,12 @@ const DATA_ID = 1
 /**
  * Store implementation for the browser.
  *
+ * Usage:
+ *
+ * ```js
+ * import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
+ * ```
+ *
  * @template T
  * @implements {Store<T>}
  */

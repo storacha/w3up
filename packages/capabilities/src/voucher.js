@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Account from '@web3-storage/access/capabilities/voucher'
+ * import * as Account from '@web3-storage/capabilities/voucher'
  * ```
  *
  * @module
@@ -29,9 +29,9 @@ export const Product = URI.uri()
 export const Identity = URI.match({ protocol: 'mailto:' })
 
 /**
- * Services are identified using did:key identifier.
+ * Services are identified using a decentralized identifier.
  */
-export const Service = DID.match({ method: 'key' })
+export const Service = DID.match({})
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
