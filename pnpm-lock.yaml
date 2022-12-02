@@ -228,16 +228,12 @@ importers:
 
   packages/capabilities:
     specifiers:
-      '@ipld/car': ^5.0.1
-      '@ipld/dag-ucan': ^2.0.1
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.0
       '@types/node': ^18.11.10
-      '@ucanto/client': ^4.0.2
       '@ucanto/core': ^4.0.2
       '@ucanto/interface': ^4.0.2
       '@ucanto/principal': ^4.0.2
-      '@ucanto/server': ^4.0.2
       '@ucanto/transport': ^4.0.2
       '@ucanto/validator': ^4.0.2
       assert: ^2.0.0
@@ -247,13 +243,9 @@ importers:
       typescript: 4.8.4
       watch: ^1.0.2
     dependencies:
-      '@ipld/car': 5.0.1
-      '@ipld/dag-ucan': 2.0.1
-      '@ucanto/client': 4.0.2
       '@ucanto/core': 4.0.2
       '@ucanto/interface': 4.0.2
       '@ucanto/principal': 4.0.2
-      '@ucanto/server': 4.0.2
       '@ucanto/transport': 4.0.2
       '@ucanto/validator': 4.0.2
     devDependencies:
