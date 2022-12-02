@@ -58,10 +58,13 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "./node_modules/hd-scripts/eslint/preact.js"
     ],
     "parserOptions": {
-      "project": "./tsconfig.json"
+      "project": "./tsconfig.json",
+      "ecmaFeatures": {
+        "jsx": true
+      }
     },
     "globals": {
       "VERSION": "readonly",

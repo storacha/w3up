@@ -101,13 +101,10 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/preact.js"
+      "./node_modules/hd-scripts/eslint/index.js"
     ],
     "parserOptions": {
-      "project": "./tsconfig.json",
-      "ecmaFeatures": {
-        "jsx": true
-      }
+      "project": "./tsconfig.json"
     },
     "rules": {
       "unicorn/prefer-number-properties": "off",
