@@ -114,7 +114,7 @@ importers:
       '@ucanto/client': ^3.0.3
       '@ucanto/core': ^3.0.3
       '@ucanto/interface': ^4.0.0
-      '@ucanto/principal': ^4.0.0
+      '@ucanto/principal': ^4.0.1
       '@ucanto/server': ^3.0.4
       '@ucanto/transport': ^3.0.3
       '@ucanto/validator': ^3.0.5
@@ -148,7 +148,7 @@ importers:
       '@ucanto/client': 3.0.3
       '@ucanto/core': 3.0.3
       '@ucanto/interface': 4.0.0
-      '@ucanto/principal': 4.0.0
+      '@ucanto/principal': 4.0.1
       '@ucanto/transport': 3.0.3
       '@ucanto/validator': 3.0.5
       '@web3-storage/capabilities': link:../capabilities
@@ -1676,6 +1676,16 @@ packages:
       '@ucanto/interface': 4.0.0
       multiformats: 10.0.2
       one-webcrypto: 1.0.3
+
+  /@ucanto/principal/4.0.1:
+    resolution: {integrity: sha512-D5ZWsRgWs3WriFEyGuisIpJYg/Mbo9GzI0ogu0jQ3HG9q2qE5Z0qEGDWBcmw6MdIIfi/5NMzxtVXOHeJY7sqPA==}
+    dependencies:
+      '@ipld/dag-ucan': 2.0.1
+      '@noble/ed25519': 1.7.1
+      '@ucanto/interface': 4.0.0
+      multiformats: 10.0.2
+      one-webcrypto: 1.0.3
+    dev: false
 
   /@ucanto/server/3.0.5:
     resolution: {integrity: sha512-6srksAbYrCixnGWMlPXAFa5smjCLZ9+AMLwxS5vbLdVToFcZc2JXFFZUFq7fJouOMETCUsk+q3ank4sNw2BQJg==}

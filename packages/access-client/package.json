@@ -60,7 +60,7 @@
     "@ucanto/client": "^3.0.3",
     "@ucanto/core": "^3.0.3",
     "@ucanto/interface": "^4.0.0",
-    "@ucanto/principal": "^4.0.0",
+    "@ucanto/principal": "^4.0.1",
     "@ucanto/transport": "^3.0.3",
     "@ucanto/validator": "^3.0.5",
     "@web3-storage/capabilities": "workspace:^",
