@@ -467,8 +467,6 @@ export class Agent {
   /**
    * Invoke and execute the given capability on the Access service connection
    *
-   * Sugar for :
-   *
    * ```js
    *
    * await agent.invokeAndExecute(Space.recover, {

@@ -69,7 +69,6 @@
     "@ucanto/client": "^3.0.1",
     "@ucanto/interface": "^3.0.0",
     "@ucanto/transport": "^3.0.1",
-    "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "multiformats": "^10.0.2",
     "p-queue": "^7.3.0",

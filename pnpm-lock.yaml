@@ -271,7 +271,6 @@ importers:
       '@ucanto/principal': ^3.0.0
       '@ucanto/server': ^3.0.1
       '@ucanto/transport': ^3.0.1
-      '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       blockstore-core: ^2.0.2
@@ -293,7 +292,6 @@ importers:
       '@ucanto/client': 3.0.2
       '@ucanto/interface': 3.0.1
       '@ucanto/transport': 3.0.2
-      '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
       multiformats: 10.0.2
       p-queue: 7.3.0
