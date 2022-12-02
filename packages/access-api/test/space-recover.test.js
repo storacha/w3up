@@ -59,7 +59,7 @@ describe('space-recover', function () {
 
     const url = new URL(inv)
     const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
         url.searchParams.get('ucan')
       )
 
@@ -76,7 +76,7 @@ describe('space-recover', function () {
     // @ts-ignore
     const validations = new Validations(await mf.getKVNamespace('VALIDATIONS'))
     const recoverEncoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
         await validations.get(issuer.did())
       )
 
@@ -100,7 +100,7 @@ describe('space-recover', function () {
         const data = JSON.parse(event.data)
 
         const encoded =
-          /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+          /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
             data.delegation
           )
 
@@ -147,7 +147,7 @@ describe('space-recover', function () {
 
     const url = new URL(inv)
     const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/capabilities/types').SpaceRecover]>} */ (
+      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
         url.searchParams.get('ucan')
       )
 
