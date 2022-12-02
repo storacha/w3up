@@ -6,7 +6,7 @@ import {
   SpaceMeta,
 } from '../types.js'
 import { SignerArchive, DID } from '@ucanto/interface'
-import { RSA } from '@ucanto/principal/.'
+import { RSA } from '@ucanto/principal'
 
 /**
  * Store interface that all stores need to implement
