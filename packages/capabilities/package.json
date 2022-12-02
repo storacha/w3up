@@ -63,7 +63,7 @@
     "@ucanto/core": "^3.0.4",
     "@ucanto/interface": "^4.0.0",
     "@ucanto/principal": "^4.0.1",
-    "@ucanto/server": "^3.0.6",
+    "@ucanto/server": "^3.0.7",
     "@ucanto/transport": "^3.0.4",
     "@ucanto/validator": "^3.0.6"
   },

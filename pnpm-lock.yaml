@@ -115,7 +115,7 @@ importers:
       '@ucanto/core': ^3.0.4
       '@ucanto/interface': ^4.0.0
       '@ucanto/principal': ^4.0.1
-      '@ucanto/server': ^3.0.4
+      '@ucanto/server': ^3.0.7
       '@ucanto/transport': ^3.0.4
       '@ucanto/validator': ^3.0.6
       '@web3-storage/capabilities': workspace:^
@@ -171,7 +171,7 @@ importers:
       '@types/mocha': 10.0.1
       '@types/node': 18.11.10
       '@types/ws': 8.5.3
-      '@ucanto/server': 3.0.5
+      '@ucanto/server': 3.0.7
       assert: 2.0.0
       delay: 5.0.0
       hd-scripts: 3.0.2
@@ -237,7 +237,7 @@ importers:
       '@ucanto/core': ^3.0.4
       '@ucanto/interface': ^4.0.0
       '@ucanto/principal': ^4.0.1
-      '@ucanto/server': ^3.0.6
+      '@ucanto/server': ^3.0.7
       '@ucanto/transport': ^3.0.4
       '@ucanto/validator': ^3.0.6
       assert: ^2.0.0
@@ -253,7 +253,7 @@ importers:
       '@ucanto/core': 3.0.4
       '@ucanto/interface': 4.0.0
       '@ucanto/principal': 4.0.1
-      '@ucanto/server': 3.0.6
+      '@ucanto/server': 3.0.7
       '@ucanto/transport': 3.0.4
       '@ucanto/validator': 3.0.6
     devDependencies:
@@ -1695,13 +1695,12 @@ packages:
       '@ucanto/interface': 3.0.1
       '@ucanto/validator': 3.0.6
 
-  /@ucanto/server/3.0.6:
-    resolution: {integrity: sha512-kv2Iati3l7RVE/V1l/ATuVxeoRI+q4N7GATt+/l1zkouogX1EWv/b58Zf2fwqtLMCDA2yC2iCqROb5TNsDOBlg==}
+  /@ucanto/server/3.0.7:
+    resolution: {integrity: sha512-Q1WzThJDdOQIYZS9opd/PakfFCenp7ksFvDm6YWvB8k8w8l44+vofggaUneCEThewg2oj3wkPMnsJX7erNT0Vw==}
     dependencies:
       '@ucanto/core': 3.0.4
       '@ucanto/interface': 4.0.0
       '@ucanto/validator': 3.0.6
-    dev: false
 
   /@ucanto/transport/3.0.2:
     resolution: {integrity: sha512-IyfI26VWPxCL2jnGiGP1i6mZblk8QORHzEVt5t+7Pic2k7pANQHoqbveQveRb9a8z6D/UdFogSPQxWYYtKaxWQ==}

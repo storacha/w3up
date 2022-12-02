@@ -84,7 +84,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.11.10",
     "@types/ws": "^8.5.3",
-    "@ucanto/server": "^3.0.4",
+    "@ucanto/server": "^3.0.7",
     "assert": "^2.0.0",
     "delay": "^5.0.0",
     "hd-scripts": "^3.0.2",
