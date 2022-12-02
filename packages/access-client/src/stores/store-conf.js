@@ -21,7 +21,13 @@ import * as Ucanto from '@ucanto/interface'
  */
 
 /**
- * Store implementation with "conf"
+ * Store implementation with "[conf](https://github.com/sindresorhus/conf)"
+ *
+ * Usage:
+ *
+ * ```js
+ * import { StoreConf } from '@web3-storage/access/stores/store-conf'
+ * ```
  *
  * @implements {Store}
  */
