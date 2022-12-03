@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3protocol/compare/wallet-v1.0.0...wallet-v2.0.0) (2022-12-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* follow up on the capabilities extract ([#239](https://github.com/web3-storage/w3protocol/issues/239))
+* Remove 0.8 caps and add account delegation to the service ([#123](https://github.com/web3-storage/w3protocol/issues/123))
+
+### Features
+
+* [#153](https://github.com/web3-storage/w3protocol/issues/153) ([#177](https://github.com/web3-storage/w3protocol/issues/177)) ([d6d448c](https://github.com/web3-storage/w3protocol/commit/d6d448c16f188398c30f2d1b83f69e1d7becd450))
+* account recover with email ([#149](https://github.com/web3-storage/w3protocol/issues/149)) ([6c659ba](https://github.com/web3-storage/w3protocol/commit/6c659ba68d23c3448d5150bc76f1ddcb91ae18d8))
+* follow up on the capabilities extract ([#239](https://github.com/web3-storage/w3protocol/issues/239)) ([ef5e779](https://github.com/web3-storage/w3protocol/commit/ef5e77922b67155f0c3e5cb37c12e32f9a56cce1))
+* Remove 0.8 caps and add account delegation to the service ([#123](https://github.com/web3-storage/w3protocol/issues/123)) ([878f8c9](https://github.com/web3-storage/w3protocol/commit/878f8c9a38f02dac509ef0b4437ab3d1b8467eb3)), closes [#117](https://github.com/web3-storage/w3protocol/issues/117) [#121](https://github.com/web3-storage/w3protocol/issues/121)
+* use modules and setup ([#99](https://github.com/web3-storage/w3protocol/issues/99)) ([b060c0b](https://github.com/web3-storage/w3protocol/commit/b060c0b299ee55dbe7820231c63be90129a39652)), closes [#98](https://github.com/web3-storage/w3protocol/issues/98)
+
+
+### Bug Fixes
+
+* 0.9 ([#78](https://github.com/web3-storage/w3protocol/issues/78)) ([1b1ed01](https://github.com/web3-storage/w3protocol/commit/1b1ed01d537e88bbdeb5ea2aeb967b27bd11f87d))
+
 ## [1.0.0](https://github.com/web3-storage/w3-protocol/compare/wallet-v0.3.0...wallet-v1.0.0) (2022-10-10)
 
 
