@@ -33,7 +33,7 @@ const HOST = 'https://access.web3.storage'
  * import { connection } from '@web3-storage/access/agent'
  * ```
  *
- * @template {Ucanto.DID} T - DID method
+ * @template {string} T - DID method
  * @param {Ucanto.Principal<T>} principal - w3access API Principal
  * @param {typeof fetch} _fetch - fetch implementation to use
  * @param {URL} url - w3access API URL
@@ -70,7 +70,7 @@ export function connection(principal, _fetch, url, channel) {
  * @template {Ucanto.Signer} T - Ucanto Signer ie. ed25519, RSA or others
  */
 export class Agent {
-  /** @type {Ucanto.Principal<Ucanto.DID>|undefined} */
+  /** @type {Ucanto.Principal<"key">|undefined} */
   #service
 
   /** @type {typeof fetch} */

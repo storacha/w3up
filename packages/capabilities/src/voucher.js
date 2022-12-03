@@ -29,9 +29,9 @@ export const Product = URI.uri()
 export const Identity = URI.match({ protocol: 'mailto:' })
 
 /**
- * Services are identified using a decentralized identifier.
+ * Services are identified using did:key identifier.
  */
-export const Service = DID.match({})
+export const Service = DID.match({ method: 'key' })
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to

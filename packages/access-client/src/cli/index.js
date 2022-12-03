@@ -158,5 +158,4 @@ prog
       console.error(`Run "${NAME} setup" first`)
     }
   })
-
 prog.parse(process.argv)
