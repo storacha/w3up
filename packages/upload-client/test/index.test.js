@@ -10,6 +10,7 @@ import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import { uploadFile, uploadDirectory } from '../src/index.js'
 import { serviceSigner } from './fixtures.js'
 import { randomBytes } from './helpers/random.js'
+import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
 
@@ -23,7 +24,10 @@ describe('uploadFile', () => {
 
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
-    const file = new Blob([await randomBytes(128)])
+    const bytes = await randomBytes(128)
+    const file = new Blob([bytes])
+    const expectedCar = await toCAR(bytes)
+
     /** @type {import('../src/types').CARLink|undefined} */
     let carCID
 
@@ -62,7 +66,10 @@ describe('uploadFile', () => {
           assert.equal(invCap.with, space.did())
           assert.equal(invCap.nb?.shards?.length, 1)
           assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
-          return null
+          return {
+            root: expectedCar.roots[0],
+            shards: [expectedCar.cid],
+          }
         }),
       },
     })
@@ -95,8 +102,8 @@ describe('uploadFile', () => {
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
 
-    assert(carCID)
-    assert(dataCID)
+    assert.equal(carCID?.toString(), expectedCar.cid.toString())
+    assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
   })
 
   it('allows custom shard size to be set', async () => {
@@ -129,7 +136,12 @@ describe('uploadFile', () => {
 
     const service = mockService({
       store: { add: provide(StoreCapabilities.add, () => res) },
-      upload: { add: provide(UploadCapabilities.add, () => null) },
+      upload: {
+        add: provide(UploadCapabilities.add, ({ capability }) => {
+          if (!capability.nb) throw new Error('nb must be present')
+          return capability.nb
+        }),
+      },
     })
 
     const server = Server.create({
@@ -210,7 +222,8 @@ describe('uploadDirectory', () => {
           assert.equal(invCap.with, space.did())
           assert.equal(invCap.nb?.shards?.length, 1)
           assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
-          return null
+          if (!invCap.nb) throw new Error('nb must be present')
+          return invCap.nb
         }),
       },
     })
@@ -277,7 +290,12 @@ describe('uploadDirectory', () => {
 
     const service = mockService({
       store: { add: provide(StoreCapabilities.add, () => res) },
-      upload: { add: provide(UploadCapabilities.add, () => null) },
+      upload: {
+        add: provide(UploadCapabilities.add, ({ capability }) => {
+          if (!capability.nb) throw new Error('nb must be present')
+          return capability.nb
+        }),
+      },
     })
 
     const server = Server.create({

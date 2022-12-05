@@ -347,7 +347,7 @@ function add(
   root: CID,
   shards: CID[],
   options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<void>
+): Promise<UploadAddResponse>
 ```
 
 Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multipe CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
