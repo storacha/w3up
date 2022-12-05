@@ -70,7 +70,10 @@ describe('IndexedDB store', () => {
       expiration: Infinity,
     })
 
-    data0.delegations.set(del0.cid.toString(), { delegation: del0 })
+    data0.delegations.set(del0.cid.toString(), {
+      delegation: del0,
+      meta: { audience: { name: 'test', type: 'device' } },
+    })
     await store.save(data0)
 
     const data1 = await store.load()

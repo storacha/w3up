@@ -1,13 +1,11 @@
+import * as DID from '@ipld/dag-ucan/did'
 import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
+import { top } from '@web3-storage/capabilities/top'
+import { delegationToString } from '@web3-storage/access/encoding'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
-import * as DID from '@ipld/dag-ucan/did'
-import {
-  delegationToString,
-  stringToDelegation,
-} from '@web3-storage/access/encoding'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -35,31 +33,33 @@ export function service(ctx) {
             return new Failure(
               `Resource ${
                 capability.with
-              } does not service did ${ctx.signer.did()}`
+              } does not match service did ${ctx.signer.did()}`
             )
           }
 
-          const encoded = await ctx.kvs.spaces.getDelegations(
-            capability.nb.identity
+          const spaces = await ctx.kvs.spaces.getByEmail(
+            capability.nb.identity.replace('mailto:', '')
           )
-          if (!encoded) {
+          if (!spaces) {
             return new Failure(
               `No delegations found for ${capability.nb.identity}`
             )
           }
 
           const results = []
-          for (const e of encoded) {
-            const proof = await stringToDelegation(e)
-            const del = await Space.top.delegate({
-              audience: invocation.issuer,
-              issuer: ctx.signer,
-              with: proof.capabilities[0].with,
-              expiration: Infinity,
-              proofs: [proof],
-            })
+          for (const { delegation, metadata } of spaces) {
+            if (delegation) {
+              const del = await top.delegate({
+                audience: invocation.issuer,
+                issuer: ctx.signer,
+                with: delegation.capabilities[0].with,
+                expiration: Infinity,
+                proofs: [delegation],
+                facts: [metadata],
+              })
 
-            results.push(await delegationToString(del))
+              results.push(await delegationToString(del))
+            }
           }
 
           return results
@@ -73,10 +73,15 @@ export function service(ctx) {
           // if yes send email with space/recover
           // if not error "no spaces for email X"
 
-          const email = capability.nb.identity
-          if (!(await ctx.kvs.spaces.hasDelegations(email))) {
+          const spaces = await ctx.kvs.spaces.getByEmail(
+            capability.nb.identity.replace('mailto:', '')
+          )
+          if (!spaces) {
             return new Failure(
-              `No spaces found for email: ${email.replace('mailto:', '')}.`
+              `No spaces found for email: ${capability.nb.identity.replace(
+                'mailto:',
+                ''
+              )}.`
             )
           }
 
@@ -87,7 +92,7 @@ export function service(ctx) {
               with: ctx.signer.did(),
               lifetimeInSeconds: 60 * 10,
               nb: {
-                identity: email,
+                identity: capability.nb.identity,
               },
               proofs: [
                 await Space.recover.delegate({
@@ -110,6 +115,11 @@ export function service(ctx) {
           if (ctx.config.ENV === 'test') {
             return url
           }
+
+          await ctx.email.sendValidation({
+            to: capability.nb.identity.replace('mailto:', ''),
+            url,
+          })
         }
       ),
     },

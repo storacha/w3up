@@ -1,242 +1,250 @@
 import * as UCAN from '@ipld/dag-ucan'
 import { Signer } from '@ucanto/principal/ed25519'
-import { context, test } from './helpers/context.js'
+import { context } from './helpers/context.js'
+import assert from 'assert'
 
-test.beforeEach(async (t) => {
-  t.context = await context()
-})
+/** @type {typeof assert} */
+const t = assert
+const test = it
 
-test('should fail with no header', async (t) => {
-  const { mf } = t.context
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
+describe('ucan', function () {
+  /** @type {Awaited<ReturnType<typeof context>>} */
+  let ctx
+  beforeEach(async function () {
+    ctx = await context()
   })
-  const rsp = await res.json()
-  t.deepEqual(rsp, {
-    error: {
-      code: 'HTTP_ERROR',
-      message: 'The required "Authorization: Bearer" header is missing.',
-    },
+  it('should fail with no header', async function () {
+    const { mf } = ctx
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+    })
+    const rsp = await res.json()
+    t.deepEqual(rsp, {
+      error: {
+        code: 'HTTP_ERROR',
+        message: 'The required "Authorization: Bearer" header is missing.',
+      },
+    })
+    t.strictEqual(res.status, 400)
   })
-  t.is(res.status, 400)
-})
 
-test('should fail with bad ucan', async (t) => {
-  const { mf } = t.context
+  it('should fail with bad ucan', async function () {
+    const { mf } = ctx
 
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ss`,
-    },
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ss`,
+      },
+    })
+    t.strictEqual(res.status, 401)
+    const rsp = await res.json()
+    t.deepEqual(rsp, {
+      error: {
+        code: 'HTTP_ERROR',
+        message: 'Malformed UCAN headers data.',
+        cause:
+          "ParseError: Can't parse UCAN: ss: Expected JWT format: 3 dot-separated base64url-encoded values.",
+      },
+    })
   })
-  t.is(res.status, 401)
-  const rsp = await res.json()
-  t.deepEqual(rsp, {
-    error: {
-      code: 'HTTP_ERROR',
-      message: 'Malformed UCAN headers data.',
-      cause:
-        "ParseError: Can't parse UCAN: ss: Expected JWT format: 3 dot-separated base64url-encoded values.",
-    },
-  })
-})
 
-test('should fail with 0 caps', async (t) => {
-  const { mf, service, issuer } = t.context
+  test('should fail with 0 caps', async function () {
+    const { mf, service, issuer } = ctx
 
-  const ucan = await UCAN.issue({
-    issuer,
-    audience: service,
-    // @ts-ignore
-    capabilities: [],
-  })
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${UCAN.format(ucan)}`,
-    },
-  })
-  const rsp = await res.json()
-  t.deepEqual(rsp, [
-    {
-      name: 'InvocationCapabilityError',
-      error: true,
-      message: 'Invocation is required to have a single capability.',
+    const ucan = await UCAN.issue({
+      issuer,
+      audience: service,
+      // @ts-ignore
       capabilities: [],
-    },
-  ])
-})
-
-test('should fail with bad service audience', async (t) => {
-  const { mf, issuer } = t.context
-
-  const audience = await Signer.generate()
-  const ucan = await UCAN.issue({
-    issuer,
-    audience,
-    // @ts-ignore
-    capabilities: [],
+    })
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UCAN.format(ucan)}`,
+      },
+    })
+    const rsp = await res.json()
+    t.deepEqual(rsp, [
+      {
+        name: 'InvocationCapabilityError',
+        error: true,
+        message: 'Invocation is required to have a single capability.',
+        capabilities: [],
+      },
+    ])
   })
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${UCAN.format(ucan)}`,
-    },
-  })
-  const rsp = await res.json()
-  t.deepEqual(rsp[0].name, 'InvalidAudience')
-})
 
-test('should fail with with more than 1 cap', async (t) => {
-  const { mf, service, issuer } = t.context
+  test('should fail with bad service audience', async function () {
+    const { mf, issuer } = ctx
 
-  const ucan = await UCAN.issue({
-    issuer,
-    audience: service,
-    capabilities: [
-      { can: 'identity/validate', with: 'mailto:admin@dag.house' },
-      { can: 'identity/register', with: 'mailto:admin@dag.house' },
-    ],
+    const audience = await Signer.generate()
+    const ucan = await UCAN.issue({
+      issuer,
+      audience,
+      // @ts-ignore
+      capabilities: [],
+    })
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UCAN.format(ucan)}`,
+      },
+    })
+    const rsp = await res.json()
+    t.deepEqual(rsp[0].name, 'InvalidAudience')
   })
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${UCAN.format(ucan)}`,
-    },
-  })
-  const rsp = await res.json()
-  t.deepEqual(rsp, [
-    {
-      name: 'InvocationCapabilityError',
-      error: true,
-      message: 'Invocation is required to have a single capability.',
+
+  test('should fail with with more than 1 cap', async function () {
+    const { mf, service, issuer } = ctx
+
+    const ucan = await UCAN.issue({
+      issuer,
+      audience: service,
       capabilities: [
         { can: 'identity/validate', with: 'mailto:admin@dag.house' },
         { can: 'identity/register', with: 'mailto:admin@dag.house' },
       ],
-    },
-  ])
-})
-
-test('should route to handler', async (t) => {
-  const { mf, issuer, service } = t.context
-
-  const ucan = await UCAN.issue({
-    issuer,
-    audience: service,
-    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
-  })
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${UCAN.format(ucan)}`,
-    },
-  })
-  const rsp = await res.json()
-  t.deepEqual(rsp, ['test pass'])
-})
-
-test('should handle exception in route handler', async (t) => {
-  const { mf, service, issuer } = t.context
-
-  const ucan = await UCAN.issue({
-    issuer,
-    audience: service,
-    capabilities: [{ can: 'testing/fail', with: 'mailto:admin@dag.house' }],
-  })
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${UCAN.format(ucan)}`,
-    },
-  })
-  const rsp = await res.json()
-  t.deepEqual(
-    rsp[0].message,
-    'service handler {can: "testing/fail"} error: test fail'
-  )
-})
-
-test('should fail with missing proofs', async (t) => {
-  const { mf, service } = t.context
-
-  const alice = await Signer.generate()
-  const bob = await Signer.generate()
-  const proof1 = await UCAN.issue({
-    issuer: alice,
-    audience: bob,
-    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
-  })
-
-  const proof2 = await UCAN.issue({
-    issuer: alice,
-    audience: bob,
-    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
-  })
-  const cid1 = await UCAN.link(proof1)
-  const cid2 = await UCAN.link(proof2)
-  const ucan = await UCAN.issue({
-    issuer: bob,
-    audience: service,
-    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
-    proofs: [cid1, cid2],
-  })
-
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${UCAN.format(ucan)}`,
-    },
-  })
-  const rsp = await res.json()
-  t.deepEqual(rsp, {
-    error: {
-      code: 'HTTP_ERROR',
-      message: 'Missing Proofs',
-      cause: {
-        prf: [cid1.toString(), cid2.toString()],
+    })
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UCAN.format(ucan)}`,
       },
-    },
-  })
-})
-
-test('should multiple invocation should pass', async (t) => {
-  const { mf, service } = t.context
-
-  const alice = await Signer.generate()
-  const bob = await Signer.generate()
-  const proof1 = await UCAN.issue({
-    issuer: alice,
-    audience: bob,
-    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
-  })
-
-  const cid1 = await UCAN.link(proof1)
-  const ucan1 = await UCAN.issue({
-    issuer: bob,
-    audience: service,
-    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
-    proofs: [cid1],
+    })
+    const rsp = await res.json()
+    t.deepEqual(rsp, [
+      {
+        name: 'InvocationCapabilityError',
+        error: true,
+        message: 'Invocation is required to have a single capability.',
+        capabilities: [
+          { can: 'identity/validate', with: 'mailto:admin@dag.house' },
+          { can: 'identity/register', with: 'mailto:admin@dag.house' },
+        ],
+      },
+    ])
   })
 
-  const ucan2 = await UCAN.issue({
-    issuer: bob,
-    audience: service,
-    capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
-    proofs: [cid1],
+  test('should route to handler', async function () {
+    const { mf, issuer, service } = ctx
+
+    const ucan = await UCAN.issue({
+      issuer,
+      audience: service,
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+    })
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UCAN.format(ucan)}`,
+      },
+    })
+    const rsp = await res.json()
+    t.deepEqual(rsp, ['test pass'])
   })
 
-  const headers = new Headers()
-  headers.append('Authorization', `Bearer ${UCAN.format(ucan1)}`)
-  headers.append('Authorization', `Bearer ${UCAN.format(ucan2)}`)
-  headers.append('ucan', `${cid1.toString()} ${UCAN.format(proof1)}`)
+  test('should handle exception in route handler', async function () {
+    const { mf, service, issuer } = ctx
 
-  const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-    method: 'POST',
-    headers: Object.fromEntries(headers.entries()),
+    const ucan = await UCAN.issue({
+      issuer,
+      audience: service,
+      capabilities: [{ can: 'testing/fail', with: 'mailto:admin@dag.house' }],
+    })
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UCAN.format(ucan)}`,
+      },
+    })
+    const rsp = await res.json()
+    t.deepEqual(
+      rsp[0].message,
+      'service handler {can: "testing/fail"} error: test fail'
+    )
   })
 
-  const rsp = await res.json()
-  t.deepEqual(rsp, ['test pass', 'test pass'])
+  test('should fail with missing proofs', async function () {
+    const { mf, service } = ctx
+
+    const alice = await Signer.generate()
+    const bob = await Signer.generate()
+    const proof1 = await UCAN.issue({
+      issuer: alice,
+      audience: bob,
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+    })
+
+    const proof2 = await UCAN.issue({
+      issuer: alice,
+      audience: bob,
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+    })
+    const cid1 = await UCAN.link(proof1)
+    const cid2 = await UCAN.link(proof2)
+    const ucan = await UCAN.issue({
+      issuer: bob,
+      audience: service,
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      proofs: [cid1, cid2],
+    })
+
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UCAN.format(ucan)}`,
+      },
+    })
+    const rsp = await res.json()
+    t.deepEqual(rsp, {
+      error: {
+        code: 'HTTP_ERROR',
+        message: 'Missing Proofs',
+        cause: {
+          prf: [cid1.toString(), cid2.toString()],
+        },
+      },
+    })
+  })
+
+  test('should multiple invocation should pass', async function () {
+    const { mf, service } = ctx
+
+    const alice = await Signer.generate()
+    const bob = await Signer.generate()
+    const proof1 = await UCAN.issue({
+      issuer: alice,
+      audience: bob,
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+    })
+
+    const cid1 = await UCAN.link(proof1)
+    const ucan1 = await UCAN.issue({
+      issuer: bob,
+      audience: service,
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      proofs: [cid1],
+    })
+
+    const ucan2 = await UCAN.issue({
+      issuer: bob,
+      audience: service,
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      proofs: [cid1],
+    })
+
+    const headers = new Headers()
+    headers.append('Authorization', `Bearer ${UCAN.format(ucan1)}`)
+    headers.append('Authorization', `Bearer ${UCAN.format(ucan2)}`)
+    headers.append('ucan', `${cid1.toString()} ${UCAN.format(proof1)}`)
+
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: Object.fromEntries(headers.entries()),
+    })
+
+    const rsp = await res.json()
+    t.deepEqual(rsp, ['test pass', 'test pass'])
+  })
 })

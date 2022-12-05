@@ -78,3 +78,7 @@ export interface ModuleWorker {
   fetch?: ModuleWorker.FetchHandler<Env>
   scheduled?: ModuleWorker.CronHandler<Env>
 }
+
+export interface D1ErrorRaw extends Error {
+  cause: Error & { code: string }
+}

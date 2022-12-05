@@ -122,3 +122,15 @@ export async function stringToDelegation(raw, encoding) {
 
   return /** @type {Types.Delegation<T>} */ (delegations[0])
 }
+
+/**
+ * @param {number} [expiration]
+ */
+export function expirationToDate(expiration) {
+  const expires =
+    expiration === Infinity || !expiration
+      ? undefined
+      : new Date(expiration * 1000)
+
+  return expires
+}
