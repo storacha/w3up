@@ -51,7 +51,7 @@ export function getContext(request, env, ctx) {
     config,
     url,
     kvs: {
-      spaces: new Spaces(config.SPACES, db),
+      spaces: new Spaces(db),
       validations: new Validations(config.VALIDATIONS),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),

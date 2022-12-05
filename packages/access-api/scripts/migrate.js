@@ -2,6 +2,7 @@ import split from '@databases/split-sql-query'
 import sql from '@databases/sql'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import fs from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -10,9 +11,12 @@ const sqliteFormat = {
   escapeIdentifier: (_) => '',
   formatValue: (_, __) => ({ placeholder: '', value: '' }),
 }
-const migrations = [
-  sql.file(`${__dirname}/../migrations/0000_create_spaces_table.sql`),
-]
+
+// const files = globbySync(`${__dirname}/../migrations/*`)
+const dir = path.resolve(`${__dirname}/../migrations`)
+
+const files = fs.readdirSync(dir)
+const migrations = files.map((f) => sql.file(path.join(dir, f)))
 
 /**
  * Migrate from migration files
@@ -20,24 +24,24 @@ const migrations = [
  * @param {D1Database} db
  */
 export async function migrate(db) {
-  try {
-    for (const m of migrations) {
-      /** @type {import('@databases/sql').SQLQuery[]} */
-      // @ts-ignore
-      const qs = split.default(m)
-      await db.batch(
-        qs.map((q) => {
-          return db.prepare(q.format(sqliteFormat).text.replace(/^--.*$/gm, ''))
-        })
-      )
-    }
-  } catch (error) {
-    const err = /** @type {Error} */ (error)
-    // eslint-disable-next-line no-console
-    console.error('D1 Error', {
-      message: err.message,
-      // @ts-ignore
-      cause: err.cause?.message,
-    })
+  const appliedMigrations = /** @type {number} */ (
+    await db.prepare('PRAGMA user_version').first('user_version')
+  )
+
+  migrations.splice(0, appliedMigrations)
+  const remaining = migrations.length
+  for (const m of migrations) {
+    /** @type {import('@databases/sql').SQLQuery[]} */
+    // @ts-ignore
+    const qs = split.default(m)
+    await db.batch(
+      qs.map((q) => {
+        return db.prepare(q.format(sqliteFormat).text.replace(/^--.*$/gm, ''))
+      })
+    )
+
+    await db
+      .prepare(`PRAGMA user_version = ${appliedMigrations + remaining}`)
+      .all()
   }
 }

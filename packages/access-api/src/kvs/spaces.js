@@ -1,11 +1,36 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import { delegationToString } from '@web3-storage/access/encoding'
+import {
+  delegationToString,
+  stringToDelegation,
+} from '@web3-storage/access/encoding'
 
 /**
  * @typedef {import('@web3-storage/access/types').SpaceD1} SpaceD1
  */
+
+/**
+ * @implements {Ucanto.Failure}
+ */
+export class D1Error extends Error {
+  /** @type {true} */
+  get error() {
+    return true
+  }
+
+  /**
+   *
+   * @param {import('../bindings').D1ErrorRaw} error
+   */
+  constructor(error) {
+    super(`${error.cause.message} (${error.cause.code})`, {
+      cause: error.cause,
+    })
+    this.name = 'D1Error'
+    this.code = error.cause.code
+  }
+}
 
 /**
  * Spaces
@@ -13,28 +38,40 @@ import { delegationToString } from '@web3-storage/access/encoding'
 export class Spaces {
   /**
    *
-   * @param {KVNamespace} kv
    * @param {import('workers-qb').D1QB} db
    */
-  constructor(kv, db) {
-    this.kv = kv
+  constructor(db) {
     this.db = db
   }
 
   /**
    * @param {import('@web3-storage/capabilities/types').VoucherRedeem} capability
    * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').VoucherRedeem>} invocation
+   * @param {Ucanto.Delegation<[import('@web3-storage/access/src/types').Top]> | undefined} delegation
    */
-  async create(capability, invocation) {
-    await this.db.insert({
-      tableName: 'spaces',
-      data: {
-        did: capability.nb.space,
-        product: capability.nb.product,
-        email: capability.nb.identity.replace('mailto:', ''),
-        agent: invocation.issuer.did(),
-      },
-    })
+  async create(capability, invocation, delegation) {
+    try {
+      const result = await this.db.insert({
+        tableName: 'spaces',
+        data: {
+          did: capability.nb.space,
+          product: capability.nb.product,
+          email: capability.nb.identity.replace('mailto:', ''),
+          agent: invocation.issuer.did(),
+          metadata: JSON.stringify(invocation.facts[0]),
+          invocation: await delegationToString(invocation),
+          // eslint-disable-next-line unicorn/no-null
+          delegation: !delegation ? null : await delegationToString(delegation),
+        },
+      })
+      return { data: result }
+    } catch (error) {
+      return {
+        error: new D1Error(
+          /** @type {import('../bindings').D1ErrorRaw} */ (error)
+        ),
+      }
+    }
   }
 
   /**
@@ -63,55 +100,49 @@ export class Spaces {
       product: results.product,
       updated_at: results.update_at,
       inserted_at: results.inserted_at,
+      // @ts-ignore
+      metadata: JSON.parse(results.metadata),
     })
   }
 
   /**
-   * Save space delegation per email
-   *
-   * @param {`mailto:${string}`} email
-   * @param {Ucanto.Delegation<Ucanto.Capabilities>} delegation
+   * @param {string} email
    */
-  async saveDelegation(email, delegation) {
-    const accs = /** @type {string[] | undefined} */ (
-      await this.kv.get(email, {
-        type: 'json',
-      })
-    )
+  async getByEmail(email) {
+    const s = await this.db.fetchAll({
+      tableName: 'spaces',
+      fields: '*',
+      where: {
+        conditions: 'email=?1',
+        params: [email],
+      },
+    })
 
-    if (accs) {
-      accs.push(await delegationToString(delegation))
-      await this.kv.put(email, JSON.stringify(accs))
-    } else {
-      await this.kv.put(
-        email,
-        JSON.stringify([await delegationToString(delegation)])
-      )
-    }
-  }
-
-  /**
-   * Check if we have delegations for an email
-   *
-   * @param {`mailto:${string}`} email
-   */
-  async hasDelegations(email) {
-    const r = await this.kv.get(email)
-    return Boolean(r)
-  }
-
-  /**
-   * @param {`mailto:${string}`} email
-   */
-  async getDelegations(email) {
-    const r = await this.kv.get(email, { type: 'json' })
-
-    if (!r) {
+    if (!s.results || s.results.length === 0) {
       return
     }
 
-    return /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').Top]>[]} */ (
-      r
-    )
+    const out = []
+
+    for (const r of s.results) {
+      out.push({
+        did: r.did,
+        agent: r.agent,
+        email: r.email,
+        product: r.product,
+        updated_at: r.update_at,
+        inserted_at: r.inserted_at,
+        // @ts-ignore
+        metadata: JSON.parse(r.metadata),
+        delegation: !r.delegation
+          ? undefined
+          : await stringToDelegation(
+              /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Top]>} */ (
+                r.delegation
+              )
+            ),
+      })
+    }
+    return out
   }
 }

@@ -56,7 +56,7 @@ export interface StoreDataIDB {
   delegations: Map<
     CIDString,
     {
-      meta?: DelegationMeta
+      meta: DelegationMeta
       delegation: Array<{ cid: CIDString; bytes: Uint8Array }>
     }
   >

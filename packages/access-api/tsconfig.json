@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["@cloudflare/workers-types"],
+    "types": ["@cloudflare/workers-types", "mocha"],
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
