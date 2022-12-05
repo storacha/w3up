@@ -43,7 +43,6 @@ importers:
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
       '@web3-storage/worker-utils': 0.4.3-dev
-      assert: ^2.0.0
       better-sqlite3: 8.0.0
       buffer: ^6.0.3
       dotenv: ^16.0.3
@@ -91,7 +90,6 @@ importers:
       '@types/mocha': 10.0.1
       '@types/node': 18.11.10
       '@types/qrcode': 1.5.0
-      assert: 2.0.0
       better-sqlite3: 8.0.0
       buffer: 6.0.3
       dotenv: 16.0.3
