@@ -421,7 +421,7 @@ export class Agent {
   async registerSpace(email, opts) {
     const space = this.currentSpace()
     const service = await this.service()
-    const spaceMeta = this.#data.spaces.get(space)
+    const spaceMeta = space ? this.#data.spaces.get(space) : undefined
 
     if (!space || !spaceMeta) {
       throw new Error('No space selected')

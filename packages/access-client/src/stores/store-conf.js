@@ -12,8 +12,8 @@ import * as Ucanto from '@ucanto/interface'
  * @typedef {{
  *    meta: import('../types.js').AgentMeta
  *    principal: string
- *    currentSpace: Ucanto.DID | undefined
- *    spaces: Array<[Ucanto.DID | undefined, import('../types').SpaceMeta]>
+ *    currentSpace?: Ucanto.DID
+ *    spaces: Array<[Ucanto.DID, import('../types').SpaceMeta]>
  *    delegations: Array<[import('../types').CIDString, {
  *      meta: import('../types').DelegationMeta,
  *      delegation: import('../types.js').EncodedDelegation

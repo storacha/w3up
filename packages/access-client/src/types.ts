@@ -81,7 +81,7 @@ export interface AgentData<T> {
   meta: AgentMeta
   principal: T
   currentSpace?: DID
-  spaces: Map<DID | undefined, SpaceMeta>
+  spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
 }
 

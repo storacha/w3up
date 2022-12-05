@@ -1,10 +1,10 @@
+import type { TupleToUnion } from 'type-fest'
 import { InferInvokedCapability } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import { top } from './top.js'
 import { add, list, remove, store } from './store.js'
 import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
-import type { TupleToUnion } from 'type-fest'
 
 // Space
 export type Space = InferInvokedCapability<typeof space>
