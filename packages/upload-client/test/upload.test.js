@@ -17,6 +17,11 @@ describe('Upload.add', () => {
     const agent = await Signer.generate()
     const car = await randomCAR(128)
 
+    const res = {
+      root: car.roots[0],
+      shards: [car.cid],
+    }
+
     const proofs = [
       await UploadCapabilities.add.delegate({
         issuer: space,
@@ -37,7 +42,7 @@ describe('Upload.add', () => {
           assert.equal(String(invCap.nb?.root), car.roots[0].toString())
           assert.equal(invCap.nb?.shards?.length, 1)
           assert.equal(String(invCap.nb?.shards?.[0]), car.cid.toString())
-          return null
+          return res
         }),
       },
     })
@@ -56,7 +61,7 @@ describe('Upload.add', () => {
     })
 
     const root = car.roots[0]
-    await Upload.add(
+    const actual = await Upload.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       root,
       [car.cid],
@@ -65,6 +70,11 @@ describe('Upload.add', () => {
 
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
+    assert.equal(actual.root.toString(), res.root.toString())
+    assert.deepEqual(
+      new Set(actual.shards?.map((s) => s.toString())),
+      new Set(res.shards.map((s) => s.toString()))
+    )
   })
 
   it('throws on service error', async () => {
@@ -127,10 +137,8 @@ describe('Upload.list', () => {
       size: 1000,
       results: [
         {
-          uploaderDID: agent.did(),
-          carCID: car.cid.toString(),
-          dataCID: car.roots[0].toString(),
-          uploadedAt: new Date().toISOString(),
+          root: car.roots[0],
+          shards: [car.cid],
         },
       ],
     }
@@ -182,9 +190,11 @@ describe('Upload.list', () => {
     assert(list.results)
     assert.equal(list.results.length, res.results.length)
     list.results.forEach((r, i) => {
-      assert.equal(r.carCID.toString(), res.results[i].carCID.toString())
-      assert.equal(r.dataCID.toString(), res.results[i].dataCID.toString())
-      assert.equal(r.uploadedAt, res.results[i].uploadedAt)
+      assert.equal(r.root.toString(), res.results[i].root.toString())
+      assert.deepStrictEqual(
+        new Set(r.shards?.map((s) => s.toString())),
+        new Set(res.results[i].shards.map((s) => s.toString()))
+      )
     })
   })
 
@@ -199,10 +209,8 @@ describe('Upload.list', () => {
       size: 1,
       results: [
         {
-          uploaderDID: agent.did(),
-          carCID: car0.cid.toString(),
-          dataCID: car0.roots[0].toString(),
-          uploadedAt: new Date().toISOString(),
+          root: car0.roots[0],
+          shards: [car0.cid],
         },
       ],
     }
@@ -211,10 +219,8 @@ describe('Upload.list', () => {
       size: 1,
       results: [
         {
-          uploaderDID: agent.did(),
-          carCID: car1.cid.toString(),
-          dataCID: car1.roots[0].toString(),
-          uploadedAt: new Date().toISOString(),
+          root: car1.roots[0],
+          shards: [car1.cid],
         },
       ],
     }
@@ -271,9 +277,11 @@ describe('Upload.list', () => {
     assert(results0.results)
     assert.equal(results0.results.length, page0.results.length)
     results0.results.forEach((r, i) => {
-      assert.equal(r.carCID.toString(), page0.results[i].carCID.toString())
-      assert.equal(r.dataCID.toString(), page0.results[i].dataCID.toString())
-      assert.equal(r.uploadedAt, page0.results[i].uploadedAt)
+      assert.equal(r.root.toString(), page0.results[i].root.toString())
+      assert.deepStrictEqual(
+        new Set(r.shards?.map((s) => s.toString())),
+        new Set(page0.results[i].shards.map((s) => s.toString()))
+      )
     })
 
     assert.equal(results1.cursor, undefined)
@@ -281,9 +289,11 @@ describe('Upload.list', () => {
     assert(results1.results)
     assert.equal(results1.results.length, page1.results.length)
     results1.results.forEach((r, i) => {
-      assert.equal(r.carCID.toString(), page1.results[i].carCID.toString())
-      assert.equal(r.dataCID.toString(), page1.results[i].dataCID.toString())
-      assert.equal(r.uploadedAt, page1.results[i].uploadedAt)
+      assert.equal(r.root.toString(), page1.results[i].root.toString())
+      assert.deepStrictEqual(
+        new Set(r.shards?.map((s) => s.toString())),
+        new Set(page1.results[i].shards.map((s) => s.toString()))
+      )
     })
   })
 

@@ -294,9 +294,8 @@ describe('Store.list', () => {
       size: 1000,
       results: [
         {
-          payloadCID: car.cid.toString(),
+          link: car.cid,
           size: 123,
-          uploadedAt: new Date().toISOString(),
         },
       ],
     }
@@ -352,9 +351,8 @@ describe('Store.list', () => {
     assert(list.results)
     assert.equal(list.results.length, res.results.length)
     list.results.forEach((r, i) => {
-      assert.equal(r.payloadCID, res.results[i].payloadCID)
-      assert.equal(r.size, res.results[i].size)
-      assert.equal(r.uploadedAt, res.results[i].uploadedAt)
+      assert.deepEqual(r.link, res.results[i].link)
+      assert.deepEqual(r.size, res.results[i].size)
     })
   })
 
@@ -365,9 +363,8 @@ describe('Store.list', () => {
       size: 1,
       results: [
         {
-          payloadCID: (await randomCAR(128)).cid.toString(),
+          link: (await randomCAR(128)).cid,
           size: 123,
-          uploadedAt: new Date().toISOString(),
         },
       ],
     }
@@ -375,9 +372,8 @@ describe('Store.list', () => {
       size: 1,
       results: [
         {
-          payloadCID: (await randomCAR(128)).cid.toString(),
+          link: (await randomCAR(128)).cid,
           size: 123,
-          uploadedAt: new Date().toISOString(),
         },
       ],
     }
@@ -437,18 +433,16 @@ describe('Store.list', () => {
     assert(results0.results)
     assert.equal(results0.results.length, page0.results.length)
     results0.results.forEach((r, i) => {
-      assert.equal(r.payloadCID, page0.results[i].payloadCID)
+      assert.equal(r.link.toString(), page0.results[i].link.toString())
       assert.equal(r.size, page0.results[i].size)
-      assert.equal(r.uploadedAt, page0.results[i].uploadedAt)
     })
 
     assert(results1.results)
     assert.equal(results1.cursor, undefined)
     assert.equal(results1.results.length, page1.results.length)
     results1.results.forEach((r, i) => {
-      assert.equal(r.payloadCID, page1.results[i].payloadCID)
+      assert.equal(r.link.toString(), page1.results[i].link.toString())
       assert.equal(r.size, page1.results[i].size)
-      assert.equal(r.uploadedAt, page1.results[i].uploadedAt)
     })
   })
 

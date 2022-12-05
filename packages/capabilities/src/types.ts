@@ -1,3 +1,4 @@
+import type { TupleToUnion } from 'type-fest'
 import { InferInvokedCapability } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import { top } from './top.js'
@@ -29,19 +30,22 @@ export type StoreList = InferInvokedCapability<typeof list>
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
-export type Abilities =
-  | Space['can']
-  | SpaceInfo['can']
-  | SpaceRecover['can']
-  | SpaceRecoverValidation['can']
-  | VoucherClaim['can']
-  | VoucherRedeem['can']
-  | Upload['can']
-  | UploadAdd['can']
-  | UploadRemove['can']
-  | UploadList['can']
-  | Store['can']
-  | StoreAdd['can']
-  | StoreRemove['can']
-  | StoreList['can']
-  | Top['can']
+export type Abilities = TupleToUnion<AbilitiesArray>
+
+export type AbilitiesArray = [
+  Top['can'],
+  Space['can'],
+  SpaceInfo['can'],
+  SpaceRecover['can'],
+  SpaceRecoverValidation['can'],
+  Upload['can'],
+  UploadAdd['can'],
+  UploadRemove['can'],
+  UploadList['can'],
+  Store['can'],
+  StoreAdd['can'],
+  StoreRemove['can'],
+  StoreList['can'],
+  VoucherClaim['can'],
+  VoucherRedeem['can']
+]
