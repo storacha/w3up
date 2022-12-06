@@ -26,9 +26,9 @@ import { AgentData } from './agent-data.js'
 
 export { AgentData }
 
-const HOST = 'https://w3access-staging.protocol-labs.workers.dev'
+const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse(
-  'did:key:z6MkwTYX2JHHd8bmaEuDdS1LJjrpFspirjDcQ4DvAiDP49Gm'
+  'did:key:z6MkqdncRZ1wj8zxCTDUQ8CRT8NQWd63T7mZRvZUX8B7XDFi'
 )
 
 /**
@@ -73,9 +73,6 @@ export function connection(options = {}) {
  * ```
  */
 export class Agent {
-  /** @type {Ucanto.Principal<"key">|undefined} */
-  #service
-
   /** @type {import('./agent-data').AgentData} */
   #data
 
@@ -92,7 +89,6 @@ export class Agent {
         url: this.url,
       })
     this.#data = data
-    this.#service = undefined
   }
 
   /**
@@ -127,16 +123,6 @@ export class Agent {
 
   get spaces() {
     return this.#data.spaces
-  }
-
-  async service() {
-    if (this.#service) {
-      return this.#service
-    }
-    const rsp = await fetch(this.url + 'version')
-    const { did } = await rsp.json()
-    this.#service = DID.parse(did)
-    return this.#service
   }
 
   did() {
@@ -295,7 +281,6 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async recover(email, opts) {
-    const service = await this.service()
     const inv = await this.invokeAndExecute(Space.recoverValidation, {
       with: URI.from(this.did()),
       nb: { identity: URI.from(`mailto:${email}`) },
@@ -312,7 +297,7 @@ export class Agent {
     await this.addProof(spaceRecover)
 
     const recoverInv = await this.invokeAndExecute(Space.recover, {
-      with: URI.from(service.did()),
+      with: URI.from(this.connection.id.did()),
       nb: {
         identity: URI.from(`mailto:${email}`),
       },
@@ -403,7 +388,7 @@ export class Agent {
    */
   async registerSpace(email, opts) {
     const space = this.currentSpace()
-    const service = await this.service()
+    const service = this.connection.id
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
 
     if (!space || !spaceMeta) {
@@ -418,6 +403,7 @@ export class Agent {
       nb: {
         identity: URI.from(`mailto:${email}`),
         product: 'product:free',
+        // @ts-expect-error expected did:key but connection can be did:any
         service: service.did(),
       },
     })
@@ -643,7 +629,7 @@ export class Agent {
     const extraProofs = options.proofs || []
     const inv = invoke({
       ...options,
-      audience: options.audience || (await this.service()),
+      audience: options.audience || this.connection.id,
       // @ts-ignore
       capability: cap.create({
         with: space,

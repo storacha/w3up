@@ -137,12 +137,8 @@ describe('Agent', function () {
   it('should get space info', async function () {
     const server = createServer()
     const agent = await Agent.create(undefined, {
-      connection: connection({ channel: server }),
+      connection: connection({ principal: server.id, channel: server }),
     })
-
-    // mock service
-    // @ts-ignore
-    agent.service = async () => server.id
 
     const space = await agent.createSpace('execute')
     await agent.setCurrentSpace(space.did)
