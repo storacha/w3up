@@ -11,7 +11,6 @@ describe('IndexedDB store', () => {
       principal: await RSASigner.generate({ extractable: false }),
     })
 
-    /** @type {StoreIndexedDB<import('../../src/types').AgentDataExport>} */
     const store = new StoreIndexedDB('test-access-db-' + Date.now())
     await store.open()
     await store.save(data.export())
@@ -35,7 +34,6 @@ describe('IndexedDB store', () => {
   })
 
   it('should allow custom store name', async () => {
-    /** @type {StoreIndexedDB<import('../../src/types').AgentDataExport>} */
     const store = new StoreIndexedDB('test-access-db-' + Date.now(), {
       dbStoreName: `store-${Date.now()}`,
     })
@@ -63,12 +61,12 @@ describe('IndexedDB store', () => {
     await store.close()
 
     // should fail
+    // @ts-expect-error object is not agent data export
     await assert.rejects(store.save({}), { message: 'Store is not open' })
     await assert.rejects(store.close(), { message: 'Store is not open' })
   })
 
   it('should round trip delegations', async () => {
-    /** @type {StoreIndexedDB<import('../../src/types').AgentDataExport>} */
     const store = new StoreIndexedDB('test-access-db-' + Date.now())
     await store.open()
 

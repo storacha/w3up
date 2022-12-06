@@ -11,7 +11,6 @@ import { getService } from './utils.js'
  */
 export async function cmdCreateSpace(opts) {
   const { url } = await getService(opts.env)
-  /** @type {StoreConf<import('../types').AgentDataExport>} */
   const store = new StoreConf({ profile: opts.profile })
   const data = await store.load()
 

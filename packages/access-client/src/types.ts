@@ -33,10 +33,10 @@ import type {
   Top,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
+import { Driver } from './drivers/types.js'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
-export * from './stores/types.js'
 
 /**
  * Access api service definition type
@@ -162,14 +162,7 @@ export interface AgentOptions {
 }
 
 export interface AgentDataOptions {
-  store?: StorageDriver<AgentDataExport>
-}
-
-export interface StorageDriver<T> {
-  /**
-   * Data is in a format that is safe to be passed to structuredClone().
-   */
-  save: (data: T) => Promise<void> | void
+  store?: Driver<AgentDataExport>
 }
 
 export type InvokeOptions<

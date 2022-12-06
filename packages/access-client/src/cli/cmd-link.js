@@ -16,7 +16,6 @@ import { getService } from './utils.js'
  */
 export async function cmdLink(channel, opts) {
   const { url } = await getService(opts.env)
-  /** @type {StoreConf<import('../types').AgentDataExport>} */
   const store = new StoreConf({ profile: opts.profile })
   const data = await store.load()
 

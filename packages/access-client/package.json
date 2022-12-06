@@ -28,6 +28,7 @@
   "exports": {
     ".": "./src/index.js",
     "./agent": "./src/agent.js",
+    "./drivers/*": "./src/drivers/*.js",
     "./stores/*": "./src/stores/*.js",
     "./types": "./src/types.js",
     "./encoding": "./src/encoding.js"
@@ -39,6 +40,9 @@
       ],
       "types": [
         "dist/src/types"
+      ],
+      "drivers/*": [
+        "dist/src/drivers/*"
       ],
       "stores/*": [
         "dist/src/stores/*"

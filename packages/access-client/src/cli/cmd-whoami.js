@@ -8,7 +8,6 @@ import { NAME } from './config.js'
  * @param {{ profile: any; env : string }} opts
  */
 export async function cmdWhoami(opts) {
-  /** @type {StoreConf<import('../types').AgentDataExport>} */
   const store = new StoreConf({ profile: opts.profile })
   const data = await store.load()
   if (data) {
