@@ -110,7 +110,7 @@ export class Agent {
    * @param {import('./types').AgentDataExport} raw
    * @param {import('./types').AgentOptions & import('./types').AgentDataOptions} [options]
    */
-  static async from(raw, options = {}) {
+  static from(raw, options = {}) {
     const data = AgentData.fromExport(raw, options)
     return new Agent(data, options)
   }
