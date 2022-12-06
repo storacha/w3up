@@ -22,8 +22,14 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
+import { AgentData } from './agent-data.js'
+
+export { AgentData }
 
 const HOST = 'https://access.web3.storage'
+const PRINCIPAL = DID.parse(
+  'did:key:z6MkqdncRZ1wj8zxCTDUQ8CRT8NQWd63T7mZRvZUX8B7XDFi'
+)
 
 /**
  * Creates a Ucanto connection for the w3access API
@@ -35,28 +41,26 @@ const HOST = 'https://access.web3.storage'
  * ```
  *
  * @template {string} T - DID method
- * @param {Ucanto.Principal<T>} principal - w3access API Principal
- * @param {typeof fetch} _fetch - fetch implementation to use
- * @param {URL} url - w3access API URL
- * @param {Ucanto.Transport.Channel<import('./types').Service>} [channel] - Ucanto channel to use
+ * @param {object} [options]
+ * @param {Ucanto.Principal<T>} [options.principal] - w3access API Principal
+ * @param {URL} [options.url] - w3access API URL
+ * @param {Ucanto.Transport.Channel<import('./types').Service>} [options.channel] - Ucanto channel to use
+ * @param {typeof fetch} [options.fetch] - Fetch implementation to use
  * @returns {Ucanto.ConnectionView<import('./types').Service>}
  */
-export function connection(principal, _fetch, url, channel) {
-  const _channel =
-    channel ||
-    HTTP.open({
-      url,
-      method: 'POST',
-      fetch: _fetch,
-    })
-  const connection = Client.connect({
-    id: principal,
+export function connection(options = {}) {
+  return Client.connect({
+    id: options.principal ?? PRINCIPAL,
     encoder: CAR,
     decoder: CBOR,
-    channel: _channel,
+    channel:
+      options.channel ??
+      HTTP.open({
+        url: options.url ?? new URL(HOST),
+        method: 'POST',
+        fetch: options.fetch ?? globalThis.fetch.bind(globalThis),
+      }),
   })
-
-  return connection
 }
 
 /**
@@ -67,79 +71,58 @@ export function connection(principal, _fetch, url, channel) {
  * ```js
  * import { Agent } from '@web3-storage/access/agent'
  * ```
- *
- * @template {Ucanto.Signer} T - Ucanto Signer ie. ed25519, RSA or others
  */
 export class Agent {
-  /** @type {Ucanto.Principal<"key">|undefined} */
-  #service
-
-  /** @type {typeof fetch} */
-  #fetch
-
-  /** @type {import('./types').AgentData<T>} */
+  /** @type {import('./agent-data').AgentData} */
   #data
 
   /**
-   * @param {import('./types').AgentOptions<T>} opts
+   * @param {import('./agent-data').AgentData} data - Agent data
+   * @param {import('./types').AgentOptions} [options]
    */
-  constructor(opts) {
-    this.url = opts.url || new URL(HOST)
-    this.connection = opts.connection
-    this.issuer = opts.data.principal
-    this.meta = opts.data.meta
-    this.store = opts.store
-
-    // private
-    this.#data = opts.data
-    this.#fetch = opts.fetch
-    this.#service = undefined
+  constructor(data, options = {}) {
+    this.url = options.url ?? new URL(HOST)
+    this.connection =
+      options.connection ??
+      connection({
+        principal: options.servicePrincipal,
+        url: this.url,
+      })
+    this.#data = data
   }
 
   /**
-   * @template {Ucanto.Signer} T
-   * @param {import('./types').AgentCreateOptions<T>} opts
+   * Create a new Agent instance, optionally with the passed initialization data.
+   *
+   * @param {Partial<import('./types').AgentDataModel>} [init]
+   * @param {import('./types').AgentOptions & import('./types').AgentDataOptions} [options]
    */
-  static async create(opts) {
-    let _fetch = opts.fetch
-    const url = opts.url || new URL(HOST)
+  static async create(init, options = {}) {
+    const data = await AgentData.create(init, options)
+    return new Agent(data, options)
+  }
 
-    // validate fetch implementation
-    if (!_fetch) {
-      if (typeof globalThis.fetch !== 'undefined') {
-        _fetch = globalThis.fetch.bind(globalThis)
-      } else {
-        throw new TypeError(
-          `Agent got undefined \`fetch\`. Try passing in a \`fetch\` implementation explicitly.`
-        )
-      }
-    }
+  /**
+   * Instantiate an Agent from pre-exported agent data.
+   *
+   * @param {import('./types').AgentDataExport} raw
+   * @param {import('./types').AgentOptions & import('./types').AgentDataOptions} [options]
+   */
+  static from(raw, options = {}) {
+    const data = AgentData.fromExport(raw, options)
+    return new Agent(data, options)
+  }
 
-    if (!(await opts.store.exists())) {
-      throw new Error('Store is not initialized, run "Store.init()" first.')
-    }
-    const data = await opts.store.load()
-    return new Agent({
-      connection: await connection(data.principal, _fetch, url, opts.channel),
-      fetch: _fetch,
-      url,
-      store: opts.store,
-      data,
-    })
+  get issuer() {
+    return this.#data.principal
+  }
+
+  get meta() {
+    return this.#data.meta
   }
 
   get spaces() {
     return this.#data.spaces
-  }
-
-  async service() {
-    if (this.#service) {
-      return this.#service
-    }
-    const rsp = await this.#fetch(this.url + 'version')
-    const { did } = await rsp.json()
-    this.#service = DID.parse(did)
-    return this.#service
   }
 
   did() {
@@ -158,13 +141,7 @@ export class Agent {
       checkAudience: this.issuer,
       checkIsExpired: true,
     })
-
-    this.#data.delegations.set(delegation.cid.toString(), {
-      delegation,
-      meta: { audience: this.meta },
-    })
-
-    await this.store.save(this.#data)
+    await this.#data.addDelegation(delegation, { audience: this.meta })
   }
 
   /**
@@ -174,7 +151,7 @@ export class Agent {
    */
   async *#delegations(caps) {
     const _caps = new Set(caps)
-    for (const [key, value] of this.#data.delegations) {
+    for (const [, value] of this.#data.delegations) {
       // check expiration
       if (!isExpired(value.delegation)) {
         // check if delegation can be used
@@ -193,11 +170,9 @@ export class Agent {
         }
       } else {
         // delete any expired delegation
-        this.#data.delegations.delete(key)
+        await this.#data.removeDelegation(value.delegation.cid)
       }
     }
-
-    await this.store.save(this.#data)
   }
 
   /**
@@ -257,13 +232,8 @@ export class Agent {
       expiration: Infinity,
     })
 
-    const meta = {
-      name,
-      isRegistered: false,
-    }
-    this.#data.spaces.set(signer.did(), meta)
-
-    await this.addProof(proof)
+    const meta = { name, isRegistered: false }
+    await this.#data.addSpace(signer.did(), meta, proof)
 
     return {
       did: signer.did(),
@@ -311,7 +281,6 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async recover(email, opts) {
-    const service = await this.service()
     const inv = await this.invokeAndExecute(Space.recoverValidation, {
       with: URI.from(this.did()),
       nb: { identity: URI.from(`mailto:${email}`) },
@@ -328,7 +297,7 @@ export class Agent {
     await this.addProof(spaceRecover)
 
     const recoverInv = await this.invokeAndExecute(Space.recover, {
-      with: URI.from(service.did()),
+      with: URI.from(this.connection.id.did()),
       nb: {
         identity: URI.from(`mailto:${email}`),
       },
@@ -365,8 +334,7 @@ export class Agent {
       throw new Error(`Agent has no proofs for ${space}.`)
     }
 
-    this.#data.currentSpace = space
-    await this.store.save(this.#data)
+    await this.#data.setCurrentSpace(space)
 
     return space
   }
@@ -420,7 +388,7 @@ export class Agent {
    */
   async registerSpace(email, opts) {
     const space = this.currentSpace()
-    const service = await this.service()
+    const service = this.connection.id
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
 
     if (!space || !spaceMeta) {
@@ -435,6 +403,7 @@ export class Agent {
       nb: {
         identity: URI.from(`mailto:${email}`),
         product: 'product:free',
+        // @ts-expect-error expected did:key but connection can be did:any
         service: service.did(),
       },
     })
@@ -480,10 +449,8 @@ export class Agent {
 
     spaceMeta.isRegistered = true
 
-    this.#data.spaces.set(space, spaceMeta)
-    this.#data.delegations.delete(voucherRedeem.cid.toString())
-
-    this.store.save(this.#data)
+    this.#data.addSpace(space, spaceMeta)
+    this.#data.removeDelegation(voucherRedeem.cid)
   }
 
   /**
@@ -548,13 +515,10 @@ export class Agent {
       ...options,
     })
 
-    this.#data.delegations.set(delegation.cid.toString(), {
-      delegation,
-      meta: {
-        audience: options.audienceMeta,
-      },
+    await this.#data.addDelegation(delegation, {
+      audience: options.audienceMeta,
     })
-    await this.store.save(this.#data)
+
     return delegation
   }
 
@@ -665,7 +629,7 @@ export class Agent {
     const extraProofs = options.proofs || []
     const inv = invoke({
       ...options,
-      audience: options.audience || (await this.service()),
+      audience: options.audience || this.connection.id,
       // @ts-ignore
       capability: cap.create({
         with: space,

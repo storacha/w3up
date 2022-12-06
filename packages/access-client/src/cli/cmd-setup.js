@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import inquirer from 'inquirer'
+import { AgentData } from '../agent-data.js'
 import { StoreConf } from '../stores/store-conf.js'
 
 /**
@@ -13,7 +14,9 @@ export async function cmdSetup(opts) {
     await store.reset()
   }
 
-  if (await store.exists()) {
+  const data = await store.load()
+
+  if (data) {
     console.log('Agent is already setup.')
   } else {
     const { name, type } = await inquirer.prompt([
@@ -31,12 +34,15 @@ export async function cmdSetup(opts) {
         message: 'Select this agent type:',
       },
     ])
-    await store.init({
-      meta: {
-        name,
-        type,
+    await AgentData.create(
+      {
+        meta: {
+          name,
+          type,
+        },
       },
-    })
+      { store }
+    )
 
     console.log('Agent is ready to use.')
   }

@@ -7,14 +7,11 @@ import * as u8 from 'uint8arrays'
 import { decodeDelegations, encodeDelegations } from '../encoding.js'
 import * as Messages from './messages.js'
 
-/**
- * @template {UCAN.Signer} T
- */
 export class Peer {
   /**
    * @param {{
-   * channel: import('./types').Channel;
-   * agent: import('../agent').Agent<T>;
+   * channel: import('./types').Channel
+   * agent: import('../agent').Agent
    * }} opts
    */
   constructor(opts) {

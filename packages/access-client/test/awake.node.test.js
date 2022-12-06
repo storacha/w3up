@@ -7,7 +7,6 @@ import PQueue from 'p-queue'
 import delay from 'delay'
 import pWaitFor from 'p-wait-for'
 import { Agent } from '../src/agent.js'
-import { StoreMemory } from '../src/stores/store-memory.js'
 
 describe('awake', function () {
   const host = new URL('ws://127.0.0.1:8788/connect')
@@ -38,14 +37,12 @@ describe('awake', function () {
   })
 
   it('should send msgs', async function () {
-    const agent1 = await Agent.create({
-      store: await StoreMemory.create(),
+    const agent1 = await Agent.create(undefined, {
       url: new URL('http://127.0.0.1:8787'),
     })
     const space = await agent1.createSpace('responder')
     await agent1.setCurrentSpace(space.did)
-    const agent2 = await Agent.create({
-      store: await StoreMemory.create(),
+    const agent2 = await Agent.create(undefined, {
       url: new URL('http://127.0.0.1:8787'),
     })
     const responder = agent1.peer(ws1)

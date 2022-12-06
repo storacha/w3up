@@ -1,41 +1,19 @@
 import assert from 'assert'
 import { URI } from '@ucanto/validator'
-import { Agent } from '../src/agent.js'
-import { StoreMemory } from '../src/stores/store-memory.js'
+import { Agent, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 
 describe('Agent', function () {
-  it('should fail if store is not initialized', async function () {
-    const store = new StoreMemory()
-
-    return assert.rejects(
-      Agent.create({
-        store,
-      }),
-      {
-        name: 'Error',
-        message: 'Store is not initialized, run "Store.init()" first.',
-      }
-    )
-  })
-
   it('should return did', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
+    const agent = await Agent.create()
 
     assert.ok(agent.did())
   })
 
   it('should create space', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
-
+    const agent = await Agent.create()
     const space = await agent.createSpace('test-create')
 
     assert(typeof space.did === 'string')
@@ -43,24 +21,15 @@ describe('Agent', function () {
   })
 
   it('should add proof when creating acccount', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
-
+    const agent = await Agent.create()
     const space = await agent.createSpace('test-add')
-
     const delegations = await agent.proofs()
 
     assert.equal(space.proof.cid, delegations[0].cid)
   })
 
   it('should set current space', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
-
+    const agent = await Agent.create()
     const space = await agent.createSpace('test')
 
     await agent.setCurrentSpace(space.did)
@@ -75,10 +44,7 @@ describe('Agent', function () {
   })
 
   it('fails set current space with no proofs', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-    })
+    const agent = await Agent.create()
 
     await assert.rejects(
       () => {
@@ -91,10 +57,8 @@ describe('Agent', function () {
   })
 
   it('should invoke and execute', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-      channel: createServer(),
+    const agent = await Agent.create(undefined, {
+      connection: connection({ channel: createServer() }),
     })
 
     const space = await agent.createSpace('execute')
@@ -115,10 +79,8 @@ describe('Agent', function () {
   })
 
   it('should execute', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-      channel: createServer(),
+    const agent = await Agent.create(undefined, {
+      connection: connection({ channel: createServer() }),
     })
 
     const space = await agent.createSpace('execute')
@@ -152,10 +114,8 @@ describe('Agent', function () {
   })
 
   it('should fail execute with no proofs', async function () {
-    const store = await StoreMemory.create()
-    const agent = await Agent.create({
-      store,
-      channel: createServer(),
+    const agent = await Agent.create(undefined, {
+      connection: connection({ channel: createServer() }),
     })
 
     await assert.rejects(
@@ -175,16 +135,10 @@ describe('Agent', function () {
   })
 
   it('should get space info', async function () {
-    const store = await StoreMemory.create()
     const server = createServer()
-    const agent = await Agent.create({
-      store,
-      channel: server,
+    const agent = await Agent.create(undefined, {
+      connection: connection({ principal: server.id, channel: server }),
     })
-
-    // mock service
-    // @ts-ignore
-    agent.service = async () => server.id
 
     const space = await agent.createSpace('execute')
     await agent.setCurrentSpace(space.did)
@@ -201,11 +155,9 @@ describe('Agent', function () {
   })
 
   it('should delegate', async function () {
-    const store = await StoreMemory.create()
     const server = createServer()
-    const agent = await Agent.create({
-      store,
-      channel: server,
+    const agent = await Agent.create(undefined, {
+      connection: connection({ channel: server }),
     })
 
     const space = await agent.createSpace('execute')

@@ -12,13 +12,11 @@ import { getService } from './utils.js'
 export async function cmdCreateSpace(opts) {
   const { url } = await getService(opts.env)
   const store = new StoreConf({ profile: opts.profile })
+  const data = await store.load()
 
-  if (await store.exists()) {
+  if (data) {
     const spinner = ora('Registering with the service').start()
-    const agent = await Agent.create({
-      store,
-      url,
-    })
+    const agent = Agent.from(data, { store, url })
 
     spinner.stopAndPersist()
     const { email, name } = await inquirer.prompt([

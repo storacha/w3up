@@ -44,12 +44,12 @@ export async function context() {
 
   return {
     mf,
-    conn: await connection(
+    conn: connection({
       principal,
       // @ts-ignore
-      mf.dispatchFetch.bind(mf),
-      new URL('http://localhost:8787')
-    ),
+      fetch: mf.dispatchFetch.bind(mf),
+      url: new URL('http://localhost:8787'),
+    }),
     service: Signer.parse(bindings.PRIVATE_KEY),
     issuer: principal,
     db: new D1QB(db),
