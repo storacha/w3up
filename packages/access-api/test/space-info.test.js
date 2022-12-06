@@ -2,6 +2,9 @@ import * as Space from '@web3-storage/capabilities/space'
 import assert from 'assert'
 import { context } from './helpers/context.js'
 import { createSpace } from './helpers/utils.js'
+import { parseLink } from '@ucanto/core'
+import * as Store from '@web3-storage/capabilities/store'
+import * as Upload from '@web3-storage/capabilities/upload'
 // @ts-ignore
 import isSubset from 'is-subset'
 
@@ -70,6 +73,217 @@ describe('space/info', function () {
           },
         })
       )
+    }
+  })
+
+  it('should return space info with store/add as proof', async function () {
+    const { issuer, service, conn } = ctx
+
+    const { space, delegation } = await createSpace(
+      issuer,
+      service,
+      conn,
+      'space-info@dag.house'
+    )
+
+    const inv = await Space.info
+      .invoke({
+        issuer,
+        audience: service,
+        with: space.did(),
+        proofs: [
+          await Store.add.delegate({
+            audience: issuer,
+            issuer: space,
+            with: space.did(),
+            proofs: [delegation],
+            nb: {
+              size: 1000,
+              link: parseLink('bafkqaaa'),
+            },
+          }),
+        ],
+      })
+      .execute(conn)
+
+    if (inv?.error) {
+      assert.fail(inv.message)
+    } else {
+      assert.deepEqual(inv.did, space.did())
+    }
+  })
+
+  it('should return space info with store/list as proof', async function () {
+    const { issuer, service, conn } = ctx
+
+    const { space, delegation } = await createSpace(
+      issuer,
+      service,
+      conn,
+      'space-info@dag.house'
+    )
+
+    const inv = await Space.info
+      .invoke({
+        issuer,
+        audience: service,
+        with: space.did(),
+        proofs: [
+          await Store.list.delegate({
+            audience: issuer,
+            issuer: space,
+            with: space.did(),
+            proofs: [delegation],
+          }),
+        ],
+      })
+      .execute(conn)
+
+    if (inv?.error) {
+      assert.fail(inv.message)
+    } else {
+      assert.deepEqual(inv.did, space.did())
+    }
+  })
+
+  it('should return space info with store/remove as proof', async function () {
+    const { issuer, service, conn } = ctx
+
+    const { space, delegation } = await createSpace(
+      issuer,
+      service,
+      conn,
+      'space-info@dag.house'
+    )
+
+    const inv = await Space.info
+      .invoke({
+        issuer,
+        audience: service,
+        with: space.did(),
+        proofs: [
+          await Store.remove.delegate({
+            audience: issuer,
+            issuer: space,
+            with: space.did(),
+            proofs: [delegation],
+            nb: {
+              link: parseLink('bafkqaaa'),
+            },
+          }),
+        ],
+      })
+      .execute(conn)
+
+    if (inv?.error) {
+      assert.fail(inv.message)
+    } else {
+      assert.deepEqual(inv.did, space.did())
+    }
+  })
+
+  it('should return space info with upload/add as proof', async function () {
+    const { issuer, service, conn } = ctx
+
+    const { space, delegation } = await createSpace(
+      issuer,
+      service,
+      conn,
+      'space-info@dag.house'
+    )
+
+    const inv = await Space.info
+      .invoke({
+        issuer,
+        audience: service,
+        with: space.did(),
+        proofs: [
+          await Upload.add.delegate({
+            audience: issuer,
+            issuer: space,
+            with: space.did(),
+            proofs: [delegation],
+            nb: {
+              root: parseLink('bafkqaaa'),
+            },
+          }),
+        ],
+      })
+      .execute(conn)
+
+    if (inv?.error) {
+      assert.fail(inv.message)
+    } else {
+      assert.deepEqual(inv.did, space.did())
+    }
+  })
+
+  it('should return space info with upload/list as proof', async function () {
+    const { issuer, service, conn } = ctx
+
+    const { space, delegation } = await createSpace(
+      issuer,
+      service,
+      conn,
+      'space-info@dag.house'
+    )
+
+    const inv = await Space.info
+      .invoke({
+        issuer,
+        audience: service,
+        with: space.did(),
+        proofs: [
+          await Upload.list.delegate({
+            audience: issuer,
+            issuer: space,
+            with: space.did(),
+            proofs: [delegation],
+          }),
+        ],
+      })
+      .execute(conn)
+
+    if (inv?.error) {
+      assert.fail(inv.message)
+    } else {
+      assert.deepEqual(inv.did, space.did())
+    }
+  })
+
+  it('should return space info with upload/remove as proof', async function () {
+    const { issuer, service, conn } = ctx
+
+    const { space, delegation } = await createSpace(
+      issuer,
+      service,
+      conn,
+      'space-info@dag.house'
+    )
+
+    const inv = await Space.info
+      .invoke({
+        issuer,
+        audience: service,
+        with: space.did(),
+        proofs: [
+          await Upload.remove.delegate({
+            audience: issuer,
+            issuer: space,
+            with: space.did(),
+            proofs: [delegation],
+            nb: {
+              root: parseLink('bafkqaaa'),
+            },
+          }),
+        ],
+      })
+      .execute(conn)
+
+    if (inv?.error) {
+      assert.fail(inv.message)
+    } else {
+      assert.deepEqual(inv.did, space.did())
     }
   })
 })
