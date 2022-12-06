@@ -97,24 +97,21 @@ export class Agent {
    * Create a new Agent instance, optionally with the passed initialization data.
    *
    * @param {Partial<import('./types').AgentDataModel>} [init]
-   * @param {import('./types').AgentOptions & { store?: import('./types').IStore<import('./types').AgentDataExport> }} [options]
+   * @param {import('./types').AgentOptions & import('./types').AgentDataOptions} [options]
    */
   static async create(init, options = {}) {
-    const { store } = options
-    if (store) await store.open()
-    const data = await AgentData.create(init, { store })
+    const data = await AgentData.create(init, options)
     return new Agent(data, options)
   }
 
   /**
-   * Create a new Agent instance from pre-exported agent data.
+   * Instantiate an Agent from pre-exported agent data.
    *
    * @param {import('./types').AgentDataExport} raw
-   * @param {import('./types').AgentOptions & { store?: import('./types').IStore<import('./types').AgentDataExport> }} [options]
+   * @param {import('./types').AgentOptions & import('./types').AgentDataOptions} [options]
    */
   static async from(raw, options = {}) {
-    const { store } = options
-    const data = AgentData.fromExport(raw, { store })
+    const data = AgentData.fromExport(raw, options)
     return new Agent(data, options)
   }
 

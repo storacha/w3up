@@ -45,6 +45,13 @@ export class StoreIndexedDB {
     this.#dbStoreName = options.dbStoreName ?? STORE_NAME
   }
 
+  /** @returns {Promise<IDBDatabase>} */
+  async #getOpenDB() {
+    if (!this.#db) await this.open()
+    // @ts-expect-error open sets this.#db
+    return this.#db
+  }
+
   async open() {
     const db = this.#db
     if (db) return
@@ -78,8 +85,7 @@ export class StoreIndexedDB {
 
   /** @param {T} data */
   async save(data) {
-    const db = this.#db
-    if (!db) throw new Error('Store is not open')
+    const db = await this.#getOpenDB()
 
     const putData = withObjectStore(
       db,
@@ -102,8 +108,7 @@ export class StoreIndexedDB {
   }
 
   async load() {
-    const db = this.#db
-    if (!db) throw new Error('Store is not open')
+    const db = await this.#getOpenDB()
 
     const getData = withObjectStore(
       db,
@@ -127,22 +132,22 @@ export class StoreIndexedDB {
   }
 
   async reset() {
-    if (this.#db) {
-      withObjectStore(this.#db, 'readwrite', this.#dbStoreName, (s) => {
-        /** @type {import('p-defer').DeferredPromise<void>} */
-        const { resolve, reject, promise } = defer()
-        const req = s.clear()
-        req.addEventListener('success', () => {
-          resolve()
-        })
+    const db = await this.#getOpenDB()
 
-        req.addEventListener('error', () =>
-          reject(new Error('failed to query DB', { cause: req.error }))
-        )
-
-        return promise
+    withObjectStore(db, 'readwrite', this.#dbStoreName, (s) => {
+      /** @type {import('p-defer').DeferredPromise<void>} */
+      const { resolve, reject, promise } = defer()
+      const req = s.clear()
+      req.addEventListener('success', () => {
+        resolve()
       })
-    }
+
+      req.addEventListener('error', () =>
+        reject(new Error('failed to query DB', { cause: req.error }))
+      )
+
+      return promise
+    })
   }
 }
 

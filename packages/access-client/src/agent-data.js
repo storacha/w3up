@@ -47,26 +47,6 @@ export class AgentData {
   }
 
   /**
-   * Instantiate AgentData, backed by data persisted in the passed store.
-   *
-   * @param {import('./types').IStore<import('./types').AgentDataExport>} store
-   * @param {import('./types').AgentDataOptions & { initialData?: Partial<import('./types').AgentDataModel> }} options
-   */
-  static async fromStore(store, options = {}) {
-    await store.open()
-    const storedData = await store.load() // { ... } or null/undefined
-    return storedData
-      ? AgentData.fromExport(storedData)
-      : await AgentData.create(options.initialData, {
-          store: {
-            save: async (d) => {
-              await store.save(d)
-            },
-          },
-        })
-  }
-
-  /**
    * Instantiate AgentData from previously exported data.
    *
    * @param {import('./types').AgentDataExport} raw
