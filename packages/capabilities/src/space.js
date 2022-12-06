@@ -16,6 +16,9 @@ import { canDelegateURI, equalWith, fail } from './utils.js'
 import * as Upload from './upload.js'
 
 export { top } from './top.js'
+// Need this to workaround TS bug
+// @see https://github.com/microsoft/TypeScript/issues/51548
+export { Store }
 
 export const space = top.derive({
   to: capability({
