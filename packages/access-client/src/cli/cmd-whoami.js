@@ -8,17 +8,19 @@ import { NAME } from './config.js'
  * @param {{ profile: any; env : string }} opts
  */
 export async function cmdWhoami(opts) {
+  /** @type {StoreConf<import('../types').AgentDataExport>} */
   const store = new StoreConf({ profile: opts.profile })
-  if (await store.exists()) {
-    const agent = await Agent.create({
-      store,
-    })
+  const data = await store.load()
+  if (data) {
+    const agent = Agent.from(data, { store })
     console.log('Agent', agent.issuer.did(), agent.meta)
     console.log('Current Space', await agent.currentSpaceWithMeta())
     console.log('\nSpaces:')
     for (const space of agent.spaces) {
       console.log(
-        `Name: ${space[1].name} DID: ${space[0]} Registered: ${space[1].isRegistered}`
+        `Name: ${space[1].name ?? 'none'} DID: ${space[0]} Registered: ${
+          space[1].isRegistered
+        }`
       )
     }
     console.log('\nProofs:')
@@ -32,7 +34,11 @@ export async function cmdWhoami(opts) {
 
     console.log('\nDelegations:')
     for await (const { meta, delegation } of agent.delegationsWithMeta()) {
-      console.log(`Audience ${meta.audience.name} (${meta.audience.type}):`)
+      console.log(
+        `Audience ${meta.audience?.name ?? 'unknown'} (${
+          meta.audience?.type ?? 'unknown'
+        }):`
+      )
       for (const cap of delegation.capabilities) {
         const expires = expirationToDate(delegation.expiration)
         console.log(

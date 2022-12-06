@@ -16,17 +16,16 @@ import { getService } from './utils.js'
  */
 export async function cmdLink(channel, opts) {
   const { url } = await getService(opts.env)
+  /** @type {StoreConf<import('../types').AgentDataExport>} */
   const store = new StoreConf({ profile: opts.profile })
+  const data = await store.load()
 
-  if (!store.exists()) {
+  if (!data) {
     console.error('run setup first')
     process.exit(1)
   }
 
-  const agent = await Agent.create({
-    store,
-    url,
-  })
+  const agent = Agent.from(data, { store, url })
 
   console.log('DID:', agent.did())
   let done = false

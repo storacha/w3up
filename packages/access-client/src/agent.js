@@ -45,6 +45,7 @@ const PRINCIPAL = DID.parse(
  * @param {Ucanto.Principal<T>} [options.principal] - w3access API Principal
  * @param {URL} [options.url] - w3access API URL
  * @param {Ucanto.Transport.Channel<import('./types').Service>} [options.channel] - Ucanto channel to use
+ * @param {typeof fetch} [options.fetch] - Fetch implementation to use
  * @returns {Ucanto.ConnectionView<import('./types').Service>}
  */
 export function connection(options = {}) {
@@ -57,6 +58,7 @@ export function connection(options = {}) {
       HTTP.open({
         url: options.url ?? new URL(HOST),
         method: 'POST',
+        fetch: options.fetch ?? globalThis.fetch.bind(globalThis),
       }),
   })
 }
@@ -121,6 +123,10 @@ export class Agent {
 
   get meta() {
     return this.#data.meta
+  }
+
+  get spaces() {
+    return this.#data.spaces
   }
 
   async service() {

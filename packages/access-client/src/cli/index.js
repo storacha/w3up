@@ -40,13 +40,12 @@ prog
   .command('space')
   .describe('Space info.')
   .action(async (opts) => {
+    /** @type {StoreConf<import('../types').AgentDataExport>} */
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
       const space = await selectSpace(agent)
       try {
         const result = await agent.getSpaceInfo(space)
@@ -65,13 +64,12 @@ prog
   .describe('Delegation capabilities.')
   .option('--file', 'File to write the delegation into.')
   .action(async (opts) => {
+    /** @type {StoreConf<import('../types').AgentDataExport>} */
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
       const space = await selectSpace(agent)
 
       await agent.setCurrentSpace(space)
@@ -137,13 +135,12 @@ prog
   .describe('Import delegation.')
   .option('--delegation')
   .action(async (opts) => {
+    /** @type {StoreConf<import('../types').AgentDataExport>} */
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
 
       const del = fs.readFileSync(path.resolve(opts.delegation), {
         encoding: 'utf8',
@@ -159,13 +156,12 @@ prog
   .command('recover')
   .describe('Recover spaces with email.')
   .action(async (opts) => {
+    /** @type {StoreConf<import('../types').AgentDataExport>} */
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
 
       const { email } = await inquirer.prompt([
         {
