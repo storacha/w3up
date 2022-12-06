@@ -10,11 +10,15 @@
  */
 
 import { top } from './top.js'
-import { store } from './store.js'
+import * as Store from './store.js'
 import { capability, URI } from '@ucanto/validator'
 import { canDelegateURI, equalWith, fail } from './utils.js'
+import * as Upload from './upload.js'
 
 export { top } from './top.js'
+// Need this to workaround TS bug
+// @see https://github.com/microsoft/TypeScript/issues/51548
+export { Store }
 
 export const space = top.derive({
   to: capability({
@@ -32,14 +36,21 @@ const base = top.or(space)
  * capability that has matching `with`. This allows store service
  * to identify account based on any user request.
  */
-export const info = base.or(store).derive({
-  to: capability({
-    can: 'space/info',
-    with: URI.match({ protocol: 'did:' }),
+export const info = base
+  .or(Store.add)
+  .or(Store.list)
+  .or(Store.remove)
+  .or(Upload.add)
+  .or(Upload.list)
+  .or(Upload.remove)
+  .derive({
+    to: capability({
+      can: 'space/info',
+      with: URI.match({ protocol: 'did:' }),
+      derives: equalWith,
+    }),
     derives: equalWith,
-  }),
-  derives: equalWith,
-})
+  })
 
 export const recoverValidation = base.derive({
   to: capability({
