@@ -17,9 +17,10 @@ import type {
   Match,
   Ability,
   UnknownMatch,
-  Transport,
   Delegation,
   DID,
+  Signer,
+  SignerArchive,
 } from '@ucanto/interface'
 
 import type {
@@ -31,12 +32,11 @@ import type {
   VoucherRedeem,
   Top,
 } from '@web3-storage/capabilities/types'
-import { IStore } from './stores/types.js'
 import type { SetRequired } from 'type-fest'
+import { Driver } from './drivers/types.js'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
-export * from './stores/types.js'
 
 /**
  * Access api service definition type
@@ -75,14 +75,31 @@ export interface Service {
 export type CIDString = string
 
 /**
- * Data schema used by the agent and persisted by stores
+ * Data schema used internally by the agent.
  */
-export interface AgentData<T> {
+export interface AgentDataModel {
   meta: AgentMeta
-  principal: T
+  principal: Signer
   currentSpace?: DID
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
+}
+
+/**
+ * Agent data that is safe to pass to structuredClone() and persisted by stores.
+ */
+export type AgentDataExport = Pick<
+  AgentDataModel,
+  'meta' | 'currentSpace' | 'spaces'
+> & {
+  principal: SignerArchive<Signer>
+  delegations: Map<
+    CIDString,
+    {
+      meta: DelegationMeta
+      delegation: Array<{ cid: CIDString; bytes: Uint8Array }>
+    }
+  >
 }
 
 /**
@@ -105,7 +122,7 @@ export interface DelegationMeta {
    * Audience metadata to be easier to build UIs with human readable data
    * Normally used with delegations issued to third parties or other devices.
    */
-  audience: AgentMeta
+  audience?: AgentMeta
 }
 
 /**
@@ -138,19 +155,14 @@ export interface SpaceD1 {
  * Agent class types
  */
 
-export interface AgentOptions<T> {
-  store: IStore<T>
-  connection: ConnectionView<Service>
+export interface AgentOptions {
   url?: URL
-  fetch: typeof fetch
-  data: AgentData<T>
+  connection?: ConnectionView<Service>
+  servicePrincipal?: Principal
 }
 
-export interface AgentCreateOptions<T> {
-  channel?: Transport.Channel<Service>
-  store: IStore<T>
-  url?: URL
-  fetch?: typeof fetch
+export interface AgentDataOptions {
+  store?: Driver<AgentDataExport>
 }
 
 export type InvokeOptions<
