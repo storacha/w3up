@@ -44,7 +44,7 @@ export async function context() {
 
   return {
     mf,
-    conn: await connection({
+    conn: connection({
       principal,
       // @ts-ignore
       fetch: mf.dispatchFetch.bind(mf),
