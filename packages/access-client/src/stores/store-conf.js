@@ -38,12 +38,7 @@ export class StoreConf {
     this.path = this.#config.path
   }
 
-  /**
-   * @returns {Promise<Store<T>>}
-   */
-  async open() {
-    return this
-  }
+  async open() {}
 
   async close() {}
 
@@ -51,13 +46,9 @@ export class StoreConf {
     this.#config.clear()
   }
 
-  /**
-   * @param {T} data
-   * @returns {Promise<Store<T>>}
-   */
+  /** @param {T} data */
   async save(data) {
     this.#config.set(data)
-    return this
   }
 
   /** @returns {Promise<T|undefined>} */

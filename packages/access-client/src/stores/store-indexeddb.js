@@ -45,14 +45,11 @@ export class StoreIndexedDB {
     this.#dbStoreName = options.dbStoreName ?? STORE_NAME
   }
 
-  /**
-   * @returns {Promise<Store<T>>}
-   */
   async open() {
     const db = this.#db
-    if (db) return this
+    if (db) return
 
-    /** @type {import('p-defer').DeferredPromise<Store<T>>} */
+    /** @type {import('p-defer').DeferredPromise<void>} */
     const { resolve, reject, promise } = defer()
     const openReq = indexedDB.open(this.#dbName, this.#dbVersion)
 
@@ -63,7 +60,7 @@ export class StoreIndexedDB {
 
     openReq.addEventListener('success', () => {
       this.#db = openReq.result
-      resolve(this)
+      resolve()
     })
 
     openReq.addEventListener('error', () => reject(openReq.error))
@@ -79,10 +76,7 @@ export class StoreIndexedDB {
     this.#db = undefined
   }
 
-  /**
-   * @param {T} data
-   * @returns {Promise<Store<T>>}
-   */
+  /** @param {T} data */
   async save(data) {
     const db = this.#db
     if (!db) throw new Error('Store is not open')
@@ -92,10 +86,10 @@ export class StoreIndexedDB {
       'readwrite',
       this.#dbStoreName,
       async (store) => {
-        /** @type {import('p-defer').DeferredPromise<Store<T>>} */
+        /** @type {import('p-defer').DeferredPromise<void>} */
         const { resolve, reject, promise } = defer()
         const putReq = store.put({ id: DATA_ID, ...data })
-        putReq.addEventListener('success', () => resolve(this))
+        putReq.addEventListener('success', () => resolve())
         putReq.addEventListener('error', () =>
           reject(new Error('failed to query DB', { cause: putReq.error }))
         )

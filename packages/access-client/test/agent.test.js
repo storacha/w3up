@@ -1,23 +1,19 @@
 import assert from 'assert'
 import { URI } from '@ucanto/validator'
 import { Agent, connection } from '../src/agent.js'
-import { AgentData } from '../src/agent-data.js'
 import * as Space from '@web3-storage/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 
 describe('Agent', function () {
   it('should return did', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data)
+    const agent = await Agent.create()
 
     assert.ok(agent.did())
   })
 
   it('should create space', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data)
-
+    const agent = await Agent.create()
     const space = await agent.createSpace('test-create')
 
     assert(typeof space.did === 'string')
@@ -25,20 +21,15 @@ describe('Agent', function () {
   })
 
   it('should add proof when creating acccount', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data)
-
+    const agent = await Agent.create()
     const space = await agent.createSpace('test-add')
-
     const delegations = await agent.proofs()
 
     assert.equal(space.proof.cid, delegations[0].cid)
   })
 
   it('should set current space', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data)
-
+    const agent = await Agent.create()
     const space = await agent.createSpace('test')
 
     await agent.setCurrentSpace(space.did)
@@ -53,8 +44,7 @@ describe('Agent', function () {
   })
 
   it('fails set current space with no proofs', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data)
+    const agent = await Agent.create()
 
     await assert.rejects(
       () => {
@@ -67,8 +57,7 @@ describe('Agent', function () {
   })
 
   it('should invoke and execute', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data, {
+    const agent = await Agent.create(undefined, {
       connection: connection({ channel: createServer() }),
     })
 
@@ -90,8 +79,7 @@ describe('Agent', function () {
   })
 
   it('should execute', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data, {
+    const agent = await Agent.create(undefined, {
       connection: connection({ channel: createServer() }),
     })
 
@@ -126,8 +114,7 @@ describe('Agent', function () {
   })
 
   it('should fail execute with no proofs', async function () {
-    const data = await AgentData.create()
-    const agent = new Agent(data, {
+    const agent = await Agent.create(undefined, {
       connection: connection({ channel: createServer() }),
     })
 
@@ -149,8 +136,7 @@ describe('Agent', function () {
 
   it('should get space info', async function () {
     const server = createServer()
-    const data = await AgentData.create()
-    const agent = new Agent(data, {
+    const agent = await Agent.create(undefined, {
       connection: connection({ channel: server }),
     })
 
@@ -174,8 +160,7 @@ describe('Agent', function () {
 
   it('should delegate', async function () {
     const server = createServer()
-    const data = await AgentData.create()
-    const agent = new Agent(data, {
+    const agent = await Agent.create(undefined, {
       connection: connection({ channel: server }),
     })
 

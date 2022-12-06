@@ -5,9 +5,7 @@ import { CID } from 'multiformats'
 
 /** @typedef {import('./types').AgentDataModel} AgentDataModel */
 
-/**
- * @implements {AgentDataModel}
- */
+/** @implements {AgentDataModel} */
 export class AgentData {
   /** @type {(data: import('./types').AgentDataExport) => Promise<void> | void} */
   #save
@@ -26,6 +24,8 @@ export class AgentData {
   }
 
   /**
+   * Create a new AgentData instance from the passed initialization data.
+   *
    * @param {Partial<import('./types').AgentDataModel>} [init]
    * @param {import('./types').AgentDataOptions} [options]
    */
@@ -67,6 +67,8 @@ export class AgentData {
   }
 
   /**
+   * Instantiate AgentData from previously exported data.
+   *
    * @param {import('./types').AgentDataExport} raw
    * @param {import('./types').AgentDataOptions} [options]
    */
@@ -99,6 +101,9 @@ export class AgentData {
     )
   }
 
+  /**
+   * Export data in a format safe to pass to `structuredClone()`.
+   */
   export() {
     /** @type {import('./types').AgentDataExport} */
     const raw = {
@@ -127,7 +132,7 @@ export class AgentData {
    */
   async addSpace(did, meta, proof) {
     this.spaces.set(did, meta)
-    await (proof ? this.addDelegation(proof) : this.#save(this.export()));
+    await (proof ? this.addDelegation(proof) : this.#save(this.export()))
   }
 
   /**
@@ -145,7 +150,7 @@ export class AgentData {
   async addDelegation(delegation, meta) {
     this.delegations.set(delegation.cid.toString(), {
       delegation,
-      ...(meta ? { meta } : {}),
+      meta: meta ?? {},
     })
     await this.#save(this.export())
   }

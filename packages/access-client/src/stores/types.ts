@@ -5,21 +5,19 @@ export interface IStore<T> {
   /**
    * Open store
    */
-  open: () => Promise<IStore<T>>
+  open: () => Promise<void>
   /**
    * Clean up and close store
    */
   close: () => Promise<void>
   /**
    * Persist data to the store's backend
-   *
-   * @param data
    */
-  save: (data: T) => Promise<IStore<T>>
+  save: (data: T) => Promise<void>
   /**
    * Loads data from the store's backend
    */
-  load: () => Promise<T|undefined>
+  load: () => Promise<T | undefined>
   /**
    * Clean all the data in the store's backend
    */

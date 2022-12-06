@@ -22,6 +22,9 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
+import { AgentData } from './agent-data.js'
+
+export { AgentData }
 
 const HOST = 'https://w3access-staging.protocol-labs.workers.dev'
 const PRINCIPAL = DID.parse(
@@ -80,16 +83,47 @@ export class Agent {
    */
   constructor(data, options = {}) {
     this.url = options.url ?? new URL(HOST)
-    this.connection = options.connection ?? connection({
-      principal: options.servicePrincipal,
-      url: this.url
-    })
+    this.connection =
+      options.connection ??
+      connection({
+        principal: options.servicePrincipal,
+        url: this.url,
+      })
     this.#data = data
     this.#service = undefined
   }
 
+  /**
+   * Create a new Agent instance, optionally with the passed initialization data.
+   *
+   * @param {Partial<import('./types').AgentDataModel>} [init]
+   * @param {import('./types').AgentOptions & { store?: import('./types').IStore<import('./types').AgentDataExport> }} [options]
+   */
+  static async create(init, options = {}) {
+    const { store } = options
+    if (store) await store.open()
+    const data = await AgentData.create(init, { store })
+    return new Agent(data, options)
+  }
+
+  /**
+   * Create a new Agent instance from pre-exported agent data.
+   *
+   * @param {import('./types').AgentDataExport} raw
+   * @param {import('./types').AgentOptions & { store?: import('./types').IStore<import('./types').AgentDataExport> }} [options]
+   */
+  static async from(raw, options = {}) {
+    const { store } = options
+    const data = AgentData.fromExport(raw, { store })
+    return new Agent(data, options)
+  }
+
   get issuer() {
-    return this.data.principal
+    return this.#data.principal
+  }
+
+  get meta() {
+    return this.#data.meta
   }
 
   async service() {
@@ -103,7 +137,7 @@ export class Agent {
   }
 
   did() {
-    return this.data.principal.did()
+    return this.#data.principal.did()
   }
 
   /**
@@ -118,7 +152,7 @@ export class Agent {
       checkAudience: this.issuer,
       checkIsExpired: true,
     })
-    await this.data.addDelegation(delegation, { audience: this.meta })
+    await this.#data.addDelegation(delegation, { audience: this.meta })
   }
 
   /**
@@ -128,7 +162,7 @@ export class Agent {
    */
   async *#delegations(caps) {
     const _caps = new Set(caps)
-    for (const [, value] of this.data.delegations) {
+    for (const [, value] of this.#data.delegations) {
       // check expiration
       if (!isExpired(value.delegation)) {
         // check if delegation can be used
@@ -147,7 +181,7 @@ export class Agent {
         }
       } else {
         // delete any expired delegation
-        await this.data.removeDelegation(value.delegation.cid)
+        await this.#data.removeDelegation(value.delegation.cid)
       }
     }
   }
@@ -210,7 +244,7 @@ export class Agent {
     })
 
     const meta = { name, isRegistered: false }
-    await this.data.addSpace(signer.did(), meta, proof)
+    await this.#data.addSpace(signer.did(), meta, proof)
 
     return {
       did: signer.did(),
@@ -312,7 +346,7 @@ export class Agent {
       throw new Error(`Agent has no proofs for ${space}.`)
     }
 
-    await this.data.setCurrentSpace(space)
+    await this.#data.setCurrentSpace(space)
 
     return space
   }
@@ -321,14 +355,14 @@ export class Agent {
    * Get current space DID
    */
   currentSpace() {
-    return this.data.currentSpace
+    return this.#data.currentSpace
   }
 
   /**
    * Get current space DID, proofs and abilities
    */
   async currentSpaceWithMeta() {
-    if (!this.data.currentSpace) {
+    if (!this.#data.currentSpace) {
       return
     }
 
@@ -426,8 +460,8 @@ export class Agent {
 
     spaceMeta.isRegistered = true
 
-    this.data.addSpace(space, spaceMeta)
-    this.data.removeDelegation(voucherRedeem.cid)
+    this.#data.addSpace(space, spaceMeta)
+    this.#data.removeDelegation(voucherRedeem.cid)
   }
 
   /**
@@ -492,7 +526,7 @@ export class Agent {
       ...options,
     })
 
-    await this.data.addDelegation(delegation, {
+    await this.#data.addDelegation(delegation, {
       audience: options.audienceMeta,
     })
 

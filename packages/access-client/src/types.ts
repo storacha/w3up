@@ -96,7 +96,7 @@ export type AgentDataExport = Pick<
   delegations: Map<
     CIDString,
     {
-      meta?: DelegationMeta
+      meta: DelegationMeta
       delegation: Array<{ cid: CIDString; bytes: Uint8Array }>
     }
   >
@@ -122,7 +122,7 @@ export interface DelegationMeta {
    * Audience metadata to be easier to build UIs with human readable data
    * Normally used with delegations issued to third parties or other devices.
    */
-  audience: AgentMeta
+  audience?: AgentMeta
 }
 
 /**
