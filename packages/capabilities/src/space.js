@@ -16,6 +16,7 @@ import { canDelegateURI, equalWith, fail } from './utils.js'
 import * as Upload from './upload.js'
 
 export { top } from './top.js'
+export { Store }
 
 export const space = top.derive({
   to: capability({
