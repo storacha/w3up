@@ -55,7 +55,9 @@ describe('IndexedDB store', () => {
   })
 
   it('should close and disallow usage', async () => {
-    const store = new StoreIndexedDB('test-access-db-' + Date.now())
+    const store = new StoreIndexedDB('test-access-db-' + Date.now(), {
+      autoOpen: false,
+    })
     await store.open()
     await store.load()
     await store.close()

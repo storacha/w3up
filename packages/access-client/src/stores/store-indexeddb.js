@@ -33,21 +33,29 @@ export class StoreIndexedDB {
   /** @type {IDBDatabase|undefined} */
   #db
 
+  /** @type {boolean} */
+  #autoOpen
+
   /**
    * @param {string} dbName
    * @param {object} [options]
    * @param {number} [options.dbVersion]
    * @param {string} [options.dbStoreName]
+   * @param {boolean} [options.autoOpen]
    */
   constructor(dbName, options = {}) {
     this.#dbName = dbName
     this.#dbVersion = options.dbVersion
     this.#dbStoreName = options.dbStoreName ?? STORE_NAME
+    this.#autoOpen = options.autoOpen ?? true
   }
 
   /** @returns {Promise<IDBDatabase>} */
   async #getOpenDB() {
-    if (!this.#db) await this.open()
+    if (!this.#db) {
+      if (!this.#autoOpen) throw new Error('Store is not open')
+      await this.open()
+    }
     // @ts-expect-error open sets this.#db
     return this.#db
   }
