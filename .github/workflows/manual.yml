@@ -11,7 +11,6 @@ on:
           - access-api
           - upload-client
           - access-client
-          - wallet
           - docs
       environment:
         description: 'Environment to deploy'
@@ -23,30 +22,6 @@ on:
           - staging
           - dev
 jobs:
-  deploy-wallet:
-    runs-on: ubuntu-latest
-    if: github.event.inputs.package == 'wallet'
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.2.3
-        with:
-          version: 7
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'pnpm'
-      - uses: actions/cache@v2
-        with:
-          path: ${{ github.workspace }}/packages/wallet/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('packages/wallet/**.[jt]s', 'packages/wallet/**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-      - run: pnpm install
-      - run: pnpm -r --filter wallet run build
-      - run: pnpm exec wrangler pages publish --project-name ucan-protocol --branch main ./packages/wallet/out
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
   deploy-access-api:
     if: github.event.inputs.package == 'access-api'
     uses: './.github/workflows/reusable-deploy-api.yml'
