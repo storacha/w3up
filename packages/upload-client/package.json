@@ -64,7 +64,7 @@
   ],
   "dependencies": {
     "@ipld/car": "^5.0.0",
-    "@ipld/dag-ucan": "^2.0.1",
+    "@ipld/dag-ucan": "^3.0.1",
     "@ipld/unixfs": "^2.0.0",
     "@ucanto/client": "^4.0.2",
     "@ucanto/interface": "^4.0.2",

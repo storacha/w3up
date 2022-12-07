@@ -109,7 +109,7 @@ importers:
   packages/access-client:
     specifiers:
       '@ipld/car': ^5.0.1
-      '@ipld/dag-ucan': ^2.0.1
+      '@ipld/dag-ucan': ^3.0.1
       '@types/assert': ^1.5.6
       '@types/inquirer': ^9.0.3
       '@types/mocha': ^10.0.1
@@ -148,7 +148,7 @@ importers:
       zod: ^3.19.1
     dependencies:
       '@ipld/car': 5.0.1
-      '@ipld/dag-ucan': 2.0.1
+      '@ipld/dag-ucan': 3.0.1
       '@ucanto/client': 4.0.2
       '@ucanto/core': 4.0.2
       '@ucanto/interface': 4.0.2
@@ -268,7 +268,7 @@ importers:
   packages/upload-client:
     specifiers:
       '@ipld/car': ^5.0.0
-      '@ipld/dag-ucan': ^2.0.1
+      '@ipld/dag-ucan': ^3.0.1
       '@ipld/unixfs': ^2.0.0
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.1
@@ -293,7 +293,7 @@ importers:
       typescript: 4.9.3
     dependencies:
       '@ipld/car': 5.0.1
-      '@ipld/dag-ucan': 2.0.1
+      '@ipld/dag-ucan': 3.0.1
       '@ipld/unixfs': 2.0.0
       '@ucanto/client': 4.0.2
       '@ucanto/interface': 4.0.2
@@ -583,14 +583,6 @@ packages:
     dependencies:
       multiformats: 10.0.2
     dev: true
-
-  /@ipld/dag-ucan/2.0.1:
-    resolution: {integrity: sha512-0cqnXPmjmFhz9JVtgU/wCaNvbnFr/HYzl4LaVm7Q7c8FsF9u671rOvNgCbSpJL6f+YTM4Q4fihxLYWPHaUSEww==}
-    dependencies:
-      '@ipld/dag-cbor': 8.0.0
-      '@ipld/dag-json': 9.0.1
-      multiformats: 10.0.2
-    dev: false
 
   /@ipld/dag-ucan/3.0.1:
     resolution: {integrity: sha512-71YwJeRHxwX3diPXfwiuzhJTjmJSqi8XW/x5Xglp82UqpM5xwtNojB07VhmDXTZXhKi42bZHyQIOLaca/t9IHw==}
