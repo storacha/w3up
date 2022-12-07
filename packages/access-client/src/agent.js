@@ -155,20 +155,22 @@ export class Agent {
     const values = []
     for (const [, value] of this.#data.delegations) {
       // check expiration
-      if (!isExpired(value.delegation) && // check if delegation can be used
-        !isTooEarly(value.delegation)) {
-          // check if we need to filter for caps
-          if (Array.isArray(caps) && caps.length > 0) {
-            for (const cap of _caps) {
-              if (canDelegateCapability(value.delegation, cap)) {
-                _caps.delete(cap)
-                values.push(value)
-              }
+      if (
+        !isExpired(value.delegation) && // check if delegation can be used
+        !isTooEarly(value.delegation)
+      ) {
+        // check if we need to filter for caps
+        if (Array.isArray(caps) && caps.length > 0) {
+          for (const cap of _caps) {
+            if (canDelegateCapability(value.delegation, cap)) {
+              _caps.delete(cap)
+              values.push(value)
             }
-          } else {
-            values.push(value)
           }
+        } else {
+          values.push(value)
         }
+      }
     }
     return values
   }
