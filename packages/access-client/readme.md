@@ -98,6 +98,31 @@ To register a space, use [`agent.registerSpace`](https://web3-storage.github.io/
 
 Calling `registerSpace` will cause the access service to send a confirmation email to the provided email address. When the activation link in the email is clicked, the service will send the Agent a delegation via a WebSocket connection that grants access to the services included in w3up's free tier. The `registerSpace` method returns a `Promise` that resolves once the registration process is complete. Make sure to wrap calls to `registerSpace` in a `try/catch` block, as registration will fail if the user does not confirm the email (or if network issues arise, etc.).
 
+### Delegating to another Agent
+
+The Agent's [`delegate` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#delegate) allows you to delegate capabilities to another Agent.
+
+```js
+const delegation = await agent.delegate({
+  audience: 'did:key:kAgentToDelegateTo',
+  abilities: [
+    {
+      can: 'space/info',
+      with: agent.currentSpace()
+    }
+  ]
+})
+```
+
+Note that the receiving agent will need to [import the delegation](#importing-delegations-from-another-agent) before they will be able to invoke the delegated capabilities.
+
+### Importing delegations from another Agent
+
+The [`addProof` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#addProof) takes in a ucanto `Delegation` and adds it to the Agent's state Store. The proof of delegation can be retrieved using the Agent's [`proofs` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#proofs).
+
+
+The [`importSpaceFromDelegation` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#importSpaceFromDelegation) also accepts a ucanto `Delegation`, but it is tailored for "full delegation" of all Space-related capabilities. The delegated ability must be `space/*`, which is the "top" of the `space/` ability set. Use `importSpaceFromDelegation` in preference to `addProofs` when importing a full `space/*` delegation, as it also adds metadata about the imported Space to the Agent's `spaces` Map and persistent Store.
+
 ## Contributing
 
 Feel free to join in. All welcome. Please [open an issue](https://github.com/web3-storage/w3protocol/issues)!
