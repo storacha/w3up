@@ -48,6 +48,14 @@ export class ConfDriver {
 
   /** @param {T} data */
   async save(data) {
+    if (typeof data === 'object') {
+      data = { ...data }
+      for (const [k, v] of Object.entries(data)) {
+        if (typeof v === 'undefined') {
+          delete data[k]
+        }
+      }
+    }
     this.#config.set(data)
   }
 
