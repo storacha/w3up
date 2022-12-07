@@ -3,4 +3,4 @@ ALTER TABLE "spaces"
 ADD COLUMN "metadata" JSON NOT NULL DEFAULT '"{}"';
 
 ALTER TABLE "spaces"
-ADD COLUMN "invocation" text NOT NULL;
+ADD COLUMN "invocation" text NOT NULL DEFAULT EMPTY;
