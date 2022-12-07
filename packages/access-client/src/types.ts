@@ -21,6 +21,7 @@ import type {
   DID,
   Signer,
   SignerArchive,
+  SigAlg,
 } from '@ucanto/interface'
 
 import type {
@@ -92,7 +93,7 @@ export type AgentDataExport = Pick<
   AgentDataModel,
   'meta' | 'currentSpace' | 'spaces'
 > & {
-  principal: SignerArchive<Signer>
+  principal: SignerArchive<DID, SigAlg>
   delegations: Map<
     CIDString,
     {
