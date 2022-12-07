@@ -23,8 +23,7 @@
     "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "testw": "watch 'pnpm test' src test --interval 1",
-    "rc": "npm version prerelease --preid rc",
-    "w3access": "./src/cli/index.js"
+    "rc": "npm version prerelease --preid rc"
   },
   "exports": {
     ".": "./src/index.js",
