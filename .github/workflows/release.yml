@@ -21,12 +21,6 @@ jobs:
           manifest-file: .github/release-please-manifest.json
           default-branch: main
           release-type: node
-  pages:
-    needs: release
-    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/wallet')
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo 'pages'
   access-api:
     needs: release
     if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access-api')

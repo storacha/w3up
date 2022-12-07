@@ -36,7 +36,7 @@ export async function getService(env) {
 
 /**
  * @template {Ucanto.Signer} T
- * @param {import('../agent').Agent<T>} agent
+ * @param {import('../agent').Agent} agent
  */
 export async function selectSpace(agent) {
   const choices = []

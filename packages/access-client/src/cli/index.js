@@ -41,12 +41,10 @@ prog
   .describe('Space info.')
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
       const space = await selectSpace(agent)
       try {
         const result = await agent.getSpaceInfo(space)
@@ -66,12 +64,10 @@ prog
   .option('--file', 'File to write the delegation into.')
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
       const space = await selectSpace(agent)
 
       await agent.setCurrentSpace(space)
@@ -138,12 +134,10 @@ prog
   .option('--delegation')
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
 
       const del = fs.readFileSync(path.resolve(opts.delegation), {
         encoding: 'utf8',
@@ -160,12 +154,10 @@ prog
   .describe('Recover spaces with email.')
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
+    const data = await store.load()
     const { url } = await getService(opts.env)
-    if (await store.exists()) {
-      const agent = await Agent.create({
-        store,
-        url,
-      })
+    if (data) {
+      const agent = Agent.from(data, { store, url })
 
       const { email } = await inquirer.prompt([
         {

@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "7.0.2",
+  "version": "8.0.1",
   "description": "w3access client",
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access-client",
   "repository": {
@@ -29,6 +29,7 @@
   "exports": {
     ".": "./src/index.js",
     "./agent": "./src/agent.js",
+    "./drivers/*": "./src/drivers/*.js",
     "./stores/*": "./src/stores/*.js",
     "./types": "./src/types.js",
     "./encoding": "./src/encoding.js"
@@ -40,6 +41,9 @@
       ],
       "types": [
         "dist/src/types"
+      ],
+      "drivers/*": [
+        "dist/src/drivers/*"
       ],
       "stores/*": [
         "dist/src/stores/*"

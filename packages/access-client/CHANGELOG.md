@@ -1,5 +1,38 @@
 # Changelog
 
+## [8.0.1](https://github.com/web3-storage/w3protocol/compare/access-v8.0.0...access-v8.0.1) (2022-12-07)
+
+
+### Bug Fixes
+
+* conf driver can store top level undefined ([c4b216b](https://github.com/web3-storage/w3protocol/commit/c4b216b364fff62b7be9b2f76d6626bfc01c2332))
+
+## [8.0.0](https://github.com/web3-storage/w3protocol/compare/access-v7.0.2...access-v8.0.0) (2022-12-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* access-client store decoupling ([#228](https://github.com/web3-storage/w3protocol/issues/228))
+* upgrade to `@ucanto/{interface,principal}`@^4.0.0 ([#238](https://github.com/web3-storage/w3protocol/issues/238))
+* follow up on the capabilities extract ([#239](https://github.com/web3-storage/w3protocol/issues/239))
+
+### Features
+
+* **access-client:** cli and recover ([#207](https://github.com/web3-storage/w3protocol/issues/207)) ([adb3a8d](https://github.com/web3-storage/w3protocol/commit/adb3a8d61d42b31f106e86b95faa3e442f5dc2c7))
+* follow up on the capabilities extract ([#239](https://github.com/web3-storage/w3protocol/issues/239)) ([ef5e779](https://github.com/web3-storage/w3protocol/commit/ef5e77922b67155f0c3e5cb37c12e32f9a56cce1))
+* Revert "feat!: upgrade to `@ucanto/{interface,principal}`@^4.0.0" ([#245](https://github.com/web3-storage/w3protocol/issues/245)) ([c182bbe](https://github.com/web3-storage/w3protocol/commit/c182bbe5e8c5a7d5c74b10cbf4b7a45b51e9b184))
+* upgrade to `@ucanto/{interface,principal}`@^4.0.0 ([#238](https://github.com/web3-storage/w3protocol/issues/238)) ([2f3bab8](https://github.com/web3-storage/w3protocol/commit/2f3bab8924fe7f34a5db64d2521730fc85739d3a))
+
+
+### Bug Fixes
+
+* connection method is not async ([#222](https://github.com/web3-storage/w3protocol/issues/222)) ([0dd1633](https://github.com/web3-storage/w3protocol/commit/0dd16338836d96bd0dcb920385e4ed90f16c45ad))
+
+
+### Code Refactoring
+
+* access-client store decoupling ([#228](https://github.com/web3-storage/w3protocol/issues/228)) ([a785278](https://github.com/web3-storage/w3protocol/commit/a7852785e2ac783bcb21790b4a87ee5ad0a1380e))
+
 ## [7.0.2](https://github.com/web3-storage/w3protocol/compare/access-v7.0.1...access-v7.0.2) (2022-11-28)
 
 
