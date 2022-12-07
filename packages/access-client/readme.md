@@ -17,7 +17,7 @@ Install the package:
 
 ```bash
 npm install @web3-storage/access
-``` 
+```
 
 ## Usage
 
@@ -34,7 +34,7 @@ import { Agent } from '@web3-storage/access/agent'
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 
 const store = await StoreIndexedDB.open('my-db-name')
-const agent = await Agent.create( { store })
+const agent = await Agent.create({ store })
 ```
 
 On node.js, use [`StoreConf`](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.StoreConf.html), which uses the [`conf` package](https://www.npmjs.com/package/conf) to store keys and metadata in the user's platform-specific default configuration location (usually in their home directory).
