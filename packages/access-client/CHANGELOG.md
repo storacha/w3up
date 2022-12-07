@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.0.1](https://github.com/web3-storage/w3protocol/compare/access-v8.0.0...access-v8.0.1) (2022-12-07)
+
+
+### Bug Fixes
+
+* conf driver can store top level undefined ([c4b216b](https://github.com/web3-storage/w3protocol/commit/c4b216b364fff62b7be9b2f76d6626bfc01c2332))
+
 ## [8.0.0](https://github.com/web3-storage/w3protocol/compare/access-v7.0.2...access-v8.0.0) (2022-12-06)
 
 
