@@ -40,7 +40,7 @@ const PRINCIPAL = DID.parse(
  * import { connection } from '@web3-storage/access/agent'
  * ```
  *
- * @template {string} T - DID method
+ * @template {Ucanto.DID} T - DID method
  * @param {object} [options]
  * @param {Ucanto.Principal<T>} [options.principal] - w3access API Principal
  * @param {URL} [options.url] - w3access API URL
@@ -403,7 +403,6 @@ export class Agent {
       nb: {
         identity: URI.from(`mailto:${email}`),
         product: 'product:free',
-        // @ts-expect-error expected did:key but connection can be did:any
         service: service.did(),
       },
     })

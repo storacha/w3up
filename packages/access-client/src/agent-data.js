@@ -71,7 +71,6 @@ export class AgentData {
     return new AgentData(
       {
         meta: raw.meta,
-        // @ts-expect-error
         principal: Signer.from(raw.principal),
         currentSpace: raw.currentSpace,
         spaces: raw.spaces,
