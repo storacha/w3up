@@ -1,5 +1,5 @@
 {
-  "packages/access-client": "9.0.0",
+  "packages/access-client": "9.0.1",
   "packages/access-api": "3.0.0",
   "packages/capabilities": "2.0.0",
   "packages/upload-client": "5.0.0"
