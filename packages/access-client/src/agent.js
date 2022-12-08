@@ -1,4 +1,4 @@
-/* eslint-disable max-depth, eqeqeq */
+/* eslint-disable max-depth */
 import * as DID from '@ipld/dag-ucan/did'
 import * as Client from '@ucanto/client'
 // @ts-ignore
@@ -234,8 +234,9 @@ export class Agent {
 
     /** @type {import('./types').SpaceMeta} */
     const meta = { isRegistered: false }
+    // eslint-disable-next-line eqeqeq
     if (name != undefined) {
-      if (typeof name != 'string') {
+      if (typeof name !== 'string') {
         throw new TypeError('invalid name')
       }
       meta.name = name
