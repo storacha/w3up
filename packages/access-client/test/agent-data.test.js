@@ -3,11 +3,13 @@ import { AgentData } from '../src/agent-data.js'
 
 describe('AgentData', () => {
   it('should not destructure store methods', async () => {
+    // eslint-disable-next-line unicorn/no-await-expression-member
+    const raw = (await AgentData.create()).export()
     class Store {
       async open() {}
       async close() {}
       async load() {
-        
+        return raw
       }
 
       async reset() {}
