@@ -1,4 +1,4 @@
-/* eslint-disable max-depth */
+/* eslint-disable max-depth, eqeqeq */
 import * as DID from '@ipld/dag-ucan/did'
 import * as Client from '@ucanto/client'
 // @ts-ignore
@@ -232,7 +232,15 @@ export class Agent {
       expiration: Infinity,
     })
 
-    const meta = { name, isRegistered: false }
+    /** @type {import('./types').SpaceMeta} */
+    const meta = { isRegistered: false }
+    if (name != undefined) {
+      if (typeof name != 'string') {
+        throw new TypeError('invalid name')
+      }
+      meta.name = name
+    }
+
     await this.#data.addSpace(signer.did(), meta, proof)
 
     return {
