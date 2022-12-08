@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "description": "w3access client",
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access-client",
   "repository": {
