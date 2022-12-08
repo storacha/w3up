@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.1](https://github.com/web3-storage/w3protocol/compare/access-v9.0.0...access-v9.0.1) (2022-12-08)
+
+
+### Bug Fixes
+
+* validate agent name ([#271](https://github.com/web3-storage/w3protocol/issues/271)) ([cdccbd3](https://github.com/web3-storage/w3protocol/commit/cdccbd3a7bcc4eaddb0ecee68336c04ac35d7996))
+
 ## [9.0.0](https://github.com/web3-storage/w3protocol/compare/access-v8.0.1...access-v9.0.0) (2022-12-07)
 
 
