@@ -20,7 +20,8 @@ export class AgentData {
     this.spaces = data.spaces
     this.delegations = data.delegations
     this.currentSpace = data.currentSpace
-    this.#save = options.store ? options.store.save : () => {}
+    this.#save = (data) =>
+      options.store ? options.store.save(data) : undefined
   }
 
   /**
