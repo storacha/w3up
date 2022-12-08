@@ -1,8 +1,7 @@
-import { Signer } from '@ucanto/principal/ed25519'
 import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
-import { loadConfig } from '../config.js'
+import { configureSigner, loadConfig } from '../config.js'
 import { Spaces } from '../kvs/spaces.js'
 import { Validations } from '../kvs/validations.js'
 import { Email } from './email.js'
@@ -42,12 +41,12 @@ export function getContext(request, env, ctx) {
     env: config.ENV,
   })
 
-  const keypair = Signer.parse(config.PRIVATE_KEY)
+  const signer = configureSigner(config)
   const url = new URL(request.url)
   const db = new D1QB(config.DB)
   return {
     log,
-    signer: keypair,
+    signer,
     config,
     url,
     kvs: {

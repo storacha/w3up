@@ -23,6 +23,11 @@ export interface Env {
   // vars
   ENV: string
   DEBUG: string
+  /**
+   * publicly advertised decentralized identifier of the running api service
+   * * this may be used to filter incoming ucanto invocations
+   */
+  DID: string
   // secrets
   PRIVATE_KEY: string
   SENTRY_DSN: string

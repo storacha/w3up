@@ -1,3 +1,5 @@
+import { Signer } from '@ucanto/principal/ed25519'
+
 /**
  * Loads configuration variables from the global environment and returns a JS object
  * keyed by variable names.
@@ -48,6 +50,8 @@ export function loadConfig(env) {
     // @ts-ignore
     // eslint-disable-next-line no-undef
     COMMITHASH: ACCOUNT_COMMITHASH,
+
+    DID: env.DID,
 
     // bindings
     METRICS:
@@ -104,4 +108,37 @@ export function createAnalyticsEngine() {
     },
     _store: store,
   }
+}
+
+/**
+ * Given a config, return a ucanto Signer object representing the service
+ *
+ * @param {object} config
+ * @param {string} [config.DID] - public identifier of the running service. e.g. a did:key or a did:web
+ * @param {string} config.PRIVATE_KEY - multiformats private key of primary signing key
+ */
+export function configureSigner(config) {
+  const signer = Signer.parse(config.PRIVATE_KEY)
+  if (config.DID) {
+    if (!isDID(config.DID)) {
+      throw new Error(`Invalid DID: ${config.DID}`)
+    }
+    return signer.withDID(config.DID)
+  }
+  return signer
+}
+
+/**
+ * Return whether or not the provided object looks like a decentralized identifier (aka DID)
+ *
+ * @see https://www.w3.org/TR/did-core/#did-syntax
+ * @param {any} object
+ * @returns {object is `did:${string}:${string}`}
+ */
+function isDID(object) {
+  if (typeof object !== 'string') return false
+  const parts = object.split(':')
+  if (parts.length <= 2) return false
+  if (parts[0] !== 'did') return false
+  return true
 }
