@@ -22,6 +22,7 @@
     "@ucanto/principal": "^4.0.2",
     "@ucanto/server": "^4.0.2",
     "@ucanto/transport": "^4.0.2",
+    "@ucanto/validator": "^4.0.2",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",

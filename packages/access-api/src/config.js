@@ -1,3 +1,4 @@
+import { DID } from '@ucanto/validator'
 import { Signer } from '@ucanto/principal/ed25519'
 
 /**
@@ -119,13 +120,14 @@ export function createAnalyticsEngine() {
  */
 export function configureSigner(config) {
   const signer = Signer.parse(config.PRIVATE_KEY)
-  if (config.DID) {
-    if (!isDID(config.DID)) {
-      throw new Error(`Invalid DID: ${config.DID}`)
-    }
-    return signer.withDID(config.DID)
+  const did = config.DID
+  if (!did) {
+    return signer
   }
-  return signer
+  if (!isDID(did)) {
+    throw new Error(`Invalid DID: ${did}`)
+  }
+  return signer.withDID(did)
 }
 
 /**
@@ -136,9 +138,8 @@ export function configureSigner(config) {
  * @returns {object is `did:${string}:${string}`}
  */
 function isDID(object) {
-  if (typeof object !== 'string') return false
-  const parts = object.split(':')
-  if (parts.length <= 2) return false
-  if (parts[0] !== 'did') return false
-  return true
+  try {
+    return Boolean(DID.match({}).from(object))
+  } catch {}
+  return false
 }
