@@ -22,11 +22,14 @@ describe('@web3-storage/access-api/src/config configureSigner', () => {
   it('creates a signer using config.{DID,PRIVATE_KEY}', async () => {
     const config = {
       PRIVATE_KEY: testKeypair.private.multiformats,
-      DID: testKeypair.public.did,
+      DID: 'did:web:exampe.com',
     }
     const signer = configModule.configureSigner(config)
     assert.ok(signer)
     assert.equal(signer.did().toString(), config.DID)
+    const { keys } = signer.toArchive()
+    const didKeys = Object.keys(keys)
+    assert.deepEqual(didKeys, [testKeypair.public.did])
   })
   it('errors if config.DID is provided but not a did', () => {
     assert.throws(() => {
