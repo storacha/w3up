@@ -39,7 +39,6 @@ export function loadConfig(env) {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
 
-    PRIVATE_KEY,
     POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
@@ -55,7 +54,6 @@ export function loadConfig(env) {
     // eslint-disable-next-line no-undef
     COMMITHASH: ACCOUNT_COMMITHASH,
 
-    DID,
     signer,
 
     // bindings
