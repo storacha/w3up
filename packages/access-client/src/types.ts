@@ -263,3 +263,6 @@ export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
 
 export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
   Phantom<C>
+
+export type BytesDelegation<C extends Capabilities = Capabilities> =
+  Uint8Array & Phantom<C>
