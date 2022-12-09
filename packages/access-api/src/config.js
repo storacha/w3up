@@ -128,22 +128,5 @@ export function configureSigner(config) {
   if (!did) {
     return signer
   }
-  if (!isDID(did)) {
-    throw new Error(`Invalid DID: ${did}`)
-  }
-  return signer.withDID(did)
-}
-
-/**
- * Return whether or not the provided object looks like a decentralized identifier (aka DID)
- *
- * @see https://www.w3.org/TR/did-core/#did-syntax
- * @param {any} object
- * @returns {object is `did:${string}:${string}`}
- */
-function isDID(object) {
-  try {
-    return Boolean(DID.match({}).from(object))
-  } catch {}
-  return false
+  return signer.withDID(DID.match({}).from(did))
 }
