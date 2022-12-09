@@ -1,7 +1,7 @@
 import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
-import { configureSigner, loadConfig } from '../config.js'
+import { loadConfig } from '../config.js'
 import { Spaces } from '../kvs/spaces.js'
 import { Validations } from '../kvs/validations.js'
 import { Email } from './email.js'
@@ -40,13 +40,11 @@ export function getContext(request, env, ctx) {
     commit: config.COMMITHASH,
     env: config.ENV,
   })
-
-  const signer = configureSigner(config)
   const url = new URL(request.url)
   const db = new D1QB(config.DB)
   return {
     log,
-    signer,
+    signer: config.signer,
     config,
     url,
     kvs: {

@@ -32,11 +32,14 @@ export function loadConfig(env) {
     }
   }
 
+  const DID = env.DID
+  const PRIVATE_KEY = vars.PRIVATE_KEY
+  const signer = configureSigner({ DID, PRIVATE_KEY })
   return {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
 
-    PRIVATE_KEY: vars.PRIVATE_KEY,
+    PRIVATE_KEY,
     POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
@@ -52,7 +55,8 @@ export function loadConfig(env) {
     // eslint-disable-next-line no-undef
     COMMITHASH: ACCOUNT_COMMITHASH,
 
-    DID: env.DID,
+    DID,
+    signer,
 
     // bindings
     METRICS:
