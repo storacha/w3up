@@ -51,7 +51,7 @@ export async function createSpace(issuer, service, conn, email) {
     throw new Error('failed to create space')
   }
 
-  const delegation = await stringToDelegation(claim)
+  const delegation = stringToDelegation(claim)
   const serviceDelegation = await Voucher.top.delegate({
     issuer: space,
     audience: service,
