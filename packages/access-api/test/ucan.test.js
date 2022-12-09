@@ -145,18 +145,16 @@ describe('ucan', function () {
   })
 
   test('should support ucan invoking to a did:web aud', async function () {
-    const serviceDidWeb = 'did:web:web3.storage'
+    const serviceDidWeb = 'did:web:example.com'
     const { mf, issuer, service } = await context({
       environment: {
         ...process.env,
-        PRIVATE_KEY:
-          'MgCYWjE6vp0cn3amPan2xPO+f6EZ3I+KwuN1w2vx57vpJ9O0Bn4ci4jn8itwc121ujm7lDHkCW24LuKfZwIdmsifVysY=',
         DID: serviceDidWeb,
       },
     })
     const ucan = await UCAN.issue({
       issuer,
-      audience: service.withDID('did:web:web3.storage'),
+      audience: service.withDID(serviceDidWeb),
       capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
     })
     const res = await mf.dispatchFetch('http://localhost:8787/raw', {
