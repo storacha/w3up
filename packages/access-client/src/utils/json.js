@@ -11,6 +11,8 @@ export const replacer = (k, v) => {
     return { $map: [...v.entries()] }
   } else if (v instanceof Uint8Array) {
     return { $bytes: [...v.values()] }
+  } else if (v?.type === 'Buffer' && Array.isArray(v.data)) {
+    return { $bytes: v.data }
   }
   return v
 }
