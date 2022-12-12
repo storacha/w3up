@@ -13,7 +13,7 @@ export async function cmdWhoami(opts) {
   if (data) {
     const agent = Agent.from(data, { store })
     console.log('Agent', agent.issuer.did(), agent.meta)
-    console.log('Current Space', await agent.currentSpaceWithMeta())
+    console.log('Current Space', agent.currentSpaceWithMeta())
     console.log('\nSpaces:')
     for (const space of agent.spaces) {
       console.log(
@@ -23,7 +23,7 @@ export async function cmdWhoami(opts) {
       )
     }
     console.log('\nProofs:')
-    for (const proof of await agent.proofs()) {
+    for (const proof of agent.proofs()) {
       for (const cap of proof.capabilities) {
         console.log(
           `With resource: ${cap.with} can "${cap.can}" expires at ${proof.expiration}`
@@ -32,7 +32,7 @@ export async function cmdWhoami(opts) {
     }
 
     console.log('\nDelegations:')
-    for await (const { meta, delegation } of agent.delegationsWithMeta()) {
+    for (const { meta, delegation } of agent.delegationsWithMeta()) {
       console.log(
         `Audience ${meta.audience?.name ?? 'unknown'} (${
           meta.audience?.type ?? 'unknown'
