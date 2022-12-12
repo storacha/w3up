@@ -1,4 +1,3 @@
-import { Signer } from '@ucanto/principal/ed25519'
 import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
@@ -41,13 +40,11 @@ export function getContext(request, env, ctx) {
     commit: config.COMMITHASH,
     env: config.ENV,
   })
-
-  const keypair = Signer.parse(config.PRIVATE_KEY)
   const url = new URL(request.url)
   const db = new D1QB(config.DB)
   return {
     log,
-    signer: keypair,
+    signer: config.signer,
     config,
     url,
     kvs: {

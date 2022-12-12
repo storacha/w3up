@@ -1,3 +1,6 @@
+import { DID } from '@ucanto/validator'
+import { Signer } from '@ucanto/principal/ed25519'
+
 /**
  * Loads configuration variables from the global environment and returns a JS object
  * keyed by variable names.
@@ -29,11 +32,13 @@ export function loadConfig(env) {
     }
   }
 
+  const DID = env.DID
+  const PRIVATE_KEY = vars.PRIVATE_KEY
+  const signer = configureSigner({ DID, PRIVATE_KEY })
   return {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
 
-    PRIVATE_KEY: vars.PRIVATE_KEY,
     POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
@@ -48,6 +53,8 @@ export function loadConfig(env) {
     // @ts-ignore
     // eslint-disable-next-line no-undef
     COMMITHASH: ACCOUNT_COMMITHASH,
+
+    signer,
 
     // bindings
     METRICS:
@@ -104,4 +111,20 @@ export function createAnalyticsEngine() {
     },
     _store: store,
   }
+}
+
+/**
+ * Given a config, return a ucanto Signer object representing the service
+ *
+ * @param {object} config
+ * @param {string} [config.DID] - public identifier of the running service. e.g. a did:key or a did:web
+ * @param {string} config.PRIVATE_KEY - multiformats private key of primary signing key
+ */
+export function configureSigner(config) {
+  const signer = Signer.parse(config.PRIVATE_KEY)
+  const did = config.DID
+  if (!did) {
+    return signer
+  }
+  return signer.withDID(DID.match({}).from(did))
 }

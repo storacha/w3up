@@ -14,20 +14,46 @@ dotenv.config({
   path: path.join(__dirname, '..', '..', '..', '..', '.env.tpl'),
 })
 
-export const bindings = {
-  ENV: 'test',
-  DEBUG: 'false',
-  PRIVATE_KEY: process.env.PRIVATE_KEY || '',
-  POSTMARK_TOKEN: process.env.POSTMARK_TOKEN || '',
-  SENTRY_DSN: process.env.SENTRY_DSN || '',
-  LOGTAIL_TOKEN: process.env.LOGTAIL_TOKEN || '',
-  W3ACCESS_METRICS: createAnalyticsEngine(),
+/**
+ * @typedef {Omit<import('../../src/bindings').Env, 'SPACES'|'VALIDATIONS'|'__D1_BETA__'>} AccessApiBindings - bindings object expected by access-api workers
+ */
+
+/**
+ * Given a map of environment vars, return a map of bindings that can be passed with access-api worker invocations.
+ *
+ * @param {{ [key: string]: string | undefined }} env - environment variables
+ * @returns {AccessApiBindings} - env bindings expected by access-api worker objects
+ */
+function createBindings(env) {
+  return {
+    ENV: 'test',
+    DEBUG: 'false',
+    DID: env.DID || '',
+    PRIVATE_KEY: env.PRIVATE_KEY || '',
+    POSTMARK_TOKEN: env.POSTMARK_TOKEN || '',
+    SENTRY_DSN: env.SENTRY_DSN || '',
+    LOGTAIL_TOKEN: env.LOGTAIL_TOKEN || '',
+    W3ACCESS_METRICS: createAnalyticsEngine(),
+  }
 }
+
+/**
+ * Good default bindings useful for tests - configured via process.env
+ */
+export const bindings = createBindings(process.env)
 
 export const serviceAuthority = Signer.parse(bindings.PRIVATE_KEY)
 
-export async function context() {
+/**
+ * @param {object} [options]
+ * @param {Record<string,string|undefined>} options.environment - environment variables to use when configuring access-api. Defaults to process.env.
+ */
+export async function context(options) {
+  const environment = options?.environment || process.env
   const principal = await Signer.generate()
+  const bindings = createBindings({
+    ...environment,
+  })
   const mf = new Miniflare({
     packagePath: true,
     wranglerConfigPath: true,
