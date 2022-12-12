@@ -194,9 +194,15 @@ export class Agent {
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
    */
   proofs(caps) {
-    return this.#delegations(caps)
-      .filter((v) => v.delegation.audience.did() === this.issuer.did())
-      .map((v) => v.delegation)
+    const arr = []
+
+    for (const value of this.#delegations(caps)) {
+      if (value.delegation.audience.did() === this.issuer.did()) {
+        arr.push(value.delegation)
+      }
+    }
+
+    return arr
   }
 
   /**
@@ -205,7 +211,13 @@ export class Agent {
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the delegations.
    */
   delegations(caps) {
-    return this.delegationsWithMeta(caps).map((v) => v.delegation)
+    const arr = []
+
+    for (const { delegation } of this.delegationsWithMeta(caps)) {
+      arr.push(delegation)
+    }
+
+    return arr
   }
 
   /**
@@ -214,9 +226,15 @@ export class Agent {
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the delegations.
    */
   delegationsWithMeta(caps) {
-    return this.#delegations(caps).filter(
-      (v) => v.delegation.audience.did() !== this.issuer.did()
-    )
+    const arr = []
+
+    for (const value of this.#delegations(caps)) {
+      if (value.delegation.audience.did() !== this.issuer.did()) {
+        arr.push(value)
+      }
+    }
+
+    return arr
   }
 
   /**
