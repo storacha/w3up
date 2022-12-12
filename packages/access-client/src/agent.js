@@ -142,6 +142,7 @@ export class Agent {
       checkIsExpired: true,
     })
     await this.#data.addDelegation(delegation, { audience: this.meta })
+    await this.removeExpiredDelegations()
   }
 
   /**
@@ -537,6 +538,7 @@ export class Agent {
     await this.#data.addDelegation(delegation, {
       audience: options.audienceMeta,
     })
+    await this.removeExpiredDelegations()
 
     return delegation
   }
