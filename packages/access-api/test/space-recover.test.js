@@ -3,7 +3,7 @@ import { stringToDelegation } from '@web3-storage/access/encoding'
 import pWaitFor from 'p-wait-for'
 import assert from 'assert'
 import { context } from './helpers/context.js'
-import { Validations } from '../src/kvs/validations.js'
+import { Validations } from '../src/models/validations.js'
 import { createSpace } from './helpers/utils.js'
 
 describe('space-recover', function () {

@@ -1,10 +1,9 @@
 import type { Logging } from '@web3-storage/worker-utils/logging'
+import type { SpaceTable } from '@web3-storage/access/types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
-import type { Signer } from '@ucanto/interface'
 import { Email } from './utils/email.js'
-import { Spaces } from './kvs/spaces.js'
-import { Validations } from './kvs/validations.js'
-import { D1QB } from 'workers-qb'
+import { Spaces } from './models/spaces.js'
+import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
 
 export {}
@@ -47,11 +46,10 @@ export interface RouteContext {
   config: ReturnType<typeof loadConfig>
   url: URL
   email: Email
-  kvs: {
+  models: {
     spaces: Spaces
     validations: Validations
   }
-  db: D1QB
 }
 
 export type Handler = _Handler<RouteContext>
@@ -84,6 +82,12 @@ export interface ModuleWorker {
   scheduled?: ModuleWorker.CronHandler<Env>
 }
 
+// D1 types
+
 export interface D1ErrorRaw extends Error {
   cause: Error & { code: string }
+}
+
+export interface D1Schema {
+  spaces: SpaceTable
 }

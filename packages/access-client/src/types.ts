@@ -10,7 +10,6 @@ import type {
   Resource,
   ResponseDecoder,
   ServiceMethod,
-  UCAN,
   URI,
   InferInvokedCapability,
   CapabilityParser,
@@ -35,9 +34,31 @@ import type {
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
+import type { ColumnType, Selectable } from 'kysely'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
+
+/**
+ * D1 Types
+ */
+
+export interface SpaceTable {
+  did: URI<'did:'>
+  agent: URI<'did:'>
+  email: string
+  product: URI<`${string}:`>
+  inserted_at: ColumnType<Date, never, Date>
+  updated_at: ColumnType<Date, never, Date>
+  metadata: SpaceTableMetadata | null
+  invocation: string
+  delegation: string | null
+}
+
+export interface SpaceTableMetadata {
+  space: SpaceMeta
+  agent: AgentMeta
+}
 
 /**
  * Access api service definition type
@@ -52,7 +73,7 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, SpaceD1, Failure>
+    info: ServiceMethod<SpaceInfo, Selectable<SpaceTable>, Failure>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
       EncodedDelegation<[SpaceRecover]> | undefined,
@@ -138,18 +159,6 @@ export interface SpaceMeta {
    * Was this space already registered with the access-api using a voucher ?
    */
   isRegistered: boolean
-}
-
-/**
- * Space schema in D1 database
- */
-export interface SpaceD1 {
-  did: UCAN.DID
-  agent: UCAN.DID
-  email: URI<'mailto:'>
-  product: URI<'product:'>
-  updated_at: string
-  inserted_at: string
 }
 
 /**

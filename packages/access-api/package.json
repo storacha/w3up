@@ -26,12 +26,13 @@
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
+    "kysely": "^0.22.0",
+    "kysely-d1": "^0.0.6",
     "p-retry": "^5.1.2",
     "preact": "^10.11.3",
     "preact-render-to-string": "^5.2.6",
     "qrcode": "^1.5.1",
-    "toucan-js": "^2.7.0",
-    "workers-qb": "^0.1.2"
+    "toucan-js": "^2.7.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.18.0",

@@ -6,7 +6,6 @@ import { Miniflare } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { migrate } from '../../scripts/migrate.js'
-import { D1QB } from 'workers-qb'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -78,7 +77,7 @@ export async function context(options) {
     }),
     service: Signer.parse(bindings.PRIVATE_KEY),
     issuer: principal,
-    db: new D1QB(db),
+    d1: db,
   }
 }
 
