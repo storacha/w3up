@@ -144,6 +144,29 @@ describe('ucan', function () {
     t.deepEqual(rsp, ['test pass'])
   })
 
+  test('should support ucan invoking to a did:web aud', async function () {
+    const serviceDidWeb = 'did:web:example.com'
+    const { mf, issuer, service } = await context({
+      environment: {
+        ...process.env,
+        DID: serviceDidWeb,
+      },
+    })
+    const ucan = await UCAN.issue({
+      issuer,
+      audience: service.withDID(serviceDidWeb),
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+    })
+    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UCAN.format(ucan)}`,
+      },
+    })
+    const rsp = await res.json()
+    t.deepEqual(rsp, ['test pass'])
+  })
+
   test('should handle exception in route handler', async function () {
     const { mf, service, issuer } = ctx
 
