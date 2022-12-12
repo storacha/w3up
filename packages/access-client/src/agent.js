@@ -142,6 +142,7 @@ export class Agent {
       checkIsExpired: true,
     })
     await this.#data.addDelegation(delegation, { audience: this.meta })
+    await this.removeExpiredDelegations()
   }
 
   /**
@@ -149,27 +150,38 @@ export class Agent {
    *
    * @param {import('@ucanto/interface').Capability[]} [caps]
    */
-  async *#delegations(caps) {
+  #delegations(caps) {
     const _caps = new Set(caps)
+    /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types').DelegationMeta }>} */
+    const values = []
     for (const [, value] of this.#data.delegations) {
       // check expiration
-      if (!isExpired(value.delegation)) {
-        // check if delegation can be used
-        if (!isTooEarly(value.delegation)) {
-          // check if we need to filter for caps
-          if (Array.isArray(caps) && caps.length > 0) {
-            for (const cap of _caps) {
-              if (canDelegateCapability(value.delegation, cap)) {
-                _caps.delete(cap)
-                yield value
-              }
+      if (
+        !isExpired(value.delegation) && // check if delegation can be used
+        !isTooEarly(value.delegation)
+      ) {
+        // check if we need to filter for caps
+        if (Array.isArray(caps) && caps.length > 0) {
+          for (const cap of _caps) {
+            if (canDelegateCapability(value.delegation, cap)) {
+              _caps.delete(cap)
+              values.push(value)
             }
-          } else {
-            yield value
           }
+        } else {
+          values.push(value)
         }
-      } else {
-        // delete any expired delegation
+      }
+    }
+    return values
+  }
+
+  /**
+   * Clean up any expired delegations.
+   */
+  async removeExpiredDelegations() {
+    for (const [, value] of this.#data.delegations) {
+      if (isExpired(value.delegation)) {
         await this.#data.removeDelegation(value.delegation.cid)
       }
     }
@@ -182,10 +194,10 @@ export class Agent {
    *
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
    */
-  async proofs(caps) {
+  proofs(caps) {
     const arr = []
 
-    for await (const value of this.#delegations(caps)) {
+    for (const value of this.#delegations(caps)) {
       if (value.delegation.audience.did() === this.issuer.did()) {
         arr.push(value.delegation)
       }
@@ -199,10 +211,14 @@ export class Agent {
    *
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the delegations.
    */
-  async *delegations(caps) {
-    for await (const { delegation } of this.delegationsWithMeta(caps)) {
-      yield delegation
+  delegations(caps) {
+    const arr = []
+
+    for (const { delegation } of this.delegationsWithMeta(caps)) {
+      arr.push(delegation)
     }
+
+    return arr
   }
 
   /**
@@ -210,12 +226,16 @@ export class Agent {
    *
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the delegations.
    */
-  async *delegationsWithMeta(caps) {
-    for await (const value of this.#delegations(caps)) {
+  delegationsWithMeta(caps) {
+    const arr = []
+
+    for (const value of this.#delegations(caps)) {
       if (value.delegation.audience.did() !== this.issuer.did()) {
-        yield value
+        arr.push(value)
       }
     }
+
+    return arr
   }
 
   /**
@@ -332,7 +352,7 @@ export class Agent {
    * @param {Ucanto.DID} space
    */
   async setCurrentSpace(space) {
-    const proofs = await this.proofs([
+    const proofs = this.proofs([
       {
         can: 'space/info',
         with: space,
@@ -358,13 +378,13 @@ export class Agent {
   /**
    * Get current space DID, proofs and abilities
    */
-  async currentSpaceWithMeta() {
+  currentSpaceWithMeta() {
     if (!this.#data.currentSpace) {
       return
     }
 
     // TODO cache these
-    const proofs = await this.proofs([
+    const proofs = this.proofs([
       {
         can: 'space/info',
         with: this.#data.currentSpace,
@@ -526,6 +546,7 @@ export class Agent {
     await this.#data.addDelegation(delegation, {
       audience: options.audienceMeta,
     })
+    await this.removeExpiredDelegations()
 
     return delegation
   }

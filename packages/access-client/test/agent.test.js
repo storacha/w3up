@@ -23,7 +23,7 @@ describe('Agent', function () {
   it('should add proof when creating acccount', async function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test-add')
-    const delegations = await agent.proofs()
+    const delegations = agent.proofs()
 
     assert.equal(space.proof.cid, delegations[0].cid)
   })
