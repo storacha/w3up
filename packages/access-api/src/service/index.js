@@ -58,7 +58,7 @@ export function service(ctx) {
                 facts: [metadata],
               })
 
-              results.push(await delegationToString(del))
+              results.push(delegationToString(del))
             }
           }
 
@@ -108,7 +108,7 @@ export function service(ctx) {
             })
             .delegate()
 
-          const encoded = await delegationToString(inv)
+          const encoded = delegationToString(inv)
           const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}&mode=recover`
 
           // For testing

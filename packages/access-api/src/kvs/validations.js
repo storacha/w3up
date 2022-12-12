@@ -19,7 +19,7 @@ export class Validations {
   async put(ucan) {
     const delegation =
       /** @type {import('@ucanto/interface').Delegation<T>} */ (
-        await stringToDelegation(ucan)
+        stringToDelegation(ucan)
       )
 
     await this.kv.put(delegation.audience.did(), ucan, {

@@ -34,7 +34,7 @@ export function voucherClaimProvider(ctx) {
       })
       .delegate()
 
-    const encoded = await delegationToString(inv)
+    const encoded = delegationToString(inv)
     // For testing
     if (ctx.config.ENV === 'test') {
       return encoded

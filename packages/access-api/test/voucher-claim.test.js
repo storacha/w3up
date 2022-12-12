@@ -38,7 +38,7 @@ describe('ucan', function () {
       return t.fail(inv.message)
     }
 
-    const delegation = await stringToDelegation(inv)
+    const delegation = stringToDelegation(inv)
 
     t.deepEqual(delegation.issuer.did(), service.did())
     t.deepEqual(delegation.audience.did(), issuer.did())

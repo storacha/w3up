@@ -318,7 +318,7 @@ export class Agent {
 
     const dels = []
     for (const del of recoverInv) {
-      dels.push(await stringToDelegation(del))
+      dels.push(stringToDelegation(del))
     }
 
     return dels
@@ -483,7 +483,7 @@ export class Agent {
       }
 
       if (msg.type === 'delegation') {
-        const delegation = await stringToDelegation(msg.delegation)
+        const delegation = stringToDelegation(msg.delegation)
         ws.close()
         return delegation
       }

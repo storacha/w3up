@@ -59,9 +59,9 @@ export class Spaces {
           email: capability.nb.identity.replace('mailto:', ''),
           agent: invocation.issuer.did(),
           metadata: JSON.stringify(invocation.facts[0]),
-          invocation: await delegationToString(invocation),
+          invocation: delegationToString(invocation),
           // eslint-disable-next-line unicorn/no-null
-          delegation: !delegation ? null : await delegationToString(delegation),
+          delegation: !delegation ? null : delegationToString(delegation),
         },
       })
       return { data: result }
@@ -136,7 +136,7 @@ export class Spaces {
         metadata: JSON.parse(r.metadata),
         delegation: !r.delegation
           ? undefined
-          : await stringToDelegation(
+          : stringToDelegation(
               /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Top]>} */ (
                 r.delegation
               )

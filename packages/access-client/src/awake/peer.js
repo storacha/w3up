@@ -4,7 +4,7 @@ import * as Signature from '@ipld/dag-ucan/signature'
 import { Verifier } from '@ucanto/principal/ed25519'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as u8 from 'uint8arrays'
-import { decodeDelegations, encodeDelegations } from '../encoding.js'
+import { stringToDelegations, delegationsToString } from '../encoding.js'
 import * as Messages from './messages.js'
 
 export class Peer {
@@ -139,7 +139,7 @@ export class Peer {
 
     /** @type {import('./types').LinkResponse} */
     const capsRsp = await this.channel.awaitMsg(this.nextdid)
-    const delegations = await decodeDelegations(capsRsp.msg.delegation)
+    const delegations = stringToDelegations(capsRsp.msg.delegation)
 
     await this.channel.sendFin(this.nextdid)
 
@@ -169,7 +169,7 @@ export class Peer {
         name: this.agent.did(),
         type: 'device',
       },
-      delegation: await encodeDelegations([d]),
+      delegation: delegationsToString([d]),
     })
   }
 

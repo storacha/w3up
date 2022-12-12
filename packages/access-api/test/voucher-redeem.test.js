@@ -53,7 +53,7 @@ describe('ucan', function () {
       return t.fail(claim.message)
     }
 
-    const delegation = await stringToDelegation(claim)
+    const delegation = stringToDelegation(claim)
 
     const redeem = await Voucher.redeem
       .invoke({
@@ -174,7 +174,7 @@ describe('ucan', function () {
       return t.fail(claim.message)
     }
 
-    const delegation = await stringToDelegation(claim)
+    const delegation = stringToDelegation(claim)
 
     const redeemInv = Voucher.redeem.invoke({
       issuer,

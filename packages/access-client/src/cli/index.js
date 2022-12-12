@@ -114,7 +114,7 @@ prog
         abilities,
       })
 
-      const delString = await delegationToString(delegation)
+      const delString = delegationToString(delegation)
 
       if (opts.file) {
         fs.writeFileSync(path.join(process.cwd(), opts.file), delString, {
@@ -143,7 +143,7 @@ prog
         encoding: 'utf8',
       })
 
-      await agent.importSpaceFromDelegation(await stringToDelegation(del))
+      await agent.importSpaceFromDelegation(stringToDelegation(del))
     } else {
       console.error(`Run "${NAME} setup" first`)
     }

@@ -63,7 +63,7 @@ describe('space-recover', function () {
         url.searchParams.get('ucan')
       )
 
-    const del = await stringToDelegation(encoded)
+    const del = stringToDelegation(encoded)
 
     assert.deepEqual(del.audience.did(), issuer.did())
     assert.deepEqual(del.issuer.did(), service.did())
@@ -81,7 +81,7 @@ describe('space-recover', function () {
       )
 
     assert.ok(recoverEncoded)
-    const recover = await stringToDelegation(recoverEncoded)
+    const recover = stringToDelegation(recoverEncoded)
     assert.deepEqual(recover.audience.did(), issuer.did())
     assert.deepEqual(recover.issuer.did(), service.did())
     assert.deepEqual(recover.capabilities[0].can, 'space/recover')
@@ -105,7 +105,7 @@ describe('space-recover', function () {
           )
 
         assert.ok(encoded)
-        const recover = await stringToDelegation(encoded)
+        const recover = stringToDelegation(encoded)
         assert.deepEqual(recover.audience.did(), issuer.did())
         assert.deepEqual(recover.issuer.did(), service.did())
         assert.deepEqual(recover.capabilities[0].can, 'space/recover')
@@ -151,7 +151,7 @@ describe('space-recover', function () {
         url.searchParams.get('ucan')
       )
 
-    const del = await stringToDelegation(encoded)
+    const del = stringToDelegation(encoded)
 
     assert.deepEqual(del.audience.did(), issuer.did())
     assert.deepEqual(del.issuer.did(), service.did())
@@ -173,7 +173,7 @@ describe('space-recover', function () {
       return assert.fail('failed to recover')
     }
 
-    const spaceDelegation = await stringToDelegation(inv2[0])
+    const spaceDelegation = stringToDelegation(inv2[0])
     assert.deepEqual(spaceDelegation.audience.did(), issuer.did())
     assert.deepEqual(spaceDelegation.capabilities[0].can, '*')
     assert.deepEqual(spaceDelegation.capabilities[0].with, space.did())
