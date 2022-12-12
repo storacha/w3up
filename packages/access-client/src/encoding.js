@@ -13,89 +13,77 @@
  * @module
  */
 /* eslint-disable unicorn/prefer-spread */
-import { CarReader } from '@ipld/car/reader'
-import { CarWriter } from '@ipld/car/writer'
+import { CarReader } from './utils/car-reader-sync.js'
+import * as CarBufferWriter from '@ipld/car/buffer-writer'
 import { Delegation } from '@ucanto/core/delegation'
 import * as u8 from 'uint8arrays'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 
 /**
- * @param {AsyncIterable<Uint8Array>} iterable
- */
-function collector(iterable) {
-  const chunks = []
-  const cfn = (async () => {
-    for await (const chunk of iterable) {
-      chunks.push(chunk)
-    }
-    return u8.concat(chunks)
-  })()
-  return cfn
-}
-
-/**
+ * Encode delegations as bytes
+ *
  * @param {Types.Delegation[]} delegations
- * @param {import('uint8arrays/to-string').SupportedEncodings} encoding
  */
-export async function encodeDelegations(delegations, encoding = 'base64url') {
-  if (delegations.length === 0) {
-    return ''
+export function delegationsToBytes(delegations) {
+  if (!Array.isArray(delegations) || delegations.length === 0) {
+    throw new Error('Delegations required to be an non empty array.')
   }
 
-  const roots = delegations.map((d) => d.root.cid)
-
-  // @ts-ignore
-  const { writer, out } = CarWriter.create(roots)
-  const collection = collector(out)
+  const roots = delegations.map(
+    (d) => /** @type {CarBufferWriter.CID} */ (d.root.cid)
+  )
+  const cids = new Set()
+  /** @type {CarBufferWriter.Block[]} */
+  const blocks = []
+  let byteLength = 0
 
   for (const delegation of delegations) {
     for (const block of delegation.export()) {
-      // @ts-ignore
-      await writer.put(block)
+      const cid = block.cid.toV1().toString()
+      if (!cids.has(cid)) {
+        byteLength += CarBufferWriter.blockLength(
+          /** @type {CarBufferWriter.Block} */ (block)
+        )
+        blocks.push(/** @type {CarBufferWriter.Block} */ (block))
+        cids.add(cid)
+      }
     }
   }
-  await writer.close()
+  const headerLength = CarBufferWriter.estimateHeaderLength(roots.length)
+  const writer = CarBufferWriter.createWriter(
+    new ArrayBuffer(headerLength + byteLength),
+    { roots }
+  )
+  for (const block of blocks) {
+    writer.write(block)
+  }
 
-  const bytes = await collection
-
-  return u8.toString(bytes, encoding)
+  return writer.close()
 }
 
 /**
- * Encode one {@link Types.Delegation Delegation} into a string
- *
- * @param {Types.Delegation<Types.Capabilities>} delegation
- * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
- */
-export function delegationToString(delegation, encoding) {
-  return encodeDelegations([delegation], encoding)
-}
-
-/**
- * Decode string into {@link Types.Delegation Delegation}
+ * Decode bytes into Delegations
  *
  * @template {Types.Capabilities} [T=Types.Capabilities]
- * @param {import('./types').EncodedDelegation<T>} raw
- * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
+ * @param {import('./types').BytesDelegation<T>} bytes
  */
-export async function decodeDelegations(raw, encoding = 'base64url') {
-  if (!raw) {
-    return []
+export function bytesToDelegations(bytes) {
+  if (!(bytes instanceof Uint8Array) || bytes.length === 0) {
+    throw new TypeError('Input should be a non-empty Uint8Array.')
   }
-  const bytes = u8.fromString(raw, encoding)
-  const reader = await CarReader.fromBytes(bytes)
-  const roots = await reader.getRoots()
+  const reader = CarReader.fromBytes(bytes)
+  const roots = reader.getRoots()
 
   /** @type {Types.Delegation<T>[]} */
   const delegations = []
 
   for (const root of roots) {
-    const rootBlock = await reader.get(root)
+    const rootBlock = reader.get(root)
 
     if (rootBlock) {
       const blocks = new Map()
-      for (const block of reader._blocks) {
+      for (const block of reader.blocks()) {
         if (block.cid.toString() !== root.toString())
           blocks.set(block.cid.toString(), block)
       }
@@ -111,14 +99,47 @@ export async function decodeDelegations(raw, encoding = 'base64url') {
 }
 
 /**
+ * @param {Types.Delegation[]} delegations
+ * @param {import('uint8arrays/to-string').SupportedEncodings} encoding
+ */
+export function delegationsToString(delegations, encoding = 'base64url') {
+  const bytes = delegationsToBytes(delegations)
+
+  return u8.toString(bytes, encoding)
+}
+
+/**
+ * Encode one {@link Types.Delegation Delegation} into a string
+ *
+ * @param {Types.Delegation<Types.Capabilities>} delegation
+ * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
+ */
+export function delegationToString(delegation, encoding) {
+  return delegationsToString([delegation], encoding)
+}
+
+/**
+ * Decode string into {@link Types.Delegation Delegation}
+ *
+ * @template {Types.Capabilities} [T=Types.Capabilities]
+ * @param {import('./types').EncodedDelegation<T>} raw
+ * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
+ */
+export function stringToDelegations(raw, encoding = 'base64url') {
+  const bytes = u8.fromString(raw, encoding)
+
+  return bytesToDelegations(bytes)
+}
+
+/**
  * Decode string into a {@link Types.Delegation Delegation}
  *
  * @template {Types.Capabilities} [T=Types.Capabilities]
  * @param {import('./types').EncodedDelegation<T>} raw
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
-export async function stringToDelegation(raw, encoding) {
-  const delegations = await decodeDelegations(raw, encoding)
+export function stringToDelegation(raw, encoding) {
+  const delegations = stringToDelegations(raw, encoding)
 
   return /** @type {Types.Delegation<T>} */ (delegations[0])
 }
