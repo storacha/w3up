@@ -6,7 +6,6 @@ export async function version(event, env, ctx) {
     version: env.config.VERSION,
     commit: env.config.COMMITHASH,
     branch: env.config.BRANCH,
-    did: env.config.ucantoServerId.did(),
-    signer: env.signer.did(),
+    did: env.signer.did(),
   })
 }
