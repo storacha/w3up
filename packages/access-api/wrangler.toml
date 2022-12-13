@@ -1,5 +1,5 @@
 # Development
-name = "w3access-test"
+name = "w3access-local"
 account_id = "fffa4b4363a7e5250af8357087263b3a"
 main = "./dist/worker.js"
 
