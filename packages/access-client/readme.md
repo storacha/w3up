@@ -11,6 +11,8 @@ An Agent can create "Spaces," which are namespaces for content stored on the w3u
 
 Although Agents (and Spaces) are created locally by generating keypairs, the w3up services will only act upon Spaces that have been registered with the w3up access service. By default, a newly-created Agent will be configured to use the production access service for remote operations, including registration.
 
+Please note that the `@web3-storage/access` package is a fairly "low level" component of the w3up JavaScript stack, and most users will be better served by [`@web3-storage/w3up-client`](https://github.com/web3-storage/w3up-client), which combines this package with a client for the upload and storage service and presents a simpler API.
+
 ## Install
 
 Install the package:
@@ -29,26 +31,64 @@ To create an Agent, you must first create a `Store`, which the Agent will use to
 
 If you're running in a web browser, use [`StoreIndexedDB`](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.StoreIndexedDB.html), which uses IndexedDB to store non-extractable [`CryptoKey`](https://www.w3.org/TR/WebCryptoAPI/#dfn-CryptoKey) objects. This prevents the private key material from ever being exposed to the JavaScript environment.
 
+Agents in a browser use RSA keys, which can be generated using the async `generate` function from `@ucanto/principal/rsa`.
+
 ```js
 import { Agent } from '@web3-storage/access/agent'
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
+import { generate } from '@ucanto/principal/rsa'
 
-const store = await StoreIndexedDB.open('my-db-name')
-const agent = await Agent.create({ store })
+async function createAgent(agentName = 'default-agent') {
+  const store = await StoreIndexedDB.open('my-db-name')
+
+  // if agent data already exists in the store, use it to create an Agent.
+  const data = await store.load()
+  if (data) {
+    return Agent.from(data, { store })
+  }
+
+  // otherwise, generate a new RSA signing key to act as the Agent's principal
+  // and create a new Agent, passing in the store so the Agent can persist its state
+  const principal = await generate()
+  const agentData = {
+    meta: { name: agentName },
+    principal
+  }
+  return Agent.create(agentData, { store })
+}
 ```
 
 On node.js, use [`StoreConf`](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.StoreConf.html), which uses the [`conf` package](https://www.npmjs.com/package/conf) to store keys and metadata in the user's platform-specific default configuration location (usually in their home directory).
 
+Agents on node should use Ed25519 keys,
+
 ```js
 import { Agent } from '@web3-storage/access/agent'
 import { StoreConf } from '@web3-storage/access/stores/store-conf'
+import { generate } from '@ucanto/principal/ed25519'
 
-const store = new StoreConf({ profile: 'app' })
-if (!(await store.exists())) {
-  await store.init({})
+async function createAgent(agentName = 'default-agent') {
+  const store = new StoreConf({ profile: 'my-w3up-app' })
+  if (!(await store.exists())) {
+    await store.init({})
+  }
+
+  // if agent data already exists in the store, use it to create an Agent.
+  const data = await store.load()
+  if (data) {
+    return Agent.from(data, { store })
+  }
+
+  // otherwise, generate a new Ed25519 signing key to act as the Agent's principal
+  // and create a new Agent, passing in the store so the Agent can persist its state
+  const principal = await generate()
+  const agentData = {
+    meta: { name: agentName },
+    principal
+  }
+  return Agent.create(agentData, { store })
 }
 
-const agent = await Agent.create({ store })
 ```
 
 See the [`AgentCreateOptions` reference](https://web3-storage.github.io/w3protocol/interfaces/_web3_storage_access._internal_.AgentCreateOptions.html) if you want to configure the Agent to use a non-production service connection.
