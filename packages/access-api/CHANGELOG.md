@@ -1,5 +1,52 @@
 # Changelog
 
+## [4.0.0](https://github.com/web3-storage/w3protocol/compare/access-api-v3.0.0...access-api-v4.0.0) (2022-12-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade access-api @ucanto/* and @ipld/dag-ucan major versions ([#246](https://github.com/web3-storage/w3protocol/issues/246))
+* access-client store decoupling ([#228](https://github.com/web3-storage/w3protocol/issues/228))
+* upgrade to `@ucanto/{interface,principal}`@^4.0.0 ([#238](https://github.com/web3-storage/w3protocol/issues/238))
+* follow up on the capabilities extract ([#239](https://github.com/web3-storage/w3protocol/issues/239))
+* doc capabilities & make requierd nb non-optionals ([#159](https://github.com/web3-storage/w3protocol/issues/159))
+* Remove 0.8 caps and add account delegation to the service ([#123](https://github.com/web3-storage/w3protocol/issues/123))
+* bump to 0.9 ([#116](https://github.com/web3-storage/w3protocol/issues/116))
+
+### Features
+
+* [#153](https://github.com/web3-storage/w3protocol/issues/153) ([#177](https://github.com/web3-storage/w3protocol/issues/177)) ([d6d448c](https://github.com/web3-storage/w3protocol/commit/d6d448c16f188398c30f2d1b83f69e1d7becd450))
+* access-api uses DID env variable when building its ucanto server id ([#275](https://github.com/web3-storage/w3protocol/issues/275)) ([311da78](https://github.com/web3-storage/w3protocol/commit/311da786b8f2fdf5ac585170e746a5a7b04ec57b))
+* **access-client:** cli and recover ([#207](https://github.com/web3-storage/w3protocol/issues/207)) ([adb3a8d](https://github.com/web3-storage/w3protocol/commit/adb3a8d61d42b31f106e86b95faa3e442f5dc2c7))
+* account recover with email ([#149](https://github.com/web3-storage/w3protocol/issues/149)) ([6c659ba](https://github.com/web3-storage/w3protocol/commit/6c659ba68d23c3448d5150bc76f1ddcb91ae18d8))
+* bump to 0.9 ([#116](https://github.com/web3-storage/w3protocol/issues/116)) ([3e0b63f](https://github.com/web3-storage/w3protocol/commit/3e0b63f38aace3a86655a1aa40e529c1501dc136))
+* doc capabilities & make requierd nb non-optionals ([#159](https://github.com/web3-storage/w3protocol/issues/159)) ([6496773](https://github.com/web3-storage/w3protocol/commit/6496773f2a4977e06126ade37ae9dfc218b05f7f))
+* follow up on the capabilities extract ([#239](https://github.com/web3-storage/w3protocol/issues/239)) ([ef5e779](https://github.com/web3-storage/w3protocol/commit/ef5e77922b67155f0c3e5cb37c12e32f9a56cce1))
+* Remove 0.8 caps and add account delegation to the service ([#123](https://github.com/web3-storage/w3protocol/issues/123)) ([878f8c9](https://github.com/web3-storage/w3protocol/commit/878f8c9a38f02dac509ef0b4437ab3d1b8467eb3)), closes [#117](https://github.com/web3-storage/w3protocol/issues/117) [#121](https://github.com/web3-storage/w3protocol/issues/121)
+* Revert "feat!: upgrade to `@ucanto/{interface,principal}`@^4.0.0" ([#245](https://github.com/web3-storage/w3protocol/issues/245)) ([c182bbe](https://github.com/web3-storage/w3protocol/commit/c182bbe5e8c5a7d5c74b10cbf4b7a45b51e9b184))
+* sync encode/decode delegations ([#276](https://github.com/web3-storage/w3protocol/issues/276)) ([ab981fb](https://github.com/web3-storage/w3protocol/commit/ab981fb6e33799153022c0f6d06c282917e7af7c))
+* upgrade access-api @ucanto/* and @ipld/dag-ucan major versions ([#246](https://github.com/web3-storage/w3protocol/issues/246)) ([5e663d1](https://github.com/web3-storage/w3protocol/commit/5e663d12ccea7d21cc8e7c36869f144a08eaa1b0))
+* upgrade to `@ucanto/{interface,principal}`@^4.0.0 ([#238](https://github.com/web3-storage/w3protocol/issues/238)) ([2f3bab8](https://github.com/web3-storage/w3protocol/commit/2f3bab8924fe7f34a5db64d2521730fc85739d3a))
+
+
+### Bug Fixes
+
+* 0.9 ([#78](https://github.com/web3-storage/w3protocol/issues/78)) ([1b1ed01](https://github.com/web3-storage/w3protocol/commit/1b1ed01d537e88bbdeb5ea2aeb967b27bd11f87d))
+* add validation copy ([#257](https://github.com/web3-storage/w3protocol/issues/257)) ([7f50af4](https://github.com/web3-storage/w3protocol/commit/7f50af471aa5d4f50fc2ac92e7bcbcc311a800b4)), closes [#139](https://github.com/web3-storage/w3protocol/issues/139)
+* fix Access API cannot get space/info [#243](https://github.com/web3-storage/w3protocol/issues/243) ([#255](https://github.com/web3-storage/w3protocol/issues/255)) ([1bacd54](https://github.com/web3-storage/w3protocol/commit/1bacd544da803c43cf85043ecdada4dee2b3e2d3))
+* fix d1 migrations ([#264](https://github.com/web3-storage/w3protocol/issues/264)) ([fb8c09d](https://github.com/web3-storage/w3protocol/commit/fb8c09d5a243a20cbde2086eac57b9637a2e1d1d))
+* make d1 spaces.metadata nullable and change to kysely ([#284](https://github.com/web3-storage/w3protocol/issues/284)) ([c8a9ce5](https://github.com/web3-storage/w3protocol/commit/c8a9ce544226b3c8456d45b15e29cec84894aeb8)), closes [#280](https://github.com/web3-storage/w3protocol/issues/280)
+* make multiformats 9 go away ([#133](https://github.com/web3-storage/w3protocol/issues/133)) ([2668880](https://github.com/web3-storage/w3protocol/commit/2668880a23c28ee45596fb1bc978564908a17e18))
+* miniflare dev script ([#137](https://github.com/web3-storage/w3protocol/issues/137)) ([1c5a4e2](https://github.com/web3-storage/w3protocol/commit/1c5a4e2f89018fdf1624cc41650764ee08f9adc4))
+* testing staging deploy ([3d500fa](https://github.com/web3-storage/w3protocol/commit/3d500fa4e6cd17a1c0c9739fb3e0e722f97d599d))
+* try to deploy api staging ([18b7b29](https://github.com/web3-storage/w3protocol/commit/18b7b296cb7e94c7fddeb163340cc0e72ce51c0a))
+* try to deploy staging ([c616818](https://github.com/web3-storage/w3protocol/commit/c61681883e69982c5ae378e6ffbf54f45c397c89))
+
+
+### Code Refactoring
+
+* access-client store decoupling ([#228](https://github.com/web3-storage/w3protocol/issues/228)) ([a785278](https://github.com/web3-storage/w3protocol/commit/a7852785e2ac783bcb21790b4a87ee5ad0a1380e))
+
 ## [3.0.0](https://github.com/web3-storage/w3-protocol/compare/access-api-v2.0.1...access-api-v3.0.0) (2022-10-14)
 
 
