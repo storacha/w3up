@@ -59,7 +59,7 @@ unsafe = { bindings = [
 [env.staging]
 name = "w3access-staging"
 workers_dev = true
-vars = { ENV = "staging", DEBUG = "false" }
+vars = { ENV = "staging", DEBUG = "false", DID = "did:web:staging.web3.storage" }
 build = { command = "scripts/cli.js build --env staging", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "b0e5ca990dda4e3784a1741dfa28a52e" },
@@ -77,7 +77,7 @@ unsafe = { bindings = [
 [env.production]
 name = "w3access"
 routes = [{ pattern = "access.web3.storage", custom_domain = true }]
-vars = { ENV = "production", DEBUG = "false" }
+vars = { ENV = "production", DEBUG = "false", DID = "did:web:web3.storage" }
 build = { command = "scripts/cli.js build --env production", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5437954e8cfd4f7d98557132b0a2e93f" },
