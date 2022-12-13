@@ -29,6 +29,7 @@ database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 ENV = "dev"
 DEBUG = "true"
 
+
 [build]
 command = "scripts/cli.js build"
 watch_dir = "src"
@@ -41,7 +42,7 @@ d1_persist = ".wrangler/miniflare"
 [env.dev]
 name = "w3access-dev"
 workers_dev = true
-vars = { ENV = "dev", DEBUG = "false" }
+vars = { ENV = "dev", DEBUG = "false", DID = "did:web:dev.web3.storage" }
 build = { command = "scripts/cli.js build --env dev", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5697e95e1aaa436788e6d697fd3350be" },
