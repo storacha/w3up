@@ -1,5 +1,19 @@
 # Changelog
 
+## [9.1.0](https://github.com/web3-storage/w3protocol/compare/access-v9.0.1...access-v9.1.0) (2022-12-13)
+
+
+### Features
+
+* sync encode/decode delegations ([#276](https://github.com/web3-storage/w3protocol/issues/276)) ([ab981fb](https://github.com/web3-storage/w3protocol/commit/ab981fb6e33799153022c0f6d06c282917e7af7c))
+
+
+### Bug Fixes
+
+* destructured save ([#272](https://github.com/web3-storage/w3protocol/issues/272)) ([a4f20a9](https://github.com/web3-storage/w3protocol/commit/a4f20a928ceddc05c22f1aed5c80c2716848a284))
+* handle Buffer serialization ([#277](https://github.com/web3-storage/w3protocol/issues/277)) ([6dc77ca](https://github.com/web3-storage/w3protocol/commit/6dc77ca51d4e59406f33c30014073916c9034a24))
+* make d1 spaces.metadata nullable and change to kysely ([#284](https://github.com/web3-storage/w3protocol/issues/284)) ([c8a9ce5](https://github.com/web3-storage/w3protocol/commit/c8a9ce544226b3c8456d45b15e29cec84894aeb8)), closes [#280](https://github.com/web3-storage/w3protocol/issues/280)
+
 ## [9.0.1](https://github.com/web3-storage/w3protocol/compare/access-v9.0.0...access-v9.0.1) (2022-12-08)
 
 
