@@ -40,12 +40,10 @@ export class Spaces {
           agent: invocation.issuer.did(),
           did: capability.nb.space,
           email: capability.nb.identity.replace('mailto:', ''),
-          invocation: await delegationToString(invocation),
+          invocation: delegationToString(invocation),
           product: capability.nb.product,
           metadata,
-          delegation: !delegation
-            ? undefined
-            : await delegationToString(delegation),
+          delegation: !delegation ? undefined : delegationToString(delegation),
         })
         .returning('spaces.did')
         .execute()
