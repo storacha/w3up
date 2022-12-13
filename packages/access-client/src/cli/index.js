@@ -22,13 +22,17 @@ const prog = sade(NAME)
 prog
   .version(pkg.version)
   .option('-p, --profile', 'Select the config profile to use.', 'main')
-  .option('--env', 'Env', 'production')
+  .option(
+    '--env',
+    'Environment "production", "staging", "dev" or "local"',
+    'production'
+  )
 
 prog.command('link [channel]').describe('Link.').action(cmdLink)
 prog
   .command('setup')
   .option('--reset', 'Reset current store.', false)
-  .describe('Print config file content.')
+  .describe('Setup agent keypair.')
   .action(cmdSetup)
 prog.command('whoami').describe('Print config file content.').action(cmdWhoami)
 prog
@@ -42,16 +46,16 @@ prog
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
     const data = await store.load()
-    const { url } = await getService(opts.env)
+    const { url, servicePrincipal } = await getService(opts.env)
     if (data) {
-      const agent = Agent.from(data, { store, url })
+      const agent = Agent.from(data, { store, url, servicePrincipal })
       const space = await selectSpace(agent)
       try {
         const result = await agent.getSpaceInfo(space)
         console.log(result)
       } catch (error_) {
         const error = /** @type {Error} */ (error_)
-        console.log(error.message)
+        console.log('Error', error.message)
       }
     } else {
       console.error(`Run "${NAME} setup" first`)
@@ -65,9 +69,9 @@ prog
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
     const data = await store.load()
-    const { url } = await getService(opts.env)
+    const { url, servicePrincipal } = await getService(opts.env)
     if (data) {
-      const agent = Agent.from(data, { store, url })
+      const agent = Agent.from(data, { store, url, servicePrincipal })
       const space = await selectSpace(agent)
 
       await agent.setCurrentSpace(space)
@@ -135,9 +139,9 @@ prog
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
     const data = await store.load()
-    const { url } = await getService(opts.env)
+    const { url, servicePrincipal } = await getService(opts.env)
     if (data) {
-      const agent = Agent.from(data, { store, url })
+      const agent = Agent.from(data, { store, url, servicePrincipal })
 
       const del = fs.readFileSync(path.resolve(opts.delegation), {
         encoding: 'utf8',
@@ -155,9 +159,9 @@ prog
   .action(async (opts) => {
     const store = new StoreConf({ profile: opts.profile })
     const data = await store.load()
-    const { url } = await getService(opts.env)
+    const { url, servicePrincipal } = await getService(opts.env)
     if (data) {
-      const agent = Agent.from(data, { store, url })
+      const agent = Agent.from(data, { store, url, servicePrincipal })
 
       const { email } = await inquirer.prompt([
         {
