@@ -151,4 +151,6 @@ export async function remove(
       cause: result,
     })
   }
+
+  return result
 }
