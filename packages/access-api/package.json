@@ -42,7 +42,7 @@
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^18.11.13",
+    "@types/node": "^18.11.14",
     "@types/qrcode": "^1.5.0",
     "better-sqlite3": "8.0.1",
     "buffer": "^6.0.3",
