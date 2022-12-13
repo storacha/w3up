@@ -36,7 +36,7 @@ export interface Service {
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddResponse, never>
     list: ServiceMethod<UploadList, ListResponse<UploadListResult>, never>
-    remove: ServiceMethod<UploadRemove, null, never>
+    remove: ServiceMethod<UploadRemove, UploadRemoveResponse | undefined, never>
   }
 }
 
@@ -50,6 +50,8 @@ export interface UploadAddResponse {
   root: AnyLink
   shards?: CARLink[]
 }
+
+export interface UploadRemoveResponse extends UploadAddResponse {}
 
 export interface ListResponse<R> {
   cursor?: string
