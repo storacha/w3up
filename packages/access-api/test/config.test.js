@@ -19,21 +19,32 @@ const testKeypair = {
 }
 
 describe('@web3-storage/access-api/src/config configureSigner', () => {
+  it('creates a signer using config.PRIVATE_KEY', async () => {
+    const config = {
+      PRIVATE_KEY: testKeypair.private.multiformats,
+    }
+    const signer = configModule.configureSigner(config)
+    assert.ok(signer)
+    assert.equal(signer.did().toString(), testKeypair.public.did)
+    const { keys } = signer.toArchive()
+    const didKeys = Object.keys(keys)
+    assert.deepEqual(didKeys, [testKeypair.public.did])
+  })
+})
+
+describe('@web3-storage/access-api/src/config configureUcantoServerId', () => {
   it('creates a signer using config.{DID,PRIVATE_KEY}', async () => {
     const config = {
       PRIVATE_KEY: testKeypair.private.multiformats,
       DID: 'did:web:exampe.com',
     }
-    const signer = configModule.configureSigner(config)
-    assert.ok(signer)
-    assert.equal(signer.did().toString(), config.DID)
-    const { keys } = signer.toArchive()
-    const didKeys = Object.keys(keys)
-    assert.deepEqual(didKeys, [testKeypair.public.did])
+    const serverId = configModule.configureUcantoServerId(config)
+    assert.ok(serverId)
+    assert.equal(serverId.did().toString(), config.DID)
   })
   it('errors if config.DID is provided but not a did', () => {
     assert.throws(() => {
-      configModule.configureSigner({
+      configModule.configureUcantoServerId({
         DID: 'not a did',
         PRIVATE_KEY: testKeypair.private.multiformats,
       })
@@ -43,8 +54,8 @@ describe('@web3-storage/access-api/src/config configureSigner', () => {
     const config = {
       PRIVATE_KEY: testKeypair.private.multiformats,
     }
-    const signer = configModule.configureSigner(config)
-    assert.ok(signer)
-    assert.equal(signer.did().toString(), testKeypair.public.did)
+    const serverId = configModule.configureUcantoServerId(config)
+    assert.ok(serverId)
+    assert.equal(serverId.did().toString(), testKeypair.public.did)
   })
 })

@@ -28,7 +28,7 @@ database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 [vars]
 ENV = "dev"
 DEBUG = "true"
-
+DID = "did:web:local.web3.storage"
 
 [build]
 command = "scripts/cli.js build"
