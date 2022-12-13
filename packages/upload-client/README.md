@@ -1,6 +1,14 @@
 <h1 align="center">⁂<br/>web3.storage</h1>
 <p align="center">The upload client for <a href="https://web3.storage">https://web3.storage</a></p>
 
+## About
+
+The `@web3-storage/upload-client` package provides the "low level" client API for uploading data to [web3.storage](https://web3.storage) using the w3up platform.
+
+Most users will be better served by the higher-level [`@web3-storage/w3up-client` package](https://github.com/web3-storage/w3up-client), which presents a simpler API and supports creating Agents and registering Spaces. 
+
+If you are using this package directly instead of `w3up-client`, you will also need to use the [`@web3-storage/access` client](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client) for Agent and Space management.
+
 ## Install
 
 Install the package using npm:
@@ -38,6 +46,8 @@ const conf = {
   proofs: await agent.proofs([store, upload]),
 }
 ```
+
+See the [`@web3-storage/access` docs](https://web3-storage.github.io/w3protocol/modules/_web3_storage_access.html) for more about creating and registering spaces.
 
 ### Uploading files
 
