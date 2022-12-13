@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.1.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.0.0...upload-client-v5.1.0) (2022-12-13)
+
+
+### Features
+
+* sync encode/decode delegations ([#276](https://github.com/web3-storage/w3protocol/issues/276)) ([ab981fb](https://github.com/web3-storage/w3protocol/commit/ab981fb6e33799153022c0f6d06c282917e7af7c))
+* upload/remove returns removed item ([#289](https://github.com/web3-storage/w3protocol/issues/289)) ([5e6681f](https://github.com/web3-storage/w3protocol/commit/5e6681f4886dc4e50550f58bf795944d51023f71))
+
 ## [5.0.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v4.0.0...upload-client-v5.0.0) (2022-12-07)
 
 
