@@ -3,7 +3,10 @@ import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
 import { top } from '@web3-storage/capabilities/top'
-import { delegationToString } from '@web3-storage/access/encoding'
+import {
+  delegationToString,
+  stringToDelegation,
+} from '@web3-storage/access/encoding'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 
@@ -20,7 +23,7 @@ export function service(ctx) {
 
     space: {
       info: Server.provide(Space.info, async ({ capability, invocation }) => {
-        const results = await ctx.kvs.spaces.get(capability.with)
+        const results = await ctx.models.spaces.get(capability.with)
         if (!results) {
           return new Failure('Space not found.')
         }
@@ -37,8 +40,8 @@ export function service(ctx) {
             )
           }
 
-          const spaces = await ctx.kvs.spaces.getByEmail(
-            capability.nb.identity.replace('mailto:', '')
+          const spaces = await ctx.models.spaces.getByEmail(
+            capability.nb.identity
           )
           if (!spaces) {
             return new Failure(
@@ -49,13 +52,19 @@ export function service(ctx) {
           const results = []
           for (const { delegation, metadata } of spaces) {
             if (delegation) {
+              const proof = await stringToDelegation(
+                /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Top]>} */ (
+                  delegation
+                )
+              )
               const del = await top.delegate({
                 audience: invocation.issuer,
                 issuer: ctx.signer,
-                with: delegation.capabilities[0].with,
+                with: proof.capabilities[0].with,
                 expiration: Infinity,
-                proofs: [delegation],
-                facts: [metadata],
+                proofs: [proof],
+                // @ts-ignore
+                facts: metadata ? [metadata] : undefined,
               })
 
               results.push(delegationToString(del))
@@ -73,8 +82,8 @@ export function service(ctx) {
           // if yes send email with space/recover
           // if not error "no spaces for email X"
 
-          const spaces = await ctx.kvs.spaces.getByEmail(
-            capability.nb.identity.replace('mailto:', '')
+          const spaces = await ctx.models.spaces.getByEmail(
+            capability.nb.identity
           )
           if (!spaces) {
             return new Failure(

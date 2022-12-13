@@ -2,10 +2,9 @@ import { Logging } from '@web3-storage/worker-utils/logging'
 import Toucan from 'toucan-js'
 import pkg from '../../package.json'
 import { loadConfig } from '../config.js'
-import { Spaces } from '../kvs/spaces.js'
-import { Validations } from '../kvs/validations.js'
+import { Spaces } from '../models/spaces.js'
+import { Validations } from '../models/validations.js'
 import { Email } from './email.js'
-import { D1QB } from 'workers-qb'
 
 /**
  * Obtains a route context object.
@@ -41,17 +40,15 @@ export function getContext(request, env, ctx) {
     env: config.ENV,
   })
   const url = new URL(request.url)
-  const db = new D1QB(config.DB)
   return {
     log,
     signer: config.signer,
     config,
     url,
-    kvs: {
-      spaces: new Spaces(db),
+    models: {
+      spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),
-    db: new D1QB(config.DB),
   }
 }
