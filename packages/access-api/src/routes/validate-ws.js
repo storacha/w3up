@@ -1,7 +1,7 @@
 import pRetry from 'p-retry'
 
 const run = async (
-  /** @type {import('../kvs/validations').Validations} */ kv,
+  /** @type {import('../models/validations').Validations} */ kv,
   /** @type {WebSocket} */ server,
   /** @type {string} */ did
 ) => {
@@ -36,7 +36,7 @@ export async function validateWS(req, env) {
     const { did } = JSON.parse(msg.data)
 
     try {
-      await pRetry(() => run(env.kvs.validations, server, did), {
+      await pRetry(() => run(env.models.validations, server, did), {
         retries: 200,
         minTimeout: 1000,
         factor: 1,

@@ -38,7 +38,7 @@ export function voucherRedeemProvider(ctx) {
       return new Failure('Multiple space delegations not suppported.')
     }
 
-    const { error } = await ctx.kvs.spaces.create(
+    const { error } = await ctx.models.spaces.create(
       capability,
       // @ts-ignore - TODO fix this
       invocation,

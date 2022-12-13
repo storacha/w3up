@@ -16,7 +16,7 @@ export async function validateEmail(req, env) {
   }
   if (req.query && req.query.ucan) {
     try {
-      const delegation = await env.kvs.validations.put(
+      const delegation = await env.models.validations.put(
         /** @type {import('@web3-storage/access/src/types.js').EncodedDelegation<[import('@web3-storage/access/src/types.js').VoucherClaim]>} */ (
           req.query.ucan
         )
@@ -62,7 +62,7 @@ export async function validateEmail(req, env) {
  */
 async function recover(req, env) {
   try {
-    const delegation = await env.kvs.validations.put(
+    const delegation = await env.models.validations.put(
       /** @type {import('@web3-storage/access/src/types.js').EncodedDelegation<[import('@web3-storage/access/src/types.js').SpaceRecover]>} */ (
         req.query.ucan
       )
