@@ -38,7 +38,7 @@ import { Agent } from '@web3-storage/access/agent'
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 import { generate } from '@ucanto/principal/rsa'
 
-async function createAgent(agentName = 'default-agent') {
+async function createAgent() {
   const store = await StoreIndexedDB.open('my-db-name')
 
   // if agent data already exists in the store, use it to create an Agent.
@@ -51,7 +51,7 @@ async function createAgent(agentName = 'default-agent') {
   // and create a new Agent, passing in the store so the Agent can persist its state
   const principal = await generate()
   const agentData = {
-    meta: { name: agentName },
+    meta: { name: 'my-browser-agent' },
     principal
   }
   return Agent.create(agentData, { store })
@@ -67,7 +67,7 @@ import { Agent } from '@web3-storage/access/agent'
 import { StoreConf } from '@web3-storage/access/stores/store-conf'
 import { generate } from '@ucanto/principal/ed25519'
 
-async function createAgent(agentName = 'default-agent') {
+async function createAgent() {
   const store = new StoreConf({ profile: 'my-w3up-app' })
   if (!(await store.exists())) {
     await store.init({})
@@ -83,7 +83,7 @@ async function createAgent(agentName = 'default-agent') {
   // and create a new Agent, passing in the store so the Agent can persist its state
   const principal = await generate()
   const agentData = {
-    meta: { name: agentName },
+    meta: { name: 'my-nodejs-agent' },
     principal
   }
   return Agent.create(agentData, { store })
@@ -161,7 +161,7 @@ Note that the receiving agent will need to [import the delegation](#importing-de
 The [`addProof` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#addProof) takes in a ucanto `Delegation` and adds it to the Agent's state Store. The proof of delegation can be retrieved using the Agent's [`proofs` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#proofs).
 
 
-The [`importSpaceFromDelegation` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#importSpaceFromDelegation) also accepts a ucanto `Delegation`, but it is tailored for "full delegation" of all Space-related capabilities. The delegated ability must be `space/*`, which is the "top" of the `space/` ability set. Use `importSpaceFromDelegation` in preference to `addProofs` when importing a full `space/*` delegation, as it also adds metadata about the imported Space to the Agent's `spaces` Map and persistent Store.
+The [`importSpaceFromDelegation` method](https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html#importSpaceFromDelegation) also accepts a ucanto `Delegation`, but it is tailored for "full delegation" of all Space-related capabilities. The delegated ability must be `*`, which is the "top" ability that can derive all abilities for the Space's DID. Use `importSpaceFromDelegation` in preference to `addProofs` when importing a full `*` delegation for a Space, as it also adds metadata about the imported Space to the Agent's persistent Store and adds the Space to the Agent's set of authorized spaces.
 
 ## Contributing
 
