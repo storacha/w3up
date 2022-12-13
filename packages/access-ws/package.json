@@ -23,7 +23,7 @@
     "@cloudflare/workers-types": "^3.18.0",
     "@sentry/cli": "2.7.0",
     "@types/git-rev-sync": "^2.0.0",
-    "@types/node": "^18.11.13",
+    "@types/node": "^18.11.14",
     "ava": "^5.1.0",
     "buffer": "^6.0.3",
     "dotenv": "^16.0.3",

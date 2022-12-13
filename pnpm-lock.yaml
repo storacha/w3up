@@ -33,7 +33,7 @@ importers:
       '@types/assert': ^1.5.6
       '@types/git-rev-sync': ^2.0.0
       '@types/mocha': ^10.0.1
-      '@types/node': ^18.11.13
+      '@types/node': ^18.11.14
       '@types/qrcode': ^1.5.0
       '@ucanto/core': ^4.0.2
       '@ucanto/interface': ^4.0.2
@@ -92,7 +92,7 @@ importers:
       '@types/assert': 1.5.6
       '@types/git-rev-sync': 2.0.0
       '@types/mocha': 10.0.1
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
       '@types/qrcode': 1.5.0
       better-sqlite3: 8.0.1
       buffer: 6.0.3
@@ -118,7 +118,7 @@ importers:
       '@types/assert': ^1.5.6
       '@types/inquirer': ^9.0.3
       '@types/mocha': ^10.0.1
-      '@types/node': ^18.11.13
+      '@types/node': ^18.11.14
       '@types/varint': ^6.0.1
       '@types/ws': ^8.5.3
       '@ucanto/client': ^4.0.2
@@ -153,7 +153,7 @@ importers:
       varint: ^6.0.0
       watch: ^1.0.2
       ws: ^8.11.0
-      zod: ^3.20.0
+      zod: ^3.20.2
     dependencies:
       '@ipld/car': 5.0.1
       '@ipld/dag-cbor': 8.0.0
@@ -179,12 +179,12 @@ importers:
       uint8arrays: 4.0.2
       varint: 6.0.0
       ws: 8.11.0
-      zod: 3.20.0
+      zod: 3.20.2
     devDependencies:
       '@types/assert': 1.5.6
       '@types/inquirer': 9.0.3
       '@types/mocha': 10.0.1
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
       '@types/varint': 6.0.1
       '@types/ws': 8.5.3
       '@ucanto/server': 4.0.2
@@ -204,7 +204,7 @@ importers:
       '@cloudflare/workers-types': ^3.18.0
       '@sentry/cli': 2.7.0
       '@types/git-rev-sync': ^2.0.0
-      '@types/node': ^18.11.13
+      '@types/node': ^18.11.14
       '@web3-storage/worker-utils': 0.4.3-dev
       ava: ^5.1.0
       buffer: ^6.0.3
@@ -227,7 +227,7 @@ importers:
       '@cloudflare/workers-types': 3.18.0
       '@sentry/cli': 2.7.0
       '@types/git-rev-sync': 2.0.0
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
       ava: 5.1.0
       buffer: 6.0.3
       dotenv: 16.0.3
@@ -246,7 +246,7 @@ importers:
     specifiers:
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.0
-      '@types/node': ^18.11.13
+      '@types/node': ^18.11.14
       '@ucanto/core': ^4.0.2
       '@ucanto/interface': ^4.0.2
       '@ucanto/principal': ^4.0.2
@@ -268,7 +268,7 @@ importers:
     devDependencies:
       '@types/assert': 1.5.6
       '@types/mocha': 10.0.1
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
       assert: 2.0.0
       hd-scripts: 3.0.2
       mocha: 10.2.0
@@ -1316,13 +1316,13 @@ packages:
   /@types/better-sqlite3/7.6.2:
     resolution: {integrity: sha512-RgmaapusqTq6IMAr4McMyAsC6RshYTCjXCnzwVV59WctUxC8bNPyUfT9t5F81lKcU41lLurhjqjoMHfauzfqGg==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
     dev: true
 
   /@types/better-sqlite3/7.6.3:
     resolution: {integrity: sha512-YS64N9SNDT/NAvou3QNdzAu3E2om/W/0dhORimtPGLef+zSK5l1vDzfsWb4xgXOgfhtOI5ZDTRxnvRPb22AIVQ==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
     dev: true
 
   /@types/cookie/0.5.0:
@@ -1363,6 +1363,10 @@ packages:
   /@types/node/18.11.13:
     resolution: {integrity: sha512-IASpMGVcWpUsx5xBOrxMj7Bl8lqfuTY7FKAnPmu5cHkfQVWF8GulWS1jbRqA934qZL35xh5xN/+Xe/i26Bod4w==}
 
+  /@types/node/18.11.14:
+    resolution: {integrity: sha512-0KXV57tENYmmJMl+FekeW9V3O/rlcqGQQJ/hNh9r8pKIj304pskWuEd8fCyNT86g/TpO0gcOTiLzsHLEURFMIQ==}
+    dev: true
+
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
     dev: true
@@ -1374,7 +1378,7 @@ packages:
   /@types/qrcode/1.5.0:
     resolution: {integrity: sha512-x5ilHXRxUPIMfjtM+1vf/GPTRWZ81nqscursm5gMznJeK9M0YnZ1c3bEvRLQ0zSSgedLx1J6MGL231ObQGGhaA==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
     dev: true
 
   /@types/retry/0.12.1:
@@ -1392,19 +1396,19 @@ packages:
   /@types/through/0.0.30:
     resolution: {integrity: sha512-FvnCJljyxhPM3gkRgWmxmDZyAQSiBQQWLI0A0VFL0K7W1oRUrPJSqNO0NvTnLkBcotdlp3lKvaT0JrnyRDkzOg==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
     dev: true
 
   /@types/varint/6.0.1:
     resolution: {integrity: sha512-fQdOiZpDMBvaEdl12P1x7xlTPRAtd7qUUtVaWgkCy8DC//wCv19nqFFtrnR3y/ac6VFY0UUvYuQqfKzZTSE26w==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
     dev: true
 
   /@types/ws/8.5.3:
     resolution: {integrity: sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
     dev: true
 
   /@types/yargs-parser/21.0.0:
@@ -7391,6 +7395,6 @@ packages:
       stack-trace: 0.0.10
     dev: true
 
-  /zod/3.20.0:
-    resolution: {integrity: sha512-ZWxs7oM5ixoo1BMoxTNeDMYSih/F/FUnExsnRtHT04rG6q0Bd74TKS45RGXw07TOalOZyyzdKaYH38k8yTEv9A==}
+  /zod/3.20.2:
+    resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}
     dev: false

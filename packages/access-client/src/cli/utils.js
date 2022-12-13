@@ -30,7 +30,7 @@ export async function getService(env) {
     // @ts-ignore
     const { did } = await rsp.json()
     audience = Verifier.parse(did)
-    return { url, audience }
+    return { url, servicePrincipal: audience }
   }
 }
 

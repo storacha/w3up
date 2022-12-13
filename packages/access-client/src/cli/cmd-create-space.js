@@ -10,13 +10,13 @@ import { getService } from './utils.js'
  * @param {{ profile: any; env: string }} opts
  */
 export async function cmdCreateSpace(opts) {
-  const { url } = await getService(opts.env)
+  const { url, servicePrincipal } = await getService(opts.env)
   const store = new StoreConf({ profile: opts.profile })
   const data = await store.load()
 
   if (data) {
     const spinner = ora('Registering with the service').start()
-    const agent = Agent.from(data, { store, url })
+    const agent = Agent.from(data, { store, url, servicePrincipal })
 
     spinner.stopAndPersist()
     const { email, name } = await inquirer.prompt([
