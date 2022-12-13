@@ -27,9 +27,7 @@ import { AgentData } from './agent-data.js'
 export { AgentData }
 
 const HOST = 'https://access.web3.storage'
-const PRINCIPAL = DID.parse(
-  'did:key:z6MkqdncRZ1wj8zxCTDUQ8CRT8NQWd63T7mZRvZUX8B7XDFi'
-)
+const PRINCIPAL = DID.parse('did:web:web3.storage')
 
 /**
  * Creates a Ucanto connection for the w3access API
