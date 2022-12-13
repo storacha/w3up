@@ -367,7 +367,7 @@ describe('Upload.remove', () => {
           assert.equal(invCap.can, UploadCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.root), car.roots[0].toString())
-          return null
+          return { root: car.roots[0] }
         }),
       },
     })
