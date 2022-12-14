@@ -34,6 +34,7 @@ describe('voucher capabilities', function () {
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
       principal: Verifier,
+      authority: service,
     })
     if (!result.error) {
       assert.deepEqual(result.audience.did(), service.did())
@@ -73,6 +74,7 @@ describe('voucher capabilities', function () {
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
       principal: Verifier,
+      authority: service,
     })
 
     if (!result.error) {
@@ -115,6 +117,7 @@ describe('voucher capabilities', function () {
     const result = await access(await claim.delegate(), {
       capability: Voucher.claim,
       principal: Verifier,
+      authority: service,
     })
 
     if (result.error) {

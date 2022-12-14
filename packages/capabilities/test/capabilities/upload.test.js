@@ -48,6 +48,7 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -83,6 +84,7 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -134,6 +136,7 @@ describe('upload capabilities', function () {
     const result = await access(add, {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
     assert.equal(result.error, true)
     assert(String(result).includes('Expected link to be CID with 0x202 codec'))
@@ -156,6 +159,7 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -204,6 +208,7 @@ describe('upload capabilities', function () {
     const result = await access(add, {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
 
     assert.equal(result.error, true)
@@ -237,6 +242,7 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -277,6 +283,7 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
 
     assert.equal(result.error, true)
@@ -312,6 +319,7 @@ describe('upload capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Upload.add,
       principal: Verifier,
+      authority: w3,
     })
 
     assert.equal(result.error, true)
@@ -334,6 +342,7 @@ describe('upload capabilities', function () {
     const result = await access(await list.delegate(), {
       capability: Upload.list,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -364,6 +373,7 @@ describe('upload capabilities', function () {
     const result = await access(await list.delegate(), {
       capability: Upload.list,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -395,6 +405,7 @@ describe('upload capabilities', function () {
     const result = await access(await list.delegate(), {
       capability: Upload.list,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -435,6 +446,7 @@ describe('upload capabilities', function () {
     const result = await access(list, {
       capability: Upload.list,
       principal: Verifier,
+      authority: w3,
     })
     assert.equal(result.error, true)
     assert(
@@ -458,6 +470,7 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -492,6 +505,7 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -529,6 +543,7 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -573,6 +588,7 @@ describe('upload capabilities', function () {
     const result = await access(remove, {
       capability: Upload.remove,
       principal: Verifier,
+      authority: w3,
     })
     assert.equal(result.error, true)
     assert(
@@ -610,6 +626,7 @@ describe('upload capabilities', function () {
     const result = await access(await remove.delegate(), {
       capability: Upload.remove,
       principal: Verifier,
+      authority: w3,
     })
 
     assert.equal(result.error, true)

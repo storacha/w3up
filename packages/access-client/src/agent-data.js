@@ -72,6 +72,7 @@ export class AgentData {
     return new AgentData(
       {
         meta: raw.meta,
+        // @ts-expect-error for some reason TS thinks this is a EdSigner
         principal: Signer.from(raw.principal),
         currentSpace: raw.currentSpace,
         spaces: raw.spaces,
