@@ -119,7 +119,7 @@ export function createAnalyticsEngine() {
  * @param {object} config
  * @param {string} config.PRIVATE_KEY - multiformats private key of primary signing key
  * @param {string} [config.DID] - public DID for the service (did:key:... derived from PRIVATE_KEY if not set)
- * @returns {import('@ucanto/interface').Signer}
+ * @returns {Signer.Signer}
  */
 export function configureSigner(config) {
   const signer = Signer.parse(config.PRIVATE_KEY)
