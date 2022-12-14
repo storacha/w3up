@@ -1,11 +1,51 @@
 {
   "name": "@web3-storage/w3up-client",
   "version": "3.0.0",
-  "description": "",
+  "description": "Client for the w3up API",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "main": "src/index.js",
   "types": "dist/src/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "*",
+        "dist/*",
+        "dist/src/*",
+        "dist/src/*/index"
+      ],
+      "src/*": [
+        "*",
+        "dist/*",
+        "dist/src/*",
+        "dist/src/*/index"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "node": "./src/index.node.js",
+      "import": "./src/index.js"
+    },
+    "./client": {
+      "types": "./dist/src/client.d.ts",
+      "import": "./src/client.js"
+    },
+    "./capability/space": {
+      "types": "./dist/src/capability/space.d.ts",
+      "import": "./src/capability/space.js"
+    },
+    "./capability/store": {
+      "types": "./dist/src/capability/store.d.ts",
+      "import": "./src/capability/store.js"
+    },
+    "./capability/upload": {
+      "types": "./dist/src/capability/upload.d.ts",
+      "import": "./src/capability/upload.js"
+    },
+    "./types": "./src/types.js"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -14,46 +54,68 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:api_docs && npm run build:types",
-    "build:api_docs": "jsdoc2md -c .jsdoc.json -f src/index.js > API.md",
-    "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./dist",
-    "pretest": "npm run typecheck && npm run lint",
-    "test": "vitest run",
     "lint": "standard",
-    "lint:fix": "standard --fix",
-    "typecheck": "tsc --noEmit",
-    "test:coverage": "vitest run --coverage",
-    "test:dev": "vitest -w"
+    "prepare": "npm run build",
+    "build": "tsc --build",
+    "test": "npm-run-all -p -r mock test:all",
+    "test:all": "run-s test:node test:browser",
+    "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings -n stack-trace-limit=1000",
+    "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
+    "mock": "run-p mock:*",
+    "mock:bucket-200": "PORT=9200 STATUS=200 node test/helpers/bucket-server.js",
+    "rc": "npm version prerelease --preid rc",
+    "docs": "npm run build && typedoc --out docs-generated"
   },
   "dependencies": {
-    "@ipld/car": "^4.1.5",
-    "@ucanto/client": "^1.0.1",
-    "@ucanto/core": "^1.0.1",
-    "@ucanto/interface": "^1.0.0",
-    "@ucanto/principal": "^1.0.1",
-    "@ucanto/server": "^1.0.2",
-    "@ucanto/transport": "^1.0.1",
-    "@ucanto/validator": "^1.0.2",
-    "@web3-storage/access": "^2.1.1",
-    "cross-fetch": "^3.1.5",
-    "uint8arrays": "^4.0.2"
+    "@ipld/dag-ucan": "^3.0.1",
+    "@ucanto/client": "^4.0.2",
+    "@ucanto/core": "^4.0.2",
+    "@ucanto/interface": "^4.0.2",
+    "@ucanto/principal": "^4.0.2",
+    "@ucanto/transport": "^4.0.2",
+    "@web3-storage/access": "^9.1.1",
+    "@web3-storage/capabilities": "^2.0.0",
+    "@web3-storage/upload-client": "^5.2.0"
   },
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.23.4",
-    "ipjs": "^5.2.0",
-    "jsdoc-to-markdown": "^7.1.1",
-    "jsdoc-tsimport-plugin": "^1.0.5",
-    "lint-staged": "^13.0.3",
-    "semantic-release": "^19.0.5",
-    "simple-git-hooks": "^2.8.0",
+    "@ucanto/server": "^4.0.2",
+    "assert": "^2.0.0",
+    "hundreds": "^0.0.9",
+    "mocha": "^10.1.0",
+    "multiformats": "^10.0.2",
+    "npm-run-all": "^4.1.5",
+    "playwright-test": "^8.1.1",
     "standard": "^17.0.0",
-    "typescript": "^4.8.3",
-    "vitest": "^0.23.4"
+    "typedoc": "^0.23.21",
+    "typedoc-plugin-missing-exports": "^1.0.0",
+    "typescript": "^4.8.3"
   },
-  "resolutions": {
-    "@ucanto/validator": "^1.0.2"
+  "directories": {
+    "test": "test"
   },
-  "lint-staged": {
-    "*.*": "npm run lint:fix"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3up-client.git"
+  },
+  "keywords": [
+    "web3",
+    "storage",
+    "upload",
+    "store",
+    "DAG",
+    "IPLD",
+    "UCAN",
+    "IPFS"
+  ],
+  "author": "DAG House",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3up-client/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3up-client#readme",
+  "standard": {
+    "env": [
+      "browser",
+      "mocha"
+    ]
   }
 }

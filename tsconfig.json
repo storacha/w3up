@@ -7,10 +7,10 @@
     "checkJs": true,
     "target": "ES2022",
     "module": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM"],
     // "noEmit": false,
     // "noEmitOnError": true,
-    // "emitDeclarationOnly": true,
+    "emitDeclarationOnly": true,
     "sourceMap": true,
     // "declaration": true,
     "declarationMap": true,
@@ -34,5 +34,16 @@
     "resolveJsonModule": true
   },
   "include": ["src"],
-  "exclude": ["**/node_modules/**"]
+  "exclude": ["**/node_modules/**"],
+  "typedocOptions": {
+    "entryPoints": [
+      "./src"
+    ],
+    "entryPointStrategy": "expand",
+    "darkHighlightTheme": "github-dark",
+    "navigationLinks": {
+      "Github": "https://github.com/web3-storage/w3up-client"
+    },
+    "customCss": "./static/docs.css",
+  }
 }

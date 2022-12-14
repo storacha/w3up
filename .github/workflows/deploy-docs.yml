@@ -1,0 +1,32 @@
+name: Generate and deploy API docs
+# trigger workflow manually for now. hook into release workflow once we know it's working
+on: [workflow_call, workflow_dispatch]
+
+jobs:
+  deploy-docs:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    environment: 
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+      - run: npm install
+      - run: npm run build
+      - run: npm run docs
+      - uses: actions/configure-pages@v2
+      - uses: actions/upload-pages-artifact@v1
+        with:
+          path: './docs-generated'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+

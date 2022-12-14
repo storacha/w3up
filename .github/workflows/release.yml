@@ -1,0 +1,21 @@
+on:
+  push:
+    branches:
+      - main
+name: Release
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: "@web3-storage/gateway-api"
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/test
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        if: ${{ steps.release.outputs.release_created }}
