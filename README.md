@@ -32,13 +32,6 @@ You can add the `@web3-storage/w3up-client` package to your JavaScript or TypeSc
 npm install @web3-storage/w3up-client
 ```
 
-Or with `yarn`:
-
-```
-yarn add @web3-storage/w3up-client
-
-```
-
 ## Usage
 
 [API Reference](#api)
