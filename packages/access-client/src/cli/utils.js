@@ -1,7 +1,7 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import { Verifier } from '@ucanto/principal/ed25519'
+import { DID } from '@ucanto/core'
 import inquirer from 'inquirer'
 
 /** @type {Record<string,string>} */
@@ -10,6 +10,13 @@ const envs = {
   staging: 'https://w3access-staging.protocol-labs.workers.dev',
   dev: 'https://w3access-dev.protocol-labs.workers.dev',
   local: 'http://127.0.0.1:8787',
+}
+
+/** @type {Record<string,string>} */
+const dids = {
+  production: 'did:web:web3.storage',
+  staging: 'did:web:staging.web3.storage',
+  dev: 'did:web:dev.web3.storage',
 }
 
 /**
@@ -22,14 +29,21 @@ let audience
  */
 export async function getService(env) {
   const url = new URL(envs[env])
+  let did
+
   if (audience) {
-    return { url, did: audience }
+    return { url, servicePrincipal: audience }
   } else {
-    const rsp = await fetch(url + 'version')
+    if (env === 'local') {
+      const rsp = await fetch(url + 'version')
+      const data = await rsp.json()
+      did = data.did
+    } else {
+      did = dids[env]
+    }
 
     // @ts-ignore
-    const { did } = await rsp.json()
-    audience = Verifier.parse(did)
+    audience = DID.parse(did)
     return { url, servicePrincipal: audience }
   }
 }
