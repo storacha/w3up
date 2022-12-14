@@ -22,19 +22,19 @@ export async function validateEmail(req, env) {
         )
       )
 
-      return new HtmlResponse(
-        (
-          <ValidateEmail
-            delegation={delegation}
-            ucan={req.query.ucan}
-            qrcode={await QRCode.toString(req.query.ucan, {
-              type: 'svg',
-              errorCorrectionLevel: 'M',
-              margin: 10,
-            })}
-          />
-        )
-      )
+      return delegation.capabilities[0].nb.redirect ? Response.redirect(delegation.capabilities[0].nb.redirect) : new HtmlResponse(
+          (
+            <ValidateEmail
+              delegation={delegation}
+              ucan={req.query.ucan}
+              qrcode={await QRCode.toString(req.query.ucan, {
+                type: 'svg',
+                errorCorrectionLevel: 'M',
+                margin: 10,
+              })}
+            />
+          )
+        );
     } catch (error) {
       const err = /** @type {Error} */ (error)
 

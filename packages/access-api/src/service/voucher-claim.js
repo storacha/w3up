@@ -29,6 +29,7 @@ export function voucherClaimProvider(ctx) {
           space: capability.with,
           identity: capability.nb.identity,
           product: capability.nb.product,
+          redirect: capability.nb.redirect,
         },
         proofs: [proof],
       })

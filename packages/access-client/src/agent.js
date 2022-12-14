@@ -412,6 +412,7 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {string} [opts.redirect]
    */
   async registerSpace(email, opts) {
     const space = this.currentSpace()
@@ -425,13 +426,18 @@ export class Agent {
     if (spaceMeta && spaceMeta.isRegistered) {
       throw new Error('Space already registered with web3.storage.')
     }
+    const claimNB = {
+      identity: URI.from(`mailto:${email}`),
+      product: 'product:free',
+      service: service.did(),
+    }
+
+    if (opts?.redirect) {
+      claimNB.redirect = opts.redirect
+    }
 
     const inv = await this.invokeAndExecute(Voucher.claim, {
-      nb: {
-        identity: URI.from(`mailto:${email}`),
-        product: 'product:free',
-        service: service.did(),
-      },
+      nb: claimNB,
     })
 
     if (inv && inv.error) {
@@ -453,13 +459,19 @@ export class Agent {
       },
     })
 
+    const redeemNB = {
+      space,
+      identity: voucherRedeem.capabilities[0].nb.identity,
+      product: voucherRedeem.capabilities[0].nb.product,
+    }
+
+    if (opts?.redirect) {
+      redeemNB.redirect = opts.redirect
+    }
+
     const accInv = await this.invokeAndExecute(Voucher.redeem, {
       with: URI.from(service.did()),
-      nb: {
-        space,
-        identity: voucherRedeem.capabilities[0].nb.identity,
-        product: voucherRedeem.capabilities[0].nb.product,
-      },
+      nb: redeemNB,
       proofs: [delegationToService],
       facts: [
         {
