@@ -34,8 +34,7 @@ export function loadConfig(env) {
 
   const DID = env.DID
   const PRIVATE_KEY = vars.PRIVATE_KEY
-  const signer = configureSigner({ PRIVATE_KEY })
-  const ucantoServerId = configureUcantoServerId({ DID, PRIVATE_KEY })
+  const signer = configureSigner({ DID, PRIVATE_KEY })
   return {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
@@ -56,7 +55,6 @@ export function loadConfig(env) {
     COMMITHASH: ACCOUNT_COMMITHASH,
 
     signer,
-    ucantoServerId,
 
     // bindings
     METRICS:
@@ -120,24 +118,13 @@ export function createAnalyticsEngine() {
  *
  * @param {object} config
  * @param {string} config.PRIVATE_KEY - multiformats private key of primary signing key
- * @returns {Signer.EdSigner}
+ * @param {string} [config.DID] - public DID for the service (did:key:... derived from PRIVATE_KEY if not set)
+ * @returns {import('@ucanto/interface').Signer}
  */
 export function configureSigner(config) {
   const signer = Signer.parse(config.PRIVATE_KEY)
-  return signer
-}
-
-/**
- * Given a config, return a ucanto principal
- *
- * @param {object} config
- * @param {string} [config.DID] - public identifier of the running service. e.g. a did:key or a did:web
- * @param {string} config.PRIVATE_KEY - multiformats private key of primary signing key
- * @returns {import('@ucanto/interface').Principal}
- */
-export function configureUcantoServerId(config) {
   if (config.DID) {
-    return DID.parse(config.DID)
+    return signer.withDID(DID.parse(config.DID).did())
   }
-  return configureSigner(config)
+  return signer
 }
