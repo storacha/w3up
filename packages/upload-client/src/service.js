@@ -2,12 +2,8 @@ import { connect } from '@ucanto/client'
 import { CAR, CBOR, HTTP } from '@ucanto/transport'
 import * as DID from '@ipld/dag-ucan/did'
 
-export const serviceURL = new URL(
-  'https://8609r1772a.execute-api.us-east-1.amazonaws.com'
-)
-export const servicePrincipal = DID.parse(
-  'did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z'
-)
+export const serviceURL = new URL('https://up.web3.storage')
+export const servicePrincipal = DID.parse('did:web:web3.storage')
 
 /** @type {import('@ucanto/interface').ConnectionView<import('./types').Service>} */
 export const connection = connect({
