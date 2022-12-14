@@ -1,13 +1,10 @@
 /**
- * The main entry point for the `@web3-storage/w3up-client` package.
- *
- * Use the static {@link create} function to create a new {@link Client} object.
- *
+ * @hidden
  * @module
  */
 import { AgentData } from '@web3-storage/access/agent'
-import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
-import { generate } from '@ucanto/principal/rsa'
+import { StoreConf } from '@web3-storage/access/stores/store-conf'
+import { generate } from '@ucanto/principal/ed25519'
 import { Client } from './client.js'
 
 /**
@@ -25,7 +22,7 @@ import { Client } from './client.js'
  * @type {import('./types').ClientFactory}
  */
 export async function create (options = {}) {
-  const store = options.store ?? new StoreIndexedDB('w3up-client')
+  const store = options.store ?? new StoreConf({ profile: 'w3up-client' })
   const raw = await store.load()
   if (raw) return new Client(AgentData.fromExport(raw, { store }), options)
   const principal = await generate()
