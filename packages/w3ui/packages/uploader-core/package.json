@@ -24,19 +24,7 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/uploader-core",
   "dependencies": {
-    "@ipld/car": "^4.1.5",
-    "@ipld/unixfs": "^1.1.0-dev",
-    "@ucanto/interface": "^1.0.0",
-    "@ucanto/principal": "^1.0.1",
-    "@ucanto/transport": "^1.0.1",
-    "@web3-storage/access": "^2.1.1",
-    "multiformats": "^9.8.1",
-    "p-retry": "^5.1.1",
-    "streaming-iterables": "^7.1.0"
-  },
-  "devDependencies": {
-    "@web-std/file": "^3.0.2",
-    "blockstore-core": "^1.0.5",
-    "ipfs-unixfs-exporter": "^7.0.11"
+    "@web3-storage/upload-client": "^5.2.0",
+    "multiformats": "^10.0.2"
   }
 }

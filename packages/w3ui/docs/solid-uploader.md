@@ -21,7 +21,7 @@ import * as SolidUploader from '@w3ui/solid-uploader'
 
 ### `UploaderProvider`
 
-Provider for an `Uploader` which allows uploads to the service. Note that this provider uses [`useAuth`](./solid-keyring#useauth) and provides an `uploader` that allows uploads only when a current identity is loaded.
+Provider for an `Uploader` which allows uploads to the service. Note that this provider uses [`useKeyring`](./solid-keyring#usekeyring) and provides an `uploader` that allows uploads only when an Agent with a registered space is loaded.
 
 Example:
 
@@ -37,36 +37,21 @@ function App () {
 }
 ```
 
+You can optionally target a non-production instance of the upload service by setting the `servicePrincipal` and `connection` props on `UploaderProvider`. The `servicePrincipal` should be set to the service's DID, and `connection` should be a ucanto `ConnectionView` to the service instance.
+
 ### `useUploader`
 
 ```ts
-const [progress, uploader] = useUploader()
+const [state, actions] = useUploader()
 ```
 
 Hook to allow use of the [`UploaderProvider`](#uploaderprovider) value. The value returned is an `UploaderContextValue`:
 
 ```ts
-export type UploaderContextValue = [
+type UploaderContextValue = [
   state: UploaderContextState,
   actions: UploaderContextActions
 ]
-
-export interface UploaderContextState {
-  uploadedCarChunks: CarChunkMeta[]
-}
-
-export interface UploaderContextActions {
-  /**
-   * Upload a single file to the service.
-   */
-  uploadFile: (file: Blob) => Promise<CID>
-  /**
-   * Upload a directory of files to the service.
-   */
-  uploadDirectory: (files: File[]) => Promise<CID>
-  /**
-   * Upload CAR bytes to the service.
-   */
-  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<void>
-}
 ```
+
+See [uploader-core.md](./uploader-core.md) for the definitions for [`UploaderContextState`](./uploader-core.md#uploadercontextstate) and [`UploaderContextActions`](./uploader-core.md#uploadercontextactions).

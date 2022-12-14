@@ -7,16 +7,17 @@
   "license": "Apache-2.0 OR MIT",
   "scripts": {
     "build": "rollup --config rollup.config.js && npm run typecheck",
-    "clean": "npm exec --workspaces -c \"rm -rf build || true\"",
+    "clean": "rm -rf node_modules package-lock.json coverage packages/*/{package-lock.json,build,node_modules}",
     "compile": "npm run --workspaces --if-present compile",
     "lint": "ts-standard",
-    "test": "jest --config jest.config.js",
+    "test": "jest --config jest.config.js --passWithNoTests",
     "typecheck": "tsc -b"
   },
   "workspaces": [
     "examples/react/file-upload",
     "examples/react/multi-file-upload",
     "examples/react/sign-up-in",
+    "examples/react/space-manager",
     "examples/react/template",
     "examples/react/uploads-list",
     "examples/solid/file-upload",
@@ -58,6 +59,7 @@
     "@rollup/plugin-replace": "^4.0.0",
     "@types/jest": "^29.0.2",
     "@types/react": "^18.0.18",
+    "@web-std/file": "^3.0.2",
     "jest": "^27.5.1",
     "react": "^18.2.0",
     "rollup": "^2.79.0",
@@ -67,7 +69,7 @@
     "rollup-plugin-visualizer": "^5.8.1",
     "solid-js": "^1.5.6",
     "ts-node": "^10.9.1",
-    "ts-standard": "^11.0.0",
+    "ts-standard": "^12.0.1",
     "typescript": "^4.8.2",
     "vue": "^3.2.39"
   }

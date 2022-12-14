@@ -1,137 +1,27 @@
-import { SigningPrincipal } from '@ucanto/interface'
-import { Principal } from '@ucanto/principal'
-import { CAR } from '@ucanto/transport'
-// @ts-expect-error
-import { add as storeAdd } from '@web3-storage/access/capabilities/store'
-// @ts-expect-error
-import { add as uploadAdd } from '@web3-storage/access/capabilities/upload'
-import { connection } from '@web3-storage/access/connection'
-import retry, { AbortError } from 'p-retry'
-import { CID } from 'multiformats/cid'
-import { transform } from 'streaming-iterables'
+import { Link, Version } from 'multiformats'
+import type { CARMetadata, Service } from '@web3-storage/upload-client/types'
+import type { ConnectionView, Principal } from '@ucanto/interface'
 
-export * from './unixfs-car'
-export * from './car-chunker'
+export { uploadFile, uploadDirectory } from '@web3-storage/upload-client'
 
-// Production
-const serviceUrl = new URL('https://8609r1772a.execute-api.us-east-1.amazonaws.com')
-const serviceDid = Principal.parse('did:key:z6MkrZ1r5XBFZjBU34qyD8fueMbMRkKw17BZaq2ivKFjnz2z')
+export type { CARMetadata, Service }
 
-const RETRIES = 3
-const CONCURRENT_UPLOADS = 3
-
-export interface Retryable {
-  retries?: number
+export interface UploaderContextState {
+  storedDAGShards: CARMetadata[]
 }
 
-export interface CarChunkMeta {
+export interface ServiceConfig {
+  servicePrincipal?: Principal
+  connection?: ConnectionView<Service>
+}
+
+export interface UploaderContextActions {
   /**
-   * CID of the CAR file (not the data it contains).
+   * Upload a single file to the current space.
    */
-  cid: CID
+  uploadFile: (file: Blob) => Promise<Link<unknown, number, number, Version>>
   /**
-   * Size of the CAR file in bytes.
+   * Upload a directory of files to the current space.
    */
-  size: number
-}
-
-export interface CarChunkUploadedEvent {
-  meta: CarChunkMeta
-}
-
-export interface UploadCarChunksOptions extends Retryable {
-  onChunkUploaded?: (event: CarChunkUploadedEvent) => void
-}
-
-export type CarData = AsyncIterable<Uint8Array>
-
-/**
- * Upload multiple CAR chunks to the service, linking them together after
- * successful completion.
- */
-export async function uploadCarChunks (principal: SigningPrincipal, chunks: AsyncIterable<CarData>, options: UploadCarChunksOptions = {}): Promise<CID[]> {
-  const onChunkUploaded = options.onChunkUploaded ?? (() => {})
-
-  const uploads = transform(CONCURRENT_UPLOADS, async chunk => {
-    const carChunks = await collect(chunk)
-    const bytes = new Uint8Array(await new Blob(carChunks).arrayBuffer())
-    const cid = await uploadCarBytes(principal, bytes, options)
-    onChunkUploaded({ meta: { cid, size: bytes.length } })
-    return cid
-  }, chunks)
-
-  const carCids = await collect(uploads)
-
-  return carCids
-}
-
-export async function createUpload (principal: SigningPrincipal, rootCid: CID, carCids: CID[]): Promise<void> {
-  const conn = connection({
-    id: serviceDid,
-    url: serviceUrl
-  })
-  const result = await uploadAdd.invoke({
-    issuer: principal,
-    audience: serviceDid,
-    with: principal.did(),
-    caveats: {
-      root: rootCid,
-      shards: carCids
-    }
-  }).execute(conn)
-  if (result?.error === true) throw result
-}
-
-export async function uploadCarBytes (principal: SigningPrincipal, bytes: Uint8Array, options: Retryable = {}): Promise<CID> {
-  const link = await CAR.codec.link(bytes)
-  const conn = connection({
-    id: serviceDid,
-    url: serviceUrl
-  })
-  const result = await retry(async () => {
-    const res = await storeAdd.invoke({
-      issuer: principal,
-      audience: serviceDid,
-      with: principal.did(),
-      caveats: {
-        link
-      }
-    }).execute(conn)
-    return res
-  }, { onFailedAttempt: console.warn, retries: options.retries ?? RETRIES })
-
-  // Return early if it was already uploaded.
-  if (result.status === 'done') {
-    return link
-  }
-
-  if (result.error != null) {
-    // @ts-expect-error not cause yet
-    throw new Error('failed store/add invocation', { cause: result.error })
-  }
-
-  const res = await retry(async () => {
-    const res = await fetch(result.url, {
-      method: 'PUT',
-      mode: 'cors',
-      body: bytes,
-      headers: result.headers
-    })
-    if (res.status >= 400 && res.status < 500) {
-      throw new AbortError(`upload failed: ${res.status}`)
-    }
-    return res
-  }, { onFailedAttempt: console.warn, retries: options.retries ?? RETRIES })
-
-  if (!res.ok) {
-    throw new Error('upload failed')
-  }
-
-  return link
-}
-
-async function collect<T> (collectable: AsyncIterable<T>|Iterable<T>): Promise<T[]> {
-  const chunks: T[] = []
-  for await (const chunk of collectable) chunks.push(chunk)
-  return chunks
+  uploadDirectory: (files: File[]) => Promise<Link<unknown, number, number, Version>>
 }

@@ -1,27 +1,9 @@
 import { createContext, useContext, createComponent, ParentComponent } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { uploadCarChunks, CarChunkMeta, encodeFile, chunkBlocks, encodeDirectory, createUpload } from '@w3ui/uploader-core'
-import { useAuth } from '@w3ui/solid-keyring'
-import { CID } from 'multiformats/cid'
-
-export interface UploaderContextState {
-  uploadedCarChunks: CarChunkMeta[]
-}
-
-export interface UploaderContextActions {
-  /**
-   * Upload a single file to the service.
-   */
-  uploadFile: (file: Blob) => Promise<CID>
-  /**
-   * Upload a directory of files to the service.
-   */
-  uploadDirectory: (files: File[]) => Promise<CID>
-  /**
-   * Upload CAR bytes to the service.
-   */
-  uploadCarChunks: (chunks: AsyncIterable<AsyncIterable<Uint8Array>>) => Promise<CID[]>
-}
+import { uploadFile, uploadDirectory, UploaderContextState, UploaderContextActions, CARMetadata, ServiceConfig } from '@w3ui/uploader-core'
+import { useKeyring } from '@w3ui/solid-keyring'
+import { add as storeAdd } from '@web3-storage/capabilities/store'
+import { add as uploadAdd } from '@web3-storage/capabilities/upload'
 
 export type UploaderContextValue = [
   state: UploaderContextState,
@@ -29,55 +11,70 @@ export type UploaderContextValue = [
 ]
 
 const UploaderContext = createContext<UploaderContextValue>([
-  { uploadedCarChunks: [] },
+  { storedDAGShards: [] },
   {
     uploadFile: async () => { throw new Error('missing uploader context provider') },
-    uploadDirectory: async () => { throw new Error('missing uploader context provider') },
-    uploadCarChunks: async () => { throw new Error('missing uploader context provider') }
+    uploadDirectory: async () => { throw new Error('missing uploader context provider') }
   }
 ])
+
+export interface UploaderProviderProps extends ServiceConfig {}
 
 /**
  * Provider for actions and state to facilitate uploads to the service.
  */
-export const UploaderProvider: ParentComponent = props => {
-  const [auth] = useAuth()
-  const [state, setState] = createStore<UploaderContextState>({ uploadedCarChunks: [] })
+export const UploaderProvider: ParentComponent<UploaderProviderProps> = props => {
+  const [keyringState, keyringActions] = useKeyring()
+  const [state, setState] = createStore<UploaderContextState>({ storedDAGShards: [] })
 
   const actions: UploaderContextActions = {
     async uploadFile (file: Blob) {
-      if (auth.identity == null) {
-        throw new Error('missing identity')
+      if (keyringState.space == null) throw new Error('missing space')
+      if (keyringState.agent == null) throw new Error('missing agent')
+
+      const storedShards: CARMetadata[] = []
+      setState('storedDAGShards', storedShards)
+
+      const conf = {
+        issuer: keyringState.agent,
+        with: keyringState.space.did(),
+        audience: props.servicePrincipal,
+        proofs: await keyringActions.getProofs([
+          { can: storeAdd.can, with: keyringState.space.did() },
+          { can: uploadAdd.can, with: keyringState.space.did() }
+        ])
       }
 
-      const { cid: cidPromise, blocks } = encodeFile(file)
-      const carCids = await actions.uploadCarChunks(chunkBlocks(blocks))
-
-      const cid = await cidPromise
-      await createUpload(auth.identity.signingPrincipal, cid, carCids)
-      return cid
+      return await uploadFile(conf, file, {
+        onShardStored: meta => {
+          storedShards.push(meta)
+          setState('storedDAGShards', [...storedShards])
+        },
+        connection: props.connection
+      })
     },
     async uploadDirectory (files: File[]) {
-      if (auth.identity == null) {
-        throw new Error('missing identity')
+      if (keyringState.space == null) throw new Error('missing space')
+      if (keyringState.agent == null) throw new Error('missing agent')
+
+      const storedShards: CARMetadata[] = []
+      setState('storedDAGShards', storedShards)
+
+      const conf = {
+        issuer: keyringState.agent,
+        with: keyringState.space.did(),
+        audience: props.servicePrincipal,
+        proofs: await keyringActions.getProofs([
+          { can: storeAdd.can, with: keyringState.space.did() },
+          { can: uploadAdd.can, with: keyringState.space.did() }
+        ]),
+        connection: props.connection
       }
 
-      const { cid: cidPromise, blocks } = encodeDirectory(files)
-      const carCids = await actions.uploadCarChunks(chunkBlocks(blocks))
-
-      const cid = await cidPromise
-      await createUpload(auth.identity.signingPrincipal, cid, carCids)
-      return cid
-    },
-    async uploadCarChunks (chunks) {
-      if (auth.identity == null) {
-        throw new Error('missing identity')
-      }
-
-      setState('uploadedCarChunks', [])
-      return await uploadCarChunks(auth.identity.signingPrincipal, chunks, {
-        onChunkUploaded: e => {
-          setState('uploadedCarChunks', [...state.uploadedCarChunks, e.meta])
+      return await uploadDirectory(conf, files, {
+        onShardStored: meta => {
+          storedShards.push(meta)
+          setState('storedDAGShards', [...storedShards])
         }
       })
     }

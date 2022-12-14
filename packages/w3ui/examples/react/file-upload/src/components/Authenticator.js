@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
-import { useAuth, AuthStatus } from '@w3ui/react-keyring'
+import { useKeyring } from '@w3ui/react-keyring'
 
 export default function Authenticator ({ children }) {
-  const { authStatus, identity, registerAndStoreIdentity, cancelRegisterAndStoreIdentity } = useAuth()
+  const [{ space }, { createSpace, registerSpace, cancelRegisterSpace }] = useKeyring()
   const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
-  if (authStatus === AuthStatus.SignedIn) {
+  if (space?.registered()) {
     return children
   }
 
-  if (authStatus === AuthStatus.EmailVerification) {
+  if (submitted) {
     return (
       <div>
         <h1 className='near-white'>Verify your email address!</h1>
-        <p>Click the link in the email we sent to {identity && identity.email} to sign in.</p>
-        <form onSubmit={e => { e.preventDefault(); cancelRegisterAndStoreIdentity() }}>
+        <p>Click the link in the email we sent to {email} to sign in.</p>
+        <form onSubmit={e => { e.preventDefault(); cancelRegisterSpace() }}>
           <button type='submit' className='ph3 pv2'>Cancel</button>
         </form>
       </div>
@@ -23,10 +24,14 @@ export default function Authenticator ({ children }) {
 
   const handleRegisterSubmit = async e => {
     e.preventDefault()
+    setSubmitted(true)
     try {
-      await registerAndStoreIdentity(email)
+      await createSpace()
+      await registerSpace(email)
     } catch (err) {
       throw new Error('failed to register', { cause: err })
+    } finally {
+      setSubmitted(false)
     }
   }
 
@@ -36,7 +41,7 @@ export default function Authenticator ({ children }) {
         <label htmlFor='email' className='db mb2'>Email address:</label>
         <input id='email' className='db pa2 w-100' type='email' value={email} onChange={e => setEmail(e.target.value)} required />
       </div>
-      <button type='submit' className='ph3 pv2'>Register</button>
+      <button type='submit' className='ph3 pv2' disabled={submitted}>Register</button>
     </form>
   )
 }

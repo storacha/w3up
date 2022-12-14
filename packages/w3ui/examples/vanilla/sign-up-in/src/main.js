@@ -1,14 +1,15 @@
 import './assets/tachyons.min.css'
 
 import {
-  createIdentity,
-  registerIdentity,
-  sendVerificationEmail,
-  waitIdentityVerification,
-  removeIdentity,
-  storeIdentity,
-  loadDefaultIdentity
+  createAgent,
+  getCurrentSpace
 } from '@w3ui/keyring-core'
+
+// FIXME: remove this once we no longer need to target staging
+import {
+  accessServicePrincipal,
+  accessServiceConnection
+} from './staging-service.js'
 
 const SELECTORS = {
   authForm: '#sign-up-in-form',
@@ -26,7 +27,7 @@ export const EVENTS = {
 export class RegisterForm extends window.HTMLElement {
   constructor () {
     super()
-    this.identity = null
+    this.agent = null
     this.email = null
     this.form$ = document.querySelector(SELECTORS.authForm)
     this.confirmationTemplate$ = document.querySelector(SELECTORS.confirmationTemplate)
@@ -37,18 +38,28 @@ export class RegisterForm extends window.HTMLElement {
     this.formatTemplateContent = this.formatTemplateContent.bind(this)
   }
 
+  async getAgent () {
+    if (this.agent == null) {
+      this.agent = await createAgent({
+        servicePrincipal: accessServicePrincipal,
+        connection: accessServiceConnection
+      })
+    }
+    return this.agent
+  }
+
   async connectedCallback () {
     this.form$.addEventListener('submit', this.submitHandler)
 
-    const identity = await loadDefaultIdentity()
+    const agent = await this.getAgent()
+    console.log(`Agent DID: ${agent.did()}`)
 
-    if (identity) {
-      this.identity = identity
-      this.email = identity.email
+    const space = getCurrentSpace(agent)
+    if (space?.registered()) {
       this.toggleConfirmation()
-      console.log(`DID: ${identity.signingPrincipal.did()}`)
+      console.log(`Space DID: ${space.did()}`)
     } else {
-      console.log('No identity registered')
+      console.log('No registered spaces')
     }
   }
 
@@ -82,9 +93,8 @@ export class RegisterForm extends window.HTMLElement {
 
   async signOutHandler (e) {
     e.preventDefault()
-    if (this.identity) {
-      await removeIdentity(this.identity)
-    }
+    this.agent = null
+
     window.location.reload()
   }
 
@@ -94,26 +104,26 @@ export class RegisterForm extends window.HTMLElement {
     // log in a user by their email
     const email = fd.get('email')
     this.email = email
-    let identity
-    let proof
 
     if (email) {
-      const unverifiedIdentity = await createIdentity({ email })
-      console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
-      await sendVerificationEmail(unverifiedIdentity)
+      const agent = await this.getAgent()
+      const { did } = await agent.createSpace()
+      await agent.setCurrentSpace(did)
+      console.log(`Created new Space with DID: ${did}`)
+
       const controller = new AbortController()
 
       try {
-        this.toggleVerification(true);
-        ({ identity, proof } = await waitIdentityVerification(
-          unverifiedIdentity,
-          {
-            signal: controller.signal
-          }
-        ))
-        await registerIdentity(identity, proof)
-        await storeIdentity(identity)
-        this.identity = identity
+        // Fire registration start event
+        const startEvent = window.CustomEvent(EVENTS.registrationStart, { bubbles: true })
+        this.dispatchEvent(startEvent)
+
+        this.toggleVerification(true)
+        await agent.registerSpace(email, { signal: controller.signal })
+
+        // Fire sign in success event
+        const successEvent = new window.CustomEvent(EVENTS.registrationSuccess, { bubbles: true })
+        this.dispatchEvent(successEvent)
       } catch (err) {
         console.error('Registration failed:', err)
         this.email = null

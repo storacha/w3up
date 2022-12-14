@@ -1,14 +1,14 @@
 <script>
-import { AuthProvider } from '@w3ui/vue-keyring'
+import { KeyringProvider } from '@w3ui/vue-keyring'
 import ContentPage from './ContentPage.vue'
 
 export default {
-  components: { AuthProvider, ContentPage }
+  components: { KeyringProvider, ContentPage }
 }
 </script>
 
 <template>
-  <AuthProvider>
+  <KeyringProvider>
     <div className="vh-100 flex flex-column justify-center items-center sans-serif light-silver">
       <header>
         <img src="./assets/logo.png" width="250" alt="logo" />
@@ -17,5 +17,5 @@ export default {
         <ContentPage />
       </div>
     </div>
-  </AuthProvider>
+  </KeyringProvider>
 </template>

@@ -11,7 +11,9 @@ module.exports = class extends JSDOMEnvironment {
       TextEncoder,
       TextDecoder,
       TransformStream,
+      // eslint-disable-next-line object-shorthand
       ArrayBuffer: ArrayBuffer,
+      // eslint-disable-next-line object-shorthand
       Uint8Array: Uint8Array,
       Blob,
       File

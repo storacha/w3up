@@ -58,10 +58,10 @@ export function ContentPage () {
         </form>
       </Match>
       <Match when={status() === 'uploading'}>
-        <Uploading files={files()} uploadedCarChunks={progress.uploadedCarChunks} />
+        <Uploading files={files()} storedDAGShards={progress.storedDAGShards} />
       </Match>
       <Match when={status() === 'done'}>
-        {error() ? <Errored error={error()} /> : <Done files={files()} dataCid={dataCid()} uploadedCarChunks={progress.uploadedCarChunks} />}
+        {error() ? <Errored error={error()} /> : <Done files={files()} dataCid={dataCid()} storedDAGShards={progress.storedDAGShards} />}
       </Match>
     </Switch>
   )
@@ -72,7 +72,7 @@ const Uploading = props => (
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
       <p className='truncate'>Uploading DAG for {props.files.length > 1 ? `${props.files.length} files` : props.files[0].name}</p>
-      {props.uploadedCarChunks.map(({ cid, size }) => (
+      {props.storedDAGShards.map(({ cid, size }) => (
         <p key={cid.toString()} className='f7 truncate'>
           {cid.toString()} ({size} bytes)
         </p>
@@ -93,8 +93,8 @@ const Done = props => (
     <h1 className='near-white'>Done!</h1>
     <p className='f6 code truncate'>{props.dataCid.toString()}</p>
     <p><a href={`https://w3s.link/ipfs/${props.dataCid}`} className='blue'>View {props.files.length > 1 ? 'files' : props.files[0].name} on IPFS Gateway.</a></p>
-    <p className='near-white'>Chunks ({props.uploadedCarChunks.length}):</p>
-    {props.uploadedCarChunks.map(({ cid, size }) => (
+    <p className='near-white'>Chunks ({props.storedDAGShards.length}):</p>
+    {props.storedDAGShards.map(({ cid, size }) => (
       <p key={cid.toString()} className='f7 truncate'>
         {cid.toString()} ({size} bytes)
       </p>

@@ -28,5 +28,10 @@
   },
   "peerDependencies": {
     "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@ucanto/interface": "^4.0.3",
+    "@ucanto/principal": "^4.0.3",
+    "@web3-storage/access": "^9.2.0"
   }
 }

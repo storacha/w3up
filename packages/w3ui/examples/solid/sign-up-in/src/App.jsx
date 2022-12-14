@@ -1,10 +1,10 @@
-import logo from './logo.png'
-import { AuthProvider } from '@w3ui/solid-keyring'
+import { KeyringProvider } from '@w3ui/solid-keyring'
 import ContentPage from './ContentPage'
+import logo from './logo.png'
 
 function App () {
   return (
-    <AuthProvider>
+    <KeyringProvider>
       <div className='vh-100 flex flex-column justify-center items-center sans-serif light-silver'>
         <header>
           <img src={logo} width='250' alt='logo' />
@@ -13,7 +13,7 @@ function App () {
           <ContentPage />
         </div>
       </div>
-    </AuthProvider>
+    </KeyringProvider>
   )
 }
 

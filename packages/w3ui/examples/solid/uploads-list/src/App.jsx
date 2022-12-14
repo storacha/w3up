@@ -1,10 +1,10 @@
 import logo from './logo.png'
-import { AuthProvider, useAuth } from '@w3ui/solid-keyring'
+import { KeyringProvider, useKeyring } from '@w3ui/solid-keyring'
 import ContentPage from './ContentPage'
 
 function App () {
   return (
-    <AuthProvider>
+    <KeyringProvider>
       <IdentityLoader>
         <div className='vh-100 flex flex-column justify-center items-center sans-serif light-silver'>
           <header>
@@ -13,13 +13,13 @@ function App () {
           <ContentPage />
         </div>
       </IdentityLoader>
-    </AuthProvider>
+    </KeyringProvider>
   )
 }
 
 function IdentityLoader ({ children }) {
-  const [, { loadDefaultIdentity }] = useAuth()
-  loadDefaultIdentity() // try load default identity - once.
+  const [, { loadAgent }] = useKeyring()
+  loadAgent() // try load default identity - once.
   return children
 }
 

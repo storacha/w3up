@@ -14,11 +14,11 @@ import * as VueKeyring from '@w3ui/vue-keyring'
 
 ## Exports
 
-* [`AuthProvider`](#authprovider)
+* [`KeyringProvider`](#keyringprovider)
 
 ---
 
-### `AuthProvider`
+### `KeyringProvider`
 
 [Provider](https://vuejs.org/guide/components/provide-inject.html) for authentication with the service.
 
@@ -26,84 +26,54 @@ Example:
 
 ```vue
 <script>
-import { AuthProvider } from '@w3ui/vue-keyring'
+import { KeyringProvider } from '@w3ui/vue-keyring'
 
 export default {
-  components: { AuthProvider }
+  components: { KeyringProvider }
 }
 </script>
 
 <template>
-  <AuthProvider>
+  <KeyringProvider>
     <!-- Application pages/components -->
-  </AuthProvider>
+  </KeyringProvider>
 </template>
 ```
 
-Once mounted, the `AuthProvider` provides the following injection keys:
+Once mounted, the `KeyringProvider` provides the following injection keys:
 
 ```ts
-type AuthProviderInjectionKey = {
-  identity: InjectionKey<Ref<AuthContextState['identity']>>
-  status: InjectionKey<Ref<AuthContextState['status']>>
-  loadDefaultIdentity: InjectionKey<AuthContextActions['loadDefaultIdentity']>
-  cancelRegisterAndStoreIdentity: InjectionKey<AuthContextActions['cancelRegisterAndStoreIdentity']>
-  registerAndStoreIdentity: InjectionKey<AuthContextActions['registerAndStoreIdentity']>
-  unloadIdentity: InjectionKey<AuthContextActions['unloadIdentity']>
-  unloadAndRemoveIdentity: InjectionKey<AuthContextActions['unloadAndRemoveIdentity']>
-}
-
-interface AuthContextState {
-  /**
-   * The current identity
-   */
-  identity?: Identity
-  /**
-   * Authentication status of the current identity.
-   */
-  status: AuthStatus
-}
-
-interface AuthContextActions {
-  /**
-   * Load the default identity from secure storage. If the identity is not
-   * verified, the registration flow will be automatically resumed.
-   */
-  loadDefaultIdentity: () => Promise<void>
-  /**
-   * Unload the current identity from memory.
-   */
-  unloadIdentity: () => Promise<void>
-  /**
-   * Unload the current identity from memory and remove from secure storage.
-   */
-  unloadAndRemoveIdentity: () => Promise<void>
-  /**
-   * Register a new identity, verify the email address and store in secure
-   * storage. Use cancelRegisterAndStoreIdentity to abort.
-   */
-  registerAndStoreIdentity: (email: string) => Promise<void>
-  /**
-   * Abort an ongoing identity registration.
-   */
-  cancelRegisterAndStoreIdentity: () => void
+type KeyringProviderInjectionKey = {
+  space: InjectionKey<Ref<KeyringContextState['space']>>,
+  spaces: InjectionKey<Ref<KeyringContextState['spaces']>>,
+  agent: InjectionKey<Ref<KeyringContextState['agent']>>,
+  loadAgent: InjectionKey<KeyringContextActions['loadAgent']>,
+  unloadAgent: InjectionKey<KeyringContextActions['unloadAgent']>,
+  resetAgent: InjectionKey<KeyringContextActions['resetAgent']>,
+  createSpace: InjectionKey<KeyringContextActions['createSpace']>,
+  setCurrentSpace: InjectionKey<KeyringContextActions['setCurrentSpace']>,
+  registerSpace: InjectionKey<KeyringContextActions['registerSpace']>,
+  cancelRegisterSpace: InjectionKey<KeyringContextActions['cancelRegisterSpace']>,
+  getProofs: InjectionKey<KeyringContextActions['getProofs']>
 }
 ```
+
+See [keyring-core.md](./keyring-core.md) for the definitions for [`KeyringContextState`](./keyring-core.md#keyringcontextstate) and [`KeyringContextActions`](./keyring-core.md#keyringcontextactions).
 
 These keys may be used in child components e.g.
 
 ```vue
 <script>
-import { AuthProviderInjectionKey } from '@w3ui/vue-keyring'
+import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
 
 export default {
   inject: {
-    identity: { from: AuthProviderInjectionKey.identity }
+    agent: { from: KeyringProviderInjectionKey.agent }
   }
 }
 </script>
 
 <template>
-  <p v-if="identity != null">{{identity.email}}</p>
+  <p v-if="agent != null">{{agent.did()}}</p>
 </template>
 ```
