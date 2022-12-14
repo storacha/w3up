@@ -111,7 +111,6 @@ prog
     const mf = new Miniflare({
       packagePath: true,
       wranglerConfigPath: true,
-      wranglerConfigEnv: 'dev',
       sourceMap: true,
       modules: true,
       watch: true,
