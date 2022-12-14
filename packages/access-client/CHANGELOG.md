@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.0](https://github.com/web3-storage/w3protocol/compare/access-v9.1.1...access-v9.2.0) (2022-12-14)
+
+
+### Features
+
+* embedded key resolution ([#312](https://github.com/web3-storage/w3protocol/issues/312)) ([4da91d5](https://github.com/web3-storage/w3protocol/commit/4da91d5f7f798d0d46c4df2aaf224610a8760d9e))
+
 ## [9.1.1](https://github.com/web3-storage/w3protocol/compare/access-v9.1.0...access-v9.1.1) (2022-12-14)
 
 
