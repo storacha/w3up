@@ -11,7 +11,7 @@ jobs:
         id: release
         with:
           release-type: node
-          package-name: "@web3-storage/gateway-api"
+          package-name: "@web3-storage/w3up-client"
       - uses: actions/checkout@v3
       - uses: ./.github/actions/test
       - run: npm run build
