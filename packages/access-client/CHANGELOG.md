@@ -1,5 +1,14 @@
 # Changelog
 
+## [9.1.1](https://github.com/web3-storage/w3protocol/compare/access-v9.1.0...access-v9.1.1) (2022-12-14)
+
+
+### Bug Fixes
+
+* access-client/src/agent default PRINCIPAL is did:web:web3.storage ([#296](https://github.com/web3-storage/w3protocol/issues/296)) ([27f2f60](https://github.com/web3-storage/w3protocol/commit/27f2f60dac7c95cb9efd42a28f5abfef8bdeb197))
+* add support for did:web in the cli ([#301](https://github.com/web3-storage/w3protocol/issues/301)) ([885f7c1](https://github.com/web3-storage/w3protocol/commit/885f7c15cec7a0724fcc4a8dd5eb0146a918373d))
+* fix client cli service did resolve ([#292](https://github.com/web3-storage/w3protocol/issues/292)) ([6be9608](https://github.com/web3-storage/w3protocol/commit/6be9608a907665a8123938ef804bebfffc5c7232))
+
 ## [9.1.0](https://github.com/web3-storage/w3protocol/compare/access-v9.0.1...access-v9.1.0) (2022-12-13)
 
 
