@@ -6,7 +6,7 @@ W3UI keyring core.
 
 ```sh
 npm install @w3ui/keyring-core
-```
+``` 
 
 ## Usage
 
