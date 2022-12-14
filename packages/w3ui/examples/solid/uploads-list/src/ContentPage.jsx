@@ -1,12 +1,12 @@
 import { Switch, Match } from 'solid-js'
-import { useAuth } from '@w3ui/solid-keyring'
+import { useKeyring } from '@w3ui/solid-keyring'
 import { createUploadsListResource } from '@w3ui/solid-uploads-list'
 import { withIdentity } from './components/Authenticator'
 import './spinner.css'
 
 export function ContentPage () {
-  const [auth] = useAuth()
-  const [data, { refetch }] = createUploadsListResource(() => auth.identity, { initialValue: { results: [] } })
+  const [keyringState, keyringActions] = useKeyring()
+  const [data, { refetch }] = createUploadsListResource(() => ({ ...keyringState, ...keyringActions }), { initialValue: { results: [] } })
 
   return (
     <div className='w-90 mw9'>

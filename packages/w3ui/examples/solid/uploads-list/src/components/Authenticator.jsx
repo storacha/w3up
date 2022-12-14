@@ -1,8 +1,8 @@
 import { createSignal, Switch, Match } from 'solid-js'
-import { useAuth, AuthStatus } from '@w3ui/solid-keyring'
+import { useKeyring } from '@w3ui/solid-keyring'
 
 function Authenticator ({ children }) {
-  const [auth, { registerAndStoreIdentity, cancelRegisterAndStoreIdentity }] = useAuth()
+  const [keyring, { createSpace, registerSpace, cancelRegisterSpace }] = useKeyring()
   const [email, setEmail] = createSignal('')
   const [submitted, setSubmitted] = createSignal(false)
 
@@ -10,7 +10,8 @@ function Authenticator ({ children }) {
     e.preventDefault()
     setSubmitted(true)
     try {
-      await registerAndStoreIdentity(email())
+      await createSpace()
+      await registerSpace(email())
     } catch (err) {
       throw new Error('failed to register', { cause: err })
     } finally {
@@ -20,20 +21,20 @@ function Authenticator ({ children }) {
 
   return (
     <Switch>
-      <Match when={auth.status === AuthStatus.SignedIn}>
+      <Match when={keyring.space?.registered()}>
         {children}
       </Match>
-      <Match when={auth.status === AuthStatus.EmailVerification}>
+      <Match when={submitted()}>
         <div className='w-90 w-50-ns mw6'>
           <h1>Verify your email address!</h1>
-          <p>Click the link in the email we sent to {auth.identity.email} to sign in.</p>
-          <form onSubmit={e => { e.preventDefault(); cancelRegisterAndStoreIdentity() }}>
+          <p>Click the link in the email we sent to {keyring.agent?.email} to sign in.</p>
+          <form onSubmit={e => { e.preventDefault(); cancelRegisterSpace() }}>
             <button type='submit' className='ph3 pv2'>Cancel</button>
           </form>
         </div>
       </Match>
-      <Match when={auth.status === AuthStatus.SignedOut}>
-        <form className='w-90 w-50-ns mw6' onSubmit={handleRegisterSubmit}>
+      <Match when={!keyring.space?.registered() && !submitted()}>
+        <form onSubmit={handleRegisterSubmit}>
           <div className='mb3'>
             <label htmlFor='email' className='db mb2'>Email address:</label>
             <input id='email' className='db pa2 w-100' type='email' value={email()} onInput={e => setEmail(e.target.value)} required />

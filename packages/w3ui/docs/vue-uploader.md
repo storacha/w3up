@@ -20,58 +20,40 @@ import * as VueUploader from '@w3ui/vue-uploader'
 
 ### `UploaderProvider`
 
-[Provider](https://vuejs.org/guide/components/provide-inject.html) for an `Uploader` which allows uploads to the service. Note that _this_ provider injects values from [`AuthProvider`](./vue-keyring#authprovider).
+[Provider](https://vuejs.org/guide/components/provide-inject.html) for an `Uploader` which allows uploads to the service. Note that _this_ provider injects values from [`KeyringProvider`](./vue-keyring#keyringprovider).
 
 Example:
 
 ```vue
 <script>
-import { AuthProvider } from '@w3ui/vue-keyring'
+import { KeyringProvider } from '@w3ui/vue-keyring'
 import { UploaderProvider } from '@w3ui/vue-uploader'
 
 export default {
-  components: { AuthProvider, UploaderProvider }
+  components: { KeyringProvider, UploaderProvider }
 }
 </script>
 
 <template>
-  <AuthProvider>
+  <KeyringProvider>
     <UploaderProvider>
       <!-- Application pages/components -->
     </UploaderProvider>
-  </AuthProvider>
+  </KeyringProvider>
 </template>
 ```
 
 Once mounted, the `UploaderProvider` provides the following injection keys:
 
 ```ts
-const UploaderProviderInjectionKey = {
+type UploaderProviderInjectionKey = {
   uploadFile: InjectionKey<UploaderContextActions['uploadFile']>,
   uploadDirectory: InjectionKey<UploaderContextActions['uploadDirectory']>,
-  uploadCarChunks: InjectionKey<UploaderContextActions['uploadCarChunks']>,
-  uploadedCarChunks: InjectionKey<Ref<UploaderContextState['uploadedCarChunks']>>
-}
-
-interface UploaderContextActions {
-  /**
-   * Upload a single file to the service.
-   */
-  uploadFile: (file: Blob) => Promise<CID>
-  /**
-   * Upload a directory of files to the service.
-   */
-  uploadDirectory: (files: File[]) => Promise<CID>
-  /**
-   * Upload CAR bytes to the service.
-   */
-  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<void>
-}
-
-interface UploaderContextState {
-  uploadedCarChunks: CarChunkMeta[]
+  storedDAGShards: InjectionKey<Ref<UploaderContextState['storedDAGShards']>>
 }
 ```
+
+See [uploader-core.md](./uploader-core.md) for the definitions for [`UploaderContextState`](./uploader-core.md#uploadercontextstate) and [`UploaderContextActions`](./uploader-core.md#uploadercontextactions).
 
 These keys may be used in child components e.g.
 

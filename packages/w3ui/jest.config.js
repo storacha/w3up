@@ -10,7 +10,7 @@ const packages = readdirSync(basePath)
   .sort((a, b) => b.length - a.length)
 
 // node_modules that need babel transform e.g. because not export cjs
-const esmodules = ['@ipld/unixfs', 'actor'].join('|')
+const esmodules = ['@ipld/unixfs', 'actor', 'multiformats'].join('|')
 
 module.exports = {
   collectCoverage: true,
@@ -25,6 +25,6 @@ module.exports = {
     snapshotFormat: {
       printBasicPrototype: false
     },
-    transformIgnorePatterns: [`/node_modules/(?!${esmodules})`]
+    transformIgnorePatterns: [`node_modules/(?!${esmodules})`]
   }))
 }

@@ -1,57 +1,69 @@
-import React, { useContext, createContext, useState, useEffect, ReactNode } from 'react'
-import { listUploads, ListPage } from '@w3ui/uploads-list-core'
-import { useAuth } from '@w3ui/react-keyring'
+import React, { useContext, createContext, useState } from 'react'
+import { UploadListResult, UploadsListContextState, UploadsListContextActions, ServiceConfig, list } from '@w3ui/uploads-list-core'
+import { useKeyring } from '@w3ui/react-keyring'
+import { list as uploadList } from '@web3-storage/capabilities/upload'
 
-export interface UploadsListContextValue {
-  /**
-   * True if the uploads list is currently being retrieved from the service.
-   */
-  loading: boolean
-  /**
-   * Set if an error occurred retrieving the uploads list.
-   */
-  error?: Error
-  /**
-   * The content of the uploads list.
-   */
-  data?: ListPage
-  /**
-   * Call to reload the uploads list.
-   */
-  reload: () => Promise<void>
-}
+export type UploadsListContextValue = [
+  state: UploadsListContextState,
+  actions: UploadsListContextActions
+]
 
-const UploadsListContext = createContext<UploadsListContextValue>({
-  loading: false,
-  reload: async () => {}
-})
+const UploadsListContext = createContext<UploadsListContextValue>([
+  {
+    loading: false
+  },
+  {
+    next: async () => {},
+    reload: async () => {}
+  }
+])
 
-export interface UploadsListProviderProps {
-  children?: ReactNode
+export interface UploadsListProviderProps extends ServiceConfig {
+  children?: JSX.Element
+  /**
+   * Maximum number of items to return per page.
+   */
+  size?: number
 }
 
 /**
- * Provider for a list of items uploaded by the current identity.
+ * Provider for a list of items uploaded to the current space.
  */
-export function UploadsListProvider ({ children }: UploadsListProviderProps): ReactNode {
-  const { identity } = useAuth()
+export function UploadsListProvider ({ size, servicePrincipal, connection, children }: UploadsListProviderProps): JSX.Element {
+  const [{ space, agent }, { getProofs }] = useKeyring()
+  const [cursor, setCursor] = useState<string>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error>()
-  const [data, setData] = useState<ListPage>()
+  const [data, setData] = useState<UploadListResult[]>()
   const [controller, setController] = useState(new AbortController())
 
-  const reload = async (): Promise<void> => {
-    if (identity == null) return
+  const loadPage = async (cursor?: string): Promise<void> => {
+    if (space == null) return
+    if (agent == null) return
+
     controller.abort()
     const newController = new AbortController()
     setController(newController)
     setLoading(true)
+
     try {
-      setData(await listUploads(identity.signingPrincipal, { signal: newController.signal }))
+      const conf = {
+        issuer: agent,
+        with: space.did(),
+        audience: servicePrincipal,
+        proofs: await getProofs([{ can: uploadList.can, with: space.did() }])
+      }
+      const page = await list(conf, {
+        cursor,
+        size,
+        signal: newController.signal,
+        connection
+      })
+      setCursor(page.cursor)
+      setData(page.results)
     } catch (err: any) {
       if (err.name !== 'AbortError') {
         console.error(err)
-        // @ts-expect-error ts not know about cause
         setError(new Error('failed to fetch uploads list', { cause: err }))
       }
     } finally {
@@ -59,10 +71,17 @@ export function UploadsListProvider ({ children }: UploadsListProviderProps): Re
     }
   }
 
-  useEffect(() => { void reload() }, [identity])
+  const state = { data, loading, error }
+  const actions = {
+    next: async (): Promise<void> => { await loadPage(cursor) },
+    reload: async (): Promise<void> => {
+      setCursor(undefined)
+      await loadPage()
+    }
+  }
 
   return (
-    <UploadsListContext.Provider value={{ error, loading, data, reload }}>
+    <UploadsListContext.Provider value={[state, actions]}>
       {children}
     </UploadsListContext.Provider>
   )

@@ -1,7 +1,8 @@
 import { defineComponent, provide, InjectionKey, inject, Ref, shallowReactive, computed } from 'vue'
-import { AuthProviderInjectionKey } from '@w3ui/vue-keyring'
-import { uploadCarChunks, CarChunkMeta, CarData, encodeFile, chunkBlocks, encodeDirectory, createUpload } from '@w3ui/uploader-core'
-import { CID } from 'multiformats/cid'
+import { uploadFile, uploadDirectory, UploaderContextState, UploaderContextActions, CARMetadata, ServiceConfig } from '@w3ui/uploader-core'
+import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
+import { add as storeAdd } from '@web3-storage/capabilities/store'
+import { add as uploadAdd } from '@web3-storage/capabilities/upload'
 
 /**
  * Injection keys for uploader context.
@@ -9,83 +10,83 @@ import { CID } from 'multiformats/cid'
 export const UploaderProviderInjectionKey = {
   uploadFile: Symbol('w3ui uploader uploadFile') as InjectionKey<UploaderContextActions['uploadFile']>,
   uploadDirectory: Symbol('w3ui uploader uploadDirectory') as InjectionKey<UploaderContextActions['uploadDirectory']>,
-  uploadCarChunks: Symbol('w3ui uploader uploadCarChunks') as InjectionKey<UploaderContextActions['uploadCarChunks']>,
-  uploadedCarChunks: Symbol('w3ui uploader uploadedCarChunks') as InjectionKey<Ref<UploaderContextState['uploadedCarChunks']>>
+  storedDAGShards: Symbol('w3ui uploader storedDAGShards') as InjectionKey<Ref<UploaderContextState['storedDAGShards']>>
 }
 
-export interface UploaderContextState {
-  uploadedCarChunks: CarChunkMeta[]
-}
-
-export interface UploaderContextActions {
-  /**
-   * Upload a single file to the service.
-   */
-  uploadFile: (file: Blob) => Promise<CID>
-  /**
-   * Upload a directory of files to the service.
-   */
-  uploadDirectory: (files: File[]) => Promise<CID>
-  /**
-   * Upload CAR bytes to the service.
-   */
-  uploadCarChunks: (chunks: AsyncIterable<CarData>) => Promise<CID[]>
-}
+export interface UploaderProviderProps extends ServiceConfig {}
 
 /**
  * Provider for actions and state to facilitate uploads to the service.
  */
-export const UploaderProvider = defineComponent({
-  setup () {
-    const identity = inject(AuthProviderInjectionKey.identity)
+export const UploaderProvider = defineComponent<UploaderProviderProps>({
+  setup ({ servicePrincipal, connection }) {
+    const space = inject(KeyringProviderInjectionKey.space)
+    const agent = inject(KeyringProviderInjectionKey.agent)
+    const getProofs = inject(KeyringProviderInjectionKey.getProofs)
+
     const state = shallowReactive<UploaderContextState>({
-      uploadedCarChunks: []
+      storedDAGShards: []
     })
 
-    provide(UploaderProviderInjectionKey.uploadedCarChunks, computed(() => state.uploadedCarChunks))
+    provide(UploaderProviderInjectionKey.storedDAGShards, computed(() => state.storedDAGShards))
 
     const actions: UploaderContextActions = {
       async uploadFile (file: Blob) {
-        if (identity?.value == null) {
-          throw new Error('missing identity')
+        if (space?.value == null) throw new Error('missing space')
+        if (agent?.value == null) throw new Error('missing agent')
+        if (getProofs == null) throw new Error('missing getProofs')
+
+        const storedShards: CARMetadata[] = []
+        state.storedDAGShards = storedShards
+
+        const conf = {
+          issuer: agent.value,
+          with: space.value.did(),
+          audience: servicePrincipal,
+          proofs: await getProofs([
+            { can: storeAdd.can, with: space.value.did() },
+            { can: uploadAdd.can, with: space.value.did() }
+          ])
         }
 
-        const { cid: cidPromise, blocks } = encodeFile(file)
-        const carCids = await actions.uploadCarChunks(chunkBlocks(blocks))
-
-        const cid = await cidPromise
-        await createUpload(identity.value.signingPrincipal, cid, carCids)
-        return cid
+        return await uploadFile(conf, file, {
+          onShardStored: meta => {
+            storedShards.push(meta)
+            state.storedDAGShards = [...storedShards]
+          },
+          connection
+        })
       },
       async uploadDirectory (files: File[]) {
-        if (identity?.value == null) {
-          throw new Error('missing identity')
+        if (space?.value == null) throw new Error('missing space')
+        if (agent?.value == null) throw new Error('missing agent')
+        if (getProofs == null) throw new Error('missing getProofs')
+
+        const storedShards: CARMetadata[] = []
+        state.storedDAGShards = storedShards
+
+        const conf = {
+          issuer: agent.value,
+          with: space.value.did(),
+          audience: servicePrincipal,
+          proofs: await getProofs([
+            { can: storeAdd.can, with: space.value.did() },
+            { can: uploadAdd.can, with: space.value.did() }
+          ])
         }
 
-        const { cid: cidPromise, blocks } = encodeDirectory(files)
-        const carCids = await actions.uploadCarChunks(chunkBlocks(blocks))
-
-        const cid = await cidPromise
-        await createUpload(identity.value.signingPrincipal, cid, carCids)
-        return cid
-      },
-      async uploadCarChunks (chunks) {
-        if (identity?.value == null) {
-          throw new Error('missing identity')
-        }
-
-        state.uploadedCarChunks = []
-        return await uploadCarChunks(identity.value.signingPrincipal, chunks, {
-          onChunkUploaded: e => {
-            state.uploadedCarChunks = [...state.uploadedCarChunks, e.meta]
-          }
+        return await uploadDirectory(conf, files, {
+          onShardStored: meta => {
+            storedShards.push(meta)
+            state.storedDAGShards = [...storedShards]
+          },
+          connection
         })
       }
     }
 
     provide(UploaderProviderInjectionKey.uploadFile, actions.uploadFile)
     provide(UploaderProviderInjectionKey.uploadDirectory, actions.uploadDirectory)
-    provide(UploaderProviderInjectionKey.uploadCarChunks, actions.uploadCarChunks)
 
     return state
   },

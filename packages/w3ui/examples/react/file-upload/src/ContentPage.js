@@ -4,7 +4,7 @@ import { withIdentity } from './components/Authenticator'
 import './spinner.css'
 
 export function ContentPage () {
-  const [{ uploadedCarChunks }, uploader] = useUploader()
+  const [{ storedDAGShards }, uploader] = useUploader()
   const [file, setFile] = useState(null)
   const [dataCid, setDataCid] = useState('')
   const [status, setStatus] = useState('')
@@ -27,11 +27,11 @@ export function ContentPage () {
   }
 
   if (status === 'uploading') {
-    return <Uploading file={file} uploadedCarChunks={uploadedCarChunks} />
+    return <Uploading file={file} storedDAGShards={storedDAGShards} />
   }
 
   if (status === 'done') {
-    return error ? <Errored error={error} /> : <Done file={file} dataCid={dataCid} uploadedCarChunks={uploadedCarChunks} />
+    return error ? <Errored error={error} /> : <Done file={file} dataCid={dataCid} storedDAGShards={storedDAGShards} />
   }
 
   return (
@@ -45,12 +45,12 @@ export function ContentPage () {
   )
 }
 
-const Uploading = ({ file, uploadedCarChunks }) => (
+const Uploading = ({ file, storedDAGShards }) => (
   <div className='flex items-center'>
     <div className='spinner mr3 flex-none' />
     <div className='flex-auto'>
       <p className='truncate'>Uploading DAG for {file.name}</p>
-      {uploadedCarChunks.map(({ cid, size }) => (
+      {storedDAGShards.map(({ cid, size }) => (
         <p key={cid.toString()} className='f7 truncate'>
           {cid.toString()} ({size} bytes)
         </p>
@@ -66,13 +66,13 @@ const Errored = ({ error }) => (
   </div>
 )
 
-const Done = ({ file, dataCid, uploadedCarChunks }) => (
+const Done = ({ file, dataCid, storedDAGShards }) => (
   <div>
     <h1 className='near-white'>Done!</h1>
     <p className='f6 code truncate'>{dataCid.toString()}</p>
     <p><a href={`https://w3s.link/ipfs/${dataCid}`} className='blue'>View {file.name} on IPFS Gateway.</a></p>
-    <p className='near-white'>Chunks ({uploadedCarChunks.length}):</p>
-    {uploadedCarChunks.map(({ cid, size }) => (
+    <p className='near-white'>Chunks ({storedDAGShards.length}):</p>
+    {storedDAGShards.map(({ cid, size }) => (
       <p key={cid.toString()} className='f7 truncate'>
         {cid.toString()} ({size} bytes)
       </p>

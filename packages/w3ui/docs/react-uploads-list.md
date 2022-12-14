@@ -21,7 +21,7 @@ import * as ReactUploadsList from '@w3ui/react-uploads-list'
 
 ### `UploadsListProvider`
 
-Provider for a list of items uploaded by the current identity. Note that this provider uses [`useAuth`](./react-keyring#useauth) to obtain the current identity.
+Provider for a list of items uploaded by the current agent. Note that this provider uses [`useKeyring`](./react-keyring#usekeyring) to obtain the current agent's identity.
 
 Example:
 
@@ -37,44 +37,21 @@ function App () {
 }
 ```
 
+You can optionally target a non-production instance of the upload service by setting the `servicePrincipal` and `connection` props on `UploadsListProvider`. The `servicePrincipal` should be set to the service's DID, and `connection` should be a ucanto `ConnectionView` to the service instance.
+
 ### `useUploadsList`
 
 ```ts
-const { data, loading, error, reload } = useUploadsList()
+const [uploadsListState, uploadsListActions] = useUploadsList()
 ```
 
 Hook to allow use of the [`UploadsListProvider`](#uploadslistprovider) value. The value returned is an `UploaderContextValue`:
 
 ```ts
-interface UploadsListContextValue {
-  /**
-   * True if the uploads list is currentky being retrieved from the service.
-   */
-  loading: boolean
-  /**
-   * Set if an error occurred retrieving the uploads list.
-   */
-  error?: Error
-  /**
-   * The content of the uploads list.
-   */
-  data?: ListPage
-  /**
-   * Call to reload the uploads list.
-   */
-  reload: () => Promise<void>
-}
-
-interface ListPage {
-    page: number;
-    pageSize: number;
-    results: ListResult[];
-}
-
-interface ListResult {
-    dataCid: CID;
-    carCids: CID[];
-    uploadedAt: Date;
-}
+export type UploadsListContextValue = [
+  state: UploadsListContextState,
+  actions: UploadsListContextActions
+]
 ```
 
+See [uploads-list-core.md](./uploads-list-core.md) for the definitions for [`UploadsListContextState`](./uploads-list-core.md#uploadslistcontextstate) and [`UploadsListContextActions`](./uploads-list-core.md#uploadslistcontextactions).

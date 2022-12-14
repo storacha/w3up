@@ -14,67 +14,44 @@ import * as ReactKeyring from '@w3ui/react-keyring'
 
 ## Exports
 
-* [`AuthProvider`](#authprovider)
-* [`useAuth`](#useauth)
+* [`KeyringProvider`](#keyringprovider)
+* [`useKeyring`](#usekeyring)
 
 ---
 
-### `AuthProvider`
+### `KeyringProvider`
 
-Provider for authentication with the service.
+Provider for managing agent creation, key management, and space registration with the service.
 
 Example:
 
 ```jsx
-import { AuthProvider } from '@w3ui/react-keyring'
+import { KeyringProvider } from '@w3ui/react-keyring'
 
 function App () {
   return (
-    <AuthProvider>
+    <KeyringProvider>
       {/* Application pages/components */}
-    </AuthProvider>
+    </KeyringProvider>
   )
 }
 ```
 
-### `useAuth`
+You can optionally target a non-production instance of the access service by setting the `servicePrincipal` and `connection` props on `KeyringProvider`. The `servicePrincipal` should be set to the service's DID, and `connection` should be a ucanto `ConnectionView` to the service instance.
+
+### `useKeyring`
 
 ```ts
-const auth = useAuth()
+const [keyringState, keyringActions] = useKeyring()
 ```
 
-Hook to allow use of the [`AuthProvider`](#authprovider) value. The value returned is an `AuthContextValue`:
+Hook to allow use of the [`KeyringProvider`](#keyringprovider) value. The value returned is a `KeyringContextValue`:
 
 ```ts
-interface AuthContextValue {
-  /**
-   * The current identity
-   */
-  identity?: Identity
-  /**
-   * Load the default identity from secure storage.
-   */
-  loadDefaultIdentity: () => Promise<void>
-  /**
-   * Unload the current identity from memory.
-   */
-  unloadIdentity: () => Promise<void>
-  /**
-   * Unload the current identity from memory and remove from secure storage.
-   */
-  unloadAndRemoveIdentity: () => Promise<void>
-  /**
-   * Register a new identity, verify the email address and store in secure
-   * storage. Use cancelRegisterAndStoreIdentity to abort.
-   */
-  registerAndStoreIdentity: (email: string) => Promise<void>
-  /**
-   * Abort an ongoing identity registration.
-   */
-  cancelRegisterAndStoreIdentity: () => void
-  /**
-   * Authentication status of the current identity.
-   */
-  authStatus: AuthStatus
-}
+export type KeyringContextValue = [
+  state: KeyringContextState,
+  actions: KeyringContextActions
+]
 ```
+
+See [keyring-core.md](./keyring-core.md) for the definitions for [`KeyringContextState`](./keyring-core.md#keyringcontextstate) and [`KeyringContextActions`](./keyring-core.md#keyringcontextactions).

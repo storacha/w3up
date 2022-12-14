@@ -1,2 +1,2 @@
-export { encodeFile, encodeDirectory, chunkBlocks } from '@w3ui/uploader-core'
+export { uploadFile, uploadDirectory, Service, CARMetadata } from '@w3ui/uploader-core'
 export * from './providers/Uploader'

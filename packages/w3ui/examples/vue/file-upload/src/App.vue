@@ -1,16 +1,16 @@
 <script>
-import { AuthProvider } from '@w3ui/vue-keyring'
+import { KeyringProvider } from '@w3ui/vue-keyring'
 import { UploaderProvider } from '@w3ui/vue-uploader'
 import Authenticator from './components/Authenticator.vue'
 import ContentPage from './ContentPage.vue'
 
 export default {
-  components: { AuthProvider, UploaderProvider, Authenticator, ContentPage }
+  components: { KeyringProvider, UploaderProvider, Authenticator, ContentPage }
 }
 </script>
 
 <template>
-  <AuthProvider>
+  <KeyringProvider>
     <UploaderProvider>
       <div className="vh-100 flex flex-column justify-center items-center sans-serif light-silver">
         <header>
@@ -23,5 +23,5 @@ export default {
         </div>
       </div>
     </UploaderProvider>
-  </AuthProvider>
+  </KeyringProvider>
 </template>

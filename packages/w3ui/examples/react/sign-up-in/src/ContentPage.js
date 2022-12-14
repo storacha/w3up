@@ -1,32 +1,32 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth, AuthStatus } from '@w3ui/react-keyring'
+import { useKeyring } from '@w3ui/react-keyring'
 
 export default function ContentPage () {
-  const { authStatus, identity, loadDefaultIdentity, registerAndStoreIdentity, unloadIdentity, cancelRegisterAndStoreIdentity } = useAuth()
+  const [{ space }, { loadAgent, unloadAgent, createSpace, registerSpace, cancelRegisterSpace }] = useKeyring()
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
 
   // eslint-disable-next-line
-  useEffect(() => { loadDefaultIdentity() }, []) // try load default identity - once.
+  useEffect(() => { loadAgent() }, []) // load the agent - once.
 
-  if (authStatus === AuthStatus.SignedIn) {
+  if (space?.registered()) {
     return (
       <div>
-        <h1 className='near-white'>Welcome {identity.email}!</h1>
+        <h1 className='near-white'>Welcome!</h1>
         <p>You are logged in!!</p>
-        <form onSubmit={e => { e.preventDefault(); unloadIdentity() }}>
+        <form onSubmit={e => { e.preventDefault(); unloadAgent() }}>
           <button type='submit' className='ph3 pv2'>Sign Out</button>
         </form>
       </div>
     )
   }
 
-  if (authStatus === AuthStatus.EmailVerification) {
+  if (submitted) {
     return (
       <div>
         <h1 className='near-white'>Verify your email address!</h1>
-        <p>Click the link in the email we sent to {identity.email} to sign in.</p>
-        <form onSubmit={e => { e.preventDefault(); cancelRegisterAndStoreIdentity() }}>
+        <p>Click the link in the email we sent to {email} to sign in.</p>
+        <form onSubmit={e => { e.preventDefault(); cancelRegisterSpace() }}>
           <button type='submit' className='ph3 pv2'>Cancel</button>
         </form>
       </div>
@@ -37,7 +37,8 @@ export default function ContentPage () {
     e.preventDefault()
     setSubmitted(true)
     try {
-      await registerAndStoreIdentity(email)
+      await createSpace()
+      await registerSpace(email)
     } catch (err) {
       throw new Error('failed to register', { cause: err })
     } finally {

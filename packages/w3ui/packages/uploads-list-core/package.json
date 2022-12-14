@@ -24,9 +24,7 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/uploads-list-core",
   "dependencies": {
-    "@ucanto/interface": "^1.0.0",
-    "@ucanto/principal": "^1.0.1",
-    "@web3-storage/access": "^2.1.1",
-    "multiformats": "^9.9.0"
+    "@ucanto/interface": "^4.0.3",
+    "@web3-storage/upload-client": "^5.2.0"
   }
 }

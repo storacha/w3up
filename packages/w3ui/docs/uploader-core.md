@@ -14,96 +14,36 @@ import * as UploaderCore from '@w3ui/uploader-core'
 
 ## Exports
 
-* [`encodeDirectory`](#encodedirectory)
-* [`encodeFile`](#encodefile)
-* [`uploadCarChunks`](#uploadcarchunks)
-* [`uploadCarBytes`](#uploadcarbytes)
+**Interfaces**
+- [`UploaderContextState`](#uploadercontextstate)
+- [`UploaderContextActions`](#uploadercontextactions)
+
+**Functions**
+- [`uploadFile`](#uploadfile)
+- [`uploadDirectory`](#uploaddirectory)
 
 ---
 
-### `chunkBlocks`
+### `UploaderContextState`
+
+Interface containing uploader state. Implementations are framework-specific and found in each framework's `-uploader` module (e.g. `@w3ui/react-uploader`).
 
 ```ts
-chunkBlocks (stream: ReadableStream<Block>, options?: ChunkerOptions): AsyncIterable<CarData>
-```
-
-Split a stream of blocks into chunks of CAR files.
-
-```ts
-interface ChunkerOptions {
-  /**
-   * The target chunk size. Actual size of CAR output may be bigger due to
-   * CAR header and block encoding data.
-   */
-  chunkSize?: number
+export interface UploaderContextState {
+  storedDAGShards: CARMetadata[]
 }
 ```
 
-### `encodeDirectory`
+The [`CARMetadata` type](https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client#carmetadata) is defined by the `@web3-storage/upload-client` package and re-exported by `@w3ui/uploader-core`.
 
-```ts
-encodeDirectory (files: Iterable<File>): { cid: Promise<CID>, blocks: ReadableStream<Block> }
-```
+### `UploaderContextActions`
 
-Create a UnixFS DAG from the passed file data. All files are added to a container directory, with paths in file names preserved.
+Interface containing upload actions. Implementations are framework-specific and found in each framework's `-uploader` module (e.g. `@w3ui/react-uploader`).
 
-Example:
+### `uploadFile`
 
-```js
-const { cid, blocks } = encodeDirectory([
-  new File(['doc0'], 'doc0.txt'),
-  new File(['doc1'], 'dir/doc1.txt'),
-])
-// DAG structure will be:
-// bafybei.../doc0.txt
-// bafybei.../dir/doc1.txt
-```
+Re-exported [`uploadFile` function](https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client#uploadfile) from `@web3-storage/upload-client`.
 
-### `encodeFile`
+### `uploadDirectory`
 
-```ts
-encodeFile (file: Blob): { cid: Promise<CID>, blocks: AsyncIterable<CarData> }
-```
-
-Create a UnixFS DAG from the passed file data.
-
-Example:
-
-```js
-const { cid, blocks } = await encodeFile(new File(['data'], 'doc.txt'))
-// Note: file name is not preserved - use encodeDirectory if required.
-```
-
-### `uploadCarChunks`
-
-```ts
-uploadCarChunks (principal: SigningPrincipal, chunks: AsyncIterable<CarData>, options?: UploadCarChunksOptions): Promise<CID[]>
-```
-
-Upload multiple CAR chunks to the service, linking them together after successful completion. Returns an array of CIDs of the CARs that were uploaded.
-
-```ts
-interface UploadCarChunksOptions {
-  retries?: number
-  onChunkUploaded?: (event: { meta: CarChunkMeta }) => void
-}
-
-interface CarChunkMeta {
-  /**
-   * CID of the CAR file (not the data it contains).
-   */
-  cid: CID
-  /**
-   * Size of the CAR file in bytes.
-   */
-  size: number
-}
-```
-
-### `uploadCarBytes`
-
-```ts
-uploadCarBytes (principal: SigningPrincipal, bytes: Uint8Array): Promise<void>
-```
-
-Upload CAR bytes to the service. The principal can be obtained from [`createIdentity`](./keyring-core#createidentity).
+Re-exported [`uploadDirectory` function](https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client#uploaddirectory) from `@web3-storage/upload-client`.

@@ -4,7 +4,7 @@ import { UploaderProviderInjectionKey } from '@w3ui/vue-uploader'
 export default {
   inject: {
     uploadFile: { from: UploaderProviderInjectionKey.uploadFile },
-    uploadedCarChunks: { from: UploaderProviderInjectionKey.uploadedCarChunks }
+    storedDAGShards: { from: UploaderProviderInjectionKey.storedDAGShards }
   },
   data () {
     return {
@@ -42,7 +42,7 @@ export default {
     <div className="flex-auto">
       <p className="truncate">Uploading DAG for {{file.name}}</p>
       <p className="f6 code truncate">{{dataCid}}</p>
-      <p v-for="chunk of uploadedCarChunks" className="f7 truncate">
+      <p v-for="chunk of storedDAGShards" className="f7 truncate">
         {{chunk.cid.toString()}} ({{chunk.size}} bytes)
       </p>
     </div>
@@ -57,8 +57,8 @@ export default {
     <h1 className="near-white">Done!</h1>
     <p className="f6 code truncate">{{dataCid}}</p>
     <p><a :href="'https://w3s.link/ipfs/' + dataCid" className="blue">View {{file.name}} on IPFS Gateway.</a></p>
-    <p className="near-white">Chunks ({{uploadedCarChunks.length}}):</p>
-    <p v-for="chunk of uploadedCarChunks" className="f7 truncate">
+    <p className="near-white">Chunks ({{storedDAGShards.length}}):</p>
+    <p v-for="chunk of storedDAGShards" className="f7 truncate">
       {{chunk.cid.toString()}} ({{chunk.size}} bytes)
     </p>
   </div>
@@ -71,4 +71,3 @@ export default {
     <button type="submit" className="ph3 pv2">Upload</button>
   </form>
 </template>
-  

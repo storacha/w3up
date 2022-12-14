@@ -5,7 +5,6 @@
 ```sh
 npm install @w3ui/keyring-core
 ```
-
 ## Usage
 
 ```js
@@ -14,138 +13,161 @@ import * as KeyringCore from '@w3ui/keyring-core'
 
 ## Exports
 
-* [`loadDefaultIdentity`](#loaddefaultidentity)
-* [`loadIdentity`](#loadidentity)
-* [`createIdentity`](#createidentity)
-* [`sendVerificationEmail`](#sendverificationemail)
-* [`waitIdentityVerification`](#waitidentityverification)
-* [`registerIdentity`](#registeridentity)
-* [`removeIdentity`](#removeidentity)
-* [`storeIdentity`](#storeidentity)
+**Interfaces**
+
+- [`KeyringContextState`](#keyringcontextstate)
+- [`KeyringContextActions`](#keyringcontextactions)
+
+**Classes**
+
+- [`Space`](#space)
+  - [`name`](#name)
+  - [`did`](#did)
+  - [`registered`](#registered)
+  - [`meta`](#meta)
+
+**Functions**
+
+- [`createAgent`](#createagent)
+- [`getCurrentSpace`](#getcurrentspace)
+- [`getSpaces`](#getspaces)
 
 ---
 
-### `loadDefaultIdentity`
+### `KeyringContextState`
+
+Interface for keyring state. Implementations are framework-specific and found in each framework's `-keyring` module (e.g. `@w3ui/react-keyring`).
 
 ```ts
-loadDefaultIdentity (): Promise<Identity | undefined>
-```
-
-Load the default identity on this device, returning `undefined` if none exist.
-
-Example:
-
-```js
-const identity = await loadDefaultIdentity()
-if (identity) {
-  console.log(`DID: ${identity.signingPrincipal.did()}`)
-} else {
-  console.log('No identity registered')
+export interface KeyringContextState {
+  /**
+   * The current space.
+   */
+  space?: Space
+  /**
+   * Spaces available to this agent.
+   */
+  spaces: Space[]
+  /**
+   * The current user agent (this device).
+   */
+  agent?: Signer
 }
 ```
 
-### `loadIdentity`
+### `KeyringContextActions`
+
+Interface for keyring actions. Implementations are framework-specific and found in each framework's `-keyring` module (e.g. `@w3ui/react-keyring`).
 
 ```ts
-loadIdentity ({ email: string }): Promise<Identity | undefined>
-```
-
-Load an identity matching the passed argument from secure storage, returning `undefined` if not found.
-
-Example:
-
-```js
-const identity = await loadIdentity('test@example.com')
-if (identity) {
-  console.log(`DID: ${identity.signingPrincipal.did()}`)
-} else {
-  console.log('Not found')
+export interface KeyringContextActions {
+  /**
+   * Load the user agent and all stored data from secure storage.
+   */
+  loadAgent: () => Promise<void>
+  /**
+   * Unload the user agent and all stored data from secure storage. Note: this
+   * does not remove data, use `resetAgent` if that is desired.
+   */
+  unloadAgent: () => Promise<void>
+  /**
+   * Unload the current space and agent from memory and remove from secure
+   * storage. Note: this removes all data and is unrecoverable.
+   */
+  resetAgent: () => Promise<void>
+  /**
+   * Create a new space with the passed name and set it as the current space.
+   */
+  createSpace: (name?: string) => Promise<DID>
+  /**
+   * Use a specific space.
+   */
+  setCurrentSpace: (did: DID) => Promise<void>
+  /**
+   * Register the current space, verify the email address and store in secure
+   * storage. Use cancelRegisterSpace to abort. Automatically sets the
+   * newly registered space as the current space.
+   */
+  registerSpace: (email: string) => Promise<void>
+  /**
+   * Abort an ongoing account registration.
+   */
+  cancelRegisterSpace: () => void,
+  /**
+   * Get all the proofs matching the capabilities. Proofs are delegations with
+   * an audience matching the agent DID.
+   */
+  getProofs: (caps: Capability[]) => Promise<Proof[]>
 }
 ```
 
-### `createIdentity`
+### `Space`
+
+A subclass of ucanto's `Principal` type that represents a storage location uniquely identified by its DID.
+
+A `Space` has the following methods:
+
+#### `name`
 
 ```ts
-createIdentity ({ email: string }): Promise<UnverifiedIdentity>
+name(): String
 ```
 
-Create a new identity.
+Returns the "friendly" name for the space, or the space DID if no name is set.
 
-Example:
-
-```js
-const unverifiedIdentity = await createIdentity('test@example.com')
-console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
-```
-
-### `sendVerificationEmail`
+#### `did`
 
 ```ts
-function sendVerificationEmail (identity: UnverifiedIdentity): Promise<void>
+did(): DID
 ```
 
-Example:
+Returns the DID string for the space.
 
-```js
-const unverifiedIdentity = await createIdentity('test@example.com')
-console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
-await sendVerificationEmail(unverifiedIdentity)
-```
-
-### `waitIdentityVerification`
+#### `registered`
 
 ```ts
-function waitIdentityVerification (identity: UnverifiedIdentity, options?: { signal: AbortSignal }): Promise<{ identity: VerifiedIdentity, proof: Delegation<[IdentityRegister]> }>
+registered(): Boolean
 ```
 
-Wait for identity verification to complete (user must click link in email).
+Returns `true` if the space has been registered with the service.
 
-Example:
-
-```js
-const unverifiedIdentity = await createIdentity('test@example.com')
-console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
-await sendVerificationEmail(unverifiedIdentity)
-const controller = new AbortController()
-const { identity, proof } = await waitIdentityVerification(unverifiedIdentity, {
-  signal: controller.signal
-})
-```
-
-### `registerIdentity`
+#### `meta`
 
 ```ts
-registerIdentity (identity: VerifiedIdentity, proof: Delegation<[IdentityRegister]>): Promise<void>
+meta(): Record<string, any>
 ```
 
-Register a verified identity with the service, passing the proof of verification (a delegation allowing registration).
+Returns user-defined metadata attached to the space.
 
-Example:
-
-```js
-const unverifiedIdentity = await createIdentity('test@example.com')
-console.log(`DID: ${unverifiedIdentity.signingPrincipal.did()}`)
-await sendVerificationEmail(unverifiedIdentity)
-const controller = new AbortController()
-const { identity, proof } = await waitIdentityVerification(unverifiedIdentity, {
-  signal: controller.signal
-})
-await registerIdentity(identity, proof)
-```
-
-### `removeIdentity`
+### `createAgent`
 
 ```ts
-removeIdentity (identity: Identity): Promise<void>
+createAgent (options: CreateAgentOptions = {}): Promise<Agent> 
 ```
 
-Remove the passed identity from secure storage.
+Create the user agent and load account information from secure storage.
 
+`CreateAgentOptions` accepts the following fields:
 
-# `storeIdentity`
+| field              | type                    | description                                          |
+| ------------------ | ----------------------- | ---------------------------------------------------- |
+| `servicePrincipal` | ucanto `Principal`      | contains the DID & public key for the access service |
+| `connection`       | ucanto `ConnectionView` | a connection to the access service                   |
+
+If `servicePrincipal` or `connection` are not provided, defaults to the production service.
+
+### `getCurrentSpace`
 
 ```ts
-storeIdentity (identity: Identity): Promise<void>
+getCurrentSpace(agent: Agent): Space | undefined
 ```
 
-Store identity locally in secure storage and set the default.
+Returns the given `agent`'s current space, or `undefined` if the agent has no current space set.
+
+### `getSpaces`
+
+```ts
+getSpaces(agent: Agent): Space[]
+```
+
+Returns an array of all spaces that the agent has access to.
