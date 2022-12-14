@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.2.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.1.0...upload-client-v5.2.0) (2022-12-14)
+
+
+### Features
+
+* update upload-client service conf ([#308](https://github.com/web3-storage/w3protocol/issues/308)) ([2cb590c](https://github.com/web3-storage/w3protocol/commit/2cb590c674a29fe040ca163c67766afb749ef337))
+
+
+### Bug Fixes
+
+* make d1 spaces.metadata nullable and change to kysely ([#284](https://github.com/web3-storage/w3protocol/issues/284)) ([c8a9ce5](https://github.com/web3-storage/w3protocol/commit/c8a9ce544226b3c8456d45b15e29cec84894aeb8)), closes [#280](https://github.com/web3-storage/w3protocol/issues/280)
+
 ## [5.1.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.0.0...upload-client-v5.1.0) (2022-12-13)
 
 
