@@ -1,5 +1,24 @@
 # Changelog
 
+## [4.1.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.0.0...access-api-v4.1.0) (2022-12-14)
+
+
+### Features
+
+* access-api version route sets did=ucantoServerId and adds a signer prop ([#305](https://github.com/web3-storage/w3protocol/issues/305)) ([5eab262](https://github.com/web3-storage/w3protocol/commit/5eab262d4bc503bf7a68f19b8193b3a57e5b8451))
+* embedded key resolution ([#312](https://github.com/web3-storage/w3protocol/issues/312)) ([4da91d5](https://github.com/web3-storage/w3protocol/commit/4da91d5f7f798d0d46c4df2aaf224610a8760d9e))
+* include ucanto server principal did as 'aud' key in /version endpoint ([#309](https://github.com/web3-storage/w3protocol/issues/309)) ([bf3b171](https://github.com/web3-storage/w3protocol/commit/bf3b17110b188c1326ba5b041d0f75906c793671))
+
+
+### Bug Fixes
+
+* access-api ctx.signer no longer uses env.DID. instead env.DID is only used for ucanto server id ([#303](https://github.com/web3-storage/w3protocol/issues/303)) ([93d7003](https://github.com/web3-storage/w3protocol/commit/93d70038abe1b36c2a84d10214143cda6b5e4423))
+* access-api wrangler.toml sets DID env var in env.dev ([#297](https://github.com/web3-storage/w3protocol/issues/297)) ([c4ca459](https://github.com/web3-storage/w3protocol/commit/c4ca459445f902d65eade97f41a197fc9178636a))
+* access-client/src/agent default PRINCIPAL is did:web:web3.storage ([#296](https://github.com/web3-storage/w3protocol/issues/296)) ([27f2f60](https://github.com/web3-storage/w3protocol/commit/27f2f60dac7c95cb9efd42a28f5abfef8bdeb197))
+* add support for did:web in the cli ([#301](https://github.com/web3-storage/w3protocol/issues/301)) ([885f7c1](https://github.com/web3-storage/w3protocol/commit/885f7c15cec7a0724fcc4a8dd5eb0146a918373d))
+* fix client cli service did resolve ([#292](https://github.com/web3-storage/w3protocol/issues/292)) ([6be9608](https://github.com/web3-storage/w3protocol/commit/6be9608a907665a8123938ef804bebfffc5c7232))
+* use did:web key in root handler ([#311](https://github.com/web3-storage/w3protocol/issues/311)) ([537dc48](https://github.com/web3-storage/w3protocol/commit/537dc48f4d864d0dbe41752f1a45dd14cd03e489))
+
 ## [4.0.0](https://github.com/web3-storage/w3protocol/compare/access-api-v3.0.0...access-api-v4.0.0) (2022-12-13)
 
 
