@@ -78,6 +78,12 @@ export const claim = base.derive({
        * Optional service DID who's voucher is been requested.
        */
       service: Service.optional(),
+      /**
+       * Optional URL to redirect email validation users who click a link in
+       * their email
+       * TODO: should validate that this is specifically a URL, not any URI
+       */
+      redirect: URI.match({ protocol: 'https:' }).optional(),
     },
     derives: (child, parent) => {
       return (
@@ -117,6 +123,12 @@ export const redeem = voucher.derive({
        * agent to choose space.
        */
       space: URI.match({ protocol: 'did:' }),
+      /**
+       * Optional URL to redirect email validation users who click a link in
+       * their email
+       * TODO: should validate that this is specifically a URL, not any URI
+       */
+      redirect: URI.match({ protocol: 'https:' }).optional(),
     },
     derives: (child, parent) => {
       return (
