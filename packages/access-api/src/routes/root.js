@@ -9,7 +9,7 @@ import { service } from '../service/index.js'
  */
 export async function postRoot(request, env) {
   const server = Server.create({
-    id: env.signer,
+    id: env.config.ucantoServerId,
     encoder: CBOR,
     decoder: CAR,
     service: service(env),
