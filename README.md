@@ -402,6 +402,37 @@ Remove a upload by root data CID.
 
 ## Types
 
+### `Capability`
+
+An object describing a UCAN capability, which specifies what action the UCAN holder `can` perform `with` some resource.
+
+Defined by the [`@ipld/dag-ucan` package](https://github.com/ipld/js-dag-ucan).
+
+```ts
+export interface Capability<
+  Can extends Ability = Ability,
+  With extends Resource = Resource,
+  Caveats extends unknown = unknown
+> {
+  with: With
+  can: Can
+  nb?: Caveats
+}
+
+
+export type Ability = `${string}/${string}` | "*"
+
+export type Resource = `${string}:${string}`
+```
+
+The `can` field contains a string ability identifier, e.g. `store/add` or `space/info`.
+
+The `with` field contains a resource URI, often a `did:key` URI that identifies a Space.
+
+The optional `nb` (_nota bene_) field contains "caveats" that add supplemental information to a UCAN invocation or delegation.
+
+See [the capability spec](https://github.com/web3-storage/w3protocol/blob/main/spec/capabilities.md) for more information about capabilities and how they are defined in w3up services.
+
 ### `CARMetadata`
 
 Metadata pertaining to a CAR file.
@@ -446,6 +477,51 @@ interface ClientFactoryOptions {
 
 More information: [`Driver`](#driver), [`ServiceConf`](#serviceconf)
 
+### `Delegation`
+
+An in-memory view of a UCAN delegation, including proofs that can be used to invoke capabilities or delegate to other agents.
+
+```ts
+import { Delegation as CoreDelegation } from '@ucanto/core/delegation'
+export interface Delegation extends CoreDelegation {
+  /**
+   * User defined delegation metadata.
+   */
+  meta(): Record<string, any>
+} 
+```
+
+The `Delegation` type in `w3up-client` extends the `Delegation` type defined by [`ucanto`][ucanto]:
+
+```ts
+export interface Delegation<C extends Capabilities = Capabilities> {
+  readonly root: UCANBlock<C>
+  readonly blocks: Map<string, Block>
+
+  readonly cid: UCANLink<C>
+  readonly bytes: ByteView<UCAN.UCAN<C>>
+  readonly data: UCAN.View<C>
+
+  asCID: UCANLink<C>
+
+  export(): IterableIterator<Block>
+
+  issuer: UCAN.Principal
+  audience: UCAN.Principal
+  capabilities: C
+  expiration?: UCAN.UTCUnixTimestamp
+  notBefore?: UCAN.UTCUnixTimestamp
+
+  nonce?: UCAN.Nonce
+
+  facts: Fact[]
+  proofs: Proof[]
+  iterate(): IterableIterator<Delegation>
+}
+```
+
+Delegations can be serialized by calling `export()` and piping the returned `Block` iterator into a `CarWriter` from the [`@ipld/car` package](https://www.npmjs.com/package/@ipld/car).
+
 ### `Driver`
 
 Storage drivers can be obtained from [`@web3-storage/access/stores`](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client/src/stores). They persist data created and managed by an agent.
@@ -475,6 +551,36 @@ type ShardStoredCallback = (meta: CARMetadata) => void
 ```
 
 More information: [`CARMetadata`](#carmetadata)
+
+### `Space`
+
+An object representing a storage location. Spaces must be [registered](#registerspace) with the service before they can be used for storage.
+
+```ts
+interface Space {
+  
+  /**
+   * The given space name.
+   */  
+  name(): string
+  
+  /**
+   * The DID of the space.
+   */  
+  did(): string
+  
+  /**
+   * Whether the space has been registered with the service.
+   */  
+  registered(): boolean
+  
+  
+  /**
+   * User defined space metadata.
+   */  
+  meta(): Record<string, any>
+}
+```
 
 ### `StoreListResult`
 
@@ -522,7 +628,7 @@ Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up-clie
 [docs-Client#uploadDirectory]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#uploadDirectory 
 [docs-Space]: https://web3-storage.github.io/w3up-client/classes/space.Space.html
 
-[docs-create]: https://web3-storage.github.io/w3up-client/functions/index.create.html
-[docs-ClientFactoryOptions]: https://web3-storage.github.io/w3up-client/interfaces/types.ClientFactoryOptions.html
+[docs-create]: #create
+[docs-ClientFactoryOptions]: #clientfactoryoptions
 
 [access-docs-Agent]: https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html
