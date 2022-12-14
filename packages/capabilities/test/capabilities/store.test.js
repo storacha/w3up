@@ -45,6 +45,7 @@ describe('store capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Store.add,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -74,6 +75,7 @@ describe('store capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Store.add,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -110,6 +112,7 @@ describe('store capabilities', function () {
     const result = await access(await add.delegate(), {
       capability: Store.add,
       principal: Verifier,
+      authority: w3,
     })
 
     if (result.error) {
@@ -150,6 +153,7 @@ describe('store capabilities', function () {
       const result = await access(await add.delegate(), {
         capability: Store.add,
         principal: Verifier,
+        authority: w3,
       })
 
       if (result.error) {
@@ -179,6 +183,7 @@ describe('store capabilities', function () {
       const result = await access(await add.delegate(), {
         capability: Store.add,
         principal: Verifier,
+        authority: w3,
       })
 
       assert.equal(result.error, true)
@@ -227,6 +232,7 @@ describe('store capabilities', function () {
       const result = await access(add, {
         capability: Store.add,
         principal: Verifier,
+        authority: w3,
       })
 
       assert.equal(result.error, true)
