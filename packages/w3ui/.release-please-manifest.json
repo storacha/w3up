@@ -5,7 +5,7 @@
   "packages/uploads-list-core": "2.0.1",
   "packages/vue-uploader": "3.0.0",
   "packages/solid-uploader": "3.0.0",
-  "packages/solid-uploads-list": "1.2.2",
+  "packages/solid-uploads-list": "2.0.0",
   "packages/vue-uploads-list": "2.0.0",
   "packages/keyring-core": "2.0.1",
   "packages/react-keyring": "2.0.0",
