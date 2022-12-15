@@ -7,6 +7,12 @@
   <a href="https://github.com/web3-storage/w3up-client/blob/main/LICENSE.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
 </p>
 
+> ### ⚠️❗ w3up-client and the underlying APIs are currently beta preview features
+> Please read the beta [Terms of Service](https://purrfect-tracker-45c.notion.site/w3up-beta-Terms-of-Service-39cb5c13439849beae327a2efec9164a) for more details.
+>
+> Open an issue on the repo or reach out to the #web3-storage channel on [IPFS Discord](https://docs.ipfs.tech/community/chat/#discord) if you have any 
+questions!
+
 ## About
 
 `@web3-storage/w3up-client` is a JavaScript libary that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
