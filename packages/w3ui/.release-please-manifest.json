@@ -2,7 +2,7 @@
   "packages/react-uploader": "2.1.2",
   "packages/uploader-core": "3.0.1",
   "packages/react-uploads-list": "1.1.2",
-  "packages/uploads-list-core": "1.0.3",
+  "packages/uploads-list-core": "2.0.0",
   "packages/vue-uploader": "2.1.2",
   "packages/solid-uploader": "2.1.2",
   "packages/solid-uploads-list": "1.2.2",
