@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/web3-storage/w3ui/compare/solid-uploader-v2.1.2...solid-uploader-v3.0.0) (2022-12-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* core and framework components have changed considerably. Please read the updated doucmentation.
+
+### Features
+
+* consume access and upload client ([#159](https://github.com/web3-storage/w3ui/issues/159)) ([e36d842](https://github.com/web3-storage/w3ui/commit/e36d842b1695032355ab29646c3dce6a33880517))
+
 ## [2.1.2](https://github.com/web3-storage/w3ui/compare/solid-uploader-v2.1.1...solid-uploader-v2.1.2) (2022-10-27)
 
 
