@@ -42,6 +42,7 @@ export async function add(
       return await StoreCapabilities.add
         .invoke({
           issuer,
+          /* c8 ignore next */
           audience: audience ?? servicePrincipal,
           with: resource,
           nb: { link, size: car.size },
@@ -128,6 +129,7 @@ export async function list(
   const result = await StoreCapabilities.list
     .invoke({
       issuer,
+      /* c8 ignore next */
       audience: audience ?? servicePrincipal,
       with: resource,
       proofs,
@@ -176,6 +178,7 @@ export async function remove(
   const result = await StoreCapabilities.remove
     .invoke({
       issuer,
+      /* c8 ignore next */
       audience: audience ?? servicePrincipal,
       with: resource,
       nb: { link },

@@ -40,6 +40,7 @@ export async function add(
       return await UploadCapabilities.add
         .invoke({
           issuer,
+          /* c8 ignore next */
           audience: audience ?? servicePrincipal,
           with: resource,
           nb: { root, shards },
@@ -91,6 +92,7 @@ export async function list(
   const result = await UploadCapabilities.list
     .invoke({
       issuer,
+      /* c8 ignore next */
       audience: audience ?? servicePrincipal,
       with: resource,
       proofs,
@@ -139,6 +141,7 @@ export async function remove(
   const result = await UploadCapabilities.remove
     .invoke({
       issuer,
+      /* c8 ignore next */
       audience: audience ?? servicePrincipal,
       with: resource,
       nb: { root },
