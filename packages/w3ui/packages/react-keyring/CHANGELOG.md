@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/web3-storage/w3ui/compare/react-keyring-v2.0.0...react-keyring-v2.0.1) (2022-12-15)
+
+
+### Bug Fixes
+
+* update dependencies ([996871f](https://github.com/web3-storage/w3ui/commit/996871fc433659a56100e529a969fbb9c054e103))
+
 ## [2.0.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v1.0.1...react-keyring-v2.0.0) (2022-12-15)
 
 
