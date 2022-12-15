@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/web3-storage/w3ui/compare/uploader-core-v3.0.0...uploader-core-v3.0.1) (2022-12-15)
+
+
+### Bug Fixes
+
+* lockfile ([09120cb](https://github.com/web3-storage/w3ui/commit/09120cb93d550fc8e1f7df39cb7585fefc3f4dca))
+
 ## [3.0.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v2.0.2...uploader-core-v3.0.0) (2022-12-15)
 
 
