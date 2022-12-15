@@ -45,6 +45,7 @@ export function voucherClaimProvider(ctx) {
     await ctx.email.sendValidation({
       to: capability.nb.identity.replace('mailto:', ''),
       url,
+      space: inv.capabilities[0].nb.space,
     })
   })
 }
