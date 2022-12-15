@@ -5,6 +5,7 @@ import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
+import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 
 export {}
 
@@ -42,7 +43,7 @@ export interface Env {
 
 export interface RouteContext {
   log: Logging
-  signer: Signer
+  signer: EdSigner.Signer
   config: ReturnType<typeof loadConfig>
   url: URL
   email: Email
