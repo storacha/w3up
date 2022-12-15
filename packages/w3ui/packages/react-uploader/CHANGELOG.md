@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/web3-storage/w3ui/compare/react-uploader-v3.0.0...react-uploader-v3.0.1) (2022-12-15)
+
+
+### Bug Fixes
+
+* update dependencies ([996871f](https://github.com/web3-storage/w3ui/commit/996871fc433659a56100e529a969fbb9c054e103))
+
 ## [3.0.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v2.1.2...react-uploader-v3.0.0) (2022-12-15)
 
 
