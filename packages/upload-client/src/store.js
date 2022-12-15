@@ -28,7 +28,7 @@ import { REQUEST_RETRIES } from './constants.js'
  * @returns {Promise<import('./types').CARLink>}
  */
 export async function add(
-  { issuer, with: resource, proofs, audience = servicePrincipal },
+  { issuer, with: resource, proofs, audience },
   car,
   options = {}
 ) {
@@ -42,7 +42,7 @@ export async function add(
       return await StoreCapabilities.add
         .invoke({
           issuer,
-          audience,
+          audience: audience ?? servicePrincipal,
           with: resource,
           nb: { link, size: car.size },
           proofs,
@@ -120,7 +120,7 @@ export async function add(
  * @returns {Promise<import('./types').ListResponse<import('./types').StoreListResult>>}
  */
 export async function list(
-  { issuer, with: resource, proofs, audience = servicePrincipal },
+  { issuer, with: resource, proofs, audience },
   options = {}
 ) {
   /* c8 ignore next */
@@ -128,7 +128,7 @@ export async function list(
   const result = await StoreCapabilities.list
     .invoke({
       issuer,
-      audience,
+      audience: audience ?? servicePrincipal,
       with: resource,
       proofs,
       nb: {
@@ -167,7 +167,7 @@ export async function list(
  * @param {import('./types').RequestOptions} [options]
  */
 export async function remove(
-  { issuer, with: resource, proofs, audience = servicePrincipal },
+  { issuer, with: resource, proofs, audience },
   link,
   options = {}
 ) {
@@ -176,7 +176,7 @@ export async function remove(
   const result = await StoreCapabilities.remove
     .invoke({
       issuer,
-      audience,
+      audience: audience ?? servicePrincipal,
       with: resource,
       nb: { link },
       proofs,
