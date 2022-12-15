@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/web3-storage/w3ui/compare/uploads-list-core-v2.0.0...uploads-list-core-v2.0.1) (2022-12-15)
+
+
+### Bug Fixes
+
+* lockfile ([54285d9](https://github.com/web3-storage/w3ui/commit/54285d9baaf5368dfea3aa9476b124c43d56aecc))
+
 ## [2.0.0](https://github.com/web3-storage/w3ui/compare/uploads-list-core-v1.0.3...uploads-list-core-v2.0.0) (2022-12-15)
 
 
