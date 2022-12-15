@@ -6,7 +6,7 @@ W3UI uploader core.
 
 ```sh
 npm install @w3ui/uploader-core
-```
+``` 
 
 ## Usage
 
