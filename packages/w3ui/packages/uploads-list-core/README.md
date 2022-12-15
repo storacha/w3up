@@ -6,7 +6,7 @@ W3UI uploads list core.
 
 ```sh
 npm install @w3ui/uploads-list-core
-```
+``` 
 
 ## Usage
 
