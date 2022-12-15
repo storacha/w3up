@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/web3-storage/w3ui/compare/keyring-core-v2.0.0...keyring-core-v2.0.1) (2022-12-15)
+
+
+### Bug Fixes
+
+* lockfile ([88f1a89](https://github.com/web3-storage/w3ui/commit/88f1a89213a24e8737d17917789a15173406fb21))
+
 ## [2.0.0](https://github.com/web3-storage/w3ui/compare/keyring-core-v1.0.2...keyring-core-v2.0.0) (2022-12-14)
 
 
