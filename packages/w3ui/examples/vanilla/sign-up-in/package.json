@@ -8,7 +8,7 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "@w3ui/keyring-core": "^1.0.2"
+    "@w3ui/keyring-core": "^2.0.1"
   },
   "devDependencies": {
     "vite": "^3.0.9"

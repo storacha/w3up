@@ -24,8 +24,8 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/vue-uploader",
   "dependencies": {
-    "@w3ui/uploader-core": "^2.0.2",
-    "@w3ui/vue-keyring": "^1.0.1",
+    "@w3ui/uploader-core": "^3.0.1",
+    "@w3ui/vue-keyring": "^2.0.0",
     "@web3-storage/capabilities": "^2.0.0",
     "multiformats": "^10.0.2"
   },

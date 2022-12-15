@@ -24,11 +24,11 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-uploads-list",
   "dependencies": {
-    "@w3ui/uploads-list-core": "^1.0.3",
+    "@w3ui/uploads-list-core": "^2.0.1",
     "@web3-storage/capabilities": "^2.0.0"
   },
   "peerDependencies": {
-    "@w3ui/solid-keyring": "^1.0.1",
+    "@w3ui/solid-keyring": "^2.0.0",
     "solid-js": "^1.5.0"
   },
   "devDependencies": {
