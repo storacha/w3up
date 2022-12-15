@@ -7,5 +7,6 @@ export async function version(event, env, ctx) {
     commit: env.config.COMMITHASH,
     branch: env.config.BRANCH,
     did: env.signer.did(),
+    publicKey: env.signer.verifier.toDIDKey(),
   })
 }
