@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.1.0...access-api-v4.2.0) (2022-12-15)
+
+
+### Features
+
+* **access-api:** access-api version endpoint has publicKey property ([#317](https://github.com/web3-storage/w3protocol/issues/317)) ([474d561](https://github.com/web3-storage/w3protocol/commit/474d561845f7c10a785421ef95e552385861a970))
+
 ## [4.1.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.0.0...access-api-v4.1.0) (2022-12-14)
 
 
