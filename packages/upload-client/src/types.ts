@@ -31,7 +31,7 @@ export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddResponse, never>
     list: ServiceMethod<StoreList, ListResponse<StoreListResult>, never>
-    remove: ServiceMethod<StoreRemove, null, never>
+    remove: ServiceMethod<StoreRemove, undefined, never>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddResponse, never>
@@ -40,10 +40,22 @@ export interface Service {
   }
 }
 
-export interface StoreAddResponse {
-  status: string
+export type StoreAddResponse =
+  | StoreAddDoneResponse
+  | StoreAddUploadRequiredResponse
+
+export interface StoreAddDoneResponse {
+  status: 'done'
+  with: DID
+  link: CARLink
+}
+
+export interface StoreAddUploadRequiredResponse {
+  status: 'upload'
   headers: Record<string, string>
   url: string
+  with: DID
+  link: CARLink
 }
 
 export interface UploadAddResponse {
