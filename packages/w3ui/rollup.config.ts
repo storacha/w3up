@@ -30,7 +30,7 @@ const umdDevPlugin = (type: 'development' | 'production'): Plugin =>
 const babelPlugin = babel({
   babelHelpers: 'bundled',
   exclude: /node_modules/,
-  extensions: ['.ts', '.tsx']
+  extensions: ['.ts', '.tsx', '.js']
 })
 
 export default function rollup (options: RollupOptions): RollupOptions[] {
