@@ -4,7 +4,7 @@ Example projects for using w3ui with [React](https://reactjs.org).
 
 * [**Sign up / Sign in**](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in)
 
-    Demonstrates email autentication flow for the service, including private key creation and email validation.
+    Demonstrates email authentication flow for the service, including private key creation and email validation.
 
 * [**Single File Upload**](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload)
 

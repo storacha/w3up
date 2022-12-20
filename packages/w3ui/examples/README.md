@@ -4,7 +4,7 @@ This directory contains example projects that use w3ui in each of the supported 
 
 * **Sign up / Sign in** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/sign-up-in) | [Vue](https://github.com/web3-storage/w3ui/tree/main/examples/vue/sign-up-in) | [Vanilla](https://github.com/web3-storage/w3ui/tree/main/examples/vanilla/sign-up-in)
 
-    Demonstrates email autentication flow for the service, including private key creation and email validation.
+    Demonstrates email authentication flow for the service, including private key creation and email validation.
 
 * **Single File Upload** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload) | [Solid](https://github.com/web3-storage/w3ui/tree/main/examples/solid/file-upload) | [Vue](https://github.com/web3-storage/w3ui/tree/main/examples/vue/file-upload) | [Vanilla](https://github.com/web3-storage/w3ui/tree/main/examples/vanilla/file-upload)
 
