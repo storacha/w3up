@@ -1,34 +1,33 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useUploadsList } from '@w3ui/react-uploads-list'
 import { withIdentity } from './components/Authenticator'
 import './spinner.css'
 
 export function ContentPage () {
-  const { loading, error, data, reload } = useUploadsList()
-
+  const [{ loading, error, data }, { next, reload }] = useUploadsList()
+  useEffect(() => {
+    next()
+  // we really only want to run this once so leave the deps list empty
+  }, [])
   if (error) {
     return <Errored error={error} />
   }
 
   return (
     <div className='w-90 mw9'>
-      {data && data.results.length
+      {data && data.length
         ? (
           <div className='overflow-auto'>
             <table className='w-100 mb3 collapse'>
               <thead className='near-white tl'>
                 <tr>
-                  <th className='pa3'>Data CID</th>
-                  <th className='pa3'>CAR CID</th>
-                  <th className='pa3'>Date</th>
+                  <th className='pa3'>Upload CID</th>
                 </tr>
               </thead>
               <tbody>
-                {data.results.map(({ dataCid, carCids, uploadedAt }) => (
-                  <tr key={dataCid} className='stripe-light'>
-                    <td className='pa3'>{dataCid}</td>
-                    <td className='pa3'>{carCids[0]}</td>
-                    <td className='pa3'>{uploadedAt.toLocaleString()}</td>
+                {data.map(({ root }) => (
+                  <tr key={root.toString()} className='stripe-light'>
+                    <td className='pa3'>{root.toString()}</td>
                   </tr>
                 ))}
               </tbody>
