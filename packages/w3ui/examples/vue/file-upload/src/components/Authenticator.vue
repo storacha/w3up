@@ -1,5 +1,5 @@
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, inject } from 'vue'
 import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
 
 /**
@@ -11,7 +11,10 @@ export default defineComponent({
     space: { from: KeyringProviderInjectionKey.space },
     createSpace: { from: KeyringProviderInjectionKey.createSpace },
     registerSpace: { from: KeyringProviderInjectionKey.registerSpace },
-    cancelRegisterSpace: { from: KeyringProviderInjectionKey.cancelRegisterSpace },
+    cancelRegisterSpace: { from: KeyringProviderInjectionKey.cancelRegisterSpace }
+  },
+  setup: function(){
+    inject(KeyringProviderInjectionKey.loadAgent)()
   },
   data () {
     return {

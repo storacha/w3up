@@ -1,4 +1,5 @@
 <script>
+import { inject } from 'vue'
 import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
 
 export default {
@@ -9,6 +10,9 @@ export default {
     registerSpace: { from: KeyringProviderInjectionKey.registerSpace },
     cancelRegisterSpace: { from: KeyringProviderInjectionKey.cancelRegisterSpace },
     unloadAgent: { from: KeyringProviderInjectionKey.unloadAgent }
+  },
+  setup: function(){
+    inject(KeyringProviderInjectionKey.loadAgent)()
   },
   data () {
     return {
