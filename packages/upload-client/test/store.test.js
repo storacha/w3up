@@ -13,12 +13,6 @@ import { mockService } from './helpers/mocks.js'
 
 describe('Store.add', () => {
   it('stores a DAG with the service', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const car = await randomCAR(128)
@@ -31,6 +25,15 @@ describe('Store.add', () => {
         expiration: Infinity,
       }),
     ]
+
+    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      link: car.cid,
+      with: space.did(),
+    }
 
     const service = mockService({
       store: {
@@ -75,12 +78,6 @@ describe('Store.add', () => {
   })
 
   it('throws for bucket URL client error 4xx', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9400', // this bucket always returns a 400
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const car = await randomCAR(128)
@@ -93,6 +90,15 @@ describe('Store.add', () => {
         expiration: Infinity,
       }),
     ]
+
+    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9400', // this bucket always returns a 400
+      link: car.cid,
+      with: space.did(),
+    }
 
     const service = mockService({
       store: {
@@ -126,12 +132,6 @@ describe('Store.add', () => {
   })
 
   it('throws for bucket URL server error 5xx', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9500', // this bucket always returns a 500
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const car = await randomCAR(128)
@@ -144,6 +144,15 @@ describe('Store.add', () => {
         expiration: Infinity,
       }),
     ]
+
+    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9500', // this bucket always returns a 500
+      link: car.cid,
+      with: space.did(),
+    }
 
     const service = mockService({
       store: {
@@ -177,12 +186,6 @@ describe('Store.add', () => {
   })
 
   it('skips sending CAR if status = done', async () => {
-    const res = {
-      status: 'done',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9001', // will fail the test if called
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const car = await randomCAR(128)
@@ -195,6 +198,14 @@ describe('Store.add', () => {
         expiration: Infinity,
       }),
     ]
+
+    /** @type {import('../src/types.js').StoreAddDoneResponse} */
+    const res = {
+      status: 'done',
+      // @ts-expect-error
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9500', // will fail the test if called
+    }
 
     const service = mockService({
       store: {
@@ -231,10 +242,17 @@ describe('Store.add', () => {
   })
 
   it('aborts', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const car = await randomCAR(128)
+
+    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9001', // will fail the test if called
+      url: 'http://localhost:9200',
+      link: car.cid,
+      with: space.did(),
     }
 
     const service = mockService({
@@ -255,10 +273,6 @@ describe('Store.add', () => {
       decoder: CBOR,
       channel: server,
     })
-
-    const space = await Signer.generate()
-    const agent = await Signer.generate()
-    const car = await randomCAR(128)
 
     const proofs = [
       await StoreCapabilities.add.delegate({
@@ -516,7 +530,7 @@ describe('Store.remove', () => {
           assert.equal(invCap.can, StoreCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), car.cid.toString())
-          return null
+          return {}
         }),
       },
     })

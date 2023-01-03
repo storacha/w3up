@@ -16,12 +16,6 @@ import { mockService } from './helpers/mocks.js'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const bytes = await randomBytes(128)
@@ -45,6 +39,15 @@ describe('uploadFile', () => {
         expiration: Infinity,
       }),
     ])
+
+    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      link: expectedCar.cid,
+      with: space.did(),
+    }
 
     const service = mockService({
       store: {
@@ -107,12 +110,6 @@ describe('uploadFile', () => {
   })
 
   it('allows custom shard size to be set', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const file = new Blob([await randomBytes(500_000)])
@@ -134,8 +131,23 @@ describe('uploadFile', () => {
       }),
     ])
 
+    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
+
     const service = mockService({
-      store: { add: provide(StoreCapabilities.add, () => res) },
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability }) => ({
+          ...res,
+          link: /** @type {import('../src/types').CARLink} */ (
+            capability.nb.link
+          ),
+        })),
+      },
       upload: {
         add: provide(UploadCapabilities.add, ({ capability }) => {
           if (!capability.nb) throw new Error('nb must be present')
@@ -172,18 +184,13 @@ describe('uploadFile', () => {
 
 describe('uploadDirectory', () => {
   it('uploads a directory to the service', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const files = [
       new File([await randomBytes(128)], '1.txt'),
       new File([await randomBytes(32)], '2.txt'),
     ]
+
     /** @type {import('../src/types').CARLink?} */
     let carCID = null
 
@@ -202,15 +209,28 @@ describe('uploadDirectory', () => {
       }),
     ])
 
+    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
+
     const service = mockService({
       store: {
-        add: provide(StoreCapabilities.add, ({ invocation }) => {
+        add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return res
+          return {
+            ...res,
+            link: /** @type {import('../src/types').CARLink} */ (
+              capability.nb.link
+            ),
+          }
         }),
       },
       upload: {
@@ -261,12 +281,6 @@ describe('uploadDirectory', () => {
   })
 
   it('allows custom shard size to be set', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const files = [new File([await randomBytes(500_000)], '1.txt')]
@@ -288,8 +302,23 @@ describe('uploadDirectory', () => {
       }),
     ])
 
+    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
+
     const service = mockService({
-      store: { add: provide(StoreCapabilities.add, () => res) },
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability }) => ({
+          ...res,
+          link: /** @type {import('../src/types').CARLink} */ (
+            capability.nb.link
+          ),
+        })),
+      },
       upload: {
         add: provide(UploadCapabilities.add, ({ capability }) => {
           if (!capability.nb) throw new Error('nb must be present')
