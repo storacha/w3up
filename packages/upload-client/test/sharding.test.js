@@ -41,12 +41,6 @@ describe('ShardingStream', () => {
 
 describe('ShardStoringStream', () => {
   it('stores multiple DAGs with the service', async () => {
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-    }
-
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const cars = await Promise.all([randomCAR(128), randomCAR(128)])
@@ -61,6 +55,24 @@ describe('ShardStoringStream', () => {
       }),
     ]
 
+    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse[]} */
+    const res = [
+      {
+        status: 'upload',
+        headers: { 'x-test': 'true' },
+        url: 'http://localhost:9200',
+        link: cars[0].cid,
+        with: space.did(),
+      },
+      {
+        status: 'upload',
+        headers: { 'x-test2': 'true' },
+        url: 'http://localhost:9200',
+        link: cars[0].cid,
+        with: space.did(),
+      },
+    ]
+
     const service = mockService({
       store: {
         add: provide(StoreCapabilities.add, ({ invocation }) => {
@@ -70,8 +82,7 @@ describe('ShardStoringStream', () => {
           assert.equal(invCap.can, 'store/add')
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), cars[invokes].cid.toString())
-          invokes++
-          return res
+          return res[invokes++]
         }),
       },
     })
