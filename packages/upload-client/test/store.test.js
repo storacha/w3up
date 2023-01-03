@@ -530,6 +530,7 @@ describe('Store.remove', () => {
           assert.equal(invCap.can, StoreCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), car.cid.toString())
+          return {}
         }),
       },
     })
