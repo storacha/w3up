@@ -1,7 +1,10 @@
-import { createResource, InitializedResourceReturn, ResourceOptions, ResourceReturn, ResourceSource } from 'solid-js'
+import type { InitializedResourceReturn, ResourceOptions, ResourceReturn, ResourceSource } from 'solid-js'
 import type { Space } from '@w3ui/keyring-core'
-import { list, ServiceConfig, ListResponse, UploadListResult } from '@w3ui/uploads-list-core'
+import type { ServiceConfig, ListResponse, UploadListResult } from '@w3ui/uploads-list-core'
 import type { Capability, Proof, Signer } from '@ucanto/interface'
+
+import { createResource } from 'solid-js'
+import { list } from '@w3ui/uploads-list-core'
 import { list as uploadList } from '@web3-storage/capabilities/upload'
 
 interface UploadsListSource extends ServiceConfig {

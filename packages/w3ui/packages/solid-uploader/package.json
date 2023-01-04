@@ -24,12 +24,12 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-uploader",
   "dependencies": {
+    "@w3ui/solid-keyring": "^2.0.0",
     "@w3ui/uploader-core": "^3.0.1",
     "@web3-storage/capabilities": "^2.0.0",
     "multiformats": "^10.0.2"
   },
   "peerDependencies": {
-    "@w3ui/solid-keyring": "^2.0.0",
     "solid-js": "^1.5.0"
   }
 }

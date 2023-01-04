@@ -22,16 +22,12 @@ export function ContentPage () {
                   <thead className='near-white tl'>
                     <tr>
                       <th className='pa3'>Data CID</th>
-                      <th className='pa3'>CAR CID</th>
-                      <th className='pa3'>Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {data().results.map(({ dataCid, carCids, uploadedAt }) => (
-                      <tr key={dataCid} className='stripe-light'>
-                        <td className='pa3'>{dataCid}</td>
-                        <td className='pa3'>{carCids[0]}</td>
-                        <td className='pa3'>{uploadedAt.toLocaleString()}</td>
+                    {data().results.map(({ root }) => (
+                      <tr key={root.toString()} className='stripe-light'>
+                        <td className='pa3'>{root.toString()}</td>
                       </tr>
                     ))}
                   </tbody>
