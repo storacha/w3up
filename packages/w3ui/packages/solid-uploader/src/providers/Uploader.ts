@@ -1,6 +1,8 @@
+import type { UploaderContextState, UploaderContextActions, CARMetadata, ServiceConfig } from '@w3ui/uploader-core'
+
 import { createContext, useContext, createComponent, ParentComponent } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { uploadFile, uploadDirectory, UploaderContextState, UploaderContextActions, CARMetadata, ServiceConfig } from '@w3ui/uploader-core'
+import { uploadFile, uploadDirectory } from '@w3ui/uploader-core'
 import { useKeyring } from '@w3ui/solid-keyring'
 import { add as storeAdd } from '@web3-storage/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/capabilities/upload'
@@ -18,7 +20,7 @@ const UploaderContext = createContext<UploaderContextValue>([
   }
 ])
 
-export interface UploaderProviderProps extends ServiceConfig {}
+export interface UploaderProviderProps extends ServiceConfig { }
 
 /**
  * Provider for actions and state to facilitate uploads to the service.

@@ -6,16 +6,18 @@ runs:
   steps:
     - uses: actions/setup-node@v3
       with:
-        registry-url: 'https://registry.npmjs.org'
         node-version: 16
-        cache: 'npm'
-    - run: npm ci
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 7
+        run_install: |
+          - recursive: true
+            args: [--frozen-lockfile, --strict-peer-dependencies]
+    - run: pnpm run lint
       shell: bash
-    - run: npm run lint
+    - run: pnpm run compile
       shell: bash
-    - run: npm run compile
+    - run: pnpm run build
       shell: bash
-    - run: npm run build
-      shell: bash
-    - run: npm test
+    - run: pnpm test
       shell: bash

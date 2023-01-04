@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react'
-import { createAgent, Space, getCurrentSpace, getSpaces, KeyringContextState, KeyringContextActions, ServiceConfig } from '@w3ui/keyring-core'
+import { createAgent, Space, getCurrentSpace, getSpaces } from '@w3ui/keyring-core'
+import type { KeyringContextState, KeyringContextActions, ServiceConfig } from '@w3ui/keyring-core'
 import type { Agent } from '@web3-storage/access'
 import type { Capability, DID, Proof, Signer } from '@ucanto/interface'
 
@@ -17,13 +18,13 @@ export const KeyringContext = createContext<KeyringContextValue>([
     agent: undefined
   },
   {
-    loadAgent: async () => {},
-    unloadAgent: async () => {},
-    resetAgent: async () => {},
+    loadAgent: async () => { },
+    unloadAgent: async () => { },
+    resetAgent: async () => { },
     createSpace: async () => { throw new Error('missing keyring context provider') },
-    setCurrentSpace: async () => {},
-    registerSpace: async () => {},
-    cancelRegisterSpace: () => {},
+    setCurrentSpace: async () => { },
+    registerSpace: async () => { },
+    cancelRegisterSpace: () => { },
     getProofs: async () => []
   }
 ])

@@ -4,10 +4,16 @@ import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
 import { add as storeAdd } from '@web3-storage/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/capabilities/upload'
 
+interface UploaderProviderInjectionKeysType {
+  uploadFile: InjectionKey<UploaderContextActions['uploadFile']>
+  uploadDirectory: InjectionKey<UploaderContextActions['uploadDirectory']>
+  storedDAGShards: InjectionKey<Ref<UploaderContextState['storedDAGShards']>>
+}
+
 /**
  * Injection keys for uploader context.
  */
-export const UploaderProviderInjectionKey = {
+export const UploaderProviderInjectionKey: UploaderProviderInjectionKeysType = {
   uploadFile: Symbol('w3ui uploader uploadFile') as InjectionKey<UploaderContextActions['uploadFile']>,
   uploadDirectory: Symbol('w3ui uploader uploadDirectory') as InjectionKey<UploaderContextActions['uploadDirectory']>,
   storedDAGShards: Symbol('w3ui uploader storedDAGShards') as InjectionKey<Ref<UploaderContextState['storedDAGShards']>>

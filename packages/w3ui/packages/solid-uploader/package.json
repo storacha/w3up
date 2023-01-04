@@ -2,10 +2,13 @@
   "name": "@w3ui/solid-uploader",
   "version": "3.0.1",
   "description": "Solid adapter for w3ui uploader.",
-  "module": "build/esm/index.js",
-  "main": "build/cjs/index.js",
-  "browser": "build/umd/index.production.js",
-  "types": "build/types/solid-uploader/src/index.d.ts",
+  "main": "src/index.ts",
+  "publishConfig": {
+    "module": "build/esm/index.js",
+    "main": "build/cjs/index.js",
+    "browser": "build/umd/index.production.js",
+    "types": "build/types/solid-uploader/src/index.d.ts"
+  },
   "scripts": {
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
@@ -24,8 +27,8 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-uploader",
   "dependencies": {
-    "@w3ui/solid-keyring": "^2.0.0",
-    "@w3ui/uploader-core": "^3.0.1",
+    "@w3ui/solid-keyring": "workspace:^",
+    "@w3ui/uploader-core": "workspace:^",
     "@web3-storage/capabilities": "^2.0.0",
     "multiformats": "^10.0.2"
   },
