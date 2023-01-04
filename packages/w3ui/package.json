@@ -48,6 +48,7 @@
     "packages/uploads-list-core"
   ],
   "devDependencies": {
+    "@babel/core": "^7.0.0",
     "@babel/plugin-transform-modules-commonjs": "^7.18.6",
     "@babel/preset-env": "^7.19.0",
     "@babel/preset-react": "^7.18.6",
@@ -58,6 +59,7 @@
     "@rollup/plugin-node-resolve": "^14.0.0",
     "@rollup/plugin-replace": "^4.0.0",
     "@types/jest": "^29.0.2",
+    "@types/node": "^18.11.18",
     "@types/react": "^18.0.18",
     "@web-std/file": "^3.0.2",
     "jest": "^27.5.1",
@@ -68,6 +70,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.8.1",
     "solid-js": "^1.5.6",
+    "svelte": "^3.55.0",
     "ts-node": "^10.9.1",
     "ts-standard": "^12.0.1",
     "typescript": "^4.8.2",
