@@ -22,5 +22,6 @@ describe('api-gateway', () => {
       `did:web:example.com`,
       'did document has id did from request host header'
     )
+    assert.equal('@context' in didDocument, true, 'did document has @context')
   })
 })
