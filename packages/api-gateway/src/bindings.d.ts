@@ -46,7 +46,7 @@ declare namespace ModuleWorker {
     request: Request,
     env?: Environment,
     ctx?: Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>
-  ) => Promise<Response> | Response
+  ) => Promise<Response>
 
   type CronHandler<Environment extends Bindings = Bindings> = (
     event: Omit<ScheduledEvent, 'waitUntil'>,
