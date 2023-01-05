@@ -28,18 +28,7 @@ import assert from 'node:assert'
 /**
  * @param {Miniflare} [miniflare]
  */
-export function withMiniflare(
-  miniflare = new Miniflare({
-    packagePath: true,
-    wranglerConfigPath: true,
-    sourceMap: true,
-    modules: true,
-    bindings: {},
-    d1Persist: undefined,
-    buildCommand: undefined,
-    port: 0,
-  })
-) {
+export function withMiniflare(miniflare = createDefaultMiniflare()) {
   /**
    * @param {(ctx: {url: URL}) => Promise<void>} doWork
    */
