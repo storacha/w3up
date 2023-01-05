@@ -10,46 +10,15 @@ import * as ucanto from '@ucanto/core'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 
-/**
- * create a Request that will invoke a UCAN over HTTP
- *
- * @template {DagUCAN.Capability} C
- * @param {object} invocation
- * @param {DagUCAN.Audience} invocation.audience
- * @param {DagUCAN.Signer<DagUCAN.DID, DagUCAN.SigAlg>} invocation.issuer
- * @param {C} invocation.capability
- * @returns {Promise<RequestInit>}
- */
-async function createDagUcanInvocationRequest(invocation) {
-  const ucan = await DagUCAN.issue({
-    capabilities: [invocation.capability],
-    ...invocation,
-  })
-  /** @type {RequestInit} */
-  const request = {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${DagUCAN.format(ucan)}`,
-    },
-  }
-  return request
-}
+describe('ApiGatewayWorker in miniflare', () => {
+  testApiGateway((useFetch) => () => createMiniflareTester()(useFetch))
+})
 
-/**
- * create objects useful for testing a ucan invocation
- *
- * @param {DagUCAN.Capability} capability - capabilities in invocation
- */
-async function simpleInvocationScenario(capability) {
-  const issuer = await ed25519Principal.generate()
-  const audience = await ed25519Principal.generate()
-  const invocation = {
-    issuer,
-    audience,
-    capability,
-  }
-  return { issuer, audience, invocation }
-}
+describe('ApiGatewayWorker', () => {
+  testApiGateway(
+    (useFetch) => () => createWorkerTester(new ApiGatewayWorker())(useFetch)
+  )
+})
 
 /**
  * @typedef {(testName: string, test: () => void|Promise<void>) => void|Promise<void>} TestFunction
@@ -151,12 +120,43 @@ async function testServesDidWebDocument(fetch, baseUrl) {
   assert.equal('@context' in didDocument, true, 'did document has @context')
 }
 
-describe('ApiGatewayWorker in miniflare', () => {
-  testApiGateway((useFetch) => () => createMiniflareTester()(useFetch))
-})
+/**
+ * create a Request that will invoke a UCAN over HTTP
+ *
+ * @template {DagUCAN.Capability} C
+ * @param {object} invocation
+ * @param {DagUCAN.Audience} invocation.audience
+ * @param {DagUCAN.Signer<DagUCAN.DID, DagUCAN.SigAlg>} invocation.issuer
+ * @param {C} invocation.capability
+ * @returns {Promise<RequestInit>}
+ */
+async function createDagUcanInvocationRequest(invocation) {
+  const ucan = await DagUCAN.issue({
+    capabilities: [invocation.capability],
+    ...invocation,
+  })
+  /** @type {RequestInit} */
+  const request = {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${DagUCAN.format(ucan)}`,
+    },
+  }
+  return request
+}
 
-describe('ApiGatewayWorker', () => {
-  testApiGateway(
-    (useFetch) => () => createWorkerTester(new ApiGatewayWorker())(useFetch)
-  )
-})
+/**
+ * create objects useful for testing a ucan invocation
+ *
+ * @param {DagUCAN.Capability} capability - capabilities in invocation
+ */
+async function simpleInvocationScenario(capability) {
+  const issuer = await ed25519Principal.generate()
+  const audience = await ed25519Principal.generate()
+  const invocation = {
+    issuer,
+    audience,
+    capability,
+  }
+  return { issuer, audience, invocation }
+}
