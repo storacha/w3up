@@ -12,8 +12,8 @@ export default function Authenticator ({ children }) {
 
   if (submitted) {
     return (
-      <div className='w-90 w-50-ns mw6'>
-        <h1>Verify your email address!</h1>
+      <div>
+        <h1 className='near-white'>Verify your email address!</h1>
         <p>Click the link in the email we sent to {email} to sign in.</p>
         <form onSubmit={e => { e.preventDefault(); cancelRegisterSpace() }}>
           <button type='submit' className='ph3 pv2'>Cancel</button>
