@@ -56,7 +56,16 @@ export class ApiGatewayWorker {
    */
   async fetchGetDidDocument(request, env) {
     const did = `did:web:${new URL(request.url).host}`
-    const didDocument = { id: did }
+    const didDocument = {
+      '@context': [
+        'https://www.w3.org/ns/did/v1',
+        // resolves ambiguous fragment uris relative to the did, not earlier context entries
+        {
+          '@base': did,
+        },
+      ],
+      id: did,
+    }
     const response = {
       body: JSON.stringify(didDocument, undefined, 2),
       headers: {
