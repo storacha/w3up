@@ -19,34 +19,20 @@ export function routeContextFromRequest(request) {
 }
 
 /**
- * @returns {Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>}
- */
-function createMockExecutionContext() {
-  return {
-    waitUntil() {
-      throw new Error(`waitUntil() not implemented`)
-    },
-    passThroughOnException() {
-      throw new Error(`passThroughOnException() not implemented`)
-    },
-  }
-}
-
-/**
  * @implements {ModuleWorker}
  */
 export class ApiGatewayWorker {
   /**
    * @type {ModuleWorker['fetch']}
    */
-  async fetch(request, env) {
+  fetch = async (request, env, executionContext) => {
     const router = new Router({ onNotFound: notFound })
     router.add('get', '/', () => new Response('Hello world!', { status: 200 }))
     router.add('get', '/.well-known/did.json', this.fetchGetDidDocument)
     const response = await router.fetch(
       request,
       env,
-      createMockExecutionContext()
+      executionContext ?? createMockExecutionContext()
     )
     return response
   }
@@ -54,7 +40,7 @@ export class ApiGatewayWorker {
   /**
    * @type {ModuleWorker['fetch']}
    */
-  async fetchGetDidDocument(request, env) {
+  fetchGetDidDocument = async (request, env, executionContext) => {
     const did = `did:web:${new URL(request.url).host}`
     const didDocument = {
       '@context': [
@@ -80,3 +66,17 @@ export class ApiGatewayWorker {
 }
 
 export default new ApiGatewayWorker()
+
+/**
+ * @returns {Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>}
+ */
+function createMockExecutionContext() {
+  return {
+    waitUntil() {
+      throw new Error(`waitUntil() not implemented`)
+    },
+    passThroughOnException() {
+      throw new Error(`passThroughOnException() not implemented`)
+    },
+  }
+}

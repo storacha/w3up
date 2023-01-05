@@ -44,8 +44,8 @@ export type Bindings = Record<
 declare namespace ModuleWorker {
   type FetchHandler<Environment extends Bindings = Bindings> = (
     request: Request,
-    env: Environment
-    // ctx: Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>
+    env?: Environment,
+    ctx?: Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>
   ) => Promise<Response> | Response
 
   type CronHandler<Environment extends Bindings = Bindings> = (

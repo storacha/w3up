@@ -11,9 +11,9 @@ describe('api-gateway', () => {
   })
   it('has a did doc', async () => {
     assert.equal(1, 1)
-    const worker = new ApiGatewayWorker()
+    const { fetch } = new ApiGatewayWorker()
     const request = new Request('https://example.com/.well-known/did.json')
-    const response = await worker.fetch(request, {})
+    const response = await fetch(request)
     assert.equal(response.status, 200)
     assert.equal(response.headers.get('content-type'), 'application/json')
     const didDocument = await response.json()
