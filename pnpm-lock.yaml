@@ -240,6 +240,93 @@ importers:
       typescript: 4.9.4
       wrangler: 2.6.2
 
+  packages/api-gateway:
+    specifiers:
+      '@cloudflare/workers-types': ^3.18.0
+      '@databases/split-sql-query': ^1.0.3
+      '@databases/sql': ^3.2.0
+      '@ipld/dag-ucan': ^3.0.1
+      '@sentry/cli': 2.7.0
+      '@types/assert': ^1.5.6
+      '@types/git-rev-sync': ^2.0.0
+      '@types/mocha': ^10.0.1
+      '@types/node': ^18.11.14
+      '@types/qrcode': ^1.5.0
+      '@ucanto/core': ^4.0.3
+      '@ucanto/interface': ^4.0.3
+      '@ucanto/principal': ^4.0.3
+      '@ucanto/server': ^4.0.3
+      '@ucanto/transport': ^4.0.3
+      '@web3-storage/access': workspace:^
+      '@web3-storage/capabilities': workspace:^
+      '@web3-storage/worker-utils': 0.4.3-dev
+      better-sqlite3: 8.0.1
+      buffer: ^6.0.3
+      dotenv: ^16.0.3
+      esbuild: ^0.16.4
+      git-rev-sync: ^3.0.2
+      hd-scripts: ^3.0.2
+      is-subset: ^0.1.1
+      kysely: ^0.22.0
+      kysely-d1: ^0.0.6
+      miniflare: ^2.11.0
+      mocha: ^10.2.0
+      p-retry: ^5.1.2
+      p-wait-for: ^5.0.0
+      preact: ^10.11.3
+      preact-render-to-string: ^5.2.6
+      process: ^0.11.10
+      qrcode: ^1.5.1
+      readable-stream: ^4.2.0
+      sade: ^1.8.1
+      toucan-js: ^2.7.0
+      typescript: 4.9.4
+      urlpattern-polyfill: ^6.0.2
+      wrangler: ^2.6.2
+    dependencies:
+      '@ipld/dag-ucan': 3.0.1
+      '@ucanto/core': 4.0.3
+      '@ucanto/interface': 4.0.3
+      '@ucanto/principal': 4.0.3
+      '@ucanto/server': 4.0.3
+      '@ucanto/transport': 4.0.3
+      '@web3-storage/access': link:../access-client
+      '@web3-storage/capabilities': link:../capabilities
+      '@web3-storage/worker-utils': 0.4.3-dev
+      kysely: 0.22.0
+      kysely-d1: 0.0.6_kysely@0.22.0
+      p-retry: 5.1.2
+      preact: 10.11.3
+      preact-render-to-string: 5.2.6_preact@10.11.3
+      qrcode: 1.5.1
+      toucan-js: 2.7.0
+    devDependencies:
+      '@cloudflare/workers-types': 3.18.0
+      '@databases/split-sql-query': 1.0.3_@databases+sql@3.2.0
+      '@databases/sql': 3.2.0
+      '@sentry/cli': 2.7.0
+      '@types/assert': 1.5.6
+      '@types/git-rev-sync': 2.0.0
+      '@types/mocha': 10.0.1
+      '@types/node': 18.11.14
+      '@types/qrcode': 1.5.0
+      better-sqlite3: 8.0.1
+      buffer: 6.0.3
+      dotenv: 16.0.3
+      esbuild: 0.16.4
+      git-rev-sync: 3.0.2
+      hd-scripts: 3.0.2
+      is-subset: 0.1.1
+      miniflare: 2.11.0
+      mocha: 10.2.0
+      p-wait-for: 5.0.0
+      process: 0.11.10
+      readable-stream: 4.2.0
+      sade: 1.8.1
+      typescript: 4.9.4
+      urlpattern-polyfill: 6.0.2
+      wrangler: 2.6.2
+
   packages/capabilities:
     specifiers:
       '@types/assert': ^1.5.6
@@ -1358,12 +1445,8 @@ packages:
     resolution: {integrity: sha512-/fvYntiO1GeICvqbQ3doGDIP97vWmvFt83GKguJ6prmQM2iXZfFcq6YE8KteFyRtX2/h5Hf91BYvPodJKFYv5Q==}
     dev: true
 
-  /@types/node/18.11.13:
-    resolution: {integrity: sha512-IASpMGVcWpUsx5xBOrxMj7Bl8lqfuTY7FKAnPmu5cHkfQVWF8GulWS1jbRqA934qZL35xh5xN/+Xe/i26Bod4w==}
-
   /@types/node/18.11.14:
     resolution: {integrity: sha512-0KXV57tENYmmJMl+FekeW9V3O/rlcqGQQJ/hNh9r8pKIj304pskWuEd8fCyNT86g/TpO0gcOTiLzsHLEURFMIQ==}
-    dev: true
 
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -6003,7 +6086,7 @@ packages:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 18.11.13
+      '@types/node': 18.11.14
       long: 5.2.1
 
   /proxy-from-env/1.1.0:
@@ -7041,6 +7124,12 @@ packages:
 
   /urlpattern-polyfill/4.0.3:
     resolution: {integrity: sha512-DOE84vZT2fEcl9gqCUTcnAw5ZY5Id55ikUcziSUntuEFL3pRvavg5kwDmTEUJkeCHInTlV/HexFomgYnzO5kdQ==}
+    dev: true
+
+  /urlpattern-polyfill/6.0.2:
+    resolution: {integrity: sha512-5vZjFlH9ofROmuWmXM9yj2wljYKgWstGwe8YTyiqM7hVum/g9LyCizPZtb3UqsuppVwety9QJmfc42VggLpTgg==}
+    dependencies:
+      braces: 3.0.2
     dev: true
 
   /util-deprecate/1.0.2:

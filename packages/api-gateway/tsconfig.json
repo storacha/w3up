@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "types": ["@cloudflare/workers-types", "mocha"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  },
+  "include": ["src", "scripts", "test", "package.json", "sql"],
+  "exclude": ["**/node_modules/**"],
+  "references": [{ "path": "../access-client" }, { "path": "../capabilities" }]
+}
