@@ -15,7 +15,9 @@
   },
   "license": "(Apache-2.0 OR MIT)",
   "dependencies": {
+    "@ipld/dag-cbor": "^8.0.0",
     "@ipld/dag-ucan": "^3.0.1",
+    "@ucanto/client": "^4.0.3",
     "@ucanto/core": "^4.0.3",
     "@ucanto/interface": "^4.0.3",
     "@ucanto/principal": "^4.0.3",

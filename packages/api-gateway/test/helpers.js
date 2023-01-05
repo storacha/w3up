@@ -2,9 +2,15 @@ import { Miniflare } from 'miniflare'
 import assert from 'node:assert'
 
 /**
+ * @typedef {
+ * |((input: URL|RequestInfo, init?: RequestInit) => Promise<Response>)
+ * } FetchFunction
+ */
+
+/**
  * @typedef FetchTestContext
  * @property {URL} url
- * @property {(request: Request) => Promise<Response>} fetch
+ * @property {FetchFunction} fetch
  */
 
 /**
@@ -13,6 +19,10 @@ import assert from 'node:assert'
 
 /**
  * @typedef {(testName: string, test: FetchTest) => void} FetchTestNamer
+ */
+
+/**
+ * @typedef {(doWork: FetchTest) => () => Promise<void>} FetchTestContextCreator
  */
 
 /**
@@ -85,9 +95,13 @@ export function createDefaultMiniflare() {
 
 /**
  * @param {Miniflare} miniflare
- * @returns (test: FethTest) => Promise<void>
+ * @param {FetchFunction} [fetch]
+ * @returns {(test: FetchTest) => Promise<void>}
  */
-export function createMiniflareTester(miniflare = createDefaultMiniflare()) {
+export function createMiniflareTester(
+  miniflare = createDefaultMiniflare(),
+  fetch = globalThis.fetch
+) {
   /**
    * @param {(ctx: FetchTestContext) => Promise<void>} test
    */
@@ -95,7 +109,7 @@ export function createMiniflareTester(miniflare = createDefaultMiniflare()) {
     await withMiniflare(miniflare)(async ({ url }) => {
       await test({
         url,
-        fetch: (request) => fetch(request),
+        fetch,
       })
     })
   }
@@ -103,7 +117,7 @@ export function createMiniflareTester(miniflare = createDefaultMiniflare()) {
 
 /**
  * @param {{ fetch: import("../src").ModuleWorker['fetch'] }} worker
- * @returns (test: FethTest) => Promise<void>
+ * @returns {(test: FetchTest) => Promise<void>}
  */
 export function createWorkerTester(worker) {
   /**
@@ -112,7 +126,14 @@ export function createWorkerTester(worker) {
   return async (test) => {
     await test({
       url: new URL('http://example.com'),
-      fetch: (request) => worker.fetch(request),
+      /**
+       * @param {URL|RequestInfo} input
+       * @param {RequestInit} [init]
+       */
+      fetch: (input, init) => {
+        const response = new Request(input, init)
+        return worker.fetch(response)
+      },
     })
   }
 }
