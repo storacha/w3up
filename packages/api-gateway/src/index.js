@@ -2,6 +2,7 @@
 // import { preflight } from '@web3-storage/worker-utils/cors'
 import { notFound } from '@web3-storage/worker-utils/response'
 import { Router } from '@web3-storage/worker-utils/router'
+import * as dagCbor from '@ipld/dag-cbor'
 // import { version } from './routes/version.js'
 
 /**
@@ -28,12 +29,26 @@ export class ApiGatewayWorker {
   fetch = async (request, env, executionContext) => {
     const router = new Router({ onNotFound: notFound })
     router.add('get', '/', () => new Response('Hello world!', { status: 200 }))
+    router.add('post', '/', this.fetchPostIndex)
     router.add('get', '/.well-known/did.json', this.fetchGetDidDocument)
     const response = await router.fetch(
       request,
       env,
       executionContext ?? createMockExecutionContext()
     )
+    return response
+  }
+
+  /**
+   * @type {ModuleWorker['fetch']}
+   */
+  fetchPostIndex = async (request, env, executionContext) => {
+    const status = 200
+    const headers = {
+      'content-type': 'application/cbor',
+    }
+    const body = dagCbor.encode({})
+    const response = new Response(body, { status, headers })
     return response
   }
 

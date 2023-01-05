@@ -245,6 +245,7 @@ importers:
       '@cloudflare/workers-types': ^3.18.0
       '@databases/split-sql-query': ^1.0.3
       '@databases/sql': ^3.2.0
+      '@ipld/dag-cbor': ^8.0.0
       '@ipld/dag-ucan': ^3.0.1
       '@sentry/cli': 2.7.0
       '@types/assert': ^1.5.6
@@ -252,6 +253,7 @@ importers:
       '@types/mocha': ^10.0.1
       '@types/node': ^18.11.14
       '@types/qrcode': ^1.5.0
+      '@ucanto/client': ^4.0.3
       '@ucanto/core': ^4.0.3
       '@ucanto/interface': ^4.0.3
       '@ucanto/principal': ^4.0.3
@@ -284,7 +286,9 @@ importers:
       urlpattern-polyfill: ^6.0.2
       wrangler: ^2.6.2
     dependencies:
+      '@ipld/dag-cbor': 8.0.0
       '@ipld/dag-ucan': 3.0.1
+      '@ucanto/client': 4.0.3
       '@ucanto/core': 4.0.3
       '@ucanto/interface': 4.0.3
       '@ucanto/principal': 4.0.3
