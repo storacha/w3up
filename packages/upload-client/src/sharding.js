@@ -46,7 +46,9 @@ export class ShardingStream extends TransformStream {
 
         const rootBlock = shard.at(-1)
         if (rootBlock != null) {
-          controller.enqueue(await encode(shard, rootBlock.cid))
+          controller.enqueue(
+            await encode(shard, options.rootCID ?? rootBlock.cid)
+          )
         }
       },
     })
