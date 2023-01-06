@@ -139,6 +139,8 @@ await Upload.add(conf, rootCID, carCIDs)
 - [API](#api)
   - [`uploadDirectory`](#uploaddirectory)
   - [`uploadFile`](#uploadfile)
+  - [`uploadCAR`](#uploadcar)
+  - [`CAR.BlockStream`](#carblockstream)
   - [`CAR.encode`](#carencode)
   - [`ShardingStream`](#shardingstream)
   - [`ShardStoringStream`](#shardstoringstream)
@@ -204,6 +206,35 @@ Required delegated capability proofs: `store/add`, `upload/add`
 
 More information: [`InvocationConfig`](#invocationconfig)
 
+### `uploadCAR`
+
+```ts
+function uploadCAR(
+  conf: InvocationConfig,
+  car: Blob,
+  options: {
+    retries?: number
+    signal?: AbortSignal
+    onShardStored?: ShardStoredCallback
+    shardSize?: number
+  } = {}
+): Promise<void>
+```
+
+Uploads a CAR file to the service. The difference between this function and [Store.add](#storeadd) is that the CAR file is automatically sharded and an "upload" is registered (see [`Upload.add`](#uploadadd)), linking the individual shards. Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
+
+Required delegated capability proofs: `store/add`, `upload/add`
+
+More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
+
+### `CAR.BlockStream`
+
+```ts
+class BlockStream extends ReadableStream<Block>
+```
+
+Creates a readable stream of blocks from a CAR file `Blob`.
+
 ### `CAR.encode`
 
 ```ts
@@ -253,7 +284,7 @@ function add(
 ): Promise<CID>
 ```
 
-Store a CAR file to the service.
+Store a CAR file to the service. Returns the CID of the CAR file stored.
 
 Required delegated capability proofs: `store/add`
 
