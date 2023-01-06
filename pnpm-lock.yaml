@@ -255,6 +255,7 @@ importers:
       '@ucanto/core': ^4.0.3
       '@ucanto/interface': ^4.0.3
       '@ucanto/principal': ^4.0.3
+      '@ucanto/server': ^4.0.3
       '@ucanto/transport': ^4.0.3
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
@@ -282,6 +283,7 @@ importers:
       '@ucanto/core': 4.0.3
       '@ucanto/interface': 4.0.3
       '@ucanto/principal': 4.0.3
+      '@ucanto/server': 4.0.3
       '@ucanto/transport': 4.0.3
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
