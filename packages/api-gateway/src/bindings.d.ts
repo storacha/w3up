@@ -5,25 +5,10 @@ export {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Env {
-  // // vars
-  // ENV: string
-  // DEBUG: string
-  // /**
-  //  * publicly advertised decentralized identifier of the running api service
-  //  * * this may be used to filter incoming ucanto invocations
-  //  */
-  // DID: string
-  // // secrets
-  // PRIVATE_KEY: string
-  // SENTRY_DSN: string
-  // POSTMARK_TOKEN: string
-  // LOGTAIL_TOKEN: string
-  // // bindings
-  // SPACES: KVNamespace
-  // VALIDATIONS: KVNamespace
-  // W3ACCESS_METRICS: AnalyticsEngine
-  // // eslint-disable-next-line @typescript-eslint/naming-convention
-  // __D1_BETA__: D1Database
+  // environment name
+  ENV: string
+  // what kind of debug info to show. falsy if none
+  DEBUG: string
 }
 
 export interface RouteContext {
