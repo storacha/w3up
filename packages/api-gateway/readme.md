@@ -15,14 +15,3 @@ pnpm run lint
 # Run tests
 pnpm run test
 ```
-
-## Migrations
-
-### Create migration
-
-```bash
-pnpm exec wrangler d1 migrations create __D1_BETA__ "<description>"
-```
-
-This will create a new file inside the `migrations` folder where you can write SQL.
-

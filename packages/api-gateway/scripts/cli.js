@@ -12,7 +12,6 @@ import { Log, LogLevel, Miniflare } from 'miniflare'
 
 // @ts-ignore
 import git from 'git-rev-sync'
-import { migrate } from './migrate.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const require = createRequire(__dirname)
@@ -120,9 +119,8 @@ prog
 
     const server = await mf.createServer() // Create http.Server instance
     server.listen(8787, async () => {
-      const binds = await mf.getBindings()
-      const db = /** @type {D1Database} */ (binds.__D1_BETA__)
-      await migrate(db)
+      // const binds = await mf.getBindings()
+      // const db = /** @type {D1Database} */ (binds.__D1_BETA__)
     })
   })
 prog.parse(process.argv)
