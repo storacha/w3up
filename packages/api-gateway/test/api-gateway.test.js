@@ -12,6 +12,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as DID from '@ipld/dag-ucan/did'
+import { Space, Store } from '@web3-storage/capabilities'
 
 describe('ApiGatewayWorker in miniflare', () => {
   testApiGateway((useFetch) => () => createMiniflareTester()(useFetch))
@@ -73,11 +74,41 @@ function testApiGateway(
   test(
     'responds to @web3-storage/capabilities invocations over ucanto http car/cbor',
     withFetch(async ({ url, fetch }) => {
+      const invoker = await ed25519Principal.generate()
       const audience = DID.parse('did:web:web3.storage')
       const connection = createHttpConnection({ url, audience, fetch })
-      /** @type {Array<{ capability: DagUCAN.Capability, error?: (error: unknown) => void }>} */
-      const capabilities = [
-        { capability: { can: 'test/success', with: 'ipfs:dag.house' } },
+      /**
+       * @typedef CanAssertError
+       * @property {(error: unknown) => void} [error] - assert on any errors
+       */
+      /**
+       * @typedef {object} HasCapability
+       * @property {DagUCAN.Capability} capability
+       */
+      /**
+       * @typedef {object} HasInvocation
+       * @property {import('@ucanto/interface').IssuedInvocationView} invocation
+       */
+      /**
+       * @typedef {(HasCapability|HasInvocation)&CanAssertError} TestCase
+       */
+      /** @type {Array<TestCase>} */
+      const casesForAccessApi = [
+        {
+          capability: Space.info.create({
+            with: invoker.did(),
+          }),
+          error: (result) => {
+            assert(result, 'result is truthy')
+            assert(
+              typeof result === 'object' &&
+                'stack' in result &&
+                typeof result.stack === 'string',
+              'result error has stack string'
+            )
+            assert(result.stack.includes('Space not found'))
+          },
+        },
         {
           capability: Voucher.claim.create({
             with: await ed25519Principal.generate().then((p) => p.did()),
@@ -103,12 +134,45 @@ function testApiGateway(
           },
         },
       ]
-      for (const { capability, error } of capabilities) {
-        const { invocation } = await simpleInvocationScenario({
-          audience,
-          capability,
-        })
-        const results = await connection.execute(ucanto.invoke(invocation))
+      const space = await ed25519Principal.generate()
+      /** @type {TestCase[]} */
+      const casesForUploadApi = [
+        {
+          invocation: Store.list.invoke({
+            issuer: invoker,
+            audience,
+            proofs: [
+              // space delegates all to invoker
+              await ucanto.Delegation.delegate({
+                issuer: space,
+                audience: invoker,
+                capabilities: [{ can: '*', with: space.did() }],
+              }),
+            ],
+            with: space.did(),
+            nb: {},
+          }),
+        },
+      ]
+      /** @type {TestCase[]} */
+      const cases = [
+        { capability: { can: 'test/success', with: 'ipfs:dag.house' } },
+        ...casesForAccessApi,
+        ...casesForUploadApi,
+      ]
+      for (const { error, ...testCase } of cases) {
+        const invocation = await (async () => {
+          if ('invocation' in testCase) {
+            return testCase.invocation
+          }
+          const scenario = await simpleInvocationScenario({
+            issuer: invoker,
+            audience,
+            capability: testCase.capability,
+          })
+          return ucanto.invoke(scenario.invocation)
+        })()
+        const results = await connection.execute(invocation)
         assert.ok(results, 'ucanto invocation returns truthy results')
         assert.ok(results.length === 1, 'results is of length 1')
         const result = results[0]
@@ -116,7 +180,13 @@ function testApiGateway(
           assert.equal(result.error, true, 'error in result')
           error(result)
         } else {
-          assert.equal('error' in result, false, 'no error in result')
+          try {
+            assert.equal('error' in result, false, 'no error in result')
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.warn('error result', result)
+            throw error
+          }
         }
       }
     })
@@ -162,11 +232,12 @@ async function testServesDidWebDocument(fetch, baseUrl) {
  * create objects useful for testing a ucan invocation
  *
  * @param {object} options
+ * @param {ed25519Principal.Signer.Signer} [options.issuer]
  * @param {DagUCAN.Audience} [options.audience]
  * @param {DagUCAN.Capability} options.capability - capabilities in invocation
  */
 async function simpleInvocationScenario(options) {
-  const issuer = await ed25519Principal.generate()
+  const issuer = options.issuer || (await ed25519Principal.generate())
   const audience = options.audience || (await ed25519Principal.generate())
   /** @type {Invocation} */
   const invocation = {

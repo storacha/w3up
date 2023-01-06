@@ -112,6 +112,13 @@ function getUpstreamForCapability(capability) {
       return new Response(body, { headers, status: 200 })
     }
   }
+  if (capability.can.startsWith('store/')) {
+    return async (request) => {
+      const upstreamRequest = new Request('https://up.web3.storage', request)
+      const response = await fetch(upstreamRequest)
+      return response
+    }
+  }
   return async (request) => {
     const upstreamRequest = new Request('https://access.web3.storage', request)
     const response = await fetch(upstreamRequest)
