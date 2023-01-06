@@ -57,7 +57,7 @@ prog
         format: 'esm',
         outfile: 'dist/worker.js',
         legalComments: 'external',
-        inject: [path.join(__dirname, 'node-globals.js')],
+        inject: [path.join(__dirname, 'build/injected-node-globals.js')],
         plugins: [PluginAlias],
         define: {
           ACCOUNT_VERSION: JSON.stringify(version),
