@@ -15,9 +15,5 @@ runs:
             args: [--frozen-lockfile, --strict-peer-dependencies]
     - run: pnpm run lint
       shell: bash
-    - run: pnpm run compile
-      shell: bash
-    - run: pnpm run build
-      shell: bash
     - run: pnpm test
       shell: bash

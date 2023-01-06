@@ -2,6 +2,7 @@
   <a href="https://beta.ui.web3.storage"><img width="250" src="https://bafybeianokbu4dgpfd2mq3za3wejtpscsy25ad6vocmmtxskcq6zig4cuq.ipfs.w3s.link/w3ui-logo-stroke.png" alt="Web3.Storage UI logo" /></a>
 </h1>
 
+
 <h3 align="center">Headless, type-safe, UI components for the next generation Web3.Storage APIs.</h3>
 
 <p align="center">
@@ -15,6 +16,8 @@
 >
 > Open an issue on the repo or reach out to the #web3-storage channel on [IPFS Discord](https://docs.ipfs.tech/community/chat/#discord) if you have any 
 questions!
+
+This repo contains reusauble UI modules for web3.storage in your favourite UI framework, and a set of example apps to see them dance.
 
 ## Documentation
 
@@ -45,6 +48,23 @@ questions!
 ## Contributing
 
 Feel free to join in. All welcome. Please read our [contributing guidelines](https://github.com/web3-storage/w3ui/blob/main/CONTRIBUTING.md) and/or [open an issue](https://github.com/web3-storage/w3ui/issues)!
+
+### Getting started
+
+To contribute to this project, clone the w3ui repository and enter the `w3ui` directory
+
+  ```sh
+  git clone https://github.com/web3-storage/w3ui
+  cd w3ui
+  ```
+
+Install dependencies and build:
+
+  ```sh
+  pnpm install
+  ```
+
+Then pick an example app from the list, `cd` into it's directory and run `pnpm start` to try it out.
 
 ## License
 

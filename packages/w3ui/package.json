@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "description": "Headless, type-safe, UI components for the next generation Web3.Storage APIs.",
   "author": "Alan Shaw",
+  "maintainers": [ "travis", "yusefnapora", "olizilla" ],
   "license": "Apache-2.0 OR MIT",
   "scripts": {
-    "build": "rollup --config rollup.config.js && npm run typecheck",
+    "prepare": "pnpm run build && pnpm run compile",
+    "build": "rollup --config rollup.config.js && pnpm run typecheck",
     "clean": "rm -rf node_modules package-lock.json coverage packages/*/{package-lock.json,build,node_modules}",
     "compile": "pnpm run --recursive --if-present compile",
     "lint": "ts-standard",

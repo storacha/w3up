@@ -13,7 +13,6 @@ To run this example:
 
   ```sh
   npm install
-  npm run build
   ```
 
 - Change to this example directory and run the example:
