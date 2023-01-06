@@ -2,6 +2,7 @@ import assert from 'node:assert'
 import { ApiGatewayWorker } from '../src/index.js'
 import 'urlpattern-polyfill'
 import { createMiniflareTester, createWorkerTester } from './helpers.js'
+// eslint-disable-next-line no-unused-vars
 import * as DagUCAN from '@ipld/dag-ucan'
 import * as ed25519Principal from '@ucanto/principal/ed25519'
 import * as Client from '@ucanto/client'
@@ -9,6 +10,8 @@ import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
+import * as Voucher from '@web3-storage/capabilities/voucher'
+import * as DID from '@ipld/dag-ucan/did'
 
 describe('ApiGatewayWorker in miniflare', () => {
   testApiGateway((useFetch) => () => createMiniflareTester()(useFetch))
@@ -47,47 +50,75 @@ function testApiGateway(
     })
   )
   test(
-    'responds to UCAN POST',
+    'responds to test/success invocation over ucanto http car/cbor',
     withFetch(async ({ url, fetch }) => {
-      const { invocation } = await simpleInvocationScenario({
+      const audience = DID.parse('did:web:web3.storage')
+      const capability = /** @type {const} */ ({
         can: 'test/success',
         with: 'https://dag.house',
       })
-      const request = new Request(
-        url,
-        await createDagUcanInvocationRequest(invocation)
-      )
-      const response = await fetch(request)
-      assert.equal(
-        response.status,
-        200,
-        'responds to dag-ucan invocation request with 200'
-      )
-      assert.equal(
-        response.headers.get('content-type'),
-        'application/cbor',
-        'responds with application/cbor'
-      )
-    })
-  )
-  test(
-    'responds to test/success invocation over ucanto http car/cbor',
-    withFetch(async ({ url, fetch }) => {
       const { invocation } = await simpleInvocationScenario({
-        can: 'test/success',
-        with: 'ipfs:dag.house',
+        audience,
+        capability,
       })
-      const connection = Client.connect({
-        id: invocation.audience,
-        channel: HTTP.open({
-          url,
-          fetch,
-        }),
-        encoder: CAR,
-        decoder: CBOR,
+      const connection = createHttpConnection({
+        url,
+        audience: invocation.audience,
+        fetch,
       })
       const result = await connection.execute(ucanto.invoke(invocation))
       assert.ok(result, 'ucanto invocation returns truthy result')
+    })
+  )
+  test(
+    'responds to @web3-storage/capabilities invocations over ucanto http car/cbor',
+    withFetch(async ({ url, fetch }) => {
+      const audience = DID.parse('did:web:web3.storage')
+      const connection = createHttpConnection({ url, audience, fetch })
+      /** @type {Array<{ capability: DagUCAN.Capability, error?: (error: unknown) => void }>} */
+      const capabilities = [
+        { capability: { can: 'test/success', with: 'ipfs:dag.house' } },
+        {
+          capability: Voucher.claim.create({
+            with: await ed25519Principal.generate().then((p) => p.did()),
+            nb: {
+              product: 'product:free',
+              identity: 'mailto:email@dag.house',
+            },
+          }),
+          // this capability will be rejected because voucher/claim must be issued by the upstream,
+          // but this test has it self-issued
+          error: (result) => {
+            assert(
+              typeof result === 'object' && result && 'name' in result,
+              'result has name'
+            )
+            assert.equal(result.name, 'Unauthorized')
+            assert('stack' in result && typeof result.stack === 'string')
+            assert(
+              result.stack.includes(
+                `Capability can not be (self) issued by 'did:key`
+              )
+            )
+          },
+        },
+      ]
+      for (const { capability, error } of capabilities) {
+        const { invocation } = await simpleInvocationScenario({
+          audience,
+          capability,
+        })
+        const results = await connection.execute(ucanto.invoke(invocation))
+        assert.ok(results, 'ucanto invocation returns truthy results')
+        assert.ok(results.length === 1, 'results is of length 1')
+        const result = results[0]
+        if (error) {
+          assert.equal(result.error, true, 'error in result')
+          error(result)
+        } else {
+          assert.equal('error' in result, false, 'no error in result')
+        }
+      }
     })
   )
 }
@@ -121,42 +152,46 @@ async function testServesDidWebDocument(fetch, baseUrl) {
 }
 
 /**
- * create a Request that will invoke a UCAN over HTTP
- *
- * @template {DagUCAN.Capability} C
- * @param {object} invocation
- * @param {DagUCAN.Audience} invocation.audience
- * @param {DagUCAN.Signer<DagUCAN.DID, DagUCAN.SigAlg>} invocation.issuer
- * @param {C} invocation.capability
- * @returns {Promise<RequestInit>}
+ * @typedef {object} Invocation
+ * @property {DagUCAN.Audience} audience
+ * @property {ed25519Principal.Signer.Signer} issuer
+ * @property {DagUCAN.Capability} capability
  */
-async function createDagUcanInvocationRequest(invocation) {
-  const ucan = await DagUCAN.issue({
-    capabilities: [invocation.capability],
-    ...invocation,
-  })
-  /** @type {RequestInit} */
-  const request = {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${DagUCAN.format(ucan)}`,
-    },
-  }
-  return request
-}
 
 /**
  * create objects useful for testing a ucan invocation
  *
- * @param {DagUCAN.Capability} capability - capabilities in invocation
+ * @param {object} options
+ * @param {DagUCAN.Audience} [options.audience]
+ * @param {DagUCAN.Capability} options.capability - capabilities in invocation
  */
-async function simpleInvocationScenario(capability) {
+async function simpleInvocationScenario(options) {
   const issuer = await ed25519Principal.generate()
-  const audience = await ed25519Principal.generate()
+  const audience = options.audience || (await ed25519Principal.generate())
+  /** @type {Invocation} */
   const invocation = {
     issuer,
     audience,
-    capability,
+    capability: options.capability,
   }
   return { issuer, audience, invocation }
+}
+
+/**
+ * @param {object} options
+ * @param {URL} options.url
+ * @param {import('@ipld/dag-ucan/.').Audience} options.audience
+ * @param {typeof globalThis.fetch} options.fetch
+ */
+function createHttpConnection({ url, audience, fetch }) {
+  const connection = Client.connect({
+    id: audience,
+    channel: HTTP.open({
+      url,
+      fetch,
+    }),
+    encoder: CAR,
+    decoder: CBOR,
+  })
+  return connection
 }

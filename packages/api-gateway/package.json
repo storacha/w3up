@@ -26,6 +26,8 @@
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
+    "browser-readablestream-to-it": "^2.0.0",
+    "it-to-buffer": "^3.0.0",
     "kysely": "^0.22.0",
     "kysely-d1": "^0.0.6",
     "p-retry": "^5.1.2",
