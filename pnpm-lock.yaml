@@ -243,8 +243,6 @@ importers:
   packages/api-gateway:
     specifiers:
       '@cloudflare/workers-types': ^3.18.0
-      '@databases/split-sql-query': ^1.0.3
-      '@databases/sql': ^3.2.0
       '@ipld/dag-cbor': ^8.0.0
       '@ipld/dag-ucan': ^3.0.1
       '@sentry/cli': 2.7.0
@@ -257,7 +255,6 @@ importers:
       '@ucanto/core': ^4.0.3
       '@ucanto/interface': ^4.0.3
       '@ucanto/principal': ^4.0.3
-      '@ucanto/server': ^4.0.3
       '@ucanto/transport': ^4.0.3
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
@@ -269,21 +266,12 @@ importers:
       esbuild: ^0.16.4
       git-rev-sync: ^3.0.2
       hd-scripts: ^3.0.2
-      is-subset: ^0.1.1
       it-to-buffer: ^3.0.0
-      kysely: ^0.22.0
-      kysely-d1: ^0.0.6
       miniflare: ^2.11.0
       mocha: ^10.2.0
-      p-retry: ^5.1.2
-      p-wait-for: ^5.0.0
-      preact: ^10.11.3
-      preact-render-to-string: ^5.2.6
       process: ^0.11.10
-      qrcode: ^1.5.1
       readable-stream: ^4.2.0
       sade: ^1.8.1
-      toucan-js: ^2.7.0
       typescript: 4.9.4
       urlpattern-polyfill: ^6.0.2
       wrangler: ^2.6.2
@@ -294,24 +282,14 @@ importers:
       '@ucanto/core': 4.0.3
       '@ucanto/interface': 4.0.3
       '@ucanto/principal': 4.0.3
-      '@ucanto/server': 4.0.3
       '@ucanto/transport': 4.0.3
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
       '@web3-storage/worker-utils': 0.4.3-dev
       browser-readablestream-to-it: 2.0.0
       it-to-buffer: 3.0.0
-      kysely: 0.22.0
-      kysely-d1: 0.0.6_kysely@0.22.0
-      p-retry: 5.1.2
-      preact: 10.11.3
-      preact-render-to-string: 5.2.6_preact@10.11.3
-      qrcode: 1.5.1
-      toucan-js: 2.7.0
     devDependencies:
       '@cloudflare/workers-types': 3.18.0
-      '@databases/split-sql-query': 1.0.3_@databases+sql@3.2.0
-      '@databases/sql': 3.2.0
       '@sentry/cli': 2.7.0
       '@types/assert': 1.5.6
       '@types/git-rev-sync': 2.0.0
@@ -324,10 +302,8 @@ importers:
       esbuild: 0.16.4
       git-rev-sync: 3.0.2
       hd-scripts: 3.0.2
-      is-subset: 0.1.1
       miniflare: 2.11.0
       mocha: 10.2.0
-      p-wait-for: 5.0.0
       process: 0.11.10
       readable-stream: 4.2.0
       sade: 1.8.1
