@@ -11,6 +11,7 @@ import toIt from 'browser-readablestream-to-it'
 // eslint-disable-next-line no-unused-vars
 import * as ucanto from '@ucanto/interface'
 // import { version } from './routes/version.js'
+import * as DID from '@ipld/dag-ucan/did'
 
 /**
  * @typedef {import('./bindings.js').ModuleWorker} ModuleWorker
@@ -98,31 +99,198 @@ const SingleCapability = {
 }
 
 /**
- * @param {dagUcan.Capability} capability
- * @returns {(req: Request) => Promise<Response>}
+ * @template [Req=Request]
+ * @template [Res=Response]]
+ * @typedef {(req: Req) => Promise<Res>} Responder
  */
-function getUpstreamForCapability(capability) {
-  if (capability.can.startsWith('test/')) {
-    // respond with cbor
-    return async () => {
-      const body = dagCbor.encode([{}])
-      const headers = {
-        'content-type': 'application/cbor',
-      }
-      return new Response(body, { headers, status: 200 })
-    }
-  }
-  if (capability.can.startsWith('store/')) {
-    return async (request) => {
-      const upstreamRequest = new Request('https://up.web3.storage', request)
-      const response = await fetch(upstreamRequest)
-      return response
-    }
-  }
+
+/**
+ * create a responder that forwards the request to the given url and proxies the response
+ *
+ * @param {URL} url - url to forward request to
+ * @returns {Responder}
+ */
+const createForwardingResponder = (url) => {
   return async (request) => {
-    const upstreamRequest = new Request('https://access.web3.storage', request)
+    const upstreamRequest = new Request(url, request)
     const response = await fetch(upstreamRequest)
     return response
+  }
+}
+
+/**
+ * create a responder that returns a cbor ucanto response that won't be interpreted as an error
+ *
+ * @param {unknown} [result] - result object to include in ucanto response
+ * @returns {Responder}
+ */
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars
+const createUcantoCborResponder = (result = {}) => {
+  return async () => {
+    const body = dagCbor.encode([result])
+    const headers = {
+      'content-type': 'application/cbor',
+    }
+    return new Response(body, { headers, status: 200 })
+  }
+}
+
+/**
+ * @type {{ [K in Web3StorageServiceEnvironment]: Web3StorageServiceUrls }}
+ */
+export const servicesByEnvironment = {
+  production: {
+    access: new URL('https://access.web3.storage'),
+    upload: new URL('https://up.web3.storage'),
+  },
+  staging: {
+    access: new URL('https://w3access-staging.protocol-labs.workers.dev'),
+    upload: new URL('https://staging.up.web3.storage'),
+  },
+}
+
+/**
+ * @template Condition
+ * @template Action
+ * @typedef Route
+ * @property {Condition} condition
+ * @property {Action} action
+ */
+
+/**
+ * @template {string} CapNamespace
+ * @template Action
+ * @typedef {Route<{ capabilityNamespace: Set<CapNamespace> }, Action>} CapabilityNamespaceRoute
+ */
+
+/**
+ * @template Action
+ * @typedef {Route<{ audience: dagUcan.DID }, Action>} AudienceRoute
+ */
+
+/**
+ * @param {Web3StorageServiceUrls} serviceUrls
+ * @returns {Array<CapabilityNamespaceRoute<string, ForwardTo>>}
+ */
+function capabilityNamespaceRoutesForService(serviceUrls) {
+  /** @type {Array<CapabilityNamespaceRoute<string, ForwardTo>>} */
+  const routes = [
+    {
+      condition: {
+        capabilityNamespace: new Set(['store', 'upload']),
+      },
+      action: {
+        forwardTo: serviceUrls.upload,
+      },
+    },
+    {
+      condition: {
+        capabilityNamespace: new Set(['space', 'voucher']),
+      },
+      action: {
+        forwardTo: serviceUrls.access,
+      },
+    },
+  ]
+  return routes
+}
+
+/**
+ * @typedef {Route<{ audience: dagUcan.DID }, Array<Route<{ capabilityNamespace: Set<string> }, { forwardTo: URL }>>>} ApiGatewayRoute
+ */
+
+/**
+ * @typedef {'staging'|'production'} Web3StorageServiceEnvironment
+ */
+
+/**
+ * @typedef {'access'|'upload'} Web3StorageServiceName
+ */
+
+/**
+ * @typedef {{ [K in Web3StorageServiceName]: URL }} Web3StorageServiceUrls
+ */
+
+/**
+ * @typedef Web3StorageUcantoEnvironment
+ * @property {dagUcan.DID} audience
+ * @property {Web3StorageServiceUrls} services
+ */
+
+/**
+ * create a route-by-audience for a given web3.storage environment configuration.
+ *
+ * @param {Web3StorageUcantoEnvironment} options
+ * @returns {Route<{ audience: dagUcan.DID }, Array<Route<{ capabilityNamespace: Set<string> }, { forwardTo: URL }>>>}
+ */
+function routeForEnvironment(options) {
+  return {
+    condition: {
+      audience: options.audience,
+    },
+    action: [...capabilityNamespaceRoutesForService(options.services)],
+  }
+}
+
+/**
+ * @type {{ [K in Web3StorageServiceEnvironment]: Web3StorageUcantoEnvironment }}
+ */
+export const audienceRoutesByEnvironment = {
+  staging: {
+    audience: DID.parse('did:web:staging.web3.storage').did(),
+    services: {
+      access: new URL('https://w3access-staging.protocol-labs.workers.dev'),
+      upload: new URL('https://staging.up.web3.storage'),
+    },
+  },
+  production: {
+    audience: DID.parse('did:web:web3.storage').did(),
+    services: {
+      access: new URL('https://access.web3.storage'),
+      upload: new URL('https://up.web3.storage'),
+    },
+  },
+}
+
+/**
+ * @typedef ForwardTo
+ * @property {URL} forwardTo
+ */
+
+class ApiGatewayRouter {
+  /** @type {Array<ApiGatewayRoute>} routes */
+  #routes
+  /**
+   * @param {Array<ApiGatewayRoute>} routes
+   */
+  constructor(routes) {
+    this.#routes = routes
+  }
+
+  /**
+   * @param {ucanto.Invocation} invocation
+   * @returns {ForwardTo|undefined}
+   */
+  route(invocation) {
+    for (const route of this.#routes) {
+      if (route.condition.audience === invocation.audience.did()) {
+        // audiences match
+        const capability = SingleCapability.fromInvocation(invocation)
+        const capNamespace = capability.can.split('/')[0]
+        for (const capabilityNamespaceRoute of route.action) {
+          // capabilityNamespace match
+          if (
+            capabilityNamespaceRoute.condition.capabilityNamespace.has(
+              capNamespace
+            )
+          ) {
+            return capabilityNamespaceRoute.action
+          }
+        }
+      }
+    }
+    // no route matched
   }
 }
 
@@ -130,6 +298,28 @@ function getUpstreamForCapability(capability) {
  * @implements {ModuleWorker}
  */
 export class ApiGatewayWorker {
+  /**
+   * Get default configuration for how an ApiGateway should route requests
+   *
+   * @returns {ApiGatewayRouter}
+   */
+  static getDefaultRouter() {
+    return new ApiGatewayRouter([
+      routeForEnvironment(audienceRoutesByEnvironment.production),
+      routeForEnvironment(audienceRoutesByEnvironment.staging),
+    ])
+  }
+
+  /** @type {ApiGatewayRouter} */
+  #router
+
+  /**
+   * @param {ApiGatewayRouter} router
+   */
+  constructor(router) {
+    this.#router = router
+  }
+
   /**
    * @type {ModuleWorker['fetch']}
    */
@@ -155,13 +345,34 @@ export class ApiGatewayWorker {
         status: 415,
       })
     }
-    // get ucanto invocation from request
     const invocation = await UcantoInvocation.fromRequest(request.clone())
-    const capability = SingleCapability.fromInvocation(invocation)
+    const route = this.#router.route(invocation)
+    if (!route) {
+      return new Response('no route found for invocation', {
+        status: 404,
+      })
+    }
+    const fetchFromUpstream = createForwardingResponder(route.forwardTo)
     // determine upstream to handle capability
-    const upstreamFetch = getUpstreamForCapability(capability)
-    const response = await upstreamFetch(request.clone())
-    return response
+    try {
+      const response = await fetchFromUpstream(request.clone())
+      return response
+    } catch (error) {
+      console.warn('failed to route invocation', {
+        invocation,
+        capability: invocation.capabilities[0],
+        error,
+      })
+      const genericError = new Error(
+        `failed to get response for routed invocation`,
+        {
+          cause: error,
+        }
+      )
+      return new Response(genericError.message, {
+        status: 502,
+      })
+    }
   }
 
   /**
@@ -192,7 +403,7 @@ export class ApiGatewayWorker {
   }
 }
 
-export default new ApiGatewayWorker()
+export default new ApiGatewayWorker(ApiGatewayWorker.getDefaultRouter())
 
 /**
  * @returns {Pick<FetchEvent, 'waitUntil' | 'passThroughOnException'>}
