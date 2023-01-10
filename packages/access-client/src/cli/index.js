@@ -27,6 +27,7 @@ prog
     'Environment "production", "staging", "dev" or "local"',
     'production'
   )
+  .option('--ucanto', 'URL to send ucanto requests to')
 
 prog.command('link [channel]').describe('Link.').action(cmdLink)
 prog

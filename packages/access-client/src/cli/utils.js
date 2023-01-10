@@ -6,7 +6,8 @@ import inquirer from 'inquirer'
 
 /** @type {Record<string,string>} */
 const envs = {
-  production: 'https://access.web3.storage',
+  production:
+    'https://refs-heads-325-unify-ucan-api-endpoints.protocol-labs.workers.dev/',
   staging: 'https://w3access-staging.protocol-labs.workers.dev',
   dev: 'https://w3access-dev.protocol-labs.workers.dev',
   local: 'http://127.0.0.1:8787',
@@ -26,9 +27,11 @@ let audience
 
 /**
  * @param {string} env
+ * @param {string} [ucantoUrl]
+ * @returns {Promise<{ url: URL, servicePrincipal: import("@ucanto/interface").Principal }>}
  */
-export async function getService(env) {
-  const url = new URL(envs[env])
+export async function getService(env, ucantoUrl) {
+  const url = new URL(typeof ucantoUrl === 'undefined' ? envs[env] : ucantoUrl)
   let did
 
   if (audience) {
