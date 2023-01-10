@@ -2,6 +2,8 @@ name: '@web3-storage/api-gateway'
 on:
   push:
     paths:
+      - pnpm-lock.yaml
+      - '.github/workflows/api-gateway*'
       - 'packages/api-gateway/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
