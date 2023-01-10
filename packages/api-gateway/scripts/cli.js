@@ -123,4 +123,15 @@ prog
       // const db = /** @type {D1Database} */ (binds.__D1_BETA__)
     })
   })
+
+prog
+  .command('normalize-worker-name <name-input>')
+  .describe(
+    'given an input name, returns a noramlized version of that name suitable for use as a cloudflare worker name'
+  )
+  .action(async (nameInput) => {
+    const normalized = nameInput.replaceAll('/', '-')
+    console.log(normalized)
+  })
+
 prog.parse(process.argv)
