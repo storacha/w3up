@@ -13,6 +13,7 @@ jobs:
       - name: Publish app
         uses: cloudflare/wrangler-action@2.0.0
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: 'packages/api-gateway'
+          apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: publish --name=w3-api-gateway-$GITHUB_REF
