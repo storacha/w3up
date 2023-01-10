@@ -9,12 +9,12 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v3
-      - id: set_wrangler_name
+      - name: install dependencies
+        run: |
+          pnpm --filter '@web3-storage/api-gateway' install
+      - id: set env.wrangler_name
         run: |
           echo "wrangler_name=w3-api-gateway-$GITHUB_REF" >> $GITHUB_ENV
-      - run: |
-          wrangler_name="${{ env.wrangler_name }}"
-          echo "wrangler_name=$wrangler_name"
       - name: Publish app
         uses: cloudflare/wrangler-action@2.0.0
         with:
