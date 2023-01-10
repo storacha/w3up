@@ -20,8 +20,9 @@ jobs:
         run: |
           pnpm --filter '@web3-storage/api-gateway' install
       - name: set env.wrangler_name
+        working-directory: ./packages/api-gateway
         run: |
-          wrangler_name="w3-api-gateway-$( echo "$GITHUB_REF" | md5 )"
+          wrangler_name="w3-api-gateway-$(./scripts/cli.js normalize-worker-name "$GITHUB_REF")"
           echo "wrangler_name=$wrangler_name" >> $GITHUB_ENV
       - name: Publish app
         uses: cloudflare/wrangler-action@2.0.0
