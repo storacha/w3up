@@ -1,23 +1,17 @@
 # Development
 name = "w3-api-gateway-local"
-account_id = "fffa4b4363a7e5250af8357087263b3a"
+type = "javascript"
 main = "./dist/worker.js"
-
-# Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
+account_id = "fffa4b4363a7e5250af8357087263b3a"
 compatibility_date = "2022-09-28"
 compatibility_flags = ["url_standard"]
-
-# We need to let wrangler bundle while D1 is in Beta
-no_bundle = false
-
-[vars]
-ENV = "local"
-DEBUG = "true"
-DID = "did:web:local.web3.storage"
+workers_dev = true
 
 [build]
 command = "scripts/cli.js build"
 watch_dir = "src"
 
-[miniflare]
-d1_persist = ".wrangler/miniflare"
+[vars]
+ENV = "local"
+DEBUG = "true"
+DID = "did:web:local.web3.storage"
