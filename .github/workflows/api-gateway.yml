@@ -5,6 +5,14 @@ on:
       - pnpm-lock.yaml
       - '.github/workflows/api-gateway*'
       - 'packages/api-gateway/**'
+  delete: {}
+  workflow_dispatch:
+    inputs:
+      deleteCloudflareWorker:
+        description: 'whether to force delete the cloudflare worker'
+        required: true
+        default: false
+        type: boolean
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -28,20 +36,20 @@ jobs:
         run: |
           wrangler_name="w3-api-gateway-$(./scripts/cli.js normalize-worker-name "$GITHUB_REF")"
           echo "wrangler_name=$wrangler_name" >> $GITHUB_ENV
-      - name: Publish Cloudflare Worker
+      # Publish a Cloudflare Worker
+      # - (unless this is a delete event)
+      - if: github.event_name !== 'delete'
+        name: Publish Cloudflare Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           workingDirectory: 'packages/api-gateway'
           apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: publish --name=${{ env.wrangler_name }}
-  delete:
-    needs:
-      - create
-    name: Delete Deployment
-    runs-on: ubuntu-latest
-    steps:
-      - uses: cloudflare/wrangler-action@2.0.0
+      # When the ref is deleted, destroy the corresponding cloudflare worker
+      - if: github.event_name === 'delete'
+        name: Delete Cloudflare Worker
+        uses: cloudflare/wrangler-action@2.0.0
         with:
           workingDirectory: 'packages/api-gateway'
           apiToken: ${{ secrets.CF_TOKEN }}
