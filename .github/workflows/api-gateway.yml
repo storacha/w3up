@@ -31,7 +31,7 @@ jobs:
       - variables
     runs-on: ubuntu-latest
     environment:
-      name: api-gateway/dev-${{ needs.variables.outputs.wrangler_name }}
+      name: dev-${{ needs.variables.outputs.wrangler_name }}/api-gateway
       url: https://${{ needs.variables.outputs.wrangler_name }}.protocol-labs.workers.dev
     steps:
       - uses: actions/checkout@v3
