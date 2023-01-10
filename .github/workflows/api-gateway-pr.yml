@@ -11,14 +11,14 @@ jobs:
       - uses: actions/checkout@v3
       - id: set_wrangler_name
         run: |
-          echo "::set-output name=name::w3-api-gateway-$GITHUB_REF"
+          echo "wrangler_name=w3-api-gateway-$GITHUB_REF" >> $GITHUB_STATE
       - run: |
-          echo "steps.set_wrangler_name.outputs.name"
-          echo "${{ steps.set_wrangler_name.outputs.name }}"
+          wrangler_name="${{ env.wrangler_name }}"
+          echo "wrangler_name=$wrangler_name"
       - name: Publish app
         uses: cloudflare/wrangler-action@2.0.0
         with:
           workingDirectory: 'packages/api-gateway'
           apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: publish --name=${{ steps.set_wrangler_name.outputs.name }}
+          command: publish --name=${{ env.wrangler_name }}
