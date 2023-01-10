@@ -17,8 +17,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  create:
+  environment:
+    name: manage dev environment for api-gateway
     runs-on: ubuntu-latest
+    environment:
+      name: dev-${{ env.wrangler_name }}
+      url: https://${{ env.wrangler_name }}.protocol-labs.workers.dev
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
