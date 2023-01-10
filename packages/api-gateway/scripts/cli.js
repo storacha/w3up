@@ -118,7 +118,8 @@ prog
     })
 
     const server = await mf.createServer() // Create http.Server instance
-    server.listen(8787, async () => {
+    server.listen(8788, async () => {
+      console.log(`Listening on http://localhost:${server.address().port}`)
       // const binds = await mf.getBindings()
       // const db = /** @type {D1Database} */ (binds.__D1_BETA__)
     })

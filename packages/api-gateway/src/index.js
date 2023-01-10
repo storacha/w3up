@@ -379,7 +379,8 @@ export class ApiGatewayWorker {
    * @type {ModuleWorker['fetch']}
    */
   fetchGetDidDocument = async (request, env, executionContext) => {
-    const did = `did:web:${new URL(request.url).host}`
+    const reqHost = new URL(request.url).host
+    const did = `did:web:${reqHost}`
     const didDocument = {
       '@context': [
         'https://www.w3.org/ns/did/v1',
@@ -389,6 +390,12 @@ export class ApiGatewayWorker {
         },
       ],
       id: did,
+      service: [
+        {
+          type: 'https://ucan.xyz',
+          id: new URL(`https://${reqHost}`).toString(),
+        },
+      ],
     }
     const response = {
       body: JSON.stringify(didDocument, undefined, 2),

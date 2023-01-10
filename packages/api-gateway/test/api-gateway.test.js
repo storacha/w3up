@@ -13,6 +13,7 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as DID from '@ipld/dag-ucan/did'
 import { Space, Store } from '@web3-storage/capabilities'
+import { UcanServiceEndpoint } from '../src/did-doc.js'
 
 describe('ApiGatewayWorker in miniflare', () => {
   testApiGateway((useFetch) => () => createMiniflareTester()(useFetch))
@@ -249,13 +250,32 @@ async function testServesDidWebDocument(fetch, baseUrl) {
   const response = await fetch(request)
   assert.equal(response.status, 200)
   assert.equal(response.headers.get('content-type'), 'application/json')
-  const didDocument = await response.json()
+  const didDocument = /** @type {unknown} */ (await response.json())
+  assert.ok(
+    didDocument && typeof didDocument === 'object',
+    'didDocument is an object'
+  )
   assert.equal(
-    didDocument.id,
+    'id' in didDocument && didDocument.id,
     `did:web:${baseUrl.host}`,
     'did document has id did from request host header'
   )
   assert.equal('@context' in didDocument, true, 'did document has @context')
+
+  /**
+   * Let's also ensure that the did document has a service endpoint pointing to the ucan endpoint
+   */
+  const didDocServiceEndpoints = /** @type {unknown[]} */ (
+    'service' in didDocument && Array.isArray(didDocument.service)
+      ? didDocument.service
+      : []
+  )
+  // eslint-disable-next-line unicorn/no-array-callback-reference
+  const ucanServiceEndpoint = UcanServiceEndpoint.find(didDocServiceEndpoints)
+  assert.ok(
+    ucanServiceEndpoint,
+    'did document has a service endpoint pointing to the ucan endpoint'
+  )
 }
 
 /**
