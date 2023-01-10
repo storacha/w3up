@@ -37,6 +37,11 @@ jobs:
       url: https://${{ needs.variables.outputs.wrangler_name }}.protocol-labs.workers.dev
     steps:
       - uses: actions/checkout@v3
+      - run: |
+          echo variables
+          echo "needs.variables.outputs.wrangler_name=${{ needs.variables.outputs.wrangler_name }}"
+          echo "jsonneeds=${{ toJSON(needs) }}"
+          echo "jsonneedsvariables=${{ toJSON(needs.variables) }}"
       - uses: pnpm/action-setup@v2.2.3
         with:
           version: 7
