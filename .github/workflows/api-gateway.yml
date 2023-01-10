@@ -57,6 +57,10 @@ jobs:
         run: |
           export CLOUDFLARE_ACCOUNT_ID="${{ secrets.CF_TOKEN }}"
           export CLOUDFLARE_API_TOKEN="${{ secrets.CF_ACCOUNT_ID}}"
+          export WRANGLER_HOME="/github/workspace"
+          mkdir -p "$HOME/.wrangler"
+          chmod -R 770 "$HOME/.wrangler"
+          npm install -g wrangler
       # Publish a Cloudflare Worker
       # - (unless this is a delete event)
       - if: github.event_name != 'delete'
