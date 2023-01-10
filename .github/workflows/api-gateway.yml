@@ -32,6 +32,8 @@ jobs:
     needs:
       - variables
     runs-on: ubuntu-latest
+    env:
+      WORKER_NAME: ${{ needs.variables.outputs.wrangler_name }}
     environment:
       name: dev-${{ needs.variables.outputs.wrangler_name }}
       url: https://${{ needs.variables.outputs.wrangler_name }}.protocol-labs.workers.dev
@@ -40,6 +42,7 @@ jobs:
       - run: |
           echo "needs.variables.outputs=${{ toJSON(needs.variables.outputs) }}"
           echo "wrangler_name=${{ needs.variables.outputs.wrangler_name }}" >> $GITHUB_ENV
+          echo "WRANGLER_NAME=$WRANGLER_NAME"
       - uses: pnpm/action-setup@v2.2.3
         with:
           version: 7
@@ -53,13 +56,19 @@ jobs:
       # Publish a Cloudflare Worker
       # - (unless this is a delete event)
       - if: github.event_name != 'delete'
-        name: Publish Cloudflare Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          workingDirectory: 'packages/api-gateway'
-          apiToken: ${{ secrets.CF_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: publish --name=${{ env.wrangler_name }}
+        working-directory: 'packages/api-gateway'
+        run: |
+          export CLOUDFLARE_ACCOUNT_ID="${{ secrets.CF_TOKEN }}"
+          export CLOUDFLARE_API_TOKEN="${{ secrets.CF_ACCOUNT_ID}}"
+          wrangler publish --name=${{ env.wrangler_name }}
+      # - if: github.event_name != 'delete'
+      #   name: Publish Cloudflare Worker
+      #   uses: cloudflare/wrangler-action@2.0.0
+      #   with:
+      #     workingDirectory: 'packages/api-gateway'
+      #     apiToken: ${{ secrets.CF_TOKEN }}
+      #     accountId: ${{ secrets.CF_ACCOUNT_ID }}
+      #     command: publish --name=${{ env.wrangler_name }}
       # When the ref is deleted, destroy the corresponding cloudflare worker
       - if: github.event_name == 'delete'
         name: Delete Cloudflare Worker
