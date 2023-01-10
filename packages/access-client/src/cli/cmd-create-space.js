@@ -7,10 +7,14 @@ import { StoreConf } from '../stores/store-conf.js'
 import { getService } from './utils.js'
 
 /**
- * @param {{ profile: any; env: string }} opts
+ * @param {{ profile: any; env: string, ucanto?: string }} opts
  */
 export async function cmdCreateSpace(opts) {
-  const { url, servicePrincipal } = await getService(opts.env)
+  const { url, servicePrincipal } = await getService(opts.env, opts.ucanto)
+  console.log('cmdCreatSpace did getService', {
+    url,
+    servicePrincipal: servicePrincipal.did(),
+  })
   const store = new StoreConf({ profile: opts.profile })
   const data = await store.load()
 
