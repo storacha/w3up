@@ -25,6 +25,8 @@ jobs:
       - id: set_outputs
         run: |
           echo "::set-output name=worker_name::$(echo "$GITHUB_REF" | tr '/' '-')"
+      - run: |
+          echo "worker_name=${{ steps.set_outputs.outputs.worker_name }}"
   environment:
     name: manage dev environment for api-gateway
     needs:
