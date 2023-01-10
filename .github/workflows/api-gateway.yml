@@ -19,30 +19,25 @@ concurrency:
 jobs:
   variables:
     outputs:
-      worker_name: ${{ steps.set_outputs.outputs.worker_name }}
+      wrangler_name: ${{ steps.set_outputs.outputs.wrangler_name }}
     runs-on: ubuntu-latest
     steps:
       - id: set_outputs
         run: |
-          echo "::set-output name=worker_name::$(echo "$GITHUB_REF" | tr '/' '-')"
-      - run: |
-          echo "worker_name=${{ steps.set_outputs.outputs.worker_name }}"
+          echo "::set-output name=wrangler_name::$(echo "$GITHUB_REF" | tr '/' '-')"
   environment:
     name: manage dev environment for api-gateway
     needs:
       - variables
     runs-on: ubuntu-latest
-    env:
-      WORKER_NAME: ${{ needs.variables.outputs.wrangler_name }}
     environment:
       name: dev-${{ needs.variables.outputs.wrangler_name }}
       url: https://${{ needs.variables.outputs.wrangler_name }}.protocol-labs.workers.dev
     steps:
       - uses: actions/checkout@v3
       - run: |
-          echo "needs.variables.outputs=${{ toJSON(needs.variables.outputs) }}"
-          echo "wrangler_name=${{ needs.variables.outputs.wrangler_name }}" >> $GITHUB_ENV
-          echo "WRANGLER_NAME=$WRANGLER_NAME"
+          echo variables
+          echo "needs.variables.outputs.wrangler_name=${{ needs.variables.outputs.wrangler_name }}"
       - uses: pnpm/action-setup@v2.2.3
         with:
           version: 7
@@ -53,22 +48,22 @@ jobs:
       - name: install dependencies
         run: |
           pnpm --filter '@web3-storage/api-gateway' install
-      - name: configure cloudflare env
-        run: |
-          export CLOUDFLARE_ACCOUNT_ID="${{ secrets.CF_TOKEN }}"
-          export CLOUDFLARE_API_TOKEN="${{ secrets.CF_ACCOUNT_ID}}"
-          export WRANGLER_HOME="/github/workspace"
-          mkdir -p "$HOME/.wrangler"
-          chmod -R 770 "$HOME/.wrangler"
-          npm install -g wrangler
       # Publish a Cloudflare Worker
       # - (unless this is a delete event)
       - if: github.event_name != 'delete'
-        working-directory: 'packages/api-gateway'
-        run: |
-          wrangler publish --name=${{ env.wrangler_name }}
+        name: Publish Cloudflare Worker
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          workingDirectory: 'packages/api-gateway'
+          apiToken: ${{ secrets.CF_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: publish --name=${{ needs.variables.outputs.wrangler_name }}
       # When the ref is deleted, destroy the corresponding cloudflare worker
       - if: github.event_name == 'delete'
-        working-directory: 'packages/api-gateway'
-        run: |
-          wrangler delete --name=${{ env.wrangler_name }}
+        name: Delete Cloudflare Worker
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          workingDirectory: 'packages/api-gateway'
+          apiToken: ${{ secrets.CF_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: delete --name=${{ needs.variables.outputs.wrangler_name }}
