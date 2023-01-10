@@ -1,8 +1,11 @@
-name: '@web3-storage/api-gateway PR'
+name: '@web3-storage/api-gateway'
 on:
-  pull_request:
+  push:
     paths:
       - 'packages/api-gateway/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +24,7 @@ jobs:
   create:
     name: Create Deployment
     needs:
-      - install
+      - build
     runs-on: ubuntu-latest
     steps:
       - name: set env.wrangler_name
