@@ -12,7 +12,7 @@ jobs:
       - name: install dependencies
         run: |
           pnpm --filter '@web3-storage/api-gateway' install
-      - id: set env.wrangler_name
+      - name: set env.wrangler_name
         run: |
           echo "wrangler_name=w3-api-gateway-$GITHUB_REF" >> $GITHUB_ENV
       - name: Publish app
