@@ -1,6 +1,6 @@
 name: '@web3-storage/api-gateway PR'
 on:
-  pull_request:
+  pull_request_target:
     paths:
       - 'packages/api-gateway/**'
 jobs:
