@@ -38,7 +38,7 @@ jobs:
           echo "wrangler_name=$wrangler_name" >> $GITHUB_ENV
       # Publish a Cloudflare Worker
       # - (unless this is a delete event)
-      - if: github.event_name !== 'delete'
+      - if: github.event_name != 'delete'
         name: Publish Cloudflare Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
@@ -47,7 +47,7 @@ jobs:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: publish --name=${{ env.wrangler_name }}
       # When the ref is deleted, destroy the corresponding cloudflare worker
-      - if: github.event_name === 'delete'
+      - if: github.event_name == 'delete'
         name: Delete Cloudflare Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
