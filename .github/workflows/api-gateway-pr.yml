@@ -1,6 +1,9 @@
 name: '@web3-storage/api-gateway PR'
 on:
-  pull_request_target:
+  push:
+    branches:
+      - 325-unify-ucan-api-endpoints
+  pull_request:
     paths:
       - 'packages/api-gateway/**'
 jobs:
