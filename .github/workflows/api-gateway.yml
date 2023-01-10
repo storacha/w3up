@@ -37,6 +37,8 @@ jobs:
       url: https://${{ needs.variables.outputs.wrangler_name }}.protocol-labs.workers.dev
     steps:
       - uses: actions/checkout@v3
+      - run: |
+          echo "needs.variables.outputs=${{ toJSON(needs.variables.outputs) }}"
       - uses: pnpm/action-setup@v2.2.3
         with:
           version: 7
@@ -52,13 +54,11 @@ jobs:
       - if: github.event_name != 'delete'
         name: Publish Cloudflare Worker
         uses: cloudflare/wrangler-action@2.0.0
-        env:
-          WRANGLER_NAME: ${{ needs.variables.outputs.wrangler_name }}
         with:
           workingDirectory: 'packages/api-gateway'
           apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: publish --name=$WRANGLER_NAME
+          command: publish --name="${{ needs.variables.outputs.wrangler_name }}"
       # When the ref is deleted, destroy the corresponding cloudflare worker
       - if: github.event_name == 'delete'
         name: Delete Cloudflare Worker
