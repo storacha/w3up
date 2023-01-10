@@ -26,6 +26,7 @@
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
+    "dotenv": "^16.0.3",
     "browser-readablestream-to-it": "^2.0.0",
     "it-to-buffer": "^3.0.0"
   },
@@ -39,7 +40,6 @@
     "@types/qrcode": "^1.5.0",
     "better-sqlite3": "8.0.1",
     "buffer": "^6.0.3",
-    "dotenv": "^16.0.3",
     "esbuild": "^0.16.4",
     "git-rev-sync": "^3.0.2",
     "hd-scripts": "^3.0.2",
