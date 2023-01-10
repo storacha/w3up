@@ -17,12 +17,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  variables:
+    outputs:
+      worker_name: ${{ steps.set_outputs.outputs.worker_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: set_outputs
+        run: |
+          echo "::set-output name=worker_name::$(echo "$GITHUB_REF" | tr '/' '-')"
   environment:
     name: manage dev environment for api-gateway
+    needs:
+      - variables
     runs-on: ubuntu-latest
     environment:
-      name: dev-${{ env.wrangler_name }}
-      url: https://${{ env.wrangler_name }}.protocol-labs.workers.dev
+      name: dev-${{ needs.variables.outputs.wrangler_name }}
+      url: https://${{ needs.variables.outputs.wrangler_name }}.protocol-labs.workers.dev
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
@@ -35,11 +45,6 @@ jobs:
       - name: install dependencies
         run: |
           pnpm --filter '@web3-storage/api-gateway' install
-      - name: set env.wrangler_name
-        working-directory: ./packages/api-gateway
-        run: |
-          wrangler_name="w3-api-gateway-$(./scripts/cli.js normalize-worker-name "$GITHUB_REF")"
-          echo "wrangler_name=$wrangler_name" >> $GITHUB_ENV
       # Publish a Cloudflare Worker
       # - (unless this is a delete event)
       - if: github.event_name != 'delete'
@@ -49,7 +54,7 @@ jobs:
           workingDirectory: 'packages/api-gateway'
           apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: publish --name=${{ env.wrangler_name }}
+          command: publish --name=${{ needs.variables.outputs.wrangler_name }}
       # When the ref is deleted, destroy the corresponding cloudflare worker
       - if: github.event_name == 'delete'
         name: Delete Cloudflare Worker
@@ -58,4 +63,4 @@ jobs:
           workingDirectory: 'packages/api-gateway'
           apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: delete --name=${{ env.wrangler_name }}
+          command: delete --name=${{ needs.variables.outputs.wrangler_name }}
