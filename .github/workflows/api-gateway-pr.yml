@@ -4,9 +4,8 @@ on:
     paths:
       - 'packages/api-gateway/**'
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    name: Deploy
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
@@ -19,15 +18,33 @@ jobs:
       - name: install dependencies
         run: |
           pnpm --filter '@web3-storage/api-gateway' install
+  create:
+    name: Create Deployment
+    needs:
+      - install
+    runs-on: ubuntu-latest
+    steps:
       - name: set env.wrangler_name
         working-directory: ./packages/api-gateway
         run: |
           wrangler_name="w3-api-gateway-$(./scripts/cli.js normalize-worker-name "$GITHUB_REF")"
           echo "wrangler_name=$wrangler_name" >> $GITHUB_ENV
-      - name: Publish app
+      - name: Publish Cloudflare Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           workingDirectory: 'packages/api-gateway'
           apiToken: ${{ secrets.CF_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: publish --name=${{ env.wrangler_name }}
+  delete:
+    needs:
+      - create
+    name: Delete Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cloudflare/wrangler-action@2.0.0
+        with:
+          workingDirectory: 'packages/api-gateway'
+          apiToken: ${{ secrets.CF_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: delete --name=${{ env.wrangler_name }}
