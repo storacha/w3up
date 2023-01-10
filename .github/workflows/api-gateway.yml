@@ -9,7 +9,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  build:
+  create:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,12 +23,6 @@ jobs:
       - name: install dependencies
         run: |
           pnpm --filter '@web3-storage/api-gateway' install
-  create:
-    name: Create Deployment
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
       - name: set env.wrangler_name
         working-directory: ./packages/api-gateway
         run: |
