@@ -9,6 +9,7 @@ import {
 } from '@web3-storage/access/encoding'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
+import { UploadApiProxyService } from './upload-api.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -16,6 +17,10 @@ import { voucherRedeemProvider } from './voucher-redeem.js'
  */
 export function service(ctx) {
   return {
+    ...UploadApiProxyService.forSigner({
+      signer: ctx.signer,
+      fetch: globalThis.fetch,
+    }),
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),

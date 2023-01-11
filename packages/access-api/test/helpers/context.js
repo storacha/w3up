@@ -6,6 +6,7 @@ import { Miniflare } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { migrate } from '../../scripts/migrate.js'
+import { configureVerifier } from '../../src/config.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -70,7 +71,7 @@ export async function context(options) {
   return {
     mf,
     conn: connection({
-      principal,
+      principal: configureVerifier(environment, principal),
       // @ts-ignore
       fetch: mf.dispatchFetch.bind(mf),
       url: new URL('http://localhost:8787'),
