@@ -35,6 +35,7 @@ importers:
       '@types/mocha': ^10.0.1
       '@types/node': ^18.11.14
       '@types/qrcode': ^1.5.0
+      '@ucanto/client': ^4.0.3
       '@ucanto/core': ^4.0.3
       '@ucanto/interface': ^4.0.3
       '@ucanto/principal': ^4.0.3
@@ -92,6 +93,7 @@ importers:
       '@types/mocha': 10.0.1
       '@types/node': 18.11.14
       '@types/qrcode': 1.5.0
+      '@ucanto/client': 4.0.3
       better-sqlite3: 8.0.1
       buffer: 6.0.3
       dotenv: 16.0.3
@@ -1566,7 +1568,6 @@ packages:
     dependencies:
       '@ucanto/interface': 4.0.3
       multiformats: 10.0.2
-    dev: false
 
   /@ucanto/core/4.0.3:
     resolution: {integrity: sha512-5Uc6vdmKZzlA9NFvAN6BC1Tp1Npz0sepp2up1ZWU4BqArQ0w4U0YMtL9KPdBnL3TDAyDNgS9PgK+vHpjcSoeiQ==}
