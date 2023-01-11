@@ -2,6 +2,8 @@ import assert from 'assert'
 import { context } from './helpers/context.js'
 import { createSpace } from './helpers/utils.js'
 import * as Store from '@web3-storage/capabilities/store'
+import * as ed25519 from '@ucanto/principal/ed25519'
+import * as dagUcanDid from '@ipld/dag-ucan/did'
 
 describe('proxy store/ and upload/ invocations to upload-api', function () {
   it('forwards store/list invocations with aud=did:key', async function () {
@@ -25,7 +27,9 @@ describe('proxy store/ and upload/ invocations to upload-api', function () {
       with: spaceCreation.space.did(),
       nb: {},
     })
-    const result = await listInvocation.execute(/** @type {any} */ (conn))
+    const result = await listInvocation.execute(
+      /** @type {import('@ucanto/interface').ConnectionView<any>} */ (conn)
+    )
     if (result?.error) {
       try {
         /**
@@ -35,6 +39,7 @@ describe('proxy store/ and upload/ invocations to upload-api', function () {
          * This makes sense because this test is just ensuring that the invocation is forwarded based on the capability.can value
          * even though the audience is just some random did:key
          */
+        assert.ok('name' in result, 'result has name property')
         assert.strictEqual(
           result.name,
           'InvalidAudience',
@@ -89,7 +94,7 @@ describe('proxy store/ and upload/ invocations to upload-api', function () {
     })
     const result = await listInvocation.execute(
       // cast to `any` only because this `conn` uses Service type from access-client.
-      /** @type {any} */ (conn)
+      /** @type {import('@ucanto/interface').ConnectionView<any>} */ (conn)
     )
     if (privateKeyFromEnv) {
       assert.ok(
@@ -103,6 +108,7 @@ describe('proxy store/ and upload/ invocations to upload-api', function () {
       //
       // Since there is an error, we'll assert it's the situation above
       try {
+        assert.ok('name' in result, 'result has name property')
         assert.strictEqual(
           result.name,
           'Unauthorized',
@@ -122,4 +128,81 @@ describe('proxy store/ and upload/ invocations to upload-api', function () {
       }
     }
   })
+  it('errors when a bad delegation is given as proof', async () => {
+    const [alice, bob, mallory] = await Promise.all(
+      Array.from({ length: 3 }).map(() => ed25519.Signer.generate())
+    )
+    const { service: serviceSigner, conn } = await context()
+    const service = process.env.DID
+      ? serviceSigner.withDID(dagUcanDid.parse(process.env.DID).did())
+      : serviceSigner
+    const spaceCreation = await createSpace(
+      alice,
+      service,
+      conn,
+      'space-info@dag.house'
+    )
+    /**
+     * @type {Array<{
+     * invocation: import('@ucanto/interface').IssuedInvocationView
+     * resultAssertion: (r: import('@ucanto/interface').Result<unknown, { error: true }>) => void
+     * }>} */
+    const cases = [
+      {
+        invocation: Store.list.invoke({
+          issuer: mallory,
+          audience: service,
+          proofs: [
+            // this shouldn't work because the audience is bob,
+            // but its a proof an an invocation issued by mallory
+            await Store.list.delegate({
+              issuer: alice,
+              audience: bob,
+              with: spaceCreation.space.did(),
+            }),
+          ],
+          with: spaceCreation.space.did(),
+          nb: {},
+        }),
+        resultAssertion(result) {
+          assert.ok(result.error, 'result is an error')
+          assert.ok('name' in result, 'result has a name')
+          assert.equal(result.name, 'InvalidAudience')
+          assert.ok(
+            'stack' in result && typeof result.stack === 'string',
+            'result has stack string'
+          )
+          assert.equal(
+            isUploadApiStack(result.stack ?? ''),
+            true,
+            'result.stack looks to be from upload-api'
+          )
+        },
+      },
+    ]
+    for (const { invocation, resultAssertion } of cases) {
+      const result = await invocation.execute(
+        /** @type {import('@ucanto/interface').ConnectionView<any>} */ (conn)
+      )
+      try {
+        resultAssertion(result)
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn('result failed assertion', result)
+        throw error
+      }
+    }
+  })
 })
+
+/**
+ * Return whether the provided stack trace string appears to be generated
+ * by a deployed upload-api.
+ * Heuristics:
+ * * stack trace files paths will start with `file:///var/task/upload-api` because of how the lambda environment is working
+ *
+ * @param {string} stack
+ */
+function isUploadApiStack(stack) {
+  return stack.includes('file:///var/task/upload-api')
+}

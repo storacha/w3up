@@ -48,7 +48,7 @@ export async function createSpace(issuer, service, conn, email) {
     })
     .execute(conn)
   if (!claim || claim.error) {
-    throw new Error('failed to create space')
+    throw new Error('failed to create space', { cause: claim })
   }
 
   const delegation = stringToDelegation(claim)
