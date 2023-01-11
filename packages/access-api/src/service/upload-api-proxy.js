@@ -1,17 +1,15 @@
-/* eslint-disable no-console */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-useless-constructor */
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
+// eslint-disable-next-line no-unused-vars
 import * as dagUcan from '@ipld/dag-ucan'
 import * as dagUcanDid from '@ipld/dag-ucan/did'
 import * as HTTP from '@ucanto/transport/http'
+// eslint-disable-next-line no-unused-vars
 import * as Store from '@web3-storage/capabilities/store'
-// @ts-ignore
-import * as ucanto from '@ucanto/core'
+// eslint-disable-next-line no-unused-vars
 import * as iucanto from '@ucanto/interface'
-// @ts-ignore
+// eslint-disable-next-line no-unused-vars
 import * as ed25519 from '@ucanto/principal/ed25519'
 
 /**
@@ -29,7 +27,7 @@ import * as ed25519 from '@ucanto/principal/ed25519'
 /**
  * @template {Record<string, any>} T
  * @param {object} options
- * @param {import('@ucanto/interface').Signer} [options.signer]
+ * @param {iucanto.Signer} [options.signer]
  * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyStoreService(options) {
@@ -59,10 +57,8 @@ function createProxyStoreService(options) {
           // and it'd be nice to not even have to pass around `options.signer`
           options.signer
         : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
-          // @Gozala can we make it so `import('@ucanto/interface').InvocationOptions['issuer']` can be a Verifier and not just Signer?
-          /** @type {import('@ucanto/principal/ed25519').EdSigner} */ (
-            context.id
-          )
+          // @Gozala can we make it so `iucanto.InvocationOptions['issuer']` can be a Verifier and not just Signer?
+          /** @type {ed25519.Signer.Signer} */ (context.id)
 
       const [result] = await Client.execute(
         [
@@ -94,14 +90,14 @@ function createProxyStoreService(options) {
 class AudienceConnections {
   /** @type {Record<dagUcan.DID, URL>} */
   #audienceToUrl
-  /** @type {undefined|import('@ucanto/interface').ConnectionView<any>} */
+  /** @type {undefined|iucanto.ConnectionView<any>} */
   #defaultConnection
   /** @type {typeof globalThis.fetch} */
   #fetch
 
   /**
    * @param {UcantoHttpConnectionOptions} options
-   * @returns {import('@ucanto/interface').ConnectionView<any>}
+   * @returns {iucanto.ConnectionView<any>}
    */
   static createConnection(options) {
     return Client.connect({
@@ -168,7 +164,7 @@ export class UploadApiProxyService {
   /**
    * @template {StoreService} T
    * @param {object} options
-   * @param {import('@ucanto/interface').Signer} options.signer
+   * @param {iucanto.Signer} options.signer
    * @param {typeof globalThis.fetch} options.fetch
    */
   static forSigner(options) {
