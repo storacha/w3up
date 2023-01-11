@@ -6,6 +6,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
+import { CID } from 'multiformats'
 import { createFileEncoderStream } from '../src/unixfs.js'
 import { ShardingStream, ShardStoringStream } from '../src/sharding.js'
 import { serviceSigner } from './fixtures.js'
@@ -36,6 +37,29 @@ describe('ShardingStream', () => {
       // add 100 bytes leeway to the chunk size for encoded CAR data
       assert(car.size <= shardSize + 100)
     }
+  })
+
+  it('uses passed root CID', async () => {
+    const file = new Blob([await randomBytes(32)])
+
+    const rootCID = CID.parse(
+      'bafybeibrqc2se2p3k4kfdwg7deigdggamlumemkiggrnqw3edrjosqhvnm'
+    )
+    /** @type {import('../src/types').CARFile[]} */
+    const shards = []
+
+    await createFileEncoderStream(file)
+      .pipeThrough(new ShardingStream({ rootCID }))
+      .pipeTo(
+        new WritableStream({
+          write: (s) => {
+            shards.push(s)
+          },
+        })
+      )
+
+    assert.equal(shards.length, 1)
+    assert.equal(shards[0].roots[0].toString(), rootCID.toString())
   })
 })
 
