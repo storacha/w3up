@@ -21,23 +21,29 @@ describe('store/list', function () {
     })
     const result = await listInvocation.execute(/** @type {any} */ (conn))
     if (result?.error) {
-      /**
-       * This is expected to error even when the forwarding is working.
-       * When this happens, the error will be like
-       * InvalidAudience: Delegation audience is 'did:key:z6MkqBzPG7oNu7At8fktasQuS7QR7Tj7CujaijPMAgzdmAxD' instead of 'did:web:web3.storage'\n"
-       */
-      assert.strictEqual(
-        result.name,
-        'InvalidAudience',
-        'error has expected name'
-      )
-      assert.strictEqual(
-        result.message?.includes(
-          `Delegation audience is 'did:key:z6MkqBzPG7oNu7At8fktasQuS7QR7Tj7CujaijPMAgzdmAxD' instead of 'did:web:web3.storage'`
-        ),
-        true,
-        `error includes expected message`
-      )
+      try {
+        /**
+         * This is expected to error even when the forwarding is working.
+         * When this happens, the error will be like
+         * InvalidAudience: Delegation audience is 'did:key:z6MkqBzPG7oNu7At8fktasQuS7QR7Tj7CujaijPMAgzdmAxD' instead of 'did:web:web3.storage'\n"
+         */
+        assert.strictEqual(
+          result.name,
+          'InvalidAudience',
+          'error has expected name'
+        )
+        assert.strictEqual(
+          result.message?.includes(
+            `Delegation audience is 'did:key:z6MkqBzPG7oNu7At8fktasQuS7QR7Tj7CujaijPMAgzdmAxD' instead of 'did:web:web3.storage'`
+          ),
+          true,
+          `error includes expected message`
+        )
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('unexpected error', result)
+        throw error
+      }
     }
   })
   it('forwards invocations with aud=did:web:web3.storage', async function () {
@@ -79,14 +85,24 @@ describe('store/list', function () {
       // production, which it almost surely is.
       //
       // Since there is an error, we'll assert it's the situation above
-      assert.strictEqual(result.name, 'Unauthorized', 'error is expected name')
-      assert.strictEqual(
-        result.message?.includes(
-          'Claim {"can":"store/list"} is not authorized'
-        ),
-        true,
-        `error includes expected message`
-      )
+      try {
+        assert.strictEqual(
+          result.name,
+          'Unauthorized',
+          'error is expected name'
+        )
+        assert.strictEqual(
+          result.message?.includes(
+            'Claim {"can":"store/list"} is not authorized'
+          ),
+          true,
+          `error includes expected message`
+        )
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('unexpected error', result)
+        throw error
+      }
     }
   })
 })

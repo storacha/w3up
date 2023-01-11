@@ -30,7 +30,7 @@ import * as ed25519 from '@ucanto/principal/ed25519'
  * @template {Record<string, any>} T
  * @param {object} options
  * @param {import('@ucanto/interface').Signer} options.signer
- * @param {Pick<Map<dagUcan.DID, iucanto.Connection<T>>, 'get'>} options.connections
+ * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyStoreService(options) {
   /**
@@ -54,7 +54,12 @@ function createProxyStoreService(options) {
       // build new invocation that delegates to custom signer
       /** @type {import('@ucanto/interface').IssuedInvocation<C>} */
       const proxyInvocation = Client.invoke({
-        issuer: options.signer,
+        // this results in a forwarded invocation, but the upstream will reject the signature
+        // created using options.signer
+        // issuer: options.signer,
+        // this works, but involves lying about the issuer (it wants a Signer but context.id is only a Verifier)
+        // @Gozala can we make it so `import('@ucanto/interface').InvocationOptions['issuer']` can be a Verifier and not just Signer?
+        issuer: /** @type {any} */ (context.id),
         capability: invocationIn.capabilities[0],
         audience: invocationIn.audience,
         proofs: [invocationIn],
