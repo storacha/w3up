@@ -9,7 +9,7 @@ import {
 } from '@web3-storage/access/encoding'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
-import { UploadApiProxyService } from './upload-api.js'
+import { UploadApiProxyService } from './upload-api-proxy.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx

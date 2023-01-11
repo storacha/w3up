@@ -29,7 +29,7 @@ import * as ed25519 from '@ucanto/principal/ed25519'
 /**
  * @template {Record<string, any>} T
  * @param {object} options
- * @param {import('@ucanto/interface').Signer} options.signer
+ * @param {import('@ucanto/interface').Signer} [options.signer]
  * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyStoreService(options) {
@@ -51,22 +51,29 @@ function createProxyStoreService(options) {
           `unable to get connection to upload-api for audience ${invocationIn.audience.did()}}`
         )
       }
-      // build new invocation that delegates to custom signer
-      /** @type {import('@ucanto/interface').IssuedInvocation<C>} */
-      const proxyInvocation = Client.invoke({
-        // this results in a forwarded invocation, but the upstream will reject the signature
-        // created using options.signer
-        // issuer: options.signer,
-        // this works, but involves lying about the issuer (it wants a Signer but context.id is only a Verifier)
-        // @Gozala can we make it so `import('@ucanto/interface').InvocationOptions['issuer']` can be a Verifier and not just Signer?
-        issuer: /** @type {any} */ (context.id),
-        capability: invocationIn.capabilities[0],
-        audience: invocationIn.audience,
-        proofs: [invocationIn],
-      })
+
+      // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
+      const proxyInvocationIssuer = options.signer
+        ? // this results in a forwarded invocation, but the upstream will reject the signature
+          // created using options.signer unless options.signer signs w/ the same private key as the original issuer
+          // and it'd be nice to not even have to pass around `options.signer`
+          options.signer
+        : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
+          // @Gozala can we make it so `import('@ucanto/interface').InvocationOptions['issuer']` can be a Verifier and not just Signer?
+          /** @type {import('@ucanto/principal/ed25519').EdSigner} */ (
+            context.id
+          )
+
       const [result] = await Client.execute(
-        [proxyInvocation],
-        /** @type {Client.Connection<any>} */ (uploadApiConnection)
+        [
+          Client.invoke({
+            issuer: proxyInvocationIssuer,
+            capability: invocationIn.capabilities[0],
+            audience: invocationIn.audience,
+            proofs: [invocationIn],
+          }),
+        ],
+        /** @type {Client.ConnectionView<any>} */ (uploadApiConnection)
       )
       return result
     },
@@ -87,14 +94,14 @@ function createProxyStoreService(options) {
 class AudienceConnections {
   /** @type {Record<dagUcan.DID, URL>} */
   #audienceToUrl
-  /** @type {undefined|import('@ucanto/interface').Connection<any>} */
+  /** @type {undefined|import('@ucanto/interface').ConnectionView<any>} */
   #defaultConnection
   /** @type {typeof globalThis.fetch} */
   #fetch
 
   /**
    * @param {UcantoHttpConnectionOptions} options
-   * @returns {import('@ucanto/interface').Connection<any>}
+   * @returns {import('@ucanto/interface').ConnectionView<any>}
    */
   static createConnection(options) {
     return Client.connect({
