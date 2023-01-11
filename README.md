@@ -155,6 +155,7 @@ In the example above, `directoryCid` resolves to an IPFS directory with the foll
 - `Client`
   - [`uploadDirectory`](#uploaddirectory)
   - [`uploadFile`](#uploadfile)
+  - [`uploadCAR`](#uploadcar)
   - [`agent`](#agent)
   - [`currentSpace`](#currentspace)
   - [`setCurrentSpace`](#setcurrentspace)
@@ -215,6 +216,7 @@ function uploadDirectory (
     signal?: AbortSignal
     onShardStored?: ShardStoredCallback
     shardSize?: number
+    concurrentRequests?: number
   } = {}
 ): Promise<CID>
 ```
@@ -233,11 +235,32 @@ function uploadFile (
     signal?: AbortSignal
     onShardStored?: ShardStoredCallback
     shardSize?: number
+    concurrentRequests?: number
   } = {}
 ): Promise<CID>
 ```
 
 Uploads a file to the service and returns the root data CID for the generated DAG.
+
+More information: [`ShardStoredCallback`](#shardstoredcallback)
+
+### `uploadCAR`
+
+```ts
+function uploadCAR (
+  car: Blob,
+  options: {
+    retries?: number
+    signal?: AbortSignal
+    onShardStored?: ShardStoredCallback
+    shardSize?: number
+    concurrentRequests?: number
+    rootCID?: CID
+  } = {}
+): Promise<void>
+```
+
+Uploads a CAR file to the service. The difference between this function and [capability.store.add](#capabilitystoreadd) is that the CAR file is automatically sharded and an "upload" is registered (see [`capability.upload.add`](#capabilityuploadadd)), linking the individual shards. Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
 
 More information: [`ShardStoredCallback`](#shardstoredcallback)
 

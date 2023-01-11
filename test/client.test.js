@@ -6,7 +6,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import { AgentData } from '@web3-storage/access/agent'
-import { randomBytes } from './helpers/random.js'
+import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { mockService, mockServiceConf } from './helpers/mocks.js'
 import { File } from './helpers/shims.js'
@@ -157,6 +157,69 @@ describe('Client', () => {
 
       assert(carCID)
       assert(dataCID)
+    })
+  })
+
+  describe('uploadCAR', () => {
+    it('uploads a CAR file to the service', async () => {
+      const car = await randomCAR(32)
+
+      /** @type {import('../src/types').CARLink?} */
+      let carCID
+
+      const service = mockService({
+        store: {
+          add: provide(StoreCapabilities.add, ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, StoreCapabilities.add.can)
+            assert.equal(invCap.with, space.did())
+            return {
+              status: 'upload',
+              headers: { 'x-test': 'true' },
+              url: 'http://localhost:9200'
+            }
+          })
+        },
+        upload: {
+          add: provide(UploadCapabilities.add, ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, UploadCapabilities.add.can)
+            assert.equal(invCap.with, space.did())
+            if (!invCap.nb) throw new Error('nb must be present')
+            assert.equal(invCap.nb.shards?.length, 1)
+            assert.equal(invCap.nb.shards[0].toString(), carCID.toString())
+            return invCap.nb
+          })
+        }
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        decoder: CAR,
+        encoder: CBOR
+      })
+
+      const alice = new Client(
+        await AgentData.create(),
+        { serviceConf: await mockServiceConf(server) }
+      )
+
+      const space = await alice.createSpace()
+      await alice.setCurrentSpace(space.did())
+      await alice.uploadCAR(car, { onShardStored: meta => { carCID = meta.cid } })
+
+      assert(service.store.add.called)
+      assert.equal(service.store.add.callCount, 1)
+      assert(service.upload.add.called)
+      assert.equal(service.upload.add.callCount, 1)
+
+      assert(carCID)
+      assert.equal(carCID.toString(), car.cid.toString())
     })
   })
 

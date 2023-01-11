@@ -75,6 +75,7 @@ export type {
   RequestOptions,
   ListRequestOptions,
   ShardingOptions,
+  ShardStoringOptions,
   UploadOptions,
   FileLike,
   BlobLike
