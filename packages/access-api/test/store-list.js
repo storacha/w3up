@@ -5,7 +5,7 @@ import * as Store from '@web3-storage/capabilities/store'
 import * as ed25519 from '@ucanto/principal/ed25519'
 import * as dagUcanDid from '@ipld/dag-ucan/did'
 
-describe('proxy store/ and upload/ invocations to upload-api', function () {
+describe('proxy store/list invocations to upload-api', function () {
   it('forwards store/list invocations with aud=did:key', async function () {
     const { issuer, service, conn } = await context({
       environment: {
