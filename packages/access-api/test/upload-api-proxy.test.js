@@ -1,19 +1,31 @@
 import assert from 'assert'
 import * as Store from '@web3-storage/capabilities/store'
+import * as Upload from '@web3-storage/capabilities/upload'
 
-describe('upload-api-proxy', function () {
+describe('parserCapabilities', function () {
   it('can get all caps from Store.all', () => {
     // eslint-disable-next-line unicorn/no-array-reduce
-    const storeCaps = parserCapabilities(Store.all)
-    const capCans = new Set(storeCaps.map((c) => c.can))
+    const caps = parserCapabilities(Store.all)
+    const cans = new Set(caps.map((c) => c.can))
     const expectedCans = new Set(['store/add', 'store/remove', 'store/list'])
     for (const can of expectedCans) {
-      assert.ok(capCans.has(can), `parsed can=${can} from Store.all`)
+      assert.ok(cans.has(can), `parsed can=${can} from Store.all`)
     }
-    for (const can of capCans) {
+    for (const can of cans) {
       assert.ok(can.startsWith('store/'), `Store.all can starts with store/`)
     }
-    assert.ok(storeCaps.length >= 3)
+  })
+  it('can get all caps from Upload.all', () => {
+    // eslint-disable-next-line unicorn/no-array-reduce
+    const caps = parserCapabilities(Upload.all)
+    const cans = new Set(caps.map((c) => c.can))
+    const expectedCans = new Set(['upload/add', 'upload/remove', 'upload/list'])
+    for (const can of expectedCans) {
+      assert.ok(cans.has(can), `parsed can=${can} from Upload.all`)
+    }
+    for (const can of cans) {
+      assert.ok(can.startsWith('upload/'), `Upload.all can starts with upload/`)
+    }
   })
 })
 
