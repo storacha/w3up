@@ -75,7 +75,7 @@
     "@ucanto/transport": "^4.0.2",
     "@web3-storage/access": "^9.1.1",
     "@web3-storage/capabilities": "^2.0.0",
-    "@web3-storage/upload-client": "^5.2.0"
+    "@web3-storage/upload-client": "^5.3.0"
   },
   "devDependencies": {
     "@ucanto/server": "^4.0.2",

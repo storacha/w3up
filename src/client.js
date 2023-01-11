@@ -1,4 +1,4 @@
-import { uploadFile, uploadDirectory } from '@web3-storage/upload-client'
+import { uploadFile, uploadDirectory, uploadCAR } from '@web3-storage/upload-client'
 import { Store as StoreCapabilities, Upload as UploadCapabilities } from '@web3-storage/capabilities'
 import { Base } from './base.js'
 import { Space } from './space.js'
@@ -47,6 +47,24 @@ export class Client extends Base {
     const conf = await this._invocationConfig([StoreCapabilities.add.can, UploadCapabilities.add.can])
     options.connection = this._serviceConf.upload
     return uploadDirectory(conf, files, options)
+  }
+
+  /**
+   * Uploads a CAR file to the service.
+   *
+   * The difference between this function and `capability.store.add` is that the
+   * CAR file is automatically sharded and an "upload" is registered, linking
+   * the individual shards (see `capability.upload.add`).
+   *
+   * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
+   *
+   * @param {import('./types').BlobLike} car CAR file.
+   * @param {import('./types').UploadOptions} [options]
+   */
+  async uploadCAR (car, options = {}) {
+    const conf = await this._invocationConfig([StoreCapabilities.add.can, UploadCapabilities.add.can])
+    options.connection = this._serviceConf.upload
+    return uploadCAR(conf, car, options)
   }
 
   /**
