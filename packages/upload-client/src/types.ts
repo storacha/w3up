@@ -186,9 +186,25 @@ export interface ShardingOptions {
    * header and block encoding data.
    */
   shardSize?: number
+  /**
+   * The root CID of the DAG contained in the shards. By default The last block
+   * is assumed to be the DAG root and becomes the CAR root CID for the last CAR
+   * output. Set this option to use this CID instead.
+   */
+  rootCID?: AnyLink
 }
 
-export interface UploadOptions extends RequestOptions, ShardingOptions {
+export interface ShardStoringOptions extends RequestOptions {
+  /**
+   * The number of concurrent requests to store shards. Default 3.
+   */
+  concurrentRequests?: number
+}
+
+export interface UploadOptions
+  extends RequestOptions,
+    ShardingOptions,
+    ShardStoringOptions {
   onShardStored?: (meta: CARMetadata) => void
 }
 
