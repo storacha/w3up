@@ -11,8 +11,6 @@ import * as Store from '@web3-storage/capabilities/store'
 import * as Upload from '@web3-storage/capabilities/upload'
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-// eslint-disable-next-line no-unused-vars
-import * as ed25519 from '@ucanto/principal/ed25519'
 
 /**
  * @template {Ucanto.Capability} C
@@ -52,7 +50,7 @@ function createInvocationResponder(options) {
    * @template {import('@ucanto/interface').Capability} Capability
    * @param {Ucanto.Invocation<Capability>} invocationIn
    * @param {Ucanto.InvocationContext} context
-   * @returns {Promise<Ucanto.Result<Success, Failure>>}
+   * @returns {Promise<Ucanto.Result<any, { error: true }>>}
    */
   return async function handleInvocation(invocationIn, context) {
     const connection = options.connections.get(invocationIn.audience.did())
@@ -69,7 +67,7 @@ function createInvocationResponder(options) {
         options.signer
       : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
         // @Gozala can we make it so `Ucanto.InvocationOptions['issuer']` can be a Verifier and not just Signer?
-        /** @type {ed25519.Signer.Signer} */ (context.id)
+        /** @type {Ucanto.Signer} */ (context.id)
 
     const [result] = await Client.execute(
       [
