@@ -12,7 +12,8 @@
   },
   "scripts": {
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false",
-    "test": "ava"
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "files": [
     "build/*",
