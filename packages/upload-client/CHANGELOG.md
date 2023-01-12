@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.3.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.2.0...upload-client-v5.3.0) (2023-01-11)
+
+
+### Features
+
+* add uploadCAR function ([#329](https://github.com/web3-storage/w3protocol/issues/329)) ([6e40e47](https://github.com/web3-storage/w3protocol/commit/6e40e477903a68d0a339300357a57ec76de60394))
+* embedded key resolution ([#312](https://github.com/web3-storage/w3protocol/issues/312)) ([4da91d5](https://github.com/web3-storage/w3protocol/commit/4da91d5f7f798d0d46c4df2aaf224610a8760d9e))
+
+
+### Bug Fixes
+
+* better upload-api service types ([#323](https://github.com/web3-storage/w3protocol/issues/323)) ([4cfe312](https://github.com/web3-storage/w3protocol/commit/4cfe312c9501c2c595a2c7f3fe768d58be1dbc7b))
+
 ## [5.2.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.1.0...upload-client-v5.2.0) (2022-12-14)
 
 

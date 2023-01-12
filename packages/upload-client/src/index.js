@@ -69,6 +69,39 @@ export async function uploadDirectory(conf, files, options = {}) {
 }
 
 /**
+ * Uploads a CAR file to the service.
+ *
+ * The difference between this function and `Store.add` is that the CAR file is
+ * automatically sharded and an "upload" is registered, linking the individual
+ * shards (see `Upload.add`).
+ *
+ * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
+ *
+ * Required delegated capability proofs: `store/add`, `upload/add`
+ *
+ * @param {import('./types').InvocationConfig} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
+ *
+ * The `issuer` is the signing authority that is issuing the UCAN
+ * invocation(s). It is typically the user _agent_.
+ *
+ * The `with` is the resource the invocation applies to. It is typically the
+ * DID of a space.
+ *
+ * The `proofs` are a set of capability delegations that prove the issuer
+ * has the capability to perform the action.
+ *
+ * The issuer needs the `store/add` and `upload/add` delegated capability.
+ * @param {import('./types').BlobLike} car CAR file.
+ * @param {import('./types').UploadOptions} [options]
+ */
+export async function uploadCAR(conf, car, options = {}) {
+  const blocks = new CAR.BlockStream(car)
+  options.rootCID = options.rootCID ?? (await blocks.getRoots())[0]
+  return await uploadBlockStream(conf, blocks, options)
+}
+
+/**
  * @param {import('./types').InvocationConfig} conf
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
  * @param {import('./types').UploadOptions} [options]

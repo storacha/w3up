@@ -1,18 +1,14 @@
 import { CarWriter } from '@ipld/car'
-import { CID } from 'multiformats/cid'
-import * as raw from 'multiformats/codecs/raw'
-import { sha256 } from 'multiformats/hashes/sha2'
 import * as CAR from '@ucanto/transport/car'
+import { toBlock } from './block.js'
 
 /**
  * @param {Uint8Array} bytes
  **/
 export async function toCAR(bytes) {
-  const hash = await sha256.digest(bytes)
-  const root = CID.create(1, raw.code, hash)
-
-  const { writer, out } = CarWriter.create(root)
-  writer.put({ cid: root, bytes })
+  const block = await toBlock(bytes)
+  const { writer, out } = CarWriter.create(block.cid)
+  writer.put(block)
   writer.close()
 
   const chunks = []
@@ -22,5 +18,5 @@ export async function toCAR(bytes) {
   const blob = new Blob(chunks)
   const cid = await CAR.codec.link(new Uint8Array(await blob.arrayBuffer()))
 
-  return Object.assign(blob, { cid, roots: [root] })
+  return Object.assign(blob, { cid, roots: [block.cid] })
 }

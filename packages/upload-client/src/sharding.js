@@ -6,8 +6,9 @@ const SHARD_SIZE = 1024 * 1024 * 100
 const CONCURRENT_UPLOADS = 3
 
 /**
- * Shard a set of blocks into a set of CAR files. The last block is assumed to
- * be the DAG root and becomes the CAR root CID for the last CAR output.
+ * Shard a set of blocks into a set of CAR files. By default the last block
+ * received is assumed to be the DAG root and becomes the CAR root CID for the
+ * last CAR output. Set the `rootCID` option to override.
  *
  * @extends {TransformStream<import('@ipld/unixfs').Block, import('./types').CARFile>}
  */
@@ -45,7 +46,9 @@ export class ShardingStream extends TransformStream {
 
         const rootBlock = shard.at(-1)
         if (rootBlock != null) {
-          controller.enqueue(await encode(shard, rootBlock.cid))
+          controller.enqueue(
+            await encode(shard, options.rootCID ?? rootBlock.cid)
+          )
         }
       },
     })
@@ -78,10 +81,12 @@ export class ShardStoringStream extends TransformStream {
    * has the capability to perform the action.
    *
    * The issuer needs the `store/add` delegated capability.
-   * @param {import('./types').RequestOptions} [options]
+   * @param {import('./types').ShardStoringOptions} [options]
    */
   constructor(conf, options = {}) {
-    const queue = new Queue({ concurrency: CONCURRENT_UPLOADS })
+    const queue = new Queue({
+      concurrency: options.concurrentRequests ?? CONCURRENT_UPLOADS,
+    })
     const abortController = new AbortController()
     super({
       async transform(car, controller) {
