@@ -8,7 +8,7 @@ export type UploadsListContextValue = [
   actions: UploadsListContextActions
 ]
 
-const UploadsListContext = createContext<UploadsListContextValue>([
+export const uploadsListContextDefaultValue: UploadsListContextValue = [
   {
     loading: false
   },
@@ -16,7 +16,9 @@ const UploadsListContext = createContext<UploadsListContextValue>([
     next: async () => {},
     reload: async () => {}
   }
-])
+]
+
+export const UploadsListContext = createContext<UploadsListContextValue>(uploadsListContextDefaultValue)
 
 export interface UploadsListProviderProps extends ServiceConfig {
   children?: JSX.Element

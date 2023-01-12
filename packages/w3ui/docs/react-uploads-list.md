@@ -21,7 +21,7 @@ import * as ReactUploadsList from '@w3ui/react-uploads-list'
 
 ### `UploadsListProvider`
 
-Provider for a list of items uploaded by the current agent. Note that this provider uses [`useKeyring`](./react-keyring#usekeyring) to obtain the current agent's identity.
+Provider for a list of items uploaded by the current agent. Note that this provider uses [`useKeyring`](./react-keyring.md#usekeyring) to obtain the current agent's identity.
 
 Example:
 

@@ -11,7 +11,7 @@ export type KeyringContextValue = [
   actions: KeyringContextActions
 ]
 
-export const KeyringContext = createContext<KeyringContextValue>([
+export const keyringContextDefaultValue: KeyringContextValue = [
   {
     space: undefined,
     spaces: [],
@@ -27,7 +27,9 @@ export const KeyringContext = createContext<KeyringContextValue>([
     cancelRegisterSpace: () => { },
     getProofs: async () => []
   }
-])
+]
+
+export const KeyringContext = createContext<KeyringContextValue>(keyringContextDefaultValue)
 
 export interface KeyringProviderProps extends ServiceConfig {
   children?: JSX.Element

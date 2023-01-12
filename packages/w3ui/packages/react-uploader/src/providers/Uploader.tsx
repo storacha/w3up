@@ -9,13 +9,15 @@ export type UploaderContextValue = [
   actions: UploaderContextActions
 ]
 
-const UploaderContext = createContext<UploaderContextValue>([
+export const uploaderContextDefaultValue: UploaderContextValue = [
   { storedDAGShards: [] },
   {
     uploadFile: async () => { throw new Error('missing uploader context provider') },
     uploadDirectory: async () => { throw new Error('missing uploader context provider') }
   }
-])
+]
+
+export const UploaderContext = createContext<UploaderContextValue>(uploaderContextDefaultValue)
 
 export interface UploaderProviderProps extends ServiceConfig {
   children?: JSX.Element
