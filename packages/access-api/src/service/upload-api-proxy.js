@@ -66,7 +66,7 @@ function createInvocationResponder(options) {
         // and it'd be nice to not even have to pass around `options.signer`
         options.signer
       : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
-        // @Gozala can we make it so `Ucanto.InvocationOptions['issuer']` can be a Verifier and not just Signer?
+        // @todo obviate this type override via https://github.com/web3-storage/ucanto/issues/195
         /** @type {Ucanto.Signer} */ (context.id)
 
     const [result] = await Client.execute(
