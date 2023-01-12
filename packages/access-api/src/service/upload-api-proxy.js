@@ -233,15 +233,3 @@ export class UploadApiProxyService {
     this.upload = upload
   }
 }
-
-/**
- * Return whether the provided stack trace string appears to be generated
- * by a deployed upload-api.
- * Heuristics:
- * * stack trace files paths will start with `file:///var/task/upload-api` because of how the lambda environment is working
- *
- * @param {string} stack
- */
-export function isUploadApiStack(stack) {
-  return stack.includes('file:///var/task/upload-api')
-}

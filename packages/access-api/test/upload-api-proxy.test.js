@@ -5,7 +5,7 @@ import { context } from './helpers/context.js'
 import * as ucanto from '@ucanto/core'
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import { isUploadApiStack } from '../src/service/upload-api-proxy.js'
+import { isUploadApiStack } from './helpers/utils.js'
 
 describe('parserCapabilities', function () {
   it('can get all caps from Store.all', () => {

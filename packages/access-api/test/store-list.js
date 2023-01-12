@@ -1,10 +1,9 @@
 import assert from 'assert'
 import { context } from './helpers/context.js'
-import { createSpace } from './helpers/utils.js'
+import { createSpace, isUploadApiStack } from './helpers/utils.js'
 import * as Store from '@web3-storage/capabilities/store'
 import * as ed25519 from '@ucanto/principal/ed25519'
 import * as ucanto from '@ucanto/core'
-import { isUploadApiStack } from '../src/service/upload-api-proxy.js'
 
 describe('proxy store/list invocations to upload-api', function () {
   it('forwards store/list invocations with aud=did:key', async function () {
