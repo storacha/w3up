@@ -211,12 +211,11 @@ export class UploadApiProxyService {
   }
 
   /**
-   * @template {StoreService} T
    * @param {object} options
-   * @param {iucanto.Signer} options.signer
+   * @param {iucanto.Signer} [options.signer]
    * @param {typeof globalThis.fetch} options.fetch
    */
-  static forSigner(options) {
+  static create(options) {
     // eslint-disable-next-line unicorn/no-array-reduce
     const audienceToUrl = Object.values(this.#environments).reduce(
       (acc, { audience, url }) => {

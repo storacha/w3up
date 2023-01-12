@@ -17,10 +17,10 @@ import { UploadApiProxyService } from './upload-api-proxy.js'
  */
 export function service(ctx) {
   return {
-    ...UploadApiProxyService.forSigner({
-      signer: ctx.signer,
+    ...UploadApiProxyService.create({
       fetch: globalThis.fetch,
     }),
+
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),
