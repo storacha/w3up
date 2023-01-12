@@ -55,12 +55,10 @@ function createInvocationResponder(options) {
    * @returns {Promise<iucanto.Result<any, { error: true }>>}
    */
   return async function handleInvocation(invocationIn, context) {
-    const uploadApiConnection = options.connections.get(
-      invocationIn.audience.did()
-    )
-    if (!uploadApiConnection) {
+    const connection = options.connections.get(invocationIn.audience.did())
+    if (!connection) {
       throw new Error(
-        `unable to get connection to upload-api for audience ${invocationIn.audience.did()}}`
+        `unable to get connection for audience ${invocationIn.audience.did()}}`
       )
     }
     // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
@@ -82,7 +80,7 @@ function createInvocationResponder(options) {
           proofs: [invocationIn],
         }),
       ],
-      /** @type {Client.ConnectionView<any>} */ (uploadApiConnection)
+      /** @type {Client.ConnectionView<any>} */ (connection)
     )
     return result
   }
