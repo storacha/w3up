@@ -1,7 +1,7 @@
 import { Signer } from '@ucanto/principal/ed25519'
-import * as DID from '@ipld/dag-ucan/did'
 // eslint-disable-next-line no-unused-vars
-import * as dagUcan from '@ipld/dag-ucan'
+import { UCAN } from '@ucanto/interface'
+import { DID } from '@ucanto/core'
 
 /**
  * Loads configuration variables from the global environment and returns a JS object
@@ -132,9 +132,9 @@ export function configureSigner(config) {
 }
 
 /**
- * @template {dagUcan.DID} ConfigDID
- * @template {dagUcan.DID} [ID=dagUcan.DID]
- * @template {dagUcan.SigAlg} [Alg=dagUcan.SigAlg]
+ * @template {UCAN.DID} ConfigDID
+ * @template {UCAN.DID} [ID=UCAN.DID]
+ * @template {UCAN.SigAlg} [Alg=UCAN.SigAlg]
  * @param {object} config
  * @param {ConfigDID} [config.DID] - public DID for the service
  * @param {import('@ucanto/interface').Verifier<ID,Alg>} verifier
