@@ -52,7 +52,7 @@ function createInvocationResponder(options) {
    * @template {import('@ucanto/interface').Capability} Capability
    * @param {Ucanto.Invocation<Capability>} invocationIn
    * @param {Ucanto.InvocationContext} context
-   * @returns {Promise<Ucanto.Result<any, { error: true }>>}
+   * @returns {Promise<Ucanto.Result<Success, Failure>>}
    */
   return async function handleInvocation(invocationIn, context) {
     const connection = options.connections.get(invocationIn.audience.did())
