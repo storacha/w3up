@@ -1,6 +1,6 @@
 import { Signer } from '@ucanto/principal/ed25519'
 // eslint-disable-next-line no-unused-vars
-import { UCAN } from '@ucanto/interface'
+import * as UCAN from '@ucanto/interface'
 import { DID } from '@ucanto/core'
 
 /**
