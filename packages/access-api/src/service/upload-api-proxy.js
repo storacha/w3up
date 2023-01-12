@@ -130,59 +130,72 @@ function createProxyUploadService(options) {
  */
 
 /**
- * @implements {Pick<Map<dagUcan.DID, Ucanto.Connection<any>>, 'get'>}
+ * @param {UcantoHttpConnectionOptions} options
+ * @returns {Ucanto.ConnectionView<any>}
  */
-class AudienceConnections {
-  /** @type {Record<dagUcan.DID, URL>} */
-  #audienceToUrl
-  /** @type {undefined|Ucanto.ConnectionView<any>} */
-  #defaultConnection
-  /** @type {typeof globalThis.fetch} */
-  #fetch
+function createUcantoHttpConnection(options) {
+  return Client.connect({
+    id: DID.parse(options.audience),
+    encoder: CAR,
+    decoder: CBOR,
+    channel: HTTP.open({
+      fetch: options.fetch,
+      url: options.url,
+    }),
+  })
+}
 
-  /**
-   * @param {UcantoHttpConnectionOptions} options
-   * @returns {Ucanto.ConnectionView<any>}
-   */
-  static createConnection(options) {
-    return Client.connect({
-      id: DID.parse(options.audience),
-      encoder: CAR,
-      decoder: CBOR,
-      channel: HTTP.open({
-        fetch: options.fetch,
-        url: options.url,
-      }),
-    })
-  }
+/**
+ * @type {Record<string, {
+ * audience: dagUcan.DID,
+ * url: URL,
+ * }>}
+ */
+const uploadApiEnvironments = {
+  production: {
+    audience: 'did:web:web3.storage',
+    url: new URL('https://up.web3.storage'),
+  },
+  staging: {
+    audience: 'did:web:staging.web3.storage',
+    url: new URL('https://staging.up.web3.storage'),
+  },
+}
 
+/**
+ * @interface {Pick<Map<dagUcan.DID, Ucanto.Connection<any>>, 'get'>}
+ */
+const audienceConnections = {
+  audienceToUrl: (() => {
+    /** @type {{ [k: keyof typeof uploadApiEnvironments]: URL }} */
+    const object = {}
+    for (const [, { audience, url }] of Object.entries(uploadApiEnvironments)) {
+      object[audience] = url
+    }
+    return object
+  })(),
+  fetch: globalThis.fetch,
+  /** @type {undefined|Ucanto.DID} */
+  defaultAudience: uploadApiEnvironments.production.audience,
   /**
-   * @param {object} options
-   * @param {Record<dagUcan.DID, URL>} options.audienceToUrl
-   * @param {UcantoHttpConnectionOptions} [options.defaultConnection]
-   * @param {typeof globalThis.fetch} options.fetch
-   */
-  constructor(options) {
-    this.#fetch = options.fetch
-    this.#audienceToUrl = options.audienceToUrl
-    this.#defaultConnection = options.defaultConnection
-      ? AudienceConnections.createConnection(options.defaultConnection)
-      : undefined
-  }
-
-  /**
+   * Return a ucanto connection to use for the provided invocation audience.
+   * If no connection is available for the provided audience, return a connection for the default audience.
+   *
    * @param {dagUcan.DID} audience
    */
   get(audience) {
-    if (audience in this.#audienceToUrl) {
-      return AudienceConnections.createConnection({
-        audience,
-        fetch: this.#fetch,
-        url: this.#audienceToUrl[audience],
-      })
+    const defaultedAudience =
+      audience in this.audienceToUrl ? audience : this.defaultAudience
+    if (!defaultedAudience) {
+      return
     }
-    return this.#defaultConnection
-  }
+    const url = this.audienceToUrl[defaultedAudience]
+    return createUcantoHttpConnection({
+      audience: defaultedAudience,
+      fetch: this.fetch,
+      url,
+    })
+  },
 }
 
 export class UploadApiProxyService {
@@ -192,47 +205,17 @@ export class UploadApiProxyService {
   upload
 
   /**
-   * @type {Record<string, {
-   * audience: dagUcan.DID,
-   * url: URL,
-   * }>}
-   */
-  static #environments = {
-    production: {
-      audience: 'did:web:web3.storage',
-      url: new URL('https://up.web3.storage'),
-    },
-    staging: {
-      audience: 'did:web:staging.web3.storage',
-      url: new URL('https://staging.up.web3.storage'),
-    },
-  }
-
-  /**
    * @param {object} options
    * @param {Ucanto.Signer} [options.signer]
    * @param {typeof globalThis.fetch} options.fetch
    */
   static create(options) {
-    // eslint-disable-next-line unicorn/no-array-reduce
-    const audienceToUrl = Object.values(this.#environments).reduce(
-      (acc, { audience, url }) => {
-        acc[audience] = url
-        return acc
-      },
-      /** @type {Record<dagUcan.DID, URL>} */ ({})
-    )
-    const connections = new AudienceConnections({
-      audienceToUrl,
-      defaultConnection: {
-        fetch: options.fetch,
-        ...this.#environments.production,
-      },
-      fetch: options.fetch,
-    })
     const proxyOptions = {
       signer: options.signer,
-      connections,
+      connections: {
+        ...audienceConnections,
+        ...(options.fetch && { fetch: options.fetch }),
+      },
     }
     return new this(
       createProxyStoreService(proxyOptions),
