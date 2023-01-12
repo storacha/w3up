@@ -4,6 +4,7 @@ import { createSpace } from './helpers/utils.js'
 import * as Store from '@web3-storage/capabilities/store'
 import * as ed25519 from '@ucanto/principal/ed25519'
 import * as dagUcanDid from '@ipld/dag-ucan/did'
+import { isUploadApiStack } from '../src/service/upload-api-proxy.js'
 
 describe('proxy store/list invocations to upload-api', function () {
   it('forwards store/list invocations with aud=did:key', async function () {
@@ -194,15 +195,3 @@ describe('proxy store/list invocations to upload-api', function () {
     }
   })
 })
-
-/**
- * Return whether the provided stack trace string appears to be generated
- * by a deployed upload-api.
- * Heuristics:
- * * stack trace files paths will start with `file:///var/task/upload-api` because of how the lambda environment is working
- *
- * @param {string} stack
- */
-function isUploadApiStack(stack) {
-  return stack.includes('file:///var/task/upload-api')
-}
