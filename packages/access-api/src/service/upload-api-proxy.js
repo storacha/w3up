@@ -8,6 +8,8 @@ import * as HTTP from '@ucanto/transport/http'
 // eslint-disable-next-line no-unused-vars
 import * as Store from '@web3-storage/capabilities/store'
 // eslint-disable-next-line no-unused-vars
+import * as Upload from '@web3-storage/capabilities/upload'
+// eslint-disable-next-line no-unused-vars
 import * as iucanto from '@ucanto/interface'
 // eslint-disable-next-line no-unused-vars
 import * as ed25519 from '@ucanto/principal/ed25519'
@@ -27,6 +29,13 @@ import * as ed25519 from '@ucanto/principal/ed25519'
  * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.add>>} add
  * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.list>>} list
  * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.remove>>} remove
+ */
+
+/**
+ * @typedef UploadService
+ * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Upload.add>>} add
+ * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Upload.list>>} list
+ * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Upload.remove>>} remove
  */
 
 /**
@@ -89,6 +98,25 @@ function createProxyStoreService(options) {
   const handleInvocation = createInvocationResponder(options)
   /**
    * @type {StoreService}
+   */
+  const store = {
+    add: handleInvocation,
+    list: handleInvocation,
+    remove: handleInvocation,
+  }
+  return store
+}
+
+/**
+ * @template {Record<string, any>} T
+ * @param {object} options
+ * @param {iucanto.Signer} [options.signer]
+ * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<T>>, 'get'>} options.connections
+ */
+function createProxyUploadService(options) {
+  const handleInvocation = createInvocationResponder(options)
+  /**
+   * @type {UploadService}
    */
   const store = {
     add: handleInvocation,
@@ -164,6 +192,8 @@ class AudienceConnections {
 export class UploadApiProxyService {
   /** @type {StoreService} */
   store
+  /** @type {UploadService} */
+  upload
 
   /**
    * @type {Record<string, {
@@ -197,27 +227,32 @@ export class UploadApiProxyService {
       },
       /** @type {Record<dagUcan.DID, URL>} */ ({})
     )
+    const connections = new AudienceConnections({
+      audienceToUrl,
+      defaultConnection: {
+        fetch: options.fetch,
+        ...this.#environments.production,
+      },
+      fetch: options.fetch,
+    })
+    const proxyOptions = {
+      signer: options.signer,
+      connections,
+    }
     return new this(
-      createProxyStoreService({
-        signer: options.signer,
-        connections: new AudienceConnections({
-          audienceToUrl,
-          defaultConnection: {
-            fetch: options.fetch,
-            ...this.#environments.production,
-          },
-          fetch: options.fetch,
-        }),
-      })
+      createProxyStoreService(proxyOptions),
+      createProxyUploadService(proxyOptions)
     )
   }
 
   /**
    * @protected
    * @param {StoreService} store
+   * @param {UploadService} upload
    */
-  constructor(store) {
+  constructor(store, upload) {
     this.store = store
+    this.upload = upload
   }
 }
 

@@ -4,6 +4,8 @@ import * as Upload from '@web3-storage/capabilities/upload'
 import * as dagUcanDid from '@ipld/dag-ucan/did'
 import { context } from './helpers/context.js'
 import * as ucanto from '@ucanto/core'
+// eslint-disable-next-line no-unused-vars
+import * as iucanto from '@ucanto/interface'
 import { isUploadApiStack } from '../src/service/upload-api-proxy.js'
 
 describe('parserCapabilities', function () {
@@ -33,44 +35,57 @@ describe('parserCapabilities', function () {
 
 describe('Store.all', () => {
   for (const can of parserAbilities(Store.all)) {
-    it(`proxies ${can} to upload-api`, async () => {
-      const { service: serviceSigner, issuer, conn } = await context()
-      /** @type {import('@ucanto/interface').ConnectionView<any>} */
-      const connection = conn
-      const service = process.env.DID
-        ? serviceSigner.withDID(dagUcanDid.parse(process.env.DID).did())
-        : serviceSigner
-      const invocation = ucanto.invoke({
-        issuer,
-        audience: service,
-        capability: {
-          can,
-          with: `https://dag.house`,
-          nb: {},
-        },
-      })
-      const [result] = await connection.execute(invocation)
-      try {
-        if ('error' in result) {
-          assert.ok(
-            'stack' in result && typeof result.stack === 'string',
-            'error.stack is a string'
-          )
-          assert.ok(
-            isUploadApiStack(result.stack),
-            'error.stack appears to be from upload-api'
-          )
-        }
-      } catch (error) {
-        if (error instanceof AssertionError) {
-          // eslint-disable-next-line no-console
-          console.warn(`unexpected result`, result)
-        }
-        throw error
-      }
-    })
+    it(`proxies ${can} to upload-api`, testCanProxyInvocation(can))
   }
 })
+
+describe('Upload.all', () => {
+  for (const can of parserAbilities(Upload.all)) {
+    it(`proxies ${can} to upload-api`, testCanProxyInvocation(can))
+  }
+})
+
+/**
+ * @param {iucanto.Ability} can
+ */
+function testCanProxyInvocation(can) {
+  return async () => {
+    const { service: serviceSigner, issuer, conn } = await context()
+    /** @type {import('@ucanto/interface').ConnectionView<any>} */
+    const connection = conn
+    const service = process.env.DID
+      ? serviceSigner.withDID(dagUcanDid.parse(process.env.DID).did())
+      : serviceSigner
+    const invocation = ucanto.invoke({
+      issuer,
+      audience: service,
+      capability: {
+        can,
+        with: `https://dag.house`,
+        nb: {},
+      },
+    })
+    const [result] = await connection.execute(invocation)
+    try {
+      if ('error' in result) {
+        assert.ok(
+          'stack' in result && typeof result.stack === 'string',
+          'error.stack is a string'
+        )
+        assert.ok(
+          isUploadApiStack(result.stack),
+          'error.stack appears to be from upload-api'
+        )
+      }
+    } catch (error) {
+      if (error instanceof AssertionError) {
+        // eslint-disable-next-line no-console
+        console.warn(`unexpected result`, result)
+      }
+      throw error
+    }
+  }
+}
 
 /**
  * @param {import('@ucanto/interface').CapabilityParser<any>} cap
