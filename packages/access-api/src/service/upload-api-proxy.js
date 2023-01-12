@@ -14,15 +14,70 @@ import * as ed25519 from '@ucanto/principal/ed25519'
 
 /**
  * @template {iucanto.Capability} C
- * @callback StoreHandler
+ * @template [Success=unknown]
+ * @template {{ error: true }} [Failure={error:true}]
+ * @callback InvocationResponder
  * @param {iucanto.Invocation<C>} invocationIn
  * @param {iucanto.InvocationContext} context
+ * @returns {Promise<iucanto.Result<Success, Failure>>}
  */
 
 /**
  * @typedef StoreService
- * @property {StoreHandler<iucanto.InferInvokedCapability<typeof Store.list>>} list
+ * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.add>>} add
+ * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.list>>} list
+ * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.remove>>} remove
  */
+
+/**
+ * @template {iucanto.Capability} C
+ * @template [Success=unknown]
+ * @template {{ error: true }} [Failure={error:true}]
+ * @param {object} options
+ * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<any>>, 'get'>} options.connections
+ * @param {iucanto.Signer} [options.signer]
+ * @returns {InvocationResponder<C, Success, Failure>}
+ */
+function createInvocationResponder(options) {
+  /**
+   * @template {import('@ucanto/interface').Capability} Capability
+   * @param {iucanto.Invocation<Capability>} invocationIn
+   * @param {iucanto.InvocationContext} context
+   * @returns {Promise<iucanto.Result<any, { error: true }>>}
+   */
+  return async function handleInvocation(invocationIn, context) {
+    const uploadApiConnection = options.connections.get(
+      invocationIn.audience.did()
+    )
+    if (!uploadApiConnection) {
+      throw new Error(
+        `unable to get connection to upload-api for audience ${invocationIn.audience.did()}}`
+      )
+    }
+    // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
+    const proxyInvocationIssuer = options.signer
+      ? // this results in a forwarded invocation, but the upstream will reject the signature
+        // created using options.signer unless options.signer signs w/ the same private key as the original issuer
+        // and it'd be nice to not even have to pass around `options.signer`
+        options.signer
+      : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
+        // @Gozala can we make it so `iucanto.InvocationOptions['issuer']` can be a Verifier and not just Signer?
+        /** @type {ed25519.Signer.Signer} */ (context.id)
+
+    const [result] = await Client.execute(
+      [
+        Client.invoke({
+          issuer: proxyInvocationIssuer,
+          capability: invocationIn.capabilities[0],
+          audience: invocationIn.audience,
+          proofs: [invocationIn],
+        }),
+      ],
+      /** @type {Client.ConnectionView<any>} */ (uploadApiConnection)
+    )
+    return result
+  }
+}
 
 /**
  * @template {Record<string, any>} T
@@ -31,48 +86,14 @@ import * as ed25519 from '@ucanto/principal/ed25519'
  * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyStoreService(options) {
+  const handleInvocation = createInvocationResponder(options)
   /**
    * @type {StoreService}
    */
   const store = {
-    /**
-     * @template {iucanto.InferInvokedCapability<typeof Store.list>} C
-     * @param {iucanto.Invocation<C>} invocationIn
-     * @param {iucanto.InvocationContext} context
-     */
-    list: async (invocationIn, context) => {
-      const uploadApiConnection = options.connections.get(
-        invocationIn.audience.did()
-      )
-      if (!uploadApiConnection) {
-        throw new Error(
-          `unable to get connection to upload-api for audience ${invocationIn.audience.did()}}`
-        )
-      }
-
-      // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
-      const proxyInvocationIssuer = options.signer
-        ? // this results in a forwarded invocation, but the upstream will reject the signature
-          // created using options.signer unless options.signer signs w/ the same private key as the original issuer
-          // and it'd be nice to not even have to pass around `options.signer`
-          options.signer
-        : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
-          // @Gozala can we make it so `iucanto.InvocationOptions['issuer']` can be a Verifier and not just Signer?
-          /** @type {ed25519.Signer.Signer} */ (context.id)
-
-      const [result] = await Client.execute(
-        [
-          Client.invoke({
-            issuer: proxyInvocationIssuer,
-            capability: invocationIn.capabilities[0],
-            audience: invocationIn.audience,
-            proofs: [invocationIn],
-          }),
-        ],
-        /** @type {Client.ConnectionView<any>} */ (uploadApiConnection)
-      )
-      return result
-    },
+    add: handleInvocation,
+    list: handleInvocation,
+    remove: handleInvocation,
   }
   return store
 }
