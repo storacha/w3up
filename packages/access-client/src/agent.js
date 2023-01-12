@@ -1,5 +1,4 @@
 /* eslint-disable max-depth */
-import * as DID from '@ipld/dag-ucan/did'
 import * as Client from '@ucanto/client'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
@@ -15,7 +14,7 @@ import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
-import { invoke, delegate } from '@ucanto/core'
+import { invoke, delegate, DID } from '@ucanto/core'
 import {
   isExpired,
   isTooEarly,

@@ -1,17 +1,16 @@
 import assert, { AssertionError } from 'assert'
 import * as Store from '@web3-storage/capabilities/store'
 import * as Upload from '@web3-storage/capabilities/upload'
-import * as dagUcanDid from '@ipld/dag-ucan/did'
 import { context } from './helpers/context.js'
 import * as ucanto from '@ucanto/core'
 // eslint-disable-next-line no-unused-vars
-import * as iucanto from '@ucanto/interface'
+import * as Ucanto from '@ucanto/interface'
 import { isUploadApiStack } from '../src/service/upload-api-proxy.js'
 
 describe('parserCapabilities', function () {
   it('can get all caps from Store.all', () => {
     const cans = parserAbilities(Store.all)
-    /** @type {Set<import('@ucanto/interface').Ability>} */
+    /** @type {Set<Ucanto.Ability>} */
     const expectedCans = new Set(['store/add', 'store/remove', 'store/list'])
     for (const can of expectedCans) {
       assert.ok(cans.has(can), `parsed can=${can} from Store.all`)
@@ -22,7 +21,7 @@ describe('parserCapabilities', function () {
   })
   it('can get all caps from Upload.all', () => {
     const cans = parserAbilities(Upload.all)
-    /** @type {Set<import('@ucanto/interface').Ability>} */
+    /** @type {Set<Ucanto.Ability>} */
     const expectedCans = new Set(['upload/add', 'upload/remove', 'upload/list'])
     for (const can of expectedCans) {
       assert.ok(cans.has(can), `parsed can=${can} from Upload.all`)
@@ -46,15 +45,15 @@ describe('Upload.all', () => {
 })
 
 /**
- * @param {iucanto.Ability} can
+ * @param {Ucanto.Ability} can
  */
 function testCanProxyInvocation(can) {
   return async () => {
     const { service: serviceSigner, issuer, conn } = await context()
-    /** @type {import('@ucanto/interface').ConnectionView<any>} */
+    /** @type {Ucanto.ConnectionView<any>} */
     const connection = conn
     const service = process.env.DID
-      ? serviceSigner.withDID(dagUcanDid.parse(process.env.DID).did())
+      ? serviceSigner.withDID(ucanto.DID.parse(process.env.DID).did())
       : serviceSigner
     const invocation = ucanto.invoke({
       issuer,
@@ -88,8 +87,8 @@ function testCanProxyInvocation(can) {
 }
 
 /**
- * @param {import('@ucanto/interface').CapabilityParser<any>} cap
- * @returns {Set<import('@ucanto/interface').Ability>}
+ * @param {Ucanto.CapabilityParser<any>} cap
+ * @returns {Set<Ucanto.Ability>}
  */
 function parserAbilities(cap) {
   const cans = new Set(
@@ -106,7 +105,7 @@ function parserAbilities(cap) {
           0,
           'only two /-delimited segments in can'
         )
-        /** @type {import('@ucanto/interface').Ability} */
+        /** @type {Ucanto.Ability} */
         const can = `${ns}/${firstSegment}`
         return can
       })

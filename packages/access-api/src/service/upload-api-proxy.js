@@ -3,56 +3,56 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 // eslint-disable-next-line no-unused-vars
 import * as dagUcan from '@ipld/dag-ucan'
-import * as dagUcanDid from '@ipld/dag-ucan/did'
+import { DID } from '@ucanto/core'
 import * as HTTP from '@ucanto/transport/http'
 // eslint-disable-next-line no-unused-vars
 import * as Store from '@web3-storage/capabilities/store'
 // eslint-disable-next-line no-unused-vars
 import * as Upload from '@web3-storage/capabilities/upload'
 // eslint-disable-next-line no-unused-vars
-import * as iucanto from '@ucanto/interface'
+import * as Ucanto from '@ucanto/interface'
 // eslint-disable-next-line no-unused-vars
 import * as ed25519 from '@ucanto/principal/ed25519'
 
 /**
- * @template {iucanto.Capability} C
+ * @template {Ucanto.Capability} C
  * @template [Success=unknown]
  * @template {{ error: true }} [Failure={error:true}]
  * @callback InvocationResponder
- * @param {iucanto.Invocation<C>} invocationIn
- * @param {iucanto.InvocationContext} context
- * @returns {Promise<iucanto.Result<Success, Failure>>}
+ * @param {Ucanto.Invocation<C>} invocationIn
+ * @param {Ucanto.InvocationContext} context
+ * @returns {Promise<Ucanto.Result<Success, Failure>>}
  */
 
 /**
  * @typedef StoreService
- * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.add>>} add
- * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.list>>} list
- * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Store.remove>>} remove
+ * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Store.add>>} add
+ * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Store.list>>} list
+ * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Store.remove>>} remove
  */
 
 /**
  * @typedef UploadService
- * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Upload.add>>} add
- * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Upload.list>>} list
- * @property {InvocationResponder<iucanto.InferInvokedCapability<typeof Upload.remove>>} remove
+ * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Upload.add>>} add
+ * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Upload.list>>} list
+ * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Upload.remove>>} remove
  */
 
 /**
- * @template {iucanto.Capability} C
+ * @template {Ucanto.Capability} C
  * @template [Success=unknown]
  * @template {{ error: true }} [Failure={error:true}]
  * @param {object} options
- * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<any>>, 'get'>} options.connections
- * @param {iucanto.Signer} [options.signer]
+ * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<any>>, 'get'>} options.connections
+ * @param {Ucanto.Signer} [options.signer]
  * @returns {InvocationResponder<C, Success, Failure>}
  */
 function createInvocationResponder(options) {
   /**
    * @template {import('@ucanto/interface').Capability} Capability
-   * @param {iucanto.Invocation<Capability>} invocationIn
-   * @param {iucanto.InvocationContext} context
-   * @returns {Promise<iucanto.Result<any, { error: true }>>}
+   * @param {Ucanto.Invocation<Capability>} invocationIn
+   * @param {Ucanto.InvocationContext} context
+   * @returns {Promise<Ucanto.Result<any, { error: true }>>}
    */
   return async function handleInvocation(invocationIn, context) {
     const connection = options.connections.get(invocationIn.audience.did())
@@ -68,7 +68,7 @@ function createInvocationResponder(options) {
         // and it'd be nice to not even have to pass around `options.signer`
         options.signer
       : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
-        // @Gozala can we make it so `iucanto.InvocationOptions['issuer']` can be a Verifier and not just Signer?
+        // @Gozala can we make it so `Ucanto.InvocationOptions['issuer']` can be a Verifier and not just Signer?
         /** @type {ed25519.Signer.Signer} */ (context.id)
 
     const [result] = await Client.execute(
@@ -89,8 +89,8 @@ function createInvocationResponder(options) {
 /**
  * @template {Record<string, any>} T
  * @param {object} options
- * @param {iucanto.Signer} [options.signer]
- * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<T>>, 'get'>} options.connections
+ * @param {Ucanto.Signer} [options.signer]
+ * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyStoreService(options) {
   const handleInvocation = createInvocationResponder(options)
@@ -108,8 +108,8 @@ function createProxyStoreService(options) {
 /**
  * @template {Record<string, any>} T
  * @param {object} options
- * @param {iucanto.Signer} [options.signer]
- * @param {Pick<Map<dagUcan.DID, iucanto.ConnectionView<T>>, 'get'>} options.connections
+ * @param {Ucanto.Signer} [options.signer]
+ * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyUploadService(options) {
   const handleInvocation = createInvocationResponder(options)
@@ -132,23 +132,23 @@ function createProxyUploadService(options) {
  */
 
 /**
- * @implements {Pick<Map<dagUcan.DID, iucanto.Connection<any>>, 'get'>}
+ * @implements {Pick<Map<dagUcan.DID, Ucanto.Connection<any>>, 'get'>}
  */
 class AudienceConnections {
   /** @type {Record<dagUcan.DID, URL>} */
   #audienceToUrl
-  /** @type {undefined|iucanto.ConnectionView<any>} */
+  /** @type {undefined|Ucanto.ConnectionView<any>} */
   #defaultConnection
   /** @type {typeof globalThis.fetch} */
   #fetch
 
   /**
    * @param {UcantoHttpConnectionOptions} options
-   * @returns {iucanto.ConnectionView<any>}
+   * @returns {Ucanto.ConnectionView<any>}
    */
   static createConnection(options) {
     return Client.connect({
-      id: dagUcanDid.parse(options.audience),
+      id: DID.parse(options.audience),
       encoder: CAR,
       decoder: CBOR,
       channel: HTTP.open({
@@ -212,7 +212,7 @@ export class UploadApiProxyService {
 
   /**
    * @param {object} options
-   * @param {iucanto.Signer} [options.signer]
+   * @param {Ucanto.Signer} [options.signer]
    * @param {typeof globalThis.fetch} options.fetch
    */
   static create(options) {

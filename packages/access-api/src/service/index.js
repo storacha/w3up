@@ -1,4 +1,4 @@
-import * as DID from '@ipld/dag-ucan/did'
+import * as ucanto from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
@@ -102,7 +102,7 @@ export function service(ctx) {
           const inv = await Space.recover
             .invoke({
               issuer: ctx.signer,
-              audience: DID.parse(capability.with),
+              audience: ucanto.DID.parse(capability.with),
               with: ctx.signer.did(),
               lifetimeInSeconds: 60 * 10,
               nb: {

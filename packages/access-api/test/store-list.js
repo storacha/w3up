@@ -3,7 +3,7 @@ import { context } from './helpers/context.js'
 import { createSpace } from './helpers/utils.js'
 import * as Store from '@web3-storage/capabilities/store'
 import * as ed25519 from '@ucanto/principal/ed25519'
-import * as dagUcanDid from '@ipld/dag-ucan/did'
+import * as ucanto from '@ucanto/core'
 import { isUploadApiStack } from '../src/service/upload-api-proxy.js'
 
 describe('proxy store/list invocations to upload-api', function () {
@@ -135,7 +135,7 @@ describe('proxy store/list invocations to upload-api', function () {
     )
     const { service: serviceSigner, conn } = await context()
     const service = process.env.DID
-      ? serviceSigner.withDID(dagUcanDid.parse(process.env.DID).did())
+      ? serviceSigner.withDID(ucanto.DID.parse(process.env.DID).did())
       : serviceSigner
     const spaceCreation = await createSpace(
       alice,
