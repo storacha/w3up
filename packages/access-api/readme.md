@@ -17,7 +17,7 @@ pnpm run lint
 pnpm run test
 ```
 
-The API server is currently hardcoded to listen on port 8787 on unspecified (i.e. typically: all) network interfaces.
+The dev API server is currently hardcoded to listen on port 8787 on unspecified (i.e. typically: all) network interfaces.
 
 ## Migrations
 
