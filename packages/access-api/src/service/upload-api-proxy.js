@@ -11,6 +11,7 @@ import * as Store from '@web3-storage/capabilities/store'
 import * as Upload from '@web3-storage/capabilities/upload'
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
+import { createProxyHandler } from '../ucanto/proxy.js'
 
 /**
  * @template {Ucanto.Capability} C
@@ -37,61 +38,13 @@ import * as Ucanto from '@ucanto/interface'
  */
 
 /**
- * @template {Ucanto.Capability} C
- * @template [Success=unknown]
- * @template {{ error: true }} [Failure={error:true}]
- * @param {object} options
- * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<any>>, 'get'>} options.connections
- * @param {Ucanto.Signer} [options.signer]
- * @returns {InvocationResponder<C, Success, Failure>}
- */
-function createInvocationResponder(options) {
-  /**
-   * @template {import('@ucanto/interface').Capability} Capability
-   * @param {Ucanto.Invocation<Capability>} invocationIn
-   * @param {Ucanto.InvocationContext} context
-   * @returns {Promise<Ucanto.Result<any, { error: true }>>}
-   */
-  return async function handleInvocation(invocationIn, context) {
-    const connection = options.connections.get(invocationIn.audience.did())
-    if (!connection) {
-      throw new Error(
-        `unable to get connection for audience ${invocationIn.audience.did()}}`
-      )
-    }
-    // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
-    const proxyInvocationIssuer = options.signer
-      ? // this results in a forwarded invocation, but the upstream will reject the signature
-        // created using options.signer unless options.signer signs w/ the same private key as the original issuer
-        // and it'd be nice to not even have to pass around `options.signer`
-        options.signer
-      : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
-        // @todo obviate this type override via https://github.com/web3-storage/ucanto/issues/195
-        /** @type {Ucanto.Signer} */ (context.id)
-
-    const [result] = await Client.execute(
-      [
-        Client.invoke({
-          issuer: proxyInvocationIssuer,
-          capability: invocationIn.capabilities[0],
-          audience: invocationIn.audience,
-          proofs: [invocationIn],
-        }),
-      ],
-      /** @type {Client.ConnectionView<any>} */ (connection)
-    )
-    return result
-  }
-}
-
-/**
  * @template {Record<string, any>} T
  * @param {object} options
  * @param {Ucanto.Signer} [options.signer]
  * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyStoreService(options) {
-  const handleInvocation = createInvocationResponder(options)
+  const handleInvocation = createProxyHandler(options)
   /**
    * @type {StoreService}
    */
@@ -110,7 +63,7 @@ function createProxyStoreService(options) {
  * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<T>>, 'get'>} options.connections
  */
 function createProxyUploadService(options) {
-  const handleInvocation = createInvocationResponder(options)
+  const handleInvocation = createProxyHandler(options)
   /**
    * @type {UploadService}
    */
