@@ -1,6 +1,8 @@
-import React, {
-  useState, createContext, useContext, useCallback, useMemo
-} from 'react'
+import type { As, Component, Props, Options } from 'ariakit-react-utils'
+import type { ChangeEvent } from 'react'
+
+import React, { Fragment, useState, createContext, useContext, useCallback, useMemo, useEffect } from 'react'
+import { createComponent, createElement } from 'ariakit-react-utils'
 import { useKeyring, KeyringContextState, KeyringContextActions } from './providers/Keyring'
 
 export type AuthenticatorContextState = KeyringContextState & {
@@ -49,6 +51,16 @@ export const AuthenticatorContext = createContext<AuthenticatorContextValue>([
   }
 ])
 
+export const AgentLoader = ({ children }: { children: JSX.Element }): JSX.Element => {
+  const [, { loadAgent }] = useKeyring()
+  // eslint-disable-next-line
+  useEffect(() => { loadAgent() }, []) // load agent - once.
+  return children
+}
+
+export type AuthenticatorRootOptions<T extends As = typeof Fragment> = Options<T>
+export type AuthenticatorRootProps<T extends As = typeof Fragment> = Props<AuthenticatorRootOptions<T>>
+
 /**
  * Top level component of the headless Authenticator.
  *
@@ -57,7 +69,7 @@ export const AuthenticatorContext = createContext<AuthenticatorContextValue>([
  * Designed to be used by Authenticator.Form, Authenticator.EmailInput
  * and others to make it easy to implement authentication UI.
  */
-export function Authenticator (props: any): JSX.Element {
+export const AuthenticatorRoot: Component<AuthenticatorRootProps> = createComponent((props) => {
   const [state, actions] = useKeyring()
   const { createSpace, registerSpace } = actions
   const [email, setEmail] = useState('')
@@ -74,16 +86,23 @@ export function Authenticator (props: any): JSX.Element {
     } finally {
       setSubmitted(false)
     }
-  }, [setSubmitted, createSpace, registerSpace])
+  }, [email, setSubmitted, createSpace, registerSpace])
 
   const value = useMemo<AuthenticatorContextValue>(() => [
     { ...state, email, submitted, handleRegisterSubmit },
     { ...actions, setEmail }
   ], [state, actions, email, submitted, handleRegisterSubmit])
   return (
-    <AuthenticatorContext.Provider {...props} value={value} />
+    <AgentLoader>
+      <AuthenticatorContext.Provider value={value}>
+        {createElement(Fragment, props)}
+      </AuthenticatorContext.Provider>
+    </AgentLoader>
   )
-}
+})
+
+export type FormOptions<T extends As = 'form'> = Options<T>
+export type FormProps<T extends As = 'form'> = Props<FormOptions<T>>
 
 /**
  * Form component for the headless Authenticator.
@@ -91,12 +110,15 @@ export function Authenticator (props: any): JSX.Element {
  * A `form` designed to work with `Authenticator`. Any passed props will
  * be passed along to the `form` component.
  */
-Authenticator.Form = function Form (props: any) {
+export const Form: Component<FormProps> = createComponent((props) => {
   const [{ handleRegisterSubmit }] = useAuthenticator()
   return (
-    <form {...props} onSubmit={handleRegisterSubmit} />
+    createElement('form', { ...props, onSubmit: handleRegisterSubmit })
   )
-}
+})
+
+export type EmailInputOptions<T extends As = 'input'> = Options<T>
+export type EmailInputProps<T extends As = 'input'> = Props<EmailInputOptions<T>>
 
 /**
  * Input component for the headless Uploader.
@@ -104,12 +126,14 @@ Authenticator.Form = function Form (props: any) {
  * An email `input` designed to work with `Authenticator.Form`. Any passed props will
  * be passed along to the `input` component.
  */
-Authenticator.EmailInput = function EmailInput (props: any) {
+export const EmailInput: Component<EmailInputProps> = createComponent(props => {
   const [{ email }, { setEmail }] = useAuthenticator()
-  return (
-    <input {...props} type='email' value={email} onChange={e => setEmail(e.target.value)} />
-  )
-}
+  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value), [])
+  return createElement('input', { ...props, type: 'email', value: email, onChange })
+})
+
+export type CancelButtonOptions<T extends As = 'button'> = Options<T>
+export type CancelButtonProps<T extends As = 'button'> = Props<CancelButtonOptions<T>>
 
 /**
  * A button that will cancel space registration.
@@ -117,12 +141,10 @@ Authenticator.EmailInput = function EmailInput (props: any) {
  * A `button` designed to work with `Authenticator.Form`. Any passed props will
  * be passed along to the `button` component.
  */
-Authenticator.CancelButton = function CancelButton (props: any) {
+export const CancelButton: Component<CancelButtonProps> = createComponent((props) => {
   const [, { cancelRegisterSpace }] = useAuthenticator()
-  return (
-    <button {...props} onClick={() => { cancelRegisterSpace() }} />
-  )
-}
+  return createElement('button', { ...props, onClick: cancelRegisterSpace })
+})
 
 /**
  * Use the scoped authenticator context state from a parent `Authenticator`.
@@ -130,3 +152,5 @@ Authenticator.CancelButton = function CancelButton (props: any) {
 export function useAuthenticator (): AuthenticatorContextValue {
   return useContext(AuthenticatorContext)
 }
+
+export const Authenticator = Object.assign(AuthenticatorRoot, { Form, EmailInput, CancelButton })

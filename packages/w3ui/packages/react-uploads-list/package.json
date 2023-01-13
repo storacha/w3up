@@ -27,9 +27,10 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-uploads-list",
   "dependencies": {
-    "@w3ui/uploads-list-core": "workspace:^",
     "@w3ui/react-keyring": "workspace:^",
-    "@web3-storage/capabilities": "^2.0.0"
+    "@w3ui/uploads-list-core": "workspace:^",
+    "@web3-storage/capabilities": "^2.0.0",
+    "ariakit-react-utils": "0.17.0-next.27"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
