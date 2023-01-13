@@ -24,55 +24,46 @@ import { createProxyHandler } from '../ucanto/proxy.js'
  */
 
 /**
- * @typedef StoreService
- * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Store.add>>} add
- * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Store.list>>} list
- * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Store.remove>>} remove
+ * Select from T the property names whose values are of type V
+ *
+ * @template T
+ * @template V
+ * @typedef { { [K in keyof T]-?: T[K] extends V ? K : never }[keyof T] } KeysWithValue
  */
 
 /**
- * @typedef UploadService
- * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Upload.add>>} add
- * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Upload.list>>} list
- * @property {InvocationResponder<Ucanto.InferInvokedCapability<typeof Upload.remove>>} remove
+ * Select from T the entries where the vlaue is of type V
+ *
+ * @template T
+ * @template V
+ * @typedef { { [K in KeysWithValue<T,V>]: T[K] } } OnlyValuesOfType
  */
 
 /**
- * @template {Record<string, any>} T
+ * @template {Record<string, unknown>} S
+ * @typedef { { [K in KeysWithValue<S, Ucanto.TheCapabilityParser<any>>]: InvocationResponder<Ucanto.InferInvokedCapability<S[K] extends Ucanto.TheCapabilityParser<infer M> ? S[K] : never>> } } ModuleService
+ */
+
+/**
+ * @typedef {ModuleService<Omit<Store, 'store'>>} StoreServiceInferred
+ * @typedef {ModuleService<Upload>} UploadServiceInferred
+ */
+
+/**
+ * @template {string|number|symbol} M
  * @param {object} options
  * @param {Ucanto.Signer} [options.signer]
- * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<T>>, 'get'>} options.connections
+ * @param {Array<M>} options.methods
+ * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<Record<M, any>>>, 'get'>} options.connections
  */
-function createProxyStoreService(options) {
+function createProxyService(options) {
   const handleInvocation = createProxyHandler(options)
-  /**
-   * @type {StoreService}
-   */
-  const store = {
-    add: handleInvocation,
-    list: handleInvocation,
-    remove: handleInvocation,
-  }
-  return store
-}
-
-/**
- * @template {Record<string, any>} T
- * @param {object} options
- * @param {Ucanto.Signer} [options.signer]
- * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<T>>, 'get'>} options.connections
- */
-function createProxyUploadService(options) {
-  const handleInvocation = createProxyHandler(options)
-  /**
-   * @type {UploadService}
-   */
-  const store = {
-    add: handleInvocation,
-    list: handleInvocation,
-    remove: handleInvocation,
-  }
-  return store
+  // eslint-disable-next-line unicorn/no-array-reduce
+  const service = options.methods.reduce((obj, method) => {
+    obj[method] = handleInvocation
+    return obj
+  }, /** @type {Record<M, typeof handleInvocation>} */ ({}))
+  return service
 }
 
 /**
@@ -98,88 +89,92 @@ function createUcantoHttpConnection(options) {
   })
 }
 
-/**
- * @type {Record<string, {
- * audience: dagUcan.DID,
- * url: URL,
- * }>}
- */
 const uploadApiEnvironments = {
   production: {
-    audience: 'did:web:web3.storage',
+    audience: /** @type {const} */ ('did:web:web3.storage'),
     url: new URL('https://up.web3.storage'),
   },
   staging: {
-    audience: 'did:web:staging.web3.storage',
+    audience: /** @type {const} */ ('did:web:staging.web3.storage'),
     url: new URL('https://staging.up.web3.storage'),
   },
 }
 
 /**
- * @interface {Pick<Map<dagUcan.DID, Ucanto.Connection<any>>, 'get'>}
+ * @typedef {keyof typeof uploadApiEnvironments} UploadApiEnvironmentName
+ * @typedef {typeof uploadApiEnvironments[UploadApiEnvironmentName]['audience']} UploadApiAudience
  */
-const audienceConnections = {
-  audienceToUrl: (() => {
-    /** @type {{ [k: keyof typeof uploadApiEnvironments]: URL }} */
-    const object = {}
-    for (const [, { audience, url }] of Object.entries(uploadApiEnvironments)) {
-      object[audience] = url
-    }
-    return object
-  })(),
-  fetch: globalThis.fetch,
-  /** @type {undefined|Ucanto.DID} */
-  defaultAudience: uploadApiEnvironments.production.audience,
-  /**
-   * Return a ucanto connection to use for the provided invocation audience.
-   * If no connection is available for the provided audience, return a connection for the default audience.
-   *
-   * @param {dagUcan.DID} audience
-   */
-  get(audience) {
-    const defaultedAudience =
-      audience in this.audienceToUrl ? audience : this.defaultAudience
-    if (!defaultedAudience) {
-      return
-    }
-    const url = this.audienceToUrl[defaultedAudience]
-    return createUcantoHttpConnection({
-      audience: defaultedAudience,
-      fetch: this.fetch,
-      url,
-    })
-  },
-}
+
+/** @type {{ [k in uploadApiEnvironments[UploadApiEnvironmentName]['audience']]: URL }} */
+export const uploadApiAudienceToUrl = (() => {
+  const environments = Object.values(uploadApiEnvironments)
+  // eslint-disable-next-line unicorn/no-array-reduce
+  const object = environments.reduce((map, env) => {
+    map[env.audience] = env.url
+    return map
+  }, /** @type {Record<UploadApiAudience, URL>} */ ({}))
+  return object
+})()
+
+// /**
+//  * @param {object} options
+//  * @param {Ucanto.Signer} [options.signer]
+//  * @param {typeof globalThis.fetch} options.fetch
+//  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
+//  * @returns
+//  */
+// export const createStoreService = (options) => {
+//   return createProxyService({
+//   connections:
+//   methods: ['list', 'add', 'remove', 'store'],
+// })
+// }
 
 export class UploadApiProxyService {
-  /** @type {StoreService} */
+  /** @type {StoreServiceInferred} */
   store
-  /** @type {UploadService} */
+  /** @type {UploadServiceInferred} */
   upload
 
   /**
    * @param {object} options
    * @param {Ucanto.Signer} [options.signer]
    * @param {typeof globalThis.fetch} options.fetch
+   * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
    */
   static create(options) {
+    const defaultAudience = uploadApiEnvironments.production.audience
+    const audienceToUrl = options.audienceToUrl || uploadApiAudienceToUrl
     const proxyOptions = {
       signer: options.signer,
       connections: {
-        ...audienceConnections,
-        ...(options.fetch && { fetch: options.fetch }),
+        /** @param {Ucanto.DID} audience */
+        get(audience) {
+          const defaultedAudience =
+            audience in audienceToUrl ? audience : defaultAudience
+          return createUcantoHttpConnection({
+            audience: defaultedAudience,
+            fetch: options.fetch,
+            url: audienceToUrl[defaultedAudience],
+          })
+        },
       },
     }
-    return new this(
-      createProxyStoreService(proxyOptions),
-      createProxyUploadService(proxyOptions)
-    )
+    const store = createProxyService({
+      ...proxyOptions,
+      methods: ['list', 'add', 'remove', 'store'],
+    })
+    const upload = createProxyService({
+      ...proxyOptions,
+      methods: ['list', 'add', 'remove', 'upload'],
+    })
+    return new this(store, upload)
   }
 
   /**
    * @protected
-   * @param {StoreService} store
-   * @param {UploadService} upload
+   * @param {StoreServiceInferred} store
+   * @param {UploadServiceInferred} upload
    */
   constructor(store, upload) {
     this.store = store
