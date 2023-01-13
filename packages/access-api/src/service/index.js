@@ -17,7 +17,7 @@ import { UploadApiProxyService } from './upload-api-proxy.js'
  */
 export function service(ctx) {
   return {
-    ...UploadApiProxyService.create({
+    ...new UploadApiProxyService({
       fetch: globalThis.fetch,
     }),
 

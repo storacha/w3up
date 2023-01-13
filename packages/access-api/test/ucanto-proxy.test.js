@@ -43,14 +43,12 @@ describe('ucanto-proxy', () => {
         test: {
           succeed: createProxyHandler({
             connections: {
-              get: (audience) => {
-                return Client.connect({
-                  id: upstreamPrincipal,
-                  encoder: CAR,
-                  decoder: CBOR,
-                  channel: upstream,
-                })
-              },
+              default: Client.connect({
+                id: upstreamPrincipal,
+                encoder: CAR,
+                decoder: CBOR,
+                channel: upstream,
+              }),
             },
           }),
         },

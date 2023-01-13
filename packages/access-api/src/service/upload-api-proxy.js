@@ -14,47 +14,17 @@ import * as Ucanto from '@ucanto/interface'
 import { createProxyHandler } from '../ucanto/proxy.js'
 
 /**
- * @template {Ucanto.Capability} C
- * @template [Success=unknown]
- * @template {{ error: true }} [Failure={error:true}]
- * @callback InvocationResponder
- * @param {Ucanto.Invocation<C>} invocationIn
- * @param {Ucanto.InvocationContext} context
- * @returns {Promise<Ucanto.Result<Success, Failure>>}
- */
-
-/**
- * Select from T the property names whose values are of type V
- *
- * @template T
- * @template V
- * @typedef { { [K in keyof T]-?: T[K] extends V ? K : never }[keyof T] } KeysWithValue
- */
-
-/**
- * Select from T the entries where the vlaue is of type V
- *
- * @template T
- * @template V
- * @typedef { { [K in KeysWithValue<T,V>]: T[K] } } OnlyValuesOfType
- */
-
-/**
- * @template {Record<string, unknown>} S
- * @typedef { { [K in KeysWithValue<S, Ucanto.TheCapabilityParser<any>>]: InvocationResponder<Ucanto.InferInvokedCapability<S[K] extends Ucanto.TheCapabilityParser<infer M> ? S[K] : never>> } } ModuleService
- */
-
-/**
- * @typedef {ModuleService<Omit<Store, 'store'>>} StoreServiceInferred
- * @typedef {ModuleService<Upload>} UploadServiceInferred
+ * @typedef {import('../ucanto/types.js').InferService<Omit<Store, 'store'>>} StoreServiceInferred
+ * @typedef {import('../ucanto/types.js').InferService<Upload>} UploadServiceInferred
  */
 
 /**
  * @template {string|number|symbol} M
+ * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
  * @param {object} options
  * @param {Ucanto.Signer} [options.signer]
  * @param {Array<M>} options.methods
- * @param {Pick<Map<dagUcan.DID, Ucanto.ConnectionView<Record<M, any>>>, 'get'>} options.connections
+ * @param {{ default: Connection } & Record<Ucanto.UCAN.DID, Connection>} options.connections
  */
 function createProxyService(options) {
   const handleInvocation = createProxyHandler(options)
@@ -116,20 +86,6 @@ export const uploadApiAudienceToUrl = (() => {
   return object
 })()
 
-// /**
-//  * @param {object} options
-//  * @param {Ucanto.Signer} [options.signer]
-//  * @param {typeof globalThis.fetch} options.fetch
-//  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
-//  * @returns
-//  */
-// export const createStoreService = (options) => {
-//   return createProxyService({
-//   connections:
-//   methods: ['list', 'add', 'remove', 'store'],
-// })
-// }
-
 export class UploadApiProxyService {
   /** @type {StoreServiceInferred} */
   store
@@ -142,42 +98,27 @@ export class UploadApiProxyService {
    * @param {typeof globalThis.fetch} options.fetch
    * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
    */
-  static create(options) {
-    const defaultAudience = uploadApiEnvironments.production.audience
-    const audienceToUrl = options.audienceToUrl || uploadApiAudienceToUrl
+  constructor(options) {
     const proxyOptions = {
       signer: options.signer,
       connections: {
-        /** @param {Ucanto.DID} audience */
-        get(audience) {
-          const defaultedAudience =
-            audience in audienceToUrl ? audience : defaultAudience
-          return createUcantoHttpConnection({
-            audience: defaultedAudience,
-            fetch: options.fetch,
-            url: audienceToUrl[defaultedAudience],
-          })
-        },
+        default: createUcantoHttpConnection({
+          ...uploadApiEnvironments.production,
+          fetch: options.fetch,
+        }),
+        [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
+          ...uploadApiEnvironments.staging,
+          fetch: options.fetch,
+        }),
       },
     }
-    const store = createProxyService({
+    this.store = createProxyService({
       ...proxyOptions,
       methods: ['list', 'add', 'remove', 'store'],
     })
-    const upload = createProxyService({
+    this.upload = createProxyService({
       ...proxyOptions,
       methods: ['list', 'add', 'remove', 'upload'],
     })
-    return new this(store, upload)
-  }
-
-  /**
-   * @protected
-   * @param {StoreServiceInferred} store
-   * @param {UploadServiceInferred} upload
-   */
-  constructor(store, upload) {
-    this.store = store
-    this.upload = upload
   }
 }
