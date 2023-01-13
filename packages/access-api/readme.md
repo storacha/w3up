@@ -4,6 +4,7 @@
 ## Development
 
 Run the root [instructions](../../readme.md#setup-a-development-environment) first.
+Review the repo-wide `.env` file copied in those steps and fill in real API keys for any services you plan to test against.
 
 ```bash
 # Run api locally
@@ -15,6 +16,8 @@ pnpm run lint
 # Run tests
 pnpm run test
 ```
+
+The API server is currently hardcoded to listen on port 8787 on unspecified (i.e. typically: all) network interfaces.
 
 ## Migrations
 
