@@ -133,12 +133,11 @@ export function configureSigner(config) {
 
 /**
  * @template {UCAN.DID} ConfigDID
- * @template {UCAN.DID} [ID=UCAN.DID]
  * @template {UCAN.SigAlg} [Alg=UCAN.SigAlg]
  * @param {object} config
  * @param {ConfigDID} [config.DID] - public DID for the service
- * @param {import('@ucanto/interface').Verifier<ID,Alg>} verifier
- * @returns {import('@ucanto/interface').Verifier<ConfigDID|ID,Alg>}
+ * @param {import('@ucanto/interface').Verifier<ConfigDID,Alg>} verifier
+ * @returns {import('@ucanto/interface').Verifier<ConfigDID,Alg>}
  */
 export function configureVerifier(config, verifier) {
   if (config.DID) {
