@@ -80,39 +80,52 @@ export const uploadApiAudienceToUrl = (() => {
   return object
 })()
 
-export class UploadApiProxyService {
-  /** @type {StoreServiceInferred} */
-  store
-  /** @type {UploadServiceInferred} */
-  upload
-
-  /**
-   * @param {object} options
-   * @param {Ucanto.Signer} [options.signer]
-   * @param {typeof globalThis.fetch} options.fetch
-   * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
-   */
-  constructor(options) {
-    const proxyOptions = {
-      signer: options.signer,
-      connections: {
-        default: createUcantoHttpConnection({
-          ...uploadApiEnvironments.production,
-          fetch: options.fetch,
-        }),
-        [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
-          ...uploadApiEnvironments.staging,
-          fetch: options.fetch,
-        }),
-      },
-    }
-    this.store = createProxyService({
-      ...proxyOptions,
-      methods: ['list', 'add', 'remove', 'store'],
-    })
-    this.upload = createProxyService({
-      ...proxyOptions,
-      methods: ['list', 'add', 'remove', 'upload'],
-    })
+/**
+ * @param {object} options
+ * @param {typeof globalThis.fetch} [options.fetch]
+ * @returns
+ */
+function getDefaultConnections({ fetch = globalThis.fetch }) {
+  return {
+    default: createUcantoHttpConnection({
+      ...uploadApiEnvironments.production,
+      fetch,
+    }),
+    [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
+      ...uploadApiEnvironments.staging,
+      fetch,
+    }),
   }
+}
+
+/**
+ * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
+ * @param {object} options
+ * @param {Ucanto.Signer} [options.signer]
+ * @param {typeof globalThis.fetch} [options.fetch]
+ * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
+ * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
+ */
+export function createUploadProxy(options) {
+  return createProxyService({
+    ...options,
+    connections: options.connections || getDefaultConnections(options),
+    methods: ['list', 'add', 'remove', 'upload'],
+  })
+}
+
+/**
+ * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
+ * @param {object} options
+ * @param {Ucanto.Signer} [options.signer]
+ * @param {typeof globalThis.fetch} [options.fetch]
+ * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
+ * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
+ */
+export function createStoreProxy(options) {
+  return createProxyService({
+    ...options,
+    connections: options.connections || getDefaultConnections(options),
+    methods: ['list', 'add', 'remove', 'store'],
+  })
 }

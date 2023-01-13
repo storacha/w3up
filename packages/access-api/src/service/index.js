@@ -9,17 +9,20 @@ import {
 } from '@web3-storage/access/encoding'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
-import { UploadApiProxyService } from './upload-api-proxy.js'
+import * as uploadApi from './upload-api-proxy.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
- * @returns {import('@web3-storage/access/types').Service}
+ * @returns {
+ * & import('@web3-storage/access/types').Service
+ * & { store: uploadApi.StoreServiceInferred }
+ * & { upload: uploadApi.UploadServiceInferred }
+ * }
  */
 export function service(ctx) {
   return {
-    ...new UploadApiProxyService({
-      fetch: globalThis.fetch,
-    }),
+    store: uploadApi.createStoreProxy(ctx),
+    upload: uploadApi.createUploadProxy(ctx),
 
     voucher: {
       claim: voucherClaimProvider(ctx),
