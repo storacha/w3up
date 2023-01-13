@@ -1,33 +1,18 @@
 import {
-  Capability,
   InferInvokedCapability,
-  Invocation,
-  InvocationContext,
   Match,
   ParsedCapability,
   RequestDecoder,
   RequestEncoder,
   ResponseDecoder,
   ResponseEncoder,
-  Result,
+  ServiceMethod,
   TheCapabilityParser,
 } from '@ucanto/interface'
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
 
 export interface ServerCodec extends RequestDecoder, ResponseEncoder {}
-
-/**
- * A single ucanto service method.
- */
-export type InvocationResponder<
-  C extends Capability,
-  Success = unknown,
-  Failure extends { error: true } = { error: true }
-> = (
-  invocation: Invocation<C>,
-  context: InvocationContext
-) => Promise<Result<Success, Failure>>
 
 /**
  * Select from T the property names whose values are of type V
@@ -47,7 +32,9 @@ export type InferService<
     Match<ParsedCapability>
   >
 > = {
-  [K in KeysWithValue<S, CP>]: InvocationResponder<
-    InferInvokedCapability<S[K] extends CP ? S[K] : never>
+  [K in KeysWithValue<S, CP>]: ServiceMethod<
+    InferInvokedCapability<S[K] extends CP ? S[K] : never>,
+    unknown,
+    { error: true }
   >
 }
