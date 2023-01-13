@@ -1,21 +1,15 @@
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
-// eslint-disable-next-line no-unused-vars
-import * as dagUcan from '@ipld/dag-ucan'
 import { DID } from '@ucanto/core'
 import * as HTTP from '@ucanto/transport/http'
-// eslint-disable-next-line no-unused-vars
-import * as Store from '@web3-storage/capabilities/store'
-// eslint-disable-next-line no-unused-vars
-import * as Upload from '@web3-storage/capabilities/upload'
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
 import { createProxyHandler } from '../ucanto/proxy.js'
 
 /**
- * @typedef {import('../ucanto/types.js').InferService<Omit<Store, 'store'>>} StoreServiceInferred
- * @typedef {import('../ucanto/types.js').InferService<Upload>} UploadServiceInferred
+ * @typedef {import('../ucanto/types.js').InferService<Omit<import('@web3-storage/capabilities/store'), 'store'>>} StoreServiceInferred
+ * @typedef {import('../ucanto/types.js').InferService<import('@web3-storage/capabilities/upload')>} UploadServiceInferred
  */
 
 /**
@@ -38,7 +32,7 @@ function createProxyService(options) {
 
 /**
  * @typedef UcantoHttpConnectionOptions
- * @property {dagUcan.DID} audience
+ * @property {Ucanto.UCAN.DID} audience
  * @property {typeof globalThis.fetch} options.fetch
  * @property {URL} options.url
  */
