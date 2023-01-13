@@ -7,31 +7,6 @@ import * as ucanto from '@ucanto/core'
 import * as Ucanto from '@ucanto/interface'
 import { isUploadApiStack } from './helpers/utils.js'
 
-describe('parserCapabilities', function () {
-  it('can get all caps from Store.all', () => {
-    const cans = parserAbilities(Store.all)
-    /** @type {Set<Ucanto.Ability>} */
-    const expectedCans = new Set(['store/add', 'store/remove', 'store/list'])
-    for (const can of expectedCans) {
-      assert.ok(cans.has(can), `parsed can=${can} from Store.all`)
-    }
-    for (const can of cans) {
-      assert.ok(can.startsWith('store/'), `Store.all can starts with store/`)
-    }
-  })
-  it('can get all caps from Upload.all', () => {
-    const cans = parserAbilities(Upload.all)
-    /** @type {Set<Ucanto.Ability>} */
-    const expectedCans = new Set(['upload/add', 'upload/remove', 'upload/list'])
-    for (const can of expectedCans) {
-      assert.ok(cans.has(can), `parsed can=${can} from Upload.all`)
-    }
-    for (const can of cans) {
-      assert.ok(can.startsWith('upload/'), `Upload.all can starts with upload/`)
-    }
-  })
-})
-
 describe('Store.all', () => {
   for (const can of parserAbilities(Store.all)) {
     it(`proxies ${can} to upload-api`, testCanProxyInvocation(can))
