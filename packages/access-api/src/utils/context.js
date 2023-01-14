@@ -50,5 +50,13 @@ export function getContext(request, env, ctx) {
       validations: new Validations(config.VALIDATIONS),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),
+    uploadApi: {
+      production: config.UPLOAD_API_URL
+        ? new URL(config.UPLOAD_API_URL)
+        : undefined,
+      staging: config.UPLOAD_API_URL_STAGING
+        ? new URL(config.UPLOAD_API_URL_STAGING)
+        : undefined,
+    },
   }
 }

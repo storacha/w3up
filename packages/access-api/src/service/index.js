@@ -1,4 +1,4 @@
-import * as DID from '@ipld/dag-ucan/did'
+import * as ucanto from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
@@ -9,13 +9,21 @@ import {
 } from '@web3-storage/access/encoding'
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
+import * as uploadApi from './upload-api-proxy.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
- * @returns {import('@web3-storage/access/types').Service}
+ * @returns {
+ * & import('@web3-storage/access/types').Service
+ * & { store: uploadApi.StoreServiceInferred }
+ * & { upload: uploadApi.UploadServiceInferred }
+ * }
  */
 export function service(ctx) {
   return {
+    store: uploadApi.createStoreProxy(ctx),
+    upload: uploadApi.createUploadProxy(ctx),
+
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),
@@ -97,7 +105,7 @@ export function service(ctx) {
           const inv = await Space.recover
             .invoke({
               issuer: ctx.signer,
-              audience: DID.parse(capability.with),
+              audience: ucanto.DID.parse(capability.with),
               with: ctx.signer.did(),
               lifetimeInSeconds: 60 * 10,
               nb: {

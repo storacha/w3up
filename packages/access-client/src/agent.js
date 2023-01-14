@@ -1,5 +1,4 @@
 /* eslint-disable max-depth */
-import * as DID from '@ipld/dag-ucan/did'
 import * as Client from '@ucanto/client'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
@@ -15,7 +14,7 @@ import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
-import { invoke, delegate } from '@ucanto/core'
+import { invoke, delegate, DID } from '@ucanto/core'
 import {
   isExpired,
   isTooEarly,
@@ -38,13 +37,14 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
  * import { connection } from '@web3-storage/access/agent'
  * ```
  *
+ * @template {import('./types').Service} Service
  * @template {Ucanto.DID} T - DID method
  * @param {object} [options]
  * @param {Ucanto.Principal<T>} [options.principal] - w3access API Principal
  * @param {URL} [options.url] - w3access API URL
- * @param {Ucanto.Transport.Channel<import('./types').Service>} [options.channel] - Ucanto channel to use
+ * @param {Ucanto.Transport.Channel<Service>} [options.channel] - Ucanto channel to use
  * @param {typeof fetch} [options.fetch] - Fetch implementation to use
- * @returns {Ucanto.ConnectionView<import('./types').Service>}
+ * @returns {Ucanto.ConnectionView<Service>}
  */
 export function connection(options = {}) {
   return Client.connect({

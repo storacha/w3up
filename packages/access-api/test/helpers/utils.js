@@ -48,7 +48,7 @@ export async function createSpace(issuer, service, conn, email) {
     })
     .execute(conn)
   if (!claim || claim.error) {
-    throw new Error('failed to create space')
+    throw new Error('failed to create space', { cause: claim })
   }
 
   const delegation = stringToDelegation(claim)
@@ -97,4 +97,16 @@ export async function createSpace(issuer, service, conn, email) {
     space,
     delegation: spaceDelegation,
   }
+}
+
+/**
+ * Return whether the provided stack trace string appears to be generated
+ * by a deployed upload-api.
+ * Heuristics:
+ * * stack trace files paths will start with `file:///var/task/upload-api` because of how the lambda environment is working
+ *
+ * @param {string} stack
+ */
+export function isUploadApiStack(stack) {
+  return stack.includes('file:///var/task/upload-api')
 }
