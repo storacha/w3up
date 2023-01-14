@@ -28,6 +28,9 @@ export interface Env {
    * * this may be used to filter incoming ucanto invocations
    */
   DID: string
+  // URLs to upload-api so we proxy invocations to it
+  UPLOAD_API_URL: string
+  UPLOAD_API_URL_STAGING: string
   // secrets
   PRIVATE_KEY: string
   SENTRY_DSN: string
@@ -50,6 +53,10 @@ export interface RouteContext {
   models: {
     spaces: Spaces
     validations: Validations
+  }
+  uploadApi: {
+    production?: URL
+    staging?: URL
   }
 }
 
