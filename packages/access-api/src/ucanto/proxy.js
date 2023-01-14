@@ -3,16 +3,6 @@ import * as Ucanto from '@ucanto/interface'
 import * as Client from '@ucanto/client'
 
 /**
- * @template {Ucanto.Capability} C
- * @template [Success=unknown]
- * @template {{ error: true }} [Failure={error:true}]
- * @callback InvocationResponder
- * @param {Ucanto.Invocation<C>} invocationIn
- * @param {Ucanto.InvocationContext} context
- * @returns {Promise<Ucanto.Result<Success, Failure>>}
- */
-
-/**
  * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
  * @param {object} options
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} options.connections

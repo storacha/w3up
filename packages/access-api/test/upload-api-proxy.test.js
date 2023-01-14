@@ -6,6 +6,13 @@ import * as ucanto from '@ucanto/core'
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
 import { isUploadApiStack } from './helpers/utils.js'
+import * as ed25519 from '@ucanto/principal/ed25519'
+import {
+  createMockUploadApiServer,
+  serverLocalUrl,
+  ucantoServerNodeListener,
+} from './helpers/upload-api.js'
+import * as nodeHttp from 'node:http'
 
 describe('Store.all', () => {
   for (const can of parserAbilities(Store.all)) {
@@ -24,15 +31,34 @@ describe('Upload.all', () => {
  */
 function testCanProxyInvocation(can) {
   return async () => {
-    const { service: serviceSigner, issuer, conn } = await context()
+    const upstreamPrincipal = await ed25519.generate()
+    const mockUpstream = createMockUploadApiServer({
+      id: upstreamPrincipal,
+    })
+    const mockUpstreamHttp = nodeHttp.createServer(
+      ucantoServerNodeListener(mockUpstream)
+    )
+    await new Promise((resolve, reject) =>
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      mockUpstreamHttp.listen(0, () => resolve(undefined))
+    )
+    // now mockUpstreamHttp is listening on a port. If something goes wrong, we will close the server to have it stop litening
+    after(() => {
+      mockUpstreamHttp.close()
+    })
+    const mockUpstreamUrl = serverLocalUrl(mockUpstreamHttp.address())
+    const { issuer, conn } = await context({
+      environment: {
+        ...process.env,
+        UPLOAD_API_URL: mockUpstreamUrl.toString(),
+        DID: upstreamPrincipal.did(),
+      },
+    })
     /** @type {Ucanto.ConnectionView<any>} */
     const connection = conn
-    const service = process.env.DID
-      ? serviceSigner.withDID(ucanto.DID.parse(process.env.DID).did())
-      : serviceSigner
     const invocation = ucanto.invoke({
       issuer,
-      audience: service,
+      audience: upstreamPrincipal,
       capability: {
         can,
         with: `https://dag.house`,

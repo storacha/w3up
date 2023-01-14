@@ -9,7 +9,7 @@ import { createProxyHandler } from '../ucanto/proxy.js'
 
 /**
  * @typedef {import('../ucanto/types.js').InferService<Omit<import('@web3-storage/capabilities/store'), 'store'>>} StoreServiceInferred
- * @typedef {import('../ucanto/types.js').InferService<import('@web3-storage/capabilities/upload')>} UploadServiceInferred
+ * @typedef {import('../ucanto/types.js').InferService<Omit<import('@web3-storage/capabilities/upload'), 'upload'>>} UploadServiceInferred
  */
 
 /**
@@ -69,31 +69,27 @@ const uploadApiEnvironments = {
  * @typedef {typeof uploadApiEnvironments[UploadApiEnvironmentName]['audience']} UploadApiAudience
  */
 
-/** @type {{ [k in uploadApiEnvironments[UploadApiEnvironmentName]['audience']]: URL }} */
-export const uploadApiAudienceToUrl = (() => {
-  const environments = Object.values(uploadApiEnvironments)
-  // eslint-disable-next-line unicorn/no-array-reduce
-  const object = environments.reduce((map, env) => {
-    map[env.audience] = env.url
-    return map
-  }, /** @type {Record<UploadApiAudience, URL>} */ ({}))
-  return object
-})()
-
 /**
  * @param {object} options
  * @param {typeof globalThis.fetch} [options.fetch]
- * @returns
+ * @param {object} options.uploadApi
+ * @param {URL} [options.uploadApi.production]
+ * @param {URL} [options.uploadApi.staging]
  */
-function getDefaultConnections({ fetch = globalThis.fetch }) {
+function getDefaultConnections(options) {
+  const { fetch = globalThis.fetch, uploadApi } = options
   return {
     default: createUcantoHttpConnection({
       ...uploadApiEnvironments.production,
+      ...(uploadApi.production && { url: uploadApi.production }),
       fetch,
     }),
-    [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
-      ...uploadApiEnvironments.staging,
-      fetch,
+    ...(uploadApi.staging && {
+      [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
+        ...uploadApiEnvironments.staging,
+        url: uploadApi.staging,
+        fetch,
+      }),
     }),
   }
 }
@@ -105,6 +101,9 @@ function getDefaultConnections({ fetch = globalThis.fetch }) {
  * @param {typeof globalThis.fetch} [options.fetch]
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
+ * @param {object} options.uploadApi
+ * @param {URL} [options.uploadApi.production]
+ * @param {URL} [options.uploadApi.staging]
  */
 export function createUploadProxy(options) {
   return createProxyService({
@@ -121,6 +120,9 @@ export function createUploadProxy(options) {
  * @param {typeof globalThis.fetch} [options.fetch]
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
+ * @param {object} options.uploadApi
+ * @param {URL} [options.uploadApi.production]
+ * @param {URL} [options.uploadApi.staging]
  */
 export function createStoreProxy(options) {
   return createProxyService({

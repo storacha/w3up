@@ -66,6 +66,9 @@ export function loadConfig(env) {
     SPACES: env.SPACES,
     VALIDATIONS: env.VALIDATIONS,
     DB: /** @type {D1Database} */ (env.__D1_BETA__),
+
+    UPLOAD_API_URL: env.UPLOAD_API_URL,
+    UPLOAD_API_URL_STAGING: env.UPLOAD_API_URL_STAGING,
   }
 }
 
