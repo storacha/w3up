@@ -1,5 +1,5 @@
-name: Test
-description: 'Setup and test'
+name: pnpm
+description: 'Setup node & pnpm'
 
 runs:
   using: "composite"
@@ -13,7 +13,4 @@ runs:
         run_install: |
           - recursive: true
             args: [--frozen-lockfile, --strict-peer-dependencies]
-    - run: pnpm run lint
-      shell: bash
-    - run: pnpm test
-      shell: bash
+

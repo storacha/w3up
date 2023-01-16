@@ -16,8 +16,11 @@
     "clean": "rm -rf node_modules package-lock.json coverage packages/*/{package-lock.json,build,node_modules}",
     "compile": "pnpm run --recursive --if-present compile",
     "lint": "ts-standard",
-    "test": "pnpm run --recursive --if-present test",
-    "typecheck": "tsc -b"
+    "test": "pnpm run --filter './packages/**' --recursive test",
+    "typecheck": "tsc -b",
+    "test:examples": "pnpm run --filter './examples/**' test",
+    "build:examples": "pnpm run --filter './examples/**' --no-bail build || true",
+    "serve:examples": "serve examples"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.18.6",
@@ -47,6 +50,7 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.8.1",
+    "serve": "^14.1.2",
     "solid-js": "^1.5.6",
     "ts-node": "^10.9.1",
     "ts-standard": "^12.0.1",
@@ -54,5 +58,10 @@
     "vitest": "^0.27.0",
     "vitest-environment-w3ui": "workspace:^",
     "vue": "^3.2.39"
+  },
+  "ts-standard": {
+    "ignore": [
+      "dist"
+    ]
   }
 }

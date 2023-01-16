@@ -1,0 +1,16 @@
+{
+  "name": "@w3ui/example-test-playwright",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "serve": "serve ../../",
+    "test": "playwright test",
+    "test:debug": "playwright test --project=chromium --headed"
+  },
+  "author": "olzilla",
+  "license": "Apache-2.0 OR MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.29.2",
+    "serve": "^14.1.2"
+  }
+}

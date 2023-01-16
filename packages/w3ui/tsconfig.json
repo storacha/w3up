@@ -5,6 +5,7 @@
     ]
   },
   "files": [],
+  "exclude":["**/dist"],
   "references": [
     {
       "path": "packages/react-keyring"
