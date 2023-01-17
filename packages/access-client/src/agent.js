@@ -519,7 +519,7 @@ export class Agent {
    * @param {import('./types').DelegationOptions} options
    */
   async delegate(options) {
-    const space = await this.currentSpaceWithMeta()
+    const space = this.currentSpaceWithMeta()
     if (!space) {
       throw new Error('there no space selected.')
     }
@@ -536,7 +536,7 @@ export class Agent {
     const delegation = await delegate({
       issuer: this.issuer,
       capabilities: caps,
-      proofs: await this.proofs(caps),
+      proofs: this.proofs(caps),
       facts: [{ space: space.meta }],
       ...options,
     })
@@ -640,7 +640,7 @@ export class Agent {
       throw new Error('No space selected, you need pass a resource.')
     }
 
-    const proofs = await this.proofs([
+    const proofs = this.proofs([
       {
         with: space,
         can: cap.can,
