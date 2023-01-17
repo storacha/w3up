@@ -49,7 +49,10 @@ export function getContext(request, env, ctx) {
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
     },
-    email: new Email({ token: config.POSTMARK_TOKEN }),
+    email: new Email({
+      token: config.POSTMARK_TOKEN,
+      sender: config.POSTMARK_SENDER,
+    }),
     uploadApi: {
       production: config.UPLOAD_API_URL
         ? new URL(config.UPLOAD_API_URL)
