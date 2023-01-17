@@ -67,7 +67,16 @@ const UploaderComponentContext = createContext<UploaderComponentContextValue>([
   }
 ])
 
-export type UploaderRootOptions<T extends As = typeof Fragment> = Options<T>
+interface OnUploadCompleteProps {
+  file?: File
+  dataCID?: Link<unknown, number, number, Version>
+}
+
+export type OnUploadComplete = (props: OnUploadCompleteProps) => void
+
+export type UploaderRootOptions<T extends As = typeof Fragment> = Options<T> & {
+  onUploadComplete?: OnUploadComplete
+}
 export type UploaderRootProps<T extends As = typeof Fragment> = Props<UploaderRootOptions<T>>
 
 /**
@@ -93,6 +102,9 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent((props
         const cid = await uploaderActions.uploadFile(file)
         setDataCID(cid)
         setStatus(Status.Succeeded)
+        if (props.onUploadComplete !== undefined) {
+          props.onUploadComplete({ file, dataCID })
+        }
       } catch (err: any) {
         setError(err)
         setStatus(Status.Failed)

@@ -23,6 +23,7 @@
       "@w3ui/react-keyring": ["packages/react-keyring/src"],
       "@w3ui/react-uploader": ["packages/react-uploader/src"],
       "@w3ui/react-uploads-list": ["packages/react-uploads-list/src"],
+      "@w3ui/react-ui": ["packages/react/src"],
 
       "@w3ui/solid-keyring": ["packages/solid-keyring/src"],
       "@w3ui/solid-uploader": ["packages/solid-uploader/src"],
