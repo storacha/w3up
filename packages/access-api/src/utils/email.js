@@ -3,8 +3,10 @@ export class Email {
    *
    * @param {object} opts
    * @param {string} opts.token
+   * @param {string} [opts.sender]
    */
   constructor(opts) {
+    this.sender = opts.sender || 'web3.storage <noreply@dag.house>'
     this.headers = {
       Accept: 'text/json',
       'Content-Type': 'text/json',
@@ -22,7 +24,7 @@ export class Email {
       method: 'POST',
       headers: this.headers,
       body: JSON.stringify({
-        From: 'web3.storage <noreply@dag.house>',
+        From: this.sender,
         To: opts.to,
         TemplateAlias: 'welcome',
         TemplateModel: {
@@ -57,7 +59,7 @@ export class Email {
       method: 'POST',
       headers: this.headers,
       body: JSON.stringify({
-        From: 'web3.storage <noreply@dag.house>',
+        From: this.sender,
         To: to,
         TextBody: textBody,
         Subject: subject,
