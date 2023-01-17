@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.3.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.2.0...access-api-v4.3.0) (2023-01-17)
+
+
+### Features
+
+* access-api forwards store/ and upload/ invocations to upload-api ([#334](https://github.com/web3-storage/w3protocol/issues/334)) ([b773376](https://github.com/web3-storage/w3protocol/commit/b77337692d9e4580031c429c429d4055d6f6ebff))
+
 ## [4.2.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.1.0...access-api-v4.2.0) (2022-12-15)
 
 
