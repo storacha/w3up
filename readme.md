@@ -27,26 +27,6 @@ Install these extensions
 - https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
 - Optional toggle for formatting https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle
 
-Add these lines to your package.json
-
-```json
- "eslintConfig": {
-    "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
-    ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
-    // optional
-    "env": {
-      "mocha": true
-    },
-    "ignorePatterns": [
-      "dist"
-    ]
-  },
-```
-
 Add these lines to your vscode workspace settings at `.vscode/settings.json`
 
 ```text
