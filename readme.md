@@ -19,6 +19,9 @@ npx simple-git-hooks
 cp .env.tpl .env
 ```
 
+The individual packages may have additional setup instructions, and include specific usage information.
+You are also encouraged to set up your IDE with linting and formatting to ensure your commits can be merged.
+
 ### Vscode config
 
 Install these extensions
@@ -37,8 +40,6 @@ Add these lines to your vscode workspace settings at `.vscode/settings.json`
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
 ```
-
-Each package has it's own readme with specific instructions.
 
 ## Release Process
 
