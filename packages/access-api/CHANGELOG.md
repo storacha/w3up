@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.4.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.3.0...access-api-v4.4.0) (2023-01-18)
+
+
+### Features
+
+* access-api upload-api-proxy routes invocations with staging audience to staging upload-api ([#357](https://github.com/web3-storage/w3protocol/issues/357)) ([d8325af](https://github.com/web3-storage/w3protocol/commit/d8325afebde6c67fb54767a0ab1e639d6248389e))
+
+
+### Bug Fixes
+
+* upload-api-proxy default fetch binds to globalThis ([#361](https://github.com/web3-storage/w3protocol/issues/361)) ([a96e6af](https://github.com/web3-storage/w3protocol/commit/a96e6af1cebacb84a097d1fc24d4fe5f658c1b93))
+
 ## [4.3.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.2.0...access-api-v4.3.0) (2023-01-17)
 
 
