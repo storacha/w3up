@@ -41,6 +41,7 @@ importers:
       '@ucanto/principal': ^4.0.3
       '@ucanto/server': ^4.0.3
       '@ucanto/transport': ^4.0.3
+      '@ucanto/validator': ^4.0.3
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
       '@web3-storage/worker-utils': 0.4.3-dev
@@ -94,6 +95,7 @@ importers:
       '@types/node': 18.11.14
       '@types/qrcode': 1.5.0
       '@ucanto/client': 4.0.3
+      '@ucanto/validator': 4.0.3
       better-sqlite3: 8.0.1
       buffer: 6.0.3
       dotenv: 16.0.3
