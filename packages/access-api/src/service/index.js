@@ -21,7 +21,10 @@ import * as uploadApi from './upload-api-proxy.js'
  */
 export function service(ctx) {
   return {
-    store: uploadApi.createStoreProxy(ctx),
+    store: uploadApi.createStoreProxy({
+      ...ctx,
+      fetch: log530Responses(globalThis.fetch.bind(globalThis), ctx),
+    }),
     upload: uploadApi.createUploadProxy(ctx),
 
     voucher: {
@@ -150,4 +153,44 @@ export function service(ctx) {
       },
     },
   }
+}
+
+/**
+ * Wrap `fetch` producing a new fetch that will log any responses it encounters with a status code of 530.
+ * Temporary for debugging https://github.com/web3-storage/w3protocol/issues/363
+ *
+ * @param {typeof globalThis.fetch} fetch
+ * @param {object} ctx
+ * @param {import('@web3-storage/worker-utils/logging.js').Logging} ctx.log
+ * @returns {typeof globalThis.fetch}
+ */
+function log530Responses(fetch, ctx) {
+  /** @type {typeof globalThis.fetch} */
+  const fetchWithLog = async (requestInfo, requestInit) => {
+    const response = await fetch(requestInfo, requestInit)
+    if (response.status === 530) {
+      const message = `unexpected 530 response from fetch`
+      const fetchInvocationDescription = {
+        request: {
+          requestInfo,
+          requestInit,
+        },
+        response: {
+          type: response.type,
+          ok: response.ok,
+          redirected: response.redirected,
+          headers: [...response.headers],
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          text: await response.clone().text(),
+        },
+      }
+      ctx.log.error(message, fetchInvocationDescription)
+      // eslint-disable-next-line no-console
+      console.warn(message, fetchInvocationDescription)
+    }
+    return response
+  }
+  return fetchWithLog
 }
