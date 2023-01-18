@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --w3ui-uploader-height: theme(spacing.36);
+  --w3ui-uploader-primary: theme(colors.orange.400);
+  --w3ui-uploader-primary-hover: theme(colors.orange.500);
+}
+
+.w3-uploads-list {
+  @apply mb-5;
+}
+
+.w3-uploads-list-data {
+  @apply overflow-auto rounded-md border border-gray-300 dark:border-gray-700;
+}
+
+.w3-uploads-list table {
+  @apply w-full border-collapse divide-y dark:divide-gray-700;
+}
+
+.w3-uploads-list thead {
+  @apply text-left bg-gray-400 dark:bg-gray-900 bg-opacity-50 text-sm;
+}
+
+.w3-uploads-list th {
+  @apply p-3;
+}
+
+.w3-uploads-list td {
+  @apply block w-64 p-3;
+}
+
+.w3-uploads-list nav {
+  @apply flex flex-row space-x-4 my-4;
+}
+
+.w3ui-uploader-wrapper {
+  @apply grow;
+}
+
+.w3ui-uploader__file {
+  @apply rounded-md w-full grid grid-cols-2 p-4 bg-gray-200 dark:bg-gray-900;
+}
+
+.w3ui-uploader__file .name {
+  @apply col-span-2 truncate;
+}
+
+.w3ui-uploader__file .type,
+.size {
+  @apply text-sm;
+}
+
+.w3ui-uploader-console {
+  @apply rounded-md w-full bg-gray-200 dark:bg-gray-900 p-4 truncate;
+}
+
+.w3ui-simple-authenticator-verify-email {
+  @apply bg-gray-400 dark:bg-gray-800 px-24 py-16 rounded-md;
+}
+
+.w3ui-simple-authenticator-verify-email .message {
+  @apply text-xl;
+}
+
+.w3ui-simple-authenticator-verify-email .detail {
+  @apply pt-2 pb-4;
+}
+
+.w3ui-simple-authenticator {
+  @apply w-full h-screen flex flex-col justify-center items-center;
+}
+
+.w3ui-simple-authenticator-form {
+  @apply bg-gray-400 dark:bg-gray-800 px-24 py-16 rounded-md;
+}
+
+.w3ui-simple-authenticator-form .email-field label {
+  @apply block mb-2;
+}
+
+.w3ui-simple-authenticator-form .email-field input {
+  @apply rounded block p-2 w-72 bg-gray-300 dark:bg-gray-900;
+}
+
+.w3ui-simple-authenticator-form .register {
+  @apply mt-2;
+}
