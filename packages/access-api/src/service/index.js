@@ -21,8 +21,12 @@ import * as uploadApi from './upload-api-proxy.js'
  */
 export function service(ctx) {
   return {
-    store: uploadApi.createStoreProxy(ctx),
-    upload: uploadApi.createUploadProxy(ctx),
+    store: uploadApi.createStoreProxy({
+      uploadApi: ctx.uploadApi,
+    }),
+    upload: uploadApi.createUploadProxy({
+      uploadApi: ctx.uploadApi,
+    }),
 
     voucher: {
       claim: voucherClaimProvider(ctx),
