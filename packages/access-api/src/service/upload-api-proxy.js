@@ -84,12 +84,10 @@ function getDefaultConnections(options) {
       ...(uploadApi.production && { url: uploadApi.production }),
       fetch,
     }),
-    ...(uploadApi.staging && {
-      [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
-        ...uploadApiEnvironments.staging,
-        url: uploadApi.staging,
-        fetch,
-      }),
+    [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
+      ...uploadApiEnvironments.staging,
+      url: uploadApi.staging ?? uploadApiEnvironments.staging.url,
+      fetch,
     }),
   }
 }
