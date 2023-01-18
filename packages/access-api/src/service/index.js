@@ -23,7 +23,25 @@ export function service(ctx) {
   return {
     store: uploadApi.createStoreProxy({
       ...ctx,
-      fetch: log530Responses(globalThis.fetch.bind(globalThis), ctx),
+      fetch: patchedFetch(
+        globalThis.fetch.bind(globalThis),
+        async (response, fetchArgs) => {
+          if (!response.ok) {
+            try {
+              ctx.log.warn(
+                `unexpected non-ok response from fetch in createStoreProxy`,
+                await describeFetch(response, fetchArgs)
+              )
+            } catch (error) {
+              ctx.log.error(
+                new Error(`error describing/logging fetch response`, {
+                  cause: error,
+                })
+              )
+            }
+          }
+        }
+      ),
     }),
     upload: uploadApi.createUploadProxy(ctx),
 
@@ -156,41 +174,44 @@ export function service(ctx) {
 }
 
 /**
- * Wrap `fetch` producing a new fetch that will log any responses it encounters with a status code of 530.
- * Temporary for debugging https://github.com/web3-storage/w3protocol/issues/363
+ * Wrap `fetch` producing a new fetch that will pass any responses it fetches to a cb.
  *
  * @param {typeof globalThis.fetch} fetch
- * @param {object} ctx
- * @param {import('@web3-storage/worker-utils/logging.js').Logging} ctx.log
+ * @param {(response: Response, fetchArgs: Parameters<typeof globalThis.fetch>) => Promise<void>} onResponse - handles each response
  * @returns {typeof globalThis.fetch}
  */
-function log530Responses(fetch, ctx) {
+function patchedFetch(fetch, onResponse) {
   /** @type {typeof globalThis.fetch} */
-  const fetchWithLog = async (requestInfo, requestInit) => {
-    const response = await fetch(requestInfo, requestInit)
-    if (response.status === 530) {
-      const message = `unexpected 530 response from fetch`
-      const fetchInvocationDescription = {
-        request: {
-          requestInfo,
-          requestInit,
-        },
-        response: {
-          type: response.type,
-          ok: response.ok,
-          redirected: response.redirected,
-          headers: [...response.headers],
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url,
-          text: await response.clone().text(),
-        },
-      }
-      ctx.log.error(message, fetchInvocationDescription)
-      // eslint-disable-next-line no-console
-      console.warn(message, fetchInvocationDescription)
-    }
+  const fetchWithLog = async (input, init) => {
+    const response = await fetch(input, init)
+    await onResponse(response, [
+      input instanceof URL ? input.toString() : input,
+      init,
+    ])
     return response
   }
   return fetchWithLog
+}
+
+/**
+ * Given a fetch invocation and the response it produced,
+ * return an object that can be logged to describe the request/response fully.
+ *
+ * @param {Response} response
+ * @param {Parameters<typeof globalThis.fetch>} fetchArgs
+ */
+async function describeFetch(response, fetchArgs) {
+  return {
+    request: fetchArgs,
+    response: {
+      type: response.type,
+      ok: response.ok,
+      redirected: response.redirected,
+      headers: [...response.headers],
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+      text: await response.clone().text(),
+    },
+  }
 }
