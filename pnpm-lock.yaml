@@ -281,7 +281,7 @@ importers:
     specifiers:
       '@ipld/car': ^5.0.3
       '@ipld/dag-ucan': ^3.2.0
-      '@ipld/unixfs': ^2.0.0
+      '@ipld/unixfs': ^2.0.1
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.1
       '@ucanto/client': ^4.1.0
@@ -306,7 +306,7 @@ importers:
     dependencies:
       '@ipld/car': 5.0.3
       '@ipld/dag-ucan': 3.2.0
-      '@ipld/unixfs': 2.0.0
+      '@ipld/unixfs': 2.0.1
       '@ucanto/client': 4.1.0
       '@ucanto/interface': 4.1.0
       '@ucanto/transport': 4.1.0
@@ -780,18 +780,11 @@ packages:
       cborg: 1.10.0
       multiformats: 11.0.1
 
-  /@ipld/dag-pb/2.1.18:
-    resolution: {integrity: sha512-ZBnf2fuX9y3KccADURG5vb9FaOeMjFkCrNysB0PtftME/4iCTjxfaLoNq/IAh5fTqUOMXvryN6Jyka4ZGuMLIg==}
-    dependencies:
-      multiformats: 9.9.0
-    dev: false
-
   /@ipld/dag-pb/4.0.0:
     resolution: {integrity: sha512-8FB/qTlNowCiszL9Sek8xH6xIQxIioXuzZ5B1jVPknQMVkd08nZUHzDjrn1Y6MqJ5PrXWLrBwNghGMWPPpvNVw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       multiformats: 11.0.1
-    dev: true
 
   /@ipld/dag-ucan/3.2.0:
     resolution: {integrity: sha512-CTClaGx4F3iEMJgYaYVOVBEvtNXzPc77Mi6p3vBtylSzDWhbf1Gou9ij7PlblOqWKA1H7XI8fp6yweTb6iXNKQ==}
@@ -800,13 +793,13 @@ packages:
       '@ipld/dag-json': 10.0.0
       multiformats: 11.0.1
 
-  /@ipld/unixfs/2.0.0:
-    resolution: {integrity: sha512-Li6ObZWlnQPM8R1O6mjUWQWlxjf+4yjZDERZIvNILOXeTvF0G36WFIdr3c2s9M6Aiez8gCMzodNnJLRXzXnJ0Q==}
+  /@ipld/unixfs/2.0.1:
+    resolution: {integrity: sha512-W3LD67tLrIGpCVYFN6N/x6bL3o03zmsfd7jPAD1aXfGXaQWWa95qXPwc6PMVRTttxha/bHMKQiG2ZeFCqp83Ew==}
     dependencies:
-      '@ipld/dag-pb': 2.1.18
+      '@ipld/dag-pb': 4.0.0
       '@web-std/stream': 1.0.1
       actor: 2.3.1
-      multiformats: 10.0.3
+      multiformats: 11.0.1
       protobufjs: 7.1.2
       rabin-rs: 2.1.0
     dev: false
@@ -5078,18 +5071,9 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
-  /multiformats/10.0.3:
-    resolution: {integrity: sha512-K2yGSmstS/oEmYiEIieHb53jJCaqp4ERPDQAYrm5sV3UUrVDZeshJQCK6GHAKyIGufU1vAcbS0PdAAZmC7Tzcw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dev: false
-
   /multiformats/11.0.1:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-
-  /multiformats/9.9.0:
-    resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
-    dev: false
 
   /multimatch/5.0.0:
     resolution: {integrity: sha512-ypMKuglUrZUD99Tk2bUQ+xNQj43lPEfAeX2o9cTteAmShXy2VHDJpuwu1o0xqoKCt9jLVAvwyFKdLTPXKAfJyA==}

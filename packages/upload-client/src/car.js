@@ -1,7 +1,11 @@
 import { CarBlockIterator, CarWriter } from '@ipld/car'
 
 /**
- * @param {Iterable<import('@ipld/unixfs').Block>|AsyncIterable<import('@ipld/unixfs').Block>} blocks
+ * @typedef {import('@ipld/unixfs').Block} Block
+ */
+
+/**
+ * @param {Iterable<Block> | AsyncIterable<Block>} blocks
  * @param {import('./types').AnyLink} [root]
  * @returns {Promise<import('./types').CARFile>}
  */
@@ -30,7 +34,7 @@ export async function encode(blocks, root) {
   return Object.assign(new Blob(chunks), { version: 1, roots })
 }
 
-/** @extends {ReadableStream<import('@ipld/unixfs').Block>} */
+/** @extends {ReadableStream<Block>} */
 export class BlockStream extends ReadableStream {
   /** @param {import('./types').BlobLike} car */
   constructor(car) {
@@ -42,12 +46,14 @@ export class BlockStream extends ReadableStream {
       return blocksPromise
     }
 
-    /** @type {AsyncIterator<import('@ipld/unixfs').Block>?} */
+    /** @type {AsyncIterator<Block>?} */
     let iterator = null
     super({
       async start() {
         const blocks = await getBlocksIterable()
-        iterator = blocks[Symbol.asyncIterator]()
+        iterator = /** @type {AsyncIterator<Block>} */ (
+          blocks[Symbol.asyncIterator]()
+        )
       },
       async pull(controller) {
         /* c8 ignore next */
