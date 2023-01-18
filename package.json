@@ -42,5 +42,6 @@
     "depcheck": "^1.4.3",
     "typedoc": "^0.23.22",
     "typedoc-plugin-missing-exports": "^1.0.0"
-  }
+  },
+  "packageManager": "pnpm@7.24.3"
 }
