@@ -43,7 +43,7 @@ export class Spaces {
           invocation: delegationToString(invocation),
           product: capability.nb.product,
           metadata,
-          delegation: !delegation ? undefined : delegationToString(delegation),
+          delegation: delegation ? delegationToString(delegation) : undefined,
         })
         .returning('spaces.did')
         .execute()

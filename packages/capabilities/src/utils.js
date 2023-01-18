@@ -48,12 +48,12 @@ export function equalWith(child, parent) {
 export function equal(child, parent, constraint) {
   if (parent === undefined || parent === '*') {
     return true
-  } else if (String(child) !== String(parent)) {
+  } else if (String(child) === String(parent)) {
+    return true
+  } else {
     return new Failure(
       `Constrain violation: ${child} violates imposed ${constraint} constraint ${parent}`
     )
-  } else {
-    return true
   }
 }
 
@@ -73,7 +73,7 @@ export const equalLink = (claimed, delegated) => {
     `${delegated.nb.link}` !== `${claimed.nb.link}`
   ) {
     return new Failure(
-      `Link ${!claimed.nb.link ? '' : `${claimed.nb.link}`} violates imposed ${
+      `Link ${claimed.nb.link ? `${claimed.nb.link}` : ''} violates imposed ${
         delegated.nb.link
       } constraint.`
     )
