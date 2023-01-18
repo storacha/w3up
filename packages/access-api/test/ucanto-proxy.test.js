@@ -1,4 +1,5 @@
 import assert from 'assert'
+import * as ucanto from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
@@ -235,6 +236,21 @@ describe('ucanto-proxy', () => {
     )
   })
   it('proxies store/list connection->http->proxy->http->server', async () => {
+    // prepare store/list scenario
+    const space = await ed25519.generate()
+    const alice = await ed25519.generate()
+    const aliceCanManageSpace = await ucanto.delegate({
+      issuer: space,
+      audience: alice,
+      capabilities: [
+        {
+          can: 'store/list',
+          with: space.did(),
+        },
+      ],
+      expiration: Infinity,
+    })
+
     // make a ucanto server that is the upstream
     const upstreamDidWeb = /** @type {const} */ (`did:web:upstream.dag.house`)
     // eslint-disable-next-line unicorn/no-await-expression-member
@@ -310,18 +326,19 @@ describe('ucanto-proxy', () => {
         fetch: globalThis.fetch,
       }),
     })
+
     // invoke proxy
-    const invoker = await ed25519.Signer.generate()
     const invocationCapability = {
       can: /** @type {const} */ ('store/list'),
-      with: /** @type {const} */ ('did:web:dag.house'),
-      nb: { foo: 'bar' },
+      with: space.did(),
     }
     const [result] = await proxyConnection.execute(
       Client.invoke({
-        issuer: invoker,
+        issuer: alice,
         audience: proxyPrincipal,
         capability: invocationCapability,
+        expiration: Infinity,
+        proofs: [aliceCanManageSpace],
       })
     )
     try {
