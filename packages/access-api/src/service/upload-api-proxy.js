@@ -77,7 +77,7 @@ const uploadApiEnvironments = {
  * @param {URL} [options.uploadApi.staging]
  */
 function getDefaultConnections(options) {
-  const { fetch = globalThis.fetch, uploadApi } = options
+  const { fetch = globalThis.fetch.bind(globalThis), uploadApi } = options
   return {
     default: createUcantoHttpConnection({
       ...uploadApiEnvironments.production,
