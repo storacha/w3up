@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@w3ui/keyring-core": "workspace:^2.0.1",
     "@w3ui/react": "workspace:^",
     "@w3ui/react-keyring": "workspace:^",
     "@w3ui/react-uploads-list": "workspace:^2.0.1",

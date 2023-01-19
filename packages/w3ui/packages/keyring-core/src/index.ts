@@ -20,7 +20,7 @@ export class Space implements Principal {
    * The given space name.
    */
   name (): string | undefined {
-    return this.#meta.name == null ? String(this.#meta.name) : undefined
+    return this.#meta.name != null ? String(this.#meta.name) : undefined
   }
 
   /**
@@ -42,6 +42,16 @@ export class Space implements Principal {
    */
   meta (): Record<string, any> {
     return this.#meta
+  }
+
+  /**
+   * Compares this space's DID to `space`'s DID, returns
+   * true if they are the same, false otherwise.
+   * If `space` is null or undefined, returns false since
+   * this space is neither.
+   */
+  sameAs (space?: Space): boolean {
+    return this.did() === space?.did()
   }
 }
 

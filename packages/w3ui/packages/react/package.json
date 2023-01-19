@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-ui",
   "dependencies": {
+    "@headlessui/react": "^1.7.7",
+    "@heroicons/react": "^2.0.13",
     "@w3ui/react-keyring": "workspace:^",
     "@w3ui/react-uploader": "workspace:^",
     "@w3ui/react-uploads-list": "workspace:^",

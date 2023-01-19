@@ -12,7 +12,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@storybook/addon-actions": "^6.5.15",
+    "@w3ui/keyring-core": "workspace:^2.0.1",
     "@w3ui/react": "workspace:^",
     "@w3ui/react-keyring": "workspace:^",
     "@w3ui/react-uploader": "workspace:^",
@@ -22,6 +22,7 @@
     "react-syntax-highlighter": "^15.5.0"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.5.15",
     "@storybook/addon-essentials": "^7.0.0-beta.29",
     "@storybook/addon-interactions": "^7.0.0-beta.29",
     "@storybook/addon-links": "^7.0.0-beta.29",
@@ -31,6 +32,7 @@
     "@storybook/testing-library": "^0.0.13",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
+    "@ucanto/interface": "^4.0.3",
     "@vitejs/plugin-react": "^3.0.0",
     "@w3ui/uploads-list-core": "workspace:^",
     "multiformats": "^10.0.2",

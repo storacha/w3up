@@ -4,8 +4,8 @@
 
 :root {
   --w3ui-uploader-height: theme(spacing.36);
-  --w3ui-uploader-primary: theme(colors.orange.400);
-  --w3ui-uploader-primary-hover: theme(colors.orange.500);
+  --w3ui-uploader-primary: theme(colors.slate.800);
+  --w3ui-uploader-primary-hover: theme(colors.blue.900);
 }
 
 .w3-uploads-list {
@@ -21,7 +21,7 @@
 }
 
 .w3-uploads-list thead {
-  @apply text-left bg-gray-400 dark:bg-gray-900 bg-opacity-50 text-sm;
+  @apply text-left bg-opacity-50 text-xs tracking-wide text-zinc-300;
 }
 
 .w3-uploads-list th {
@@ -29,7 +29,7 @@
 }
 
 .w3-uploads-list td {
-  @apply block w-64 p-3;
+  @apply block w-64 p-2 pl-3 font-mono text-xs;
 }
 
 .w3-uploads-list nav {

@@ -30,8 +30,8 @@ export function AuthenticationSubmitted (): JSX.Element {
 }
 
 export function AuthenticationEnsurer ({ children }: { children: JSX.Element | JSX.Element[] }): JSX.Element {
-  const [{ space, submitted }] = useAuthenticator()
-  const registered = Boolean(space?.registered())
+  const [{ spaces, submitted }] = useAuthenticator()
+  const registered = Boolean(spaces.some(s => s.registered()))
   if (registered) {
     return <>{children}</>
   } else if (submitted) {
