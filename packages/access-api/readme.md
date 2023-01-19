@@ -36,3 +36,5 @@ Sourcemaps work locally but on deployed environments they won't because Cloudfla
 Sentry sourcemaps also don't show the proper source stacktraces for the same reason.
 
 If you encounter a situation where sourcemaps don't work properly locally please open an issue and check if `no_bundle` to `true` in wrangler.toml helps.
+
+Tracking issue for this problem https://github.com/web3-storage/w3protocol/issues/112.
