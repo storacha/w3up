@@ -48,13 +48,18 @@ export function ucantoServerNodeListener(ucantoServer) {
     for await (const chunk of request) {
       chunks.push(chunk)
     }
-    const { headers, body } = await ucantoServer.request({
-      headers: /** @type {Record<string,string>} */ ({ ...request.headers }),
-      body: Buffer.concat(chunks),
-    })
-    response.writeHead(200, headers)
-    response.write(body)
-    response.end()
+    try {
+      const { headers, body } = await ucantoServer.request({
+        headers: /** @type {Record<string,string>} */ ({ ...request.headers }),
+        body: Buffer.concat(chunks),
+      })
+      response.writeHead(200, headers)
+      response.write(body)
+      response.end()
+    } catch (error) {
+      response.writeHead(500)
+      response.end(error)
+    }
   }
 }
 
@@ -66,4 +71,18 @@ export function serverLocalUrl(address) {
   if (!address || typeof address !== 'object')
     throw new Error(`cant determine local url from address`)
   return new URL(`http://localhost:${address.port}`)
+}
+
+/**
+ * @param {import('node:http').Server} server
+ * @returns Promise<URL>
+ */
+export async function listen(server) {
+  await new Promise((resolve, reject) => {
+    server.listen(0, () => {
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      resolve(undefined)
+    })
+  })
+  return serverLocalUrl(server.address())
 }
