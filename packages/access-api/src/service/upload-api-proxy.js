@@ -56,7 +56,9 @@ function createUcantoHttpConnection(options) {
 const uploadApiEnvironments = {
   production: {
     audience: /** @type {const} */ ('did:web:web3.storage'),
-    url: new URL('https://up.web3.storage'),
+    // dont use up.web3.storage because it won't resolve from inside cloudflare workers
+    // until resolution of https://github.com/web3-storage/w3protocol/issues/363
+    url: new URL('https://3bd9h7xn3j.execute-api.us-west-2.amazonaws.com/'),
   },
   staging: {
     audience: /** @type {const} */ ('did:web:staging.web3.storage'),
