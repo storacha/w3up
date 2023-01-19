@@ -60,9 +60,9 @@ export interface Channel {
   sendFin: (did: UCAN.Principal) => Promise<void>
 }
 
-export type MessageType = z.infer<typeof Messages['MessageType']>
+export type MessageType = z.infer<(typeof Messages)['MessageType']>
 
-export type AwakeMessage = z.infer<typeof Messages['AwakeMessage']>
+export type AwakeMessage = z.infer<(typeof Messages)['AwakeMessage']>
 
 export interface AwakeInit extends AwakeMessage {
   did: UCAN.Principal
@@ -92,7 +92,7 @@ export interface AwakeMsgDecrypted extends AwakeMessage {
 }
 
 export type PinChallengeMessage = z.infer<
-  typeof Messages['PinChallengeMessage']
+  (typeof Messages)['PinChallengeMessage']
 > & {
   did: `did:${string}`
 }

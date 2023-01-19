@@ -7,7 +7,7 @@ import * as Utils from './utils.js'
 
 export { Space, Top, Store, Upload, Voucher, Utils }
 
-/** @type {import('./types').AbilitiesArray} */
+/** @type {import('./types.js').AbilitiesArray} */
 export const abilitiesAsStrings = [
   Top.top.can,
   Space.space.can,

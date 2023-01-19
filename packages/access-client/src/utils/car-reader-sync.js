@@ -217,7 +217,7 @@ export function readHeader(reader, strictVersion) {
   ) {
     throw new Error(
       `Invalid CAR version: ${block.version}${
-        strictVersion !== undefined ? ` (expected ${strictVersion})` : ''
+        strictVersion === undefined ? '' : ` (expected ${strictVersion})`
       }`
     )
   }
