@@ -63,7 +63,7 @@ export function createProxyHandler(options) {
       signer,
       catchInvocationError = defaultCatchInvocationError,
     } = options
-    const { audience, capabilities } = invocationIn
+    const { audience, capabilities, expiration, notBefore } = invocationIn
     const connection = connections[audience.did()] ?? connections.default
     // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary, no-unneeded-ternary
     const proxyInvocationIssuer = signer
@@ -79,6 +79,8 @@ export function createProxyHandler(options) {
       capability: capabilities[0],
       audience,
       proofs: [invocationIn],
+      expiration,
+      notBefore,
     })
     try {
       const [result] = await Client.execute(
