@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.5.0...access-api-v4.6.0) (2023-01-19)
+
+
+### Features
+
+* access-api proxy.js has configurable options.catchInvocationError, by default catches HTTPError -&gt; error result w/ status=502 ([#366](https://github.com/web3-storage/w3protocol/issues/366)) ([c8ca473](https://github.com/web3-storage/w3protocol/commit/c8ca4738dc5678b69e79cc70372bc69825c7026e))
+
 ## [4.5.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.4.0...access-api-v4.5.0) (2023-01-19)
 
 
