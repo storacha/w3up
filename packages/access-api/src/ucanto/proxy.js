@@ -15,8 +15,7 @@ const BadGatewayHTTPErrorResult = {
       return
     }
     const status = 'status' in error ? Number(error.status) : undefined
-    const isServerError =
-      typeof status !== 'undefined' && status >= 500 && status < 600
+    const isServerError = status !== undefined && status >= 500 && status < 600
     if (!isServerError) {
       return
     }
