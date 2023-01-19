@@ -47,7 +47,7 @@ function defaultCatchInvocationError(error) {
  * @param {object} options
  * @param {(error: unknown) => Promise<unknown>} [options.catchInvocationError] - catches any error that comes from invoking the proxy invocation on the connection. If it returns a value, that value will be the proxied invocation result.
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} options.connections
- * @param {Ucanto.Signer} [options.signer]
+ * @param {Ucanto.Signer} options.signer
  */
 export function createProxyHandler(options) {
   /**
@@ -64,17 +64,8 @@ export function createProxyHandler(options) {
     } = options
     const { audience, capabilities, expiration, notBefore } = invocationIn
     const connection = connections[audience.did()] ?? connections.default
-    // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary, no-unneeded-ternary
-    const proxyInvocationIssuer = signer
-      ? // this results in a forwarded invocation, but the upstream will reject the signature
-        // created using options.signer unless options.signer signs w/ the same private key as the original issuer
-        // and it'd be nice to not even have to pass around `options.signer`
-        signer
-      : // this works, but involves lying about the issuer type (it wants a Signer but context.id is only a Verifier)
-        // @todo obviate this type override via https://github.com/web3-storage/ucanto/issues/195
-        /** @type {Ucanto.Signer} */ (context.id)
     const proxyInvocation = Client.invoke({
-      issuer: proxyInvocationIssuer,
+      issuer: signer,
       capability: capabilities[0],
       audience,
       proofs: [invocationIn],
