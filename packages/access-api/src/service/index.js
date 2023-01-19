@@ -204,7 +204,6 @@ async function describeFetch(response, fetchArgs) {
   return {
     request: fetchArgs,
     response: {
-      type: response.type,
       ok: response.ok,
       redirected: response.redirected,
       headers: [...response.headers],
