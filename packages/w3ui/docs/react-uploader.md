@@ -14,10 +14,33 @@ import * as ReactUploader from '@w3ui/react-uploader'
 
 ## Exports
 
+* [`Uploader`](#uploader)
+  * [`Uploader.Form`](#uploaderform)
+  * [`Uploader.Input`](#uploaderinput)
 * [`UploaderProvider`](#uploaderprovider)
 * [`useUploader`](#useuploader)
 
 ---
+
+### `Uploader`
+
+Top-level component of the headless Uploader.
+
+Designed to be used with [`Uploader.Form`](#uploaderform) and [`Uploader.Input`](#uploaderinput) to easily create a custom component for uploading files to web3.storage.
+
+#### `Uploader.Form`
+
+Form component for the headless Uploader.
+
+Renders a `form` element designed to work with [`Uploader`](#uploader) that will send files from an [`Uploader.Input`](#uploaderinput) component to the web3.storage service when the form is submitted.
+
+Any passed props will be passed along to the `input` element.
+
+#### `Uploader.Input`
+
+Input component for the headless Uploader.
+
+Renders a file `input` element designed to work with [`Uploader`](#uploader). When used inside of an [`Uploader.Form`](#uploaderform), files added to the input will be uploaded when the form is submitted.
 
 ### `UploaderProvider`
 

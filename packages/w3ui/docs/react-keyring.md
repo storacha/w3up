@@ -14,10 +14,33 @@ import * as ReactKeyring from '@w3ui/react-keyring'
 
 ## Exports
 
+* [`Authenticator`](#authenticator)
+  * [`Authenticator.Form`](#authenticatorform)
+  * [`Authenticator.Email`](#authenticatoremail)
+  * [`Authenticator.CancelButton`](#authenticatorcancelbutton)
 * [`KeyringProvider`](#keyringprovider)
 * [`useKeyring`](#usekeyring)
 
 ---
+
+### `Authenticator`
+
+Headless component providing agent and space creation and registration functionality. The `Authenticator`
+component is designed to be used by [`Authenticator.Form`](#authenticatorform), [`Authenticator.Email`](#authenticatoremail) and other "markup components" when implementing an authentication UI.
+
+Must be used inside of a [`KeyringProvider`](#keyringprovider).
+
+#### `Authenticator.Form`
+
+A `form` element designed to work with the [`Authenticator`](#authenticator) component. Any passed props will be passed along to the `form` element.
+
+#### `Authenticator.Email`
+
+An email `input` element designed to work with [`Authenticator.Form`](#authenticatorform). Any passed props will be passed along to the `input` component.
+
+#### `Authenticator.CancelButton`
+
+A `button` element that will cancel space registration, designed to work with [`Authenticator.Form`](#authenticatorform). Any passed props will be passed along to the `button` element.
 
 ### `KeyringProvider`
 

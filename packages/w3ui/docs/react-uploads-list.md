@@ -14,10 +14,35 @@ import * as ReactUploadsList from '@w3ui/react-uploads-list'
 
 ## Exports
 
+* [`UploadsList`](#uploadslist)
+  * [`UploadsList.NextButton`](#uploadslistnextbutton)
+  * [`UploadsList.ReloadButton`](#uploadslistreloadbutton)
 * [`UploadsListProvider`](#uploadslistprovider)
 * [`useUploadsList`](#useuploadslist)
 
 ---
+
+### `UploadsList`
+
+Top-level component of the headless UploadsList.
+
+Designed to be used with [`UploadsList.NextButton`](#uploadslistnextbutton), [`UploadsList.ReloadButton`](#uploadslistreloadbutton), etc to easily create a custom component for listing uploads in a web3.storage space.
+
+#### `UploadsList.NextButton`
+
+Button that loads the next page of results in an UploadsList.
+
+Renders a `button` element designed to work with [`UploadsList`](#uploadslist). When pressed, will request the next page of uploads from the service.
+
+Any passed props will be passed along to the `button` element.
+
+#### `UploadsList.ReloadButton`
+
+Button that reloads an UploadsList.
+
+Renders a `button` element designed to work with [`UploadsList`](#uploadslist). When pressed, will reload list data from the service.
+
+Any passed props will be passed along to the `button` element.
 
 ### `UploadsListProvider`
 
