@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.6.1...access-api-v4.7.0) (2023-01-19)
+
+
+### Features
+
+* upload-api-proxy production url is to aws http gateway instead of up.web3.storage ([#376](https://github.com/web3-storage/w3protocol/issues/376)) ([96a856d](https://github.com/web3-storage/w3protocol/commit/96a856dc7b8d9ed7d305e44d06579b16d629fa33))
+
 ## [4.6.1](https://github.com/web3-storage/w3protocol/compare/access-api-v4.6.0...access-api-v4.6.1) (2023-01-19)
 
 
