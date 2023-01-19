@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.1](https://github.com/web3-storage/w3protocol/compare/access-api-v4.6.0...access-api-v4.6.1) (2023-01-19)
+
+
+### Bug Fixes
+
+* debug logging describeFetch does not access `response.type` ([#373](https://github.com/web3-storage/w3protocol/issues/373)) ([d27b94c](https://github.com/web3-storage/w3protocol/commit/d27b94c9e7b685d62126c453734bf9d1cd6f2486))
+
 ## [4.6.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.5.0...access-api-v4.6.0) (2023-01-19)
 
 
