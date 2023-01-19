@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.4.0...access-api-v4.5.0) (2023-01-19)
+
+
+### Features
+
+* access-api createStoreProxy uses patched fetch that will log any non-ok responses (to debug) ([#364](https://github.com/web3-storage/w3protocol/issues/364)) ([e741bc0](https://github.com/web3-storage/w3protocol/commit/e741bc040ad78a65d9c329765bfd8aec7820d96f))
+
 ## [4.4.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.3.0...access-api-v4.4.0) (2023-01-18)
 
 
