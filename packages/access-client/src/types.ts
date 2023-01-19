@@ -179,7 +179,10 @@ export type InvokeOptions<
   A extends Ability,
   R extends Resource,
   CAP extends CapabilityParser<
-    Match<{ can: A; with: R; nb?: {} | undefined }, UnknownMatch>
+    Match<
+      { can: A; with: R; nb?: Record<string, unknown> | undefined },
+      UnknownMatch
+    >
   >
 > = UCANBasicOptions &
   InferNb<InferInvokedCapability<CAP>['nb']> & {
@@ -253,20 +256,21 @@ export interface UCANBasicOptions {
 /**
  * Given an inferred capability infers if the nb field is optional or not
  */
-export type InferNb<C extends {} | undefined> = keyof C extends never
-  ? {
-      nb?: never
-    }
-  : {
-      /**
-       * Non-normative fields for the capability
-       *
-       * Check the capability definition for more details on the `nb` field.
-       *
-       * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
-       */
-      nb: C
-    }
+export type InferNb<C extends Record<string, unknown> | undefined> =
+  keyof C extends never
+    ? {
+        nb?: never
+      }
+    : {
+        /**
+         * Non-normative fields for the capability
+         *
+         * Check the capability definition for more details on the `nb` field.
+         *
+         * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
+         */
+        nb: C
+      }
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
 
