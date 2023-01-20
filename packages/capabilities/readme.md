@@ -92,7 +92,7 @@ The above would result in an object similar to the following:
 
 #### `invoke`
 
-The `invoke` method returns an "invocation" of the capability, which can be executed against a ucanto service.
+The `invoke` method returns an [invocation](https://github.com/ucan-wg/spec/#29-invocation) of the capability, which can be executed against a ucanto service.
 
 Like `create`, `invoke` accepts `with` and `nb` fields, and the inputs must match the constraints in the capability definition.
 
