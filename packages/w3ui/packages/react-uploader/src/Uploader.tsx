@@ -47,7 +47,7 @@ export type UploaderComponentContextActions = UploaderContextActions & {
    * Set a file to be uploaded to web3.storage. The file will be uploaded
    * when `handleUploadSubmit` is called.
    */
-  setFile: React.Dispatch<React.SetStateAction<File | undefined>>
+  setFile: (file?: File) => void
 }
 
 export type UploaderComponentContextValue = [
@@ -93,6 +93,11 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent((props
   const [status, setStatus] = useState(Status.Idle)
   const [error, setError] = useState()
 
+  const setFileAndReset = (file?: File): void => {
+    setFile(file)
+    setStatus(Status.Idle)
+  }
+
   const handleUploadSubmit = async (e: Event): Promise<void> => {
     e.preventDefault()
     if (file != null) {
@@ -114,7 +119,7 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent((props
 
   const uploaderComponentContextValue = useMemo<UploaderComponentContextValue>(() => [
     { ...uploaderState, file, dataCID, status, error, handleUploadSubmit },
-    { ...uploaderActions, setFile }
+    { ...uploaderActions, setFile: setFileAndReset }
   ], [uploaderState, file, dataCID, status, error, handleUploadSubmit, uploaderActions, setFile])
 
   return (

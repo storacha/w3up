@@ -1,9 +1,11 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import type { ChangeEvent } from 'react'
 import type { Space } from '@w3ui/keyring-core'
 
+import { useEffect, useState } from 'react'
 import { Authenticator, Uploader, UploadsList, W3APIProvider, SpaceFinder } from '@w3ui/react'
 import { useKeyring } from '@w3ui/react-keyring'
 import { useUploadsList } from '@w3ui/react-uploads-list'
+import { ArrowPathIcon } from '@heroicons/react/20/solid'
 import md5 from 'blueimp-md5'
 import '@w3ui/react/src/styles/uploader.css'
 
@@ -11,6 +13,9 @@ function SpaceRegistrar (): JSX.Element {
   const [, { registerSpace }] = useKeyring()
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  function resetForm (): void {
+    setEmail('')
+  }
   async function onSubmit (e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
     setSubmitted(true)
@@ -20,35 +25,40 @@ function SpaceRegistrar (): JSX.Element {
       console.log(err)
       throw new Error('failed to register', { cause: err })
     } finally {
+      resetForm()
       setSubmitted(false)
     }
   }
   return (
-    <div>
-      {submitted
-        ? (
+    <div className='flex flex-col items-center space-y-24 pt-12'>
+      <div className='flex flex-col items-center space-y-2'>
+        <h3 className='text-lg'>Verify your email address!</h3>
+        <p>Click the link in the email we sent to start uploading to this space.</p>
+      </div>
+      <div className='flex flex-col items-center space-y-4'>
+        <h5>
+          Need a new verification email?
+        </h5>
+        <form
+          className='flex flex-col items-center space-y-2'
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => { void onSubmit(e) }}
+        >
+          <input
+            className='text-black px-2 py-1 rounded'
+            type='email' placeholder='Email'
+            value={email}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }}
+          />
+          <input
+            type='submit' className='w3ui-button' value='Re-send Verification Email'
+            disabled={email === ''}
+          />
+        </form>
+        {submitted &&
           <p>
-            Please check your email for a verification email.
-          </p>
-          )
-        : (
-          <>
-            <p>
-              Before you upload files, you must register this space.
-            </p>
-            <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => { void onSubmit(e) }}>
-              <input
-                type='email' placeholder='Email' autofocus
-                value={email}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }}
-              />
-              <input
-                type='submit' className='w3ui-button' value='Register'
-                disabled={email === ''}
-              />
-            </form>
-          </>
-          )}
+            Verification re-sent, please check your email for a verification email.
+          </p>}
+      </div>
     </div>
   )
 }
@@ -102,48 +112,62 @@ function SpaceCreator (props: any): JSX.Element {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
 
+  function resetForm (): void {
+    setEmail('')
+    setName('')
+  }
+
   async function onSubmit (e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
     setSubmitted(true)
     try {
       await createSpace(name)
-      await registerSpace(email)
+      // ignore this because the UI knows how to help the user recover
+      // from space registration failure
+      void registerSpace(email)
     } catch (err) {
       console.log(err)
       throw new Error('failed to register', { cause: err })
     } finally {
+      resetForm()
       setSubmitted(false)
     }
   }
   return (
     <div {...props}>
       {(creating)
-        ? (
-          <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => { void onSubmit(e) }}>
-            <input
-              className='text-black'
-              type='email' placeholder='Email' autofocus
-              value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }}
-            />
-            <input
-              className='text-black'
-              placeholder='Name'
-              value={name}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => { setName(e.target.value) }}
-            />
-            <input type='submit' className='w3ui-button' value='Create' />
-          </form>
-          )
-        : submitted
+        ? submitted
           ? (
-            <div>creating space...</div>
+            <div className='flex flex-col items-center space-y-4'>
+              <h5>Creating Space...</h5>
+              <ArrowPathIcon className='animate-spin w-6' />
+            </div>
             )
           : (
-            <button className='w3ui-button py-2' onClick={() => setCreating(true)}>
-              Add Space
-            </button>
-            )}
+            <form
+              className='flex flex-col space-y-2'
+              onSubmit={(e: React.FormEvent<HTMLFormElement>) => { void onSubmit(e) }}
+            >
+              <input
+                className='text-black py-1 px-2 rounded'
+                type='email' placeholder='Email' autofocus
+                value={email}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }}
+              />
+              <input
+                className='text-black py-1 px-2 rounded'
+                placeholder='Name'
+                value={name}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => { setName(e.target.value) }}
+              />
+              <input type='submit' className='w3ui-button' value='Create' />
+            </form>
+            )
+        : (
+          <button className='w3ui-button py-2' onClick={() => setCreating(true)}>
+            Add Space
+          </button>
+          )}
     </div>
   )
 }

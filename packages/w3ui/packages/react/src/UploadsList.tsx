@@ -31,7 +31,11 @@ function Uploads ({ uploads }: { uploads?: UploadListResult[] }): JSX.Element {
             <tbody>
               {uploads.map(({ root }) => (
                 <tr key={root.toString()}>
-                  <td>{root.toString()}</td>
+                  <td>
+                    <a href={`https://${root.toString()}.ipfs.w3s.link/`}>
+                      {root.toString()}
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>

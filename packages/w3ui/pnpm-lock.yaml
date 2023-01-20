@@ -234,6 +234,7 @@ importers:
 
   examples/react/w3console:
     specifiers:
+      '@heroicons/react': ^2.0.13
       '@preact/preset-vite': ^2.4.0
       '@types/blueimp-md5': ^2.18.0
       '@w3ui/keyring-core': workspace:^2.0.1
@@ -248,6 +249,7 @@ importers:
       typescript: ^4.9.3
       vite: ^4.0.0
     dependencies:
+      '@heroicons/react': 2.0.13
       '@w3ui/keyring-core': link:../../../packages/keyring-core
       '@w3ui/react': link:../../../packages/react
       '@w3ui/react-keyring': link:../../../packages/react-keyring

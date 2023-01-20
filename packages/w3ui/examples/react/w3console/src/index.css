@@ -41,7 +41,7 @@
 }
 
 .w3ui-uploader__file {
-  @apply rounded-md w-full grid grid-cols-2 p-4 bg-gray-200 dark:bg-gray-900;
+  @apply rounded-md w-full grid grid-cols-2 p-4 bg-gray-200 text-gray-500 dark:bg-gray-900 dark:text-white;
 }
 
 .w3ui-uploader__file .name {
@@ -54,7 +54,7 @@
 }
 
 .w3ui-uploader-console {
-  @apply rounded-md w-full bg-gray-200 dark:bg-gray-900 p-4 truncate;
+  @apply rounded-md w-full bg-gray-200 text-gray-500 dark:bg-gray-900 dark:text-white p-4 truncate;
 }
 
 .w3ui-simple-authenticator-verify-email {

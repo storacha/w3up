@@ -29,43 +29,66 @@ interface DoneProps {
   storedDAGShards?: CARMetadata[]
 }
 
-export const Done = ({ file, dataCID, storedDAGShards }: DoneProps): JSX.Element => {
+export const Done = ({ dataCID }: DoneProps): JSX.Element => {
+  const [, { setFile }] = useUploaderComponent()
   const cid: string = dataCID?.toString() ?? ''
   return (
     <div className='done'>
       <h1 className='title'>Done!</h1>
-      <p className='cid'>{cid}</p>
-      <p className='view'><a href={`https://${cid}.ipfs.w3s.link/`}>View {file?.name} on IPFS Gateway.</a></p>
-      <h5 className='chunks'>Shards ({storedDAGShards?.length}):</h5>
-      {storedDAGShards?.map(({ cid, size }) => (
-        <p className='shard' key={cid.toString()}>
-          {cid.toString()} ({size} bytes)
-        </p>
-      ))}
+      <p className='cid'>
+        Uploaded to <a href={`https://${cid}.ipfs.w3s.link/`}>{cid}</a>
+      </p>
+      <button
+        className='w3ui-button'
+        onClick={() => { setFile(undefined) }}
+      >
+        Add More
+      </button>
     </div>
   )
 }
 
 const UploaderForm = (): JSX.Element => {
-  const [{ file }] = useUploaderComponent()
+  const [{ status, file }] = useUploaderComponent()
+  const hasFile = (file !== undefined)
   return (
     <UploaderCore.Form>
-      <div className='w3ui-uploader'>
+      <div className={`w3ui-uploader ${status} ${hasFile ? 'has-file' : 'no-file'}`}>
         <label className='w3ui-uploader__label'>File:</label>
         <UploaderCore.Input className='w3ui-uploader__input' />
+        <UploaderContents />
       </div>
-      {(file !== undefined) && (
-        <div className='w3ui-uploader__file'>
-          <span className='name'>{file.name}</span>
-          <span className='type'>{file.type}</span>
-          <span className='size'>{file.size}</span>
-        </div>
-      )}
-      <button type='submit' className='w3ui-button' disabled={file === undefined}>
-        Upload
-      </button>
     </UploaderCore.Form>
   )
+}
+
+const UploaderContents = (): JSX.Element => {
+  const [{ status, file }] = useUploaderComponent()
+  const hasFile = (file !== undefined)
+  if (status === Status.Idle) {
+    if (hasFile) {
+      return (
+        <>
+          <div className='w3ui-uploader__file'>
+            <span className='name'>{file.name}</span>
+            <span className='type'>{file.type}</span>
+            <span className='size'>{file.size}</span>
+          </div>
+          <button type='submit' className='w3ui-button' disabled={file === undefined}>
+            Upload
+          </button>
+        </>
+      )
+    } else {
+      return <></>
+    }
+  } else {
+    return (
+      <div className='w3ui-uploader-console'>
+        <UploaderConsole />
+      </div>
+    )
+  }
 }
 
 const UploaderConsole = (): JSX.Element => {
@@ -84,21 +107,6 @@ const UploaderConsole = (): JSX.Element => {
   }
 }
 
-const UploaderBody = (): JSX.Element => {
-  const [{ status }] = useUploaderComponent()
-
-  return (
-    <>
-      <UploaderForm />
-      {(status !== Status.Idle) && (
-        <div className='w3ui-uploader-console'>
-          <UploaderConsole />
-        </div>
-      )}
-    </>
-  )
-}
-
 export interface SimpleUploaderProps {
   onUploadComplete?: OnUploadComplete
 }
@@ -106,7 +114,7 @@ export interface SimpleUploaderProps {
 export const Uploader = ({ onUploadComplete }: SimpleUploaderProps): JSX.Element => {
   return (
     <UploaderCore as='div' className='w3ui-uploader-wrapper' onUploadComplete={onUploadComplete}>
-      <UploaderBody />
+      <UploaderForm />
     </UploaderCore>
   )
 }
