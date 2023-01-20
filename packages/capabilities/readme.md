@@ -112,12 +112,13 @@ interface UCANOptions {
 }
 ```
 
-In the example below, we assume that the `loadSigningKey` function returns a valid `Signer` object.
+In the example below, we're generating a new `Signer` to act as the issuer of the invocation using the `@ucanto/principal/ed25519` package. Note that in a real application, the service would likely reject an invocation from this signer, as it does not have any delegated permissions. See the [access client package](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client) for more about key management and delegation in practice.
 
 ```ts
 import * as DID from '@ipld/dag-ucan/did'
+import * as ed25519 from '@ucanto/principal/ed25519'
 
-const issuer = loadSigningKey()
+const issuer = await ed25519.generate()
 const audience = DID.parse('did:web:web3.storage')
 
 const invocation = Store.add.invoke({
@@ -145,8 +146,9 @@ The `delegate` method allows you to create a ucanto `Delegation`, which allows a
 
 ```ts
 import * as DID from '@ipld/dag-ucan/did'
+import * as ed25519 from '@ucanto/principal/ed25519'
 
-const issuer = loadSigningKey()
+const issuer = await ed25519.generate()
 const audience = DID.parse('did:web:web3.storage')
 
 const delegation = await Store.add.delegate({
