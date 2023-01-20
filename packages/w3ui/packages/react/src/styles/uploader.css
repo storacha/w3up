@@ -2,7 +2,7 @@
   --w3ui-uploader-padding: 2rem;
   --w3ui-uploader-background: rgba(255, 255, 255, 0.05);
   --w3ui-uploader-background-hover: rgba(255, 255, 255, 0.08);
-  --w3ui-uploader-height: 250px;
+  --w3ui-uploader-height: 200px;
   --w3ui-uploader-border-color: rgba(255, 255, 255, 0.25);
   --w3ui-uploader-border-radius: 8px;
   --w3ui-uploader-primary: salmon;
@@ -18,7 +18,7 @@
   border: 2px dashed var(--w3ui-uploader-border-color);
   background-color: var(--w3ui-uploader-background);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.25em;
@@ -56,10 +56,47 @@
   z-index: 10;
 }
 
-.w3ui-uploader-console .done {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.w3ui-uploader__file_icon {
+  width: 52px;
+  height: 52px;
+  padding: 0 2px;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 1px;
+  line-height: 50px;
+  display: inline-block;
+  background-color: black;
+  text-transform: uppercase;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 2px;
+  margin-right: 12px;
+}
+
+.w3ui-uploader__file_meta {
+  display: inline-block;
+  vertical-align: 10px;
+}
+
+.w3ui-uploader__file_meta_name {
+  display: block;
+  font-size: 14px;
+  line-height: 2rem;
+}
+
+.w3ui-uploader__file_meta_size {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  font-family: monospace;
+  color:rgba(255, 255, 255, 0.65)
+}
+
+.w3ui-uploader-console__cid {
+  font-size: 12px;
+  font-family: monospace;
 }
 
 .w3ui-uploader-console .uploading {
@@ -74,15 +111,18 @@
   align-items: center;
 }
 
-.w3ui-uploader-console .done button {
-  width: auto;
-  margin-top: 1rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 90%;
-  color: white;
+.w3ui-uploader-console__done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.w3ui-uploader__label {
+.w3ui-uploader .w3ui-uploader__label {
+  display: none;
+}
+
+.w3ui-uploader.no-file .w3ui-uploader__label {
+  display: block;
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   height: 1px;
@@ -92,9 +132,15 @@
   width: 1px;
 }
 
-.w3ui-uploader__input {
+.w3ui-uploader .w3ui-uploader__input {
+  display: none;
+}
+
+.w3ui-uploader.no-file .w3ui-uploader__input {
+  display: block;
   cursor: pointer;
   position: absolute;
+  width: 100%;
   padding: 0;
   opacity: 0;
   top: 0;
@@ -103,17 +149,41 @@
   left: 0;
 }
 
+.w3ui-uploader-console__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  color: rgb(156 163 175)
+}
+
+.w3ui-uploader-console__actions {
+  /* border-top: solid 1px var(--w3ui-uploader-border-color); */
+  padding: 1rem;
+}
+
+
+
 .w3ui-button {
   width: 100%;
   background-color: var(--w3ui-uploader-primary);
   border-radius: var(--w3ui-uploader-border-radius);
   outline: none;
   border: 0;
-  padding: 0.75em;
+  padding: 8px 32px;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .w3ui-button:hover {
   background-color: var(--w3ui-uploader-primary-hover);
+}
+
+.w3ui-uploader .w3ui-button {
+  width: auto;
 }

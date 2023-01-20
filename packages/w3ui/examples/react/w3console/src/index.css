@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 :root {
-  --w3ui-uploader-height: theme(spacing.36);
   --w3ui-uploader-primary: theme(colors.slate.800);
   --w3ui-uploader-primary-hover: theme(colors.blue.900);
 }
@@ -34,27 +33,6 @@
 
 .w3-uploads-list nav {
   @apply flex flex-row space-x-4 my-4;
-}
-
-.w3ui-uploader-wrapper {
-  @apply grow;
-}
-
-.w3ui-uploader__file {
-  @apply rounded-md w-full grid grid-cols-2 p-4 bg-gray-200 text-gray-500 dark:bg-gray-900 dark:text-white;
-}
-
-.w3ui-uploader__file .name {
-  @apply col-span-2 truncate;
-}
-
-.w3ui-uploader__file .type,
-.size {
-  @apply text-sm;
-}
-
-.w3ui-uploader-console {
-  @apply rounded-md w-full bg-gray-200 text-gray-500 dark:bg-gray-900 dark:text-white p-4 truncate;
 }
 
 .w3ui-simple-authenticator-verify-email {
