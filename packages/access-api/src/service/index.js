@@ -21,28 +21,7 @@ import * as uploadApi from './upload-api-proxy.js'
  */
 export function service(ctx) {
   return {
-    store: uploadApi.createStoreProxy({
-      ...ctx,
-      fetch: patchedFetch(
-        globalThis.fetch.bind(globalThis),
-        async (response, fetchArgs) => {
-          if (!response.ok) {
-            try {
-              ctx.log.warn(
-                `unexpected non-ok response from fetch in createStoreProxy`,
-                await describeFetch(response, fetchArgs)
-              )
-            } catch (error) {
-              ctx.log.error(
-                new Error(`error describing/logging fetch response`, {
-                  cause: error,
-                })
-              )
-            }
-          }
-        }
-      ),
-    }),
+    store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
 
     voucher: {
@@ -169,48 +148,6 @@ export function service(ctx) {
       fail() {
         throw new Error('test fail')
       },
-    },
-  }
-}
-
-/**
- * Wrap `fetch` producing a new fetch that will pass any responses it fetches to a cb.
- *
- * @param {typeof globalThis.fetch} fetch
- * @param {(response: Response, fetchArgs: Parameters<typeof globalThis.fetch>) => Promise<void>} onResponse - handles each response
- * @returns {typeof globalThis.fetch}
- */
-function patchedFetch(fetch, onResponse) {
-  /** @type {typeof globalThis.fetch} */
-  const fetchWithLog = async (input, init) => {
-    const response = await fetch(input, init)
-    await onResponse(response, [
-      input instanceof URL ? input.toString() : input,
-      init,
-    ])
-    return response
-  }
-  return fetchWithLog
-}
-
-/**
- * Given a fetch invocation and the response it produced,
- * return an object that can be logged to describe the request/response fully.
- *
- * @param {Response} response
- * @param {Parameters<typeof globalThis.fetch>} fetchArgs
- */
-async function describeFetch(response, fetchArgs) {
-  return {
-    request: fetchArgs,
-    response: {
-      ok: response.ok,
-      redirected: response.redirected,
-      headers: [...response.headers],
-      status: response.status,
-      statusText: response.statusText,
-      url: response.url,
-      text: await response.clone().text(),
     },
   }
 }

@@ -45,6 +45,7 @@ describe('ucanto-proxy', () => {
       service: {
         test: {
           succeed: createProxyHandler({
+            signer: proxyPrincipal,
             connections: {
               default: Client.connect({
                 id: upstreamPrincipal,
@@ -116,6 +117,7 @@ describe('ucanto-proxy', () => {
       service: {
         test: {
           succeed: createProxyHandler({
+            signer: upstreamPrincipal,
             connections: {
               default: Client.connect({
                 id: upstreamPrincipal,
