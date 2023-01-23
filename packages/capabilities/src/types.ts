@@ -12,6 +12,7 @@ export type Access = InferInvokedCapability<typeof AccessCaps.access>
 export type AccessAuthorize = InferInvokedCapability<
   typeof AccessCaps.authorize
 >
+export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 
 // Space
 export type Space = InferInvokedCapability<typeof space>
@@ -56,5 +57,6 @@ export type AbilitiesArray = [
   VoucherClaim['can'],
   VoucherRedeem['can'],
   Access['can'],
-  AccessAuthorize['can']
+  AccessAuthorize['can'],
+  AccessSession['can']
 ]

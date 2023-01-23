@@ -27,4 +27,5 @@ export const abilitiesAsStrings = [
   Voucher.redeem.can,
   Access.access.can,
   Access.authorize.can,
+  Access.session.can,
 ]
