@@ -13,12 +13,16 @@
     "test": "pnpm -r --if-present run test",
     "check": "pnpm -r --if-present run check",
     "build": "pnpm -r --if-present run build",
-    "docs": "pnpm run build && typedoc --out docs"
+    "docs": "pnpm run build && typedoc --out docs",
+    "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
   },
   "devDependencies": {
+    "@docusaurus/core": "^2.2.0",
+    "docusaurus-plugin-typedoc": "^0.18.0",
     "lint-staged": "^13.1.0",
     "prettier": "2.8.3",
     "simple-git-hooks": "^2.8.1",
+    "typedoc-plugin-markdown": "^3.14.0",
     "typescript": "4.9.4",
     "wrangler": "^2.8.0"
   },
@@ -43,5 +47,12 @@
     "typedoc": "^0.23.22",
     "typedoc-plugin-missing-exports": "^1.0.0"
   },
-  "packageManager": "pnpm@7.24.3"
+  "packageManager": "pnpm@7.24.3",
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react*"
+      ]
+    }
+  }
 }
