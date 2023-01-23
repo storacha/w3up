@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.7.0...access-api-v4.8.0) (2023-01-23)
+
+
+### Features
+
+* add /reproduce-cloudflare-error route to access-api ([#380](https://github.com/web3-storage/w3protocol/issues/380)) ([edf925f](https://github.com/web3-storage/w3protocol/commit/edf925f6c17d8a78981ac71d7400dcac927301ac))
+
 ## [4.7.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.6.1...access-api-v4.7.0) (2023-01-19)
 
 
