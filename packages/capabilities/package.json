@@ -23,8 +23,8 @@
   },
   "exports": {
     ".": "./src/index.js",
-    "./types": "./dist/src/types.d.ts",
-    "./*": "./src/*.js"
+    "./*": "./src/*.js",
+    "./types": "./dist/src/types.d.ts"
   },
   "typesVersions": {
     "*": {
@@ -34,20 +34,23 @@
       "store": [
         "dist/src/store"
       ],
-      "types": [
-        "dist/src/types"
-      ],
       "top": [
         "dist/src/top"
       ],
       "upload": [
         "dist/src/upload"
       ],
+      "voucher": [
+        "dist/src/voucher"
+      ],
+      "access": [
+        "dist/src/access"
+      ],
       "utils": [
         "dist/src/utils"
       ],
-      "voucher": [
-        "dist/src/voucher"
+      "types": [
+        "dist/src/types"
       ]
     }
   },

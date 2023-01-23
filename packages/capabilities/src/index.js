@@ -3,6 +3,7 @@ import * as Top from './top.js'
 import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as Voucher from './voucher.js'
+import * as Access from './access.js'
 import * as Utils from './utils.js'
 
 export { Space, Top, Store, Upload, Voucher, Utils }
@@ -24,4 +25,6 @@ export const abilitiesAsStrings = [
   Store.list.can,
   Voucher.claim.can,
   Voucher.redeem.can,
+  Access.access.can,
+  Access.authorize.can,
 ]
