@@ -16,7 +16,6 @@ import { createProxyHandler } from '../ucanto/proxy.js'
  * @template {string|number|symbol} M
  * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
  * @param {object} options
- * @param {Ucanto.Signer} options.signer
  * @param {Array<M>} options.methods
  * @param {{ default: Connection } & Record<Ucanto.UCAN.DID, Connection>} options.connections
  */
@@ -97,7 +96,6 @@ function getDefaultConnections(options) {
 /**
  * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
  * @param {object} options
- * @param {Ucanto.Signer} options.signer
  * @param {typeof globalThis.fetch} [options.fetch]
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
@@ -116,7 +114,6 @@ export function createUploadProxy(options) {
 /**
  * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
  * @param {object} options
- * @param {Ucanto.Signer} options.signer
  * @param {typeof globalThis.fetch} [options.fetch]
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
