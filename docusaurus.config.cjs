@@ -15,7 +15,7 @@ const config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en']
   },
 
   plugins: [
@@ -25,12 +25,12 @@ const config = {
         tsconfig: './tsconfig.json',
         out: 'markdown',
         sidebar: {
-          categoryLabel: 'w3up-client',
+          categoryLabel: 'w3up-client'
         },
-        includeExtension: false,
-      },
-    ],
-  ],
+        includeExtension: false
+      }
+    ]
+  ]
 }
 
 module.exports = config
