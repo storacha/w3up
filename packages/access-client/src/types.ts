@@ -61,6 +61,13 @@ export interface SpaceTableMetadata {
 }
 
 /**
+ * Indicates failure executing ability that requires access to a space that cannot be found by the handler
+ */
+export type SpaceNotFoundFailure = Failure & {
+  status: 404
+}
+
+/**
  * Access api service definition type
  */
 export interface Service {
@@ -73,7 +80,11 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, Selectable<SpaceTable>, Failure>
+    info: ServiceMethod<
+      SpaceInfo,
+      Selectable<SpaceTable>,
+      Failure | SpaceNotFoundFailure
+    >
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
       EncodedDelegation<[SpaceRecover]> | undefined,

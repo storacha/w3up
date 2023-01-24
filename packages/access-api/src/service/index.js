@@ -33,7 +33,11 @@ export function service(ctx) {
       info: Server.provide(Space.info, async ({ capability, invocation }) => {
         const results = await ctx.models.spaces.get(capability.with)
         if (!results) {
-          return new Failure('Space not found.')
+          return {
+            error: true,
+            status: 404,
+            message: 'Space not found.',
+          }
         }
         return results
       }),

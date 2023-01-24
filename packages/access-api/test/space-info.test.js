@@ -28,6 +28,11 @@ describe('space/info', function () {
 
     if (inv?.error) {
       assert.deepEqual(inv.message, `Space not found.`)
+      assert.deepEqual(
+        'status' in inv && inv.status,
+        404,
+        'error result has status 404'
+      )
     } else {
       assert.fail()
     }
