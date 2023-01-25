@@ -6,15 +6,15 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.13",
-    "@w3ui/keyring-core": "workspace:^2.0.1",
+    "@w3ui/keyring-core": "workspace:^",
     "@w3ui/react": "workspace:^",
     "@w3ui/react-keyring": "workspace:^",
-    "@w3ui/react-uploads-list": "workspace:^2.0.1",
+    "@w3ui/react-uploads-list": "workspace:^",
     "blueimp-md5": "^2.19.0",
     "preact": "^10.11.3"
   },

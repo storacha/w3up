@@ -237,10 +237,10 @@ importers:
       '@heroicons/react': ^2.0.13
       '@preact/preset-vite': ^2.4.0
       '@types/blueimp-md5': ^2.18.0
-      '@w3ui/keyring-core': workspace:^2.0.1
+      '@w3ui/keyring-core': workspace:^
       '@w3ui/react': workspace:^
       '@w3ui/react-keyring': workspace:^
-      '@w3ui/react-uploads-list': workspace:^2.0.1
+      '@w3ui/react-uploads-list': workspace:^
       autoprefixer: ^10.4.13
       blueimp-md5: ^2.19.0
       postcss: ^8.4.21
@@ -750,6 +750,20 @@ packages:
       semver: 6.3.0
     dev: true
 
+  /@babel/helper-compilation-targets/7.20.7_@babel+core@7.20.5:
+    resolution: {integrity: sha512-4tGORmfQcrc+bvrjb5y3dG9Mx1IOZjsHqQVUz7XCNHO+iTmqxWnVg3KRygjGmpRLJGdQSKuvFinbIb0CnZwHAQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/compat-data': 7.20.5
+      '@babel/core': 7.20.5
+      '@babel/helper-validator-option': 7.18.6
+      browserslist: 4.21.4
+      lru-cache: 5.1.1
+      semver: 6.3.0
+    dev: true
+
   /@babel/helper-create-class-features-plugin/7.20.5_@babel+core@7.20.12:
     resolution: {integrity: sha512-3RCdA/EmEaikrhayahwToF0fpweU/8o2p8vhc1c/1kftHOdTKuC65kik/TLc+qfbS8JKw4qqJbne4ovICDhmww==}
     engines: {node: '>=6.9.0'}
@@ -830,7 +844,7 @@ packages:
       '@babel/core': ^7.4.0-0
     dependencies:
       '@babel/core': 7.20.5
-      '@babel/helper-compilation-targets': 7.20.0_@babel+core@7.20.5
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.20.5
       '@babel/helper-plugin-utils': 7.20.2
       debug: 4.3.4
       lodash.debounce: 4.0.8
@@ -1341,7 +1355,7 @@ packages:
     dependencies:
       '@babel/compat-data': 7.20.5
       '@babel/core': 7.20.5
-      '@babel/helper-compilation-targets': 7.20.0_@babel+core@7.20.5
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.20.5
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-object-rest-spread': 7.8.3_@babel+core@7.20.5
       '@babel/plugin-transform-parameters': 7.20.5_@babel+core@7.20.5
@@ -1924,7 +1938,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.5
       '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-compilation-targets': 7.20.0_@babel+core@7.20.5
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.20.5
       '@babel/helper-environment-visitor': 7.18.9
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-optimise-call-expression': 7.18.6
@@ -2090,7 +2104,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.5
-      '@babel/helper-compilation-targets': 7.20.0_@babel+core@7.20.5
+      '@babel/helper-compilation-targets': 7.20.7_@babel+core@7.20.5
       '@babel/helper-function-name': 7.19.0
       '@babel/helper-plugin-utils': 7.20.2
     dev: true
@@ -2155,7 +2169,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.5
-      '@babel/helper-module-transforms': 7.20.2
+      '@babel/helper-module-transforms': 7.20.11
       '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
@@ -2212,7 +2226,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.5
       '@babel/helper-hoist-variables': 7.18.6
-      '@babel/helper-module-transforms': 7.20.2
+      '@babel/helper-module-transforms': 7.20.11
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-validator-identifier': 7.19.1
     transitivePeerDependencies:
@@ -2239,7 +2253,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.5
-      '@babel/helper-module-transforms': 7.20.2
+      '@babel/helper-module-transforms': 7.20.11
       '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
@@ -3844,7 +3858,7 @@ packages:
       '@storybook/csf-plugin': 7.0.0-beta.29
       '@storybook/csf-tools': 7.0.0-beta.29
       '@storybook/global': 5.0.0
-      '@storybook/mdx2-csf': 1.0.0-next.4
+      '@storybook/mdx2-csf': 1.0.0-next.5
       '@storybook/node-logger': 7.0.0-beta.29
       '@storybook/postinstall': 7.0.0-beta.29
       '@storybook/preview-api': 7.0.0-beta.29
@@ -4173,7 +4187,7 @@ packages:
       '@storybook/client-logger': 7.0.0-beta.29
       '@storybook/core-common': 7.0.0-beta.29
       '@storybook/csf-plugin': 7.0.0-beta.29
-      '@storybook/mdx2-csf': 1.0.0-next.4
+      '@storybook/mdx2-csf': 1.0.0-next.5
       '@storybook/node-logger': 7.0.0-beta.29
       '@storybook/preview': 7.0.0-beta.29
       '@storybook/preview-api': 7.0.0-beta.29
@@ -4392,7 +4406,7 @@ packages:
       '@storybook/core-events': 7.0.0-beta.29
       '@storybook/csf': 0.0.2-next.8
       '@storybook/csf-tools': 7.0.0-beta.29
-      '@storybook/docs-mdx': 0.0.1-next.5
+      '@storybook/docs-mdx': 0.0.1-next.6
       '@storybook/global': 5.0.0
       '@storybook/node-logger': 7.0.0-beta.29
       '@storybook/preview-api': 7.0.0-beta.29
@@ -4470,8 +4484,8 @@ packages:
       type-fest: 2.19.0
     dev: true
 
-  /@storybook/docs-mdx/0.0.1-next.5:
-    resolution: {integrity: sha512-EowXFPq4TBZQguKCdU8y7EzpuSv2vSu5gy7pgF/1P5mq7LG9h8YIrerOW9DL4zfp9E0GHIWlSXR5KuFIqqKc/Q==}
+  /@storybook/docs-mdx/0.0.1-next.6:
+    resolution: {integrity: sha512-DjoSIXADmLJtdroXAjUotFiZlcZ2usWhqrS7aeOtZs0DVR0Ws5WQjnwtpDUXt8gryTSd+OZJ0cNsDcqg4JDEvQ==}
     dev: true
 
   /@storybook/docs-tools/7.0.0-beta.29:
@@ -4549,8 +4563,8 @@ packages:
     resolution: {integrity: sha512-Ha6GJXxEjqP9Z03iV7ehBKgsij0enB7GRcFstJOHjnV8WEDKfF8uPg3SHh2yfueww7P8SWS3Xc3Rzud80fJctQ==}
     dev: true
 
-  /@storybook/mdx2-csf/1.0.0-next.4:
-    resolution: {integrity: sha512-nvRgYdpYvXsvSgCzKc4LQA1JxtJzmv47IsFAsh1rTz5FoHyK8watLU2WqX9T4w52fpFXBHx7RwGEsCRt0XgZlQ==}
+  /@storybook/mdx2-csf/1.0.0-next.5:
+    resolution: {integrity: sha512-02w0sgGZaK1agT050yCVhJ+o4rLHANWvLKWjQjeAsYbjneLC5ITt+3GDB4jRiWwJboZ8dHW1fGSK1Vg5fA34aQ==}
     dev: true
 
   /@storybook/node-logger/7.0.0-beta.29:
