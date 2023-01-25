@@ -1,4 +1,5 @@
 import { render } from 'preact-render-to-string'
+// @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
 
@@ -100,11 +101,12 @@ export class HtmlResponse extends Response {
 /**
  *
  * @param {object} param0
- * @param {Ucanto.Delegation<[import('@web3-storage/capabilities/types').VoucherClaim]> | Ucanto.Delegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} param0.delegation
  * @param {string} param0.ucan
+ * @param {string} param0.email
+ * @param {string} param0.audience
  * @param {string} param0.qrcode
  */
-export const ValidateEmail = ({ delegation, ucan, qrcode }) => (
+export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
   <div class="fcenter">
     <img
       src="https://web3.storage/android-chrome-512x512.png"
@@ -112,10 +114,7 @@ export const ValidateEmail = ({ delegation, ucan, qrcode }) => (
       width="80"
     />
     <h1>Email Validated</h1>
-    <p>
-      {delegation.capabilities[0].nb.identity.replace('mailto:', '')} was
-      confirmed. You may close this window.
-    </p>
+    <p>{email} was confirmed. You may close this window.</p>
     <div class="box">
       <p>
         During the beta period, uploads via w3up will only appear via the beta
@@ -141,7 +140,7 @@ export const ValidateEmail = ({ delegation, ucan, qrcode }) => (
       <summary>More details</summary>
       <h5>Validation requested by:</h5>
       <p>
-        <code>{delegation.audience.did()}</code>
+        <code>{audience}</code>
       </p>
       <h5>QR Code:</h5>
       <div
