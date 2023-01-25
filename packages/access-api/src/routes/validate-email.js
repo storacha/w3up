@@ -17,8 +17,8 @@ export async function validateEmail(req, env) {
     return recover(req, env)
   }
 
-  if (req.query && req.query.ucan && req.query.mode === 'account') {
-    return account(req, env)
+  if (req.query && req.query.ucan && req.query.mode === 'session') {
+    return session(req, env)
   }
   if (req.query && req.query.ucan) {
     try {
@@ -112,7 +112,7 @@ async function recover(req, env) {
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
  * @param {import('../bindings.js').RouteContext} env
  */
-async function account(req, env) {
+async function session(req, env) {
   /** @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessSession]>} */
   const delegation = stringToDelegation(req.query.ucan)
   await env.models.validations.putSession(

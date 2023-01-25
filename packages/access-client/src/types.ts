@@ -32,7 +32,6 @@ import type {
   VoucherRedeem,
   Top,
   AccessAuthorize,
-  AccessSession,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -89,11 +88,8 @@ export interface SpaceTableMetadata {
  */
 export interface Service {
   access: {
-    authorize: ServiceMethod<
-      AccessAuthorize,
-      EncodedDelegation<[AccessSession]> | undefined,
-      Failure
-    >
+    // returns a URL string for tests or nothing in other envs
+    authorize: ServiceMethod<AccessAuthorize, string | undefined, Failure>
   }
   voucher: {
     claim: ServiceMethod<

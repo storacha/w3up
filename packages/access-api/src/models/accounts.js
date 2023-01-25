@@ -24,7 +24,8 @@ export class Accounts {
   constructor(d1) {
     /** @type {GenericPlugin<DelegationRecord>} */
     const objectPlugin = new GenericPlugin({
-      expiration: (v) => new Date(v),
+      // eslint-disable-next-line unicorn/no-null
+      expiration: (v) => (typeof v === 'string' ? new Date(v) : null),
       inserted_at: (v) => new Date(v),
       updated_at: (v) => new Date(v),
     })

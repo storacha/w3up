@@ -30,7 +30,7 @@ export function accessAuthorizeProvider(ctx) {
 
       await ctx.models.accounts.create(capability.nb.as)
 
-      const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}&mode=account`
+      const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}&mode=session`
       // For testing
       if (ctx.config.ENV === 'test') {
         return url
