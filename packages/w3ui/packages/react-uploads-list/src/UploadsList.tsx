@@ -1,7 +1,7 @@
 import type { As, Component, Props, Options, RenderProp } from 'ariakit-react-utils'
 import type { UploadsListContextState, UploadsListContextActions } from '@w3ui/uploads-list-core'
 
-import React, { Fragment, createContext, useContext, useMemo, useCallback, useEffect } from 'react'
+import React, { Fragment, createContext, useContext, useMemo, useCallback } from 'react'
 import { createComponent, createElement } from 'ariakit-react-utils'
 import { useUploadsList } from './providers/UploadsList'
 
@@ -68,10 +68,6 @@ export const UploadsListRoot = (props: UploadsListRootProps): JSX.Element => {
   } else {
     renderedChildren = children as React.ReactNode
   }
-  useEffect(() => {
-    // load the first page of results asynchronously
-    void actions.next()
-  }, [])
   return (
     <UploadsListComponentContext.Provider value={contextValue}>
       {renderedChildren}
