@@ -74,9 +74,9 @@ The most important prefixes you should have in mind are:
 
 ### Access API
 
-There's 3 environments prodution, staging and dev. The URLs are:
+There's 3 environments production, staging and dev. The URLs are:
 
-- Prodution: https://access.web3.storage
+- Production: https://access.web3.storage
 - Staging: https://w3access-staging.protocol-labs.workers.dev
 - Dev: https://w3access-dev.protocol-labs.workers.dev
 
@@ -87,7 +87,7 @@ The history and the current deployed commits can be checked at https://github.co
 1. Each PR deploys to `dev`, we should add support for unique deployments and remove `dev` completely.
 2. Each Access API **Release** PR deploys to `staging` every time the CI runs for that PR.
    - Note: Any change to the folder `packages/access-api` will update the Access API release PR and trigger a new deployment to `staging`.
-3. After merging an Access API release PR to `main` CI will deploy to `prodution`.
+3. After merging an Access API release PR to `main` CI will deploy to `production`.
 
 #### Reverting a bad deployment
 
