@@ -60,7 +60,7 @@ Release PRs are created individually for each package in the mono repo.
 
 ### How should I write my commits?
 
-Release Please assume you are using [Conventional Commit messages](https://www.conventionalcommits.org/).
+Release Please assumes you are using [Conventional Commit messages](https://www.conventionalcommits.org/).
 
 The most important prefixes you should have in mind are:
 
