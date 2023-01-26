@@ -42,7 +42,7 @@ export function loadConfig(env) {
     ENV: parseRuntimeEnv(vars.ENV),
 
     POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
-    POSTMARK_SENDER: env.POSTMARK_SENDER || undefined,
+    POSTMARK_SENDER: env.POSTMARK_SENDER,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
 
