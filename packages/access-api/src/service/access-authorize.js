@@ -19,7 +19,7 @@ export function accessAuthorizeProvider(ctx) {
           issuer: ctx.signer,
           audience: DID.parse(capability.nb.as),
           with: ctx.signer.did(),
-          expiration: Infinity,
+          lifetimeInSeconds: 86_400 * 7, // 7 days
           nb: {
             key: capability.with,
           },
