@@ -171,9 +171,14 @@ export interface SpaceMeta {
  * Agent class types
  */
 
+// w3ui's keyring providers pass custom URL via this object
+interface _AgentConnection extends ConnectionView<Service> {
+  url?: URL
+}
+
 export interface AgentOptions {
   url?: URL
-  connection?: ConnectionView<Service>
+  connection?: _AgentConnection
   servicePrincipal?: Principal
 }
 
