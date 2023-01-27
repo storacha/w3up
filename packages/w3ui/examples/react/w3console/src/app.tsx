@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react'
 import { Authenticator, Uploader, UploadsList, W3APIProvider, SpaceFinder } from '@w3ui/react'
 import { useKeyring } from '@w3ui/react-keyring'
 import { useUploadsList } from '@w3ui/react-uploads-list'
-import { ArrowPathIcon } from '@heroicons/react/20/solid'
+import { ArrowPathIcon, ShareIcon } from '@heroicons/react/20/solid'
 import md5 from 'blueimp-md5'
 import '@w3ui/react/src/styles/uploader.css'
+import { SpaceShare } from './share'
 
 function SpaceRegistrar (): JSX.Element {
   const [, { registerSpace }] = useKeyring()
@@ -64,6 +65,7 @@ function SpaceRegistrar (): JSX.Element {
 }
 
 function SpaceSection (): JSX.Element {
+  const [share, setShare] = useState(false)
   const [{ space }] = useKeyring()
   const [, { reload }] = useUploadsList()
   // reload the uploads list when the space changes
@@ -79,27 +81,30 @@ function SpaceSection (): JSX.Element {
         {(space !== undefined) && (
           <div className='flex flex-row items-start gap-2'>
             <img title={space.did()} src={`https://www.gravatar.com/avatar/${md5(space.did())}?d=identicon`} className='w-10 hover:saturate-200 saturate-0 invert border-solid border-gray-500 border' />
-            <div>
+            <div className='grow'>
               <h1 className='text-xl font-semibold leading-5'>{space.name() ?? 'Untitled'}</h1>
               <label className='font-mono text-xs text-gray-500'>{space.did()}</label>
             </div>
+            <button className='h-6 w-6 text-gray-500 hover:text-gray-100' onClick={() => setShare(!share)}>
+              <ShareIcon />
+            </button>
           </div>
         )}
 
       </header>
       <div className='container mx-auto'>
-        {registered
-          ? (
-            <>
-              <Uploader onUploadComplete={() => { void reload() }} />
-              <div className='mt-8'>
-                <UploadsList />
-              </div>
-            </>
-            )
-          : (
-            <SpaceRegistrar />
-            )}
+        {share && <SpaceShare />}
+        {registered && !share && (
+          <>
+            <Uploader onUploadComplete={() => { void reload() }} />
+            <div className='mt-8'>
+              <UploadsList />
+            </div>
+          </>
+        )}
+        {!registered && (
+          <SpaceRegistrar />
+        )}
       </div>
     </div>
   )

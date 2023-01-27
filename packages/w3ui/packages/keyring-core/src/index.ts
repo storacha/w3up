@@ -1,7 +1,7 @@
 import { Agent } from '@web3-storage/access/agent'
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
-import type { Service } from '@web3-storage/access/types'
-import type { Capability, DID, Proof, Signer, ConnectionView, Principal } from '@ucanto/interface'
+import type { Abilities, AgentMeta, Service } from '@web3-storage/access/types'
+import type { Capability, DID, Proof, Signer, ConnectionView, Principal, Delegation, UCANOptions } from '@ucanto/interface'
 import * as RSASigner from '@ucanto/principal/rsa'
 
 const DB_NAME = 'w3ui'
@@ -108,7 +108,14 @@ export interface KeyringContextActions {
    * an audience matching the agent DID.
    */
   getProofs: (caps: Capability[]) => Promise<Proof[]>
+  /**
+   * Create a delegation to the passed audience for the given abilities with
+   * the _current_ space as the resource.
+   */
+  createDelegation: (audience: Principal, abilities: Abilities[], options: CreateDelegationOptions) => Promise<Delegation>
 }
+
+export type CreateDelegationOptions = Omit<UCANOptions, 'audience'> & { audienceMeta?: AgentMeta }
 
 export interface ServiceConfig {
   servicePrincipal?: Principal

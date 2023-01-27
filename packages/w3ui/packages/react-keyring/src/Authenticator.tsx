@@ -47,7 +47,8 @@ export const AuthenticatorContext = createContext<AuthenticatorContextValue>([
     setCurrentSpace: async () => { },
     registerSpace: async () => { },
     cancelRegisterSpace: () => { },
-    getProofs: async () => []
+    getProofs: async () => [],
+    createDelegation: async () => { throw new Error('missing keyring context provider') }
   }
 ])
 

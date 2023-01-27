@@ -1,7 +1,8 @@
 import type { ParentComponent } from 'solid-js'
-import type { KeyringContextState, KeyringContextActions, ServiceConfig } from '@w3ui/keyring-core'
+import type { KeyringContextState, KeyringContextActions, ServiceConfig, CreateDelegationOptions } from '@w3ui/keyring-core'
 import type { Agent } from '@web3-storage/access'
-import type { Delegation, Capability, DID } from '@ucanto/interface'
+import type { Abilities } from '@web3-storage/access/types'
+import type { Delegation, Capability, DID, Principal } from '@ucanto/interface'
 
 import { createContext, useContext, createSignal, createComponent } from 'solid-js'
 import { createStore } from 'solid-js/store'
@@ -30,7 +31,8 @@ export const AuthContext = createContext<KeyringContextValue>([
     setCurrentSpace: async () => { },
     registerSpace: async () => { },
     cancelRegisterSpace: () => { },
-    getProofs: async () => []
+    getProofs: async () => [],
+    createDelegation: async () => { throw new Error('missing keyring context provider') }
   }
 ])
 
@@ -121,6 +123,17 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
     return agent.proofs(caps)
   }
 
+  const createDelegation = async (audience: Principal, abilities: Abilities[], options: CreateDelegationOptions): Promise<Delegation> => {
+    const agent = await getAgent()
+    const audienceMeta = options.audienceMeta ?? { name: 'agent', type: 'device' }
+    return await agent.delegate({
+      ...options,
+      abilities,
+      audience,
+      audienceMeta
+    })
+  }
+
   const actions = {
     loadAgent,
     unloadAgent,
@@ -129,7 +142,8 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
     registerSpace,
     cancelRegisterSpace,
     setCurrentSpace,
-    getProofs
+    getProofs,
+    createDelegation
   }
 
   return createComponent(AuthContext.Provider, {

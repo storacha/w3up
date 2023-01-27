@@ -235,6 +235,8 @@ importers:
   examples/react/w3console:
     specifiers:
       '@heroicons/react': ^2.0.13
+      '@ipld/car': ^5.0.3
+      '@ipld/dag-ucan': ^3.2.0
       '@preact/preset-vite': ^2.4.0
       '@types/blueimp-md5': ^2.18.0
       '@w3ui/keyring-core': workspace:^
@@ -250,6 +252,8 @@ importers:
       vite: ^4.0.0
     dependencies:
       '@heroicons/react': 2.0.13
+      '@ipld/car': 5.0.3
+      '@ipld/dag-ucan': 3.2.0
       '@w3ui/keyring-core': link:../../../packages/keyring-core
       '@w3ui/react': link:../../../packages/react
       '@w3ui/react-keyring': link:../../../packages/react-keyring
@@ -3308,12 +3312,35 @@ packages:
       multiformats: 10.0.3
       varint: 6.0.0
 
+  /@ipld/car/5.0.3:
+    resolution: {integrity: sha512-omPSY65OSVmlFGJDn2xbd75o71GNHmgP5u2dQ5fITc0X/QqJZVfZi95NCs8oa1wWhjkaK3RTswRSg2iNqFUSAg==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.0
+      cborg: 1.10.0
+      multiformats: 11.0.1
+      varint: 6.0.0
+
   /@ipld/dag-cbor/8.0.0:
     resolution: {integrity: sha512-VfedC21yAD/ZIahcrHTeMcc17kEVRlCmHQl0JY9/Rwbd102v0QcuXtBN8KGH8alNO82S89+H6MM/hxP85P4Veg==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       cborg: 1.9.6
       multiformats: 10.0.3
+
+  /@ipld/dag-cbor/9.0.0:
+    resolution: {integrity: sha512-zdsiSiYDEOIDW7mmWOYWC9gukjXO+F8wqxz/LfN7iSwTfIyipC8+UQrCbPupFMRb/33XQTZk8yl3My8vUQBRoA==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      cborg: 1.10.0
+      multiformats: 11.0.1
+
+  /@ipld/dag-json/10.0.0:
+    resolution: {integrity: sha512-u/PfR2sT9AiZZDUl1VNspx3OP13zuvBXAd3sKiURlSOoWfoLigxTCs+sXeaXA0hoXU7u1M2DECMt4LCUHuApSA==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      cborg: 1.10.0
+      multiformats: 11.0.1
 
   /@ipld/dag-json/9.0.1:
     resolution: {integrity: sha512-dL5Xhrk0XXoq3lSsY2LNNraH2Nxx4nlgQwSarl2J3oir2jBDQEiBDW8bjgr30ni8/epdWDhXm5mdxat8dFWwGQ==}
@@ -3334,6 +3361,13 @@ packages:
       '@ipld/dag-cbor': 8.0.0
       '@ipld/dag-json': 9.0.1
       multiformats: 10.0.3
+
+  /@ipld/dag-ucan/3.2.0:
+    resolution: {integrity: sha512-CTClaGx4F3iEMJgYaYVOVBEvtNXzPc77Mi6p3vBtylSzDWhbf1Gou9ij7PlblOqWKA1H7XI8fp6yweTb6iXNKQ==}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.0
+      '@ipld/dag-json': 10.0.0
+      multiformats: 11.0.1
 
   /@ipld/unixfs/2.0.0:
     resolution: {integrity: sha512-Li6ObZWlnQPM8R1O6mjUWQWlxjf+4yjZDERZIvNILOXeTvF0G36WFIdr3c2s9M6Aiez8gCMzodNnJLRXzXnJ0Q==}
@@ -5262,22 +5296,22 @@ packages:
   /@ucanto/core/4.0.3:
     resolution: {integrity: sha512-5Uc6vdmKZzlA9NFvAN6BC1Tp1Npz0sepp2up1ZWU4BqArQ0w4U0YMtL9KPdBnL3TDAyDNgS9PgK+vHpjcSoeiQ==}
     dependencies:
-      '@ipld/car': 5.0.1
+      '@ipld/car': 5.0.3
       '@ipld/dag-cbor': 8.0.0
-      '@ipld/dag-ucan': 3.1.1
+      '@ipld/dag-ucan': 3.2.0
       '@ucanto/interface': 4.0.3
       multiformats: 10.0.3
 
   /@ucanto/interface/4.0.3:
     resolution: {integrity: sha512-ip1ZziMUhi9nFm9jPLEDLs8zX4HleYsuHHITH5w8GjST7chbRz1LBSq43A3nMUgea17cuIp+rr7i4QcOSFgXHw==}
     dependencies:
-      '@ipld/dag-ucan': 3.1.1
+      '@ipld/dag-ucan': 3.2.0
       multiformats: 10.0.3
 
   /@ucanto/principal/4.0.3:
     resolution: {integrity: sha512-mR9BTkXWDDSFDCf5gminNeDte/jwurohjFJE8oVfGfUnkzSjYwfm4h5GQ47qeze6xgm17SS5pQwipSvCGHfvkg==}
     dependencies:
-      '@ipld/dag-ucan': 3.1.1
+      '@ipld/dag-ucan': 3.2.0
       '@noble/ed25519': 1.7.1
       '@ucanto/interface': 4.0.3
       multiformats: 10.0.3
@@ -5294,7 +5328,7 @@ packages:
   /@ucanto/transport/4.0.3:
     resolution: {integrity: sha512-yrJoqoxmMCpPElR+iEb2AKIjUEmM+JGCcM1TZLXVbMlzaAt6ndYDMPajfnh3PBQMk7edIodZi+UxCLKvc8yelg==}
     dependencies:
-      '@ipld/car': 5.0.1
+      '@ipld/car': 5.0.3
       '@ipld/dag-cbor': 8.0.0
       '@ucanto/core': 4.0.3
       '@ucanto/interface': 4.0.3
@@ -5303,7 +5337,7 @@ packages:
   /@ucanto/validator/4.0.3:
     resolution: {integrity: sha512-GLsOIq4R7ixu4D1NMNEJZhOelLPIpd/qtTyOjpxqrrSfsDfOoCsHkSxBy0gTwS/4ZIFMM5sa2LBPJw+ZXobgzw==}
     dependencies:
-      '@ipld/car': 5.0.1
+      '@ipld/car': 5.0.3
       '@ipld/dag-cbor': 8.0.0
       '@ucanto/core': 4.0.3
       '@ucanto/interface': 4.0.3
@@ -6322,6 +6356,10 @@ packages:
   /caniuse-lite/1.0.30001439:
     resolution: {integrity: sha512-1MgUzEkoMO6gKfXflStpYgZDlFM7M/ck/bgfVCACO5vnAf0fXoNVHdWtqGU+MYca+4bL9Z5bpOVmR33cWW9G2A==}
     dev: true
+
+  /cborg/1.10.0:
+    resolution: {integrity: sha512-/eM0JCaL99HDHxjySNQJLaolZFVdl6VA0/hEKIoiQPcQzE5LrG5QHdml0HaBt31brgB9dNe1zMr3f8IVrpotRQ==}
+    hasBin: true
 
   /cborg/1.9.6:
     resolution: {integrity: sha512-XmiD+NWTk9xg31d8MdXgW46bSZd95ELllxjbjdWGyHAtpTw+cf8iG3NibWgTWRnfWfxtcihVa5Pm0gchHiO3JQ==}
@@ -9945,6 +9983,10 @@ packages:
 
   /multiformats/10.0.3:
     resolution: {integrity: sha512-K2yGSmstS/oEmYiEIieHb53jJCaqp4ERPDQAYrm5sV3UUrVDZeshJQCK6GHAKyIGufU1vAcbS0PdAAZmC7Tzcw==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+
+  /multiformats/11.0.1:
+    resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
   /multiformats/9.9.0:
