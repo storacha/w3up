@@ -10,6 +10,7 @@ import type {
   Resource,
   ResponseDecoder,
   ServiceMethod,
+  Transport,
   URI,
   InferInvokedCapability,
   CapabilityParser,
@@ -171,14 +172,18 @@ export interface SpaceMeta {
  * Agent class types
  */
 
-// w3ui's keyring providers pass custom URL via this object
-interface _AgentConnection extends ConnectionView<Service> {
+// the Agent does bypass the connection.channel to open its own Websocket —
+// it tries reusing the channel's own URL if it has one from e.g. HTTP.open
+interface _AgentChannnelWithWebsocketUrl extends Transport.Channel<Service> {
   url?: URL
+}
+interface _AgentConnectionWithWebsocketUrl extends ConnectionView<Service> {
+  readonly channel: _AgentChannnelWithWebsocketUrl // xref ucanto's ConnectionOptions<T>
 }
 
 export interface AgentOptions {
   url?: URL
-  connection?: _AgentConnection
+  connection?: _AgentConnectionWithWebsocketUrl
   servicePrincipal?: Principal
 }
 

@@ -79,7 +79,7 @@ export class Agent {
    * @param {import('./types').AgentOptions} [options]
    */
   constructor(data, options = {}) {
-    this.url = options.connection?.url ?? options.url ?? new URL(HOST)
+    this.url = options.connection?.channel.url ?? options.url ?? new URL(HOST)
     this.connection =
       options.connection ??
       connection({
