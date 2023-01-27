@@ -25,9 +25,11 @@ import type {
 
 import type {
   Abilities,
+  NoncePhrase,
   SpaceInfo,
   SpaceRecover,
   SpaceRecoverValidation,
+  ShouldShowValidationNonce,
   VoucherClaim,
   VoucherRedeem,
   Top,
@@ -67,7 +69,9 @@ export interface Service {
   voucher: {
     claim: ServiceMethod<
       VoucherClaim,
-      EncodedDelegation<[VoucherRedeem]> | undefined,
+      | ShouldShowValidationNonce
+      | EncodedDelegation<[VoucherRedeem]>
+      | undefined,
       Failure
     >
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
@@ -76,7 +80,7 @@ export interface Service {
     info: ServiceMethod<SpaceInfo, Selectable<SpaceTable>, Failure>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
-      EncodedDelegation<[SpaceRecover]> | undefined,
+      ShouldShowValidationNonce | EncodedDelegation<[SpaceRecover]> | undefined,
       Failure
     >
     recover: ServiceMethod<
@@ -208,6 +212,8 @@ export type DelegationOptions = SetRequired<UCANBasicOptions, 'audience'> & {
    */
   audienceMeta: AgentMeta
 }
+
+export type ValidationPhraseHandler = (please_show: NoncePhrase) => undefined
 
 /**
  * Utility types
