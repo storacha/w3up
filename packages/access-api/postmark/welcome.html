@@ -1,0 +1,41 @@
+
+<p>Hi {{email}}! To complete your {{product_name}} registration, we just need to verify your email address.</p>
+<!-- Action -->
+<table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center">
+      <!-- Border based button https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="center">
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>
+                  <a href="{{action_url}}" class="button button--purple" target="_blank">Verify email address</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<p>Once verified, you can continue your registration process.</p>
+
+<!-- Sub copy -->
+<table class="body-sub">
+  <tr>
+    <td>
+      <div style="box-sizing:border-box;display:block;max-width:580px;margin:0 auto">
+        <p class="sub">Button not working? Paste the following link into your browser: <a href="{{action_url}}">{{action_url}}</a></p>
+      </div>
+      
+    </td>
+  </tr>
+  <tr>
+     <td>
+      <p class="sub">You're receiving this email because you recently started a registration with <b>{{product_name}}</b>. If this wasn't you, please ignore this email.</p>
+    </td>
+  </tr>
+</table>
