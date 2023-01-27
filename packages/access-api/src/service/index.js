@@ -140,7 +140,7 @@ export function service(ctx) {
             url,
             nonce,
           })
-          return nonce
+          return { match_phrase: nonce }
         }
       ),
     },
