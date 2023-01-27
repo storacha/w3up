@@ -8,12 +8,14 @@ import { validateEmail } from './routes/validate-email.js'
 import { validateWS } from './routes/validate-ws.js'
 import { version } from './routes/version.js'
 import { getContext } from './utils/context.js'
+import { generateNoncePhrase } from './utils/phrase.js'
 
 /** @type Router<import('./bindings.js').RouteContext> */
 const r = new Router({ onNotFound: notFound })
 
 r.add('options', '*', preflight)
 r.add('get', '/version', version)
+r.add('get', '/phrase-test', phraseTest)
 r.add('get', '/validate-email', validateEmail)
 r.add('get', '/validate-ws', validateWS)
 r.add('post', '/', postRoot)
@@ -66,4 +68,13 @@ async function reproduceCloudflareError(request) {
     },
   }
   return new Response(JSON.stringify(response, undefined, 2), { status: 200 })
+}
+
+/**
+ * @param {import('@web3-storage/worker-utils/router').ParsedRequest} request
+ * @param {import('./bindings.js').RouteContext} env
+ */
+async function phraseTest(request, env) {
+  const entropy = Number(request.query.bits) || 42
+  return new Response(generateNoncePhrase(entropy), { status: 200 })
 }

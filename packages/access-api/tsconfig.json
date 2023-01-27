@@ -6,7 +6,14 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "include": ["src", "scripts", "test", "package.json", "sql"],
+  "include": [
+    "src",
+    "scripts",
+    "test",
+    "sql",
+    "package.json",
+    "src/utils/phrase-words.json"
+  ],
   "exclude": ["**/node_modules/**"],
   "references": [{ "path": "../access-client" }, { "path": "../capabilities" }]
 }
