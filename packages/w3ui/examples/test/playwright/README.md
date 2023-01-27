@@ -11,7 +11,7 @@ Install the deps and the browsers from the root of the monorepo
 $ pnpm i
 
 # fetch test browsers
-$ pnpx playwright install
+$ pnpm playwright:install
 ```
 
 Build the examples to their many dist folders

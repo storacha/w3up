@@ -20,7 +20,8 @@
     "typecheck": "tsc -b",
     "test:examples": "pnpm run --filter './examples/**' test",
     "build:examples": "pnpm run --filter './examples/**' --no-bail build || true",
-    "serve:examples": "serve examples"
+    "serve:examples": "serve examples",
+    "playwright:install": "pnpm --filter './examples/test/playwright' exec playwright install"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
