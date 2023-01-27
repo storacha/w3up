@@ -27,7 +27,7 @@ export interface Env {
    * publicly advertised decentralized identifier of the running api service
    * * this may be used to filter incoming ucanto invocations
    */
-  DID: string
+  DID: `did:web:${string}`
   // URLs to upload-api so we proxy invocations to it
   UPLOAD_API_URL: string
   UPLOAD_API_URL_STAGING: string
