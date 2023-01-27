@@ -2,6 +2,9 @@
 Welcome, {{name}}!
 ******************
 
+Your app should be showing:
+
+{{match_phrase}}
 
 ## Hugo
 
