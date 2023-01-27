@@ -15,7 +15,7 @@ export class Email {
   /**
    * Send validation email with ucan to register
    *
-   * @param {{ to: string; url: string }} opts
+   * @param {{ to: string; url: string, nonce: string }} opts
    */
   async sendValidation(opts) {
     const rsp = await fetch('https://api.postmarkapp.com/email/withTemplate', {
@@ -30,6 +30,7 @@ export class Email {
           product_name: 'Web3 Storage',
           email: opts.to,
           action_url: opts.url,
+          match_phrase: opts.nonce,
         },
       }),
     })
