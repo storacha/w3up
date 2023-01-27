@@ -15,7 +15,7 @@ questions!
 
 ## About
 
-`@web3-storage/w3up-client` is a JavaScript libary that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
+`@web3-storage/w3up-client` is a JavaScript library that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
 
 This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@web3-storage/access`][access-client-github] and [`@web3-storage/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `w3up-client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
 
@@ -44,7 +44,7 @@ npm install @web3-storage/w3up-client
 
 ### Core concepts
 
-w3up services use [ucanto][ucanto], a Remote Proceedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_. See our [intro to UCAN blog post](https://blog.web3.storage/posts/intro-to-ucan) for an overview of UCAN.
+w3up services use [ucanto][ucanto], a Remote Procedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_. See our [intro to UCAN blog post](https://blog.web3.storage/posts/intro-to-ucan) for an overview of UCAN.
 
 `w3up-client` and `ucanto` take care of the details of UCANs for you, but a few of the underlying terms and concepts may "bubble up" to the surface of the API, so we'll cover the basics here. We'll also go over some terms that are specific to w3up that you might not have encountered elsewhere.
 
@@ -52,7 +52,7 @@ UCAN-based APIs are centered around _capabilities_, which are comprised of an _a
 
 To invoke a capability, the client must have a private signing key, which is managed by a component called an _Agent_. When you [create a client object](#creating-a-client-object) with `w3up-client`, an Agent is automatically created for you and used when making requests. The Agent's keys and metadata are securely stored and are loaded the next time you create a client. 
 
-Each device or browser should create its own Agent, so that private keys are never shared across multiple devices. Instead of sharing keys, a user can delegate some or all of their capabilites from one Agent to another.
+Each device or browser should create its own Agent, so that private keys are never shared across multiple devices. Instead of sharing keys, a user can delegate some or all of their capabilities from one Agent to another.
 
 When you upload data to w3up, your uploads are linked to a unique _Space_ acts as a "namespace" for the data you upload. Spaces are used to keep track of which uploads belong to which users, among other things.
 
@@ -407,7 +407,7 @@ function add (
 ): Promise<UploadAddResponse>
 ```
 
-Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multipe CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
+Register a set of stored CAR files as an "upload" in the system. A DAG can be split between multiple CAR files. Calling this function allows multiple stored CAR files to be considered as a single upload.
 
 ### `capability.upload.list`
 
