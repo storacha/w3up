@@ -48,11 +48,9 @@ function testCanProxyInvocation(can) {
     })
     const mockUpstreamUrl = serverLocalUrl(mockUpstreamHttp.address())
     const { issuer, conn } = await context({
-      environment: {
-        ...process.env,
-        UPLOAD_API_URL: mockUpstreamUrl.toString(),
-        DID: upstreamPrincipal.did(),
-      },
+      UPLOAD_API_URL: mockUpstreamUrl.toString(),
+      // @ts-expect-error This expects did:web
+      DID: upstreamPrincipal.did(),
     })
     /** @type {Ucanto.ConnectionView<any>} */
     const connection = conn

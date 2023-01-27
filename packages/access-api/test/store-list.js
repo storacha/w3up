@@ -39,23 +39,16 @@ describe('proxy store/list invocations to upload-api', function () {
       // if this is set, it's to inject in the actual private key used by web3StorageDid.
       // and if it's present, the assertions will expect no error from the proxy or upstream
       const privateKeyFromEnv = process.env.WEB3_STORAGE_PRIVATE_KEY
-      const {
-        issuer,
-        service: serviceSigner,
-        conn,
-      } = await context({
-        environment: {
-          ...process.env,
-          // this emulates the configuration for deployed environments,
-          // which will allow the access-api ucanto server to accept
-          // invocations where aud=web3storageDid
-          DID: web3storageDid,
-          PRIVATE_KEY: privateKeyFromEnv ?? process.env.PRIVATE_KEY,
-          UPLOAD_API_URL: mockUpstreamUrl.toString(),
-          UPLOAD_API_URL_STAGING: mockUpstreamUrl.toString(),
-        },
+      const { issuer, service, conn } = await context({
+        // this emulates the configuration for deployed environments,
+        // which will allow the access-api ucanto server to accept
+        // invocations where aud=web3storageDid
+        DID: web3storageDid,
+        // @ts-ignore
+        PRIVATE_KEY: privateKeyFromEnv ?? process.env.PRIVATE_KEY,
+        UPLOAD_API_URL: mockUpstreamUrl.toString(),
+        UPLOAD_API_URL_STAGING: mockUpstreamUrl.toString(),
       })
-      const service = serviceSigner.withDID(web3storageDid)
       const spaceCreation = await createSpace(
         issuer,
         service,
@@ -98,10 +91,7 @@ describe('proxy store/list invocations to upload-api', function () {
       Array.from({ length: 3 }).map(() => ed25519.Signer.generate())
     )
     const { service: serviceSigner, conn } = await context({
-      environment: {
-        ...process.env,
-        UPLOAD_API_URL: mockUpstreamUrl.toString(),
-      },
+      UPLOAD_API_URL: mockUpstreamUrl.toString(),
     })
     const service = process.env.DID
       ? serviceSigner.withDID(ucanto.DID.parse(process.env.DID).did())
