@@ -99,6 +99,40 @@ export class HtmlResponse extends Response {
 
 /**
  *
+ * @param {object} props
+ * @param {boolean} [props.autoApprove]
+ */
+export const PendingValidateEmail = ({ autoApprove }) => (
+  <div class="fcenter">
+    <img
+      src="https://web3.storage/android-chrome-512x512.png"
+      height="80"
+      width="80"
+    />
+    <div>
+      <h1>Validating Email</h1>
+      <form id="approval" method="post" class="fcenter">
+        <button class="mcenter">Approve</button>
+      </form>
+      {autoApprove ? (
+        <script
+          dangerouslySetInnerHTML={{
+            // NOTE: this script sticks to ES3-era syntax for compat with more browsers
+            __html: `(function () {
+            // auto-submit the form for any user w/JS enabled
+            var form = document.getElementById('approval');
+            form.style.display = 'none';
+            form.submit();
+          })();`,
+          }}
+        />
+      ) : undefined}
+    </div>
+  </div>
+)
+
+/**
+ *
  * @param {object} param0
  * @param {Ucanto.Delegation<[import('@web3-storage/capabilities/types').VoucherClaim]> | Ucanto.Delegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} param0.delegation
  * @param {string} param0.ucan
