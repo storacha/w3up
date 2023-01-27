@@ -25,6 +25,7 @@ function randomInt(max) {
   return Math.floor(Math.random() * (max - min) + min)
 }
 
+const DEFAULT_ENTROPY = 50
 const entropyPerWord = Math.log2(words.length)
 
 function randomWord() {
@@ -34,10 +35,10 @@ function randomWord() {
 
 /**
  *
- * @param {number} entropy
+ * @param {number} [entropy]
  * @returns {string}
  */
-export function generateNoncePhrase(entropy) {
+export function generateNoncePhrase(entropy = DEFAULT_ENTROPY) {
   const phrase = []
   let nWordsNeeded = Math.ceil(entropy / entropyPerWord)
   while (nWordsNeeded--) {
