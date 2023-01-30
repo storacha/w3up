@@ -59,10 +59,6 @@ const uploadApiEnvironments = {
     // until resolution of https://github.com/web3-storage/w3protocol/issues/363
     url: new URL('https://3bd9h7xn3j.execute-api.us-west-2.amazonaws.com/'),
   },
-  staging: {
-    audience: /** @type {const} */ ('did:web:staging.web3.storage'),
-    url: new URL('https://staging.up.web3.storage'),
-  },
 }
 
 /**
@@ -73,21 +69,16 @@ const uploadApiEnvironments = {
 /**
  * @param {object} options
  * @param {typeof globalThis.fetch} [options.fetch]
- * @param {object} options.uploadApi
- * @param {URL} [options.uploadApi.production]
- * @param {URL} [options.uploadApi.staging]
+ * @param {import('../bindings.js').RouteContext['uploadApi']} options.uploadApi
  */
 function getDefaultConnections(options) {
   const { fetch = globalThis.fetch.bind(globalThis), uploadApi } = options
   return {
     default: createUcantoHttpConnection({
+      // use production environment
       ...uploadApiEnvironments.production,
-      ...(uploadApi.production && { url: uploadApi.production }),
-      fetch,
-    }),
-    [uploadApiEnvironments.staging.audience]: createUcantoHttpConnection({
-      ...uploadApiEnvironments.staging,
-      url: uploadApi.staging ?? uploadApiEnvironments.staging.url,
+      // but override uploadApi.url from configuration, if provided
+      ...uploadApi.ucanto,
       fetch,
     }),
   }
@@ -99,9 +90,7 @@ function getDefaultConnections(options) {
  * @param {typeof globalThis.fetch} [options.fetch]
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
- * @param {object} options.uploadApi
- * @param {URL} [options.uploadApi.production]
- * @param {URL} [options.uploadApi.staging]
+ * @param {import('../bindings.js').RouteContext['uploadApi']} options.uploadApi
  */
 export function createUploadProxy(options) {
   return createProxyService({
@@ -117,9 +106,7 @@ export function createUploadProxy(options) {
  * @param {typeof globalThis.fetch} [options.fetch]
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
  * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
- * @param {object} options.uploadApi
- * @param {URL} [options.uploadApi.production]
- * @param {URL} [options.uploadApi.staging]
+ * @param {import('../bindings.js').RouteContext['uploadApi']} options.uploadApi
  */
 export function createStoreProxy(options) {
   return createProxyService({

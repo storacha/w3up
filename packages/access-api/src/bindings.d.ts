@@ -30,7 +30,6 @@ export interface Env {
   DID: `did:web:${string}`
   // URLs to upload-api so we proxy invocations to it
   UPLOAD_API_URL: string
-  UPLOAD_API_URL_STAGING: string
   // secrets
   PRIVATE_KEY: string
   SENTRY_DSN: string
@@ -55,8 +54,7 @@ export interface RouteContext {
     validations: Validations
   }
   uploadApi: {
-    production?: URL
-    staging?: URL
+    ucanto?: { url: URL }
   }
 }
 

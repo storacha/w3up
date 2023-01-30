@@ -56,11 +56,8 @@ export function getContext(request, env, ctx) {
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),
     uploadApi: {
-      production: config.UPLOAD_API_URL
-        ? new URL(config.UPLOAD_API_URL)
-        : undefined,
-      staging: config.UPLOAD_API_URL_STAGING
-        ? new URL(config.UPLOAD_API_URL_STAGING)
+      ucanto: config.UPLOAD_API_URL
+        ? { url: new URL(config.UPLOAD_API_URL) }
         : undefined,
     },
   }

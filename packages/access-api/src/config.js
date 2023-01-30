@@ -58,7 +58,6 @@ export function loadConfig(env) {
     DID: DID.parse(vars.DID).did(),
 
     UPLOAD_API_URL: env.UPLOAD_API_URL,
-    UPLOAD_API_URL_STAGING: env.UPLOAD_API_URL_STAGING,
     // bindings
     METRICS:
       /** @type {import("./bindings").AnalyticsEngine} */ (
