@@ -35,9 +35,11 @@ import type {
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
 import type { ColumnType, Selectable } from 'kysely'
+import { SpaceUnknown } from './errors.js'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
+export * from './errors.js'
 
 /**
  * D1 Types
@@ -61,13 +63,6 @@ export interface SpaceTableMetadata {
 }
 
 /**
- * Indicates failure executing ability that requires access to a space that cannot be found by the handler
- */
-export type SpaceNotFoundFailure = Failure & {
-  status: 404
-}
-
-/**
  * Access api service definition type
  */
 export interface Service {
@@ -83,7 +78,7 @@ export interface Service {
     info: ServiceMethod<
       SpaceInfo,
       Selectable<SpaceTable>,
-      Failure | SpaceNotFoundFailure
+      Failure | SpaceUnknown
     >
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,

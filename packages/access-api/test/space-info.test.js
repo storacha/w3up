@@ -28,10 +28,11 @@ describe('space/info', function () {
 
     if (inv?.error) {
       assert.deepEqual(inv.message, `Space not found.`)
+      const expectedErrorName = 'SpaceUnknown'
       assert.deepEqual(
-        'status' in inv && inv.status,
-        404,
-        'error result has status 404'
+        'name' in inv && inv.name,
+        expectedErrorName,
+        `error result has name ${expectedErrorName}`
       )
     } else {
       assert.fail()
