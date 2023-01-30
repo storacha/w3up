@@ -35,9 +35,11 @@ import type {
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
 import type { ColumnType, Selectable } from 'kysely'
+import { SpaceUnknown } from './errors.js'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
+export * from './errors.js'
 
 /**
  * D1 Types
@@ -73,7 +75,11 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, Selectable<SpaceTable>, Failure>
+    info: ServiceMethod<
+      SpaceInfo,
+      Selectable<SpaceTable>,
+      Failure | SpaceUnknown
+    >
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
       EncodedDelegation<[SpaceRecover]> | undefined,

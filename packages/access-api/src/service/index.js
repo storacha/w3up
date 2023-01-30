@@ -33,7 +33,13 @@ export function service(ctx) {
       info: Server.provide(Space.info, async ({ capability, invocation }) => {
         const results = await ctx.models.spaces.get(capability.with)
         if (!results) {
-          return new Failure('Space not found.')
+          /** @type {import('@web3-storage/access/types').SpaceUnknown} */
+          const spaceUnknownFailure = {
+            error: true,
+            name: 'SpaceUnknown',
+            message: `Space not found.`,
+          }
+          return spaceUnknownFailure
         }
         return results
       }),
