@@ -60,7 +60,7 @@ unsafe = { bindings = [
 [env.staging]
 name = "w3access-staging"
 workers_dev = true
-vars = { ENV = "staging", DEBUG = "false", DID = "did:web:staging.web3.storage" }
+vars = { ENV = "staging", DEBUG = "false", DID = "did:web:staging.web3.storage", UPLOAD_API_URL = "https://staging.up.web3.storage" }
 build = { command = "scripts/cli.js build --env staging", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "b0e5ca990dda4e3784a1741dfa28a52e" },
