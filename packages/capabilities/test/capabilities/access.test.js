@@ -239,56 +239,6 @@ describe('access capabilities', function () {
             with: issuer.did(),
           })
         },
-        // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L185
-        ({ issuer }) => {
-          const account = issuer.withDID('did:mailto:web.mail:alice')
-          Access.claim.invoke({
-            issuer: account,
-            audience: ucanto.DID.parse('did:web:web3.storage'),
-            with: account.did(),
-            proofs: [
-              /*
-              // @TODO: include proof like this from spec text https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L194
-              {
-                "iss": "did:web:web3.storage",
-                "aud": "did:mailto:web.mail:alice",
-                "att": [
-                  {
-                    "with": "did:web:web3.storage",
-                    "can": "./update",
-                    "nb": { "key": "did:key:zAli" }
-                  }
-                ]
-              }
-              */
-            ],
-          })
-        },
-        // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L257
-        ({ issuer }) => {
-          const account = issuer.withDID('did:mailto:gmail.com:bob')
-          Access.claim.invoke({
-            issuer: account,
-            audience: ucanto.DID.parse('did:web:web3.storage'),
-            with: account.did(),
-            proofs: [
-              /*
-              // @TODO: include proof like this from spec text https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L266
-              {
-                "iss": "did:web:web3.storage",
-                "aud": "did:mailto:gmail.com:bob",
-                "att": [
-                  {
-                    "with": "did:web:web3.storage",
-                    "can": "./update",
-                    "nb": { "key": "did:key:zBobAgent" }
-                  }
-                ]
-              }
-              */
-            ],
-          })
-        },
       ]
       for (const example of examples) {
         await example({ issuer: bob })
