@@ -1,7 +1,4 @@
 import { render } from 'preact-render-to-string'
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
-import * as Ucanto from '@ucanto/interface'
 
 /**
  * Build HTML document
@@ -144,6 +141,7 @@ export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
       </p>
       <h5>QR Code:</h5>
       <div
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: qrcode,
         }}
