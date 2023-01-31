@@ -4,6 +4,7 @@ import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
 import * as Ucanto from '@ucanto/interface'
+import { delegate } from '@ucanto/core'
 
 describe('access capabilities', function () {
   it('should self issue', async function () {
@@ -276,6 +277,37 @@ describe('access capabilities', function () {
             with: issuer.did(),
           }),
         `Invalid 'with'`
+      )
+    })
+    it('does not authorize invocations whose .with uses unexpected did methods', async () => {
+      const issuer = bob
+      const audience = service
+      const invocation = await delegate({
+        issuer,
+        audience,
+        capabilities: [
+          {
+            can: 'access/claim',
+            with: issuer.withDID('did:foo:bar').did(),
+          },
+        ],
+      })
+      const result = await access(
+        // @ts-ignore - expected complaint from compiler. We want to make sure there is an equivalent error at runtime
+        invocation,
+        {
+          capability: Access.claim,
+          principal: Verifier,
+          authority: audience,
+        }
+      )
+      assert.ok(result.error, 'result of access(invocation) is an error')
+      assert.deepEqual(result.name, 'Unauthorized')
+      assert.ok(
+        result.delegationErrors.find((e) =>
+          e.message.includes('but got "did:foo:bar" instead')
+        ),
+        'a result.delegationErrors message mentions invalid with value'
       )
     })
   })
