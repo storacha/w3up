@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.9.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.8.0...access-api-v4.9.0) (2023-01-30)
+
+
+### Features
+
+* access-api handling store/info for space not in db returns failure with name ([#391](https://github.com/web3-storage/w3protocol/issues/391)) ([9610fcf](https://github.com/web3-storage/w3protocol/commit/9610fcf31b9dbf57cc5ec3ca31f642f7ab6190de))
+* update @ucanto/* to ~4.2.3 ([#405](https://github.com/web3-storage/w3protocol/issues/405)) ([50c0c80](https://github.com/web3-storage/w3protocol/commit/50c0c80789c26b777e854b7208b7391499d2ef18))
+* update access-api ucanto proxy to not need a signer ([#390](https://github.com/web3-storage/w3protocol/issues/390)) ([71cbeb7](https://github.com/web3-storage/w3protocol/commit/71cbeb718d0a5132b97efa1173a5aaf9c75cbe80))
+
+
+### Bug Fixes
+
+* make tests use did:web everywhere ([#397](https://github.com/web3-storage/w3protocol/issues/397)) ([c7d5c34](https://github.com/web3-storage/w3protocol/commit/c7d5c345360f97eee537c1833783eb5f2efc76d4))
+
 ## [4.8.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.7.0...access-api-v4.8.0) (2023-01-23)
 
 
