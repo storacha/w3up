@@ -4,7 +4,7 @@ import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
 import * as Ucanto from '@ucanto/interface'
-import { delegate } from '@ucanto/core'
+import { delegate, invoke } from '@ucanto/core'
 
 describe('access capabilities', function () {
   it('should self issue', async function () {
@@ -264,6 +264,41 @@ describe('access capabilities', function () {
           'result capability.can is access/claim'
         )
         assert.deepEqual(result.capability.nb, {}, 'result has empty nb')
+      }
+    })
+    it('can be derived', async () => {
+      /** @type {Array<Ucanto.Ability>} */
+      const cansThatShouldDeriveAccessClaim = ['*', 'access/*']
+      for (const can of cansThatShouldDeriveAccessClaim) {
+        const invocation = await invoke({
+          issuer: alice,
+          audience: service,
+          capability: {
+            can: 'access/claim',
+            with: bob.did(),
+          },
+          proofs: [
+            await delegate({
+              issuer: bob,
+              audience: alice,
+              capabilities: [
+                {
+                  can,
+                  with: bob.did(),
+                },
+              ],
+            }),
+          ],
+        }).delegate()
+        const result = await access(invocation, {
+          capability: Access.claim,
+          principal: Verifier,
+          authority: service,
+        })
+        assert.ok(
+          result.error !== true,
+          'result of access(invocation) is not an error'
+        )
       }
     })
     it('cannot invoke when .with uses unexpected did method', async () => {
