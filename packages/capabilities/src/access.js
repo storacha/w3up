@@ -31,7 +31,6 @@ export const access = top.derive({
   to: capability({
     can: 'access/*',
     with: URI.match({ protocol: 'did:' }),
-    derives: equalWith,
   }),
   derives: equalWith,
 })

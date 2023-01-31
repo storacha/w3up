@@ -3,7 +3,7 @@ import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
-import * as ucanto from '@ucanto/core'
+import * as Ucanto from '@ucanto/interface'
 
 describe('access capabilities', function () {
   it('should self issue', async function () {
@@ -227,21 +227,42 @@ describe('access capabilities', function () {
   describe('access/claim', () => {
     // ensure we can use the capability to produce the invocations from the spec at https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md
     it('can create delegations from spec', async () => {
+      const audience = service.withDID('did:web:web3.storage')
       /**
-       * @type {Array<(arg: { issuer: import('@ucanto/principal').ed25519.Signer.EdSigner }) => void|Promise<void>>}
+       * @type {Array<(arg: { issuer: Ucanto.Signer<Ucanto.DID<'key'>>}) => Ucanto.IssuedInvocation<Ucanto.InferInvokedCapability<typeof Access.claim>>>}
        */
       const examples = [
         // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md#accessclaim
         ({ issuer }) => {
-          Access.claim.invoke({
+          return Access.claim.invoke({
             issuer,
-            audience: ucanto.DID.parse('did:web:web3.storage'),
+            audience,
             with: issuer.did(),
           })
         },
       ]
       for (const example of examples) {
-        await example({ issuer: bob })
+        const invocation = await example({ issuer: bob }).delegate()
+        const result = await access(invocation, {
+          capability: Access.claim,
+          principal: Verifier,
+          authority: audience,
+        })
+        assert.ok(
+          result.error !== true,
+          'result of access(invocation) is not an error'
+        )
+        assert.deepEqual(
+          result.audience.did(),
+          audience.did(),
+          'result audience did is expected value'
+        )
+        assert.equal(
+          result.capability.can,
+          'access/claim',
+          'result capability.can is access/claim'
+        )
+        assert.deepEqual(result.capability.nb, {}, 'result has empty nb')
       }
     })
   })
