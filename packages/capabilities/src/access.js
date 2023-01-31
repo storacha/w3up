@@ -100,3 +100,11 @@ export const session = capability({
     key: DID.match({ method: 'key' }),
   },
 })
+
+export const claim = base.derive({
+  to: capability({
+    can: 'access/claim',
+    with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
+  }),
+  derives: equalWith,
+})

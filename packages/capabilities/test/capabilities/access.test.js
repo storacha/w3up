@@ -3,6 +3,7 @@ import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
+import * as ucanto from '@ucanto/core'
 
 describe('access capabilities', function () {
   it('should self issue', async function () {
@@ -221,5 +222,77 @@ describe('access capabilities', function () {
         },
       })
     }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)
+  })
+
+  describe('access/claim', () => {
+    // ensure we can use the capability to produce the invocations from the spec at https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md
+    it('can create delegations from spec', async () => {
+      /**
+       * @type {Array<(arg: { issuer: import('@ucanto/principal').ed25519.Signer.EdSigner }) => void|Promise<void>>}
+       */
+      const examples = [
+        // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md#accessclaim
+        ({ issuer }) => {
+          Access.claim.invoke({
+            issuer,
+            audience: ucanto.DID.parse('did:web:web3.storage'),
+            with: issuer.did(),
+          })
+        },
+        // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L185
+        ({ issuer }) => {
+          const account = issuer.withDID('did:mailto:web.mail:alice')
+          Access.claim.invoke({
+            issuer: account,
+            audience: ucanto.DID.parse('did:web:web3.storage'),
+            with: account.did(),
+            proofs: [
+              /*
+              // @TODO: include proof like this from spec text https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L194
+              {
+                "iss": "did:web:web3.storage",
+                "aud": "did:mailto:web.mail:alice",
+                "att": [
+                  {
+                    "with": "did:web:web3.storage",
+                    "can": "./update",
+                    "nb": { "key": "did:key:zAli" }
+                  }
+                ]
+              }
+              */
+            ],
+          })
+        },
+        // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L257
+        ({ issuer }) => {
+          const account = issuer.withDID('did:mailto:gmail.com:bob')
+          Access.claim.invoke({
+            issuer: account,
+            audience: ucanto.DID.parse('did:web:web3.storage'),
+            with: account.did(),
+            proofs: [
+              /*
+              // @TODO: include proof like this from spec text https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md?plain=1#L266
+              {
+                "iss": "did:web:web3.storage",
+                "aud": "did:mailto:gmail.com:bob",
+                "att": [
+                  {
+                    "with": "did:web:web3.storage",
+                    "can": "./update",
+                    "nb": { "key": "did:key:zBobAgent" }
+                  }
+                ]
+              }
+              */
+            ],
+          })
+        },
+      ]
+      for (const example of examples) {
+        await example({ issuer: bob })
+      }
+    })
   })
 })
