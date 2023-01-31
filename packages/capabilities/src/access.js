@@ -105,6 +105,7 @@ export const claim = base.derive({
   to: capability({
     can: 'access/claim',
     with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
+    derives: equalWith,
   }),
   derives: equalWith,
 })
