@@ -5,7 +5,7 @@ import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
-import { Signer as EdSigner } from '@ucanto/principal/ed25519'
+import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 
 export {}
 
@@ -53,9 +53,7 @@ export interface RouteContext {
     spaces: Spaces
     validations: Validations
   }
-  uploadApi: {
-    ucanto?: { url: URL }
-  }
+  uploadApi: ConnectionView
 }
 
 export type Handler = _Handler<RouteContext>

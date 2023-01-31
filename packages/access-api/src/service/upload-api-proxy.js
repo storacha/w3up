@@ -37,10 +37,13 @@ function createProxyService(options) {
  */
 
 /**
+ * Create a ucanto connection to an upload api url.
+ * Assumes upload-api at that URL decodes requests as CAR and encodes responses as CBOR.
+ *
  * @param {UcantoHttpConnectionOptions} options
  * @returns {Ucanto.ConnectionView<any>}
  */
-function createUcantoHttpConnection(options) {
+export function createUploadApiConnection(options) {
   return Client.connect({
     id: DID.parse(options.audience),
     encoder: CAR,
@@ -52,66 +55,30 @@ function createUcantoHttpConnection(options) {
   })
 }
 
-const uploadApiEnvironments = {
-  production: {
-    audience: /** @type {const} */ ('did:web:web3.storage'),
-    // dont use up.web3.storage because it won't resolve from inside cloudflare workers
-    // until resolution of https://github.com/web3-storage/w3protocol/issues/363
-    url: new URL('https://3bd9h7xn3j.execute-api.us-west-2.amazonaws.com/'),
-  },
-}
-
-/**
- * @typedef {keyof typeof uploadApiEnvironments} UploadApiEnvironmentName
- * @typedef {typeof uploadApiEnvironments[UploadApiEnvironmentName]['audience']} UploadApiAudience
- */
-
 /**
  * @param {object} options
- * @param {typeof globalThis.fetch} [options.fetch]
- * @param {import('../bindings.js').RouteContext['uploadApi']} options.uploadApi
- */
-function getDefaultConnections(options) {
-  const { fetch = globalThis.fetch.bind(globalThis), uploadApi } = options
-  return {
-    default: createUcantoHttpConnection({
-      // use production environment
-      ...uploadApiEnvironments.production,
-      // but override uploadApi.url from configuration, if provided
-      ...uploadApi.ucanto,
-      fetch,
-    }),
-  }
-}
-
-/**
- * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
- * @param {object} options
- * @param {typeof globalThis.fetch} [options.fetch]
- * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
- * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
  * @param {import('../bindings.js').RouteContext['uploadApi']} options.uploadApi
  */
 export function createUploadProxy(options) {
   return createProxyService({
     ...options,
-    connections: options.connections || getDefaultConnections(options),
+    connections: {
+      default: options.uploadApi,
+    },
     methods: ['list', 'add', 'remove', 'upload'],
   })
 }
 
 /**
- * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
  * @param {object} options
- * @param {typeof globalThis.fetch} [options.fetch]
- * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} [options.connections]
- * @param {Record<Ucanto.UCAN.DID, URL>} [options.audienceToUrl]
  * @param {import('../bindings.js').RouteContext['uploadApi']} options.uploadApi
  */
 export function createStoreProxy(options) {
   return createProxyService({
     ...options,
-    connections: options.connections || getDefaultConnections(options),
+    connections: {
+      default: options.uploadApi,
+    },
     methods: ['list', 'add', 'remove', 'store'],
   })
 }

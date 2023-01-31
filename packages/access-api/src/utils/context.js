@@ -6,6 +6,8 @@ import { loadConfig } from '../config.js'
 import { Spaces } from '../models/spaces.js'
 import { Validations } from '../models/validations.js'
 import { Email } from './email.js'
+import { createUploadApiConnection } from '../service/upload-api-proxy.js'
+import { DID } from '@ucanto/core'
 
 /**
  * Obtains a route context object.
@@ -55,10 +57,10 @@ export function getContext(request, env, ctx) {
       validations: new Validations(config.VALIDATIONS),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),
-    uploadApi: {
-      ucanto: config.UPLOAD_API_URL
-        ? { url: new URL(config.UPLOAD_API_URL) }
-        : undefined,
-    },
+    uploadApi: createUploadApiConnection({
+      audience: DID.parse(config.DID).did(),
+      url: new URL(config.UPLOAD_API_URL),
+      fetch: globalThis.fetch.bind(globalThis),
+    }),
   }
 }
