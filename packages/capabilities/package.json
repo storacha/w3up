@@ -46,6 +46,9 @@
       "access": [
         "dist/src/access"
       ],
+      "provider": [
+        "dist/src/provider"
+      ],
       "utils": [
         "dist/src/utils"
       ],
