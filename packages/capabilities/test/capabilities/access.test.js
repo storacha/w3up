@@ -227,7 +227,7 @@ describe('access capabilities', function () {
 
   describe('access/claim', () => {
     // ensure we can use the capability to produce the invocations from the spec at https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md
-    it('can access delegations from spec', async () => {
+    it('can create/access delegations from spec', async () => {
       const audience = service.withDID('did:web:web3.storage')
       /**
        * @type {Array<(arg: { issuer: Ucanto.Signer<Ucanto.DID<'key'>>}) => Ucanto.IssuedInvocation<Ucanto.InferInvokedCapability<typeof Access.claim>>>}
@@ -308,6 +308,30 @@ describe('access capabilities', function () {
           e.message.includes('but got "did:foo:bar" instead')
         ),
         'a result.delegationErrors message mentions invalid with value'
+      )
+    })
+    it('does not authorize invocations whose .with is not an issuer in proofs', async () => {
+      const issuer = bob
+      const audience = service
+      const invocation = await Access.claim
+        .invoke({
+          issuer,
+          audience,
+          // note: this did is not same as issuer.did() so issuer has no proof that they can use this resource
+          with: alice.did(),
+        })
+        .delegate()
+      const result = await access(invocation, {
+        capability: Access.claim,
+        principal: Verifier,
+        authority: audience,
+      })
+      assert.ok(result.error, 'result of access(invocation) is an error')
+      assert.deepEqual(result.name, 'Unauthorized')
+      assert.ok(
+        result.failedProofs.find((e) => {
+          return /Capability (.+) is not authorized/.test(e.message)
+        })
       )
     })
   })
