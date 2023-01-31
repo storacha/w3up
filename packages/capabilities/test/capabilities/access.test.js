@@ -226,7 +226,7 @@ describe('access capabilities', function () {
 
   describe('access/claim', () => {
     // ensure we can use the capability to produce the invocations from the spec at https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md
-    it('can create delegations from spec', async () => {
+    it('can access delegations from spec', async () => {
       const audience = service.withDID('did:web:web3.storage')
       /**
        * @type {Array<(arg: { issuer: Ucanto.Signer<Ucanto.DID<'key'>>}) => Ucanto.IssuedInvocation<Ucanto.InferInvokedCapability<typeof Access.claim>>>}
@@ -264,6 +264,19 @@ describe('access capabilities', function () {
         )
         assert.deepEqual(result.capability.nb, {}, 'result has empty nb')
       }
+    })
+    it('cannot invoke when .with uses unexpected did method', async () => {
+      const issuer = bob.withDID('did:foo:bar')
+      assert.throws(
+        () =>
+          Access.claim.invoke({
+            issuer,
+            audience: service,
+            // @ts-ignore - expected complaint from compiler. We want to make sure there is an equivalent error at runtime
+            with: issuer.did(),
+          }),
+        `Invalid 'with'`
+      )
     })
   })
 })
