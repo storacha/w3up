@@ -1,5 +1,20 @@
 # Changelog
 
+## [9.3.0](https://github.com/web3-storage/w3protocol/compare/access-v9.2.0...access-v9.3.0) (2023-01-30)
+
+
+### Features
+
+* access-api forwards store/ and upload/ invocations to upload-api ([#334](https://github.com/web3-storage/w3protocol/issues/334)) ([b773376](https://github.com/web3-storage/w3protocol/commit/b77337692d9e4580031c429c429d4055d6f6ebff))
+* access-api handling store/info for space not in db returns failure with name ([#391](https://github.com/web3-storage/w3protocol/issues/391)) ([9610fcf](https://github.com/web3-storage/w3protocol/commit/9610fcf31b9dbf57cc5ec3ca31f642f7ab6190de))
+* update @ucanto/* to ~4.2.3 ([#405](https://github.com/web3-storage/w3protocol/issues/405)) ([50c0c80](https://github.com/web3-storage/w3protocol/commit/50c0c80789c26b777e854b7208b7391499d2ef18))
+* update access-api ucanto proxy to not need a signer ([#390](https://github.com/web3-storage/w3protocol/issues/390)) ([71cbeb7](https://github.com/web3-storage/w3protocol/commit/71cbeb718d0a5132b97efa1173a5aaf9c75cbe80))
+
+
+### Bug Fixes
+
+* remove unecessary awaits ([#352](https://github.com/web3-storage/w3protocol/issues/352)) ([64da6e5](https://github.com/web3-storage/w3protocol/commit/64da6e50c4d0d0ef3b78c00298769665463e421d))
+
 ## [9.2.0](https://github.com/web3-storage/w3protocol/compare/access-v9.1.1...access-v9.2.0) (2022-12-14)
 
 
