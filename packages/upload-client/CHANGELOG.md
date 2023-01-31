@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.4.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.3.0...upload-client-v5.4.0) (2023-01-30)
+
+
+### Features
+
+* update @ucanto/* to ~4.2.3 ([#405](https://github.com/web3-storage/w3protocol/issues/405)) ([50c0c80](https://github.com/web3-storage/w3protocol/commit/50c0c80789c26b777e854b7208b7391499d2ef18))
+* update access-api ucanto proxy to not need a signer ([#390](https://github.com/web3-storage/w3protocol/issues/390)) ([71cbeb7](https://github.com/web3-storage/w3protocol/commit/71cbeb718d0a5132b97efa1173a5aaf9c75cbe80))
+
+
+### Bug Fixes
+
+* use nullish coalescing for audience ([#319](https://github.com/web3-storage/w3protocol/issues/319)) ([a1d5ecf](https://github.com/web3-storage/w3protocol/commit/a1d5ecfb8a0cedc2bbd609907efab27297256fa8))
+
 ## [5.3.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.2.0...upload-client-v5.3.0) (2023-01-11)
 
 
