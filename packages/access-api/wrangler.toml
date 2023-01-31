@@ -29,6 +29,7 @@ database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 ENV = "dev"
 DEBUG = "true"
 DID = "did:web:local.web3.storage"
+UPLOAD_API_URL = "https://up.web3.storage"
 
 [build]
 command = "scripts/cli.js build"
@@ -37,12 +38,11 @@ watch_dir = "src"
 [miniflare]
 d1_persist = ".wrangler/miniflare"
 
-
 # Dev
 [env.dev]
 name = "w3access-dev"
 workers_dev = true
-vars = { ENV = "dev", DEBUG = "false", DID = "did:web:dev.web3.storage" }
+vars = { ENV = "dev", DEBUG = "false", DID = "did:web:dev.web3.storage", UPLOAD_API_URL = "https://staging.up.web3.storage" }
 build = { command = "scripts/cli.js build --env dev", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5697e95e1aaa436788e6d697fd3350be" },
@@ -90,3 +90,6 @@ d1_databases = [
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
+[env.production.vars]
+# production upload-api, but bypass up.web3.storage due to cloudflare dns issue https://github.com/web3-storage/w3protocol/issues/363#issuecomment-1410887488
+UPLOAD_API_URL = "https://3bd9h7xn3j.execute-api.us-west-2.amazonaws.com/"
