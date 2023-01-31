@@ -71,7 +71,7 @@ export interface DelegationTable {
   bytes: Uint8Array
   audience: URI<'did:'>
   issuer: URI<'did:'>
-  expiration: Date | null
+  expires_at: Date | null
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
 }

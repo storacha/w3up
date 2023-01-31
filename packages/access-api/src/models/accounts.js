@@ -24,7 +24,7 @@ export class Accounts {
     /** @type {GenericPlugin<DelegationRecord>} */
     const objectPlugin = new GenericPlugin({
       // eslint-disable-next-line unicorn/no-null
-      expiration: (v) => (typeof v === 'string' ? new Date(v) : null),
+      expires_at: (v) => (typeof v === 'string' ? new Date(v) : null),
       inserted_at: (v) => new Date(v),
       updated_at: (v) => new Date(v),
     })
@@ -63,7 +63,7 @@ export class Accounts {
         audience: del.audience.did(),
         issuer: del.issuer.did(),
         bytes: delegationsToBytes([del]),
-        expiration: expirationToDate(del.expiration),
+        expires_at: expirationToDate(del.expiration),
       })
       .onConflict((oc) => oc.column('cid').doNothing())
       .returningAll()
@@ -103,9 +103,9 @@ export class Accounts {
       .where('delegations.cid', '=', cid)
       .where((qb) =>
         qb
-          .where('delegations.expiration', '>=', new Date())
+          .where('delegations.expires_at', '>=', new Date())
           // eslint-disable-next-line unicorn/no-null
-          .orWhere('delegations.expiration', 'is', null)
+          .orWhere('delegations.expires_at', 'is', null)
       )
       .executeTakeFirst()
   }
