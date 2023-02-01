@@ -58,6 +58,24 @@ export function equal(child, parent, constraint) {
 }
 
 /**
+ * @param {Types.Link<unknown, number, number, 0 | 1> | undefined} child
+ * @param {Types.Link<unknown, number, number, 0 | 1> | undefined} parent
+ * @param {string} constraint
+ */
+
+export function equalCID(child, parent, constraint) {
+  if (parent === undefined) {
+    return true
+  } else if (child && !child.equals(parent)) {
+    return new Failure(
+      `Constrain violation: ${child} violates imposed ${constraint} constraint ${parent}`
+    )
+  } else {
+    return true
+  }
+}
+
+/**
  * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
  * @param {T} claimed
  * @param {T} delegated
