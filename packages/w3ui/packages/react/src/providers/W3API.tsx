@@ -13,11 +13,16 @@ export interface UploaderProviderProps extends ServiceConfig {
   children?: JSX.Element
 }
 
-export function W3APIProvider ({ children }: { children: JSX.Element | JSX.Element[] }): JSX.Element {
+export interface W3APIProviderProps {
+  children: JSX.Element | JSX.Element[]
+  uploadsListPageSize?: number
+}
+
+export function W3APIProvider ({ children, uploadsListPageSize }: W3APIProviderProps): JSX.Element {
   return (
     <KeyringProvider>
       <UploaderProvider>
-        <UploadsListProvider>
+        <UploadsListProvider size={uploadsListPageSize}>
           <>{children}</>
         </UploadsListProvider>
       </UploaderProvider>

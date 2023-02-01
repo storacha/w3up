@@ -136,7 +136,7 @@ export function Logo (): JSX.Element {
 
 export function App (): JSX.Element {
   return (
-    <W3APIProvider>
+    <W3APIProvider uploadsListPageSize={20}>
       <Authenticator>
         <div className='flex min-h-full w-full'>
           <nav className='flex-none w-64 bg-gray-900 text-white px-4 pb-4 border-r border-gray-800'>
