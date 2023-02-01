@@ -371,3 +371,50 @@ describe('access capabilities', function () {
     })
   })
 })
+
+describe('access/delegate', () => {
+  it('can create valid delegations and authorize them', async () => {
+    const issuer = alice
+    const audience = service.withDID('did:web:web3.storage')
+    const examples = [
+      // uncommon to have empty delegation set, but it is valid afaict
+      Access.delegate
+        .invoke({
+          issuer,
+          audience,
+          with: issuer.did(),
+          nb: {
+            delegations: {},
+          },
+        })
+        .delegate(),
+    ]
+    for (const example of examples) {
+      const invocation = await example
+      const result = await access(invocation, {
+        capability: Access.delegate,
+        principal: Verifier,
+        authority: audience,
+      })
+      assert.ok(
+        result.error !== true,
+        'result of access(invocation) is not an error'
+      )
+      assert.deepEqual(
+        result.audience.did(),
+        audience.did(),
+        'result audience did is expected value'
+      )
+      assert.equal(
+        result.capability.can,
+        'access/delegate',
+        'result capability.can is access/delegate'
+      )
+      assert.deepEqual(
+        result.capability.nb,
+        invocation.capabilities[0].nb,
+        'result has expected nb'
+      )
+    }
+  })
+})
