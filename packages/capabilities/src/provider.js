@@ -3,12 +3,12 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Access from '@web3-storage/capabilities/provider'
+ * import * as Provider from '@web3-storage/capabilities/provider'
  * ```
  *
  * @module
  */
-import { capability, DID, URI, Link } from '@ucanto/validator'
+import { capability, DID, URI } from '@ucanto/validator'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -24,7 +24,7 @@ export { top }
  */
 export const provider = top.derive({
   to: capability({
-    can: 'access/*',
+    can: 'provider/*',
     with: DID,
     derives: equalWith,
   }),
@@ -34,21 +34,18 @@ export const provider = top.derive({
 const base = top.or(provider)
 
 /**
- * Capability can be invoked by an agent to request a `consumer/add` for an account.
+ * Capability can be invoked by an agent to request a `consumer/add` for a space.
  */
 export const get = base.derive({
   to: capability({
     can: 'provider/get',
-    /**
-     * Must be an account DID
-     */
     with: DID,
     nb: {
       provider: DID,
       /**
-       * Support specific space DIDs or wildcard did:* to request a provider for multiple spaces
+       * Support specific space DIDs or undefined to request a provider for multiple spaces
        */
-      consumer: URI.match({ protocol: 'did:' }),
+      consumer: URI.match({ protocol: 'did:' }).optional(),
     },
     derives: (child, parent) => {
       return (
@@ -63,29 +60,20 @@ export const get = base.derive({
 })
 
 /**
- * Capability can be invoked by an agent to request a `consumer/add` for an account.
+ * Capability can be invoked by an agent to add a provider to a space.
  */
-export const consume = base.derive({
+export const add = base.derive({
   to: capability({
-    can: 'provider/consume',
-    /**
-     * Must be an provider DID
-     */
+    can: 'provider/add',
     with: DID,
     nb: {
-      /**
-       * CID for the provider/get invocation
-       */
-      request: Link,
-      /**
-       * Support specific space DIDs or wildcard did:* to request a provider for multiple spaces
-       */
-      consumer: DID.match({ method: 'key' }),
+      provider: DID,
+      consumer: URI.match({ protocol: 'did:' }),
     },
     derives: (child, parent) => {
       return (
         fail(equalWith(child, parent)) ||
-        fail(equal(child.nb.request, parent.nb.request, 'request')) ||
+        fail(equal(child.nb.provider, parent.nb.provider, 'provider')) ||
         fail(equal(child.nb.consumer, parent.nb.consumer, 'consumer')) ||
         true
       )

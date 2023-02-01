@@ -4,7 +4,6 @@ import { Verifier } from '@ucanto/principal/ed25519'
 import * as Provider from '../../src/provider.js'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
-import { parseLink } from '@ucanto/core'
 
 describe('provider capabilities', function () {
   describe('provider/get', function () {
@@ -297,6 +296,41 @@ describe('provider capabilities', function () {
       }
     })
 
+    it('should invoke with no consumer', async function () {
+      const account = mallory
+      const agent = alice
+      const auth = Provider.get.invoke({
+        issuer: account,
+        audience: service,
+        with: agent.did(),
+        nb: {
+          provider: 'did:web:ucan.web3.storage:providers:free',
+        },
+        proofs: [
+          await Provider.get.delegate({
+            issuer: agent,
+            audience: account,
+            with: agent.did(),
+          }),
+        ],
+      })
+
+      const result = await access(await auth.delegate(), {
+        capability: Provider.get,
+        principal: Verifier,
+        authority: service,
+      })
+      if (result.error) {
+        assert.fail('error in self issue')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'provider/get')
+        assert.deepEqual(result.capability.nb, {
+          provider: 'did:web:ucan.web3.storage:providers:free',
+        })
+      }
+    })
+
     it('should fail if nb does not match', async function () {
       const account = mallory
       const space = bob
@@ -389,70 +423,49 @@ describe('provider capabilities', function () {
     })
   })
 
-  describe('provider/consume', function () {
-    it('should not self issue', async function () {
+  describe('provider/add', function () {
+    it('should self issue', async function () {
+      const account = mallory
       const space = bob
-      const provider = mallory.withDID(
-        'did:web:ucan.web3.storage:providers:free'
-      )
-      const invocation = Provider.consume.invoke({
-        issuer: mallory,
+      const auth = Provider.add.invoke({
+        issuer: account,
         audience: service,
-        with: provider.did(),
+        with: account.did(),
         nb: {
-          request: parseLink('bafkqaaa'),
+          provider: 'did:web:ucan.web3.storage:providers:free',
           consumer: space.did(),
         },
       })
 
-      const result = await access(await invocation.delegate(), {
-        capability: Provider.consume,
+      const result = await access(await auth.delegate(), {
+        capability: Provider.add,
         principal: Verifier,
         authority: service,
       })
       if (result.error) {
-        assert.ok(
-          result.message.includes(`Capability can not be (self) issued`)
-        )
+        assert.fail('error in self issue')
       } else {
-        assert.fail('should return error')
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'provider/add')
+        assert.deepEqual(result.capability.nb, {
+          provider: 'did:web:ucan.web3.storage:providers:free',
+          consumer: space.did(),
+        })
       }
     })
 
-    it('should fail different nb.request', async function () {
-      const space = bob
-      const provider = mallory.withDID(
-        'did:web:ucan.web3.storage:providers:free'
-      )
-      const invocation = Provider.consume.invoke({
-        issuer: mallory,
-        audience: service,
-        with: provider.did(),
-        nb: {
-          request: parseLink('bafkqaaa'),
-          consumer: space.did(),
-        },
-        proofs: [
-          await Provider.consume.delegate({
-            issuer: provider,
-            audience: mallory,
-            with: provider.did(),
-          }),
-        ],
-      })
-
-      const result = await access(await invocation.delegate(), {
-        capability: Provider.consume,
-        principal: Verifier,
-        authority: service,
-      })
-      if (result.error) {
-        assert.ok(
-          result.message.includes(`Capability can not be (self) issued`)
-        )
-      } else {
-        assert.fail('should return error')
-      }
+    it('should not support undefined consumer', async function () {
+      assert.throws(() => {
+        Provider.add.invoke({
+          issuer: bob,
+          audience: service,
+          with: bob.did(),
+          // @ts-expect-error
+          nb: {
+            provider: 'did:web:ucan.web3.storage:providers:free',
+          },
+        })
+      }, /Error: Invalid 'nb.consumer' - Expected URI but got undefined/)
     })
   })
 })
