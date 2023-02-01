@@ -3,6 +3,7 @@ import Toucan from 'toucan-js'
 import { Signer } from '@ucanto/principal/ed25519'
 import pkg from '../../package.json'
 import { loadConfig } from '../config.js'
+import { Accounts } from '../models/accounts.js'
 import { Spaces } from '../models/spaces.js'
 import { Validations } from '../models/validations.js'
 import { Email } from './email.js'
@@ -53,6 +54,7 @@ export function getContext(request, env, ctx) {
     models: {
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
+      accounts: new Accounts(config.DB),
     },
     email: new Email({ token: config.POSTMARK_TOKEN }),
     uploadApi: {
