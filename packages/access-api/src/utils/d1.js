@@ -2,13 +2,13 @@
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
 import { OperationNodeTransformer } from 'kysely'
-import { isObject } from './common.js'
+import { isPlainObject, isDate, isBuffer } from './common.js'
 
 /**
  * @typedef {import('kysely').KyselyPlugin} KyselyPlugin
  */
 
-export class JsonTransformer extends OperationNodeTransformer {
+export class ObjectLikeTransformer extends OperationNodeTransformer {
   /**
    * @param {import('kysely').PrimitiveValueListNode} node
    */
@@ -16,20 +16,49 @@ export class JsonTransformer extends OperationNodeTransformer {
     return {
       ...node,
       values: node.values.map((v) => {
-        return isObject(v) ? JSON.stringify(v) : v
+        if (isPlainObject(v)) {
+          return JSON.stringify(v)
+        }
+
+        if (isDate(v)) {
+          return v.toISOString()
+        }
+
+        return v
       }),
     }
+  }
+
+  /**
+   * @param {import('kysely').ValueNode} node
+   */
+  transformValue(node) {
+    if (isPlainObject(node.value)) {
+      return { kind: node.kind, value: JSON.stringify(node.value) }
+    }
+
+    if (isDate(node.value)) {
+      return { kind: node.kind, value: node.value.toISOString() }
+    }
+
+    return node
   }
 }
 
 /**
- * Plugin to transform queries and results for the Space table
+ * Plugin to transform queries and results to and from js object types
  *
+ * @template R
  * @implements {KyselyPlugin}
  */
-export class SpacePlugin {
-  constructor() {
-    this.transformer = new JsonTransformer()
+export class GenericPlugin {
+  /**
+   *
+   * @param {Partial<{[Key in keyof R]: (value: any) => R[Key]}>} resultTransforms
+   */
+  constructor(resultTransforms) {
+    this.transformer = new ObjectLikeTransformer()
+    this.resultTransforms = resultTransforms
   }
 
   /**
@@ -43,18 +72,23 @@ export class SpacePlugin {
         ...args.result,
         rows: args.result.rows.map((row) => {
           const custom = {}
-          if (row.metadata) {
+          for (const [key, value] of Object.entries(row)) {
+            if (isBuffer(value)) {
+              // @ts-ignore
+              custom[key] = new Uint8Array(
+                value.buffer,
+                value.byteOffset,
+                value.byteLength
+              )
+            }
+
             // @ts-ignore
-            custom.metadata = JSON.parse(row.metadata)
+            if (this.resultTransforms[key]) {
+              // @ts-ignore
+              custom[key] = this.resultTransforms[key](value)
+            }
           }
-          if (row.inserted_at) {
-            // @ts-ignore
-            custom.inserted_at = new Date(row.inserted_at)
-          }
-          if (row.updated_at) {
-            // @ts-ignore
-            custom.updated_at = new Date(row.updated_at)
-          }
+
           return {
             ...row,
             ...custom,

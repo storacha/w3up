@@ -46,7 +46,7 @@ const base = top.or(access)
 export const authorize = base.derive({
   to: capability({
     can: 'access/authorize',
-    with: URI.match({ protocol: 'did:' }),
+    with: DID.match({ method: 'key' }),
     nb: {
       /**
        * Value MUST be a did:mailto identifier of the account
