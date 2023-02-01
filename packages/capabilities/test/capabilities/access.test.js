@@ -376,6 +376,11 @@ describe('access/delegate', () => {
   it('can create valid delegations and authorize them', async () => {
     const issuer = alice
     const audience = service.withDID('did:web:web3.storage')
+    const bobCanStoreAllWithAlice = await delegate({
+      issuer: alice,
+      audience: bob,
+      capabilities: [{ can: 'store/*', with: alice.did() }],
+    })
     const examples = [
       // uncommon to have empty delegation set, but it is valid afaict
       Access.delegate
@@ -386,6 +391,21 @@ describe('access/delegate', () => {
           nb: {
             delegations: {},
           },
+        })
+        .delegate(),
+      // https://github.com/web3-storage/specs/blob/7e662a2d9ada4e3fc22a7a68f84871bff0a5380c/w3-access.md?plain=1#L58
+      Access.delegate
+        .invoke({
+          issuer,
+          audience,
+          with: issuer.did(),
+          nb: {
+            delegations: {
+              [bobCanStoreAllWithAlice.cid.toString()]:
+                bobCanStoreAllWithAlice.cid,
+            },
+          },
+          proofs: [bobCanStoreAllWithAlice],
         })
         .delegate(),
     ]
