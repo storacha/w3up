@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, URI, DID } from '@ucanto/validator'
+import { capability, URI, DID, Schema } from '@ucanto/validator'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -106,5 +106,28 @@ export const claim = base.derive({
     with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
     derives: equalWith,
   }),
+  derives: equalWith,
+})
+
+// https://github.com/web3-storage/specs/blob/main/w3-access.md#accessdelegate
+export const delegate = base.derive({
+  to: capability({
+    can: 'access/delegate',
+    /**
+     * Field MUST be a space DID with a storage provider. Delegation will be stored just like any other DAG stored using store/add capability.
+     *
+     * @see https://github.com/web3-storage/specs/blob/main/w3-access.md#delegate-with
+     */
+    with: DID.match({ method: 'key' }),
+    nb: {
+      // keys SHOULD be CIDs, but we won't require it in the schema
+      delegations: Schema.dictionary({
+        value: Schema.Link,
+      }),
+    },
+    // @todo improve - taking into account `nb`
+    derives: equalWith,
+  }),
+  // @todo improve - taking into account `nb`
   derives: equalWith,
 })
