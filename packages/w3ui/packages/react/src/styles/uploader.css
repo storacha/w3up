@@ -1,3 +1,5 @@
+@import url(base.css);
+
 :root {
   --w3ui-uploader-padding: 2rem;
   --w3ui-uploader-background: rgba(255, 255, 255, 0.05);
@@ -5,8 +7,6 @@
   --w3ui-uploader-height: 200px;
   --w3ui-uploader-border-color: rgba(255, 255, 255, 0.25);
   --w3ui-uploader-border-radius: 8px;
-  --w3ui-uploader-primary: salmon;
-  --w3ui-uploader-primary-hover: rgb(250, 136, 124);
 }
 
 .w3ui-uploader {
@@ -49,7 +49,6 @@
 
 .w3ui-uploader.no-file:after {
   content: "Drag files or Click to Browse";
-  /* color: var(--w3ui-uploader-primary); */
 }
 
 .w3ui-uploader button {
@@ -160,28 +159,6 @@
 .w3ui-uploader-console__actions {
   /* border-top: solid 1px var(--w3ui-uploader-border-color); */
   padding: 1rem;
-}
-
-
-
-.w3ui-button {
-  width: 100%;
-  background-color: var(--w3ui-uploader-primary);
-  border-radius: var(--w3ui-uploader-border-radius);
-  outline: none;
-  border: 0;
-  padding: 8px 32px;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 24px;
-  letter-spacing: 0.4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.w3ui-button:hover {
-  background-color: var(--w3ui-uploader-primary-hover);
 }
 
 .w3ui-uploader .w3ui-button {

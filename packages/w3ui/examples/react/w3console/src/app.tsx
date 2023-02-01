@@ -2,12 +2,14 @@ import type { ChangeEvent } from 'react'
 import type { Space } from '@w3ui/keyring-core'
 
 import { useEffect, useState } from 'react'
-import { Authenticator, Uploader, UploadsList, W3APIProvider, SpaceFinder } from '@w3ui/react'
+import { Authenticator, Uploader, UploadsList, W3APIProvider, SpaceFinder, SpaceCreator } from '@w3ui/react'
 import { useKeyring } from '@w3ui/react-keyring'
 import { useUploadsList } from '@w3ui/react-uploads-list'
-import { ArrowPathIcon, ShareIcon } from '@heroicons/react/20/solid'
+import { ShareIcon } from '@heroicons/react/20/solid'
 import md5 from 'blueimp-md5'
 import '@w3ui/react/src/styles/uploader.css'
+import '@w3ui/react/src/styles/space-finder.css'
+import '@w3ui/react/src/styles/uploads-list.css'
 import { SpaceShare } from './share'
 
 function SpaceRegistrar (): JSX.Element {
@@ -106,73 +108,6 @@ function SpaceSection (): JSX.Element {
           <SpaceRegistrar />
         )}
       </div>
-    </div>
-  )
-}
-
-function SpaceCreator (props: any): JSX.Element {
-  const [, { createSpace, registerSpace }] = useKeyring()
-  const [creating, setCreating] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
-
-  function resetForm (): void {
-    setEmail('')
-    setName('')
-  }
-
-  async function onSubmit (e: React.FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault()
-    setSubmitted(true)
-    try {
-      await createSpace(name)
-      // ignore this because the UI knows how to help the user recover
-      // from space registration failure
-      void registerSpace(email)
-    } catch (err) {
-      console.log(err)
-      throw new Error('failed to register', { cause: err })
-    } finally {
-      resetForm()
-      setSubmitted(false)
-    }
-  }
-  return (
-    <div {...props}>
-      {(creating)
-        ? submitted
-          ? (
-            <div className='flex flex-col items-center space-y-4'>
-              <h5>Creating Space...</h5>
-              <ArrowPathIcon className='animate-spin w-6' />
-            </div>
-            )
-          : (
-            <form
-              className='flex flex-col space-y-2'
-              onSubmit={(e: React.FormEvent<HTMLFormElement>) => { void onSubmit(e) }}
-            >
-              <input
-                className='text-black py-1 px-2 rounded'
-                type='email' placeholder='Email' autofocus
-                value={email}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }}
-              />
-              <input
-                className='text-black py-1 px-2 rounded'
-                placeholder='Name'
-                value={name}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => { setName(e.target.value) }}
-              />
-              <input type='submit' className='w3ui-button' value='Create' />
-            </form>
-            )
-        : (
-          <button className='w3ui-button py-2' onClick={() => setCreating(true)}>
-            Add Space
-          </button>
-          )}
     </div>
   )
 }

@@ -6,16 +6,14 @@ function Uploads ({ uploads }: { uploads?: UploadListResult[] }): JSX.Element {
   if ((uploads === undefined) || (uploads.length === 0)) {
     return (
       <>
-        <div>
-          <div>
-            No uploads
-          </div>
-          <nav>
-            <UploadsListCore.ReloadButton className='reload w3ui-button'>
-              Reload
-            </UploadsListCore.ReloadButton>
-          </nav>
+        <div className='w3-uploads-list-no-uploads'>
+          No uploads
         </div>
+        <nav>
+          <UploadsListCore.ReloadButton className='reload w3ui-button'>
+            Reload
+          </UploadsListCore.ReloadButton>
+        </nav>
       </>
     )
   } else {

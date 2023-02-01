@@ -5,6 +5,7 @@ import { CID } from 'multiformats/cid'
 // import * as raw from 'multiformats/codecs/raw'
 import { UploadsList } from '@w3ui/react'
 import { UploadsListContext } from '@w3ui/react-uploads-list'
+import '@w3ui/react/src/styles/uploads-list.css'
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/react/writing-stories/introduction
 export default {

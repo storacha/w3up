@@ -11,7 +11,7 @@ interface SpaceFinderProps {
   className?: string
 }
 
-export function SpaceFinder ({ spaces, selected, setSelected, className }: SpaceFinderProps): JSX.Element {
+export function SpaceFinder ({ spaces, selected, setSelected, className = '' }: SpaceFinderProps): JSX.Element {
   const [query, setQuery] = useState('')
   const filtered =
     query === ''
@@ -24,18 +24,18 @@ export function SpaceFinder ({ spaces, selected, setSelected, className }: Space
       )
 
   return (
-    <div className={className}>
+    <div className={`${className} w3ui-space-finder`}>
       <Combobox value={selected} onChange={setSelected} by={(a, b) => a.sameAs(b)}>
-        <div className='relative mt-1'>
-          <div className='relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm'>
+        <div className='w3ui-space-finder-contents'>
+          <div className='w3ui-space-finder-closed'>
             <Combobox.Input
-              className='w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0 text-black'
+              className='w3ui-space-finder-combobox-input'
               displayValue={(space: Space) => space.name() ?? space.did()}
               onChange={(event) => setQuery(event.target.value)}
             />
-            <Combobox.Button className='absolute inset-y-0 right-0 flex items-center pr-2'>
+            <Combobox.Button className='w3ui-space-finder-combobox-button'>
               <ChevronUpDownIcon
-                className='h-5 w-5 text-gray-400'
+                className='w3ui-space-finder-combobox-icon'
                 aria-hidden='true'
               />
             </Combobox.Button>
@@ -47,10 +47,10 @@ export function SpaceFinder ({ spaces, selected, setSelected, className }: Space
             leaveTo='opacity-0'
             afterLeave={() => setQuery('')}
           >
-            <Combobox.Options className='absolute mt-1 max-h-44 w-full bg-white overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm' static>
+            <Combobox.Options className='w3ui-space-finder-combobox-options' static>
               {filtered.length === 0 && query !== ''
                 ? (
-                  <div className='relative cursor-default select-none py-2 px-4 font-mono text-xs text-red-500'>
+                  <div className='w3ui-space-finder-combobox-no-results'>
                     (╯°□°)╯︵ ┻━┻
                   </div>
                   )
@@ -59,16 +59,16 @@ export function SpaceFinder ({ spaces, selected, setSelected, className }: Space
                       <Combobox.Option
                         key={space.did()}
                         className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                      `w3ui-space-finder-combobox-option ${
+                        active ? 'active' : ''
                       }`}
                         value={space}
                       >
                         {({ selected, active }) => (
                           <>
                             <span
-                              className={`block truncate ${
-                            selected ? 'font-medium' : 'font-normal'
+                              className={`w3ui-space-finder-combobox-option-space-name ${
+                            selected ? 'selected' : ''
                           }`}
                             >
                               {space.name() ?? space.did()}
@@ -76,11 +76,11 @@ export function SpaceFinder ({ spaces, selected, setSelected, className }: Space
                             {selected
                               ? (
                                 <span
-                                  className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                              active ? 'text-white' : 'text-teal-600'
+                                  className={`w3ui-space-finder-combobox-option-selected-icon-wrapper ${
+                              active ? 'active' : ''
                             }`}
                                 >
-                                  <CheckIcon className='h-5 w-5' aria-hidden='true' />
+                                  <CheckIcon className='w3ui-space-finder-combobox-option-selected-icon' aria-hidden='true' />
                                 </span>
                                 )
                               : null}

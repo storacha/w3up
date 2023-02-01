@@ -1,0 +1,127 @@
+@import url(base.css);
+
+.w3ui-space-finder-contents {
+  position: relative;
+  margin-top: 0.25rem;
+}
+
+.w3ui-space-finder-closed {
+  position: relative;
+  width: 100%;
+  cursor: default;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: white;
+  text-align: left;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.w3ui-space-finder-closed:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.w3ui-space-finder-combobox-input {
+  width: 100%;
+  border-style: none;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  padding-right: 2.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(17 24 39);
+}
+
+.w3ui-space-finder-combobox-button {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem;
+}
+
+.w3ui-space-finder-combobox-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: rgb(156 163 175);
+}
+
+.w3ui-space-finder-combobox-options {
+  position: absolute;
+  margin-top: 0.25rem;
+  max-height: 11rem;
+  width: 100%;
+  background: white;
+  overflow: auto;
+  border-radius: 0.375rem;
+  padding-top: 0.25rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  list-style-type: none;
+  padding-inline-start: 0px;
+}
+
+.w3ui-space-finder-combobox-no-results {
+  position: relative;
+  cursor: default;
+  user-select: none;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(239 68 68);
+}
+
+.w3ui-space-finder-combobox-option {
+  position: relative;
+  cursor: default;
+  user-select: none;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 2.5rem;
+  padding-right: 1rem;
+  color: rgb(156 163 175);
+}
+
+.w3ui-space-finder-combobox-option.active {
+  background-color: rgb(13 148 136);
+  color: white;
+}
+
+.w3ui-space-finder-combobox-option-space-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w3ui-space-finder-combobox-option-space-name.selected {
+  font-weight: 500;
+}
+
+.w3ui-space-finder-combobox-option-selected-icon-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 0.75rem;
+  color: rgb(13 148 136);
+}
+
+.w3ui-space-finder-combobox-option-selected-icon-wrapper.active {
+  color: white;
+}
+
+.w3ui-space-finder-combobox-option-selected-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
