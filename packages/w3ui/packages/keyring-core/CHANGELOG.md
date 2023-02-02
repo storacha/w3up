@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.1.0](https://github.com/web3-storage/w3ui/compare/keyring-core-v2.0.1...keyring-core-v2.1.0) (2023-02-02)
+
+
+### Features
+
+* add `sameAs` function to compare spaces by DID ([#268](https://github.com/web3-storage/w3ui/issues/268)) ([3dcd647](https://github.com/web3-storage/w3ui/commit/3dcd647d3c05c6b403a439af58688885073631b8))
+* fix bug in `name` function ([#268](https://github.com/web3-storage/w3ui/issues/268)) ([3dcd647](https://github.com/web3-storage/w3ui/commit/3dcd647d3c05c6b403a439af58688885073631b8))
+* add createDelegation function to delegate access to spaces ([#293](https://github.com/web3-storage/w3ui/issues/293)) ([441d757](https://github.com/web3-storage/w3ui/commit/441d7573f628e358aa76fe8313f01e209c42c68f))
+
 ## [2.0.1](https://github.com/web3-storage/w3ui/compare/keyring-core-v2.0.0...keyring-core-v2.0.1) (2022-12-15)
 
 
