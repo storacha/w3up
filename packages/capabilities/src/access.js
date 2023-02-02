@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, URI, DID, Schema } from '@ucanto/validator'
+import { capability, URI, DID, Schema, Failure } from '@ucanto/validator'
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
@@ -122,12 +122,63 @@ export const delegate = base.derive({
     nb: {
       // keys SHOULD be CIDs, but we won't require it in the schema
       delegations: Schema.dictionary({
-        value: Schema.Link,
+        value: Schema.Link.match(),
       }),
     },
-    // @todo improve - taking into account `nb`
-    derives: equalWith,
+    derives: (claim, proof) => {
+      return (
+        fail(equalWith(claim, proof)) ||
+        // @ts-ignore
+        fail(subsetsNbDelegations(claim, proof)) ||
+        true
+      )
+    },
   }),
   // @todo improve - taking into account `nb`
   derives: equalWith,
 })
+
+/**
+ * @template {Types.Ability} A
+ * @template {Types.URI} R
+ * @param {Types.ParsedCapability<A, R, { delegations: Record<string, Types.Link>}>} ucan
+ * @returns {Set<string>}
+ */
+const nbDelegationsCids = (ucan) =>
+  new Set(Object.values(ucan.nb.delegations || {}).map(String))
+
+/**
+ * @template {Types.Ability} A
+ * @template {Types.URI} R
+ * @param {Types.ParsedCapability<A, R, { delegations: Record<string, Types.Link>}>} claim
+ * @param {Types.ParsedCapability<A, R, { delegations: Record<string, Types.Link>}>} proof
+ */
+function subsetsNbDelegations(claim, proof) {
+  const missingProofs = setDifference(
+    new Set(nbDelegationsCids(claim)),
+    new Set(nbDelegationsCids(proof))
+  )
+  if (missingProofs.size > 0) {
+    return new Failure(
+      `Can not derive ${claim.can}. Missing proofs for delegations: ${[
+        ...missingProofs,
+      ].join(', ')}`
+    )
+  }
+  return true
+}
+
+/**
+ * @template S
+ * @param {Set<S>} minuend - set to subtract from
+ * @param {Set<S>} subtrahend - subtracted from minuend
+ */
+function setDifference(minuend, subtrahend) {
+  const difference = new Set()
+  for (const e of minuend) {
+    if (!subtrahend.has(e)) {
+      difference.add(e)
+    }
+  }
+  return difference
+}

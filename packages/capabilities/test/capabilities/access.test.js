@@ -381,6 +381,7 @@ describe('access/delegate', () => {
       audience: bob,
       capabilities: [{ can: 'store/*', with: alice.did() }],
     })
+    // @todo - add example of delegating alice -> bob
     const examples = [
       // uncommon to have empty delegation set, but it is valid afaict
       Access.delegate
@@ -446,4 +447,56 @@ describe('access/delegate', () => {
       )
     }
   })
+  // @todo test can derive from access/* to access/delegate
+  it('can only delegate a subset of nb.delegations', async () => {
+    const audience = service
+    /** @param {string} methodName */
+    const createTestDelegation = (methodName) =>
+      delegate({
+        issuer: alice,
+        audience: bob,
+        capabilities: [{ can: `test/${methodName}`, with: alice.did() }],
+      })
+    /** @param {number} length */
+    const createTestDelegations = (length) =>
+      Promise.all(
+        Array.from({ length }).map((_, i) => createTestDelegation(i.toString()))
+      )
+    const allTestDelegations = await createTestDelegations(2)
+    const [, ...someTestDelegations] = allTestDelegations
+    const bobCanDelegateSomeWithAlice = await Access.delegate.delegate({
+      issuer: alice,
+      audience: bob,
+      with: alice.did(),
+      nb: {
+        delegations: toDelegationsDict(someTestDelegations),
+      },
+    })
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: bob,
+        audience,
+        with: alice.did(),
+        nb: {
+          delegations: toDelegationsDict(allTestDelegations),
+        },
+        proofs: [bobCanDelegateSomeWithAlice],
+      })
+      .delegate()
+    const result = await access(invocation, {
+      capability: Access.delegate,
+      principal: Verifier,
+      authority: audience,
+    })
+    assert.ok(result.error === true, 'result of access(invocation) is an error')
+  })
 })
+
+/**
+ * Given array of delegations, return a valid value for access/delegate nb.delegations
+ *
+ * @param {Array<Ucanto.Delegation>} delegations
+ */
+function toDelegationsDict(delegations) {
+  return Object.fromEntries(delegations.map((d) => [d.cid.toString(), d.cid]))
+}
