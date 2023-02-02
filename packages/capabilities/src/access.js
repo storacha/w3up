@@ -121,6 +121,9 @@ export const delegate = base.derive({
     with: DID.match({ method: 'key' }),
     nb: {
       // keys SHOULD be CIDs, but we won't require it in the schema
+      /**
+       * @type {Schema.Schema<AccessDelegateDelegations>}
+       */
       delegations: Schema.dictionary({
         value: Schema.Link.match(),
       }),
@@ -141,11 +144,16 @@ export const delegate = base.derive({
 })
 
 /**
+ * @typedef {Schema.Dictionary<string, Types.Link<unknown, number, number, 0 | 1>>} AccessDelegateDelegations
+ */
+
+/**
  * Parsed Capability for access/delegate
  *
- * @template {Types.Ability} A
- * @template {Types.URI} R
- * @typedef {Types.ParsedCapability<A, R, { delegations?: Types.Failure | Schema.Dictionary<string, Types.Link<unknown, number, number, 0 | 1>> }>} ParsedAccessDelegate
+ * @typedef {object} ParsedAccessDelegate
+ * @property {string} can
+ * @property {object} nb
+ * @property {AccessDelegateDelegations} [nb.delegations]
  */
 
 /**
@@ -154,13 +162,11 @@ export const delegate = base.derive({
  * checks that the claimed delegation set is equal to or less than the proven delegation set.
  * usable with {import('@ucanto/interface').Derives}.
  *
- * @template {Types.Ability} A
- * @template {Types.URI} R
- * @param {ParsedAccessDelegate<A,R>} claim
- * @param {ParsedAccessDelegate<A,R>} proof
+ * @param {ParsedAccessDelegate} claim
+ * @param {ParsedAccessDelegate} proof
  */
 function subsetsNbDelegations(claim, proof) {
-  /** @param {ParsedAccessDelegate<A,R>} ucan */
+  /** @param {ParsedAccessDelegate} ucan */
   const nbDelegationsCids = (ucan) =>
     new Set(Object.values(ucan.nb.delegations || {}).map(String))
   const missingProofs = setDifference(
