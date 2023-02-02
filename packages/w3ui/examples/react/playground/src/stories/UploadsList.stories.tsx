@@ -1,5 +1,5 @@
 import React from 'react'
-import { CID } from 'multiformats/cid'
+import * as Link from 'multiformats/link'
 // these imports used by commented-out functions below, delete if we don't bring those back soon
 // import { sha256 } from 'multiformats/hashes/sha2'
 // import * as raw from 'multiformats/codecs/raw'
@@ -32,7 +32,7 @@ export const Empty = {
 
 export const OneItem = {
   render: () => {
-    const state = { data: [{ root: CID.parse('QmPr755CxWUwt39C2Yiw4UGKrv16uZhSgeZJmoHUUS9TSJ') }], loading: false }
+    const state = { data: [{ root: Link.parse('QmPr755CxWUwt39C2Yiw4UGKrv16uZhSgeZJmoHUUS9TSJ') }], loading: false }
     const actions = {
       next: async (): Promise<void> => { console.log('NEXT') },
       reload: async (): Promise<void> => { }
@@ -176,4 +176,4 @@ const oneHundredCids = [
   'bafkreidvyaevch6silpmqqd5gmacqdpy3ujwxcsjnbukhitpn6eclfpfse',
   'bafkreicebeagd3i4yxxsoxpfmibq3t6ebx2evab2xlitsqabdzptae6o4m',
   'bafkreids7gwr2igplug6lluxzjmj7l7cy63ckmabhfaciy62zqtw4telyy'
-].map(cid => CID.parse(cid))
+].map(cid => Link.parse(cid))

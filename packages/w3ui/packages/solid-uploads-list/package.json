@@ -29,12 +29,12 @@
   "dependencies": {
     "@w3ui/solid-keyring": "workspace:^",
     "@w3ui/uploads-list-core": "workspace:^",
-    "@web3-storage/capabilities": "^2.0.0"
+    "@web3-storage/capabilities": "^2.2.0"
   },
   "peerDependencies": {
     "solid-js": "^1.5.0"
   },
   "devDependencies": {
-    "@ucanto/interface": "^4.0.3"
+    "@ucanto/interface": "^4.2.3"
   }
 }

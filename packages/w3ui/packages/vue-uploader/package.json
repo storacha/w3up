@@ -28,8 +28,8 @@
   "dependencies": {
     "@w3ui/uploader-core": "workspace:^",
     "@w3ui/vue-keyring": "workspace:^",
-    "@web3-storage/capabilities": "^2.0.0",
-    "multiformats": "^10.0.2"
+    "@web3-storage/capabilities": "^2.2.0",
+    "multiformats": "^11.0.1"
   },
   "peerDependencies": {
     "vue": "^3.0.0"

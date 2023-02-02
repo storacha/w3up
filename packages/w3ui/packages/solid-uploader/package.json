@@ -29,8 +29,8 @@
   "dependencies": {
     "@w3ui/solid-keyring": "workspace:^",
     "@w3ui/uploader-core": "workspace:^",
-    "@web3-storage/capabilities": "^2.0.0",
-    "multiformats": "^10.0.2"
+    "@web3-storage/capabilities": "^2.2.0",
+    "multiformats": "^11.0.1"
   },
   "peerDependencies": {
     "solid-js": "^1.5.0"

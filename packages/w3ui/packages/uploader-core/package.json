@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/uploader-core",
   "dependencies": {
-    "@ucanto/interface": "^4.0.3",
-    "@web3-storage/upload-client": "^5.2.0",
-    "multiformats": "^10.0.2"
+    "@ucanto/interface": "^4.2.3",
+    "@web3-storage/upload-client": "^5.4.0",
+    "multiformats": "^11.0.1"
   }
 }

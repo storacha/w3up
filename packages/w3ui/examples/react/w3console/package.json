@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.13",
-    "@ipld/car": "^5.0.3",
+    "@ipld/car": "^5.1.0",
     "@ipld/dag-ucan": "^3.2.0",
     "@w3ui/keyring-core": "workspace:^",
     "@w3ui/react": "workspace:^",

@@ -31,9 +31,9 @@
     "ariakit-react-utils": "0.17.0-next.27"
   },
   "devDependencies": {
-    "@ucanto/interface": "^4.0.3",
-    "@ucanto/principal": "^4.0.3",
-    "@web3-storage/access": "^9.2.0"
+    "@ucanto/interface": "^4.2.3",
+    "@ucanto/principal": "^4.2.3",
+    "@web3-storage/access": "^9.3.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

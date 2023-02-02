@@ -29,9 +29,9 @@
   "dependencies": {
     "@w3ui/react-keyring": "workspace:^",
     "@w3ui/uploader-core": "workspace:^",
-    "@web3-storage/capabilities": "^2.0.0",
+    "@web3-storage/capabilities": "^2.2.0",
     "ariakit-react-utils": "0.17.0-next.27",
-    "multiformats": "^10.0.2"
+    "multiformats": "^11.0.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
