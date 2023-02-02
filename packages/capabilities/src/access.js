@@ -141,12 +141,19 @@ export const delegate = base.derive({
 })
 
 /**
+ * Parsed Capability for access/delegate
+ *
  * @template {Types.Ability} A
  * @template {Types.URI} R
  * @typedef {Types.ParsedCapability<A, R, { delegations?: Types.Failure | Schema.Dictionary<string, Types.Link<unknown, number, number, 0 | 1>> }>} ParsedAccessDelegate
  */
 
 /**
+ * returns whether the claimed ucan is proves by the proof ucan.
+ * both are access/delegate, or at least have same semantics for `nb.delegations`, which is a set of delegations.
+ * checks that the claimed delegation set is equal to or less than the proven delegation set.
+ * usable with {import('@ucanto/interface').Derives}.
+ *
  * @template {Types.Ability} A
  * @template {Types.URI} R
  * @param {ParsedAccessDelegate<A,R>} claim
