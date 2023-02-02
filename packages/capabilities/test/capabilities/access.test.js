@@ -4,7 +4,7 @@ import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
 import * as Ucanto from '@ucanto/interface'
-import { delegate, invoke } from '@ucanto/core'
+import { delegate, invoke, parseLink } from '@ucanto/core'
 
 describe('access capabilities', function () {
   it('should self issue', async function () {
@@ -394,20 +394,29 @@ describe('access/delegate', () => {
         })
         .delegate(),
       // https://github.com/web3-storage/specs/blob/7e662a2d9ada4e3fc22a7a68f84871bff0a5380c/w3-access.md?plain=1#L58
-      Access.delegate
-        .invoke({
-          issuer,
-          audience,
-          with: issuer.did(),
-          nb: {
-            delegations: {
-              [bobCanStoreAllWithAlice.cid.toString()]:
-                bobCanStoreAllWithAlice.cid,
+      // with several different, but all valid, property names to use in the `nb.delegations` dict
+      .../** @type {const} */ ([
+        // correct cid
+        [bobCanStoreAllWithAlice.cid.toString(), bobCanStoreAllWithAlice.cid],
+        // not a cid at all
+        ['thisIsNotACid', bobCanStoreAllWithAlice.cid],
+        // cid that does not correspond to value
+        [parseLink('bafkqaaa').toString(), bobCanStoreAllWithAlice.cid],
+      ]).map(([delegationDictKey, delegationLink]) =>
+        Access.delegate
+          .invoke({
+            issuer,
+            audience,
+            with: issuer.did(),
+            nb: {
+              delegations: {
+                [delegationDictKey]: delegationLink,
+              },
             },
-          },
-          proofs: [bobCanStoreAllWithAlice],
-        })
-        .delegate(),
+            proofs: [bobCanStoreAllWithAlice],
+          })
+          .delegate()
+      ),
     ]
     for (const example of examples) {
       const invocation = await example
