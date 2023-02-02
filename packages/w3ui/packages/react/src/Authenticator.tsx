@@ -41,9 +41,14 @@ export function AuthenticationEnsurer ({ children }: { children: JSX.Element | J
   }
 }
 
-export function Authenticator ({ children }: { children: JSX.Element | JSX.Element[] }): JSX.Element {
+interface AuthenticatorProps {
+  children: JSX.Element | JSX.Element[]
+  className?: string
+}
+
+export function Authenticator ({ children, className = '' }: AuthenticatorProps): JSX.Element {
   return (
-    <AuthCore as='div' className='w3ui-authenticator'>
+    <AuthCore as='div' className={`w3ui-authenticator ${className}`}>
       <AuthenticationEnsurer>
         {children}
       </AuthenticationEnsurer>

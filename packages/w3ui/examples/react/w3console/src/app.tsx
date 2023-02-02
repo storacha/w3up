@@ -7,9 +7,7 @@ import { useKeyring } from '@w3ui/react-keyring'
 import { useUploadsList } from '@w3ui/react-uploads-list'
 import { ShareIcon } from '@heroicons/react/20/solid'
 import md5 from 'blueimp-md5'
-import '@w3ui/react/src/styles/uploader.css'
-import '@w3ui/react/src/styles/space-finder.css'
-import '@w3ui/react/src/styles/uploads-list.css'
+import '@w3ui/react/src/styles/all.css'
 import { SpaceShare } from './share'
 
 function SpaceRegistrar (): JSX.Element {
