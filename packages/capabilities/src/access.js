@@ -128,7 +128,6 @@ export const delegate = base.derive({
     derives: (claim, proof) => {
       return (
         fail(equalWith(claim, proof)) ||
-        // @ts-ignore
         fail(subsetsNbDelegations(claim, proof)) ||
         true
       )
@@ -141,19 +140,19 @@ export const delegate = base.derive({
 /**
  * @template {Types.Ability} A
  * @template {Types.URI} R
- * @param {Types.ParsedCapability<A, R, { delegations: Record<string, Types.Link>}>} ucan
- * @returns {Set<string>}
+ * @typedef {Types.ParsedCapability<A, R, { delegations?: Types.Failure | Schema.Dictionary<string, Types.Link<unknown, number, number, 0 | 1>> }>} ParsedAccessDelegate
  */
-const nbDelegationsCids = (ucan) =>
-  new Set(Object.values(ucan.nb.delegations || {}).map(String))
 
 /**
  * @template {Types.Ability} A
  * @template {Types.URI} R
- * @param {Types.ParsedCapability<A, R, { delegations: Record<string, Types.Link>}>} claim
- * @param {Types.ParsedCapability<A, R, { delegations: Record<string, Types.Link>}>} proof
+ * @param {ParsedAccessDelegate<A,R>} claim
+ * @param {ParsedAccessDelegate<A,R>} proof
  */
 function subsetsNbDelegations(claim, proof) {
+  /** @param {ParsedAccessDelegate<A,R>} ucan */
+  const nbDelegationsCids = (ucan) =>
+    new Set(Object.values(ucan.nb.delegations || {}).map(String))
   const missingProofs = setDifference(
     new Set(nbDelegationsCids(claim)),
     new Set(nbDelegationsCids(proof))
