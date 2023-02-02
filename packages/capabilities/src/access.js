@@ -175,9 +175,7 @@ function subsetsNbDelegations(claim, proof) {
   )
   if (missingProofs.size > 0) {
     return new Failure(
-      `Can not derive ${claim.can}. Missing proofs for delegations: ${[
-        ...missingProofs,
-      ].join(', ')}`
+      `unauthorized nb.delegations ${[...missingProofs].join(', ')}`
     )
   }
   return true

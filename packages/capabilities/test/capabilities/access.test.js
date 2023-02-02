@@ -381,8 +381,7 @@ describe('access/delegate', () => {
       audience: bob,
       capabilities: [{ can: 'store/*', with: alice.did() }],
     })
-    // @todo - add example of delegating alice -> bob
-    const examples = [
+    const validInvocations = [
       // uncommon to have empty delegation set, but it is valid afaict
       Access.delegate
         .invoke({
@@ -394,8 +393,8 @@ describe('access/delegate', () => {
           },
         })
         .delegate(),
+      // example from spec, but once each with several different, but all valid, property names to use in the `nb.delegations` dict
       // https://github.com/web3-storage/specs/blob/7e662a2d9ada4e3fc22a7a68f84871bff0a5380c/w3-access.md?plain=1#L58
-      // with several different, but all valid, property names to use in the `nb.delegations` dict
       .../** @type {const} */ ([
         // correct cid
         [bobCanStoreAllWithAlice.cid.toString(), bobCanStoreAllWithAlice.cid],
@@ -418,9 +417,37 @@ describe('access/delegate', () => {
           })
           .delegate()
       ),
+
+      // access/delegate derived
+      ...(await Promise.all(
+        /** @type {const} */ ([{ can: '*' }, { can: 'access/*' }]).map(
+          async (proofCapability) =>
+            Access.delegate
+              .invoke({
+                issuer: bob,
+                audience,
+                with: alice.did(),
+                nb: {
+                  delegations: {},
+                },
+                proofs: [
+                  await delegate({
+                    issuer: alice,
+                    audience: bob,
+                    capabilities: [
+                      {
+                        can: proofCapability.can,
+                        with: alice.did(),
+                      },
+                    ],
+                  }),
+                ],
+              })
+              .delegate()
+        )
+      )),
     ]
-    for (const example of examples) {
-      const invocation = await example
+    for await (const invocation of validInvocations) {
       const result = await access(invocation, {
         capability: Access.delegate,
         principal: Verifier,
@@ -447,8 +474,8 @@ describe('access/delegate', () => {
       )
     }
   })
-  // @todo test can derive from access/* to access/delegate
-  it('can only delegate a subset of nb.delegations', async () => {
+
+  it('cannot delegate a superset of nb.delegations', async () => {
     const audience = service
     /** @param {string} methodName */
     const createTestDelegation = (methodName) =>
@@ -462,14 +489,15 @@ describe('access/delegate', () => {
       Promise.all(
         Array.from({ length }).map((_, i) => createTestDelegation(i.toString()))
       )
-    const allTestDelegations = await createTestDelegations(2)
-    const [, ...someTestDelegations] = allTestDelegations
+    const allDelegations = await createTestDelegations(2)
+    const [firstDelegation, ...someDelegations] = allDelegations
     const bobCanDelegateSomeWithAlice = await Access.delegate.delegate({
       issuer: alice,
       audience: bob,
       with: alice.did(),
       nb: {
-        delegations: toDelegationsDict(someTestDelegations),
+        // note: only 'some'
+        delegations: toDelegationsDict(someDelegations),
       },
     })
     const invocation = await Access.delegate
@@ -478,7 +506,8 @@ describe('access/delegate', () => {
         audience,
         with: alice.did(),
         nb: {
-          delegations: toDelegationsDict(allTestDelegations),
+          // note: 'all' (more than 'some') - this isn't allowed by the proof
+          delegations: toDelegationsDict(allDelegations),
         },
         proofs: [bobCanDelegateSomeWithAlice],
       })
@@ -489,6 +518,101 @@ describe('access/delegate', () => {
       authority: audience,
     })
     assert.ok(result.error === true, 'result of access(invocation) is an error')
+    assert.deepEqual(result.failedProofs.length, 1)
+    assert.ok(
+      result.message.match(`unauthorized nb.delegations ${firstDelegation.cid}`)
+    )
+  })
+
+  it('cannot invoke if proof.with does not match', async () => {
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: bob,
+        audience: service,
+        // with mallory, but proof is with alice
+        with: mallory.did(),
+        nb: {
+          delegations: {},
+        },
+        proofs: [
+          await Access.delegate.delegate({
+            issuer: alice,
+            audience: bob,
+            // with alice, but invocation is with mallory
+            with: alice.did(),
+          }),
+        ],
+      })
+      .delegate()
+    const result = await access(invocation, {
+      capability: Access.delegate,
+      principal: Verifier,
+      authority: service,
+    })
+    assert.ok(result.error, 'result is error')
+    assert.ok(
+      result.message.includes(
+        `Can not derive access/delegate with ${mallory.did()} from ${alice.did()}`
+      )
+    )
+  })
+
+  it('does not parse malformed delegations', async () => {
+    const invalidAccessDelegateCapabilities = /** @type {const} */ ([
+      {
+        can: 'access/delegate',
+        with: alice.did(),
+        // schema requires nb.delegations
+      },
+      {
+        can: 'access/delegate',
+        with: alice.did(),
+        // schema requires nb.delegations
+        nb: {},
+      },
+      {
+        can: 'access/delegate',
+        with: alice.did(),
+        nb: {
+          delegations: {
+            // schema requires value to be a Link, not number
+            foo: 1,
+          },
+        },
+      },
+      {
+        can: 'access/delegate',
+        // with must be a did:key
+        with: 'https://dag.house',
+      },
+      {
+        can: 'access/delegate',
+        // with must be a did:key
+        with: 'did:web:dag.house',
+      },
+    ])
+    for (const cap of invalidAccessDelegateCapabilities) {
+      const accessResult = await access(
+        // @ts-ignore - tsc doesn't like the invalid capability types,
+        // but we want to ensure there is a runtime error too
+        await delegate({
+          issuer: alice,
+          audience: bob,
+          capabilities: [cap],
+        }),
+        {
+          capability: Access.delegate,
+          principal: Verifier,
+          authority: service,
+        }
+      )
+      assert.ok(accessResult.error, 'accessResult is error')
+      assert.ok(
+        accessResult.message.includes(
+          `Encountered malformed 'access/delegate' capability`
+        )
+      )
+    }
   })
 })
 
