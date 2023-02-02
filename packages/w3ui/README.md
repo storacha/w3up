@@ -45,6 +45,24 @@ This repo contains reusauble UI modules for web3.storage in your favourite UI fr
 
     A demo of the list of uploads that have been made to an account.
 
+## Storybook
+
+To run our [Storybook](https://storybook.js.org/), run:
+
+```bash
+cd examples/react/playground
+pnpm run storybook
+```
+
+## w3console
+
+To run w3console, a full-featured console for web3.storage and demonstration of our React components, run:
+
+```bash
+cd examples/react/w3console
+pnpm start
+```
+
 ## Contributing
 
 Feel free to join in. All welcome. Please read our [contributing guidelines](https://github.com/web3-storage/w3ui/blob/main/CONTRIBUTING.md) and/or [open an issue](https://github.com/web3-storage/w3ui/issues)!
