@@ -133,8 +133,11 @@ export const delegate = base.derive({
       )
     },
   }),
-  // @todo improve - taking into account `nb`
-  derives: equalWith,
+  derives: (claim, proof) => {
+    // no need to check claim.nb.delegations is subset of proof
+    // because the proofs types here never include constraints on the nb.delegations set
+    return fail(equalWith(claim, proof)) || true
+  },
 })
 
 /**
