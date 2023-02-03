@@ -480,6 +480,8 @@ importers:
 
   packages/react-keyring:
     specifiers:
+      '@testing-library/react': ^13.4.0
+      '@testing-library/user-event': ^14.4.3
       '@ucanto/interface': ^4.2.3
       '@ucanto/principal': ^4.2.3
       '@w3ui/keyring-core': workspace:^
@@ -489,12 +491,16 @@ importers:
       '@w3ui/keyring-core': link:../keyring-core
       ariakit-react-utils: 0.17.0-next.27
     devDependencies:
+      '@testing-library/react': 13.4.0
+      '@testing-library/user-event': 14.4.3
       '@ucanto/interface': 4.2.3
       '@ucanto/principal': 4.2.3
       '@web3-storage/access': 9.3.0
 
   packages/react-uploader:
     specifiers:
+      '@testing-library/react': ^13.4.0
+      '@testing-library/user-event': ^14.4.3
       '@w3ui/react-keyring': workspace:^
       '@w3ui/uploader-core': workspace:^
       '@web3-storage/capabilities': ^2.2.0
@@ -506,9 +512,14 @@ importers:
       '@web3-storage/capabilities': 2.2.0
       ariakit-react-utils: 0.17.0-next.27
       multiformats: 11.0.1
+    devDependencies:
+      '@testing-library/react': 13.4.0
+      '@testing-library/user-event': 14.4.3
 
   packages/react-uploads-list:
     specifiers:
+      '@testing-library/react': ^13.4.0
+      '@testing-library/user-event': ^14.4.3
       '@w3ui/react-keyring': workspace:^
       '@w3ui/uploads-list-core': workspace:^
       '@web3-storage/capabilities': ^2.2.0
@@ -518,6 +529,9 @@ importers:
       '@w3ui/uploads-list-core': link:../uploads-list-core
       '@web3-storage/capabilities': 2.2.0
       ariakit-react-utils: 0.17.0-next.27
+    devDependencies:
+      '@testing-library/react': 13.4.0
+      '@testing-library/user-event': 14.4.3
 
   packages/solid-keyring:
     specifiers:
@@ -4804,6 +4818,18 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
+  /@testing-library/react/13.4.0:
+    resolution: {integrity: sha512-sXOGON+WNTh3MLE9rve97ftaZukN3oNf2KjDy7YTx6hcTO2uuLHuCGynMDhFwGw/jYf4OJ2Qk0i4i79qMNNkyw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@babel/runtime': 7.20.7
+      '@testing-library/dom': 8.20.0
+      '@types/react-dom': 18.0.9
+    dev: true
+
   /@testing-library/user-event/13.5.0_yxlyej73nftwmh2fiao7paxmlm:
     resolution: {integrity: sha512-5Kwtbo3Y/NowpkbRuSepbyMFkZmHgD+vPzYB/RJ4oxt5Gj/avFFBYjhw27cqSVPVw/3a67NK1PbiIr9k4Gwmdg==}
     engines: {node: '>=10', npm: '>=6'}
@@ -4812,6 +4838,13 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.7
       '@testing-library/dom': 8.20.0
+    dev: true
+
+  /@testing-library/user-event/14.4.3:
+    resolution: {integrity: sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
     dev: true
 
   /@tootallnate/once/2.0.0:

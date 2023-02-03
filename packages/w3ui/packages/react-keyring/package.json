@@ -10,7 +10,9 @@
     "types": "build/types/react-keyring/src/index.d.ts"
   },
   "scripts": {
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "files": [
     "build/*",
@@ -31,6 +33,8 @@
     "ariakit-react-utils": "0.17.0-next.27"
   },
   "devDependencies": {
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
     "@ucanto/interface": "^4.2.3",
     "@ucanto/principal": "^4.2.3",
     "@web3-storage/access": "^9.3.0"

@@ -10,7 +10,9 @@
     "types": "build/types/react-uploads-list/src/index.d.ts"
   },
   "scripts": {
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "files": [
     "build/*",
@@ -34,5 +36,9 @@
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3"
   }
 }
