@@ -7,6 +7,16 @@ import * as RSASigner from '@ucanto/principal/rsa'
 const DB_NAME = 'w3ui'
 const DB_STORE_NAME = 'keyring'
 
+/**
+ * A Space is the core organizational structure of web3-storage,
+ * similar to a bucket in S3 but with some special properties.
+ *
+ * At its core, a Space is just a public/private keypair that
+ * that users can associate web3-storage uploads with. The keypair
+ * is stored locally in a user's browser and can be registered with
+ * web3-storage to enable uploads and allow for recovery of upload
+ * capabilities in case the keypair is lost.
+ */
 export class Space implements Principal {
   #did: DID
   #meta: Record<string, any>
