@@ -1,11 +1,16 @@
 import type { Logging } from '@web3-storage/worker-utils/logging'
-import type { SpaceTable } from '@web3-storage/access/types'
+import type {
+  AccountTable,
+  DelegationTable,
+  SpaceTable,
+} from '@web3-storage/access/types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
 import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
+import { Accounts } from './models/accounts.js'
 
 export {}
 
@@ -52,6 +57,7 @@ export interface RouteContext {
   models: {
     spaces: Spaces
     validations: Validations
+    accounts: Accounts
   }
   uploadApi: ConnectionView
 }
@@ -94,4 +100,6 @@ export interface D1ErrorRaw extends Error {
 
 export interface D1Schema {
   spaces: SpaceTable
+  accounts: AccountTable
+  delegations: DelegationTable
 }

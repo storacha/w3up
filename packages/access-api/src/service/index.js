@@ -10,11 +10,11 @@ import {
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as uploadApi from './upload-api-proxy.js'
+import { accessAuthorizeProvider } from './access-authorize.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
- * @returns {
- * & import('@web3-storage/access/types').Service
+ * @returns { import('@web3-storage/access/types').Service
  * & { store: uploadApi.StoreServiceInferred }
  * & { upload: uploadApi.UploadServiceInferred }
  * }
@@ -24,6 +24,9 @@ export function service(ctx) {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
 
+    access: {
+      authorize: accessAuthorizeProvider(ctx),
+    },
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),
@@ -66,7 +69,7 @@ export function service(ctx) {
           const results = []
           for (const { delegation, metadata } of spaces) {
             if (delegation) {
-              const proof = await stringToDelegation(
+              const proof = stringToDelegation(
                 /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/access/types').Top]>} */ (
                   delegation
                 )

@@ -31,7 +31,6 @@ export const access = top.derive({
   to: capability({
     can: 'access/*',
     with: URI.match({ protocol: 'did:' }),
-    derives: equalWith,
   }),
   derives: equalWith,
 })
@@ -46,7 +45,7 @@ const base = top.or(access)
 export const authorize = base.derive({
   to: capability({
     can: 'access/authorize',
-    with: URI.match({ protocol: 'did:' }),
+    with: DID.match({ method: 'key' }),
     nb: {
       /**
        * Value MUST be a did:mailto identifier of the account
@@ -99,4 +98,13 @@ export const session = capability({
     // Agent DID so it can sign UCANs as did:mailto if it matches this delegation `aud`
     key: DID.match({ method: 'key' }),
   },
+})
+
+export const claim = base.derive({
+  to: capability({
+    can: 'access/claim',
+    with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
+    derives: equalWith,
+  }),
+  derives: equalWith,
 })

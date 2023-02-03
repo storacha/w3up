@@ -4,9 +4,11 @@ import * as Ucanto from '@ucanto/interface'
 import { delegationToString } from '@web3-storage/access/encoding'
 import { Kysely } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
-import { D1Error, SpacePlugin } from '../utils/d1.js'
+import { D1Error, GenericPlugin } from '../utils/d1.js'
 
-const spacePlugin = new SpacePlugin()
+/**
+ * @typedef {import('@web3-storage/access/src/types.js').SpaceRecord} SpaceRecord
+ */
 
 /**
  * Spaces
@@ -17,8 +19,17 @@ export class Spaces {
    * @param {D1Database} d1
    */
   constructor(d1) {
+    /** @type {GenericPlugin<SpaceRecord>} */
+    const objectPlugin = new GenericPlugin({
+      metadata: (v) => JSON.parse(v),
+      inserted_at: (v) => new Date(v),
+      updated_at: (v) => new Date(v),
+    })
     this.d1 = /** @type {Kysely<import('../bindings').D1Schema>} */ (
-      new Kysely({ dialect: new D1Dialect({ database: d1 }) })
+      new Kysely({
+        dialect: new D1Dialect({ database: d1 }),
+        plugins: [objectPlugin],
+      })
     )
   }
 
@@ -34,7 +45,6 @@ export class Spaces {
           /** @type {unknown} */ (invocation.facts[0])
         )
       const result = await this.d1
-        .withPlugin(spacePlugin)
         .insertInto('spaces')
         .values({
           agent: invocation.issuer.did(),
@@ -64,7 +74,6 @@ export class Spaces {
    */
   async get(did) {
     const space = await this.d1
-      .withPlugin(spacePlugin)
       .selectFrom('spaces')
       .selectAll()
       .where('spaces.did', '=', did)
@@ -80,7 +89,6 @@ export class Spaces {
    */
   async getByEmail(email) {
     const spaces = await this.d1
-      .withPlugin(spacePlugin)
       .selectFrom('spaces')
       .selectAll()
       .where('spaces.email', '=', email.replace('mailto:', ''))
