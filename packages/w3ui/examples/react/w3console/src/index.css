@@ -2,3 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.w3ui-authenticator {
+  background-image: url("/w3.svg");
+  background-repeat: no-repeat;
+  background-position: center 95%;
+  @apply bg-gray-900;
+}
+
+.w3ui-authenticator-form {
+  background: linear-gradient(104.3deg,#3064e0 -8.21%,#00d8ff 88.68%);
+  @apply shadow-md px-10 pt-14 pb-8 rounded-xl;
+}
+
+.w3ui-authenticator-form .email-field label {
+  @apply text-white font-semibold uppercase text-xs tracking-wider m-1 font-mono opacity-80;
+}
+
+.w3ui-authenticator-form .email-field input {
+  width: 22rem;
+  @apply bg-white rounded-md shadow-md
+}

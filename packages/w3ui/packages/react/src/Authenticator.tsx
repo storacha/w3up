@@ -8,7 +8,7 @@ export function AuthenticationForm (): JSX.Element {
     <div className='w3ui-authenticator'>
       <AuthCore.Form className='w3ui-authenticator-form'>
         <div className='email-field'>
-          <label htmlFor='w3ui-authenticator-email'>Email address:</label>
+          <label htmlFor='w3ui-authenticator-email'>Email</label>
           <AuthCore.EmailInput id='w3ui-authenticator-email' required />
         </div>
         <button className='register w3ui-button' type='submit' disabled={submitted}>Register</button>

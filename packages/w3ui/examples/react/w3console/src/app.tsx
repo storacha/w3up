@@ -148,7 +148,7 @@ export function App (): JSX.Element {
               </div>
             </div>
           </nav>
-          <main className='grow bg-dark-gray text-white p-4'>
+          <main className='grow bg-gray-dark text-white p-4'>
             <SpaceSection />
           </main>
         </div>
