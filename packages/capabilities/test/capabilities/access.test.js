@@ -372,108 +372,116 @@ describe('access capabilities', function () {
   })
 })
 
-describe('access/delegate', () => {
-  it('can create valid delegations and authorize them', async () => {
-    const issuer = alice
-    const audience = service.withDID('did:web:web3.storage')
-    const bobCanStoreAllWithAlice = await delegate({
+/**
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} alice
+ * @param {Ucanto.Principal<Ucanto.DID<'key'>>} service
+ */
+function createSelfIssuedDelegateInvocation(alice, service) {
+  return Access.delegate
+    .invoke({
       issuer: alice,
-      audience: bob,
-      capabilities: [{ can: 'store/*', with: alice.did() }],
+      audience: service,
+      with: alice.did(),
+      nb: {
+        delegations: {},
+      },
     })
-    const validInvocations = [
-      // uncommon to have empty delegation set, but it is valid afaict
-      Access.delegate
+    .delegate()
+}
+
+describe('access/delegate', () => {
+  it('authorizes self issued invocation', async () => {
+    const invocation = await createSelfIssuedDelegateInvocation(alice, service)
+    const accessResult = await access(invocation, {
+      capability: Access.delegate,
+      principal: Verifier,
+      authority: service,
+    })
+    assert.ok(
+      accessResult.error !== true,
+      'result of access(invocation) is not an error'
+    )
+  })
+
+  /**
+   * Assert can parse various valid ways of expressing '.nb.delegations` delegations as a dict.
+   * The property names SHOULD be CIDs of the value links, but don't have to.
+   */
+  for (const [variantName, { entry }] of Object.entries(
+    nbDelegationsEntryVariants(
+      delegate({
+        issuer: alice,
+        audience: bob,
+        capabilities: [{ can: '*', with: alice.did() }],
+      })
+    )
+  )) {
+    it(`authorizes .nb.delegations dict key variant ${variantName}`, async () => {
+      const invocation = await Access.delegate
         .invoke({
-          issuer,
-          audience,
-          with: issuer.did(),
+          issuer: alice,
+          audience: service,
+          with: alice.did(),
+          nb: {
+            delegations: Object.fromEntries([await entry]),
+          },
+        })
+        .delegate()
+      const accessResult = await access(invocation, {
+        capability: Access.delegate,
+        principal: Verifier,
+        authority: service,
+      })
+      assert.ok(
+        accessResult.error !== true,
+        'result of access(invocation) is not an error'
+      )
+    })
+  }
+
+  /**
+   * Assert can derive access/delegate from these UCAN proof.can
+   */
+  const expectCanDeriveDelegateFromCans = /** @type {const} */ ([
+    '*',
+    'access/*',
+    'access/delegate',
+  ])
+  for (const deriveFromCan of expectCanDeriveDelegateFromCans) {
+    it(`derives from can=${deriveFromCan} and matching cap.with`, async () => {
+      const invocation = await Access.delegate
+        .invoke({
+          issuer: bob,
+          audience: service,
+          with: alice.did(),
           nb: {
             delegations: {},
           },
-        })
-        .delegate(),
-      // example from spec, but once each with several different, but all valid, property names to use in the `nb.delegations` dict
-      // https://github.com/web3-storage/specs/blob/7e662a2d9ada4e3fc22a7a68f84871bff0a5380c/w3-access.md?plain=1#L58
-      .../** @type {const} */ ([
-        // correct cid
-        [bobCanStoreAllWithAlice.cid.toString(), bobCanStoreAllWithAlice.cid],
-        // not a cid at all
-        ['thisIsNotACid', bobCanStoreAllWithAlice.cid],
-        // cid that does not correspond to value
-        [parseLink('bafkqaaa').toString(), bobCanStoreAllWithAlice.cid],
-      ]).map(([delegationDictKey, delegationLink]) =>
-        Access.delegate
-          .invoke({
-            issuer,
-            audience,
-            with: issuer.did(),
-            nb: {
-              delegations: {
-                [delegationDictKey]: delegationLink,
-              },
-            },
-            proofs: [bobCanStoreAllWithAlice],
-          })
-          .delegate()
-      ),
-
-      // access/delegate derived
-      ...(await Promise.all(
-        /** @type {const} */ ([{ can: '*' }, { can: 'access/*' }]).map(
-          async (proofCapability) =>
-            Access.delegate
-              .invoke({
-                issuer: bob,
-                audience,
-                with: alice.did(),
-                nb: {
-                  delegations: {},
+          proofs: [
+            await delegate({
+              issuer: alice,
+              audience: bob,
+              capabilities: [
+                {
+                  can: deriveFromCan,
+                  with: alice.did(),
                 },
-                proofs: [
-                  await delegate({
-                    issuer: alice,
-                    audience: bob,
-                    capabilities: [
-                      {
-                        can: proofCapability.can,
-                        with: alice.did(),
-                      },
-                    ],
-                  }),
-                ],
-              })
-              .delegate()
-        )
-      )),
-    ]
-    for await (const invocation of validInvocations) {
-      const result = await access(invocation, {
+              ],
+            }),
+          ],
+        })
+        .delegate()
+      const accessResult = await access(invocation, {
         capability: Access.delegate,
         principal: Verifier,
-        authority: audience,
+        authority: service,
       })
       assert.ok(
-        result.error !== true,
+        accessResult.error !== true,
         'result of access(invocation) is not an error'
       )
-      assert.deepEqual(
-        result.audience.did(),
-        audience.did(),
-        'result audience did is expected value'
-      )
-      assert.equal(
-        result.capability.can,
-        'access/delegate',
-        'result capability.can is access/delegate'
-      )
-      assert.deepEqual(
-        result.capability.nb,
-        invocation.capabilities[0].nb,
-        'result has expected nb'
-      )
-    }
-  })
+    })
+  }
 
   it('cannot delegate a superset of nb.delegations', async () => {
     const audience = service
@@ -623,4 +631,30 @@ describe('access/delegate', () => {
  */
 function toDelegationsDict(delegations) {
   return Object.fromEntries(delegations.map((d) => [d.cid.toString(), d.cid]))
+}
+
+/**
+ * Create named variants of ways that .nb.delegations dict could represent a delegation entry in its dict
+ *
+ * @template {Ucanto.Capabilities} Caps
+ * @param {Promise<Ucanto.Delegation<Caps>>} delegation
+ */
+function nbDelegationsEntryVariants(delegation) {
+  return {
+    'correct cid': {
+      entry: delegation.then((delegation) => [
+        delegation.cid.toString(),
+        delegation.cid,
+      ]),
+    },
+    'property not a cid': {
+      entry: delegation.then((delegation) => ['thisIsNotACid', delegation.cid]),
+    },
+    'property name is a cid but does not correspond to value': {
+      entry: delegation.then((delegation) => [
+        parseLink('bafkqaaa').toString(),
+        delegation.cid,
+      ]),
+    },
+  }
 }
