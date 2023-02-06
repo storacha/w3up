@@ -32,7 +32,8 @@ export const AuthContext = createContext<KeyringContextValue>([
     registerSpace: async () => { },
     cancelRegisterSpace: () => { },
     getProofs: async () => [],
-    createDelegation: async () => { throw new Error('missing keyring context provider') }
+    createDelegation: async () => { throw new Error('missing keyring context provider') },
+    addSpace: async () => { }
   }
 ])
 
@@ -134,6 +135,11 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
     })
   }
 
+  const addSpace = async (proof: Delegation): Promise<void> => {
+    const agent = await getAgent()
+    await agent.importSpaceFromDelegation(proof)
+  }
+
   const actions = {
     loadAgent,
     unloadAgent,
@@ -143,7 +149,8 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
     cancelRegisterSpace,
     setCurrentSpace,
     getProofs,
-    createDelegation
+    createDelegation,
+    addSpace
   }
 
   return createComponent(AuthContext.Provider, {

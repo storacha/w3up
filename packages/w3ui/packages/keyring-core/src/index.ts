@@ -123,6 +123,10 @@ export interface KeyringContextActions {
    * the _current_ space as the resource.
    */
   createDelegation: (audience: Principal, abilities: Abilities[], options: CreateDelegationOptions) => Promise<Delegation>
+  /**
+   * Import a proof that delegates `*` ability on a space to this agent
+   */
+  addSpace: (proof: Delegation) => Promise<void>
 }
 
 export type CreateDelegationOptions = Omit<UCANOptions, 'audience'> & { audienceMeta?: AgentMeta }
