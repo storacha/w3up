@@ -99,6 +99,7 @@ export async function list(
       nb: {
         cursor: options.cursor,
         size: options.size,
+        prev: options.prev,
       },
     })
     .execute(conn)

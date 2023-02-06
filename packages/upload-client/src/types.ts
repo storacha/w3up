@@ -174,6 +174,10 @@ export interface Pageable {
    * Maximum number of items to return.
    */
   size?: number
+  /**
+   * If true, return page of results preceding cursor. Defaults to false.
+   */
+  prev?: boolean
 }
 
 export interface RequestOptions extends Retryable, Abortable, Connectable {}

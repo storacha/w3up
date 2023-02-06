@@ -150,6 +150,10 @@ export const list = base.derive({
        * Maximum number of items per page.
        */
       size: Schema.integer().optional(),
+      /**
+       * If true, return page of results preceding cursor. Defaults to false.
+       */
+      prev: Schema.boolean().optional(),
     },
   }),
   /**
