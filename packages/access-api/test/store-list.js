@@ -13,8 +13,7 @@ import {
 
 describe('proxy store/list invocations to upload-api', function () {
   for (const web3storageDid of /** @type {const} */ ([
-    'did:web:web3.storage',
-    'did:web:staging.web3.storage',
+    'did:web:test.web3.storage',
   ])) {
     it(`forwards invocations with aud=${web3storageDid}`, async function () {
       const mockUpstream = createMockUploadApiServer({
@@ -47,7 +46,6 @@ describe('proxy store/list invocations to upload-api', function () {
         // @ts-ignore
         PRIVATE_KEY: privateKeyFromEnv ?? process.env.PRIVATE_KEY,
         UPLOAD_API_URL: mockUpstreamUrl.toString(),
-        UPLOAD_API_URL_STAGING: mockUpstreamUrl.toString(),
       })
       const spaceCreation = await createSpace(
         issuer,
