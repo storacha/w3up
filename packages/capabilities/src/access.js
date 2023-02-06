@@ -166,12 +166,9 @@ export const delegate = base.derive({
  * @param {ParsedAccessDelegate} proof
  */
 function subsetsNbDelegations(claim, proof) {
-  /** @param {ParsedAccessDelegate} ucan */
-  const nbDelegationsCids = (ucan) =>
-    new Set(Object.values(ucan.nb.delegations || {}).map(String))
   const missingProofs = setDifference(
-    new Set(nbDelegationsCids(claim)),
-    new Set(nbDelegationsCids(proof))
+    delegatedCids(claim),
+    new Set(delegatedCids(proof))
   )
   if (missingProofs.size > 0) {
     return new Failure(
@@ -182,11 +179,24 @@ function subsetsNbDelegations(claim, proof) {
 }
 
 /**
+ * iterate delegated UCAN CIDs from an access/delegate capability.nb.delegations value.
+ *
+ * @param {ParsedAccessDelegate} delegate
+ * @returns {Iterable<string>}
+ */
+function* delegatedCids(delegate) {
+  for (const d of Object.values(delegate.nb.delegations || {})) {
+    yield d.toString()
+  }
+}
+
+/**
  * @template S
- * @param {Set<S>} minuend - set to subtract from
+ * @param {Iterable<S>} minuend - set to subtract from
  * @param {Set<S>} subtrahend - subtracted from minuend
  */
 function setDifference(minuend, subtrahend) {
+  /** @type {Set<S>} */
   const difference = new Set()
   for (const e of minuend) {
     if (!subtrahend.has(e)) {
