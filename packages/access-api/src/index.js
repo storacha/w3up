@@ -18,7 +18,6 @@ r.add('get', '/validate-email', validateEmail)
 r.add('get', '/validate-ws', validateWS)
 r.add('post', '/', postRoot)
 r.add('post', '/raw', postRaw)
-r.add('get', '/reproduce-cloudflare-error', reproduceCloudflareError)
 
 /** @type {import('./bindings.js').ModuleWorker} */
 const worker = {
@@ -40,30 +39,3 @@ const worker = {
 }
 
 export default worker
-
-/**
- * @param {import('@web3-storage/worker-utils/router').ParsedRequest} request
- * @returns
- */
-async function reproduceCloudflareError(request) {
-  const fetchUrl = request.query.url || 'https://up.web3.storage'
-  let fetchedResponse
-  try {
-    fetchedResponse = await fetch(fetchUrl)
-  } catch (error) {
-    const message = `/reproduce-cloudflare-error fetch ${fetchUrl} threw unexpected error: ${error}`
-    // eslint-disable-next-line no-console
-    console.error(message, error)
-    return new Response(JSON.stringify({ message }, undefined, 2), {
-      status: 500,
-    })
-  }
-  const response = {
-    message: `got response from fetching ${fetchUrl}`,
-    response: {
-      status: fetchedResponse.status,
-      statusText: fetchedResponse.statusText,
-    },
-  }
-  return new Response(JSON.stringify(response, undefined, 2), { status: 200 })
-}
