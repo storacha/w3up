@@ -85,7 +85,17 @@
       "WebSocketPair": "readonly"
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off"
+      "unicorn/prefer-number-properties": "off",
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "Awaited",
+            "D1Database",
+            "Iterable"
+          ]
+        }
+      ]
     }
   },
   "eslintIgnore": [
