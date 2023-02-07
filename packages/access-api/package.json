@@ -92,7 +92,10 @@
           "definedTypes": [
             "Awaited",
             "D1Database",
-            "Iterable"
+            "FetchEvent",
+            "Iterable",
+            "KVNamespace",
+            "ResponseInit"
           ]
         }
       ]
