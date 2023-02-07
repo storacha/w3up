@@ -375,16 +375,19 @@ describe('access capabilities', function () {
 /**
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} alice
  * @param {Ucanto.Principal<Ucanto.DID<'key'>>} service
+ * @param {Record<string, Ucanto.Delegation>} delegations
+ * @param {Ucanto.Delegation[]} proofs
  */
-function createSelfIssuedDelegateInvocation(alice, service) {
+function delegateAccess(alice, service, delegations={}, proofs=[]) {
   return Access.delegate
     .invoke({
       issuer: alice,
       audience: service,
       with: alice.did(),
       nb: {
-        delegations: {},
+        delegations
       },
+      proofs
     })
     .delegate()
 }
