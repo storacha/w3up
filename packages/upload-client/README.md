@@ -5,9 +5,9 @@
 
 The `@web3-storage/upload-client` package provides the "low level" client API for uploading data to [web3.storage](https://web3.storage) using the w3up platform.
 
-Most users will be better served by the higher-level [`@web3-storage/w3up-client` package](https://github.com/web3-storage/w3up-client), which presents a simpler API and supports creating Agents and registering Spaces. 
+Most users will be better served by the higher-level [`@web3-storage/w3up-client` package](https://github.com/web3-storage/w3up-client), which presents a simpler API and supports creating agents and registering spaces.
 
-If you are using this package directly instead of `w3up-client`, you will also need to use the [`@web3-storage/access` client](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client) for Agent and Space management.
+If you are using this package directly instead of `w3up-client`, you will also need to use the [`@web3-storage/access` client](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client) for agent and space management. The `@web3-storage/capabilities` package referenced in the examples below is a transitive dependency of both `@web3-storage/upload-client` and `@web3-storage/access`, so you shouldn't need to install it explicitly.
 
 ## Install
 
@@ -21,9 +21,9 @@ npm install @web3-storage/upload-client
 
 [API Reference](#api)
 
-### Create an Agent
+### Create an agent
 
-An Agent provides:
+An agent provides:
 
 1. The key pair used to call the service and sign the payload (the `issuer`).
 2. A decentralized identifier (DID) of the "space" where data should be uploaded (the `with`).
@@ -31,8 +31,8 @@ An Agent provides:
 
 ```js
 import { Agent } from '@web3-storage/access'
-import { store } from '@web3-storage/access/capabilities/store'
-import { upload } from '@web3-storage/access/capabilities/upload'
+import { store } from '@web3-storage/capabilities/store'
+import { upload } from '@web3-storage/capabilities/upload'
 
 const agent = await Agent.create()
 
