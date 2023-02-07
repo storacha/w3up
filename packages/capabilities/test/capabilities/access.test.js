@@ -372,29 +372,18 @@ describe('access capabilities', function () {
   })
 })
 
-/**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} alice
- * @param {Ucanto.Principal<Ucanto.DID<'key'>>} service
- * @param {Record<string, Ucanto.Delegation>} delegations
- * @param {Ucanto.Delegation[]} proofs
- */
-function delegateAccess(alice, service, delegations={}, proofs=[]) {
-  return Access.delegate
-    .invoke({
-      issuer: alice,
-      audience: service,
-      with: alice.did(),
-      nb: {
-        delegations
-      },
-      proofs
-    })
-    .delegate()
-}
-
 describe('access/delegate', () => {
   it('authorizes self issued invocation', async () => {
-    const invocation = await createSelfIssuedDelegateInvocation(alice, service)
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: alice,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          delegations: {},
+        },
+      })
+      .delegate()
     const accessResult = await access(invocation, {
       capability: Access.delegate,
       principal: Verifier,
