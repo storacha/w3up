@@ -405,7 +405,7 @@ describe('access/delegate', () => {
 
   /**
    * Assert can parse various valid ways of expressing '.nb.delegations` delegations as a dict.
-   * The property names SHOULD be CIDs of the value links, but don't have to.
+   * The property names SHOULD be CIDs of the value links, but this invariant is not enforced.
    */
   for (const [variantName, { entry }] of Object.entries(
     nbDelegationsEntryVariants(
