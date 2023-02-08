@@ -9,7 +9,7 @@ import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
-import { Signer as EdSigner } from '@ucanto/principal/ed25519'
+import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { Accounts } from './models/accounts.js'
 
 export {}
@@ -35,7 +35,6 @@ export interface Env {
   DID: `did:web:${string}`
   // URLs to upload-api so we proxy invocations to it
   UPLOAD_API_URL: string
-  UPLOAD_API_URL_STAGING: string
   // secrets
   PRIVATE_KEY: string
   SENTRY_DSN: string
@@ -60,10 +59,7 @@ export interface RouteContext {
     validations: Validations
     accounts: Accounts
   }
-  uploadApi: {
-    production?: URL
-    staging?: URL
-  }
+  uploadApi: ConnectionView
 }
 
 export type Handler = _Handler<RouteContext>
