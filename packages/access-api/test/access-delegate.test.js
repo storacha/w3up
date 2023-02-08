@@ -5,6 +5,7 @@ import * as assert from 'node:assert'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import * as principal from '@ucanto/principal'
+import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
 
 describe('access-api handling access/delegate', function () {
   for (const [variantName, createInvocation] of Object.entries(
@@ -104,7 +105,7 @@ describe('access-delegate-handler', () => {
         proofs: [],
       })
       .delegate()
-    /** @type {DelegationsStorage} */
+    /** @type {import('../src/service/access-delegate.js').DelegationsStorage} */
     const delegations = []
     const handleAccessDelegate = createAccessDelegateHandler({ delegations })
     await assert.rejects(handleAccessDelegate(invocation), 'UnknownDelegation')
@@ -131,7 +132,7 @@ describe('access-delegate-handler', () => {
         proofs: [delegated],
       })
       .delegate()
-    /** @type {DelegationsStorage} */
+    /** @type {import('../src/service/access-delegate.js').DelegationsStorage} */
     const delegations = []
     const handleAccessDelegate = createAccessDelegateHandler({ delegations })
     const result = await handleAccessDelegate(invocation)
@@ -139,55 +140,3 @@ describe('access-delegate-handler', () => {
     assert.deepEqual(delegations.length, 1, '1 delegation was stored')
   })
 })
-
-/**
- * @callback AccessDelegateHandler
- * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessDelegate>} invocation
- * @returns {Promise<Ucanto.Result<unknown, Ucanto.Failure>>}
- */
-
-/**
- * @typedef {Pick<Array<Ucanto.Delegation<Ucanto.Capabilities>>, 'push'|'length'>} DelegationsStorage
- */
-
-/**
- * @param {object} options
- * @param {DelegationsStorage} [options.delegations]
- * @returns {AccessDelegateHandler}
- */
-function createAccessDelegateHandler({ delegations = [] } = {}) {
-  return async (invocation) => {
-    const delegated = extractProvenDelegations(invocation)
-    delegations.push(...delegated)
-    return {}
-  }
-}
-
-/**
- * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessDelegate>} invocation
- * @returns {Iterable<Ucanto.Delegation<Ucanto.Capabilities>>}
- */
-function* extractProvenDelegations({ proofs, capabilities }) {
-  const nbDelegations = new Set(Object.values(capabilities[0].nb.delegations))
-  const proofDelegations = proofs.flatMap((proof) =>
-    'capabilities' in proof ? [proof] : []
-  )
-  if (nbDelegations.size > proofDelegations.length) {
-    throw new Error(
-      `UnknownDelegation: nb.delegations has more delegations than proofs`
-    )
-  }
-  for (const delegationLink of nbDelegations) {
-    // @todo avoid O(m*n) check here, but not obvious how while also using full Link#equals logic
-    // (could be O(minimum(m,n)) if comparing CID as strings, but that might ignore same link diff multibase)
-    const delegationProof = proofDelegations.find((p) =>
-      delegationLink.equals(p.cid)
-    )
-    if (!delegationProof) {
-      throw new Error(
-        `UnknownDelegation: missing proof for delegation cid ${delegationLink}`
-      )
-    }
-    yield delegationProof
-  }
-}
