@@ -372,26 +372,18 @@ describe('access capabilities', function () {
   })
 })
 
-/**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} alice
- * @param {Ucanto.Principal<Ucanto.DID<'key'>>} service
- */
-function createSelfIssuedDelegateInvocation(alice, service) {
-  return Access.delegate
-    .invoke({
-      issuer: alice,
-      audience: service,
-      with: alice.did(),
-      nb: {
-        delegations: {},
-      },
-    })
-    .delegate()
-}
-
 describe('access/delegate', () => {
   it('authorizes self issued invocation', async () => {
-    const invocation = await createSelfIssuedDelegateInvocation(alice, service)
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: alice,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          delegations: {},
+        },
+      })
+      .delegate()
     const accessResult = await access(invocation, {
       capability: Access.delegate,
       principal: Verifier,
@@ -405,7 +397,7 @@ describe('access/delegate', () => {
 
   /**
    * Assert can parse various valid ways of expressing '.nb.delegations` delegations as a dict.
-   * The property names SHOULD be CIDs of the value links, but don't have to.
+   * The property names SHOULD be CIDs of the value links, but this invariant is not enforced.
    */
   for (const [variantName, { entry }] of Object.entries(
     nbDelegationsEntryVariants(
