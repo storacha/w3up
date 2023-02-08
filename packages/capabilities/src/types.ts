@@ -5,6 +5,14 @@ import { top } from './top.js'
 import { add, list, remove, store } from './store.js'
 import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
+import * as AccessCaps from './access.js'
+
+// Access
+export type Access = InferInvokedCapability<typeof AccessCaps.access>
+export type AccessAuthorize = InferInvokedCapability<
+  typeof AccessCaps.authorize
+>
+export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 
 // Space
 export type Space = InferInvokedCapability<typeof space>
@@ -47,5 +55,8 @@ export type AbilitiesArray = [
   StoreRemove['can'],
   StoreList['can'],
   VoucherClaim['can'],
-  VoucherRedeem['can']
+  VoucherRedeem['can'],
+  Access['can'],
+  AccessAuthorize['can'],
+  AccessSession['can']
 ]

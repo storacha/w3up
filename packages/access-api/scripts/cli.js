@@ -123,6 +123,7 @@ prog
       const binds = await mf.getBindings()
       const db = /** @type {D1Database} */ (binds.__D1_BETA__)
       await migrate(db)
+      console.log('⚡️ Server listening on http://localhost:8787')
     })
   })
 prog.parse(process.argv)

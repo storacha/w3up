@@ -51,7 +51,7 @@ export class ConfDriver {
     if (typeof data === 'object') {
       data = { ...data }
       for (const [k, v] of Object.entries(data)) {
-        if (typeof v === 'undefined') {
+        if (v === undefined) {
           delete data[k]
         }
       }

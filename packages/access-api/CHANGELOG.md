@@ -1,5 +1,66 @@
 # Changelog
 
+## [4.9.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.8.0...access-api-v4.9.0) (2023-01-30)
+
+
+### Features
+
+* access-api handling store/info for space not in db returns failure with name ([#391](https://github.com/web3-storage/w3protocol/issues/391)) ([9610fcf](https://github.com/web3-storage/w3protocol/commit/9610fcf31b9dbf57cc5ec3ca31f642f7ab6190de))
+* update @ucanto/* to ~4.2.3 ([#405](https://github.com/web3-storage/w3protocol/issues/405)) ([50c0c80](https://github.com/web3-storage/w3protocol/commit/50c0c80789c26b777e854b7208b7391499d2ef18))
+* update access-api ucanto proxy to not need a signer ([#390](https://github.com/web3-storage/w3protocol/issues/390)) ([71cbeb7](https://github.com/web3-storage/w3protocol/commit/71cbeb718d0a5132b97efa1173a5aaf9c75cbe80))
+
+
+### Bug Fixes
+
+* make tests use did:web everywhere ([#397](https://github.com/web3-storage/w3protocol/issues/397)) ([c7d5c34](https://github.com/web3-storage/w3protocol/commit/c7d5c345360f97eee537c1833783eb5f2efc76d4))
+
+## [4.8.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.7.0...access-api-v4.8.0) (2023-01-23)
+
+
+### Features
+
+* add /reproduce-cloudflare-error route to access-api ([#380](https://github.com/web3-storage/w3protocol/issues/380)) ([edf925f](https://github.com/web3-storage/w3protocol/commit/edf925f6c17d8a78981ac71d7400dcac927301ac))
+
+## [4.7.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.6.1...access-api-v4.7.0) (2023-01-19)
+
+
+### Features
+
+* upload-api-proxy production url is to aws http gateway instead of up.web3.storage ([#376](https://github.com/web3-storage/w3protocol/issues/376)) ([96a856d](https://github.com/web3-storage/w3protocol/commit/96a856dc7b8d9ed7d305e44d06579b16d629fa33))
+
+## [4.6.1](https://github.com/web3-storage/w3protocol/compare/access-api-v4.6.0...access-api-v4.6.1) (2023-01-19)
+
+
+### Bug Fixes
+
+* debug logging describeFetch does not access `response.type` ([#373](https://github.com/web3-storage/w3protocol/issues/373)) ([d27b94c](https://github.com/web3-storage/w3protocol/commit/d27b94c9e7b685d62126c453734bf9d1cd6f2486))
+
+## [4.6.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.5.0...access-api-v4.6.0) (2023-01-19)
+
+
+### Features
+
+* access-api proxy.js has configurable options.catchInvocationError, by default catches HTTPError -&gt; error result w/ status=502 ([#366](https://github.com/web3-storage/w3protocol/issues/366)) ([c8ca473](https://github.com/web3-storage/w3protocol/commit/c8ca4738dc5678b69e79cc70372bc69825c7026e))
+
+## [4.5.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.4.0...access-api-v4.5.0) (2023-01-19)
+
+
+### Features
+
+* access-api createStoreProxy uses patched fetch that will log any non-ok responses (to debug) ([#364](https://github.com/web3-storage/w3protocol/issues/364)) ([e741bc0](https://github.com/web3-storage/w3protocol/commit/e741bc040ad78a65d9c329765bfd8aec7820d96f))
+
+## [4.4.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.3.0...access-api-v4.4.0) (2023-01-18)
+
+
+### Features
+
+* access-api upload-api-proxy routes invocations with staging audience to staging upload-api ([#357](https://github.com/web3-storage/w3protocol/issues/357)) ([d8325af](https://github.com/web3-storage/w3protocol/commit/d8325afebde6c67fb54767a0ab1e639d6248389e))
+
+
+### Bug Fixes
+
+* upload-api-proxy default fetch binds to globalThis ([#361](https://github.com/web3-storage/w3protocol/issues/361)) ([a96e6af](https://github.com/web3-storage/w3protocol/commit/a96e6af1cebacb84a097d1fc24d4fe5f658c1b93))
+
 ## [4.3.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.2.0...access-api-v4.3.0) (2023-01-17)
 
 

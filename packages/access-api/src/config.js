@@ -1,4 +1,4 @@
-import { Signer } from '@ucanto/principal/ed25519'
+// @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as UCAN from '@ucanto/interface'
 import { DID } from '@ucanto/core'
@@ -15,6 +15,7 @@ export function loadConfig(env) {
 
   /** @type {Array<keyof env>} */
   const required = [
+    'DID',
     'ENV',
     'DEBUG',
     'PRIVATE_KEY',
@@ -34,9 +35,6 @@ export function loadConfig(env) {
     }
   }
 
-  const DID = env.DID
-  const PRIVATE_KEY = vars.PRIVATE_KEY
-  const signer = configureSigner({ DID, PRIVATE_KEY })
   return {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
@@ -57,8 +55,10 @@ export function loadConfig(env) {
     // eslint-disable-next-line no-undef
     COMMITHASH: ACCOUNT_COMMITHASH,
 
-    signer,
+    PRIVATE_KEY: vars.PRIVATE_KEY,
+    DID: DID.parse(vars.DID).did(),
 
+    UPLOAD_API_URL: env.UPLOAD_API_URL || 'https://up.web3.storage/',
     // bindings
     METRICS:
       /** @type {import("./bindings").AnalyticsEngine} */ (
@@ -67,9 +67,6 @@ export function loadConfig(env) {
     SPACES: env.SPACES,
     VALIDATIONS: env.VALIDATIONS,
     DB: /** @type {D1Database} */ (env.__D1_BETA__),
-
-    UPLOAD_API_URL: env.UPLOAD_API_URL,
-    UPLOAD_API_URL_STAGING: env.UPLOAD_API_URL_STAGING,
   }
 }
 
@@ -117,35 +114,4 @@ export function createAnalyticsEngine() {
     },
     _store: store,
   }
-}
-
-/**
- * Given a config, return a ucanto Signer object representing the service
- *
- * @param {object} config
- * @param {string} config.PRIVATE_KEY - multiformats private key of primary signing key
- * @param {string} [config.DID] - public DID for the service (did:key:... derived from PRIVATE_KEY if not set)
- * @returns {Signer.Signer}
- */
-export function configureSigner(config) {
-  const signer = Signer.parse(config.PRIVATE_KEY)
-  if (config.DID) {
-    return signer.withDID(DID.parse(config.DID).did())
-  }
-  return signer
-}
-
-/**
- * @template {UCAN.DID} ConfigDID
- * @template {UCAN.SigAlg} [Alg=UCAN.SigAlg]
- * @param {object} config
- * @param {ConfigDID} [config.DID] - public DID for the service
- * @param {import('@ucanto/interface').Verifier<ConfigDID,Alg>} verifier
- * @returns {import('@ucanto/interface').Verifier<ConfigDID,Alg>}
- */
-export function configureVerifier(config, verifier) {
-  if (config.DID) {
-    return verifier.withDID(DID.parse(config.DID).did())
-  }
-  return verifier
 }

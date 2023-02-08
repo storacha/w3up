@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/capabilities",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Capabilities provided by web3.storage",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/capabilities",
   "repository": {
@@ -23,8 +23,8 @@
   },
   "exports": {
     ".": "./src/index.js",
-    "./types": "./dist/src/types.d.ts",
-    "./*": "./src/*.js"
+    "./*": "./src/*.js",
+    "./types": "./dist/src/types.d.ts"
   },
   "typesVersions": {
     "*": {
@@ -34,20 +34,23 @@
       "store": [
         "dist/src/store"
       ],
-      "types": [
-        "dist/src/types"
-      ],
       "top": [
         "dist/src/top"
       ],
       "upload": [
         "dist/src/upload"
       ],
+      "voucher": [
+        "dist/src/voucher"
+      ],
+      "access": [
+        "dist/src/access"
+      ],
       "utils": [
         "dist/src/utils"
       ],
-      "voucher": [
-        "dist/src/voucher"
+      "types": [
+        "dist/src/types"
       ]
     }
   },
@@ -57,18 +60,18 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ucanto/core": "^4.0.3",
-    "@ucanto/interface": "^4.0.3",
-    "@ucanto/principal": "^4.0.3",
-    "@ucanto/transport": "^4.0.3",
-    "@ucanto/validator": "^4.0.3"
+    "@ucanto/core": "^4.2.3",
+    "@ucanto/interface": "^4.2.3",
+    "@ucanto/principal": "^4.2.3",
+    "@ucanto/transport": "^4.2.3",
+    "@ucanto/validator": "^4.2.3"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
-    "@types/node": "^18.11.14",
+    "@types/node": "^18.11.18",
     "assert": "^2.0.0",
-    "hd-scripts": "^3.0.2",
+    "hd-scripts": "^4.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^8.1.2",
     "type-fest": "^3.3.0",
@@ -85,7 +88,15 @@
     "rules": {
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
-      "unicorn/no-array-reduce": "off"
+      "unicorn/no-array-reduce": "off",
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "Iterable"
+          ]
+        }
+      ]
     },
     "env": {
       "mocha": true
