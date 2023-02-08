@@ -28,7 +28,7 @@ import { REQUEST_RETRIES } from './constants.js'
  * @returns {Promise<import('./types').UploadAddResponse>}
  */
 export async function add(
-  { issuer, with: resource, proofs, audience = servicePrincipal },
+  { issuer, with: resource, proofs, audience },
   root,
   shards,
   options = {}
@@ -40,7 +40,8 @@ export async function add(
       return await UploadCapabilities.add
         .invoke({
           issuer,
-          audience,
+          /* c8 ignore next */
+          audience: audience ?? servicePrincipal,
           with: resource,
           nb: { root, shards },
           proofs,
@@ -82,7 +83,7 @@ export async function add(
  * @returns {Promise<import('./types').ListResponse<import('./types').UploadListResult>>}
  */
 export async function list(
-  { issuer, with: resource, proofs, audience = servicePrincipal },
+  { issuer, with: resource, proofs, audience },
   options = {}
 ) {
   /* c8 ignore next */
@@ -91,7 +92,8 @@ export async function list(
   const result = await UploadCapabilities.list
     .invoke({
       issuer,
-      audience,
+      /* c8 ignore next */
+      audience: audience ?? servicePrincipal,
       with: resource,
       proofs,
       nb: {
@@ -130,7 +132,7 @@ export async function list(
  * @param {import('./types').RequestOptions} [options]
  */
 export async function remove(
-  { issuer, with: resource, proofs, audience = servicePrincipal },
+  { issuer, with: resource, proofs, audience },
   root,
   options = {}
 ) {
@@ -139,7 +141,8 @@ export async function remove(
   const result = await UploadCapabilities.remove
     .invoke({
       issuer,
-      audience,
+      /* c8 ignore next */
+      audience: audience ?? servicePrincipal,
       with: resource,
       nb: { root },
       proofs,

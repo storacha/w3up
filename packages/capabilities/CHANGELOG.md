@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.2.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v2.1.0...capabilities-v2.2.0) (2023-01-30)
+
+
+### Features
+
+* access-api forwards store/ and upload/ invocations to upload-api ([#334](https://github.com/web3-storage/w3protocol/issues/334)) ([b773376](https://github.com/web3-storage/w3protocol/commit/b77337692d9e4580031c429c429d4055d6f6ebff))
+* **capabilities:** implement access/authorize and ./update caps ([#387](https://github.com/web3-storage/w3protocol/issues/387)) ([4242ce0](https://github.com/web3-storage/w3protocol/commit/4242ce046b8e95c43dbf33a139bb98b682eeb198)), closes [#385](https://github.com/web3-storage/w3protocol/issues/385)
+* embedded key resolution ([#312](https://github.com/web3-storage/w3protocol/issues/312)) ([4da91d5](https://github.com/web3-storage/w3protocol/commit/4da91d5f7f798d0d46c4df2aaf224610a8760d9e))
+* update @ucanto/* to ~4.2.3 ([#405](https://github.com/web3-storage/w3protocol/issues/405)) ([50c0c80](https://github.com/web3-storage/w3protocol/commit/50c0c80789c26b777e854b7208b7391499d2ef18))
+* update access-api ucanto proxy to not need a signer ([#390](https://github.com/web3-storage/w3protocol/issues/390)) ([71cbeb7](https://github.com/web3-storage/w3protocol/commit/71cbeb718d0a5132b97efa1173a5aaf9c75cbe80))
+
+
+### Bug Fixes
+
+* fix client cli service did resolve ([#292](https://github.com/web3-storage/w3protocol/issues/292)) ([6be9608](https://github.com/web3-storage/w3protocol/commit/6be9608a907665a8123938ef804bebfffc5c7232))
+
 ## [2.1.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v2.0.0...capabilities-v2.1.0) (2022-12-13)
 
 

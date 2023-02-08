@@ -6,7 +6,6 @@ import { Miniflare, Log, LogLevel } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { migrate } from '../../scripts/migrate.js'
-import { configureSigner } from '../../src/config.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -21,42 +20,34 @@ dotenv.config({
 /**
  * Given a map of environment vars, return a map of bindings that can be passed with access-api worker invocations.
  *
- * @param {{ [key: string]: string | undefined }} env - environment variables
+ * @param {any} env - environment variables
  * @returns {AccessApiBindings} - env bindings expected by access-api worker objects
  */
 function createBindings(env) {
   return {
     ENV: 'test',
     DEBUG: 'false',
-    DID: env.DID || '',
+    DID: env.DID || 'did:web:test.web3.storage',
     PRIVATE_KEY: env.PRIVATE_KEY || '',
     POSTMARK_TOKEN: env.POSTMARK_TOKEN || '',
     SENTRY_DSN: env.SENTRY_DSN || '',
     LOGTAIL_TOKEN: env.LOGTAIL_TOKEN || '',
     W3ACCESS_METRICS: createAnalyticsEngine(),
     UPLOAD_API_URL: env.UPLOAD_API_URL || '',
-    UPLOAD_API_URL_STAGING: env.UPLOAD_API_URL_STAGING || '',
   }
 }
 
 /**
- * Good default bindings useful for tests - configured via process.env
+ * @param {Partial<AccessApiBindings>} env - environment variables to use when configuring access-api. Defaults to process.env.
  */
-export const bindings = createBindings(process.env)
-
-export const serviceAuthority = Signer.parse(bindings.PRIVATE_KEY)
-
-/**
- * @param {object} [options]
- * @param {Record<string,string|undefined>} options.environment - environment variables to use when configuring access-api. Defaults to process.env.
- */
-export async function context(options) {
-  const environment = options?.environment || process.env
-  const principal = await Signer.generate()
+export async function context(env = {}) {
   const bindings = createBindings({
-    ...environment,
+    ...process.env,
+    ...env,
   })
-  const servicePrincipal = configureSigner(bindings)
+  const servicePrincipal = Signer.parse(bindings.PRIVATE_KEY).withDID(
+    bindings.DID
+  )
   const mf = new Miniflare({
     packagePath: true,
     wranglerConfigPath: true,
@@ -80,8 +71,8 @@ export async function context(options) {
       fetch: mf.dispatchFetch.bind(mf),
       url: new URL('http://localhost:8787'),
     }),
-    service: Signer.parse(bindings.PRIVATE_KEY),
-    issuer: principal,
+    service: servicePrincipal,
+    issuer: await Signer.generate(),
     d1: db,
   }
 }

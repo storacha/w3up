@@ -29,26 +29,7 @@ export async function cmdLink(channel, opts) {
   console.log('DID:', agent.did())
   let done = false
   const host = new URL('ws://127.0.0.1:8788/connect')
-  if (!channel) {
-    const ws = await new Channel(
-      host,
-      agent.did(),
-      await EcdhKeypair.create()
-    ).open()
-
-    const responder = agent.peer(ws)
-    await responder.awaitBootstrap()
-    const { pin } = await inquirer.prompt({
-      type: 'input',
-      name: 'pin',
-      message: 'Input your pin:',
-    })
-
-    await responder.ack(pin)
-    await responder.awaitLink()
-
-    done = true
-  } else {
+  if (channel) {
     const ws = await new Channel(
       host,
       channel,
@@ -71,6 +52,25 @@ export async function cmdLink(channel, opts) {
     })
 
     console.log(link)
+
+    done = true
+  } else {
+    const ws = await new Channel(
+      host,
+      agent.did(),
+      await EcdhKeypair.create()
+    ).open()
+
+    const responder = agent.peer(ws)
+    await responder.awaitBootstrap()
+    const { pin } = await inquirer.prompt({
+      type: 'input',
+      name: 'pin',
+      message: 'Input your pin:',
+    })
+
+    await responder.ack(pin)
+    await responder.awaitLink()
 
     done = true
   }
