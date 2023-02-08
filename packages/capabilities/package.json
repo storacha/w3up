@@ -89,7 +89,14 @@
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
       "unicorn/no-array-reduce": "off",
-      "jsdoc/no-undefined-types": "error"
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "Iterable"
+          ]
+        }
+      ]
     },
     "env": {
       "mocha": true

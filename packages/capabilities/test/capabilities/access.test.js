@@ -4,7 +4,7 @@ import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
 import * as Ucanto from '@ucanto/interface'
-import { delegate, invoke } from '@ucanto/core'
+import { delegate, invoke, parseLink } from '@ucanto/core'
 
 describe('access capabilities', function () {
   it('should self issue', async function () {
@@ -371,3 +371,282 @@ describe('access capabilities', function () {
     })
   })
 })
+
+describe('access/delegate', () => {
+  it('authorizes self issued invocation', async () => {
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: alice,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          delegations: {},
+        },
+      })
+      .delegate()
+    const accessResult = await access(invocation, {
+      capability: Access.delegate,
+      principal: Verifier,
+      authority: service,
+    })
+    assert.ok(
+      accessResult.error !== true,
+      'result of access(invocation) is not an error'
+    )
+  })
+
+  /**
+   * Assert can parse various valid ways of expressing '.nb.delegations` delegations as a dict.
+   * The property names SHOULD be CIDs of the value links, but this invariant is not enforced.
+   */
+  for (const [variantName, { entry }] of Object.entries(
+    nbDelegationsEntryVariants(
+      delegate({
+        issuer: alice,
+        audience: bob,
+        capabilities: [{ can: '*', with: alice.did() }],
+      })
+    )
+  )) {
+    it(`authorizes .nb.delegations dict key variant ${variantName}`, async () => {
+      const invocation = await Access.delegate
+        .invoke({
+          issuer: alice,
+          audience: service,
+          with: alice.did(),
+          nb: {
+            delegations: Object.fromEntries([await entry]),
+          },
+        })
+        .delegate()
+      const accessResult = await access(invocation, {
+        capability: Access.delegate,
+        principal: Verifier,
+        authority: service,
+      })
+      assert.ok(
+        accessResult.error !== true,
+        'result of access(invocation) is not an error'
+      )
+    })
+  }
+
+  /**
+   * Assert can derive access/delegate from these UCAN proof.can
+   */
+  const expectCanDeriveDelegateFromCans = /** @type {const} */ ([
+    '*',
+    'access/*',
+    'access/delegate',
+  ])
+  for (const deriveFromCan of expectCanDeriveDelegateFromCans) {
+    it(`derives from can=${deriveFromCan} and matching cap.with`, async () => {
+      const invocation = await Access.delegate
+        .invoke({
+          issuer: bob,
+          audience: service,
+          with: alice.did(),
+          nb: {
+            delegations: {},
+          },
+          proofs: [
+            await delegate({
+              issuer: alice,
+              audience: bob,
+              capabilities: [
+                {
+                  can: deriveFromCan,
+                  with: alice.did(),
+                },
+              ],
+            }),
+          ],
+        })
+        .delegate()
+      const accessResult = await access(invocation, {
+        capability: Access.delegate,
+        principal: Verifier,
+        authority: service,
+      })
+      assert.ok(
+        accessResult.error !== true,
+        'result of access(invocation) is not an error'
+      )
+    })
+  }
+
+  it('cannot delegate a superset of nb.delegations', async () => {
+    const audience = service
+    /** @param {string} methodName */
+    const createTestDelegation = (methodName) =>
+      delegate({
+        issuer: alice,
+        audience: bob,
+        capabilities: [{ can: `test/${methodName}`, with: alice.did() }],
+      })
+    /** @param {number} length */
+    const createTestDelegations = (length) =>
+      Promise.all(
+        Array.from({ length }).map((_, i) => createTestDelegation(i.toString()))
+      )
+    const allDelegations = await createTestDelegations(2)
+    const [firstDelegation, ...someDelegations] = allDelegations
+    const bobCanDelegateSomeWithAlice = await Access.delegate.delegate({
+      issuer: alice,
+      audience: bob,
+      with: alice.did(),
+      nb: {
+        // note: only 'some'
+        delegations: toDelegationsDict(someDelegations),
+      },
+    })
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: bob,
+        audience,
+        with: alice.did(),
+        nb: {
+          // note: 'all' (more than 'some') - this isn't allowed by the proof
+          delegations: toDelegationsDict(allDelegations),
+        },
+        proofs: [bobCanDelegateSomeWithAlice],
+      })
+      .delegate()
+    const result = await access(invocation, {
+      capability: Access.delegate,
+      principal: Verifier,
+      authority: audience,
+    })
+    assert.ok(result.error === true, 'result of access(invocation) is an error')
+    assert.deepEqual(result.failedProofs.length, 1)
+    assert.ok(
+      result.message.match(`unauthorized nb.delegations ${firstDelegation.cid}`)
+    )
+  })
+
+  it('cannot invoke if proof.with does not match', async () => {
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: bob,
+        audience: service,
+        // with mallory, but proof is with alice
+        with: mallory.did(),
+        nb: {
+          delegations: {},
+        },
+        proofs: [
+          await Access.delegate.delegate({
+            issuer: alice,
+            audience: bob,
+            // with alice, but invocation is with mallory
+            with: alice.did(),
+          }),
+        ],
+      })
+      .delegate()
+    const result = await access(invocation, {
+      capability: Access.delegate,
+      principal: Verifier,
+      authority: service,
+    })
+    assert.ok(result.error, 'result is error')
+    assert.ok(
+      result.message.includes(
+        `Can not derive access/delegate with ${mallory.did()} from ${alice.did()}`
+      )
+    )
+  })
+
+  it('does not parse malformed delegations', async () => {
+    const invalidAccessDelegateCapabilities = /** @type {const} */ ([
+      {
+        can: 'access/delegate',
+        with: alice.did(),
+        // schema requires nb.delegations
+      },
+      {
+        can: 'access/delegate',
+        with: alice.did(),
+        // schema requires nb.delegations
+        nb: {},
+      },
+      {
+        can: 'access/delegate',
+        with: alice.did(),
+        nb: {
+          delegations: {
+            // schema requires value to be a Link, not number
+            foo: 1,
+          },
+        },
+      },
+      {
+        can: 'access/delegate',
+        // with must be a did:key
+        with: 'https://dag.house',
+      },
+      {
+        can: 'access/delegate',
+        // with must be a did:key
+        with: 'did:web:dag.house',
+      },
+    ])
+    for (const cap of invalidAccessDelegateCapabilities) {
+      const accessResult = await access(
+        // @ts-ignore - tsc doesn't like the invalid capability types,
+        // but we want to ensure there is a runtime error too
+        await delegate({
+          issuer: alice,
+          audience: bob,
+          capabilities: [cap],
+        }),
+        {
+          capability: Access.delegate,
+          principal: Verifier,
+          authority: service,
+        }
+      )
+      assert.ok(accessResult.error, 'accessResult is error')
+      assert.ok(
+        accessResult.message.includes(
+          `Encountered malformed 'access/delegate' capability`
+        )
+      )
+    }
+  })
+})
+
+/**
+ * Given array of delegations, return a valid value for access/delegate nb.delegations
+ *
+ * @param {Array<Ucanto.Delegation>} delegations
+ */
+function toDelegationsDict(delegations) {
+  return Object.fromEntries(delegations.map((d) => [d.cid.toString(), d.cid]))
+}
+
+/**
+ * Create named variants of ways that .nb.delegations dict could represent a delegation entry in its dict
+ *
+ * @template {Ucanto.Capabilities} Caps
+ * @param {Promise<Ucanto.Delegation<Caps>>} delegation
+ */
+function nbDelegationsEntryVariants(delegation) {
+  return {
+    'correct cid': {
+      entry: delegation.then((delegation) => [
+        delegation.cid.toString(),
+        delegation.cid,
+      ]),
+    },
+    'property not a cid': {
+      entry: delegation.then((delegation) => ['thisIsNotACid', delegation.cid]),
+    },
+    'property name is a cid but does not correspond to value': {
+      entry: delegation.then((delegation) => [
+        parseLink('bafkqaaa').toString(),
+        delegation.cid,
+      ]),
+    },
+  }
+}
