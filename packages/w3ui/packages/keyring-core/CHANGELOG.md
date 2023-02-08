@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/web3-storage/w3ui/compare/keyring-core-v2.1.1...keyring-core-v2.2.0) (2023-02-06)
+
+
+### Features
+
+* import a space into w3console ([#309](https://github.com/web3-storage/w3ui/issues/309)) ([a69a95b](https://github.com/web3-storage/w3ui/commit/a69a95bbd83b0caf3babff55fb40891b94122b92))
+
 ## [2.1.1](https://github.com/web3-storage/w3ui/compare/keyring-core-v2.1.0...keyring-core-v2.1.1) (2023-02-03)
 
 
