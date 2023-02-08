@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v2.0.1...solid-uploads-list-v2.0.2) (2023-02-06)
+
+
+### Bug Fixes
+
+* get solid examples working again ([#199](https://github.com/web3-storage/w3ui/issues/199)) ([78ad7e9](https://github.com/web3-storage/w3ui/commit/78ad7e91dd83eff4e62f09100ef75b1c97671e3f))
+
 ## [2.0.1](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v2.0.0...solid-uploads-list-v2.0.1) (2022-12-15)
 
 
