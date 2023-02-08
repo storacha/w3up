@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/web3-storage/w3ui/compare/solid-keyring-v2.0.1...solid-keyring-v2.1.0) (2023-02-06)
+
+
+### Features
+
+* delegate access to spaces ([#293](https://github.com/web3-storage/w3ui/issues/293)) ([441d757](https://github.com/web3-storage/w3ui/commit/441d7573f628e358aa76fe8313f01e209c42c68f))
+* import a space into w3console ([#309](https://github.com/web3-storage/w3ui/issues/309)) ([a69a95b](https://github.com/web3-storage/w3ui/commit/a69a95bbd83b0caf3babff55fb40891b94122b92))
+
+
+### Bug Fixes
+
+* get solid examples working again ([#199](https://github.com/web3-storage/w3ui/issues/199)) ([78ad7e9](https://github.com/web3-storage/w3ui/commit/78ad7e91dd83eff4e62f09100ef75b1c97671e3f))
+
 ## [2.0.1](https://github.com/web3-storage/w3ui/compare/solid-keyring-v2.0.0...solid-keyring-v2.0.1) (2022-12-15)
 
 
