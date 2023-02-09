@@ -1,7 +1,7 @@
 Hi {{email}}! To complete your {{product_name}} registration,
 we just need to verify your email address.
 
-Please verify that the application you used to register this space is showing the phrase:
+Please confirm the app you are trying to register is showing this phrase:
 
 {{match_phrase}}
 
