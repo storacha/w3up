@@ -30,6 +30,18 @@ export class Validations {
   }
 
   /**
+   * @template {import('@ucanto/interface').Capabilities} T = import('@ucanto/interface').Capabilities
+   * @param {import('@web3-storage/access/src/types').EncodedDelegation<T>} ucan
+   * @param {import('@ucanto/interface').DID} agent
+   * @param {number} expirationTtl - Expiration in second from now. Defaults to 5 mins.
+   */
+  async putSession(ucan, agent, expirationTtl = 60 * 5) {
+    return await this.kv.put(agent, ucan, {
+      expirationTtl,
+    })
+  }
+
+  /**
    * @param {string} did
    */
   async get(did) {

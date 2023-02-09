@@ -40,6 +40,7 @@ export function loadConfig(env) {
     ENV: parseRuntimeEnv(vars.ENV),
 
     POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
+    POSTMARK_SENDER: env.POSTMARK_SENDER,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
 
@@ -57,8 +58,7 @@ export function loadConfig(env) {
     PRIVATE_KEY: vars.PRIVATE_KEY,
     DID: DID.parse(vars.DID).did(),
 
-    UPLOAD_API_URL: env.UPLOAD_API_URL,
-    UPLOAD_API_URL_STAGING: env.UPLOAD_API_URL_STAGING,
+    UPLOAD_API_URL: env.UPLOAD_API_URL || 'https://up.web3.storage/',
     // bindings
     METRICS:
       /** @type {import("./bindings").AnalyticsEngine} */ (
