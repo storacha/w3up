@@ -6,7 +6,7 @@ import * as Ucanto from '@ucanto/interface'
  * @returns {import("../types/delegations").DelegationsStorage}
  */
 export function createDelegationsStorage() {
-  return []
+  return /** @type {Array<Ucanto.Delegation>} */ ([])
 }
 
 /**
