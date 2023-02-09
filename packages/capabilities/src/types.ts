@@ -12,6 +12,7 @@ export type Access = InferInvokedCapability<typeof AccessCaps.access>
 export type AccessAuthorize = InferInvokedCapability<
   typeof AccessCaps.authorize
 >
+export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 

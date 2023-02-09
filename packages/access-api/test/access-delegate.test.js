@@ -7,7 +7,7 @@ import * as ucanto from '@ucanto/core'
 import * as principal from '@ucanto/principal'
 import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
 
-for (const tester of [
+for (const tester of /** @type {const} */ ([
   {
     name: 'handled by access-api in miniflare',
     supportsClaim: true,
@@ -18,7 +18,7 @@ for (const tester of [
     supportsClaim: false,
     ...createTesterFromHandler(() => createAccessDelegateHandler()),
   },
-]) {
+])) {
   describe(`access/delegate ${tester.name}`, () => {
     // test common variants of access/delegate invocation
     for (const [variantName, createTest] of Object.entries(
@@ -42,8 +42,12 @@ for (const tester of [
 
     // test delegate, then claim
     if (tester.supportsClaim) {
-      it('can delegate, then claim delegations', async () => {
-        await testCanDelegateThenClaim(tester.invoke)
+      it('can delegate, then claim', async () => {
+        await testCanDelegateThenClaim(
+          tester.invoke,
+          await tester.issuer,
+          await tester.audience
+        )
       })
     }
   })
@@ -234,7 +238,77 @@ describe('access-delegate-handler', () => {
 })
 
 /**
- *
- * @param {import('../src/service/access-delegate.js').AccessDelegateHandler} invoke
+ * @template {Ucanto.Capability} Capability
+ * @template [Success=unknown]
+ * @template {{ error: true }} [Failure=Ucanto.Failure]
+ * @typedef {(invocation: Ucanto.Invocation<Capability>) => Promise<Ucanto.Result<Success, Failure>>} InvocationHandler
  */
-async function testCanDelegateThenClaim(invoke) {}
+
+/**
+ * @param {InvocationHandler<Ucanto.Capability, unknown, { error: true }>} invoke
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
+ * @param {Ucanto.Verifier<Ucanto.DID>} audience
+ */
+async function testCanDelegateThenClaim(invoke, issuer, audience) {
+  const { delegate, claim } = await setupDelegateThenClaim(issuer, audience)
+  const delegateResult = await invoke(delegate)
+  assert.notDeepEqual(
+    delegateResult.error,
+    true,
+    'result of access/delegate is not an error'
+  )
+
+  // delegate succeeded, now try to claim it
+  const claimResult = await invoke(claim)
+  assert.notDeepEqual(
+    claimResult.error,
+    true,
+    'result of access/claim is not an error'
+  )
+  assert.deepEqual(
+    Object.values(/** @type {any} */ (claimResult).delegations).length,
+    Object.values(delegate.capabilities[0].nb.delegations).length,
+    'claimed same number of delegations as were delegated'
+  )
+}
+
+/**
+ * setup test scenario testing that an access/delegate can be followed up by access/claim.
+ *
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} invoker
+ * @param {Ucanto.Verifier<Ucanto.DID>} audience
+ */
+async function setupDelegateThenClaim(invoker, audience) {
+  const alice = await principal.ed25519.generate()
+  const bob = await principal.ed25519.generate()
+  const aliceSaysBobCanStoreAllWithAlice = await ucanto.delegate({
+    issuer: alice,
+    audience: bob,
+    capabilities: [{ can: 'store/*', with: alice.did() }],
+  })
+  // invocation of access/delegate
+  const delegate = await Access.delegate
+    .invoke({
+      issuer: invoker,
+      audience,
+      with: invoker.did(),
+      nb: {
+        delegations: {
+          notACid: aliceSaysBobCanStoreAllWithAlice.cid,
+        },
+      },
+      proofs: [aliceSaysBobCanStoreAllWithAlice],
+    })
+    .delegate()
+  // invocation of access/claim that should claim the delegations
+  // claim as bob, since bob is the audience of `aliceSaysBobCanStoreAllWithAlice`
+  const claim = await Access.claim
+    .invoke({
+      issuer: invoker,
+      audience,
+      with: invoker.did(),
+      proofs: [],
+    })
+    .delegate()
+  return { delegate, claim }
+}
