@@ -88,7 +88,7 @@ describe('access/authorize', function () {
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessSession]>} */ (
         url.searchParams.get('ucan')
       )
-    const rsp = await mf.dispatchFetch(url)
+    const rsp = await mf.dispatchFetch(url, { method: 'POST' })
     const html = await rsp.text()
 
     assert(html.includes(encoded))
@@ -119,7 +119,7 @@ describe('access/authorize', function () {
 
     const url = new URL(inv)
     // click email url
-    await mf.dispatchFetch(url)
+    await mf.dispatchFetch(url, { method: 'POST' })
 
     // ws
     const res = await mf.dispatchFetch('http://localhost:8787/validate-ws', {
