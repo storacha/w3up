@@ -18,12 +18,8 @@ export function accessDelegateProvider(ctx) {
  */
 
 /**
- * @typedef {Pick<Array<Ucanto.Delegation<Ucanto.Capabilities>>, 'push'|'length'>} DelegationsStorage
- */
-
-/**
  * @param {object} options
- * @param {DelegationsStorage} [options.delegations]
+ * @param {import('../types/delegations').DelegationsStorage} [options.delegations]
  * @returns {AccessDelegateHandler}
  */
 export function createAccessDelegateHandler({ delegations = [] } = {}) {
