@@ -1,6 +1,7 @@
 import * as Server from '@ucanto/server'
 import { delegate } from '@web3-storage/capabilities/access'
 import * as Ucanto from '@ucanto/interface'
+import { createDelegationsStorage } from './delegations.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -22,7 +23,9 @@ export function accessDelegateProvider(ctx) {
  * @param {import('../types/delegations').DelegationsStorage} [options.delegations]
  * @returns {AccessDelegateHandler}
  */
-export function createAccessDelegateHandler({ delegations = [] } = {}) {
+export function createAccessDelegateHandler({
+  delegations = createDelegationsStorage(),
+} = {}) {
   return async (invocation) => {
     const delegated = extractProvenDelegations(invocation)
     delegations.push(...delegated)

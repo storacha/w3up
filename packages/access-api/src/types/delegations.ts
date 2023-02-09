@@ -1,10 +1,15 @@
 import * as Ucanto from '@ucanto/interface'
 
-export type DelegationsStorage = Pick<
-  Array<Ucanto.Delegation<Ucanto.Capabilities>>,
-  'push' | 'length'
-> & {
+export type Resolvable<T> = T | Promise<T>
+
+export interface DelegationsStorage<
+  Cap extends Ucanto.Capability = Ucanto.Capability
+> {
+  push: (
+    ...delegation: Array<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
+  ) => Resolvable<unknown>
+  length: Resolvable<number>
   [Symbol.iterator]: () => IterableIterator<
-    Ucanto.Delegation<Ucanto.Capabilities>
+    Ucanto.Delegation<Ucanto.Tuple<Cap>>
   >
 }

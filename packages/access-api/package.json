@@ -94,7 +94,9 @@
             "D1Database",
             "FetchEvent",
             "Iterable",
+            "IterableIterator",
             "KVNamespace",
+            "PromiseLike",
             "ResponseInit"
           ]
         }
