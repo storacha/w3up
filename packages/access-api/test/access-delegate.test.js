@@ -7,6 +7,7 @@ import * as ucanto from '@ucanto/core'
 import * as principal from '@ucanto/principal'
 import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
 import { createAccessClaimHandler } from '../src/service/access-claim.js'
+import { createDelegationsStorage } from '../src/service/delegations.js'
 
 for (const tester of /** @type {const} */ ([
   {
@@ -44,13 +45,31 @@ for (const tester of /** @type {const} */ ([
 for (const tester of /** @type {const} */ ([
   {
     name: 'handled by createAccessHandler',
-    ...createTesterFromHandler(() =>
-      createAccessHandler(
-        createAccessDelegateHandler(),
-        createAccessClaimHandler()
-      )
+    ...createTesterFromHandler(
+      (() => {
+        const delegations = createDelegationsStorage()
+        return () => {
+          return createAccessHandler(
+            createAccessDelegateHandler({ delegations }),
+            createAccessClaimHandler({ delegations })
+          )
+        }
+      })()
     ),
   },
+  /*
+  @todo: uncomment this testing against access-api + miniflare
+  * after
+    * get access/delegate handler working in prod w/ sql DelegationsStorage
+      because otherwise there is nothing to access/claim
+    * more tests on createAccessClaimHandler alone
+      * ensure you can only claim things that are delegated to you, etc.
+    * use createAccessClaimHandler inside of access-api ucanto service/server
+  */
+  // {
+  //   name: 'handled by access-api in miniflare',
+  //   ...createTesterFromContext(() => context()),
+  // },
 ])) {
   describe(`access/delegate ${tester.name}`, () => {
     // test delegate, then claim
@@ -222,8 +241,7 @@ describe('access-delegate-handler', () => {
         proofs: [],
       })
       .delegate()
-    /** @type {import('../src/service/access-delegate.js').DelegationsStorage} */
-    const delegations = []
+    const delegations = createDelegationsStorage()
     const handleAccessDelegate = createAccessDelegateHandler({ delegations })
     await assert.rejects(handleAccessDelegate(invocation), 'UnknownDelegation')
     assert.deepEqual(delegations.length, 0, '0 delegations were stored')
@@ -249,8 +267,7 @@ describe('access-delegate-handler', () => {
         proofs: [delegated],
       })
       .delegate()
-    /** @type {import('../src/service/access-delegate.js').DelegationsStorage} */
-    const delegations = []
+    const delegations = createDelegationsStorage()
     const handleAccessDelegate = createAccessDelegateHandler({ delegations })
     const result = await handleAccessDelegate(invocation)
     assert.notDeepEqual(result.error, true, 'invocation result is not an error')
@@ -273,6 +290,7 @@ describe('access-delegate-handler', () => {
 async function testCanDelegateThenClaim(invoke, issuer, audience) {
   const { delegate, claim } = await setupDelegateThenClaim(issuer, audience)
   const delegateResult = await invoke(delegate)
+  warnOnErrorResult(delegateResult)
   assert.notDeepEqual(
     delegateResult.error,
     true,
@@ -281,17 +299,37 @@ async function testCanDelegateThenClaim(invoke, issuer, audience) {
 
   // delegate succeeded, now try to claim it
   const claimResult = await invoke(claim)
-  assert.notDeepEqual(
-    claimResult.error,
-    true,
-    'result of access/claim is not an error'
+  assertNotError(claimResult)
+  assert.deepEqual(
+    Object.values(/** @type {any} */ (claimResult).delegations).length,
+    Object.values(delegate.capabilities[0].nb.delegations).length,
+    'claimed same number of delegations as were delegated'
   )
-  // @todo enable this assertion once we have access/claim results
-  // assert.deepEqual(
-  //   Object.values(/** @type {any} */ (claimResult).delegations).length,
-  //   Object.values(delegate.capabilities[0].nb.delegations).length,
-  //   'claimed same number of delegations as were delegated'
-  // )
+}
+
+/**
+ * @param {{ error?: unknown }} result
+ * @param {string} assertionMessage
+ */
+function assertNotError(result, assertionMessage = 'result is not an error') {
+  warnOnErrorResult(result)
+  assert.notDeepEqual(result.error, true, assertionMessage)
+}
+
+/**
+ * @param {{ error?: unknown }} result
+ * @param {string} [message]
+ * @param {(...loggables: any[]) => void} warn
+ */
+function warnOnErrorResult(
+  result,
+  message = 'unexpected error result',
+  // eslint-disable-next-line no-console
+  warn = console.warn.bind(console)
+) {
+  if (result.error) {
+    warn(message, result)
+  }
 }
 
 /**
