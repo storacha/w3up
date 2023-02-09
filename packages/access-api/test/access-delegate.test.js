@@ -10,14 +10,17 @@ import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
 for (const tester of [
   {
     name: 'handled by access-api in miniflare',
+    supportsClaim: true,
     ...createTesterFromContext(() => context()),
   },
   {
     name: 'handled by access-delegate-handler',
+    supportsClaim: false,
     ...createTesterFromHandler(() => createAccessDelegateHandler()),
   },
 ]) {
   describe(`access/delegate ${tester.name}`, () => {
+    // test common variants of access/delegate invocation
     for (const [variantName, createTest] of Object.entries(
       namedDelegateVariants()
     )) {
@@ -34,6 +37,13 @@ for (const tester of [
           true,
           'invocation result is not an error'
         )
+      })
+    }
+
+    // test delegate, then claim
+    if (tester.supportsClaim) {
+      it('can delegate, then claim delegations', async () => {
+        await testCanDelegateThenClaim(tester.invoke)
       })
     }
   })
@@ -222,3 +232,9 @@ describe('access-delegate-handler', () => {
     assert.deepEqual(delegations.length, 1, '1 delegation was stored')
   })
 })
+
+/**
+ *
+ * @param {import('../src/service/access-delegate.js').AccessDelegateHandler} invoke
+ */
+async function testCanDelegateThenClaim(invoke) {}

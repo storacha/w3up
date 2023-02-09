@@ -14,7 +14,7 @@ export function accessDelegateProvider(ctx) {
 /**
  * @callback AccessDelegateHandler
  * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessDelegate>} invocation
- * @returns {Promise<Ucanto.Result<unknown, Ucanto.Failure>>}
+ * @returns {Promise<Ucanto.Result<unknown, { error: true }>>}
  */
 
 /**
