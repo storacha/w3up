@@ -1,7 +1,10 @@
 import { Signer } from '@ucanto/principal'
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
+import { DID } from '@ucanto/core'
 import { importDAG } from '@ucanto/core/delegation'
 import { CID } from 'multiformats'
+import { Access } from '@web3-storage/capabilities'
+import { isExpired } from './delegations.js'
 
 /** @typedef {import('./types').AgentDataModel} AgentDataModel */
 
@@ -142,5 +145,16 @@ export class AgentData {
   async removeDelegation(cid) {
     this.delegations.delete(cid.toString())
     await this.#save(this.export())
+  }
+
+  /**
+   * The current session proof.
+   */
+  sessionProof() {
+    for (const { delegation } of this.delegations.values()) {
+      // @ts-expect-error "key" does not exist in object, unless it's a session capability
+      const cap = delegation.capabilities.find(c => c.can === Access.session.can && c.nb?.key === this.principal.did())
+      if (cap && !isExpired(delegation)) return delegation
+    }
   }
 }

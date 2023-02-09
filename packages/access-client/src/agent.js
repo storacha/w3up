@@ -10,6 +10,7 @@ import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
+import * as Access from '@web3-storage/capabilities/access'
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
@@ -186,19 +187,33 @@ export class Agent {
   }
 
   /**
-   * Get all the proofs matching the capabilities
+   * Get all the proofs matching the capabilities.
    *
-   * Proofs are delegations with an audience matching agent DID.
+   * Proofs are delegations with an audience matching agent DID, or with an
+   * audience matching the session DID.
+   * 
+   * Proof of session will also be included in the returned proofs if any
+   * proofs matching the passed capabilities require it.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
    */
   proofs(caps) {
     const arr = []
+    const session = this.#data.sessionProof()
+    let hasSessionDelegations = false
 
-    for (const value of this.#delegations(caps)) {
-      if (value.delegation.audience.did() === this.issuer.did()) {
-        arr.push(value.delegation)
+    for (const { delegation } of this.#delegations(caps)) {
+      const aud = delegation.audience
+      if (aud.did() === this.issuer.did()) {
+        arr.push(delegation)
+      } else if (aud.did() === session?.audience.did()) {
+        arr.push(delegation)
+        hasSessionDelegations = true
       }
+    }
+
+    if (session && hasSessionDelegations) {
+      arr.push(session)
     }
 
     return arr
@@ -228,7 +243,9 @@ export class Agent {
     const arr = []
 
     for (const value of this.#delegations(caps)) {
-      if (value.delegation.audience.did() !== this.issuer.did()) {
+      const { delegation } = value
+      const isSession = delegation.capabilities.some(c => c.can === Access.session.can)
+      if (!isSession && delegation.audience.did() !== this.issuer.did()) {
         arr.push(value)
       }
     }
@@ -402,6 +419,43 @@ export class Agent {
       capabilities: [...caps],
       meta: this.#data.spaces.get(this.#data.currentSpace),
     }
+  }
+
+  /**
+   * Request authorization of a session allowing this agent to issue UCANs
+   * signed by the passed email address.
+   *
+   * @param {string} email
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   */
+  async authorize(email, opts) {
+    const parts = email.split('@').map(s => encodeURIComponent(s))
+    const sessionPrincipal = DID.parse(`did:mailto:${parts[1]}:${parts[0]}`)
+
+    const res = await Access.authorize.invoke({
+      issuer: this.issuer,
+      audience: this.connection.id,
+      with: this.issuer.did(),
+      nb: { as: sessionPrincipal.did() }
+    }).execute(this.connection)
+
+    if (res?.error) {
+      throw new Error('failed to authorize session', { cause: res })
+    }
+
+    const sessionDelegation =
+      /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
+      (await this.#waitForDelegation(opts))
+
+    const cap = sessionDelegation.capabilities.find(c => c.can === Access.session.can && c.nb.key === this.issuer.did())
+    if (!cap && isExpired(sessionDelegation)) {
+      throw new Error('received invalid delegation')
+    }
+
+    await this.addProof(sessionDelegation)
+
+    // TODO: claim delegations
   }
 
   /**
