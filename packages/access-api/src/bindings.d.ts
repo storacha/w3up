@@ -39,6 +39,7 @@ export interface Env {
   PRIVATE_KEY: string
   SENTRY_DSN: string
   POSTMARK_TOKEN: string
+  POSTMARK_SENDER?: string
   LOGTAIL_TOKEN: string
   // bindings
   SPACES: KVNamespace
