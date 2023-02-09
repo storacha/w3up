@@ -177,7 +177,7 @@ export interface Pageable {
   /**
    * If true, return page of results preceding cursor. Defaults to false.
    */
-  prev?: boolean
+  pre?: boolean
 }
 
 export interface RequestOptions extends Retryable, Abortable, Connectable {}
