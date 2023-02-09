@@ -9,7 +9,10 @@ import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
 import { createAccessClaimHandler } from '../src/service/access-claim.js'
 import { createDelegationsStorage } from '../src/service/delegations.js'
 
-for (const tester of /** @type {const} */ ([
+/**
+ * Run the same tests against several variants of access/delegate handlers.
+ */
+for (const variant of /** @type {const} */ ([
   {
     name: 'handled by access-api in miniflare',
     ...createTesterFromContext(() => context()),
@@ -19,13 +22,13 @@ for (const tester of /** @type {const} */ ([
     ...createTesterFromHandler(() => createAccessDelegateHandler()),
   },
 ])) {
-  describe(`access/delegate ${tester.name}`, () => {
+  describe(`access/delegate ${variant.name}`, () => {
     // test common variants of access/delegate invocation
     for (const [variantName, createTest] of Object.entries(
       namedDelegateVariants()
     )) {
       it(`handles variant ${variantName}`, async () => {
-        const { issuer, audience, invoke } = tester
+        const { issuer, audience, invoke } = variant
         const { invocation, check } = await createTest({ issuer, audience })
         /** @type {Ucanto.Result<unknown, { error: true }>} */
         const result = await invoke(invocation)
@@ -42,7 +45,10 @@ for (const tester of /** @type {const} */ ([
   })
 }
 
-for (const tester of /** @type {const} */ ([
+/**
+ * Run the same tests against several variants of ( access/delegate | access/claim ) handlers.
+ */
+for (const variant of /** @type {const} */ ([
   {
     name: 'handled by createAccessHandler',
     ...createTesterFromHandler(
@@ -71,13 +77,13 @@ for (const tester of /** @type {const} */ ([
   //   ...createTesterFromContext(() => context()),
   // },
 ])) {
-  describe(`access/delegate ${tester.name}`, () => {
+  describe(`access/delegate ${variant.name}`, () => {
     // test delegate, then claim
     it('can delegate, then claim', async () => {
       await testCanDelegateThenClaim(
-        tester.invoke,
-        await tester.issuer,
-        await tester.audience
+        variant.invoke,
+        await variant.issuer,
+        await variant.audience
       )
     })
   })
