@@ -33,13 +33,16 @@ import type {
   VoucherClaim,
   VoucherRedeem,
   Top,
+  AccessAuthorize,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
-import type { ColumnType, Selectable } from 'kysely'
+import { SpaceUnknown } from './errors.js'
+import type { ColumnType, Generated, Selectable } from 'kysely'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
+export * from './errors.js'
 
 /**
  * D1 Types
@@ -50,12 +53,32 @@ export interface SpaceTable {
   agent: URI<'did:'>
   email: string
   product: URI<`${string}:`>
-  inserted_at: ColumnType<Date, never, Date>
+  inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
   metadata: SpaceTableMetadata | null
   invocation: string
   delegation: string | null
 }
+export type SpaceRecord = Selectable<SpaceTable>
+
+export interface AccountTable {
+  did: URI<'did:'>
+  inserted_at: Generated<Date>
+  updated_at: ColumnType<Date, never, Date>
+}
+export type AccountRecord = Selectable<AccountTable>
+
+export interface DelegationTable {
+  cid: string
+  bytes: Uint8Array
+  audience: URI<'did:'>
+  issuer: URI<'did:'>
+  expires_at: Date | null
+  inserted_at: Generated<Date>
+  updated_at: ColumnType<Date, never, Date>
+}
+
+export type DelegationRecord = Selectable<DelegationTable>
 
 export interface SpaceTableMetadata {
   space: SpaceMeta
@@ -66,6 +89,10 @@ export interface SpaceTableMetadata {
  * Access api service definition type
  */
 export interface Service {
+  access: {
+    // returns a URL string for tests or nothing in other envs
+    authorize: ServiceMethod<AccessAuthorize, string | undefined, Failure>
+  }
   voucher: {
     claim: ServiceMethod<
       VoucherClaim,
@@ -77,7 +104,7 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, Selectable<SpaceTable>, Failure>
+    info: ServiceMethod<SpaceInfo, SpaceRecord, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
       ShouldShowValidationNonce | EncodedDelegation<[SpaceRecover]> | undefined,

@@ -47,35 +47,23 @@ function defaultCatchInvocationError(error) {
  * @param {object} options
  * @param {(error: unknown) => Promise<unknown>} [options.catchInvocationError] - catches any error that comes from invoking the proxy invocation on the connection. If it returns a value, that value will be the proxied invocation result.
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} options.connections
- * @param {Ucanto.Signer} options.signer
  */
 export function createProxyHandler(options) {
   /**
    * @template {import('@ucanto/interface').Capability} Capability
-   * @param {Ucanto.Invocation<Capability>} invocationIn
+   * @param {Ucanto.Invocation<Capability>} invocation
    * @param {Ucanto.InvocationContext} context
    * @returns {Promise<Ucanto.Result<any, { error: true }>>}
    */
-  return async function handleInvocation(invocationIn, context) {
-    const {
-      connections,
-      signer,
-      catchInvocationError = defaultCatchInvocationError,
-    } = options
-    const { audience, capabilities, expiration, notBefore } = invocationIn
-    const connection = connections[audience.did()] ?? connections.default
-    const proxyInvocation = Client.invoke({
-      issuer: signer,
-      capability: capabilities[0],
-      audience,
-      proofs: [invocationIn],
-      expiration,
-      notBefore,
-    })
+  return async function handleInvocation(invocation, context) {
+    const { connections, catchInvocationError = defaultCatchInvocationError } =
+      options
+    const connection =
+      connections[invocation.audience.did()] ?? connections.default
     try {
       const [result] = await Client.execute(
-        [proxyInvocation],
-        /** @type {Client.ConnectionView<any>} */ (connection)
+        [await invocation.delegate()],
+        connection
       )
       return result
     } catch (error) {
