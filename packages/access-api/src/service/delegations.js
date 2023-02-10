@@ -3,10 +3,18 @@ import * as Ucanto from '@ucanto/interface'
 /**
  * DelegationsStorage that stores in-memory.
  *
+ * @param {Array<Ucanto.Delegation>} delegations
  * @returns {import("../types/delegations").DelegationsStorage}
  */
-export function createDelegationsStorage() {
-  return /** @type {Array<Ucanto.Delegation>} */ ([])
+export function createDelegationsStorage(delegations = []) {
+  const storage = Object.assign(delegations, {
+    async *[Symbol.asyncIterator]() {
+      for (const delegation of delegations) {
+        yield delegation
+      }
+    },
+  })
+  return storage
 }
 
 /**

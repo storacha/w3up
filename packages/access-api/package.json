@@ -31,6 +31,7 @@
     "preact": "^10.11.3",
     "preact-render-to-string": "^5.2.6",
     "qrcode": "^1.5.1",
+    "streaming-iterables": "^7.1.0",
     "toucan-js": "^2.7.0"
   },
   "devDependencies": {
@@ -90,6 +91,7 @@
         "error",
         {
           "definedTypes": [
+            "AsyncIterableIterator",
             "Awaited",
             "D1Database",
             "FetchEvent",

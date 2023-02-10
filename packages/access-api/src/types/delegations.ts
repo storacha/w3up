@@ -9,7 +9,7 @@ export interface DelegationsStorage<
     ...delegation: Array<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
   ) => Resolvable<unknown>
   length: Resolvable<number>
-  [Symbol.iterator]: () => IterableIterator<
+  [Symbol.asyncIterator]: () => AsyncIterableIterator<
     Ucanto.Delegation<Ucanto.Tuple<Cap>>
   >
 }

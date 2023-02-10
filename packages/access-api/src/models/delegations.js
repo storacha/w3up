@@ -1,5 +1,8 @@
 import * as Ucanto from '@ucanto/interface'
-import { delegationsToBytes } from '@web3-storage/access/encoding'
+import {
+  delegationsToBytes,
+  bytesToDelegations,
+} from '@web3-storage/access/encoding'
 
 /**
  * @typedef {import('@web3-storage/access/src/types').DelegationTable} DelegationRow
@@ -88,6 +91,42 @@ export class DbDelegationsStorage {
   [Symbol.iterator]() {
     throw new Error(`NotImplemented: D1DelegationsStorage#[Symbol.iterator]`)
   }
+
+  /**
+   * @returns {AsyncIterableIterator<Ucanto.Delegation>}
+   */
+  async *[Symbol.asyncIterator]() {
+    if (this.#db.canStream) {
+      for await (const row of this.#db
+        .selectFrom('delegations')
+        .select(['bytes'])
+        .stream()) {
+        yield rowToDelegation(row)
+      }
+    } else {
+      // this db doesn't support .stream() so do something worse
+      for (const row of await this.#db
+        .selectFrom('delegations')
+        .select(['bytes'])
+        .execute()) {
+        yield rowToDelegation(row)
+      }
+    }
+  }
+}
+
+/**
+ * @param {Pick<DelegationRow, 'bytes'>} row
+ * @returns {Ucanto.Delegation}
+ */
+function rowToDelegation(row) {
+  const delegations = bytesToDelegations(row.bytes)
+  if (delegations.length !== 1) {
+    throw new Error(
+      `unexpected number of delegations from bytes: ${delegations.length}`
+    )
+  }
+  return delegations[0]
 }
 
 /**
