@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v2.2.0...capabilities-v2.3.0) (2023-02-10)
+
+
+### Features
+
+* add `pre` caveat to `store/list` and `upload/list` ([#423](https://github.com/web3-storage/w3protocol/issues/423)) ([a0f6d28](https://github.com/web3-storage/w3protocol/commit/a0f6d2834b900c4522fe71da473e4b43760502fd))
+* add access/delegate capability parser exported from @web3-storage/capabilities ([#420](https://github.com/web3-storage/w3protocol/issues/420)) ([e8e2b1a](https://github.com/web3-storage/w3protocol/commit/e8e2b1a7606ce82bc346517d875de5244d240229))
+* add support for access/authorize and update ([#392](https://github.com/web3-storage/w3protocol/issues/392)) ([9c8ca0b](https://github.com/web3-storage/w3protocol/commit/9c8ca0b385c940c8f0c21ee9edde093d2dcab8b8)), closes [#386](https://github.com/web3-storage/w3protocol/issues/386)
+* define access/claim in @web3-storage/capabilities ([#409](https://github.com/web3-storage/w3protocol/issues/409)) ([4d72ba3](https://github.com/web3-storage/w3protocol/commit/4d72ba3a1ce2564cda13c62137967613b18334a7))
+
 ## [2.2.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v2.1.0...capabilities-v2.2.0) (2023-01-30)
 
 
