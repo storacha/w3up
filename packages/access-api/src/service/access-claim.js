@@ -5,6 +5,16 @@ import { toDelegationsDict } from './delegations.js'
 import { collect } from 'streaming-iterables'
 
 /**
+ * @typedef AccessClaimSuccess
+ * @property {Record<string,Ucanto.UCANLink>} delegations
+ */
+
+/**
+ * @typedef {{ error: true }} AccessClaimFailure
+ * @typedef {Ucanto.Result<AccessClaimSuccess, AccessClaimFailure>} AccessClaimResult
+ */
+
+/**
  * @param {import('../bindings').RouteContext} ctx
  */
 export function accessClaimProvider(ctx) {
@@ -14,14 +24,9 @@ export function accessClaimProvider(ctx) {
 }
 
 /**
- * @typedef AccessClaimSuccess
- * @property {Record<string,Ucanto.UCANLink>} delegations
- */
-
-/**
  * @callback AccessClaimHandler
  * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessClaim>} invocation
- * @returns {Promise<Ucanto.Result<AccessClaimSuccess, { error: true }>>}
+ * @returns {Promise<AccessClaimResult>}
  */
 
 /**
@@ -30,6 +35,7 @@ export function accessClaimProvider(ctx) {
  * @returns {AccessClaimHandler}
  */
 export function createAccessClaimHandler({ delegations }) {
+  /** @type {AccessClaimHandler} */
   return async (invocation) => {
     return {
       delegations: toDelegationsDict(await collect(delegations)),

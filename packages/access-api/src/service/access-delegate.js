@@ -4,6 +4,12 @@ import * as Ucanto from '@ucanto/interface'
 import { createDelegationsStorage } from './delegations.js'
 
 /**
+ * @typedef {{}} AccessDelegateSuccess
+ * @typedef {{ error: true }} AccessDelegateFailure
+ * @typedef {Ucanto.Result<AccessDelegateSuccess, AccessDelegateFailure>} AccessDelegateResult
+ */
+
+/**
  * @param {import('../bindings').RouteContext} ctx
  */
 export function accessDelegateProvider(ctx) {
@@ -15,7 +21,7 @@ export function accessDelegateProvider(ctx) {
 /**
  * @callback AccessDelegateHandler
  * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessDelegate>} invocation
- * @returns {Promise<Ucanto.Result<unknown, { error: true }>>}
+ * @returns {Promise<AccessDelegateResult>}
  */
 
 /**
