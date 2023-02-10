@@ -27,7 +27,13 @@ export function service(ctx) {
 
     access: {
       authorize: accessAuthorizeProvider(ctx),
-      delegate: accessDelegateProvider(ctx),
+      delegate: (...args) => {
+        // disable until hardened in test/staging
+        if (ctx.config.ENV === 'production') {
+          throw new Error(`acccess/delegate invocation handling is not enabled`)
+        }
+        return accessDelegateProvider(ctx)(...args)
+      },
     },
     voucher: {
       claim: voucherClaimProvider(ctx),
