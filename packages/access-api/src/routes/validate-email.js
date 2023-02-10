@@ -6,7 +6,22 @@ import {
   HtmlResponse,
   ValidateEmail,
   ValidateEmailError,
+  PendingValidateEmail,
 } from '../utils/html.js'
+
+/**
+ * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
+ * @param {import('../bindings.js').RouteContext} env
+ */
+export async function preValidateEmail(req, env) {
+  if (!req.query?.ucan) {
+    return new HtmlResponse(
+      <ValidateEmailError msg={'Missing delegation in the URL.'} />
+    )
+  }
+
+  return new HtmlResponse(<PendingValidateEmail autoApprove={true} />)
+}
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
