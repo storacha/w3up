@@ -294,12 +294,8 @@ The `with` field of the invocation must be set to the DID of the memory space to
 | ----------- | ------------------------ | --------- | --------------------------------------------------------------- |
 | `nb.cursor` | string                   | ❌         | A cursor returned by a previous invocation                      |
 | `nb.size`   | integer                  | ❌         | The maximum number of results to return                         |
+| `nb.pre`    | boolean                  | ❌         | If true, return the page of results preceeding the cursor       |
 
-| field       | value                    | required? | context                                                         |
-| ----------- | ------------------------ | --------- | --------------------------------------------------------------- |
-| `nb.cursor` | string                   | ❌         | A cursor returned by a previous invocation                      |
-| `nb.size`   | integer                  | ❌         | The maximum number of results to return                         |
-| `nb.pre`    | boolean                  | ❌         | If true, return the page of results preceeding the cursor |
 ## `voucher/` namespace
 
 TODO: more voucher docs when implementation details settle down a bit.
