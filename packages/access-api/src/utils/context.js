@@ -58,7 +58,10 @@ export function getContext(request, env, ctx) {
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
     },
-    email: new Email({ token: config.POSTMARK_TOKEN }),
+    email: new Email({
+      token: config.POSTMARK_TOKEN,
+      sender: config.POSTMARK_SENDER,
+    }),
     uploadApi: createUploadApiConnection({
       audience: DID.parse(config.DID).did(),
       url: new URL(config.UPLOAD_API_URL),
