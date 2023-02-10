@@ -36,7 +36,32 @@ export class DbDelegationsStorage {
 
   /** @type {import("../types/delegations").DelegationsStorage['length']} */
   get length() {
-    throw new Error(`NotImplemented: D1DelegationsStorage#length`)
+    return new Promise((resolve, reject) => {
+      this.#db
+        .selectFrom('delegations')
+        .select((e) => e.fn.count('cid').as('size'))
+        .executeTakeFirstOrThrow()
+        .then(({ size }) => {
+          if (typeof size === 'string') {
+            const sizeNumber = parseInt(size, 10)
+            if (isNaN(sizeNumber)) {
+              throw new TypeError(
+                `unable to determine size number of delegations table`
+              )
+            }
+            return sizeNumber
+          }
+          if (typeof size === 'bigint') {
+            if (size > Number.MAX_SAFE_INTEGER) {
+              throw new TypeError(`table size too big for js Number`)
+            }
+            return Number(size)
+          }
+          return size
+        })
+        .then(resolve)
+        .catch(reject)
+    })
   }
 
   /**

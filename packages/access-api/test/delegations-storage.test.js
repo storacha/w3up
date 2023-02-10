@@ -4,12 +4,18 @@ import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import { createD1Database } from '../src/utils/d1.js'
+import * as assert from 'node:assert'
 
 describe('DbDelegationsStorage', () => {
   it('should persist delegations', async () => {
     const { d1 } = await context()
-    const dbDelegations = new DbDelegationsStorage(createD1Database(d1))
-    await dbDelegations.push(await createSampleDelegation())
+    const storage = new DbDelegationsStorage(createD1Database(d1))
+    const count = Math.round(Math.random() * 10)
+    const delegations = await Promise.all(
+      Array.from({ length: count }).map(() => createSampleDelegation())
+    )
+    await storage.push(...delegations)
+    assert.deepEqual(await storage.length, delegations.length)
   })
 })
 
