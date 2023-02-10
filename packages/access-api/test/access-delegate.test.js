@@ -8,6 +8,8 @@ import * as principal from '@ucanto/principal'
 import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
 import { createAccessClaimHandler } from '../src/service/access-claim.js'
 import { createDelegationsStorage } from '../src/service/delegations.js'
+import { createD1Database } from '../src/utils/d1.js'
+import { DbDelegationsStorage } from '../src/models/delegations.js'
 
 /**
  * Run the same tests against several variants of access/delegate handlers.
@@ -50,7 +52,7 @@ for (const variant of /** @type {const} */ ([
  */
 for (const variant of /** @type {const} */ ([
   {
-    name: 'handled by createAccessHandler',
+    name: 'handled by createAccessHandler using array createDelegationsStorage',
     ...createTesterFromHandler(
       (() => {
         const delegations = createDelegationsStorage()
@@ -59,6 +61,28 @@ for (const variant of /** @type {const} */ ([
             createAccessDelegateHandler({ delegations }),
             createAccessClaimHandler({ delegations })
           )
+        }
+      })()
+    ),
+  },
+  {
+    name: 'handled by createAccessHandler using DbDelegationsStorage',
+    ...createTesterFromHandler(
+      (() => {
+        const d1 = context().then((ctx) => ctx.d1)
+        const database = d1.then((d1) => createD1Database(d1))
+        const delegations = database.then((db) => new DbDelegationsStorage(db))
+        return () => {
+          /**
+           * @type {InvocationHandler<AccessDelegate | AccessClaim, unknown, { error: true }>}
+           */
+          return async (invocation) => {
+            const handle = createAccessHandler(
+              createAccessDelegateHandler({ delegations: await delegations }),
+              createAccessClaimHandler({ delegations: await delegations })
+            )
+            return handle(invocation)
+          }
         }
       })()
     ),

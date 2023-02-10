@@ -145,7 +145,8 @@ export class D1Error extends Error {
  * @returns {import('../types/database.js').Database<S>}
  */
 export function createD1Database(d1) {
-  return new Kysely({
+  /** @type {Kysely<S>} */
+  const kdb = new Kysely({
     dialect: new D1Dialect({ database: d1 }),
     plugins: [
       new GenericPlugin({
@@ -156,4 +157,8 @@ export function createD1Database(d1) {
       }),
     ],
   })
+  const db = Object.assign(kdb, {
+    canStream: false,
+  })
+  return db
 }

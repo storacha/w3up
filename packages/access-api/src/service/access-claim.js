@@ -2,6 +2,7 @@ import * as Server from '@ucanto/server'
 import { claim } from '@web3-storage/capabilities/access'
 import * as Ucanto from '@ucanto/interface'
 import { toDelegationsDict } from './delegations.js'
+import { collect } from 'streaming-iterables'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -31,7 +32,7 @@ export function accessClaimProvider(ctx) {
 export function createAccessClaimHandler({ delegations }) {
   return async (invocation) => {
     return {
-      delegations: toDelegationsDict([...delegations]),
+      delegations: toDelegationsDict(await collect(delegations)),
     }
   }
 }
