@@ -3,14 +3,17 @@
  * into ucanto responses.
  */
 
-import * as UCAN from '@ipld/dag-ucan'
 import * as Ucanto from '@ucanto/interface'
 import { createSampleDelegation } from '../src/utils/ucan.js'
 import * as assert from 'node:assert'
-import { identity } from 'multiformats/hashes/identity'
+import {
+  bytesToDelegations,
+  delegationsToBytes,
+} from '@web3-storage/access/encoding'
 
 /**
- * @typedef {Record<string,Ucanto.Link>} Encoded
+ * @template D
+ * @typedef {Record<string,Ucanto.ByteView<D>>} DictCidToCarBytes
  */
 
 /**
@@ -18,40 +21,72 @@ import { identity } from 'multiformats/hashes/identity'
  * the ucanto response is likely going to be encoded to CBOR.
  * encode the set to a dict, where keys are a CIDs of the delegation, and
  *
- * @param {Iterable<Ucanto.Delegation>} delegations
- * @returns {Promise<Encoded>}
+ * @template {Ucanto.Capabilities} Capabilities
+ * @param {Iterable<Ucanto.Delegation<Capabilities>>} delegations
+ * @returns {DictCidToCarBytes<Ucanto.Delegation<Capabilities>>}
  */
-async function encode(delegations) {
-  const entries = await Promise.all(
-    [...delegations].map(async (d) => {
-      const identityLink = await UCAN.link(d.data, { hasher: identity })
-      return /** @type {const} */ ([d.cid.toString(), identityLink])
-    })
-  )
+function encode(delegations) {
+  const entries = [...delegations].map((d) => {
+    return /** @type {const} */ ([d.cid.toString(), delegationsToBytes([d])])
+  })
   return Object.fromEntries(entries)
+}
+
+/**
+ * @param {DictCidToCarBytes<Ucanto.Delegation>} encoded
+ * @returns {Iterable<Ucanto.Delegation>}
+ */
+function* decode(encoded) {
+  for (const carBytes of Object.values(encoded)) {
+    const delegations = bytesToDelegations(
+      /** @type {import('@web3-storage/access/src/types.js').BytesDelegation<Ucanto.Capabilities>} */ (
+        carBytes
+      )
+    )
+    yield* delegations
+  }
 }
 
 it('can encode delegations set to dict', async () => {
   const delegations = [
     ...(await createSampleDelegations(Math.ceil(3 * Math.random()))),
   ]
+  const delegationsCidStrings = new Set(delegations.map((d) => String(d.cid)))
   const encoded = await encode(delegations)
   assert.deepEqual(
     Object.entries(encoded).length,
     delegations.length,
     'encoded has one entry for each delegation'
   )
-  const ipldRawCode = 0x55
-  for (const link of Object.values(encoded)) {
-    assert.deepEqual(
-      link.code,
-      ipldRawCode,
-      'encoded delegation CID should use raw code'
+  for (const value of Object.values(encoded)) {
+    const decodedDelegations = bytesToDelegations(
+      /** @type {import('@web3-storage/access/src/types.js').BytesDelegation<Ucanto.Capabilities>} */ (
+        value
+      )
+    )
+    assert.deepEqual(decodedDelegations.length, 1, 'decodedValue has one entry')
+    const [delegation] = decodedDelegations
+    assert.ok(
+      delegationsCidStrings.has(delegation.cid.toString()),
+      'decoded delegations entry has same cid as original'
     )
   }
 })
 
-// @todo test can decoded Encoded back to Set<Delegations>
+it('can decode delegations dict back to set', async () => {
+  const delegations = [
+    ...(await createSampleDelegations(Math.ceil(3 * Math.random()))),
+  ]
+  const delegationsCidStrings = new Set(delegations.map((d) => String(d.cid)))
+  const encoded = await encode(delegations)
+  const decoded = [...decode(encoded)]
+  const decodedCidStrings = new Set(decoded.map((d) => String(d.cid)))
+  assert.deepEqual(
+    [...delegationsCidStrings],
+    [...decodedCidStrings],
+    'decoded has same cids as original'
+  )
+})
 
 async function createSampleDelegations(length = 3) {
   const delegations = await Promise.all(

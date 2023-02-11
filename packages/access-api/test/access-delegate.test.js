@@ -10,6 +10,7 @@ import { createAccessClaimHandler } from '../src/service/access-claim.js'
 import { createDelegationsStorage } from '../src/service/delegations.js'
 import { createD1Database } from '../src/utils/d1.js'
 import { DbDelegationsStorage } from '../src/models/delegations.js'
+import * as delegationsResponse from '../src/utils/delegations-response.js'
 
 /**
  * Run the same tests against several variants of access/delegate handlers.
@@ -318,7 +319,10 @@ describe('access-delegate-handler', () => {
  * @param {Ucanto.Verifier<Ucanto.DID>} audience
  */
 async function testCanDelegateThenClaim(invoke, issuer, audience) {
-  const { delegate, claim } = await setupDelegateThenClaim(issuer, audience)
+  const { delegate, claim, delegations } = await setupDelegateThenClaim(
+    issuer,
+    audience
+  )
   const delegateResult = await invoke(delegate)
   warnOnErrorResult(delegateResult)
   assert.notDeepEqual(
@@ -330,10 +334,17 @@ async function testCanDelegateThenClaim(invoke, issuer, audience) {
   // delegate succeeded, now try to claim it
   const claimResult = await invoke(claim)
   assertNotError(claimResult)
+  const claimedDelegations = [
+    ...delegationsResponse.decode(
+      /** @type {import('../src/service/access-claim.js').AccessClaimSuccess} */ (
+        claimResult
+      ).delegations
+    ),
+  ]
   assert.deepEqual(
-    Object.values(/** @type {any} */ (claimResult).delegations).length,
-    Object.values(delegate.capabilities[0].nb.delegations).length,
-    'claimed same number of delegations as were delegated'
+    claimedDelegations,
+    delegations,
+    'claimed all delegated delegations'
   )
 }
 
@@ -376,6 +387,7 @@ async function setupDelegateThenClaim(invoker, audience) {
     audience: bob,
     capabilities: [{ can: 'store/*', with: alice.did() }],
   })
+  const delegations = [aliceSaysBobCanStoreAllWithAlice]
   // invocation of access/delegate
   const delegate = await Access.delegate
     .invoke({
@@ -400,7 +412,7 @@ async function setupDelegateThenClaim(invoker, audience) {
       proofs: [],
     })
     .delegate()
-  return { delegate, claim }
+  return { delegate, claim, delegations }
 }
 
 /**

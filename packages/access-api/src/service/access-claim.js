@@ -1,12 +1,12 @@
 import * as Server from '@ucanto/server'
 import { claim } from '@web3-storage/capabilities/access'
 import * as Ucanto from '@ucanto/interface'
-import { toDelegationsDict } from './delegations.js'
 import { collect } from 'streaming-iterables'
+import * as delegationsResponse from '../utils/delegations-response.js'
 
 /**
  * @typedef AccessClaimSuccess
- * @property {Record<string,Ucanto.UCANLink>} delegations
+ * @property {Record<string,Ucanto.ByteView<Ucanto.Delegation>>} delegations
  */
 
 /**
@@ -38,7 +38,7 @@ export function createAccessClaimHandler({ delegations }) {
   /** @type {AccessClaimHandler} */
   return async (invocation) => {
     return {
-      delegations: toDelegationsDict(await collect(delegations)),
+      delegations: delegationsResponse.encode(await collect(delegations)),
     }
   }
 }
