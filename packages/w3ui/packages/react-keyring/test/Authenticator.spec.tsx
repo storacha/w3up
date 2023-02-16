@@ -4,7 +4,11 @@ import { test, expect, vi } from 'vitest'
 import user from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react'
 
-import { KeyringContext, keyringContextDefaultValue, KeyringContextValue } from '../src/providers/Keyring'
+import {
+  KeyringContext,
+  keyringContextDefaultValue,
+  KeyringContextValue
+} from '../src/providers/Keyring'
 import { Authenticator, CancelButton, Form, EmailInput } from '../src/index'
 
 test('CancelButton', async () => {

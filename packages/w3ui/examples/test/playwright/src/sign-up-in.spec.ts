@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-for (const ui of ['react', 'solid', 'vue'/* 'vanilla' not work atm */]) {
+for (const ui of ['react', 'solid', 'vue' /* 'vanilla' not work atm */]) {
   test(`${ui}: sign in`, async ({ page }) => {
     await page.goto(`/${ui}/sign-up-in/`)
     await expect(page).toHaveTitle('W3UI Sign Up / Sign In Example App')

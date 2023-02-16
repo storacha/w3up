@@ -3,13 +3,13 @@ import { RegisterForm } from './register'
 import { ListFiles } from './list'
 
 export const EVENTS = {
-  registrationSuccess: 'registration:success'
+  registrationSuccess: 'registration:success',
 }
 
 const SELECTORS = {
   registerComponent: '#register-form-component',
   uploadComponent: '#upload-form-component',
-  container: '.container'
+  container: '.container',
 }
 
 document.addEventListener(EVENTS.registrationSuccess, (event) => {
@@ -21,7 +21,4 @@ document.addEventListener(EVENTS.registrationSuccess, (event) => {
   container.appendChild(uploadEl)
 })
 
-export {
-  RegisterForm,
-  ListFiles
-}
+export { RegisterForm, ListFiles }

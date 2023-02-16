@@ -4,7 +4,7 @@ import type { Environment } from 'vitest'
 
 const env: Environment = {
   name: 'w3ui',
-  async setup (global, options) {
+  async setup(global, options) {
     // use the standard jsdom environment as a base
     const jsdom = await builtinEnvironments.jsdom.setup(global, options)
 
@@ -14,11 +14,11 @@ const env: Environment = {
     Object.defineProperty(global, 'crypto', { get: () => crypto.webcrypto })
 
     return {
-      async teardown (global) {
+      async teardown(global) {
         await jsdom.teardown(global)
-      }
+      },
     }
-  }
+  },
 }
 
 export default env

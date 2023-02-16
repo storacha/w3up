@@ -9,24 +9,26 @@ export default {
   component: SpaceFinder,
   tags: ['autodocs'],
   argTypes: {
-    setSelected: { action: 'set space' }
-  }
+    setSelected: { action: 'set space' },
+  },
 }
 
-const spaces = ['did:example:abc123', 'did:example:xyz789', 'did:example:lmn456'].map(
-  (did: string, i) => new Space(did as DID, { name: `Space ${i}` })
-)
+const spaces = [
+  'did:example:abc123',
+  'did:example:xyz789',
+  'did:example:lmn456',
+].map((did: string, i) => new Space(did as DID, { name: `Space ${i}` }))
 
 export const Primary = {
   args: {
     spaces,
-    selected: spaces[0]
+    selected: spaces[0],
   },
   decorators: [
     (Story) => (
       <div style={{ margin: '3em' }}>
         <Story />
       </div>
-    )
-  ]
+    ),
+  ],
 }

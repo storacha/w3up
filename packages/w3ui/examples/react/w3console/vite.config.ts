@@ -8,12 +8,18 @@ const patchedPreactPlugin = preact()
 patchedPreactPlugin[0].config = () => ({
   resolve: {
     alias: {
-      'react-dom/test-utils': path.resolve(__dirname, './node_modules/preact/test-utils'),
+      'react-dom/test-utils': path.resolve(
+        __dirname,
+        './node_modules/preact/test-utils'
+      ),
       'react-dom': path.resolve(__dirname, './node_modules/preact/compat'),
       react: path.resolve(__dirname, './node_modules/preact/compat'),
-      'preact/jsx-runtime': path.resolve(__dirname, './node_modules/preact/jsx-runtime')
-    }
-  }
+      'preact/jsx-runtime': path.resolve(
+        __dirname,
+        './node_modules/preact/jsx-runtime'
+      ),
+    },
+  },
 })
 
 // https://vitejs.dev/config/
@@ -21,6 +27,6 @@ export default defineConfig({
   base: '',
   plugins: [patchedPreactPlugin],
   server: {
-    port: 3000
-  }
+    port: 3000,
+  },
 })

@@ -15,7 +15,9 @@
     "build": "rollup --config rollup.config.js && pnpm run typecheck",
     "clean": "rm -rf node_modules package-lock.json coverage packages/*/{package-lock.json,build,node_modules}",
     "compile": "pnpm run --recursive --if-present compile",
-    "lint": "ts-standard",
+    "format": "pnpm --recursive --if-present run lint --fix",
+    "format:check": "lint",
+    "lint": "pnpm --recursive --if-present run lint",
     "test": "pnpm run --filter './packages/**' --recursive test",
     "typecheck": "tsc -b",
     "test:examples": "pnpm run --filter './examples/**' test",
@@ -45,6 +47,7 @@
     "@web3-storage/capabilities": "^2.2.0",
     "esm": "^3.2.25",
     "fake-indexeddb": "^4.0.1",
+    "hd-scripts": "^4.1.0",
     "jsdom": "^21.1.0",
     "path": "^0.12.7",
     "react": "^18.2.0",
@@ -55,15 +58,9 @@
     "serve": "^14.2.0",
     "solid-js": "^1.6.10",
     "ts-node": "^10.9.1",
-    "ts-standard": "^12.0.2",
     "typescript": "^4.9.4",
     "vitest": "^0.27.3",
     "vitest-environment-w3ui": "workspace:^",
     "vue": "^3.2.45"
-  },
-  "ts-standard": {
-    "ignore": [
-      "dist"
-    ]
   }
 }

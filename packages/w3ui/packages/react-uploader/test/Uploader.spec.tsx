@@ -4,7 +4,11 @@ import { test, expect, vi } from 'vitest'
 import user from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react'
 
-import { UploaderContext, uploaderContextDefaultValue, UploaderContextValue } from '../src/providers/Uploader'
+import {
+  UploaderContext,
+  uploaderContextDefaultValue,
+  UploaderContextValue
+} from '../src/providers/Uploader'
 import { Uploader, Input, Form } from '../src/index'
 
 test('Form', async () => {

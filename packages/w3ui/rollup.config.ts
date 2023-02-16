@@ -23,16 +23,16 @@ const umdDevPlugin = (type: 'development' | 'production'): Plugin =>
   replace({
     'process.env.NODE_ENV': `"${type}"`,
     delimiters: ['', ''],
-    preventAssignment: true
+    preventAssignment: true,
   })
 
 const babelPlugin = babel({
   babelHelpers: 'bundled',
   exclude: /node_modules/,
-  extensions: ['.ts', '.tsx', '.js']
+  extensions: ['.ts', '.tsx', '.js'],
 })
 
-export default function rollup (options: RollupOptions): RollupOptions[] {
+export default function rollup(options: RollupOptions): RollupOptions[] {
   return [
     ...buildConfigs({
       name: 'uploader-core',
@@ -40,7 +40,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       jsName: 'UploaderCore',
       outputFile: 'uploader-core',
       entryFile: 'src/index.ts',
-      globals: {}
+      globals: {},
     }),
     ...buildConfigs({
       name: 'uploads-list-core',
@@ -48,7 +48,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       jsName: 'UploadsListCore',
       outputFile: 'uploads-list-core',
       entryFile: 'src/index.ts',
-      globals: {}
+      globals: {},
     }),
     ...buildConfigs({
       name: 'keyring-core',
@@ -56,7 +56,7 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       jsName: 'KeyringCore',
       outputFile: 'keyring-core',
       entryFile: 'src/index.ts',
-      globals: {}
+      globals: {},
     }),
     ...buildConfigs({
       name: 'react-keyring',
@@ -65,8 +65,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       outputFile: 'react-keyring',
       entryFile: 'src/index.ts',
       globals: {
-        react: 'React'
-      }
+        react: 'React',
+      },
     }),
     ...buildConfigs({
       name: 'react-uploader',
@@ -76,8 +76,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
-        '@w3ui/react-keyring': 'ReactKeyring'
-      }
+        '@w3ui/react-keyring': 'ReactKeyring',
+      },
     }),
     ...buildConfigs({
       name: 'react-uploads-list',
@@ -87,8 +87,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
-        '@w3ui/react-keyring': 'ReactKeyring'
-      }
+        '@w3ui/react-keyring': 'ReactKeyring',
+      },
     }),
     ...buildConfigs({
       name: 'react',
@@ -97,8 +97,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       outputFile: 'react',
       entryFile: 'src/index.ts',
       globals: {
-        react: 'React'
-      }
+        react: 'React',
+      },
     }),
     ...buildConfigs({
       name: 'solid-keyring',
@@ -108,8 +108,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         'solid-js': 'Solid',
-        'solid-js/store': 'SolidStore'
-      }
+        'solid-js/store': 'SolidStore',
+      },
     }),
     ...buildConfigs({
       name: 'solid-uploader',
@@ -120,8 +120,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {
         'solid-js': 'Solid',
         'solid-js/store': 'SolidStore',
-        '@w3ui/solid-keyring': 'SolidKeyring'
-      }
+        '@w3ui/solid-keyring': 'SolidKeyring',
+      },
     }),
     ...buildConfigs({
       name: 'solid-uploads-list',
@@ -132,8 +132,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       globals: {
         'solid-js': 'Solid',
         'solid-js/store': 'SolidStore',
-        '@w3ui/solid-keyring': 'SolidKeyring'
-      }
+        '@w3ui/solid-keyring': 'SolidKeyring',
+      },
     }),
     ...buildConfigs({
       name: 'vue-keyring',
@@ -142,8 +142,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       outputFile: 'vue-keyring',
       entryFile: 'src/index.ts',
       globals: {
-        vue: 'Vue'
-      }
+        vue: 'Vue',
+      },
     }),
     ...buildConfigs({
       name: 'vue-uploader',
@@ -153,8 +153,8 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         vue: 'Vue',
-        '@w3ui/vue-keyring': 'VueKeyring'
-      }
+        '@w3ui/vue-keyring': 'VueKeyring',
+      },
     }),
     ...buildConfigs({
       name: 'vue-uploads-list',
@@ -164,13 +164,13 @@ export default function rollup (options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         vue: 'Vue',
-        '@w3ui/vue-keyring': 'VueKeyring'
-      }
-    })
+        '@w3ui/vue-keyring': 'VueKeyring',
+      },
+    }),
   ]
 }
 
-function buildConfigs (opts: {
+function buildConfigs(opts: {
   packageDir: string
   name: string
   jsName: string
@@ -191,13 +191,13 @@ function buildConfigs (opts: {
     packageDir: opts.packageDir,
     external,
     banner,
-    globals: opts.globals
+    globals: opts.globals,
   }
 
   return [esm(options), cjs(options), umdDev(options), umdProd(options)]
 }
 
-function esm ({ input, packageDir, external, banner }: Options): RollupOptions {
+function esm({ input, packageDir, external, banner }: Options): RollupOptions {
   return {
     // ESM
     external,
@@ -206,18 +206,18 @@ function esm ({ input, packageDir, external, banner }: Options): RollupOptions {
       format: 'esm',
       sourcemap: true,
       dir: `${packageDir}/build/esm`,
-      banner
+      banner,
     },
     plugins: [
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true })
-    ]
+      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true }),
+    ],
   }
 }
 
-function cjs ({ input, external, packageDir, banner }: Options): RollupOptions {
+function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
   return {
     // CJS
     external,
@@ -228,25 +228,25 @@ function cjs ({ input, external, packageDir, banner }: Options): RollupOptions {
       dir: `${packageDir}/build/cjs`,
       // preserveModules: true,
       exports: 'named',
-      banner
+      banner,
     },
     plugins: [
       commonjs(),
       json(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true })
-    ]
+      nodeResolve({ extensions: ['.ts', '.tsx'], browser: true }),
+    ],
   }
 }
 
-function umdDev ({
+function umdDev({
   input,
   external,
   packageDir,
   outputFile,
   globals,
   banner,
-  jsName
+  jsName,
 }: Options): RollupOptions {
   return {
     // UMD (Dev)
@@ -258,26 +258,26 @@ function umdDev ({
       file: `${packageDir}/build/umd/index.development.js`,
       name: jsName,
       globals,
-      banner
+      banner,
     },
     plugins: [
       commonjs(),
       json(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx'], browser: true }),
-      umdDevPlugin('development')
-    ]
+      umdDevPlugin('development'),
+    ],
   }
 }
 
-function umdProd ({
+function umdProd({
   input,
   external,
   packageDir,
   outputFile,
   globals,
   banner,
-  jsName
+  jsName,
 }: Options): RollupOptions {
   return {
     // UMD (Prod)
@@ -289,7 +289,7 @@ function umdProd ({
       file: `${packageDir}/build/umd/index.production.js`,
       name: jsName,
       globals,
-      banner
+      banner,
     },
     plugins: [
       commonjs(),
@@ -299,23 +299,23 @@ function umdProd ({
       umdDevPlugin('production'),
       terser({
         mangle: true,
-        compress: true
+        compress: true,
       }),
       size({}),
       visualizer({
         filename: `${packageDir}/build/stats-html.html`,
-        gzipSize: true
+        gzipSize: true,
       }),
       visualizer({
         filename: `${packageDir}/build/stats.json`,
         template: 'raw-data',
-        gzipSize: true
-      })
-    ]
+        gzipSize: true,
+      }),
+    ],
   }
 }
 
-function createBanner (libraryName: string): string {
+function createBanner(libraryName: string): string {
   return `/**
  * ${libraryName}
  *

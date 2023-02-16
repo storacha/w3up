@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test'
 
-for (const ui of ['react', 'solid'/* `vue` not exit yet, 'vanilla' not work atm */]) {
+for (const ui of [
+  'react',
+  'solid' /* `vue` not exit yet, 'vanilla' not work atm */,
+]) {
   test(`${ui}: multi file upload`, async ({ page }) => {
     await page.goto(`/${ui}/multi-file-upload/`)
     await expect(page).toHaveTitle('W3UI Multi File Upload Example App')

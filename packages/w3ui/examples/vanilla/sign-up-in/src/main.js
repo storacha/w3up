@@ -1,14 +1,11 @@
 import './assets/tachyons.min.css'
 
-import {
-  createAgent,
-  getCurrentSpace
-} from '@w3ui/keyring-core'
+import { createAgent, getCurrentSpace } from '@w3ui/keyring-core'
 
 // FIXME: remove this once we no longer need to target staging
 import {
   accessServicePrincipal,
-  accessServiceConnection
+  accessServiceConnection,
 } from './staging-service.js'
 
 const SELECTORS = {
@@ -16,39 +13,43 @@ const SELECTORS = {
   cancelRegistrationButton: '#cancel-registration',
   signOutButton: '#sign-out',
   verificationTemplate: '#verification-required-template',
-  confirmationTemplate: '#registration-success-template'
+  confirmationTemplate: '#registration-success-template',
 }
 
 export const EVENTS = {
   registrationStart: 'registration:start',
-  registrationSuccess: 'registration:success'
+  registrationSuccess: 'registration:success',
 }
 
 export class RegisterForm extends window.HTMLElement {
-  constructor () {
+  constructor() {
     super()
     this.agent = null
     this.email = null
     this.form$ = document.querySelector(SELECTORS.authForm)
-    this.confirmationTemplate$ = document.querySelector(SELECTORS.confirmationTemplate)
-    this.verificationTemplate$ = document.querySelector(SELECTORS.verificationTemplate)
+    this.confirmationTemplate$ = document.querySelector(
+      SELECTORS.confirmationTemplate
+    )
+    this.verificationTemplate$ = document.querySelector(
+      SELECTORS.verificationTemplate
+    )
     this.submitHandler = this.submitHandler.bind(this)
     this.cancelRegistrationHandler = this.cancelRegistrationHandler.bind(this)
     this.signOutHandler = this.signOutHandler.bind(this)
     this.formatTemplateContent = this.formatTemplateContent.bind(this)
   }
 
-  async getAgent () {
+  async getAgent() {
     if (this.agent == null) {
       this.agent = await createAgent({
         servicePrincipal: accessServicePrincipal,
-        connection: accessServiceConnection
+        connection: accessServiceConnection,
       })
     }
     return this.agent
   }
 
-  async connectedCallback () {
+  async connectedCallback() {
     this.form$.addEventListener('submit', this.submitHandler)
 
     const agent = await this.getAgent()
@@ -63,42 +64,47 @@ export class RegisterForm extends window.HTMLElement {
     }
   }
 
-  formatTemplateContent (templateContent) {
+  formatTemplateContent(templateContent) {
     templateContent.querySelector('[data-email-slot]').innerHTML = this.email
     return templateContent
   }
 
-  toggleConfirmation () {
+  toggleConfirmation() {
     const templateContent = this.confirmationTemplate$.content
     this.replaceChildren(this.formatTemplateContent(templateContent))
     this.signOutButton$ = document.querySelector(SELECTORS.signOutButton)
     this.signOutButton$.addEventListener('click', this.signOutHandler)
   }
 
-  toggleVerification () {
+  toggleVerification() {
     const templateContent = this.verificationTemplate$.content
     this.replaceChildren(this.formatTemplateContent(templateContent))
-    this.cancelRegistrationButton$ = document.querySelector(SELECTORS.cancelRegistrationButton)
-    this.cancelRegistrationButton$.addEventListener('click', this.cancelRegistrationHandler)
+    this.cancelRegistrationButton$ = document.querySelector(
+      SELECTORS.cancelRegistrationButton
+    )
+    this.cancelRegistrationButton$.addEventListener(
+      'click',
+      this.cancelRegistrationHandler
+    )
   }
 
-  disconnectedCallback () {
+  disconnectedCallback() {
     this.form$?.removeEventListener('submit', this.submitHandler)
   }
 
-  async cancelRegistrationHandler (e) {
+  async cancelRegistrationHandler(e) {
     e.preventDefault()
     window.location.reload()
   }
 
-  async signOutHandler (e) {
+  async signOutHandler(e) {
     e.preventDefault()
     this.agent = null
 
     window.location.reload()
   }
 
-  async submitHandler (e) {
+  async submitHandler(e) {
     e.preventDefault()
     const fd = new window.FormData(e.target)
     // log in a user by their email
@@ -115,14 +121,19 @@ export class RegisterForm extends window.HTMLElement {
 
       try {
         // Fire registration start event
-        const startEvent = window.CustomEvent(EVENTS.registrationStart, { bubbles: true })
+        const startEvent = window.CustomEvent(EVENTS.registrationStart, {
+          bubbles: true,
+        })
         this.dispatchEvent(startEvent)
 
         this.toggleVerification(true)
         await agent.registerSpace(email, { signal: controller.signal })
 
         // Fire sign in success event
-        const successEvent = new window.CustomEvent(EVENTS.registrationSuccess, { bubbles: true })
+        const successEvent = new window.CustomEvent(
+          EVENTS.registrationSuccess,
+          { bubbles: true }
+        )
         this.dispatchEvent(successEvent)
       } catch (err) {
         console.error('Registration failed:', err)
@@ -131,7 +142,7 @@ export class RegisterForm extends window.HTMLElement {
         this.toggleConfirmation(true)
       }
     }
-  };
+  }
 }
 
 window.customElements.define('register-form', RegisterForm)

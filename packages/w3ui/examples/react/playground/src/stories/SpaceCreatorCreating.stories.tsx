@@ -5,11 +5,9 @@ export default {
   title: 'w3ui/SpaceCreator',
   component: SpaceCreatorCreating,
   tags: ['autodocs'],
-  argTypes: {
-  }
+  argTypes: {},
 }
 
 export const Creating = {
-  args: {
-  }
+  args: {},
 }

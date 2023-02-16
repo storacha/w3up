@@ -8,7 +8,7 @@ import {
   waitIdentityVerification,
   removeIdentity,
   storeIdentity,
-  loadDefaultIdentity
+  loadDefaultIdentity,
 } from '@w3ui/keyring-core'
 
 const SELECTORS = {
@@ -16,24 +16,28 @@ const SELECTORS = {
   cancelRegistrationButton: '#cancel-registration',
   signOutButton: '#sign-out',
   verificationTemplate: '#verification-required-template',
-  confirmationTemplate: '#registration-success-template'
+  confirmationTemplate: '#registration-success-template',
 }
 
 export class RegisterForm extends window.HTMLElement {
-  constructor () {
+  constructor() {
     super()
     this.identity = null
     this.email = null
     this.form$ = document.querySelector(SELECTORS.authForm)
-    this.confirmationTemplate$ = document.querySelector(SELECTORS.confirmationTemplate)
-    this.verificationTemplate$ = document.querySelector(SELECTORS.verificationTemplate)
+    this.confirmationTemplate$ = document.querySelector(
+      SELECTORS.confirmationTemplate
+    )
+    this.verificationTemplate$ = document.querySelector(
+      SELECTORS.verificationTemplate
+    )
     this.submitHandler = this.submitHandler.bind(this)
     this.cancelRegistrationHandler = this.cancelRegistrationHandler.bind(this)
     this.signOutHandler = this.signOutHandler.bind(this)
     this.formatTemplateContent = this.formatTemplateContent.bind(this)
   }
 
-  async connectedCallback () {
+  async connectedCallback() {
     this.form$.addEventListener('submit', this.submitHandler)
 
     const identity = await loadDefaultIdentity()
@@ -48,39 +52,46 @@ export class RegisterForm extends window.HTMLElement {
     }
   }
 
-  formatTemplateContent (templateContent) {
+  formatTemplateContent(templateContent) {
     templateContent.querySelector('[data-email-slot]').innerText = this.email
     return templateContent
   }
 
-  toggleConfirmation () {
+  toggleConfirmation() {
     const templateContent = this.confirmationTemplate$.content
     this.replaceChildren(this.formatTemplateContent(templateContent))
     this.signOutButton$ = document.querySelector(SELECTORS.signOutButton)
     this.signOutButton$.addEventListener('click', this.signOutHandler)
 
     // Fire sign in success event
-    const event = new window.CustomEvent(EVENTS.registrationSuccess, { bubbles: true })
+    const event = new window.CustomEvent(EVENTS.registrationSuccess, {
+      bubbles: true,
+    })
     this.dispatchEvent(event)
   }
 
-  toggleVerification () {
+  toggleVerification() {
     const templateContent = this.verificationTemplate$.content
     this.replaceChildren(this.formatTemplateContent(templateContent))
-    this.cancelRegistrationButton$ = document.querySelector(SELECTORS.cancelRegistrationButton)
-    this.cancelRegistrationButton$.addEventListener('click', this.cancelRegistrationHandler)
+    this.cancelRegistrationButton$ = document.querySelector(
+      SELECTORS.cancelRegistrationButton
+    )
+    this.cancelRegistrationButton$.addEventListener(
+      'click',
+      this.cancelRegistrationHandler
+    )
   }
 
-  disconnectedCallback () {
+  disconnectedCallback() {
     this.form$?.removeEventListener('submit', this.submitHandler)
   }
 
-  cancelRegistrationHandler (e) {
+  cancelRegistrationHandler(e) {
     e.preventDefault()
     window.location.reload()
   }
 
-  async signOutHandler (e) {
+  async signOutHandler(e) {
     e.preventDefault()
     if (this.identity) {
       await removeIdentity(this.identity)
@@ -88,7 +99,7 @@ export class RegisterForm extends window.HTMLElement {
     window.location.reload()
   }
 
-  async submitHandler (e) {
+  async submitHandler(e) {
     e.preventDefault()
     const fd = new window.FormData(e.target)
     // log in a user by their email
@@ -104,11 +115,11 @@ export class RegisterForm extends window.HTMLElement {
       const controller = new AbortController()
 
       try {
-        this.toggleVerification(true);
-        ({ identity, proof } = await waitIdentityVerification(
+        this.toggleVerification(true)
+        ;({ identity, proof } = await waitIdentityVerification(
           unverifiedIdentity,
           {
-            signal: controller.signal
+            signal: controller.signal,
           }
         ))
         await registerIdentity(identity, proof)
@@ -121,7 +132,7 @@ export class RegisterForm extends window.HTMLElement {
         this.toggleConfirmation(true)
       }
     }
-  };
+  }
 }
 
 window.customElements.define('register-form', RegisterForm)

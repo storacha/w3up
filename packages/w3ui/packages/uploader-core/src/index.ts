@@ -23,5 +23,7 @@ export interface UploaderContextActions {
   /**
    * Upload a directory of files to the current space.
    */
-  uploadDirectory: (files: File[]) => Promise<Link<unknown, number, number, Version>>
+  uploadDirectory: (
+    files: File[]
+  ) => Promise<Link<unknown, number, number, Version>>
 }

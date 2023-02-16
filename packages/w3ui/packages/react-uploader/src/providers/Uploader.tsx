@@ -1,5 +1,12 @@
 import React, { useContext, createContext, useState } from 'react'
-import { uploadFile, uploadDirectory, UploaderContextState, UploaderContextActions, CARMetadata, ServiceConfig } from '@w3ui/uploader-core'
+import {
+  uploadFile,
+  uploadDirectory,
+  UploaderContextState,
+  UploaderContextActions,
+  CARMetadata,
+  ServiceConfig
+} from '@w3ui/uploader-core'
 import { useKeyring } from '@w3ui/react-keyring'
 import { add as storeAdd } from '@web3-storage/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/capabilities/upload'
@@ -12,12 +19,18 @@ export type UploaderContextValue = [
 export const uploaderContextDefaultValue: UploaderContextValue = [
   { storedDAGShards: [] },
   {
-    uploadFile: async () => { throw new Error('missing uploader context provider') },
-    uploadDirectory: async () => { throw new Error('missing uploader context provider') }
+    uploadFile: async () => {
+      throw new Error('missing uploader context provider')
+    },
+    uploadDirectory: async () => {
+      throw new Error('missing uploader context provider')
+    }
   }
 ]
 
-export const UploaderContext = createContext<UploaderContextValue>(uploaderContextDefaultValue)
+export const UploaderContext = createContext<UploaderContextValue>(
+  uploaderContextDefaultValue
+)
 
 export interface UploaderProviderProps extends ServiceConfig {
   children?: JSX.Element
@@ -26,9 +39,15 @@ export interface UploaderProviderProps extends ServiceConfig {
 /**
  * Provider for actions and state to facilitate uploads to the service.
  */
-export function UploaderProvider ({ servicePrincipal, connection, children }: UploaderProviderProps): JSX.Element {
+export function UploaderProvider ({
+  servicePrincipal,
+  connection,
+  children
+}: UploaderProviderProps): JSX.Element {
   const [{ space, agent }, { getProofs }] = useKeyring()
-  const [storedDAGShards, setStoredDAGShards] = useState<UploaderContextState['storedDAGShards']>([])
+  const [storedDAGShards, setStoredDAGShards] = useState<
+  UploaderContextState['storedDAGShards']
+  >([])
 
   const state = { storedDAGShards }
   const actions: UploaderContextActions = {
@@ -50,7 +69,7 @@ export function UploaderProvider ({ servicePrincipal, connection, children }: Up
       }
 
       return await uploadFile(conf, file, {
-        onShardStored: meta => {
+        onShardStored: (meta) => {
           storedShards.push(meta)
           setStoredDAGShards([...storedShards])
         },
@@ -74,7 +93,7 @@ export function UploaderProvider ({ servicePrincipal, connection, children }: Up
       }
 
       return await uploadDirectory(conf, files, {
-        onShardStored: meta => {
+        onShardStored: (meta) => {
           storedShards.push(meta)
           setStoredDAGShards([...storedShards])
         },

@@ -1,6 +1,15 @@
-import type { InitializedResourceReturn, ResourceOptions, ResourceReturn, ResourceSource } from 'solid-js'
+import type {
+  InitializedResourceReturn,
+  ResourceOptions,
+  ResourceReturn,
+  ResourceSource
+} from 'solid-js'
 import type { Space } from '@w3ui/keyring-core'
-import type { ServiceConfig, ListResponse, UploadListResult } from '@w3ui/uploads-list-core'
+import type {
+  ServiceConfig,
+  ListResponse,
+  UploadListResult
+} from '@w3ui/uploads-list-core'
 import type { Capability, Proof, Signer } from '@ucanto/interface'
 
 import { createResource } from 'solid-js'
@@ -20,10 +29,23 @@ interface UploadsListSource extends ServiceConfig {
  * see the docs for [`createResource`](https://www.solidjs.com/docs/latest/api#createresource)
  * for parameter and return type descriptions.
  */
-export function createUploadsListResource (source: ResourceSource<UploadsListSource>, options?: ResourceOptions<ListResponse<UploadListResult>, UploadsListSource>): ResourceReturn<ListResponse<UploadListResult>> | InitializedResourceReturn<ListResponse<UploadListResult>> {
+export function createUploadsListResource (
+  source: ResourceSource<UploadsListSource>,
+  options?: ResourceOptions<ListResponse<UploadListResult>, UploadsListSource>
+):
+  | ResourceReturn<ListResponse<UploadListResult>>
+  | InitializedResourceReturn<ListResponse<UploadListResult>> {
   return createResource<ListResponse<UploadListResult>, UploadsListSource>(
     source,
-    async ({ cursor, size, space, agent, servicePrincipal, connection, getProofs }) => {
+    async ({
+      cursor,
+      size,
+      space,
+      agent,
+      servicePrincipal,
+      connection,
+      getProofs
+    }) => {
       const conf = {
         issuer: agent,
         with: space.did(),

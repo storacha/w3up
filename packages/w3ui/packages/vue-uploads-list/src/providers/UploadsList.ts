@@ -1,17 +1,41 @@
-import { defineComponent, provide, InjectionKey, inject, shallowReactive, Ref, computed, watch } from 'vue'
+import {
+  defineComponent,
+  provide,
+  InjectionKey,
+  inject,
+  shallowReactive,
+  Ref,
+  computed,
+  watch
+} from 'vue'
 import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
-import { UploadsListContextState, UploadsListContextActions, ServiceConfig, list } from '@w3ui/uploads-list-core'
+import {
+  UploadsListContextState,
+  UploadsListContextActions,
+  ServiceConfig,
+  list
+} from '@w3ui/uploads-list-core'
 import { list as uploadList } from '@web3-storage/capabilities/upload'
 
 /**
  * Injection keys for uploads list context.
  */
 export const UploadsListProviderInjectionKey = {
-  loading: Symbol('w3ui uploads list loading') as InjectionKey<Ref<UploadsListContextState['loading']>>,
-  error: Symbol('w3ui uploads list error') as InjectionKey<Ref<UploadsListContextState['error']>>,
-  data: Symbol('w3ui uploads list data') as InjectionKey<Ref<UploadsListContextState['data']>>,
-  next: Symbol('w3ui uploads list next') as InjectionKey<UploadsListContextActions['next']>,
-  reload: Symbol('w3ui uploads list reload') as InjectionKey<UploadsListContextActions['reload']>
+  loading: Symbol('w3ui uploads list loading') as InjectionKey<
+  Ref<UploadsListContextState['loading']>
+  >,
+  error: Symbol('w3ui uploads list error') as InjectionKey<
+  Ref<UploadsListContextState['error']>
+  >,
+  data: Symbol('w3ui uploads list data') as InjectionKey<
+  Ref<UploadsListContextState['data']>
+  >,
+  next: Symbol('w3ui uploads list next') as InjectionKey<
+  UploadsListContextActions['next']
+  >,
+  reload: Symbol('w3ui uploads list reload') as InjectionKey<
+  UploadsListContextActions['reload']
+  >
 }
 
 export interface UploadsListProviderProps extends ServiceConfig {
@@ -39,9 +63,18 @@ export const UploadsListProvider = defineComponent<UploadsListProviderProps>({
     let cursor: string | undefined
     let controller = new AbortController()
 
-    provide(UploadsListProviderInjectionKey.loading, computed(() => state.loading))
-    provide(UploadsListProviderInjectionKey.error, computed(() => state.error))
-    provide(UploadsListProviderInjectionKey.data, computed(() => state.data))
+    provide(
+      UploadsListProviderInjectionKey.loading,
+      computed(() => state.loading)
+    )
+    provide(
+      UploadsListProviderInjectionKey.error,
+      computed(() => state.error)
+    )
+    provide(
+      UploadsListProviderInjectionKey.data,
+      computed(() => state.data)
+    )
 
     const loadPage = async (cursor?: string): Promise<void> => {
       if (space?.value == null) return
@@ -58,7 +91,9 @@ export const UploadsListProvider = defineComponent<UploadsListProviderProps>({
           issuer: agent.value,
           with: space.value.did(),
           audience: servicePrincipal,
-          proofs: await getProofs([{ can: uploadList.can, with: space.value.did() }])
+          proofs: await getProofs([
+            { can: uploadList.can, with: space.value.did() }
+          ])
         }
         const page = await list(conf, {
           cursor,
@@ -68,11 +103,13 @@ export const UploadsListProvider = defineComponent<UploadsListProviderProps>({
         })
         cursor = page.cursor
         state.data = page.results
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          console.error(err)
+      } catch (error: any) {
+        if (error.name !== 'AbortError') {
+          /* eslint-disable no-console */
+          console.error(error)
+          /* eslint-enable no-console */
           // @ts-expect-error ts not know about cause
-          setError(new Error('failed to fetch uploads list', { cause: err }))
+          setError(new Error('failed to fetch uploads list', { cause: error }))
         }
       } finally {
         state.loading = false
@@ -88,7 +125,7 @@ export const UploadsListProvider = defineComponent<UploadsListProviderProps>({
       await loadPage(cursor)
     })
 
-    watch([space, agent], async () => await loadPage())
+    watch([space, agent], async () => { await loadPage() })
 
     return state
   },
@@ -96,7 +133,6 @@ export const UploadsListProvider = defineComponent<UploadsListProviderProps>({
   // Our provider component is a renderless component
   // it does not render any markup of its own.
   render () {
-    // @ts-expect-error
-    return this.$slots.default()
+    return this.$slots.default?.()
   }
 })

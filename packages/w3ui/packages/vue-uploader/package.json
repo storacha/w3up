@@ -9,7 +9,8 @@
     "types": "build/types/vue-uploader/src/index.d.ts"
   },
   "scripts": {
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false",
+    "lint": "tsc --build && eslint '**/*.{js,jsx,ts,tsx}'"
   },
   "files": [
     "build/*",
@@ -33,5 +34,14 @@
   },
   "peerDependencies": {
     "vue": "^3.0.0"
-  }
+  },
+  "eslintConfig": {
+    "extends": [
+      "../../eslint.packages.js"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules",
+    "build"
+  ]
 }

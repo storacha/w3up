@@ -1,17 +1,28 @@
 import type { As, Component, Props, Options } from 'ariakit-react-utils'
 import type { ChangeEvent } from 'react'
 
-import React, { useContext, useMemo, useCallback, createContext, useState, Fragment } from 'react'
+import React, {
+  useContext,
+  useMemo,
+  useCallback,
+  createContext,
+  useState,
+  Fragment
+} from 'react'
 import { createComponent, createElement } from 'ariakit-react-utils'
 import { Link, Version } from 'multiformats'
-import { CARMetadata, UploaderContextState, UploaderContextActions } from '@w3ui/uploader-core'
+import {
+  CARMetadata,
+  UploaderContextState,
+  UploaderContextActions
+} from '@w3ui/uploader-core'
 import { useUploader } from './providers/Uploader'
 
 export enum Status {
   Idle = 'idle',
   Uploading = 'uploading',
   Failed = 'failed',
-  Succeeded = 'succeeded'
+  Succeeded = 'succeeded',
 }
 
 export type UploaderComponentContextState = UploaderContextState & {
@@ -61,9 +72,15 @@ const UploaderComponentContext = createContext<UploaderComponentContextValue>([
     storedDAGShards: []
   },
   {
-    setFile: () => { throw new Error('missing set file function') },
-    uploadFile: async () => { throw new Error('missing uploader context provider') },
-    uploadDirectory: async () => { throw new Error('missing uploader context provider') }
+    setFile: () => {
+      throw new Error('missing set file function')
+    },
+    uploadFile: async () => {
+      throw new Error('missing uploader context provider')
+    },
+    uploadDirectory: async () => {
+      throw new Error('missing uploader context provider')
+    }
   }
 ])
 
@@ -77,7 +94,9 @@ export type OnUploadComplete = (props: OnUploadCompleteProps) => void
 export type UploaderRootOptions<T extends As = typeof Fragment> = Options<T> & {
   onUploadComplete?: OnUploadComplete
 }
-export type UploaderRootProps<T extends As = typeof Fragment> = Props<UploaderRootOptions<T>>
+export type UploaderRootProps<T extends As = typeof Fragment> = Props<
+UploaderRootOptions<T>
+>
 
 /**
  * Top level component of the headless Uploader.
@@ -86,48 +105,71 @@ export type UploaderRootProps<T extends As = typeof Fragment> = Props<UploaderRo
  * to easily create a custom component for uploading files to
  * web3.storage.
  */
-export const UploaderRoot: Component<UploaderRootProps> = createComponent((props) => {
-  const [uploaderState, uploaderActions] = useUploader()
-  const [file, setFile] = useState<File>()
-  const [dataCID, setDataCID] = useState<Link<unknown, number, number, Version>>()
-  const [status, setStatus] = useState(Status.Idle)
-  const [error, setError] = useState()
+export const UploaderRoot: Component<UploaderRootProps> = createComponent(
+  (props) => {
+    const [uploaderState, uploaderActions] = useUploader()
+    const [file, setFile] = useState<File>()
+    const [dataCID, setDataCID] =
+      useState<Link<unknown, number, number, Version>>()
+    const [status, setStatus] = useState(Status.Idle)
+    const [error, setError] = useState()
 
-  const setFileAndReset = (file?: File): void => {
-    setFile(file)
-    setStatus(Status.Idle)
-  }
+    const setFileAndReset = (file?: File): void => {
+      setFile(file)
+      setStatus(Status.Idle)
+    }
 
-  const handleUploadSubmit = async (e: Event): Promise<void> => {
-    e.preventDefault()
-    if (file != null) {
-      try {
-        setError(undefined)
-        setStatus(Status.Uploading)
-        const cid = await uploaderActions.uploadFile(file)
-        setDataCID(cid)
-        setStatus(Status.Succeeded)
-        if (props.onUploadComplete !== undefined) {
-          props.onUploadComplete({ file, dataCID })
+    const handleUploadSubmit = async (e: Event): Promise<void> => {
+      e.preventDefault()
+      if (file != null) {
+        try {
+          setError(undefined)
+          setStatus(Status.Uploading)
+          const cid = await uploaderActions.uploadFile(file)
+          setDataCID(cid)
+          setStatus(Status.Succeeded)
+          if (props.onUploadComplete !== undefined) {
+            props.onUploadComplete({ file, dataCID })
+          }
+        } catch (error_: any) {
+          setError(error_)
+          setStatus(Status.Failed)
         }
-      } catch (err: any) {
-        setError(err)
-        setStatus(Status.Failed)
       }
     }
+
+    const uploaderComponentContextValue =
+      useMemo<UploaderComponentContextValue>(
+        () => [
+          {
+            ...uploaderState,
+            file,
+            dataCID,
+            status,
+            error,
+            handleUploadSubmit
+          },
+          { ...uploaderActions, setFile: setFileAndReset }
+        ],
+        [
+          uploaderState,
+          file,
+          dataCID,
+          status,
+          error,
+          handleUploadSubmit,
+          uploaderActions,
+          setFile
+        ]
+      )
+
+    return (
+      <UploaderComponentContext.Provider value={uploaderComponentContextValue}>
+        {createElement(Fragment, props)}
+      </UploaderComponentContext.Provider>
+    )
   }
-
-  const uploaderComponentContextValue = useMemo<UploaderComponentContextValue>(() => [
-    { ...uploaderState, file, dataCID, status, error, handleUploadSubmit },
-    { ...uploaderActions, setFile: setFileAndReset }
-  ], [uploaderState, file, dataCID, status, error, handleUploadSubmit, uploaderActions, setFile])
-
-  return (
-    <UploaderComponentContext.Provider value={uploaderComponentContextValue}>
-      {createElement(Fragment, props)}
-    </UploaderComponentContext.Provider>
-  )
-})
+)
 
 export type InputOptions<T extends As = 'input'> = Options<T>
 export type InputProps<T extends As = 'input'> = Props<InputOptions<T>>
@@ -140,9 +182,12 @@ export type InputProps<T extends As = 'input'> = Props<InputOptions<T>>
  */
 export const Input: Component<InputProps> = createComponent((props) => {
   const [, { setFile }] = useContext(UploaderComponentContext)
-  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setFile(e?.target?.files?.[0])
-  }, [setFile])
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setFile(e?.target?.files?.[0])
+    },
+    [setFile]
+  )
   return createElement('input', { ...props, type: 'file', onChange })
 })
 

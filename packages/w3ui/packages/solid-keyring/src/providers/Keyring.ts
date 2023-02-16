@@ -1,10 +1,20 @@
 import type { ParentComponent } from 'solid-js'
-import type { KeyringContextState, KeyringContextActions, ServiceConfig, CreateDelegationOptions } from '@w3ui/keyring-core'
+import type {
+  KeyringContextState,
+  KeyringContextActions,
+  ServiceConfig,
+  CreateDelegationOptions
+} from '@w3ui/keyring-core'
 import type { Agent } from '@web3-storage/access'
 import type { Abilities } from '@web3-storage/access/types'
 import type { Delegation, Capability, DID, Principal } from '@ucanto/interface'
 
-import { createContext, useContext, createSignal, createComponent } from 'solid-js'
+import {
+  createContext,
+  useContext,
+  createSignal,
+  createComponent
+} from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { createAgent, getCurrentSpace, getSpaces } from '@w3ui/keyring-core'
 
@@ -24,25 +34,31 @@ const defaultState: KeyringContextState = {
 export const AuthContext = createContext<KeyringContextValue>([
   defaultState,
   {
-    loadAgent: async () => { },
-    unloadAgent: async () => { },
-    resetAgent: async () => { },
-    createSpace: async () => { throw new Error('missing keyring context provider') },
-    setCurrentSpace: async () => { },
-    registerSpace: async () => { },
-    cancelRegisterSpace: () => { },
+    loadAgent: async () => {},
+    unloadAgent: async () => {},
+    resetAgent: async () => {},
+    createSpace: async () => {
+      throw new Error('missing keyring context provider')
+    },
+    setCurrentSpace: async () => {},
+    registerSpace: async () => {},
+    cancelRegisterSpace: () => {},
     getProofs: async () => [],
-    createDelegation: async () => { throw new Error('missing keyring context provider') },
-    addSpace: async () => { }
+    createDelegation: async () => {
+      throw new Error('missing keyring context provider')
+    },
+    addSpace: async () => {}
   }
 ])
 
-export interface KeyringProviderProps extends ServiceConfig { }
+export interface KeyringProviderProps extends ServiceConfig {}
 
 /**
  * Key management provider.
  */
-export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
+export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
+  props
+) => {
   const [state, setState] = createStore({
     space: defaultState.space,
     spaces: defaultState.spaces,
@@ -50,12 +66,16 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
   })
 
   const [agent, setAgent] = createSignal<Agent>()
-  const [registerAbortController, setRegisterAbortController] = createSignal<AbortController>()
+  const [registerAbortController, setRegisterAbortController] =
+    createSignal<AbortController>()
 
   const getAgent = async (): Promise<Agent> => {
     let a = agent()
     if (a == null) {
-      a = await createAgent({ servicePrincipal: props.servicePrincipal, connection: props.connection })
+      a = await createAgent({
+        servicePrincipal: props.servicePrincipal,
+        connection: props.connection
+      })
       setAgent(a)
       setState('agent', a.issuer)
       setState('space', getCurrentSpace(a))
@@ -88,9 +108,9 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
       await agent.registerSpace(email, { signal: controller.signal })
       setState('space', getCurrentSpace(agent))
       setState('spaces', getSpaces(agent))
-    } catch (err) {
+    } catch (error) {
       if (!controller.signal.aborted) {
-        throw err
+        throw error
       }
     }
   }
@@ -115,7 +135,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
 
   const resetAgent = async (): Promise<void> => {
     const agent = await getAgent()
-    // @ts-expect-error
+    // @ts-expect-error TODO: expose store in access client
     await Promise.all([agent.store.reset(), unloadAgent()])
   }
 
@@ -124,9 +144,16 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = props => {
     return agent.proofs(caps)
   }
 
-  const createDelegation = async (audience: Principal, abilities: Abilities[], options: CreateDelegationOptions): Promise<Delegation> => {
+  const createDelegation = async (
+    audience: Principal,
+    abilities: Abilities[],
+    options: CreateDelegationOptions
+  ): Promise<Delegation> => {
     const agent = await getAgent()
-    const audienceMeta = options.audienceMeta ?? { name: 'agent', type: 'device' }
+    const audienceMeta = options.audienceMeta ?? {
+      name: 'agent',
+      type: 'device'
+    }
     return await agent.delegate({
       ...options,
       abilities,

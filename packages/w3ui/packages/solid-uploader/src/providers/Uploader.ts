@@ -1,6 +1,16 @@
-import type { UploaderContextState, UploaderContextActions, CARMetadata, ServiceConfig } from '@w3ui/uploader-core'
+import type {
+  UploaderContextState,
+  UploaderContextActions,
+  CARMetadata,
+  ServiceConfig
+} from '@w3ui/uploader-core'
 
-import { createContext, useContext, createComponent, ParentComponent } from 'solid-js'
+import {
+  createContext,
+  useContext,
+  createComponent,
+  ParentComponent
+} from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { uploadFile, uploadDirectory } from '@w3ui/uploader-core'
 import { useKeyring } from '@w3ui/solid-keyring'
@@ -15,19 +25,27 @@ export type UploaderContextValue = [
 const UploaderContext = createContext<UploaderContextValue>([
   { storedDAGShards: [] },
   {
-    uploadFile: async () => { throw new Error('missing uploader context provider') },
-    uploadDirectory: async () => { throw new Error('missing uploader context provider') }
+    uploadFile: async () => {
+      throw new Error('missing uploader context provider')
+    },
+    uploadDirectory: async () => {
+      throw new Error('missing uploader context provider')
+    }
   }
 ])
 
-export interface UploaderProviderProps extends ServiceConfig { }
+export interface UploaderProviderProps extends ServiceConfig {}
 
 /**
  * Provider for actions and state to facilitate uploads to the service.
  */
-export const UploaderProvider: ParentComponent<UploaderProviderProps> = props => {
+export const UploaderProvider: ParentComponent<UploaderProviderProps> = (
+  props
+) => {
   const [keyringState, keyringActions] = useKeyring()
-  const [state, setState] = createStore<UploaderContextState>({ storedDAGShards: [] })
+  const [state, setState] = createStore<UploaderContextState>({
+    storedDAGShards: []
+  })
 
   const actions: UploaderContextActions = {
     async uploadFile (file: Blob) {
@@ -48,7 +66,7 @@ export const UploaderProvider: ParentComponent<UploaderProviderProps> = props =>
       }
 
       return await uploadFile(conf, file, {
-        onShardStored: meta => {
+        onShardStored: (meta) => {
           storedShards.push(meta)
           setState('storedDAGShards', [...storedShards])
         },
@@ -74,7 +92,7 @@ export const UploaderProvider: ParentComponent<UploaderProviderProps> = props =>
       }
 
       return await uploadDirectory(conf, files, {
-        onShardStored: meta => {
+        onShardStored: (meta) => {
           storedShards.push(meta)
           setState('storedDAGShards', [...storedShards])
         }

@@ -3,21 +3,18 @@ import React from 'react'
 import { UploadsList as UploadsListCore } from '@w3ui/react-uploads-list'
 
 function Uploads ({ uploads }: { uploads?: UploadListResult[] }): JSX.Element {
-  if ((uploads === undefined) || (uploads.length === 0)) {
-    return (
+  return uploads === undefined || uploads.length === 0
+    ? (
       <>
-        <div className='w3-uploads-list-no-uploads'>
-          No uploads
-        </div>
+        <div className='w3-uploads-list-no-uploads'>No uploads</div>
         <nav>
           <UploadsListCore.ReloadButton className='reload w3ui-button'>
             Reload
           </UploadsListCore.ReloadButton>
         </nav>
       </>
-    )
-  } else {
-    return (
+      )
+    : (
       <>
         <div className='w3-uploads-list-data'>
           <table>
@@ -48,8 +45,7 @@ function Uploads ({ uploads }: { uploads?: UploadListResult[] }): JSX.Element {
           </UploadsListCore.ReloadButton>
         </nav>
       </>
-    )
-  }
+      )
 }
 
 export const UploadsList = (): JSX.Element => {

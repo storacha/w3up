@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
-    "lib": [
-      "ES2022"
-    ]
+    "lib": ["ES2022"]
   },
   "files": [],
-  "exclude":["**/dist"],
+  "exclude": ["**/dist"],
   "references": [
     {
       "path": "packages/react-keyring"

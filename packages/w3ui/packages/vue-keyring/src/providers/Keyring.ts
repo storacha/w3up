@@ -1,6 +1,17 @@
-import { defineComponent, provide, computed, InjectionKey, Ref, shallowReactive } from 'vue'
+import {
+  defineComponent,
+  provide,
+  computed,
+  InjectionKey,
+  Ref,
+  shallowReactive
+} from 'vue'
 import { createAgent, getCurrentSpace, getSpaces } from '@w3ui/keyring-core'
-import type { KeyringContextState, KeyringContextActions, ServiceConfig } from '@w3ui/keyring-core'
+import type {
+  KeyringContextState,
+  KeyringContextActions,
+  ServiceConfig
+} from '@w3ui/keyring-core'
 
 import type { Agent } from '@web3-storage/access'
 import type { Capability, DID, Proof } from '@ucanto/interface'
@@ -53,9 +64,18 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
     let agent: Agent | undefined
     let registerAbortController: AbortController
 
-    provide(KeyringProviderInjectionKey.agent, computed(() => state.agent))
-    provide(KeyringProviderInjectionKey.space, computed(() => state.space))
-    provide(KeyringProviderInjectionKey.spaces, computed(() => state.spaces))
+    provide(
+      KeyringProviderInjectionKey.agent,
+      computed(() => state.agent)
+    )
+    provide(
+      KeyringProviderInjectionKey.space,
+      computed(() => state.space)
+    )
+    provide(
+      KeyringProviderInjectionKey.spaces,
+      computed(() => state.spaces)
+    )
 
     const getAgent = async (): Promise<Agent> => {
       if (agent == null) {
@@ -73,35 +93,44 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
       }
     })
 
-    provide(KeyringProviderInjectionKey.createSpace, async (name?: string): Promise<DID> => {
-      const agent = await getAgent()
-      const { did } = await agent.createSpace(name)
-      await agent.setCurrentSpace(did)
-      state.space = getCurrentSpace(agent)
-      return did
-    })
-
-    provide(KeyringProviderInjectionKey.registerSpace, async (email: string): Promise<void> => {
-      const agent = await getAgent()
-      const controller = new AbortController()
-      registerAbortController = controller
-
-      try {
-        await agent.registerSpace(email, { signal: controller.signal })
+    provide(
+      KeyringProviderInjectionKey.createSpace,
+      async (name?: string): Promise<DID> => {
+        const agent = await getAgent()
+        const { did } = await agent.createSpace(name)
+        await agent.setCurrentSpace(did)
         state.space = getCurrentSpace(agent)
-        state.spaces = getSpaces(agent)
-      } catch (err) {
-        if (!controller.signal.aborted) {
-          throw err
+        return did
+      }
+    )
+
+    provide(
+      KeyringProviderInjectionKey.registerSpace,
+      async (email: string): Promise<void> => {
+        const agent = await getAgent()
+        const controller = new AbortController()
+        registerAbortController = controller
+
+        try {
+          await agent.registerSpace(email, { signal: controller.signal })
+          state.space = getCurrentSpace(agent)
+          state.spaces = getSpaces(agent)
+        } catch (error) {
+          if (!controller.signal.aborted) {
+            throw error
+          }
         }
       }
-    })
+    )
 
-    provide(KeyringProviderInjectionKey.setCurrentSpace, async (did: DID): Promise<void> => {
-      const agent = await getAgent()
-      await agent.setCurrentSpace(did)
-      state.space = getCurrentSpace(agent)
-    })
+    provide(
+      KeyringProviderInjectionKey.setCurrentSpace,
+      async (did: DID): Promise<void> => {
+        const agent = await getAgent()
+        await agent.setCurrentSpace(did)
+        state.space = getCurrentSpace(agent)
+      }
+    )
 
     const loadAgent = async (): Promise<void> => {
       if (agent != null) return
@@ -119,14 +148,17 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
 
     provide(KeyringProviderInjectionKey.resetAgent, async (): Promise<void> => {
       const agent = await getAgent()
-      // @ts-expect-error
+      // @ts-expect-error TODO: expose store in access client
       await Promise.all([agent.store.reset(), unloadAgent()])
     })
 
-    provide(KeyringProviderInjectionKey.getProofs, async (caps: Capability[]): Promise<Proof[]> => {
-      const agent = await getAgent()
-      return agent.proofs(caps)
-    })
+    provide(
+      KeyringProviderInjectionKey.getProofs,
+      async (caps: Capability[]): Promise<Proof[]> => {
+        const agent = await getAgent()
+        return agent.proofs(caps)
+      }
+    )
 
     // void loadAgent()
 
@@ -136,7 +168,6 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
   // Our provider component is a renderless component
   // it does not render any markup of its own.
   render () {
-    // @ts-expect-error
-    return this.$slots.default()
+    return this.$slots.default?.()
   }
 })

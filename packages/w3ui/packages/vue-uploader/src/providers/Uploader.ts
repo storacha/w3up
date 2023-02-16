@@ -1,5 +1,20 @@
-import { defineComponent, provide, InjectionKey, inject, Ref, shallowReactive, computed } from 'vue'
-import { uploadFile, uploadDirectory, UploaderContextState, UploaderContextActions, CARMetadata, ServiceConfig } from '@w3ui/uploader-core'
+import {
+  defineComponent,
+  provide,
+  InjectionKey,
+  inject,
+  Ref,
+  shallowReactive,
+  computed
+} from 'vue'
+import {
+  uploadFile,
+  uploadDirectory,
+  UploaderContextState,
+  UploaderContextActions,
+  CARMetadata,
+  ServiceConfig
+} from '@w3ui/uploader-core'
 import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
 import { add as storeAdd } from '@web3-storage/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/capabilities/upload'
@@ -34,7 +49,10 @@ export const UploaderProvider = defineComponent<UploaderProviderProps>({
       storedDAGShards: []
     })
 
-    provide(UploaderProviderInjectionKey.storedDAGShards, computed(() => state.storedDAGShards))
+    provide(
+      UploaderProviderInjectionKey.storedDAGShards,
+      computed(() => state.storedDAGShards)
+    )
 
     const actions: UploaderContextActions = {
       async uploadFile (file: Blob) {
@@ -56,7 +74,7 @@ export const UploaderProvider = defineComponent<UploaderProviderProps>({
         }
 
         return await uploadFile(conf, file, {
-          onShardStored: meta => {
+          onShardStored: (meta) => {
             storedShards.push(meta)
             state.storedDAGShards = [...storedShards]
           },
@@ -82,7 +100,7 @@ export const UploaderProvider = defineComponent<UploaderProviderProps>({
         }
 
         return await uploadDirectory(conf, files, {
-          onShardStored: meta => {
+          onShardStored: (meta) => {
             storedShards.push(meta)
             state.storedDAGShards = [...storedShards]
           },
@@ -92,7 +110,10 @@ export const UploaderProvider = defineComponent<UploaderProviderProps>({
     }
 
     provide(UploaderProviderInjectionKey.uploadFile, actions.uploadFile)
-    provide(UploaderProviderInjectionKey.uploadDirectory, actions.uploadDirectory)
+    provide(
+      UploaderProviderInjectionKey.uploadDirectory,
+      actions.uploadDirectory
+    )
 
     return state
   },
@@ -100,7 +121,6 @@ export const UploaderProvider = defineComponent<UploaderProviderProps>({
   // Our provider component is a renderless component
   // it does not render any markup of its own.
   render () {
-    // @ts-expect-error
-    return this.$slots.default()
+    return this.$slots.default?.()
   }
 })

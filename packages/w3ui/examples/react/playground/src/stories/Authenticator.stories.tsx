@@ -5,11 +5,9 @@ export default {
   title: 'w3ui/Authenticator',
   component: Authenticator,
   tags: ['autodocs'],
-  argTypes: {
-  }
+  argTypes: {},
 }
 
 export const Primary = {
-  args: {
-  }
+  args: {},
 }

@@ -11,7 +11,7 @@ import '@w3ui/react/src/styles/uploads-list.css'
 export default {
   title: 'w3ui/UploadsList',
   component: UploadsList,
-  tags: ['autodocs']
+  tags: ['autodocs'],
 }
 
 // More on writing stories with args: https://storybook.js.org/docs/7.0/react/writing-stories/args
@@ -19,45 +19,55 @@ export const Empty = {
   render: () => {
     const state = { data: [], loading: false }
     const actions = {
-      next: async (): Promise<void> => { },
-      reload: async (): Promise<void> => { }
+      next: async (): Promise<void> => {},
+      reload: async (): Promise<void> => {},
     }
     return (
       <UploadsListContext.Provider value={[state, actions]}>
         <UploadsList />
       </UploadsListContext.Provider>
     )
-  }
+  },
 }
 
 export const OneItem = {
   render: () => {
-    const state = { data: [{ root: Link.parse('QmPr755CxWUwt39C2Yiw4UGKrv16uZhSgeZJmoHUUS9TSJ') }], loading: false }
+    const state = {
+      data: [
+        { root: Link.parse('QmPr755CxWUwt39C2Yiw4UGKrv16uZhSgeZJmoHUUS9TSJ') },
+      ],
+      loading: false,
+    }
     const actions = {
-      next: async (): Promise<void> => { console.log('NEXT') },
-      reload: async (): Promise<void> => { }
+      next: async (): Promise<void> => {
+        console.log('NEXT')
+      },
+      reload: async (): Promise<void> => {},
     }
     return (
       <UploadsListContext.Provider value={[state, actions]}>
         <UploadsList />
       </UploadsListContext.Provider>
     )
-  }
+  },
 }
 
 export const OneHundredItems = {
   render: () => {
-    const state = { data: oneHundredCids.map(root => ({ root })), loading: false }
+    const state = {
+      data: oneHundredCids.map((root) => ({ root })),
+      loading: false,
+    }
     const actions = {
-      next: async (): Promise<void> => { },
-      reload: async (): Promise<void> => { }
+      next: async (): Promise<void> => {},
+      reload: async (): Promise<void> => {},
     }
     return (
       <UploadsListContext.Provider value={[state, actions]}>
         <UploadsList />
       </UploadsListContext.Provider>
     )
-  }
+  },
 }
 
 /* commenting because currently unused but potentially useful soon
@@ -175,5 +185,5 @@ const oneHundredCids = [
   'bafkreiaivicxyj4zanjcvtkn2csw2eyr2zhdu3pk7r7xsdrmgv2yjzfwp4',
   'bafkreidvyaevch6silpmqqd5gmacqdpy3ujwxcsjnbukhitpn6eclfpfse',
   'bafkreicebeagd3i4yxxsoxpfmibq3t6ebx2evab2xlitsqabdzptae6o4m',
-  'bafkreids7gwr2igplug6lluxzjmj7l7cy63ckmabhfaciy62zqtw4telyy'
-].map(cid => Link.parse(cid))
+  'bafkreids7gwr2igplug6lluxzjmj7l7cy63ckmabhfaciy62zqtw4telyy',
+].map((cid) => Link.parse(cid))

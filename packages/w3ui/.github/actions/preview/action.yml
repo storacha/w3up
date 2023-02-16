@@ -39,7 +39,7 @@ outputs:
     value: ${{ steps.set_summary.outputs.summary }}
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Add to web3.storage
       uses: web3-storage/add-to-web3@v2
@@ -47,7 +47,7 @@ runs:
       with:
         path_to_add: ${{ inputs.path_to_add }}
         web3_token: ${{ inputs.web3_token }}
-    
+
     - name: Update IPFS DNSLink
       if: inputs.dnslink_domain != '' && github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: npx dnslink-cloudflare --record ${{ inputs.dnslink_record }} --domain ${{ inputs.dnslink_domain }} --link /ipfs/${{ steps.ipfs.outputs.cid }}
@@ -78,4 +78,3 @@ runs:
           core.setOutput('summary', `### Website preview 🔗✨
           - 🙂 https://w3s.link/ipfs/${{ steps.ipfs.outputs.cid }}
           - ⛅️ ${{ steps.cloudflare_url.outputs.stdout }}`)
-        

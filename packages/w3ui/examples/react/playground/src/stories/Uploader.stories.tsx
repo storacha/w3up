@@ -5,14 +5,10 @@ export default {
   title: 'w3ui/Uploader',
   component: Uploader,
   tags: ['autodocs'],
-  argTypes: {
-  },
-  parameters: {
-
-  }
+  argTypes: {},
+  parameters: {},
 }
 
 export const Primary = {
-  args: {
-  }
+  args: {},
 }

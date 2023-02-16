@@ -1,7 +1,16 @@
 import { Agent } from '@web3-storage/access/agent'
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 import type { Abilities, AgentMeta, Service } from '@web3-storage/access/types'
-import type { Capability, DID, Proof, Signer, ConnectionView, Principal, Delegation, UCANOptions } from '@ucanto/interface'
+import type {
+  Capability,
+  DID,
+  Proof,
+  Signer,
+  ConnectionView,
+  Principal,
+  Delegation,
+  UCANOptions
+} from '@ucanto/interface'
 import * as RSASigner from '@ucanto/principal/rsa'
 
 const DB_NAME = 'w3ui'
@@ -122,14 +131,20 @@ export interface KeyringContextActions {
    * Create a delegation to the passed audience for the given abilities with
    * the _current_ space as the resource.
    */
-  createDelegation: (audience: Principal, abilities: Abilities[], options: CreateDelegationOptions) => Promise<Delegation>
+  createDelegation: (
+    audience: Principal,
+    abilities: Abilities[],
+    options: CreateDelegationOptions
+  ) => Promise<Delegation>
   /**
    * Import a proof that delegates `*` ability on a space to this agent
    */
   addSpace: (proof: Delegation) => Promise<void>
 }
 
-export type CreateDelegationOptions = Omit<UCANOptions, 'audience'> & { audienceMeta?: AgentMeta }
+export type CreateDelegationOptions = Omit<UCANOptions, 'audience'> & {
+  audienceMeta?: AgentMeta
+}
 
 export interface ServiceConfig {
   servicePrincipal?: Principal
@@ -167,11 +182,23 @@ export interface CreateAgentOptions extends ServiceConfig {}
  * Create an agent for managing identity. It uses RSA keys that are stored in
  * IndexedDB as unextractable `CryptoKey`s.
  */
-export async function createAgent (options: CreateAgentOptions = {}): Promise<Agent> {
-  const dbName = `${DB_NAME}${(options.servicePrincipal != null) ? '@' + options.servicePrincipal.did() : ''}`
-  const store = new StoreIndexedDB(dbName, { dbVersion: 1, dbStoreName: DB_STORE_NAME })
+export async function createAgent (
+  options: CreateAgentOptions = {}
+): Promise<Agent> {
+  const dbName = `${DB_NAME}${
+    options.servicePrincipal != null ? '@' + options.servicePrincipal.did() : ''
+  }`
+  const store = new StoreIndexedDB(dbName, {
+    dbVersion: 1,
+    dbStoreName: DB_STORE_NAME
+  })
   const raw = await store.load()
-  if (raw != null) return Object.assign(Agent.from(raw, { ...options, store }), { store })
+  if (raw != null) {
+    return Object.assign(Agent.from(raw, { ...options, store }), { store })
+  }
   const principal = await RSASigner.generate()
-  return Object.assign(await Agent.create({ principal }, { ...options, store }), { store })
+  return Object.assign(
+    await Agent.create({ principal }, { ...options, store }),
+    { store }
+  )
 }

@@ -7,20 +7,22 @@ const SELECTORS = {
   noUploadTemplate: '#no-uploads',
   reloadButton: '[data-reload-button]',
   error: '.list-error',
-  table: 'table'
+  table: 'table',
 }
 
 export class ListFiles extends window.HTMLElement {
-  constructor () {
+  constructor() {
     super()
     this.listTemplate$ = document.querySelector(SELECTORS.listTemplate)
     this.listItemTemplate$ = document.querySelector(SELECTORS.listItemTemplate)
-    this.listErrorTemplate$ = document.querySelector(SELECTORS.listErrorTemplate)
+    this.listErrorTemplate$ = document.querySelector(
+      SELECTORS.listErrorTemplate
+    )
     this.updateList = this.updateList.bind(this)
     this.noUploads = false
   }
 
-  async connectedCallback () {
+  async connectedCallback() {
     this.appendChild(this.listTemplate$?.content.cloneNode(true))
     this.table = this.querySelector(SELECTORS.table)
     this.error = this.querySelector(SELECTORS.error)
@@ -34,7 +36,7 @@ export class ListFiles extends window.HTMLElement {
     this.updateList()
   }
 
-  async updateList () {
+  async updateList() {
     try {
       const files = (await listUploads(this.identity.signingPrincipal)).results
       if (files.length > 0) {
@@ -51,19 +53,19 @@ export class ListFiles extends window.HTMLElement {
     }
   }
 
-  toggleError (showError) {
+  toggleError(showError) {
     this.table.hidden = showError
     this.error.hidden = !showError
   }
 
-  toggleNoUploads () {
+  toggleNoUploads() {
     const templateContent = document.querySelector(SELECTORS.noUploadTemplate)
     this.replaceChildren(templateContent.content)
     const reloadButton = document.querySelector(SELECTORS.reloadButton)
     reloadButton.addEventListener('click', this.updateList)
   }
 
-  renderFileRow (file) {
+  renderFileRow(file) {
     const item = this.listItemTemplate$?.content.cloneNode(true)
     const columns = item.querySelectorAll('td')
     const gatewayLinkEl = document.createElement('a')

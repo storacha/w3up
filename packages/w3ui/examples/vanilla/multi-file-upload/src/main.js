@@ -4,12 +4,12 @@ import { RegisterForm } from './register'
 import { UploadFileForm } from './upload'
 
 export const EVENTS = {
-  registrationSuccess: 'registration:success'
+  registrationSuccess: 'registration:success',
 }
 
 const SELECTORS = {
   registerComponent: '#register-form-component',
-  uploadComponent: '#upload-form-component'
+  uploadComponent: '#upload-form-component',
 }
 
 document.addEventListener(EVENTS.registrationSuccess, (event) => {
@@ -21,7 +21,4 @@ document.addEventListener(EVENTS.registrationSuccess, (event) => {
   container.appendChild(uploadEl)
 })
 
-export {
-  RegisterForm,
-  UploadFileForm
-}
+export { RegisterForm, UploadFileForm }
