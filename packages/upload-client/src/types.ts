@@ -66,7 +66,10 @@ export interface UploadAddResponse {
 export interface UploadRemoveResponse extends UploadAddResponse {}
 
 export interface ListResponse<R> {
+  // cursor is deprecated in favor of endCursor, which should always be exactly the same value
   cursor?: string
+  startCursor?: string
+  endCursor?: string
   size: number
   results: R[]
 }
@@ -174,6 +177,10 @@ export interface Pageable {
    * Maximum number of items to return.
    */
   size?: number
+  /**
+   * If true, return page of results preceding cursor. Defaults to false.
+   */
+  pre?: boolean
 }
 
 export interface RequestOptions extends Retryable, Abortable, Connectable {}
