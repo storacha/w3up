@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.6.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.5.0...upload-client-v5.6.0) (2023-02-16)
+
+
+### Features
+
+* add startCursor and endCursor to ListResponse ([#437](https://github.com/web3-storage/w3protocol/issues/437)) ([8fa5672](https://github.com/web3-storage/w3protocol/commit/8fa56720fb7a60dfa9186dea7b61d60863402408))
+
+## [5.5.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.4.0...upload-client-v5.5.0) (2023-02-10)
+
+
+### Features
+
+* add `pre` caveat to `store/list` and `upload/list` ([#423](https://github.com/web3-storage/w3protocol/issues/423)) ([a0f6d28](https://github.com/web3-storage/w3protocol/commit/a0f6d2834b900c4522fe71da473e4b43760502fd))
+
 ## [5.4.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.3.0...upload-client-v5.4.0) (2023-01-30)
 
 

@@ -136,6 +136,7 @@ export async function list(
       nb: {
         cursor: options.cursor,
         size: options.size,
+        pre: options.pre,
       },
     })
     .execute(conn)
