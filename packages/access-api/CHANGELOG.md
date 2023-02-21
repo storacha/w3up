@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.11.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.10.0...access-api-v4.11.0) (2023-02-21)
+
+
+### Features
+
+* send emails from noreply@web3.storage ([#439](https://github.com/web3-storage/w3protocol/issues/439)) ([4f974a9](https://github.com/web3-storage/w3protocol/commit/4f974a9ae221fbd213fcd4d27df243f6ed6160ef))
+
 ## [4.10.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.9.0...access-api-v4.10.0) (2023-02-16)
 
 
