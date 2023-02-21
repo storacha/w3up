@@ -6,7 +6,7 @@ export class Email {
    * @param {string} [opts.sender]
    */
   constructor(opts) {
-    this.sender = opts.sender || 'web3.storage <noreply@dag.house>'
+    this.sender = opts.sender || 'web3.storage <noreply@web3.storage>'
     this.headers = {
       Accept: 'text/json',
       'Content-Type': 'text/json',
