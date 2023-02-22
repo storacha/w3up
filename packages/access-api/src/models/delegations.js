@@ -73,9 +73,6 @@ export class DbDelegationsStorage {
    */
   push = async (...delegations) => {
     const values = delegations.map((d) => createDelegationRowUpdate(d))
-    // @todo this might fail on foreign key constraint
-    // as long as delegations table has col audience fk to accounts did
-    // because audience might be a did:key not in accounts table
     await this.#db
       .insertInto('delegations')
       .values(values)
