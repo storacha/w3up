@@ -7,11 +7,12 @@ import * as delegationsResponse from '../utils/delegations-response.js'
 /**
  * @typedef {import('@web3-storage/capabilities/types').AccessClaimSuccess} AccessClaimSuccess
  * @typedef {import('@web3-storage/capabilities/types').AccessClaimFailure} AccessClaimFailure
- * @property {Record<string,Ucanto.ByteView<Ucanto.Delegation>>} delegations
  */
 
 /**
- * @typedef {Ucanto.Result<AccessClaimSuccess, AccessClaimFailure>} AccessClaimResult
+ * @callback AccessClaimHandler
+ * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessClaim>} invocation
+ * @returns {Promise<Ucanto.Result<AccessClaimSuccess, AccessClaimFailure>>}
  */
 
 /**
@@ -31,12 +32,6 @@ export function accessClaimProvider(ctx) {
 }
 
 /**
- * @callback AccessClaimHandler
- * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessClaim>} invocation
- * @returns {Promise<AccessClaimResult>}
- */
-
-/**
  * @param {object} options
  * @param {import('../types/delegations').DelegationsStorage} options.delegations
  * @returns {AccessClaimHandler}
@@ -44,7 +39,8 @@ export function accessClaimProvider(ctx) {
 export function createAccessClaimHandler({ delegations }) {
   /** @type {AccessClaimHandler} */
   return async (invocation) => {
-    // @todo - this should filter based on invocation
+    // @todo - this should filter based on invocation param
+    // https://github.com/web3-storage/w3protocol/issues/394
     const claimed = await collect(delegations)
     return {
       delegations: delegationsResponse.encode(claimed),
