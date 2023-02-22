@@ -4,8 +4,21 @@ import * as Ucanto from '@ucanto/interface'
 import { createDelegationsStorage } from './delegations.js'
 
 /**
+ * access/delegate failure due to the 'with' resource not having
+ * enough storage capacity to store the delegation.
+ * https://github.com/web3-storage/specs/blob/7e662a2d9ada4e3fc22a7a68f84871bff0a5380c/w3-access.md?plain=1#L94
+ *
+ * Semantics inspired by https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507
+ *
+ * @typedef InsufficientStorage
+ * @property {true} error
+ * @property {"InsufficientStorage"} name
+ * @property {string} message
+ */
+
+/**
  * @typedef {{}} AccessDelegateSuccess
- * @typedef {{ error: true }} AccessDelegateFailure
+ * @typedef {InsufficientStorage} AccessDelegateFailure
  * @typedef {Ucanto.Result<AccessDelegateSuccess, AccessDelegateFailure>} AccessDelegateResult
  */
 
@@ -25,14 +38,35 @@ export function accessDelegateProvider(ctx) {
  */
 
 /**
+ * @callback HasStorageProvider
+ * @param {Ucanto.DID<'key'>} did
+ * @returns {Promise<boolean>} whether the given resource has a storage provider
+ */
+
+/**
  * @param {object} options
  * @param {import('../types/delegations').DelegationsStorage} [options.delegations]
+ * @param {HasStorageProvider} [options.hasStorageProvider]
+ * @param {boolean} [options.allowServiceWithoutStorageProvider] - whether to allow service if the capability resource does not have a storage provider
  * @returns {AccessDelegateHandler}
  */
 export function createAccessDelegateHandler({
   delegations = createDelegationsStorage(),
+  hasStorageProvider = async () => false,
+  allowServiceWithoutStorageProvider = false,
 } = {}) {
   return async (invocation) => {
+    const capabability = invocation.capabilities[0]
+    if (
+      !allowServiceWithoutStorageProvider &&
+      !(await hasStorageProvider(capabability.with))
+    ) {
+      return {
+        name: 'InsufficientStorage',
+        message: `${capabability.with} has no storage provider`,
+        error: true,
+      }
+    }
     const delegated = extractProvenDelegations(invocation)
     delegations.push(...delegated)
     return {}

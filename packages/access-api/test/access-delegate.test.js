@@ -7,7 +7,10 @@ import * as ucanto from '@ucanto/core'
 import * as principal from '@ucanto/principal'
 import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
 import { createAccessClaimHandler } from '../src/service/access-claim.js'
-import { createDelegationsStorage } from '../src/service/delegations.js'
+import {
+  createDelegationsStorage,
+  toDelegationsDict,
+} from '../src/service/delegations.js'
 import { createD1Database } from '../src/utils/d1.js'
 import { DbDelegationsStorage } from '../src/models/delegations.js'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
@@ -15,34 +18,52 @@ import * as delegationsResponse from '../src/utils/delegations-response.js'
 /**
  * Run the same tests against several variants of access/delegate handlers.
  */
-for (const variant of /** @type {const} */ ([
+for (const handlerVariant of /** @type {const} */ ([
   {
     name: 'handled by access-api in miniflare',
-    ...createTesterFromContext(() => context()),
+    ...(() => {
+      const spaceWithStorageProvider = principal.ed25519.generate()
+      return {
+        spaceWithStorageProvider,
+        ...createTesterFromContext(() => context()),
+      }
+    })(),
   },
   {
     name: 'handled by access-delegate-handler',
-    ...createTesterFromHandler(() => createAccessDelegateHandler()),
+    ...(() => {
+      const spaceWithStorageProvider = principal.ed25519.generate()
+      return {
+        spaceWithStorageProvider,
+        ...createTesterFromHandler(() =>
+          createAccessDelegateHandler({
+            hasStorageProvider: async (uri) => {
+              return (
+                uri === (await spaceWithStorageProvider.then((s) => s.did()))
+              )
+            },
+          })
+        ),
+      }
+    })(),
   },
 ])) {
-  describe(`access/delegate ${variant.name}`, () => {
+  describe(`access/delegate ${handlerVariant.name}`, () => {
     // test common variants of access/delegate invocation
     for (const [variantName, createTest] of Object.entries(
-      namedDelegateVariants()
+      namedDelegateVariants({
+        spaceWithStorageProvider: handlerVariant.spaceWithStorageProvider,
+      })
     )) {
       it(`handles variant ${variantName}`, async () => {
-        const { issuer, audience, invoke } = variant
+        const { issuer, audience, invoke } = handlerVariant
         const { invocation, check } = await createTest({ issuer, audience })
         /** @type {Ucanto.Result<unknown, { error: true }>} */
         const result = await invoke(invocation)
         if (typeof check === 'function') {
           await check(result)
         }
-        assert.notDeepEqual(
-          result.error,
-          true,
-          'invocation result is not an error'
-        )
+        assertNotError(result)
       })
     }
   })
@@ -54,39 +75,67 @@ for (const variant of /** @type {const} */ ([
 for (const variant of /** @type {const} */ ([
   {
     name: 'handled by createAccessHandler using array createDelegationsStorage',
-    ...createTesterFromHandler(
-      (() => {
-        const delegations = createDelegationsStorage()
-        return () => {
-          return createAccessHandler(
-            createAccessDelegateHandler({ delegations }),
-            createAccessClaimHandler({ delegations })
-          )
-        }
-      })()
-    ),
+    ...(() => {
+      const spaceWithStorageProvider = principal.ed25519.generate()
+      return {
+        spaceWithStorageProvider,
+        ...createTesterFromHandler(
+          (() => {
+            const delegations = createDelegationsStorage()
+            return () => {
+              return createAccessHandler(
+                createAccessDelegateHandler({
+                  delegations,
+                  hasStorageProvider: async (uri) => {
+                    return (
+                      uri ===
+                      (await spaceWithStorageProvider.then((s) => s.did()))
+                    )
+                  },
+                }),
+                createAccessClaimHandler({ delegations })
+              )
+            }
+          })()
+        ),
+      }
+    })(),
   },
   {
     name: 'handled by createAccessHandler using DbDelegationsStorage',
-    ...createTesterFromHandler(
-      (() => {
-        const d1 = context().then((ctx) => ctx.d1)
-        const database = d1.then((d1) => createD1Database(d1))
-        const delegations = database.then((db) => new DbDelegationsStorage(db))
-        return () => {
-          /**
-           * @type {InvocationHandler<AccessDelegate | AccessClaim, unknown, { error: true }>}
-           */
-          return async (invocation) => {
-            const handle = createAccessHandler(
-              createAccessDelegateHandler({ delegations: await delegations }),
-              createAccessClaimHandler({ delegations: await delegations })
-            )
-            return handle(invocation)
-          }
-        }
-      })()
-    ),
+    ...(() => {
+      const spaceWithStorageProvider = principal.ed25519.generate()
+      const d1 = context().then((ctx) => ctx.d1)
+      const database = d1.then((d1) => createD1Database(d1))
+      const delegations = database.then((db) => new DbDelegationsStorage(db))
+      return {
+        spaceWithStorageProvider,
+        ...createTesterFromHandler(
+          (() => {
+            return () => {
+              /**
+               * @type {InvocationHandler<AccessDelegate | AccessClaim, unknown, { error: true }>}
+               */
+              return async (invocation) => {
+                const handle = createAccessHandler(
+                  createAccessDelegateHandler({
+                    delegations: await delegations,
+                    hasStorageProvider: async (uri) => {
+                      return (
+                        uri ===
+                        (await spaceWithStorageProvider.then((s) => s.did()))
+                      )
+                    },
+                  }),
+                  createAccessClaimHandler({ delegations: await delegations })
+                )
+                return handle(invocation)
+              }
+            }
+          })()
+        ),
+      }
+    })(),
   },
   /*
   @todo: uncomment this testing against access-api + miniflare
@@ -107,7 +156,7 @@ for (const variant of /** @type {const} */ ([
     it('can delegate, then claim', async () => {
       await testCanDelegateThenClaim(
         variant.invoke,
-        await variant.issuer,
+        await variant.spaceWithStorageProvider,
         await variant.audience
       )
     })
@@ -194,58 +243,94 @@ function createTesterFromHandler(createHandler) {
  */
 
 /**
- * create valid delegate invocation with an empty delegation set
- *
- * @type {InvocationTestCreator<typeof Access.delegate>}
+ * @param {object} options
+ * @param {Promise<Ucanto.Signer<Ucanto.DID<'key'>>>} options.spaceWithStorageProvider
+ * @returns {InvocationTestCreator<typeof Access.delegate>}
  */
-async function withEmptyDelegationSet({ issuer, audience }) {
-  const invocation = await Access.delegate
-    .invoke({
-      issuer: await issuer,
-      audience: await audience,
-      with: await Promise.resolve(issuer).then((i) => i.did()),
-      nb: {
-        delegations: {},
-      },
+function createTestWithSpaceAndEmptyDelegationSet(options) {
+  /**
+   * create valid delegate invocation with an empty delegation set
+   *
+   * @type {InvocationTestCreator<typeof Access.delegate>}
+   */
+  return async function (invocationOptions) {
+    const issuer = await invocationOptions.issuer
+    const audience = await invocationOptions.audience
+    const spaceWithStorageProvider = await options.spaceWithStorageProvider
+    const authorizationToDelegate = await Access.delegate.delegate({
+      issuer: spaceWithStorageProvider,
+      audience: issuer,
+      with: spaceWithStorageProvider.did(),
     })
-    .delegate()
-  return { invocation }
-}
-
-/**
- * create a valid delegate invocation with a single delegation in nb.delegations set
- *
- * @type {InvocationTestCreator<typeof Access.delegate>}
- */
-async function withSingleDelegation({ issuer, audience }) {
-  const delegation = await ucanto.delegate({
-    issuer: await issuer,
-    audience: await audience,
-    capabilities: [{ can: '*', with: 'urn:foo' }],
-  })
-  const invocation = await Access.delegate
-    .invoke({
-      issuer: await issuer,
-      audience: await audience,
-      with: await Promise.resolve(issuer).then((i) => i.did()),
-      nb: {
-        delegations: {
-          notACid: delegation.cid,
+    const invocation = await Access.delegate
+      .invoke({
+        issuer,
+        audience,
+        with: spaceWithStorageProvider.did(),
+        nb: {
+          delegations: {},
         },
-      },
-      proofs: [delegation],
-    })
-    .delegate()
-  return { invocation }
+        proofs: [authorizationToDelegate],
+      })
+      .delegate()
+    return { invocation }
+  }
 }
 
 /**
+ * @param {object} options
+ * @param {Promise<Ucanto.Signer<Ucanto.DID<'key'>>>} options.spaceWithStorageProvider
+ * @param {(options: { issuer: Ucanto.Signer<Ucanto.DID<'key'>> }) => Resolvable<Iterable<Ucanto.Delegation>>} options.delegations - delegations to delegate vi access/delegate .nb.delegations
+ * @returns {InvocationTestCreator<typeof Access.delegate>}
+ */
+function createTestWithSpace(options) {
+  return async function (invocationOptions) {
+    const issuer = await invocationOptions.issuer
+    const audience = await invocationOptions.audience
+    const spaceWithStorageProvider = await options.spaceWithStorageProvider
+    const authorizationToDelegate = await Access.top.delegate({
+      issuer: spaceWithStorageProvider,
+      audience: issuer,
+      with: spaceWithStorageProvider.did(),
+    })
+    const delegations = [...(await options.delegations({ issuer }))]
+    const invocation = await Access.delegate
+      .invoke({
+        issuer,
+        audience,
+        with: spaceWithStorageProvider.did(),
+        nb: {
+          delegations: toDelegationsDict(delegations),
+        },
+        proofs: [authorizationToDelegate, ...delegations],
+      })
+      .delegate()
+    return { invocation }
+  }
+}
+
+/**
+ * @param {object} options
+ * @param {Promise<Ucanto.Signer<Ucanto.DID<'key'>>>} options.spaceWithStorageProvider
  * @returns {Record<string, InvocationTestCreator<typeof Access.delegate>>}
  */
-function namedDelegateVariants() {
+function namedDelegateVariants({ spaceWithStorageProvider }) {
   return {
-    withEmptyDelegationSet,
-    withSingleDelegation,
+    withSpaceAndEmptyDelegationSet: createTestWithSpaceAndEmptyDelegationSet({
+      spaceWithStorageProvider,
+    }),
+    withSpaceAndSingleDelegation: createTestWithSpace({
+      spaceWithStorageProvider,
+      delegations: async ({ issuer }) => {
+        return [
+          await ucanto.delegate({
+            issuer,
+            audience: issuer,
+            capabilities: [{ can: '*', with: 'did:web:example.com' }],
+          }),
+        ]
+      },
+    }),
   }
 }
 
@@ -273,7 +358,12 @@ describe('access-delegate-handler', () => {
       })
       .delegate()
     const delegations = createDelegationsStorage()
-    const handleAccessDelegate = createAccessDelegateHandler({ delegations })
+    const handleAccessDelegate = createAccessDelegateHandler({
+      delegations,
+      hasStorageProvider: async (uri) => {
+        return uri === alice.did()
+      },
+    })
     await assert.rejects(handleAccessDelegate(invocation), 'UnknownDelegation')
     assert.deepEqual(delegations.length, 0, '0 delegations were stored')
   })
@@ -299,10 +389,43 @@ describe('access-delegate-handler', () => {
       })
       .delegate()
     const delegations = createDelegationsStorage()
-    const handleAccessDelegate = createAccessDelegateHandler({ delegations })
+    const handleAccessDelegate = createAccessDelegateHandler({
+      delegations,
+      hasStorageProvider: async (uri) => uri === alice.did(),
+    })
     const result = await handleAccessDelegate(invocation)
-    assert.notDeepEqual(result.error, true, 'invocation result is not an error')
+    assertNotError(result, 'invocation result is not an error')
     assert.deepEqual(delegations.length, 1, '1 delegation was stored')
+  })
+
+  // "Provider SHOULD deny service if DID in the `with` field has no storage provider."
+  // https://github.com/web3-storage/specs/blob/7e662a2d9ada4e3fc22a7a68f84871bff0a5380c/w3-access.md?plain=1#L94
+  it('InsufficientStorage if DID in the `with` field has no storage provider', async () => {
+    const alice = await principal.ed25519.generate()
+    const w3 = await principal.ed25519.generate()
+    const delegations = createDelegationsStorage()
+    const handleAccessDelegate = createAccessDelegateHandler({
+      delegations,
+      // note: always returns false
+      hasStorageProvider: async () => false,
+    })
+    const invocation = await Access.delegate
+      .invoke({
+        issuer: alice,
+        audience: w3,
+        with: alice.did(),
+        nb: {
+          delegations: {},
+        },
+      })
+      .delegate()
+    const result = await handleAccessDelegate(invocation)
+    assert.ok(result.error, 'invocation result is an error')
+    assert.deepEqual(result.name, 'InsufficientStorage')
+    assert.ok(
+      result.message.includes('has no storage provider'),
+      'InsufficientStorage message indicates that it is because there is no storage provider'
+    )
   })
 })
 
