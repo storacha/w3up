@@ -1,5 +1,28 @@
 # Changelog
 
+## [4.11.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.10.0...access-api-v4.11.0) (2023-02-21)
+
+
+### Features
+
+* send emails from noreply@web3.storage ([#439](https://github.com/web3-storage/w3protocol/issues/439)) ([4f974a9](https://github.com/web3-storage/w3protocol/commit/4f974a9ae221fbd213fcd4d27df243f6ed6160ef))
+
+## [4.10.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.9.0...access-api-v4.10.0) (2023-02-16)
+
+
+### Features
+
+* add support for access/authorize and update ([#392](https://github.com/web3-storage/w3protocol/issues/392)) ([9c8ca0b](https://github.com/web3-storage/w3protocol/commit/9c8ca0b385c940c8f0c21ee9edde093d2dcab8b8)), closes [#386](https://github.com/web3-storage/w3protocol/issues/386)
+* optional override for Postmark email From: field ([#354](https://github.com/web3-storage/w3protocol/issues/354)) ([f6b2350](https://github.com/web3-storage/w3protocol/commit/f6b23509768e59b72db51f6ae56cba260058771a))
+* rm /reproduce-cloudflare-error route ([#426](https://github.com/web3-storage/w3protocol/issues/426)) ([99cbd2f](https://github.com/web3-storage/w3protocol/commit/99cbd2f9bbdb55f31773c5d654d02b66c2468e32))
+* rm upload-api-proxy ability to route to separate environment audiences ([#407](https://github.com/web3-storage/w3protocol/issues/407)) ([5cfe274](https://github.com/web3-storage/w3protocol/commit/5cfe274fc402e3df4fd4bc8520cefb178f0eba65))
+
+
+### Bug Fixes
+
+* align postmark/welcome.txt with .html version ([#431](https://github.com/web3-storage/w3protocol/issues/431)) ([a53d6e6](https://github.com/web3-storage/w3protocol/commit/a53d6e62af165a1eb4649525cd0dc7e83a9f5279))
+* avoid email delegation via GET request ([#430](https://github.com/web3-storage/w3protocol/issues/430)) ([d282d6a](https://github.com/web3-storage/w3protocol/commit/d282d6abac12c29dfbe9690ba5cd285ee3960f91))
+
 ## [4.9.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.8.0...access-api-v4.9.0) (2023-01-30)
 
 
