@@ -10,15 +10,12 @@ import { createDelegationsStorage } from './delegations.js'
  *
  * Semantics inspired by https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507
  *
- * @typedef InsufficientStorage
- * @property {true} error
- * @property {"InsufficientStorage"} name
- * @property {string} message
+ * @typedef {import('@web3-storage/capabilities/types').InsufficientStorage} InsufficientStorage
  */
 
 /**
- * @typedef {{}} AccessDelegateSuccess
- * @typedef {InsufficientStorage} AccessDelegateFailure
+ * @typedef {import('@web3-storage/capabilities/types').AccessDelegateSuccess} AccessDelegateSuccess
+ * @typedef {import('@web3-storage/capabilities/types').AccessDelegateFailure} AccessDelegateFailure
  * @typedef {Ucanto.Result<AccessDelegateSuccess, AccessDelegateFailure>} AccessDelegateResult
  */
 

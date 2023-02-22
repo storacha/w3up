@@ -1,4 +1,5 @@
 import type { TupleToUnion } from 'type-fest'
+import * as Ucanto from '@ucanto/interface'
 import { InferInvokedCapability } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import { top } from './top.js'
@@ -22,9 +23,17 @@ export type AccessAuthorize = InferInvokedCapability<
   typeof AccessCaps.authorize
 >
 export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
+export interface AccessClaimSuccess {
+  delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
+}
+export interface AccessClaimFailure {
+  error: true
+}
+
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
 export type AccessDelegateSuccess = unknown
 export type AccessDelegateFailure = { error: true } | InsufficientStorage
+
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 
 // Space
