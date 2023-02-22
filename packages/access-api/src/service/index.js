@@ -32,7 +32,12 @@ export function service(ctx) {
         if (ctx.config.ENV === 'production') {
           throw new Error(`acccess/delegate invocation handling is not enabled`)
         }
-        return accessDelegateProvider(ctx)(...args)
+        return accessDelegateProvider({
+          delegations: ctx.models.delegations,
+          hasStorageProvider: async (uri) => {
+            return Boolean(await ctx.models.spaces.get(uri))
+          },
+        })(...args)
       },
     },
     voucher: {

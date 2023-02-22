@@ -23,11 +23,18 @@ import { createDelegationsStorage } from './delegations.js'
  */
 
 /**
- * @param {import('../bindings').RouteContext} ctx
+ * @param {object} ctx
+ * @param {import('../types/delegations').DelegationsStorage} ctx.delegations
+ * @param {HasStorageProvider} ctx.hasStorageProvider
  */
 export function accessDelegateProvider(ctx) {
+  const handleInvocation = createAccessDelegateHandler(ctx)
   return Server.provide(delegate, async ({ capability, invocation }) => {
-    return {}
+    return handleInvocation(
+      /** @type {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessDelegate>} */ (
+        invocation
+      )
+    )
   })
 }
 
