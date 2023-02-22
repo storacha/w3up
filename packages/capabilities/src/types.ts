@@ -7,6 +7,15 @@ import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
 
+/**
+ * failure due to a resource not having enough storage capacity.
+ */
+export interface InsufficientStorage {
+  error: true
+  name: 'InsufficientStorage'
+  message: string
+}
+
 // Access
 export type Access = InferInvokedCapability<typeof AccessCaps.access>
 export type AccessAuthorize = InferInvokedCapability<
@@ -14,6 +23,8 @@ export type AccessAuthorize = InferInvokedCapability<
 >
 export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
+export type AccessDelegateSuccess = unknown
+export type AccessDelegateFailure = { error: true } | InsufficientStorage
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 
 // Space
