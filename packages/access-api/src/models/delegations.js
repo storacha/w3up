@@ -79,14 +79,6 @@ export class DbDelegationsStorage {
       .onConflict((oc) => oc.column('cid').doNothing())
       .returningAll()
       .executeTakeFirst()
-  };
-
-  // eslint-disable-next-line jsdoc/require-returns-check
-  /**
-   * @returns {IterableIterator<Ucanto.Delegation>}
-   */
-  [Symbol.iterator]() {
-    throw new Error(`NotImplemented: D1DelegationsStorage#[Symbol.iterator]`)
   }
 
   /**
