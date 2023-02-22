@@ -15,11 +15,18 @@ import * as delegationsResponse from '../utils/delegations-response.js'
  */
 
 /**
- * @param {import('../bindings').RouteContext} ctx
+ * @param {object} ctx
+ * @param {import('../types/delegations').DelegationsStorage} ctx.delegations
+ * @param {Pick<import('../bindings.js').RouteContext['config'], 'ENV'>} ctx.config
  */
 export function accessClaimProvider(ctx) {
-  return Server.provide(claim, async ({ capability, invocation }) => {
-    return {}
+  const handleClaimInvocation = createAccessClaimHandler(ctx)
+  return Server.provide(claim, async ({ invocation }) => {
+    // disable until hardened in test/staging
+    if (ctx.config.ENV === 'production') {
+      throw new Error(`acccess/claim invocation handling is not enabled`)
+    }
+    return handleClaimInvocation(invocation)
   })
 }
 
@@ -37,8 +44,10 @@ export function accessClaimProvider(ctx) {
 export function createAccessClaimHandler({ delegations }) {
   /** @type {AccessClaimHandler} */
   return async (invocation) => {
+    // @todo - this should filter based on invocation
+    const claimed = await collect(delegations)
     return {
-      delegations: delegationsResponse.encode(await collect(delegations)),
+      delegations: delegationsResponse.encode(claimed),
     }
   }
 }
