@@ -5,12 +5,12 @@ import { collect } from 'streaming-iterables'
 import * as delegationsResponse from '../utils/delegations-response.js'
 
 /**
- * @typedef AccessClaimSuccess
+ * @typedef {import('@web3-storage/capabilities/types').AccessClaimSuccess} AccessClaimSuccess
+ * @typedef {import('@web3-storage/capabilities/types').AccessClaimFailure} AccessClaimFailure
  * @property {Record<string,Ucanto.ByteView<Ucanto.Delegation>>} delegations
  */
 
 /**
- * @typedef {{ error: true }} AccessClaimFailure
  * @typedef {Ucanto.Result<AccessClaimSuccess, AccessClaimFailure>} AccessClaimResult
  */
 
