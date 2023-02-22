@@ -460,11 +460,11 @@ importers:
     specifiers:
       '@ucanto/interface': ^4.2.3
       '@ucanto/principal': ^4.2.3
-      '@web3-storage/access': ^9.3.0
+      '@web3-storage/access': ^9.4.0
     dependencies:
       '@ucanto/interface': 4.2.3
       '@ucanto/principal': 4.2.3
-      '@web3-storage/access': 9.3.0
+      '@web3-storage/access': 9.4.0
 
   packages/react:
     specifiers:
@@ -489,7 +489,7 @@ importers:
       '@ucanto/interface': ^4.2.3
       '@ucanto/principal': ^4.2.3
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^9.3.0
+      '@web3-storage/access': ^9.4.0
       ariakit-react-utils: 0.17.0-next.27
     dependencies:
       '@w3ui/keyring-core': link:../keyring-core
@@ -499,7 +499,7 @@ importers:
       '@testing-library/user-event': 14.4.3
       '@ucanto/interface': 4.2.3
       '@ucanto/principal': 4.2.3
-      '@web3-storage/access': 9.3.0
+      '@web3-storage/access': 9.4.0
 
   packages/react-uploader:
     specifiers:
@@ -542,12 +542,12 @@ importers:
       '@ucanto/interface': ^4.2.3
       '@ucanto/principal': ^4.2.3
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^9.3.0
+      '@web3-storage/access': ^9.4.0
     dependencies:
       '@ucanto/interface': 4.2.3
       '@ucanto/principal': 4.2.3
       '@w3ui/keyring-core': link:../keyring-core
-      '@web3-storage/access': 9.3.0
+      '@web3-storage/access': 9.4.0
 
   packages/solid-uploader:
     specifiers:
@@ -603,13 +603,13 @@ importers:
       '@ucanto/interface': ^4.2.3
       '@ucanto/principal': ^4.2.3
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^9.3.0
+      '@web3-storage/access': ^9.4.0
     dependencies:
       '@w3ui/keyring-core': link:../keyring-core
     devDependencies:
       '@ucanto/interface': 4.2.3
       '@ucanto/principal': 4.2.3
-      '@web3-storage/access': 9.3.0
+      '@web3-storage/access': 9.4.0
 
   packages/vue-uploader:
     specifiers:
@@ -3973,7 +3973,7 @@ packages:
     dependencies:
       '@storybook/client-logger': 7.0.0-beta.29
       '@storybook/core-events': 7.0.0-beta.29
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/global': 5.0.0
       '@storybook/manager-api': 7.0.0-beta.29_biqbaboplfbrettd7655fr4n2y
       '@storybook/preview-api': 7.0.0-beta.29
@@ -4142,7 +4142,7 @@ packages:
       '@storybook/client-logger': 7.0.0-beta.29
       '@storybook/components': 7.0.0-beta.29_biqbaboplfbrettd7655fr4n2y
       '@storybook/core-events': 7.0.0-beta.29
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/docs-tools': 7.0.0-beta.29
       '@storybook/global': 5.0.0
       '@storybook/manager-api': 7.0.0-beta.29_biqbaboplfbrettd7655fr4n2y
@@ -4315,7 +4315,7 @@ packages:
       '@babel/core': 7.20.5
       '@babel/preset-env': 7.20.2_@babel+core@7.20.5
       '@babel/types': 7.20.7
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/csf-tools': 7.0.0-beta.29
       '@storybook/node-logger': 7.0.0-beta.29
       '@storybook/types': 7.0.0-beta.29
@@ -4355,7 +4355,7 @@ packages:
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@storybook/client-logger': 7.0.0-beta.29
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/global': 5.0.0
       '@storybook/theming': 7.0.0-beta.29_biqbaboplfbrettd7655fr4n2y
       '@storybook/types': 7.0.0-beta.29
@@ -4424,7 +4424,7 @@ packages:
       '@storybook/builder-manager': 7.0.0-beta.29
       '@storybook/core-common': 7.0.0-beta.29
       '@storybook/core-events': 7.0.0-beta.29
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/csf-tools': 7.0.0-beta.29
       '@storybook/docs-mdx': 0.0.1-next.6
       '@storybook/global': 5.0.0
@@ -4481,7 +4481,7 @@ packages:
     resolution: {integrity: sha512-YPVCGBJAJ7Nr7Ldav1I2LW2R3Yv7joneHFj3hqQ248ThNESbsRXTukcaUcCsXvjXFZpWPUzf3LnGvpWt7bciQg==}
     dependencies:
       '@babel/types': 7.20.7
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/types': 7.0.0-beta.29
       fs-extra: 9.1.0
       recast: 0.23.1
@@ -4496,11 +4496,9 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /@storybook/csf/0.0.2-next.8:
-    resolution: {integrity: sha512-3T6rflW7D9q1iXOR+bidwoNbd9rVUTyjYH/sqsnYjbXhb/aOXsQzGKwNeq9QqZIFVpKfg5BoOF5i7DCMtoGknQ==}
+  /@storybook/csf/0.0.2-next.10:
+    resolution: {integrity: sha512-m2PFgBP/xRIF85VrDhvesn9ktaD2pN3VUjvMqkAL/cINp/3qXsCyI81uw7N5VEOkQAbWrY2FcydnvEPDEdE8fA==}
     dependencies:
-      expect-type: 0.14.2
-      lodash: 4.17.21
       type-fest: 2.19.0
     dev: true
 
@@ -4561,7 +4559,7 @@ packages:
       '@storybook/channels': 7.0.0-beta.29
       '@storybook/client-logger': 7.0.0-beta.29
       '@storybook/core-events': 7.0.0-beta.29
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/global': 5.0.0
       '@storybook/router': 7.0.0-beta.29_biqbaboplfbrettd7655fr4n2y
       '@storybook/theming': 7.0.0-beta.29_biqbaboplfbrettd7655fr4n2y
@@ -4607,7 +4605,7 @@ packages:
       '@storybook/channels': 7.0.0-beta.29
       '@storybook/client-logger': 7.0.0-beta.29
       '@storybook/core-events': 7.0.0-beta.29
-      '@storybook/csf': 0.0.2-next.8
+      '@storybook/csf': 0.0.2-next.10
       '@storybook/global': 5.0.0
       '@storybook/types': 7.0.0-beta.29
       '@types/qs': 6.9.7
@@ -5486,8 +5484,8 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
-  /@web3-storage/access/9.3.0:
-    resolution: {integrity: sha512-j1HUqREA6etXP0/Rcg2+e3Ug6Vi9zgJBxenFSC4U+AyulGtfkKgJrZG8Qabj6L4+UjNxjrEjSmxUn8V8lq/ULw==}
+  /@web3-storage/access/9.4.0:
+    resolution: {integrity: sha512-GwrSHhOigNI009DRmRtJjqQ3JS/a+rlU7wXM7k5+FwMR9Kqr/Ayid+Ida1tN7NPEIKBqfe9wfXbVMowi86YNYw==}
     hasBin: true
     dependencies:
       '@ipld/car': 5.1.0
@@ -5499,7 +5497,7 @@ packages:
       '@ucanto/principal': 4.2.3
       '@ucanto/transport': 4.2.3
       '@ucanto/validator': 4.2.3
-      '@web3-storage/capabilities': 2.2.0
+      '@web3-storage/capabilities': 2.3.0
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
       inquirer: 9.1.4
@@ -5521,6 +5519,15 @@ packages:
 
   /@web3-storage/capabilities/2.2.0:
     resolution: {integrity: sha512-TCGcpMSVQJa0CI2GzBxJSEZDdbilEe3dtXdCzwi9NWmulsnPPj3KjSil/qHW04pYtnfql4/9n4a+pxjx6iGNCA==}
+    dependencies:
+      '@ucanto/core': 4.2.3
+      '@ucanto/interface': 4.2.3
+      '@ucanto/principal': 4.2.3
+      '@ucanto/transport': 4.2.3
+      '@ucanto/validator': 4.2.3
+
+  /@web3-storage/capabilities/2.3.0:
+    resolution: {integrity: sha512-+vg61eqK1eqQ+QD1hvChDDx6CXLGFnUsEA+W+g9yagCpq+H9yAqROncEEt+oluIGvAqNbFMrUb+bWRWxk0Tmuw==}
     dependencies:
       '@ucanto/core': 4.2.3
       '@ucanto/interface': 4.2.3
@@ -8063,10 +8070,6 @@ packages:
       to-regex: 3.0.2
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /expect-type/0.14.2:
-    resolution: {integrity: sha512-ed3+tr5ujbIYXZ8Pl/VgIphwJQ0q5tBLGGdn7Zvwt1WyPBRX83xjT5pT77P/GkuQbctx0K2ZNSSan7eruJqTCQ==}
     dev: true
 
   /expect/29.3.1:
