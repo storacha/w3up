@@ -21,7 +21,12 @@ export class Spaces {
   constructor(d1) {
     /** @type {GenericPlugin<SpaceRecord>} */
     const objectPlugin = new GenericPlugin({
-      metadata: (v) => JSON.parse(v),
+      metadata: (v) => {
+        if (v === 'EMPTY') {
+          return
+        }
+        return JSON.parse(v)
+      },
       inserted_at: (v) => new Date(v),
       updated_at: (v) => new Date(v),
     })

@@ -14,6 +14,7 @@ import {
 import { createD1Database } from '../src/utils/d1.js'
 import { DbDelegationsStorage } from '../src/models/delegations.js'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
+import { Voucher } from '@web3-storage/capabilities'
 
 /**
  * Run the same tests against several variants of access/delegate handlers.
@@ -25,7 +26,9 @@ for (const handlerVariant of /** @type {const} */ ([
       const spaceWithStorageProvider = principal.ed25519.generate()
       return {
         spaceWithStorageProvider,
-        ...createTesterFromContext(() => context()),
+        ...createTesterFromContext(() => context(), {
+          registerSpaces: [spaceWithStorageProvider],
+        }),
       }
     })(),
   },
@@ -66,6 +69,10 @@ for (const handlerVariant of /** @type {const} */ ([
         assertNotError(result)
       })
     }
+
+    it(`InsufficientStorage if DID in the with field has no storage provider`, async () => {
+      await testInsufficientStorageIfNoStorageProvider(handlerVariant)
+    })
   })
 }
 
@@ -140,8 +147,6 @@ for (const variant of /** @type {const} */ ([
   /*
   @todo: uncomment this testing against access-api + miniflare
   * after
-    * get access/delegate handler working in prod w/ sql DelegationsStorage
-      because otherwise there is nothing to access/claim
     * more tests on createAccessClaimHandler alone
       * ensure you can only claim things that are delegated to you, etc.
     * use createAccessClaimHandler inside of access-api ucanto service/server
@@ -167,9 +172,14 @@ for (const variant of /** @type {const} */ ([
  * Tests using context from "./helpers/context.js", which sets up a testable access-api inside miniflare.
  *
  * @param {() => Promise<{ issuer: Ucanto.Signer<Ucanto.DID<'key'>>, service: Ucanto.Signer<Ucanto.DID>, conn: Ucanto.ConnectionView<Record<string, any>> }>} createContext
+ * @param {object} [options]
+ * @param {Iterable<Resolvable<Ucanto.Principal>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
  */
-function createTesterFromContext(createContext) {
-  const context = createContext()
+function createTesterFromContext(createContext, options) {
+  const context = createContext().then(async (ctx) => {
+    await registerSpaces(options?.registerSpaces ?? [], ctx.service, ctx.conn)
+    return ctx
+  })
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
   /**
@@ -182,6 +192,54 @@ function createTesterFromContext(createContext) {
     return result
   }
   return { issuer, audience, invoke }
+}
+
+/**
+ * given an iterable of spaces, register them against an access-api
+ * using a service-issued voucher/redeem invocation
+ *
+ * @param {Iterable<Resolvable<Ucanto.Principal>>} spaces
+ * @param {Ucanto.Signer<Ucanto.DID>} issuer
+ * @param {Ucanto.ConnectionView<Record<string, any>>} conn
+ */
+async function registerSpaces(spaces, issuer, conn) {
+  for (const spacePromise of spaces) {
+    const space = await spacePromise
+    const redeem = await spaceRegistrationInvocation(issuer, space.did())
+    const results = await conn.execute(redeem)
+    assert.deepEqual(
+      results.length,
+      1,
+      'registration invocation should have 1 result'
+    )
+    const [result] = results
+    assertNotError(result)
+  }
+}
+
+/**
+ * get an access-api invocation that will register a space.
+ * This is useful e.g. because some functionality (e.g. access/delegate)
+ * will fail unless the space is registered.
+ *
+ * @param {Ucanto.Signer<Ucanto.DID>} issuer - issues voucher/redeem. e.g. could be the same signer as access-api env.PRIVATE_KEY
+ * @param {Ucanto.DID} space
+ * @param {Ucanto.Principal} audience - audience of the invocation. often is same as issuer
+ */
+async function spaceRegistrationInvocation(issuer, space, audience = issuer) {
+  const redeem = await Voucher.redeem
+    .invoke({
+      issuer,
+      audience,
+      with: issuer.did(),
+      nb: {
+        product: 'product:free',
+        space,
+        identity: 'mailto:someone',
+      },
+    })
+    .delegate()
+  return redeem
 }
 
 /**
@@ -401,33 +459,43 @@ describe('access-delegate-handler', () => {
   // "Provider SHOULD deny service if DID in the `with` field has no storage provider."
   // https://github.com/web3-storage/specs/blob/7e662a2d9ada4e3fc22a7a68f84871bff0a5380c/w3-access.md?plain=1#L94
   it('InsufficientStorage if DID in the `with` field has no storage provider', async () => {
-    const alice = await principal.ed25519.generate()
-    const w3 = await principal.ed25519.generate()
-    const delegations = createDelegationsStorage()
-    const handleAccessDelegate = createAccessDelegateHandler({
-      delegations,
-      // note: always returns false
-      hasStorageProvider: async () => false,
+    await testInsufficientStorageIfNoStorageProvider({
+      audience: await principal.ed25519.generate(),
+      invoke: createAccessDelegateHandler({
+        delegations: createDelegationsStorage(),
+        // note: always returns false
+        hasStorageProvider: async () => false,
+      }),
     })
-    const invocation = await Access.delegate
-      .invoke({
-        issuer: alice,
-        audience: w3,
-        with: alice.did(),
-        nb: {
-          delegations: {},
-        },
-      })
-      .delegate()
-    const result = await handleAccessDelegate(invocation)
-    assert.ok(result.error, 'invocation result is an error')
-    assert.deepEqual(result.name, 'InsufficientStorage')
-    assert.ok(
-      result.message.includes('has no storage provider'),
-      'InsufficientStorage message indicates that it is because there is no storage provider'
-    )
   })
 })
+
+/**
+ * @param {object} options
+ * @param {Resolvable<Ucanto.Principal>} options.audience
+ * @param {(inv: Ucanto.Invocation<AccessDelegate>) => Promise<Ucanto.Result<unknown, { error: true } | Ucanto.Failure >>} options.invoke
+ */
+async function testInsufficientStorageIfNoStorageProvider(options) {
+  const alice = await principal.ed25519.generate()
+  const invocation = await Access.delegate
+    .invoke({
+      issuer: alice,
+      audience: await options.audience,
+      with: alice.did(),
+      nb: {
+        delegations: {},
+      },
+    })
+    .delegate()
+  const result = await options.invoke(invocation)
+  assert.ok(result.error, 'invocation result.error is truthy')
+  assert.ok('name' in result, 'result has a .name property')
+  assert.deepEqual(result.name, 'InsufficientStorage')
+  assert.ok(
+    result.message.includes('has no storage provider'),
+    'InsufficientStorage message indicates that it is because there is no storage provider'
+  )
+}
 
 /**
  * @template {Ucanto.Capability} Capability
@@ -472,16 +540,18 @@ async function testCanDelegateThenClaim(invoke, issuer, audience) {
 }
 
 /**
- * @param {{ error?: unknown }} result
+ * @param {{ error?: unknown }|null} result
  * @param {string} assertionMessage
  */
 function assertNotError(result, assertionMessage = 'result is not an error') {
   warnOnErrorResult(result)
-  assert.notDeepEqual(result.error, true, assertionMessage)
+  if (result && 'error' in result) {
+    assert.notDeepEqual(result.error, true, assertionMessage)
+  }
 }
 
 /**
- * @param {{ error?: unknown }} result
+ * @param {{ error?: unknown }|null} result
  * @param {string} [message]
  * @param {(...loggables: any[]) => void} warn
  */
@@ -491,7 +561,7 @@ function warnOnErrorResult(
   // eslint-disable-next-line no-console
   warn = console.warn.bind(console)
 ) {
-  if (result.error) {
+  if (result && 'error' in result && result.error) {
     warn(message, result)
   }
 }
