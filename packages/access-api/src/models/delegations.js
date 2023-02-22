@@ -37,7 +37,6 @@ export class DbDelegationsStorage {
     )
   }
 
-  /** @type {import("../types/delegations").DelegationsStorage['length']} */
   get length() {
     return new Promise((resolve, reject) => {
       this.#db
@@ -68,6 +67,7 @@ export class DbDelegationsStorage {
   }
 
   /**
+   * store items
    *
    * @param  {Array<Ucanto.Delegation>} delegations
    */
@@ -82,6 +82,8 @@ export class DbDelegationsStorage {
   }
 
   /**
+   * iterate through all stored items
+   *
    * @returns {AsyncIterableIterator<Ucanto.Delegation>}
    */
   async *[Symbol.asyncIterator]() {
