@@ -70,14 +70,17 @@ export class DbDelegationsStorage {
    * store items
    *
    * @param  {Array<Ucanto.Delegation>} delegations
+   * @returns {Promise<void>}
    */
   push = async (...delegations) => {
+    if (delegations.length === 0) {
+      return
+    }
     const values = delegations.map((d) => createDelegationRowUpdate(d))
     await this.#db
       .insertInto('delegations')
       .values(values)
       .onConflict((oc) => oc.column('cid').doNothing())
-      .returningAll()
       .executeTakeFirst()
   }
 
