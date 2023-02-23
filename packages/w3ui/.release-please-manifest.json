@@ -8,7 +8,7 @@
   "packages/solid-uploads-list": "2.0.2",
   "packages/vue-uploads-list": "2.0.1",
   "packages/keyring-core": "2.2.1",
+  "packages/solid-keyring": "2.1.1",
   "packages/react-keyring": "3.0.1",
-  "packages/solid-keyring": "2.1.0",
   "packages/vue-keyring": "2.0.2"
 }
