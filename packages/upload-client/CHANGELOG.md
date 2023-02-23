@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.6.0...upload-client-v6.0.0) (2023-02-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename startCursor and endCursor to before and after ([#442](https://github.com/web3-storage/w3protocol/issues/442))
+
+### Features
+
+* rename startCursor and endCursor to before and after ([#442](https://github.com/web3-storage/w3protocol/issues/442)) ([d4581a8](https://github.com/web3-storage/w3protocol/commit/d4581a80a91f1e6422a0d8eec2eb1403fbd34d90))
+
 ## [5.6.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.5.0...upload-client-v5.6.0) (2023-02-16)
 
 
