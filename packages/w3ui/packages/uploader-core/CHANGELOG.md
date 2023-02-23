@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v4.0.0...uploader-core-v4.1.0) (2023-02-23)
+
+
+### Features
+
+* implement reverse paging ([#381](https://github.com/web3-storage/w3ui/issues/381)) ([10f059a](https://github.com/web3-storage/w3ui/commit/10f059af4dbf5cb6303d82c1133defe8f74aa914))
+
 ## [4.0.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v3.0.2...uploader-core-v4.0.0) (2023-02-16)
 
 
