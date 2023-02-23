@@ -423,7 +423,7 @@ describe('access-delegate-handler', () => {
       },
     })
     await assert.rejects(handleAccessDelegate(invocation), 'UnknownDelegation')
-    assert.deepEqual(delegations.length, 0, '0 delegations were stored')
+    assert.deepEqual(await delegations.count(), 0, '0 delegations were stored')
   })
   it('stores delegations', async () => {
     const alice = await principal.ed25519.generate()
@@ -453,7 +453,7 @@ describe('access-delegate-handler', () => {
     })
     const result = await handleAccessDelegate(invocation)
     assertNotError(result, 'invocation result is not an error')
-    assert.deepEqual(delegations.length, 1, '1 delegation was stored')
+    assert.deepEqual(delegations.count, 1, '1 delegation was stored')
   })
 
   // "Provider SHOULD deny service if DID in the `with` field has no storage provider."

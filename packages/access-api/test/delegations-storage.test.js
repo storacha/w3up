@@ -12,7 +12,7 @@ describe('DbDelegationsStorage', () => {
     const delegations = await Promise.all(
       Array.from({ length: count }).map(() => createSampleDelegation())
     )
-    await storage.push(...delegations)
-    assert.deepEqual(await storage.length, delegations.length)
+    await storage.putMany(...delegations)
+    assert.deepEqual(await storage.count(), delegations.length)
   })
 })

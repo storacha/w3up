@@ -7,13 +7,26 @@ import * as Ucanto from '@ucanto/interface'
  * @returns {import("../types/delegations").DelegationsStorage}
  */
 export function createDelegationsStorage(delegations = []) {
-  const storage = Object.assign(delegations, {
-    async *[Symbol.asyncIterator]() {
-      for (const delegation of delegations) {
-        yield delegation
-      }
-    },
-  })
+  /** @type {import("../types/delegations").DelegationsStorage[typeof Symbol.asyncIterator]} */
+  async function* asyncIterator() {
+    for (const delegation of delegations) {
+      yield delegation
+    }
+  }
+  /** @type {import("../types/delegations").DelegationsStorage['count']} */
+  async function count() {
+    return BigInt(delegations.length)
+  }
+  /** @type {import("../types/delegations").DelegationsStorage['putMany']} */
+  async function putMany(...args) {
+    return delegations.push(...args)
+  }
+  /** @type {import('../types/delegations').DelegationsStorage} */
+  const storage = {
+    [Symbol.asyncIterator]: asyncIterator,
+    count,
+    putMany,
+  }
   return storage
 }
 

@@ -72,7 +72,7 @@ export function createAccessDelegateHandler({
       }
     }
     const delegated = extractProvenDelegations(invocation)
-    await delegations.push(...delegated)
+    await delegations.putMany(...delegated)
     return {}
   }
 }

@@ -1,23 +1,21 @@
 import * as Ucanto from '@ucanto/interface'
 
-export type Resolvable<T> = T | Promise<T>
-
 export interface DelegationsStorage<
   Cap extends Ucanto.Capability = Ucanto.Capability
 > {
   /**
-   * push items into storage
+   * write several items into storage
    *
    * @param delegations - delegations to store
    */
-  push: (
+  putMany: (
     ...delegations: Array<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
-  ) => Resolvable<unknown>
+  ) => Promise<unknown>
 
   /**
    * get number of stored items
    */
-  length: Resolvable<number>
+  count: () => Promise<bigint>
 
   /**
    * iterate through all stored items

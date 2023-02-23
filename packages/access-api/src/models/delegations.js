@@ -37,33 +37,12 @@ export class DbDelegationsStorage {
     )
   }
 
-  get length() {
-    return new Promise((resolve, reject) => {
-      this.#db
-        .selectFrom('delegations')
-        .select((e) => e.fn.count('cid').as('size'))
-        .executeTakeFirstOrThrow()
-        .then(({ size }) => {
-          if (typeof size === 'string') {
-            const sizeNumber = parseInt(size, 10)
-            if (isNaN(sizeNumber)) {
-              throw new TypeError(
-                `unable to determine size number of delegations table`
-              )
-            }
-            return sizeNumber
-          }
-          if (typeof size === 'bigint') {
-            if (size > Number.MAX_SAFE_INTEGER) {
-              throw new TypeError(`table size too big for js Number`)
-            }
-            return Number(size)
-          }
-          return size
-        })
-        .then(resolve)
-        .catch(reject)
-    })
+  async count() {
+    const { size } = await this.#db
+      .selectFrom('delegations')
+      .select((e) => e.fn.count('cid').as('size'))
+      .executeTakeFirstOrThrow()
+    return BigInt(size)
   }
 
   /**
@@ -72,7 +51,7 @@ export class DbDelegationsStorage {
    * @param  {Array<Ucanto.Delegation>} delegations
    * @returns {Promise<void>}
    */
-  push = async (...delegations) => {
+  async putMany(...delegations) {
     if (delegations.length === 0) {
       return
     }
@@ -90,21 +69,16 @@ export class DbDelegationsStorage {
    * @returns {AsyncIterableIterator<Ucanto.Delegation>}
    */
   async *[Symbol.asyncIterator]() {
-    if (this.#db.canStream) {
-      for await (const row of this.#db
-        .selectFrom('delegations')
-        .select(['bytes'])
-        .stream()) {
-        yield rowToDelegation(row)
-      }
-    } else {
-      // this db doesn't support .stream() so do something worse
-      for (const row of await this.#db
-        .selectFrom('delegations')
-        .select(['bytes'])
-        .execute()) {
-        yield rowToDelegation(row)
-      }
+    if (!this.#db.canStream) {
+      throw new Error(
+        `cannot create asyncIterator because the underlying database does not support streaming`
+      )
+    }
+    for await (const row of this.#db
+      .selectFrom('delegations')
+      .select(['bytes'])
+      .stream()) {
+      yield rowToDelegation(row)
     }
   }
 }
