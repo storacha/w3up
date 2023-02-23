@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/web3-storage/w3ui/compare/vue-keyring-v2.0.1...vue-keyring-v2.0.2) (2023-02-23)
+
+
+### Bug Fixes
+
+* update to latest @web3-storage/access ([#384](https://github.com/web3-storage/w3ui/issues/384)) ([5b06ee5](https://github.com/web3-storage/w3ui/commit/5b06ee59350fcd285db495fc6de456caa6d327c1))
+
 ## [2.0.1](https://github.com/web3-storage/w3ui/compare/vue-keyring-v2.0.0...vue-keyring-v2.0.1) (2022-12-15)
 
 
