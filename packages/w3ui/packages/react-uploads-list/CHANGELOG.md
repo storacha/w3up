@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v2.1.0...react-uploads-list-v2.2.0) (2023-02-23)
+
+
+### Features
+
+* implement reverse paging ([#381](https://github.com/web3-storage/w3ui/issues/381)) ([10f059a](https://github.com/web3-storage/w3ui/commit/10f059af4dbf5cb6303d82c1133defe8f74aa914))
+
 ## [2.1.0](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v2.0.1...react-uploads-list-v2.1.0) (2023-02-06)
 
 
