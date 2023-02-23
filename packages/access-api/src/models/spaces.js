@@ -22,6 +22,8 @@ export class Spaces {
     /** @type {GenericPlugin<SpaceRecord>} */
     const objectPlugin = new GenericPlugin({
       metadata: (v) => {
+        // this will be `EMPTY` because it's the default value in the sql schema
+        // https://github.com/web3-storage/w3protocol/issues/447
         if (v === 'EMPTY') {
           return
         }
