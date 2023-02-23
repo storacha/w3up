@@ -11,7 +11,7 @@ import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
 import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { Accounts } from './models/accounts.js'
-import { DelegationsStorage } from './types/delegations.js'
+import { DelegationsStorage as Delegations } from './types/delegations.js'
 
 export {}
 
@@ -60,7 +60,7 @@ export interface RouteContext {
     spaces: Spaces
     validations: Validations
     accounts: Accounts
-    delegations: DelegationsStorage
+    delegations: Delegations
   }
   uploadApi: ConnectionView
 }
