@@ -72,6 +72,10 @@ export class GenericPlugin {
       return {
         ...args.result,
         rows: args.result.rows.map((row) => {
+          if (row && row?.metadata === 'EMPTY') {
+            // eslint-disable-next-line no-console
+            console.log('GenericPlugin#transformResult row', row)
+          }
           const custom = {}
           for (const [key, value] of Object.entries(row)) {
             if (isBuffer(value)) {
