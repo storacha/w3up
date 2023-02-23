@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.4.0](https://github.com/web3-storage/w3protocol/compare/access-v9.3.0...access-v9.4.0) (2023-02-23)
+
+
+### Features
+
+* add support for access/authorize and update ([#392](https://github.com/web3-storage/w3protocol/issues/392)) ([9c8ca0b](https://github.com/web3-storage/w3protocol/commit/9c8ca0b385c940c8f0c21ee9edde093d2dcab8b8)), closes [#386](https://github.com/web3-storage/w3protocol/issues/386)
+
+
+### Bug Fixes
+
+* look for URL in channel before falling back to default ([#440](https://github.com/web3-storage/w3protocol/issues/440)) ([0741295](https://github.com/web3-storage/w3protocol/commit/0741295768af977dc5b3e35acabe4de85f9660b5))
+
 ## [9.4.0](https://github.com/web3-storage/w3protocol/compare/access-v9.3.0...access-v9.4.0) (2023-02-21)
 
 
