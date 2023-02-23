@@ -70,8 +70,11 @@ export class DbDelegationsStorage {
    */
   async *[Symbol.asyncIterator]() {
     if (!this.#db.canStream) {
-      throw new Error(
-        `cannot create asyncIterator because the underlying database does not support streaming`
+      throw Object.assign(
+        new Error(
+          `cannot create asyncIterator because the underlying database does not support streaming`
+        ),
+        { name: 'NotImplementedError' }
       )
     }
     for await (const row of this.#db
