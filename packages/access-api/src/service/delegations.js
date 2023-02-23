@@ -17,6 +17,14 @@ export function createDelegationsStorage(delegations = []) {
   async function count() {
     return BigInt(delegations.length)
   }
+  /** @type {import("../types/delegations").DelegationsStorage['find']} */
+  async function* find(query) {
+    for (const d of delegations) {
+      if (d.audience.did() === query.audience) {
+        yield d
+      }
+    }
+  }
   /** @type {import("../types/delegations").DelegationsStorage['putMany']} */
   async function putMany(...args) {
     return delegations.push(...args)
@@ -25,6 +33,7 @@ export function createDelegationsStorage(delegations = []) {
   const storage = {
     [Symbol.asyncIterator]: asyncIterator,
     count,
+    find,
     putMany,
   }
   return storage

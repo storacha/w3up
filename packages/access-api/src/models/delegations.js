@@ -46,6 +46,15 @@ export class DbDelegationsStorage {
   }
 
   /**
+   * @param {import('../types/delegations').Query} query
+   */
+  async find(query) {
+    const rows = [...(await selectByAudience(this.#db, query.audience))]
+    const delegations = rows.map((r) => rowToDelegation(r))
+    return delegations
+  }
+
+  /**
    * store items
    *
    * @param  {Array<Ucanto.Delegation>} delegations
@@ -111,4 +120,16 @@ function createDelegationRowUpdate(d) {
     issuer: d.issuer.did(),
     bytes: delegationsToBytes([d]),
   }
+}
+
+/**
+ * @param {DelegationsDatabase} db
+ * @param {Ucanto.DID<'key'>} audience
+ */
+async function selectByAudience(db, audience) {
+  return await db
+    .selectFrom('delegations')
+    .selectAll()
+    .where('delegations.audience', '=', audience)
+    .execute()
 }
