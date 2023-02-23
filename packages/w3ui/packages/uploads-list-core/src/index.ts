@@ -33,6 +33,10 @@ export interface UploadsListContextActions {
   /**
    * Load the next page of results.
    */
+  prev: () => Promise<void>
+  /**
+   * Load the next page of results.
+   */
   next: () => Promise<void>
   /**
    * Call to reload the uploads list (discarding the current page).

@@ -19,6 +19,7 @@ export const uploadsListContextDefaultValue: UploadsListContextValue = [
     loading: false
   },
   {
+    prev: async () => {},
     next: async () => {},
     reload: async () => {}
   }
@@ -46,13 +47,14 @@ export function UploadsListProvider ({
   children
 }: UploadsListProviderProps): JSX.Element {
   const [{ space, agent }, { getProofs }] = useKeyring()
-  const [cursor, setCursor] = useState<string>()
+  const [before, setBefore] = useState<string>()
+  const [after, setAfter] = useState<string>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error>()
   const [data, setData] = useState<UploadListResult[]>()
   const [controller, setController] = useState(new AbortController())
 
-  const loadPage = async (cursor?: string): Promise<void> => {
+  const loadPage = async (cursor?: string, pre?: boolean): Promise<void> => {
     if (space == null) return
     if (agent == null) return
 
@@ -71,11 +73,15 @@ export function UploadsListProvider ({
       const page = await list(conf, {
         cursor,
         size,
+        pre,
         signal: newController.signal,
         connection
       })
-      setCursor(page.cursor)
-      setData(page.results)
+      if (page.size > 0) {
+        setBefore(page.before)
+        setAfter(page.after)
+        setData(page.results)
+      }
     } catch (error_: any) {
       if (error_.name !== 'AbortError') {
         /* eslint-disable no-console */
@@ -90,17 +96,20 @@ export function UploadsListProvider ({
 
   const state = { data, loading, error }
   const actions = {
-    next: async (): Promise<void> => {
-      await loadPage(cursor)
-    },
+    next: async (): Promise<void> => { await loadPage(after) },
+    prev: async (): Promise<void> => { await loadPage(before, true) },
     reload: async (): Promise<void> => {
-      setCursor(undefined)
+      setBefore(undefined)
+      setAfter(undefined)
       await loadPage()
     }
   }
 
   // we should reload the page any time the space or agent change
   useEffect(() => {
+    setBefore(undefined)
+    setAfter(undefined)
+    setData([])
     void loadPage()
   }, [space, agent])
 

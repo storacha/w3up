@@ -29,26 +29,29 @@ export type UploadsListComponentContextValue = [
   actions: UploadsListComponentContextActions
 ]
 
-export const UploadsListComponentContext =
-  createContext<UploadsListComponentContextValue>([
-    {
-      /**
-       * A boolean indicating whether the uploads list
-       * is currently loading data from the server.
-       */
-      loading: false
-    },
-    {
-      /**
-       * A function that will load the next page of results.
-       */
-      next: async () => {},
-      /**
-       * A function that will reload the uploads list.
-       */
-      reload: async () => {}
-    }
-  ])
+export const UploadsListComponentContext = createContext<UploadsListComponentContextValue>([
+  {
+    /**
+     * A boolean indicating whether the uploads list
+     * is currently loading data from the server.
+     */
+    loading: false
+  },
+  {
+    /**
+     * A function that will load the previous page of results.
+     */
+    prev: async () => {},
+    /**
+     * A function that will load the next page of results.
+     */
+    next: async () => {},
+    /**
+     * A function that will reload the uploads list.
+     */
+    reload: async () => {}
+  }
+])
 
 export type UploadsListRootOptions = Options<typeof Fragment>
 export type UploadsListRenderProps = Omit<
@@ -94,9 +97,26 @@ export const UploadsListRoot = (props: UploadsListRootProps): JSX.Element => {
   )
 }
 
+export type PrevButtonOptions<T extends As = 'button'> = Options<T>
+export type PrevButtonProps<T extends As = 'button'> = Props<PrevButtonOptions<T>>
+
+/**
+ * Button that loads the next page of results.
+ *
+ * A 'button' designed to work with `UploadsList`. Any passed props will
+ * be passed along to the `button` component.
+ */
+export const PrevButton: Component<PrevButtonProps> = createComponent((props: any) => {
+  const [, { prev }] = useContext(UploadsListComponentContext)
+  const onClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    void prev()
+  }, [prev])
+  return createElement('button', { ...props, onClick })
+})
+
 export type NextButtonOptions<T extends As = 'button'> = Options<T>
-export type NextButtonProps<T extends As = 'button'> =
-  Props<NextButtonOptions<T>>
+export type NextButtonProps<T extends As = 'button'> = Props<NextButtonOptions<T>>
 
 /**
  * Button that loads the next page of results.
@@ -119,9 +139,7 @@ export const NextButton: Component<NextButtonProps> = createComponent(
 )
 
 export type ReloadButtonOptions<T extends As = 'button'> = Options<T>
-export type ReloadButtonProps<T extends As = 'button'> = Props<
-ReloadButtonOptions<T>
->
+export type ReloadButtonProps<T extends As = 'button'> = Props<ReloadButtonOptions<T>>
 
 /**
  * Button that reloads an `UploadsList`.
@@ -150,7 +168,4 @@ export function useUploadsListComponent (): UploadsListComponentContextValue {
   return useContext(UploadsListComponentContext)
 }
 
-export const UploadsList = Object.assign(UploadsListRoot, {
-  NextButton,
-  ReloadButton
-})
+export const UploadsList = Object.assign(UploadsListRoot, { PrevButton, NextButton, ReloadButton })
