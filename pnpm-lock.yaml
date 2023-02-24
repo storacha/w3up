@@ -47,6 +47,7 @@ importers:
       '@ucanto/principal': ^4.2.3
       '@ucanto/server': ^4.2.3
       '@ucanto/transport': ^4.2.3
+      '@ucanto/validator': ^4.2.3
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
       '@web3-storage/worker-utils': 0.4.3-dev
@@ -69,6 +70,7 @@ importers:
       qrcode: ^1.5.1
       readable-stream: ^4.2.0
       sade: ^1.8.1
+      streaming-iterables: ^7.1.0
       toucan-js: ^2.7.0
       typescript: 4.9.4
       wrangler: ^2.8.0
@@ -79,6 +81,7 @@ importers:
       '@ucanto/principal': 4.2.3
       '@ucanto/server': 4.2.3
       '@ucanto/transport': 4.2.3
+      '@ucanto/validator': 4.2.3
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
       '@web3-storage/worker-utils': 0.4.3-dev
@@ -88,6 +91,7 @@ importers:
       preact: 10.11.3
       preact-render-to-string: 5.2.6_preact@10.11.3
       qrcode: 1.5.1
+      streaming-iterables: 7.1.0
       toucan-js: 2.7.0
     devDependencies:
       '@cloudflare/workers-types': 3.19.0
@@ -11491,6 +11495,11 @@ packages:
       inherits: 2.0.4
       readable-stream: 3.6.0
     dev: true
+
+  /streaming-iterables/7.1.0:
+    resolution: {integrity: sha512-t2KmiLVhqafTRqGefD98s5XAMskfkfprr/BTzPIZz0kWB23iyR7XUkY03yjUf4aZpAuuV2/2SUOVri3LgKuOKw==}
+    engines: {node: '>=14'}
+    dev: false
 
   /streamsearch/1.1.0:
     resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}

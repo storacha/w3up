@@ -21,7 +21,14 @@ export class Spaces {
   constructor(d1) {
     /** @type {GenericPlugin<SpaceRecord>} */
     const objectPlugin = new GenericPlugin({
-      metadata: (v) => JSON.parse(v),
+      metadata: (v) => {
+        // this will be `EMPTY` because it's the default value in the sql schema
+        // https://github.com/web3-storage/w3protocol/issues/447
+        if (v === 'EMPTY') {
+          return
+        }
+        return JSON.parse(v)
+      },
       inserted_at: (v) => new Date(v),
       updated_at: (v) => new Date(v),
     })
