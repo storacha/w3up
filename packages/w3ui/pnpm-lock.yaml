@@ -234,6 +234,7 @@ importers:
 
   examples/react/w3console:
     specifiers:
+      '@headlessui/react': ^1.7.7
       '@heroicons/react': ^2.0.13
       '@ipld/car': ^5.1.0
       '@ipld/dag-ucan': ^3.2.0
@@ -242,9 +243,10 @@ importers:
       '@ucanto/core': ^4.1.0
       '@ucanto/interface': ^4.1.0
       '@w3ui/keyring-core': workspace:^
-      '@w3ui/react': workspace:^
       '@w3ui/react-keyring': workspace:^
+      '@w3ui/react-uploader': workspace:^
       '@w3ui/react-uploads-list': workspace:^
+      '@w3ui/uploader-core': workspace:^
       autoprefixer: ^10.4.13
       blueimp-md5: ^2.19.0
       postcss: ^8.4.21
@@ -253,13 +255,15 @@ importers:
       typescript: ^4.9.3
       vite: ^4.0.0
     dependencies:
+      '@headlessui/react': 1.7.7
       '@heroicons/react': 2.0.13
       '@ipld/car': 5.1.0
       '@ipld/dag-ucan': 3.2.0
       '@w3ui/keyring-core': link:../../../packages/keyring-core
-      '@w3ui/react': link:../../../packages/react
       '@w3ui/react-keyring': link:../../../packages/react-keyring
+      '@w3ui/react-uploader': link:../../../packages/react-uploader
       '@w3ui/react-uploads-list': link:../../../packages/react-uploads-list
+      '@w3ui/uploader-core': link:../../../packages/uploader-core
       blueimp-md5: 2.19.0
       preact: 10.11.3
     devDependencies:

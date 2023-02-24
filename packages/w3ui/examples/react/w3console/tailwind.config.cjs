@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'logo': 'url("/w3.svg")'
+      },
       colors: {
         'gray-dark': '#1d2027'
       }

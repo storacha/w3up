@@ -2,30 +2,27 @@ import type { ChangeEvent } from 'react'
 import type { Space } from '@w3ui/keyring-core'
 
 import { useEffect, useState } from 'react'
-import {
-  Authenticator,
-  Uploader,
-  UploadsList,
-  W3APIProvider,
-  SpaceFinder,
-  SpaceCreator,
-} from '@w3ui/react'
+import { DIDKey } from '@ucanto/interface'
 import { useKeyring } from '@w3ui/react-keyring'
 import { useUploadsList } from '@w3ui/react-uploads-list'
 import { ShareIcon } from '@heroicons/react/20/solid'
 import md5 from 'blueimp-md5'
-import '@w3ui/react/src/styles/all.css'
 import { SpaceShare } from './share'
-import { DIDKey } from '@ucanto/interface'
+import { Authenticator } from './components/Authenticator'
+import { Uploader } from './components/Uploader'
+import { UploadsList } from './components/UploadsList'
+import { W3APIProvider } from './components/W3API'
+import { SpaceFinder } from './components/SpaceFinder'
+import { SpaceCreator } from './components/SpaceCreator'
 
-function SpaceRegistrar(): JSX.Element {
+function SpaceRegistrar (): JSX.Element {
   const [, { registerSpace }] = useKeyring()
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
-  function resetForm(): void {
+  function resetForm (): void {
     setEmail('')
   }
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
+  async function onSubmit (e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
     setSubmitted(true)
     try {
@@ -87,7 +84,7 @@ interface SpaceSectionProps {
   share: boolean
 }
 
-function SpaceSection(props: SpaceSectionProps): JSX.Element {
+function SpaceSection (props: SpaceSectionProps): JSX.Element {
   const { viewSpace, share, setShare } = props
   const [{ space }] = useKeyring()
   const [, { reload }] = useUploadsList()
@@ -149,7 +146,7 @@ function SpaceSection(props: SpaceSectionProps): JSX.Element {
   )
 }
 
-function SpaceSelector(props: any): JSX.Element {
+function SpaceSelector (props: any): JSX.Element {
   const { selected, setSelected, spaces } = props
   return (
     <div>
@@ -167,7 +164,7 @@ function SpaceSelector(props: any): JSX.Element {
   )
 }
 
-export function Logo(): JSX.Element {
+export function Logo (): JSX.Element {
   return (
     <h1 className='font-bold flex flex-row justify-center items-center gap-2'>
       <svg
@@ -190,11 +187,11 @@ export function Logo(): JSX.Element {
   )
 }
 
-export function Layout(): JsxElement {
+export function Layout (): JsxElement {
   const [share, setShare] = useState(false)
   const [{ space, spaces }, { setCurrentSpace }] = useKeyring()
 
-  function viewSpace(did: DIDKey): void {
+  function viewSpace (did: DIDKey): void {
     setShare(false)
     void setCurrentSpace(did)
   }
@@ -223,7 +220,7 @@ export function Layout(): JsxElement {
   )
 }
 
-export function App(): JSX.Element {
+export function App (): JSX.Element {
   return (
     <W3APIProvider uploadsListPageSize={20}>
       <Authenticator className='h-full'>

@@ -30,7 +30,7 @@
   padding-right: 2.5rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: rgb(17 24 39);
+  color: #111827;
 }
 
 .w3ui-space-finder-combobox-button {
@@ -46,7 +46,7 @@
 .w3ui-space-finder-combobox-icon {
   height: 1.25rem;
   width: 1.25rem;
-  color: rgb(156 163 175);
+  color: #9ca3af;
 }
 
 .w3ui-space-finder-combobox-options {
@@ -76,7 +76,7 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.75rem;
   line-height: 1rem;
-  color: rgb(239 68 68);
+  color: #ef4444;
 }
 
 .w3ui-space-finder-combobox-option {
@@ -87,11 +87,11 @@
   padding-bottom: 0.5rem;
   padding-left: 2.5rem;
   padding-right: 1rem;
-  color: rgb(156 163 175);
+  color: #9ca3af;
 }
 
 .w3ui-space-finder-combobox-option.active {
-  background-color: rgb(13 148 136);
+  background-color: #0d9488;
   color: white;
 }
 

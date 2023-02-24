@@ -6,7 +6,7 @@ import { CarReader } from '@ipld/car/reader'
 import { importDAG } from '@ucanto/core/delegation'
 import type { PropsWithChildren } from 'react'
 import type { Delegation, DIDKey } from '@ucanto/interface'
-import { DidIcon } from './components/did-icon'
+import { DidIcon } from './components/DidIcon'
 
 function Header(props: PropsWithChildren): JSX.Element {
   return (

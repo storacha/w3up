@@ -1,8 +1,8 @@
 :root {
   --w3ui-button-text-color: white;
   --w3ui-button-border-radius: 0.375rem;
-  --w3ui-button-primary: rgb(30 41 59);
-  --w3ui-button-primary-hover: rgb(30 58 138);
+  --w3ui-button-primary: #1e293b;
+  --w3ui-button-primary-hover: #1e3a8a;
 }
 
 .w3ui-button {
