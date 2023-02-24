@@ -1,25 +1,32 @@
 import * as Ucanto from '@ucanto/interface'
 
+// without this alias, eslint jsdoc/check-types will complain below
+/* eslint-disable jsdoc/check-types */
+/**
+ * @typedef {typeof Symbol.iterator} SymbolIterator
+ */
+/* eslint-enable jsdoc/check-types */
+
 /**
  * DelegationsStorage that stores in-memory.
  *
- * @param {Array<Ucanto.Delegation>} delegations
+ * @param {Pick<Array<Ucanto.Delegation>, 'length' | 'push' | SymbolIterator>} storage
  * @returns {import("../types/delegations").DelegationsStorage}
  */
-export function createDelegationsStorage(delegations = []) {
+export function createDelegationsStorage(storage = []) {
   /** @type {import("../types/delegations").DelegationsStorage[typeof Symbol.asyncIterator]} */
   async function* asyncIterator() {
-    for (const delegation of delegations) {
+    for (const delegation of storage) {
       yield delegation
     }
   }
   /** @type {import("../types/delegations").DelegationsStorage['count']} */
   async function count() {
-    return BigInt(delegations.length)
+    return BigInt(storage.length)
   }
   /** @type {import("../types/delegations").DelegationsStorage['find']} */
   async function* find(query) {
-    for (const d of delegations) {
+    for (const d of storage) {
       if (d.audience.did() === query.audience) {
         yield d
       }
@@ -27,16 +34,16 @@ export function createDelegationsStorage(delegations = []) {
   }
   /** @type {import("../types/delegations").DelegationsStorage['putMany']} */
   async function putMany(...args) {
-    return delegations.push(...args)
+    return storage.push(...args)
   }
   /** @type {import('../types/delegations').DelegationsStorage} */
-  const storage = {
+  const delegations = {
     [Symbol.asyncIterator]: asyncIterator,
     count,
     find,
     putMany,
   }
-  return storage
+  return delegations
 }
 
 /**
