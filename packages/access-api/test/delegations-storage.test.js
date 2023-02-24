@@ -6,6 +6,7 @@ import { createSampleDelegation } from '../src/utils/ucan.js'
 import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
+import { collect } from 'streaming-iterables'
 
 describe('DbDelegationsStorage', () => {
   it('should persist delegations', async () => {
@@ -21,17 +22,48 @@ describe('DbDelegationsStorage', () => {
 
   it('can retrieve delegations by audience', async () => {
     const { issuer, d1 } = await context()
-    const alice = await principal.ed25519.generate()
-    const bob = await principal.ed25519.generate()
     const delegations = new DbDelegationsStorage(createD1Database(d1))
-    const delegationA = await createDelegation({ issuer, audience: alice })
-    const delegationB = await createDelegation({ issuer, audience: bob })
-    await delegations.putMany(delegationA, delegationB)
 
-    const aliceDelegations = await delegations.find({ audience: alice.did() })
-    assert.deepEqual(aliceDelegations.length, 1)
-    const bobDelegations = await delegations.find({ audience: bob.did() })
-    assert.deepEqual(bobDelegations.length, 1)
+    const alice = await principal.ed25519.generate()
+    const delegationsForAlice = await Promise.all(
+      Array.from({ length: 1 }).map(() =>
+        createDelegation({ issuer, audience: alice })
+      )
+    )
+
+    const bob = await principal.ed25519.generate()
+    const delegationsForBob = await Promise.all(
+      Array.from({ length: 2 }).map((e, i) =>
+        createDelegation({
+          issuer,
+          audience: bob,
+          capabilities: [
+            {
+              can: `test/${i}`,
+              with: alice.did(),
+            },
+          ],
+        })
+      )
+    )
+
+    await delegations.putMany(...delegationsForAlice, ...delegationsForBob)
+
+    const aliceDelegations = await collect(
+      delegations.find({ audience: alice.did() })
+    )
+    assert.deepEqual(aliceDelegations.length, delegationsForAlice.length)
+
+    const bobDelegations = await collect(
+      delegations.find({ audience: bob.did() })
+    )
+    assert.deepEqual(bobDelegations.length, delegationsForBob.length)
+
+    const carol = await principal.ed25519.generate()
+    const carolDelegations = await collect(
+      delegations.find({ audience: carol.did() })
+    )
+    assert.deepEqual(carolDelegations.length, 0)
   })
 })
 

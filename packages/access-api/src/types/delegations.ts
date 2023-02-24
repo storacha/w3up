@@ -32,7 +32,5 @@ export interface DelegationsStorage<
   /**
    * find all items that match the query
    */
-  find: (
-    query: Query
-  ) => Promise<Iterable<Ucanto.Delegation<Ucanto.Tuple<Cap>>>>
+  find: (query: Query) => AsyncIterable<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
 }

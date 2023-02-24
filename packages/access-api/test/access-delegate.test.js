@@ -519,12 +519,10 @@ async function testCanDelegateThenClaim(invoke, issuer, audience) {
     'result of access/delegate is not an error'
   )
 
-  // @todo uncomment the following assertions after further work on access/claim in https://github.com/web3-storage/w3protocol/issues/394
-  // it passed before, but not after https://github.com/web3-storage/w3protocol/pull/427#discussion_r1115842300
-
-  // // delegate succeeded, now try to claim it
-  // const claimResult = await invoke(claim)
-  // assertNotError(claimResult)
+  // delegate succeeded, now try to claim it
+  const { claim } = setup
+  const claimResult = await invoke(claim)
+  assertNotError(claimResult)
 
   // const claimedDelegations = [
   //   ...delegationsResponse.decode(

@@ -48,10 +48,10 @@ export class DbDelegationsStorage {
   /**
    * @param {import('../types/delegations').Query} query
    */
-  async find(query) {
-    const rows = [...(await selectByAudience(this.#db, query.audience))]
-    const delegations = rows.map((r) => rowToDelegation(r))
-    return delegations
+  async *find(query) {
+    for await (const row of await selectByAudience(this.#db, query.audience)) {
+      yield rowToDelegation(row)
+    }
   }
 
   /**
