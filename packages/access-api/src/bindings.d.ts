@@ -4,6 +4,7 @@ import type {
   DelegationTable,
   SpaceTable,
 } from '@web3-storage/access/types'
+import type { DurableObjectNamespace } from '@cloudflare/workers-types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
@@ -45,6 +46,7 @@ export interface Env {
   SPACES: KVNamespace
   VALIDATIONS: KVNamespace
   W3ACCESS_METRICS: AnalyticsEngine
+  SPACE_VERIFIERS: DurableObjectNamespace
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __D1_BETA__: D1Database
 }
@@ -61,6 +63,7 @@ export interface RouteContext {
     accounts: Accounts
   }
   uploadApi: ConnectionView
+  spaceVerifiers: DurableObjectNamespace
 }
 
 export type Handler = _Handler<RouteContext>

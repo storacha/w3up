@@ -7,9 +7,11 @@ export class Validations {
   /**
    *
    * @param {KVNamespace} kv
+   * @param {DurableObjectNamespace} spaceVerifiers
    */
-  constructor(kv) {
+  constructor(kv, spaceVerifiers) {
     this.kv = kv
+    this.spaceVerifiers = spaceVerifiers
   }
 
   /**
@@ -22,9 +24,27 @@ export class Validations {
         stringToDelegation(ucan)
       )
 
+    // TODO: remove this KV stuff once we have the durable objects stuff in production
     await this.kv.put(delegation.audience.did(), ucan, {
       expiration: delegation.expiration,
     })
+    if (delegation.capabilities[0].nb?.space) {
+      const durableObjectID = this.spaceVerifiers.idFromName(
+        delegation.capabilities[0].nb.space
+      )
+      const durableObject = this.spaceVerifiers.get(durableObjectID)
+      // hostname is totally ignored by the durable object but must be set so set it to example.com
+      const response = await durableObject.fetch(
+        'https://example.com/delegation',
+        {
+          method: 'PUT',
+          body: ucan,
+        }
+      )
+      if (response.status === 400) {
+        throw new Error(response.statusText)
+      }
+    }
 
     return delegation
   }

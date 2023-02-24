@@ -55,7 +55,7 @@ export function getContext(request, env, ctx) {
     url,
     models: {
       spaces: new Spaces(config.DB),
-      validations: new Validations(config.VALIDATIONS),
+      validations: new Validations(config.VALIDATIONS, env.SPACE_VERIFIERS),
       accounts: new Accounts(config.DB),
     },
     email: new Email({
@@ -67,5 +67,6 @@ export function getContext(request, env, ctx) {
       url: new URL(config.UPLOAD_API_URL),
       fetch: globalThis.fetch.bind(globalThis),
     }),
+    spaceVerifiers: env.SPACE_VERIFIERS,
   }
 }

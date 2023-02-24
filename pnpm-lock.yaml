@@ -31,7 +31,7 @@ importers:
 
   packages/access-api:
     specifiers:
-      '@cloudflare/workers-types': ^3.18.0
+      '@cloudflare/workers-types': ^3.19.0
       '@databases/split-sql-query': ^1.0.3
       '@databases/sql': ^3.2.0
       '@ipld/dag-ucan': ^3.2.0
