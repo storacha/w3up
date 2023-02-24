@@ -14,6 +14,7 @@ import {
 import { createD1Database } from '../src/utils/d1.js'
 import { DbDelegationsStorage } from '../src/models/delegations.js'
 import { Voucher } from '@web3-storage/capabilities'
+import * as delegationsResponse from '../src/utils/delegations-response.js'
 
 /**
  * Run the same tests against several variants of access/delegate handlers.
@@ -519,26 +520,23 @@ async function testCanDelegateThenClaim(invoke, issuer, audience) {
     'result of access/delegate is not an error'
   )
 
-  // @todo uncomment the following assertions after further work on access/claim in https://github.com/web3-storage/w3protocol/issues/394
-  // it passed before, but not after https://github.com/web3-storage/w3protocol/pull/427#discussion_r1115842300
-
-  // // delegate succeeded, now try to claim it
-  // const claimResult = await invoke(claim)
-  // assertNotError(claimResult)
-
-  // const claimedDelegations = [
-  //   ...delegationsResponse.decode(
-  //     /** @type {import('../src/service/access-claim.js').AccessClaimSuccess} */ (
-  //       claimResult
-  //     ).delegations
-  //   ),
-  // ]
-  // const { delegations } = setup
-  // assert.deepEqual(
-  //   claimedDelegations,
-  //   delegations,
-  //   'claimed all delegated delegations'
-  // )
+  // delegate succeeded, now try to claim it
+  const { claim } = setup
+  const claimResult = await invoke(claim)
+  assertNotError(claimResult)
+  const claimedDelegations = [
+    ...delegationsResponse.decode(
+      /** @type {import('../src/service/access-claim.js').AccessClaimSuccess} */ (
+        claimResult
+      ).delegations
+    ),
+  ]
+  const { delegations } = setup
+  assert.deepEqual(
+    claimedDelegations,
+    delegations,
+    'claimed all delegated delegations'
+  )
 }
 
 /**
@@ -576,13 +574,12 @@ function warnOnErrorResult(
  */
 async function setupDelegateThenClaim(invoker, audience) {
   const alice = await principal.ed25519.generate()
-  const bob = await principal.ed25519.generate()
-  const aliceSaysBobCanStoreAllWithAlice = await ucanto.delegate({
+  const aliceSaysInvokerCanStoreAllWithAlice = await ucanto.delegate({
     issuer: alice,
-    audience: bob,
+    audience: invoker,
     capabilities: [{ can: 'store/*', with: alice.did() }],
   })
-  const delegations = [aliceSaysBobCanStoreAllWithAlice]
+  const delegations = [aliceSaysInvokerCanStoreAllWithAlice]
   // invocation of access/delegate
   const delegate = await Access.delegate
     .invoke({
@@ -590,15 +587,13 @@ async function setupDelegateThenClaim(invoker, audience) {
       audience,
       with: invoker.did(),
       nb: {
-        delegations: {
-          notACid: aliceSaysBobCanStoreAllWithAlice.cid,
-        },
+        delegations: toDelegationsDict(delegations),
       },
-      proofs: [aliceSaysBobCanStoreAllWithAlice],
+      proofs: delegations,
     })
     .delegate()
   // invocation of access/claim that should claim the delegations
-  // claim as bob, since bob is the audience of `aliceSaysBobCanStoreAllWithAlice`
+  // claim as invoker, since invoker is the audience of `aliceSaysInvokerCanStoreAllWithAlice`
   const claim = await Access.claim
     .invoke({
       issuer: invoker,

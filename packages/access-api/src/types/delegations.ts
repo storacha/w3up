@@ -1,5 +1,10 @@
 import * as Ucanto from '@ucanto/interface'
 
+interface ByAudience {
+  audience: Ucanto.DID<'key'>
+}
+export type Query = ByAudience
+
 export interface DelegationsStorage<
   Cap extends Ucanto.Capability = Ucanto.Capability
 > {
@@ -23,4 +28,9 @@ export interface DelegationsStorage<
   [Symbol.asyncIterator]: () => AsyncIterableIterator<
     Ucanto.Delegation<Ucanto.Tuple<Cap>>
   >
+
+  /**
+   * find all items that match the query
+   */
+  find: (query: Query) => AsyncIterable<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
 }

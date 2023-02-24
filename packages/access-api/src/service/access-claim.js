@@ -1,8 +1,9 @@
 import * as Server from '@ucanto/server'
 import { claim } from '@web3-storage/capabilities/access'
 import * as Ucanto from '@ucanto/interface'
-import { collect } from 'streaming-iterables'
+import * as validator from '@ucanto/validator'
 import * as delegationsResponse from '../utils/delegations-response.js'
+import { collect } from 'streaming-iterables'
 
 /**
  * @typedef {import('@web3-storage/capabilities/types').AccessClaimSuccess} AccessClaimSuccess
@@ -39,9 +40,13 @@ export function accessClaimProvider(ctx) {
 export function createAccessClaimHandler({ delegations }) {
   /** @type {AccessClaimHandler} */
   return async (invocation) => {
-    // @todo - this should filter based on invocation param
-    // https://github.com/web3-storage/w3protocol/issues/394
-    const claimed = await collect(delegations)
+    const claimedAudience = invocation.capabilities[0].with
+    if (validator.DID.match({ method: 'mailto' }).is(claimedAudience)) {
+      throw new Error(`did:mailto not supported`)
+    }
+    const claimed = await collect(
+      delegations.find({ audience: claimedAudience })
+    )
     return {
       delegations: delegationsResponse.encode(claimed),
     }
