@@ -21,7 +21,7 @@ for (const handlerVariant of /** @type {const} */ ([
     })(),
   },
 ])) {
-  describe(`test ${handlerVariant.name}`, () => {
+  describe(`access-claim ${handlerVariant.name}`, () => {
     it(`can be invoked`, async () => {
       const issuer = await handlerVariant.issuer
       const result = await handlerVariant.invoke(
@@ -40,4 +40,6 @@ for (const handlerVariant of /** @type {const} */ ([
       )
     })
   })
+
+  // there are more tests about `testDelegateThenClaim` in ./access-delegate.test.js
 }

@@ -148,17 +148,18 @@ for (const variant of /** @type {const} */ ([
       }
     })(),
   },
-  /*
-  @todo: uncomment this testing against access-api + miniflare
-  * after
-    * more tests on createAccessClaimHandler alone
-      * ensure you can only claim things that are delegated to you, etc.
-    * use createAccessClaimHandler inside of access-api ucanto service/server
-  */
-  // {
-  //   name: 'handled by access-api in miniflare',
-  //   ...createTesterFromContext(() => context()),
-  // },
+  {
+    name: 'handled by access-api in miniflare',
+    ...(() => {
+      const spaceWithStorageProvider = principal.ed25519.generate()
+      return {
+        spaceWithStorageProvider,
+        ...createTesterFromContext(() => context(), {
+          registerSpaces: [spaceWithStorageProvider],
+        }),
+      }
+    })(),
+  },
 ])) {
   describe(`access/delegate ${variant.name}`, () => {
     // test delegate, then claim
