@@ -151,7 +151,7 @@ async function session(req, env) {
     }
     const account = accessSessionResult.audience
     const agentPubkey = accessSessionResult.capability.nb.key
-    const wrappedKeyCanAsignForAccount = await ucanto.delegate({
+    const wrappedKeyCanSignForAccount = await ucanto.delegate({
       issuer: env.signer,
       audience: { did: () => agentPubkey },
       capabilities: [
@@ -176,7 +176,7 @@ async function session(req, env) {
         }),
       ],
     })
-    await env.models.delegations.putMany(wrappedKeyCanAsignForAccount)
+    await env.models.delegations.putMany(wrappedKeyCanSignForAccount)
   }
 
   try {
