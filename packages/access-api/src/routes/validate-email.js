@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { stringToDelegation } from '@web3-storage/access/encoding'
+import {
+  stringToDelegation,
+} from '@web3-storage/access/encoding'
 import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
 import { toEmail } from '../utils/did-mailto.js'
