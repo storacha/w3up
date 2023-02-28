@@ -77,7 +77,44 @@ for (const handlerVariant of /** @type {const} */ ([
     it(`InsufficientStorage if DID in the with field has no storage provider`, async () => {
       await testInsufficientStorageIfNoStorageProvider(handlerVariant)
     })
+
+    it(`can access/delegate against registered space`, async () => {
+      const service = await handlerVariant.audience
+      const spaceWithStorageProvider =
+        await handlerVariant.spaceWithStorageProvider
+      const delegateResult = await testCanAccessDelegateWithRegisteredSpace({
+        space: spaceWithStorageProvider,
+        service,
+        invoke: handlerVariant.invoke,
+      })
+      assert.notDeepEqual(
+        delegateResult.error,
+        true,
+        'delegate result is not an error'
+      )
+    })
   })
+}
+
+/**
+ * @param {object} options
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.space - registered space
+ * @param {Ucanto.Principal} options.service
+ * @param {(invocation: Ucanto.Invocation<AccessDelegate>) => Promise<import('../src/service/access-delegate.js').AccessDelegateResult>} options.invoke
+ */
+async function testCanAccessDelegateWithRegisteredSpace(options) {
+  const delegate = await Access.delegate
+    .invoke({
+      issuer: options.space,
+      audience: options.service,
+      with: options.space.did(),
+      nb: {
+        delegations: {},
+      },
+    })
+    .delegate()
+  const delegateResult = await options.invoke(delegate)
+  return delegateResult
 }
 
 /**

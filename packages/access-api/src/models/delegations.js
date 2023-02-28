@@ -124,7 +124,7 @@ function createDelegationRowUpdate(d) {
 
 /**
  * @param {DelegationsDatabase} db
- * @param {Ucanto.DID<'key'>} audience
+ * @param {Ucanto.DID} audience
  */
 async function selectByAudience(db, audience) {
   return await db

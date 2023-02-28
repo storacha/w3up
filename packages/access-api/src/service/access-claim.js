@@ -1,7 +1,6 @@
 import * as Server from '@ucanto/server'
 import { claim } from '@web3-storage/capabilities/access'
 import * as Ucanto from '@ucanto/interface'
-import * as validator from '@ucanto/validator'
 import * as delegationsResponse from '../utils/delegations-response.js'
 import { collect } from 'streaming-iterables'
 
@@ -41,9 +40,6 @@ export function createAccessClaimHandler({ delegations }) {
   /** @type {AccessClaimHandler} */
   return async (invocation) => {
     const claimedAudience = invocation.capabilities[0].with
-    if (validator.DID.match({ method: 'mailto' }).is(claimedAudience)) {
-      throw new Error(`did:mailto not supported`)
-    }
     const claimed = await collect(
       delegations.find({ audience: claimedAudience })
     )

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { stringToDelegation } from '@web3-storage/access/encoding'
+import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
 import { toEmail } from '../utils/did-mailto.js'
 import {
@@ -8,6 +9,9 @@ import {
   ValidateEmailError,
   PendingValidateEmail,
 } from '../utils/html.js'
+import * as ucanto from '@ucanto/core'
+import * as validator from '@ucanto/validator'
+import { Verifier } from '@ucanto/principal/ed25519'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -134,6 +138,46 @@ async function session(req, env) {
     req.query.ucan,
     delegation.capabilities[0].nb.key
   )
+  if (req.method.toLowerCase() === 'post') {
+    const accessSessionResult = await validator.access(delegation, {
+      capability: Access.session,
+      principal: Verifier,
+      authority: env.signer,
+    })
+    if (accessSessionResult.error) {
+      throw new Error(
+        `unable to validate access session: ${accessSessionResult.error}`
+      )
+    }
+    const account = accessSessionResult.audience
+    const agentPubkey = accessSessionResult.capability.nb.key
+    const wrappedKeyCanAsignForAccount = await ucanto.delegate({
+      issuer: env.signer,
+      audience: { did: () => agentPubkey },
+      capabilities: [
+        {
+          with: env.signer.did(),
+          can: 'access-api/delegation',
+        },
+      ],
+      proofs: [
+        await ucanto.delegate({
+          issuer: env.signer,
+          audience: account,
+          capabilities: [
+            {
+              with: env.signer.did(),
+              can: './update',
+              nb: {
+                key: agentPubkey,
+              },
+            },
+          ],
+        }),
+      ],
+    })
+    await env.models.delegations.putMany(wrappedKeyCanAsignForAccount)
+  }
 
   try {
     return new HtmlResponse(
