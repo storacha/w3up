@@ -10,6 +10,7 @@ import { context } from './helpers/context.js'
 // @ts-ignore
 import isSubset from 'is-subset'
 import { toEmail } from '../src/utils/did-mailto.js'
+import { warnOnErrorResult } from './helpers/ucanto-test-utils.js'
 
 /** @type {typeof assert} */
 const t = assert
@@ -137,28 +138,44 @@ describe('access/authorize', function () {
       'delegations' in claimResult,
       'claimResult should have delegations property'
     )
-    const claimedDelegations = new Set(
-      Object.values(claimResult.delegations).flatMap((bytes) => {
+    const claimedDelegations = Object.values(claimResult.delegations).flatMap(
+      (bytes) => {
         return bytesToDelegations(
           /** @type {import('@web3-storage/access/src/types.js').BytesDelegation} */ (
             bytes
           )
         )
-      })
+      }
     )
     assert.deepEqual(
-      claimedDelegations.size,
-      1,
-      'should have claimed 1 delegation'
+      claimedDelegations.length,
+      2,
+      'should have claimed delegation(s)'
     )
-    const [claimedDelegation1] = claimedDelegations
-    assert.deepEqual(claimedDelegation1.issuer.did(), service.did())
-    assert.deepEqual(claimedDelegation1.audience.did(), issuer.did())
-    assert.deepEqual(claimedDelegation1.capabilities[0].can, 'ucan/attest')
-    assert.deepEqual(claimedDelegation1.capabilities[0].with, service.did())
+    /**
+     * @param {import('@ucanto/interface').Proof} proof
+     */
+    // eslint-disable-next-line unicorn/consistent-function-scoping
+    const proofDelegation = (proof) => {
+      if (!('cid' in proof)) {
+        return
+      }
+      return proof
+    }
+    const attest = claimedDelegations.find(
+      (d) => proofDelegation(d.proofs[0])?.issuer.did() === accountDID
+    )
+    assert.ok(
+      attest,
+      'should claim ucan/attest delegation with proof.iss=accountDID'
+    )
+    assert.deepEqual(attest.issuer.did(), service.did())
+    assert.deepEqual(attest.audience.did(), issuer.did())
+    assert.deepEqual(attest.capabilities[0].can, 'ucan/attest')
+    assert.deepEqual(attest.capabilities[0].with, service.did())
 
     // ucan/attest nb.proof can be decoded into a delegation
-    const claimedNb = claimedDelegation1.capabilities[0].nb
+    const claimedNb = attest.capabilities[0].nb
     assert.ok(
       claimedNb && typeof claimedNb === 'object' && 'proof' in claimedNb,
       'should have nb.proof'
@@ -173,6 +190,33 @@ describe('access/authorize', function () {
     assert.deepEqual(expectAccountToKey.capabilities, [
       { can: '*', with: 'ucan:*' },
     ])
+
+    const attestIssService = claimedDelegations.find(
+      (d) => proofDelegation(d.proofs[0])?.issuer.did() === service.did()
+    )
+    assert.ok(
+      attestIssService,
+      'should claim ucan/attest with proof.iss=service'
+    )
+    const accountAuthorization = attestIssService.proofs[0]
+    const account = issuer.withDID(accountDID)
+    const claimAsAccount = Access.claim.invoke({
+      issuer: account,
+      audience: service,
+      with: account.did(),
+      proofs: [accountAuthorization],
+    })
+    const claimAsAccountResult = await claimAsAccount.execute(conn)
+    warnOnErrorResult(claimAsAccountResult)
+    assert.notDeepEqual(
+      claimAsAccountResult.error,
+      true,
+      'claimAsAccountResult should not error'
+    )
+    assert.ok(
+      'delegations' in claimAsAccountResult,
+      'claimAsAccountResult should have delegations property'
+    )
   })
 
   it('should receive delegation in the ws', async function () {

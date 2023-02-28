@@ -160,6 +160,34 @@ async function session(req, env) {
 
     const agentPubkey = accessSessionResult.capability.nb.key
 
+    const update = await ucanto.delegate({
+      issuer: env.signer,
+      audience: account,
+      capabilities: [
+        {
+          with: env.signer.did(),
+          can: './update',
+          nb: {
+            key: agentPubkey,
+          },
+        },
+      ],
+    })
+    const attestKeyAuthorizesAccount = await ucanto.delegate({
+      issuer: env.signer,
+      audience: { did: () => agentPubkey },
+      capabilities: [
+        {
+          with: env.signer.did(),
+          can: 'ucan/attest',
+          nb: {
+            proof: update.cid,
+          },
+        },
+      ],
+      proofs: [update],
+    })
+
     // create delegations that should be claimable
     const delegationAccountToKey = await ucanto.delegate({
       issuer: account,
@@ -182,10 +210,10 @@ async function session(req, env) {
       issuer: env.signer,
       audience: {
         did() {
-          return accessSessionResult.capability.nb.key
+          return agentPubkey
         },
       },
-      proofs: [delegation],
+      proofs: [delegationAccountToKey],
       capabilities: [
         {
           can: 'ucan/attest',
@@ -196,7 +224,10 @@ async function session(req, env) {
         },
       ],
     })
-    await env.models.delegations.putMany(delegateToKey)
+    await env.models.delegations.putMany(
+      delegateToKey,
+      attestKeyAuthorizesAccount
+    )
   }
 
   try {
