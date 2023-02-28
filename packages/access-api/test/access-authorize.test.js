@@ -95,7 +95,7 @@ describe('access/authorize', function () {
     assert(html.includes(toEmail(accountDID)))
   })
 
-  it('should send confirmation email with link that, when clicked, allows for access/delegate', async function () {
+  it('should send confirmation email with link that, when clicked, allows for access/claim', async function () {
     const { issuer, service, conn, mf } = ctx
     const accountDID = 'did:mailto:dag.house:email'
 
@@ -122,6 +122,23 @@ describe('access/authorize', function () {
       confirmEmailPostResponse.status,
       200,
       'confirmEmailPostResponse status is 200'
+    )
+
+    const claim = Access.claim.invoke({
+      issuer,
+      audience: conn.id,
+      with: issuer.did(),
+    })
+    const claimResult = await claim.execute(conn)
+    assert.ok(
+      'delegations' in claimResult,
+      'claimResult should have delegations property'
+    )
+    const claimedDelegations = claimResult.delegations
+    assert.deepEqual(
+      Object.values(claimedDelegations).length,
+      1,
+      'should have claimed 1 delegation'
     )
 
     let accessDelegateError
