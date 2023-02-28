@@ -40,6 +40,9 @@ export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 // Provider
 export type Provider = InferInvokedCapability<typeof provider.provider>
 export type ProviderAdd = InferInvokedCapability<typeof provider.add>
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ProviderAddSuccess {}
+export type ProviderAddFailure = Ucanto.Failure
 
 // Space
 export type Space = InferInvokedCapability<typeof space>

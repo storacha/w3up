@@ -43,7 +43,7 @@ for (const handlerVariant of /** @type {const} */ ([
           .invoke({
             issuer,
             audience: await handlerVariant.audience,
-            with: issuer.did(),
+            with: `did:mailto:example.com:foo`,
             nb: {
               consumer: space.did(),
               provider: 'did:web:web3.storage:providers:w3up-alpha',
@@ -52,11 +52,7 @@ for (const handlerVariant of /** @type {const} */ ([
           .delegate()
       )
       warnOnErrorResult(result)
-      assert.notDeepEqual(
-        result.error,
-        true,
-        'provider/add result should not be error'
-      )
+      assert.deepEqual('name' in result && result.name, 'NotImplemented')
     })
   })
 }

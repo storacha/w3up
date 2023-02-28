@@ -17,6 +17,10 @@ import * as Ucanto from '@ucanto/interface'
 export function createProviderAddHandler() {
   /** @type {ProviderAddHandler} */
   return async (invocation) => {
-    return {}
+    return {
+      error: true,
+      name: 'NotImplemented',
+      message: 'Provider add not implemented yet',
+    }
   }
 }

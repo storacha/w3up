@@ -34,13 +34,15 @@ export const StorageProvider = literal(
   'did:web:web3.storage:providers:w3up-alpha'
 )
 
+export const AccountDID = DID.match({ method: 'mailto' })
+
 /**
  * Capability can be invoked by an agent to add a provider to a space.
  */
 export const add = base.derive({
   to: capability({
     can: 'provider/add',
-    with: DID,
+    with: AccountDID,
     nb: {
       provider: StorageProvider,
       consumer: URI.match({ protocol: 'did:' }),
