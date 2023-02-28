@@ -100,7 +100,7 @@ function parseAbility(ability) {
 
 /**
  *
- * TODO: needs to account for caps derived from diferent namespaces like 'account/info' can be derived from 'store/add'
+ * TODO: needs to account for caps derived from different namespaces like 'account/info' can be derived from 'store/add'
  *
  * @param {import('@ucanto/interface').Ability} parent
  * @param {import('@ucanto/interface').Ability} child
@@ -119,7 +119,7 @@ export function canDelegateAbility(parent, child) {
     return false
   }
 
-  // namespaces dont match
+  // namespaces don't match
   if (parsedParent.namespace !== parsedChild.namespace) {
     return false
   }

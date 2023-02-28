@@ -9,13 +9,9 @@
  * @module
  */
 import { capability, URI, DID, Schema, Failure } from '@ucanto/validator'
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 import { equalWith, fail, equal } from './utils.js'
-import { top } from './top.js'
-
-export { top }
+export { top } from './top.js'
 
 /**
  * Account identifier.
@@ -27,46 +23,34 @@ export const As = DID.match({ method: 'mailto' })
  * derived any `access/` prefixed capability for the agent identified
  * by did:key in the `with` field.
  */
-export const access = top.derive({
-  to: capability({
-    can: 'access/*',
-    with: URI.match({ protocol: 'did:' }),
-  }),
-  derives: equalWith,
+export const access = capability({
+  can: 'access/*',
+  with: URI.match({ protocol: 'did:' }),
 })
-
-const base = top.or(access)
 
 /**
  * Capability can be invoked by an agent to request a `./update` for an account.
  *
  * `with` field identifies requesting agent, which MAY be different from iss field identifying issuing agent.
  */
-export const authorize = base.derive({
-  to: capability({
-    can: 'access/authorize',
-    with: DID.match({ method: 'key' }),
-    nb: {
-      /**
-       * Value MUST be a did:mailto identifier of the account
-       * that the agent wishes to represent via did:key in the `with` field.
-       * It MUST be a valid did:mailto identifier.
-       */
-      as: As,
-    },
-    derives: (child, parent) => {
-      return (
-        fail(equalWith(child, parent)) ||
-        fail(equal(child.nb.as, parent.nb.as, 'as')) ||
-        true
-      )
-    },
+export const authorize = capability({
+  can: 'access/authorize',
+  with: DID.match({ method: 'key' }),
+  nb: Schema.struct({
+    /**
+     * Value MUST be a did:mailto identifier of the account
+     * that the agent wishes to represent via did:key in the `with` field.
+     * It MUST be a valid did:mailto identifier.
+     */
+    as: As,
   }),
-  /**
-   * `access/authorize` can be derived from the `access/*` & `*` capability
-   * as long as the `with` fields match.
-   */
-  derives: equalWith,
+  derives: (child, parent) => {
+    return (
+      fail(equalWith(child, parent)) ||
+      fail(equal(child.nb.as, parent.nb.as, 'as')) ||
+      true
+    )
+  },
 })
 
 /**
@@ -94,52 +78,41 @@ export const session = capability({
   can: './update',
   // Should be web3.storage DID
   with: URI.match({ protocol: 'did:' }),
-  nb: {
+  nb: Schema.struct({
     // Agent DID so it can sign UCANs as did:mailto if it matches this delegation `aud`
     key: DID.match({ method: 'key' }),
-  },
+  }),
 })
 
-export const claim = base.derive({
-  to: capability({
-    can: 'access/claim',
-    with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
-    derives: equalWith,
-  }),
-  derives: equalWith,
+export const claim = capability({
+  can: 'access/claim',
+  with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
 })
 
 // https://github.com/web3-storage/specs/blob/main/w3-access.md#accessdelegate
-export const delegate = base.derive({
-  to: capability({
-    can: 'access/delegate',
+export const delegate = capability({
+  can: 'access/delegate',
+  /**
+   * Field MUST be a space DID with a storage provider. Delegation will be stored just like any other DAG stored using store/add capability.
+   *
+   * @see https://github.com/web3-storage/specs/blob/main/w3-access.md#delegate-with
+   */
+  with: DID.match({ method: 'key' }),
+  nb: Schema.struct({
+    // keys SHOULD be CIDs, but we won't require it in the schema
     /**
-     * Field MUST be a space DID with a storage provider. Delegation will be stored just like any other DAG stored using store/add capability.
-     *
-     * @see https://github.com/web3-storage/specs/blob/main/w3-access.md#delegate-with
+     * @type {Schema.Schema<AccessDelegateDelegations>}
      */
-    with: DID.match({ method: 'key' }),
-    nb: {
-      // keys SHOULD be CIDs, but we won't require it in the schema
-      /**
-       * @type {Schema.Schema<AccessDelegateDelegations>}
-       */
-      delegations: Schema.dictionary({
-        value: Schema.Link.match(),
-      }),
-    },
-    derives: (claim, proof) => {
-      return (
-        fail(equalWith(claim, proof)) ||
-        fail(subsetsNbDelegations(claim, proof)) ||
-        true
-      )
-    },
+    delegations: Schema.dictionary({
+      value: Schema.Link.match(),
+    }),
   }),
   derives: (claim, proof) => {
-    // no need to check claim.nb.delegations is subset of proof
-    // because the proofs types here never include constraints on the nb.delegations set
-    return fail(equalWith(claim, proof)) || true
+    return (
+      fail(equalWith(claim, proof)) ||
+      fail(subsetsNbDelegations(claim, proof)) ||
+      true
+    )
   },
 })
 

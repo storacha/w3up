@@ -229,11 +229,13 @@ describe('access capabilities', function () {
     // ensure we can use the capability to produce the invocations from the spec at https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md
     it('can create/access delegations from spec', async () => {
       const audience = service.withDID('did:web:web3.storage')
-      /**
-       * @type {Array<(arg: { issuer: Ucanto.Signer<Ucanto.DID<'key'>>}) => Ucanto.IssuedInvocation<Ucanto.InferInvokedCapability<typeof Access.claim>>>}
-       */
+
       const examples = [
         // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md#accessclaim
+        /**
+         *
+         * @param {{ issuer: Ucanto.Signer<Ucanto.DID<'key'>>}} input
+         */
         ({ issuer }) => {
           return Access.claim.invoke({
             issuer,

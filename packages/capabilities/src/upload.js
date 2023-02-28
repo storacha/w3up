@@ -11,36 +11,22 @@
 import { capability, Link, URI, Schema } from '@ucanto/validator'
 import { codec as CAR } from '@ucanto/transport/car'
 import { equalWith, fail, equal } from './utils.js'
-import { top } from './top.js'
+export { top } from './top.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
  * derived any `upload/` prefixed capability for the (memory) space identified
  * by did:key in the `with` field.
  */
-export const upload = top.derive({
-  to: capability({
-    can: 'upload/*',
-    /**
-     * did:key identifier of the (memory) space where upload is add to the
-     * upload list.
-     */
-    with: URI.match({ protocol: 'did:' }),
-    derives: equalWith,
-  }),
+export const upload = capability({
+  can: 'upload/*',
   /**
-   * `upload/*` can be derived from the `*` capability as long as `with` field
-   * is the same.
+   * did:key identifier of the (memory) space where upload is add to the
+   * upload list.
    */
+  with: URI.match({ protocol: 'did:' }),
   derives: equalWith,
 })
-
-// Right now ucanto does not yet has native `*` support, which means
-// `upload/add` can not be derived from `*` event though it can be
-// derived from `upload/*`. As a workaround we just define base capability
-// here so all store capabilities could be derived from either `*` or
-// `upload/*`.
-const base = top.or(upload)
 
 /**
  * Schema representing a link (a.k.a CID) to a CAR file. Enforces CAR codec code and CID v1.
@@ -66,37 +52,30 @@ const CARLink = Link.match({ code: CAR.code, version: 1 })
  * Note: If DAG with the given root is already in the upload list, invocation
  * will simply update `shards` to be a union of existing and new shards.
  */
-export const add = base.derive({
-  to: capability({
-    can: 'upload/add',
-    /**
-     * did:key identifier of the (memory) space where uploaded is added.
-     */
-    with: URI.match({ protocol: 'did:' }),
-    nb: {
-      /**
-       * Root CID of the DAG to be added to the upload list.
-       */
-      root: Link,
-      /**
-       * CIDs to the CAR files that contain blocks of the DAG.
-       */
-      shards: CARLink.array().optional(),
-    },
-    derives: (self, from) => {
-      return (
-        fail(equalWith(self, from)) ||
-        fail(equal(self.nb.root, from.nb.root, 'root')) ||
-        fail(equal(self.nb.shards, from.nb.shards, 'shards')) ||
-        true
-      )
-    },
-  }),
+export const add = capability({
+  can: 'upload/add',
   /**
-   * `upload/add` can be derived from the `upload/*` & `*` capability
-   * as long as `with` fields match.
+   * did:key identifier of the (memory) space where uploaded is added.
    */
-  derives: equalWith,
+  with: URI.match({ protocol: 'did:' }),
+  nb: Schema.struct({
+    /**
+     * Root CID of the DAG to be added to the upload list.
+     */
+    root: Link,
+    /**
+     * CIDs to the CAR files that contain blocks of the DAG.
+     */
+    shards: CARLink.array().optional(),
+  }),
+  derives: (self, from) => {
+    return (
+      fail(equalWith(self, from)) ||
+      fail(equal(self.nb.root, from.nb.root, 'root')) ||
+      fail(equal(self.nb.shards, from.nb.shards, 'shards')) ||
+      true
+    )
+  },
 })
 
 /**
@@ -104,67 +83,53 @@ export const add = base.derive({
  * list. Please note that removing an upload does not delete corresponding shards
  * from the store, however that could be done via `store/remove` invocations.
  */
-export const remove = base.derive({
-  to: capability({
-    can: 'upload/remove',
-    /**
-     * did:key identifier of the (memory) space where uploaded is removed from.
-     */
-    with: URI.match({ protocol: 'did:' }),
-    nb: {
-      /**
-       * Root CID of the DAG to be removed from the upload list.
-       */
-      root: Link,
-    },
-    derives: (self, from) => {
-      return (
-        fail(equalWith(self, from)) ||
-        fail(equal(self.nb.root, from.nb.root, 'root')) ||
-        true
-      )
-    },
-  }),
+export const remove = capability({
+  can: 'upload/remove',
   /**
-   * `upload/remove` can be derived from the `upload/*` & `*` capability
-   * as long as `with` fields match.
+   * did:key identifier of the (memory) space where uploaded is removed from.
    */
-  derives: equalWith,
+  with: URI.match({ protocol: 'did:' }),
+  nb: Schema.struct({
+    /**
+     * Root CID of the DAG to be removed from the upload list.
+     */
+    root: Link,
+  }),
+  derives: (self, from) => {
+    return (
+      fail(equalWith(self, from)) ||
+      fail(equal(self.nb.root, from.nb.root, 'root')) ||
+      true
+    )
+  },
 })
 
 /**
  * Capability can be invoked to request a list of uploads in the (memory) space
  * identified by the `with` field.
  */
-export const list = base.derive({
-  to: capability({
-    can: 'upload/list',
-    with: URI.match({ protocol: 'did:' }),
-    nb: {
-      /**
-       * A pointer that can be moved back and forth on the list.
-       * It can be used to paginate a list for instance.
-       */
-      cursor: Schema.string().optional(),
-      /**
-       * Maximum number of items per page.
-       */
-      size: Schema.integer().optional(),
-      /**
-       * If true, return page of results preceding cursor. Defaults to false.
-       */
-      pre: Schema.boolean().optional(),
-    },
+export const list = capability({
+  can: 'upload/list',
+  with: URI.match({ protocol: 'did:' }),
+  nb: Schema.struct({
+    /**
+     * A pointer that can be moved back and forth on the list.
+     * It can be used to paginate a list for instance.
+     */
+    cursor: Schema.string().optional(),
+    /**
+     * Maximum number of items per page.
+     */
+    size: Schema.integer().optional(),
+    /**
+     * If true, return page of results preceding cursor. Defaults to false.
+     */
+    pre: Schema.boolean().optional(),
   }),
-  /**
-   * `upload/list` can be derived from the `upload/*` & `*` capability
-   * as long as with fields match.
-   */
-  derives: equalWith,
 })
 
 export const all = add.or(remove).or(list)
 
-// ⚠️ We export imports here so they are not omited in generated typedefs
+// ⚠️ We export imports here so they are not omitted in generated typedefs
 // @see https://github.com/microsoft/TypeScript/issues/51548
 export { Link, Schema }
