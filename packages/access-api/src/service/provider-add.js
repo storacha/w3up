@@ -20,11 +20,7 @@ import { Provider } from '@web3-storage/capabilities'
 export function createProviderAddHandler() {
   /** @type {ProviderAddHandler} */
   return async (invocation) => {
-    return {
-      error: true,
-      name: 'NotImplemented',
-      message: 'Provider add not implemented yet',
-    }
+    return {}
   }
 }
 

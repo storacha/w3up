@@ -9,6 +9,7 @@ import * as provider from '@web3-storage/capabilities/provider'
 import * as assert from 'assert'
 import { createProviderAddHandler } from '../src/service/provider-add.js'
 import { context } from './helpers/context.js'
+import * as ucanto from '@ucanto/core'
 import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
@@ -42,8 +43,7 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
           })
           .delegate()
       )
-      warnOnErrorResult(result)
-      assert.deepEqual('name' in result && result.name, 'NotImplemented')
+      assertNotError(result)
     })
   })
 }
@@ -184,4 +184,28 @@ async function testAuthorizeClaimProviderAdd(options) {
     `providerAddAsAccountResult is an object`
   )
   assertNotError(providerAddAsAccountResult)
+
+  const spaceStorageResult = await options.invoke(
+    await ucanto
+      .invoke({
+        issuer: space,
+        audience: service,
+        capability: {
+          can: 'testing/space-storage',
+          with: space.did(),
+        },
+      })
+      .delegate()
+  )
+  assert.ok(
+    spaceStorageResult &&
+      typeof spaceStorageResult === 'object' &&
+      'hasStorageProvider' in spaceStorageResult,
+    'spaceStorageResult has hasStorageProvider property'
+  )
+  assert.deepEqual(
+    spaceStorageResult.hasStorageProvider,
+    true,
+    `testing/space-storage.hasStorageProvider is true`
+  )
 }

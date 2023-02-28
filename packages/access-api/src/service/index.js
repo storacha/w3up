@@ -1,4 +1,5 @@
 import * as ucanto from '@ucanto/core'
+import * as Ucanto from '@ucanto/interface'
 import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
@@ -23,6 +24,12 @@ import { providerAddProvider } from './provider-add.js'
  * }
  */
 export function service(ctx) {
+  /**
+   * @param {Ucanto.DID<'key'>} uri
+   */
+  const hasStorageProvider = async (uri) => {
+    return Boolean(await ctx.models.spaces.get(uri))
+  }
   return {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
@@ -46,9 +53,7 @@ export function service(ctx) {
         }
         return accessDelegateProvider({
           delegations: ctx.models.delegations,
-          hasStorageProvider: async (uri) => {
-            return Boolean(await ctx.models.spaces.get(uri))
-          },
+          hasStorageProvider,
         })(...args)
       },
     },
@@ -192,6 +197,15 @@ export function service(ctx) {
       },
       fail() {
         throw new Error('test fail')
+      },
+      /**
+       * @param {Ucanto.Invocation<Ucanto.Capability<'testing/space-storage', Ucanto.DID<'key'>, Ucanto.Failure>>} invocation
+       */
+      'space-storage': async (invocation) => {
+        const spaceId = invocation.capabilities[0].with
+        return {
+          hasStorageProvider: await hasStorageProvider(spaceId),
+        }
       },
     },
   }
