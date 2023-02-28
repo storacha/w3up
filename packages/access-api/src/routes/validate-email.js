@@ -149,7 +149,7 @@ async function session(req, env) {
         `unable to validate access session: ${accessSessionResult.error}`
       )
     }
-    const account = { did: () => accessSessionResult.audience.did() }
+    const account = accessSessionResult.audience
     const agentPubkey = accessSessionResult.capability.nb.key
     const wrappedKeyCanAsignForAccount = await ucanto.delegate({
       issuer: env.signer,
