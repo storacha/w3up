@@ -153,12 +153,14 @@ describe('access/authorize', function () {
       'should have claimed delegation(s)'
     )
     /**
+     * narrow Ucanto.Proof to Ucanto.Delegation
+     *
      * @param {import('@ucanto/interface').Proof} proof
      */
     // eslint-disable-next-line unicorn/consistent-function-scoping
     const proofDelegation = (proof) => {
       if (!('cid' in proof)) {
-        return
+        throw new Error('proof must be delegation')
       }
       return proof
     }
@@ -180,11 +182,8 @@ describe('access/authorize', function () {
       claimedNb && typeof claimedNb === 'object' && 'proof' in claimedNb,
       'should have nb.proof'
     )
-    const accountToKeyBytes =
-      /** @type {import('@web3-storage/access/types').BytesDelegation} */ (
-        claimedNb.proof
-      )
-    const [expectAccountToKey] = bytesToDelegations(accountToKeyBytes)
+    const expectAccountToKey = proofDelegation(attest.proofs[0])
+    assert.ok(expectAccountToKey, 'expect proofs to contain delegation')
     assert.deepEqual(expectAccountToKey.issuer.did(), accountDID)
     assert.deepEqual(expectAccountToKey.audience.did(), issuer.did())
     assert.deepEqual(expectAccountToKey.capabilities, [
