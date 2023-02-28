@@ -95,6 +95,68 @@ describe('access/authorize', function () {
     assert(html.includes(toEmail(accountDID)))
   })
 
+  it('should send confirmation email with link that, when clicked, allows for access/delegate', async function () {
+    const { issuer, service, conn, mf } = ctx
+    const accountDID = 'did:mailto:dag.house:email'
+
+    const inv = await Access.authorize
+      .invoke({
+        issuer,
+        audience: service,
+        with: issuer.did(),
+        nb: {
+          as: accountDID,
+        },
+      })
+      .execute(conn)
+
+    // @todo - this only returns string when ENV==='test'. Remove that env-specific behavior
+    assert.ok(typeof inv === 'string', 'invocation result is a string')
+
+    const confirmEmailPostUrl = new URL(inv)
+    const confirmEmailPostResponse = await mf.dispatchFetch(
+      confirmEmailPostUrl,
+      { method: 'POST' }
+    )
+    assert.deepEqual(
+      confirmEmailPostResponse.status,
+      200,
+      'confirmEmailPostResponse status is 200'
+    )
+
+    let accessDelegateError
+    /** @type {undefined|import('@ucanto/interface').Result<import('@web3-storage/capabilities/types').AccessDelegateSuccess, import('@web3-storage/capabilities/types').AccessDelegateFailure>} */
+    let accessDelegateResult
+    try {
+      accessDelegateResult = await Access.delegate
+        .invoke({
+          issuer,
+          audience: conn.id,
+          with: issuer.did(),
+          nb: {
+            delegations: {},
+          },
+        })
+        .execute(conn)
+    } catch (error) {
+      accessDelegateError = error
+    }
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    assert.deepEqual(accessDelegateError, undefined)
+    assert.ok(accessDelegateResult, 'access/delegate should have result')
+    assert.deepEqual(
+      typeof accessDelegateResult === 'object' &&
+        'name' in accessDelegateResult &&
+        accessDelegateResult.name,
+      'InsufficientStorage',
+      'access/delegate should fail with InsufficientStorage'
+    )
+
+    // @todo once provider/add is implemented, use it to add a storage provider,
+    // then `access/delegate` invocations should get a non-error result
+    // https://github.com/web3-storage/w3protocol/issues/459
+  })
+
   it('should receive delegation in the ws', async function () {
     const { issuer, service, conn, mf } = ctx
     const accountDID = 'did:mailto:dag.house:email'
