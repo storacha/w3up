@@ -1,6 +1,7 @@
 import * as Ucanto from '@ucanto/interface'
 import { Voucher } from '@web3-storage/capabilities'
 import * as assert from 'assert'
+import * as principal from '@ucanto/principal'
 
 /**
  * Tests using context from "./helpers/context.js", which sets up a testable access-api inside miniflare.
@@ -113,4 +114,35 @@ export function warnOnErrorResult(
   if (result && 'error' in result && result.error) {
     warn(message, result)
   }
+}
+
+/**
+ * @template {Ucanto.Capability} Capability
+ * @template Result
+ * @typedef {object} InvokeTester
+ * @property {(invocation: Ucanto.Invocation<Capability>) => Promise<Result>} invoke
+ * @property {Resolvable<Ucanto.Signer<Ucanto.DID<'key'>>>} issuer
+ * @property {Resolvable<Ucanto.Verifier<Ucanto.DID>>} audience
+ */
+
+/**
+ * Tests using simple function invocation -> result
+ *
+ * @template {Ucanto.Capability} Capability
+ * @template Result
+ * @param {() => (invocation: Ucanto.Invocation<Capability>) => Promise<Result>} createHandler
+ * @returns {InvokeTester<Capability, Result>}
+ */
+export function createTesterFromHandler(createHandler) {
+  const issuer = principal.ed25519.generate()
+  const audience = principal.ed25519.generate()
+  /**
+   * @param {Ucanto.Invocation<Capability>} invocation
+   */
+  const invoke = async (invocation) => {
+    const handle = createHandler()
+    const result = await handle(invocation)
+    return result
+  }
+  return { issuer, audience, invoke }
 }
