@@ -12,6 +12,7 @@ import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as uploadApi from './upload-api-proxy.js'
 import { accessAuthorizeProvider } from './access-authorize.js'
 import { accessDelegateProvider } from './access-delegate.js'
+import { accessClaimProvider } from './access-claim.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -27,6 +28,16 @@ export function service(ctx) {
 
     access: {
       authorize: accessAuthorizeProvider(ctx),
+      claim: (...args) => {
+        // disable until hardened in test/staging
+        if (ctx.config.ENV === 'production') {
+          throw new Error(`acccess/claim invocation handling is not enabled`)
+        }
+        return accessClaimProvider({
+          delegations: ctx.models.delegations,
+          config: ctx.config,
+        })(...args)
+      },
       delegate: (...args) => {
         // disable until hardened in test/staging
         if (ctx.config.ENV === 'production') {
