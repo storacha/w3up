@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, DID, URI } from '@ucanto/validator'
+import { capability, DID, URI, literal } from '@ucanto/validator'
 import { equalWith, fail, equal } from './utils.js'
 import { top } from './top.js'
 
@@ -16,7 +16,7 @@ export { top }
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
- * derived any `provider/` prefixed capability for the agent identified
+ * derive any `provider/` prefixed capability for the agent identified
  * by did:key in the `with` field.
  */
 export const provider = top.derive({
@@ -30,6 +30,10 @@ export const provider = top.derive({
 
 const base = top.or(provider)
 
+export const StorageProvider = literal(
+  'did:web:web3.storage:providers:w3up-alpha'
+)
+
 /**
  * Capability can be invoked by an agent to add a provider to a space.
  */
@@ -38,7 +42,7 @@ export const add = base.derive({
     can: 'provider/add',
     with: DID,
     nb: {
-      provider: DID,
+      provider: StorageProvider,
       consumer: URI.match({ protocol: 'did:' }),
     },
     derives: (child, parent) => {

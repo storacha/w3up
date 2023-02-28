@@ -13,7 +13,7 @@ describe('provider/add', function () {
       audience: service,
       with: account.did(),
       nb: {
-        provider: 'did:web:ucan.web3.storage:providers:free',
+        provider: 'did:web:web3.storage:providers:w3up-alpha',
         consumer: space.did(),
       },
     })
@@ -29,7 +29,7 @@ describe('provider/add', function () {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'provider/add')
       assert.deepEqual(result.capability.nb, {
-        provider: 'did:web:ucan.web3.storage:providers:free',
+        provider: 'did:web:web3.storage:providers:w3up-alpha',
         consumer: space.did(),
       })
     }
@@ -43,7 +43,7 @@ describe('provider/add', function () {
         with: bob.did(),
         // @ts-expect-error
         nb: {
-          provider: 'did:web:ucan.web3.storage:providers:free',
+          provider: 'did:web:web3.storage:providers:w3up-alpha',
         },
       })
     }, /Error: Invalid 'nb.consumer' - Expected URI but got undefined/)

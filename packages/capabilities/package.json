@@ -28,6 +28,9 @@
   },
   "typesVersions": {
     "*": {
+      "provider": [
+        "dist/src/provider"
+      ],
       "space": [
         "dist/src/space"
       ],
