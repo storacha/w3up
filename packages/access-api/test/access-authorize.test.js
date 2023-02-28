@@ -1,4 +1,7 @@
-import { stringToDelegation } from '@web3-storage/access/encoding'
+import {
+  stringToDelegation,
+  bytesToDelegations,
+} from '@web3-storage/access/encoding'
 import * as Access from '@web3-storage/capabilities/access'
 import assert from 'assert'
 import pWaitFor from 'p-wait-for'
@@ -134,12 +137,42 @@ describe('access/authorize', function () {
       'delegations' in claimResult,
       'claimResult should have delegations property'
     )
-    const claimedDelegations = claimResult.delegations
+    const claimedDelegations = new Set(
+      Object.values(claimResult.delegations).flatMap((bytes) => {
+        return bytesToDelegations(
+          /** @type {import('@web3-storage/access/src/types.js').BytesDelegation} */ (
+            bytes
+          )
+        )
+      })
+    )
     assert.deepEqual(
-      Object.values(claimedDelegations).length,
+      claimedDelegations.size,
       1,
       'should have claimed 1 delegation'
     )
+    const [claimedDelegation1] = claimedDelegations
+    assert.deepEqual(claimedDelegation1.issuer.did(), service.did())
+    assert.deepEqual(claimedDelegation1.audience.did(), issuer.did())
+    assert.deepEqual(claimedDelegation1.capabilities[0].can, 'ucan/attest')
+    assert.deepEqual(claimedDelegation1.capabilities[0].with, service.did())
+
+    // ucan/attest nb.proof can be decoded into a delegation
+    const claimedNb = claimedDelegation1.capabilities[0].nb
+    assert.ok(
+      claimedNb && typeof claimedNb === 'object' && 'proof' in claimedNb,
+      'should have nb.proof'
+    )
+    const accountToKeyBytes =
+      /** @type {import('@web3-storage/access/types').BytesDelegation} */ (
+        claimedNb.proof
+      )
+    const [expectAccountToKey] = bytesToDelegations(accountToKeyBytes)
+    assert.deepEqual(expectAccountToKey.issuer.did(), accountDID)
+    assert.deepEqual(expectAccountToKey.audience.did(), issuer.did())
+    assert.deepEqual(expectAccountToKey.capabilities, [
+      { can: '*', with: 'ucan:*' },
+    ])
   })
 
   it('should receive delegation in the ws', async function () {

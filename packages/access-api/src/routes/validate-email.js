@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { stringToDelegation } from '@web3-storage/access/encoding'
+import {
+  delegationsToBytes,
+  stringToDelegation,
+} from '@web3-storage/access/encoding'
 import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
 import { toEmail } from '../utils/did-mailto.js'
@@ -12,6 +15,7 @@ import {
 import * as ucanto from '@ucanto/core'
 import * as validator from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
+import { ed25519 } from '@ucanto/principal'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -149,6 +153,28 @@ async function session(req, env) {
         `unable to validate access session: ${accessSessionResult.error}`
       )
     }
+    const accountDID = accessSessionResult.audience.did()
+    // @todo: use new ucanto `Account` instead
+    const accountOneOffKey = await ed25519.generate()
+    const account = accountOneOffKey.withDID(accountDID)
+
+    const agentPubkey = accessSessionResult.capability.nb.key
+
+    // create delegations that should be claimable
+    const delegationAccountToKey = await ucanto.delegate({
+      issuer: account,
+      audience: {
+        did() {
+          return agentPubkey
+        },
+      },
+      capabilities: [
+        {
+          with: 'ucan:*',
+          can: '*',
+        },
+      ],
+    })
     // generate a delegation to the key that we can save in
     // models.delegations to be found by subsequent access/claim
     // invocations invoked by the did:key
@@ -162,9 +188,11 @@ async function session(req, env) {
       proofs: [delegation],
       capabilities: [
         {
-          can: './update',
+          can: 'ucan/attest',
           with: env.signer.did(),
-          nb: accessSessionResult.capability.nb,
+          nb: {
+            proof: delegationsToBytes([delegationAccountToKey]),
+          },
         },
       ],
     })
