@@ -140,38 +140,6 @@ describe('access/authorize', function () {
       1,
       'should have claimed 1 delegation'
     )
-
-    let accessDelegateError
-    /** @type {undefined|import('@ucanto/interface').Result<import('@web3-storage/capabilities/types').AccessDelegateSuccess, import('@web3-storage/capabilities/types').AccessDelegateFailure>} */
-    let accessDelegateResult
-    try {
-      accessDelegateResult = await Access.delegate
-        .invoke({
-          issuer,
-          audience: conn.id,
-          with: issuer.did(),
-          nb: {
-            delegations: {},
-          },
-        })
-        .execute(conn)
-    } catch (error) {
-      accessDelegateError = error
-    }
-    // eslint-disable-next-line unicorn/no-useless-undefined
-    assert.deepEqual(accessDelegateError, undefined)
-    assert.ok(accessDelegateResult, 'access/delegate should have result')
-    assert.deepEqual(
-      typeof accessDelegateResult === 'object' &&
-        'name' in accessDelegateResult &&
-        accessDelegateResult.name,
-      'InsufficientStorage',
-      'access/delegate should fail with InsufficientStorage'
-    )
-
-    // @todo once provider/add is implemented, use it to add a storage provider,
-    // then `access/delegate` invocations should get a non-error result
-    // https://github.com/web3-storage/w3protocol/issues/459
   })
 
   it('should receive delegation in the ws', async function () {
