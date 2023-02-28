@@ -46,5 +46,7 @@ export function voucherClaimProvider(ctx) {
       to: capability.nb.identity.replace('mailto:', ''),
       url,
     })
+
+    return {}
   })
 }
