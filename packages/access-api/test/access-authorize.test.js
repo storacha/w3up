@@ -216,6 +216,10 @@ describe('access/authorize', function () {
       'delegations' in claimAsAccountResult,
       'claimAsAccountResult should have delegations property'
     )
+    const claimedAsAccountDelegations = Object.values(
+      claimAsAccountResult.delegations
+    )
+    assert.deepEqual(claimedAsAccountDelegations.length, 0)
   })
 
   it('should receive delegation in the ws', async function () {
