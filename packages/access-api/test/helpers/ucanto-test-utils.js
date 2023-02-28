@@ -4,9 +4,17 @@ import * as assert from 'assert'
 import * as principal from '@ucanto/principal'
 
 /**
+ * @typedef HelperTestContext
+ * @property {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
+ * @property {Ucanto.Signer<Ucanto.DID>} service
+ * @property {Ucanto.ConnectionView<Record<string, any>>} conn
+ * @property {import('miniflare').Miniflare} mf
+ */
+
+/**
  * Tests using context from "./helpers/context.js", which sets up a testable access-api inside miniflare.
  *
- * @param {() => Promise<{ issuer: Ucanto.Signer<Ucanto.DID<'key'>>, service: Ucanto.Signer<Ucanto.DID>, conn: Ucanto.ConnectionView<Record<string, any>> }>} createContext
+ * @param {() => Promise<HelperTestContext>} createContext
  * @param {object} [options]
  * @param {Iterable<Promise<Ucanto.Principal>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
  */
@@ -17,6 +25,7 @@ export function createTesterFromContext(createContext, options) {
   })
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
+  const miniflare = context.then(({ mf }) => mf)
   /**
    * @template {Ucanto.Capability} Capability
    * @param {Ucanto.Invocation<Capability>} invocation
@@ -26,7 +35,7 @@ export function createTesterFromContext(createContext, options) {
     const [result] = await conn.execute(invocation)
     return result
   }
-  return { issuer, audience, invoke }
+  return { issuer, audience, invoke, miniflare }
 }
 
 /**

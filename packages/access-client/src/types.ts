@@ -38,6 +38,9 @@ import type {
   AccessClaim,
   AccessClaimSuccess,
   AccessClaimFailure,
+  ProviderAdd,
+  ProviderAddSuccess,
+  ProviderAddFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -102,6 +105,9 @@ export interface Service {
       AccessDelegateSuccess,
       AccessDelegateFailure
     >
+  }
+  provider: {
+    add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
   }
   voucher: {
     claim: ServiceMethod<

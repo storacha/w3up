@@ -13,6 +13,7 @@ import * as uploadApi from './upload-api-proxy.js'
 import { accessAuthorizeProvider } from './access-authorize.js'
 import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
+import { providerAddProvider } from './provider-add.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -51,6 +52,17 @@ export function service(ctx) {
         })(...args)
       },
     },
+
+    provider: {
+      add: (...args) => {
+        // disable until hardened in test/staging
+        if (ctx.config.ENV === 'production') {
+          throw new Error(`provider/add invocation handling is not enabled`)
+        }
+        return providerAddProvider(ctx)(...args)
+      },
+    },
+
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),
