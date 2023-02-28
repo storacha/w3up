@@ -149,61 +149,31 @@ describe('access/authorize', function () {
     )
     assert.deepEqual(
       claimedDelegations.length,
-      2,
+      1,
       'should have claimed delegation(s)'
     )
-    /**
-     * narrow Ucanto.Proof to Ucanto.Delegation
-     *
-     * @param {import('@ucanto/interface').Proof} proof
-     */
-    // eslint-disable-next-line unicorn/consistent-function-scoping
-    const proofDelegation = (proof) => {
-      if (!('cid' in proof)) {
+
+    const claimedDelegationIssuedByService = claimedDelegations.find((d) => {
+      if (!('cid' in d.proofs[0])) {
         throw new Error('proof must be delegation')
       }
-      return proof
-    }
-    const attest = claimedDelegations.find(
-      (d) => proofDelegation(d.proofs[0])?.issuer.did() === accountDID
-    )
+      return d.proofs[0].issuer.did() === service.did()
+    })
     assert.ok(
-      attest,
-      'should claim ucan/attest delegation with proof.iss=accountDID'
-    )
-    assert.deepEqual(attest.issuer.did(), service.did())
-    assert.deepEqual(attest.audience.did(), issuer.did())
-    assert.deepEqual(attest.capabilities[0].can, 'ucan/attest')
-    assert.deepEqual(attest.capabilities[0].with, service.did())
-
-    // ucan/attest nb.proof can be decoded into a delegation
-    const claimedNb = attest.capabilities[0].nb
-    assert.ok(
-      claimedNb && typeof claimedNb === 'object' && 'proof' in claimedNb,
-      'should have nb.proof'
-    )
-    const expectAccountToKey = proofDelegation(attest.proofs[0])
-    assert.ok(expectAccountToKey, 'expect proofs to contain delegation')
-    assert.deepEqual(expectAccountToKey.issuer.did(), accountDID)
-    assert.deepEqual(expectAccountToKey.audience.did(), issuer.did())
-    assert.deepEqual(expectAccountToKey.capabilities, [
-      { can: '*', with: 'ucan:*' },
-    ])
-
-    const attestIssService = claimedDelegations.find(
-      (d) => proofDelegation(d.proofs[0])?.issuer.did() === service.did()
-    )
-    assert.ok(
-      attestIssService,
+      claimedDelegationIssuedByService,
       'should claim ucan/attest with proof.iss=service'
     )
-    const accountAuthorization = attestIssService.proofs[0]
+
+    // we can use claimedDelegationIssuedByService to invoke access/claim as iss=accountDID
     const account = issuer.withDID(accountDID)
     const claimAsAccount = Access.claim.invoke({
       issuer: account,
       audience: service,
       with: account.did(),
-      proofs: [accountAuthorization],
+      proofs: [
+        // allows signing with issuer.signer as iss=accountDID
+        claimedDelegationIssuedByService.proofs[0],
+      ],
     })
     const claimAsAccountResult = await claimAsAccount.execute(conn)
     warnOnErrorResult(claimAsAccountResult)

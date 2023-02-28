@@ -12,7 +12,6 @@ import {
 import * as ucanto from '@ucanto/core'
 import * as validator from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
-import { ed25519 } from '@ucanto/principal'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -150,81 +149,34 @@ async function session(req, env) {
         `unable to validate access session: ${accessSessionResult.error}`
       )
     }
-    const accountDID = accessSessionResult.audience.did()
-    // @todo: use new ucanto `Account` instead
-    const accountOneOffKey = await ed25519.generate()
-    const account = accountOneOffKey.withDID(accountDID)
-
+    const account = { did: () => accessSessionResult.audience.did() }
     const agentPubkey = accessSessionResult.capability.nb.key
-
-    const update = await ucanto.delegate({
-      issuer: env.signer,
-      audience: account,
-      capabilities: [
-        {
-          with: env.signer.did(),
-          can: './update',
-          nb: {
-            key: agentPubkey,
-          },
-        },
-      ],
-    })
-    const attestKeyAuthorizesAccount = await ucanto.delegate({
+    const wrappedKeyCanAsignForAccount = await ucanto.delegate({
       issuer: env.signer,
       audience: { did: () => agentPubkey },
       capabilities: [
         {
           with: env.signer.did(),
-          can: 'ucan/attest',
-          nb: {
-            proof: update.cid,
-          },
+          can: 'access-api/delegation',
         },
       ],
-      proofs: [update],
-    })
-
-    // create delegations that should be claimable
-    const delegationAccountToKey = await ucanto.delegate({
-      issuer: account,
-      audience: {
-        did() {
-          return agentPubkey
-        },
-      },
-      capabilities: [
-        {
-          with: 'ucan:*',
-          can: '*',
-        },
+      proofs: [
+        await ucanto.delegate({
+          issuer: env.signer,
+          audience: account,
+          capabilities: [
+            {
+              with: env.signer.did(),
+              can: './update',
+              nb: {
+                key: agentPubkey,
+              },
+            },
+          ],
+        }),
       ],
     })
-    // generate a delegation to the key that we can save in
-    // models.delegations to be found by subsequent access/claim
-    // invocations invoked by the did:key
-    const delegateToKey = await ucanto.delegate({
-      issuer: env.signer,
-      audience: {
-        did() {
-          return agentPubkey
-        },
-      },
-      proofs: [delegationAccountToKey],
-      capabilities: [
-        {
-          can: 'ucan/attest',
-          with: env.signer.did(),
-          nb: {
-            proof: delegationAccountToKey.cid,
-          },
-        },
-      ],
-    })
-    await env.models.delegations.putMany(
-      delegateToKey,
-      attestKeyAuthorizesAccount
-    )
+    await env.models.delegations.putMany(wrappedKeyCanAsignForAccount)
   }
 
   try {
