@@ -1,4 +1,5 @@
 import { stringToDelegation } from '@web3-storage/access/encoding'
+import { sendDelegationToSpaceVerifier } from '../durable-objects/space-verifier.js'
 
 /**
  * Validations
@@ -29,23 +30,12 @@ export class Validations {
       expiration: delegation.expiration,
     })
     if (delegation.capabilities[0].nb?.space) {
-      const durableObjectID = this.spaceVerifiers.idFromName(
-        delegation.capabilities[0].nb.space
+      await sendDelegationToSpaceVerifier(
+        this.spaceVerifiers,
+        delegation.capabilities[0].nb.space,
+        ucan
       )
-      const durableObject = this.spaceVerifiers.get(durableObjectID)
-      // hostname is totally ignored by the durable object but must be set so set it to example.com
-      const response = await durableObject.fetch(
-        'https://example.com/delegation',
-        {
-          method: 'PUT',
-          body: ucan,
-        }
-      )
-      if (response.status === 400) {
-        throw new Error(response.statusText)
-      }
     }
-
     return delegation
   }
 
