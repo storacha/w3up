@@ -138,6 +138,13 @@ async function session(req, env) {
   /** @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessAuthorize]>} */
   const delegation = stringToDelegation(req.query.ucan)
 
+  // ⚠️ This is not an ideal solution but we do need to ensure that attacker
+  // cannot simply send a valid `access/authorize` delegation to the service
+  // and get an attested session.
+  if (delegation.issuer.did() !== env.signer.did()) {
+    throw new Error('Delegation MUST be issued by the service')
+  }
+
   // TODO: Figure when do we go through a post vs get request. WebSocket message
   // was send regardless of the method, but delegations were only stored on post
   // requests.
