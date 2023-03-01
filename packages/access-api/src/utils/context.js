@@ -23,8 +23,7 @@ import { createD1Database } from './d1.js'
 export function getContext(request, env, ctx) {
   const config = loadConfig(env)
   const email =
-    config.ENV === 'test' ||
-    (config.ENV === 'dev' && env.DEBUG_EMAIL === 'true')
+    config.ENV === 'test' || config.ENV === 'dev'
       ? Email.debug()
       : Email.configure({
           token: config.POSTMARK_TOKEN,
