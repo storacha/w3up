@@ -28,10 +28,7 @@ export function accessClaimProvider(ctx) {
       throw new Error(`access/claim invocation handling is not enabled`)
     }
 
-    return handleClaimInvocation(
-      /** @type {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessClaim>} */
-      (invocation)
-    )
+    return handleClaimInvocation(invocation)
   })
 }
 
