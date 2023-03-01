@@ -63,6 +63,6 @@ describe('provider/add', function () {
           provider: 'did:web:web3.storage:providers:w3up-alpha',
         },
       })
-    }, /Error: Invalid 'nb.consumer' - Expected URI but got undefined/)
+    }, /Error: Invalid 'nb.consumer' - Expected value of type string instead got undefined/)
   })
 })
