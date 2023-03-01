@@ -19,10 +19,10 @@ jq --raw-input | jq --slurp > src/utils/phrase-words.json
  * @returns {number}
  */
 function randomInt(max) {
-  // NOTE: does not support all calling patterns of the real one!
-  const min = 0
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values
-  return Math.floor(Math.random() * (max - min) + min)
+  const array = new Uint32Array(1)
+  const random = self.crypto.getRandomValues(array)[0]
+  // 0xFFFFFFFF is the max value of a Uint32
+  return Math.floor((random / 0xff_ff_ff_ff) * max)
 }
 
 const DEFAULT_ENTROPY = 50

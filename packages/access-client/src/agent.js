@@ -311,7 +311,7 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
-   * @param {import('./types').ValidationPhraseHandler} [opts.handlePhrase]
+   * @param {import('./types').ValidationPhraseHandler} [opts.onPhrase]
    */
   async recover(email, opts) {
     const inv = await this.invokeAndExecute(Space.recoverValidation, {
@@ -323,8 +323,8 @@ export class Agent {
       throw new Error('Recover validation failed', { cause: inv })
     }
 
-    if (inv && 'match_phrase' in inv) {
-      opts?.handlePhrase?.(inv.match_phrase)
+    if (inv?.matchPhrase) {
+      opts?.onPhrase?.(inv.matchPhrase)
     }
 
     const spaceRecover =
@@ -422,7 +422,7 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
-   * @param {import('./types').ValidationPhraseHandler} [opts.handlePhrase]
+   * @param {import('./types').ValidationPhraseHandler} [opts.onPhrase]
    */
   async registerSpace(email, opts) {
     const space = this.currentSpace()
@@ -449,8 +449,8 @@ export class Agent {
       throw new Error('Voucher claim failed', { cause: inv })
     }
 
-    if (inv && 'match_phrase' in inv) {
-      opts?.handlePhrase?.(inv.match_phrase)
+    if (inv?.matchPhrase) {
+      opts?.onPhrase?.(inv.matchPhrase)
     }
 
     const voucherRedeem =

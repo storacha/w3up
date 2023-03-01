@@ -39,8 +39,8 @@ export type StoreList = InferInvokedCapability<typeof list>
 export type Top = InferInvokedCapability<typeof top>
 
 export type NoncePhrase = string
-export interface ShouldShowValidationNonce {
-  match_phrase: NoncePhrase
+export interface HasValidationNonce {
+  phrase: NoncePhrase
 }
 
 export type Abilities = TupleToUnion<AbilitiesArray>
