@@ -61,11 +61,11 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ucanto/core": "^4.4.0",
-    "@ucanto/interface": "^4.4.1",
-    "@ucanto/principal": "^4.4.0",
-    "@ucanto/transport": "^4.4.0",
-    "@ucanto/validator": "^4.4.0"
+    "@ucanto/core": "^5.0.0",
+    "@ucanto/interface": "^5.0.0",
+    "@ucanto/principal": "^5.0.0",
+    "@ucanto/transport": "^5.0.0",
+    "@ucanto/validator": "^5.0.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",

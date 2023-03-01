@@ -41,13 +41,13 @@ importers:
       '@types/mocha': ^10.0.1
       '@types/node': ^18.11.18
       '@types/qrcode': ^1.5.0
-      '@ucanto/client': ^4.4.0
-      '@ucanto/core': ^4.4.0
-      '@ucanto/interface': ^4.4.1
-      '@ucanto/principal': ^4.4.0
-      '@ucanto/server': ^4.4.1
-      '@ucanto/transport': ^4.4.0
-      '@ucanto/validator': ^4.4.0
+      '@ucanto/client': ^5.0.0
+      '@ucanto/core': ^5.0.0
+      '@ucanto/interface': ^5.0.0
+      '@ucanto/principal': ^5.0.0
+      '@ucanto/server': ^5.0.0
+      '@ucanto/transport': ^5.0.0
+      '@ucanto/validator': ^5.0.0
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
       '@web3-storage/worker-utils': 0.4.3-dev
@@ -76,12 +76,12 @@ importers:
       wrangler: ^2.8.0
     dependencies:
       '@ipld/dag-ucan': 3.2.0
-      '@ucanto/core': 4.4.0
-      '@ucanto/interface': 4.4.1
-      '@ucanto/principal': 4.4.0
-      '@ucanto/server': 4.4.1
-      '@ucanto/transport': 4.4.0
-      '@ucanto/validator': 4.4.0
+      '@ucanto/core': 5.0.0
+      '@ucanto/interface': 5.0.0
+      '@ucanto/principal': 5.0.0
+      '@ucanto/server': 5.0.0
+      '@ucanto/transport': 5.0.0
+      '@ucanto/validator': 5.0.0
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
       '@web3-storage/worker-utils': 0.4.3-dev
@@ -103,7 +103,7 @@ importers:
       '@types/mocha': 10.0.1
       '@types/node': 18.11.18
       '@types/qrcode': 1.5.0
-      '@ucanto/client': 4.4.0
+      '@ucanto/client': 5.0.0
       better-sqlite3: 8.0.1
       buffer: 6.0.3
       dotenv: 16.0.3
@@ -131,13 +131,13 @@ importers:
       '@types/node': ^18.11.18
       '@types/varint': ^6.0.1
       '@types/ws': ^8.5.4
-      '@ucanto/client': ^4.4.0
-      '@ucanto/core': ^4.4.0
-      '@ucanto/interface': ^4.4.1
-      '@ucanto/principal': ^4.4.0
-      '@ucanto/server': ^4.4.1
-      '@ucanto/transport': ^4.4.0
-      '@ucanto/validator': ^4.4.0
+      '@ucanto/client': ^5.0.0
+      '@ucanto/core': ^5.0.0
+      '@ucanto/interface': ^5.0.0
+      '@ucanto/principal': ^5.0.0
+      '@ucanto/server': ^5.0.0
+      '@ucanto/transport': ^5.0.0
+      '@ucanto/validator': ^5.0.0
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       bigint-mod-arith: ^3.1.2
@@ -168,12 +168,12 @@ importers:
       '@ipld/car': 5.1.0
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.2.0
-      '@ucanto/client': 4.4.0
-      '@ucanto/core': 4.4.0
-      '@ucanto/interface': 4.4.1
-      '@ucanto/principal': 4.4.0
-      '@ucanto/transport': 4.4.0
-      '@ucanto/validator': 4.4.0
+      '@ucanto/client': 5.0.0
+      '@ucanto/core': 5.0.0
+      '@ucanto/interface': 5.0.0
+      '@ucanto/principal': 5.0.0
+      '@ucanto/transport': 5.0.0
+      '@ucanto/validator': 5.0.0
       '@web3-storage/capabilities': link:../capabilities
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
@@ -197,7 +197,7 @@ importers:
       '@types/node': 18.11.18
       '@types/varint': 6.0.1
       '@types/ws': 8.5.4
-      '@ucanto/server': 4.4.1
+      '@ucanto/server': 5.0.0
       assert: 2.0.0
       delay: 5.0.0
       hd-scripts: 4.0.0
@@ -257,11 +257,11 @@ importers:
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.0
       '@types/node': ^18.11.18
-      '@ucanto/core': ^4.4.0
-      '@ucanto/interface': ^4.4.1
-      '@ucanto/principal': ^4.4.0
-      '@ucanto/transport': ^4.4.0
-      '@ucanto/validator': ^4.4.0
+      '@ucanto/core': ^5.0.0
+      '@ucanto/interface': ^5.0.0
+      '@ucanto/principal': ^5.0.0
+      '@ucanto/transport': ^5.0.0
+      '@ucanto/validator': ^5.0.0
       assert: ^2.0.0
       hd-scripts: ^4.0.0
       mocha: ^10.2.0
@@ -270,11 +270,11 @@ importers:
       typescript: 4.9.5
       watch: ^1.0.2
     dependencies:
-      '@ucanto/core': 4.4.0
-      '@ucanto/interface': 4.4.1
-      '@ucanto/principal': 4.4.0
-      '@ucanto/transport': 4.4.0
-      '@ucanto/validator': 4.4.0
+      '@ucanto/core': 5.0.0
+      '@ucanto/interface': 5.0.0
+      '@ucanto/principal': 5.0.0
+      '@ucanto/transport': 5.0.0
+      '@ucanto/validator': 5.0.0
     devDependencies:
       '@types/assert': 1.5.6
       '@types/mocha': 10.0.1
@@ -294,11 +294,11 @@ importers:
       '@ipld/unixfs': ^2.0.1
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.1
-      '@ucanto/client': ^4.4.0
-      '@ucanto/interface': ^4.4.1
-      '@ucanto/principal': ^4.4.0
-      '@ucanto/server': ^4.4.1
-      '@ucanto/transport': ^4.4.0
+      '@ucanto/client': ^5.0.0
+      '@ucanto/interface': ^5.0.0
+      '@ucanto/principal': ^5.0.0
+      '@ucanto/server': ^5.0.0
+      '@ucanto/transport': ^5.0.0
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       blockstore-core: ^3.0.0
@@ -317,9 +317,9 @@ importers:
       '@ipld/car': 5.1.0
       '@ipld/dag-ucan': 3.2.0
       '@ipld/unixfs': 2.0.1
-      '@ucanto/client': 4.4.0
-      '@ucanto/interface': 4.4.1
-      '@ucanto/transport': 4.4.0
+      '@ucanto/client': 5.0.0
+      '@ucanto/interface': 5.0.0
+      '@ucanto/transport': 5.0.0
       '@web3-storage/capabilities': link:../capabilities
       multiformats: 11.0.1
       p-queue: 7.3.0
@@ -327,8 +327,8 @@ importers:
     devDependencies:
       '@types/assert': 1.5.6
       '@types/mocha': 10.0.1
-      '@ucanto/principal': 4.4.0
-      '@ucanto/server': 4.4.1
+      '@ucanto/principal': 5.0.0
+      '@ucanto/server': 5.0.0
       assert: 2.0.0
       blockstore-core: 3.0.0
       c8: 7.12.0
@@ -3523,60 +3523,60 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@ucanto/client/4.4.0:
-    resolution: {integrity: sha512-FeqzLyuVNlN10u2lZzmKY4n0hqvxJ16rI/TeaI5rJ7+GAHb8cEdrADAvp2+ysKZyiXG2R5qgee0p0bGu0yXpgw==}
+  /@ucanto/client/5.0.0:
+    resolution: {integrity: sha512-lx37qipzJn40xOklaE6Wftw9w6Uky3gLi5lG2bfvhqjPt5D0BLHypM8+NTIaik170fiBn8uJi4HwLs7MabZexA==}
     dependencies:
-      '@ucanto/interface': 4.4.1
+      '@ucanto/interface': 5.0.0
       multiformats: 11.0.1
 
-  /@ucanto/core/4.4.0:
-    resolution: {integrity: sha512-WqQAej4cd9eAnTVoIrOf6xl9Wg/7MhEk54gEQodZ4An1GpjPxG5FTz5FzIC5tcdR3XLcCx23d6pWqsqUN9cTVg==}
+  /@ucanto/core/5.0.0:
+    resolution: {integrity: sha512-xJaPz2lne/pvE9vVQ/2tlo3kNp/yAqn9aY543CmfRcbL+4Fb9mcxk6VBSNuPs/jbuCllqw1+ieZFBjxVHJAhrQ==}
     dependencies:
       '@ipld/car': 5.1.0
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.2.0
-      '@ucanto/interface': 4.4.1
+      '@ucanto/interface': 5.0.0
       multiformats: 11.0.1
 
-  /@ucanto/interface/4.4.1:
-    resolution: {integrity: sha512-Ua4Nf7Ld/Q96xOCS3KACI65imkdyWhYZiSPRAAHiOF12biyxxjxpaoO5CNBXNNFiOhRH0Tk1+fZYeULbqh+x9g==}
+  /@ucanto/interface/5.0.0:
+    resolution: {integrity: sha512-uHi59dfu5grs6cU0AOAM13kQRffmPodVaF7/3lwceiJikxvcnpH59RySdMf0UYAqq5x0Ft6Zhe80SAT6VmOnuQ==}
     dependencies:
       '@ipld/dag-ucan': 3.2.0
       multiformats: 11.0.1
 
-  /@ucanto/principal/4.4.0:
-    resolution: {integrity: sha512-OvF01NSBtC2eCzSgsLriFJmdn73/xOAtX68BwaUI1ox5QLeldC8jZi2EHfpQEE/F5XKLFs08DXrVvHZeb3GMRA==}
+  /@ucanto/principal/5.0.0:
+    resolution: {integrity: sha512-9XyxebWk4zT6J+e5oU4X/Q1w8Z1PwTTREcTP57PTij+b+jHTWArZgYp2oyDGglEnJERANTnSRfuNlwHirqqAGw==}
     dependencies:
       '@ipld/dag-ucan': 3.2.0
       '@noble/ed25519': 1.7.3
-      '@ucanto/interface': 4.4.1
+      '@ucanto/interface': 5.0.0
       multiformats: 11.0.1
       one-webcrypto: 1.0.3
 
-  /@ucanto/server/4.4.1:
-    resolution: {integrity: sha512-uW14tD5LvSOcRq5ziL3UgkYFCvh0WX8UzGinuLWdDvqoRHi6aVldIVu0TyNwMnnSx4E/FM5Y6zIKsN3barzVyw==}
+  /@ucanto/server/5.0.0:
+    resolution: {integrity: sha512-nd7k+WsA/8g0SxGi4wTQ33DJ739nf7lARmNI7RS7dkFYf59tAAXeLC6tIAEYHg5qS6R2Z6x1VtkOpnX3J6QyAg==}
     dependencies:
-      '@ucanto/core': 4.4.0
-      '@ucanto/interface': 4.4.1
-      '@ucanto/validator': 4.4.0
+      '@ucanto/core': 5.0.0
+      '@ucanto/interface': 5.0.0
+      '@ucanto/validator': 5.0.0
 
-  /@ucanto/transport/4.4.0:
-    resolution: {integrity: sha512-hUKQ3x3Lncl8SMmZLBezrbgZNzyEjDOGcwP7gMPImHWYVUTAZitOC9EgBF/EZCvpnHO4f0HSl0PSqQIbxWofHA==}
+  /@ucanto/transport/5.0.0:
+    resolution: {integrity: sha512-+sEBlNyN7cV4uvoDoWlyHJ44P7vm1jMUpc1S06XQyTtUQhgocw9rg7OKHLX/ZW5TkaLPFrIV9yFxwuaUm4T/Ug==}
     dependencies:
       '@ipld/car': 5.1.0
       '@ipld/dag-cbor': 9.0.0
-      '@ucanto/core': 4.4.0
-      '@ucanto/interface': 4.4.1
+      '@ucanto/core': 5.0.0
+      '@ucanto/interface': 5.0.0
       multiformats: 11.0.1
     dev: false
 
-  /@ucanto/validator/4.4.0:
-    resolution: {integrity: sha512-5I6/pAC3lEpcoNdjtssFUmenoJzG0w1SgKbsgUaSVeVqkRTLPaNQS6t7M2b7r8LY4W1OA8OmttfA7gB5mYm8sA==}
+  /@ucanto/validator/5.0.0:
+    resolution: {integrity: sha512-K/hI9CJMycQl+3XAtbhmt8DDW6xGxSn083RPARYnZDnCyaq7sJKgXL8e/5CSlulhf+/k1bK4qXe2ZDOi+E6TXQ==}
     dependencies:
       '@ipld/car': 5.1.0
       '@ipld/dag-cbor': 8.0.1
-      '@ucanto/core': 4.4.0
-      '@ucanto/interface': 4.4.1
+      '@ucanto/core': 5.0.0
+      '@ucanto/interface': 5.0.0
       multiformats: 11.0.1
 
   /@vue/compiler-core/3.2.45:
