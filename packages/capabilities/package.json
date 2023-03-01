@@ -62,7 +62,7 @@
   ],
   "dependencies": {
     "@ucanto/core": "^4.4.0",
-    "@ucanto/interface": "^4.4.0",
+    "@ucanto/interface": "^4.4.1",
     "@ucanto/principal": "^4.4.0",
     "@ucanto/transport": "^4.4.0",
     "@ucanto/validator": "^4.4.0"
