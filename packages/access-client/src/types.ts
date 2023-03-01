@@ -21,6 +21,7 @@ import type {
   Signer,
   SignerArchive,
   SigAlg,
+  Caveats,
 } from '@ucanto/interface'
 
 import type {
@@ -218,10 +219,7 @@ export type InvokeOptions<
   A extends Ability,
   R extends Resource,
   CAP extends CapabilityParser<
-    Match<
-      { can: A; with: R; nb?: Record<string, unknown> | undefined },
-      UnknownMatch
-    >
+    Match<{ can: A; with: R; nb: Caveats }, UnknownMatch>
   >
 > = UCANBasicOptions &
   InferNb<InferInvokedCapability<CAP>['nb']> & {
