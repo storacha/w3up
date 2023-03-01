@@ -1,4 +1,5 @@
 import {
+  stringToDelegations,
   stringToDelegation,
   bytesToDelegations,
 } from '@web3-storage/access/encoding'
@@ -32,7 +33,8 @@ describe('access/authorize', function () {
         audience: service,
         with: issuer.did(),
         nb: {
-          as: accountDID,
+          iss: accountDID,
+          att: [{ can: '*' }],
         },
       })
       .execute(conn)
@@ -46,15 +48,22 @@ describe('access/authorize', function () {
 
     const url = new URL(inv)
     const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessSession]>} */ (
+      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessAuthorize]>} */ (
         url.searchParams.get('ucan')
       )
     const delegation = stringToDelegation(encoded)
     t.deepEqual(delegation.issuer.did(), service.did())
     t.deepEqual(delegation.audience.did(), accountDID)
-    t.deepEqual(delegation.capabilities[0].nb.key, issuer.did())
-    t.deepEqual(delegation.capabilities[0].with, service.did())
-    t.deepEqual(delegation.capabilities[0].can, './update')
+    t.deepEqual(delegation.capabilities, [
+      {
+        with: issuer.did(),
+        can: 'access/authorize',
+        nb: {
+          iss: accountDID,
+          att: [{ can: '*' }],
+        },
+      },
+    ])
 
     const accounts = new Accounts(d1)
     const acc = await accounts.get(accountDID)
@@ -75,7 +84,8 @@ describe('access/authorize', function () {
         audience: service,
         with: issuer.did(),
         nb: {
-          as: accountDID,
+          iss: accountDID,
+          att: [{ can: '*' }],
         },
       })
       .execute(conn)
@@ -89,7 +99,7 @@ describe('access/authorize', function () {
 
     const url = new URL(inv)
     const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessSession]>} */ (
+      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessAuthorize]>} */ (
         url.searchParams.get('ucan')
       )
     const rsp = await mf.dispatchFetch(url, { method: 'POST' })
@@ -100,17 +110,18 @@ describe('access/authorize', function () {
   })
 
   // this relies on ./update that is no longer in ucanto
-  it.skip('should send confirmation email with link that, when clicked, allows for access/claim', async function () {
-    const { issuer, service, conn, mf } = ctx
+  it('should send confirmation email with link that, when clicked, allows for access/claim', async function () {
+    const { issuer: agent, service, conn, mf } = ctx
     const accountDID = 'did:mailto:dag.house:email'
 
     const inv = await Access.authorize
       .invoke({
-        issuer,
+        issuer: agent,
         audience: service,
-        with: issuer.did(),
+        with: agent.did(),
         nb: {
-          as: accountDID,
+          iss: accountDID,
+          att: [{ can: '*' }],
         },
       })
       .execute(conn)
@@ -130,11 +141,12 @@ describe('access/authorize', function () {
     )
 
     const claim = Access.claim.invoke({
-      issuer,
+      issuer: agent,
       audience: conn.id,
-      with: issuer.did(),
+      with: agent.did(),
     })
     const claimResult = await claim.execute(conn)
+
     assert.ok(
       'delegations' in claimResult,
       'claimResult should have delegations property'
@@ -150,31 +162,28 @@ describe('access/authorize', function () {
     )
     assert.deepEqual(
       claimedDelegations.length,
-      1,
+      2,
       'should have claimed delegation(s)'
     )
 
     const claimedDelegationIssuedByService = claimedDelegations.find((d) => {
-      if (!('cid' in d.proofs[0])) {
+      if (!('cid' in d)) {
         throw new Error('proof must be delegation')
       }
-      return d.proofs[0].issuer.did() === service.did()
+      return d.issuer.did() === service.did()
     })
+
     assert.ok(
       claimedDelegationIssuedByService,
       'should claim ucan/attest with proof.iss=service'
     )
 
-    // we can use claimedDelegationIssuedByService to invoke access/claim as iss=accountDID
-    const account = issuer.withDID(accountDID)
+    // we can use delegations to invoke access/claim with=accountDID
     const claimAsAccount = Access.claim.invoke({
-      issuer: account,
+      issuer: agent,
       audience: service,
-      with: account.did(),
-      proofs: [
-        // allows signing with issuer.signer as iss=accountDID
-        claimedDelegationIssuedByService.proofs[0],
-      ],
+      with: accountDID,
+      proofs: claimedDelegations,
     })
     const claimAsAccountResult = await claimAsAccount.execute(conn)
     warnOnErrorResult(claimAsAccountResult)
@@ -194,16 +203,17 @@ describe('access/authorize', function () {
   })
 
   it('should receive delegation in the ws', async function () {
-    const { issuer, service, conn, mf } = ctx
+    const { issuer: agent, service, conn, mf } = ctx
     const accountDID = 'did:mailto:dag.house:email'
 
     const inv = await Access.authorize
       .invoke({
-        issuer,
+        issuer: agent,
         audience: service,
-        with: issuer.did(),
+        with: agent.did(),
         nb: {
-          as: accountDID,
+          iss: accountDID,
+          att: [{ can: '*' }],
         },
       })
       .execute(conn)
@@ -238,18 +248,37 @@ describe('access/authorize', function () {
           )
 
         assert.ok(encoded)
-        const delegation = stringToDelegation(encoded)
-        t.deepEqual(delegation.issuer.did(), service.did())
-        t.deepEqual(delegation.audience.did(), accountDID)
-        t.deepEqual(delegation.capabilities[0].nb.key, issuer.did())
-        t.deepEqual(delegation.capabilities[0].with, service.did())
-        t.deepEqual(delegation.capabilities[0].can, './update')
+        const [authorization, attestation] = stringToDelegations(encoded)
+
+        assert.equal(authorization.issuer.did(), accountDID)
+        assert.equal(authorization.audience.did(), agent.did())
+        assert.equal(authorization.expiration, Infinity)
+        assert.deepEqual(authorization.capabilities, [
+          {
+            can: '*',
+            with: 'ucan:*',
+          },
+        ])
+
+        assert.equal(attestation.issuer.did(), service.did())
+        assert.equal(attestation.audience.did(), agent.did())
+        assert.equal(attestation.expiration, Infinity)
+        assert.deepEqual(attestation.capabilities, [
+          {
+            can: 'ucan/attest',
+            with: service.did(),
+            nb: {
+              proof: authorization.cid,
+            },
+          },
+        ])
+
         done = true
       })
 
       webSocket.send(
         JSON.stringify({
-          did: issuer.did(),
+          did: agent.did(),
         })
       )
 
