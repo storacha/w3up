@@ -45,6 +45,8 @@ export interface Env {
   SENTRY_DSN: string
   POSTMARK_TOKEN: string
   POSTMARK_SENDER?: string
+
+  DEBUG_EMAIL?: string
   LOGTAIL_TOKEN: string
   // bindings
   SPACES: KVNamespace
