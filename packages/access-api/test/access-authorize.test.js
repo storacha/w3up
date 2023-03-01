@@ -58,7 +58,7 @@ describe('access/authorize', function () {
     }
 
     const [email] = outbox
-    assert.notEqual(email, undefined, 'no email was send')
+    assert.notEqual(email, undefined, 'no email was sent')
 
     const url = new URL(email.url)
     const encoded =
@@ -110,7 +110,7 @@ describe('access/authorize', function () {
 
     const [email] = outbox
     if (!inv) {
-      return assert.fail('no email was send')
+      return assert.fail('no email was sent')
     }
 
     const url = new URL(email.url)
