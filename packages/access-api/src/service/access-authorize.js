@@ -37,15 +37,13 @@ export function accessAuthorizeProvider(ctx) {
       await ctx.models.accounts.create(capability.nb.iss)
 
       const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}&mode=session`
-      // For testing
-      if (ctx.config.ENV === 'test') {
-        return url
-      }
 
       await ctx.email.sendValidation({
         to: Mailto.toEmail(capability.nb.iss),
         url,
       })
+
+      return {}
     }
   )
 }
