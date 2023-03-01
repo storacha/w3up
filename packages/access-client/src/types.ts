@@ -29,7 +29,6 @@ import type {
   SpaceInfo,
   SpaceRecover,
   SpaceRecoverValidation,
-  ShouldShowValidationNonce,
   VoucherClaim,
   VoucherRedeem,
   Top,
@@ -96,9 +95,7 @@ export interface Service {
   voucher: {
     claim: ServiceMethod<
       VoucherClaim,
-      | ShouldShowValidationNonce
-      | EncodedDelegation<[VoucherRedeem]>
-      | undefined,
+      EncodedDelegation<[VoucherRedeem]> | undefined,
       Failure
     >
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
@@ -107,7 +104,7 @@ export interface Service {
     info: ServiceMethod<SpaceInfo, SpaceRecord, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
-      ShouldShowValidationNonce | EncodedDelegation<[SpaceRecover]> | undefined,
+      EncodedDelegation<[SpaceRecover]> | undefined,
       Failure
     >
     recover: ServiceMethod<
@@ -240,7 +237,7 @@ export type DelegationOptions = SetRequired<UCANBasicOptions, 'audience'> & {
   audienceMeta: AgentMeta
 }
 
-export type ValidationPhraseHandler = (please_show: NoncePhrase) => undefined
+export type ValidationPhraseHandler = (phrase: NoncePhrase) => undefined
 
 /**
  * Utility types
