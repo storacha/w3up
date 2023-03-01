@@ -33,6 +33,7 @@ import type {
   VoucherRedeem,
   Top,
   AccessAuthorize,
+  AccessAuthorizeSuccess,
   AccessDelegate,
   AccessDelegateFailure,
   AccessDelegateSuccess,
@@ -95,8 +96,7 @@ export interface SpaceTableMetadata {
  */
 export interface Service {
   access: {
-    // returns a URL string for tests or nothing in other envs
-    authorize: ServiceMethod<AccessAuthorize, string | undefined, Failure>
+    authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
     delegate: ServiceMethod<
       AccessDelegate,
