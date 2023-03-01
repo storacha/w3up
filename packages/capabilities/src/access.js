@@ -16,7 +16,31 @@ export { top } from './top.js'
 /**
  * Account identifier.
  */
-export const As = DID.match({ method: 'mailto' })
+export const Account = DID.match({ method: 'mailto' })
+
+/**
+ * Describes the capability requested.
+ */
+export const CapabilityRequest = Schema.struct({
+  /**
+   * If set to `"*"` it corresponds to "sudo" access.
+   */
+  can: Schema.string(),
+})
+
+/**
+ * Authorization request describing set of desired capabilities.
+ */
+export const AuthorizationRequest = Schema.struct({
+  /**
+   * DID of the Account authorization is requested from.
+   */
+  iss: Account,
+  /**
+   * Capabilities agent wishes to be granted.
+   */
+  att: CapabilityRequest.array(),
+})
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
@@ -29,25 +53,21 @@ export const access = capability({
 })
 
 /**
- * Capability can be invoked by an agent to request a `./update` for an account.
- *
- * `with` field identifies requesting agent, which MAY be different from iss field identifying issuing agent.
+ * Capability can be invoked by an agent to request set of capabilities from
+ * the account.
  */
 export const authorize = capability({
   can: 'access/authorize',
   with: DID.match({ method: 'key' }),
-  nb: Schema.struct({
-    /**
-     * Value MUST be a did:mailto identifier of the account
-     * that the agent wishes to represent via did:key in the `with` field.
-     * It MUST be a valid did:mailto identifier.
-     */
-    as: As,
-  }),
+  /**
+   * Authorization request describing set of desired capabilities
+   */
+  nb: AuthorizationRequest,
   derives: (child, parent) => {
     return (
       fail(equalWith(child, parent)) ||
-      fail(equal(child.nb.as, parent.nb.as, 'as')) ||
+      fail(equal(child.nb.iss, parent.nb.iss, 'iss')) ||
+      fail(subsetCapabilities(child.nb.att, parent.nb.att)) ||
       true
     )
   },
@@ -148,6 +168,38 @@ function subsetsNbDelegations(claim, proof) {
       `unauthorized nb.delegations ${[...missingProofs].join(', ')}`
     )
   }
+  return true
+}
+
+/**
+ * Checks that set of requested capabilities is a subset of the capabilities
+ * that had been allowed by the owner or the delegate.
+ *
+ * ⚠️ This function does not currently check that say `store/add` is allowed
+ * when say `store/*` was delegated, because it seems very unlikely that we
+ * will ever encounter delegations for `access/authorize` at all.
+ *
+ * @param {Schema.Infer<CapabilityRequest>[]} claim
+ * @param {Schema.Infer<CapabilityRequest>[]} proof
+ */
+const subsetCapabilities = (claim, proof) => {
+  const allowed = new Set(proof.map((p) => p.can))
+  // If everything is allowed, no need to check further because it contains
+  // all the capabilities.
+  if (allowed.has('*')) {
+    return true
+  }
+
+  // Otherwise we compute delta between what is allowed and what is requested.
+  const escalated = setDifference(
+    claim.map((c) => c.can),
+    allowed
+  )
+
+  if (escalated.size > 0) {
+    return new Failure(`unauthorized nb.att.can ${[...escalated].join(', ')}`)
+  }
+
   return true
 }
 
