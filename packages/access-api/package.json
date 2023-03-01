@@ -22,6 +22,7 @@
     "@ucanto/principal": "^4.2.3",
     "@ucanto/server": "^4.2.3",
     "@ucanto/transport": "^4.2.3",
+    "@ucanto/validator": "^4.2.3",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
@@ -31,6 +32,7 @@
     "preact": "^10.11.3",
     "preact-render-to-string": "^5.2.6",
     "qrcode": "^1.5.1",
+    "streaming-iterables": "^7.1.0",
     "toucan-js": "^2.7.0"
   },
   "devDependencies": {
@@ -85,7 +87,23 @@
       "WebSocketPair": "readonly"
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off"
+      "unicorn/prefer-number-properties": "off",
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "AsyncIterableIterator",
+            "Awaited",
+            "D1Database",
+            "FetchEvent",
+            "Iterable",
+            "IterableIterator",
+            "KVNamespace",
+            "PromiseLike",
+            "ResponseInit"
+          ]
+        }
+      ]
     }
   },
   "eslintIgnore": [

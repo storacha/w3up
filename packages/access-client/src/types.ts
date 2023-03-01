@@ -33,6 +33,12 @@ import type {
   VoucherRedeem,
   Top,
   AccessAuthorize,
+  AccessDelegate,
+  AccessDelegateFailure,
+  AccessDelegateSuccess,
+  AccessClaim,
+  AccessClaimSuccess,
+  AccessClaimFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -91,6 +97,12 @@ export interface Service {
   access: {
     // returns a URL string for tests or nothing in other envs
     authorize: ServiceMethod<AccessAuthorize, string | undefined, Failure>
+    claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
+    delegate: ServiceMethod<
+      AccessDelegate,
+      AccessDelegateSuccess,
+      AccessDelegateFailure
+    >
   }
   voucher: {
     claim: ServiceMethod<
