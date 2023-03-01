@@ -131,7 +131,7 @@ export function warnOnErrorResult(
  * @typedef {object} InvokeTester
  * @property {(invocation: Ucanto.Invocation<Capability>) => Promise<Result>} invoke
  * @property {Resolvable<Ucanto.Signer<Ucanto.DID<'key'>>>} issuer
- * @property {Resolvable<Ucanto.Verifier<Ucanto.DID>>} audience
+ * @property {Resolvable<Ucanto.Signer<Ucanto.DID>>} audience
  */
 
 /**

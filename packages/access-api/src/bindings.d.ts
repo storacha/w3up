@@ -57,10 +57,11 @@ export interface RouteContext {
   url: URL
   email: Email
   models: {
-    spaces: Spaces
-    validations: Validations
     accounts: Accounts
     delegations: Delegations
+    spaces: Spaces
+    storageProvisions: StorageProvisions
+    validations: Validations
   }
   uploadApi: ConnectionView
 }

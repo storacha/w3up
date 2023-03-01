@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, DID, URI, literal } from '@ucanto/validator'
+import { capability, DID, literal } from '@ucanto/validator'
 import { equalWith, fail, equal } from './utils.js'
 import { top } from './top.js'
 
@@ -45,7 +45,7 @@ export const add = base.derive({
     with: AccountDID,
     nb: {
       provider: StorageProvider,
-      consumer: URI.match({ protocol: 'did:' }),
+      consumer: DID.match({ method: 'key' }),
     },
     derives: (child, parent) => {
       return (

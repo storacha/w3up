@@ -11,6 +11,7 @@ import { createUploadApiConnection } from '../service/upload-api-proxy.js'
 import { DID } from '@ucanto/core'
 import { DbDelegationsStorage } from '../models/delegations.js'
 import { createD1Database } from './d1.js'
+import { createStorageProvisions } from '../models/storage-provisions.js'
 
 /**
  * Obtains a route context object.
@@ -60,6 +61,7 @@ export function getContext(request, env, ctx) {
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
+      storageProvisions: createStorageProvisions([]),
     },
     email: new Email({
       token: config.POSTMARK_TOKEN,
