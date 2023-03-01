@@ -19,8 +19,22 @@ const t = assert
 describe('access/authorize', function () {
   /** @type {Awaited<ReturnType<typeof context>>} */
   let ctx
+  /** @type {{to:string, url:string}[]} */
+  let outbox
   beforeEach(async function () {
-    ctx = await context()
+    outbox = []
+    ctx = await context({
+      globals: {
+        email: {
+          /**
+           * @param {*} email
+           */
+          sendValidation(email) {
+            outbox.push(email)
+          },
+        },
+      },
+    })
   })
 
   it('should issue ./update', async function () {
@@ -39,14 +53,14 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    if (!inv) {
-      return assert.fail('no output')
-    }
     if (inv.error) {
       return assert.fail(inv.message)
     }
 
-    const url = new URL(inv)
+    const [email] = outbox
+    assert.notEqual(email, undefined, 'no email was send')
+
+    const url = new URL(email.url)
     const encoded =
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessAuthorize]>} */ (
         url.searchParams.get('ucan')
@@ -90,14 +104,16 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    if (!inv) {
-      return assert.fail('no output')
-    }
     if (inv.error) {
       return assert.fail(inv.message)
     }
 
-    const url = new URL(inv)
+    const [email] = outbox
+    if (!inv) {
+      return assert.fail('no email was send')
+    }
+
+    const url = new URL(email.url)
     const encoded =
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessAuthorize]>} */ (
         url.searchParams.get('ucan')
@@ -126,10 +142,11 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    // @todo - this only returns string when ENV==='test'. Remove that env-specific behavior
-    assert.ok(typeof inv === 'string', 'invocation result is a string')
+    assert.equal(inv.error, undefined, 'invocation should not fail')
+    const [email] = outbox
+    assert.notEqual(email, undefined, 'email was sent')
 
-    const confirmEmailPostUrl = new URL(inv)
+    const confirmEmailPostUrl = new URL(email.url)
     const confirmEmailPostResponse = await mf.dispatchFetch(
       confirmEmailPostUrl,
       { method: 'POST' }
@@ -218,14 +235,14 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    if (!inv) {
-      return assert.fail('no output')
-    }
     if (inv.error) {
       return assert.fail(inv.message)
     }
 
-    const url = new URL(inv)
+    const [email] = outbox
+    assert.notEqual(email, undefined, 'email was sent')
+
+    const url = new URL(email.url)
     // click email url
     await mf.dispatchFetch(url, { method: 'POST' })
 
