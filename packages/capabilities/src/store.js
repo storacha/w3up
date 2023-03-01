@@ -10,7 +10,6 @@
  */
 import { capability, Failure, Link, URI, Schema } from '@ucanto/validator'
 import { equalLink, equalWith } from './utils.js'
-export { top } from './top.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
