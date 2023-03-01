@@ -254,9 +254,9 @@ async function testAuthorizeClaimProviderAdd(options) {
       'hasStorageProvider' in spaceStorageResult,
     'spaceStorageResult has hasStorageProvider property'
   )
-  // assert.deepEqual(
-  //   spaceStorageResult.hasStorageProvider,
-  //   true,
-  //   `testing/space-storage.hasStorageProvider is true`
-  // )
+  assert.deepEqual(
+    spaceStorageResult.hasStorageProvider,
+    true,
+    `testing/space-storage.hasStorageProvider is true`
+  )
 }
