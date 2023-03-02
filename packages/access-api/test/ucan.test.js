@@ -147,8 +147,10 @@ describe('ucan', function () {
   test('should support ucan invoking to a did:web aud', async function () {
     const serviceDidWeb = 'did:web:example.com'
     const { mf, issuer, service } = await context({
-      ...process.env,
-      DID: serviceDidWeb,
+      env: {
+        ...process.env,
+        DID: serviceDidWeb,
+      },
     })
     const ucan = await UCAN.issue({
       issuer,
