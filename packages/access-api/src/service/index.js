@@ -203,8 +203,11 @@ export function service(ctx) {
        */
       'space-storage': async (invocation) => {
         const spaceId = invocation.capabilities[0].with
+        const hasStorageProvider =
+          await ctx.models.storageProvisions.hasStorageProvider(spaceId)
         return {
-          hasStorageProvider: await hasStorageProvider(spaceId),
+          hasStorageProvider,
+          foo: 'ben',
         }
       },
     },

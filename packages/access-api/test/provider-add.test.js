@@ -13,7 +13,7 @@ import * as ucanto from '@ucanto/core'
 import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
-import { createStorageProvisions } from '../src/models/storage-provisions.js'
+import { createStorageProvisions } from '../src/models/provisions.js'
 
 for (const providerAddHandlerVariant of /** @type {const} */ ([
   {
@@ -89,7 +89,7 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
       )
       assertNotError(providerAddition)
       assert.deepEqual(
-        providerAddHandlerVariant.storageProvisions.hasStorageProvider(
+        await providerAddHandlerVariant.storageProvisions.hasStorageProvider(
           space.did()
         ),
         true,

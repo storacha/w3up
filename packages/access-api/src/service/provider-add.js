@@ -35,7 +35,7 @@ export function createProviderAddHandler(options) {
         message: 'Issuer must be a mailto DID',
       }
     }
-    await options.storageProvisions.create({
+    await options.storageProvisions.putMany({
       space: consumer,
       provider,
       account: accountDID,
