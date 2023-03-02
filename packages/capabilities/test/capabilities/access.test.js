@@ -359,7 +359,7 @@ describe('access capabilities', function () {
         assert.fail('error in self issue')
       } else {
         assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/authorize')
+        assert.equal(result.capability.can, 'access/confirm')
         assert.deepEqual(result.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           aud: agent.did(),
@@ -368,7 +368,7 @@ describe('access capabilities', function () {
       }
     })
 
-    it('should delegate from authorize to authorize', async function () {
+    it('should delegate from confirm to confirm', async function () {
       const agent1 = bob
       const agent2 = mallory
       const ucan = Access.confirm.invoke({
@@ -381,7 +381,7 @@ describe('access capabilities', function () {
           att: [{ can: '*' }],
         },
         proofs: [
-          await Access.authorize.delegate({
+          await Access.confirm.delegate({
             issuer: agent1,
             audience: agent2,
             with: agent1.did(),
@@ -405,6 +405,7 @@ describe('access capabilities', function () {
         assert.equal(result.capability.can, 'access/confirm')
         assert.deepEqual(result.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
+          aud: agent2.did(),
           att: [{ can: '*' }],
         })
       }
@@ -602,7 +603,7 @@ describe('access capabilities', function () {
           att: [{ can: '*' }],
         },
         proofs: [
-          await Access.authorize.delegate({
+          await Access.confirm.delegate({
             issuer: alice,
             audience: bob,
             with: alice.did(),
