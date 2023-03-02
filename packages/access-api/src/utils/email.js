@@ -1,6 +1,12 @@
+export const debug = () => new DebugEmail()
+
+/**
+ * @param {{token:string, sender?:string}} opts
+ */
+export const configure = (opts) => new Email(opts)
+
 export class Email {
   /**
-   *
    * @param {object} opts
    * @param {string} opts.token
    * @param {string} [opts.sender]
@@ -73,6 +79,46 @@ export class Email {
           rsp.status
         }, body: ${await rsp.text()}`
       )
+    }
+  }
+}
+
+/**
+ * This is API compatible version of Email class that can be used during
+ * tests and debugging.
+ */
+export class DebugEmail {
+  /**
+   * Send validation email with ucan to register
+   *
+   * @param {{ to: string; url: string }} opts
+   */
+  async sendValidation(opts) {
+    try {
+      // @ts-expect-error
+      globalThis.email.sendValidation(opts)
+    } catch {
+      // eslint-disable-next-line no-console
+      console.log('email.sendValidation', opts)
+    }
+  }
+
+  /**
+   * Send email
+   *
+   * @param {object} opts
+   * @param {string} opts.to
+   * @param {string} opts.textBody
+   * @param {string} opts.subject
+   *
+   */
+  async send(opts) {
+    try {
+      // @ts-expect-error
+      globalThis.email.send(opts)
+    } catch {
+      // eslint-disable-next-line no-console
+      console.log('email.send', opts)
     }
   }
 }
