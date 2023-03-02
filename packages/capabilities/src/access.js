@@ -84,7 +84,7 @@ export const confirm = capability({
   with: DID,
   nb: Schema.struct({
     iss: Account,
-    aud: DID,
+    aud: Schema.did(),
     att: CapabilityRequest.array(),
   }),
   derives: (claim, proof) => {
