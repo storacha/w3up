@@ -14,7 +14,7 @@ dotenv.config({
 })
 
 /**
- * @typedef {Omit<import('../../src/bindings').Env, 'SPACES'|'VALIDATIONS'|'__D1_BETA__'>} AccessApiBindings - bindings object expected by access-api workers
+ * @typedef {Omit<import('../../src/bindings').Env, 'SPACES'|'VALIDATIONS'|'__D1_BETA__'|'SPACE_VERIFIERS'>} AccessApiBindings - bindings object expected by access-api workers
  */
 
 /**
@@ -34,7 +34,6 @@ function createBindings(env) {
     LOGTAIL_TOKEN: env.LOGTAIL_TOKEN || '',
     W3ACCESS_METRICS: createAnalyticsEngine(),
     UPLOAD_API_URL: env.UPLOAD_API_URL || '',
-    SPACE_VERIFIERS: {},
   }
 }
 

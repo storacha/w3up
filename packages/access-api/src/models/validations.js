@@ -8,7 +8,7 @@ export class Validations {
   /**
    *
    * @param {KVNamespace} kv
-   * @param {import('@cloudflare/workers-types/2022-11-30').DurableObjectNamespace} spaceVerifiers
+   * @param {import('../bindings').DurableObjectNamespace | undefined} spaceVerifiers
    */
   constructor(kv, spaceVerifiers) {
     this.kv = kv
@@ -34,7 +34,7 @@ export class Validations {
       /** @type import('@ucanto/interface').InferInvokedCapability<typeof import('@web3-storage/capabilities/voucher').redeem> */ (
         delegation.capabilities[0]
       )
-    if (cap.nb?.space) {
+    if (this.spaceVerifiers && cap.nb?.space) {
       await sendDelegationToSpaceVerifier(
         this.spaceVerifiers,
         cap.nb.space,

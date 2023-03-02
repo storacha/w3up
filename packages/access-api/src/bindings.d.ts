@@ -4,7 +4,6 @@ import type {
   DelegationTable,
   SpaceTable,
 } from '@web3-storage/access/types'
-import type { DurableObjectNamespace } from '@cloudflare/workers-types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
@@ -15,6 +14,12 @@ import { Accounts } from './models/accounts.js'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 
 export {}
+
+export type {
+  DurableObjectNamespace,
+  DurableObjectState,
+  Response as WorkerResponse,
+} from '@cloudflare/workers-types'
 
 // CF Analytics Engine types not available yet
 export interface AnalyticsEngine {
