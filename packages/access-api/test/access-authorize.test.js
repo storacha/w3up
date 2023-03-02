@@ -70,10 +70,11 @@ describe('access/authorize', function () {
     t.deepEqual(delegation.audience.did(), accountDID)
     t.deepEqual(delegation.capabilities, [
       {
-        with: issuer.did(),
-        can: 'access/authorize',
+        with: conn.id.did(),
+        can: 'access/confirm',
         nb: {
           iss: accountDID,
+          aud: issuer.did(),
           att: [{ can: '*' }],
         },
       },
@@ -114,15 +115,12 @@ describe('access/authorize', function () {
     }
 
     const url = new URL(email.url)
-    const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessAuthorize]>} */ (
-        url.searchParams.get('ucan')
-      )
     const rsp = await mf.dispatchFetch(url, { method: 'POST' })
     const html = await rsp.text()
 
-    assert(html.includes(encoded))
+    assert(html.includes('Email Validated'))
     assert(html.includes(toEmail(accountDID)))
+    assert(html.includes(issuer.did()))
   })
 
   // this relies on ./update that is no longer in ucanto

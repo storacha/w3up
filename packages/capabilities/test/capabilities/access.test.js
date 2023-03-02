@@ -7,331 +7,675 @@ import * as Ucanto from '@ucanto/interface'
 import { delegate, invoke, parseLink } from '@ucanto/core'
 
 describe('access capabilities', function () {
-  it('should self issue', async function () {
-    const agent = mallory
-    const auth = Access.authorize.invoke({
-      issuer: agent,
-      audience: service,
-      with: agent.did(),
-      nb: {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      },
-    })
-
-    const result = await access(await auth.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-    if (result.error) {
-      assert.fail('error in self issue')
-    } else {
-      assert.deepEqual(result.audience.did(), service.did())
-      assert.equal(result.capability.can, 'access/authorize')
-      assert.deepEqual(result.capability.nb, {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      })
-    }
-  })
-
-  it('should delegate from authorize to authorize', async function () {
-    const agent1 = bob
-    const agent2 = mallory
-    const claim = Access.authorize.invoke({
-      issuer: agent2,
-      audience: service,
-      with: agent1.did(),
-      nb: {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      },
-      proofs: [
-        await Access.authorize.delegate({
-          issuer: agent1,
-          audience: agent2,
-          with: agent1.did(),
-          nb: {
-            iss: 'did:mailto:web3.storage:test',
-          },
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    if (result.error) {
-      assert.fail('should not error')
-    } else {
-      assert.deepEqual(result.audience.did(), service.did())
-      assert.equal(result.capability.can, 'access/authorize')
-      assert.deepEqual(result.capability.nb, {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      })
-    }
-  })
-
-  it('should delegate from authorize/* to authorize', async function () {
-    const agent1 = bob
-    const agent2 = mallory
-    const claim = Access.authorize.invoke({
-      issuer: agent2,
-      audience: service,
-      with: agent1.did(),
-      nb: {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      },
-      proofs: [
-        await Access.access.delegate({
-          issuer: agent1,
-          audience: agent2,
-          with: agent1.did(),
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    if (result.error) {
-      assert.fail('should not error')
-    } else {
-      assert.deepEqual(result.audience.did(), service.did())
-      assert.equal(result.capability.can, 'access/authorize')
-      assert.deepEqual(result.capability.nb, {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      })
-    }
-  })
-
-  it('should delegate from * to authorize', async function () {
-    const agent1 = bob
-    const agent2 = mallory
-    const claim = Access.authorize.invoke({
-      issuer: agent2,
-      audience: service,
-      with: agent1.did(),
-      nb: {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      },
-      proofs: [
-        await Access.top.delegate({
-          issuer: agent1,
-          audience: agent2,
-          with: agent1.did(),
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    if (result.error) {
-      assert.fail('should not error')
-    } else {
-      assert.deepEqual(result.audience.did(), service.did())
-      assert.equal(result.capability.can, 'access/authorize')
-      assert.deepEqual(result.capability.nb, {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      })
-    }
-  })
-
-  it('should error auth to auth when `iss` is different', async function () {
-    const agent1 = bob
-    const agent2 = mallory
-    const claim = Access.authorize.invoke({
-      issuer: agent2,
-      audience: service,
-      with: agent1.did(),
-      nb: {
-        iss: 'did:mailto:web3.storage:ANOTHER_TEST',
-        att: [{ can: '*' }],
-      },
-      proofs: [
-        await Access.authorize.delegate({
-          issuer: agent1,
-          audience: agent2,
-          with: agent1.did(),
-          nb: {
-            iss: 'did:mailto:web3.storage:test',
-          },
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    if (result.error) {
-      assert.ok(result.message.includes('- Can not derive'))
-    } else {
-      assert.fail('should error')
-    }
-  })
-
-  it('should be able to derive from * scope', async function () {
-    const claim = Access.authorize.invoke({
-      issuer: bob,
-      audience: service,
-      with: alice.did(),
-      nb: {
-        iss: 'did:mailto:web.mail:alice',
-        att: [{ can: 'store/*' }],
-      },
-      proofs: [
-        await Access.authorize.delegate({
-          issuer: alice,
-          audience: bob,
-          with: alice.did(),
-          nb: {
-            iss: 'did:mailto:web.mail:alice',
-            att: [{ can: '*' }],
-          },
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    assert.equal(result.error, undefined, 'should be authorized')
-  })
-
-  it('should be able to reduce scope', async function () {
-    const claim = Access.authorize.invoke({
-      issuer: bob,
-      audience: service,
-      with: alice.did(),
-      nb: {
-        iss: 'did:mailto:web.mail:alice',
-        att: [{ can: 'store/add' }],
-      },
-      proofs: [
-        await Access.authorize.delegate({
-          issuer: alice,
-          audience: bob,
-          with: alice.did(),
-          nb: {
-            iss: 'did:mailto:web.mail:alice',
-            att: [{ can: 'store/add' }, { can: 'store/remove' }],
-          },
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    assert.equal(result.error, undefined, 'should be authorized')
-  })
-
-  it('should error on escalation', async function () {
-    const claim = Access.authorize.invoke({
-      issuer: bob,
-      audience: service,
-      with: alice.did(),
-      nb: {
-        iss: 'did:mailto:web.mail:alice',
-        att: [{ can: '*' }],
-      },
-      proofs: [
-        await Access.authorize.delegate({
-          issuer: alice,
-          audience: bob,
-          with: alice.did(),
-          nb: {
-            iss: 'did:mailto:web.mail:alice',
-            att: [{ can: 'store/*' }],
-          },
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    if (result.error) {
-      assert.ok(result.message.includes('unauthorized nb.att.can *'))
-    } else {
-      assert.fail('should error')
-    }
-  })
-
-  it('should error on principal misalignment', async function () {
-    const agent1 = bob
-    const agent2 = mallory
-    const claim = Access.authorize.invoke({
-      issuer: agent2,
-      audience: service,
-      with: alice.did(),
-      nb: {
-        iss: 'did:mailto:web3.storage:test',
-        att: [{ can: '*' }],
-      },
-      proofs: [
-        await Access.top.delegate({
-          issuer: agent1,
-          audience: agent2,
-          with: agent1.did(),
-        }),
-      ],
-    })
-
-    const result = await access(await claim.delegate(), {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: service,
-    })
-
-    if (result.error) {
-      assert.ok(result.message.includes('- Can not derive'))
-    } else {
-      assert.fail('should error')
-    }
-  })
-
-  it('should fail validation if its not mailto', async function () {
-    assert.throws(() => {
-      Access.authorize.invoke({
-        issuer: bob,
+  describe('access/authorize', function () {
+    it('should self issue', async function () {
+      const agent = mallory
+      const auth = Access.authorize.invoke({
+        issuer: agent,
         audience: service,
-        with: bob.did(),
+        with: agent.did(),
         nb: {
-          // @ts-expect-error
-          iss: 'did:NOT_MAILTO:web3.storage:test',
+          iss: 'did:mailto:web3.storage:test',
           att: [{ can: '*' }],
         },
       })
-    }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)
+
+      const result = await access(await auth.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+      if (result.error) {
+        assert.fail('error in self issue')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/authorize')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should delegate from authorize to authorize', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const claim = Access.authorize.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.authorize.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+            nb: {
+              iss: 'did:mailto:web3.storage:test',
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail('should not error')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/authorize')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should delegate from authorize/* to authorize', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const claim = Access.authorize.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.access.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail('should not error')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/authorize')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should delegate from * to authorize', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const claim = Access.authorize.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.top.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail('should not error')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/authorize')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should error auth to auth when `iss` is different', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const claim = Access.authorize.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:ANOTHER_TEST',
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.authorize.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+            nb: {
+              iss: 'did:mailto:web3.storage:test',
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.ok(result.message.includes('- Can not derive'))
+      } else {
+        assert.fail('should error')
+      }
+    })
+
+    it('should be able to derive from * scope', async function () {
+      const claim = Access.authorize.invoke({
+        issuer: bob,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web.mail:alice',
+          att: [{ can: 'store/*' }],
+        },
+        proofs: [
+          await Access.authorize.delegate({
+            issuer: alice,
+            audience: bob,
+            with: alice.did(),
+            nb: {
+              iss: 'did:mailto:web.mail:alice',
+              att: [{ can: '*' }],
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.equal(result.error, undefined, 'should be authorized')
+    })
+
+    it('should be able to reduce scope', async function () {
+      const claim = Access.authorize.invoke({
+        issuer: bob,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web.mail:alice',
+          att: [{ can: 'store/add' }],
+        },
+        proofs: [
+          await Access.authorize.delegate({
+            issuer: alice,
+            audience: bob,
+            with: alice.did(),
+            nb: {
+              iss: 'did:mailto:web.mail:alice',
+              att: [{ can: 'store/add' }, { can: 'store/remove' }],
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.equal(result.error, undefined, 'should be authorized')
+    })
+
+    it('should error on escalation', async function () {
+      const claim = Access.authorize.invoke({
+        issuer: bob,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web.mail:alice',
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.authorize.delegate({
+            issuer: alice,
+            audience: bob,
+            with: alice.did(),
+            nb: {
+              iss: 'did:mailto:web.mail:alice',
+              att: [{ can: 'store/*' }],
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.ok(result.message.includes('unauthorized nb.att.can *'))
+      } else {
+        assert.fail('should error')
+      }
+    })
+
+    it('should error on principal misalignment', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const claim = Access.authorize.invoke({
+        issuer: agent2,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.top.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+          }),
+        ],
+      })
+
+      const result = await access(await claim.delegate(), {
+        capability: Access.authorize,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.ok(result.message.includes('- Can not derive'))
+      } else {
+        assert.fail('should error')
+      }
+    })
+
+    it('should fail validation if its not mailto', async function () {
+      assert.throws(() => {
+        Access.authorize.invoke({
+          issuer: bob,
+          audience: service,
+          with: bob.did(),
+          nb: {
+            // @ts-expect-error
+            iss: 'did:NOT_MAILTO:web3.storage:test',
+            att: [{ can: '*' }],
+          },
+        })
+      }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)
+    })
+  })
+
+  describe('access/confirm', function () {
+    it('should self issue', async function () {
+      const agent = mallory
+      const ucan = Access.confirm.invoke({
+        issuer: agent,
+        audience: service,
+        with: agent.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent.did(),
+          att: [{ can: '*' }],
+        },
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+      if (result.error) {
+        assert.fail('error in self issue')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/authorize')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent.did(),
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should delegate from authorize to authorize', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const ucan = Access.confirm.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent2.did(),
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.authorize.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+            nb: {
+              iss: 'did:mailto:web3.storage:test',
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail('should not error')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/confirm')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should delegate from access/* to access/confirm', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const ucan = Access.confirm.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent2.did(),
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.access.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail('should not error')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/confirm')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent2.did(),
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should delegate from * to access/confirm', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const ucan = Access.confirm.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent2.did(),
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.top.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail('should not error')
+      } else {
+        assert.deepEqual(result.audience.did(), service.did())
+        assert.equal(result.capability.can, 'access/confirm')
+        assert.deepEqual(result.capability.nb, {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent2.did(),
+          att: [{ can: '*' }],
+        })
+      }
+    })
+
+    it('should error when `iss` is different', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const ucan = Access.confirm.invoke({
+        issuer: agent2,
+        audience: service,
+        with: agent1.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:ANOTHER_TEST',
+          aud: agent2.did(),
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.confirm.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+            nb: {
+              iss: 'did:mailto:web3.storage:test',
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.ok(result.message.includes('- Can not derive'))
+      } else {
+        assert.fail('should error')
+      }
+    })
+
+    it('should be able to derive from * scope', async function () {
+      const ucan = Access.confirm.invoke({
+        issuer: bob,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web.mail:alice',
+          aud: bob.did(),
+          att: [{ can: 'store/*' }],
+        },
+        proofs: [
+          await Access.confirm.delegate({
+            issuer: alice,
+            audience: bob,
+            with: alice.did(),
+            nb: {
+              iss: 'did:mailto:web.mail:alice',
+              att: [{ can: '*' }],
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.equal(result.error, undefined, 'should be authorized')
+    })
+
+    it('should be able to reduce scope', async function () {
+      const ucan = Access.confirm.invoke({
+        issuer: bob,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web.mail:alice',
+          aud: bob.did(),
+          att: [{ can: 'store/add' }],
+        },
+        proofs: [
+          await Access.confirm.delegate({
+            issuer: alice,
+            audience: bob,
+            with: alice.did(),
+            nb: {
+              iss: 'did:mailto:web.mail:alice',
+              att: [{ can: 'store/add' }, { can: 'store/remove' }],
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.equal(result.error, undefined, 'should be authorized')
+    })
+
+    it('should error on escalation', async function () {
+      const ucan = Access.confirm.invoke({
+        issuer: bob,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web.mail:alice',
+          aud: bob.did(),
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.authorize.delegate({
+            issuer: alice,
+            audience: bob,
+            with: alice.did(),
+            nb: {
+              iss: 'did:mailto:web.mail:alice',
+              att: [{ can: 'store/*' }],
+            },
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.ok(result.message.includes('unauthorized nb.att.can *'))
+      } else {
+        assert.fail('should error')
+      }
+    })
+
+    it('should error on principal misalignment', async function () {
+      const agent1 = bob
+      const agent2 = mallory
+      const ucan = Access.confirm.invoke({
+        issuer: agent2,
+        audience: service,
+        with: alice.did(),
+        nb: {
+          iss: 'did:mailto:web3.storage:test',
+          aud: agent2.did(),
+          att: [{ can: '*' }],
+        },
+        proofs: [
+          await Access.top.delegate({
+            issuer: agent1,
+            audience: agent2,
+            with: agent1.did(),
+          }),
+        ],
+      })
+
+      const result = await access(await ucan.delegate(), {
+        capability: Access.confirm,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.ok(result.message.includes('- Can not derive'))
+      } else {
+        assert.fail('should error')
+      }
+    })
+
+    it('should fail validation if its not mailto', async function () {
+      assert.throws(() => {
+        Access.confirm.invoke({
+          issuer: bob,
+          audience: service,
+          with: bob.did(),
+          nb: {
+            // @ts-expect-error
+            iss: 'did:NOT_MAILTO:web3.storage:test',
+            aud: bob.did(),
+            att: [{ can: '*' }],
+          },
+        })
+      }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)
+    })
   })
 
   describe('access/claim', () => {

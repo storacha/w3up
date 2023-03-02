@@ -40,6 +40,7 @@ export type AccessDelegateSuccess = unknown
 export type AccessDelegateFailure = { error: true } | InsufficientStorage
 
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
+export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 
 // Space
 export type Space = InferInvokedCapability<typeof space>

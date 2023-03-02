@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, URI, DID, Schema, Failure } from '@ucanto/validator'
+import { capability, URI, DID, Link, Schema, Failure } from '@ucanto/validator'
 import * as Types from '@ucanto/interface'
 import { equalWith, fail, equal } from './utils.js'
 export { top } from './top.js'
@@ -74,20 +74,49 @@ export const authorize = capability({
 })
 
 /**
- * Issued by trusted authority (usually the one handling invocation that contains this proof) 
- * to the account (aud) to update invocation local state of the document.
+ * Capability is delegated by us to the user allowing them to complete the
+ * authorization flow. It allows us to ensure that user clicks the link and
+ * we don't have some rogue agent trying to impersonate user clicking the link
+ * in order to get access to their account.
+ */
+export const confirm = capability({
+  can: 'access/confirm',
+  with: DID,
+  nb: Schema.struct({
+    iss: Account,
+    aud: DID,
+    att: CapabilityRequest.array(),
+  }),
+  derives: (claim, proof) => {
+    return (
+      fail(equalWith(claim, proof)) ||
+      fail(equal(claim.nb.iss, proof.nb.iss, 'iss')) ||
+      fail(equal(claim.nb.aud, proof.nb.aud, 'aud')) ||
+      fail(subsetCapabilities(claim.nb.att, proof.nb.att)) ||
+      true
+    )
+  },
+})
+
+/**
+ * Issued by trusted authority (usually the one handling invocation) that attest
+ * that specific UCAN delegation has been considered authentic.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-account.md#update
+ * @see https://github.com/web3-storage/specs/blob/main/w3-session.md#authorization-session
  * 
  * @example
  * ```js
  * {
     iss: "did:web:web3.storage",
-    aud: "did:mailto:alice@web.mail",
+    aud: "did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi",
     att: [{
-      with: "did:web:web3.storage",
-      can: "./update",
-      nb: { key: "did:key:zAgent" }
+      "with": "did:web:web3.storage",
+      "can": "ucan/attest",
+      "nb": {
+        "proof": {
+          "/": "bafyreifer23oxeyamllbmrfkkyvcqpujevuediffrpvrxmgn736f4fffui"
+        }
+      }
     }],
     exp: null
     sig: "..."
@@ -95,12 +124,12 @@ export const authorize = capability({
  * ```
  */
 export const session = capability({
-  can: './update',
+  can: 'ucan/attest',
   // Should be web3.storage DID
   with: URI.match({ protocol: 'did:' }),
   nb: Schema.struct({
-    // Agent DID so it can sign UCANs as did:mailto if it matches this delegation `aud`
-    key: DID.match({ method: 'key' }),
+    // UCAN delegation that is being attested.
+    proof: Link,
   }),
 })
 
