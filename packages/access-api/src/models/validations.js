@@ -8,7 +8,7 @@ export class Validations {
   /**
    *
    * @param {KVNamespace} kv
-   * @param {DurableObjectNamespace} spaceVerifiers
+   * @param {import('@cloudflare/workers-types/2022-11-30').DurableObjectNamespace} spaceVerifiers
    */
   constructor(kv, spaceVerifiers) {
     this.kv = kv

@@ -3,7 +3,7 @@ import { stringToDelegation } from '@web3-storage/access/encoding'
 /**
  *
  * @template {import('@ucanto/interface').Capabilities} [T=import('@ucanto/interface').Capabilities]
- * @param {DurableObjectNamespace} spaceVerifiers
+ * @param {import('@cloudflare/workers-types/2022-11-30').DurableObjectNamespace} spaceVerifiers
  * @param {string} space
  * @param {import('@web3-storage/access/src/types').EncodedDelegation<T>} ucan
  */
@@ -44,7 +44,7 @@ function sendDelegation(server, ucan) {
  */
 export class SpaceVerifier {
   /**
-   * @param {DurableObjectState} state
+   * @param {import('@cloudflare/workers-types/2022-11-30').DurableObjectState} state
    */
   constructor(state) {
     this.state = state
