@@ -14,6 +14,7 @@ import {
 import * as ucanto from '@ucanto/core'
 import * as validator from '@ucanto/validator'
 import { Verifier, Absentee } from '@ucanto/principal'
+import { collect } from 'streaming-iterables'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -176,8 +177,16 @@ async function authorize(req, env) {
       audience: agent,
       capabilities,
       expiration: Infinity,
-      // We should also include proofs with all the delegations we have for
-      // the account.
+      // We include all the delegations to the account so that the agent will
+      // have delegation chains to all the delegated resources.
+      // We should actually filter out only delegations that support delegated
+      // capabilities, but for now we just include all of them since we only
+      // implement sudo access anyway.
+      proofs: await collect(
+        env.models.delegations.find({
+          audience: account.did(),
+        })
+      ),
     })
 
     const attestation = await Access.session.delegate({
@@ -189,6 +198,8 @@ async function authorize(req, env) {
     })
 
     // Store the delegations so that they can be pulled with access/claim
+    // The fact that we're storing proofs chains that we pulled from the
+    // database is not great, but it's a tradeoff we're making for now.
     await env.models.delegations.putMany(delegation, attestation)
 
     const authorization = delegationsToString([delegation, attestation])
