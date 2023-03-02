@@ -25,8 +25,9 @@ export function accessClaimProvider(ctx) {
   return Server.provide(claim, async ({ invocation }) => {
     // disable until hardened in test/staging
     if (ctx.config.ENV === 'production') {
-      throw new Error(`acccess/claim invocation handling is not enabled`)
+      throw new Error(`access/claim invocation handling is not enabled`)
     }
+
     return handleClaimInvocation(invocation)
   })
 }

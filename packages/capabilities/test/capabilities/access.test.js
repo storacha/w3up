@@ -14,7 +14,8 @@ describe('access capabilities', function () {
       audience: service,
       with: agent.did(),
       nb: {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       },
     })
 
@@ -29,7 +30,8 @@ describe('access capabilities', function () {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'access/authorize')
       assert.deepEqual(result.capability.nb, {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       })
     }
   })
@@ -42,7 +44,8 @@ describe('access capabilities', function () {
       audience: service,
       with: agent1.did(),
       nb: {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       },
       proofs: [
         await Access.authorize.delegate({
@@ -50,7 +53,7 @@ describe('access capabilities', function () {
           audience: agent2,
           with: agent1.did(),
           nb: {
-            as: 'did:mailto:web3.storage:test',
+            iss: 'did:mailto:web3.storage:test',
           },
         }),
       ],
@@ -68,7 +71,8 @@ describe('access capabilities', function () {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'access/authorize')
       assert.deepEqual(result.capability.nb, {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       })
     }
   })
@@ -81,7 +85,8 @@ describe('access capabilities', function () {
       audience: service,
       with: agent1.did(),
       nb: {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       },
       proofs: [
         await Access.access.delegate({
@@ -104,10 +109,12 @@ describe('access capabilities', function () {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'access/authorize')
       assert.deepEqual(result.capability.nb, {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       })
     }
   })
+
   it('should delegate from * to authorize', async function () {
     const agent1 = bob
     const agent2 = mallory
@@ -116,7 +123,8 @@ describe('access capabilities', function () {
       audience: service,
       with: agent1.did(),
       nb: {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       },
       proofs: [
         await Access.top.delegate({
@@ -139,12 +147,13 @@ describe('access capabilities', function () {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'access/authorize')
       assert.deepEqual(result.capability.nb, {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       })
     }
   })
 
-  it('should error auth to auth when caveats are different', async function () {
+  it('should error auth to auth when `iss` is different', async function () {
     const agent1 = bob
     const agent2 = mallory
     const claim = Access.authorize.invoke({
@@ -152,7 +161,8 @@ describe('access capabilities', function () {
       audience: service,
       with: agent1.did(),
       nb: {
-        as: 'did:mailto:web3.storage:ANOTHER_TEST',
+        iss: 'did:mailto:web3.storage:ANOTHER_TEST',
+        att: [{ can: '*' }],
       },
       proofs: [
         await Access.authorize.delegate({
@@ -160,7 +170,7 @@ describe('access capabilities', function () {
           audience: agent2,
           with: agent1.did(),
           nb: {
-            as: 'did:mailto:web3.storage:test',
+            iss: 'did:mailto:web3.storage:test',
           },
         }),
       ],
@@ -179,7 +189,104 @@ describe('access capabilities', function () {
     }
   })
 
-  it('should error if with dont match', async function () {
+  it('should be able to derive from * scope', async function () {
+    const claim = Access.authorize.invoke({
+      issuer: bob,
+      audience: service,
+      with: alice.did(),
+      nb: {
+        iss: 'did:mailto:web.mail:alice',
+        att: [{ can: 'store/*' }],
+      },
+      proofs: [
+        await Access.authorize.delegate({
+          issuer: alice,
+          audience: bob,
+          with: alice.did(),
+          nb: {
+            iss: 'did:mailto:web.mail:alice',
+            att: [{ can: '*' }],
+          },
+        }),
+      ],
+    })
+
+    const result = await access(await claim.delegate(), {
+      capability: Access.authorize,
+      principal: Verifier,
+      authority: service,
+    })
+
+    assert.equal(result.error, undefined, 'should be authorized')
+  })
+
+  it('should be able to reduce scope', async function () {
+    const claim = Access.authorize.invoke({
+      issuer: bob,
+      audience: service,
+      with: alice.did(),
+      nb: {
+        iss: 'did:mailto:web.mail:alice',
+        att: [{ can: 'store/add' }],
+      },
+      proofs: [
+        await Access.authorize.delegate({
+          issuer: alice,
+          audience: bob,
+          with: alice.did(),
+          nb: {
+            iss: 'did:mailto:web.mail:alice',
+            att: [{ can: 'store/add' }, { can: 'store/remove' }],
+          },
+        }),
+      ],
+    })
+
+    const result = await access(await claim.delegate(), {
+      capability: Access.authorize,
+      principal: Verifier,
+      authority: service,
+    })
+
+    assert.equal(result.error, undefined, 'should be authorized')
+  })
+
+  it('should error on escalation', async function () {
+    const claim = Access.authorize.invoke({
+      issuer: bob,
+      audience: service,
+      with: alice.did(),
+      nb: {
+        iss: 'did:mailto:web.mail:alice',
+        att: [{ can: '*' }],
+      },
+      proofs: [
+        await Access.authorize.delegate({
+          issuer: alice,
+          audience: bob,
+          with: alice.did(),
+          nb: {
+            iss: 'did:mailto:web.mail:alice',
+            att: [{ can: 'store/*' }],
+          },
+        }),
+      ],
+    })
+
+    const result = await access(await claim.delegate(), {
+      capability: Access.authorize,
+      principal: Verifier,
+      authority: service,
+    })
+
+    if (result.error) {
+      assert.ok(result.message.includes('unauthorized nb.att.can *'))
+    } else {
+      assert.fail('should error')
+    }
+  })
+
+  it('should error on principal misalignment', async function () {
     const agent1 = bob
     const agent2 = mallory
     const claim = Access.authorize.invoke({
@@ -187,7 +294,8 @@ describe('access capabilities', function () {
       audience: service,
       with: alice.did(),
       nb: {
-        as: 'did:mailto:web3.storage:test',
+        iss: 'did:mailto:web3.storage:test',
+        att: [{ can: '*' }],
       },
       proofs: [
         await Access.top.delegate({
@@ -219,7 +327,8 @@ describe('access capabilities', function () {
         with: bob.did(),
         nb: {
           // @ts-expect-error
-          as: 'did:NOT_MAILTO:web3.storage:test',
+          iss: 'did:NOT_MAILTO:web3.storage:test',
+          att: [{ can: '*' }],
         },
       })
     }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)
@@ -229,11 +338,13 @@ describe('access capabilities', function () {
     // ensure we can use the capability to produce the invocations from the spec at https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md
     it('can create/access delegations from spec', async () => {
       const audience = service.withDID('did:web:web3.storage')
-      /**
-       * @type {Array<(arg: { issuer: Ucanto.Signer<Ucanto.DID<'key'>>}) => Ucanto.IssuedInvocation<Ucanto.InferInvokedCapability<typeof Access.claim>>>}
-       */
+
       const examples = [
         // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md#accessclaim
+        /**
+         *
+         * @param {{ issuer: Ucanto.Signer<Ucanto.DID<'key'>>}} input
+         */
         ({ issuer }) => {
           return Access.claim.invoke({
             issuer,
@@ -266,6 +377,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.capability.nb, {}, 'result has empty nb')
       }
     })
+
     it('can be derived', async () => {
       /** @type {Array<Ucanto.Ability>} */
       const cansThatShouldDeriveAccessClaim = ['*', 'access/*']

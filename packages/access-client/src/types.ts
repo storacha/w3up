@@ -21,6 +21,7 @@ import type {
   Signer,
   SignerArchive,
   SigAlg,
+  Caveats,
 } from '@ucanto/interface'
 
 import type {
@@ -33,6 +34,7 @@ import type {
   VoucherRedeem,
   Top,
   AccessAuthorize,
+  AccessAuthorizeSuccess,
   AccessDelegate,
   AccessDelegateFailure,
   AccessDelegateSuccess,
@@ -95,8 +97,7 @@ export interface SpaceTableMetadata {
  */
 export interface Service {
   access: {
-    // returns a URL string for tests or nothing in other envs
-    authorize: ServiceMethod<AccessAuthorize, string | undefined, Failure>
+    authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
     delegate: ServiceMethod<
       AccessDelegate,
@@ -219,10 +220,7 @@ export type InvokeOptions<
   A extends Ability,
   R extends Resource,
   CAP extends CapabilityParser<
-    Match<
-      { can: A; with: R; nb?: Record<string, unknown> | undefined },
-      UnknownMatch
-    >
+    Match<{ can: A; with: R; nb: Caveats }, UnknownMatch>
   >
 > = UCANBasicOptions &
   InferNb<InferInvokedCapability<CAP>['nb']> & {
