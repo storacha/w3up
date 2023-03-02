@@ -29,10 +29,15 @@ export class Validations {
     await this.kv.put(delegation.audience.did(), ucan, {
       expiration: delegation.expiration,
     })
-    if (delegation.capabilities[0].nb?.space) {
+
+    const cap =
+      /** @type import('@ucanto/interface').InferInvokedCapability<typeof import('@web3-storage/capabilities/voucher').redeem> */ (
+        delegation.capabilities[0]
+      )
+    if (cap.nb?.space) {
       await sendDelegationToSpaceVerifier(
         this.spaceVerifiers,
-        delegation.capabilities[0].nb.space,
+        cap.nb.space,
         ucan
       )
     }

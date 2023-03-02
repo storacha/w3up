@@ -2,6 +2,7 @@ import { stringToDelegation } from '@web3-storage/access/encoding'
 
 /**
  *
+ * @template {import('@ucanto/interface').Capabilities} [T=import('@ucanto/interface').Capabilities]
  * @param {DurableObjectNamespace} spaceVerifiers
  * @param {string} space
  * @param {import('@web3-storage/access/src/types').EncodedDelegation<T>} ucan
@@ -24,8 +25,9 @@ export async function sendDelegationToSpaceVerifier(
 }
 
 /**
+ * @template {import('@ucanto/interface').Capabilities} [T=import('@ucanto/interface').Capabilities]
  * @param {WebSocket} server
- * @param {string} ucan
+ * @param {import('@web3-storage/access/src/types').EncodedDelegation<T>} ucan
  */
 function sendDelegation(server, ucan) {
   server.send(
@@ -38,16 +40,13 @@ function sendDelegation(server, ucan) {
 }
 
 /**
- * @class SpaceVerifier
- * @property {import('@cloudflare/workers-types').DurableObjectState} state
- * @property {import('@cloudflare/workers-types').string} ucan
+ * SpaceVerifier
  */
 export class SpaceVerifier {
   /**
-   * @param {import('@cloudflare/workers-types').DurableObjectState} state
-   * @param {import('@cloudflare/workers-types').Env} env
+   * @param {DurableObjectState} state
    */
-  constructor(state, env) {
+  constructor(state) {
     this.state = state
     // `blockConcurrencyWhile()` ensures no requests are delivered until
     // initialization completes.
@@ -62,11 +61,12 @@ export class SpaceVerifier {
 
   async cleanupUCAN() {
     this.ucan = undefined
-    await this.state.storage.put('ucan')
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    await this.state.storage.put('ucan', undefined)
   }
 
   /**
-   * @param {import('@cloudflare/workers-types').Request} req
+   * @param {Request} req
    */
   async fetch(req) {
     const path = new URL(req.url).pathname
@@ -84,8 +84,14 @@ export class SpaceVerifier {
       // @ts-ignore
       server.accept()
       // if the user has already verified and set this.ucan here, send them the delegation
+
       if (this.ucan) {
-        sendDelegation(server, this.ucan)
+        sendDelegation(
+          server,
+          /** @type {import('@web3-storage/access/src/types').EncodedDelegation} */ (
+            this.ucan
+          )
+        )
         await this.cleanupUCAN()
       } else {
         this.server = server
