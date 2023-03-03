@@ -169,7 +169,7 @@ export function createDelegationRowUpdate(d) {
  * @returns {ArrayBuffer|undefined} - undefined if unable to convert
  */
 export function delegationsTableBytesToArrayBuffer(sqlValue) {
-  if (isBuffer(sqlValue)) {
+  if (ArrayBuffer.isView(sqlValue)) {
     return new Uint8Array(
       sqlValue.buffer,
       sqlValue.byteOffset,
