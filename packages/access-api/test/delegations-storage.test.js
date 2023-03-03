@@ -1,5 +1,9 @@
 import { context } from './helpers/context.js'
-import { DbDelegationsStorage } from '../src/models/delegations.js'
+import {
+  createDelegationRowUpdate,
+  DbDelegationsStorage,
+  delegationsTable,
+} from '../src/models/delegations.js'
 import { createD1Database } from '../src/utils/d1.js'
 import * as assert from 'node:assert'
 import { createSampleDelegation } from '../src/utils/ucan.js'
@@ -64,6 +68,44 @@ describe('DbDelegationsStorage', () => {
       delegations.find({ audience: carol.did() })
     )
     assert.deepEqual(carolDelegations.length, 0)
+  })
+
+  it('find can handle rows with empty bytes', async () => {
+    const { d1, issuer } = await context()
+    const db = createD1Database(d1)
+    const delegations = new DbDelegationsStorage(db)
+    const row = createDelegationRowUpdate(
+      await ucanto.delegate({
+        issuer,
+        audience: issuer,
+        capabilities: [{ can: '*', with: 'ucan:*' }],
+      })
+    )
+    // insert row with empty bytes
+    await db
+      .insertInto(delegationsTable)
+      .values([
+        {
+          ...row,
+          bytes: Uint8Array.from([]),
+        },
+      ])
+      .onConflict((oc) => oc.column('cid').doNothing())
+      .execute()
+    // now try to find
+    const find = () => collect(delegations.find({ audience: issuer.did() }))
+    let findError
+    try {
+      await find()
+    } catch (error) {
+      findError = error
+    }
+    assert.ok(findError && typeof findError === 'object')
+    assert.deepEqual(
+      'name' in findError && findError?.name,
+      'UnexpectedDelegation'
+    )
+    assert.ok('row' in findError, 'UnexpectedDelegation error contains row')
   })
 })
 
