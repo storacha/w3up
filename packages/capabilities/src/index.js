@@ -12,7 +12,6 @@ export { Access, Provider, Space, Top, Store, Upload, Voucher, Utils }
 /** @type {import('./types.js').AbilitiesArray} */
 export const abilitiesAsStrings = [
   Top.top.can,
-  Provider.provider.can,
   Provider.add.can,
   Space.space.can,
   Space.info.can,

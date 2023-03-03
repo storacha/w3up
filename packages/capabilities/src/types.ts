@@ -44,7 +44,6 @@ export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 
 // Provider
-export type Provider = InferInvokedCapability<typeof provider.provider>
 export type ProviderAdd = InferInvokedCapability<typeof provider.add>
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ProviderAddSuccess {}
@@ -78,7 +77,6 @@ export type Abilities = TupleToUnion<AbilitiesArray>
 
 export type AbilitiesArray = [
   Top['can'],
-  Provider['can'],
   ProviderAdd['can'],
   Space['can'],
   SpaceInfo['can'],
