@@ -4,11 +4,7 @@ import * as assert from 'assert'
 import * as principal from '@ucanto/principal'
 
 /**
- * @typedef HelperTestContext
- * @property {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
- * @property {Ucanto.Signer<Ucanto.DID>} service
- * @property {Ucanto.ConnectionView<Record<string, any>>} conn
- * @property {import('miniflare').Miniflare} mf
+ * @typedef {import('./types').HelperTestContext} HelperTestContext
  */
 
 /**
