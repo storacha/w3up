@@ -58,7 +58,7 @@ export async function context({ env = {}, globals } = {}) {
     bindings,
     d1Persist: undefined,
     buildCommand: undefined,
-    log: new Log(LogLevel.DEBUG),
+    log: new Log(LogLevel.ERROR),
     ...(globals ? { globals } : {}),
   })
 
