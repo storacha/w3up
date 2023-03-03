@@ -70,7 +70,7 @@ describe('DbDelegationsStorage', () => {
     assert.deepEqual(carolDelegations.length, 0)
   })
 
-  it('find can handle rows with empty bytes', async () => {
+  it('find throws UnexpectedDelegation when encountering row with empty bytes', async () => {
     const { d1, issuer } = await context()
     const db = createD1Database(d1)
     const delegations = new DbDelegationsStorage(db)
