@@ -18,6 +18,8 @@ import {
  * @typedef {import("../types/database").Database<Tables>} DelegationsDatabase
  */
 
+export const delegationsTable = /** @type {const} */ ('delegations_v2')
+
 /**
  * DelegationsStorage that persists using SQL.
  * * should work with cloudflare D1
@@ -26,7 +28,7 @@ export class DbDelegationsStorage {
   /** @type {DelegationsDatabase} */
   #db
   #tables = {
-    delegations: /** @type {const} */ ('delegations_v2'),
+    delegations: delegationsTable,
   }
 
   /**
@@ -106,11 +108,40 @@ export class DbDelegationsStorage {
 }
 
 /**
+ * indicates that processing failed due to encountering an unexpected delegation.
+ * e.g. if a delegation could not be parsed from underlying storage
+ */
+class UnexpectedDelegation extends Error {
+  name = 'UnexpectedDelegation'
+}
+
+/**
  * @param {Pick<DelegationRow, 'bytes'>} row
  * @returns {Ucanto.Delegation}
  */
 function rowToDelegation(row) {
-  const delegations = bytesToDelegations(row.bytes)
+  /** @type {Ucanto.Delegation[]} */
+  let delegations = []
+  try {
+    delegations = bytesToDelegations(row.bytes)
+  } catch (error) {
+    if (
+      typeof error === 'object' &&
+      error &&
+      error.toString() === 'TypeError: Input should be a non-empty Uint8Array.'
+    ) {
+      throw Object.assign(
+        new UnexpectedDelegation(`failed to create delegation from row`, {
+          cause: error,
+        }),
+        // adding these so they appear in sentry et al and can aid debugging
+        {
+          row,
+        }
+      )
+    }
+    throw error
+  }
   if (delegations.length !== 1) {
     throw new Error(
       `unexpected number of delegations from bytes: ${delegations.length}`
@@ -123,7 +154,7 @@ function rowToDelegation(row) {
  * @param {Ucanto.Delegation} d
  * @returns {DelegationRowUpdate}
  */
-function createDelegationRowUpdate(d) {
+export function createDelegationRowUpdate(d) {
   return {
     cid: d.cid.toV1().toString(),
     audience: d.audience.did(),
