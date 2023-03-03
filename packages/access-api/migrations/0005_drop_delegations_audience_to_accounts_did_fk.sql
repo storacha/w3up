@@ -5,16 +5,11 @@ goal: remove the foreign key constraint on delegations.audience -> accounts.did.
 We want to be able to store delegations whose audience is not an account did.
 
 sqlite doesn't support `alter table drop constraint`.
-So here we will:
-* create delegations_new table without the constraint
-* insert all from delegations -> delegations_new
-* rename delegations_new -> delegations
+AND cloudflare d1 doesn't support `DROP TABLE`
 */
 
-ALTER TABLE delegations RENAME TO delegations_deleted_1677807019;
-
 CREATE TABLE
-    IF NOT EXISTS delegations (
+    IF NOT EXISTS delegations_v2 (
         cid TEXT NOT NULL PRIMARY KEY,
         bytes BLOB NOT NULL,
         audience TEXT NOT NULL,
@@ -25,5 +20,5 @@ CREATE TABLE
         UNIQUE (cid)
     );
 
-INSERT INTO delegations (cid, bytes, audience, issuer, expiration, inserted_at, updated_at)
-SELECT cid, bytes, audience, issuer, expiration, inserted_at, updated_at FROM delegations_deleted_1677807019;
+INSERT INTO delegations_v2 (cid, bytes, audience, issuer, expiration, inserted_at, updated_at)
+SELECT cid, bytes, audience, issuer, expiration, inserted_at, updated_at FROM delegations;
