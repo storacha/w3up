@@ -33,7 +33,7 @@ export function createProvisions(storage = []) {
  * @typedef ProvsionsRow
  * @property {string} consumer
  * @property {string} provider
- * @property {string} issuer - did of actor who did the provisioning
+ * @property {string} sponsor - did of actor who authorized for this provision
  */
 
 /**
@@ -77,7 +77,7 @@ export class DbProvisions {
       return {
         consumer: item.space,
         provider: item.provider,
-        issuer: item.account,
+        sponsor: item.account,
       }
     })
     await this.#db

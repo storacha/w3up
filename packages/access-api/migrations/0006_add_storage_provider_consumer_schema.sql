@@ -15,8 +15,8 @@ CREATE TABLE
         consumer TEXT NOT NULL,
         -- DID of the provider e.g. a storage provider
         provider TEXT NOT NULL,
-        -- DID of the actor that issued this provision
-        issuer TEXT NOT NULL,
+        -- DID of the actor that authorized this provision
+        sponsor TEXT NOT NULL,
         inserted_at TEXT NOT NULL DEFAULT (strftime ('%Y-%m-%dT%H:%M:%fZ', 'now')),
         updated_at TEXT NOT NULL DEFAULT (strftime ('%Y-%m-%dT%H:%M:%fZ', 'now'))
     );
