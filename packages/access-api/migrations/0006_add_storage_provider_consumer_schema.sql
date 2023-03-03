@@ -9,6 +9,7 @@ CREATE TABLE
     -- provision: the action of providing or supplying something for use
     -- use case: representing the registration of a storage provider to a space
     IF NOT EXISTS provisions (
+        -- auto pk so other tables can reference this
         id INTEGER NOT NULL PRIMARY KEY,
         -- DID of the actor that is consuming the provider. e.g. a space DID
         consumer TEXT NOT NULL,
