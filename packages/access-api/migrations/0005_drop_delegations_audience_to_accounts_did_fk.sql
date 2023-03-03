@@ -11,8 +11,10 @@ So here we will:
 * rename delegations_new -> delegations
 */
 
+ALTER TABLE delegations RENAME TO delegations_deleted_1677807019;
+
 CREATE TABLE
-    IF NOT EXISTS delegations_new (
+    IF NOT EXISTS delegations (
         cid TEXT NOT NULL PRIMARY KEY,
         bytes BLOB NOT NULL,
         audience TEXT NOT NULL,
@@ -23,8 +25,5 @@ CREATE TABLE
         UNIQUE (cid)
     );
 
-INSERT INTO delegations_new (cid, bytes, audience, issuer, expiration, inserted_at, updated_at)
-SELECT cid, bytes, audience, issuer, expiration, inserted_at, updated_at FROM delegations;
-
-DROP TABLE delegations;
-ALTER TABLE delegations_new RENAME TO delegations;
+INSERT INTO delegations (cid, bytes, audience, issuer, expiration, inserted_at, updated_at)
+SELECT cid, bytes, audience, issuer, expiration, inserted_at, updated_at FROM delegations_deleted_1677807019;
