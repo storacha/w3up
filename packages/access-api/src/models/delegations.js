@@ -52,7 +52,14 @@ export class DbDelegationsStorage {
    * @param {import('../types/delegations').Query} query
    */
   async *find(query) {
-    for await (const row of await selectByAudience(this.#db, query.audience)) {
+    const { audience } = query
+    const { delegations } = this.#tables
+    const selection = await this.#db
+      .selectFrom(delegations)
+      .selectAll()
+      .where(`${delegations}.audience`, '=', audience)
+      .execute()
+    for await (const row of selection) {
       yield rowToDelegation(row)
     }
   }
@@ -123,16 +130,4 @@ function createDelegationRowUpdate(d) {
     issuer: d.issuer.did(),
     bytes: delegationsToBytes([d]),
   }
-}
-
-/**
- * @param {DelegationsDatabase} db
- * @param {Ucanto.DID} audience
- */
-async function selectByAudience(db, audience) {
-  return await db
-    .selectFrom('delegations_v2')
-    .selectAll()
-    .where('delegations_v2.audience', '=', audience)
-    .execute()
 }
