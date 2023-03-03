@@ -20,7 +20,7 @@ import * as principal from '@ucanto/principal'
  */
 export function createTesterFromContext(createContext, options) {
   const context = createContext().then(async (ctx) => {
-    await registerSpaces(options?.registerSpaces ?? [], ctx.service, ctx.conn)
+    await registerSpaces(options?.registerSpaces ?? [], ctx)
     return ctx
   })
   const issuer = context.then(({ issuer }) => issuer)
@@ -48,13 +48,14 @@ export function createTesterFromContext(createContext, options) {
  * using a service-issued voucher/redeem invocation
  *
  * @param {Iterable<Resolvable<Ucanto.Principal>>} spaces
- * @param {Ucanto.Signer<Ucanto.DID>} issuer
- * @param {Ucanto.ConnectionView<Record<string, any>>} conn
+ * @param {object} options
+ * @param {Ucanto.Signer<Ucanto.DID>} options.service
+ * @param {Ucanto.ConnectionView<Record<string, any>>} options.conn
  */
-export async function registerSpaces(spaces, issuer, conn) {
+export async function registerSpaces(spaces, { service, conn }) {
   for (const spacePromise of spaces) {
     const space = await spacePromise
-    const redeem = await spaceRegistrationInvocation(issuer, space.did())
+    const redeem = await spaceRegistrationInvocation(service, space.did())
     const results = await conn.execute(redeem)
     assert.deepEqual(
       results.length,

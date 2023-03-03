@@ -39,7 +39,7 @@ export function service(ctx) {
       claim: (...args) => {
         // disable until hardened in test/staging
         if (ctx.config.ENV === 'production') {
-          throw new Error(`acccess/claim invocation handling is not enabled`)
+          throw new Error(`access/claim invocation handling is not enabled`)
         }
         return accessClaimProvider({
           delegations: ctx.models.delegations,
@@ -49,7 +49,7 @@ export function service(ctx) {
       delegate: (...args) => {
         // disable until hardened in test/staging
         if (ctx.config.ENV === 'production') {
-          throw new Error(`acccess/delegate invocation handling is not enabled`)
+          throw new Error(`access/delegate invocation handling is not enabled`)
         }
         return accessDelegateProvider({
           delegations: ctx.models.delegations,

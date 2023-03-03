@@ -41,6 +41,7 @@ export type AccessDelegateSuccess = unknown
 export type AccessDelegateFailure = { error: true } | InsufficientStorage
 
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
+export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 
 // Provider
 export type Provider = InferInvokedCapability<typeof provider.provider>
