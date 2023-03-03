@@ -11,7 +11,7 @@ import {
 
 /**
  * @typedef Tables
- * @property {DelegationRow} delegations
+ * @property {DelegationRow} delegations_v2
  */
 
 /**
@@ -25,6 +25,9 @@ import {
 export class DbDelegationsStorage {
   /** @type {DelegationsDatabase} */
   #db
+  #tables = {
+    delegations: /** @type {const} */ ('delegations_v2'),
+  }
 
   /**
    * @param {DelegationsDatabase} db
@@ -39,7 +42,7 @@ export class DbDelegationsStorage {
 
   async count() {
     const { size } = await this.#db
-      .selectFrom('delegations')
+      .selectFrom(this.#tables.delegations)
       .select((e) => e.fn.count('cid').as('size'))
       .executeTakeFirstOrThrow()
     return BigInt(size)
@@ -49,7 +52,14 @@ export class DbDelegationsStorage {
    * @param {import('../types/delegations').Query} query
    */
   async *find(query) {
-    for await (const row of await selectByAudience(this.#db, query.audience)) {
+    const { audience } = query
+    const { delegations } = this.#tables
+    const selection = await this.#db
+      .selectFrom(delegations)
+      .selectAll()
+      .where(`${delegations}.audience`, '=', audience)
+      .execute()
+    for await (const row of selection) {
       yield rowToDelegation(row)
     }
   }
@@ -66,7 +76,7 @@ export class DbDelegationsStorage {
     }
     const values = delegations.map((d) => createDelegationRowUpdate(d))
     await this.#db
-      .insertInto('delegations')
+      .insertInto(this.#tables.delegations)
       .values(values)
       .onConflict((oc) => oc.column('cid').doNothing())
       .executeTakeFirst()
@@ -87,7 +97,7 @@ export class DbDelegationsStorage {
       )
     }
     for await (const row of this.#db
-      .selectFrom('delegations')
+      .selectFrom(this.#tables.delegations)
       .select(['bytes'])
       .stream()) {
       yield rowToDelegation(row)
@@ -120,16 +130,4 @@ function createDelegationRowUpdate(d) {
     issuer: d.issuer.did(),
     bytes: delegationsToBytes([d]),
   }
-}
-
-/**
- * @param {DelegationsDatabase} db
- * @param {Ucanto.DID} audience
- */
-async function selectByAudience(db, audience) {
-  return await db
-    .selectFrom('delegations')
-    .selectAll()
-    .where('delegations.audience', '=', audience)
-    .execute()
 }
