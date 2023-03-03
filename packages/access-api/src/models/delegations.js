@@ -3,7 +3,6 @@ import {
   delegationsToBytes,
   bytesToDelegations,
 } from '@web3-storage/access/encoding'
-import { isBuffer } from '../utils/common.js'
 
 /**
  * @typedef {import('@web3-storage/access/src/types').DelegationTable} DelegationRow
