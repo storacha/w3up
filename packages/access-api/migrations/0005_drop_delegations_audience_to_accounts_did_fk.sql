@@ -26,5 +26,5 @@ CREATE TABLE
 INSERT INTO delegations_new (cid, bytes, audience, issuer, expiration, inserted_at, updated_at)
 SELECT cid, bytes, audience, issuer, expiration, inserted_at, updated_at FROM delegations;
 
-DROP TABLE delegations;
+ALTER TABLE delegations RENAME TO delegations_1677808856;
 ALTER TABLE delegations_new RENAME TO delegations;
