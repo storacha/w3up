@@ -17,7 +17,7 @@ import * as validator from '@ucanto/validator'
 
 /**
  * @param {object} options
- * @param {import('../types/provisions').StorageProvisions} options.storageProvisions
+ * @param {import('../types/provisions').Provisions} options.provisions
  * @returns {ProviderAddHandler}
  */
 export function createProviderAddHandler(options) {
@@ -35,7 +35,7 @@ export function createProviderAddHandler(options) {
         message: 'Issuer must be a mailto DID',
       }
     }
-    await options.storageProvisions.putMany({
+    await options.provisions.putMany({
       space: consumer,
       provider,
       account: accountDID,
@@ -46,12 +46,12 @@ export function createProviderAddHandler(options) {
 
 /**
  * @param {object} ctx
- * @param {Pick<import('../bindings').RouteContext['models'], 'storageProvisions'>} ctx.models
+ * @param {Pick<import('../bindings').RouteContext['models'], 'provisions'>} ctx.models
  */
 export function providerAddProvider(ctx) {
   return Server.provide(Provider.add, async ({ invocation }) => {
     const handler = createProviderAddHandler({
-      storageProvisions: ctx.models.storageProvisions,
+      provisions: ctx.models.provisions,
     })
     return handler(/** @type {Ucanto.Invocation<ProviderAdd>} */ (invocation))
   })

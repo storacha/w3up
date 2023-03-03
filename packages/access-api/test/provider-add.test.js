@@ -13,7 +13,7 @@ import * as ucanto from '@ucanto/core'
 import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
-import { createStorageProvisions } from '../src/models/provisions.js'
+import { createProvisions } from '../src/models/provisions.js'
 import { Email } from '../src/utils/email.js'
 
 for (const providerAddHandlerVariant of /** @type {const} */ ([
@@ -21,13 +21,13 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
     name: 'handled by createProviderAddHandler',
     ...(() => {
       const spaceWithStorageProvider = principal.ed25519.generate()
-      const storageProvisions = createStorageProvisions()
+      const provisions = createProvisions()
       return {
         spaceWithStorageProvider,
-        storageProvisions,
+        provisions,
         ...createTesterFromHandler(() =>
           createProviderAddHandler({
-            storageProvisions,
+            provisions,
           })
         ),
       }
@@ -90,7 +90,7 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
       )
       assertNotError(providerAddition)
       assert.deepEqual(
-        await providerAddHandlerVariant.storageProvisions.hasStorageProvider(
+        await providerAddHandlerVariant.provisions.hasStorageProvider(
           space.did()
         ),
         true,

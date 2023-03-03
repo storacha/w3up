@@ -1,24 +1,24 @@
 /* eslint-disable no-void */
 
 /**
- * @typedef {import("../types/provisions").StorageProvisions} StorageProvisions
+ * @typedef {import("../types/provisions").Provisions} Provisions
  */
 
 /**
  * @param {Array<import("../types/provisions").StorageProvisionCreation>} storage
- * @returns {StorageProvisions}
+ * @returns {Provisions}
  */
-export function createStorageProvisions(storage = []) {
-  /** @type {StorageProvisions['hasStorageProvider']} */
+export function createProvisions(storage = []) {
+  /** @type {Provisions['hasStorageProvider']} */
   const hasStorageProvider = async (consumerId) => {
     const hasRowWithSpace = storage.some(({ space }) => space === consumerId)
     return hasRowWithSpace
   }
-  /** @type {StorageProvisions['putMany']} */
+  /** @type {Provisions['putMany']} */
   const putMany = async (...items) => {
     storage.push(...items)
   }
-  /** @type {StorageProvisions['count']} */
+  /** @type {Provisions['count']} */
   const count = async () => {
     return BigInt(storage.length)
   }
@@ -41,9 +41,9 @@ export function createStorageProvisions(storage = []) {
  */
 
 /**
- * StorageProvisions backed by a kyseli database (e.g. sqlite or cloudflare d1)
+ * Provisions backed by a kyseli database (e.g. sqlite or cloudflare d1)
  */
-export class DbStorageProvisions {
+export class DbProvisions {
   /** @type {ProvisionsDatabase} */
   #db
 
@@ -55,10 +55,10 @@ export class DbStorageProvisions {
     this.tableNames = {
       provisions: /** @type {const} */ ('provisions'),
     }
-    void (/** @type {StorageProvisions} */ (this))
+    void (/** @type {Provisions} */ (this))
   }
 
-  /** @type {StorageProvisions['count']} */
+  /** @type {Provisions['count']} */
   async count(...items) {
     const { size } = await this.#db
       .selectFrom(this.tableNames.provisions)
@@ -67,7 +67,7 @@ export class DbStorageProvisions {
     return BigInt(size)
   }
 
-  /** @type {StorageProvisions['putMany']} */
+  /** @type {Provisions['putMany']} */
   async putMany(...items) {
     if (items.length === 0) {
       return
@@ -86,7 +86,7 @@ export class DbStorageProvisions {
       .executeTakeFirstOrThrow()
   }
 
-  /** @type {StorageProvisions['hasStorageProvider']} */
+  /** @type {Provisions['hasStorageProvider']} */
   async hasStorageProvider(consumerDid) {
     const { provisions } = this.tableNames
     const { size } = await this.#db

@@ -1,13 +1,13 @@
 import { context } from './helpers/context.js'
-import { DbStorageProvisions } from '../src/models/provisions.js'
+import { DbProvisions } from '../src/models/provisions.js'
 import { createD1Database } from '../src/utils/d1.js'
 import * as assert from 'node:assert'
 import * as principal from '@ucanto/principal'
 
-describe('DbStorageProvisions', () => {
+describe('DbProvisions', () => {
   it('should persist provisions', async () => {
     const { d1 } = await context()
-    const storage = new DbStorageProvisions(createD1Database(d1))
+    const storage = new DbProvisions(createD1Database(d1))
     const count = Math.round(Math.random() * 10)
     const provisions = await Promise.all(
       Array.from({ length: count }).map(async () => {
