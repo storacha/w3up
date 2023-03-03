@@ -3,6 +3,7 @@ import {
   delegationsToBytes,
   bytesToDelegations,
 } from '@web3-storage/access/encoding'
+import { isBuffer } from '../utils/common.js'
 
 /**
  * @typedef {import('@web3-storage/access/src/types').DelegationTable} DelegationRow
@@ -160,5 +161,22 @@ export function createDelegationRowUpdate(d) {
     audience: d.audience.did(),
     issuer: d.issuer.did(),
     bytes: delegationsToBytes([d]),
+  }
+}
+
+/**
+ * @param {Array<number> | Buffer | unknown} sqlValue - value from kysely 'bytes' table - in node it could be a Buffer. In cloudflare it might be an Array
+ * @returns {ArrayBuffer|undefined} - undefined if unable to convert
+ */
+export function delegationsTableBytesToArrayBuffer(sqlValue) {
+  if (isBuffer(sqlValue)) {
+    return new Uint8Array(
+      sqlValue.buffer,
+      sqlValue.byteOffset,
+      sqlValue.byteLength
+    )
+  }
+  if (Array.isArray(sqlValue)) {
+    return Uint8Array.from(sqlValue)
   }
 }
