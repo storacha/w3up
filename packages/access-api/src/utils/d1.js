@@ -142,9 +142,10 @@ export class D1Error extends Error {
 /**
  * @template S
  * @param {D1Database} d1
+ * @param {Record<string, (v: unknown) => unknown>} [resultTransforms]
  * @returns {import('../types/database.js').Database<S>}
  */
-export function createD1Database(d1) {
+export function createD1Database(d1, resultTransforms = {}) {
   /** @type {Kysely<S>} */
   const kdb = new Kysely({
     dialect: new D1Dialect({ database: d1 }),
@@ -154,6 +155,7 @@ export function createD1Database(d1) {
         expires_at: (v) => (typeof v === 'string' ? new Date(v) : null),
         inserted_at: (v) => new Date(v),
         updated_at: (v) => new Date(v),
+        ...resultTransforms,
       }),
     ],
   })
