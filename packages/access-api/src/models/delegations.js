@@ -162,3 +162,20 @@ export function createDelegationRowUpdate(d) {
     bytes: delegationsToBytes([d]),
   }
 }
+
+/**
+ * @param {Array<number> | Buffer | unknown} sqlValue - value from kysely 'bytes' table - in node it could be a Buffer. In cloudflare it might be an Array
+ * @returns {ArrayBuffer|undefined} - undefined if unable to convert
+ */
+export function delegationsTableBytesToArrayBuffer(sqlValue) {
+  if (ArrayBuffer.isView(sqlValue)) {
+    return new Uint8Array(
+      sqlValue.buffer,
+      sqlValue.byteOffset,
+      sqlValue.byteLength
+    )
+  }
+  if (Array.isArray(sqlValue)) {
+    return Uint8Array.from(sqlValue)
+  }
+}
