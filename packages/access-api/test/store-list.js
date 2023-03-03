@@ -39,13 +39,15 @@ describe('proxy store/list invocations to upload-api', function () {
       // and if it's present, the assertions will expect no error from the proxy or upstream
       const privateKeyFromEnv = process.env.WEB3_STORAGE_PRIVATE_KEY
       const { issuer, service, conn } = await context({
-        // this emulates the configuration for deployed environments,
-        // which will allow the access-api ucanto server to accept
-        // invocations where aud=web3storageDid
-        DID: web3storageDid,
-        // @ts-ignore
-        PRIVATE_KEY: privateKeyFromEnv ?? process.env.PRIVATE_KEY,
-        UPLOAD_API_URL: mockUpstreamUrl.toString(),
+        env: {
+          // this emulates the configuration for deployed environments,
+          // which will allow the access-api ucanto server to accept
+          // invocations where aud=web3storageDid
+          DID: web3storageDid,
+          // @ts-ignore
+          PRIVATE_KEY: privateKeyFromEnv ?? process.env.PRIVATE_KEY,
+          UPLOAD_API_URL: mockUpstreamUrl.toString(),
+        },
       })
       const spaceCreation = await createSpace(
         issuer,
@@ -89,7 +91,9 @@ describe('proxy store/list invocations to upload-api', function () {
       Array.from({ length: 3 }).map(() => ed25519.Signer.generate())
     )
     const { service: serviceSigner, conn } = await context({
-      UPLOAD_API_URL: mockUpstreamUrl.toString(),
+      env: {
+        UPLOAD_API_URL: mockUpstreamUrl.toString(),
+      },
     })
     const service = process.env.DID
       ? serviceSigner.withDID(ucanto.DID.parse(process.env.DID).did())

@@ -9,6 +9,8 @@ import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface Unit {}
 /**
  * failure due to a resource not having enough storage capacity.
  */
@@ -23,6 +25,9 @@ export type Access = InferInvokedCapability<typeof AccessCaps.access>
 export type AccessAuthorize = InferInvokedCapability<
   typeof AccessCaps.authorize
 >
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export type AccessAuthorizeSuccess = Unit
 export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
 export interface AccessClaimSuccess {
   delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>

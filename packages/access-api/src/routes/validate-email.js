@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { stringToDelegation } from '@web3-storage/access/encoding'
+import {
+  stringToDelegation,
+  delegationsToString,
+} from '@web3-storage/access/encoding'
 import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
 import { toEmail } from '../utils/did-mailto.js'
@@ -11,7 +14,7 @@ import {
 } from '../utils/html.js'
 import * as ucanto from '@ucanto/core'
 import * as validator from '@ucanto/validator'
-import { Verifier } from '@ucanto/principal/ed25519'
+import { Verifier, Absentee } from '@ucanto/principal'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -132,53 +135,84 @@ async function recover(req, env) {
  * @param {import('../bindings.js').RouteContext} env
  */
 async function session(req, env) {
-  /** @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessSession]>} */
+  /** @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessAuthorize]>} */
   const delegation = stringToDelegation(req.query.ucan)
-  await env.models.validations.putSession(
-    req.query.ucan,
-    delegation.capabilities[0].nb.key
-  )
+
+  // ⚠️ This is not an ideal solution but we do need to ensure that attacker
+  // cannot simply send a valid `access/authorize` delegation to the service
+  // and get an attested session.
+  if (delegation.issuer.did() !== env.signer.did()) {
+    throw new Error('Delegation MUST be issued by the service')
+  }
+
+  // TODO: Figure when do we go through a post vs get request. WebSocket message
+  // was send regardless of the method, but delegations were only stored on post
+  // requests.
   if (req.method.toLowerCase() === 'post') {
     const accessSessionResult = await validator.access(delegation, {
-      capability: Access.session,
+      capability: Access.authorize,
       principal: Verifier,
       authority: env.signer,
     })
+
     if (accessSessionResult.error) {
       throw new Error(
         `unable to validate access session: ${accessSessionResult.error}`
       )
     }
-    const account = accessSessionResult.audience
-    const agentPubkey = accessSessionResult.capability.nb.key
-    const wrappedKeyCanSignForAccount = await ucanto.delegate({
+
+    // Create a absentee signer for the account that authorized the delegation
+    const account = Absentee.from({ id: accessSessionResult.capability.nb.iss })
+    const agent = Verifier.parse(accessSessionResult.capability.with)
+
+    // It the future we should instead render a page and allow a user to select
+    // which delegations they wish to re-delegate. Right now we just re-delegate
+    // everything that was requested for all of the resources.
+    const capabilities =
+      /** @type {ucanto.UCAN.Capabilities} */
+      (
+        accessSessionResult.capability.nb.att.map(({ can }) => ({
+          can,
+          with: /** @type {ucanto.UCAN.Resource} */ ('ucan:*'),
+        }))
+      )
+
+    // create an authorization on behalf of the account with an absent
+    // signature.
+    const authorization = await ucanto.delegate({
+      issuer: account,
+      audience: agent,
+      capabilities,
+      expiration: Infinity,
+      // We should also include proofs with all the delegations we have for
+      // the account.
+    })
+
+    const attestation = await ucanto.delegate({
       issuer: env.signer,
-      audience: { did: () => agentPubkey },
+      audience: agent,
       capabilities: [
         {
           with: env.signer.did(),
-          can: 'access-api/delegation',
+          can: 'ucan/attest',
+          nb: { proof: authorization.cid },
         },
       ],
-      proofs: [
-        await ucanto.delegate({
-          issuer: env.signer,
-          audience: account,
-          capabilities: [
-            {
-              with: env.signer.did(),
-              can: './update',
-              nb: {
-                key: agentPubkey,
-              },
-            },
-          ],
-        }),
-      ],
+      expiration: Infinity,
     })
-    await env.models.delegations.putMany(wrappedKeyCanSignForAccount)
+
+    // Store the delegations so that they can be pulled with access/claim
+    await env.models.delegations.putMany(authorization, attestation)
+
+    // Send delegations to the client through a websocket
+    await env.models.validations.putSession(
+      delegationsToString([authorization, attestation]),
+      agent.did()
+    )
   }
 
+  // TODO: We clearly should not render that access/delegate in the QR code, but
+  // I'm not sure what this QR code is used for.
   try {
     return new HtmlResponse(
       (

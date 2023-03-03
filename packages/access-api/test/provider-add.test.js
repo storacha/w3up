@@ -14,6 +14,7 @@ import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { createStorageProvisions } from '../src/models/provisions.js'
+import { Email } from '../src/utils/email.js'
 
 for (const providerAddHandlerVariant of /** @type {const} */ ([
   {
@@ -104,11 +105,23 @@ for (const accessApiVariant of /** @type {const} */ ([
     name: 'handled by access-api in miniflare',
     ...(() => {
       const spaceWithStorageProvider = principal.ed25519.generate()
+      /** @type {{to:string, url:string}[]} */
+      const emails = []
+      const email = createEmail(emails)
       return {
         spaceWithStorageProvider,
-        ...createTesterFromContext(() => context(), {
-          registerSpaces: [spaceWithStorageProvider],
-        }),
+        emails,
+        ...createTesterFromContext(
+          () =>
+            context({
+              globals: {
+                email,
+              },
+            }),
+          {
+            registerSpaces: [spaceWithStorageProvider],
+          }
+        ),
       }
     })(),
   },
@@ -123,10 +136,32 @@ for (const accessApiVariant of /** @type {const} */ ([
         space: await principal.ed25519.generate(),
         invoke: accessApiVariant.invoke,
         service: await accessApiVariant.audience,
+        emails: accessApiVariant.emails,
         miniflare: await accessApiVariant.miniflare,
       })
     })
   })
+}
+
+/**
+ * @typedef {import('../src/utils/email.js').ValidationEmailSend} ValidationEmailSend
+ */
+
+/**
+ *
+ * @param {Pick<Array<ValidationEmailSend>, 'push'>} storage
+ * @returns {Pick<Email, 'sendValidation'>}
+ */
+export function createEmail(storage) {
+  const email = {
+    /**
+     * @param {ValidationEmailSend} email
+     */
+    async sendValidation(email) {
+      storage.push(email)
+    },
+  }
+  return email
 }
 
 /**
@@ -137,22 +172,28 @@ for (const accessApiVariant of /** @type {const} */ ([
  * @param {Ucanto.Principal} options.service - web3.storage service
  * @param {import('miniflare').Miniflare} options.miniflare
  * @param {(invocation: Ucanto.Invocation<Ucanto.Capability>) => Promise<unknown>} options.invoke
+ * @param {ValidationEmailSend[]} options.emails
  */
 async function testAuthorizeClaimProviderAdd(options) {
-  const { accountA, deviceA, miniflare, service, space } = options
+  const { accountA, deviceA, miniflare, service, space, emails } = options
   // authorize
-  const confirmationUrl = await options.invoke(
+  await options.invoke(
     await Access.authorize
       .invoke({
         issuer: deviceA,
         audience: service,
         with: deviceA.did(),
         nb: {
-          as: accountA.did(),
+          att: [{ can: '*' }],
+          iss: accountA.did(),
         },
       })
       .delegate()
   )
+  const validationEmail = emails.at(-1)
+  assert.ok(validationEmail, 'has email after authorize')
+
+  const confirmationUrl = validationEmail.url
   assert.ok(typeof confirmationUrl === 'string', 'confirmationUrl is string')
   const confirmEmailPostResponse = await miniflare.dispatchFetch(
     new URL(confirmationUrl),
@@ -192,40 +233,30 @@ async function testAuthorizeClaimProviderAdd(options) {
       )
     ),
   ]
-  assert.deepEqual(claimedDelegations.length, 1)
-  const [sessionEnvelope] = claimedDelegations
-  assert.deepEqual(sessionEnvelope.capabilities.length, 1)
-  assert.deepEqual(
-    sessionEnvelope.proofs.length,
-    1,
-    'session envelope has session delegation as proof'
-  )
-  const [session] = sessionEnvelope.proofs
-  assert.ok('cid' in session, 'session proof is whole delegation not link')
-  assert.deepEqual(session.capabilities.length, 1, 'session has a capability')
-  assert.deepEqual(
-    session.capabilities[0].can,
-    './update',
-    'session capability is ./update'
-  )
-  assert.deepEqual(
-    session.capabilities[0].with,
-    service.did(),
-    'session capability with is service'
+  assert.ok(claimedDelegations.length > 0)
+  const claimedDelegationIssuedByService = claimedDelegations.find((d) => {
+    if (!('cid' in d)) {
+      throw new Error('proof must be delegation')
+    }
+    return d.issuer.did() === service.did()
+  })
+  assert.ok(
+    claimedDelegationIssuedByService,
+    'found claimedDelegationIssuedByService'
   )
 
   // provider/add
   const providerAddAsAccountResult = await options.invoke(
     await Provider.add
       .invoke({
-        issuer: deviceA.withDID(accountA.did()),
+        issuer: deviceA,
         audience: service,
         with: accountA.did(),
         nb: {
           provider: 'did:web:web3.storage:providers:w3up-alpha',
           consumer: space.did(),
         },
-        proofs: [session],
+        proofs: claimedDelegations,
       })
       .delegate()
   )

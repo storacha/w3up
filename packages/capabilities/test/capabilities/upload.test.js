@@ -25,14 +25,13 @@ describe('upload capabilities', function () {
   })
 
   it('upload/add can be derived from upload/* derived from *', async () => {
-    const upload = await Upload.upload
-      .invoke({
-        issuer: alice,
-        audience: bob,
-        with: account.did(),
-        proofs: [await any],
-      })
-      .delegate()
+    const upload = await Upload.upload.delegate({
+      issuer: alice,
+      audience: bob,
+      with: account.did(),
+      proofs: [await any],
+    })
+
     const root = await createCborCid('root')
 
     const add = Upload.add.invoke({
@@ -63,7 +62,7 @@ describe('upload capabilities', function () {
   })
 
   it('upload/add can be derived from *', async () => {
-    const upload = Upload.upload.invoke({
+    const upload = await Upload.upload.delegate({
       issuer: alice,
       audience: bob,
       with: account.did(),
@@ -78,7 +77,7 @@ describe('upload capabilities', function () {
       nb: {
         root,
       },
-      proofs: [await upload.delegate()],
+      proofs: [upload],
     })
 
     const result = await access(await add.delegate(), {
@@ -355,7 +354,7 @@ describe('upload capabilities', function () {
   })
 
   it('upload/list can be derived from *', async () => {
-    const upload = Upload.upload.invoke({
+    const upload = await Upload.upload.delegate({
       issuer: alice,
       audience: bob,
       with: account.did(),
@@ -366,7 +365,7 @@ describe('upload capabilities', function () {
       audience: w3,
       issuer: bob,
       with: account.did(),
-      proofs: [await upload.delegate()],
+      proofs: [upload],
       nb: {},
     })
 
@@ -485,7 +484,7 @@ describe('upload capabilities', function () {
   })
 
   it('upload/remove can be derived from *', async () => {
-    const upload = Upload.upload.invoke({
+    const upload = await Upload.upload.delegate({
       issuer: alice,
       audience: bob,
       with: account.did(),
@@ -496,7 +495,7 @@ describe('upload capabilities', function () {
       audience: w3,
       issuer: bob,
       with: account.did(),
-      proofs: [await upload.delegate()],
+      proofs: [upload],
       nb: {
         root: parseLink('bafkqaaa'),
       },

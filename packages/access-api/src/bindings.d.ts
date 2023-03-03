@@ -5,7 +5,6 @@ import type {
   SpaceTable,
 } from '@web3-storage/access/types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
-import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
@@ -25,6 +24,11 @@ export interface AnalyticsEngineEvent {
   readonly blobs?: Array<ArrayBuffer | string | null>
 }
 
+export interface Email {
+  sendValidation: ({ to: string, url: string }) => Promise<void>
+  send: ({ to: string, textBody: string, subject: string }) => Promise<void>
+}
+
 export interface Env {
   // vars
   ENV: string
@@ -41,6 +45,8 @@ export interface Env {
   SENTRY_DSN: string
   POSTMARK_TOKEN: string
   POSTMARK_SENDER?: string
+
+  DEBUG_EMAIL?: string
   LOGTAIL_TOKEN: string
   // bindings
   SPACES: KVNamespace

@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, DID, literal } from '@ucanto/validator'
+import { capability, DID, literal, struct } from '@ucanto/validator'
 import { equalWith, fail, equal } from './utils.js'
 import { top } from './top.js'
 
@@ -43,10 +43,10 @@ export const add = base.derive({
   to: capability({
     can: 'provider/add',
     with: AccountDID,
-    nb: {
+    nb: struct({
       provider: StorageProvider,
       consumer: DID.match({ method: 'key' }),
-    },
+    }),
     derives: (child, parent) => {
       return (
         fail(equalWith(child, parent)) ||
