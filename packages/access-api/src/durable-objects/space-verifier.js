@@ -61,8 +61,7 @@ export class SpaceVerifier {
 
   async cleanupUCAN() {
     this.ucan = undefined
-    // eslint-disable-next-line unicorn/no-useless-undefined
-    await this.state.storage.put('ucan', undefined)
+    await this.state.storage.put('ucan', '')
   }
 
   /**
