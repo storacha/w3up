@@ -1,4 +1,5 @@
 import * as ucanto from '@ucanto/core'
+import * as Ucanto from '@ucanto/interface'
 import * as Server from '@ucanto/server'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
@@ -13,6 +14,7 @@ import * as uploadApi from './upload-api-proxy.js'
 import { accessAuthorizeProvider } from './access-authorize.js'
 import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
+import { providerAddProvider } from './provider-add.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -22,6 +24,12 @@ import { accessClaimProvider } from './access-claim.js'
  * }
  */
 export function service(ctx) {
+  /**
+   * @param {Ucanto.DID<'key'>} uri
+   */
+  const hasStorageProvider = async (uri) => {
+    return Boolean(await ctx.models.spaces.get(uri))
+  }
   return {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
@@ -45,12 +53,21 @@ export function service(ctx) {
         }
         return accessDelegateProvider({
           delegations: ctx.models.delegations,
-          hasStorageProvider: async (uri) => {
-            return Boolean(await ctx.models.spaces.get(uri))
-          },
+          hasStorageProvider,
         })(...args)
       },
     },
+
+    provider: {
+      add: (...args) => {
+        // disable until hardened in test/staging
+        if (ctx.config.ENV === 'production') {
+          throw new Error(`provider/add invocation handling is not enabled`)
+        }
+        return providerAddProvider(ctx)(...args)
+      },
+    },
+
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),
@@ -180,6 +197,18 @@ export function service(ctx) {
       },
       fail() {
         throw new Error('test fail')
+      },
+      /**
+       * @param {Ucanto.Invocation<Ucanto.Capability<'testing/space-storage', Ucanto.DID<'key'>, Ucanto.Failure>>} invocation
+       */
+      'space-storage': async (invocation) => {
+        const spaceId = invocation.capabilities[0].with
+        const hasStorageProvider =
+          await ctx.models.provisions.hasStorageProvider(spaceId)
+        return {
+          hasStorageProvider,
+          foo: 'ben',
+        }
       },
     },
   }

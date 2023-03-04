@@ -14,6 +14,7 @@ import {
   delegationsTableBytesToArrayBuffer,
 } from '../models/delegations.js'
 import { createD1Database } from './d1.js'
+import { DbProvisions } from '../models/provisions.js'
 
 /**
  * Obtains a route context object.
@@ -77,6 +78,7 @@ export function getContext(request, env, ctx) {
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
+      provisions: new DbProvisions(createD1Database(config.DB)),
     },
     email,
     uploadApi: createUploadApiConnection({
