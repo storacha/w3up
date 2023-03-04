@@ -1,6 +1,12 @@
 export const debug = () => new DebugEmail()
 
 /**
+ * @typedef ValidationEmailSend
+ * @property {string} to
+ * @property {string} url
+ */
+
+/**
  * @param {{token:string, sender?:string}} opts
  */
 export const configure = (opts) => new Email(opts)
@@ -23,7 +29,7 @@ export class Email {
   /**
    * Send validation email with ucan to register
    *
-   * @param {{ to: string; url: string }} opts
+   * @param {ValidationEmailSend} opts
    */
   async sendValidation(opts) {
     const rsp = await fetch('https://api.postmarkapp.com/email/withTemplate', {
@@ -90,7 +96,7 @@ export class DebugEmail {
   /**
    * Send validation email with ucan to register
    *
-   * @param {{ to: string; url: string }} opts
+   * @param {ValidationEmailSend} opts
    */
   async sendValidation(opts) {
     try {
