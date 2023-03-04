@@ -36,6 +36,7 @@ export function createProviderAddHandler(options) {
       }
     }
     await options.provisions.putMany({
+      invocation,
       space: consumer,
       provider,
       account: accountDID,

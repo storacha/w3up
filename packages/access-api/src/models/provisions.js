@@ -31,6 +31,7 @@ export function createProvisions(storage = []) {
 
 /**
  * @typedef ProvsionsRow
+ * @property {string} cid
  * @property {string} consumer
  * @property {string} provider
  * @property {string} sponsor - did of actor who authorized for this provision
@@ -75,6 +76,7 @@ export class DbProvisions {
     /** @type {ProvsionsRow[]} */
     const rows = items.map((item) => {
       return {
+        cid: item.invocation.cid.toString(),
         consumer: item.space,
         provider: item.provider,
         sponsor: item.account,
@@ -95,5 +97,18 @@ export class DbProvisions {
       .where(`${provisions}.consumer`, '=', consumerDid)
       .executeTakeFirstOrThrow()
     return size > 0
+  }
+
+  /**
+   * @param {import("@ucanto/interface").DID<'key'>} consumer
+   */
+  async findForConsumer(consumer) {
+    const { provisions } = this.tableNames
+    const rows = await this.#db
+      .selectFrom(provisions)
+      .selectAll()
+      .where(`${provisions}.consumer`, '=', consumer.toString())
+      .execute()
+    return rows
   }
 }

@@ -1,4 +1,5 @@
 import * as Ucanto from '@ucanto/interface'
+import { ProviderAdd } from '@web3-storage/capabilities/src/types'
 
 export type AlphaStorageProvider = 'did:web:web3.storage:providers:w3up-alpha'
 
@@ -6,6 +7,7 @@ export type AlphaStorageProvider = 'did:web:web3.storage:providers:w3up-alpha'
  * action which results in provisionment of a space consuming a storage provider
  */
 export interface StorageProvisionCreation {
+  invocation: Ucanto.Invocation<ProviderAdd>
   space: Ucanto.DID<'key'>
   account: Ucanto.DID<'mailto'>
   provider: AlphaStorageProvider
