@@ -6,7 +6,7 @@ export type AlphaStorageProvider = 'did:web:web3.storage:providers:w3up-alpha'
 /**
  * action which results in provisionment of a space consuming a storage provider
  */
-export interface StorageProvisionCreation {
+export interface Provision {
   invocation: Ucanto.Invocation<ProviderAdd>
   space: Ucanto.DID<'key'>
   account: Ucanto.DID<'mailto'>
@@ -23,7 +23,7 @@ export interface Provisions {
    *
    * @param items - provisions to store
    */
-  putMany: (...items: StorageProvisionCreation[]) => Promise<void>
+  putMany: (...items: Provision[]) => Promise<void>
 
   /**
    * get number of stored items

@@ -5,7 +5,7 @@
  */
 
 /**
- * @param {Array<import("../types/provisions").StorageProvisionCreation>} storage
+ * @param {Array<import("../types/provisions").Provision>} storage
  * @returns {Provisions}
  */
 export function createProvisions(storage = []) {

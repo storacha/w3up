@@ -27,7 +27,7 @@ describe('DbProvisions', () => {
             },
           })
           .delegate()
-        /** @type {import('../src/types/provisions.js').StorageProvisionCreation} */
+        /** @type {import('../src/types/provisions.js').Provision} */
         const provision = {
           invocation,
           space: spaceA.did(),
