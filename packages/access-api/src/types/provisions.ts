@@ -16,7 +16,7 @@ export interface Provision {
 /**
  * stores instances of a storage provider being consumed by a consumer
  */
-export interface Provisions {
+export interface ProvisionsStorage {
   hasStorageProvider: (consumer: Ucanto.DID<'key'>) => Promise<boolean>
   /**
    * write several items into storage

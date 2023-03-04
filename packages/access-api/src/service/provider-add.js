@@ -17,7 +17,7 @@ import * as validator from '@ucanto/validator'
 
 /**
  * @param {object} options
- * @param {import('../types/provisions').Provisions} options.provisions
+ * @param {import('../types/provisions').ProvisionsStorage} options.provisions
  * @returns {ProviderAddHandler}
  */
 export function createProviderAddHandler(options) {

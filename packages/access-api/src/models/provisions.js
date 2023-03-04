@@ -1,7 +1,7 @@
 /* eslint-disable no-void */
 
 /**
- * @typedef {import("../types/provisions").Provisions} Provisions
+ * @typedef {import("../types/provisions").ProvisionsStorage} Provisions
  */
 
 /**
