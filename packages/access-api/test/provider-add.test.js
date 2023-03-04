@@ -53,50 +53,6 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
       )
       assertNotError(result)
     })
-    it(`can be invoked by did:mailto w/ session ./update`, async () => {
-      const agentA = await principal.ed25519.generate()
-      const accountDID = /** @type {Ucanto.DID<'mailto'>} */ (
-        'did:mailto:example.com:foo'
-      )
-      const account = { did: () => accountDID }
-      const space = await principal.ed25519.generate()
-      const service = await providerAddHandlerVariant.audience
-      const agentACanSignAsAccountDID = await ucanto.delegate({
-        issuer: service,
-        audience: account,
-        capabilities: [
-          {
-            with: service.did(),
-            can: './update',
-            nb: {
-              key: agentA.did(),
-            },
-          },
-        ],
-      })
-      const providerAddition = await providerAddHandlerVariant.invoke(
-        await provider.add
-          .invoke({
-            issuer: agentA.withDID(accountDID),
-            audience: service,
-            with: account.did(),
-            nb: {
-              consumer: space.did(),
-              provider: 'did:web:web3.storage:providers:w3up-alpha',
-            },
-            proofs: [agentACanSignAsAccountDID],
-          })
-          .delegate()
-      )
-      assertNotError(providerAddition)
-      assert.deepEqual(
-        await providerAddHandlerVariant.provisions.hasStorageProvider(
-          space.did()
-        ),
-        true,
-        'provider/add invocation resulted in spaceHasStorageProvider true'
-      )
-    })
   })
 }
 

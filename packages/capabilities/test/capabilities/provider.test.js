@@ -1,10 +1,12 @@
 import assert from 'assert'
 import { access } from '@ucanto/validator'
+import * as principal from '@ucanto/principal'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Provider from '../../src/provider.js'
 import { bob, service, alice, mallory } from '../helpers/fixtures.js'
 import { createAuthorization } from '../helpers/utils.js'
 import * as ucanto from '@ucanto/core'
+import * as Ucanto from '@ucanto/interface'
 
 describe('provider/add', function () {
   it('can invoke as an account', async function () {
@@ -400,4 +402,36 @@ describe('provider/add', function () {
 
     assert.equal(result.error, true)
   })
+
+  for (const useAccountDid of [true, false]) {
+    it(`cannot provider/add with no proofs useAccountDid=${useAccountDid}`, async () => {
+      const agentA = await principal.ed25519.generate()
+      const accountDID = /** @type {Ucanto.DID<'mailto'>} */ (
+        'did:mailto:example.com:foo'
+      )
+      const account = { did: () => accountDID }
+      const space = await principal.ed25519.generate()
+      const service = await principal.ed25519.generate()
+      const issuer = useAccountDid ? agentA.withDID(accountDID) : agentA
+      const providerAddInvocation = await Provider.add
+        .invoke({
+          issuer,
+          audience: service,
+          with: account.did(),
+          nb: {
+            consumer: space.did(),
+            provider: 'did:web:web3.storage:providers:w3up-alpha',
+          },
+          // NOTE: no proofs!
+        })
+        .delegate()
+
+      const result = await access(await providerAddInvocation.delegate(), {
+        capability: Provider.add,
+        principal: Verifier,
+        authority: service,
+      })
+      assert.deepEqual(result.error, true, 'validator.access result')
+    })
+  }
 })
