@@ -1,21 +1,27 @@
 import * as Ucanto from '@ucanto/interface'
 import { Voucher } from '@web3-storage/capabilities'
 import * as assert from 'assert'
+import * as principal from '@ucanto/principal'
+
+/**
+ * @typedef {import('./types').HelperTestContext} HelperTestContext
+ */
 
 /**
  * Tests using context from "./helpers/context.js", which sets up a testable access-api inside miniflare.
  *
- * @param {() => Promise<{ issuer: Ucanto.Signer<Ucanto.DID<'key'>>, service: Ucanto.Signer<Ucanto.DID>, conn: Ucanto.ConnectionView<Record<string, any>> }>} createContext
+ * @param {() => Promise<HelperTestContext>} createContext
  * @param {object} [options]
  * @param {Iterable<Promise<Ucanto.Principal>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
  */
 export function createTesterFromContext(createContext, options) {
   const context = createContext().then(async (ctx) => {
-    await registerSpaces(options?.registerSpaces ?? [], ctx.service, ctx.conn)
+    await registerSpaces(options?.registerSpaces ?? [], ctx)
     return ctx
   })
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
+  const miniflare = context.then(({ mf }) => mf)
   /**
    * @template {Ucanto.Capability} Capability
    * @param {Ucanto.Invocation<Capability>} invocation
@@ -25,7 +31,7 @@ export function createTesterFromContext(createContext, options) {
     const [result] = await conn.execute(invocation)
     return result
   }
-  return { issuer, audience, invoke }
+  return { issuer, audience, invoke, miniflare }
 }
 
 /**
@@ -38,13 +44,14 @@ export function createTesterFromContext(createContext, options) {
  * using a service-issued voucher/redeem invocation
  *
  * @param {Iterable<Resolvable<Ucanto.Principal>>} spaces
- * @param {Ucanto.Signer<Ucanto.DID>} issuer
- * @param {Ucanto.ConnectionView<Record<string, any>>} conn
+ * @param {object} options
+ * @param {Ucanto.Signer<Ucanto.DID>} options.service
+ * @param {Ucanto.ConnectionView<Record<string, any>>} options.conn
  */
-export async function registerSpaces(spaces, issuer, conn) {
+export async function registerSpaces(spaces, { service, conn }) {
   for (const spacePromise of spaces) {
     const space = await spacePromise
-    const redeem = await spaceRegistrationInvocation(issuer, space.did())
+    const redeem = await spaceRegistrationInvocation(service, space.did())
     const results = await conn.execute(redeem)
     assert.deepEqual(
       results.length,
@@ -113,4 +120,35 @@ export function warnOnErrorResult(
   if (result && 'error' in result && result.error) {
     warn(message, result)
   }
+}
+
+/**
+ * @template {Ucanto.Capability} Capability
+ * @template Result
+ * @typedef {object} InvokeTester
+ * @property {(invocation: Ucanto.Invocation<Capability>) => Promise<Result>} invoke
+ * @property {Resolvable<Ucanto.Signer<Ucanto.DID<'key'>>>} issuer
+ * @property {Resolvable<Ucanto.Signer<Ucanto.DID>>} audience
+ */
+
+/**
+ * Tests using simple function invocation -> result
+ *
+ * @template {Ucanto.Capability} Capability
+ * @template Result
+ * @param {() => (invocation: Ucanto.Invocation<Capability>) => Promise<Result>} createHandler
+ * @returns {InvokeTester<Capability, Result>}
+ */
+export function createTesterFromHandler(createHandler) {
+  const issuer = principal.ed25519.generate()
+  const audience = principal.ed25519.generate()
+  /**
+   * @param {Ucanto.Invocation<Capability>} invocation
+   */
+  const invoke = async (invocation) => {
+    const handle = createHandler()
+    const result = await handle(invocation)
+    return result
+  }
+  return { issuer, audience, invoke }
 }
