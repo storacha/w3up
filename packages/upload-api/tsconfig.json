@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["mocha"],
+    "types": ["mocha"]
   },
-  "include": ["src", "src/lib.js", "test"],
-  "exclude": ["**/node_modules/**", "test/service", "test/*.test.js", "test/helpers", "src/tables", "src/functions"],
+  "include": ["src", "test"],
+  "exclude": ["**/node_modules/**", "dist"],
   "references": [{ "path": "../capabilities" }]
 }
