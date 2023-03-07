@@ -1,0 +1,81 @@
+{
+  "name": "@web3-storage/upload-api",
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build",
+    "check": "tsc --build",
+    "lint": "tsc --build",
+    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules test/**/*.spec.js",
+    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules --watch-files src,test"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.226.0",
+    "@aws-sdk/client-kinesis": "^3.226.0",
+    "@aws-sdk/client-s3": "^3.226.0",
+    "@aws-sdk/s3-request-presigner": "^3.226.0",
+    "@aws-sdk/util-dynamodb": "^3.226.0",
+    "@ipld/dag-ucan": "^3.0.1",
+    "@sentry/serverless": "^7.22.0",
+    "@serverless-stack/node": "^1.18.2",
+    "@ucanto/client": "^5.0.0",
+    "@ucanto/interface": "^5.0.0",
+    "@ucanto/principal": "^5.0.0",
+    "@ucanto/server": "^5.0.0",
+    "@ucanto/transport": "^5.0.0",
+    "@web-std/fetch": "^4.1.0",
+    "@web3-storage/access": "^9.0.0",
+    "@web3-storage/capabilities": "^3.0.0",
+    "multiformats": "^11.0.1",
+    "p-retry": "^5.1.2",
+    "uint8arrays": "^4.0.2"
+  },
+  "devDependencies": {
+    "@ipld/car": "^5.0.1",
+    "@serverless-stack/resources": "*",
+    "@types/aws-lambda": "^8.10.108",
+    "@ucanto/core": "^5.0.0",
+    "@web-std/blob": "3.0.4",
+    "@types/mocha": "^10.0.1",
+    "mocha": "^10.2.0",
+    "nanoid": "^4.0.0",
+    "@web3-storage/sigv4": "^1.0.2",
+    "hd-scripts": "^4.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/hd-scripts/eslint/index.js"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/prefer-export-from": "off",
+      "unicorn/no-array-reduce": "off",
+      "unicorn/no-null": "off",
+      "unicorn/no-zero-fractions": "off",
+      "unicorn/no-negated-condition": "off",
+      "no-nested-ternary": "off",
+      "yoda": "off",
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "Iterable"
+          ]
+        }
+      ]
+    },
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist",
+      "coverage"
+    ]
+  },
+  "engines": {
+    "node": ">=16.15"
+  }
+}
