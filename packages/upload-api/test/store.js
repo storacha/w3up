@@ -1,5 +1,4 @@
 import { createServer, connect } from '../src/lib.js'
-import { delegate } from '@ucanto/core'
 import * as API from '../src/types.js'
 import * as Signer from '@ucanto/principal/ed25519'
 import { CID } from 'multiformats'
@@ -7,19 +6,10 @@ import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
 import * as Link from '@ucanto/core/link'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
+import { createSpace, registerSpace } from './util.js'
 
 /**
- * @typedef {object} Assert
- * @property {(actual:unknown, expected:unknown, message?:string) => void} deepEqual
- * @property {(actual:unknown, expected:unknown, message?:string) => void} equal
- */
-
-/**
- * @typedef {(assert:Assert, context:API.UcantoServerTestContext) => unknown} Test
- */
-
-/**
- * @type {Record<string, Test>}
+ * @type {API.Tests}
  */
 export const test = {
   'store/add returns signed url for uploading': async (assert, context) => {
@@ -652,33 +642,4 @@ export const test = {
     assert.deepEqual(prevListResponse.before, listResponse.before)
     assert.deepEqual(prevListResponse.after, listResponse.after)
   },
-}
-
-/**
- * @param {API.Principal} audience
- */
-export async function createSpace(audience) {
-  const space = await Signer.generate()
-  const spaceDid = space.did()
-
-  return {
-    proof: await delegate({
-      issuer: space,
-      audience,
-      capabilities: [{ can: '*', with: spaceDid }],
-    }),
-    spaceDid,
-  }
-}
-
-/**
- *
- * @param {API.Principal} audience
- * @param {object} context
- * @param {API.TestSpaceRegistry} context.testSpaceRegistry
- */
-export const registerSpace = async (audience, { testSpaceRegistry }) => {
-  const { proof, spaceDid } = await createSpace(audience)
-  await testSpaceRegistry.registerSpace(spaceDid)
-  return { proof, spaceDid }
 }

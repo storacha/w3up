@@ -9,6 +9,7 @@ export class StoreTable {
     /** @type {(API.StoreAddInput & API.StoreListItem)[]} */
     this.items = []
   }
+
   /**
    * @param {API.StoreAddInput} input
    * @returns
@@ -23,6 +24,7 @@ export class StoreTable {
     })
     return output
   }
+
   /**
    *
    * @param {API.DID} space
@@ -33,12 +35,14 @@ export class StoreTable {
       (item) => item.space === space && item.link.toString() === link.toString()
     )
   }
+
   /**
    * @param {API.DID} space
    * @param {API.UnknownLink} link
    * @returns
    */
   async exists(space, link) {
+    // eslint-disable-next-line yoda
     return null != (await this.get(space, link))
   }
 

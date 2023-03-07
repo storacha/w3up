@@ -1,4 +1,5 @@
 import * as API from '../src/types.js'
+import { parseLink } from '@ucanto/core'
 
 /**
  * @implements {API.UploadTable}
@@ -8,32 +9,58 @@ export class UploadTable {
     /** @type {(API.UploadListItem & API.UploadAddInput)[]} */
     this.items = []
   }
+
   /**
    * @param {API.UploadAddInput} input
    * @returns
    */
-  async insert({ space, issuer, invocation, ...output }) {
+  async insert({ space, issuer, invocation, root, shards = [] }) {
     const time = new Date().toISOString()
-    this.items.push({
-      space,
-      issuer,
-      invocation,
-      ...output,
-      insertedAt: time,
-      updatedAt: time,
-    })
-    return output
+    const item = this.items.find(
+      (item) => item.space === space && item.root.toString() === root.toString()
+    )
+
+    if (item) {
+      const next = new Set([
+        ...(item.shards || []).map(String),
+        ...shards.map(String),
+      ])
+
+      Object.assign(item, {
+        shards: [...next].map(($) => parseLink($)),
+        updatedAt: time,
+      })
+
+      return { root, shards: item.shards }
+    } else {
+      this.items.unshift({
+        space,
+        issuer,
+        invocation,
+        root,
+        shards,
+        insertedAt: time,
+        updatedAt: time,
+      })
+
+      return { root, shards }
+    }
   }
+
   /**
    * @param {API.DID} space
    * @param {API.UnknownLink} root
    */
   async remove(space, root) {
-    this.items = this.items.filter(
-      (item) => item.space !== space && item.root.toString() !== root.toString()
+    const item = this.items.find(
+      (item) => item.space === space && item.root.toString() === root.toString()
     )
 
-    return undefined
+    if (item) {
+      this.items.splice(this.items.indexOf(item), 1)
+    }
+
+    return item
   }
 
   /**
@@ -45,6 +72,7 @@ export class UploadTable {
       (item) => item.space === space && item.root.toString() === root.toString()
     )
   }
+
   /**
    * @param {API.DID} space
    * @param {API.UnknownLink} link
@@ -69,16 +97,23 @@ export class UploadTable {
       .filter(([n, item]) => item.space === space)
       .slice(0, size)
 
+    if (matches.length === 0) {
+      return {
+        size: 0,
+        results: [],
+      }
+    }
+
     const first = matches[0]
     const last = matches[matches.length - 1]
 
-    const start = String(first[0] || 0)
-    const end = String(last[0] || 0)
+    const start = first[0] || 0
+    const end = last[0] || 0
     const values = matches.map(([_, item]) => item)
 
     const [before, after, results] = pre
-      ? [end, start, values.reverse()]
-      : [start, end, values]
+      ? [`${start}`, `${end + 1}`, values]
+      : [`${start + offset}`, `${end + 1 + offset}`, values]
 
     return {
       size: values.length,
