@@ -64,9 +64,11 @@ for (const accessApiVariant of /** @type {const} */ ([
       /** @type {{to:string, url:string}[]} */
       const emails = []
       const email = createEmail(emails)
+      const features = new Set(['provider/add', 'access/delegate'])
       return {
         spaceWithStorageProvider,
         emails,
+        features,
         ...createTesterFromContext(
           () =>
             context({
@@ -97,6 +99,100 @@ for (const accessApiVariant of /** @type {const} */ ([
       })
     })
   })
+
+  if (
+    ['provider/add', 'access/delegate'].every((f) =>
+      accessApiVariant.features.has(f)
+    )
+  ) {
+    it('provider/add allows for access/delegate', async () => {
+      const space = await principal.ed25519.generate()
+      const issuer = await accessApiVariant.issuer
+      const service = await accessApiVariant.audience
+      const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
+      const serviceSessionAttest = await ucanto.delegate({
+        issuer: service,
+        audience: issuer,
+        capabilities: [
+          {
+            can: 'provider/add',
+            with: accountDid,
+          },
+          {
+            can: 'access/delegate',
+            with: space.did(),
+          },
+        ],
+      })
+      const sessionProofs = [
+        await ucanto.delegate({
+          issuer: service,
+          audience: issuer,
+          capabilities: [
+            {
+              can: 'ucan/attest',
+              with: accountDid,
+              nb: {
+                // note: whole delegation is also included in 'proofs'
+                proof: serviceSessionAttest.cid,
+              },
+            },
+          ],
+        }),
+        serviceSessionAttest,
+      ]
+      const addStorageProvider = await ucanto
+        .invoke({
+          issuer,
+          audience: service,
+          capability: {
+            can: 'provider/add',
+            with: accountDid,
+            nb: {
+              provider: 'did:web:web3.storage:providers:w3up-alpha',
+              consumer: space.did(),
+            },
+          },
+          proofs: [
+            // space says issuer can provider/add with this account
+            await ucanto.delegate({
+              issuer: space,
+              audience: issuer,
+              capabilities: [
+                {
+                  can: 'provider/add',
+                  with: accountDid,
+                },
+              ],
+            }),
+            ...sessionProofs,
+          ],
+        })
+        .delegate()
+      const addStorageProviderResult = await accessApiVariant.invoke(
+        addStorageProvider
+      )
+      assertNotError(addStorageProviderResult)
+
+      // storage provider added. So we should be able to delegate now
+      const accessDelegate = await ucanto
+        .invoke({
+          issuer,
+          audience: service,
+          capability: {
+            can: 'access/delegate',
+            with: space.did(),
+            nb: {
+              delegations: {},
+            },
+          },
+          proofs: [...sessionProofs],
+        })
+        .delegate()
+      const accessDelegateResult = await accessApiVariant.invoke(accessDelegate)
+      assertNotError(accessDelegateResult)
+    })
+  }
 }
 
 /**
