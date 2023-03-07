@@ -107,43 +107,38 @@ for (const accessApiVariant of /** @type {const} */ ([
   ) {
     it('provider/add allows for access/delegate', async () => {
       const space = await principal.ed25519.generate()
-      const issuer = await accessApiVariant.issuer
+      const agent = await accessApiVariant.issuer
       const service = await accessApiVariant.audience
       const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
-      const serviceSessionAttest = await ucanto.delegate({
-        issuer: service,
-        audience: issuer,
+
+      const accountAuthorizesIssuerClaim = await ucanto.delegate({
+        issuer: principal.Absentee.from({ id: accountDid }),
+        audience: agent,
         capabilities: [
           {
-            can: 'provider/add',
-            with: accountDid,
+            with: 'ucan:*',
+            can: '*',
           },
+        ],
+      })
+      const serviceAttestsThatAccountAuthorizesIssuer = await ucanto.delegate({
+        issuer: service,
+        audience: agent,
+        capabilities: [
           {
-            can: 'access/delegate',
-            with: space.did(),
+            with: service.did(),
+            can: 'ucan/attest',
+            nb: { proof: accountAuthorizesIssuerClaim.cid },
           },
         ],
       })
       const sessionProofs = [
-        await ucanto.delegate({
-          issuer: service,
-          audience: issuer,
-          capabilities: [
-            {
-              can: 'ucan/attest',
-              with: accountDid,
-              nb: {
-                // note: whole delegation is also included in 'proofs'
-                proof: serviceSessionAttest.cid,
-              },
-            },
-          ],
-        }),
-        serviceSessionAttest,
+        accountAuthorizesIssuerClaim,
+        serviceAttestsThatAccountAuthorizesIssuer,
       ]
       const addStorageProvider = await ucanto
         .invoke({
-          issuer,
+          issuer: agent,
           audience: service,
           capability: {
             can: 'provider/add',
@@ -154,10 +149,11 @@ for (const accessApiVariant of /** @type {const} */ ([
             },
           },
           proofs: [
+            ...sessionProofs,
             // space says issuer can provider/add with this account
             await ucanto.delegate({
               issuer: space,
-              audience: issuer,
+              audience: agent,
               capabilities: [
                 {
                   can: 'provider/add',
@@ -165,7 +161,6 @@ for (const accessApiVariant of /** @type {const} */ ([
                 },
               ],
             }),
-            ...sessionProofs,
           ],
         })
         .delegate()
@@ -177,7 +172,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       // storage provider added. So we should be able to delegate now
       const accessDelegate = await ucanto
         .invoke({
-          issuer,
+          issuer: agent,
           audience: service,
           capability: {
             can: 'access/delegate',
@@ -186,7 +181,19 @@ for (const accessApiVariant of /** @type {const} */ ([
               delegations: {},
             },
           },
-          proofs: [...sessionProofs],
+          proofs: [
+            ...sessionProofs,
+            await ucanto.delegate({
+              issuer: space,
+              audience: agent,
+              capabilities: [
+                {
+                  can: 'access/delegate',
+                  with: space.did(),
+                },
+              ],
+            }),
+          ],
         })
         .delegate()
       const accessDelegateResult = await accessApiVariant.invoke(accessDelegate)
