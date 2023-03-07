@@ -169,7 +169,6 @@ for (const accessApiVariant of /** @type {const} */ ([
             },
           },
           proofs: [
-            ...sessionProofs,
             // space says agent can access/delegate with space
             await ucanto.delegate({
               issuer: space,
