@@ -111,7 +111,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       const service = await accessApiVariant.audience
       const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
 
-      const accountAuthorizesIssuerClaim = await ucanto.delegate({
+      const accountAuthorizesAgentClaim = await ucanto.delegate({
         issuer: principal.Absentee.from({ id: accountDid }),
         audience: agent,
         capabilities: [
@@ -121,20 +121,20 @@ for (const accessApiVariant of /** @type {const} */ ([
           },
         ],
       })
-      const serviceAttestsThatAccountAuthorizesIssuer = await ucanto.delegate({
+      const serviceAttestsThatAccountAuthorizesAgent = await ucanto.delegate({
         issuer: service,
         audience: agent,
         capabilities: [
           {
             with: service.did(),
             can: 'ucan/attest',
-            nb: { proof: accountAuthorizesIssuerClaim.cid },
+            nb: { proof: accountAuthorizesAgentClaim.cid },
           },
         ],
       })
       const sessionProofs = [
-        accountAuthorizesIssuerClaim,
-        serviceAttestsThatAccountAuthorizesIssuer,
+        accountAuthorizesAgentClaim,
+        serviceAttestsThatAccountAuthorizesAgent,
       ]
       const addStorageProvider = await ucanto
         .invoke({
