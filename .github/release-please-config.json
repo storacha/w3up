@@ -4,6 +4,7 @@
     "packages/access-client": {},
     "packages/access-api": {},
     "packages/capabilities": {},
+    "packages/upload-api": {},
     "packages/upload-client": {}
   }
 }
