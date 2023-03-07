@@ -107,13 +107,13 @@ for (const accessApiVariant of /** @type {const} */ ([
   ) {
     it('provider/add allows for access/delegate', async () => {
       const space = await principal.ed25519.generate()
-      const issuer = await accessApiVariant.issuer
+      const agent = await accessApiVariant.issuer
       const service = await accessApiVariant.audience
       const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
 
       const accountAuthorizesIssuerClaim = await ucanto.delegate({
         issuer: principal.Absentee.from({ id: accountDid }),
-        audience: issuer,
+        audience: agent,
         capabilities: [
           {
             with: 'ucan:*',
@@ -123,7 +123,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       })
       const serviceAttestsThatAccountAuthorizesIssuer = await ucanto.delegate({
         issuer: service,
-        audience: issuer,
+        audience: agent,
         capabilities: [
           {
             with: service.did(),
@@ -138,7 +138,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       ]
       const addStorageProvider = await ucanto
         .invoke({
-          issuer,
+          issuer: agent,
           audience: service,
           capability: {
             can: 'provider/add',
@@ -153,7 +153,7 @@ for (const accessApiVariant of /** @type {const} */ ([
             // space says issuer can provider/add with this account
             await ucanto.delegate({
               issuer: space,
-              audience: issuer,
+              audience: agent,
               capabilities: [
                 {
                   can: 'provider/add',
@@ -172,7 +172,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       // storage provider added. So we should be able to delegate now
       const accessDelegate = await ucanto
         .invoke({
-          issuer,
+          issuer: agent,
           audience: service,
           capability: {
             can: 'access/delegate',
@@ -185,7 +185,7 @@ for (const accessApiVariant of /** @type {const} */ ([
             ...sessionProofs,
             await ucanto.delegate({
               issuer: space,
-              audience: issuer,
+              audience: agent,
               capabilities: [
                 {
                   can: 'access/delegate',
