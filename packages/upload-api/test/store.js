@@ -320,7 +320,7 @@ export const test = {
     assert.equal(retryStoreAdd.error, undefined)
   },
 
-  'store/add fails when size to large to PUT': async (assert, context) => {
+  'store/add fails when size too large to PUT': async (assert, context) => {
     const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
