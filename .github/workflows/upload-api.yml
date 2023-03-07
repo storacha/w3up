@@ -46,6 +46,7 @@ jobs:
         with:
           project: packages/upload-api/tsconfig.json
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
