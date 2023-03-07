@@ -148,20 +148,7 @@ for (const accessApiVariant of /** @type {const} */ ([
               consumer: space.did(),
             },
           },
-          proofs: [
-            ...sessionProofs,
-            // space says issuer can provider/add with this account
-            await ucanto.delegate({
-              issuer: space,
-              audience: agent,
-              capabilities: [
-                {
-                  can: 'provider/add',
-                  with: accountDid,
-                },
-              ],
-            }),
-          ],
+          proofs: [...sessionProofs],
         })
         .delegate()
       const addStorageProviderResult = await accessApiVariant.invoke(
@@ -183,6 +170,7 @@ for (const accessApiVariant of /** @type {const} */ ([
           },
           proofs: [
             ...sessionProofs,
+            // space says agent can access/delegate with space
             await ucanto.delegate({
               issuer: space,
               audience: agent,
