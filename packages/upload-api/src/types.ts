@@ -227,6 +227,9 @@ export interface TestSpaceRegistry {
 export interface LinkJSON<T extends UnknownLink = UnknownLink> {
   '/': ToString<T>
 }
+export interface SpaceUnknown extends Failure {
+  name: 'SpaceUnknown'
+}
 
 export interface Assert {
   equal: (actual: unknown, expected: unknown, message?: string | Error) => void
