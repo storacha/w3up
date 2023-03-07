@@ -24,12 +24,6 @@ import { providerAddProvider } from './provider-add.js'
  * }
  */
 export function service(ctx) {
-  /**
-   * @param {Ucanto.DID<'key'>} uri
-   */
-  const hasStorageProvider = async (uri) => {
-    return Boolean(await ctx.models.spaces.get(uri))
-  }
   return {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
@@ -53,7 +47,19 @@ export function service(ctx) {
         }
         return accessDelegateProvider({
           delegations: ctx.models.delegations,
-          hasStorageProvider,
+          hasStorageProvider: async (space) => {
+            /** @type {import('./access-delegate.js').HasStorageProvider} */
+            const registeredViaVoucherRedeem = async (space) =>
+              Boolean(await ctx.models.spaces.get(space))
+            /** @type {import('./access-delegate.js').HasStorageProvider} */
+            // eslint-disable-next-line unicorn/consistent-function-scoping
+            const registeredViaProviderAdd = (space) =>
+              ctx.models.provisions.hasStorageProvider(space)
+            return Boolean(
+              (await registeredViaProviderAdd(space)) ||
+                (await registeredViaVoucherRedeem(space))
+            )
+          },
         })(...args)
       },
     },
