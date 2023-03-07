@@ -1,5 +1,5 @@
 /* eslint-disable no-only-tests/no-only-tests */
-import * as Upload from './store.js'
+import * as Store from './store.js'
 import * as assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
 import { CarStoreBucket } from './car-store-bucket.js'
@@ -9,7 +9,7 @@ import { DudewhereBucket } from './dude-where-bucket.js'
 import * as AccessVerifier from './access-verifier.js'
 
 describe('store/*', () => {
-  for (const [name, test] of Object.entries(Upload.test)) {
+  for (const [name, test] of Object.entries(Store.test)) {
     const define = name.startsWith('only ')
       ? it.only
       : name.startsWith('skip ')
@@ -34,9 +34,10 @@ describe('store/*', () => {
             },
           },
           maxUploadSize: 5_000_000_000,
-          testStoreTable: storeTable,
           storeTable,
+          testStoreTable: storeTable,
           uploadTable,
+          testUploadTable: uploadTable,
           carStoreBucket,
           dudewhereBucket,
           access,

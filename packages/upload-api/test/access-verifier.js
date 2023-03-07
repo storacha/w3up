@@ -15,7 +15,7 @@ export const createService = (context) => ({
     info: Server.provide(Space.info, async ({ capability, invocation }) => {
       const results = await context.models.spaces.get(capability.with)
       if (!results) {
-        /** @type {import('@web3-storage/access/types').SpaceUnknown} */
+        /** @type {API.SpaceUnknown} */
         const spaceUnknownFailure = {
           error: true,
           name: 'SpaceUnknown',
@@ -82,11 +82,9 @@ export const create = ({ id }) => {
         .execute(client)
 
       if (result.error) {
-        if (result.error && result.name === 'SpaceUnknown') {
-          return new Failure(`Space has no storage provider`, { cause: result })
-        } else {
-          return result
-        }
+        return result.error && result.name === 'SpaceUnknown'
+          ? new Failure(`Space has no storage provider`, { cause: result })
+          : result
       } else {
         return {}
       }
