@@ -33,7 +33,8 @@ export interface Service {
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
+    // @todo - Use proper type when no item was removed instead of undefined
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk | undefined, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
@@ -69,6 +70,7 @@ export interface UcantoServerTestContext
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
+  testUploadTable: TestUploadTable
   testSpaceRegistry: TestSpaceRegistry
 }
 
@@ -132,6 +134,13 @@ export interface UploadTable {
     space: DID,
     options?: ListOptions
   ) => Promise<ListResponse<UploadListItem>>
+}
+
+export interface TestUploadTable {
+  get(
+    space: DID,
+    root: UnknownLink
+  ): Promise<(UploadAddInput & UploadListItem) | undefined>
 }
 
 export interface StoreAddInput {
@@ -201,8 +210,12 @@ export interface AccessVerifier {
    * Determines if the issuer of the invocation has received a delegation
    * allowing them to issue the passed invocation.
    */
-  allocateSpace: (invocation: Invocation) => Promise<Result<{}, Failure>>
+  allocateSpace: (
+    invocation: Invocation
+  ) => Promise<Result<AllocateOk, Failure>>
 }
+
+interface AllocateOk {}
 
 export interface TestSpaceRegistry {
   /**
@@ -214,3 +227,15 @@ export interface TestSpaceRegistry {
 export interface LinkJSON<T extends UnknownLink = UnknownLink> {
   '/': ToString<T>
 }
+
+export interface Assert {
+  equal: (actual: unknown, expected: unknown, message?: string | Error) => void
+  deepEqual: (
+    actual: unknown,
+    expected: unknown,
+    message?: string | Error
+  ) => void
+}
+
+export type Test = (assert: Assert, context: UcantoServerTestContext) => unknown
+export type Tests = Record<string, Test>

@@ -3,8 +3,8 @@ import * as Client from '@ucanto/client'
 import * as Types from './types.js'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
-import { createStoreService } from './store/index.js'
-import { createUploadService } from './upload/index.js'
+import { createService as createStoreService } from './store.js'
+import { createService as createUploadService } from './upload.js'
 
 /**
  * @param {Types.UcantoServerContext} options

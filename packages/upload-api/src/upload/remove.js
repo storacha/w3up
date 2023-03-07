@@ -4,7 +4,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.UploadServiceContext} context
- * @returns {API.ServiceMethod<API.UploadRemove, API.UploadRemoveOk, API.Failure>}
+ * @returns {API.ServiceMethod<API.UploadRemove, API.UploadRemoveOk | undefined, API.Failure>}
  */
 export function uploadRemoveProvider(context) {
   return Server.provide(Upload.remove, async ({ capability }) => {
@@ -12,6 +12,6 @@ export function uploadRemoveProvider(context) {
     const space = Server.DID.parse(capability.with).did()
 
     const result = await context.uploadTable.remove(space, root)
-    return result || { root }
+    return result
   })
 }

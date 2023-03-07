@@ -7,29 +7,27 @@ import * as API from '../types.js'
  * @param {API.UploadServiceContext} context
  * @returns {API.ServiceMethod<API.UploadAdd, API.UploadAddOk, API.Failure>}
  */
-export function uploadAddProvider(context) {
+export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
   return Server.provide(Upload.add, async ({ capability, invocation }) => {
     const { root, shards } = capability.nb
-    const space = Server.DID.parse(capability.with).did()
+    const space = Server.DID.parse(capability.with)
     const issuer = invocation.issuer.did()
-    const isVerified = await context.access.allocateSpace(invocation)
+    const allocated = await access.allocateSpace(invocation)
 
-    if (!isVerified) {
-      return new Server.Failure(
-        `${issuer} is not delegated capability ${Upload.add.can} on ${space}`
-      )
+    if (allocated.error) {
+      return allocated
     }
 
     const [res] = await Promise.all([
       // Store in Database
-      context.uploadTable.insert({
-        space,
+      uploadTable.insert({
+        space: space.did(),
         root,
         shards,
-        issuer: invocation.issuer.did(),
+        issuer,
         invocation: invocation.cid,
       }),
-      writeDataCidToCarCidsMapping(context.dudewhereBucket, root, shards),
+      writeDataCidToCarCidsMapping(dudewhereBucket, root, shards),
     ])
 
     return res
