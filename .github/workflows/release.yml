@@ -34,7 +34,8 @@ jobs:
     if: |
       contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/capabilities') ||
-      contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client')
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-api')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
