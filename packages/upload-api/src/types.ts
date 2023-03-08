@@ -70,7 +70,6 @@ export interface UcantoServerTestContext
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
-  testUploadTable: TestUploadTable
   testSpaceRegistry: TestSpaceRegistry
 }
 
@@ -134,13 +133,6 @@ export interface UploadTable {
     space: DID,
     options?: ListOptions
   ) => Promise<ListResponse<UploadListItem>>
-}
-
-export interface TestUploadTable {
-  get(
-    space: DID,
-    root: UnknownLink
-  ): Promise<(UploadAddInput & UploadListItem) | undefined>
 }
 
 export interface StoreAddInput {
