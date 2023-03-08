@@ -34,7 +34,7 @@ export interface Service {
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
     // @todo - Use proper type when no item was removed instead of undefined
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk | undefined, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk | null, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
@@ -128,7 +128,7 @@ export interface TestStoreTable {
 export interface UploadTable {
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
   insert: (item: UploadAddInput) => Promise<UploadAddOk>
-  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | undefined>
+  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>
   list: (
     space: DID,
     options?: ListOptions

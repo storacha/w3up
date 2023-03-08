@@ -345,7 +345,7 @@ export const test = {
 
     assert.equal(
       uploadRemove,
-      undefined,
+      null,
       'expect falsy response when removing an upload you do not have'
     )
   },
