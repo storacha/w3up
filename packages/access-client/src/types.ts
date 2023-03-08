@@ -77,6 +77,7 @@ export type SpaceInfoResult =
       did: DID<'key'>
     }
   // deprecated and may be removed if voucher/redeem is removed
+  /** @deprecated */
   | SpaceRecord
 
 export interface AccountTable {
