@@ -15,6 +15,7 @@ import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { createProvisions } from '../src/models/provisions.js'
 import { Email } from '../src/utils/email.js'
+import { NON_STANDARD } from '@ipld/dag-ucan/signature'
 
 for (const providerAddHandlerVariant of /** @type {const} */ ([
   {
@@ -64,7 +65,11 @@ for (const accessApiVariant of /** @type {const} */ ([
       /** @type {{to:string, url:string}[]} */
       const emails = []
       const email = createEmail(emails)
-      const features = new Set(['provider/add', 'access/delegate'])
+      const features = new Set([
+        'provider/add',
+        'access/delegate',
+        'store/info',
+      ])
       return {
         spaceWithStorageProvider,
         emails,
@@ -185,6 +190,75 @@ for (const accessApiVariant of /** @type {const} */ ([
         .delegate()
       const accessDelegateResult = await accessApiVariant.invoke(accessDelegate)
       assertNotError(accessDelegateResult)
+    })
+  }
+
+  if (
+    ['provider/add', 'store/info'].every((f) =>
+      accessApiVariant.features.has(f)
+    )
+  ) {
+    it('provider/add allows for store/info ', async () => {
+      const space = await principal.ed25519.generate()
+      const agent = await accessApiVariant.issuer
+      const service = await accessApiVariant.audience
+      const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
+      const accountAuthorization = await createAccountAuthorization(
+        agent,
+        service,
+        principal.Absentee.from({
+          id: /** @type {Ucanto.DID<'mailto'>} */ (accountDid),
+        })
+      )
+      const addStorageProvider = await ucanto
+        .invoke({
+          issuer: agent,
+          audience: service,
+          capability: {
+            can: 'provider/add',
+            with: accountDid,
+            nb: {
+              provider: 'did:web:web3.storage:providers:w3up-alpha',
+              consumer: space.did(),
+            },
+          },
+          proofs: [...accountAuthorization],
+        })
+        .delegate()
+      const addStorageProviderResult = await accessApiVariant.invoke(
+        addStorageProvider
+      )
+      assertNotError(addStorageProviderResult)
+
+      // storage provider added. So we should be able to space/info now
+      const spaceInfo = await ucanto
+        .invoke({
+          issuer: agent,
+          audience: service,
+          capability: {
+            can: 'space/info',
+            with: space.did(),
+            nb: {
+              delegations: {},
+            },
+          },
+          proofs: [
+            // space says agent can store/info with space
+            await ucanto.delegate({
+              issuer: space,
+              audience: agent,
+              capabilities: [
+                {
+                  can: 'space/info',
+                  with: space.did(),
+                },
+              ],
+            }),
+          ],
+        })
+        .delegate()
+      const spaceInfoResult = await accessApiVariant.invoke(spaceInfo)
+      assertNotError(spaceInfoResult)
     })
   }
 }
@@ -336,4 +410,48 @@ async function testAuthorizeClaimProviderAdd(options) {
     true,
     `testing/space-storage.hasStorageProvider is true`
   )
+}
+
+/**
+ * Create some proofs that delegate capabilities to agent to invoke on behalf of account.
+ * This is supposed to emulate what gets created by `access/authorize` confirmation email link click.
+ *
+ * @param {Ucanto.Principal<Ucanto.DID<'key'>>} agent - device agent that will be authorized
+ * @param {Ucanto.Signer<Ucanto.DID>} service
+ * @param {Ucanto.UCAN.Signer<Ucanto.DID<'mailto'>, NON_STANDARD>} account
+ * @param {Ucanto.Capabilities} capabilities
+ * @returns
+ */
+async function createAccountAuthorization(
+  agent,
+  service,
+  account,
+  capabilities = [
+    {
+      with: 'ucan:*',
+      can: '*',
+    },
+  ]
+) {
+  const accountAuthorizesAgentClaim = await ucanto.delegate({
+    issuer: account,
+    audience: agent,
+    capabilities,
+  })
+  const serviceAttestsThatAccountAuthorizesAgent = await ucanto.delegate({
+    issuer: service,
+    audience: agent,
+    capabilities: [
+      {
+        with: service.did(),
+        can: 'ucan/attest',
+        nb: { proof: accountAuthorizesAgentClaim.cid },
+      },
+    ],
+  })
+  const proofs = [
+    accountAuthorizesAgentClaim,
+    serviceAttestsThatAccountAuthorizesAgent,
+  ]
+  return proofs
 }
