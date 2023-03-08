@@ -232,12 +232,16 @@ export interface SpaceUnknown extends Failure {
 }
 
 export interface Assert {
-  equal: (actual: unknown, expected: unknown, message?: string | Error) => void
-  deepEqual: (
-    actual: unknown,
-    expected: unknown,
-    message?: string | Error
-  ) => void
+  equal: <Actual, Expected extends Actual>(
+    actual: Actual,
+    expected: Expected,
+    message?: string
+  ) => unknown
+  deepEqual: <Actual, Expected extends Actual>(
+    actual: Actual,
+    expected: Expected,
+    message?: string
+  ) => unknown
 }
 
 export type Test = (assert: Assert, context: UcantoServerTestContext) => unknown
