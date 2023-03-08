@@ -5,6 +5,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import { createService as createStoreService } from './store.js'
 import { createService as createUploadService } from './upload.js'
+export * from './types.js'
 
 /**
  * @param {Types.UcantoServerContext} options
