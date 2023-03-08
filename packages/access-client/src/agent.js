@@ -196,7 +196,7 @@ export class Agent {
    *
    * Proofs are delegations with an audience matching agent DID, or with an
    * audience matching the session DID.
-   * 
+   *
    * Proof of session will also be included in the returned proofs if any
    * proofs matching the passed capabilities require it.
    *
@@ -249,7 +249,9 @@ export class Agent {
 
     for (const value of this.#delegations(caps)) {
       const { delegation } = value
-      const isSession = delegation.capabilities.some(c => c.can === Access.session.can)
+      const isSession = delegation.capabilities.some(
+        (c) => c.can === Access.session.can
+      )
       if (!isSession && delegation.audience.did() !== this.issuer.did()) {
         arr.push(value)
       }
@@ -435,15 +437,17 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async authorize(email, opts) {
-    const parts = email.split('@').map(s => encodeURIComponent(s))
+    const parts = email.split('@').map((s) => encodeURIComponent(s))
     const sessionPrincipal = DID.parse(`did:mailto:${parts[1]}:${parts[0]}`)
 
-    const res = await Access.authorize.invoke({
-      issuer: this.issuer,
+    const res = await this.invokeAndExecute(Access.authorize, {
       audience: this.connection.id,
       with: this.issuer.did(),
-      nb: { as: sessionPrincipal.did() }
-    }).execute(this.connection)
+      nb: {
+        iss: sessionPrincipal.did(),
+        att: [{ can: 'store/*' }, { can: 'provider/add' }],
+      },
+    })
 
     if (res?.error) {
       throw new Error('failed to authorize session', { cause: res })
@@ -453,7 +457,10 @@ export class Agent {
       /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
       (await this.#waitForDelegation(opts))
 
-    const cap = sessionDelegation.capabilities.find(c => c.can === Access.session.can && c.nb.key === this.issuer.did())
+    // @ts-expect-error "key" does not exist in object, unless it's a session capability
+    const cap = sessionDelegation.capabilities.find(
+      (c) => c.can === Access.session.can && c.nb.key === this.issuer.did()
+    )
     if (!cap && isExpired(sessionDelegation)) {
       throw new Error('received invalid delegation')
     }
