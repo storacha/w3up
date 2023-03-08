@@ -259,6 +259,8 @@ for (const accessApiVariant of /** @type {const} */ ([
         .delegate()
       const spaceInfoResult = await accessApiVariant.invoke(spaceInfo)
       assertNotError(spaceInfoResult)
+      assert.ok('did' in spaceInfoResult)
+      assert.deepEqual(spaceInfoResult.did, space.did())
     })
   }
 }
