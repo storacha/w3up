@@ -84,7 +84,13 @@ export interface CarStoreBucket {
   createUploadUrl: (
     link: UnknownLink,
     size: number
-  ) => Promise<{ url: URL; headers: { 'x-amz-checksum-sha256': string } }>
+  ) => Promise<{
+    url: URL
+    headers: {
+      'x-amz-checksum-sha256': string
+      'content-length': string
+    } & Record<string, string>
+  }>
 }
 
 export interface CarStoreBucketOptions {
@@ -158,7 +164,7 @@ export interface StoreAddOk {
   with: API.URI<'did:'>
   link: UnknownLink
   url?: URL
-  headers?: Record<string, string | number | boolean>
+  headers?: Record<string, string>
 }
 
 export interface StoreRemoveOk {}

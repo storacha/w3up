@@ -134,7 +134,7 @@ export class CarStoreBucket {
       url,
       headers: {
         'x-amz-checksum-sha256': checksum,
-        'content-length': size,
+        'content-length': String(size),
       },
     }
   }

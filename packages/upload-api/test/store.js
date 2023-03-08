@@ -43,7 +43,7 @@ export const test = {
     assert.equal(storeAdd.with, spaceDid)
     assert.deepEqual(storeAdd.link, link)
 
-    assert.equal(storeAdd.headers?.['content-length'], size)
+    assert.equal(storeAdd.headers?.['content-length'], String(size))
     assert.deepEqual(
       storeAdd.headers?.['x-amz-checksum-sha256'],
       base64pad.baseEncode(link.multihash.digest)
