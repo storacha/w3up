@@ -7,7 +7,7 @@ import { D1Dialect } from 'kysely-d1'
 import { D1Error, GenericPlugin } from '../utils/d1.js'
 
 /**
- * @typedef {import('@web3-storage/access/src/types.js').SpaceRecord} SpaceRecord
+ * @typedef {import('@web3-storage/access/src/types.js').SpaceTable} SpaceTable
  */
 
 /**
@@ -19,9 +19,16 @@ export class Spaces {
    * @param {D1Database} d1
    */
   constructor(d1) {
-    /** @type {GenericPlugin<SpaceRecord>} */
+    /** @type {GenericPlugin<import('kysely').Selectable<SpaceTable>>} */
     const objectPlugin = new GenericPlugin({
-      metadata: (v) => JSON.parse(v),
+      metadata: (v) => {
+        // this will be `EMPTY` because it's the default value in the sql schema
+        // https://github.com/web3-storage/w3protocol/issues/447
+        if (v === 'EMPTY') {
+          return
+        }
+        return JSON.parse(v)
+      },
       inserted_at: (v) => new Date(v),
       updated_at: (v) => new Date(v),
     })

@@ -67,6 +67,8 @@ export interface UploadRemoveResponse extends UploadAddResponse {}
 
 export interface ListResponse<R> {
   cursor?: string
+  before?: string
+  after?: string
   size: number
   results: R[]
 }
@@ -174,6 +176,10 @@ export interface Pageable {
    * Maximum number of items to return.
    */
   size?: number
+  /**
+   * If true, return page of results preceding cursor. Defaults to false.
+   */
+  pre?: boolean
 }
 
 export interface RequestOptions extends Retryable, Abortable, Connectable {}

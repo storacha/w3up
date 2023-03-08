@@ -197,7 +197,15 @@ The `with` field of the invocation must be set to the DID of the memory space to
 
 #### Caveats
 
-None currently, but this is expected to change once pagination is fully implemented.
+`cursor` can be set to start listing from an item in the middle of the list. Its value should be a `cursor` returned by a previous invocation of `store/list`
+`size` can be set to change the number of items returned by an `store/list` invocation
+`pre` can be set to `true` to return the page of results preceding `cursor` rather than the results after `cursor`. Defaults to `false`.
+
+| field       | value                    | required? | context                                                         |
+| ----------- | ------------------------ | --------- | --------------------------------------------------------------- |
+| `nb.cursor` | string                   | ❌         | A cursor returned by a previous invocation                      |
+| `nb.size`   | integer                  | ❌         | The maximum number of results to return                         |
+| `nb.pre`    | boolean                  | ❌         | If true, return the page of results preceding the cursor |
 
 ## `upload/` namespace
 
@@ -278,7 +286,15 @@ The `with` field of the invocation must be set to the DID of the memory space to
 
 #### Caveats
 
-None currently, but this is expected to change once pagination is fully implemented.
+`cursor` can be set to start listing from an item in the middle of the list. Its value should be a `cursor` returned by a previous invocation of `upload/list`
+`size` can be set to change the number of items returned by an `upload/list` invocation
+`pre` can be set to `true` to return the page of results preceding `cursor` rather than the results after `cursor`. Defaults to `false`.
+
+| field       | value                    | required? | context                                                         |
+| ----------- | ------------------------ | --------- | --------------------------------------------------------------- |
+| `nb.cursor` | string                   | ❌         | A cursor returned by a previous invocation                      |
+| `nb.size`   | integer                  | ❌         | The maximum number of results to return                         |
+| `nb.pre`    | boolean                  | ❌         | If true, return the page of results preceding the cursor       |
 
 ## `voucher/` namespace
 

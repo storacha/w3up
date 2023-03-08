@@ -1,5 +1,7 @@
 import * as ucanto from '@ucanto/core'
+import * as Ucanto from '@ucanto/interface'
 import * as Server from '@ucanto/server'
+import * as validator from '@ucanto/validator'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
 import { top } from '@web3-storage/capabilities/top'
@@ -11,6 +13,10 @@ import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as uploadApi from './upload-api-proxy.js'
 import { accessAuthorizeProvider } from './access-authorize.js'
+import { accessDelegateProvider } from './access-delegate.js'
+import { accessClaimProvider } from './access-claim.js'
+import { providerAddProvider } from './provider-add.js'
+import { Spaces } from '../models/spaces.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -20,13 +26,47 @@ import { accessAuthorizeProvider } from './access-authorize.js'
  * }
  */
 export function service(ctx) {
+  /** @param {Ucanto.DID<'key'>} space */
+  const hasStorageProvider = async (space) =>
+    spaceHasStorageProvider(space, ctx.models.spaces, ctx.models.provisions)
   return {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
 
     access: {
       authorize: accessAuthorizeProvider(ctx),
+      claim: (...args) => {
+        // disable until hardened in test/staging
+        if (ctx.config.ENV === 'production') {
+          throw new Error(`access/claim invocation handling is not enabled`)
+        }
+        return accessClaimProvider({
+          delegations: ctx.models.delegations,
+          config: ctx.config,
+        })(...args)
+      },
+      delegate: (...args) => {
+        // disable until hardened in test/staging
+        if (ctx.config.ENV === 'production') {
+          throw new Error(`access/delegate invocation handling is not enabled`)
+        }
+        return accessDelegateProvider({
+          delegations: ctx.models.delegations,
+          hasStorageProvider,
+        })(...args)
+      },
     },
+
+    provider: {
+      add: (...args) => {
+        // disable until hardened in test/staging
+        if (ctx.config.ENV === 'production') {
+          throw new Error(`provider/add invocation handling is not enabled`)
+        }
+        return providerAddProvider(ctx)(...args)
+      },
+    },
+
     voucher: {
       claim: voucherClaimProvider(ctx),
       redeem: voucherRedeemProvider(ctx),
@@ -34,8 +74,27 @@ export function service(ctx) {
 
     space: {
       info: Server.provide(Space.info, async ({ capability, invocation }) => {
-        const results = await ctx.models.spaces.get(capability.with)
-        if (!results) {
+        const spaceDid = capability.with
+        if (!validator.DID.match({ method: 'key' }).is(spaceDid)) {
+          /** @type {import('@web3-storage/access/types').SpaceUnknown} */
+          const unexpectedSpaceDidFailure = {
+            error: true,
+            name: 'SpaceUnknown',
+            message: `can only get info for did:key spaces`,
+          }
+          return unexpectedSpaceDidFailure
+        }
+        if (
+          await spaceHasStorageProviderFromProviderAdd(
+            spaceDid,
+            ctx.models.provisions
+          )
+        ) {
+          return { did: spaceDid }
+        }
+        // this only exists if the space was registered via voucher/redeem
+        const space = await ctx.models.spaces.get(capability.with)
+        if (!space) {
           /** @type {import('@web3-storage/access/types').SpaceUnknown} */
           const spaceUnknownFailure = {
             error: true,
@@ -44,7 +103,8 @@ export function service(ctx) {
           }
           return spaceUnknownFailure
         }
-        return results
+        /** @type {import('@web3-storage/access/types').SpaceRecord} */
+        return space
       }),
       recover: Server.provide(
         Space.recover,
@@ -157,6 +217,51 @@ export function service(ctx) {
       fail() {
         throw new Error('test fail')
       },
+      /**
+       * @param {Ucanto.Invocation<Ucanto.Capability<'testing/space-storage', Ucanto.DID<'key'>, Ucanto.Failure>>} invocation
+       */
+      'space-storage': async (invocation) => {
+        const spaceId = invocation.capabilities[0].with
+        const hasStorageProvider =
+          await ctx.models.provisions.hasStorageProvider(spaceId)
+        return {
+          hasStorageProvider,
+          foo: 'ben',
+        }
+      },
     },
   }
+}
+
+/**
+ * @param {Ucanto.DID<'key'>} space
+ * @param {Spaces} spaces
+ * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @returns {Promise<boolean>}
+ */
+async function spaceHasStorageProvider(space, spaces, provisions) {
+  return (
+    (await spaceHasStorageProviderFromProviderAdd(space, provisions)) ||
+    (await spaceHasStorageProviderFromVoucherRedeem(space, spaces))
+  )
+}
+
+/**
+ * @param {Ucanto.DID<'key'>} space
+ * @param {Spaces} spaces
+ * @returns {Promise<boolean>}
+ */
+async function spaceHasStorageProviderFromVoucherRedeem(space, spaces) {
+  const registered = Boolean(await spaces.get(space))
+  return registered
+}
+
+/**
+ * @param {Ucanto.DID<'key'>} space
+ * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @returns {Promise<boolean>}
+ */
+async function spaceHasStorageProviderFromProviderAdd(space, provisions) {
+  const registeredViaProviderAdd = await provisions.hasStorageProvider(space)
+  return registeredViaProviderAdd
 }
