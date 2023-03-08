@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.0...upload-api-v1.0.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* release upload api ([#501](https://github.com/web3-storage/w3protocol/issues/501)) ([23d536a](https://github.com/web3-storage/w3protocol/commit/23d536af6f323311721aecf75ca77b7a19f88643))
+
 ## 1.0.0 (2023-03-08)
 
 
