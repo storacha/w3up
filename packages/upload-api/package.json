@@ -3,6 +3,12 @@
   "version": "1.0.2",
   "type": "module",
   "main": "./src/lib.js",
+  "files": [
+    "src",
+    "test",
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.d.ts.map"
+  ],
   "typesVersions": {
     "*": {
       "src/lib.js": [
@@ -104,6 +110,20 @@
     "ignorePatterns": [
       "dist",
       "coverage"
+    ]
+  },
+  "depcheck": {
+    "specials": [
+      "bin"
+    ],
+    "ignorePatterns": [
+      "dist"
+    ],
+    "ignores": [
+      "dist",
+      "@types/*",
+      "hd-scripts",
+      "eslint-config-prettier"
     ]
   },
   "engines": {
