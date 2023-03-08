@@ -307,15 +307,15 @@ export const test = {
       )
     }
 
-    if (uploadRemove.error) {
+    if (uploadRemove?.error) {
       throw new Error(
         'expected upload/remove response to include the upload object removed',
         { cause: uploadRemove.error }
       )
     }
 
-    assert.equal(uploadRemove.root.toString(), car.roots[0].toString())
-    assert.equal(uploadRemove.shards?.[0].toString(), car.cid.toString())
+    assert.equal(uploadRemove?.root.toString(), car.roots[0].toString())
+    assert.equal(uploadRemove?.shards?.[0].toString(), car.cid.toString())
   },
 
   'upload/remove does not fail for non existent upload': async (
