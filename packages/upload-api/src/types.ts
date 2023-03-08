@@ -158,7 +158,7 @@ export interface StoreAddOk {
   with: API.URI<'did:'>
   link: UnknownLink
   url?: URL
-  headers?: Record<string, string>
+  headers?: Record<string, string | number | boolean>
 }
 
 export interface StoreRemoveOk {}
