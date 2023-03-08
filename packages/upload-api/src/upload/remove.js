@@ -4,7 +4,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.UploadServiceContext} context
- * @returns {API.ServiceMethod<API.UploadRemove, API.UploadRemoveOk | undefined, API.Failure>}
+ * @returns {API.ServiceMethod<API.UploadRemove, API.UploadRemoveOk | null, API.Failure>}
  */
 export function uploadRemoveProvider(context) {
   return Server.provide(Upload.remove, async ({ capability }) => {

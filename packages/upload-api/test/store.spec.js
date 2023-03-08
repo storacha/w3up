@@ -37,7 +37,6 @@ describe('store/*', () => {
           storeTable,
           testStoreTable: storeTable,
           uploadTable,
-          testUploadTable: uploadTable,
           carStoreBucket,
           dudewhereBucket,
           access,

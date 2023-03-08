@@ -34,7 +34,7 @@ export interface Service {
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
     // @todo - Use proper type when no item was removed instead of undefined
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk | undefined, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk | null, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
@@ -70,7 +70,6 @@ export interface UcantoServerTestContext
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
-  testUploadTable: TestUploadTable
   testSpaceRegistry: TestSpaceRegistry
 }
 
@@ -129,18 +128,11 @@ export interface TestStoreTable {
 export interface UploadTable {
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
   insert: (item: UploadAddInput) => Promise<UploadAddOk>
-  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | undefined>
+  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>
   list: (
     space: DID,
     options?: ListOptions
   ) => Promise<ListResponse<UploadListItem>>
-}
-
-export interface TestUploadTable {
-  get(
-    space: DID,
-    root: UnknownLink
-  ): Promise<(UploadAddInput & UploadListItem) | undefined>
 }
 
 export interface StoreAddInput {
@@ -232,12 +224,16 @@ export interface SpaceUnknown extends Failure {
 }
 
 export interface Assert {
-  equal: (actual: unknown, expected: unknown, message?: string | Error) => void
-  deepEqual: (
-    actual: unknown,
-    expected: unknown,
-    message?: string | Error
-  ) => void
+  equal: <Actual, Expected extends Actual>(
+    actual: Actual,
+    expected: Expected,
+    message?: string
+  ) => unknown
+  deepEqual: <Actual, Expected extends Actual>(
+    actual: Actual,
+    expected: Expected,
+    message?: string
+  ) => unknown
 }
 
 export type Test = (assert: Assert, context: UcantoServerTestContext) => unknown

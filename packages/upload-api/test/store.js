@@ -43,7 +43,7 @@ export const test = {
     assert.equal(storeAdd.with, spaceDid)
     assert.deepEqual(storeAdd.link, link)
 
-    assert.deepEqual(storeAdd.headers?.['content-length'], size)
+    assert.equal(storeAdd.headers?.['content-length'], String(size))
     assert.deepEqual(
       storeAdd.headers?.['x-amz-checksum-sha256'],
       base64pad.baseEncode(link.multihash.digest)
@@ -81,16 +81,16 @@ export const test = {
 
     assert.deepEqual(
       {
+        space: item.space,
+        link: item.link,
+        size: item.size,
+        issuer: item.issuer,
+      },
+      {
         space: spaceDid,
         link,
         size: data.byteLength,
         issuer: alice.did(),
-      },
-      {
-        space: item?.space,
-        link: item?.link,
-        size: item?.size,
-        issuer: item?.issuer,
       }
     )
 
@@ -262,10 +262,7 @@ export const test = {
       }
     )
 
-    assert.equal(
-      Link.parse(item.invocation.toString()),
-      item.invocation.toString()
-    )
+    assert.deepEqual(Link.parse(item.invocation.toString()), item.invocation)
 
     assert.equal(
       Date.now() - new Date(item.insertedAt).getTime() < 60_000,

@@ -2,16 +2,23 @@
   "name": "@web3-storage/upload-api",
   "version": "1.0.1",
   "type": "module",
+  "main": "./src/lib.js",
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/src/*"
-      ],
-      "dist/src/lib.d.ts": [
+      "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
+      "store": [
+        "dist/src/store.d.ts"
+      ],
+      "upload": [
+        "dist/src/upload.d.ts"
+      ],
+      "types": [
+        "dist/src/types.d.ts"
+      ],
       "test": [
-        "dist/test/*"
+        "dist/test/lib.d.ts"
       ]
     }
   },
@@ -45,7 +52,6 @@
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules --watch-files src,test"
   },
   "dependencies": {
-    "@sentry/serverless": "^7.22.0",
     "@ucanto/client": "^5.1.0",
     "@ucanto/interface": "^6.0.0",
     "@ucanto/principal": "^5.1.0",
