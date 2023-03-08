@@ -26,22 +26,28 @@ describe('upload/*', () => {
       const access = AccessVerifier.create({ id })
 
       try {
-        await test(assert, {
-          id,
-          errorReporter: {
-            catch(error) {
-              assert.fail(error)
-            },
+        await test(
+          {
+            equal: assert.strictEqual,
+            deepEqual: assert.deepStrictEqual,
           },
-          maxUploadSize: 5_000_000_000,
-          storeTable,
-          testStoreTable: storeTable,
-          uploadTable,
-          carStoreBucket,
-          dudewhereBucket,
-          access,
-          testSpaceRegistry: access,
-        })
+          {
+            id,
+            errorReporter: {
+              catch(error) {
+                assert.fail(error)
+              },
+            },
+            maxUploadSize: 5_000_000_000,
+            storeTable,
+            testStoreTable: storeTable,
+            uploadTable,
+            carStoreBucket,
+            dudewhereBucket,
+            access,
+            testSpaceRegistry: access,
+          }
+        )
       } finally {
         await carStoreBucket.deactivate()
       }
