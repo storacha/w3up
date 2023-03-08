@@ -30,6 +30,10 @@ const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
 
 /**
+ * @typedef {import('./types').Service} Service
+ */
+
+/**
  * Creates a Ucanto connection for the w3access API
  *
  * Usage:
@@ -38,7 +42,6 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
  * import { connection } from '@web3-storage/access/agent'
  * ```
  *
- * @template {import('./types').Service} Service
  * @template {Ucanto.DID} T - DID method
  * @param {object} [options]
  * @param {Ucanto.Principal<T>} [options.principal] - w3access API Principal
@@ -80,7 +83,9 @@ export class Agent {
    * @param {import('./types').AgentOptions} [options]
    */
   constructor(data, options = {}) {
-    this.url = options.url ?? new URL(HOST)
+    /** @type { Client.Channel<Service> & { url?: URL } | undefined } */
+    const channel = options.connection?.channel
+    this.url = options.url ?? channel?.url ?? new URL(HOST)
     this.connection =
       options.connection ??
       connection({

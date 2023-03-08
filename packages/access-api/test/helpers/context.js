@@ -34,14 +34,15 @@ function createBindings(env) {
     LOGTAIL_TOKEN: env.LOGTAIL_TOKEN || '',
     W3ACCESS_METRICS: createAnalyticsEngine(),
     UPLOAD_API_URL: env.UPLOAD_API_URL || '',
-    UPLOAD_API_URL_STAGING: env.UPLOAD_API_URL_STAGING || '',
   }
 }
 
 /**
- * @param {Partial<AccessApiBindings>} env - environment variables to use when configuring access-api. Defaults to process.env.
+ * @param {object} options
+ * @param {Partial<AccessApiBindings>} [options.env] - environment variables to use when configuring access-api. Defaults to process.env.
+ * @param {unknown} [options.globals] - globals passed into miniflare
  */
-export async function context(env = {}) {
+export async function context({ env = {}, globals } = {}) {
   const bindings = createBindings({
     ...process.env,
     ...env,
@@ -58,6 +59,7 @@ export async function context(env = {}) {
     d1Persist: undefined,
     buildCommand: undefined,
     log: new Log(LogLevel.ERROR),
+    ...(globals ? { globals } : {}),
   })
 
   const binds = await mf.getBindings()

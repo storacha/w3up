@@ -228,8 +228,8 @@ describe('store capabilities', function () {
         proofs: [await top()],
       })
 
-      // @ts-expect-error - size type doesnt not match because we are testing fails
       const result = await access(add, {
+        // @ts-expect-error - size type doesn't not match because we are testing fails
         capability: Store.add,
         principal: Verifier,
         authority: w3,
