@@ -70,6 +70,16 @@ export interface SpaceTable {
 }
 export type SpaceRecord = Selectable<SpaceTable>
 
+export type SpaceInfoResult =
+  // w3up spaces registered via provider/add will have this
+  | {
+      // space did
+      did: DID<'key'>
+    }
+  // deprecated and may be removed if voucher/redeem is removed
+  /** @deprecated */
+  | SpaceRecord
+
 export interface AccountTable {
   did: URI<'did:'>
   inserted_at: Generated<Date>
@@ -119,7 +129,7 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, SpaceRecord, Failure | SpaceUnknown>
+    info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
       EncodedDelegation<[SpaceRecover]> | undefined,
