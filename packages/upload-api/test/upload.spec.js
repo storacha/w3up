@@ -23,7 +23,7 @@ describe('upload/*', () => {
       const dudewhereBucket = new DudewhereBucket()
       const signer = await Signer.generate()
       const id = signer.withDID('did:web:test.web3.storage')
-      const access = AccessVerifier.create({ id: signer })
+      const access = AccessVerifier.create({ id })
 
       try {
         await test(assert, {
