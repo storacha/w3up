@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.3...upload-api-v1.0.4) (2023-03-08)
+
+
+### Bug Fixes
+
+* **upload-api:** include test types in the package ([#513](https://github.com/web3-storage/w3protocol/issues/513)) ([0c7a452](https://github.com/web3-storage/w3protocol/commit/0c7a452af99757aa34871c4d5c9d77938934892e))
+
 ## [1.0.3](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.2...upload-api-v1.0.3) (2023-03-08)
 
 
