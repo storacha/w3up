@@ -1,13 +1,13 @@
 {
   "name": "@web3-storage/upload-api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "main": "./src/lib.js",
   "files": [
     "src",
     "test",
-    "dist/src/**/*.d.ts",
-    "dist/src/**/*.d.ts.map"
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map"
   ],
   "typesVersions": {
     "*": {
