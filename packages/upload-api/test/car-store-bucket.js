@@ -40,6 +40,8 @@ export class CarStoreBucket {
       }
 
       response.end()
+      // otherwise it keep connection lingering
+      response.destroy()
     })
     await new Promise((resolve) => server.listen(resolve))
 
@@ -80,7 +82,11 @@ export class CarStoreBucket {
    */
   deactivate() {
     return new Promise((resolve, reject) => {
-      this.server.closeAllConnections()
+      // does not exist in node 16
+      if (typeof this.server.closeAllConnections === 'function') {
+        this.server.closeAllConnections()
+      }
+
       this.server.close((error) => {
         if (error) {
           reject(error)
