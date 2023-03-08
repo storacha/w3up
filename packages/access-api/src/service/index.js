@@ -1,6 +1,7 @@
 import * as ucanto from '@ucanto/core'
 import * as Ucanto from '@ucanto/interface'
 import * as Server from '@ucanto/server'
+import * as validator from '@ucanto/validator'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
 import { top } from '@web3-storage/capabilities/top'
@@ -15,6 +16,7 @@ import { accessAuthorizeProvider } from './access-authorize.js'
 import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
 import { providerAddProvider } from './provider-add.js'
+import { Spaces } from '../models/spaces.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -24,6 +26,9 @@ import { providerAddProvider } from './provider-add.js'
  * }
  */
 export function service(ctx) {
+  /** @param {Ucanto.DID<'key'>} space */
+  const hasStorageProvider = async (space) =>
+    spaceHasStorageProvider(space, ctx.models.spaces, ctx.models.provisions)
   return {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
@@ -47,19 +52,7 @@ export function service(ctx) {
         }
         return accessDelegateProvider({
           delegations: ctx.models.delegations,
-          hasStorageProvider: async (space) => {
-            /** @type {import('./access-delegate.js').HasStorageProvider} */
-            const registeredViaVoucherRedeem = async (space) =>
-              Boolean(await ctx.models.spaces.get(space))
-            /** @type {import('./access-delegate.js').HasStorageProvider} */
-            // eslint-disable-next-line unicorn/consistent-function-scoping
-            const registeredViaProviderAdd = (space) =>
-              ctx.models.provisions.hasStorageProvider(space)
-            return Boolean(
-              (await registeredViaProviderAdd(space)) ||
-                (await registeredViaVoucherRedeem(space))
-            )
-          },
+          hasStorageProvider,
         })(...args)
       },
     },
@@ -81,8 +74,27 @@ export function service(ctx) {
 
     space: {
       info: Server.provide(Space.info, async ({ capability, invocation }) => {
-        const results = await ctx.models.spaces.get(capability.with)
-        if (!results) {
+        const spaceDid = capability.with
+        if (!validator.DID.match({ method: 'key' }).is(spaceDid)) {
+          /** @type {import('@web3-storage/access/types').SpaceUnknown} */
+          const unexpectedSpaceDidFailure = {
+            error: true,
+            name: 'SpaceUnknown',
+            message: `can only get info for did:key spaces`,
+          }
+          return unexpectedSpaceDidFailure
+        }
+        if (
+          await spaceHasStorageProviderFromProviderAdd(
+            spaceDid,
+            ctx.models.provisions
+          )
+        ) {
+          return { did: spaceDid }
+        }
+        // this only exists if the space was registered via voucher/redeem
+        const space = await ctx.models.spaces.get(capability.with)
+        if (!space) {
           /** @type {import('@web3-storage/access/types').SpaceUnknown} */
           const spaceUnknownFailure = {
             error: true,
@@ -91,7 +103,8 @@ export function service(ctx) {
           }
           return spaceUnknownFailure
         }
-        return results
+        /** @type {import('@web3-storage/access/types').SpaceRecord} */
+        return space
       }),
       recover: Server.provide(
         Space.recover,
@@ -218,4 +231,37 @@ export function service(ctx) {
       },
     },
   }
+}
+
+/**
+ * @param {Ucanto.DID<'key'>} space
+ * @param {Spaces} spaces
+ * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @returns {Promise<boolean>}
+ */
+async function spaceHasStorageProvider(space, spaces, provisions) {
+  return (
+    (await spaceHasStorageProviderFromProviderAdd(space, provisions)) ||
+    (await spaceHasStorageProviderFromVoucherRedeem(space, spaces))
+  )
+}
+
+/**
+ * @param {Ucanto.DID<'key'>} space
+ * @param {Spaces} spaces
+ * @returns {Promise<boolean>}
+ */
+async function spaceHasStorageProviderFromVoucherRedeem(space, spaces) {
+  const registered = Boolean(await spaces.get(space))
+  return registered
+}
+
+/**
+ * @param {Ucanto.DID<'key'>} space
+ * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @returns {Promise<boolean>}
+ */
+async function spaceHasStorageProviderFromProviderAdd(space, provisions) {
+  const registeredViaProviderAdd = await provisions.hasStorageProvider(space)
+  return registeredViaProviderAdd
 }
