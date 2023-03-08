@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.2...upload-api-v1.0.3) (2023-03-08)
+
+
+### Bug Fixes
+
+* switch upload-api to node16 ([#509](https://github.com/web3-storage/w3protocol/issues/509)) ([698a033](https://github.com/web3-storage/w3protocol/commit/698a03391221aceb1ce602c407587497d97a77ed))
+* types so that w3infra would have been evident ([#507](https://github.com/web3-storage/w3protocol/issues/507)) ([544a838](https://github.com/web3-storage/w3protocol/commit/544a838fa16b316825f69fd95fcb5e35002ac958))
+
 ## [1.0.2](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.1...upload-api-v1.0.2) (2023-03-08)
 
 
