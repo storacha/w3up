@@ -48,8 +48,8 @@
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",
-    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules test/**/*.spec.js",
-    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules --watch-files src,test"
+    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
+    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "dependencies": {
     "@ucanto/client": "^5.1.0",
@@ -66,7 +66,9 @@
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^5.1.0",
     "@web3-storage/sigv4": "^1.0.2",
-    "mocha": "^10.2.0"
+    "@web-std/blob": "^3.0.4",
+    "mocha": "^10.2.0",
+    "hd-scripts": "^4.1.0"
   },
   "eslintConfig": {
     "extends": [

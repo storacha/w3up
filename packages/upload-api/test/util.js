@@ -7,6 +7,7 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import * as CAR from '@ucanto/transport/car'
 import * as raw from 'multiformats/codecs/raw'
 import { CarWriter } from '@ipld/car'
+import { Blob } from '@web-std/blob'
 
 /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
 export const alice = ed25519.parse(
