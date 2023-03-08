@@ -240,9 +240,9 @@ export function service(ctx) {
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProvider(space, spaces, provisions) {
-  return Boolean(
+  return (
     (await spaceHasStorageProviderFromProviderAdd(space, provisions)) ||
-      (await spaceHasStorageProviderFromVoucherRedeem(space, spaces))
+    (await spaceHasStorageProviderFromVoucherRedeem(space, spaces))
   )
 }
 
