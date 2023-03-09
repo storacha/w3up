@@ -57,5 +57,18 @@ describe('DbProvisions', () => {
     // all of lastProvisions are duplicate, but firstProvision is new so that should be added
     await storage.putMany(...lastProvisions, firstProvision)
     assert.deepEqual(await storage.count(), count)
+
+    // but if we try to store the same provision (same `cid`) with different
+    // fields derived from invocation, it should error
+    const modifiedFirstProvision = {
+      ...firstProvision,
+      space: /** @type {const} */ ('did:key:foo'),
+    }
+    const putModifiedFirstProvision = () =>
+      storage.putMany(modifiedFirstProvision)
+    await assert.rejects(
+      putModifiedFirstProvision(),
+      'cannot putMany with same cid but different derived fields'
+    )
   })
 })
