@@ -218,6 +218,14 @@ async function authorize(req, env) {
             type: 'svg',
             errorCorrectionLevel: 'M',
             margin: 10,
+          }).catch((error) => {
+            if (/too big to be stored in a qr/i.test(error.message)) {
+              env.log.error(error)
+              // It's not important to have the QR code
+              // eslint-disable-next-line unicorn/no-useless-undefined
+              return undefined
+            }
+            throw error
           })}
         />
       )
@@ -226,7 +234,8 @@ async function authorize(req, env) {
     const err = /** @type {Error} */ (error)
     env.log.error(err)
     return new HtmlResponse(
-      <ValidateEmailError msg={'Oops something went wrong.'} />
+      <ValidateEmailError msg={'Oops something went wrong.'} />,
+      { status: 500 }
     )
   }
 }
