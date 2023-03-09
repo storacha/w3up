@@ -135,7 +135,7 @@ export const PendingValidateEmail = ({ autoApprove }) => (
  * @param {string} param0.ucan
  * @param {string} param0.email
  * @param {string} param0.audience
- * @param {string} param0.qrcode
+ * @param {string} [param0.qrcode]
  */
 export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
   <div class="fcenter">
@@ -173,17 +173,21 @@ export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
       <p>
         <code>{audience}</code>
       </p>
-      <h5>QR Code:</h5>
-      <div
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: qrcode,
-        }}
-        class="mcenter"
-        style={{
-          width: '300px',
-        }}
-      />
+      {qrcode && (
+        <>
+          <h5>QR Code:</h5>
+          <div
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: qrcode,
+            }}
+            class="mcenter"
+            style={{
+              width: '300px',
+            }}
+          />
+        </>
+      )}
       <h5>UCAN:</h5>
       <pre>
         <code>{ucan}</code>
