@@ -12,7 +12,7 @@ describe('DbProvisions', () => {
     const storage = new DbProvisions(createD1Database(d1))
     const count = Math.round(Math.random() * 10)
     const spaceA = await principal.ed25519.generate()
-    const provisions = await Promise.all(
+    const [firstProvision, ...lastProvisions] = await Promise.all(
       Array.from({ length: count }).map(async () => {
         const issuerKey = await principal.ed25519.generate()
         const issuer = issuerKey.withDID('did:mailto:example.com:foo')
@@ -37,8 +37,8 @@ describe('DbProvisions', () => {
         return provision
       })
     )
-    await storage.putMany(...provisions)
-    assert.deepEqual(await storage.count(), provisions.length)
+    await storage.putMany(...lastProvisions)
+    assert.deepEqual(await storage.count(), lastProvisions.length)
 
     const spaceHasStorageProvider = await storage.hasStorageProvider(
       spaceA.did()
@@ -52,5 +52,10 @@ describe('DbProvisions', () => {
         'can parse provision.cid as CID'
       )
     }
+
+    // ensure no error if we try to store same provision twice
+    // all of lastProvisions are duplicate, but firstProvision is new so that should be added
+    await storage.putMany(...lastProvisions, firstProvision)
+    assert.deepEqual(await storage.count(), count)
   })
 })

@@ -85,6 +85,14 @@ export class DbProvisions {
     await this.#db
       .insertInto(this.tableNames.provisions)
       .values(rows)
+      .onConflict((oc) => {
+        // if cid conflicts, update columns w/ values from conflicting insert
+        return oc.column('cid').doUpdateSet({
+          consumer: (eb) => eb.ref('excluded.consumer'),
+          provider: (eb) => eb.ref('excluded.provider'),
+          sponsor: (eb) => eb.ref('excluded.sponsor'),
+        })
+      })
       .executeTakeFirstOrThrow()
   }
 
