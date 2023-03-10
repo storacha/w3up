@@ -6,12 +6,15 @@ import * as Ucanto from '@ucanto/interface'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
+import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
-import { stringToDelegation } from './encoding.js'
+import * as Provider from '@web3-storage/capabilities/provider'
+
+import { stringToDelegation, bytesToDelegations } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
@@ -28,6 +31,55 @@ export { AgentData }
 
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
+
+/**
+ *
+ * @param {string} email
+ */
+function emailToSessionPrincipal(email) {
+  const parts = email.split('@').map((s) => encodeURIComponent(s))
+  return DID.parse(`did:mailto:${parts[1]}:${parts[0]}`)
+}
+/**
+ *
+ * @param {Signer} space
+ * @param {Signer} account
+ * @returns
+ */
+async function createSpaceSaysAccountCanStoreAddWithSpace(space, account) {
+  return ucanto.delegate({
+    issuer: space,
+    audience: account,
+    capabilities: [
+      {
+        can: 'store/add',
+        with: space.did(),
+      },
+      {
+        can: 'store/list',
+        with: space.did(),
+      },
+    ],
+  })
+}
+
+/**
+ *
+ * @param {Signer.EdSigner} space
+ * @param {Signer} device
+ */
+async function createSpaceSaysDeviceCanAccessDelegateWithSpace(space, device) {
+  return ucanto.delegate({
+    issuer: space,
+    audience: device,
+    capabilities: [
+      {
+        can: 'access/delegate',
+        with: space.did(),
+      },
+    ],
+  })
+}
 
 /**
  * @typedef {import('./types').Service} Service
@@ -437,8 +489,7 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async authorize(email, opts) {
-    const parts = email.split('@').map((s) => encodeURIComponent(s))
-    const sessionPrincipal = DID.parse(`did:mailto:${parts[1]}:${parts[0]}`)
+    const sessionPrincipal = emailToSessionPrincipal(email)
 
     const res = await this.invokeAndExecute(Access.authorize, {
       audience: this.connection.id,
@@ -457,8 +508,8 @@ export class Agent {
       /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
       (await this.#waitForDelegation(opts))
 
-    // @ts-expect-error "key" does not exist in object, unless it's a session capability
     const cap = sessionDelegation.capabilities.find(
+      // @ts-expect-error "key" does not exist in object, unless it's a session capability
       (c) => c.can === Access.session.can && c.nb.key === this.issuer.did()
     )
     if (!cap && isExpired(sessionDelegation)) {
@@ -466,8 +517,76 @@ export class Agent {
     }
 
     await this.addProof(sessionDelegation)
+  }
 
-    // TODO: claim delegations
+  async claimDelegations() {
+    const res = await this.invokeAndExecute(Access.claim, {
+      audience: this.connection.id,
+      with: this.issuer.did(),
+    })
+
+    if (res.error) {
+      throw new Error('error claiming delegations')
+    }
+    const delegations = Object.values(res.delegations).flatMap((bytes) =>
+      bytesToDelegations(bytes)
+    )
+    for (const delegation of delegations) {
+      this.addProof(delegation)
+    }
+
+    // TODO: should we be inferring which spaces we have access to here and updating local space state?
+
+    return delegations
+  }
+
+  /**
+   *
+   * @param {string} email
+   * @param {Signer.EdSigner} space - TODO is this type correct?
+   */
+  async addProvider(email, space) {
+    const sessionPrincipal = emailToSessionPrincipal(email)
+    await this.invokeAndExecute(Provider.add, {
+      audience: this.connection.id,
+      with: sessionPrincipal.did(),
+      // TODO: do we really want to send ALL delegations here or should we only select some subset?
+      proofs: this.#data.delegations,
+      nb: {
+        // TODO probably need to make it possible to pass other providers in
+        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        consumer: space.did(),
+      },
+    })
+  }
+
+  /**
+   *
+   * @param {string} email
+   * @param {Signer.EdSigner} space - TODO is this type correct?
+   */
+  async delegateSpaceAccessToAccount(email, space) {
+    const sessionPrincipal = emailToSessionPrincipal(email)
+    const spaceSaysAccountCanStoreAddWithSpace =
+      await createSpaceSaysAccountCanStoreAddWithSpace(space, sessionPrincipal)
+    await this.invokeAndExecute(Access.delegate, {
+      audience: this.connection.id,
+      with: space.did(),
+      nb: {
+        delegations: {
+          [spaceSaysAccountCanStoreAddWithSpace.cid.toString()]:
+            spaceSaysAccountCanStoreAddWithSpace.cid,
+        },
+      },
+      proofs: [
+        await createSpaceSaysDeviceCanAccessDelegateWithSpace(
+          space,
+          this.issuer
+        ),
+        // must be embedded here because it's referenced by cid in .nb.delegations
+        spaceSaysAccountCanStoreAddWithSpace,
+      ],
+    })
   }
 
   /**
