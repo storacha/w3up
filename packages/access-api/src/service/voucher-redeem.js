@@ -46,7 +46,7 @@ export function voucherRedeemProvider(ctx) {
     )
 
     if (error) {
-      if (error.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+      if ('code' in error && error.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
         return new Failure(`Space ${capability.nb.space} already registered.`)
       } else {
         throw error

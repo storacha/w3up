@@ -11,12 +11,14 @@ import {
 
 /**
  * @typedef Tables
- * @property {DelegationRow} delegations
+ * @property {DelegationRow} delegations_v2
  */
 
 /**
  * @typedef {import("../types/database").Database<Tables>} DelegationsDatabase
  */
+
+export const delegationsTable = /** @type {const} */ ('delegations_v2')
 
 /**
  * DelegationsStorage that persists using SQL.
@@ -25,6 +27,9 @@ import {
 export class DbDelegationsStorage {
   /** @type {DelegationsDatabase} */
   #db
+  #tables = {
+    delegations: delegationsTable,
+  }
 
   /**
    * @param {DelegationsDatabase} db
@@ -39,7 +44,7 @@ export class DbDelegationsStorage {
 
   async count() {
     const { size } = await this.#db
-      .selectFrom('delegations')
+      .selectFrom(this.#tables.delegations)
       .select((e) => e.fn.count('cid').as('size'))
       .executeTakeFirstOrThrow()
     return BigInt(size)
@@ -49,7 +54,14 @@ export class DbDelegationsStorage {
    * @param {import('../types/delegations').Query} query
    */
   async *find(query) {
-    for await (const row of await selectByAudience(this.#db, query.audience)) {
+    const { audience } = query
+    const { delegations } = this.#tables
+    const selection = await this.#db
+      .selectFrom(delegations)
+      .selectAll()
+      .where(`${delegations}.audience`, '=', audience)
+      .execute()
+    for await (const row of selection) {
       yield rowToDelegation(row)
     }
   }
@@ -66,7 +78,7 @@ export class DbDelegationsStorage {
     }
     const values = delegations.map((d) => createDelegationRowUpdate(d))
     await this.#db
-      .insertInto('delegations')
+      .insertInto(this.#tables.delegations)
       .values(values)
       .onConflict((oc) => oc.column('cid').doNothing())
       .executeTakeFirst()
@@ -87,7 +99,7 @@ export class DbDelegationsStorage {
       )
     }
     for await (const row of this.#db
-      .selectFrom('delegations')
+      .selectFrom(this.#tables.delegations)
       .select(['bytes'])
       .stream()) {
       yield rowToDelegation(row)
@@ -96,11 +108,40 @@ export class DbDelegationsStorage {
 }
 
 /**
+ * indicates that processing failed due to encountering an unexpected delegation.
+ * e.g. if a delegation could not be parsed from underlying storage
+ */
+class UnexpectedDelegation extends Error {
+  name = 'UnexpectedDelegation'
+}
+
+/**
  * @param {Pick<DelegationRow, 'bytes'>} row
  * @returns {Ucanto.Delegation}
  */
 function rowToDelegation(row) {
-  const delegations = bytesToDelegations(row.bytes)
+  /** @type {Ucanto.Delegation[]} */
+  let delegations = []
+  try {
+    delegations = bytesToDelegations(row.bytes)
+  } catch (error) {
+    if (
+      typeof error === 'object' &&
+      error &&
+      error.toString() === 'TypeError: Input should be a non-empty Uint8Array.'
+    ) {
+      throw Object.assign(
+        new UnexpectedDelegation(`failed to create delegation from row`, {
+          cause: error,
+        }),
+        // adding these so they appear in sentry et al and can aid debugging
+        {
+          row,
+        }
+      )
+    }
+    throw error
+  }
   if (delegations.length !== 1) {
     throw new Error(
       `unexpected number of delegations from bytes: ${delegations.length}`
@@ -113,7 +154,7 @@ function rowToDelegation(row) {
  * @param {Ucanto.Delegation} d
  * @returns {DelegationRowUpdate}
  */
-function createDelegationRowUpdate(d) {
+export function createDelegationRowUpdate(d) {
   return {
     cid: d.cid.toV1().toString(),
     audience: d.audience.did(),
@@ -123,13 +164,18 @@ function createDelegationRowUpdate(d) {
 }
 
 /**
- * @param {DelegationsDatabase} db
- * @param {Ucanto.DID} audience
+ * @param {Array<number> | Buffer | unknown} sqlValue - value from kysely 'bytes' table - in node it could be a Buffer. In cloudflare it might be an Array
+ * @returns {ArrayBuffer|undefined} - undefined if unable to convert
  */
-async function selectByAudience(db, audience) {
-  return await db
-    .selectFrom('delegations')
-    .selectAll()
-    .where('delegations.audience', '=', audience)
-    .execute()
+export function delegationsTableBytesToArrayBuffer(sqlValue) {
+  if (ArrayBuffer.isView(sqlValue)) {
+    return new Uint8Array(
+      sqlValue.buffer,
+      sqlValue.byteOffset,
+      sqlValue.byteLength
+    )
+  }
+  if (Array.isArray(sqlValue)) {
+    return Uint8Array.from(sqlValue)
+  }
 }

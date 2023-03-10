@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.2.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v3.1.0...capabilities-v3.2.0) (2023-03-08)
+
+
+### Features
+
+* upgrade to new ucanto ([#498](https://github.com/web3-storage/w3protocol/issues/498)) ([dcb41a9](https://github.com/web3-storage/w3protocol/commit/dcb41a9981c2b6bebbdbd29debcad9f510383680))
+
+## [3.1.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v3.0.0...capabilities-v3.1.0) (2023-03-04)
+
+
+### Features
+
+* access-api handles provider/add invocations ([#462](https://github.com/web3-storage/w3protocol/issues/462)) ([5fb56f7](https://github.com/web3-storage/w3protocol/commit/5fb56f794529f3d4de2b4597c47503002767fabb))
+* includes proofs chains in the delegated authorization chain ([#467](https://github.com/web3-storage/w3protocol/issues/467)) ([5144293](https://github.com/web3-storage/w3protocol/commit/5144293deabd9d5380448ae288e089ef2652def7))
+
 ## [3.0.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v2.3.0...capabilities-v3.0.0) (2023-03-01)
 
 

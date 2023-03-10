@@ -9,8 +9,12 @@ import { Validations } from '../models/validations.js'
 import * as Email from './email.js'
 import { createUploadApiConnection } from '../service/upload-api-proxy.js'
 import { DID } from '@ucanto/core'
-import { DbDelegationsStorage } from '../models/delegations.js'
+import {
+  DbDelegationsStorage,
+  delegationsTableBytesToArrayBuffer,
+} from '../models/delegations.js'
 import { createD1Database } from './d1.js'
+import { DbProvisions } from '../models/provisions.js'
 
 /**
  * Obtains a route context object.
@@ -64,10 +68,17 @@ export function getContext(request, env, ctx) {
     config,
     url,
     models: {
-      delegations: new DbDelegationsStorage(createD1Database(config.DB)),
+      delegations: new DbDelegationsStorage(
+        createD1Database(config.DB, {
+          bytes: (v) => {
+            return delegationsTableBytesToArrayBuffer(v) ?? v
+          },
+        })
+      ),
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS, env.SPACE_VERIFIERS),
       accounts: new Accounts(config.DB),
+      provisions: new DbProvisions(createD1Database(config.DB)),
     },
     email,
     uploadApi: createUploadApiConnection({
