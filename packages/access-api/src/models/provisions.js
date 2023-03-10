@@ -14,9 +14,9 @@ export function createProvisions(storage = []) {
     const hasRowWithSpace = storage.some(({ space }) => space === consumerId)
     return hasRowWithSpace
   }
-  /** @type {Provisions['putMany']} */
-  const putMany = async (...items) => {
-    storage.push(...items)
+  /** @type {Provisions['put']} */
+  const put = async (item) => {
+    storage.push(item)
   }
   /** @type {Provisions['count']} */
   const count = async () => {
@@ -24,13 +24,13 @@ export function createProvisions(storage = []) {
   }
   return {
     count,
-    putMany,
+    put,
     hasStorageProvider,
   }
 }
 
 /**
- * @typedef ProvsionsRow
+ * @typedef ProvisionsRow
  * @property {string} cid
  * @property {string} consumer
  * @property {string} provider
@@ -38,7 +38,7 @@ export function createProvisions(storage = []) {
  */
 
 /**
- * @typedef {import("../types/database").Database<{ provisions: ProvsionsRow }>} ProvisionsDatabase
+ * @typedef {import("../types/database").Database<{ provisions: ProvisionsRow }>} ProvisionsDatabase
  */
 
 /**
@@ -68,32 +68,66 @@ export class DbProvisions {
     return BigInt(size)
   }
 
-  /** @type {Provisions['putMany']} */
-  async putMany(...items) {
-    if (items.length === 0) {
+  /** @type {Provisions['put']} */
+  async put(item) {
+    /** @type {ProvisionsRow} */
+    const row = {
+      cid: item.invocation.cid.toString(),
+      consumer: item.space,
+      provider: item.provider,
+      sponsor: item.account,
+    }
+    /** @type {Array<keyof ProvisionsRow>} */
+    const rowColumns = ['cid', 'consumer', 'provider', 'sponsor']
+    const insert = this.#db
+      .insertInto(this.tableNames.provisions)
+      .values(row)
+      .returning(rowColumns)
+
+    let primaryKeyError
+    try {
+      await insert.executeTakeFirstOrThrow()
+    } catch (error) {
+      const isD1 = /D1_ALL_ERROR/.test(String(error))
+      if (!isD1) throw error
+      const cause =
+        error && typeof error === 'object' && 'cause' in error && error.cause
+      const code =
+        cause &&
+        typeof cause === 'object' &&
+        'code' in cause &&
+        typeof cause.code === 'string' &&
+        cause.code
+      if (code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') throw error
+      primaryKeyError = error
+    }
+
+    if (!primaryKeyError) {
+      // inserted ok
       return
     }
-    /** @type {ProvsionsRow[]} */
-    const rows = items.map((item) => {
-      return {
-        cid: item.invocation.cid.toString(),
-        consumer: item.space,
-        provider: item.provider,
-        sponsor: item.account,
-      }
-    })
-    await this.#db
-      .insertInto(this.tableNames.provisions)
-      .values(rows)
-      .onConflict((oc) => {
-        // if cid conflicts, update columns w/ values from conflicting insert
-        return oc.column('cid').doUpdateSet({
-          consumer: (eb) => eb.ref('excluded.consumer'),
-          provider: (eb) => eb.ref('excluded.provider'),
-          sponsor: (eb) => eb.ref('excluded.sponsor'),
-        })
-      })
+
+    // there was already a row with this invocation cid
+    // as long as the row we tried to insert is same as one already there, no need to error
+    const existing = await this.#db
+      .selectFrom(this.tableNames.provisions)
+      .select(rowColumns)
+      .where('cid', '=', row.cid)
       .executeTakeFirstOrThrow()
+    if (deepEqual(existing, row)) {
+      return
+    }
+
+    // this is a sign of something very wrong. throw so error reporters can report on it
+    throw Object.assign(
+      new Error(
+        `Provision with cid ${item.invocation.cid} already exists with different field values`
+      ),
+      {
+        insertion: row,
+        existing,
+      }
+    )
   }
 
   /** @type {Provisions['hasStorageProvider']} */
@@ -119,4 +153,19 @@ export class DbProvisions {
       .execute()
     return rows
   }
+}
+
+/**
+ * @param {Record<string,any>} x
+ * @param {Record<string,any>} y
+ * @returns {boolean}
+ */
+function deepEqual(x, y) {
+  const ok = Object.keys
+  const tx = typeof x
+  const ty = typeof y
+  return x && y && tx === 'object' && tx === ty
+    ? ok(x).length === ok(y).length &&
+        ok(x).every((key) => deepEqual(x[key], y[key]))
+    : x === y
 }

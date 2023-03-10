@@ -35,7 +35,7 @@ export function createProviderAddHandler(options) {
         message: 'Issuer must be a mailto DID',
       }
     }
-    await options.provisions.putMany({
+    await options.provisions.put({
       invocation,
       space: consumer,
       provider,
