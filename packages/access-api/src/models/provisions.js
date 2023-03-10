@@ -88,37 +88,39 @@ export class DbProvisions {
     try {
       await insert.executeTakeFirstOrThrow()
     } catch (error) {
-      const isD1 = /D1_ALL_ERROR/.test(String(error))
-      if (!isD1) throw error
-      const cause =
-        error && typeof error === 'object' && 'cause' in error && error.cause
-      const code =
-        cause &&
-        typeof cause === 'object' &&
-        'code' in cause &&
-        typeof cause.code === 'string' &&
-        cause.code
-      if (code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') throw error
-      primaryKeyError = error
+      const d1Error = extractD1Error(error)
+      switch (d1Error?.code) {
+        case 'SQLITE_CONSTRAINT_PRIMARYKEY': {
+          primaryKeyError = error
+          break
+        }
+        default: {
+          throw error
+        }
+      }
     }
 
     if (!primaryKeyError) {
-      // inserted ok
+      // no error inserting, we're done with put
       return
     }
 
     // there was already a row with this invocation cid
-    // as long as the row we tried to insert is same as one already there, no need to error
+    // as long as the row we tried to insert is same as one already there, no need to error.
+    // so let's compare the existing row with that cid to the row we tried to insert.
     const existing = await this.#db
       .selectFrom(this.tableNames.provisions)
       .select(rowColumns)
       .where('cid', '=', row.cid)
       .executeTakeFirstOrThrow()
     if (deepEqual(existing, row)) {
+      // the insert failed, but the existing row is identical to the row that failed to insert.
+      // so the put is a no-op, and we can consider it a success despite encountering the primaryKeyError
       return
     }
 
     // this is a sign of something very wrong. throw so error reporters can report on it
+    // and determine what led to a put() with same invocation cid but new non-cid column values
     throw Object.assign(
       new Error(
         `Provision with cid ${item.invocation.cid} already exists with different field values`
@@ -168,4 +170,21 @@ function deepEqual(x, y) {
     ? ok(x).length === ok(y).length &&
         ok(x).every((key) => deepEqual(x[key], y[key]))
     : x === y
+}
+
+/**
+ * @param {unknown} error
+ */
+function extractD1Error(error) {
+  const isD1 = /D1_ALL_ERROR/.test(String(error))
+  if (!isD1) return
+  const cause =
+    error && typeof error === 'object' && 'cause' in error && error.cause
+  const code =
+    cause &&
+    typeof cause === 'object' &&
+    'code' in cause &&
+    typeof cause.code === 'string' &&
+    cause.code
+  return { cause, code }
 }
