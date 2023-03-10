@@ -1,4 +1,4 @@
-<h1 align="center">⁂<br/>web3.storage</h1>
+<h1 align="center"><img src="https://bafybeia4luuns6dgymy5kau5rm7r4qzrrzg6cglpzpogussprpy42cmcn4.ipfs.w3s.link/w3up-logo.png" width="445" /></h1>
 <p align="center">The main JavaScript client for the w3up platform by <a href="https://web3.storage">https://web3.storage</a></p>
 <p align="center">
   <a href="https://github.com/web3-storage/w3up-client/actions/workflows/test.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/web3-storage/w3up-client/test.yml?branch=main&style=for-the-badge" /></a>
