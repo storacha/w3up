@@ -6,6 +6,7 @@ import { Delegation as AgentDelegation } from './delegation.js'
 import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
+import { AccessClient } from './capability/access.js'
 
 export class Client extends Base {
   /**
@@ -16,6 +17,7 @@ export class Client extends Base {
   constructor (agentData, options) {
     super(agentData, options)
     this.capability = {
+      access: new AccessClient(agentData, options),
       store: new StoreClient(agentData, options),
       upload: new UploadClient(agentData, options),
       space: new SpaceClient(agentData, options)
