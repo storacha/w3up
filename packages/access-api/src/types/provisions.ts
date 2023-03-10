@@ -19,11 +19,11 @@ export interface Provision {
 export interface ProvisionsStorage {
   hasStorageProvider: (consumer: Ucanto.DID<'key'>) => Promise<boolean>
   /**
-   * write several items into storage
+   * ensure item is stored
    *
-   * @param items - provisions to store
+   * @param item - provision to store
    */
-  putMany: (...items: Provision[]) => Promise<void>
+  put: (item: Provision) => Promise<void>
 
   /**
    * get number of stored items
