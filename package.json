@@ -32,6 +32,10 @@
       "types": "./dist/src/client.d.ts",
       "import": "./src/client.js"
     },
+    "./capability/access": {
+      "types": "./dist/src/capability/access.d.ts",
+      "import": "./src/capability/access.js"
+    },
     "./capability/space": {
       "types": "./dist/src/capability/space.d.ts",
       "import": "./src/capability/space.js"
@@ -69,14 +73,14 @@
   },
   "dependencies": {
     "@ipld/dag-ucan": "^3.0.1",
-    "@ucanto/client": "^4.0.2",
-    "@ucanto/core": "^4.0.2",
-    "@ucanto/interface": "^4.0.2",
-    "@ucanto/principal": "^4.0.2",
-    "@ucanto/transport": "^4.0.2",
-    "@web3-storage/access": "^9.1.1",
+    "@ucanto/client": "^5.1.0",
+    "@ucanto/core": "^5.1.0",
+    "@ucanto/interface": "^6.0.0",
+    "@ucanto/principal": "^5.1.0",
+    "@ucanto/transport": "^5.1.0",
+    "@web3-storage/access": "file:../w3protocol/packages/access-client",
     "@web3-storage/capabilities": "^2.0.0",
-    "@web3-storage/upload-client": "^5.3.0"
+    "@web3-storage/upload-client": "^7.0.0"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.2.0",
