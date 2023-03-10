@@ -81,7 +81,10 @@ describe('DbProvisions', () => {
       modifiedFirstProvision.space
     )
     assert.deepEqual(provisionForFakeConsumer.length, 0)
-    // count umodified
-    assert.deepEqual(await storage.count(), count)
+    assert.deepEqual(
+      await storage.count(),
+      count,
+      'count was not increased by put w/ existing cid'
+    )
   })
 })
