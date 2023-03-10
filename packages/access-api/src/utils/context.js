@@ -62,9 +62,10 @@ export function getContext(request, env, ctx) {
     env: config.ENV,
   })
   const url = new URL(request.url)
+  const signer = Signer.parse(config.PRIVATE_KEY).withDID(config.DID)
   return {
     log,
-    signer: Signer.parse(config.PRIVATE_KEY).withDID(config.DID),
+    signer,
     config,
     url,
     models: {
@@ -78,7 +79,7 @@ export function getContext(request, env, ctx) {
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
-      provisions: new DbProvisions(createD1Database(config.DB)),
+      provisions: new DbProvisions(signer.did(), createD1Database(config.DB)),
     },
     email,
     uploadApi: createUploadApiConnection({
