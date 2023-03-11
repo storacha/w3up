@@ -3,10 +3,8 @@ import * as ucanto from '@ucanto/core'
 import { Verifier, Absentee } from '@ucanto/principal'
 import { collect } from 'streaming-iterables'
 import * as Access from '@web3-storage/capabilities/access'
-import {
-  delegationsToBytes,
-  delegationsToString,
-} from '@web3-storage/access/encoding'
+import { delegationsToString } from '@web3-storage/access/encoding'
+import * as delegationsResponse from '../utils/delegations-response.js'
 
 /**
  * @typedef {import('@web3-storage/capabilities/types').AccessConfirmSuccess} AccessConfirmSuccess
@@ -88,9 +86,6 @@ export async function handleAccessConfirm(invocation, ctx) {
   await ctx.models.validations.putSession(authorization, agent.did())
 
   return {
-    delegations: {
-      [delegation.cid.toString()]: delegationsToBytes([delegation]),
-      [attestation.cid.toString()]: delegationsToBytes([attestation]),
-    },
+    delegations: delegationsResponse.encode([delegation, attestation]),
   }
 }
