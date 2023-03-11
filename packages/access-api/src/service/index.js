@@ -4,6 +4,7 @@ import * as Server from '@ucanto/server'
 import * as validator from '@ucanto/validator'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
+import * as Access from '@web3-storage/capabilities/access'
 import { top } from '@web3-storage/capabilities/top'
 import {
   delegationToString,
@@ -17,6 +18,7 @@ import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
 import { providerAddProvider } from './provider-add.js'
 import { Spaces } from '../models/spaces.js'
+import { handleAccessConfirm } from './access-confirm.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -45,6 +47,17 @@ export function service(ctx) {
           config: ctx.config,
         })(...args)
       },
+      confirm: Server.provide(
+        Access.confirm,
+        async ({ capability, invocation }) => {
+          return handleAccessConfirm(
+            /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
+              invocation
+            ),
+            ctx
+          )
+        }
+      ),
       delegate: (...args) => {
         // disable until hardened in test/staging
         if (ctx.config.ENV === 'production') {

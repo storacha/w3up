@@ -313,8 +313,12 @@ describe('access/authorize', function () {
     const space = await ed25519.generate()
     const w3 = ctx.service
 
-    await registerSpaces([space], ctx)
     const account = Absentee.from({ id: 'did:mailto:dag.house:test' })
+    await registerSpaces([space], {
+      ...ctx,
+      agent: ctx.issuer,
+      account,
+    })
 
     // delegate all space capabilities to the account
     const delegation = await delegate({
@@ -343,6 +347,7 @@ describe('access/authorize', function () {
       })
       .execute(ctx.conn)
 
+    warnOnErrorResult(delegateResult)
     assert.equal(delegateResult.error, undefined, 'delegation succeeded')
 
     // Now generate an agent and try to authorize with the account

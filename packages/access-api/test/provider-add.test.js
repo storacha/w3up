@@ -83,6 +83,7 @@ for (const accessApiVariant of /** @type {const} */ ([
             }),
           {
             registerSpaces: [spaceWithStorageProvider],
+            account: { did: () => /** @type {const} */ ('did:mailto:foo') },
           }
         ),
       }

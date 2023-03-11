@@ -1,8 +1,8 @@
 import * as Ucanto from '@ucanto/interface'
-import { Voucher } from '@web3-storage/capabilities'
+import { Access, Provider, Voucher } from '@web3-storage/capabilities'
 import * as assert from 'assert'
 import * as principal from '@ucanto/principal'
-
+import * as delegationsResponse from '../../src/utils/delegations-response.js'
 /**
  * @typedef {import('./types').HelperTestContext} HelperTestContext
  */
@@ -12,12 +12,23 @@ import * as principal from '@ucanto/principal'
  *
  * @param {() => Promise<HelperTestContext>} createContext
  * @param {object} [options]
- * @param {Iterable<Promise<Ucanto.Principal>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.account - account to register spaces with
+ * @param {Iterable<Promise<Ucanto.Principal<Ucanto.DID<'key'>>>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
  */
 export function createTesterFromContext(createContext, options) {
   const context = createContext().then(async (ctx) => {
-    await registerSpaces(options?.registerSpaces ?? [], ctx)
-    return ctx
+    const registeredSpaceAgent = await principal.ed25519.generate()
+    if (options) {
+      await registerSpaces(options?.registerSpaces ?? [], {
+        ...ctx,
+        account: options.account,
+        agent: registeredSpaceAgent,
+      })
+    }
+    return {
+      ...ctx,
+      registeredSpaceAgent,
+    }
   })
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
@@ -43,23 +54,55 @@ export function createTesterFromContext(createContext, options) {
  * given an iterable of spaces, register them against an access-api
  * using a service-issued voucher/redeem invocation
  *
- * @param {Iterable<Resolvable<Ucanto.Principal>>} spaces
+ * @param {Iterable<Resolvable<Ucanto.Principal<Ucanto.DID<'key'>>>>} spaces
  * @param {object} options
  * @param {Ucanto.Signer<Ucanto.DID>} options.service
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.agent
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.account
  * @param {Ucanto.ConnectionView<Record<string, any>>} options.conn
  */
-export async function registerSpaces(spaces, { service, conn }) {
+export async function registerSpaces(
+  spaces,
+  { service, conn, account, agent }
+) {
+  // first register account
+  const request = await accountRegistrationInvocation(
+    service,
+    account.did(),
+    agent.did(),
+    service
+  )
+  const results = await conn.execute(request)
+  assert.deepEqual(
+    results.length,
+    1,
+    'registration invocation should have 1 result'
+  )
+  const [result] = results
+  assertNotError(result)
+  assert.ok(
+    'delegations' in result,
+    'registration result should have delegations'
+  )
+  const accountDelegations = [
+    ...delegationsResponse.decode(/** @type {any} */ (result.delegations)),
+  ]
   for (const spacePromise of spaces) {
     const space = await spacePromise
-    const redeem = await spaceRegistrationInvocation(service, space.did())
-    const results = await conn.execute(redeem)
-    assert.deepEqual(
-      results.length,
-      1,
-      'registration invocation should have 1 result'
-    )
-    const [result] = results
-    assertNotError(result)
+    const addProvider = await Provider.add
+      .invoke({
+        issuer: agent,
+        audience: service,
+        with: account.did(),
+        nb: {
+          consumer: space.did(),
+          provider: 'did:web:web3.storage:providers:w3up-alpha',
+        },
+        proofs: [...accountDelegations],
+      })
+      .delegate()
+    const [addProviderResult] = await conn.execute(addProvider)
+    assertNotError(addProviderResult)
   }
 }
 
@@ -72,7 +115,7 @@ export async function registerSpaces(spaces, { service, conn }) {
  * @param {Ucanto.DID} space
  * @param {Ucanto.Principal} audience - audience of the invocation. often is same as issuer
  */
-export async function spaceRegistrationInvocation(
+export async function spaceRegistrationInvocationVoucher(
   issuer,
   space,
   audience = issuer
@@ -90,6 +133,42 @@ export async function spaceRegistrationInvocation(
     })
     .delegate()
   return redeem
+}
+
+/**
+ * get an access-api invocation that will register an account.
+ * This is useful e.g. because some functionality (e.g. access/delegate)
+ * will fail unless the space is registered.
+ *
+ * @param {Ucanto.Signer<Ucanto.DID>} service - issues voucher/redeem. e.g. could be the same signer as access-api env.PRIVATE_KEY
+ * @param {Ucanto.DID<'mailto'>} account
+ * @param {Ucanto.DID<'key'>} agent
+ * @param {Ucanto.Principal} audience - audience of the invocation. often is same as issuer
+ * @param {number} lifetimeInSeconds
+ */
+export async function accountRegistrationInvocation(
+  service,
+  account,
+  agent,
+  audience = service,
+  lifetimeInSeconds = 60 * 15
+) {
+  const registerSpace = await Access.confirm
+    .invoke({
+      issuer: service,
+      audience,
+      with: service.did(),
+      lifetimeInSeconds,
+      // We link to the authorization request so that this attestation can
+      // not be used to authorize a different request.
+      nb: {
+        iss: account,
+        aud: agent,
+        att: [{ can: '*' }],
+      },
+    })
+    .delegate()
+  return registerSpace
 }
 
 /**
