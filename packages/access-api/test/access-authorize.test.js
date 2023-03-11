@@ -17,6 +17,7 @@ import {
 } from './helpers/ucanto-test-utils.js'
 import { ed25519, Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
+import { Space } from '@web3-storage/capabilities'
 
 /** @type {typeof assert} */
 const t = assert
@@ -424,5 +425,16 @@ describe('access/authorize', function () {
       delegation.cid,
       'delegation to an account is included'
     )
+
+    // use these delegations to do something on the space
+    const info = await Space.info
+      .invoke({
+        issuer: agent,
+        audience: w3,
+        with: space.did(),
+        proofs: [authorization, attestation],
+      })
+      .execute(ctx.conn)
+    assert.notDeepEqual(info.error, true, 'space/info did not error')
   })
 })
