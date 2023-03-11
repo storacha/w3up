@@ -1,5 +1,49 @@
 # Changelog
 
+## [10.0.0](https://github.com/web3-storage/w3protocol/compare/access-v9.4.0...access-v10.0.0) (2023-03-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463))
+
+### Features
+
+* access-api handles provider/add invocations ([#462](https://github.com/web3-storage/w3protocol/issues/462)) ([5fb56f7](https://github.com/web3-storage/w3protocol/commit/5fb56f794529f3d4de2b4597c47503002767fabb))
+* access-api serves access/claim invocations ([#456](https://github.com/web3-storage/w3protocol/issues/456)) ([baacf35](https://github.com/web3-storage/w3protocol/commit/baacf3553ce8de0ca75e0815da849cca65ec880a))
+* handle access/delegate invocations without error ([#427](https://github.com/web3-storage/w3protocol/issues/427)) ([4f0bd1c](https://github.com/web3-storage/w3protocol/commit/4f0bd1c1cd3cfb1c848892ad418c6d7b2197045a))
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463)) ([2d786ee](https://github.com/web3-storage/w3protocol/commit/2d786ee81a6eb72c4782548ad3e3796fe3947fa5))
+* upgrade to new ucanto ([#498](https://github.com/web3-storage/w3protocol/issues/498)) ([dcb41a9](https://github.com/web3-storage/w3protocol/commit/dcb41a9981c2b6bebbdbd29debcad9f510383680))
+
+
+### Bug Fixes
+
+* allow injecting email ([#466](https://github.com/web3-storage/w3protocol/issues/466)) ([e19847f](https://github.com/web3-storage/w3protocol/commit/e19847fef804fed33f709ec8b78640fff21ca01e))
+
+## [9.4.0](https://github.com/web3-storage/w3protocol/compare/access-v9.3.0...access-v9.4.0) (2023-02-23)
+
+
+### Features
+
+* add support for access/authorize and update ([#392](https://github.com/web3-storage/w3protocol/issues/392)) ([9c8ca0b](https://github.com/web3-storage/w3protocol/commit/9c8ca0b385c940c8f0c21ee9edde093d2dcab8b8)), closes [#386](https://github.com/web3-storage/w3protocol/issues/386)
+
+
+### Bug Fixes
+
+* look for URL in channel before falling back to default ([#440](https://github.com/web3-storage/w3protocol/issues/440)) ([0741295](https://github.com/web3-storage/w3protocol/commit/0741295768af977dc5b3e35acabe4de85f9660b5))
+
+## [9.4.0](https://github.com/web3-storage/w3protocol/compare/access-v9.3.0...access-v9.4.0) (2023-02-21)
+
+
+### Features
+
+* add support for access/authorize and update ([#392](https://github.com/web3-storage/w3protocol/issues/392)) ([9c8ca0b](https://github.com/web3-storage/w3protocol/commit/9c8ca0b385c940c8f0c21ee9edde093d2dcab8b8)), closes [#386](https://github.com/web3-storage/w3protocol/issues/386)
+
+
+### Bug Fixes
+
+* look for URL in channel before falling back to default ([#440](https://github.com/web3-storage/w3protocol/issues/440)) ([0741295](https://github.com/web3-storage/w3protocol/commit/0741295768af977dc5b3e35acabe4de85f9660b5))
+
 ## [9.3.0](https://github.com/web3-storage/w3protocol/compare/access-v9.2.0...access-v9.3.0) (2023-01-30)
 
 

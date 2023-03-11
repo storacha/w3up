@@ -6,9 +6,15 @@ import { loadConfig } from '../config.js'
 import { Accounts } from '../models/accounts.js'
 import { Spaces } from '../models/spaces.js'
 import { Validations } from '../models/validations.js'
-import { Email } from './email.js'
+import * as Email from './email.js'
 import { createUploadApiConnection } from '../service/upload-api-proxy.js'
 import { DID } from '@ucanto/core'
+import {
+  DbDelegationsStorage,
+  delegationsTableBytesToArrayBuffer,
+} from '../models/delegations.js'
+import { createD1Database } from './d1.js'
+import { DbProvisions } from '../models/provisions.js'
 
 /**
  * Obtains a route context object.
@@ -20,6 +26,14 @@ import { DID } from '@ucanto/core'
  */
 export function getContext(request, env, ctx) {
   const config = loadConfig(env)
+  const email =
+    config.ENV === 'test' ||
+    (config.ENV === 'dev' && env.DEBUG_EMAIL === 'true')
+      ? Email.debug()
+      : Email.configure({
+          token: config.POSTMARK_TOKEN,
+          sender: config.POSTMARK_SENDER,
+        })
 
   // Sentry
   const sentry = new Toucan({
@@ -54,11 +68,19 @@ export function getContext(request, env, ctx) {
     config,
     url,
     models: {
+      delegations: new DbDelegationsStorage(
+        createD1Database(config.DB, {
+          bytes: (v) => {
+            return delegationsTableBytesToArrayBuffer(v) ?? v
+          },
+        })
+      ),
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
+      provisions: new DbProvisions(createD1Database(config.DB)),
     },
-    email: new Email({ token: config.POSTMARK_TOKEN }),
+    email,
     uploadApi: createUploadApiConnection({
       audience: DID.parse(config.DID).did(),
       url: new URL(config.UPLOAD_API_URL),

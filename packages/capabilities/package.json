@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/capabilities",
-  "version": "2.2.0",
+  "version": "3.2.0",
   "description": "Capabilities provided by web3.storage",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/capabilities",
   "repository": {
@@ -15,6 +15,7 @@
   "scripts": {
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
+    "check": "tsc --build",
     "test": "pnpm run test:node && pnpm run test:browser",
     "test:node": "mocha 'test/**/*.test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test",
@@ -28,6 +29,9 @@
   },
   "typesVersions": {
     "*": {
+      "provider": [
+        "dist/src/provider"
+      ],
       "space": [
         "dist/src/space"
       ],
@@ -60,11 +64,11 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ucanto/core": "^4.2.3",
-    "@ucanto/interface": "^4.2.3",
-    "@ucanto/principal": "^4.2.3",
-    "@ucanto/transport": "^4.2.3",
-    "@ucanto/validator": "^4.2.3"
+    "@ucanto/core": "^5.1.0",
+    "@ucanto/interface": "^6.0.0",
+    "@ucanto/principal": "^5.1.0",
+    "@ucanto/transport": "^5.1.0",
+    "@ucanto/validator": "^6.0.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
@@ -75,7 +79,7 @@
     "mocha": "^10.2.0",
     "playwright-test": "^8.1.2",
     "type-fest": "^3.3.0",
-    "typescript": "4.9.4",
+    "typescript": "4.9.5",
     "watch": "^1.0.2"
   },
   "eslintConfig": {

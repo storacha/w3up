@@ -68,7 +68,7 @@ describe('space-recover', function () {
     assert.deepEqual(del.audience.did(), issuer.did())
     assert.deepEqual(del.issuer.did(), service.did())
     assert.deepEqual(del.capabilities[0].can, 'space/recover')
-    const rsp = await mf.dispatchFetch(url)
+    const rsp = await mf.dispatchFetch(url, { method: 'POST' })
     const html = await rsp.text()
 
     assert(html.includes(encoded))

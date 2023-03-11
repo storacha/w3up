@@ -5,12 +5,13 @@ import type {
   SpaceTable,
 } from '@web3-storage/access/types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
-import { Email } from './utils/email.js'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
 import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { Accounts } from './models/accounts.js'
+import { DelegationsStorage as Delegations } from './types/delegations.js'
+import { ProvisionsStorage } from './types/provisions.js'
 
 export {}
 
@@ -22,6 +23,11 @@ export interface AnalyticsEngine {
 export interface AnalyticsEngineEvent {
   readonly doubles?: number[]
   readonly blobs?: Array<ArrayBuffer | string | null>
+}
+
+export interface Email {
+  sendValidation: ({ to: string, url: string }) => Promise<void>
+  send: ({ to: string, textBody: string, subject: string }) => Promise<void>
 }
 
 export interface Env {
@@ -39,6 +45,9 @@ export interface Env {
   PRIVATE_KEY: string
   SENTRY_DSN: string
   POSTMARK_TOKEN: string
+  POSTMARK_SENDER?: string
+
+  DEBUG_EMAIL?: string
   LOGTAIL_TOKEN: string
   // bindings
   SPACES: KVNamespace
@@ -55,9 +64,11 @@ export interface RouteContext {
   url: URL
   email: Email
   models: {
-    spaces: Spaces
-    validations: Validations
     accounts: Accounts
+    delegations: Delegations
+    spaces: Spaces
+    provisions: ProvisionsStorage
+    validations: Validations
   }
   uploadApi: ConnectionView
 }

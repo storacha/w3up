@@ -21,6 +21,7 @@ import type {
   Signer,
   SignerArchive,
   SigAlg,
+  Caveats,
 } from '@ucanto/interface'
 
 import type {
@@ -32,6 +33,16 @@ import type {
   VoucherRedeem,
   Top,
   AccessAuthorize,
+  AccessAuthorizeSuccess,
+  AccessDelegate,
+  AccessDelegateFailure,
+  AccessDelegateSuccess,
+  AccessClaim,
+  AccessClaimSuccess,
+  AccessClaimFailure,
+  ProviderAdd,
+  ProviderAddSuccess,
+  ProviderAddFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -58,6 +69,16 @@ export interface SpaceTable {
   delegation: string | null
 }
 export type SpaceRecord = Selectable<SpaceTable>
+
+export type SpaceInfoResult =
+  // w3up spaces registered via provider/add will have this
+  | {
+      // space did
+      did: DID<'key'>
+    }
+  // deprecated and may be removed if voucher/redeem is removed
+  /** @deprecated */
+  | SpaceRecord
 
 export interface AccountTable {
   did: URI<'did:'>
@@ -88,8 +109,16 @@ export interface SpaceTableMetadata {
  */
 export interface Service {
   access: {
-    // returns a URL string for tests or nothing in other envs
-    authorize: ServiceMethod<AccessAuthorize, string | undefined, Failure>
+    authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
+    claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
+    delegate: ServiceMethod<
+      AccessDelegate,
+      AccessDelegateSuccess,
+      AccessDelegateFailure
+    >
+  }
+  provider: {
+    add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
   }
   voucher: {
     claim: ServiceMethod<
@@ -100,7 +129,7 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, SpaceRecord, Failure | SpaceUnknown>
+    info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
       EncodedDelegation<[SpaceRecover]> | undefined,
@@ -206,10 +235,7 @@ export type InvokeOptions<
   A extends Ability,
   R extends Resource,
   CAP extends CapabilityParser<
-    Match<
-      { can: A; with: R; nb?: Record<string, unknown> | undefined },
-      UnknownMatch
-    >
+    Match<{ can: A; with: R; nb: Caveats }, UnknownMatch>
   >
 > = UCANBasicOptions &
   InferNb<InferInvokedCapability<CAP>['nb']> & {

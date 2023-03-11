@@ -1,7 +1,8 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import { OperationNodeTransformer } from 'kysely'
+import { Kysely, OperationNodeTransformer } from 'kysely'
+import { D1Dialect } from 'kysely-d1'
 import { isPlainObject, isDate, isBuffer } from './common.js'
 
 /**
@@ -136,4 +137,30 @@ export class D1Error extends Error {
     this.name = 'D1Error'
     this.code = error.cause.code
   }
+}
+
+/**
+ * @template S
+ * @param {D1Database} d1
+ * @param {Record<string, (v: unknown) => unknown>} [resultTransforms]
+ * @returns {import('../types/database.js').Database<S>}
+ */
+export function createD1Database(d1, resultTransforms = {}) {
+  /** @type {Kysely<S>} */
+  const kdb = new Kysely({
+    dialect: new D1Dialect({ database: d1 }),
+    plugins: [
+      new GenericPlugin({
+        // eslint-disable-next-line unicorn/no-null
+        expires_at: (v) => (typeof v === 'string' ? new Date(v) : null),
+        inserted_at: (v) => new Date(v),
+        updated_at: (v) => new Date(v),
+        ...resultTransforms,
+      }),
+    ],
+  })
+  const db = Object.assign(kdb, {
+    canStream: false,
+  })
+  return db
 }

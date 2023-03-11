@@ -1,9 +1,5 @@
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
-import {
-  delegationsToBytes,
-  expirationToDate,
-} from '@web3-storage/access/encoding'
 import { Kysely } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
 import { GenericPlugin } from '../utils/d1.js'
@@ -52,26 +48,6 @@ export class Accounts {
   }
 
   /**
-   *
-   * @param {Ucanto.Delegation} del
-   */
-  async addDelegation(del) {
-    const result = await this.d1
-      .insertInto('delegations')
-      .values({
-        cid: del.cid.toV1().toString(),
-        audience: del.audience.did(),
-        issuer: del.issuer.did(),
-        bytes: delegationsToBytes([del]),
-        expires_at: expirationToDate(del.expiration),
-      })
-      .onConflict((oc) => oc.column('cid').doNothing())
-      .returningAll()
-      .executeTakeFirst()
-    return result
-  }
-
-  /**
    * @param {Ucanto.URI<"did:">} did
    */
   async get(did) {
@@ -79,34 +55,6 @@ export class Accounts {
       .selectFrom('accounts')
       .selectAll()
       .where('accounts.did', '=', did)
-      .executeTakeFirst()
-  }
-
-  /**
-   * @param {Ucanto.URI<"did:">} did
-   */
-  async getDelegations(did) {
-    return await this.d1
-      .selectFrom('delegations')
-      .selectAll()
-      .where('delegations.audience', '=', did)
-      .execute()
-  }
-
-  /**
-   * @param {string} cid
-   */
-  async getDelegationsByCid(cid) {
-    return await this.d1
-      .selectFrom('delegations')
-      .selectAll()
-      .where('delegations.cid', '=', cid)
-      .where((qb) =>
-        qb
-          .where('delegations.expires_at', '>=', new Date())
-          // eslint-disable-next-line unicorn/no-null
-          .orWhere('delegations.expires_at', 'is', null)
-      )
       .executeTakeFirst()
   }
 }

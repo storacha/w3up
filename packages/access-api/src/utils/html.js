@@ -97,11 +97,45 @@ export class HtmlResponse extends Response {
 
 /**
  *
+ * @param {object} props
+ * @param {boolean} [props.autoApprove]
+ */
+export const PendingValidateEmail = ({ autoApprove }) => (
+  <div class="fcenter">
+    <img
+      src="https://web3.storage/android-chrome-512x512.png"
+      height="80"
+      width="80"
+    />
+    <div>
+      <h1>Validating Email</h1>
+      <form id="approval" method="post" class="fcenter">
+        <button class="mcenter">Approve</button>
+      </form>
+      {autoApprove ? (
+        <script
+          dangerouslySetInnerHTML={{
+            // NOTE: this script sticks to ES3-era syntax for compat with more browsers
+            __html: `(function () {
+            // auto-submit the form for any user w/JS enabled
+            var form = document.getElementById('approval');
+            form.style.display = 'none';
+            form.submit();
+          })();`,
+          }}
+        />
+      ) : undefined}
+    </div>
+  </div>
+)
+
+/**
+ *
  * @param {object} param0
  * @param {string} param0.ucan
  * @param {string} param0.email
  * @param {string} param0.audience
- * @param {string} param0.qrcode
+ * @param {string} [param0.qrcode]
  */
 export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
   <div class="fcenter">
@@ -139,17 +173,21 @@ export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
       <p>
         <code>{audience}</code>
       </p>
-      <h5>QR Code:</h5>
-      <div
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: qrcode,
-        }}
-        class="mcenter"
-        style={{
-          width: '300px',
-        }}
-      />
+      {qrcode && (
+        <>
+          <h5>QR Code:</h5>
+          <div
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: qrcode,
+            }}
+            class="mcenter"
+            style={{
+              width: '300px',
+            }}
+          />
+        </>
+      )}
       <h5>UCAN:</h5>
       <pre>
         <code>{ucan}</code>

@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "9.3.0",
+  "version": "10.0.0",
   "description": "w3access client",
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access-client",
   "repository": {
@@ -60,12 +60,12 @@
   "dependencies": {
     "@ipld/car": "^5.1.0",
     "@ipld/dag-ucan": "^3.2.0",
-    "@ucanto/client": "^4.2.3",
-    "@ucanto/core": "^4.2.3",
-    "@ucanto/interface": "^4.2.3",
-    "@ucanto/principal": "^4.2.3",
-    "@ucanto/transport": "^4.2.3",
-    "@ucanto/validator": "^4.2.3",
+    "@ucanto/client": "^5.1.0",
+    "@ucanto/core": "^5.1.0",
+    "@ucanto/interface": "^6.0.0",
+    "@ucanto/principal": "^5.1.0",
+    "@ucanto/transport": "^5.1.0",
+    "@ucanto/validator": "^6.0.0",
     "@web3-storage/capabilities": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "10.2.0",
@@ -89,7 +89,7 @@
     "@types/node": "^18.11.18",
     "@types/varint": "^6.0.1",
     "@types/ws": "^8.5.4",
-    "@ucanto/server": "^4.2.3",
+    "@ucanto/server": "^6.0.0",
     "assert": "^2.0.0",
     "delay": "^5.0.0",
     "hd-scripts": "^4.0.0",
@@ -98,7 +98,7 @@
     "p-queue": "^7.3.0",
     "playwright-test": "^8.1.2",
     "sade": "^1.8.1",
-    "typescript": "4.9.4",
+    "typescript": "4.9.5",
     "watch": "^1.0.2"
   },
   "eslintConfig": {
