@@ -15,6 +15,20 @@ import {
 
 /**
  * @param {Ucanto.Invocation<import('@web3-storage/capabilities/src/types').AccessConfirm>} invocation
+ */
+export function parse(invocation) {
+  const capability = invocation.capabilities[0]
+  // Create a absentee signer for the account that authorized the delegation
+  const account = Absentee.from({ id: capability.nb.iss })
+  const agent = Verifier.parse(capability.nb.aud)
+  return {
+    account,
+    agent,
+  }
+}
+
+/**
+ * @param {Ucanto.Invocation<import('@web3-storage/capabilities/src/types').AccessConfirm>} invocation
  * @param {import('../bindings').RouteContext} ctx
  * @returns {Promise<Ucanto.Result<AccessConfirmSuccess, AccessConfirmFailure>>}
  */
@@ -24,9 +38,7 @@ export async function handleAccessConfirm(invocation, ctx) {
     throw new Error(`Not a valid access/confirm delegation`)
   }
 
-  // Create a absentee signer for the account that authorized the delegation
-  const account = Absentee.from({ id: capability.nb.iss })
-  const agent = Verifier.parse(capability.nb.aud)
+  const { account, agent } = parse(invocation)
 
   // It the future we should instead render a page and allow a user to select
   // which delegations they wish to re-delegate. Right now we just re-delegate

@@ -50,6 +50,10 @@ export function service(ctx) {
       confirm: Server.provide(
         Access.confirm,
         async ({ capability, invocation }) => {
+          // only needed in tests
+          if (ctx.config.ENV !== 'test') {
+            throw new Error(`access/confirm is disabled`)
+          }
           return handleAccessConfirm(
             /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
               invocation
