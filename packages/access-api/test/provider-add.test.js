@@ -22,7 +22,10 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
     name: 'handled by createProviderAddHandler',
     ...(() => {
       const spaceWithStorageProvider = principal.ed25519.generate()
-      const provisions = createProvisions()
+      const service = {
+        did: () => /** @type {const} */ ('did:web:web3.storage'),
+      }
+      const provisions = createProvisions(service.did())
       return {
         spaceWithStorageProvider,
         provisions,
@@ -47,7 +50,7 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
             with: `did:mailto:example.com:foo`,
             nb: {
               consumer: space.did(),
-              provider: 'did:web:web3.storage:providers:w3up-alpha',
+              provider: providerAddHandlerVariant.provisions.service,
             },
           })
           .delegate()
@@ -149,7 +152,7 @@ for (const accessApiVariant of /** @type {const} */ ([
             can: 'provider/add',
             with: accountDid,
             nb: {
-              provider: 'did:web:web3.storage:providers:w3up-alpha',
+              provider: service.did(),
               consumer: space.did(),
             },
           },
@@ -218,7 +221,7 @@ for (const accessApiVariant of /** @type {const} */ ([
             can: 'provider/add',
             with: accountDid,
             nb: {
-              provider: 'did:web:web3.storage:providers:w3up-alpha',
+              provider: service.did(),
               consumer: space.did(),
             },
           },
@@ -291,7 +294,7 @@ export function createEmail(storage) {
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.deviceA
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.space
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.accountA
- * @param {Ucanto.Principal} options.service - web3.storage service
+ * @param {Ucanto.Principal<Ucanto.DID<'web'>>} options.service - web3.storage service
  * @param {import('miniflare').Miniflare} options.miniflare
  * @param {(invocation: Ucanto.Invocation<Ucanto.Capability>) => Promise<unknown>} options.invoke
  * @param {ValidationEmailSend[]} options.emails
@@ -375,7 +378,7 @@ async function testAuthorizeClaimProviderAdd(options) {
         audience: service,
         with: accountA.did(),
         nb: {
-          provider: 'did:web:web3.storage:providers:w3up-alpha',
+          provider: service.did(),
           consumer: space.did(),
         },
         proofs: claimedDelegations,
