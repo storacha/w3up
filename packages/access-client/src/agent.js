@@ -35,15 +35,16 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
 /**
  *
  * @param {string} email
+ * @returns {Ucanto.Principal<Ucanto.DID<'mailto'>>}
  */
 function emailToSessionPrincipal(email) {
   const parts = email.split('@').map((s) => encodeURIComponent(s))
   return DID.parse(`did:mailto:${parts[1]}:${parts[0]}`)
 }
+
 /**
- *
- * @param {Signer} space
- * @param {Signer} account
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @returns
  */
 async function createSpaceSaysAccountCanStoreAddWithSpace(space, account) {
@@ -64,9 +65,8 @@ async function createSpaceSaysAccountCanStoreAddWithSpace(space, account) {
 }
 
 /**
- *
- * @param {Signer.EdSigner} space
- * @param {Signer} device
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} space
+ * @param {Ucanto.Principal<Ucanto.DID<'key'>>} device
  */
 async function createSpaceSaysDeviceCanAccessDelegateWithSpace(space, device) {
   return ucanto.delegate({
@@ -520,11 +520,19 @@ export class Agent {
   }
 
   async claimDelegations() {
-    const res = await this.invokeAndExecute(Access.claim, {
-      audience: this.connection.id,
-      with: this.issuer.did(),
-    })
-
+    const [res] = await this.connection.execute(
+      Access.claim.invoke({
+        issuer: this.issuer,
+        audience: this.connection.id,
+        with: this.issuer.did(),
+        proofs: this.proofs([
+          {
+            can: 'access/claim',
+            with: this.issuer.did(),
+          },
+        ]),
+      })
+    )
     if (res.error) {
       throw new Error('error claiming delegations')
     }
@@ -551,7 +559,12 @@ export class Agent {
       audience: this.connection.id,
       with: sessionPrincipal.did(),
       // TODO: do we really want to send ALL delegations here or should we only select some subset?
-      proofs: this.#data.delegations,
+      proofs: this.proofs([
+        {
+          can: 'provider/add',
+          with: sessionPrincipal.did(),
+        },
+      ]),
       nb: {
         // TODO probably need to make it possible to pass other providers in
         provider: 'did:web:web3.storage:providers:w3up-alpha',

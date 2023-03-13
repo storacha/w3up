@@ -157,7 +157,7 @@ export type CIDString = string
  */
 export interface AgentDataModel {
   meta: AgentMeta
-  principal: Signer
+  principal: Signer<DID<'key'>>
   currentSpace?: DID
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
@@ -331,4 +331,4 @@ export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
   Phantom<C>
 
 export type BytesDelegation<C extends Capabilities = Capabilities> =
-  Uint8Array & Phantom<C>
+  Uint8Array & Phantom<Delegation<C>>
