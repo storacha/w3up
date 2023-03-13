@@ -154,7 +154,7 @@ export class AgentData {
       const cap = delegation.capabilities.find(
         (c) =>
           // @ts-expect-error "key" does not exist in object, unless it's a session capability
-          c.can === Access.session.can && c?.nb?.key === this.principal.did()
+          c.can === Access.session.can && c.nb?.key === this.principal.did()
       )
       if (cap && !isExpired(delegation)) return delegation
     }
