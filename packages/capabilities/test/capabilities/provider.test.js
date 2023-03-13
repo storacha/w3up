@@ -18,7 +18,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       },
       proofs: await createAuthorization({ agent, service, account }),
@@ -35,7 +35,7 @@ describe('provider/add', function () {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'provider/add')
       assert.deepEqual(result.capability.nb, {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       })
     }
@@ -50,7 +50,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       },
     })
@@ -78,7 +78,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       },
       proofs: [delegation],
@@ -107,7 +107,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       },
       proofs: [attestation],
@@ -131,7 +131,7 @@ describe('provider/add', function () {
         with: bobAccount.did(),
         // @ts-expect-error
         nb: {
-          provider: 'did:web:web3.storage:providers:w3up-alpha',
+          provider: service.did(),
         },
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "consumer"/)
@@ -145,7 +145,7 @@ describe('provider/add', function () {
         audience: service,
         with: bobAccount.did(),
         nb: {
-          provider: 'did:web:web3.storage:providers:w3up-alpha',
+          provider: service.did(),
           // @ts-expect-error
           consumer: 'did:mailto:web3.storage:user',
         },
@@ -162,27 +162,26 @@ describe('provider/add', function () {
         with: bobAccount.did(),
         // @ts-expect-error - missing provider
         nb: {
-          // provider: 'did:web:web3.storage:providers:w3up-alpha',
+          // provider: service.did(),
           consumer: bob.did(),
         },
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "provider"/)
   })
 
-  it('requires nb.provider be registered', async function () {
+  it('does not require nb.provider be registered', async function () {
     const bobAccount = bob.withDID('did:mailto:bob.com:bob')
-    assert.throws(() => {
-      Provider.add.invoke({
+    await Provider.add
+      .invoke({
         issuer: bob,
         audience: service,
         with: bobAccount.did(),
         nb: {
-          // @ts-expect-error - not registered
           provider: 'did:web:web3.storage:providers:w3up-beta',
           consumer: bob.did(),
         },
       })
-    }, /Error: Invalid 'nb' - Object contains invalid field "provider"/)
+      .delegate()
   })
 
   it('can delegate provider/add', async () => {
@@ -194,7 +193,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       },
       proofs: [
@@ -203,7 +202,7 @@ describe('provider/add', function () {
           audience: bob,
           with: account,
           nb: {
-            provider: 'did:web:web3.storage:providers:w3up-alpha',
+            provider: service.did(),
             consumer: space.did(),
           },
           proofs: await createAuthorization({ agent, service, account }),
@@ -229,7 +228,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       },
       proofs: [
@@ -238,7 +237,7 @@ describe('provider/add', function () {
           audience: bob,
           with: account,
           nb: {
-            provider: 'did:web:web3.storage:providers:w3up-alpha',
+            provider: service.did(),
           },
           proofs: await createAuthorization({ agent, service, account }),
         }),
@@ -263,7 +262,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: space.did(),
       },
       proofs: [
@@ -297,7 +296,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: bob.did(),
       },
       proofs: [
@@ -332,7 +331,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: bob.did(),
       },
       proofs: [
@@ -372,7 +371,7 @@ describe('provider/add', function () {
       audience: service,
       with: 'did:mailto:mallory.com:bob',
       nb: {
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: service.did(),
         consumer: bob.did(),
       },
       proofs: [
@@ -420,7 +419,7 @@ describe('provider/add', function () {
           with: account.did(),
           nb: {
             consumer: space.did(),
-            provider: 'did:web:web3.storage:providers:w3up-alpha',
+            provider: service.did(),
           },
           // NOTE: no proofs!
         })

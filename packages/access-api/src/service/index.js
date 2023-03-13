@@ -234,9 +234,10 @@ export function service(ctx) {
 }
 
 /**
+ * @template {Ucanto.DID} Service
  * @param {Ucanto.DID<'key'>} space
  * @param {Spaces} spaces
- * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProvider(space, spaces, provisions) {
@@ -257,8 +258,9 @@ async function spaceHasStorageProviderFromVoucherRedeem(space, spaces) {
 }
 
 /**
+ * @template {Ucanto.DID} Service
  * @param {Ucanto.DID<'key'>} space
- * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProviderFromProviderAdd(space, provisions) {
