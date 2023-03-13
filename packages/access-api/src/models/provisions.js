@@ -1,28 +1,32 @@
 /* eslint-disable no-void */
 
 /**
- * @typedef {import("../types/provisions").ProvisionsStorage} Provisions
+ * @template {import("@ucanto/interface").DID} ServiceId
+ * @typedef {import("../types/provisions").ProvisionsStorage<ServiceId>} Provisions
  */
 
 /**
- * @param {Array<import("../types/provisions").Provision>} storage
- * @returns {Provisions}
+ * @template {import("@ucanto/interface").DID} ServiceId
+ * @param {ServiceId} service
+ * @param {Array<import("../types/provisions").Provision<ServiceId>>} storage
+ * @returns {Provisions<ServiceId>}
  */
-export function createProvisions(storage = []) {
-  /** @type {Provisions['hasStorageProvider']} */
+export function createProvisions(service, storage = []) {
+  /** @type {Provisions<ServiceId>['hasStorageProvider']} */
   const hasStorageProvider = async (consumerId) => {
     const hasRowWithSpace = storage.some(({ space }) => space === consumerId)
     return hasRowWithSpace
   }
-  /** @type {Provisions['put']} */
+  /** @type {Provisions<ServiceId>['put']} */
   const put = async (item) => {
     storage.push(item)
   }
-  /** @type {Provisions['count']} */
+  /** @type {Provisions<ServiceId>['count']} */
   const count = async () => {
     return BigInt(storage.length)
   }
   return {
+    service,
     count,
     put,
     hasStorageProvider,
@@ -42,6 +46,7 @@ export function createProvisions(storage = []) {
  */
 
 /**
+ * @template {import("@ucanto/interface").DID} ServiceId
  * Provisions backed by a kyseli database (e.g. sqlite or cloudflare d1)
  */
 export class DbProvisions {
@@ -49,17 +54,19 @@ export class DbProvisions {
   #db
 
   /**
+   * @param {ServiceId} service
    * @param {ProvisionsDatabase} db
    */
-  constructor(db) {
+  constructor(service, db) {
+    this.service = service
     this.#db = db
     this.tableNames = {
       provisions: /** @type {const} */ ('provisions'),
     }
-    void (/** @type {Provisions} */ (this))
+    void (/** @type {Provisions<ServiceId>} */ (this))
   }
 
-  /** @type {Provisions['count']} */
+  /** @type {Provisions<ServiceId>['count']} */
   async count(...items) {
     const { size } = await this.#db
       .selectFrom(this.tableNames.provisions)
@@ -68,7 +75,7 @@ export class DbProvisions {
     return BigInt(size)
   }
 
-  /** @type {Provisions['put']} */
+  /** @type {Provisions<ServiceId>['put']} */
   async put(item) {
     /** @type {ProvisionsRow} */
     const row = {
@@ -132,7 +139,7 @@ export class DbProvisions {
     )
   }
 
-  /** @type {Provisions['hasStorageProvider']} */
+  /** @type {Provisions<ServiceId>['hasStorageProvider']} */
   async hasStorageProvider(consumerDid) {
     const { provisions } = this.tableNames
     const { size } = await this.#db
