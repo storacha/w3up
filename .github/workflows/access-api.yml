@@ -41,11 +41,3 @@ jobs:
       environment: staging
       environment_url: https://w3access-staging.protocol-labs.workers.dev
     secrets: inherit
-  deploy-dev:
-    needs: test
-    if: github.event_name == 'pull_request' && !contains(github.head_ref, 'release-please--branches')
-    uses: './.github/workflows/reusable-deploy-api.yml'
-    with:
-      environment: dev
-      environment_url: https://w3access-dev.protocol-labs.workers.dev
-    secrets: inherit
