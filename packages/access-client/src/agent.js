@@ -520,19 +520,10 @@ export class Agent {
   }
 
   async claimDelegations() {
-    const [res] = await this.connection.execute(
-      Access.claim.invoke({
-        issuer: this.issuer,
-        audience: this.connection.id,
-        with: this.issuer.did(),
-        proofs: this.proofs([
-          {
-            can: 'access/claim',
-            with: this.issuer.did(),
-          },
-        ]),
-      })
-    )
+    const res = await this.invokeAndExecute(Access.claim, {
+      audience: this.connection.id,
+      with: this.issuer.did(),
+    })
     if (res.error) {
       throw new Error('error claiming delegations')
     }
@@ -768,12 +759,12 @@ export class Agent {
    * await recoverInvocation.execute(agent.connection)
    * ```
    *
+   * @type {import('./types').InvokeAndExecute}
    * @template {Ucanto.Ability} A
    * @template {Ucanto.URI} R
-   * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
-   * @template {Ucanto.Caveats} [C={}]
-   * @param {CAP} cap
-   * @param {import('./types').InvokeOptions<A, R, CAP>} options
+   * @template {Ucanto.Caveats} C
+   * @param {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} cap
+   * @param {import('./types').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
    */
   async invokeAndExecute(cap, options) {
     const inv = await this.invoke(cap, options)
@@ -781,7 +772,7 @@ export class Agent {
     // @ts-ignore
     const out = inv.execute(this.connection)
 
-    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<CAP>, import('./types').Service>>} */ (
+    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>, import('./types').Service>>} */ (
       out
     )
   }
