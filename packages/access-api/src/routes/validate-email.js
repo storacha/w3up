@@ -151,7 +151,9 @@ async function authorize(req, env) {
     })
 
     if (confirmation.error) {
-      throw new Error(`unable to validate access session: ${confirmation}`)
+      throw new Error(`unable to validate access session: ${confirmation}`, {
+        cause: confirmation.error,
+      })
     }
 
     const confirm = provide(
