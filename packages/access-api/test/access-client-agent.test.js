@@ -28,4 +28,10 @@ for (const accessApiVariant of /** @type {const} */ ([
       assert.equal(space.proof.cid, delegations[0].cid)
     })
   })
+  it('can authorize', async () => {
+    const accessAgent = await AccessAgent.create(undefined, {
+      connection: await accessApiVariant.connection,
+    })
+    await accessAgent.authorize('example@dag.house')
+  })
 }
