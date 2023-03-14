@@ -63,8 +63,9 @@ export function validate(delegation, opts) {
  */
 export function canDelegateCapability(delegation, child) {
   for (const parent of delegation.capabilities) {
+    // TODO is this right?
     if (
-      parent.with === child.with &&
+      (parent.with === child.with || parent.with === 'ucan:*') &&
       canDelegateAbility(parent.can, child.can)
     ) {
       return true

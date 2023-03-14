@@ -46,6 +46,9 @@ import type {
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
+  AccessConfirm,
+  AccessConfirmSuccess,
+  AccessConfirmFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -114,6 +117,12 @@ export interface Service {
   access: {
     authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    confirm: ServiceMethod<
+      AccessConfirm,
+      AccessConfirmSuccess,
+      AccessConfirmFailure
+    >
     delegate: ServiceMethod<
       AccessDelegate,
       AccessDelegateSuccess,
@@ -161,6 +170,7 @@ export type CIDString = string
 export interface AgentDataModel {
   meta: AgentMeta
   principal: Signer<DID<'key'>>
+  sessionPrincipal?: Principal<Ucanto.DID<'mailto'>>
   currentSpace?: DID
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
@@ -174,6 +184,7 @@ export type AgentDataExport = Pick<
   'meta' | 'currentSpace' | 'spaces'
 > & {
   principal: SignerArchive<DID, SigAlg>
+  sessionPrincipal?: string
   delegations: Map<
     CIDString,
     {
