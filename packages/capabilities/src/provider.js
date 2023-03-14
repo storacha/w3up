@@ -8,16 +8,11 @@
  *
  * @module
  */
-import { capability, DID, literal, struct } from '@ucanto/validator'
+import { capability, DID, struct } from '@ucanto/validator'
 import { equalWith, fail, equal } from './utils.js'
 
-export const Web3StorageId = literal('did:web:web3.storage').or(
-  literal('did:web:staging.web3.storage')
-)
-
-export const Provider = Web3StorageId.or(DID.match({ method: 'key' })).or(
-  DID.match({ method: 'web' })
-)
+// e.g. did:web:web3.storage or did:web:staging.web3.storage
+export const Provider = DID.match({ method: 'web' })
 
 export const AccountDID = DID.match({ method: 'mailto' })
 

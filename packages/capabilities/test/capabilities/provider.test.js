@@ -18,7 +18,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       },
       proofs: await createAuthorization({ agent, service, account }),
@@ -35,7 +35,7 @@ describe('provider/add', function () {
       assert.deepEqual(result.audience.did(), service.did())
       assert.equal(result.capability.can, 'provider/add')
       assert.deepEqual(result.capability.nb, {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       })
     }
@@ -50,7 +50,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       },
     })
@@ -78,7 +78,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       },
       proofs: [delegation],
@@ -107,7 +107,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       },
       proofs: [attestation],
@@ -129,9 +129,9 @@ describe('provider/add', function () {
         issuer: bob,
         audience: service,
         with: bobAccount.did(),
-        // @ts-expect-error
+        // @ts-ignore
         nb: {
-          provider: service.did(),
+          provider: 'did:web:test.web3.storage',
         },
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "consumer"/)
@@ -145,7 +145,7 @@ describe('provider/add', function () {
         audience: service,
         with: bobAccount.did(),
         nb: {
-          provider: service.did(),
+          provider: 'did:web:test.web3.storage',
           // @ts-expect-error
           consumer: 'did:mailto:web3.storage:user',
         },
@@ -162,7 +162,7 @@ describe('provider/add', function () {
         with: bobAccount.did(),
         // @ts-expect-error - missing provider
         nb: {
-          // provider: service.did(),
+          // provider: 'did:web:test.web3.storage',
           consumer: bob.did(),
         },
       })
@@ -193,7 +193,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       },
       proofs: [
@@ -202,7 +202,7 @@ describe('provider/add', function () {
           audience: bob,
           with: account,
           nb: {
-            provider: service.did(),
+            provider: 'did:web:test.web3.storage',
             consumer: space.did(),
           },
           proofs: await createAuthorization({ agent, service, account }),
@@ -228,7 +228,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       },
       proofs: [
@@ -237,7 +237,7 @@ describe('provider/add', function () {
           audience: bob,
           with: account,
           nb: {
-            provider: service.did(),
+            provider: 'did:web:test.web3.storage',
           },
           proofs: await createAuthorization({ agent, service, account }),
         }),
@@ -262,7 +262,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       },
       proofs: [
@@ -296,7 +296,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: bob.did(),
       },
       proofs: [
@@ -331,7 +331,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: bob.did(),
       },
       proofs: [
@@ -371,7 +371,7 @@ describe('provider/add', function () {
       audience: service,
       with: 'did:mailto:mallory.com:bob',
       nb: {
-        provider: service.did(),
+        provider: 'did:web:test.web3.storage',
         consumer: bob.did(),
       },
       proofs: [
@@ -419,7 +419,7 @@ describe('provider/add', function () {
           with: account.did(),
           nb: {
             consumer: space.did(),
-            provider: service.did(),
+            provider: 'did:web:test.web3.storage',
           },
           // NOTE: no proofs!
         })

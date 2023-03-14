@@ -36,6 +36,11 @@ export interface AccessClaimFailure {
   error: true
 }
 
+export interface AccessConfirmSuccess {
+  delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
+}
+export interface AccessConfirmFailure extends Ucanto.Failure {}
+
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
 export type AccessDelegateSuccess = unknown
 export type AccessDelegateFailure = { error: true } | InsufficientStorage
