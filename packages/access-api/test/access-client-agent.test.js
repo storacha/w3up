@@ -65,6 +65,7 @@ async function testSessionAuthorization(access, account) {
     w3caps.Access.authorize,
     {
       audience: access.connection.id,
+      with: access.issuer.did(),
       nb: {
         iss: account.did(),
         att: [{ can: '*' }],
