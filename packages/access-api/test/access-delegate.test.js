@@ -203,6 +203,7 @@ for (const variant of /** @type {const} */ ([
     // test delegate, then claim
     it('can delegate, then claim', async () => {
       await testCanDelegateThenClaim(
+        // @ts-ignore
         variant.invoke,
         await variant.spaceWithStorageProvider,
         await variant.audience

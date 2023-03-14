@@ -296,7 +296,7 @@ export function createEmail(storage) {
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.accountA
  * @param {Ucanto.Principal<Ucanto.DID<'web'>>} options.service - web3.storage service
  * @param {import('miniflare').Miniflare} options.miniflare
- * @param {(invocation: Ucanto.Invocation<Ucanto.Capability>) => Promise<unknown>} options.invoke
+ * @param {import('../src/types/ucanto.js').ServiceInvoke<import('./helpers/ucanto-test-utils.js').AccessService>} options.invoke
  * @param {ValidationEmailSend[]} options.emails
  */
 async function testAuthorizeClaimProviderAdd(options) {
@@ -393,6 +393,7 @@ async function testAuthorizeClaimProviderAdd(options) {
   assertNotError(providerAddAsAccountResult)
 
   const spaceStorageResult = await options.invoke(
+    // @ts-ignore - not in service type because only enabled while testing
     await ucanto
       .invoke({
         issuer: space,
