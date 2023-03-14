@@ -4,13 +4,14 @@ import * as assert from 'assert'
 import * as principal from '@ucanto/principal'
 
 /**
- * @typedef {import('./types').HelperTestContext} HelperTestContext
+ * @typedef {import('@web3-storage/access/types').Service} AccessService
  */
 
 /**
  * Tests using context from "./helpers/context.js", which sets up a testable access-api inside miniflare.
  *
- * @param {() => Promise<HelperTestContext>} createContext
+ * @template {Record<string,any>} Service
+ * @param {() => Promise<import('./types').HelperTestContext<Service>>} createContext
  * @param {object} [options]
  * @param {Iterable<Promise<Ucanto.Principal>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
  */
@@ -19,19 +20,20 @@ export function createTesterFromContext(createContext, options) {
     await registerSpaces(options?.registerSpaces ?? [], ctx)
     return ctx
   })
+  /** @type {Promise<Ucanto.ConnectionView<Service>>} */
+  const connection = context.then((ctx) => ctx.conn)
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
   const miniflare = context.then(({ mf }) => mf)
   /**
-   * @template {Ucanto.Capability} Capability
-   * @param {Ucanto.Invocation<Capability>} invocation
+   * @type {import('../../src/types/ucanto').ServiceInvoke<Service>}
    */
   const invoke = async (invocation) => {
     const { conn } = await context
     const [result] = await conn.execute(invocation)
     return result
   }
-  return { issuer, audience, invoke, miniflare }
+  return { issuer, audience, invoke, miniflare, context, connection }
 }
 
 /**

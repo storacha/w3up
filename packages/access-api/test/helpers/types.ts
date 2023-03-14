@@ -1,9 +1,9 @@
 import type * as Ucanto from '@ucanto/interface'
 import type { Miniflare } from 'miniflare'
 
-export interface HelperTestContext {
+export interface HelperTestContext<Service extends Record<string, any>> {
   issuer: Ucanto.Signer<Ucanto.DID<'key'>>
   service: Ucanto.Signer<Ucanto.DID<'web'>>
-  conn: Ucanto.ConnectionView<Record<string, any>>
+  conn: Ucanto.ConnectionView<Service>
   mf: Miniflare
 }

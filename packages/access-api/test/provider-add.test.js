@@ -290,13 +290,19 @@ export function createEmail(storage) {
 }
 
 /**
+ * @typedef {import('@web3-storage/capabilities/types').AccessClaim} AccessClaim
+ * @typedef {import('@web3-storage/capabilities/types').AccessAuthorize} AccessAuthorize
+ * @typedef {import('@web3-storage/capabilities/types').ProviderAdd} ProviderAdd
+ */
+
+/**
  * @param {object} options
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.deviceA
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.space
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.accountA
  * @param {Ucanto.Principal<Ucanto.DID<'web'>>} options.service - web3.storage service
  * @param {import('miniflare').Miniflare} options.miniflare
- * @param {(invocation: Ucanto.Invocation<Ucanto.Capability>) => Promise<unknown>} options.invoke
+ * @param {import('../src/types/ucanto.js').ServiceInvoke<import('./helpers/ucanto-test-utils.js').AccessService, AccessClaim|AccessAuthorize|ProviderAdd>} options.invoke
  * @param {ValidationEmailSend[]} options.emails
  */
 async function testAuthorizeClaimProviderAdd(options) {
@@ -393,6 +399,7 @@ async function testAuthorizeClaimProviderAdd(options) {
   assertNotError(providerAddAsAccountResult)
 
   const spaceStorageResult = await options.invoke(
+    // @ts-ignore - not in service type because only enabled while testing
     await ucanto
       .invoke({
         issuer: space,
