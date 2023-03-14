@@ -56,7 +56,7 @@ export function createTesterFromContext(createContext, options) {
  *
  * @param {Iterable<Resolvable<Ucanto.Principal<Ucanto.DID<'key'>>>>} spaces
  * @param {object} options
- * @param {Ucanto.Signer<Ucanto.DID>} options.service
+ * @param {Ucanto.Signer<Ucanto.DID<'web'>>} options.service
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.agent
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.account
  * @param {Ucanto.ConnectionView<Record<string, any>>} options.conn
@@ -96,7 +96,7 @@ export async function registerSpaces(
         with: account.did(),
         nb: {
           consumer: space.did(),
-          provider: 'did:web:web3.storage:providers:w3up-alpha',
+          provider: service.did(),
         },
         proofs: [...accountDelegations],
       })
