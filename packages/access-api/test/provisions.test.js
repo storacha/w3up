@@ -8,9 +8,9 @@ import { CID } from 'multiformats'
 
 describe('DbProvisions', () => {
   it('should persist provisions', async () => {
-    const { d1 } = await context()
+    const { d1, service } = await context()
     const db = createD1Database(d1)
-    const storage = new DbProvisions(db)
+    const storage = new DbProvisions(service.did(), db)
     const count = 2 + Math.round(Math.random() * 3)
     const spaceA = await principal.ed25519.generate()
     const [firstProvision, ...lastProvisions] = await Promise.all(
@@ -28,7 +28,7 @@ describe('DbProvisions', () => {
             },
           })
           .delegate()
-        /** @type {import('../src/types/provisions.js').Provision} */
+        /** @type {import('../src/types/provisions.js').Provision<'did:web:web3.storage:providers:w3up-alpha'>} */
         const provision = {
           invocation,
           space: spaceA.did(),
