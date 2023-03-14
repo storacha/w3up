@@ -10,7 +10,6 @@ import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
-import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
 import * as Provider from '@web3-storage/capabilities/provider'
 
@@ -43,43 +42,49 @@ function emailToSessionPrincipal(email) {
 }
 
 /**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} space
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
+ * @param {Ucanto.DID} space
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @returns
  */
-async function createSpaceSaysAccountCanAdminSpace(space, account) {
+async function createSpaceSaysAccountCanAdminSpace(issuer, space, account) {
   return ucanto.delegate({
-    issuer: space,
+    issuer,
     audience: account,
     capabilities: [
       {
         can: 'space/*',
-        with: space.did(),
+        with: space,
       },
       {
         can: 'store/*',
-        with: space.did(),
+        with: space,
       },
       {
         can: 'upload/*',
-        with: space.did(),
+        with: space,
       },
     ],
   })
 }
 
 /**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} space
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
+ * @param {Ucanto.DID} space
  * @param {Ucanto.Principal<Ucanto.DID<'key'>>} device
  */
-async function createSpaceSaysDeviceCanAccessDelegateWithSpace(space, device) {
+async function createSpaceSaysDeviceCanAccessDelegateWithSpace(
+  issuer,
+  space,
+  device
+) {
   return ucanto.delegate({
-    issuer: space,
+    issuer,
     audience: device,
     capabilities: [
       {
         can: 'access/delegate',
-        with: space.did(),
+        with: space,
       },
     ],
   })
@@ -317,52 +322,6 @@ export class Agent {
     }
 
     return arr
-  }
-
-  /**
-   * Creates a space signer and a delegation to the agent
-   *
-   * @param {string} [name]
-   */
-  async newCreateSpace(name) {
-    const signer = await Signer.generate()
-    const proof = await Space.top.delegate({
-      issuer: signer,
-      audience: this.issuer,
-      with: signer.did(),
-      expiration: Infinity,
-    })
-
-    const providerResult = await this.addProvider(signer)
-    if (providerResult.error) {
-      throw new Error(providerResult.message, { cause: providerResult })
-    }
-    const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
-      signer
-    )
-    if (delegateSpaceAccessResult.error) {
-      // @ts-ignore it's very weird that this is throwing an error but line 338 above does not - ignore for now
-      throw new Error(delegateSpaceAccessResult.message, {
-        cause: delegateSpaceAccessResult,
-      })
-    }
-    /** @type {import('./types').SpaceMeta} */
-    const meta = { isRegistered: true }
-    // eslint-disable-next-line eqeqeq
-    if (name != undefined) {
-      if (typeof name !== 'string') {
-        throw new TypeError('invalid name')
-      }
-      meta.name = name
-    }
-
-    await this.#data.addSpace(signer.did(), meta, proof)
-
-    return {
-      did: signer.did(),
-      meta,
-      proof,
-    }
   }
 
   /**
@@ -617,8 +576,7 @@ export class Agent {
   }
 
   /**
-   *
-   * @param {Signer.EdSigner} space - TODO is this type correct?
+   * @param {Ucanto.DID} space - TODO is this type correct?
    */
   async addProvider(space) {
     const sessionPrincipal = this.#data.sessionPrincipal
@@ -639,14 +597,14 @@ export class Agent {
       nb: {
         // TODO probably need to make it possible to pass other providers in
         provider: 'did:web:staging.web3.storage',
-        consumer: space.did(),
+        consumer: space,
       },
     })
   }
 
   /**
    *
-   * @param {Signer.EdSigner} space - TODO is this type correct?
+   * @param {Ucanto.DID} space - TODO is this type correct?
    */
   async delegateSpaceAccessToAccount(space) {
     const sessionPrincipal = this.#data.sessionPrincipal
@@ -658,10 +616,14 @@ export class Agent {
     }
 
     const spaceSaysAccountCanAdminSpace =
-      await createSpaceSaysAccountCanAdminSpace(space, sessionPrincipal)
+      await createSpaceSaysAccountCanAdminSpace(
+        this.issuer,
+        space,
+        sessionPrincipal
+      )
     return this.invokeAndExecute(Access.delegate, {
       audience: this.connection.id,
-      with: space.did(),
+      with: space,
       expiration: Infinity,
       nb: {
         delegations: {
@@ -671,6 +633,7 @@ export class Agent {
       },
       proofs: [
         await createSpaceSaysDeviceCanAccessDelegateWithSpace(
+          this.issuer,
           space,
           this.issuer
         ),
@@ -685,13 +648,11 @@ export class Agent {
    *
    * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
    *
-   * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    */
-  async registerSpace(email, opts) {
+  async registerSpace(opts) {
     const space = this.currentSpace()
-    const service = this.connection.id
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
 
     if (!space || !spaceMeta) {
@@ -701,58 +662,21 @@ export class Agent {
     if (spaceMeta && spaceMeta.isRegistered) {
       throw new Error('Space already registered with web3.storage.')
     }
-
-    const inv = await this.invokeAndExecute(Voucher.claim, {
-      nb: {
-        identity: URI.from(`mailto:${email}`),
-        product: 'product:free',
-        service: service.did(),
-      },
-    })
-
-    if (inv && inv.error) {
-      throw new Error('Voucher claim failed', { cause: inv })
+    const providerResult = await this.addProvider(space)
+    if (providerResult.error) {
+      throw new Error(providerResult.message, { cause: providerResult })
     }
-
-    const voucherRedeem =
-      /** @type {Ucanto.Delegation<[import('./types').VoucherRedeem]>} */ (
-        await this.#waitForDelegation(opts)
-      )
-    await this.addProof(voucherRedeem)
-    const delegationToService = await this.delegate({
-      abilities: ['*'],
-      audience: service,
-      expiration: Infinity,
-      audienceMeta: {
-        name: 'w3access',
-        type: 'service',
-      },
-    })
-
-    const accInv = await this.invokeAndExecute(Voucher.redeem, {
-      with: URI.from(service.did()),
-      nb: {
-        space,
-        identity: voucherRedeem.capabilities[0].nb.identity,
-        product: voucherRedeem.capabilities[0].nb.product,
-      },
-      proofs: [delegationToService],
-      facts: [
-        {
-          space: spaceMeta,
-          agent: this.meta,
-        },
-      ],
-    })
-
-    if (accInv && accInv.error) {
-      throw new Error('Space registration failed', { cause: accInv })
+    const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
+      space
+    )
+    if (delegateSpaceAccessResult.error) {
+      // @ts-ignore it's very weird that this is throwing an error but line 692 above does not - ignore for now
+      throw new Error(delegateSpaceAccessResult.message, {
+        cause: delegateSpaceAccessResult,
+      })
     }
-
     spaceMeta.isRegistered = true
-
     this.#data.addSpace(space, spaceMeta)
-    this.#data.removeDelegation(voucherRedeem.cid)
   }
 
   /**
