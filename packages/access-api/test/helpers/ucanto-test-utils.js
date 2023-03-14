@@ -153,7 +153,7 @@ export async function accountRegistrationInvocation(
   audience = service,
   lifetimeInSeconds = 60 * 15
 ) {
-  const registerSpace = await Access.confirm
+  const register = await Access.confirm
     .invoke({
       issuer: service,
       audience,
@@ -168,7 +168,7 @@ export async function accountRegistrationInvocation(
       },
     })
     .delegate()
-  return registerSpace
+  return register
 }
 
 /**
