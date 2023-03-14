@@ -172,7 +172,9 @@ async function authorize(req, env) {
       principal: Verifier,
     })
     if (confirmResult.error) {
-      throw new Error('error confirming')
+      throw new Error('error confirming', {
+        cause: confirmResult.error,
+      })
     }
     const { account, agent } = accessConfirm.parse(request)
     const confirmDelegations = [
