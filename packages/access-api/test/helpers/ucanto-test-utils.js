@@ -35,6 +35,7 @@ export function createTesterFromContext(createContext, options) {
   const connection = context.then((ctx) => ctx.conn)
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
+  const service = context.then(({ service }) => service)
   const miniflare = context.then(({ mf }) => mf)
   /**
    * @type {import('../../src/types/ucanto').ServiceInvoke<Service>}
@@ -44,7 +45,7 @@ export function createTesterFromContext(createContext, options) {
     const [result] = await conn.execute(invocation)
     return result
   }
-  return { issuer, audience, invoke, miniflare, context, connection }
+  return { issuer, audience, invoke, miniflare, context, connection, service }
 }
 
 /**

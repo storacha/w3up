@@ -110,3 +110,26 @@ export async function createSpace(issuer, service, conn, email) {
 export function isUploadApiStack(stack) {
   return stack.includes('file:///var/task/upload-api')
 }
+
+/**
+ * @typedef {import('../../src/utils/email').ValidationEmailSend} ValidationEmailSend
+ * @typedef {import('../../src/utils/email').Email} Email
+ */
+
+/**
+ * create an Email that is useful for testing
+ *
+ * @param {Pick<Array<ValidationEmailSend>, 'push'>} storage
+ * @returns {Pick<Email, 'sendValidation'>}
+ */
+export function createEmail(storage) {
+  const email = {
+    /**
+     * @param {ValidationEmailSend} email
+     */
+    async sendValidation(email) {
+      storage.push(email)
+    },
+  }
+  return email
+}

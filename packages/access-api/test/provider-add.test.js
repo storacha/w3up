@@ -14,8 +14,8 @@ import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { createProvisions } from '../src/models/provisions.js'
-import { Email } from '../src/utils/email.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
+import { createEmail } from './helpers/utils.js'
 
 for (const providerAddHandlerVariant of /** @type {const} */ ([
   {
@@ -272,23 +272,6 @@ for (const accessApiVariant of /** @type {const} */ ([
 /**
  * @typedef {import('../src/utils/email.js').ValidationEmailSend} ValidationEmailSend
  */
-
-/**
- *
- * @param {Pick<Array<ValidationEmailSend>, 'push'>} storage
- * @returns {Pick<Email, 'sendValidation'>}
- */
-export function createEmail(storage) {
-  const email = {
-    /**
-     * @param {ValidationEmailSend} email
-     */
-    async sendValidation(email) {
-      storage.push(email)
-    },
-  }
-  return email
-}
 
 /**
  * @typedef {import('@web3-storage/capabilities/types').AccessClaim} AccessClaim
