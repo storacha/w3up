@@ -47,17 +47,21 @@ function emailToSessionPrincipal(email) {
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @returns
  */
-async function createSpaceSaysAccountCanStoreAddWithSpace(space, account) {
+async function createSpaceSaysAccountCanAdminSpace(space, account) {
   return ucanto.delegate({
     issuer: space,
     audience: account,
     capabilities: [
       {
-        can: 'store/add',
+        can: 'space/*',
         with: space.did(),
       },
       {
-        can: 'store/list',
+        can: 'store/*',
+        with: space.did(),
+      },
+      {
+        can: 'upload/*',
         with: space.did(),
       },
     ],
@@ -261,10 +265,13 @@ export class Agent {
 
     for (const { delegation } of this.#delegations(caps)) {
       const aud = delegation.audience
-      if (aud.did() === this.issuer.did()) {
+      if (
+        aud.did() === this.issuer.did() ||
+        aud.did() === session?.audience.did()
+      ) {
         arr.push(delegation)
-      } else if (aud.did() === session?.audience.did()) {
-        arr.push(delegation)
+      }
+      if (aud.did() === session?.audience.did()) {
         hasSessionDelegations = true
       }
     }
@@ -310,6 +317,42 @@ export class Agent {
     }
 
     return arr
+  }
+
+  /**
+   * Creates a space signer and a delegation to the agent
+   *
+   * @param {string} [name]
+   */
+  async newCreateSpace(name) {
+    const signer = await Signer.generate()
+    const proof = await Space.top.delegate({
+      issuer: signer,
+      audience: this.issuer,
+      with: signer.did(),
+      expiration: Infinity,
+    })
+
+    await this.addProvider(signer)
+    await this.delegateSpaceAccessToAccount(signer)
+
+    /** @type {import('./types').SpaceMeta} */
+    const meta = { isRegistered: true }
+    // eslint-disable-next-line eqeqeq
+    if (name != undefined) {
+      if (typeof name !== 'string') {
+        throw new TypeError('invalid name')
+      }
+      meta.name = name
+    }
+
+    await this.#data.addSpace(signer.did(), meta, proof)
+
+    return {
+      did: signer.did(),
+      meta,
+      proof,
+    }
   }
 
   /**
@@ -496,7 +539,7 @@ export class Agent {
       with: this.issuer.did(),
       nb: {
         iss: sessionPrincipal.did(),
-        att: [{ can: 'store/*' }, { can: 'provider/add' }],
+        att: [{ can: 'store/*' }, { can: 'provider/add' }, { can: 'upload/*' }],
       },
     })
 
@@ -517,6 +560,7 @@ export class Agent {
     }
 
     await this.addProof(sessionDelegation)
+    this.#data.setSessionPrincipal(sessionPrincipal)
   }
 
   async claimDelegations() {
@@ -532,6 +576,25 @@ export class Agent {
     )
     for (const delegation of delegations) {
       this.addProof(delegation)
+
+      // if we can find a store/* capability in this delegation, look in the proofs
+      // for the concrete capabilities where space DIDs will be specified
+      // TODO: this was my first attempt at inferring spaces from claimed delegations, but I think it needs work - tv
+      // if (delegation.capabilities.some((cap) => cap.can === 'store/*')) {
+      //   const spaceListingProof = delegation.proofs.find((del) =>
+      //     del.capabilities.some((cap) => cap.can === 'store/list')
+      //   )
+      //   const spaceListingCap = spaceListingProof.capabilities.find(
+      //     (cap) => cap.can === 'store/list'
+      //   )
+      //   if (spaceListingCap) {
+      //     this.#data.addSpace(
+      //       spaceListingCap.with,
+      //       { isRegistered: true },
+      //       delegation
+      //     )
+      //   }
+      // }
     }
 
     // TODO: should we be inferring which spaces we have access to here and updating local space state?
@@ -541,15 +604,18 @@ export class Agent {
 
   /**
    *
-   * @param {string} email
    * @param {Signer.EdSigner} space - TODO is this type correct?
    */
-  async addProvider(email, space) {
-    const sessionPrincipal = emailToSessionPrincipal(email)
-    await this.invokeAndExecute(Provider.add, {
+  async addProvider(space) {
+    const sessionPrincipal = this.#data.sessionPrincipal
+
+    if (!sessionPrincipal) {
+      throw new Error('cannot add provider, please authorize first')
+    }
+
+    return await this.invokeAndExecute(Provider.add, {
       audience: this.connection.id,
       with: sessionPrincipal.did(),
-      // TODO: do we really want to send ALL delegations here or should we only select some subset?
       proofs: this.proofs([
         {
           can: 'provider/add',
@@ -558,7 +624,7 @@ export class Agent {
       ]),
       nb: {
         // TODO probably need to make it possible to pass other providers in
-        provider: 'did:web:web3.storage:providers:w3up-alpha',
+        provider: 'did:web:staging.web3.storage',
         consumer: space.did(),
       },
     })
@@ -566,20 +632,27 @@ export class Agent {
 
   /**
    *
-   * @param {string} email
    * @param {Signer.EdSigner} space - TODO is this type correct?
    */
-  async delegateSpaceAccessToAccount(email, space) {
-    const sessionPrincipal = emailToSessionPrincipal(email)
-    const spaceSaysAccountCanStoreAddWithSpace =
-      await createSpaceSaysAccountCanStoreAddWithSpace(space, sessionPrincipal)
-    await this.invokeAndExecute(Access.delegate, {
+  async delegateSpaceAccessToAccount(space) {
+    const sessionPrincipal = this.#data.sessionPrincipal
+
+    if (!sessionPrincipal) {
+      throw new Error(
+        'cannot add delegate space access to account, please authorize first'
+      )
+    }
+
+    const spaceSaysAccountCanAdminSpace =
+      await createSpaceSaysAccountCanAdminSpace(space, sessionPrincipal)
+    return await this.invokeAndExecute(Access.delegate, {
       audience: this.connection.id,
       with: space.did(),
+      expiration: Infinity,
       nb: {
         delegations: {
-          [spaceSaysAccountCanStoreAddWithSpace.cid.toString()]:
-            spaceSaysAccountCanStoreAddWithSpace.cid,
+          [spaceSaysAccountCanAdminSpace.cid.toString()]:
+            spaceSaysAccountCanAdminSpace.cid,
         },
       },
       proofs: [
@@ -588,7 +661,7 @@ export class Agent {
           this.issuer
         ),
         // must be embedded here because it's referenced by cid in .nb.delegations
-        spaceSaysAccountCanStoreAddWithSpace,
+        spaceSaysAccountCanAdminSpace,
       ],
     })
   }
@@ -829,6 +902,7 @@ export class Agent {
       throw new Error('No space selected, you need pass a resource.')
     }
 
+    const extraProofs = options.proofs || []
     const proofs = this.proofs([
       {
         with: space,
@@ -836,13 +910,15 @@ export class Agent {
       },
     ])
 
-    if (proofs.length === 0 && options.with !== this.did()) {
+    if (
+      proofs.length === 0 &&
+      options.with !== this.did() &&
+      extraProofs.length === 0
+    ) {
       throw new Error(
-        `no proofs available for resource ${space} and ability ${cap.can}`
+        `no proofs available for resource ${space} and ability ${cap.can} and no extra proofs were provided`
       )
     }
-
-    const extraProofs = options.proofs || []
     const inv = invoke({
       ...options,
       audience: options.audience || this.connection.id,
