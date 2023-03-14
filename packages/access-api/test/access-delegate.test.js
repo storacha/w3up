@@ -6,13 +6,10 @@ import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import * as principal from '@ucanto/principal'
 import { createAccessDelegateHandler } from '../src/service/access-delegate.js'
-import { createAccessClaimHandler } from '../src/service/access-claim.js'
 import {
   createDelegationsStorage,
   toDelegationsDict,
 } from '../src/service/delegations.js'
-import { createD1Database } from '../src/utils/d1.js'
-import { DbDelegationsStorage } from '../src/models/delegations.js'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import {
   assertNotError,
@@ -122,70 +119,6 @@ async function testCanAccessDelegateWithRegisteredSpace(options) {
  * Run the same tests against several variants of ( access/delegate | access/claim ) handlers.
  */
 for (const variant of /** @type {const} */ ([
-  {
-    name: 'handled by createAccessHandler using array createDelegationsStorage',
-    ...(() => {
-      const spaceWithStorageProvider = principal.ed25519.generate()
-      return {
-        spaceWithStorageProvider,
-        ...createTesterFromHandler(
-          (() => {
-            const delegations = createDelegationsStorage()
-            return () => {
-              return createAccessHandler(
-                createAccessDelegateHandler({
-                  delegations,
-                  hasStorageProvider: async (uri) => {
-                    return (
-                      uri ===
-                      (await spaceWithStorageProvider.then((s) => s.did()))
-                    )
-                  },
-                }),
-                createAccessClaimHandler({ delegations })
-              )
-            }
-          })()
-        ),
-      }
-    })(),
-  },
-  {
-    name: 'handled by createAccessHandler using DbDelegationsStorage',
-    ...(() => {
-      const spaceWithStorageProvider = principal.ed25519.generate()
-      const d1 = context().then((ctx) => ctx.d1)
-      const database = d1.then((d1) => createD1Database(d1))
-      const delegations = database.then((db) => new DbDelegationsStorage(db))
-      return {
-        spaceWithStorageProvider,
-        ...createTesterFromHandler(
-          (() => {
-            return () => {
-              /**
-               * @type {InvocationHandler<AccessDelegate | AccessClaim, unknown, { error: true }>}
-               */
-              return async (invocation) => {
-                const handle = createAccessHandler(
-                  createAccessDelegateHandler({
-                    delegations: await delegations,
-                    hasStorageProvider: async (uri) => {
-                      return (
-                        uri ===
-                        (await spaceWithStorageProvider.then((s) => s.did()))
-                      )
-                    },
-                  }),
-                  createAccessClaimHandler({ delegations: await delegations })
-                )
-                return handle(invocation)
-              }
-            }
-          })()
-        ),
-      }
-    })(),
-  },
   {
     name: 'handled by access-api in miniflare',
     ...(() => {
@@ -443,7 +376,11 @@ async function testInsufficientStorageIfNoStorageProvider(options) {
  */
 
 /**
- * @param {InvocationHandler<AccessDelegate | AccessClaim, unknown, { error: true }>} invoke
+ * @typedef {import('@web3-storage/access/types').Service} AccessService
+ */
+
+/**
+ * @param {import('../src/types/ucanto.js').ServiceInvoke<AccessService, AccessDelegate | AccessClaim>} invoke
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
  * @param {Ucanto.Verifier<Ucanto.DID>} audience
  */
@@ -520,31 +457,3 @@ async function setupDelegateThenClaim(invoker, audience) {
  * @typedef {Ucanto.InferInvokedCapability<typeof Access.claim>} AccessClaim
  * @typedef {Ucanto.InferInvokedCapability<typeof Access.delegate>} AccessDelegate
  */
-
-/**
- * @param {import('../src/service/access-delegate.js').AccessDelegateHandler} handleDelegate
- * @param {InvocationHandler<AccessClaim, unknown, { error: true }>} handleClaim
- * @returns {InvocationHandler<AccessDelegate | AccessClaim, unknown, { error: true }>}
- */
-function createAccessHandler(handleDelegate, handleClaim) {
-  return async (invocation) => {
-    const can = invocation.capabilities[0].can
-    switch (can) {
-      case 'access/claim': {
-        return handleClaim(
-          /** @type {Ucanto.Invocation<AccessClaim>} */ (invocation)
-        )
-      }
-      case 'access/delegate': {
-        return handleDelegate(
-          /** @type {Ucanto.Invocation<AccessDelegate>} */ (invocation)
-        )
-      }
-      default: {
-        // eslint-disable-next-line no-void
-        void (/** @type {never} */ (can))
-      }
-    }
-    throw new Error(`unexpected can=${can}`)
-  }
-}
