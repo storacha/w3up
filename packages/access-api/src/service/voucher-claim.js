@@ -35,16 +35,16 @@ export function voucherClaimProvider(ctx) {
       .delegate()
 
     const encoded = delegationToString(inv)
-    // For testing
-    if (ctx.config.ENV === 'test') {
-      return encoded
-    }
 
     const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}`
-
     await ctx.email.sendValidation({
       to: capability.nb.identity.replace('mailto:', ''),
       url,
     })
+
+    // For testing
+    if (ctx.config.ENV === 'test') {
+      return encoded
+    }
   })
 }
