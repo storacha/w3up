@@ -82,7 +82,7 @@ export async function handleAccessConfirm(invocation, ctx) {
   await ctx.models.delegations.putMany(delegation, attestation)
 
   const authorization = delegationsToString([delegation, attestation])
-  // Send delegations to the client through a websocket
+  // Save delegations for the validation process
   await ctx.models.validations.putSession(authorization, agent.did())
 
   return {
