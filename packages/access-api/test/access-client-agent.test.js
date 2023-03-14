@@ -8,10 +8,14 @@ for (const accessApiVariant of /** @type {const} */ ([
   {
     name: 'using access-api in miniflare',
     ...(() => {
+      const account = {
+        did: () => /** @type {const} */ ('did:mailto:dag.house:foo'),
+      }
       const spaceWithStorageProvider = principal.ed25519.generate()
       return {
         spaceWithStorageProvider,
         ...createTesterFromContext(context, {
+          account,
           registerSpaces: [spaceWithStorageProvider],
         }),
       }
