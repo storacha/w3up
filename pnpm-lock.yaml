@@ -134,7 +134,7 @@ importers:
       '@types/varint': ^6.0.1
       '@types/ws': ^8.5.4
       '@ucanto/client': ^5.1.0
-      '@ucanto/core': ^5.1.0
+      '@ucanto/core': file:../../../ucanto/packages/core
       '@ucanto/interface': ^6.0.0
       '@ucanto/principal': ^5.1.0
       '@ucanto/server': ^6.0.0
@@ -171,7 +171,7 @@ importers:
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.2.0
       '@ucanto/client': 5.1.0
-      '@ucanto/core': 5.1.0
+      '@ucanto/core': file:../ucanto/packages/core
       '@ucanto/interface': 6.0.0
       '@ucanto/principal': 5.1.0
       '@ucanto/transport': 5.1.0
@@ -13007,3 +13007,24 @@ packages:
   /zwitch/1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
     dev: true
+
+  file:../ucanto/packages/core:
+    resolution: {directory: ../ucanto/packages/core, type: directory}
+    name: '@ucanto/core'
+    version: 5.1.0
+    dependencies:
+      '@ipld/car': 5.1.0
+      '@ipld/dag-cbor': 9.0.0
+      '@ipld/dag-ucan': 3.2.0
+      '@ucanto/interface': file:../ucanto/packages/interface
+      multiformats: 11.0.1
+    dev: false
+
+  file:../ucanto/packages/interface:
+    resolution: {directory: ../ucanto/packages/interface, type: directory}
+    name: '@ucanto/interface'
+    version: 6.1.0
+    dependencies:
+      '@ipld/dag-ucan': 3.2.0
+      multiformats: 11.0.1
+    dev: false
