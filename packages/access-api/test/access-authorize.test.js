@@ -17,6 +17,7 @@ import {
 } from './helpers/ucanto-test-utils.js'
 import { ed25519, Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
+import { Space } from '@web3-storage/capabilities'
 
 /** @type {typeof assert} */
 const t = assert
@@ -312,8 +313,12 @@ describe('access/authorize', function () {
     const space = await ed25519.generate()
     const w3 = ctx.service
 
-    await registerSpaces([space], ctx)
     const account = Absentee.from({ id: 'did:mailto:dag.house:test' })
+    await registerSpaces([space], {
+      ...ctx,
+      agent: ctx.issuer,
+      account,
+    })
 
     // delegate all space capabilities to the account
     const delegation = await delegate({
@@ -342,6 +347,7 @@ describe('access/authorize', function () {
       })
       .execute(ctx.conn)
 
+    warnOnErrorResult(delegateResult)
     assert.equal(delegateResult.error, undefined, 'delegation succeeded')
 
     // Now generate an agent and try to authorize with the account
@@ -424,5 +430,16 @@ describe('access/authorize', function () {
       delegation.cid,
       'delegation to an account is included'
     )
+
+    // use these delegations to do something on the space
+    const info = await Space.info
+      .invoke({
+        issuer: agent,
+        audience: w3,
+        with: space.did(),
+        proofs: [authorization, attestation],
+      })
+      .execute(ctx.conn)
+    assert.notDeepEqual(info.error, true, 'space/info did not error')
   })
 })

@@ -29,10 +29,12 @@ for (const handlerVariant of /** @type {const} */ ([
     name: 'handled by access-api in miniflare',
     ...(() => {
       const spaceWithStorageProvider = principal.ed25519.generate()
+      const account = { did: () => /** @type {const} */ ('did:mailto:foo') }
       return {
         spaceWithStorageProvider,
         ...createTesterFromContext(() => context(), {
           registerSpaces: [spaceWithStorageProvider],
+          account,
         }),
       }
     })(),
@@ -190,10 +192,12 @@ for (const variant of /** @type {const} */ ([
     name: 'handled by access-api in miniflare',
     ...(() => {
       const spaceWithStorageProvider = principal.ed25519.generate()
+      const account = { did: () => /** @type {const} */ ('did:mailto:foo') }
       return {
         spaceWithStorageProvider,
         ...createTesterFromContext(() => context(), {
           registerSpaces: [spaceWithStorageProvider],
+          account,
         }),
       }
     })(),
