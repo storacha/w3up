@@ -333,9 +333,19 @@ export class Agent {
       expiration: Infinity,
     })
 
-    await this.addProvider(signer)
-    await this.delegateSpaceAccessToAccount(signer)
-
+    const providerResult = await this.addProvider(signer)
+    if (providerResult.error) {
+      throw new Error(providerResult.message, { cause: providerResult })
+    }
+    const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
+      signer
+    )
+    if (delegateSpaceAccessResult.error) {
+      // @ts-ignore it's very weird that this is throwing an error but line 338 above does not - ignore for now
+      throw new Error(delegateSpaceAccessResult.message, {
+        cause: delegateSpaceAccessResult,
+      })
+    }
     /** @type {import('./types').SpaceMeta} */
     const meta = { isRegistered: true }
     // eslint-disable-next-line eqeqeq
@@ -561,6 +571,10 @@ export class Agent {
 
     await this.addProof(sessionDelegation)
     this.#data.setSessionPrincipal(sessionPrincipal)
+
+    // claim delegations here because we will need an ucan/attest from the service to
+    // pair with the session delegation we just claimed to make it work
+    await this.claimDelegations()
   }
 
   async claimDelegations() {
@@ -613,7 +627,7 @@ export class Agent {
       throw new Error('cannot add provider, please authorize first')
     }
 
-    return await this.invokeAndExecute(Provider.add, {
+    return this.invokeAndExecute(Provider.add, {
       audience: this.connection.id,
       with: sessionPrincipal.did(),
       proofs: this.proofs([
@@ -645,7 +659,7 @@ export class Agent {
 
     const spaceSaysAccountCanAdminSpace =
       await createSpaceSaysAccountCanAdminSpace(space, sessionPrincipal)
-    return await this.invokeAndExecute(Access.delegate, {
+    return this.invokeAndExecute(Access.delegate, {
       audience: this.connection.id,
       with: space.did(),
       expiration: Infinity,
