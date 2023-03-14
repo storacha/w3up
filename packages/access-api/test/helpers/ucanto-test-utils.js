@@ -159,8 +159,6 @@ export async function accountRegistrationInvocation(
       audience,
       with: service.did(),
       lifetimeInSeconds,
-      // We link to the authorization request so that this attestation can
-      // not be used to authorize a different request.
       nb: {
         iss: account,
         aud: agent,
