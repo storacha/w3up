@@ -6,9 +6,9 @@ import { Agent as AccessAgent } from '@web3-storage/access/agent'
 import * as w3caps from '@web3-storage/capabilities'
 import * as assert from 'assert'
 import * as Ucanto from '@ucanto/interface'
-import * as ucanto from '@ucanto/core'
 import { createEmail } from './helpers/utils.js'
 import { stringToDelegations } from '@web3-storage/access/encoding'
+import * as delegationsResponse from '../src/utils/delegations-response.js'
 
 for (const accessApiVariant of /** @type {const} */ ([
   {
@@ -103,9 +103,6 @@ async function testSessionAuthorization(service, access, account, emails) {
     'authorize result is not an error'
   )
 
-  // eslint-disable-next-line no-console
-  console.log({ authorizeResult, emails })
-
   const latestEmail = emails.at(-1)
   assert.ok(latestEmail, 'received a confirmation email')
   const confirmationInvocations = stringToDelegations(
@@ -116,67 +113,37 @@ async function testSessionAuthorization(service, access, account, emails) {
     /** @type {Ucanto.Invocation<import('@web3-storage/capabilities/src/types.js').AccessConfirm>} */ (
       confirmationInvocations[0]
     )
-  console.log(
-    'serviceSaysAccountCanConfirm',
-    JSON.stringify(serviceSaysAccountCanConfirm, undefined, 2)
-  )
 
   const confirm = await w3caps.Access.confirm
     .invoke({
       nb: {
         ...serviceSaysAccountCanConfirm.capabilities[0].nb,
       },
-      issuer: access.issuer,
+      issuer: service,
       audience: access.connection.id,
       with: access.connection.id.did(),
-      proofs: [
-        serviceSaysAccountCanConfirm,
-        ...(await createSessionProofs(service, account, access.issuer, [
-          { can: '*', with: service.did() },
-        ])),
-      ],
+      proofs: [serviceSaysAccountCanConfirm],
     })
     .delegate()
-  console.log('confirm', JSON.stringify(confirm, undefined, 2))
 
   const [confirmationResult] = await access.connection.execute(confirm)
-  console.log({ confirmationResult })
   assert.notDeepStrictEqual(
     confirmationResult.error,
     true,
     'confirm result is not an error'
   )
-}
 
-/**
- * @param {principal.ed25519.Signer.Signer<`did:web:${string}`, principal.ed25519.Signer.UCAN.SigAlg>} service
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} agent
- * @param {Ucanto.Capabilities} capabilities
- * @param {number} expiration
- * @returns {Promise<Array<Ucanto.Delegation>>}
- */
-async function createSessionProofs(
-  service,
-  account,
-  agent,
-  capabilities,
-  expiration = Infinity
-) {
-  const delegation = await ucanto.delegate({
-    issuer: principal.Absentee.from({ id: account.did() }),
-    audience: agent,
-    capabilities,
-    expiration,
+  const claimResult = await access.invokeAndExecute(w3caps.Access.claim, {
+    with: access.issuer.did(),
   })
-
-  const attestation = await w3caps.Access.session.delegate({
-    issuer: service,
-    audience: agent,
-    with: service.did(),
-    nb: { proof: delegation.cid },
-    expiration,
-  })
-
-  return [delegation, attestation]
+  assert.notDeepEqual(
+    claimResult.error,
+    true,
+    'access/claim result is not an error'
+  )
+  assert.ok(!claimResult.error)
+  const claimedDelegations1 = [
+    ...delegationsResponse.decode(claimResult.delegations),
+  ]
+  assert.ok(claimedDelegations1.length > 0, 'claimed some delegations')
 }
