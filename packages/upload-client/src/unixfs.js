@@ -1,12 +1,16 @@
 import * as UnixFS from '@ipld/unixfs'
 import * as raw from 'multiformats/codecs/raw'
+import { withMaxChunkSize } from '@ipld/unixfs/file/chunker/fixed'
+import { withWidth } from '@ipld/unixfs/file/layout/balanced'
 
+const SHARD_THRESHOLD = 1000 // shard directory after > 1,000 items
 const queuingStrategy = UnixFS.withCapacity()
 
-// TODO: configure chunk size and max children https://github.com/ipld/js-unixfs/issues/36
 const settings = UnixFS.configure({
   fileChunkEncoder: raw,
   smallFileEncoder: raw,
+  chunker: withMaxChunkSize(1024 * 1024),
+  fileLayout: withWidth(1024),
 })
 
 /**
@@ -64,7 +68,10 @@ class UnixFSDirectoryBuilder {
 
   /** @param {import('@ipld/unixfs').View} writer */
   async finalize(writer) {
-    const dirWriter = UnixFS.createDirectoryWriter(writer)
+    const dirWriter =
+      this.entries.size <= SHARD_THRESHOLD
+        ? UnixFS.createDirectoryWriter(writer)
+        : UnixFS.createShardedDirectoryWriter(writer)
     for (const [name, entry] of this.entries) {
       const link = await entry.finalize(writer)
       dirWriter.set(name, link)
