@@ -19,7 +19,7 @@ for (const accessApiVariant of /** @type {const} */ ([
   },
 ])) {
   describe(`access-client-agent ${accessApiVariant.name}`, () => {
-    it('can be used with access-client agent', async () => {
+    it('can createSpace', async () => {
       const accessAgent = await AccessAgent.create(undefined, {
         connection: await accessApiVariant.connection,
       })
