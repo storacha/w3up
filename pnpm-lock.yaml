@@ -328,7 +328,7 @@ importers:
     specifiers:
       '@ipld/car': ^5.0.3
       '@ipld/dag-ucan': ^3.2.0
-      '@ipld/unixfs': ^2.1.0
+      '@ipld/unixfs': ^2.1.1
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.1
       '@ucanto/client': ^5.1.0
@@ -353,7 +353,7 @@ importers:
     dependencies:
       '@ipld/car': 5.1.0
       '@ipld/dag-ucan': 3.2.0
-      '@ipld/unixfs': 2.1.0
+      '@ipld/unixfs': 2.1.1
       '@ucanto/client': 5.1.0
       '@ucanto/interface': 6.0.0
       '@ucanto/transport': 5.1.0
@@ -2525,8 +2525,8 @@ packages:
       '@ipld/dag-json': 10.0.1
       multiformats: 11.0.1
 
-  /@ipld/unixfs/2.1.0:
-    resolution: {integrity: sha512-il1vU83a/0QsmIvWvqoWdPgw6Uedjdryj4LsmoJKm4jEUmevMnxZTsTEHp3uzvzMJaLmUmB5ZABIvVvBQHdhmQ==}
+  /@ipld/unixfs/2.1.1:
+    resolution: {integrity: sha512-g3gr/3XvfQs4x2VFjlICae09ul5fbWCKRInN6Vgeot2+GH0h/krr3PqZCIo4dy4Ou2mQOsIddxUvG8UZ4p9SbQ==}
     dependencies:
       '@ipld/dag-pb': 4.0.2
       '@multiformats/murmur3': 2.1.3
