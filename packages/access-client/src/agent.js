@@ -576,7 +576,7 @@ export class Agent {
   }
 
   /**
-   * @param {Ucanto.DID} space - TODO is this type correct?
+   * @param {Ucanto.DID<'key'>} space
    */
   async addProvider(space) {
     const sessionPrincipal = this.#data.sessionPrincipal
