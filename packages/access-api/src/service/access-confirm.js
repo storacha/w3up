@@ -1,10 +1,11 @@
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
-import { Verifier, Absentee } from '@ucanto/principal'
+import { Absentee } from '@ucanto/principal'
 import { collect } from 'streaming-iterables'
 import * as Access from '@web3-storage/capabilities/access'
 import { delegationsToString } from '@web3-storage/access/encoding'
 import * as delegationsResponse from '../utils/delegations-response.js'
+import * as validator from '@ucanto/validator'
 
 /**
  * @typedef {import('@web3-storage/capabilities/types').AccessConfirmSuccess} AccessConfirmSuccess
@@ -18,7 +19,9 @@ export function parse(invocation) {
   const capability = invocation.capabilities[0]
   // Create a absentee signer for the account that authorized the delegation
   const account = Absentee.from({ id: capability.nb.iss })
-  const agent = Verifier.parse(capability.nb.aud)
+  const agent = {
+    did: () => validator.DID.match({ method: 'key' }).from(capability.nb.aud),
+  }
   return {
     account,
     agent,
@@ -50,31 +53,21 @@ export async function handleAccessConfirm(invocation, ctx) {
       }))
     )
 
-  // create an delegation on behalf of the account with an absent signature.
-  const delegation = await ucanto.delegate({
-    issuer: account,
-    audience: agent,
+  const [delegation, attestation] = await createSessionProofs(
+    ctx.signer,
+    account,
+    agent,
     capabilities,
-    expiration: Infinity,
     // We include all the delegations to the account so that the agent will
     // have delegation chains to all the delegated resources.
     // We should actually filter out only delegations that support delegated
     // capabilities, but for now we just include all of them since we only
     // implement sudo access anyway.
-    proofs: await collect(
-      ctx.models.delegations.find({
-        audience: account.did(),
-      })
-    ),
-  })
-
-  const attestation = await Access.session.delegate({
-    issuer: ctx.signer,
-    audience: agent,
-    with: ctx.signer.did(),
-    nb: { proof: delegation.cid },
-    expiration: Infinity,
-  })
+    ctx.models.delegations.find({
+      audience: account.did(),
+    }),
+    Infinity
+  )
 
   // Store the delegations so that they can be pulled with access/claim
   // The fact that we're storing proofs chains that we pulled from the
@@ -88,4 +81,41 @@ export async function handleAccessConfirm(invocation, ctx) {
   return {
     delegations: delegationsResponse.encode([delegation, attestation]),
   }
+}
+
+/**
+ * @param {Ucanto.Signer} service
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ * @param {Ucanto.Principal<Ucanto.DID<'key'>>} agent
+ * @param {Ucanto.Capabilities} capabilities
+ * @param {AsyncIterable<Ucanto.Delegation>} delegationProofs
+ * @param {number} expiration
+ * @returns {Promise<[delegation: Ucanto.Delegation, attestation: Ucanto.Delegation]>}
+ */
+export async function createSessionProofs(
+  service,
+  account,
+  agent,
+  capabilities,
+  delegationProofs,
+  expiration
+) {
+  // create an delegation on behalf of the account with an absent signature.
+  const delegation = await ucanto.delegate({
+    issuer: Absentee.from({ id: account.did() }),
+    audience: agent,
+    capabilities,
+    expiration,
+    proofs: [...(await collect(delegationProofs))],
+  })
+
+  const attestation = await Access.session.delegate({
+    issuer: service,
+    audience: agent,
+    with: service.did(),
+    nb: { proof: delegation.cid },
+    expiration,
+  })
+
+  return [delegation, attestation]
 }

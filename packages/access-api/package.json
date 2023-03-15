@@ -94,6 +94,7 @@
         "error",
         {
           "definedTypes": [
+            "AsyncIterable",
             "AsyncIterableIterator",
             "Awaited",
             "D1Database",

@@ -837,7 +837,9 @@ export class Agent {
   async invoke(cap, options) {
     const space = options.with || this.currentSpace()
     if (!space) {
-      throw new Error('No space selected, you need pass a resource.')
+      throw new Error(
+        'No space or resource selected, you need pass a resource.'
+      )
     }
 
     const extraProofs = options.proofs || []
