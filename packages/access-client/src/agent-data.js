@@ -1,6 +1,7 @@
 import { Signer } from '@ucanto/principal'
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { importDAG } from '@ucanto/core/delegation'
+import * as Ucanto from '@ucanto/interface'
 import { DID } from '@ucanto/core'
 import { CID } from 'multiformats'
 import { Access } from '@web3-storage/capabilities'
@@ -161,16 +162,19 @@ export class AgentData {
     this.delegations.delete(cid.toString())
     await this.#save(this.export())
   }
+}
 
-  /**
-   * The current session proof.
-   */
-  sessionProof() {
-    for (const { delegation } of this.delegations.values()) {
-      const cap = delegation.capabilities.find(
-        (c) => c.can === Access.session.can // TODO we should make sure this is the current session proof - we were checking nb.key but that doesn't seem to exist in the staging ucan/attest at the moment
-      )
-      if (cap && !isExpired(delegation)) return delegation
-    }
+/**
+ * get session proof
+ *
+ * @param {AgentData} data
+ * @returns {Ucanto.Delegation | undefined}
+ */
+export function getSessionProof(data) {
+  for (const { delegation } of data.delegations.values()) {
+    const cap = delegation.capabilities.find(
+      (c) => c.can === Access.session.can // TODO we should make sure this is the current session proof - we were checking nb.key but that doesn't seem to exist in the staging ucan/attest at the moment
+    )
+    if (cap && !isExpired(delegation)) return delegation
   }
 }
