@@ -66,14 +66,16 @@ export async function context({ env = {}, globals } = {}) {
   const db = /** @type {D1Database} */ (binds.__D1_BETA__)
   await migrate(db)
 
+  const conn = connection({
+    principal: servicePrincipal,
+    // @ts-ignore
+    fetch: mf.dispatchFetch.bind(mf),
+    url: new URL('http://localhost:8787'),
+  })
   return {
     mf,
-    conn: connection({
-      principal: servicePrincipal,
-      // @ts-ignore
-      fetch: mf.dispatchFetch.bind(mf),
-      url: new URL('http://localhost:8787'),
-    }),
+    conn,
+    connection: conn,
     service: servicePrincipal,
     issuer: await Signer.generate(),
     d1: db,

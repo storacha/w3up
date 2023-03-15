@@ -21,48 +21,52 @@ for (const accessApiVariant of /** @type {const} */ ([
         did: () => /** @type {const} */ ('did:mailto:dag.house:foo'),
       }
       const spaceWithStorageProvider = principal.ed25519.generate()
-      /** @type {{to:string, url:string}[]} */
-      const emails = []
-      const email = createEmail(emails)
+      async function createContext() {
+        /** @type {{url:string}[]} */
+        const emails = []
+        const email = createEmail(emails)
+        const ctx = await context({
+          globals: {
+            email,
+          },
+        })
+        return {
+          ...ctx,
+          emails,
+        }
+      }
       return {
         spaceWithStorageProvider,
-        emails,
-        ...createTesterFromContext(
-          () =>
-            context({
-              globals: {
-                email,
-              },
-            }),
-          {
-            account,
-            registerSpaces: [spaceWithStorageProvider],
-          }
-        ),
+        ...createTesterFromContext(createContext, {
+          account,
+          registerSpaces: [spaceWithStorageProvider],
+        }),
       }
     })(),
   },
 ])) {
   describe(`access-client-agent ${accessApiVariant.name}`, () => {
     it('can createSpace', async () => {
+      const { connection } = await accessApiVariant.create()
       const accessAgent = await AccessAgent.create(undefined, {
-        connection: await accessApiVariant.connection,
+        connection,
       })
       const space = await accessAgent.createSpace('test-add')
       const delegations = accessAgent.proofs()
       assert.equal(space.proof.cid, delegations[0].cid)
     })
     it.skip('can authorize', async () => {
+      const { connection } = await accessApiVariant.create()
       const accessAgent = await AccessAgent.create(undefined, {
-        connection: await accessApiVariant.connection,
+        connection,
       })
       await accessAgent.authorize('example@dag.house')
     })
 
     it('can testSessionAuthorization', async () => {
-      const { emails, connection, service } = accessApiVariant
+      const { connection, service, emails } = await accessApiVariant.create()
       const accessAgent = await AccessAgent.create(undefined, {
-        connection: await connection,
+        connection,
       })
       /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
       const account = { did: () => 'did:mailto:dag.house:example' }
@@ -75,23 +79,21 @@ for (const accessApiVariant of /** @type {const} */ ([
     })
 
     it('can requestAuthorization', async () => {
-      const { connection } = accessApiVariant
+      const { connection } = await accessApiVariant.create()
       /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
       const account = { did: () => 'did:mailto:dag.house:example' }
-      const accessAgent = await AccessAgent.create(undefined, {
-        connection: await connection,
-      })
+      const accessAgent = await AccessAgent.create(undefined, { connection })
       await requestAuthorization(accessAgent, account, [{ can: '*' }])
     })
 
-    it('can requestAuthorization then click email', async () => {
-      const connection = await accessApiVariant.connection
-      const { emails } = accessApiVariant
+    it('can requestAuthorization, then click confirm email, then claim', async () => {
+      const { emails, connection } = await accessApiVariant.create()
       /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
       const account = { did: () => 'did:mailto:dag.house:example' }
       const accessAgent = await AccessAgent.create(undefined, {
         connection,
       })
+      console.log('accessAgent.issuer', accessAgent.issuer.did())
 
       // request that account authorizes accessAgent
       // this should result in sending a confirmation email
@@ -119,11 +121,15 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
       // invoke the access/confirm invocation as if the user had clicked the email
       const [confirmResult] = await connection.execute(confirm)
+      console.log({ confirmResult })
       assert.notEqual(
         confirmResult.error,
         true,
         'access/confirm result is not an error'
       )
+
+      const claimed = await accessAgent.claimDelegations()
+      assert.deepEqual(claimed.length, 2)
     })
   })
 }
@@ -207,7 +213,7 @@ async function requestAuthorization(access, authorizer, abilities) {
  * @param {principal.ed25519.Signer.Signer<`did:web:${string}`, principal.ed25519.Signer.UCAN.SigAlg>} service
  * @param {AccessAgent} access
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {{to:string, url:string}[]} emails
+ * @param {{url:string}[]} emails
  */
 async function testSessionAuthorization(service, access, account, emails) {
   const authorizeResult = await access.invokeAndExecute(
