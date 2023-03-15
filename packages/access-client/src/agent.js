@@ -620,7 +620,7 @@ export class Agent {
    *
    * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
    *
-   * @param {`${string}@${string}`} email
+   * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id

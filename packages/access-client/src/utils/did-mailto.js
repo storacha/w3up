@@ -1,5 +1,5 @@
 /**
- * @param {`${string}@${string}`} email
+ * @param {string} email
  * @returns {`did:mailto:${string}:${string}`}
  */
 export function createDidMailtoFromEmail(email) {
