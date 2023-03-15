@@ -113,7 +113,7 @@ describe('uploadFile', () => {
   it('allows custom shard size to be set', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
-    const file = new Blob([await randomBytes(500_000)])
+    const file = new Blob([await randomBytes(1024 * 1024 * 5)])
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
 
@@ -174,12 +174,12 @@ describe('uploadFile', () => {
       file,
       {
         connection,
-        shardSize: 400_000, // should end up with 2 CAR files
+        shardSize: 1024 * 1024 * 2, // should end up with 2 CAR files
         onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )
 
-    assert.equal(carCIDs.length, 2)
+    assert.equal(carCIDs.length, 3)
   })
 })
 

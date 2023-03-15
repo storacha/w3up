@@ -691,7 +691,7 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async #waitForDelegation(opts) {
-    const ws = new Websocket(this.url, 'validate-ws')
+    const ws = new Websocket(this.url, `validate-ws/${this.currentSpace()}`)
     await ws.open()
 
     ws.send({

@@ -38,6 +38,11 @@ watch_dir = "src"
 [miniflare]
 d1_persist = ".wrangler/miniflare"
 
+[durable_objects]
+bindings = [
+  { name = "SPACE_VERIFIERS", class_name = "SpaceVerifier" }
+]
+
 # Dev
 [env.dev]
 name = "w3access-dev"
@@ -54,7 +59,6 @@ d1_databases = [
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
-
 
 # Staging
 [env.staging]
@@ -73,7 +77,6 @@ unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
 
-
 # Production
 [env.production]
 name = "w3access"
@@ -89,6 +92,7 @@ d1_databases = [
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
+
 [env.production.vars]
 DEBUG = "false"
 DID = "did:web:web3.storage"
