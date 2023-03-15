@@ -27,7 +27,7 @@ export class Client extends Base {
   /**
    * Register the _current_ space with the service.
    *
-   * @param {string} email
+   * @param {`${string}@${string}`} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
@@ -81,6 +81,13 @@ export class Client extends Base {
   }
 
   /**
+   * Return the default provider.
+   */
+  defaultProvider () {
+    return this._agent.connection.id.did()
+  }
+
+  /**
    * The current user agent (this device).
    */
   agent () {
@@ -98,7 +105,7 @@ export class Client extends Base {
   /**
    * Use a specific space.
    *
-   * @param {import('./types').DID} did
+   * @param {import('./types').DID<'key'>} did
    */
   async setCurrentSpace (did) {
     await this._agent.setCurrentSpace(did)
@@ -124,12 +131,13 @@ export class Client extends Base {
   /**
    * Register the _current_ space with the service.
    *
+   * @param {string} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
   /* c8 ignore next 3 */
-  async registerSpace (options) {
-    await this._agent.registerSpace(options)
+  async registerSpace (email, options) {
+    await this._agent.registerSpace(email, options)
   }
 
   /**
