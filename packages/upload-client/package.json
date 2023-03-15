@@ -78,7 +78,7 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@ucanto/principal": "^5.1.0",
-    "@ucanto/server": "^6.0.0",
+    "@ucanto/server": "^6.1.0",
     "assert": "^2.0.0",
     "blockstore-core": "^3.0.0",
     "c8": "^7.12.0",
