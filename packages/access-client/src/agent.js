@@ -488,14 +488,18 @@ export class Agent {
    * @param {`${string}@${string}`} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
    */
   async authorize(email, opts) {
+    const capabilityRequest = opts?.capabilities
+      ? [...opts.capabilities]
+      : [{ can: 'store/*' }, { can: 'provider/add' }, { can: 'upload/*' }]
     const res = await this.invokeAndExecute(Access.authorize, {
       audience: this.connection.id,
       with: this.issuer.did(),
       nb: {
         iss: createDidMailtoFromEmail(email),
-        att: [{ can: 'store/*' }, { can: 'provider/add' }, { can: 'upload/*' }],
+        att: capabilityRequest,
       },
     })
 
