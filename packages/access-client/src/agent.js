@@ -435,7 +435,7 @@ export class Agent {
    *
    * Other methods will default to use the current space if no resource is defined
    *
-   * @param {Ucanto.DID} space
+   * @param {Ucanto.DID<'key'>} space
    */
   async setCurrentSpace(space) {
     const proofs = this.proofs([
