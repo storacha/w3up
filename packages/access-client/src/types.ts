@@ -171,7 +171,7 @@ export interface AgentDataModel {
   meta: AgentMeta
   principal: Signer<DID<'key'>>
   sessionPrincipal?: Principal<Ucanto.DID<'mailto'>>
-  currentSpace?: DID
+  currentSpace?: DID<'key'>
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
 }
