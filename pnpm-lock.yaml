@@ -297,7 +297,7 @@ importers:
       '@ucanto/core': ^5.1.0
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
-      '@ucanto/server': ^6.0.0
+      '@ucanto/server': ^6.1.0
       '@ucanto/transport': ^5.1.0
       '@web-std/blob': ^3.0.4
       '@web3-storage/capabilities': workspace:^
@@ -310,7 +310,7 @@ importers:
       '@ucanto/client': 5.1.0
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
-      '@ucanto/server': 6.0.0
+      '@ucanto/server': 6.1.0
       '@ucanto/transport': 5.1.0
       '@web3-storage/capabilities': link:../capabilities
       multiformats: 11.0.1
@@ -334,7 +334,7 @@ importers:
       '@ucanto/client': ^5.1.0
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
-      '@ucanto/server': ^6.0.0
+      '@ucanto/server': ^6.1.0
       '@ucanto/transport': ^5.1.0
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
@@ -365,7 +365,7 @@ importers:
       '@types/assert': 1.5.6
       '@types/mocha': 10.0.1
       '@ucanto/principal': 5.1.0
-      '@ucanto/server': 6.0.0
+      '@ucanto/server': 6.1.0
       assert: 2.0.0
       blockstore-core: 3.0.0
       c8: 7.12.0
@@ -3596,13 +3596,6 @@ packages:
       '@ucanto/interface': 6.2.0
       multiformats: 11.0.1
       one-webcrypto: 1.0.3
-
-  /@ucanto/server/6.0.0:
-    resolution: {integrity: sha512-xwZa3S8bclGn3JxuxUIQ+TOZKeAhbSDJEk7B3ZgHUu0bYBBFEyRbAVD177ZpAnTuvj8Et68g1tRzNIStQPMvSA==}
-    dependencies:
-      '@ucanto/core': 5.2.0
-      '@ucanto/interface': 6.2.0
-      '@ucanto/validator': 6.1.0
 
   /@ucanto/server/6.1.0:
     resolution: {integrity: sha512-IRvYbv1iEAjgm8Rc4hqUPm2NGSU+R+X+wyHp3hUI/YdGji+bajghV4gU9klkDkgm0aqVuI1fDFyODWZb5UROtw==}
