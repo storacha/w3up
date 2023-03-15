@@ -259,8 +259,8 @@ importers:
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.0
       '@types/node': ^18.11.18
-      '@ucanto/core': ^5.1.0
-      '@ucanto/interface': ^6.0.0
+      '@ucanto/core': ^5.2.0
+      '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@ucanto/transport': ^5.1.0
       '@ucanto/validator': ^6.0.0
@@ -272,8 +272,8 @@ importers:
       typescript: 4.9.5
       watch: ^1.0.2
     dependencies:
-      '@ucanto/core': 5.1.0
-      '@ucanto/interface': 6.0.0
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
       '@ucanto/transport': 5.1.0
       '@ucanto/validator': 6.0.0
@@ -3598,7 +3598,7 @@ packages:
     dependencies:
       '@ipld/dag-ucan': 3.2.0
       '@noble/ed25519': 1.7.3
-      '@ucanto/interface': 6.0.0
+      '@ucanto/interface': 6.2.0
       multiformats: 11.0.1
       one-webcrypto: 1.0.3
 
@@ -3615,7 +3615,7 @@ packages:
       '@ipld/car': 5.1.0
       '@ipld/dag-cbor': 9.0.0
       '@ucanto/core': 5.2.0
-      '@ucanto/interface': 6.0.0
+      '@ucanto/interface': 6.2.0
       multiformats: 11.0.1
     dev: false
 
@@ -3625,7 +3625,7 @@ packages:
       '@ipld/car': 5.1.0
       '@ipld/dag-cbor': 9.0.0
       '@ucanto/core': 5.2.0
-      '@ucanto/interface': 6.0.0
+      '@ucanto/interface': 6.2.0
       multiformats: 11.0.1
 
   /@vue/compiler-core/3.2.45:
