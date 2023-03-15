@@ -2,7 +2,6 @@ import { Signer } from '@ucanto/principal'
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { importDAG } from '@ucanto/core/delegation'
 import * as Ucanto from '@ucanto/interface'
-import { DID } from '@ucanto/core'
 import { CID } from 'multiformats'
 import { Access } from '@web3-storage/capabilities'
 import { isExpired } from './delegations.js'
@@ -21,7 +20,6 @@ export class AgentData {
   constructor(data, options = {}) {
     this.meta = data.meta
     this.principal = data.principal
-    this.sessionPrincipal = data.sessionPrincipal
     this.spaces = data.spaces
     this.delegations = data.delegations
     this.currentSpace = data.currentSpace
@@ -40,7 +38,6 @@ export class AgentData {
       {
         meta: { name: 'agent', type: 'device', ...init.meta },
         principal: init.principal ?? (await EdSigner.generate()),
-        sessionPrincipal: init.sessionPrincipal,
         spaces: init.spaces ?? new Map(),
         delegations: init.delegations ?? new Map(),
         currentSpace: init.currentSpace,
@@ -80,10 +77,6 @@ export class AgentData {
         meta: raw.meta,
         // @ts-expect-error for some reason TS thinks this is a EdSigner
         principal: Signer.from(raw.principal),
-        // @ts-expect-error TODO figure out the types for this too
-        sessionPrincipal: raw.sessionPrincipal
-          ? DID.parse(raw.sessionPrincipal)
-          : undefined,
         currentSpace: raw.currentSpace,
         spaces: raw.spaces,
         delegations: dels,
@@ -100,7 +93,6 @@ export class AgentData {
     const raw = {
       meta: this.meta,
       principal: this.principal.toArchive(),
-      sessionPrincipal: this.sessionPrincipal?.did(),
       currentSpace: this.currentSpace,
       spaces: this.spaces,
       delegations: new Map(),
@@ -132,14 +124,6 @@ export class AgentData {
    */
   async setCurrentSpace(did) {
     this.currentSpace = did
-    await this.#save(this.export())
-  }
-
-  /**
-   * @param {import('@ucanto/interface').Principal<import('@ucanto/interface').DID<'mailto'>>} principal
-   */
-  async setSessionPrincipal(principal) {
-    this.sessionPrincipal = principal
     await this.#save(this.export())
   }
 

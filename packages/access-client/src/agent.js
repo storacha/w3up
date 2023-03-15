@@ -7,7 +7,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
-import { URI } from '@ucanto/validator'
+import { URI, DID as DIDValidator } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Access from '@web3-storage/capabilities/access'
@@ -25,21 +25,12 @@ import {
   canDelegateCapability,
 } from './delegations.js'
 import { AgentData, getSessionProof } from './agent-data.js'
+import { createDidMailtoFromEmail } from './utils/did-mailto.js'
 
 export { AgentData }
 
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
-
-/**
- *
- * @param {string} email
- * @returns {Ucanto.Principal<Ucanto.DID<'mailto'>>}
- */
-function emailToSessionPrincipal(email) {
-  const parts = email.split('@').map((s) => encodeURIComponent(s))
-  return DID.parse(`did:mailto:${parts[1]}:${parts[0]}`)
-}
 
 /**
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
@@ -188,10 +179,6 @@ export class Agent {
 
   get spaces() {
     return this.#data.spaces
-  }
-
-  get account() {
-    return this.#data.sessionPrincipal
   }
 
   did() {
@@ -500,18 +487,16 @@ export class Agent {
    * Request authorization of a session allowing this agent to issue UCANs
    * signed by the passed email address.
    *
-   * @param {string} email
+   * @param {`${string}@${string}`} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    */
   async authorize(email, opts) {
-    const sessionPrincipal = emailToSessionPrincipal(email)
-
     const res = await this.invokeAndExecute(Access.authorize, {
       audience: this.connection.id,
       with: this.issuer.did(),
       nb: {
-        iss: sessionPrincipal.did(),
+        iss: createDidMailtoFromEmail(email),
         att: [{ can: 'store/*' }, { can: 'provider/add' }, { can: 'upload/*' }],
       },
     })
@@ -533,7 +518,6 @@ export class Agent {
     }
 
     await this.addProof(sessionDelegation)
-    this.#data.setSessionPrincipal(sessionPrincipal)
 
     // claim delegations here because we will need an ucan/attest from the service to
     // pair with the session delegation we just claimed to make it work
@@ -581,26 +565,21 @@ export class Agent {
 
   /**
    * @param {Ucanto.DID<'key'>} space
+   * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+   * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
    */
-  async addProvider(space) {
-    const sessionPrincipal = this.#data.sessionPrincipal
-
-    if (!sessionPrincipal) {
-      throw new Error('cannot add provider, please authorize first')
-    }
-
+  async addProvider(space, account, provider) {
     return this.invokeAndExecute(Provider.add, {
       audience: this.connection.id,
-      with: sessionPrincipal.did(),
+      with: account.did(),
       proofs: this.proofs([
         {
           can: 'provider/add',
-          with: sessionPrincipal.did(),
+          with: account.did(),
         },
       ]),
       nb: {
-        // TODO probably need to make it possible to pass other providers in
-        provider: 'did:web:staging.web3.storage',
+        provider,
         consumer: space,
       },
     })
@@ -609,22 +588,11 @@ export class Agent {
   /**
    *
    * @param {Ucanto.DID<'key'>} space
+   * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    */
-  async delegateSpaceAccessToAccount(space) {
-    const sessionPrincipal = this.#data.sessionPrincipal
-
-    if (!sessionPrincipal) {
-      throw new Error(
-        'cannot add delegate space access to account, please authorize first'
-      )
-    }
-
+  async delegateSpaceAccessToAccount(space, account) {
     const spaceSaysAccountCanAdminSpace =
-      await createIssuerSaysAccountCanAdminSpace(
-        this.issuer,
-        space,
-        sessionPrincipal
-      )
+      await createIssuerSaysAccountCanAdminSpace(this.issuer, space, account)
     return this.invokeAndExecute(Access.delegate, {
       audience: this.connection.id,
       with: space,
@@ -652,12 +620,26 @@ export class Agent {
    *
    * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
    *
+   * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
    */
-  async registerSpace(opts) {
+  async registerSpace(email, opts) {
     const space = this.currentSpace()
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
+    const provider =
+      opts?.provider ||
+      (() => {
+        const service = this.connection.id.did()
+        if (DIDValidator.match({ method: 'web' }).is(service)) {
+          // connection.id did is a valid provider value. Try using that.
+          return service
+        }
+        throw new Error(
+          `unable to determine provider to use to register space. Pass opts.provider`
+        )
+      })()
 
     if (!space || !spaceMeta) {
       throw new Error('No space selected')
@@ -666,14 +648,14 @@ export class Agent {
     if (spaceMeta && spaceMeta.isRegistered) {
       throw new Error('Space already registered with web3.storage.')
     }
-    const providerResult = await this.addProvider(
-      /** @type {Ucanto.DID<'key'>} */ (space)
-    )
+    const account = { did: () => createDidMailtoFromEmail(email) }
+    const providerResult = await this.addProvider(space, account, provider)
     if (providerResult.error) {
       throw new Error(providerResult.message, { cause: providerResult })
     }
     const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
-      space
+      space,
+      account
     )
     if (delegateSpaceAccessResult.error) {
       // @ts-ignore it's very weird that this is throwing an error but line 692 above does not - ignore for now
