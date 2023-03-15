@@ -7,7 +7,7 @@ export class AccessClient extends Base {
   /**
    * Authorize the current device to use capabilities granted to email.
    *
-   * @param {string} email
+   * @param {`${string}@${string}`} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
