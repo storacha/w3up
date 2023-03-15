@@ -122,8 +122,9 @@ describe('access/authorize', function () {
 
     const url = new URL(email.url)
     const rsp = await mf.dispatchFetch(url, { method: 'POST' })
-    const html = await rsp.text()
+    assert.deepEqual(rsp.status, 200)
 
+    const html = await rsp.text()
     assert(html.includes('Email Validated'))
     assert(html.includes(toEmail(accountDID)))
     assert(html.includes(issuer.did()))
