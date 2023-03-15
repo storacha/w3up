@@ -56,7 +56,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       await accessAgent.authorize('example@dag.house')
     })
 
-    it('can be used to do session authorization', async () => {
+    it('can testSessionAuthorization', async () => {
       const { emails, connection, service } = accessApiVariant
       const accessAgent = await AccessAgent.create(undefined, {
         connection: await connection,
@@ -70,6 +70,19 @@ for (const accessApiVariant of /** @type {const} */ ([
         emails
       )
     })
+
+    it('can requestAccess', async () => {
+      const { connection } = accessApiVariant
+      /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
+      const account = { did: () => 'did:mailto:dag.house:example' }
+      const accessAgent = await AccessAgent.create(undefined, {
+        connection: await connection,
+      })
+      const authorization = await requestAuthorization(accessAgent, account, [
+        { can: '*' },
+      ])
+      assert.ok(authorization)
+    })
   })
 }
 
@@ -78,6 +91,32 @@ for (const accessApiVariant of /** @type {const} */ ([
  * @typedef {import('@web3-storage/capabilities/src/types.js').AccessConfirm} AccessConfirm
  * @typedef {import('./helpers/ucanto-test-utils.js').AccessService} AccessService
  */
+
+/**
+ * request authorization using access-api access/authorize
+ *
+ * @param {AccessAgent} access
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} authorizer - who you are requesting authorization from
+ * @param {Iterable<{ can: Ucanto.Ability }>} abilities - e.g. [{ can: '*' }]
+ */
+async function requestAuthorization(access, authorizer, abilities) {
+  const authorizeResult = await access.invokeAndExecute(
+    w3caps.Access.authorize,
+    {
+      audience: access.connection.id,
+      with: access.issuer.did(),
+      nb: {
+        iss: authorizer.did(),
+        att: [...abilities],
+      },
+    }
+  )
+  assert.notDeepStrictEqual(
+    authorizeResult.error,
+    true,
+    'authorize result is not an error'
+  )
+}
 
 /**
  * @param {principal.ed25519.Signer.Signer<`did:web:${string}`, principal.ed25519.Signer.UCAN.SigAlg>} service
