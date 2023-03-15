@@ -64,11 +64,11 @@
     "@ucanto/server": "^6.1.0",
     "@ucanto/transport": "^5.1.1",
     "@web3-storage/capabilities": "workspace:^",
-    "multiformats": "^11.0.1",
+    "multiformats": "^11.0.2",
     "p-retry": "^5.1.2"
   },
   "devDependencies": {
-    "@ipld/car": "^5.0.1",
+    "@ipld/car": "^5.1.1",
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^5.1.0",
     "@web-std/blob": "^3.0.4",

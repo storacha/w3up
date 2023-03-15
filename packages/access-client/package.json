@@ -73,7 +73,7 @@
     "inquirer": "^9.1.4",
     "isomorphic-ws": "^5.0.0",
     "kysely": "^0.23.4",
-    "multiformats": "^11.0.1",
+    "multiformats": "^11.0.2",
     "one-webcrypto": "^1.0.3",
     "ora": "^6.1.2",
     "p-defer": "^4.0.0",
