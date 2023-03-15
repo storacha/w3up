@@ -65,7 +65,7 @@ export function validate(delegation, opts) {
  * @param {import('@ucanto/interface').Capability} child
  */
 export function canDelegateCapability(delegation, child) {
-  // @ts-ignore ignore this until we bring in ucanto as a normal dependency rather than linking to a local version
+  
   const allowsCapabilities = ucanto.Delegation.allows(delegation)
   if (allowsCapabilities[child.with]) {
     const cans = /** @type {import('@ucanto/interface').Ability[]} */ (
