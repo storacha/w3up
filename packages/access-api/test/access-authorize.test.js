@@ -73,7 +73,7 @@ describe('access/authorize', function () {
       )
     const delegation = stringToDelegation(encoded)
     t.deepEqual(delegation.issuer.did(), service.did())
-    t.deepEqual(delegation.audience.did(), accountDID)
+    t.deepEqual(delegation.audience.did(), service.did())
     t.deepEqual(delegation.capabilities, [
       {
         with: conn.id.did(),
