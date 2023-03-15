@@ -127,7 +127,7 @@ export class AgentData {
   }
 
   /**
-   * @param {import('@ucanto/interface').DID} did
+   * @param {import('@ucanto/interface').DID<'key'>} did
    */
   async setCurrentSpace(did) {
     this.currentSpace = did
