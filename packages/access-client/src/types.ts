@@ -170,7 +170,6 @@ export type CIDString = string
 export interface AgentDataModel {
   meta: AgentMeta
   principal: Signer<DID<'key'>>
-  sessionPrincipal?: Principal<Ucanto.DID<'mailto'>>
   currentSpace?: DID<'key'>
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
@@ -184,7 +183,6 @@ export type AgentDataExport = Pick<
   'meta' | 'currentSpace' | 'spaces'
 > & {
   principal: SignerArchive<DID, SigAlg>
-  sessionPrincipal?: string
   delegations: Map<
     CIDString,
     {
