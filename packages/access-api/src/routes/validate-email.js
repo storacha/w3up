@@ -152,7 +152,7 @@ async function authorize(req, env) {
 
     if (confirmation.error) {
       throw new Error(`unable to validate access session: ${confirmation}`, {
-        cause: confirmation.error,
+        cause: confirmation,
       })
     }
 
@@ -173,7 +173,7 @@ async function authorize(req, env) {
     })
     if (confirmResult.error) {
       throw new Error('error confirming', {
-        cause: confirmResult.error,
+        cause: confirmResult,
       })
     }
     const { account, agent } = accessConfirm.parse(request)
@@ -193,6 +193,8 @@ async function authorize(req, env) {
       )
     )
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('error in validate-email', error)
     const err = /** @type {Error} */ (error)
     env.log.error(err)
     return new HtmlResponse(
