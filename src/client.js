@@ -25,6 +25,17 @@ export class Client extends Base {
   }
 
   /**
+   * Register the _current_ space with the service.
+   *
+   * @param {string} email
+   * @param {object} [options]
+   * @param {AbortSignal} [options.signal]
+   */
+  async authorize (email, options) {
+    await this.capability.access.authorize(email, options)
+  }
+
+  /**
    * Uploads a file to the service and returns the root data CID for the
    * generated DAG.
    *
@@ -113,19 +124,12 @@ export class Client extends Base {
   /**
    * Register the _current_ space with the service.
    *
-   * Invokes `voucher/redeem` for the free tier, waits on the websocket for the
-   * `voucher/claim` and invokes it.
-   *
-   * It also adds a full space delegation to the service in the `voucher/claim`
-   * invocation to allow for recovery.
-   *
-   * @param {string} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
   /* c8 ignore next 3 */
-  async registerSpace (email, options) {
-    await this._agent.registerSpace(email, options)
+  async registerSpace (options) {
+    await this._agent.registerSpace(options)
   }
 
   /**
