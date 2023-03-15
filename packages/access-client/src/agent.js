@@ -10,6 +10,7 @@ import * as ucanto from '@ucanto/core'
 import { URI, DID as DIDValidator } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
+import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
 import * as Provider from '@web3-storage/capabilities/provider'
 
@@ -627,7 +628,7 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
    */
-  async registerSpace(email, opts) {
+  async #newRegisterSpace(email, opts) {
     const space = this.currentSpace()
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
     const provider =
@@ -667,6 +668,87 @@ export class Agent {
     }
     spaceMeta.isRegistered = true
     this.#data.addSpace(space, spaceMeta)
+  }
+
+  /**
+   * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
+   *
+   * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
+   *
+   * @param {string} email
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
+   */
+  async registerSpace(email, opts = {}) {
+    // if the client passes `provider` use the new space registration flow
+    if (opts.provider) {
+      return this.#newRegisterSpace(email, opts)
+    }
+
+    const space = this.currentSpace()
+    const service = this.connection.id
+    const spaceMeta = space ? this.#data.spaces.get(space) : undefined
+
+    if (!space || !spaceMeta) {
+      throw new Error('No space selected')
+    }
+
+    if (spaceMeta && spaceMeta.isRegistered) {
+      throw new Error('Space already registered with web3.storage.')
+    }
+
+    const inv = await this.invokeAndExecute(Voucher.claim, {
+      nb: {
+        identity: URI.from(`mailto:${email}`),
+        product: 'product:free',
+        service: service.did(),
+      },
+    })
+
+    if (inv && inv.error) {
+      throw new Error('Voucher claim failed', { cause: inv })
+    }
+
+    const voucherRedeem =
+      /** @type {Ucanto.Delegation<[import('./types').VoucherRedeem]>} */ (
+        await this.#waitForDelegation(opts)
+      )
+    await this.addProof(voucherRedeem)
+    const delegationToService = await this.delegate({
+      abilities: ['*'],
+      audience: service,
+      expiration: Infinity,
+      audienceMeta: {
+        name: 'w3access',
+        type: 'service',
+      },
+    })
+
+    const accInv = await this.invokeAndExecute(Voucher.redeem, {
+      with: URI.from(service.did()),
+      nb: {
+        space,
+        identity: voucherRedeem.capabilities[0].nb.identity,
+        product: voucherRedeem.capabilities[0].nb.product,
+      },
+      proofs: [delegationToService],
+      facts: [
+        {
+          space: spaceMeta,
+          agent: this.meta,
+        },
+      ],
+    })
+
+    if (accInv && accInv.error) {
+      throw new Error('Space registration failed', { cause: accInv })
+    }
+
+    spaceMeta.isRegistered = true
+
+    this.#data.addSpace(space, spaceMeta)
+    this.#data.removeDelegation(voucherRedeem.cid)
   }
 
   /**
