@@ -115,13 +115,19 @@
       "unicorn/prefer-export-from": "off",
       "unicorn/no-array-reduce": "off",
       "jsdoc/no-undefined-types": [
-        "warn",
+        "error",
         {
           "definedTypes": [
+            "ArrayLike",
             "AsyncIterable",
             "AsyncIterableIterator",
             "Iterable",
-            "IterableIterator"
+            "IterableIterator",
+            "Generator",
+            "CryptoKeyPair",
+            "NodeJS",
+            "ErrorOptions",
+            "IDBTransactionMode"
           ]
         }
       ]
