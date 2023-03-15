@@ -47,7 +47,7 @@ function emailToSessionPrincipal(email) {
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @returns
  */
-async function createSpaceSaysAccountCanAdminSpace(issuer, space, account) {
+async function createIssuerSaysAccountCanAdminSpace(issuer, space, account) {
   return ucanto.delegate({
     issuer,
     audience: account,
@@ -73,7 +73,7 @@ async function createSpaceSaysAccountCanAdminSpace(issuer, space, account) {
  * @param {Ucanto.DID} space
  * @param {Ucanto.Principal<Ucanto.DID<'key'>>} device
  */
-async function createSpaceSaysDeviceCanAccessDelegateWithSpace(
+async function createIssuerSaysDeviceCanAccessDelegateWithSpace(
   issuer,
   space,
   device
@@ -604,7 +604,7 @@ export class Agent {
 
   /**
    *
-   * @param {Ucanto.DID} space - TODO is this type correct?
+   * @param {Ucanto.DID<'key'>} space
    */
   async delegateSpaceAccessToAccount(space) {
     const sessionPrincipal = this.#data.sessionPrincipal
@@ -616,7 +616,7 @@ export class Agent {
     }
 
     const spaceSaysAccountCanAdminSpace =
-      await createSpaceSaysAccountCanAdminSpace(
+      await createIssuerSaysAccountCanAdminSpace(
         this.issuer,
         space,
         sessionPrincipal
@@ -632,7 +632,7 @@ export class Agent {
         },
       },
       proofs: [
-        await createSpaceSaysDeviceCanAccessDelegateWithSpace(
+        await createIssuerSaysDeviceCanAccessDelegateWithSpace(
           this.issuer,
           space,
           this.issuer

@@ -65,7 +65,6 @@ export function validate(delegation, opts) {
  * @param {import('@ucanto/interface').Capability} child
  */
 export function canDelegateCapability(delegation, child) {
-  
   const allowsCapabilities = ucanto.Delegation.allows(delegation)
   if (allowsCapabilities[child.with]) {
     const cans = /** @type {import('@ucanto/interface').Ability[]} */ (
