@@ -75,7 +75,6 @@ export async function context({ env = {}, globals } = {}) {
   return {
     mf,
     conn,
-    connection: conn,
     service: servicePrincipal,
     issuer: await Signer.generate(),
     d1: db,

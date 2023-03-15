@@ -33,6 +33,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         return {
           ...ctx,
           emails,
+          connection: ctx.conn,
         }
       }
       return {
