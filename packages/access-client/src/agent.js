@@ -36,26 +36,24 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
  * @param {Ucanto.DID} space
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ * @param {Ucanto.Capabilities} capabilities
  * @returns
  */
-async function createIssuerSaysAccountCanAdminSpace(issuer, space, account) {
+async function createIssuerSaysAccountCanAdminSpace(
+  issuer,
+  space,
+  account,
+  capabilities = [
+    {
+      can: '*',
+      with: space,
+    },
+  ]
+) {
   return ucanto.delegate({
     issuer,
     audience: account,
-    capabilities: [
-      {
-        can: 'space/*',
-        with: space,
-      },
-      {
-        can: 'store/*',
-        with: space,
-      },
-      {
-        can: 'upload/*',
-        with: space,
-      },
-    ],
+    capabilities,
   })
 }
 
