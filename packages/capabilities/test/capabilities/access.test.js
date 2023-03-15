@@ -339,7 +339,7 @@ describe('access capabilities', function () {
   describe('access/confirm', function () {
     it('should self issue', async function () {
       const agent = mallory
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: agent,
         audience: service,
         with: agent.did(),
@@ -351,7 +351,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -371,7 +371,7 @@ describe('access capabilities', function () {
     it('should delegate from confirm to confirm', async function () {
       const agent1 = bob
       const agent2 = mallory
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: agent2,
         audience: service,
         with: agent1.did(),
@@ -381,7 +381,7 @@ describe('access capabilities', function () {
           att: [{ can: '*' }],
         },
         proofs: [
-          await Access.confirm.delegate({
+          await Access.authorize.delegate({
             issuer: agent1,
             audience: agent2,
             with: agent1.did(),
@@ -393,7 +393,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -414,7 +414,7 @@ describe('access capabilities', function () {
     it('should delegate from access/* to access/confirm', async function () {
       const agent1 = bob
       const agent2 = mallory
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: agent2,
         audience: service,
         with: agent1.did(),
@@ -433,7 +433,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -454,7 +454,7 @@ describe('access capabilities', function () {
     it('should delegate from * to access/confirm', async function () {
       const agent1 = bob
       const agent2 = mallory
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: agent2,
         audience: service,
         with: agent1.did(),
@@ -473,7 +473,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -494,7 +494,7 @@ describe('access capabilities', function () {
     it('should error when `iss` is different', async function () {
       const agent1 = bob
       const agent2 = mallory
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: agent2,
         audience: service,
         with: agent1.did(),
@@ -504,7 +504,7 @@ describe('access capabilities', function () {
           att: [{ can: '*' }],
         },
         proofs: [
-          await Access.confirm.delegate({
+          await Access.authorize.delegate({
             issuer: agent1,
             audience: agent2,
             with: agent1.did(),
@@ -516,7 +516,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -529,7 +529,7 @@ describe('access capabilities', function () {
     })
 
     it('should be able to derive from * scope', async function () {
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: bob,
         audience: service,
         with: alice.did(),
@@ -539,7 +539,7 @@ describe('access capabilities', function () {
           att: [{ can: 'store/*' }],
         },
         proofs: [
-          await Access.confirm.delegate({
+          await Access.authorize.delegate({
             issuer: alice,
             audience: bob,
             with: alice.did(),
@@ -552,7 +552,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -561,7 +561,7 @@ describe('access capabilities', function () {
     })
 
     it('should be able to reduce scope', async function () {
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: bob,
         audience: service,
         with: alice.did(),
@@ -571,7 +571,7 @@ describe('access capabilities', function () {
           att: [{ can: 'store/add' }],
         },
         proofs: [
-          await Access.confirm.delegate({
+          await Access.authorize.delegate({
             issuer: alice,
             audience: bob,
             with: alice.did(),
@@ -584,7 +584,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -593,7 +593,7 @@ describe('access capabilities', function () {
     })
 
     it('should error on escalation', async function () {
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: bob,
         audience: service,
         with: alice.did(),
@@ -603,7 +603,7 @@ describe('access capabilities', function () {
           att: [{ can: '*' }],
         },
         proofs: [
-          await Access.confirm.delegate({
+          await Access.authorize.delegate({
             issuer: alice,
             audience: bob,
             with: alice.did(),
@@ -616,7 +616,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -631,7 +631,7 @@ describe('access capabilities', function () {
     it('should error on principal misalignment', async function () {
       const agent1 = bob
       const agent2 = mallory
-      const ucan = Access.confirm.invoke({
+      const ucan = Access.authorize.invoke({
         issuer: agent2,
         audience: service,
         with: alice.did(),
@@ -650,7 +650,7 @@ describe('access capabilities', function () {
       })
 
       const result = await access(await ucan.delegate(), {
-        capability: Access.confirm,
+        capability: Access.authorize,
         principal: Verifier,
         authority: service,
       })
@@ -664,7 +664,7 @@ describe('access capabilities', function () {
 
     it('should fail validation if its not mailto', async function () {
       assert.throws(() => {
-        Access.confirm.invoke({
+        Access.authorize.invoke({
           issuer: bob,
           audience: service,
           with: bob.did(),

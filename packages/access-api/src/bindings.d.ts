@@ -8,10 +8,12 @@ import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
+import type { DID } from '@ucanto/interface'
 import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { Accounts } from './models/accounts.js'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage } from './types/provisions.js'
+import { ConsumerStore } from './types/consumers.js'
 
 export {}
 
@@ -26,8 +28,12 @@ export interface AnalyticsEngineEvent {
 }
 
 export interface Email {
-  sendValidation: ({ to: string, url: string }) => Promise<void>
-  send: ({ to: string, textBody: string, subject: string }) => Promise<void>
+  sendValidation: (input: { to: string; url: string }) => Promise<void>
+  send: (input: {
+    to: string
+    textBody: string
+    subject: string
+  }) => Promise<void>
 }
 
 export interface Env {
@@ -59,7 +65,7 @@ export interface Env {
 
 export interface RouteContext {
   log: Logging
-  signer: EdSigner.Signer
+  signer: EdSigner.Signer<DID<'web'>>
   config: ReturnType<typeof loadConfig>
   url: URL
   email: Email
@@ -69,6 +75,8 @@ export interface RouteContext {
     spaces: Spaces
     provisions: ProvisionsStorage
     validations: Validations
+    consumers: ConsumerStore
+    subscriptions: SubscriptionStore
   }
   uploadApi: ConnectionView
 }

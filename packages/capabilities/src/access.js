@@ -28,6 +28,12 @@ export const CapabilityRequest = Schema.struct({
   can: Schema.string(),
 })
 
+export const Capability = Schema.struct({
+  can: Schema.string(),
+  with: Schema.URI,
+  nb: Schema.unknown(),
+})
+
 /**
  * Authorization request describing set of desired capabilities.
  */
@@ -53,21 +59,40 @@ export const access = capability({
 })
 
 /**
+ * Describes set of permissions granted or requested. It uses layout from
+ * [UCAN 0.10](https://github.com/ucan-wg/spec/pull/132) as opposed to 0.9
+ * used currently to avoid breaking changes in the future.
+ */
+const Access = Schema.dictionary({
+  key: Schema.URI,
+  value: Schema.dictionary({
+    key: Schema.string(),
+    value: Schema.dictionary({
+      key: Schema.string(),
+      value: Schema.unknown(),
+    }).array(),
+  }),
+})
+
+/**
  * Capability can be invoked by an agent to request set of capabilities from
  * the account.
  */
-export const authorize = capability({
-  can: 'access/authorize',
+export const request = capability({
+  can: 'access/request',
   with: DID.match({ method: 'key' }),
   /**
    * Authorization request describing set of desired capabilities
    */
-  nb: AuthorizationRequest,
+  nb: Schema.struct({
+    from: Account,
+    access: Access,
+  }),
   derives: (child, parent) => {
     return (
       fail(equalWith(child, parent)) ||
-      fail(equal(child.nb.iss, parent.nb.iss, 'iss')) ||
-      fail(subsetCapabilities(child.nb.att, parent.nb.att)) ||
+      fail(equal(child.nb.from, parent.nb.from, 'from')) ||
+      fail(restrictAccess(child.nb.access, parent.nb.access)) ||
       true
     )
   },
@@ -79,22 +104,95 @@ export const authorize = capability({
  * we don't have some rogue agent trying to impersonate user clicking the link
  * in order to get access to their account.
  */
-export const confirm = capability({
-  can: 'access/confirm',
-  with: DID,
+export const authorize = capability({
+  can: 'access/authorize',
+  with: DID.match({ method: 'web' }),
   nb: Schema.struct({
-    iss: Account,
-    aud: Schema.did(),
-    att: CapabilityRequest.array(),
+    from: Schema.did(),
+    to: Schema.did(),
+    access: Access,
   }),
   derives: (claim, proof) => {
     return (
       fail(equalWith(claim, proof)) ||
-      fail(equal(claim.nb.iss, proof.nb.iss, 'iss')) ||
-      fail(equal(claim.nb.aud, proof.nb.aud, 'aud')) ||
-      fail(subsetCapabilities(claim.nb.att, proof.nb.att)) ||
+      fail(equal(claim.nb.from, claim.nb.from, 'from')) ||
+      fail(equal(claim.nb.to, claim.nb.to, 'to')) ||
+      fail(restrictAccess(claim.nb.access, proof.nb.access)) ||
       true
     )
+  },
+})
+
+/**
+ *
+ * @param {Record<string, Record<string, Record<string, unknown>[]>>} granted
+ * @param {Record<string, Record<string, Record<string, unknown>[]>>} approved
+ */
+const restrictAccess = (granted, approved) => {
+  const anyResource = approved['ucan:*']
+  for (const [uri, value] of Object.entries(granted)) {
+    const resource = approved[uri] || anyResource
+    if (!resource) {
+      return new Failure(`Escalation resource '${uri}' has not been delegated`)
+    }
+
+    for (const [can, caveats] of Object.entries(value)) {
+      const ability = resource[can] || resource['*']
+      if (!ability) {
+        return new Failure(
+          `Escalation ability ${can} on resource '${uri}' has not been delegated`
+        )
+      }
+
+      // if caveats are not specified then it means no caveats are imposed
+      // which is equivalent of `{}`.
+      if (ability.length === 0) {
+        ability.push({})
+      }
+      if (caveats.length === 0) {
+        caveats.push({})
+      }
+
+      for (const need of caveats) {
+        const satisfied = ability.some((allow) => isSubStruct(need, allow))
+        if (!satisfied) {
+          return new Failure(
+            `Escalation ability ${can} on resource '${uri}' with caveats ${JSON.stringify(
+              need
+            )} violates imposed caveats ${JSON.stringify(ability)}`
+          )
+        }
+      }
+    }
+  }
+
+  return true
+}
+
+/**
+ * @template {Record<string, unknown>} T
+ * @template {Record<string, unknown>} U
+ * @param {T} a
+ * @param {U} b
+ */
+const isSubStruct = (a, b) => {
+  for (const [key, value] of Object.entries(a)) {
+    if (key in b && JSON.stringify(b[key]) !== JSON.stringify(value)) {
+      return false
+    }
+  }
+}
+
+authorize.create({
+  with: 'did:web:web3.storage',
+  nb: {
+    from: 'did:mailto:web.mail:alice',
+    to: 'did:web:web3.storage',
+    access: {
+      'did:web:web3.storage': {
+        'store/add': [],
+      },
+    },
   },
 })
 
@@ -211,7 +309,7 @@ function subsetsNbDelegations(claim, proof) {
  * @param {Schema.Infer<CapabilityRequest>[]} claim
  * @param {Schema.Infer<CapabilityRequest>[]} proof
  */
-const subsetCapabilities = (claim, proof) => {
+const subsetCapabilitiesRequested = (claim, proof) => {
   const allowed = new Set(proof.map((p) => p.can))
   // If everything is allowed, no need to check further because it contains
   // all the capabilities.

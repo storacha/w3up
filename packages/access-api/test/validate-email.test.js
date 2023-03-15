@@ -16,7 +16,7 @@ describe('validate-email', () => {
       issuer: service,
       audience: agent,
       capabilities: [
-        Access.confirm.create({
+        Access.authorize.create({
           with: service.did(),
           nb: {
             iss: accountDid,
