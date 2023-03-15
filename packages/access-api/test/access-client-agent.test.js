@@ -7,7 +7,10 @@ import * as w3caps from '@web3-storage/capabilities'
 import * as assert from 'assert'
 import * as Ucanto from '@ucanto/interface'
 import { createEmail } from './helpers/utils.js'
-import { stringToDelegations } from '@web3-storage/access/encoding'
+import {
+  stringToDelegation,
+  stringToDelegations,
+} from '@web3-storage/access/encoding'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 
 for (const accessApiVariant of /** @type {const} */ ([
@@ -71,18 +74,100 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
     })
 
-    it('can requestAccess', async () => {
+    it('can requestAuthorization', async () => {
       const { connection } = accessApiVariant
       /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
       const account = { did: () => 'did:mailto:dag.house:example' }
       const accessAgent = await AccessAgent.create(undefined, {
         connection: await connection,
       })
-      const authorization = await requestAuthorization(accessAgent, account, [
+      await requestAuthorization(accessAgent, account, [{ can: '*' }])
+    })
+
+    it('can requestAuthorization then click email', async () => {
+      const connection = await accessApiVariant.connection
+      const { emails } = accessApiVariant
+      /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
+      const account = { did: () => 'did:mailto:dag.house:example' }
+      const accessAgent = await AccessAgent.create(undefined, {
+        connection,
+      })
+
+      // request that account authorizes accessAgent
+      // this should result in sending a confirmation email
+      const requestAllAbilities = requestAuthorization(accessAgent, account, [
         { can: '*' },
       ])
-      assert.ok(authorization)
+
+      // in parallel:
+      // * request authorization
+      // * keep checking your email for the confirmation email that sends, then return it
+      // await both succeeding
+      const abort = new AbortController()
+      after(() => abort.abort())
+      const [, confirmEmail] = await Promise.all([
+        requestAllAbilities,
+        watchForEmail(emails, 100, abort.signal).then((email) => {
+          return email
+        }),
+      ])
+
+      // extract confirmation invocation from email that was sent by service while handling access/authorize
+      const confirm = await extractConfirmInvocation(
+        connection,
+        new URL(confirmEmail.url)
+      )
+      // invoke the access/confirm invocation as if the user had clicked the email
+      const [confirmResult] = await connection.execute(confirm)
+      assert.notEqual(
+        confirmResult.error,
+        true,
+        'access/confirm result is not an error'
+      )
     })
+  })
+}
+
+/**
+ * @param {Ucanto.Connection<AccessService>} connection
+ * @param {URL} confirmationUrl
+ * @returns {Promise<Ucanto.Invocation<AccessConfirm>>}
+ */
+async function extractConfirmInvocation(connection, confirmationUrl) {
+  const delegation = stringToDelegation(
+    confirmationUrl.searchParams.get('ucan') ?? ''
+  )
+  if (
+    delegation.capabilities.length !== 1 ||
+    delegation.capabilities[0].can !== 'access/confirm'
+  ) {
+    throw new Error(`parsed unexpected delegation from confirmationUrl`)
+  }
+  const confirm = /** @type {Ucanto.Invocation<AccessConfirm>} */ (delegation)
+  return confirm
+}
+
+/**
+ * @param {Array<{ url: string }>} emails
+ * @param {number} [retryAfter]
+ * @param {AbortSignal} [abort]
+ * @returns {Promise<{ url: string }>} latest email, once received
+ */
+function watchForEmail(emails, retryAfter, abort) {
+  return new Promise((resolve, reject) => {
+    if (abort) {
+      abort.addEventListener('abort', () => reject(new Error('aborted')))
+    }
+    const latestEmail = emails.at(-1)
+    if (latestEmail) {
+      return resolve(latestEmail)
+    }
+    if (typeof retryAfter === 'number') {
+      setTimeout(
+        () => watchForEmail(emails, retryAfter).then(resolve).catch(reject),
+        retryAfter
+      )
+    }
   })
 }
 
