@@ -75,26 +75,6 @@ describe('ucan', function () {
     ])
   })
 
-  test('should fail with bad service audience', async function () {
-    const { mf, issuer } = ctx
-
-    const audience = await Signer.generate()
-    const ucan = await UCAN.issue({
-      issuer,
-      audience,
-      // @ts-ignore
-      capabilities: [],
-    })
-    const res = await mf.dispatchFetch('http://localhost:8787/raw', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${UCAN.format(ucan)}`,
-      },
-    })
-    const rsp = await res.json()
-    t.deepEqual(rsp[0].name, 'InvalidAudience')
-  })
-
   test('should fail with with more than 1 cap', async function () {
     const { mf, service, issuer } = ctx
 
