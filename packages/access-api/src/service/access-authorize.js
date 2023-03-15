@@ -22,7 +22,7 @@ export function accessAuthorizeProvider(ctx) {
      * surface where an attacker could attempt concurrent authorization
      * request in attempt confuse a user into clicking the wrong link.
      */
-    const confirmation = await Access.confirm
+    const confirmation = await Access.authorize
       .invoke({
         issuer: ctx.signer,
         audience: DID.parse(capability.nb.iss),

@@ -17,6 +17,7 @@ import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
 import { providerAddProvider } from './provider-add.js'
 import { Spaces } from '../models/spaces.js'
+import { request as accessRequest } from './access-request.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx

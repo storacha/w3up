@@ -143,7 +143,7 @@ async function authorize(req, env) {
     const request = stringToDelegation(req.query.ucan)
 
     const confirmation = await validator.access(request, {
-      capability: Access.confirm,
+      capability: Access.authorize,
       principal: Verifier,
       authority: env.signer,
     })
