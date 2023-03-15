@@ -27,7 +27,7 @@ import {
 import { AgentData, getSessionProof } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
 
-export { AgentData }
+export { AgentData, createDidMailtoFromEmail }
 
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
