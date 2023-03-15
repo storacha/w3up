@@ -662,7 +662,9 @@ export class Agent {
     if (spaceMeta && spaceMeta.isRegistered) {
       throw new Error('Space already registered with web3.storage.')
     }
-    const providerResult = await this.addProvider(space)
+    const providerResult = await this.addProvider(
+      /** @type {Ucanto.DID<'key'>} */ (space)
+    )
     if (providerResult.error) {
       throw new Error(providerResult.message, { cause: providerResult })
     }
