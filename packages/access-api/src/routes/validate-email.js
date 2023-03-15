@@ -15,8 +15,9 @@ import * as validator from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from '../utils/delegations-response.js'
 import * as accessConfirm from '../service/access-confirm.js'
-import { provide } from '@ucanto/server'
+import { provideAdvanced } from '@ucanto/server'
 import * as Ucanto from '@ucanto/interface'
+import { literal } from '@ucanto/validator'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -156,19 +157,21 @@ async function authorize(req, env) {
       })
     }
 
-    const confirm = provide(
-      Access.confirm,
-      async ({ capability, invocation }) => {
+    const confirm = provideAdvanced({
+      capability: Access.confirm,
+      audience: literal(request.audience.did()),
+      handler: async ({ capability, invocation }) => {
         return accessConfirm.handleAccessConfirm(
           /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
             invocation
           ),
           env
         )
-      }
-    )
+      },
+    })
     const confirmResult = await confirm(request, {
-      id: env.signer.verifier,
+      // note: this is required, but the validation will use `options.capability` passsed to `provideAdvanced`
+      id: env.signer,
       principal: Verifier,
     })
     if (confirmResult.error) {
