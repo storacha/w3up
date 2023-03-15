@@ -190,6 +190,10 @@ export class Agent {
     return this.#data.spaces
   }
 
+  get account() {
+    return this.#data.sessionPrincipal
+  }
+
   did() {
     return this.#data.principal.did()
   }
