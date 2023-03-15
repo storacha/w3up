@@ -24,7 +24,7 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
-import { AgentData } from './agent-data.js'
+import { AgentData, getSessionProof } from './agent-data.js'
 
 export { AgentData }
 
@@ -269,7 +269,7 @@ export class Agent {
    */
   proofs(caps) {
     const arr = []
-    const session = this.#data.sessionProof()
+    const session = getSessionProof(this.#data)
     let hasSessionDelegations = false
 
     for (const { delegation } of this.#delegations(caps)) {

@@ -113,7 +113,24 @@
     "rules": {
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
-      "unicorn/no-array-reduce": "off"
+      "unicorn/no-array-reduce": "off",
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "ArrayLike",
+            "AsyncIterable",
+            "AsyncIterableIterator",
+            "Iterable",
+            "IterableIterator",
+            "Generator",
+            "CryptoKeyPair",
+            "NodeJS",
+            "ErrorOptions",
+            "IDBTransactionMode"
+          ]
+        }
+      ]
     },
     "env": {
       "mocha": true
