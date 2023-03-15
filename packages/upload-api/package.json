@@ -62,7 +62,7 @@
     "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
     "@ucanto/server": "^6.1.0",
-    "@ucanto/transport": "^5.1.0",
+    "@ucanto/transport": "^5.1.1",
     "@web3-storage/capabilities": "workspace:^",
     "multiformats": "^11.0.1",
     "p-retry": "^5.1.2"

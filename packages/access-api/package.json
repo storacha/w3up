@@ -22,7 +22,7 @@
     "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
     "@ucanto/server": "^6.1.0",
-    "@ucanto/transport": "^5.1.0",
+    "@ucanto/transport": "^5.1.1",
     "@ucanto/validator": "^6.1.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
