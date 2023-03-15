@@ -14,7 +14,7 @@ describe('validate-email', () => {
     const extraBytes = getRandomValues(new Uint8Array(10 * 1024))
     const ucan = await Delegation.delegate({
       issuer: service,
-      audience: agent,
+      audience: service,
       capabilities: [
         Access.confirm.create({
           with: service.did(),
