@@ -134,12 +134,12 @@ importers:
       '@types/varint': ^6.0.1
       '@types/ws': ^8.5.4
       '@ucanto/client': ^5.1.0
-      '@ucanto/core': ^5.1.0
-      '@ucanto/interface': ^6.0.0
+      '@ucanto/core': ^5.2.0
+      '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
-      '@ucanto/server': ^6.0.0
+      '@ucanto/server': ^6.1.0
       '@ucanto/transport': ^5.1.0
-      '@ucanto/validator': ^6.0.0
+      '@ucanto/validator': ^6.1.0
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       bigint-mod-arith: ^3.1.2
@@ -171,11 +171,11 @@ importers:
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.2.0
       '@ucanto/client': 5.1.0
-      '@ucanto/core': 5.1.0
-      '@ucanto/interface': 6.0.0
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
       '@ucanto/transport': 5.1.0
-      '@ucanto/validator': 6.0.0
+      '@ucanto/validator': 6.1.0
       '@web3-storage/capabilities': link:../capabilities
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
@@ -199,7 +199,7 @@ importers:
       '@types/node': 18.11.18
       '@types/varint': 6.0.1
       '@types/ws': 8.5.4
-      '@ucanto/server': 6.0.0
+      '@ucanto/server': 6.1.0
       assert: 2.0.0
       delay: 5.0.0
       hd-scripts: 4.0.0
@@ -3606,9 +3606,17 @@ packages:
   /@ucanto/server/6.0.0:
     resolution: {integrity: sha512-xwZa3S8bclGn3JxuxUIQ+TOZKeAhbSDJEk7B3ZgHUu0bYBBFEyRbAVD177ZpAnTuvj8Et68g1tRzNIStQPMvSA==}
     dependencies:
-      '@ucanto/core': 5.1.0
+      '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
-      '@ucanto/validator': 6.0.0
+      '@ucanto/validator': 6.1.0
+
+  /@ucanto/server/6.1.0:
+    resolution: {integrity: sha512-IRvYbv1iEAjgm8Rc4hqUPm2NGSU+R+X+wyHp3hUI/YdGji+bajghV4gU9klkDkgm0aqVuI1fDFyODWZb5UROtw==}
+    dependencies:
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/validator': 6.1.0
+    dev: true
 
   /@ucanto/transport/5.1.0:
     resolution: {integrity: sha512-Um/ba0DmTM1icZW08pxg7hyV1BYXGMyWEeVAnrM3W/WnrYd+JTEFoaPrbPce//Dkmrfk8uGjuIIgjpPT1eAfUA==}
@@ -3628,6 +3636,7 @@ packages:
       '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
       multiformats: 11.0.1
+    dev: false
 
   /@ucanto/validator/6.1.0:
     resolution: {integrity: sha512-vZ40paByLgosllG+YfuI4eD7m3KyYG1ebEa9jZEkLDYjWh7WWBtYvBn40pziIiLfBCzum2zU1uP1SMOf63EqqQ==}
@@ -3637,7 +3646,6 @@ packages:
       '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
       multiformats: 11.0.1
-    dev: false
 
   /@vue/compiler-core/3.2.45:
     resolution: {integrity: sha512-rcMj7H+PYe5wBV3iYeUgbCglC+pbpN8hBLTJvRiK2eKQiWqu+fG9F+8sW99JdL4LQi7Re178UOxn09puSXvn4A==}
