@@ -46,7 +46,7 @@ importers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@ucanto/server': ^6.1.0
-      '@ucanto/transport': ^5.1.0
+      '@ucanto/transport': ^5.1.1
       '@ucanto/validator': ^6.1.0
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
@@ -81,7 +81,7 @@ importers:
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
       '@ucanto/server': 6.1.0
-      '@ucanto/transport': 5.1.0
+      '@ucanto/transport': 5.1.1
       '@ucanto/validator': 6.1.0
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
@@ -138,7 +138,7 @@ importers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@ucanto/server': ^6.1.0
-      '@ucanto/transport': ^5.1.0
+      '@ucanto/transport': ^5.1.1
       '@ucanto/validator': ^6.1.0
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
@@ -174,7 +174,7 @@ importers:
       '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
-      '@ucanto/transport': 5.1.0
+      '@ucanto/transport': 5.1.1
       '@ucanto/validator': 6.1.0
       '@web3-storage/capabilities': link:../capabilities
       bigint-mod-arith: 3.1.2
@@ -262,7 +262,7 @@ importers:
       '@ucanto/core': ^5.2.0
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
-      '@ucanto/transport': ^5.1.0
+      '@ucanto/transport': ^5.1.1
       '@ucanto/validator': ^6.1.0
       assert: ^2.0.0
       hd-scripts: ^4.0.0
@@ -275,7 +275,7 @@ importers:
       '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
-      '@ucanto/transport': 5.1.0
+      '@ucanto/transport': 5.1.1
       '@ucanto/validator': 6.1.0
     devDependencies:
       '@types/assert': 1.5.6
@@ -298,7 +298,7 @@ importers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@ucanto/server': ^6.1.0
-      '@ucanto/transport': ^5.1.0
+      '@ucanto/transport': ^5.1.1
       '@web-std/blob': ^3.0.4
       '@web3-storage/capabilities': workspace:^
       '@web3-storage/sigv4': ^1.0.2
@@ -311,7 +311,7 @@ importers:
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
       '@ucanto/server': 6.1.0
-      '@ucanto/transport': 5.1.0
+      '@ucanto/transport': 5.1.1
       '@web3-storage/capabilities': link:../capabilities
       multiformats: 11.0.1
       p-retry: 5.1.2
@@ -335,7 +335,7 @@ importers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@ucanto/server': ^6.1.0
-      '@ucanto/transport': ^5.1.0
+      '@ucanto/transport': ^5.1.1
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       blockstore-core: ^3.0.0
@@ -356,7 +356,7 @@ importers:
       '@ipld/unixfs': 2.0.1
       '@ucanto/client': 5.1.0
       '@ucanto/interface': 6.2.0
-      '@ucanto/transport': 5.1.0
+      '@ucanto/transport': 5.1.1
       '@web3-storage/capabilities': link:../capabilities
       multiformats: 11.0.1
       p-queue: 7.3.0
@@ -1938,7 +1938,7 @@ packages:
       react:
         optional: true
     dependencies:
-      '@types/react': 18.0.27
+      '@types/react': 18.0.28
       prop-types: 15.8.1
     dev: true
 
@@ -2498,6 +2498,16 @@ packages:
       multiformats: 11.0.1
       varint: 6.0.0
 
+  /@ipld/car/5.1.1:
+    resolution: {integrity: sha512-HoFTUqUJL9cPGhC9qRmHCvamfIsj1JllQSQ/Xu9/KN/VNJp8To9Ms4qiZPEMOwcrNFclfYqrahjGYbf4KL/d9A==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.0
+      cborg: 1.10.0
+      multiformats: 11.0.2
+      varint: 6.0.0
+    dev: false
+
   /@ipld/dag-cbor/9.0.0:
     resolution: {integrity: sha512-zdsiSiYDEOIDW7mmWOYWC9gukjXO+F8wqxz/LfN7iSwTfIyipC8+UQrCbPupFMRb/33XQTZk8yl3My8vUQBRoA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -2516,7 +2526,7 @@ packages:
     resolution: {integrity: sha512-8FB/qTlNowCiszL9Sek8xH6xIQxIioXuzZ5B1jVPknQMVkd08nZUHzDjrn1Y6MqJ5PrXWLrBwNghGMWPPpvNVw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      multiformats: 11.0.1
+      multiformats: 11.0.2
 
   /@ipld/dag-ucan/3.2.0:
     resolution: {integrity: sha512-CTClaGx4F3iEMJgYaYVOVBEvtNXzPc77Mi6p3vBtylSzDWhbf1Gou9ij7PlblOqWKA1H7XI8fp6yweTb6iXNKQ==}
@@ -2809,7 +2819,7 @@ packages:
     resolution: {integrity: sha512-4gCptOviYuu8ts5iUPwAcyIgl1FAyOAtWkQMAdu7FpgWveV5uVmA/919+QhgiZu8lhBGLWvRRTigOEdYNX9y0A==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      multiformats: 11.0.1
+      multiformats: 11.0.2
       murmurhash3js-revisited: 3.0.0
     dev: true
 
@@ -3329,8 +3339,8 @@ packages:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
     dev: true
 
-  /@types/react/18.0.27:
-    resolution: {integrity: sha512-3vtRKHgVxu3Jp9t718R9BuzoD4NcQ8YJ5XRzsSKxNDiDonD2MXIT1TmSkenxuCycZJoQT5d2vE8LwWJxBC1gmA==}
+  /@types/react/18.0.28:
+    resolution: {integrity: sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
@@ -3604,14 +3614,14 @@ packages:
       '@ucanto/interface': 6.2.0
       '@ucanto/validator': 6.1.0
 
-  /@ucanto/transport/5.1.0:
-    resolution: {integrity: sha512-Um/ba0DmTM1icZW08pxg7hyV1BYXGMyWEeVAnrM3W/WnrYd+JTEFoaPrbPce//Dkmrfk8uGjuIIgjpPT1eAfUA==}
+  /@ucanto/transport/5.1.1:
+    resolution: {integrity: sha512-5g2Xiofqalvmaw/UPRTdxV2be+KE3TMbFhG4ZNNPkDIBpdBduVENcLQPJ9ksD29Bc2ArIefXALxGzyGLgUPCBg==}
     dependencies:
-      '@ipld/car': 5.1.0
+      '@ipld/car': 5.1.1
       '@ipld/dag-cbor': 9.0.0
       '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
-      multiformats: 11.0.1
+      multiformats: 11.0.2
     dev: false
 
   /@ucanto/validator/6.1.0:
@@ -7798,7 +7808,7 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       interface-store: 3.0.4
-      multiformats: 11.0.1
+      multiformats: 11.0.2
     dev: true
 
   /interface-store/3.0.4:
@@ -9087,6 +9097,10 @@ packages:
 
   /multiformats/11.0.1:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+
+  /multiformats/11.0.2:
+    resolution: {integrity: sha512-b5mYMkOkARIuVZCpvijFj9a6m5wMVLC7cf/jIPd5D/ARDOfLC5+IFkbgDXQgcU2goIsTD/O9NY4DI/Mt4OGvlg==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
   /multimatch/5.0.0:
