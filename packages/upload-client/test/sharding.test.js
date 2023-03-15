@@ -15,8 +15,8 @@ import { mockService } from './helpers/mocks.js'
 
 describe('ShardingStream', () => {
   it('creates shards from blocks', async () => {
-    const file = new Blob([await randomBytes(1024 * 1024)])
-    const shardSize = 512 * 1024
+    const file = new Blob([await randomBytes(1024 * 1024 * 5)])
+    const shardSize = 1024 * 1024 * 2
 
     /** @type {import('../src/types').CARFile[]} */
     const shards = []
