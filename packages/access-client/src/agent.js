@@ -487,26 +487,43 @@ export class Agent {
    * signed by the passed email address.
    *
    * @param {`${string}@${string}`} email
-   * @param {object} [opts]
+   * @param {object} opts
    * @param {AbortSignal} [opts.signal]
-   * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+   * @param {Iterable<{ can: Ucanto.Ability }>} opts.capabilities
    */
-  async authorize(email, opts) {
-    const capabilityRequest = opts?.capabilities
-      ? [...opts.capabilities]
-      : [{ can: 'store/*' }, { can: 'provider/add' }, { can: 'upload/*' }]
+  async requestAuthorization(email, opts) {
     const res = await this.invokeAndExecute(Access.authorize, {
       audience: this.connection.id,
       with: this.issuer.did(),
       nb: {
         iss: createDidMailtoFromEmail(email),
-        att: capabilityRequest,
+        att: [...opts.capabilities],
       },
     })
 
     if (res?.error) {
       throw new Error('failed to authorize session', { cause: res })
     }
+  }
+
+  /**
+   * Request authorization of a session allowing this agent to issue UCANs
+   * signed by the passed email address.
+   *
+   * @param {`${string}@${string}`} email
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+   */
+  async authorize(email, opts) {
+    await this.requestAuthorization(email, {
+      ...opts,
+      capabilities: opts?.capabilities || [
+        { can: 'store/*' },
+        { can: 'provider/add' },
+        { can: 'upload/*' },
+      ],
+    })
 
     const sessionDelegation =
       /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
