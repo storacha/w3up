@@ -14,6 +14,7 @@ import {
   stringToDelegations,
 } from '@web3-storage/access/encoding'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
+import { AgentData } from '@web3-storage/access'
 
 for (const accessApiVariant of /** @type {const} */ ([
   {
@@ -206,7 +207,8 @@ for (const accessApiVariant of /** @type {const} */ ([
         })
       )
       const { connection, emails } = await accessApiVariant.create()
-      const accessAgent = await AccessAgent.create(undefined, {
+      const accessAgentData = await AgentData.create()
+      const accessAgent = await AccessAgent.create(accessAgentData, {
         connection,
       })
       const abort = new AbortController()
@@ -232,6 +234,17 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
       const accountsThatAddedProvider = []
       for (const account of accounts) {
+        const proofsForAccount = accessAgent.proofs([
+          {
+            can: 'provider/add',
+            with: spaceCreation.did,
+          },
+        ])
+        // eslint-disable-next-line no-console
+        console.log(
+          'proofsForAccount',
+          JSON.stringify(proofsForAccount, undefined, 2)
+        )
         await accessAgent.addProvider(spaceCreation.did, account, provider)
         accountsThatAddedProvider.push(account)
       }
