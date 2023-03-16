@@ -1,6 +1,9 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { context } from './helpers/context.js'
-import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
+import {
+  assertNotError,
+  createTesterFromContext,
+} from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import {
   addProvider,
@@ -333,6 +336,20 @@ for (const accessApiVariant of /** @type {const} */ ([
 
       // try to addProvider
       await addProvider(deviceB, spaceCreation.did, account, provider)
+
+      // try to space/info as deviceB
+      const spaceInfoResult = await deviceB.invokeAndExecute(
+        w3caps.Space.info,
+        {
+          with: spaceCreation.did,
+        }
+      )
+      assertNotError(spaceInfoResult)
+      assert.notEqual(
+        spaceInfoResult.error,
+        true,
+        'spaceInfoResult is not an error'
+      )
     })
   })
 }
