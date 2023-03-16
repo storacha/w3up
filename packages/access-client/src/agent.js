@@ -25,7 +25,7 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
-import { AgentData, getSessionProof } from './agent-data.js'
+import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
 
 export { AgentData, createDidMailtoFromEmail }
@@ -255,26 +255,20 @@ export class Agent {
    */
   proofs(caps) {
     const arr = []
-    const session = getSessionProof(this.#data)
-    let hasSessionDelegations = false
 
     for (const { delegation } of this.#delegations(caps)) {
-      const aud = delegation.audience
-      if (
-        aud.did() === this.issuer.did() ||
-        aud.did() === session?.audience.did()
-      ) {
+      if (delegation.audience.did() === this.issuer.did()) {
         arr.push(delegation)
       }
-      if (aud.did() === session?.audience.did()) {
-        hasSessionDelegations = true
+    }
+
+    const sessions = getSessionProofs(this.#data)
+    for (const proof of arr) {
+      const session = sessions[proof.asCID.toString()]
+      if (session) {
+        arr.push(session)
       }
     }
-
-    if (session && hasSessionDelegations) {
-      arr.push(session)
-    }
-
     return arr
   }
 
@@ -530,8 +524,8 @@ export class Agent {
       (await this.#waitForDelegation(opts))
 
     const cap = sessionDelegation.capabilities.find(
-      // @ts-expect-error "key" does not exist in object, unless it's a session capability
-      (c) => c.can === Access.session.can && c.nb.key === this.issuer.did()
+      // @ts-expect-error "proof" does not exist in caveats, unless it's a session capability - TODO: is there a better way to type this?
+      (c) => c.can === Access.session.can && c.nb.proof === this.issuer.did()
     )
     if (!cap && isExpired(sessionDelegation)) {
       throw new Error('received invalid delegation')
@@ -592,12 +586,6 @@ export class Agent {
     return this.invokeAndExecute(Provider.add, {
       audience: this.connection.id,
       with: account.did(),
-      proofs: this.proofs([
-        {
-          can: 'provider/add',
-          with: account.did(),
-        },
-      ]),
       nb: {
         provider,
         consumer: space,
