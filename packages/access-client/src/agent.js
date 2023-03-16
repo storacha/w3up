@@ -461,7 +461,6 @@ export class Agent {
       return
     }
 
-    // TODO cache these
     const proofs = this.proofs([
       {
         can: 'space/info',
@@ -508,14 +507,6 @@ export class Agent {
     const sessionDelegation =
       /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
       (await this.#waitForDelegation(opts))
-
-    const cap = sessionDelegation.capabilities.find(
-      // @ts-expect-error "proof" does not exist in caveats, unless it's a session capability - TODO: is there a better way to type this?
-      (c) => c.can === Access.session.can && c.nb.proof === this.issuer.did()
-    )
-    if (!cap && isExpired(sessionDelegation)) {
-      throw new Error('received invalid delegation')
-    }
 
     await this.addProof(sessionDelegation)
 
