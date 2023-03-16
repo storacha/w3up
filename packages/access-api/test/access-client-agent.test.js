@@ -114,10 +114,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       ])
 
       // extract confirmation invocation from email that was sent by service while handling access/authorize
-      const confirm = await extractConfirmInvocation(
-        connection,
-        new URL(confirmEmail.url)
-      )
+      const confirm = await extractConfirmInvocation(new URL(confirmEmail.url))
       // invoke the access/confirm invocation as if the user had clicked the email
       const [confirmResult] = await connection.execute(confirm)
       assert.notEqual(
@@ -133,11 +130,10 @@ for (const accessApiVariant of /** @type {const} */ ([
 }
 
 /**
- * @param {Ucanto.Connection<AccessService>} connection
  * @param {URL} confirmationUrl
  * @returns {Promise<Ucanto.Invocation<AccessConfirm>>}
  */
-async function extractConfirmInvocation(connection, confirmationUrl) {
+async function extractConfirmInvocation(confirmationUrl) {
   const delegation = stringToDelegation(
     confirmationUrl.searchParams.get('ucan') ?? ''
   )
