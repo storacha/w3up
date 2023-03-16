@@ -38,6 +38,9 @@ export * from './agent-use-cases.js'
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
 
+/** @type {WeakMap<Agent, AgentData>} */
+export const agentToData = new WeakMap()
+
 /**
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
  * @param {Ucanto.DID} space
@@ -152,6 +155,7 @@ export class Agent {
         url: this.url,
       })
     this.#data = data
+    agentToData.set(this, this.#data)
   }
 
   /**
@@ -514,30 +518,6 @@ export class Agent {
     // pair with the session delegation we just claimed to make it work
     await claimDelegations(this, this.issuer.did(), { addProofs: true })
     await claimDelegations(this, account.did(), { addProofs: true })
-  }
-
-  /**
-   * Given a list of delegations, add to agent data spaces list.
-   *
-   * TODO: DON'T USE - we'd like to move away from storing space information inside the agent, planning on removing this soon!
-   *
-   * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
-   */
-  async _addSpacesFromDelegations(delegations) {
-    if (delegations.length > 0) {
-      const allows = ucanto.Delegation.allows(
-        delegations[0],
-        ...delegations.slice(1)
-      )
-      for (const [did, value] of Object.entries(allows)) {
-        // TODO I don't think this should be `store/*` but this works for today
-        if (value['store/*']) {
-          this.#data.addSpace(/** @type {Ucanto.DID} */ (did), {
-            isRegistered: true,
-          })
-        }
-      }
-    }
   }
 
   /**

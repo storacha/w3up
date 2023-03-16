@@ -1,8 +1,9 @@
-import { Agent as AccessAgent } from './agent.js'
+import { Agent as AccessAgent, agentToData } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
+import { Delegation } from '@ucanto/core'
 
 /**
  * Request authorization of a session allowing this agent to issue UCANs
@@ -52,10 +53,39 @@ export async function claimDelegations(
   )
   if (addProofs) for (const d of delegations) access.addProof(d)
 
-  // TODO get rid of this - we'd like to move responsibility for storing space metadata out of agent-data soon
-  if (addProofs) access._addSpacesFromDelegations(delegations)
+  if (addProofs) {
+    await addSpacesFromDelegations(access, delegations)
+  }
 
   return delegations
+}
+
+/**
+ * Given a list of delegations, add to agent data spaces list.
+ *
+ * TODO: DON'T USE - we'd like to move away from storing space information inside the agent, planning on removing this soon!
+ *
+ * @param {AccessAgent} access
+ * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
+ */
+export async function addSpacesFromDelegations(access, delegations) {
+  const data = agentToData.get(access)
+  if (!data) {
+    throw Object.assign(new Error(`cannot determine AgentData for Agent`), {
+      agent: access,
+    })
+  }
+  if (delegations.length > 0) {
+    const allows = Delegation.allows(delegations[0], ...delegations.slice(1))
+    for (const [did, value] of Object.entries(allows)) {
+      // TODO I don't think this should be `store/*` but this works for today
+      if (value['store/*']) {
+        data.addSpace(/** @type {Ucanto.DID} */ (did), {
+          isRegistered: true,
+        })
+      }
+    }
+  }
 }
 
 /**
