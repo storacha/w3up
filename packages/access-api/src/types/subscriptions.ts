@@ -1,21 +1,20 @@
-import type { DID, Link } from '@ucanto/interface'
-import type { Database, TextColumn, Row } from './database.js'
+import type { DID, Link, Result, Failure } from '@ucanto/interface'
+import type { Text, Row } from './database.js'
 import type * as Capabilities from '@web3-storage/capabilities/types'
 
-export interface Subscription extends Capabilities.Subscription {
-  cause: TextColumn<Link>
-  order: TextColumn<Link>
+export interface SubscriptionID {
+  cause: Text<Link>
 }
 
-export type SubscriptionRecord = Row<Subscription>
+export interface Subscription extends Capabilities.Subscription {
+  cause: Text<Link>
+  order: Text<Link>
+}
 
-export interface SubscriptionDB
-  extends Database<{
-    subscriptions: SubscriptionRecord
-  }> {}
+export interface SubscriptionRecord extends Subscription, Row {}
 
 export interface SubscriptionStore {
-  add: (subscription: Subscription) => Promise<Subscription>
+  add: (subscription: Subscription) => Promise<Result<SubscriptionID, Failure>>
   find: (query: SubscriptionQuery) => Promise<Capabilities.SubscriptionRecord[]>
 }
 

@@ -2,7 +2,7 @@
 
 /**
  * @template {import("@ucanto/interface").DID} ServiceId
- * @typedef {import("../types/provisions").ProvisionsStorage<ServiceId>} Provisions
+ * @typedef {import("../types/provisions").ProvisionStore<ServiceId>} Provisions
  */
 
 /**

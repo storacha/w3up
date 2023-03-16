@@ -1,30 +1,36 @@
-import { Kysely } from 'kysely'
+import * as Kysely from 'kysely'
 
-import type { ColumnType, Generated } from 'kysely'
-
-export type Database<Tables> = Kysely<Tables> & {
+export type Database<Tables> = Kysely.Kysely<Tables> & {
   /**
-   * whether or not this Databse supports Kysely stream() asyncIterator
+   * whether or not this Database supports Kysely stream() asyncIterator
    * (kysely-d1 dialect does not)
    */
-  canStream: boolean
+  canStream?: boolean
 }
 
-declare const Column: unique symbol
+declare const column: unique symbol
 
-export type TextColumn<T> = T & {
-  [Column]?: ColumnType<T, string, string>
+export type Column<
+  SelectType,
+  InsertType = SelectType,
+  UpdateType = InsertType
+> = SelectType & {
+  [column]?: Kysely.ColumnType<SelectType, InsertType, UpdateType>
 }
-// eslint-disable-next-line unicorn/prefer-export-from
-export type { Generated }
 
-export type Row<Model> = {
-  [Key in keyof Model]: Model[Key] extends {
-    [Column]?: ColumnType<infer O, infer I, infer U>
-  }
-    ? ColumnType<O, I, U>
+export type Text<T> = Column<T, string>
+
+export type Timestamp = Column<Date, never, Date>
+
+export type Generated<T> = Column<T, T | undefined, T>
+
+export interface Row {
+  updated_at: Timestamp
+  inserted_at: Timestamp
+}
+
+export type Table<Model> = {
+  [Key in keyof Model]: Model[Key] extends Column<infer O, infer I, infer U>
+    ? Kysely.ColumnType<O, I, U>
     : Model[Key]
-} & {
-  inserted_at: ColumnType<Date, never, Date>
-  updated_at: ColumnType<Date, never, Date>
 }
