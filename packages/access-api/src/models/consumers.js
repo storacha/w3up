@@ -65,11 +65,12 @@ export class Consumers {
    * @param {API.ConsumerQuery} query
    *
    */
-  async find({ provider, consumer, customer }) {
+  async find({ provider, consumer, order, customer }) {
     return await this.records.filter((record) => {
       return (
         (!provider || record.provider === provider) &&
-        (!consumer || record.consumer === consumer)
+        (!consumer || record.consumer === consumer) &&
+        (!order || record.order.toString() === order.toString())
       )
     })
   }
