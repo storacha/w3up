@@ -31,8 +31,8 @@ export interface ConsumerRecord extends Row<Consumer> {
 }
 
 export interface ConsumerStore {
-  // eslint-disable-next-line @typescript-eslint/ban-types
   add: (consumer: Consumer) => Promise<Result<{}, Failure>>
+  remove: (consumer: Omit<Consumer, 'cause'>) => Promise<Result<{}, Failure>>
 
   find: (query: ConsumerQuery) => Promise<Consumer[]>
 }
