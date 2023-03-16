@@ -330,6 +330,9 @@ for (const accessApiVariant of /** @type {const} */ ([
         }
       )
       assert.equal(deviceBClaimed.length, 2, 'deviceB claimed delegations')
+
+      // try to addProvider
+      await addProvider(deviceB, spaceCreation.did, account, provider)
     })
   })
 }
