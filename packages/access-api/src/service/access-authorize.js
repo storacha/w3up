@@ -9,7 +9,7 @@ import { delegationToString } from '@web3-storage/access/encoding'
 export function accessAuthorizeProvider(ctx) {
   return Server.provide(Access.authorize, async ({ capability }) => {
     /**
-     * We delegate to the account DID `access/confirm` capability which will
+     * We issue `access/confirm` invocation which will
      * get embedded in the URL that we send to the user. When user clicks the
      * link we'll get this delegation back in the `/validate-email` endpoint
      * which will allow us to verify that it was the user who clicked the link
