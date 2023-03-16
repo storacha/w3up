@@ -14,7 +14,7 @@ import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
 import * as Provider from '@web3-storage/capabilities/provider'
 
-import { stringToDelegation, bytesToDelegations } from './encoding.js'
+import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
@@ -27,7 +27,7 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
-import { requestAuthorization } from './agent-use-cases.js'
+import { claimDelegations, requestAuthorization } from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
 export * from './agent-use-cases.js'
@@ -519,41 +519,10 @@ export class Agent {
   }
 
   async claimDelegations() {
-    const res = await this.invokeAndExecute(Access.claim, {
-      audience: this.connection.id,
-      with: this.issuer.did(),
-    })
-    if (res.error) {
-      throw new Error('error claiming delegations')
+    const delegations = await claimDelegations(this, this.issuer.did())
+    for (const proof of delegations) {
+      this.addProof(proof)
     }
-    const delegations = Object.values(res.delegations).flatMap((bytes) =>
-      bytesToDelegations(bytes)
-    )
-    for (const delegation of delegations) {
-      this.addProof(delegation)
-
-      // if we can find a store/* capability in this delegation, look in the proofs
-      // for the concrete capabilities where space DIDs will be specified
-      // TODO: this was my first attempt at inferring spaces from claimed delegations, but I think it needs work - tv
-      // if (delegation.capabilities.some((cap) => cap.can === 'store/*')) {
-      //   const spaceListingProof = delegation.proofs.find((del) =>
-      //     del.capabilities.some((cap) => cap.can === 'store/list')
-      //   )
-      //   const spaceListingCap = spaceListingProof.capabilities.find(
-      //     (cap) => cap.can === 'store/list'
-      //   )
-      //   if (spaceListingCap) {
-      //     this.#data.addSpace(
-      //       spaceListingCap.with,
-      //       { isRegistered: true },
-      //       delegation
-      //     )
-      //   }
-      // }
-    }
-
-    // TODO: should we be inferring which spaces we have access to here and updating local space state?
-
     return delegations
   }
 

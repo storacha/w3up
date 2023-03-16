@@ -1,6 +1,7 @@
 import { Agent as AccessAgent } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
+import { bytesToDelegations } from './encoding.js'
 
 /**
  * Request authorization of a session allowing this agent to issue UCANs
@@ -22,4 +23,28 @@ export async function requestAuthorization(access, account, capabilities) {
   if (res?.error) {
     throw new Error('failed to authorize session', { cause: res })
   }
+}
+
+/**
+ * claim delegations delegated to an audience
+ *
+ * @param {AccessAgent} access
+ * @param {Ucanto.DID} [audienceOfClaimedDelegations] - defaults to access.connection.id.did()
+ * @returns
+ */
+export async function claimDelegations(
+  access,
+  audienceOfClaimedDelegations = access.connection.id.did()
+) {
+  const res = await access.invokeAndExecute(Access.claim, {
+    audience: access.connection.id,
+    with: audienceOfClaimedDelegations,
+  })
+  if (res.error) {
+    throw new Error('error claiming delegations')
+  }
+  const delegations = Object.values(res.delegations).flatMap((bytes) =>
+    bytesToDelegations(bytes)
+  )
+  return delegations
 }
