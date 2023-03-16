@@ -30,15 +30,17 @@ export interface InsufficientStorage {
 export type Access = InferInvokedCapability<typeof AccessCaps.access>
 
 export type AccessRequest = InferInvokedCapability<typeof AccessCaps.request>
-export type AccessRequestSuccess = Unit
-export type AccessRequestFailure = Failure
+export interface AccessRequestSuccess {
+  ran: Link
+}
+export interface AccessRequestFailure extends Failure {}
 
 export type AccessAuthorize = InferInvokedCapability<
   typeof AccessCaps.authorize
 >
+export interface AccessAuthorizeSuccess {}
+export interface AccessAuthorizeFailure extends Failure {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export type AccessAuthorizeSuccess = Unit
 export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
 export interface AccessClaimSuccess {
   delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
@@ -93,7 +95,7 @@ export interface CustomerAddSuccess {
   cause: Link
 }
 
-export interface CustomerAddFailure extends Ucanto.Failure {}
+export interface CustomerAddFailure extends Failure {}
 export type CustomerList = InferInvokedCapability<typeof customer.list>
 
 export interface Subscription {

@@ -12,12 +12,15 @@ import {
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as uploadApi from './upload-api-proxy.js'
-import { accessAuthorizeProvider } from './access-authorize.js'
+import * as AccessAuthorize from './access-authorize.js'
+import * as AccessRequest from './access-request.js'
 import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
-import { providerAddProvider } from './provider-add.js'
+import * ProviderAdd from './provider-add.js'
 import { Spaces } from '../models/spaces.js'
-import { request as accessRequest } from './access-request.js'
+import * as Subscriptions from './subscription.js'
+import * as Customer from './customer.js'
+import * as Consumer from './consumer.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -34,8 +37,13 @@ export function service(ctx) {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
 
+    consumer: Consumer.provide(ctx),
+    subscription: Subscriptions.provide(ctx),
+    customer: Customer.provide(ctx),
+
     access: {
-      authorize: accessAuthorizeProvider(ctx),
+      authorize: AccessAuthorize.provide(ctx),
+      request: AccessRequest.provide(ctx),
       claim: (...args) => {
         // disable until hardened in test/staging
         if (ctx.config.ENV === 'production') {
@@ -59,13 +67,7 @@ export function service(ctx) {
     },
 
     provider: {
-      add: (...args) => {
-        // disable until hardened in test/staging
-        if (ctx.config.ENV === 'production') {
-          throw new Error(`provider/add invocation handling is not enabled`)
-        }
-        return providerAddProvider(ctx)(...args)
-      },
+      add: ProviderAdd.provide(ctx)
     },
 
     voucher: {
@@ -238,7 +240,7 @@ export function service(ctx) {
  * @template {Ucanto.DID} Service
  * @param {Ucanto.DID<'key'>} space
  * @param {Spaces} spaces
- * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
+ * @param {import('../types/provisions.js').ProvisionStore<Service>} provisions
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProvider(space, spaces, provisions) {
@@ -261,7 +263,7 @@ async function spaceHasStorageProviderFromVoucherRedeem(space, spaces) {
 /**
  * @template {Ucanto.DID} Service
  * @param {Ucanto.DID<'key'>} space
- * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
+ * @param {import('../types/provisions.js').ProvisionStore<Service>} provisions
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProviderFromProviderAdd(space, provisions) {

@@ -6,14 +6,16 @@ import type {
 } from '@web3-storage/access/types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import { Spaces } from './models/spaces.js'
-import { Validations } from './models/validations.js'
 import { loadConfig } from './config.js'
 import type { DID } from '@ucanto/interface'
 import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
-import { Accounts } from './models/accounts.js'
-import { DelegationsStorage as Delegations } from './types/delegations.js'
-import { ProvisionsStorage } from './types/provisions.js'
-import { ConsumerStore } from './types/consumers.js'
+import {
+  DelegationStore,
+  ProvisionStore,
+  ConsumerStore,
+  ValidationStore,
+  AccountStore,
+} from './types/index.js'
 
 export {}
 
@@ -70,11 +72,11 @@ export interface RouteContext {
   url: URL
   email: Email
   models: {
-    accounts: Accounts
-    delegations: Delegations
+    accounts: AccountStore
+    delegations: DelegationStore
     spaces: Spaces
-    provisions: ProvisionsStorage
-    validations: Validations
+    provisions: ProvisionStore
+    validations: ValidationStore
     consumers: ConsumerStore
     subscriptions: SubscriptionStore
   }

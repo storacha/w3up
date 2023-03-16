@@ -16,10 +16,10 @@ export interface SubscriptionDB
 
 export interface SubscriptionStore {
   add: (subscription: Subscription) => Promise<Subscription>
-  find: (query: Query) => Promise<Capabilities.SubscriptionRecord[]>
+  find: (query: SubscriptionQuery) => Promise<Capabilities.SubscriptionRecord[]>
 }
 
-export interface Query {
+export interface SubscriptionQuery {
   customer?: DID<'mailto'>
   provider?: DID<'web'>
   order?: Link

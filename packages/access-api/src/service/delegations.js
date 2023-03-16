@@ -11,20 +11,20 @@ import * as Ucanto from '@ucanto/interface'
  * DelegationsStorage that stores in-memory.
  *
  * @param {Pick<Array<Ucanto.Delegation>, 'length' | 'push' | SymbolIterator>} storage
- * @returns {import("../types/delegations").DelegationsStorage}
+ * @returns {import("../types/delegations").DelegationStore}
  */
 export function createDelegationsStorage(storage = []) {
-  /** @type {import("../types/delegations").DelegationsStorage[typeof Symbol.asyncIterator]} */
+  /** @type {import("../types/delegations").DelegationStore[typeof Symbol.asyncIterator]} */
   async function* asyncIterator() {
     for (const delegation of storage) {
       yield delegation
     }
   }
-  /** @type {import("../types/delegations").DelegationsStorage['count']} */
+  /** @type {import("../types/delegations").DelegationStore['count']} */
   async function count() {
     return BigInt(storage.length)
   }
-  /** @type {import("../types/delegations").DelegationsStorage['find']} */
+  /** @type {import("../types/delegations").DelegationStore['find']} */
   async function* find(query) {
     for (const d of storage) {
       if (d.audience.did() === query.audience) {
@@ -32,11 +32,11 @@ export function createDelegationsStorage(storage = []) {
       }
     }
   }
-  /** @type {import("../types/delegations").DelegationsStorage['putMany']} */
+  /** @type {import("../types/delegations").DelegationStore['putMany']} */
   async function putMany(...args) {
     return storage.push(...args)
   }
-  /** @type {import('../types/delegations').DelegationsStorage} */
+  /** @type {import('../types/delegations').DelegationStore} */
   const delegations = {
     [Symbol.asyncIterator]: asyncIterator,
     count,

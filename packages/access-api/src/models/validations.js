@@ -1,7 +1,9 @@
 import { stringToDelegation } from '@web3-storage/access/encoding'
+import * as API from '../types/index.js'
 
 /**
  * Validations
+ * @implements {API.ValidationStore}
  */
 export class Validations {
   /**
@@ -13,8 +15,9 @@ export class Validations {
   }
 
   /**
-   * @template {import('@ucanto/interface').Capabilities} [T=import('@ucanto/interface').Capabilities]
+   * @template {import('@ucanto/interface').Capabilities} T
    * @param {import('@web3-storage/access/src/types').EncodedDelegation<T>} ucan
+   * @returns {Promise<import('@ucanto/interface').Delegation<T>>}
    */
   async put(ucan) {
     const delegation =
