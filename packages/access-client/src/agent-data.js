@@ -1,4 +1,5 @@
 import { Signer } from '@ucanto/principal'
+import { Link } from '@ucanto/validator'
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { importDAG } from '@ucanto/core/delegation'
 import * as Ucanto from '@ucanto/interface'
@@ -149,16 +150,44 @@ export class AgentData {
 }
 
 /**
- * get session proof
+ * Is the given capability a session attestation?
+ *
+ * @param {EdSigner.Capability} cap
+ * @returns {boolean}
+ */
+const isSessionCapability = (cap) => cap.can === Access.session.can
+
+/**
+ * Is the given delegation a session proof?
+ *
+ * @param {Ucanto.Delegation} delegation
+ * @returns {boolean}
+ */
+const isSessionProof = (delegation) =>
+  delegation.capabilities.some((cap) => isSessionCapability(cap))
+
+/**
+ * Get a map from CIDs to the session proofs that reference them
  *
  * @param {AgentData} data
- * @returns {Ucanto.Delegation | undefined}
+ * @returns {Record<string, Ucanto.Delegation>}
  */
-export function getSessionProof(data) {
+export function getSessionProofs(data) {
+  /** @type {Record<string, Ucanto.Delegation>} */
+  const proofs = {}
   for (const { delegation } of data.delegations.values()) {
-    const cap = delegation.capabilities.find(
-      (c) => c.can === Access.session.can // TODO we should make sure this is the current session proof - we were checking nb.key but that doesn't seem to exist in the staging ucan/attest at the moment
-    )
-    if (cap && !isExpired(delegation)) return delegation
+    if (isSessionProof(delegation)) {
+      const cap = delegation.capabilities.find((cap) =>
+        isSessionCapability(cap)
+      )
+      if (cap && !isExpired(delegation)) {
+        // @ts-expect-error "proof" does not exist in caveats, unless it's a session capability - TODO: is there a better way to type this?
+        const proof = /** @type {Link | undefined} */ (cap.nb?.proof)
+        if (proof) {
+          proofs[proof.toString()] = delegation
+        }
+      }
+    }
   }
+  return proofs
 }
