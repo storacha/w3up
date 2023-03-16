@@ -526,7 +526,7 @@ export class Agent {
    * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
    */
-  async addProvider(space, account, provider) {
+  async #addProvider(space, account, provider) {
     return addProvider(this, space, account, provider)
   }
 
@@ -594,7 +594,7 @@ export class Agent {
       throw new Error('Space already registered with web3.storage.')
     }
     const account = { did: () => createDidMailtoFromEmail(email) }
-    await this.addProvider(space, account, provider)
+    await this.#addProvider(space, account, provider)
     const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
       space,
       account
