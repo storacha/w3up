@@ -34,8 +34,9 @@ export function accessAuthorizeProvider(ctx) {
         nb: {
           // we copy request details and set the `aud` field to the agent DID
           // that requested the authorization.
-          ...capability.nb,
+          iss: capability.nb.iss,
           aud: capability.with,
+          att: capability.nb.att,
         },
       })
       .delegate()
