@@ -1,7 +1,10 @@
 import { context } from './helpers/context.js'
 import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
-import { Agent as AccessAgent } from '@web3-storage/access/agent'
+import {
+  Agent as AccessAgent,
+  createDidMailtoFromEmail,
+} from '@web3-storage/access/agent'
 import * as w3caps from '@web3-storage/capabilities'
 import * as assert from 'assert'
 import * as Ucanto from '@ucanto/interface'
@@ -164,17 +167,60 @@ for (const accessApiVariant of /** @type {const} */ ([
       // const providerAddResult = await accessAgent.invokeAndExecute()
     })
 
-    it.skip('can registerSpace', async () => {
-      const { connection } = await accessApiVariant.create()
+    it('can registerSpace', async () => {
+      const { connection, emails } = await accessApiVariant.create()
       const accountEmail = 'foo@dag.house'
-      // const account = { did: () => createDidMailtoFromEmail(accountEmail) }
+      const account = { did: () => createDidMailtoFromEmail(accountEmail) }
       const accessAgent = await AccessAgent.create(undefined, {
         connection,
       })
+      const abort = new AbortController()
+      after(() => abort.abort())
 
-      await accessAgent.registerSpace(accountEmail)
+      // request agent authorization from account
+      requestAuthorization(accessAgent, account, [{ can: '*' }])
+      // confirm authorization
+      const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
+      await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
+      // claim delegations after confirmation
+      await accessAgent.claimDelegations()
+
+      // create space
+      const spaceName = `space-test-${Math.random().toString().slice(2)}`
+      const spaceCreation = await accessAgent.createSpace(spaceName)
+      await accessAgent.setCurrentSpace(spaceCreation.did)
+
+      // 'register space' - i.e. add a storage provider as an account
+      await accessAgent.registerSpace(accountEmail, {
+        provider: /** @type {Ucanto.DID<'web'>} */ (connection.id.did()),
+      })
+    })
+
+    it.skip('same agent, multiple accounts, try to provider/add', () => {
+      throw new Error('todo')
+    })
+
+    it.skip('can can use second device with same account', () => {
+      throw new Error('todo')
     })
   })
+}
+
+/**
+ *
+ * @param {Ucanto.ConnectionView<AccessService>} connection
+ * @param {{ url: string|URL }} confirmation
+ */
+async function confirmConfirmationUrl(connection, confirmation) {
+  // extract confirmation invocation from email that was sent by service while handling access/authorize
+  const confirm = await extractConfirmInvocation(new URL(confirmation.url))
+  // invoke the access/confirm invocation as if the user had clicked the email
+  const [confirmResult] = await connection.execute(confirm)
+  assert.notEqual(
+    confirmResult.error,
+    true,
+    'access/confirm result is not an error'
+  )
 }
 
 /**
