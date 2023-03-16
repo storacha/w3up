@@ -51,6 +51,10 @@ export async function claimDelegations(
     bytesToDelegations(bytes)
   )
   if (addProofs) for (const d of delegations) access.addProof(d)
+
+  // TODO get rid of this - we'd like to move responsibility for storing space metadata out of agent-data soon
+  if (addProofs) access._addSpacesFromDelegations(delegations)
+
   return delegations
 }
 

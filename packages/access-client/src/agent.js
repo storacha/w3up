@@ -517,6 +517,30 @@ export class Agent {
   }
 
   /**
+   * Given a list of delegations, add to agent data spaces list.
+   *
+   * TODO: DON'T USE - we'd like to move away from storing space information inside the agent, planning on removing this soon!
+   *
+   * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
+   */
+  async _addSpacesFromDelegations(delegations) {
+    if (delegations.length > 0) {
+      const allows = ucanto.Delegation.allows(
+        delegations[0],
+        ...delegations.slice(1)
+      )
+      for (const [did, value] of Object.entries(allows)) {
+        // TODO I don't think this should be `store/*` but this works for today
+        if (value['store/*']) {
+          this.#data.addSpace(/** @type {Ucanto.DID} */ (did), {
+            isRegistered: true,
+          })
+        }
+      }
+    }
+  }
+
+  /**
    * @param {Ucanto.DID<'key'>} space
    * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
