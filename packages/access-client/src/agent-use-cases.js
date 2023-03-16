@@ -29,16 +29,19 @@ export async function requestAuthorization(access, account, capabilities) {
  * claim delegations delegated to an audience
  *
  * @param {AccessAgent} access
- * @param {Ucanto.DID} [audienceOfClaimedDelegations] - defaults to access.connection.id.did()
+ * @param {Ucanto.DID} [delegee] - audience of claimed delegations. defaults to access.connection.id.did()
+ * @param {object} options
+ * @param {boolean} [options.addProofs] - whether to addProof to access agent
  * @returns
  */
 export async function claimDelegations(
   access,
-  audienceOfClaimedDelegations = access.connection.id.did()
+  delegee = access.connection.id.did(),
+  { addProofs = false } = {}
 ) {
   const res = await access.invokeAndExecute(Access.claim, {
     audience: access.connection.id,
-    with: audienceOfClaimedDelegations,
+    with: delegee,
   })
   if (res.error) {
     throw new Error('error claiming delegations')
@@ -46,5 +49,6 @@ export async function claimDelegations(
   const delegations = Object.values(res.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
   )
+  if (addProofs) for (const d of delegations) access.addProof(d)
   return delegations
 }

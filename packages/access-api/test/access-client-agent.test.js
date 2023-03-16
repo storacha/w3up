@@ -4,6 +4,7 @@ import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import {
   Agent as AccessAgent,
+  claimDelegations,
   createDidMailtoFromEmail,
   requestAuthorization,
 } from '@web3-storage/access/agent'
@@ -137,7 +138,11 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
 
       // these are delegations with audience=accessAgent.issuer
-      const claimedAsAgent = await accessAgent.claimDelegations()
+      const claimedAsAgent = await claimDelegations(
+        accessAgent,
+        accessAgent.issuer.did(),
+        { addProofs: true }
+      )
       assert.deepEqual(claimedAsAgent.length, 2)
       assert.ok(
         claimedAsAgent.every(
@@ -186,7 +191,9 @@ for (const accessApiVariant of /** @type {const} */ ([
       const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
       await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
       // claim delegations after confirmation
-      await accessAgent.claimDelegations()
+      await claimDelegations(accessAgent, accessAgent.issuer.did(), {
+        addProofs: true,
+      })
 
       // create space
       const spaceName = `space-test-${Math.random().toString().slice(2)}`
@@ -232,7 +239,9 @@ for (const accessApiVariant of /** @type {const} */ ([
         const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
         await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
         // claim delegations after confirmation
-        await accessAgent.claimDelegations()
+        await claimDelegations(accessAgent, accessAgent.issuer.did(), {
+          addProofs: true,
+        })
         // expect two new delegations, [delegationFromAccount, attestationFromService]
         expectedDataDelegations += 2
         assert.deepEqual(

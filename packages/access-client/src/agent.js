@@ -515,15 +515,7 @@ export class Agent {
 
     // claim delegations here because we will need an ucan/attest from the service to
     // pair with the session delegation we just claimed to make it work
-    await this.claimDelegations()
-  }
-
-  async claimDelegations() {
-    const delegations = await claimDelegations(this, this.issuer.did())
-    for (const proof of delegations) {
-      this.addProof(proof)
-    }
-    return delegations
+    await claimDelegations(this, this.issuer.did(), { addProofs: true })
   }
 
   /**
