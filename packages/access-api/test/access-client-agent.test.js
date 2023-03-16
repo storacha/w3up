@@ -3,6 +3,7 @@ import { context } from './helpers/context.js'
 import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import {
+  addProvider,
   Agent as AccessAgent,
   claimDelegations,
   createDidMailtoFromEmail,
@@ -268,7 +269,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         accessAgent.connection.id.did()
       )
       for (const account of accounts) {
-        await accessAgent.addProvider(spaceCreation.did, account, provider)
+        await addProvider(accessAgent, spaceCreation.did, account, provider)
       }
     })
 

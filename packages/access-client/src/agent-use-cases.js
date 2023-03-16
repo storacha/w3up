@@ -2,6 +2,7 @@ import { Agent as AccessAgent } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
+import { Provider } from '@web3-storage/capabilities'
 
 /**
  * Request authorization of a session allowing this agent to issue UCANs
@@ -51,4 +52,24 @@ export async function claimDelegations(
   )
   if (addProofs) for (const d of delegations) access.addProof(d)
   return delegations
+}
+
+/**
+ * @param {AccessAgent} access
+ * @param {Ucanto.DID<'key'>} space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
+ */
+export async function addProvider(access, space, account, provider) {
+  const result = await access.invokeAndExecute(Provider.add, {
+    audience: access.connection.id,
+    with: account.did(),
+    nb: {
+      provider,
+      consumer: space,
+    },
+  })
+  if (result.error) {
+    throw new Error(`error adding provider`, { cause: result })
+  }
 }

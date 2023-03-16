@@ -12,7 +12,6 @@ import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
-import * as Provider from '@web3-storage/capabilities/provider'
 
 import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
@@ -27,7 +26,11 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
-import { claimDelegations, requestAuthorization } from './agent-use-cases.js'
+import {
+  addProvider,
+  claimDelegations,
+  requestAuthorization,
+} from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
 export * from './agent-use-cases.js'
@@ -524,14 +527,7 @@ export class Agent {
    * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
    */
   async addProvider(space, account, provider) {
-    return this.invokeAndExecute(Provider.add, {
-      audience: this.connection.id,
-      with: account.did(),
-      nb: {
-        provider,
-        consumer: space,
-      },
-    })
+    return addProvider(this, space, account, provider)
   }
 
   /**
@@ -598,10 +594,7 @@ export class Agent {
       throw new Error('Space already registered with web3.storage.')
     }
     const account = { did: () => createDidMailtoFromEmail(email) }
-    const providerResult = await this.addProvider(space, account, provider)
-    if (providerResult.error) {
-      throw new Error(providerResult.message, { cause: providerResult })
-    }
+    await this.addProvider(space, account, provider)
     const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
       space,
       account
