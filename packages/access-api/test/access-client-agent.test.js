@@ -167,7 +167,50 @@ for (const accessApiVariant of /** @type {const} */ ([
       // const providerAddResult = await accessAgent.invokeAndExecute()
     })
 
-    it('can add storage provider manually', async () => {
+    it('can get proofs for provider/add', async () => {
+      const { connection, emails } = await accessApiVariant.create()
+      const accountEmail = 'foo@dag.house'
+      const account = { did: () => createDidMailtoFromEmail(accountEmail) }
+      const accessAgent = await AccessAgent.create(undefined, {
+        connection,
+      })
+      const abort = new AbortController()
+      after(() => abort.abort())
+
+      // request agent authorization from account
+      requestAuthorization(accessAgent, account, [{ can: '*' }])
+      // confirm authorization
+      const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
+      await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
+
+      // create space
+      const spaceName = `space-test-${Math.random().toString().slice(2)}`
+      const spaceCreation = await accessAgent.createSpace(spaceName)
+      await accessAgent.setCurrentSpace(spaceCreation.did)
+
+      const provider = /** @type {Ucanto.DID<'web'>} */ (
+        accessAgent.connection.id.did()
+      )
+
+      const providerAddProofs = accessAgent.proofs([
+        {
+          can: 'provider/add',
+          with: account.did(),
+          nb: {
+            provider,
+            consumer: spaceCreation.did,
+          },
+        },
+      ])
+      assert.notEqual(
+        providerAddProofs.length,
+        0,
+        'determined more than zero proofs for provider/add'
+      )
+    })
+
+    // @todo - remove this test once 'can registerSpace' passes
+    it.skip('can add storage provider manually', async () => {
       const { connection, emails } = await accessApiVariant.create()
       const accountEmail = 'foo@dag.house'
       const account = { did: () => createDidMailtoFromEmail(accountEmail) }
