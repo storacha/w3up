@@ -77,7 +77,7 @@ export function getContext(request, env, ctx) {
         })
       ),
       spaces: new Spaces(config.DB),
-      validations: new Validations(config.VALIDATIONS, env.SPACE_VERIFIERS),
+      validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
       provisions: new DbProvisions(signer.did(), createD1Database(config.DB)),
     },
@@ -87,6 +87,5 @@ export function getContext(request, env, ctx) {
       url: new URL(config.UPLOAD_API_URL),
       fetch: globalThis.fetch.bind(globalThis),
     }),
-    spaceVerifiers: env.SPACE_VERIFIERS,
   }
 }
