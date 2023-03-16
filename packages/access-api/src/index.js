@@ -6,7 +6,6 @@ import { postRaw } from './routes/raw.js'
 import { postRoot } from './routes/root.js'
 import { preValidateEmail, validateEmail } from './routes/validate-email.js'
 import { validateWS } from './routes/validate-ws.js'
-import { validateWSDID } from './routes/validate-ws-did.js'
 import { version } from './routes/version.js'
 import { getContext } from './utils/context.js'
 
@@ -18,7 +17,6 @@ r.add('get', '/version', version)
 r.add('get', '/validate-email', preValidateEmail)
 r.add('post', '/validate-email', validateEmail)
 r.add('get', '/validate-ws', validateWS)
-r.add('get', '/validate-ws/:did', validateWSDID)
 r.add('post', '/', postRoot)
 r.add('post', '/raw', postRaw)
 
@@ -40,7 +38,5 @@ const worker = {
     }
   },
 }
-
-export { SpaceVerifier } from './durable-objects/space-verifier.js'
 
 export default worker

@@ -15,12 +15,6 @@ import { ProvisionsStorage } from './types/provisions.js'
 
 export {}
 
-export type {
-  DurableObjectNamespace,
-  DurableObjectState,
-  Response as WorkerResponse,
-} from '@cloudflare/workers-types'
-
 // CF Analytics Engine types not available yet
 export interface AnalyticsEngine {
   writeDataPoint: (event: AnalyticsEngineEvent) => void
@@ -59,7 +53,6 @@ export interface Env {
   SPACES: KVNamespace
   VALIDATIONS: KVNamespace
   W3ACCESS_METRICS: AnalyticsEngine
-  SPACE_VERIFIERS: DurableObjectNamespace
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __D1_BETA__: D1Database
 }
@@ -78,7 +71,6 @@ export interface RouteContext {
     validations: Validations
   }
   uploadApi: ConnectionView
-  spaceVerifiers: DurableObjectNamespace
 }
 
 export type Handler = _Handler<RouteContext>
