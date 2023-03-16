@@ -2,7 +2,6 @@
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Top from '@web3-storage/capabilities/top'
 import { stringToDelegation } from '@web3-storage/access/encoding'
-import pWaitFor from 'p-wait-for'
 import { context } from './helpers/context.js'
 import { Spaces } from '../src/models/spaces.js'
 import { Signer } from '@ucanto/principal/ed25519'
@@ -18,22 +17,8 @@ const test = it
 describe('voucher/redeem', function () {
   /** @type {Awaited<ReturnType<typeof context>>} */
   let ctx
-  /** @type {{to:string, url:string}[]} */
-  let outbox
   beforeEach(async function () {
-    outbox = []
-    ctx = await context({
-      globals: {
-        email: {
-          /**
-           * @param {*} email
-           */
-          sendValidation(email) {
-            outbox.push(email)
-          },
-        },
-      },
-    })
+    ctx = await context()
   })
 
   test('should return voucher/redeem', async function () {
@@ -132,75 +117,6 @@ describe('voucher/redeem', function () {
     t.deepEqual(del.capabilities[0].with, space.did())
     // eslint-disable-next-line unicorn/no-null
     t.deepEqual(del.facts[0], null)
-  })
-
-  test('should receive delegation in the web socket', async () => {
-    const { issuer, service, conn, mf } = ctx
-
-    const space = await Signer.generate()
-    await Voucher.claim
-      .invoke({
-        issuer,
-        audience: service,
-        with: space.did(),
-        nb: {
-          identity: 'mailto:email@dag.house',
-          product: 'product:free',
-          service: service.did(),
-        },
-        proofs: [
-          await Top.top.delegate({
-            issuer: space,
-            audience: issuer,
-            with: space.did(),
-            expiration: Infinity,
-          }),
-        ],
-      })
-      .execute(conn)
-
-    const [email] = outbox
-    assert.notEqual(email, undefined, 'email was sent')
-
-    const url = new URL(email.url)
-
-    // ws
-    const res = await mf.dispatchFetch(
-      `http://localhost:8787/validate-ws/${space.did()}`,
-      {
-        headers: { Upgrade: 'websocket' },
-      }
-    )
-
-    const webSocket = res.webSocket
-    if (webSocket) {
-      let done = false
-      webSocket.accept()
-      webSocket.addEventListener('message', (event) => {
-        // @ts-ignore
-        const data = JSON.parse(event.data)
-
-        const encoded =
-          /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessSession]>} */ (
-            data.delegation
-          )
-
-        assert.ok(encoded)
-
-        const authorization = stringToDelegation(encoded)
-        // @ts-ignore
-        assert.equal(authorization.capabilities[0].nb.space, space.did())
-
-        done = true
-      })
-
-      // click email url
-      await mf.dispatchFetch(url, { method: 'POST' })
-
-      await pWaitFor(() => done)
-    } else {
-      assert.fail('should have ws')
-    }
   })
 
   test('should fail with wrong resource', async function () {

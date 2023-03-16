@@ -1,5 +1,4 @@
 import { stringToDelegation } from '@web3-storage/access/encoding'
-import { sendDelegationToSpaceVerifier } from '../durable-objects/space-verifier.js'
 
 /**
  * Validations
@@ -8,11 +7,9 @@ export class Validations {
   /**
    *
    * @param {KVNamespace} kv
-   * @param {import('../bindings').DurableObjectNamespace | undefined} spaceVerifiers
    */
-  constructor(kv, spaceVerifiers) {
+  constructor(kv) {
     this.kv = kv
-    this.spaceVerifiers = spaceVerifiers
   }
 
   /**
@@ -25,22 +22,10 @@ export class Validations {
         stringToDelegation(ucan)
       )
 
-    // TODO: remove this KV stuff once we have the durable objects stuff in production
     await this.kv.put(delegation.audience.did(), ucan, {
       expiration: delegation.expiration,
     })
 
-    const cap =
-      /** @type import('@ucanto/interface').InferInvokedCapability<typeof import('@web3-storage/capabilities/voucher').redeem> */ (
-        delegation.capabilities[0]
-      )
-    if (this.spaceVerifiers && cap.nb?.space) {
-      await sendDelegationToSpaceVerifier(
-        this.spaceVerifiers,
-        cap.nb.space,
-        ucan
-      )
-    }
     return delegation
   }
 
