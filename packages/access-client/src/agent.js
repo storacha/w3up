@@ -568,10 +568,11 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {Ucanto.DID<'key'>} [opts.space]
    * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
    */
   async #newRegisterSpace(email, opts) {
-    const space = this.currentSpace()
+    const space = opts?.space || this.currentSpace()
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
     const provider =
       opts?.provider ||
@@ -617,6 +618,7 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {Ucanto.DID<'key'>} [opts.space] - space to register
    * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
    */
   async registerSpace(email, opts = {}) {
@@ -625,7 +627,7 @@ export class Agent {
       return this.#newRegisterSpace(email, opts)
     }
 
-    const space = this.currentSpace()
+    const space = opts.space ?? this.currentSpace()
     const service = this.connection.id
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
 

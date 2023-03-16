@@ -213,9 +213,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         'test-b@dag.house',
       ]).map((email) => ({
         email,
-        did: function thisEmailDidMailto() {
-          return createDidMailtoFromEmail(this.email)
-        },
+        did: thisEmailDidMailto,
       }))
       const { connection, emails } = await accessApiVariant.create()
       const accessAgentData = await AgentData.create()
@@ -273,8 +271,68 @@ for (const accessApiVariant of /** @type {const} */ ([
       }
     })
 
-    it.skip('can can use second device with same account', () => {
-      throw new Error('todo')
+    it('can use second device with same account', async () => {
+      const account = {
+        email: 'example@dag.house',
+        did: thisEmailDidMailto,
+      }
+      const { connection, emails } = await accessApiVariant.create()
+      const provider = /** @type {Ucanto.DID<'web'>} */ (connection.id.did())
+      const abort = new AbortController()
+      after(() => abort.abort())
+
+      // first device
+      const deviceAAgentData = await AgentData.create()
+      const deviceA = await AccessAgent.create(deviceAAgentData, {
+        connection,
+      })
+
+      // deviceA authorization
+      await requestAuthorization(deviceA, account, [{ can: '*' }])
+      await confirmConfirmationUrl(
+        deviceA.connection,
+        await watchForEmail(emails, 100, abort.signal)
+      )
+      await claimDelegations(deviceA, deviceA.issuer.did(), {
+        addProofs: true,
+      })
+
+      // deviceA creates a space
+      const spaceCreation = await deviceA.createSpace(
+        `space-test-${Math.random().toString().slice(2)}`
+      )
+      assert.ok(spaceCreation.did)
+      // deviceA registers a space
+      await deviceA.registerSpace(account.email, {
+        provider,
+        space: spaceCreation.did,
+      })
+
+      /**
+       * second device - deviceB
+       */
+      const deviceBData = await AgentData.create()
+      const deviceB = await AccessAgent.create(deviceBData, {
+        connection,
+      })
+      // authorize deviceB
+      await requestAuthorization(deviceB, account, [{ can: '*' }])
+      await confirmConfirmationUrl(
+        deviceB.connection,
+        await watchForEmail(emails, 100, abort.signal)
+      )
+      // claim delegations after confirmation
+      const deviceBClaimed = await claimDelegations(
+        deviceB,
+        deviceB.issuer.did(),
+        {
+          addProofs: true,
+        }
+      )
+      assert.equal(deviceBClaimed.length, 2, 'deviceB claimed delegations')
+
+      // try to addProvider
+      await addProvider(deviceB, spaceCreation.did, account, provider)
     })
   })
 }
@@ -411,4 +469,12 @@ async function testSessionAuthorization(service, access, account, emails) {
     ...delegationsResponse.decode(claimResult.delegations),
   ]
   assert.ok(claimedDelegations1.length > 0, 'claimed some delegations')
+}
+
+/**
+ * @this {{email: string}}
+ * @returns {Ucanto.DID<'mailto'>}
+ */
+function thisEmailDidMailto() {
+  return createDidMailtoFromEmail(this.email)
 }
