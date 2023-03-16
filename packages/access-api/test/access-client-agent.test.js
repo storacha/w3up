@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/consistent-function-scoping */
 import { context } from './helpers/context.js'
 import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
@@ -213,7 +214,15 @@ for (const accessApiVariant of /** @type {const} */ ([
       })
       const abort = new AbortController()
       after(() => abort.abort())
-
+      /** @param {AgentData} agentData */
+      const countDelegations = ({ delegations }) =>
+        [...delegations.values()].length
+      assert.deepEqual(
+        countDelegations(accessAgentData),
+        0,
+        'agentData has zero delegations initially'
+      )
+      let expectedDataDelegations = 0
       for (const account of accounts) {
         // request agent authorization from account
         requestAuthorization(accessAgent, account, [{ can: '*' }])
@@ -222,12 +231,32 @@ for (const accessApiVariant of /** @type {const} */ ([
         await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
         // claim delegations after confirmation
         await accessAgent.claimDelegations()
+        // expect two new delegations, [delegationFromAccount, attestationFromService]
+        expectedDataDelegations += 2
+        assert.deepEqual(
+          countDelegations(accessAgentData),
+          expectedDataDelegations,
+          `agentData has ${expectedDataDelegations} after authorizing account ${account.did()} and claiming`
+        )
       }
 
       // create space
       const spaceName = `space-test-${Math.random().toString().slice(2)}`
       const spaceCreation = await accessAgent.createSpace(spaceName)
+      expectedDataDelegations += 2
+      assert.deepEqual(
+        countDelegations(accessAgentData),
+        expectedDataDelegations,
+        `agentData has ${expectedDataDelegations} after calling accessClientAgent.createSpace(...)`
+      )
+
       await accessAgent.setCurrentSpace(spaceCreation.did)
+
+      // eslint-disable-next-line no-console
+      console.log(
+        'all delegations',
+        JSON.stringify([...accessAgentData.delegations.values()], undefined, 2)
+      )
 
       const provider = /** @type {Ucanto.DID<'web'>} */ (
         accessAgent.connection.id.did()
@@ -237,7 +266,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         const proofsForAccount = accessAgent.proofs([
           {
             can: 'provider/add',
-            with: spaceCreation.did,
+            with: account.did(),
           },
         ])
         // eslint-disable-next-line no-console
@@ -246,7 +275,7 @@ for (const accessApiVariant of /** @type {const} */ ([
           JSON.stringify(proofsForAccount, undefined, 2)
         )
         await accessAgent.addProvider(spaceCreation.did, account, provider)
-        accountsThatAddedProvider.push(account)
+        // accountsThatAddedProvider.push(account)
       }
 
       assert.deepEqual(
