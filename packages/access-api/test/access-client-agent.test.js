@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { context } from './helpers/context.js'
 import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
@@ -94,7 +93,6 @@ for (const accessApiVariant of /** @type {const} */ ([
       const accessAgent = await AccessAgent.create(undefined, {
         connection,
       })
-      console.log('accessAgent.issuer', accessAgent.issuer.did())
 
       // request that account authorizes accessAgent
       // this should result in sending a confirmation email
@@ -122,7 +120,6 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
       // invoke the access/confirm invocation as if the user had clicked the email
       const [confirmResult] = await connection.execute(confirm)
-      console.log({ confirmResult })
       assert.notEqual(
         confirmResult.error,
         true,
