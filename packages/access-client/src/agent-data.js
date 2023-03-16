@@ -1,5 +1,4 @@
 import { Signer } from '@ucanto/principal'
-import { Link } from '@ucanto/validator'
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { importDAG } from '@ucanto/core/delegation'
 import * as Ucanto from '@ucanto/interface'
@@ -152,7 +151,7 @@ export class AgentData {
 /**
  * Is the given capability a session attestation?
  *
- * @param {EdSigner.Capability} cap
+ * @param {Ucanto.Capability} cap
  * @returns {boolean}
  */
 const isSessionCapability = (cap) => cap.can === Access.session.can
@@ -161,7 +160,7 @@ const isSessionCapability = (cap) => cap.can === Access.session.can
  * Is the given delegation a session proof?
  *
  * @param {Ucanto.Delegation} delegation
- * @returns {boolean}
+ * @returns {delegation is Ucanto.Delegation<[import('./types').AccessSession]>}
  */
 const isSessionProof = (delegation) =>
   delegation.capabilities.some((cap) => isSessionCapability(cap))
@@ -177,12 +176,9 @@ export function getSessionProofs(data) {
   const proofs = {}
   for (const { delegation } of data.delegations.values()) {
     if (isSessionProof(delegation)) {
-      const cap = delegation.capabilities.find((cap) =>
-        isSessionCapability(cap)
-      )
+      const cap = delegation.capabilities[0]
       if (cap && !isExpired(delegation)) {
-        // @ts-expect-error "proof" does not exist in caveats, unless it's a session capability - TODO: is there a better way to type this?
-        const proof = /** @type {Link | undefined} */ (cap.nb?.proof)
+        const proof = cap.nb.proof
         if (proof) {
           proofs[proof.toString()] = delegation
         }
