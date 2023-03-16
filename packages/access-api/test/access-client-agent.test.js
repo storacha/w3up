@@ -196,8 +196,51 @@ for (const accessApiVariant of /** @type {const} */ ([
       })
     })
 
-    it.skip('same agent, multiple accounts, try to provider/add', () => {
-      throw new Error('todo')
+    it('same agent, multiple accounts, provider/add', async () => {
+      const accounts = ['test-a@dag.house', 'test-b@dag.house'].map(
+        (email) => ({
+          email,
+          did: function thisEmailDidMailto() {
+            return createDidMailtoFromEmail(this.email)
+          },
+        })
+      )
+      const { connection, emails } = await accessApiVariant.create()
+      const accessAgent = await AccessAgent.create(undefined, {
+        connection,
+      })
+      const abort = new AbortController()
+      after(() => abort.abort())
+
+      for (const account of accounts) {
+        // request agent authorization from account
+        requestAuthorization(accessAgent, account, [{ can: '*' }])
+        // confirm authorization
+        const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
+        await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
+        // claim delegations after confirmation
+        await accessAgent.claimDelegations()
+      }
+
+      // create space
+      const spaceName = `space-test-${Math.random().toString().slice(2)}`
+      const spaceCreation = await accessAgent.createSpace(spaceName)
+      await accessAgent.setCurrentSpace(spaceCreation.did)
+
+      const provider = /** @type {Ucanto.DID<'web'>} */ (
+        accessAgent.connection.id.did()
+      )
+      const accountsThatAddedProvider = []
+      for (const account of accounts) {
+        await accessAgent.addProvider(spaceCreation.did, account, provider)
+        accountsThatAddedProvider.push(account)
+      }
+
+      assert.deepEqual(
+        accountsThatAddedProvider.length,
+        accounts.length,
+        'all accounts added provider'
+      )
     })
 
     it.skip('can can use second device with same account', () => {
