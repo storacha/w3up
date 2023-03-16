@@ -21,8 +21,6 @@ CREATE TABLE
       order TEXT NOT NULL,
       -- DID of the provider e.g. a storage provider
       provider TEXT NOT NULL,
-      -- DID of the account billed for this subscription
-      customer TEXT NOT NULL,
       -- metadata
       inserted_at TEXT NOT NULL DEFAULT (strftime ('%Y-%m-%dT%H:%M:%fZ', 'now')),
       updated_at TEXT NOT NULL DEFAULT (strftime ('%Y-%m-%dT%H:%M:%fZ', 'now')),
@@ -54,8 +52,6 @@ CREATE TABLE
     order TEXT NOT NULL,
     -- DID of the provider e.g. a storage provider
     provider TEXT NOT NULL,
-    -- DID of the customer account
-    customer TEXT NOT NULL,
     
     -- subscription ID is derived from (order, provider). This is a virtual
     -- column which is not stored in the database but could be used in queries.
@@ -68,7 +64,7 @@ CREATE TABLE
     updated_at TEXT NOT NULL DEFAULT (strftime ('%Y-%m-%dT%H:%M:%fZ', 'now')),
 
     -- Operation that caused insertion of this record.
-    CONSTRAINT task_cid UNIQUE (cid),
+    CONSTRAINT task_cid UNIQUE (cause),
     -- We use (order, provider, consumer) as a composite primary key to enforce
     -- uniqueness constraint from the provider side. This allows provider to
     -- decide how to generate the order ID to enforce whatever constraint they
@@ -76,4 +72,4 @@ CREATE TABLE
     -- order by accound DID, while nft.storage may choose to not have such
     -- limitation and generate a unique order based on other factors.
     PRIMARY KEY (order, provider, consumer)
-  )
+  );

@@ -1,7 +1,5 @@
 /**
- *
- * @param {`did:${string}:${string}`} did
- * @returns
+ * @param {`did:mailto:${string}`} did
  */
 export function toEmail(did) {
   const parts = did.split(':')

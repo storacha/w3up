@@ -3,9 +3,9 @@ import * as Ucanto from '@ucanto/interface'
 interface ByAudience {
   audience: Ucanto.DID<'key' | 'mailto'>
 }
-export type Query = ByAudience
+export type DelegationQuery = ByAudience
 
-export interface DelegationsStorage<
+export interface DelegationStore<
   Cap extends Ucanto.Capability = Ucanto.Capability
 > {
   /**
@@ -32,5 +32,7 @@ export interface DelegationsStorage<
   /**
    * find all items that match the query
    */
-  find: (query: Query) => AsyncIterable<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
+  find: (
+    query: DelegationQuery
+  ) => Promise<Array<Ucanto.Delegation<Ucanto.Tuple<Cap>>>>
 }

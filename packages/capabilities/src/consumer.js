@@ -26,7 +26,7 @@ export const Provision = Schema.struct({
    * provider. For example provider could derive an order info from the user
    * account and use it to enforce that only one space can be added per user.
    */
-  order: Schema.link({ version: 1 }),
+  order: Schema.Order,
 })
 
 /**
@@ -37,7 +37,7 @@ export const consumer = Schema.capability({
   can: 'consumer/*',
   with: Schema.Provider,
   nb: Schema.struct({
-    order: Schema.link(),
+    order: Schema.Order,
   }),
 })
 

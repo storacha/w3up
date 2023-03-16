@@ -36,3 +36,5 @@ export const Account = DID.match({ method: 'mailto' })
  * be different per in dev, staging and prod.
  */
 export const Provider = DID.match({ method: 'web' })
+
+export const Order = Schema.link({ version: 1 })

@@ -3,17 +3,20 @@ import * as Server from '@ucanto/server'
 import { Verifier } from '@ucanto/principal'
 import { Customer, Consumer } from '@web3-storage/capabilities'
 import * as Capabilities from '@web3-storage/capabilities/types'
-import { bytesToDelegations } from '@web3-storage/access/encoding'
+import {
+  bytesToDelegations,
+  delegationsToBytes,
+} from '@web3-storage/access/encoding'
+import { codec as CBOR } from '@ucanto/transport/cbor'
+import * as Mailto from '../utils/did-mailto.js'
 import { claim, Failure } from '@ucanto/validator'
 
 /**
  * @typedef {object} Context
  * @property {object} models
  * @property {import('../types/subscriptions').SubscriptionStore} models.subscriptions
- * @property {import('../types/delegations').DelegationsStorage} models.delegations
+ * @property {import('../types/delegations').DelegationStore} models.delegations
  * @property {Server.Signer<Server.API.DID<'web'>>} signer
- * @property {URL} url
- * @property {import('../bindings').Email} email
  */
 
 /**
@@ -25,7 +28,7 @@ import { claim, Failure } from '@ucanto/validator'
  */
 export const add = async ({ capability, invocation }, context) => {
   // we ensure that invocation includes a delegation to the
-  const result = await decodeDelegation(capability.nb.access, context)
+  const result = await decodeAuthorization(capability.nb.access, context)
   if (result.error) {
     return result
   }
@@ -71,7 +74,7 @@ export const list = async ({ capability }, context) => {
  * @param {Server.Signer<Server.API.DID<'web'>>} context.signer
  */
 
-export const decodeDelegation = async (bytes, context) => {
+export const decodeAuthorization = async (bytes, context) => {
   // we ensure that invocation includes a delegation to the
   const result = await claim(Consumer.consumer, bytesToDelegations(bytes), {
     // ⚠️ This will not going to work when provider did is different from
@@ -102,3 +105,70 @@ export const provide = (context) => ({
   add: Server.provide(Customer.add, (input) => add(input, context)),
   list: Server.provide(Customer.list, (input) => list(input, context)),
 })
+
+/**
+ * @param {object} input
+ * @param {Server.Signer<Server.API.DID<'web'>>} input.provider
+ * @param {Server.Principal<Server.API.DID<"mailto">>} input.customer
+ */
+export const createSubscription = async ({ provider, customer }) => {
+  const order = await createOrder({ customer })
+  // We want to give account full access to the provider subscription so we
+  // delegate `consumer/*` capability to it.
+  const access = await createAuthorization({ customer, provider, order })
+
+  const invocation = await Customer.add
+    .invoke({
+      issuer: provider,
+      audience: provider,
+      with: provider.did(),
+      nb: {
+        order,
+        access: delegationsToBytes([access]),
+      },
+    })
+    .delegate()
+
+  const [capability] = invocation.capabilities
+
+  return { invocation, capability, order, access }
+}
+
+/**
+ * Creates an order for the given customer.
+ *
+ * @param {object} input
+ * @param {Server.Principal<Server.API.DID<"mailto">>} input.customer
+ */
+
+export const createOrder = async ({ customer }) => {
+  const { cid } = await CBOR.write({ mailto: Mailto.toEmail(customer.did()) })
+  return cid
+}
+
+/**
+ * Create an authorization for the given customer that allows them to add/remove
+ * consumers to the subscription.
+ *
+ *
+ * @param {object} input
+ * @param {Server.API.Link} input.order
+ * @param {Server.Signer<Server.API.DID<'web'>>} input.provider
+ * @param {Server.Principal<Server.API.DID<"mailto">>} input.customer
+ */
+
+export const createAuthorization = async ({ provider, customer, order }) => {
+  // We want to give account full access to the provider subscription so we
+  // delegate `consumer/*` capability to it.
+  return await Consumer.consumer
+    .invoke({
+      issuer: provider,
+      expiration: Infinity,
+      audience: customer,
+      with: provider.did(),
+      nb: {
+        order,
+      },
+    })
+    .delegate()
+}

@@ -37,9 +37,7 @@ export class DbDelegationsStorage {
   constructor(db) {
     this.#db = db
     // eslint-disable-next-line no-void
-    void (
-      /** @type {import('../types/delegations').DelegationsStorage} */ (this)
-    )
+    void (/** @type {import('../types/delegations').DelegationStore} */ (this))
   }
 
   async count() {
@@ -51,9 +49,9 @@ export class DbDelegationsStorage {
   }
 
   /**
-   * @param {import('../types/delegations').Query} query
+   * @param {import('../types/delegations').DelegationQuery} query
    */
-  async *find(query) {
+  async find(query) {
     const { audience } = query
     const { delegations } = this.#tables
     const selection = await this.#db
@@ -61,9 +59,8 @@ export class DbDelegationsStorage {
       .selectAll()
       .where(`${delegations}.audience`, '=', audience)
       .execute()
-    for await (const row of selection) {
-      yield rowToDelegation(row)
-    }
+
+    return selection.map((row) => rowToDelegation(row))
   }
 
   /**

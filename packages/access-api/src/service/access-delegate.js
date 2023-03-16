@@ -21,7 +21,7 @@ import { createDelegationsStorage } from './delegations.js'
 
 /**
  * @param {object} ctx
- * @param {import('../types/delegations').DelegationsStorage} ctx.delegations
+ * @param {import('../types/delegations').DelegationStore} ctx.delegations
  * @param {HasStorageProvider} ctx.hasStorageProvider
  */
 export function accessDelegateProvider(ctx) {
@@ -49,7 +49,7 @@ export function accessDelegateProvider(ctx) {
 
 /**
  * @param {object} options
- * @param {import('../types/delegations').DelegationsStorage} [options.delegations]
+ * @param {import('../types/delegations').DelegationStore} [options.delegations]
  * @param {HasStorageProvider} [options.hasStorageProvider]
  * @param {boolean} [options.allowServiceWithoutStorageProvider] - whether to allow service if the capability resource does not have a storage provider
  * @returns {AccessDelegateHandler}

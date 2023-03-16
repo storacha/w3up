@@ -1,39 +1,48 @@
 /* eslint-disable unicorn/new-for-builtins, max-depth */
 import * as Server from '@ucanto/server'
 import { ed25519, Absentee } from '@ucanto/principal'
-import { Access, Consumer } from '@web3-storage/capabilities'
+import { Access } from '@web3-storage/capabilities'
 import * as Capabilities from '@web3-storage/capabilities/types'
 import * as Mailto from '../utils/did-mailto.js'
 import { delegationToString } from '@web3-storage/access/encoding'
-import { codec as CBOR } from '@ucanto/transport/cbor'
+import * as Customer from './customer.js'
 
 /**
  * @typedef {object} Context
  * @property {object} models
  * @property {import('../types/consumers').ConsumerStore} models.consumers
+ * @property {import('../types/subscriptions').SubscriptionStore} models.subscriptions
+ * @property {import('../types/delegations').DelegationStore} models.delegations
  * @property {Server.Signer<Server.API.DID<'web'>>} signer
  * @property {URL} url
  * @property {import('../bindings').Email} email
  *
  * @param {object} input
  * @param {Capabilities.AccessRequest} input.capability
+ * @param {{ cid: Capabilities.Link }} input.invocation
  * @param {Context} context
- * @returns {Promise<Capabilities.AccessRequestSuccess>}
+ * @returns {Promise<Server.Result<Capabilities.AccessRequestSuccess, Capabilities.AccessRequestFailure>>}
  */
-export const request = async ({ capability }, context) => {
+export const request = async ({ capability, invocation }, context) => {
   const provider = context.signer
   const account = Absentee.from({ id: capability.nb.from })
-
-  // We want to check if we already have a consumer record for this provider
-  // and account. We do not await here though as we have few more async steps
-  // to do before we need the result.
-  const consumersPromise = context.models.consumers.find({
-    provider: provider.did(),
-    customer: account.did(),
+  const customer = await Customer.createSubscription({
+    provider,
+    customer: account,
   })
 
+  // We try to add the customer subscription to the provider, if one already
+  // exists this will be a noop. If it did not exist one will be created and
+  // `consumer/*` capability will be delegated to the account.
+  const result = await Customer.add(customer, context)
+  // This should never happen because adding same subscription twice is a noop
+  // yet we check and propagate error just in case.
+  if (result.error) {
+    return result
+  }
+
   // Generate a new "session" principal for the user that can be used to
-  // by the account holder to approve requested access.
+  // by the account holder to approve or deny requested authorization.
   const sessionPrincipal = await ed25519.generate()
 
   // We will build a verification URL that we will send to the user in order
@@ -58,79 +67,22 @@ export const request = async ({ capability }, context) => {
     lifetimeInSeconds,
   })
   // encode the delegation as a query parameter and add it to the URL
-  url.searchParams.set('approve', await delegationToString(authorization))
-
-  // If don't have a consumer record for this provider and account, we delegate
-  // `consumer/add` capability to the session principal so that it can provision
-  // a space. In the future we will only pass the delegation along with the
-  // private key so that user could choose which space DID to use. For now we
-  // also create an invocation that will provision a session principal as a
-  // space.
-  const consumers = await consumersPromise
-  if (consumers.length === 0) {
-  }
-
-  if (consumers.length === 0) {
-    const enrollment = await enroll({
-      provider,
-      customer: account,
-      agent: sessionPrincipal,
-      lifetimeInSeconds,
-    })
-
-    url.searchParams.set('enroll', await delegationToString(enrollment))
-  }
+  url.searchParams.set('ucan', await delegationToString(authorization))
+  url.searchParams.set('mode', 'authorize')
 
   await context.email.sendValidation({
     to: Mailto.toEmail(account.did()),
     url: url.toString(),
   })
 
-  return {}
+  return { ran: invocation.cid }
 }
 
 /**
- * @param {import('../bindings').RouteContext} context
+ * @param {Context} context
  */
 export const provide = (context) =>
   Server.provide(Access.request, (input) => request(input, context))
-
-/**
- * @param {object} input
- * @param {Server.Signer<Server.API.DID<'key'>>} input.agent
- * @param {Server.Signer<Server.API.DID<'web'>>} input.provider
- * @param {Server.Principal<Server.API.DID<'mailto'>>} input.customer
- * @param {number} input.lifetimeInSeconds
- */
-export const enroll = async ({ provider, customer, agent }) => {
-  const order = await CBOR.write({ customer })
-  const delegation = await Consumer.add.delegate({
-    issuer: provider,
-    audience: agent,
-    with: provider.did(),
-    nb: {
-      // we should probably store subscription info in a separate table
-      // and reference that record by ID here. For now we keep things simple
-      // and pass the subscription info as is.
-      order: order.cid,
-      customer: customer.did(),
-    },
-  })
-
-  const invocation = Consumer.add.invoke({
-    issuer: agent,
-    audience: provider,
-    with: provider.did(),
-    nb: {
-      order: order.cid,
-      consumer: agent.did(),
-      customer: customer.did(),
-    },
-    proofs: [delegation],
-  })
-
-  return await invocation.delegate()
-}
 
 /**
  * @param {object} input

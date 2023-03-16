@@ -41,7 +41,7 @@ export class Consumers {
   }
 
   /**
-   * @param {API.Query} query
+   * @param {API.ConsumerQuery} query
    *
    */
   async *find({ provider, consumer, customer }) {
@@ -108,7 +108,7 @@ export class ConsumerDB {
   }
 
   /**
-   * @param {API.Query} query
+   * @param {API.ConsumerQuery} query
    */
   async *find({ provider, consumer, customer }) {
     let query = this.d1.selectFrom(this.tableName).selectAll()

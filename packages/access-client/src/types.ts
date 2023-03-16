@@ -32,6 +32,9 @@ import type {
   VoucherClaim,
   VoucherRedeem,
   Top,
+  AccessRequest,
+  AccessRequestSuccess,
+  AccessRequestFailure,
   AccessAuthorize,
   AccessAuthorizeSuccess,
   AccessDelegate,
@@ -43,6 +46,21 @@ import type {
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
+  CustomerList,
+  CustomerListSuccess,
+  CustomerListFailure,
+  CustomerAdd,
+  CustomerAddSuccess,
+  CustomerAddFailure,
+  SubscriptionList,
+  SubscriptionListSuccess,
+  SubscriptionListFailure,
+  ConsumerAdd,
+  ConsumerAddSuccess,
+  ConsumerAddFailure,
+  ConsumerList,
+  ConsumerListSuccess,
+  ConsumerListFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -81,7 +99,7 @@ export type SpaceInfoResult =
   | SpaceRecord
 
 export interface AccountTable {
-  did: URI<'did:'>
+  did: DID
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
 }
@@ -90,8 +108,8 @@ export type AccountRecord = Selectable<AccountTable>
 export interface DelegationTable {
   cid: string
   bytes: Uint8Array
-  audience: URI<'did:'>
-  issuer: URI<'did:'>
+  audience: DID
+  issuer: DID
   expires_at: Date | null
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
@@ -109,7 +127,12 @@ export interface SpaceTableMetadata {
  */
 export interface Service {
   access: {
-    authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
+    request: ServiceMethod<AccessRequest, AccessRequestSuccess, Failure>
+    authorize: ServiceMethod<
+      AccessAuthorize,
+      AccessAuthorizeSuccess,
+      AccessRequestFailure
+    >
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
     delegate: ServiceMethod<
       AccessDelegate,
@@ -117,8 +140,24 @@ export interface Service {
       AccessDelegateFailure
     >
   }
+  subscription: {
+    list: ServiceMethod<
+      SubscriptionList,
+      SubscriptionListSuccess,
+      SubscriptionListFailure
+    >
+  }
+  customer: {
+    add: ServiceMethod<CustomerAdd, CustomerAddSuccess, CustomerAddFailure>
+    list: ServiceMethod<CustomerList, CustomerListSuccess, CustomerListFailure>
+  }
+
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
+  }
+  consumer: {
+    add: ServiceMethod<ConsumerAdd, ConsumerAddSuccess, ConsumerAddFailure>
+    list: ServiceMethod<ConsumerList, ConsumerListSuccess, ConsumerListFailure>
   }
   voucher: {
     claim: ServiceMethod<

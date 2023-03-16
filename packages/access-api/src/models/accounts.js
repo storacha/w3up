@@ -3,6 +3,7 @@ import * as Ucanto from '@ucanto/interface'
 import { Kysely } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
 import { GenericPlugin } from '../utils/d1.js'
+import * as API from '../types/index.js'
 
 /**
  * @typedef {import('@web3-storage/access/src/types.js').DelegationRecord} DelegationRecord
@@ -10,6 +11,7 @@ import { GenericPlugin } from '../utils/d1.js'
 
 /**
  * Accounts
+ * @implements {API.AccountStore}
  */
 export class Accounts {
   /**
@@ -33,7 +35,7 @@ export class Accounts {
   }
 
   /**
-   * @param {Ucanto.URI<"did:">} did
+   * @param {Ucanto.DID} did
    */
   async create(did) {
     const result = await this.d1
@@ -44,17 +46,20 @@ export class Accounts {
       .onConflict((oc) => oc.column('did').doNothing())
       .returning('accounts.did')
       .execute()
+
     return { data: result }
   }
 
   /**
-   * @param {Ucanto.URI<"did:">} did
+   * @param {Ucanto.DID} did
    */
   async get(did) {
-    return await this.d1
+    const out = await this.d1
       .selectFrom('accounts')
       .selectAll()
       .where('accounts.did', '=', did)
       .executeTakeFirst()
+
+    return out
   }
 }

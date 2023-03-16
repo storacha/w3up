@@ -17,7 +17,7 @@ import { collect } from 'streaming-iterables'
 
 /**
  * @param {object} ctx
- * @param {import('../types/delegations').DelegationsStorage} ctx.delegations
+ * @param {import('../types/delegations').DelegationStore} ctx.delegations
  * @param {Pick<import('../bindings.js').RouteContext['config'], 'ENV'>} ctx.config
  */
 export function accessClaimProvider(ctx) {
@@ -34,7 +34,7 @@ export function accessClaimProvider(ctx) {
 
 /**
  * @param {object} options
- * @param {import('../types/delegations').DelegationsStorage} options.delegations
+ * @param {import('../types/delegations').DelegationStore} options.delegations
  * @returns {AccessClaimHandler}
  */
 export function createAccessClaimHandler({ delegations }) {
