@@ -11,28 +11,33 @@ import * as delegationsResponse from '../../src/utils/delegations-response.js'
  * Tests using context from "./helpers/context.js", which sets up a testable access-api inside miniflare.
  *
  * @template {Record<string,any>} Service
- * @param {() => Promise<import('./types').HelperTestContext<Service>>} createContext
+ * @template {import('./types').HelperTestContext<Service>} Context
+ * @param {() => Promise<Context>} createContext
  * @param {object} [options]
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.account - account to register spaces with
  * @param {Iterable<Promise<Ucanto.Principal<Ucanto.DID<'key'>>>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
  */
 export function createTesterFromContext(createContext, options) {
-  const context = createContext().then(async (ctx) => {
-    const registeredSpaceAgent = await principal.ed25519.generate()
-    if (options) {
-      await registerSpaces(options?.registerSpaces ?? [], {
+  const create = () =>
+    createContext().then(async (ctx) => {
+      const registeredSpaceAgent = await principal.ed25519.generate()
+      if (options) {
+        await registerSpaces(options?.registerSpaces ?? [], {
+          ...ctx,
+          account: options.account,
+          agent: registeredSpaceAgent,
+        })
+      }
+      /** @type {Ucanto.ConnectionView<Service>} */
+      const connection = ctx.conn
+      return {
         ...ctx,
-        account: options.account,
-        agent: registeredSpaceAgent,
-      })
-    }
-    return {
-      ...ctx,
-      registeredSpaceAgent,
-    }
-  })
-  /** @type {Promise<Ucanto.ConnectionView<Service>>} */
-  const connection = context.then((ctx) => ctx.conn)
+        connection,
+        registeredSpaceAgent,
+      }
+    })
+  const context = create()
+  const connection = context.then(({ connection }) => connection)
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
   const service = context.then(({ service }) => service)
@@ -45,7 +50,16 @@ export function createTesterFromContext(createContext, options) {
     const [result] = await conn.execute(invocation)
     return result
   }
-  return { issuer, audience, invoke, miniflare, context, connection, service }
+  return {
+    issuer,
+    audience,
+    invoke,
+    miniflare,
+    context,
+    connection,
+    service,
+    create,
+  }
 }
 
 /**
