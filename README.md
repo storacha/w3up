@@ -42,6 +42,10 @@ npm install @web3-storage/w3up-client
 
 [API Reference](#api)
 
+> ⚠️❗ __Public Data__ 🌎: All data uploaded to web3.storage is available to anyone who requests it using the correct CID. Do not store any private or sensitive information in an unencrypted form using web3.storage.
+
+> ⚠️❗ __Permanent Data__ ♾️: Deleting files from the web3.storage site’s Files page will remove them from the file listing for your account, but that doesn’t prevent nodes on the decentralized storage network from retaining copies of the data indefinitely. Do not use web3.storage for data that may need to be permanently deleted in the future.
+
 ### Core concepts
 
 w3up services use [ucanto][ucanto], a Remote Procedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_. See our [intro to UCAN blog post](https://blog.web3.storage/posts/intro-to-ucan) for an overview of UCAN.
