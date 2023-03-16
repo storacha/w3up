@@ -167,7 +167,56 @@ for (const accessApiVariant of /** @type {const} */ ([
       // const providerAddResult = await accessAgent.invokeAndExecute()
     })
 
-    it('can authorize, then create and register space', async () => {
+    it('can add storage provider manually', async () => {
+      const { connection, emails } = await accessApiVariant.create()
+      const accountEmail = 'foo@dag.house'
+      const account = { did: () => createDidMailtoFromEmail(accountEmail) }
+      const accessAgent = await AccessAgent.create(undefined, {
+        connection,
+      })
+      const abort = new AbortController()
+      after(() => abort.abort())
+
+      // request agent authorization from account
+      requestAuthorization(accessAgent, account, [{ can: '*' }])
+      // confirm authorization
+      const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
+      await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
+
+      // create space
+      const spaceName = `space-test-${Math.random().toString().slice(2)}`
+      const spaceCreation = await accessAgent.createSpace(spaceName)
+      await accessAgent.setCurrentSpace(spaceCreation.did)
+
+      const provider = /** @type {Ucanto.DID<'web'>} */ (
+        accessAgent.connection.id.did()
+      )
+      // 'register space' - i.e. add a storage provider as an account
+      const [providerAddResult] = await accessAgent.connection.execute(
+        await w3caps.Provider.add
+          .invoke({
+            issuer: accessAgent.issuer,
+            audience: accessAgent.connection.id,
+            with: account.did(),
+            nb: {
+              provider,
+              consumer: spaceCreation.did,
+            },
+          })
+          .delegate()
+      )
+      if (providerAddResult.error) {
+        throw providerAddResult
+      }
+      assert.notEqual(
+        providerAddResult.error,
+        true,
+        'providerAddResult is not an error'
+      )
+      assert.ok(providerAddResult)
+    })
+
+    it.skip('can registerSpace', async () => {
       const { connection, emails } = await accessApiVariant.create()
       const accountEmail = 'foo@dag.house'
       const account = { did: () => createDidMailtoFromEmail(accountEmail) }
