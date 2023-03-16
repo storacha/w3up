@@ -16,7 +16,7 @@ import * as AccessAuthorize from './access-authorize.js'
 import * as AccessRequest from './access-request.js'
 import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
-import * ProviderAdd from './provider-add.js'
+import * as ProviderAdd from './provider-add.js'
 import { Spaces } from '../models/spaces.js'
 import * as Subscriptions from './subscription.js'
 import * as Customer from './customer.js'
@@ -67,7 +67,7 @@ export function service(ctx) {
     },
 
     provider: {
-      add: ProviderAdd.provide(ctx)
+      add: ProviderAdd.provide(ctx),
     },
 
     voucher: {
