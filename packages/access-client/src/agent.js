@@ -27,8 +27,10 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
+import { requestAuthorization } from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
+export * from './agent-use-cases.js'
 
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
@@ -481,43 +483,21 @@ export class Agent {
    * signed by the passed email address.
    *
    * @param {`${string}@${string}`} email
-   * @param {object} opts
-   * @param {AbortSignal} [opts.signal]
-   * @param {Iterable<{ can: Ucanto.Ability }>} opts.capabilities
-   */
-  async requestAuthorization(email, opts) {
-    const res = await this.invokeAndExecute(Access.authorize, {
-      audience: this.connection.id,
-      with: this.issuer.did(),
-      nb: {
-        iss: createDidMailtoFromEmail(email),
-        att: [...opts.capabilities],
-      },
-    })
-
-    if (res?.error) {
-      throw new Error('failed to authorize session', { cause: res })
-    }
-  }
-
-  /**
-   * Request authorization of a session allowing this agent to issue UCANs
-   * signed by the passed email address.
-   *
-   * @param {`${string}@${string}`} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
    */
   async authorize(email, opts) {
-    await this.requestAuthorization(email, {
-      ...opts,
-      capabilities: opts?.capabilities || [
+    const account = { did: () => createDidMailtoFromEmail(email) }
+    await requestAuthorization(
+      this,
+      account,
+      opts?.capabilities || [
         { can: 'store/*' },
         { can: 'provider/add' },
         { can: 'upload/*' },
-      ],
-    })
+      ]
+    )
 
     const sessionDelegation =
       /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */

@@ -5,6 +5,7 @@ import * as principal from '@ucanto/principal'
 import {
   Agent as AccessAgent,
   createDidMailtoFromEmail,
+  requestAuthorization,
 } from '@web3-storage/access/agent'
 import * as w3caps from '@web3-storage/capabilities'
 import * as assert from 'assert'
@@ -68,10 +69,10 @@ for (const accessApiVariant of /** @type {const} */ ([
       const emailCount = emails.length
       const abort = new AbortController()
       after(() => abort.abort())
-      await accessAgent.requestAuthorization('example@dag.house', {
-        signal: abort.signal,
-        capabilities: [{ can: '*' }],
-      })
+      const account = {
+        did: () => createDidMailtoFromEmail('example@dag.house'),
+      }
+      await requestAuthorization(accessAgent, account, [{ can: '*' }])
       assert.deepEqual(emails.length, emailCount + 1)
     })
 
@@ -199,14 +200,15 @@ for (const accessApiVariant of /** @type {const} */ ([
     })
 
     it('same agent, multiple accounts, provider/add', async () => {
-      const accounts = ['test-a@dag.house', 'test-b@dag.house'].map(
-        (email) => ({
-          email,
-          did: function thisEmailDidMailto() {
-            return createDidMailtoFromEmail(this.email)
-          },
-        })
-      )
+      const accounts = /** @type {const} */ ([
+        'test-a@dag.house',
+        'test-b@dag.house',
+      ]).map((email) => ({
+        email,
+        did: function thisEmailDidMailto() {
+          return createDidMailtoFromEmail(this.email)
+        },
+      }))
       const { connection, emails } = await accessApiVariant.create()
       const accessAgentData = await AgentData.create()
       const accessAgent = await AccessAgent.create(accessAgentData, {
@@ -225,7 +227,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       let expectedDataDelegations = 0
       for (const account of accounts) {
         // request agent authorization from account
-        requestAuthorization(accessAgent, account, [{ can: '*' }])
+        await requestAuthorization(accessAgent, account, [{ can: '*' }])
         // confirm authorization
         const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
         await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
@@ -243,7 +245,8 @@ for (const accessApiVariant of /** @type {const} */ ([
       // create space
       const spaceName = `space-test-${Math.random().toString().slice(2)}`
       const spaceCreation = await accessAgent.createSpace(spaceName)
-      expectedDataDelegations += 2
+      // expect 1 new delegation from space.did() -> accessAgent.issuer.did()
+      expectedDataDelegations += 1
       assert.deepEqual(
         countDelegations(accessAgentData),
         expectedDataDelegations,
@@ -252,37 +255,12 @@ for (const accessApiVariant of /** @type {const} */ ([
 
       await accessAgent.setCurrentSpace(spaceCreation.did)
 
-      // eslint-disable-next-line no-console
-      console.log(
-        'all delegations',
-        JSON.stringify([...accessAgentData.delegations.values()], undefined, 2)
-      )
-
       const provider = /** @type {Ucanto.DID<'web'>} */ (
         accessAgent.connection.id.did()
       )
-      const accountsThatAddedProvider = []
       for (const account of accounts) {
-        const proofsForAccount = accessAgent.proofs([
-          {
-            can: 'provider/add',
-            with: account.did(),
-          },
-        ])
-        // eslint-disable-next-line no-console
-        console.log(
-          'proofsForAccount',
-          JSON.stringify(proofsForAccount, undefined, 2)
-        )
         await accessAgent.addProvider(spaceCreation.did, account, provider)
-        // accountsThatAddedProvider.push(account)
       }
-
-      assert.deepEqual(
-        accountsThatAddedProvider.length,
-        accounts.length,
-        'all accounts added provider'
-      )
     })
 
     it.skip('can can use second device with same account', () => {
@@ -355,32 +333,6 @@ function watchForEmail(emails, retryAfter, abort) {
  * @typedef {import('@web3-storage/capabilities/src/types.js').AccessConfirm} AccessConfirm
  * @typedef {import('./helpers/ucanto-test-utils.js').AccessService} AccessService
  */
-
-/**
- * request authorization using access-api access/authorize
- *
- * @param {AccessAgent} access
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} authorizer - who you are requesting authorization from
- * @param {Iterable<{ can: Ucanto.Ability }>} abilities - e.g. [{ can: '*' }]
- */
-async function requestAuthorization(access, authorizer, abilities) {
-  const authorizeResult = await access.invokeAndExecute(
-    w3caps.Access.authorize,
-    {
-      audience: access.connection.id,
-      with: access.issuer.did(),
-      nb: {
-        iss: authorizer.did(),
-        att: [...abilities],
-      },
-    }
-  )
-  assert.notDeepStrictEqual(
-    authorizeResult.error,
-    true,
-    'authorize result is not an error'
-  )
-}
 
 /**
  * @param {principal.ed25519.Signer.Signer<`did:web:${string}`, principal.ed25519.Signer.UCAN.SigAlg>} service
