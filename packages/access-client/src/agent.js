@@ -535,7 +535,7 @@ export class Agent {
    * @param {Ucanto.DID<'key'>} space
    * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    */
-  async delegateSpaceAccessToAccount(space, account) {
+  async #delegateSpaceAccessToAccount(space, account) {
     const spaceSaysAccountCanAdminSpace =
       await createIssuerSaysAccountCanAdminSpace(this.issuer, space, account)
     return this.invokeAndExecute(Access.delegate, {
@@ -595,7 +595,7 @@ export class Agent {
     }
     const account = { did: () => createDidMailtoFromEmail(email) }
     await this.#addProvider(space, account, provider)
-    const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
+    const delegateSpaceAccessResult = await this.#delegateSpaceAccessToAccount(
       space,
       account
     )
