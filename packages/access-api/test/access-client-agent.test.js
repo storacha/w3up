@@ -93,7 +93,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       await requestAuthorization(accessAgent, account, [{ can: '*' }])
     })
 
-    it('can requestAuthorization, then click confirm email, then claim', async () => {
+    it('can authorize session with account and use', async () => {
       const { emails, connection } = await accessApiVariant.create()
       /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
       const account = { did: () => 'did:mailto:dag.house:example' }
@@ -130,8 +130,49 @@ for (const accessApiVariant of /** @type {const} */ ([
         'access/confirm result is not an error'
       )
 
-      const claimed = await accessAgent.claimDelegations()
-      assert.deepEqual(claimed.length, 2)
+      // these are delegations with audience=accessAgent.issuer
+      const claimedAsAgent = await accessAgent.claimDelegations()
+      assert.deepEqual(claimedAsAgent.length, 2)
+      assert.ok(
+        claimedAsAgent.every(
+          (d) => d.audience.did() === accessAgent.issuer.did()
+        )
+      )
+
+      // we expect these to have sessionProofs
+      // one ucan/attest and one that is attested to
+      const delegationFromAccountToSession = claimedAsAgent.find(
+        (d) => d.issuer.did() === account.did()
+      )
+      assert.ok(
+        delegationFromAccountToSession,
+        'claimed delegationFromAccountToSession'
+      )
+      const attestation = claimedAsAgent.find(
+        (d) => d.capabilities[0].can === 'ucan/attest'
+      )
+      assert.ok(attestation, 'claimed attestation')
+      assert.equal(
+        /** @type {any} */ (attestation).capabilities[0].nb.proof.toString(),
+        delegationFromAccountToSession.cid.toString(),
+        'ucan/attest proof cid matches delegation cid'
+      )
+
+      const accountProofs = [delegationFromAccountToSession, attestation]
+      assert.ok(accountProofs)
+      // @todo we should be able to use the accountProofs to provider/add
+      // const providerAddResult = await accessAgent.invokeAndExecute()
+    })
+
+    it.skip('can registerSpace', async () => {
+      const { connection } = await accessApiVariant.create()
+      const accountEmail = 'foo@dag.house'
+      // const account = { did: () => createDidMailtoFromEmail(accountEmail) }
+      const accessAgent = await AccessAgent.create(undefined, {
+        connection,
+      })
+
+      await accessAgent.registerSpace(accountEmail)
     })
   })
 }
