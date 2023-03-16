@@ -55,12 +55,14 @@ for (const accessApiVariant of /** @type {const} */ ([
       const delegations = accessAgent.proofs()
       assert.equal(space.proof.cid, delegations[0].cid)
     })
-    it.skip('can authorize', async () => {
+    it('can authorize', async () => {
       const { connection } = await accessApiVariant.create()
       const accessAgent = await AccessAgent.create(undefined, {
         connection,
       })
-      await accessAgent.authorize('example@dag.house')
+      const abort = new AbortController()
+      after(() => abort.abort())
+      accessAgent.authorize('example@dag.house', abort)
     })
 
     it('can testSessionAuthorization', async () => {

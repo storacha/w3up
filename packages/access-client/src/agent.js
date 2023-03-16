@@ -507,24 +507,6 @@ export class Agent {
     if (res?.error) {
       throw new Error('failed to authorize session', { cause: res })
     }
-
-    const sessionDelegation =
-      /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
-      (await this.#waitForDelegation(opts))
-
-    const cap = sessionDelegation.capabilities.find(
-      // @ts-expect-error "key" does not exist in object, unless it's a session capability
-      (c) => c.can === Access.session.can && c.nb.key === this.issuer.did()
-    )
-    if (!cap && isExpired(sessionDelegation)) {
-      throw new Error('received invalid delegation')
-    }
-
-    await this.addProof(sessionDelegation)
-
-    // claim delegations here because we will need an ucan/attest from the service to
-    // pair with the session delegation we just claimed to make it work
-    await this.claimDelegations()
   }
 
   async claimDelegations() {
