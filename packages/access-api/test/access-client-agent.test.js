@@ -175,8 +175,6 @@ for (const accessApiVariant of /** @type {const} */ ([
 
       const accountProofs = [delegationFromAccountToSession, attestation]
       assert.ok(accountProofs)
-      // @todo we should be able to use the accountProofs to provider/add
-      // const providerAddResult = await accessAgent.invokeAndExecute()
     })
 
     it('can registerSpace', async () => {
