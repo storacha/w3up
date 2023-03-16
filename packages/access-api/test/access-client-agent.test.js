@@ -55,12 +55,19 @@ for (const accessApiVariant of /** @type {const} */ ([
       const delegations = accessAgent.proofs()
       assert.equal(space.proof.cid, delegations[0].cid)
     })
-    it.skip('can authorize', async () => {
-      const { connection } = await accessApiVariant.create()
+    it('can requestAuthorization', async () => {
+      const { connection, emails } = await accessApiVariant.create()
       const accessAgent = await AccessAgent.create(undefined, {
         connection,
       })
-      await accessAgent.authorize('example@dag.house')
+      const emailCount = emails.length
+      const abort = new AbortController()
+      after(() => abort.abort())
+      await accessAgent.requestAuthorization('example@dag.house', {
+        signal: abort.signal,
+        capabilities: [{ can: '*' }],
+      })
+      assert.deepEqual(emails.length, emailCount + 1)
     })
 
     it('can testSessionAuthorization', async () => {
