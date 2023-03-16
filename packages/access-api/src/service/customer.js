@@ -41,6 +41,10 @@ export const add = async ({ capability, invocation }, context) => {
     order: capability.nb.order,
   })
 
+  if (subscription.error) {
+    return new Failure(`Failed to create subscription: ${subscription}`)
+  }
+
   // We detect whether insert occurred or if this operation was a noop
   // by checking if `cause` matches invocation cid. If insert took place
   // we'll save a delegation into delegation store.
