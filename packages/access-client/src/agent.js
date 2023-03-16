@@ -12,9 +12,8 @@ import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
-import * as Provider from '@web3-storage/capabilities/provider'
 
-import { stringToDelegation, bytesToDelegations } from './encoding.js'
+import { stringToDelegation } from './encoding.js'
 import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
@@ -27,8 +26,14 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
+import {
+  addProvider,
+  claimDelegations,
+  requestAuthorization,
+} from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
+export * from './agent-use-cases.js'
 
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
@@ -481,43 +486,21 @@ export class Agent {
    * signed by the passed email address.
    *
    * @param {`${string}@${string}`} email
-   * @param {object} opts
-   * @param {AbortSignal} [opts.signal]
-   * @param {Iterable<{ can: Ucanto.Ability }>} opts.capabilities
-   */
-  async requestAuthorization(email, opts) {
-    const res = await this.invokeAndExecute(Access.authorize, {
-      audience: this.connection.id,
-      with: this.issuer.did(),
-      nb: {
-        iss: createDidMailtoFromEmail(email),
-        att: [...opts.capabilities],
-      },
-    })
-
-    if (res?.error) {
-      throw new Error('failed to authorize session', { cause: res })
-    }
-  }
-
-  /**
-   * Request authorization of a session allowing this agent to issue UCANs
-   * signed by the passed email address.
-   *
-   * @param {`${string}@${string}`} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
    * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
    */
   async authorize(email, opts) {
-    await this.requestAuthorization(email, {
-      ...opts,
-      capabilities: opts?.capabilities || [
+    const account = { did: () => createDidMailtoFromEmail(email) }
+    await requestAuthorization(
+      this,
+      account,
+      opts?.capabilities || [
         { can: 'store/*' },
         { can: 'provider/add' },
         { can: 'upload/*' },
-      ],
-    })
+      ]
+    )
 
     const sessionDelegation =
       /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
@@ -535,46 +518,7 @@ export class Agent {
 
     // claim delegations here because we will need an ucan/attest from the service to
     // pair with the session delegation we just claimed to make it work
-    await this.claimDelegations()
-  }
-
-  async claimDelegations() {
-    const res = await this.invokeAndExecute(Access.claim, {
-      audience: this.connection.id,
-      with: this.issuer.did(),
-    })
-    if (res.error) {
-      throw new Error('error claiming delegations')
-    }
-    const delegations = Object.values(res.delegations).flatMap((bytes) =>
-      bytesToDelegations(bytes)
-    )
-    for (const delegation of delegations) {
-      this.addProof(delegation)
-
-      // if we can find a store/* capability in this delegation, look in the proofs
-      // for the concrete capabilities where space DIDs will be specified
-      // TODO: this was my first attempt at inferring spaces from claimed delegations, but I think it needs work - tv
-      // if (delegation.capabilities.some((cap) => cap.can === 'store/*')) {
-      //   const spaceListingProof = delegation.proofs.find((del) =>
-      //     del.capabilities.some((cap) => cap.can === 'store/list')
-      //   )
-      //   const spaceListingCap = spaceListingProof.capabilities.find(
-      //     (cap) => cap.can === 'store/list'
-      //   )
-      //   if (spaceListingCap) {
-      //     this.#data.addSpace(
-      //       spaceListingCap.with,
-      //       { isRegistered: true },
-      //       delegation
-      //     )
-      //   }
-      // }
-    }
-
-    // TODO: should we be inferring which spaces we have access to here and updating local space state?
-
-    return delegations
+    await claimDelegations(this, this.issuer.did(), { addProofs: true })
   }
 
   /**
@@ -582,15 +526,8 @@ export class Agent {
    * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
    */
-  async addProvider(space, account, provider) {
-    return this.invokeAndExecute(Provider.add, {
-      audience: this.connection.id,
-      with: account.did(),
-      nb: {
-        provider,
-        consumer: space,
-      },
-    })
+  async #addProvider(space, account, provider) {
+    return addProvider(this, space, account, provider)
   }
 
   /**
@@ -598,7 +535,7 @@ export class Agent {
    * @param {Ucanto.DID<'key'>} space
    * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    */
-  async delegateSpaceAccessToAccount(space, account) {
+  async #delegateSpaceAccessToAccount(space, account) {
     const spaceSaysAccountCanAdminSpace =
       await createIssuerSaysAccountCanAdminSpace(this.issuer, space, account)
     return this.invokeAndExecute(Access.delegate, {
@@ -657,11 +594,8 @@ export class Agent {
       throw new Error('Space already registered with web3.storage.')
     }
     const account = { did: () => createDidMailtoFromEmail(email) }
-    const providerResult = await this.addProvider(space, account, provider)
-    if (providerResult.error) {
-      throw new Error(providerResult.message, { cause: providerResult })
-    }
-    const delegateSpaceAccessResult = await this.delegateSpaceAccessToAccount(
+    await this.#addProvider(space, account, provider)
+    const delegateSpaceAccessResult = await this.#delegateSpaceAccessToAccount(
       space,
       account
     )

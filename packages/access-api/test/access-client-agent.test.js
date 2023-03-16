@@ -1,9 +1,13 @@
+/* eslint-disable unicorn/consistent-function-scoping */
 import { context } from './helpers/context.js'
 import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import {
+  addProvider,
   Agent as AccessAgent,
+  claimDelegations,
   createDidMailtoFromEmail,
+  requestAuthorization,
 } from '@web3-storage/access/agent'
 import * as w3caps from '@web3-storage/capabilities'
 import * as assert from 'assert'
@@ -14,6 +18,7 @@ import {
   stringToDelegations,
 } from '@web3-storage/access/encoding'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
+import { AgentData } from '@web3-storage/access'
 
 for (const accessApiVariant of /** @type {const} */ ([
   {
@@ -66,10 +71,10 @@ for (const accessApiVariant of /** @type {const} */ ([
       const emailCount = emails.length
       const abort = new AbortController()
       after(() => abort.abort())
-      await accessAgent.requestAuthorization('example@dag.house', {
-        signal: abort.signal,
-        capabilities: [{ can: '*' }],
-      })
+      const account = {
+        did: () => createDidMailtoFromEmail('example@dag.house'),
+      }
+      await requestAuthorization(accessAgent, account, [{ can: '*' }])
       assert.deepEqual(emails.length, emailCount + 1)
     })
 
@@ -134,7 +139,11 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
 
       // these are delegations with audience=accessAgent.issuer
-      const claimedAsAgent = await accessAgent.claimDelegations()
+      const claimedAsAgent = await claimDelegations(
+        accessAgent,
+        accessAgent.issuer.did(),
+        { addProofs: true }
+      )
       assert.deepEqual(claimedAsAgent.length, 2)
       assert.ok(
         claimedAsAgent.every(
@@ -183,7 +192,9 @@ for (const accessApiVariant of /** @type {const} */ ([
       const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
       await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
       // claim delegations after confirmation
-      await accessAgent.claimDelegations()
+      await claimDelegations(accessAgent, accessAgent.issuer.did(), {
+        addProofs: true,
+      })
 
       // create space
       const spaceName = `space-test-${Math.random().toString().slice(2)}`
@@ -196,8 +207,70 @@ for (const accessApiVariant of /** @type {const} */ ([
       })
     })
 
-    it.skip('same agent, multiple accounts, try to provider/add', () => {
-      throw new Error('todo')
+    it('same agent, multiple accounts, provider/add', async () => {
+      const accounts = /** @type {const} */ ([
+        'test-a@dag.house',
+        'test-b@dag.house',
+      ]).map((email) => ({
+        email,
+        did: function thisEmailDidMailto() {
+          return createDidMailtoFromEmail(this.email)
+        },
+      }))
+      const { connection, emails } = await accessApiVariant.create()
+      const accessAgentData = await AgentData.create()
+      const accessAgent = await AccessAgent.create(accessAgentData, {
+        connection,
+      })
+      const abort = new AbortController()
+      after(() => abort.abort())
+      /** @param {AgentData} agentData */
+      const countDelegations = ({ delegations }) =>
+        [...delegations.values()].length
+      assert.deepEqual(
+        countDelegations(accessAgentData),
+        0,
+        'agentData has zero delegations initially'
+      )
+      let expectedDataDelegations = 0
+      for (const account of accounts) {
+        // request agent authorization from account
+        await requestAuthorization(accessAgent, account, [{ can: '*' }])
+        // confirm authorization
+        const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
+        await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
+        // claim delegations after confirmation
+        await claimDelegations(accessAgent, accessAgent.issuer.did(), {
+          addProofs: true,
+        })
+        // expect two new delegations, [delegationFromAccount, attestationFromService]
+        expectedDataDelegations += 2
+        assert.deepEqual(
+          countDelegations(accessAgentData),
+          expectedDataDelegations,
+          `agentData has ${expectedDataDelegations} after authorizing account ${account.did()} and claiming`
+        )
+      }
+
+      // create space
+      const spaceName = `space-test-${Math.random().toString().slice(2)}`
+      const spaceCreation = await accessAgent.createSpace(spaceName)
+      // expect 1 new delegation from space.did() -> accessAgent.issuer.did()
+      expectedDataDelegations += 1
+      assert.deepEqual(
+        countDelegations(accessAgentData),
+        expectedDataDelegations,
+        `agentData has ${expectedDataDelegations} after calling accessClientAgent.createSpace(...)`
+      )
+
+      await accessAgent.setCurrentSpace(spaceCreation.did)
+
+      const provider = /** @type {Ucanto.DID<'web'>} */ (
+        accessAgent.connection.id.did()
+      )
+      for (const account of accounts) {
+        await addProvider(accessAgent, spaceCreation.did, account, provider)
+      }
     })
 
     it.skip('can can use second device with same account', () => {
@@ -270,32 +343,6 @@ function watchForEmail(emails, retryAfter, abort) {
  * @typedef {import('@web3-storage/capabilities/src/types.js').AccessConfirm} AccessConfirm
  * @typedef {import('./helpers/ucanto-test-utils.js').AccessService} AccessService
  */
-
-/**
- * request authorization using access-api access/authorize
- *
- * @param {AccessAgent} access
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} authorizer - who you are requesting authorization from
- * @param {Iterable<{ can: Ucanto.Ability }>} abilities - e.g. [{ can: '*' }]
- */
-async function requestAuthorization(access, authorizer, abilities) {
-  const authorizeResult = await access.invokeAndExecute(
-    w3caps.Access.authorize,
-    {
-      audience: access.connection.id,
-      with: access.issuer.did(),
-      nb: {
-        iss: authorizer.did(),
-        att: [...abilities],
-      },
-    }
-  )
-  assert.notDeepStrictEqual(
-    authorizeResult.error,
-    true,
-    'authorize result is not an error'
-  )
-}
 
 /**
  * @param {principal.ed25519.Signer.Signer<`did:web:${string}`, principal.ed25519.Signer.UCAN.SigAlg>} service
