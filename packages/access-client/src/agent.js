@@ -43,6 +43,7 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
  * @param {Ucanto.DID} space
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @param {Ucanto.Capabilities} capabilities
+ * @param {Ucanto.Delegation[]} proofs
  * @returns
  */
 async function createIssuerSaysAccountCanAdminSpace(
@@ -54,12 +55,14 @@ async function createIssuerSaysAccountCanAdminSpace(
       can: '*',
       with: space,
     },
-  ]
+  ],
+  proofs = []
 ) {
   return ucanto.delegate({
     issuer,
     audience: account,
     capabilities,
+    proofs,
   })
 }
 
@@ -519,6 +522,7 @@ export class Agent {
     // claim delegations here because we will need an ucan/attest from the service to
     // pair with the session delegation we just claimed to make it work
     await claimDelegations(this, this.issuer.did(), { addProofs: true })
+    await claimDelegations(this, account.did(), { addProofs: true })
   }
 
   /**
@@ -536,16 +540,22 @@ export class Agent {
    * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    */
   async #delegateSpaceAccessToAccount(space, account) {
-    const spaceSaysAccountCanAdminSpace =
-      await createIssuerSaysAccountCanAdminSpace(this.issuer, space, account)
+    const issuerSaysAccountCanAdminSpace =
+      await createIssuerSaysAccountCanAdminSpace(
+        this.issuer,
+        space,
+        account,
+        undefined,
+        this.proofs([{ with: space, can: '*' }])
+      )
     return this.invokeAndExecute(Access.delegate, {
       audience: this.connection.id,
       with: space,
       expiration: Infinity,
       nb: {
         delegations: {
-          [spaceSaysAccountCanAdminSpace.cid.toString()]:
-            spaceSaysAccountCanAdminSpace.cid,
+          [issuerSaysAccountCanAdminSpace.cid.toString()]:
+            issuerSaysAccountCanAdminSpace.cid,
         },
       },
       proofs: [
@@ -555,7 +565,7 @@ export class Agent {
           this.issuer
         ),
         // must be embedded here because it's referenced by cid in .nb.delegations
-        spaceSaysAccountCanAdminSpace,
+        issuerSaysAccountCanAdminSpace,
       ],
     })
   }

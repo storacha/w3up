@@ -1,6 +1,9 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { context } from './helpers/context.js'
-import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
+import {
+  assertNotError,
+  createTesterFromContext,
+} from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import {
   addProvider,
@@ -321,18 +324,51 @@ for (const accessApiVariant of /** @type {const} */ ([
         deviceB.connection,
         await watchForEmail(emails, 100, abort.signal)
       )
-      // claim delegations after confirmation
-      const deviceBClaimed = await claimDelegations(
+      // claim delegations aud=deviceB.issuer
+      const deviceBIssuerClaimed = await claimDelegations(
         deviceB,
         deviceB.issuer.did(),
         {
           addProofs: true,
         }
       )
-      assert.equal(deviceBClaimed.length, 2, 'deviceB claimed delegations')
+      assert.equal(
+        deviceBIssuerClaimed.length,
+        2,
+        'deviceBIssuerClaimed delegations'
+      )
+      // claim delegations aud=account
+      const deviceBAccountClaimed = await claimDelegations(
+        deviceB,
+        account.did(),
+        {
+          addProofs: true,
+        }
+      )
+      assert.equal(
+        deviceBAccountClaimed.length,
+        1,
+        'deviceBAccountClaimed delegations'
+      )
 
       // try to addProvider
       await addProvider(deviceB, spaceCreation.did, account, provider)
+
+      // issuer + account proofs should authorize deviceB to invoke space/info
+      const spaceInfoResult = await deviceB.invokeAndExecute(
+        w3caps.Space.info,
+        {
+          with: spaceCreation.did,
+        }
+      )
+      assertNotError(spaceInfoResult)
+      assert.notEqual(
+        spaceInfoResult.error,
+        true,
+        'spaceInfoResult is not an error'
+      )
+      assert.ok(!spaceInfoResult.error)
+      assert.deepEqual(spaceInfoResult.did, spaceCreation.did)
     })
   })
 }
