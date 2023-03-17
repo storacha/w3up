@@ -65,28 +65,6 @@ async function createIssuerSaysAccountCanAdminSpace(
 }
 
 /**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
- * @param {Ucanto.DID} space
- * @param {Ucanto.Principal<Ucanto.DID<'key'>>} device
- */
-async function createIssuerSaysDeviceCanAccessDelegateWithSpace(
-  issuer,
-  space,
-  device
-) {
-  return ucanto.delegate({
-    issuer,
-    audience: device,
-    capabilities: [
-      {
-        can: 'access/delegate',
-        with: space,
-      },
-    ],
-  })
-}
-
-/**
  * @typedef {import('./types').Service} Service
  */
 
@@ -515,11 +493,6 @@ export class Agent {
         },
       },
       proofs: [
-        await createIssuerSaysDeviceCanAccessDelegateWithSpace(
-          this.issuer,
-          space,
-          this.issuer
-        ),
         // must be embedded here because it's referenced by cid in .nb.delegations
         issuerSaysAccountCanAdminSpace,
       ],
