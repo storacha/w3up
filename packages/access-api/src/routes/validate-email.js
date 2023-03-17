@@ -11,7 +11,6 @@ import {
   ValidateEmailError,
   PendingValidateEmail,
 } from '../utils/html.js'
-import * as validator from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from '../utils/delegations-response.js'
 import * as accessConfirm from '../service/access-confirm.js'
@@ -143,18 +142,6 @@ async function authorize(req, env) {
      * @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessConfirm]>}
      */
     const request = stringToDelegation(req.query.ucan)
-
-    const confirmation = await validator.access(request, {
-      capability: Access.confirm,
-      principal: Verifier,
-      authority: env.signer,
-    })
-
-    if (confirmation.error) {
-      throw new Error(`unable to verify access/confirm invocation`, {
-        cause: confirmation,
-      })
-    }
 
     const confirm = provide(
       Access.confirm,
