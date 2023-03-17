@@ -295,7 +295,7 @@ export async function addProviderAndDelegateToAccount(
         return service
       }
       throw new Error(
-        `unable to determine provider to use to register space. Pass opts.provider`
+        `unable to determine provider to use to addProviderAndDelegateToAccount using access.connection.id did ${service}. expected a did:web:`
       )
     })()
 
