@@ -272,7 +272,12 @@ for (const accessApiVariant of /** @type {const} */ ([
         accessAgent.connection.id.did()
       )
       for (const account of accounts) {
-        await addProvider(accessAgent, spaceCreation.did, account, provider)
+        await addProvider({
+          access: accessAgent,
+          space: spaceCreation.did,
+          account,
+          provider,
+        })
       }
     })
 
@@ -350,7 +355,12 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
 
       // try to addProvider
-      await addProvider(deviceB, spaceCreation.did, account, provider)
+      await addProvider({
+        access: deviceB,
+        space: spaceCreation.did,
+        account,
+        provider,
+      })
 
       // issuer + account proofs should authorize deviceB to invoke space/info
       const spaceInfoResult = await deviceB.invokeAndExecute(
@@ -406,7 +416,7 @@ for (const accessApiVariant of /** @type {const} */ ([
     await Promise.all([authorize(), clickNextConfirmationLink()])
 
     const space = await deviceA.createSpace()
-    await addProvider(deviceA, space.did, account, provider)
+    await addProvider({ access: deviceA, space: space.did, account, provider })
     const spaceInfoResult = await deviceA.invokeAndExecute(w3caps.Space.info, {
       with: space.did,
     })
@@ -434,7 +444,7 @@ for (const accessApiVariant of /** @type {const} */ ([
     await Promise.all([authorize(), clickNextConfirmationLink()])
 
     const space = await deviceA.createSpace()
-    await addProvider(deviceA, space.did, account, provider)
+    await addProvider({ access: deviceA, space: space.did, account, provider })
     const spaceInfoResult = await deviceA.invokeAndExecute(w3caps.Space.info, {
       with: space.did,
     })
