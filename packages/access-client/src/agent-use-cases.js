@@ -1,10 +1,16 @@
-import { Agent as AccessAgent, agentToData } from './agent.js'
+import {
+  Agent as AccessAgent,
+  agentToData,
+  createDidMailtoFromEmail,
+} from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
-import { bytesToDelegations } from './encoding.js'
+import { bytesToDelegations, stringToDelegation } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
 import { Delegation } from '@ucanto/core'
 import * as w3caps from '@web3-storage/capabilities'
+import { Websocket, AbortError } from './utils/ws.js'
+import { isSessionProof } from './agent-data.js'
 
 /**
  * Request authorization of a session allowing this agent to issue UCANs
@@ -154,4 +160,121 @@ export async function expectNewClaimableDelegations(access, delegee, options) {
     }
   })
   return claimed
+}
+
+/**
+ * @param {AccessAgent} access
+ * @param {object} [opts]
+ * @param {AbortSignal} [opts.signal]
+ */
+export async function waitForDelegation(access, opts) {
+  const ws = new Websocket(access.url, 'validate-ws')
+  await ws.open(opts)
+
+  ws.send({
+    did: access.did(),
+  })
+
+  try {
+    const msg = await ws.awaitMsg(opts)
+
+    if (msg.type === 'timeout') {
+      await ws.close(1000, 'agent got timeout waiting for validation')
+      throw new Error('Email validation timed out.')
+    }
+
+    if (msg.type === 'delegation') {
+      const delegation = stringToDelegation(msg.delegation)
+      await ws.close(1000, 'received delegation, agent is done with ws')
+      return delegation
+    }
+  } catch (error) {
+    if (error instanceof AbortError) {
+      await ws.close(1000, 'AbortError: agent failed to get delegation')
+      throw new TypeError('Failed to get delegation', { cause: error })
+    }
+    throw error
+  }
+  throw new TypeError('Failed to get delegation')
+}
+
+/**
+ * Request authorization of a session allowing this agent to issue UCANs
+ * signed by the passed email address.
+ *
+ * @param {AccessAgent} access
+ * @param {`${string}@${string}`} email
+ * @param {object} [opts]
+ * @param {AbortSignal} [opts.signal]
+ * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+ */
+export async function authorize(access, email, opts) {
+  const account = { did: () => createDidMailtoFromEmail(email) }
+  await requestAuthorization(
+    access,
+    account,
+    opts?.capabilities || [
+      { can: 'space/*' },
+      { can: 'store/*' },
+      { can: 'provider/add' },
+      { can: 'upload/*' },
+    ]
+  )
+
+  const raceAbort = new AbortController()
+  opts?.signal?.addEventListener('abort', () => raceAbort.abort())
+
+  let winner
+  const sessionDelegationFromSocket =
+    /** @type {Promise<[Ucanto.Delegation<[import('./types').AccessSession]>]>} */
+    (
+      waitForDelegation(access, {
+        ...opts,
+        signal: raceAbort.signal,
+      }).then((d) => {
+        raceAbort.abort()
+        return [d]
+      })
+    )
+
+  const sessionDelegationFromClaim = expectNewClaimableDelegations(
+    access,
+    access.issuer.did(),
+    { abort: raceAbort.signal }
+  ).then((claimed) => {
+    if (![...claimed].some((d) => isSessionProof(d))) {
+      throw new Error(`claimed new delegations, but none were a session proof`)
+    }
+    return [...claimed]
+  })
+
+  const sessionDelegations = await Promise.race([
+    sessionDelegationFromSocket.then((d) => {
+      winner = sessionDelegationFromSocket
+      return d
+    }),
+    sessionDelegationFromClaim.then((d) => {
+      winner = sessionDelegationFromClaim
+      return d
+    }),
+  ]).then((d) => {
+    raceAbort.abort()
+    return d
+  })
+  await Promise.all(sessionDelegations.map(async (d) => access.addProof(d)))
+
+  // claim delegations here because we will need an ucan/attest from the service to
+  // pair with the session delegation we just claimed to make it work
+  if (winner !== sessionDelegationFromClaim)
+    await claimDelegations(access, access.issuer.did(), { addProofs: true })
+  // see if we just claimed delegations that will allow us to claim as account
+  const claimAsAccountProofs = access.proofs([
+    { can: 'access/claim', with: account.did() },
+  ])
+  if (claimAsAccountProofs.length > 0) {
+    await claimDelegations(access, account.did(), { addProofs: true })
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn(`authorize() skipped claiming delegations as ${account.did()}`)
+  }
 }
