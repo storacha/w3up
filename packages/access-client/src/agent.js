@@ -745,7 +745,7 @@ export async function addSpacesFromDelegations(access, delegations) {
     })
   }
   // TODO: we need a more robust way to determine which spaces a user has access to
-  // it may or may not involve look at delegations - will file an issue
+  // it may or may not involve look at delegations
   if (delegations.length > 0) {
     const allows = ucanto.Delegation.allows(
       delegations[0],
