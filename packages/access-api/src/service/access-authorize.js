@@ -24,6 +24,9 @@ export function accessAuthorizeProvider(ctx) {
     const confirmation = await Access.confirm
       .invoke({
         issuer: ctx.signer,
+        // audience same as issuer because this is a service invocation
+        // that will get handled by access/confirm handler
+        // but only if the receiver of this email wants it to be
         audience: ctx.signer,
         // Because with is set to our DID no other actor will be able to issue
         // this delegation without our private key.
