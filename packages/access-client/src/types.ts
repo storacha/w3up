@@ -170,7 +170,9 @@ export type CIDString = string
 export interface AgentDataModel {
   meta: AgentMeta
   principal: Signer<DID<'key'>>
+  /** @deprecated */
   currentSpace?: DID<'key'>
+  /** @deprecated */
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
 }
