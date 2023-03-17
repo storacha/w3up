@@ -32,11 +32,12 @@ export class Subscription {
   /**
    * @param {API.Subscription} record
    */
-  async add({ cause, provider, customer, order }) {
+  async add({ cause, provider, customer, provision, order }) {
     try {
       const result = await this.d1
         .insertInto(this.tableName)
         .values({
+          provision: provision.toString(),
           cause: cause.toString(),
           provider,
           customer,

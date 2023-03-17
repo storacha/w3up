@@ -8,28 +8,18 @@
  *
  * @module
  */
-import { capability, DID, literal, struct } from '@ucanto/validator'
 import { equalWith, fail, equal } from './utils.js'
-
-export const Web3StorageId = literal('did:web:web3.storage').or(
-  literal('did:web:staging.web3.storage')
-)
-
-export const Provider = Web3StorageId.or(DID.match({ method: 'key' })).or(
-  DID.match({ method: 'web' })
-)
-
-export const AccountDID = DID.match({ method: 'mailto' })
+import * as Schema from './schema.js'
 
 /**
  * Capability can be invoked by an agent to add a provider to a space.
  */
-export const add = capability({
+export const add = Schema.capability({
   can: 'provider/add',
-  with: AccountDID,
-  nb: struct({
-    provider: Provider,
-    consumer: DID.match({ method: 'key' }),
+  with: Schema.Account,
+  nb: Schema.struct({
+    provider: Schema.Provider,
+    consumer: Schema.Space,
   }),
   derives: (child, parent) => {
     return (

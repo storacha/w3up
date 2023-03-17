@@ -1,6 +1,5 @@
 import type { Generated, Text, Row, Table } from './database.js'
 import type { DID, Link, Result, Failure } from '@ucanto/interface'
-
 export * from './database.js'
 
 export interface Consumer {

@@ -1,36 +1,35 @@
 -- Migration number: 0007 	 2023-03-10T14:14:00.000Z
 
--- goal: add tables to keep track of the subscribptions accounts have with
--- providers and a table to keep track of consumers of the subcriptions.
+-- goal: add tables to keep track of the subscriptions accounts have with
+-- providers and a table to keep track of consumers of the subscriptions.
 
 -- Table is used to keep track of the accounts subscribed to a provider(s).
 -- Insertion here are caused by `customer/add` capability invocation.
--- Records here are indepotent meaning that invoking `customer/add` for the
+-- Records here are idempotent meaning that invoking `customer/add` for the
 -- same (order, provider, customer) triple will have no effect.
 CREATE TABLE
     IF NOT EXISTS subscriptions (
-      -- CID of the Task that created this subscription, not to be confused
-      -- with the CID of the invocation/delegation which we may have multiple
-      -- for the same task.
-      -- @see https://github.com/ucan-wg/invocation/#3-task
+      -- CID of the `customer/*` delegation from provider to the customer.
+      provision TEXT NOT NULL,
+      -- CID of the Task that created this subscription, usually this would be
+      -- `customer/add` invocation.
       cause TEXT NOT NULL,
-      -- ID of the subscription is derived order@provider which can be used
-      -- to enforce uniqueness constraint
-      id TEXT GENERATED ALWAYS AS (format("%s@%s", order, provider)) VIRTUAL,
       -- Unique identifier for this subscription
       order TEXT NOT NULL,
       -- DID of the provider e.g. a storage provider
       provider TEXT NOT NULL,
+      -- DID of the customer
+      customer TEXT NOT NULL,
       -- metadata
       inserted_at TEXT NOT NULL DEFAULT (strftime ('%Y-%m-%dT%H:%M:%fZ', 'now')),
       updated_at TEXT NOT NULL DEFAULT (strftime ('%Y-%m-%dT%H:%M:%fZ', 'now')),
 
-      -- Operation is indepotent, so we'll have a CID of the task that created
+      -- Operation is idempotent, so we'll have a CID of the task that created
       -- this subscription. All subsequent invocations will be NOOPs.
       CONSTRAINT task_cid UNIQUE (cause),
       -- Subscription ID is derived from (order, provider) and is unique.
-      -- Note that `custmer` is not part of the primary key because we want to
-      -- allow provider to choose how to enforrce uniqueness constraint using
+      -- Note that `customer` is not part of the primary key because we want to
+      -- allow provider to choose how to enforce uniqueness constraint using
       -- the `order` field.
       PRIMARY KEY (order, provider)
     )
@@ -41,7 +40,7 @@ CREATE TABLE
 -- created.
 -- Note that while this table has a superset of the columns of `subscription`
 -- table wi still need both because consumers may be added and removed without
--- cancling the subscription.
+-- canceling the subscription.
 CREATE TABLE
   IF NOT EXISTS consumers (
     -- CID of the invocation that created this subscription
@@ -69,7 +68,7 @@ CREATE TABLE
     -- uniqueness constraint from the provider side. This allows provider to
     -- decide how to generate the order ID to enforce whatever constraint they
     -- want. E.g. web3.storage will enforce one provider per space by generating
-    -- order by accound DID, while nft.storage may choose to not have such
+    -- order by account DID, while nft.storage may choose to not have such
     -- limitation and generate a unique order based on other factors.
     PRIMARY KEY (order, provider, consumer)
   );

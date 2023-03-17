@@ -55,12 +55,12 @@ import type {
   SubscriptionList,
   SubscriptionListSuccess,
   SubscriptionListFailure,
-  ConsumerAdd,
-  ConsumerAddSuccess,
-  ConsumerAddFailure,
-  ConsumerList,
-  ConsumerListSuccess,
-  ConsumerListFailure,
+  ProvisionAdd,
+  ProvisionAddSuccess,
+  ProvisionAddFailure,
+  ProvisionList,
+  ProvisionListSuccess,
+  ProvisionListFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -155,9 +155,13 @@ export interface Service {
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
   }
-  consumer: {
-    add: ServiceMethod<ConsumerAdd, ConsumerAddSuccess, ConsumerAddFailure>
-    list: ServiceMethod<ConsumerList, ConsumerListSuccess, ConsumerListFailure>
+  provision: {
+    add: ServiceMethod<ProvisionAdd, ProvisionAddSuccess, ProvisionAddFailure>
+    list: ServiceMethod<
+      ProvisionList,
+      ProvisionListSuccess,
+      ProvisionListFailure
+    >
   }
   voucher: {
     claim: ServiceMethod<

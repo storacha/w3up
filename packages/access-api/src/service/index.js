@@ -20,7 +20,7 @@ import * as ProviderAdd from './provider-add.js'
 import { Spaces } from '../models/spaces.js'
 import * as Subscriptions from './subscription.js'
 import * as Customer from './customer.js'
-import * as Consumer from './consumer.js'
+import * as Provision from './provision.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -37,7 +37,7 @@ export function service(ctx) {
     store: uploadApi.createStoreProxy(ctx),
     upload: uploadApi.createUploadProxy(ctx),
 
-    consumer: Consumer.provide(ctx),
+    provision: Provision.provide(ctx),
     subscription: Subscriptions.provide(ctx),
     customer: Customer.provide(ctx),
 

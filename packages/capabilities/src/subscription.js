@@ -16,7 +16,7 @@ import * as Schema from './schema.js'
  */
 export const list = Schema.capability({
   with: Schema.Account,
-  can: 'subscription/list',
+  can: 'account/subscription/list',
   nb: Schema.struct({
     provider: Schema.Provider.optional(),
     order: Schema.link({ version: 1 }).optional(),

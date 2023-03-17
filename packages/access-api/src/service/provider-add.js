@@ -3,7 +3,7 @@ import { Provider, Schema } from '@web3-storage/capabilities'
 import * as API from '../types/index.js'
 import * as Capabilities from '@web3-storage/capabilities/types'
 import * as Customer from './customer.js'
-import { Absentee } from '@ucanto/principal/.'
+import { Absentee } from '@ucanto/principal'
 
 /**
  * @typedef {object} Context
@@ -42,7 +42,7 @@ export const add = async ({ capability, invocation }, context) => {
   // Create a subscription for this account with a provider. If one already
   // exists this will be a noop. If it did not exist one will be created and
   // `consumer/*` capability will be delegated to the account.
-  const customer = await Customer.createSubscription({
+  const customer = await Customer.createCustomer({
     provider: context.signer,
     customer: account,
   })
