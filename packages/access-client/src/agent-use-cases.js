@@ -69,12 +69,13 @@ export async function claimAccess(
 }
 
 /**
- * @param {AccessAgent} access
- * @param {Ucanto.DID<'key'>} space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
+ * @param {object} opts
+ * @param {AccessAgent} opts.access
+ * @param {Ucanto.DID<'key'>} opts.space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} opts.account
+ * @param {Ucanto.DID<'web'>} opts.provider - e.g. 'did:web:staging.web3.storage'
  */
-export async function addProvider(access, space, account, provider) {
+export async function addProvider({ access, space, account, provider }) {
   const result = await access.invokeAndExecute(Provider.add, {
     audience: access.connection.id,
     with: account.did(),
