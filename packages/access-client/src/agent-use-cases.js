@@ -267,14 +267,4 @@ export async function authorize(access, email, opts) {
   // pair with the session delegation we just claimed to make it work
   if (winner !== sessionDelegationFromClaim)
     await claimDelegations(access, access.issuer.did(), { addProofs: true })
-  // see if we just claimed delegations that will allow us to claim as account
-  const claimAsAccountProofs = access.proofs([
-    { can: 'access/claim', with: account.did() },
-  ])
-  if (claimAsAccountProofs.length > 0) {
-    await claimDelegations(access, account.did(), { addProofs: true })
-  } else {
-    // eslint-disable-next-line no-console
-    console.warn(`authorize() skipped claiming delegations as ${account.did()}`)
-  }
 }
