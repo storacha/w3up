@@ -378,6 +378,28 @@ for (const accessApiVariant of /** @type {const} */ ([
     })
     await addSpacesFromDelegations(accessAgent, [])
   })
+
+  it.skip('multi device authorize method', async () => {
+    const abort = new AbortController()
+    after(() => abort.abort())
+    const account = {
+      email: /** @type {const} */ ('example@dag.house'),
+      did: thisEmailDidMailto,
+    }
+    const { connection, emails } = await accessApiVariant.create()
+    const deviceA = await AccessAgent.create(undefined, {
+      connection,
+    })
+
+    const authorize = () => deviceA.authorize(account.email)
+    const clickNextConfirmationLink = () =>
+      watchForEmail(emails, 100, abort.signal).then((email) => {
+        return confirmConfirmationUrl(deviceA.connection, email)
+      })
+    // authorize() will hang because it tries to connect ws to localhost:8787
+    // which gets ECONNREFUSED, but ../src/ws.js swallws error
+    await Promise.all([authorize(), clickNextConfirmationLink()])
+  })
 }
 
 /**
@@ -417,7 +439,7 @@ async function extractConfirmInvocation(confirmationUrl) {
 
 /**
  * @param {Array<{ url: string }>} emails
- * @param {number} [retryAfter]
+ * @param {number} retryAfter
  * @param {AbortSignal} [abort]
  * @returns {Promise<{ url: string }>} latest email, once received
  */
