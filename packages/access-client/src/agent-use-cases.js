@@ -12,14 +12,14 @@ import { Websocket, AbortError } from './utils/ws.js'
 import { isSessionProof } from './agent-data.js'
 
 /**
- * Request authorization of a session allowing this agent to issue UCANs
- * signed by the passed email address.
+ * Request access by a session allowing this agent to issue UCANs
+ * signed by the account.
  *
  * @param {AccessAgent} access
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @param {Iterable<{ can: Ucanto.Ability }>} capabilities
  */
-export async function requestAuthorization(access, account, capabilities) {
+export async function requestAccess(access, account, capabilities) {
   const res = await access.invokeAndExecute(Access.authorize, {
     audience: access.connection.id,
     with: access.issuer.did(),
@@ -188,7 +188,7 @@ export async function authorizeAndWait(access, email, opts) {
       })
     }
   const account = { did: () => createDidMailtoFromEmail(email) }
-  await requestAuthorization(
+  await requestAccess(
     access,
     account,
     opts?.capabilities || [

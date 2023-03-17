@@ -14,7 +14,7 @@ import {
   claimDelegations,
   createDidMailtoFromEmail,
   expectNewClaimableDelegations,
-  requestAuthorization,
+  requestAccess,
 } from '@web3-storage/access/agent'
 import * as w3caps from '@web3-storage/capabilities'
 import * as assert from 'assert'
@@ -81,7 +81,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       const account = {
         did: () => createDidMailtoFromEmail('example@dag.house'),
       }
-      await requestAuthorization(accessAgent, account, [{ can: '*' }])
+      await requestAccess(accessAgent, account, [{ can: '*' }])
       assert.deepEqual(emails.length, emailCount + 1)
     })
 
@@ -105,7 +105,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       /** @type {Ucanto.Principal<Ucanto.DID<'mailto'>>} */
       const account = { did: () => 'did:mailto:dag.house:example' }
       const accessAgent = await AccessAgent.create(undefined, { connection })
-      await requestAuthorization(accessAgent, account, [{ can: '*' }])
+      await requestAccess(accessAgent, account, [{ can: '*' }])
     })
 
     it('can authorize session with account and use', async () => {
@@ -118,7 +118,7 @@ for (const accessApiVariant of /** @type {const} */ ([
 
       // request that account authorizes accessAgent
       // this should result in sending a confirmation email
-      const requestAllAbilities = requestAuthorization(accessAgent, account, [
+      const requestAllAbilities = requestAccess(accessAgent, account, [
         { can: '*' },
       ])
 
@@ -192,7 +192,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       after(() => abort.abort())
 
       // request agent authorization from account
-      requestAuthorization(accessAgent, account, [{ can: '*' }])
+      requestAccess(accessAgent, account, [{ can: '*' }])
       // confirm authorization
       const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
       await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
@@ -238,7 +238,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       let expectedDataDelegations = 0
       for (const account of accounts) {
         // request agent authorization from account
-        await requestAuthorization(accessAgent, account, [{ can: '*' }])
+        await requestAccess(accessAgent, account, [{ can: '*' }])
         // confirm authorization
         const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
         await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
@@ -293,7 +293,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       })
 
       // deviceA authorization
-      await requestAuthorization(deviceA, account, [{ can: '*' }])
+      await requestAccess(deviceA, account, [{ can: '*' }])
       await confirmConfirmationUrl(
         deviceA.connection,
         await watchForEmail(emails, 100, abort.signal)
@@ -321,7 +321,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         connection,
       })
       // authorize deviceB
-      await requestAuthorization(deviceB, account, [{ can: '*' }])
+      await requestAccess(deviceB, account, [{ can: '*' }])
       await confirmConfirmationUrl(
         deviceB.connection,
         await watchForEmail(emails, 100, abort.signal)
@@ -459,7 +459,7 @@ for (const accessApiVariant of /** @type {const} */ ([
 
     const authorize = async () => {
       // fire off request
-      await requestAuthorization(deviceA, account, [{ can: '*' }])
+      await requestAccess(deviceA, account, [{ can: '*' }])
       const claimed = await expectNewClaimableDelegations(
         deviceA,
         deviceA.issuer.did(),
