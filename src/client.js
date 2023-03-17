@@ -133,10 +133,12 @@ export class Client extends Base {
    *
    * @param {string} email
    * @param {object} [options]
+   * @param {import('./types').DID<'web'>} [options.provider]
    * @param {AbortSignal} [options.signal]
    */
   /* c8 ignore next 3 */
-  async registerSpace (email, options) {
+  async registerSpace (email, options = {}) {
+    options.provider = options.provider || /** @type {import('./types').DID<'web'>} */(this._agent.connection.id.did())
     await this._agent.registerSpace(email, options)
   }
 
