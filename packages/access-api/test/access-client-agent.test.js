@@ -9,6 +9,7 @@ import {
   addProvider,
   addSpacesFromDelegations,
   Agent as AccessAgent,
+  authorize,
   claimDelegations,
   createDidMailtoFromEmail,
   expectNewClaimableDelegations,
@@ -393,12 +394,12 @@ for (const accessApiVariant of /** @type {const} */ ([
       connection,
     })
 
-    const authorize = () => deviceA.authorize(account.email)
+    const doAuthorize = () => authorize(deviceA, account.email)
     const clickNextConfirmationLink = () =>
       watchForEmail(emails, 100, abort.signal).then((email) => {
         return confirmConfirmationUrl(deviceA.connection, email)
       })
-    await Promise.all([authorize(), clickNextConfirmationLink()])
+    await Promise.all([doAuthorize(), clickNextConfirmationLink()])
 
     const space = await deviceA.createSpace()
     await addProvider(deviceA, space.did, account, provider)
