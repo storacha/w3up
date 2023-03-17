@@ -1,26 +1,27 @@
 import {
+  addSpacesFromDelegations,
   Agent as AccessAgent,
-  agentToData,
   createDidMailtoFromEmail,
 } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations, stringToDelegation } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
-import { Delegation } from '@ucanto/core'
 import * as w3caps from '@web3-storage/capabilities'
 import { Websocket, AbortError } from './utils/ws.js'
-import { isSessionProof } from './agent-data.js'
+import { AgentData, isSessionProof } from './agent-data.js'
+import * as ucanto from '@ucanto/core'
+import { DID as DIDValidator } from '@ucanto/validator'
 
 /**
- * Request authorization of a session allowing this agent to issue UCANs
- * signed by the passed email address.
+ * Request access by a session allowing this agent to issue UCANs
+ * signed by the account.
  *
  * @param {AccessAgent} access
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @param {Iterable<{ can: Ucanto.Ability }>} capabilities
  */
-export async function requestAuthorization(access, account, capabilities) {
+export async function requestAccess(access, account, capabilities) {
   const res = await access.invokeAndExecute(Access.authorize, {
     audience: access.connection.id,
     with: access.issuer.did(),
@@ -30,7 +31,7 @@ export async function requestAuthorization(access, account, capabilities) {
     },
   })
   if (res?.error) {
-    throw new Error('failed to authorize session', { cause: res })
+    throw res
   }
 }
 
@@ -38,22 +39,22 @@ export async function requestAuthorization(access, account, capabilities) {
  * claim delegations delegated to an audience
  *
  * @param {AccessAgent} access
- * @param {Ucanto.DID} [delegee] - audience of claimed delegations. defaults to access.connection.id.did()
+ * @param {Ucanto.DID} [audienceOfClaimedDelegations] - audience of claimed delegations. defaults to access.connection.id.did()
  * @param {object} options
  * @param {boolean} [options.addProofs] - whether to addProof to access agent
  * @returns
  */
-export async function claimDelegations(
+export async function claimAccess(
   access,
-  delegee = access.connection.id.did(),
+  audienceOfClaimedDelegations = access.connection.id.did(),
   { addProofs = false } = {}
 ) {
   const res = await access.invokeAndExecute(Access.claim, {
     audience: access.connection.id,
-    with: delegee,
+    with: audienceOfClaimedDelegations,
   })
   if (res.error) {
-    throw new Error('error claiming delegations')
+    throw res
   }
   const delegations = Object.values(res.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
@@ -70,41 +71,13 @@ export async function claimDelegations(
 }
 
 /**
- * @private
- * Given a list of delegations, add to agent data spaces list.
- *
- * TODO: DON'T USE - we'd like to move away from storing space information inside the agent, planning on removing this soon!
- *
- * @param {AccessAgent} access
- * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
+ * @param {object} opts
+ * @param {AccessAgent} opts.access
+ * @param {Ucanto.DID<'key'>} opts.space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} opts.account
+ * @param {Ucanto.DID<'web'>} opts.provider - e.g. 'did:web:staging.web3.storage'
  */
-export async function addSpacesFromDelegations(access, delegations) {
-  const data = agentToData.get(access)
-  if (!data) {
-    throw Object.assign(new Error(`cannot determine AgentData for Agent`), {
-      agent: access,
-    })
-  }
-  if (delegations.length > 0) {
-    const allows = Delegation.allows(delegations[0], ...delegations.slice(1))
-    for (const [did, value] of Object.entries(allows)) {
-      // TODO I don't think this should be `store/*` but this works for today
-      if (value['store/*']) {
-        data.addSpace(/** @type {Ucanto.DID} */ (did), {
-          isRegistered: true,
-        })
-      }
-    }
-  }
-}
-
-/**
- * @param {AccessAgent} access
- * @param {Ucanto.DID<'key'>} space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
- */
-export async function addProvider(access, space, account, provider) {
+export async function addProvider({ access, space, account, provider }) {
   const result = await access.invokeAndExecute(Provider.add, {
     audience: access.connection.id,
     with: account.did(),
@@ -114,7 +87,7 @@ export async function addProvider(access, space, account, provider) {
     },
   })
   if (result.error) {
-    throw new Error(`error adding provider`, { cause: result })
+    throw result
   }
 }
 
@@ -128,7 +101,7 @@ export async function addProvider(access, space, account, provider) {
  */
 export async function expectNewClaimableDelegations(access, delegee, options) {
   const interval = options?.interval || 250
-  const claim = () => claimDelegations(access, delegee)
+  const claim = () => claimAccess(access, delegee)
   const initialClaimResult = await claim()
   const claimed = await new Promise((resolve, reject) => {
     options?.abort?.addEventListener('abort', (e) => {
@@ -218,7 +191,7 @@ export async function authorizeAndWait(access, email, opts) {
       })
     }
   const account = { did: () => createDidMailtoFromEmail(email) }
-  await requestAuthorization(
+  await requestAccess(
     access,
     account,
     opts?.capabilities || [
@@ -261,7 +234,7 @@ export async function authorizeWithSocket(access, email, opts) {
   })
   // claim delegations here because we will need an ucan/attest from the service to
   // pair with the session delegation we just claimed to make it work
-  await claimDelegations(access, access.issuer.did(), { addProofs: true })
+  await claimAccess(access, access.issuer.did(), { addProofs: true })
 }
 
 /**
@@ -289,5 +262,124 @@ export async function authorizeWithPollClaim(access, email, opts) {
   await authorizeAndWait(access, email, {
     ...opts,
     expectAuthorization,
+  })
+}
+
+/**
+ * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
+ *
+ * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
+ *
+ * @param {AccessAgent} access
+ * @param {AgentData} agentData
+ * @param {string} email
+ * @param {object} [opts]
+ * @param {AbortSignal} [opts.signal]
+ * @param {Ucanto.DID<'key'>} [opts.space]
+ * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
+ */
+export async function addProviderAndDelegateToAccount(
+  access,
+  agentData,
+  email,
+  opts
+) {
+  const space = opts?.space || access.currentSpace()
+  const spaceMeta = space ? agentData.spaces.get(space) : undefined
+  const provider =
+    opts?.provider ||
+    (() => {
+      const service = access.connection.id.did()
+      if (DIDValidator.match({ method: 'web' }).is(service)) {
+        // connection.id did is a valid provider value. Try using that.
+        return service
+      }
+      throw new Error(
+        `unable to determine provider to use to addProviderAndDelegateToAccount using access.connection.id did ${service}. expected a did:web:`
+      )
+    })()
+
+  if (!space || !spaceMeta) {
+    throw new Error('No space selected')
+  }
+
+  if (spaceMeta && spaceMeta.isRegistered) {
+    throw new Error('Space already registered with web3.storage.')
+  }
+  const account = { did: () => createDidMailtoFromEmail(email) }
+  await addProvider({ access, space, account, provider })
+  const delegateSpaceAccessResult = await delegateSpaceAccessToAccount(
+    access,
+    space,
+    account
+  )
+  if (delegateSpaceAccessResult.error) {
+    throw delegateSpaceAccessResult
+  }
+  spaceMeta.isRegistered = true
+  await agentData.addSpace(space, spaceMeta)
+}
+
+/**
+ * @param {AccessAgent} access
+ * @param {Ucanto.DID<'key'>} space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ */
+async function delegateSpaceAccessToAccount(access, space, account) {
+  const issuerSaysAccountCanAdminSpace =
+    await createIssuerSaysAccountCanAdminSpace(
+      access.issuer,
+      space,
+      account,
+      undefined,
+      access.proofs([{ with: space, can: '*' }]),
+      // we want to sign over control of this space forever
+      Infinity
+    )
+  return access.invokeAndExecute(Access.delegate, {
+    audience: access.connection.id,
+    with: space,
+    expiration: Infinity,
+    nb: {
+      delegations: {
+        [issuerSaysAccountCanAdminSpace.cid.toString()]:
+          issuerSaysAccountCanAdminSpace.cid,
+      },
+    },
+    proofs: [
+      // must be embedded here because it's referenced by cid in .nb.delegations
+      issuerSaysAccountCanAdminSpace,
+    ],
+  })
+}
+
+/**
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
+ * @param {Ucanto.DID} space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ * @param {Ucanto.Capabilities} capabilities
+ * @param {Ucanto.Delegation[]} proofs
+ * @param {number} expiration
+ * @returns
+ */
+async function createIssuerSaysAccountCanAdminSpace(
+  issuer,
+  space,
+  account,
+  capabilities = [
+    {
+      can: '*',
+      with: space,
+    },
+  ],
+  proofs = [],
+  expiration
+) {
+  return ucanto.delegate({
+    issuer,
+    audience: account,
+    capabilities,
+    proofs,
+    expiration,
   })
 }

@@ -63,10 +63,6 @@ export class Websocket {
     this.ws = ws
 
     ws.addEventListener('close', (event) => {
-      if (event.code === 1006) {
-        this.close(event.code, event.reason)
-        return
-      }
       if (!this.forceClose && !this.timeout) {
         this.timeout = setTimeout(() => {
           this.attemps++

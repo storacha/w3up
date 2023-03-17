@@ -11,7 +11,6 @@ import {
   ValidateEmailError,
   PendingValidateEmail,
 } from '../utils/html.js'
-import * as validator from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from '../utils/delegations-response.js'
 import * as accessConfirm from '../service/access-confirm.js'
@@ -144,18 +143,6 @@ async function authorize(req, env) {
      */
     const request = stringToDelegation(req.query.ucan)
 
-    const confirmation = await validator.access(request, {
-      capability: Access.confirm,
-      principal: Verifier,
-      authority: env.signer,
-    })
-
-    if (confirmation.error) {
-      throw new Error(`unable to validate access session: ${confirmation}`, {
-        cause: confirmation,
-      })
-    }
-
     const confirm = provide(
       Access.confirm,
       async ({ capability, invocation }) => {
@@ -193,8 +180,6 @@ async function authorize(req, env) {
       )
     )
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('error in validate-email', error)
     const err = /** @type {Error} */ (error)
     env.log.error(err)
     return new HtmlResponse(

@@ -7,7 +7,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
-import { URI, DID as DIDValidator } from '@ucanto/validator'
+import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
@@ -25,7 +25,10 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
-import { addProvider, waitForDelegationOnSocket } from './agent-use-cases.js'
+import {
+  addProviderAndDelegateToAccount,
+  waitForDelegationOnSocket,
+} from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
 export * from './agent-use-cases.js'
@@ -33,39 +36,15 @@ export * from './agent-use-cases.js'
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
 
-/** @type {WeakMap<Agent, AgentData>} */
-export const agentToData = new WeakMap()
-
 /**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
- * @param {Ucanto.DID} space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Ucanto.Capabilities} capabilities
- * @param {Ucanto.Delegation[]} proofs
- * @param {number} expiration
- * @returns
+ * Keeps track of AgentData for all Agents constructed.
+ * Used by
+ * * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
+ *
+ * @deprecated - remove this when deprecated addSpacesFromDelegations is removed
  */
-async function createIssuerSaysAccountCanAdminSpace(
-  issuer,
-  space,
-  account,
-  capabilities = [
-    {
-      can: '*',
-      with: space,
-    },
-  ],
-  proofs = [],
-  expiration
-) {
-  return ucanto.delegate({
-    issuer,
-    audience: account,
-    capabilities,
-    proofs,
-    expiration,
-  })
-}
+/** @type {WeakMap<Agent, AgentData>} */
+const agentToData = new WeakMap()
 
 /**
  * @typedef {import('./types').Service} Service
@@ -463,98 +442,6 @@ export class Agent {
   }
 
   /**
-   * @param {Ucanto.DID<'key'>} space
-   * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
-   * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
-   */
-  async #addProvider(space, account, provider) {
-    return addProvider(this, space, account, provider)
-  }
-
-  /**
-   *
-   * @param {Ucanto.DID<'key'>} space
-   * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
-   */
-  async #delegateSpaceAccessToAccount(space, account) {
-    const issuerSaysAccountCanAdminSpace =
-      await createIssuerSaysAccountCanAdminSpace(
-        this.issuer,
-        space,
-        account,
-        undefined,
-        this.proofs([{ with: space, can: '*' }]),
-        // we want to sign over control of this space forever
-        Infinity
-      )
-    return this.invokeAndExecute(Access.delegate, {
-      audience: this.connection.id,
-      with: space,
-      expiration: Infinity,
-      nb: {
-        delegations: {
-          [issuerSaysAccountCanAdminSpace.cid.toString()]:
-            issuerSaysAccountCanAdminSpace.cid,
-        },
-      },
-      proofs: [
-        // must be embedded here because it's referenced by cid in .nb.delegations
-        issuerSaysAccountCanAdminSpace,
-      ],
-    })
-  }
-
-  /**
-   * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
-   *
-   * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
-   *
-   * @param {string} email
-   * @param {object} [opts]
-   * @param {AbortSignal} [opts.signal]
-   * @param {Ucanto.DID<'key'>} [opts.space]
-   * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
-   */
-  async #newRegisterSpace(email, opts) {
-    const space = opts?.space || this.currentSpace()
-    const spaceMeta = space ? this.#data.spaces.get(space) : undefined
-    const provider =
-      opts?.provider ||
-      (() => {
-        const service = this.connection.id.did()
-        if (DIDValidator.match({ method: 'web' }).is(service)) {
-          // connection.id did is a valid provider value. Try using that.
-          return service
-        }
-        throw new Error(
-          `unable to determine provider to use to register space. Pass opts.provider`
-        )
-      })()
-
-    if (!space || !spaceMeta) {
-      throw new Error('No space selected')
-    }
-
-    if (spaceMeta && spaceMeta.isRegistered) {
-      throw new Error('Space already registered with web3.storage.')
-    }
-    const account = { did: () => createDidMailtoFromEmail(email) }
-    await this.#addProvider(space, account, provider)
-    const delegateSpaceAccessResult = await this.#delegateSpaceAccessToAccount(
-      space,
-      account
-    )
-    if (delegateSpaceAccessResult.error) {
-      // @ts-ignore it's very weird that this is throwing an error but line 692 above does not - ignore for now
-      throw new Error(delegateSpaceAccessResult.message, {
-        cause: delegateSpaceAccessResult,
-      })
-    }
-    spaceMeta.isRegistered = true
-    this.#data.addSpace(space, spaceMeta)
-  }
-
-  /**
    * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
    *
    * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
@@ -568,7 +455,12 @@ export class Agent {
   async registerSpace(email, opts = {}) {
     // if the client passes `provider` use the new space registration flow
     if (opts.provider) {
-      return this.#newRegisterSpace(email, opts)
+      return await addProviderAndDelegateToAccount(
+        this,
+        this.#data,
+        email,
+        opts
+      )
     }
 
     const space = opts.space ?? this.currentSpace()
@@ -832,5 +724,37 @@ export class Agent {
     }
 
     return inv
+  }
+}
+
+/**
+ * Given a list of delegations, add to agent data spaces list.
+ *
+ * @deprecated - trying to remove explicit space tracking from Agent/AgentData
+ * in favor of functions that derive the space set from access.delegations
+ *
+ * @param {Agent} access
+ * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
+ */
+export async function addSpacesFromDelegations(access, delegations) {
+  const data = agentToData.get(access)
+  if (!data) {
+    throw Object.assign(new Error(`cannot determine AgentData for Agent`), {
+      agent: access,
+    })
+  }
+  if (delegations.length > 0) {
+    const allows = ucanto.Delegation.allows(
+      delegations[0],
+      ...delegations.slice(1)
+    )
+    for (const [did, value] of Object.entries(allows)) {
+      // TODO I don't think this should be `store/*` but this works for today
+      if (value['store/*']) {
+        data.addSpace(/** @type {Ucanto.DID} */ (did), {
+          isRegistered: true,
+        })
+      }
+    }
   }
 }
