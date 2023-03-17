@@ -110,6 +110,7 @@ export class AgentData {
   }
 
   /**
+   * @deprecated
    * @param {import('@ucanto/interface').DID} did
    * @param {import('./types').SpaceMeta} meta
    * @param {import('@ucanto/interface').Delegation} [proof]
@@ -120,6 +121,7 @@ export class AgentData {
   }
 
   /**
+   * @deprecated
    * @param {import('@ucanto/interface').DID<'key'>} did
    */
   async setCurrentSpace(did) {

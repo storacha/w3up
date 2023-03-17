@@ -7,6 +7,7 @@ import {
 import * as principal from '@ucanto/principal'
 import {
   addProvider,
+  addSpacesFromDelegations,
   Agent as AccessAgent,
   claimDelegations,
   createDidMailtoFromEmail,
@@ -368,6 +369,14 @@ for (const accessApiVariant of /** @type {const} */ ([
       assert.ok(!spaceInfoResult.error)
       assert.deepEqual(spaceInfoResult.did, spaceCreation.did)
     })
+  })
+
+  it('can addSpacesFromDelegations', async () => {
+    const { connection } = await accessApiVariant.create()
+    const accessAgent = await AccessAgent.create(undefined, {
+      connection,
+    })
+    await addSpacesFromDelegations(accessAgent, [])
   })
 }
 
