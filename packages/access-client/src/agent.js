@@ -502,6 +502,7 @@ export class Agent {
       this,
       account,
       opts?.capabilities || [
+        { can: 'space/*' },
         { can: 'store/*' },
         { can: 'provider/add' },
         { can: 'upload/*' },
