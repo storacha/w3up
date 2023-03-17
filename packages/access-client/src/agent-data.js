@@ -164,7 +164,7 @@ const isSessionCapability = (cap) => cap.can === Access.session.can
  * @param {Ucanto.Delegation} delegation
  * @returns {delegation is Ucanto.Delegation<[import('./types').AccessSession]>}
  */
-const isSessionProof = (delegation) =>
+export const isSessionProof = (delegation) =>
   delegation.capabilities.some((cap) => isSessionCapability(cap))
 
 /**

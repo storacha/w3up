@@ -52,7 +52,10 @@ export async function claimDelegations(
   const delegations = Object.values(res.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
   )
-  if (addProofs) for (const d of delegations) access.addProof(d)
+  if (addProofs)
+    for (const d of delegations) {
+      await access.addProof(d)
+    }
 
   if (addProofs) {
     await addSpacesFromDelegations(access, delegations)
@@ -116,13 +119,16 @@ export async function addProvider(access, space, account, provider) {
  * @param {object} [options]
  * @param {number} [options.interval]
  * @param {AbortSignal} [options.abort]
+ * @returns {Promise<Iterable<Ucanto.Delegation>>}
  */
 export async function expectNewClaimableDelegations(access, delegee, options) {
   const interval = options?.interval || 250
   const claim = () => claimDelegations(access, delegee)
   const initialClaimResult = await claim()
   const claimed = await new Promise((resolve, reject) => {
-    options?.abort?.addEventListener('abort', reject)
+    options?.abort?.addEventListener('abort', (e) => {
+      reject(new Error('expectNewClaimableDelegations aborted', { cause: e }))
+    })
     poll(interval)
     /**
      * @param {number} retryAfter
