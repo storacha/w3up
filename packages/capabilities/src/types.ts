@@ -3,7 +3,7 @@ import * as Ucanto from '@ucanto/interface'
 import { InferInvokedCapability, Link, DID } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import * as provider from './provider.js'
-import * as consumer from './consumer.js'
+import * as provision from './provision.js'
 import * as subscription from './subscription.js'
 import * as customer from './customer.js'
 import { top } from './top.js'
@@ -61,21 +61,21 @@ export type ProviderAdd = InferInvokedCapability<typeof provider.add>
 export interface ProviderAddSuccess {}
 export type ProviderAddFailure = Ucanto.Failure
 
-// Consumer
+// Provision
 
-export type Consumer = InferInvokedCapability<typeof consumer.consumer>
+export type Provision = InferInvokedCapability<typeof provision.provision>
 
-export type ConsumerAdd = InferInvokedCapability<typeof consumer.add>
-export interface ConsumerAddSuccess {}
-export interface ConsumerAddFailure extends Ucanto.Failure {}
+export type ProvisionAdd = InferInvokedCapability<typeof provision.add>
+export interface ProvisionAddSuccess {}
+export interface ProvisionAddFailure extends Ucanto.Failure {}
 
-export type ConsumerRemove = InferInvokedCapability<typeof consumer.remove>
-export interface ConsumerRemoveSuccess {}
-export interface ConsumerRemoveFailure extends Ucanto.Failure {}
+export type ProvisionRemove = InferInvokedCapability<typeof provision.remove>
+export interface ProvisionRemoveSuccess {}
+export interface ProvisionRemoveFailure extends Ucanto.Failure {}
 
-export type ConsumerList = InferInvokedCapability<typeof consumer.list>
-export interface ConsumerListSuccess {}
-export interface ConsumerListFailure extends Ucanto.Failure {}
+export type ProvisionList = InferInvokedCapability<typeof provision.list>
+export interface ProvisionListSuccess {}
+export interface ProvisionListFailure extends Ucanto.Failure {}
 
 // Subscription
 
@@ -100,6 +100,11 @@ export type CustomerList = InferInvokedCapability<typeof customer.list>
 
 export interface Subscription {
   /**
+   * CID of the `consumer/*` delegation that grants customer access to this
+   * subscription.
+   */
+  provision: Link
+  /**
    * CID of the invocation that created this subscription
    */
   cause: Link
@@ -116,6 +121,7 @@ export interface Subscription {
    */
   order: Link
 }
+
 export interface SubscriptionRecord extends Subscription {
   inserted_at: Date
   updated_at: Date

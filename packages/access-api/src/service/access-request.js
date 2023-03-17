@@ -26,7 +26,7 @@ import * as Customer from './customer.js'
 export const request = async ({ capability, invocation }, context) => {
   const provider = context.signer
   const account = Absentee.from({ id: capability.nb.from })
-  const customer = await Customer.createSubscription({
+  const customer = await Customer.createCustomer({
     provider,
     customer: account,
   })

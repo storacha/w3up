@@ -30,10 +30,9 @@ export const add = Schema.capability({
   with: Schema.Provider,
   can: 'customer/add',
   nb: Schema.struct({
-    order: Schema.link({ version: 1 }),
     /**
      * Must be a link to the signed `consumer/*` capability.
      */
-    access: Schema.Bytes,
+    provision: Schema.link({ version: 1 }),
   }),
 })

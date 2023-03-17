@@ -33,11 +33,13 @@ export const Provision = Schema.struct({
  * Capability provider delegates to a customer account when subscrpition is
  * created.
  */
-export const consumer = Schema.capability({
-  can: 'consumer/*',
+export const provision = Schema.capability({
+  can: 'provision/*',
   with: Schema.Provider,
   nb: Schema.struct({
+    consumer: Schema.Space.optional(),
     order: Schema.Order,
+    customer: Schema.Account,
   }),
 })
 
@@ -47,7 +49,7 @@ export const consumer = Schema.capability({
  * @see https://github.com/web3-storage/specs/blob/main/w3-provider.md#consumeradd-invocation
  */
 export const add = Schema.capability({
-  can: 'consumer/add',
+  can: 'provision/add',
   with: Schema.Provider,
   nb: Provision,
   derives: (child, parent) => {
@@ -64,7 +66,7 @@ export const add = Schema.capability({
  * Removes a consumer from the subscription.
  */
 export const remove = Schema.capability({
-  can: 'consumer/remove',
+  can: 'provision/remove',
   with: Schema.Provider,
   nb: Provision,
 })
@@ -73,9 +75,9 @@ export const remove = Schema.capability({
  * Lists consumers.
  */
 export const list = Schema.capability({
-  can: 'consumer/list',
+  can: 'provision/list',
   with: Schema.Provider,
   nb: Schema.struct({
-    order: Schema.link().optional(),
+    order: Schema.Order.optional(),
   }),
 })
