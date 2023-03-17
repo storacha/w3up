@@ -25,7 +25,7 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
-import { addProvider, waitForDelegation } from './agent-use-cases.js'
+import { addProvider, waitForDelegationOnSocket } from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
 export * from './agent-use-cases.js'
@@ -664,7 +664,7 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async #waitForDelegation(opts) {
-    return waitForDelegation(this, opts)
+    return waitForDelegationOnSocket(this, opts)
   }
 
   /**
