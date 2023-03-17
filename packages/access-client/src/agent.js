@@ -665,21 +665,19 @@ export class Agent {
       )
     }
 
-    const extraProofs = options.proofs || []
-    const proofs = this.proofs([
-      {
-        with: space,
-        can: cap.can,
-      },
-    ])
+    const proofs = [
+      ...(options.proofs || []),
+      ...this.proofs([
+        {
+          with: space,
+          can: cap.can,
+        },
+      ]),
+    ]
 
-    if (
-      proofs.length === 0 &&
-      options.with !== this.did() &&
-      extraProofs.length === 0
-    ) {
+    if (proofs.length === 0 && options.with !== this.did()) {
       throw new Error(
-        `no proofs available for resource ${space} and ability ${cap.can} and no extra proofs were provided`
+        `no proofs available for resource ${space} and ability ${cap.can}`
       )
     }
     const inv = invoke({
@@ -691,7 +689,7 @@ export class Agent {
         nb: options.nb,
       }),
       issuer: this.issuer,
-      proofs: [...proofs, ...extraProofs],
+      proofs: [...proofs],
     })
 
     return /** @type {Ucanto.IssuedInvocationView<Ucanto.InferInvokedCapability<CAP>>} */ (

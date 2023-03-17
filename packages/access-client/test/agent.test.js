@@ -129,7 +129,7 @@ describe('Agent', function () {
         name: 'Error',
         message: `no proofs available for resource ${URI.from(
           fixtures.alice.did()
-        )} and ability space/info and no extra proofs were provided`,
+        )} and ability space/info`,
       }
     )
   })
