@@ -1,5 +1,5 @@
 import { Base } from '../base.js'
-import { claimDelegations, authorizeWithSocket } from '@web3-storage/access/agent'
+import { claimAccess, authorizeWithSocket } from '@web3-storage/access/agent'
 
 /**
  * Client for interacting with the `access/*` capabilities.
@@ -20,6 +20,6 @@ export class AccessClient extends Base {
    * Claim delegations
    */
   async claim () {
-    return claimDelegations(this._agent, this._agent.issuer.did(), { addProofs: true })
+    return claimAccess(this._agent, this._agent.issuer.did(), { addProofs: true })
   }
 }
