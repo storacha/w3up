@@ -58,12 +58,11 @@ export async function claimDelegations(
   const delegations = Object.values(res.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
   )
-  if (addProofs)
+  if (addProofs) {
     for (const d of delegations) {
       await access.addProof(d)
     }
 
-  if (addProofs) {
     await addSpacesFromDelegations(access, delegations)
   }
 
