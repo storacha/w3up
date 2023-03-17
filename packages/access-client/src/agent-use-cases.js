@@ -9,7 +9,9 @@ import { bytesToDelegations, stringToDelegation } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
 import { Websocket, AbortError } from './utils/ws.js'
-import { isSessionProof } from './agent-data.js'
+import { AgentData, isSessionProof } from './agent-data.js'
+import * as ucanto from '@ucanto/core'
+import { DID as DIDValidator } from '@ucanto/validator'
 
 /**
  * Request access by a session allowing this agent to issue UCANs
@@ -260,5 +262,127 @@ export async function authorizeWithPollClaim(access, email, opts) {
   await authorizeAndWait(access, email, {
     ...opts,
     expectAuthorization,
+  })
+}
+
+/**
+ * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
+ *
+ * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
+ *
+ * @param {AccessAgent} access
+ * @param {AgentData} agentData
+ * @param {string} email
+ * @param {object} [opts]
+ * @param {AbortSignal} [opts.signal]
+ * @param {Ucanto.DID<'key'>} [opts.space]
+ * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
+ */
+export async function addProviderAndDelegateToAccount(
+  access,
+  agentData,
+  email,
+  opts
+) {
+  const space = opts?.space || access.currentSpace()
+  const spaceMeta = space ? agentData.spaces.get(space) : undefined
+  const provider =
+    opts?.provider ||
+    (() => {
+      const service = access.connection.id.did()
+      if (DIDValidator.match({ method: 'web' }).is(service)) {
+        // connection.id did is a valid provider value. Try using that.
+        return service
+      }
+      throw new Error(
+        `unable to determine provider to use to register space. Pass opts.provider`
+      )
+    })()
+
+  if (!space || !spaceMeta) {
+    throw new Error('No space selected')
+  }
+
+  if (spaceMeta && spaceMeta.isRegistered) {
+    throw new Error('Space already registered with web3.storage.')
+  }
+  const account = { did: () => createDidMailtoFromEmail(email) }
+  await addProvider({ access, space, account, provider })
+  const delegateSpaceAccessResult = await delegateSpaceAccessToAccount(
+    access,
+    space,
+    account
+  )
+  if (delegateSpaceAccessResult.error) {
+    // @ts-ignore it's very weird that this is throwing an error but line 692 above does not - ignore for now
+    throw new Error(delegateSpaceAccessResult.message, {
+      cause: delegateSpaceAccessResult,
+    })
+  }
+  spaceMeta.isRegistered = true
+  await agentData.addSpace(space, spaceMeta)
+}
+
+/**
+ * @param {AccessAgent} access
+ * @param {Ucanto.DID<'key'>} space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ */
+async function delegateSpaceAccessToAccount(access, space, account) {
+  const issuerSaysAccountCanAdminSpace =
+    await createIssuerSaysAccountCanAdminSpace(
+      access.issuer,
+      space,
+      account,
+      undefined,
+      access.proofs([{ with: space, can: '*' }]),
+      // we want to sign over control of this space forever
+      Infinity
+    )
+  return access.invokeAndExecute(Access.delegate, {
+    audience: access.connection.id,
+    with: space,
+    expiration: Infinity,
+    nb: {
+      delegations: {
+        [issuerSaysAccountCanAdminSpace.cid.toString()]:
+          issuerSaysAccountCanAdminSpace.cid,
+      },
+    },
+    proofs: [
+      // must be embedded here because it's referenced by cid in .nb.delegations
+      issuerSaysAccountCanAdminSpace,
+    ],
+  })
+}
+
+/**
+ * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
+ * @param {Ucanto.DID} space
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ * @param {Ucanto.Capabilities} capabilities
+ * @param {Ucanto.Delegation[]} proofs
+ * @param {number} expiration
+ * @returns
+ */
+async function createIssuerSaysAccountCanAdminSpace(
+  issuer,
+  space,
+  account,
+  capabilities = [
+    {
+      can: '*',
+      with: space,
+    },
+  ],
+  proofs = [],
+  expiration
+) {
+  return ucanto.delegate({
+    issuer,
+    audience: account,
+    capabilities,
+    proofs,
+    expiration,
   })
 }
