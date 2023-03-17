@@ -181,7 +181,6 @@ export class Agent {
    */
   async addProof(delegation) {
     validate(delegation, {
-      checkAudience: this.issuer,
       checkIsExpired: true,
     })
     await this.#data.addDelegation(delegation, { audience: this.meta })
