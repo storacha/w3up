@@ -9,7 +9,8 @@ import {
   addProvider,
   addSpacesFromDelegations,
   Agent as AccessAgent,
-  authorize,
+  authorizeAndWait,
+  authorizeWithPollClaim,
   claimDelegations,
   createDidMailtoFromEmail,
   expectNewClaimableDelegations,
@@ -381,7 +382,7 @@ for (const accessApiVariant of /** @type {const} */ ([
     await addSpacesFromDelegations(accessAgent, [])
   })
 
-  it('multi device authorize method', async () => {
+  it('authorizeAndWait', async () => {
     const abort = new AbortController()
     after(() => abort.abort())
     const account = {
@@ -393,16 +394,55 @@ for (const accessApiVariant of /** @type {const} */ ([
     const deviceA = await AccessAgent.create(undefined, {
       connection,
     })
-
-    const doAuthorize = () => authorize(deviceA, account.email)
+    const expectAuthorization = () =>
+      expectNewClaimableDelegations(deviceA, deviceA.issuer.did(), {
+        abort: abort.signal,
+      })
+    const authorize = () =>
+      authorizeAndWait(deviceA, account.email, {
+        signal: abort.signal,
+        expectAuthorization,
+      })
     const clickNextConfirmationLink = () =>
       watchForEmail(emails, 100, abort.signal).then((email) => {
         return confirmConfirmationUrl(deviceA.connection, email)
       })
-    await Promise.all([doAuthorize(), clickNextConfirmationLink()])
+    await Promise.all([authorize(), clickNextConfirmationLink()])
 
     const space = await deviceA.createSpace()
     await addProvider(deviceA, space.did, account, provider)
+    const spaceInfoResult = await deviceA.invokeAndExecute(w3caps.Space.info, {
+      with: space.did,
+    })
+    assertNotError(spaceInfoResult)
+  })
+
+  it('authorizeWithPollClaim', async () => {
+    const abort = new AbortController()
+    after(() => abort.abort())
+    const account = {
+      email: /** @type {const} */ ('example@dag.house'),
+      did: thisEmailDidMailto,
+    }
+    const { connection, emails } = await accessApiVariant.create()
+    const provider = /** @type {Ucanto.DID<'web'>} */ (connection.id.did())
+    const deviceA = await AccessAgent.create(undefined, {
+      connection,
+    })
+    const authorize = () =>
+      authorizeWithPollClaim(deviceA, account.email, { signal: abort.signal })
+    const clickNextConfirmationLink = () =>
+      watchForEmail(emails, 100, abort.signal).then((email) => {
+        return confirmConfirmationUrl(deviceA.connection, email)
+      })
+    await Promise.all([authorize(), clickNextConfirmationLink()])
+
+    const space = await deviceA.createSpace()
+    await addProvider(deviceA, space.did, account, provider)
+    const spaceInfoResult = await deviceA.invokeAndExecute(w3caps.Space.info, {
+      with: space.did,
+    })
+    assertNotError(spaceInfoResult)
   })
 
   it('can poll access/claim to know when confirmation happened', async () => {
