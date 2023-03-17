@@ -62,18 +62,18 @@
     "@ipld/dag-cbor": "^9.0.0",
     "@ipld/dag-ucan": "^3.2.0",
     "@ucanto/client": "^5.1.0",
-    "@ucanto/core": "^5.1.0",
-    "@ucanto/interface": "^6.0.0",
+    "@ucanto/core": "^5.2.0",
+    "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
-    "@ucanto/transport": "^5.1.0",
-    "@ucanto/validator": "^6.0.0",
+    "@ucanto/transport": "^5.1.1",
+    "@ucanto/validator": "^6.1.0",
     "@web3-storage/capabilities": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "10.2.0",
     "inquirer": "^9.1.4",
     "isomorphic-ws": "^5.0.0",
     "kysely": "^0.23.4",
-    "multiformats": "^11.0.1",
+    "multiformats": "^11.0.2",
     "one-webcrypto": "^1.0.3",
     "ora": "^6.1.2",
     "p-defer": "^4.0.0",
@@ -91,7 +91,7 @@
     "@types/node": "^18.11.18",
     "@types/varint": "^6.0.1",
     "@types/ws": "^8.5.4",
-    "@ucanto/server": "^6.0.0",
+    "@ucanto/server": "^6.1.0",
     "assert": "^2.0.0",
     "delay": "^5.0.0",
     "hd-scripts": "^4.0.0",
@@ -113,7 +113,24 @@
     "rules": {
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
-      "unicorn/no-array-reduce": "off"
+      "unicorn/no-array-reduce": "off",
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "ArrayLike",
+            "AsyncIterable",
+            "AsyncIterableIterator",
+            "Iterable",
+            "IterableIterator",
+            "Generator",
+            "CryptoKeyPair",
+            "NodeJS",
+            "ErrorOptions",
+            "IDBTransactionMode"
+          ]
+        }
+      ]
     },
     "env": {
       "mocha": true

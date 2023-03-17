@@ -73,7 +73,7 @@ describe('access/authorize', function () {
       )
     const delegation = stringToDelegation(encoded)
     t.deepEqual(delegation.issuer.did(), service.did())
-    t.deepEqual(delegation.audience.did(), accountDID)
+    t.deepEqual(delegation.audience.did(), service.did())
     t.deepEqual(delegation.capabilities, [
       {
         with: conn.id.did(),
@@ -122,8 +122,9 @@ describe('access/authorize', function () {
 
     const url = new URL(email.url)
     const rsp = await mf.dispatchFetch(url, { method: 'POST' })
-    const html = await rsp.text()
+    assert.deepEqual(rsp.status, 200)
 
+    const html = await rsp.text()
     assert(html.includes('Email Validated'))
     assert(html.includes(toEmail(accountDID)))
     assert(html.includes(issuer.did()))
