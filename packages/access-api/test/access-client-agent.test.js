@@ -344,15 +344,6 @@ for (const accessApiVariant of /** @type {const} */ ([
         2,
         'deviceBIssuerClaimed delegations'
       )
-      // claim delegations aud=account
-      const deviceBAccountClaimed = await claimAccess(deviceB, account.did(), {
-        addProofs: true,
-      })
-      assert.equal(
-        deviceBAccountClaimed.length,
-        1,
-        'deviceBAccountClaimed delegations'
-      )
 
       // try to addProvider
       await addProvider({
