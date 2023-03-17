@@ -1,5 +1,5 @@
 import { Base } from '../base.js'
-import { claimDelegations } from '@web3-storage/access/agent'
+import { claimDelegations, authorizeWithSocket } from '@web3-storage/access/agent'
 
 /**
  * Client for interacting with the `access/*` capabilities.
@@ -13,7 +13,7 @@ export class AccessClient extends Base {
    * @param {AbortSignal} [options.signal]
    */
   async authorize (email, options) {
-    return this._agent.authorize(email, options)
+    return authorizeWithSocket(this._agent, email, options)
   }
 
   /**
