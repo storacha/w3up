@@ -56,7 +56,7 @@ async function createIssuerSaysAccountCanAdminSpace(
     },
   ],
   proofs = [],
-  expiration = Infinity
+  expiration
 ) {
   return ucanto.delegate({
     issuer,
@@ -77,7 +77,7 @@ async function createIssuerSaysDeviceCanAccessDelegateWithSpace(
   issuer,
   space,
   device,
-  expiration = Infinity
+  expiration
 ) {
   return ucanto.delegate({
     issuer,
