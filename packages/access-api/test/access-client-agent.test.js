@@ -11,6 +11,7 @@ import {
   Agent as AccessAgent,
   claimDelegations,
   createDidMailtoFromEmail,
+  expectNewClaimableDelegations,
   requestAuthorization,
 } from '@web3-storage/access/agent'
 import * as w3caps from '@web3-storage/capabilities'
@@ -399,6 +400,39 @@ for (const accessApiVariant of /** @type {const} */ ([
     // authorize() will hang because it tries to connect ws to localhost:8787
     // which gets ECONNREFUSED, but ../src/ws.js swallws error
     await Promise.all([authorize(), clickNextConfirmationLink()])
+  })
+
+  it('can poll access/claim to know when confirmation happened', async () => {
+    const abort = new AbortController()
+    after(() => abort.abort())
+    const account = {
+      email: /** @type {const} */ ('example@dag.house'),
+      did: thisEmailDidMailto,
+    }
+    const { connection, emails } = await accessApiVariant.create()
+    const deviceA = await AccessAgent.create(undefined, {
+      connection,
+    })
+
+    const authorize = async () => {
+      // fire off request
+      await requestAuthorization(deviceA, account, [{ can: '*' }])
+      const claimed = await expectNewClaimableDelegations(
+        deviceA,
+        deviceA.issuer.did(),
+        { abort: abort.signal }
+      )
+      return claimed
+    }
+    const clickNextConfirmationLink = () =>
+      watchForEmail(emails, 100, abort.signal).then((email) => {
+        return confirmConfirmationUrl(deviceA.connection, email)
+      })
+    const [claimed] = await Promise.all([
+      authorize(),
+      clickNextConfirmationLink(),
+    ])
+    assert.equal(claimed.length, 2)
   })
 }
 

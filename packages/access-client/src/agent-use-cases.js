@@ -4,6 +4,7 @@ import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
 import { Delegation } from '@ucanto/core'
+import * as w3caps from '@web3-storage/capabilities'
 
 /**
  * Request authorization of a session allowing this agent to issue UCANs
@@ -107,4 +108,44 @@ export async function addProvider(access, space, account, provider) {
   if (result.error) {
     throw new Error(`error adding provider`, { cause: result })
   }
+}
+
+/**
+ * @param {AccessAgent} access
+ * @param {Ucanto.DID} delegee
+ * @param {object} [options]
+ * @param {number} [options.interval]
+ * @param {AbortSignal} [options.abort]
+ */
+export async function expectNewClaimableDelegations(access, delegee, options) {
+  const interval = options?.interval || 250
+  const claim = () => claimDelegations(access, delegee)
+  const initialClaimResult = await claim()
+  const claimed = await new Promise((resolve, reject) => {
+    options?.abort?.addEventListener('abort', reject)
+    poll(interval)
+    /**
+     * @param {number} retryAfter
+     */
+    async function poll(retryAfter) {
+      const pollClaimResult = await access.invokeAndExecute(
+        w3caps.Access.claim,
+        { with: delegee }
+      )
+      if (pollClaimResult.error) {
+        return reject(pollClaimResult)
+      }
+      // got a response. If it contains same amount of delegations as initialClaimResult,
+      // user has not clicked confirm
+      const claimedDelegations = Object.values(
+        pollClaimResult.delegations
+      ).flatMap((d) => bytesToDelegations(d))
+      if (claimedDelegations.length > initialClaimResult.length) {
+        resolve(claimedDelegations)
+      } else {
+        setTimeout(() => poll(retryAfter), retryAfter)
+      }
+    }
+  })
+  return claimed
 }
