@@ -31,7 +31,7 @@ export async function requestAccess(access, account, capabilities) {
     },
   })
   if (res?.error) {
-    throw new Error('failed to authorize session', { cause: res })
+    throw res
   }
 }
 
@@ -54,7 +54,7 @@ export async function claimAccess(
     with: audienceOfClaimedDelegations,
   })
   if (res.error) {
-    throw new Error('error claiming delegations', { cause: res })
+    throw res
   }
   const delegations = Object.values(res.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
@@ -87,7 +87,7 @@ export async function addProvider({ access, space, account, provider }) {
     },
   })
   if (result.error) {
-    throw new Error(`error adding provider`, { cause: result })
+    throw result
   }
 }
 
@@ -314,10 +314,7 @@ export async function addProviderAndDelegateToAccount(
     account
   )
   if (delegateSpaceAccessResult.error) {
-    // @ts-ignore it's very weird that this is throwing an error but line 692 above does not - ignore for now
-    throw new Error(delegateSpaceAccessResult.message, {
-      cause: delegateSpaceAccessResult,
-    })
+    throw delegateSpaceAccessResult
   }
   spaceMeta.isRegistered = true
   await agentData.addSpace(space, spaceMeta)
