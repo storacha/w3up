@@ -14,7 +14,6 @@ import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
 
 import { stringToDelegation } from './encoding.js'
-import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
 import { invoke, delegate, DID } from '@ucanto/core'
@@ -24,14 +23,9 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
-import { AgentData, getSessionProofs, isSessionProof } from './agent-data.js'
+import { AgentData, getSessionProofs } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
-import {
-  addProvider,
-  claimDelegations,
-  requestAuthorization,
-  expectNewClaimableDelegations,
-} from './agent-use-cases.js'
+import { addProvider, waitForDelegation } from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
 export * from './agent-use-cases.js'
@@ -488,90 +482,6 @@ export class Agent {
   }
 
   /**
-   * Request authorization of a session allowing this agent to issue UCANs
-   * signed by the passed email address.
-   *
-   * @param {`${string}@${string}`} email
-   * @param {object} [opts]
-   * @param {AbortSignal} [opts.signal]
-   * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
-   */
-  async authorize(email, opts) {
-    const account = { did: () => createDidMailtoFromEmail(email) }
-    await requestAuthorization(
-      this,
-      account,
-      opts?.capabilities || [
-        { can: 'space/*' },
-        { can: 'store/*' },
-        { can: 'provider/add' },
-        { can: 'upload/*' },
-      ]
-    )
-
-    const raceAbort = new AbortController()
-    opts?.signal?.addEventListener('abort', () => raceAbort.abort())
-
-    let winner
-    const sessionDelegationFromSocket =
-      /** @type {Promise<[Ucanto.Delegation<[import('./types').AccessSession]>]>} */
-      (
-        this.#waitForDelegation({
-          ...opts,
-          signal: raceAbort.signal,
-        }).then((d) => {
-          raceAbort.abort()
-          return [d]
-        })
-      )
-
-    const sessionDelegationFromClaim = expectNewClaimableDelegations(
-      this,
-      this.issuer.did(),
-      { abort: raceAbort.signal }
-    ).then((claimed) => {
-      if (![...claimed].some((d) => isSessionProof(d))) {
-        throw new Error(
-          `claimed new delegations, but none were a session proof`
-        )
-      }
-      return [...claimed]
-    })
-
-    const sessionDelegations = await Promise.race([
-      sessionDelegationFromSocket.then((d) => {
-        winner = sessionDelegationFromSocket
-        return d
-      }),
-      sessionDelegationFromClaim.then((d) => {
-        winner = sessionDelegationFromClaim
-        return d
-      }),
-    ]).then((d) => {
-      raceAbort.abort()
-      return d
-    })
-    await Promise.all(sessionDelegations.map(async (d) => this.addProof(d)))
-
-    // claim delegations here because we will need an ucan/attest from the service to
-    // pair with the session delegation we just claimed to make it work
-    if (winner !== sessionDelegationFromClaim)
-      await claimDelegations(this, this.issuer.did(), { addProofs: true })
-    // see if we just claimed delegations that will allow us to claim as account
-    const claimAsAccountProofs = this.proofs([
-      { can: 'access/claim', with: account.did() },
-    ])
-    if (claimAsAccountProofs.length > 0) {
-      await claimDelegations(this, account.did(), { addProofs: true })
-    } else {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `authorize() skipped claiming delegations as ${account.did()}`
-      )
-    }
-  }
-
-  /**
    * @param {Ucanto.DID<'key'>} space
    * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
    * @param {Ucanto.DID<'web'>} provider - e.g. 'did:web:staging.web3.storage'
@@ -754,34 +664,7 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async #waitForDelegation(opts) {
-    const ws = new Websocket(this.url, 'validate-ws')
-    await ws.open(opts)
-
-    ws.send({
-      did: this.did(),
-    })
-
-    try {
-      const msg = await ws.awaitMsg(opts)
-
-      if (msg.type === 'timeout') {
-        await ws.close(1000, 'agent got timeout waiting for validation')
-        throw new Error('Email validation timed out.')
-      }
-
-      if (msg.type === 'delegation') {
-        const delegation = stringToDelegation(msg.delegation)
-        await ws.close(1000, 'received delegation, agent is done with ws')
-        return delegation
-      }
-    } catch (error) {
-      if (error instanceof AbortError) {
-        await ws.close(1000, 'AbortError: agent failed to get delegation')
-        throw new TypeError('Failed to get delegation', { cause: error })
-      }
-      throw error
-    }
-    throw new TypeError('Failed to get delegation')
+    return waitForDelegation(this, opts)
   }
 
   /**
