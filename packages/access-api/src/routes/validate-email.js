@@ -180,8 +180,6 @@ async function authorize(req, env) {
       )
     )
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('error in validate-email', error)
     const err = /** @type {Error} */ (error)
     env.log.error(err)
     return new HtmlResponse(
