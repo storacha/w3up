@@ -61,6 +61,7 @@ export async function claimDelegations(
 }
 
 /**
+ * @private
  * Given a list of delegations, add to agent data spaces list.
  *
  * TODO: DON'T USE - we'd like to move away from storing space information inside the agent, planning on removing this soon!
