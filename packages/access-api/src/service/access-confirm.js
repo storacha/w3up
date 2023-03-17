@@ -96,7 +96,9 @@ export async function createSessionProofs({
   agent,
   capabilities,
   delegationProofs,
-  expiration,
+  // default to Infinity is reasonable here because
+  // account consented to this.
+  expiration = Infinity,
 }) {
   // create an delegation on behalf of the account with an absent signature.
   const delegation = await ucanto.delegate({
