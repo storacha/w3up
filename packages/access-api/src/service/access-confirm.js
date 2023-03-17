@@ -1,11 +1,10 @@
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
-import { Absentee } from '@ucanto/principal'
+import { Absentee, Verifier } from '@ucanto/principal'
 import { collect } from 'streaming-iterables'
 import * as Access from '@web3-storage/capabilities/access'
 import { delegationsToString } from '@web3-storage/access/encoding'
 import * as delegationsResponse from '../utils/delegations-response.js'
-import * as validator from '@ucanto/validator'
 
 /**
  * @typedef {import('@web3-storage/capabilities/types').AccessConfirmSuccess} AccessConfirmSuccess
@@ -19,9 +18,7 @@ export function parse(invocation) {
   const capability = invocation.capabilities[0]
   // Create a absentee signer for the account that authorized the delegation
   const account = Absentee.from({ id: capability.nb.iss })
-  const agent = {
-    did: () => validator.DID.match({ method: 'key' }).from(capability.nb.aud),
-  }
+  const agent = Verifier.parse(capability.nb.aud)
   return {
     account,
     agent,
@@ -87,7 +84,7 @@ export async function handleAccessConfirm(invocation, ctx) {
  * @param {object} opts
  * @param {Ucanto.Signer} opts.service
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} opts.account
- * @param {Ucanto.Principal<Ucanto.DID<'key'>>} opts.agent
+ * @param {Ucanto.Principal<Ucanto.DID>} opts.agent
  * @param {Ucanto.Capabilities} opts.capabilities
  * @param {AsyncIterable<Ucanto.Delegation>} opts.delegationProofs
  * @param {number} opts.expiration
