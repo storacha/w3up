@@ -24,12 +24,13 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
-import { AgentData, getSessionProofs } from './agent-data.js'
+import { AgentData, getSessionProofs, isSessionProof } from './agent-data.js'
 import { createDidMailtoFromEmail } from './utils/did-mailto.js'
 import {
   addProvider,
   claimDelegations,
   requestAuthorization,
+  expectNewClaimableDelegations,
 } from './agent-use-cases.js'
 
 export { AgentData, createDidMailtoFromEmail }
@@ -205,7 +206,6 @@ export class Agent {
    */
   async addProof(delegation) {
     validate(delegation, {
-      checkAudience: this.issuer,
       checkIsExpired: true,
     })
     await this.#data.addDelegation(delegation, { audience: this.meta })
@@ -508,16 +508,66 @@ export class Agent {
       ]
     )
 
-    const sessionDelegation =
-      /** @type {Ucanto.Delegation<[import('./types').AccessSession]>} */
-      (await this.#waitForDelegation(opts))
+    const raceAbort = new AbortController()
+    opts?.signal?.addEventListener('abort', () => raceAbort.abort())
 
-    await this.addProof(sessionDelegation)
+    let winner
+    const sessionDelegationFromSocket =
+      /** @type {Promise<[Ucanto.Delegation<[import('./types').AccessSession]>]>} */
+      (
+        this.#waitForDelegation({
+          ...opts,
+          signal: raceAbort.signal,
+        }).then((d) => {
+          raceAbort.abort()
+          return [d]
+        })
+      )
+
+    const sessionDelegationFromClaim = expectNewClaimableDelegations(
+      this,
+      this.issuer.did(),
+      { abort: raceAbort.signal }
+    ).then((claimed) => {
+      if (![...claimed].some((d) => isSessionProof(d))) {
+        throw new Error(
+          `claimed new delegations, but none were a session proof`
+        )
+      }
+      return [...claimed]
+    })
+
+    const sessionDelegations = await Promise.race([
+      sessionDelegationFromSocket.then((d) => {
+        winner = sessionDelegationFromSocket
+        return d
+      }),
+      sessionDelegationFromClaim.then((d) => {
+        winner = sessionDelegationFromClaim
+        return d
+      }),
+    ]).then((d) => {
+      raceAbort.abort()
+      return d
+    })
+    await Promise.all(sessionDelegations.map(async (d) => this.addProof(d)))
 
     // claim delegations here because we will need an ucan/attest from the service to
     // pair with the session delegation we just claimed to make it work
-    await claimDelegations(this, this.issuer.did(), { addProofs: true })
-    await claimDelegations(this, account.did(), { addProofs: true })
+    if (winner !== sessionDelegationFromClaim)
+      await claimDelegations(this, this.issuer.did(), { addProofs: true })
+    // see if we just claimed delegations that will allow us to claim as account
+    const claimAsAccountProofs = this.proofs([
+      { can: 'access/claim', with: account.did() },
+    ])
+    if (claimAsAccountProofs.length > 0) {
+      await claimDelegations(this, account.did(), { addProofs: true })
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `authorize() skipped claiming delegations as ${account.did()}`
+      )
+    }
   }
 
   /**
@@ -704,7 +754,7 @@ export class Agent {
    */
   async #waitForDelegation(opts) {
     const ws = new Websocket(this.url, 'validate-ws')
-    await ws.open()
+    await ws.open(opts)
 
     ws.send({
       did: this.did(),
@@ -714,20 +764,21 @@ export class Agent {
       const msg = await ws.awaitMsg(opts)
 
       if (msg.type === 'timeout') {
-        await ws.close()
+        await ws.close(1000, 'agent got timeout waiting for validation')
         throw new Error('Email validation timed out.')
       }
 
       if (msg.type === 'delegation') {
         const delegation = stringToDelegation(msg.delegation)
-        ws.close()
+        await ws.close(1000, 'received delegation, agent is done with ws')
         return delegation
       }
     } catch (error) {
       if (error instanceof AbortError) {
-        await ws.close()
+        await ws.close(1000, 'AbortError: agent failed to get delegation')
         throw new TypeError('Failed to get delegation', { cause: error })
       }
+      throw error
     }
     throw new TypeError('Failed to get delegation')
   }
