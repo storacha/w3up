@@ -134,6 +134,12 @@ export interface Service {
       AccessRequestFailure
     >
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    confirm: ServiceMethod<
+      AccessConfirm,
+      AccessConfirmSuccess,
+      AccessConfirmFailure
+    >
     delegate: ServiceMethod<
       AccessDelegate,
       AccessDelegateSuccess,

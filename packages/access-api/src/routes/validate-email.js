@@ -1,6 +1,6 @@
 import {
-  stringToDelegation,
   delegationsToString,
+  stringToDelegation,
 } from '@web3-storage/access/encoding'
 import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
@@ -11,10 +11,12 @@ import {
   ValidateEmailError,
   PendingValidateEmail,
 } from '../utils/html.js'
-import * as ucanto from '@ucanto/core'
 import * as validator from '@ucanto/validator'
-import { Verifier, Absentee } from '@ucanto/principal'
-import { collect } from 'streaming-iterables'
+import { Verifier } from '@ucanto/principal'
+import * as delegationsResponse from '../utils/delegations-response.js'
+import * as accessConfirm from '../service/access-confirm.js'
+import { provide } from '@ucanto/server'
+import * as Ucanto from '@ucanto/interface'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -149,62 +151,35 @@ async function authorize(req, env) {
     })
 
     if (confirmation.error) {
-      throw new Error(`unable to validate access session: ${confirmation}`)
+      throw new Error(`unable to validate access session: ${confirmation}`, {
+        cause: confirmation.error,
+      })
     }
-    if (confirmation.capability.with !== env.signer.did()) {
-      throw new Error(`Not a valid access/confirm delegation`)
+
+    const confirm = provide(
+      Access.confirm,
+      async ({ capability, invocation }) => {
+        return accessConfirm.handleAccessConfirm(
+          /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
+            invocation
+          ),
+          env
+        )
+      }
+    )
+    const confirmResult = await confirm(request, {
+      id: env.signer.verifier,
+      principal: Verifier,
+    })
+    if (confirmResult.error) {
+      throw new Error('error confirming', {
+        cause: confirmResult.error,
+      })
     }
-
-    // Create a absentee signer for the account that authorized the delegation
-    const account = Absentee.from({ id: confirmation.capability.nb.iss })
-    const agent = Verifier.parse(confirmation.capability.nb.aud)
-
-    // It the future we should instead render a page and allow a user to select
-    // which delegations they wish to re-delegate. Right now we just re-delegate
-    // everything that was requested for all of the resources.
-    const capabilities =
-      /** @type {ucanto.UCAN.Capabilities} */
-      (
-        confirmation.capability.nb.att.map(({ can }) => ({
-          can,
-          with: /** @type {ucanto.UCAN.Resource} */ ('ucan:*'),
-        }))
-      )
-
-    // create an delegation on behalf of the account with an absent signature.
-    const delegation = await ucanto.delegate({
-      issuer: account,
-      audience: agent,
-      capabilities,
-      expiration: Infinity,
-      // We include all the delegations to the account so that the agent will
-      // have delegation chains to all the delegated resources.
-      // We should actually filter out only delegations that support delegated
-      // capabilities, but for now we just include all of them since we only
-      // implement sudo access anyway.
-      proofs: await collect(
-        env.models.delegations.find({
-          audience: account.did(),
-        })
-      ),
-    })
-
-    const attestation = await Access.session.delegate({
-      issuer: env.signer,
-      audience: agent,
-      with: env.signer.did(),
-      nb: { proof: delegation.cid },
-      expiration: Infinity,
-    })
-
-    // Store the delegations so that they can be pulled with access/claim
-    // The fact that we're storing proofs chains that we pulled from the
-    // database is not great, but it's a tradeoff we're making for now.
-    await env.models.delegations.putMany(delegation, attestation)
-
-    const authorization = delegationsToString([delegation, attestation])
-    // Send delegations to the client through a websocket
-    await env.models.validations.putSession(authorization, agent.did())
+    const { account, agent } = accessConfirm.parse(request)
+    const confirmDelegations = [
+      ...delegationsResponse.decode(confirmResult.delegations),
+    ]
 
     // We render HTML page explaining to the user what has happened and providing
     // a QR code in the details if they want to drill down.
@@ -213,20 +188,7 @@ async function authorize(req, env) {
         <ValidateEmail
           email={toEmail(account.did())}
           audience={agent.did()}
-          ucan={authorization}
-          qrcode={await QRCode.toString(authorization, {
-            type: 'svg',
-            errorCorrectionLevel: 'M',
-            margin: 10,
-          }).catch((error) => {
-            if (/too big to be stored in a qr/i.test(error.message)) {
-              env.log.error(error)
-              // It's not important to have the QR code
-              // eslint-disable-next-line unicorn/no-useless-undefined
-              return undefined
-            }
-            throw error
-          })}
+          ucan={delegationsToString(confirmDelegations)}
         />
       )
     )

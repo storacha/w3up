@@ -328,7 +328,7 @@ importers:
     specifiers:
       '@ipld/car': ^5.0.3
       '@ipld/dag-ucan': ^3.2.0
-      '@ipld/unixfs': ^2.0.1
+      '@ipld/unixfs': ^2.1.1
       '@types/assert': ^1.5.6
       '@types/mocha': ^10.0.1
       '@ucanto/client': ^5.1.0
@@ -353,7 +353,7 @@ importers:
     dependencies:
       '@ipld/car': 5.1.0
       '@ipld/dag-ucan': 3.2.0
-      '@ipld/unixfs': 2.0.1
+      '@ipld/unixfs': 2.1.1
       '@ucanto/client': 5.1.0
       '@ucanto/interface': 6.0.0
       '@ucanto/transport': 5.1.0
@@ -2512,8 +2512,8 @@ packages:
       cborg: 1.10.0
       multiformats: 11.0.1
 
-  /@ipld/dag-pb/4.0.0:
-    resolution: {integrity: sha512-8FB/qTlNowCiszL9Sek8xH6xIQxIioXuzZ5B1jVPknQMVkd08nZUHzDjrn1Y6MqJ5PrXWLrBwNghGMWPPpvNVw==}
+  /@ipld/dag-pb/4.0.2:
+    resolution: {integrity: sha512-me9oEPb7UNPWSplUFCXyxnQE3/WlsjOljqO2RZN44XOmGkBY0/WVklbXorVE1eiv0Rt3p6dBS2x36Rq8A0Am8A==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       multiformats: 11.0.1
@@ -2525,10 +2525,12 @@ packages:
       '@ipld/dag-json': 10.0.1
       multiformats: 11.0.1
 
-  /@ipld/unixfs/2.0.1:
-    resolution: {integrity: sha512-W3LD67tLrIGpCVYFN6N/x6bL3o03zmsfd7jPAD1aXfGXaQWWa95qXPwc6PMVRTttxha/bHMKQiG2ZeFCqp83Ew==}
+  /@ipld/unixfs/2.1.1:
+    resolution: {integrity: sha512-g3gr/3XvfQs4x2VFjlICae09ul5fbWCKRInN6Vgeot2+GH0h/krr3PqZCIo4dy4Ou2mQOsIddxUvG8UZ4p9SbQ==}
     dependencies:
-      '@ipld/dag-pb': 4.0.0
+      '@ipld/dag-pb': 4.0.2
+      '@multiformats/murmur3': 2.1.3
+      '@perma/map': 1.0.2
       '@web-std/stream': 1.0.1
       actor: 2.3.1
       multiformats: 11.0.1
@@ -2813,6 +2815,14 @@ packages:
       murmurhash3js-revisited: 3.0.0
     dev: true
 
+  /@multiformats/murmur3/2.1.3:
+    resolution: {integrity: sha512-YvLK1IrLnRckPsvXhOkZjaIGNonsEdD1dL3NPSaLilV/WjVYeBgnNZXTUsaPzFXGrIFM7motx+yCmmqzXO6gtQ==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      multiformats: 11.0.1
+      murmurhash3js-revisited: 3.0.0
+    dev: false
+
   /@noble/ed25519/1.7.3:
     resolution: {integrity: sha512-iR8GBkDt0Q3GyaVcIu7mSsVIqnFbkbRzGLWlvhwunacoLwt4J3swfKhfaM6rN6WY+TBGoYT1GtT1mIh2/jGbRQ==}
 
@@ -2840,6 +2850,12 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
     dev: true
+
+  /@perma/map/1.0.2:
+    resolution: {integrity: sha512-hujwGOY6yTYnpf5YAtpD5MJAI1kcsVPqyN0lxG8Sampf/InO3jmX/MlJCHCGFPpPqB5JyO5WNnL+tUs1Umqe0A==}
+    dependencies:
+      murmurhash3js-revisited: 3.0.0
+    dev: false
 
   /@phenomnomnominal/tsquery/4.2.0_typescript@4.9.5:
     resolution: {integrity: sha512-hR2U3uVcrrdkuG30ItQ+uFDs4ncZAybxWG0OjTE8ptPzVoU7GVeXpy+vMU8zX9EbmjGeITPw/su5HjYQyAH8bA==}
@@ -7830,7 +7846,7 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       '@ipld/dag-cbor': 9.0.0
-      '@ipld/dag-pb': 4.0.0
+      '@ipld/dag-pb': 4.0.2
       '@multiformats/murmur3': 2.1.2
       err-code: 3.0.1
       hamt-sharding: 3.0.2
@@ -9093,7 +9109,6 @@ packages:
   /murmurhash3js-revisited/3.0.0:
     resolution: {integrity: sha512-/sF3ee6zvScXMb1XFJ8gDsSnY+X8PbOyjIuBhtgis10W2Jx4ZjIhikUCIF9c4gpJxVnQIsPAFrSwTCuAjicP6g==}
     engines: {node: '>=8.0.0'}
-    dev: true
 
   /mustache/4.2.0:
     resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
