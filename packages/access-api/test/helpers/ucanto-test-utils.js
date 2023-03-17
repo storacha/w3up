@@ -4,45 +4,62 @@ import * as assert from 'assert'
 import * as principal from '@ucanto/principal'
 import * as delegationsResponse from '../../src/utils/delegations-response.js'
 /**
- * @typedef {import('./types').HelperTestContext} HelperTestContext
+ * @typedef {import('@web3-storage/access/types').Service} AccessService
  */
 
 /**
  * Tests using context from "./helpers/context.js", which sets up a testable access-api inside miniflare.
  *
- * @param {() => Promise<HelperTestContext>} createContext
+ * @template {Record<string,any>} Service
+ * @template {import('./types').HelperTestContext<Service>} Context
+ * @param {() => Promise<Context>} createContext
  * @param {object} [options]
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.account - account to register spaces with
  * @param {Iterable<Promise<Ucanto.Principal<Ucanto.DID<'key'>>>>} options.registerSpaces - spaces to register in access-api. Some access-api functionality on a space requires it to be registered.
  */
 export function createTesterFromContext(createContext, options) {
-  const context = createContext().then(async (ctx) => {
-    const registeredSpaceAgent = await principal.ed25519.generate()
-    if (options) {
-      await registerSpaces(options?.registerSpaces ?? [], {
+  const create = () =>
+    createContext().then(async (ctx) => {
+      const registeredSpaceAgent = await principal.ed25519.generate()
+      if (options) {
+        await registerSpaces(options?.registerSpaces ?? [], {
+          ...ctx,
+          account: options.account,
+          agent: registeredSpaceAgent,
+        })
+      }
+      /** @type {Ucanto.ConnectionView<Service>} */
+      const connection = ctx.conn
+      return {
         ...ctx,
-        account: options.account,
-        agent: registeredSpaceAgent,
-      })
-    }
-    return {
-      ...ctx,
-      registeredSpaceAgent,
-    }
-  })
+        connection,
+        registeredSpaceAgent,
+      }
+    })
+  const context = create()
+  const connection = context.then(({ connection }) => connection)
   const issuer = context.then(({ issuer }) => issuer)
   const audience = context.then(({ service }) => service)
+  const service = context.then(({ service }) => service)
   const miniflare = context.then(({ mf }) => mf)
   /**
-   * @template {Ucanto.Capability} Capability
-   * @param {Ucanto.Invocation<Capability>} invocation
+   * @type {import('../../src/types/ucanto').ServiceInvoke<Service>}
    */
   const invoke = async (invocation) => {
     const { conn } = await context
     const [result] = await conn.execute(invocation)
     return result
   }
-  return { issuer, audience, invoke, miniflare }
+  return {
+    issuer,
+    audience,
+    invoke,
+    miniflare,
+    context,
+    connection,
+    service,
+    create,
+  }
 }
 
 /**

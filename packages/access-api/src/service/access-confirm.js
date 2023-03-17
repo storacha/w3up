@@ -1,6 +1,6 @@
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
-import { Verifier, Absentee } from '@ucanto/principal'
+import { Absentee, Verifier } from '@ucanto/principal'
 import { collect } from 'streaming-iterables'
 import * as Access from '@web3-storage/capabilities/access'
 import { delegationsToString } from '@web3-storage/access/encoding'
@@ -50,29 +50,19 @@ export async function handleAccessConfirm(invocation, ctx) {
       }))
     )
 
-  // create an delegation on behalf of the account with an absent signature.
-  const delegation = await ucanto.delegate({
-    issuer: account,
-    audience: agent,
+  const [delegation, attestation] = await createSessionProofs({
+    service: ctx.signer,
+    account,
+    agent,
     capabilities,
-    expiration: Infinity,
     // We include all the delegations to the account so that the agent will
     // have delegation chains to all the delegated resources.
     // We should actually filter out only delegations that support delegated
     // capabilities, but for now we just include all of them since we only
     // implement sudo access anyway.
-    proofs: await collect(
-      ctx.models.delegations.find({
-        audience: account.did(),
-      })
-    ),
-  })
-
-  const attestation = await Access.session.delegate({
-    issuer: ctx.signer,
-    audience: agent,
-    with: ctx.signer.did(),
-    nb: { proof: delegation.cid },
+    delegationProofs: ctx.models.delegations.find({
+      audience: account.did(),
+    }),
     expiration: Infinity,
   })
 
@@ -88,4 +78,44 @@ export async function handleAccessConfirm(invocation, ctx) {
   return {
     delegations: delegationsResponse.encode([delegation, attestation]),
   }
+}
+
+/**
+ * @param {object} opts
+ * @param {Ucanto.Signer} opts.service
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} opts.account
+ * @param {Ucanto.Principal<Ucanto.DID>} opts.agent
+ * @param {Ucanto.Capabilities} opts.capabilities
+ * @param {AsyncIterable<Ucanto.Delegation>} opts.delegationProofs
+ * @param {number} opts.expiration
+ * @returns {Promise<[delegation: Ucanto.Delegation, attestation: Ucanto.Delegation]>}
+ */
+export async function createSessionProofs({
+  service,
+  account,
+  agent,
+  capabilities,
+  delegationProofs,
+  // default to Infinity is reasonable here because
+  // account consented to this.
+  expiration = Infinity,
+}) {
+  // create an delegation on behalf of the account with an absent signature.
+  const delegation = await ucanto.delegate({
+    issuer: Absentee.from({ id: account.did() }),
+    audience: agent,
+    capabilities,
+    expiration,
+    proofs: [...(await collect(delegationProofs))],
+  })
+
+  const attestation = await Access.session.delegate({
+    issuer: service,
+    audience: agent,
+    with: service.did(),
+    nb: { proof: delegation.cid },
+    expiration,
+  })
+
+  return [delegation, attestation]
 }

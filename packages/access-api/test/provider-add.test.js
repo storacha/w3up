@@ -14,8 +14,8 @@ import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { createProvisions } from '../src/models/provisions.js'
-import { Email } from '../src/utils/email.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
+import { createEmail } from './helpers/utils.js'
 
 for (const providerAddHandlerVariant of /** @type {const} */ ([
   {
@@ -274,21 +274,10 @@ for (const accessApiVariant of /** @type {const} */ ([
  */
 
 /**
- *
- * @param {Pick<Array<ValidationEmailSend>, 'push'>} storage
- * @returns {Pick<Email, 'sendValidation'>}
+ * @typedef {import('@web3-storage/capabilities/types').AccessClaim} AccessClaim
+ * @typedef {import('@web3-storage/capabilities/types').AccessAuthorize} AccessAuthorize
+ * @typedef {import('@web3-storage/capabilities/types').ProviderAdd} ProviderAdd
  */
-export function createEmail(storage) {
-  const email = {
-    /**
-     * @param {ValidationEmailSend} email
-     */
-    async sendValidation(email) {
-      storage.push(email)
-    },
-  }
-  return email
-}
 
 /**
  * @param {object} options
@@ -297,7 +286,7 @@ export function createEmail(storage) {
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.accountA
  * @param {Ucanto.Principal<Ucanto.DID<'web'>>} options.service - web3.storage service
  * @param {import('miniflare').Miniflare} options.miniflare
- * @param {(invocation: Ucanto.Invocation<Ucanto.Capability>) => Promise<unknown>} options.invoke
+ * @param {import('../src/types/ucanto.js').ServiceInvoke<import('./helpers/ucanto-test-utils.js').AccessService, AccessClaim|AccessAuthorize|ProviderAdd>} options.invoke
  * @param {ValidationEmailSend[]} options.emails
  */
 async function testAuthorizeClaimProviderAdd(options) {
@@ -394,6 +383,7 @@ async function testAuthorizeClaimProviderAdd(options) {
   assertNotError(providerAddAsAccountResult)
 
   const spaceStorageResult = await options.invoke(
+    // @ts-ignore - not in service type because only enabled while testing
     await ucanto
       .invoke({
         issuer: space,

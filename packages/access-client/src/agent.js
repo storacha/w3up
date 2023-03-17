@@ -6,12 +6,14 @@ import * as Ucanto from '@ucanto/interface'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
+import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
+import * as Access from '@web3-storage/capabilities/access'
+
 import { stringToDelegation } from './encoding.js'
-import { Websocket, AbortError } from './utils/ws.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
 import { invoke, delegate, DID } from '@ucanto/core'
@@ -21,12 +23,28 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
-import { AgentData } from './agent-data.js'
+import { AgentData, getSessionProofs } from './agent-data.js'
+import { createDidMailtoFromEmail } from './utils/did-mailto.js'
+import {
+  addProviderAndDelegateToAccount,
+  waitForDelegationOnSocket,
+} from './agent-use-cases.js'
 
-export { AgentData }
+export { AgentData, createDidMailtoFromEmail }
+export * from './agent-use-cases.js'
 
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
+
+/**
+ * Keeps track of AgentData for all Agents constructed.
+ * Used by
+ * * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
+ *
+ * @deprecated - remove this when deprecated addSpacesFromDelegations is removed
+ */
+/** @type {WeakMap<Agent, AgentData>} */
+const agentToData = new WeakMap()
 
 /**
  * @typedef {import('./types').Service} Service
@@ -92,6 +110,7 @@ export class Agent {
         url: this.url,
       })
     this.#data = data
+    agentToData.set(this, this.#data)
   }
 
   /**
@@ -191,21 +210,32 @@ export class Agent {
   }
 
   /**
-   * Get all the proofs matching the capabilities
+   * Get all the proofs matching the capabilities.
    *
-   * Proofs are delegations with an audience matching agent DID.
+   * Proofs are delegations with an audience matching agent DID, or with an
+   * audience matching the session DID.
+   *
+   * Proof of session will also be included in the returned proofs if any
+   * proofs matching the passed capabilities require it.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
    */
   proofs(caps) {
     const arr = []
 
-    for (const value of this.#delegations(caps)) {
-      if (value.delegation.audience.did() === this.issuer.did()) {
-        arr.push(value.delegation)
+    for (const { delegation } of this.#delegations(caps)) {
+      if (delegation.audience.did() === this.issuer.did()) {
+        arr.push(delegation)
       }
     }
 
+    const sessions = getSessionProofs(this.#data)
+    for (const proof of arr) {
+      const session = sessions[proof.asCID.toString()]
+      if (session) {
+        arr.push(session)
+      }
+    }
     return arr
   }
 
@@ -233,7 +263,11 @@ export class Agent {
     const arr = []
 
     for (const value of this.#delegations(caps)) {
-      if (value.delegation.audience.did() !== this.issuer.did()) {
+      const { delegation } = value
+      const isSession = delegation.capabilities.some(
+        (c) => c.can === Access.session.can
+      )
+      if (!isSession && delegation.audience.did() !== this.issuer.did()) {
         arr.push(value)
       }
     }
@@ -352,7 +386,7 @@ export class Agent {
    *
    * Other methods will default to use the current space if no resource is defined
    *
-   * @param {Ucanto.DID} space
+   * @param {Ucanto.DID<'key'>} space
    */
   async setCurrentSpace(space) {
     const proofs = this.proofs([
@@ -386,7 +420,6 @@ export class Agent {
       return
     }
 
-    // TODO cache these
     const proofs = this.proofs([
       {
         can: 'space/info',
@@ -417,9 +450,21 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {Ucanto.DID<'key'>} [opts.space] - space to register
+   * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
    */
-  async registerSpace(email, opts) {
-    const space = this.currentSpace()
+  async registerSpace(email, opts = {}) {
+    // if the client passes `provider` use the new space registration flow
+    if (opts.provider) {
+      return await addProviderAndDelegateToAccount(
+        this,
+        this.#data,
+        email,
+        opts
+      )
+    }
+
+    const space = opts.space ?? this.currentSpace()
     const service = this.connection.id
     const spaceMeta = space ? this.#data.spaces.get(space) : undefined
 
@@ -490,33 +535,7 @@ export class Agent {
    * @param {AbortSignal} [opts.signal]
    */
   async #waitForDelegation(opts) {
-    const ws = new Websocket(this.url, 'validate-ws')
-    await ws.open()
-
-    ws.send({
-      did: this.did(),
-    })
-
-    try {
-      const msg = await ws.awaitMsg(opts)
-
-      if (msg.type === 'timeout') {
-        await ws.close()
-        throw new Error('Email validation timed out.')
-      }
-
-      if (msg.type === 'delegation') {
-        const delegation = stringToDelegation(msg.delegation)
-        ws.close()
-        return delegation
-      }
-    } catch (error) {
-      if (error instanceof AbortError) {
-        await ws.close()
-        throw new TypeError('Failed to get delegation', { cause: error })
-      }
-    }
-    throw new TypeError('Failed to get delegation')
+    return waitForDelegationOnSocket(this, opts)
   }
 
   /**
@@ -575,12 +594,12 @@ export class Agent {
    * await recoverInvocation.execute(agent.connection)
    * ```
    *
+   * @type {import('./types').InvokeAndExecute}
    * @template {Ucanto.Ability} A
    * @template {Ucanto.URI} R
-   * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
-   * @template {Ucanto.Caveats} [C={}]
-   * @param {CAP} cap
-   * @param {import('./types').InvokeOptions<A, R, CAP>} options
+   * @template {Ucanto.Caveats} C
+   * @param {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} cap
+   * @param {import('./types').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
    */
   async invokeAndExecute(cap, options) {
     const inv = await this.invoke(cap, options)
@@ -588,7 +607,7 @@ export class Agent {
     // @ts-ignore
     const out = inv.execute(this.connection)
 
-    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<CAP>, import('./types').Service>>} */ (
+    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>, import('./types').Service>>} */ (
       out
     )
   }
@@ -642,23 +661,26 @@ export class Agent {
   async invoke(cap, options) {
     const space = options.with || this.currentSpace()
     if (!space) {
-      throw new Error('No space selected, you need pass a resource.')
+      throw new Error(
+        'No space or resource selected, you need pass a resource.'
+      )
     }
 
-    const proofs = this.proofs([
-      {
-        with: space,
-        can: cap.can,
-      },
-    ])
+    const proofs = [
+      ...(options.proofs || []),
+      ...this.proofs([
+        {
+          with: space,
+          can: cap.can,
+        },
+      ]),
+    ]
 
     if (proofs.length === 0 && options.with !== this.did()) {
       throw new Error(
         `no proofs available for resource ${space} and ability ${cap.can}`
       )
     }
-
-    const extraProofs = options.proofs || []
     const inv = invoke({
       ...options,
       audience: options.audience || this.connection.id,
@@ -668,7 +690,7 @@ export class Agent {
         nb: options.nb,
       }),
       issuer: this.issuer,
-      proofs: [...proofs, ...extraProofs],
+      proofs: [...proofs],
     })
 
     return /** @type {Ucanto.IssuedInvocationView<Ucanto.InferInvokedCapability<CAP>>} */ (
@@ -703,5 +725,39 @@ export class Agent {
     }
 
     return inv
+  }
+}
+
+/**
+ * Given a list of delegations, add to agent data spaces list.
+ *
+ * @deprecated - trying to remove explicit space tracking from Agent/AgentData
+ * in favor of functions that derive the space set from access.delegations
+ *
+ * @param {Agent} access
+ * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
+ */
+export async function addSpacesFromDelegations(access, delegations) {
+  const data = agentToData.get(access)
+  if (!data) {
+    throw Object.assign(new Error(`cannot determine AgentData for Agent`), {
+      agent: access,
+    })
+  }
+  // TODO: we need a more robust way to determine which spaces a user has access to
+  // it may or may not involve look at delegations
+  if (delegations.length > 0) {
+    const allows = ucanto.Delegation.allows(
+      delegations[0],
+      ...delegations.slice(1)
+    )
+
+    for (const [did, value] of Object.entries(allows)) {
+      if (did.startsWith('did:key') && value['space/*']) {
+        data.addSpace(/** @type {Ucanto.DID} */ (did), {
+          isRegistered: true,
+        })
+      }
+    }
   }
 }
