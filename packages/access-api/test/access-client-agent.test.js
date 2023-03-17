@@ -380,7 +380,7 @@ for (const accessApiVariant of /** @type {const} */ ([
     await addSpacesFromDelegations(accessAgent, [])
   })
 
-  it.skip('multi device authorize method', async () => {
+  it('multi device authorize method', async () => {
     const abort = new AbortController()
     after(() => abort.abort())
     const account = {
@@ -388,6 +388,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       did: thisEmailDidMailto,
     }
     const { connection, emails } = await accessApiVariant.create()
+    const provider = /** @type {Ucanto.DID<'web'>} */ (connection.id.did())
     const deviceA = await AccessAgent.create(undefined, {
       connection,
     })
@@ -397,9 +398,10 @@ for (const accessApiVariant of /** @type {const} */ ([
       watchForEmail(emails, 100, abort.signal).then((email) => {
         return confirmConfirmationUrl(deviceA.connection, email)
       })
-    // authorize() will hang because it tries to connect ws to localhost:8787
-    // which gets ECONNREFUSED, but ../src/ws.js swallws error
     await Promise.all([authorize(), clickNextConfirmationLink()])
+
+    const space = await deviceA.createSpace()
+    await addProvider(deviceA, space.did, account, provider)
   })
 
   it('can poll access/claim to know when confirmation happened', async () => {
@@ -432,7 +434,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       authorize(),
       clickNextConfirmationLink(),
     ])
-    assert.equal(claimed.length, 2)
+    assert.equal([...claimed].length, 2)
   })
 }
 

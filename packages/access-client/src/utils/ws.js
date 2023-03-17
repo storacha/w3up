@@ -44,9 +44,13 @@ export class Websocket {
     this.forceClose = false
   }
 
-  async open() {
+  /**
+   * @param {object} [opts]
+   * @param {AbortSignal} [opts.signal]
+   */
+  async open(opts) {
     this.ws = this.connect()
-    await pWaitFor(() => this.ws?.readyState === 1)
+    await pWaitFor(() => opts?.signal?.aborted || this.ws?.readyState === 1)
     return this
   }
 
@@ -59,6 +63,10 @@ export class Websocket {
     this.ws = ws
 
     ws.addEventListener('close', (event) => {
+      if (event.code === 1006) {
+        this.close(event.code, event.reason)
+        return
+      }
       if (!this.forceClose && !this.timeout) {
         this.timeout = setTimeout(() => {
           this.attemps++
