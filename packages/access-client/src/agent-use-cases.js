@@ -1,13 +1,12 @@
 import {
+  addSpacesFromDelegations,
   Agent as AccessAgent,
-  agentToData,
   createDidMailtoFromEmail,
 } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations, stringToDelegation } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
-import { Delegation } from '@ucanto/core'
 import * as w3caps from '@web3-storage/capabilities'
 import { Websocket, AbortError } from './utils/ws.js'
 import { isSessionProof } from './agent-data.js'
@@ -67,35 +66,6 @@ export async function claimDelegations(
   }
 
   return delegations
-}
-
-/**
- * @private
- * Given a list of delegations, add to agent data spaces list.
- *
- * TODO: DON'T USE - we'd like to move away from storing space information inside the agent, planning on removing this soon!
- *
- * @param {AccessAgent} access
- * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
- */
-export async function addSpacesFromDelegations(access, delegations) {
-  const data = agentToData.get(access)
-  if (!data) {
-    throw Object.assign(new Error(`cannot determine AgentData for Agent`), {
-      agent: access,
-    })
-  }
-  if (delegations.length > 0) {
-    const allows = Delegation.allows(delegations[0], ...delegations.slice(1))
-    for (const [did, value] of Object.entries(allows)) {
-      // TODO I don't think this should be `store/*` but this works for today
-      if (value['store/*']) {
-        data.addSpace(/** @type {Ucanto.DID} */ (did), {
-          isRegistered: true,
-        })
-      }
-    }
-  }
 }
 
 /**

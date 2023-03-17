@@ -33,8 +33,15 @@ export * from './agent-use-cases.js'
 const HOST = 'https://access.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
 
+/**
+ * Keeps track of AgentData for all Agents constructed.
+ * Used by
+ * * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
+ *
+ * @deprecated - remove this when deprecated addSpacesFromDelegations is removed
+ */
 /** @type {WeakMap<Agent, AgentData>} */
-export const agentToData = new WeakMap()
+const agentToData = new WeakMap()
 
 /**
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
@@ -834,5 +841,37 @@ export class Agent {
     }
 
     return inv
+  }
+}
+
+/**
+ * Given a list of delegations, add to agent data spaces list.
+ *
+ * @deprecated - trying to remove explicit space tracking from Agent/AgentData
+ * in favor of functions that derive the space set from access.delegations
+ *
+ * @param {Agent} access
+ * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
+ */
+export async function addSpacesFromDelegations(access, delegations) {
+  const data = agentToData.get(access)
+  if (!data) {
+    throw Object.assign(new Error(`cannot determine AgentData for Agent`), {
+      agent: access,
+    })
+  }
+  if (delegations.length > 0) {
+    const allows = ucanto.Delegation.allows(
+      delegations[0],
+      ...delegations.slice(1)
+    )
+    for (const [did, value] of Object.entries(allows)) {
+      // TODO I don't think this should be `store/*` but this works for today
+      if (value['store/*']) {
+        data.addSpace(/** @type {Ucanto.DID} */ (did), {
+          isRegistered: true,
+        })
+      }
+    }
   }
 }
