@@ -11,7 +11,7 @@ import {
   Agent as AccessAgent,
   authorizeAndWait,
   authorizeWithPollClaim,
-  claimDelegations,
+  claimAccess,
   createDidMailtoFromEmail,
   expectNewClaimableDelegations,
   requestAccess,
@@ -146,7 +146,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
 
       // these are delegations with audience=accessAgent.issuer
-      const claimedAsAgent = await claimDelegations(
+      const claimedAsAgent = await claimAccess(
         accessAgent,
         accessAgent.issuer.did(),
         { addProofs: true }
@@ -197,7 +197,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
       await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
       // claim delegations after confirmation
-      await claimDelegations(accessAgent, accessAgent.issuer.did(), {
+      await claimAccess(accessAgent, accessAgent.issuer.did(), {
         addProofs: true,
       })
 
@@ -243,7 +243,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         const confirmationEmail = await watchForEmail(emails, 100, abort.signal)
         await confirmConfirmationUrl(accessAgent.connection, confirmationEmail)
         // claim delegations after confirmation
-        await claimDelegations(accessAgent, accessAgent.issuer.did(), {
+        await claimAccess(accessAgent, accessAgent.issuer.did(), {
           addProofs: true,
         })
         // expect two new delegations, [delegationFromAccount, attestationFromService]
@@ -298,7 +298,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         deviceA.connection,
         await watchForEmail(emails, 100, abort.signal)
       )
-      await claimDelegations(deviceA, deviceA.issuer.did(), {
+      await claimAccess(deviceA, deviceA.issuer.did(), {
         addProofs: true,
       })
 
@@ -327,7 +327,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         await watchForEmail(emails, 100, abort.signal)
       )
       // claim delegations aud=deviceB.issuer
-      const deviceBIssuerClaimed = await claimDelegations(
+      const deviceBIssuerClaimed = await claimAccess(
         deviceB,
         deviceB.issuer.did(),
         {
@@ -340,13 +340,9 @@ for (const accessApiVariant of /** @type {const} */ ([
         'deviceBIssuerClaimed delegations'
       )
       // claim delegations aud=account
-      const deviceBAccountClaimed = await claimDelegations(
-        deviceB,
-        account.did(),
-        {
-          addProofs: true,
-        }
-      )
+      const deviceBAccountClaimed = await claimAccess(deviceB, account.did(), {
+        addProofs: true,
+      })
       assert.equal(
         deviceBAccountClaimed.length,
         1,

@@ -37,22 +37,22 @@ export async function requestAccess(access, account, capabilities) {
  * claim delegations delegated to an audience
  *
  * @param {AccessAgent} access
- * @param {Ucanto.DID} [delegee] - audience of claimed delegations. defaults to access.connection.id.did()
+ * @param {Ucanto.DID} [audienceOfClaimedDelegations] - audience of claimed delegations. defaults to access.connection.id.did()
  * @param {object} options
  * @param {boolean} [options.addProofs] - whether to addProof to access agent
  * @returns
  */
-export async function claimDelegations(
+export async function claimAccess(
   access,
-  delegee = access.connection.id.did(),
+  audienceOfClaimedDelegations = access.connection.id.did(),
   { addProofs = false } = {}
 ) {
   const res = await access.invokeAndExecute(Access.claim, {
     audience: access.connection.id,
-    with: delegee,
+    with: audienceOfClaimedDelegations,
   })
   if (res.error) {
-    throw new Error('error claiming delegations')
+    throw new Error('error claiming delegations', { cause: res })
   }
   const delegations = Object.values(res.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
@@ -98,7 +98,7 @@ export async function addProvider(access, space, account, provider) {
  */
 export async function expectNewClaimableDelegations(access, delegee, options) {
   const interval = options?.interval || 250
-  const claim = () => claimDelegations(access, delegee)
+  const claim = () => claimAccess(access, delegee)
   const initialClaimResult = await claim()
   const claimed = await new Promise((resolve, reject) => {
     options?.abort?.addEventListener('abort', (e) => {
@@ -231,7 +231,7 @@ export async function authorizeWithSocket(access, email, opts) {
   })
   // claim delegations here because we will need an ucan/attest from the service to
   // pair with the session delegation we just claimed to make it work
-  await claimDelegations(access, access.issuer.did(), { addProofs: true })
+  await claimAccess(access, access.issuer.did(), { addProofs: true })
 }
 
 /**
