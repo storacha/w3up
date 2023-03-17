@@ -744,14 +744,16 @@ export async function addSpacesFromDelegations(access, delegations) {
       agent: access,
     })
   }
+  // TODO: we need a more robust way to determine which spaces a user has access to
+  // it may or may not involve look at delegations
   if (delegations.length > 0) {
     const allows = ucanto.Delegation.allows(
       delegations[0],
       ...delegations.slice(1)
     )
+
     for (const [did, value] of Object.entries(allows)) {
-      // TODO I don't think this should be `store/*` but this works for today
-      if (value['store/*']) {
+      if (did.startsWith('did:key') && value['space/*']) {
         data.addSpace(/** @type {Ucanto.DID} */ (did), {
           isRegistered: true,
         })
