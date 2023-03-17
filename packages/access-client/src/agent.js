@@ -42,6 +42,7 @@ export const agentToData = new WeakMap()
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @param {Ucanto.Capabilities} capabilities
  * @param {Ucanto.Delegation[]} proofs
+ * @param {number} expiration
  * @returns
  */
 async function createIssuerSaysAccountCanAdminSpace(
@@ -54,13 +55,15 @@ async function createIssuerSaysAccountCanAdminSpace(
       with: space,
     },
   ],
-  proofs = []
+  proofs = [],
+  expiration = Infinity
 ) {
   return ucanto.delegate({
     issuer,
     audience: account,
     capabilities,
     proofs,
+    expiration,
   })
 }
 
@@ -68,11 +71,13 @@ async function createIssuerSaysAccountCanAdminSpace(
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
  * @param {Ucanto.DID} space
  * @param {Ucanto.Principal<Ucanto.DID<'key'>>} device
+ * @param {number} expiration
  */
 async function createIssuerSaysDeviceCanAccessDelegateWithSpace(
   issuer,
   space,
-  device
+  device,
+  expiration = Infinity
 ) {
   return ucanto.delegate({
     issuer,
@@ -83,6 +88,7 @@ async function createIssuerSaysDeviceCanAccessDelegateWithSpace(
         with: space,
       },
     ],
+    expiration,
   })
 }
 
@@ -502,7 +508,9 @@ export class Agent {
         space,
         account,
         undefined,
-        this.proofs([{ with: space, can: '*' }])
+        this.proofs([{ with: space, can: '*' }]),
+        // we want to sign over control of this space forever
+        Infinity
       )
     return this.invokeAndExecute(Access.delegate, {
       audience: this.connection.id,
@@ -518,7 +526,9 @@ export class Agent {
         await createIssuerSaysDeviceCanAccessDelegateWithSpace(
           this.issuer,
           space,
-          this.issuer
+          this.issuer,
+          // I think this needs to be infinity if the expiration of the delegation above is Infinity, otherwise the account will eventually lose access to the space
+          Infinity
         ),
         // must be embedded here because it's referenced by cid in .nb.delegations
         issuerSaysAccountCanAdminSpace,
