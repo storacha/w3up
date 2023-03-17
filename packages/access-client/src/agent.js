@@ -42,6 +42,7 @@ export const agentToData = new WeakMap()
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
  * @param {Ucanto.Capabilities} capabilities
  * @param {Ucanto.Delegation[]} proofs
+ * @param {number} expiration
  * @returns
  */
 async function createIssuerSaysAccountCanAdminSpace(
@@ -54,13 +55,15 @@ async function createIssuerSaysAccountCanAdminSpace(
       with: space,
     },
   ],
-  proofs = []
+  proofs = [],
+  expiration
 ) {
   return ucanto.delegate({
     issuer,
     audience: account,
     capabilities,
     proofs,
+    expiration,
   })
 }
 
@@ -480,7 +483,9 @@ export class Agent {
         space,
         account,
         undefined,
-        this.proofs([{ with: space, can: '*' }])
+        this.proofs([{ with: space, can: '*' }]),
+        // we want to sign over control of this space forever
+        Infinity
       )
     return this.invokeAndExecute(Access.delegate, {
       audience: this.connection.id,
