@@ -53,8 +53,8 @@ export async function handleAccessConfirm(invocation, ctx) {
       }))
     )
 
-  const [delegation, attestation] = await createSessionProofs(
-    ctx.signer,
+  const [delegation, attestation] = await createSessionProofs({
+    service: ctx.signer,
     account,
     agent,
     capabilities,
@@ -63,11 +63,11 @@ export async function handleAccessConfirm(invocation, ctx) {
     // We should actually filter out only delegations that support delegated
     // capabilities, but for now we just include all of them since we only
     // implement sudo access anyway.
-    ctx.models.delegations.find({
+    delegationProofs: ctx.models.delegations.find({
       audience: account.did(),
     }),
-    Infinity
-  )
+    expiration: Infinity,
+  })
 
   // Store the delegations so that they can be pulled with access/claim
   // The fact that we're storing proofs chains that we pulled from the
@@ -84,22 +84,23 @@ export async function handleAccessConfirm(invocation, ctx) {
 }
 
 /**
- * @param {Ucanto.Signer} service
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Ucanto.Principal<Ucanto.DID<'key'>>} agent
- * @param {Ucanto.Capabilities} capabilities
- * @param {AsyncIterable<Ucanto.Delegation>} delegationProofs
- * @param {number} expiration
+ * @param {object} opts
+ * @param {Ucanto.Signer} opts.service
+ * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} opts.account
+ * @param {Ucanto.Principal<Ucanto.DID<'key'>>} opts.agent
+ * @param {Ucanto.Capabilities} opts.capabilities
+ * @param {AsyncIterable<Ucanto.Delegation>} opts.delegationProofs
+ * @param {number} opts.expiration
  * @returns {Promise<[delegation: Ucanto.Delegation, attestation: Ucanto.Delegation]>}
  */
-export async function createSessionProofs(
+export async function createSessionProofs({
   service,
   account,
   agent,
   capabilities,
   delegationProofs,
-  expiration
-) {
+  expiration,
+}) {
   // create an delegation on behalf of the account with an absent signature.
   const delegation = await ucanto.delegate({
     issuer: Absentee.from({ id: account.did() }),
