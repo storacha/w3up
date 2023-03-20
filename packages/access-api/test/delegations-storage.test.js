@@ -133,3 +133,47 @@ async function createDelegation(opts = {}) {
     capabilities,
   })
 }
+
+for (const variant of [
+  { name: 'DbDelegationsStorage', ...createDbDelegationsStorageVariant() },
+]) {
+  describe(`delegations storage ${variant.name}`, () => {
+    testVariant(
+      () => variant.create(),
+      (name, doTest) => {
+        it(name, doTest)
+      }
+    )
+  })
+}
+
+function createDbDelegationsStorageVariant() {
+  return {
+    create: async () => {
+      const { d1 } = await context()
+      const delegationsStorage = new DbDelegationsStorage(createD1Database(d1))
+      return { delegationsStorage }
+    },
+  }
+}
+
+/**
+ * @typedef {object} DelegationsStorageVariant
+ * @property {import('../src/types/delegations.js').DelegationsStorage} delegationsStorage
+ */
+
+/**
+ * @param {() => Promise<DelegationsStorageVariant>} createVariant - create a new test context
+ * @param {(name: string, test: () => Promise<unknown>) => void} test - name a test
+ */
+function testVariant(createVariant, test) {
+  test('should persist delegations', async () => {
+    const { delegationsStorage } = await createVariant()
+    const count = Math.round(Math.random() * 10)
+    const delegations = await Promise.all(
+      Array.from({ length: count }).map(() => createSampleDelegation())
+    )
+    await delegationsStorage.putMany(...delegations)
+    assert.deepEqual(await delegationsStorage.count(), delegations.length)
+  })
+}
