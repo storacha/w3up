@@ -2,6 +2,7 @@
 import { Signer } from '@ucanto/principal/ed25519'
 import { connection } from '@web3-storage/access'
 import dotenv from 'dotenv'
+import { createFetchMock } from '@miniflare/core'
 import { Miniflare, Log, LogLevel } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -34,6 +35,7 @@ function createBindings(env) {
     LOGTAIL_TOKEN: env.LOGTAIL_TOKEN || '',
     W3ACCESS_METRICS: createAnalyticsEngine(),
     UPLOAD_API_URL: env.UPLOAD_API_URL || '',
+    UCAN_INVOCATION_POST_BASIC_AUTH: env.UCAN_INVOCATION_POST_BASIC_AUTH || '',
   }
 }
 
@@ -50,6 +52,8 @@ export async function context({ env = {}, globals } = {}) {
   const servicePrincipal = Signer.parse(bindings.PRIVATE_KEY).withDID(
     bindings.DID
   )
+
+  const fetchMock = createFetchMock()
   const mf = new Miniflare({
     packagePath: true,
     wranglerConfigPath: true,
@@ -60,6 +64,7 @@ export async function context({ env = {}, globals } = {}) {
     buildCommand: undefined,
     log: new Log(LogLevel.ERROR),
     ...(globals ? { globals } : {}),
+    fetchMock,
   })
 
   const binds = await mf.getBindings()
@@ -72,6 +77,14 @@ export async function context({ env = {}, globals } = {}) {
     fetch: mf.dispatchFetch.bind(mf),
     url: new URL('http://localhost:8787'),
   })
+
+  // Mock request to https://up.web3.storage/ucan
+  // (see https://undici.nodejs.org/#/docs/api/MockAgent?id=mockagentgetorigin)
+  const origin = fetchMock.get('https://up.web3.storage')
+  origin
+    .intercept({ method: 'POST', path: '/ucan' })
+    .reply(200, 'Mocked response!')
+
   return {
     mf,
     conn,
