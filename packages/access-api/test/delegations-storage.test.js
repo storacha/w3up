@@ -13,17 +13,6 @@ import * as ucanto from '@ucanto/core'
 import { collect } from 'streaming-iterables'
 
 describe('DbDelegationsStorage', () => {
-  it('should persist delegations', async () => {
-    const { d1 } = await context()
-    const storage = new DbDelegationsStorage(createD1Database(d1))
-    const count = Math.round(Math.random() * 10)
-    const delegations = await Promise.all(
-      Array.from({ length: count }).map(() => createSampleDelegation())
-    )
-    await storage.putMany(...delegations)
-    assert.deepEqual(await storage.count(), delegations.length)
-  })
-
   it('can retrieve delegations by audience', async () => {
     const { issuer, d1 } = await context()
     const delegations = new DbDelegationsStorage(createD1Database(d1))
@@ -135,7 +124,14 @@ async function createDelegation(opts = {}) {
 }
 
 for (const variant of [
-  { name: 'DbDelegationsStorage', ...createDbDelegationsStorageVariant() },
+  {
+    name: 'DelegationsStorage with sqlite',
+    ...createDbDelegationsStorageVariant(),
+  },
+  {
+    name: 'DelegationsStorage with sqlite+kv',
+    ...createDbDelegationsStorageVariantWithR2(),
+  },
 ]) {
   describe(`delegations storage ${variant.name}`, () => {
     testVariant(
@@ -147,10 +143,33 @@ for (const variant of [
   })
 }
 
+/**
+ * create a variant of DelegationsStorage that uses sqlite and can work with cloudflare d1
+ *
+ * @returns
+ */
 function createDbDelegationsStorageVariant() {
   return {
     create: async () => {
       const { d1 } = await context()
+      const delegationsStorage = new DbDelegationsStorage(createD1Database(d1))
+      return { delegationsStorage }
+    },
+  }
+}
+
+/**
+ * create a variant of DelegationsStorage that uses sqlite for most things
+ * but stores blobs in a separate r2-like key/value store
+ *
+ * @see https://github.com/web3-storage/w3protocol/issues/571
+ * @returns
+ */
+function createDbDelegationsStorageVariantWithR2() {
+  return {
+    create: async () => {
+      const { d1 } = await context()
+      // @todo use r2
       const delegationsStorage = new DbDelegationsStorage(createD1Database(d1))
       return { delegationsStorage }
     },
