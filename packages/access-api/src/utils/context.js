@@ -87,5 +87,7 @@ export function getContext(request, env, ctx) {
       url: new URL(config.UPLOAD_API_URL),
       fetch: globalThis.fetch.bind(globalThis),
     }),
+    uploadApiUrl: new URL(config.UPLOAD_API_URL),
+    ucanInvocationPostBasicAuth: config.UCAN_INVOCATION_POST_BASIC_AUTH,
   }
 }

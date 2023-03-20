@@ -46,6 +46,7 @@ export interface Env {
   SENTRY_DSN: string
   POSTMARK_TOKEN: string
   POSTMARK_SENDER?: string
+  UCAN_INVOCATION_POST_BASIC_AUTH: string
 
   DEBUG_EMAIL?: string
   LOGTAIL_TOKEN: string
@@ -71,6 +72,8 @@ export interface RouteContext {
     validations: Validations
   }
   uploadApi: ConnectionView
+  uploadApiUrl: URL
+  ucanInvocationPostBasicAuth: string
 }
 
 export type Handler = _Handler<RouteContext>
