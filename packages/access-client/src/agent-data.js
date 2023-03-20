@@ -111,12 +111,15 @@ export class AgentData {
 
   /**
    * @deprecated
-   * @param {import('@ucanto/interface').DID} did
+   * @param {import('@ucanto/interface').DID<'key'>} did
    * @param {import('./types').SpaceMeta} meta
    * @param {import('@ucanto/interface').Delegation} [proof]
    */
   async addSpace(did, meta, proof) {
     this.spaces.set(did, meta)
+    if (!this.currentSpace) {
+      this.currentSpace = did
+    }
     await (proof ? this.addDelegation(proof) : this.#save(this.export()))
   }
 
