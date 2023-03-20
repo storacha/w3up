@@ -754,7 +754,7 @@ export async function addSpacesFromDelegations(access, delegations) {
 
     for (const [did, value] of Object.entries(allows)) {
       if (did.startsWith('did:key') && value['space/*']) {
-        data.addSpace(/** @type {Ucanto.DID} */ (did), {
+        data.addSpace(/** @type {Ucanto.DID<'key'>} */ (did), {
           isRegistered: true,
         })
       }
