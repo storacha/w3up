@@ -58,6 +58,7 @@ importers:
       git-rev-sync: ^3.0.2
       hd-scripts: ^4.0.0
       is-subset: ^0.1.1
+      it-to-buffer: ^3.0.1
       kysely: ^0.23.4
       kysely-d1: ^0.1.0
       miniflare: ^2.11.0
@@ -86,6 +87,7 @@ importers:
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
       '@web3-storage/worker-utils': 0.4.3-dev
+      it-to-buffer: 3.0.1
       kysely: 0.23.4
       kysely-d1: 0.1.0_kysely@0.23.4
       multiformats: 11.0.2
@@ -8828,6 +8830,13 @@ packages:
     resolution: {integrity: sha512-lN3diSTomOvYBk2K0LHAgrQ52DlQfvq8tH/+HLAFpX8Q3JwBkr/BPJEi3Z3Lf8jMmN1KOCBXvt5sXa3eW9vUmg==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dev: true
+
+  /it-to-buffer/3.0.1:
+    resolution: {integrity: sha512-TiMudfypF2yW+HdNfhDgbkNQ42yuK1MizB716kwnzIJSQa8AM15zh+VZG2L/xQWaqyWfra1dr9neWO55xsYolA==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      uint8arrays: 4.0.3
+    dev: false
 
   /jest-util/29.5.0:
     resolution: {integrity: sha512-RYMgG/MTadOr5t8KdhejfvUU82MxsCu5MF6KuDUHl+NuwzUt+Sm6jJWxTJVrDR1j5M/gJVCPKQEpWXY+yIQ6lQ==}
