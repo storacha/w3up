@@ -78,13 +78,13 @@
     "@ucanto/interface": "^6.0.0",
     "@ucanto/principal": "^5.1.0",
     "@ucanto/transport": "^5.1.0",
-    "@web3-storage/access": "file:../w3protocol/packages/access-client",
-    "@web3-storage/capabilities": "^2.0.0",
+    "@web3-storage/access": "11.0.0-rc.0",
+    "@web3-storage/capabilities": "^4.0.0",
     "@web3-storage/upload-client": "^7.0.0"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.2.0",
-    "@ucanto/server": "^4.0.2",
+    "@ucanto/server": "^6.1.0",
     "assert": "^2.0.0",
     "docusaurus-plugin-typedoc": "^0.18.0",
     "hundreds": "^0.0.9",
