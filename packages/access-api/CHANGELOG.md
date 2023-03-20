@@ -1,5 +1,45 @@
 # Changelog
 
+## [11.0.0-rc.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.11.0...access-api-v11.0.0-rc.0) (2023-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433))
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463))
+
+### Features
+
+* access-api handles provider/add invocations ([#462](https://github.com/web3-storage/w3protocol/issues/462)) ([5fb56f7](https://github.com/web3-storage/w3protocol/commit/5fb56f794529f3d4de2b4597c47503002767fabb))
+* access-api serves access/claim invocations ([#456](https://github.com/web3-storage/w3protocol/issues/456)) ([baacf35](https://github.com/web3-storage/w3protocol/commit/baacf3553ce8de0ca75e0815da849cca65ec880a))
+* access/authorize confirmation email click results in a delegation back to the issuer did:key so that access/claim works ([#460](https://github.com/web3-storage/w3protocol/issues/460)) ([a466a7d](https://github.com/web3-storage/w3protocol/commit/a466a7de4e5b3d9c727307dd781f5e5c9b7cdf0a))
+* define `access/confirm` handler and use it in ucanto-test-utils registerSpaces + validate-email handler ([#530](https://github.com/web3-storage/w3protocol/issues/530)) ([b1bbc90](https://github.com/web3-storage/w3protocol/commit/b1bbc907c96cfc7788f50fb0c154d9b54894e03e))
+* handle access/delegate invocations without error ([#427](https://github.com/web3-storage/w3protocol/issues/427)) ([4f0bd1c](https://github.com/web3-storage/w3protocol/commit/4f0bd1c1cd3cfb1c848892ad418c6d7b2197045a))
+* if POST /validate-email?mode=authorize catches error w/ too big qr code ([#516](https://github.com/web3-storage/w3protocol/issues/516)) ([d0df525](https://github.com/web3-storage/w3protocol/commit/d0df52554bf2d80a6be11da631ad41a5ce7675ca))
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433)) ([1ddc6a0](https://github.com/web3-storage/w3protocol/commit/1ddc6a0c53f8cdb6837a315d8aaf567100dfb8d7))
+* includes proofs chains in the delegated authorization chain ([#467](https://github.com/web3-storage/w3protocol/issues/467)) ([5144293](https://github.com/web3-storage/w3protocol/commit/5144293deabd9d5380448ae288e089ef2652def7))
+* move validation flow to a Durable Object to make it ⏩ fast ⏩ fast ⏩ fast ⏩  ([#449](https://github.com/web3-storage/w3protocol/issues/449)) ([02d7552](https://github.com/web3-storage/w3protocol/commit/02d75522b1ed794d267880e5f8a4fc3964066992))
+* provision provider type is now the DID of the w3s service ([#528](https://github.com/web3-storage/w3protocol/issues/528)) ([6a72855](https://github.com/web3-storage/w3protocol/commit/6a72855db4d6e838e9948f3951fdb5ef324eec95))
+* space/info will not error for spaces that have had storage provider added via provider/add ([#510](https://github.com/web3-storage/w3protocol/issues/510)) ([ea4e872](https://github.com/web3-storage/w3protocol/commit/ea4e872475c74165b08016c210e65b4062a2ffb6))
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463)) ([2d786ee](https://github.com/web3-storage/w3protocol/commit/2d786ee81a6eb72c4782548ad3e3796fe3947fa5))
+* upgrade to new ucanto ([#498](https://github.com/web3-storage/w3protocol/issues/498)) ([dcb41a9](https://github.com/web3-storage/w3protocol/commit/dcb41a9981c2b6bebbdbd29debcad9f510383680))
+
+
+### Bug Fixes
+
+* access/delegate checks hasStorageProvider(space) in a way that provider/add allows access/delegate ([#483](https://github.com/web3-storage/w3protocol/issues/483)) ([f4c640d](https://github.com/web3-storage/w3protocol/commit/f4c640d4127d511fb55a9160f22e1c9042b35994))
+* adjust migration 0005 to keep delegations table but create new used delegations_v2 ([#469](https://github.com/web3-storage/w3protocol/issues/469)) ([a205ad1](https://github.com/web3-storage/w3protocol/commit/a205ad13f425675e8aac2ec4f06294d0134c8112))
+* adjust migration 0005 to not do a drop table and instead rename delegations -&gt; delegations_old and create a new delegations ([#468](https://github.com/web3-storage/w3protocol/issues/468)) ([6c8242d](https://github.com/web3-storage/w3protocol/commit/6c8242db6708fa7129f51ad22e1b64d244a2c9fe))
+* allow injecting email ([#466](https://github.com/web3-storage/w3protocol/issues/466)) ([e19847f](https://github.com/web3-storage/w3protocol/commit/e19847fef804fed33f709ec8b78640fff21ca01e))
+* DbDelegationsStorage#find throws UnexpectedDelegation w/ { row } if failed bytesToDelegations ([#476](https://github.com/web3-storage/w3protocol/issues/476)) ([a6dafcb](https://github.com/web3-storage/w3protocol/commit/a6dafcb0c44b20fa87bbe81d7a982fb13387084e))
+* DbProvisionsStorage putMany doesnt error on cid col conflict ([#517](https://github.com/web3-storage/w3protocol/issues/517)) ([c1fea63](https://github.com/web3-storage/w3protocol/commit/c1fea63bd2e60326d8587079a8bbc810db8c741f))
+* delegations model tries to handle if row.bytes is Array not Buffer (e.g. cloudflare) ([#478](https://github.com/web3-storage/w3protocol/issues/478)) ([030e7b7](https://github.com/web3-storage/w3protocol/commit/030e7b7fe7b712d0e828ba2a1777d8f4e0a11eb5))
+
+
+### Miscellaneous Chores
+
+* **access-client:** release 11.0.0-rc.0 ([#573](https://github.com/web3-storage/w3protocol/issues/573)) ([be4386d](https://github.com/web3-storage/w3protocol/commit/be4386d66ceea393f289adb3c79273c250542807))
+
 ## [4.11.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.10.0...access-api-v4.11.0) (2023-02-21)
 
 
