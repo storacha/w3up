@@ -6,12 +6,13 @@ import {
   Ref,
   shallowReactive
 } from 'vue'
-import { createAgent, getCurrentSpace, getSpaces } from '@w3ui/keyring-core'
+import { createAgent, getCurrentSpace as getCurrentSpaceInAgent, getSpaces } from '@w3ui/keyring-core'
 import type {
   KeyringContextState,
   KeyringContextActions,
   ServiceConfig
 } from '@w3ui/keyring-core'
+import { authorizeWithSocket } from '@web3-storage/access/agent'
 
 import type { Agent } from '@web3-storage/access'
 import type { Capability, DID, Proof } from '@ucanto/interface'
@@ -30,6 +31,7 @@ interface KeyringProviderInjectionKeyType {
   registerSpace: InjectionKey<KeyringContextActions['registerSpace']>
   cancelRegisterSpace: InjectionKey<KeyringContextActions['cancelRegisterSpace']>
   getProofs: InjectionKey<KeyringContextActions['getProofs']>
+  authorize: InjectionKey<KeyringContextActions['authorize']>
 }
 
 /**
@@ -46,10 +48,11 @@ export const KeyringProviderInjectionKey: KeyringProviderInjectionKeyType = {
   setCurrentSpace: Symbol('w3ui keyring setCurrentSpace'),
   registerSpace: Symbol('w3ui keyring registerSpace'),
   cancelRegisterSpace: Symbol('w3ui keyring cancelRegisterSpace'),
-  getProofs: Symbol('w3ui keyring getProofs')
+  getProofs: Symbol('w3ui keyring getProofs'),
+  authorize: Symbol('w3ui keyring authorize')
 }
 
-export interface KeyringProviderProps extends ServiceConfig {}
+export interface KeyringProviderProps extends ServiceConfig { }
 
 /**
  * Provider for authentication with the service.
@@ -59,7 +62,8 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
     const state = shallowReactive<KeyringContextState>({
       agent: undefined,
       space: undefined,
-      spaces: []
+      spaces: [],
+      account: undefined
     })
     let agent: Agent | undefined
     let registerAbortController: AbortController
@@ -81,11 +85,34 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
       if (agent == null) {
         agent = await createAgent({ servicePrincipal, connection })
         state.agent = agent.issuer
-        state.space = getCurrentSpace(agent)
+        state.space = getCurrentSpaceInAgent(agent)
         state.spaces = getSpaces(agent)
       }
       return agent
     }
+
+    provide(KeyringProviderInjectionKey.authorize,
+      async (email: '{string}@{string}'): Promise<void> => {
+        const agent = await getAgent()
+        const controller = new AbortController()
+        registerAbortController = controller
+
+        try {
+          await authorizeWithSocket(agent, email, { signal: controller.signal })
+          // TODO is there other state that needs to be initialized?
+          state.account = email
+          const newSpaces = getSpaces(agent)
+          state.spaces = newSpaces
+          const newCurrentSpace = getCurrentSpaceInAgent(agent) ?? newSpaces[0]
+          if (newCurrentSpace != null) {
+            state.space = newCurrentSpace
+          }
+        } catch (error) {
+          if (!controller.signal.aborted) {
+            throw error
+          }
+        }
+      })
 
     provide(KeyringProviderInjectionKey.cancelRegisterSpace, (): void => {
       if (registerAbortController != null) {
@@ -99,7 +126,7 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
         const agent = await getAgent()
         const { did } = await agent.createSpace(name)
         await agent.setCurrentSpace(did)
-        state.space = getCurrentSpace(agent)
+        state.space = getCurrentSpaceInAgent(agent)
         return did
       }
     )
@@ -113,7 +140,7 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
 
         try {
           await agent.registerSpace(email, { signal: controller.signal })
-          state.space = getCurrentSpace(agent)
+          state.space = getCurrentSpaceInAgent(agent)
           state.spaces = getSpaces(agent)
         } catch (error) {
           if (!controller.signal.aborted) {
@@ -127,8 +154,8 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
       KeyringProviderInjectionKey.setCurrentSpace,
       async (did: DID): Promise<void> => {
         const agent = await getAgent()
-        await agent.setCurrentSpace(did)
-        state.space = getCurrentSpace(agent)
+        await agent.setCurrentSpace(did as DID<'key'>)
+        state.space = getCurrentSpaceInAgent(agent)
       }
     )
 

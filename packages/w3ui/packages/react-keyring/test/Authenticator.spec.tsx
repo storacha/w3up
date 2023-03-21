@@ -32,15 +32,13 @@ test('CancelButton', async () => {
 })
 
 test('Form', async () => {
-  const createSpace = vi.fn()
-  const registerSpace = vi.fn()
+  const authorize = vi.fn()
 
   const contextValue: KeyringContextValue = [
     keyringContextDefaultValue[0],
     {
       ...keyringContextDefaultValue[1],
-      createSpace,
-      registerSpace
+      authorize
     }
   ]
   render(
@@ -62,6 +60,5 @@ test('Form', async () => {
   const submitButton = screen.getByText('Create Space')
   await user.click(submitButton)
 
-  expect(createSpace).toHaveBeenCalledOnce()
-  expect(registerSpace).toHaveBeenCalledWith(myEmail)
+  expect(authorize).toHaveBeenCalledOnce()
 })

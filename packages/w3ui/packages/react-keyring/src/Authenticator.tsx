@@ -67,7 +67,8 @@ export const AuthenticatorContext = createContext<AuthenticatorContextValue>([
     createDelegation: async () => {
       throw new Error('missing keyring context provider')
     },
-    addSpace: async () => {}
+    addSpace: async () => {},
+    authorize: async () => {}
   }
 ])
 
@@ -100,7 +101,7 @@ AuthenticatorRootOptions<T>
 export const AuthenticatorRoot: Component<AuthenticatorRootProps> =
   createComponent((props) => {
     const [state, actions] = useKeyring()
-    const { createSpace, registerSpace } = actions
+    const { authorize } = actions
     const [email, setEmail] = useState('')
     const [submitted, setSubmitted] = useState(false)
 
@@ -109,15 +110,16 @@ export const AuthenticatorRoot: Component<AuthenticatorRootProps> =
         e.preventDefault()
         setSubmitted(true)
         try {
-          await createSpace()
-          await registerSpace(email)
+          await authorize(email as '{string}@{string}')
         } catch (error: any) {
+          // eslint-disable-next-line no-console
+          console.error('failed to register:', error)
           throw new Error('failed to register', { cause: error })
         } finally {
           setSubmitted(false)
         }
       },
-      [email, setSubmitted, createSpace, registerSpace]
+      [email, setSubmitted, authorize]
     )
 
     const value = useMemo<AuthenticatorContextValue>(

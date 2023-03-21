@@ -7,6 +7,8 @@ import type {
 } from '@w3ui/keyring-core'
 import type { Agent } from '@web3-storage/access'
 import type { Abilities } from '@web3-storage/access/types'
+import { authorizeWithSocket } from '@web3-storage/access/agent'
+
 import type { Delegation, Capability, DID, Principal } from '@ucanto/interface'
 
 import {
@@ -16,7 +18,7 @@ import {
   createComponent
 } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { createAgent, getCurrentSpace, getSpaces } from '@w3ui/keyring-core'
+import { createAgent, getCurrentSpace as getCurrentSpaceInAgent, getSpaces } from '@w3ui/keyring-core'
 
 export { KeyringContextState, KeyringContextActions }
 
@@ -28,7 +30,8 @@ export type KeyringContextValue = [
 const defaultState: KeyringContextState = {
   space: undefined,
   spaces: [],
-  agent: undefined
+  agent: undefined,
+  account: undefined
 }
 
 export const AuthContext = createContext<KeyringContextValue>([
@@ -47,7 +50,8 @@ export const AuthContext = createContext<KeyringContextValue>([
     createDelegation: async () => {
       throw new Error('missing keyring context provider')
     },
-    addSpace: async () => {}
+    addSpace: async () => {},
+    authorize: async () => {}
   }
 ])
 
@@ -62,7 +66,8 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
   const [state, setState] = createStore({
     space: defaultState.space,
     spaces: defaultState.spaces,
-    agent: defaultState.agent
+    agent: defaultState.agent,
+    account: defaultState.account
   })
 
   const [agent, setAgent] = createSignal<Agent>()
@@ -78,10 +83,32 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
       })
       setAgent(a)
       setState('agent', a.issuer)
-      setState('space', getCurrentSpace(a))
+      setState('space', getCurrentSpaceInAgent(a))
       setState('spaces', getSpaces(a))
     }
     return a
+  }
+
+  const authorize = async (email: '{string}@{string}'): Promise<void> => {
+    const agent = await getAgent()
+    const controller = new AbortController()
+    setRegisterAbortController(controller)
+
+    try {
+      await authorizeWithSocket(agent, email, { signal: controller.signal })
+      // TODO is there other state that needs to be initialized?
+      setState('account', email)
+      const newSpaces = getSpaces(agent)
+      setState('spaces', newSpaces)
+      const newCurrentSpace = getCurrentSpaceInAgent(agent) ?? newSpaces[0]
+      if (newCurrentSpace != null) {
+        await setCurrentSpace(newCurrentSpace.did() as DID<'key'>)
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        throw error
+      }
+    }
   }
 
   const cancelRegisterSpace = (): void => {
@@ -95,7 +122,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     const agent = await getAgent()
     const { did } = await agent.createSpace(name)
     await agent.setCurrentSpace(did)
-    setState('space', getCurrentSpace(agent))
+    setState('space', getCurrentSpaceInAgent(agent))
     return did
   }
 
@@ -106,7 +133,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
 
     try {
       await agent.registerSpace(email, { signal: controller.signal })
-      setState('space', getCurrentSpace(agent))
+      setState('space', getCurrentSpaceInAgent(agent))
       setState('spaces', getSpaces(agent))
     } catch (error) {
       if (!controller.signal.aborted) {
@@ -117,8 +144,8 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
 
   const setCurrentSpace = async (did: DID): Promise<void> => {
     const agent = await getAgent()
-    await agent.setCurrentSpace(did)
-    setState('space', getCurrentSpace(agent))
+    await agent.setCurrentSpace(did as DID<'key'>)
+    setState('space', getCurrentSpaceInAgent(agent))
   }
 
   const loadAgent = async (): Promise<void> => {
@@ -177,7 +204,8 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     setCurrentSpace,
     getProofs,
     createDelegation,
-    addSpace
+    addSpace,
+    authorize
   }
 
   return createComponent(AuthContext.Provider, {

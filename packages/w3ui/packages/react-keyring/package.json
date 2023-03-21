@@ -31,14 +31,15 @@
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-keyring",
   "dependencies": {
     "@w3ui/keyring-core": "workspace:^",
-    "ariakit-react-utils": "0.17.0-next.27"
+    "ariakit-react-utils": "0.17.0-next.27",
+    "use-local-storage-state": "^18.2.1"
   },
   "devDependencies": {
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
-    "@ucanto/interface": "^4.2.3",
-    "@ucanto/principal": "^4.2.3",
-    "@web3-storage/access": "^9.4.0"
+    "@ucanto/interface": "^6.2.0",
+    "@ucanto/principal": "^5.1.0",
+    "@web3-storage/access": "11.0.0-rc.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

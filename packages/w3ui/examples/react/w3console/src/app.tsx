@@ -13,7 +13,7 @@ import { Uploader } from './components/Uploader'
 import { UploadsList } from './components/UploadsList'
 import { W3APIProvider } from './components/W3API'
 import { SpaceFinder } from './components/SpaceFinder'
-import { SpaceCreator } from './components/SpaceCreator'
+import { SpaceCreatorForm, SpaceCreator } from './components/SpaceCreator'
 
 function SpaceRegistrar (): JSX.Element {
   const [, { registerSpace }] = useKeyring()
@@ -140,7 +140,12 @@ function SpaceSection (props: SpaceSectionProps): JSX.Element {
             </div>
           </>
         )}
-        {!registered && !share && <SpaceRegistrar />}
+        {(space && !registered) && !share && <SpaceRegistrar />}
+        {!space && (
+          <div className="text-center">
+            <h1 className="text-xl">Select a space from the dropdown on the left to get started.</h1>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -187,7 +192,33 @@ export function Logo (): JSX.Element {
   )
 }
 
-export function Layout (): JsxElement {
+export function SpaceEnsurer ({
+  children
+}: {
+  children: JSX.Element | JSX.Element[]
+}): JSX.Element {
+  const [{ spaces, account }] = useKeyring()
+  if (spaces && spaces.length > 0) {
+    return <>{children}</>
+  }
+  return (
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div className="text-gray-200 text-center">
+        <h1 className="my-4 text-lg">Welcome {account}!</h1>
+        <p>
+          To get started with w3up you'll need to create a space.
+        </p>
+        <p>
+          Give it a name and hit create!
+        </p>
+        <SpaceCreatorForm className='mt-4' />
+      </div>
+    </div>
+  )
+}
+
+
+export function Layout (): JSX.Element {
   const [share, setShare] = useState(false)
   const [{ space, spaces }, { setCurrentSpace }] = useKeyring()
 
@@ -224,7 +255,9 @@ export function App (): JSX.Element {
   return (
     <W3APIProvider uploadsListPageSize={20}>
       <Authenticator className='h-full'>
-        <Layout />
+        <SpaceEnsurer>
+          <Layout />
+        </SpaceEnsurer>
       </Authenticator>
     </W3APIProvider>
   )

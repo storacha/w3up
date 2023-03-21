@@ -1,8 +1,9 @@
 import React, { createContext, useState, useContext } from 'react'
+import useLocalStorageState from 'use-local-storage-state'
 import {
   createAgent,
   Space,
-  getCurrentSpace,
+  getCurrentSpace as getCurrentSpaceInAgent,
   getSpaces,
   CreateDelegationOptions
 } from '@w3ui/keyring-core'
@@ -13,6 +14,7 @@ import type {
 } from '@w3ui/keyring-core'
 import type { Agent } from '@web3-storage/access'
 import type { Abilities } from '@web3-storage/access/types'
+import { authorizeWithSocket } from '@web3-storage/access/agent'
 import type {
   Capability,
   Delegation,
@@ -33,12 +35,14 @@ export const keyringContextDefaultValue: KeyringContextValue = [
   {
     space: undefined,
     spaces: [],
-    agent: undefined
+    agent: undefined,
+    account: undefined
   },
   {
     loadAgent: async () => {},
     unloadAgent: async () => {},
     resetAgent: async () => {},
+    authorize: async () => {},
     createSpace: async () => {
       throw new Error('missing keyring context provider')
     },
@@ -70,6 +74,7 @@ export function KeyringProvider ({
   connection
 }: KeyringProviderProps): JSX.Element {
   const [agent, setAgent] = useState<Agent>()
+  const [account, setAccount] = useLocalStorageState<string>('w3ui-account-email')
   const [space, setSpace] = useState<Space>()
   const [spaces, setSpaces] = useState<Space[]>([])
   const [issuer, setIssuer] = useState<Signer>()
@@ -81,11 +86,33 @@ export function KeyringProvider ({
       const a = await createAgent({ servicePrincipal, connection })
       setAgent(a)
       setIssuer(a.issuer)
-      setSpace(getCurrentSpace(a))
+      setSpace(getCurrentSpaceInAgent(a))
       setSpaces(getSpaces(a))
       return a
     }
     return agent
+  }
+
+  const authorize = async (email: '{string}@{string}'): Promise<void> => {
+    const agent = await getAgent()
+    const controller = new AbortController()
+    setRegisterAbortController(controller)
+
+    try {
+      await authorizeWithSocket(agent, email, { signal: controller.signal })
+      // TODO is there other state that needs to be initialized?
+      setAccount(email)
+      const newSpaces = getSpaces(agent)
+      setSpaces(newSpaces)
+      const newCurrentSpace = getCurrentSpaceInAgent(agent) ?? newSpaces[0]
+      if (newCurrentSpace != null) {
+        await setCurrentSpace(newCurrentSpace.did() as DID<'key'>)
+      }
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        throw error
+      }
+    }
   }
 
   const cancelRegisterSpace = (): void => {
@@ -98,7 +125,7 @@ export function KeyringProvider ({
     const agent = await getAgent()
     const { did } = await agent.createSpace(name)
     await agent.setCurrentSpace(did)
-    setSpace(getCurrentSpace(agent))
+    setSpace(getCurrentSpaceInAgent(agent))
     return did
   }
 
@@ -108,8 +135,11 @@ export function KeyringProvider ({
     setRegisterAbortController(controller)
 
     try {
-      await agent.registerSpace(email, { signal: controller.signal })
-      setSpace(getCurrentSpace(agent))
+      await agent.registerSpace(email, {
+        signal: controller.signal,
+        provider: agent.connection.id.did() as DID<'web'>
+      })
+      setSpace(getCurrentSpaceInAgent(agent))
       setSpaces(getSpaces(agent))
     } catch (error) {
       if (!controller.signal.aborted) {
@@ -120,8 +150,8 @@ export function KeyringProvider ({
 
   const setCurrentSpace = async (did: DID): Promise<void> => {
     const agent = await getAgent()
-    await agent.setCurrentSpace(did)
-    setSpace(getCurrentSpace(agent))
+    await agent.setCurrentSpace(did as DID<'key'>)
+    setSpace(getCurrentSpaceInAgent(agent))
   }
 
   const loadAgent = async (): Promise<void> => {
@@ -173,9 +203,11 @@ export function KeyringProvider ({
   const state = {
     space,
     spaces,
-    agent: issuer
+    agent: issuer,
+    account
   }
   const actions = {
+    authorize,
     loadAgent,
     unloadAgent,
     resetAgent,

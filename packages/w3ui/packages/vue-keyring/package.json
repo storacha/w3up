@@ -33,9 +33,9 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@ucanto/interface": "^4.2.3",
-    "@ucanto/principal": "^4.2.3",
-    "@web3-storage/access": "^9.4.0"
+    "@ucanto/interface": "^6.2.0",
+    "@ucanto/principal": "^5.1.0",
+    "@web3-storage/access": "11.0.0-rc.0"
   },
   "eslintConfig": {
     "extends": [

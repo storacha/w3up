@@ -33,7 +33,7 @@ export function SpaceFinder ({
       <Combobox
         value={selected}
         onChange={setSelected}
-        by={(a, b) => a.sameAs(b)}
+        by={(a, b) => a?.sameAs(b)}
       >
         <div className='relative mt-1'>
           <div className='relative w-full overflow-hidden rounded-lg bg-white text-left shadow-md'>
@@ -57,7 +57,7 @@ export function SpaceFinder ({
             afterLeave={() => { setQuery('') }}
           >
             <Combobox.Options
-              className='absolute mt-1 max-h-44 w-full bg-white rounded-md pt-1 shadow-lg'
+              className='absolute mt-1 max-h-96 w-full bg-white rounded-md pt-1 shadow-lg overflow-scroll'
               static
             >
               {filtered.length === 0 && query !== ''

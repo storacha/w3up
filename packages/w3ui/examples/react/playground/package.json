@@ -32,7 +32,7 @@
     "@storybook/testing-library": "^0.0.13",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
-    "@ucanto/interface": "^4.2.3",
+    "@ucanto/interface": "^6.2.0",
     "@vitejs/plugin-react": "^3.0.0",
     "@w3ui/uploads-list-core": "workspace:^",
     "multiformats": "^11.0.1",

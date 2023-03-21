@@ -87,6 +87,10 @@ export interface KeyringContextState {
    * The current user agent (this device).
    */
   agent?: Signer
+  /**
+   * The account this device is authorized to act as. Currently just an email address.
+   */
+  account?: string
 }
 
 export interface KeyringContextActions {
@@ -104,6 +108,10 @@ export interface KeyringContextActions {
    * storage. Note: this removes all data and is unrecoverable.
    */
   resetAgent: () => Promise<void>
+  /**
+   * Authorize this device to act as the account linked to email.
+   */
+  authorize: (email: '{string}@{string}') => Promise<void>
   /**
    * Create a new space with the passed name and set it as the current space.
    */

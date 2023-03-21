@@ -18,11 +18,11 @@ importers:
       '@types/jest': ^29.4.0
       '@types/jsdom': ^20.0.1
       '@types/react': ^18.0.26
-      '@ucanto/client': ^4.2.3
-      '@ucanto/server': ^4.2.3
-      '@ucanto/transport': ^4.2.3
+      '@ucanto/client': ^5.1.0
+      '@ucanto/server': ^6.1.0
+      '@ucanto/transport': ^5.1.1
       '@web-std/file': ^3.0.2
-      '@web3-storage/capabilities': ^2.2.0
+      '@web3-storage/capabilities': ^4.0.0
       esm: ^3.2.25
       fake-indexeddb: ^4.0.1
       hd-scripts: ^4.1.0
@@ -55,11 +55,11 @@ importers:
       '@types/jest': 29.4.0
       '@types/jsdom': 20.0.1
       '@types/react': 18.0.26
-      '@ucanto/client': 4.2.3
-      '@ucanto/server': 4.2.3
-      '@ucanto/transport': 4.2.3
+      '@ucanto/client': 5.1.0
+      '@ucanto/server': 6.1.0
+      '@ucanto/transport': 5.1.1
       '@web-std/file': 3.0.2
-      '@web3-storage/capabilities': 2.2.0
+      '@web3-storage/capabilities': 4.0.0
       esm: 3.2.25
       fake-indexeddb: 4.0.1
       hd-scripts: 4.1.0
@@ -132,7 +132,7 @@ importers:
       '@storybook/testing-library': ^0.0.13
       '@types/react': ^18.0.26
       '@types/react-dom': ^18.0.9
-      '@ucanto/interface': ^4.2.3
+      '@ucanto/interface': ^6.2.0
       '@vitejs/plugin-react': ^3.0.0
       '@w3ui/keyring-core': workspace:^2.0.1
       '@w3ui/react': workspace:^
@@ -167,7 +167,7 @@ importers:
       '@storybook/testing-library': 0.0.13_biqbaboplfbrettd7655fr4n2y
       '@types/react': 18.0.26
       '@types/react-dom': 18.0.9
-      '@ucanto/interface': 4.2.3
+      '@ucanto/interface': 6.2.0
       '@vitejs/plugin-react': 3.0.0_vite@4.0.3
       '@w3ui/uploads-list-core': link:../../../packages/uploads-list-core
       multiformats: 11.0.1
@@ -240,8 +240,8 @@ importers:
       '@ipld/dag-ucan': ^3.2.0
       '@preact/preset-vite': ^2.4.0
       '@types/blueimp-md5': ^2.18.0
-      '@ucanto/core': ^4.1.0
-      '@ucanto/interface': ^4.1.0
+      '@ucanto/core': ^5.2.0
+      '@ucanto/interface': ^6.2.0
       '@w3ui/keyring-core': workspace:^
       '@w3ui/react-keyring': workspace:^
       '@w3ui/react-uploader': workspace:^
@@ -269,8 +269,8 @@ importers:
     devDependencies:
       '@preact/preset-vite': 2.5.0_preact@10.11.3+vite@4.0.3
       '@types/blueimp-md5': 2.18.0
-      '@ucanto/core': 4.2.3
-      '@ucanto/interface': 4.2.3
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
       autoprefixer: 10.4.13_postcss@8.4.21
       postcss: 8.4.21
       tailwindcss: 3.2.4_postcss@8.4.21
@@ -462,13 +462,13 @@ importers:
 
   packages/keyring-core:
     specifiers:
-      '@ucanto/interface': ^4.2.3
-      '@ucanto/principal': ^4.2.3
-      '@web3-storage/access': ^9.4.0
+      '@ucanto/interface': ^6.2.0
+      '@ucanto/principal': ^5.1.0
+      '@web3-storage/access': 11.0.0-rc.0
     dependencies:
-      '@ucanto/interface': 4.2.3
-      '@ucanto/principal': 4.2.3
-      '@web3-storage/access': 9.4.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
+      '@web3-storage/access': 11.0.0-rc.0
 
   packages/react:
     specifiers:
@@ -490,20 +490,22 @@ importers:
     specifiers:
       '@testing-library/react': ^13.4.0
       '@testing-library/user-event': ^14.4.3
-      '@ucanto/interface': ^4.2.3
-      '@ucanto/principal': ^4.2.3
+      '@ucanto/interface': ^6.2.0
+      '@ucanto/principal': ^5.1.0
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^9.4.0
+      '@web3-storage/access': 11.0.0-rc.0
       ariakit-react-utils: 0.17.0-next.27
+      use-local-storage-state: ^18.2.1
     dependencies:
       '@w3ui/keyring-core': link:../keyring-core
       ariakit-react-utils: 0.17.0-next.27
+      use-local-storage-state: 18.2.1
     devDependencies:
       '@testing-library/react': 13.4.0
       '@testing-library/user-event': 14.4.3
-      '@ucanto/interface': 4.2.3
-      '@ucanto/principal': 4.2.3
-      '@web3-storage/access': 9.4.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
+      '@web3-storage/access': 11.0.0-rc.0
 
   packages/react-uploader:
     specifiers:
@@ -511,13 +513,13 @@ importers:
       '@testing-library/user-event': ^14.4.3
       '@w3ui/react-keyring': workspace:^
       '@w3ui/uploader-core': workspace:^
-      '@web3-storage/capabilities': ^2.2.0
+      '@web3-storage/capabilities': ^4.0.0
       ariakit-react-utils: 0.17.0-next.27
       multiformats: ^11.0.1
     dependencies:
       '@w3ui/react-keyring': link:../react-keyring
       '@w3ui/uploader-core': link:../uploader-core
-      '@web3-storage/capabilities': 2.2.0
+      '@web3-storage/capabilities': 4.0.0
       ariakit-react-utils: 0.17.0-next.27
       multiformats: 11.0.1
     devDependencies:
@@ -530,12 +532,12 @@ importers:
       '@testing-library/user-event': ^14.4.3
       '@w3ui/react-keyring': workspace:^
       '@w3ui/uploads-list-core': workspace:^
-      '@web3-storage/capabilities': ^2.3.0
+      '@web3-storage/capabilities': ^4.0.0
       ariakit-react-utils: 0.17.0-next.27
     dependencies:
       '@w3ui/react-keyring': link:../react-keyring
       '@w3ui/uploads-list-core': link:../uploads-list-core
-      '@web3-storage/capabilities': 2.3.0
+      '@web3-storage/capabilities': 4.0.0
       ariakit-react-utils: 0.17.0-next.27
     devDependencies:
       '@testing-library/react': 13.4.0
@@ -543,58 +545,58 @@ importers:
 
   packages/solid-keyring:
     specifiers:
-      '@ucanto/interface': ^4.2.3
-      '@ucanto/principal': ^4.2.3
+      '@ucanto/interface': ^6.2.0
+      '@ucanto/principal': ^5.1.0
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^9.4.0
+      '@web3-storage/access': 11.0.0-rc.0
     dependencies:
-      '@ucanto/interface': 4.2.3
-      '@ucanto/principal': 4.2.3
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
       '@w3ui/keyring-core': link:../keyring-core
-      '@web3-storage/access': 9.4.0
+      '@web3-storage/access': 11.0.0-rc.0
 
   packages/solid-uploader:
     specifiers:
       '@w3ui/solid-keyring': workspace:^
       '@w3ui/uploader-core': workspace:^
-      '@web3-storage/capabilities': ^2.2.0
+      '@web3-storage/capabilities': ^4.0.0
       multiformats: ^11.0.1
     dependencies:
       '@w3ui/solid-keyring': link:../solid-keyring
       '@w3ui/uploader-core': link:../uploader-core
-      '@web3-storage/capabilities': 2.2.0
+      '@web3-storage/capabilities': 4.0.0
       multiformats: 11.0.1
 
   packages/solid-uploads-list:
     specifiers:
-      '@ucanto/interface': ^4.2.3
+      '@ucanto/interface': ^6.2.0
       '@w3ui/solid-keyring': workspace:^
       '@w3ui/uploads-list-core': workspace:^
-      '@web3-storage/capabilities': ^2.2.0
+      '@web3-storage/capabilities': ^4.0.0
     dependencies:
       '@w3ui/solid-keyring': link:../solid-keyring
       '@w3ui/uploads-list-core': link:../uploads-list-core
-      '@web3-storage/capabilities': 2.2.0
+      '@web3-storage/capabilities': 4.0.0
     devDependencies:
-      '@ucanto/interface': 4.2.3
+      '@ucanto/interface': 6.2.0
 
   packages/uploader-core:
     specifiers:
-      '@ucanto/interface': ^4.2.3
-      '@web3-storage/upload-client': ^6.0.0
+      '@ucanto/interface': ^6.2.0
+      '@web3-storage/upload-client': ^7.0.0
       multiformats: ^11.0.1
     dependencies:
-      '@ucanto/interface': 4.2.3
-      '@web3-storage/upload-client': 6.0.0
+      '@ucanto/interface': 6.2.0
+      '@web3-storage/upload-client': 7.0.0
       multiformats: 11.0.1
 
   packages/uploads-list-core:
     specifiers:
-      '@ucanto/interface': ^4.2.3
-      '@web3-storage/upload-client': ^6.0.0
+      '@ucanto/interface': ^6.2.0
+      '@web3-storage/upload-client': ^7.0.0
     dependencies:
-      '@ucanto/interface': 4.2.3
-      '@web3-storage/upload-client': 6.0.0
+      '@ucanto/interface': 6.2.0
+      '@web3-storage/upload-client': 7.0.0
 
   packages/vitest-environment-w3ui:
     specifiers:
@@ -604,38 +606,38 @@ importers:
 
   packages/vue-keyring:
     specifiers:
-      '@ucanto/interface': ^4.2.3
-      '@ucanto/principal': ^4.2.3
+      '@ucanto/interface': ^6.2.0
+      '@ucanto/principal': ^5.1.0
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^9.4.0
+      '@web3-storage/access': 11.0.0-rc.0
     dependencies:
       '@w3ui/keyring-core': link:../keyring-core
     devDependencies:
-      '@ucanto/interface': 4.2.3
-      '@ucanto/principal': 4.2.3
-      '@web3-storage/access': 9.4.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
+      '@web3-storage/access': 11.0.0-rc.0
 
   packages/vue-uploader:
     specifiers:
       '@w3ui/uploader-core': workspace:^
       '@w3ui/vue-keyring': workspace:^
-      '@web3-storage/capabilities': ^2.2.0
+      '@web3-storage/capabilities': ^4.0.0
       multiformats: ^11.0.1
     dependencies:
       '@w3ui/uploader-core': link:../uploader-core
       '@w3ui/vue-keyring': link:../vue-keyring
-      '@web3-storage/capabilities': 2.2.0
+      '@web3-storage/capabilities': 4.0.0
       multiformats: 11.0.1
 
   packages/vue-uploads-list:
     specifiers:
       '@w3ui/uploads-list-core': workspace:^
       '@w3ui/vue-keyring': workspace:^
-      '@web3-storage/capabilities': ^2.2.0
+      '@web3-storage/capabilities': ^4.0.0
     dependencies:
       '@w3ui/uploads-list-core': link:../uploads-list-core
       '@w3ui/vue-keyring': link:../vue-keyring
-      '@web3-storage/capabilities': 2.2.0
+      '@web3-storage/capabilities': 4.0.0
 
 packages:
 
@@ -3315,32 +3317,34 @@ packages:
       multiformats: 11.0.1
       varint: 6.0.0
 
-  /@ipld/dag-cbor/8.0.1:
-    resolution: {integrity: sha512-mHRuzgGXNk0Y5W7nNQdN37qJiig1Kdgf92icBVFRUNtBc9Ezl5DIdWfiGWBucHBrhqPBncxoH3As9cHPIRozxA==}
+  /@ipld/car/5.1.1:
+    resolution: {integrity: sha512-HoFTUqUJL9cPGhC9qRmHCvamfIsj1JllQSQ/Xu9/KN/VNJp8To9Ms4qiZPEMOwcrNFclfYqrahjGYbf4KL/d9A==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      cborg: 1.10.0
-      multiformats: 11.0.1
+      '@ipld/dag-cbor': 9.0.0
+      cborg: 1.10.1
+      multiformats: 11.0.2
+      varint: 6.0.0
 
   /@ipld/dag-cbor/9.0.0:
     resolution: {integrity: sha512-zdsiSiYDEOIDW7mmWOYWC9gukjXO+F8wqxz/LfN7iSwTfIyipC8+UQrCbPupFMRb/33XQTZk8yl3My8vUQBRoA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      cborg: 1.10.0
-      multiformats: 11.0.1
+      cborg: 1.10.1
+      multiformats: 11.0.2
 
   /@ipld/dag-json/10.0.0:
     resolution: {integrity: sha512-u/PfR2sT9AiZZDUl1VNspx3OP13zuvBXAd3sKiURlSOoWfoLigxTCs+sXeaXA0hoXU7u1M2DECMt4LCUHuApSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      cborg: 1.10.0
+      cborg: 1.10.1
       multiformats: 11.0.1
 
-  /@ipld/dag-pb/4.0.0:
-    resolution: {integrity: sha512-8FB/qTlNowCiszL9Sek8xH6xIQxIioXuzZ5B1jVPknQMVkd08nZUHzDjrn1Y6MqJ5PrXWLrBwNghGMWPPpvNVw==}
+  /@ipld/dag-pb/4.0.2:
+    resolution: {integrity: sha512-me9oEPb7UNPWSplUFCXyxnQE3/WlsjOljqO2RZN44XOmGkBY0/WVklbXorVE1eiv0Rt3p6dBS2x36Rq8A0Am8A==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      multiformats: 11.0.1
+      multiformats: 11.0.2
     dev: false
 
   /@ipld/dag-ucan/3.2.0:
@@ -3350,14 +3354,16 @@ packages:
       '@ipld/dag-json': 10.0.0
       multiformats: 11.0.1
 
-  /@ipld/unixfs/2.0.1:
-    resolution: {integrity: sha512-W3LD67tLrIGpCVYFN6N/x6bL3o03zmsfd7jPAD1aXfGXaQWWa95qXPwc6PMVRTttxha/bHMKQiG2ZeFCqp83Ew==}
+  /@ipld/unixfs/2.1.1:
+    resolution: {integrity: sha512-g3gr/3XvfQs4x2VFjlICae09ul5fbWCKRInN6Vgeot2+GH0h/krr3PqZCIo4dy4Ou2mQOsIddxUvG8UZ4p9SbQ==}
     dependencies:
-      '@ipld/dag-pb': 4.0.0
+      '@ipld/dag-pb': 4.0.2
+      '@multiformats/murmur3': 2.1.3
+      '@perma/map': 1.0.2
       '@web-std/stream': 1.0.1
       actor: 2.3.1
-      multiformats: 11.0.1
-      protobufjs: 7.2.0
+      multiformats: 11.0.2
+      protobufjs: 7.2.2
       rabin-rs: 2.1.0
     dev: false
 
@@ -3515,8 +3521,16 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@noble/ed25519/1.7.1:
-    resolution: {integrity: sha512-Rk4SkJFaXZiznFyC/t77Q0NKS4FL7TLJJsVG2V2oiEq3kJVeTdxysEe/yRWSpnWMe808XRDJ+VFh5pt/FN5plw==}
+  /@multiformats/murmur3/2.1.3:
+    resolution: {integrity: sha512-YvLK1IrLnRckPsvXhOkZjaIGNonsEdD1dL3NPSaLilV/WjVYeBgnNZXTUsaPzFXGrIFM7motx+yCmmqzXO6gtQ==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      multiformats: 11.0.2
+      murmurhash3js-revisited: 3.0.0
+    dev: false
+
+  /@noble/ed25519/1.7.3:
+    resolution: {integrity: sha512-iR8GBkDt0Q3GyaVcIu7mSsVIqnFbkbRzGLWlvhwunacoLwt4J3swfKhfaM6rN6WY+TBGoYT1GtT1mIh2/jGbRQ==}
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -3538,6 +3552,12 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.14.0
     dev: true
+
+  /@perma/map/1.0.2:
+    resolution: {integrity: sha512-hujwGOY6yTYnpf5YAtpD5MJAI1kcsVPqyN0lxG8Sampf/InO3jmX/MlJCHCGFPpPqB5JyO5WNnL+tUs1Umqe0A==}
+    dependencies:
+      murmurhash3js-revisited: 3.0.0
+    dev: false
 
   /@phenomnomnominal/tsquery/4.2.0_typescript@4.9.4:
     resolution: {integrity: sha512-hR2U3uVcrrdkuG30ItQ+uFDs4ncZAybxWG0OjTE8ptPzVoU7GVeXpy+vMU8zX9EbmjGeITPw/su5HjYQyAH8bA==}
@@ -3882,7 +3902,7 @@ packages:
       '@storybook/csf-plugin': 7.0.0-beta.29
       '@storybook/csf-tools': 7.0.0-beta.29
       '@storybook/global': 5.0.0
-      '@storybook/mdx2-csf': 1.0.0-next.5
+      '@storybook/mdx2-csf': 1.0.0-next.6
       '@storybook/node-logger': 7.0.0-beta.29
       '@storybook/postinstall': 7.0.0-beta.29
       '@storybook/preview-api': 7.0.0-beta.29
@@ -4211,7 +4231,7 @@ packages:
       '@storybook/client-logger': 7.0.0-beta.29
       '@storybook/core-common': 7.0.0-beta.29
       '@storybook/csf-plugin': 7.0.0-beta.29
-      '@storybook/mdx2-csf': 1.0.0-next.5
+      '@storybook/mdx2-csf': 1.0.0-next.6
       '@storybook/node-logger': 7.0.0-beta.29
       '@storybook/preview': 7.0.0-beta.29
       '@storybook/preview-api': 7.0.0-beta.29
@@ -4585,8 +4605,8 @@ packages:
     resolution: {integrity: sha512-Ha6GJXxEjqP9Z03iV7ehBKgsij0enB7GRcFstJOHjnV8WEDKfF8uPg3SHh2yfueww7P8SWS3Xc3Rzud80fJctQ==}
     dev: true
 
-  /@storybook/mdx2-csf/1.0.0-next.5:
-    resolution: {integrity: sha512-02w0sgGZaK1agT050yCVhJ+o4rLHANWvLKWjQjeAsYbjneLC5ITt+3GDB4jRiWwJboZ8dHW1fGSK1Vg5fA34aQ==}
+  /@storybook/mdx2-csf/1.0.0-next.6:
+    resolution: {integrity: sha512-m6plojocU/rmrqWd26yvm8D+oHZPZ6PtSSFmZIgpNDEPVmc8s4fBD6LXOAB5MiPI5f8KLUr2HVhOMZ97o5pDTw==}
     dev: true
 
   /@storybook/node-logger/7.0.0-beta.29:
@@ -5069,6 +5089,11 @@ packages:
 
   /@types/node/18.11.18:
     resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
+    dev: true
+
+  /@types/node/18.15.5:
+    resolution: {integrity: sha512-Ark2WDjjZO7GmvsyFFf81MXuGTA/d6oP38anyxWOL6EREyBKAxKoFHwBhaZxCfLRLpO8JgVXwqOwSwa7jRcjew==}
+    dev: false
 
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -5307,61 +5332,61 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@ucanto/client/4.2.3:
-    resolution: {integrity: sha512-vIa0drEAeolQpSePpHtsW1bx8lzDdxtXi2fEdQ4f34xbI2VSOQuAgUURJTtRVmRXa5MweQoEGI9CHPKL4CMyFQ==}
+  /@ucanto/client/5.1.0:
+    resolution: {integrity: sha512-Rr2q3ARDmiaaVnvNkPNsIhS+1ORyCqQhGRSqf8ugfJVmvbvjLFA6EYxjknUdg5tqt0aVnYTNuZ/GwIxaqMzliA==}
     dependencies:
-      '@ucanto/interface': 4.2.3
-      multiformats: 11.0.1
+      '@ucanto/interface': 6.2.0
+      multiformats: 11.0.2
 
-  /@ucanto/core/4.2.3:
-    resolution: {integrity: sha512-udvp7IMRCE3XFhPYiKISt52r8QjbrqG7d1papdtWwF6RAzTbIWhgXSwAjEbroYCr/gQst7U8aYsgr4xvG2miUQ==}
+  /@ucanto/core/5.2.0:
+    resolution: {integrity: sha512-Eblo2LfJyojRKmBk5/w25u1hhSCs6K3zUH/zNknwTrJg7CJYxw0hgsGcXrlkQf1TnSRzJVFEduK1ZzYCV55/Uw==}
     dependencies:
-      '@ipld/car': 5.1.0
+      '@ipld/car': 5.1.1
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.2.0
-      '@ucanto/interface': 4.2.3
-      multiformats: 11.0.1
+      '@ucanto/interface': 6.2.0
+      multiformats: 11.0.2
 
-  /@ucanto/interface/4.2.3:
-    resolution: {integrity: sha512-IoccqMc2/vqaPT6U061ylC138mQ3pLp6coqjXTDmlL9OHmskLcEeQh5Mxe0AYHWMhO1ZuB0LRIysBXk7xoK25Q==}
+  /@ucanto/interface/6.2.0:
+    resolution: {integrity: sha512-b37bjTxNWQE+O4f18fvb7/woe41Dvb4AfdbevPLmaJj1fZogssH9fVgWlZdVg8ZsJQhMxRyHDuH40QAvuKRR1w==}
     dependencies:
       '@ipld/dag-ucan': 3.2.0
-      multiformats: 11.0.1
+      multiformats: 11.0.2
 
-  /@ucanto/principal/4.2.3:
-    resolution: {integrity: sha512-S02cKaMcIQhxk9uJfUCUb+f98zEEFsC+5BZC6aBoYVCEpXwVZD6+hc9xI0yIQl8zJyQVA3nnUUpLfLynsSox2A==}
+  /@ucanto/principal/5.1.0:
+    resolution: {integrity: sha512-niZzojYPYAgdszTmra82wGbl5YGHugUblMTPrEjuz3RFjXDCxW50IJFwzus3Z6k6Q6zIbXPU+yVxTbzJWg8/JA==}
     dependencies:
       '@ipld/dag-ucan': 3.2.0
-      '@noble/ed25519': 1.7.1
-      '@ucanto/interface': 4.2.3
-      multiformats: 11.0.1
+      '@noble/ed25519': 1.7.3
+      '@ucanto/interface': 6.2.0
+      multiformats: 11.0.2
       one-webcrypto: 1.0.3
 
-  /@ucanto/server/4.2.3:
-    resolution: {integrity: sha512-lmDC0d9mVGYfiqwzpiTG6CFZpGVw1GnFx9EOtozKPa+v2nzwqDAkwYAQwNrJ2nbJWQQeFi7/Jiaec9EmdPEpsg==}
+  /@ucanto/server/6.1.0:
+    resolution: {integrity: sha512-IRvYbv1iEAjgm8Rc4hqUPm2NGSU+R+X+wyHp3hUI/YdGji+bajghV4gU9klkDkgm0aqVuI1fDFyODWZb5UROtw==}
     dependencies:
-      '@ucanto/core': 4.2.3
-      '@ucanto/interface': 4.2.3
-      '@ucanto/validator': 4.2.3
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/validator': 6.1.0
     dev: true
 
-  /@ucanto/transport/4.2.3:
-    resolution: {integrity: sha512-ZtHB5ybSB/1dBLhzJqjxGDEE+TTTNzc9HMrVA1AP5KHvaHPu2UtAmS2IMr+HrhSjcwWwdavK0qMQbXSfLWM+kg==}
+  /@ucanto/transport/5.1.1:
+    resolution: {integrity: sha512-5g2Xiofqalvmaw/UPRTdxV2be+KE3TMbFhG4ZNNPkDIBpdBduVENcLQPJ9ksD29Bc2ArIefXALxGzyGLgUPCBg==}
     dependencies:
-      '@ipld/car': 5.1.0
+      '@ipld/car': 5.1.1
       '@ipld/dag-cbor': 9.0.0
-      '@ucanto/core': 4.2.3
-      '@ucanto/interface': 4.2.3
-      multiformats: 11.0.1
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      multiformats: 11.0.2
 
-  /@ucanto/validator/4.2.3:
-    resolution: {integrity: sha512-7lA9PK+c0Hu857eHuZIVX3ZBooqvOT25/CXUxGjqs5YFCY7dUhrNCxJYnWsPZnEdriq6x6VSj8pZPwN8I7CyQw==}
+  /@ucanto/validator/6.1.0:
+    resolution: {integrity: sha512-vZ40paByLgosllG+YfuI4eD7m3KyYG1ebEa9jZEkLDYjWh7WWBtYvBn40pziIiLfBCzum2zU1uP1SMOf63EqqQ==}
     dependencies:
-      '@ipld/car': 5.1.0
-      '@ipld/dag-cbor': 8.0.1
-      '@ucanto/core': 4.2.3
-      '@ucanto/interface': 4.2.3
-      multiformats: 11.0.1
+      '@ipld/car': 5.1.1
+      '@ipld/dag-cbor': 9.0.0
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      multiformats: 11.0.2
 
   /@vitejs/plugin-react/3.0.0_vite@4.0.3:
     resolution: {integrity: sha512-1mvyPc0xYW5G8CHQvJIJXLoMjl5Ct3q2g5Y2s6Ccfgwm45y48LBvsla7az+GkkAtYikWQ4Lxqcsq5RHLcZgtNQ==}
@@ -5488,26 +5513,26 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
-  /@web3-storage/access/9.4.0:
-    resolution: {integrity: sha512-GwrSHhOigNI009DRmRtJjqQ3JS/a+rlU7wXM7k5+FwMR9Kqr/Ayid+Ida1tN7NPEIKBqfe9wfXbVMowi86YNYw==}
+  /@web3-storage/access/11.0.0-rc.0:
+    resolution: {integrity: sha512-y3hwtlj8QhHHmK6XvzWRusm8E83jh3GkHon80wTCE0iB/BFlTNkOBeb+C5FhImC1vSFseBBG+FxLZffwfsnrYA==}
     hasBin: true
     dependencies:
       '@ipld/car': 5.1.0
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.2.0
-      '@ucanto/client': 4.2.3
-      '@ucanto/core': 4.2.3
-      '@ucanto/interface': 4.2.3
-      '@ucanto/principal': 4.2.3
-      '@ucanto/transport': 4.2.3
-      '@ucanto/validator': 4.2.3
-      '@web3-storage/capabilities': 2.3.0
+      '@ucanto/client': 5.1.0
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
+      '@ucanto/transport': 5.1.1
+      '@ucanto/validator': 6.1.0
+      '@web3-storage/capabilities': 4.0.0
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
       inquirer: 9.1.4
       isomorphic-ws: 5.0.0_ws@8.12.0
       kysely: 0.23.4
-      multiformats: 11.0.1
+      multiformats: 11.0.2
       one-webcrypto: 1.0.3
       ora: 6.1.2
       p-defer: 4.0.0
@@ -5521,36 +5546,37 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@web3-storage/capabilities/2.2.0:
-    resolution: {integrity: sha512-TCGcpMSVQJa0CI2GzBxJSEZDdbilEe3dtXdCzwi9NWmulsnPPj3KjSil/qHW04pYtnfql4/9n4a+pxjx6iGNCA==}
+  /@web3-storage/capabilities/3.2.0:
+    resolution: {integrity: sha512-WtQNLpqfsq1v62+OJFaXUNXJsk+x8WWJZnok4tEd2p57uv1d9TeNnnWhzOo5qzGmoh1pqjlLoPjYrq78Ib9o7A==}
     dependencies:
-      '@ucanto/core': 4.2.3
-      '@ucanto/interface': 4.2.3
-      '@ucanto/principal': 4.2.3
-      '@ucanto/transport': 4.2.3
-      '@ucanto/validator': 4.2.3
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
+      '@ucanto/transport': 5.1.1
+      '@ucanto/validator': 6.1.0
+    dev: false
 
-  /@web3-storage/capabilities/2.3.0:
-    resolution: {integrity: sha512-+vg61eqK1eqQ+QD1hvChDDx6CXLGFnUsEA+W+g9yagCpq+H9yAqROncEEt+oluIGvAqNbFMrUb+bWRWxk0Tmuw==}
+  /@web3-storage/capabilities/4.0.0:
+    resolution: {integrity: sha512-O+WmApepwaNFNsOj8f66HrIgDl/VGsGLn4iJMyqZdiTxVupNXfFsSVI2iBGEaJlNI+RDzISejXnGtScy1abxGQ==}
     dependencies:
-      '@ucanto/core': 4.2.3
-      '@ucanto/interface': 4.2.3
-      '@ucanto/principal': 4.2.3
-      '@ucanto/transport': 4.2.3
-      '@ucanto/validator': 4.2.3
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
+      '@ucanto/transport': 5.1.1
+      '@ucanto/validator': 6.1.0
 
-  /@web3-storage/upload-client/6.0.0:
-    resolution: {integrity: sha512-oJ1/cLBSap25j2ZfC1RNOW9IisOnWMX2ay7sAWY9KPDiWe/coBXDOQB3vXxtPWSIBID6+SOSGaHh3+kXv8b4yg==}
+  /@web3-storage/upload-client/7.0.0:
+    resolution: {integrity: sha512-zPAdnay60PzKKqClXRWxGukdTiMFustmgcDmrWf7PAISZSoP2gvc5WFHYYY0NGlSOsgDUwN4zgl8noGsQQFisQ==}
     dependencies:
-      '@ipld/car': 5.1.0
+      '@ipld/car': 5.1.1
       '@ipld/dag-ucan': 3.2.0
-      '@ipld/unixfs': 2.0.1
-      '@ucanto/client': 4.2.3
-      '@ucanto/interface': 4.2.3
-      '@ucanto/transport': 4.2.3
-      '@web3-storage/capabilities': 2.3.0
-      multiformats: 11.0.1
-      p-queue: 7.3.0
+      '@ipld/unixfs': 2.1.1
+      '@ucanto/client': 5.1.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/transport': 5.1.1
+      '@web3-storage/capabilities': 3.2.0
+      multiformats: 11.0.2
+      p-queue: 7.3.4
       p-retry: 5.1.2
     dev: false
 
@@ -6404,6 +6430,10 @@ packages:
 
   /cborg/1.10.0:
     resolution: {integrity: sha512-/eM0JCaL99HDHxjySNQJLaolZFVdl6VA0/hEKIoiQPcQzE5LrG5QHdml0HaBt31brgB9dNe1zMr3f8IVrpotRQ==}
+    hasBin: true
+
+  /cborg/1.10.1:
+    resolution: {integrity: sha512-et6Qm8MOUY2kCWa5GKk2MlBVoPjHv0hQBmlzI/Z7+5V3VJCeIkGehIB3vWknNsm2kOkAIs6wEKJFJo8luWQQ/w==}
     hasBin: true
 
   /chai/4.3.7:
@@ -10242,6 +10272,15 @@ packages:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
+  /multiformats/11.0.2:
+    resolution: {integrity: sha512-b5mYMkOkARIuVZCpvijFj9a6m5wMVLC7cf/jIPd5D/ARDOfLC5+IFkbgDXQgcU2goIsTD/O9NY4DI/Mt4OGvlg==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+
+  /murmurhash3js-revisited/3.0.0:
+    resolution: {integrity: sha512-/sF3ee6zvScXMb1XFJ8gDsSnY+X8PbOyjIuBhtgis10W2Jx4ZjIhikUCIF9c4gpJxVnQIsPAFrSwTCuAjicP6g==}
+    engines: {node: '>=8.0.0'}
+    dev: false
+
   /mute-stream/0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
 
@@ -10604,8 +10643,8 @@ packages:
       aggregate-error: 3.1.0
     dev: true
 
-  /p-queue/7.3.0:
-    resolution: {integrity: sha512-5fP+yVQ0qp0rEfZoDTlP2c3RYBgxvRsw30qO+VtPPc95lyvSG+x6USSh1TuLB4n96IO6I8/oXQGsTgtna4q2nQ==}
+  /p-queue/7.3.4:
+    resolution: {integrity: sha512-esox8CWt0j9EZECFvkFl2WNPat8LN4t7WWeXq73D9ha0V96qPRufApZi4ZhPwXAln1uVVal429HVVKPa2X0yQg==}
     engines: {node: '>=12'}
     dependencies:
       eventemitter3: 4.0.7
@@ -10995,8 +11034,8 @@ packages:
       xtend: 4.0.2
     dev: false
 
-  /protobufjs/7.2.0:
-    resolution: {integrity: sha512-hYCqTDuII4iJ4stZqiuGCSU8xxWl5JeXYpwARGtn/tWcKCAro6h3WQz+xpsNbXW0UYqpmTQFEyFWO0G0Kjt64g==}
+  /protobufjs/7.2.2:
+    resolution: {integrity: sha512-++PrQIjrom+bFDPpfmqXfAGSQs40116JRrqqyf53dymUMvvb5d/LMRyicRoF1AUKoXVS1/IgJXlEgcpr4gTF3Q==}
     engines: {node: '>=12.0.0'}
     requiresBuild: true
     dependencies:
@@ -11010,7 +11049,7 @@ packages:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 18.11.18
+      '@types/node': 18.15.5
       long: 5.2.1
     dev: false
 
@@ -12642,7 +12681,7 @@ packages:
     resolution: {integrity: sha512-b+aKlI2oTnxnfeSQWV1sMacqSNxqhtXySaH6bflvONGxF8V/fT3ZlYH7z2qgGfydsvpVo4JUgM/Ylyfl2YouCg==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      multiformats: 11.0.1
+      multiformats: 11.0.2
 
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
@@ -12792,6 +12831,14 @@ packages:
       querystringify: 2.2.0
       requires-port: 1.0.0
     dev: true
+
+  /use-local-storage-state/18.2.1:
+    resolution: {integrity: sha512-JgFWmMIIsN3uIQ2hSDhYGiYdfykMFVPNX/vz5JX/9V1igJSUjEe30CgswH076YqBx4Njea1NJ6B4farIlnSLuA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+    dev: false
 
   /use/3.1.1:
     resolution: {integrity: sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==}
