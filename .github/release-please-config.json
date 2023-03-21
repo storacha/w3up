@@ -4,9 +4,17 @@
     "packages/access-client": {
       "prerelease": true
     },
-    "packages/access-api": {},
-    "packages/capabilities": {},
-    "packages/upload-api": {},
-    "packages/upload-client": {}
+    "packages/access-api": {
+      "release-as": "5.0.0"
+    },
+    "packages/capabilities": {
+      "release-as": "4.0.1"
+    },
+    "packages/upload-api": {
+      "release-as": "2.0.0"
+    },
+    "packages/upload-client": {
+      "release-as": "8.0.0"
+    }
   }
 }
