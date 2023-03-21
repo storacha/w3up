@@ -24,6 +24,7 @@ export class Client extends Base {
     }
   }
 
+  /* c8 ignore start - testing websockets is hard */
   /**
    * Register the _current_ space with the service.
    *
@@ -34,6 +35,7 @@ export class Client extends Base {
   async authorize (email, options) {
     await this.capability.access.authorize(email, options)
   }
+  /* c8 ignore stop */
 
   /**
    * Uploads a file to the service and returns the root data CID for the
@@ -128,6 +130,7 @@ export class Client extends Base {
     return new Space(did, meta)
   }
 
+  /* c8 ignore start - hard to test this without authorize tests which require websockets */
   /**
    * Register the _current_ space with the service.
    *
@@ -136,11 +139,11 @@ export class Client extends Base {
    * @param {import('./types').DID<'web'>} [options.provider]
    * @param {AbortSignal} [options.signal]
    */
-  /* c8 ignore next 3 */
   async registerSpace (email, options = {}) {
     options.provider = options.provider || /** @type {import('./types').DID<'web'>} */(this._agent.connection.id.did())
     await this._agent.registerSpace(email, options)
   }
+  /* c8 ignore stop */
 
   /**
    * Add a space from a received proof.

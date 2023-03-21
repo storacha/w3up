@@ -30,6 +30,14 @@ export function mockService (impl) {
     space: {
       info: withCallCount(impl.space?.info ?? notImplemented),
       'recover-validation': withCallCount(impl.space?.['recover-validation'] ?? notImplemented)
+    },
+    access: {
+      claim: withCallCount(impl.access?.claim ?? notImplemented),
+      authorize: withCallCount(impl.access?.authorize ?? notImplemented),
+      delegate: withCallCount(impl.access?.delegate ?? notImplemented)
+    },
+    provider: {
+      add: withCallCount(impl.provider?.add ?? notImplemented)
     }
   }
 }
