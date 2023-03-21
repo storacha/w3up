@@ -307,4 +307,11 @@ describe('Client', () => {
       assert.equal(delegations[0].meta()?.audience?.name, name)
     })
   })
+
+  describe('defaultProvider', () => {
+    it('should return the connection ID', async () => {
+      const alice = new Client(await AgentData.create())
+      assert.equal(alice.defaultProvider(), 'did:web:web3.storage')
+    })
+  })
 })
