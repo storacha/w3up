@@ -14,7 +14,7 @@ export class Client extends Base {
    * @param {object} [options]
    * @param {import('./types').ServiceConf} [options.serviceConf]
    */
-  constructor (agentData, options) {
+  constructor(agentData, options) {
     super(agentData, options)
     this.capability = {
       access: new AccessClient(agentData, options),
@@ -141,7 +141,7 @@ export class Client extends Base {
    * @param {AbortSignal} [options.signal]
    */
   async registerSpace (email, options = {}) {
-    options.provider = options.provider ?? this.defaultProvider()
+    options.provider = options.provider ?? /** @type {import('./types').DID<'web'>} */(this.defaultProvider())
     await this._agent.registerSpace(email, options)
   }
   /* c8 ignore stop */
