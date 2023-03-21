@@ -75,7 +75,24 @@ export interface RouteContext {
 }
 
 interface UCANLog {
+  /**
+   * This can fail if it is unable to write to the underlying store. Handling
+   * invocations will be blocked until write is complete. Implementation may
+   * choose to do several retries before failing.
+   * @param car - UCAN invocations in CAR. Each invocation is a root in the CAR.
+   */
   logInvocations: (car: Uint8Array) => Promise<void>
+  /**
+   * Takes DAG-CBOR encoded invocation receipts. It is not allowed to fail and
+   * promise is only going to be used to keep worker waiting. It is not allowed
+   * to fail because by the time it is called invocation handler has already
+   * ran and did some IO which can't be rolled back. So it's up to implementation
+   * to either keep retrying or to store receipts in some queue and retry later.
+   *
+   * @see https://github.com/ucan-wg/invocation/#8-receipt
+   *
+   * @param receipt - DAG-CBOR encoded invocation receipt
+   */
   logReceipt: (receipt: Uint8Array) => Promise<void>
 }
 
