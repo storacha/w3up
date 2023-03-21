@@ -1,6 +1,6 @@
-import { Schema, capability, DID } from '@ucanto/validator'
+import { Schema, capability, DID, Failure } from '@ucanto/validator'
 
-export { Schema, capability, DID }
+export { Schema, capability, DID, Failure }
 
 export const {
   literal,
@@ -30,6 +30,7 @@ export const Bytes = unknown().refine({
 
 export const Space = DID.match({ method: 'key' })
 export const Account = DID.match({ method: 'mailto' })
+export const Agent = Schema.did()
 
 /**
  * We do not limit provider to a specific DID, because we want to allow it to
@@ -38,3 +39,5 @@ export const Account = DID.match({ method: 'mailto' })
 export const Provider = DID.match({ method: 'web' })
 
 export const Order = Schema.link({ version: 1 })
+
+export const Ability = Schema.string()

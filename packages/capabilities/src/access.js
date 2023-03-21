@@ -8,15 +8,19 @@
  *
  * @module
  */
-import { capability, URI, DID, Link, Schema, Failure } from '@ucanto/validator'
+import {
+  Ability,
+  Provider,
+  Account,
+  Agent,
+  capability,
+  DID,
+  Schema,
+  Failure,
+} from './schema.js'
 import * as Types from '@ucanto/interface'
 import { equalWith, fail, equal } from './utils.js'
 export { top } from './top.js'
-
-/**
- * Account identifier.
- */
-export const Account = DID.match({ method: 'mailto' })
 
 /**
  * Describes the capability requested.
@@ -55,7 +59,17 @@ export const AuthorizationRequest = Schema.struct({
  */
 export const access = capability({
   can: 'access/*',
-  with: URI.match({ protocol: 'did:' }),
+  with: Schema.URI.match({ protocol: 'did:' }),
+})
+
+/**
+ * Describes set of abilities granted or requested.
+ */
+export const Allow = Schema.dictionary({
+  key: Ability,
+  // we may allow additional details in the future but for now we only allow
+  // empty array.
+  value: Schema.never().array(),
 })
 
 /**
@@ -65,13 +79,7 @@ export const access = capability({
  */
 const Access = Schema.dictionary({
   key: Schema.URI,
-  value: Schema.dictionary({
-    key: Schema.string(),
-    value: Schema.dictionary({
-      key: Schema.string(),
-      value: Schema.unknown(),
-    }).array(),
-  }),
+  value: Allow,
 })
 
 /**
@@ -106,17 +114,15 @@ export const request = capability({
  */
 export const authorize = capability({
   can: 'access/authorize',
-  with: DID.match({ method: 'web' }),
+  with: Account,
   nb: Schema.struct({
-    from: Schema.did(),
-    to: Schema.did(),
+    agent: Agent,
     access: Access,
   }),
   derives: (claim, proof) => {
     return (
       fail(equalWith(claim, proof)) ||
-      fail(equal(claim.nb.from, claim.nb.from, 'from')) ||
-      fail(equal(claim.nb.to, claim.nb.to, 'to')) ||
+      fail(equal(claim.nb.agent, claim.nb.agent, 'delegate')) ||
       fail(restrictAccess(claim.nb.access, proof.nb.access)) ||
       true
     )
@@ -140,21 +146,17 @@ const restrictAccess = (granted, approved) => {
       const ability = resource[can] || resource['*']
       if (!ability) {
         return new Failure(
-          `Escalation ability ${can} on resource '${uri}' has not been delegated`
+          `ability "${can}" has not been delegated for '${uri}'`
         )
       }
 
       // if caveats are not specified then it means no caveats are imposed
       // which is equivalent of `{}`.
-      if (ability.length === 0) {
-        ability.push({})
-      }
-      if (caveats.length === 0) {
-        caveats.push({})
-      }
+      const approved = ability.length > 0 ? ability : [{}]
+      const granted = caveats.length > 0 ? caveats : [{}]
 
-      for (const need of caveats) {
-        const satisfied = ability.some((allow) => isSubStruct(need, allow))
+      for (const need of granted) {
+        const satisfied = approved.some((allow) => isSubStruct(need, allow))
         if (!satisfied) {
           return new Failure(
             `Escalation ability ${can} on resource '${uri}' with caveats ${JSON.stringify(
@@ -181,20 +183,8 @@ const isSubStruct = (a, b) => {
       return false
     }
   }
+  return true
 }
-
-authorize.create({
-  with: 'did:web:web3.storage',
-  nb: {
-    from: 'did:mailto:web.mail:alice',
-    to: 'did:web:web3.storage',
-    access: {
-      'did:web:web3.storage': {
-        'store/add': [],
-      },
-    },
-  },
-})
 
 /**
  * Issued by trusted authority (usually the one handling invocation) that attest
@@ -224,10 +214,10 @@ authorize.create({
 export const session = capability({
   can: 'ucan/attest',
   // Should be web3.storage DID
-  with: URI.match({ protocol: 'did:' }),
+  with: Schema.DID,
   nb: Schema.struct({
     // UCAN delegation that is being attested.
-    proof: Link,
+    proof: Schema.link(),
   }),
 })
 
@@ -295,38 +285,6 @@ function subsetsNbDelegations(claim, proof) {
       `unauthorized nb.delegations ${[...missingProofs].join(', ')}`
     )
   }
-  return true
-}
-
-/**
- * Checks that set of requested capabilities is a subset of the capabilities
- * that had been allowed by the owner or the delegate.
- *
- * ⚠️ This function does not currently check that say `store/add` is allowed
- * when say `store/*` was delegated, because it seems very unlikely that we
- * will ever encounter delegations for `access/authorize` at all.
- *
- * @param {Schema.Infer<CapabilityRequest>[]} claim
- * @param {Schema.Infer<CapabilityRequest>[]} proof
- */
-const subsetCapabilitiesRequested = (claim, proof) => {
-  const allowed = new Set(proof.map((p) => p.can))
-  // If everything is allowed, no need to check further because it contains
-  // all the capabilities.
-  if (allowed.has('*')) {
-    return true
-  }
-
-  // Otherwise we compute delta between what is allowed and what is requested.
-  const escalated = setDifference(
-    claim.map((c) => c.can),
-    allowed
-  )
-
-  if (escalated.size > 0) {
-    return new Failure(`unauthorized nb.att.can ${[...escalated].join(', ')}`)
-  }
-
   return true
 }
 

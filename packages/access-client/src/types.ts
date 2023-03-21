@@ -91,9 +91,9 @@ export type SpaceRecord = Selectable<SpaceTable>
 export type SpaceInfoResult =
   // w3up spaces registered via provider/add will have this
   | {
-      // space did
-      did: DID<'key'>
-    }
+    // space did
+    did: DID<'key'>
+  }
   // deprecated and may be removed if voucher/redeem is removed
   /** @deprecated */
   | SpaceRecord
@@ -135,11 +135,11 @@ export interface Service {
     >
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
     // eslint-disable-next-line @typescript-eslint/ban-types
-    confirm: ServiceMethod<
-      AccessConfirm,
-      AccessConfirmSuccess,
-      AccessConfirmFailure
-    >
+    // confirm: ServiceMethod<
+    //   AccessConfirm,
+    //   AccessConfirmSuccess,
+    //   AccessConfirmFailure
+    // >
     delegate: ServiceMethod<
       AccessDelegate,
       AccessDelegateSuccess,
@@ -360,21 +360,21 @@ export interface UCANBasicOptions {
  */
 export type InferNb<C extends Record<string, unknown> | undefined> =
   keyof C extends never
-    ? {
-        nb?: never
-      }
-    : {
-        /**
-         * Non-normative fields for the capability
-         *
-         * Check the capability definition for more details on the `nb` field.
-         *
-         * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
-         */
-        nb: C
-      }
+  ? {
+    nb?: never
+  }
+  : {
+    /**
+     * Non-normative fields for the capability
+     *
+     * Check the capability definition for more details on the `nb` field.
+     *
+     * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
+     */
+    nb: C
+  }
 
-export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
+export interface ClientCodec extends RequestEncoder, ResponseDecoder { }
 
 export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
   Phantom<C>
