@@ -140,7 +140,7 @@ export class Client extends Base {
    * @param {AbortSignal} [options.signal]
    */
   async registerSpace (email, options = {}) {
-    options.provider = options.provider || /** @type {import('./types').DID<'web'>} */(this._agent.connection.id.did())
+    options.provider = options.provider ?? this.defaultProvider()
     await this._agent.registerSpace(email, options)
   }
   /* c8 ignore stop */
