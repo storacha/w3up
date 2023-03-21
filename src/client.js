@@ -14,7 +14,7 @@ export class Client extends Base {
    * @param {object} [options]
    * @param {import('./types').ServiceConf} [options.serviceConf]
    */
-  constructor(agentData, options) {
+  constructor (agentData, options) {
     super(agentData, options)
     this.capability = {
       access: new AccessClient(agentData, options),
