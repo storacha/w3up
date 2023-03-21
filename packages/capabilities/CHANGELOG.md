@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.0.0-rc.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v4.0.0...capabilities-v11.0.0-rc.0) (2023-03-21)
+
+
+### Miscellaneous Chores
+
+* **access-client:** release 11.0.0-rc.0 ([#573](https://github.com/web3-storage/w3protocol/issues/573)) ([be4386d](https://github.com/web3-storage/w3protocol/commit/be4386d66ceea393f289adb3c79273c250542807))
+
 ## [4.0.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v3.2.0...capabilities-v4.0.0) (2023-03-17)
 
 
