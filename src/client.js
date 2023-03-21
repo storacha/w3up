@@ -26,7 +26,8 @@ export class Client extends Base {
 
   /* c8 ignore start - testing websockets is hard */
   /**
-   * Register the _current_ space with the service.
+   * Authorize this device to act on behalf of the account identified by
+   * email.
    *
    * @param {`${string}@${string}`} email
    * @param {object} [options]
