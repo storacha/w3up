@@ -18,9 +18,54 @@ export async function postRoot(request, env) {
     },
   })
 
-  const rsp = await server.request({
-    body: new Uint8Array(await request.arrayBuffer()),
+  const body = new Uint8Array(await request.arrayBuffer())
+  const invocations = await server.decoder.decode({
+    body,
     headers: Object.fromEntries(request.headers.entries()),
   })
-  return new Response(rsp.body, { headers: rsp.headers })
+
+  const [, ...results] = await Promise.all([
+    env.ucanLog.logInvocations(body),
+    ...invocations.map((invocation) => execute(invocation, server, env)),
+  ])
+
+  const response = await server.encoder.encode(results)
+  return new Response(response.body, {
+    headers: response.headers,
+  })
+}
+
+/**
+ *
+ * @param {Server.Invocation} invocation
+ * @param {Server.ServerView<*>} server
+ * @param {import('../bindings.js').RouteContext} env
+ * @returns {Promise<Server.Result<unknown, Server.API.Failure>>}
+ */
+const execute = async (invocation, server, env) => {
+  /** @type {[Server.Result<*, Server.API.Failure>]} */
+  const [result] = await Server.execute([invocation], server)
+  const out = result?.error ? { error: result } : { ok: result }
+
+  // Create a receipt payload for the invocation conforming to the spec
+  // @see https://github.com/ucan-wg/invocation/#8-receipt
+  const payload = {
+    run: invocation.cid,
+    out,
+    fx: { fork: [] },
+    meta: {},
+    iss: env.signer.did(),
+    prf: [],
+  }
+  // create a receipt by signing the payload with a server key
+  const receipt = CBOR.codec.encode({
+    ...payload,
+    s: await env.signer.sign(CBOR.codec.encode(payload)),
+  })
+  // Send the receipt to the ucan log. Notice that if this fails, the the whole
+  // batch of invocations may fail but there is no way to do a better handling
+  // at this layer. It is up to the `ucanLog` to handle IO errors.
+  await env.ucanLog.logReceipt(receipt)
+  // then we just return the result as is.
+  return result
 }
