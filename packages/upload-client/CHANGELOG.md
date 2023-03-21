@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.0.0-rc.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v7.0.0...upload-client-v11.0.0-rc.0) (2023-03-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433))
+
+### Features
+
+* add HAMT sharded directories support ([#536](https://github.com/web3-storage/w3protocol/issues/536)) ([8d98025](https://github.com/web3-storage/w3protocol/commit/8d98025012c87104db2910c315542d5c44bc637a))
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433)) ([1ddc6a0](https://github.com/web3-storage/w3protocol/commit/1ddc6a0c53f8cdb6837a315d8aaf567100dfb8d7))
+
+
+### Miscellaneous Chores
+
+* **access-client:** release 11.0.0-rc.0 ([#573](https://github.com/web3-storage/w3protocol/issues/573)) ([be4386d](https://github.com/web3-storage/w3protocol/commit/be4386d66ceea393f289adb3c79273c250542807))
+
 ## [7.0.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v6.0.0...upload-client-v7.0.0) (2023-03-08)
 
 
