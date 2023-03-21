@@ -38,7 +38,7 @@ jobs:
           # Enable to publish dnslink on merge to main
           # dnslink_record: console
           # dnslink_domain: web3.storage
-          cf_pages_project: w3console
+          cf_pages_project: console-web3-storage-preview
           cf_account_id: ${{ secrets.CF_ACCOUNT_ID }}
           cf_token: ${{ secrets.CF_TOKEN }}
 

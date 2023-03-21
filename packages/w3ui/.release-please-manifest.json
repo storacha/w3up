@@ -10,5 +10,6 @@
   "packages/keyring-core": "2.2.1",
   "packages/solid-keyring": "2.1.1",
   "packages/react-keyring": "3.0.1",
-  "packages/vue-keyring": "2.0.2"
+  "packages/vue-keyring": "2.0.2",
+  "examples/react/w3console": "0.0.0"
 }

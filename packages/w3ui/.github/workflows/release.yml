@@ -16,6 +16,7 @@ jobs:
         with:
           token: ${{secrets.GITHUB_TOKEN}}
           command: manifest
+ 
   publish:
     name: Publish
     needs: release
@@ -24,6 +25,8 @@ jobs:
     strategy:
       matrix:
         path_released: ${{fromJson(needs.release.outputs.paths_released)}}
+        exclude:
+          - path_released: examples/react/w3console
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/pnpm
@@ -36,3 +39,66 @@ jobs:
           pnpm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  publish-w3console-staging:
+    name: Publish w3console staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - name: Build staging.console.web3.storage
+        run: pnpm build
+        working-directory: examples/react/w3console
+        env:
+          VITE_W3UP_PROVIDER: did:web:staging.web3.storage
+          VITE_W3UP_ACCESS_SERVICE_URL: 'https://w3access-staging.protocol-labs.workers.dev'
+          VITE_W3UP_ACCESS_SERVICE_DID: 'did:web:staging.web3.storage'
+          VITE_W3UP_UPLOAD_SERVICE_URL: 'https://staging.up.web3.storage'
+          VITE_W3UP_UPLOAD_SERVICE_DID: 'did:web:staging.web3.storage'
+      - name: Publish staging.console.web3.storage
+        uses: ./.github/actions/preview
+        with:
+          path_to_add: examples/react/w3console/dist
+          web3_token: ${{ secrets.WEB3_TOKEN }}
+          cf_pages_project: console-web3-storage-staging
+          cf_account_id: ${{ secrets.CF_ACCOUNT_ID }}
+          cf_token: ${{ secrets.CF_TOKEN }}
+
+  publish-w3console-production:
+    name: Publish w3console production
+    needs: release
+    if: contains(fromJson(needs.release.outputs.paths_released), 'examples/react/w3console')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - name: Build console.web3.storage
+        run: pnpm build
+        working-directory: examples/react/w3console
+        env:
+          VITE_W3UP_PROVIDER: did:web:web3.storage
+      - name: Publish console.web3.storage
+        uses: ./.github/actions/preview
+        with:
+          path_to_add: examples/react/w3console/dist
+          web3_token: ${{ secrets.WEB3_TOKEN }}
+          dnslink_record: beta.console
+          dnslink_domain: web3.storage
+          cf_pages_project: console-web3-storage
+          cf_account_id: ${{ secrets.CF_ACCOUNT_ID }}
+          cf_token: ${{ secrets.CF_TOKEN }}
+      - name: Build console.nft.storage
+        run: pnpm build
+        working-directory: examples/react/w3console
+        env:
+          VITE_W3UP_PROVIDER: did:web:nft.storage
+      - name: Publish console.nft.storage
+        uses: ./.github/actions/preview
+        with:
+          path_to_add: examples/react/w3console/dist
+          web3_token: ${{ secrets.WEB3_TOKEN }}
+          dnslink_record: beta.console
+          dnslink_domain: nft.storage
+          cf_pages_project: console-nft-storage
+          cf_account_id: ${{ secrets.CF_ACCOUNT_ID }}
+          cf_token: ${{ secrets.CF_TOKEN }}
