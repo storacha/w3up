@@ -20,6 +20,7 @@
     "test:node": "mocha 'test/**/*.test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test",
     "testw": "watch 'pnpm test:node' src test --interval 1",
+    "tq": "mocha --bail -n experimental-vm-modules -n no-warnings 'test/**/*.test.js'",
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
