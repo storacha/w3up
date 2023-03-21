@@ -68,6 +68,10 @@ export function getContext(request, env, ctx) {
     signer,
     config,
     url,
+    ucanLog: {
+      async logInvocations() {},
+      async logReceipt() {},
+    },
     models: {
       delegations: new DbDelegationsStorage(
         createD1Database(config.DB, {

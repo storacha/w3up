@@ -63,6 +63,7 @@ export interface RouteContext {
   config: ReturnType<typeof loadConfig>
   url: URL
   email: Email
+  ucanLog: UCANLog
   models: {
     accounts: Accounts
     delegations: Delegations
@@ -71,6 +72,11 @@ export interface RouteContext {
     validations: Validations
   }
   uploadApi: ConnectionView
+}
+
+interface UCANLog {
+  logInvocations: (car: Uint8Array) => Promise<void>
+  logReceipt: (receipt: Uint8Array) => Promise<void>
 }
 
 export type Handler = _Handler<RouteContext>
