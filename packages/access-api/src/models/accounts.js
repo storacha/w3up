@@ -5,7 +5,7 @@ import { D1Dialect } from 'kysely-d1'
 import { GenericPlugin } from '../utils/d1.js'
 
 /**
- * @typedef {import('@web3-storage/access/src/types.js').DelegationRecord} DelegationRecord
+ * @typedef {import('kysely').Selectable<import('../types/access-api-d1.js').DelegationsV2Table>} DelegationV2Record
  */
 
 /**
@@ -13,11 +13,10 @@ import { GenericPlugin } from '../utils/d1.js'
  */
 export class Accounts {
   /**
-   *
    * @param {D1Database} d1
    */
   constructor(d1) {
-    /** @type {GenericPlugin<DelegationRecord>} */
+    /** @type {GenericPlugin<DelegationV2Record>} */
     const objectPlugin = new GenericPlugin({
       // eslint-disable-next-line unicorn/no-null
       expires_at: (v) => (typeof v === 'string' ? new Date(v) : null),

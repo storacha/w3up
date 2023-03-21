@@ -104,6 +104,7 @@
             "IterableIterator",
             "KVNamespace",
             "PromiseLike",
+            "R2Bucket",
             "ResponseInit"
           ]
         }
