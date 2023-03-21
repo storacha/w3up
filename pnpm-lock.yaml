@@ -33,6 +33,7 @@ importers:
       '@databases/split-sql-query': ^1.0.3
       '@databases/sql': ^3.2.0
       '@ipld/dag-ucan': ^3.2.0
+      '@miniflare/core': ^2.11.0
       '@sentry/cli': 2.7.0
       '@types/assert': ^1.5.6
       '@types/git-rev-sync': ^2.0.0
@@ -97,6 +98,7 @@ importers:
       '@cloudflare/workers-types': 3.19.0
       '@databases/split-sql-query': 1.0.3_@databases+sql@3.3.0
       '@databases/sql': 3.3.0
+      '@miniflare/core': 2.11.0
       '@sentry/cli': 2.7.0
       '@types/assert': 1.5.6
       '@types/git-rev-sync': 2.0.0
@@ -2865,7 +2867,7 @@ packages:
       '@miniflare/core': 2.11.0
       '@miniflare/shared': 2.11.0
       http-cache-semantics: 4.1.1
-      undici: 5.9.1
+      undici: 5.20.0
     dev: true
 
   /@miniflare/cache/2.12.1:
@@ -2906,7 +2908,7 @@ packages:
       dotenv: 10.0.0
       kleur: 4.1.5
       set-cookie-parser: 2.5.1
-      undici: 5.9.1
+      undici: 5.20.0
       urlpattern-polyfill: 4.0.3
     dev: true
 
@@ -2949,7 +2951,7 @@ packages:
       '@miniflare/core': 2.11.0
       '@miniflare/shared': 2.11.0
       '@miniflare/storage-memory': 2.11.0
-      undici: 5.9.1
+      undici: 5.20.0
     dev: true
 
   /@miniflare/durable-objects/2.12.1:
@@ -2969,7 +2971,7 @@ packages:
       '@miniflare/core': 2.11.0
       '@miniflare/shared': 2.11.0
       html-rewriter-wasm: 0.4.1
-      undici: 5.9.1
+      undici: 5.20.0
     dev: true
 
   /@miniflare/html-rewriter/2.12.1:
@@ -2991,8 +2993,8 @@ packages:
       '@miniflare/web-sockets': 2.11.0
       kleur: 4.1.5
       selfsigned: 2.1.1
-      undici: 5.9.1
-      ws: 8.12.0
+      undici: 5.20.0
+      ws: 8.13.0
       youch: 2.2.2
     transitivePeerDependencies:
       - bufferutil
@@ -3049,7 +3051,7 @@ packages:
     engines: {node: '>=16.13'}
     dependencies:
       '@miniflare/shared': 2.11.0
-      undici: 5.9.1
+      undici: 5.20.0
     dev: true
 
   /@miniflare/r2/2.12.1:
@@ -3180,8 +3182,8 @@ packages:
     dependencies:
       '@miniflare/core': 2.11.0
       '@miniflare/shared': 2.11.0
-      undici: 5.9.1
-      ws: 8.12.0
+      undici: 5.20.0
+      ws: 8.13.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -9484,7 +9486,7 @@ packages:
       kleur: 4.1.5
       semiver: 1.1.0
       source-map-support: 0.5.21
-      undici: 5.9.1
+      undici: 5.20.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -12698,11 +12700,6 @@ packages:
       busboy: 1.6.0
     dev: true
 
-  /undici/5.9.1:
-    resolution: {integrity: sha512-6fB3a+SNnWEm4CJbgo0/CWR8RGcOCQP68SF4X0mxtYTq2VNN8T88NYrWVBAeSX+zb7bny2dx2iYhP3XHi00omg==}
-    engines: {node: '>=12.18'}
-    dev: true
-
   /unherit/1.1.3:
     resolution: {integrity: sha512-Ft16BJcnapDKp0+J/rqFC3Rrk6Y/Ng4nzsC028k2jdDII/rdZ7Wd3pPT/6+vIIxRagwRc9K0IUX0Ra4fKvw+WQ==}
     dependencies:
@@ -13319,7 +13316,7 @@ packages:
       blake3-wasm: 2.1.5
       chokidar: 3.5.3
       esbuild: 0.16.3
-      miniflare: 2.12.1
+      miniflare: 2.11.0
       nanoid: 3.3.4
       path-to-regexp: 6.2.1
       selfsigned: 2.1.1
@@ -13434,6 +13431,7 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: false
 
   /ws/8.13.0:
     resolution: {integrity: sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA==}
