@@ -1,4 +1,5 @@
 import * as Server from '@ucanto/server'
+import pRetry from 'p-retry'
 import { serverCodec } from '../ucanto/server-codec.js'
 import { service } from '../service/index.js'
 
@@ -30,13 +31,19 @@ export async function postRaw(request, env, ctx) {
   // Process CAR with invocations asynchronously
   ctx.waitUntil(
     (async () => {
-      await fetch(new URL('/ucan', env.uploadApiUrl), {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${env.ucanInvocationPostBasicAuth}`,
-        },
-        body,
-      })
+      await pRetry(
+        () =>
+          fetch(new URL('/ucan', env.ucanInvocationPostURL), {
+            method: 'POST',
+            headers: {
+              Authorization: `Basic ${env.ucanInvocationPostBasicAuth}`,
+            },
+            body,
+          }),
+        {
+          retries: 10,
+        }
+      )
     })()
   )
 

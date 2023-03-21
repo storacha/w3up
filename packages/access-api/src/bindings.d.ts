@@ -72,7 +72,7 @@ export interface RouteContext {
     validations: Validations
   }
   uploadApi: ConnectionView
-  uploadApiUrl: URL
+  ucanInvocationPostURL: URL
   ucanInvocationPostBasicAuth: string
 }
 
