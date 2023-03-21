@@ -5,17 +5,17 @@ import {
 } from '@web3-storage/access/encoding'
 
 /**
- * @typedef {import('@web3-storage/access/src/types').DelegationTable} DelegationRow
+ * @template {import('../types/access-api-d1').DelegationsV2Table | import('../types/access-api-d1').DelegationsV3Table} DelegationRow
  * @typedef {Omit<DelegationRow, 'inserted_at'|'updated_at'|'expires_at'>} DelegationRowUpdate
  */
 
 /**
- * @typedef Tables
- * @property {DelegationRow} delegations_v2
+ * @typedef V2Tables
+ * @property {import('../types/access-api-d1').DelegationsV2Table} delegations_v2
  */
 
 /**
- * @typedef {import("../types/database").Database<Tables>} DelegationsDatabase
+ * @typedef {import("../types/database").Database<V2Tables>} DelegationsDatabase
  */
 
 export const delegationsTable = /** @type {const} */ ('delegations_v2')
@@ -43,11 +43,7 @@ export class DbDelegationsStorage {
   }
 
   async count() {
-    const { size } = await this.#db
-      .selectFrom(this.#tables.delegations)
-      .select((e) => e.fn.count('cid').as('size'))
-      .executeTakeFirstOrThrow()
-    return BigInt(size)
+    return count(this.#db, this.#tables.delegations)
   }
 
   /**
@@ -116,7 +112,7 @@ class UnexpectedDelegation extends Error {
 }
 
 /**
- * @param {Pick<DelegationRow, 'bytes'>} row
+ * @param {Pick<import('../types/access-api-d1').DelegationsV2Table, 'bytes'>} row
  * @returns {Ucanto.Delegation}
  */
 function rowToDelegation(row) {
@@ -152,7 +148,7 @@ function rowToDelegation(row) {
 
 /**
  * @param {Ucanto.Delegation} d
- * @returns {DelegationRowUpdate}
+ * @returns {DelegationRowUpdate<import('../types/access-api-d1').DelegationsV2Table>}
  */
 export function createDelegationRowUpdate(d) {
   return {
@@ -160,6 +156,17 @@ export function createDelegationRowUpdate(d) {
     audience: d.audience.did(),
     issuer: d.issuer.did(),
     bytes: delegationsToBytes([d]),
+  }
+}
+
+/**
+ * @param {Ucanto.Delegation} d
+ */
+export function createDelegationRowUpdateV3(d) {
+  return {
+    cid: d.cid.toV1().toString(),
+    audience: d.audience.did(),
+    issuer: d.issuer.did(),
   }
 }
 
@@ -178,4 +185,80 @@ export function delegationsTableBytesToArrayBuffer(sqlValue) {
   if (Array.isArray(sqlValue)) {
     return Uint8Array.from(sqlValue)
   }
+}
+
+/**
+ * @typedef {`delegations_v3`} DelegationsTableWithoutBytesName
+ */
+
+/** @type {DelegationsTableWithoutBytesName} */
+export const delegationsV3Table = `delegations_v3`
+
+/**
+ * @typedef {import('../types/access-api-d1').AccessApiD1TablesV2} AccessApiD1TablesV2
+ * @typedef {import('../types/access-api-d1').AccessApiD1TablesV3} AccessApiD1TablesV3
+ */
+
+export class DbDelegationsStorageWithR2 {
+  // /** @type {R2Bucket} */
+  // #dags;
+  /** @type {import('../types/database').Database<AccessApiD1TablesV3>} */
+  #db
+  /** @type {keyof AccessApiD1TablesV3} */
+  #delegationsTableName = delegationsV3Table
+
+  /**
+   * @param {import('../types/database').Database<AccessApiD1TablesV3>} db
+   * @param {R2Bucket} dags
+   * @param {keyof AccessApiD1TablesV3} delegationsTableName
+   */
+  // eslint-disable-next-line no-useless-constructor
+  constructor(db, dags, delegationsTableName = delegationsV3Table) {
+    this.#db = db
+    this.#delegationsTableName = delegationsTableName
+    // this.#dags = dags
+  }
+
+  /**
+   * store items
+   *
+   * @param  {Array<Ucanto.Delegation>} delegations
+   * @returns {Promise<void>}
+   */
+  async putMany(...delegations) {
+    if (delegations.length === 0) {
+      return
+    }
+    const values = delegations.map((d) => createDelegationRowUpdateV3(d))
+    await this.#db
+      .insertInto(this.#delegationsTableName)
+      .values(values)
+      .onConflict((oc) => oc.column('cid').doNothing())
+      .executeTakeFirst()
+  }
+
+  /** @returns {Promise<bigint>} */
+  async count() {
+    return count(this.#db, this.#delegationsTableName)
+  }
+}
+
+/**
+ * @typedef {import('../types/access-api-d1').DelegationsV3Table} DelegationsV3Table
+ * @typedef {import('../types/access-api-d1').DelegationsV2Table} DelegationsV2Table
+ */
+
+/**
+ * @template {string} TableName
+ * @template {Record<TableName, DelegationsV3Table|DelegationsV2Table>} Tables
+ * @param {import('../types/database').Database<Tables>} db
+ * @param {TableName} delegationsTable
+ * @returns {Promise<bigint>} - count of table
+ */
+async function count(db, delegationsTable) {
+  const { size } = await db
+    .selectFrom(delegationsTable)
+    .select((e) => e.fn.count('cid').as('size'))
+    .executeTakeFirstOrThrow()
+  return BigInt(size)
 }

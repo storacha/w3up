@@ -2,6 +2,7 @@ import { context } from './helpers/context.js'
 import {
   createDelegationRowUpdate,
   DbDelegationsStorage,
+  DbDelegationsStorageWithR2,
   delegationsTable,
 } from '../src/models/delegations.js'
 import { createD1Database } from '../src/utils/d1.js'
@@ -150,6 +151,9 @@ for (const variant of [
  */
 function createDbDelegationsStorageVariant() {
   return {
+    /**
+     * @returns {Promise<DelegationsStorageVariant>}
+     */
     create: async () => {
       const { d1 } = await context()
       const delegationsStorage = new DbDelegationsStorage(createD1Database(d1))
@@ -163,14 +167,18 @@ function createDbDelegationsStorageVariant() {
  * but stores blobs in a separate r2-like key/value store
  *
  * @see https://github.com/web3-storage/w3protocol/issues/571
- * @returns
  */
 function createDbDelegationsStorageVariantWithR2() {
   return {
+    /**
+     * @returns {Promise<DelegationsStorageVariant>}
+     */
     create: async () => {
-      const { d1 } = await context()
-      // @todo use r2
-      const delegationsStorage = new DbDelegationsStorage(createD1Database(d1))
+      const { d1, accessApiR2 } = await context()
+      const delegationsStorage = new DbDelegationsStorageWithR2(
+        createD1Database(d1),
+        accessApiR2
+      )
       return { delegationsStorage }
     },
   }
@@ -178,7 +186,7 @@ function createDbDelegationsStorageVariantWithR2() {
 
 /**
  * @typedef {object} DelegationsStorageVariant
- * @property {import('../src/types/delegations.js').DelegationsStorage} delegationsStorage
+ * @property {Pick<import('../src/types/delegations.js').DelegationsStorage, 'putMany'|'count'>} delegationsStorage
  */
 
 /**
