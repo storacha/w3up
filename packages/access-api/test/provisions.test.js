@@ -10,7 +10,7 @@ describe('DbProvisions', () => {
   it('should persist provisions', async () => {
     const { d1, service } = await context()
     const db = createD1Database(d1)
-    const storage = new DbProvisions(service.did(), db)
+    const storage = new DbProvisions([service.did()], db)
     const count = 2 + Math.round(Math.random() * 3)
     const spaceA = await principal.ed25519.generate()
     const [firstProvision, ...lastProvisions] = await Promise.all(
@@ -68,7 +68,7 @@ describe('DbProvisions', () => {
       account: /** @type {const} */ ('did:mailto:foo'),
       // note this type assertion is wrong, but useful to set up the test
       provider:
-        /** @type {import('../src/types/provisions.js').AlphaStorageProvider} */ (
+        /** @type {import('@ucanto/interface').DID<'web'>} */ (
           'did:provider:foo'
         ),
     }
