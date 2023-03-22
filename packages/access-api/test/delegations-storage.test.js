@@ -3,7 +3,7 @@ import {
   createDelegationRowUpdate,
   DbDelegationsStorage,
   DbDelegationsStorageWithR2,
-  delegationsTable,
+  delegationsV2TableName,
 } from '../src/models/delegations.js'
 import { createD1Database } from '../src/utils/d1.js'
 import * as assert from 'node:assert'
@@ -31,7 +31,7 @@ describe('DbDelegationsStorage', () => {
     )
     // insert row with empty bytes
     await db
-      .insertInto(delegationsTable)
+      .insertInto(delegationsV2TableName)
       .values([
         {
           ...row,

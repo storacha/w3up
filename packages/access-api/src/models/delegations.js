@@ -14,30 +14,27 @@ import {
  */
 
 /**
- * @typedef V2Tables
- * @property {import('../types/access-api-cf-db').DelegationsV2Table} delegations_v2
+ * @template Tables
+ * @typedef {import("../types/database").Database<Tables>} Database
  */
 
-/**
- * @typedef {import("../types/database").Database<V2Tables>} DelegationsDatabase
- */
-
-// @todo remove reference to v2
-export const delegationsTable = /** @type {const} */ ('delegations_v2')
+export const delegationsV2TableName = /** @type {const} */ ('delegations_v2')
 
 /**
  * DelegationsStorage that persists using SQL.
- * * should work with cloudflare D1
+ * * should work with cloudflare D1 v2 schema
+ *
+ * @template {Database<AccessApiD1TablesV2>} DB
  */
 export class DbDelegationsStorage {
-  /** @type {DelegationsDatabase} */
+  /** @type {DB} */
   #db
   #tables = {
-    delegations: delegationsTable,
+    delegations: delegationsV2TableName,
   }
 
   /**
-   * @param {DelegationsDatabase} db
+   * @param {DB} db
    */
   constructor(db) {
     this.#db = db
