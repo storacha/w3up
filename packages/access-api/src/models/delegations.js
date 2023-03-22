@@ -223,6 +223,10 @@ export class DbDelegationsStorageWithR2 {
     this.#db = db
     this.#delegationsTableName = delegationsTableName
     this.#dags = dags
+    // eslint-disable-next-line no-void
+    void (
+      /** @type {import('../types/delegations').DelegationsStorage} */ (this)
+    )
   }
 
   /**
@@ -261,6 +265,23 @@ export class DbDelegationsStorageWithR2 {
       .where(`${delegations}.audience`, '=', audience)
       .execute()
     for await (const row of selection) {
+      yield this.#rowToDelegation(row)
+    }
+  }
+
+  async *[Symbol.asyncIterator]() {
+    if (!this.#db.canStream) {
+      throw Object.assign(
+        new Error(
+          `cannot create asyncIterator because the underlying database does not support streaming`
+        ),
+        { name: 'NotImplementedError' }
+      )
+    }
+    for await (const row of this.#db
+      .selectFrom(this.#delegationsTableName)
+      .select(['cid'])
+      .stream()) {
       yield this.#rowToDelegation(row)
     }
   }
