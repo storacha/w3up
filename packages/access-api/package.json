@@ -145,5 +145,10 @@
       "hd-scripts",
       "better-sqlite3"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "undici": "^5.20.0"
+    }
   }
 }
