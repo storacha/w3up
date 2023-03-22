@@ -15,6 +15,10 @@ import { collect } from 'streaming-iterables'
 
 describe('DbDelegationsStorage', () => {
   it('find throws UnexpectedDelegation when encountering row with empty bytes', async () => {
+    /**
+     * Note: this test only makes sense in the delegations_v2 table schema.
+     * In delegations_v3, we removed the `bytes` column.
+     */
     const { d1, issuer } = await context()
     const db = createD1Database(d1)
     const delegations = new DbDelegationsStorage(db)
