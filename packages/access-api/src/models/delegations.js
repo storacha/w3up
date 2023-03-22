@@ -5,6 +5,10 @@ import {
 } from '@web3-storage/access/encoding'
 
 /**
+ * @typedef {import('@miniflare/r2').R2Bucket} R2Bucket
+ */
+
+/**
  * @template {import('../types/access-api-d1').DelegationsV2Table | import('../types/access-api-d1').DelegationsV3Table} DelegationRow
  * @typedef {Omit<DelegationRow, 'inserted_at'|'updated_at'|'expires_at'>} DelegationRowUpdate
  */
@@ -118,8 +122,12 @@ class UnexpectedDelegation extends Error {
 function rowToDelegation(row) {
   /** @type {Ucanto.Delegation[]} */
   let delegations = []
+  // kysely/sqlite/d1/various-miniflare-versions sometimes only give an Array here.
+  // (GenericPlugin tries to ensure Uint8Array, but it can't reliably detect when to cast Array -> Uint8Array)
+  const rowBytes =
+    row.bytes instanceof Uint8Array ? row.bytes : new Uint8Array(row.bytes)
   try {
-    delegations = bytesToDelegations(row.bytes)
+    delegations = bytesToDelegations(rowBytes)
   } catch (error) {
     if (
       typeof error === 'object' &&
@@ -200,8 +208,8 @@ export const delegationsV3Table = `delegations_v3`
  */
 
 export class DbDelegationsStorageWithR2 {
-  // /** @type {R2Bucket} */
-  // #dags;
+  /** @type {R2Bucket} */
+  #dags
   /** @type {import('../types/database').Database<AccessApiD1TablesV3>} */
   #db
   /** @type {keyof AccessApiD1TablesV3} */
@@ -216,7 +224,7 @@ export class DbDelegationsStorageWithR2 {
   constructor(db, dags, delegationsTableName = delegationsV3Table) {
     this.#db = db
     this.#delegationsTableName = delegationsTableName
-    // this.#dags = dags
+    this.#dags = dags
   }
 
   /**
@@ -229,6 +237,7 @@ export class DbDelegationsStorageWithR2 {
     if (delegations.length === 0) {
       return
     }
+    await writeDelegations(this.#dags, delegations)
     const values = delegations.map((d) => createDelegationRowUpdateV3(d))
     await this.#db
       .insertInto(this.#delegationsTableName)
@@ -240,6 +249,45 @@ export class DbDelegationsStorageWithR2 {
   /** @returns {Promise<bigint>} */
   async count() {
     return count(this.#db, this.#delegationsTableName)
+  }
+
+  /**
+   * @param {import('../types/delegations').Query} query
+   */
+  async *find(query) {
+    const { audience } = query
+    const delegations = this.#delegationsTableName
+    const selection = await this.#db
+      .selectFrom(delegations)
+      .selectAll()
+      .where(`${delegations}.audience`, '=', audience)
+      .execute()
+    for await (const row of selection) {
+      yield this.#rowToDelegation(row)
+    }
+  }
+
+  /**
+   * @param {Pick<import('../types/access-api-d1').DelegationsV3Table, 'cid'>} row
+   * @param {R2Bucket} dags
+   * @returns {Promise<Ucanto.Delegation>}
+   */
+  async #rowToDelegation(row, dags = this.#dags) {
+    const { cid } = row
+    const carBytesR2 = await dags.get(cid.toString())
+    if (!carBytesR2) {
+      throw new Error(`failed to read car bytes for cid ${cid.toString()}`)
+    }
+    // @todo stream car reading
+    const carBytes = new Uint8Array(await carBytesR2.arrayBuffer())
+    const delegations = bytesToDelegations(carBytes)
+    if (delegations.length !== 1) {
+      throw new Error(
+        `expected 1 delegation in CAR, but got ${delegations.length}`
+      )
+    }
+    const [delegation] = delegations
+    return delegation
   }
 }
 
@@ -261,4 +309,32 @@ async function count(db, delegationsTable) {
     .select((e) => e.fn.count('cid').as('size'))
     .executeTakeFirstOrThrow()
   return BigInt(size)
+}
+
+/**
+ * @param {R2Bucket} bucket
+ * @param {Iterable<Ucanto.Delegation>} delegations
+ */
+async function writeDelegations(bucket, delegations) {
+  return writeEntries(
+    bucket,
+    [...delegations].map((delegation) => {
+      const key = delegation.cid.toString()
+      const carBytes = delegationsToBytes([delegation])
+      const value = carBytes
+      return /** @type {[key: string, value: Uint8Array]} */ ([key, value])
+    })
+  )
+}
+
+/**
+ * @param {R2Bucket} bucket
+ * @param {Iterable<readonly [key: string, value: Uint8Array ]>} entries
+ */
+async function writeEntries(bucket, entries) {
+  await Promise.all(
+    [...entries].map(async ([key, value]) => {
+      return bucket.put(key, value)
+    })
+  )
 }
