@@ -212,6 +212,8 @@ export class DbDelegationsStorageWithR2 {
   #db
   /** @type {keyof AccessApiD1TablesV3} */
   #delegationsTableName = delegationsV3Table
+  /* @type {(d: { cid: string }) => string} */
+  #getDagsKey = delegationCarFileKeyer
 
   /**
    * @param {import('../types/database').Database<AccessApiD1TablesV3>} db
@@ -239,7 +241,7 @@ export class DbDelegationsStorageWithR2 {
     if (delegations.length === 0) {
       return
     }
-    await writeDelegations(this.#dags, delegations)
+    await writeDelegations(this.#dags, delegations, this.#getDagsKey)
     const values = delegations.map((d) => createDelegationRowUpdateV3(d))
     await this.#db
       .insertInto(this.#delegationsTableName)
@@ -289,15 +291,15 @@ export class DbDelegationsStorageWithR2 {
   /**
    * @param {Pick<import('../types/access-api-cf-db').DelegationsV3Table, 'cid'>} row
    * @param {R2Bucket} dags
+   * @param {(d: { cid: string }) => string} keyer - builds k/v key strings for each delegation
    * @returns {Promise<Ucanto.Delegation>}
    */
-  async #rowToDelegation(row, dags = this.#dags) {
-    const { cid } = row
-    const carBytesR2 = await dags.get(cid.toString())
+  async #rowToDelegation(row, dags = this.#dags, keyer = this.#getDagsKey) {
+    const cidString = row.cid.toString()
+    const carBytesR2 = await dags.get(keyer({ cid: cidString }))
     if (!carBytesR2) {
-      throw new Error(`failed to read car bytes for cid ${cid.toString()}`)
+      throw new Error(`failed to read car bytes for cid ${cidString}`)
     }
-    // @todo stream car reading
     const carBytes = new Uint8Array(await carBytesR2.arrayBuffer())
     const delegations = bytesToDelegations(carBytes)
     if (delegations.length !== 1) {
@@ -331,7 +333,7 @@ async function count(db, delegationsTable) {
 }
 
 /**
- * @param {Ucanto.Delegation} ucan
+ * @param {{ cid: string }} ucan
  */
 function delegationCarFileKeyer(ucan) {
   return `${ucan.cid.toString()}.car`
@@ -340,17 +342,13 @@ function delegationCarFileKeyer(ucan) {
 /**
  * @param {R2Bucket} bucket
  * @param {Iterable<Ucanto.Delegation>} delegations
- * @param {(d: Ucanto.Delegation) => string} keyer - builds k/v key strings for each delegation
+ * @param {(d: { cid: string }) => string} keyer - builds k/v key strings for each delegation
  */
-async function writeDelegations(
-  bucket,
-  delegations,
-  keyer = delegationCarFileKeyer
-) {
+async function writeDelegations(bucket, delegations, keyer) {
   return writeEntries(
     bucket,
     [...delegations].map((delegation) => {
-      const key = delegation.cid.toString()
+      const key = keyer({ cid: delegation.cid.toString() })
       const carBytes = delegationsToBytes([delegation])
       const value = carBytes
       return /** @type {[key: string, value: Uint8Array]} */ ([key, value])
