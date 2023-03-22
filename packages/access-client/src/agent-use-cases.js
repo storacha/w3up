@@ -265,7 +265,7 @@ export async function authorizeWithPollClaim(access, email, opts) {
   })
   // Claim delegations here because we will need an ucan/attest from the service to
   // pair with the session delegation we just claimed to make it work.
-  // This is a bit duplicative because we're already invoking `access/claim` in the 
+  // This is a bit duplicative because we're already invoking `access/claim` in the
   // wait function above, but we don't do space inference there so do it one more time
   // for consistency with authorizeWithSocket.
   await claimAccess(access, access.issuer.did(), { addProofs: true })
