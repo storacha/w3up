@@ -9,35 +9,34 @@ import {
  */
 
 /**
- * @template {import('../types/access-api-cf-db').DelegationsV2Table | import('../types/access-api-cf-db').DelegationsV3Table} DelegationRow
+ * @template {import('../types/access-api-cf-db').DelegationsV2Row | import('../types/access-api-cf-db').DelegationsV3Row} DelegationRow
  * @typedef {Omit<DelegationRow, 'inserted_at'|'updated_at'|'expires_at'>} DelegationRowUpdate
  */
 
 /**
- * @typedef V2Tables
- * @property {import('../types/access-api-cf-db').DelegationsV2Table} delegations_v2
+ * @template Tables
+ * @typedef {import("../types/database").Database<Tables>} Database
  */
 
-/**
- * @typedef {import("../types/database").Database<V2Tables>} DelegationsDatabase
- */
-
-// @todo remove reference to v2
-export const delegationsTable = /** @type {const} */ ('delegations_v2')
+export const delegationsV2TableName = /** @type {const} */ ('delegations_v2')
 
 /**
  * DelegationsStorage that persists using SQL.
- * * should work with cloudflare D1
+ * * should work with cloudflare D1 v2 schema
+ *
+ * @deprecated - use AccessApiD1TablesV3 and DbDelegationsStorageWithR2
+ *
+ * @template {Database<import('../types/access-api-cf-db').DelegationsV2Tables>} DB
  */
 export class DbDelegationsStorage {
-  /** @type {DelegationsDatabase} */
+  /** @type {DB} */
   #db
   #tables = {
-    delegations: delegationsTable,
+    delegations: delegationsV2TableName,
   }
 
   /**
-   * @param {DelegationsDatabase} db
+   * @param {DB} db
    */
   constructor(db) {
     this.#db = db
@@ -117,7 +116,7 @@ class UnexpectedDelegation extends Error {
 }
 
 /**
- * @param {Pick<import('../types/access-api-cf-db').DelegationsV2Table, 'bytes'>} row
+ * @param {Pick<import('../types/access-api-cf-db').DelegationsV2Row, 'bytes'>} row
  * @returns {Ucanto.Delegation}
  */
 function rowToDelegation(row) {
@@ -153,7 +152,7 @@ function rowToDelegation(row) {
 
 /**
  * @param {Ucanto.Delegation} d
- * @returns {DelegationRowUpdate<import('../types/access-api-cf-db').DelegationsV2Table>}
+ * @returns {DelegationRowUpdate<import('../types/access-api-cf-db').DelegationsV2Row>}
  */
 export function createDelegationRowUpdate(d) {
   return {
@@ -166,6 +165,7 @@ export function createDelegationRowUpdate(d) {
 
 /**
  * @param {Ucanto.Delegation} d
+ * @returns {DelegationRowUpdate<import('../types/access-api-cf-db').DelegationsV3Row>}
  */
 export function createDelegationRowUpdateV3(d) {
   return {
@@ -192,36 +192,27 @@ export function delegationsTableBytesToArrayBuffer(sqlValue) {
   }
 }
 
-/**
- * @typedef {`delegations_v3`} DelegationsTableWithoutBytesName
- */
-
-/** @type {DelegationsTableWithoutBytesName} */
-export const delegationsV3Table = `delegations_v3`
+export const delegationsV3Table = /** @type {const} */ (`delegations_v3`)
 
 /**
- * @typedef {import('../types/access-api-cf-db').AccessApiD1TablesV2} AccessApiD1TablesV2
- * @typedef {import('../types/access-api-cf-db').AccessApiD1TablesV3} AccessApiD1TablesV3
+ * @template {Database<import('../types/access-api-cf-db').DelegationsV3Tables>} DB
  */
-
 export class DbDelegationsStorageWithR2 {
   // @todo abstract away R2 specifics into DagStore: ~AsyncMap<CID, Ucanto.Delegation>
   /** @type {R2Bucket} */
   #dags
-  /** @type {import('../types/database').Database<AccessApiD1TablesV3>} */
+  /** @type {DB} */
   #db
-  /** @type {keyof AccessApiD1TablesV3} */
   #delegationsTableName = delegationsV3Table
+  /* @type {(d: { cid: string }) => string} */
+  #getDagsKey = carFileKeyer
 
   /**
-   * @param {import('../types/database').Database<AccessApiD1TablesV3>} db
+   * @param {DB} db
    * @param {R2Bucket} dags
-   * @param {keyof AccessApiD1TablesV3} delegationsTableName
    */
-  // eslint-disable-next-line no-useless-constructor
-  constructor(db, dags, delegationsTableName = delegationsV3Table) {
+  constructor(db, dags) {
     this.#db = db
-    this.#delegationsTableName = delegationsTableName
     this.#dags = dags
     // eslint-disable-next-line no-void
     void (
@@ -239,8 +230,9 @@ export class DbDelegationsStorageWithR2 {
     if (delegations.length === 0) {
       return
     }
-    await writeDelegations(this.#dags, delegations)
+    await writeDelegations(this.#dags, delegations, this.#getDagsKey)
     const values = delegations.map((d) => createDelegationRowUpdateV3(d))
+    // @todo - if this fails, undo writeDelegations that dont need to be stored
     await this.#db
       .insertInto(this.#delegationsTableName)
       .values(values)
@@ -287,17 +279,17 @@ export class DbDelegationsStorageWithR2 {
   }
 
   /**
-   * @param {Pick<import('../types/access-api-cf-db').DelegationsV3Table, 'cid'>} row
+   * @param {Pick<import('../types/access-api-cf-db').DelegationsV3Row, 'cid'>} row
    * @param {R2Bucket} dags
+   * @param {(d: { cid: string }) => string} keyer - builds k/v key strings for each delegation
    * @returns {Promise<Ucanto.Delegation>}
    */
-  async #rowToDelegation(row, dags = this.#dags) {
-    const { cid } = row
-    const carBytesR2 = await dags.get(cid.toString())
+  async #rowToDelegation(row, dags = this.#dags, keyer = this.#getDagsKey) {
+    const cidString = row.cid.toString()
+    const carBytesR2 = await dags.get(keyer({ cid: cidString }))
     if (!carBytesR2) {
-      throw new Error(`failed to read car bytes for cid ${cid.toString()}`)
+      throw new Error(`failed to read car bytes for cid ${cidString}`)
     }
-    // @todo stream car reading
     const carBytes = new Uint8Array(await carBytesR2.arrayBuffer())
     const delegations = bytesToDelegations(carBytes)
     if (delegations.length !== 1) {
@@ -311,13 +303,13 @@ export class DbDelegationsStorageWithR2 {
 }
 
 /**
- * @typedef {import('../types/access-api-cf-db').DelegationsV3Table} DelegationsV3Table
- * @typedef {import('../types/access-api-cf-db').DelegationsV2Table} DelegationsV2Table
+ * @typedef {import('../types/access-api-cf-db').DelegationsV3Row} DelegationsV3Row
+ * @typedef {import('../types/access-api-cf-db').DelegationsV2Row} DelegationsV2Row
  */
 
 /**
  * @template {string} TableName
- * @template {Record<TableName, DelegationsV3Table|DelegationsV2Table>} Tables
+ * @template {Record<TableName, DelegationsV3Row|DelegationsV2Row>} Tables
  * @param {import('../types/database').Database<Tables>} db
  * @param {TableName} delegationsTable
  * @returns {Promise<bigint>} - count of table
@@ -331,26 +323,22 @@ async function count(db, delegationsTable) {
 }
 
 /**
- * @param {Ucanto.Delegation} ucan
+ * @param {{ cid: string }} ucan
  */
-function delegationCarFileKeyer(ucan) {
-  return `${ucan.cid.toString()}.car`
+function carFileKeyer(ucan) {
+  return /** @type {const} */ (`${ucan.cid.toString()}.car`)
 }
 
 /**
  * @param {R2Bucket} bucket
  * @param {Iterable<Ucanto.Delegation>} delegations
- * @param {(d: Ucanto.Delegation) => string} keyer - builds k/v key strings for each delegation
+ * @param {(d: { cid: string }) => string} keyer - builds k/v key strings for each delegation
  */
-async function writeDelegations(
-  bucket,
-  delegations,
-  keyer = delegationCarFileKeyer
-) {
+async function writeDelegations(bucket, delegations, keyer) {
   return writeEntries(
     bucket,
     [...delegations].map((delegation) => {
-      const key = delegation.cid.toString()
+      const key = keyer({ cid: delegation.cid.toString() })
       const carBytes = delegationsToBytes([delegation])
       const value = carBytes
       return /** @type {[key: string, value: Uint8Array]} */ ([key, value])
