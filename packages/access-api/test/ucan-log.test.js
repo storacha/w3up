@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-null */
 /* eslint-disable unicorn/consistent-destructuring */
 import * as Space from '@web3-storage/capabilities/space'
-import assert, { fail } from 'assert'
+import assert from 'assert'
 import { context } from './helpers/context.js'
 import { codec as CAR } from '@ucanto/transport/car'
 import { codec as CBOR } from '@ucanto/transport/cbor'
