@@ -24,6 +24,7 @@ class UCANLog {
     this.url = url
     this.auth = auth
   }
+
   /**
    * @param {Uint8Array} car
    */
@@ -43,6 +44,7 @@ class UCANLog {
       }
     )
   }
+
   /**
    * @param {API.ReceiptBlock} receipt
    */
@@ -62,11 +64,11 @@ class UCANLog {
           retries: 10,
         }
       )
-    } catch (cause) {
+    } catch (error) {
       throw new Error(
-        `Failed to log receipt for invocation ${receipt.data.ran}: ${cause}`,
+        `Failed to log receipt for invocation ${receipt.data.ran}: ${error}`,
         {
-          cause,
+          cause: error,
         }
       )
     }
@@ -86,6 +88,7 @@ class UCANLogDebug {
       globalThis.ucanlog.invocations.push(car)
     } catch {}
   }
+
   /**
    * @param {API.ReceiptBlock} receipt
    */
@@ -93,9 +96,9 @@ class UCANLogDebug {
     try {
       // @ts-expect-error
       globalThis.ucanlog.receipts.push(receipt)
-    } catch (cause) {
+    } catch (error) {
       throw new Error(
-        `Failed to log receipt for invocation ${receipt.data.ran}: ${cause}`
+        `Failed to log receipt for invocation ${receipt.data.ran}: ${error}`
       )
     }
   }

@@ -55,7 +55,9 @@ export async function postRoot(request, env, ctx) {
     // to the client as soon as possible. We will however keep the worker alive
     // until we have logged the receipt. If logging fails we will log the error
     // as we have no way to handle it here nor we can rollback the invocation.
-    forks.push(env.ucanLog.logReceipt(receipt).catch((e) => env.log.error(e)))
+    forks.push(
+      env.ucanLog.logReceipt(receipt).catch((error) => env.log.error(error))
+    )
   }
 
   const response = await encoder.encode(out)

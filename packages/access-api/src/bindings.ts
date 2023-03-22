@@ -43,6 +43,8 @@ export interface Email {
   }) => Promise<void>
 }
 
+// We can't use interface here or it will not extend Record and cause type error
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type Env = {
   // vars
   ENV: string
@@ -73,7 +75,7 @@ export type Env = {
 }
 
 export interface HandlerContext {
-  waitUntil(promise: Promise<any>): void
+  waitUntil: (promise: Promise<any>) => void
 }
 
 export interface RouteContext {
@@ -98,6 +100,7 @@ export interface UCANLog {
    * This can fail if it is unable to write to the underlying store. Handling
    * invocations will be blocked until write is complete. Implementation may
    * choose to do several retries before failing.
+   *
    * @param car - UCAN invocations in CAR. Each invocation is a root in the CAR.
    */
   logInvocations: (car: Uint8Array) => Promise<void>
@@ -120,7 +123,7 @@ export interface Receipt {
   out: ReceiptResult
   meta: Record<string, unknown>
   iss?: DID
-  prf?: Link<Delegation>[]
+  prf?: Array<Link<Delegation>>
 
   s: ByteView<Signature>
 }
@@ -131,8 +134,10 @@ export interface ReceiptBlock extends Block<Receipt> {
 
 /**
  * Defines result type as per invocation spec
+ *
  * @see https://github.com/ucan-wg/invocation/#6-result
  */
+
 export type ReceiptResult<T = unknown, X extends {} = {}> = Variant<{
   ok: T
   error: X
@@ -172,7 +177,7 @@ export type ReceiptResult<T = unknown, X extends {} = {}> = Variant<{
  *
  * [keyed union]:https://ipld.io/docs/schemas/features/representation-strategies/#union-keyed-representation
  */
-export type Variant<U extends { [Key: string]: unknown }> = {
+export type Variant<U extends Record<string, unknown>> = {
   [Key in keyof U]: { [K in Exclude<keyof U, Key>]?: never } & {
     [K in Key]: U[Key]
   }
@@ -191,6 +196,7 @@ export type Bindings = Record<
   | AnalyticsEngine
 >
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace ModuleWorker {
   type FetchHandler<Environment extends Bindings = Bindings> = (
     request: Request,
