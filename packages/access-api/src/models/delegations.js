@@ -232,6 +232,7 @@ export class DbDelegationsStorageWithR2 {
     }
     await writeDelegations(this.#dags, delegations, this.#getDagsKey)
     const values = delegations.map((d) => createDelegationRowUpdateV3(d))
+    // @todo - if this fails, undo writeDelegations that dont need to be stored
     await this.#db
       .insertInto(this.#delegationsTableName)
       .values(values)
