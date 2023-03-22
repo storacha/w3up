@@ -7,7 +7,7 @@ export { R2Bucket } from '@miniflare/r2'
 
 export interface DelegationsV2Table {
   cid: string
-  bytes: Uint8Array
+  bytes: Uint8Array | number[]
   audience: URI<'did:'>
   issuer: URI<'did:'>
   expires_at: Date | null
