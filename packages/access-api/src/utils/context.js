@@ -79,7 +79,10 @@ export function getContext(request, env, ctx) {
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
-      provisions: new DbProvisions(config.PROVIDERS, createD1Database(config.DB)),
+      provisions: new DbProvisions(
+        config.PROVIDERS,
+        createD1Database(config.DB)
+      ),
     },
     email,
     uploadApi: createUploadApiConnection({
