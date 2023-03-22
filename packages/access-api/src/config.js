@@ -60,7 +60,7 @@ export function loadConfig(env) {
 
     /** DIDs of services that can be used to provision spaces. */
     PROVIDERS: env.PROVIDERS
-      ? env.PROVIDERS.split(',').map(id => DID.parse(id).did())
+      ? env.PROVIDERS.split(',').map((id) => DID.parse(id).did())
       : [DID.parse(vars.DID).did()],
 
     UPLOAD_API_URL: env.UPLOAD_API_URL || 'https://up.web3.storage/',

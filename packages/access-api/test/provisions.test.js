@@ -67,10 +67,9 @@ describe('DbProvisions', () => {
       space: /** @type {const} */ ('did:key:foo'),
       account: /** @type {const} */ ('did:mailto:foo'),
       // note this type assertion is wrong, but useful to set up the test
-      provider:
-        /** @type {import('@ucanto/interface').DID<'web'>} */ (
-          'did:provider:foo'
-        ),
+      provider: /** @type {import('@ucanto/interface').DID<'web'>} */ (
+        'did:provider:foo'
+      ),
     }
     const putModifiedFirstProvision = () => storage.put(modifiedFirstProvision)
     await assert.rejects(
