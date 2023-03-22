@@ -52,7 +52,11 @@ export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 export type ProviderAdd = InferInvokedCapability<typeof provider.add>
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ProviderAddSuccess {}
-export type ProviderAddFailure = Ucanto.Failure
+export type ProviderAddFailure = InvalidProvider | Ucanto.Failure
+
+export interface InvalidProvider extends Ucanto.Failure {
+  name: 'InvalidProvider'
+}
 
 // Space
 export type Space = InferInvokedCapability<typeof space>
