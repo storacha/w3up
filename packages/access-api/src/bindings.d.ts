@@ -7,6 +7,7 @@ import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { Accounts } from './models/accounts.js'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage } from './types/provisions.js'
+import { R2Bucket } from '@miniflare/r2'
 
 export {}
 
@@ -48,6 +49,7 @@ export interface Env {
   SPACES: KVNamespace
   VALIDATIONS: KVNamespace
   W3ACCESS_METRICS: AnalyticsEngine
+  ACCESS_API_R2: R2Bucket
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __D1_BETA__: D1Database
 }
