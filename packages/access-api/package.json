@@ -41,7 +41,7 @@
     "@cloudflare/workers-types": "^3.19.0",
     "@databases/split-sql-query": "^1.0.3",
     "@databases/sql": "^3.2.0",
-    "@miniflare/r2": "2.12.1",
+    "@miniflare/r2": "^2.12.1",
     "@sentry/cli": "2.7.0",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
@@ -56,14 +56,14 @@
     "git-rev-sync": "^3.0.2",
     "hd-scripts": "^4.0.0",
     "is-subset": "^0.1.1",
-    "miniflare": "2.12.1",
+    "miniflare": "^2.12.1",
     "mocha": "^10.2.0",
     "p-wait-for": "^5.0.0",
     "process": "^0.11.10",
     "readable-stream": "^4.2.0",
     "sade": "^1.8.1",
     "typescript": "4.9.5",
-    "wrangler": "2.13.0"
+    "wrangler": "^2.13.0"
   },
   "eslintConfig": {
     "extends": [
@@ -104,7 +104,6 @@
             "IterableIterator",
             "KVNamespace",
             "PromiseLike",
-            "R2Bucket",
             "ResponseInit"
           ]
         }
@@ -139,7 +138,6 @@
       "@types/*",
       "wrangler",
       "@cloudflare/workers-types",
-      "@miniflare/r2",
       "process",
       "buffer",
       "hd-scripts",
