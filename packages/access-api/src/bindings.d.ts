@@ -1,9 +1,4 @@
 import type { Logging } from '@web3-storage/worker-utils/logging'
-import type {
-  AccountTable,
-  DelegationTable,
-  SpaceTable,
-} from '@web3-storage/access/types'
 import type { Handler as _Handler } from '@web3-storage/worker-utils/router'
 import { Spaces } from './models/spaces.js'
 import { Validations } from './models/validations.js'
@@ -107,10 +102,4 @@ export interface ModuleWorker {
 
 export interface D1ErrorRaw extends Error {
   cause: Error & { code: string }
-}
-
-export interface D1Schema {
-  spaces: SpaceTable
-  accounts: AccountTable
-  delegations: DelegationTable
 }
