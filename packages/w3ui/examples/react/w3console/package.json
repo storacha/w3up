@@ -20,7 +20,8 @@
     "@w3ui/react-uploads-list": "workspace:^",
     "@w3ui/uploader-core": "workspace:^",
     "blueimp-md5": "^2.19.0",
-    "preact": "^10.11.3"
+    "preact": "^10.11.3",
+    "react-router-dom": "^6.9.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.4.0",
