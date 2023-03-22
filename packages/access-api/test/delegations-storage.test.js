@@ -14,52 +14,6 @@ import * as ucanto from '@ucanto/core'
 import { collect } from 'streaming-iterables'
 
 describe('DbDelegationsStorage', () => {
-  it('can retrieve delegations by audience', async () => {
-    const { issuer, d1 } = await context()
-    const delegations = new DbDelegationsStorage(createD1Database(d1))
-
-    const alice = await principal.ed25519.generate()
-    const delegationsForAlice = await Promise.all(
-      Array.from({ length: 1 }).map(() =>
-        createDelegation({ issuer, audience: alice })
-      )
-    )
-
-    const bob = await principal.ed25519.generate()
-    const delegationsForBob = await Promise.all(
-      Array.from({ length: 2 }).map((e, i) =>
-        createDelegation({
-          issuer,
-          audience: bob,
-          capabilities: [
-            {
-              can: `test/${i}`,
-              with: alice.did(),
-            },
-          ],
-        })
-      )
-    )
-
-    await delegations.putMany(...delegationsForAlice, ...delegationsForBob)
-
-    const aliceDelegations = await collect(
-      delegations.find({ audience: alice.did() })
-    )
-    assert.deepEqual(aliceDelegations.length, delegationsForAlice.length)
-
-    const bobDelegations = await collect(
-      delegations.find({ audience: bob.did() })
-    )
-    assert.deepEqual(bobDelegations.length, delegationsForBob.length)
-
-    const carol = await principal.ed25519.generate()
-    const carolDelegations = await collect(
-      delegations.find({ audience: carol.did() })
-    )
-    assert.deepEqual(carolDelegations.length, 0)
-  })
-
   it('find throws UnexpectedDelegation when encountering row with empty bytes', async () => {
     const { d1, issuer } = await context()
     const db = createD1Database(d1)
@@ -157,7 +111,7 @@ function createDbDelegationsStorageVariant() {
     create: async () => {
       const { d1 } = await context()
       const delegationsStorage = new DbDelegationsStorage(createD1Database(d1))
-      return { delegationsStorage }
+      return { delegations: delegationsStorage }
     },
   }
 }
@@ -174,19 +128,20 @@ function createDbDelegationsStorageVariantWithR2() {
      * @returns {Promise<DelegationsStorageVariant>}
      */
     create: async () => {
-      const { d1, accessApiR2 } = await context()
+      const { d1, mf } = await context()
+      const accessApiR2 = await mf.getR2Bucket('ACCESS_API_R2')
       const delegationsStorage = new DbDelegationsStorageWithR2(
         createD1Database(d1),
         accessApiR2
       )
-      return { delegationsStorage }
+      return { delegations: delegationsStorage }
     },
   }
 }
 
 /**
  * @typedef {object} DelegationsStorageVariant
- * @property {Pick<import('../src/types/delegations.js').DelegationsStorage, 'putMany'|'count'>} delegationsStorage
+ * @property {Pick<import('../src/types/delegations.js').DelegationsStorage, 'putMany'|'count'|'find'>} delegations
  */
 
 /**
@@ -195,12 +150,57 @@ function createDbDelegationsStorageVariantWithR2() {
  */
 function testVariant(createVariant, test) {
   test('should persist delegations', async () => {
-    const { delegationsStorage } = await createVariant()
+    const { delegations: delegationsStorage } = await createVariant()
     const count = Math.round(Math.random() * 10)
     const delegations = await Promise.all(
       Array.from({ length: count }).map(() => createSampleDelegation())
     )
     await delegationsStorage.putMany(...delegations)
     assert.deepEqual(await delegationsStorage.count(), delegations.length)
+  })
+  test('can retrieve delegations by audience', async () => {
+    const { delegations } = await createVariant()
+    const issuer = await principal.ed25519.generate()
+
+    const alice = await principal.ed25519.generate()
+    const delegationsForAlice = await Promise.all(
+      Array.from({ length: 1 }).map(() =>
+        createDelegation({ issuer, audience: alice })
+      )
+    )
+
+    const bob = await principal.ed25519.generate()
+    const delegationsForBob = await Promise.all(
+      Array.from({ length: 2 }).map((e, i) =>
+        createDelegation({
+          issuer,
+          audience: bob,
+          capabilities: [
+            {
+              can: `test/${i}`,
+              with: alice.did(),
+            },
+          ],
+        })
+      )
+    )
+
+    await delegations.putMany(...delegationsForAlice, ...delegationsForBob)
+
+    const aliceDelegations = await collect(
+      delegations.find({ audience: alice.did() })
+    )
+    assert.deepEqual(aliceDelegations.length, delegationsForAlice.length)
+
+    const bobDelegations = await collect(
+      delegations.find({ audience: bob.did() })
+    )
+    assert.deepEqual(bobDelegations.length, delegationsForBob.length)
+
+    const carol = await principal.ed25519.generate()
+    const carolDelegations = await collect(
+      delegations.find({ audience: carol.did() })
+    )
+    assert.deepEqual(carolDelegations.length, 0)
   })
 }

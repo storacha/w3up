@@ -63,7 +63,6 @@ export async function context({ env = {}, globals } = {}) {
   })
 
   const binds = await mf.getBindings()
-  const accessApiR2 = /** @type {R2Bucket} */ (binds.ACCESS_API_R2)
   const db = /** @type {D1Database} */ (binds.__D1_BETA__)
   await migrate(db)
 
@@ -79,7 +78,6 @@ export async function context({ env = {}, globals } = {}) {
     service: servicePrincipal,
     issuer: await Signer.generate(),
     d1: db,
-    accessApiR2,
   }
 }
 
