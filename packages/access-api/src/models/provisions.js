@@ -7,11 +7,11 @@
 
 /**
  * @template {import("@ucanto/interface").DID} ServiceId
- * @param {ServiceId} service
+ * @param {ServiceId[]} services
  * @param {Array<import("../types/provisions").Provision<ServiceId>>} storage
  * @returns {Provisions<ServiceId>}
  */
-export function createProvisions(service, storage = []) {
+export function createProvisions(services, storage = []) {
   /** @type {Provisions<ServiceId>['hasStorageProvider']} */
   const hasStorageProvider = async (consumerId) => {
     const hasRowWithSpace = storage.some(({ space }) => space === consumerId)
@@ -26,7 +26,7 @@ export function createProvisions(service, storage = []) {
     return BigInt(storage.length)
   }
   return {
-    service,
+    services,
     count,
     put,
     hasStorageProvider,
@@ -54,11 +54,11 @@ export class DbProvisions {
   #db
 
   /**
-   * @param {ServiceId} service
+   * @param {ServiceId[]} services
    * @param {ProvisionsDatabase} db
    */
-  constructor(service, db) {
-    this.service = service
+  constructor(services, db) {
+    this.services = services
     this.#db = db
     this.tableNames = {
       provisions: /** @type {const} */ ('provisions'),

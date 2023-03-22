@@ -25,7 +25,7 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
       const service = {
         did: () => /** @type {const} */ ('did:web:web3.storage'),
       }
-      const provisions = createProvisions(service.did())
+      const provisions = createProvisions([service.did()])
       return {
         spaceWithStorageProvider,
         provisions,
@@ -50,7 +50,7 @@ for (const providerAddHandlerVariant of /** @type {const} */ ([
             with: `did:mailto:example.com:foo`,
             nb: {
               consumer: space.did(),
-              provider: providerAddHandlerVariant.provisions.service,
+              provider: providerAddHandlerVariant.provisions.services[0],
             },
           })
           .delegate()
