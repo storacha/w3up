@@ -96,14 +96,14 @@ export class DbProvisions {
       await insert.executeTakeFirstOrThrow()
     } catch (error) {
       const d1Error = extractD1Error(error)
-      switch (d1Error?.code) {
-        case 'SQLITE_CONSTRAINT_PRIMARYKEY': {
-          primaryKeyError = error
-          break
-        }
-        default: {
-          throw error
-        }
+      if (d1Error?.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+        primaryKeyError = error
+      } else if (
+        /UNIQUE constraint failed: provisions.cid/.test(String(d1Error?.cause))
+      ) {
+        primaryKeyError = error
+      } else {
+        throw error
       }
     }
 
@@ -183,15 +183,16 @@ function deepEqual(x, y) {
  * @param {unknown} error
  */
 function extractD1Error(error) {
-  const isD1 = /D1_ALL_ERROR/.test(String(error))
+  const isD1 = /D1_(ALL_)?ERROR/.test(String(error))
   if (!isD1) return
   const cause =
     error && typeof error === 'object' && 'cause' in error && error.cause
   const code =
-    cause &&
-    typeof cause === 'object' &&
-    'code' in cause &&
-    typeof cause.code === 'string' &&
-    cause.code
+    (cause &&
+      typeof cause === 'object' &&
+      'code' in cause &&
+      typeof cause.code === 'string' &&
+      cause.code) ||
+    undefined
   return { cause, code }
 }

@@ -18,7 +18,6 @@
   "license": "(Apache-2.0 OR MIT)",
   "dependencies": {
     "@ipld/dag-ucan": "^3.2.0",
-    "@miniflare/r2": "^2.11.0",
     "@ucanto/core": "^5.2.0",
     "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
@@ -58,14 +57,14 @@
     "git-rev-sync": "^3.0.2",
     "hd-scripts": "^4.0.0",
     "is-subset": "^0.1.1",
-    "miniflare": "^2.12.2",
+    "miniflare": "2.12.1",
     "mocha": "^10.2.0",
     "p-wait-for": "^5.0.0",
     "process": "^0.11.10",
     "readable-stream": "^4.2.0",
     "sade": "^1.8.1",
     "typescript": "4.9.5",
-    "wrangler": "^2.13.0"
+    "wrangler": "2.13.0"
   },
   "eslintConfig": {
     "extends": [
