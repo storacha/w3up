@@ -95,14 +95,8 @@ export class DbProvisions {
     try {
       await insert.executeTakeFirstOrThrow()
     } catch (error) {
-      const d1Error = extractD1Error(error)
-      if (d1Error?.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-        primaryKeyError = error
-      } else if (
-        /UNIQUE constraint failed: provisions.cid/.test(String(d1Error?.cause))
-      ) {
-        primaryKeyError = error
-      } else {
+      primaryKeyError = getCidUniquenessError(error)
+      if (!primaryKeyError) {
         throw error
       }
     }
@@ -195,4 +189,22 @@ function extractD1Error(error) {
       cause.code) ||
     undefined
   return { cause, code }
+}
+
+/**
+ * return whether or not the provided parameter indicates an error
+ * writing provision to kysely database because there is already an entry
+ * for the written a cid
+ *
+ * @param {unknown} error
+ */
+function getCidUniquenessError(error) {
+  const d1Error = extractD1Error(error)
+  if (d1Error?.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+    return d1Error
+  } else if (
+    /UNIQUE constraint failed: provisions.cid/.test(String(d1Error?.cause))
+  ) {
+    return d1Error
+  }
 }

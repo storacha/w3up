@@ -123,12 +123,8 @@ class UnexpectedDelegation extends Error {
 function rowToDelegation(row) {
   /** @type {Ucanto.Delegation[]} */
   let delegations = []
-  // kysely/sqlite/d1/various-miniflare-versions sometimes only give an Array here.
-  // (GenericPlugin tries to ensure Uint8Array, but it can't reliably detect when to cast Array -> Uint8Array)
-  const rowBytes =
-    row.bytes instanceof Uint8Array ? row.bytes : new Uint8Array(row.bytes)
   try {
-    delegations = bytesToDelegations(rowBytes)
+    delegations = bytesToDelegations(new Uint8Array(row.bytes))
   } catch (error) {
     if (
       typeof error === 'object' &&
