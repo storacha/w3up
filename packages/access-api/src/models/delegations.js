@@ -208,6 +208,7 @@ export const delegationsV3Table = `delegations_v3`
  */
 
 export class DbDelegationsStorageWithR2 {
+  // @todo abstract away R2 specifics into DagStore: ~AsyncMap<CID, Ucanto.Delegation>
   /** @type {R2Bucket} */
   #dags
   /** @type {import('../types/database').Database<AccessApiD1TablesV3>} */
@@ -312,10 +313,22 @@ async function count(db, delegationsTable) {
 }
 
 /**
+ * @param {Ucanto.Delegation} ucan
+ */
+function delegationCarFileKeyer(ucan) {
+  return `${ucan.cid.toString()}.car`
+}
+
+/**
  * @param {R2Bucket} bucket
  * @param {Iterable<Ucanto.Delegation>} delegations
+ * @param {(d: Ucanto.Delegation) => string} keyer - builds k/v key strings for each delegation
  */
-async function writeDelegations(bucket, delegations) {
+async function writeDelegations(
+  bucket,
+  delegations,
+  keyer = delegationCarFileKeyer
+) {
   return writeEntries(
     bucket,
     [...delegations].map((delegation) => {
