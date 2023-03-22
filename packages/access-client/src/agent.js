@@ -65,7 +65,12 @@ const agentToData = new WeakMap()
  * @param {URL} [options.url] - w3access API URL
  * @param {Ucanto.Transport.Channel<Service>} [options.channel] - Ucanto channel to use
  * @param {typeof fetch} [options.fetch] - Fetch implementation to use
- * @returns {Ucanto.ConnectionView<Service>}
+ * @returns {Ucanto.ConnectionView<Service & {
+ * testing: {
+ * pass: Ucanto.ServiceMethod<{}, string, Ucanto.Failure>
+ * fail: Ucanto.ServiceMethod<{}, never, Ucanto.Failure>
+ * }
+ * }>}
  */
 export function connection(options = {}) {
   return Client.connect({

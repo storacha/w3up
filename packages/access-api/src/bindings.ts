@@ -12,14 +12,7 @@ import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { Accounts } from './models/accounts.js'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage } from './types/provisions.js'
-import {
-  DID,
-  Link,
-  Delegation,
-  Signature,
-  ByteView,
-  Block,
-} from '@ucanto/interface'
+import { DID, Link, Delegation, Signature, Block } from '@ucanto/interface'
 export * from '@ucanto/interface'
 
 export {}
@@ -125,7 +118,7 @@ export interface Receipt {
   iss?: DID
   prf?: Array<Link<Delegation>>
 
-  s: ByteView<Signature>
+  s: Signature
 }
 
 export interface ReceiptBlock extends Block<Receipt> {
