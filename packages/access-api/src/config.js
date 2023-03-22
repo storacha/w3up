@@ -36,7 +36,9 @@ export function loadConfig(env) {
   }
 
   if (typeof env.ACCESS_API_R2 !== 'object') {
-    throw new TypeError(`expected env.ACCESS_API_R2 to be an R2Bucket object, but got ${typeof env.ACCESS_API_R2}`)
+    throw new TypeError(
+      `expected env.ACCESS_API_R2 to be an R2Bucket object, but got ${typeof env.ACCESS_API_R2}`
+    )
   }
 
   return {
