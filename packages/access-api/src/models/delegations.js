@@ -5,17 +5,17 @@ import {
 } from '@web3-storage/access/encoding'
 
 /**
- * @typedef {import('@miniflare/r2').R2Bucket} R2Bucket
+ * @typedef {import('../types/access-api-cf-db').R2Bucket} R2Bucket
  */
 
 /**
- * @template {import('../types/access-api-d1').DelegationsV2Table | import('../types/access-api-d1').DelegationsV3Table} DelegationRow
+ * @template {import('../types/access-api-cf-db').DelegationsV2Table | import('../types/access-api-cf-db').DelegationsV3Table} DelegationRow
  * @typedef {Omit<DelegationRow, 'inserted_at'|'updated_at'|'expires_at'>} DelegationRowUpdate
  */
 
 /**
  * @typedef V2Tables
- * @property {import('../types/access-api-d1').DelegationsV2Table} delegations_v2
+ * @property {import('../types/access-api-cf-db').DelegationsV2Table} delegations_v2
  */
 
 /**
@@ -117,7 +117,7 @@ class UnexpectedDelegation extends Error {
 }
 
 /**
- * @param {Pick<import('../types/access-api-d1').DelegationsV2Table, 'bytes'>} row
+ * @param {Pick<import('../types/access-api-cf-db').DelegationsV2Table, 'bytes'>} row
  * @returns {Ucanto.Delegation}
  */
 function rowToDelegation(row) {
@@ -157,7 +157,7 @@ function rowToDelegation(row) {
 
 /**
  * @param {Ucanto.Delegation} d
- * @returns {DelegationRowUpdate<import('../types/access-api-d1').DelegationsV2Table>}
+ * @returns {DelegationRowUpdate<import('../types/access-api-cf-db').DelegationsV2Table>}
  */
 export function createDelegationRowUpdate(d) {
   return {
@@ -204,8 +204,8 @@ export function delegationsTableBytesToArrayBuffer(sqlValue) {
 export const delegationsV3Table = `delegations_v3`
 
 /**
- * @typedef {import('../types/access-api-d1').AccessApiD1TablesV2} AccessApiD1TablesV2
- * @typedef {import('../types/access-api-d1').AccessApiD1TablesV3} AccessApiD1TablesV3
+ * @typedef {import('../types/access-api-cf-db').AccessApiD1TablesV2} AccessApiD1TablesV2
+ * @typedef {import('../types/access-api-cf-db').AccessApiD1TablesV3} AccessApiD1TablesV3
  */
 
 export class DbDelegationsStorageWithR2 {
@@ -270,7 +270,7 @@ export class DbDelegationsStorageWithR2 {
   }
 
   /**
-   * @param {Pick<import('../types/access-api-d1').DelegationsV3Table, 'cid'>} row
+   * @param {Pick<import('../types/access-api-cf-db').DelegationsV3Table, 'cid'>} row
    * @param {R2Bucket} dags
    * @returns {Promise<Ucanto.Delegation>}
    */
@@ -294,8 +294,8 @@ export class DbDelegationsStorageWithR2 {
 }
 
 /**
- * @typedef {import('../types/access-api-d1').DelegationsV3Table} DelegationsV3Table
- * @typedef {import('../types/access-api-d1').DelegationsV2Table} DelegationsV2Table
+ * @typedef {import('../types/access-api-cf-db').DelegationsV3Table} DelegationsV3Table
+ * @typedef {import('../types/access-api-cf-db').DelegationsV2Table} DelegationsV2Table
  */
 
 /**
