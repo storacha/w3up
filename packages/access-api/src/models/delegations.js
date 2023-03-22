@@ -22,6 +22,7 @@ import {
  * @typedef {import("../types/database").Database<V2Tables>} DelegationsDatabase
  */
 
+// @todo remove reference to v2
 export const delegationsTable = /** @type {const} */ ('delegations_v2')
 
 /**
