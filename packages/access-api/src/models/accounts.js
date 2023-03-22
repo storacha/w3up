@@ -5,7 +5,7 @@ import { D1Dialect } from 'kysely-d1'
 import { GenericPlugin } from '../utils/d1.js'
 
 /**
- * @typedef {import('kysely').Selectable<import('../types/access-api-d1.js').DelegationsV2Table>} DelegationV2Record
+ * @typedef {import('kysely').Selectable<import('../types/access-api-cf-db.js').DelegationsV2Table>} DelegationV2Record
  */
 
 /**

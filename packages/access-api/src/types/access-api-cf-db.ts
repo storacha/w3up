@@ -1,6 +1,8 @@
 import { URI } from '@ucanto/interface'
 import { ColumnType, Generated } from 'kysely'
 
+export { R2Bucket } from '@miniflare/r2'
+
 // v2
 
 export interface DelegationsV2Table {
