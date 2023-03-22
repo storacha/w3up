@@ -10,7 +10,8 @@ import {
 import type {
   KeyringContextState,
   KeyringContextActions,
-  ServiceConfig
+  ServiceConfig,
+  RegisterSpaceOpts
 } from '@w3ui/keyring-core'
 import type { Agent } from '@web3-storage/access'
 import type { Abilities } from '@web3-storage/access/types'
@@ -129,7 +130,7 @@ export function KeyringProvider ({
     return did
   }
 
-  const registerSpace = async (email: string): Promise<void> => {
+  const registerSpace = async (email: string, opts: RegisterSpaceOpts = {}): Promise<void> => {
     const agent = await getAgent()
     const controller = new AbortController()
     setRegisterAbortController(controller)
@@ -137,7 +138,7 @@ export function KeyringProvider ({
     try {
       await agent.registerSpace(email, {
         signal: controller.signal,
-        provider: agent.connection.id.did() as DID<'web'>
+        provider: opts.provider ?? (agent.connection.id.did() as DID<'web'>)
       })
       setSpace(getCurrentSpaceInAgent(agent))
       setSpaces(getSpaces(agent))
