@@ -12,6 +12,15 @@ import { ConnectionView, Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { Accounts } from './models/accounts.js'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage } from './types/provisions.js'
+import {
+  DID,
+  Link,
+  Delegation,
+  Signature,
+  ByteView,
+  Block,
+} from '@ucanto/interface'
+export * from '@ucanto/interface'
 
 export {}
 
@@ -26,11 +35,15 @@ export interface AnalyticsEngineEvent {
 }
 
 export interface Email {
-  sendValidation: ({ to: string, url: string }) => Promise<void>
-  send: ({ to: string, textBody: string, subject: string }) => Promise<void>
+  sendValidation: (input: { to: string; url: string }) => Promise<void>
+  send: (input: {
+    to: string
+    textBody: string
+    subject: string
+  }) => Promise<void>
 }
 
-export interface Env {
+export type Env = {
   // vars
   ENV: string
   DEBUG: string
@@ -46,7 +59,8 @@ export interface Env {
   SENTRY_DSN: string
   POSTMARK_TOKEN: string
   POSTMARK_SENDER?: string
-  UCAN_INVOCATION_POST_BASIC_AUTH: string
+  UCAN_LOG_URL?: string
+  UCAN_LOG_BASIC_AUTH?: string
 
   DEBUG_EMAIL?: string
   LOGTAIL_TOKEN: string
@@ -56,6 +70,10 @@ export interface Env {
   W3ACCESS_METRICS: AnalyticsEngine
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __D1_BETA__: D1Database
+}
+
+export interface HandlerContext {
+  waitUntil(promise: Promise<any>): void
 }
 
 export interface RouteContext {
@@ -72,12 +90,10 @@ export interface RouteContext {
     provisions: ProvisionsStorage
     validations: Validations
   }
-  uploadApi: ConnectionView
-  ucanInvocationPostURL: URL
-  ucanInvocationPostBasicAuth: string
+  uploadApi: ConnectionView<any>
 }
 
-interface UCANLog {
+export interface UCANLog {
   /**
    * This can fail if it is unable to write to the underlying store. Handling
    * invocations will be blocked until write is complete. Implementation may
@@ -96,20 +112,85 @@ interface UCANLog {
    *
    * @param receipt - DAG-CBOR encoded invocation receipt
    */
-  logReceipt: (receipt: Uint8Array) => Promise<void>
+  logReceipt: (block: ReceiptBlock) => Promise<void>
 }
+
+export interface Receipt {
+  ran: Link
+  out: ReceiptResult
+  meta: Record<string, unknown>
+  iss?: DID
+  prf?: Link<Delegation>[]
+
+  s: ByteView<Signature>
+}
+
+export interface ReceiptBlock extends Block<Receipt> {
+  data: Receipt
+}
+
+/**
+ * Defines result type as per invocation spec
+ * @see https://github.com/ucan-wg/invocation/#6-result
+ */
+export type ReceiptResult<T = unknown, X extends {} = {}> = Variant<{
+  ok: T
+  error: X
+}>
+
+/**
+ * Utility type for defining a [keyed union] type as in IPLD Schema. In practice
+ * this just works around typescript limitation that requires discriminant field
+ * on all variants.
+ *
+ * ```ts
+ * type Result<T, X> =
+ *   | { ok: T }
+ *   | { error: X }
+ *
+ * const demo = (result: Result<string, Error>) => {
+ *   if (result.ok) {
+ *   //  ^^^^^^^^^ Property 'ok' does not exist on type '{ error: Error; }`
+ *   }
+ * }
+ * ```
+ *
+ * Using `Variant` type we can define same union type that works as expected:
+ *
+ * ```ts
+ * type Result<T, X> = Variant<{
+ *   ok: T
+ *   error: X
+ * }>
+ *
+ * const demo = (result: Result<string, Error>) => {
+ *   if (result.ok) {
+ *     result.ok.toUpperCase()
+ *   }
+ * }
+ * ```
+ *
+ * [keyed union]:https://ipld.io/docs/schemas/features/representation-strategies/#union-keyed-representation
+ */
+export type Variant<U extends { [Key: string]: unknown }> = {
+  [Key in keyof U]: { [K in Exclude<keyof U, Key>]?: never } & {
+    [K in Key]: U[Key]
+  }
+}[keyof U]
 
 export type Handler = _Handler<RouteContext>
 
 export type Bindings = Record<
   string,
+  | string
+  | undefined
   | KVNamespace
   | DurableObjectNamespace
   | CryptoKey
-  | string
   | D1Database
   | AnalyticsEngine
 >
+
 declare namespace ModuleWorker {
   type FetchHandler<Environment extends Bindings = Bindings> = (
     request: Request,

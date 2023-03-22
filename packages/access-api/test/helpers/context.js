@@ -35,7 +35,7 @@ function createBindings(env) {
     LOGTAIL_TOKEN: env.LOGTAIL_TOKEN || '',
     W3ACCESS_METRICS: createAnalyticsEngine(),
     UPLOAD_API_URL: env.UPLOAD_API_URL || '',
-    UCAN_INVOCATION_POST_BASIC_AUTH: env.UCAN_INVOCATION_POST_BASIC_AUTH || '',
+    UCAN_LOG_URL: env.UCAN_LOG_URL || '',
   }
 }
 

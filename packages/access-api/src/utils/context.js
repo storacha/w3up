@@ -7,6 +7,7 @@ import { Accounts } from '../models/accounts.js'
 import { Spaces } from '../models/spaces.js'
 import { Validations } from '../models/validations.js'
 import * as Email from './email.js'
+import * as UCANLog from './ucan-log.js'
 import { createUploadApiConnection } from '../service/upload-api-proxy.js'
 import { DID } from '@ucanto/core'
 import {
@@ -34,6 +35,13 @@ export function getContext(request, env, ctx) {
           token: config.POSTMARK_TOKEN,
           sender: config.POSTMARK_SENDER,
         })
+
+  const ucanLog = config.UCAN_LOG_URL
+    ? UCANLog.connect({
+        url: new URL(config.UCAN_LOG_URL),
+        auth: config.UCAN_LOG_BASIC_AUTH,
+      })
+    : UCANLog.debug()
 
   // Sentry
   const sentry = new Toucan({
@@ -68,10 +76,6 @@ export function getContext(request, env, ctx) {
     signer,
     config,
     url,
-    ucanLog: {
-      async logInvocations() {},
-      async logReceipt() {},
-    },
     models: {
       delegations: new DbDelegationsStorage(
         createD1Database(config.DB, {
@@ -86,12 +90,11 @@ export function getContext(request, env, ctx) {
       provisions: new DbProvisions(signer.did(), createD1Database(config.DB)),
     },
     email,
+    ucanLog,
     uploadApi: createUploadApiConnection({
       audience: DID.parse(config.DID).did(),
       url: new URL(config.UPLOAD_API_URL),
       fetch: globalThis.fetch.bind(globalThis),
     }),
-    ucanInvocationPostURL: new URL(config.UPLOAD_API_URL),
-    ucanInvocationPostBasicAuth: config.UCAN_INVOCATION_POST_BASIC_AUTH,
   }
 }

@@ -43,7 +43,8 @@ export function loadConfig(env) {
     POSTMARK_SENDER: env.POSTMARK_SENDER,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
-    UCAN_INVOCATION_POST_BASIC_AUTH: vars.UCAN_INVOCATION_POST_BASIC_AUTH,
+    UCAN_LOG_BASIC_AUTH: vars.UCAN_LOG_BASIC_AUTH,
+    UCAN_LOG_URL: env.UCAN_LOG_URL,
 
     // These are injected in esbuild
     // @ts-ignore
@@ -57,7 +58,7 @@ export function loadConfig(env) {
     COMMITHASH: ACCOUNT_COMMITHASH,
 
     PRIVATE_KEY: vars.PRIVATE_KEY,
-    DID: DID.parse(vars.DID).did(),
+    DID: /** @type {UCAN.DID<"web">} */ (DID.parse(vars.DID).did()),
 
     UPLOAD_API_URL: env.UPLOAD_API_URL || 'https://up.web3.storage/',
     // bindings

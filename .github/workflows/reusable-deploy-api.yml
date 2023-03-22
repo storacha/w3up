@@ -24,7 +24,7 @@ on:
         required: true
       LOGTAIL_TOKEN:
         required: true
-      UCAN_INVOCATION_POST_BASIC_AUTH:
+      UCAN_LOG_BASIC_AUTH:
         required: true
 
 jobs:
@@ -60,7 +60,7 @@ jobs:
             PRIVATE_KEY
             SENTRY_DSN
             LOGTAIL_TOKEN
-            UCAN_INVOCATION_POST_BASIC_AUTH
+            UCAN_LOG_BASIC_AUTH
         env:
           POSTMARK_TOKEN: ${{ secrets.POSTMARK_TOKEN }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
@@ -68,4 +68,4 @@ jobs:
           SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
           SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
           LOGTAIL_TOKEN: ${{ secrets.LOGTAIL_TOKEN }}
-          UCAN_INVOCATION_POST_BASIC_AUTH: ${{ secrets.UCAN_INVOCATION_POST_BASIC_AUTH }}
+          UCAN_LOG_BASIC_AUTH: ${{ secrets.UCAN_LOG_BASIC_AUTH }}
