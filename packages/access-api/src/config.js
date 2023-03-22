@@ -35,6 +35,12 @@ export function loadConfig(env) {
     }
   }
 
+  if (typeof env.ACCESS_API_R2 !== 'object') {
+    throw new TypeError(
+      `expected env.ACCESS_API_R2 to be an R2Bucket object, but got ${typeof env.ACCESS_API_R2}`
+    )
+  }
+
   return {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
@@ -67,6 +73,7 @@ export function loadConfig(env) {
     SPACES: env.SPACES,
     VALIDATIONS: env.VALIDATIONS,
     DB: /** @type {D1Database} */ (env.__D1_BETA__),
+    ACCESS_API_R2: env.ACCESS_API_R2,
   }
 }
 

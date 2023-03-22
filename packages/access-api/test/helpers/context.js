@@ -14,7 +14,7 @@ dotenv.config({
 })
 
 /**
- * @typedef {Omit<import('../../src/bindings').Env, 'SPACES'|'VALIDATIONS'|'__D1_BETA__'>} AccessApiBindings - bindings object expected by access-api workers
+ * @typedef {Omit<import('../../src/bindings').Env, 'SPACES'|'VALIDATIONS'|'__D1_BETA__'|'ACCESS_API_R2'>} AccessApiBindings - bindings object expected by access-api workers
  */
 
 /**
