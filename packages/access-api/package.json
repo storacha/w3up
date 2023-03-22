@@ -43,6 +43,7 @@
     "@cloudflare/workers-types": "^3.19.0",
     "@databases/split-sql-query": "^1.0.3",
     "@databases/sql": "^3.2.0",
+    "@miniflare/r2": "2.12.1",
     "@sentry/cli": "2.7.0",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
