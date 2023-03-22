@@ -110,10 +110,6 @@ export interface DudewhereBucket {
   put: (dataCid: string, carCid: string) => Promise<void>
 }
 
-export interface UcanBucket {
-  put: (carCid: string, bytes: Uint8Array) => Promise<void>
-}
-
 export interface StoreTable {
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
