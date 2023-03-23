@@ -35,6 +35,12 @@ export function loadConfig(env) {
     }
   }
 
+  if (typeof env.DELEGATIONS_BUCKET !== 'object') {
+    throw new TypeError(
+      `expected env.DELEGATIONS_BUCKET to be an R2Bucket object, but got ${typeof env.DELEGATIONS_BUCKET}`
+    )
+  }
+
   return {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
@@ -67,6 +73,7 @@ export function loadConfig(env) {
     SPACES: env.SPACES,
     VALIDATIONS: env.VALIDATIONS,
     DB: /** @type {D1Database} */ (env.__D1_BETA__),
+    DELEGATIONS_BUCKET: env.DELEGATIONS_BUCKET,
   }
 }
 
