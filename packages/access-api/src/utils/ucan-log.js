@@ -29,20 +29,29 @@ class UCANLog {
    * @param {Uint8Array} car
    */
   async logInvocations(car) {
-    await pRetry(
-      () =>
-        fetch(this.url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Basic ${this.auth}`,
-            'Content-Type': 'application/invocations+car',
-          },
-          body: car,
-        }),
-      {
-        retries: 10,
-      }
-    )
+    try {
+      await pRetry(
+        async () => {
+          const res = await fetch(this.url, {
+            method: 'POST',
+            headers: {
+              Authorization: `Basic ${this.auth}`,
+              'Content-Type': 'application/invocations+car',
+            },
+            body: car,
+          })
+          if (!res.ok) {
+            throw new Error(`HTTP request status not ok: ${res.status}`)
+          }
+          return res
+        },
+        {
+          retries: 10,
+        }
+      )
+    } catch (error) {
+      throw new Error(`Failed to log invocations: ${error}`, { cause: error, })
+    }
   }
 
   /**
@@ -51,15 +60,20 @@ class UCANLog {
   async logReceipt(receipt) {
     try {
       await pRetry(
-        () =>
-          fetch(this.url, {
+        async () => {
+          const res = await fetch(this.url, {
             method: 'POST',
             headers: {
               Authorization: `Basic ${this.auth}`,
               'Content-Type': 'application/receipt+dag-cbor',
             },
             body: receipt.bytes,
-          }),
+          })
+          if (!res.ok) {
+            throw new Error(`HTTP request status not ok: ${res.status}`)
+          }
+          return res
+        },
         {
           retries: 10,
         }
