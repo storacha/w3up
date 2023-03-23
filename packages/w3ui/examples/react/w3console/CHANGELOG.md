@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/w3console-v1.0.0...w3console-v1.0.1) (2023-03-23)
+
+
+### Bug Fixes
+
+* use production service configuration by default in w3console ([#425](https://github.com/web3-storage/w3ui/issues/425)) ([04990c5](https://github.com/web3-storage/w3ui/commit/04990c57e3575d0c12ff1eb7420d0d64c5415c26))
+
 ## 1.0.0 (2023-03-23)
 
 
