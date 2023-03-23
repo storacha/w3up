@@ -41,7 +41,7 @@ export function getContext(request, env, ctx) {
       throw new Error(`config.UCAN_LOG_BASIC_AUTH is required but missing`)
     }
     if (!config.UCAN_LOG_URL) {
-      throw new Error(`config.UCAN_LOG_BASIC_AUTH is required but missing`)
+      throw new Error(`config.UCAN_LOG_URL is required but missing`)
     }
   }
   const ucanLog =
