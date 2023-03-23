@@ -36,12 +36,13 @@ export function getContext(request, env, ctx) {
           sender: config.POSTMARK_SENDER,
         })
 
-  const ucanLog = config.UCAN_LOG_URL
-    ? UCANLog.connect({
-        url: new URL(config.UCAN_LOG_URL),
-        auth: config.UCAN_LOG_BASIC_AUTH,
-      })
-    : UCANLog.debug()
+  const ucanLog =
+    config.UCAN_LOG_URL && config.UCAN_LOG_BASIC_AUTH
+      ? UCANLog.connect({
+          url: new URL(config.UCAN_LOG_URL),
+          auth: config.UCAN_LOG_BASIC_AUTH,
+        })
+      : UCANLog.debug()
 
   // Sentry
   const sentry = new Toucan({
