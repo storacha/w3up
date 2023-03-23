@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.0.0](https://github.com/web3-storage/w3protocol/compare/access-v11.0.0-rc.0...access-v11.0.0) (2023-03-23)
+
+
+### Features
+
+* move access-api delegation bytes out of d1 and into r2 ([#578](https://github.com/web3-storage/w3protocol/issues/578)) ([4510c9a](https://github.com/web3-storage/w3protocol/commit/4510c9a8c4389ca975d66f5c9592bce326bbc1c7))
+
 ## [11.0.0-rc.0](https://github.com/web3-storage/w3protocol/compare/access-v10.0.0...access-v11.0.0-rc.0) (2023-03-20)
 
 
