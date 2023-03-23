@@ -97,23 +97,31 @@ class UCANLogDebug {
    * @param {Uint8Array} car
    */
   async logInvocations(car) {
-    try {
-      // @ts-expect-error
-      globalThis.ucanlog.invocations.push(car)
-    } catch {}
+    const { ucanlog } =
+      /** @type {{ucanlog?: { invocations?: Array<Uint8Array> }}} */ (
+        globalThis
+      )
+    if (typeof ucanlog?.invocations?.push === 'function') {
+      ucanlog.invocations.push(car)
+    }
   }
 
   /**
    * @param {API.ReceiptBlock} receipt
    */
   async logReceipt(receipt) {
-    try {
-      // @ts-expect-error
-      globalThis.ucanlog.receipts.push(receipt)
-    } catch (error) {
-      throw new Error(
-        `Failed to log receipt for invocation ${receipt.data.ran}: ${error}`
+    const { ucanlog } =
+      /** @type {{ucanlog?: { receipts?: Array<API.ReceiptBlock> }}} */ (
+        globalThis
       )
+    if (typeof ucanlog?.receipts?.push === 'function') {
+      try {
+        ucanlog.receipts.push(receipt)
+      } catch (error) {
+        throw new Error(
+          `Failed to log receipt for invocation ${receipt.data.ran}: ${error}`
+        )
+      }
     }
   }
 }
