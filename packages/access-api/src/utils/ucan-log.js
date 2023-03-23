@@ -41,7 +41,9 @@ class UCANLog {
 
       if (!res.ok) {
         const reason = await res.text().catch(() => '')
-        throw new Error(`HTTP request status not ok: ${res.status} - ${reason}`)
+        throw new Error(
+          `HTTP request to "${this.url}" with auth "${this.auth}" failed with status: ${res.status} and reason ${reason}`
+        )
       }
     } catch (error) {
       throw new Error(`Failed to log invocations: ${error}`, { cause: error })
