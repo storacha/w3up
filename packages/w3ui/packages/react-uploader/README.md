@@ -1,6 +1,6 @@
 # react-uploader
 
-React adapter for W3UI uploader.
+React adapter for w3ui uploader.
 
 ## Install
 
