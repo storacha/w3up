@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.0](https://github.com/web3-storage/w3protocol/compare/access-api-v5.0.0...access-api-v5.0.0) (2023-03-23)
+
+
+### Features
+
+* remove checks that disable some access/ functionality in prod ([#609](https://github.com/web3-storage/w3protocol/issues/609)) ([b970942](https://github.com/web3-storage/w3protocol/commit/b97094287301e83222f71508d6c0e3176357742f))
+
 ## [5.0.0](https://github.com/web3-storage/w3protocol/compare/access-api-v4.11.0...access-api-v5.0.0) (2023-03-23)
 
 
