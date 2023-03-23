@@ -31,6 +31,7 @@ importers:
       '@databases/split-sql-query': ^1.0.3
       '@databases/sql': ^3.2.0
       '@ipld/dag-ucan': ^3.2.0
+      '@miniflare/core': ^2.11.0
       '@miniflare/r2': ^2.12.1
       '@sentry/cli': 2.7.0
       '@types/assert': ^1.5.6
@@ -96,6 +97,7 @@ importers:
       '@cloudflare/workers-types': 3.19.0
       '@databases/split-sql-query': 1.0.3_@databases+sql@3.3.0
       '@databases/sql': 3.3.0
+      '@miniflare/core': 2.12.1
       '@miniflare/r2': 2.12.1
       '@sentry/cli': 2.7.0
       '@types/assert': 1.5.6

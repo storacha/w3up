@@ -536,7 +536,6 @@ function watchForEmail(emails, retryAfter, abort) {
 }
 
 /**
- * @typedef {import('./provider-add.test.js').AccessAuthorize} AccessAuthorize
  * @typedef {import('@web3-storage/capabilities/src/types.js').AccessConfirm} AccessConfirm
  * @typedef {import('./helpers/ucanto-test-utils.js').AccessService} AccessService
  */

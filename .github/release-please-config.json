@@ -2,7 +2,7 @@
   "separate-pull-requests": true,
   "packages": {
     "packages/access-client": {
-      "prerelease": true
+      "release-as": "11.0.0"
     },
     "packages/access-api": {
       "release-as": "5.0.0"
