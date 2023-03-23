@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.1.0](https://github.com/web3-storage/w3protocol/compare/access-api-v5.0.0...access-api-v5.1.0) (2023-03-23)
+
+
+### Features
+
+* remove checks that disable some access/ functionality in prod ([#609](https://github.com/web3-storage/w3protocol/issues/609)) ([b970942](https://github.com/web3-storage/w3protocol/commit/b97094287301e83222f71508d6c0e3176357742f))
+
+
+### Bug Fixes
+
+* release please config ([#615](https://github.com/web3-storage/w3protocol/issues/615)) ([50eec61](https://github.com/web3-storage/w3protocol/commit/50eec61d95ed430761f8eb3f99323a2dfc504e8a))
+* set env for ucan log url ([#611](https://github.com/web3-storage/w3protocol/issues/611)) ([529aa55](https://github.com/web3-storage/w3protocol/commit/529aa558e72af751936127f13a7e5be20fb9ad17))
+
 ## [5.0.0](https://github.com/web3-storage/w3protocol/compare/access-api-v5.0.0...access-api-v5.0.0) (2023-03-23)
 
 
