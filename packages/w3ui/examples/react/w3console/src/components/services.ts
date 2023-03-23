@@ -41,3 +41,5 @@ export const uploadServiceConnection = connect<Service>({
     method: 'POST',
   }),
 })
+
+export const gatewayHost = import.meta.env.VITE_W3UP_GATEWAY_HOST ?? 'w3s.link'

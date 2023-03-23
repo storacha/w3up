@@ -8,6 +8,7 @@ import {
   Uploader as UploaderCore,
   useUploaderComponent
 } from '@w3ui/react-uploader'
+import { gatewayHost } from '../components/services'
 
 export const Uploading = ({
   file,
@@ -49,7 +50,7 @@ export const Done = ({ dataCID }: DoneProps): JSX.Element => {
       <h1 className='font-bold text-sm uppercase text-gray-400 mb-1'>Uploaded</h1>
       <a
         className='font-mono text-xs'
-        href={`https://${cid}.ipfs.w3s.link/`}
+        href={`https://${cid}.ipfs.${gatewayHost}/`}
       >
         {cid}
       </a>

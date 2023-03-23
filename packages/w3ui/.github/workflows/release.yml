@@ -95,6 +95,7 @@ jobs:
         env:
           VITE_W3UP_PROVIDER: did:web:nft.storage
           VITE_W3UP_SERVICE_BRAND_NAME: 'NFT.Storage'
+          VITE_W3UP_GATEWAY_HOST: nftstorage.link
       - name: Publish console.nft.storage
         uses: ./.github/actions/preview
         with:

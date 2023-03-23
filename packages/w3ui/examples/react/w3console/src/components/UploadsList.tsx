@@ -2,6 +2,7 @@ import React from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, ArrowPathIcon } from '@heroicons/react/20/solid'
 import type { UploadListResult } from '@w3ui/uploads-list-core'
 import { UploadsList as UploadsListCore } from '@w3ui/react-uploads-list'
+import { gatewayHost } from '../components/services'
 
 interface UploadsProps {
   uploads?: UploadListResult[]
@@ -33,7 +34,7 @@ function Uploads ({ uploads, loading }: UploadsProps): JSX.Element {
               {uploads.map(({ root }) => (
                 <tr key={root.toString()}>
                   <td className="w-64 p-2 pl-3 font-mono text-sm">
-                    <a href={`https://${root.toString()}.ipfs.w3s.link/`}>
+                    <a href={`https://${root.toString()}.ipfs.${gatewayHost}/`}>
                       {root.toString()}
                     </a>
                   </td>
