@@ -22,7 +22,9 @@ export interface ProvisionsStorage<ServiceDID extends Ucanto.DID<'web'>> {
    *
    * @param item - provision to store
    */
-  put: (item: Provision<ServiceDID>) => Promise<void>
+  put: (
+    item: Provision<ServiceDID>
+  ) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
 
   /**
    * get number of stored items

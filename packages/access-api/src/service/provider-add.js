@@ -44,14 +44,14 @@ export function createProviderAddHandler(options) {
         message: `Invalid provider: ${provider}`,
       }
     }
-    await options.provisions.put({
+
+    return await options.provisions.put({
       invocation,
       space: consumer,
       // eslint-disable-next-line object-shorthand
       provider: /** @type {ServiceId} */ (provider),
       account: accountDID,
     })
-    return {}
   }
 }
 
