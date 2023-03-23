@@ -80,7 +80,7 @@
     "@ucanto/transport": "^5.1.0",
     "@web3-storage/access": "11.0.0-rc.0",
     "@web3-storage/capabilities": "^4.0.0",
-    "@web3-storage/upload-client": "^7.0.0"
+    "@web3-storage/upload-client": "^8.0.0"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.2.0",
