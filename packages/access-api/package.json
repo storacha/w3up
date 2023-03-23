@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access-api",
-  "version": "4.11.0",
+  "version": "5.0.0",
   "description": "Access API",
   "type": "module",
   "main": "dist/worker.js",
@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore --write",
     "dev": "scripts/cli.js dev",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
@@ -41,6 +42,7 @@
     "@cloudflare/workers-types": "^3.19.0",
     "@databases/split-sql-query": "^1.0.3",
     "@databases/sql": "^3.2.0",
+    "@miniflare/core": "^2.11.0",
     "@miniflare/r2": "^2.12.1",
     "@sentry/cli": "2.7.0",
     "@types/assert": "^1.5.6",
@@ -91,6 +93,7 @@
     },
     "rules": {
       "unicorn/prefer-number-properties": "off",
+      "@typescript-eslint/ban-types": "off",
       "jsdoc/no-undefined-types": [
         "error",
         {
@@ -143,5 +146,10 @@
       "hd-scripts",
       "better-sqlite3"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "undici": "^5.20.0"
+    }
   }
 }

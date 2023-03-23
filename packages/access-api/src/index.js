@@ -2,7 +2,6 @@ import { corsHeaders, preflight } from '@web3-storage/worker-utils/cors'
 import { errorHandler } from '@web3-storage/worker-utils/error'
 import { notFound } from '@web3-storage/worker-utils/response'
 import { Router } from '@web3-storage/worker-utils/router'
-import { postRaw } from './routes/raw.js'
 import { postRoot } from './routes/root.js'
 import { preValidateEmail, validateEmail } from './routes/validate-email.js'
 import { validateWS } from './routes/validate-ws.js'
@@ -18,7 +17,7 @@ r.add('get', '/validate-email', preValidateEmail)
 r.add('post', '/validate-email', validateEmail)
 r.add('get', '/validate-ws', validateWS)
 r.add('post', '/', postRoot)
-r.add('post', '/raw', postRaw)
+r.add('post', '/raw', postRoot)
 
 /** @type {import('./bindings.js').ModuleWorker} */
 const worker = {

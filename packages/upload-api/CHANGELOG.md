@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.4...upload-api-v2.0.0) (2023-03-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* ucan bucket is not part of upload-api but rather ucan-api
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433))
+
+### Features
+
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433)) ([1ddc6a0](https://github.com/web3-storage/w3protocol/commit/1ddc6a0c53f8cdb6837a315d8aaf567100dfb8d7))
+
+
+### Bug Fixes
+
+* remove ucan bucket interface ([#594](https://github.com/web3-storage/w3protocol/issues/594)) ([52cf7c1](https://github.com/web3-storage/w3protocol/commit/52cf7c1f35f01aac66d475d884b87f29348a145c))
+
+
+### Miscellaneous Chores
+
+* **access-client:** release 11.0.0-rc.0 ([#573](https://github.com/web3-storage/w3protocol/issues/573)) ([be4386d](https://github.com/web3-storage/w3protocol/commit/be4386d66ceea393f289adb3c79273c250542807))
+
 ## [1.0.4](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.3...upload-api-v1.0.4) (2023-03-08)
 
 

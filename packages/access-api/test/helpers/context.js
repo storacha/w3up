@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 import { Signer } from '@ucanto/principal/ed25519'
-import { connection } from '@web3-storage/access'
+import * as Ucanto from '@ucanto/interface'
+import * as Access from '@web3-storage/access'
 import dotenv from 'dotenv'
+import { createFetchMock } from '@miniflare/core'
 import { Miniflare, Log, LogLevel } from 'miniflare'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -25,6 +27,7 @@ dotenv.config({
  */
 function createBindings(env) {
   return {
+    ...env,
     ENV: 'test',
     DEBUG: 'false',
     DID: env.DID || 'did:web:test.web3.storage',
@@ -34,13 +37,20 @@ function createBindings(env) {
     LOGTAIL_TOKEN: env.LOGTAIL_TOKEN || '',
     W3ACCESS_METRICS: createAnalyticsEngine(),
     UPLOAD_API_URL: env.UPLOAD_API_URL || '',
+    UCAN_LOG_URL: env.UCAN_LOG_URL || '',
   }
 }
 
 /**
- * @param {object} options
- * @param {Partial<AccessApiBindings>} [options.env] - environment variables to use when configuring access-api. Defaults to process.env.
- * @param {unknown} [options.globals] - globals passed into miniflare
+ * @typedef {{testing: {
+ * pass: Ucanto.ServiceMethod<*, string, Ucanto.Failure>
+ * fail: Ucanto.ServiceMethod<*, never, Ucanto.Failure>
+ * }}} TestService
+ * @typedef {object} Options
+ * @property {Partial<AccessApiBindings>} [env] - environment variables to use when configuring access-api. Defaults to process.env.
+ * @property {Record<string, unknown>} [globals] - globals passed into miniflare
+ *
+ * @param {Options} options
  */
 export async function context({ env = {}, globals } = {}) {
   const bindings = createBindings({
@@ -50,6 +60,8 @@ export async function context({ env = {}, globals } = {}) {
   const servicePrincipal = Signer.parse(bindings.PRIVATE_KEY).withDID(
     bindings.DID
   )
+
+  const fetchMock = createFetchMock()
   const mf = new Miniflare({
     packagePath: true,
     wranglerConfigPath: true,
@@ -60,18 +72,30 @@ export async function context({ env = {}, globals } = {}) {
     buildCommand: undefined,
     log: new Log(LogLevel.ERROR),
     ...(globals ? { globals } : {}),
+    fetchMock,
   })
 
   const binds = await mf.getBindings()
   const db = /** @type {D1Database} */ (binds.__D1_BETA__)
   await migrate(db)
 
-  const conn = connection({
-    principal: servicePrincipal,
-    // @ts-ignore
-    fetch: mf.dispatchFetch.bind(mf),
-    url: new URL('http://localhost:8787'),
-  })
+  const conn =
+    /** @type {Ucanto.ConnectionView<Access.Service & TestService>} */ (
+      Access.connection({
+        principal: servicePrincipal,
+        // @ts-ignore
+        fetch: mf.dispatchFetch.bind(mf),
+        url: new URL('http://localhost:8787'),
+      })
+    )
+
+  // Mock request to https://up.web3.storage/ucan
+  // (see https://undici.nodejs.org/#/docs/api/MockAgent?id=mockagentgetorigin)
+  const origin = fetchMock.get('https://up.web3.storage')
+  origin
+    .intercept({ method: 'POST', path: '/ucan' })
+    .reply(200, 'Mocked response!')
+
   return {
     mf,
     conn,
