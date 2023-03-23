@@ -164,7 +164,7 @@ export const w3 = ed25519
  * @template {Record<string, any>} Service
  * @param {object} options
  * @param {Service} options.service
- * @param {Server.API.Signer<Server.API.DID<'web'>} [options.id]
+ * @param {Server.API.Signer<Server.API.DID<'web'>>} [options.id]
  * @param {Server.Transport.RequestDecoder} [options.decoder]
  * @param {Server.Transport.ResponseEncoder} [options.encoder]
  */
@@ -206,7 +206,7 @@ export const connect = ({ id, channel, encoder = CAR, decoder = CBOR }) =>
  * @template {Record<string, any>} Service
  * @param {object} options
  * @param {Service} options.service
- * @param {Server.API.Signer<Server.API.DID<'web'>} options.id
+ * @param {Server.API.Signer<Server.API.DID<'web'>>} options.id
  * @param {object} [options.server]
  * @param {Types.Transport.RequestDecoder} [options.server.decoder]
  * @param {Types.Transport.ResponseEncoder} [options.server.encoder]
