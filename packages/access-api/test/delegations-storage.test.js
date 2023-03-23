@@ -88,7 +88,7 @@ for (const variant of [
     ...createDbDelegationsStorageVariant(),
   },
   {
-    name: 'DelegationsStorage with sqlite+kv',
+    name: 'DelegationsStorage with sqlite+R2',
     ...createDbDelegationsStorageVariantWithR2(),
   },
 ]) {
