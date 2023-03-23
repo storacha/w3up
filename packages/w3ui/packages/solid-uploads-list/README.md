@@ -1,6 +1,6 @@
 # solid-uploads-list
 
-Solid adapter for W3UI uploads list.
+Solid adapter for w3ui uploads list.
 
 ## Install
 

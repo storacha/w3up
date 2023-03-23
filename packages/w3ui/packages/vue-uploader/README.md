@@ -1,6 +1,6 @@
 # vue-uploader
 
-Vue adapter for W3UI uploader.
+Vue adapter for w3ui uploader.
 
 ## Install
 

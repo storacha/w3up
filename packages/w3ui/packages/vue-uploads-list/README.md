@@ -1,6 +1,6 @@
 # vue-uploads-list
 
-Vue adapter for W3UI uploads list.
+Vue adapter for w3ui uploads list.
 
 ## Install
 

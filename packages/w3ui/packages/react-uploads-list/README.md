@@ -1,6 +1,6 @@
 # react-uploads-list
 
-React adapter for W3UI uploads list.
+React adapter for w3ui uploads list.
 
 ## Install
 

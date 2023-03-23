@@ -1,6 +1,6 @@
 # solid-uploader
 
-Solid adapter for W3UI uploader.
+Solid adapter for w3ui uploader.
 
 ## Install
 
