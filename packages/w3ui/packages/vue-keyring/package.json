@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/vue-keyring",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Vue adapter for w3ui keyring.",
   "main": "src/index.ts",
   "publishConfig": {
