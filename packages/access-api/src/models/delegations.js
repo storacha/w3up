@@ -351,7 +351,5 @@ async function writeDelegations(bucket, delegations, keyer) {
  * @param {Iterable<readonly [key: string, value: Uint8Array ]>} entries
  */
 async function writeEntries(bucket, entries) {
-  await Promise.all(
-    [...entries].map(([key, value]) => bucket.put(key, value))
-  )
+  await Promise.all([...entries].map(([key, value]) => bucket.put(key, value)))
 }
