@@ -1,28 +1,41 @@
-import React from 'react'
 import {
   Authenticator as AuthCore,
   useAuthenticator
 } from '@w3ui/react-keyring'
+import { serviceName, tosUrl, LogoIcon } from '../brand'
 
 export function AuthenticationForm (): JSX.Element {
   const [{ submitted }] = useAuthenticator()
-
   return (
     <div className='authenticator'>
-      <AuthCore.Form className='bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-md px-10 pt-14 pb-8'>
+      <AuthCore.Form className='text-white/80 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-md px-10 pt-8 pb-8'>
+        <div className='flex flex-row gap-4 mb-8 flex justify-center gap-4'>
+          <LogoIcon />
+          <h1 className='text-2xl'>
+            {serviceName}
+          </h1>
+        </div>
         <div>
-          <label className='block mb-2 uppercase text-white/80 text-xs font-semibold tracking-wider m-1 font-mono' htmlFor='authenticator-email'>Email</label>
+          <label className='block mb-2 uppercase text-xs font-semibold tracking-wider m-1 font-mono' htmlFor='authenticator-email'>Email</label>
           <AuthCore.EmailInput className='block rounded-md p-2 w-80 bg-white shadow-md' id='authenticator-email' required />
         </div>
         <button
-          className='mt-2 bg-white/0 w-full hover:bg-blue-800 rounded-md w-full text-sm font-medium text-white py-2 px-8 transition-colors ease-in'
+          className='mt-2 bg-white/0 w-full hover:bg-blue-800 rounded-md w-full text-sm font-medium py-2 px-8 transition-colors ease-in'
           type='submit'
           disabled={submitted}
         >
           Register
         </button>
       </AuthCore.Form>
-    </div>
+      <p className='text-xs text-white/80 italic max-w-xs text-left mt-6'>
+        By registering with {serviceName} w3up beta, you agree to the <a className='underline' href={tosUrl}>Terms of Service</a>.
+        If you have an existing non-w3up beta account with {serviceName} and register for
+        the w3up beta version of {serviceName} using the same email, then at the end of the
+        beta period, these accounts will be combined. Until the beta period is over and this
+        migration occurs, uploads to w3up will not appear in your {serviceName} account
+        (and vice versa), even if you register with the same email.
+      </p>
+    </div >
   )
 }
 
