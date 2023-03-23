@@ -93,18 +93,6 @@ export interface AccountTable {
 }
 export type AccountRecord = Selectable<AccountTable>
 
-export interface DelegationTable {
-  cid: string
-  bytes: Uint8Array
-  audience: URI<'did:'>
-  issuer: URI<'did:'>
-  expires_at: Date | null
-  inserted_at: Generated<Date>
-  updated_at: ColumnType<Date, never, Date>
-}
-
-export type DelegationRecord = Selectable<DelegationTable>
-
 export interface SpaceTableMetadata {
   space: SpaceMeta
   agent: AgentMeta

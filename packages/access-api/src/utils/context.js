@@ -11,7 +11,7 @@ import * as UCANLog from './ucan-log.js'
 import { createUploadApiConnection } from '../service/upload-api-proxy.js'
 import { DID } from '@ucanto/core'
 import {
-  DbDelegationsStorage,
+  DbDelegationsStorageWithR2,
   delegationsTableBytesToArrayBuffer,
 } from '../models/delegations.js'
 import { createD1Database } from './d1.js'
@@ -77,17 +77,21 @@ export function getContext(request, env, ctx) {
     config,
     url,
     models: {
-      delegations: new DbDelegationsStorage(
+      delegations: new DbDelegationsStorageWithR2(
         createD1Database(config.DB, {
           bytes: (v) => {
             return delegationsTableBytesToArrayBuffer(v) ?? v
           },
-        })
+        }),
+        config.DELEGATIONS_BUCKET
       ),
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
-      provisions: new DbProvisions(signer.did(), createD1Database(config.DB)),
+      provisions: new DbProvisions(
+        config.PROVIDERS,
+        createD1Database(config.DB)
+      ),
     },
     email,
     ucanLog,

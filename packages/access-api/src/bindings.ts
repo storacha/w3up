@@ -57,6 +57,8 @@ export type Env = {
   UCAN_LOG_URL?: string
   UCAN_LOG_BASIC_AUTH?: string
 
+  /** CSV DIDs of services that can be used to provision spaces. */
+  PROVIDERS?: string
   DEBUG_EMAIL?: string
   LOGTAIL_TOKEN: string
   // bindings
