@@ -1,11 +1,5 @@
 # Changelog
 
-## [4.0.0](https://github.com/web3-storage/w3ui/compare/solid-uploader-v4.0.0...solid-uploader-v4.0.0) (2023-03-23)
-
-
-### Bug Fixes
-
-* tweak READMEs for packages that release-please didn't release right ([#440](https://github.com/web3-storage/w3ui/issues/440)) ([845a6b6](https://github.com/web3-storage/w3ui/commit/845a6b644dbec6bf65ff09e751da7b7f01c8cf1e))
 
 ## [4.0.0](https://github.com/web3-storage/w3ui/compare/solid-uploader-v3.0.2...solid-uploader-v4.0.0) (2023-03-23)
 
@@ -17,6 +11,10 @@
 ### Features
 
 * use new account model ([#400](https://github.com/web3-storage/w3ui/issues/400)) ([66dd20b](https://github.com/web3-storage/w3ui/commit/66dd20b3a95fc496da1aeb40342c8f691d147c7e))
+
+### Bug Fixes
+
+* tweak READMEs for packages that release-please didn't release right ([#440](https://github.com/web3-storage/w3ui/issues/440)) ([845a6b6](https://github.com/web3-storage/w3ui/commit/845a6b644dbec6bf65ff09e751da7b7f01c8cf1e))
 
 ## [3.0.2](https://github.com/web3-storage/w3ui/compare/solid-uploader-v3.0.1...solid-uploader-v3.0.2) (2023-02-06)
 

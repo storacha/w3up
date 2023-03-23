@@ -1,19 +1,5 @@
 # Changelog
 
-## [4.0.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v4.0.0...react-uploader-v4.0.0) (2023-03-23)
-
-
-### Bug Fixes
-
-* tweak stylization of w3ui in react-uploader README ([#437](https://github.com/web3-storage/w3ui/issues/437)) ([3259e27](https://github.com/web3-storage/w3ui/commit/3259e27aa60ed254e2520b1cbf2eee0e5a31c9b0))
-
-## [4.0.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v4.0.0...react-uploader-v4.0.0) (2023-03-23)
-
-
-### Bug Fixes
-
-* tweak stylization of w3ui in react-uploader README ([#437](https://github.com/web3-storage/w3ui/issues/437)) ([3259e27](https://github.com/web3-storage/w3ui/commit/3259e27aa60ed254e2520b1cbf2eee0e5a31c9b0))
-
 ## [4.0.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v3.1.0...react-uploader-v4.0.0) (2023-03-23)
 
 
@@ -21,9 +7,15 @@
 
 * use new account model ([#400](https://github.com/web3-storage/w3ui/issues/400))
 
+
 ### Features
 
 * use new account model ([#400](https://github.com/web3-storage/w3ui/issues/400)) ([66dd20b](https://github.com/web3-storage/w3ui/commit/66dd20b3a95fc496da1aeb40342c8f691d147c7e))
+
+
+### Bug Fixes
+
+* tweak stylization of w3ui in react-uploader README ([#437](https://github.com/web3-storage/w3ui/issues/437)) ([3259e27](https://github.com/web3-storage/w3ui/commit/3259e27aa60ed254e2520b1cbf2eee0e5a31c9b0))
 
 ## [3.1.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v3.0.1...react-uploader-v3.1.0) (2023-02-06)
 
