@@ -49,7 +49,7 @@ export function loadConfig(env) {
     POSTMARK_SENDER: env.POSTMARK_SENDER,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
-    UCAN_LOG_BASIC_AUTH: vars.UCAN_LOG_BASIC_AUTH,
+    UCAN_LOG_BASIC_AUTH: env.UCAN_LOG_BASIC_AUTH,
     UCAN_LOG_URL: env.UCAN_LOG_URL,
 
     // These are injected in esbuild
