@@ -247,5 +247,3 @@ export function createTesterFromHandler(createHandler) {
   }
   return { issuer, audience, invoke }
 }
-
-export const createServer = (service) => {}
