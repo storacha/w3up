@@ -91,6 +91,7 @@
     },
     "rules": {
       "unicorn/prefer-number-properties": "off",
+      "@typescript-eslint/ban-types": "off",
       "jsdoc/no-undefined-types": [
         "error",
         {

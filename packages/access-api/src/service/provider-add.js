@@ -36,17 +36,22 @@ export function createProviderAddHandler(options) {
         message: 'Issuer must be a mailto DID',
       }
     }
-    if (provider !== options.provisions.service) {
-      throw new Error(`Provider must be ${options.provisions.service}`)
+    // @ts-expect-error provider might not be in service providers list - it ok!
+    if (!options.provisions.services.includes(provider)) {
+      return {
+        error: true,
+        name: 'InvalidProvider',
+        message: `Invalid provider: ${provider}`,
+      }
     }
-    await options.provisions.put({
+
+    return await options.provisions.put({
       invocation,
       space: consumer,
       // eslint-disable-next-line object-shorthand
       provider: /** @type {ServiceId} */ (provider),
       account: accountDID,
     })
-    return {}
   }
 }
 
