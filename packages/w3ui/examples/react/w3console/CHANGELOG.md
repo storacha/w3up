@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.0.1...w3console-v1.1.0) (2023-03-23)
+
+
+### Features
+
+* switch gateway host per deployment ([#427](https://github.com/web3-storage/w3ui/issues/427)) ([9a9c7da](https://github.com/web3-storage/w3ui/commit/9a9c7da6b5ac84189ee727ce7ee14594ac7d5224))
+* update ToS page in hosted console ([#421](https://github.com/web3-storage/w3ui/issues/421)) ([3aa8e2d](https://github.com/web3-storage/w3ui/commit/3aa8e2d17e205c73a80861bd23df9e0a570c5ce7))
+
+
+### Bug Fixes
+
+* show terms to unauthorized users ([#428](https://github.com/web3-storage/w3ui/issues/428)) ([e3825ac](https://github.com/web3-storage/w3ui/commit/e3825ac63227d57e0ec7ad9419cdb3db1352f7a2))
+
 ## [1.0.1](https://github.com/web3-storage/w3ui/compare/w3console-v1.0.0...w3console-v1.0.1) (2023-03-23)
 
 
