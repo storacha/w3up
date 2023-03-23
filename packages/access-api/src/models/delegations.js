@@ -103,7 +103,7 @@ export class DbDelegationsStorageWithR2 {
       .insertInto(this.#delegationsTableName)
       .values(values)
       .onConflict((oc) => oc.column('cid').doNothing())
-      .executeTakeFirst()
+      .execute()
   }
 
   /** @returns {Promise<bigint>} */
