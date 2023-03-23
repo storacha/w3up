@@ -3,7 +3,6 @@ import { Access, Provider, Voucher } from '@web3-storage/capabilities'
 import * as assert from 'assert'
 import * as principal from '@ucanto/principal'
 import * as delegationsResponse from '../../src/utils/delegations-response.js'
-
 /**
  * @typedef {import('@web3-storage/access/types').Service} AccessService
  */
