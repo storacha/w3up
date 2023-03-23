@@ -36,7 +36,7 @@ export function getContext(request, env, ctx) {
           sender: config.POSTMARK_SENDER,
         })
 
-  if (['staging', 'production'].includes(env.ENV)) {
+  if (['staging', 'production'].includes(config.ENV)) {
     if (!config.UCAN_LOG_BASIC_AUTH) {
       throw new Error(`config.UCAN_LOG_BASIC_AUTH is required but missing`)
     }
