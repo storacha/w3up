@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.1.4](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.3...access-api-v5.1.4) (2023-03-23)
+
+
+### Bug Fixes
+
+* access-api utils/context no longer throws in staging and prod if UCAN configs are falsy ([#630](https://github.com/web3-storage/w3protocol/issues/630)) ([f7d1df3](https://github.com/web3-storage/w3protocol/commit/f7d1df3d6389d31ce245039b0663615956b24f85))
+* adjust how access-api uses config to build a ucanLog ([#627](https://github.com/web3-storage/w3protocol/issues/627)) ([30f6f77](https://github.com/web3-storage/w3protocol/commit/30f6f770fbabf60d2ab1b85dc985f057d3dbdbd7))
+* bug with how loadConfig reads UCAN_LOG_BASIC_AUTH ([#629](https://github.com/web3-storage/w3protocol/issues/629)) ([1580953](https://github.com/web3-storage/w3protocol/commit/15809534e839c5f89613aa1437b453b9976fd536))
+
 ## [5.1.3](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.2...access-api-v5.1.3) (2023-03-23)
 
 
