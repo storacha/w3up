@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/web3-storage/w3ui/compare/vue-uploader-v3.0.1...vue-uploader-v4.0.0) (2023-03-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* use new account model ([#400](https://github.com/web3-storage/w3ui/issues/400))
+
+### Features
+
+* use new account model ([#400](https://github.com/web3-storage/w3ui/issues/400)) ([66dd20b](https://github.com/web3-storage/w3ui/commit/66dd20b3a95fc496da1aeb40342c8f691d147c7e))
+
 ## [3.0.1](https://github.com/web3-storage/w3ui/compare/vue-uploader-v3.0.0...vue-uploader-v3.0.1) (2022-12-15)
 
 

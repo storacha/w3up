@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/vue-uploader",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Vue adapter for w3ui uploader.",
   "main": "src/index.ts",
   "publishConfig": {
