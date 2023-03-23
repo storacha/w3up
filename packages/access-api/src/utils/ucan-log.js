@@ -38,7 +38,7 @@ class UCANLog {
         },
         body: car,
       })
-      
+
       if (!res.ok) {
         const reason = await res.text().catch(() => '')
         throw new Error(`HTTP request status not ok: ${res.status} - ${reason}`)
