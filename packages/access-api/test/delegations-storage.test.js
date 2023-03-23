@@ -1,10 +1,5 @@
 import { context } from './helpers/context.js'
-import {
-  createDelegationRowUpdate,
-  DbDelegationsStorage,
-  DbDelegationsStorageWithR2,
-  delegationsV2TableName,
-} from '../src/models/delegations.js'
+import { DbDelegationsStorageWithR2 } from '../src/models/delegations.js'
 import { createD1Database } from '../src/utils/d1.js'
 import * as assert from 'node:assert'
 import { createSampleDelegation } from '../src/utils/ucan.js'
@@ -13,48 +8,13 @@ import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import { collect } from 'streaming-iterables'
 
-describe('DbDelegationsStorage', () => {
-  it('find throws UnexpectedDelegation when encountering row with empty bytes', async () => {
-    /**
-     * Note: this test only makes sense in the delegations_v2 table schema.
-     * In delegations_v3, we removed the `bytes` column.
-     */
-    const { d1, issuer } = await context()
-    const db = createD1Database(d1)
-    const delegations = new DbDelegationsStorage(db)
-    const row = createDelegationRowUpdate(
-      await ucanto.delegate({
-        issuer,
-        audience: issuer,
-        capabilities: [{ can: '*', with: 'ucan:*' }],
-      })
-    )
-    // insert row with empty bytes
-    await db
-      .insertInto(delegationsV2TableName)
-      .values([
-        {
-          ...row,
-          bytes: Uint8Array.from([]),
-        },
-      ])
-      .onConflict((oc) => oc.column('cid').doNothing())
-      .execute()
-    // now try to find
-    const find = () => collect(delegations.find({ audience: issuer.did() }))
-    let findError
-    try {
-      await find()
-    } catch (error) {
-      findError = error
+describe('DelegationsStorage with sqlite+R2', () => {
+  testVariant(
+    () => createDbDelegationsStorageVariantWithR2().create(),
+    (name, doTest) => {
+      it(name, doTest)
     }
-    assert.ok(findError && typeof findError === 'object')
-    assert.deepEqual(
-      'name' in findError && findError?.name,
-      'UnexpectedDelegation'
-    )
-    assert.ok('row' in findError, 'UnexpectedDelegation error contains row')
-  })
+  )
 })
 
 /**
@@ -80,44 +40,6 @@ async function createDelegation(opts = {}) {
     audience,
     capabilities,
   })
-}
-
-for (const variant of [
-  {
-    name: 'DelegationsStorage with sqlite',
-    ...createDbDelegationsStorageVariant(),
-  },
-  {
-    name: 'DelegationsStorage with sqlite+R2',
-    ...createDbDelegationsStorageVariantWithR2(),
-  },
-]) {
-  describe(`delegations storage ${variant.name}`, () => {
-    testVariant(
-      () => variant.create(),
-      (name, doTest) => {
-        it(name, doTest)
-      }
-    )
-  })
-}
-
-/**
- * create a variant of DelegationsStorage that uses sqlite and can work with cloudflare d1
- *
- * @returns
- */
-function createDbDelegationsStorageVariant() {
-  return {
-    /**
-     * @returns {Promise<DelegationsStorageVariant>}
-     */
-    create: async () => {
-      const { d1 } = await context()
-      const delegationsStorage = new DbDelegationsStorage(createD1Database(d1))
-      return { delegations: delegationsStorage }
-    },
-  }
 }
 
 /**
