@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/solid-keyring",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Solid adapter for w3ui keyring.",
   "main": "src/index.ts",
   "publishConfig": {
