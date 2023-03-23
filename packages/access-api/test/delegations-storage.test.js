@@ -145,7 +145,10 @@ function testCloudflareVariant(createVariant, test) {
     await delegations.putMany(ucan1)
     const listResult = await r2.list()
     assert.deepEqual(listResult.objects.length, 1)
-    const r2KeyCidString = listResult.objects[0].key.split('.')[0]
+    const r2KeyString = listResult.objects[0].key
+    const r2KeyMatch = r2KeyString.match(/^\/delegations\/(.+)\.car$/)
+    assert.ok(r2KeyMatch)
+    const r2KeyCidString = r2KeyMatch[1]
 
     assert.deepEqual(
       r2KeyCidString[0],

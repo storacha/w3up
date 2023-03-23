@@ -37,16 +37,10 @@ export function service(ctx) {
 
     access: {
       authorize: accessAuthorizeProvider(ctx),
-      claim: (...args) => {
-        // disable until hardened in test/staging
-        if (ctx.config.ENV === 'production') {
-          throw new Error(`access/claim invocation handling is not enabled`)
-        }
-        return accessClaimProvider({
-          delegations: ctx.models.delegations,
-          config: ctx.config,
-        })(...args)
-      },
+      claim: accessClaimProvider({
+        delegations: ctx.models.delegations,
+        config: ctx.config,
+      }),
       confirm: Server.provide(
         Access.confirm,
         async ({ capability, invocation }) => {
@@ -62,26 +56,14 @@ export function service(ctx) {
           )
         }
       ),
-      delegate: (...args) => {
-        // disable until hardened in test/staging
-        if (ctx.config.ENV === 'production') {
-          throw new Error(`access/delegate invocation handling is not enabled`)
-        }
-        return accessDelegateProvider({
-          delegations: ctx.models.delegations,
-          hasStorageProvider,
-        })(...args)
-      },
+      delegate: accessDelegateProvider({
+        delegations: ctx.models.delegations,
+        hasStorageProvider,
+      }),
     },
 
     provider: {
-      add: (...args) => {
-        // disable until hardened in test/staging
-        if (ctx.config.ENV === 'production') {
-          throw new Error(`provider/add invocation handling is not enabled`)
-        }
-        return providerAddProvider(ctx)(...args)
-      },
+      add: providerAddProvider(ctx),
     },
 
     voucher: {
