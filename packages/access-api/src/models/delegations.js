@@ -157,14 +157,13 @@ export class DbDelegationsStorageWithR2 {
     if (!carBytesR2) {
       throw new Error(`failed to read car bytes for cid ${row.cid} key ${key}`)
     }
-    const carBytes = new Uint8Array(await carBytesR2.arrayBuffer())
-    const delegations = bytesToDelegations(carBytes)
-    if (delegations.length !== 1) {
-      throw new Error(
-        `expected 1 delegation in CAR, but got ${delegations.length}`
-      )
+    const delegations = bytesToDelegations(
+      new Uint8Array(await carBytesR2.arrayBuffer())
+    )
+    const delegation = delegations.find((d) => d.cid.equals(cid))
+    if (!delegation) {
+      throw new Error(`failed to parse delegation with expected cid ${row.cid}`)
     }
-    const [delegation] = delegations
     return delegation
   }
 }
