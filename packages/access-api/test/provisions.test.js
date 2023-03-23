@@ -71,11 +71,13 @@ describe('DbProvisions', () => {
         'did:provider:foo'
       ),
     }
-    const putModifiedFirstProvision = () => storage.put(modifiedFirstProvision)
-    await assert.rejects(
-      putModifiedFirstProvision(),
+    const result = await storage.put(modifiedFirstProvision)
+    assert.equal(
+      result.error && result.name,
+      'ConflictError',
       'cannot put with same cid but different derived fields'
     )
+
     const provisionForFakeConsumer = await storage.findForConsumer(
       modifiedFirstProvision.space
     )

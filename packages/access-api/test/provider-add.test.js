@@ -212,8 +212,7 @@ describe(`provider/add`, () => {
     assertNotError(addW3Storage)
   })
 
-  // TODO: this test is failing because implementation is not correct
-  it.skip('provider/add can not add two diff providers to the same space', async () => {
+  it('provider/add can not add two diff providers to the same space', async () => {
     const { space, agent, account, service, ...context } = await setup({
       env: {
         PROVIDERS: 'did:web:nft.storage,did:web:web3.storage',
@@ -236,7 +235,6 @@ describe(`provider/add`, () => {
 
     assertNotError(addNFTStorage)
 
-    const w3space = await principal.ed25519.generate()
     const addW3Storage = await Provider.add
       .invoke({
         issuer: agent,
@@ -244,7 +242,7 @@ describe(`provider/add`, () => {
         with: account.did(),
         nb: {
           provider: 'did:web:web3.storage',
-          consumer: w3space.did(),
+          consumer: space.did(),
         },
         proofs,
       })
@@ -254,6 +252,11 @@ describe(`provider/add`, () => {
       addW3Storage.error,
       true,
       'Provider already added to this space'
+    )
+
+    assert.match(
+      String(addW3Storage.message),
+      /it already has a did:web:nft.storage provider/
     )
   })
 })
