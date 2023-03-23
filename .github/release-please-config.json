@@ -1,20 +1,12 @@
 {
   "separate-pull-requests": true,
   "packages": {
-    "packages/access-client": {
-      "release-as": "11.0.0"
-    },
-    "packages/access-api": {
-      "release-as": "5.0.0"
-    },
+    "packages/access-client": {},
+    "packages/access-api": {},
     "packages/capabilities": {
       "release-as": "4.0.1"
     },
-    "packages/upload-api": {
-      "release-as": "2.0.0"
-    },
-    "packages/upload-client": {
-      "release-as": "8.0.0"
-    }
+    "packages/upload-api": {},
+    "packages/upload-client": {}
   }
 }
