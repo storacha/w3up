@@ -36,6 +36,14 @@ export function getContext(request, env, ctx) {
           sender: config.POSTMARK_SENDER,
         })
 
+  if (['staging', 'production'].includes(config.ENV)) {
+    if (!config.UCAN_LOG_BASIC_AUTH) {
+      throw new Error(`config.UCAN_LOG_BASIC_AUTH is required but missing`)
+    }
+    if (!config.UCAN_LOG_URL) {
+      throw new Error(`config.UCAN_LOG_URL is required but missing`)
+    }
+  }
   const ucanLog =
     config.UCAN_LOG_URL && config.UCAN_LOG_BASIC_AUTH
       ? UCANLog.connect({
