@@ -26,8 +26,8 @@ database_name = "spaces-dev"
 database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 
 [[r2_buckets]]
-binding = "ACCESS_API_R2"
-bucket_name = "access-api-dev-1"
+binding = "DELEGATIONS"
+bucket_name = "access-api-delegations-dev-0"
 
 [vars]
 ENV = "dev"
@@ -76,7 +76,9 @@ d1_databases = [
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
-
+[[env.staging.r2_buckets]]
+binding = "DELEGATIONS"
+bucket_name = "access-api-delegations-staging-0"
 
 # Production
 [env.production]
@@ -93,6 +95,9 @@ d1_databases = [
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
+[[env.production.r2_buckets]]
+binding = "DELEGATIONS"
+bucket_name = "access-api-delegations-prod-0"
 [env.production.vars]
 DEBUG = "false"
 DID = "did:web:web3.storage"
