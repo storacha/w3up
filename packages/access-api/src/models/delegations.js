@@ -253,7 +253,7 @@ export class DbDelegationsStorageWithR2 {
     const delegations = this.#delegationsTableName
     const selection = await this.#db
       .selectFrom(delegations)
-      .selectAll()
+      .select(['cid'])
       .where(`${delegations}.audience`, '=', audience)
       .execute()
     for await (const row of selection) {
