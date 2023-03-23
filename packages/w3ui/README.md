@@ -12,7 +12,7 @@
 </p>
 
 > ### ⚠️❗ w3ui and the underlying APIs are currently BETA preview features
-> Please read the beta [Terms of Service](https://purrfect-tracker-45c.notion.site/w3up-beta-Terms-of-Service-39cb5c13439849beae327a2efec9164a) for more details.
+> Please read the beta Terms of Service ([web3.storage](https://console.web3.storage/terms), [NFT.Storage](https://console.nft.storage/terms)) for more details.
 >
 > Open an issue on the repo or reach out to the #web3-storage channel on [IPFS Discord](https://docs.ipfs.tech/community/chat/#discord) if you have any 
 questions!
