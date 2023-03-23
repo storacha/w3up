@@ -3,7 +3,7 @@
 import * as Ucanto from '@ucanto/interface'
 import { Kysely, OperationNodeTransformer } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
-import { isPlainObject, isDate, isBuffer } from './common.js'
+import { isPlainObject, isDate } from './common.js'
 
 /**
  * @typedef {import('kysely').KyselyPlugin} KyselyPlugin
@@ -74,15 +74,6 @@ export class GenericPlugin {
         rows: args.result.rows.map((row) => {
           const custom = {}
           for (const [key, value] of Object.entries(row)) {
-            if (isBuffer(value)) {
-              // @ts-ignore
-              custom[key] = new Uint8Array(
-                value.buffer,
-                value.byteOffset,
-                value.byteLength
-              )
-            }
-
             // @ts-ignore
             if (this.resultTransforms[key]) {
               // @ts-ignore
