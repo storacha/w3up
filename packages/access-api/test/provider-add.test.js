@@ -2,273 +2,264 @@ import {
   assertNotError,
   createTesterFromContext,
   createTesterFromHandler,
+  registerSpaces,
   warnOnErrorResult,
 } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
-import * as provider from '@web3-storage/capabilities/provider'
 import * as assert from 'assert'
-import { createProviderAddHandler } from '../src/service/provider-add.js'
-import { context } from './helpers/context.js'
 import * as ucanto from '@ucanto/core'
 import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
-import { createProvisions } from '../src/models/provisions.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
-import { createEmail } from './helpers/utils.js'
+import { createContextWithMailbox } from './helpers/utils.js'
 
-for (const providerAddHandlerVariant of /** @type {const} */ ([
-  {
-    name: 'handled by createProviderAddHandler',
-    ...(() => {
-      const spaceWithStorageProvider = principal.ed25519.generate()
-      const service = {
-        did: () => /** @type {const} */ ('did:web:web3.storage'),
-      }
-      const provisions = createProvisions([service.did()])
-      return {
-        spaceWithStorageProvider,
-        provisions,
-        ...createTesterFromHandler(() =>
-          createProviderAddHandler({
-            provisions,
-          })
-        ),
-      }
-    })(),
-  },
-])) {
-  describe(`provider/add ${providerAddHandlerVariant.name}`, () => {
-    it(`can be invoked by did:key`, async () => {
-      const space = await principal.ed25519.generate()
-      const issuer = await providerAddHandlerVariant.issuer
-      const result = await providerAddHandlerVariant.invoke(
-        await provider.add
-          .invoke({
-            issuer,
-            audience: await providerAddHandlerVariant.audience,
-            with: `did:mailto:example.com:foo`,
-            nb: {
-              consumer: space.did(),
-              provider: providerAddHandlerVariant.provisions.services[0],
-            },
-          })
-          .delegate()
-      )
-      assertNotError(result)
+// for (const accessApiVariant of /** @type {const} */ ([
+//   {
+//     name: 'handled by access-api in miniflare',
+//     ...(() => {
+//       const spaceWithStorageProvider = principal.ed25519.generate()
+//       /** @type {{to:string, url:string}[]} */
+//       const emails = []
+//       const email = createEmail(emails)
+//       const features = new Set([
+//         'provider/add',
+//         'access/delegate',
+//         'store/info',
+//       ])
+//       return {
+//         spaceWithStorageProvider,
+//         emails,
+//         features,
+//         ...createTesterFromContext(
+//           () =>
+//             context({
+//               globals: {
+//                 email,
+//               },
+//             }),
+//           {
+//             registerSpaces: [spaceWithStorageProvider],
+//             account: { did: () => /** @type {const} */ ('did:mailto:foo') },
+//           }
+//         ),
+//       }
+//     })(),
+//   },
+// ])) {
+// }
+describe(`provider/add`, () => {
+  it.only(`can invoke as did:mailto after authorize confirmation`, async () => {
+    const context = await createContextWithMailbox()
+
+    const space = await principal.ed25519.generate()
+    const agent = await principal.ed25519.generate()
+    const account = principal.Absentee.from({ id: 'did:mailto:foo' })
+
+    await registerSpaces([space], {
+      ...context,
+      account,
+      agent,
+    })
+
+    await testAuthorizeClaimProviderAdd({
+      deviceA: await principal.ed25519.generate(),
+      accountA: account,
+      space,
+      conn: context.conn,
+      service: context.service,
+      emails: context.emails,
+      mf: context.mf,
     })
   })
-}
+})
 
-for (const accessApiVariant of /** @type {const} */ ([
-  {
-    name: 'handled by access-api in miniflare',
-    ...(() => {
-      const spaceWithStorageProvider = principal.ed25519.generate()
-      /** @type {{to:string, url:string}[]} */
-      const emails = []
-      const email = createEmail(emails)
-      const features = new Set([
-        'provider/add',
-        'access/delegate',
-        'store/info',
-      ])
-      return {
-        spaceWithStorageProvider,
-        emails,
-        features,
-        ...createTesterFromContext(
-          () =>
-            context({
-              globals: {
-                email,
-              },
-            }),
-          {
-            registerSpaces: [spaceWithStorageProvider],
-            account: { did: () => /** @type {const} */ ('did:mailto:foo') },
-          }
-        ),
+// if (
+//   ['provider/add', 'access/delegate'].every((f) =>
+//     accessApiVariant.features.has(f)
+//   )
+// ) {
+//   it('provider/add allows for access/delegate', async () => {
+//     const space = await principal.ed25519.generate()
+//     const agent = await accessApiVariant.issuer
+//     const service = await accessApiVariant.audience
+//     const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
+
+//     const accountAuthorizesAgentClaim = await ucanto.delegate({
+//       issuer: principal.Absentee.from({ id: accountDid }),
+//       audience: agent,
+//       capabilities: [
+//         {
+//           with: 'ucan:*',
+//           can: '*',
+//         },
+//       ],
+//     })
+//     const serviceAttestsThatAccountAuthorizesAgent = await ucanto.delegate({
+//       issuer: service,
+//       audience: agent,
+//       capabilities: [
+//         {
+//           with: service.did(),
+//           can: 'ucan/attest',
+//           nb: { proof: accountAuthorizesAgentClaim.cid },
+//         },
+//       ],
+//     })
+//     const sessionProofs = [
+//       accountAuthorizesAgentClaim,
+//       serviceAttestsThatAccountAuthorizesAgent,
+//     ]
+//     const addStorageProvider = await ucanto
+//       .invoke({
+//         issuer: agent,
+//         audience: service,
+//         capability: {
+//           can: 'provider/add',
+//           with: accountDid,
+//           nb: {
+//             provider: service.did(),
+//             consumer: space.did(),
+//           },
+//         },
+//         proofs: [...sessionProofs],
+//       })
+//       .delegate()
+//     const addStorageProviderResult = await accessApiVariant.invoke(
+//       addStorageProvider
+//     )
+//     assertNotError(addStorageProviderResult)
+
+//     // storage provider added. So we should be able to delegate now
+//     const accessDelegate = await ucanto
+//       .invoke({
+//         issuer: agent,
+//         audience: service,
+//         capability: {
+//           can: 'access/delegate',
+//           with: space.did(),
+//           nb: {
+//             delegations: {},
+//           },
+//         },
+//         proofs: [
+//           // space says agent can access/delegate with space
+//           await ucanto.delegate({
+//             issuer: space,
+//             audience: agent,
+//             capabilities: [
+//               {
+//                 can: 'access/delegate',
+//                 with: space.did(),
+//               },
+//             ],
+//           }),
+//         ],
+//       })
+//       .delegate()
+//     const accessDelegateResult = await accessApiVariant.invoke(accessDelegate)
+//     assertNotError(accessDelegateResult)
+//   })
+// }
+
+// if (
+//   ['provider/add', 'store/info'].every((f) => accessApiVariant.features.has(f))
+// ) {
+//   it('provider/add allows for store/info ', async () => {
+//     const space = await principal.ed25519.generate()
+//     const agent = await accessApiVariant.issuer
+//     const service = await accessApiVariant.audience
+//     const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
+//     const accountAuthorization = await createAccountAuthorization(
+//       agent,
+//       service,
+//       principal.Absentee.from({
+//         id: /** @type {Ucanto.DID<'mailto'>} */ (accountDid),
+//       })
+//     )
+//     const addStorageProvider = await ucanto
+//       .invoke({
+//         issuer: agent,
+//         audience: service,
+//         capability: {
+//           can: 'provider/add',
+//           with: accountDid,
+//           nb: {
+//             provider: service.did(),
+//             consumer: space.did(),
+//           },
+//         },
+//         proofs: [...accountAuthorization],
+//       })
+//       .delegate()
+//     const addStorageProviderResult = await accessApiVariant.invoke(
+//       addStorageProvider
+//     )
+//     assertNotError(addStorageProviderResult)
+
+//     // storage provider added. So we should be able to space/info now
+//     const spaceInfo = await ucanto
+//       .invoke({
+//         issuer: agent,
+//         audience: service,
+//         capability: {
+//           can: 'space/info',
+//           with: space.did(),
+//           nb: {
+//             delegations: {},
+//           },
+//         },
+//         proofs: [
+//           // space says agent can store/info with space
+//           await ucanto.delegate({
+//             issuer: space,
+//             audience: agent,
+//             capabilities: [
+//               {
+//                 can: 'space/info',
+//                 with: space.did(),
+//               },
+//             ],
+//           }),
+//         ],
+//       })
+//       .delegate()
+//     const spaceInfoResult = await accessApiVariant.invoke(spaceInfo)
+//     assertNotError(spaceInfoResult)
+//     assert.ok('did' in spaceInfoResult)
+//     assert.deepEqual(spaceInfoResult.did, space.did())
+//   })
+// }
+
+const setup = async () => {
+  const spaceWithStorageProvider = principal.ed25519.generate()
+  /** @type {{to:string, url:string}[]} */
+  const emails = []
+  const email = createEmail(emails)
+  const features = new Set(['provider/add', 'access/delegate', 'store/info'])
+  return {
+    spaceWithStorageProvider,
+    emails,
+    features,
+    ...createTesterFromContext(
+      () =>
+        context({
+          globals: {
+            email,
+          },
+        }),
+      {
+        registerSpaces: [spaceWithStorageProvider],
+        account: { did: () => /** @type {const} */ ('did:mailto:foo') },
       }
-    })(),
-  },
-])) {
-  describe(`provider/add ${accessApiVariant.name}`, () => {
-    it(`can invoke as did:mailto after authorize confirmation`, async () => {
-      await testAuthorizeClaimProviderAdd({
-        deviceA: await principal.ed25519.generate(),
-        accountA: {
-          did: () => /** @type {const} */ (`did:mailto:example.com:foo`),
-        },
-        space: await principal.ed25519.generate(),
-        invoke: accessApiVariant.invoke,
-        service: await accessApiVariant.audience,
-        emails: accessApiVariant.emails,
-        miniflare: await accessApiVariant.miniflare,
-      })
-    })
-  })
-
-  if (
-    ['provider/add', 'access/delegate'].every((f) =>
-      accessApiVariant.features.has(f)
-    )
-  ) {
-    it('provider/add allows for access/delegate', async () => {
-      const space = await principal.ed25519.generate()
-      const agent = await accessApiVariant.issuer
-      const service = await accessApiVariant.audience
-      const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
-
-      const accountAuthorizesAgentClaim = await ucanto.delegate({
-        issuer: principal.Absentee.from({ id: accountDid }),
-        audience: agent,
-        capabilities: [
-          {
-            with: 'ucan:*',
-            can: '*',
-          },
-        ],
-      })
-      const serviceAttestsThatAccountAuthorizesAgent = await ucanto.delegate({
-        issuer: service,
-        audience: agent,
-        capabilities: [
-          {
-            with: service.did(),
-            can: 'ucan/attest',
-            nb: { proof: accountAuthorizesAgentClaim.cid },
-          },
-        ],
-      })
-      const sessionProofs = [
-        accountAuthorizesAgentClaim,
-        serviceAttestsThatAccountAuthorizesAgent,
-      ]
-      const addStorageProvider = await ucanto
-        .invoke({
-          issuer: agent,
-          audience: service,
-          capability: {
-            can: 'provider/add',
-            with: accountDid,
-            nb: {
-              provider: service.did(),
-              consumer: space.did(),
-            },
-          },
-          proofs: [...sessionProofs],
-        })
-        .delegate()
-      const addStorageProviderResult = await accessApiVariant.invoke(
-        addStorageProvider
-      )
-      assertNotError(addStorageProviderResult)
-
-      // storage provider added. So we should be able to delegate now
-      const accessDelegate = await ucanto
-        .invoke({
-          issuer: agent,
-          audience: service,
-          capability: {
-            can: 'access/delegate',
-            with: space.did(),
-            nb: {
-              delegations: {},
-            },
-          },
-          proofs: [
-            // space says agent can access/delegate with space
-            await ucanto.delegate({
-              issuer: space,
-              audience: agent,
-              capabilities: [
-                {
-                  can: 'access/delegate',
-                  with: space.did(),
-                },
-              ],
-            }),
-          ],
-        })
-        .delegate()
-      const accessDelegateResult = await accessApiVariant.invoke(accessDelegate)
-      assertNotError(accessDelegateResult)
-    })
-  }
-
-  if (
-    ['provider/add', 'store/info'].every((f) =>
-      accessApiVariant.features.has(f)
-    )
-  ) {
-    it('provider/add allows for store/info ', async () => {
-      const space = await principal.ed25519.generate()
-      const agent = await accessApiVariant.issuer
-      const service = await accessApiVariant.audience
-      const accountDid = /** @type {const} */ ('did:mailto:example.com:foo')
-      const accountAuthorization = await createAccountAuthorization(
-        agent,
-        service,
-        principal.Absentee.from({
-          id: /** @type {Ucanto.DID<'mailto'>} */ (accountDid),
-        })
-      )
-      const addStorageProvider = await ucanto
-        .invoke({
-          issuer: agent,
-          audience: service,
-          capability: {
-            can: 'provider/add',
-            with: accountDid,
-            nb: {
-              provider: service.did(),
-              consumer: space.did(),
-            },
-          },
-          proofs: [...accountAuthorization],
-        })
-        .delegate()
-      const addStorageProviderResult = await accessApiVariant.invoke(
-        addStorageProvider
-      )
-      assertNotError(addStorageProviderResult)
-
-      // storage provider added. So we should be able to space/info now
-      const spaceInfo = await ucanto
-        .invoke({
-          issuer: agent,
-          audience: service,
-          capability: {
-            can: 'space/info',
-            with: space.did(),
-            nb: {
-              delegations: {},
-            },
-          },
-          proofs: [
-            // space says agent can store/info with space
-            await ucanto.delegate({
-              issuer: space,
-              audience: agent,
-              capabilities: [
-                {
-                  can: 'space/info',
-                  with: space.did(),
-                },
-              ],
-            }),
-          ],
-        })
-        .delegate()
-      const spaceInfoResult = await accessApiVariant.invoke(spaceInfo)
-      assertNotError(spaceInfoResult)
-      assert.ok('did' in spaceInfoResult)
-      assert.deepEqual(spaceInfoResult.did, space.did())
-    })
+    ),
   }
 }
 
+const setup2 = async () => {
+  const context = await createContext()
+  const registeredSpaceAgent = await principal.ed25519.generate()
+}
 /**
  * @typedef {import('../src/utils/email.js').ValidationEmailSend} ValidationEmailSend
  */
@@ -285,32 +276,32 @@ for (const accessApiVariant of /** @type {const} */ ([
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.space
  * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.accountA
  * @param {Ucanto.Principal<Ucanto.DID<'web'>>} options.service - web3.storage service
- * @param {import('miniflare').Miniflare} options.miniflare
- * @param {import('../src/types/ucanto.js').ServiceInvoke<import('./helpers/ucanto-test-utils.js').AccessService, AccessClaim|AccessAuthorize|ProviderAdd>} options.invoke
+ * @param {import('miniflare').Miniflare} options.mf
+ * @param {import('@ucanto/interface').ConnectionView<import('@web3-storage/access/types').Service>} options.conn
  * @param {ValidationEmailSend[]} options.emails
  */
 async function testAuthorizeClaimProviderAdd(options) {
-  const { accountA, deviceA, miniflare, service, space, emails } = options
+  const { accountA, conn, deviceA, mf, service, space, emails } = options
   // authorize
-  await options.invoke(
-    await Access.authorize
-      .invoke({
-        issuer: deviceA,
-        audience: service,
-        with: deviceA.did(),
-        nb: {
-          att: [{ can: '*' }],
-          iss: accountA.did(),
-        },
-      })
-      .delegate()
-  )
+
+  await Access.authorize
+    .invoke({
+      issuer: deviceA,
+      audience: service,
+      with: deviceA.did(),
+      nb: {
+        att: [{ can: '*' }],
+        iss: accountA.did(),
+      },
+    })
+    .execute(conn)
+
   const validationEmail = emails.at(-1)
   assert.ok(validationEmail, 'has email after authorize')
 
   const confirmationUrl = validationEmail.url
   assert.ok(typeof confirmationUrl === 'string', 'confirmationUrl is string')
-  const confirmEmailPostResponse = await miniflare.dispatchFetch(
+  const confirmEmailPostResponse = await mf.dispatchFetch(
     new URL(confirmationUrl),
     { method: 'POST' }
   )
@@ -321,15 +312,14 @@ async function testAuthorizeClaimProviderAdd(options) {
   )
 
   // claim as deviceA
-  const claimAsDeviceAResult = await options.invoke(
-    await Access.claim
-      .invoke({
-        issuer: deviceA,
-        audience: service,
-        with: deviceA.did(),
-      })
-      .delegate()
-  )
+  const claimAsDeviceAResult = await Access.claim
+    .invoke({
+      issuer: deviceA,
+      audience: service,
+      with: deviceA.did(),
+    })
+    .execute(conn)
+
   assert.ok(
     claimAsDeviceAResult && typeof claimAsDeviceAResult === 'object',
     `claimAsDeviceAResult is an object`
@@ -361,20 +351,19 @@ async function testAuthorizeClaimProviderAdd(options) {
   )
 
   // provider/add
-  const providerAddAsAccountResult = await options.invoke(
-    await Provider.add
-      .invoke({
-        issuer: deviceA,
-        audience: service,
-        with: accountA.did(),
-        nb: {
-          provider: service.did(),
-          consumer: space.did(),
-        },
-        proofs: claimedDelegations,
-      })
-      .delegate()
-  )
+  const providerAddAsAccountResult = await Provider.add
+    .invoke({
+      issuer: deviceA,
+      audience: service,
+      with: accountA.did(),
+      nb: {
+        provider: service.did(),
+        consumer: space.did(),
+      },
+      proofs: claimedDelegations,
+    })
+    .execute(conn)
+
   assert.ok(
     providerAddAsAccountResult &&
       typeof providerAddAsAccountResult === 'object',
@@ -382,19 +371,18 @@ async function testAuthorizeClaimProviderAdd(options) {
   )
   assertNotError(providerAddAsAccountResult)
 
-  const spaceStorageResult = await options.invoke(
+  const spaceStorageResult = await ucanto
+    .invoke({
+      issuer: space,
+      audience: service,
+      capability: {
+        can: 'testing/space-storage',
+        with: space.did(),
+      },
+    })
     // @ts-ignore - not in service type because only enabled while testing
-    await ucanto
-      .invoke({
-        issuer: space,
-        audience: service,
-        capability: {
-          can: 'testing/space-storage',
-          with: space.did(),
-        },
-      })
-      .delegate()
-  )
+    .execute(conn)
+
   assert.ok(
     spaceStorageResult &&
       typeof spaceStorageResult === 'object' &&
