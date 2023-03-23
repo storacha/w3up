@@ -7,14 +7,12 @@ import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import { collect } from 'streaming-iterables'
+import { CID } from 'multiformats'
+import { base32 } from 'multiformats/bases/base32'
 
 describe('DelegationsStorage with sqlite+R2', () => {
-  testVariant(
-    () => createDbDelegationsStorageVariantWithR2().create(),
-    (name, doTest) => {
-      it(name, doTest)
-    }
-  )
+  testVariant(createDbDelegationsStorageVariantWithR2, it)
+  testCloudflareVariant(createDbDelegationsStorageVariantWithR2, it)
 })
 
 /**
@@ -48,20 +46,17 @@ async function createDelegation(opts = {}) {
  *
  * @see https://github.com/web3-storage/w3protocol/issues/571
  */
-function createDbDelegationsStorageVariantWithR2() {
+async function createDbDelegationsStorageVariantWithR2() {
+  const { d1, mf } = await context()
+  const accessApiR2 = await mf.getR2Bucket('ACCESS_API_R2')
+  const delegationsStorage = new DbDelegationsStorageWithR2(
+    createD1Database(d1),
+    accessApiR2
+  )
   return {
-    /**
-     * @returns {Promise<DelegationsStorageVariant>}
-     */
-    create: async () => {
-      const { d1, mf } = await context()
-      const accessApiR2 = await mf.getR2Bucket('ACCESS_API_R2')
-      const delegationsStorage = new DbDelegationsStorageWithR2(
-        createD1Database(d1),
-        accessApiR2
-      )
-      return { delegations: delegationsStorage }
-    },
+    d1,
+    delegations: delegationsStorage,
+    r2: accessApiR2,
   }
 }
 
@@ -128,5 +123,65 @@ function testVariant(createVariant, test) {
       delegations.find({ audience: carol.did() })
     )
     assert.deepEqual(carolDelegations.length, 0)
+  })
+}
+
+/**
+ * @param {() => Promise<DelegationsStorageVariant & { d1: D1Database, r2: import('../src/types/access-api-cf-db').R2Bucket }>} createVariant - create a new test context
+ * @param {(name: string, test: () => Promise<unknown>) => void} test - name a test
+ */
+function testCloudflareVariant(createVariant, test) {
+  test('puts into d1+r2', async () => {
+    const { d1, delegations, r2 } = await createVariant()
+    const multibasePrefixes = { base32: base32.prefix }
+    const expectMultibase = 'base32'
+    const multihashCodes = {
+      // https://github.com/multiformats/multicodec/blob/aa0c3a41473c0a3796cdf2175ac5552989b2a905/table.csv#L9
+      'sha2-256': 0x12,
+    }
+    const expectMultihash = multihashCodes['sha2-256']
+
+    const ucan1 = await createSampleDelegation()
+    await delegations.putMany(ucan1)
+    const listResult = await r2.list()
+    assert.deepEqual(listResult.objects.length, 1)
+    const r2KeyCidString = listResult.objects[0].key.split('.')[0]
+
+    assert.deepEqual(
+      r2KeyCidString[0],
+      multibasePrefixes[expectMultibase],
+      `r2 key cid string uses multibase ${expectMultibase}`
+    )
+    const r2KeyCid = CID.parse(r2KeyCidString)
+
+    assert.deepEqual(r2KeyCid.version, 1)
+    assert.deepEqual(r2KeyCid.code, ucanto.UCAN.code)
+    assert.deepEqual(
+      r2KeyCid.multihash.code,
+      expectMultihash,
+      `keyCid multihash code is ${expectMultihash}`
+    )
+
+    // d1 cid column
+    const delegationsFromD1 = await d1
+      .prepare(`select cid from delegations_v3`)
+      .all()
+    assert.equal(delegationsFromD1.results?.length, 1)
+    const d1CidString = /** @type {{cid:string}} */ (
+      delegationsFromD1.results?.[0]
+    ).cid
+    assert.deepEqual(
+      d1CidString[0],
+      multibasePrefixes[expectMultibase],
+      `d1 cid column uses multibase ${expectMultibase}`
+    )
+    const d1Cid = CID.parse(d1CidString)
+    assert.deepEqual(d1Cid.version, 1)
+    assert.deepEqual(d1Cid.code, ucanto.UCAN.code)
+    assert.deepEqual(
+      d1Cid.multihash.code,
+      expectMultihash,
+      `d1Cid multihash code is ${expectMultihash}`
+    )
   })
 }
