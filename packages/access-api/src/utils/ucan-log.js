@@ -50,7 +50,7 @@ class UCANLog {
         }
       )
     } catch (error) {
-      throw new Error(`Failed to log invocations: ${error}`, { cause: error, })
+      throw new Error(`Failed to log invocations: ${error}`, { cause: error })
     }
   }
 
