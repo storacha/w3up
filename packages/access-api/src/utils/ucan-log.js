@@ -32,7 +32,7 @@ class UCANLog {
     try {
       await pRetry(
         async () => {
-          const res = await fetch(this.url, {
+          const res = await fetch(`${this.url}/ucan`, {
             method: 'POST',
             headers: {
               Authorization: `Basic ${this.auth}`,
@@ -61,7 +61,7 @@ class UCANLog {
     try {
       await pRetry(
         async () => {
-          const res = await fetch(this.url, {
+          const res = await fetch(`${this.url}/ucan`, {
             method: 'POST',
             headers: {
               Authorization: `Basic ${this.auth}`,
