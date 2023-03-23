@@ -32,7 +32,7 @@ export class Spaces {
       inserted_at: (v) => new Date(v),
       updated_at: (v) => new Date(v),
     })
-    this.d1 = /** @type {Kysely<import('../bindings').D1Schema>} */ (
+    this.d1 = /** @type {Kysely<{ spaces: SpaceTable }>} */ (
       new Kysely({
         dialect: new D1Dialect({ database: d1 }),
         plugins: [objectPlugin],

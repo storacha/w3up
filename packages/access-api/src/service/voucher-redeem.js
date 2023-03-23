@@ -5,6 +5,7 @@ import * as Server from '@ucanto/server'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { Delegation } from '@ucanto/core'
 import { Failure } from '@ucanto/server'
+import { D1Error } from '../utils/d1.js'
 /**
  * @param {import('../bindings').RouteContext} ctx
  */
@@ -46,7 +47,7 @@ export function voucherRedeemProvider(ctx) {
     )
 
     if (error) {
-      if ('code' in error && error.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+      if (isSpaceAlreadyRegisteredError(error)) {
         return new Failure(`Space ${capability.nb.space} already registered.`)
       } else {
         throw error
@@ -68,4 +69,20 @@ export function voucherRedeemProvider(ctx) {
       })
     }
   })
+}
+
+/**
+ * @param {D1Error} error
+ */
+function isSpaceAlreadyRegisteredError(error) {
+  if ('code' in error && error.code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+    return true
+  }
+  if (
+    'cause' in error &&
+    /UNIQUE constraint failed: spaces.did/.test(String(error.cause))
+  ) {
+    return true
+  }
+  return false
 }
