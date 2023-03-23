@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.2](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.1...access-api-v5.1.2) (2023-03-23)
+
+
+### Bug Fixes
+
+* ucan log connect only when url and token ([#607](https://github.com/web3-storage/w3protocol/issues/607)) ([5eef6cc](https://github.com/web3-storage/w3protocol/commit/5eef6ccb60ab46a7c2888c10d8f03420d7c81623))
+
 ## [5.1.1](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.0...access-api-v5.1.1) (2023-03-23)
 
 
