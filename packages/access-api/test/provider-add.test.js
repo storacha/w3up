@@ -255,7 +255,7 @@ describe(`provider/add`, () => {
     )
 
     assert.match(
-      String(addW3Storage.message),
+      addW3Storage.error ? addW3Storage?.message : '',
       /it already has a did:web:nft.storage provider/
     )
   })
