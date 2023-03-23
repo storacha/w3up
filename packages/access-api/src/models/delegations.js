@@ -352,8 +352,6 @@ async function writeDelegations(bucket, delegations, keyer) {
  */
 async function writeEntries(bucket, entries) {
   await Promise.all(
-    [...entries].map(async ([key, value]) => {
-      return bucket.put(key, value)
-    })
+    [...entries].map(([key, value]) => bucket.put(key, value))
   )
 }
