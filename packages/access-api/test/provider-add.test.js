@@ -263,6 +263,7 @@ describe(`provider/add`, () => {
 
 /**
  * Sets up test context and creates various principals used in this test suite.
+ *
  * @param {Context.Options} options
  */
 const setup = async (options = {}) => {
