@@ -64,7 +64,6 @@ unsafe = { bindings = [
 [env.staging]
 name = "w3access-staging"
 workers_dev = true
-vars = { ENV = "staging", DEBUG = "false", DID = "did:web:staging.web3.storage", UPLOAD_API_URL = "https://staging.up.web3.storage" }
 build = { command = "scripts/cli.js build --env staging", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "b0e5ca990dda4e3784a1741dfa28a52e" },
@@ -79,6 +78,13 @@ unsafe = { bindings = [
 [[env.staging.r2_buckets]]
 binding = "DELEGATIONS_BUCKET"
 bucket_name = "w3up-delegations-staging-0"
+[env.staging.vars]
+DEBUG = "false"
+DID = "did:web:staging.web3.storage"
+ENV = "staging"
+UPLOAD_API_URL = "https://staging.up.web3.storage"
+PROVIDERS = "did:web:staging.web3.storage,did:web:staging.nft.storage"
+
 
 # Production
 [env.production]
@@ -104,3 +110,4 @@ DID = "did:web:web3.storage"
 ENV = "production"
 # production upload-api - bypass up.web3.storage due to cloudflare dns issue https://github.com/web3-storage/w3protocol/issues/363#issuecomment-1410887488
 UPLOAD_API_URL = "https://3bd9h7xn3j.execute-api.us-west-2.amazonaws.com/"
+PROVIDERS = "did:web:web3.storage,did:web:nft.storage"

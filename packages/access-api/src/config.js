@@ -64,6 +64,11 @@ export function loadConfig(env) {
     PRIVATE_KEY: vars.PRIVATE_KEY,
     DID: DID.parse(vars.DID).did(),
 
+    /** DIDs of services that can be used to provision spaces. */
+    PROVIDERS: env.PROVIDERS
+      ? env.PROVIDERS.split(',').map((id) => DID.parse(id).did())
+      : [DID.parse(vars.DID).did()],
+
     UPLOAD_API_URL: env.UPLOAD_API_URL || 'https://up.web3.storage/',
     // bindings
     METRICS:
