@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.3](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.2...access-api-v5.1.3) (2023-03-23)
+
+
+### Bug Fixes
+
+* rm access/claim disabling in prod ([#624](https://github.com/web3-storage/w3protocol/issues/624)) ([5bfb7c9](https://github.com/web3-storage/w3protocol/commit/5bfb7c9aa9e2b9cd8a866e9d13f11bb941a1f521))
+
 ## [5.1.2](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.1...access-api-v5.1.2) (2023-03-23)
 
 
