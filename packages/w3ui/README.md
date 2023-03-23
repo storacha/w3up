@@ -17,7 +17,7 @@
 > Open an issue on the repo or reach out to the #web3-storage channel on [IPFS Discord](https://docs.ipfs.tech/community/chat/#discord) if you have any 
 questions!
 
-This repo contains reusauble UI modules for web3.storage in your favourite UI framework, and a set of example apps to see them dance.
+This repo contains reusauble UI modules for the web3.storage w3up beta in your favourite UI framework, and a set of example apps to see them dance.
 
 ## Documentation
 
