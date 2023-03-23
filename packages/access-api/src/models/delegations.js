@@ -71,7 +71,7 @@ export class DbDelegationsStorageWithR2 {
   /** @type {DB} */
   #db
   #delegationsTableName = delegationsV3Table
-  #getDagsKey = carFileKeyer
+  #getDagsKey = createDelegationsBucketKey
 
   /**
    * @param {DB} db
@@ -147,12 +147,12 @@ export class DbDelegationsStorageWithR2 {
   /**
    * @param {Pick<import('../types/access-api-cf-db').DelegationsV3Row, 'cid'>} row
    * @param {R2Bucket} dags
-   * @param {(d: { cid: Ucanto.Delegation['cid'] }) => string} keyer - builds k/v key strings for each delegation
+   * @param {(d: { cid: Ucanto.Delegation['cid'] }) => string} createKey - builds k/v key strings for each delegation
    * @returns {Promise<Ucanto.Delegation>}
    */
-  async #rowToDelegation(row, dags = this.#dags, keyer = this.#getDagsKey) {
+  async #rowToDelegation(row, dags = this.#dags, createKey = this.#getDagsKey) {
     const cid = /** @type {Ucanto.UCANLink} */ (CID.parse(row.cid))
-    const key = keyer({ cid })
+    const key = createKey({ cid })
     const carBytesR2 = await dags.get(key)
     if (!carBytesR2) {
       throw new Error(`failed to read car bytes for cid ${row.cid} key ${key}`)
@@ -190,21 +190,23 @@ async function count(db, delegationsTable) {
 /**
  * @param {{ cid: Ucanto.Delegation['cid'] }} ucan
  */
-function carFileKeyer(ucan) {
-  const key = /** @type {const} */ (`${ucan.cid.toString(base32)}.car`)
+function createDelegationsBucketKey(ucan) {
+  const key = /** @type {const} */ (
+    `/delegations/${ucan.cid.toString(base32)}.car`
+  )
   return key
 }
 
 /**
  * @param {R2Bucket} bucket
  * @param {Iterable<Ucanto.Delegation>} delegations
- * @param {(d: { cid: Ucanto.Delegation['cid'] }) => string} keyer - builds k/v key strings for each delegation
+ * @param {(d: { cid: Ucanto.Delegation['cid'] }) => string} createKey - builds k/v key strings for each delegation
  */
-async function writeDelegations(bucket, delegations, keyer) {
+async function writeDelegations(bucket, delegations, createKey) {
   return writeEntries(
     bucket,
     [...delegations].map((delegation) => {
-      const key = keyer(delegation)
+      const key = createKey(delegation)
       const carBytes = delegationsToBytes([delegation])
       const value = carBytes
       return /** @type {[key: string, value: Uint8Array]} */ ([key, value])
