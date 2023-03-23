@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { Authenticator } from './components/Authenticator'
+import { Authenticator } from '@w3ui/react-keyring'
 import { W3APIProvider } from './components/W3API'
 
 // thanks, https://dev.to/franciscomendes10866/file-based-routing-using-vite-and-react-router-3fdo

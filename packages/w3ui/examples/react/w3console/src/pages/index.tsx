@@ -13,6 +13,7 @@ import { Uploader } from '../components/Uploader'
 import { UploadsList } from '../components/UploadsList'
 import { SpaceFinder } from '../components/SpaceFinder'
 import { SpaceCreatorForm, SpaceCreator } from '../components/SpaceCreator'
+import { AuthenticationEnsurer } from '../components/Authenticator'
 
 function SpaceRegistrar (): JSX.Element {
   const [, { registerSpace }] = useKeyring()
@@ -227,28 +228,30 @@ export default function Home (): JSX.Element {
   }
 
   return (
-    <SpaceEnsurer>
-      <div className='flex min-h-full w-full'>
-        <nav className='flex-none w-64 bg-gray-900 text-white px-4 pb-4 border-r border-gray-800'>
-          <div className='flex flex-col justify-between min-h-full'>
-            <div class='flex-none'>
-              <SpaceSelector
-                selected={space}
-                setSelected={viewSpace}
-                spaces={spaces}
-              />
+    <AuthenticationEnsurer>
+      <SpaceEnsurer>
+        <div className='flex min-h-full w-full'>
+          <nav className='flex-none w-64 bg-gray-900 text-white px-4 pb-4 border-r border-gray-800'>
+            <div className='flex flex-col justify-between min-h-full'>
+              <div class='flex-none'>
+                <SpaceSelector
+                  selected={space}
+                  setSelected={viewSpace}
+                  spaces={spaces}
+                />
+              </div>
+              <div>
+                <SpaceCreator className='mb-4' />
+                <Logo />
+              </div>
             </div>
-            <div>
-              <SpaceCreator className='mb-4' />
-              <Logo />
-            </div>
-          </div>
-        </nav>
-        <main className='grow bg-gray-dark text-white p-4'>
-          <SpaceSection viewSpace={viewSpace} share={share} setShare={setShare} />
-        </main>
-      </div>
-    </SpaceEnsurer>
+          </nav>
+          <main className='grow bg-gray-dark text-white p-4'>
+            <SpaceSection viewSpace={viewSpace} share={share} setShare={setShare} />
+          </main>
+        </div>
+      </SpaceEnsurer>
+    </AuthenticationEnsurer>
   )
 }
 

@@ -60,31 +60,4 @@ export function AuthenticationEnsurer ({
   return <AuthenticationForm />
 }
 
-interface AuthenticatorProps {
-  children: JSX.Element | JSX.Element[]
-  className?: string
-}
 
-export function Authenticator ({
-  children,
-  className = ''
-}: AuthenticatorProps): JSX.Element {
-  return (
-    <AuthCore as='div' className={className}>
-      <AuthenticationEnsurer>{children}</AuthenticationEnsurer>
-    </AuthCore>
-  )
-}
-
-/**
- * Wrapping a component with this HoC ensures an identity exists.
- */
-export function withIdentity<C extends React.JSXElementConstructor<P>, P> (
-  Component: C
-) {
-  return (props: any) => (
-    <Authenticator>
-      <Component {...props} />
-    </Authenticator>
-  )
-}
