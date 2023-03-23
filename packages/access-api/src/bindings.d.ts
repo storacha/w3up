@@ -50,10 +50,9 @@ export interface Env {
   VALIDATIONS: KVNamespace
   W3ACCESS_METRICS: AnalyticsEngine
   /**
-   * primary r2 bucket used by access-api.
    * will be used for storing env.models.delegations CARs
    */
-  ACCESS_API_R2: R2Bucket
+  DELEGATIONS: R2Bucket
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __D1_BETA__: D1Database
 }

@@ -35,9 +35,9 @@ export function loadConfig(env) {
     }
   }
 
-  if (typeof env.ACCESS_API_R2 !== 'object') {
+  if (typeof env.DELEGATIONS !== 'object') {
     throw new TypeError(
-      `expected env.ACCESS_API_R2 to be an R2Bucket object, but got ${typeof env.ACCESS_API_R2}`
+      `expected env.DELEGATIONS to be an R2Bucket object, but got ${typeof env.DELEGATIONS}`
     )
   }
 
@@ -73,7 +73,7 @@ export function loadConfig(env) {
     SPACES: env.SPACES,
     VALIDATIONS: env.VALIDATIONS,
     DB: /** @type {D1Database} */ (env.__D1_BETA__),
-    ACCESS_API_R2: env.ACCESS_API_R2,
+    DELEGATIONS: env.DELEGATIONS,
   }
 }
 
