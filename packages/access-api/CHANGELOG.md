@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.1](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.0...access-api-v5.1.1) (2023-03-23)
+
+
+### Bug Fixes
+
+* ucan log route needs path ([#618](https://github.com/web3-storage/w3protocol/issues/618)) ([789554b](https://github.com/web3-storage/w3protocol/commit/789554b31a37d85c0678670d9861a35cf4a186c9))
+
 ## [5.1.0](https://github.com/web3-storage/w3protocol/compare/access-api-v5.0.0...access-api-v5.1.0) (2023-03-23)
 
 
