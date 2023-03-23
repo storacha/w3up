@@ -86,6 +86,26 @@ Agents are entities that control the private signing keys used to interact with 
 
 `create` accepts an optional [`ClientFactoryOptions` object][docs-ClientFactoryOptions], which can be used to target a non-production instance of the w3up access and upload services, or to use a non-default persistent `Store`. See the [`@web3-storage/access` docs](https://web3-storage.github.io/w3protocol/modules/_web3_storage_access.html) for more about `Store` configuration.
 
+#### Authorizing your agent
+
+In order to store data with w3up, you'll need to authorize your agent. Currently you can only authorize your agent by confirming your email address. By confirming your email address w3up will attest that you are not a robot and are ok to upload data to the service! Hooray.
+
+Authorizing your agent allows you to claim spaces and other delegations that you created on a _different_ agent that is authorized to the _same_ email account. Authorization needs to happen only once per agent.
+
+```js
+await client.authorize('zaphod@beeblebrox.galaxy')
+```
+
+Calling `authorize` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `authorize` method will resolve. Make sure to check for errors, as `authorize` will fail if the email is not confirmed within the expiration timeout.
+
+Note: Alternatively, you can add a delegation for access to a space created by a different authorized agent, see the [`addSpace` client method](docs-client#addSpace).
+
+If this is not the first time you authorized an agent with your email, then you'll want to claim any spaces and delegations you have on your other agent(s):
+
+```js
+await client.capability.access.claim()
+```
+
 #### Creating and registering Spaces
 
 Before you can upload data, you'll need to create a [`Space`][docs-Space] and register it with the service.
@@ -106,7 +126,7 @@ First, set the space as your "current" space using the [`setCurrentSpace` method
 await client.setCurrentSpace(space.did())
 ```
 
-Next, call the [`registerSpace` method][docs-Client#registerSpace], passing in an email address to register as the primary contact for the space:
+Next, call the [`registerSpace` method][docs-Client#registerSpace], passing in the _same_ email address you used to authorize your agent:
 
 ```js
 try {
@@ -116,13 +136,9 @@ try {
 }
 ```
 
-Calling `registerSpace` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `registerSpace` method will resolve. Make sure to check for errors, as `registerSpace` will fail if the email is not confirmed within the expiration timeout.
-
-Registering a space enrolls it in web3.storage's free usage tier, allowing you to store files, list uploads, etc.
-
 #### Uploading data
 
-Once you've [created and registered a space](#creating-and-registering-spaces), you can upload files to the w3up platform.
+Once you've [authorized](#authorizing-your-agent), [created and registered a space](#creating-and-registering-spaces), you can upload files to the w3up platform.
 
 Call [`uploadFile`][docs-Client#uploadFile] to upload a single file, or [`uploadDirectory`][docs-Client#uploadDirectory] to upload multiple files.
 
@@ -161,6 +177,7 @@ In the example above, `directoryCid` resolves to an IPFS directory with the foll
   - [`uploadFile`](#uploadfile)
   - [`uploadCAR`](#uploadcar)
   - [`agent`](#agent)
+  - [`authorize`](#authorize)
   - [`currentSpace`](#currentspace)
   - [`setCurrentSpace`](#setcurrentspace)
   - [`spaces`](#spaces)
@@ -171,6 +188,8 @@ In the example above, `directoryCid` resolves to an IPFS directory with the foll
   - [`addProof`](#addproof)
   - [`delegations`](#delegations)
   - [`createDelegation`](#createdelegation)
+  - [`capability.access.authorize`](#capabilityaccessauthorize)
+  - [`capability.access.claim`](#capabilityaccessclaim)
   - [`capability.space.info`](#capabilityspaceinfo)
   - [`capability.space.recover`](#capabilityspacerecover)
   - [`capability.store.add`](#capabilitystoreadd)
@@ -276,6 +295,14 @@ function agent (): Signer
 
 The user agent. The agent is a signer - an entity that can sign UCANs with keys from a `Principal` using a signing algorithm.
 
+### `authorize`
+
+```ts
+function authorize (email: string, options?: { signal?: AbortSignal }): Promise<void>
+```
+
+Authorize the current agent to use capabilities granted to the passed email account.
+
 ### `currentSpace`
 
 ```ts
@@ -318,10 +345,6 @@ async function registerSpace (
 ```
 
 Register the _current_ space with the service.
-
-Invokes `voucher/redeem` for the free tier, waits on the websocket for the `voucher/claim` and invokes it.
-
-It also adds a full space delegation to the service in the `voucher/claim` invocation to allow for recovery.
 
 ### `addSpace`
 
@@ -366,6 +389,25 @@ function createDelegation (
 ```
 
 Create a delegation to the passed audience for the given abilities with the _current_ space as the resource.
+
+### `capability.access.authorize`
+
+```ts
+function authorize (
+  email: string,
+  options: { signal?: AbortSignal } = {}
+): Promise<void>
+```
+
+Authorize the current agent to use capabilities granted to the passed email account.
+
+### `capability.access.claim`
+
+```ts
+function claim (): Promise<Delegation<Capabilities>[]>
+```
+
+Claim delegations granted to the account associated with this agent. Note: the received delegations are added to the agent's persistent store.
 
 ### `capability.store.add`
 
