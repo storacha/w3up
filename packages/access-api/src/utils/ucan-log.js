@@ -40,7 +40,8 @@ class UCANLog {
       })
       
       if (!res.ok) {
-        throw new Error(`HTTP request status not ok: ${res.status}`)
+        const reason = await res.text.catch(() => '')
+        throw new Error(`HTTP request status not ok: ${res.status} - ${reason}`)
       }
       
       return res
