@@ -52,7 +52,7 @@ export interface Env {
   /**
    * will be used for storing env.models.delegations CARs
    */
-  DELEGATIONS: R2Bucket
+  DELEGATIONS_BUCKET: R2Bucket
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __D1_BETA__: D1Database
 }
