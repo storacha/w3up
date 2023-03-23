@@ -9,7 +9,7 @@
   "packages/vue-uploads-list": "2.0.1",
   "packages/keyring-core": "3.0.0",
   "packages/solid-keyring": "2.1.1",
-  "packages/react-keyring": "3.0.1",
+  "packages/react-keyring": "4.0.0",
   "packages/vue-keyring": "2.0.2",
   "examples/react/w3console": "1.1.0"
 }

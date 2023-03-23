@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/react-keyring",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "React adapter for w3ui keyring.",
   "main": "src/index.ts",
   "publishConfig": {
