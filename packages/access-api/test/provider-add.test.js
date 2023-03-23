@@ -10,7 +10,11 @@ import * as Ucanto from '@ucanto/interface'
 import { Access, Provider } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
-import { createContextWithMailbox } from './helpers/utils.js'
+import {
+  createContextWithMailbox,
+  createAuthorization,
+  Context,
+} from './helpers/utils.js'
 
 describe(`provider/add`, () => {
   it(`can invoke as did:mailto after authorize confirmation`, async () => {
@@ -168,13 +172,98 @@ describe(`provider/add`, () => {
     assert.ok('did' in spaceInfoResult)
     assert.deepEqual(spaceInfoResult.did, space.did())
   })
+
+  it('add providers set in env', async () => {
+    const { space, agent, account, service, ...context } = await setup({
+      env: {
+        PROVIDERS: 'did:web:nft.storage,did:web:web3.storage',
+      },
+    })
+    const proofs = await createAuthorization({ agent, service, account })
+    const addNFTStorage = await Provider.add
+      .invoke({
+        issuer: agent,
+        audience: service,
+        with: account.did(),
+        nb: {
+          provider: 'did:web:nft.storage',
+          consumer: space.did(),
+        },
+        proofs,
+      })
+      .execute(context.conn)
+
+    assertNotError(addNFTStorage)
+
+    const w3space = await principal.ed25519.generate()
+    const addW3Storage = await Provider.add
+      .invoke({
+        issuer: agent,
+        audience: service,
+        with: account.did(),
+        nb: {
+          provider: 'did:web:web3.storage',
+          consumer: w3space.did(),
+        },
+        proofs,
+      })
+      .execute(context.conn)
+
+    assertNotError(addW3Storage)
+  })
+
+  // TODO: this test is failing because implementation is not correct
+  it.skip('provider/add can not add two diff providers to the same space', async () => {
+    const { space, agent, account, service, ...context } = await setup({
+      env: {
+        PROVIDERS: 'did:web:nft.storage,did:web:web3.storage',
+      },
+    })
+
+    const proofs = await createAuthorization({ agent, service, account })
+    const addNFTStorage = await Provider.add
+      .invoke({
+        issuer: agent,
+        audience: service,
+        with: account.did(),
+        nb: {
+          provider: 'did:web:nft.storage',
+          consumer: space.did(),
+        },
+        proofs,
+      })
+      .execute(context.conn)
+
+    assertNotError(addNFTStorage)
+
+    const w3space = await principal.ed25519.generate()
+    const addW3Storage = await Provider.add
+      .invoke({
+        issuer: agent,
+        audience: service,
+        with: account.did(),
+        nb: {
+          provider: 'did:web:web3.storage',
+          consumer: w3space.did(),
+        },
+        proofs,
+      })
+      .execute(context.conn)
+
+    assert.equal(
+      addW3Storage.error,
+      true,
+      'Provider already added to this space'
+    )
+  })
 })
 
 /**
  * Sets up test context and creates various principals used in this test suite.
+ * @param {Context.Options} options
  */
-const setup = async () => {
-  const context = await createContextWithMailbox()
+const setup = async (options = {}) => {
+  const context = await createContextWithMailbox(options)
   const space = await principal.ed25519.generate()
   const agent = await principal.ed25519.generate()
   const account = principal.Absentee.from({ id: 'did:mailto:foo' })

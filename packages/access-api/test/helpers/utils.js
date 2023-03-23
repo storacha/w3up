@@ -9,7 +9,10 @@ import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/transport/cbor'
-import { context as createContext } from './context.js'
+import * as Context from './context.js'
+import { Access } from '@web3-storage/capabilities'
+// eslint-disable-next-line unicorn/prefer-export-from
+export { Context }
 
 /**
  * @param {Types.UCAN.View} ucan
@@ -221,15 +224,59 @@ export const createChannel = ({ id = w3, service, ...etc }) => {
   return { server, client }
 }
 
-export const createContextWithMailbox = async () => {
+/**
+ * @param {Context.Options} options
+ */
+export const createContextWithMailbox = async ({ env, globals } = {}) => {
   /** @type {{to:string, url:string}[]} */
   const emails = []
   const email = createEmail(emails)
-  const context = await createContext({
+  const context = await Context.context({
+    env,
     globals: {
       email,
+      ...globals,
     },
   })
 
   return { ...context, emails }
+}
+
+/**
+ * Utility function that creates a delegation from account to agent and an
+ * attestation from service to proof it. Proofs can be used to invoke any
+ * capability on behalf of the account.
+ *
+ * @param {object} input
+ * @param {Types.UCAN.Signer<Types.DID<'mailto'>>} input.account
+ * @param {Types.Signer<Types.DID<'web'>>} input.service
+ * @param {Types.Signer} input.agent
+ */
+export const createAuthorization = async ({ account, agent, service }) => {
+  // Issue authorization from account DID to agent DID
+  const authorization = await Server.delegate({
+    issuer: account,
+    audience: agent,
+    capabilities: [
+      {
+        with: 'ucan:*',
+        can: '*',
+      },
+    ],
+    expiration: Infinity,
+  })
+
+  const attest = await Access.session
+    .invoke({
+      issuer: service,
+      audience: agent,
+      with: service.did(),
+      nb: {
+        proof: authorization.cid,
+      },
+      expiration: Infinity,
+    })
+    .delegate()
+
+  return [authorization, attest]
 }
