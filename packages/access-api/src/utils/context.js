@@ -75,7 +75,7 @@ export function getContext(request, env, ctx) {
             return delegationsTableBytesToArrayBuffer(v) ?? v
           },
         }),
-        config.ACCESS_API_R2
+        config.DELEGATIONS
       ),
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
