@@ -30,25 +30,21 @@ class UCANLog {
    */
   async logInvocations(car) {
     try {
-      await pRetry(
-        async () => {
-          const res = await fetch(`${this.url}/ucan`, {
-            method: 'POST',
-            headers: {
-              Authorization: `Basic ${this.auth}`,
-              'Content-Type': 'application/invocations+car',
-            },
-            body: car,
-          })
-          if (!res.ok) {
-            throw new Error(`HTTP request status not ok: ${res.status}`)
-          }
-          return res
+      const res = await fetch(`${this.url}/ucan`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${this.auth}`,
+          'Content-Type': 'application/invocations+car',
         },
-        {
-          retries: 10,
-        }
-      )
+        body: car,
+      })
+
+      if (!res.ok) {
+        const reason = await res.text().catch(() => '')
+        throw new Error(
+          `HTTP request to "${this.url}" with auth "${this.auth}" failed with status: ${res.status} and reason ${reason}`
+        )
+      }
     } catch (error) {
       throw new Error(`Failed to log invocations: ${error}`, { cause: error })
     }
@@ -75,7 +71,7 @@ class UCANLog {
           return res
         },
         {
-          retries: 10,
+          retries: 3,
         }
       )
     } catch (error) {
