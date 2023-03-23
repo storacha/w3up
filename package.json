@@ -78,7 +78,7 @@
     "@ucanto/interface": "^6.0.0",
     "@ucanto/principal": "^5.1.0",
     "@ucanto/transport": "^5.1.0",
-    "@web3-storage/access": "11.0.0-rc.0",
+    "@web3-storage/access": "^11.0.0",
     "@web3-storage/capabilities": "^4.0.0",
     "@web3-storage/upload-client": "^8.0.0"
   },
