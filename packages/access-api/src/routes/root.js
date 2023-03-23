@@ -22,5 +22,6 @@ export async function postRoot(request, env) {
     body: new Uint8Array(await request.arrayBuffer()),
     headers: Object.fromEntries(request.headers.entries()),
   })
+
   return new Response(rsp.body, { headers: rsp.headers })
 }
