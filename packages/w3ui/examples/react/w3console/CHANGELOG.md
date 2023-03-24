@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.1.0...w3console-v1.2.0) (2023-03-24)
+
+
+### Features
+
+* updates to ToS and login page ([#447](https://github.com/web3-storage/w3ui/issues/447)) ([e62ad96](https://github.com/web3-storage/w3ui/commit/e62ad969b73d1b694f75c172febf3b5ad5fba6a6)), closes [#397](https://github.com/web3-storage/w3ui/issues/397)
+
+
+### Bug Fixes
+
+* make auth email input text black ([#462](https://github.com/web3-storage/w3ui/issues/462)) ([dc8ddca](https://github.com/web3-storage/w3ui/commit/dc8ddca49c525f08d0968bfc74f22c5595e68f7d))
+* wait for register space before returning from space create onSubmit ([#463](https://github.com/web3-storage/w3ui/issues/463)) ([9b35b2c](https://github.com/web3-storage/w3ui/commit/9b35b2cbdc571126873bb8d2bc58e2d7860b230f))
+
 ## [1.1.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.0.1...w3console-v1.1.0) (2023-03-23)
 
 
