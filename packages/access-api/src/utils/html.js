@@ -140,30 +140,26 @@ export const PendingValidateEmail = ({ autoApprove }) => (
 export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
   <div class="fcenter">
     <img
-      src="https://web3.storage/android-chrome-512x512.png"
+      src="https://camo.githubusercontent.com/56c7b9e4143bd5db3e3e6d4ff03c077dd0a7f16b9f96f04d81b272caa9266b3e/68747470733a2f2f6261667962656961346c75756e73366467796d79356b617535726d377234717a72727a673663676c707a706f67757373707270793432636d636e342e697066732e7733732e6c696e6b2f773375702d6c6f676f2e706e67"
       height="80"
-      width="80"
     />
     <h1>Email Validated</h1>
     <p>{email} was confirmed. You may close this window.</p>
     <div class="box">
       <p>
-        During the beta period, uploads via w3up will only appear via the beta
-        APIs, and not on the web3.storage or NFT.Storage websites, even if the
-        associated email addresses are the same.
+        By registering with either the web3.storage or the NFT.Storage w3up
+        beta, you agree to the respective Terms of Service (
+        <a href="https://console.web3.storage/terms">web3.storage ToS</a>,
+        <a href="https://console.nft.storage/terms">NFT.Storage ToS</a>)
       </p>
       <p>
-        At the end of the beta period, web3.storage and NFT.Storage's upload
-        APIs and existing accounts will be upgraded to use w3up. Uploads via the
-        w3up beta be migrated to web3.storage by default and, if applicable,
-        combined with the relevant existing web3.storage account (based on email
-        address). If you would rather have your beta w3up account be associated
-        with the NFT.Storage product (e.g., you are only storing off-chain NFT
-        data), please email us at{' '}
-        <a href="mailto:support@nft.storage">support@nft.storage</a>. All w3up
-        uploads associated with a given registered email will only be able to be
-        associated with one of either web3.storage or NFT.Storage when these
-        uploads are migrated.
+        If you have an existing non-w3up beta account with NFT.Storage or
+        web3.storage and register for the w3up beta version of the same product
+        (NFT.Storage or web3.storage) using the same email, then at the end of
+        the beta period, these accounts will be combined. Until the beta period
+        is over and this migration occurs, uploads to w3up will not appear in
+        your NFT.Storage or web3.storage account (and vice versa), even if you
+        register with the same email.
       </p>
     </div>
     <details style={{ maxWidth: '80vw', overflow: 'overlay' }}>
