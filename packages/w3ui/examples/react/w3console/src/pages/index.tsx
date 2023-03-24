@@ -14,65 +14,41 @@ import { UploadsList } from '../components/UploadsList'
 import { SpaceFinder } from '../components/SpaceFinder'
 import { SpaceCreatorForm, SpaceCreator } from '../components/SpaceCreator'
 import { AuthenticationEnsurer } from '../components/Authenticator'
+import Loader from '../components/Loader'
 import { tosUrl, Logo } from '../brand'
 
 function SpaceRegistrar (): JSX.Element {
-  const [, { registerSpace }] = useKeyring()
-  const [email, setEmail] = useState('')
+  const [{ account }, { registerSpace }] = useKeyring()
   const [submitted, setSubmitted] = useState(false)
-  function resetForm (): void {
-    setEmail('')
-  }
-  async function onSubmit (e: React.FormEvent<HTMLFormElement>): Promise<void> {
+  async function onSubmit (e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     e.preventDefault()
-    setSubmitted(true)
-    try {
-      await registerSpace(email)
-    } catch (err) {
-      console.log(err)
-      throw new Error('failed to register', { cause: err })
-    } finally {
-      resetForm()
-      setSubmitted(false)
+    if (account) {
+      setSubmitted(true)
+      try {
+        await registerSpace(account, { provider: import.meta.env.VITE_W3UP_PROVIDER })
+      } catch (err) {
+        console.log(err)
+        throw new Error('failed to register', { cause: err })
+      } finally {
+        setSubmitted(false)
+      }
+    } else {
+      throw new Error('cannot register space, no account found, have you authorized your email?')
     }
   }
   return (
-    <div className='flex flex-col items-center space-y-24 pt-12'>
-      <div className='flex flex-col items-center space-y-2'>
-        <h3 className='text-lg'>Verify your email address!</h3>
+    <div className='flex flex-col items-center space-y-12 pt-12'>
+      <div className='flex flex-col items-center space-y-4'>
+        <h3 className='text-lg'>This space is not yet registered.</h3>
         <p>
-          Click the link in the email we sent to start uploading to this space.
+          Click the button below to register this space and start uploading.
         </p>
       </div>
       <div className='flex flex-col items-center space-y-4'>
-        <h5>Need a new verification email?</h5>
-        <form
-          className='flex flex-col items-center space-y-2'
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            void onSubmit(e)
-          }}
-        >
-          <input
-            className='text-black px-2 py-1 rounded'
-            type='email'
-            placeholder='Email'
-            value={email}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setEmail(e.target.value)
-            }}
-          />
-          <input
-            type='submit'
-            className='w3ui-button'
-            value='Re-send Verification Email'
-            disabled={email === ''}
-          />
-        </form>
-        {submitted && (
-          <p>
-            Verification re-sent, please check your email for a verification
-            email.
-          </p>
+        {submitted ? (
+          <Loader className='w-6' />
+        ) : (
+          <button className='w3ui-button' onClick={onSubmit}>Register Space</button>
         )}
       </div>
     </div>
