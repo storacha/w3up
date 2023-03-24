@@ -14,7 +14,7 @@ import { UploadsList } from '../components/UploadsList'
 import { SpaceFinder } from '../components/SpaceFinder'
 import { SpaceCreatorForm, SpaceCreator } from '../components/SpaceCreator'
 import { AuthenticationEnsurer } from '../components/Authenticator'
-import { tosUrl, LogoIcon } from '../brand'
+import { tosUrl, Logo } from '../brand'
 
 function SpaceRegistrar (): JSX.Element {
   const [, { registerSpace }] = useKeyring()
@@ -170,14 +170,6 @@ function SpaceSelector (props: any): JSX.Element {
   )
 }
 
-export function Logo (): JSX.Element {
-  return (
-    <h1 className='font-bold flex flex-row justify-center items-center gap-2'>
-      <LogoIcon />
-      console
-    </h1>
-  )
-}
 
 export function SpaceEnsurer ({
   children
@@ -227,9 +219,9 @@ export default function Home (): JSX.Element {
                   spaces={spaces}
                 />
               </div>
-              <div>
+              <div className='flex flex-col items-center'>
                 <SpaceCreator className='mb-8' />
-                <Logo />
+                <Logo className='w-36 mb-2'/>
                 <a className='text-xs block text-center mt-2' href={tosUrl}>Terms</a>
               </div>
             </div>

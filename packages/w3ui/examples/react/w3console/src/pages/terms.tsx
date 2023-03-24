@@ -1,11 +1,11 @@
-import { LogoIcon, tosUrl } from '../brand'
+import { Logo, tosUrl } from '../brand'
 
 export default function Terms () {
   const serviceName = import.meta.env.VITE_W3UP_SERVICE_BRAND_NAME || 'dev.web3.storage'
   return (
     <div className='flex flex-col justify-start items-center min-h-full w-full bg-gray-900 text-white p-8'>
       <div className='flex flex-row gap-4'>
-        <LogoIcon />
+        <Logo className='h-12'/>
         <h1 className='text-2xl my-4 font-bold'>
           {serviceName} w3up beta Terms of Service
         </h1>

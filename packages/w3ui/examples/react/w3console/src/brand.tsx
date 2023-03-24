@@ -1,6 +1,6 @@
 export const serviceName = import.meta.env.VITE_W3UP_SERVICE_BRAND_NAME || 'dev.web3.storage'
 export const tosUrl = import.meta.env.VITE_W3UP_PROVIDER == 'did:web:nft.storage' ? 'https://nft.storage/terms' : 'https://web3.storage/terms'
-export const LogoIcon = () => (
+export const Web3StorageLogoIcon = () => (
   <svg
     width='30'
     viewBox='0 0 27.2 27.18'
@@ -16,3 +16,16 @@ export const LogoIcon = () => (
     />
   </svg>
 )
+
+export const NFTStorageLogo = ({ className = '' }: { className?: string }) => (
+  <img className={className} src='nft-storage.svg'></img>
+)
+
+export const Web3StorageLogo = () => (
+  <div className='font-bold flex flex-row justify-center items-center gap-2'>
+    <Web3StorageLogoIcon />
+    <span>console</span>
+  </div>
+)
+
+export const Logo = import.meta.env.VITE_W3UP_PROVIDER == 'did:web:nft.storage' ? NFTStorageLogo : Web3StorageLogo

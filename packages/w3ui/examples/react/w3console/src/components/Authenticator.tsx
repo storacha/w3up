@@ -2,7 +2,7 @@ import {
   Authenticator as AuthCore,
   useAuthenticator
 } from '@w3ui/react-keyring'
-import { serviceName, tosUrl, LogoIcon } from '../brand'
+import { serviceName, tosUrl, Logo } from '../brand'
 
 export function AuthenticationForm (): JSX.Element {
   const [{ submitted }] = useAuthenticator()
@@ -10,10 +10,7 @@ export function AuthenticationForm (): JSX.Element {
     <div className='authenticator'>
       <AuthCore.Form className='text-white/80 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-md px-10 pt-8 pb-8'>
         <div className='flex flex-row gap-4 mb-8 flex justify-center gap-4'>
-          <LogoIcon />
-          <h1 className='text-2xl'>
-            {serviceName}
-          </h1>
+          <Logo className='w-36'/>
         </div>
         <div>
           <label className='block mb-2 uppercase text-xs font-semibold tracking-wider m-1 font-mono' htmlFor='authenticator-email'>Email</label>
