@@ -1,0 +1,17 @@
+name: w3up-client
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/w3up-client/**'
+      - '.github/workflows/w3up-client.yml'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    paths:
+      - 'packages/w3up-client/**'
+      - '.github/workflows/w3up-client.yml'
+      - 'pnpm-lock.yaml'
+jobs:
+  test:
+    uses: ./packages/w3up-client/.github/workflows/test.yml
