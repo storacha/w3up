@@ -131,19 +131,18 @@ export const PendingValidateEmail = ({ autoApprove }) => (
  * @param {string} [param0.qrcode]
  */
 export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
-  <div style={{maxWidth: '640px', paddingTop:'50px', margin: '0 auto'}}>
-    <header style={{textAlign: 'center'}}>
+  <div style={{ maxWidth: '640px', paddingTop: '50px', margin: '0 auto' }}>
+    <header style={{ textAlign: 'center' }}>
       <img
-
         src="https://bafybeib7zsc7ppyfuby72dz4cpjonql7zt3vetf3cu7rios7hovlgaoug4.ipfs.w3s.link/w3up-logo.png"
-        style={{height: '80px', display: 'inline-block'}}
+        style={{ height: '80px', display: 'inline-block' }}
       />
-      <h1 style={{paddingTop: '20px'}}>Email Validated</h1>
-      <p style={{paddingBottom: '30px', color: 'white'}}>
+      <h1 style={{ paddingTop: '20px' }}>Email Validated</h1>
+      <p style={{ paddingBottom: '30px', color: 'white' }}>
         {email} was confirmed. You may close this window.
       </p>
     </header>
-    <div class="box" style={{fontSize: '14px'}}>
+    <div class="box" style={{ fontSize: '14px' }}>
       <p>
         If you have an existing non-w3up beta account with NFT.Storage or
         web3.storage and register for the w3up beta version of the same product
@@ -160,10 +159,12 @@ export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
         <a href="https://console.nft.storage/terms">NFT.Storage ToS</a>).
       </p>
     </div>
-    <details style={{ maxWidth: '640px', overflow: 'overlay', textDecoration: 'none' }}>
+    <details
+      style={{ maxWidth: '640px', overflow: 'overlay', textDecoration: 'none' }}
+    >
       {' '}
-      <summary style={{fontSize: '14px'}}>Auth details</summary>
-      <h5 style={{marginBottom: 0}}>Validation requested by</h5>
+      <summary style={{ fontSize: '14px' }}>Auth details</summary>
+      <h5 style={{ marginBottom: 0 }}>Validation requested by</h5>
       <pre>
         <code>{audience}</code>
       </pre>
@@ -182,7 +183,7 @@ export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
           />
         </>
       )}
-      <h5 style={{marginBottom: 0, paddingTop: '8px'}}>UCAN</h5>
+      <h5 style={{ marginBottom: 0, paddingTop: '8px' }}>UCAN</h5>
       <pre>
         <code>{ucan}</code>
       </pre>
