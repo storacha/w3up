@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.2.0...w3console-v1.3.0) (2023-03-24)
+
+
+### Features
+
+* add the NFT.Storage logo and make sure it looks nice ([#465](https://github.com/web3-storage/w3ui/issues/465)) ([5e16e2f](https://github.com/web3-storage/w3ui/commit/5e16e2f80ba5376f92a9b2697671516023b94005))
+* adjust language in register button ([#467](https://github.com/web3-storage/w3ui/issues/467)) ([70f408e](https://github.com/web3-storage/w3ui/commit/70f408eb8bd5ed0b4cf14583638e15eba5bfc465))
+
+
+### Bug Fixes
+
+* get space registrar looking and acting right ([#466](https://github.com/web3-storage/w3ui/issues/466)) ([616f781](https://github.com/web3-storage/w3ui/commit/616f781979de6f5e595c86ee6ac3b827b6b16edf))
+
 ## [1.2.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.1.0...w3console-v1.2.0) (2023-03-24)
 
 
