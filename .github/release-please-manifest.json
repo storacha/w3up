@@ -1,6 +1,6 @@
 {
   "packages/access-client": "11.0.0",
-  "packages/access-api": "5.1.4",
+  "packages/access-api": "5.2.1",
   "packages/capabilities": "4.0.0",
   "packages/upload-api": "2.0.0",
   "packages/upload-client": "8.0.0"

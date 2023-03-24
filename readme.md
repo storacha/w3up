@@ -1,4 +1,6 @@
-# Web3 Storage Ucan Protocol
+# w3up UCAN Protocol
+
+Implementation of the w3up UCAN protocols.
 
 ## Contributing
 
@@ -93,6 +95,6 @@ The history and the current deployed commits can be checked at https://github.co
 
 When something bad is deployed to any environment it can be reverted by going to the [Manual Deploy Workflow](https://github.com/web3-storage/w3-protocol/actions/workflows/manual.yml) select a branch or tag, the package (in this case `access-api`) and the environment and run the workflow.
 
-# License
+## License
 
 Dual-licensed under [MIT + Apache 2.0](license.md)

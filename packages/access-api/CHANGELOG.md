@@ -1,5 +1,32 @@
 # Changelog
 
+## [5.2.1](https://github.com/web3-storage/w3protocol/compare/access-api-v5.2.0...access-api-v5.2.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* center email validation layout ([#645](https://github.com/web3-storage/w3protocol/issues/645)) ([82a665c](https://github.com/web3-storage/w3protocol/commit/82a665cf34f36918e06e147778a4690ca2a8dbea))
+* release changes to email validation confirmation page ([#643](https://github.com/web3-storage/w3protocol/issues/643)) ([b2de5c6](https://github.com/web3-storage/w3protocol/commit/b2de5c62ad224eacc94dd018c73bd34b8e5c142a))
+
+## [5.2.0](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.5...access-api-v5.2.0) (2023-03-24)
+
+
+### Features
+
+* update access confirmation email ([#636](https://github.com/web3-storage/w3protocol/issues/636)) ([15c9503](https://github.com/web3-storage/w3protocol/commit/15c95030f46507affd7e68b7ef6b7449ba6e3ac8))
+
+
+### Bug Fixes
+
+* image color, typos in access email confirmation ([#638](https://github.com/web3-storage/w3protocol/issues/638)) ([539cb33](https://github.com/web3-storage/w3protocol/commit/539cb331ab9b66f8e2703f9ef8518518a7bcb299))
+
+## [5.1.5](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.4...access-api-v5.1.5) (2023-03-23)
+
+
+### Bug Fixes
+
+* do not include token in an error message ([#634](https://github.com/web3-storage/w3protocol/issues/634)) ([8043976](https://github.com/web3-storage/w3protocol/commit/8043976213fa1da252a31c4000876a22bcae3651))
+
 ## [5.1.4](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.3...access-api-v5.1.4) (2023-03-23)
 
 
