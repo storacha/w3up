@@ -15,3 +15,5 @@ The html will change on every run, as we include ucan info.
 Full snapshot testing is not considered here as it is dull.
 
 A storybook for this project would be decent tho.
+
+⁂
