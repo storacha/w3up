@@ -39,6 +39,12 @@ export function buildDocument(body) {
       margin: 0 40px;
       padding: 40px 0;
     }
+    .fcenter {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+    }
     .mcenter {
       margin: 0 auto;
     }
