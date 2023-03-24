@@ -390,8 +390,7 @@ Create a new space with an optional name.
 ```ts
 async function registerSpace (
   email: string,
-  provider?: string,
-  options?: { signal?: AbortSignal }
+  options?: { provider?: string, signal?: AbortSignal }
 ): Promise<Space>
 ```
 
