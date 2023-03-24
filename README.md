@@ -7,7 +7,7 @@
   <a href="https://github.com/web3-storage/w3up-client/blob/main/LICENSE.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
 </p>
 
-> ### ⚠️❗ w3up-client and the underlying APIs are currently beta preview features
+> ### ⚠️❗ w3up-client and the available hosted APIs are currently beta preview features
 > Please read the beta Terms of Service ([web3.storage](https://console.web3.storage/terms), [NFT.Storage](https://console.nft.storage/terms)) for more details.
 >
 > Open an issue on the repo or reach out to the #web3-storage channel on [IPFS Discord](https://docs.ipfs.tech/community/chat/#discord) if you have any 
@@ -46,10 +46,6 @@ npm install @web3-storage/w3up-client
 ## Usage
 
 [API Reference](#api)
-
-> ⚠️❗ __Public Data__ 🌎: All data uploaded to web3.storage is available to anyone who requests it using the correct CID. Do not store any private or sensitive information in an unencrypted form using web3.storage.
-
-> ⚠️❗ __Permanent Data__ ♾️: Deleting files from the web3.storage site’s Files page will remove them from the file listing for your account, but that doesn’t prevent nodes on the decentralized storage network from retaining copies of the data indefinitely. Do not use web3.storage for data that may need to be permanently deleted in the future.
 
 ### Core concepts
 
