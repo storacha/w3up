@@ -12,7 +12,7 @@ export function buildDocument(body) {
 
 <head>
   <meta charset="utf-8">
-  <title>Web3 Storage</title>
+  <title>w3up Email Validation</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@acab/reset.css">
