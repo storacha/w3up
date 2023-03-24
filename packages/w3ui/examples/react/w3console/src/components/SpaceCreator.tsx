@@ -3,12 +3,13 @@ import type { ChangeEvent } from 'react'
 import React, { useState } from 'react'
 import { useKeyring } from '@w3ui/react-keyring'
 import { ArrowPathIcon } from '@heroicons/react/20/solid'
+import Loader from '../components/Loader'
 
 export function SpaceCreatorCreating (): JSX.Element {
   return (
     <div className='flex flex-col items-center space-y-4'>
       <h5>Creating Space...</h5>
-      <ArrowPathIcon className='animate-spin w-6' />
+      <Loader className='w-6' />
     </div>
   )
 }
@@ -34,7 +35,7 @@ export function SpaceCreatorForm ({
       setSubmitted(true)
       try {
         await createSpace(name)
-        await registerSpace(account, {provider: import.meta.env.VITE_W3UP_PROVIDER})
+        await registerSpace(account, { provider: import.meta.env.VITE_W3UP_PROVIDER })
       } catch (error) {
         /* eslint-disable no-console */
         console.error(error)
