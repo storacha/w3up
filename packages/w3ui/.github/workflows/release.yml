@@ -29,15 +29,15 @@ jobs:
           - path_released: examples/react/w3console
     steps:
       - uses: actions/checkout@v3
-        if: ${{path_released != ''}}
+        if: ${{matrix.path_released != ''}}
       - uses: ./.github/actions/pnpm
-        if: ${{path_released != ''}}
+        if: ${{matrix.path_released != ''}}
       - run: pnpm lint
-        if: ${{path_released != ''}}
+        if: ${{matrix.path_released != ''}}
       - run: pnpm test
-        if: ${{path_released != ''}}
+        if: ${{matrix.path_released != ''}}
       - name: pnpm publish
-        if: ${{path_released != ''}}
+        if: ${{matrix.path_released != ''}}
         run: |
           cd ${{ matrix.path_released }}
           pnpm install
