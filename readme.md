@@ -1,4 +1,6 @@
-# Web3 Storage Ucan Protocol
+# Web3.Storage w3up UCAN Protocol
+
+Implementation of the w3up UCAN protocols.
 
 ## Contributing
 
