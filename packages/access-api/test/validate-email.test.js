@@ -45,7 +45,7 @@ describe('validate-email', () => {
       method: 'post',
     })
     assert.deepEqual(response.status, 200)
-    const relPath = new URL('./snapshots/validate-email.html', import.meta.url)
+    const relPath = new URL('snapshots/validate-email.html', import.meta.url)
     writeFileSync(relPath, await response.text())
   })
 })
