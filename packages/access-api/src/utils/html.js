@@ -39,16 +39,9 @@ export function buildDocument(body) {
       margin: 0 40px;
       padding: 40px 0;
     }
-    .fcenter {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      justify-content: center;
-    }
     .mcenter {
       margin: 0 auto;
     }
-
     .box {
       max-width: 640px;
       background-color: var(--background-alt);
@@ -138,14 +131,19 @@ export const PendingValidateEmail = ({ autoApprove }) => (
  * @param {string} [param0.qrcode]
  */
 export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
-  <div class="fcenter">
-    <img
-      src="https://user-images.githubusercontent.com/11778450/227402733-b2e4b175-b1a6-4a49-92ff-9ac4e247a695.png"
-      height="100"
-    />
-    <h1>Email Validated</h1>
-    <p>{email} was confirmed. You may close this window.</p>
-    <div class="box">
+  <div style={{maxWidth: '640px', paddingTop:'50px', margin: '0 auto'}}>
+    <header style={{textAlign: 'center'}}>
+      <img
+
+        src="https://bafybeib7zsc7ppyfuby72dz4cpjonql7zt3vetf3cu7rios7hovlgaoug4.ipfs.w3s.link/w3up-logo.png"
+        style={{height: '80px', display: 'inline-block'}}
+      />
+      <h1 style={{paddingTop: '20px'}}>Email Validated</h1>
+      <p style={{paddingBottom: '30px', color: 'white'}}>
+        {email} was confirmed. You may close this window.
+      </p>
+    </header>
+    <div class="box" style={{fontSize: '14px'}}>
       <p>
         If you have an existing non-w3up beta account with NFT.Storage or
         web3.storage and register for the w3up beta version of the same product
@@ -162,16 +160,16 @@ export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
         <a href="https://console.nft.storage/terms">NFT.Storage ToS</a>).
       </p>
     </div>
-    <details style={{ maxWidth: '80vw', overflow: 'overlay' }}>
+    <details style={{ maxWidth: '640px', overflow: 'overlay', textDecoration: 'none' }}>
       {' '}
-      <summary>More details</summary>
-      <h5>Validation requested by:</h5>
-      <p>
+      <summary style={{fontSize: '14px'}}>Auth details</summary>
+      <h5 style={{marginBottom: 0}}>Validation requested by</h5>
+      <pre>
         <code>{audience}</code>
-      </p>
+      </pre>
       {qrcode && (
         <>
-          <h5>QR Code:</h5>
+          <h5>QR Code</h5>
           <div
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
@@ -184,7 +182,7 @@ export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
           />
         </>
       )}
-      <h5>UCAN:</h5>
+      <h5 style={{marginBottom: 0, paddingTop: '8px'}}>UCAN</h5>
       <pre>
         <code>{ucan}</code>
       </pre>

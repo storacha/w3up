@@ -4,6 +4,7 @@ import { Delegation } from '@ucanto/core'
 import { Access } from '@web3-storage/capabilities'
 import { delegationToString } from '@web3-storage/access/encoding'
 import { getRandomValues } from 'crypto'
+import { writeFileSync } from 'fs'
 
 describe('validate-email', () => {
   it('can POST /validate-email?mode=authorize', async () => {
@@ -44,5 +45,7 @@ describe('validate-email', () => {
       method: 'post',
     })
     assert.deepEqual(response.status, 200)
+    const relPath = new URL('./snapshots/validate-email.html', import.meta.url)
+    writeFileSync(relPath, await response.text())
   })
 })
