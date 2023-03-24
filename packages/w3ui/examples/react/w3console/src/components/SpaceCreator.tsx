@@ -34,9 +34,7 @@ export function SpaceCreatorForm ({
       setSubmitted(true)
       try {
         await createSpace(name)
-        // ignore this because the Space UI should handle helping the user recover
-        // from space registration failure
-        void registerSpace(account, {provider: import.meta.env.VITE_W3UP_PROVIDER})
+        await registerSpace(account, {provider: import.meta.env.VITE_W3UP_PROVIDER})
       } catch (error) {
         /* eslint-disable no-console */
         console.error(error)
