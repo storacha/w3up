@@ -7,6 +7,7 @@
       "release-as": "4.0.1"
     },
     "packages/upload-api": {},
-    "packages/upload-client": {}
+    "packages/upload-client": {},
+    "packages/w3up-client": {}
   }
 }
