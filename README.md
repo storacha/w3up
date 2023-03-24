@@ -146,11 +146,12 @@ First, set the space as your "current" space using the [`setCurrentSpace` method
 await client.setCurrentSpace(space.did())
 ```
 
-Next, call the [`registerSpace` method][docs-Client#registerSpace], passing in the _same_ email address you used to authorize your agent:
+Next, call the [`registerSpace` method][docs-Client#registerSpace], passing in the _same_ email address you used to authorize your agent. You
+can specify a storage provider for the space to use by passing a provider DID as the `provider` option:
 
 ```js
 try {
-  await client.registerSpace('zaphod@beeblebrox.galaxy')
+  await client.registerSpace('zaphod@beeblebrox.galaxy', { provider: 'did:web:web3.storage' })
 } catch (err) {
   console.error('registration failed: ', err)
 }
