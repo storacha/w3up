@@ -41,12 +41,15 @@ export function AuthenticationSubmitted (): JSX.Element {
 
   return (
     <div className='authenticator'>
-      <div className='bg-gray-400 px-24 py-16 rounded-md'>
-        <h1 className='text-xl'>Verify your email address!</h1>
+      <div className='text-white bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-md px-10 pt-8 pb-8'>
+        <div className='flex flex-row gap-4 mb-8 flex justify-center gap-4'>
+          <Logo className='w-36'/>
+        </div>
+        <h1 className='text-xl font-semibold'>Verify your email address!</h1>
         <p className='pt-2 pb-4'>
-          Click the link in the email we sent to {email} to authorize this agent.
+          Click the link in the email we sent to <span className='font-semibold tracking-wide'>{email}</span> to authorize this agent.
         </p>
-        <AuthCore.CancelButton className='w3ui-button w-full'>
+        <AuthCore.CancelButton className='w3ui-button hidden' >
           Cancel
         </AuthCore.CancelButton>
       </div>
