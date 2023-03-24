@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "dist",
+    // project options
+    "allowJs": true,
+    "checkJs": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": ["ESNext", "DOM"],
+    // "noEmit": false,
+    // "noEmitOnError": true,
+    "emitDeclarationOnly": true,
+    "sourceMap": true,
+    // "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "composite": true,
+    "isolatedModules": true,
+    "removeComments": false,
+    // module resolution
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    // linter checks
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    // advanced
+    "importsNotUsedAsValues": "remove",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "stripInternal": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src"],
+  "exclude": ["**/node_modules/**"],
+  "typedocOptions": {
+    "entryPoints": [
+      "./src"
+    ],
+    "entryPointStrategy": "expand",
+    "darkHighlightTheme": "github-dark",
+    "navigationLinks": {
+      "Github": "https://github.com/web3-storage/w3up-client"
+    },
+    "customCss": "./static/docs.css",
+  }
+}
