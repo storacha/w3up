@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.2.1](https://github.com/web3-storage/w3protocol/compare/access-api-v5.2.0...access-api-v5.2.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* center email validation layout ([#645](https://github.com/web3-storage/w3protocol/issues/645)) ([82a665c](https://github.com/web3-storage/w3protocol/commit/82a665cf34f36918e06e147778a4690ca2a8dbea))
+* release changes to email validation confirmation page ([#643](https://github.com/web3-storage/w3protocol/issues/643)) ([b2de5c6](https://github.com/web3-storage/w3protocol/commit/b2de5c62ad224eacc94dd018c73bd34b8e5c142a))
+
 ## [5.2.0](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.5...access-api-v5.2.0) (2023-03-24)
 
 
