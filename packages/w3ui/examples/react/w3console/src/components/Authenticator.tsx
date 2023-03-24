@@ -21,7 +21,7 @@ export function AuthenticationForm (): JSX.Element {
           type='submit'
           disabled={submitted}
         >
-          Register
+          Authorize
         </button>
       </AuthCore.Form>
       <p className='text-xs text-white/80 italic max-w-xs text-left mt-6'>
@@ -44,7 +44,7 @@ export function AuthenticationSubmitted (): JSX.Element {
       <div className='bg-gray-400 px-24 py-16 rounded-md'>
         <h1 className='text-xl'>Verify your email address!</h1>
         <p className='pt-2 pb-4'>
-          Click the link in the email we sent to {email} to sign in.
+          Click the link in the email we sent to {email} to authorize this agent.
         </p>
         <AuthCore.CancelButton className='w3ui-button w-full'>
           Cancel
