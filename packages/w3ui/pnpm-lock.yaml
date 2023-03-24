@@ -134,7 +134,7 @@ importers:
       '@types/react-dom': ^18.0.9
       '@ucanto/interface': ^6.2.0
       '@vitejs/plugin-react': ^3.0.0
-      '@w3ui/keyring-core': workspace:^2.0.1
+      '@w3ui/keyring-core': workspace:^
       '@w3ui/react': workspace:^
       '@w3ui/react-keyring': workspace:^
       '@w3ui/react-uploader': workspace:^
