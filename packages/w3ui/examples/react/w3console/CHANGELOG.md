@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/web3-storage/w3ui/compare/w3console-v1.3.0...w3console-v1.3.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* w3console email check page improvements ([#471](https://github.com/web3-storage/w3ui/issues/471)) ([5ed999b](https://github.com/web3-storage/w3ui/commit/5ed999b10048e0af673fc560df83ecfbf6715b9c))
+
 ## [1.3.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.2.0...w3console-v1.3.0) (2023-03-24)
 
 
