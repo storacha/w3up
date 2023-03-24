@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.2.0](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.5...access-api-v5.2.0) (2023-03-24)
+
+
+### Features
+
+* update access confirmation email ([#636](https://github.com/web3-storage/w3protocol/issues/636)) ([15c9503](https://github.com/web3-storage/w3protocol/commit/15c95030f46507affd7e68b7ef6b7449ba6e3ac8))
+
+
+### Bug Fixes
+
+* image color, typos in access email confirmation ([#638](https://github.com/web3-storage/w3protocol/issues/638)) ([539cb33](https://github.com/web3-storage/w3protocol/commit/539cb331ab9b66f8e2703f9ef8518518a7bcb299))
+
 ## [5.1.5](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.4...access-api-v5.1.5) (2023-03-23)
 
 
