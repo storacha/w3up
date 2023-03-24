@@ -17,7 +17,7 @@ export function AuthenticationForm (): JSX.Element {
         </div>
         <div>
           <label className='block mb-2 uppercase text-xs font-semibold tracking-wider m-1 font-mono' htmlFor='authenticator-email'>Email</label>
-          <AuthCore.EmailInput className='block rounded-md p-2 w-80 bg-white shadow-md' id='authenticator-email' required />
+          <AuthCore.EmailInput className='block rounded-md p-2 w-80 bg-white text-black shadow-md' id='authenticator-email' required />
         </div>
         <button
           className='mt-2 bg-white/0 w-full hover:bg-blue-800 rounded-md w-full text-sm font-medium py-2 px-8 transition-colors ease-in'
