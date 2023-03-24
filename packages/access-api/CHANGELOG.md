@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.5](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.4...access-api-v5.1.5) (2023-03-23)
+
+
+### Bug Fixes
+
+* do not include token in an error message ([#634](https://github.com/web3-storage/w3protocol/issues/634)) ([8043976](https://github.com/web3-storage/w3protocol/commit/8043976213fa1da252a31c4000876a22bcae3651))
+
 ## [5.1.4](https://github.com/web3-storage/w3protocol/compare/access-api-v5.1.3...access-api-v5.1.4) (2023-03-23)
 
 
