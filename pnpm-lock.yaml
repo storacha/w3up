@@ -286,6 +286,7 @@ importers:
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       blockstore-core: ^3.0.0
+      c8: ^7.13.0
       hd-scripts: ^4.0.0
       hundreds: ^0.0.9
       ipfs-unixfs-exporter: ^10.0.0
@@ -314,6 +315,7 @@ importers:
       '@ucanto/server': 6.1.0
       assert: 2.0.0
       blockstore-core: 3.0.0
+      c8: 7.13.0
       hd-scripts: 4.0.0
       hundreds: 0.0.9
       ipfs-unixfs-exporter: 10.0.0
@@ -6200,7 +6202,7 @@ packages:
       eslint-plugin-promise: ^6.0.0
     dependencies:
       eslint: 8.33.0
-      eslint-plugin-import: 2.27.5_eslint@8.33.0
+      eslint-plugin-import: 2.27.5_ufewo3pl5nnmz6lltvjrdi2hii
       eslint-plugin-n: 15.6.1_eslint@8.33.0
       eslint-plugin-promise: 6.1.1_eslint@8.33.0
     dev: true
