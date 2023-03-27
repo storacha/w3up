@@ -60,6 +60,7 @@
   "scripts": {
     "lint": "standard",
     "build": "tsc --build",
+    "prepare": "npm run build",
     "test": "npm-run-all -p -r mock test:all",
     "test:all": "run-s test:node test:browser",
     "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings -n stack-trace-limit=1000",
