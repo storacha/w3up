@@ -45,5 +45,10 @@
       "Github": "https://github.com/web3-storage/w3up-client"
     },
     "customCss": "./static/docs.css",
-  }
+  },
+  "references": [
+    { "path": "../access-client" },
+    { "path": "../capabilities" },
+    { "path": "../upload-client" }
+  ]
 }
