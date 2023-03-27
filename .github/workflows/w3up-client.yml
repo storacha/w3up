@@ -29,6 +29,6 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
-      - run: pnpm --filter '@web3-storage/w3up-client' install
+      - run: pnpm --filter '@web3-storage/w3up-client...' install
       - run: pnpm --filter '@web3-storage/w3up-client' build
       - uses: ./packages/w3up-client/.github/workflows/test.yml
