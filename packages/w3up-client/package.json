@@ -59,7 +59,6 @@
   ],
   "scripts": {
     "lint": "standard",
-    "prepare": "npm run build",
     "build": "tsc --build",
     "test": "npm-run-all -p -r mock test:all",
     "test:all": "run-s test:node test:browser",
