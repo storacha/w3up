@@ -286,7 +286,6 @@ importers:
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       blockstore-core: ^3.0.0
-      c8: ^7.13.0
       hd-scripts: ^4.0.0
       hundreds: ^0.0.9
       ipfs-unixfs-exporter: ^10.0.0
@@ -315,7 +314,6 @@ importers:
       '@ucanto/server': 6.1.0
       assert: 2.0.0
       blockstore-core: 3.0.0
-      c8: 7.13.0
       hd-scripts: 4.0.0
       hundreds: 0.0.9
       ipfs-unixfs-exporter: 10.0.0
@@ -4731,7 +4729,7 @@ packages:
       istanbul-reports: 3.1.5
       rimraf: 3.0.2
       test-exclude: 6.0.0
-      v8-to-istanbul: 9.0.1
+      v8-to-istanbul: 9.1.0
       yargs: 16.2.0
       yargs-parser: 20.2.9
     dev: true
@@ -6202,7 +6200,7 @@ packages:
       eslint-plugin-promise: ^6.0.0
     dependencies:
       eslint: 8.33.0
-      eslint-plugin-import: 2.27.5_ufewo3pl5nnmz6lltvjrdi2hii
+      eslint-plugin-import: 2.27.5_eslint@8.33.0
       eslint-plugin-n: 15.6.1_eslint@8.33.0
       eslint-plugin-promise: 6.1.1_eslint@8.33.0
     dev: true
@@ -9779,7 +9777,7 @@ packages:
       tape: 5.6.3
       tempy: 3.0.0
       test-exclude: 6.0.0
-      v8-to-istanbul: 9.0.1
+      v8-to-istanbul: 9.1.0
     dev: true
 
   /please-upgrade-node/3.2.0:
@@ -12329,8 +12327,8 @@ packages:
     hasBin: true
     dev: true
 
-  /v8-to-istanbul/9.0.1:
-    resolution: {integrity: sha512-74Y4LqY74kLE6IFyIjPtkSTWzUZmj8tdHT9Ii/26dvQ6K9Dl2NbEfj0XgU2sHCtKgt5VupqhlO/5aWuqS+IY1w==}
+  /v8-to-istanbul/9.1.0:
+    resolution: {integrity: sha512-6z3GW9x8G1gd+JIIgQQQxXuiJtCXeAjp6RaPEPLv62mH3iPHPxV6W3robxtCzNErRo6ZwTmzWhsbNvjyEBKzKA==}
     engines: {node: '>=10.12.0'}
     dependencies:
       '@jridgewell/trace-mapping': 0.3.17

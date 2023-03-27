@@ -24,7 +24,7 @@ export class Client extends Base {
     }
   }
 
-  /* c8 ignore start */
+  /* c8 ignore start - testing websockets is hard */
   /**
    * Authorize the current agent to use capabilities granted to the passed
    * email account.
@@ -131,7 +131,7 @@ export class Client extends Base {
     return new Space(did, meta)
   }
 
-  /* c8 ignore start */
+  /* c8 ignore start - hard to test this without authorize tests which require websockets */
   /**
    * Register the _current_ space with the service.
    *

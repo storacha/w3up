@@ -5,7 +5,7 @@ import { claimAccess, authorizeWithSocket } from '@web3-storage/access/agent'
  * Client for interacting with the `access/*` capabilities.
  */
 export class AccessClient extends Base {
-  /* c8 ignore start */
+  /* c8 ignore start - testing websocket code is hard */
   /**
    * Authorize the current agent to use capabilities granted to the passed
    * email account.

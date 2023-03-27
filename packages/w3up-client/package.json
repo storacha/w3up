@@ -87,6 +87,7 @@
     "@ipld/car": "^5.1.1",
     "@ucanto/server": "^6.1.0",
     "assert": "^2.0.0",
+    "c8": "^7.13.0",
     "docusaurus-plugin-typedoc": "^0.18.0",
     "hundreds": "^0.0.9",
     "mocha": "^10.1.0",
