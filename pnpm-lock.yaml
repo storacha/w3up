@@ -286,7 +286,7 @@ importers:
       '@web3-storage/capabilities': workspace:^
       assert: ^2.0.0
       blockstore-core: ^3.0.0
-      c8: ^7.12.0
+      c8: ^7.13.0
       hd-scripts: ^4.0.0
       hundreds: ^0.0.9
       ipfs-unixfs-exporter: ^10.0.0
@@ -315,7 +315,7 @@ importers:
       '@ucanto/server': 6.1.0
       assert: 2.0.0
       blockstore-core: 3.0.0
-      c8: 7.12.0
+      c8: 7.13.0
       hd-scripts: 4.0.0
       hundreds: 0.0.9
       ipfs-unixfs-exporter: 10.0.0
@@ -327,6 +327,7 @@ importers:
   packages/w3up-client:
     specifiers:
       '@docusaurus/core': ^2.2.0
+      '@ipld/car': ^5.1.1
       '@ipld/dag-ucan': ^3.0.1
       '@ucanto/client': ^5.1.0
       '@ucanto/core': ^5.1.0
@@ -334,10 +335,11 @@ importers:
       '@ucanto/principal': ^5.1.0
       '@ucanto/server': ^6.1.0
       '@ucanto/transport': ^5.1.0
-      '@web3-storage/access': ^11.0.0
-      '@web3-storage/capabilities': ^4.0.0
-      '@web3-storage/upload-client': ^8.0.0
+      '@web3-storage/access': workspace:^
+      '@web3-storage/capabilities': workspace:^
+      '@web3-storage/upload-client': workspace:^
       assert: ^2.0.0
+      c8: ^7.13.0
       docusaurus-plugin-typedoc: ^0.18.0
       hundreds: ^0.0.9
       mocha: ^10.1.0
@@ -357,12 +359,14 @@ importers:
       '@ucanto/principal': 5.1.0
       '@ucanto/transport': 5.1.1
       '@web3-storage/access': link:../access-client
-      '@web3-storage/capabilities': 4.0.1
+      '@web3-storage/capabilities': link:../capabilities
       '@web3-storage/upload-client': link:../upload-client
     devDependencies:
       '@docusaurus/core': 2.3.1_typescript@4.9.5
+      '@ipld/car': 5.1.1
       '@ucanto/server': 6.1.0
       assert: 2.0.0
+      c8: 7.13.0
       docusaurus-plugin-typedoc: 0.18.0_bhwftghzp2kjaeaba4ticsx7k4
       hundreds: 0.0.9
       mocha: 10.2.0
@@ -3957,16 +3961,6 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
-  /@web3-storage/capabilities/4.0.1:
-    resolution: {integrity: sha512-Shl6ZGXOpCKL+wohQsAMjW6cN+eadk7vigSXyNW8iI2TUSgkILzfNOQtkC1nWhXw/d4bh3OuzS84QN8V0wO4fw==}
-    dependencies:
-      '@ucanto/core': 5.2.0
-      '@ucanto/interface': 6.2.0
-      '@ucanto/principal': 5.1.0
-      '@ucanto/transport': 5.1.1
-      '@ucanto/validator': 6.1.0
-    dev: false
-
   /@web3-storage/multipart-parser/1.0.0:
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
     dev: false
@@ -4723,8 +4717,8 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /c8/7.12.0:
-    resolution: {integrity: sha512-CtgQrHOkyxr5koX1wEUmN/5cfDa2ckbHRA4Gy5LAL0zaCFtVWJS5++n+w4/sr2GWGerBxgTjpKeDclk/Qk6W/A==}
+  /c8/7.13.0:
+    resolution: {integrity: sha512-/NL4hQTv1gBL6J6ei80zu3IiTrmePDKXKXOTLpHvcIWZTVYQlDhVWjjWvkhICylE8EwwnMVzDZugCvdx0/DIIA==}
     engines: {node: '>=10.12.0'}
     hasBin: true
     dependencies:
@@ -6208,7 +6202,7 @@ packages:
       eslint-plugin-promise: ^6.0.0
     dependencies:
       eslint: 8.33.0
-      eslint-plugin-import: 2.27.5_eslint@8.33.0
+      eslint-plugin-import: 2.27.5_ufewo3pl5nnmz6lltvjrdi2hii
       eslint-plugin-n: 15.6.1_eslint@8.33.0
       eslint-plugin-promise: 6.1.1_eslint@8.33.0
     dev: true
@@ -7687,7 +7681,7 @@ packages:
     resolution: {integrity: sha512-4pHIJQl4SiVeMeg00w6WypEjVrSgVUxQS8YlOWW3KehCdlz/PoEhKlJY2DYeR56lPoF5KA+YjHKgnwhCsKJ7IQ==}
     hasBin: true
     dependencies:
-      c8: 7.12.0
+      c8: 7.13.0
     dev: true
 
   /iconv-lite/0.4.24:
