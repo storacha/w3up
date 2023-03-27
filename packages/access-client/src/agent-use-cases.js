@@ -9,7 +9,7 @@ import { bytesToDelegations, stringToDelegation } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
 import { Websocket, AbortError } from './utils/ws.js'
-import { AgentData, isSessionProof } from './agent-data.js'
+import { AgentData } from './agent-data.js'
 import * as ucanto from '@ucanto/core'
 import { DID as DIDValidator } from '@ucanto/validator'
 
@@ -235,34 +235,6 @@ export async function authorizeWithSocket(access, email, opts) {
   // claim delegations here because we will need an ucan/attest from the service to
   // pair with the session delegation we just claimed to make it work
   await claimAccess(access, access.issuer.did(), { addProofs: true })
-}
-
-/**
- * Request authorization of a session allowing this agent to issue UCANs
- * signed by the passed email address.
- *
- * @param {AccessAgent} access
- * @param {`${string}@${string}`} email
- * @param {object} [opts]
- * @param {AbortSignal} [opts.signal]
- * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
- */
-export async function authorizeWithPollClaim(access, email, opts) {
-  const expectAuthorization = () =>
-    expectNewClaimableDelegations(access, access.issuer.did(), {
-      abort: opts?.signal,
-    }).then((claimed) => {
-      if (![...claimed].some((d) => isSessionProof(d))) {
-        throw new Error(
-          `claimed new delegations, but none were a session proof`
-        )
-      }
-      return [...claimed]
-    })
-  await authorizeAndWait(access, email, {
-    ...opts,
-    expectAuthorization,
-  })
 }
 
 /**

@@ -10,7 +10,6 @@ import {
   addSpacesFromDelegations,
   Agent as AccessAgent,
   authorizeAndWait,
-  authorizeWithPollClaim,
   claimAccess,
   createDidMailtoFromEmail,
   expectNewClaimableDelegations,
@@ -615,4 +614,36 @@ async function testSessionAuthorization(service, access, account, emails) {
  */
 function thisEmailDidMailto() {
   return createDidMailtoFromEmail(this.email)
+}
+
+/**
+ * Request authorization of a session allowing this agent to issue UCANs
+ * signed by the passed email address.
+ *
+ * @param {AccessAgent} access
+ * @param {`${string}@${string}`} email
+ * @param {object} [opts]
+ * @param {AbortSignal} [opts.signal]
+ * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+ */
+export async function authorizeWithPollClaim(access, email, opts) {
+  const expectAuthorization = () =>
+    expectNewClaimableDelegations(access, access.issuer.did(), {
+      abort: opts?.signal,
+    }).then((claimed) => {
+      if (
+        ![...claimed].some((d) =>
+          d.capabilities.some((d) => d.can === w3caps.Access.session.can)
+        )
+      ) {
+        throw new Error(
+          `claimed new delegations, but none were a session proof`
+        )
+      }
+      return [...claimed]
+    })
+  await authorizeAndWait(access, email, {
+    ...opts,
+    expectAuthorization,
+  })
 }
