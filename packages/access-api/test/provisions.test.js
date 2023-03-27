@@ -8,9 +8,9 @@ import { CID } from 'multiformats'
 
 describe('DbProvisions', () => {
   it('should persist provisions', async () => {
-    const { d1 } = await context()
+    const { d1, service } = await context()
     const db = createD1Database(d1)
-    const storage = new DbProvisions(db)
+    const storage = new DbProvisions([service.did()], db)
     const count = 2 + Math.round(Math.random() * 3)
     const spaceA = await principal.ed25519.generate()
     const [firstProvision, ...lastProvisions] = await Promise.all(
@@ -28,7 +28,7 @@ describe('DbProvisions', () => {
             },
           })
           .delegate()
-        /** @type {import('../src/types/provisions.js').Provision} */
+        /** @type {import('../src/types/provisions.js').Provision<'did:web:web3.storage:providers:w3up-alpha'>} */
         const provision = {
           invocation,
           space: spaceA.did(),
@@ -67,16 +67,17 @@ describe('DbProvisions', () => {
       space: /** @type {const} */ ('did:key:foo'),
       account: /** @type {const} */ ('did:mailto:foo'),
       // note this type assertion is wrong, but useful to set up the test
-      provider:
-        /** @type {import('../src/types/provisions.js').AlphaStorageProvider} */ (
-          'did:provider:foo'
-        ),
+      provider: /** @type {import('@ucanto/interface').DID<'web'>} */ (
+        'did:provider:foo'
+      ),
     }
-    const putModifiedFirstProvision = () => storage.put(modifiedFirstProvision)
-    await assert.rejects(
-      putModifiedFirstProvision(),
+    const result = await storage.put(modifiedFirstProvision)
+    assert.equal(
+      result.error && result.name,
+      'ConflictError',
       'cannot put with same cid but different derived fields'
     )
+
     const provisionForFakeConsumer = await storage.findForConsumer(
       modifiedFirstProvision.space
     )

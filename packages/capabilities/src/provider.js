@@ -8,12 +8,11 @@
  *
  * @module
  */
-import { capability, DID, literal, struct } from '@ucanto/validator'
+import { capability, DID, struct } from '@ucanto/validator'
 import { equalWith, fail, equal } from './utils.js'
 
-export const StorageProvider = literal(
-  'did:web:web3.storage:providers:w3up-alpha'
-)
+// e.g. did:web:web3.storage or did:web:staging.web3.storage
+export const Provider = DID.match({ method: 'web' })
 
 export const AccountDID = DID.match({ method: 'mailto' })
 
@@ -24,7 +23,7 @@ export const add = capability({
   can: 'provider/add',
   with: AccountDID,
   nb: struct({
-    provider: StorageProvider,
+    provider: Provider,
     consumer: DID.match({ method: 'key' }),
   }),
   derives: (child, parent) => {

@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-api",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "type": "module",
   "main": "./src/lib.js",
   "files": [
@@ -59,22 +59,22 @@
   },
   "dependencies": {
     "@ucanto/client": "^5.1.0",
-    "@ucanto/interface": "^6.0.0",
+    "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
-    "@ucanto/server": "^6.0.0",
-    "@ucanto/transport": "^5.1.0",
-    "@web3-storage/capabilities": "^3.0.0",
-    "multiformats": "^11.0.1",
+    "@ucanto/server": "^6.1.0",
+    "@ucanto/transport": "^5.1.1",
+    "@web3-storage/capabilities": "workspace:^",
+    "multiformats": "^11.0.2",
     "p-retry": "^5.1.2"
   },
   "devDependencies": {
-    "@ipld/car": "^5.0.1",
+    "@ipld/car": "^5.1.1",
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^5.1.0",
-    "@web3-storage/sigv4": "^1.0.2",
     "@web-std/blob": "^3.0.4",
-    "mocha": "^10.2.0",
-    "hd-scripts": "^4.1.0"
+    "@web3-storage/sigv4": "^1.0.2",
+    "hd-scripts": "^4.1.0",
+    "mocha": "^10.2.0"
   },
   "eslintConfig": {
     "extends": [

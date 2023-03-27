@@ -17,6 +17,7 @@ import {
 } from './helpers/ucanto-test-utils.js'
 import { ed25519, Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
+import { Space } from '@web3-storage/capabilities'
 
 /** @type {typeof assert} */
 const t = assert
@@ -72,7 +73,7 @@ describe('access/authorize', function () {
       )
     const delegation = stringToDelegation(encoded)
     t.deepEqual(delegation.issuer.did(), service.did())
-    t.deepEqual(delegation.audience.did(), accountDID)
+    t.deepEqual(delegation.audience.did(), service.did())
     t.deepEqual(delegation.capabilities, [
       {
         with: conn.id.did(),
@@ -121,8 +122,9 @@ describe('access/authorize', function () {
 
     const url = new URL(email.url)
     const rsp = await mf.dispatchFetch(url, { method: 'POST' })
-    const html = await rsp.text()
+    assert.deepEqual(rsp.status, 200)
 
+    const html = await rsp.text()
     assert(html.includes('Email Validated'))
     assert(html.includes(toEmail(accountDID)))
     assert(html.includes(issuer.did()))
@@ -312,8 +314,12 @@ describe('access/authorize', function () {
     const space = await ed25519.generate()
     const w3 = ctx.service
 
-    await registerSpaces([space], ctx)
     const account = Absentee.from({ id: 'did:mailto:dag.house:test' })
+    await registerSpaces([space], {
+      ...ctx,
+      agent: ctx.issuer,
+      account,
+    })
 
     // delegate all space capabilities to the account
     const delegation = await delegate({
@@ -342,6 +348,7 @@ describe('access/authorize', function () {
       })
       .execute(ctx.conn)
 
+    warnOnErrorResult(delegateResult)
     assert.equal(delegateResult.error, undefined, 'delegation succeeded')
 
     // Now generate an agent and try to authorize with the account
@@ -424,5 +431,16 @@ describe('access/authorize', function () {
       delegation.cid,
       'delegation to an account is included'
     )
+
+    // use these delegations to do something on the space
+    const info = await Space.info
+      .invoke({
+        issuer: agent,
+        audience: w3,
+        with: space.did(),
+        proofs: [authorization, attestation],
+      })
+      .execute(ctx.conn)
+    assert.notDeepEqual(info.error, true, 'space/info did not error')
   })
 })

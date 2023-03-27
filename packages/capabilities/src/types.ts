@@ -36,6 +36,11 @@ export interface AccessClaimFailure {
   error: true
 }
 
+export interface AccessConfirmSuccess {
+  delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
+}
+export interface AccessConfirmFailure extends Ucanto.Failure {}
+
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
 export type AccessDelegateSuccess = unknown
 export type AccessDelegateFailure = { error: true } | InsufficientStorage
@@ -47,7 +52,11 @@ export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 export type ProviderAdd = InferInvokedCapability<typeof provider.add>
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ProviderAddSuccess {}
-export type ProviderAddFailure = Ucanto.Failure
+export type ProviderAddFailure = InvalidProvider | Ucanto.Failure
+
+export interface InvalidProvider extends Ucanto.Failure {
+  name: 'InvalidProvider'
+}
 
 // Space
 export type Space = InferInvokedCapability<typeof space>

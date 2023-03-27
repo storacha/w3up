@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access-api",
-  "version": "4.11.0",
+  "version": "5.2.1",
   "description": "Access API",
   "type": "module",
   "main": "dist/worker.js",
@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore --write",
     "dev": "scripts/cli.js dev",
     "build": "scripts/cli.js build",
     "check": "tsc --build",
@@ -18,18 +19,18 @@
   "license": "(Apache-2.0 OR MIT)",
   "dependencies": {
     "@ipld/dag-ucan": "^3.2.0",
-    "@ucanto/core": "^5.1.0",
-    "@ucanto/interface": "^6.0.0",
+    "@ucanto/core": "^5.2.0",
+    "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
-    "@ucanto/server": "^6.0.0",
-    "@ucanto/transport": "^5.1.0",
-    "@ucanto/validator": "^6.0.0",
+    "@ucanto/server": "^6.1.0",
+    "@ucanto/transport": "^5.1.1",
+    "@ucanto/validator": "^6.1.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
     "kysely": "^0.23.4",
-    "kysely-d1": "^0.1.0",
-    "multiformats": "^11.0.1",
+    "kysely-d1": "^0.3.0",
+    "multiformats": "^11.0.2",
     "p-retry": "^5.1.2",
     "preact": "^10.11.3",
     "preact-render-to-string": "^5.2.6",
@@ -38,9 +39,11 @@
     "toucan-js": "^2.7.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.18.0",
+    "@cloudflare/workers-types": "^3.19.0",
     "@databases/split-sql-query": "^1.0.3",
     "@databases/sql": "^3.2.0",
+    "@miniflare/core": "^2.11.0",
+    "@miniflare/r2": "^2.12.1",
     "@sentry/cli": "2.7.0",
     "@types/assert": "^1.5.6",
     "@types/git-rev-sync": "^2.0.0",
@@ -55,14 +58,14 @@
     "git-rev-sync": "^3.0.2",
     "hd-scripts": "^4.0.0",
     "is-subset": "^0.1.1",
-    "miniflare": "^2.11.0",
+    "miniflare": "^2.12.1",
     "mocha": "^10.2.0",
     "p-wait-for": "^5.0.0",
     "process": "^0.11.10",
     "readable-stream": "^4.2.0",
     "sade": "^1.8.1",
     "typescript": "4.9.5",
-    "wrangler": "^2.8.0"
+    "wrangler": "^2.13.0"
   },
   "eslintConfig": {
     "extends": [
@@ -90,10 +93,12 @@
     },
     "rules": {
       "unicorn/prefer-number-properties": "off",
+      "@typescript-eslint/ban-types": "off",
       "jsdoc/no-undefined-types": [
         "error",
         {
           "definedTypes": [
+            "AsyncIterable",
             "AsyncIterableIterator",
             "Awaited",
             "D1Database",
@@ -141,5 +146,10 @@
       "hd-scripts",
       "better-sqlite3"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "undici": "^5.20.0"
+    }
   }
 }

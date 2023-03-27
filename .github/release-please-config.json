@@ -3,7 +3,9 @@
   "packages": {
     "packages/access-client": {},
     "packages/access-api": {},
-    "packages/capabilities": {},
+    "packages/capabilities": {
+      "release-as": "4.0.1"
+    },
     "packages/upload-api": {},
     "packages/upload-client": {}
   }

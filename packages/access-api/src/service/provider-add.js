@@ -16,8 +16,9 @@ import * as validator from '@ucanto/validator'
  */
 
 /**
+ * @template {Ucanto.DID} ServiceId
  * @param {object} options
- * @param {import('../types/provisions').ProvisionsStorage} options.provisions
+ * @param {import('../types/provisions').ProvisionsStorage<ServiceId>} options.provisions
  * @returns {ProviderAddHandler}
  */
 export function createProviderAddHandler(options) {
@@ -35,13 +36,22 @@ export function createProviderAddHandler(options) {
         message: 'Issuer must be a mailto DID',
       }
     }
-    await options.provisions.put({
+    // @ts-expect-error provider might not be in service providers list - it ok!
+    if (!options.provisions.services.includes(provider)) {
+      return {
+        error: true,
+        name: 'InvalidProvider',
+        message: `Invalid provider: ${provider}`,
+      }
+    }
+
+    return await options.provisions.put({
       invocation,
       space: consumer,
-      provider,
+      // eslint-disable-next-line object-shorthand
+      provider: /** @type {ServiceId} */ (provider),
       account: accountDID,
     })
-    return {}
   }
 }
 

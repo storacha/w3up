@@ -1,4 +1,5 @@
 import assert from 'assert'
+import { decode, NodeType } from '@ipld/unixfs'
 import { exporter } from 'ipfs-unixfs-exporter'
 import { MemoryBlockstore } from 'blockstore-core/memory'
 import * as raw from 'multiformats/codecs/raw'
@@ -65,6 +66,31 @@ describe('UnixFS', () => {
     const actualPaths = entries.map((e) => e.path)
 
     expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
+  })
+
+  it('encodes a sharded directory', async () => {
+    const files = []
+    for (let i = 0; i < 1001; i++) {
+      files.push(new File([`data${i}`], `file${i}.txt`))
+    }
+
+    const { cid, blocks } = await encodeDirectory(files)
+    const blockstore = await blocksToBlockstore(blocks)
+    const dirEntry = await exporter(cid.toString(), blockstore)
+    assert.equal(dirEntry.type, 'directory')
+
+    const expectedPaths = files.map((f) => path.join(cid.toString(), f.name))
+    // @ts-expect-error
+    const entries = await collectDir(dirEntry)
+    const actualPaths = entries.map((e) => e.path)
+
+    expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
+
+    // check root node is a HAMT sharded directory
+    // @ts-expect-error
+    const bytes = await blockstore.get(cid)
+    const node = decode(bytes)
+    assert.equal(node.type, NodeType.HAMTShard)
   })
 
   it('throws then treating a file as a directory', () =>

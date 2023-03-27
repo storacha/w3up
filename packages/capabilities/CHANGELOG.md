@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.0.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v3.2.0...capabilities-v4.0.0) (2023-03-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433))
+
+### Features
+
+* define `access/confirm` handler and use it in ucanto-test-utils registerSpaces + validate-email handler ([#530](https://github.com/web3-storage/w3protocol/issues/530)) ([b1bbc90](https://github.com/web3-storage/w3protocol/commit/b1bbc907c96cfc7788f50fb0c154d9b54894e03e))
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433)) ([1ddc6a0](https://github.com/web3-storage/w3protocol/commit/1ddc6a0c53f8cdb6837a315d8aaf567100dfb8d7))
+* provision provider type is now the DID of the w3s service ([#528](https://github.com/web3-storage/w3protocol/issues/528)) ([6a72855](https://github.com/web3-storage/w3protocol/commit/6a72855db4d6e838e9948f3951fdb5ef324eec95))
+
 ## [3.2.0](https://github.com/web3-storage/w3protocol/compare/capabilities-v3.1.0...capabilities-v3.2.0) (2023-03-08)
 
 

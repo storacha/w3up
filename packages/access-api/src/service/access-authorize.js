@@ -1,7 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
 import * as Mailto from '../utils/did-mailto.js'
-import * as DID from '@ipld/dag-ucan/did'
 import { delegationToString } from '@web3-storage/access/encoding'
 
 /**
@@ -10,7 +9,7 @@ import { delegationToString } from '@web3-storage/access/encoding'
 export function accessAuthorizeProvider(ctx) {
   return Server.provide(Access.authorize, async ({ capability }) => {
     /**
-     * We delegate to the account DID `access/confirm` capability which will
+     * We issue `access/confirm` invocation which will
      * get embedded in the URL that we send to the user. When user clicks the
      * link we'll get this delegation back in the `/validate-email` endpoint
      * which will allow us to verify that it was the user who clicked the link
@@ -25,7 +24,10 @@ export function accessAuthorizeProvider(ctx) {
     const confirmation = await Access.confirm
       .invoke({
         issuer: ctx.signer,
-        audience: DID.parse(capability.nb.iss),
+        // audience same as issuer because this is a service invocation
+        // that will get handled by access/confirm handler
+        // but only if the receiver of this email wants it to be
+        audience: ctx.signer,
         // Because with is set to our DID no other actor will be able to issue
         // this delegation without our private key.
         with: ctx.signer.did(),

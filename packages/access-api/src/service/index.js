@@ -4,6 +4,7 @@ import * as Server from '@ucanto/server'
 import * as validator from '@ucanto/validator'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
+import * as Access from '@web3-storage/capabilities/access'
 import { top } from '@web3-storage/capabilities/top'
 import {
   delegationToString,
@@ -17,6 +18,7 @@ import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
 import { providerAddProvider } from './provider-add.js'
 import { Spaces } from '../models/spaces.js'
+import { handleAccessConfirm } from './access-confirm.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -35,36 +37,33 @@ export function service(ctx) {
 
     access: {
       authorize: accessAuthorizeProvider(ctx),
-      claim: (...args) => {
-        // disable until hardened in test/staging
-        if (ctx.config.ENV === 'production') {
-          throw new Error(`access/claim invocation handling is not enabled`)
+      claim: accessClaimProvider({
+        delegations: ctx.models.delegations,
+        config: ctx.config,
+      }),
+      confirm: Server.provide(
+        Access.confirm,
+        async ({ capability, invocation }) => {
+          // only needed in tests
+          if (ctx.config.ENV !== 'test') {
+            throw new Error(`access/confirm is disabled`)
+          }
+          return handleAccessConfirm(
+            /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
+              invocation
+            ),
+            ctx
+          )
         }
-        return accessClaimProvider({
-          delegations: ctx.models.delegations,
-          config: ctx.config,
-        })(...args)
-      },
-      delegate: (...args) => {
-        // disable until hardened in test/staging
-        if (ctx.config.ENV === 'production') {
-          throw new Error(`access/delegate invocation handling is not enabled`)
-        }
-        return accessDelegateProvider({
-          delegations: ctx.models.delegations,
-          hasStorageProvider,
-        })(...args)
-      },
+      ),
+      delegate: accessDelegateProvider({
+        delegations: ctx.models.delegations,
+        hasStorageProvider,
+      }),
     },
 
     provider: {
-      add: (...args) => {
-        // disable until hardened in test/staging
-        if (ctx.config.ENV === 'production') {
-          throw new Error(`provider/add invocation handling is not enabled`)
-        }
-        return providerAddProvider(ctx)(...args)
-      },
+      add: providerAddProvider(ctx),
     },
 
     voucher: {
@@ -234,9 +233,10 @@ export function service(ctx) {
 }
 
 /**
+ * @template {Ucanto.DID} Service
  * @param {Ucanto.DID<'key'>} space
  * @param {Spaces} spaces
- * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProvider(space, spaces, provisions) {
@@ -257,8 +257,9 @@ async function spaceHasStorageProviderFromVoucherRedeem(space, spaces) {
 }
 
 /**
+ * @template {Ucanto.DID} Service
  * @param {Ucanto.DID<'key'>} space
- * @param {import('../types/provisions.js').ProvisionsStorage} provisions
+ * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProviderFromProviderAdd(space, provisions) {

@@ -23,11 +23,6 @@ import { collect } from 'streaming-iterables'
 export function accessClaimProvider(ctx) {
   const handleClaimInvocation = createAccessClaimHandler(ctx)
   return Server.provide(claim, async ({ invocation }) => {
-    // disable until hardened in test/staging
-    if (ctx.config.ENV === 'production') {
-      throw new Error(`access/claim invocation handling is not enabled`)
-    }
-
     return handleClaimInvocation(invocation)
   })
 }
