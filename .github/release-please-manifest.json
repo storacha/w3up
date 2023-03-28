@@ -3,6 +3,6 @@
   "packages/access-api": "5.2.1",
   "packages/capabilities": "4.0.1",
   "packages/upload-api": "2.0.0",
-  "packages/upload-client": "8.0.0",
+  "packages/upload-client": "8.1.0",
   "packages/w3up-client": "5.1.0"
 }

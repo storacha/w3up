@@ -99,12 +99,47 @@ describe('UnixFS', () => {
         new File(['a file, not a directory'], 'file.txt'),
         new File(['a file in a file!!!'], 'file.txt/another.txt'),
       ]),
-      { message: '"file.txt" cannot be a file and a directory' }
+      { message: '"file.txt/another.txt" cannot be a file and a directory' }
     ))
 
   it('configured to use raw leaves', async () => {
     const file = new Blob(['test'])
     const { cid } = await encodeFile(file)
     assert.equal(cid.code, raw.code)
+  })
+
+  it('callback for each directory entry link', async () => {
+    const files = [
+      new File(['file'], 'file.txt'),
+      new File(['another'], '/dir/another.txt'),
+    ]
+    /** @type {import('../src/types.js').DirectoryEntryLink[]} */
+    const links = []
+    await encodeDirectory(files, { onDirectoryEntryLink: (l) => links.push(l) })
+    assert.equal(links.length, 4)
+    assert.equal(links[0].name, 'file.txt')
+    assert.equal(links[0].dagByteLength, 4)
+    assert.equal(
+      links[0].cid.toString(),
+      'bafkreib3tq2y6nxqumnwvu7bj4yjy7hrtcwjerxigfxzzzkd2wyzvqblqa'
+    )
+    assert.equal(links[1].name, 'dir/another.txt')
+    assert.equal(links[1].dagByteLength, 7)
+    assert.equal(
+      links[1].cid.toString(),
+      'bafkreifoisfmq3corzg6yzcxffyi55ayooxhtrw77bhp64zwbgeuq7yi4u'
+    )
+    assert.equal(links[2].name, 'dir')
+    assert.equal(links[2].dagByteLength, 66)
+    assert.equal(
+      links[2].cid.toString(),
+      'bafybeigbv3g5frjg66akpd6gwfkryqraom4nyrgtltpyoa4e7h3bhnbmti'
+    )
+    assert.equal(links[3].name, '')
+    assert.equal(links[3].dagByteLength, 173)
+    assert.equal(
+      links[3].cid.toString(),
+      'bafybeie4fxkioskwb4h7xpb5f6tbktm4vjxt7rtsqjit72jrv3ii5h26sy'
+    )
   })
 })
