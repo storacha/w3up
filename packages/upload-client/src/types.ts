@@ -17,6 +17,7 @@ import {
   UploadList,
   UploadRemove,
 } from '@web3-storage/capabilities/types'
+import * as UnixFS from '@ipld/unixfs/src/unixfs'
 
 export type {
   StoreAdd,
@@ -186,6 +187,15 @@ export interface RequestOptions extends Retryable, Abortable, Connectable {}
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}
 
+export type DirectoryEntryLink = UnixFS.DirectoryEntryLink
+
+export interface UnixFSDirectoryEncoderOptions {
+  /**
+   * Callback for each time a directory entry has been fully encoded.
+   */
+  onDirectoryEntryLink?: (link: DirectoryEntryLink) => void
+}
+
 export interface ShardingOptions {
   /**
    * The target shard size. Actual size of CAR output may be bigger due to CAR
@@ -213,6 +223,9 @@ export interface UploadOptions
     ShardStoringOptions {
   onShardStored?: (meta: CARMetadata) => void
 }
+
+export interface UploadDirectoryOptions
+  extends UploadOptions, UnixFSDirectoryEncoderOptions {}
 
 export interface BlobLike {
   /**

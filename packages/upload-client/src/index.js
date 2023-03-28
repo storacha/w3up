@@ -58,12 +58,12 @@ export async function uploadFile(conf, file, options = {}) {
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
  * @param {import('./types').FileLike[]} files File data.
- * @param {import('./types').UploadOptions} [options]
+ * @param {import('./types').UploadDirectoryOptions} [options]
  */
 export async function uploadDirectory(conf, files, options = {}) {
   return await uploadBlockStream(
     conf,
-    UnixFS.createDirectoryEncoderStream(files),
+    UnixFS.createDirectoryEncoderStream(files, options),
     options
   )
 }
