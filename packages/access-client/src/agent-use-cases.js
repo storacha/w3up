@@ -92,6 +92,18 @@ export async function addProvider({ access, space, account, provider }) {
 }
 
 /**
+ * @typedef {(delegations: Ucanto.Delegation<Ucanto.Capabilities>[]) => boolean} DelegationsChecker
+ */
+
+/**
+ * @type DelegationsChecker
+ */
+export function delegationsIncludeSessionProof(delegations) {
+  return delegations.some((d) => isSessionProof(d))
+}
+
+/**
+ * @param {DelegationsChecker} delegationsMatch
  * @param {AccessAgent} access
  * @param {Ucanto.DID} delegee
  * @param {object} [options]
@@ -99,13 +111,18 @@ export async function addProvider({ access, space, account, provider }) {
  * @param {AbortSignal} [options.abort]
  * @returns {Promise<Iterable<Ucanto.Delegation>>}
  */
-export async function expectNewClaimableDelegations(access, delegee, options) {
+export async function pollAccessClaimUntil(
+  delegationsMatch,
+  access,
+  delegee,
+  options
+) {
   const interval = options?.interval || 250
-  const claim = () => claimAccess(access, delegee)
-  const initialClaimResult = await claim()
   const claimed = await new Promise((resolve, reject) => {
     options?.abort?.addEventListener('abort', (e) => {
-      reject(new Error('expectNewClaimableDelegations aborted', { cause: e }))
+      reject(
+        new Error('pollAccessClaimUntilSessionProof aborted', { cause: e })
+      )
     })
     poll(interval)
     /**
@@ -119,12 +136,10 @@ export async function expectNewClaimableDelegations(access, delegee, options) {
       if (pollClaimResult.error) {
         return reject(pollClaimResult)
       }
-      // got a response. If it contains same amount of delegations as initialClaimResult,
-      // user has not clicked confirm
       const claimedDelegations = Object.values(
         pollClaimResult.delegations
       ).flatMap((d) => bytesToDelegations(d))
-      if (claimedDelegations.length > initialClaimResult.length) {
+      if (delegationsMatch(claimedDelegations)) {
         resolve(claimedDelegations)
       } else {
         setTimeout(() => poll(retryAfter), retryAfter)
@@ -171,6 +186,34 @@ export async function waitForDelegationOnSocket(access, opts) {
 }
 
 /**
+ * @typedef {{signal?: AbortSignal }} AuthorizationWaiterOpts
+ * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts) => Promise<Iterable<Ucanto.Delegation>> } AuthorizationWaiter
+ */
+
+/**
+ * @type AuthorizationWaiter
+ */
+export async function waitForAuthorizationOnSocket(access, opts = {}) {
+  const delegation = await waitForDelegationOnSocket(access, opts)
+  return [delegation]
+}
+
+/**
+ * @type AuthorizationWaiter
+ */
+export async function waitForAuthorizationByPolling(access, opts = {}) {
+  const claimed = await pollAccessClaimUntil(
+    delegationsIncludeSessionProof,
+    access,
+    access.issuer.did(),
+    {
+      abort: opts?.signal,
+    }
+  )
+  return [...claimed]
+}
+
+/**
  * Request authorization of a session allowing this agent to issue UCANs
  * signed by the passed email address.
  *
@@ -180,16 +223,11 @@ export async function waitForDelegationOnSocket(access, opts) {
  * @param {AbortSignal} [opts.signal]
  * @param {boolean} [opts.dontAddProofs] - whether to skip adding proofs to the agent
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
- * @param {() => Promise<Iterable<Ucanto.Delegation>>} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
+ * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
-export async function authorizeAndWait(access, email, opts) {
+export async function authorizeAndWait(access, email, opts = {}) {
   const expectAuthorization =
-    opts?.expectAuthorization ||
-    function () {
-      return expectNewClaimableDelegations(access, access.issuer.did(), {
-        abort: opts?.signal,
-      })
-    }
+    opts.expectAuthorization || waitForAuthorizationByPolling
   const account = { did: () => createDidMailtoFromEmail(email) }
   await requestAccess(
     access,
@@ -201,7 +239,7 @@ export async function authorizeAndWait(access, email, opts) {
       { can: 'upload/*' },
     ]
   )
-  const sessionDelegations = [...(await expectAuthorization())]
+  const sessionDelegations = [...(await expectAuthorization(access, opts))]
   if (!opts?.dontAddProofs) {
     await Promise.all(sessionDelegations.map(async (d) => access.addProof(d)))
   }
@@ -211,30 +249,16 @@ export async function authorizeAndWait(access, email, opts) {
  * Request authorization of a session allowing this agent to issue UCANs
  * signed by the passed email address.
  *
- * @param {AccessAgent} access
+ * @param {AccessAgent} accessAgent
  * @param {`${string}@${string}`} email
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+ * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
-export async function authorizeWithSocket(access, email, opts) {
-  const expectAuthorization = () =>
-    /** @type {Promise<[Ucanto.Delegation<[import('./types').AccessSession]>]>} */
-    (
-      waitForDelegationOnSocket(access, {
-        ...opts,
-        signal: opts?.signal,
-      }).then((d) => {
-        return [d]
-      })
-    )
-  await authorizeAndWait(access, email, {
-    ...opts,
-    expectAuthorization,
-  })
-  // claim delegations here because we will need an ucan/attest from the service to
-  // pair with the session delegation we just claimed to make it work
-  await claimAccess(access, access.issuer.did(), { addProofs: true })
+export async function authorizeWaitAndClaim(accessAgent, email, opts) {
+  await authorizeAndWait(accessAgent, email, opts)
+  await claimAccess(accessAgent, accessAgent.issuer.did(), { addProofs: true })
 }
 
 /**
@@ -246,22 +270,12 @@ export async function authorizeWithSocket(access, email, opts) {
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+ * @deprecated
  */
-export async function authorizeWithPollClaim(access, email, opts) {
-  const expectAuthorization = () =>
-    expectNewClaimableDelegations(access, access.issuer.did(), {
-      abort: opts?.signal,
-    }).then((claimed) => {
-      if (![...claimed].some((d) => isSessionProof(d))) {
-        throw new Error(
-          `claimed new delegations, but none were a session proof`
-        )
-      }
-      return [...claimed]
-    })
-  await authorizeAndWait(access, email, {
+export async function authorizeWithSocket(access, email, opts) {
+  return authorizeWaitAndClaim(access, email, {
     ...opts,
-    expectAuthorization,
+    expectAuthorization: waitForAuthorizationOnSocket,
   })
 }
 
