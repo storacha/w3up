@@ -195,7 +195,7 @@ export async function waitForDelegationOnSocket(access, opts) {
  * well-known websocket endpoint for the access-api server to
  * receive and forward a session delegation from the authorization
  * email flow.
- * 
+ *
  * @type AuthorizationWaiter
  */
 export async function waitForAuthorizationOnSocket(access, opts = {}) {
@@ -207,7 +207,7 @@ export async function waitForAuthorizationOnSocket(access, opts = {}) {
  * Wait for authorization process to complete by polling executions of the
  * `access/claim` capability and waiting for the result to include
  * a session delegation.
- * 
+ *
  * @type AuthorizationWaiter
  */
 export async function waitForAuthorizationByPolling(access, opts = {}) {
@@ -268,7 +268,9 @@ export async function authorizeAndWait(access, email, opts = {}) {
  */
 export async function authorizeWaitAndClaim(accessAgent, email, opts) {
   await authorizeAndWait(accessAgent, email, opts)
-  await claimAccess(accessAgent, accessAgent.issuer.did(), { addProofs: opts?.addProofs ?? true })
+  await claimAccess(accessAgent, accessAgent.issuer.did(), {
+    addProofs: opts?.addProofs ?? true,
+  })
 }
 
 /**
