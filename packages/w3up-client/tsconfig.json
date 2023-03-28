@@ -7,8 +7,9 @@
     "noUnusedParameters": false
   },
   "include": [
-    "./src"
+    "./src",
     // @todo add "./test",
+    "./test/helpers",
   ],
   "typedocOptions": {
     "entryPoints": ["./src"],

@@ -9,6 +9,8 @@ const notImplemented = () => {
 
 /**
  * @param {Partial<{
+ * access: Partial<import('@web3-storage/access/types').Service['access']>
+ * provider: Partial<import('@web3-storage/access/types').Service['provider']>
  * store: Partial<import('@web3-storage/upload-client/types').Service['store']>
  * upload: Partial<import('@web3-storage/upload-client/types').Service['upload']>
  * voucher: Partial<import('@web3-storage/access/types').Service['voucher']>
@@ -61,7 +63,8 @@ function withCallCount(fn) {
 }
 
 /**
- * @param {import('@ucanto/interface').ServerView} server
+ * @template {Record<string, any>} Service - describes methods exposed via ucanto server
+ * @param {import('@ucanto/interface').ServerView<Service>} server
  */
 export async function mockServiceConf(server) {
   const connection = connect({
