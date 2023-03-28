@@ -116,7 +116,6 @@ describe('UnixFS', () => {
     /** @type {import('../src/types.js').DirectoryEntryLink[]} */
     const links = []
     await encodeDirectory(files, { onDirectoryEntryLink: (l) => links.push(l) })
-    console.log(links)
     assert.equal(links.length, 4)
     assert.equal(links[0].name, 'file.txt')
     assert.equal(links[0].dagByteLength, 4)
