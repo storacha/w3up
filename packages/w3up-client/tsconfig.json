@@ -10,7 +10,8 @@
     "./src",
     // @todo add "./test",
     "./test/capability",
-    "./test/helpers"
+    "./test/helpers",
+    "./test/client.test.js"
   ],
   "typedocOptions": {
     "entryPoints": ["./src"],
