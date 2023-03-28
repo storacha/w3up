@@ -9,8 +9,7 @@
   "include": [
     "./src",
     // @todo add "./test",
-    "./test/capability/access.test.js",
-    "./test/capability/space.test.js",
+    "./test/capability",
     "./test/helpers"
   ],
   "typedocOptions": {
