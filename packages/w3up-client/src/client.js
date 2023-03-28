@@ -124,10 +124,10 @@ export class Client extends Base {
   /**
    * Use a specific space.
    *
-   * @param {import('./types').DID<'key'>} did
+   * @param {import('./types').DID} did
    */
   async setCurrentSpace(did) {
-    await this._agent.setCurrentSpace(did)
+    await this._agent.setCurrentSpace(/** @type {`did:key:${string}`} */ (did))
   }
 
   /**
@@ -135,7 +135,7 @@ export class Client extends Base {
    */
   spaces() {
     return [...this._agent.spaces].map(([did, meta]) => {
-      return new Space(/** @type {`did:key:${string}`} */ (did), meta)
+      return new Space(did, meta)
     })
   }
 
@@ -173,7 +173,7 @@ export class Client extends Base {
    */
   async addSpace(proof) {
     const { did, meta } = await this._agent.importSpaceFromDelegation(proof)
-    return new Space(/** @type {`did:key:${string}`} */ (did), meta)
+    return new Space(did, meta)
   }
 
   /**

@@ -20,7 +20,7 @@ describe('SpaceClient', () => {
             assert.equal(invCap.can, SpaceCapabilities.info.can)
             assert.equal(invCap.with, space.did())
             return {
-              did: space.did(),
+              did: /** @type {`did:key:${string}`} */ (space.did()),
             }
           }),
         },
