@@ -12,8 +12,10 @@ import {
   authorizeAndWait,
   claimAccess,
   createDidMailtoFromEmail,
-  expectNewClaimableDelegations,
+  delegationsIncludeSessionProof,
+  pollAccessClaimUntil,
   requestAccess,
+  waitForAuthorizationByPolling,
 } from '@web3-storage/access/agent'
 import * as w3caps from '@web3-storage/capabilities'
 import * as assert from 'assert'
@@ -390,14 +392,10 @@ for (const accessApiVariant of /** @type {const} */ ([
     const deviceA = await AccessAgent.create(undefined, {
       connection,
     })
-    const expectAuthorization = () =>
-      expectNewClaimableDelegations(deviceA, deviceA.issuer.did(), {
-        abort: abort.signal,
-      })
     const authorize = () =>
       authorizeAndWait(deviceA, account.email, {
         signal: abort.signal,
-        expectAuthorization,
+        expectAuthorization: waitForAuthorizationByPolling,
       })
     const clickNextConfirmationLink = () =>
       watchForEmail(emails, 100, abort.signal).then((email) => {
@@ -456,7 +454,8 @@ for (const accessApiVariant of /** @type {const} */ ([
     const authorize = async () => {
       // fire off request
       await requestAccess(deviceA, account, [{ can: '*' }])
-      const claimed = await expectNewClaimableDelegations(
+      const claimed = await pollAccessClaimUntil(
+        delegationsIncludeSessionProof,
         deviceA,
         deviceA.issuer.did(),
         { abort: abort.signal }
@@ -627,23 +626,8 @@ function thisEmailDidMailto() {
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
  */
 export async function authorizeWithPollClaim(access, email, opts) {
-  const expectAuthorization = () =>
-    expectNewClaimableDelegations(access, access.issuer.did(), {
-      abort: opts?.signal,
-    }).then((claimed) => {
-      if (
-        ![...claimed].some((d) =>
-          d.capabilities.some((d) => d.can === w3caps.Access.session.can)
-        )
-      ) {
-        throw new Error(
-          `claimed new delegations, but none were a session proof`
-        )
-      }
-      return [...claimed]
-    })
   await authorizeAndWait(access, email, {
     ...opts,
-    expectAuthorization,
+    expectAuthorization: waitForAuthorizationByPolling,
   })
 }
