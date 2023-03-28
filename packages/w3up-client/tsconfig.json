@@ -4,10 +4,10 @@
     "outDir": "dist",
     "emitDeclarationOnly": true,
     "composite": true,
-    "noUnusedParameters": false,
+    "noUnusedParameters": false
   },
   "include": [
-    "./src",
+    "./src"
     // @todo add "./test",
   ],
   "typedocOptions": {
@@ -17,7 +17,7 @@
     "navigationLinks": {
       "Github": "https://github.com/web3-storage/w3up-client"
     },
-    "customCss": "./static/docs.css",
+    "customCss": "./static/docs.css"
   },
   "references": [
     { "path": "../access-client" },

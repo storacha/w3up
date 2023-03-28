@@ -6,8 +6,6 @@
     "packages/capabilities": {},
     "packages/upload-api": {},
     "packages/upload-client": {},
-    "packages/w3up-client": {
-      "release-as": "5.2.0"
-    }
+    "packages/w3up-client": {}
   }
 }

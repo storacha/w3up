@@ -21,7 +21,7 @@ import { Client } from './client.js'
  *
  * @type {import('./types').ClientFactory}
  */
-export async function create (options = {}) {
+export async function create(options = {}) {
   const store = options.store ?? new StoreConf({ profile: 'w3up-client' })
   const raw = await store.load()
   if (raw) return new Client(AgentData.fromExport(raw, { store }), options)

@@ -13,7 +13,7 @@ export class Delegation extends CoreDelegation {
    * @param {Map<string, import('./types').Block>} [blocks]
    * @param {Record<string, any>} [meta]
    */
-  constructor (root, blocks, meta = {}) {
+  constructor(root, blocks, meta = {}) {
     super(root, blocks)
     this.#meta = meta
   }
@@ -21,7 +21,7 @@ export class Delegation extends CoreDelegation {
   /**
    * User defined delegation metadata.
    */
-  meta () {
+  meta() {
     return this.#meta
   }
 }

@@ -11,8 +11,8 @@ export const accessServiceConnection = connect({
   decoder: CBOR,
   channel: HTTP.open({
     url: accessServiceURL,
-    method: 'POST'
-  })
+    method: 'POST',
+  }),
 })
 
 export const uploadServiceURL = new URL('https://up.web3.storage')
@@ -24,12 +24,12 @@ export const uploadServiceConnection = connect({
   decoder: CBOR,
   channel: HTTP.open({
     url: uploadServiceURL,
-    method: 'POST'
-  })
+    method: 'POST',
+  }),
 })
 
 /** @type {import('./types').ServiceConf} */
 export const serviceConf = {
   access: accessServiceConnection,
-  upload: uploadServiceConnection
+  upload: uploadServiceConnection,
 }

@@ -23,23 +23,22 @@ describe('StoreClient', () => {
             return {
               status: 'upload',
               headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200'
+              url: 'http://localhost:9200',
             }
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())
@@ -63,9 +62,9 @@ describe('StoreClient', () => {
         results: [
           {
             link: (await randomCAR(128)).cid,
-            size: 123
-          }
-        ]
+            size: 123,
+          },
+        ],
       }
 
       const service = mockService({
@@ -77,21 +76,20 @@ describe('StoreClient', () => {
             assert.equal(invCap.can, StoreCapabilities.list.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
             return page
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())
@@ -102,7 +100,10 @@ describe('StoreClient', () => {
       assert.equal(service.store.list.callCount, 1)
 
       assert.equal(res.cursor, cursor)
-      assert.equal(res.results[0].link.toString(), page.results[0].link.toString())
+      assert.equal(
+        res.results[0].link.toString(),
+        page.results[0].link.toString()
+      )
     })
   })
 
@@ -117,21 +118,20 @@ describe('StoreClient', () => {
             assert.equal(invCap.can, StoreCapabilities.remove.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
             return null
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())

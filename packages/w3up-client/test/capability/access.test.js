@@ -19,23 +19,22 @@ describe('AccessClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, AccessCapabilities.claim.can)
             return {
-              delegations: []
+              delegations: [],
             }
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const delegations = await alice.capability.access.claim()
 

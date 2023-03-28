@@ -12,4 +12,5 @@ const server = createServer((req, res) => {
   res.end()
 })
 
+// eslint-disable-next-line no-console
 server.listen(port, () => console.log(`Listening on :${port}`))

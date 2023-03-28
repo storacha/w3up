@@ -22,7 +22,9 @@ export class AccessClient extends Base {
   /**
    * Claim delegations granted to the account associated with this agent.
    */
-  async claim () {
-    return claimAccess(this._agent, this._agent.issuer.did(), { addProofs: true })
+  async claim() {
+    return claimAccess(this._agent, this._agent.issuer.did(), {
+      addProofs: true,
+    })
   }
 }
