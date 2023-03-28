@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.1.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v8.0.0...upload-client-v8.1.0) (2023-03-28)
+
+
+### Features
+
+* docs for DirectoryEntryLinkCallback ([50e5fa5](https://github.com/web3-storage/w3protocol/commit/50e5fa550b7659f0b2c545e26b792e0d871c6e88))
+
 ## [8.0.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v7.0.0...upload-client-v8.0.0) (2023-03-23)
 
 
