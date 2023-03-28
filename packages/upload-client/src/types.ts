@@ -191,7 +191,7 @@ export type DirectoryEntryLink = UnixFS.DirectoryEntryLink
 
 export interface UnixFSDirectoryEncoderOptions {
   /**
-   * Callback for each time a directory entry has been fully encoded.
+   * Callback for every DAG encoded directory entry, including the root.
    */
   onDirectoryEntryLink?: (link: DirectoryEntryLink) => void
 }

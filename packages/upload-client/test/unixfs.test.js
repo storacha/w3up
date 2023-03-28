@@ -116,7 +116,8 @@ describe('UnixFS', () => {
     /** @type {import('../src/types.js').DirectoryEntryLink[]} */
     const links = []
     await encodeDirectory(files, { onDirectoryEntryLink: l => links.push(l) })
-    assert.equal(links.length, 3)
+    console.log(links)
+    assert.equal(links.length, 4)
     assert.equal(links[0].name, 'file.txt')
     assert.equal(links[0].dagByteLength, 4)
     assert.equal(
@@ -134,6 +135,12 @@ describe('UnixFS', () => {
     assert.equal(
       links[2].cid.toString(),
       'bafybeigbv3g5frjg66akpd6gwfkryqraom4nyrgtltpyoa4e7h3bhnbmti'
+    )
+    assert.equal(links[3].name, '')
+    assert.equal(links[3].dagByteLength, 173)
+    assert.equal(
+      links[3].cid.toString(),
+      'bafybeie4fxkioskwb4h7xpb5f6tbktm4vjxt7rtsqjit72jrv3ii5h26sy'
     )
   })
 })

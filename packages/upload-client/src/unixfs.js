@@ -147,7 +147,10 @@ export function createDirectoryEncoderStream(files, options) {
   const { readable, writable } = new TransformStream({}, queuingStrategy)
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
   void (async () => {
-    await rootDir.finalize(unixfsWriter)
+    const link = await rootDir.finalize(unixfsWriter)
+    if (options?.onDirectoryEntryLink) {
+      options.onDirectoryEntryLink({ name: '', ...link })
+    }
     await unixfsWriter.close()
   })()
 
