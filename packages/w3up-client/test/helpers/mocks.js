@@ -63,7 +63,8 @@ function withCallCount(fn) {
 }
 
 /**
- * @template {Record<string, any>} Service - describes methods exposed via ucanto server
+ * @template {string} K
+ * @template {Record<K, any>} Service - describes methods exposed via ucanto server
  * @param {import('@ucanto/interface').ServerView<Service>} server
  */
 export async function mockServiceConf(server) {

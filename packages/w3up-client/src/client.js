@@ -134,7 +134,9 @@ export class Client extends Base {
    * Spaces available to this agent.
    */
   spaces() {
-    return [...this._agent.spaces].map(([did, meta]) => new Space(did, meta))
+    return [...this._agent.spaces].map(([did, meta]) => {
+      return new Space(/** @type {`did:key:${string}`} */ (did), meta)
+    })
   }
 
   /**
@@ -171,7 +173,7 @@ export class Client extends Base {
    */
   async addSpace(proof) {
     const { did, meta } = await this._agent.importSpaceFromDelegation(proof)
-    return new Space(did, meta)
+    return new Space(/** @type {`did:key:${string}`} */ (did), meta)
   }
 
   /**

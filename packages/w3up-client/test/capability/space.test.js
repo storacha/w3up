@@ -21,11 +21,6 @@ describe('SpaceClient', () => {
             assert.equal(invCap.with, space.did())
             return {
               did: space.did(),
-              agent: alice.agent().did(),
-              email: 'mailto:alice@example.com',
-              product: 'product:test',
-              updated_at: '',
-              inserted_at: '',
             }
           }),
         },
@@ -39,6 +34,7 @@ describe('SpaceClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -51,9 +47,6 @@ describe('SpaceClient', () => {
       assert.equal(service.space.info.callCount, 1)
 
       assert.equal(info.did, space.did())
-      assert.equal(info.agent, alice.agent().did())
-      assert.equal(info.email, 'mailto:alice@example.com')
-      assert.equal(info.product, 'product:test')
     })
   })
 })

@@ -9,7 +9,9 @@
   "include": [
     "./src",
     // @todo add "./test",
-    "./test/helpers",
+    "./test/capability/access.test.js",
+    "./test/capability/space.test.js",
+    "./test/helpers"
   ],
   "typedocOptions": {
     "entryPoints": ["./src"],
