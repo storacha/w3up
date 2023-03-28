@@ -77,6 +77,7 @@ export type {
   ShardingOptions,
   ShardStoringOptions,
   UploadOptions,
+  UploadDirectoryOptions,
   FileLike,
   BlobLike
 } from '@web3-storage/upload-client/types'
