@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.0.1](https://github.com/web3-storage/w3protocol/compare/access-v11.0.0...access-v11.0.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* @web3-storage/access/agent no longer exports authorizeWithPollClaim ([#656](https://github.com/web3-storage/w3protocol/issues/656)) ([a8be429](https://github.com/web3-storage/w3protocol/commit/a8be429e9d60bfe3a32ae7ca0fe7f2ef6e88ff4d))
+
 ## [11.0.0](https://github.com/web3-storage/w3protocol/compare/access-v11.0.0-rc.0...access-v11.0.0) (2023-03-23)
 
 
