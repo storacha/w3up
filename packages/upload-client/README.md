@@ -157,6 +157,7 @@ await Upload.add(conf, rootCID, carCIDs)
 - [Types](#types)
   - [`CARFile`](#carfile)
   - [`CARMetadata`](#carmetadata)
+  - [`DirectoryEntryLinkCallback`](#directoryentrylinkcallback)
   - [`InvocationConfig`](#invocationconfig)
   - [`ShardStoredCallback`](#shardstoredcallback)
 - [Contributing](#contributing)
@@ -174,6 +175,7 @@ function uploadDirectory(
     retries?: number
     signal?: AbortSignal
     onShardStored?: ShardStoredCallback
+    onDirectoryEntryLink?: DirectoryEntryLinkCallback
     shardSize?: number
     concurrentRequests?: number
   } = {}
@@ -464,6 +466,14 @@ export interface CARMetadata {
    */
   size: number
 }
+```
+
+### `DirectoryEntryLinkCallback`
+
+Callback for every DAG encoded directory entry, including the root. It includes the CID, name (full path) and DAG size in bytes.
+
+```ts
+type DirectoryEntryLinkCallback = (link: DirectoryEntryLink) => void
 ```
 
 ### `InvocationConfig`
