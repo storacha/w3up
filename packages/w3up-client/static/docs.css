@@ -1,0 +1,12 @@
+a[href*='_internal_.html'] + ul {
+  display: none;
+}
+
+.tsd-kind-module > ul {
+  display: none;
+  overflow: hidden;
+}
+
+.tsd-kind-module.selected > ul {
+  display: block;
+}

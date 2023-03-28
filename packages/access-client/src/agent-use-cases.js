@@ -9,7 +9,7 @@ import { bytesToDelegations, stringToDelegation } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
 import { Websocket, AbortError } from './utils/ws.js'
-import { AgentData, isSessionProof } from './agent-data.js'
+import { AgentData } from './agent-data.js'
 import * as ucanto from '@ucanto/core'
 import { DID as DIDValidator } from '@ucanto/validator'
 
