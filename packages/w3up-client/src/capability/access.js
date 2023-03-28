@@ -14,7 +14,7 @@ export class AccessClient extends Base {
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
-  async authorize (email, options) {
+  async authorize(email, options) {
     return authorizeWaitAndClaim(this._agent, email, options)
   }
   /* c8 ignore stop */
