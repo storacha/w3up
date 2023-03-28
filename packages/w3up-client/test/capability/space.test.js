@@ -25,23 +25,22 @@ describe('SpaceClient', () => {
               email: 'mailto:alice@example.com',
               product: 'product:test',
               updated_at: '',
-              inserted_at: ''
+              inserted_at: '',
             }
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())

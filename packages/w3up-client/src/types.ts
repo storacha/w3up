@@ -1,8 +1,11 @@
-import { Driver } from '@web3-storage/access/drivers/types'
-import { Service as AccessService, AgentDataExport } from '@web3-storage/access/types'
-import { Service as UploadService } from '@web3-storage/upload-client/types'
-import { ConnectionView } from '@ucanto/interface'
-import { Client } from './client'
+import { type Driver } from '@web3-storage/access/drivers/types'
+import {
+  type Service as AccessService,
+  type AgentDataExport,
+} from '@web3-storage/access/types'
+import { type Service as UploadService } from '@web3-storage/upload-client/types'
+import { type ConnectionView } from '@ucanto/interface'
+import { type Client } from './client'
 
 export interface ServiceConf {
   access: ConnectionView<AccessService>
@@ -20,15 +23,13 @@ export interface ClientFactoryOptions {
   serviceConf?: ServiceConf
 }
 
-export interface ClientFactory {
-  (options?: ClientFactoryOptions): Promise<Client>
-}
+export type ClientFactory = (options?: ClientFactoryOptions) => Promise<Client>
 
 export { Client } from './client'
 
 export type { UnknownLink } from 'multiformats'
 
-export type { 
+export type {
   DID,
   Principal,
   Delegation,
@@ -38,7 +39,7 @@ export type {
   UCANOptions,
   UCANBlock,
   Block,
-  ConnectionView
+  ConnectionView,
 } from '@ucanto/interface'
 
 export type {
@@ -55,7 +56,7 @@ export type {
   AgentDataModel,
   AgentDataExport,
   AgentMeta,
-  DelegationMeta
+  DelegationMeta,
 } from '@web3-storage/access/types'
 
 export type {
@@ -79,5 +80,5 @@ export type {
   UploadOptions,
   UploadDirectoryOptions,
   FileLike,
-  BlobLike
+  BlobLike,
 } from '@web3-storage/upload-client/types'

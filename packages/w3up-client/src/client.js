@@ -1,5 +1,12 @@
-import { uploadFile, uploadDirectory, uploadCAR } from '@web3-storage/upload-client'
-import { Store as StoreCapabilities, Upload as UploadCapabilities } from '@web3-storage/capabilities'
+import {
+  uploadFile,
+  uploadDirectory,
+  uploadCAR,
+} from '@web3-storage/upload-client'
+import {
+  Store as StoreCapabilities,
+  Upload as UploadCapabilities,
+} from '@web3-storage/capabilities'
 import { Base } from './base.js'
 import { Space } from './space.js'
 import { Delegation as AgentDelegation } from './delegation.js'
@@ -14,13 +21,13 @@ export class Client extends Base {
    * @param {object} [options]
    * @param {import('./types').ServiceConf} [options.serviceConf]
    */
-  constructor (agentData, options) {
+  constructor(agentData, options) {
     super(agentData, options)
     this.capability = {
       access: new AccessClient(agentData, options),
       store: new StoreClient(agentData, options),
       upload: new UploadClient(agentData, options),
-      space: new SpaceClient(agentData, options)
+      space: new SpaceClient(agentData, options),
     }
   }
 
@@ -33,7 +40,7 @@ export class Client extends Base {
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
-  async authorize (email, options) {
+  async authorize(email, options) {
     await this.capability.access.authorize(email, options)
   }
   /* c8 ignore stop */
@@ -42,11 +49,14 @@ export class Client extends Base {
    * Uploads a file to the service and returns the root data CID for the
    * generated DAG.
    *
-   * @param {import('./types').BlobLike} file File data.
+   * @param {import('./types').BlobLike} file - File data.
    * @param {import('./types').UploadOptions} [options]
    */
-  async uploadFile (file, options = {}) {
-    const conf = await this._invocationConfig([StoreCapabilities.add.can, UploadCapabilities.add.can])
+  async uploadFile(file, options = {}) {
+    const conf = await this._invocationConfig([
+      StoreCapabilities.add.can,
+      UploadCapabilities.add.can,
+    ])
     options.connection = this._serviceConf.upload
     return uploadFile(conf, file, options)
   }
@@ -56,11 +66,14 @@ export class Client extends Base {
    * for the generated DAG. All files are added to a container directory, with
    * paths in file names preserved.
    *
-   * @param {import('./types').FileLike[]} files File data.
+   * @param {import('./types').FileLike[]} files - File data.
    * @param {import('./types').UploadDirectoryOptions} [options]
    */
-  async uploadDirectory (files, options = {}) {
-    const conf = await this._invocationConfig([StoreCapabilities.add.can, UploadCapabilities.add.can])
+  async uploadDirectory(files, options = {}) {
+    const conf = await this._invocationConfig([
+      StoreCapabilities.add.can,
+      UploadCapabilities.add.can,
+    ])
     options.connection = this._serviceConf.upload
     return uploadDirectory(conf, files, options)
   }
@@ -74,11 +87,14 @@ export class Client extends Base {
    *
    * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
    *
-   * @param {import('./types').BlobLike} car CAR file.
+   * @param {import('./types').BlobLike} car - CAR file.
    * @param {import('./types').UploadOptions} [options]
    */
-  async uploadCAR (car, options = {}) {
-    const conf = await this._invocationConfig([StoreCapabilities.add.can, UploadCapabilities.add.can])
+  async uploadCAR(car, options = {}) {
+    const conf = await this._invocationConfig([
+      StoreCapabilities.add.can,
+      UploadCapabilities.add.can,
+    ])
     options.connection = this._serviceConf.upload
     return uploadCAR(conf, car, options)
   }
@@ -86,21 +102,21 @@ export class Client extends Base {
   /**
    * Return the default provider.
    */
-  defaultProvider () {
+  defaultProvider() {
     return this._agent.connection.id.did()
   }
 
   /**
    * The current user agent (this device).
    */
-  agent () {
+  agent() {
     return this._agent.issuer
   }
 
   /**
    * The current space.
    */
-  currentSpace () {
+  currentSpace() {
     const did = this._agent.currentSpace()
     return did ? new Space(did, this._agent.spaces.get(did)) : undefined
   }
@@ -110,14 +126,14 @@ export class Client extends Base {
    *
    * @param {import('./types').DID<'key'>} did
    */
-  async setCurrentSpace (did) {
+  async setCurrentSpace(did) {
     await this._agent.setCurrentSpace(did)
   }
 
   /**
    * Spaces available to this agent.
    */
-  spaces () {
+  spaces() {
     return [...this._agent.spaces].map(([did, meta]) => new Space(did, meta))
   }
 
@@ -126,7 +142,7 @@ export class Client extends Base {
    *
    * @param {string} [name]
    */
-  async createSpace (name) {
+  async createSpace(name) {
     const { did, meta } = await this._agent.createSpace(name)
     return new Space(did, meta)
   }
@@ -140,8 +156,10 @@ export class Client extends Base {
    * @param {import('./types').DID<'web'>} [options.provider]
    * @param {AbortSignal} [options.signal]
    */
-  async registerSpace (email, options = {}) {
-    options.provider = options.provider ?? /** @type {import('./types').DID<'web'>} */(this.defaultProvider())
+  async registerSpace(email, options = {}) {
+    options.provider =
+      options.provider ??
+      /** @type {import('./types').DID<'web'>} */ (this.defaultProvider())
     await this._agent.registerSpace(email, options)
   }
   /* c8 ignore stop */
@@ -151,7 +169,7 @@ export class Client extends Base {
    *
    * @param {import('./types').Delegation} proof
    */
-  async addSpace (proof) {
+  async addSpace(proof) {
     const { did, meta } = await this._agent.importSpaceFromDelegation(proof)
     return new Space(did, meta)
   }
@@ -161,10 +179,10 @@ export class Client extends Base {
    *
    * Proofs are delegations with an _audience_ matching the agent DID.
    *
-   * @param {import('./types').Capability[]} [caps] Capabilities to
+   * @param {import('./types').Capability[]} [caps] - Capabilities to
    * filter by. Empty or undefined caps with return all the proofs.
    */
-  proofs (caps) {
+  proofs(caps) {
     return this._agent.proofs(caps)
   }
 
@@ -174,20 +192,22 @@ export class Client extends Base {
    *
    * @param {import('./types').Delegation} proof
    */
-  async addProof (proof) {
+  async addProof(proof) {
     await this._agent.addProof(proof)
   }
 
   /**
    * Get delegations created by the agent for others.
    *
-   * @param {import('./types').Capability[]} [caps] Capabilities to
+   * @param {import('./types').Capability[]} [caps] - Capabilities to
    * filter by. Empty or undefined caps with return all the delegations.
    */
-  delegations (caps) {
+  delegations(caps) {
     const delegations = []
     for (const { delegation, meta } of this._agent.delegationsWithMeta(caps)) {
-      delegations.push(new AgentDelegation(delegation.root, delegation.blocks, meta))
+      delegations.push(
+        new AgentDelegation(delegation.root, delegation.blocks, meta)
+      )
     }
     return delegations
   }
@@ -200,13 +220,16 @@ export class Client extends Base {
    * @param {import('./types').Abilities[]} abilities
    * @param {Omit<import('./types').UCANOptions, 'audience'> & { audienceMeta?: import('./types').AgentMeta }} [options]
    */
-  async createDelegation (audience, abilities, options = {}) {
-    const audienceMeta = options.audienceMeta ?? { name: 'agent', type: 'device' }
+  async createDelegation(audience, abilities, options = {}) {
+    const audienceMeta = options.audienceMeta ?? {
+      name: 'agent',
+      type: 'device',
+    }
     const { root, blocks } = await this._agent.delegate({
       ...options,
       abilities,
       audience,
-      audienceMeta
+      audienceMeta,
     })
     return new AgentDelegation(root, blocks, { audience: audienceMeta })
   }

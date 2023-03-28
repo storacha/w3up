@@ -14,7 +14,7 @@ export class AccessClient extends Base {
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
-  async authorize (email, options) {
+  async authorize(email, options) {
     return authorizeWithSocket(this._agent, email, options)
   }
   /* c8 ignore stop */
@@ -22,7 +22,9 @@ export class AccessClient extends Base {
   /**
    * Claim delegations granted to the account associated with this agent.
    */
-  async claim () {
-    return claimAccess(this._agent, this._agent.issuer.did(), { addProofs: true })
+  async claim() {
+    return claimAccess(this._agent, this._agent.issuer.did(), {
+      addProofs: true,
+    })
   }
 }

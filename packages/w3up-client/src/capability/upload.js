@@ -9,11 +9,11 @@ export class UploadClient extends Base {
   /**
    * Register an "upload" to the resource.
    *
-   * @param {import('../types').UnknownLink} root Root data CID for the DAG that was stored.
-   * @param {import('../types').CARLink[]} shards CIDs of CAR files that contain the DAG.
+   * @param {import('../types').UnknownLink} root - Root data CID for the DAG that was stored.
+   * @param {import('../types').CARLink[]} shards - CIDs of CAR files that contain the DAG.
    * @param {import('../types').RequestOptions} [options]
    */
-  async add (root, shards, options = {}) {
+  async add(root, shards, options = {}) {
     const conf = await this._invocationConfig([UploadCapabilities.add.can])
     options.connection = this._serviceConf.upload
     return Upload.add(conf, root, shards, options)
@@ -24,7 +24,7 @@ export class UploadClient extends Base {
    *
    * @param {import('../types').ListRequestOptions} [options]
    */
-  async list (options = {}) {
+  async list(options = {}) {
     const conf = await this._invocationConfig([UploadCapabilities.list.can])
     options.connection = this._serviceConf.upload
     return Upload.list(conf, options)
@@ -33,10 +33,10 @@ export class UploadClient extends Base {
   /**
    * Remove an upload by root data CID.
    *
-   * @param {import('../types').UnknownLink} root Root data CID to remove.
+   * @param {import('../types').UnknownLink} root - Root data CID to remove.
    * @param {import('../types').RequestOptions} [options]
    */
-  async remove (root, options = {}) {
+  async remove(root, options = {}) {
     const conf = await this._invocationConfig([UploadCapabilities.remove.can])
     options.connection = this._serviceConf.upload
     return Upload.remove(conf, root, options)
