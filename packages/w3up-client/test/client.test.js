@@ -33,9 +33,9 @@ describe('Client', () => {
             return {
               status: 'upload',
               headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200'
+              url: 'http://localhost:9200',
             }
-          })
+          }),
         },
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
@@ -48,29 +48,30 @@ describe('Client', () => {
             assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
             return {
               root: expectedCar.roots[0],
-              shards: [expectedCar.cid]
+              shards: [expectedCar.cid],
             }
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())
 
       const dataCID = await alice.uploadFile(file, {
-        onShardStored: meta => { carCID = meta.cid }
+        onShardStored: (meta) => {
+          carCID = meta.cid
+        },
       })
 
       assert(service.store.add.called)
@@ -88,7 +89,10 @@ describe('Client', () => {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
 
-      await assert.rejects(alice.uploadFile(file), { message: 'missing current space: use createSpace() or setCurrentSpace()' })
+      await assert.rejects(alice.uploadFile(file), {
+        message:
+          'missing current space: use createSpace() or setCurrentSpace()',
+      })
     })
   })
 
@@ -96,7 +100,7 @@ describe('Client', () => {
     it('should upload a directory to the service', async () => {
       const files = [
         new File([await randomBytes(128)], '1.txt'),
-        new File([await randomBytes(32)], '2.txt')
+        new File([await randomBytes(32)], '2.txt'),
       ]
 
       /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
@@ -113,9 +117,9 @@ describe('Client', () => {
             return {
               status: 'upload',
               headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200'
+              url: 'http://localhost:9200',
             }
-          })
+          }),
         },
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
@@ -127,27 +131,28 @@ describe('Client', () => {
             assert.equal(invCap.nb?.shards?.length, 1)
             if (!invCap.nb) throw new Error('nb must be present')
             return invCap.nb
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())
 
       const dataCID = await alice.uploadDirectory(files, {
-        onShardStored: meta => { carCID = meta.cid }
+        onShardStored: (meta) => {
+          carCID = meta.cid
+        },
       })
 
       assert(service.store.add.called)
@@ -178,9 +183,9 @@ describe('Client', () => {
             return {
               status: 'upload',
               headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200'
+              url: 'http://localhost:9200',
             }
-          })
+          }),
         },
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
@@ -193,25 +198,28 @@ describe('Client', () => {
             assert.equal(invCap.nb.shards?.length, 1)
             assert.equal(invCap.nb.shards[0].toString(), carCID.toString())
             return invCap.nb
-          })
-        }
+          }),
+        },
       })
 
       const server = createServer({
         id: await Signer.generate(),
         service,
         decoder: CAR,
-        encoder: CBOR
+        encoder: CBOR,
       })
 
-      const alice = new Client(
-        await AgentData.create(),
-        { serviceConf: await mockServiceConf(server) }
-      )
+      const alice = new Client(await AgentData.create(), {
+        serviceConf: await mockServiceConf(server),
+      })
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())
-      await alice.uploadCAR(car, { onShardStored: meta => { carCID = meta.cid } })
+      await alice.uploadCAR(car, {
+        onShardStored: (meta) => {
+          carCID = meta.cid
+        },
+      })
 
       assert(service.store.add.called)
       assert.equal(service.store.add.callCount, 1)
@@ -228,7 +236,7 @@ describe('Client', () => {
       const alice = new Client(await AgentData.create())
 
       const current0 = alice.currentSpace()
-      assert(current0 == null)
+      assert(current0 === undefined)
 
       const space = await alice.createSpace()
       await alice.setCurrentSpace(space.did())
@@ -298,7 +306,7 @@ describe('Client', () => {
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
       const delegation = await alice.createDelegation(bob.agent(), ['*'], {
-        audienceMeta: { type: 'device', name }
+        audienceMeta: { type: 'device', name },
       })
 
       const delegations = alice.delegations()

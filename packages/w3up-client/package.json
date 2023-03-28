@@ -58,7 +58,7 @@
     "dist"
   ],
   "scripts": {
-    "lint": "standard",
+    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "prepare": "npm run build",
     "test": "npm-run-all -p -r mock test:all",
@@ -89,6 +89,7 @@
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "docusaurus-plugin-typedoc": "^0.18.0",
+    "hd-scripts": "^5.0.0",
     "hundreds": "^0.0.9",
     "mocha": "^10.1.0",
     "multiformats": "^11.0.0",
@@ -99,6 +100,48 @@
     "typedoc-plugin-markdown": "^3.14.0",
     "typedoc-plugin-missing-exports": "^1.0.0",
     "typescript": "^4.8.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/hd-scripts/eslint/index.js"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/prefer-export-from": "off",
+      "unicorn/no-array-reduce": "off",
+      "unicorn/no-null": "off",
+      "unicorn/no-await-expression-member": "off",
+      "import/extensions": "off",
+      "jsdoc/check-tag-names": "off",
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "ArrayLike",
+            "AsyncIterable",
+            "AsyncIterableIterator",
+            "BlobPart",
+            "Iterable",
+            "IterableIterator",
+            "Generator",
+            "CryptoKeyPair",
+            "NodeJS",
+            "ErrorOptions",
+            "IDBTransactionMode"
+          ]
+        }
+      ]
+    },
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist",
+      "coverage"
+    ]
   },
   "directories": {
     "test": "test"
