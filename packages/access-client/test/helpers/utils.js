@@ -35,7 +35,7 @@ export async function createCarCid(source) {
  *
  * @returns {Ucanto.ServerView<import('../../src/types.js').Service>}
  */
-export function createServer() {
+export function createServer(handlers = {}) {
   const server = Server.create({
     id: service,
     encoder: CBOR,
@@ -58,6 +58,7 @@ export function createServer() {
           }
         }),
       },
+      ...handlers
     },
   })
 

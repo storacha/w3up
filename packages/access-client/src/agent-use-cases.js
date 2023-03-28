@@ -136,13 +136,17 @@ export async function pollAccessClaimUntil(
       if (pollClaimResult.error) {
         return reject(pollClaimResult)
       }
-      const claimedDelegations = Object.values(
-        pollClaimResult.delegations
-      ).flatMap((d) => bytesToDelegations(d))
-      if (delegationsMatch(claimedDelegations)) {
-        resolve(claimedDelegations)
-      } else {
-        setTimeout(() => poll(retryAfter), retryAfter)
+      try {
+        const claimedDelegations = Object.values(
+          pollClaimResult.delegations
+        ).flatMap((d) => bytesToDelegations(d))
+        if (delegationsMatch(claimedDelegations)) {
+          resolve(claimedDelegations)
+        } else {
+          setTimeout(() => poll(retryAfter), retryAfter)
+        }
+      } catch (e) {
+        reject(e)
       }
     }
   })
