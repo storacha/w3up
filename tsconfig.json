@@ -39,7 +39,7 @@
       "packages/access-client",
       "packages/capabilities",
       "packages/upload-client",
-      "packages/w3up-client",
+      "packages/w3up-client"
     ],
     "excludeExternals": true,
     "darkHighlightTheme": "github-dark",

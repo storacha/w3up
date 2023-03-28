@@ -8,7 +8,7 @@ inputs:
     description: 'path to directory of w3up-client package'
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - run: npm run lint
       shell: bash
