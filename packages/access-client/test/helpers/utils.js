@@ -32,7 +32,7 @@ export async function createCarCid(source) {
 }
 
 /**
- *
+ * @param {object} handlers - a map of keys to capability handler maps
  * @returns {Ucanto.ServerView<import('../../src/types.js').Service>}
  */
 export function createServer(handlers = {}) {
@@ -58,7 +58,7 @@ export function createServer(handlers = {}) {
           }
         }),
       },
-      ...handlers
+      ...handlers,
     },
   })
 

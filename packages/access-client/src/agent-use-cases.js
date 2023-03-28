@@ -145,8 +145,8 @@ export async function pollAccessClaimUntil(
         } else {
           setTimeout(() => poll(retryAfter), retryAfter)
         }
-      } catch (e) {
-        reject(e)
+      } catch (error) {
+        reject(error)
       }
     }
   })
