@@ -191,6 +191,11 @@ export async function waitForDelegationOnSocket(access, opts) {
  */
 
 /**
+ * Wait for the authorization process to complete by waiting on a
+ * well-known websocket endpoint for the access-api server to
+ * receive and forward a session delegation from the authorization
+ * email flow.
+ * 
  * @type AuthorizationWaiter
  */
 export async function waitForAuthorizationOnSocket(access, opts = {}) {
@@ -199,6 +204,10 @@ export async function waitForAuthorizationOnSocket(access, opts = {}) {
 }
 
 /**
+ * Wait for authorization process to complete by polling executions of the
+ * `access/claim` capability and waiting for the result to include
+ * a session delegation.
+ * 
  * @type AuthorizationWaiter
  */
 export async function waitForAuthorizationByPolling(access, opts = {}) {
@@ -254,11 +263,12 @@ export async function authorizeAndWait(access, email, opts = {}) {
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+ * @param {boolean} [opts.addProofs]
  * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
 export async function authorizeWaitAndClaim(accessAgent, email, opts) {
   await authorizeAndWait(accessAgent, email, opts)
-  await claimAccess(accessAgent, accessAgent.issuer.did(), { addProofs: true })
+  await claimAccess(accessAgent, accessAgent.issuer.did(), { addProofs: opts?.addProofs ?? true })
 }
 
 /**
@@ -270,7 +280,7 @@ export async function authorizeWaitAndClaim(accessAgent, email, opts) {
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
- * @deprecated
+ * @deprecated use authorizeWaitAndClaim directly going forward, passing it the expectAuthorization: waitForAuthorizationOnSocket to replicate this function's behavior
  */
 export async function authorizeWithSocket(access, email, opts) {
   return authorizeWaitAndClaim(access, email, {
