@@ -57,7 +57,7 @@ export class Client extends Base {
    * paths in file names preserved.
    *
    * @param {import('./types').FileLike[]} files File data.
-   * @param {import('./types').UploadOptions} [options]
+   * @param {import('./types').UploadDirectoryOptions} [options]
    */
   async uploadDirectory (files, options = {}) {
     const conf = await this._invocationConfig([StoreCapabilities.add.can, UploadCapabilities.add.can])
