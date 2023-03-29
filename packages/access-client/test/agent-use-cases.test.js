@@ -2,7 +2,7 @@ import assert from 'assert'
 import sinon from 'sinon'
 import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
-import { space } from '@web3-storage/capabilities/space'
+import * as Space from '@web3-storage/capabilities/space'
 import { Agent, connection } from '../src/agent.js'
 import {
   delegationsIncludeSessionProof,
@@ -47,7 +47,7 @@ describe('authorizeWaitAndClaim', async function () {
     const agent = await Agent.create(undefined, {
       connection: connection({ principal: server.id, channel: server }),
     })
-    const spaceProof = await space.delegate({
+    const spaceProofOne = await Space.space.delegate({
       issuer: agent.issuer,
       audience: agent.issuer,
       with: fixtures.alice.did(),
@@ -57,25 +57,55 @@ describe('authorizeWaitAndClaim', async function () {
       audience: agent.issuer,
       with: fixtures.alice.did(),
       nb: {
-        proof: spaceProof.asCID,
+        proof: spaceProofOne.asCID,
       },
     })
     const authorizedDelegations = {
       delegations: {
+        [spaceProofOne.cid.toString()]: delegationsToBytes([spaceProofOne]),
         [sessionProof.cid.toString()]: delegationsToBytes([sessionProof]),
       },
     }
+    const spaceProofTwo = await Space.space.delegate({
+      issuer: agent.issuer,
+      audience: agent.issuer,
+      with: fixtures.bob.did(),
+    })
+    const allClaimableDelegations = {
+      delegations: {
+        ...authorizedDelegations.delegations,
+        [spaceProofTwo.cid.toString()]: delegationsToBytes([spaceProofTwo]),
+      }
+    }
+
+    /**
+     * the default authorizeWait strategy just polls `access/claim` so set up the handler to be called three times:
+     * 1) the first time we return no delegations to get it to retry
+     * 2) the second time we return the session delegations so it moves on from the authorize step
+     * 3) the third time the user is claiming delegations - in most real world situations this would return the same delegations
+     *    as (2) but we return an extra delegation to make it easier to write tests that verify the claim step is saving proofs
+     *    it receives
+     * 
+     * once we have a non-polling implementation of an AuthorizationWaiter as the default we should be able to mock
+     * this being called once and returning all the claims
+     */
     claimHandler
       .onFirstCall()
       .resolves({ delegations: {} })
       .onSecondCall()
       .resolves(authorizedDelegations)
       .onThirdCall()
-      .resolves(authorizedDelegations)
+      .resolves(allClaimableDelegations)
+
+    assert(agent.proofs([]).length === 0)
 
     await authorizeWaitAndClaim(agent, 'foo@example.com')
 
     assert(authorizeHandler.calledOnce)
     assert(claimHandler.calledThrice)
+
+    // make sure both space proofs are available
+    assert(agent.proofs([{can: 'space/*', with: spaceProofOne.capabilities[0].with}]).length > 0)
+    assert(agent.proofs([{can: 'space/*', with: spaceProofTwo.capabilities[0].with}]).length > 0)
   })
 })
