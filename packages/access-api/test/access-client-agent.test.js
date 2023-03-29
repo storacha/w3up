@@ -458,7 +458,7 @@ for (const accessApiVariant of /** @type {const} */ ([
         delegationsIncludeSessionProof,
         deviceA,
         deviceA.issuer.did(),
-        { abort: abort.signal }
+        { signal: abort.signal }
       )
       return claimed
     }
