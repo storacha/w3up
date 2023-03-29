@@ -56,6 +56,46 @@ describe('Agent', function () {
     )
   })
 
+  it('should allow import a space', async () => {
+    const alice = await Agent.create()
+    const bob = await Agent.create()
+
+    const space = await alice.createSpace('videos')
+    await alice.setCurrentSpace(space.did)
+
+    const proof = await alice.delegate({
+      audience: bob,
+      audienceMeta: { name: 'videos', type: 'app' },
+      abilities: ['*']
+    })
+
+    await bob.importSpaceFromDelegation(proof)
+    await bob.setCurrentSpace(space.did)
+
+    const proofs = bob.proofs([{ can: 'store/add', with: space.did }])
+    assert(proofs.length)
+  })
+
+  it('should allow import a space with restricted abilities', async () => {
+    const alice = await Agent.create()
+    const bob = await Agent.create()
+
+    const space = await alice.createSpace('videos')
+    await alice.setCurrentSpace(space.did)
+
+    const proof = await alice.delegate({
+      audience: bob,
+      audienceMeta: { name: 'videos', type: 'app' },
+      abilities: ['store/add']
+    })
+
+    await bob.importSpaceFromDelegation(proof)
+    await bob.setCurrentSpace(space.did)
+
+    const proofs = bob.proofs([{ can: 'store/add', with: space.did }])
+    assert(proofs.length)
+  })
+
   it('should invoke and execute', async function () {
     const agent = await Agent.create(undefined, {
       connection: connection({ channel: createServer() }),
@@ -199,7 +239,7 @@ describe('Agent', function () {
       audienceMeta: { name: 'sss', type: 'app' },
     })
 
-    await bob.addProof(delegation)
+    await bob.importSpaceFromDelegation(delegation)
     await bob.setCurrentSpace(space.did)
 
     // should not be able to store/remove - bob only has ability to space/info
