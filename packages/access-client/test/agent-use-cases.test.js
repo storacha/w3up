@@ -75,7 +75,7 @@ describe('authorizeWaitAndClaim', async function () {
       delegations: {
         ...authorizedDelegations.delegations,
         [spaceProofTwo.cid.toString()]: delegationsToBytes([spaceProofTwo]),
-      }
+      },
     }
 
     /**
@@ -83,9 +83,9 @@ describe('authorizeWaitAndClaim', async function () {
      * 1) the first time we return no delegations to get it to retry
      * 2) the second time we return the session delegations so it moves on from the authorize step
      * 3) the third time the user is claiming delegations - in most real world situations this would return the same delegations
-     *    as (2) but we return an extra delegation to make it easier to write tests that verify the claim step is saving proofs
-     *    it receives
-     * 
+     * as (2) but we return an extra delegation to make it easier to write tests that verify the claim step is saving proofs
+     * it receives
+     *
      * once we have a non-polling implementation of an AuthorizationWaiter as the default we should be able to mock
      * this being called once and returning all the claims
      */
@@ -105,7 +105,15 @@ describe('authorizeWaitAndClaim', async function () {
     assert(claimHandler.calledThrice)
 
     // make sure both space proofs are available
-    assert(agent.proofs([{can: 'space/*', with: spaceProofOne.capabilities[0].with}]).length > 0)
-    assert(agent.proofs([{can: 'space/*', with: spaceProofTwo.capabilities[0].with}]).length > 0)
+    assert(
+      agent.proofs([
+        { can: 'space/*', with: spaceProofOne.capabilities[0].with },
+      ]).length > 0
+    )
+    assert(
+      agent.proofs([
+        { can: 'space/*', with: spaceProofTwo.capabilities[0].with },
+      ]).length > 0
+    )
   })
 })
