@@ -157,6 +157,7 @@ export async function pollAccessClaimUntil(
  * @param {AccessAgent} access
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
+ * @deprecated - use waitForAuthorizationOnSocket
  */
 export async function waitForDelegationOnSocket(access, opts) {
   const ws = new Websocket(access.url, 'validate-ws')
