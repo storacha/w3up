@@ -40,9 +40,8 @@ describe('create', () => {
     await create({ principal: principal0, store })
 
     const principal1 = await Signer.generate()
-    await assert.rejects(
-      create({ principal: principal1, store }),
-      { message: `store cannot be used with ${principal1.did()}, stored principal and passed principal must match` }
-    )
+    await assert.rejects(create({ principal: principal1, store }), {
+      message: `store cannot be used with ${principal1.did()}, stored principal and passed principal must match`,
+    })
   })
 })
