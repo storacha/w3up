@@ -191,11 +191,7 @@ export async function authorizeAndWait(access, email, opts) {
       })
     }
   const account = { did: () => createDidMailtoFromEmail(email) }
-  await requestAccess(
-    access,
-    account,
-    opts?.capabilities || [{ can: '*' }]
-  )
+  await requestAccess(access, account, opts?.capabilities || [{ can: '*' }])
   const sessionDelegations = [...(await expectAuthorization())]
   if (!opts?.dontAddProofs) {
     await Promise.all(sessionDelegations.map(async (d) => access.addProof(d)))
