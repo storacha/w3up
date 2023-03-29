@@ -124,17 +124,19 @@ export class Client extends Base {
   /**
    * Use a specific space.
    *
-   * @param {import('./types').DID<'key'>} did
+   * @param {import('./types').DID} did
    */
   async setCurrentSpace(did) {
-    await this._agent.setCurrentSpace(did)
+    await this._agent.setCurrentSpace(/** @type {`did:key:${string}`} */ (did))
   }
 
   /**
    * Spaces available to this agent.
    */
   spaces() {
-    return [...this._agent.spaces].map(([did, meta]) => new Space(did, meta))
+    return [...this._agent.spaces].map(([did, meta]) => {
+      return new Space(did, meta)
+    })
   }
 
   /**

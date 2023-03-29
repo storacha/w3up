@@ -24,6 +24,8 @@ describe('StoreClient', () => {
               status: 'upload',
               headers: { 'x-test': 'true' },
               url: 'http://localhost:9200',
+              link: car.cid,
+              with: space.did(),
             }
           }),
         },
@@ -37,6 +39,7 @@ describe('StoreClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -88,6 +91,7 @@ describe('StoreClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -130,6 +134,7 @@ describe('StoreClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 

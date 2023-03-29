@@ -43,6 +43,7 @@ describe('StoreClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -92,6 +93,7 @@ describe('StoreClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -121,7 +123,8 @@ describe('StoreClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.remove.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
-            return null
+            // eslint-disable-next-line unicorn/no-useless-undefined
+            return undefined
           }),
         },
       })
@@ -134,6 +137,7 @@ describe('StoreClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 

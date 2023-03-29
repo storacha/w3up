@@ -19,7 +19,7 @@ describe('AccessClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, AccessCapabilities.claim.can)
             return {
-              delegations: [],
+              delegations: {},
             }
           }),
         },
@@ -33,6 +33,7 @@ describe('AccessClient', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
