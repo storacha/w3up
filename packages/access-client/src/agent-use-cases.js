@@ -40,8 +40,8 @@ export async function requestAccess(access, account, capabilities) {
  *
  * @param {AccessAgent} access
  * @param {Ucanto.DID} [audienceOfClaimedDelegations] - audience of claimed delegations. defaults to access.connection.id.did()
- * @param {object} options
- * @param {boolean} [options.addProofs] - whether to addProof to access agent
+ * @param {object} opts
+ * @param {boolean} [opts.addProofs] - whether to addProof to access agent
  * @returns
  */
 export async function claimAccess(
@@ -106,20 +106,20 @@ export function delegationsIncludeSessionProof(delegations) {
  * @param {DelegationsChecker} delegationsMatch
  * @param {AccessAgent} access
  * @param {Ucanto.DID} delegee
- * @param {object} [options]
- * @param {number} [options.interval]
- * @param {AbortSignal} [options.abort]
+ * @param {object} [opts]
+ * @param {number} [opts.interval]
+ * @param {AbortSignal} [opts.signal]
  * @returns {Promise<Iterable<Ucanto.Delegation>>}
  */
 export async function pollAccessClaimUntil(
   delegationsMatch,
   access,
   delegee,
-  options
+  opts
 ) {
-  const interval = options?.interval || 250
+  const interval = opts?.interval || 250
   const claimed = await new Promise((resolve, reject) => {
-    options?.abort?.addEventListener('abort', (e) => {
+    opts?.signal?.addEventListener('abort', (e) => {
       reject(
         new Error('pollAccessClaimUntilSessionProof aborted', { cause: e })
       )
@@ -221,7 +221,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
     access,
     access.issuer.did(),
     {
-      abort: opts?.signal,
+      signal: opts?.signal,
     }
   )
   return [...claimed]
