@@ -109,6 +109,7 @@
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
       "unicorn/no-array-reduce": "off",
+      "unicorn/explicit-length-check": "off",
       "jsdoc/no-undefined-types": [
         "error",
         {
