@@ -103,7 +103,7 @@ export class ShardStoringStream extends TransformStream {
             }
           },
           { signal: abortController.signal }
-        )
+        ).catch(err => console.error(err))
 
         // retain backpressure by not returning until no items queued to be run
         await queue.onSizeLessThan(1)
