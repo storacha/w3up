@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.2.0](https://github.com/web3-storage/w3protocol/compare/access-v11.1.0...access-v11.2.0) (2023-03-29)
+
+
+### Features
+
+* allow importing a space with restricted abilities ([#685](https://github.com/web3-storage/w3protocol/issues/685)) ([a711b9b](https://github.com/web3-storage/w3protocol/commit/a711b9ba92c1b3d2a25e91c538234de62af6f485))
+
 ## [11.1.0](https://github.com/web3-storage/w3protocol/compare/access-v11.0.1...access-v11.1.0) (2023-03-29)
 
 
