@@ -1,6 +1,7 @@
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
+import * as ucanto from '@ucanto/core'
 import { canDelegateAbility } from '@web3-storage/capabilities/utils'
 
 /**
@@ -44,7 +45,9 @@ export function validate(delegation, opts) {
   } = opts ?? {}
 
   if (checkAudience && delegation.audience.did() !== checkAudience.did()) {
-    throw new Error(`Delegation audience does not match required DID.`)
+    throw new Error(
+      `Delegation audience ${delegation.audience.did()} does not match required DID ${checkAudience.did()}`
+    )
   }
 
   if (checkIsExpired && isExpired(delegation)) {
@@ -62,12 +65,15 @@ export function validate(delegation, opts) {
  * @param {import('@ucanto/interface').Capability} child
  */
 export function canDelegateCapability(delegation, child) {
-  for (const parent of delegation.capabilities) {
-    if (
-      parent.with === child.with &&
-      canDelegateAbility(parent.can, child.can)
-    ) {
-      return true
+  const allowsCapabilities = ucanto.Delegation.allows(delegation)
+  if (allowsCapabilities[child.with]) {
+    const cans = /** @type {import('@ucanto/interface').Ability[]} */ (
+      Object.keys(allowsCapabilities[child.with])
+    )
+    for (const can of cans) {
+      if (canDelegateAbility(can, child.can)) {
+        return true
+      }
     }
   }
   return false

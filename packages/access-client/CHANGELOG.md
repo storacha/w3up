@@ -1,5 +1,58 @@
 # Changelog
 
+## [11.0.1](https://github.com/web3-storage/w3protocol/compare/access-v11.0.0...access-v11.0.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* @web3-storage/access/agent no longer exports authorizeWithPollClaim ([#656](https://github.com/web3-storage/w3protocol/issues/656)) ([a8be429](https://github.com/web3-storage/w3protocol/commit/a8be429e9d60bfe3a32ae7ca0fe7f2ef6e88ff4d))
+
+## [11.0.0](https://github.com/web3-storage/w3protocol/compare/access-v11.0.0-rc.0...access-v11.0.0) (2023-03-23)
+
+
+### Features
+
+* move access-api delegation bytes out of d1 and into r2 ([#578](https://github.com/web3-storage/w3protocol/issues/578)) ([4510c9a](https://github.com/web3-storage/w3protocol/commit/4510c9a8c4389ca975d66f5c9592bce326bbc1c7))
+
+## [11.0.0-rc.0](https://github.com/web3-storage/w3protocol/compare/access-v10.0.0...access-v11.0.0-rc.0) (2023-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433))
+
+### Features
+
+* define `access/confirm` handler and use it in ucanto-test-utils registerSpaces + validate-email handler ([#530](https://github.com/web3-storage/w3protocol/issues/530)) ([b1bbc90](https://github.com/web3-storage/w3protocol/commit/b1bbc907c96cfc7788f50fb0c154d9b54894e03e))
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433)) ([1ddc6a0](https://github.com/web3-storage/w3protocol/commit/1ddc6a0c53f8cdb6837a315d8aaf567100dfb8d7))
+* move validation flow to a Durable Object to make it ⏩ fast ⏩ fast ⏩ fast ⏩  ([#449](https://github.com/web3-storage/w3protocol/issues/449)) ([02d7552](https://github.com/web3-storage/w3protocol/commit/02d75522b1ed794d267880e5f8a4fc3964066992))
+* space/info will not error for spaces that have had storage provider added via provider/add ([#510](https://github.com/web3-storage/w3protocol/issues/510)) ([ea4e872](https://github.com/web3-storage/w3protocol/commit/ea4e872475c74165b08016c210e65b4062a2ffb6))
+
+
+### Miscellaneous Chores
+
+* **access-client:** release 11.0.0-rc.0 ([#573](https://github.com/web3-storage/w3protocol/issues/573)) ([be4386d](https://github.com/web3-storage/w3protocol/commit/be4386d66ceea393f289adb3c79273c250542807))
+
+## [10.0.0](https://github.com/web3-storage/w3protocol/compare/access-v9.4.0...access-v10.0.0) (2023-03-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463))
+
+### Features
+
+* access-api handles provider/add invocations ([#462](https://github.com/web3-storage/w3protocol/issues/462)) ([5fb56f7](https://github.com/web3-storage/w3protocol/commit/5fb56f794529f3d4de2b4597c47503002767fabb))
+* access-api serves access/claim invocations ([#456](https://github.com/web3-storage/w3protocol/issues/456)) ([baacf35](https://github.com/web3-storage/w3protocol/commit/baacf3553ce8de0ca75e0815da849cca65ec880a))
+* handle access/delegate invocations without error ([#427](https://github.com/web3-storage/w3protocol/issues/427)) ([4f0bd1c](https://github.com/web3-storage/w3protocol/commit/4f0bd1c1cd3cfb1c848892ad418c6d7b2197045a))
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463)) ([2d786ee](https://github.com/web3-storage/w3protocol/commit/2d786ee81a6eb72c4782548ad3e3796fe3947fa5))
+* upgrade to new ucanto ([#498](https://github.com/web3-storage/w3protocol/issues/498)) ([dcb41a9](https://github.com/web3-storage/w3protocol/commit/dcb41a9981c2b6bebbdbd29debcad9f510383680))
+
+
+### Bug Fixes
+
+* allow injecting email ([#466](https://github.com/web3-storage/w3protocol/issues/466)) ([e19847f](https://github.com/web3-storage/w3protocol/commit/e19847fef804fed33f709ec8b78640fff21ca01e))
+
 ## [9.4.0](https://github.com/web3-storage/w3protocol/compare/access-v9.3.0...access-v9.4.0) (2023-02-23)
 
 

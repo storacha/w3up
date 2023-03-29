@@ -11,7 +11,13 @@ import { context } from './helpers/context.js'
 // @ts-ignore
 import isSubset from 'is-subset'
 import { toEmail } from '../src/utils/did-mailto.js'
-import { warnOnErrorResult } from './helpers/ucanto-test-utils.js'
+import {
+  warnOnErrorResult,
+  registerSpaces,
+} from './helpers/ucanto-test-utils.js'
+import { ed25519, Absentee } from '@ucanto/principal'
+import { delegate } from '@ucanto/core'
+import { Space } from '@web3-storage/capabilities'
 
 /** @type {typeof assert} */
 const t = assert
@@ -37,7 +43,7 @@ describe('access/authorize', function () {
     })
   })
 
-  it('should issue ./update', async function () {
+  it('should issue access/confirm', async function () {
     const { issuer, service, conn, d1 } = ctx
     const accountDID = 'did:mailto:dag.house:hello'
 
@@ -67,13 +73,14 @@ describe('access/authorize', function () {
       )
     const delegation = stringToDelegation(encoded)
     t.deepEqual(delegation.issuer.did(), service.did())
-    t.deepEqual(delegation.audience.did(), accountDID)
+    t.deepEqual(delegation.audience.did(), service.did())
     t.deepEqual(delegation.capabilities, [
       {
-        with: issuer.did(),
-        can: 'access/authorize',
+        with: conn.id.did(),
+        can: 'access/confirm',
         nb: {
           iss: accountDID,
+          aud: issuer.did(),
           att: [{ can: '*' }],
         },
       },
@@ -114,15 +121,13 @@ describe('access/authorize', function () {
     }
 
     const url = new URL(email.url)
-    const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessAuthorize]>} */ (
-        url.searchParams.get('ucan')
-      )
     const rsp = await mf.dispatchFetch(url, { method: 'POST' })
-    const html = await rsp.text()
+    assert.deepEqual(rsp.status, 200)
 
-    assert(html.includes(encoded))
+    const html = await rsp.text()
+    assert(html.includes('Email Validated'))
     assert(html.includes(toEmail(accountDID)))
+    assert(html.includes(issuer.did()))
   })
 
   // this relies on ./update that is no longer in ucanto
@@ -303,5 +308,139 @@ describe('access/authorize', function () {
     } else {
       assert.fail('should have ws')
     }
+  })
+
+  it('should receive account delegations', async () => {
+    const space = await ed25519.generate()
+    const w3 = ctx.service
+
+    const account = Absentee.from({ id: 'did:mailto:dag.house:test' })
+    await registerSpaces([space], {
+      ...ctx,
+      agent: ctx.issuer,
+      account,
+    })
+
+    // delegate all space capabilities to the account
+    const delegation = await delegate({
+      issuer: space,
+      audience: account,
+      capabilities: [
+        {
+          with: space.did(),
+          can: '*',
+        },
+      ],
+    })
+
+    // send above delegation to the service so it can be claimed.
+    const delegateResult = await Access.delegate
+      .invoke({
+        issuer: space,
+        audience: w3,
+        with: space.did(),
+        nb: {
+          delegations: {
+            [delegation.cid.toString()]: delegation.cid,
+          },
+        },
+        proofs: [delegation],
+      })
+      .execute(ctx.conn)
+
+    warnOnErrorResult(delegateResult)
+    assert.equal(delegateResult.error, undefined, 'delegation succeeded')
+
+    // Now generate an agent and try to authorize with the account
+    const agent = await ed25519.generate()
+    const auth = await Access.authorize
+      .invoke({
+        issuer: agent,
+        audience: w3,
+        with: agent.did(),
+        nb: {
+          iss: account.did(),
+          att: [{ can: '*' }],
+        },
+      })
+      .execute(ctx.conn)
+
+    assert.equal(auth.error, undefined, 'authorize succeeded')
+
+    // now we are going to complete authorization flow following the email link
+    const [email] = outbox
+    assert.notEqual(email, undefined, 'email was sent')
+    const confirmEmailPostUrl = new URL(email.url)
+    const confirmEmailPostResponse = await ctx.mf.dispatchFetch(
+      confirmEmailPostUrl,
+      { method: 'POST' }
+    )
+    assert.deepEqual(
+      confirmEmailPostResponse.status,
+      200,
+      'confirmEmailPostResponse status is 200'
+    )
+
+    // we can use delegations to invoke access/claim with=accountDID
+    const claim = await Access.claim
+      .invoke({
+        issuer: agent,
+        audience: w3,
+        with: agent.did(),
+      })
+      .execute(ctx.conn)
+
+    if (claim.error) {
+      assert.fail('claim succeeded')
+    }
+
+    const delegations = Object.values(claim.delegations).map((bytes) => {
+      return bytesToDelegations(
+        /** @type {import('@web3-storage/access/src/types.js').BytesDelegation} */ (
+          bytes
+        )
+      )[0]
+    })
+
+    const [attestation, authorization] =
+      delegations[0].issuer.did() === w3.did()
+        ? delegations
+        : delegations.reverse()
+
+    assert.deepEqual(attestation.capabilities, [
+      {
+        can: 'ucan/attest',
+        with: w3.did(),
+        nb: {
+          proof: authorization.cid,
+        },
+      },
+    ])
+
+    assert.equal(authorization.issuer.did(), account.did())
+    assert.deepEqual(authorization.capabilities, [
+      {
+        can: '*',
+        with: 'ucan:*',
+      },
+    ])
+
+    assert.deepEqual(
+      // @ts-expect-error - it could be a link but we know it's delegation
+      authorization.proofs[0].cid,
+      delegation.cid,
+      'delegation to an account is included'
+    )
+
+    // use these delegations to do something on the space
+    const info = await Space.info
+      .invoke({
+        issuer: agent,
+        audience: w3,
+        with: space.did(),
+        proofs: [authorization, attestation],
+      })
+      .execute(ctx.conn)
+    assert.notDeepEqual(info.error, true, 'space/info did not error')
   })
 })

@@ -1,0 +1,18 @@
+name: Test
+description: 'test'
+
+# install npm dependencies (e.g. via `npm` or monorepo `pnpm`) before invoking this action to run tests
+
+inputs:
+  w3up-client-dir:
+    description: 'path to directory of w3up-client package'
+
+runs:
+  using: 'composite'
+  steps:
+    - run: npm run lint
+      shell: bash
+      working-directory: ${{ inputs.w3up-client-dir }}
+    - run: npm test
+      shell: bash
+      working-directory: ${{ inputs.w3up-client-dir }}

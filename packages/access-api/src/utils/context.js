@@ -7,10 +7,15 @@ import { Accounts } from '../models/accounts.js'
 import { Spaces } from '../models/spaces.js'
 import { Validations } from '../models/validations.js'
 import * as Email from './email.js'
+import * as UCANLog from './ucan-log.js'
 import { createUploadApiConnection } from '../service/upload-api-proxy.js'
 import { DID } from '@ucanto/core'
-import { DbDelegationsStorage } from '../models/delegations.js'
+import {
+  DbDelegationsStorageWithR2,
+  delegationsTableBytesToArrayBuffer,
+} from '../models/delegations.js'
 import { createD1Database } from './d1.js'
+import { DbProvisions } from '../models/provisions.js'
 
 /**
  * Obtains a route context object.
@@ -30,6 +35,14 @@ export function getContext(request, env, ctx) {
           token: config.POSTMARK_TOKEN,
           sender: config.POSTMARK_SENDER,
         })
+
+  const ucanLog =
+    config.UCAN_LOG_URL && config.UCAN_LOG_BASIC_AUTH
+      ? UCANLog.connect({
+          url: new URL(config.UCAN_LOG_URL),
+          auth: config.UCAN_LOG_BASIC_AUTH,
+        })
+      : UCANLog.debug()
 
   // Sentry
   const sentry = new Toucan({
@@ -58,18 +71,31 @@ export function getContext(request, env, ctx) {
     env: config.ENV,
   })
   const url = new URL(request.url)
+  const signer = Signer.parse(config.PRIVATE_KEY).withDID(config.DID)
   return {
     log,
-    signer: Signer.parse(config.PRIVATE_KEY).withDID(config.DID),
+    signer,
     config,
     url,
     models: {
-      delegations: new DbDelegationsStorage(createD1Database(config.DB)),
+      delegations: new DbDelegationsStorageWithR2(
+        createD1Database(config.DB, {
+          bytes: (v) => {
+            return delegationsTableBytesToArrayBuffer(v) ?? v
+          },
+        }),
+        config.DELEGATIONS_BUCKET
+      ),
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
+      provisions: new DbProvisions(
+        config.PROVIDERS,
+        createD1Database(config.DB)
+      ),
     },
     email,
+    ucanLog,
     uploadApi: createUploadApiConnection({
       audience: DID.parse(config.DID).did(),
       url: new URL(config.UPLOAD_API_URL),

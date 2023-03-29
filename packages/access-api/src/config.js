@@ -35,6 +35,12 @@ export function loadConfig(env) {
     }
   }
 
+  if (typeof env.DELEGATIONS_BUCKET !== 'object') {
+    throw new TypeError(
+      `expected env.DELEGATIONS_BUCKET to be an R2Bucket object, but got ${typeof env.DELEGATIONS_BUCKET}`
+    )
+  }
+
   return {
     DEBUG: boolValue(vars.DEBUG),
     ENV: parseRuntimeEnv(vars.ENV),
@@ -43,6 +49,8 @@ export function loadConfig(env) {
     POSTMARK_SENDER: env.POSTMARK_SENDER,
     SENTRY_DSN: vars.SENTRY_DSN,
     LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
+    UCAN_LOG_BASIC_AUTH: env.UCAN_LOG_BASIC_AUTH,
+    UCAN_LOG_URL: env.UCAN_LOG_URL,
 
     // These are injected in esbuild
     // @ts-ignore
@@ -56,7 +64,14 @@ export function loadConfig(env) {
     COMMITHASH: ACCOUNT_COMMITHASH,
 
     PRIVATE_KEY: vars.PRIVATE_KEY,
-    DID: DID.parse(vars.DID).did(),
+    DID: /** @type {UCAN.DID<"web">} */ (DID.parse(vars.DID).did()),
+
+    /** DIDs of services that can be used to provision spaces. */
+    PROVIDERS: env.PROVIDERS
+      ? env.PROVIDERS.split(',').map(
+          (id) => /** @type {UCAN.DID<"web">} */ (DID.parse(id).did())
+        )
+      : [/** @type {UCAN.DID<"web">} */ (DID.parse(vars.DID).did())],
 
     UPLOAD_API_URL: env.UPLOAD_API_URL || 'https://up.web3.storage/',
     // bindings
@@ -67,6 +82,7 @@ export function loadConfig(env) {
     SPACES: env.SPACES,
     VALIDATIONS: env.VALIDATIONS,
     DB: /** @type {D1Database} */ (env.__D1_BETA__),
+    DELEGATIONS_BUCKET: env.DELEGATIONS_BUCKET,
   }
 }
 

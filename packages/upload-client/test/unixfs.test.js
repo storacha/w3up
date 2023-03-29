@@ -1,4 +1,5 @@
 import assert from 'assert'
+import { decode, NodeType } from '@ipld/unixfs'
 import { exporter } from 'ipfs-unixfs-exporter'
 import { MemoryBlockstore } from 'blockstore-core/memory'
 import * as raw from 'multiformats/codecs/raw'
@@ -67,18 +68,78 @@ describe('UnixFS', () => {
     expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
   })
 
+  it('encodes a sharded directory', async () => {
+    const files = []
+    for (let i = 0; i < 1001; i++) {
+      files.push(new File([`data${i}`], `file${i}.txt`))
+    }
+
+    const { cid, blocks } = await encodeDirectory(files)
+    const blockstore = await blocksToBlockstore(blocks)
+    const dirEntry = await exporter(cid.toString(), blockstore)
+    assert.equal(dirEntry.type, 'directory')
+
+    const expectedPaths = files.map((f) => path.join(cid.toString(), f.name))
+    // @ts-expect-error
+    const entries = await collectDir(dirEntry)
+    const actualPaths = entries.map((e) => e.path)
+
+    expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
+
+    // check root node is a HAMT sharded directory
+    // @ts-expect-error
+    const bytes = await blockstore.get(cid)
+    const node = decode(bytes)
+    assert.equal(node.type, NodeType.HAMTShard)
+  })
+
   it('throws then treating a file as a directory', () =>
     assert.rejects(
       encodeDirectory([
         new File(['a file, not a directory'], 'file.txt'),
         new File(['a file in a file!!!'], 'file.txt/another.txt'),
       ]),
-      { message: '"file.txt" cannot be a file and a directory' }
+      { message: '"file.txt/another.txt" cannot be a file and a directory' }
     ))
 
   it('configured to use raw leaves', async () => {
     const file = new Blob(['test'])
     const { cid } = await encodeFile(file)
     assert.equal(cid.code, raw.code)
+  })
+
+  it('callback for each directory entry link', async () => {
+    const files = [
+      new File(['file'], 'file.txt'),
+      new File(['another'], '/dir/another.txt'),
+    ]
+    /** @type {import('../src/types.js').DirectoryEntryLink[]} */
+    const links = []
+    await encodeDirectory(files, { onDirectoryEntryLink: (l) => links.push(l) })
+    assert.equal(links.length, 4)
+    assert.equal(links[0].name, 'file.txt')
+    assert.equal(links[0].dagByteLength, 4)
+    assert.equal(
+      links[0].cid.toString(),
+      'bafkreib3tq2y6nxqumnwvu7bj4yjy7hrtcwjerxigfxzzzkd2wyzvqblqa'
+    )
+    assert.equal(links[1].name, 'dir/another.txt')
+    assert.equal(links[1].dagByteLength, 7)
+    assert.equal(
+      links[1].cid.toString(),
+      'bafkreifoisfmq3corzg6yzcxffyi55ayooxhtrw77bhp64zwbgeuq7yi4u'
+    )
+    assert.equal(links[2].name, 'dir')
+    assert.equal(links[2].dagByteLength, 66)
+    assert.equal(
+      links[2].cid.toString(),
+      'bafybeigbv3g5frjg66akpd6gwfkryqraom4nyrgtltpyoa4e7h3bhnbmti'
+    )
+    assert.equal(links[3].name, '')
+    assert.equal(links[3].dagByteLength, 173)
+    assert.equal(
+      links[3].cid.toString(),
+      'bafybeie4fxkioskwb4h7xpb5f6tbktm4vjxt7rtsqjit72jrv3ii5h26sy'
+    )
   })
 })

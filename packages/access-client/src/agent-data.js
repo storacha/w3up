@@ -1,7 +1,10 @@
 import { Signer } from '@ucanto/principal'
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { importDAG } from '@ucanto/core/delegation'
+import * as Ucanto from '@ucanto/interface'
 import { CID } from 'multiformats'
+import { Access } from '@web3-storage/capabilities'
+import { isExpired } from './delegations.js'
 
 /** @typedef {import('./types').AgentDataModel} AgentDataModel */
 
@@ -107,6 +110,7 @@ export class AgentData {
   }
 
   /**
+   * @deprecated
    * @param {import('@ucanto/interface').DID} did
    * @param {import('./types').SpaceMeta} meta
    * @param {import('@ucanto/interface').Delegation} [proof]
@@ -117,7 +121,8 @@ export class AgentData {
   }
 
   /**
-   * @param {import('@ucanto/interface').DID} did
+   * @deprecated
+   * @param {import('@ucanto/interface').DID<'key'>} did
    */
   async setCurrentSpace(did) {
     this.currentSpace = did
@@ -143,4 +148,44 @@ export class AgentData {
     this.delegations.delete(cid.toString())
     await this.#save(this.export())
   }
+}
+
+/**
+ * Is the given capability a session attestation?
+ *
+ * @param {Ucanto.Capability} cap
+ * @returns {boolean}
+ */
+const isSessionCapability = (cap) => cap.can === Access.session.can
+
+/**
+ * Is the given delegation a session proof?
+ *
+ * @param {Ucanto.Delegation} delegation
+ * @returns {delegation is Ucanto.Delegation<[import('./types').AccessSession]>}
+ */
+export const isSessionProof = (delegation) =>
+  delegation.capabilities.some((cap) => isSessionCapability(cap))
+
+/**
+ * Get a map from CIDs to the session proofs that reference them
+ *
+ * @param {AgentData} data
+ * @returns {Record<string, Ucanto.Delegation>}
+ */
+export function getSessionProofs(data) {
+  /** @type {Record<string, Ucanto.Delegation>} */
+  const proofs = {}
+  for (const { delegation } of data.delegations.values()) {
+    if (isSessionProof(delegation)) {
+      const cap = delegation.capabilities[0]
+      if (cap && !isExpired(delegation)) {
+        const proof = cap.nb.proof
+        if (proof) {
+          proofs[proof.toString()] = delegation
+        }
+      }
+    }
+  }
+  return proofs
 }
