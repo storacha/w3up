@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { URI } from '@ucanto/validator'
-import { Agent, connection } from '../src/agent.js'
+import { Agent, connection, createDidMailtoFromEmail } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
@@ -179,5 +179,45 @@ describe('Agent', function () {
         with: space.did,
       },
     ])
+  })
+
+  it('should not create delegation without proof', async function () {
+    const server = createServer()
+    const alice = await Agent.create(undefined, {
+      connection: connection({ channel: server }),
+    })
+    const bob = await Agent.create(undefined, {
+      connection: connection({ channel: server }),
+    })
+
+    const space = await alice.createSpace('execute')
+    await alice.setCurrentSpace(space.did)
+
+    const delegation = await alice.delegate({
+      abilities: ['space/info'],
+      audience: bob,
+      audienceMeta: { name: 'sss', type: 'app' },
+    })
+
+    await bob.addProof(delegation)
+    await bob.setCurrentSpace(space.did)
+
+    // should not be able to store/remove - bob only has ability to space/info
+    await assert.rejects(
+      () =>
+        bob.delegate({
+          abilities: ['store/remove'],
+          audience: fixtures.mallory,
+          audienceMeta: { name: 'sss', type: 'app' },
+        }),
+      /cannot delegate capability store\/remove/
+    )
+  })
+
+  it('exports createDidMailtoFromEmail', async () => {
+    assert.deepEqual(
+      createDidMailtoFromEmail('foo@dag.house'),
+      'did:mailto:dag.house:foo'
+    )
   })
 })

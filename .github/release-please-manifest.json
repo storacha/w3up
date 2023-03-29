@@ -1,6 +1,8 @@
 {
-  "packages/access-client": "9.4.0",
-  "packages/access-api": "4.11.0",
-  "packages/capabilities": "2.3.0",
-  "packages/upload-client": "6.0.0"
+  "packages/access-client": "11.0.1",
+  "packages/access-api": "5.2.1",
+  "packages/capabilities": "4.0.1",
+  "packages/upload-api": "2.0.0",
+  "packages/upload-client": "8.1.0",
+  "packages/w3up-client": "5.4.0"
 }

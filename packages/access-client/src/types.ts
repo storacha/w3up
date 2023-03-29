@@ -22,7 +22,10 @@ import type {
   SignerArchive,
   SigAlg,
   Caveats,
+  TheCapabilityParser,
+  CapabilityMatch,
 } from '@ucanto/interface'
+import * as Ucanto from '@ucanto/interface'
 
 import type {
   Abilities,
@@ -41,6 +44,12 @@ import type {
   AccessClaim,
   AccessClaimSuccess,
   AccessClaimFailure,
+  ProviderAdd,
+  ProviderAddSuccess,
+  ProviderAddFailure,
+  AccessConfirm,
+  AccessConfirmSuccess,
+  AccessConfirmFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -68,24 +77,22 @@ export interface SpaceTable {
 }
 export type SpaceRecord = Selectable<SpaceTable>
 
+export type SpaceInfoResult =
+  // w3up spaces registered via provider/add will have this
+  | {
+      // space did
+      did: DID<'key'>
+    }
+  // deprecated and may be removed if voucher/redeem is removed
+  /** @deprecated */
+  | SpaceRecord
+
 export interface AccountTable {
   did: URI<'did:'>
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
 }
 export type AccountRecord = Selectable<AccountTable>
-
-export interface DelegationTable {
-  cid: string
-  bytes: Uint8Array
-  audience: URI<'did:'>
-  issuer: URI<'did:'>
-  expires_at: Date | null
-  inserted_at: Generated<Date>
-  updated_at: ColumnType<Date, never, Date>
-}
-
-export type DelegationRecord = Selectable<DelegationTable>
 
 export interface SpaceTableMetadata {
   space: SpaceMeta
@@ -99,11 +106,20 @@ export interface Service {
   access: {
     authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    confirm: ServiceMethod<
+      AccessConfirm,
+      AccessConfirmSuccess,
+      AccessConfirmFailure
+    >
     delegate: ServiceMethod<
       AccessDelegate,
       AccessDelegateSuccess,
       AccessDelegateFailure
     >
+  }
+  provider: {
+    add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
   }
   voucher: {
     claim: ServiceMethod<
@@ -114,7 +130,7 @@ export interface Service {
     redeem: ServiceMethod<VoucherRedeem, void, Failure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, SpaceRecord, Failure | SpaceUnknown>
+    info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
       EncodedDelegation<[SpaceRecover]> | undefined,
@@ -142,8 +158,10 @@ export type CIDString = string
  */
 export interface AgentDataModel {
   meta: AgentMeta
-  principal: Signer
-  currentSpace?: DID
+  principal: Signer<DID<'key'>>
+  /** @deprecated */
+  currentSpace?: DID<'key'>
+  /** @deprecated */
   spaces: Map<DID, SpaceMeta>
   delegations: Map<CIDString, { meta: DelegationMeta; delegation: Delegation }>
 }
@@ -318,4 +336,20 @@ export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
   Phantom<C>
 
 export type BytesDelegation<C extends Capabilities = Capabilities> =
-  Uint8Array & Phantom<C>
+  Uint8Array & Phantom<Delegation<C>>
+
+export type InvokeAndExecute = <
+  A extends Ability,
+  R extends URI,
+  C extends Ucanto.Caveats
+>(
+  cap: TheCapabilityParser<CapabilityMatch<A, R, C>>,
+  options: InvokeOptions<A, R, TheCapabilityParser<CapabilityMatch<A, R, C>>>
+) => Promise<
+  Ucanto.InferServiceInvocationReturn<
+    Ucanto.InferInvokedCapability<
+      Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>
+    >,
+    import('./types').Service
+  >
+>

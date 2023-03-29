@@ -13,7 +13,7 @@
  * @module
  */
 /* eslint-disable unicorn/prefer-spread */
-import { CarReader } from './utils/car-reader-sync.js'
+import { CarBufferReader } from '@ipld/car/buffer-reader'
 import * as CarBufferWriter from '@ipld/car/buffer-writer'
 import { Delegation } from '@ucanto/core/delegation'
 import * as u8 from 'uint8arrays'
@@ -72,7 +72,7 @@ export function bytesToDelegations(bytes) {
   if (!(bytes instanceof Uint8Array) || bytes.length === 0) {
     throw new TypeError('Input should be a non-empty Uint8Array.')
   }
-  const reader = CarReader.fromBytes(bytes)
+  const reader = CarBufferReader.fromBytes(bytes)
   const roots = reader.getRoots()
 
   /** @type {Types.Delegation<T>[]} */

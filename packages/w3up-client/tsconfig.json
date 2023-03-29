@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "emitDeclarationOnly": true,
+    "composite": true,
+    "noUnusedParameters": false
+  },
+  "include": ["./src", "./test"],
+  "typedocOptions": {
+    "entryPoints": ["./src"],
+    "entryPointStrategy": "expand",
+    "darkHighlightTheme": "github-dark",
+    "navigationLinks": {
+      "Github": "https://github.com/web3-storage/w3up-client"
+    },
+    "customCss": "./static/docs.css"
+  },
+  "references": [
+    { "path": "../access-client" },
+    { "path": "../capabilities" },
+    { "path": "../upload-client" }
+  ]
+}

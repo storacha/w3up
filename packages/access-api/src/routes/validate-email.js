@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import {
-  stringToDelegation,
   delegationsToString,
+  stringToDelegation,
 } from '@web3-storage/access/encoding'
 import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
@@ -12,9 +11,11 @@ import {
   ValidateEmailError,
   PendingValidateEmail,
 } from '../utils/html.js'
-import * as ucanto from '@ucanto/core'
-import * as validator from '@ucanto/validator'
-import { Verifier, Absentee } from '@ucanto/principal'
+import { Verifier } from '@ucanto/principal'
+import * as delegationsResponse from '../utils/delegations-response.js'
+import * as accessConfirm from '../service/access-confirm.js'
+import { provide } from '@ucanto/server'
+import * as Ucanto from '@ucanto/interface'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -39,9 +40,10 @@ export async function validateEmail(req, env) {
     return recover(req, env)
   }
 
-  if (req.query && req.query.ucan && req.query.mode === 'session') {
-    return session(req, env)
+  if (req.query && req.query.ucan && req.query.mode === 'authorize') {
+    return authorize(req, env)
   }
+
   if (req.query && req.query.ucan) {
     try {
       const delegation = await env.models.validations.put(
@@ -134,97 +136,46 @@ async function recover(req, env) {
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
  * @param {import('../bindings.js').RouteContext} env
  */
-async function session(req, env) {
-  /** @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessAuthorize]>} */
-  const delegation = stringToDelegation(req.query.ucan)
-
-  // ⚠️ This is not an ideal solution but we do need to ensure that attacker
-  // cannot simply send a valid `access/authorize` delegation to the service
-  // and get an attested session.
-  if (delegation.issuer.did() !== env.signer.did()) {
-    throw new Error('Delegation MUST be issued by the service')
-  }
-
-  // TODO: Figure when do we go through a post vs get request. WebSocket message
-  // was send regardless of the method, but delegations were only stored on post
-  // requests.
-  if (req.method.toLowerCase() === 'post') {
-    const accessSessionResult = await validator.access(delegation, {
-      capability: Access.authorize,
-      principal: Verifier,
-      authority: env.signer,
-    })
-
-    if (accessSessionResult.error) {
-      throw new Error(
-        `unable to validate access session: ${accessSessionResult.error}`
-      )
-    }
-
-    // Create a absentee signer for the account that authorized the delegation
-    const account = Absentee.from({ id: accessSessionResult.capability.nb.iss })
-    const agent = Verifier.parse(accessSessionResult.capability.with)
-
-    // It the future we should instead render a page and allow a user to select
-    // which delegations they wish to re-delegate. Right now we just re-delegate
-    // everything that was requested for all of the resources.
-    const capabilities =
-      /** @type {ucanto.UCAN.Capabilities} */
-      (
-        accessSessionResult.capability.nb.att.map(({ can }) => ({
-          can,
-          with: /** @type {ucanto.UCAN.Resource} */ ('ucan:*'),
-        }))
-      )
-
-    // create an authorization on behalf of the account with an absent
-    // signature.
-    const authorization = await ucanto.delegate({
-      issuer: account,
-      audience: agent,
-      capabilities,
-      expiration: Infinity,
-      // We should also include proofs with all the delegations we have for
-      // the account.
-    })
-
-    const attestation = await ucanto.delegate({
-      issuer: env.signer,
-      audience: agent,
-      capabilities: [
-        {
-          with: env.signer.did(),
-          can: 'ucan/attest',
-          nb: { proof: authorization.cid },
-        },
-      ],
-      expiration: Infinity,
-    })
-
-    // Store the delegations so that they can be pulled with access/claim
-    await env.models.delegations.putMany(authorization, attestation)
-
-    // Send delegations to the client through a websocket
-    await env.models.validations.putSession(
-      delegationsToString([authorization, attestation]),
-      agent.did()
-    )
-  }
-
-  // TODO: We clearly should not render that access/delegate in the QR code, but
-  // I'm not sure what this QR code is used for.
+async function authorize(req, env) {
   try {
+    /**
+     * @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessConfirm]>}
+     */
+    const request = stringToDelegation(req.query.ucan)
+
+    const confirm = provide(
+      Access.confirm,
+      async ({ capability, invocation }) => {
+        return accessConfirm.handleAccessConfirm(
+          /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
+            invocation
+          ),
+          env
+        )
+      }
+    )
+    const confirmResult = await confirm(request, {
+      id: env.signer,
+      principal: Verifier,
+    })
+    if (confirmResult.error) {
+      throw new Error('error confirming', {
+        cause: confirmResult,
+      })
+    }
+    const { account, agent } = accessConfirm.parse(request)
+    const confirmDelegations = [
+      ...delegationsResponse.decode(confirmResult.delegations),
+    ]
+
+    // We render HTML page explaining to the user what has happened and providing
+    // a QR code in the details if they want to drill down.
     return new HtmlResponse(
       (
         <ValidateEmail
-          email={toEmail(delegation.audience.did())}
-          audience={delegation.audience.did()}
-          ucan={req.query.ucan}
-          qrcode={await QRCode.toString(req.query.ucan, {
-            type: 'svg',
-            errorCorrectionLevel: 'M',
-            margin: 10,
-          })}
+          email={toEmail(account.did())}
+          audience={agent.did()}
+          ucan={delegationsToString(confirmDelegations)}
         />
       )
     )
@@ -232,7 +183,8 @@ async function session(req, env) {
     const err = /** @type {Error} */ (error)
     env.log.error(err)
     return new HtmlResponse(
-      <ValidateEmailError msg={'Oops something went wrong.'} />
+      <ValidateEmailError msg={'Oops something went wrong.'} />,
+      { status: 500 }
     )
   }
 }

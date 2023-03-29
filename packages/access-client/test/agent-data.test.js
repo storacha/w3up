@@ -21,6 +21,6 @@ describe('AgentData', () => {
     }
     const store = new Store()
     const data = await AgentData.create(undefined, { store })
-    await assert.doesNotReject(data.setCurrentSpace('did:x:y'))
+    await assert.doesNotReject(data.setCurrentSpace('did:key:y'))
   })
 })

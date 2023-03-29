@@ -1,5 +1,41 @@
 # Changelog
 
+## [8.1.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v8.0.0...upload-client-v8.1.0) (2023-03-28)
+
+
+### Features
+
+* docs for DirectoryEntryLinkCallback ([50e5fa5](https://github.com/web3-storage/w3protocol/commit/50e5fa550b7659f0b2c545e26b792e0d871c6e88))
+
+## [8.0.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v7.0.0...upload-client-v8.0.0) (2023-03-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433))
+
+### Features
+
+* add HAMT sharded directories support ([#536](https://github.com/web3-storage/w3protocol/issues/536)) ([8d98025](https://github.com/web3-storage/w3protocol/commit/8d98025012c87104db2910c315542d5c44bc637a))
+* implement new account-based multi-device flow ([#433](https://github.com/web3-storage/w3protocol/issues/433)) ([1ddc6a0](https://github.com/web3-storage/w3protocol/commit/1ddc6a0c53f8cdb6837a315d8aaf567100dfb8d7))
+
+
+### Miscellaneous Chores
+
+* **access-client:** release 11.0.0-rc.0 ([#573](https://github.com/web3-storage/w3protocol/issues/573)) ([be4386d](https://github.com/web3-storage/w3protocol/commit/be4386d66ceea393f289adb3c79273c250542807))
+
+## [7.0.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v6.0.0...upload-client-v7.0.0) (2023-03-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463))
+
+### Features
+
+* upgrade capabilities to latest ucanto ([#463](https://github.com/web3-storage/w3protocol/issues/463)) ([2d786ee](https://github.com/web3-storage/w3protocol/commit/2d786ee81a6eb72c4782548ad3e3796fe3947fa5))
+* upgrade to new ucanto ([#498](https://github.com/web3-storage/w3protocol/issues/498)) ([dcb41a9](https://github.com/web3-storage/w3protocol/commit/dcb41a9981c2b6bebbdbd29debcad9f510383680))
+
 ## [6.0.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v5.6.0...upload-client-v6.0.0) (2023-02-23)
 
 

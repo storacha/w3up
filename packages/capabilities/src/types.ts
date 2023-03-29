@@ -2,6 +2,7 @@ import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import { InferInvokedCapability } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
+import * as provider from './provider.js'
 import { top } from './top.js'
 import { add, list, remove, store } from './store.js'
 import * as UploadCaps from './upload.js'
@@ -35,11 +36,27 @@ export interface AccessClaimFailure {
   error: true
 }
 
+export interface AccessConfirmSuccess {
+  delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
+}
+export interface AccessConfirmFailure extends Ucanto.Failure {}
+
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
 export type AccessDelegateSuccess = unknown
 export type AccessDelegateFailure = { error: true } | InsufficientStorage
 
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
+export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
+
+// Provider
+export type ProviderAdd = InferInvokedCapability<typeof provider.add>
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ProviderAddSuccess {}
+export type ProviderAddFailure = InvalidProvider | Ucanto.Failure
+
+export interface InvalidProvider extends Ucanto.Failure {
+  name: 'InvalidProvider'
+}
 
 // Space
 export type Space = InferInvokedCapability<typeof space>
@@ -74,6 +91,7 @@ export type Abilities = TupleToUnion<AbilitiesArray>
 
 export type AbilitiesArray = [
   Top['can'],
+  ProviderAdd['can'],
   Space['can'],
   SpaceInfo['can'],
   SpaceRecover['can'],

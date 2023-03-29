@@ -90,20 +90,22 @@ export class ShardStoringStream extends TransformStream {
     const abortController = new AbortController()
     super({
       async transform(car, controller) {
-        void queue.add(
-          async () => {
-            try {
-              const opts = { ...options, signal: abortController.signal }
-              const cid = await add(conf, car, opts)
-              const { version, roots, size } = car
-              controller.enqueue({ version, roots, cid, size })
-            } catch (err) {
-              controller.error(err)
-              abortController.abort(err)
-            }
-          },
-          { signal: abortController.signal }
-        )
+        void queue
+          .add(
+            async () => {
+              try {
+                const opts = { ...options, signal: abortController.signal }
+                const cid = await add(conf, car, opts)
+                const { version, roots, size } = car
+                controller.enqueue({ version, roots, cid, size })
+              } catch (err) {
+                controller.error(err)
+                abortController.abort(err)
+              }
+            },
+            { signal: abortController.signal }
+          )
+          .catch((err) => console.error(err))
 
         // retain backpressure by not returning until no items queued to be run
         await queue.onSizeLessThan(1)

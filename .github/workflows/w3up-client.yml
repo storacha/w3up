@@ -1,0 +1,38 @@
+name: w3up-client
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/w3up-client/**'
+      - '.github/workflows/w3up-client.yml'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    paths:
+      - 'packages/w3up-client/**'
+      - '.github/workflows/w3up-client.yml'
+      - 'pnpm-lock.yaml'
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/w3up-client
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install
+        uses: pnpm/action-setup@v2.2.3
+        with:
+          version: 7
+      - name: Setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+          cache: 'pnpm'
+      - run: pnpm --filter '@web3-storage/w3up-client...' install
+      - uses: ./packages/w3up-client/.github/actions/test
+        with:
+          w3up-client-dir: ./packages/w3up-client/

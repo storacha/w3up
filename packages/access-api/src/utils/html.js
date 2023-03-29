@@ -12,7 +12,7 @@ export function buildDocument(body) {
 
 <head>
   <meta charset="utf-8">
-  <title>Web3 Storage</title>
+  <title>w3up Email Validation</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@acab/reset.css">
@@ -48,7 +48,6 @@ export function buildDocument(body) {
     .mcenter {
       margin: 0 auto;
     }
-
     .box {
       max-width: 640px;
       background-color: var(--background-alt);
@@ -135,56 +134,62 @@ export const PendingValidateEmail = ({ autoApprove }) => (
  * @param {string} param0.ucan
  * @param {string} param0.email
  * @param {string} param0.audience
- * @param {string} param0.qrcode
+ * @param {string} [param0.qrcode]
  */
 export const ValidateEmail = ({ ucan, qrcode, email, audience }) => (
-  <div class="fcenter">
-    <img
-      src="https://web3.storage/android-chrome-512x512.png"
-      height="80"
-      width="80"
-    />
-    <h1>Email Validated</h1>
-    <p>{email} was confirmed. You may close this window.</p>
-    <div class="box">
+  <div style={{ maxWidth: '640px', paddingTop: '50px', margin: '0 auto' }}>
+    <header style={{ textAlign: 'center' }}>
+      <img
+        src="https://bafybeib7zsc7ppyfuby72dz4cpjonql7zt3vetf3cu7rios7hovlgaoug4.ipfs.w3s.link/w3up-logo.png"
+        style={{ height: '80px', display: 'inline-block' }}
+      />
+      <h1 style={{ paddingTop: '20px' }}>Email Validated</h1>
+      <p style={{ paddingBottom: '30px', color: 'white' }}>
+        {email} was confirmed. You may close this window.
+      </p>
+    </header>
+    <div class="box" style={{ fontSize: '14px' }}>
       <p>
-        During the beta period, uploads via w3up will only appear via the beta
-        APIs, and not on the web3.storage or NFT.Storage websites, even if the
-        associated email addresses are the same.
+        If you have an existing non-w3up beta account with NFT.Storage or
+        web3.storage and register for the w3up beta version of the same product
+        (NFT.Storage or web3.storage) using the same email, then at the end of
+        the beta period, these accounts will be combined. Until the beta period
+        is over and this migration occurs, uploads to w3up will not appear in
+        your NFT.Storage or web3.storage account (and vice versa), even if you
+        register with the same email.
       </p>
       <p>
-        At the end of the beta period, web3.storage and NFT.Storage's upload
-        APIs and existing accounts will be upgraded to use w3up. Uploads via the
-        w3up beta be migrated to web3.storage by default and, if applicable,
-        combined with the relevant existing web3.storage account (based on email
-        address). If you would rather have your beta w3up account be associated
-        with the NFT.Storage product (e.g., you are only storing off-chain NFT
-        data), please email us at{' '}
-        <a href="mailto:support@nft.storage">support@nft.storage</a>. All w3up
-        uploads associated with a given registered email will only be able to be
-        associated with one of either web3.storage or NFT.Storage when these
-        uploads are migrated.
+        By registering with either the web3.storage or the NFT.Storage w3up
+        beta, you agree to the respective Terms of Service (
+        <a href="https://console.web3.storage/terms">web3.storage ToS</a>,{' '}
+        <a href="https://console.nft.storage/terms">NFT.Storage ToS</a>).
       </p>
     </div>
-    <details style={{ maxWidth: '80vw', overflow: 'overlay' }}>
+    <details
+      style={{ maxWidth: '640px', overflow: 'overlay', textDecoration: 'none' }}
+    >
       {' '}
-      <summary>More details</summary>
-      <h5>Validation requested by:</h5>
-      <p>
+      <summary style={{ fontSize: '14px' }}>Auth details</summary>
+      <h5 style={{ marginBottom: 0 }}>Validation requested by</h5>
+      <pre>
         <code>{audience}</code>
-      </p>
-      <h5>QR Code:</h5>
-      <div
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: qrcode,
-        }}
-        class="mcenter"
-        style={{
-          width: '300px',
-        }}
-      />
-      <h5>UCAN:</h5>
+      </pre>
+      {qrcode && (
+        <>
+          <h5>QR Code</h5>
+          <div
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: qrcode,
+            }}
+            class="mcenter"
+            style={{
+              width: '300px',
+            }}
+          />
+        </>
+      )}
+      <h5 style={{ marginBottom: 0, paddingTop: '8px' }}>UCAN</h5>
       <pre>
         <code>{ucan}</code>
       </pre>

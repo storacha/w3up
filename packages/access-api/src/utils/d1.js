@@ -3,7 +3,7 @@
 import * as Ucanto from '@ucanto/interface'
 import { Kysely, OperationNodeTransformer } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
-import { isPlainObject, isDate, isBuffer } from './common.js'
+import { isPlainObject, isDate } from './common.js'
 
 /**
  * @typedef {import('kysely').KyselyPlugin} KyselyPlugin
@@ -74,15 +74,6 @@ export class GenericPlugin {
         rows: args.result.rows.map((row) => {
           const custom = {}
           for (const [key, value] of Object.entries(row)) {
-            if (isBuffer(value)) {
-              // @ts-ignore
-              custom[key] = new Uint8Array(
-                value.buffer,
-                value.byteOffset,
-                value.byteLength
-              )
-            }
-
             // @ts-ignore
             if (this.resultTransforms[key]) {
               // @ts-ignore
@@ -142,9 +133,10 @@ export class D1Error extends Error {
 /**
  * @template S
  * @param {D1Database} d1
+ * @param {Record<string, (v: unknown) => unknown>} [resultTransforms]
  * @returns {import('../types/database.js').Database<S>}
  */
-export function createD1Database(d1) {
+export function createD1Database(d1, resultTransforms = {}) {
   /** @type {Kysely<S>} */
   const kdb = new Kysely({
     dialect: new D1Dialect({ database: d1 }),
@@ -154,6 +146,7 @@ export function createD1Database(d1) {
         expires_at: (v) => (typeof v === 'string' ? new Date(v) : null),
         inserted_at: (v) => new Date(v),
         updated_at: (v) => new Date(v),
+        ...resultTransforms,
       }),
     ],
   })
