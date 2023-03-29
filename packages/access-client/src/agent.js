@@ -309,34 +309,25 @@ export class Agent {
   }
 
   /**
-   * Import a space from a '*' delegation
+   * Import a space from a delegation.
    *
    * @param {Ucanto.Delegation} delegation
    */
   async importSpaceFromDelegation(delegation) {
-    if (delegation.capabilities[0].can !== '*') {
-      throw new Error(
-        'Space can only be import with full capabilities delegation.'
-      )
-    }
-
     const meta = /** @type {import('./types').SpaceMeta} */ (
-      delegation.facts[0].space
-    )
-    const del = /** @type {Ucanto.Delegation<[import('./types').Top]>} */ (
-      delegation
+      delegation.facts[0]?.space ?? { isRegistered: false }
     )
     // @ts-ignore
-    const did = Verifier.parse(del.capabilities[0].with).did()
+    const did = Verifier.parse(delegation.capabilities[0].with).did()
 
     this.#data.spaces.set(did, meta)
 
-    await this.addProof(del)
+    await this.addProof(delegation)
 
     return {
       did,
       meta,
-      proof: del,
+      proof: delegation,
     }
   }
 
@@ -389,14 +380,7 @@ export class Agent {
    * @param {Ucanto.DID<'key'>} space
    */
   async setCurrentSpace(space) {
-    const proofs = this.proofs([
-      {
-        can: 'space/info',
-        with: space,
-      },
-    ])
-
-    if (proofs.length === 0) {
+    if (!this.#data.spaces.has(space)) {
       throw new Error(`Agent has no proofs for ${space}.`)
     }
 
