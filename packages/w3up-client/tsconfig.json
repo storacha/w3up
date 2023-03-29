@@ -6,10 +6,7 @@
     "composite": true,
     "noUnusedParameters": false
   },
-  "include": [
-    "./src"
-    // @todo add "./test",
-  ],
+  "include": ["./src", "./test"],
   "typedocOptions": {
     "entryPoints": ["./src"],
     "entryPointStrategy": "expand",
