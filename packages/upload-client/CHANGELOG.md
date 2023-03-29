@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.2.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v8.1.0...upload-client-v8.2.0) (2023-03-29)
+
+
+### Features
+
+* add w3up-client at /packages/w3up-client ([#653](https://github.com/web3-storage/w3protocol/issues/653)) ([ca921ec](https://github.com/web3-storage/w3protocol/commit/ca921ec2d6fb99d5d3db44f1d5ce77e1fe3dd7dd))
+
+
+### Bug Fixes
+
+* catch p-queue error on abort ([329de15](https://github.com/web3-storage/w3protocol/commit/329de1571fb3cea8ed1a6dca98249bad5d3b3018))
+
 ## [8.1.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v8.0.0...upload-client-v8.1.0) (2023-03-28)
 
 
