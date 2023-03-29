@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-client",
-  "version": "8.1.0",
+  "version": "8.2.0",
   "description": "The web3.storage upload client",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client",
   "repository": {
