@@ -194,12 +194,7 @@ export async function authorizeAndWait(access, email, opts) {
   await requestAccess(
     access,
     account,
-    opts?.capabilities || [
-      { can: 'space/*' },
-      { can: 'store/*' },
-      { can: 'provider/add' },
-      { can: 'upload/*' },
-    ]
+    opts?.capabilities || [{ can: '*' }]
   )
   const sessionDelegations = [...(await expectAuthorization())]
   if (!opts?.dontAddProofs) {

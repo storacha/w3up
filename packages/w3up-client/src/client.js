@@ -39,6 +39,7 @@ export class Client extends Base {
    * @param {`${string}@${string}`} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
+   * @param {Iterable<{ can: import('./types').Ability }>} [options.capabilities]
    */
   async authorize(email, options) {
     await this.capability.access.authorize(email, options)
