@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.1.0](https://github.com/web3-storage/w3protocol/compare/access-v11.0.1...access-v11.1.0) (2023-03-29)
+
+
+### Features
+
+* get `access/claim` authorization wait function working ([#666](https://github.com/web3-storage/w3protocol/issues/666)) ([83971de](https://github.com/web3-storage/w3protocol/commit/83971de683b5fccbbc7ae36b7cb34d62a9930349))
+
+
+### Bug Fixes
+
+* verify proofs exist for requested delegation capabilities ([#670](https://github.com/web3-storage/w3protocol/issues/670)) ([068e801](https://github.com/web3-storage/w3protocol/commit/068e801ef849c9ebeacdc85eda75005e28a67b86))
+
 ## [11.0.1](https://github.com/web3-storage/w3protocol/compare/access-v11.0.0...access-v11.0.1) (2023-03-28)
 
 
