@@ -545,7 +545,7 @@ export class Agent {
   async delegate(options) {
     const space = this.currentSpaceWithMeta()
     if (!space) {
-      throw new Error('there no space selected.')
+      throw new Error('no space selected.')
     }
 
     const caps = /** @type {Ucanto.Capabilities} */ (
@@ -557,11 +557,18 @@ export class Agent {
       })
     )
 
+    // Verify agent can provide proofs for each requested capability
+    for (const cap of caps) {
+      if (!this.proofs([cap]).length) {
+        throw new Error(`cannot delegate capability ${cap.can} with ${cap.with}`)
+      }
+    }
+
     const delegation = await delegate({
       issuer: this.issuer,
       capabilities: caps,
       proofs: this.proofs(caps),
-      facts: [{ space: space.meta }],
+      facts: [{ space: space.meta ?? {} }],
       ...options,
     })
 
