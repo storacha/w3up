@@ -66,7 +66,7 @@ describe('Agent', function () {
     const proof = await alice.delegate({
       audience: bob,
       audienceMeta: { name: 'videos', type: 'app' },
-      abilities: ['*']
+      abilities: ['*'],
     })
 
     await bob.importSpaceFromDelegation(proof)
@@ -86,7 +86,7 @@ describe('Agent', function () {
     const proof = await alice.delegate({
       audience: bob,
       audienceMeta: { name: 'videos', type: 'app' },
-      abilities: ['store/add']
+      abilities: ['store/add'],
     })
 
     await bob.importSpaceFromDelegation(proof)
