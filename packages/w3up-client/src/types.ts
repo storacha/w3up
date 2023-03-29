@@ -4,7 +4,7 @@ import {
   type AgentDataExport,
 } from '@web3-storage/access/types'
 import { type Service as UploadService } from '@web3-storage/upload-client/types'
-import { type ConnectionView } from '@ucanto/interface'
+import type { ConnectionView, Signer, DID } from '@ucanto/interface'
 import { type Client } from './client'
 
 export interface ServiceConf {
@@ -21,6 +21,12 @@ export interface ClientFactoryOptions {
    * Service DID and URL configuration.
    */
   serviceConf?: ServiceConf
+  /**
+   * Use this principal to sign UCANs. Note: if the store is non-empty and the
+   * principal saved in the store is not the same principal as the one passed
+   * here an error will be thrown.
+   */
+  principal?: Signer<DID<'key'>>
 }
 
 export type ClientFactory = (options?: ClientFactoryOptions) => Promise<Client>

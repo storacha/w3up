@@ -27,8 +27,16 @@ import { Client } from './client.js'
 export async function create(options = {}) {
   const store = options.store ?? new StoreIndexedDB('w3up-client')
   const raw = await store.load()
-  if (raw) return new Client(AgentData.fromExport(raw, { store }), options)
-  const principal = await generate()
+  if (raw) {
+    const data = AgentData.fromExport(raw, { store })
+    if (options.principal && data.principal.did() !== options.principal.did()) {
+      throw new Error(
+        `store cannot be used with ${options.principal.did()}, stored principal and passed principal must match`
+      )
+    }
+    return new Client(data, options)
+  }
+  const principal = options.principal ?? (await generate())
   const data = await AgentData.create({ principal }, { store })
   return new Client(data, options)
 }
