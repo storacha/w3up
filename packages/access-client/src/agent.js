@@ -560,7 +560,9 @@ export class Agent {
     // Verify agent can provide proofs for each requested capability
     for (const cap of caps) {
       if (!this.proofs([cap]).length) {
-        throw new Error(`cannot delegate capability ${cap.can} with ${cap.with}`)
+        throw new Error(
+          `cannot delegate capability ${cap.can} with ${cap.with}`
+        )
       }
     }
 
