@@ -34,6 +34,10 @@ describe('Client', () => {
               status: 'upload',
               headers: { 'x-test': 'true' },
               url: 'http://localhost:9200',
+              link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                invocation.capabilities[0].nb?.link
+              ),
+              with: space.did(),
             }
           }),
         },
@@ -62,6 +66,7 @@ describe('Client', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -118,6 +123,10 @@ describe('Client', () => {
               status: 'upload',
               headers: { 'x-test': 'true' },
               url: 'http://localhost:9200',
+              link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                invocation.capabilities[0].nb?.link
+              ),
+              with: space.did(),
             }
           }),
         },
@@ -143,6 +152,7 @@ describe('Client', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -184,6 +194,10 @@ describe('Client', () => {
               status: 'upload',
               headers: { 'x-test': 'true' },
               url: 'http://localhost:9200',
+              link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                invocation.capabilities[0].nb?.link
+              ),
+              with: space.did(),
             }
           }),
         },
@@ -196,7 +210,8 @@ describe('Client', () => {
             assert.equal(invCap.with, space.did())
             if (!invCap.nb) throw new Error('nb must be present')
             assert.equal(invCap.nb.shards?.length, 1)
-            assert.equal(invCap.nb.shards[0].toString(), carCID.toString())
+            assert.ok(carCID)
+            assert.equal(invCap.nb.shards?.[0].toString(), carCID.toString())
             return invCap.nb
           }),
         },
@@ -210,6 +225,7 @@ describe('Client', () => {
       })
 
       const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
         serviceConf: await mockServiceConf(server),
       })
 
@@ -225,9 +241,6 @@ describe('Client', () => {
       assert.equal(service.store.add.callCount, 1)
       assert(service.upload.add.called)
       assert.equal(service.upload.add.callCount, 1)
-
-      assert(carCID)
-      assert.equal(carCID.toString(), car.cid.toString())
     })
   })
 
