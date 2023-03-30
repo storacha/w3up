@@ -113,11 +113,13 @@ export class RegisterForm extends window.HTMLElement {
 
     if (email) {
       const agent = await this.getAgent()
+
+      const controller = new AbortController()
+      await agent.authorize(email, { signal: controller.signal })
+
       const { did } = await agent.createSpace()
       await agent.setCurrentSpace(did)
       console.log(`Created new Space with DID: ${did}`)
-
-      const controller = new AbortController()
 
       try {
         // Fire registration start event
@@ -127,7 +129,7 @@ export class RegisterForm extends window.HTMLElement {
         this.dispatchEvent(startEvent)
 
         this.toggleVerification(true)
-        await agent.registerSpace(email, { signal: controller.signal })
+        await agent.registerSpace(email)
 
         // Fire sign in success event
         const successEvent = new window.CustomEvent(

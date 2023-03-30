@@ -45,7 +45,7 @@ export const AuthContext = createContext<KeyringContextValue>([
     },
     setCurrentSpace: async () => {},
     registerSpace: async () => {},
-    cancelRegisterSpace: () => {},
+    cancelAuthorize: () => {},
     getProofs: async () => [],
     createDelegation: async () => {
       throw new Error('missing keyring context provider')
@@ -55,7 +55,7 @@ export const AuthContext = createContext<KeyringContextValue>([
   }
 ])
 
-export interface KeyringProviderProps extends ServiceConfig {}
+export interface KeyringProviderProps extends ServiceConfig { }
 
 /**
  * Key management provider.
@@ -111,7 +111,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     }
   }
 
-  const cancelRegisterSpace = (): void => {
+  const cancelAuthorize = (): void => {
     const controller = registerAbortController()
     if (controller != null) {
       controller.abort()
@@ -128,18 +128,9 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
 
   const registerSpace = async (email: string): Promise<void> => {
     const agent = await getAgent()
-    const controller = new AbortController()
-    setRegisterAbortController(controller)
-
-    try {
-      await agent.registerSpace(email, { signal: controller.signal })
-      setState('space', getCurrentSpaceInAgent(agent))
-      setState('spaces', getSpaces(agent))
-    } catch (error) {
-      if (!controller.signal.aborted) {
-        throw error
-      }
-    }
+    await agent.registerSpace(email)
+    setState('space', getCurrentSpaceInAgent(agent))
+    setState('spaces', getSpaces(agent))
   }
 
   const setCurrentSpace = async (did: DID): Promise<void> => {
@@ -157,6 +148,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     setState('space', undefined)
     setState('spaces', [])
     setState('agent', undefined)
+    setState('account', undefined)
     setAgent(undefined)
   }
 
@@ -200,12 +192,12 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     resetAgent,
     createSpace,
     registerSpace,
-    cancelRegisterSpace,
     setCurrentSpace,
     getProofs,
     createDelegation,
     addSpace,
-    authorize
+    authorize,
+    cancelAuthorize
   }
 
   return createComponent(AuthContext.Provider, {

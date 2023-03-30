@@ -20,6 +20,7 @@ import type { Capability, DID, Proof } from '@ucanto/interface'
 export { KeyringContextState, KeyringContextActions }
 
 interface KeyringProviderInjectionKeyType {
+  account: InjectionKey<Ref<KeyringContextState['account']>>
   space: InjectionKey<Ref<KeyringContextState['space']>>
   spaces: InjectionKey<Ref<KeyringContextState['spaces']>>
   agent: InjectionKey<Ref<KeyringContextState['agent']>>
@@ -29,15 +30,16 @@ interface KeyringProviderInjectionKeyType {
   createSpace: InjectionKey<KeyringContextActions['createSpace']>
   setCurrentSpace: InjectionKey<KeyringContextActions['setCurrentSpace']>
   registerSpace: InjectionKey<KeyringContextActions['registerSpace']>
-  cancelRegisterSpace: InjectionKey<KeyringContextActions['cancelRegisterSpace']>
   getProofs: InjectionKey<KeyringContextActions['getProofs']>
   authorize: InjectionKey<KeyringContextActions['authorize']>
+  cancelAuthorize: InjectionKey<KeyringContextActions['cancelAuthorize']>
 }
 
 /**
  * Injection keys for keyring provider context.
  */
 export const KeyringProviderInjectionKey: KeyringProviderInjectionKeyType = {
+  account: Symbol('w3ui keyring account'),
   space: Symbol('w3ui keyring space'),
   spaces: Symbol('w3ui keyring spaces'),
   agent: Symbol('w3ui keyring agent'),
@@ -47,9 +49,9 @@ export const KeyringProviderInjectionKey: KeyringProviderInjectionKeyType = {
   createSpace: Symbol('w3ui keyring createSpace'),
   setCurrentSpace: Symbol('w3ui keyring setCurrentSpace'),
   registerSpace: Symbol('w3ui keyring registerSpace'),
-  cancelRegisterSpace: Symbol('w3ui keyring cancelRegisterSpace'),
   getProofs: Symbol('w3ui keyring getProofs'),
-  authorize: Symbol('w3ui keyring authorize')
+  authorize: Symbol('w3ui keyring authorize'),
+  cancelAuthorize: Symbol('w3ui keyring cancelAuthorize')
 }
 
 export interface KeyringProviderProps extends ServiceConfig { }
@@ -79,6 +81,10 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
     provide(
       KeyringProviderInjectionKey.spaces,
       computed(() => state.spaces)
+    )
+    provide(
+      KeyringProviderInjectionKey.account,
+      computed(() => state.account)
     )
 
     const getAgent = async (): Promise<Agent> => {
@@ -114,7 +120,7 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
         }
       })
 
-    provide(KeyringProviderInjectionKey.cancelRegisterSpace, (): void => {
+    provide(KeyringProviderInjectionKey.cancelAuthorize, (): void => {
       if (registerAbortController != null) {
         registerAbortController.abort()
       }
@@ -169,6 +175,7 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
       state.space = undefined
       state.spaces = []
       state.agent = undefined
+      state.account = undefined
       agent = undefined
     }
     provide(KeyringProviderInjectionKey.unloadAgent, unloadAgent)

@@ -44,6 +44,7 @@ Once mounted, the `KeyringProvider` provides the following injection keys:
 
 ```ts
 type KeyringProviderInjectionKey = {
+  account: InjectionKey<Ref<KeyringContextState['account']>>,
   space: InjectionKey<Ref<KeyringContextState['space']>>,
   spaces: InjectionKey<Ref<KeyringContextState['spaces']>>,
   agent: InjectionKey<Ref<KeyringContextState['agent']>>,
@@ -53,7 +54,8 @@ type KeyringProviderInjectionKey = {
   createSpace: InjectionKey<KeyringContextActions['createSpace']>,
   setCurrentSpace: InjectionKey<KeyringContextActions['setCurrentSpace']>,
   registerSpace: InjectionKey<KeyringContextActions['registerSpace']>,
-  cancelRegisterSpace: InjectionKey<KeyringContextActions['cancelRegisterSpace']>,
+  authorize: InjectionKey<KeyringContextActions['authorize']>,
+  cancelAuthorize: InjectionKey<KeyringContextActions['cancelAuthorize']>,
   getProofs: InjectionKey<KeyringContextActions['getProofs']>
 }
 ```

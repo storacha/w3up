@@ -8,10 +8,11 @@ import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
 export default defineComponent({
   inject: {
     agent: { from: KeyringProviderInjectionKey.agent },
-    space: { from: KeyringProviderInjectionKey.space },
+    account: { from: KeyringProviderInjectionKey.account },
     createSpace: { from: KeyringProviderInjectionKey.createSpace },
     registerSpace: { from: KeyringProviderInjectionKey.registerSpace },
-    cancelRegisterSpace: { from: KeyringProviderInjectionKey.cancelRegisterSpace },
+    authorize: { from: KeyringProviderInjectionKey.authorize },
+    cancelAuthorize: { from: KeyringProviderInjectionKey.cancelAuthorize },
   },
   setup: function(){
     inject(KeyringProviderInjectionKey.loadAgent)()
@@ -27,6 +28,7 @@ export default defineComponent({
       e.preventDefault()
       this.submitted = true
       try {
+        await this.authorize(this.email)
         await this.createSpace()
         await this.registerSpace(this.email)
       } catch (err) {
@@ -37,14 +39,14 @@ export default defineComponent({
     },
     handleCancelRegisterSubmit (e) {
       e.preventDefault()
-      this.cancelRegisterSpace()
+      this.cancelAuthorize()
     }
   }
 })
 </script>
 
 <template>
-  <div v-if="space?.registered()">
+  <div v-if="account">
     <slot></slot>
   </div>
 
@@ -56,11 +58,11 @@ export default defineComponent({
     </form>
   </div>
 
-  <form v-if="!space?.registered() && !submitted" @submit="handleRegisterSubmit" className="w-90 w-50-ns mw6">
+  <form v-if="!account && !submitted" @submit="handleRegisterSubmit" className="w-90 w-50-ns mw6">
     <div className="mb3">
       <label htmlFor="email" className="db mb2">Email address:</label>
       <input id="email" className="db pa2 w-100" type="email" v-model="email" required />
     </div>
-    <button type="submit" className="ph3 pv2" :disabled="submitted">Register</button>
+    <button type="submit" className="ph3 pv2" :disabled="submitted">Authorize</button>
   </form>
 </template>

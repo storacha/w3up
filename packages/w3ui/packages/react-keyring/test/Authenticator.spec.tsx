@@ -12,10 +12,10 @@ import {
 import { Authenticator, CancelButton, Form, EmailInput } from '../src/index'
 
 test('CancelButton', async () => {
-  const cancelRegisterSpace = vi.fn()
+  const cancelAuthorize = vi.fn()
   const contextValue: KeyringContextValue = [
     keyringContextDefaultValue[0],
-    { ...keyringContextDefaultValue[1], cancelRegisterSpace }
+    { ...keyringContextDefaultValue[1], cancelAuthorize }
   ]
   render(
     <KeyringContext.Provider value={contextValue}>
@@ -28,7 +28,7 @@ test('CancelButton', async () => {
   const cancelButton = screen.getByText('Cancel')
   await user.click(cancelButton)
 
-  expect(cancelRegisterSpace).toHaveBeenCalledOnce()
+  expect(cancelAuthorize).toHaveBeenCalledOnce()
 })
 
 test('Form', async () => {

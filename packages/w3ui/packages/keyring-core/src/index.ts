@@ -117,6 +117,10 @@ export interface KeyringContextActions {
    */
   authorize: (email: '{string}@{string}') => Promise<void>
   /**
+   * Abort an ongoing account authorization.
+   */
+  cancelAuthorize: () => void
+  /**
    * Create a new space with the passed name and set it as the current space.
    */
   createSpace: (name?: string) => Promise<DID>
@@ -125,15 +129,10 @@ export interface KeyringContextActions {
    */
   setCurrentSpace: (did: DID) => Promise<void>
   /**
-   * Register the current space, verify the email address and store in secure
-   * storage. Use cancelRegisterSpace to abort. Automatically sets the
+   * Register the current space and store in secure storage. Automatically sets the
    * newly registered space as the current space.
    */
   registerSpace: (email: string, opts?: RegisterSpaceOpts) => Promise<void>
-  /**
-   * Abort an ongoing account registration.
-   */
-  cancelRegisterSpace: () => void
   /**
    * Get all the proofs matching the capabilities. Proofs are delegations with
    * an audience matching the agent DID.

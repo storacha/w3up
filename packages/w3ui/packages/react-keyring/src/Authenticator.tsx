@@ -62,7 +62,7 @@ export const AuthenticatorContext = createContext<AuthenticatorContextValue>([
     },
     setCurrentSpace: async () => {},
     registerSpace: async () => {},
-    cancelRegisterSpace: () => {},
+    cancelAuthorize: () => {},
     getProofs: async () => [],
     createDelegation: async () => {
       throw new Error('missing keyring context provider')
@@ -191,8 +191,8 @@ CancelButtonOptions<T>
  */
 export const CancelButton: Component<CancelButtonProps> = createComponent(
   (props) => {
-    const [, { cancelRegisterSpace }] = useAuthenticator()
-    return createElement('button', { ...props, onClick: cancelRegisterSpace })
+    const [, { cancelAuthorize }] = useAuthenticator()
+    return createElement('button', { ...props, onClick: cancelAuthorize })
   }
 )
 

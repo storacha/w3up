@@ -2,7 +2,7 @@ import { createSignal, Switch, Match } from 'solid-js'
 import { useKeyring } from '@w3ui/solid-keyring'
 
 function Authenticator ({ children }) {
-  const [keyring, { createSpace, registerSpace, cancelRegisterSpace }] = useKeyring()
+  const [keyring, { createSpace, registerSpace, authorize, cancelAuthorize }] = useKeyring()
   const [email, setEmail] = createSignal('')
   const [submitted, setSubmitted] = createSignal(false)
 
@@ -10,6 +10,7 @@ function Authenticator ({ children }) {
     e.preventDefault()
     setSubmitted(true)
     try {
+      await authorize(email())
       await createSpace()
       await registerSpace(email())
     } catch (err) {
@@ -27,13 +28,13 @@ function Authenticator ({ children }) {
       <Match when={submitted()}>
         <div>
           <h1 className='near-white'>Verify your email address!</h1>
-          <p>Click the link in the email we sent to {keyring.agent?.email} to sign in.</p>
-          <form onSubmit={e => { e.preventDefault(); cancelRegisterSpace() }}>
+          <p>Click the link in the email we sent to {keyring.account} to sign in.</p>
+          <form onSubmit={e => { e.preventDefault(); cancelAuthorize() }}>
             <button type='submit' className='ph3 pv2'>Cancel</button>
           </form>
         </div>
       </Match>
-      <Match when={!keyring.space?.registered() && !submitted()}>
+      <Match when={!keyring.account && !submitted()}>
         <form onSubmit={handleRegisterSubmit}>
           <div className='mb3'>
             <label htmlFor='email' className='db mb2'>Email address:</label>
