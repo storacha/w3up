@@ -7,7 +7,7 @@ import type {
 } from '@w3ui/keyring-core'
 import type { Agent } from '@web3-storage/access'
 import type { Abilities } from '@web3-storage/access/types'
-import { authorizeWithSocket } from '@web3-storage/access/agent'
+import { authorizeWaitAndClaim } from '@web3-storage/access/agent'
 
 import type { Delegation, Capability, DID, Principal } from '@ucanto/interface'
 
@@ -95,7 +95,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     setRegisterAbortController(controller)
 
     try {
-      await authorizeWithSocket(agent, email, { signal: controller.signal })
+      await authorizeWaitAndClaim(agent, email, { signal: controller.signal })
       // TODO is there other state that needs to be initialized?
       setState('account', email)
       const newSpaces = getSpaces(agent)

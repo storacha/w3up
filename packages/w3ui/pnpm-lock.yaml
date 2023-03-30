@@ -466,11 +466,11 @@ importers:
     specifiers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
-      '@web3-storage/access': ^11.0.0
+      '@web3-storage/access': ^11.2.0
     dependencies:
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
-      '@web3-storage/access': 11.0.0
+      '@web3-storage/access': 11.2.0
 
   packages/react:
     specifiers:
@@ -495,7 +495,7 @@ importers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^11.0.0
+      '@web3-storage/access': ^11.2.0
       ariakit-react-utils: 0.17.0-next.27
       use-local-storage-state: ^18.2.1
     dependencies:
@@ -507,7 +507,7 @@ importers:
       '@testing-library/user-event': 14.4.3
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
-      '@web3-storage/access': 11.0.0
+      '@web3-storage/access': 11.2.0
 
   packages/react-uploader:
     specifiers:
@@ -550,12 +550,12 @@ importers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^11.0.0
+      '@web3-storage/access': ^11.2.0
     dependencies:
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
       '@w3ui/keyring-core': link:../keyring-core
-      '@web3-storage/access': 11.0.0
+      '@web3-storage/access': 11.2.0
 
   packages/solid-uploader:
     specifiers:
@@ -611,13 +611,13 @@ importers:
       '@ucanto/interface': ^6.2.0
       '@ucanto/principal': ^5.1.0
       '@w3ui/keyring-core': workspace:^
-      '@web3-storage/access': ^11.0.0
+      '@web3-storage/access': ^11.2.0
     dependencies:
       '@w3ui/keyring-core': link:../keyring-core
     devDependencies:
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
-      '@web3-storage/access': 11.0.0
+      '@web3-storage/access': 11.2.0
 
   packages/vue-uploader:
     specifiers:
@@ -5521,12 +5521,11 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
-  /@web3-storage/access/11.0.0:
-    resolution: {integrity: sha512-hWzuxvDjtBze6KGErwZljUx0OtsO1Se938OoWlG155YnW+k0m8pu75KNcSVbiQCIWHfS+HcKeS1+ZY7W2bY2tA==}
+  /@web3-storage/access/11.2.0:
+    resolution: {integrity: sha512-eN0FQ0G1bZSdQYK6xUnqV6Ueyx5DWtfsFOuH9+pVabyH6T6CHqI9NyimQPH67JlEszHdSAxxod3H54QVhUNT/Q==}
     hasBin: true
     dependencies:
       '@ipld/car': 5.1.1
-      '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.2.0
       '@ucanto/client': 5.1.0
       '@ucanto/core': 5.2.0
@@ -5534,7 +5533,7 @@ packages:
       '@ucanto/principal': 5.1.0
       '@ucanto/transport': 5.1.1
       '@ucanto/validator': 6.1.0
-      '@web3-storage/capabilities': 4.0.0
+      '@web3-storage/capabilities': 4.0.1
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
       inquirer: 9.1.5
@@ -5547,7 +5546,6 @@ packages:
       p-wait-for: 5.0.1
       type-fest: 3.7.0
       uint8arrays: 4.0.3
-      varint: 6.0.0
       ws: 8.13.0
       zod: 3.21.4
     transitivePeerDependencies:
@@ -5556,6 +5554,15 @@ packages:
 
   /@web3-storage/capabilities/4.0.0:
     resolution: {integrity: sha512-O+WmApepwaNFNsOj8f66HrIgDl/VGsGLn4iJMyqZdiTxVupNXfFsSVI2iBGEaJlNI+RDzISejXnGtScy1abxGQ==}
+    dependencies:
+      '@ucanto/core': 5.2.0
+      '@ucanto/interface': 6.2.0
+      '@ucanto/principal': 5.1.0
+      '@ucanto/transport': 5.1.1
+      '@ucanto/validator': 6.1.0
+
+  /@web3-storage/capabilities/4.0.1:
+    resolution: {integrity: sha512-Shl6ZGXOpCKL+wohQsAMjW6cN+eadk7vigSXyNW8iI2TUSgkILzfNOQtkC1nWhXw/d4bh3OuzS84QN8V0wO4fw==}
     dependencies:
       '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
