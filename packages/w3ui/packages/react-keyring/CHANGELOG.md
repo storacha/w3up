@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v5.0.0...react-keyring-v5.1.0) (2023-03-30)
+
+
+### Features
+
+* use new faster auth function ([#483](https://github.com/web3-storage/w3ui/issues/483)) ([372f249](https://github.com/web3-storage/w3ui/commit/372f249c8ee253e7b5a291530ce54ee615ce0568))
+
 ## [5.0.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v4.0.0...react-keyring-v5.0.0) (2023-03-30)
 
 
