@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/web3-storage/w3ui/compare/w3console-v1.4.0...w3console-v1.4.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* the tiniest of language tweaks! ([#488](https://github.com/web3-storage/w3ui/issues/488)) ([203202b](https://github.com/web3-storage/w3ui/commit/203202b77b710f84fce884aa815da165997ceb5d))
+
 ## [1.4.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.3.1...w3console-v1.4.0) (2023-03-30)
 
 
