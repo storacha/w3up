@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v4.0.0...react-keyring-v5.0.0) (2023-03-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* update examples for new authorize flow ([#474](https://github.com/web3-storage/w3ui/issues/474))
+
+### Bug Fixes
+
+* update examples for new authorize flow ([#474](https://github.com/web3-storage/w3ui/issues/474)) ([0925c21](https://github.com/web3-storage/w3ui/commit/0925c213c68c17f7edf606c0e55d22cec85b719a))
+
 ## [4.0.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v3.0.1...react-keyring-v4.0.0) (2023-03-23)
 
 
