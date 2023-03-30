@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/web3-storage/w3ui/compare/react-uploader-v4.0.0...react-uploader-v4.0.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* tweak stylization of w3ui in react-uploader README ([#437](https://github.com/web3-storage/w3ui/issues/437)) ([3259e27](https://github.com/web3-storage/w3ui/commit/3259e27aa60ed254e2520b1cbf2eee0e5a31c9b0))
+
 ## [4.0.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v3.1.0...react-uploader-v4.0.0) (2023-03-23)
 
 
