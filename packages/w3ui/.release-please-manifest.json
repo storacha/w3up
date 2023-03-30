@@ -5,7 +5,7 @@
   "packages/react-keyring": "5.0.0",
   "packages/react-uploader": "4.0.0",
   "packages/react-uploads-list": "3.0.0",
-  "packages/vue-keyring": "3.0.0",
+  "packages/vue-keyring": "4.0.0",
   "packages/vue-uploader": "4.0.0",
   "packages/vue-uploads-list": "3.0.0",
   "packages/solid-keyring": "3.0.0",
