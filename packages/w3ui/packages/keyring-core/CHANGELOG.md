@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.1](https://github.com/web3-storage/w3ui/compare/keyring-core-v4.1.0...keyring-core-v4.1.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* email type ([#492](https://github.com/web3-storage/w3ui/issues/492)) ([c09011b](https://github.com/web3-storage/w3ui/commit/c09011b95866f1531b213612baaa4de46109c8b9))
+* types location ([#491](https://github.com/web3-storage/w3ui/issues/491)) ([30f5efa](https://github.com/web3-storage/w3ui/commit/30f5efafc7f0387f83342fce1f3d88f3de11dd51))
+
 ## [4.1.0](https://github.com/web3-storage/w3ui/compare/keyring-core-v4.0.0...keyring-core-v4.1.0) (2023-03-30)
 
 
