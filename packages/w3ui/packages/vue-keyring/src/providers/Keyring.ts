@@ -98,7 +98,7 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
     }
 
     provide(KeyringProviderInjectionKey.authorize,
-      async (email: '{string}@{string}'): Promise<void> => {
+      async (email: `${string}@${string}`): Promise<void> => {
         const agent = await getAgent()
         const controller = new AbortController()
         registerAbortController = controller

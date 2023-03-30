@@ -94,7 +94,7 @@ export function KeyringProvider ({
     return agent
   }
 
-  const authorize = async (email: '{string}@{string}'): Promise<void> => {
+  const authorize = async (email: `${string}@${string}`): Promise<void> => {
     const agent = await getAgent()
     const controller = new AbortController()
     setRegisterAbortController(controller)

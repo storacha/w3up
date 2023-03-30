@@ -89,7 +89,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     return a
   }
 
-  const authorize = async (email: '{string}@{string}'): Promise<void> => {
+  const authorize = async (email: `${string}@${string}`): Promise<void> => {
     const agent = await getAgent()
     const controller = new AbortController()
     setRegisterAbortController(controller)
