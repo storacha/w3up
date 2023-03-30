@@ -14,8 +14,8 @@ import { UploadsList } from '../components/UploadsList'
 import { SpaceFinder } from '../components/SpaceFinder'
 import { SpaceCreatorForm, SpaceCreator } from '../components/SpaceCreator'
 import { AuthenticationEnsurer } from '../components/Authenticator'
+import { DefaultLayout } from '../components/Layout'
 import Loader from '../components/Loader'
-import { tosUrl, Logo } from '../brand'
 
 function SpaceRegistrar (): JSX.Element {
   const [{ account }, { registerSpace }] = useKeyring()
@@ -185,27 +185,18 @@ export default function Home (): JSX.Element {
   return (
     <AuthenticationEnsurer>
       <SpaceEnsurer>
-        <div className='flex min-h-full w-full'>
-          <nav className='flex-none w-64 bg-gray-900 text-white px-4 pb-4 border-r border-gray-800'>
-            <div className='flex flex-col justify-between min-h-full'>
-              <div class='flex-none'>
-                <SpaceSelector
-                  selected={space}
-                  setSelected={viewSpace}
-                  spaces={spaces}
-                />
-              </div>
-              <div className='flex flex-col items-center'>
-                <SpaceCreator className='mb-8' />
-                <Logo className='w-36 mb-2'/>
-                <a className='text-xs block text-center mt-2' href={tosUrl}>Terms</a>
-              </div>
-            </div>
-          </nav>
-          <main className='grow bg-gray-dark text-white p-4'>
-            <SpaceSection viewSpace={viewSpace} share={share} setShare={setShare} />
-          </main>
-        </div>
+        <DefaultLayout sidebar={
+          <div class='flex-grow flex flex-col justify-between'>
+            <SpaceSelector
+              selected={space}
+              setSelected={viewSpace}
+              spaces={spaces}
+            />
+            <SpaceCreator className='mb-8 self-center' />
+          </div>
+        }>
+          <SpaceSection viewSpace={viewSpace} share={share} setShare={setShare} />
+        </DefaultLayout>
       </SpaceEnsurer>
     </AuthenticationEnsurer>
   )
