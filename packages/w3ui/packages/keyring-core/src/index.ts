@@ -115,7 +115,7 @@ export interface KeyringContextActions {
   /**
    * Authorize this device to act as the account linked to email.
    */
-  authorize: (email: '{string}@{string}') => Promise<void>
+  authorize: (email: `${string}@${string}`) => Promise<void>
   /**
    * Abort an ongoing account authorization.
    */
