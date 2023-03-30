@@ -8,5 +8,5 @@ export function toEmail(did) {
   if (parts[1] !== 'mailto') {
     throw new Error(`DID ${did} is not a mailto did.`)
   }
-  return `${parts[3]}@${parts[2]}`
+  return `${decodeURIComponent(parts[3])}@${decodeURIComponent(parts[2])}`
 }
