@@ -5,7 +5,7 @@ export default function Docs () {
   return (
     <DefaultLayout>
       <div className='flex flex-col justify-start items-center min-h-full w-full text-left text-white p-8'>
-        <h1 className='text-3xl mb-8 font-bold'>Welcome to the w3console beta!</h1>
+        <h1 className='text-3xl mb-8 font-bold'>Welcome to the w3up web console beta!</h1>
         <p className='mb-4 w-4/5'>
           We're excited that you're using the w3up web console. This is a web-based interface
           to <Link href='https://github.com/web3-storage/w3up'>w3up</Link>, designed to make it easy
