@@ -245,7 +245,8 @@ export interface UploadOptions
 
 export interface UploadDirectoryOptions
   extends UploadOptions,
-    UnixFSDirectoryEncoderOptions {}
+    UnixFSDirectoryEncoderOptions,
+    UploadProgressTrackable {}
 
 export interface BlobLike {
   /**
