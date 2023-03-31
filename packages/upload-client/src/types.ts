@@ -1,3 +1,4 @@
+import type { ProgressFn } from 'ipfs-utils/src/types'
 import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
 import { CAR } from '@ucanto/transport'
@@ -64,7 +65,7 @@ export interface UploadAddResponse {
   shards?: CARLink[]
 }
 
-export interface UploadRemoveResponse extends UploadAddResponse {}
+export interface UploadRemoveResponse extends UploadAddResponse { }
 
 export interface ListResponse<R> {
   cursor?: string
@@ -80,7 +81,7 @@ export interface StoreListResult {
   origin?: CARLink
 }
 
-export interface UploadListResult extends UploadAddResponse {}
+export interface UploadListResult extends UploadAddResponse { }
 
 export interface InvocationConfig {
   /**
@@ -129,7 +130,7 @@ export interface CARHeaderInfo {
 /**
  * A DAG encoded as a CAR.
  */
-export interface CARFile extends CARHeaderInfo, Blob {}
+export interface CARFile extends CARHeaderInfo, Blob { }
 
 /**
  * An IPLD Link that has the CAR codec code.
@@ -167,6 +168,10 @@ export interface Connectable {
   connection?: ConnectionView<Service>
 }
 
+export interface UploadProgressTrackable {
+  onUploadProgress?: ProgressFn
+}
+
 export interface Pageable {
   /**
    * Opaque string specifying where to start retrival of the next page of
@@ -183,9 +188,9 @@ export interface Pageable {
   pre?: boolean
 }
 
-export interface RequestOptions extends Retryable, Abortable, Connectable {}
+export interface RequestOptions extends Retryable, Abortable, Connectable, UploadProgressTrackable { }
 
-export interface ListRequestOptions extends RequestOptions, Pageable {}
+export interface ListRequestOptions extends RequestOptions, Pageable { }
 
 export type DirectoryEntryLink = UnixFS.DirectoryEntryLink
 
@@ -210,7 +215,7 @@ export interface ShardingOptions {
   rootCID?: AnyLink
 }
 
-export interface ShardStoringOptions extends RequestOptions {
+export interface ShardStoringOptions extends RequestOptions, UploadProgressTrackable {
   /**
    * The number of concurrent requests to store shards. Default 3.
    */
@@ -219,14 +224,15 @@ export interface ShardStoringOptions extends RequestOptions {
 
 export interface UploadOptions
   extends RequestOptions,
-    ShardingOptions,
-    ShardStoringOptions {
+  ShardingOptions,
+  ShardStoringOptions,
+  UploadProgressTrackable {
   onShardStored?: (meta: CARMetadata) => void
 }
 
 export interface UploadDirectoryOptions
   extends UploadOptions,
-    UnixFSDirectoryEncoderOptions {}
+  UnixFSDirectoryEncoderOptions { }
 
 export interface BlobLike {
   /**

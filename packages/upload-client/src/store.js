@@ -3,6 +3,7 @@ import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
+import { fetch }  from 'ipfs-utils/src/http/fetch'
 
 /**
  * Store a DAG encoded as a CAR file. The issuer needs the `store/add`
@@ -67,15 +68,17 @@ export async function add(
     return link
   }
 
+  const fetchWithUploadProgress = /** @type {(url: string, init?: import('ipfs-utils/src/types').FetchOptions) => Promise<Response>} */(fetch)
   const res = await retry(
     async () => {
       try {
-        const res = await fetch(result.url, {
+        const res = await fetchWithUploadProgress(result.url, {
           method: 'PUT',
           mode: 'cors',
           body: car,
           headers: result.headers,
           signal: options.signal,
+          onUploadProgress: options.onUploadProgress
         })
         if (res.status >= 400 && res.status < 500) {
           throw new AbortError(`upload failed: ${res.status}`)

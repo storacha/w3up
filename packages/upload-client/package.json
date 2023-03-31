@@ -70,6 +70,7 @@
     "@ucanto/interface": "^6.2.0",
     "@ucanto/transport": "^5.1.1",
     "@web3-storage/capabilities": "workspace:^",
+    "ipfs-utils": "^9.0.14",
     "multiformats": "^11.0.2",
     "p-queue": "^7.3.0",
     "p-retry": "^5.1.2"
