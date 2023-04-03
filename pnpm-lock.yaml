@@ -143,6 +143,7 @@ importers:
       '@ucanto/transport': ^5.1.1
       '@ucanto/validator': ^6.1.0
       '@web3-storage/capabilities': workspace:^
+      '@web3-storage/did-mailto': workspace:^
       assert: ^2.0.0
       bigint-mod-arith: ^3.1.2
       conf: 10.2.0
@@ -175,6 +176,7 @@ importers:
       '@ucanto/transport': 5.1.1
       '@ucanto/validator': 6.1.0
       '@web3-storage/capabilities': link:../capabilities
+      '@web3-storage/did-mailto': link:../did-mailto
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
       inquirer: 9.1.4
