@@ -1,36 +1,48 @@
 import * as assert from 'assert'
-import * as didMailtoModule from '../src/index.js'
+import * as didMailto from '../src/index.js'
 
 describe('did-mailto', () => {
-  testDidMailto(didMailtoModule, async (name, test) => it(name, test))
+  testDidMailto(didMailto, async (name, test) => it(name, test))
 })
 
 /**
- * @param {typeof didMailtoModule} didMailtoModule
+ * @param {typeof didMailto} didMailto
  * @param {import("./test-types").TestAdder} test
  */
-function testDidMailto(didMailtoModule, test) {
+function testDidMailto(didMailto, test) {
   test('module is an object', async () => {
-    assert.equal(typeof didMailtoModule, 'object')
+    assert.equal(typeof didMailto, 'object')
   })
-  for (const { email, didMailto } of examples()) {
+  for (const { email, did } of examples()) {
     test(`fromEmail("${email}")`, async () => {
       assert.deepStrictEqual(
-        didMailtoModule.fromEmail(email),
-        didMailtoModule.fromString(didMailto)
+        didMailto.fromEmail(email),
+        did
       )
     })
-    test(`toEmail("${didMailto}")`, async () => {
+    test(`toEmail("${did}")`, async () => {
       assert.deepStrictEqual(
-        didMailtoModule.toEmail(didMailtoModule.fromString(didMailto)),
+        didMailto.toEmail(did),
         email
+      )
+    })
+    test(`toEmail(fromEmail("${email}"))`, async () => {
+      assert.deepStrictEqual(
+        didMailto.toEmail(didMailto.fromEmail(email)),
+        email
+      )
+    })
+    test(`fromEmail(toEmail("${did}"))`, async () => {
+      assert.deepStrictEqual(
+        didMailto.fromEmail(didMailto.toEmail(did)),
+        did
       )
     })
   }
   for (const email of validEmailAddresses()) {
     test(`email("${email}")`, async () => {
       assert.doesNotThrow(
-        () => didMailtoModule.email(email),
+        () => didMailto.email(email),
         'can parse to email'
       )
     })
@@ -39,12 +51,12 @@ function testDidMailto(didMailtoModule, test) {
 
 function* examples() {
   yield {
-    email: didMailtoModule.email('example+123@example.com'),
-    didMailto: 'did:mailto:example.com:example%2B123',
+    email: didMailto.email('example+123@example.com'),
+    did: didMailto.fromString('did:mailto:example.com:example%2B123'),
   }
   yield {
-    email: didMailtoModule.email('"email@1"@example.com'),
-    didMailto: `did:mailto:example.com:%22email%401%22`,
+    email: didMailto.email('"email@1"@example.com'),
+    did: didMailto.fromString(`did:mailto:example.com:%22email%401%22`),
   }
 }
 
