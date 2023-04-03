@@ -65,7 +65,7 @@ describe('DbProvisions', () => {
     const modifiedFirstProvision = {
       ...firstProvision,
       space: /** @type {const} */ ('did:key:foo'),
-      account: /** @type {const} */ ('did:mailto:foo'),
+      account: /** @type {const} */ ('did:mailto:example.com:foo'),
       // note this type assertion is wrong, but useful to set up the test
       provider: /** @type {import('@ucanto/interface').DID<'web'>} */ (
         'did:provider:foo'

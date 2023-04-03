@@ -16,7 +16,9 @@ for (const handlerVariant of /** @type {const} */ ([
         spaceWithStorageProvider,
         ...createTesterFromContext(() => context(), {
           registerSpaces: [spaceWithStorageProvider],
-          account: { did: () => /** @type {const} */ ('did:mailto:foo') },
+          account: {
+            did: () => /** @type {const} */ ('did:mailto:example.com:foo'),
+          },
         }),
       }
     })(),
