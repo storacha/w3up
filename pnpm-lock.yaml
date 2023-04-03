@@ -240,6 +240,18 @@ importers:
       typescript: 4.9.5
       watch: 1.0.2
 
+  packages/did-mailto:
+    specifiers:
+      '@types/mocha': ^10.0.1
+      '@types/node': ^18.11.18
+      hd-scripts: ^4.1.0
+      mocha: ^10.2.0
+    devDependencies:
+      '@types/mocha': 10.0.1
+      '@types/node': 18.15.5
+      hd-scripts: 4.1.0
+      mocha: 10.2.0
+
   packages/upload-api:
     specifiers:
       '@ipld/car': ^5.1.1
