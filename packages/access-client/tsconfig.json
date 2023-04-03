@@ -7,8 +7,5 @@
   },
   "include": ["src", "scripts", "test", "package.json"],
   "exclude": ["**/node_modules/**"],
-  "references": [
-    { "path": "../capabilities" },
-    { "path": "../did-mailto" }
-  ]
+  "references": [{ "path": "../capabilities" }, { "path": "../did-mailto" }]
 }
