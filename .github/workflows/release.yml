@@ -34,6 +34,7 @@ jobs:
     if: |
       contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/capabilities') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/did-mailto') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-api') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/w3up-client')
