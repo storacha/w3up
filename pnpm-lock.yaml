@@ -48,6 +48,7 @@ importers:
       '@ucanto/validator': ^6.1.0
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
+      '@web3-storage/did-mailto': workspace:^
       '@web3-storage/worker-utils': 0.4.3-dev
       better-sqlite3: 8.0.1
       buffer: ^6.0.3
@@ -83,6 +84,7 @@ importers:
       '@ucanto/validator': 6.1.0
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
+      '@web3-storage/did-mailto': link:../did-mailto
       '@web3-storage/worker-utils': 0.4.3-dev
       dotenv: 16.0.3
       kysely: 0.23.4
@@ -141,6 +143,7 @@ importers:
       '@ucanto/transport': ^5.1.1
       '@ucanto/validator': ^6.1.0
       '@web3-storage/capabilities': workspace:^
+      '@web3-storage/did-mailto': workspace:^
       assert: ^2.0.0
       bigint-mod-arith: ^3.1.2
       conf: 10.2.0
@@ -173,6 +176,7 @@ importers:
       '@ucanto/transport': 5.1.1
       '@ucanto/validator': 6.1.0
       '@web3-storage/capabilities': link:../capabilities
+      '@web3-storage/did-mailto': link:../did-mailto
       bigint-mod-arith: 3.1.2
       conf: 10.2.0
       inquirer: 9.1.4
@@ -239,6 +243,18 @@ importers:
       type-fest: 3.5.4
       typescript: 4.9.5
       watch: 1.0.2
+
+  packages/did-mailto:
+    specifiers:
+      '@types/mocha': ^10.0.1
+      '@types/node': ^18.11.18
+      hd-scripts: ^4.1.0
+      mocha: ^10.2.0
+    devDependencies:
+      '@types/mocha': 10.0.1
+      '@types/node': 18.15.5
+      hd-scripts: 4.1.0
+      mocha: 10.2.0
 
   packages/upload-api:
     specifiers:

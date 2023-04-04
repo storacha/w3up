@@ -4,7 +4,7 @@ import {
 } from '@web3-storage/access/encoding'
 import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
-import { toEmail } from '../utils/did-mailto.js'
+import * as DidMailto from '@web3-storage/did-mailto'
 import {
   HtmlResponse,
   ValidateEmail,
@@ -173,7 +173,7 @@ async function authorize(req, env) {
     return new HtmlResponse(
       (
         <ValidateEmail
-          email={toEmail(account.did())}
+          email={DidMailto.toEmail(DidMailto.fromString(account.did()))}
           audience={agent.did()}
           ucan={delegationsToString(confirmDelegations)}
         />

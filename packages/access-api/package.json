@@ -27,6 +27,7 @@
     "@ucanto/validator": "^6.1.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
+    "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/worker-utils": "0.4.3-dev",
     "dotenv": "^16.0.3",
     "kysely": "^0.23.4",
