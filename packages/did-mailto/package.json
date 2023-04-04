@@ -1,0 +1,67 @@
+{
+  "name": "@web3-storage/did-mailto",
+  "version": "1.0.0",
+  "description": "did:mailto",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3up.git",
+    "directory": "packages/did-mailto"
+  },
+  "license": "(Apache-2.0 OR MIT)",
+  "type": "module",
+  "types": "dist/src/index.d.ts",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "test",
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "check": "tsc --build",
+    "lint": "tsc --build",
+    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
+    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.11.18",
+    "hd-scripts": "^4.1.0",
+    "mocha": "^10.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/hd-scripts/eslint/index.js"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "Iterable"
+          ]
+        }
+      ]
+    },
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist",
+      "coverage"
+    ]
+  },
+  "engines": {
+    "node": ">=16.15"
+  }
+}
