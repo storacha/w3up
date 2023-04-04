@@ -62,16 +62,19 @@ describe('Store.add', () => {
       channel: server,
     })
 
+    let progressStatusCalls = 0
     const carCID = await Store.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {
         connection,
+        onUploadProgress: (status) => { progressStatusCalls++ }
       }
     )
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
+    assert.equal(progressStatusCalls, 1)
 
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())

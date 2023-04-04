@@ -1,7 +1,6 @@
 import type {
-  ProgressFn,
   FetchOptions,
-  ProgressStatus,
+  ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types'
 import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
@@ -26,8 +25,6 @@ import * as UnixFS from '@ipld/unixfs/src/unixfs'
 
 export type {
   FetchOptions,
-  ProgressFn,
-  ProgressStatus,
   StoreAdd,
   StoreList,
   StoreRemove,
@@ -35,6 +32,12 @@ export type {
   UploadList,
   UploadRemove,
 }
+
+export interface ProgressStatus extends XHRProgressStatus {
+  url?: string
+}
+
+export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service {
   store: {

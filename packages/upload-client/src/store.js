@@ -6,6 +6,24 @@ import { REQUEST_RETRIES } from './constants.js'
 import fetchPkg from 'ipfs-utils/src/http/fetch.js'
 const { fetch } = fetchPkg
 
+
+/**
+ * 
+ * @param {string} url 
+ * @param {import('./types').ProgressFn} handler 
+ */
+function createUploadProgressHandler(url, handler) {
+  /**
+   * 
+   * @param {import('./types').ProgressStatus} status 
+   */
+  function onUploadProgress({total, loaded, lengthComputable}) {
+    return handler({ total, loaded, lengthComputable, url })
+  }
+  return onUploadProgress
+}
+
+
 /**
  * Store a DAG encoded as a CAR file. The issuer needs the `store/add`
  * delegated capability.
@@ -70,9 +88,10 @@ export async function add(
   }
 
   const fetchWithUploadProgress =
-    /** @type {(url: string, init?: import('ipfs-utils/src/types').FetchOptions) => Promise<Response>} */ (
+    /** @type {(url: string, init?: import('./types').FetchOptions) => Promise<Response>} */ (
       fetch
     )
+
   const res = await retry(
     async () => {
       try {
@@ -82,7 +101,9 @@ export async function add(
           body: car,
           headers: result.headers,
           signal: options.signal,
-          onUploadProgress: options.onUploadProgress,
+          onUploadProgress: options.onUploadProgress ? createUploadProgressHandler(result.url, options.onUploadProgress) : undefined,
+          // @ts-expect-error - this is needed by recent versions of node - see https://github.com/bluesky-social/atproto/pull/470 for more info
+          duplex: 'half',
         })
         if (res.status >= 400 && res.status < 500) {
           throw new AbortError(`upload failed: ${res.status}`)
