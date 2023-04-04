@@ -68,7 +68,9 @@ describe('Store.add', () => {
       car,
       {
         connection,
-        onUploadProgress: (status) => { progressStatusCalls++ }
+        onUploadProgress: (status) => {
+          progressStatusCalls++
+        },
       }
     )
 
