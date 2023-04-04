@@ -15,21 +15,6 @@ export function fromEmail(email) {
 }
 
 /**
- * @param {string} email
- */
-function parseEmail(email) {
-  const atParts = email.split('@')
-  if (atParts.length < 2) {
-    throw new TypeError(
-      `expected at least 2 @-delimtied segments, but got ${atParts.length}`
-    )
-  }
-  const domain = atParts.at(-1) ?? ''
-  const local = atParts.slice(0, -1).join('@')
-  return { domain, local }
-}
-
-/**
  * @param {import("./types").DidMailto} did
  * @returns {import("./types").EmailAddress}
  */
@@ -42,6 +27,10 @@ export function toEmail(did) {
 }
 
 /**
+ * given a string, if it is an EmailAddress, return it, otherwise throw an error.
+ * Use this to parse string input to `EmailAddress` type to pass to `fromEmail` (when needed).
+ * This is not meant to be a general RFC5322 (et al) email address validator, which would be more expensive.
+ * 
  * @param {string} input
  * @returns {import("./types").EmailAddress}
  */
@@ -67,4 +56,19 @@ export function fromString(input) {
   }
   const [domain, local] = [colonParts[2], colonParts[3]]
   return `did:mailto:${domain}:${local}`
+}
+
+/**
+ * @param {string} email
+ */
+function parseEmail(email) {
+  const atParts = email.split('@')
+  if (atParts.length < 2) {
+    throw new TypeError(
+      `expected at least 2 @-delimtied segments, but got ${atParts.length}`
+    )
+  }
+  const domain = atParts.at(-1) ?? ''
+  const local = atParts.slice(0, -1).join('@')
+  return { domain, local }
 }
