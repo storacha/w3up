@@ -270,7 +270,7 @@ const setup = async (options = {}) => {
   const context = await createContextWithMailbox(options)
   const space = await principal.ed25519.generate()
   const agent = await principal.ed25519.generate()
-  const account = principal.Absentee.from({ id: 'did:mailto:foo' })
+  const account = principal.Absentee.from({ id: 'did:mailto:example.com:foo' })
 
   return { ...context, space, agent, account }
 }
