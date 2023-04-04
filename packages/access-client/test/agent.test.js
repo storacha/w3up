@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { URI } from '@ucanto/validator'
-import { Agent, connection, createDidMailtoFromEmail } from '../src/agent.js'
+import { Agent, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
@@ -251,13 +251,6 @@ describe('Agent', function () {
           audienceMeta: { name: 'sss', type: 'app' },
         }),
       /cannot delegate capability store\/remove/
-    )
-  })
-
-  it('exports createDidMailtoFromEmail', async () => {
-    assert.deepEqual(
-      createDidMailtoFromEmail('foo@dag.house'),
-      'did:mailto:dag.house:foo'
     )
   })
 })

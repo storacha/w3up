@@ -24,13 +24,12 @@ import {
   canDelegateCapability,
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
-import { createDidMailtoFromEmail } from './utils/did-mailto.js'
 import {
   addProviderAndDelegateToAccount,
   waitForDelegationOnSocket,
 } from './agent-use-cases.js'
 
-export { AgentData, createDidMailtoFromEmail }
+export { AgentData }
 export * from './agent-use-cases.js'
 
 const HOST = 'https://access.web3.storage'
