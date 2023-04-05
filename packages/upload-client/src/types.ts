@@ -1,3 +1,7 @@
+import type {
+  FetchOptions,
+  ProgressStatus as XHRProgressStatus,
+} from 'ipfs-utils/src/types'
 import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
 import { CAR } from '@ucanto/transport'
@@ -20,6 +24,7 @@ import {
 import * as UnixFS from '@ipld/unixfs/src/unixfs'
 
 export type {
+  FetchOptions,
   StoreAdd,
   StoreList,
   StoreRemove,
@@ -27,6 +32,12 @@ export type {
   UploadList,
   UploadRemove,
 }
+
+export interface ProgressStatus extends XHRProgressStatus {
+  url?: string
+}
+
+export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service {
   store: {
@@ -167,6 +178,10 @@ export interface Connectable {
   connection?: ConnectionView<Service>
 }
 
+export interface UploadProgressTrackable {
+  onUploadProgress?: ProgressFn
+}
+
 export interface Pageable {
   /**
    * Opaque string specifying where to start retrival of the next page of
@@ -183,7 +198,11 @@ export interface Pageable {
   pre?: boolean
 }
 
-export interface RequestOptions extends Retryable, Abortable, Connectable {}
+export interface RequestOptions
+  extends Retryable,
+    Abortable,
+    Connectable,
+    UploadProgressTrackable {}
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}
 
@@ -210,7 +229,9 @@ export interface ShardingOptions {
   rootCID?: AnyLink
 }
 
-export interface ShardStoringOptions extends RequestOptions {
+export interface ShardStoringOptions
+  extends RequestOptions,
+    UploadProgressTrackable {
   /**
    * The number of concurrent requests to store shards. Default 3.
    */
@@ -220,13 +241,15 @@ export interface ShardStoringOptions extends RequestOptions {
 export interface UploadOptions
   extends RequestOptions,
     ShardingOptions,
-    ShardStoringOptions {
+    ShardStoringOptions,
+    UploadProgressTrackable {
   onShardStored?: (meta: CARMetadata) => void
 }
 
 export interface UploadDirectoryOptions
   extends UploadOptions,
-    UnixFSDirectoryEncoderOptions {}
+    UnixFSDirectoryEncoderOptions,
+    UploadProgressTrackable {}
 
 export interface BlobLike {
   /**
