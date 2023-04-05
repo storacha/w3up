@@ -34,6 +34,7 @@ importers:
       '@miniflare/core': ^2.11.0
       '@miniflare/r2': ^2.12.1
       '@sentry/cli': 2.7.0
+      '@sentry/integrations': ^7.28.0
       '@types/assert': ^1.5.6
       '@types/git-rev-sync': ^2.0.0
       '@types/mocha': ^10.0.1
@@ -49,7 +50,7 @@ importers:
       '@web3-storage/access': workspace:^
       '@web3-storage/capabilities': workspace:^
       '@web3-storage/did-mailto': workspace:^
-      '@web3-storage/worker-utils': 0.4.3-dev
+      '@web3-storage/worker-utils': 0.5.0-dev
       better-sqlite3: 8.0.1
       buffer: ^6.0.3
       dotenv: ^16.0.3
@@ -71,11 +72,12 @@ importers:
       readable-stream: ^4.2.0
       sade: ^1.8.1
       streaming-iterables: ^7.1.0
-      toucan-js: ^2.7.0
+      toucan-js: ^3.1.0
       typescript: 4.9.5
       wrangler: ^2.13.0
     dependencies:
       '@ipld/dag-ucan': 3.2.0
+      '@sentry/integrations': 7.28.0
       '@ucanto/core': 5.2.0
       '@ucanto/interface': 6.2.0
       '@ucanto/principal': 5.1.0
@@ -85,7 +87,7 @@ importers:
       '@web3-storage/access': link:../access-client
       '@web3-storage/capabilities': link:../capabilities
       '@web3-storage/did-mailto': link:../did-mailto
-      '@web3-storage/worker-utils': 0.4.3-dev
+      '@web3-storage/worker-utils': 0.5.0-dev
       dotenv: 16.0.3
       kysely: 0.23.4
       kysely-d1: 0.3.0_kysely@0.23.4
@@ -95,7 +97,7 @@ importers:
       preact-render-to-string: 5.2.6_preact@10.11.3
       qrcode: 1.5.1
       streaming-iterables: 7.1.0
-      toucan-js: 2.7.0
+      toucan-js: 3.1.0
     devDependencies:
       '@cloudflare/workers-types': 3.19.0
       '@databases/split-sql-query': 1.0.3_@databases+sql@3.3.0
@@ -3217,45 +3219,48 @@ packages:
       - supports-color
     dev: true
 
-  /@sentry/core/6.19.6:
-    resolution: {integrity: sha512-biEotGRr44/vBCOegkTfC9rwqaqRKIpFljKGyYU6/NtzMRooktqOhjmjmItNCMRknArdeaQwA8lk2jcZDXX3Og==}
-    engines: {node: '>=6'}
+  /@sentry/core/7.28.1:
+    resolution: {integrity: sha512-7wvnuvn/mrAfcugWoCG/3pqDIrUgH5t+HisMJMGw0h9Tc33KqrmqMDCQVvjlrr2pWrw/vuUCFdm8CbUHJ832oQ==}
+    engines: {node: '>=8'}
     dependencies:
-      '@sentry/hub': 6.19.6
-      '@sentry/minimal': 6.19.6
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/types': 7.28.1
+      '@sentry/utils': 7.28.1
       tslib: 1.14.1
     dev: false
 
-  /@sentry/hub/6.19.6:
-    resolution: {integrity: sha512-PuEOBZxvx3bjxcXmWWZfWXG+orojQiWzv9LQXjIgroVMKM/GG4QtZbnWl1hOckUj7WtKNl4hEGO2g/6PyCV/vA==}
-    engines: {node: '>=6'}
+  /@sentry/integrations/7.28.0:
+    resolution: {integrity: sha512-OS51DRs1lvI/pQaxcpsxOxhbDKB3ZxTZglVjoCr7pZQm7pb6gzQF2oaYT+W1hMgK0h/mEgyR9XWDOAZCa2aMBg==}
+    engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
+      '@sentry/types': 7.28.0
+      '@sentry/utils': 7.28.0
+      localforage: 1.10.0
       tslib: 1.14.1
     dev: false
 
-  /@sentry/minimal/6.19.6:
-    resolution: {integrity: sha512-T1NKcv+HTlmd8EbzUgnGPl4ySQGHWMCyZ8a8kXVMZOPDzphN3fVIzkYzWmSftCWp0rpabXPt9aRF2mfBKU+mAQ==}
-    engines: {node: '>=6'}
+  /@sentry/types/7.28.0:
+    resolution: {integrity: sha512-F6tZldpvC3Lt8FPgJ6wRTcE7P9txIpHSBjyYz9wqFlVJx4IhBmrn6vZU1LvANUaK1jZZF2PW5tFRrVEnydfpqg==}
+    engines: {node: '>=8'}
+    dev: false
+
+  /@sentry/types/7.28.1:
+    resolution: {integrity: sha512-DvSplMVrVEmOzR2M161V5+B8Up3vR71xMqJOpWTzE9TqtFJRGPtqT/5OBsNJJw1+/j2ssMcnKwbEo9Q2EGeS6g==}
+    engines: {node: '>=8'}
+    dev: false
+
+  /@sentry/utils/7.28.0:
+    resolution: {integrity: sha512-ag1RotlFSJnwUi/MYWY5iQ8aLcwrCBlD/qlGB43PvB3XGDl3e7E/pUy2bdblP7Q2uCKLVUBcudyaSgtvNqu9wA==}
+    engines: {node: '>=8'}
     dependencies:
-      '@sentry/hub': 6.19.6
-      '@sentry/types': 6.19.6
+      '@sentry/types': 7.28.0
       tslib: 1.14.1
     dev: false
 
-  /@sentry/types/6.19.6:
-    resolution: {integrity: sha512-QH34LMJidEUPZK78l+Frt3AaVFJhEmIi05Zf8WHd9/iTt+OqvCHBgq49DDr1FWFqyYWm/QgW/3bIoikFpfsXyQ==}
-    engines: {node: '>=6'}
-    dev: false
-
-  /@sentry/utils/6.19.6:
-    resolution: {integrity: sha512-fAMWcsguL0632eWrROp/vhPgI7sBj/JROWVPzpabwVkm9z3m1rQm6iLFn4qfkZL8Ozy6NVZPXOQ7EXmeU24byg==}
-    engines: {node: '>=6'}
+  /@sentry/utils/7.28.1:
+    resolution: {integrity: sha512-75/jzLUO9HH09iC9TslNimGbxOP3jgn89P+q7uR+rp2fJfRExHVeKJZQdK0Ij4/SmE7TJ3Uh2r154N0INZEx1g==}
+    engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 6.19.6
+      '@sentry/types': 7.28.1
       tslib: 1.14.1
     dev: false
 
@@ -3521,10 +3526,6 @@ packages:
     dependencies:
       '@types/node': 18.15.5
     dev: true
-
-  /@types/cookie/0.5.0:
-    resolution: {integrity: sha512-CJWHVHHupxBYfIlMM+qzXx4dRKIV1VzOm0cP3Wpqten8MDx1tK+y92YDXUshN1ONAfwodvKxDNkw35/pNs+izg==}
-    dev: false
 
   /@types/eslint-scope/3.7.4:
     resolution: {integrity: sha512-9K4zoImiZc3HlIp6AVUDE4CWYx22a+lhSZMYNpbjW04+YF0KWj4pJXnEMjdnFTiQibFFmElcsasJXDbdI/EPhA==}
@@ -4246,12 +4247,12 @@ packages:
       '@noble/hashes': 1.2.0
     dev: true
 
-  /@web3-storage/worker-utils/0.4.3-dev:
-    resolution: {integrity: sha512-PJ30KkwtyNoTkVEQjrNhNYQw3JdDRd23GnVfega114m2TIge33qBfD2/X2+Pn1uC4WKpOHKnCmR6tXHmRLgYig==}
+  /@web3-storage/worker-utils/0.5.0-dev:
+    resolution: {integrity: sha512-+l24gxzefmpcwdw7edmC9ELIhtoAIV2yGWnoRH9Pnm8vIwfAUtjjfs28t7gbT+nfQvK+DtigjJHTvQJLfJImew==}
     dependencies:
       '@web-std/fetch': 4.1.0
       nanoid: 4.0.0
-      toucan-js: 2.7.0
+      toucan-js: 3.1.0
     dev: false
 
   /@webassemblyjs/ast/1.11.1:
@@ -5468,6 +5469,7 @@ packages:
   /cookie/0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
+    dev: true
 
   /copy-webpack-plugin/11.0.0_webpack@5.76.3:
     resolution: {integrity: sha512-fX2MWpamkW0hZxMEg0+mYnA40LTosOSa5TqZ9GYIBzyJa9C3QUaMPSE2xAi/buNr8u89SfD9wHSQVBzrRa/SOQ==}
@@ -6244,12 +6246,6 @@ packages:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
     dependencies:
       is-arrayish: 0.2.1
-
-  /error-stack-parser/2.1.4:
-    resolution: {integrity: sha512-Sk5V6wVazPhq5MhpO+AUxJn5x7XSXGl1R93Vn7i+zS15KDVxQijejNCrz8340/2bgLBjR9GtEG8ZVKONDjcqGQ==}
-    dependencies:
-      stackframe: 1.3.4
-    dev: false
 
   /es-abstract/1.21.1:
     resolution: {integrity: sha512-QudMsPOz86xYz/1dG1OuGBKOELjCh99IIWHLzy5znUB6j8xG2yMA7bfTV86VSqKF+Y/H08vQPR+9jyXpuC6hfg==}
@@ -8387,6 +8383,10 @@ packages:
       queue: 6.0.2
     dev: true
 
+  /immediate/3.0.6:
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
+    dev: false
+
   /immer/9.0.19:
     resolution: {integrity: sha512-eY+Y0qcsB4TZKwgQzLaE/lqYMlKhv5J9dyd2RhhtGhNo2njPXDqU9XPfcNfa3MIDsdtZt5KlkIsirlo4dHsWdQ==}
     dev: true
@@ -9253,6 +9253,12 @@ packages:
       type-check: 0.4.0
     dev: true
 
+  /lie/3.1.1:
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
+    dependencies:
+      immediate: 3.0.6
+    dev: false
+
   /lilconfig/2.0.6:
     resolution: {integrity: sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==}
     engines: {node: '>=10'}
@@ -9389,6 +9395,12 @@ packages:
     resolution: {integrity: sha512-ZvFw1KWS3GVyYBYb7qkmRM/WwL2TQQBxgCK62rlvm4WpVQ23Nb4tYjApUlfjrEGvOs7KHEsmyUn75OHZrJMWPw==}
     engines: {node: '>= 12.13.0'}
     dev: true
+
+  /localforage/1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
+    dependencies:
+      lie: 3.1.1
+    dev: false
 
   /locate-path/3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
@@ -12135,11 +12147,6 @@ packages:
       source-map: 0.6.1
     dev: true
 
-  /source-map/0.5.6:
-    resolution: {integrity: sha512-MjZkVp0NHr5+TPihLcadqnlVoGIoWo4IBHptutGh9wI3ttUYvCG26HkSuDi+K6lsZ25syXJXcctwgyVCt//xqA==}
-    engines: {node: '>=0.10.0'}
-    dev: false
-
   /source-map/0.5.7:
     resolution: {integrity: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==}
     engines: {node: '>=0.10.0'}
@@ -12222,34 +12229,9 @@ packages:
     deprecated: 'Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility'
     dev: true
 
-  /stack-generator/2.0.10:
-    resolution: {integrity: sha512-mwnua/hkqM6pF4k8SnmZ2zfETsRUpWXREfA/goT8SLCV4iOFa4bzOX2nDipWAZFPTjLvQB82f5yaodMVhK0yJQ==}
-    dependencies:
-      stackframe: 1.3.4
-    dev: false
-
   /stack-trace/0.0.10:
     resolution: {integrity: sha512-KGzahc7puUKkzyMt+IqAep+TVNbKP+k2Lmwhub39m1AsTSkaDutx56aDCo+HLDzf/D26BIHTJWNiTG1KAJiQCg==}
     dev: true
-
-  /stackframe/1.3.4:
-    resolution: {integrity: sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==}
-    dev: false
-
-  /stacktrace-gps/3.1.2:
-    resolution: {integrity: sha512-GcUgbO4Jsqqg6RxfyTHFiPxdPqF+3LFmQhm7MgCuYQOYuWyqxo5pwRPz5d/u6/WYJdEnWfK4r+jGbyD8TSggXQ==}
-    dependencies:
-      source-map: 0.5.6
-      stackframe: 1.3.4
-    dev: false
-
-  /stacktrace-js/2.0.2:
-    resolution: {integrity: sha512-Je5vBeY4S1r/RnLydLl0TBTi3F2qdfWmYsGvtfZgEI+SCprPppaIhQf5nGcal4gI4cGpCV/duLcAzT1np6sQqg==}
-    dependencies:
-      error-stack-parser: 2.1.4
-      stack-generator: 2.0.10
-      stacktrace-gps: 3.1.2
-    dev: false
 
   /standard-engine/15.0.0:
     resolution: {integrity: sha512-4xwUhJNo1g/L2cleysUqUv7/btn7GEbYJvmgKrQ2vd/8pkTmN8cpqAZg+BT8Z1hNeEH787iWUdOpL8fmApLtxA==}
@@ -12697,16 +12679,12 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /toucan-js/2.7.0:
-    resolution: {integrity: sha512-vbvRbFfMLN2Jf9lOkwL1KwIwuCcS/ko0MVACZTYTnbdVlVjsIviwCU0inH0CRcMXCvFAS+uL8z/gSV3y7FpZUQ==}
+  /toucan-js/3.1.0:
+    resolution: {integrity: sha512-bRbq/HB+aSfwbsSoCNI6qyPXx2bhsscxSYxnAY63xXv9lIeOLUYfvYdOIBWfAVj9QHNST+X83GQ0lj/llvHpVg==}
     dependencies:
-      '@sentry/core': 6.19.6
-      '@sentry/hub': 6.19.6
-      '@sentry/types': 6.19.6
-      '@sentry/utils': 6.19.6
-      '@types/cookie': 0.5.0
-      cookie: 0.5.0
-      stacktrace-js: 2.0.2
+      '@sentry/core': 7.28.1
+      '@sentry/types': 7.28.1
+      '@sentry/utils': 7.28.1
     dev: false
 
   /tr46/0.0.3:
