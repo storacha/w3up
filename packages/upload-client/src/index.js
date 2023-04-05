@@ -107,7 +107,7 @@ export async function uploadCAR(conf, car, options = {}) {
  * @param {import('./types').UploadOptions} [options]
  * @returns {Promise<import('./types').AnyLink>}
  */
-async function uploadBlockStream(conf, blocks, options = {}) {
+export async function uploadBlockStream(conf, blocks, options = {}) {
   /** @type {import('./types').CARLink[]} */
   const shards = []
   /** @type {import('./types').AnyLink?} */
@@ -130,4 +130,19 @@ async function uploadBlockStream(conf, blocks, options = {}) {
 
   await Upload.add(conf, root, shards, options)
   return root
+}
+
+/**
+ * @param {import('./types').InvocationConfig} conf
+ * @param {(writer: ReturnType<UnixFS.createDirectoryWriter>) => Promise<void>} task
+ * @param {import('./types').UploadOptions} [options]
+ */
+export const uploadWith = async (conf, task, options = {}) => {
+  const channel = UnixFS.createUploadChannel()
+  const writer = UnixFS.createDirectoryWriter(channel)
+  const result = uploadBlockStream(conf, channel.readable, options)
+  await task(writer)
+  await writer.close()
+  await channel.writer.close()
+  return result
 }
