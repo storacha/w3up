@@ -69,6 +69,7 @@ describe('Store.add', () => {
       {
         connection,
         onUploadProgress: (status) => {
+          assert(typeof status.loaded === 'number' && status.loaded > 0)
           progressStatusCalls++
         },
       }
