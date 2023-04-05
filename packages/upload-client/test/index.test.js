@@ -7,7 +7,12 @@ import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
-import { uploadFile, uploadDirectory, uploadCAR } from '../src/index.js'
+import {
+  uploadFile,
+  uploadDirectory,
+  uploadCAR,
+  uploadWith,
+} from '../src/index.js'
 import { serviceSigner } from './fixtures.js'
 import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
@@ -456,5 +461,118 @@ describe('uploadCAR', () => {
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
     assert.equal(carCIDs.length, 2)
+  })
+})
+
+describe('incremental uploader', () => {
+  it('incremental upload', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const files = [
+      new File([await randomBytes(128)], '1.txt'),
+      new File([await randomBytes(32)], '2.txt'),
+    ]
+
+    /** @type {import('../src/types').CARLink?} */
+    let carCID = null
+
+    const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      UploadCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ])
+
+    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
+
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, StoreCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
+          return {
+            ...res,
+            link: /** @type {import('../src/types').CARLink} */ (
+              capability.nb.link
+            ),
+          }
+        }),
+      },
+      upload: {
+        add: provide(UploadCapabilities.add, ({ invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, UploadCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
+          assert.equal(invCap.nb?.shards?.length, 1)
+          assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
+          if (!invCap.nb) throw new Error('nb must be present')
+          return invCap.nb
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      decoder: CAR,
+      encoder: CBOR,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      encoder: CAR,
+      decoder: CBOR,
+      channel: server,
+    })
+
+    const dataCID = await uploadWith(
+      {
+        issuer: agent,
+        with: space.did(),
+        proofs,
+        audience: serviceSigner,
+      },
+      async (writer) => {
+        console.log('writing')
+        const onetxt = writer.createFile(files[0].name)
+        onetxt.write(new Uint8Array(await files[0].arrayBuffer()))
+        await onetxt.close()
+
+        const twotxt = writer.createFile(files[1].name)
+        await twotxt.write(new Uint8Array(await files[1].arrayBuffer()))
+      },
+      {
+        connection,
+        onShardStored: (meta) => {
+          carCID = meta.cid
+        },
+      }
+    )
+
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+    assert(service.upload.add.called)
+    assert.equal(service.upload.add.callCount, 1)
+
+    assert(carCID)
+    assert(dataCID)
   })
 })
