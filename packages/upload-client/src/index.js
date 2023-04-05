@@ -107,7 +107,7 @@ export async function uploadCAR(conf, car, options = {}) {
  * @param {import('./types').UploadOptions} [options]
  * @returns {Promise<import('./types').AnyLink>}
  */
-export async function uploadBlockStream(conf, blocks, options = {}) {
+async function uploadBlockStream(conf, blocks, options = {}) {
   /** @type {import('./types').CARLink[]} */
   const shards = []
   /** @type {import('./types').AnyLink?} */
