@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.3.0](https://github.com/web3-storage/w3up/compare/upload-client-v8.2.0...upload-client-v8.3.0) (2023-04-05)
+
+
+### Features
+
+* allow clients to pass uploadFile and uploadDirectory an onUploadProgress callback ([#720](https://github.com/web3-storage/w3up/issues/720)) ([b9247ad](https://github.com/web3-storage/w3up/commit/b9247ad6be952fdd1117510a9c5ba74153c6b1f4))
+
 ## [8.2.0](https://github.com/web3-storage/w3protocol/compare/upload-client-v8.1.0...upload-client-v8.2.0) (2023-03-29)
 
 
