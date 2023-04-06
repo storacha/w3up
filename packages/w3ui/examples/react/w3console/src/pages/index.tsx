@@ -86,11 +86,11 @@ function SpaceSection (props: SpaceSectionProps): JSX.Element {
               )}?d=identicon`}
               className='w-10 hover:saturate-200 saturate-0 invert border-solid border-gray-500 border'
             />
-            <div className='grow'>
-              <h1 className='text-xl font-semibold leading-5'>
+            <div className='grow overflow-hidden whitespace-nowrap text-ellipsis text-gray-500'>
+              <h1 className='text-xl font-semibold leading-5 text-white'>
                 {space.name() ?? 'Untitled'}
               </h1>
-              <label className='font-mono text-xs text-gray-500'>
+              <label className='font-mono text-xs'>
                 {space.did()}
               </label>
             </div>

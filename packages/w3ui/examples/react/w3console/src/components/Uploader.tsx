@@ -17,10 +17,10 @@ export const Uploading = ({
   file?: File
   storedDAGShards?: CARMetadata[]
 }): JSX.Element => (
-  <div className='flex flex-col items-center'>
+  <div className='flex flex-col items-center w-full'>
     <h1 className='font-bold text-sm uppercase text-gray-400'>Uploading {file?.name}</h1>
     {storedDAGShards?.map(({ cid, size }) => (
-      <p className='text-xs' key={cid.toString()}>
+      <p className='text-xs max-w-full overflow-hidden text-ellipsis' key={cid.toString()}>
         shard {cid.toString()} ({humanFileSize(size)}) uploaded
       </p>
     ))}
@@ -46,10 +46,10 @@ export const Done = ({ dataCID }: DoneProps): JSX.Element => {
   const [, { setFile }] = useUploaderComponent()
   const cid: string = dataCID?.toString() ?? ''
   return (
-    <div className='flex flex-col items-center'>
-      <h1 className='font-bold text-sm uppercase text-gray-400 mb-1'>Uploaded</h1>
+    <div className='flex flex-col items-center w-full'>
+      <h1 className='font-bold text-sm uppercase text-gray-400 mb-1 '>Uploaded</h1>
       <a
-        className='font-mono text-xs'
+        className='font-mono text-xs max-w-full overflow-hidden no-wrap text-ellipsis'
         href={`https://${cid}.ipfs.${gatewayHost}/`}
       >
         {cid}
@@ -136,9 +136,9 @@ const UploaderContents = (): JSX.Element => {
       : <></>
   } else {
     return (
-      <div>
+      <>
         <UploaderConsole />
-      </div>
+      </>
     )
   }
 }

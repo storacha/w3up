@@ -24,7 +24,7 @@ function Uploads ({ uploads, loading }: UploadsProps): JSX.Element {
     : (
       <>
         <div className='rounded-md border border-zinc-300'>
-          <table className='border-collapse w-full  divide-y divide-zinc-300'>
+          <table className='border-collapse table-fixed w-full divide-y divide-zinc-300'>
             <thead className='text-left text-sm text-zinc-300'>
               <tr>
                 <th className="p-3">Root CID</th>
@@ -33,7 +33,7 @@ function Uploads ({ uploads, loading }: UploadsProps): JSX.Element {
             <tbody>
               {uploads.map(({ root }) => (
                 <tr key={root.toString()}>
-                  <td className="w-64 p-2 pl-3 font-mono text-sm">
+                  <td className="p-2 pl-3 font-mono text-sm overflow-hidden no-wrap text-ellipsis">
                     <a href={`https://${root.toString()}.ipfs.${gatewayHost}/`}>
                       {root.toString()}
                     </a>
