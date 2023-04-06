@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1](https://github.com/web3-storage/w3ui/compare/vue-keyring-v4.1.0...vue-keyring-v4.1.1) (2023-04-06)
+
+
+### Bug Fixes
+
+* more email type ([#494](https://github.com/web3-storage/w3ui/issues/494)) ([355e794](https://github.com/web3-storage/w3ui/commit/355e794a9bf77381ee8f886f8c93d4b8262684a1))
+
 ## [4.1.0](https://github.com/web3-storage/w3ui/compare/vue-keyring-v4.0.0...vue-keyring-v4.1.0) (2023-03-30)
 
 
