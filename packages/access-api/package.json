@@ -19,6 +19,7 @@
   "license": "(Apache-2.0 OR MIT)",
   "dependencies": {
     "@ipld/dag-ucan": "^3.2.0",
+    "@sentry/integrations": "^7.28.0",
     "@ucanto/core": "^5.2.0",
     "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
@@ -28,7 +29,7 @@
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
-    "@web3-storage/worker-utils": "0.4.3-dev",
+    "@web3-storage/worker-utils": "0.5.0-dev",
     "dotenv": "^16.0.3",
     "kysely": "^0.23.4",
     "kysely-d1": "^0.3.0",
@@ -38,7 +39,7 @@
     "preact-render-to-string": "^5.2.6",
     "qrcode": "^1.5.1",
     "streaming-iterables": "^7.1.0",
-    "toucan-js": "^2.7.0"
+    "toucan-js": "^3.1.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.19.0",
