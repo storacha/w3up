@@ -1,5 +1,22 @@
 # Changelog
 
+## [6.0.0](https://github.com/web3-storage/w3up/compare/access-api-v5.2.1...access-api-v6.0.0) (2023-04-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* add did mailto package, replacing `createDidMailtoFromEmail` ([#722](https://github.com/web3-storage/w3up/issues/722))
+
+### Features
+
+* add did mailto package, replacing `createDidMailtoFromEmail` ([#722](https://github.com/web3-storage/w3up/issues/722)) ([b48c256](https://github.com/web3-storage/w3up/commit/b48c256bfa57dda5d1762f77e41af1ecddf35846))
+
+
+### Bug Fixes
+
+* bug where did:mailto with pct-encoded email parts was not decoded correctly ([#719](https://github.com/web3-storage/w3up/issues/719)) ([7003dd2](https://github.com/web3-storage/w3up/commit/7003dd2a159c58872cbecaad1fd4a863e4a7f34b))
+* upgrade toucan-js and @web3-storage/worker-utils ([#728](https://github.com/web3-storage/w3up/issues/728)) ([976c77c](https://github.com/web3-storage/w3up/commit/976c77c260ced0e8545dad8599796cb32c6eabe2))
+
 ## [5.2.1](https://github.com/web3-storage/w3protocol/compare/access-api-v5.2.0...access-api-v5.2.1) (2023-03-24)
 
 
