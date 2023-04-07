@@ -1,5 +1,16 @@
 # Changelog
 
+## [12.0.0](https://github.com/web3-storage/w3up/compare/access-v11.2.0...access-v12.0.0) (2023-04-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* add did mailto package, replacing `createDidMailtoFromEmail` ([#722](https://github.com/web3-storage/w3up/issues/722))
+
+### Features
+
+* add did mailto package, replacing `createDidMailtoFromEmail` ([#722](https://github.com/web3-storage/w3up/issues/722)) ([b48c256](https://github.com/web3-storage/w3up/commit/b48c256bfa57dda5d1762f77e41af1ecddf35846))
+
 ## [11.2.0](https://github.com/web3-storage/w3protocol/compare/access-v11.1.0...access-v11.2.0) (2023-03-29)
 
 
