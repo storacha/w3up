@@ -15,7 +15,6 @@ import {
 } from '../models/delegations.js'
 import { createD1Database } from './d1.js'
 import { DbProvisions } from '../models/provisions.js'
-import { RewriteFrames } from '@sentry/integrations'
 
 /**
  * Obtains a route context object.
@@ -48,7 +47,6 @@ export function getContext(request, env, ctx) {
   const sentry = new Toucan({
     context: ctx,
     integrations: [
-      new RewriteFrames({ root: '/' }),
       new RequestData({
         allowedHeaders: ['user-agent', 'x-client'],
         allowedSearchParams: /(.*)/,
