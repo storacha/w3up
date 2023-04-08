@@ -23,7 +23,7 @@ r.add('get', '/.debug/error', () => {
 })
 
 /** @type {import('./bindings.js').ModuleWorker} */
-const worker = {
+export default {
   fetch: async (request, env, ctx) => {
     const context = getContext(request, env, ctx)
     context.log.time('request')
@@ -40,5 +40,3 @@ const worker = {
     }
   },
 }
-
-export default worker
