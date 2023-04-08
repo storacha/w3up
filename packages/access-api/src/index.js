@@ -18,6 +18,9 @@ r.add('post', '/validate-email', validateEmail)
 r.add('get', '/validate-ws', validateWS)
 r.add('post', '/', postRoot)
 r.add('post', '/raw', postRoot)
+r.add('get', '/.debug/error', () => {
+  throw new Error('this is the result of handling a request at /.debug/error')
+})
 
 /** @type {import('./bindings.js').ModuleWorker} */
 const worker = {
