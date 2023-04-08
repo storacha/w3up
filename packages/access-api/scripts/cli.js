@@ -67,7 +67,7 @@ prog
           global: 'globalThis',
         },
         minify: opts.env !== 'dev',
-        sourcemap: true,
+        sourcemap: 'external',
         jsxImportSource: 'preact',
         jsx: 'automatic',
         loader: { '.js': 'jsx' },
