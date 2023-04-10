@@ -1,5 +1,3 @@
-import { Agent } from '@web3-storage/access/agent'
-import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 import type { Abilities, AgentMeta, Service } from '@web3-storage/access/types'
 import type {
   Capability,
@@ -11,7 +9,12 @@ import type {
   Delegation,
   UCANOptions
 } from '@ucanto/interface'
+import { Agent, authorizeWaitAndClaim } from '@web3-storage/access/agent'
+import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 import * as RSASigner from '@ucanto/principal/rsa'
+
+export { Agent, Abilities, AgentMeta, Service }
+export const authorize = authorizeWaitAndClaim
 
 const DB_NAME = 'w3ui'
 const DB_STORE_NAME = 'keyring'

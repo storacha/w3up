@@ -34,8 +34,7 @@
   },
   "devDependencies": {
     "@ucanto/interface": "^6.2.0",
-    "@ucanto/principal": "^5.1.0",
-    "@web3-storage/access": "^11.2.0"
+    "@ucanto/principal": "^5.1.0"
   },
   "eslintConfig": {
     "extends": [

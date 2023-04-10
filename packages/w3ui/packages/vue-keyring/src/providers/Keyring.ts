@@ -1,3 +1,10 @@
+import type {
+  Agent,
+  KeyringContextState,
+  KeyringContextActions,
+  ServiceConfig
+} from '@w3ui/keyring-core'
+import type { Capability, DID, Proof } from '@ucanto/interface'
 import {
   defineComponent,
   provide,
@@ -6,16 +13,12 @@ import {
   Ref,
   shallowReactive
 } from 'vue'
-import { createAgent, getCurrentSpace as getCurrentSpaceInAgent, getSpaces } from '@w3ui/keyring-core'
-import type {
-  KeyringContextState,
-  KeyringContextActions,
-  ServiceConfig
+import {
+  authorize as accessAuthorize,
+  createAgent,
+  getCurrentSpace as getCurrentSpaceInAgent,
+  getSpaces
 } from '@w3ui/keyring-core'
-import { authorizeWithSocket } from '@web3-storage/access/agent'
-
-import type { Agent } from '@web3-storage/access'
-import type { Capability, DID, Proof } from '@ucanto/interface'
 
 export { KeyringContextState, KeyringContextActions }
 
@@ -104,7 +107,7 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
         registerAbortController = controller
 
         try {
-          await authorizeWithSocket(agent, email, { signal: controller.signal })
+          await accessAuthorize(agent, email, { signal: controller.signal })
           // TODO is there other state that needs to be initialized?
           state.account = email
           const newSpaces = getSpaces(agent)

@@ -3,11 +3,12 @@ import type {
   KeyringContextState,
   KeyringContextActions,
   ServiceConfig,
-  CreateDelegationOptions
+  CreateDelegationOptions,
+  Agent,
+  Abilities
 } from '@w3ui/keyring-core'
-import type { Agent } from '@web3-storage/access'
-import type { Abilities } from '@web3-storage/access/types'
-import { authorizeWaitAndClaim } from '@web3-storage/access/agent'
+
+import { authorize as accessAuthorize, createAgent, getCurrentSpace as getCurrentSpaceInAgent, getSpaces } from '@w3ui/keyring-core'
 
 import type { Delegation, Capability, DID, Principal } from '@ucanto/interface'
 
@@ -18,7 +19,6 @@ import {
   createComponent
 } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { createAgent, getCurrentSpace as getCurrentSpaceInAgent, getSpaces } from '@w3ui/keyring-core'
 
 export { KeyringContextState, KeyringContextActions }
 
@@ -95,7 +95,7 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     setRegisterAbortController(controller)
 
     try {
-      await authorizeWaitAndClaim(agent, email, { signal: controller.signal })
+      await accessAuthorize(agent, email, { signal: controller.signal })
       // TODO is there other state that needs to be initialized?
       setState('account', email)
       const newSpaces = getSpaces(agent)
