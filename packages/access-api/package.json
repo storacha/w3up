@@ -10,10 +10,11 @@
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore --write",
     "dev": "scripts/cli.js dev",
-    "build": "scripts/cli.js build",
+    "build": "wrangler publish --dry-run --outdir=dist",
     "check": "tsc --build",
     "test": "pnpm build && mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules",
-    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules --watch-files src,test"
+    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules --watch-files src,test",
+    "wrangler:build": "wrangler publish --dry-run --outdir=dist"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
