@@ -2,10 +2,7 @@
 name = "w3access-local"
 account_id = "fffa4b4363a7e5250af8357087263b3a"
 main = "./src/index.js"
-
-# Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
-compatibility_date = "2022-09-28"
-compatibility_flags = ["url_standard"]
+compatibility_date = "2022-11-11"
 
 [[kv_namespaces]]
 binding = "SPACES"
@@ -20,7 +17,7 @@ preview_id = "62e57652625c44a3b1fef2f840ffc882"
 [[d1_databases]]
 binding = "__D1_BETA__"
 database_name = "spaces-dev"
-database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
+database_id = "e3331d3b-d8dd-48b0-ab80-2dba93c2c256"
 
 [[r2_buckets]]
 binding = "DELEGATIONS_BUCKET"
@@ -33,6 +30,7 @@ DEBUG = "true"
 DID = "did:web:local.web3.storage"
 PRIVATE_KEY="MgCYWjE6vp0cn3amPan2xPO+f6EZ3I+KwuN1w2vx57vpJ9O0Bn4ci4jn8itwc121ujm7lDHkCW24LuKfZwIdmsifVysY="
 UPLOAD_API_URL = "https://up.web3.storage"
+SENTRY_DSN = ""
 
 [build]
 watch_dir = "src"
@@ -44,18 +42,29 @@ d1_persist = ".wrangler/miniflare"
 [env.dev]
 name = "w3access-dev"
 workers_dev = true
-vars = { ENV = "dev", DEBUG = "false", DID = "did:web:dev.web3.storage", UPLOAD_API_URL = "https://staging.up.web3.storage" }
 build = { command = "scripts/cli.js build --env dev", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5697e95e1aaa436788e6d697fd3350be" },
     { binding = "VALIDATIONS", id = "ea17f472b37a43d29c1faf7af9512e03" },
 ]
-d1_databases = [
-    { binding = "__D1_BETA__", database_name = "access-dev", database_id = "4145a261-e54c-411d-a001-050fc30e4678" },
-]
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
+
+[env.dev.vars]
+DEBUG = "false"
+DID = "did:web:dev.web3.storage"
+ENV = "dev"
+UPLOAD_API_URL = "https://staging.up.web3.storage"
+
+[[env.dev.d1_databases]]
+binding = "__D1_BETA__"
+database_name = "access-dev-1"
+database_id = "3e95d74b-3c43-4cda-a6ec-76f227f44782"
+
+[[env.dev.r2_buckets]]
+binding = "DELEGATIONS_BUCKET"
+bucket_name = "w3up-delegations-dev-0"
 
 
 # Staging
