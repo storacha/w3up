@@ -1,6 +1,7 @@
 export class Space {
   /** @type {import('./types').DID} */
   #did
+
   /** @type {Record<string, any>} */
   #meta
 

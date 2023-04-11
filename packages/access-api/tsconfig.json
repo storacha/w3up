@@ -15,5 +15,9 @@
     "src/utils/phrase-words.json"
   ],
   "exclude": ["**/node_modules/**"],
-  "references": [{ "path": "../access-client" }, { "path": "../capabilities" }]
+  "references": [
+    { "path": "../access-client" },
+    { "path": "../capabilities" },
+    { "path": "../did-mailto" }
+  ]
 }

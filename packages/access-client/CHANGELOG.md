@@ -1,5 +1,35 @@
 # Changelog
 
+## [12.0.0](https://github.com/web3-storage/w3up/compare/access-v11.2.0...access-v12.0.0) (2023-04-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* add did mailto package, replacing `createDidMailtoFromEmail` ([#722](https://github.com/web3-storage/w3up/issues/722))
+
+### Features
+
+* add did mailto package, replacing `createDidMailtoFromEmail` ([#722](https://github.com/web3-storage/w3up/issues/722)) ([b48c256](https://github.com/web3-storage/w3up/commit/b48c256bfa57dda5d1762f77e41af1ecddf35846))
+
+## [11.2.0](https://github.com/web3-storage/w3protocol/compare/access-v11.1.0...access-v11.2.0) (2023-03-29)
+
+
+### Features
+
+* allow importing a space with restricted abilities ([#685](https://github.com/web3-storage/w3protocol/issues/685)) ([a711b9b](https://github.com/web3-storage/w3protocol/commit/a711b9ba92c1b3d2a25e91c538234de62af6f485))
+
+## [11.1.0](https://github.com/web3-storage/w3protocol/compare/access-v11.0.1...access-v11.1.0) (2023-03-29)
+
+
+### Features
+
+* get `access/claim` authorization wait function working ([#666](https://github.com/web3-storage/w3protocol/issues/666)) ([83971de](https://github.com/web3-storage/w3protocol/commit/83971de683b5fccbbc7ae36b7cb34d62a9930349))
+
+
+### Bug Fixes
+
+* verify proofs exist for requested delegation capabilities ([#670](https://github.com/web3-storage/w3protocol/issues/670)) ([068e801](https://github.com/web3-storage/w3protocol/commit/068e801ef849c9ebeacdc85eda75005e28a67b86))
+
 ## [11.0.1](https://github.com/web3-storage/w3protocol/compare/access-v11.0.0...access-v11.0.1) (2023-03-28)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "11.0.1",
+  "version": "12.0.0",
   "description": "w3access client",
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access-client",
   "repository": {
@@ -67,6 +67,7 @@
     "@ucanto/transport": "^5.1.1",
     "@ucanto/validator": "^6.1.0",
     "@web3-storage/capabilities": "workspace:^",
+    "@web3-storage/did-mailto": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "10.2.0",
     "inquirer": "^9.1.4",

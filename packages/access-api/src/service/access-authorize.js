@@ -1,6 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
-import * as Mailto from '../utils/did-mailto.js'
+import * as DidMailto from '@web3-storage/did-mailto'
 import { delegationToString } from '@web3-storage/access/encoding'
 
 /**
@@ -52,7 +52,7 @@ export function accessAuthorizeProvider(ctx) {
     const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}&mode=authorize`
 
     await ctx.email.sendValidation({
-      to: Mailto.toEmail(capability.nb.iss),
+      to: DidMailto.toEmail(DidMailto.fromString(capability.nb.iss)),
       url,
     })
 

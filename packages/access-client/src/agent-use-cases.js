@@ -1,8 +1,4 @@
-import {
-  addSpacesFromDelegations,
-  Agent as AccessAgent,
-  createDidMailtoFromEmail,
-} from './agent.js'
+import { addSpacesFromDelegations, Agent as AccessAgent } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations, stringToDelegation } from './encoding.js'
@@ -12,6 +8,7 @@ import { Websocket, AbortError } from './utils/ws.js'
 import { AgentData, isSessionProof } from './agent-data.js'
 import * as ucanto from '@ucanto/core'
 import { DID as DIDValidator } from '@ucanto/validator'
+import * as DidMailto from '@web3-storage/did-mailto'
 
 /**
  * Request access by a session allowing this agent to issue UCANs
@@ -242,7 +239,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
 export async function authorizeAndWait(access, email, opts = {}) {
   const expectAuthorization =
     opts.expectAuthorization || waitForAuthorizationByPolling
-  const account = { did: () => createDidMailtoFromEmail(email) }
+  const account = { did: () => DidMailto.fromEmail(email) }
   await requestAccess(
     access,
     account,
@@ -337,7 +334,7 @@ export async function addProviderAndDelegateToAccount(
   if (spaceMeta && spaceMeta.isRegistered) {
     throw new Error('Space already registered with web3.storage.')
   }
-  const account = { did: () => createDidMailtoFromEmail(email) }
+  const account = { did: () => DidMailto.fromEmail(DidMailto.email(email)) }
   await addProvider({ access, space, account, provider })
   const delegateSpaceAccessResult = await delegateSpaceAccessToAccount(
     access,

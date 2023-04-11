@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access-api",
-  "version": "5.2.1",
+  "version": "6.0.0",
   "description": "Access API",
   "type": "module",
   "main": "dist/worker.js",
@@ -27,7 +27,8 @@
     "@ucanto/validator": "^6.1.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/worker-utils": "0.4.3-dev",
+    "@web3-storage/did-mailto": "workspace:^",
+    "@web3-storage/worker-utils": "0.5.0-dev",
     "dotenv": "^16.0.3",
     "kysely": "^0.23.4",
     "kysely-d1": "^0.3.0",
@@ -37,7 +38,7 @@
     "preact-render-to-string": "^5.2.6",
     "qrcode": "^1.5.1",
     "streaming-iterables": "^7.1.0",
-    "toucan-js": "^2.7.0"
+    "toucan-js": "^3.1.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.19.0",

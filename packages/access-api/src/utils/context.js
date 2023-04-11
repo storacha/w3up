@@ -1,7 +1,6 @@
 import { Logging } from '@web3-storage/worker-utils/logging'
-import Toucan from 'toucan-js'
+import { Toucan, RequestData } from 'toucan-js'
 import { Signer } from '@ucanto/principal/ed25519'
-import pkg from '../../package.json'
 import { loadConfig } from '../config.js'
 import { Accounts } from '../models/accounts.js'
 import { Spaces } from '../models/spaces.js'
@@ -47,17 +46,17 @@ export function getContext(request, env, ctx) {
   // Sentry
   const sentry = new Toucan({
     context: ctx,
+    integrations: [
+      new RequestData({
+        allowedHeaders: ['user-agent', 'x-client'],
+        allowedSearchParams: /(.*)/,
+      }),
+    ],
     request,
     dsn: config.SENTRY_DSN,
-    allowedHeaders: ['user-agent', 'x-client'],
-    allowedSearchParams: /(.*)/,
     debug: false,
     environment: config.ENV,
-    rewriteFrames: {
-      root: '/',
-    },
     release: config.VERSION,
-    pkg,
   })
 
   // Logging

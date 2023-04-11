@@ -10,7 +10,7 @@ import { Accounts } from '../src/models/accounts.js'
 import { context } from './helpers/context.js'
 // @ts-ignore
 import isSubset from 'is-subset'
-import { toEmail } from '../src/utils/did-mailto.js'
+import * as DidMailto from '@web3-storage/did-mailto'
 import {
   warnOnErrorResult,
   registerSpaces,
@@ -126,7 +126,7 @@ describe('access/authorize', function () {
 
     const html = await rsp.text()
     assert(html.includes('Email Validated'))
-    assert(html.includes(toEmail(accountDID)))
+    assert(html.includes(DidMailto.toEmail(accountDID)))
     assert(html.includes(issuer.did()))
   })
 

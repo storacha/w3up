@@ -4,6 +4,7 @@ import {
   assertNotError,
   createTesterFromContext,
 } from './helpers/ucanto-test-utils.js'
+import * as DidMailto from '@web3-storage/did-mailto'
 import * as principal from '@ucanto/principal'
 import {
   addProvider,
@@ -11,7 +12,6 @@ import {
   Agent as AccessAgent,
   authorizeAndWait,
   claimAccess,
-  createDidMailtoFromEmail,
   delegationsIncludeSessionProof,
   pollAccessClaimUntil,
   requestAccess,
@@ -37,7 +37,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       }
       const spaceWithStorageProvider = principal.ed25519.generate()
       async function createContext() {
-        /** @type {{url:string}[]} */
+        /** @type {{url:string,to:string}[]} */
         const emails = []
         const email = createEmail(emails)
         const ctx = await context({
@@ -80,7 +80,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       const abort = new AbortController()
       after(() => abort.abort())
       const account = {
-        did: () => createDidMailtoFromEmail('example@dag.house'),
+        did: () => DidMailto.fromEmail(DidMailto.email('example@dag.house')),
       }
       await requestAccess(accessAgent, account, [{ can: '*' }])
       assert.deepEqual(emails.length, emailCount + 1)
@@ -184,8 +184,8 @@ for (const accessApiVariant of /** @type {const} */ ([
 
     it('can registerSpace', async () => {
       const { connection, emails } = await accessApiVariant.create()
-      const accountEmail = 'foo@dag.house'
-      const account = { did: () => createDidMailtoFromEmail(accountEmail) }
+      const accountEmail = DidMailto.email('foo@dag.house')
+      const account = { did: () => DidMailto.fromEmail(accountEmail) }
       const accessAgent = await AccessAgent.create(undefined, {
         connection,
       })
@@ -384,7 +384,7 @@ for (const accessApiVariant of /** @type {const} */ ([
     const abort = new AbortController()
     after(() => abort.abort())
     const account = {
-      email: /** @type {const} */ ('example@dag.house'),
+      email: /** @type {const} */ ('example+123@dag.house'),
       did: thisEmailDidMailto,
     }
     const { connection, emails } = await accessApiVariant.create()
@@ -409,6 +409,9 @@ for (const accessApiVariant of /** @type {const} */ ([
       with: space.did,
     })
     assertNotError(spaceInfoResult)
+
+    const latestEmail = emails.at(-1)
+    assert.deepEqual(latestEmail?.to, account.email, 'emails are equal')
   })
 
   it('authorizeWithPollClaim', async () => {
@@ -612,7 +615,7 @@ async function testSessionAuthorization(service, access, account, emails) {
  * @returns {Ucanto.DID<'mailto'>}
  */
 function thisEmailDidMailto() {
-  return createDidMailtoFromEmail(this.email)
+  return DidMailto.fromEmail(DidMailto.email(this.email))
 }
 
 /**
