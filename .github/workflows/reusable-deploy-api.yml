@@ -76,4 +76,13 @@ jobs:
           SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
           LOGTAIL_TOKEN: ${{ secrets.LOGTAIL_TOKEN }}
           UCAN_LOG_BASIC_AUTH: ${{ secrets.UCAN_LOG_BASIC_AUTH }}
-      - run: ls packages/access-api/dist/
+      - working-directory: packages/access-api
+        run: |
+          pnpm exec wrangler publish --dry-run --outdir=dist
+          ls -alh dist
+          echo "release_name is ${{ steps.set-release-name.outputs.release_name }}"
+          echo "RELEASE_NAME=$RELEASE_NAME"
+          pnpm exec sentry-cli releases new "$RELEASE_NAME" --finalize
+          pnpm exec sentry-cli releases files "$RELEASE_NAME" upload-sourcemaps ./dist
+        env:
+          RELEASE_NAME: ${{ steps.set-release-name.outputs.release_name }}"
