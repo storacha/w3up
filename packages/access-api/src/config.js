@@ -2,7 +2,7 @@
 // eslint-disable-next-line no-unused-vars
 import * as UCAN from '@ucanto/interface'
 import { DID } from '@ucanto/core'
-import * as release from './utils/release.build.js';
+import * as release from './utils/release.build.js'
 
 /**
  * Loads configuration variables from the global environment and returns a JS object
