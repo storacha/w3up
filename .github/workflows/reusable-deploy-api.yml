@@ -43,6 +43,13 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       - run: pnpm install
+      # release prep
+      - id: set-release-name
+        env:
+          ENV: ${{ inputs.environment }}
+        run: |
+          echo "release_name=$(node scripts/release.js)" >> "$GITHUB_OUTPUT"
+      - run: echo "release name is ${{ steps.set-release-name.outputs.release_name }}"
       # Migration database
       - run: pnpm -r --filter @web3-storage/access-api exec wrangler d1 migrations apply __D1_BETA__ --env ${{ inputs.environment }}
         env:
@@ -69,3 +76,4 @@ jobs:
           SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
           LOGTAIL_TOKEN: ${{ secrets.LOGTAIL_TOKEN }}
           UCAN_LOG_BASIC_AUTH: ${{ secrets.UCAN_LOG_BASIC_AUTH }}
+      - run: ls packages/access-api/dist/
