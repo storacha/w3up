@@ -115,8 +115,11 @@ export async function pollAccessClaimUntil(
   opts
 ) {
   const interval = opts?.interval || 250
+  /** @type {ReturnType<typeof setTimeout>} */
+  let pollingTimeoutId
   const claimed = await new Promise((resolve, reject) => {
     opts?.signal?.addEventListener('abort', (e) => {
+      pollingTimeoutId && clearTimeout(pollingTimeoutId)
       reject(
         new Error('pollAccessClaimUntilSessionProof aborted', { cause: e })
       )
@@ -140,7 +143,7 @@ export async function pollAccessClaimUntil(
         if (delegationsMatch(claimedDelegations)) {
           resolve(claimedDelegations)
         } else {
-          setTimeout(() => poll(retryAfter), retryAfter)
+          pollingTimeoutId = setTimeout(() => poll(retryAfter), retryAfter)
         }
       } catch (error) {
         reject(error)
@@ -188,17 +191,12 @@ export async function waitForDelegationOnSocket(access, opts) {
 }
 
 /**
- * @typedef {{signal?: AbortSignal }} AuthorizationWaiterOpts
- * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts) => Promise<Iterable<Ucanto.Delegation>> } AuthorizationWaiter
- */
-
-/**
  * Wait for the authorization process to complete by waiting on a
  * well-known websocket endpoint for the access-api server to
  * receive and forward a session delegation from the authorization
  * email flow.
  *
- * @type AuthorizationWaiter
+ * @type import('./types.js').AuthorizationWaiter<{}>
  */
 export async function waitForAuthorizationOnSocket(access, opts = {}) {
   const delegation = await waitForDelegationOnSocket(access, opts)
@@ -210,7 +208,7 @@ export async function waitForAuthorizationOnSocket(access, opts = {}) {
  * `access/claim` capability and waiting for the result to include
  * a session delegation.
  *
- * @type AuthorizationWaiter
+ * @type import('./types.js').AuthorizationWaiter<{interval?: number}>
  */
 export async function waitForAuthorizationByPolling(access, opts = {}) {
   const claimed = await pollAccessClaimUntil(
@@ -219,6 +217,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
     access.issuer.did(),
     {
       signal: opts?.signal,
+      interval: opts?.interval
     }
   )
   return [...claimed]
@@ -234,7 +233,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
  * @param {AbortSignal} [opts.signal]
  * @param {boolean} [opts.dontAddProofs] - whether to skip adding proofs to the agent
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
- * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
+ * @param {import('./types.js').AuthorizationWaiter<any>} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
 export async function authorizeAndWait(access, email, opts = {}) {
   const expectAuthorization =
@@ -264,9 +263,10 @@ export async function authorizeAndWait(access, email, opts = {}) {
  * @param {`${string}@${string}`} email
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
+ * @param {number} [opts.interval]
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
  * @param {boolean} [opts.addProofs]
- * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
+ * @param {import('./types.js').AuthorizationWaiter<any>} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
 export async function authorizeWaitAndClaim(accessAgent, email, opts) {
   await authorizeAndWait(accessAgent, email, opts)

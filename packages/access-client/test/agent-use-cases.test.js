@@ -116,4 +116,30 @@ describe('authorizeWaitAndClaim', async function () {
       ]).length > 0
     )
   })
+
+  it('should stop polling once aborted', async function () {
+    const authorizeHandler = sinon.fake.resolves({})
+    const claimHandler = sinon.stub()
+
+    const server = createServer({
+      access: {
+        authorize: Server.provide(Access.authorize, authorizeHandler),
+        claim: Server.provide(Access.claim, claimHandler),
+      },
+    })
+    const agent = await Agent.create(undefined, {
+      connection: connection({ principal: server.id, channel: server }),
+    })
+    claimHandler
+      .onFirstCall()
+      .resolves({ delegations: {} })
+    const controller = new AbortController()
+    const pollingInterval = 250
+    setTimeout(() => controller.abort(), pollingInterval / 2)
+    await assert.rejects(authorizeWaitAndClaim(agent, 'foo@example.com', {signal: controller.signal, interval: pollingInterval}))
+    // wait for 2 polling intervals to let any remaining polling finish
+    await new Promise((resolve) => setTimeout(() => resolve(true), pollingInterval * 2))
+    assert(authorizeHandler.calledOnce)
+    assert(claimHandler.calledOnce)
+  })
 })
