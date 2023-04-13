@@ -7,6 +7,7 @@ import { Agent, connection } from '../src/agent.js'
 import {
   delegationsIncludeSessionProof,
   authorizeWaitAndClaim,
+  waitForAuthorizationByPolling,
 } from '../src/agent-use-cases.js'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
@@ -137,7 +138,11 @@ describe('authorizeWaitAndClaim', async function () {
     await assert.rejects(
       authorizeWaitAndClaim(agent, 'foo@example.com', {
         signal: controller.signal,
-        interval: pollingInterval,
+        expectAuthorization: (access, opts) =>
+          waitForAuthorizationByPolling(access, {
+            ...opts,
+            interval: pollingInterval,
+          }),
       })
     )
     // wait for 2 polling intervals to let any remaining polling finish

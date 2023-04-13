@@ -191,12 +191,21 @@ export async function waitForDelegationOnSocket(access, opts) {
 }
 
 /**
+ * @template {unknown} [T={}]
+ * @typedef {{ signal?: AbortSignal } & T} AuthorizationWaiterOpts
+ */
+/**
+ * @template {unknown} [U={}]
+ * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts<U>) => Promise<Iterable<Ucanto.Delegation>>} AuthorizationWaiter
+ */
+
+/**
  * Wait for the authorization process to complete by waiting on a
  * well-known websocket endpoint for the access-api server to
  * receive and forward a session delegation from the authorization
  * email flow.
  *
- * @type import('./types.js').AuthorizationWaiter<{}>
+ * @type AuthorizationWaiter
  */
 export async function waitForAuthorizationOnSocket(access, opts = {}) {
   const delegation = await waitForDelegationOnSocket(access, opts)
@@ -208,7 +217,7 @@ export async function waitForAuthorizationOnSocket(access, opts = {}) {
  * `access/claim` capability and waiting for the result to include
  * a session delegation.
  *
- * @type import('./types.js').AuthorizationWaiter<{interval?: number}>
+ * @type AuthorizationWaiter<{interval?: number}>
  */
 export async function waitForAuthorizationByPolling(access, opts = {}) {
   const claimed = await pollAccessClaimUntil(
@@ -233,7 +242,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
  * @param {AbortSignal} [opts.signal]
  * @param {boolean} [opts.dontAddProofs] - whether to skip adding proofs to the agent
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
- * @param {import('./types.js').AuthorizationWaiter<any>} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
+ * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
 export async function authorizeAndWait(access, email, opts = {}) {
   const expectAuthorization =
@@ -263,10 +272,9 @@ export async function authorizeAndWait(access, email, opts = {}) {
  * @param {`${string}@${string}`} email
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
- * @param {number} [opts.interval]
  * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
  * @param {boolean} [opts.addProofs]
- * @param {import('./types.js').AuthorizationWaiter<any>} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
+ * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
 export async function authorizeWaitAndClaim(accessAgent, email, opts) {
   await authorizeAndWait(accessAgent, email, opts)

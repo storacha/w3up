@@ -54,7 +54,6 @@ import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
 import { SpaceUnknown } from './errors.js'
 import type { ColumnType, Generated, Selectable } from 'kysely'
-import type { Agent as AccessAgent } from './agent.js'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
@@ -351,9 +350,3 @@ export type InvokeAndExecute = <
     import('./types').Service
   >
 >
-
-export type AuthorizationWaiterOpts<T> = { signal?: AbortSignal } & T
-export type AuthorizationWaiter<T> = (
-  accessAgent: AccessAgent,
-  opts: AuthorizationWaiterOpts<T>
-) => Promise<Iterable<Ucanto.Delegation>>
