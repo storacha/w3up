@@ -45,7 +45,6 @@ d1_persist = ".wrangler/miniflare"
 name = "w3access-dev"
 workers_dev = true
 vars = { ENV = "dev", DEBUG = "false", DID = "did:web:dev.web3.storage", UPLOAD_API_URL = "https://staging.up.web3.storage" }
-build = { command = "scripts/cli.js build --env dev", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5697e95e1aaa436788e6d697fd3350be" },
     { binding = "VALIDATIONS", id = "ea17f472b37a43d29c1faf7af9512e03" },
@@ -62,7 +61,6 @@ unsafe = { bindings = [
 [env.staging]
 name = "w3access-staging"
 workers_dev = true
-build = { command = "scripts/cli.js build --env staging", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "b0e5ca990dda4e3784a1741dfa28a52e" },
     { binding = "VALIDATIONS", id = "b13f07c88fe848db9ccf651a0fea3fb6" },
@@ -88,7 +86,6 @@ bucket_name = "w3up-delegations-staging-0"
 [env.production]
 name = "w3access"
 routes = [{ pattern = "access.web3.storage", custom_domain = true }]
-build = { command = "scripts/cli.js build --env production", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5437954e8cfd4f7d98557132b0a2e93f" },
     { binding = "VALIDATIONS", id = "fb7cf10c725f45948321e88b8cb168ad" },
