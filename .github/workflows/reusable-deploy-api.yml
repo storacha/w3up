@@ -48,7 +48,7 @@ jobs:
         env:
           ENV: ${{ inputs.environment }}
         run: |
-          echo "release_name=$(node scripts/release.js)" >> "$GITHUB_OUTPUT"
+          echo "release_name=$(node packages/access-api/scripts/release.js)" >> "$GITHUB_OUTPUT"
       - run: echo "release name is ${{ steps.set-release-name.outputs.release_name }}"
       # Migration database
       - run: pnpm -r --filter @web3-storage/access-api exec wrangler d1 migrations apply __D1_BETA__ --env ${{ inputs.environment }}
