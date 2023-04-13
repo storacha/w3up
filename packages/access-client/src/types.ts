@@ -80,9 +80,9 @@ export type SpaceRecord = Selectable<SpaceTable>
 export type SpaceInfoResult =
   // w3up spaces registered via provider/add will have this
   | {
-    // space did
-    did: DID<'key'>
-  }
+      // space did
+      did: DID<'key'>
+    }
   // deprecated and may be removed if voucher/redeem is removed
   /** @deprecated */
   | SpaceRecord
@@ -314,19 +314,19 @@ export interface UCANBasicOptions {
  */
 export type InferNb<C extends Record<string, unknown> | undefined> =
   keyof C extends never
-  ? {
-    nb?: never
-  }
-  : {
-    /**
-     * Non-normative fields for the capability
-     *
-     * Check the capability definition for more details on the `nb` field.
-     *
-     * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
-     */
-    nb: C
-  }
+    ? {
+        nb?: never
+      }
+    : {
+        /**
+         * Non-normative fields for the capability
+         *
+         * Check the capability definition for more details on the `nb` field.
+         *
+         * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
+         */
+        nb: C
+      }
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
 
@@ -353,4 +353,7 @@ export type InvokeAndExecute = <
 >
 
 export type AuthorizationWaiterOpts<T> = { signal?: AbortSignal } & T
-export type AuthorizationWaiter<T> = (accessAgent: AccessAgent, opts: AuthorizationWaiterOpts<T>) => Promise<Iterable<Ucanto.Delegation>>
+export type AuthorizationWaiter<T> = (
+  accessAgent: AccessAgent,
+  opts: AuthorizationWaiterOpts<T>
+) => Promise<Iterable<Ucanto.Delegation>>

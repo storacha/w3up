@@ -15,16 +15,10 @@ function testDidMailto(didMailto, test) {
   })
   for (const { email, did } of examples()) {
     test(`fromEmail("${email}")`, async () => {
-      assert.deepStrictEqual(
-        didMailto.fromEmail(email),
-        did
-      )
+      assert.deepStrictEqual(didMailto.fromEmail(email), did)
     })
     test(`toEmail("${did}")`, async () => {
-      assert.deepStrictEqual(
-        didMailto.toEmail(did),
-        email
-      )
+      assert.deepStrictEqual(didMailto.toEmail(did), email)
     })
     test(`toEmail(fromEmail("${email}"))`, async () => {
       assert.deepStrictEqual(
@@ -33,18 +27,12 @@ function testDidMailto(didMailto, test) {
       )
     })
     test(`fromEmail(toEmail("${did}"))`, async () => {
-      assert.deepStrictEqual(
-        didMailto.fromEmail(didMailto.toEmail(did)),
-        did
-      )
+      assert.deepStrictEqual(didMailto.fromEmail(didMailto.toEmail(did)), did)
     })
   }
   for (const email of validEmailAddresses()) {
     test(`email("${email}")`, async () => {
-      assert.doesNotThrow(
-        () => didMailto.email(email),
-        'can parse to email'
-      )
+      assert.doesNotThrow(() => didMailto.email(email), 'can parse to email')
     })
   }
 }

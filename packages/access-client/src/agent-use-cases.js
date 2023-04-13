@@ -217,7 +217,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
     access.issuer.did(),
     {
       signal: opts?.signal,
-      interval: opts?.interval
+      interval: opts?.interval,
     }
   )
   return [...claimed]
