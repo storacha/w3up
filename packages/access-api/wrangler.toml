@@ -49,13 +49,13 @@ kv_namespaces = [
     { binding = "SPACES", id = "5697e95e1aaa436788e6d697fd3350be" },
     { binding = "VALIDATIONS", id = "ea17f472b37a43d29c1faf7af9512e03" },
 ]
-d1_databases = [
-    { binding = "__D1_BETA__", database_name = "access-dev", database_id = "4145a261-e54c-411d-a001-050fc30e4678" },
-]
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
-
+[[env.dev.d1_databases]]
+binding = "__D1_BETA__"
+database_name = "access-dev"
+database_id = "7f5c4ec7-610b-4885-b9f7-0886ce0639f6"
 
 # Staging
 [env.staging]
