@@ -40,6 +40,10 @@ watch_dir = "src"
 [miniflare]
 d1_persist = ".wrangler/miniflare"
 
+rules = [
+  { type = "Text", globs = ["package.json"], fallthrough = true }
+]
+
 # Dev
 [env.dev]
 name = "w3access-dev"
@@ -52,10 +56,16 @@ kv_namespaces = [
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
+
 [[env.dev.d1_databases]]
 binding = "__D1_BETA__"
 database_name = "access-dev"
 database_id = "7f5c4ec7-610b-4885-b9f7-0886ce0639f6"
+
+[[env.dev.r2_buckets]]
+binding = "DELEGATIONS_BUCKET"
+bucket_name = "w3up-delegations-dev-0"
+preview_bucket_name = "w3up-delegations-dev-0"
 
 # Staging
 [env.staging]
