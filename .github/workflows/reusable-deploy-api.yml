@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: 18
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm --filter '@web3-storage/access-api...' install
       # release prep
       - id: set-release-name
         env:
