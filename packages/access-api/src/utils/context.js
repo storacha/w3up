@@ -64,7 +64,7 @@ export function getContext(request, env, ctx) {
   const log = new Logging(request, ctx, {
     token: config.LOGTAIL_TOKEN,
     debug: config.DEBUG,
-    sentry: ['test', 'dev'].includes(config.ENV) ? undefined : sentry,
+    sentry: ['test'].includes(config.ENV) ? undefined : sentry,
     branch: config.BRANCH,
     version: config.VERSION,
     commit: config.COMMITHASH,

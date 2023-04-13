@@ -2,6 +2,7 @@
 // eslint-disable-next-line no-unused-vars
 import * as UCAN from '@ucanto/interface'
 import { DID } from '@ucanto/core'
+import * as release from './utils/release.build.js';
 
 /**
  * Loads configuration variables from the global environment and returns a JS object
@@ -50,10 +51,10 @@ export function loadConfig(env) {
     BRANCH: env.ACCOUNT_BRANCH ?? '',
     // @ts-ignore
     // eslint-disable-next-line no-undef
-    VERSION: env.ACCOUNT_VERSION ?? '',
+    VERSION: env.ACCOUNT_VERSION ?? release.name ?? '',
     // @ts-ignore
     // eslint-disable-next-line no-undef
-    COMMITHASH: env.ACCOUNT_COMMITHASH ?? '',
+    COMMITHASH: env.ACCOUNT_COMMITHASH ?? release.gitRevShort ?? '',
 
     PRIVATE_KEY: vars.PRIVATE_KEY,
     DID: /** @type {UCAN.DID<"web">} */ (DID.parse(vars.DID).did()),
