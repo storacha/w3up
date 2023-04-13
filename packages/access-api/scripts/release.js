@@ -42,9 +42,9 @@ async function main(argv = process.argv) {
     .action((opts) => {
       const lines = [
         `/** @type {string|undefined} */`,
-        `export const gitRevShort = "${git.short(__dirname())}";`,
+        `export const gitRevShort = '${git.short(__dirname())}'`,
         `/** @type {string|undefined} */`,
-        `export const name = "${getReleaseName(opts.env)}";`,
+        `export const name = '${getReleaseName(opts.env)}'`,
       ]
       console.log(lines.join('\n'))
     })

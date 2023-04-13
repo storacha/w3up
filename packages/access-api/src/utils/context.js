@@ -15,7 +15,7 @@ import {
 } from '../models/delegations.js'
 import { createD1Database } from './d1.js'
 import { DbProvisions } from '../models/provisions.js'
-import * as sentryRelease from './sentry-release.js'
+import * as release from './release.build.js'
 
 /**
  * Obtains a route context object.
@@ -57,7 +57,7 @@ export function getContext(request, env, ctx) {
     dsn: config.SENTRY_DSN,
     debug: false,
     environment: config.ENV,
-    release: sentryRelease.name,
+    release: release.name,
   })
 
   // Logging
