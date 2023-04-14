@@ -115,8 +115,11 @@ export async function pollAccessClaimUntil(
   opts
 ) {
   const interval = opts?.interval || 250
+  /** @type {ReturnType<typeof setTimeout>} */
+  let pollingTimeoutId
   const claimed = await new Promise((resolve, reject) => {
     opts?.signal?.addEventListener('abort', (e) => {
+      pollingTimeoutId && clearTimeout(pollingTimeoutId)
       reject(
         new Error('pollAccessClaimUntilSessionProof aborted', { cause: e })
       )
@@ -140,7 +143,7 @@ export async function pollAccessClaimUntil(
         if (delegationsMatch(claimedDelegations)) {
           resolve(claimedDelegations)
         } else {
-          setTimeout(() => poll(retryAfter), retryAfter)
+          pollingTimeoutId = setTimeout(() => poll(retryAfter), retryAfter)
         }
       } catch (error) {
         reject(error)
@@ -188,8 +191,12 @@ export async function waitForDelegationOnSocket(access, opts) {
 }
 
 /**
- * @typedef {{signal?: AbortSignal }} AuthorizationWaiterOpts
- * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts) => Promise<Iterable<Ucanto.Delegation>> } AuthorizationWaiter
+ * @template [T={}]
+ * @typedef {{ signal?: AbortSignal } & T} AuthorizationWaiterOpts
+ */
+/**
+ * @template [U={}]
+ * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts<U>) => Promise<Iterable<Ucanto.Delegation>>} AuthorizationWaiter
  */
 
 /**
@@ -210,7 +217,7 @@ export async function waitForAuthorizationOnSocket(access, opts = {}) {
  * `access/claim` capability and waiting for the result to include
  * a session delegation.
  *
- * @type AuthorizationWaiter
+ * @type AuthorizationWaiter<{interval?: number}>
  */
 export async function waitForAuthorizationByPolling(access, opts = {}) {
   const claimed = await pollAccessClaimUntil(
@@ -219,6 +226,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
     access.issuer.did(),
     {
       signal: opts?.signal,
+      interval: opts?.interval,
     }
   )
   return [...claimed]
