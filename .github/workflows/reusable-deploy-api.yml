@@ -51,6 +51,7 @@ jobs:
           echo "release_name=$(node packages/access-api/scripts/release.js)" >> "$GITHUB_OUTPUT"
       - run: echo "release name is ${{ steps.set-release-name.outputs.release_name }}"
       - name: write release info to src
+        working-directory: packages/access-api/
         env:
           ENV: ${{ vars.ENV }}
         run: |

@@ -45,6 +45,7 @@ export function getContext(request, env, ctx) {
       : UCANLog.debug()
 
   // Sentry
+  // eslint-disable-next-line no-console
   console.warn('constructing toucan-js', {
     release: String(release.name),
   })
