@@ -84,8 +84,8 @@ jobs:
           echo "RELEASE_NAME=$RELEASE_NAME"
           echo "SENTRY_ORG=$SENTRY_ORG"
           echo "SENTRY_PROJECT=$SENTRY_PROJECT"
-          SENTRY_ORG="$SENTRY_ORG" SENTRY_PROJECT="$SENTRY_PROJECT" ENV="$ENV" pnpm exec -c sentry-cli releases new "$RELEASE_NAME" --finalize
-          SENTRY_ORG="$SENTRY_ORG" SENTRY_PROJECT="$SENTRY_PROJECT" ENV="$ENV" pnpm exec -c sentry-cli releases files "$RELEASE_NAME" upload-sourcemaps ./dist
+          SENTRY_ORG="$SENTRY_ORG" SENTRY_PROJECT="$SENTRY_PROJECT" ENV="$ENV" pnpm exec sentry-cli releases new "$RELEASE_NAME" --finalize
+          SENTRY_ORG="$SENTRY_ORG" SENTRY_PROJECT="$SENTRY_PROJECT" ENV="$ENV" pnpm exec sentry-cli releases files "$RELEASE_NAME" upload-sourcemaps ./dist
         env:
           ENV: ${{ vars.ENV }}
           RELEASE_NAME: ${{ steps.set-release-name.outputs.release_name }}"
