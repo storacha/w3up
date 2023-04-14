@@ -40,10 +40,6 @@ watch_dir = "src"
 [miniflare]
 d1_persist = ".wrangler/miniflare"
 
-rules = [
-  { type = "Text", globs = ["package.json"], fallthrough = true }
-]
-
 # Dev
 [env.dev]
 name = "w3access-dev"
