@@ -92,7 +92,15 @@ What is the change that we're proposing and/or doing?
 4. When invocations handled by access-api have been either removed (e.g. `voucher/*`) or equivalent handlers are deployed to AWS via w3infra, change the access-api service to proxy `access/*` et al handlers to w3infra [in the same way it proxies `store/*` and `upload/*` invocations](https://github.com/web3-storage/w3up/blob/main/packages/access-api/src/service/index.js#L35).
     * this will allow for testing the new invocation handlers running on AWS, but will be opaque to any existing clients, who can continue sending invocations to cloudflare, where they will be proxied and served by w3infra
 
+### Open Questions
+
+* Can aws-sdk DynamoDB run in cloudflare workers?
+
 ### Tasks
+
+* [ ] @gobengo document how we can store access/delegate delegations inside invocations in s3
+
+* [ ] prototype DynamoDB + ProvisionsStorage (DynamoDB provisioned via AWS Console)
 
 * [ ] remove implementaiton of voucher protocol in access-api (because it depends on D1)
 * [ ] export `access-api` service factory from package in w3up monorepo (similar to [upload-api](https://github.com/web3-storage/w3up/tree/main/packages/upload-api))
