@@ -68,6 +68,7 @@ jobs:
         with:
           # preCommands: git config --global --add safe.directory "*"
           apiToken: ${{ secrets.CF_TOKEN }}
+          command: publish --env "${{ vars.ENV }}" --outdir=dist
           workingDirectory: 'packages/access-api'
           environment: ${{ inputs.environment }}
           secrets: |
@@ -87,8 +88,7 @@ jobs:
       - name: create sentry release
         working-directory: packages/access-api
         run: |
-          # write ./dist/index.{js,js.map}
-          pnpm exec wrangler --env="$ENV" publish --dry-run --outdir=dist
+          ls -alh ./dist
           # create sentry release
           pnpm exec sentry-cli releases new "$RELEASE_NAME" --finalize
           # associate wrangler-built src+map to sentry release
