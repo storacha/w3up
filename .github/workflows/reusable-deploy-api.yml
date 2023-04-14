@@ -95,7 +95,7 @@ jobs:
           SENTRY_ORG="$SENTRY_ORG" SENTRY_PROJECT="$SENTRY_PROJECT" ENV="$ENV" pnpm exec sentry-cli releases files "$RELEASE_NAME" upload-sourcemaps ./dist
         env:
           ENV: ${{ vars.ENV }}
-          RELEASE_NAME: ${{ steps.set-release-name.outputs.release_name }}"
+          RELEASE_NAME: ${{ steps.set-release-name.outputs.release_name }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
