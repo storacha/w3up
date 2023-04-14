@@ -1,0 +1,68 @@
+{
+  "name": "@web3-storage/discovery",
+  "version": "1.0.0",
+  "description": "protocol for content discovery",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3up.git",
+    "directory": "packages/discovery"
+  },
+  "license": "(Apache-2.0 OR MIT)",
+  "type": "module",
+  "types": "dist/src/index.d.ts",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "test",
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "check": "tsc --build",
+    "lint": "tsc --build",
+    "prettier:check": "prettier --check '{src,test}/*.{js,ts,yml,json}'",
+    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
+    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-jsdoc": "^41.1.1",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.4"
+  },
+  "eslintConfig": {
+    "env": {
+      "mocha": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:jsdoc/recommended-error"
+    ],
+    "ignorePatterns": [
+      "dist",
+      "coverage"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "plugins": [
+      "@typescript-eslint"
+    ]
+  },
+  "engines": {
+    "node": ">=16.15"
+  }
+}
