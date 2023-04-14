@@ -5,5 +5,7 @@
   },
   "include": ["src", "test"],
   "exclude": ["**/node_modules/**", "dist"],
-  "references": []
+  "references": [
+    { "path": "../capabilities" }
+  ]
 }
