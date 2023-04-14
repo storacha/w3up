@@ -45,6 +45,9 @@ export function getContext(request, env, ctx) {
       : UCANLog.debug()
 
   // Sentry
+  console.warn('constructing toucan-js', {
+    release: String(release.name),
+  })
   const sentry = new Toucan({
     context: ctx,
     integrations: [

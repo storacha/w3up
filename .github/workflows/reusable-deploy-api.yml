@@ -50,6 +50,11 @@ jobs:
         run: |
           echo "release_name=$(node packages/access-api/scripts/release.js)" >> "$GITHUB_OUTPUT"
       - run: echo "release name is ${{ steps.set-release-name.outputs.release_name }}"
+      - name: write release info to src
+        env:
+          ENV: ${{ vars.ENV }}
+        run: |
+          node scripts/release.js esm > src/utils/release.build.js
       # Migration database
       - run: pnpm -r --filter @web3-storage/access-api exec wrangler d1 migrations apply __D1_BETA__ --env ${{ inputs.environment }}
         env:
@@ -76,7 +81,8 @@ jobs:
           SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
           LOGTAIL_TOKEN: ${{ secrets.LOGTAIL_TOKEN }}
           UCAN_LOG_BASIC_AUTH: ${{ secrets.UCAN_LOG_BASIC_AUTH }}
-      - working-directory: packages/access-api
+      - name: create sentry release
+        working-directory: packages/access-api
         run: |
           pnpm exec wrangler --env="$ENV" publish --dry-run --outdir=dist
           ls -alh dist
