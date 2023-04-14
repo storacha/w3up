@@ -87,7 +87,7 @@ jobs:
       - name: create sentry release
         working-directory: packages/access-api
         run: |
-          # write ./index.{js,js.map}
+          # write ./dist/index.{js,js.map}
           pnpm exec wrangler --env="$ENV" publish --dry-run --outdir=dist
           # create sentry release
           pnpm exec sentry-cli releases new "$RELEASE_NAME" --finalize
