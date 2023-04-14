@@ -191,11 +191,11 @@ export async function waitForDelegationOnSocket(access, opts) {
 }
 
 /**
- * @template {unknown} [T={}]
+ * @template [T={}]
  * @typedef {{ signal?: AbortSignal } & T} AuthorizationWaiterOpts
  */
 /**
- * @template {unknown} [U={}]
+ * @template [U={}]
  * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts<U>) => Promise<Iterable<Ucanto.Delegation>>} AuthorizationWaiter
  */
 
