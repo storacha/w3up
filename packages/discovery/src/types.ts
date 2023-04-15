@@ -13,6 +13,18 @@ export type NoopMethod<Ability extends Ucanto.Ability> = Server.ServiceMethod<
   NoopError
 >
 
+export type ClaimCapability<Ability extends Ucanto.Ability> =
+  Server.API.Capability<Ability, Server.API.DID, { type: DiscoveryAssertion }>
+export type ClaimSuccess = {
+  type: DiscoveryAssertion
+}
+export type ClaimError = {}
+export type ClaimMethod<Ability extends Ucanto.Ability> = Server.ServiceMethod<
+  ClaimCapability<Ability>,
+  ClaimSuccess,
+  ClaimError
+>
+
 export type DiscoveryAssertion = 'inclusion' | 'location' | 'partition'
 
 export type ContentDiscoveryService = {
@@ -20,6 +32,7 @@ export type ContentDiscoveryService = {
     assert: {
       [A in DiscoveryAssertion]: NoopMethod<`discovery/assert/${A}`>
     }
+    claim: ClaimMethod<'discovery/claim'>
   }
 }
 

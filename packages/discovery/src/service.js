@@ -1,4 +1,5 @@
 import noop from './noop.js'
+import claim from './claim.js'
 import { createMethod } from './ucanto-utils.js'
 
 export default { create }
@@ -16,6 +17,7 @@ export function create() {
         inclusion: createMethod('discovery/assert/inclusion', noop),
         partition: createMethod('discovery/assert/partition', noop),
       },
+      claim: createMethod('discovery/claim', claim),
     },
   }
 }
