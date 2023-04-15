@@ -1,6 +1,5 @@
 import * as assert from 'assert'
 import * as discovery from '../src/index.js'
-import { invoke } from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as principal from '@ucanto/principal'
@@ -27,7 +26,7 @@ function testDiscovery(module, test) {
       id,
       service,
     })
-    const claimResult = await server.run(invoke({
+    const claimInvocation = await Server.invoke({
       issuer: id,
       audience: id,
       capability: {
@@ -35,7 +34,13 @@ function testDiscovery(module, test) {
         with: id.did(),
         nb: {},
       }
-    }))
-    assert.deepEqual(claimResult.out.ok, {})
+    }).buildIPLDView();
+    const claimResult = await server.service.discovery.assert.location(
+      claimInvocation,
+      { id, principal: principal.Verifier }
+    )
+    assert.deepEqual(claimResult.ok, {
+      message: 'assert location invoked ok'
+    })
   })
 }

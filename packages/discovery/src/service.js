@@ -1,16 +1,18 @@
-import { provider as location } from './location.js'
+import location from './location.js'
+
 export default { create }
 
-// eslint-disable-next-line jsdoc/require-returns
 /**
  * create a discovery service
+ * 
+ * @returns {import('./types.js').ContentDiscoveryService} - content discovery service that can be served with ucanto
  */
 export function create() {
   return {
     discovery: {
       assert: {
-        location,
-      },
+        location: location.method({ can: 'discovery/assert/location' }),
+      }
     },
   }
 }

@@ -1,20 +1,45 @@
-import { Schema, provide, capability as createCapability } from '@ucanto/server'
+import { Schema } from '@ucanto/server'
+import * as Ucanto from '@ucanto/interface'
+import { createMethod } from './ucanto-utils.js'
 
-/**
- * location claim
- */
-export const capability = createCapability({
-  can: 'discovery/assert/location',
+export const descriptor = {
   with: Schema.did(),
   nb: Schema.struct({}),
-})
+}
 
-export const invoke = async () => {
+// eslint-disable-next-line jsdoc/require-returns
+/**
+ * create a descriptor
+ * 
+ * @param {object} options - options
+ * @param {Ucanto.Ability} options.can - capability name
+ */
+export function describe({ can }) {
   return {
-    ok: {},
+    ...descriptor,
+    can,
   }
 }
 
-export const provider = provide(capability, invoke)
+export const invoke = async () => {
+  return {
+    ok: {
+      message: 'assert location invoked ok'
+    },
+  }
+}
 
-export default { provider }
+// eslint-disable-next-line jsdoc/require-returns
+/**
+ * @param {object} o - options
+ * @param {Ucanto.Ability} o.can - capabilty name
+ */
+export function method({ can }) {
+  return createMethod(can, { descriptor, invoke })
+}
+
+export default {
+  descriptor,
+  invoke,
+  method,
+}
