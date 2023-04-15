@@ -50,9 +50,8 @@ function testDiscovery(module, test) {
   }
 }
 
-// eslint-disable-next-line jsdoc/require-yields
 /**
- * @returns {IterableIterator<import('../src/types.js').DiscoveryAssertion>} - assertions
+ * @yields {import('../src/types.js').DiscoveryAssertion}
  */
 function* iterateAssertions() {
   yield* /** @type {Iterable<import('../src/types.js').DiscoveryAssertion>} */ (
