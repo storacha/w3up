@@ -82,7 +82,7 @@ function testDiscoveryAssertion(test, assertion) {
     const result = await invocation.execute(connection)
     assert.deepEqual(result.out.ok, {
       // it echos back type from invocation.nb.type
-      type: invocation.capabilities[0].nb.type,
+      type: assertion,
     })
   })
 }
