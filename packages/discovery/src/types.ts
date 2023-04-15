@@ -13,12 +13,12 @@ export type NoopMethod<Ability extends Ucanto.Ability> = Server.ServiceMethod<
   NoopError
 >
 
+export type DiscoveryAssertion = 'inclusion' | 'location' | 'partition'
+
 export type ContentDiscoveryService = {
   discovery: {
     assert: {
-      inclusion: NoopMethod<'discovery/assert/inclusion'>
-      location: NoopMethod<'discovery/assert/location'>
-      partition: NoopMethod<'discovery/assert/partition'>
+      [A in DiscoveryAssertion]: NoopMethod<`discovery/assert/${A}`>
     }
   }
 }
