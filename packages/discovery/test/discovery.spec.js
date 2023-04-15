@@ -75,7 +75,7 @@ function testDiscoveryAssertion(test, assertion) {
         can: `discovery/claim`,
         with: id.did(),
         nb: {
-          type: /** @type {const} */ ('partition'),
+          type: assertion,
         },
       },
     })
