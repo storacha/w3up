@@ -1,18 +1,21 @@
-import location from './location.js'
+import noop from './noop.js'
+import { createMethod } from './ucanto-utils.js'
 
 export default { create }
 
 /**
  * create a discovery service
- * 
+ *
  * @returns {import('./types.js').ContentDiscoveryService} - content discovery service that can be served with ucanto
  */
 export function create() {
   return {
     discovery: {
       assert: {
-        location: location.method({ can: 'discovery/assert/location' }),
-      }
+        location: createMethod('discovery/assert/location', noop),
+        inclusion: createMethod('discovery/assert/inclusion', noop),
+        partition: createMethod('discovery/assert/partition', noop),
+      },
     },
   }
 }

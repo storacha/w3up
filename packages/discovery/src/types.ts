@@ -1,23 +1,55 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import * as Server from '@ucanto/server'
+import type * as Ucanto from '@ucanto/interface'
 
-export type AssertLocationCapability = Server.API.Capability<
-  "discovery/assert/location",
-  Server.API.DID,
-  Server.Schema.InferStruct<{}>
->
-export type AssertLocationSuccess = {}
-export type AssertLocationError = {}
-export type AssertLocationMethod = Server.ServiceMethod<
-  AssertLocationCapability,
-  AssertLocationSuccess,
-  AssertLocationError
+export type NoopCapability<Ability extends Ucanto.Ability> =
+  Server.API.Capability<Ability, Server.API.DID, Server.Schema.InferStruct<{}>>
+
+export type NoopSuccess = {}
+export type NoopError = {}
+export type NoopMethod<Ability extends Ucanto.Ability> = Server.ServiceMethod<
+  NoopCapability<Ability>,
+  NoopSuccess,
+  NoopError
 >
 
 export type ContentDiscoveryService = {
   discovery: {
     assert: {
-      location: AssertLocationMethod
+      inclusion: NoopMethod<'discovery/assert/inclusion'>
+      location: NoopMethod<'discovery/assert/location'>
+      partition: NoopMethod<'discovery/assert/partition'>
     }
   }
 }
+
+/**
+ * similar to `Descriptor` in ucanto source code, which isn't exported
+ */
+export type CapabilityDescriptor<
+  A extends Ucanto.Ability,
+  R extends Ucanto.Resource,
+  C extends Ucanto.Caveats = {}
+> = {
+  derives?: (
+    claim: { can: A; with: R; nb: C },
+    proof: { can: A; with: R; nb: C }
+  ) => Ucanto.Result<{}, Ucanto.Failure>
+  nb: Server.Schema.MapRepresentation<C, unknown>
+  with: Ucanto.Reader<R, Ucanto.Resource, Ucanto.Failure>
+}
+
+/**
+ * function that handles a capability invocation
+ */
+export type CapabilityServiceMethod<
+  A extends Ucanto.Ability,
+  R extends Ucanto.Resource,
+  C extends Ucanto.Caveats,
+  O extends {},
+  X extends {}
+> = (
+  input: import('@ucanto/server').ProviderInput<
+    Ucanto.ParsedCapability<A, R, C>
+  >
+) => Ucanto.Await<Ucanto.Result<O, X>>

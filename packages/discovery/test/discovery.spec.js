@@ -10,7 +10,7 @@ describe('discovery', () => {
 
 /**
  * test discovery module
- * 
+ *
  * @param {typeof discovery} module - discovery module to test
  * @param {import("./test-types").TestAdder} test - add a named test
  */
@@ -33,14 +33,14 @@ function testDiscovery(module, test) {
         can: /** @type {const} */ ('discovery/assert/location'),
         with: id.did(),
         nb: {},
-      }
-    }).buildIPLDView();
+      },
+    }).buildIPLDView()
     const claimResult = await server.service.discovery.assert.location(
       claimInvocation,
       { id, principal: principal.Verifier }
     )
     assert.deepEqual(claimResult.ok, {
-      message: 'assert location invoked ok'
+      status: 200,
     })
   })
 }
