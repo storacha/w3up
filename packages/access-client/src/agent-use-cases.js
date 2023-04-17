@@ -117,9 +117,7 @@ export async function pollAccessClaimUntil(
   const interval = opts?.interval || 250
   const claimed = await new Promise((resolve, reject) => {
     opts?.signal?.addEventListener('abort', (e) => {
-      reject(
-        new Error('pollAccessClaimUntil aborted', { cause: e })
-      )
+      reject(new Error('pollAccessClaimUntil aborted', { cause: e }))
     })
     poll(interval)
     /**
