@@ -115,13 +115,10 @@ export async function pollAccessClaimUntil(
   opts
 ) {
   const interval = opts?.interval || 250
-  /** @type {ReturnType<typeof setTimeout>} */
-  let pollingTimeoutId
   const claimed = await new Promise((resolve, reject) => {
     opts?.signal?.addEventListener('abort', (e) => {
-      pollingTimeoutId && clearTimeout(pollingTimeoutId)
       reject(
-        new Error('pollAccessClaimUntilSessionProof aborted', { cause: e })
+        new Error('pollAccessClaimUntil aborted', { cause: e })
       )
     })
     poll(interval)
@@ -129,24 +126,28 @@ export async function pollAccessClaimUntil(
      * @param {number} retryAfter
      */
     async function poll(retryAfter) {
-      const pollClaimResult = await access.invokeAndExecute(
-        w3caps.Access.claim,
-        { with: delegee }
-      )
-      if (pollClaimResult.error) {
-        return reject(pollClaimResult)
-      }
-      try {
-        const claimedDelegations = Object.values(
-          pollClaimResult.delegations
-        ).flatMap((d) => bytesToDelegations(d))
-        if (delegationsMatch(claimedDelegations)) {
-          resolve(claimedDelegations)
-        } else {
-          pollingTimeoutId = setTimeout(() => poll(retryAfter), retryAfter)
+      if (opts?.signal?.aborted) {
+        reject(new Error('pollAccessClaimUntil aborted'))
+      } else {
+        const pollClaimResult = await access.invokeAndExecute(
+          w3caps.Access.claim,
+          { with: delegee }
+        )
+        if (pollClaimResult.error) {
+          return reject(pollClaimResult)
         }
-      } catch (error) {
-        reject(error)
+        try {
+          const claimedDelegations = Object.values(
+            pollClaimResult.delegations
+          ).flatMap((d) => bytesToDelegations(d))
+          if (delegationsMatch(claimedDelegations)) {
+            resolve(claimedDelegations)
+          } else {
+            setTimeout(() => poll(retryAfter), retryAfter)
+          }
+        } catch (error) {
+          reject(error)
+        }
       }
     }
   })
