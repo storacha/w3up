@@ -15,7 +15,7 @@ export function loadConfig(env) {
   const vars = {}
 
   /** @type {Array<keyof env>} */
-  const required = ['DID', 'ENV', 'DEBUG', 'PRIVATE_KEY']
+  const required = ['DID', 'ENV', 'DEBUG', 'PRIVATE_KEY', 'POSTMARK_TOKEN']
 
   for (const name of required) {
     const val = env[name]
