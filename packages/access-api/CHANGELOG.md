@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.1](https://github.com/web3-storage/w3up/compare/access-api-v6.1.0...access-api-v6.1.1) (2023-04-17)
+
+
+### Bug Fixes
+
+* add POSTMARK_TOKEN back to list of required env ([#761](https://github.com/web3-storage/w3up/issues/761)) ([5018095](https://github.com/web3-storage/w3up/commit/50180958b6c1e05159aca879f89ef40547ed608e))
+
 ## [6.1.0](https://github.com/web3-storage/w3up/compare/access-api-v6.0.0...access-api-v6.1.0) (2023-04-14)
 
 
