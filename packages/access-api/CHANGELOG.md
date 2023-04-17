@@ -1,5 +1,20 @@
 # Changelog
 
+## [6.1.0](https://github.com/web3-storage/w3up/compare/access-api-v6.0.0...access-api-v6.1.0) (2023-04-14)
+
+
+### Features
+
+* change access-api wrangler.toml to be no_bundle=false. use wrangler bundling ([#739](https://github.com/web3-storage/w3up/issues/739)) ([d659516](https://github.com/web3-storage/w3up/commit/d6595169bba974428899a8fd18f596718aaa5e41))
+
+
+### Bug Fixes
+
+* access-api cli.js build does sourcemap=external instead of true ([#731](https://github.com/web3-storage/w3up/issues/731)) ([d1a35b7](https://github.com/web3-storage/w3up/commit/d1a35b78030732f9c87f86a8f458678b0064abdd))
+* add /.debug/error route ([#732](https://github.com/web3-storage/w3up/issues/732)) ([2ca5de8](https://github.com/web3-storage/w3up/commit/2ca5de8cff7be64cb75b48b9e5ff9188732ec99d))
+* change access-api src/index.js 'export default' to be an immediately-defined object in hopes stack traces will work better ([#733](https://github.com/web3-storage/w3up/issues/733)) ([a509313](https://github.com/web3-storage/w3up/commit/a509313cb7bafb6eaf5f1ff925e67d1303188504)), closes [#623](https://github.com/web3-storage/w3up/issues/623)
+* toucan-js in access-api does not use RewriteFrame integration ([#729](https://github.com/web3-storage/w3up/issues/729)) ([eeb90e6](https://github.com/web3-storage/w3up/commit/eeb90e6bf8e162356e19852db224236462d5d55f))
+
 ## [6.0.0](https://github.com/web3-storage/w3up/compare/access-api-v5.2.1...access-api-v6.0.0) (2023-04-06)
 
 
