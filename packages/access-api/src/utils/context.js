@@ -15,7 +15,6 @@ import {
 } from '../models/delegations.js'
 import { createD1Database } from './d1.js'
 import { DbProvisions } from '../models/provisions.js'
-import * as release from './release.build.js'
 
 /**
  * Obtains a route context object.
@@ -57,14 +56,14 @@ export function getContext(request, env, ctx) {
     dsn: config.SENTRY_DSN,
     debug: false,
     environment: config.ENV,
-    release: release.name,
+    release: config.VERSION,
   })
 
   // Logging
   const log = new Logging(request, ctx, {
     token: config.LOGTAIL_TOKEN,
     debug: config.DEBUG,
-    sentry: ['test'].includes(config.ENV) ? undefined : sentry,
+    sentry: ['test', 'dev'].includes(config.ENV) ? undefined : sentry,
     branch: config.BRANCH,
     version: config.VERSION,
     commit: config.COMMITHASH,

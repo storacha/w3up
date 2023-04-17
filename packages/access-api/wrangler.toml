@@ -1,11 +1,14 @@
 # Development
 name = "w3access-local"
 account_id = "fffa4b4363a7e5250af8357087263b3a"
-main = "./src/index.js"
+main = "./dist/worker.js"
 
 # Compatibility flags https://github.com/cloudflare/wrangler/pull/2009
 compatibility_date = "2022-09-28"
 compatibility_flags = ["url_standard"]
+
+# We need to let wrangler bundle while D1 is in Beta
+no_bundle = false
 
 [[kv_namespaces]]
 binding = "SPACES"
@@ -25,16 +28,15 @@ database_id = "7c676e0c-b9e7-4711-97c8-7b1c8eb229ae"
 [[r2_buckets]]
 binding = "DELEGATIONS_BUCKET"
 bucket_name = "w3up-delegations-dev-0"
-preview_bucket_name = "w3up-delegations-dev-0"
 
 [vars]
 ENV = "dev"
 DEBUG = "true"
 DID = "did:web:local.web3.storage"
-PRIVATE_KEY="MgCYWjE6vp0cn3amPan2xPO+f6EZ3I+KwuN1w2vx57vpJ9O0Bn4ci4jn8itwc121ujm7lDHkCW24LuKfZwIdmsifVysY="
 UPLOAD_API_URL = "https://up.web3.storage"
 
 [build]
+command = "scripts/cli.js build"
 watch_dir = "src"
 
 [miniflare]
@@ -45,28 +47,24 @@ d1_persist = ".wrangler/miniflare"
 name = "w3access-dev"
 workers_dev = true
 vars = { ENV = "dev", DEBUG = "false", DID = "did:web:dev.web3.storage", UPLOAD_API_URL = "https://staging.up.web3.storage" }
+build = { command = "scripts/cli.js build --env dev", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5697e95e1aaa436788e6d697fd3350be" },
     { binding = "VALIDATIONS", id = "ea17f472b37a43d29c1faf7af9512e03" },
+]
+d1_databases = [
+    { binding = "__D1_BETA__", database_name = "access-dev", database_id = "4145a261-e54c-411d-a001-050fc30e4678" },
 ]
 unsafe = { bindings = [
     { type = "analytics_engine", dataset = "W3ACCESS_METRICS", name = "W3ACCESS_METRICS" },
 ] }
 
-[[env.dev.d1_databases]]
-binding = "__D1_BETA__"
-database_name = "access-dev"
-database_id = "7f5c4ec7-610b-4885-b9f7-0886ce0639f6"
-
-[[env.dev.r2_buckets]]
-binding = "DELEGATIONS_BUCKET"
-bucket_name = "w3up-delegations-dev-0"
-preview_bucket_name = "w3up-delegations-dev-0"
 
 # Staging
 [env.staging]
 name = "w3access-staging"
 workers_dev = true
+build = { command = "scripts/cli.js build --env staging", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "b0e5ca990dda4e3784a1741dfa28a52e" },
     { binding = "VALIDATIONS", id = "b13f07c88fe848db9ccf651a0fea3fb6" },
@@ -92,6 +90,7 @@ bucket_name = "w3up-delegations-staging-0"
 [env.production]
 name = "w3access"
 routes = [{ pattern = "access.web3.storage", custom_domain = true }]
+build = { command = "scripts/cli.js build --env production", watch_dir = "src" }
 kv_namespaces = [
     { binding = "SPACES", id = "5437954e8cfd4f7d98557132b0a2e93f" },
     { binding = "VALIDATIONS", id = "fb7cf10c725f45948321e88b8cb168ad" },

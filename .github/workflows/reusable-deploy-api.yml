@@ -42,23 +42,8 @@ jobs:
         with:
           node-version: 18
           cache: 'pnpm'
-      - run: pnpm --filter '@web3-storage/access-api...' install
-      # get release name that will be used for sentry
-      - id: set-release-name
-        env:
-          ENV: ${{ inputs.environment }}
-        run: |
-          echo "release_name=$(node packages/access-api/scripts/release.js)" >> "$GITHUB_OUTPUT"
-      - run: echo "release name is ${{ steps.set-release-name.outputs.release_name }}"
-      # write release info to ./src so it can be imported at runtime (e.g. used by toucan-js for `opts.release`)
-      # be sure to keep this before wrangler-action bundles+deploys
-      - name: write release info to src
-        working-directory: packages/access-api/
-        env:
-          ENV: ${{ vars.ENV }}
-        run: |
-          node scripts/release.js esm > src/utils/release.build.js
-      # Apply D1 Migrations
+      - run: pnpm install
+      # Migration database
       - run: pnpm -r --filter @web3-storage/access-api exec wrangler d1 migrations apply __D1_BETA__ --env ${{ inputs.environment }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_TOKEN }}
@@ -68,7 +53,6 @@ jobs:
         with:
           # preCommands: git config --global --add safe.directory "*"
           apiToken: ${{ secrets.CF_TOKEN }}
-          command: publish --env "${{ vars.ENV }}" --outdir=dist
           workingDirectory: 'packages/access-api'
           environment: ${{ inputs.environment }}
           secrets: |
@@ -81,19 +65,7 @@ jobs:
           POSTMARK_TOKEN: ${{ secrets.POSTMARK_TOKEN }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_UPLOAD: ${{ secrets.SENTRY_UPLOAD }}
+          SENTRY_TOKEN: ${{ secrets.SENTRY_TOKEN }}
           LOGTAIL_TOKEN: ${{ secrets.LOGTAIL_TOKEN }}
           UCAN_LOG_BASIC_AUTH: ${{ secrets.UCAN_LOG_BASIC_AUTH }}
-      - name: create sentry release
-        working-directory: packages/access-api
-        run: |
-          ls -alh ./dist
-          # create sentry release
-          pnpm exec sentry-cli releases new "$RELEASE_NAME" --finalize
-          # associate wrangler-built src+map to sentry release
-          pnpm exec sentry-cli releases files "$RELEASE_NAME" upload-sourcemaps ./dist
-        env:
-          ENV: ${{ vars.ENV }}
-          RELEASE_NAME: ${{ steps.set-release-name.outputs.release_name }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
