@@ -91,7 +91,7 @@
     "@types/sinon": "^10.0.13",
     "@types/varint": "^6.0.1",
     "@types/ws": "^8.5.4",
-    "@ucanto/server": "^7.0.0",
+    "@ucanto/server": "^7.0.2",
     "assert": "^2.0.0",
     "hd-scripts": "^4.0.0",
     "mocha": "^10.2.0",

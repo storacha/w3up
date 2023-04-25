@@ -129,7 +129,8 @@ export const test = {
         throw new Error('invocation failed', { cause: storeAdd })
       }
 
-      const url = storeAdd.out.ok.url && new URL(storeAdd.out.ok.url)
+      const url =
+        storeAdd.out.ok.status === 'upload' && new URL(storeAdd.out.ok.url)
       if (!url) {
         throw new Error('Expected presigned url in response')
       }
@@ -179,7 +180,8 @@ export const test = {
         throw new Error('invocation failed', { cause: storeAdd })
       }
 
-      const url = storeAdd.out.ok.url && new URL(storeAdd.out.ok.url)
+      const url =
+        storeAdd.out.ok.status === 'upload' && new URL(storeAdd.out.ok.url)
       if (!url) {
         throw new Error('Expected presigned url in response')
       }

@@ -72,7 +72,7 @@ export const create = ({ id }) => {
       // if info capability is derivable from the passed capability, then we'll
       // receive a response and know that the invocation issuer has verified
       // themselves with w3access.
-      const result = await Space.info
+      const { out: result } = await Space.info
         .invoke({
           issuer: id,
           audience: id,
@@ -82,12 +82,16 @@ export const create = ({ id }) => {
         })
         .execute(client)
 
-      if (result.out.error) {
-        return result.out.error && result.out.error?.name === 'SpaceUnknown'
-          ? new Failure(`Space has no storage provider`, { cause: result })
+      if (result.error) {
+        return result.error.name === 'SpaceUnknown'
+          ? {
+              error: new Failure(`Space has no storage provider`, {
+                cause: result.error,
+              }),
+            }
           : result
       } else {
-        return {}
+        return { ok: {} }
       }
     },
   }

@@ -43,7 +43,7 @@ export function storeAddProvider({
         ok: {
           status: 'done',
           with: space,
-          link
+          link,
         },
       }
     }

@@ -155,12 +155,24 @@ export interface StoreListItem extends StoreAddOutput {
 
 export interface StoreListOk extends ListResponse<StoreListItem> {}
 
-export interface StoreAddOk {
-  status: 'upload' | 'done'
+export type StoreAddOk =
+  | StoreAddDone
+  | StoreAddUpload
+  
+export interface StoreAddDone {
+  status: 'done'
   with: API.URI<'did:'>
   link: UnknownLink
-  url?: URL
-  headers?: Record<string, string>
+  url?: undefined
+  headers?: undefined
+}
+
+export interface StoreAddUpload {
+  status: 'upload'
+  with: API.URI<'did:'>
+  link: UnknownLink
+  url: URL
+  headers: Record<string, string>
 }
 
 export interface StoreRemoveOk {}
