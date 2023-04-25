@@ -1,6 +1,5 @@
 import * as Client from '@ucanto/client'
-import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
+import { CAR } from '@ucanto/transport'
 import { DID } from '@ucanto/core'
 import * as HTTP from '@ucanto/transport/http'
 // eslint-disable-next-line no-unused-vars
@@ -41,13 +40,11 @@ function createProxyService(options) {
  * Assumes upload-api at that URL decodes requests as CAR and encodes responses as CBOR.
  *
  * @param {UcantoHttpConnectionOptions} options
- * @returns {Ucanto.ConnectionView<any>}
  */
 export function createUploadApiConnection(options) {
   return Client.connect({
     id: DID.parse(options.audience),
-    encoder: CAR,
-    decoder: CBOR,
+    codec: CAR.outbound,
     channel: HTTP.open({
       fetch: options.fetch,
       url: options.url,

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["ESNext", "DOM"],
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "noImplicitAny": false
   },
   "include": ["src", "scripts", "test", "package.json"],
   "exclude": ["**/node_modules/**"],

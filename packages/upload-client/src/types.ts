@@ -43,12 +43,16 @@ export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddResponse, never>
     list: ServiceMethod<StoreList, ListResponse<StoreListResult>, never>
-    remove: ServiceMethod<StoreRemove, unknown, never>
+    remove: ServiceMethod<StoreRemove, Record<string, unknown>, never>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddResponse, never>
     list: ServiceMethod<UploadList, ListResponse<UploadListResult>, never>
-    remove: ServiceMethod<UploadRemove, UploadRemoveResponse | undefined, never>
+    remove: ServiceMethod<
+      UploadRemove,
+      UploadRemoveResponse | Record<string, unknown>,
+      never
+    >
   }
 }
 

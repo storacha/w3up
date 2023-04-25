@@ -53,7 +53,7 @@ export async function claimAccess(
   if (res.error) {
     throw res
   }
-  const delegations = Object.values(res.delegations).flatMap((bytes) =>
+  const delegations = Object.values(res.ok.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
   )
   if (addProofs) {
@@ -138,7 +138,7 @@ export async function pollAccessClaimUntil(
       }
       try {
         const claimedDelegations = Object.values(
-          pollClaimResult.delegations
+          pollClaimResult.ok.delegations
         ).flatMap((d) => bytesToDelegations(d))
         if (delegationsMatch(claimedDelegations)) {
           resolve(claimedDelegations)

@@ -140,15 +140,19 @@ describe('Agent', function () {
 
     assert.deepStrictEqual(out, [
       {
-        did: 'did:key:sss',
-        agent: 'did:key:agent',
-        email: 'mail@mail.com',
-        product: 'product:free',
-        updated_at: 'sss',
-        inserted_at: 'date',
+        ok: {
+          did: 'did:key:sss',
+          agent: 'did:key:agent',
+          email: 'mail@mail.com',
+          product: 'product:free',
+          updated_at: 'sss',
+          inserted_at: 'date',
+        }
       },
       {
-        recover: true,
+        ok: {
+          recover: true,
+        }
       },
     ])
   })

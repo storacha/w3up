@@ -1,7 +1,6 @@
 import * as Server from '@ucanto/server'
 import { connect } from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 
 const notImplemented = () => {
   throw new Server.Failure('not implemented')
@@ -70,8 +69,7 @@ function withCallCount(fn) {
 export async function mockServiceConf(server) {
   const connection = connect({
     id: server.id,
-    encoder: CAR,
-    decoder: CBOR,
+    codec: CAR.outbound,
     channel: server,
   })
   return { access: connection, upload: connection }

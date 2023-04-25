@@ -37,9 +37,9 @@ describe('voucher capabilities', function () {
       authority: service,
     })
     if (!result.error) {
-      assert.deepEqual(result.audience.did(), service.did())
-      assert.equal(result.capability.can, 'voucher/claim')
-      assert.deepEqual(result.capability.nb, {
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'voucher/claim')
+      assert.deepEqual(result.ok.capability.nb, {
         identity: 'mailto:alice@email.com',
         product: 'product:free',
         service: service.did(),
@@ -80,9 +80,9 @@ describe('voucher capabilities', function () {
     if (result.error) {
       assert.fail('should not error')
     } else {
-      assert.deepEqual(result.audience.did(), service.did())
-      assert.equal(result.capability.can, 'voucher/claim')
-      assert.deepEqual(result.capability.nb, {
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'voucher/claim')
+      assert.deepEqual(result.ok.capability.nb, {
         identity: 'mailto:alice@email.com',
         product: 'product:free',
         service: service.did(),
@@ -121,7 +121,7 @@ describe('voucher capabilities', function () {
     })
 
     if (result.error) {
-      assert.ok(result.message.includes('- Can not derive'))
+      assert.ok(result.error.message.includes('- Can not derive'))
     } else {
       assert.fail('should error')
     }

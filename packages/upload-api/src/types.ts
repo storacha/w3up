@@ -6,7 +6,7 @@ import type {
   HandlerExecutionError,
   Signer,
   DID,
-  Transport,
+  InboundCodec,
   Result,
 } from '@ucanto/interface'
 import type { API } from '@ucanto/server'
@@ -23,6 +23,7 @@ import {
 } from '@web3-storage/capabilities/types'
 
 export * from '@web3-storage/capabilities/types'
+// @ts-expect-error duplicate export from capabilities types
 export * from '@ucanto/interface'
 
 export interface Service {
@@ -34,7 +35,7 @@ export interface Service {
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
     // @todo - Use proper type when no item was removed instead of undefined
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk | null, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk | UploadRemoveEmpty, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
@@ -58,8 +59,7 @@ export interface ServiceContext
     UploadServiceContext {}
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
-  decoder?: Transport.RequestDecoder
-  encoder?: Transport.ResponseEncoder
+  codec?: InboundCodec
   errorReporter: ErrorReporter
 }
 
@@ -176,6 +176,7 @@ export interface UploadAddInput {
 export interface UploadAddOk
   extends Omit<UploadAddInput, 'space' | 'issuer' | 'invocation'> {}
 export interface UploadRemoveOk extends UploadAddOk {}
+export interface UploadRemoveEmpty {}
 
 export interface UploadListItem extends UploadAddOk {
   insertedAt: string
@@ -236,6 +237,7 @@ export interface Assert {
     expected: Expected,
     message?: string
   ) => unknown
+  ok: <Actual>(actual: Actual, message?: string) => unknown
 }
 
 export type Test = (assert: Assert, context: UcantoServerTestContext) => unknown

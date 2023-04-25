@@ -1,3 +1,4 @@
+import * as CAR from '@ucanto/transport/car'
 import pRetry from 'p-retry'
 import * as API from '../bindings.js'
 
@@ -26,59 +27,32 @@ class UCANLog {
   }
 
   /**
-   * @param {Uint8Array} car
+   * @param {import('@ucanto/server').HTTPRequest} request
    */
-  async logInvocations(car) {
-    try {
-      const res = await fetch(`${this.url}/ucan`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${this.auth}`,
-          'Content-Type': 'application/invocations+car',
-        },
-        body: car,
-      })
-
-      if (!res.ok) {
-        const reason = await res.text().catch(() => '')
-        throw new Error(`HTTP post failed: ${res.status} - ${reason}`)
-      }
-    } catch (error) {
-      throw new Error(`Failed to log invocations: ${error}`, { cause: error })
-    }
-  }
-
-  /**
-   * @param {API.ReceiptBlock} receipt
-   */
-  async logReceipt(receipt) {
+  async log(request) {
     try {
       await pRetry(
         async () => {
           const res = await fetch(`${this.url}/ucan`, {
             method: 'POST',
             headers: {
+              ...request.headers,
               Authorization: `Basic ${this.auth}`,
-              'Content-Type': 'application/receipt+dag-cbor',
             },
-            body: receipt.bytes,
+            body: request.body,
           })
+
           if (!res.ok) {
-            throw new Error(`HTTP request status not ok: ${res.status}`)
+            const reason = await res.text().catch(() => '')
+            throw new Error(`HTTP post failed: ${res.status} - ${reason}`)
           }
-          return res
         },
         {
           retries: 3,
         }
       )
     } catch (error) {
-      throw new Error(
-        `Failed to log receipt for invocation ${receipt.data.ran}: ${error}`,
-        {
-          cause: error,
-        }
-      )
+      throw new Error(`Failed to log agent message: ${error}`, { cause: error })
     }
   }
 }
@@ -88,33 +62,32 @@ class UCANLog {
  */
 class UCANLogDebug {
   /**
-   * @param {Uint8Array} car
+   * @param {import('@ucanto/server').HTTPRequest} request
    */
-  async logInvocations(car) {
+  async log(request) {
     const { ucanlog } =
-      /** @type {{ucanlog?: { invocations?: Array<Uint8Array> }}} */ (
+      /** @type {{ucanlog?: { invocations?: Array<Uint8Array>, receipts?: Array<any> }}} */ (
         globalThis
       )
-    if (typeof ucanlog?.invocations?.push === 'function') {
-      ucanlog.invocations.push(car)
+    // decode
+    const selection = CAR.inbound.accept(request)
+    if (selection.error) {
+      console.error('unexpected UCAN encoding for UCAN log')
+      return
     }
-  }
+    const message = await selection.ok.decoder.decode(request)
 
-  /**
-   * @param {API.ReceiptBlock} receipt
-   */
-  async logReceipt(receipt) {
-    const { ucanlog } =
-      /** @type {{ucanlog?: { receipts?: Array<API.ReceiptBlock> }}} */ (
-        globalThis
-      )
+    // Log invocations
+    if (typeof ucanlog?.invocations?.push === 'function') {
+      for (const invocation of message.invocations) {
+        ucanlog.invocations.push(invocation.bytes)
+      }
+    }
+
+    // Log receipts
     if (typeof ucanlog?.receipts?.push === 'function') {
-      try {
-        ucanlog.receipts.push(receipt)
-      } catch (error) {
-        throw new Error(
-          `Failed to log receipt for invocation ${receipt.data.ran}: ${error}`
-        )
+      for (const receipt of message.receipts.values()) {
+        ucanlog.receipts.push(receipt.out.ok || receipt.out.error)
       }
     }
   }

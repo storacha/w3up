@@ -1,4 +1,4 @@
-import { Failure } from '@ucanto/validator'
+import { fail, ok } from '@ucanto/validator'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 
@@ -10,17 +10,17 @@ import * as Types from '@ucanto/interface'
  */
 export function canDelegateURI(child, parent) {
   if (parent === undefined) {
-    return true
+    return ok({})
   }
   if (child !== undefined && parent.endsWith('*')) {
     return child.startsWith(parent.slice(0, -1))
-      ? true
-      : new Failure(`${child} does not match ${parent}`)
+      ? ok({})
+      : fail(`${child} does not match ${parent}`)
   }
 
   return child === parent
-    ? true
-    : new Failure(`${child} is different from ${parent}`)
+    ? ok({})
+    : fail(`${child} is different from ${parent}`)
 }
 
 /**
@@ -31,12 +31,9 @@ export function canDelegateURI(child, parent) {
  * @param {Types.ParsedCapability} parent
  */
 export function equalWith(child, parent) {
-  return (
-    child.with === parent.with ||
-    new Failure(
-      `Can not derive ${child.can} with ${child.with} from ${parent.with}`
-    )
-  )
+  return child.with === parent.with
+    ? ok({})
+    : fail(`Can not derive ${child.can} with ${child.with} from ${parent.with}`)
 }
 
 /**
@@ -47,11 +44,11 @@ export function equalWith(child, parent) {
 
 export function equal(child, parent, constraint) {
   if (parent === undefined || parent === '*') {
-    return true
+    return ok({})
   } else if (String(child) === String(parent)) {
-    return true
+    return ok({})
   } else {
-    return new Failure(
+    return fail(
       `Constrain violation: ${child} violates imposed ${constraint} constraint ${parent}`
     )
   }
@@ -61,33 +58,33 @@ export function equal(child, parent, constraint) {
  * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
  * @param {T} claimed
  * @param {T} delegated
- * @returns {Types.Result<true, Types.Failure>}
+ * @returns {Types.Result<{}, Types.Failure>}
  */
 export const equalLink = (claimed, delegated) => {
   if (claimed.with !== delegated.with) {
-    return new Failure(
+    return fail(
       `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
     )
   } else if (
     delegated.nb.link &&
     `${delegated.nb.link}` !== `${claimed.nb.link}`
   ) {
-    return new Failure(
+    return fail(
       `Link ${claimed.nb.link ? `${claimed.nb.link}` : ''} violates imposed ${
         delegated.nb.link
       } constraint.`
     )
   } else {
-    return true
+    return ok({})
   }
 }
 
 /**
- * @param {Types.Failure | true} value
+ * @template T
+ * @param {Types.Result<T , Types.Failure>} result
+ * @returns {{error: Types.Failure, ok?:undefined}|undefined}
  */
-export function fail(value) {
-  return value === true ? undefined : value
-}
+export const and = (result) => (result.error ? result : undefined)
 
 /**
  *

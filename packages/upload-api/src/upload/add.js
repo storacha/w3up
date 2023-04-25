@@ -15,7 +15,7 @@ export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
     const allocated = await access.allocateSpace(invocation)
 
     if (allocated.error) {
-      return allocated
+      throw allocated
     }
 
     const [res] = await Promise.all([
@@ -30,7 +30,7 @@ export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
       writeDataCidToCarCidsMapping(dudewhereBucket, root, shards),
     ])
 
-    return res
+    return { ok: res }
   })
 }
 

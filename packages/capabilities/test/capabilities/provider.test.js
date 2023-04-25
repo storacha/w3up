@@ -32,9 +32,9 @@ describe('provider/add', function () {
     if (result.error) {
       assert.fail('error in self issue')
     } else {
-      assert.deepEqual(result.audience.did(), service.did())
-      assert.equal(result.capability.can, 'provider/add')
-      assert.deepEqual(result.capability.nb, {
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'provider/add')
+      assert.deepEqual(result.ok.capability.nb, {
         provider: 'did:web:test.web3.storage',
         consumer: space.did(),
       })
@@ -61,7 +61,7 @@ describe('provider/add', function () {
       authority: service,
     })
 
-    assert.equal(result.toString().includes('not authorized'), true)
+    assert.equal(result.error?.message.includes('not authorized'), true)
   })
 
   it('fails without attestation', async function () {
@@ -90,7 +90,7 @@ describe('provider/add', function () {
       authority: service,
     })
 
-    assert.equal(result.toString().includes('not authorized'), true)
+    assert.equal(result.error?.message.includes('not authorized'), true)
   })
 
   it('fails without account delegation', async function () {
@@ -119,7 +119,7 @@ describe('provider/add', function () {
       authority: service,
     })
 
-    assert.equal(result.toString().includes('not authorized'), true)
+    assert.equal(result.error?.message.includes('not authorized'), true)
   })
 
   it('requires nb.consumer', async function () {
@@ -318,8 +318,7 @@ describe('provider/add', function () {
       authority: service,
     })
 
-    assert.equal(result.toString().includes('Constrain violation'), true)
-    assert.equal(result.error, true)
+    assert.equal(result.error?.message.includes('Constrain violation'), true)
   })
 
   it('can not change delegated provider', async () => {
@@ -359,7 +358,7 @@ describe('provider/add', function () {
       authority: service,
     })
 
-    assert.equal(result.error, true)
+    assert.ok(result.error)
   })
 
   it('can not change with field', async () => {
@@ -399,7 +398,7 @@ describe('provider/add', function () {
       authority: service,
     })
 
-    assert.equal(result.error, true)
+    assert.ok(result.error)
   })
 
   for (const useAccountDid of [true, false]) {
@@ -430,7 +429,7 @@ describe('provider/add', function () {
         principal: Verifier,
         authority: service,
       })
-      assert.deepEqual(result.error, true, 'validator.access result')
+      assert.ok(result.error, 'validator.access result')
     })
   }
 })

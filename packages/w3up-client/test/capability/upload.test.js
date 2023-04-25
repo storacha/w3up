@@ -1,7 +1,6 @@
 import assert from 'assert'
 import { create as createServer, provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import { Upload as UploadCapabilities } from '@web3-storage/capabilities'
 import { AgentData } from '@web3-storage/access/agent'
@@ -30,7 +29,7 @@ describe('StoreClient', () => {
             assert.equal(String(invCap.nb?.root), car.roots[0].toString())
             assert.equal(invCap.nb?.shards?.length, 1)
             assert.equal(String(invCap.nb?.shards?.[0]), car.cid.toString())
-            return res
+            return { ok: res }
           }),
         },
       })
@@ -38,8 +37,7 @@ describe('StoreClient', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -80,7 +78,7 @@ describe('StoreClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.list.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
-            return page
+            return { ok: page }
           }),
         },
       })
@@ -88,8 +86,7 @@ describe('StoreClient', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -124,7 +121,7 @@ describe('StoreClient', () => {
             assert.equal(invCap.can, UploadCapabilities.remove.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
             // eslint-disable-next-line unicorn/no-useless-undefined
-            return undefined
+            return { ok: {} }
           }),
         },
       })
@@ -132,8 +129,7 @@ describe('StoreClient', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {

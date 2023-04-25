@@ -1,8 +1,6 @@
-import { Delegation } from '@ucanto/core'
+import { Message } from '@ucanto/core'
 import * as UCAN from '@ipld/dag-ucan'
 import { UTF8 } from '@ucanto/transport'
-// eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
 import { HTTPError } from '@web3-storage/worker-utils/error'
 
 const HEADERS = Object.freeze({
@@ -74,10 +72,11 @@ async function parseHeaders(headers) {
 /** @type {import('./types.js').ServerCodec} */
 export const serverCodec = {
   /**
-   * Decode Request
+   * Decodes `AgentMessage` from the received `HTTPRequest`.
    *
-   * @template {Types.Tuple<Types.IssuedInvocation>} I
-   * @param {Types.HTTPRequest<I>} request
+   * @template {import('@ucanto/interface').AgentMessage} Message
+   * @param {import('@ucanto/interface').HTTPRequest<Message>} request
+   * @returns {Promise<Message>}
    */
   async decode({ body, headers }) {
     const headersData = await parseHeaders(headers)
@@ -87,11 +86,12 @@ export const serverCodec = {
         { status: 400 }
       )
     }
-    const invocations = []
+
+    let root
+    const blocks = new Map()
 
     // Iterate ucan invocations from the headers
     for (const ucanView of headersData.ucans) {
-      const blocks = new Map()
       const missing = []
 
       // Check all the proofs for each invocation
@@ -113,25 +113,30 @@ export const serverCodec = {
         })
       }
 
-      // Build the full ucan chain for each invocation from headers data
-      invocations.push(
-        Delegation.create({ root: await UCAN.write(ucanView), blocks })
-      )
+      if (!root) {
+        root = (await UCAN.write(ucanView)).cid
+      }
     }
-    return /** @type {Types.InferInvocations<I>} */ (invocations)
+
+    if (!root) {
+      throw new Error('Missing root')
+    }
+
+    const message = Message.view({ root, store: blocks })
+    return /** @type {Message} */ (message)
   },
 
   /**
-   * Encode Response
+   * Encodes `AgentMessage` into an `HTTPRequest`.
    *
-   * @template I
-   * @param {I} result
-   * @returns {Types.HTTPResponse<I>}
+   * @template {import('@ucanto/interface').AgentMessage} Message
+   * @param {Message} message
+   * @returns {import('@ucanto/interface').HTTPRequest<Message>}
    */
-  encode(result) {
+  encode(message) {
     return {
       headers: Object.fromEntries(new Headers(HEADERS).entries()),
-      body: UTF8.encode(JSON.stringify(result)),
+      body: UTF8.encode(JSON.stringify(message)),
     }
   },
 }

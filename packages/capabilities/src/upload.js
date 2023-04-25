@@ -8,9 +8,9 @@
  *
  * @module
  */
-import { capability, Link, URI, Schema } from '@ucanto/validator'
+import { capability, Link, URI, Schema, ok } from '@ucanto/validator'
 import { codec as CAR } from '@ucanto/transport/car'
-import { equalWith, fail, equal } from './utils.js'
+import { equalWith, and, equal } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
@@ -69,10 +69,10 @@ export const add = capability({
   }),
   derives: (self, from) => {
     return (
-      fail(equalWith(self, from)) ||
-      fail(equal(self.nb.root, from.nb.root, 'root')) ||
-      fail(equal(self.nb.shards, from.nb.shards, 'shards')) ||
-      true
+      and(equalWith(self, from)) ||
+      and(equal(self.nb.root, from.nb.root, 'root')) ||
+      and(equal(self.nb.shards, from.nb.shards, 'shards')) ||
+      ok({})
     )
   },
 })
@@ -96,9 +96,9 @@ export const remove = capability({
   }),
   derives: (self, from) => {
     return (
-      fail(equalWith(self, from)) ||
-      fail(equal(self.nb.root, from.nb.root, 'root')) ||
-      true
+      and(equalWith(self, from)) ||
+      and(equal(self.nb.root, from.nb.root, 'root')) ||
+      ok({})
     )
   },
 })

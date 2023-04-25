@@ -1,9 +1,8 @@
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import { service } from '../service/index.js'
-import * as API from '../bindings.js'
 import { serverCodec as json } from '../ucanto/server-codec.js'
+import * as API from '../bindings.js'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} request
@@ -14,8 +13,7 @@ import { serverCodec as json } from '../ucanto/server-codec.js'
 export async function postRoot(request, env, ctx) {
   const server = Server.create({
     id: env.signer,
-    encoder: CBOR,
-    decoder: CAR,
+    codec: CAR.inbound,
     service: service(env),
     catch: (/** @type {string | Error} */ err) => {
       env.log.error(err)
@@ -23,83 +21,37 @@ export async function postRoot(request, env, ctx) {
   })
 
   const body = new Uint8Array(await request.arrayBuffer())
+  ///** @type {Readonly<Record<string, string>>} */
   const headers = Object.fromEntries(request.headers.entries())
 
-  /** @type {[Server.RequestDecoder, Server.ResponseEncoder]} */
-  // We will use encoder / decoder pair based on the content-type header this
-  // way we do not need to have separate routes.
-  const [decoder, encoder] =
-    headers['content-type'] === 'application/car' ? [CAR, CBOR] : [json, json]
+  // We will use different codec based on the content-type header
+  // this way we do not need to have separate routes.
+  const codec =
+    headers['content-type'] === 'application/car' ? CAR.request : json
 
-  const invocations = await decoder.decode({
+  // @ts-expect-error matching signatures are incompatible
+  const message = await codec.decode({
     body,
-    headers: Object.fromEntries(request.headers.entries()),
+    headers,
+  })
+
+  const inMessage = CAR.request.encode(message, {
+    headers,
   })
 
   // We block until we can log the UCAN invocation if this fails we return a 500
   // to the client. That is because in the future we expect that invocations will
   // be written to a queue first and then processed asynchronously, so if we
   // fail to queue the invocation we should not handle it.
-  await env.ucanLog.logInvocations(body)
+  await env.ucanLog.log(inMessage)
 
-  const results = await Promise.all(
-    invocations.map((invocation) => execute(invocation, server, env))
-  )
+  const result = await Server.execute(message, server)
+  // @ts-expect-error matching signatures are incompatible
+  const outMessage = codec.encode(result)
 
-  const forks = []
-  const out = []
+  ctx.waitUntil(env.ucanLog.log(outMessage))
 
-  for (const receipt of results) {
-    out.push(receipt.data.out.error || receipt.data.out.ok)
-    // we don't await the logReceipt call because we want to return the response
-    // to the client as soon as possible. We will however keep the worker alive
-    // until we have logged the receipt. If logging fails we will log the error
-    // as we have no way to handle it here nor we can rollback the invocation.
-    forks.push(
-      env.ucanLog.logReceipt(receipt).catch((error) => env.log.error(error))
-    )
-  }
-
-  const response = await encoder.encode(out)
-
-  ctx.waitUntil(Promise.all(forks))
-
-  return new Response(response.body, {
-    headers: response.headers,
+  return new Response(outMessage.body, {
+    headers: outMessage.headers,
   })
-}
-
-/**
- *
- * @param {Server.Invocation} invocation
- * @param {Server.ServerView<*>} server
- * @param {API.RouteContext} env
- * @returns {Promise<Required<API.Block<API.Receipt>>>}
- */
-const execute = async (invocation, server, env) => {
-  /** @type {[Server.Result<*, Server.API.Failure>]} */
-  const [result] = await Server.execute([invocation], server)
-  const out = result?.error ? { error: result } : { ok: result }
-
-  // Create a receipt payload for the invocation conforming to the spec
-  // @see https://github.com/ucan-wg/invocation/#8-receipt
-  const payload = {
-    ran: invocation.cid,
-    out,
-    fx: { fork: [] },
-    meta: {},
-    iss: env.signer.did(),
-    prf: [],
-  }
-
-  // create a receipt by signing the payload with a server key
-  const receipt = {
-    ...payload,
-    s: await env.signer.sign(CBOR.codec.encode(payload)),
-  }
-
-  return {
-    data: receipt,
-    ...(await CBOR.codec.write(receipt)),
-  }
 }

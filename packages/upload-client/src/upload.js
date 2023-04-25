@@ -54,13 +54,13 @@ export async function add(
     }
   )
 
-  if (result?.error) {
+  if (!result.out.ok) {
     throw new Error(`failed ${UploadCapabilities.add.can} invocation`, {
-      cause: result,
+      cause: result.out.error,
     })
   }
 
-  return result
+  return result.out.ok
 }
 
 /**
@@ -104,13 +104,13 @@ export async function list(
     })
     .execute(conn)
 
-  if (result.error) {
+  if (!result.out.ok) {
     throw new Error(`failed ${UploadCapabilities.list.can} invocation`, {
-      cause: result,
+      cause: result.out.error,
     })
   }
 
-  return result
+  return result.out.ok
 }
 
 /**
@@ -150,11 +150,11 @@ export async function remove(
     })
     .execute(conn)
 
-  if (result?.error) {
+  if (!result.out.ok) {
     throw new Error(`failed ${UploadCapabilities.remove.can} invocation`, {
-      cause: result,
+      cause: result.out.error,
     })
   }
 
-  return result
+  return result.out.ok
 }

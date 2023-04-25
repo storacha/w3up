@@ -4,7 +4,6 @@ import * as Client from '@ucanto/client'
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
@@ -47,6 +46,7 @@ const agentToData = new WeakMap()
 
 /**
  * @typedef {import('./types').Service} Service
+ * @typedef {import('@ucanto/interface').Receipt<any, any>} Receipt
  */
 
 /**
@@ -69,8 +69,7 @@ const agentToData = new WeakMap()
 export function connection(options = {}) {
   return Client.connect({
     id: options.principal ?? PRINCIPAL,
-    encoder: CAR,
-    decoder: CBOR,
+    codec: CAR.outbound,
     channel:
       options.channel ??
       HTTP.open({
@@ -364,7 +363,7 @@ export class Agent {
     }
 
     const dels = []
-    for (const del of recoverInv) {
+    for (const del of recoverInv.ok) {
       dels.push(stringToDelegation(del))
     }
 
@@ -599,6 +598,7 @@ export class Agent {
     // @ts-ignore
     const out = inv.execute(this.connection)
 
+    // @ts-ignore TODO figutr out type...
     return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>, import('./types').Service>>} */ (
       out
     )

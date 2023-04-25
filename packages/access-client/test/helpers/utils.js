@@ -4,7 +4,7 @@ import { parseLink } from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
+import * as CBOR from '@ucanto/core/cbor'
 import { service } from './fixtures.js'
 
 /**
@@ -18,7 +18,7 @@ export function parseCarLink(source) {
  * @param {any} data
  */
 export async function createCborCid(data) {
-  const cbor = await CBOR.codec.write(data)
+  const cbor = await CBOR.write(data)
   return cbor.cid
 }
 
@@ -26,7 +26,7 @@ export async function createCborCid(data) {
  * @param {string} source
  */
 export async function createCarCid(source) {
-  const cbor = await CBOR.codec.write({ hello: source })
+  const cbor = await CBOR.write({ hello: source })
   const shard = await CAR.codec.write({ roots: [cbor] })
   return shard.cid
 }
@@ -38,23 +38,26 @@ export async function createCarCid(source) {
 export function createServer(handlers = {}) {
   const server = Server.create({
     id: service,
-    encoder: CBOR,
-    decoder: CAR,
+    codec: CAR.inbound,
     service: {
       space: {
         info: Server.provide(Space.info, async ({ capability }) => {
           return {
-            did: 'did:key:sss',
-            agent: 'did:key:agent',
-            email: 'mail@mail.com',
-            product: 'product:free',
-            updated_at: 'sss',
-            inserted_at: 'date',
+            ok: {
+              did: 'did:key:sss',
+              agent: 'did:key:agent',
+              email: 'mail@mail.com',
+              product: 'product:free',
+              updated_at: 'sss',
+              inserted_at: 'date',
+            },
           }
         }),
         recover: Server.provide(Space.recover, async ({ capability }) => {
           return {
-            recover: true,
+            ok: {
+              recover: true,
+            },
           }
         }),
       },

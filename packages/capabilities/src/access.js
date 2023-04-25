@@ -8,9 +8,9 @@
  *
  * @module
  */
-import { capability, URI, DID, Link, Schema, Failure } from '@ucanto/validator'
+import { capability, URI, DID, Link, Schema, fail, ok } from '@ucanto/validator'
 import * as Types from '@ucanto/interface'
-import { equalWith, fail, equal } from './utils.js'
+import { equalWith, equal, and } from './utils.js'
 export { top } from './top.js'
 
 /**
@@ -65,10 +65,10 @@ export const authorize = capability({
   nb: AuthorizationRequest,
   derives: (child, parent) => {
     return (
-      fail(equalWith(child, parent)) ||
-      fail(equal(child.nb.iss, parent.nb.iss, 'iss')) ||
-      fail(subsetCapabilities(child.nb.att, parent.nb.att)) ||
-      true
+      and(equalWith(child, parent)) ||
+      and(equal(child.nb.iss, parent.nb.iss, 'iss')) ||
+      and(subsetCapabilities(child.nb.att, parent.nb.att)) ||
+      ok({})
     )
   },
 })
@@ -89,11 +89,11 @@ export const confirm = capability({
   }),
   derives: (claim, proof) => {
     return (
-      fail(equalWith(claim, proof)) ||
-      fail(equal(claim.nb.iss, proof.nb.iss, 'iss')) ||
-      fail(equal(claim.nb.aud, proof.nb.aud, 'aud')) ||
-      fail(subsetCapabilities(claim.nb.att, proof.nb.att)) ||
-      true
+      and(equalWith(claim, proof)) ||
+      and(equal(claim.nb.iss, proof.nb.iss, 'iss')) ||
+      and(equal(claim.nb.aud, proof.nb.aud, 'aud')) ||
+      and(subsetCapabilities(claim.nb.att, proof.nb.att)) ||
+      ok({})
     )
   },
 })
@@ -158,9 +158,9 @@ export const delegate = capability({
   }),
   derives: (claim, proof) => {
     return (
-      fail(equalWith(claim, proof)) ||
-      fail(subsetsNbDelegations(claim, proof)) ||
-      true
+      and(equalWith(claim, proof)) ||
+      and(subsetsNbDelegations(claim, proof)) ||
+      ok({})
     )
   },
 })
@@ -193,11 +193,9 @@ function subsetsNbDelegations(claim, proof) {
     new Set(delegatedCids(proof))
   )
   if (missingProofs.size > 0) {
-    return new Failure(
-      `unauthorized nb.delegations ${[...missingProofs].join(', ')}`
-    )
+    return fail(`unauthorized nb.delegations ${[...missingProofs].join(', ')}`)
   }
-  return true
+  return ok({})
 }
 
 /**
@@ -216,7 +214,7 @@ const subsetCapabilities = (claim, proof) => {
   // If everything is allowed, no need to check further because it contains
   // all the capabilities.
   if (allowed.has('*')) {
-    return true
+    return ok({})
   }
 
   // Otherwise we compute delta between what is allowed and what is requested.
@@ -226,10 +224,10 @@ const subsetCapabilities = (claim, proof) => {
   )
 
   if (escalated.size > 0) {
-    return new Failure(`unauthorized nb.att.can ${[...escalated].join(', ')}`)
+    return fail(`unauthorized nb.att.can ${[...escalated].join(', ')}`)
   }
 
-  return true
+  return ok({})
 }
 
 /**

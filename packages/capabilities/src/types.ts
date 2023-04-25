@@ -42,7 +42,7 @@ export interface AccessConfirmSuccess {
 export interface AccessConfirmFailure extends Ucanto.Failure {}
 
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
-export type AccessDelegateSuccess = unknown
+export type AccessDelegateSuccess = {}
 export type AccessDelegateFailure = { error: true } | InsufficientStorage
 
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>

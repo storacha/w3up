@@ -123,16 +123,16 @@ export interface Service {
   voucher: {
     claim: ServiceMethod<
       VoucherClaim,
-      EncodedDelegation<[VoucherRedeem]> | undefined,
+      EncodedDelegation<[VoucherRedeem]> | Record<string, unknown>,
       Failure
     >
-    redeem: ServiceMethod<VoucherRedeem, void, Failure>
+    redeem: ServiceMethod<VoucherRedeem, Record<string, unknown>, Failure>
   }
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
-      EncodedDelegation<[SpaceRecover]> | undefined,
+      EncodedDelegation<[SpaceRecover]> | Record<string, unknown>,
       Failure
     >
     recover: ServiceMethod<

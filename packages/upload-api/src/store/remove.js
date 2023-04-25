@@ -13,6 +13,8 @@ export function storeRemoveProvider(context) {
 
     await context.storeTable.remove(space, link)
 
-    return {}
+    return {
+      ok: {},
+    }
   })
 }

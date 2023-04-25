@@ -1,7 +1,6 @@
 import assert from 'assert'
 import { create as createServer, provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
@@ -31,13 +30,15 @@ describe('Client', () => {
             assert.equal(invCap.can, StoreCapabilities.add.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
             return {
-              status: 'upload',
-              headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200',
-              link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
-                invocation.capabilities[0].nb?.link
-              ),
-              with: space.did(),
+              ok: {
+                status: 'upload',
+                headers: { 'x-test': 'true' },
+                url: 'http://localhost:9200',
+                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                  invocation.capabilities[0].nb?.link
+                ),
+                with: space.did(),
+              },
             }
           }),
         },
@@ -51,8 +52,10 @@ describe('Client', () => {
             assert.equal(invCap.nb?.shards?.length, 1)
             assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
             return {
-              root: expectedCar.roots[0],
-              shards: [expectedCar.cid],
+              ok: {
+                root: expectedCar.roots[0],
+                shards: [expectedCar.cid],
+              },
             }
           }),
         },
@@ -61,8 +64,7 @@ describe('Client', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -120,13 +122,15 @@ describe('Client', () => {
             assert.equal(invCap.can, StoreCapabilities.add.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
             return {
-              status: 'upload',
-              headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200',
-              link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
-                invocation.capabilities[0].nb?.link
-              ),
-              with: space.did(),
+              ok: {
+                status: 'upload',
+                headers: { 'x-test': 'true' },
+                url: 'http://localhost:9200',
+                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                  invocation.capabilities[0].nb?.link
+                ),
+                with: space.did(),
+              },
             }
           }),
         },
@@ -139,7 +143,9 @@ describe('Client', () => {
             assert.equal(invCap.with, alice.currentSpace()?.did())
             assert.equal(invCap.nb?.shards?.length, 1)
             if (!invCap.nb) throw new Error('nb must be present')
-            return invCap.nb
+            return {
+              ok: invCap.nb,
+            }
           }),
         },
       })
@@ -147,8 +153,7 @@ describe('Client', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -191,13 +196,15 @@ describe('Client', () => {
             assert.equal(invCap.can, StoreCapabilities.add.can)
             assert.equal(invCap.with, space.did())
             return {
-              status: 'upload',
-              headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200',
-              link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
-                invocation.capabilities[0].nb?.link
-              ),
-              with: space.did(),
+              ok: {
+                status: 'upload',
+                headers: { 'x-test': 'true' },
+                url: 'http://localhost:9200',
+                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                  invocation.capabilities[0].nb?.link
+                ),
+                with: space.did(),
+              },
             }
           }),
         },
@@ -212,7 +219,9 @@ describe('Client', () => {
             assert.equal(invCap.nb.shards?.length, 1)
             assert.ok(carCID)
             assert.equal(invCap.nb.shards?.[0].toString(), carCID.toString())
-            return invCap.nb
+            return {
+              ok: invCap.nb,
+            }
           }),
         },
       })
@@ -220,8 +229,7 @@ describe('Client', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {

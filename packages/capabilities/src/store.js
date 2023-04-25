@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { capability, Failure, Link, URI, Schema } from '@ucanto/validator'
+import { capability, Link, URI, Schema, ok, fail } from '@ucanto/validator'
 import { equalLink, equalWith } from './utils.js'
 
 /**
@@ -69,12 +69,10 @@ export const add = capability({
       return result
     } else if (claim.nb.size !== undefined && from.nb.size !== undefined) {
       return claim.nb.size > from.nb.size
-        ? new Failure(
-            `Size constraint violation: ${claim.nb.size} > ${from.nb.size}`
-          )
-        : true
+        ? fail(`Size constraint violation: ${claim.nb.size} > ${from.nb.size}`)
+        : ok({})
     } else {
-      return true
+      return ok({})
     }
   },
 })
@@ -127,11 +125,11 @@ export const list = capability({
   }),
   derives: (claimed, delegated) => {
     if (claimed.with !== delegated.with) {
-      return new Failure(
+      return fail(
         `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
       )
     }
-    return true
+    return ok({})
   },
 })
 

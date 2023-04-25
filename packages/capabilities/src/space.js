@@ -10,8 +10,8 @@
  */
 
 import * as Store from './store.js'
-import { capability, URI, Schema } from '@ucanto/validator'
-import { canDelegateURI, equalWith, fail } from './utils.js'
+import { capability, URI, Schema, ok } from '@ucanto/validator'
+import { canDelegateURI, equalWith, and } from './utils.js'
 import * as Upload from './upload.js'
 export { top } from './top.js'
 
@@ -60,9 +60,9 @@ export const recover = capability({
   }),
   derives: (child, parent) => {
     return (
-      fail(equalWith(child, parent)) ||
-      fail(canDelegateURI(child.nb.identity, parent.nb.identity)) ||
-      true
+      and(equalWith(child, parent)) ||
+      and(canDelegateURI(child.nb.identity, parent.nb.identity)) ||
+      ok({})
     )
   },
 })

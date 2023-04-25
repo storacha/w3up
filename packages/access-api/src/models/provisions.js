@@ -21,7 +21,9 @@ export function createProvisions(services, storage = []) {
   /** @type {Provisions<ServiceId>['put']} */
   const put = async (item) => {
     storage.push(item)
-    return {}
+    return {
+      ok: {},
+    }
   }
   /** @type {Provisions<ServiceId>['count']} */
   const count = async () => {
@@ -128,11 +130,13 @@ export class DbProvisions {
     const matches = await this.find({ space: row.consumer })
     const conflict = matches.find((row) => row.provider !== item.provider)
     if (conflict) {
-      return new ConflictError({
-        message: `Space ${row.consumer} can not be provisioned with ${row.provider}, it already has a ${conflict.provider} provider`,
-        insertion: row,
-        existing: conflict,
-      })
+      return {
+        error: new ConflictError({
+          message: `Space ${row.consumer} can not be provisioned with ${row.provider}, it already has a ${conflict.provider} provider`,
+          insertion: row,
+          existing: conflict,
+        }),
+      }
     }
 
     /** @type {Array<keyof ProvisionsRow>} */
@@ -148,13 +152,17 @@ export class DbProvisions {
     } catch (error) {
       primaryKeyError = getCidUniquenessError(error)
       if (!primaryKeyError) {
-        return new Failure(`Unexpected error inserting provision: ${error}`)
+        return {
+          error: new Failure(`Unexpected error inserting provision: ${error}`),
+        }
       }
     }
 
     if (!primaryKeyError) {
       // no error inserting, we're done with put
-      return {}
+      return {
+        ok: {},
+      }
     }
 
     // there was already a row with this invocation cid
@@ -167,22 +175,24 @@ export class DbProvisions {
       .executeTakeFirst()
 
     if (!existing) {
-      return new Failure(`Unexpected error inserting provision`)
+      return { error: new Failure(`Unexpected error inserting provision`) }
     }
 
     if (existing && deepEqual(existing, row)) {
       // the insert failed, but the existing row is identical to the row that failed to insert.
       // so the put is a no-op, and we can consider it a success despite encountering the primaryKeyError
-      return {}
+      return { ok: {} }
     }
 
     // this is a sign of something very wrong. throw so error reporters can report on it
     // and determine what led to a put() with same invocation cid but new non-cid column values
-    return new ConflictError({
-      message: `Provision with cid ${item.invocation.cid} already exists with different field values`,
-      insertion: row,
-      existing,
-    })
+    return {
+      error: new ConflictError({
+        message: `Provision with cid ${item.invocation.cid} already exists with different field values`,
+        insertion: row,
+        existing,
+      }),
+    }
   }
 
   /** @type {Provisions<ServiceId>['hasStorageProvider']} */

@@ -8,8 +8,8 @@
  *
  * @module
  */
-import { capability, URI, DID, Schema } from '@ucanto/validator'
-import { equalWith, fail, equal } from './utils.js'
+import { capability, URI, DID, Schema, ok } from '@ucanto/validator'
+import { equalWith, and, equal } from './utils.js'
 export { top } from './top.js'
 
 /**
@@ -70,11 +70,11 @@ export const claim = capability({
   }),
   derives: (child, parent) => {
     return (
-      fail(equalWith(child, parent)) ||
-      fail(equal(child.nb.product, parent.nb.product, 'product')) ||
-      fail(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
-      fail(equal(child.nb.service, parent.nb.service, 'service')) ||
-      true
+      and(equalWith(child, parent)) ||
+      and(equal(child.nb.product, parent.nb.product, 'product')) ||
+      and(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
+      and(equal(child.nb.service, parent.nb.service, 'service')) ||
+      ok({})
     )
   },
 })
@@ -102,11 +102,11 @@ export const redeem = capability({
   }),
   derives: (child, parent) => {
     return (
-      fail(equalWith(child, parent)) ||
-      fail(equal(child.nb.product, parent.nb.product, 'product')) ||
-      fail(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
-      fail(equal(child.nb.space, parent.nb.space, 'account')) ||
-      true
+      and(equalWith(child, parent)) ||
+      and(equal(child.nb.product, parent.nb.product, 'product')) ||
+      and(equal(child.nb.identity, parent.nb.identity, 'identity')) ||
+      and(equal(child.nb.space, parent.nb.space, 'account')) ||
+      ok({})
     )
   },
 })

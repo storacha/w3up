@@ -2,7 +2,7 @@ import * as API from '../src/types.js'
 import { Space } from '@web3-storage/capabilities'
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
-import { CAR, CBOR } from '@ucanto/transport'
+import { CAR } from '@ucanto/transport'
 import { Failure } from '@ucanto/server'
 
 /**
@@ -17,13 +17,16 @@ export const createService = (context) => ({
       if (!results) {
         /** @type {API.SpaceUnknown} */
         const spaceUnknownFailure = {
-          error: true,
           name: 'SpaceUnknown',
           message: `Space not found.`,
         }
-        return spaceUnknownFailure
+        return {
+          error: spaceUnknownFailure,
+        }
       }
-      return results
+      return {
+        ok: results,
+      }
     }),
   },
 })
@@ -38,8 +41,7 @@ export const createServer = (context) =>
   Server.create({
     id: context.id,
     service: createService(context),
-    encoder: CBOR,
-    decoder: CAR,
+    codec: CAR.inbound,
   })
 
 /**
@@ -59,8 +61,7 @@ export const create = ({ id }) => {
   const client = Client.connect({
     id,
     channel: server,
-    encoder: CAR,
-    decoder: CBOR,
+    codec: CAR.outbound,
   })
 
   return {
@@ -81,8 +82,8 @@ export const create = ({ id }) => {
         })
         .execute(client)
 
-      if (result.error) {
-        return result.error && result.name === 'SpaceUnknown'
+      if (result.out.error) {
+        return result.out.error && result.out.error?.name === 'SpaceUnknown'
           ? new Failure(`Space has no storage provider`, { cause: result })
           : result
       } else {

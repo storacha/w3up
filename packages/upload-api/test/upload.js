@@ -43,11 +43,11 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadAdd.error) {
+    if (uploadAdd.out.error) {
       throw new Error('invocation failed', { cause: uploadAdd })
     }
 
-    assert.deepEqual(uploadAdd, { root, shards })
+    assert.deepEqual(uploadAdd.out.ok, { root, shards })
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.deepEqual(results.length, 1)
@@ -86,12 +86,12 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadAdd.error) {
+    if (!uploadAdd.out.ok) {
       throw new Error('invocation failed', { cause: uploadAdd })
     }
 
     assert.deepEqual(
-      uploadAdd,
+      uploadAdd.out.ok,
       { root, shards: [] },
       'Should have an empty shards array'
     )
@@ -128,11 +128,11 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadAdd1.error) {
+    if (!uploadAdd1.out.ok) {
       throw new Error('invocation failed', { cause: uploadAdd1 })
     }
 
-    assert.deepEqual(uploadAdd1.shards, [])
+    assert.deepEqual(uploadAdd1.out.ok.shards, [])
 
     const uploadAdd2 = await Upload.add
       .invoke({
@@ -144,11 +144,11 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadAdd2.error) {
+    if (!uploadAdd2.out.ok) {
       throw new Error('invocation failed', { cause: uploadAdd2 })
     }
 
-    assert.deepEqual(uploadAdd2.shards, shards)
+    assert.deepEqual(uploadAdd2.out.ok.shards, shards)
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.equal(results.length, 1)
@@ -190,12 +190,12 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadAdd1.error) {
+    if (!uploadAdd1.out.ok) {
       throw new Error('invocation failed', { cause: uploadAdd1 })
     }
 
     assert.deepEqual(
-      uploadAdd1.shards?.map(String).sort(),
+      uploadAdd1.out.ok.shards?.map(String).sort(),
       [cars[0].cid, cars[1].cid].map(String).sort()
     )
 
@@ -209,12 +209,12 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadAdd2.error) {
+    if (!uploadAdd2.out.ok) {
       throw new Error('invocation failed', { cause: uploadAdd2 })
     }
 
     assert.deepEqual(
-      uploadAdd2.shards?.map(String).sort(),
+      uploadAdd2.out.ok.shards?.map(String).sort(),
       [cars[0].cid, cars[1].cid, cars[2].cid].map(String).sort()
     )
 
@@ -260,10 +260,13 @@ export const test = {
       })
       .execute(connection)
 
-    if (!uploadAdd.error) {
+    if (!uploadAdd.out.error) {
       throw new Error('invocation should have failed')
     }
-    assert.equal(uploadAdd.message.includes('has no storage provider'), true)
+    assert.equal(
+      uploadAdd.out.error.message.includes('has no storage provider'),
+      true
+    )
   },
 
   'upload/remove removes an upload': async (assert, context) => {
@@ -287,7 +290,7 @@ export const test = {
         proofs: [proof],
       })
       .execute(connection)
-    if (uploadAdd.error) {
+    if (!uploadAdd.out.ok) {
       throw new Error('invocation failed', { cause: uploadAdd })
     }
 
@@ -307,15 +310,22 @@ export const test = {
       )
     }
 
-    if (uploadRemove?.error) {
+    if (!uploadRemove.out.ok) {
       throw new Error(
         'expected upload/remove response to include the upload object removed',
-        { cause: uploadRemove.error }
+        { cause: uploadRemove.out.error }
       )
     }
 
-    assert.equal(uploadRemove?.root.toString(), car.roots[0].toString())
-    assert.equal(uploadRemove?.shards?.[0].toString(), car.cid.toString())
+    // @ts-expect-error TODO FIX
+    assert.ok(uploadRemove.out.ok.root)
+    // @ts-expect-error TODO FIX
+    assert.equal(uploadRemove.out.ok.root?.toString(), car.roots[0].toString())
+    assert.equal(
+      // @ts-expect-error TODO FIX
+      uploadRemove?.out.ok.shards?.[0].toString(),
+      car.cid.toString()
+    )
   },
 
   'upload/remove does not fail for non existent upload': async (
@@ -344,8 +354,8 @@ export const test = {
       .execute(connection)
 
     assert.equal(
-      uploadRemove,
-      null,
+      uploadRemove.out.ok,
+      {},
       'expect falsy response when removing an upload you do not have'
     )
   },
@@ -382,7 +392,7 @@ export const test = {
         proofs: [proofSpaceA],
       })
       .execute(connection)
-    if (uploadAddCarAToSpaceA.error) {
+    if (uploadAddCarAToSpaceA.out.error) {
       throw new Error('invocation failed', { cause: uploadAddCarAToSpaceA })
     }
 
@@ -396,7 +406,7 @@ export const test = {
         proofs: [proofSpaceA],
       })
       .execute(connection)
-    if (uploadAddCarBToSpaceA.error) {
+    if (uploadAddCarBToSpaceA.out.error) {
       throw new Error('invocation failed', { cause: uploadAddCarBToSpaceA })
     }
 
@@ -410,7 +420,7 @@ export const test = {
         proofs: [proofSpaceB],
       })
       .execute(connection)
-    if (uploadAddCarAToSpaceB.error) {
+    if (uploadAddCarAToSpaceB.out.error) {
       throw new Error('invocation failed', { cause: uploadAddCarAToSpaceB })
     }
 
@@ -479,11 +489,11 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadAdd.error) {
+    if (!uploadAdd.out.ok) {
       throw new Error('invocation failed', { cause: uploadAdd })
     }
 
-    assert.equal(uploadAdd.shards?.length, shards.length)
+    assert.equal(uploadAdd.out.ok.shards?.length, shards.length)
 
     // Validate DB before remove
     const { results } = await context.uploadTable.list(spaceDid)
@@ -521,7 +531,7 @@ export const test = {
       })
       .execute(connection)
 
-    assert.deepEqual(uploadList, { results: [], size: 0 })
+    assert.deepEqual(uploadList.out.ok, { results: [], size: 0 })
   },
 
   'upload/list returns entries previously uploaded by the user': async (
@@ -559,15 +569,15 @@ export const test = {
       })
       .execute(connection)
 
-    if (uploadList.error) {
+    if (!uploadList.out.ok) {
       throw new Error('invocation failed', { cause: uploadList })
     }
 
-    assert.equal(uploadList.size, cars.length)
+    assert.equal(uploadList.out.ok.size, cars.length)
 
     for (const car of cars) {
       const root = car.roots[0]
-      const item = uploadList.results.find(
+      const item = uploadList.out.ok.results.find(
         (x) => x.root.toString() === root.toString()
       )
 
@@ -618,17 +628,17 @@ export const test = {
         })
         .execute(connection)
 
-      if (uploadList.error) {
+      if (!uploadList.out.ok) {
         throw new Error('invocation failed', { cause: uploadList })
       }
 
       // Add page if it has size
-      if (uploadList.size > 0) {
-        listPages.push(uploadList.results)
+      if (uploadList.out.ok.size > 0) {
+        listPages.push(uploadList.out.ok.results)
       }
 
-      if (uploadList.cursor) {
-        cursor = uploadList.cursor
+      if (uploadList.out.ok.cursor) {
+        cursor = uploadList.out.ok.cursor
       } else {
         break
       }
@@ -691,8 +701,8 @@ export const test = {
         },
       })
       .execute(connection)
-    if (listResponse.error) {
-      throw new Error('invocation failed', { cause: listResponse.error })
+    if (!listResponse.out.ok) {
+      throw new Error('invocation failed', { cause: listResponse.out.error })
     }
 
     const secondListResponse = await Upload.list
@@ -703,12 +713,14 @@ export const test = {
         proofs: [proof],
         nb: {
           size,
-          cursor: listResponse.after,
+          cursor: listResponse.out.ok.after,
         },
       })
       .execute(connection)
-    if (secondListResponse.error) {
-      throw new Error('invocation failed', { cause: secondListResponse.error })
+    if (!secondListResponse.out.ok) {
+      throw new Error('invocation failed', {
+        cause: secondListResponse.out.error,
+      })
     }
 
     const prevListResponse = await Upload.list
@@ -719,25 +731,36 @@ export const test = {
         proofs: [proof],
         nb: {
           size,
-          cursor: secondListResponse.before,
+          cursor: secondListResponse.out.ok.before,
           pre: true,
         },
       })
       .execute(connection)
-    if (prevListResponse.error) {
-      throw new Error('invocation failed', { cause: prevListResponse.error })
+    if (!prevListResponse.out.ok) {
+      throw new Error('invocation failed', {
+        cause: prevListResponse.out.error,
+      })
     }
 
-    assert.equal(listResponse.results.length, 3)
-    assert.equal(prevListResponse.results.length, 3)
+    assert.equal(listResponse.out.ok.results.length, 3)
+    assert.equal(prevListResponse.out.ok.results.length, 3)
 
     // listResponse is the first page. we used its after to get the second page, and then used the before of the second
     // page with the `pre` caveat to list the first page again. the results and cursors should remain the same.
-    assert.deepEqual(prevListResponse.results[0], listResponse.results[0])
-    assert.deepEqual(prevListResponse.results[1], listResponse.results[1])
-    assert.deepEqual(prevListResponse.results[2], listResponse.results[2])
-    assert.equal(prevListResponse.before, listResponse.before)
-    assert.equal(prevListResponse.after, listResponse.after)
+    assert.deepEqual(
+      prevListResponse.out.ok.results[0],
+      listResponse.out.ok.results[0]
+    )
+    assert.deepEqual(
+      prevListResponse.out.ok.results[1],
+      listResponse.out.ok.results[1]
+    )
+    assert.deepEqual(
+      prevListResponse.out.ok.results[2],
+      listResponse.out.ok.results[2]
+    )
+    assert.equal(prevListResponse.out.ok.before, listResponse.out.ok.before)
+    assert.equal(prevListResponse.out.ok.after, listResponse.out.ok.after)
   },
   'invoking with wrong audience fails': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
@@ -758,18 +781,18 @@ export const test = {
       })
       .execute(connection)
 
-    if (!result?.error) {
+    if (!result.out.error) {
       throw new Error('invocation should have failed')
     }
 
-    assert.equal(result?.name, 'InvalidAudience')
+    assert.equal(result.out.error.name, 'InvalidAudience')
     assert.equal(
-      result.message.includes(`${connection.id.did()}`),
+      result.out.error.message.includes(`${connection.id.did()}`),
       true,
       'mentions expected audience'
     )
     assert.equal(
-      result.message.includes(`did:web:example.com`),
+      result.out.error.message.includes(`did:web:example.com`),
       true,
       'mentions passed audience'
     )

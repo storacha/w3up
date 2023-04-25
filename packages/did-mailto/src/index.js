@@ -30,7 +30,7 @@ export function toEmail(did) {
  * given a string, if it is an EmailAddress, return it, otherwise throw an error.
  * Use this to parse string input to `EmailAddress` type to pass to `fromEmail` (when needed).
  * This is not meant to be a general RFC5322 (et al) email address validator, which would be more expensive.
- * 
+ *
  * @param {string} input
  * @returns {import("./types").EmailAddress}
  */
