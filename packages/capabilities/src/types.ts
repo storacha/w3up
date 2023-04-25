@@ -15,7 +15,6 @@ export interface Unit {}
  * failure due to a resource not having enough storage capacity.
  */
 export interface InsufficientStorage {
-  error: true
   name: 'InsufficientStorage'
   message: string
 }
@@ -33,7 +32,7 @@ export interface AccessClaimSuccess {
   delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
 }
 export interface AccessClaimFailure {
-  error: true
+  message: string
 }
 
 export interface AccessConfirmSuccess {
@@ -42,8 +41,8 @@ export interface AccessConfirmSuccess {
 export interface AccessConfirmFailure extends Ucanto.Failure {}
 
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
-export type AccessDelegateSuccess = {}
-export type AccessDelegateFailure = { error: true } | InsufficientStorage
+export type AccessDelegateSuccess = Unit
+export type AccessDelegateFailure = InsufficientStorage
 
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
