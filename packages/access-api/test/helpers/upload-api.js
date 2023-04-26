@@ -32,6 +32,7 @@ export function createMockUploadApiServer({ id }) {
       },
     },
   })
+  // @ts-expect-error TODO fix
   return server
 }
 

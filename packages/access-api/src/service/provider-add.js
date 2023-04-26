@@ -34,7 +34,7 @@ export function createProviderAddHandler(options) {
         error: {
           name: 'Unauthorized',
           message: 'Issuer must be a mailto DID',
-        }
+        },
       }
     }
     // @ts-expect-error provider might not be in service providers list - it ok!
@@ -43,17 +43,17 @@ export function createProviderAddHandler(options) {
         error: {
           name: 'InvalidProvider',
           message: `Invalid provider: ${provider}`,
-        }
+        },
       }
     }
 
     return await options.provisions.put({
-        invocation,
-        space: consumer,
-        // eslint-disable-next-line object-shorthand
-        provider: /** @type {ServiceId} */ (provider),
-        account: accountDID,
-      })
+      invocation,
+      space: consumer,
+      // eslint-disable-next-line object-shorthand
+      provider: /** @type {ServiceId} */ (provider),
+      account: accountDID,
+    })
   }
 }
 

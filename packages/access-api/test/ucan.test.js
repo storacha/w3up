@@ -72,7 +72,7 @@ describe('ucan', function () {
           name: 'InvocationCapabilityError',
           message: 'Invocation is required to have a single capability.',
           capabilities: [],
-        }
+        },
       },
     ])
   })
@@ -95,21 +95,22 @@ describe('ucan', function () {
       },
     })
     const rsp = await res.json()
-    t.deepEqual(Object.values(rsp), [{
-      error: {
-        name: 'InvocationCapabilityError',
-        error: true,
-        message: 'Invocation is required to have a single capability.',
-        capabilities: [
-          { can: 'identity/validate', with: 'mailto:admin@dag.house' },
-          { can: 'identity/register', with: 'mailto:admin@dag.house' },
-        ],
+    t.deepEqual(Object.values(rsp), [
+      {
+        error: {
+          name: 'InvocationCapabilityError',
+          error: true,
+          message: 'Invocation is required to have a single capability.',
+          capabilities: [
+            { can: 'identity/validate', with: 'mailto:admin@dag.house' },
+            { can: 'identity/register', with: 'mailto:admin@dag.house' },
+          ],
+        },
       },
-    }])
+    ])
   })
 
   test('should route to handler', async function () {
-    console.log('START')
     const { mf, issuer, service } = ctx
 
     const ucan = await UCAN.issue({

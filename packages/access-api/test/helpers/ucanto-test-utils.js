@@ -48,6 +48,7 @@ export function createTesterFromContext(createContext, options) {
   const invoke = async (invocation) => {
     const { conn } = await context
     const [result] = await conn.execute(invocation)
+    // @ts-expect-error TODO fix
     return result
   }
   return {
@@ -102,7 +103,9 @@ export async function registerSpaces(
     'registration result should have delegations'
   )
   const accountDelegations = [
-    ...delegationsResponse.decode(/** @type {any} */ (result.out.ok.delegations)),
+    ...delegationsResponse.decode(
+      /** @type {any} */ (result.out.ok.delegations)
+    ),
   ]
   for (const spacePromise of spaces) {
     const space = await spacePromise

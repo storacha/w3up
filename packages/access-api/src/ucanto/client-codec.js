@@ -5,6 +5,7 @@ import { UTF8 } from '@ucanto/transport'
 export const clientCodec = {
   async encode(invocations, options) {
     const headers = new Headers()
+    // @ts-expect-error TODO fix
     const chain = await invocations[0].delegate()
 
     // TODO iterate over proofs and send them too

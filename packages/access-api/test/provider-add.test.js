@@ -1,8 +1,4 @@
-import {
-  assertNotError,
-  registerSpaces,
-  warnOnErrorResult,
-} from './helpers/ucanto-test-utils.js'
+import { assertNotError, registerSpaces } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import * as assert from 'assert'
 import * as ucanto from '@ucanto/core'
@@ -248,10 +244,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assert.ok(
-      addW3Storage.out.error,
-      'Provider already added to this space'
-    )
+    assert.ok(addW3Storage.out.error, 'Provider already added to this space')
     assert.match(
       addW3Storage.out.error ? addW3Storage.out.error.message : '',
       /it already has a did:web:nft.storage provider/

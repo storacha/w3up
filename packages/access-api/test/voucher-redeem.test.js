@@ -215,7 +215,10 @@ describe('voucher/redeem', function () {
     const redeem2 = await redeemInv.execute(conn)
 
     t.ok(redeem2.out.error)
-    t.deepEqual(redeem2.out.error.message, `Space ${space.did()} already registered.`)
+    t.deepEqual(
+      redeem2.out.error.message,
+      `Space ${space.did()} already registered.`
+    )
   })
 
   test('should not fail with empty metadata', async function () {

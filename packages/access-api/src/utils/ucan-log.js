@@ -72,12 +72,11 @@ class UCANLogDebug {
     // decode
     const selection = CAR.inbound.accept(request)
     if (selection.error) {
+      // eslint-disable-next-line no-console
       console.error('unexpected UCAN encoding for UCAN log')
       return
     }
     const message = await selection.ok.decoder.decode(request)
-
-
 
     // Log invocations
     if (typeof ucanlog?.invocations?.push === 'function') {

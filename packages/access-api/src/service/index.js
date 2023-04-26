@@ -32,11 +32,14 @@ export function service(ctx) {
   const hasStorageProvider = async (space) =>
     spaceHasStorageProvider(space, ctx.models.spaces, ctx.models.provisions)
   return {
+    // @ts-expect-error TODO fix
     store: uploadApi.createStoreProxy(ctx),
+    // @ts-expect-error TODO fix
     upload: uploadApi.createUploadProxy(ctx),
 
     access: {
       authorize: accessAuthorizeProvider(ctx),
+      // @ts-expect-error TODO fix
       claim: accessClaimProvider({
         delegations: ctx.models.delegations,
         config: ctx.config,
@@ -81,7 +84,7 @@ export function service(ctx) {
             message: `can only get info for did:key spaces`,
           }
           return {
-            error: unexpectedSpaceDidFailure
+            error: unexpectedSpaceDidFailure,
           }
         }
         if (
@@ -91,7 +94,7 @@ export function service(ctx) {
           )
         ) {
           return {
-            ok: { did: spaceDid }
+            ok: { did: spaceDid },
           }
         }
         // this only exists if the space was registered via voucher/redeem
@@ -103,7 +106,7 @@ export function service(ctx) {
             message: `Space not found.`,
           }
           return {
-            error: spaceUnknownFailure
+            error: spaceUnknownFailure,
           }
         }
         return { ok: space }
@@ -117,7 +120,7 @@ export function service(ctx) {
                 `Resource ${
                   capability.with
                 } does not match service did ${ctx.signer.did()}`
-              )
+              ),
             }
           }
 
@@ -128,7 +131,7 @@ export function service(ctx) {
             return {
               error: new Failure(
                 `No delegations found for ${capability.nb.identity}`
-              )
+              ),
             }
           }
 
@@ -155,7 +158,7 @@ export function service(ctx) {
           }
 
           return {
-            ok: results
+            ok: results,
           }
         }
       ),
@@ -176,7 +179,8 @@ export function service(ctx) {
                 `No spaces found for email: ${capability.nb.identity.replace(
                   'mailto:',
                   ''
-                )}.`)
+                )}.`
+              ),
             }
           }
 

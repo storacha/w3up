@@ -43,7 +43,7 @@ export function createAccessClaimHandler({ delegations }) {
     return {
       ok: {
         delegations: delegationsResponse.encode(claimed),
-      }
+      },
     }
   }
 }

@@ -30,7 +30,7 @@ export type InferService<
   S extends Record<string, unknown>,
   CP extends TheCapabilityParser<Match<ParsedCapability>> = TheCapabilityParser<
     Match<ParsedCapability>
-  >,
+  >
 > = {
   [K in KeysWithValue<S, CP>]: ServiceMethod<
     InferInvokedCapability<S[K] extends CP ? S[K] : never>,

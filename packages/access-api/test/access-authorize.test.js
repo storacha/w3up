@@ -174,15 +174,15 @@ describe('access/authorize', function () {
       'delegations' in claimResult.out.ok,
       'claimResult should have delegations property'
     )
-    const claimedDelegations = Object.values(claimResult.out.ok.delegations).flatMap(
-      (bytes) => {
-        return bytesToDelegations(
-          /** @type {import('@web3-storage/access/src/types.js').BytesDelegation} */ (
-            bytes
-          )
+    const claimedDelegations = Object.values(
+      claimResult.out.ok.delegations
+    ).flatMap((bytes) => {
+      return bytesToDelegations(
+        /** @type {import('@web3-storage/access/src/types.js').BytesDelegation} */ (
+          bytes
         )
-      }
-    )
+      )
+    })
     assert.deepEqual(
       claimedDelegations.length,
       2,

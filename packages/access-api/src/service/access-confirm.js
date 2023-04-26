@@ -78,7 +78,7 @@ export async function handleAccessConfirm(invocation, ctx) {
   return {
     ok: {
       delegations: delegationsResponse.encode([delegation, attestation]),
-    }
+    },
   }
 }
 

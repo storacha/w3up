@@ -26,8 +26,7 @@ export async function postRoot(request, env, ctx) {
 
   // We will use different codec based on the content-type header
   // this way we do not need to have separate routes.
-  const codec =
-    headers['content-type'] === CAR.contentType ? CAR.request : json
+  const codec = headers['content-type'] === CAR.contentType ? CAR.request : json
 
   // @ts-expect-error matching signatures are incompatible
   const message = await codec.decode({

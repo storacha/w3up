@@ -8,7 +8,7 @@ import { UCAN, isLink, invoke } from '@ucanto/core'
 describe('ucan-log', function () {
   /** @type {Awaited<ReturnType<typeof context>>} */
   let ctx
-  /** @type {import('@ucanto/interface').Invocation[]}*/
+  /** @type {import('@ucanto/interface').Invocation[]} */
   let invocations
   /** @type {import('@ucanto/interface').Receipt[]} */
   let receipts
@@ -41,13 +41,9 @@ describe('ucan-log', function () {
     assert.ok(invocation, 'should have received invocation')
 
     const { cid } = await task.delegate()
-    assert.deepEqual(
-      invocation.cid,
-      cid,
-      'invocation should have same CID'
-    )
+    assert.deepEqual(invocation.cid, cid, 'invocation should have same CID')
 
-    const receipt =receipts.pop()
+    const receipt = receipts.pop()
     assert.ok(receipt)
     assert.equal(isLink(receipt.ran.link()), true, 'receipt should have cid')
     assert.deepEqual(
@@ -105,20 +101,16 @@ describe('ucan-log', function () {
     assert.deepEqual(invocationB.cid, failCID)
 
     assert.equal(receipts.length, 2, 'should have received 2 receipts')
-    const passReceipt = (
-      receipts.find(({ ran }) => ran.link().toString() === passCID.toString())
+    const passReceipt = receipts.find(
+      ({ ran }) => ran.link().toString() === passCID.toString()
     )
 
-    const failReceipt = (
-      receipts.find(({ ran }) => ran.link().toString() === failCID.toString())
+    const failReceipt = receipts.find(
+      ({ ran }) => ran.link().toString() === failCID.toString()
     )
 
     assert.ok(passReceipt, 'receipt have pass receipt')
-    assert.equal(
-      passReceipt.out,
-      'test pass',
-      'pass should have ok result'
-    )
+    assert.equal(passReceipt.out, 'test pass', 'pass should have ok result')
 
     assert.ok(failReceipt, 'receipt have fail receipt')
     assert.match(
@@ -130,7 +122,7 @@ describe('ucan-log', function () {
     for (const receipt of [passReceipt, failReceipt]) {
       assert.deepEqual(
         await receipt.verifySignature(ctx.service.signer),
-      { ok: {} },
+        { ok: {} },
         'receipt should be signed by service'
       )
     }
@@ -142,6 +134,5 @@ describe('ucan-log', function () {
       /test fail/,
       'fail result should contain error'
     )
-
   })
 })

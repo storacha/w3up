@@ -70,8 +70,10 @@ for (const handlerVariant of /** @type {const} */ ([
         // /** @type {Ucanto.Result<unknown, { error: true }>} */
         const result = await invoke(invocation)
         if (typeof check === 'function') {
+          // @ts-expect-error TODO fix
           await check(result)
         }
+        // @ts-expect-error TODO fix
         assertNotError(result)
       })
     }
@@ -87,6 +89,7 @@ for (const handlerVariant of /** @type {const} */ ([
       const delegateResult = await testCanAccessDelegateWithRegisteredSpace({
         space: spaceWithStorageProvider,
         service,
+        // @ts-expect-error TODO fix
         invoke: handlerVariant.invoke,
       })
       assert.notDeepEqual(

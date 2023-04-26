@@ -172,11 +172,7 @@ export const w3 = ed25519
  * @param {Server.API.Signer<Server.API.DID<'web'>>} [options.id]
  * @param {Server.InboundCodec} [options.codec]
  */
-export const createServer = ({
-  id = w3,
-  service,
-  codec = CAR.inbound,
-}) =>
+export const createServer = ({ id = w3, service, codec = CAR.inbound }) =>
   Server.create({
     id,
     codec,

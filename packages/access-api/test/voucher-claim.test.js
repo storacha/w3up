@@ -89,10 +89,14 @@ describe('voucher/claim', () => {
     })
     // @todo should not need to cast to string
     // this function only returns a string when ENV==='test' and that's weird
-    const claimResult = (await claim.execute(conn))
+    const claimResult = await claim.execute(conn)
 
-    // @ts-expect-error for tests out comes as a string
-    assert.deepEqual(typeof claimResult.out.ok.encoded, 'string', 'claim result is a string')
+    assert.deepEqual(
+      // @ts-expect-error for tests out comes as a string
+      typeof claimResult.out.ok.encoded,
+      'string',
+      'claim result is a string'
+    )
     const confirmEmailDelegation = await stringToDelegation(
       // @ts-expect-error for tests out comes as a string
       claimResult.out.ok.encoded

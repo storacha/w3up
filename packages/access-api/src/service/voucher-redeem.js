@@ -17,7 +17,7 @@ export function voucherRedeemProvider(ctx) {
           `Resource ${
             capability.with
           } does not match service did ${ctx.signer.did()}`
-        )
+        ),
       }
     }
 
@@ -39,7 +39,7 @@ export function voucherRedeemProvider(ctx) {
 
     if (delegations.length > 1) {
       return {
-        error: new Failure('Multiple space delegations not suppported.')
+        error: new Failure('Multiple space delegations not suppported.'),
       }
     }
 
@@ -53,7 +53,9 @@ export function voucherRedeemProvider(ctx) {
     if (error) {
       if (isSpaceAlreadyRegisteredError(error)) {
         return {
-          error: new Failure(`Space ${capability.nb.space} already registered.`)
+          error: new Failure(
+            `Space ${capability.nb.space} already registered.`
+          ),
         }
       } else {
         throw error
