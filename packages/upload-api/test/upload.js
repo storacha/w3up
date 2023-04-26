@@ -353,7 +353,7 @@ export const test = {
       })
       .execute(connection)
 
-    assert.equal(
+    assert.deepEqual(
       uploadRemove.out.ok,
       {},
       'expect falsy response when removing an upload you do not have'

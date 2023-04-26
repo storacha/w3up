@@ -272,7 +272,7 @@ export const test = {
     )
   },
 
-  'only store/add disallowed if invocation fails access verification': async (
+  'store/add disallowed if invocation fails access verification': async (
     assert,
     context
   ) => {
@@ -313,7 +313,7 @@ export const test = {
       })
       .execute(connection)
 
-    assert.ok(retryStoreAdd.out.error)
+    assert.equal(retryStoreAdd.out.error, undefined)
   },
 
   'store/add fails when size too large to PUT': async (assert, context) => {
