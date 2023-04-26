@@ -15,7 +15,7 @@ export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
     const allocated = await access.allocateSpace(invocation)
 
     if (allocated.error) {
-      throw allocated
+      return allocated
     }
 
     const [res] = await Promise.all([

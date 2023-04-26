@@ -272,7 +272,7 @@ export const test = {
     )
   },
 
-  'store/add disallowed if invocation fails access verification': async (
+  'only store/add disallowed if invocation fails access verification': async (
     assert,
     context
   ) => {

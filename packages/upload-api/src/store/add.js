@@ -24,7 +24,7 @@ export function storeAddProvider({
 
     // If failed to allocate space, fail with allocation error
     if (allocated.error) {
-      throw allocated.error
+      return allocated
     }
 
     if (!carIsLinkedToAccount) {
@@ -51,9 +51,11 @@ export function storeAddProvider({
     if (size > maxUploadSize) {
       // checking this last, as larger CAR may already exist in bucket from pinning service fetch.
       // we only want to prevent this here so we don't give the user a PUT url they can't use.
-      throw new Server.Failure(
-        `Size must not exceed ${maxUploadSize}. Split CAR into smaller shards`
-      )
+      return {
+        error: new Server.Failure(
+          `Size must not exceed ${maxUploadSize}. Split CAR into smaller shards`
+        ),
+      }
     }
 
     const { url, headers } = await carStoreBucket.createUploadUrl(link, size)
