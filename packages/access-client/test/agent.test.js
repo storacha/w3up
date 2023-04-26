@@ -104,11 +104,11 @@ describe('Agent', function () {
     const space = await agent.createSpace('execute')
     await agent.setCurrentSpace(space.did)
 
-    const out = await agent.invokeAndExecute(Space.info, {
+    const { out } = await agent.invokeAndExecute(Space.info, {
       audience: fixtures.service,
     })
 
-    assert.deepEqual(out, {
+    assert.deepEqual(out.ok, {
       did: 'did:key:sss',
       agent: 'did:key:agent',
       email: 'mail@mail.com',
@@ -136,25 +136,28 @@ describe('Agent', function () {
       },
     })
 
-    const out = await agent.execute(i1, i2)
+    const receipts = await agent.execute(i1, i2)
 
-    assert.deepStrictEqual(out, [
-      {
-        ok: {
-          did: 'did:key:sss',
-          agent: 'did:key:agent',
-          email: 'mail@mail.com',
-          product: 'product:free',
-          updated_at: 'sss',
-          inserted_at: 'date',
-        }
-      },
-      {
-        ok: {
-          recover: true,
-        }
-      },
-    ])
+    assert.deepStrictEqual(
+      receipts.map(($) => $.out),
+      [
+        {
+          ok: {
+            did: 'did:key:sss',
+            agent: 'did:key:agent',
+            email: 'mail@mail.com',
+            product: 'product:free',
+            updated_at: 'sss',
+            inserted_at: 'date',
+          },
+        },
+        {
+          ok: {
+            recover: true,
+          },
+        },
+      ]
+    )
   })
 
   it('should fail execute with no proofs', async function () {

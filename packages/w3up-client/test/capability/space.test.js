@@ -46,7 +46,7 @@ describe('SpaceClient', () => {
       assert(service.space.info.called)
       assert.equal(service.space.info.callCount, 1)
 
-      assert.equal(info.out.ok.did, space.did())
+      assert.equal(info.did, space.did())
     })
   })
 })

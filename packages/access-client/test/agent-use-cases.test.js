@@ -92,11 +92,11 @@ describe('authorizeWaitAndClaim', async function () {
      */
     claimHandler
       .onFirstCall()
-      .resolves({ delegations: {} })
+      .resolves({ ok: { delegations: {} } })
       .onSecondCall()
-      .resolves(authorizedDelegations)
+      .resolves({ ok: authorizedDelegations })
       .onThirdCall()
-      .resolves(allClaimableDelegations)
+      .resolves({ ok: allClaimableDelegations })
 
     assert(agent.proofs([]).length === 0)
 

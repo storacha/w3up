@@ -341,7 +341,7 @@ export class Agent {
       nb: { identity: URI.from(`mailto:${email}`) },
     })
 
-    if (inv && inv.error) {
+    if (inv && inv.out.error) {
       throw new Error('Recover validation failed', { cause: inv })
     }
 
@@ -358,12 +358,12 @@ export class Agent {
       },
     })
 
-    if (recoverInv && recoverInv.error) {
+    if (recoverInv.out.error) {
       throw new Error('Spaces recover failed', { cause: recoverInv })
     }
 
     const dels = []
-    for (const del of recoverInv.ok) {
+    for (const del of recoverInv.out.ok) {
       dels.push(stringToDelegation(del))
     }
 
@@ -466,7 +466,7 @@ export class Agent {
       },
     })
 
-    if (inv && inv.error) {
+    if (inv && inv.out.error) {
       throw new Error('Voucher claim failed', { cause: inv })
     }
 
@@ -501,7 +501,7 @@ export class Agent {
       ],
     })
 
-    if (accInv && accInv.error) {
+    if (accInv && accInv.out.error) {
       throw new Error('Space registration failed', { cause: accInv })
     }
 
@@ -585,23 +585,17 @@ export class Agent {
    * await recoverInvocation.execute(agent.connection)
    * ```
    *
-   * @type {import('./types').InvokeAndExecute}
    * @template {Ucanto.Ability} A
    * @template {Ucanto.URI} R
    * @template {Ucanto.Caveats} C
    * @param {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} cap
    * @param {import('./types').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
+   * @returns {Promise<Ucanto.InferReceipt<Ucanto.Capability<A, R, C>, import('./types').Service>>}
    */
   async invokeAndExecute(cap, options) {
     const inv = await this.invoke(cap, options)
-
-    // @ts-ignore
-    const out = inv.execute(this.connection)
-
-    // @ts-ignore TODO figutr out type...
-    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>, import('./types').Service>>} */ (
-      out
-    )
+    const out = inv.execute(/** @type {*} */ (this.connection))
+    return /** @type {*} */ (out)
   }
 
   /**
@@ -712,11 +706,11 @@ export class Agent {
       with: _space,
     })
 
-    if (inv.error) {
-      throw inv
+    if (inv.out.error) {
+      throw inv.out.error
     }
 
-    return inv
+    return inv.out.ok
   }
 }
 

@@ -22,10 +22,7 @@ import type {
   SignerArchive,
   SigAlg,
   Caveats,
-  TheCapabilityParser,
-  CapabilityMatch,
 } from '@ucanto/interface'
-import * as Ucanto from '@ucanto/interface'
 
 import type {
   Abilities,
@@ -335,18 +332,3 @@ export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
 export type BytesDelegation<C extends Capabilities = Capabilities> =
   Uint8Array & Phantom<Delegation<C>>
 
-export type InvokeAndExecute = <
-  A extends Ability,
-  R extends URI,
-  C extends Ucanto.Caveats
->(
-  cap: TheCapabilityParser<CapabilityMatch<A, R, C>>,
-  options: InvokeOptions<A, R, TheCapabilityParser<CapabilityMatch<A, R, C>>>
-) => Promise<
-  Ucanto.InferServiceInvocationReturn<
-    Ucanto.InferInvokedCapability<
-      Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>
-    >,
-    import('./types').Service
-  >
->

@@ -27,8 +27,8 @@ export async function requestAccess(access, account, capabilities) {
       att: [...capabilities],
     },
   })
-  if (res?.error) {
-    throw res
+  if (res?.out.error) {
+    throw res.out.error
   }
 }
 
@@ -50,10 +50,10 @@ export async function claimAccess(
     audience: access.connection.id,
     with: audienceOfClaimedDelegations,
   })
-  if (res.error) {
-    throw res
+  if (res.out.error) {
+    throw res.out.error
   }
-  const delegations = Object.values(res.ok.delegations).flatMap((bytes) =>
+  const delegations = Object.values(res.out.ok.delegations).flatMap((bytes) =>
     bytesToDelegations(bytes)
   )
   if (addProofs) {
@@ -83,8 +83,8 @@ export async function addProvider({ access, space, account, provider }) {
       consumer: space,
     },
   })
-  if (result.error) {
-    throw result
+  if (result.out.error) {
+    throw result.out.error
   }
 }
 
@@ -133,12 +133,13 @@ export async function pollAccessClaimUntil(
         w3caps.Access.claim,
         { with: delegee }
       )
-      if (pollClaimResult.error) {
+
+      if (pollClaimResult.out.error) {
         return reject(pollClaimResult)
       }
       try {
         const claimedDelegations = Object.values(
-          pollClaimResult.ok.delegations
+          pollClaimResult.out.ok.delegations
         ).flatMap((d) => bytesToDelegations(d))
         if (delegationsMatch(claimedDelegations)) {
           resolve(claimedDelegations)
@@ -349,8 +350,8 @@ export async function addProviderAndDelegateToAccount(
     space,
     account
   )
-  if (delegateSpaceAccessResult.error) {
-    throw delegateSpaceAccessResult
+  if (delegateSpaceAccessResult.out.error) {
+    throw delegateSpaceAccessResult.out.error
   }
   spaceMeta.isRegistered = true
   await agentData.addSpace(space, spaceMeta)
