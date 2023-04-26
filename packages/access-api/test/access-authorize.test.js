@@ -59,8 +59,8 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    if (inv.error) {
-      return assert.fail(inv.message)
+    if (inv.out.error) {
+      return assert.fail(inv.out.error.message)
     }
 
     const [email] = outbox
@@ -111,8 +111,8 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    if (inv.error) {
-      return assert.fail(inv.message)
+    if (inv.out.error) {
+      return assert.fail(inv.out.error.message)
     }
 
     const [email] = outbox
@@ -147,7 +147,7 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    assert.equal(inv.error, undefined, 'invocation should not fail')
+    assert.equal(inv.out.error, undefined, 'invocation should not fail')
     const [email] = outbox
     assert.notEqual(email, undefined, 'email was sent')
 
@@ -169,11 +169,12 @@ describe('access/authorize', function () {
     })
     const claimResult = await claim.execute(conn)
 
+    assert.ok(claimResult.out.ok)
     assert.ok(
-      'delegations' in claimResult,
+      'delegations' in claimResult.out.ok,
       'claimResult should have delegations property'
     )
-    const claimedDelegations = Object.values(claimResult.delegations).flatMap(
+    const claimedDelegations = Object.values(claimResult.out.ok.delegations).flatMap(
       (bytes) => {
         return bytesToDelegations(
           /** @type {import('@web3-storage/access/src/types.js').BytesDelegation} */ (
@@ -209,17 +210,16 @@ describe('access/authorize', function () {
     })
     const claimAsAccountResult = await claimAsAccount.execute(conn)
     warnOnErrorResult(claimAsAccountResult)
-    assert.notDeepEqual(
-      claimAsAccountResult.error,
-      true,
+    assert.ok(
+      claimAsAccountResult.out.ok,
       'claimAsAccountResult should not error'
     )
     assert.ok(
-      'delegations' in claimAsAccountResult,
+      'delegations' in claimAsAccountResult.out.ok,
       'claimAsAccountResult should have delegations property'
     )
     const claimedAsAccountDelegations = Object.values(
-      claimAsAccountResult.delegations
+      claimAsAccountResult.out.ok.delegations
     )
     assert.deepEqual(claimedAsAccountDelegations.length, 0)
   })
@@ -240,8 +240,8 @@ describe('access/authorize', function () {
       })
       .execute(conn)
 
-    if (inv.error) {
-      return assert.fail(inv.message)
+    if (inv.out.error) {
+      return assert.fail(inv.out.error.message)
     }
 
     const [email] = outbox
@@ -349,7 +349,7 @@ describe('access/authorize', function () {
       .execute(ctx.conn)
 
     warnOnErrorResult(delegateResult)
-    assert.equal(delegateResult.error, undefined, 'delegation succeeded')
+    assert.equal(delegateResult.out.error, undefined, 'delegation succeeded')
 
     // Now generate an agent and try to authorize with the account
     const agent = await ed25519.generate()
@@ -365,7 +365,7 @@ describe('access/authorize', function () {
       })
       .execute(ctx.conn)
 
-    assert.equal(auth.error, undefined, 'authorize succeeded')
+    assert.equal(auth.out.error, undefined, 'authorize succeeded')
 
     // now we are going to complete authorization flow following the email link
     const [email] = outbox
@@ -390,11 +390,11 @@ describe('access/authorize', function () {
       })
       .execute(ctx.conn)
 
-    if (claim.error) {
+    if (claim.out.error) {
       assert.fail('claim succeeded')
     }
 
-    const delegations = Object.values(claim.delegations).map((bytes) => {
+    const delegations = Object.values(claim.out.ok.delegations).map((bytes) => {
       return bytesToDelegations(
         /** @type {import('@web3-storage/access/src/types.js').BytesDelegation} */ (
           bytes
@@ -441,6 +441,6 @@ describe('access/authorize', function () {
         proofs: [authorization, attestation],
       })
       .execute(ctx.conn)
-    assert.notDeepEqual(info.error, true, 'space/info did not error')
+    assert.ok(info.out.ok, 'space/info did not error')
   })
 })

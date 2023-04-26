@@ -76,7 +76,9 @@ export async function handleAccessConfirm(invocation, ctx) {
   await ctx.models.validations.putSession(authorization, agent.did())
 
   return {
-    delegations: delegationsResponse.encode([delegation, attestation]),
+    ok: {
+      delegations: delegationsResponse.encode([delegation, attestation]),
+    }
   }
 }
 

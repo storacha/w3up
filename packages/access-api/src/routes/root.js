@@ -21,13 +21,13 @@ export async function postRoot(request, env, ctx) {
   })
 
   const body = new Uint8Array(await request.arrayBuffer())
-  ///** @type {Readonly<Record<string, string>>} */
+  /** @type {Readonly<Record<string, string>>} */
   const headers = Object.fromEntries(request.headers.entries())
 
   // We will use different codec based on the content-type header
   // this way we do not need to have separate routes.
   const codec =
-    headers['content-type'] === 'application/car' ? CAR.request : json
+    headers['content-type'] === CAR.contentType ? CAR.request : json
 
   // @ts-expect-error matching signatures are incompatible
   const message = await codec.decode({

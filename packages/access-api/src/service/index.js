@@ -77,11 +77,12 @@ export function service(ctx) {
         if (!validator.DID.match({ method: 'key' }).is(spaceDid)) {
           /** @type {import('@web3-storage/access/types').SpaceUnknown} */
           const unexpectedSpaceDidFailure = {
-            error: true,
             name: 'SpaceUnknown',
             message: `can only get info for did:key spaces`,
           }
-          return unexpectedSpaceDidFailure
+          return {
+            error: unexpectedSpaceDidFailure
+          }
         }
         if (
           await spaceHasStorageProviderFromProviderAdd(
@@ -89,40 +90,46 @@ export function service(ctx) {
             ctx.models.provisions
           )
         ) {
-          return { did: spaceDid }
+          return {
+            ok: { did: spaceDid }
+          }
         }
         // this only exists if the space was registered via voucher/redeem
         const space = await ctx.models.spaces.get(capability.with)
         if (!space) {
           /** @type {import('@web3-storage/access/types').SpaceUnknown} */
           const spaceUnknownFailure = {
-            error: true,
             name: 'SpaceUnknown',
             message: `Space not found.`,
           }
-          return spaceUnknownFailure
+          return {
+            error: spaceUnknownFailure
+          }
         }
-        /** @type {import('@web3-storage/access/types').SpaceRecord} */
-        return space
+        return { ok: space }
       }),
       recover: Server.provide(
         Space.recover,
         async ({ capability, invocation }) => {
           if (capability.with !== ctx.signer.did()) {
-            return new Failure(
-              `Resource ${
-                capability.with
-              } does not match service did ${ctx.signer.did()}`
-            )
+            return {
+              error: new Failure(
+                `Resource ${
+                  capability.with
+                } does not match service did ${ctx.signer.did()}`
+              )
+            }
           }
 
           const spaces = await ctx.models.spaces.getByEmail(
             capability.nb.identity
           )
           if (!spaces) {
-            return new Failure(
-              `No delegations found for ${capability.nb.identity}`
-            )
+            return {
+              error: new Failure(
+                `No delegations found for ${capability.nb.identity}`
+              )
+            }
           }
 
           const results = []
@@ -147,7 +154,9 @@ export function service(ctx) {
             }
           }
 
-          return results
+          return {
+            ok: results
+          }
         }
       ),
 
@@ -162,12 +171,13 @@ export function service(ctx) {
             capability.nb.identity
           )
           if (!spaces) {
-            return new Failure(
-              `No spaces found for email: ${capability.nb.identity.replace(
-                'mailto:',
-                ''
-              )}.`
-            )
+            return {
+              error: new Failure(
+                `No spaces found for email: ${capability.nb.identity.replace(
+                  'mailto:',
+                  ''
+                )}.`)
+            }
           }
 
           const inv = await Space.recover
@@ -198,13 +208,15 @@ export function service(ctx) {
 
           // For testing
           if (ctx.config.ENV === 'test') {
-            return url
+            return { ok: { url } }
           }
 
           await ctx.email.sendValidation({
             to: capability.nb.identity.replace('mailto:', ''),
             url,
           })
+
+          return { ok: {} }
         }
       ),
     },

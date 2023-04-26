@@ -8,7 +8,6 @@ import { ed25519 } from '@ucanto/principal'
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Context from './context.js'
 import { Access } from '@web3-storage/capabilities'
 // eslint-disable-next-line unicorn/prefer-export-from
@@ -55,11 +54,12 @@ export async function createSpace(issuer, service, conn, email) {
       proofs: [spaceDelegation],
     })
     .execute(conn)
-  if (!claim || claim.error) {
+  if (!claim.out.ok || claim.out.error) {
     throw new Error('failed to create space', { cause: claim })
   }
 
-  const delegation = stringToDelegation(claim)
+  // @ts-expect-error encoded only added for testing
+  const delegation = stringToDelegation(claim.out.ok.encoded)
   const serviceDelegation = await Voucher.top.delegate({
     issuer: space,
     audience: service,
@@ -73,7 +73,9 @@ export async function createSpace(issuer, service, conn, email) {
       with: service.did(),
       nb: {
         space: space.did(),
+        // @ts-expect-error object is of type unknown
         identity: delegation.capabilities[0].nb.identity,
+        // @ts-expect-error object is of type unknown
         product: delegation.capabilities[0].nb.product,
       },
       facts: [
@@ -95,10 +97,10 @@ export async function createSpace(issuer, service, conn, email) {
     })
     .execute(conn)
 
-  if (redeem?.error) {
+  if (redeem.out.error) {
     // eslint-disable-next-line no-console
     console.log('create space util error', redeem)
-    throw new Error(redeem.message)
+    throw new Error(redeem.out.error.message)
   }
 
   return {
@@ -168,19 +170,16 @@ export const w3 = ed25519
  * @param {object} options
  * @param {Service} options.service
  * @param {Server.API.Signer<Server.API.DID<'web'>>} [options.id]
- * @param {Server.Transport.RequestDecoder} [options.decoder]
- * @param {Server.Transport.ResponseEncoder} [options.encoder]
+ * @param {Server.InboundCodec} [options.codec]
  */
 export const createServer = ({
   id = w3,
   service,
-  decoder = CAR,
-  encoder = CBOR,
+  codec = CAR.inbound,
 }) =>
   Server.create({
     id,
-    encoder,
-    decoder,
+    codec,
     service,
   })
 
@@ -190,15 +189,13 @@ export const createServer = ({
  * @param {object} options
  * @param {Types.Principal} options.id
  * @param {Types.Transport.Channel<Types.Service>} options.channel
- * @param {Types.Transport.RequestEncoder} [options.encoder]
- * @param {Types.Transport.ResponseDecoder} [options.decoder]
+ * @param {Types.OutboundCodec} [options.codec]
  */
-export const connect = ({ id, channel, encoder = CAR, decoder = CBOR }) =>
+export const connect = ({ id, channel, codec = CAR.outbound }) =>
   Client.connect({
     id,
     channel,
-    encoder,
-    decoder,
+    codec,
   })
 
 /**

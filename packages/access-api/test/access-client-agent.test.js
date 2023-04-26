@@ -141,7 +141,7 @@ for (const accessApiVariant of /** @type {const} */ ([
       // invoke the access/confirm invocation as if the user had clicked the email
       const [confirmResult] = await connection.execute(confirm)
       assert.notEqual(
-        confirmResult.error,
+        confirmResult.out.error,
         true,
         'access/confirm result is not an error'
       )
@@ -363,12 +363,12 @@ for (const accessApiVariant of /** @type {const} */ ([
       )
       assertNotError(spaceInfoResult)
       assert.notEqual(
-        spaceInfoResult.error,
+        spaceInfoResult.out.error,
         true,
         'spaceInfoResult is not an error'
       )
-      assert.ok(!spaceInfoResult.error)
-      assert.deepEqual(spaceInfoResult.did, spaceCreation.did)
+      assert.ok(spaceInfoResult.out.ok)
+      assert.deepEqual(spaceInfoResult.out.ok.did, spaceCreation.did)
     })
   })
 
@@ -488,7 +488,7 @@ async function confirmConfirmationUrl(connection, confirmation) {
   // invoke the access/confirm invocation as if the user had clicked the email
   const [confirmResult] = await connection.execute(confirm)
   assert.notEqual(
-    confirmResult.error,
+    confirmResult.out.error,
     true,
     'access/confirm result is not an error'
   )
@@ -560,7 +560,7 @@ async function testSessionAuthorization(service, access, account, emails) {
     }
   )
   assert.notDeepStrictEqual(
-    authorizeResult.error,
+    authorizeResult.out.error,
     true,
     'authorize result is not an error'
   )
@@ -590,7 +590,7 @@ async function testSessionAuthorization(service, access, account, emails) {
 
   const [confirmationResult] = await access.connection.execute(confirm)
   assert.notDeepStrictEqual(
-    confirmationResult.error,
+    confirmationResult.out.error,
     true,
     'confirm result is not an error'
   )
@@ -599,13 +599,13 @@ async function testSessionAuthorization(service, access, account, emails) {
     with: access.issuer.did(),
   })
   assert.notDeepEqual(
-    claimResult.error,
+    claimResult.out.error,
     true,
     'access/claim result is not an error'
   )
-  assert.ok(!claimResult.error)
+  assert.ok(claimResult.out.ok)
   const claimedDelegations1 = [
-    ...delegationsResponse.decode(claimResult.delegations),
+    ...delegationsResponse.decode(claimResult.out.ok.delegations),
   ]
   assert.ok(claimedDelegations1.length > 0, 'claimed some delegations')
 }

@@ -73,7 +73,7 @@ describe('DbProvisions', () => {
     }
     const result = await storage.put(modifiedFirstProvision)
     assert.equal(
-      result.error && result.name,
+      result.error && result.error.name,
       'ConflictError',
       'cannot put with same cid but different derived fields'
     )

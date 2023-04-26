@@ -26,11 +26,11 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.deepEqual(inv.message, `Space not found.`)
+    if (inv.out.error) {
+      assert.deepEqual(inv.out.error.message, `Space not found.`)
       const expectedErrorName = 'SpaceUnknown'
       assert.deepEqual(
-        'name' in inv && inv.name,
+        inv.out.error.name,
         expectedErrorName,
         `error result has name ${expectedErrorName}`
       )
@@ -58,11 +58,11 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.fail()
+    if (inv.out.error) {
+      assert.fail(inv.out.error.message)
     } else {
       assert.ok(
-        isSubset(inv, {
+        isSubset(inv.out.ok, {
           did: space.did(),
           agent: issuer.did(),
           email: 'space-info@dag.house',
@@ -112,10 +112,10 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.fail(inv.message)
+    if (inv.out.error) {
+      assert.fail(inv.out.error.message)
     } else {
-      assert.deepEqual(inv.did, space.did())
+      assert.deepEqual(inv.out.ok.did, space.did())
     }
   })
 
@@ -145,10 +145,10 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.fail(inv.message)
+    if (inv.out.error) {
+      assert.fail(inv.out.error.message)
     } else {
-      assert.deepEqual(inv.did, space.did())
+      assert.deepEqual(inv.out.ok.did, space.did())
     }
   })
 
@@ -181,10 +181,10 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.fail(inv.message)
+    if (inv.out.error) {
+      assert.fail(inv.out.error.message)
     } else {
-      assert.deepEqual(inv.did, space.did())
+      assert.deepEqual(inv.out.ok.did, space.did())
     }
   })
 
@@ -217,10 +217,10 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.fail(inv.message)
+    if (inv.out.error) {
+      assert.fail(inv.out.error.message)
     } else {
-      assert.deepEqual(inv.did, space.did())
+      assert.deepEqual(inv.out.ok.did, space.did())
     }
   })
 
@@ -250,10 +250,10 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.fail(inv.message)
+    if (inv.out.error) {
+      assert.fail(inv.out.error.message)
     } else {
-      assert.deepEqual(inv.did, space.did())
+      assert.deepEqual(inv.out.ok.did, space.did())
     }
   })
 
@@ -286,10 +286,10 @@ describe('space/info', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
-      assert.fail(inv.message)
+    if (inv.out.error) {
+      assert.fail(inv.out.error.message)
     } else {
-      assert.deepEqual(inv.did, space.did())
+      assert.deepEqual(inv.out.ok.did, space.did())
     }
   })
 })

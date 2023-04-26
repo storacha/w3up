@@ -6,6 +6,7 @@ import { delegationToString } from '@web3-storage/access/encoding'
  * @param {import('../bindings').RouteContext} ctx
  */
 export function voucherClaimProvider(ctx) {
+  // @ts-expect-error testing return type not included
   return Server.provide(Voucher.claim, async ({ capability, invocation }) => {
     const proof = await Voucher.redeem.delegate({
       audience: ctx.signer,
@@ -37,7 +38,7 @@ export function voucherClaimProvider(ctx) {
     const encoded = delegationToString(inv)
     // For testing
     if (ctx.config.ENV === 'test') {
-      return encoded
+      return { ok: { encoded } }
     }
 
     const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}`

@@ -31,27 +31,29 @@ export function createProviderAddHandler(options) {
     } = providerAddCap
     if (!validator.DID.match({ method: 'mailto' }).is(accountDID)) {
       return {
-        error: true,
-        name: 'Unauthorized',
-        message: 'Issuer must be a mailto DID',
+        error: {
+          name: 'Unauthorized',
+          message: 'Issuer must be a mailto DID',
+        }
       }
     }
     // @ts-expect-error provider might not be in service providers list - it ok!
     if (!options.provisions.services.includes(provider)) {
       return {
-        error: true,
-        name: 'InvalidProvider',
-        message: `Invalid provider: ${provider}`,
+        error: {
+          name: 'InvalidProvider',
+          message: `Invalid provider: ${provider}`,
+        }
       }
     }
 
     return await options.provisions.put({
-      invocation,
-      space: consumer,
-      // eslint-disable-next-line object-shorthand
-      provider: /** @type {ServiceId} */ (provider),
-      account: accountDID,
-    })
+        invocation,
+        space: consumer,
+        // eslint-disable-next-line object-shorthand
+        provider: /** @type {ServiceId} */ (provider),
+        account: accountDID,
+      })
   }
 }
 

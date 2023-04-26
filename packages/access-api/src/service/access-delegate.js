@@ -66,14 +66,17 @@ export function createAccessDelegateHandler({
       !(await hasStorageProvider(capabability.with))
     ) {
       return {
-        name: 'InsufficientStorage',
-        message: `${capabability.with} has no storage provider`,
-        error: true,
+        error: {
+          name: 'InsufficientStorage',
+          message: `${capabability.with} has no storage provider`,
+        }
       }
     }
     const delegated = extractProvenDelegations(invocation)
     await delegations.putMany(...delegated)
-    return {}
+    return {
+      ok: {}
+    }
   }
 }
 

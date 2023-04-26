@@ -168,9 +168,9 @@ describe(`provider/add`, () => {
         ],
       })
       .execute(context.conn)
-    assertNotError(spaceInfoResult)
-    assert.ok('did' in spaceInfoResult)
-    assert.deepEqual(spaceInfoResult.did, space.did())
+    assert.ok(spaceInfoResult.out.ok)
+    assert.ok('did' in spaceInfoResult.out.ok)
+    assert.deepEqual(spaceInfoResult.out.ok.did, space.did())
   })
 
   it('add providers set in env', async () => {
@@ -248,14 +248,12 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assert.equal(
-      addW3Storage.error,
-      true,
+    assert.ok(
+      addW3Storage.out.error,
       'Provider already added to this space'
     )
-
     assert.match(
-      addW3Storage.error ? addW3Storage?.message : '',
+      addW3Storage.out.error ? addW3Storage.out.error.message : '',
       /it already has a did:web:nft.storage provider/
     )
   })
@@ -333,17 +331,17 @@ async function testAuthorizeClaimProviderAdd(options) {
     claimAsDeviceAResult && typeof claimAsDeviceAResult === 'object',
     `claimAsDeviceAResult is an object`
   )
-  warnOnErrorResult(claimAsDeviceAResult)
+  assert.ok(claimAsDeviceAResult.out.ok)
   assert.ok(
-    'delegations' in claimAsDeviceAResult &&
-      typeof claimAsDeviceAResult.delegations === 'object' &&
-      claimAsDeviceAResult.delegations,
+    'delegations' in claimAsDeviceAResult.out.ok &&
+      typeof claimAsDeviceAResult.out.ok.delegations === 'object' &&
+      claimAsDeviceAResult.out.ok.delegations,
     'claimAsDeviceAResult should have delegations property'
   )
   const claimedDelegations = [
     ...delegationsResponse.decode(
       /** @type {Record<string,Ucanto.ByteView<Ucanto.Delegation>>} */ (
-        claimAsDeviceAResult.delegations
+        claimAsDeviceAResult.out.ok.delegations
       )
     ),
   ]
@@ -393,13 +391,13 @@ async function testAuthorizeClaimProviderAdd(options) {
     .execute(conn)
 
   assert.ok(
-    spaceStorageResult &&
-      typeof spaceStorageResult === 'object' &&
-      'hasStorageProvider' in spaceStorageResult,
+    spaceStorageResult.out &&
+      typeof spaceStorageResult.out === 'object' &&
+      'hasStorageProvider' in spaceStorageResult.out,
     'spaceStorageResult has hasStorageProvider property'
   )
   assert.deepEqual(
-    spaceStorageResult.hasStorageProvider,
+    spaceStorageResult.out.hasStorageProvider,
     true,
     `testing/space-storage.hasStorageProvider is true`
   )

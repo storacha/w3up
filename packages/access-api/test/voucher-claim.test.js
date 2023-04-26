@@ -35,17 +35,21 @@ describe('ucan', function () {
     if (!inv) {
       return t.fail('no output')
     }
-    if (inv.error) {
-      return t.fail(inv.message)
+    if (inv.out.error) {
+      return t.fail(inv.out.error.message)
     }
 
-    const delegation = stringToDelegation(inv)
+    // @ts-expect-error for tests out comes as a string
+    const delegation = stringToDelegation(inv.out.ok.encoded)
 
     t.deepEqual(delegation.issuer.did(), service.did())
     t.deepEqual(delegation.audience.did(), issuer.did())
+    // @ts-expect-error TODO unknown type
     t.deepEqual(delegation.capabilities[0].nb.space, issuer.did())
+    // @ts-expect-error TODO unknown type
     t.deepEqual(delegation.capabilities[0].nb.product, 'product:free')
     t.deepEqual(
+      // @ts-expect-error TODO unknown type
       delegation.capabilities[0].nb.identity,
       'mailto:email@dag.house'
     )
@@ -85,10 +89,13 @@ describe('voucher/claim', () => {
     })
     // @todo should not need to cast to string
     // this function only returns a string when ENV==='test' and that's weird
-    const claimResult = /** @type {string} */ (await claim.execute(conn))
-    assert.deepEqual(typeof claimResult, 'string', 'claim result is a string')
+    const claimResult = (await claim.execute(conn))
+
+    // @ts-expect-error for tests out comes as a string
+    assert.deepEqual(typeof claimResult.out.ok.encoded, 'string', 'claim result is a string')
     const confirmEmailDelegation = await stringToDelegation(
-      claimResult
+      // @ts-expect-error for tests out comes as a string
+      claimResult.out.ok.encoded
     ).delegate()
     const confirmEmailReceipt = await invoke({
       issuer,

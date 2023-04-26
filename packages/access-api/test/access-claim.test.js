@@ -36,8 +36,11 @@ for (const handlerVariant of /** @type {const} */ ([
           })
           .delegate()
       )
+      // @ts-expect-error type not inferred correctly
+      assert.ok(result.out.ok)
       assert.deepEqual(
-        'delegations' in result,
+        // @ts-expect-error type not inferred correctly
+        'delegations' in result.out.ok,
         true,
         'result contains delegations set'
       )

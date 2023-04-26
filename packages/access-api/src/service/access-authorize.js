@@ -56,6 +56,8 @@ export function accessAuthorizeProvider(ctx) {
       url,
     })
 
-    return {}
+    return {
+      ok: {}
+    }
   })
 }

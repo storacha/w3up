@@ -165,7 +165,7 @@ async function authorize(req, env) {
     }
     const { account, agent } = accessConfirm.parse(request)
     const confirmDelegations = [
-      ...delegationsResponse.decode(confirmResult.delegations),
+      ...delegationsResponse.decode(confirmResult.ok.delegations),
     ]
 
     // We render HTML page explaining to the user what has happened and providing

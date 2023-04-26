@@ -12,11 +12,13 @@ import { D1Error } from '../utils/d1.js'
 export function voucherRedeemProvider(ctx) {
   return Server.provide(Voucher.redeem, async ({ capability, invocation }) => {
     if (capability.with !== ctx.signer.did()) {
-      return new Failure(
-        `Resource ${
-          capability.with
-        } does not match service did ${ctx.signer.did()}`
-      )
+      return {
+        error: new Failure(
+          `Resource ${
+            capability.with
+          } does not match service did ${ctx.signer.did()}`
+        )
+      }
     }
 
     /** @type {Ucanto.Delegation<Ucanto.Capabilities>[]} */
@@ -36,7 +38,9 @@ export function voucherRedeemProvider(ctx) {
     }
 
     if (delegations.length > 1) {
-      return new Failure('Multiple space delegations not suppported.')
+      return {
+        error: new Failure('Multiple space delegations not suppported.')
+      }
     }
 
     const { error } = await ctx.models.spaces.create(
@@ -48,7 +52,9 @@ export function voucherRedeemProvider(ctx) {
 
     if (error) {
       if (isSpaceAlreadyRegisteredError(error)) {
-        return new Failure(`Space ${capability.nb.space} already registered.`)
+        return {
+          error: new Failure(`Space ${capability.nb.space} already registered.`)
+        }
       } else {
         throw error
       }
@@ -68,6 +74,8 @@ export function voucherRedeemProvider(ctx) {
         } with email ${capability.nb.identity.replace('mailto:', '')}`,
       })
     }
+
+    return { ok: {} }
   })
 }
 

@@ -53,7 +53,7 @@ export function createProxyHandler(options) {
    * @template {import('@ucanto/interface').Capability} Capability
    * @param {Ucanto.Invocation<Capability>} invocation
    * @param {Ucanto.InvocationContext} context
-   * @returns {Promise<Ucanto.Result<any, { error: true }>>}
+   * @returns {Promise<Ucanto.Result<any, any>>}
    */
   return async function handleInvocation(invocation, context) {
     const { connections, catchInvocationError = defaultCatchInvocationError } =
@@ -65,10 +65,12 @@ export function createProxyHandler(options) {
         [await invocation.delegate()],
         connection
       )
+      // @ts-expect-error TODO
       return result
     } catch (error) {
       if (catchInvocationError) {
         const caughtResult = await catchInvocationError(error)
+        // @ts-expect-error TODO
         return caughtResult
       }
       throw error

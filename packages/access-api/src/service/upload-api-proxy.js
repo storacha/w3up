@@ -24,7 +24,7 @@ function createProxyService(options) {
   const service = options.methods.reduce((obj, method) => {
     obj[method] = handleInvocation
     return obj
-  }, /** @type {Record<M, Ucanto.ServiceMethod<Ucanto.Capability, unknown, Ucanto.Failure>>} */ ({}))
+  }, /** @type {Record<M, Ucanto.ServiceMethod<Ucanto.Capability, Ucanto.Result, Ucanto.Failure>>} */ ({}))
   return service
 }
 

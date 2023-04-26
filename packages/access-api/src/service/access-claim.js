@@ -22,6 +22,7 @@ import { collect } from 'streaming-iterables'
  */
 export function accessClaimProvider(ctx) {
   const handleClaimInvocation = createAccessClaimHandler(ctx)
+  // @ts-expect-error TODO error
   return Server.provide(claim, async ({ invocation }) => {
     return handleClaimInvocation(invocation)
   })
@@ -40,7 +41,9 @@ export function createAccessClaimHandler({ delegations }) {
       delegations.find({ audience: claimedAudience })
     )
     return {
-      delegations: delegationsResponse.encode(claimed),
+      ok: {
+        delegations: delegationsResponse.encode(claimed),
+      }
     }
   }
 }

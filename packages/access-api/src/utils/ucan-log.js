@@ -66,7 +66,7 @@ class UCANLogDebug {
    */
   async log(request) {
     const { ucanlog } =
-      /** @type {{ucanlog?: { invocations?: Array<Uint8Array>, receipts?: Array<any> }}} */ (
+      /** @type {{ucanlog?: { invocations?: Array<API.Invocation>, receipts?: Array<API.Receipt> }}} */ (
         globalThis
       )
     // decode
@@ -77,17 +77,20 @@ class UCANLogDebug {
     }
     const message = await selection.ok.decoder.decode(request)
 
+
+
     // Log invocations
     if (typeof ucanlog?.invocations?.push === 'function') {
       for (const invocation of message.invocations) {
-        ucanlog.invocations.push(invocation.bytes)
+        ucanlog.invocations.push(invocation)
       }
     }
 
     // Log receipts
     if (typeof ucanlog?.receipts?.push === 'function') {
       for (const receipt of message.receipts.values()) {
-        ucanlog.receipts.push(receipt.out.ok || receipt.out.error)
+        // @ts-expect-error TODO
+        ucanlog.receipts.push(receipt)
       }
     }
   }

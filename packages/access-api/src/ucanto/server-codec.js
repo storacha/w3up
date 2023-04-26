@@ -1,4 +1,4 @@
-import { Message } from '@ucanto/core'
+import { Message, Delegation } from '@ucanto/core'
 import * as UCAN from '@ipld/dag-ucan'
 import { UTF8 } from '@ucanto/transport'
 import { HTTPError } from '@web3-storage/worker-utils/error'
@@ -87,11 +87,11 @@ export const serverCodec = {
       )
     }
 
-    let root
-    const blocks = new Map()
+    const invocations = []
 
     // Iterate ucan invocations from the headers
     for (const ucanView of headersData.ucans) {
+      const blocks = new Map()
       const missing = []
 
       // Check all the proofs for each invocation
@@ -113,16 +113,14 @@ export const serverCodec = {
         })
       }
 
-      if (!root) {
-        root = (await UCAN.write(ucanView)).cid
-      }
+      // Build the full ucan chain for each invocation from headers data
+      invocations.push(
+        Delegation.create({ root: await UCAN.write(ucanView), blocks })
+      )
     }
 
-    if (!root) {
-      throw new Error('Missing root')
-    }
-
-    const message = Message.view({ root, store: blocks })
+    // @ts-expect-error TODO invocations incompatible
+    const message = await Message.build({ invocations })
     return /** @type {Message} */ (message)
   },
 
@@ -134,9 +132,15 @@ export const serverCodec = {
    * @returns {import('@ucanto/interface').HTTPRequest<Message>}
    */
   encode(message) {
+    /** @type {Record<string, any>} */
+    const outs = {}
+    for (const receipt of message.receipts.values()) {
+      outs[receipt.ran.link().toString()] = receipt.out
+    }
+
     return {
       headers: Object.fromEntries(new Headers(HEADERS).entries()),
-      body: UTF8.encode(JSON.stringify(message)),
+      body: UTF8.encode(JSON.stringify(outs)),
     }
   },
 }

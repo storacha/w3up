@@ -49,11 +49,12 @@ describe('voucher/redeem', function () {
     if (!claim) {
       return t.fail('no output')
     }
-    if (claim.error) {
-      return t.fail(claim.message)
+    if (claim.out.error) {
+      return t.fail(claim.out.error.message)
     }
 
-    const delegation = stringToDelegation(claim)
+    // @ts-expect-error for tests out comes as a string
+    const delegation = stringToDelegation(claim.out.ok.encoded)
 
     const redeem = await Voucher.redeem
       .invoke({
@@ -62,7 +63,9 @@ describe('voucher/redeem', function () {
         with: service.did(),
         nb: {
           space: space.did(),
+          // @ts-expect-error TODO unknown type
           identity: delegation.capabilities[0].nb.identity,
+          // @ts-expect-error TODO unknown type
           product: delegation.capabilities[0].nb.product,
         },
         proofs: [
@@ -79,8 +82,8 @@ describe('voucher/redeem', function () {
 
       .execute(conn)
 
-    if (redeem?.error) {
-      return t.fail()
+    if (redeem.out.error) {
+      return t.fail(redeem.out.error.message)
     }
 
     const spaces = new Spaces(d1)
@@ -135,10 +138,9 @@ describe('voucher/redeem', function () {
       })
       .execute(conn)
 
-    if (redeem.error) {
-      t.ok(redeem.error)
+    if (redeem.out.error) {
       t.deepEqual(
-        redeem.message,
+        redeem.out.error.message,
         `Resource ${issuer.did()} does not match service did ${service.did()}`
       )
     } else {
@@ -174,11 +176,12 @@ describe('voucher/redeem', function () {
     if (!claim) {
       return t.fail('no output')
     }
-    if (claim.error) {
-      return t.fail(claim.message)
+    if (claim.out.error) {
+      return t.fail(claim.out.error.message)
     }
 
-    const delegation = stringToDelegation(claim)
+    // @ts-expect-error for tests out comes as a string
+    const delegation = stringToDelegation(claim.out.ok.encoded)
 
     const redeemInv = Voucher.redeem.invoke({
       issuer,
@@ -186,7 +189,9 @@ describe('voucher/redeem', function () {
       with: service.did(),
       nb: {
         space: space.did(),
+        // @ts-expect-error TODO unknown type
         identity: delegation.capabilities[0].nb.identity,
+        // @ts-expect-error TODO unknown type
         product: delegation.capabilities[0].nb.product,
       },
       proofs: [
@@ -203,16 +208,14 @@ describe('voucher/redeem', function () {
 
     const redeem = await redeemInv.execute(conn)
 
-    if (redeem?.error) {
-      return t.fail(redeem.message)
+    if (redeem.out.error) {
+      return t.fail(redeem.out.error.message)
     }
 
     const redeem2 = await redeemInv.execute(conn)
 
-    t.ok(redeem2.error)
-    if (redeem2.error) {
-      t.deepEqual(redeem2.message, `Space ${space.did()} already registered.`)
-    }
+    t.ok(redeem2.out.error)
+    t.deepEqual(redeem2.out.error.message, `Space ${space.did()} already registered.`)
   })
 
   test('should not fail with empty metadata', async function () {
@@ -243,11 +246,12 @@ describe('voucher/redeem', function () {
     if (!claim) {
       return t.fail('no output')
     }
-    if (claim.error) {
-      return t.fail(claim.message)
+    if (claim.out.error) {
+      return t.fail(claim.out.error.message)
     }
 
-    const delegation = await stringToDelegation(claim)
+    // @ts-expect-error for tests out comes as a string
+    const delegation = await stringToDelegation(claim.out.ok.encoded)
 
     const redeem = await Voucher.redeem
       .invoke({
@@ -256,7 +260,9 @@ describe('voucher/redeem', function () {
         with: service.did(),
         nb: {
           space: space.did(),
+          // @ts-expect-error TODO unknown type
           identity: delegation.capabilities[0].nb.identity,
+          // @ts-expect-error TODO unknown type
           product: delegation.capabilities[0].nb.product,
         },
         proofs: [
@@ -272,8 +278,8 @@ describe('voucher/redeem', function () {
 
       .execute(conn)
 
-    if (redeem?.error) {
-      return t.fail(redeem.message)
+    if (redeem.out.error) {
+      return t.fail(redeem.out.error.message)
     }
   })
 })

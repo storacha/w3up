@@ -96,13 +96,13 @@ export async function registerSpaces(
     'registration invocation should have 1 result'
   )
   const [result] = results
-  assertNotError(result)
+  assert.ok(result.out.ok)
   assert.ok(
-    'delegations' in result,
+    'delegations' in result.out.ok,
     'registration result should have delegations'
   )
   const accountDelegations = [
-    ...delegationsResponse.decode(/** @type {any} */ (result.delegations)),
+    ...delegationsResponse.decode(/** @type {any} */ (result.out.ok.delegations)),
   ]
   for (const spacePromise of spaces) {
     const space = await spacePromise
@@ -187,7 +187,7 @@ export async function accountRegistrationInvocation(
 }
 
 /**
- * @param {{ error?: unknown }|null} result
+ * @param {{ out: { error?: unknown } }} result
  * @param {string} assertionMessage
  */
 export function assertNotError(
@@ -195,13 +195,13 @@ export function assertNotError(
   assertionMessage = 'result is not an error'
 ) {
   warnOnErrorResult(result)
-  if (result && 'error' in result) {
-    assert.notDeepEqual(result.error, true, assertionMessage)
+  if (result.out && 'error' in result.out) {
+    assert.notDeepEqual(result.out.error, true, assertionMessage)
   }
 }
 
 /**
- * @param {{ error?: unknown }|null} result
+ * @param {{ out: { error?: unknown } }} result
  * @param {string} [message]
  * @param {(...loggables: any[]) => void} warn
  */
@@ -242,7 +242,8 @@ export function createTesterFromHandler(createHandler) {
   const invoke = async (invocation) => {
     const handle = createHandler()
     const result = await handle(invocation)
-    return result
+    return { out: result }
   }
+  // @ts-expect-error TODO fix invoke type
   return { issuer, audience, invoke }
 }

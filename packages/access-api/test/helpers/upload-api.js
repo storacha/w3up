@@ -2,11 +2,10 @@
 import * as Ucanto from '@ucanto/interface'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 
 /**
  * @param {object} options
- * @param {Ucanto.Verifier} options.id
+ * @param {Ucanto.Signer} options.id
  * @returns {Ucanto.ServerView<{
  * store: import('../../src/service/upload-api-proxy.js').StoreServiceInferred
  * upload: import('../../src/service/upload-api-proxy.js').UploadServiceInferred
@@ -19,8 +18,7 @@ export function createMockUploadApiServer({ id }) {
   }
   const server = Server.create({
     id,
-    decoder: CAR,
-    encoder: CBOR,
+    codec: CAR.inbound,
     service: {
       store: {
         list: serviceMethod,
