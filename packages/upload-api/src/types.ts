@@ -35,7 +35,11 @@ export interface Service {
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
     // @todo - Use proper type when no item was removed instead of undefined
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk | UploadRemoveEmpty, Failure>
+    remove: ServiceMethod<
+      UploadRemove,
+      UploadRemoveOk | UploadRemoveEmpty,
+      Failure
+    >
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
@@ -155,10 +159,8 @@ export interface StoreListItem extends StoreAddOutput {
 
 export interface StoreListOk extends ListResponse<StoreListItem> {}
 
-export type StoreAddOk =
-  | StoreAddDone
-  | StoreAddUpload
-  
+export type StoreAddOk = StoreAddDone | StoreAddUpload
+
 export interface StoreAddDone {
   status: 'done'
   with: API.URI<'did:'>

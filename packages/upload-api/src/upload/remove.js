@@ -14,7 +14,7 @@ export function uploadRemoveProvider(context) {
     const result = await context.uploadTable.remove(space, root)
 
     return {
-      ok: result ? result : {}
+      ok: result ? result : {},
     }
   })
 }
