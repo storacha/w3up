@@ -12,7 +12,7 @@ import { SpaceShare } from '../share'
 import { Uploader } from '../components/Uploader'
 import { UploadsList } from '../components/UploadsList'
 import { SpaceFinder } from '../components/SpaceFinder'
-import { SpaceCreatorForm, SpaceCreator } from '../components/SpaceCreator'
+import { SpaceCreatorForm } from '../components/SpaceCreator'
 import { AuthenticationEnsurer } from '../components/Authenticator'
 import { DefaultLayout } from '../components/Layout'
 import Loader from '../components/Loader'
@@ -192,7 +192,6 @@ export default function Home (): JSX.Element {
               setSelected={viewSpace}
               spaces={spaces}
             />
-            <SpaceCreator className='mb-8 self-center' />
           </div>
         }>
           <SpaceSection viewSpace={viewSpace} share={share} setShare={setShare} />
