@@ -3,6 +3,8 @@ import * as UCAN from '@ipld/dag-ucan'
 import { UTF8 } from '@ucanto/transport'
 import { HTTPError } from '@web3-storage/worker-utils/error'
 
+export const contentType = 'application/json'
+
 const HEADERS = Object.freeze({
   'content-type': 'application/json',
 })
@@ -69,78 +71,75 @@ async function parseHeaders(headers) {
   }
 }
 
-/** @type {import('./types.js').ServerCodec} */
-export const serverCodec = {
-  /**
-   * Decodes `AgentMessage` from the received `HTTPRequest`.
-   *
-   * @template {import('@ucanto/interface').AgentMessage} Message
-   * @param {import('@ucanto/interface').HTTPRequest<Message>} request
-   * @returns {Promise<Message>}
-   */
-  async decode({ body, headers }) {
-    const headersData = await parseHeaders(headers)
-    if (headersData.ucans.length === 0) {
-      throw new HTTPError(
-        'The required "Authorization: Bearer" header is missing.',
-        { status: 400 }
-      )
-    }
+/**
+ * Decodes `AgentMessage` from the received `HTTPRequest`.
+ *
+ * @template {import('@ucanto/interface').AgentMessage} Message
+ * @param {import('@ucanto/interface').HTTPRequest<Message>} request
+ * @returns {Promise<Message>}
+ */
+export const decode = async ({ body, headers }) => {
+  const headersData = await parseHeaders(headers)
+  if (headersData.ucans.length === 0) {
+    throw new HTTPError(
+      'The required "Authorization: Bearer" header is missing.',
+      { status: 400 }
+    )
+  }
 
-    const invocations = []
+  const invocations = []
 
-    // Iterate ucan invocations from the headers
-    for (const ucanView of headersData.ucans) {
-      const blocks = new Map()
-      const missing = []
+  // Iterate ucan invocations from the headers
+  for (const ucanView of headersData.ucans) {
+    const blocks = new Map()
+    const missing = []
 
-      // Check all the proofs for each invocation
-      for (const proofCID of ucanView.proofs) {
-        const proof = headersData.proofs.get(proofCID.toString())
-        if (!proof) {
-          missing.push(proofCID.toString())
-        }
-
-        blocks.set(proofCID.toString(), proof)
-        // TODO implement caching of proofs https://github.com/ucan-wg/ucan-as-bearer-token#32-cache-and-expiry
+    // Check all the proofs for each invocation
+    for (const proofCID of ucanView.proofs) {
+      const proof = headersData.proofs.get(proofCID.toString())
+      if (!proof) {
+        missing.push(proofCID.toString())
       }
 
-      if (missing.length > 0) {
-        throw new HTTPError('Missing Proofs', {
-          status: 510,
-          // @ts-ignore - Error.cause type is a mess
-          cause: { prf: missing },
-        })
-      }
-
-      // Build the full ucan chain for each invocation from headers data
-      invocations.push(
-        Delegation.create({ root: await UCAN.write(ucanView), blocks })
-      )
+      blocks.set(proofCID.toString(), proof)
+      // TODO implement caching of proofs https://github.com/ucan-wg/ucan-as-bearer-token#32-cache-and-expiry
     }
 
-    // @ts-expect-error TODO invocations incompatible
-    const message = await Message.build({ invocations })
-    return /** @type {Message} */ (message)
-  },
-
-  /**
-   * Encodes `AgentMessage` into an `HTTPRequest`.
-   *
-   * @template {import('@ucanto/interface').AgentMessage} Message
-   * @param {Message} message
-   * @returns {import('@ucanto/interface').HTTPRequest<Message>}
-   */
-  encode(message) {
-    /** @type {Record<string, any>} */
-    const outs = {}
-    for (const receipt of message.receipts.values()) {
-      outs[receipt.ran.link().toString()] = receipt.out
+    if (missing.length > 0) {
+      throw new HTTPError('Missing Proofs', {
+        status: 510,
+        // @ts-ignore - Error.cause type is a mess
+        cause: { prf: missing },
+      })
     }
 
-    return {
-      headers: Object.fromEntries(new Headers(HEADERS).entries()),
-      body: UTF8.encode(JSON.stringify(outs)),
-    }
-  },
+    // Build the full ucan chain for each invocation from headers data
+    invocations.push(
+      Delegation.create({ root: await UCAN.write(ucanView), blocks })
+    )
+  }
+
+  // @ts-expect-error TODO invocations incompatible
+  const message = await Message.build({ invocations })
+  return /** @type {Message} */ (message)
+}
+
+/**
+ * Encodes `AgentMessage` into an `HTTPRequest`.
+ *
+ * @template {import('@ucanto/interface').AgentMessage} Message
+ * @param {Message} message
+ * @returns {import('@ucanto/interface').HTTPRequest<Message>}
+ */
+export const encode = (message) => {
+  /** @type {Record<string, any>} */
+  const outs = {}
+  for (const receipt of message.receipts.values()) {
+    outs[receipt.ran.link().toString()] = receipt.out
+  }
+
+  return {
+    headers: Object.fromEntries(new Headers(HEADERS).entries()),
+    body: UTF8.encode(JSON.stringify(outs)),
+  }
 }

@@ -1,56 +1,103 @@
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
+import * as Legacy from '@ucanto/transport/legacy'
+import * as Codec from '@ucanto/transport/codec'
 import { service } from '../service/index.js'
-import { serverCodec as json } from '../ucanto/server-codec.js'
+import * as json from '../ucanto/server-codec.js'
 import * as API from '../bindings.js'
 
+const codec = Codec.inbound({
+  decoders: {
+    [CAR.contentType]: CAR.request,
+    [Legacy.contentType]: Legacy.request,
+    [json.contentType]: json,
+  },
+  encoders: {
+    '*/*;q=0.1': Legacy.response,
+    [CAR.contentType]: CAR.response,
+    [json.contentType]: json,
+  },
+})
+
 /**
- * @param {import('@web3-storage/worker-utils/router').ParsedRequest} request
+ * @param {{headers: Record<string, string>, body: Uint8Array}} request
  * @param {API.RouteContext} env
  * @param {API.HandlerContext} ctx
- *
  */
-export async function postRoot(request, env, ctx) {
+export async function post({ headers, body }, env, ctx) {
   const server = Server.create({
     id: env.signer,
-    codec: CAR.inbound,
+    codec,
     service: service(env),
     catch: (/** @type {string | Error} */ err) => {
       env.log.error(err)
     },
   })
 
-  const body = new Uint8Array(await request.arrayBuffer())
-  /** @type {Readonly<Record<string, string>>} */
-  const headers = Object.fromEntries(request.headers.entries())
+  const selection = codec.accept({ headers, body })
 
-  // We will use different codec based on the content-type header
-  // this way we do not need to have separate routes.
-  const codec = headers['content-type'] === CAR.contentType ? CAR.request : json
+  // If we were unable to select a codec we do not support request encoding
+  // so we simply return an error response to the client.
+  if (selection.error) {
+    const { status, headers = {}, message } = selection.error
+    return new Response(message, {
+      status,
+      headers,
+    })
+  } else {
+    const { encoder, decoder } = selection.ok
+    /** @type {API.AgentMessage} */
+    const message = await decoder.decode({ headers, body })
 
-  // @ts-expect-error matching signatures are incompatible
-  const message = await codec.decode({
-    body,
-    headers,
-  })
+    // We block until we can log the UCAN invocation if this fails we return a 500
+    // to the client. That is because in the future we expect that invocations will
+    // be written to a queue first and then processed asynchronously, so if we
+    // fail to queue the invocation we should not handle it.
+    await env.ucanLog.log(CAR.request.encode(message))
 
-  const inMessage = CAR.request.encode(message, {
-    headers,
-  })
+    const result = await Server.execute(message, server)
 
-  // We block until we can log the UCAN invocation if this fails we return a 500
-  // to the client. That is because in the future we expect that invocations will
-  // be written to a queue first and then processed asynchronously, so if we
-  // fail to queue the invocation we should not handle it.
-  await env.ucanLog.log(inMessage)
+    ctx.waitUntil(env.ucanLog.log(CAR.response.encode(result)))
 
-  const result = await Server.execute(message, server)
-  // @ts-expect-error matching signatures are incompatible
-  const outMessage = codec.encode(result)
-
-  ctx.waitUntil(env.ucanLog.log(outMessage))
-
-  return new Response(outMessage.body, {
-    headers: outMessage.headers,
-  })
+    const { body: responseBody, ...response } = await encoder.encode(result)
+    return new Response(responseBody, response)
+  }
 }
+
+/**
+ * Post request implicitly in JSON encoding.
+ *
+ * @param {import('@web3-storage/worker-utils/router').ParsedRequest} request
+ * @param {API.RouteContext} env
+ * @param {API.HandlerContext} ctx
+ */
+export const postJSON = async (request, env, ctx) =>
+  post(
+    {
+      headers: {
+        'content-type': json.contentType,
+        accept: json.contentType,
+        ...Object.fromEntries(request.headers.entries()),
+      },
+      body: new Uint8Array(await request.arrayBuffer()),
+    },
+    env,
+    ctx
+  )
+
+/**
+ * Post request in arbitrary encoding.
+ *
+ * @param {import('@web3-storage/worker-utils/router').ParsedRequest} request
+ * @param {API.RouteContext} env
+ * @param {API.HandlerContext} ctx
+ */
+export const postRoot = async (request, env, ctx) =>
+  post(
+    {
+      headers: Object.fromEntries(request.headers.entries()),
+      body: new Uint8Array(await request.arrayBuffer()),
+    },
+    env,
+    ctx
+  )

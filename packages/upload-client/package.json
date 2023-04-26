@@ -68,7 +68,7 @@
     "@ipld/unixfs": "^2.1.1",
     "@ucanto/client": "^7.0.1",
     "@ucanto/interface": "^7.0.1",
-    "@ucanto/transport": "^7.0.2",
+    "@ucanto/transport": "^7.0.3",
     "@web3-storage/capabilities": "workspace:^",
     "ipfs-utils": "^9.0.14",
     "multiformats": "^11.0.2",

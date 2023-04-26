@@ -65,7 +65,7 @@
     "@ucanto/core": "^7.0.1",
     "@ucanto/interface": "^7.0.1",
     "@ucanto/principal": "^7.0.0",
-    "@ucanto/transport": "^7.0.2",
+    "@ucanto/transport": "^7.0.3",
     "@ucanto/validator": "^7.0.0",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",

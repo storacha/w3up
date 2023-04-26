@@ -54,8 +54,8 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
       '@ucanto/transport':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^7.0.3
+        version: 7.0.3
       '@ucanto/validator':
         specifier: ^7.0.0
         version: 7.0.0
@@ -199,8 +199,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       '@ucanto/transport':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^7.0.3
+        version: 7.0.3
       '@ucanto/validator':
         specifier: ^7.0.0
         version: 7.0.0
@@ -314,8 +314,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       '@ucanto/transport':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^7.0.3
+        version: 7.0.3
       '@ucanto/validator':
         specifier: ^7.0.0
         version: 7.0.0
@@ -381,8 +381,8 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
       '@ucanto/transport':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^7.0.3
+        version: 7.0.3
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -433,8 +433,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/transport':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^7.0.3
+        version: 7.0.3
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -512,8 +512,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       '@ucanto/transport':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^7.0.3
+        version: 7.0.3
       '@web3-storage/access':
         specifier: workspace:^
         version: link:../access-client
@@ -4439,8 +4439,8 @@ packages:
       '@ucanto/interface': 7.0.1
       '@ucanto/validator': 7.0.0
 
-  /@ucanto/transport@7.0.2:
-    resolution: {integrity: sha512-az2Wh+ns4O/U8a08h079+GEhuiPuA3e58QMD45dGsxbMmQf1FdkdoLGGOtJMf+5nugK+wuQ2v3PF7YPmOeRLsw==}
+  /@ucanto/transport@7.0.3:
+    resolution: {integrity: sha512-znDhFd6+gAOyqNTpzIqpLIfEWO6J0JYG5TQaPV1SP4B73Idad/WYMVTZpTNUGY2B2BmY42iyzbvnNUsCKzwxEg==}
     dependencies:
       '@ucanto/core': 7.0.1
       '@ucanto/interface': 7.0.1
