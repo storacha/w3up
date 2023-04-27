@@ -4,6 +4,7 @@ export const debug = () => new DebugEmail()
  * @typedef ValidationEmailSend
  * @property {string} to
  * @property {string} url
+ * @property {string} nonce
  */
 
 /**
@@ -44,6 +45,7 @@ export class Email {
           product_name: 'Web3 Storage',
           email: opts.to,
           action_url: opts.url,
+          match_phrase: opts.nonce,
         },
       }),
     })

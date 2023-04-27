@@ -29,6 +29,7 @@ import * as Ucanto from '@ucanto/interface'
 
 import type {
   Abilities,
+  NoncePhrase,
   SpaceInfo,
   SpaceRecover,
   SpaceRecoverValidation,
@@ -263,6 +264,8 @@ export type DelegationOptions = SetRequired<UCANBasicOptions, 'audience'> & {
    */
   audienceMeta: AgentMeta
 }
+
+export type ValidationPhraseHandler = (phrase: NoncePhrase) => undefined
 
 /**
  * Utility types

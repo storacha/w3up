@@ -14,6 +14,7 @@ import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as uploadApi from './upload-api-proxy.js'
 import { accessAuthorizeProvider } from './access-authorize.js'
+import { generateNoncePhrase } from '../utils/phrase.js'
 import { accessDelegateProvider } from './access-delegate.js'
 import { accessClaimProvider } from './access-claim.js'
 import { providerAddProvider } from './provider-add.js'
@@ -195,6 +196,7 @@ export function service(ctx) {
 
           const encoded = delegationToString(inv)
           const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}&mode=recover`
+          const nonce = generateNoncePhrase()
 
           // For testing
           if (ctx.config.ENV === 'test') {
@@ -204,7 +206,9 @@ export function service(ctx) {
           await ctx.email.sendValidation({
             to: capability.nb.identity.replace('mailto:', ''),
             url,
+            nonce,
           })
+          return { matchPhrase: nonce }
         }
       ),
     },

@@ -1,7 +1,11 @@
 Hi {{email}}! To complete your {{product_name}} registration,
 we just need to verify your email address.
 
-Please visit the following link in your web browser:
+Please confirm the app you are trying to register is showing this phrase:
+
+{{match_phrase}}
+
+If it is, please visit the following link in your web browser:
 
 {{action_url}}
 

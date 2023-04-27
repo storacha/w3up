@@ -335,6 +335,7 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {import('./types').ValidationPhraseHandler} [opts.onPhrase]
    */
   async recover(email, opts) {
     const inv = await this.invokeAndExecute(Space.recoverValidation, {
@@ -344,6 +345,10 @@ export class Agent {
 
     if (inv && inv.error) {
       throw new Error('Recover validation failed', { cause: inv })
+    }
+
+    if (inv?.matchPhrase) {
+      opts?.onPhrase?.(inv.matchPhrase)
     }
 
     const spaceRecover =
@@ -433,6 +438,7 @@ export class Agent {
    * @param {string} email
    * @param {object} [opts]
    * @param {AbortSignal} [opts.signal]
+   * @param {import('./types').ValidationPhraseHandler} [opts.onPhrase]
    * @param {Ucanto.DID<'key'>} [opts.space] - space to register
    * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
    */
@@ -469,6 +475,10 @@ export class Agent {
 
     if (inv && inv.error) {
       throw new Error('Voucher claim failed', { cause: inv })
+    }
+
+    if (inv?.matchPhrase) {
+      opts?.onPhrase?.(inv.matchPhrase)
     }
 
     const voucherRedeem =

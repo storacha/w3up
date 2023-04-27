@@ -1,6 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { delegationToString } from '@web3-storage/access/encoding'
+import { generateNoncePhrase } from '../utils/phrase.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -41,10 +42,13 @@ export function voucherClaimProvider(ctx) {
     }
 
     const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}`
+    const nonce = generateNoncePhrase()
 
     await ctx.email.sendValidation({
       to: capability.nb.identity.replace('mailto:', ''),
       url,
+      nonce,
     })
+    return { matchPhrase: nonce }
   })
 }
