@@ -4,7 +4,7 @@ import { ProviderAdd } from '@web3-storage/capabilities/src/types'
 /**
  * action which results in provisionment of a space consuming a storage provider
  */
-export interface Provision<ServiceDID extends Ucanto.DID<string>> {
+export interface Provision<ServiceDID extends Ucanto.DID<'web'>> {
   invocation: Ucanto.Invocation<ProviderAdd>
   space: Ucanto.DID<'key'>
   account: Ucanto.DID<'mailto'>
