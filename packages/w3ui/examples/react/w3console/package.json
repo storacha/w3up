@@ -14,11 +14,9 @@
     "@heroicons/react": "^2.0.17",
     "@ipld/car": "^5.1.0",
     "@ipld/dag-ucan": "^3.2.0",
-    "@w3ui/keyring-core": "workspace:^",
     "@w3ui/react-keyring": "workspace:^",
     "@w3ui/react-uploader": "workspace:^",
     "@w3ui/react-uploads-list": "workspace:^",
-    "@w3ui/uploader-core": "workspace:^",
     "blueimp-md5": "^2.19.0",
     "preact": "^10.11.3",
     "react-router-dom": "^6.9.0"

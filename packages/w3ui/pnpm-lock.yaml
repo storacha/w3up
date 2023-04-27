@@ -242,11 +242,9 @@ importers:
       '@types/blueimp-md5': ^2.18.0
       '@ucanto/core': ^5.2.0
       '@ucanto/interface': ^6.2.0
-      '@w3ui/keyring-core': workspace:^
       '@w3ui/react-keyring': workspace:^
       '@w3ui/react-uploader': workspace:^
       '@w3ui/react-uploads-list': workspace:^
-      '@w3ui/uploader-core': workspace:^
       autoprefixer: ^10.4.13
       blueimp-md5: ^2.19.0
       postcss: ^8.4.21
@@ -260,11 +258,9 @@ importers:
       '@heroicons/react': 2.0.17
       '@ipld/car': 5.1.0
       '@ipld/dag-ucan': 3.2.0
-      '@w3ui/keyring-core': link:../../../packages/keyring-core
       '@w3ui/react-keyring': link:../../../packages/react-keyring
       '@w3ui/react-uploader': link:../../../packages/react-uploader
       '@w3ui/react-uploads-list': link:../../../packages/react-uploads-list
-      '@w3ui/uploader-core': link:../../../packages/uploader-core
       blueimp-md5: 2.19.0
       preact: 10.11.3
       react-router-dom: 6.9.0
@@ -515,13 +511,11 @@ importers:
       '@w3ui/uploader-core': workspace:^
       '@web3-storage/capabilities': ^4.0.0
       ariakit-react-utils: 0.17.0-next.27
-      multiformats: ^11.0.1
     dependencies:
       '@w3ui/react-keyring': link:../react-keyring
       '@w3ui/uploader-core': link:../uploader-core
       '@web3-storage/capabilities': 4.0.0
       ariakit-react-utils: 0.17.0-next.27
-      multiformats: 11.0.1
     devDependencies:
       '@testing-library/react': 13.4.0
       '@testing-library/user-event': 14.4.3
@@ -3326,7 +3320,7 @@ packages:
     dependencies:
       '@ipld/dag-cbor': 9.0.0
       cborg: 1.10.0
-      multiformats: 11.0.1
+      multiformats: 11.0.2
       varint: 6.0.0
     dev: false
 
@@ -3351,7 +3345,7 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       cborg: 1.10.1
-      multiformats: 11.0.1
+      multiformats: 11.0.2
 
   /@ipld/dag-pb/4.0.2:
     resolution: {integrity: sha512-me9oEPb7UNPWSplUFCXyxnQE3/WlsjOljqO2RZN44XOmGkBY0/WVklbXorVE1eiv0Rt3p6dBS2x36Rq8A0Am8A==}
@@ -3365,7 +3359,7 @@ packages:
     dependencies:
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-json': 10.0.0
-      multiformats: 11.0.1
+      multiformats: 11.0.2
 
   /@ipld/unixfs/2.1.1:
     resolution: {integrity: sha512-g3gr/3XvfQs4x2VFjlICae09ul5fbWCKRInN6Vgeot2+GH0h/krr3PqZCIo4dy4Ou2mQOsIddxUvG8UZ4p9SbQ==}

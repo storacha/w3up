@@ -1,4 +1,4 @@
-import type { Space } from '@w3ui/keyring-core'
+import type { Space } from '@w3ui/react-keyring'
 
 import React, { Fragment, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'

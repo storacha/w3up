@@ -28,11 +28,13 @@ Top-level component of the headless UploadsList.
 
 Designed to be used with [`UploadsList.NextButton`](#uploadslistnextbutton), [`UploadsList.ReloadButton`](#uploadslistreloadbutton), etc to easily create a custom component for listing uploads in a web3.storage space.
 
+Must be used inside of an [`UploadsListProvider`](#uploadslistprovider).
+
 #### `UploadsList.NextButton`
 
 Button that loads the next page of results in an UploadsList.
 
-Renders a `button` element designed to work with [`UploadsList`](#uploadslist). When pressed, will request the next page of uploads from the service.
+Renders a `button` element designed to be used inside of an [`UploadsList`](#uploadslist). When pressed, will request the next page of uploads from the service.
 
 Any passed props will be passed along to the `button` element.
 
@@ -40,7 +42,7 @@ Any passed props will be passed along to the `button` element.
 
 Button that reloads an UploadsList.
 
-Renders a `button` element designed to work with [`UploadsList`](#uploadslist). When pressed, will reload list data from the service.
+Renders a `button` element designed to be used inside of an [`UploadsList`](#uploadslist). When pressed, will reload list data from the service.
 
 Any passed props will be passed along to the `button` element.
 

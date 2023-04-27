@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react'
-import { ServiceConfig } from '@w3ui/uploader-core'
+import { useMemo } from 'react'
 import {
   useUploader,
   UploaderContextValue,
@@ -21,9 +20,6 @@ export interface W3APIContextValue {
   keyring: KeyringContextValue
   uploader: UploaderContextValue
   uploadsList: UploadsListContextValue
-}
-export interface UploaderProviderProps extends ServiceConfig {
-  children?: JSX.Element
 }
 
 export interface W3APIProviderProps {

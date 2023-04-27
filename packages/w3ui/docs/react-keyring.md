@@ -32,15 +32,15 @@ Must be used inside of a [`KeyringProvider`](#keyringprovider).
 
 #### `Authenticator.Form`
 
-A `form` element designed to work with the [`Authenticator`](#authenticator) component. Any passed props will be passed along to the `form` element.
+A `form` element designed to be used inside of an [`Authenticator`](#authenticator) component. Any passed props will be passed along to the `form` element.
 
 #### `Authenticator.Email`
 
-An email `input` element designed to work with [`Authenticator.Form`](#authenticatorform). Any passed props will be passed along to the `input` component.
+An email `input` element designed to be used inside of an [`Authenticator.Form`](#authenticatorform). Any passed props will be passed along to the `input` component.
 
 #### `Authenticator.CancelButton`
 
-A `button` element that will cancel space registration, designed to work with [`Authenticator.Form`](#authenticatorform). Any passed props will be passed along to the `button` element.
+A `button` element that will cancel space registration, designed to be used inside of an [`Authenticator.Form`](#authenticatorform). Any passed props will be passed along to the `button` element.
 
 ### `KeyringProvider`
 

@@ -28,11 +28,13 @@ Top-level component of the headless Uploader.
 
 Designed to be used with [`Uploader.Form`](#uploaderform) and [`Uploader.Input`](#uploaderinput) to easily create a custom component for uploading files to web3.storage.
 
+Must be used inside of an [`UploaderProvider`](#uploaderprovider).
+
 #### `Uploader.Form`
 
 Form component for the headless Uploader.
 
-Renders a `form` element designed to work with [`Uploader`](#uploader) that will send files from an [`Uploader.Input`](#uploaderinput) component to the web3.storage service when the form is submitted.
+Renders a `form` element designed to be used inside of an [`Uploader`](#uploader) that will send files from an [`Uploader.Input`](#uploaderinput) component to the web3.storage service when the form is submitted.
 
 Any passed props will be passed along to the `input` element.
 
@@ -40,7 +42,7 @@ Any passed props will be passed along to the `input` element.
 
 Input component for the headless Uploader.
 
-Renders a file `input` element designed to work with [`Uploader`](#uploader). When used inside of an [`Uploader.Form`](#uploaderform), files added to the input will be uploaded when the form is submitted.
+Renders a file `input` element designed to be used inside of an [`Uploader`](#uploader). When used inside of an [`Uploader.Form`](#uploaderform), files added to the input will be uploaded when the form is submitted.
 
 ### `UploaderProvider`
 

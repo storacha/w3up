@@ -1,5 +1,11 @@
 import type { As, Component, Props, Options } from 'ariakit-react-utils'
 import type { ChangeEvent } from 'react'
+import type {
+  CID,
+  CARMetadata,
+  UploaderContextState,
+  UploaderContextActions
+} from '@w3ui/uploader-core'
 
 import React, {
   useContext,
@@ -10,12 +16,6 @@ import React, {
   Fragment
 } from 'react'
 import { createComponent, createElement } from 'ariakit-react-utils'
-import { Link, Version } from 'multiformats'
-import {
-  CARMetadata,
-  UploaderContextState,
-  UploaderContextActions
-} from '@w3ui/uploader-core'
 import { useUploader } from './providers/Uploader'
 
 export enum Status {
@@ -46,7 +46,7 @@ export type UploaderComponentContextState = UploaderContextState & {
   /**
    * The CID of a successful upload
    */
-  dataCID?: Link<unknown, number, number, Version>
+  dataCID?: CID
   /**
    * Shards of a DAG uploaded to web3.storage
    */
@@ -86,7 +86,7 @@ const UploaderComponentContext = createContext<UploaderComponentContextValue>([
 
 interface OnUploadCompleteProps {
   file?: File
-  dataCID?: Link<unknown, number, number, Version>
+  dataCID?: CID
 }
 
 export type OnUploadComplete = (props: OnUploadCompleteProps) => void
@@ -94,9 +94,7 @@ export type OnUploadComplete = (props: OnUploadCompleteProps) => void
 export type UploaderRootOptions<T extends As = typeof Fragment> = Options<T> & {
   onUploadComplete?: OnUploadComplete
 }
-export type UploaderRootProps<T extends As = typeof Fragment> = Props<
-UploaderRootOptions<T>
->
+export type UploaderRootProps<T extends As = typeof Fragment> = Props<UploaderRootOptions<T>>
 
 /**
  * Top level component of the headless Uploader.
@@ -110,7 +108,7 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
     const [uploaderState, uploaderActions] = useUploader()
     const [file, setFile] = useState<File>()
     const [dataCID, setDataCID] =
-      useState<Link<unknown, number, number, Version>>()
+      useState<CID>()
     const [status, setStatus] = useState(Status.Idle)
     const [error, setError] = useState()
 
