@@ -1,5 +1,5 @@
 import * as ucanto from '@ucanto/core'
-import * as Ucanto from '@ucanto/interface'
+import * as API from '../api.js'
 import * as Server from '@ucanto/server'
 import * as validator from '@ucanto/validator'
 import { Failure } from '@ucanto/server'
@@ -18,19 +18,14 @@ import * as Provider from './provider.js'
 import * as Voucher from './voucher.js'
 
 /**
- * @param {import('../bindings').RouteContext} ctx
- * @returns { import('@web3-storage/access/types').Service
- * & { store: uploadApi.StoreServiceInferred }
- * & { upload: uploadApi.UploadServiceInferred }
- * }
+ * @param {API.RouteContext} ctx
+ * @returns {API.Service}
  */
 export function service(ctx) {
-  /** @param {Ucanto.DID<'key'>} space */
+  /** @param {API.DID<'key'>} space */
 
   return {
-    // @ts-expect-error TODO fix
     store: uploadApi.createStoreProxy(ctx),
-    // @ts-expect-error TODO fix
     upload: uploadApi.createUploadProxy(ctx),
     access: Access.provide(ctx),
     provider: Provider.provide(ctx),
@@ -202,9 +197,9 @@ export function service(ctx) {
 }
 
 /**
- * @template {Ucanto.DID} Service
- * @param {Ucanto.DID<'key'>} space
- * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
+ * @template {API.DID} Service
+ * @param {API.DID<'key'>} space
+ * @param {API.ProvisionsStorage<Service>} provisions
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProviderFromProviderAdd(space, provisions) {

@@ -25,7 +25,7 @@ function createProxyService(options) {
   const service = options.methods.reduce((obj, method) => {
     obj[method] = handleInvocation
     return obj
-  }, /** @type {Record<M, Ucanto.ServiceMethod<Ucanto.Capability, Ucanto.Result, Ucanto.Failure>>} */ ({}))
+  }, /** @type {Record<M, Ucanto.ServiceMethod<Ucanto.Capability, *, *>>} */ ({}))
   return service
 }
 
@@ -41,6 +41,7 @@ function createProxyService(options) {
  * Assumes upload-api at that URL decodes requests as CAR and encodes responses as CBOR.
  *
  * @param {UcantoHttpConnectionOptions} options
+ * @returns {Ucanto.ConnectionView<any>}
  */
 export function createUploadApiConnection(options) {
   return Client.connect({
