@@ -151,7 +151,7 @@ export async function add(
  *
  * The issuer needs the `store/list` delegated capability.
  * @param {import('./types').ListRequestOptions} [options]
- * @returns {Promise<import('./types').ListResponse<import('./types').StoreListResult>>}
+ * @returns {Promise<import('./types').StoreListOk>}
  */
 export async function list(
   { issuer, with: resource, proofs, audience },

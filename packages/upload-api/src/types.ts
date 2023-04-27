@@ -8,8 +8,8 @@ import type {
   DID,
   InboundCodec,
   Result,
+  Unit
 } from '@ucanto/interface'
-import type { API } from '@ucanto/server'
 
 import { ToString, UnknownLink } from 'multiformats'
 
@@ -28,17 +28,12 @@ export * from '@ucanto/interface'
 export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddOk, Failure>
-    remove: ServiceMethod<StoreRemove, StoreRemoveOk, Failure>
+    remove: ServiceMethod<StoreRemove, Unit, Failure>
     list: ServiceMethod<StoreList, StoreListOk, Failure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
-    // @todo - Use proper type when no item was removed instead of undefined
-    remove: ServiceMethod<
-      UploadRemove,
-      UploadRemoveOk | UploadRemoveEmpty,
-      Failure
-    >
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
@@ -162,7 +157,7 @@ export type StoreAddOk = StoreAddDone | StoreAddUpload
 
 export interface StoreAddDone {
   status: 'done'
-  with: API.URI<'did:'>
+  with: DID
   link: UnknownLink
   url?: undefined
   headers?: undefined
@@ -170,13 +165,12 @@ export interface StoreAddDone {
 
 export interface StoreAddUpload {
   status: 'upload'
-  with: API.URI<'did:'>
+  with: DID
   link: UnknownLink
   url: URL
   headers: Record<string, string>
 }
 
-export interface StoreRemoveOk {}
 
 export interface UploadAddInput {
   space: DID
@@ -188,8 +182,16 @@ export interface UploadAddInput {
 
 export interface UploadAddOk
   extends Omit<UploadAddInput, 'space' | 'issuer' | 'invocation'> {}
-export interface UploadRemoveOk extends UploadAddOk {}
-export interface UploadRemoveEmpty {}
+export type UploadRemoveOk =
+  | UploadDIDRemove
+  | UploadDidNotRemove
+
+export interface UploadDIDRemove extends UploadAddOk {
+}
+export interface UploadDidNotRemove {
+  root?: undefined
+  shards?: undefined
+}
 
 export interface UploadListItem extends UploadAddOk {
   insertedAt: string

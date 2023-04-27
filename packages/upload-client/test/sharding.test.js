@@ -78,7 +78,7 @@ describe('ShardStoringStream', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse[]} */
+    /** @type {import('../src/types.js').StoreAddUpload[]} */
     const res = [
       {
         status: 'upload',

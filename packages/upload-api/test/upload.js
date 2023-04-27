@@ -317,12 +317,9 @@ export const test = {
       )
     }
 
-    // @ts-expect-error TODO FIX
     assert.ok(uploadRemove.out.ok.root)
-    // @ts-expect-error TODO FIX
     assert.equal(uploadRemove.out.ok.root?.toString(), car.roots[0].toString())
     assert.equal(
-      // @ts-expect-error TODO FIX
       uploadRemove?.out.ok.shards?.[0].toString(),
       car.cid.toString()
     )

@@ -4,7 +4,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.StoreServiceContext} context
- * @returns {API.ServiceMethod<API.StoreRemove, API.StoreRemoveOk, API.Failure>}
+ * @returns {API.ServiceMethod<API.StoreRemove, API.Unit, API.Failure>}
  */
 export function storeRemoveProvider(context) {
   return Server.provide(Store.remove, async ({ capability }) => {

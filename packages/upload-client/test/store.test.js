@@ -25,7 +25,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -94,7 +94,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -146,7 +146,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -198,12 +198,11 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddDoneResponse} */
+    /** @type {import('../src/types.js').StoreAddDone} */
     const res = {
       status: 'done',
       // @ts-expect-error
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9500', // will fail the test if called
     }
 
     const service = mockService({
@@ -243,7 +242,7 @@ describe('Store.add', () => {
     const agent = await Signer.generate()
     const car = await randomCAR(128)
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddOk} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
