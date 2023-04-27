@@ -22,6 +22,8 @@ import type {
   SignerArchive,
   SigAlg,
   Caveats,
+  Unit,
+  ToString
 } from '@ucanto/interface'
 
 import type {
@@ -120,16 +122,16 @@ export interface Service {
   voucher: {
     claim: ServiceMethod<
       VoucherClaim,
-      EncodedDelegation<[VoucherRedeem]> | Record<string, unknown>,
+      EncodedDelegation<[VoucherRedeem]> | '',
       Failure
     >
-    redeem: ServiceMethod<VoucherRedeem, Record<string, unknown>, Failure>
+    redeem: ServiceMethod<VoucherRedeem, Unit, Failure>
   }
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
-      EncodedDelegation<[SpaceRecover]> | Record<string, unknown>,
+      ToString<URL> | '',
       Failure
     >
     recover: ServiceMethod<

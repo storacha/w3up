@@ -10,7 +10,6 @@ import * as nodeHttp from 'node:http'
 import { listen, ucantoServerNodeListener } from './helpers/upload-api.js'
 import * as HTTP from '@ucanto/transport/http'
 
-// TODO: Re-enable after fixing proxy
 describe('ucanto-proxy', () => {
   it('proxies invocations to another ucanto server', async () => {
     // make a ucanto server that is the upstream

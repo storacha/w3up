@@ -39,17 +39,13 @@ describe('ucan', function () {
       return t.fail(inv.out.error.message)
     }
 
-    // @ts-expect-error for tests out comes as a string
-    const delegation = stringToDelegation(inv.out.ok.encoded)
+    const delegation = stringToDelegation(inv.out.ok)
 
     t.deepEqual(delegation.issuer.did(), service.did())
     t.deepEqual(delegation.audience.did(), issuer.did())
-    // @ts-expect-error TODO unknown type
     t.deepEqual(delegation.capabilities[0].nb.space, issuer.did())
-    // @ts-expect-error TODO unknown type
     t.deepEqual(delegation.capabilities[0].nb.product, 'product:free')
     t.deepEqual(
-      // @ts-expect-error TODO unknown type
       delegation.capabilities[0].nb.identity,
       'mailto:email@dag.house'
     )
@@ -92,14 +88,13 @@ describe('voucher/claim', () => {
     const claimResult = await claim.execute(conn)
 
     assert.deepEqual(
-      // @ts-expect-error for tests out comes as a string
-      typeof claimResult.out.ok.encoded,
+      typeof claimResult.out.ok,
       'string',
       'claim result is a string'
     )
+
     const confirmEmailDelegation = await stringToDelegation(
-      // @ts-expect-error for tests out comes as a string
-      claimResult.out.ok.encoded
+      claimResult.out.ok || ''
     ).delegate()
     const confirmEmailReceipt = await invoke({
       issuer,

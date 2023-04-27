@@ -57,8 +57,7 @@ describe('space-recover', function () {
       return assert.fail('failed to recover')
     }
 
-    // @ts-expect-error url is set only for testing
-    const url = new URL(inv.out.ok.url)
+    const url = new URL(inv.out.ok)
     const encoded =
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
         url.searchParams.get('ucan')
@@ -146,8 +145,7 @@ describe('space-recover', function () {
       return assert.fail('failed to recover')
     }
 
-    // @ts-expect-error url is set only for testing
-    const url = new URL(inv.out.ok.url)
+    const url = new URL(inv.out.ok)
     const encoded =
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
         url.searchParams.get('ucan')

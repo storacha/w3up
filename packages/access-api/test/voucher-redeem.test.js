@@ -53,8 +53,7 @@ describe('voucher/redeem', function () {
       return t.fail(claim.out.error.message)
     }
 
-    // @ts-expect-error for tests out comes as a string
-    const delegation = stringToDelegation(claim.out.ok.encoded)
+    const delegation = stringToDelegation(claim.out.ok)
 
     const redeem = await Voucher.redeem
       .invoke({
@@ -63,9 +62,7 @@ describe('voucher/redeem', function () {
         with: service.did(),
         nb: {
           space: space.did(),
-          // @ts-expect-error TODO unknown type
           identity: delegation.capabilities[0].nb.identity,
-          // @ts-expect-error TODO unknown type
           product: delegation.capabilities[0].nb.product,
         },
         proofs: [
@@ -180,8 +177,7 @@ describe('voucher/redeem', function () {
       return t.fail(claim.out.error.message)
     }
 
-    // @ts-expect-error for tests out comes as a string
-    const delegation = stringToDelegation(claim.out.ok.encoded)
+    const delegation = stringToDelegation(claim.out.ok)
 
     const redeemInv = Voucher.redeem.invoke({
       issuer,
@@ -189,9 +185,7 @@ describe('voucher/redeem', function () {
       with: service.did(),
       nb: {
         space: space.did(),
-        // @ts-expect-error TODO unknown type
         identity: delegation.capabilities[0].nb.identity,
-        // @ts-expect-error TODO unknown type
         product: delegation.capabilities[0].nb.product,
       },
       proofs: [
@@ -253,8 +247,7 @@ describe('voucher/redeem', function () {
       return t.fail(claim.out.error.message)
     }
 
-    // @ts-expect-error for tests out comes as a string
-    const delegation = await stringToDelegation(claim.out.ok.encoded)
+    const delegation = await stringToDelegation(claim.out.ok)
 
     const redeem = await Voucher.redeem
       .invoke({
@@ -263,9 +256,7 @@ describe('voucher/redeem', function () {
         with: service.did(),
         nb: {
           space: space.did(),
-          // @ts-expect-error TODO unknown type
           identity: delegation.capabilities[0].nb.identity,
-          // @ts-expect-error TODO unknown type
           product: delegation.capabilities[0].nb.product,
         },
         proofs: [

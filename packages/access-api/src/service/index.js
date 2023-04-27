@@ -168,7 +168,7 @@ export function service(ctx) {
 
           // For testing
           if (ctx.config.ENV === 'test') {
-            return { ok: { url } }
+            return { ok: url }
           }
 
           await ctx.email.sendValidation({
@@ -176,7 +176,7 @@ export function service(ctx) {
             url,
           })
 
-          return { ok: {} }
+          return { ok: '' }
         }
       ),
     },

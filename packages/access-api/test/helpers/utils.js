@@ -58,8 +58,7 @@ export async function createSpace(issuer, service, conn, email) {
     throw new Error('failed to create space', { cause: claim })
   }
 
-  // @ts-expect-error encoded only added for testing
-  const delegation = stringToDelegation(claim.out.ok.encoded)
+  const delegation = stringToDelegation(claim.out.ok)
   const serviceDelegation = await Voucher.top.delegate({
     issuer: space,
     audience: service,
@@ -73,9 +72,7 @@ export async function createSpace(issuer, service, conn, email) {
       with: service.did(),
       nb: {
         space: space.did(),
-        // @ts-expect-error object is of type unknown
         identity: delegation.capabilities[0].nb.identity,
-        // @ts-expect-error object is of type unknown
         product: delegation.capabilities[0].nb.product,
       },
       facts: [

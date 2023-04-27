@@ -237,8 +237,9 @@ describe('ucan', function () {
     const ucan2 = await UCAN.issue({
       issuer: bob,
       audience: service,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin2@dag.house' }],
+      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
       proofs: [cid1],
+      nonce: '2',
     })
 
     const headers = new Headers()

@@ -43,7 +43,7 @@ export const claim = async ({ capability, invocation }, ctx) => {
   const encoded = delegationToString(inv)
   // For testing
   if (ctx.config.ENV === 'test') {
-    return { ok: { encoded } }
+    return { ok: encoded }
   }
 
   const url = `${ctx.url.protocol}//${ctx.url.host}/validate-email?ucan=${encoded}`
@@ -53,5 +53,5 @@ export const claim = async ({ capability, invocation }, ctx) => {
     url,
   })
 
-  return { ok: {} }
+  return { ok: '' }
 }
