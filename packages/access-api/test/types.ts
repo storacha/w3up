@@ -1,7 +1,7 @@
 /* eslint-disable import/export */
-import * as API from "../src/api.js"
+import * as API from '../src/api.js'
 
-export * from "../src/api.js"
+export * from '../src/api.js'
 
 export interface ServerContext {
   id: API.Signer
@@ -11,14 +11,14 @@ export interface ServerContext {
 export interface TestContext {
   service: API.Signer<API.ServiceDID>
 
-  outbox: Array<{to:string, url:string}>
+  outbox: Array<{ to: string; url: string }>
   connection: API.ConnectionView<API.Service>
 
   fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>
 
   webSocket: (input: RequestInfo, init?: RequestInit) => Promise<WebSocket>
 }
-  
+
 export interface Assert {
   equal: <Actual, Expected extends Actual>(
     actual: Actual,
