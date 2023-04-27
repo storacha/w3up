@@ -44,7 +44,7 @@ describe('DbProvisions', () => {
     const spaceHasStorageProvider = await storage.hasStorageProvider(
       spaceA.did()
     )
-    assert.deepEqual(spaceHasStorageProvider, true)
+    assert.deepEqual(spaceHasStorageProvider, { ok: true })
 
     for (const provision of await storage.findForConsumer(spaceA.did())) {
       assert.deepEqual(typeof provision.cid, 'string')

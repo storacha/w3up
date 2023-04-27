@@ -9,6 +9,7 @@ import { createProxyHandler } from '../ucanto/proxy.js'
 /**
  * @typedef {import('../ucanto/types.js').InferService<Omit<import('@web3-storage/capabilities/store'), 'store'>>} StoreServiceInferred
  * @typedef {import('../ucanto/types.js').InferService<Omit<import('@web3-storage/capabilities/upload'), 'upload'>>} UploadServiceInferred
+ * @typedef {{ store: StoreServiceInferred, upload: UploadServiceInferred }} Service
  */
 
 /**

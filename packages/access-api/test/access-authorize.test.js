@@ -98,7 +98,6 @@ describe('access/authorize', function () {
   it('should validate have delegation in the email url', async function () {
     const { issuer, service, conn, mf } = ctx
     const accountDID = 'did:mailto:dag.house:email'
-
     const inv = await Access.authorize
       .invoke({
         issuer,
@@ -110,20 +109,18 @@ describe('access/authorize', function () {
         },
       })
       .execute(conn)
-
     if (inv.out.error) {
       return assert.fail(inv.out.error.message)
     }
-
     const [email] = outbox
     if (!inv) {
       return assert.fail('no email was sent')
     }
-
     const url = new URL(email.url)
-    const rsp = await mf.dispatchFetch(url, { method: 'POST' })
-    assert.deepEqual(rsp.status, 200)
 
+    const rsp = await mf.dispatchFetch(url, { method: 'POST' })
+
+    assert.deepEqual(rsp.status, 200)
     const html = await rsp.text()
     assert(html.includes('Email Validated'))
     assert(html.includes(DidMailto.toEmail(accountDID)))

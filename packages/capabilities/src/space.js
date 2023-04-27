@@ -10,7 +10,7 @@
  */
 
 import * as Store from './store.js'
-import { capability, URI, Schema, ok } from '@ucanto/validator'
+import { capability, URI, Schema, ok, fail } from '@ucanto/validator'
 import { canDelegateURI, equalWith, and } from './utils.js'
 import * as Upload from './upload.js'
 export { top } from './top.js'
@@ -64,5 +64,25 @@ export const recover = capability({
       and(canDelegateURI(child.nb.identity, parent.nb.identity)) ||
       ok({})
     )
+  },
+})
+
+export const allocate = capability({
+  can: 'space/allocate',
+  with: Schema.did({ method: 'key' }),
+  nb: Schema.struct({
+    size: Schema.integer(),
+  }),
+  derives: (child, parent) => {
+    const result = equalWith(child, parent)
+    if (result.ok) {
+      return child.nb.size <= parent.nb.size
+        ? ok({})
+        : fail(
+            `Claimed size ${child.nb.size} escalates delegated size ${parent.nb.size}`
+          )
+    } else {
+      return result
+    }
   },
 })

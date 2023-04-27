@@ -4,7 +4,6 @@ import * as Server from '@ucanto/server'
 import * as validator from '@ucanto/validator'
 import { Failure } from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
-import * as Access from '@web3-storage/capabilities/access'
 import { top } from '@web3-storage/capabilities/top'
 import {
   delegationToString,
@@ -13,12 +12,9 @@ import {
 import { voucherClaimProvider } from './voucher-claim.js'
 import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as uploadApi from './upload-api-proxy.js'
-import { accessAuthorizeProvider } from './access-authorize.js'
-import { accessDelegateProvider } from './access-delegate.js'
-import { accessClaimProvider } from './access-claim.js'
-import { providerAddProvider } from './provider-add.js'
-import { Spaces } from '../models/spaces.js'
-import { handleAccessConfirm } from './access-confirm.js'
+import * as Access from './access.js'
+import * as Consumer from './consumer.js'
+import * as Provider from './provider.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -29,45 +25,16 @@ import { handleAccessConfirm } from './access-confirm.js'
  */
 export function service(ctx) {
   /** @param {Ucanto.DID<'key'>} space */
-  const hasStorageProvider = async (space) =>
-    spaceHasStorageProvider(space, ctx.models.spaces, ctx.models.provisions)
+
   return {
     // @ts-expect-error TODO fix
     store: uploadApi.createStoreProxy(ctx),
     // @ts-expect-error TODO fix
     upload: uploadApi.createUploadProxy(ctx),
 
-    access: {
-      authorize: accessAuthorizeProvider(ctx),
-      // @ts-expect-error TODO fix
-      claim: accessClaimProvider({
-        delegations: ctx.models.delegations,
-        config: ctx.config,
-      }),
-      confirm: Server.provide(
-        Access.confirm,
-        async ({ capability, invocation }) => {
-          // only needed in tests
-          if (ctx.config.ENV !== 'test') {
-            throw new Error(`access/confirm is disabled`)
-          }
-          return handleAccessConfirm(
-            /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
-              invocation
-            ),
-            ctx
-          )
-        }
-      ),
-      delegate: accessDelegateProvider({
-        delegations: ctx.models.delegations,
-        hasStorageProvider,
-      }),
-    },
+    access: Access.provide(ctx),
 
-    provider: {
-      add: providerAddProvider(ctx),
-    },
+    provider: Provider.provide(ctx),
 
     voucher: {
       claim: voucherClaimProvider(ctx),
@@ -224,6 +191,9 @@ export function service(ctx) {
         }
       ),
     },
+
+    consumer: Consumer.provide(ctx),
+
     // @ts-ignore
     testing: {
       pass() {
@@ -232,44 +202,8 @@ export function service(ctx) {
       fail() {
         throw new Error('test fail')
       },
-      /**
-       * @param {Ucanto.Invocation<Ucanto.Capability<'testing/space-storage', Ucanto.DID<'key'>, Ucanto.Failure>>} invocation
-       */
-      'space-storage': async (invocation) => {
-        const spaceId = invocation.capabilities[0].with
-        const hasStorageProvider =
-          await ctx.models.provisions.hasStorageProvider(spaceId)
-        return {
-          hasStorageProvider,
-          foo: 'ben',
-        }
-      },
     },
   }
-}
-
-/**
- * @template {Ucanto.DID} Service
- * @param {Ucanto.DID<'key'>} space
- * @param {Spaces} spaces
- * @param {import('../types/provisions.js').ProvisionsStorage<Service>} provisions
- * @returns {Promise<boolean>}
- */
-async function spaceHasStorageProvider(space, spaces, provisions) {
-  return (
-    (await spaceHasStorageProviderFromProviderAdd(space, provisions)) ||
-    (await spaceHasStorageProviderFromVoucherRedeem(space, spaces))
-  )
-}
-
-/**
- * @param {Ucanto.DID<'key'>} space
- * @param {Spaces} spaces
- * @returns {Promise<boolean>}
- */
-async function spaceHasStorageProviderFromVoucherRedeem(space, spaces) {
-  const registered = Boolean(await spaces.get(space))
-  return registered
 }
 
 /**
@@ -279,6 +213,6 @@ async function spaceHasStorageProviderFromVoucherRedeem(space, spaces) {
  * @returns {Promise<boolean>}
  */
 async function spaceHasStorageProviderFromProviderAdd(space, provisions) {
-  const registeredViaProviderAdd = await provisions.hasStorageProvider(space)
-  return registeredViaProviderAdd
+  const { ok } = await provisions.hasStorageProvider(space)
+  return ok || false
 }

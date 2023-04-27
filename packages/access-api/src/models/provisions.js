@@ -16,7 +16,7 @@ export function createProvisions(services, storage = []) {
   /** @type {Provisions<ServiceId>['hasStorageProvider']} */
   const hasStorageProvider = async (consumerId) => {
     const hasRowWithSpace = storage.some(({ space }) => space === consumerId)
-    return hasRowWithSpace
+    return { ok: hasRowWithSpace }
   }
   /** @type {Provisions<ServiceId>['put']} */
   const put = async (item) => {
@@ -197,13 +197,17 @@ export class DbProvisions {
 
   /** @type {Provisions<ServiceId>['hasStorageProvider']} */
   async hasStorageProvider(consumerDid) {
-    const { provisions } = this.tableNames
-    const { size } = await this.#db
-      .selectFrom(provisions)
-      .select((e) => e.fn.count('provider').as('size'))
-      .where(`${provisions}.consumer`, '=', consumerDid)
-      .executeTakeFirstOrThrow()
-    return size > 0
+    try {
+      const { provisions } = this.tableNames
+      const { size } = await this.#db
+        .selectFrom(provisions)
+        .select((e) => e.fn.count('provider').as('size'))
+        .where(`${provisions}.consumer`, '=', consumerDid)
+        .executeTakeFirstOrThrow()
+      return { ok: size > 0 }
+    } catch {
+      return { ok: false }
+    }
   }
 
   /**

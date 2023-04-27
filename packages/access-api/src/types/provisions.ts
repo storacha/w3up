@@ -18,7 +18,7 @@ export interface ProvisionsStorage<
   ServiceDID extends Ucanto.DID<string> = Ucanto.DID<string>
 > {
   services: ServiceDID[]
-  hasStorageProvider: (consumer: Ucanto.DID<'key'>) => Promise<boolean>
+  hasStorageProvider: (consumer: Ucanto.DID<'key'>) => Promise<Ucanto.Result<boolean, never>>
   /**
    * ensure item is stored
    *

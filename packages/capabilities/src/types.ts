@@ -32,6 +32,7 @@ export interface AccessClaimSuccess {
   delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
 }
 export interface AccessClaimFailure {
+  name: 'AccessClaimFailure'
   message: string
 }
 
@@ -42,7 +43,11 @@ export interface AccessConfirmFailure extends Ucanto.Failure {}
 
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
 export type AccessDelegateSuccess = Unit
-export type AccessDelegateFailure = InsufficientStorage
+export type AccessDelegateFailure = InsufficientStorage | DelegationNotFound
+
+export interface DelegationNotFound extends Ucanto.Failure {
+  name: 'DelegationNotFound'
+}
 
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>

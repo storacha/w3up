@@ -2,6 +2,7 @@
 import { Signer } from '@ucanto/principal/ed25519'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/access'
+import * as API from '../../src/api.js'
 import dotenv from 'dotenv'
 import { createFetchMock } from '@miniflare/core'
 import { Miniflare, Log, LogLevel } from 'miniflare'
@@ -79,15 +80,14 @@ export async function context({ env = {}, globals } = {}) {
   const db = /** @type {D1Database} */ (binds.__D1_BETA__)
   await migrate(db)
 
-  const conn =
-    /** @type {Ucanto.ConnectionView<Access.Service & TestService>} */ (
-      Access.connection({
-        principal: servicePrincipal,
-        // @ts-ignore
-        fetch: mf.dispatchFetch.bind(mf),
-        url: new URL('http://localhost:8787'),
-      })
-    )
+  const conn = /** @type {Ucanto.ConnectionView<API.Service & TestService>} */ (
+    Access.connection({
+      principal: servicePrincipal,
+      // @ts-ignore
+      fetch: mf.dispatchFetch.bind(mf),
+      url: new URL('http://localhost:8787'),
+    })
+  )
 
   // Mock request to https://up.web3.storage/ucan
   // (see https://undici.nodejs.org/#/docs/api/MockAgent?id=mockagentgetorigin)
@@ -99,6 +99,7 @@ export async function context({ env = {}, globals } = {}) {
   return {
     mf,
     conn,
+    connection: conn,
     service: servicePrincipal,
     issuer: await Signer.generate(),
     d1: db,

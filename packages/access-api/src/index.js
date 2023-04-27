@@ -17,6 +17,8 @@ r.add('get', '/validate-email', preValidateEmail)
 r.add('post', '/validate-email', validateEmail)
 r.add('get', '/validate-ws', validateWS)
 r.add('post', '/', postRoot)
+// From tests it appears that we expect requests and responses on this endpoint
+// to be in application/json format.
 r.add('post', '/raw', postJSON)
 r.add('get', '/.debug/error', () => {
   throw new Error('this is the result of handling a request at /.debug/error')

@@ -30,7 +30,6 @@ export async function createCarCid(source) {
 }
 
 /**
- *
  * @param {object} input
  * @param {Ucanto.Signer} input.service
  * @param {Ucanto.Principal} input.agent

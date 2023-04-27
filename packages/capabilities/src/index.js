@@ -6,8 +6,9 @@ import * as Upload from './upload.js'
 import * as Voucher from './voucher.js'
 import * as Access from './access.js'
 import * as Utils from './utils.js'
+import * as Consumer from './consumer.js'
 
-export { Access, Provider, Space, Top, Store, Upload, Voucher, Utils }
+export { Access, Provider, Space, Top, Store, Upload, Voucher, Consumer, Utils }
 
 /** @type {import('./types.js').AbilitiesArray} */
 export const abilitiesAsStrings = [

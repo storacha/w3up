@@ -2,7 +2,6 @@ import {
   delegationsToString,
   stringToDelegation,
 } from '@web3-storage/access/encoding'
-import * as Access from '@web3-storage/capabilities/access'
 import QRCode from 'qrcode'
 import * as DidMailto from '@web3-storage/did-mailto'
 import {
@@ -14,8 +13,6 @@ import {
 import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from '../utils/delegations-response.js'
 import * as accessConfirm from '../service/access-confirm.js'
-import { provide } from '@ucanto/server'
-import * as Ucanto from '@ucanto/interface'
 
 /**
  * @param {import('@web3-storage/worker-utils/router').ParsedRequest} req
@@ -143,27 +140,18 @@ async function authorize(req, env) {
      */
     const request = stringToDelegation(req.query.ucan)
 
-    const confirm = provide(
-      Access.confirm,
-      async ({ capability, invocation }) => {
-        return accessConfirm.handleAccessConfirm(
-          /** @type {Ucanto.Invocation<import('@web3-storage/access/types').AccessConfirm>} */ (
-            invocation
-          ),
-          env
-        )
-      }
-    )
+    const confirm = accessConfirm.provide(env)
     const confirmResult = await confirm(request, {
       id: env.signer,
       principal: Verifier,
     })
+
     if (confirmResult.error) {
       throw new Error('error confirming', {
         cause: confirmResult,
       })
     }
-    const { account, agent } = accessConfirm.parse(request)
+    const { account, agent } = accessConfirm.parse(request.capabilities[0])
     const confirmDelegations = [
       ...delegationsResponse.decode(confirmResult.ok.delegations),
     ]

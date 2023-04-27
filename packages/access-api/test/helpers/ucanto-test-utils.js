@@ -64,15 +64,10 @@ export function createTesterFromContext(createContext, options) {
 }
 
 /**
- * @template T
- * @typedef {import('../access-delegate.test').Resolvable<T>} Resolvable
- */
-
-/**
  * given an iterable of spaces, register them against an access-api
  * using a service-issued voucher/redeem invocation
  *
- * @param {Iterable<Resolvable<Ucanto.Principal<Ucanto.DID<'key'>>>>} spaces
+ * @param {Iterable<Ucanto.Await<Ucanto.Principal<Ucanto.DID<'key'>>>>} spaces
  * @param {object} options
  * @param {Ucanto.Signer<Ucanto.DID<'web'>>} options.service
  * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.agent
@@ -224,8 +219,8 @@ export function warnOnErrorResult(
  * @template Result
  * @typedef {object} InvokeTester
  * @property {(invocation: Ucanto.Invocation<Capability>) => Promise<Result>} invoke
- * @property {Resolvable<Ucanto.Signer<Ucanto.DID<'key'>>>} issuer
- * @property {Resolvable<Ucanto.Signer<Ucanto.DID>>} audience
+ * @property {Ucanto.Await<Ucanto.Signer<Ucanto.DID<'key'>>>} issuer
+ * @property {Ucanto.Await<Ucanto.Signer<Ucanto.DID>>} audience
  */
 
 /**
