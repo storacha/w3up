@@ -32,5 +32,22 @@ export interface Service extends AccessAPI.Service, UploadAPI.Service {
   consumer: {
     has: ServiceMethod<InferInvokedCapability<typeof Capabilities.Consumer.has>, boolean, Failure>
   }
+  customer: {
+    get: ServiceMethod<InferInvokedCapability<typeof Capabilities.Customer.get>, CustomerGetOk, CustomerGetError>
+  }
 }
 
+export interface UnknownProvider extends Failure {
+  name: 'UnknownProvider'
+}
+
+export type CustomerGetError =
+  UnknownProvider
+
+export interface CustomerGetOk {
+  customer: null | {
+    did: AccountDID
+  }
+}
+
+export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>

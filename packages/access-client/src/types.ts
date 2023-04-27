@@ -84,7 +84,7 @@ export type SpaceInfoResult =
   | SpaceRecord
 
 export interface AccountTable {
-  did: URI<'did:'>
+  did: DID<'mailto'>
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
 }

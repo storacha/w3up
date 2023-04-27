@@ -100,10 +100,37 @@ export async function context({ env = {}, globals } = {}) {
     mf,
     conn,
     connection: conn,
+
+    /** @type {typeof fetch} */
+    fetch: /** @type {*} */ (mf.dispatchFetch.bind(mf)),
+    webSocket: openWebSocket.bind(null, mf),
     service: servicePrincipal,
     issuer: await Signer.generate(),
     d1: db,
   }
+}
+
+/**
+ * @param {Miniflare} mf
+ * @param {RequestInfo} input
+ * @param {RequestInit} init
+ * @returns {Promise<WebSocket>}
+ */
+const openWebSocket = async (mf, input, { headers, ...init } = {}) => {
+  const { webSocket } = await mf.dispatchFetch(
+    /** @type {*} */ (input),
+    /** @type {*} */ ({
+      headers: { Upgrade: 'websocket', ...headers },
+      ...init,
+    })
+  )
+
+  if (!webSocket) {
+    throw new Error('WebSocket connection failed')
+  }
+
+  webSocket.accept()
+  return /** @type {*} */ (webSocket)
 }
 
 export function createAnalyticsEngine() {

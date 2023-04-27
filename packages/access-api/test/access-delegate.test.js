@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-only-tests/no-only-tests */
 import * as Delegate from './access-delegate.js'
 import * as assert from 'assert'
@@ -18,7 +19,10 @@ describe('access/delegate', () => {
           deepEqual: assert.deepStrictEqual,
           ok: assert.ok,
         },
-        await context()
+        {
+          outbox: [],
+          ...(await context()),
+        }
       )
     })
   }

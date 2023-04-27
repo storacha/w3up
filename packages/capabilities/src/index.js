@@ -7,8 +7,20 @@ import * as Voucher from './voucher.js'
 import * as Access from './access.js'
 import * as Utils from './utils.js'
 import * as Consumer from './consumer.js'
+import * as Customer from './customer.js'
 
-export { Access, Provider, Space, Top, Store, Upload, Voucher, Consumer, Utils }
+export {
+  Access,
+  Provider,
+  Space,
+  Top,
+  Store,
+  Upload,
+  Voucher,
+  Consumer,
+  Customer,
+  Utils,
+}
 
 /** @type {import('./types.js').AbilitiesArray} */
 export const abilitiesAsStrings = [

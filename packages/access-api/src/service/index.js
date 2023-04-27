@@ -14,6 +14,7 @@ import { voucherRedeemProvider } from './voucher-redeem.js'
 import * as uploadApi from './upload-api-proxy.js'
 import * as Access from './access.js'
 import * as Consumer from './consumer.js'
+import * as Customer from './customer.js'
 import * as Provider from './provider.js'
 
 /**
@@ -193,6 +194,7 @@ export function service(ctx) {
     },
 
     consumer: Consumer.provide(ctx),
+    customer: Customer.provide(ctx),
 
     // @ts-ignore
     testing: {
