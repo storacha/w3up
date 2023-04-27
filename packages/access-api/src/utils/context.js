@@ -88,7 +88,6 @@ export function getContext(request, env, ctx) {
       spaces: new Spaces(config.DB),
       validations: new Validations(config.VALIDATIONS),
       accounts: new Accounts(config.DB),
-      // @ts-expect-error TODO fix
       provisions: new DbProvisions(
         config.PROVIDERS,
         createD1Database(config.DB)

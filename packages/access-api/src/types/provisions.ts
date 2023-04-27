@@ -15,7 +15,7 @@ export interface Provision<ServiceDID extends Ucanto.DID<string>> {
  * stores instances of a storage provider being consumed by a consumer
  */
 export interface ProvisionsStorage<
-  ServiceDID extends Ucanto.DID<string> = Ucanto.DID<string>
+  ServiceDID extends Ucanto.DID<string> = Ucanto.DID<'web'>
 > {
   services: ServiceDID[]
   hasStorageProvider: (

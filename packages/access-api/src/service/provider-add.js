@@ -12,7 +12,7 @@ export const provide = (ctx) =>
 /**
  * @typedef {object} Context
  * @property {object} models
- * @property {API.ProvisionsStorage<API.DID>} models.provisions
+ * @property {API.ProvisionsStorage} models.provisions
  *
  * @param {Server.ProviderInput<API.InferInvokedCapability<typeof Provider.add>>} input
  * @param {Context} context

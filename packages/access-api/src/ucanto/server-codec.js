@@ -1,7 +1,8 @@
-import { Message, Delegation } from '@ucanto/core'
+import { Message, Invocation } from '@ucanto/core'
 import * as UCAN from '@ipld/dag-ucan'
 import { UTF8 } from '@ucanto/transport'
 import { HTTPError } from '@web3-storage/worker-utils/error'
+import * as API from '../api.js'
 
 export const contentType = 'application/json'
 
@@ -115,12 +116,14 @@ export const decode = async ({ body, headers }) => {
 
     // Build the full ucan chain for each invocation from headers data
     invocations.push(
-      Delegation.create({ root: await UCAN.write(ucanView), blocks })
+      Invocation.create({ root: await UCAN.write(ucanView), blocks })
     )
   }
 
-  // @ts-expect-error TODO invocations incompatible
-  const message = await Message.build({ invocations })
+  const message = await Message.build({
+    // eslint-disable-next-line object-shorthand
+    invocations: /** @type {API.Tuple<API.Invocation>} */ (invocations),
+  })
   return /** @type {Message} */ (message)
 }
 
