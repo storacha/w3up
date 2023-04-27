@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /* eslint-disable no-console */
 import { Signer } from '@ucanto/principal/ed25519'
 import * as Ucanto from '@ucanto/interface'
