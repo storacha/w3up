@@ -23,7 +23,6 @@ import {
 } from '@web3-storage/capabilities/types'
 
 export * from '@web3-storage/capabilities/types'
-// @ts-expect-error duplicate export from capabilities types
 export * from '@ucanto/interface'
 
 export interface Service {

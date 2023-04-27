@@ -1,6 +1,6 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
-import { InferInvokedCapability } from '@ucanto/interface'
+import { InferInvokedCapability, Unit } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -9,8 +9,7 @@ import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Unit {}
+export type { Unit }
 /**
  * failure due to a resource not having enough storage capacity.
  */
