@@ -197,7 +197,7 @@ export function service(ctx) {
 }
 
 /**
- * @template {API.DID} Service
+ * @template {API.DID<'web'>} Service
  * @param {API.DID<'key'>} space
  * @param {API.ProvisionsStorage<Service>} provisions
  * @returns {Promise<boolean>}
