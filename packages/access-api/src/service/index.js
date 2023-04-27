@@ -9,13 +9,13 @@ import {
   delegationToString,
   stringToDelegation,
 } from '@web3-storage/access/encoding'
-import { voucherClaimProvider } from './voucher-claim.js'
-import { voucherRedeemProvider } from './voucher-redeem.js'
+
 import * as uploadApi from './upload-api-proxy.js'
 import * as Access from './access.js'
 import * as Consumer from './consumer.js'
 import * as Customer from './customer.js'
 import * as Provider from './provider.js'
+import * as Voucher from './voucher.js'
 
 /**
  * @param {import('../bindings').RouteContext} ctx
@@ -32,16 +32,9 @@ export function service(ctx) {
     store: uploadApi.createStoreProxy(ctx),
     // @ts-expect-error TODO fix
     upload: uploadApi.createUploadProxy(ctx),
-
     access: Access.provide(ctx),
-
     provider: Provider.provide(ctx),
-
-    voucher: {
-      claim: voucherClaimProvider(ctx),
-      redeem: voucherRedeemProvider(ctx),
-    },
-
+    voucher: Voucher.provide(ctx),
     space: {
       info: Server.provide(Space.info, async ({ capability, invocation }) => {
         const spaceDid = capability.with
