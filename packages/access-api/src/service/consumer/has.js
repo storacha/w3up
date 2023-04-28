@@ -9,7 +9,7 @@ export const provide = (context) =>
   Provider.provide(Consumer.has, (input) => has(input, context))
 
 /**
- * @param {Provider.ProviderInput<API.InferInvokedCapability<typeof Consumer.has>>} input
+ * @param {API.Input<Consumer.has>} input
  * @param {API.RouteContext} context
  * @returns {Promise<API.Result<boolean, API.Failure>>}
  */

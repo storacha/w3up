@@ -16,7 +16,7 @@ export const provide = (ctx) =>
  */
 
 /**
- * @param {Server.ProviderInput<API.InferInvokedCapability<typeof Access.delegate>>} input
+ * @param {API.Input<Access.delegate>} input
  * @param {Context} context
  * @returns {Promise<API.Result<API.AccessDelegateSuccess, API.AccessDelegateFailure>>}
  */

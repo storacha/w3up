@@ -27,7 +27,7 @@ export const provide = (ctx) =>
   Provider.provide(Access.confirm, (input) => confirm(input, ctx))
 
 /**
- * @param {Provider.ProviderInput<API.InferInvokedCapability<typeof Access.confirm>>} input
+ * @param {API.Input<Access.confirm>} input
  * @param {API.RouteContext} ctx
  * @returns {Promise<API.Result<API.AccessConfirmSuccess, API.AccessConfirmFailure>>}
  */

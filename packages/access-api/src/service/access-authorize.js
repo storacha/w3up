@@ -1,17 +1,18 @@
 import * as Server from '@ucanto/server'
+import * as API from '../api.js'
 import * as Access from '@web3-storage/capabilities/access'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { delegationToString } from '@web3-storage/access/encoding'
 
 /**
- * @param {import('../bindings').RouteContext} ctx
+ * @param {API.RouteContext} ctx
  */
 export const provide = (ctx) =>
   Server.provide(Access.authorize, (input) => authorize(input, ctx))
 
 /**
- * @param {Server.ProviderInput<Server.InferInvokedCapability<typeof Access.authorize>>} input
- * @param {import('../bindings').RouteContext} ctx
+ * @param {API.Input<Access.authorize>} input
+ * @param {API.RouteContext} ctx
  */
 export const authorize = async ({ capability }, ctx) => {
   /**

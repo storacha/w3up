@@ -14,7 +14,7 @@ export const provide = (ctx) =>
  * @property {object} models
  * @property {API.ProvisionsStorage} models.provisions
  *
- * @param {Server.ProviderInput<API.InferInvokedCapability<typeof Provider.add>>} input
+ * @param {API.Input<Provider.add>} input
  * @param {Context} context
  */
 export const add = async (
@@ -43,6 +43,7 @@ export const add = async (
   }
 
   return await provisions.put({
+    // eslint-disable-next-line object-shorthand
     invocation: /** @type {API.Invocation<API.ProviderAdd>} */ (invocation),
     space: consumer,
     // eslint-disable-next-line object-shorthand

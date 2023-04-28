@@ -9,7 +9,7 @@ export const provide = (context) =>
   Provider.provide(Customer.get, (input) => get(input, context))
 
 /**
- * @param {Provider.ProviderInput<API.InferInvokedCapability<typeof Customer.get>>} input
+ * @param {API.Input<Customer.get>} input
  * @param {API.RouteContext} context
  * @returns {Promise<API.CustomerGetResult>}
  */

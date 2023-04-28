@@ -1,16 +1,17 @@
+import * as API from '../api.js'
 import * as Provider from '@ucanto/server'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { delegationToString } from '@web3-storage/access/encoding'
 
 /**
- * @param {import('../bindings').RouteContext} ctx
+ * @param {API.RouteContext} ctx
  */
 export const provide = (ctx) =>
   Provider.provide(Voucher.claim, (input) => claim(input, ctx))
 
 /**
- * @param {Provider.ProviderInput<Provider.InferInvokedCapability<typeof Voucher.claim>>} input
- * @param {import('../bindings').RouteContext} ctx
+ * @param {API.Input<Voucher.claim>} input
+ * @param {API.RouteContext} ctx
  */
 export const claim = async ({ capability, invocation }, ctx) => {
   const proof = await Voucher.redeem.delegate({

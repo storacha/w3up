@@ -1,6 +1,4 @@
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
-import * as Ucanto from '@ucanto/interface'
+import * as API from '../api.js'
 import * as Provider from '@ucanto/server'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import { Delegation } from '@ucanto/core'
@@ -8,14 +6,14 @@ import { Failure } from '@ucanto/server'
 import { D1Error } from '../utils/d1.js'
 
 /**
- * @param {import('../bindings').RouteContext} ctx
+ * @param {API.RouteContext} ctx
  */
 export const provide = (ctx) =>
   Provider.provide(Voucher.redeem, (input) => redeem(input, ctx))
 
 /**
- * @param {Provider.ProviderInput<Provider.InferInvokedCapability<typeof Voucher.redeem>>} input
- * @param {import('../bindings').RouteContext} ctx
+ * @param {API.Input<Voucher.redeem>} input
+ * @param {API.RouteContext} ctx
  */
 export const redeem = async ({ capability, invocation }, ctx) => {
   if (capability.with !== ctx.signer.did()) {
@@ -28,7 +26,7 @@ export const redeem = async ({ capability, invocation }, ctx) => {
     }
   }
 
-  /** @type {Ucanto.Delegation<Ucanto.Capabilities>[]} */
+  /** @type {API.Delegation<API.Capabilities>[]} */
   const delegations = []
   // We should only save delegation for email identities
   if (capability.nb.identity.startsWith('mailto:')) {

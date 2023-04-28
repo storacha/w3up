@@ -14,8 +14,7 @@ export const provide = (ctx) =>
   Server.provide(Access.claim, (input) => claim(input, ctx))
 
 /**
- * @param {object} input
- * @param {API.Invocation<API.AccessClaim>} input.invocation
+ * @param {API.Input<Access.claim>} input
  * @param {Context} ctx
  * @returns {Promise<API.Result<API.AccessClaimSuccess, API.AccessClaimFailure>>}
  */
