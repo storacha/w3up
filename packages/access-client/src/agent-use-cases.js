@@ -115,41 +115,14 @@ export async function pollAccessClaimUntil(
   opts
 ) {
   const interval = opts?.interval || 250
-  const claimed = await new Promise((resolve, reject) => {
-    opts?.signal?.addEventListener('abort', (e) => {
-      reject(new Error('access/claim polling aborted', { cause: e }))
-    })
-    poll(interval)
-    /**
-     * @param {number} retryAfter
-     */
-    async function poll(retryAfter) {
-      if (opts?.signal?.aborted) {
-        reject(new Error('access/claim polling aborted'))
-      } else {
-        const pollClaimResult = await access.invokeAndExecute(
-          w3caps.Access.claim,
-          { with: delegee }
-        )
-        if (pollClaimResult.error) {
-          return reject(pollClaimResult)
-        }
-        try {
-          const claimedDelegations = Object.values(
-            pollClaimResult.delegations
-          ).flatMap((d) => bytesToDelegations(d))
-          if (delegationsMatch(claimedDelegations)) {
-            resolve(claimedDelegations)
-          } else {
-            setTimeout(() => poll(retryAfter), retryAfter)
-          }
-        } catch (error) {
-          reject(error)
-        }
-      }
-    }
-  })
-  return claimed
+  while (true) {
+    if (opts?.signal?.aborted) throw opts.signal.reason ?? new Error('operation aborted')
+    const res = await access.invokeAndExecute(w3caps.Access.claim, { with: delegee })
+    if (res.error) throw res
+    const claims = Object.values(res.delegations).flatMap(d => bytesToDelegations(d))
+    if (delegationsMatch(claims)) return claims
+    await new Promise(resolve => setTimeout(resolve, interval))
+  }
 }
 
 /**
