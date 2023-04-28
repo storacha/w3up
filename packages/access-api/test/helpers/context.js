@@ -44,10 +44,6 @@ function createBindings(env) {
 }
 
 /**
- * @typedef {{testing: {
- * pass: Ucanto.ServiceMethod<*, string, Ucanto.Failure>
- * fail: Ucanto.ServiceMethod<*, never, Ucanto.Failure>
- * }}} TestService
  * @typedef {object} Options
  * @property {Partial<AccessApiBindings>} [env] - environment variables to use when configuring access-api. Defaults to process.env.
  * @property {Record<string, unknown>} [globals] - globals passed into miniflare
@@ -81,7 +77,7 @@ export async function context({ env = {}, globals } = {}) {
   const db = /** @type {D1Database} */ (binds.__D1_BETA__)
   await migrate(db)
 
-  const conn = /** @type {Ucanto.ConnectionView<API.Service & TestService>} */ (
+  const conn = /** @type {Ucanto.ConnectionView<API.Service>} */ (
     Access.connection({
       principal: servicePrincipal,
       // @ts-ignore
