@@ -116,12 +116,17 @@ export async function pollAccessClaimUntil(
 ) {
   const interval = opts?.interval || 250
   while (true) {
-    if (opts?.signal?.aborted) throw opts.signal.reason ?? new Error('operation aborted')
-    const res = await access.invokeAndExecute(w3caps.Access.claim, { with: delegee })
+    if (opts?.signal?.aborted)
+      throw opts.signal.reason ?? new Error('operation aborted')
+    const res = await access.invokeAndExecute(w3caps.Access.claim, {
+      with: delegee,
+    })
     if (res.error) throw res
-    const claims = Object.values(res.delegations).flatMap(d => bytesToDelegations(d))
+    const claims = Object.values(res.delegations).flatMap((d) =>
+      bytesToDelegations(d)
+    )
     if (delegationsMatch(claims)) return claims
-    await new Promise(resolve => setTimeout(resolve, interval))
+    await new Promise((resolve) => setTimeout(resolve, interval))
   }
 }
 
