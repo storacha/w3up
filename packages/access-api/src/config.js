@@ -2,6 +2,7 @@
 // eslint-disable-next-line no-unused-vars
 import * as UCAN from '@ucanto/interface'
 import { DID } from '@ucanto/core'
+import * as release from './utils/release.build.js'
 
 /**
  * Loads configuration variables from the global environment and returns a JS object
@@ -14,15 +15,7 @@ export function loadConfig(env) {
   const vars = {}
 
   /** @type {Array<keyof env>} */
-  const required = [
-    'DID',
-    'ENV',
-    'DEBUG',
-    'PRIVATE_KEY',
-    'SENTRY_DSN',
-    'POSTMARK_TOKEN',
-    'LOGTAIL_TOKEN',
-  ]
+  const required = ['DID', 'ENV', 'DEBUG', 'PRIVATE_KEY', 'POSTMARK_TOKEN']
 
   for (const name of required) {
     const val = env[name]
@@ -47,21 +40,21 @@ export function loadConfig(env) {
 
     POSTMARK_TOKEN: vars.POSTMARK_TOKEN,
     POSTMARK_SENDER: env.POSTMARK_SENDER,
-    SENTRY_DSN: vars.SENTRY_DSN,
-    LOGTAIL_TOKEN: vars.LOGTAIL_TOKEN,
+    SENTRY_DSN: env.SENTRY_DSN,
+    LOGTAIL_TOKEN: env.LOGTAIL_TOKEN,
     UCAN_LOG_BASIC_AUTH: env.UCAN_LOG_BASIC_AUTH,
     UCAN_LOG_URL: env.UCAN_LOG_URL,
 
     // These are injected in esbuild
     // @ts-ignore
     // eslint-disable-next-line no-undef
-    BRANCH: ACCOUNT_BRANCH,
+    BRANCH: env.ACCOUNT_BRANCH ?? '',
     // @ts-ignore
     // eslint-disable-next-line no-undef
-    VERSION: ACCOUNT_VERSION,
+    VERSION: env.ACCOUNT_VERSION ?? release.name ?? '',
     // @ts-ignore
     // eslint-disable-next-line no-undef
-    COMMITHASH: ACCOUNT_COMMITHASH,
+    COMMITHASH: env.ACCOUNT_COMMITHASH ?? release.gitRevShort ?? '',
 
     PRIVATE_KEY: vars.PRIVATE_KEY,
     DID: /** @type {UCAN.DID<"web">} */ (DID.parse(vars.DID).did()),

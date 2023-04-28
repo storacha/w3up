@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.1](https://github.com/web3-storage/w3up/compare/access-v12.0.0...access-v12.0.1) (2023-04-14)
+
+
+### Bug Fixes
+
+* stop polling after authorizeWaitAndClaim is aborted ([#756](https://github.com/web3-storage/w3up/issues/756)) ([55cd89d](https://github.com/web3-storage/w3up/commit/55cd89de5ef491248c5f8acdcb0b3da0e6f4351d))
+
 ## [12.0.0](https://github.com/web3-storage/w3up/compare/access-v11.2.0...access-v12.0.0) (2023-04-06)
 
 
