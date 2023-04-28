@@ -33,6 +33,7 @@ export interface SpaceProviderRegistry {
   hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
 }
 
+export { AccessAPI, UploadAPI }
 export interface Service extends AccessAPI.Service, UploadAPI.Service {
   consumer: {
     has: ServiceMethod<

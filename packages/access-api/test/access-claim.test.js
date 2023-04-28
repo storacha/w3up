@@ -3,6 +3,7 @@
 import * as Suite from './access-claim.js'
 import * as assert from 'assert'
 import { context } from './helpers/context.js'
+import { queue } from './helpers/utils.js'
 
 describe('access/claim', () => {
   for (const [name, test] of Object.entries(Suite.test)) {
@@ -14,7 +15,8 @@ describe('access/claim', () => {
 
     define(name, async () => {
       /** @type {{to:string, url:string}[]} */
-      const outbox = []
+      const buffer = []
+      const mail = queue(buffer)
       await test(
         {
           equal: assert.strictEqual,
@@ -22,7 +24,7 @@ describe('access/claim', () => {
           ok: assert.ok,
         },
         {
-          outbox,
+          mail,
           ...(await context({
             globals: {
               email: {
@@ -30,7 +32,7 @@ describe('access/claim', () => {
                  * @param {*} email
                  */
                 sendValidation(email) {
-                  outbox.push(email)
+                  mail.put(email)
                 },
               },
             },

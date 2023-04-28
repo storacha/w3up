@@ -11,7 +11,7 @@ export interface ServerContext {
 export interface TestContext {
   service: API.Signer<API.ServiceDID>
 
-  outbox: Array<{ to: string; url: string }>
+  mail: { take: () => API.Await<{ to: string; url: string }> }
   connection: API.ConnectionView<API.Service>
 
   fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>

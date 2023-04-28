@@ -15,7 +15,7 @@ import {
  */
 export const test = {
   'should issue access/confirm': async (assert, context) => {
-    const { space, account, service, outbox, connection } = await setup(context)
+    const { space, account, service, mail, connection } = await setup(context)
 
     const inv = await Access.authorize
       .invoke({
@@ -31,7 +31,7 @@ export const test = {
 
     assert.equal(inv.out.error, undefined)
 
-    const [email] = outbox
+    const email = await mail.take()
     assert.ok(email, 'email was sent')
 
     const url = new URL(email.url)
@@ -76,7 +76,7 @@ export const test = {
     assert,
     context
   ) => {
-    const { account, agent, service, outbox, connection } = await setup(context)
+    const { account, agent, service, mail, connection } = await setup(context)
     const auth = await Access.authorize
       .invoke({
         issuer: agent,
@@ -90,7 +90,7 @@ export const test = {
       .execute(connection)
 
     assert.equal(auth.out.error, undefined, 'should not fail')
-    const [email] = outbox
+    const email = await mail.take()
     assert.ok(email, 'email was sent')
 
     const rsp = await context.fetch(email.url, { method: 'POST' })
@@ -104,9 +104,7 @@ export const test = {
 
   'should send confirmation email with link that, when clicked, allows for access/claim':
     async (assert, context) => {
-      const { agent, account, service, outbox, connection } = await setup(
-        context
-      )
+      const { agent, account, service, mail, connection } = await setup(context)
 
       const auth = await Access.authorize
         .invoke({
@@ -121,7 +119,7 @@ export const test = {
         .execute(connection)
 
       assert.equal(auth.out.error, undefined, 'invocation should not fail')
-      const [email] = outbox
+      const email = await mail.take()
       assert.ok(email, 'email was sent')
 
       const confirmEmailPostResponse = await context.fetch(email.url, {
@@ -196,7 +194,7 @@ export const test = {
     },
 
   'should receive delegation in the ws': async (assert, context) => {
-    const { account, agent, service, outbox, connection } = await setup(context)
+    const { account, agent, service, mail, connection } = await setup(context)
 
     const auth = await Access.authorize
       .invoke({
@@ -211,7 +209,7 @@ export const test = {
       .execute(connection)
 
     assert.equal(auth.out.error, undefined, 'should not fail')
-    const [email] = outbox
+    const email = await mail.take()
     assert.ok(email, 'email was sent')
 
     // click email url
@@ -267,7 +265,7 @@ export const test = {
   },
 
   'should receive account delegations': async (assert, context) => {
-    const { space, account, agent, service, outbox, connection } = await setup(
+    const { space, account, agent, service, mail, connection } = await setup(
       context
     )
 
@@ -323,7 +321,7 @@ export const test = {
     assert.equal(auth.out.error, undefined, 'authorize succeeded')
 
     // now we are going to complete authorization flow following the email link
-    const [email] = outbox
+    const email = await mail.take()
     assert.ok(email, 'email was sent')
     const confirmEmailPostResponse = await context.fetch(email.url, {
       method: 'POST',

@@ -3,6 +3,7 @@
 import * as Suite from './access-authorize.js'
 import * as assert from 'assert'
 import { context } from './helpers/context.js'
+import { queue } from './helpers/utils.js'
 
 describe('access/authorize', () => {
   for (const [name, test] of Object.entries(Suite.test)) {
@@ -13,8 +14,8 @@ describe('access/authorize', () => {
       : it
 
     define(name, async () => {
-      /** @type {{to:string, url:string}[]} */
-      const outbox = []
+      const mail = queue(/** @type {{to:string, url:string}[]} */ ([]))
+
       await test(
         {
           equal: assert.strictEqual,
@@ -22,7 +23,7 @@ describe('access/authorize', () => {
           ok: assert.ok,
         },
         {
-          outbox,
+          mail,
           ...(await context({
             globals: {
               email: {
@@ -30,7 +31,7 @@ describe('access/authorize', () => {
                  * @param {*} email
                  */
                 sendValidation(email) {
-                  outbox.push(email)
+                  mail.put(email)
                 },
               },
             },

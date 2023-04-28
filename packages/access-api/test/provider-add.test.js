@@ -1,4 +1,3 @@
-import { assertNotError, registerSpaces } from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import * as assert from 'assert'
 import * as ucanto from '@ucanto/core'
@@ -10,16 +9,19 @@ import {
   createContextWithMailbox,
   createAuthorization,
   Context,
+  provisionProvider,
 } from './helpers/utils.js'
 
 describe(`provider/add`, () => {
   it(`can invoke as did:mailto after authorize confirmation`, async () => {
     const { space, agent, account, ...context } = await setup()
 
-    await registerSpaces([space], {
-      ...context,
-      account,
+    await provisionProvider({
+      service: context.service,
       agent,
+      space,
+      account,
+      connection: context.connection,
     })
 
     await testAuthorizeClaimProviderAdd({
@@ -77,7 +79,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addStorageProviderResult)
+    assert.equal(addStorageProviderResult.out.error, undefined)
 
     // storage provider added. So we should be able to delegate now
     const accessDelegateResult = await ucanto
@@ -106,7 +108,8 @@ describe(`provider/add`, () => {
         ],
       })
       .execute(context.conn)
-    assertNotError(accessDelegateResult)
+
+    assert.equal(accessDelegateResult.out.error, undefined)
   })
 
   it('provider/add allows for store/info ', async () => {
@@ -135,7 +138,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addStorageProviderResult)
+    assert.equal(addStorageProviderResult.out.error, undefined)
 
     // storage provider added. So we should be able to space/info now
     const spaceInfoResult = await ucanto
@@ -189,7 +192,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addNFTStorage)
+    assert.equal(addNFTStorage.out.error, undefined)
 
     const w3space = await principal.ed25519.generate()
     const addW3Storage = await Provider.add
@@ -205,7 +208,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addW3Storage)
+    assert.equal(addW3Storage.out.error, undefined)
   })
 
   it('provider/add can not add two diff providers to the same space', async () => {
@@ -229,7 +232,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addNFTStorage)
+    assert.equal(addNFTStorage.out.error, undefined)
 
     const addW3Storage = await Provider.add
       .invoke({
@@ -369,7 +372,7 @@ async function testAuthorizeClaimProviderAdd(options) {
       typeof providerAddAsAccountResult === 'object',
     `providerAddAsAccountResult is an object`
   )
-  assertNotError(providerAddAsAccountResult)
+  assert.equal(providerAddAsAccountResult.out.error, undefined)
 
   const spaceStorageResult = await Consumer.has
     .invoke({

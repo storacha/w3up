@@ -3,6 +3,7 @@
 import * as Delegate from './access-delegate.js'
 import * as assert from 'assert'
 import { context } from './helpers/context.js'
+import { queue } from './helpers/utils.js'
 
 describe('access/delegate', () => {
   for (const [name, test] of Object.entries(Delegate.test)) {
@@ -12,6 +13,7 @@ describe('access/delegate', () => {
       ? it.skip
       : it
 
+    const mail = queue(/** @type {{to:string, url:string}[]} */ ([]))
     define(name, async () => {
       await test(
         {
@@ -20,8 +22,19 @@ describe('access/delegate', () => {
           ok: assert.ok,
         },
         {
-          outbox: [],
-          ...(await context()),
+          mail,
+          ...(await context({
+            globals: {
+              email: {
+                /**
+                 * @param {*} email
+                 */
+                sendValidation(email) {
+                  mail.put(email)
+                },
+              },
+            },
+          })),
         }
       )
     })

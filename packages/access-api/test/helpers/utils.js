@@ -294,3 +294,41 @@ export const provisionProvider = async ({
       proofs: await createAuthorization({ agent, service, account }),
     })
     .execute(connection)
+
+/**
+ * @template T
+ * @param {T[]} buffer
+ * @returns
+ */
+export const queue = (buffer = []) => {
+  /** @type {Array<(input:T) => void>} */
+  const reads = []
+
+  /**
+   * @param {T} message
+   */
+  const put = (message) => {
+    const read = reads.shift()
+    if (read) {
+      read(message)
+    } else {
+      buffer.push(message)
+    }
+  }
+
+  /**
+   * @returns {Promise<T>}
+   */
+  const take = () => {
+    return new Promise((resolve) => {
+      const message = buffer.shift()
+      if (message) {
+        resolve(message)
+      } else {
+        reads.push(resolve)
+      }
+    })
+  }
+
+  return { put, take }
+}
