@@ -117,7 +117,7 @@ export async function pollAccessClaimUntil(
   const interval = opts?.interval || 250
   const claimed = await new Promise((resolve, reject) => {
     opts?.signal?.addEventListener('abort', (e) => {
-      reject(new Error('pollAccessClaimUntil aborted', { cause: e }))
+      reject(new Error('access/claim polling aborted', { cause: e }))
     })
     poll(interval)
     /**
@@ -125,7 +125,7 @@ export async function pollAccessClaimUntil(
      */
     async function poll(retryAfter) {
       if (opts?.signal?.aborted) {
-        reject(new Error('pollAccessClaimUntil aborted'))
+        reject(new Error('access/claim polling aborted'))
       } else {
         const pollClaimResult = await access.invokeAndExecute(
           w3caps.Access.claim,
