@@ -1,4 +1,3 @@
-// @ts-ignore
 // eslint-disable-next-line no-unused-vars
 
 import * as API from '../api.js'
@@ -54,11 +53,12 @@ export class Spaces {
         /** @type {import('@web3-storage/access/types').SpaceTableMetadata | undefined} */ (
           /** @type {unknown} */ (invocation.facts[0])
         )
+
       const result = await this.d1
         .insertInto('spaces')
         .values({
           agent: invocation.issuer.did(),
-          did: capability.nb.space,
+          did: /** @type {API.DIDKey} */ (capability.nb.space),
           email: capability.nb.identity.replace('mailto:', ''),
           invocation: delegationToString(invocation),
           product: capability.nb.product,
@@ -80,7 +80,7 @@ export class Spaces {
   /**
    * Get space by DID
    *
-   * @param {API.URI<"did:">} did
+   * @param {API.DIDKey} did
    */
   async get(did) {
     const space = await this.d1
@@ -95,7 +95,7 @@ export class Spaces {
   }
 
   /**
-   * @param {API.URI<"did:">} did
+   * @param {API.DIDKey} did
    */
 
   async hasStorageProvider(did) {

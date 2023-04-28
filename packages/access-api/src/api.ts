@@ -7,16 +7,22 @@ import type {
   Unit,
   Result,
   ServiceMethod,
+  Match,
+  CapabilityParser,
+  ParsedCapability,
+  DelegationOptions,
   InferInvokedCapability,
 } from '@ucanto/interface'
 import * as UploadAPI from './service/upload-api-proxy.js'
 import * as AccessAPI from '@web3-storage/access/types'
 import type { RouteContext } from './bindings.js'
 import * as Capabilities from '@web3-storage/capabilities'
+import type { ProviderInput } from '@ucanto/server'
 
+export * from '@web3-storage/access/types'
 export * from '@ucanto/interface'
 export * from '@web3-storage/capabilities/types'
-export type { SpaceDID, Unit, RouteContext }
+export type { SpaceDID, Unit, RouteContext, DelegationOptions }
 export type AccountDID = DID<'mailto'>
 export type ServiceDID = DID<'web'>
 
@@ -49,6 +55,18 @@ export interface Service extends AccessAPI.Service, UploadAPI.Service {
       CustomerGetError
     >
   }
+  console: {
+    log: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Console.log>,
+      {},
+      never
+    >
+    error: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Console.error>,
+      never,
+      Failure & { cause: unknown }
+    >
+  }
 }
 
 export interface UnknownProvider extends Failure {
@@ -64,3 +82,6 @@ export interface CustomerGetOk {
 }
 
 export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>
+
+export type Input<C extends CapabilityParser<Match<ParsedCapability>>> =
+  ProviderInput<InferInvokedCapability<C> & ParsedCapability>

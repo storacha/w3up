@@ -2,7 +2,7 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Legacy from '@ucanto/transport/legacy'
 import * as Codec from '@ucanto/transport/codec'
-import { service } from '../service/index.js'
+import { provide } from '../service/index.js'
 import * as json from '../ucanto/server-codec.js'
 import * as API from '../bindings.js'
 
@@ -35,7 +35,7 @@ export async function post({ headers, body }, env, ctx) {
   const server = Server.create({
     id: env.signer,
     codec,
-    service: service(env),
+    service: provide(env),
     catch: (/** @type {string | Error} */ err) => {
       env.log.error(err)
     },

@@ -12,6 +12,8 @@ import { capability, URI, DID, Schema, ok } from '@ucanto/validator'
 import { equalWith, and, equal } from './utils.js'
 export { top } from './top.js'
 
+export const SpaceDID = DID.match({ method: 'key' })
+
 /**
  * Products are identified by the CID of the DAG that describes them.
  */

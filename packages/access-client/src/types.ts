@@ -18,6 +18,7 @@ import type {
   UnknownMatch,
   Delegation,
   DID,
+  DIDKey,
   Signer,
   SignerArchive,
   SigAlg,
@@ -63,10 +64,10 @@ export * from './errors.js'
  */
 
 export interface SpaceTable {
-  did: URI<'did:'>
-  agent: URI<'did:'>
+  did: DIDKey
+  agent: DID
   email: string
-  product: URI<`${string}:`>
+  product: URI
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
   metadata: SpaceTableMetadata | null

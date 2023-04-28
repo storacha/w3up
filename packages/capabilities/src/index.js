@@ -8,6 +8,7 @@ import * as Access from './access.js'
 import * as Utils from './utils.js'
 import * as Consumer from './consumer.js'
 import * as Customer from './customer.js'
+import * as Console from './console.js'
 
 export {
   Access,
@@ -19,6 +20,7 @@ export {
   Voucher,
   Consumer,
   Customer,
+  Console,
   Utils,
 }
 

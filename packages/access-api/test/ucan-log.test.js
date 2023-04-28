@@ -72,7 +72,8 @@ describe('ucan-log', function () {
       audience: service,
       capability: {
         with: issuer.did(),
-        can: 'testing/pass',
+        can: 'console/log',
+        nb: { value: 'pass' },
       },
       expiration: UCAN.now() + 100,
     })
@@ -82,7 +83,8 @@ describe('ucan-log', function () {
       audience: service,
       capability: {
         with: issuer.did(),
-        can: 'testing/fail',
+        can: 'console/error',
+        nb: { error: 'Boom!' },
       },
       expiration: UCAN.now() + 100,
     })
@@ -110,12 +112,16 @@ describe('ucan-log', function () {
     )
 
     assert.ok(passReceipt, 'receipt have pass receipt')
-    assert.equal(passReceipt.out, 'test pass', 'pass should have ok result')
+    assert.deepEqual(
+      passReceipt.out,
+      { ok: 'pass' },
+      'pass should have ok result'
+    )
 
     assert.ok(failReceipt, 'receipt have fail receipt')
     assert.match(
-      failReceipt.out.error.message,
-      /test fail/,
+      failReceipt.out.error.cause,
+      /Boom!/,
       'fail receipt have error result'
     )
 
@@ -127,11 +133,11 @@ describe('ucan-log', function () {
       )
     }
 
-    assert.deepEqual(passResult.out, 'test pass', 'pass result should be ok')
+    assert.deepEqual(passResult.out, { ok: 'pass' }, 'pass result should be ok')
     assert.ok(failResult.out.error, 'fail result should be error')
     assert.match(
-      failResult.out.error.message,
-      /test fail/,
+      JSON.stringify(failResult.out.error),
+      /Boom!/,
       'fail result should contain error'
     )
   })
