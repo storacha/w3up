@@ -8,7 +8,7 @@ import {
   ResponseEncoder,
   ServiceMethod,
   TheCapabilityParser,
-  Failure
+  Failure,
 } from '@ucanto/interface'
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}

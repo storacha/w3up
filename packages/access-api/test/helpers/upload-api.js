@@ -2,24 +2,23 @@
 import * as Ucanto from '@ucanto/interface'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
+import * as API from '../../src/api.js'
 
 /**
  * @param {object} options
  * @param {Ucanto.Signer} options.id
- * @returns {Ucanto.ServerView<{
- * store: import('../../src/service/upload-api-proxy.js').StoreServiceInferred
- * upload: import('../../src/service/upload-api-proxy.js').UploadServiceInferred
- * }>}
+ * @returns {Ucanto.ServerView<API.UploadAPI.Service>}
  */
 export function createMockUploadApiServer({ id }) {
   // eslint-disable-next-line unicorn/consistent-function-scoping
   async function serviceMethod() {
-    return { mockUploadAPi: true }
+    return { ok: { mockUploadAPi: true } }
   }
+
   const server = Server.create({
     id,
     codec: CAR.inbound,
-    service: {
+    service: /** @type {API.UploadAPI.Service} */ ({
       store: {
         list: serviceMethod,
         add: serviceMethod,
@@ -30,9 +29,9 @@ export function createMockUploadApiServer({ id }) {
         add: serviceMethod,
         remove: serviceMethod,
       },
-    },
+    }),
   })
-  // @ts-expect-error TODO fix
+
   return server
 }
 

@@ -13,7 +13,7 @@ import {
   DID,
   Principal,
   Unit,
-  Failure
+  Failure,
 } from '@ucanto/interface'
 import {
   StoreAdd,
@@ -79,13 +79,11 @@ export interface UploadAddOk {
   shards?: CARLink[]
 }
 
-
 export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
 export interface UploadDidNotRemove {
   root?: undefined
   shards?: undefined
 }
-
 
 export interface UploadDIDRemove extends UploadAddOk {}
 export interface UploadListOk extends ListResponse<UploadListItem> {}

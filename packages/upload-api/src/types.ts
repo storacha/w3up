@@ -8,7 +8,7 @@ import type {
   DID,
   InboundCodec,
   Result,
-  Unit
+  Unit,
 } from '@ucanto/interface'
 
 import { ToString, UnknownLink } from 'multiformats'
@@ -171,7 +171,6 @@ export interface StoreAddUpload {
   headers: Record<string, string>
 }
 
-
 export interface UploadAddInput {
   space: DID
   root: UnknownLink
@@ -182,12 +181,9 @@ export interface UploadAddInput {
 
 export interface UploadAddOk
   extends Omit<UploadAddInput, 'space' | 'issuer' | 'invocation'> {}
-export type UploadRemoveOk =
-  | UploadDIDRemove
-  | UploadDidNotRemove
+export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
 
-export interface UploadDIDRemove extends UploadAddOk {
-}
+export interface UploadDIDRemove extends UploadAddOk {}
 export interface UploadDidNotRemove {
   root?: undefined
   shards?: undefined

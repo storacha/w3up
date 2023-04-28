@@ -23,7 +23,7 @@ import type {
   SigAlg,
   Caveats,
   Unit,
-  ToString
+  ToString,
 } from '@ucanto/interface'
 
 import type {
