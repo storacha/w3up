@@ -1,5 +1,16 @@
 # Changelog
 
+## [9.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v8.3.0...upload-client-v9.0.0) (2023-05-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to ucanto7.x.x ([#774](https://github.com/web3-storage/w3up/issues/774))
+
+### Features
+
+* upgrade to ucanto7.x.x ([#774](https://github.com/web3-storage/w3up/issues/774)) ([0cc6e66](https://github.com/web3-storage/w3up/commit/0cc6e66a80476e05c75bea94c1bee9bd12cbacf5))
+
 ## [8.3.0](https://github.com/web3-storage/w3up/compare/upload-client-v8.2.0...upload-client-v8.3.0) (2023-04-05)
 
 
