@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/did-mailto",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "did:mailto",
   "repository": {
     "type": "git",
