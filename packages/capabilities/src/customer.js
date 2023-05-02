@@ -19,7 +19,7 @@ export const get = capability({
   derives: (child, parent) => {
     return (
       and(equalWith(child, parent)) ||
-      and(equal(child.nb.customer, parent.nb.customer, 'consumer')) ||
+      and(equal(child.nb.customer, parent.nb.customer, 'customer')) ||
       ok({})
     )
   },

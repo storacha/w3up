@@ -46,8 +46,7 @@ export const add = async (
     // eslint-disable-next-line object-shorthand
     invocation: /** @type {API.Invocation<API.ProviderAdd>} */ (invocation),
     space: consumer,
-    // eslint-disable-next-line object-shorthand
-    provider: provider,
+    provider,
     account: accountDID,
   })
 }

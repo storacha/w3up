@@ -27,7 +27,7 @@ export class Accounts {
   }
 
   /**
-   * @param {Ucanto.DID<"mailto">} did
+   * @param {Ucanto.DID<'mailto'>} did
    */
   async create(did) {
     const result = await this.d1

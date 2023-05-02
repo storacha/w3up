@@ -8,7 +8,7 @@ export const SpaceDID = DID.match({ method: 'key' })
 
 /**
  * Capability can be invoked by a provider to check if it has given space as
- * a customer.
+ * a consumer.
  */
 export const has = capability({
   can: 'consumer/has',

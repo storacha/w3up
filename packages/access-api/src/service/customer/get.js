@@ -14,6 +14,12 @@ export const provide = (context) =>
  * @returns {Promise<API.CustomerGetResult>}
  */
 const get = async ({ capability }, context) => {
+  /**
+   * Ensure that resource is the service DID, which implies it's either
+   * invoked by service itself or an authorized delegate (like admin).
+   * In other words no user will be able to invoke this unless service
+   * explicitly delegated capability to them to do so.
+   */
   if (capability.with !== context.signer.did()) {
     return { error: new UnknownProvider(capability.with) }
   }

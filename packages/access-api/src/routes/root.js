@@ -7,11 +7,13 @@ import * as json from '../ucanto/server-codec.js'
 import * as API from '../bindings.js'
 
 /**
- * We define a ucanto codec that will switch encoding based on the content-type
- * and accept headers. If the content-type is `application/vnd.ipld.car` it will
- * use CAR encoding and decoding. If the content-type is `application/car` it
- * will use legacy encoding and decoding. If the content-type is
- * `application/json` it will use JSON encoding and decoding.
+ * We define a ucanto codec that will switch encoder / decoder based on the `content-type`
+ * and `accept` headers respectively. If the `content-type` and `accept` headers are set to
+ * `application/vnd.ipld.car` CAR encoder / decoder is used. If the `content-type` is set to
+ * `application/car` legacy CAR decoder (which different from current CAR decoder) is used.
+ * Legacy clients did not set `accept` header which is handled by `*/*;q=0.1` case that uses
+ * `Legacy.response` that encodes in (CBOR) format expected by those clients. If `content-type`
+ * and `accept` are set to `application/json`  JSON encoder and decoder are used.
  */
 const codec = Codec.inbound({
   decoders: {
