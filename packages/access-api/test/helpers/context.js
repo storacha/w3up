@@ -1,7 +1,9 @@
+/* eslint-disable jsdoc/no-undefined-types */
 /* eslint-disable no-console */
 import { Signer } from '@ucanto/principal/ed25519'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/access'
+import * as API from '../../src/api.js'
 import dotenv from 'dotenv'
 import { createFetchMock } from '@miniflare/core'
 import { Miniflare, Log, LogLevel } from 'miniflare'
@@ -42,10 +44,6 @@ function createBindings(env) {
 }
 
 /**
- * @typedef {{testing: {
- * pass: Ucanto.ServiceMethod<*, string, Ucanto.Failure>
- * fail: Ucanto.ServiceMethod<*, never, Ucanto.Failure>
- * }}} TestService
  * @typedef {object} Options
  * @property {Partial<AccessApiBindings>} [env] - environment variables to use when configuring access-api. Defaults to process.env.
  * @property {Record<string, unknown>} [globals] - globals passed into miniflare
@@ -79,15 +77,14 @@ export async function context({ env = {}, globals } = {}) {
   const db = /** @type {D1Database} */ (binds.__D1_BETA__)
   await migrate(db)
 
-  const conn =
-    /** @type {Ucanto.ConnectionView<Access.Service & TestService>} */ (
-      Access.connection({
-        principal: servicePrincipal,
-        // @ts-ignore
-        fetch: mf.dispatchFetch.bind(mf),
-        url: new URL('http://localhost:8787'),
-      })
-    )
+  const conn = /** @type {Ucanto.ConnectionView<API.Service>} */ (
+    Access.connection({
+      principal: servicePrincipal,
+      // @ts-ignore
+      fetch: mf.dispatchFetch.bind(mf),
+      url: new URL('http://localhost:8787'),
+    })
+  )
 
   // Mock request to https://up.web3.storage/ucan
   // (see https://undici.nodejs.org/#/docs/api/MockAgent?id=mockagentgetorigin)
@@ -99,10 +96,38 @@ export async function context({ env = {}, globals } = {}) {
   return {
     mf,
     conn,
+    connection: conn,
+
+    /** @type {typeof fetch} */
+    fetch: /** @type {*} */ (mf.dispatchFetch.bind(mf)),
+    webSocket: openWebSocket.bind(null, mf),
     service: servicePrincipal,
     issuer: await Signer.generate(),
     d1: db,
   }
+}
+
+/**
+ * @param {Miniflare} mf
+ * @param {RequestInfo} input
+ * @param {RequestInit} init
+ * @returns {Promise<WebSocket>}
+ */
+const openWebSocket = async (mf, input, { headers, ...init } = {}) => {
+  const { webSocket } = await mf.dispatchFetch(
+    /** @type {*} */ (input),
+    /** @type {*} */ ({
+      headers: { Upgrade: 'websocket', ...headers },
+      ...init,
+    })
+  )
+
+  if (!webSocket) {
+    throw new Error('WebSocket connection failed')
+  }
+
+  webSocket.accept()
+  return /** @type {*} */ (webSocket)
 }
 
 export function createAnalyticsEngine() {

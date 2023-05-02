@@ -3,7 +3,6 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import { CID } from 'multiformats'
@@ -79,7 +78,7 @@ describe('ShardStoringStream', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse[]} */
+    /** @type {import('../src/types.js').StoreAddUpload[]} */
     const res = [
       {
         status: 'upload',
@@ -106,7 +105,7 @@ describe('ShardStoringStream', () => {
           assert.equal(invCap.can, 'store/add')
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), cars[invokes].cid.toString())
-          return res[invokes++]
+          return { ok: res[invokes++] }
         }),
       },
     })
@@ -114,13 +113,11 @@ describe('ShardStoringStream', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -183,13 +180,11 @@ describe('ShardStoringStream', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 

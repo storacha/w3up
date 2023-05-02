@@ -4,7 +4,6 @@ import * as Client from '@ucanto/client'
 // eslint-disable-next-line no-unused-vars
 import * as Ucanto from '@ucanto/interface'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
@@ -47,6 +46,7 @@ const agentToData = new WeakMap()
 
 /**
  * @typedef {import('./types').Service} Service
+ * @typedef {import('@ucanto/interface').Receipt<any, any>} Receipt
  */
 
 /**
@@ -69,8 +69,7 @@ const agentToData = new WeakMap()
 export function connection(options = {}) {
   return Client.connect({
     id: options.principal ?? PRINCIPAL,
-    encoder: CAR,
-    decoder: CBOR,
+    codec: CAR.outbound,
     channel:
       options.channel ??
       HTTP.open({
@@ -342,7 +341,7 @@ export class Agent {
       nb: { identity: URI.from(`mailto:${email}`) },
     })
 
-    if (inv && inv.error) {
+    if (inv && inv.out.error) {
       throw new Error('Recover validation failed', { cause: inv })
     }
 
@@ -359,12 +358,12 @@ export class Agent {
       },
     })
 
-    if (recoverInv && recoverInv.error) {
+    if (recoverInv.out.error) {
       throw new Error('Spaces recover failed', { cause: recoverInv })
     }
 
     const dels = []
-    for (const del of recoverInv) {
+    for (const del of recoverInv.out.ok) {
       dels.push(stringToDelegation(del))
     }
 
@@ -467,7 +466,7 @@ export class Agent {
       },
     })
 
-    if (inv && inv.error) {
+    if (inv && inv.out.error) {
       throw new Error('Voucher claim failed', { cause: inv })
     }
 
@@ -502,7 +501,7 @@ export class Agent {
       ],
     })
 
-    if (accInv && accInv.error) {
+    if (accInv && accInv.out.error) {
       throw new Error('Space registration failed', { cause: accInv })
     }
 
@@ -586,22 +585,17 @@ export class Agent {
    * await recoverInvocation.execute(agent.connection)
    * ```
    *
-   * @type {import('./types').InvokeAndExecute}
    * @template {Ucanto.Ability} A
    * @template {Ucanto.URI} R
    * @template {Ucanto.Caveats} C
    * @param {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} cap
    * @param {import('./types').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
+   * @returns {Promise<Ucanto.InferReceipt<Ucanto.Capability<A, R, C>, import('./types').Service>>}
    */
   async invokeAndExecute(cap, options) {
     const inv = await this.invoke(cap, options)
-
-    // @ts-ignore
-    const out = inv.execute(this.connection)
-
-    return /** @type {Promise<Ucanto.InferServiceInvocationReturn<Ucanto.InferInvokedCapability<Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>, import('./types').Service>>} */ (
-      out
-    )
+    const out = inv.execute(/** @type {*} */ (this.connection))
+    return /** @type {*} */ (out)
   }
 
   /**
@@ -712,11 +706,11 @@ export class Agent {
       with: _space,
     })
 
-    if (inv.error) {
-      throw inv
+    if (inv.out.error) {
+      throw inv.out.error
     }
 
-    return inv
+    return inv.out.ok
   }
 }
 

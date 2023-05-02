@@ -1,69 +1,52 @@
-import * as Ucanto from '@ucanto/interface'
+import * as API from '../api.js'
 import * as Server from '@ucanto/server'
 import { Provider } from '@web3-storage/capabilities'
 import * as validator from '@ucanto/validator'
 
 /**
- * @typedef {import('@web3-storage/capabilities/types').ProviderAdd} ProviderAdd
- * @typedef {import('@web3-storage/capabilities/types').ProviderAddSuccess} ProviderAddSuccess
- * @typedef {import('@web3-storage/capabilities/types').ProviderAddFailure} ProviderAddFailure
+ * @param {Context} ctx
  */
+export const provide = (ctx) =>
+  Server.provide(Provider.add, (input) => add(input, ctx))
 
 /**
- * @callback ProviderAddHandler
- * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').ProviderAdd>} invocation
- * @returns {Promise<Ucanto.Result<ProviderAddSuccess, ProviderAddFailure>>}
+ * @typedef {object} Context
+ * @property {object} models
+ * @property {API.ProvisionsStorage} models.provisions
+ *
+ * @param {API.Input<Provider.add>} input
+ * @param {Context} context
  */
-
-/**
- * @template {Ucanto.DID} ServiceId
- * @param {object} options
- * @param {import('../types/provisions').ProvisionsStorage<ServiceId>} options.provisions
- * @returns {ProviderAddHandler}
- */
-export function createProviderAddHandler(options) {
-  /** @type {ProviderAddHandler} */
-  return async (invocation) => {
-    const [providerAddCap] = invocation.capabilities
-    const {
-      nb: { consumer, provider },
-      with: accountDID,
-    } = providerAddCap
-    if (!validator.DID.match({ method: 'mailto' }).is(accountDID)) {
-      return {
-        error: true,
+export const add = async (
+  { capability, invocation },
+  { models: { provisions } }
+) => {
+  const {
+    nb: { consumer, provider },
+    with: accountDID,
+  } = capability
+  if (!validator.DID.match({ method: 'mailto' }).is(accountDID)) {
+    return {
+      error: {
         name: 'Unauthorized',
         message: 'Issuer must be a mailto DID',
-      }
+      },
     }
-    // @ts-expect-error provider might not be in service providers list - it ok!
-    if (!options.provisions.services.includes(provider)) {
-      return {
-        error: true,
+  }
+  if (!provisions.services.includes(provider)) {
+    return {
+      error: {
         name: 'InvalidProvider',
         message: `Invalid provider: ${provider}`,
-      }
+      },
     }
-
-    return await options.provisions.put({
-      invocation,
-      space: consumer,
-      // eslint-disable-next-line object-shorthand
-      provider: /** @type {ServiceId} */ (provider),
-      account: accountDID,
-    })
   }
-}
 
-/**
- * @param {object} ctx
- * @param {Pick<import('../bindings').RouteContext['models'], 'provisions'>} ctx.models
- */
-export function providerAddProvider(ctx) {
-  return Server.provide(Provider.add, async ({ invocation }) => {
-    const handler = createProviderAddHandler({
-      provisions: ctx.models.provisions,
-    })
-    return handler(/** @type {Ucanto.Invocation<ProviderAdd>} */ (invocation))
+  return await provisions.put({
+    // eslint-disable-next-line object-shorthand
+    invocation: /** @type {API.Invocation<API.ProviderAdd>} */ (invocation),
+    space: consumer,
+    provider,
+    account: accountDID,
   })
 }

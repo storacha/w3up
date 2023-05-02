@@ -1,6 +1,6 @@
-// @ts-ignore
 // eslint-disable-next-line no-unused-vars
-import * as Ucanto from '@ucanto/interface'
+
+import * as API from '../api.js'
 import { delegationToString } from '@web3-storage/access/encoding'
 import { Kysely } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
@@ -12,6 +12,8 @@ import { D1Error, GenericPlugin } from '../utils/d1.js'
 
 /**
  * Spaces
+ *
+ * @implements {API.SpaceProviderRegistry}
  */
 export class Spaces {
   /**
@@ -42,8 +44,8 @@ export class Spaces {
 
   /**
    * @param {import('@web3-storage/capabilities/types').VoucherRedeem} capability
-   * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').VoucherRedeem>} invocation
-   * @param {Ucanto.Delegation<[import('@web3-storage/access/types').Top]> | undefined} delegation
+   * @param {API.Invocation<import('@web3-storage/capabilities/types').VoucherRedeem>} invocation
+   * @param {API.Delegation<[import('@web3-storage/access/types').Top]> | undefined} delegation
    */
   async create(capability, invocation, delegation) {
     try {
@@ -51,11 +53,12 @@ export class Spaces {
         /** @type {import('@web3-storage/access/types').SpaceTableMetadata | undefined} */ (
           /** @type {unknown} */ (invocation.facts[0])
         )
+
       const result = await this.d1
         .insertInto('spaces')
         .values({
           agent: invocation.issuer.did(),
-          did: capability.nb.space,
+          did: /** @type {API.DIDKey} */ (capability.nb.space),
           email: capability.nb.identity.replace('mailto:', ''),
           invocation: delegationToString(invocation),
           product: capability.nb.product,
@@ -77,7 +80,7 @@ export class Spaces {
   /**
    * Get space by DID
    *
-   * @param {Ucanto.URI<"did:">} did
+   * @param {API.DIDKey} did
    */
   async get(did) {
     const space = await this.d1
@@ -92,7 +95,19 @@ export class Spaces {
   }
 
   /**
-   * @param {Ucanto.URI<"mailto:">} email
+   * @param {API.DIDKey} did
+   */
+
+  async hasStorageProvider(did) {
+    try {
+      return { ok: Boolean(await this.get(did)) }
+    } catch {
+      return { ok: false }
+    }
+  }
+
+  /**
+   * @param {API.URI<"mailto:">} email
    */
   async getByEmail(email) {
     const spaces = await this.d1

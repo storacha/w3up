@@ -65,12 +65,14 @@ describe('ucan', function () {
       },
     })
     const rsp = await res.json()
-    t.deepEqual(rsp, [
+    t.deepEqual(Object.values(rsp), [
       {
-        name: 'InvocationCapabilityError',
-        error: true,
-        message: 'Invocation is required to have a single capability.',
-        capabilities: [],
+        error: {
+          error: true,
+          name: 'InvocationCapabilityError',
+          message: 'Invocation is required to have a single capability.',
+          capabilities: [],
+        },
       },
     ])
   })
@@ -93,15 +95,17 @@ describe('ucan', function () {
       },
     })
     const rsp = await res.json()
-    t.deepEqual(rsp, [
+    t.deepEqual(Object.values(rsp), [
       {
-        name: 'InvocationCapabilityError',
-        error: true,
-        message: 'Invocation is required to have a single capability.',
-        capabilities: [
-          { can: 'identity/validate', with: 'mailto:admin@dag.house' },
-          { can: 'identity/register', with: 'mailto:admin@dag.house' },
-        ],
+        error: {
+          name: 'InvocationCapabilityError',
+          error: true,
+          message: 'Invocation is required to have a single capability.',
+          capabilities: [
+            { can: 'identity/validate', with: 'mailto:admin@dag.house' },
+            { can: 'identity/register', with: 'mailto:admin@dag.house' },
+          ],
+        },
       },
     ])
   })
@@ -112,7 +116,7 @@ describe('ucan', function () {
     const ucan = await UCAN.issue({
       issuer,
       audience: service,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/log', with: issuer.did() }],
     })
     const res = await mf.dispatchFetch('http://localhost:8787/raw', {
       method: 'POST',
@@ -121,7 +125,7 @@ describe('ucan', function () {
       },
     })
     const rsp = await res.json()
-    t.deepEqual(rsp, ['test pass'])
+    t.deepEqual(Object.values(rsp), [{ ok: {} }])
   })
 
   test('should support ucan invoking to a did:web aud', async function () {
@@ -135,7 +139,9 @@ describe('ucan', function () {
     const ucan = await UCAN.issue({
       issuer,
       audience: service.withDID(serviceDidWeb),
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [
+        { can: 'console/log', with: issuer.did(), nb: { value: { x: 1 } } },
+      ],
     })
     const res = await mf.dispatchFetch('http://localhost:8787/raw', {
       method: 'POST',
@@ -144,7 +150,7 @@ describe('ucan', function () {
       },
     })
     const rsp = await res.json()
-    t.deepEqual(rsp, ['test pass'])
+    t.deepEqual(Object.values(rsp), [{ ok: { x: 1 } }])
   })
 
   test('should handle exception in route handler', async function () {
@@ -153,7 +159,7 @@ describe('ucan', function () {
     const ucan = await UCAN.issue({
       issuer,
       audience: service,
-      capabilities: [{ can: 'testing/fail', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/error', with: issuer.did() }],
     })
     const res = await mf.dispatchFetch('http://localhost:8787/raw', {
       method: 'POST',
@@ -163,7 +169,16 @@ describe('ucan', function () {
     })
     const rsp = await res.json()
     t.deepEqual(
-      rsp[0].message,
+      Object.values(rsp),
+      [
+        {
+          error: {
+            name: 'Error',
+            message: 'Error from console',
+            cause: {},
+          },
+        },
+      ],
       'service handler {can: "testing/fail"} error: test fail'
     )
   })
@@ -176,20 +191,20 @@ describe('ucan', function () {
     const proof1 = await UCAN.issue({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/log', with: alice.did() }],
     })
 
     const proof2 = await UCAN.issue({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/log', with: alice.did() }],
     })
     const cid1 = await UCAN.link(proof1)
     const cid2 = await UCAN.link(proof2)
     const ucan = await UCAN.issue({
       issuer: bob,
       audience: service,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/log', with: alice.did() }],
       proofs: [cid1, cid2],
     })
 
@@ -219,22 +234,23 @@ describe('ucan', function () {
     const proof1 = await UCAN.issue({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/log', with: alice.did() }],
     })
 
     const cid1 = await UCAN.link(proof1)
     const ucan1 = await UCAN.issue({
       issuer: bob,
       audience: service,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/log', with: alice.did() }],
       proofs: [cid1],
     })
 
     const ucan2 = await UCAN.issue({
       issuer: bob,
       audience: service,
-      capabilities: [{ can: 'testing/pass', with: 'mailto:admin@dag.house' }],
+      capabilities: [{ can: 'console/log', with: alice.did() }],
       proofs: [cid1],
+      nonce: '2',
     })
 
     const headers = new Headers()
@@ -248,6 +264,6 @@ describe('ucan', function () {
     })
 
     const rsp = await res.json()
-    t.deepEqual(rsp, ['test pass', 'test pass'])
+    t.deepEqual(Object.values(rsp), [{ ok: {} }, { ok: {} }])
   })
 })

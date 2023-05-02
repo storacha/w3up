@@ -2,7 +2,7 @@ import type {
   FetchOptions,
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types'
-import { Link, UnknownLink, Version } from 'multiformats/link'
+import { Link, ToString, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
 import { CAR } from '@ucanto/transport'
 import {
@@ -12,6 +12,8 @@ import {
   Proof,
   DID,
   Principal,
+  Unit,
+  Failure,
 } from '@ucanto/interface'
 import {
   StoreAdd,
@@ -41,41 +43,50 @@ export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service {
   store: {
-    add: ServiceMethod<StoreAdd, StoreAddResponse, never>
-    list: ServiceMethod<StoreList, ListResponse<StoreListResult>, never>
-    remove: ServiceMethod<StoreRemove, unknown, never>
+    add: ServiceMethod<StoreAdd, StoreAddOk, Failure>
+    remove: ServiceMethod<StoreRemove, Unit, Failure>
+    list: ServiceMethod<StoreList, StoreListOk, Failure>
   }
   upload: {
-    add: ServiceMethod<UploadAdd, UploadAddResponse, never>
-    list: ServiceMethod<UploadList, ListResponse<UploadListResult>, never>
-    remove: ServiceMethod<UploadRemove, UploadRemoveResponse | undefined, never>
+    add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
+    list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
 
-export type StoreAddResponse =
-  | StoreAddDoneResponse
-  | StoreAddUploadRequiredResponse
+export type StoreAddOk = StoreAddDone | StoreAddUpload
 
-export interface StoreAddDoneResponse {
+export interface StoreListOk extends ListResponse<StoreListItem> {}
+
+export interface StoreAddDone {
   status: 'done'
   with: DID
-  link: CARLink
+  link: UnknownLink
+  url?: undefined
+  headers?: undefined
 }
 
-export interface StoreAddUploadRequiredResponse {
+export interface StoreAddUpload {
   status: 'upload'
-  headers: Record<string, string>
-  url: string
   with: DID
-  link: CARLink
+  link: UnknownLink
+  url: ToString<URL>
+  headers: Record<string, string>
 }
 
-export interface UploadAddResponse {
+export interface UploadAddOk {
   root: AnyLink
   shards?: CARLink[]
 }
 
-export interface UploadRemoveResponse extends UploadAddResponse {}
+export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
+export interface UploadDidNotRemove {
+  root?: undefined
+  shards?: undefined
+}
+
+export interface UploadDIDRemove extends UploadAddOk {}
+export interface UploadListOk extends ListResponse<UploadListItem> {}
 
 export interface ListResponse<R> {
   cursor?: string
@@ -85,13 +96,13 @@ export interface ListResponse<R> {
   results: R[]
 }
 
-export interface StoreListResult {
+export interface StoreListItem {
   link: CARLink
   size: number
   origin?: CARLink
 }
 
-export interface UploadListResult extends UploadAddResponse {}
+export interface UploadListItem extends UploadAddOk {}
 
 export interface InvocationConfig {
   /**

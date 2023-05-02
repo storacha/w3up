@@ -35,21 +35,21 @@ export const test = {
     // invoke a store/add with proof
     const storeAdd = await invocation.execute(connection)
 
-    if (storeAdd.error) {
+    if (!storeAdd.out.ok) {
       throw new Error('invocation failed', { cause: storeAdd })
     }
 
-    assert.equal(storeAdd.status, 'upload')
-    assert.equal(storeAdd.with, spaceDid)
-    assert.deepEqual(storeAdd.link, link)
+    assert.equal(storeAdd.out.ok.status, 'upload')
+    assert.equal(storeAdd.out.ok.with, spaceDid)
+    assert.deepEqual(storeAdd.out.ok.link, link)
 
-    assert.equal(storeAdd.headers?.['content-length'], String(size))
+    assert.equal(storeAdd.out.ok.headers?.['content-length'], String(size))
     assert.deepEqual(
-      storeAdd.headers?.['x-amz-checksum-sha256'],
+      storeAdd.out.ok.headers?.['x-amz-checksum-sha256'],
       base64pad.baseEncode(link.multihash.digest)
     )
 
-    const url = storeAdd.url && new URL(storeAdd.url)
+    const url = storeAdd.out.ok.url && new URL(storeAdd.out.ok.url)
     if (!url) {
       throw new Error('Expected presigned url in response')
     }
@@ -68,7 +68,7 @@ export const test = {
       method: 'PUT',
       mode: 'cors',
       body: data,
-      headers: storeAdd.headers,
+      headers: storeAdd.out.ok.headers,
     })
 
     assert.equal(goodPut.status, 200, await goodPut.text())
@@ -125,11 +125,12 @@ export const test = {
         })
         .execute(connection)
 
-      if (storeAdd.error) {
+      if (!storeAdd.out.ok) {
         throw new Error('invocation failed', { cause: storeAdd })
       }
 
-      const url = storeAdd.url && new URL(storeAdd.url)
+      const url =
+        storeAdd.out.ok.status === 'upload' && new URL(storeAdd.out.ok.url)
       if (!url) {
         throw new Error('Expected presigned url in response')
       }
@@ -139,7 +140,7 @@ export const test = {
         mode: 'cors',
         body: longer,
         headers: {
-          ...storeAdd.headers,
+          ...storeAdd.out.ok.headers,
           'content-length': longer.byteLength.toString(10),
         },
       })
@@ -175,11 +176,12 @@ export const test = {
         })
         .execute(connection)
 
-      if (storeAdd.error) {
+      if (!storeAdd.out.ok) {
         throw new Error('invocation failed', { cause: storeAdd })
       }
 
-      const url = storeAdd.url && new URL(storeAdd.url)
+      const url =
+        storeAdd.out.ok.status === 'upload' && new URL(storeAdd.out.ok.url)
       if (!url) {
         throw new Error('Expected presigned url in response')
       }
@@ -188,7 +190,7 @@ export const test = {
         method: 'PUT',
         mode: 'cors',
         body: other,
-        headers: storeAdd.headers,
+        headers: storeAdd.out.ok.headers,
       })
 
       assert.equal(
@@ -233,14 +235,14 @@ export const test = {
 
     const storeAdd = await storeAddInvocation.execute(connection)
 
-    if (storeAdd.error) {
+    if (!storeAdd.out.ok) {
       throw new Error('invocation failed', { cause: storeAdd })
     }
 
-    assert.equal(storeAdd.status, 'done')
-    assert.equal(storeAdd.with, spaceDid)
-    assert.deepEqual(storeAdd.link, link)
-    assert.equal(storeAdd.url == null, true)
+    assert.equal(storeAdd.out.ok.status, 'done')
+    assert.equal(storeAdd.out.ok.with, spaceDid)
+    assert.deepEqual(storeAdd.out.ok.link, link)
+    assert.equal(storeAdd.out.ok.url == null, true)
 
     const item = await context.testStoreTable.get(spaceDid, link)
     if (!item) {
@@ -295,11 +297,8 @@ export const test = {
       })
       .execute(connection)
 
-    assert.equal(storeAdd.error, true)
-    assert.equal(
-      storeAdd.error && storeAdd.message.includes('no storage'),
-      true
-    )
+    assert.ok(storeAdd.out.error)
+    assert.equal(storeAdd.out.error?.message.includes('no storage'), true)
 
     // Register space and retry
     await context.testSpaceRegistry.registerSpace(spaceDid)
@@ -314,7 +313,7 @@ export const test = {
       })
       .execute(connection)
 
-    assert.equal(retryStoreAdd.error, undefined)
+    assert.equal(retryStoreAdd.out.error, undefined)
   },
 
   'store/add fails when size too large to PUT': async (assert, context) => {
@@ -338,9 +337,9 @@ export const test = {
       })
       .execute(connection)
 
-    assert.equal(storeAdd.error, true)
+    assert.ok(storeAdd.out.error)
     assert.equal(
-      storeAdd.error && storeAdd.message.startsWith('Size must not exceed'),
+      storeAdd.out.error?.message.startsWith('Size must not exceed'),
       true
     )
   },
@@ -370,7 +369,7 @@ export const test = {
       .execute(connection)
 
     // expect no response for a remove
-    assert.deepEqual(storeRemove, {})
+    assert.deepEqual(storeRemove.out.ok, {})
 
     const storeRemove2 = await StoreCapabilities.remove
       .invoke({
@@ -383,7 +382,7 @@ export const test = {
       .execute(connection)
 
     // expect no response for a remove
-    assert.deepEqual(storeRemove2, {})
+    assert.deepEqual(storeRemove2.out.ok, {})
   },
 
   'store/list does not fail for empty list': async (assert, context) => {
@@ -404,7 +403,7 @@ export const test = {
       })
       .execute(connection)
 
-    assert.deepEqual(storeList, { results: [], size: 0 })
+    assert.deepEqual(storeList.out.ok, { results: [], size: 0 })
   },
 
   'store/list returns items previously stored by the user': async (
@@ -434,12 +433,12 @@ export const test = {
         })
         .execute(connection)
 
-      if (storeAdd.error) {
+      if (storeAdd.out.error) {
         throw new Error('invocation failed', { cause: storeAdd })
       }
 
-      assert.equal(storeAdd.status, 'upload')
-      links.push(storeAdd.link)
+      assert.equal(storeAdd.out.ok.status, 'upload')
+      links.push(storeAdd.out.ok.link)
     }
 
     const storeList = await StoreCapabilities.list
@@ -452,15 +451,15 @@ export const test = {
       })
       .execute(connection)
 
-    if (storeList.error) {
+    if (storeList.out.error) {
       throw new Error('invocation failed', { cause: storeList })
     }
 
-    assert.equal(storeList.size, links.length)
+    assert.equal(storeList.out.ok.size, links.length)
 
     // list order last-in-first-out
     assert.deepEqual(
-      storeList.results.map(({ link }) => ({ link, size: 5 })),
+      storeList.out.ok.results.map(({ link }) => ({ link, size: 5 })),
       links.reverse().map((link) => ({ link, size: 5 }))
     )
   },
@@ -489,11 +488,11 @@ export const test = {
           proofs: [proof],
         })
         .execute(connection)
-      if (storeAdd.error) {
+      if (storeAdd.out.error) {
         throw new Error('invocation failed', { cause: storeAdd })
       }
 
-      links.push(storeAdd.link)
+      links.push(storeAdd.out.ok.link)
     }
 
     // Get list with page size 1 (two pages)
@@ -516,15 +515,15 @@ export const test = {
         })
         .execute(connection)
 
-      if (storeList.error) {
+      if (storeList.out.error) {
         throw new Error('invocation failed', { cause: storeList })
       }
 
       // Add page if it has size
-      storeList.size > 0 && listPages.push(storeList.results)
+      storeList.out.ok.size > 0 && listPages.push(storeList.out.ok.results)
 
-      if (storeList.after) {
-        cursor = storeList.after
+      if (storeList.out.ok.after) {
+        cursor = storeList.out.ok.after
       } else {
         break
       }
@@ -573,11 +572,11 @@ export const test = {
           proofs: [proof],
         })
         .execute(connection)
-      if (storeAdd.error) {
+      if (storeAdd.out.error) {
         throw new Error('invocation failed', { cause: storeAdd })
       }
 
-      links.push(storeAdd.link)
+      links.push(storeAdd.out.ok.link)
     }
 
     const size = 3
@@ -593,8 +592,8 @@ export const test = {
         },
       })
       .execute(connection)
-    if (listResponse.error) {
-      throw new Error('invocation failed', { cause: listResponse.error })
+    if (listResponse.out.error) {
+      throw new Error('invocation failed', { cause: listResponse.out.error })
     }
 
     const secondListResponse = await StoreCapabilities.list
@@ -605,12 +604,14 @@ export const test = {
         proofs: [proof],
         nb: {
           size,
-          cursor: listResponse.after,
+          cursor: listResponse.out.ok.after,
         },
       })
       .execute(connection)
-    if (secondListResponse.error) {
-      throw new Error('invocation failed', { cause: secondListResponse.error })
+    if (secondListResponse.out.error) {
+      throw new Error('invocation failed', {
+        cause: secondListResponse.out.error,
+      })
     }
 
     const prevListResponse = await StoreCapabilities.list
@@ -621,22 +622,33 @@ export const test = {
         proofs: [proof],
         nb: {
           size,
-          cursor: secondListResponse.before,
+          cursor: secondListResponse.out.ok.before,
           pre: true,
         },
       })
       .execute(connection)
-    if (prevListResponse.error) {
-      throw new Error('invocation failed', { cause: prevListResponse.error })
+    if (prevListResponse.out.error) {
+      throw new Error('invocation failed', {
+        cause: prevListResponse.out.error,
+      })
     }
 
-    assert.equal(listResponse.results.length, 3)
+    assert.equal(listResponse.out.ok.results.length, 3)
     // listResponse is the first page. we used its after to get the second page, and then used the before of the second
     // page with the `pre` caveat to list the first page again. the results and cursors should remain the same.
-    assert.deepEqual(prevListResponse.results[0], listResponse.results[0])
-    assert.deepEqual(prevListResponse.results[1], listResponse.results[1])
-    assert.deepEqual(prevListResponse.results[2], listResponse.results[2])
-    assert.deepEqual(prevListResponse.before, listResponse.before)
-    assert.deepEqual(prevListResponse.after, listResponse.after)
+    assert.deepEqual(
+      prevListResponse.out.ok.results[0],
+      listResponse.out.ok.results[0]
+    )
+    assert.deepEqual(
+      prevListResponse.out.ok.results[1],
+      listResponse.out.ok.results[1]
+    )
+    assert.deepEqual(
+      prevListResponse.out.ok.results[2],
+      listResponse.out.ok.results[2]
+    )
+    assert.deepEqual(prevListResponse.out.ok.before, listResponse.out.ok.before)
+    assert.deepEqual(prevListResponse.out.ok.after, listResponse.out.ok.after)
   },
 }

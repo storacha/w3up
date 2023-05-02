@@ -30,6 +30,7 @@ describe('upload/*', () => {
           {
             equal: assert.strictEqual,
             deepEqual: assert.deepStrictEqual,
+            ok: assert.ok,
           },
           {
             id,

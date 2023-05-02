@@ -2,7 +2,7 @@
 import * as Ucanto from '@ucanto/interface'
 import { parseLink, delegate } from '@ucanto/core'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
+import * as CBOR from '@ucanto/core/cbor'
 import { Absentee } from '@ucanto/principal'
 
 /**
@@ -16,7 +16,7 @@ export function parseCarLink(source) {
  * @param {any} data
  */
 export async function createCborCid(data) {
-  const cbor = await CBOR.codec.write(data)
+  const cbor = await CBOR.write(data)
   return cbor.cid
 }
 
@@ -24,13 +24,12 @@ export async function createCborCid(data) {
  * @param {string} source
  */
 export async function createCarCid(source) {
-  const cbor = await CBOR.codec.write({ hello: source })
+  const cbor = await CBOR.write({ hello: source })
   const shard = await CAR.codec.write({ roots: [cbor] })
   return shard.cid
 }
 
 /**
- *
  * @param {object} input
  * @param {Ucanto.Signer} input.service
  * @param {Ucanto.Principal} input.agent

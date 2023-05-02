@@ -28,9 +28,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('error in self issue')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/authorize')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/authorize')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           att: [{ can: '*' }],
         })
@@ -69,9 +69,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('should not error')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/authorize')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/authorize')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           att: [{ can: '*' }],
         })
@@ -107,9 +107,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('should not error')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/authorize')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/authorize')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           att: [{ can: '*' }],
         })
@@ -145,9 +145,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('should not error')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/authorize')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/authorize')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           att: [{ can: '*' }],
         })
@@ -184,7 +184,7 @@ describe('access capabilities', function () {
       })
 
       if (result.error) {
-        assert.ok(result.message.includes('- Can not derive'))
+        assert.ok(result.error.message.includes('- Can not derive'))
       } else {
         assert.fail('should error')
       }
@@ -281,7 +281,7 @@ describe('access capabilities', function () {
       })
 
       if (result.error) {
-        assert.ok(result.message.includes('unauthorized nb.att.can *'))
+        assert.ok(result.error.message.includes('unauthorized nb.att.can *'))
       } else {
         assert.fail('should error')
       }
@@ -314,7 +314,7 @@ describe('access capabilities', function () {
       })
 
       if (result.error) {
-        assert.ok(result.message.includes('- Can not derive'))
+        assert.ok(result.error.message.includes('- Can not derive'))
       } else {
         assert.fail('should error')
       }
@@ -358,9 +358,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('error in self issue')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/confirm')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/confirm')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           aud: agent.did(),
           att: [{ can: '*' }],
@@ -401,9 +401,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('should not error')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/confirm')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/confirm')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
@@ -441,9 +441,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('should not error')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/confirm')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/confirm')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
@@ -481,9 +481,9 @@ describe('access capabilities', function () {
       if (result.error) {
         assert.fail('should not error')
       } else {
-        assert.deepEqual(result.audience.did(), service.did())
-        assert.equal(result.capability.can, 'access/confirm')
-        assert.deepEqual(result.capability.nb, {
+        assert.deepEqual(result.ok.audience.did(), service.did())
+        assert.equal(result.ok.capability.can, 'access/confirm')
+        assert.deepEqual(result.ok.capability.nb, {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
@@ -522,7 +522,7 @@ describe('access capabilities', function () {
       })
 
       if (result.error) {
-        assert.ok(result.message.includes('- Can not derive'))
+        assert.ok(result.error.message.includes('- Can not derive'))
       } else {
         assert.fail('should error')
       }
@@ -622,7 +622,7 @@ describe('access capabilities', function () {
       })
 
       if (result.error) {
-        assert.ok(result.message.includes('unauthorized nb.att.can *'))
+        assert.ok(result.error.message.includes('unauthorized nb.att.can *'))
       } else {
         assert.fail('should error')
       }
@@ -656,7 +656,7 @@ describe('access capabilities', function () {
       })
 
       if (result.error) {
-        assert.ok(result.message.includes('- Can not derive'))
+        assert.ok(result.error.message.includes('- Can not derive'))
       } else {
         assert.fail('should error')
       }
@@ -705,21 +705,19 @@ describe('access capabilities', function () {
           principal: Verifier,
           authority: audience,
         })
-        assert.ok(
-          result.error !== true,
-          'result of access(invocation) is not an error'
-        )
+
+        assert.ok(result.ok, 'result of access(invocation) is not an error')
         assert.deepEqual(
-          result.audience.did(),
+          result.ok.audience.did(),
           audience.did(),
           'result audience did is expected value'
         )
         assert.equal(
-          result.capability.can,
+          result.ok.capability.can,
           'access/claim',
           'result capability.can is access/claim'
         )
-        assert.deepEqual(result.capability.nb, {}, 'result has empty nb')
+        assert.deepEqual(result.ok.capability.nb, {}, 'result has empty nb')
       }
     })
 
@@ -752,10 +750,7 @@ describe('access capabilities', function () {
           principal: Verifier,
           authority: service,
         })
-        assert.ok(
-          result.error !== true,
-          'result of access(invocation) is not an error'
-        )
+        assert.ok(result.ok, 'result of access(invocation) is not an error')
       }
     })
     it('cannot invoke when .with uses unexpected did method', async () => {
@@ -794,9 +789,9 @@ describe('access capabilities', function () {
         }
       )
       assert.ok(result.error, 'result of access(invocation) is an error')
-      assert.deepEqual(result.name, 'Unauthorized')
+      assert.deepEqual(result.error.name, 'Unauthorized')
       assert.ok(
-        result.delegationErrors.find((e) =>
+        result.error.delegationErrors.find((e) =>
           e.message.includes('but got "did:foo:bar" instead')
         ),
         'a result.delegationErrors message mentions invalid with value'
@@ -819,9 +814,9 @@ describe('access capabilities', function () {
         authority: audience,
       })
       assert.ok(result.error, 'result of access(invocation) is an error')
-      assert.deepEqual(result.name, 'Unauthorized')
+      assert.deepEqual(result.error.name, 'Unauthorized')
       assert.ok(
-        result.failedProofs.find((e) => {
+        result.error.failedProofs.find((e) => {
           return /Capability (.+) is not authorized/.test(e.message)
         })
       )
@@ -846,10 +841,7 @@ describe('access/delegate', () => {
       principal: Verifier,
       authority: service,
     })
-    assert.ok(
-      accessResult.error !== true,
-      'result of access(invocation) is not an error'
-    )
+    assert.ok(accessResult.ok, 'result of access(invocation) is not an error')
   })
 
   /**
@@ -881,10 +873,7 @@ describe('access/delegate', () => {
         principal: Verifier,
         authority: service,
       })
-      assert.ok(
-        accessResult.error !== true,
-        'result of access(invocation) is not an error'
-      )
+      assert.ok(accessResult.ok, 'result of access(invocation) is not an error')
     })
   }
 
@@ -925,10 +914,7 @@ describe('access/delegate', () => {
         principal: Verifier,
         authority: service,
       })
-      assert.ok(
-        accessResult.error !== true,
-        'result of access(invocation) is not an error'
-      )
+      assert.ok(accessResult.ok, 'result of access(invocation) is not an error')
     })
   }
 
@@ -974,10 +960,12 @@ describe('access/delegate', () => {
       principal: Verifier,
       authority: audience,
     })
-    assert.ok(result.error === true, 'result of access(invocation) is an error')
-    assert.deepEqual(result.failedProofs.length, 1)
+    assert.ok(result.error, 'result of access(invocation) is an error')
+    assert.deepEqual(result.error.failedProofs.length, 1)
     assert.ok(
-      result.message.match(`unauthorized nb.delegations ${firstDelegation.cid}`)
+      result.error.message.match(
+        `unauthorized nb.delegations ${firstDelegation.cid}`
+      )
     )
   })
 
@@ -1008,7 +996,7 @@ describe('access/delegate', () => {
     })
     assert.ok(result.error, 'result is error')
     assert.ok(
-      result.message.includes(
+      result.error.message.includes(
         `Can not derive access/delegate with ${mallory.did()} from ${alice.did()}`
       )
     )
@@ -1065,7 +1053,7 @@ describe('access/delegate', () => {
       )
       assert.ok(accessResult.error, 'accessResult is error')
       assert.ok(
-        accessResult.message.includes(
+        accessResult.error.message.includes(
           `Encountered malformed 'access/delegate' capability`
         )
       )

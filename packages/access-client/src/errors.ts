@@ -6,7 +6,6 @@ import * as Ucanto from '@ucanto/interface'
  * or it's a seen space that hasn't been fully registered such that the service can serve info about the space.
  */
 export interface SpaceUnknown extends Ucanto.Failure {
-  error: true
   message: string
   name: 'SpaceUnknown'
 }

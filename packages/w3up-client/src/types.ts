@@ -66,11 +66,11 @@ export type {
 } from '@web3-storage/access/types'
 
 export type {
-  StoreAddResponse,
-  UploadAddResponse,
+  StoreAddOk,
+  UploadAddOk as UploadAddResponse,
   ListResponse,
-  StoreListResult,
-  UploadListResult,
+  StoreListOk,
+  UploadListOk,
   AnyLink,
   CARLink,
   CARFile,

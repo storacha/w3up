@@ -1,7 +1,6 @@
 import assert from 'assert'
 import { create as createServer, provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as SpaceCapabilities from '@web3-storage/capabilities/space'
 import { AgentData } from '@web3-storage/access/agent'
@@ -20,7 +19,9 @@ describe('SpaceClient', () => {
             assert.equal(invCap.can, SpaceCapabilities.info.can)
             assert.equal(invCap.with, space.did())
             return {
-              did: /** @type {`did:key:${string}`} */ (space.did()),
+              ok: {
+                did: /** @type {`did:key:${string}`} */ (space.did()),
+              },
             }
           }),
         },
@@ -29,8 +30,7 @@ describe('SpaceClient', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {

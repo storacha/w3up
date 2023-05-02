@@ -2,7 +2,6 @@ import assert from 'assert'
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as ed25519 from '@ucanto/principal/ed25519'
 import { createProxyHandler } from '../src/ucanto/proxy.js'
 // eslint-disable-next-line no-unused-vars
@@ -20,8 +19,7 @@ describe('ucanto-proxy', () => {
     const testSucceedResponseFixture = { success: true }
     const upstream = Server.create({
       id: upstreamPrincipal,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
       service: {
         test: {
           /**
@@ -40,16 +38,14 @@ describe('ucanto-proxy', () => {
     // const proxyPrincipal = await ed25519.generate()
     const proxy = Server.create({
       id: proxyPrincipal,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
       service: {
         test: {
           succeed: createProxyHandler({
             connections: {
               default: Client.connect({
                 id: upstreamPrincipal,
-                encoder: CAR,
-                decoder: CBOR,
+                codec: CAR.outbound,
                 channel: upstream,
               }),
             },
@@ -60,8 +56,7 @@ describe('ucanto-proxy', () => {
     // create connection to proxy
     const proxyConnection = Client.connect({
       id: proxyPrincipal,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: proxy,
     })
     // invoke proxy
@@ -78,16 +73,15 @@ describe('ucanto-proxy', () => {
         capability: invocationCapability,
       })
     )
-    assert.equal(result?.error, undefined, 'result has no error')
+    assert.equal(result.out.error, undefined, 'result has no error')
     assert.equal(testSucceedInvocations.length, 1, 'upstream was invoked once')
     assert.deepEqual(
       testSucceedInvocations[0][0].capabilities[0],
       invocationCapability,
       'upstream received same capability as was sent to proxy'
     )
-    assert.equal(result?.error, undefined, 'result has no error')
     assert.deepEqual(
-      result,
+      result.out,
       testSucceedResponseFixture,
       'proxy result is same returned from upstream'
     )
@@ -111,16 +105,14 @@ describe('ucanto-proxy', () => {
     // create the proxy that will proxy requests to the upstream
     const proxy = Server.create({
       id: upstreamPrincipal,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
       service: {
         test: {
           succeed: createProxyHandler({
             connections: {
               default: Client.connect({
                 id: upstreamPrincipal,
-                encoder: CAR,
-                decoder: CBOR,
+                codec: CAR.outbound,
                 channel: HTTP.open({
                   url: upstreamUrl,
                 }),
@@ -137,8 +129,7 @@ describe('ucanto-proxy', () => {
     const proxyUrl = await listen(proxyHttpServer)
     const proxyConnection = Client.connect({
       id: upstreamPrincipal,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: HTTP.open({ url: proxyUrl }),
     })
 
@@ -155,45 +146,17 @@ describe('ucanto-proxy', () => {
       })
     )
 
-    assert.equal(result?.error, true, 'result has error=true')
-    assert.equal(
-      'status' in result && result?.status,
-      502,
-      'result has status=502'
-    )
-    assert.equal(
-      'statusText' in result && result?.statusText,
-      'Bad Gateway',
-      'result has statusText'
-    )
-    assert.ok('x-proxy-error' in result, 'result has x-proxy-error')
-    assert.ok(
-      result['x-proxy-error'] && typeof result['x-proxy-error'] === 'object',
-      'result has x-proxy-error object'
-    )
-    assert.ok(
-      'status' in result['x-proxy-error'],
-      'result has x-proxy-error.status'
-    )
-    assert.equal(
-      result['x-proxy-error'].status,
-      stubbedUpstreamResponse.status,
-      `result['x-proxy-error'] has status=${stubbedUpstreamResponse.status}`
-    )
-    assert.ok(
-      'statusText' in result['x-proxy-error'],
-      'result has x-proxy-error.statusText'
-    )
-    assert.equal(
-      result['x-proxy-error'].statusText,
-      stubbedUpstreamResponse.statusText,
-      `result['x-proxy-error'] has statusText=${stubbedUpstreamResponse.statusText}`
-    )
-    assert.ok('url' in result['x-proxy-error'], 'result has x-proxy-error.url')
-    assert.equal(
-      result['x-proxy-error'].url,
-      upstreamUrl,
-      `result['x-proxy-error'] has url=${upstreamUrl}`
-    )
+    assert.deepEqual(result.out, {
+      error: {
+        status: 502,
+        statusText: 'Bad Gateway',
+        'x-proxy-error': {
+          name: 'HTTPError',
+          status: stubbedUpstreamResponse.status,
+          statusText: stubbedUpstreamResponse.statusText,
+          url: upstreamUrl.href,
+        },
+      },
+    })
   })
 })

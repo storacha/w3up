@@ -27,9 +27,9 @@ describe('space-recover', function () {
       })
       .execute(conn)
 
-    if (inv?.error) {
+    if (inv.out.error) {
       assert.deepEqual(
-        inv.message,
+        inv.out.error.message,
         `No spaces found for email: hello@dag.house.`
       )
     } else {
@@ -53,11 +53,11 @@ describe('space-recover', function () {
       })
       .execute(conn)
 
-    if (!inv || inv.error) {
+    if (!inv || inv.out.error) {
       return assert.fail('failed to recover')
     }
 
-    const url = new URL(inv)
+    const url = new URL(inv.out.ok)
     const encoded =
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
         url.searchParams.get('ucan')
@@ -141,11 +141,11 @@ describe('space-recover', function () {
       })
       .execute(conn)
 
-    if (!inv || inv.error) {
+    if (!inv || inv.out.error) {
       return assert.fail('failed to recover')
     }
 
-    const url = new URL(inv)
+    const url = new URL(inv.out.ok)
     const encoded =
       /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').SpaceRecover]>} */ (
         url.searchParams.get('ucan')
@@ -169,11 +169,11 @@ describe('space-recover', function () {
       })
       .execute(conn)
 
-    if (!inv2 || inv2.error) {
+    if (!inv2 || inv2.out.error) {
       return assert.fail('failed to recover')
     }
 
-    const spaceDelegation = stringToDelegation(inv2[0])
+    const spaceDelegation = stringToDelegation(inv2.out.ok[0])
     assert.deepEqual(spaceDelegation.audience.did(), issuer.did())
     assert.deepEqual(spaceDelegation.capabilities[0].can, '*')
     assert.deepEqual(spaceDelegation.capabilities[0].with, space.did())
@@ -199,10 +199,10 @@ describe('space-recover', function () {
       })
       .execute(conn)
 
-    if (!spaceInfo || spaceInfo.error) {
+    if (!spaceInfo || spaceInfo.out.error) {
       return assert.fail('failed to get space info')
     }
 
-    assert.deepEqual(spaceInfo.did, space.did())
+    assert.deepEqual(spaceInfo.out.ok.did, space.did())
   })
 })

@@ -1,5 +1,5 @@
-import * as Ucanto from '@ucanto/interface'
-import * as ucanto from '@ucanto/core'
+import * as API from '../api.js'
+import * as Provider from '@ucanto/server'
 import { Absentee, Verifier } from '@ucanto/principal'
 import { collect } from 'streaming-iterables'
 import * as Access from '@web3-storage/capabilities/access'
@@ -7,15 +7,9 @@ import { delegationsToString } from '@web3-storage/access/encoding'
 import * as delegationsResponse from '../utils/delegations-response.js'
 
 /**
- * @typedef {import('@web3-storage/capabilities/types').AccessConfirmSuccess} AccessConfirmSuccess
- * @typedef {import('@web3-storage/capabilities/types').AccessConfirmFailure} AccessConfirmFailure
+ * @param {API.AccessConfirm} capability
  */
-
-/**
- * @param {Ucanto.Invocation<import('@web3-storage/capabilities/src/types').AccessConfirm>} invocation
- */
-export function parse(invocation) {
-  const capability = invocation.capabilities[0]
+export function parse(capability) {
   // Create a absentee signer for the account that authorized the delegation
   const account = Absentee.from({ id: capability.nb.iss })
   const agent = Verifier.parse(capability.nb.aud)
@@ -26,27 +20,33 @@ export function parse(invocation) {
 }
 
 /**
- * @param {Ucanto.Invocation<import('@web3-storage/capabilities/src/types').AccessConfirm>} invocation
- * @param {import('../bindings').RouteContext} ctx
- * @returns {Promise<Ucanto.Result<AccessConfirmSuccess, AccessConfirmFailure>>}
+ *
+ * @param {API.RouteContext} ctx
  */
-export async function handleAccessConfirm(invocation, ctx) {
-  const capability = invocation.capabilities[0]
+export const provide = (ctx) =>
+  Provider.provide(Access.confirm, (input) => confirm(input, ctx))
+
+/**
+ * @param {API.Input<Access.confirm>} input
+ * @param {API.RouteContext} ctx
+ * @returns {Promise<API.Result<API.AccessConfirmSuccess, API.AccessConfirmFailure>>}
+ */
+export async function confirm({ capability, invocation }, ctx) {
   if (capability.with !== ctx.signer.did()) {
     throw new Error(`Not a valid access/confirm delegation`)
   }
 
-  const { account, agent } = parse(invocation)
+  const { account, agent } = parse(capability)
 
   // It the future we should instead render a page and allow a user to select
   // which delegations they wish to re-delegate. Right now we just re-delegate
   // everything that was requested for all of the resources.
   const capabilities =
-    /** @type {ucanto.UCAN.Capabilities} */
+    /** @type {API.UCAN.Capabilities} */
     (
       capability.nb.att.map(({ can }) => ({
         can,
-        with: /** @type {ucanto.UCAN.Resource} */ ('ucan:*'),
+        with: /** @type {API.UCAN.Resource} */ ('ucan:*'),
       }))
     )
 
@@ -76,19 +76,21 @@ export async function handleAccessConfirm(invocation, ctx) {
   await ctx.models.validations.putSession(authorization, agent.did())
 
   return {
-    delegations: delegationsResponse.encode([delegation, attestation]),
+    ok: {
+      delegations: delegationsResponse.encode([delegation, attestation]),
+    },
   }
 }
 
 /**
  * @param {object} opts
- * @param {Ucanto.Signer} opts.service
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} opts.account
- * @param {Ucanto.Principal<Ucanto.DID>} opts.agent
- * @param {Ucanto.Capabilities} opts.capabilities
- * @param {AsyncIterable<Ucanto.Delegation>} opts.delegationProofs
+ * @param {API.Signer} opts.service
+ * @param {API.Principal<API.DID<'mailto'>>} opts.account
+ * @param {API.Principal<API.DID>} opts.agent
+ * @param {API.Capabilities} opts.capabilities
+ * @param {AsyncIterable<API.Delegation>} opts.delegationProofs
  * @param {number} opts.expiration
- * @returns {Promise<[delegation: Ucanto.Delegation, attestation: Ucanto.Delegation]>}
+ * @returns {Promise<[delegation: API.Delegation, attestation: API.Delegation]>}
  */
 export async function createSessionProofs({
   service,
@@ -101,7 +103,7 @@ export async function createSessionProofs({
   expiration = Infinity,
 }) {
   // create an delegation on behalf of the account with an absent signature.
-  const delegation = await ucanto.delegate({
+  const delegation = await Provider.delegate({
     issuer: Absentee.from({ id: account.did() }),
     audience: agent,
     capabilities,

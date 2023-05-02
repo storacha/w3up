@@ -18,14 +18,14 @@ import type {
   UnknownMatch,
   Delegation,
   DID,
+  DIDKey,
   Signer,
   SignerArchive,
   SigAlg,
   Caveats,
-  TheCapabilityParser,
-  CapabilityMatch,
+  Unit,
+  ToString,
 } from '@ucanto/interface'
-import * as Ucanto from '@ucanto/interface'
 
 import type {
   Abilities,
@@ -64,10 +64,10 @@ export * from './errors.js'
  */
 
 export interface SpaceTable {
-  did: URI<'did:'>
-  agent: URI<'did:'>
+  did: DIDKey
+  agent: DID
   email: string
-  product: URI<`${string}:`>
+  product: URI
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
   metadata: SpaceTableMetadata | null
@@ -87,7 +87,7 @@ export type SpaceInfoResult =
   | SpaceRecord
 
 export interface AccountTable {
-  did: URI<'did:'>
+  did: DID<'mailto'>
   inserted_at: Generated<Date>
   updated_at: ColumnType<Date, never, Date>
 }
@@ -123,16 +123,16 @@ export interface Service {
   voucher: {
     claim: ServiceMethod<
       VoucherClaim,
-      EncodedDelegation<[VoucherRedeem]> | undefined,
+      EncodedDelegation<[VoucherRedeem]> | '',
       Failure
     >
-    redeem: ServiceMethod<VoucherRedeem, void, Failure>
+    redeem: ServiceMethod<VoucherRedeem, Unit, Failure>
   }
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
     'recover-validation': ServiceMethod<
       SpaceRecoverValidation,
-      EncodedDelegation<[SpaceRecover]> | undefined,
+      ToString<URL> | '',
       Failure
     >
     recover: ServiceMethod<
@@ -334,19 +334,3 @@ export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
 
 export type BytesDelegation<C extends Capabilities = Capabilities> =
   Uint8Array & Phantom<Delegation<C>>
-
-export type InvokeAndExecute = <
-  A extends Ability,
-  R extends URI,
-  C extends Ucanto.Caveats
->(
-  cap: TheCapabilityParser<CapabilityMatch<A, R, C>>,
-  options: InvokeOptions<A, R, TheCapabilityParser<CapabilityMatch<A, R, C>>>
-) => Promise<
-  Ucanto.InferServiceInvocationReturn<
-    Ucanto.InferInvokedCapability<
-      Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>
-    >,
-    import('./types').Service
-  >
->

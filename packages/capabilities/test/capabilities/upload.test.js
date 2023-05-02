@@ -51,12 +51,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/add')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/add')
+    assert.deepEqual(result.ok.capability.nb, {
       root,
     })
   })
@@ -87,12 +87,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/add')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/add')
+    assert.deepEqual(result.ok.capability.nb, {
       root,
     })
   })
@@ -133,12 +133,15 @@ describe('upload capabilities', function () {
     })
 
     const result = await access(add, {
+      // @ts-expect-error testing error with invalid root type
       capability: Upload.add,
       principal: Verifier,
       authority: w3,
     })
-    assert.equal(result.error, true)
-    assert(String(result).includes('Expected link to be CID with 0x202 codec'))
+    assert.ok(result.error)
+    assert(
+      result.error.message.includes('Expected link to be CID with 0x202 codec')
+    )
   })
 
   it('upload/add works with shards that are CAR cids', async () => {
@@ -162,12 +165,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/add')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/add')
+    assert.deepEqual(result.ok.capability.nb, {
       root,
       shards: [shard],
     })
@@ -210,9 +213,9 @@ describe('upload capabilities', function () {
       authority: w3,
     })
 
-    assert.equal(result.error, true)
+    assert.ok(result.error)
     assert(
-      String(result).includes(
+      result.error.message.includes(
         'Expected did: URI instead got mailto:alice@web.mail'
       )
     )
@@ -245,10 +248,10 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.capability.nb, {
       root,
     })
   })
@@ -285,9 +288,9 @@ describe('upload capabilities', function () {
       authority: w3,
     })
 
-    assert.equal(result.error, true)
+    assert.ok(result.error)
     assert(
-      String(result).includes(
+      result.error.message.includes(
         'bafyreig7xrtnfhkdu4wt3fbufl4bppd5r5ixrowmi5ekw5vjundxynmzj4 violates imposed root constraint bafyreiglqnkzhzh2gyz4zfy7zpi6wcamumrclarakshlocd35l4o63l76q'
       )
     )
@@ -321,9 +324,9 @@ describe('upload capabilities', function () {
       authority: w3,
     })
 
-    assert.equal(result.error, true)
+    assert.ok(result.error)
     assert(
-      String(result).includes(
+      result.error.message.includes(
         'imposed shards constraint bagbaierar5jtiax76ossjdhyqshypwkkrztwp3zch7voido4pmuxrcoyq7za'
       )
     )
@@ -345,12 +348,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/list')
-    assert.deepEqual(result.capability.nb, {})
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/list')
+    assert.deepEqual(result.ok.capability.nb, {})
   })
 
   it('upload/list can be derived from *', async () => {
@@ -376,12 +379,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/list')
-    assert.deepEqual(result.capability.nb, {})
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/list')
+    assert.deepEqual(result.ok.capability.nb, {})
   })
 
   it('upload/list can be derived from upload/list', async () => {
@@ -408,12 +411,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/list')
-    assert.deepEqual(result.capability.nb, {})
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/list')
+    assert.deepEqual(result.ok.capability.nb, {})
   })
 
   it('upload/list capability requires with to be a did', () => {
@@ -447,9 +450,9 @@ describe('upload capabilities', function () {
       principal: Verifier,
       authority: w3,
     })
-    assert.equal(result.error, true)
+    assert.ok(result.error)
     assert(
-      String(result).includes(
+      result.error.message.includes(
         'Expected did: URI instead got mailto:alice@web.mail'
       )
     )
@@ -473,12 +476,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/remove')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/remove')
+    assert.deepEqual(result.ok.capability.nb, {
       root: parseLink('bafkqaaa'),
     })
   })
@@ -508,12 +511,12 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/remove')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/remove')
+    assert.deepEqual(result.ok.capability.nb, {
       root: parseLink('bafkqaaa'),
     })
   })
@@ -546,13 +549,13 @@ describe('upload capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'upload/remove')
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'upload/remove')
     // @ts-ignore
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.capability.nb, {
       root: parseLink('bafkqaaa'),
     })
   })
@@ -589,9 +592,9 @@ describe('upload capabilities', function () {
       principal: Verifier,
       authority: w3,
     })
-    assert.equal(result.error, true)
+    assert.ok(result.error)
     assert(
-      String(result).includes(
+      result.error.message.includes(
         'Expected did: URI instead got mailto:alice@web.mail'
       )
     )
@@ -628,9 +631,9 @@ describe('upload capabilities', function () {
       authority: w3,
     })
 
-    assert.equal(result.error, true)
+    assert.ok(result.error)
     assert(
-      String(result).includes(
+      result.error.message.includes(
         'bagbaieral6qo2fk7dph2ltggtw2qc6hda23hawvpc4duykdsh4soobxfe55a violates imposed root constraint bafkqaaa'
       )
     )

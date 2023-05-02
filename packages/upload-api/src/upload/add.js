@@ -30,7 +30,7 @@ export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
       writeDataCidToCarCidsMapping(dudewhereBucket, root, shards),
     ])
 
-    return res
+    return { ok: res }
   })
 }
 

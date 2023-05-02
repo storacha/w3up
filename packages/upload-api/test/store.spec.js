@@ -30,6 +30,7 @@ describe('store/*', () => {
           {
             equal: assert.strictEqual,
             deepEqual: assert.deepStrictEqual,
+            ok: assert.ok,
           },
           {
             id,

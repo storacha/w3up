@@ -3,7 +3,6 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as Store from '../src/store.js'
@@ -26,7 +25,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -44,7 +43,7 @@ describe('Store.add', () => {
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), car.cid.toString())
-          return res
+          return { ok: res }
         }),
       },
     })
@@ -52,13 +51,11 @@ describe('Store.add', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -97,7 +94,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -108,20 +105,18 @@ describe('Store.add', () => {
 
     const service = mockService({
       store: {
-        add: provide(StoreCapabilities.add, () => res),
+        add: provide(StoreCapabilities.add, () => ({ ok: res })),
       },
     })
 
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -151,7 +146,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -162,20 +157,18 @@ describe('Store.add', () => {
 
     const service = mockService({
       store: {
-        add: provide(StoreCapabilities.add, () => res),
+        add: provide(StoreCapabilities.add, () => ({ ok: res })),
       },
     })
 
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -205,30 +198,27 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddDoneResponse} */
+    /** @type {import('../src/types.js').StoreAddDone} */
     const res = {
       status: 'done',
       // @ts-expect-error
       headers: { 'x-test': 'true' },
-      url: 'http://localhost:9500', // will fail the test if called
     }
 
     const service = mockService({
       store: {
-        add: provide(StoreCapabilities.add, () => res),
+        add: provide(StoreCapabilities.add, () => ({ ok: res })),
       },
     })
 
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -252,7 +242,7 @@ describe('Store.add', () => {
     const agent = await Signer.generate()
     const car = await randomCAR(128)
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddOk} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -263,20 +253,18 @@ describe('Store.add', () => {
 
     const service = mockService({
       store: {
-        add: provide(StoreCapabilities.add, () => res),
+        add: provide(StoreCapabilities.add, () => ({ ok: res })),
       },
     })
 
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -340,7 +328,7 @@ describe('Store.list', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.list.can)
           assert.equal(invCap.with, space.did())
-          return res
+          return { ok: res }
         }),
       },
     })
@@ -348,13 +336,11 @@ describe('Store.list', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -419,7 +405,7 @@ describe('Store.list', () => {
           assert.equal(invCap.can, StoreCapabilities.list.can)
           assert.equal(invCap.with, space.did())
           assert.equal(invCap.nb?.size, 1)
-          return invCap.nb?.cursor === cursor ? page1 : page0
+          return { ok: invCap.nb?.cursor === cursor ? page1 : page0 }
         }),
       },
     })
@@ -427,13 +413,11 @@ describe('Store.list', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -490,13 +474,11 @@ describe('Store.list', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -536,7 +518,7 @@ describe('Store.remove', () => {
           assert.equal(invCap.can, StoreCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), car.cid.toString())
-          return {}
+          return { ok: {} }
         }),
       },
     })
@@ -544,13 +526,11 @@ describe('Store.remove', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -589,13 +569,11 @@ describe('Store.remove', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 

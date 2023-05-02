@@ -1,6 +1,6 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
-import { InferInvokedCapability } from '@ucanto/interface'
+import { InferInvokedCapability, Unit } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -9,13 +9,11 @@ import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Unit {}
+export type { Unit }
 /**
  * failure due to a resource not having enough storage capacity.
  */
 export interface InsufficientStorage {
-  error: true
   name: 'InsufficientStorage'
   message: string
 }
@@ -33,7 +31,8 @@ export interface AccessClaimSuccess {
   delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
 }
 export interface AccessClaimFailure {
-  error: true
+  name: 'AccessClaimFailure'
+  message: string
 }
 
 export interface AccessConfirmSuccess {
@@ -42,8 +41,12 @@ export interface AccessConfirmSuccess {
 export interface AccessConfirmFailure extends Ucanto.Failure {}
 
 export type AccessDelegate = InferInvokedCapability<typeof AccessCaps.delegate>
-export type AccessDelegateSuccess = unknown
-export type AccessDelegateFailure = { error: true } | InsufficientStorage
+export type AccessDelegateSuccess = Unit
+export type AccessDelegateFailure = InsufficientStorage | DelegationNotFound
+
+export interface DelegationNotFound extends Ucanto.Failure {
+  name: 'DelegationNotFound'
+}
 
 export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>

@@ -6,10 +6,10 @@ import type {
   HandlerExecutionError,
   Signer,
   DID,
-  Transport,
+  InboundCodec,
   Result,
+  Unit,
 } from '@ucanto/interface'
-import type { API } from '@ucanto/server'
 
 import { ToString, UnknownLink } from 'multiformats'
 
@@ -28,13 +28,12 @@ export * from '@ucanto/interface'
 export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddOk, Failure>
-    remove: ServiceMethod<StoreRemove, StoreRemoveOk, Failure>
+    remove: ServiceMethod<StoreRemove, Unit, Failure>
     list: ServiceMethod<StoreList, StoreListOk, Failure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
-    // @todo - Use proper type when no item was removed instead of undefined
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk | null, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
 }
@@ -58,8 +57,7 @@ export interface ServiceContext
     UploadServiceContext {}
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
-  decoder?: Transport.RequestDecoder
-  encoder?: Transport.ResponseEncoder
+  codec?: InboundCodec
   errorReporter: ErrorReporter
 }
 
@@ -155,15 +153,23 @@ export interface StoreListItem extends StoreAddOutput {
 
 export interface StoreListOk extends ListResponse<StoreListItem> {}
 
-export interface StoreAddOk {
-  status: 'upload' | 'done'
-  with: API.URI<'did:'>
+export type StoreAddOk = StoreAddDone | StoreAddUpload
+
+export interface StoreAddDone {
+  status: 'done'
+  with: DID
   link: UnknownLink
-  url?: URL
-  headers?: Record<string, string>
+  url?: undefined
+  headers?: undefined
 }
 
-export interface StoreRemoveOk {}
+export interface StoreAddUpload {
+  status: 'upload'
+  with: DID
+  link: UnknownLink
+  url: URL
+  headers: Record<string, string>
+}
 
 export interface UploadAddInput {
   space: DID
@@ -175,7 +181,13 @@ export interface UploadAddInput {
 
 export interface UploadAddOk
   extends Omit<UploadAddInput, 'space' | 'issuer' | 'invocation'> {}
-export interface UploadRemoveOk extends UploadAddOk {}
+export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
+
+export interface UploadDIDRemove extends UploadAddOk {}
+export interface UploadDidNotRemove {
+  root?: undefined
+  shards?: undefined
+}
 
 export interface UploadListItem extends UploadAddOk {
   insertedAt: string
@@ -236,6 +248,7 @@ export interface Assert {
     expected: Expected,
     message?: string
   ) => unknown
+  ok: <Actual>(actual: Actual, message?: string) => unknown
 }
 
 export type Test = (assert: Assert, context: UcantoServerTestContext) => unknown

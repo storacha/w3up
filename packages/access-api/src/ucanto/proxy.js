@@ -12,18 +12,20 @@ const BadGatewayHTTPErrorResult = {
    */
   catch(error) {
     if (!error || typeof error !== 'object') {
-      return
+      return { ok: {} }
     }
     const status = 'status' in error ? Number(error.status) : undefined
     const isServerError = status !== undefined && status >= 500 && status < 600
     if (!isServerError) {
-      return
+      return { ok: {} }
     }
+
     return {
-      error: true,
-      status: 502,
-      statusText: 'Bad Gateway',
-      'x-proxy-error': error,
+      error: {
+        status: 502,
+        statusText: 'Bad Gateway',
+        'x-proxy-error': error,
+      },
     }
   },
 }
@@ -45,7 +47,7 @@ function defaultCatchInvocationError(error) {
 /**
  * @template {Ucanto.ConnectionView<any>} [Connection=Ucanto.ConnectionView<any>]
  * @param {object} options
- * @param {(error: unknown) => Promise<unknown>} [options.catchInvocationError] - catches any error that comes from invoking the proxy invocation on the connection. If it returns a value, that value will be the proxied invocation result.
+ * @param {(error: unknown) => Promise<Ucanto.Result>} [options.catchInvocationError] - catches any error that comes from invoking the proxy invocation on the connection. If it returns a value, that value will be the proxied invocation result.
  * @param {{ default: Connection, [K: Ucanto.UCAN.DID]: Connection }} options.connections
  */
 export function createProxyHandler(options) {
@@ -53,7 +55,7 @@ export function createProxyHandler(options) {
    * @template {import('@ucanto/interface').Capability} Capability
    * @param {Ucanto.Invocation<Capability>} invocation
    * @param {Ucanto.InvocationContext} context
-   * @returns {Promise<Ucanto.Result<any, { error: true }>>}
+   * @returns {Promise<Ucanto.Result<any, any>>}
    */
   return async function handleInvocation(invocation, context) {
     const { connections, catchInvocationError = defaultCatchInvocationError } =
@@ -65,10 +67,12 @@ export function createProxyHandler(options) {
         [await invocation.delegate()],
         connection
       )
-      return result
+
+      return result.out
     } catch (error) {
       if (catchInvocationError) {
         const caughtResult = await catchInvocationError(error)
+
         return caughtResult
       }
       throw error

@@ -49,12 +49,12 @@ describe('store capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'store/add')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'store/add')
+    assert.deepEqual(result.ok.capability.nb, {
       link: parseLink('bafkqaaa'),
       size: 0,
     })
@@ -79,12 +79,12 @@ describe('store capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'store/add')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'store/add')
+    assert.deepEqual(result.ok.capability.nb, {
       link: parseLink('bafkqaaa'),
       size: 0,
     })
@@ -116,12 +116,12 @@ describe('store capabilities', function () {
     })
 
     if (result.error) {
-      assert.fail(result.message)
+      assert.fail(result.error.message)
     }
 
-    assert.deepEqual(result.audience.did(), w3.did())
-    assert.equal(result.capability.can, 'store/add')
-    assert.deepEqual(result.capability.nb, {
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'store/add')
+    assert.deepEqual(result.ok.capability.nb, {
       link: parseLink('bafkqaaa'),
       size: 0,
     })
@@ -157,12 +157,12 @@ describe('store capabilities', function () {
       })
 
       if (result.error) {
-        assert.fail(result.message)
+        assert.fail(result.error.message)
       }
 
-      assert.deepEqual(result.audience.did(), w3.did())
-      assert.equal(result.capability.can, 'store/add')
-      assert.deepEqual(result.capability.nb, {
+      assert.deepEqual(result.ok.audience.did(), w3.did())
+      assert.equal(result.ok.capability.can, 'store/add')
+      assert.deepEqual(result.ok.capability.nb, {
         link: parseLink('bafkqaaa'),
         size: 1000,
       })
@@ -186,8 +186,8 @@ describe('store capabilities', function () {
         authority: w3,
       })
 
-      assert.equal(result.error, true)
-      assert(String(result).includes('violation: 2048 > 1024'))
+      assert.ok(result.error)
+      assert(result.error.message.includes('violation: 2048 > 1024'))
     }
   })
 
@@ -235,8 +235,8 @@ describe('store capabilities', function () {
         authority: w3,
       })
 
-      assert.equal(result.error, true)
-      assert(String(result).includes('Expected value of type'))
+      assert.ok(result.error)
+      assert(result.error.message.includes('Expected value of type'))
     })
   }
 

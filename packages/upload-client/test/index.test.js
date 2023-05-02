@@ -3,7 +3,6 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
@@ -41,7 +40,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {import('../src/types.js').StoreAddUploadRequiredResponse} */
+    /** @type {import('../src/types.js').StoreAddUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -58,7 +57,7 @@ describe('uploadFile', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return res
+          return { ok: res }
         }),
       },
       upload: {
@@ -71,8 +70,10 @@ describe('uploadFile', () => {
           assert.equal(invCap.nb?.shards?.length, 1)
           assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
           return {
-            root: expectedCar.roots[0],
-            shards: [expectedCar.cid],
+            ok: {
+              root: expectedCar.roots[0],
+              shards: [expectedCar.cid],
+            },
           }
         }),
       },
@@ -81,13 +82,11 @@ describe('uploadFile', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
     const dataCID = await uploadFile(
@@ -132,7 +131,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -143,16 +142,18 @@ describe('uploadFile', () => {
     const service = mockService({
       store: {
         add: provide(StoreCapabilities.add, ({ capability }) => ({
-          ...res,
-          link: /** @type {import('../src/types').CARLink} */ (
-            capability.nb.link
-          ),
+          ok: {
+            ...res,
+            link: /** @type {import('../src/types').CARLink} */ (
+              capability.nb.link
+            ),
+          },
         })),
       },
       upload: {
         add: provide(UploadCapabilities.add, ({ capability }) => {
           if (!capability.nb) throw new Error('nb must be present')
-          return capability.nb
+          return { ok: capability.nb }
         }),
       },
     })
@@ -160,13 +161,11 @@ describe('uploadFile', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
     await uploadFile(
@@ -210,7 +209,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -227,10 +226,12 @@ describe('uploadDirectory', () => {
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
           return {
-            ...res,
-            link: /** @type {import('../src/types').CARLink} */ (
-              capability.nb.link
-            ),
+            ok: {
+              ...res,
+              link: /** @type {import('../src/types').CARLink} */ (
+                capability.nb.link
+              ),
+            },
           }
         }),
       },
@@ -244,7 +245,7 @@ describe('uploadDirectory', () => {
           assert.equal(invCap.nb?.shards?.length, 1)
           assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
           if (!invCap.nb) throw new Error('nb must be present')
-          return invCap.nb
+          return { ok: invCap.nb }
         }),
       },
     })
@@ -252,13 +253,11 @@ describe('uploadDirectory', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
     const dataCID = await uploadDirectory(
@@ -303,7 +302,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -314,16 +313,18 @@ describe('uploadDirectory', () => {
     const service = mockService({
       store: {
         add: provide(StoreCapabilities.add, ({ capability }) => ({
-          ...res,
-          link: /** @type {import('../src/types').CARLink} */ (
-            capability.nb.link
-          ),
+          ok: {
+            ...res,
+            link: /** @type {import('../src/types').CARLink} */ (
+              capability.nb.link
+            ),
+          },
         })),
       },
       upload: {
         add: provide(UploadCapabilities.add, ({ capability }) => {
           if (!capability.nb) throw new Error('nb must be present')
-          return capability.nb
+          return { ok: capability.nb }
         }),
       },
     })
@@ -331,13 +332,11 @@ describe('uploadDirectory', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
     await uploadDirectory(
@@ -387,7 +386,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUploadRequiredResponse, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -404,10 +403,12 @@ describe('uploadCAR', () => {
           assert.equal(invCap.can, StoreCapabilities.add.can)
           assert.equal(invCap.with, space.did())
           return {
-            ...res,
-            link: /** @type {import('../src/types').CARLink} */ (
-              capability.nb.link
-            ),
+            ok: {
+              ...res,
+              link: /** @type {import('../src/types').CARLink} */ (
+                capability.nb.link
+              ),
+            },
           }
         }),
       },
@@ -423,7 +424,9 @@ describe('uploadCAR', () => {
           invCap.nb.shards?.forEach((s, i) => {
             assert(s.toString(), carCIDs[i].toString())
           })
-          return invCap.nb
+          return {
+            ok: invCap.nb,
+          }
         }),
       },
     })
@@ -431,13 +434,11 @@ describe('uploadCAR', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 

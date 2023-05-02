@@ -1,46 +1,29 @@
 import * as Server from '@ucanto/server'
-import { claim } from '@web3-storage/capabilities/access'
-import * as Ucanto from '@ucanto/interface'
+import * as Access from '@web3-storage/capabilities/access'
+import * as API from '../api.js'
 import * as delegationsResponse from '../utils/delegations-response.js'
 import { collect } from 'streaming-iterables'
 
 /**
- * @typedef {import('@web3-storage/capabilities/types').AccessClaimSuccess} AccessClaimSuccess
- * @typedef {import('@web3-storage/capabilities/types').AccessClaimFailure} AccessClaimFailure
+ * @typedef {object} Context
+ * @property {object} models
+ * @property {API.DelegationsStorage} models.delegations
+ * @param {Context} ctx
  */
+export const provide = (ctx) =>
+  Server.provide(Access.claim, (input) => claim(input, ctx))
 
 /**
- * @callback AccessClaimHandler
- * @param {Ucanto.Invocation<import('@web3-storage/capabilities/types').AccessClaim>} invocation
- * @returns {Promise<Ucanto.Result<AccessClaimSuccess, AccessClaimFailure>>}
+ * @param {API.Input<Access.claim>} input
+ * @param {Context} ctx
+ * @returns {Promise<API.Result<API.AccessClaimSuccess, API.AccessClaimFailure>>}
  */
-
-/**
- * @param {object} ctx
- * @param {import('../types/delegations').DelegationsStorage} ctx.delegations
- * @param {Pick<import('../bindings.js').RouteContext['config'], 'ENV'>} ctx.config
- */
-export function accessClaimProvider(ctx) {
-  const handleClaimInvocation = createAccessClaimHandler(ctx)
-  return Server.provide(claim, async ({ invocation }) => {
-    return handleClaimInvocation(invocation)
-  })
-}
-
-/**
- * @param {object} options
- * @param {import('../types/delegations').DelegationsStorage} options.delegations
- * @returns {AccessClaimHandler}
- */
-export function createAccessClaimHandler({ delegations }) {
-  /** @type {AccessClaimHandler} */
-  return async (invocation) => {
-    const claimedAudience = invocation.capabilities[0].with
-    const claimed = await collect(
-      delegations.find({ audience: claimedAudience })
-    )
-    return {
+export const claim = async ({ invocation }, { models: { delegations } }) => {
+  const claimedAudience = invocation.capabilities[0].with
+  const claimed = await collect(delegations.find({ audience: claimedAudience }))
+  return {
+    ok: {
       delegations: delegationsResponse.encode(claimed),
-    }
+    },
   }
 }

@@ -8,8 +8,8 @@
  *
  * @module
  */
-import { capability, DID, struct } from '@ucanto/validator'
-import { equalWith, fail, equal } from './utils.js'
+import { capability, DID, struct, ok } from '@ucanto/validator'
+import { equalWith, and, equal } from './utils.js'
 
 // e.g. did:web:web3.storage or did:web:staging.web3.storage
 export const Provider = DID.match({ method: 'web' })
@@ -28,10 +28,10 @@ export const add = capability({
   }),
   derives: (child, parent) => {
     return (
-      fail(equalWith(child, parent)) ||
-      fail(equal(child.nb.provider, parent.nb.provider, 'provider')) ||
-      fail(equal(child.nb.consumer, parent.nb.consumer, 'consumer')) ||
-      true
+      and(equalWith(child, parent)) ||
+      and(equal(child.nb.provider, parent.nb.provider, 'provider')) ||
+      and(equal(child.nb.consumer, parent.nb.consumer, 'consumer')) ||
+      ok({})
     )
   },
 })

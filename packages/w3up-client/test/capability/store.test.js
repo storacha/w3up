@@ -1,7 +1,6 @@
 import assert from 'assert'
 import { create as createServer, provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import { Store as StoreCapabilities } from '@web3-storage/capabilities'
 import { AgentData } from '@web3-storage/access/agent'
@@ -21,11 +20,13 @@ describe('StoreClient', () => {
             assert.equal(invCap.can, StoreCapabilities.add.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
             return {
-              status: 'upload',
-              headers: { 'x-test': 'true' },
-              url: 'http://localhost:9200',
-              link: car.cid,
-              with: space.did(),
+              ok: {
+                status: 'upload',
+                headers: { 'x-test': 'true' },
+                url: 'http://localhost:9200',
+                link: car.cid,
+                with: space.did(),
+              },
             }
           }),
         },
@@ -34,8 +35,7 @@ describe('StoreClient', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -78,7 +78,7 @@ describe('StoreClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.list.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
-            return page
+            return { ok: page }
           }),
         },
       })
@@ -86,8 +86,7 @@ describe('StoreClient', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -121,7 +120,7 @@ describe('StoreClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.remove.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
-            return null
+            return { ok: {} }
           }),
         },
       })
@@ -129,8 +128,7 @@ describe('StoreClient', () => {
       const server = createServer({
         id: await Signer.generate(),
         service,
-        decoder: CAR,
-        encoder: CBOR,
+        codec: CAR.inbound,
       })
 
       const alice = new Client(await AgentData.create(), {

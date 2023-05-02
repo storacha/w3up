@@ -8,6 +8,7 @@ import {
   ResponseEncoder,
   ServiceMethod,
   TheCapabilityParser,
+  Failure,
 } from '@ucanto/interface'
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
@@ -31,11 +32,11 @@ export type InferService<
   CP extends TheCapabilityParser<Match<ParsedCapability>> = TheCapabilityParser<
     Match<ParsedCapability>
   >,
-  Success = any
+  Success extends {} = {}
 > = {
   [K in KeysWithValue<S, CP>]: ServiceMethod<
     InferInvokedCapability<S[K] extends CP ? S[K] : never>,
     Success,
-    { error: true }
+    Failure
   >
 }

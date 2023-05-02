@@ -74,16 +74,18 @@ export async function add(
     }
   )
 
-  if (result.error) {
+  if (!result.out.ok) {
     throw new Error(`failed ${StoreCapabilities.add.can} invocation`, {
-      cause: result,
+      cause: result.out.error,
     })
   }
 
   // Return early if it was already uploaded.
-  if (result.status === 'done') {
+  if (result.out.ok.status === 'done') {
     return link
   }
+
+  const responseAddUpload = result.out.ok
 
   const fetchWithUploadProgress =
     /** @type {(url: string, init?: import('./types').FetchOptions) => Promise<Response>} */ (
@@ -93,14 +95,17 @@ export async function add(
   const res = await retry(
     async () => {
       try {
-        const res = await fetchWithUploadProgress(result.url, {
+        const res = await fetchWithUploadProgress(responseAddUpload.url, {
           method: 'PUT',
           mode: 'cors',
           body: car,
-          headers: result.headers,
+          headers: responseAddUpload.headers,
           signal: options.signal,
           onUploadProgress: options.onUploadProgress
-            ? createUploadProgressHandler(result.url, options.onUploadProgress)
+            ? createUploadProgressHandler(
+                responseAddUpload.url,
+                options.onUploadProgress
+              )
             : undefined,
           // @ts-expect-error - this is needed by recent versions of node - see https://github.com/bluesky-social/atproto/pull/470 for more info
           duplex: 'half',
@@ -146,7 +151,7 @@ export async function add(
  *
  * The issuer needs the `store/list` delegated capability.
  * @param {import('./types').ListRequestOptions} [options]
- * @returns {Promise<import('./types').ListResponse<import('./types').StoreListResult>>}
+ * @returns {Promise<import('./types').StoreListOk>}
  */
 export async function list(
   { issuer, with: resource, proofs, audience },
@@ -169,13 +174,13 @@ export async function list(
     })
     .execute(conn)
 
-  if (result.error) {
+  if (!result.out.ok) {
     throw new Error(`failed ${StoreCapabilities.list.can} invocation`, {
-      cause: result,
+      cause: result.out.error,
     })
   }
 
-  return result
+  return result.out.ok
 }
 
 /**
@@ -215,9 +220,9 @@ export async function remove(
     })
     .execute(conn)
 
-  if (result?.error) {
+  if (!result.out.ok) {
     throw new Error(`failed ${StoreCapabilities.remove.can} invocation`, {
-      cause: result,
+      cause: result.out.error,
     })
   }
 }

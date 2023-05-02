@@ -3,7 +3,6 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as CBOR from '@ucanto/transport/cbor'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as Upload from '../src/upload.js'
@@ -42,7 +41,7 @@ describe('Upload.add', () => {
           assert.equal(String(invCap.nb?.root), car.roots[0].toString())
           assert.equal(invCap.nb?.shards?.length, 1)
           assert.equal(String(invCap.nb?.shards?.[0]), car.cid.toString())
-          return res
+          return { ok: res }
         }),
       },
     })
@@ -50,13 +49,11 @@ describe('Upload.add', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -102,13 +99,11 @@ describe('Upload.add', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -159,7 +154,7 @@ describe('Upload.list', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, UploadCapabilities.list.can)
           assert.equal(invCap.with, space.did())
-          return res
+          return { ok: res }
         }),
       },
     })
@@ -167,13 +162,11 @@ describe('Upload.list', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -242,7 +235,9 @@ describe('Upload.list', () => {
           assert.equal(invCap.can, UploadCapabilities.list.can)
           assert.equal(invCap.with, space.did())
           assert.equal(invCap.nb?.size, 1)
-          return invCap.nb?.cursor === cursor ? page1 : page0
+          return {
+            ok: invCap.nb?.cursor === cursor ? page1 : page0,
+          }
         }),
       },
     })
@@ -250,13 +245,11 @@ describe('Upload.list', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -321,13 +314,11 @@ describe('Upload.list', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -367,7 +358,9 @@ describe('Upload.remove', () => {
           assert.equal(invCap.can, UploadCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.root), car.roots[0].toString())
-          return { root: car.roots[0] }
+          return {
+            ok: { root: car.roots[0] },
+          }
         }),
       },
     })
@@ -375,13 +368,11 @@ describe('Upload.remove', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 
@@ -420,13 +411,11 @@ describe('Upload.remove', () => {
     const server = Server.create({
       id: serviceSigner,
       service,
-      decoder: CAR,
-      encoder: CBOR,
+      codec: CAR.inbound,
     })
     const connection = Client.connect({
       id: serviceSigner,
-      encoder: CAR,
-      decoder: CBOR,
+      codec: CAR.outbound,
       channel: server,
     })
 

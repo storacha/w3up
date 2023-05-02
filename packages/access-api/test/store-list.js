@@ -66,7 +66,7 @@ describe('proxy store/list invocations to upload-api', function () {
         // cast to `any` only because this `conn` uses Service type from access-client.
         /** @type {import('@ucanto/interface').ConnectionView<any>} */ (conn)
       )
-      assert.ok(!result?.error, 'should not be an error')
+      assert.ok(!result.out.error, 'should not be an error')
     })
   }
 })

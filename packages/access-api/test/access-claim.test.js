@@ -1,48 +1,44 @@
-import { context } from './helpers/context.js'
-import { createTesterFromContext } from './helpers/ucanto-test-utils.js'
-import { ed25519 } from '@ucanto/principal'
-import { claim } from '@web3-storage/capabilities/access'
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-only-tests/no-only-tests */
+import * as Suite from './access-claim.js'
 import * as assert from 'assert'
+import { context } from './helpers/context.js'
+import { queue } from './helpers/utils.js'
 
-/**
- * Run the same tests against several variants of access/delegate handlers.
- */
-for (const handlerVariant of /** @type {const} */ ([
-  {
-    name: 'handled by access-api in miniflare',
-    ...(() => {
-      const spaceWithStorageProvider = ed25519.generate()
-      return {
-        spaceWithStorageProvider,
-        ...createTesterFromContext(() => context(), {
-          registerSpaces: [spaceWithStorageProvider],
-          account: {
-            did: () => /** @type {const} */ ('did:mailto:example.com:foo'),
-          },
-        }),
-      }
-    })(),
-  },
-])) {
-  describe(`access-claim ${handlerVariant.name}`, () => {
-    it(`can be invoked`, async () => {
-      const issuer = await handlerVariant.issuer
-      const result = await handlerVariant.invoke(
-        await claim
-          .invoke({
-            issuer,
-            audience: await handlerVariant.audience,
-            with: issuer.did(),
-          })
-          .delegate()
-      )
-      assert.deepEqual(
-        'delegations' in result,
-        true,
-        'result contains delegations set'
+describe('access/claim', () => {
+  for (const [name, test] of Object.entries(Suite.test)) {
+    const define = name.startsWith('only! ')
+      ? it.only
+      : name.startsWith('skip! ')
+      ? it.skip
+      : it
+
+    define(name, async () => {
+      /** @type {{to:string, url:string}[]} */
+      const buffer = []
+      const mail = queue(buffer)
+      await test(
+        {
+          equal: assert.strictEqual,
+          deepEqual: assert.deepStrictEqual,
+          ok: assert.ok,
+        },
+        {
+          mail,
+          ...(await context({
+            globals: {
+              email: {
+                /**
+                 * @param {*} email
+                 */
+                sendValidation(email) {
+                  mail.put(email)
+                },
+              },
+            },
+          })),
+        }
       )
     })
-  })
-
-  // there are more tests about `testDelegateThenClaim` in ./access-delegate.test.js
-}
+  }
+})

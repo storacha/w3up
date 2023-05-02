@@ -1,29 +1,27 @@
-import {
-  assertNotError,
-  registerSpaces,
-  warnOnErrorResult,
-} from './helpers/ucanto-test-utils.js'
 import * as principal from '@ucanto/principal'
 import * as assert from 'assert'
 import * as ucanto from '@ucanto/core'
-import * as Ucanto from '@ucanto/interface'
-import { Access, Provider } from '@web3-storage/capabilities'
+import * as API from '../src/api.js'
+import { Access, Provider, Consumer } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
 import {
   createContextWithMailbox,
   createAuthorization,
   Context,
+  provisionProvider,
 } from './helpers/utils.js'
 
 describe(`provider/add`, () => {
   it(`can invoke as did:mailto after authorize confirmation`, async () => {
     const { space, agent, account, ...context } = await setup()
 
-    await registerSpaces([space], {
-      ...context,
-      account,
+    await provisionProvider({
+      service: context.service,
       agent,
+      space,
+      account,
+      connection: context.connection,
     })
 
     await testAuthorizeClaimProviderAdd({
@@ -81,7 +79,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addStorageProviderResult)
+    assert.equal(addStorageProviderResult.out.error, undefined)
 
     // storage provider added. So we should be able to delegate now
     const accessDelegateResult = await ucanto
@@ -110,7 +108,8 @@ describe(`provider/add`, () => {
         ],
       })
       .execute(context.conn)
-    assertNotError(accessDelegateResult)
+
+    assert.equal(accessDelegateResult.out.error, undefined)
   })
 
   it('provider/add allows for store/info ', async () => {
@@ -139,7 +138,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addStorageProviderResult)
+    assert.equal(addStorageProviderResult.out.error, undefined)
 
     // storage provider added. So we should be able to space/info now
     const spaceInfoResult = await ucanto
@@ -168,9 +167,9 @@ describe(`provider/add`, () => {
         ],
       })
       .execute(context.conn)
-    assertNotError(spaceInfoResult)
-    assert.ok('did' in spaceInfoResult)
-    assert.deepEqual(spaceInfoResult.did, space.did())
+    assert.ok(spaceInfoResult.out.ok)
+    assert.ok('did' in spaceInfoResult.out.ok)
+    assert.deepEqual(spaceInfoResult.out.ok.did, space.did())
   })
 
   it('add providers set in env', async () => {
@@ -193,7 +192,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addNFTStorage)
+    assert.equal(addNFTStorage.out.error, undefined)
 
     const w3space = await principal.ed25519.generate()
     const addW3Storage = await Provider.add
@@ -209,7 +208,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addW3Storage)
+    assert.equal(addW3Storage.out.error, undefined)
   })
 
   it('provider/add can not add two diff providers to the same space', async () => {
@@ -233,7 +232,7 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assertNotError(addNFTStorage)
+    assert.equal(addNFTStorage.out.error, undefined)
 
     const addW3Storage = await Provider.add
       .invoke({
@@ -248,14 +247,9 @@ describe(`provider/add`, () => {
       })
       .execute(context.conn)
 
-    assert.equal(
-      addW3Storage.error,
-      true,
-      'Provider already added to this space'
-    )
-
+    assert.ok(addW3Storage.out.error, 'Provider already added to this space')
     assert.match(
-      addW3Storage.error ? addW3Storage?.message : '',
+      addW3Storage.out.error ? addW3Storage.out.error.message : '',
       /it already has a did:web:nft.storage provider/
     )
   })
@@ -281,12 +275,12 @@ const setup = async (options = {}) => {
 
 /**
  * @param {object} options
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.deviceA
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} options.space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} options.accountA
- * @param {Ucanto.Principal<Ucanto.DID<'web'>>} options.service - web3.storage service
+ * @param {API.Signer<API.DID<'key'>>} options.deviceA
+ * @param {API.Signer<API.DID<'key'>>} options.space
+ * @param {API.Principal<API.DID<'mailto'>>} options.accountA
+ * @param {API.Signer<API.DID<'web'>>} options.service - web3.storage service
  * @param {import('miniflare').Miniflare} options.mf
- * @param {import('@ucanto/interface').ConnectionView<import('@web3-storage/access/types').Service>} options.conn
+ * @param {API.ConnectionView<API.Service>} options.conn
  * @param {ValidationEmailSend[]} options.emails
  */
 async function testAuthorizeClaimProviderAdd(options) {
@@ -333,17 +327,17 @@ async function testAuthorizeClaimProviderAdd(options) {
     claimAsDeviceAResult && typeof claimAsDeviceAResult === 'object',
     `claimAsDeviceAResult is an object`
   )
-  warnOnErrorResult(claimAsDeviceAResult)
+  assert.ok(claimAsDeviceAResult.out.ok)
   assert.ok(
-    'delegations' in claimAsDeviceAResult &&
-      typeof claimAsDeviceAResult.delegations === 'object' &&
-      claimAsDeviceAResult.delegations,
+    'delegations' in claimAsDeviceAResult.out.ok &&
+      typeof claimAsDeviceAResult.out.ok.delegations === 'object' &&
+      claimAsDeviceAResult.out.ok.delegations,
     'claimAsDeviceAResult should have delegations property'
   )
   const claimedDelegations = [
     ...delegationsResponse.decode(
-      /** @type {Record<string,Ucanto.ByteView<Ucanto.Delegation>>} */ (
-        claimAsDeviceAResult.delegations
+      /** @type {Record<string,API.ByteView<API.Delegation>>} */ (
+        claimAsDeviceAResult.out.ok.delegations
       )
     ),
   ]
@@ -378,30 +372,23 @@ async function testAuthorizeClaimProviderAdd(options) {
       typeof providerAddAsAccountResult === 'object',
     `providerAddAsAccountResult is an object`
   )
-  assertNotError(providerAddAsAccountResult)
+  assert.equal(providerAddAsAccountResult.out.error, undefined)
 
-  const spaceStorageResult = await ucanto
+  const spaceStorageResult = await Consumer.has
     .invoke({
-      issuer: space,
+      issuer: service,
       audience: service,
-      capability: {
-        can: 'testing/space-storage',
-        with: space.did(),
+      with: service.did(),
+      nb: {
+        consumer: space.did(),
       },
     })
-    // @ts-ignore - not in service type because only enabled while testing
     .execute(conn)
 
-  assert.ok(
-    spaceStorageResult &&
-      typeof spaceStorageResult === 'object' &&
-      'hasStorageProvider' in spaceStorageResult,
-    'spaceStorageResult has hasStorageProvider property'
-  )
   assert.deepEqual(
-    spaceStorageResult.hasStorageProvider,
-    true,
-    `testing/space-storage.hasStorageProvider is true`
+    spaceStorageResult.out,
+    { ok: true },
+    `consumer/has reports true`
   )
 }
 
@@ -409,10 +396,10 @@ async function testAuthorizeClaimProviderAdd(options) {
  * Create some proofs that delegate capabilities to agent to invoke on behalf of account.
  * This is supposed to emulate what gets created by `access/authorize` confirmation email link click.
  *
- * @param {Ucanto.Principal<Ucanto.DID<'key'>>} agent - device agent that will be authorized
- * @param {Ucanto.Signer<Ucanto.DID>} service
- * @param {Ucanto.UCAN.Signer<Ucanto.DID<'mailto'>, NON_STANDARD>} account
- * @param {Ucanto.Capabilities} capabilities
+ * @param {API.Principal<API.DID<'key'>>} agent - device agent that will be authorized
+ * @param {API.Signer<API.DID>} service
+ * @param {API.UCAN.Signer<API.DID<'mailto'>, NON_STANDARD>} account
+ * @param {API.Capabilities} capabilities
  * @returns
  */
 async function createAccountAuthorization(

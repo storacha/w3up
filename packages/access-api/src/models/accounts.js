@@ -27,7 +27,7 @@ export class Accounts {
   }
 
   /**
-   * @param {Ucanto.URI<"did:">} did
+   * @param {Ucanto.DID<'mailto'>} did
    */
   async create(did) {
     const result = await this.d1
@@ -42,7 +42,7 @@ export class Accounts {
   }
 
   /**
-   * @param {Ucanto.URI<"did:">} did
+   * @param {Ucanto.DID<'mailto'>} did
    */
   async get(did) {
     return await this.d1
