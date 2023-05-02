@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.2](https://github.com/web3-storage/w3up/compare/access-v12.0.1...access-v12.0.2) (2023-05-01)
+
+
+### Bug Fixes
+
+* account for edge cases in polling abort ([#763](https://github.com/web3-storage/w3up/issues/763)) ([e11a37d](https://github.com/web3-storage/w3up/commit/e11a37d1ff609f93b3f450546b75a62313e152a9))
+
 ## [12.0.1](https://github.com/web3-storage/w3up/compare/access-v12.0.0...access-v12.0.1) (2023-04-14)
 
 

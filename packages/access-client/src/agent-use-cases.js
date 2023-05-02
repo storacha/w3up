@@ -115,43 +115,19 @@ export async function pollAccessClaimUntil(
   opts
 ) {
   const interval = opts?.interval || 250
-  /** @type {ReturnType<typeof setTimeout>} */
-  let pollingTimeoutId
-  const claimed = await new Promise((resolve, reject) => {
-    opts?.signal?.addEventListener('abort', (e) => {
-      pollingTimeoutId && clearTimeout(pollingTimeoutId)
-      reject(
-        new Error('pollAccessClaimUntilSessionProof aborted', { cause: e })
-      )
+  while (true) {
+    if (opts?.signal?.aborted)
+      throw opts.signal.reason ?? new Error('operation aborted')
+    const res = await access.invokeAndExecute(w3caps.Access.claim, {
+      with: delegee,
     })
-    poll(interval)
-    /**
-     * @param {number} retryAfter
-     */
-    async function poll(retryAfter) {
-      const pollClaimResult = await access.invokeAndExecute(
-        w3caps.Access.claim,
-        { with: delegee }
-      )
-
-      if (pollClaimResult.out.error) {
-        return reject(pollClaimResult)
-      }
-      try {
-        const claimedDelegations = Object.values(
-          pollClaimResult.out.ok.delegations
-        ).flatMap((d) => bytesToDelegations(d))
-        if (delegationsMatch(claimedDelegations)) {
-          resolve(claimedDelegations)
-        } else {
-          pollingTimeoutId = setTimeout(() => poll(retryAfter), retryAfter)
-        }
-      } catch (error) {
-        reject(error)
-      }
-    }
-  })
-  return claimed
+    if (res.out.error) throw res.out.error
+    const claims = Object.values(res.out.ok.delegations).flatMap((d) =>
+      bytesToDelegations(d)
+    )
+    if (delegationsMatch(claims)) return claims
+    await new Promise((resolve) => setTimeout(resolve, interval))
+  }
 }
 
 /**
