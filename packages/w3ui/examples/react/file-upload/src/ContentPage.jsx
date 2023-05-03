@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import { useUploader } from '@w3ui/react-uploader'
 import { withIdentity } from './components/Authenticator'
 import './spinner.css'
+import Loader from './components/Loader'
 
 export function ContentPage () {
-  const [{ storedDAGShards }, uploader] = useUploader()
-  const [file, setFile] = useState(null)
+  const [{ storedDAGShards, uploadProgress }, uploader] = useUploader()
+  const [file, setFile] = useState({})
   const [dataCid, setDataCid] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState(null)
@@ -27,7 +28,7 @@ export function ContentPage () {
   }
 
   if (status === 'uploading') {
-    return <Uploading file={file} storedDAGShards={storedDAGShards} />
+    return <Uploading file={file} storedDAGShards={storedDAGShards} uploadProgress={uploadProgress} />
   }
 
   if (status === 'done') {
@@ -45,9 +46,9 @@ export function ContentPage () {
   )
 }
 
-const Uploading = ({ file, storedDAGShards }) => (
+const Uploading = ({ file, storedDAGShards, uploadProgress }) => (
   <div className='flex items-center'>
-    <div className='spinner mr3 flex-none' />
+    <Loader className='mr3' uploadProgress={uploadProgress} />
     <div className='flex-auto'>
       <p className='truncate'>Uploading DAG for {file.name}</p>
       {storedDAGShards.map(({ cid, size }) => (

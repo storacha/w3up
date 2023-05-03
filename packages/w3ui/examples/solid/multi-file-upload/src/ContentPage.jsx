@@ -1,6 +1,7 @@
 import { createSignal, Switch, Match } from 'solid-js'
 import { useUploader } from '@w3ui/solid-uploader'
 import { withIdentity } from './components/Authenticator'
+import Loader from './components/Loader'
 import './spinner.css'
 
 export function ContentPage () {
@@ -58,7 +59,7 @@ export function ContentPage () {
         </form>
       </Match>
       <Match when={status() === 'uploading'}>
-        <Uploading files={files()} storedDAGShards={progress.storedDAGShards} />
+        <Uploading files={files()} progress={progress} />
       </Match>
       <Match when={status() === 'done'}>
         {error() ? <Errored error={error()} /> : <Done files={files()} dataCid={dataCid()} storedDAGShards={progress.storedDAGShards} />}
@@ -69,10 +70,10 @@ export function ContentPage () {
 
 const Uploading = props => (
   <div className='flex items-center'>
-    <div className='spinner mr3 flex-none' />
+    <Loader className='mr3' progress={props.progress} />
     <div className='flex-auto'>
       <p className='truncate'>Uploading DAG for {props.files.length > 1 ? `${props.files.length} files` : props.files[0].name}</p>
-      {props.storedDAGShards.map(({ cid, size }) => (
+      {props.progress.storedDAGShards.map(({ cid, size }) => (
         <p key={cid.toString()} className='f7 truncate'>
           {cid.toString()} ({size} bytes)
         </p>

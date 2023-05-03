@@ -69,7 +69,8 @@ export type UploaderComponentContextValue = [
 const UploaderComponentContext = createContext<UploaderComponentContextValue>([
   {
     status: Status.Idle,
-    storedDAGShards: []
+    storedDAGShards: [],
+    uploadProgress: {}
   },
   {
     setFile: () => {

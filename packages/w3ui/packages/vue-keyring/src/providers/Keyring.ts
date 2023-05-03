@@ -5,6 +5,7 @@ import type {
   ServiceConfig
 } from '@w3ui/keyring-core'
 import type { Capability, DID, Proof } from '@ucanto/interface'
+
 import {
   defineComponent,
   provide,
@@ -17,7 +18,8 @@ import {
   authorize as accessAuthorize,
   createAgent,
   getCurrentSpace as getCurrentSpaceInAgent,
-  getSpaces
+  getSpaces,
+  W3UI_ACCOUNT_LOCALSTORAGE_KEY
 } from '@w3ui/keyring-core'
 
 export { KeyringContextState, KeyringContextActions }
@@ -68,7 +70,7 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
       agent: undefined,
       space: undefined,
       spaces: [],
-      account: undefined
+      account: window.localStorage.getItem(W3UI_ACCOUNT_LOCALSTORAGE_KEY) ?? undefined
     })
     let agent: Agent | undefined
     let registerAbortController: AbortController
@@ -108,8 +110,8 @@ export const KeyringProvider = defineComponent<KeyringProviderProps>({
 
         try {
           await accessAuthorize(agent, email, { signal: controller.signal })
-          // TODO is there other state that needs to be initialized?
           state.account = email
+          window.localStorage.setItem(W3UI_ACCOUNT_LOCALSTORAGE_KEY, email)
           const newSpaces = getSpaces(agent)
           state.spaces = newSpaces
           const newCurrentSpace = getCurrentSpaceInAgent(agent) ?? newSpaces[0]

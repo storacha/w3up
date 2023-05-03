@@ -33,7 +33,7 @@
   "dependencies": {
     "@ucanto/interface": "^6.2.0",
     "@ucanto/principal": "^5.1.0",
-    "@web3-storage/access": "^12.0.0"
+    "@web3-storage/access": "^12.0.2"
   },
   "eslintConfig": {
     "extends": [

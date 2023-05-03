@@ -50,7 +50,7 @@ export function AuthenticationSubmitted (): JSX.Element {
         <p className='pt-2 pb-4'>
           Click the link in the email we sent to <span className='font-semibold tracking-wide'>{email}</span> to authorize this agent.
         </p>
-        <AuthCore.CancelButton className='w3ui-button hidden' >
+        <AuthCore.CancelButton className='w3ui-button' >
           Cancel
         </AuthCore.CancelButton>
       </div>

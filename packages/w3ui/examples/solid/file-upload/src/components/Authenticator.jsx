@@ -22,7 +22,7 @@ function Authenticator ({ children }) {
 
   return (
     <Switch>
-      <Match when={keyring.space?.registered()}>
+      <Match when={keyring.account}>
         {children}
       </Match>
       <Match when={submitted()}>

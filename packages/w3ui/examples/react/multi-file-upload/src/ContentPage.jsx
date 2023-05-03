@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { useUploader } from '@w3ui/react-uploader'
 import { withIdentity } from './components/Authenticator'
+import Loader from './components/Loader'
 import './spinner.css'
 
 export function ContentPage () {
-  const [{ storedDAGShards }, uploader] = useUploader()
+  const [{ storedDAGShards, uploadProgress }, uploader] = useUploader()
   const [files, setFiles] = useState([])
   const [allowDirectory, setAllowDirectory] = useState(false)
   const [wrapInDirectory, setWrapInDirectory] = useState(false)
@@ -33,7 +34,7 @@ export function ContentPage () {
   }
 
   if (status === 'uploading') {
-    return <Uploading files={files} storedDAGShards={storedDAGShards} />
+    return <Uploading files={files} storedDAGShards={storedDAGShards} uploadProgress={uploadProgress} />
   }
 
   if (status === 'done') {
@@ -60,16 +61,16 @@ export function ContentPage () {
               <input type='checkbox' value={wrapInDirectory} onChange={e => setWrapInDirectory(e.target.checked)} /> Wrap file in a directory
             </label>
           </div>
-          )
+        )
         : null}
       <button type='submit' className='ph3 pv2'>Upload</button>
     </form>
   )
 }
 
-const Uploading = ({ files, storedDAGShards }) => (
+const Uploading = ({ files, storedDAGShards, uploadProgress }) => (
   <div className='flex items-center'>
-    <div className='spinner mr3 flex-none' />
+    <Loader className='mr3' uploadProgress={uploadProgress} />
     <div className='flex-auto'>
       <p className='truncate'>Uploading DAG for {files.length > 1 ? `${files.length} files` : files[0].name}</p>
       {storedDAGShards.map(({ cid, size }) => (

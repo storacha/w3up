@@ -18,6 +18,7 @@ export const authorize = authorizeWaitAndClaim
 
 const DB_NAME = 'w3ui'
 const DB_STORE_NAME = 'keyring'
+export const W3UI_ACCOUNT_LOCALSTORAGE_KEY = 'w3ui-account-email'
 
 /**
  * A Space is the core organizational structure of web3-storage,

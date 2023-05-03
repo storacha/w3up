@@ -1,10 +1,13 @@
 <script>
 import { UploaderProviderInjectionKey } from '@w3ui/vue-uploader'
+import Loader from './components/Loader.vue'
 
 export default {
   inject: {
     uploadFile: { from: UploaderProviderInjectionKey.uploadFile },
-    storedDAGShards: { from: UploaderProviderInjectionKey.storedDAGShards }
+    storedDAGShards: { from: UploaderProviderInjectionKey.storedDAGShards },
+    uploadProgress: { from: UploaderProviderInjectionKey.uploadProgress }
+
   },
   data () {
     return {
@@ -32,13 +35,14 @@ export default {
       e.preventDefault()
       this.file = e.target.files[0]
     }
-  }
+  },
+  components: { Loader }
 }
 </script>
 
 <template>
   <div v-if="status === 'uploading'" className="flex items-center">
-    <div className="spinner mr3 flex-none"></div>
+    <Loader className="mr3 flex-none" :uploadProgress="uploadProgress" />
     <div className="flex-auto">
       <p className="truncate">Uploading DAG for {{file.name}}</p>
       <p className="f6 code truncate">{{dataCid}}</p>

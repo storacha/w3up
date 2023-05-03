@@ -1,8 +1,9 @@
 import type {
-  UploaderContextState,
-  UploaderContextActions,
   CARMetadata,
-  ServiceConfig
+  ProgressStatus,
+  ServiceConfig,
+  UploaderContextState,
+  UploaderContextActions
 } from '@w3ui/uploader-core'
 
 import {
@@ -23,7 +24,10 @@ export type UploaderContextValue = [
 ]
 
 const UploaderContext = createContext<UploaderContextValue>([
-  { storedDAGShards: [] },
+  {
+    storedDAGShards: [],
+    uploadProgress: {}
+  },
   {
     uploadFile: async () => {
       throw new Error('missing uploader context provider')
@@ -34,7 +38,7 @@ const UploaderContext = createContext<UploaderContextValue>([
   }
 ])
 
-export interface UploaderProviderProps extends ServiceConfig {}
+export interface UploaderProviderProps extends ServiceConfig { }
 
 /**
  * Provider for actions and state to facilitate uploads to the service.
@@ -44,7 +48,8 @@ export const UploaderProvider: ParentComponent<UploaderProviderProps> = (
 ) => {
   const [keyringState, keyringActions] = useKeyring()
   const [state, setState] = createStore<UploaderContextState>({
-    storedDAGShards: []
+    storedDAGShards: [],
+    uploadProgress: {}
   })
 
   const actions: UploaderContextActions = {
@@ -65,13 +70,18 @@ export const UploaderProvider: ParentComponent<UploaderProviderProps> = (
         ])
       }
 
-      return await uploadFile(conf, file, {
+      const result = await uploadFile(conf, file, {
         onShardStored: (meta) => {
           storedShards.push(meta)
           setState('storedDAGShards', [...storedShards])
         },
+        onUploadProgress: (status: ProgressStatus) => {
+          setState('uploadProgress', { ...state.uploadProgress, [status.url ?? '']: status })
+        },
         connection: props.connection
       })
+      setState('uploadProgress', {})
+      return result
     },
     async uploadDirectory (files: File[]) {
       if (keyringState.space == null) throw new Error('missing space')
@@ -87,16 +97,21 @@ export const UploaderProvider: ParentComponent<UploaderProviderProps> = (
         proofs: await keyringActions.getProofs([
           { can: storeAdd.can, with: keyringState.space.did() },
           { can: uploadAdd.can, with: keyringState.space.did() }
-        ]),
-        connection: props.connection
+        ])
       }
 
-      return await uploadDirectory(conf, files, {
+      const result = await uploadDirectory(conf, files, {
         onShardStored: (meta) => {
           storedShards.push(meta)
           setState('storedDAGShards', [...storedShards])
-        }
+        },
+        onUploadProgress: (status: ProgressStatus) => {
+          setState('uploadProgress', { ...state.uploadProgress, [status.url ?? '']: status })
+        },
+        connection: props.connection
       })
+      setState('uploadProgress', {})
+      return result
     }
   }
 
