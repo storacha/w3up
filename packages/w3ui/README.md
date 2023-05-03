@@ -45,15 +45,6 @@ This repo contains reusauble UI modules for the web3.storage w3up beta in your f
 
     A demo of the list of uploads that have been made to an account.
 
-## Storybook
-
-To run our [Storybook](https://storybook.js.org/), run:
-
-```bash
-cd examples/react/playground
-pnpm run storybook
-```
-
 ## w3console
 
 To run w3console, a full-featured console for web3.storage and demonstration of our React components, run:
