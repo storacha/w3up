@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v2.0.0...upload-api-v3.0.0) (2023-05-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to ucanto7.x.x ([#774](https://github.com/web3-storage/w3up/issues/774))
+
+### Features
+
+* upgrade to ucanto7.x.x ([#774](https://github.com/web3-storage/w3up/issues/774)) ([0cc6e66](https://github.com/web3-storage/w3up/commit/0cc6e66a80476e05c75bea94c1bee9bd12cbacf5))
+
 ## [2.0.0](https://github.com/web3-storage/w3protocol/compare/upload-api-v1.0.4...upload-api-v2.0.0) (2023-03-23)
 
 
