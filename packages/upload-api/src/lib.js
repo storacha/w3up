@@ -1,7 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as Types from './types.js'
-import * as CAR from '@ucanto/transport/car'
+import * as Legacy from '@ucanto/transport/legacy'
 import { createService as createStoreService } from './store.js'
 import { createService as createUploadService } from './upload.js'
 export * from './types.js'
@@ -9,7 +9,7 @@ export * from './types.js'
 /**
  * @param {Types.UcantoServerContext} options
  */
-export const createServer = ({ id, codec = CAR.inbound, ...context }) =>
+export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
   Server.create({
     id,
     codec,
