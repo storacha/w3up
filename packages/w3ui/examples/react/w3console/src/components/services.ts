@@ -15,8 +15,7 @@ export const accessServicePrincipal = DID.parse(
 
 export const accessServiceConnection = connect<Service>({
   id: accessServicePrincipal,
-  encoder: CAR,
-  decoder: CBOR,
+  codec: CAR.outbound,
   channel: HTTP.open<Record<string, any>>({
     url: accessServiceURL,
     method: 'POST',
@@ -34,8 +33,7 @@ export const uploadServicePrincipal = DID.parse(
 
 export const uploadServiceConnection = connect<Service>({
   id: uploadServicePrincipal,
-  encoder: CAR,
-  decoder: CBOR,
+  codec: CAR.outbound,
   channel: HTTP.open<Record<string, any>>({
     url: uploadServiceURL,
     method: 'POST',

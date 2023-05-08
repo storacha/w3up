@@ -24,8 +24,8 @@
   "devDependencies": {
     "@preact/preset-vite": "^2.4.0",
     "@types/blueimp-md5": "^2.18.0",
-    "@ucanto/core": "^5.2.0",
-    "@ucanto/interface": "^6.2.0",
+    "@ucanto/core": "^7.1.1",
+    "@ucanto/interface": "^7.1.0",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.4",

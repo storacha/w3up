@@ -36,7 +36,7 @@
     "solid-js": "^1.5.0"
   },
   "devDependencies": {
-    "@ucanto/interface": "^6.2.0"
+    "@ucanto/interface": "^7.1.0"
   },
   "eslintConfig": {
     "extends": [
