@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [3.1.0](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v3.0.0...solid-uploads-list-v3.1.0) (2023-05-09)
+
+
+### Features
+
+* update to latest version of ucanto and [@web3-storage](https://github.com/web3-storage) libraries ([#514](https://github.com/web3-storage/w3ui/issues/514)) ([e1ee301](https://github.com/web3-storage/w3ui/commit/e1ee301f8a6571a074c46add79527e2480f82675))
+
+
+### Bug Fixes
+
+* tweak READMEs for packages that release-please didn't release right ([#440](https://github.com/web3-storage/w3ui/issues/440)) ([845a6b6](https://github.com/web3-storage/w3ui/commit/845a6b644dbec6bf65ff09e751da7b7f01c8cf1e))
+
 ## [3.0.0](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v2.0.2...solid-uploads-list-v3.0.0) (2023-03-23)
 
 

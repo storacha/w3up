@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/solid-uploads-list",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Solid adapter for w3ui uploads list.",
   "main": "src/index.ts",
   "publishConfig": {
