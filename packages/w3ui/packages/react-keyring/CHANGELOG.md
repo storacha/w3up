@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.2.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v5.1.1...react-keyring-v5.2.0) (2023-05-09)
+
+
+### Features
+
+* update to latest version of ucanto and [@web3-storage](https://github.com/web3-storage) libraries ([#514](https://github.com/web3-storage/w3ui/issues/514)) ([e1ee301](https://github.com/web3-storage/w3ui/commit/e1ee301f8a6571a074c46add79527e2480f82675))
+* upload progress ([#499](https://github.com/web3-storage/w3ui/issues/499)) ([6c9de97](https://github.com/web3-storage/w3ui/commit/6c9de9799ff25e16ed5b5ce4f1b66bd9430466f8))
+* w3console cleanup and updates to packages to support it ([#507](https://github.com/web3-storage/w3ui/issues/507)) ([78aee2a](https://github.com/web3-storage/w3ui/commit/78aee2a63f3f56dedc493b0fe8e60aa94ad84f07))
+
+
+### Bug Fixes
+
+* update @web3-storage/access dep to fix email + issue ([#503](https://github.com/web3-storage/w3ui/issues/503)) ([d3b0bba](https://github.com/web3-storage/w3ui/commit/d3b0bba4472ec3da2bb24abf750e58b2563dc4a0))
+
 ## [5.1.1](https://github.com/web3-storage/w3ui/compare/react-keyring-v5.1.0...react-keyring-v5.1.1) (2023-03-30)
 
 
