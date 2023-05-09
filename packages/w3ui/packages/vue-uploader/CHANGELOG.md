@@ -1,6 +1,19 @@
 # Changelog
 
 
+## [4.1.0](https://github.com/web3-storage/w3ui/compare/vue-uploader-v4.0.0...vue-uploader-v4.1.0) (2023-05-09)
+
+
+### Features
+
+* upload progress ([#499](https://github.com/web3-storage/w3ui/issues/499)) ([6c9de97](https://github.com/web3-storage/w3ui/commit/6c9de9799ff25e16ed5b5ce4f1b66bd9430466f8))
+* w3console cleanup and updates to packages to support it ([#507](https://github.com/web3-storage/w3ui/issues/507)) ([78aee2a](https://github.com/web3-storage/w3ui/commit/78aee2a63f3f56dedc493b0fe8e60aa94ad84f07))
+
+
+### Bug Fixes
+
+* tweak READMEs for packages that release-please didn't release right ([#440](https://github.com/web3-storage/w3ui/issues/440)) ([845a6b6](https://github.com/web3-storage/w3ui/commit/845a6b644dbec6bf65ff09e751da7b7f01c8cf1e))
+
 ## [4.0.0](https://github.com/web3-storage/w3ui/compare/vue-uploader-v3.0.1...vue-uploader-v4.0.0) (2023-03-23)
 
 
