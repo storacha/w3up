@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.4.1...w3console-v1.5.0) (2023-05-09)
+
+
+### Features
+
+* add warnings about the public and permanent nature of w3up uploads ([#502](https://github.com/web3-storage/w3ui/issues/502)) ([6cc58f8](https://github.com/web3-storage/w3ui/commit/6cc58f8e1161a23f07e6bab50064182a63998ff4)), closes [#464](https://github.com/web3-storage/w3ui/issues/464)
+* get w3console looking acceptable on mobile ([#500](https://github.com/web3-storage/w3ui/issues/500)) ([118cb22](https://github.com/web3-storage/w3ui/commit/118cb229dda289e9c98cff488c388fcc6d26e8cb))
+* remove space creator from sidebar ([#509](https://github.com/web3-storage/w3ui/issues/509)) ([40bc621](https://github.com/web3-storage/w3ui/commit/40bc6218d833b01536e23791da0a200e28facfb9))
+* update to latest version of ucanto and [@web3-storage](https://github.com/web3-storage) libraries ([#514](https://github.com/web3-storage/w3ui/issues/514)) ([e1ee301](https://github.com/web3-storage/w3ui/commit/e1ee301f8a6571a074c46add79527e2480f82675))
+* upload progress ([#499](https://github.com/web3-storage/w3ui/issues/499)) ([6c9de97](https://github.com/web3-storage/w3ui/commit/6c9de9799ff25e16ed5b5ce4f1b66bd9430466f8))
+* w3console cleanup and updates to packages to support it ([#507](https://github.com/web3-storage/w3ui/issues/507)) ([78aee2a](https://github.com/web3-storage/w3ui/commit/78aee2a63f3f56dedc493b0fe8e60aa94ad84f07))
+
 ## [1.4.1](https://github.com/web3-storage/w3ui/compare/w3console-v1.4.0...w3console-v1.4.1) (2023-03-30)
 
 
