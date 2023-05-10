@@ -9,7 +9,12 @@ import type {
   InboundCodec,
   Result,
   Unit,
+  CapabilityParser,
+  Match,
+  ParsedCapability,
+  InferInvokedCapability,
 } from '@ucanto/interface'
+import type { ProviderInput } from '@ucanto/server'
 
 import { ToString, UnknownLink } from 'multiformats'
 
@@ -20,7 +25,9 @@ import {
   UploadAdd,
   UploadRemove,
   UploadList,
+
 } from '@web3-storage/capabilities/types'
+import * as Capabilities from '@web3-storage/capabilities'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
@@ -35,6 +42,18 @@ export interface Service {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
     remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
+  },
+  console: {
+    log: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Console.log>,
+      {},
+      never
+    >
+    error: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Console.error>,
+      never,
+      Failure & { cause: unknown }
+    >
   }
 }
 
@@ -52,9 +71,13 @@ export interface UploadServiceContext {
   access: AccessVerifier
 }
 
+export interface ConsoleServiceContext {
+}
+
 export interface ServiceContext
   extends StoreServiceContext,
-    UploadServiceContext {}
+  ConsoleServiceContext,
+  UploadServiceContext {}
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
   codec?: InboundCodec
@@ -63,8 +86,8 @@ export interface UcantoServerContext extends ServiceContext {
 
 export interface UcantoServerTestContext
   extends UcantoServerContext,
-    StoreTestContext,
-    UploadTestContext {}
+  StoreTestContext,
+  UploadTestContext {}
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
@@ -101,7 +124,7 @@ export interface CarStoreBucketOptions {
 }
 
 export interface CarStoreBucketService {
-  use(options?: CarStoreBucketOptions): Promise<CarStoreBucket>
+  use (options?: CarStoreBucketOptions): Promise<CarStoreBucket>
 }
 
 export interface DudewhereBucket {
@@ -119,7 +142,7 @@ export interface StoreTable {
 }
 
 export interface TestStoreTable {
-  get(
+  get (
     space: DID,
     link: UnknownLink
   ): Promise<(StoreAddInput & StoreListItem) | undefined>
@@ -236,6 +259,9 @@ export interface LinkJSON<T extends UnknownLink = UnknownLink> {
 export interface SpaceUnknown extends Failure {
   name: 'SpaceUnknown'
 }
+
+export type Input<C extends CapabilityParser<Match<ParsedCapability>>> =
+  ProviderInput<InferInvokedCapability<C> & ParsedCapability>
 
 export interface Assert {
   equal: <Actual, Expected extends Actual>(

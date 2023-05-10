@@ -5,6 +5,7 @@ import * as Legacy from '@ucanto/transport/legacy'
 import * as CAR from '@ucanto/transport/car'
 import { createService as createStoreService } from './store.js'
 import { createService as createUploadService } from './upload.js'
+import { createService as createConsoleService } from './console.js'
 export * from './types.js'
 
 /**
@@ -25,6 +26,7 @@ export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
 export const createService = (context) => ({
   store: createStoreService(context),
   upload: createUploadService(context),
+  console: createConsoleService(context)
 })
 
 /**
