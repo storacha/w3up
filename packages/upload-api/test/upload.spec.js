@@ -7,6 +7,9 @@ import { StoreTable } from './store-table.js'
 import { UploadTable } from './upload-table.js'
 import { DudewhereBucket } from './dude-where-bucket.js'
 import * as AccessVerifier from './access-verifier.js'
+import * as Email from '../src/utils/email'
+import { ProvisionsStorage } from './provisions-storage.js'
+import { DelegationsStorage } from './delegations-storage.js'
 
 describe('upload/*', () => {
   for (const [name, test] of Object.entries(Upload.test)) {
@@ -34,6 +37,13 @@ describe('upload/*', () => {
           },
           {
             id,
+            signer,
+            email: Email.debug(),
+            url: new URL('https://service.example.com'),
+            models: {
+              provisions: new ProvisionsStorage(),
+              delegations: new DelegationsStorage()
+            },
             errorReporter: {
               catch(error) {
                 assert.fail(error)

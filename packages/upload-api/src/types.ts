@@ -6,6 +6,7 @@ import type {
   HandlerExecutionError,
   Signer,
   DID,
+  DIDKey,
   InboundCodec,
   Result,
   Unit,
@@ -16,7 +17,31 @@ import type {
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
 
+import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
+import { DelegationsStorage as Delegations } from './types/delegations'
+import { ProvisionsStorage as Provisions } from './types/provisions'
+
+export type SpaceDID = DIDKey
+
+export interface SpaceProviderRegistry {
+  hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
+}
+
+export interface InsufficientStorage extends Failure {
+  name: 'InsufficientStorage'
+}
+
+export type AllocationError = InsufficientStorage
+
+export interface Email {
+  sendValidation: (input: { to: string; url: string }) => Promise<void>
+  send: (input: {
+    to: string
+    textBody: string
+    subject: string
+  }) => Promise<void>
+}
 
 import {
   StoreAdd,
@@ -25,12 +50,25 @@ import {
   UploadAdd,
   UploadRemove,
   UploadList,
-
+  AccessAuthorize,
+  AccessAuthorizeSuccess,
+  AccessDelegate,
+  AccessDelegateFailure,
+  AccessDelegateSuccess,
+  AccessClaim,
+  AccessClaimSuccess,
+  AccessClaimFailure,
+  AccessConfirm,
+  AccessConfirmSuccess,
+  AccessConfirmFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
+
+export type { ProvisionsStorage } from './types/provisions'
+export type { DelegationsStorage } from './types/delegations'
 
 export interface Service {
   store: {
@@ -54,6 +92,21 @@ export interface Service {
       never,
       Failure & { cause: unknown }
     >
+  },
+  access: {
+    authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
+    claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    confirm: ServiceMethod<
+      AccessConfirm,
+      AccessConfirmSuccess,
+      AccessConfirmFailure
+    >
+    delegate: ServiceMethod<
+      AccessDelegate,
+      AccessDelegateSuccess,
+      AccessDelegateFailure
+    >
   }
 }
 
@@ -71,12 +124,24 @@ export interface UploadServiceContext {
   access: AccessVerifier
 }
 
+export interface AccessServiceContext {
+  signer: EdSigner.Signer
+  email: Email
+  url: URL
+  models: {
+    //accounts: Accounts,
+    delegations: Delegations,
+    provisions: Provisions
+  }
+}
+
 export interface ConsoleServiceContext {
 }
 
 export interface ServiceContext
-  extends StoreServiceContext,
+  extends AccessServiceContext,
   ConsoleServiceContext,
+  StoreServiceContext,
   UploadServiceContext {}
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
