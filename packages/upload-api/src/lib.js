@@ -9,6 +9,8 @@ import { createService as createConsoleService } from './console.js'
 import { createService as createAccessService } from './access.js'
 import { createService as createConsumerService } from './consumer.js'
 import { createService as createCustomerService } from './customer.js'
+import { createService as createSpaceService } from './space.js'
+import { createService as createProviderService } from './provider.js'
 
 export * from './types.js'
 
@@ -28,12 +30,14 @@ export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
  * @returns {Types.Service}
  */
 export const createService = (context) => ({
+  access: createAccessService(context),
+  console: createConsoleService(context),
+  consumer: createConsumerService(context),
+  customer: createCustomerService(context),
+  provider: createProviderService(context),
+  space: createSpaceService(context),
   store: createStoreService(context),
   upload: createUploadService(context),
-  console: createConsoleService(context),
-  access: createAccessService(context),
-  consumer: createConsumerService(context),
-  customer: createCustomerService(context)
 })
 
 /**

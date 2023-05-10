@@ -383,14 +383,17 @@ importers:
       '@ucanto/transport':
         specifier: ^7.0.3
         version: 7.0.3
+      '@ucanto/validator':
+        specifier: ^7.0.0
+        version: 7.0.0
       '@web3-storage/access':
-        specifier: workspace:^13.0.0
+        specifier: workspace:^
         version: link:../access-client
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/did-mailto':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^
         version: link:../did-mailto
       multiformats:
         specifier: ^11.0.2

@@ -26,7 +26,7 @@ export type SpaceDID = DIDKey
 export type AccountDID = DID<'mailto'>
 
 export interface SpaceProviderRegistry {
-  hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
+  hasStorageProvider (space: SpaceDID): Promise<Result<boolean, never>>
 }
 
 export interface InsufficientStorage extends Failure {
@@ -62,6 +62,10 @@ import {
   AccessConfirm,
   AccessConfirmSuccess,
   AccessConfirmFailure,
+  ProviderAdd,
+  ProviderAddSuccess,
+  ProviderAddFailure,
+  SpaceInfo
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 
@@ -123,6 +127,12 @@ export interface Service {
       CustomerGetError
     >
   }
+  provider: {
+    add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
+  }
+  space: {
+    info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
+  }
 }
 
 export interface StoreServiceContext {
@@ -139,7 +149,7 @@ export interface UploadServiceContext {
   access: AccessVerifier
 }
 
-export interface Models { 
+export interface Models {
   delegations: Delegations,
   provisions: Provisions
 }
@@ -163,11 +173,21 @@ export interface CustomerServiceContext {
 export interface ConsoleServiceContext {
 }
 
+export interface SpaceServiceContext {
+  models: Models
+}
+
+export interface ProviderServiceContext {
+  models: Models
+}
+
 export interface ServiceContext
   extends AccessServiceContext,
   ConsoleServiceContext,
   ConsumerServiceContext,
   CustomerServiceContext,
+  ProviderServiceContext,
+  SpaceServiceContext,
   StoreServiceContext,
   UploadServiceContext {}
 export interface UcantoServerContext extends ServiceContext {
@@ -248,6 +268,10 @@ export interface UploadTable {
     space: DID,
     options?: ListOptions
   ) => Promise<ListResponse<UploadListItem>>
+}
+
+export type SpaceInfoResult = {
+  did: SpaceDID
 }
 
 export interface UnknownProvider extends Failure {
