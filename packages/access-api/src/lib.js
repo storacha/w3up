@@ -8,9 +8,12 @@ import { createService as createConsumerService } from './consumer.js'
 import { createService as createCustomerService } from './customer.js'
 import { createService as createProviderService } from './provider.js'
 import { createService as createSpaceService } from './space.js'
+import * as API from './api.js'
+export * from './api.js'
+
 
 /**
- * @param {Types.UcantoServerContext} options
+ * @param {API.UcantoServerContext} options
  */
 export const createServer = ({ id, codec = CAR.inbound, ...context }) =>
   Server.create({
@@ -21,8 +24,7 @@ export const createServer = ({ id, codec = CAR.inbound, ...context }) =>
   })
 
 /**
- * @param {Types.ServiceContext} context
- * @returns {Types.Service}
+ * @param {API.ServiceContext} context
  */
 export const createService = (context) => ({
   access: createAccessService(context),

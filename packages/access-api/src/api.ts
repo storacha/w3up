@@ -4,6 +4,9 @@ import type {
   DID,
   DIDKey as SpaceDID,
   Failure,
+  HandlerExecutionError,
+  Signer,
+  InboundCodec,
   Unit,
   Result,
   ServiceMethod,
@@ -85,3 +88,42 @@ export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>
 
 export type Input<C extends CapabilityParser<Match<ParsedCapability>>> =
   ProviderInput<InferInvokedCapability<C> & ParsedCapability>
+
+
+export interface ErrorReporter {
+  catch: (error: HandlerExecutionError) => void
+}
+
+export interface AccessServiceContext extends RouteContext {
+}
+
+export interface ConsoleServiceContext extends RouteContext {
+}
+
+export interface ConsumerServiceContext extends RouteContext {
+}
+
+export interface CustomerServiceContext extends RouteContext {
+}
+
+export interface ProviderServiceContext extends RouteContext {
+}
+
+export interface SpaceServiceContext extends RouteContext {
+}
+
+export interface ServiceContext
+  extends AccessServiceContext,
+  ConsoleServiceContext,
+  ConsumerServiceContext,
+  CustomerServiceContext,
+  ProviderServiceContext,
+  SpaceServiceContext {
+
+}
+
+export interface UcantoServerContext extends ServiceContext {
+  id: Signer
+  codec?: InboundCodec
+  errorReporter: ErrorReporter
+}
