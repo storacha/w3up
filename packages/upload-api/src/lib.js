@@ -7,6 +7,8 @@ import { createService as createStoreService } from './store.js'
 import { createService as createUploadService } from './upload.js'
 import { createService as createConsoleService } from './console.js'
 import { createService as createAccessService } from './access.js'
+import { createService as createConsumerService } from './consumer.js'
+import { createService as createCustomerService } from './customer.js'
 
 export * from './types.js'
 
@@ -29,7 +31,9 @@ export const createService = (context) => ({
   store: createStoreService(context),
   upload: createUploadService(context),
   console: createConsoleService(context),
-  access: createAccessService(context)
+  access: createAccessService(context),
+  consumer: createConsumerService(context),
+  customer: createCustomerService(context)
 })
 
 /**

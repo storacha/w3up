@@ -23,6 +23,7 @@ import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
 
 export type SpaceDID = DIDKey
+export type AccountDID = DID<'mailto'>
 
 export interface SpaceProviderRegistry {
   hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
@@ -107,6 +108,20 @@ export interface Service {
       AccessDelegateSuccess,
       AccessDelegateFailure
     >
+  },
+  consumer: {
+    has: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Consumer.has>,
+      boolean,
+      Failure
+    >
+  }
+  customer: {
+    get: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Customer.get>,
+      CustomerGetOk,
+      CustomerGetError
+    >
   }
 }
 
@@ -124,15 +139,25 @@ export interface UploadServiceContext {
   access: AccessVerifier
 }
 
+export interface Models { 
+  delegations: Delegations,
+  provisions: Provisions
+}
+
 export interface AccessServiceContext {
   signer: EdSigner.Signer
   email: Email
   url: URL
-  models: {
-    //accounts: Accounts,
-    delegations: Delegations,
-    provisions: Provisions
-  }
+  models: Models
+}
+
+export interface ConsumerServiceContext {
+  signer: EdSigner.Signer
+  models: Models
+}
+
+export interface CustomerServiceContext {
+  signer: EdSigner.Signer
 }
 
 export interface ConsoleServiceContext {
@@ -141,6 +166,8 @@ export interface ConsoleServiceContext {
 export interface ServiceContext
   extends AccessServiceContext,
   ConsoleServiceContext,
+  ConsumerServiceContext,
+  CustomerServiceContext,
   StoreServiceContext,
   UploadServiceContext {}
 export interface UcantoServerContext extends ServiceContext {
@@ -222,6 +249,21 @@ export interface UploadTable {
     options?: ListOptions
   ) => Promise<ListResponse<UploadListItem>>
 }
+
+export interface UnknownProvider extends Failure {
+  name: 'UnknownProvider'
+}
+
+export type CustomerGetError = UnknownProvider
+
+export interface CustomerGetOk {
+  customer: null | {
+    did: AccountDID
+  }
+}
+
+export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>
+
 
 export interface StoreAddInput {
   space: DID
