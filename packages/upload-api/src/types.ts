@@ -149,21 +149,17 @@ export interface UploadServiceContext {
   access: AccessVerifier
 }
 
-export interface Models {
-  delegations: Delegations,
-  provisions: Provisions
-}
-
 export interface AccessServiceContext {
   signer: EdSigner.Signer
   email: Email
   url: URL
-  models: Models
+  delegationsStorage: Delegations
+  provisionsStorage: Provisions
 }
 
 export interface ConsumerServiceContext {
   signer: EdSigner.Signer
-  models: Models
+  provisionsStorage: Provisions
 }
 
 export interface CustomerServiceContext {
@@ -174,11 +170,12 @@ export interface ConsoleServiceContext {
 }
 
 export interface SpaceServiceContext {
-  models: Models
+  provisionsStorage: Provisions
+  delegationsStorage: Delegations
 }
 
 export interface ProviderServiceContext {
-  models: Models
+  provisionsStorage: Provisions
 }
 
 export interface ServiceContext

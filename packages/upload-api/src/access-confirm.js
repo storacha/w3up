@@ -59,7 +59,7 @@ export async function confirm({ capability, invocation }, ctx) {
     // We should actually filter out only delegations that support delegated
     // capabilities, but for now we just include all of them since we only
     // implement sudo access anyway.
-    delegationProofs: ctx.models.delegations.find({
+    delegationProofs: ctx.delegationsStorage.find({
       audience: account.did(),
     }),
     expiration: Infinity,
@@ -68,7 +68,7 @@ export async function confirm({ capability, invocation }, ctx) {
   // Store the delegations so that they can be pulled with access/claim
   // The fact that we're storing proofs chains that we pulled from the
   // database is not great, but it's a tradeoff we're making for now.
-  await ctx.models.delegations.putMany(delegation, attestation)
+  await ctx.delegationsStorage.putMany(delegation, attestation)
 
   return {
     ok: {

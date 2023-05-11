@@ -40,10 +40,8 @@ describe('store/*', () => {
             signer,
             email: Email.debug(),
             url: new URL('https://service.example.com'),
-            models: {
-              provisions: new ProvisionsStorage(),
-              delegations: new DelegationsStorage()
-            },
+            provisionsStorage: new ProvisionsStorage(),
+            delegationsStorage: new DelegationsStorage(),
             errorReporter: {
               catch(error) {
                 assert.fail(error)

@@ -16,8 +16,8 @@ describe('upload/*', () => {
     const define = name.startsWith('only ')
       ? it.only
       : name.startsWith('skip ')
-      ? it.skip
-      : it
+        ? it.skip
+        : it
 
     define(name, async () => {
       const storeTable = new StoreTable()
@@ -40,10 +40,8 @@ describe('upload/*', () => {
             signer,
             email: Email.debug(),
             url: new URL('https://service.example.com'),
-            models: {
-              provisions: new ProvisionsStorage(),
-              delegations: new DelegationsStorage()
-            },
+            provisionsStorage: new ProvisionsStorage(),
+            delegationsStorage: new DelegationsStorage(),
             errorReporter: {
               catch(error) {
                 assert.fail(error)

@@ -9,8 +9,6 @@ import * as Types from './types.js'
  * @returns {Promise<Types.Result<{ did: Types.SpaceDID }, Types.Failure>>}
  */
 export const info = async ({ capability }, ctx) => {
-  const { provisions } = ctx.models
-
   const spaceDid = capability.with
   if (!DID.match({ method: 'key' }).is(spaceDid)) {
     /** @type {Types.SpaceUnknown} */
@@ -23,7 +21,7 @@ export const info = async ({ capability }, ctx) => {
     }
   }
 
-  const result = await provisions.hasStorageProvider(spaceDid)
+  const result = await ctx.provisionsStorage.hasStorageProvider(spaceDid)
   if (result.ok) {
     return {
       ok: { did: spaceDid },

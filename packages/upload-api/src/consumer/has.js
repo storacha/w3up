@@ -22,5 +22,5 @@ const has = async ({ capability }, context) => {
     )
   }
 
-  return context.models.provisions.hasStorageProvider(capability.nb.consumer)
+  return context.provisionsStorage.hasStorageProvider(capability.nb.consumer)
 }

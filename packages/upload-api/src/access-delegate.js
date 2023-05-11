@@ -4,14 +4,14 @@ import * as Types from './types.js'
 import * as Allocator from './space-allocate.js'
 
 /**
- * @param {Types.SpaceServiceContext} ctx
+ * @param {Types.AccessServiceContext} ctx
  */
 export const provide = (ctx) =>
   Server.provide(Access.delegate, (input) => delegate(input, ctx))
 
 /**
  * @param {Types.Input<Access.delegate>} input
- * @param {Types.SpaceServiceContext} context
+ * @param {Types.AccessServiceContext} context
  * @returns {Promise<Types.Result<Types.AccessDelegateSuccess, Types.AccessDelegateFailure>>}
  */
 export const delegate = async ({ capability, invocation }, context) => {
@@ -35,7 +35,7 @@ export const delegate = async ({ capability, invocation }, context) => {
   )
 
   if (result.ok) {
-    await context.models.delegations.putMany(...delegated.ok)
+    await context.delegationsStorage.putMany(...delegated.ok)
     return { ok: {} }
   } else {
     return result

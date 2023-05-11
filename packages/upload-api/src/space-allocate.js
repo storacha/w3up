@@ -11,8 +11,7 @@ import * as Space from '@web3-storage/capabilities/space'
 export const allocate = async ({ capability }, context) => {
   const { with: space, nb } = capability
   const { size } = nb
-  const { provisions } = context.models
-  const result = await provisions.hasStorageProvider(space)
+  const result = await context.provisionsStorage.hasStorageProvider(space)
   if (result.ok) {
     return { ok: { size } }
   }
