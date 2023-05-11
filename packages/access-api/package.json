@@ -5,40 +5,7 @@
   "type": "module",
   "main": "dist/worker.js",
   "module": "dist/worker.js",
-  "exports": {
-    ".": {
-      "types": "./dist/src/lib.d.ts",
-      "import": "./src/lib.js"
-    },
-    "./types": {
-      "types": "./dist/src/types.d.ts",
-      "import": "./src/types.js"
-    },
-    "./access": {
-      "types": "./dist/src/access.d.ts",
-      "import": "./src/access.js"
-    },
-    "./console": {
-      "types": "./dist/src/console.d.ts",
-      "import": "./src/console.js"
-    },
-    "./consumer": {
-      "types": "./dist/src/consumer.d.ts",
-      "import": "./src/consumer.js"
-    },
-    "./customer": {
-      "types": "./dist/src/customer.d.ts",
-      "import": "./src/customer.js"
-    },
-    "./provider": {
-      "types": "./dist/src/provider.d.ts",
-      "import": "./src/provider.js"
-    },
-    "./space": {
-      "types": "./dist/src/space.d.ts",
-      "import": "./src/space.js"
-    }
-  },
+  "private": true,
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore --write",
