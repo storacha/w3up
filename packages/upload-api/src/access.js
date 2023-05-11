@@ -1,4 +1,4 @@
-import * as Types from './types'
+import * as Types from './types.js'
 import * as Authorize from './access-authorize.js'
 import * as Delegate from './access-delegate.js'
 import * as Claim from './access-claim.js'

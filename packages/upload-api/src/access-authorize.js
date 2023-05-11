@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as Types from './types'
+import * as Types from './types.js'
 import * as Access from '@web3-storage/capabilities/access'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { delegationToString } from '@web3-storage/access/encoding'

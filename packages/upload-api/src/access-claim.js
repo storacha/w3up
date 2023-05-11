@@ -1,7 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
 import * as Ucanto from '@ucanto/interface'
-import * as Types from './types'
+import * as Types from './types.js'
 import * as delegationsResponse from './utils/delegations-response.js'
 import { collect } from 'streaming-iterables'
 

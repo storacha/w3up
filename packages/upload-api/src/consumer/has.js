@@ -1,4 +1,4 @@
-import * as Types from '../types'
+import * as Types from '../types.js'
 import * as Provider from '@ucanto/server'
 import { Consumer } from '@web3-storage/capabilities'
 

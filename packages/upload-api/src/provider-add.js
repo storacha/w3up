@@ -1,4 +1,4 @@
-import * as Types from './types'
+import * as Types from './types.js'
 import * as Server from '@ucanto/server'
 import { Provider } from '@web3-storage/capabilities'
 import * as validator from '@ucanto/validator'

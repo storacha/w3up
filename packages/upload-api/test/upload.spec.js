@@ -7,7 +7,7 @@ import { StoreTable } from './store-table.js'
 import { UploadTable } from './upload-table.js'
 import { DudewhereBucket } from './dude-where-bucket.js'
 import * as AccessVerifier from './access-verifier.js'
-import * as Email from '../src/utils/email'
+import * as Email from '../src/utils/email.js'
 import { ProvisionsStorage } from './provisions-storage.js'
 import { DelegationsStorage } from './delegations-storage.js'
 

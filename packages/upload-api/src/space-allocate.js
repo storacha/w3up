@@ -1,4 +1,4 @@
-import * as Types from './types'
+import * as Types from './types.js'
 import * as Server from '@ucanto/server'
 import * as Ucanto from '@ucanto/interface'
 import * as Space from '@web3-storage/capabilities/space'

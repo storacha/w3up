@@ -1,7 +1,7 @@
 import { Console } from '@web3-storage/capabilities'
 import * as Provider from '@ucanto/server'
 import * as Ucanto from '@ucanto/interface'
-import * as Types from './types'
+import * as Types from './types.js'
 
 
 /**

@@ -1,7 +1,7 @@
 import { Space } from '@web3-storage/capabilities'
 import { DID } from '@ucanto/validator'
 import * as Provider from '@ucanto/server'
-import * as Types from './types'
+import * as Types from './types.js'
 
 /**
  * @param {Types.Input<Space.info>} input
