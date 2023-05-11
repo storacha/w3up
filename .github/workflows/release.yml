@@ -32,7 +32,6 @@ jobs:
   npm:
     needs: release
     if: |
-      contains(fromJson(needs.release.outputs.paths_released), 'packages/access-api') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/capabilities') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/did-mailto') ||

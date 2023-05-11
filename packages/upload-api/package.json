@@ -14,6 +14,24 @@
       "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
+      "access": [
+        "dist/src/access.d.ts"
+      ],
+      "console": [
+        "dist/src/console.d.ts"
+      ],
+      "consumer": [
+        "dist/src/consumer.d.ts"
+      ],
+      "customer": [
+        "dist/src/customer.d.ts"
+      ],
+      "provider": [
+        "dist/src/provider.d.ts"
+      ],
+      "space": [
+        "dist/src/space.d.ts"
+      ],
       "store": [
         "dist/src/store.d.ts"
       ],
@@ -36,6 +54,30 @@
     "./types": {
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
+    },
+    "./access": {
+      "types": "./dist/src/access.d.ts",
+      "import": "./src/access.js"
+    },
+    "./console": {
+      "types": "./dist/src/console.d.ts",
+      "import": "./src/console.js"
+    },
+    "./consumer": {
+      "types": "./dist/src/consumer.d.ts",
+      "import": "./src/consumer.js"
+    },
+    "./customer": {
+      "types": "./dist/src/customer.d.ts",
+      "import": "./src/customer.js"
+    },
+    "./provider": {
+      "types": "./dist/src/provider.d.ts",
+      "import": "./src/provider.js"
+    },
+    "./space": {
+      "types": "./dist/src/space.d.ts",
+      "import": "./src/space.js"
     },
     "./store": {
       "types": "./dist/src/store.d.ts",
