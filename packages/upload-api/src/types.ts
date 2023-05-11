@@ -15,16 +15,20 @@ import type {
   ParsedCapability,
   InferInvokedCapability,
 } from '@ucanto/interface'
-import type { ProviderInput } from '@ucanto/server'
+import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
+import { EmailSend, ValidationEmailSend } from './utils/email'
+
+export type { EmailSend, ValidationEmailSend }
 
 export type SpaceDID = DIDKey
 export type AccountDID = DID<'mailto'>
-
+export type ServiceDID = DID<'web'>
+export type ServiceSigner = Signer<ServiceDID>
 export interface SpaceProviderRegistry {
   hasStorageProvider (space: SpaceDID): Promise<Result<boolean, never>>
 }
@@ -42,6 +46,11 @@ export interface Email {
     textBody: string
     subject: string
   }) => Promise<void>
+}
+
+export interface DebugEmail extends Email {
+  emails: Array<ValidationEmailSend | EmailSend>
+  take: () => Promise<ValidationEmailSend | EmailSend>
 }
 
 import {
@@ -187,6 +196,7 @@ export interface ServiceContext
   SpaceServiceContext,
   StoreServiceContext,
   UploadServiceContext {}
+
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
   codec?: InboundCodec
@@ -196,7 +206,12 @@ export interface UcantoServerContext extends ServiceContext {
 export interface UcantoServerTestContext
   extends UcantoServerContext,
   StoreTestContext,
-  UploadTestContext {}
+  UploadTestContext {
+  connection: ConnectionView<Service>
+  mail: DebugEmail
+  service: Signer<ServiceDID>
+  fetch: typeof fetch
+}
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
@@ -221,6 +236,7 @@ export interface CarStoreBucket {
       'content-length': string
     } & Record<string, string>
   }>
+  deactivate: () => Promise<void>
 }
 
 export interface CarStoreBucketOptions {
@@ -284,7 +300,6 @@ export interface CustomerGetOk {
 }
 
 export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>
-
 
 export interface StoreAddInput {
   space: DID

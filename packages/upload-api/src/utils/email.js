@@ -7,6 +7,13 @@ export const debug = () => new DebugEmail()
  */
 
 /**
+ * @typedef EmailSend
+ * @property {string} to
+ * @property {string} textBody
+ * @property {string} subject
+ */
+
+/**
  * @param {{token:string, sender?:string}} opts
  */
 export const configure = (opts) => new Email(opts)
@@ -94,6 +101,9 @@ export class Email {
  * tests and debugging.
  */
 export class DebugEmail {
+  constructor(){
+    this.email = /** @type {Array<ValidationEmailSend | EmailSend>} */([])
+  }
   /**
    * Send validation email with ucan to register
    *
@@ -102,7 +112,7 @@ export class DebugEmail {
   async sendValidation(opts) {
     try {
       // @ts-expect-error
-      globalThis.email.sendValidation(opts)
+      this.email.sendValidation(opts)
     } catch {
       // eslint-disable-next-line no-console
       console.log('email.sendValidation', opts)
@@ -121,7 +131,7 @@ export class DebugEmail {
   async send(opts) {
     try {
       // @ts-expect-error
-      globalThis.email.send(opts)
+      this.email.send(opts)
     } catch {
       // eslint-disable-next-line no-console
       console.log('email.send', opts)
