@@ -1,7 +1,6 @@
 import * as Types from './types.js'
 import * as Provider from '@ucanto/server'
 import { Absentee, Verifier } from '@ucanto/principal'
-import * as Ucanto from '@ucanto/interface'
 import { collect } from 'streaming-iterables'
 import * as Access from '@web3-storage/capabilities/access'
 import * as delegationsResponse from './utils/delegations-response.js'
@@ -29,7 +28,7 @@ export const provide = (ctx) =>
 /**
  * @param {Types.Input<Access.confirm>} input
  * @param {Types.AccessServiceContext} ctx
- * @returns {Promise<Ucanto.Result<Types.AccessConfirmSuccess, Types.AccessConfirmFailure>>}
+ * @returns {Promise<Types.Result<Types.AccessConfirmSuccess, Types.AccessConfirmFailure>>}
  */
 export async function confirm({ capability, invocation }, ctx) {
   if (capability.with !== ctx.signer.did()) {
@@ -81,8 +80,8 @@ export async function confirm({ capability, invocation }, ctx) {
 /**
  * @param {object} opts
  * @param {Types.Signer} opts.service
- * @param {Ucanto.Principal<Types.DID<'mailto'>>} opts.account
- * @param {Ucanto.Principal<Types.DID>} opts.agent
+ * @param {Types.Principal<Types.DID<'mailto'>>} opts.account
+ * @param {Types.Principal<Types.DID>} opts.agent
  * @param {Types.Capabilities} opts.capabilities
  * @param {AsyncIterable<Types.Delegation>} opts.delegationProofs
  * @param {number} opts.expiration

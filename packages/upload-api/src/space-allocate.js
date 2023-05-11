@@ -1,13 +1,12 @@
 import * as Types from './types.js'
 import * as Server from '@ucanto/server'
-import * as Ucanto from '@ucanto/interface'
 import * as Space from '@web3-storage/capabilities/space'
 
 /**
  *
  * @param {{capability: {with: Types.SpaceDID, nb:{size:number}}}} input
  * @param {Types.SpaceServiceContext} context
- * @returns {Promise<Ucanto.Result<{size:number}, Types.AllocationError>>}
+ * @returns {Promise<Types.Result<{size:number}, Types.AllocationError>>}
  */
 export const allocate = async ({ capability }, context) => {
   const { with: space, nb } = capability

@@ -1,11 +1,10 @@
 import { Console } from '@web3-storage/capabilities'
 import * as Provider from '@ucanto/server'
-import * as Ucanto from '@ucanto/interface'
 import * as Types from './types.js'
 
 /**
  * @param {Types.Input<Console.log>} input
- * @returns {Promise<Ucanto.Result<{}, never>>}
+ * @returns {Promise<Types.Result<{}, never>>}
  */
 export const log = async ({ capability }) => {
   const ok = capability.nb.value == null ? {} : capability.nb.value
@@ -14,7 +13,7 @@ export const log = async ({ capability }) => {
 
 /**
  * @param {Types.Input<Console.error>} input
- * @returns {Promise<Ucanto.Result<never, Ucanto.Failure & { cause: unknown }>>}
+ * @returns {Promise<Types.Result<never, Types.Failure & { cause: unknown }>>}
  */
 export const error = async ({ capability }) => {
   const cause = capability.nb.error == null ? {} : capability.nb.error

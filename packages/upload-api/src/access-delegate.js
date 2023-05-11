@@ -1,5 +1,4 @@
 import * as Server from '@ucanto/server'
-import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import * as Types from './types.js'
 import * as Allocator from './space-allocate.js'
@@ -13,7 +12,7 @@ export const provide = (ctx) =>
 /**
  * @param {Types.Input<Access.delegate>} input
  * @param {Types.SpaceServiceContext} context
- * @returns {Promise<Ucanto.Result<Types.AccessDelegateSuccess, Types.AccessDelegateFailure>>}
+ * @returns {Promise<Types.Result<Types.AccessDelegateSuccess, Types.AccessDelegateFailure>>}
  */
 export const delegate = async ({ capability, invocation }, context) => {
   const delegated = extractProvenDelegations(capability, invocation.proofs)
@@ -46,7 +45,7 @@ export const delegate = async ({ capability, invocation }, context) => {
 /**
  * @param {Types.InferInvokedCapability<typeof Access.delegate>} capability
  * @param {Types.Proof[]} proofs
- * @returns {Ucanto.Result<Types.Delegation<Types.Capabilities>[], Types.DelegationNotFound>}
+ * @returns {Types.Result<Types.Delegation<Types.Capabilities>[], Types.DelegationNotFound>}
  */
 const extractProvenDelegations = (capability, proofs) => {
   const nbDelegations = new Set(Object.values(capability.nb.delegations))
