@@ -3,7 +3,6 @@ import * as Provider from '@ucanto/server'
 import * as Ucanto from '@ucanto/interface'
 import * as Types from './types.js'
 
-
 /**
  * @param {Types.Input<Console.log>} input
  * @returns {Promise<Ucanto.Result<{}, never>>}

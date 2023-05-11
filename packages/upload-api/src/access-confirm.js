@@ -71,14 +71,6 @@ export async function confirm({ capability, invocation }, ctx) {
   // database is not great, but it's a tradeoff we're making for now.
   await ctx.models.delegations.putMany(delegation, attestation)
 
-  
-
-  // TODO: I think this was only here for the legacy validation flow, but need to confirm - TV
-  // const authorization = delegationsToString([delegation, attestation])
-  // // Save delegations for the validation process
-  // await ctx.models.validations.putSession(authorization, agent.did())
-  
-
   return {
     ok: {
       delegations: delegationsResponse.encode([delegation, attestation]),

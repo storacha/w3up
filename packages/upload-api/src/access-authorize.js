@@ -50,9 +50,6 @@ export const authorize = async ({ capability }, ctx) => {
     })
     .delegate()
 
-  // TODO: @gozala and @bengo and I don't think we need to do this, but keeping around in case we realize we do
-  // await ctx.models.accounts.create(capability.nb.iss)
-
   // Encode authorization request and our attestation as string so that it
   // can be passed as a query parameter in the URL.
   const encoded = delegationToString(confirmation)

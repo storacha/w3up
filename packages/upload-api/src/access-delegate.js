@@ -5,20 +5,14 @@ import * as Types from './types.js'
 import * as Allocator from './space-allocate.js'
 
 /**
- * @param {Context} ctx
+ * @param {Types.SpaceServiceContext} ctx
  */
 export const provide = (ctx) =>
   Server.provide(Access.delegate, (input) => delegate(input, ctx))
 
 /**
- * @typedef {Allocator.Context & {
- * models: {delegations: import('./types/delegations').DelegationsStorage}
- * }} Context
- */
-
-/**
  * @param {Types.Input<Access.delegate>} input
- * @param {Context} context
+ * @param {Types.SpaceServiceContext} context
  * @returns {Promise<Ucanto.Result<Types.AccessDelegateSuccess, Types.AccessDelegateFailure>>}
  */
 export const delegate = async ({ capability, invocation }, context) => {

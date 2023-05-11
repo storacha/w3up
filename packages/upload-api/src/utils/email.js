@@ -11,6 +11,7 @@ export const debug = () => new DebugEmail()
  */
 export const configure = (opts) => new Email(opts)
 
+// TODO: move this out to w3infra
 export class Email {
   /**
    * @param {object} opts
