@@ -41,6 +41,9 @@
       "types": [
         "dist/src/types.d.ts"
       ],
+      "validate": [
+        "dist/src/validate.d.ts"
+      ],
       "test": [
         "dist/test/lib.d.ts"
       ]
@@ -86,6 +89,10 @@
     "./upload": {
       "types": "./dist/src/upload.d.ts",
       "import": "./src/upload.js"
+    },
+    "./validate": {
+      "types": "./dist/src/validate.d.ts",
+      "import": "./src/validate.js"
     },
     "./test": {
       "types": "./dist/test/lib.d.ts",

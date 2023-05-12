@@ -27,9 +27,9 @@ export const createContext = async () => {
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
     id,
-    signer,
+    signer: id,
     email: Email.debug(),
-    url: new URL('https://service.example.com'),
+    url: new URL('http://localhost:8787'),
     provisionsStorage: new ProvisionsStorage(),
     delegationsStorage: new DelegationsStorage(),
     errorReporter: {

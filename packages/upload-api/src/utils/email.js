@@ -7,13 +7,6 @@ export const debug = () => new DebugEmail()
  */
 
 /**
- * @typedef EmailSend
- * @property {string} to
- * @property {string} textBody
- * @property {string} subject
- */
-
-/**
  * @param {{token:string, sender?:string}} opts
  */
 export const configure = (opts) => new Email(opts)
@@ -64,36 +57,6 @@ export class Email {
       )
     }
   }
-
-  /**
-   * Send email
-   *
-   * @param {object} opts
-   * @param {string} opts.to
-   * @param {string} opts.textBody
-   * @param {string} opts.subject
-   *
-   */
-  async send({ to, textBody, subject }) {
-    const rsp = await fetch('https://api.postmarkapp.com/email', {
-      method: 'POST',
-      headers: this.headers,
-      body: JSON.stringify({
-        From: this.sender,
-        To: to,
-        TextBody: textBody,
-        Subject: subject,
-      }),
-    })
-
-    if (!rsp.ok) {
-      throw new Error(
-        `Send email failed with status: ${
-          rsp.status
-        }, body: ${await rsp.text()}`
-      )
-    }
-  }
 }
 
 /**
@@ -102,7 +65,7 @@ export class Email {
  */
 export class DebugEmail {
   constructor(){
-    this.email = /** @type {Array<ValidationEmailSend | EmailSend>} */([])
+    this.emails = /** @type {ValidationEmailSend[]} */([])
   }
   /**
    * Send validation email with ucan to register
@@ -111,30 +74,14 @@ export class DebugEmail {
    */
   async sendValidation(opts) {
     try {
-      // @ts-expect-error
-      this.email.sendValidation(opts)
+      this.emails.push(opts)
     } catch {
       // eslint-disable-next-line no-console
       console.log('email.sendValidation', opts)
     }
   }
 
-  /**
-   * Send email
-   *
-   * @param {object} opts
-   * @param {string} opts.to
-   * @param {string} opts.textBody
-   * @param {string} opts.subject
-   *
-   */
-  async send(opts) {
-    try {
-      // @ts-expect-error
-      this.email.send(opts)
-    } catch {
-      // eslint-disable-next-line no-console
-      console.log('email.send', opts)
-    }
+  async take(){
+    return this.emails.shift()
   }
 }

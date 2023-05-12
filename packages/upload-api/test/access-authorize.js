@@ -5,10 +5,10 @@ import { Access, Customer, Space } from '@web3-storage/capabilities'
 import { alice, bob, provisionProvider } from './helpers/utils.js'
 import * as DidMailto from '@web3-storage/did-mailto'
 import {
-  stringToDelegations,
   stringToDelegation,
   bytesToDelegations,
 } from '@web3-storage/access/encoding'
+import { authorizeFromUrl } from '../src/validate.js'
 
 /**
  * @type {API.Tests}
@@ -31,8 +31,7 @@ export const test = {
 
     assert.equal(inv.out.error, undefined)
 
-
-    const email = /** @type {API.ValidationEmailSend} */ (await mail.take())
+    const email = await mail.take()
     assert.ok(email, 'email was sent')
 
     const url = new URL(email.url)
@@ -94,13 +93,14 @@ export const test = {
     const email = await mail.take()
     assert.ok(email, 'email was sent')
 
-    const rsp = await context.fetch(email.url, { method: 'POST' })
+    const rsp = await authorizeFromUrl(email.url, context)
 
-    assert.deepEqual(rsp.status, 200)
-    const html = await rsp.text()
-    assert.ok(html.includes('Email Validated'))
-    assert.ok(html.includes(DidMailto.toEmail(account.did())))
-    assert.ok(html.includes(agent.did()))
+    assert.ok(rsp.ok, 'validation failed')
+    if (rsp.ok) {
+      assert.equal(rsp.ok.email, DidMailto.toEmail(account.did()))
+      assert.equal(rsp.ok.audience, agent.did())
+    }
+
   },
 
   'should send confirmation email with link that, when clicked, allows for access/claim':
@@ -123,23 +123,17 @@ export const test = {
       const email = await mail.take()
       assert.ok(email, 'email was sent')
 
-      const confirmEmailPostResponse = await context.fetch(email.url, {
-        method: 'POST',
-      })
+      const confirmEmailPostResponse = await authorizeFromUrl(email.url, context)
 
-      assert.deepEqual(
-        confirmEmailPostResponse.status,
-        200,
-        'confirmEmailPostResponse status is 200'
-      )
+      assert.ok(confirmEmailPostResponse.ok, 'email confirmation failed')
 
       const claim = Access.claim.invoke({
         issuer: agent,
         audience: service,
         with: agent.did(),
       })
-      const claimResult = await claim.execute(connection)
 
+      const claimResult = await claim.execute(connection)
       assert.ok(claimResult.out.ok)
       assert.ok(
         claimResult.out.ok?.delegations,
@@ -193,77 +187,6 @@ export const test = {
       )
       assert.deepEqual(claimedAsAccountDelegations.length, 0)
     },
-
-  'should receive delegation in the ws': async (assert, context) => {
-    const { account, agent, service, mail, connection } = await setup(context)
-
-    const auth = await Access.authorize
-      .invoke({
-        issuer: agent,
-        audience: service,
-        with: agent.did(),
-        nb: {
-          iss: account.did(),
-          att: [{ can: '*' }],
-        },
-      })
-      .execute(connection)
-
-    assert.equal(auth.out.error, undefined, 'should not fail')
-    const email = await mail.take()
-    assert.ok(email, 'email was sent')
-
-    // click email url
-    await context.fetch(email.url, { method: 'POST' })
-
-    // ws
-    const webSocket = await context.webSocket(
-      'http://localhost:8787/validate-ws'
-    )
-
-    const event = new Promise((resolve) =>
-      webSocket.addEventListener('message', resolve)
-    )
-    webSocket.send(
-      JSON.stringify({
-        did: agent.did(),
-      })
-    )
-
-    const message = await event
-    const data = JSON.parse(message.data)
-
-    const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessSession]>} */ (
-        data.delegation
-      )
-
-    assert.ok(encoded)
-    const [authorization, attestation] = stringToDelegations(encoded)
-
-    assert.equal(authorization.issuer.did(), account.did())
-    assert.equal(authorization.audience.did(), agent.did())
-    assert.equal(authorization.expiration, Infinity)
-    assert.deepEqual(authorization.capabilities, [
-      {
-        can: '*',
-        with: 'ucan:*',
-      },
-    ])
-
-    assert.equal(attestation.issuer.did(), service.did())
-    assert.equal(attestation.audience.did(), agent.did())
-    assert.equal(attestation.expiration, Infinity)
-    assert.deepEqual(attestation.capabilities, [
-      {
-        can: 'ucan/attest',
-        with: service.did(),
-        nb: {
-          proof: authorization.cid,
-        },
-      },
-    ])
-  },
 
   'should receive account delegations': async (assert, context) => {
     const { space, account, agent, service, mail, connection } = await setup(
@@ -324,14 +247,9 @@ export const test = {
     // now we are going to complete authorization flow following the email link
     const email = await mail.take()
     assert.ok(email, 'email was sent')
-    const confirmEmailPostResponse = await context.fetch(email.url, {
-      method: 'POST',
-    })
-    assert.deepEqual(
-      confirmEmailPostResponse.status,
-      200,
-      'confirmEmailPostResponse status is 200'
-    )
+
+    const rsp = await authorizeFromUrl(email.url, context)
+    assert.ok(rsp.ok, 'user authorization succeeded')
 
     // we can use delegations to invoke access/claim with=accountDID
     const claim = await Access.claim

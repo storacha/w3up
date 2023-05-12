@@ -21,42 +21,6 @@ export function isUploadApiStack(stack) {
   return stack.includes('file:///var/task/upload-api')
 }
 
-/**
- * @typedef {import('../../src/utils/email').ValidationEmailSend} ValidationEmailSend
- * @typedef {import('../../src/utils/email').EmailSend} EmailSend
- * @typedef {import('../../src/utils/email').Email} Email
- */
-
-/**
- * create an Email that is useful for testing
- *
- * @param {Pick<Array<ValidationEmailSend | EmailSend>, 'push'>} storage
- * @returns {Email}
- */
-export function createEmail(storage) {
-  const email = {
-    sender: 'noreply@example.com',
-    headers: {
-      Accept: 'text/json',
-      'Content-Type': 'text/json',
-      'X-Postmark-Server-Token': 'dummy-postmark-token',
-    },
-    /**
-     * @param {ValidationEmailSend} email
-     */
-    async sendValidation(email) {
-      storage.push(email)
-    },
-    /**
-     * @param {EmailSend} email
-     */
-    async send(email) {
-      storage.push(email)
-    },
-  }
-  return email
-}
-
 /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
 export const alice = ed25519.parse(
   'MgCZT5vOnYZoVAeyjnzuJIVY9J4LNtJ+f8Js0cTPuKUpFne0BVEDJjEu6quFIU8yp91/TY/+MYK8GvlKoTDnqOCovCVM='

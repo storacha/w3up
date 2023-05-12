@@ -21,9 +21,9 @@ import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
-import { EmailSend, ValidationEmailSend } from './utils/email'
+import { ValidationEmailSend } from './utils/email'
 
-export type { EmailSend, ValidationEmailSend }
+export type { ValidationEmailSend }
 
 export type SpaceDID = DIDKey
 export type AccountDID = DID<'mailto'>
@@ -41,16 +41,11 @@ export type AllocationError = InsufficientStorage
 
 export interface Email {
   sendValidation: (input: { to: string; url: string }) => Promise<void>
-  send: (input: {
-    to: string
-    textBody: string
-    subject: string
-  }) => Promise<void>
 }
 
 export interface DebugEmail extends Email {
-  emails: Array<ValidationEmailSend | EmailSend>
-  take: () => Promise<ValidationEmailSend | EmailSend>
+  emails: Array<ValidationEmailSend>
+  take: () => Promise<ValidationEmailSend>
 }
 
 import {
@@ -82,7 +77,7 @@ export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
 
 export type { ProvisionsStorage } from './types/provisions'
-export type { DelegationsStorage } from './types/delegations'
+export type { DelegationsStorage, Query as DelegationsStorageQuery } from './types/delegations'
 
 export interface Service {
   store: {
@@ -158,11 +153,14 @@ export interface UploadServiceContext {
   access: AccessVerifier
 }
 
-export interface AccessServiceContext {
+export interface AccessClaimContext {
+  delegationsStorage: Delegations
+}
+
+export type AccessServiceContext = AccessClaimContext & {
   signer: EdSigner.Signer
   email: Email
   url: URL
-  delegationsStorage: Delegations
   provisionsStorage: Provisions
 }
 
