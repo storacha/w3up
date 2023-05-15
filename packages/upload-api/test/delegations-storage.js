@@ -7,14 +7,14 @@ export class DelegationsStorage {
 
   constructor(){
     /**
-     * @type {Array<Types.Delegation<Types.Tuple<any>>}
+     * @type {Array<Types.Delegation<Types.Tuple<any>>>}
      */
     this.delegations = []    
   }
 
   /**
    * 
-   * @param  {Array<Types.Delegation<Types.Tuple<any>>} delegations 
+   * @param  {Array<Types.Delegation<Types.Tuple<any>>>} delegations 
    * @returns 
    */
   async putMany(...delegations) {
@@ -23,7 +23,7 @@ export class DelegationsStorage {
   }
 
   async count() {
-    return BigInt(0)
+    return BigInt(this.delegations.length)
   }
 
   async *[Symbol.asyncIterator]() {

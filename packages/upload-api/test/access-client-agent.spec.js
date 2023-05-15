@@ -1,10 +1,10 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-only-tests/no-only-tests */
-import * as Suite from './access-authorize.js'
+import * as Suite from './access-client-agent.js'
 import * as assert from 'assert'
 import { cleanupContext, createContext } from './helpers/context.js'
 
-describe('access/authorize', () => {
+describe('access-client-agent', () => {
   for (const [name, test] of Object.entries(Suite.test)) {
     const define = name.startsWith('only! ')
       ? it.only

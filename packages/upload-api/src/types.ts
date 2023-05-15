@@ -76,7 +76,7 @@ import * as Capabilities from '@web3-storage/capabilities'
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
 
-export type { ProvisionsStorage } from './types/provisions'
+export type { ProvisionsStorage, Provision } from './types/provisions'
 export type { DelegationsStorage, Query as DelegationsStorageQuery } from './types/delegations'
 
 export interface Service {

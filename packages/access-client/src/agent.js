@@ -12,7 +12,6 @@ import * as Space from '@web3-storage/capabilities/space'
 import * as Voucher from '@web3-storage/capabilities/voucher'
 import * as Access from '@web3-storage/capabilities/access'
 
-import { stringToDelegation } from './encoding.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { Verifier } from '@ucanto/principal'
 import { invoke, delegate, DID } from '@ucanto/core'
@@ -327,47 +326,6 @@ export class Agent {
       meta,
       proof: delegation,
     }
-  }
-
-  /**
-   *
-   * @param {string} email
-   * @param {object} [opts]
-   * @param {AbortSignal} [opts.signal]
-   */
-  async recover(email, opts) {
-    const inv = await this.invokeAndExecute(Space.recoverValidation, {
-      with: URI.from(this.did()),
-      nb: { identity: URI.from(`mailto:${email}`) },
-    })
-
-    if (inv && inv.out.error) {
-      throw new Error('Recover validation failed', { cause: inv })
-    }
-
-    const spaceRecover =
-      /** @type {Ucanto.Delegation<[import('./types').SpaceRecover]>} */ (
-        await this.#waitForDelegation(opts)
-      )
-    await this.addProof(spaceRecover)
-
-    const recoverInv = await this.invokeAndExecute(Space.recover, {
-      with: URI.from(this.connection.id.did()),
-      nb: {
-        identity: URI.from(`mailto:${email}`),
-      },
-    })
-
-    if (recoverInv.out.error) {
-      throw new Error('Spaces recover failed', { cause: recoverInv })
-    }
-
-    const dels = []
-    for (const del of recoverInv.out.ok) {
-      dels.push(stringToDelegation(del))
-    }
-
-    return dels
   }
 
   /**
