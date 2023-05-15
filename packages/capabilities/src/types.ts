@@ -1,6 +1,6 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
-import { InferInvokedCapability, Unit } from '@ucanto/interface'
+import { InferInvokedCapability, Unit, DID } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -56,6 +56,7 @@ export type ProviderAdd = InferInvokedCapability<typeof provider.add>
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ProviderAddSuccess {}
 export type ProviderAddFailure = InvalidProvider | Ucanto.Failure
+export type ProviderDID = DID<'web'>
 
 export interface InvalidProvider extends Ucanto.Failure {
   name: 'InvalidProvider'

@@ -23,13 +23,6 @@ export interface DelegationsStorage<
   count: () => Promise<bigint>
 
   /**
-   * iterate through all stored items
-   */
-  [Symbol.asyncIterator]: () => AsyncIterableIterator<
-    Ucanto.Delegation<Ucanto.Tuple<Cap>>
-  >
-
-  /**
    * find all items that match the query
    */
   find: (query: Query) => AsyncIterable<Ucanto.Delegation<Ucanto.Tuple<Cap>>>

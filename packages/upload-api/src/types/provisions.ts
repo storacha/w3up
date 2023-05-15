@@ -1,23 +1,24 @@
+import type { ProviderDID } from '@web3-storage/capabilities/src/types'
 import * as Ucanto from '@ucanto/interface'
 import { ProviderAdd } from '@web3-storage/capabilities/src/types'
 
 /**
  * action which results in provisionment of a space consuming a storage provider
  */
-export interface Provision<ServiceDID extends Ucanto.DID<'web'>> {
-  invocation: Ucanto.Invocation<ProviderAdd>
-  space: Ucanto.DID<'key'>
-  account: Ucanto.DID<'mailto'>
-  provider: ServiceDID
+export interface Provision {
+  cause: Ucanto.Invocation<ProviderAdd>
+  consumer: Ucanto.DID<'key'>
+  customer: Ucanto.DID<'mailto'>
+  provider: ProviderDID
 }
 
 /**
  * stores instances of a storage provider being consumed by a consumer
  */
 export interface ProvisionsStorage<
-  ServiceDID extends Ucanto.DID<'web'> = Ucanto.DID<'web'>
+  ProviderDID = Ucanto.DID<'web'>
 > {
-  services: ServiceDID[]
+  services: ProviderDID[]
   hasStorageProvider: (
     consumer: Ucanto.DID<'key'>
   ) => Promise<Ucanto.Result<boolean, never>>
@@ -27,7 +28,7 @@ export interface ProvisionsStorage<
    * @param item - provision to store
    */
   put: (
-    item: Provision<ServiceDID>
+    item: Provision
   ) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
 
   /**

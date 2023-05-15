@@ -40,9 +40,9 @@ export const add = async (
 
   return await provisions.put({
     // eslint-disable-next-line object-shorthand
-    invocation: /** @type {Types.Invocation<Types.ProviderAdd>} */ (invocation),
-    space: consumer,
+    cause: /** @type {Types.Invocation<Types.ProviderAdd>} */ (invocation),
+    consumer,
     provider,
-    account: accountDID,
+    customer: accountDID,
   })
 }

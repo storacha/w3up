@@ -10,7 +10,7 @@ export class ProvisionsStorage {
    */
   constructor(providers = ['did:web:test.web3.storage']) {
     /**
-     * @type {Record<Types.DIDKey, Types.Provision<Types.ServiceDID>>}
+     * @type {Record<Types.DIDKey, Types.Provision>}
      */
     this.provisions = {}
     this.providers = /** @type {Types.ServiceDID[]} */ (providers)
@@ -33,17 +33,17 @@ export class ProvisionsStorage {
 
   /**
    *
-   * @param {Types.Provision<Types.ServiceDID>} item
+   * @param {Types.Provision} item
    * @returns
    */
   async put(item) {
     if (
-      this.provisions[item.space] &&
-      this.provisions[item.space].provider !== item.provider
+      this.provisions[item.consumer] &&
+      this.provisions[item.consumer].provider !== item.provider
     ) {
       return { error: new Error() }
     } else {
-      this.provisions[item.space] = item
+      this.provisions[item.consumer] = item
       return { ok: {} }
     }
   }

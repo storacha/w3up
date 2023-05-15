@@ -27,12 +27,12 @@ export function testVariant(createVariant, test) {
             },
           })
           .delegate()
-        /** @type {import('./types/provisions.js').Provision<'did:web:web3.storage:providers:w3up-alpha'>} */
+        /** @type {import('./types/provisions.js').Provision} */
         const provision = {
-          invocation,
-          space: spaceA.did(),
+          cause: invocation,
+          consumer: spaceA.did(),
           provider: 'did:web:web3.storage:providers:w3up-alpha',
-          account: issuer.did(),
+          customer: issuer.did(),
         }
         return provision
       })
