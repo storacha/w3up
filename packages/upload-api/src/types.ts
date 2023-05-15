@@ -30,7 +30,7 @@ export type AccountDID = DID<'mailto'>
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
 export interface SpaceProviderRegistry {
-  hasStorageProvider (space: SpaceDID): Promise<Result<boolean, never>>
+  hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
 }
 
 export interface InsufficientStorage extends Failure {
@@ -69,7 +69,7 @@ import {
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
-  SpaceInfo
+  SpaceInfo,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 
@@ -77,7 +77,10 @@ export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
 
 export type { ProvisionsStorage, Provision } from './types/provisions'
-export type { DelegationsStorage, Query as DelegationsStorageQuery } from './types/delegations'
+export type {
+  DelegationsStorage,
+  Query as DelegationsStorageQuery,
+} from './types/delegations'
 
 export interface Service {
   store: {
@@ -89,7 +92,7 @@ export interface Service {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
     remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
-  },
+  }
   console: {
     log: ServiceMethod<
       InferInvokedCapability<typeof Capabilities.Console.log>,
@@ -101,7 +104,7 @@ export interface Service {
       never,
       Failure & { cause: unknown }
     >
-  },
+  }
   access: {
     authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
@@ -116,7 +119,7 @@ export interface Service {
       AccessDelegateSuccess,
       AccessDelegateFailure
     >
-  },
+  }
   consumer: {
     has: ServiceMethod<
       InferInvokedCapability<typeof Capabilities.Consumer.has>,
@@ -173,8 +176,7 @@ export interface CustomerServiceContext {
   signer: EdSigner.Signer
 }
 
-export interface ConsoleServiceContext {
-}
+export interface ConsoleServiceContext {}
 
 export interface SpaceServiceContext {
   provisionsStorage: Provisions
@@ -187,13 +189,13 @@ export interface ProviderServiceContext {
 
 export interface ServiceContext
   extends AccessServiceContext,
-  ConsoleServiceContext,
-  ConsumerServiceContext,
-  CustomerServiceContext,
-  ProviderServiceContext,
-  SpaceServiceContext,
-  StoreServiceContext,
-  UploadServiceContext {}
+    ConsoleServiceContext,
+    ConsumerServiceContext,
+    CustomerServiceContext,
+    ProviderServiceContext,
+    SpaceServiceContext,
+    StoreServiceContext,
+    UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
@@ -203,8 +205,8 @@ export interface UcantoServerContext extends ServiceContext {
 
 export interface UcantoServerTestContext
   extends UcantoServerContext,
-  StoreTestContext,
-  UploadTestContext {
+    StoreTestContext,
+    UploadTestContext {
   connection: ConnectionView<Service>
   mail: DebugEmail
   service: Signer<ServiceDID>
@@ -247,7 +249,7 @@ export interface CarStoreBucketOptions {
 }
 
 export interface CarStoreBucketService {
-  use (options?: CarStoreBucketOptions): Promise<CarStoreBucket>
+  use(options?: CarStoreBucketOptions): Promise<CarStoreBucket>
 }
 
 export interface DudewhereBucket {
@@ -265,7 +267,7 @@ export interface StoreTable {
 }
 
 export interface TestStoreTable {
-  get (
+  get(
     space: DID,
     link: UnknownLink
   ): Promise<(StoreAddInput & StoreListItem) | undefined>

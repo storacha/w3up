@@ -76,4 +76,3 @@ export function testVariant(createVariant, test) {
     )
   })
 }
-

@@ -15,7 +15,7 @@ export const provide = (ctx) =>
  */
 export const add = async (
   { capability, invocation },
-  { provisionsStorage: provisions  }
+  { provisionsStorage: provisions }
 ) => {
   const {
     nb: { consumer, provider },

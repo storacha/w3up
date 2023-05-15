@@ -9,8 +9,8 @@ describe('access/authorize', () => {
     const define = name.startsWith('only! ')
       ? it.only
       : name.startsWith('skip! ')
-        ? it.skip
-        : it
+      ? it.skip
+      : it
 
     define(name, async () => {
       const context = await createContext()

@@ -12,7 +12,6 @@ const notImplemented = () => {
  * provider: Partial<import('@web3-storage/access/types').Service['provider']>
  * store: Partial<import('@web3-storage/upload-client/types').Service['store']>
  * upload: Partial<import('@web3-storage/upload-client/types').Service['upload']>
- * voucher: Partial<import('@web3-storage/access/types').Service['voucher']>
  * space: Partial<import('@web3-storage/access/types').Service['space']>
  * }>} impl
  */
@@ -30,9 +29,6 @@ export function mockService(impl) {
     },
     space: {
       info: withCallCount(impl.space?.info ?? notImplemented),
-      'recover-validation': withCallCount(
-        impl.space?.['recover-validation'] ?? notImplemented
-      ),
     },
     access: {
       claim: withCallCount(impl.access?.claim ?? notImplemented),

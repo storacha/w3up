@@ -12,14 +12,4 @@ export class SpaceClient extends Base {
   async info(space) {
     return await this._agent.getSpaceInfo(space)
   }
-
-  /**
-   * Recover the current space.
-   *
-   * @param {string} email - Email address to send recovery emaail to.
-   */
-  /* c8 ignore next 3 */
-  async recover(email) {
-    return await this._agent.recover(email)
-  }
 }

@@ -28,7 +28,7 @@ const get = async ({ capability }, context) => {
   // returns the DID we already have. we may want to query other tables in the future
   // but for now I think we can skip this and drop the accounts table entirely
   // const customer = await context.models.accounts.get(capability.nb.customer)
-  const customer = {did: capability.nb.customer}
+  const customer = { did: capability.nb.customer }
   return { ok: { customer: customer || null } }
 }
 

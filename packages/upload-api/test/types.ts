@@ -10,8 +10,8 @@ export interface ServerContext {
 
 export type TestContext = API.UcantoServerTestContext
 export interface ProviderTestContext extends TestContext {
-  space: API.Signer<API.SpaceDID>,
-  agent: API.Signer<API.DIDKey>,
+  space: API.Signer<API.SpaceDID>
+  agent: API.Signer<API.DIDKey>
   account: API.UCAN.Signer<API.AccountDID>
 }
 

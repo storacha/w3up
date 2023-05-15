@@ -69,10 +69,10 @@ export interface SpaceTable {
 }
 export type SpaceRecord = Selectable<SpaceTable>
 
-export type SpaceInfoResult = {
-      // space did
-      did: DID<'key'>
-    }
+export interface SpaceInfoResult {
+  // space did
+  did: DID<'key'>
+}
 
 export interface AccountTable {
   did: DID<'mailto'>

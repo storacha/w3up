@@ -77,7 +77,7 @@ describe('space/info', function () {
   })
 
   it('should return space info with store/add as proof', async function () {
-    const { signer:issuer, service, connection } = ctx
+    const { signer: issuer, service, connection } = ctx
 
     const { space, delegation } = await createSpace(
       issuer,

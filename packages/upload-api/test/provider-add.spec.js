@@ -7,10 +7,7 @@ import { cleanupContext, createContext } from './helpers/context.js'
 import { Access, Provider, Consumer } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
-import {
-  createAuthorization,
-  provisionProvider,
-} from './helpers/utils.js'
+import { createAuthorization, provisionProvider } from './helpers/utils.js'
 import { authorizeFromUrl } from '../src/validate.js'
 
 describe(`provider/add`, () => {
@@ -32,7 +29,7 @@ describe(`provider/add`, () => {
         conn: context.connection,
         service: context.service,
         emails: context.mail,
-        context
+        context,
       })
     } finally {
       await cleanupContext(context)
@@ -321,7 +318,10 @@ async function testAuthorizeClaimProviderAdd(options) {
 
   const confirmationUrl = validationEmail.url
   assert.ok(typeof confirmationUrl === 'string', 'confirmationUrl is string')
-  const confirmEmailPostResponse = await authorizeFromUrl(confirmationUrl, context)
+  const confirmEmailPostResponse = await authorizeFromUrl(
+    confirmationUrl,
+    context
+  )
   assert.ok(confirmEmailPostResponse.ok)
 
   // claim as deviceA
@@ -340,13 +340,13 @@ async function testAuthorizeClaimProviderAdd(options) {
   assert.ok(claimAsDeviceAResult.out.ok)
   assert.ok(
     'delegations' in claimAsDeviceAResult.out.ok &&
-    typeof claimAsDeviceAResult.out.ok.delegations === 'object' &&
-    claimAsDeviceAResult.out.ok.delegations,
+      typeof claimAsDeviceAResult.out.ok.delegations === 'object' &&
+      claimAsDeviceAResult.out.ok.delegations,
     'claimAsDeviceAResult should have delegations property'
   )
   const claimedDelegations = [
     ...delegationsResponse.decode(
-      /** @type {Record<string,API.ByteView<API.Delegation>>} */(
+      /** @type {Record<string,API.ByteView<API.Delegation>>} */ (
         claimAsDeviceAResult.out.ok.delegations
       )
     ),
@@ -379,7 +379,7 @@ async function testAuthorizeClaimProviderAdd(options) {
 
   assert.ok(
     providerAddAsAccountResult &&
-    typeof providerAddAsAccountResult === 'object',
+      typeof providerAddAsAccountResult === 'object',
     `providerAddAsAccountResult is an object`
   )
   assert.equal(providerAddAsAccountResult.out.error, undefined)

@@ -100,7 +100,6 @@ export const test = {
       assert.equal(rsp.ok.email, DidMailto.toEmail(account.did()))
       assert.equal(rsp.ok.audience, agent.did())
     }
-
   },
 
   'should send confirmation email with link that, when clicked, allows for access/claim':
@@ -123,7 +122,10 @@ export const test = {
       const email = await mail.take()
       assert.ok(email, 'email was sent')
 
-      const confirmEmailPostResponse = await authorizeFromUrl(email.url, context)
+      const confirmEmailPostResponse = await authorizeFromUrl(
+        email.url,
+        context
+      )
 
       assert.ok(confirmEmailPostResponse.ok, 'email confirmation failed')
 

@@ -64,8 +64,8 @@ export class Email {
  * tests and debugging.
  */
 export class DebugEmail {
-  constructor(){
-    this.emails = /** @type {ValidationEmailSend[]} */([])
+  constructor() {
+    this.emails = /** @type {ValidationEmailSend[]} */ ([])
   }
   /**
    * Send validation email with ucan to register
@@ -81,7 +81,7 @@ export class DebugEmail {
     }
   }
 
-  async take(){
+  async take() {
     return this.emails.shift()
   }
 }

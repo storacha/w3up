@@ -59,13 +59,13 @@ export const createContext = async (options = {}) => {
     connection,
     testStoreTable: storeTable,
     testSpaceRegistry: access,
-    fetch
+    fetch,
   }
 }
 
 /**
- * 
- * @param {Types.UcantoServerTestContext} context 
+ *
+ * @param {Types.UcantoServerTestContext} context
  */
 export const cleanupContext = async (context) => {
   await context.carStoreBucket.deactivate()

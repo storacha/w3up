@@ -5,8 +5,8 @@ import * as delegationsResponse from './utils/delegations-response.js'
 import { collect } from 'streaming-iterables'
 
 /**
-  * @param {Types.AccessClaimContext} ctx
-  */
+ * @param {Types.AccessClaimContext} ctx
+ */
 export const provide = (ctx) =>
   Server.provide(Access.claim, (input) => claim(input, ctx))
 
@@ -15,7 +15,10 @@ export const provide = (ctx) =>
  * @param {Types.AccessClaimContext} ctx
  * @returns {Promise<Types.Result<Types.AccessClaimSuccess, Types.AccessClaimFailure>>}
  */
-export const claim = async ({ invocation }, { delegationsStorage: delegations }) => {
+export const claim = async (
+  { invocation },
+  { delegationsStorage: delegations }
+) => {
   const claimedAudience = invocation.capabilities[0].with
   const claimed = await collect(delegations.find({ audience: claimedAudience }))
   return {

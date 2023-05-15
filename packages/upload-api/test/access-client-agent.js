@@ -30,7 +30,7 @@ export const test = {
 
     const space = await agent.createSpace('test-add')
     const [proof] = agent.proofs()
-    assert.deepEqual(space.proof.cid, /** @type {API.Link} */(proof.cid))
+    assert.deepEqual(space.proof.cid, /** @type {API.Link} */ (proof.cid))
   },
   'can requestAuthorization': async (assert, context) => {
     const { agent, mail, account, accountEmail } = await setup(context)
@@ -146,7 +146,7 @@ export const test = {
     )
     assert.ok(attestation, 'claimed attestation')
     assert.equal(
-      /** @type {any} */(attestation).capabilities[0].nb.proof.toString(),
+      /** @type {any} */ (attestation).capabilities[0].nb.proof.toString(),
       delegationFromAccountToSession?.cid.toString(),
       'ucan/attest proof cid matches delegation cid'
     )
@@ -332,7 +332,9 @@ export const test = {
       expectAuthorization: waitForAuthorizationByPolling,
     })
     // wait 100 milliseconds to let the email be sent
-    await new Promise(resolve => { setTimeout(resolve, 100) })
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100)
+    })
     const confirmationEmail = await mail.take()
     await confirmConfirmationUrl(deviceA.connection, confirmationEmail)
     await authorized
@@ -361,7 +363,9 @@ export const test = {
       expectAuthorization: waitForAuthorizationByPolling,
     })
     // wait 100 milliseconds to let the email be sent
-    await new Promise(resolve => { setTimeout(resolve, 100) })
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100)
+    })
     const confirmationEmail = await mail.take()
     await confirmConfirmationUrl(agent.connection, confirmationEmail)
     await authorized
@@ -394,7 +398,9 @@ export const test = {
       agent.issuer.did()
     )
     // wait 100 milliseconds to let the email be sent
-    await new Promise(resolve => { setTimeout(resolve, 100) })
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100)
+    })
     const confirmationEmail = await mail.take()
     await confirmConfirmationUrl(agent.connection, confirmationEmail)
     assert.equal([...(await claimed)].length, 2, 'claimed delegations')

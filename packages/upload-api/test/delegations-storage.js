@@ -4,18 +4,17 @@ import * as Types from '../src/types.js'
  * @implements {Types.DelegationsStorage}
  */
 export class DelegationsStorage {
-
-  constructor(){
+  constructor() {
     /**
      * @type {Array<Types.Delegation<Types.Tuple<any>>>}
      */
-    this.delegations = []    
+    this.delegations = []
   }
 
   /**
-   * 
-   * @param  {Array<Types.Delegation<Types.Tuple<any>>>} delegations 
-   * @returns 
+   *
+   * @param  {Array<Types.Delegation<Types.Tuple<any>>>} delegations
+   * @returns
    */
   async putMany(...delegations) {
     this.delegations = [...delegations, ...this.delegations]
@@ -26,15 +25,14 @@ export class DelegationsStorage {
     return BigInt(this.delegations.length)
   }
 
-  async *[Symbol.asyncIterator]() {
-  }
-  
+  async *[Symbol.asyncIterator]() {}
+
   /**
-   * @param {Types.DelegationsStorageQuery} query 
+   * @param {Types.DelegationsStorageQuery} query
    */
   async *find(query) {
-    for (const delegation of this.delegations){
-      if (query.audience === delegation.audience.did()){
+    for (const delegation of this.delegations) {
+      if (query.audience === delegation.audience.did()) {
         yield delegation
       }
     }

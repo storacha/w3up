@@ -208,16 +208,18 @@ export async function createSpace(issuer, service, conn, email) {
   const space = await ed25519.generate()
   const account = principal.Absentee.from({ id: DidMailto.fromEmail(email) })
   const proofs = await createAuthorization({ agent: issuer, service, account })
-  await Provider.add.invoke({
-    issuer,
-    audience: service,
-    with: account.did(),
-    nb: {
-      provider: /** @type {Types.DID<'web'>} */ (service.did()),
-      consumer: space.did()
-    },
-    proofs
-  }).execute(conn)
+  await Provider.add
+    .invoke({
+      issuer,
+      audience: service,
+      with: account.did(),
+      nb: {
+        provider: /** @type {Types.DID<'web'>} */ (service.did()),
+        consumer: space.did(),
+      },
+      proofs,
+    })
+    .execute(conn)
   const spaceDelegation = await Space.top.delegate({
     issuer: space,
     audience: issuer,
@@ -226,6 +228,6 @@ export async function createSpace(issuer, service, conn, email) {
   })
   return {
     space,
-    delegation: spaceDelegation
+    delegation: spaceDelegation,
   }
 }
