@@ -15,7 +15,7 @@ export interface DelegationsStorage<
    */
   putMany: (
     ...delegations: Array<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
-  ) => Promise<unknown>
+  ) => Promise<Ucanto.Result<{}, never>>
 
   /**
    * get number of stored items

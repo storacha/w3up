@@ -18,14 +18,14 @@ export class DelegationsStorage {
    */
   async putMany(...delegations) {
     this.delegations = [...delegations, ...this.delegations]
-    return {}
+    return { ok: {} }
   }
 
   async count() {
     return BigInt(this.delegations.length)
   }
 
-  async *[Symbol.asyncIterator]() {}
+  async *[Symbol.asyncIterator]() { }
 
   /**
    * @param {Types.DelegationsStorageQuery} query
