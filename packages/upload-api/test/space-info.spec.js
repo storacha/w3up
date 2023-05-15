@@ -68,7 +68,6 @@ describe('space/info', function () {
     if (inv.out.error) {
       assert.fail(inv.out.error.message)
     } else {
-      console.log(JSON.stringify(inv.out.ok, null, 4))
       assert.ok(
         isSubset(inv.out.ok, {
           did: space.did(),
