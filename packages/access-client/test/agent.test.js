@@ -144,7 +144,7 @@ describe('Agent', function () {
             updated_at: 'sss',
             inserted_at: 'date',
           },
-        }
+        },
       ]
     )
   })
