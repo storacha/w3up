@@ -5,18 +5,23 @@ import * as Types from '../src/types.js'
  */
 export class ProvisionsStorage {
 
-  constructor(){
+  /**
+   * 
+   * @param {Array<Types.ServiceDID | string>} providers 
+   */
+  constructor(providers = ['did:web:test.web3.storage']) {
     /**
      * @type {Record<Types.DIDKey, Types.Provision<Types.ServiceDID>>} 
      */
-    this.providers = {}
+    this.provisions = {}
+    this.providers = /** @type {Types.ServiceDID[]} */ (providers)
   }
 
   /**
    * @returns {Types.ServiceDID[]}
    */
-  get services(){
-    return ['did:web:test.web3.storage']
+  get services() {
+    return this.providers
   }
 
   /**
@@ -24,7 +29,7 @@ export class ProvisionsStorage {
    * @param {Types.DIDKey} consumer 
    */
   async hasStorageProvider(consumer) {
-    return { ok: !!this.providers[consumer] }
+    return { ok: !!this.provisions[consumer] }
   }
 
   /**
@@ -33,8 +38,12 @@ export class ProvisionsStorage {
    * @returns 
    */
   async put(item) {
-    this.providers[item.space] = item
-    return { ok: {} }
+    if (this.provisions[item.space] && (this.provisions[item.space].provider !== item.provider)) {
+      return { error: new Error() }
+    } else {
+      this.provisions[item.space] = item
+      return { ok: {} }
+    }
   }
 
   async count() {

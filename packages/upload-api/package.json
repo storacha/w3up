@@ -122,12 +122,14 @@
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",
+    "@ipld/dag-ucan": "^3.3.2",
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^7.0.1",
     "@web-std/blob": "^3.0.4",
     "@web3-storage/sigv4": "^1.0.2",
     "dotenv": "^16.0.3",
     "hd-scripts": "^4.1.0",
+    "is-subset": "^0.1.1",
     "mocha": "^10.2.0"
   },
   "eslintConfig": {

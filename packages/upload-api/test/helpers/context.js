@@ -13,9 +13,11 @@ import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
 
 /**
+ * @param {object} options
+ * @param {string[]} [options.providers]
  * @returns {Promise<Types.UcantoServerTestContext>}
  */
-export const createContext = async () => {
+export const createContext = async (options = {}) => {
   const storeTable = new StoreTable()
   const uploadTable = new UploadTable()
   const carStoreBucket = await CarStoreBucket.activate()
@@ -30,7 +32,7 @@ export const createContext = async () => {
     signer: id,
     email: Email.debug(),
     url: new URL('http://localhost:8787'),
-    provisionsStorage: new ProvisionsStorage(),
+    provisionsStorage: new ProvisionsStorage(options.providers),
     delegationsStorage: new DelegationsStorage(),
     errorReporter: {
       catch(error) {

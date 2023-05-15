@@ -408,6 +408,9 @@ importers:
       '@ipld/car':
         specifier: ^5.1.1
         version: 5.1.1
+      '@ipld/dag-ucan':
+        specifier: ^3.3.2
+        version: 3.3.2
       '@types/mocha':
         specifier: ^10.0.1
         version: 10.0.1
@@ -426,6 +429,9 @@ importers:
       hd-scripts:
         specifier: ^4.1.0
         version: 4.1.0
+      is-subset:
+        specifier: ^0.1.1
+        version: 0.1.1
       mocha:
         specifier: ^10.2.0
         version: 10.2.0

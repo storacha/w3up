@@ -1,11 +1,14 @@
 /* eslint-disable unicorn/prefer-number-properties */
 import * as Types from '../../src/types.js'
 import { ed25519 } from '@ucanto/principal'
+import * as principal from '@ucanto/principal'
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as Context from './context.js'
-import { Access, Provider } from '@web3-storage/capabilities'
+import { Access, Provider, Space } from '@web3-storage/capabilities'
+import * as DidMailto from '@web3-storage/did-mailto'
+
 // eslint-disable-next-line unicorn/prefer-export-from
 export { Context }
 
@@ -193,4 +196,36 @@ export const queue = (buffer = []) => {
   }
 
   return { put, take }
+}
+
+/**
+ * @param {Types.Signer} issuer
+ * @param {Types.Signer<Types.ServiceDID>} service
+ * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
+ * @param {`${string}@${string}`} email
+ */
+export async function createSpace(issuer, service, conn, email) {
+  const space = await ed25519.generate()
+  const account = principal.Absentee.from({ id: DidMailto.fromEmail(email) })
+  const proofs = await createAuthorization({ agent: issuer, service, account })
+  await Provider.add.invoke({
+    issuer,
+    audience: service,
+    with: account.did(),
+    nb: {
+      provider: /** @type {Types.DID<'web'>} */ (service.did()),
+      consumer: space.did()
+    },
+    proofs
+  }).execute(conn)
+  const spaceDelegation = await Space.top.delegate({
+    issuer: space,
+    audience: issuer,
+    with: space.did(),
+    expiration: Infinity,
+  })
+  return {
+    space,
+    delegation: spaceDelegation
+  }
 }

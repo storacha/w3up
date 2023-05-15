@@ -9,6 +9,11 @@ export interface ServerContext {
 }
 
 export type TestContext = API.UcantoServerTestContext
+export interface ProviderTestContext extends TestContext {
+  space: API.Signer<API.SpaceDID>,
+  agent: API.Signer<API.DIDKey>,
+  account: API.UCAN.Signer<API.AccountDID>
+}
 
 export interface Assert {
   equal: <Actual, Expected extends Actual>(
