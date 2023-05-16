@@ -117,8 +117,7 @@
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
     "multiformats": "^11.0.2",
-    "p-retry": "^5.1.2",
-    "streaming-iterables": "^7.1.0"
+    "p-retry": "^5.1.2"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",
