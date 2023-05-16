@@ -9,6 +9,8 @@ import * as API from './types.js'
  * @returns {Promise<API.Result<{ did: API.SpaceDID }, API.Failure>>}
  */
 export const info = async ({ capability }, ctx) => {
+  const { provisionsStorage: provisions } = ctx
+
   const spaceDid = capability.with
   if (!DID.match({ method: 'key' }).is(spaceDid)) {
     /** @type {API.SpaceUnknown} */
@@ -21,7 +23,7 @@ export const info = async ({ capability }, ctx) => {
     }
   }
 
-  const result = await ctx.provisionsStorage.hasStorageProvider(spaceDid)
+  const result = await provisions.hasStorageProvider(spaceDid)
   if (result.ok) {
     return {
       ok: { did: spaceDid },
