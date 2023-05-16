@@ -1,17 +1,17 @@
-import * as Types from '../types.js'
+import * as API from '../types.js'
 import * as Provider from '@ucanto/server'
 import { Customer } from '@web3-storage/capabilities'
 
 /**
- * @param {Types.CustomerServiceContext} context
+ * @param {API.CustomerServiceContext} context
  */
 export const provide = (context) =>
   Provider.provide(Customer.get, (input) => get(input, context))
 
 /**
- * @param {Types.Input<Customer.get>} input
- * @param {Types.CustomerServiceContext} context
- * @returns {Promise<Types.CustomerGetResult>}
+ * @param {API.Input<Customer.get>} input
+ * @param {API.CustomerServiceContext} context
+ * @returns {Promise<API.CustomerGetResult>}
  */
 const get = async ({ capability }, context) => {
   /**
@@ -34,7 +34,7 @@ const get = async ({ capability }, context) => {
 
 class UnknownProvider extends Provider.Failure {
   /**
-   * @param {Types.DID} did
+   * @param {API.DID} did
    */
   constructor(did) {
     super()

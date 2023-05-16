@@ -1,11 +1,11 @@
-import * as Types from './types.js'
+import * as API from './types.js'
 import * as Authorize from './access-authorize.js'
 import * as Delegate from './access-delegate.js'
 import * as Claim from './access-claim.js'
 import * as Confirm from './access-confirm.js'
 
 /**
- * @param {Types.AccessServiceContext} context
+ * @param {API.AccessServiceContext} context
  */
 export const createService = (context) => ({
   authorize: Authorize.provide(context),

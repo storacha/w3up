@@ -1,4 +1,4 @@
-import * as Types from './types.js'
+import * as API from './types.js'
 import * as Provider from '@ucanto/server'
 import { Absentee, Verifier } from '@ucanto/principal'
 import { collect } from 'streaming-iterables'
@@ -6,7 +6,7 @@ import * as Access from '@web3-storage/capabilities/access'
 import * as delegationsResponse from './utils/delegations-response.js'
 
 /**
- * @param {Types.AccessConfirm} capability
+ * @param {API.AccessConfirm} capability
  */
 export function parse(capability) {
   // Create a absentee signer for the account that authorized the delegation
@@ -20,15 +20,15 @@ export function parse(capability) {
 
 /**
  *
- * @param {Types.AccessServiceContext} ctx
+ * @param {API.AccessServiceContext} ctx
  */
 export const provide = (ctx) =>
   Provider.provide(Access.confirm, (input) => confirm(input, ctx))
 
 /**
- * @param {Types.Input<Access.confirm>} input
- * @param {Types.AccessServiceContext} ctx
- * @returns {Promise<Types.Result<Types.AccessConfirmSuccess, Types.AccessConfirmFailure>>}
+ * @param {API.Input<Access.confirm>} input
+ * @param {API.AccessServiceContext} ctx
+ * @returns {Promise<API.Result<API.AccessConfirmSuccess, API.AccessConfirmFailure>>}
  */
 export async function confirm({ capability, invocation }, ctx) {
   if (capability.with !== ctx.signer.did()) {
@@ -41,11 +41,11 @@ export async function confirm({ capability, invocation }, ctx) {
   // which delegations they wish to re-delegate. Right now we just re-delegate
   // everything that was requested for all of the resources.
   const capabilities =
-    /** @type {Types.UCAN.Capabilities} */
+    /** @type {API.UCAN.Capabilities} */
     (
       capability.nb.att.map(({ can }) => ({
         can,
-        with: /** @type {Types.UCAN.Resource} */ ('ucan:*'),
+        with: /** @type {API.UCAN.Resource} */ ('ucan:*'),
       }))
     )
 
@@ -79,13 +79,13 @@ export async function confirm({ capability, invocation }, ctx) {
 
 /**
  * @param {object} opts
- * @param {Types.Signer} opts.service
- * @param {Types.Principal<Types.DID<'mailto'>>} opts.account
- * @param {Types.Principal<Types.DID>} opts.agent
- * @param {Types.Capabilities} opts.capabilities
- * @param {AsyncIterable<Types.Delegation>} opts.delegationProofs
+ * @param {API.Signer} opts.service
+ * @param {API.Principal<API.DID<'mailto'>>} opts.account
+ * @param {API.Principal<API.DID>} opts.agent
+ * @param {API.Capabilities} opts.capabilities
+ * @param {AsyncIterable<API.Delegation>} opts.delegationProofs
  * @param {number} opts.expiration
- * @returns {Promise<[delegation: Types.Delegation, attestation: Types.Delegation]>}
+ * @returns {Promise<[delegation: API.Delegation, attestation: API.Delegation]>}
  */
 export async function createSessionProofs({
   service,

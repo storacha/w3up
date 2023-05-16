@@ -1,18 +1,18 @@
 import * as Server from '@ucanto/server'
-import * as Types from './types.js'
+import * as API from './types.js'
 import * as Access from '@web3-storage/capabilities/access'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { delegationToString } from '@web3-storage/access/encoding'
 
 /**
- * @param {Types.AccessServiceContext} ctx
+ * @param {API.AccessServiceContext} ctx
  */
 export const provide = (ctx) =>
   Server.provide(Access.authorize, (input) => authorize(input, ctx))
 
 /**
- * @param {Types.Input<Access.authorize>} input
- * @param {Types.AccessServiceContext} ctx
+ * @param {API.Input<Access.authorize>} input
+ * @param {API.AccessServiceContext} ctx
  */
 export const authorize = async ({ capability }, ctx) => {
   /**

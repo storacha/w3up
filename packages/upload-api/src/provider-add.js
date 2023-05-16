@@ -1,17 +1,17 @@
-import * as Types from './types.js'
+import * as API from './types.js'
 import * as Server from '@ucanto/server'
 import { Provider } from '@web3-storage/capabilities'
 import * as validator from '@ucanto/validator'
 
 /**
- * @param {Types.ProviderServiceContext} ctx
+ * @param {API.ProviderServiceContext} ctx
  */
 export const provide = (ctx) =>
   Server.provide(Provider.add, (input) => add(input, ctx))
 
 /**
- * @param {Types.Input<Provider.add>} input
- * @param {Types.ProviderServiceContext} context
+ * @param {API.Input<Provider.add>} input
+ * @param {API.ProviderServiceContext} context
  */
 export const add = async (
   { capability, invocation },
@@ -40,7 +40,7 @@ export const add = async (
 
   return await provisions.put({
     // eslint-disable-next-line object-shorthand
-    cause: /** @type {Types.Invocation<Types.ProviderAdd>} */ (invocation),
+    cause: /** @type {API.Invocation<API.ProviderAdd>} */ (invocation),
     consumer,
     provider,
     customer: accountDID,

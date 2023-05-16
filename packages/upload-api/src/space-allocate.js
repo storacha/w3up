@@ -1,12 +1,12 @@
-import * as Types from './types.js'
+import * as API from './types.js'
 import * as Server from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
 
 /**
  *
- * @param {{capability: {with: Types.SpaceDID, nb:{size:number}}}} input
- * @param {Types.SpaceServiceContext} context
- * @returns {Promise<Types.Result<{size:number}, Types.AllocationError>>}
+ * @param {{capability: {with: API.SpaceDID, nb:{size:number}}}} input
+ * @param {API.SpaceServiceContext} context
+ * @returns {Promise<API.Result<{size:number}, API.AllocationError>>}
  */
 export const allocate = async ({ capability }, context) => {
   const { with: space, nb } = capability
@@ -17,7 +17,7 @@ export const allocate = async ({ capability }, context) => {
   }
 
   return {
-    /** @type {Types.AllocationError} */
+    /** @type {API.AllocationError} */
     error: {
       name: 'InsufficientStorage',
       message: `${space} has no storage provider`,
@@ -27,7 +27,7 @@ export const allocate = async ({ capability }, context) => {
 
 /**
  *
- * @param {Types.SpaceServiceContext} context
+ * @param {API.SpaceServiceContext} context
  */
 export const provide = (context) =>
   Server.provide(Space.allocate, (input) => allocate(input, context))

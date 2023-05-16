@@ -1,19 +1,19 @@
 import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
-import * as Types from './types.js'
+import * as API from './types.js'
 import * as delegationsResponse from './utils/delegations-response.js'
 import { collect } from 'streaming-iterables'
 
 /**
- * @param {Types.AccessClaimContext} ctx
+ * @param {API.AccessClaimContext} ctx
  */
 export const provide = (ctx) =>
   Server.provide(Access.claim, (input) => claim(input, ctx))
 
 /**
- * @param {Types.Input<Access.claim>} input
- * @param {Types.AccessClaimContext} ctx
- * @returns {Promise<Types.Result<Types.AccessClaimSuccess, Types.AccessClaimFailure>>}
+ * @param {API.Input<Access.claim>} input
+ * @param {API.AccessClaimContext} ctx
+ * @returns {Promise<API.Result<API.AccessClaimSuccess, API.AccessClaimFailure>>}
  */
 export const claim = async (
   { invocation },

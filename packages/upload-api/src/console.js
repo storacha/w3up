@@ -1,10 +1,10 @@
 import { Console } from '@web3-storage/capabilities'
 import * as Provider from '@ucanto/server'
-import * as Types from './types.js'
+import * as API from './types.js'
 
 /**
- * @param {Types.Input<Console.log>} input
- * @returns {Promise<Types.Result<{}, never>>}
+ * @param {API.Input<Console.log>} input
+ * @returns {Promise<API.Result<{}, never>>}
  */
 export const log = async ({ capability }) => {
   const ok = capability.nb.value == null ? {} : capability.nb.value
@@ -12,8 +12,8 @@ export const log = async ({ capability }) => {
 }
 
 /**
- * @param {Types.Input<Console.error>} input
- * @returns {Promise<Types.Result<never, Types.Failure & { cause: unknown }>>}
+ * @param {API.Input<Console.error>} input
+ * @returns {Promise<API.Result<never, API.Failure & { cause: unknown }>>}
  */
 export const error = async ({ capability }) => {
   const cause = capability.nb.error == null ? {} : capability.nb.error
@@ -27,7 +27,7 @@ export const error = async ({ capability }) => {
 }
 
 /**
- * @param {Types.ConsoleServiceContext} ctx
+ * @param {API.ConsoleServiceContext} ctx
  */
 export const createService = (ctx) => ({
   log: Provider.provide(Console.log, (input) => log(input)),

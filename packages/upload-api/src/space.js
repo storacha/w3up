@@ -1,17 +1,17 @@
 import { Space } from '@web3-storage/capabilities'
 import { DID } from '@ucanto/validator'
 import * as Provider from '@ucanto/server'
-import * as Types from './types.js'
+import * as API from './types.js'
 
 /**
- * @param {Types.Input<Space.info>} input
- * @param {Types.SpaceServiceContext} ctx
- * @returns {Promise<Types.Result<{ did: Types.SpaceDID }, Types.Failure>>}
+ * @param {API.Input<Space.info>} input
+ * @param {API.SpaceServiceContext} ctx
+ * @returns {Promise<API.Result<{ did: API.SpaceDID }, API.Failure>>}
  */
 export const info = async ({ capability }, ctx) => {
   const spaceDid = capability.with
   if (!DID.match({ method: 'key' }).is(spaceDid)) {
-    /** @type {Types.SpaceUnknown} */
+    /** @type {API.SpaceUnknown} */
     const unexpectedSpaceDidFailure = {
       name: 'SpaceUnknown',
       message: `can only get info for did:key spaces`,
@@ -39,7 +39,7 @@ export const info = async ({ capability }, ctx) => {
 }
 
 /**
- * @param {Types.SpaceServiceContext} ctx
+ * @param {API.SpaceServiceContext} ctx
  */
 export const createService = (ctx) => ({
   info: Provider.provide(Space.info, (input) => info(input, ctx)),

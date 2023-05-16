@@ -1,18 +1,18 @@
 import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
-import * as Types from './types.js'
+import * as API from './types.js'
 import * as Allocator from './space-allocate.js'
 
 /**
- * @param {Types.AccessServiceContext} ctx
+ * @param {API.AccessServiceContext} ctx
  */
 export const provide = (ctx) =>
   Server.provide(Access.delegate, (input) => delegate(input, ctx))
 
 /**
- * @param {Types.Input<Access.delegate>} input
- * @param {Types.AccessServiceContext} context
- * @returns {Promise<Types.Result<Types.AccessDelegateSuccess, Types.AccessDelegateFailure>>}
+ * @param {API.Input<Access.delegate>} input
+ * @param {API.AccessServiceContext} context
+ * @returns {Promise<API.Result<API.AccessDelegateSuccess, API.AccessDelegateFailure>>}
  */
 export const delegate = async ({ capability, invocation }, context) => {
   const delegated = extractProvenDelegations(capability, invocation.proofs)
@@ -43,9 +43,9 @@ export const delegate = async ({ capability, invocation }, context) => {
 }
 
 /**
- * @param {Types.InferInvokedCapability<typeof Access.delegate>} capability
- * @param {Types.Proof[]} proofs
- * @returns {Types.Result<Types.Delegation<Types.Capabilities>[], Types.DelegationNotFound>}
+ * @param {API.InferInvokedCapability<typeof Access.delegate>} capability
+ * @param {API.Proof[]} proofs
+ * @returns {API.Result<API.Delegation<API.Capabilities>[], API.DelegationNotFound>}
  */
 const extractProvenDelegations = (capability, proofs) => {
   const nbDelegations = new Set(Object.values(capability.nb.delegations))
