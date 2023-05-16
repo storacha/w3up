@@ -238,7 +238,6 @@ export interface CarStoreBucket {
       'content-length': string
     } & Record<string, string>
   }>
-  deactivate: () => Promise<void>
 }
 
 export interface CarStoreBucketOptions {

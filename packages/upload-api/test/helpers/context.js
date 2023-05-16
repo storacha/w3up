@@ -68,5 +68,5 @@ export const createContext = async (options = {}) => {
  * @param {Types.UcantoServerTestContext} context
  */
 export const cleanupContext = async (context) => {
-  await context.carStoreBucket.deactivate()
+  /** @type {CarStoreBucket & {  deactivate: () => Promise<void> }}} */(await context.carStoreBucket).deactivate()
 }
