@@ -45,11 +45,11 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/core':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.1
+        version: 7.1.1
       '@ucanto/interface':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.0
+        version: 7.1.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
@@ -160,11 +160,11 @@ importers:
   packages/capabilities:
     dependencies:
       '@ucanto/core':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.1
+        version: 7.1.1
       '@ucanto/interface':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.0
+        version: 7.1.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
@@ -227,8 +227,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/interface':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.0
+        version: 7.1.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
@@ -267,8 +267,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       '@ucanto/core':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.1
+        version: 7.1.1
       '@web-std/blob':
         specifier: ^3.0.4
         version: 3.0.4
@@ -300,8 +300,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/interface':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.0
+        version: 7.1.0
       '@ucanto/transport':
         specifier: ^7.0.3
         version: 7.0.3
@@ -373,11 +373,11 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/core':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.1
+        version: 7.1.1
       '@ucanto/interface':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^7.1.0
+        version: 7.1.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
@@ -3444,21 +3444,21 @@ packages:
   /@ucanto/client@7.0.1:
     resolution: {integrity: sha512-Rn1rX77UNyMAnJmVhmnSvESgVgRkVvEo7+j6q/FAQijZS83GPF/jr3Ln7Xbc88548ilcAViFjNGK0TpKBl/rAQ==}
     dependencies:
-      '@ucanto/core': 7.0.1
-      '@ucanto/interface': 7.0.1
+      '@ucanto/core': 7.1.1
+      '@ucanto/interface': 7.1.0
     dev: false
 
-  /@ucanto/core@7.0.1:
-    resolution: {integrity: sha512-XCcPlGkjLo+a0r3ejxjy3OZouwoABKIBU0sZO8OjdDjX3TP2y24KfmNjL+3y6i9wqid6Fpc/S9gVvUGMYEJeJA==}
+  /@ucanto/core@7.1.1:
+    resolution: {integrity: sha512-RXYOXVTqpTqeYBw7aVGna4JwLEi4xnfN4eX53n+9SLNbh7lNrD7bZuXGMB53W4PimRIZp92tQSWSO8ljw3hf1Q==}
     dependencies:
       '@ipld/car': 5.1.1
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.3.2
-      '@ucanto/interface': 7.0.1
+      '@ucanto/interface': 7.1.0
       multiformats: 11.0.2
 
-  /@ucanto/interface@7.0.1:
-    resolution: {integrity: sha512-OdIbpyEMg3yejlHP4Jjb+3zOj2JF3H/E6S9m+AfDLxnxUlJ3f7AM5VWTdkHMXN9VpOSko+cn56MXFD34qnccKw==}
+  /@ucanto/interface@7.1.0:
+    resolution: {integrity: sha512-DMD0ybPZ7UUtBx9g3TR6mrYW6N2IMhzgQ2IRfYsoTlhnXOTfmllwogWKhUJobf/lBHmmpi2CW8gWXTBby/cN5A==}
     dependencies:
       '@ipld/dag-ucan': 3.3.2
       multiformats: 11.0.2
@@ -3468,22 +3468,22 @@ packages:
     dependencies:
       '@ipld/dag-ucan': 3.3.2
       '@noble/ed25519': 1.7.3
-      '@ucanto/interface': 7.0.1
+      '@ucanto/interface': 7.1.0
       multiformats: 11.0.2
       one-webcrypto: 1.0.3
 
   /@ucanto/server@7.0.2:
     resolution: {integrity: sha512-U1wM01abvrNUlnVbFWaE6Vr02L6iPi+sYboBcvrqTFNkefQ0FYuQ38OqSlH0bE1pKMvhvCjJM1f7MD0LkrsHwA==}
     dependencies:
-      '@ucanto/core': 7.0.1
-      '@ucanto/interface': 7.0.1
+      '@ucanto/core': 7.1.1
+      '@ucanto/interface': 7.1.0
       '@ucanto/validator': 7.0.0
 
   /@ucanto/transport@7.0.3:
     resolution: {integrity: sha512-znDhFd6+gAOyqNTpzIqpLIfEWO6J0JYG5TQaPV1SP4B73Idad/WYMVTZpTNUGY2B2BmY42iyzbvnNUsCKzwxEg==}
     dependencies:
-      '@ucanto/core': 7.0.1
-      '@ucanto/interface': 7.0.1
+      '@ucanto/core': 7.1.1
+      '@ucanto/interface': 7.1.0
     dev: false
 
   /@ucanto/validator@7.0.0:
@@ -3491,8 +3491,8 @@ packages:
     dependencies:
       '@ipld/car': 5.1.1
       '@ipld/dag-cbor': 9.0.0
-      '@ucanto/core': 7.0.1
-      '@ucanto/interface': 7.0.1
+      '@ucanto/core': 7.1.1
+      '@ucanto/interface': 7.1.0
       multiformats: 11.0.2
 
   /@vue/compiler-core@3.2.47:

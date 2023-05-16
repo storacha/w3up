@@ -75,8 +75,8 @@
   "dependencies": {
     "@ipld/dag-ucan": "^3.3.2",
     "@ucanto/client": "^7.0.1",
-    "@ucanto/core": "^7.0.1",
-    "@ucanto/interface": "^7.0.1",
+    "@ucanto/core": "^7.1.1",
+    "@ucanto/interface": "^7.1.0",
     "@ucanto/principal": "^7.0.0",
     "@ucanto/transport": "^7.0.3",
     "@web3-storage/access": "workspace:^",

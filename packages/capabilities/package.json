@@ -64,8 +64,8 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ucanto/core": "^7.0.1",
-    "@ucanto/interface": "^7.0.1",
+    "@ucanto/core": "^7.1.1",
+    "@ucanto/interface": "^7.1.0",
     "@ucanto/principal": "^7.0.0",
     "@ucanto/transport": "^7.0.3",
     "@ucanto/validator": "^7.0.0"

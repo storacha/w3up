@@ -108,7 +108,7 @@
   },
   "dependencies": {
     "@ucanto/client": "^7.0.1",
-    "@ucanto/interface": "^7.0.1",
+    "@ucanto/interface": "^7.1.0",
     "@ucanto/principal": "^7.0.0",
     "@ucanto/server": "^7.0.2",
     "@ucanto/transport": "^7.0.3",
@@ -123,7 +123,7 @@
     "@ipld/car": "^5.1.1",
     "@ipld/dag-ucan": "^3.3.2",
     "@types/mocha": "^10.0.1",
-    "@ucanto/core": "^7.0.1",
+    "@ucanto/core": "^7.1.1",
     "@web-std/blob": "^3.0.4",
     "@web3-storage/sigv4": "^1.0.2",
     "hd-scripts": "^4.1.0",
