@@ -2,7 +2,6 @@ import * as assert from 'node:assert'
 import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
-import { collect } from 'streaming-iterables'
 import { createSampleDelegation } from './utils/ucan.js'
 import * as Types from './types.js'
 
@@ -79,20 +78,14 @@ export function testVariant(createVariant, test) {
 
     await delegations.putMany(...delegationsForAlice, ...delegationsForBob)
 
-    const aliceDelegations = await collect(
-      delegations.find({ audience: alice.did() })
-    )
-    assert.deepEqual(aliceDelegations.length, delegationsForAlice.length)
+    const aliceDelegations = (await delegations.find({ audience: alice.did() })).ok
+    assert.deepEqual(aliceDelegations?.length, delegationsForAlice.length)
 
-    const bobDelegations = await collect(
-      delegations.find({ audience: bob.did() })
-    )
-    assert.deepEqual(bobDelegations.length, delegationsForBob.length)
+    const bobDelegations = (await delegations.find({ audience: bob.did() })).ok
+    assert.deepEqual(bobDelegations?.length, delegationsForBob.length)
 
     const carol = await principal.ed25519.generate()
-    const carolDelegations = await collect(
-      delegations.find({ audience: carol.did() })
-    )
-    assert.deepEqual(carolDelegations.length, 0)
+    const carolDelegations = (await delegations.find({ audience: carol.did() })).ok
+    assert.deepEqual(carolDelegations?.length, 0)
   })
 }

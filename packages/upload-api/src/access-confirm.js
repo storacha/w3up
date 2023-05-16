@@ -1,7 +1,6 @@
 import * as API from './types.js'
 import * as Provider from '@ucanto/server'
 import { Absentee, Verifier } from '@ucanto/principal'
-import { collect } from 'streaming-iterables'
 import * as Access from '@web3-storage/capabilities/access'
 import * as delegationsResponse from './utils/delegations-response.js'
 
@@ -49,6 +48,14 @@ export async function confirm({ capability, invocation }, ctx) {
       }))
     )
 
+  const delegationsResult = await ctx.delegationsStorage.find({
+    audience: account.did(),
+  })
+
+  if (delegationsResult.error){
+    return delegationsResult
+  }
+
   const [delegation, attestation] = await createSessionProofs({
     service: ctx.signer,
     account,
@@ -59,9 +66,7 @@ export async function confirm({ capability, invocation }, ctx) {
     // We should actually filter out only delegations that support delegated
     // capabilities, but for now we just include all of them since we only
     // implement sudo access anyway.
-    delegationProofs: ctx.delegationsStorage.find({
-      audience: account.did(),
-    }),
+    delegationProofs: delegationsResult.ok,
     expiration: Infinity,
   })
 
@@ -83,7 +88,7 @@ export async function confirm({ capability, invocation }, ctx) {
  * @param {API.Principal<API.DID<'mailto'>>} opts.account
  * @param {API.Principal<API.DID>} opts.agent
  * @param {API.Capabilities} opts.capabilities
- * @param {AsyncIterable<API.Delegation>} opts.delegationProofs
+ * @param {API.Delegation[]} opts.delegationProofs
  * @param {number} opts.expiration
  * @returns {Promise<[delegation: API.Delegation, attestation: API.Delegation]>}
  */
@@ -103,7 +108,7 @@ export async function createSessionProofs({
     audience: agent,
     capabilities,
     expiration,
-    proofs: [...(await collect(delegationProofs))],
+    proofs: delegationProofs,
   })
 
   const attestation = await Access.session.delegate({

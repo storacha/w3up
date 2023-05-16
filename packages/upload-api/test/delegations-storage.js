@@ -25,16 +25,18 @@ export class DelegationsStorage {
     return BigInt(this.delegations.length)
   }
 
-  async *[Symbol.asyncIterator]() { }
-
   /**
    * @param {Types.DelegationsStorageQuery} query
    */
-  async *find(query) {
+  async find(query) {
+    const delegations = []
     for (const delegation of this.delegations) {
       if (query.audience === delegation.audience.did()) {
-        yield delegation
+        delegations.push(delegation)
       }
+    }
+    return {
+      ok: delegations
     }
   }
 }

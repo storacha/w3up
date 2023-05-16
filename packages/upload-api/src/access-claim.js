@@ -2,7 +2,6 @@ import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
 import * as API from './types.js'
 import * as delegationsResponse from './utils/delegations-response.js'
-import { collect } from 'streaming-iterables'
 
 /**
  * @param {API.AccessClaimContext} ctx
@@ -20,10 +19,13 @@ export const claim = async (
   { delegationsStorage: delegations }
 ) => {
   const claimedAudience = invocation.capabilities[0].with
-  const claimed = await collect(delegations.find({ audience: claimedAudience }))
+  const claimedResult = await delegations.find({ audience: claimedAudience })
+  if (claimedResult.error){
+    return claimedResult
+  }
   return {
     ok: {
-      delegations: delegationsResponse.encode(claimed),
+      delegations: delegationsResponse.encode(claimedResult.ok),
     },
   }
 }
