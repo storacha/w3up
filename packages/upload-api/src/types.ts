@@ -21,9 +21,11 @@ import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
-import { ValidationEmailSend } from './utils/email'
 
-export type { ValidationEmailSend }
+export type ValidationEmailSend = {
+  to: string,
+  url: string
+}
 
 export type SpaceDID = DIDKey
 export type AccountDID = DID<'mailto'>
