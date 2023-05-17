@@ -1,4 +1,4 @@
-import { testVariant } from '../src/provisions-storage-tests.js'
+import { testVariant } from './provisions-storage-tests.js'
 import { ProvisionsStorage } from './provisions-storage.js'
 
 describe('in memory provisions storage', () => {

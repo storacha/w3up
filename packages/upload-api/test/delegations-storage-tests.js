@@ -2,8 +2,8 @@ import * as assert from 'node:assert'
 import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
-import { createSampleDelegation } from './utils/ucan.js'
-import * as Types from './types.js'
+import { createSampleDelegation } from '../src/utils/ucan.js'
+import * as Types from '../src/types.js'
 
 /**
  * @param {object} [opts]
@@ -32,16 +32,16 @@ async function createDelegation(opts = {}) {
 
 /**
  * @typedef {object} DelegationsStorageVariant
- * @property {Pick<import('./types/delegations.js').DelegationsStorage, 'putMany'|'count'|'find'>} delegations
+ * @property {Pick<import('../src/types/delegations.js').DelegationsStorage, 'putMany'|'count'|'find'>} delegations
  */
 
 /**
- * @param {() => Promise<Types.DelegationsStorage>} createVariant - create a new test context
+ * @param {(context: unknown) => Promise<Types.DelegationsStorage>} createVariant - create a new test context
  * @param {(name: string, test: () => Promise<unknown>) => void} test - name a test
  */
 export function testVariant(createVariant, test) {
-  test('should persist delegations', async () => {
-    const delegationsStorage = await createVariant()
+  test('should persist delegations', async (/**@type {unknown} */ context) => {
+    const delegationsStorage = await createVariant(context)
     const count = Math.round(Math.random() * 10)
     const delegations = await Promise.all(
       Array.from({ length: count }).map(() => createSampleDelegation())
@@ -49,8 +49,8 @@ export function testVariant(createVariant, test) {
     await delegationsStorage.putMany(...delegations)
     assert.deepEqual(await delegationsStorage.count(), delegations.length)
   })
-  test('can retrieve delegations by audience', async () => {
-    const delegations = await createVariant()
+  test('can retrieve delegations by audience', async (/**@type {unknown} */ context) => {
+    const delegations = await createVariant(context)
     const issuer = await principal.ed25519.generate()
 
     const alice = await principal.ed25519.generate()

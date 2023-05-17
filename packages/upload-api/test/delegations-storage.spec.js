@@ -1,4 +1,4 @@
-import { testVariant } from '../src/delegations-storage-tests.js'
+import { testVariant } from './delegations-storage-tests.js'
 import { DelegationsStorage } from './delegations-storage.js'
 
 describe('in memory delegations storage', () => {
