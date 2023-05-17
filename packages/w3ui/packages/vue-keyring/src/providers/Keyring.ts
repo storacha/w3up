@@ -12,7 +12,8 @@ import {
   computed,
   InjectionKey,
   Ref,
-  shallowReactive
+  shallowReactive,
+  Component
 } from 'vue'
 import {
   authorize as accessAuthorize,
@@ -64,7 +65,7 @@ export interface KeyringProviderProps extends ServiceConfig { }
 /**
  * Provider for authentication with the service.
  */
-export const KeyringProvider = defineComponent<KeyringProviderProps>({
+export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<KeyringProviderProps>({
   setup ({ servicePrincipal, connection }) {
     const state = shallowReactive<KeyringContextState>({
       agent: undefined,

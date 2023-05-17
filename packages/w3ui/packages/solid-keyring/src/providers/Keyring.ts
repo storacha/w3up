@@ -1,4 +1,4 @@
-import type { ParentComponent } from 'solid-js'
+import type { Context, ParentComponent } from 'solid-js'
 import type {
   KeyringContextState,
   KeyringContextActions,
@@ -38,7 +38,7 @@ const defaultState: KeyringContextState = {
   account: window.localStorage.getItem(W3UI_ACCOUNT_LOCALSTORAGE_KEY) ?? undefined
 }
 
-export const AuthContext = createContext<KeyringContextValue>([
+export const AuthContext: Context<KeyringContextValue> = createContext<KeyringContextValue>([
   defaultState,
   {
     loadAgent: async () => {},

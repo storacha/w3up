@@ -15,6 +15,7 @@ module.exports = {
     'unicorn/prefer-export-from': 'off',
     'unicorn/filename-case': 'off',
     'unicorn/no-useless-undefined': 'off',
+    'unicorn/expiring-todo-comments': 'off',
     'jsdoc/require-param': 'off',
     'jsdoc/newline-after-description': 'off',
     'jsdoc/require-param-type': 'off',

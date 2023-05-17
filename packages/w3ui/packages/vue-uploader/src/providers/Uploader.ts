@@ -12,7 +12,8 @@ import {
   inject,
   Ref,
   shallowReactive,
-  computed
+  computed,
+  Component
 } from 'vue'
 import {
   uploadFile,
@@ -44,7 +45,7 @@ export interface UploaderProviderProps extends ServiceConfig {}
 /**
  * Provider for actions and state to facilitate uploads to the service.
  */
-export const UploaderProvider = defineComponent<UploaderProviderProps>({
+export const UploaderProvider: Component<UploaderProviderProps> = defineComponent<UploaderProviderProps>({
   setup ({ servicePrincipal, connection }) {
     const space = inject(KeyringProviderInjectionKey.space)
     const agent = inject(KeyringProviderInjectionKey.agent)

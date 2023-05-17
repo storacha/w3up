@@ -6,7 +6,8 @@ import {
   shallowReactive,
   Ref,
   computed,
-  watch
+  watch,
+  Component
 } from 'vue'
 import { KeyringProviderInjectionKey } from '@w3ui/vue-keyring'
 import {
@@ -48,7 +49,7 @@ export interface UploadsListProviderProps extends ServiceConfig {
 /**
  * Provider for a list of items uploaded by the current identity.
  */
-export const UploadsListProvider = defineComponent<UploadsListProviderProps>({
+export const UploadsListProvider: Component<UploadsListProviderProps> = defineComponent<UploadsListProviderProps>({
   setup ({ size, servicePrincipal, connection }) {
     const space = inject(KeyringProviderInjectionKey.space)
     const agent = inject(KeyringProviderInjectionKey.agent)

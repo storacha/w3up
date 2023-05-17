@@ -13,7 +13,7 @@
   "scripts": {
     "prepare": "pnpm run build && pnpm run compile",
     "build": "rollup --config rollup.config.js && pnpm run typecheck",
-    "clean": "rm -rf node_modules package-lock.json coverage packages/*/{package-lock.json,build,node_modules}",
+    "clean": "rm -rf node_modules pnpm-lock.yaml coverage packages/*/{build,node_modules}",
     "compile": "pnpm run --recursive --if-present compile",
     "format": "pnpm --recursive --if-present run lint --fix",
     "format:check": "lint",
