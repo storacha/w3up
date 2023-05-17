@@ -21,6 +21,7 @@ import * as UploaderCore from '@w3ui/uploader-core'
 **Functions**
 - [`uploadFile`](#uploadfile)
 - [`uploadDirectory`](#uploaddirectory)
+- [`uploadCAR`](#uploadcar)
 
 ---
 
@@ -47,3 +48,7 @@ Re-exported [`uploadFile` function](https://github.com/web3-storage/w3protocol/t
 ### `uploadDirectory`
 
 Re-exported [`uploadDirectory` function](https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client#uploaddirectory) from `@web3-storage/upload-client`.
+
+### `uploadCAR`
+
+Re-exported [`uploadCAR` function](https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client#uploadcar) from `@web3-storage/upload-client`.

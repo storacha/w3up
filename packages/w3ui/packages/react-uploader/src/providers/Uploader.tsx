@@ -9,7 +9,8 @@ import type {
 import React, { useContext, createContext, useState } from 'react'
 import {
   uploadFile,
-  uploadDirectory
+  uploadDirectory,
+  uploadCAR
 } from '@w3ui/uploader-core'
 import { useKeyring } from '@w3ui/react-keyring'
 import { add as storeAdd } from '@web3-storage/capabilities/store'
@@ -30,6 +31,9 @@ export const uploaderContextDefaultValue: UploaderContextValue = [
       throw new Error('missing uploader context provider')
     },
     uploadDirectory: async () => {
+      throw new Error('missing uploader context provider')
+    },
+    uploadCAR: async () => {
       throw new Error('missing uploader context provider')
     }
   }
@@ -106,6 +110,36 @@ export function UploaderProvider ({
       }
 
       const result = await uploadDirectory(conf, files, {
+        onShardStored: (meta) => {
+          storedShards.push(meta)
+          setStoredDAGShards([...storedShards])
+        },
+        onUploadProgress: (status: ProgressStatus) => {
+          setUploadProgress(statuses => ({ ...statuses, [status.url ?? '']: status }))
+        },
+        connection
+      })
+      setUploadProgress({})
+      return result
+    },
+    async uploadCAR (car: Blob) {
+      if (space == null) throw new Error('missing space')
+      if (agent == null) throw new Error('missing agent')
+
+      const storedShards: CARMetadata[] = []
+      setStoredDAGShards(storedShards)
+
+      const conf = {
+        issuer: agent,
+        with: space.did(),
+        audience: servicePrincipal,
+        proofs: await getProofs([
+          { can: storeAdd.can, with: space.did() },
+          { can: uploadAdd.can, with: space.did() }
+        ])
+      }
+
+      const result = await uploadCAR(conf, car, {
         onShardStored: (meta) => {
           storedShards.push(meta)
           setStoredDAGShards([...storedShards])

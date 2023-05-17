@@ -3,7 +3,7 @@ import type { ConnectionView, Principal } from '@ucanto/interface'
 
 import { Link, Version } from 'multiformats'
 
-export { uploadFile, uploadDirectory } from '@web3-storage/upload-client'
+export { uploadFile, uploadDirectory, uploadCAR } from '@web3-storage/upload-client'
 
 export type { CARMetadata, Service, ProgressFn, ProgressStatus, FetchOptions }
 
@@ -31,4 +31,8 @@ export interface UploaderContextActions {
   uploadDirectory: (
     files: File[]
   ) => Promise<CID>
+  /**
+   * Upload a CAR file containing a DAG to the current space.
+   */
+  uploadCAR: (car: Blob) => Promise<CID>
 }

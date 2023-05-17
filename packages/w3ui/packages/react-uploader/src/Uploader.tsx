@@ -81,6 +81,9 @@ const UploaderComponentContext = createContext<UploaderComponentContextValue>([
     },
     uploadDirectory: async () => {
       throw new Error('missing uploader context provider')
+    },
+    uploadCAR: async () => {
+      throw new Error('missing uploader context provider')
     }
   }
 ])

@@ -13,7 +13,7 @@ import {
   ParentComponent
 } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { uploadFile, uploadDirectory } from '@w3ui/uploader-core'
+import { uploadFile, uploadDirectory, uploadCAR } from '@w3ui/uploader-core'
 import { useKeyring } from '@w3ui/solid-keyring'
 import { add as storeAdd } from '@web3-storage/capabilities/store'
 import { add as uploadAdd } from '@web3-storage/capabilities/upload'
@@ -33,6 +33,9 @@ const UploaderContext = createContext<UploaderContextValue>([
       throw new Error('missing uploader context provider')
     },
     uploadDirectory: async () => {
+      throw new Error('missing uploader context provider')
+    },
+    uploadCAR: async () => {
       throw new Error('missing uploader context provider')
     }
   }
@@ -101,6 +104,36 @@ export const UploaderProvider: ParentComponent<UploaderProviderProps> = (
       }
 
       const result = await uploadDirectory(conf, files, {
+        onShardStored: (meta) => {
+          storedShards.push(meta)
+          setState('storedDAGShards', [...storedShards])
+        },
+        onUploadProgress: (status: ProgressStatus) => {
+          setState('uploadProgress', { ...state.uploadProgress, [status.url ?? '']: status })
+        },
+        connection: props.connection
+      })
+      setState('uploadProgress', {})
+      return result
+    },
+    async uploadCAR (car: Blob) {
+      if (keyringState.space == null) throw new Error('missing space')
+      if (keyringState.agent == null) throw new Error('missing agent')
+
+      const storedShards: CARMetadata[] = []
+      setState('storedDAGShards', storedShards)
+
+      const conf = {
+        issuer: keyringState.agent,
+        with: keyringState.space.did(),
+        audience: props.servicePrincipal,
+        proofs: await keyringActions.getProofs([
+          { can: storeAdd.can, with: keyringState.space.did() },
+          { can: uploadAdd.can, with: keyringState.space.did() }
+        ])
+      }
+
+      const result = await uploadCAR(conf, car, {
         onShardStored: (meta) => {
           storedShards.push(meta)
           setState('storedDAGShards', [...storedShards])
