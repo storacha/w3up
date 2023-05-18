@@ -326,7 +326,7 @@ function uploadCAR (
     concurrentRequests?: number
     rootCID?: CID
   } = {}
-): Promise<void>
+): Promise<CID>
 ```
 
 Uploads a CAR file to the service. The difference between this function and [capability.store.add](#capabilitystoreadd) is that the CAR file is automatically sharded and an "upload" is registered (see [`capability.upload.add`](#capabilityuploadadd)), linking the individual shards. Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
