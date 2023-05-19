@@ -131,7 +131,7 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
           setDataCID(cid)
           setStatus(Status.Succeeded)
           if (props.onUploadComplete !== undefined) {
-            props.onUploadComplete({ file, dataCID })
+            props.onUploadComplete({ file, dataCID: cid })
           }
         } catch (error_: any) {
           setError(error_)
