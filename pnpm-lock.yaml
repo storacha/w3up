@@ -45,11 +45,11 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/core':
-        specifier: ^7.1.1
-        version: 7.1.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/interface':
-        specifier: ^7.1.0
-        version: 7.1.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
@@ -130,8 +130,8 @@ importers:
         specifier: ^8.5.4
         version: 8.5.4
       '@ucanto/server':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^8.0.0
+        version: 8.0.0
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -160,11 +160,11 @@ importers:
   packages/capabilities:
     dependencies:
       '@ucanto/core':
-        specifier: ^7.1.1
-        version: 7.1.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/interface':
-        specifier: ^7.1.0
-        version: 7.1.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
@@ -227,14 +227,14 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/interface':
-        specifier: ^7.1.0
-        version: 7.1.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
       '@ucanto/server':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/transport':
         specifier: ^7.0.3
         version: 7.0.3
@@ -267,8 +267,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       '@ucanto/core':
-        specifier: ^7.1.1
-        version: 7.1.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@web-std/blob':
         specifier: ^3.0.4
         version: 3.0.4
@@ -300,8 +300,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/interface':
-        specifier: ^7.1.0
-        version: 7.1.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/transport':
         specifier: ^7.0.3
         version: 7.0.3
@@ -331,8 +331,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       '@ucanto/server':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^8.0.0
+        version: 8.0.0
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -373,11 +373,11 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@ucanto/core':
-        specifier: ^7.1.1
-        version: 7.1.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/interface':
-        specifier: ^7.1.0
-        version: 7.1.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/principal':
         specifier: ^7.0.0
         version: 7.0.0
@@ -404,8 +404,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       '@ucanto/server':
-        specifier: ^7.0.2
-        version: 7.0.2
+        specifier: ^8.0.0
+        version: 8.0.0
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -3457,8 +3457,23 @@ packages:
       '@ucanto/interface': 7.1.0
       multiformats: 11.0.2
 
+  /@ucanto/core@8.0.0:
+    resolution: {integrity: sha512-Ne45bH0uUhAexNkJWj8tYsvKut58LaL3rsu30vxVh+ybkj47nD02mY8KqW+vCHY80E1ubPcjlHuCt0+efR9bgw==}
+    dependencies:
+      '@ipld/car': 5.1.1
+      '@ipld/dag-cbor': 9.0.0
+      '@ipld/dag-ucan': 3.3.2
+      '@ucanto/interface': 8.0.0
+      multiformats: 11.0.2
+
   /@ucanto/interface@7.1.0:
     resolution: {integrity: sha512-DMD0ybPZ7UUtBx9g3TR6mrYW6N2IMhzgQ2IRfYsoTlhnXOTfmllwogWKhUJobf/lBHmmpi2CW8gWXTBby/cN5A==}
+    dependencies:
+      '@ipld/dag-ucan': 3.3.2
+      multiformats: 11.0.2
+
+  /@ucanto/interface@8.0.0:
+    resolution: {integrity: sha512-xeJJYdGAPKOYbCiG8BsGmyoBovZDtVya+42Gtd8fViZeNSS3h0f2BPDBS91YFOxSGswqCd2fqvrfrlg3TTMmZw==}
     dependencies:
       '@ipld/dag-ucan': 3.3.2
       multiformats: 11.0.2
@@ -3472,11 +3487,11 @@ packages:
       multiformats: 11.0.2
       one-webcrypto: 1.0.3
 
-  /@ucanto/server@7.0.2:
-    resolution: {integrity: sha512-U1wM01abvrNUlnVbFWaE6Vr02L6iPi+sYboBcvrqTFNkefQ0FYuQ38OqSlH0bE1pKMvhvCjJM1f7MD0LkrsHwA==}
+  /@ucanto/server@8.0.0:
+    resolution: {integrity: sha512-ISpDq6CHSmxgACtLHaVziwWuQrvBRyOzhyjqP9D8v34ltMQSev0yHsB9/3WT+2+66odm80xZ0OVbpJ4mTnqApg==}
     dependencies:
-      '@ucanto/core': 7.1.1
-      '@ucanto/interface': 7.1.0
+      '@ucanto/core': 8.0.0
+      '@ucanto/interface': 8.0.0
       '@ucanto/validator': 7.0.0
 
   /@ucanto/transport@7.0.3:
