@@ -146,7 +146,7 @@ async function authorize(req, env) {
       principal: Verifier,
     })
 
-    if (confirmResult.error) {
+    if (confirmResult.error || !confirmResult.ok) {
       throw new Error('error confirming', {
         cause: confirmResult,
       })
