@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.0.1](https://github.com/web3-storage/w3up/compare/access-v13.0.0...access-v13.0.1) (2023-05-22)
+
+
+### Bug Fixes
+
+* upgrade ucanto to 8 ([#794](https://github.com/web3-storage/w3up/issues/794)) ([00b011d](https://github.com/web3-storage/w3up/commit/00b011d87f628d4b3040398ca6cba567a69713ff))
+
 ## [13.0.0](https://github.com/web3-storage/w3up/compare/access-v12.0.2...access-v13.0.0) (2023-05-02)
 
 
