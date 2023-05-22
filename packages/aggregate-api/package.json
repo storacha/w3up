@@ -1,0 +1,111 @@
+{
+  "name": "@web3-storage/aggregate-api",
+  "version": "2.0.0",
+  "type": "module",
+  "main": "./src/lib.js",
+  "files": [
+    "src",
+    "test",
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map"
+  ],
+  "typesVersions": {
+    "*": {
+      "src/lib.js": [
+        "dist/src/lib.d.ts"
+      ],
+      "aggregate": [
+        "dist/src/aggregate.d.ts"
+      ],
+      "offer": [
+        "dist/src/offer.d.ts"
+      ],
+      "types": [
+        "dist/src/types.d.ts"
+      ],
+      "test": [
+        "dist/test/lib.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/lib.d.ts",
+      "import": "./src/lib.js"
+    },
+    "./types": {
+      "types": "./dist/src/types.d.ts",
+      "import": "./src/types.js"
+    },
+    "./aggregate": {
+      "types": "./dist/src/aggregate.d.ts",
+      "import": "./src/aggregate.js"
+    },
+    "./offer": {
+      "types": "./dist/src/offer.d.ts",
+      "import": "./src/offer.js"
+    },
+    "./test": {
+      "types": "./dist/test/lib.d.ts",
+      "import": "./test/lib.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "check": "tsc --build",
+    "lint": "tsc --build",
+    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
+    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
+  },
+  "dependencies": {
+    "@ucanto/client": "^7.0.1",
+    "@ucanto/core": "^8.0.0",
+    "@ucanto/interface": "^8.0.0",
+    "@ucanto/server": "^8.0.0",
+    "@ucanto/transport": "^7.0.2",
+    "@web3-storage/capabilities": "workspace:^"
+  },
+  "devDependencies": {
+    "@ipld/car": "^5.1.1",
+    "@types/mocha": "^10.0.1",
+    "@ucanto/principal": "^7.0.0",
+    "@web-std/blob": "^3.0.4",
+    "@web3-storage/aggregate-client": "workspace:^",
+    "hd-scripts": "^4.1.0",
+    "multiformats": "^11.0.2",
+    "mocha": "^10.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/hd-scripts/eslint/index.js"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {},
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist",
+      "coverage"
+    ]
+  },
+  "depcheck": {
+    "specials": [
+      "bin"
+    ],
+    "ignorePatterns": [
+      "dist"
+    ],
+    "ignores": [
+      "dist",
+      "@types/*",
+      "hd-scripts",
+      "eslint-config-prettier"
+    ]
+  },
+  "engines": {
+    "node": ">=16.15"
+  }
+}

@@ -52,7 +52,11 @@ importers:
         version: 8.0.0
       '@ucanto/server':
         specifier: ^8.0.0
+<<<<<<< HEAD
         version: 8.0.1
+=======
+        version: 8.0.0
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
       '@ucanto/transport':
         specifier: ^8.0.0
         version: 8.0.0
@@ -275,8 +279,13 @@ importers:
         specifier: ^8.5.4
         version: 8.5.4
       '@ucanto/server':
+<<<<<<< HEAD
         specifier: ^8.0.1
         version: 8.0.1
+=======
+        specifier: ^8.0.0
+        version: 8.0.0
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -301,6 +310,119 @@ importers:
       watch:
         specifier: ^1.0.2
         version: 1.0.2
+
+  packages/aggregate-api:
+    dependencies:
+      '@ucanto/client':
+        specifier: ^7.0.1
+        version: 7.0.1
+      '@ucanto/core':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/interface':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/server':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/transport':
+        specifier: ^7.0.2
+        version: 7.0.3
+      '@web3-storage/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
+    devDependencies:
+      '@ipld/car':
+        specifier: ^5.1.1
+        version: 5.1.1
+      '@types/mocha':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@ucanto/principal':
+        specifier: ^7.0.0
+        version: 7.0.0
+      '@web-std/blob':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@web3-storage/aggregate-client':
+        specifier: workspace:^
+        version: link:../aggregate-client
+      hd-scripts:
+        specifier: ^4.1.0
+        version: 4.1.0
+      mocha:
+        specifier: ^10.2.0
+        version: 10.2.0
+      multiformats:
+        specifier: ^11.0.2
+        version: 11.0.2
+
+  packages/aggregate-client:
+    dependencies:
+      '@ipld/dag-cbor':
+        specifier: ^9.0.0
+        version: 9.0.0
+      '@ipld/dag-ucan':
+        specifier: ^3.3.2
+        version: 3.3.2
+      '@ucanto/client':
+        specifier: ^7.0.1
+        version: 7.0.1
+      '@ucanto/core':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/interface':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/transport':
+        specifier: ^7.0.2
+        version: 7.0.3
+      '@web3-storage/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
+    devDependencies:
+      '@ipld/car':
+        specifier: ^5.1.1
+        version: 5.1.1
+      '@types/assert':
+        specifier: ^1.5.6
+        version: 1.5.6
+      '@types/mocha':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@ucanto/principal':
+        specifier: ^7.0.0
+        version: 7.0.0
+      '@ucanto/server':
+        specifier: ^8.0.0
+        version: 8.0.0
+      assert:
+        specifier: ^2.0.0
+        version: 2.0.0
+      c8:
+        specifier: ^7.13.0
+        version: 7.13.0
+      hd-scripts:
+        specifier: ^4.0.0
+        version: 4.1.0
+      hundreds:
+        specifier: ^0.0.9
+        version: 0.0.9
+      mocha:
+        specifier: ^10.2.0
+        version: 10.2.0
+      multiformats:
+        specifier: ^11.0.2
+        version: 11.0.2
+      npm-run-all:
+        specifier: ^4.1.5
+        version: 4.1.5
+      playwright-test:
+        specifier: ^8.1.2
+        version: 8.2.0
+      typescript:
+        specifier: 4.9.5
+        version: 4.9.5
 
   packages/capabilities:
     dependencies:
@@ -378,8 +500,13 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/server':
+<<<<<<< HEAD
         specifier: ^8.0.1
         version: 8.0.1
+=======
+        specifier: ^8.0.0
+        version: 8.0.0
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
       '@ucanto/transport':
         specifier: ^8.0.0
         version: 8.0.0
@@ -461,8 +588,13 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/server':
+<<<<<<< HEAD
         specifier: ^8.0.1
         version: 8.0.1
+=======
+        specifier: ^8.0.0
+        version: 8.0.0
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -534,8 +666,13 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       '@ucanto/server':
+<<<<<<< HEAD
         specifier: ^8.0.1
         version: 8.0.1
+=======
+        specifier: ^8.0.0
+        version: 8.0.0
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -2879,7 +3016,11 @@ packages:
     dependencies:
       ajv: 6.12.6
       debug: 4.3.4
+<<<<<<< HEAD
       espree: 9.5.0
+=======
+      espree: 9.4.1
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
       globals: 13.20.0
       ignore: 5.2.4
       import-fresh: 3.3.0
@@ -4193,6 +4334,7 @@ packages:
       '@typescript-eslint/types': 5.50.0
       '@typescript-eslint/typescript-estree': 5.50.0(typescript@4.9.5)
       debug: 4.3.4
+<<<<<<< HEAD
       eslint: 8.33.0
       typescript: 4.9.5
     transitivePeerDependencies:
@@ -4213,6 +4355,8 @@ packages:
       '@typescript-eslint/types': 5.57.0
       '@typescript-eslint/typescript-estree': 5.57.0(typescript@4.9.5)
       debug: 4.3.4
+=======
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
       eslint: 8.33.0
       typescript: 4.9.5
     transitivePeerDependencies:
@@ -4454,12 +4598,21 @@ packages:
       multiformats: 11.0.2
       one-webcrypto: 1.0.3
 
+<<<<<<< HEAD
   /@ucanto/server@8.0.1:
     resolution: {integrity: sha512-QgtEUgJwXmmbFA4cdQ0kOhaSPekAdVNl9vYrE59Joy6OhEh5fvnOiGMYWdkExFmvL4v1DhKZwVH8p9iQ+eWFTw==}
     dependencies:
       '@ucanto/core': 8.0.0
       '@ucanto/interface': 8.0.0
       '@ucanto/validator': 8.0.0
+=======
+  /@ucanto/server@8.0.0:
+    resolution: {integrity: sha512-ISpDq6CHSmxgACtLHaVziwWuQrvBRyOzhyjqP9D8v34ltMQSev0yHsB9/3WT+2+66odm80xZ0OVbpJ4mTnqApg==}
+    dependencies:
+      '@ucanto/core': 8.0.0
+      '@ucanto/interface': 8.0.0
+      '@ucanto/validator': 7.0.0
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
 
   /@ucanto/transport@8.0.0:
     resolution: {integrity: sha512-1/3ELUtUAu7zNKq/jy/PjvvCoFt7cFS8198E8U04UM1EsZS0WvK2VnEa/aS8MA5bBy8TjRFmQtXjcndZ0RE5vw==}
@@ -7581,6 +7734,18 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
+=======
+  /espree@9.4.1:
+    resolution: {integrity: sha512-XwctdmTO6SIvCzd9810yyNzIrOrqNYV9Koizx4C/mRhf9uq0o4yHoCEU/670pOxOL/MSraektvSAji79kX90Vg==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dependencies:
+      acorn: 8.8.2
+      acorn-jsx: 5.3.2(acorn@8.8.2)
+      eslint-visitor-keys: 3.3.0
+    dev: true
+
+>>>>>>> 319bf4b (fix: upgrade ucanto to 8 (#794))
   /espree@9.5.0:
     resolution: {integrity: sha512-JPbJGhKc47++oo4JkEoTe2wjy4fmMwvFpgJT9cQzmfXKp22Dr6Hf1tdCteLz1h0P3t+mGvWZ+4Uankvh8+c6zw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}

@@ -8,6 +8,8 @@ import { add, list, remove, store } from './store.js'
 import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
+import * as AggregateCaps from './aggregate.js'
+import * as OfferCaps from './offer.js'
 
 export type { Unit }
 /**
@@ -82,6 +84,12 @@ export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
+// Aggregate
+export type AggregateOffer = InferInvokedCapability<typeof AggregateCaps.offer>
+export type AggregateGet = InferInvokedCapability<typeof AggregateCaps.get>
+// Offer
+export type OfferArrange = InferInvokedCapability<typeof OfferCaps.arrange>
+
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
@@ -106,5 +114,8 @@ export type AbilitiesArray = [
   VoucherRedeem['can'],
   Access['can'],
   AccessAuthorize['can'],
-  AccessSession['can']
+  AccessSession['can'],
+  AggregateOffer['can'],
+  AggregateGet['can'],
+  OfferArrange['can']
 ]
