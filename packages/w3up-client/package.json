@@ -74,11 +74,11 @@
   },
   "dependencies": {
     "@ipld/dag-ucan": "^3.3.2",
-    "@ucanto/client": "^7.0.1",
+    "@ucanto/client": "^8.0.0",
     "@ucanto/core": "^8.0.0",
     "@ucanto/interface": "^8.0.0",
-    "@ucanto/principal": "^7.0.0",
-    "@ucanto/transport": "^7.0.3",
+    "@ucanto/principal": "^8.0.0",
+    "@ucanto/transport": "^8.0.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/upload-client": "workspace:^"

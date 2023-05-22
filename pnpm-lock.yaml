@@ -42,8 +42,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       '@ucanto/client':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/core':
         specifier: ^8.0.0
         version: 8.0.0
@@ -51,14 +51,14 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/principal':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/transport':
-        specifier: ^7.0.3
-        version: 7.0.3
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/validator':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -166,14 +166,14 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/principal':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/transport':
-        specifier: ^7.0.3
-        version: 7.0.3
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/validator':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
     devDependencies:
       '@types/assert':
         specifier: ^1.5.6
@@ -224,23 +224,23 @@ importers:
   packages/upload-api:
     dependencies:
       '@ucanto/client':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/interface':
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/principal':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/server':
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/transport':
-        specifier: ^7.0.3
-        version: 7.0.3
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/validator':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@web3-storage/access':
         specifier: workspace:^
         version: link:../access-client
@@ -297,14 +297,14 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       '@ucanto/client':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/interface':
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/transport':
-        specifier: ^7.0.3
-        version: 7.0.3
+        specifier: ^8.0.0
+        version: 8.0.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -328,8 +328,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       '@ucanto/principal':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/server':
         specifier: ^8.0.0
         version: 8.0.0
@@ -370,8 +370,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       '@ucanto/client':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/core':
         specifier: ^8.0.0
         version: 8.0.0
@@ -379,11 +379,11 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/principal':
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^8.0.0
+        version: 8.0.0
       '@ucanto/transport':
-        specifier: ^7.0.3
-        version: 7.0.3
+        specifier: ^8.0.0
+        version: 8.0.0
       '@web3-storage/access':
         specifier: workspace:^
         version: link:../access-client
@@ -3441,11 +3441,11 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@ucanto/client@7.0.1:
-    resolution: {integrity: sha512-Rn1rX77UNyMAnJmVhmnSvESgVgRkVvEo7+j6q/FAQijZS83GPF/jr3Ln7Xbc88548ilcAViFjNGK0TpKBl/rAQ==}
+  /@ucanto/client@8.0.0:
+    resolution: {integrity: sha512-2nuAzdcFawPzqQZO/7MvdtOkkxdS5OLLDmKbPV8aEV7Xo7QzwvO3gfrR1sC967ggf+O758LhaMPEXczcSspHbQ==}
     dependencies:
-      '@ucanto/core': 7.1.1
-      '@ucanto/interface': 7.1.0
+      '@ucanto/core': 8.0.0
+      '@ucanto/interface': 8.0.0
     dev: false
 
   /@ucanto/core@7.1.1:
@@ -3478,12 +3478,12 @@ packages:
       '@ipld/dag-ucan': 3.3.2
       multiformats: 11.0.2
 
-  /@ucanto/principal@7.0.0:
-    resolution: {integrity: sha512-VZuLDDQWpkkKR8+MHdnigOd5AlnToeb4vz1bjCircxSNMUvIi5O2UAUkSArgSPzqPUeriZW6vRbwGK2DMqQ4UQ==}
+  /@ucanto/principal@8.0.0:
+    resolution: {integrity: sha512-85IXfp8P3FGbQ5rQbLtAA2DkIgjOaqdTPXZHA2W+/UdEsJxfb1jf2TqOjHUt3PWcCbP2hqbRZWBYAKJszkW2uA==}
     dependencies:
       '@ipld/dag-ucan': 3.3.2
       '@noble/ed25519': 1.7.3
-      '@ucanto/interface': 7.1.0
+      '@ucanto/interface': 8.0.0
       multiformats: 11.0.2
       one-webcrypto: 1.0.3
 
@@ -3494,11 +3494,11 @@ packages:
       '@ucanto/interface': 8.0.0
       '@ucanto/validator': 7.0.0
 
-  /@ucanto/transport@7.0.3:
-    resolution: {integrity: sha512-znDhFd6+gAOyqNTpzIqpLIfEWO6J0JYG5TQaPV1SP4B73Idad/WYMVTZpTNUGY2B2BmY42iyzbvnNUsCKzwxEg==}
+  /@ucanto/transport@8.0.0:
+    resolution: {integrity: sha512-1/3ELUtUAu7zNKq/jy/PjvvCoFt7cFS8198E8U04UM1EsZS0WvK2VnEa/aS8MA5bBy8TjRFmQtXjcndZ0RE5vw==}
     dependencies:
-      '@ucanto/core': 7.1.1
-      '@ucanto/interface': 7.1.0
+      '@ucanto/core': 8.0.0
+      '@ucanto/interface': 8.0.0
     dev: false
 
   /@ucanto/validator@7.0.0:
@@ -3509,6 +3509,16 @@ packages:
       '@ucanto/core': 7.1.1
       '@ucanto/interface': 7.1.0
       multiformats: 11.0.2
+
+  /@ucanto/validator@8.0.0:
+    resolution: {integrity: sha512-S+cGKUVu074TT1FaoOyZa3mKf3CuEBLHLlE3TU1UoIC5Yp9WnvX+cDOGKIyfJ/HgHHBvAEDxYNOkNZbCATsRdA==}
+    dependencies:
+      '@ipld/car': 5.1.1
+      '@ipld/dag-cbor': 9.0.0
+      '@ucanto/core': 8.0.0
+      '@ucanto/interface': 8.0.0
+      multiformats: 11.0.2
+    dev: false
 
   /@vue/compiler-core@3.2.47:
     resolution: {integrity: sha512-p4D7FDnQb7+YJmO2iPEv0SQNeNzcbHdGByJDsT4lynf63AFkOTFN07HsiRSvjGo0QrxR/o3d0hUyNCUnBU2Tig==}

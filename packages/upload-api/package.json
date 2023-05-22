@@ -107,12 +107,12 @@
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "dependencies": {
-    "@ucanto/client": "^7.0.1",
+    "@ucanto/client": "^8.0.0",
     "@ucanto/interface": "^8.0.0",
-    "@ucanto/principal": "^7.0.0",
+    "@ucanto/principal": "^8.0.0",
     "@ucanto/server": "^8.0.0",
-    "@ucanto/transport": "^7.0.3",
-    "@ucanto/validator": "^7.0.0",
+    "@ucanto/transport": "^8.0.0",
+    "@ucanto/validator": "^8.0.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",

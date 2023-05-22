@@ -39,14 +39,15 @@ export async function authorize(encodedUcan, env) {
       principal: Verifier,
     })
 
-    if (confirmResult.error) {
+    if (!confirmResult.ok) {
       return {
         error: new Error('error confirming', {
-          cause: confirmResult,
+          cause: confirmResult.error,
         }),
       }
     }
     const { account, agent } = accessConfirm.parse(request.capabilities[0])
+
     const confirmDelegations = [
       ...delegationsResponse.decode(confirmResult.ok.delegations),
     ]
