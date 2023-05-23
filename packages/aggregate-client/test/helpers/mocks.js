@@ -6,8 +6,8 @@ const notImplemented = () => {
 
 /**
  * @param {Partial<{
- *   aggregate: Partial<import('../../src/types').Service['aggregate']>
- *   offer: Partial<import('../../src/types').Service['offer']>
+ * aggregate: Partial<import('../../src/types').Service['aggregate']>
+ * offer: Partial<import('../../src/types').Service['offer']>
  * }>} impl
  */
 export function mockService(impl) {

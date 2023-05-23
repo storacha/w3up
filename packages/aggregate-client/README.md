@@ -30,21 +30,6 @@ Required delegated capability proofs: `aggregate/offer`
 
 More information: [`InvocationConfig`](#invocationconfig)
 
-### `aggregateOffer`
-
-```ts
-function aggregateOffer(
-  conf: InvocationConfig,
-  offers: Offer[],
-): Promise<{ status: string }>
-```
-
-Ask the service to create an aggregate offer and put it available for Storage Providers.
-
-Required delegated capability proofs: `aggregate/offer`
-
-More information: [`InvocationConfig`](#invocationconfig)
-
 ### `aggregateGet`
 
 ```ts
@@ -53,6 +38,12 @@ function aggregateGet(
   commitmentProof: string, // TODO: ProofLink
 ): Promise<unkown> // TODO: type
 ```
+
+Ask the service to get deal details of an aggregate.
+
+Required delegated capability proofs: `aggregate/get`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ## Types
 

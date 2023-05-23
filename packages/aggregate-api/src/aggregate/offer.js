@@ -11,12 +11,13 @@ export const MAX_SIZE = 127 * (1 << 28)
  * @param {API.AggregateServiceContext} context
  * @returns {API.UcantoInterface.ServiceMethod<API.AggregateOffer, API.AggregateOfferResponse, API.UcantoInterface.Failure>}
  */
-export function aggregateOfferProvider({ offerBucket }) {
+export function aggregateOfferProvider({ offerStore }) {
   return Server.provideAdvanced({
     capability: Aggregate.offer,
     handler: async ({ capability, invocation, context }) => {
       // Get offer block
       const offerCid = capability.nb.offer
+      const commitmentProof = capability.nb.commitmentProof
       const offers = getOfferBlock(offerCid, invocation)
 
       if (!offers) {
@@ -51,9 +52,6 @@ export function aggregateOfferProvider({ offerBucket }) {
 
       // TODO: Validate commP
 
-      // Write offer to file
-      await offerBucket.put(offers)
-
       // Create effect for receipt
       const fx = await Offer.arrange
         .invoke({
@@ -61,10 +59,15 @@ export function aggregateOfferProvider({ offerBucket }) {
           audience: context.id,
           with: context.id.did(),
           nb: {
-            commitmentProof: capability.nb.commitmentProof,
+            commitmentProof,
           },
         })
         .delegate()
+
+      // TODO: archive delegation
+      // fx.archive()
+      // Write offer to store
+      await offerStore.put(commitmentProof, offers)
 
       return Server.ok({
         status: 'queued',

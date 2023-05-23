@@ -1,9 +1,9 @@
 import * as API from '../../src/types.js'
 
 /**
- * @implements {API.AggregateArrangedTable}
+ * @implements {API.AggregateStore}
  */
-export class aggregateArrangedTable {
+export class AggregateStore {
   constructor() {
     /** @type {Map<string, unknown[]>} */
     this.items = new Map()
@@ -24,7 +24,7 @@ export class aggregateArrangedTable {
       this.items.set(commitmentProof, newEntries)
     }
 
-    return Promise.resolve(newEntries)
+    return Promise.resolve()
   }
 
   /**

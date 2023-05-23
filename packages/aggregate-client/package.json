@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/aggregate-client",
-  "version": "8.3.0",
+  "version": "0.0.0",
   "description": "The web3.storage aggregate client",
   "homepage": "https://github.com/web3-storage/w3up/tree/main/packages/aggregate-client",
   "repository": {
@@ -25,7 +25,6 @@
   "exports": {
     ".": "./src/index.js",
     "./aggregate": "./src/aggregate.js",
-    "./offer": "./src/offer.js",
     "./types": "./src/types.js"
   },
   "typesVersions": {
@@ -35,9 +34,6 @@
       ],
       "aggregate": [
         "dist/src/aggregate.d.ts"
-      ],
-      "offer": [
-        "dist/src/offer.d.ts"
       ]
     }
   },
@@ -49,18 +45,18 @@
   "dependencies": {
     "@ipld/dag-ucan": "^3.3.2",
     "@ipld/dag-cbor": "^9.0.0",
-    "@ucanto/client": "^7.0.1",
+    "@ucanto/client": "^8.0.0",
     "@ucanto/core": "^8.0.0",
     "@ucanto/interface": "^8.0.0",
-    "@ucanto/transport": "^7.0.2",
+    "@ucanto/transport": "^8.0.0",
     "@web3-storage/capabilities": "workspace:^"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
-    "@ucanto/principal": "^7.0.0",
-    "@ucanto/server": "^8.0.0",
+    "@ucanto/principal": "^8.0.0",
+    "@ucanto/server": "^8.0.1",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "hd-scripts": "^4.0.0",
@@ -78,7 +74,11 @@
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {},
+    "rules": {
+      "unicorn/no-await-expression-member": "off",
+      "unicorn/prefer-spread": "off",
+      "no-new": "off"
+    },
     "env": {
       "mocha": true
     },

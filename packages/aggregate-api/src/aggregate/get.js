@@ -6,13 +6,11 @@ import * as API from '../types.js'
  * @param {API.AggregateServiceContext} context
  * @returns {API.UcantoInterface.ServiceMethod<API.AggregateGet, API.AggregateGetResponse, API.UcantoInterface.Failure>}
  */
-export function aggregateGetProvider({ aggregateArrangedTable }) {
+export function aggregateGetProvider({ aggregateStore }) {
   return Server.provide(Aggregate.get, async ({ capability }) => {
     const commitmentProof = capability.nb.commitmentProof
 
-    const aggregateArrangedResult = await aggregateArrangedTable.get(
-      commitmentProof
-    )
+    const aggregateArrangedResult = await aggregateStore.get(commitmentProof)
     if (!aggregateArrangedResult) {
       return {
         error: new Server.Failure(

@@ -9,7 +9,7 @@ export const MAX_SIZE = 127 * (1 << 28)
 /**
  * Offer an aggregate to be assembled and stored.
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types').InvocationConfig} conf - Configuration
  * @param {import('./types').Offer[]} offers
  * @param {import('./types').RequestOptions} [options]
  */
@@ -70,7 +70,7 @@ export async function aggregateOffer(
 /**
  * Get details of an aggregate.
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types').InvocationConfig} conf - Configuration
  * @param {string} commitmentProof
  * @param {import('./types').RequestOptions} [options]
  */

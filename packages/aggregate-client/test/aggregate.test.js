@@ -5,10 +5,11 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as CAR from '@ucanto/transport/car'
 import { CBOR } from '@ucanto/core'
 import * as AggregateCapabilities from '@web3-storage/capabilities/aggregate'
+import * as OfferCapabilities from '@web3-storage/capabilities/offer'
 
 import * as Aggregate from '../src/aggregate.js'
 
-import { serviceSigner } from './fixtures.js'
+import { serviceProvider } from './fixtures.js'
 import { mockService } from './helpers/mocks.js'
 import { randomCARs } from './helpers/random.js'
 
@@ -33,24 +34,40 @@ describe('aggregate.offer', () => {
     // Create Ucanto service
     const service = mockService({
       aggregate: {
-        offer: Server.provide(AggregateCapabilities.offer, ({ invocation }) => {
-          assert.strictEqual(invocation.issuer.did(), storeFront.did())
-          assert.strictEqual(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.strictEqual(invCap.can, AggregateCapabilities.offer.can)
-          assert.equal(invCap.with, serviceSigner.did())
-          // size
-          assert.strictEqual(invCap.nb?.size, size)
-          assert.ok(invCap.nb?.commitmentProof)
-          // TODO: Validate commitmemnt proof
-          assert.ok(invCap.nb?.offer)
-          // Validate block inline exists
-          const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
-          assert.ok(invocationBlocks.find((b) => b.cid.equals(offerBlock.cid)))
+        offer: Server.provideAdvanced({
+          capability: AggregateCapabilities.offer,
+          handler: async ({ invocation, context }) => {
+            assert.strictEqual(invocation.issuer.did(), storeFront.did())
+            assert.strictEqual(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.strictEqual(invCap.can, AggregateCapabilities.offer.can)
+            assert.equal(invCap.with, serviceProvider.did())
+            // size
+            assert.strictEqual(invCap.nb?.size, size)
+            assert.ok(invCap.nb?.commitmentProof)
+            // TODO: Validate commitmemnt proof
+            assert.ok(invCap.nb?.offer)
+            // Validate block inline exists
+            const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
+            assert.ok(
+              invocationBlocks.find((b) => b.cid.equals(offerBlock.cid))
+            )
 
-          return {
-            ok: aggregateOfferResponse,
-          }
+            // Create effect for receipt
+            const fx = await OfferCapabilities.arrange
+              .invoke({
+                issuer: context.id,
+                audience: context.id,
+                with: context.id.did(),
+                nb: {
+                  commitmentProof: invCap.nb?.commitmentProof,
+                },
+              })
+              .delegate()
+
+            return Server.ok(aggregateOfferResponse)
+              .join(fx.link())
+          },
         }),
       },
     })
@@ -58,9 +75,9 @@ describe('aggregate.offer', () => {
     const res = await Aggregate.aggregateOffer(
       {
         issuer: storeFront,
-        with: serviceSigner.did(),
+        with: serviceProvider.did(),
         proofs,
-        audience: serviceSigner,
+        audience: serviceProvider,
       },
       offers,
       // @ts-expect-error no full service implemented
@@ -68,7 +85,8 @@ describe('aggregate.offer', () => {
     )
     assert.ok(res.out.ok)
     assert.deepEqual(res.out.ok, aggregateOfferResponse)
-    // TODO: includes effect fx in receipt
+    // includes effect fx in receipt
+    assert.ok(res.fx.join)
   })
 
   it('fails to place a offer with larger size than required', async () => {
@@ -96,9 +114,9 @@ describe('aggregate.offer', () => {
         Aggregate.aggregateOffer(
           {
             issuer: storeFront,
-            with: serviceSigner.did(),
+            with: serviceProvider.did(),
             proofs,
-            audience: serviceSigner,
+            audience: serviceProvider,
           },
           offers,
           // @ts-expect-error no full service implemented
@@ -128,9 +146,9 @@ describe('aggregate.offer', () => {
         Aggregate.aggregateOffer(
           {
             issuer: storeFront,
-            with: serviceSigner.did(),
+            with: serviceProvider.did(),
             proofs,
-            audience: serviceSigner,
+            audience: serviceProvider,
           },
           offers,
           // @ts-expect-error no full service implemented
@@ -166,9 +184,9 @@ describe('aggregate.offer', () => {
         Aggregate.aggregateOffer(
           {
             issuer: storeFront,
-            with: serviceSigner.did(),
+            with: serviceProvider.did(),
             proofs,
-            audience: serviceSigner,
+            audience: serviceProvider,
           },
           offers,
           // @ts-expect-error no full service implemented
@@ -194,7 +212,7 @@ describe('aggregate.get', () => {
           assert.strictEqual(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.strictEqual(invCap.can, AggregateCapabilities.get.can)
-          assert.equal(invCap.with, serviceSigner.did())
+          assert.equal(invCap.with, serviceProvider.did())
           assert.ok(invCap.nb?.commitmentProof)
           return { ok: { deals } }
         }),
@@ -204,9 +222,9 @@ describe('aggregate.get', () => {
     const res = await Aggregate.aggregateGet(
       {
         issuer: storeFront,
-        with: serviceSigner.did(),
+        with: serviceProvider.did(),
         proofs,
-        audience: serviceSigner,
+        audience: serviceProvider,
       },
       commitmentProof,
       // @ts-expect-error no full service implemented
@@ -222,16 +240,16 @@ async function getContext() {
   const storeFront = await Signer.generate()
   const proofs = [
     await AggregateCapabilities.offer.delegate({
-      issuer: serviceSigner,
+      issuer: serviceProvider,
       audience: storeFront,
-      with: serviceSigner.did(),
-      expiration: Infinity,
+      with: serviceProvider.did(),
+      expiration: Number.POSITIVE_INFINITY,
     }),
     await AggregateCapabilities.get.delegate({
-      issuer: serviceSigner,
+      issuer: serviceProvider,
       audience: storeFront,
-      with: serviceSigner.did(),
-      expiration: Infinity,
+      with: serviceProvider.did(),
+      expiration: Number.POSITIVE_INFINITY,
     }),
   ]
 
@@ -240,18 +258,18 @@ async function getContext() {
 
 /**
  * @param {Partial<{
- *   aggregate: Partial<import('../src/types').Service['aggregate']>
- *   offer: Partial<import('../src/types').Service['offer']>
+ * aggregate: Partial<import('../src/types').Service['aggregate']>
+ * offer: Partial<import('../src/types').Service['offer']>
  * }>} service
  */
 function getConnection(service) {
   const server = Server.create({
-    id: serviceSigner,
+    id: serviceProvider,
     service,
     codec: CAR.inbound,
   })
   const connection = Client.connect({
-    id: serviceSigner,
+    id: serviceProvider,
     codec: CAR.outbound,
     channel: server,
   })

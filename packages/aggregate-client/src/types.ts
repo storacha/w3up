@@ -41,7 +41,7 @@ export interface Service {
     get: ServiceMethod<AggregateGet, AggregateGetResponse, Failure>
   }
   offer: {
-    arrange: ServiceMethod<OfferArrange, {}, Failure>
+    arrange: ServiceMethod<OfferArrange, OfferArrangeResponse, Failure>
   }
 }
 
@@ -50,6 +50,10 @@ export interface AggregateGetResponse {
 }
 
 export interface AggregateOfferResponse {
+  status: string
+}
+
+export interface OfferArrangeResponse {
   status: string
 }
 

@@ -34,7 +34,6 @@ export const test = {
     const commitmentProof = 'commitmentProof'
 
     const block = await CBOR.write(offers)
-    console.log('inv', storeFront.did(), connection.id.did())
     const aggregateOfferInvocation = Aggregate.offer.invoke({
       issuer: storeFront,
       audience: connection.id,
@@ -234,6 +233,8 @@ export const test = {
       // Validate effect in receipt does not exist
       assert.ok(!aggregateOffer.fx.join)
     },
+  // offer/arrange tests
+  // TODO
   // aggregate/get tests
   'aggregate/get fails when requested aggregate does not exist': async (
     assert,
@@ -274,7 +275,8 @@ export const test = {
     const deal = {
       status: 'done',
     }
-    await context.aggregateArrangedTable.put(commitmentProof, deal)
+    await context.aggregateStoreBackend.put(commitmentProof, deal)
+
     const aggregateGetInvocation = Aggregate.get.invoke({
       issuer: storeFront,
       audience: connection.id,

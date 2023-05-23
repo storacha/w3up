@@ -3,8 +3,8 @@ import * as assert from 'assert'
 import * as Aggregate from './aggregate.js'
 import * as Signer from '@ucanto/principal/ed25519'
 
-import { OfferBucket } from './context/offer-bucket.js'
-import { aggregateArrangedTable } from './context/aggregate-arranged-table.js'
+import { OfferStore } from './context/offer-store.js'
+import { AggregateStore } from './context/aggregate-store.js'
 
 describe('aggregate/*', () => {
   for (const [name, test] of Object.entries(Aggregate.test)) {
@@ -17,6 +17,7 @@ describe('aggregate/*', () => {
     define(name, async () => {
       const signer = await Signer.generate()
       const id = signer.withDID('did:web:test.web3.storage')
+      const aggregateStore = new AggregateStore()
 
       await test(
         {
@@ -31,8 +32,10 @@ describe('aggregate/*', () => {
               assert.fail(error)
             },
           },
-          offerBucket: new OfferBucket(),
-          aggregateArrangedTable: new aggregateArrangedTable(),
+          offerStore: new OfferStore(),
+          arrangedOfferStore: new OfferStore(),
+          aggregateStore,
+          aggregateStoreBackend: aggregateStore,
         }
       )
     })

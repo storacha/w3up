@@ -11,23 +11,28 @@ export * from '@web3-storage/capabilities/types'
 export * as UcantoInterface from '@ucanto/interface'
 
 export interface AggregateServiceContext {
-  aggregateArrangedTable: AggregateArrangedTable
-  offerBucket: OfferBucket
+  aggregateStore: AggregateStore
+  offerStore: OfferStore
 }
 
-export interface OfferServiceContext {}
+export interface OfferServiceContext {
+  arrangedOfferStore: ArrangedOfferStore
+}
 
 export interface ServiceContext
   extends AggregateServiceContext,
     OfferServiceContext {}
 
-export interface OfferBucket {
-  put: (offers: Offer[]) => Promise<void>
+export interface ArrangedOfferStore {
+  get: (commitmentProof: string) => Promise<string | undefined>
 }
 
-export interface AggregateArrangedTable {
+export interface OfferStore {
+  put: (commitmentProof: string, offers: Offer[]) => Promise<void>
+}
+
+export interface AggregateStore {
   get: (commitmentProof: string) => Promise<unknown[] | undefined>
-  put: (commitmentProof: string, deal: unknown) => Promise<unknown[]>
 }
 
 export interface UcantoServerContext extends ServiceContext {
@@ -54,5 +59,13 @@ export interface Assert {
   ok: <Actual>(actual: Actual, message?: string) => unknown
 }
 
-export type Test = (assert: Assert, context: UcantoServerContext) => unknown
+export interface AggregateStoreBackend {
+  put: (commitmentProof: string, aggregateInfo: unknown) => Promise<void>
+}
+
+export interface UcantoServerContextTest extends UcantoServerContext {
+  aggregateStoreBackend: AggregateStoreBackend
+}
+
+export type Test = (assert: Assert, context: UcantoServerContextTest) => unknown
 export type Tests = Record<string, Test>
