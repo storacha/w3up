@@ -74,11 +74,11 @@
   },
   "dependencies": {
     "@ipld/dag-ucan": "^3.3.2",
-    "@ucanto/client": "^7.0.1",
+    "@ucanto/client": "^8.0.0",
     "@ucanto/core": "^8.0.0",
     "@ucanto/interface": "^8.0.0",
-    "@ucanto/principal": "^7.0.0",
-    "@ucanto/transport": "^7.0.3",
+    "@ucanto/principal": "^8.0.0",
+    "@ucanto/transport": "^8.0.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/upload-client": "workspace:^"
@@ -87,7 +87,7 @@
     "@docusaurus/core": "^2.2.0",
     "@ipld/car": "^5.1.1",
     "@types/mocha": "^10.0.1",
-    "@ucanto/server": "^8.0.0",
+    "@ucanto/server": "^8.0.1",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "docusaurus-plugin-typedoc": "^0.18.0",
