@@ -1,5 +1,14 @@
 # Changelog
 
+## [9.0.1](https://github.com/web3-storage/w3up/compare/upload-client-v9.0.0...upload-client-v9.0.1) (2023-05-23)
+
+
+### Bug Fixes
+
+* docs for `uploadCAR` return value ([#791](https://github.com/web3-storage/w3up/issues/791)) ([a5ceee4](https://github.com/web3-storage/w3up/commit/a5ceee4ed115bf4d784b99d814c522364fdb97e6))
+* upgrade remaining ucanto deps ([#798](https://github.com/web3-storage/w3up/issues/798)) ([7211501](https://github.com/web3-storage/w3up/commit/72115010663a62140127cdeed21f2dc37f59da08))
+* upgrade ucanto to 8 ([#794](https://github.com/web3-storage/w3up/issues/794)) ([00b011d](https://github.com/web3-storage/w3up/commit/00b011d87f628d4b3040398ca6cba567a69713ff))
+
 ## [9.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v8.3.0...upload-client-v9.0.0) (2023-05-02)
 
 
