@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v5.0.0...capabilities-v5.0.1) (2023-05-23)
+
+
+### Bug Fixes
+
+* upgrade remaining ucanto deps ([#798](https://github.com/web3-storage/w3up/issues/798)) ([7211501](https://github.com/web3-storage/w3up/commit/72115010663a62140127cdeed21f2dc37f59da08))
+* upgrade ucanto to 8 ([#794](https://github.com/web3-storage/w3up/issues/794)) ([00b011d](https://github.com/web3-storage/w3up/commit/00b011d87f628d4b3040398ca6cba567a69713ff))
+
 ## [5.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v4.0.1...capabilities-v5.0.0) (2023-05-02)
 
 
