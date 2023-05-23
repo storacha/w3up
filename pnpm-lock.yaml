@@ -130,8 +130,8 @@ importers:
         specifier: ^8.5.4
         version: 8.5.4
       '@ucanto/server':
-        specifier: ^8.0.0
-        version: 8.0.0
+        specifier: ^8.0.1
+        version: 8.0.1
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -233,8 +233,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/server':
-        specifier: ^8.0.0
-        version: 8.0.0
+        specifier: ^8.0.1
+        version: 8.0.1
       '@ucanto/transport':
         specifier: ^8.0.0
         version: 8.0.0
@@ -331,8 +331,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@ucanto/server':
-        specifier: ^8.0.0
-        version: 8.0.0
+        specifier: ^8.0.1
+        version: 8.0.1
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -404,8 +404,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       '@ucanto/server':
-        specifier: ^8.0.0
-        version: 8.0.0
+        specifier: ^8.0.1
+        version: 8.0.1
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -3448,15 +3448,6 @@ packages:
       '@ucanto/interface': 8.0.0
     dev: false
 
-  /@ucanto/core@7.1.1:
-    resolution: {integrity: sha512-RXYOXVTqpTqeYBw7aVGna4JwLEi4xnfN4eX53n+9SLNbh7lNrD7bZuXGMB53W4PimRIZp92tQSWSO8ljw3hf1Q==}
-    dependencies:
-      '@ipld/car': 5.1.1
-      '@ipld/dag-cbor': 9.0.0
-      '@ipld/dag-ucan': 3.3.2
-      '@ucanto/interface': 7.1.0
-      multiformats: 11.0.2
-
   /@ucanto/core@8.0.0:
     resolution: {integrity: sha512-Ne45bH0uUhAexNkJWj8tYsvKut58LaL3rsu30vxVh+ybkj47nD02mY8KqW+vCHY80E1ubPcjlHuCt0+efR9bgw==}
     dependencies:
@@ -3464,12 +3455,6 @@ packages:
       '@ipld/dag-cbor': 9.0.0
       '@ipld/dag-ucan': 3.3.2
       '@ucanto/interface': 8.0.0
-      multiformats: 11.0.2
-
-  /@ucanto/interface@7.1.0:
-    resolution: {integrity: sha512-DMD0ybPZ7UUtBx9g3TR6mrYW6N2IMhzgQ2IRfYsoTlhnXOTfmllwogWKhUJobf/lBHmmpi2CW8gWXTBby/cN5A==}
-    dependencies:
-      '@ipld/dag-ucan': 3.3.2
       multiformats: 11.0.2
 
   /@ucanto/interface@8.0.0:
@@ -3487,12 +3472,12 @@ packages:
       multiformats: 11.0.2
       one-webcrypto: 1.0.3
 
-  /@ucanto/server@8.0.0:
-    resolution: {integrity: sha512-ISpDq6CHSmxgACtLHaVziwWuQrvBRyOzhyjqP9D8v34ltMQSev0yHsB9/3WT+2+66odm80xZ0OVbpJ4mTnqApg==}
+  /@ucanto/server@8.0.1:
+    resolution: {integrity: sha512-QgtEUgJwXmmbFA4cdQ0kOhaSPekAdVNl9vYrE59Joy6OhEh5fvnOiGMYWdkExFmvL4v1DhKZwVH8p9iQ+eWFTw==}
     dependencies:
       '@ucanto/core': 8.0.0
       '@ucanto/interface': 8.0.0
-      '@ucanto/validator': 7.0.0
+      '@ucanto/validator': 8.0.0
 
   /@ucanto/transport@8.0.0:
     resolution: {integrity: sha512-1/3ELUtUAu7zNKq/jy/PjvvCoFt7cFS8198E8U04UM1EsZS0WvK2VnEa/aS8MA5bBy8TjRFmQtXjcndZ0RE5vw==}
@@ -3500,15 +3485,6 @@ packages:
       '@ucanto/core': 8.0.0
       '@ucanto/interface': 8.0.0
     dev: false
-
-  /@ucanto/validator@7.0.0:
-    resolution: {integrity: sha512-esbxBSe4HIlwbL/+G4pCZf7Z09OsQ9thoFUpIvKO96iZin2hFJJhW5AcXTp/9z/+k3SO3pD879PjPpGkrMZRVA==}
-    dependencies:
-      '@ipld/car': 5.1.1
-      '@ipld/dag-cbor': 9.0.0
-      '@ucanto/core': 7.1.1
-      '@ucanto/interface': 7.1.0
-      multiformats: 11.0.2
 
   /@ucanto/validator@8.0.0:
     resolution: {integrity: sha512-S+cGKUVu074TT1FaoOyZa3mKf3CuEBLHLlE3TU1UoIC5Yp9WnvX+cDOGKIyfJ/HgHHBvAEDxYNOkNZbCATsRdA==}
@@ -3518,7 +3494,6 @@ packages:
       '@ucanto/core': 8.0.0
       '@ucanto/interface': 8.0.0
       multiformats: 11.0.2
-    dev: false
 
   /@vue/compiler-core@3.2.47:
     resolution: {integrity: sha512-p4D7FDnQb7+YJmO2iPEv0SQNeNzcbHdGByJDsT4lynf63AFkOTFN07HsiRSvjGo0QrxR/o3d0hUyNCUnBU2Tig==}
