@@ -5,7 +5,7 @@ import {
 import * as DidMailto from '@web3-storage/did-mailto'
 import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from './utils/delegations-response.js'
-import * as accessConfirm from './access-confirm.js'
+import * as accessConfirm from './access/confirm.js'
 import * as Types from './types.js'
 /**
  * @param {string | URL} url
