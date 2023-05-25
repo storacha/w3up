@@ -35,7 +35,7 @@ export const delegate = async ({ capability, invocation }, context) => {
   )
 
   if (result.ok) {
-    await context.delegationsStorage.putMany(...delegated.ok)
+    await context.delegationsStorage.putMany(invocation.asCID, ...delegated.ok)
     return { ok: {} }
   } else {
     return result
