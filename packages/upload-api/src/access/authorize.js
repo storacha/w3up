@@ -10,11 +10,23 @@ import { delegationToString } from '@web3-storage/access/encoding'
 export const provide = (ctx) =>
   Server.provide(Access.authorize, (input) => authorize(input, ctx))
 
+
+
 /**
  * @param {API.Input<Access.authorize>} input
  * @param {API.AccessServiceContext} ctx
  */
 export const authorize = async ({ capability }, ctx) => {
+  const accountDID = capability.nb.iss
+  if (await ctx.accountStorage.isEmailOrDomainBlocked(accountDID)) {
+    return {
+      error: {
+        name: 'AccountBlocked',
+        message: `Account identified by ${accountDID} is blocked`
+      }
+    }
+  }
+
   /**
    * We issue `access/confirm` invocation which will
    * get embedded in the URL that we send to the user. When user clicks the

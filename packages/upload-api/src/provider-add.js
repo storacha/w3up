@@ -15,7 +15,10 @@ export const provide = (ctx) =>
  */
 export const add = async (
   { capability, invocation },
-  { provisionsStorage: provisions }
+  {
+    provisionsStorage: provisions,
+    accountsStorage: accounts
+  }
 ) => {
   const {
     nb: { consumer, provider },
@@ -27,6 +30,14 @@ export const add = async (
         name: 'Unauthorized',
         message: 'Issuer must be a mailto DID',
       },
+    }
+  }
+  if (await accounts.isEmailOrDomainBlocked(accountDID)) {
+    return {
+      error: {
+        name: 'AccountBlocked',
+        message: `Account identified by ${accountDID} is blocked`
+      }
     }
   }
   if (!provisions.services.includes(provider)) {
