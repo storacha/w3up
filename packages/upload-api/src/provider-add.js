@@ -32,7 +32,7 @@ export const add = async (
       },
     }
   }
-  if (await accounts.isEmailOrDomainBlocked(accountDID)) {
+  if ((await accounts.isEmailOrDomainBlocked(accountDID)).ok) {
     return {
       error: {
         name: 'AccountBlocked',

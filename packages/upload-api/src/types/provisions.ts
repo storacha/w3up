@@ -1,6 +1,7 @@
 import type { ProviderDID } from '@web3-storage/capabilities/src/types'
 import * as Ucanto from '@ucanto/interface'
 import { ProviderAdd } from '@web3-storage/capabilities/src/types'
+import { SpaceDID } from '../types'
 
 /**
  * action which results in provisionment of a space consuming a storage provider
@@ -35,4 +36,9 @@ export interface ProvisionsStorage<
    * get number of stored items
    */
   count: () => Promise<bigint>
+
+  /**
+   * is the given space blocked?
+   */
+  isSpaceBlocked: (spaceDID: SpaceDID) => Promise<Ucanto.Result<boolean, never>>
 }

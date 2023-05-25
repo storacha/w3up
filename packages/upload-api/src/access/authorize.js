@@ -18,7 +18,7 @@ export const provide = (ctx) =>
  */
 export const authorize = async ({ capability }, ctx) => {
   const accountDID = capability.nb.iss
-  if (await ctx.accountStorage.isEmailOrDomainBlocked(accountDID)) {
+  if ((await ctx.accountsStorage.isEmailOrDomainBlocked(accountDID)).ok) {
     return {
       error: {
         name: 'AccountBlocked',

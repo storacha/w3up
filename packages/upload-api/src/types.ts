@@ -21,6 +21,7 @@ import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
+import { AccountsStorage as Accounts } from './types/accounts'
 
 export type ValidationEmailSend = {
   to: string,
@@ -83,6 +84,7 @@ export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
 } from './types/delegations'
+export type { AccountsStorage } from './types/accounts'
 
 export interface Service {
   store: {
@@ -167,6 +169,7 @@ export type AccessServiceContext = AccessClaimContext & {
   email: Email
   url: URL
   provisionsStorage: Provisions
+  accountsStorage: Accounts
 }
 
 export interface ConsumerServiceContext {
@@ -187,6 +190,7 @@ export interface SpaceServiceContext {
 
 export interface ProviderServiceContext {
   provisionsStorage: Provisions
+  accountsStorage: Accounts
 }
 
 export interface ServiceContext

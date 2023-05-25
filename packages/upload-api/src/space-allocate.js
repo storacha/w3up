@@ -10,7 +10,7 @@ import * as Space from '@web3-storage/capabilities/space'
  */
 export const allocate = async ({ capability }, context) => {
   const { with: space, nb } = capability
-  if (await context.provisionsStorage.isSpaceBlocked(space)) {
+  if ((await context.provisionsStorage.isSpaceBlocked(space)).ok) {
     return {
       error: {
         name: 'InsufficientStorage',

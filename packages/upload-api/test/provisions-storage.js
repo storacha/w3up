@@ -51,4 +51,10 @@ export class ProvisionsStorage {
   async count() {
     return BigInt(0)
   }
+
+  async isSpaceBlocked() {
+    return {
+      ok: false
+    }
+  }
 }
