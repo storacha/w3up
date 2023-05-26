@@ -10,8 +10,6 @@ import { delegationToString } from '@web3-storage/access/encoding'
 export const provide = (ctx) =>
   Server.provide(Access.authorize, (input) => authorize(input, ctx))
 
-
-
 /**
  * @param {API.Input<Access.authorize>} input
  * @param {API.AccessServiceContext} ctx
