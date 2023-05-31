@@ -1,4 +1,4 @@
-import * as assert from 'node:assert'
+import * as API from '../src/types.js'
 import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
@@ -31,26 +31,20 @@ async function createDelegation(opts = {}) {
 }
 
 /**
- * @typedef {object} DelegationsStorageVariant
- * @property {Pick<import('../src/types/delegations.js').DelegationsStorage, 'putMany'|'count'|'find'>} delegations
+ * @type {API.Tests}
  */
-
-/**
- * @param {(context: unknown) => Promise<Types.DelegationsStorage>} createVariant - create a new test context
- * @param {(name: string, test: () => Promise<unknown>) => void} test - name a test
- */
-export function testVariant(createVariant, test) {
-  test('should persist delegations', async (/**@type {unknown} */ context) => {
-    const delegationsStorage = await createVariant(context)
+export const test = {
+  'should persist delegations': async (assert, context) => {
+    const delegationsStorage = context.delegationsStorage
     const count = Math.round(Math.random() * 10)
     const delegations = await Promise.all(
       Array.from({ length: count }).map(() => createSampleDelegation())
     )
     await delegationsStorage.putMany(delegations[0].asCID, delegations)
-    assert.deepEqual(await delegationsStorage.count(), delegations.length)
-  })
-  test('can retrieve delegations by audience', async (/**@type {unknown} */ context) => {
-    const delegations = await createVariant(context)
+    assert.deepEqual(await delegationsStorage.count(), BigInt(delegations.length))
+  },
+  'can retrieve delegations by audience': async (assert, context) => {
+    const delegations = await context.delegationsStorage
     const issuer = await principal.ed25519.generate()
 
     const alice = await principal.ed25519.generate()
@@ -87,5 +81,5 @@ export function testVariant(createVariant, test) {
     const carol = await principal.ed25519.generate()
     const carolDelegations = (await delegations.find({ audience: carol.did() })).ok
     assert.deepEqual(carolDelegations?.length, 0)
-  })
+  }
 }

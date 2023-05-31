@@ -176,6 +176,7 @@ export interface ConsumerServiceContext {
 
 export interface CustomerServiceContext {
   signer: EdSigner.Signer
+  provisionsStorage: Provisions
 }
 
 export interface ConsoleServiceContext {}

@@ -24,12 +24,8 @@ const get = async ({ capability }, context) => {
     return { error: new UnknownProvider(capability.with) }
   }
 
-  // TODO: we used to query the accounts table for this, but that only
-  // returns the DID we already have. we may want to query other tables in the future
-  // but for now I think we can skip this and drop the accounts table entirely
-  // const customer = await context.models.accounts.get(capability.nb.customer)
-  const customer = { did: capability.nb.customer }
-  return { ok: { customer: customer || null } }
+  const customer = await context.provisionsStorage.getCustomer(capability.with, capability.nb.customer)
+  return { ok: { customer: customer.ok ? { did: customer.ok.did } : null } }
 }
 
 class UnknownProvider extends Provider.Failure {

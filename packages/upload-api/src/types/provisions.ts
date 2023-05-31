@@ -12,6 +12,11 @@ export interface Provision {
   provider: ProviderDID
 }
 
+export interface Customer {
+  did: Ucanto.DID<'mailto'>
+  provisions: Provision[]
+}
+
 /**
  * stores instances of a storage provider being consumed by a consumer
  */
@@ -30,6 +35,21 @@ export interface ProvisionsStorage<
   put: (
     item: Provision
   ) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+
+  /**
+   * Returns information about a customer related to the given provider.
+   * 
+   * TODO: this should probably be moved to its own Storage interface, but 
+   * I'd like to tackle that once we've finished consolidating the access and upload services.
+   * 
+   * @param provider DID of the provider we care about
+   * @param customer DID of the customer
+   * @returns record for the specified customer, if it is in our system
+   */
+  getCustomer: (
+    provider: ProviderDID,
+    customer: Ucanto.DID<'mailto'>
+  ) => Promise<Ucanto.Result<Customer | null, Ucanto.Failure>>
 
   /**
    * get number of stored items

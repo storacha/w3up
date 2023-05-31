@@ -48,7 +48,19 @@ export class ProvisionsStorage {
     }
   }
 
+  /**
+   * 
+   * @param {Types.ProviderDID} provider 
+   * @param {Types.DID<'mailto'>} customer 
+   * @returns 
+   */
+  async getCustomer(provider, customer) {
+    const provisions = Object.values(this.provisions).filter(p => (p.provider === provider) && (p.customer === customer))
+    const exists = provisions.length > 0
+    return { ok: exists ? { did: customer, provisions } : null }
+  }
+
   async count() {
-    return BigInt(0)
+    return BigInt(Object.values(this.provisions).length)
   }
 }
