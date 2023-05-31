@@ -1,7 +1,7 @@
 import * as Store from './store.js'
 import * as Upload from './upload.js'
-import { testVariant as testDelegationsStorageVariant } from './delegations-storage-tests.js'
-import { testVariant as testProvisionsStorageVariant } from './provisions-storage-tests.js'
+import { test as delegationsStorageTests } from './delegations-storage-tests.js'
+import { test as provisionsStorageTests } from './provisions-storage-tests.js'
 
 export * from './util.js'
 
@@ -13,6 +13,6 @@ export const test = {
 export {
   Store,
   Upload,
-  testDelegationsStorageVariant,
-  testProvisionsStorageVariant
+  delegationsStorageTests,
+  provisionsStorageTests
 }

@@ -3,7 +3,6 @@ import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import { createSampleDelegation } from '../src/utils/ucan.js'
-import * as Types from '../src/types.js'
 
 /**
  * @param {object} [opts]
