@@ -46,7 +46,7 @@ export function testVariant(createVariant, test) {
     const delegations = await Promise.all(
       Array.from({ length: count }).map(() => createSampleDelegation())
     )
-    await delegationsStorage.putMany(...delegations)
+    await delegationsStorage.putMany(delegations[0].asCID, delegations)
     assert.deepEqual(await delegationsStorage.count(), delegations.length)
   })
   test('can retrieve delegations by audience', async (/**@type {unknown} */ context) => {
@@ -76,7 +76,7 @@ export function testVariant(createVariant, test) {
       )
     )
 
-    await delegations.putMany(...delegationsForAlice, ...delegationsForBob)
+    await delegations.putMany(delegationsForAlice[0].link(), [...delegationsForAlice, ...delegationsForBob])
 
     const aliceDelegations = (await delegations.find({ audience: alice.did() })).ok
     assert.deepEqual(aliceDelegations?.length, delegationsForAlice.length)

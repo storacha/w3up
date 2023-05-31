@@ -14,7 +14,8 @@ export interface DelegationsStorage<
    * @param delegations - delegations to store
    */
   putMany: (
-    ...delegations: Array<Ucanto.Delegation<Ucanto.Tuple<Cap>>>
+    cause: Ucanto.Link,
+    delegations: Ucanto.Delegation<Ucanto.Tuple<Cap>>[]
   ) => Promise<Ucanto.Result<{}, never>>
 
   /**

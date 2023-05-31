@@ -73,7 +73,7 @@ export async function confirm({ capability, invocation }, ctx) {
   // Store the delegations so that they can be pulled with access/claim
   // The fact that we're storing proofs chains that we pulled from the
   // database is not great, but it's a tradeoff we're making for now.
-  await ctx.delegationsStorage.putMany(delegation, attestation)
+  await ctx.delegationsStorage.putMany(invocation.link(), [delegation, attestation])
 
   return {
     ok: {
