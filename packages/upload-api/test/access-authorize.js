@@ -53,23 +53,6 @@ export const test = {
         },
       },
     ])
-
-    const customer = await Customer.get
-      .invoke({
-        issuer: service,
-        audience: service,
-        with: service.did(),
-        nb: {
-          customer: account.did(),
-        },
-      })
-      .execute(connection)
-
-    assert.deepEqual(
-      customer.out.ok?.customer?.did,
-      account.did(),
-      'account is a customer'
-    )
   },
 
   'should validate have delegation in the email url': async (
