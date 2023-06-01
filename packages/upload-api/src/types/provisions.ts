@@ -14,7 +14,6 @@ export interface Provision {
 
 export interface Customer {
   did: Ucanto.DID<'mailto'>
-  provisions: Provision[]
 }
 
 /**

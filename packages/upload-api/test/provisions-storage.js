@@ -55,9 +55,8 @@ export class ProvisionsStorage {
    * @returns 
    */
   async getCustomer(provider, customer) {
-    const provisions = Object.values(this.provisions).filter(p => (p.provider === provider) && (p.customer === customer))
-    const exists = provisions.length > 0
-    return { ok: exists ? { did: customer, provisions } : null }
+    const exists = Object.values(this.provisions).find(p => (p.provider === provider) && (p.customer === customer))
+    return { ok: exists ? { did: customer } : null }
   }
 
   async count() {
