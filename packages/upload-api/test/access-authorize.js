@@ -1,7 +1,7 @@
 import * as API from './types.js'
 import { Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
-import { Access, Customer, Space } from '@web3-storage/capabilities'
+import { Access, Space } from '@web3-storage/capabilities'
 import { alice, bob, provisionProvider } from './helpers/utils.js'
 import * as DidMailto from '@web3-storage/did-mailto'
 import {
