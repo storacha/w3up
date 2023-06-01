@@ -4,6 +4,8 @@
 
 export const debug = () => new DebugEmail()
 
+const MAX_TAKE_RETRIES = 3
+
 /**
  * This is API compatible version of Email class that can be used during
  * tests and debugging.
@@ -25,9 +27,23 @@ export class DebugEmail {
       console.log('email.sendValidation', opts)
     }
   }
+  /**
+   * 
+   * @param {number} retries 
+   */
+  async takeWithRetries(retries = MAX_TAKE_RETRIES) {
+    const self = this
+    if ((this.emails.length > 0) || (retries <= 0)){
+      return this.emails.shift()
+    } else {
+      return new Promise(resolve => {
+        setTimeout(() => resolve(self.takeWithRetries(retries - 1)), 100)
+      })
+    }
+  }
 
   async take() {
-    return this.emails.shift()
+    return this.takeWithRetries()
   }
 }
 

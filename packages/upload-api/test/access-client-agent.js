@@ -331,10 +331,6 @@ export const test = {
     const authorized = authorizeAndWait(deviceA, accountEmail, {
       expectAuthorization: waitForAuthorizationByPolling,
     })
-    // wait 100 milliseconds to let the email be sent
-    await new Promise((resolve) => {
-      setTimeout(resolve, 100)
-    })
     const confirmationEmail = await mail.take()
     await confirmConfirmationUrl(deviceA.connection, confirmationEmail)
     await authorized
@@ -361,10 +357,6 @@ export const test = {
 
     const authorized = authorizeAndWait(agent, accountEmail, {
       expectAuthorization: waitForAuthorizationByPolling,
-    })
-    // wait 100 milliseconds to let the email be sent
-    await new Promise((resolve) => {
-      setTimeout(resolve, 100)
     })
     const confirmationEmail = await mail.take()
     await confirmConfirmationUrl(agent.connection, confirmationEmail)
@@ -397,10 +389,6 @@ export const test = {
       agent,
       agent.issuer.did()
     )
-    // wait 100 milliseconds to let the email be sent
-    await new Promise((resolve) => {
-      setTimeout(resolve, 100)
-    })
     const confirmationEmail = await mail.take()
     await confirmConfirmationUrl(agent.connection, confirmationEmail)
     assert.equal([...(await claimed)].length, 2, 'claimed delegations')
