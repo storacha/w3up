@@ -62,10 +62,12 @@ export interface Offer {
 
 ### `InvocationConfig`
 
-This is the configuration for the UCAN invocation. It is an object with `issuer` and `proofs`:
+This is the configuration for the UCAN invocation. It is an object with `issuer`, `audience`, `resource` and `proofs`:
 
 - The `issuer` is the signing authority that is issuing the UCAN invocation(s).
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+- The `audience` is the principal authority that the UCAN is delegated to.
+- The `resource` (`with` field) points to a storage space.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action. These might not be required.
 
 ## Contributing
 
