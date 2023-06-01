@@ -32,7 +32,7 @@ export interface InvocationConfig {
   /**
    * Proof(s) the issuer has the capability to perform the action.
    */
-  proofs: Proof[]
+  proofs?: Proof[]
 }
 
 export interface Service {

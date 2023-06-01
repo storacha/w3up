@@ -15,7 +15,7 @@ import { randomCARs } from './helpers/random.js'
 
 describe('aggregate.offer', () => {
   it('places a valid offer with the service', async () => {
-    const { storeFront, proofs } = await getContext()
+    const { storeFront } = await getContext()
 
     // Generate CAR Files for offer
     const offers = (await randomCARs(100, 100))
@@ -41,7 +41,7 @@ describe('aggregate.offer', () => {
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.strictEqual(invCap.can, AggregateCapabilities.offer.can)
-            assert.equal(invCap.with, serviceProvider.did())
+            assert.equal(invCap.with, invocation.issuer.did())
             // size
             assert.strictEqual(invCap.nb?.size, size)
             assert.ok(invCap.nb?.commitmentProof)
@@ -65,18 +65,15 @@ describe('aggregate.offer', () => {
               })
               .delegate()
 
-            return Server.ok(aggregateOfferResponse)
-              .join(fx.link())
+            return Server.ok(aggregateOfferResponse).join(fx.link())
           },
         }),
       },
     })
-
     const res = await Aggregate.aggregateOffer(
       {
         issuer: storeFront,
-        with: serviceProvider.did(),
-        proofs,
+        with: storeFront.did(),
         audience: serviceProvider,
       },
       offers,
@@ -90,7 +87,7 @@ describe('aggregate.offer', () => {
   })
 
   it('fails to place a offer with larger size than required', async () => {
-    const { storeFront, proofs } = await getContext()
+    const { storeFront } = await getContext()
 
     // Generate CAR Files for offer
     const offers = (await randomCARs(100, 100))
@@ -114,8 +111,7 @@ describe('aggregate.offer', () => {
         Aggregate.aggregateOffer(
           {
             issuer: storeFront,
-            with: serviceProvider.did(),
-            proofs,
+            with: storeFront.did(),
             audience: serviceProvider,
           },
           offers,
@@ -127,7 +123,7 @@ describe('aggregate.offer', () => {
   })
 
   it('fails to place a offer with smaller size than required', async () => {
-    const { storeFront, proofs } = await getContext()
+    const { storeFront } = await getContext()
 
     // Generate CAR Files for offer
     const offers = await randomCARs(100, 100)
@@ -146,8 +142,7 @@ describe('aggregate.offer', () => {
         Aggregate.aggregateOffer(
           {
             issuer: storeFront,
-            with: serviceProvider.did(),
-            proofs,
+            with: storeFront.did(),
             audience: serviceProvider,
           },
           offers,
@@ -159,7 +154,7 @@ describe('aggregate.offer', () => {
   })
 
   it('fails to place a offer with invalid URLs', async () => {
-    const { storeFront, proofs } = await getContext()
+    const { storeFront } = await getContext()
 
     // Generate CAR Files for offer
     const offers = (await randomCARs(100, 100))
@@ -184,8 +179,7 @@ describe('aggregate.offer', () => {
         Aggregate.aggregateOffer(
           {
             issuer: storeFront,
-            with: serviceProvider.did(),
-            proofs,
+            with: storeFront.did(),
             audience: serviceProvider,
           },
           offers,
@@ -199,7 +193,7 @@ describe('aggregate.offer', () => {
 
 describe('aggregate.get', () => {
   it('places a valid offer with the service', async () => {
-    const { storeFront, proofs } = await getContext()
+    const { storeFront } = await getContext()
     const commitmentProof = 'todo-commitmentproof'
     /** @type {unknown[]} */
     const deals = []
@@ -212,7 +206,7 @@ describe('aggregate.get', () => {
           assert.strictEqual(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.strictEqual(invCap.can, AggregateCapabilities.get.can)
-          assert.equal(invCap.with, serviceProvider.did())
+          assert.equal(invCap.with, invocation.issuer.did())
           assert.ok(invCap.nb?.commitmentProof)
           return { ok: { deals } }
         }),
@@ -222,8 +216,7 @@ describe('aggregate.get', () => {
     const res = await Aggregate.aggregateGet(
       {
         issuer: storeFront,
-        with: serviceProvider.did(),
-        proofs,
+        with: storeFront.did(),
         audience: serviceProvider,
       },
       commitmentProof,
@@ -238,22 +231,8 @@ describe('aggregate.get', () => {
 
 async function getContext() {
   const storeFront = await Signer.generate()
-  const proofs = [
-    await AggregateCapabilities.offer.delegate({
-      issuer: serviceProvider,
-      audience: storeFront,
-      with: serviceProvider.did(),
-      expiration: Number.POSITIVE_INFINITY,
-    }),
-    await AggregateCapabilities.get.delegate({
-      issuer: serviceProvider,
-      audience: storeFront,
-      with: serviceProvider.did(),
-      expiration: Number.POSITIVE_INFINITY,
-    }),
-  ]
 
-  return { storeFront, proofs }
+  return { storeFront }
 }
 
 /**

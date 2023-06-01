@@ -13,11 +13,6 @@ import { capability, Link, URI, Schema } from '@ucanto/validator'
 /**
  * `aggregate/offer` capability allows agent to create an offer to get an aggregate
  * of CARs files in the market to be fetched and stored by a Storage provider.
- * TODO: below
- * identified by did:key in the `with` field. Agent must precompute CAR locally
- * and provide it's CID and size using `nb.link` and `nb.size` fields, allowing
- * a service to provision a write location for the agent to PUT or POST desired
- * CAR into.
  */
 export const offer = capability({
   can: 'aggregate/offer',

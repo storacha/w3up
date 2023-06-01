@@ -22,8 +22,8 @@ export function offerArrangeProvider({ arrangedOfferStore }) {
 
     return {
       ok: {
-        status
-      }
+        status,
+      },
     }
   })
 }

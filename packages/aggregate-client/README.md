@@ -26,8 +26,6 @@ function aggregateOffer(
 
 Ask the service to create an aggregate offer and put it available for Storage Providers.
 
-Required delegated capability proofs: `aggregate/offer`
-
 More information: [`InvocationConfig`](#invocationconfig)
 
 ### `aggregateGet`
@@ -40,8 +38,6 @@ function aggregateGet(
 ```
 
 Ask the service to get deal details of an aggregate.
-
-Required delegated capability proofs: `aggregate/get`
 
 More information: [`InvocationConfig`](#invocationconfig)
 
@@ -62,10 +58,12 @@ export interface Offer {
 
 ### `InvocationConfig`
 
-This is the configuration for the UCAN invocation. It is an object with `issuer` and `proofs`:
+This is the configuration for the UCAN invocation. It is an object with `issuer`, `audience`, `resource` and `proofs`:
 
 - The `issuer` is the signing authority that is issuing the UCAN invocation(s).
-- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+- The `audience` is the principal authority that the UCAN is delegated to.
+- The `resource` (`with` field) points to a storage space.
+- The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action. These might not be required.
 
 ## Contributing
 

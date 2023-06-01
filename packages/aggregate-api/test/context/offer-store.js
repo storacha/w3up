@@ -8,15 +8,14 @@ export class OfferStore {
     this.offers = new Map()
   }
   /**
-   * @param {string} commitmentProof 
-   * @param {Offers} offers
+   * @param {import('../../src/types').OfferToQueue} offerToQueue
    */
-  async put(commitmentProof, offers) {
-    this.offers.set(commitmentProof, offers)
+  async queue(offerToQueue) {
+    this.offers.set(offerToQueue.commitmentProof, offerToQueue.offers)
   }
 
   /**
-   * @param {string} commitmentProof 
+   * @param {string} commitmentProof
    * @returns {Promise<string>}
    */
   async get(commitmentProof) {

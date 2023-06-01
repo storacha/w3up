@@ -64,10 +64,8 @@ export function aggregateOfferProvider({ offerStore }) {
         })
         .delegate()
 
-      // TODO: archive delegation
-      // fx.archive()
       // Write offer to store
-      await offerStore.put(commitmentProof, offers)
+      await offerStore.queue({ commitmentProof, offers })
 
       return Server.ok({
         status: 'queued',

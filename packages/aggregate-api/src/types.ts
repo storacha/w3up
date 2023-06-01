@@ -28,7 +28,12 @@ export interface ArrangedOfferStore {
 }
 
 export interface OfferStore {
-  put: (commitmentProof: string, offers: Offer[]) => Promise<void>
+  queue: (aggregateOffer: OfferToQueue) => Promise<void>
+}
+
+export interface OfferToQueue {
+  commitmentProof: string
+  offers: Offer[]
 }
 
 export interface AggregateStore {
@@ -64,6 +69,7 @@ export interface AggregateStoreBackend {
 }
 
 export interface UcantoServerContextTest extends UcantoServerContext {
+  // to enable tests to insert data in aggregateStore memory db
   aggregateStoreBackend: AggregateStoreBackend
 }
 
