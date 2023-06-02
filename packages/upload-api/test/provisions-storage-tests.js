@@ -11,6 +11,7 @@ export const test = {
     async (assert, context) => {
       const storage = context.provisionsStorage
       const spaceA = await principal.ed25519.generate()
+      const spaceB = await principal.ed25519.generate()
       const issuerKey = await principal.ed25519.generate()
       const issuer = issuerKey.withDID('did:mailto:example.com:foo')
       const provider = 'did:web:web3.storage:providers:w3up-alpha'
@@ -50,14 +51,21 @@ export const test = {
 
       const modifiedProvision = {
         ...provision,
-        provider: /** @type {import('@ucanto/interface').DID<'web'>} */ (
-          'did:provider:foo'
-        ),
+        cause: await Provider.add
+          .invoke({
+            issuer,
+            audience: issuer,
+            with: issuer.did(),
+            nb: {
+              consumer: spaceB.did(),
+              provider,
+            },
+          }).delegate(),
       }
 
-      // ensure error if we try to store a provision for a consumer that already has a provider
+      // ensure error if we try to store a provision with the same (consumer, provider, customer) but a different cause
       const modifiedResult = await storage.put(modifiedProvision)
-      assert.ok(modifiedResult.error, 'provisioning for a consumer who already has a provider succeeded and should not have!')
+      assert.ok(modifiedResult.error, 'provisioning with duplicate (consumer, provider, customer) but a different cause succeeded and should not have!')
       assert.deepEqual(await storage.count(), BigInt(1))
 
       // verify that provisions are returned as part of customer record

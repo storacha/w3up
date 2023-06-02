@@ -37,6 +37,14 @@ export const add = async (
       },
     }
   }
+  if ((await provisions.hasStorageProvider(consumer)).ok){
+    return {
+      error: {
+        name: 'SpaceAlreadyProvisioned',
+        message: `${consumer} already has a storage provider`
+      }
+    }
+  }
 
   return await provisions.put({
     // eslint-disable-next-line object-shorthand

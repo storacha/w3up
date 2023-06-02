@@ -220,22 +220,21 @@ export const test = {
       )
     }
 
-    // create space
-    const spaceName = `space-test-${Math.random().toString().slice(2)}`
-    const spaceCreation = await agent.createSpace(spaceName)
-    // expect 1 new delegation from space.did() -> accessAgent.issuer.did()
-    expectedDataDelegations += 1
-    assert.deepEqual(
-      countDelegations(accessAgentData),
-      expectedDataDelegations,
-      `agentData has ${expectedDataDelegations} after calling accessClientAgent.createSpace(...)`
-    )
-
-    await agent.setCurrentSpace(spaceCreation.did)
-
-    const provider = /** @type {API.DID<'web'>} */ (agent.connection.id.did())
-
     for (const account of accounts) {
+      // create space
+      const spaceName = `space-test-${Math.random().toString().slice(2)}`
+      const spaceCreation = await agent.createSpace(spaceName)
+      // expect 1 new delegation from space.did() -> accessAgent.issuer.did()
+      expectedDataDelegations += 1
+      assert.deepEqual(
+        countDelegations(accessAgentData),
+        expectedDataDelegations,
+        `agentData has ${expectedDataDelegations} after calling accessClientAgent.createSpace(...)`
+      )
+
+      await agent.setCurrentSpace(spaceCreation.did)
+
+      const provider = /** @type {API.DID<'web'>} */ (agent.connection.id.did())
       await addProvider({
         access: agent,
         space: spaceCreation.did,
@@ -297,14 +296,6 @@ export const test = {
       2,
       'deviceBIssuerClaimed delegations'
     )
-
-    // try to addProvider
-    await addProvider({
-      access: deviceB,
-      space: spaceCreation.did,
-      account,
-      provider: service.did(),
-    })
 
     // issuer + account proofs should authorize deviceB to invoke space/info
     const spaceInfoResult = await deviceB.invokeAndExecute(Space.info, {

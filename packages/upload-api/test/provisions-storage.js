@@ -1,6 +1,13 @@
 import * as Types from '../src/types.js'
 
 /**
+ * 
+ * @param {Types.Provision} item 
+ * @returns {string}
+ */
+const itemKey = (item) => `${item.customer}@${item.provider}`
+
+/**
  * @implements {Types.ProvisionsStorage}
  */
 export class ProvisionsStorage {
@@ -10,7 +17,7 @@ export class ProvisionsStorage {
    */
   constructor(providers = ['did:web:test.web3.storage']) {
     /**
-     * @type {Record<Types.DIDKey, Types.Provision>}
+     * @type {Record<string, Types.Provision>}
      */
     this.provisions = {}
     this.providers = /** @type {Types.ServiceDID[]} */ (providers)
@@ -28,7 +35,7 @@ export class ProvisionsStorage {
    * @param {Types.DIDKey} consumer
    */
   async hasStorageProvider(consumer) {
-    return { ok: !!this.provisions[consumer] }
+    return { ok: !!Object.values(this.provisions).find(i => i.consumer === consumer) }
   }
 
   /**
@@ -37,13 +44,19 @@ export class ProvisionsStorage {
    * @returns
    */
   async put(item) {
+    const storedItem = this.provisions[itemKey(item)]
     if (
-      this.provisions[item.consumer] &&
-      this.provisions[item.consumer].provider !== item.provider
+      storedItem &&
+      (
+        (storedItem.provider !== item.provider) || 
+        (storedItem.customer !== item.customer) || 
+        (storedItem.consumer !== item.consumer) || 
+        (storedItem.cause.link() !== item.cause.link())
+      )
     ) {
-      return { error: new Error() }
+      return { error: new Error(`could not store ${JSON.stringify(item)}`) }
     } else {
-      this.provisions[item.consumer] = item
+      this.provisions[itemKey(item)] = item
       return { ok: {} }
     }
   }

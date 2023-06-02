@@ -14,14 +14,6 @@ describe(`provider/add`, () => {
   it(`can invoke as did:mailto after authorize confirmation`, async () => {
     const { space, agent, account, ...context } = await setup()
     try {
-      await provisionProvider({
-        service: context.service,
-        agent,
-        space,
-        account,
-        connection: context.connection,
-      })
-
       await testAuthorizeClaimProviderAdd({
         deviceA: await principal.ed25519.generate(),
         accountA: account,
