@@ -20,8 +20,14 @@ export const claim = async (
 ) => {
   const claimedAudience = invocation.capabilities[0].with
   const claimedResult = await delegations.find({ audience: claimedAudience })
-  if (claimedResult.error){
-    return claimedResult
+  if (claimedResult.error) {
+    return {
+      error: {
+        name: 'AccessClaimFailure',
+        message: 'error finding delegations',
+        cause: claimedResult.error
+      }
+    }
   }
   return {
     ok: {

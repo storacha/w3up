@@ -30,7 +30,7 @@ export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
 export interface AccessClaimSuccess {
   delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
 }
-export interface AccessClaimFailure {
+export interface AccessClaimFailure extends Ucanto.Failure {
   name: 'AccessClaimFailure'
   message: string
 }

@@ -27,5 +27,5 @@ export interface DelegationsStorage<
    * find all items that match the query
    */
   find: (query: Query) =>
-   Promise<Ucanto.Result<Ucanto.Delegation<Ucanto.Tuple<Cap>>[], never>>
+   Promise<Ucanto.Result<Ucanto.Delegation<Ucanto.Tuple<Cap>>[], Ucanto.Failure>>
 }
