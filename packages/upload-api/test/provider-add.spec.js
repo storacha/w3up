@@ -7,7 +7,7 @@ import { cleanupContext, createContext } from './helpers/context.js'
 import { Access, Provider, Consumer } from '@web3-storage/capabilities'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
-import { createAuthorization, provisionProvider } from './helpers/utils.js'
+import { createAuthorization } from './helpers/utils.js'
 import { authorizeFromUrl } from '../src/validate.js'
 
 describe(`provider/add`, () => {
