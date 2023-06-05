@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { create as createServer, provide } from '@ucanto/server'
+import { create as createServer, provide, isLink } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import { Store as StoreCapabilities } from '@web3-storage/capabilities'
@@ -47,12 +47,14 @@ describe('StoreClient', () => {
       await alice.setCurrentSpace(space.did())
 
       const car = await randomCAR(128)
-      const carCID = await alice.capability.store.add(car)
+      const result = await alice.capability.store.add(car)
 
       assert(service.store.add.called)
       assert.equal(service.store.add.callCount, 1)
 
-      assert.equal(carCID.toString(), car.cid.toString())
+      assert.equal(result.link.toString(), car.cid.toString())
+      assert.ok(result.piece.size > car.size)
+      assert.ok(isLink(result.piece.link))
     })
   })
 

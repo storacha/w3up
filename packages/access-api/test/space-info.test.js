@@ -8,6 +8,16 @@ import * as Upload from '@web3-storage/capabilities/upload'
 // @ts-ignore
 import isSubset from 'is-subset'
 
+/**
+ * Fixture for the `piece` field of the `store/add` capability.
+ */
+const piece = {
+  link: parseLink(
+    'bafkreiflp6w7xmfwmadkrjej2xygua5d2bx74rr3glywb44ekmap4g3rjy'
+  ),
+  size: 1024,
+}
+
 describe('space/info', function () {
   /** @type {Awaited<ReturnType<typeof context>>} */
   let ctx
@@ -106,6 +116,7 @@ describe('space/info', function () {
             nb: {
               size: 1000,
               link: parseLink('bafkqaaa'),
+              piece,
             },
           }),
         ],
