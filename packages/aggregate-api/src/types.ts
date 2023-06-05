@@ -28,12 +28,19 @@ export interface ArrangedOfferStore {
 }
 
 export interface OfferStore {
+  // queue: (aggregateOffer: AggregateOffer, fxArchive: Uint8Array) => Promise<void>
   put: (commitmentProof: string, offers: Offer[]) => Promise<void>
 }
 
 export interface AggregateStore {
   get: (commitmentProof: string) => Promise<unknown[] | undefined>
 }
+
+export interface AggregateOffer {
+  commitmentProof: string
+  offers: Offer[]
+}
+
 
 export interface UcantoServerContext extends ServiceContext {
   id: Signer

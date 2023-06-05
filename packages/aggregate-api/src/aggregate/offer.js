@@ -65,8 +65,21 @@ export function aggregateOfferProvider({ offerStore }) {
         .delegate()
 
       // TODO: archive delegation
-      // fx.archive()
+      // const fxArchive = await fx.archive()
+
+      // if (!fxArchive.ok) {
+      //   return {
+      //     error: new Server.Failure(
+      //       `provided size ${capability.nb.size} does not match computed size ${size}`
+      //     ),
+      //   }
+      // }
+
+      // fxArchive.ok
       // Write offer to store
+      // const aggregateOffer = { commitmentProof, offers }
+      // await offerStore.queue(aggregateOffer, fxArchive.ok)
+      
       await offerStore.put(commitmentProof, offers)
 
       return Server.ok({
