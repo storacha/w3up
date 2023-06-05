@@ -29,6 +29,13 @@ const store = async () =>
     proofs: [await top()],
   })
 
+const commP = {
+  link: parseLink(
+    'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+  ),
+  size: 128,
+}
+
 describe('store capabilities', function () {
   it('store/add can be derived from *', async () => {
     const add = Store.add.invoke({
@@ -38,6 +45,7 @@ describe('store capabilities', function () {
       nb: {
         link: parseLink('bafkqaaa'),
         size: 0,
+        piece: commP,
       },
       proofs: [await top()],
     })
@@ -57,6 +65,7 @@ describe('store capabilities', function () {
     assert.deepEqual(result.ok.capability.nb, {
       link: parseLink('bafkqaaa'),
       size: 0,
+      piece: commP,
     })
   })
 
@@ -68,6 +77,7 @@ describe('store capabilities', function () {
       nb: {
         link: parseLink('bafkqaaa'),
         size: 0,
+        piece: commP,
       },
       proofs: [await store()],
     })
@@ -87,6 +97,7 @@ describe('store capabilities', function () {
     assert.deepEqual(result.ok.capability.nb, {
       link: parseLink('bafkqaaa'),
       size: 0,
+      piece: commP,
     })
   })
 
@@ -105,6 +116,7 @@ describe('store capabilities', function () {
       nb: {
         link: parseLink('bafkqaaa'),
         size: 0,
+        piece: commP,
       },
       proofs: [store],
     })
@@ -124,6 +136,7 @@ describe('store capabilities', function () {
     assert.deepEqual(result.ok.capability.nb, {
       link: parseLink('bafkqaaa'),
       size: 0,
+      piece: commP,
     })
   })
 
@@ -146,6 +159,7 @@ describe('store capabilities', function () {
         nb: {
           size: 1000,
           link: parseLink('bafkqaaa'),
+          piece: commP,
         },
         proofs: [delegation],
       })
@@ -165,6 +179,7 @@ describe('store capabilities', function () {
       assert.deepEqual(result.ok.capability.nb, {
         link: parseLink('bafkqaaa'),
         size: 1000,
+        piece: commP,
       })
     }
 
@@ -176,6 +191,7 @@ describe('store capabilities', function () {
         nb: {
           size: 2048,
           link: parseLink('bafkqaaa'),
+          piece: commP,
         },
         proofs: [await delegation],
       })
@@ -205,6 +221,7 @@ describe('store capabilities', function () {
             link: parseLink('bafkqaaa'),
             // @ts-expect-error
             size,
+            piece: commP,
           },
           proofs,
         })
@@ -222,6 +239,7 @@ describe('store capabilities', function () {
             nb: {
               link: await createCarCid('bafkqaaa'),
               size,
+              piece: commP,
             },
           },
         ],
@@ -250,6 +268,7 @@ describe('store capabilities', function () {
         nb: {
           link: parseLink('bafkqaaa'),
           size: 1024.2,
+          piece: commP,
         },
         proofs,
       })

@@ -26,6 +26,11 @@ export const store = capability({
   derives: equalWith,
 })
 
+export const Piece = Schema.struct({
+  link: Schema.link(),
+  size: Schema.integer(),
+})
+
 /**
  * `store/add` capability allows agent to store a CAR file into a (memory) space
  * identified by did:key in the `with` field. Agent must precompute CAR locally
@@ -46,12 +51,16 @@ export const add = capability({
      * for this exact CAR file for agent to PUT or POST it. Attempt to write
      * any other content will fail.
      */
-    link: Link,
+    link: Schema.link(),
     /**
      * Size of the CAR file to be stored. Service will provision write target
      * for this exact size. Attempt to write a larger CAR file will fail.
      */
     size: Schema.integer(),
+    /**
+     * The file coin piece details.
+     */
+    piece: Piece,
     /**
      * Agent may optionally provide a link to a related CAR file using `origin`
      * field. This is useful when storing large DAGs, agent could shard it
