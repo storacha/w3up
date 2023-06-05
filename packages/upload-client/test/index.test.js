@@ -109,7 +109,11 @@ describe('uploadFile', () => {
     assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
   })
 
-  it('allows custom shard size to be set', async () => {
+  it('allows custom shard size to be set', async function () {
+    // on my device it usually takes 4secs but on CI it seems to exceed 5s
+    // timeout. Bump it up to 10s.
+    this.timeout(10_000)
+
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const file = new Blob([await randomBytes(1024 * 1024 * 5)])
