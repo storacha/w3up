@@ -1,16 +1,16 @@
 /* eslint-disable unicorn/no-null */
-import assert from 'assert'
-import { access } from '@ucanto/validator'
-import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
+import { Verifier } from '@ucanto/principal'
+import { access } from '@ucanto/validator'
+import { assert } from 'chai'
 import * as Store from '../../src/store.js'
 import * as Capability from '../../src/top.js'
 
 import {
-  alice,
-  service as w3,
   mallory as account,
+  alice,
   bob,
+  service as w3,
 } from '../helpers/fixtures.js'
 import { createCarCid } from '../helpers/utils.js'
 
@@ -140,7 +140,7 @@ describe('store capabilities', function () {
     })
   })
 
-  it('store/add sholud fail when escalating size constraint', async () => {
+  it('store/add should fail when escalating size constraint', async () => {
     const delegation = await Store.add.delegate({
       issuer: alice,
       audience: bob,
@@ -203,7 +203,10 @@ describe('store capabilities', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes('violation: 2048 > 1024'))
+      assert.match(
+        String(result.error),
+        /"nb.size: 1024" violation: 2048 > 1024/
+      )
     }
   })
 
@@ -254,7 +257,7 @@ describe('store capabilities', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes('Expected value of type'))
+      assert.match(String(result.error), /Expected value of type/)
     })
   }
 
@@ -273,5 +276,165 @@ describe('store capabilities', function () {
         proofs,
       })
     }, /Expected value of type integer instead got 1024\.2/)
+  })
+
+  it('piece can be unconstrained', async () => {
+    const proof = await Store.add.delegate({
+      issuer: alice,
+      audience: bob,
+      with: alice.did(),
+      nb: {
+        link: await createCarCid('bafkqaaa'),
+        size: 1024,
+      },
+    })
+
+    const add = await Store.add
+      .invoke({
+        issuer: bob,
+        audience: w3,
+        with: alice.did(),
+        nb: {
+          link: await createCarCid('bafkqaaa'),
+          size: 1024,
+          piece: commP,
+        },
+        proofs: [proof],
+      })
+      .delegate()
+
+    const result = await access(add, {
+      capability: Store.add,
+      principal: Verifier,
+      authority: w3,
+    })
+
+    assert.ok(result.ok)
+  })
+
+  it('can not partially constrain piece', async () => {
+    const proof = await delegate({
+      issuer: alice,
+      audience: bob,
+      capabilities: [
+        {
+          can: 'store/add',
+          with: alice.did(),
+          nb: {
+            link: await createCarCid('bafkqaaa'),
+            size: 1024,
+            piece: {
+              size: 2048,
+            },
+          },
+        },
+      ],
+    })
+
+    const add = await Store.add
+      .invoke({
+        issuer: bob,
+        audience: w3,
+        with: alice.did(),
+        nb: {
+          link: await createCarCid('bafkqaaa'),
+          size: 1024,
+          piece: {
+            link: commP.link,
+            size: 2048,
+          },
+        },
+        proofs: [proof],
+      })
+      .delegate()
+
+    const result = await access(add, {
+      capability: Store.add,
+      principal: Verifier,
+      authority: w3,
+    })
+
+    assert.ok(result.error?.message.includes('contains invalid field "link"'))
+  })
+
+  it('piece constraints are verified', async () => {
+    const piece = {
+      ...commP,
+      size: 2048,
+    }
+    const proof = await Store.add.delegate({
+      issuer: alice,
+      audience: bob,
+      with: alice.did(),
+      nb: {
+        link: await createCarCid('bafkqaaa'),
+        size: 1024,
+        piece,
+      },
+    })
+
+    for (const input of [
+      { size: 0 },
+      { size: 2047 },
+      { size: 2049 },
+      { size: 3000 },
+      { size: 2048, ok: true },
+    ]) {
+      const add = await Store.add
+        .invoke({
+          issuer: bob,
+          audience: w3,
+          with: alice.did(),
+          nb: {
+            link: await createCarCid('bafkqaaa'),
+            size: 1024,
+            piece: {
+              ...piece,
+              size: input.size,
+            },
+          },
+          proofs: [proof],
+        })
+        .delegate()
+
+      const result = await access(add, {
+        capability: Store.add,
+        principal: Verifier,
+        authority: w3,
+      })
+
+      if (input.ok) {
+        assert.ok(result.ok)
+      } else {
+        assert.match(String(result.error), /piece.size/)
+      }
+    }
+
+    const add = await Store.add
+      .invoke({
+        issuer: bob,
+        audience: w3,
+        with: alice.did(),
+        nb: {
+          link: await createCarCid('bafkqaaa'),
+          size: 1024,
+          piece: {
+            ...piece,
+            link: parseLink(
+              'bafkreiebxxq5gathekjxvf6bvr4wwrw3nc2tgxyuiaxv5fhwhxk3ckn7x4'
+            ),
+          },
+        },
+        proofs: [proof],
+      })
+      .delegate()
+
+    const result = await access(add, {
+      capability: Store.add,
+      principal: Verifier,
+      authority: w3,
+    })
+
+    assert.match(String(result.error), /piece.link/)
   })
 })

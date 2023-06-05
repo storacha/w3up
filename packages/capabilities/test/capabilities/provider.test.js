@@ -1,4 +1,4 @@
-import assert from 'assert'
+import { assert } from 'chai'
 import { access } from '@ucanto/validator'
 import * as principal from '@ucanto/principal'
 import { Verifier } from '@ucanto/principal/ed25519'
@@ -134,7 +134,7 @@ describe('provider/add', function () {
           provider: 'did:web:test.web3.storage',
         },
       })
-    }, /Error: Invalid 'nb' - Object contains invalid field "consumer"/)
+    }, /Invalid 'nb' - Object contains invalid field "consumer"/)
   })
 
   it('nb.consumer must be a did:key', async function () {
@@ -150,7 +150,7 @@ describe('provider/add', function () {
           consumer: 'did:mailto:web3.storage:user',
         },
       })
-    }, /Error: Invalid 'nb' - Object contains invalid field "consumer"/)
+    }, /Invalid 'nb' - Object contains invalid field "consumer"/g)
   })
 
   it('requires nb.provider', async function () {
@@ -166,7 +166,7 @@ describe('provider/add', function () {
           consumer: bob.did(),
         },
       })
-    }, /Error: Invalid 'nb' - Object contains invalid field "provider"/)
+    }, /Invalid 'nb' - Object contains invalid field "provider"/)
   })
 
   it('does not require nb.provider be registered', async function () {

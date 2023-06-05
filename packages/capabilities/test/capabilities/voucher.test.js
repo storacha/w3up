@@ -1,4 +1,4 @@
-import assert from 'assert'
+import { assert } from 'chai'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
 import { delegate } from '@ucanto/core'

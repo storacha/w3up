@@ -55,28 +55,36 @@ export function equal(child, parent, constraint) {
 }
 
 /**
- * @template {Types.ParsedCapability<"store/add"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
- * @param {T} claimed
- * @param {T} delegated
- * @returns {Types.Result<{}, Types.Failure>}
+ * Checks that numeric `claim` does not exceed imposed (numeric) `quota`.
+ *
+ * @param {number} claim
+ * @param {number} quota
+ * @param {string} at
  */
-export const equalLink = (claimed, delegated) => {
-  if (claimed.with !== delegated.with) {
-    return fail(
-      `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
-    )
-  } else if (
-    delegated.nb.link &&
-    `${delegated.nb.link}` !== `${claimed.nb.link}`
-  ) {
-    return fail(
-      `Link ${claimed.nb.link ? `${claimed.nb.link}` : ''} violates imposed ${
-        delegated.nb.link
-      } constraint.`
-    )
+export function checkQuota(claim, quota, at) {
+  if (quota === undefined) {
+    return ok({})
+  } else if (claim > quota) {
+    return fail(`"${at}: ${quota}" violation: ${claim} > ${quota}`)
   } else {
     return ok({})
   }
+}
+
+/**
+ * Checks that `claimed` {@link Types.Link} meets an `imposed` constraint.
+ *
+ * @param {Types.UnknownLink} claimed
+ * @param {Types.UnknownLink|undefined} imposed
+ * @param {string} at
+ * @returns {Types.Result<{}, Types.Failure>}
+ */
+export const checkLink = (claimed, imposed, at) => {
+  return equal(
+    String(claimed),
+    imposed === undefined ? undefined : String(imposed),
+    at
+  )
 }
 
 /**

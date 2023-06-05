@@ -1,4 +1,4 @@
-import assert from 'assert'
+import { assert } from 'chai'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
@@ -139,8 +139,9 @@ describe('upload capabilities', function () {
       authority: w3,
     })
     assert.ok(result.error)
-    assert(
-      result.error.message.includes('Expected link to be CID with 0x202 codec')
+    assert.match(
+      String(result.error),
+      /Expected link to be CID with 0x202 codec/
     )
   })
 
@@ -214,10 +215,9 @@ describe('upload capabilities', function () {
     })
 
     assert.ok(result.error)
-    assert(
-      result.error.message.includes(
-        'Expected did: URI instead got mailto:alice@web.mail'
-      )
+    assert.match(
+      String(result.error),
+      /Expected did: URI instead got mailto:alice@web.mail/
     )
   })
 
@@ -289,10 +289,9 @@ describe('upload capabilities', function () {
     })
 
     assert.ok(result.error)
-    assert(
-      result.error.message.includes(
-        'bafyreig7xrtnfhkdu4wt3fbufl4bppd5r5ixrowmi5ekw5vjundxynmzj4 violates imposed root constraint bafyreiglqnkzhzh2gyz4zfy7zpi6wcamumrclarakshlocd35l4o63l76q'
-      )
+    assert.match(
+      String(result.error),
+      /bafyreig7xrtnfhkdu4wt3fbufl4bppd5r5ixrowmi5ekw5vjundxynmzj4 violates imposed root constraint bafyreiglqnkzhzh2gyz4zfy7zpi6wcamumrclarakshlocd35l4o63l76q/
     )
   })
 
@@ -325,10 +324,9 @@ describe('upload capabilities', function () {
     })
 
     assert.ok(result.error)
-    assert(
-      result.error.message.includes(
-        'imposed shards constraint bagbaierar5jtiax76ossjdhyqshypwkkrztwp3zch7voido4pmuxrcoyq7za'
-      )
+    assert.match(
+      String(result.error),
+      /imposed shards constraint bagbaierar5jtiax76ossjdhyqshypwkkrztwp3zch7voido4pmuxrcoyq7za/
     )
   })
 
@@ -451,10 +449,9 @@ describe('upload capabilities', function () {
       authority: w3,
     })
     assert.ok(result.error)
-    assert(
-      result.error.message.includes(
-        'Expected did: URI instead got mailto:alice@web.mail'
-      )
+    assert.match(
+      String(result.error),
+      /Expected did: URI instead got mailto:alice@web.mail/
     )
   })
 
@@ -593,10 +590,9 @@ describe('upload capabilities', function () {
       authority: w3,
     })
     assert.ok(result.error)
-    assert(
-      result.error.message.includes(
-        'Expected did: URI instead got mailto:alice@web.mail'
-      )
+    assert.match(
+      String(result.error),
+      /Expected did: URI instead got mailto:alice@web.mail/
     )
   })
 
@@ -632,10 +628,9 @@ describe('upload capabilities', function () {
     })
 
     assert.ok(result.error)
-    assert(
-      result.error.message.includes(
-        'bagbaieral6qo2fk7dph2ltggtw2qc6hda23hawvpc4duykdsh4soobxfe55a violates imposed root constraint bafkqaaa'
-      )
+    assert.match(
+      String(result.error),
+      /bagbaieral6qo2fk7dph2ltggtw2qc6hda23hawvpc4duykdsh4soobxfe55a violates imposed root constraint bafkqaaa/
     )
   })
 })

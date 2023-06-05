@@ -8,8 +8,8 @@
  *
  * @module
  */
-import { capability, Link, URI, Schema, ok, fail } from '@ucanto/validator'
-import { equalLink, equalWith } from './utils.js'
+import { capability, Link, URI, Schema, ok } from '@ucanto/validator'
+import { checkLink, equalWith, checkQuota, equal, and } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
@@ -73,16 +73,16 @@ export const add = capability({
     origin: Link.optional(),
   }),
   derives: (claim, from) => {
-    const result = equalLink(claim, from)
-    if (result.error) {
-      return result
-    } else if (claim.nb.size !== undefined && from.nb.size !== undefined) {
-      return claim.nb.size > from.nb.size
-        ? fail(`Size constraint violation: ${claim.nb.size} > ${from.nb.size}`)
-        : ok({})
-    } else {
-      return ok({})
-    }
+    return (
+      and(equalWith(claim, from)) ||
+      and(checkLink(claim.nb.link, from.nb.link, 'nb.link')) ||
+      and(checkQuota(claim.nb.size, from.nb.size, 'nb.size')) ||
+      and(
+        checkLink(claim.nb.piece.link, from.nb.piece.link, 'nb.piece.link')
+      ) ||
+      and(equal(claim.nb.piece.size, from.nb.piece.size, 'nb.piece.size')) ||
+      ok({})
+    )
   },
 })
 
@@ -103,7 +103,13 @@ export const remove = capability({
      */
     link: Link,
   }),
-  derives: equalLink,
+  derives: (claimed, delegated) => {
+    return (
+      and(equalWith(claimed, delegated)) ||
+      checkLink(claimed.nb.link, delegated.nb.link, 'nb.link') ||
+      ok({})
+    )
+  },
 })
 
 /**
@@ -133,12 +139,12 @@ export const list = capability({
     pre: Schema.boolean().optional(),
   }),
   derives: (claimed, delegated) => {
-    if (claimed.with !== delegated.with) {
-      return fail(
-        `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
-      )
-    }
-    return ok({})
+    return (
+      and(equalWith(claimed, delegated)) ||
+      and(equal(claimed.nb.cursor, delegated.nb.cursor, 'nb.cursor')) ||
+      and(equal(claimed.nb.size, delegated.nb.size, 'nb.size')) ||
+      ok({})
+    )
   },
 })
 

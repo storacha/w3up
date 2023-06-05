@@ -1,4 +1,4 @@
-import assert from 'assert'
+import { assert } from 'chai'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
@@ -708,16 +708,16 @@ describe('access capabilities', function () {
 
         assert.ok(result.ok, 'result of access(invocation) is not an error')
         assert.deepEqual(
-          result.ok.audience.did(),
+          result.ok?.audience.did(),
           audience.did(),
           'result audience did is expected value'
         )
         assert.equal(
-          result.ok.capability.can,
+          result.ok?.capability.can,
           'access/claim',
           'result capability.can is access/claim'
         )
-        assert.deepEqual(result.ok.capability.nb, {}, 'result has empty nb')
+        assert.deepEqual(result.ok?.capability.nb, {}, 'result has empty nb')
       }
     })
 
@@ -789,9 +789,9 @@ describe('access capabilities', function () {
         }
       )
       assert.ok(result.error, 'result of access(invocation) is an error')
-      assert.deepEqual(result.error.name, 'Unauthorized')
+      assert.deepEqual(result.error?.name, 'Unauthorized')
       assert.ok(
-        result.error.delegationErrors.find((e) =>
+        result.error?.delegationErrors.find((e) =>
           e.message.includes('but got "did:foo:bar" instead')
         ),
         'a result.delegationErrors message mentions invalid with value'
@@ -814,9 +814,9 @@ describe('access capabilities', function () {
         authority: audience,
       })
       assert.ok(result.error, 'result of access(invocation) is an error')
-      assert.deepEqual(result.error.name, 'Unauthorized')
+      assert.deepEqual(result.error?.name, 'Unauthorized')
       assert.ok(
-        result.error.failedProofs.find((e) => {
+        result.error?.failedProofs.find((e) => {
           return /Capability (.+) is not authorized/.test(e.message)
         })
       )
@@ -961,9 +961,9 @@ describe('access/delegate', () => {
       authority: audience,
     })
     assert.ok(result.error, 'result of access(invocation) is an error')
-    assert.deepEqual(result.error.failedProofs.length, 1)
+    assert.deepEqual(result.error?.failedProofs.length, 1)
     assert.ok(
-      result.error.message.match(
+      result.error?.message.match(
         `unauthorized nb.delegations ${firstDelegation.cid}`
       )
     )
@@ -996,7 +996,7 @@ describe('access/delegate', () => {
     })
     assert.ok(result.error, 'result is error')
     assert.ok(
-      result.error.message.includes(
+      result.error?.message.includes(
         `Can not derive access/delegate with ${mallory.did()} from ${alice.did()}`
       )
     )
@@ -1053,7 +1053,7 @@ describe('access/delegate', () => {
       )
       assert.ok(accessResult.error, 'accessResult is error')
       assert.ok(
-        accessResult.error.message.includes(
+        accessResult.error?.message.includes(
           `Encountered malformed 'access/delegate' capability`
         )
       )
