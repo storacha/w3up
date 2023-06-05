@@ -60,7 +60,7 @@ describe('Store.add', () => {
     })
 
     let progressStatusCalls = 0
-    const carCID = await Store.add(
+    const result = await Store.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {
@@ -76,8 +76,10 @@ describe('Store.add', () => {
     assert.equal(service.store.add.callCount, 1)
     assert.equal(progressStatusCalls, 1)
 
-    assert(carCID)
-    assert.equal(carCID.toString(), car.cid.toString())
+    assert(result)
+    assert.equal(result.link.toString(), car.cid.toString())
+    assert.equal(result.piece.size >= car.size, true)
+    assert.equal(Server.isLink(result.piece.link), true)
   })
 
   it('throws for bucket URL client error 4xx', async () => {
@@ -222,7 +224,7 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    const carCID = await Store.add(
+    const result = await Store.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {
@@ -233,8 +235,10 @@ describe('Store.add', () => {
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
 
-    assert(carCID)
-    assert.equal(carCID.toString(), car.cid.toString())
+    assert(result)
+    assert.equal(result.link.toString(), car.cid.toString())
+    assert.equal(result.piece.size >= car.size, true)
+    assert.equal(Server.isLink(result.piece.link), true)
   })
 
   it('aborts', async () => {

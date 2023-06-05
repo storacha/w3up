@@ -9,6 +9,16 @@ import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import { createSpace, registerSpace } from './util.js'
 
 /**
+ * Fixture for the `piece` field of the `store/add` capability.
+ */
+const piece = {
+  link: Link.parse(
+    'bafkreiflp6w7xmfwmadkrjej2xygua5d2bx74rr3glywb44ekmap4g3rjy'
+  ),
+  size: 1024,
+}
+
+/**
  * @type {API.Tests}
  */
 export const test = {
@@ -28,7 +38,7 @@ export const test = {
       issuer: alice,
       audience: context.id,
       with: spaceDid,
-      nb: { link, size },
+      nb: { link, size, piece },
       proofs: [proof],
     })
 
@@ -120,7 +130,7 @@ export const test = {
           issuer: alice,
           audience: context.id,
           with: spaceDid,
-          nb: { link, size },
+          nb: { link, size, piece },
           proofs: [proof],
         })
         .execute(connection)
@@ -171,7 +181,7 @@ export const test = {
           issuer: alice,
           audience: context.id,
           with: spaceDid,
-          nb: { link, size },
+          nb: { link, size, piece },
           proofs: [proof],
         })
         .execute(connection)
@@ -229,7 +239,7 @@ export const test = {
       issuer: alice,
       audience: connection.id,
       with: spaceDid,
-      nb: { link, size: data.byteLength },
+      nb: { link, size: data.byteLength, piece },
       proofs: [proof],
     })
 
@@ -292,7 +302,7 @@ export const test = {
         issuer: alice,
         audience: connection.id,
         with: spaceDid,
-        nb: { link, size: data.byteLength },
+        nb: { link, size: data.byteLength, piece },
         proofs: [proof],
       })
       .execute(connection)
@@ -308,7 +318,7 @@ export const test = {
         issuer: alice,
         audience: connection.id,
         with: spaceDid,
-        nb: { link, size: data.byteLength },
+        nb: { link, size: data.byteLength, piece },
         proofs: [proof],
       })
       .execute(connection)
@@ -332,7 +342,7 @@ export const test = {
         issuer: alice,
         audience: connection.id,
         with: spaceDid,
-        nb: { link, size },
+        nb: { link, size, piece },
         proofs: [proof],
       })
       .execute(connection)
@@ -428,7 +438,11 @@ export const test = {
           issuer: alice,
           audience: connection.id,
           with: spaceDid,
-          nb: { link: await CAR.codec.link(datum), size: datum.byteLength },
+          nb: {
+            link: await CAR.codec.link(datum),
+            size: datum.byteLength,
+            piece,
+          },
           proofs: [proof],
         })
         .execute(connection)
@@ -484,7 +498,11 @@ export const test = {
           issuer: alice,
           audience: connection.id,
           with: spaceDid,
-          nb: { link: await CAR.codec.link(datum), size: datum.byteLength },
+          nb: {
+            link: await CAR.codec.link(datum),
+            size: datum.byteLength,
+            piece,
+          },
           proofs: [proof],
         })
         .execute(connection)
@@ -568,7 +586,11 @@ export const test = {
           issuer: alice,
           audience: connection.id,
           with: spaceDid,
-          nb: { link: await CAR.codec.link(datum), size: datum.byteLength },
+          nb: {
+            link: await CAR.codec.link(datum),
+            size: datum.byteLength,
+            piece,
+          },
           proofs: [proof],
         })
         .execute(connection)

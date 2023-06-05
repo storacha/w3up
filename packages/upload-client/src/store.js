@@ -4,6 +4,7 @@ import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
 import fetchPkg from 'ipfs-utils/src/http/fetch.js'
+import { CommP } from '@web3-storage/data-segment'
 const { fetch } = fetchPkg
 
 /**
@@ -43,7 +44,7 @@ function createUploadProgressHandler(url, handler) {
  * The issuer needs the `store/add` delegated capability.
  * @param {Blob} car CAR file data.
  * @param {import('./types').RequestOptions} [options]
- * @returns {Promise<import('./types').CARLink>}
+ * @returns {Promise<import('./types').ContentArchiveInfo>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
@@ -53,8 +54,18 @@ export async function add(
   // TODO: validate blob contains CAR data
   const bytes = new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
+  const piece = await CommP.build(bytes)
   /* c8 ignore next */
   const conn = options.connection ?? connection
+  const payload = {
+    link,
+    size: bytes.length,
+    piece: {
+      link: piece.link(),
+      size: piece.pieceSize,
+    },
+  }
+
   const result = await retry(
     async () => {
       return await StoreCapabilities.add
@@ -63,7 +74,7 @@ export async function add(
           /* c8 ignore next */
           audience: audience ?? servicePrincipal,
           with: resource,
-          nb: { link, size: car.size },
+          nb: payload,
           proofs,
         })
         .execute(conn)
@@ -82,7 +93,7 @@ export async function add(
 
   // Return early if it was already uploaded.
   if (result.out.ok.status === 'done') {
-    return link
+    return payload
   }
 
   const responseAddUpload = result.out.ok
@@ -131,7 +142,7 @@ export async function add(
     throw new Error(`upload failed: ${res.status}`)
   }
 
-  return link
+  return payload
 }
 
 /**

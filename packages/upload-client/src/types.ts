@@ -24,6 +24,7 @@ import {
   UploadRemove,
 } from '@web3-storage/capabilities/types'
 import * as UnixFS from '@ipld/unixfs/src/unixfs'
+import type { CommP } from '@web3-storage/data-segment'
 
 export type {
   FetchOptions,
@@ -135,6 +136,12 @@ export interface UnixFSEncodeResult {
 }
 
 /**
+ * [Piece CID](https://spec.filecoin.io/systems/filecoin_files/piece/) of some
+ * content.
+ */
+export type PieceCID = ReturnType<typeof CommP.toCID>
+
+/**
  * Information present in the CAR file header.
  */
 export interface CARHeaderInfo {
@@ -166,14 +173,35 @@ export type AnyLink = Link<unknown, number, number, Version>
 /**
  * Metadata pertaining to a CAR file.
  */
-export interface CARMetadata extends CARHeaderInfo {
+export interface CARMetadata extends PieceInfo, CARHeaderInfo {
   /**
    * CID of the CAR file (not the data it contains).
    */
   cid: CARLink
+
   /**
    * Size of the CAR file in bytes.
    */
+  size: number
+}
+
+export interface ContentArchiveInfo extends PieceInfo {
+  /**
+   * CID of the CAR file (not the data it contains).
+   */
+  link: CARLink
+}
+
+export interface PieceInfo {
+  piece: Piece
+}
+
+/**
+ * [Piece](https://spec.filecoin.io/systems/filecoin_files/piece/) information
+ * for this CAR file.
+ */
+export interface Piece {
+  link: PieceCID
   size: number
 }
 

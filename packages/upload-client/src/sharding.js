@@ -95,9 +95,9 @@ export class ShardStoringStream extends TransformStream {
             async () => {
               try {
                 const opts = { ...options, signal: abortController.signal }
-                const cid = await add(conf, car, opts)
+                const { link: cid, piece } = await add(conf, car, opts)
                 const { version, roots, size } = car
-                controller.enqueue({ version, roots, cid, size })
+                controller.enqueue({ version, roots, cid, size, piece })
               } catch (err) {
                 controller.error(err)
                 abortController.abort(err)
