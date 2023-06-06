@@ -9,13 +9,16 @@ export interface DelegationsStorage<
   Cap extends Ucanto.Capability = Ucanto.Capability
 > {
   /**
-   * write several items into storage
-   *
-   * @param delegations - delegations to store
+   * Write several items into storage.
+   * 
+   * Options accept an optional `cause` that MUST be the CID of the invocation
+   * that contains the given delegation. Implementations MAY choose
+   * to avoid storing delegations as long as they can reliably
+   * retrieve the invocation by CID when they need to return the given delegations.
    */
   putMany: (
-    cause: Ucanto.Link,
-    delegations: Ucanto.Delegation<Ucanto.Tuple<Cap>>[]
+    delegations: Ucanto.Delegation<Ucanto.Tuple<Cap>>[],
+    options?: { cause?: Ucanto.Link }
   ) => Promise<Ucanto.Result<{}, never>>
 
   /**
