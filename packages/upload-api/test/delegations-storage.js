@@ -12,12 +12,9 @@ export class DelegationsStorage {
   }
 
   /**
-   *
-   * @param {Types.Link} _
    * @param  {Array<Types.Delegation<Types.Tuple<any>>>} delegations
-   * @returns
    */
-  async putMany(_, delegations) {
+  async putMany(delegations) {
     this.delegations = [...delegations, ...this.delegations]
     return { ok: {} }
   }
