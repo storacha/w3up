@@ -28,29 +28,6 @@ export async function aggregateOffer(
 
   // Validate size for offer is valid
   const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-  if (size < MIN_SIZE) {
-    throw new Error(
-      `provided size is not enough to create an offer (${size} < ${MIN_SIZE})`
-    )
-  } else if (size > MAX_SIZE) {
-    throw new Error(
-      `provided size is larger than it can be accepted for an offer (${size} > ${MAX_SIZE})`
-    )
-  }
-
-  // Validate valid URLs
-  for (const offer of offers.values()) {
-    for (const u of offer.src) {
-      try {
-        new URL(u)
-      } catch {
-        throw new Error(
-          `provided url ${u} for offer CAR ${offer.link.toString()} is invalid`
-        )
-      }
-    }
-  }
-
   const block = await CBOR.write(offers)
   const invocation = AggregateCapabilities.offer.invoke({
     issuer,

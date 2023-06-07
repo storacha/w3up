@@ -87,6 +87,7 @@ export interface AggregateOfferFailure extends Ucanto.Failure {
     | 'AggregateFailure'
     | 'AggregateOfferInvalidSizeFailure'
     | 'AggregateOfferBlockNotFoundFailure'
+    | 'AggregateOfferInvalidUrlFailure'
 }
 
 export interface OfferArrangeSuccess {

@@ -60,6 +60,21 @@ export const claim = async (
     }
   }
 
+  // Validate URLs in offers src
+  for (const offer of offers.values()) {
+    for (const u of offer.src) {
+      try {
+        new URL(u)
+      } catch {
+        return {
+          error: new AggregateOfferInvalidUrlError(
+            `offer has invalid URL: ${u}`
+          ),
+        }
+      }
+    }
+  }
+
   // TODO: Validate commP
 
   // Create effect for receipt
@@ -96,6 +111,12 @@ function getOfferBlock(offerCid, invocation) {
       return decoded
       // TODO: Validate with schema
     }
+  }
+}
+
+class AggregateOfferInvalidUrlError extends Server.Failure {
+  get name() {
+    return /** @type {const} */ ('AggregateOfferInvalidUrlFailure')
   }
 }
 

@@ -109,6 +109,53 @@ export const test = {
     // Validate effect in receipt does not exist
     assert.ok(!aggregateOffer.fx.join)
   },
+  'aggregate/offer fails when one or more URLs are not valid': async (
+    assert,
+    context
+  ) => {
+    const { storeFront } = await getServiceContext()
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // Generate CAR Files for offer
+    const offers = (await randomCARs(100, 100))
+      // Get broken URLs
+      .map((car) => ({
+        ...car,
+        size: car.size * 10e5,
+        src: [`${car.link}`],
+      }))
+
+    const size = offers.reduce((accum, offer) => accum + offer.size, 0)
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
+
+    const block = await CBOR.write(offers)
+    const aggregateOfferInvocation = Aggregate.offer.invoke({
+      issuer: storeFront,
+      audience: connection.id,
+      with: storeFront.did(),
+      nb: {
+        offer: block.cid,
+        commitmentProof,
+        size,
+      },
+    })
+    aggregateOfferInvocation.attach(block)
+
+    const aggregateOffer = await aggregateOfferInvocation.execute(connection)
+    assert.ok(aggregateOffer.out.error)
+    assert.deepEqual(
+      aggregateOffer.out.error?.message,
+      `offer has invalid URL: ${offers[0].link.toString()}`
+    )
+
+    // Validate effect in receipt does not exist
+    assert.ok(!aggregateOffer.fx.join)
+  },
   'aggregate/offer fails when size is not enough for offer': async (
     assert,
     context
