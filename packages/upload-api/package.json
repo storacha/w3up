@@ -14,6 +14,24 @@
       "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
+      "access": [
+        "dist/src/access.d.ts"
+      ],
+      "console": [
+        "dist/src/console.d.ts"
+      ],
+      "consumer": [
+        "dist/src/consumer.d.ts"
+      ],
+      "customer": [
+        "dist/src/customer.d.ts"
+      ],
+      "provider": [
+        "dist/src/provider.d.ts"
+      ],
+      "space": [
+        "dist/src/space.d.ts"
+      ],
       "store": [
         "dist/src/store.d.ts"
       ],
@@ -22,6 +40,9 @@
       ],
       "types": [
         "dist/src/types.d.ts"
+      ],
+      "validate": [
+        "dist/src/validate.d.ts"
       ],
       "test": [
         "dist/test/lib.d.ts"
@@ -37,6 +58,30 @@
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
     },
+    "./access": {
+      "types": "./dist/src/access.d.ts",
+      "import": "./src/access.js"
+    },
+    "./console": {
+      "types": "./dist/src/console.d.ts",
+      "import": "./src/console.js"
+    },
+    "./consumer": {
+      "types": "./dist/src/consumer.d.ts",
+      "import": "./src/consumer.js"
+    },
+    "./customer": {
+      "types": "./dist/src/customer.d.ts",
+      "import": "./src/customer.js"
+    },
+    "./provider": {
+      "types": "./dist/src/provider.d.ts",
+      "import": "./src/provider.js"
+    },
+    "./space": {
+      "types": "./dist/src/space.d.ts",
+      "import": "./src/space.js"
+    },
     "./store": {
       "types": "./dist/src/store.d.ts",
       "import": "./src/store.js"
@@ -44,6 +89,10 @@
     "./upload": {
       "types": "./dist/src/upload.d.ts",
       "import": "./src/upload.js"
+    },
+    "./validate": {
+      "types": "./dist/src/validate.d.ts",
+      "import": "./src/validate.js"
     },
     "./test": {
       "types": "./dist/test/lib.d.ts",
@@ -63,17 +112,22 @@
     "@ucanto/principal": "^8.0.0",
     "@ucanto/server": "^8.0.1",
     "@ucanto/transport": "^8.0.0",
+    "@ucanto/validator": "^8.0.0",
+    "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
+    "@web3-storage/did-mailto": "workspace:^",
     "multiformats": "^11.0.2",
     "p-retry": "^5.1.2"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",
+    "@ipld/dag-ucan": "^3.3.2",
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^8.0.0",
     "@web-std/blob": "^3.0.4",
     "@web3-storage/sigv4": "^1.0.2",
     "hd-scripts": "^4.1.0",
+    "is-subset": "^0.1.1",
     "mocha": "^10.2.0"
   },
   "eslintConfig": {

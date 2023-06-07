@@ -153,33 +153,4 @@ prog
     }
   })
 
-prog
-  .command('recover')
-  .describe('Recover spaces with email.')
-  .action(async (opts) => {
-    const store = new StoreConf({ profile: opts.profile })
-    const data = await store.load()
-    const { url, servicePrincipal } = await getService(opts.env)
-    if (data) {
-      const agent = Agent.from(data, { store, url, servicePrincipal })
-
-      const { email } = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'email',
-          default: 'hugomrdias@gmail.com',
-          message: 'Input email:',
-        },
-      ])
-
-      const dels = await agent.recover(email)
-
-      for (const del of dels) {
-        const { did, meta } = await agent.importSpaceFromDelegation(del)
-        console.log(`Imported space ${meta.name} with DID: ${did}`)
-      }
-    } else {
-      console.error(`Run "${NAME} setup" first`)
-    }
-  })
 prog.parse(process.argv)

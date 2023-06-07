@@ -23,18 +23,11 @@ import type {
   SignerArchive,
   SigAlg,
   Caveats,
-  Unit,
-  ToString,
 } from '@ucanto/interface'
 
 import type {
   Abilities,
   SpaceInfo,
-  SpaceRecover,
-  SpaceRecoverValidation,
-  VoucherClaim,
-  VoucherRedeem,
-  Top,
   AccessAuthorize,
   AccessAuthorizeSuccess,
   AccessDelegate,
@@ -76,15 +69,10 @@ export interface SpaceTable {
 }
 export type SpaceRecord = Selectable<SpaceTable>
 
-export type SpaceInfoResult =
-  // w3up spaces registered via provider/add will have this
-  | {
-      // space did
-      did: DID<'key'>
-    }
-  // deprecated and may be removed if voucher/redeem is removed
-  /** @deprecated */
-  | SpaceRecord
+export interface SpaceInfoResult {
+  // space did
+  did: DID<'key'>
+}
 
 export interface AccountTable {
   did: DID<'mailto'>
@@ -120,26 +108,8 @@ export interface Service {
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
   }
-  voucher: {
-    claim: ServiceMethod<
-      VoucherClaim,
-      EncodedDelegation<[VoucherRedeem]> | '',
-      Failure
-    >
-    redeem: ServiceMethod<VoucherRedeem, Unit, Failure>
-  }
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
-    'recover-validation': ServiceMethod<
-      SpaceRecoverValidation,
-      ToString<URL> | '',
-      Failure
-    >
-    recover: ServiceMethod<
-      SpaceRecover,
-      Array<EncodedDelegation<[Top]>>,
-      Failure
-    >
   }
 }
 
@@ -214,7 +184,7 @@ export interface SpaceMeta {
    */
   name?: string
   /**
-   * Was this space already registered with the access-api using a voucher ?
+   * Was this space already registered with w3up?
    */
   isRegistered: boolean
 }
