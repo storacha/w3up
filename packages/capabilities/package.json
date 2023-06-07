@@ -50,6 +50,12 @@
       "access": [
         "dist/src/access"
       ],
+      "aggregate": [
+        "dist/src/aggregate"
+      ],
+      "offer": [
+        "dist/src/offer"
+      ],
       "utils": [
         "dist/src/utils"
       ],
@@ -90,6 +96,7 @@
       "project": "./tsconfig.json"
     },
     "rules": {
+      "unicorn/expiring-todo-comments": "off",
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
       "unicorn/no-array-reduce": "off",

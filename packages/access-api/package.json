@@ -95,6 +95,7 @@
     },
     "rules": {
       "unicorn/prefer-number-properties": "off",
+      "unicorn/expiring-todo-comments": "off",
       "@typescript-eslint/ban-types": "off",
       "unicorn/no-null": "off",
       "jsdoc/no-undefined-types": [
