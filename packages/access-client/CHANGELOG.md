@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.0.0](https://github.com/web3-storage/w3up/compare/access-v13.0.2...access-v14.0.0) (2023-06-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* merge `@web3-storage/access-api` into `@web3-storage/upload-api` ([#790](https://github.com/web3-storage/w3up/issues/790))
+
+### Features
+
+* merge `@web3-storage/access-api` into `@web3-storage/upload-api` ([#790](https://github.com/web3-storage/w3up/issues/790)) ([4f6ddb6](https://github.com/web3-storage/w3up/commit/4f6ddb690c365a42a3dc4c5c6898e4999bd0f868))
+* w3 aggregate protocol client and api implementation ([#787](https://github.com/web3-storage/w3up/issues/787)) ([b58069d](https://github.com/web3-storage/w3up/commit/b58069d7960efe09283f3b23fed77515b62d4639))
+
 ## [13.0.2](https://github.com/web3-storage/w3up/compare/access-v13.0.1...access-v13.0.2) (2023-05-23)
 
 
