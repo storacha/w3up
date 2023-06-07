@@ -20,7 +20,7 @@ export const claim = async ({ capability }, { aggregateStore }) => {
   if (!aggregateArrangedResult) {
     return {
       error: new AggregateNotFound(
-        `requested aggregate with commitment proof ${commitmentProof} is not known`
+        `aggregate not found for commitment proof: ${commitmentProof}`
       ),
     }
   }

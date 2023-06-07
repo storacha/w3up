@@ -82,7 +82,9 @@
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {},
+    "rules": {
+      "unicorn/expiring-todo-comments": "off"
+    },
     "env": {
       "mocha": true
     },

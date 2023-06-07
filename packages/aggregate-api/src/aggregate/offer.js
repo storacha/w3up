@@ -13,7 +13,7 @@ export const MAX_SIZE = 127 * (1 << 28)
 export const provide = (context) =>
   Server.provideAdvanced({
     capability: Aggregate.offer,
-    handler: (input) => claim(input, context)
+    handler: (input) => claim(input, context),
   })
 
 /**
@@ -21,7 +21,10 @@ export const provide = (context) =>
  * @param {API.AggregateServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateOfferSuccess, API.AggregateOfferFailure> | API.UcantoInterface.JoinBuilder<API.AggregateOfferSuccess>>}
  */
-export const claim = async ({ capability, invocation, context }, { offerStore }) => {
+export const claim = async (
+  { capability, invocation, context },
+  { offerStore }
+) => {
   // Get offer block
   const offerCid = capability.nb.offer
   const commitmentProof = capability.nb.commitmentProof
@@ -30,7 +33,7 @@ export const claim = async ({ capability, invocation, context }, { offerStore })
   if (!offers) {
     return {
       error: new AggregateOfferBlockNotFoundError(
-        `inline offer block for offer cid ${offerCid.toString()} was not provided`
+        `missing offer block in invocation: ${offerCid.toString()}`
       ),
     }
   }
@@ -40,19 +43,19 @@ export const claim = async ({ capability, invocation, context }, { offerStore })
   if (size < MIN_SIZE) {
     return {
       error: new AggregateOfferInvalidSizeError(
-        `provided size is not enough to create an offer (${size} < ${MIN_SIZE})`
+        `offer under size, offered: ${size}, minimum: ${MIN_SIZE}`
       ),
     }
   } else if (size > MAX_SIZE) {
     return {
       error: new AggregateOfferInvalidSizeError(
-        `provided size is larger than it can be accepted for an offer (${size} > ${MAX_SIZE})`
+        `offer over size, offered: ${size}, maximum: ${MAX_SIZE}`
       ),
     }
   } else if (size !== capability.nb.size) {
     return {
       error: new AggregateOfferInvalidSizeError(
-        `provided size ${capability.nb.size} does not match computed size ${size}`
+        `offer size mismatch, specified: ${capability.nb.size}, actual: ${size}`
       ),
     }
   }
@@ -61,15 +64,15 @@ export const claim = async ({ capability, invocation, context }, { offerStore })
 
   // Create effect for receipt
   const fx = await Offer.arrange
-  .invoke({
-    issuer: context.id,
-    audience: context.id,
-    with: context.id.did(),
-    nb: {
-      commitmentProof,
-    },
-  })
-  .delegate()
+    .invoke({
+      issuer: context.id,
+      audience: context.id,
+      with: context.id.did(),
+      nb: {
+        commitmentProof,
+      },
+    })
+    .delegate()
 
   // Write offer to store
   await offerStore.queue({ commitmentProof, offers })

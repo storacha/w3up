@@ -76,6 +76,7 @@
     },
     "rules": {
       "unicorn/no-await-expression-member": "off",
+      "unicorn/expiring-todo-comments": "off",
       "unicorn/prefer-spread": "off",
       "no-new": "off"
     },

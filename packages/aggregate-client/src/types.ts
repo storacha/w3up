@@ -18,7 +18,7 @@ import {
   AggregateGetFailure,
   OfferArrange,
   OfferArrangeSuccess,
-  OfferArrangeFailure
+  OfferArrangeFailure,
 } from '@web3-storage/capabilities/types'
 
 export interface InvocationConfig {
@@ -42,11 +42,19 @@ export interface InvocationConfig {
 
 export interface Service {
   aggregate: {
-    offer: ServiceMethod<AggregateOffer, AggregateOfferSuccess, AggregateOfferFailure>
+    offer: ServiceMethod<
+      AggregateOffer,
+      AggregateOfferSuccess,
+      AggregateOfferFailure
+    >
     get: ServiceMethod<AggregateGet, AggregateGetSuccess, AggregateGetFailure>
   }
   offer: {
-    arrange: ServiceMethod<OfferArrange, OfferArrangeSuccess, OfferArrangeFailure>
+    arrange: ServiceMethod<
+      OfferArrange,
+      OfferArrangeSuccess,
+      OfferArrangeFailure
+    >
   }
 }
 

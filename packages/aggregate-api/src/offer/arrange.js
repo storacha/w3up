@@ -16,21 +16,21 @@ export const provide = (context) =>
 export const claim = async ({ capability }, { arrangedOfferStore }) => {
   const commitmentProof = capability.nb.commitmentProof
 
-    const status = await arrangedOfferStore.get(commitmentProof)
+  const status = await arrangedOfferStore.get(commitmentProof)
 
-    if (!status) {
-      return {
-        error: new OfferArrangeNotFound(
-          `provided commitment proof ${commitmentProof} has no arranged offers`
-        ),
-      }
-    }
-
+  if (!status) {
     return {
-      ok: {
-        status,
-      },
+      error: new OfferArrangeNotFound(
+        `arranged offer not found for commitment proof: ${commitmentProof}`
+      ),
     }
+  }
+
+  return {
+    ok: {
+      status,
+    },
+  }
 }
 
 class OfferArrangeNotFound extends Server.Failure {
