@@ -1,5 +1,18 @@
 # Changelog
 
+## [7.1.0](https://github.com/web3-storage/w3up/compare/access-api-v7.0.0...access-api-v7.1.0) (2023-06-07)
+
+
+### Features
+
+* w3 aggregate protocol client and api implementation ([#787](https://github.com/web3-storage/w3up/issues/787)) ([b58069d](https://github.com/web3-storage/w3up/commit/b58069d7960efe09283f3b23fed77515b62d4639))
+
+
+### Bug Fixes
+
+* upgrade remaining ucanto deps ([#798](https://github.com/web3-storage/w3up/issues/798)) ([7211501](https://github.com/web3-storage/w3up/commit/72115010663a62140127cdeed21f2dc37f59da08))
+* upgrade ucanto to 8 ([#794](https://github.com/web3-storage/w3up/issues/794)) ([00b011d](https://github.com/web3-storage/w3up/commit/00b011d87f628d4b3040398ca6cba567a69713ff))
+
 ## [7.0.0](https://github.com/web3-storage/w3up/compare/access-api-v6.1.1...access-api-v7.0.0) (2023-05-04)
 
 
