@@ -184,7 +184,7 @@ export interface SpaceMeta {
    */
   name?: string
   /**
-   * Was this space already registered with the access-api using a voucher ?
+   * Was this space already registered with w3up?
    */
   isRegistered: boolean
 }

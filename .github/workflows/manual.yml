@@ -6,9 +6,8 @@ on:
         description: 'Package to deploy'
         required: true
         type: choice
-        default: 'access-api'
+        default: 'docs'
         options:
-          - access-api
           - upload-client
           - access-client
           - docs
@@ -22,12 +21,6 @@ on:
           - staging
           - dev
 jobs:
-  deploy-access-api:
-    if: github.event.inputs.package == 'access-api'
-    uses: './.github/workflows/reusable-deploy-api.yml'
-    with:
-      environment: ${{ github.event.inputs.environment }}
-    secrets: inherit
   deploy-access-client:
     runs-on: ubuntu-latest
     if: github.event.inputs.package == 'access-client'

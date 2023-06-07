@@ -21,14 +21,6 @@ jobs:
           manifest-file: .github/release-please-manifest.json
           default-branch: main
           release-type: node
-  access-api:
-    needs: release
-    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access-api')
-    uses: './.github/workflows/reusable-deploy-api.yml'
-    with:
-      environment: production
-      environment_url: https://access.web3.storage
-    secrets: inherit
   npm:
     needs: release
     if: |
