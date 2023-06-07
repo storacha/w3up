@@ -8,12 +8,17 @@ import {
   DID,
   Principal,
   ToString,
-  Failure,
 } from '@ucanto/interface'
 import {
   AggregateOffer,
+  AggregateOfferSuccess,
+  AggregateOfferFailure,
   AggregateGet,
+  AggregateGetSuccess,
+  AggregateGetFailure,
   OfferArrange,
+  OfferArrangeSuccess,
+  OfferArrangeFailure
 } from '@web3-storage/capabilities/types'
 
 export interface InvocationConfig {
@@ -37,24 +42,12 @@ export interface InvocationConfig {
 
 export interface Service {
   aggregate: {
-    offer: ServiceMethod<AggregateOffer, AggregateOfferResponse, Failure>
-    get: ServiceMethod<AggregateGet, AggregateGetResponse, Failure>
+    offer: ServiceMethod<AggregateOffer, AggregateOfferSuccess, AggregateOfferFailure>
+    get: ServiceMethod<AggregateGet, AggregateGetSuccess, AggregateGetFailure>
   }
   offer: {
-    arrange: ServiceMethod<OfferArrange, OfferArrangeResponse, Failure>
+    arrange: ServiceMethod<OfferArrange, OfferArrangeSuccess, OfferArrangeFailure>
   }
-}
-
-export interface AggregateGetResponse {
-  deals: unknown[]
-}
-
-export interface AggregateOfferResponse {
-  status: string
-}
-
-export interface OfferArrangeResponse {
-  status: string
 }
 
 export interface Offer {

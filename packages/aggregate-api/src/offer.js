@@ -1,4 +1,4 @@
-import { offerArrangeProvider } from './offer/arrange.js'
+import { provide as offerArrangeProvider } from './offer/arrange.js'
 import * as API from './types.js'
 
 /**

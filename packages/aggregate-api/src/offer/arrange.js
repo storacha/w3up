@@ -4,17 +4,23 @@ import * as API from '../types.js'
 
 /**
  * @param {API.OfferServiceContext} context
- * @returns {API.UcantoInterface.ServiceMethod<API.OfferArrange, API.OfferArrangeResponse, API.UcantoInterface.Failure>}
  */
-export function offerArrangeProvider({ arrangedOfferStore }) {
-  return Server.provide(Offer.arrange, async ({ capability }) => {
-    const commitmentProof = capability.nb.commitmentProof
+export const provide = (context) =>
+  Server.provide(Offer.arrange, (input) => claim(input, context))
+
+/**
+ * @param {API.Input<Offer.arrange>} input
+ * @param {API.OfferServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.OfferArrangeSuccess, API.OfferArrangeFailure>>}
+ */
+export const claim = async ({ capability }, { arrangedOfferStore }) => {
+  const commitmentProof = capability.nb.commitmentProof
 
     const status = await arrangedOfferStore.get(commitmentProof)
 
     if (!status) {
       return {
-        error: new Server.Failure(
+        error: new OfferArrangeNotFound(
           `provided commitment proof ${commitmentProof} has no arranged offers`
         ),
       }
@@ -25,5 +31,10 @@ export function offerArrangeProvider({ arrangedOfferStore }) {
         status,
       },
     }
-  })
+}
+
+class OfferArrangeNotFound extends Server.Failure {
+  get name() {
+    return /** @type {const} */ ('OfferArrangeFailure')
+  }
 }

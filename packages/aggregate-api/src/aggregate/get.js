@@ -4,24 +4,35 @@ import * as API from '../types.js'
 
 /**
  * @param {API.AggregateServiceContext} context
- * @returns {API.UcantoInterface.ServiceMethod<API.AggregateGet, API.AggregateGetResponse, API.UcantoInterface.Failure>}
  */
-export function aggregateGetProvider({ aggregateStore }) {
-  return Server.provide(Aggregate.get, async ({ capability }) => {
-    const commitmentProof = capability.nb.commitmentProof
+export const provide = (context) =>
+  Server.provide(Aggregate.get, (input) => claim(input, context))
 
-    const aggregateArrangedResult = await aggregateStore.get(commitmentProof)
-    if (!aggregateArrangedResult) {
-      return {
-        error: new Server.Failure(
-          `requested aggregate with commitment proof ${commitmentProof} is not known`
-        ),
-      }
-    }
+/**
+ * @param {API.Input<Aggregate.get>} input
+ * @param {API.AggregateServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.AggregateGetSuccess, API.AggregateGetFailure>>}
+ */
+export const claim = async ({ capability }, { aggregateStore }) => {
+  const commitmentProof = capability.nb.commitmentProof
+
+  const aggregateArrangedResult = await aggregateStore.get(commitmentProof)
+  if (!aggregateArrangedResult) {
     return {
-      ok: {
-        deals: aggregateArrangedResult,
-      },
+      error: new AggregateNotFound(
+        `requested aggregate with commitment proof ${commitmentProof} is not known`
+      ),
     }
-  })
+  }
+  return {
+    ok: {
+      deals: aggregateArrangedResult,
+    },
+  }
+}
+
+class AggregateNotFound extends Server.Failure {
+  get name() {
+    return /** @type {const} */ ('AggregateGetFailure')
+  }
 }

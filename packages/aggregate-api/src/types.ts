@@ -2,7 +2,12 @@ import type {
   HandlerExecutionError,
   Signer,
   InboundCodec,
+  CapabilityParser,
+  ParsedCapability,
+  InferInvokedCapability,
+  Match,
 } from '@ucanto/interface'
+import type { ProviderInput } from '@ucanto/server'
 
 import type { Offer } from '@web3-storage/aggregate-client/types'
 export * from '@web3-storage/aggregate-client/types'
@@ -75,3 +80,6 @@ export interface UcantoServerContextTest extends UcantoServerContext {
 
 export type Test = (assert: Assert, context: UcantoServerContextTest) => unknown
 export type Tests = Record<string, Test>
+
+export type Input<C extends CapabilityParser<Match<ParsedCapability>>> =
+  ProviderInput<InferInvokedCapability<C> & ParsedCapability>

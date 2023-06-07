@@ -26,7 +26,7 @@ describe('aggregate.offer', () => {
       }))
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
     const offerBlock = await CBOR.write(offers)
-    /** @type {import('../src/types').AggregateOfferResponse} */
+    /** @type {import('@web3-storage/capabilities/types').AggregateOfferSuccess} */
     const aggregateOfferResponse = {
       status: 'queued',
     }
@@ -36,6 +36,7 @@ describe('aggregate.offer', () => {
       aggregate: {
         offer: Server.provideAdvanced({
           capability: AggregateCapabilities.offer,
+          // @ts-expect-error not failure type expected because of assert throw
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), storeFront.did())
             assert.strictEqual(invocation.capabilities.length, 1)

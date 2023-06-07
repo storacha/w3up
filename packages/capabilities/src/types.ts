@@ -71,6 +71,28 @@ export type SpaceRecoverValidation = InferInvokedCapability<
 >
 export type SpaceRecover = InferInvokedCapability<typeof recover>
 
+// Aggregate
+export interface AggregateGetSuccess {
+  deals: unknown[]
+}
+export interface AggregateGetFailure extends Ucanto.Failure {
+  name: 'AggregateGetFailure'
+}
+
+export interface AggregateOfferSuccess {
+  status: string
+}
+export interface AggregateOfferFailure extends Ucanto.Failure {
+  name: 'AggregateFailure' | 'AggregateOfferInvalidSizeFailure' | 'AggregateOfferBlockNotFoundFailure'
+}
+
+export interface OfferArrangeSuccess {
+  status: string
+}
+export interface OfferArrangeFailure extends Ucanto.Failure {
+  name: 'OfferArrangeFailure'
+}
+
 // Voucher Protocol
 export type VoucherRedeem = InferInvokedCapability<typeof redeem>
 export type VoucherClaim = InferInvokedCapability<typeof claim>
