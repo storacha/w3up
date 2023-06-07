@@ -1,0 +1,33 @@
+name: Aggregate Client
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/aggregate-client/**'
+      - '.github/workflows/aggregate-client.yml'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    paths:
+      - 'packages/aggregate-client/**'
+      - '.github/workflows/aggregate-client.yml'
+      - 'pnpm-lock.yaml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.3
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm run build
+      - run: pnpm -r --filter @web3-storage/aggregate-client run lint
+      - run: pnpm -r --filter @web3-storage/aggregate-client run test
