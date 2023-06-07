@@ -80,6 +80,22 @@ export const equalLink = (claimed, delegated) => {
 }
 
 /**
+ * Checks that `claimed` {@link Types.Link} meets an `imposed` constraint.
+ *
+ * @param {Types.UnknownLink} claimed
+ * @param {Types.UnknownLink|undefined} imposed
+ * @param {string} at
+ * @returns {Types.Result<{}, Types.Failure>}
+ */
+export const checkLink = (claimed, imposed, at) => {
+  return equal(
+    String(claimed),
+    imposed === undefined ? undefined : String(imposed),
+    at
+  )
+}
+
+/**
  * @template T
  * @param {Types.Result<T , Types.Failure>} result
  * @returns {{error: Types.Failure, ok?:undefined}|undefined}

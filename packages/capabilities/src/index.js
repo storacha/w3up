@@ -9,6 +9,8 @@ import * as Utils from './utils.js'
 import * as Consumer from './consumer.js'
 import * as Customer from './customer.js'
 import * as Console from './console.js'
+import * as Offer from './offer.js'
+import * as Aggregate from './aggregate.js'
 
 export {
   Access,
@@ -22,6 +24,8 @@ export {
   Customer,
   Console,
   Utils,
+  Aggregate,
+  Offer,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
@@ -45,4 +49,7 @@ export const abilitiesAsStrings = [
   Access.access.can,
   Access.authorize.can,
   Access.session.can,
+  Aggregate.offer.can,
+  Aggregate.get.can,
+  Offer.arrange.can,
 ]

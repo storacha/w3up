@@ -113,6 +113,7 @@
     "rules": {
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
+      "unicorn/expiring-todo-comments": "off",
       "unicorn/no-array-reduce": "off",
       "unicorn/no-null": "off",
       "unicorn/no-await-expression-member": "off",
