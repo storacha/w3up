@@ -6,12 +6,49 @@ import type {
   HandlerExecutionError,
   Signer,
   DID,
+  DIDKey,
   InboundCodec,
   Result,
   Unit,
+  CapabilityParser,
+  Match,
+  ParsedCapability,
+  InferInvokedCapability,
 } from '@ucanto/interface'
+import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
+import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
+import { DelegationsStorage as Delegations } from './types/delegations'
+import { ProvisionsStorage as Provisions } from './types/provisions'
+
+export type ValidationEmailSend = {
+  to: string,
+  url: string
+}
+
+export type SpaceDID = DIDKey
+export type AccountDID = DID<'mailto'>
+export type ServiceDID = DID<'web'>
+export type ServiceSigner = Signer<ServiceDID>
+export interface SpaceProviderRegistry {
+  hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
+}
+
+export interface InsufficientStorage extends Failure {
+  name: 'InsufficientStorage'
+}
+
+export type AllocationError = InsufficientStorage
+
+export interface Email {
+  sendValidation: (input: { to: string; url: string }) => Promise<void>
+}
+
+export interface DebugEmail extends Email {
+  emails: Array<ValidationEmailSend>
+  take: () => Promise<ValidationEmailSend>
+}
 
 import {
   StoreAdd,
@@ -20,10 +57,32 @@ import {
   UploadAdd,
   UploadRemove,
   UploadList,
+  AccessAuthorize,
+  AccessAuthorizeSuccess,
+  AccessDelegate,
+  AccessDelegateFailure,
+  AccessDelegateSuccess,
+  AccessClaim,
+  AccessClaimSuccess,
+  AccessClaimFailure,
+  AccessConfirm,
+  AccessConfirmSuccess,
+  AccessConfirmFailure,
+  ProviderAdd,
+  ProviderAddSuccess,
+  ProviderAddFailure,
+  SpaceInfo,
 } from '@web3-storage/capabilities/types'
+import * as Capabilities from '@web3-storage/capabilities'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
+
+export type { ProvisionsStorage, Provision } from './types/provisions'
+export type {
+  DelegationsStorage,
+  Query as DelegationsStorageQuery,
+} from './types/delegations'
 
 export interface Service {
   store: {
@@ -35,6 +94,52 @@ export interface Service {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
     remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
+  }
+  console: {
+    log: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Console.log>,
+      {},
+      never
+    >
+    error: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Console.error>,
+      never,
+      Failure & { cause: unknown }
+    >
+  }
+  access: {
+    authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
+    claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
+    confirm: ServiceMethod<
+      AccessConfirm,
+      AccessConfirmSuccess,
+      AccessConfirmFailure
+    >
+    delegate: ServiceMethod<
+      AccessDelegate,
+      AccessDelegateSuccess,
+      AccessDelegateFailure
+    >
+  }
+  consumer: {
+    has: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Consumer.has>,
+      boolean,
+      Failure
+    >
+  }
+  customer: {
+    get: ServiceMethod<
+      InferInvokedCapability<typeof Capabilities.Customer.get>,
+      CustomerGetOk,
+      CustomerGetError
+    >
+  }
+  provider: {
+    add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
+  }
+  space: {
+    info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
   }
 }
 
@@ -52,9 +157,48 @@ export interface UploadServiceContext {
   access: AccessVerifier
 }
 
+export interface AccessClaimContext {
+  delegationsStorage: Delegations
+}
+
+export type AccessServiceContext = AccessClaimContext & {
+  signer: EdSigner.Signer
+  email: Email
+  url: URL
+  provisionsStorage: Provisions
+}
+
+export interface ConsumerServiceContext {
+  signer: EdSigner.Signer
+  provisionsStorage: Provisions
+}
+
+export interface CustomerServiceContext {
+  signer: EdSigner.Signer
+  provisionsStorage: Provisions
+}
+
+export interface ConsoleServiceContext {}
+
+export interface SpaceServiceContext {
+  provisionsStorage: Provisions
+  delegationsStorage: Delegations
+}
+
+export interface ProviderServiceContext {
+  provisionsStorage: Provisions
+}
+
 export interface ServiceContext
-  extends StoreServiceContext,
+  extends AccessServiceContext,
+    ConsoleServiceContext,
+    ConsumerServiceContext,
+    CustomerServiceContext,
+    ProviderServiceContext,
+    SpaceServiceContext,
+    StoreServiceContext,
     UploadServiceContext {}
+
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
   codec?: InboundCodec
@@ -64,7 +208,12 @@ export interface UcantoServerContext extends ServiceContext {
 export interface UcantoServerTestContext
   extends UcantoServerContext,
     StoreTestContext,
-    UploadTestContext {}
+    UploadTestContext {
+  connection: ConnectionView<Service>
+  mail: DebugEmail
+  service: Signer<ServiceDID>
+  fetch: typeof fetch
+}
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
@@ -134,6 +283,24 @@ export interface UploadTable {
     options?: ListOptions
   ) => Promise<ListResponse<UploadListItem>>
 }
+
+export type SpaceInfoResult = {
+  did: SpaceDID
+}
+
+export interface UnknownProvider extends Failure {
+  name: 'UnknownProvider'
+}
+
+export type CustomerGetError = UnknownProvider
+
+export interface CustomerGetOk {
+  customer: null | {
+    did: AccountDID
+  }
+}
+
+export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>
 
 export interface StoreAddInput {
   space: DID
@@ -236,6 +403,9 @@ export interface LinkJSON<T extends UnknownLink = UnknownLink> {
 export interface SpaceUnknown extends Failure {
   name: 'SpaceUnknown'
 }
+
+export type Input<C extends CapabilityParser<Match<ParsedCapability>>> =
+  ProviderInput<InferInvokedCapability<C> & ParsedCapability>
 
 export interface Assert {
   equal: <Actual, Expected extends Actual>(

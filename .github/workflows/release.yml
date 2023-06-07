@@ -21,14 +21,6 @@ jobs:
           manifest-file: .github/release-please-manifest.json
           default-branch: main
           release-type: node
-  access-api:
-    needs: release
-    if: contains(fromJson(needs.release.outputs.paths_released), 'packages/access-api')
-    uses: './.github/workflows/reusable-deploy-api.yml'
-    with:
-      environment: production
-      environment_url: https://access.web3.storage
-    secrets: inherit
   npm:
     needs: release
     if: |
@@ -45,7 +37,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.3
         with:
-          version: 7
+          version: 8
       - uses: actions/setup-node@v3
         with:
           node-version: 18

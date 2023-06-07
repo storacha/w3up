@@ -129,14 +129,8 @@ describe('Agent', function () {
     const i1 = await agent.invoke(Space.info, {
       audience: fixtures.service,
     })
-    const i2 = await agent.invoke(Space.recover, {
-      audience: fixtures.service,
-      nb: {
-        identity: 'mailto: email@gmail.com',
-      },
-    })
 
-    const receipts = await agent.execute(i1, i2)
+    const receipts = await agent.execute(i1)
 
     assert.deepStrictEqual(
       receipts.map(($) => $.out),
@@ -149,11 +143,6 @@ describe('Agent', function () {
             product: 'product:free',
             updated_at: 'sss',
             inserted_at: 'date',
-          },
-        },
-        {
-          ok: {
-            recover: true,
           },
         },
       ]
