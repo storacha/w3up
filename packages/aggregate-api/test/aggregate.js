@@ -1,6 +1,6 @@
 import { Aggregate, Offer } from '@web3-storage/capabilities'
 
-import { CBOR } from '@ucanto/core'
+import { CBOR, parseLink } from '@ucanto/core'
 import * as Signer from '@ucanto/principal/ed25519'
 
 import { MIN_SIZE, MAX_SIZE } from '../src/aggregate/offer.js'
@@ -31,7 +31,9 @@ export const test = {
         size: car.size * 10e5,
       }))
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = 'commitmentProof'
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -81,7 +83,9 @@ export const test = {
     // Generate CAR Files for offer
     const offers = await randomCARs(100, 100)
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = 'commitmentProof'
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -99,7 +103,7 @@ export const test = {
     assert.ok(aggregateOffer.out.error)
     assert.deepEqual(
       aggregateOffer.out.error?.message,
-      `inline offer block for offer cid ${block.cid.toString()} was not provided`
+      `missing offer block in invocation: ${block.cid.toString()}`
     )
 
     // Validate effect in receipt does not exist
@@ -118,7 +122,9 @@ export const test = {
     // Generate CAR Files for offer
     const offers = await randomCARs(100, 100)
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = 'commitmentProof'
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -137,7 +143,7 @@ export const test = {
     assert.ok(aggregateOffer.out.error)
     assert.deepEqual(
       aggregateOffer.out.error?.message,
-      `provided size is not enough to create an offer (${size} < ${MIN_SIZE})`
+      `offer under size, offered: ${size}, minimum: ${MIN_SIZE}`
     )
 
     // Validate effect in receipt does not exist
@@ -161,7 +167,9 @@ export const test = {
         size: car.size * 10e6,
       }))
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = 'commitmentProof'
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -180,7 +188,7 @@ export const test = {
     assert.ok(aggregateOffer.out.error)
     assert.deepEqual(
       aggregateOffer.out.error?.message,
-      `provided size is larger than it can be accepted for an offer (${size} > ${MAX_SIZE})`
+      `offer over size, offered: ${size}, maximum: ${MAX_SIZE}`
     )
 
     // Validate effect in receipt does not exist
@@ -203,7 +211,9 @@ export const test = {
         }))
       const size = offers.reduce((accum, offer) => accum + offer.size, 0)
       const badSize = size - 1000
-      const commitmentProof = 'commitmentProof'
+      const commitmentProof = parseLink(
+        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+      )
 
       const block = await CBOR.write(offers)
       const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -222,7 +232,7 @@ export const test = {
       assert.ok(aggregateOffer.out.error)
       assert.deepEqual(
         aggregateOffer.out.error?.message,
-        `provided size ${badSize} does not match computed size ${size}`
+        `offer size mismatch, specified: ${badSize}, actual: ${size}`
       )
 
       // Validate effect in receipt does not exist
@@ -247,7 +257,9 @@ export const test = {
         size: car.size * 10e5,
       }))
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = 'commitmentProof'
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -307,7 +319,9 @@ export const test = {
       channel: createServer(context),
     })
 
-    const commitmentProof = `${Date.now()}`
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
     const aggregateGetInvocation = Aggregate.get.invoke({
       issuer: storeFront,
       audience: connection.id,
@@ -331,7 +345,9 @@ export const test = {
       channel: createServer(context),
     })
 
-    const commitmentProof = `${Date.now()}`
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
     const deal = {
       status: 'done',
     }

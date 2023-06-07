@@ -222,6 +222,7 @@ importers:
       '@web-std/blob': ^3.0.4
       '@web3-storage/aggregate-client': workspace:^
       '@web3-storage/capabilities': workspace:^
+      '@web3-storage/data-segment': ^1.0.1
       hd-scripts: ^4.1.0
       mocha: ^10.2.0
       multiformats: ^11.0.2
@@ -232,6 +233,7 @@ importers:
       '@ucanto/server': 8.0.1
       '@ucanto/transport': 8.0.0
       '@web3-storage/capabilities': link:../capabilities
+      '@web3-storage/data-segment': 1.0.1
     devDependencies:
       '@ipld/car': 5.1.1
       '@types/mocha': 10.0.1
@@ -4307,6 +4309,12 @@ packages:
     resolution: {integrity: sha512-tsz4Y0WNDgFA5jwLSeV7/UV5rfMIlj0cPsSLVfTihjaVW0OJPd5NxJ3le1B3yLyqqzRpeG5OAfJAADLc4VoGTA==}
     dependencies:
       web-streams-polyfill: 3.2.1
+    dev: false
+
+  /@web3-storage/data-segment/1.0.1:
+    resolution: {integrity: sha512-qgVSLN/VZhNgprFJvzLTK4wGTAQYpQ9O42FrskGxlDgGjBx7ZCw4VL8mgzDVhR4MHXL/yA/bXFQtm5JST+JAZQ==}
+    dependencies:
+      multiformats: 11.0.2
     dev: false
 
   /@web3-storage/multipart-parser/1.0.0:

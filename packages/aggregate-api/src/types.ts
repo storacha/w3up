@@ -6,6 +6,7 @@ import type {
   ParsedCapability,
   InferInvokedCapability,
   Match,
+  Link,
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
 
@@ -29,7 +30,9 @@ export interface ServiceContext
     OfferServiceContext {}
 
 export interface ArrangedOfferStore {
-  get: (commitmentProof: string) => Promise<string | undefined>
+  get: (
+    commitmentProof: Link<unknown, number, number, 0 | 1>
+  ) => Promise<string | undefined>
 }
 
 export interface OfferStore {
@@ -37,12 +40,14 @@ export interface OfferStore {
 }
 
 export interface OfferToQueue {
-  commitmentProof: string
+  commitmentProof: Link<unknown, number, number, 0 | 1>
   offers: Offer[]
 }
 
 export interface AggregateStore {
-  get: (commitmentProof: string) => Promise<unknown[] | undefined>
+  get: (
+    commitmentProof: Link<unknown, number, number, 0 | 1>
+  ) => Promise<unknown[] | undefined>
 }
 
 export interface UcantoServerContext extends ServiceContext {
@@ -70,7 +75,10 @@ export interface Assert {
 }
 
 export interface AggregateStoreBackend {
-  put: (commitmentProof: string, aggregateInfo: unknown) => Promise<void>
+  put: (
+    commitmentProof: Link<unknown, number, number, 0 | 1>,
+    aggregateInfo: unknown
+  ) => Promise<void>
 }
 
 export interface UcantoServerContextTest extends UcantoServerContext {

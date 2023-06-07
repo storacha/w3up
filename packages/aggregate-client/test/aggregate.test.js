@@ -3,7 +3,7 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as CAR from '@ucanto/transport/car'
-import { CBOR } from '@ucanto/core'
+import { CBOR, parseLink } from '@ucanto/core'
 import * as AggregateCapabilities from '@web3-storage/capabilities/aggregate'
 import * as OfferCapabilities from '@web3-storage/capabilities/offer'
 
@@ -195,7 +195,9 @@ describe('aggregate.offer', () => {
 describe('aggregate.get', () => {
   it('places a valid offer with the service', async () => {
     const { storeFront } = await getContext()
-    const commitmentProof = 'todo-commitmentproof'
+    const commitmentProof = parseLink(
+      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+    )
     /** @type {unknown[]} */
     const deals = []
 

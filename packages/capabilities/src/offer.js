@@ -8,20 +8,34 @@
  *
  * @module
  */
-import { capability, URI, Schema } from '@ucanto/validator'
+import { capability, Schema, ok } from '@ucanto/validator'
+import { equalWith, checkLink, and } from './utils.js'
 
 /**
  * Capability can be used to arrange an offer with an aggregate of CARs.
  */
 export const arrange = capability({
   can: 'offer/arrange',
-  with: URI.match({ protocol: 'did:' }),
+  with: Schema.did(),
   nb: Schema.struct({
     /**
      * Commitment proof for the aggregate being requested.
      */
-    commitmentProof: Schema.string(),
+    commitmentProof: Schema.link(),
   }),
+  derives: (claim, from) => {
+    return (
+      and(equalWith(claim, from)) ||
+      and(
+        checkLink(
+          claim.nb.commitmentProof,
+          from.nb.commitmentProof,
+          'nb.commitmentProof'
+        )
+      ) ||
+      ok({})
+    )
+  },
 })
 
 // ⚠️ We export imports here so they are not omitted in generated typedes

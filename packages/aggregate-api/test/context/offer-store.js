@@ -11,14 +11,17 @@ export class OfferStore {
    * @param {import('../../src/types').OfferToQueue} offerToQueue
    */
   async queue(offerToQueue) {
-    this.offers.set(offerToQueue.commitmentProof, offerToQueue.offers)
+    this.offers.set(
+      offerToQueue.commitmentProof.toString(),
+      offerToQueue.offers
+    )
   }
 
   /**
-   * @param {string} commitmentProof
+   * @param {import('@ucanto/interface').Link<unknown, number, number, 0 | 1>} commitmentProof
    * @returns {Promise<string>}
    */
   async get(commitmentProof) {
-    return Promise.resolve(`todo:${commitmentProof}`)
+    return Promise.resolve(`todo:${commitmentProof.toString()}`)
   }
 }

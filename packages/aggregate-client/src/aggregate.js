@@ -1,5 +1,5 @@
 import * as AggregateCapabilities from '@web3-storage/capabilities/aggregate'
-import { CBOR } from '@ucanto/core'
+import { CBOR, parseLink } from '@ucanto/core'
 
 import { servicePrincipal, connection } from './service.js'
 
@@ -22,7 +22,9 @@ export async function aggregateOffer(
   const conn = options.connection ?? connection
 
   // TODO: Get commitmentProof
-  const commitmentProof = 'commitmentProof'
+  const commitmentProof = parseLink(
+    'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+  )
 
   // Validate size for offer is valid
   const size = offers.reduce((accum, offer) => accum + offer.size, 0)
@@ -71,7 +73,7 @@ export async function aggregateOffer(
  * Get details of an aggregate.
  *
  * @param {import('./types').InvocationConfig} conf - Configuration
- * @param {string} commitmentProof
+ * @param {import('@ucanto/interface').Link<unknown, number, number, 0 | 1>} commitmentProof
  * @param {import('./types').RequestOptions} [options]
  */
 export async function aggregateGet(

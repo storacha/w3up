@@ -84,7 +84,7 @@ export const claim = async (
 
 /**
  * @param {Server.API.Link<unknown, number, number, 0 | 1>} offerCid
- * @param {Server.API.Invocation<Server.API.Capability<"aggregate/offer", Server.API.URI<"did:">, Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; commitmentProof: string; size: number & Server.API.Phantom<{ typeof: "integer"; }>; }, "offer" | "commitmentProof" | "size">>>} invocation
+ * @param {Server.API.Invocation<Server.API.Capability<"aggregate/offer", `did:${string}:${string}` & `did:${string}` & Server.API.Phantom<{ protocol: "did:"; }> & `${string}:${string}` & Server.API.Phantom<{ protocol: `${string}:`; }>, Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; commitmentProof: Server.API.Link<unknown, number, number, 0 | 1>; size: number & Server.API.Phantom<{ typeof: "integer"; }>; }, "offer" | "commitmentProof" | "size"> & Partial<Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; commitmentProof: Server.API.Link<unknown, number, number, 0 | 1>; size: number & Server.API.Phantom<{ typeof: "integer"; }>; }, never>>>>} invocation
  */
 function getOfferBlock(offerCid, invocation) {
   for (const block of invocation.iterateIPLDBlocks()) {
