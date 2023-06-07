@@ -76,7 +76,7 @@ export interface AggregateGetSuccess {
   deals: unknown[]
 }
 export interface AggregateGetFailure extends Ucanto.Failure {
-  name: 'AggregateGetFailure'
+  name: 'AggregateNotFound'
 }
 
 export interface AggregateOfferSuccess {
@@ -84,17 +84,16 @@ export interface AggregateOfferSuccess {
 }
 export interface AggregateOfferFailure extends Ucanto.Failure {
   name:
-    | 'AggregateFailure'
-    | 'AggregateOfferInvalidSizeFailure'
-    | 'AggregateOfferBlockNotFoundFailure'
-    | 'AggregateOfferInvalidUrlFailure'
+    | 'AggregateOfferInvalidSize'
+    | 'AggregateOfferBlockNotFound'
+    | 'AggregateOfferInvalidUrl'
 }
 
 export interface OfferArrangeSuccess {
   status: string
 }
 export interface OfferArrangeFailure extends Ucanto.Failure {
-  name: 'OfferArrangeFailure'
+  name: 'OfferArrangeNotFound'
 }
 
 // Voucher Protocol

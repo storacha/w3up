@@ -116,18 +116,18 @@ function getOfferBlock(offerCid, invocation) {
 
 class AggregateOfferInvalidUrlError extends Server.Failure {
   get name() {
-    return /** @type {const} */ ('AggregateOfferInvalidUrlFailure')
+    return /** @type {const} */ ('AggregateOfferInvalidUrl')
   }
 }
 
 class AggregateOfferInvalidSizeError extends Server.Failure {
   get name() {
-    return /** @type {const} */ ('AggregateOfferInvalidSizeFailure')
+    return /** @type {const} */ ('AggregateOfferInvalidSize')
   }
 }
 
 class AggregateOfferBlockNotFoundError extends Server.Failure {
   get name() {
-    return /** @type {const} */ ('AggregateOfferBlockNotFoundFailure')
+    return /** @type {const} */ ('AggregateOfferBlockNotFound')
   }
 }

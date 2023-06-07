@@ -35,6 +35,6 @@ export const claim = async ({ capability }, { arrangedOfferStore }) => {
 
 class OfferArrangeNotFound extends Server.Failure {
   get name() {
-    return /** @type {const} */ ('OfferArrangeFailure')
+    return /** @type {const} */ ('OfferArrangeNotFound')
   }
 }

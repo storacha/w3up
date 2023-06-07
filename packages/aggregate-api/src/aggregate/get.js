@@ -33,6 +33,6 @@ export const claim = async ({ capability }, { aggregateStore }) => {
 
 class AggregateNotFound extends Server.Failure {
   get name() {
-    return /** @type {const} */ ('AggregateGetFailure')
+    return /** @type {const} */ ('AggregateNotFound')
   }
 }
