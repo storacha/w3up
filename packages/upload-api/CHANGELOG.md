@@ -1,5 +1,24 @@
 # Changelog
 
+## [4.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v3.0.0...upload-api-v4.0.0) (2023-06-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* merge `@web3-storage/access-api` into `@web3-storage/upload-api` ([#790](https://github.com/web3-storage/w3up/issues/790))
+
+### Features
+
+* merge `@web3-storage/access-api` into `@web3-storage/upload-api` ([#790](https://github.com/web3-storage/w3up/issues/790)) ([4f6ddb6](https://github.com/web3-storage/w3up/commit/4f6ddb690c365a42a3dc4c5c6898e4999bd0f868))
+
+
+### Bug Fixes
+
+* upgrade remaining ucanto deps ([#798](https://github.com/web3-storage/w3up/issues/798)) ([7211501](https://github.com/web3-storage/w3up/commit/72115010663a62140127cdeed21f2dc37f59da08))
+* upgrade ucanto to 8 ([#794](https://github.com/web3-storage/w3up/issues/794)) ([00b011d](https://github.com/web3-storage/w3up/commit/00b011d87f628d4b3040398ca6cba567a69713ff))
+* use legacy codec on upload api ([#788](https://github.com/web3-storage/w3up/issues/788)) ([1514474](https://github.com/web3-storage/w3up/commit/151447414f79e9df5aba1873b962c9c2efed1935))
+* use legacy codec on upload api ([#788](https://github.com/web3-storage/w3up/issues/788)) ([84a4d44](https://github.com/web3-storage/w3up/commit/84a4d440ffa0be1ea4962b32070c12b83cc95562))
+
 ## [3.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v2.0.0...upload-api-v3.0.0) (2023-05-03)
 
 
