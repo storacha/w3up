@@ -43,6 +43,7 @@ jobs:
           pnpm install
           pnpm run --if-present build
 
-      - name: Test
+      - name: Lint
         run: pnpm -r --filter @web3-storage/aggregate-api run lint
+      - name: Test
         run: pnpm -r --filter @web3-storage/aggregate-api run test
