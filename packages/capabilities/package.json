@@ -36,7 +36,16 @@
   "typesVersions": {
     "*": {
       "*": [
-        "dist/src/*"
+        "*",
+        "dist/*",
+        "dist/src/*",
+        "dist/src/*/index"
+      ],
+      "src/*": [
+        "*",
+        "dist/*",
+        "dist/src/*",
+        "dist/src/*/index"
       ]
     }
   },
