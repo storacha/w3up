@@ -23,44 +23,29 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./src/index.js",
-    "./*": "./src/*.js",
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "import": "./src/*.js"
+    },
     "./types": "./dist/src/types.d.ts"
   },
   "typesVersions": {
     "*": {
-      "provider": [
-        "dist/src/provider"
+      "*": [
+        "*",
+        "dist/*",
+        "dist/src/*",
+        "dist/src/*/index"
       ],
-      "space": [
-        "dist/src/space"
-      ],
-      "store": [
-        "dist/src/store"
-      ],
-      "top": [
-        "dist/src/top"
-      ],
-      "upload": [
-        "dist/src/upload"
-      ],
-      "voucher": [
-        "dist/src/voucher"
-      ],
-      "access": [
-        "dist/src/access"
-      ],
-      "aggregate": [
-        "dist/src/aggregate"
-      ],
-      "offer": [
-        "dist/src/offer"
-      ],
-      "utils": [
-        "dist/src/utils"
-      ],
-      "types": [
-        "dist/src/types"
+      "src/*": [
+        "*",
+        "dist/*",
+        "dist/src/*",
+        "dist/src/*/index"
       ]
     }
   },
