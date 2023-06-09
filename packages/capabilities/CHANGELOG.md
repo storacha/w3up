@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v6.0.0...capabilities-v6.0.1) (2023-06-09)
+
+
+### Bug Fixes
+
+* specify module types in exports ([#814](https://github.com/web3-storage/w3up/issues/814)) ([d64f1b6](https://github.com/web3-storage/w3up/commit/d64f1b6b91c87287e04fabed384041e2dff0efca))
+
 ## [6.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v5.0.1...capabilities-v6.0.0) (2023-06-07)
 
 
