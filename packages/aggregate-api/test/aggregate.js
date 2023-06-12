@@ -68,7 +68,7 @@ export const test = {
       .delegate()
 
     assert.ok(aggregateOffer.fx.join)
-    assert.ok(fx.link().equals(aggregateOffer.fx.join))
+    assert.ok(fx.link().equals(aggregateOffer.fx.join?.link()))
   },
   'aggregate/offer fails when offer block is not attached': async (
     assert,
