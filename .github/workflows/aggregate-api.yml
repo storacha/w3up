@@ -1,0 +1,49 @@
+name: Aggregate API
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/aggregate-api/**'
+      - '.github/workflows/aggregate-api.yml'
+      - 'pnpm-lock.yaml'
+      - '.env.tpl'
+  pull_request:
+    paths:
+      - 'packages/aggregate-api/**'
+      - '.github/workflows/aggregate-api.yml'
+      - 'pnpm-lock.yaml'
+      - '.env.tpl'
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install
+        uses: pnpm/action-setup@v2.2.3
+        with:
+          version: 8
+
+      - name: Setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+          cache: 'pnpm'
+
+      - name: Build
+        run: |
+          pnpm install
+          pnpm run --if-present build
+
+      - name: Lint
+        run: pnpm -r --filter @web3-storage/aggregate-api run lint
+      - name: Test
+        run: pnpm -r --filter @web3-storage/aggregate-api run test
