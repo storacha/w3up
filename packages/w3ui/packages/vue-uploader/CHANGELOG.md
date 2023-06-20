@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [4.2.0](https://github.com/web3-storage/w3ui/compare/vue-uploader-v4.1.0...vue-uploader-v4.2.0) (2023-06-20)
+
+
+### Features
+
+* implement `uploadCAR` in uploader ([#517](https://github.com/web3-storage/w3ui/issues/517)) ([40036ea](https://github.com/web3-storage/w3ui/commit/40036ea391fa47c26ab35fb29511d9b3a1305aaf))
+
+
+### Bug Fixes
+
+* inferred type error ([#516](https://github.com/web3-storage/w3ui/issues/516)) ([1bf4cf2](https://github.com/web3-storage/w3ui/commit/1bf4cf26efa846624864b661888b1178319ba11d))
+
 ## [4.1.0](https://github.com/web3-storage/w3ui/compare/vue-uploader-v4.0.0...vue-uploader-v4.1.0) (2023-05-09)
 
 
