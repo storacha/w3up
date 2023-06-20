@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [4.2.0](https://github.com/web3-storage/w3ui/compare/solid-uploader-v4.1.0...solid-uploader-v4.2.0) (2023-06-20)
+
+
+### Features
+
+* implement `uploadCAR` in uploader ([#517](https://github.com/web3-storage/w3ui/issues/517)) ([40036ea](https://github.com/web3-storage/w3ui/commit/40036ea391fa47c26ab35fb29511d9b3a1305aaf))
+
 ## [4.1.0](https://github.com/web3-storage/w3ui/compare/solid-uploader-v4.0.0...solid-uploader-v4.1.0) (2023-05-09)
 
 
