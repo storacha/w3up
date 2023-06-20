@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [3.0.2](https://github.com/web3-storage/w3ui/compare/vue-uploads-list-v3.0.1...vue-uploads-list-v3.0.2) (2023-06-20)
+
+
+### Bug Fixes
+
+* inferred type error ([#516](https://github.com/web3-storage/w3ui/issues/516)) ([1bf4cf2](https://github.com/web3-storage/w3ui/commit/1bf4cf26efa846624864b661888b1178319ba11d))
+
 ## [3.0.1](https://github.com/web3-storage/w3ui/compare/vue-uploads-list-v3.0.0...vue-uploads-list-v3.0.1) (2023-05-09)
 
 

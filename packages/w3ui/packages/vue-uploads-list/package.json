@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/vue-uploads-list",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Vue adapter for w3ui uploads list.",
   "main": "src/index.ts",
   "publishConfig": {
