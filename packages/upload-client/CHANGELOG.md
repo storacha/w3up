@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.0.1...upload-client-v9.1.0) (2023-06-20)
+
+
+### Features
+
+* w3 aggregate protocol client and api implementation ([#787](https://github.com/web3-storage/w3up/issues/787)) ([b58069d](https://github.com/web3-storage/w3up/commit/b58069d7960efe09283f3b23fed77515b62d4639))
+
 ## [9.0.1](https://github.com/web3-storage/w3up/compare/upload-client-v9.0.0...upload-client-v9.0.1) (2023-05-23)
 
 
