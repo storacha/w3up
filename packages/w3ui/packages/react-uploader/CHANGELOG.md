@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.2.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v4.1.0...react-uploader-v4.2.0) (2023-06-20)
+
+
+### Features
+
+* implement `uploadCAR` in uploader ([#517](https://github.com/web3-storage/w3ui/issues/517)) ([40036ea](https://github.com/web3-storage/w3ui/commit/40036ea391fa47c26ab35fb29511d9b3a1305aaf))
+
+
+### Bug Fixes
+
+* missing `dataCID` in `onUploadComplete` callback ([#525](https://github.com/web3-storage/w3ui/issues/525)) ([fb048a9](https://github.com/web3-storage/w3ui/commit/fb048a90f642849277a7c0d032c1a25d30fd1e99))
+
 ## [4.1.0](https://github.com/web3-storage/w3ui/compare/react-uploader-v4.0.1...react-uploader-v4.1.0) (2023-05-09)
 
 
