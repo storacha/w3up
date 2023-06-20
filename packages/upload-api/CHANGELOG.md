@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v4.0.0...upload-api-v4.1.0) (2023-06-20)
+
+
+### Features
+
+* add failure type to DelegationsStorage#putMany return ([#819](https://github.com/web3-storage/w3up/issues/819)) ([ae7b7c6](https://github.com/web3-storage/w3up/commit/ae7b7c651b57cd514b9429677a420fd14237b8a8))
+
 ## [4.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v3.0.0...upload-api-v4.0.0) (2023-06-08)
 
 
