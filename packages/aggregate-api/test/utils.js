@@ -1,3 +1,4 @@
+import { CommP } from '@web3-storage/data-segment'
 import { CID } from 'multiformats'
 import { webcrypto } from 'crypto'
 import { sha256 } from 'multiformats/hashes/sha2'
@@ -36,24 +37,39 @@ export async function randomCAR(size) {
   const blob = new Blob(chunks)
   const cid = await CAR.codec.link(new Uint8Array(await blob.arrayBuffer()))
 
-  return Object.assign(blob, { cid, roots: [root] })
+  return Object.assign(blob, { cid, roots: [root], bytes })
 }
 
 /**
  * @param {number} length
  * @param {number} size
- * @param {object} [options]
- * @param {string} [options.origin]
  */
-export async function randomCARs(length, size, options = {}) {
-  const origin = options.origin || 'https://carpark.web3.storage'
-
+export async function randomCARs(length, size) {
   return (
     await Promise.all(Array.from({ length }).map(() => randomCAR(size)))
   ).map((car) => ({
     link: car.cid,
     size: car.size,
-    commitmentProof: 'todo-commP',
-    src: [`${origin}/${car.cid.toString()}`],
   }))
+}
+
+/**
+ * @param {number} length
+ * @param {number} size
+ */
+export async function randomCargo(length, size) {
+  const cars = await Promise.all(
+    Array.from({ length }).map(() => randomCAR(size))
+  )
+
+  return Promise.all(
+    cars.map(async (car) => {
+      const commP = await CommP.build(car.bytes)
+
+      return {
+        link: commP.link(),
+        size: commP.pieceSize,
+      }
+    })
+  )
 }

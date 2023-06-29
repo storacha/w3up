@@ -181,6 +181,9 @@ importers:
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
+      '@web3-storage/data-segment':
+        specifier: ^1.0.1
+        version: 1.0.1
     devDependencies:
       '@ipld/car':
         specifier: ^5.1.1
@@ -246,6 +249,9 @@ importers:
       '@ucanto/server':
         specifier: ^8.0.1
         version: 8.0.1
+      '@web3-storage/data-segment':
+        specifier: ^1.0.1
+        version: 1.0.1
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -3340,6 +3346,11 @@ packages:
     dependencies:
       web-streams-polyfill: 3.2.1
     dev: false
+
+  /@web3-storage/data-segment@1.0.1:
+    resolution: {integrity: sha512-qgVSLN/VZhNgprFJvzLTK4wGTAQYpQ9O42FrskGxlDgGjBx7ZCw4VL8mgzDVhR4MHXL/yA/bXFQtm5JST+JAZQ==}
+    dependencies:
+      multiformats: 11.0.2
 
   /@web3-storage/sigv4@1.0.2:
     resolution: {integrity: sha512-ZUXKK10NmuQgPkqByhb1H3OQxkIM0CIn2BMPhGQw7vQw8WIzrBkk9IJiAVfJ/UVBFrf6uzPbx2lEBLt4diCMnQ==}

@@ -14,14 +14,14 @@ export const provide = (context) =>
  * @returns {Promise<API.UcantoInterface.Result<API.OfferArrangeSuccess, API.OfferArrangeFailure>>}
  */
 export const claim = async ({ capability }, { arrangedOfferStore }) => {
-  const commitmentProof = capability.nb.commitmentProof
+  const pieceLink = capability.nb.pieceLink
 
-  const status = await arrangedOfferStore.get(commitmentProof)
+  const status = await arrangedOfferStore.get(pieceLink)
 
   if (!status) {
     return {
       error: new OfferArrangeNotFound(
-        `arranged offer not found for commitment proof: ${commitmentProof}`
+        `arranged offer not found for piece: ${pieceLink}`
       ),
     }
   }

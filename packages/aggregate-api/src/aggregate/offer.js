@@ -27,7 +27,7 @@ export const claim = async (
 ) => {
   // Get offer block
   const offerCid = capability.nb.offer
-  const commitmentProof = capability.nb.commitmentProof
+  const piece = capability.nb.piece
   const offers = getOfferBlock(offerCid, invocation)
 
   if (!offers) {
@@ -52,30 +52,15 @@ export const claim = async (
         `offer over size, offered: ${size}, maximum: ${MAX_SIZE}`
       ),
     }
-  } else if (size !== capability.nb.size) {
+  } else if (size !== piece.size) {
     return {
       error: new AggregateOfferInvalidSizeError(
-        `offer size mismatch, specified: ${capability.nb.size}, actual: ${size}`
+        `offer size mismatch, specified: ${piece.size}, actual: ${size}`
       ),
     }
   }
 
-  // Validate URLs in offers src
-  for (const offer of offers.values()) {
-    for (const u of offer.src) {
-      try {
-        new URL(u)
-      } catch {
-        return {
-          error: new AggregateOfferInvalidUrlError(
-            `offer has invalid URL: ${u}`
-          ),
-        }
-      }
-    }
-  }
-
-  // TODO: Validate commP
+  // TODO: Validate commP of commPs
 
   // Create effect for receipt
   const fx = await Offer.arrange
@@ -84,13 +69,13 @@ export const claim = async (
       audience: context.id,
       with: context.id.did(),
       nb: {
-        commitmentProof,
+        pieceLink: piece.link,
       },
     })
     .delegate()
 
   // Write offer to store
-  await offerStore.queue({ commitmentProof, offers })
+  await offerStore.queue({ piece, offers })
 
   return Server.ok({
     status: 'queued',
@@ -99,24 +84,18 @@ export const claim = async (
 
 /**
  * @param {Server.API.Link<unknown, number, number, 0 | 1>} offerCid
- * @param {Server.API.Invocation<Server.API.Capability<"aggregate/offer", `did:${string}:${string}` & `did:${string}` & Server.API.Phantom<{ protocol: "did:"; }> & `${string}:${string}` & Server.API.Phantom<{ protocol: `${string}:`; }>, Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; commitmentProof: Server.API.Link<unknown, number, number, 0 | 1>; size: number & Server.API.Phantom<{ typeof: "integer"; }>; }, "offer" | "commitmentProof" | "size"> & Partial<Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; commitmentProof: Server.API.Link<unknown, number, number, 0 | 1>; size: number & Server.API.Phantom<{ typeof: "integer"; }>; }, never>>>>} invocation
+ * @param {Server.API.Invocation<Server.API.Capability<"aggregate/offer", `did:${string}:${string}` & `did:${string}` & Server.API.Phantom<{ protocol: "did:"; }> & `${string}:${string}` & Server.API.Phantom<{ protocol: `${string}:`; }>, Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; piece: Server.Schema.InferStruct<{ link: Server.Schema.Schema<Server.API.Link<unknown, number, number, 0 | 1>, any>; size: Server.Schema.NumberSchema<number & Server.API.Phantom<{ typeof: "integer"; }>, unknown>; }>; }, "offer" | "piece"> & Partial<Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; piece: Server.Schema.InferStruct<{ link: Server.Schema.Schema<Server.API.Link<unknown, number, number, 0 | 1>, any>; size: Server.Schema.NumberSchema<number & Server.API.Phantom<{ typeof: "integer"; }>, unknown>; }>; }, never>>>>} invocation
  */
 function getOfferBlock(offerCid, invocation) {
   for (const block of invocation.iterateIPLDBlocks()) {
     if (block.cid.equals(offerCid)) {
       const decoded =
-        /** @type {import('@web3-storage/aggregate-client/types').Offer[]} */ (
+        /** @type {import('@web3-storage/aggregate-client/types').Piece[]} */ (
           CBOR.decode(block.bytes)
         )
       return decoded
       // TODO: Validate with schema
     }
-  }
-}
-
-class AggregateOfferInvalidUrlError extends Server.Failure {
-  get name() {
-    return /** @type {const} */ ('AggregateOfferInvalidUrl')
   }
 }
 

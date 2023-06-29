@@ -10,7 +10,7 @@ import type {
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
 
-import type { Offer } from '@web3-storage/aggregate-client/types'
+import type { Piece } from '@web3-storage/aggregate-client/types'
 export * from '@web3-storage/aggregate-client/types'
 
 export * from '@web3-storage/capabilities/types'
@@ -31,7 +31,7 @@ export interface ServiceContext
 
 export interface ArrangedOfferStore {
   get: (
-    commitmentProof: Link<unknown, number, number, 0 | 1>
+    pieceLink: Link<unknown, number, number, 0 | 1>
   ) => Promise<string | undefined>
 }
 
@@ -40,13 +40,13 @@ export interface OfferStore {
 }
 
 export interface OfferToQueue {
-  commitmentProof: Link<unknown, number, number, 0 | 1>
-  offers: Offer[]
+  piece: Piece
+  offers: Piece[]
 }
 
 export interface AggregateStore {
   get: (
-    commitmentProof: Link<unknown, number, number, 0 | 1>
+    pieceLink: Link<unknown, number, number, 0 | 1>
   ) => Promise<unknown[] | undefined>
 }
 
@@ -76,7 +76,7 @@ export interface Assert {
 
 export interface AggregateStoreBackend {
   put: (
-    commitmentProof: Link<unknown, number, number, 0 | 1>,
+    pieceLink: Link<unknown, number, number, 0 | 1>,
     aggregateInfo: unknown
   ) => Promise<void>
 }

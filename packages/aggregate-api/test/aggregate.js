@@ -5,7 +5,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 
 import { MIN_SIZE, MAX_SIZE } from '../src/aggregate/offer.js'
 import * as API from '../src/types.js'
-import { randomCARs } from './utils.js'
+import { randomCargo } from './utils.js'
 import { createServer, connect } from '../src/lib.js'
 
 /**
@@ -24,16 +24,20 @@ export const test = {
     })
 
     // Generate CAR Files for offer
-    const offers = (await randomCARs(100, 100))
+    const offers = (await randomCargo(100, 128))
       // Inflate size for testing within range
       .map((car) => ({
         ...car,
         size: car.size * 10e5,
       }))
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = parseLink(
-      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-    )
+    // TODO: This should be generated with commP of commPs builder
+    const piece = {
+      link: parseLink(
+        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+      ),
+      size,
+    }
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -42,7 +46,8 @@ export const test = {
       with: storeFront.did(),
       nb: {
         offer: block.cid,
-        commitmentProof,
+        // @ts-expect-error link not explicitly with commP codec
+        piece,
         size,
       },
     })
@@ -62,7 +67,7 @@ export const test = {
         audience: context.id,
         with: context.id.did(),
         nb: {
-          commitmentProof,
+          pieceLink: piece.link,
         },
       })
       .delegate()
@@ -81,11 +86,15 @@ export const test = {
     })
 
     // Generate CAR Files for offer
-    const offers = await randomCARs(100, 100)
+    const offers = await randomCargo(100, 128)
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = parseLink(
-      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-    )
+    // TODO: This should be generated with commP of commPs builder
+    const piece = {
+      link: parseLink(
+        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+      ),
+      size,
+    }
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -94,7 +103,8 @@ export const test = {
       with: storeFront.did(),
       nb: {
         offer: block.cid,
-        commitmentProof,
+        // @ts-expect-error link not explicitly with commP codec
+        piece,
         size,
       },
     })
@@ -104,53 +114,6 @@ export const test = {
     assert.deepEqual(
       aggregateOffer.out.error?.message,
       `missing offer block in invocation: ${block.cid.toString()}`
-    )
-
-    // Validate effect in receipt does not exist
-    assert.ok(!aggregateOffer.fx.join)
-  },
-  'aggregate/offer fails when one or more URLs are not valid': async (
-    assert,
-    context
-  ) => {
-    const { storeFront } = await getServiceContext()
-    const connection = connect({
-      id: context.id,
-      channel: createServer(context),
-    })
-
-    // Generate CAR Files for offer
-    const offers = (await randomCARs(100, 100))
-      // Get broken URLs
-      .map((car) => ({
-        ...car,
-        size: car.size * 10e5,
-        src: [`${car.link}`],
-      }))
-
-    const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = parseLink(
-      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-    )
-
-    const block = await CBOR.write(offers)
-    const aggregateOfferInvocation = Aggregate.offer.invoke({
-      issuer: storeFront,
-      audience: connection.id,
-      with: storeFront.did(),
-      nb: {
-        offer: block.cid,
-        commitmentProof,
-        size,
-      },
-    })
-    aggregateOfferInvocation.attach(block)
-
-    const aggregateOffer = await aggregateOfferInvocation.execute(connection)
-    assert.ok(aggregateOffer.out.error)
-    assert.deepEqual(
-      aggregateOffer.out.error?.message,
-      `offer has invalid URL: ${offers[0].link.toString()}`
     )
 
     // Validate effect in receipt does not exist
@@ -167,11 +130,15 @@ export const test = {
     })
 
     // Generate CAR Files for offer
-    const offers = await randomCARs(100, 100)
+    const offers = await randomCargo(100, 128)
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = parseLink(
-      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-    )
+    // TODO: This should be generated with commP of commPs builder
+    const piece = {
+      link: parseLink(
+        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+      ),
+      size,
+    }
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -180,7 +147,8 @@ export const test = {
       with: storeFront.did(),
       nb: {
         offer: block.cid,
-        commitmentProof,
+        // @ts-expect-error link not explicitly with commP codec
+        piece,
         size,
       },
     })
@@ -207,16 +175,19 @@ export const test = {
     })
 
     // Generate CAR Files for offer
-    const offers = (await randomCARs(100, 100))
+    const offers = (await randomCargo(100, 128))
       // Inflate size for testing above range
       .map((car) => ({
         ...car,
         size: car.size * 10e6,
       }))
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = parseLink(
-      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-    )
+    const piece = {
+      link: parseLink(
+        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+      ),
+      size,
+    }
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -225,7 +196,8 @@ export const test = {
       with: storeFront.did(),
       nb: {
         offer: block.cid,
-        commitmentProof,
+        // @ts-expect-error link not explicitly with commP codec
+        piece,
         size,
       },
     })
@@ -250,7 +222,7 @@ export const test = {
       })
 
       // Generate CAR Files for offer
-      const offers = (await randomCARs(100, 100))
+      const offers = (await randomCargo(100, 128))
         // Inflate size for testing above range
         .map((car) => ({
           ...car,
@@ -258,9 +230,13 @@ export const test = {
         }))
       const size = offers.reduce((accum, offer) => accum + offer.size, 0)
       const badSize = size - 1000
-      const commitmentProof = parseLink(
-        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-      )
+      // TODO: This should be generated with commP of commPs builder
+      const piece = {
+        link: parseLink(
+          'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+        ),
+        size: badSize,
+      }
 
       const block = await CBOR.write(offers)
       const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -269,8 +245,8 @@ export const test = {
         with: storeFront.did(),
         nb: {
           offer: block.cid,
-          commitmentProof,
-          size: badSize,
+          // @ts-expect-error link not explicitly with commP codec
+          piece,
         },
       })
       aggregateOfferInvocation.attach(block)
@@ -297,16 +273,20 @@ export const test = {
     })
 
     // Generate CAR Files for offer
-    const offers = (await randomCARs(100, 100))
+    const offers = (await randomCargo(100, 128))
       // Inflate size for testing within range
       .map((car) => ({
         ...car,
         size: car.size * 10e5,
       }))
     const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const commitmentProof = parseLink(
-      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-    )
+    // TODO: This should be generated with commP of commPs builder
+    const piece = {
+      link: parseLink(
+        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+      ),
+      size,
+    }
 
     const block = await CBOR.write(offers)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -315,8 +295,8 @@ export const test = {
       with: storeFront.did(),
       nb: {
         offer: block.cid,
-        commitmentProof,
-        size,
+        // @ts-expect-error link not explicitly with commP codec
+        piece,
       },
     })
     aggregateOfferInvocation.attach(block)
@@ -334,7 +314,7 @@ export const test = {
         audience: context.id,
         with: context.id.did(),
         nb: {
-          commitmentProof,
+          pieceLink: piece.link,
         },
       })
       .delegate()
@@ -344,7 +324,7 @@ export const test = {
       audience: context.id,
       with: context.id.did(),
       nb: {
-        commitmentProof,
+        pieceLink: piece.link,
       },
     })
 
@@ -366,7 +346,7 @@ export const test = {
       channel: createServer(context),
     })
 
-    const commitmentProof = parseLink(
+    const subject = parseLink(
       'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
     )
     const aggregateGetInvocation = Aggregate.get.invoke({
@@ -374,7 +354,7 @@ export const test = {
       audience: connection.id,
       with: storeFront.did(),
       nb: {
-        commitmentProof,
+        subject,
       },
     })
 
@@ -392,20 +372,20 @@ export const test = {
       channel: createServer(context),
     })
 
-    const commitmentProof = parseLink(
+    const subject = parseLink(
       'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
     )
     const deal = {
       status: 'done',
     }
-    await context.aggregateStoreBackend.put(commitmentProof, deal)
+    await context.aggregateStoreBackend.put(subject, deal)
 
     const aggregateGetInvocation = Aggregate.get.invoke({
       issuer: storeFront,
       audience: connection.id,
       with: storeFront.did(),
       nb: {
-        commitmentProof,
+        subject,
       },
     })
 

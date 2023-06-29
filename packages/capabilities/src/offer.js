@@ -21,18 +21,12 @@ export const arrange = capability({
     /**
      * Commitment proof for the aggregate being requested.
      */
-    commitmentProof: Schema.link(),
+    pieceLink: Schema.link(),
   }),
   derives: (claim, from) => {
     return (
       and(equalWith(claim, from)) ||
-      and(
-        checkLink(
-          claim.nb.commitmentProof,
-          from.nb.commitmentProof,
-          'nb.commitmentProof'
-        )
-      ) ||
+      and(checkLink(claim.nb.pieceLink, from.nb.pieceLink, 'nb.pieceLink')) ||
       ok({})
     )
   },

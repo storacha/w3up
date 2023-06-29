@@ -1,4 +1,5 @@
 import { Link } from 'multiformats/link'
+import type { CommP } from '@web3-storage/data-segment'
 import { CAR } from '@ucanto/transport'
 import {
   ConnectionView,
@@ -58,13 +59,6 @@ export interface Service {
   }
 }
 
-export interface Offer {
-  link: CARLink
-  size: number
-  commitmentProof: string // TODO: ProofLink
-  src: OfferSrc[]
-}
-
 export interface RequestOptions extends Connectable {}
 
 export interface Connectable {
@@ -77,3 +71,18 @@ export interface Connectable {
 export type CARLink = Link<unknown, typeof CAR.codec.code>
 
 export type OfferSrc = ToString<URL>
+
+/**
+ * [Piece CID](https://spec.filecoin.io/systems/filecoin_files/piece/) of some
+ * content.
+ */
+export type PieceCID = ReturnType<typeof CommP.toCID>
+
+/**
+ * [Piece](https://spec.filecoin.io/systems/filecoin_files/piece/) information
+ * for this CAR file.
+ */
+export interface Piece {
+  link: PieceCID
+  size: number
+}

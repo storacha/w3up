@@ -1,3 +1,5 @@
+import { CommP } from '@web3-storage/data-segment'
+
 import { toCAR } from './car.js'
 
 /** @param {number} size */
@@ -34,18 +36,33 @@ export async function randomCAR(size) {
 /**
  * @param {number} length
  * @param {number} size
- * @param {object} [options]
- * @param {string} [options.origin]
  */
-export async function randomCARs(length, size, options = {}) {
-  const origin = options.origin || 'https://carpark.web3.storage'
-
+export async function randomCARs(length, size) {
   return (
     await Promise.all(Array.from({ length }).map(() => randomCAR(size)))
   ).map((car) => ({
     link: car.cid,
     size: car.size,
-    commitmentProof: 'todo-commP',
-    src: [`${origin}/${car.cid.toString()}`],
   }))
+}
+
+/**
+ * @param {number} length
+ * @param {number} size
+ */
+export async function randomCargo(length, size) {
+  const cars = await Promise.all(
+    Array.from({ length }).map(() => randomCAR(size))
+  )
+
+  return Promise.all(
+    cars.map(async (car) => {
+      const commP = await CommP.build(car.bytes)
+
+      return {
+        link: commP.link(),
+        size: commP.pieceSize,
+      }
+    })
+  )
 }

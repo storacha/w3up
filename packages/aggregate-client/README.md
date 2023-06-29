@@ -20,7 +20,8 @@ npm install @web3-storage/aggregate-client
 ```ts
 function aggregateOffer(
   conf: InvocationConfig,
-  offers: Offer[],
+  piece: Piece,
+  offer: Piece[],
 ): Promise<{ status: string }>
 ```
 
@@ -33,8 +34,8 @@ More information: [`InvocationConfig`](#invocationconfig)
 ```ts
 function aggregateGet(
   conf: InvocationConfig,
-  commitmentProof: string, // TODO: ProofLink
-): Promise<unkown> // TODO: type
+  subject: PieceCID,
+): Promise<unkown>
 ```
 
 Ask the service to get deal details of an aggregate.
@@ -43,17 +44,17 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ## Types
 
-### `Offer`
+### `Piece`
 
 An offered CAR to be part of an Aggregate.
 
 ```ts
-export interface Offer {
-  link: CARLink
+export interface Piece {
+  link: PieceCID
   size: number
-  commitmentProof: string // TODO: ProofLink
-  src: OfferSrc[]
 }
+
+export type PieceCID = ReturnType<typeof CommP.toCID>
 ```
 
 ### `InvocationConfig`
