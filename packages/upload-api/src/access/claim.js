@@ -25,8 +25,8 @@ export const claim = async (
       error: {
         name: 'AccessClaimFailure',
         message: 'error finding delegations',
-        cause: claimedResult.error
-      }
+        cause: claimedResult.error,
+      },
     }
   }
   return {

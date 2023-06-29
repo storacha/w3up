@@ -1,8 +1,8 @@
 import * as Types from '../src/types.js'
 
 /**
- * 
- * @param {Types.Provision} item 
+ *
+ * @param {Types.Provision} item
  * @returns {string}
  */
 const itemKey = (item) => `${item.customer}@${item.provider}`
@@ -35,7 +35,9 @@ export class ProvisionsStorage {
    * @param {Types.DIDKey} consumer
    */
   async hasStorageProvider(consumer) {
-    return { ok: !!Object.values(this.provisions).find(i => i.consumer === consumer) }
+    return {
+      ok: !!Object.values(this.provisions).find((i) => i.consumer === consumer),
+    }
   }
 
   /**
@@ -47,12 +49,10 @@ export class ProvisionsStorage {
     const storedItem = this.provisions[itemKey(item)]
     if (
       storedItem &&
-      (
-        (storedItem.provider !== item.provider) || 
-        (storedItem.customer !== item.customer) || 
-        (storedItem.consumer !== item.consumer) || 
-        (storedItem.cause.link() !== item.cause.link())
-      )
+      (storedItem.provider !== item.provider ||
+        storedItem.customer !== item.customer ||
+        storedItem.consumer !== item.consumer ||
+        storedItem.cause.link() !== item.cause.link())
     ) {
       return { error: new Error(`could not store ${JSON.stringify(item)}`) }
     } else {
@@ -62,13 +62,15 @@ export class ProvisionsStorage {
   }
 
   /**
-   * 
-   * @param {Types.ProviderDID} provider 
-   * @param {Types.DID<'mailto'>} customer 
-   * @returns 
+   *
+   * @param {Types.ProviderDID} provider
+   * @param {Types.DID<'mailto'>} customer
+   * @returns
    */
   async getCustomer(provider, customer) {
-    const exists = Object.values(this.provisions).find(p => (p.provider === provider) && (p.customer === customer))
+    const exists = Object.values(this.provisions).find(
+      (p) => p.provider === provider && p.customer === customer
+    )
     return { ok: exists ? { did: customer } : null }
   }
 

@@ -16,5 +16,5 @@ export {
   Upload,
   delegationsStorageTests,
   provisionsStorageTests,
-  DebugEmail
+  DebugEmail,
 }

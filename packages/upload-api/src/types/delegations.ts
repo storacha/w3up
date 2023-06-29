@@ -10,7 +10,7 @@ export interface DelegationsStorage<
 > {
   /**
    * Write several items into storage.
-   * 
+   *
    * Options accepts an optional `cause` that MUST be the CID of the invocation
    * that contains the given delegations. Implementations MAY choose
    * to avoid storing delegations as long as they can reliably
@@ -29,6 +29,9 @@ export interface DelegationsStorage<
   /**
    * find all items that match the query
    */
-  find: (query: Query) =>
-   Promise<Ucanto.Result<Ucanto.Delegation<Ucanto.Tuple<Cap>>[], Ucanto.Failure>>
+  find: (
+    query: Query
+  ) => Promise<
+    Ucanto.Result<Ucanto.Delegation<Ucanto.Tuple<Cap>>[], Ucanto.Failure>
+  >
 }

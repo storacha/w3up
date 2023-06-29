@@ -24,7 +24,10 @@ const get = async ({ capability }, context) => {
     return { error: new UnknownProvider(capability.with) }
   }
 
-  const customer = await context.provisionsStorage.getCustomer(capability.with, capability.nb.customer)
+  const customer = await context.provisionsStorage.getCustomer(
+    capability.with,
+    capability.nb.customer
+  )
   return { ok: { customer: customer.ok ? { did: customer.ok.did } : null } }
 }
 
