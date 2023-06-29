@@ -34,7 +34,7 @@ export class DelegationsStorage {
       }
     }
     return {
-      ok: delegations
+      ok: delegations,
     }
   }
 }

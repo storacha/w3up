@@ -28,15 +28,15 @@ export class DebugEmail {
     }
   }
   /**
-   * 
-   * @param {number} retries 
+   *
+   * @param {number} retries
    */
   async takeWithRetries(retries = MAX_TAKE_RETRIES) {
     const self = this
-    if ((this.emails.length > 0) || (retries <= 0)){
+    if (this.emails.length > 0 || retries <= 0) {
       return this.emails.shift()
     } else {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => resolve(self.takeWithRetries(retries - 1)), 100)
       })
     }
@@ -46,4 +46,3 @@ export class DebugEmail {
     return this.takeWithRetries()
   }
 }
-

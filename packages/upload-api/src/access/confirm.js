@@ -52,7 +52,7 @@ export async function confirm({ capability, invocation }, ctx) {
     audience: account.did(),
   })
 
-  if (delegationsResult.error){
+  if (delegationsResult.error) {
     return delegationsResult
   }
 

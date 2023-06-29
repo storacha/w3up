@@ -37,12 +37,12 @@ export const add = async (
       },
     }
   }
-  if ((await provisions.hasStorageProvider(consumer)).ok){
+  if ((await provisions.hasStorageProvider(consumer)).ok) {
     return {
       error: {
         name: 'SpaceAlreadyProvisioned',
-        message: `${consumer} already has a storage provider`
-      }
+        message: `${consumer} already has a storage provider`,
+      },
     }
   }
 

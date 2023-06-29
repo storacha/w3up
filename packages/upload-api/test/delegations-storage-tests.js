@@ -40,7 +40,10 @@ export const test = {
       Array.from({ length: count }).map(() => createSampleDelegation())
     )
     await delegationsStorage.putMany(delegations)
-    assert.deepEqual(await delegationsStorage.count(), BigInt(delegations.length))
+    assert.deepEqual(
+      await delegationsStorage.count(),
+      BigInt(delegations.length)
+    )
   },
   'can retrieve delegations by audience': async (assert, context) => {
     const delegations = await context.delegationsStorage
@@ -71,14 +74,16 @@ export const test = {
 
     await delegations.putMany([...delegationsForAlice, ...delegationsForBob])
 
-    const aliceDelegations = (await delegations.find({ audience: alice.did() })).ok
+    const aliceDelegations = (await delegations.find({ audience: alice.did() }))
+      .ok
     assert.deepEqual(aliceDelegations?.length, delegationsForAlice.length)
 
     const bobDelegations = (await delegations.find({ audience: bob.did() })).ok
     assert.deepEqual(bobDelegations?.length, delegationsForBob.length)
 
     const carol = await principal.ed25519.generate()
-    const carolDelegations = (await delegations.find({ audience: carol.did() })).ok
+    const carolDelegations = (await delegations.find({ audience: carol.did() }))
+      .ok
     assert.deepEqual(carolDelegations?.length, 0)
-  }
+  },
 }

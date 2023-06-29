@@ -23,7 +23,7 @@ import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
 
 export type ValidationEmailSend = {
-  to: string,
+  to: string
   url: string
 }
 
