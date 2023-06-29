@@ -68,7 +68,9 @@ export const createContext = async (options = {}) => {
  * @param {Types.UcantoServerTestContext} context
  */
 export const cleanupContext = async (context) => {
-  /** @type {CarStoreBucket & {  deactivate: () => Promise<void> }}} */ ;(
-    await context.carStoreBucket
-  ).deactivate()
+  /** @type {CarStoreBucket & {  deactivate: () => Promise<void> }}} */
+  // @ts-ignore type misses S3 bucket properties like accessKey
+  const store = context.carStoreBucket
+
+  await store.deactivate()
 }
