@@ -28,7 +28,7 @@ export const claim = async (
   // Get offer block
   const offerCid = capability.nb.offer
   const piece = capability.nb.piece
-  const offers = getOfferBlock(offerCid, invocation)
+  const offers = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
 
   if (!offers) {
     return {
@@ -84,10 +84,10 @@ export const claim = async (
 
 /**
  * @param {Server.API.Link<unknown, number, number, 0 | 1>} offerCid
- * @param {Server.API.Invocation<Server.API.Capability<"aggregate/offer", `did:${string}:${string}` & `did:${string}` & Server.API.Phantom<{ protocol: "did:"; }> & `${string}:${string}` & Server.API.Phantom<{ protocol: `${string}:`; }>, Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; piece: Server.Schema.InferStruct<{ link: Server.Schema.Schema<Server.API.Link<unknown, number, number, 0 | 1>, any>; size: Server.Schema.NumberSchema<number & Server.API.Phantom<{ typeof: "integer"; }>, unknown>; }>; }, "offer" | "piece"> & Partial<Pick<{ offer: Server.API.Link<unknown, number, number, 0 | 1>; piece: Server.Schema.InferStruct<{ link: Server.Schema.Schema<Server.API.Link<unknown, number, number, 0 | 1>, any>; size: Server.Schema.NumberSchema<number & Server.API.Phantom<{ typeof: "integer"; }>, unknown>; }>; }, never>>>>} invocation
+ * @param {IterableIterator<Server.API.Transport.Block<unknown, number, number, 1>>} blockIterator
  */
-function getOfferBlock(offerCid, invocation) {
-  for (const block of invocation.iterateIPLDBlocks()) {
+function getOfferBlock(offerCid, blockIterator) {
+  for (const block of blockIterator) {
     if (block.cid.equals(offerCid)) {
       const decoded =
         /** @type {import('@web3-storage/aggregate-client/types').Piece[]} */ (

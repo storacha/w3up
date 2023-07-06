@@ -44,7 +44,7 @@ export async function aggregateOffer(
  * Get details of an aggregate.
  *
  * @param {import('./types').InvocationConfig} conf - Configuration
- * @param {import('@ucanto/interface').Link<unknown, number, number, 0 | 1>} subject
+ * @param {import('@ucanto/interface').UnknownLink} subject
  * @param {import('./types').RequestOptions} [options]
  */
 export async function aggregateGet(
