@@ -14,13 +14,13 @@ export const provide = (context) =>
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateGetSuccess, API.AggregateGetFailure>>}
  */
 export const claim = async ({ capability }, { aggregateStore }) => {
-  const commitmentProof = capability.nb.commitmentProof
+  const subject = capability.nb.subject
 
-  const aggregateArrangedResult = await aggregateStore.get(commitmentProof)
+  const aggregateArrangedResult = await aggregateStore.get(subject)
   if (!aggregateArrangedResult) {
     return {
       error: new AggregateNotFound(
-        `aggregate not found for commitment proof: ${commitmentProof}`
+        `aggregate not found for subject: ${subject}`
       ),
     }
   }

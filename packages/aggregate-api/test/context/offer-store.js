@@ -1,5 +1,5 @@
 /**
- * @typedef {import('@web3-storage/aggregate-client/types').Offer[]} Offers
+ * @typedef {import('@web3-storage/aggregate-client/types').Piece[]} Offers
  */
 
 export class OfferStore {
@@ -11,17 +11,14 @@ export class OfferStore {
    * @param {import('../../src/types').OfferToQueue} offerToQueue
    */
   async queue(offerToQueue) {
-    this.offers.set(
-      offerToQueue.commitmentProof.toString(),
-      offerToQueue.offers
-    )
+    this.offers.set(offerToQueue.piece.link.toString(), offerToQueue.offers)
   }
 
   /**
-   * @param {import('@ucanto/interface').Link<unknown, number, number, 0 | 1>} commitmentProof
+   * @param {import('@ucanto/interface').Link<unknown, number, number, 0 | 1>} pieceLink
    * @returns {Promise<string>}
    */
-  async get(commitmentProof) {
-    return Promise.resolve(`todo:${commitmentProof.toString()}`)
+  async get(pieceLink) {
+    return Promise.resolve(`todo:${pieceLink.toString()}`)
   }
 }

@@ -1,5 +1,5 @@
 import * as AggregateCapabilities from '@web3-storage/capabilities/aggregate'
-import { CBOR, parseLink } from '@ucanto/core'
+import { CBOR } from '@ucanto/core'
 
 import { servicePrincipal, connection } from './service.js'
 
@@ -10,25 +10,20 @@ export const MAX_SIZE = 127 * (1 << 28)
  * Offer an aggregate to be assembled and stored.
  *
  * @param {import('./types').InvocationConfig} conf - Configuration
- * @param {import('./types').Offer[]} offers
+ * @param {import('./types').Piece} piece
+ * @param {import('./types').Piece[]} offer
  * @param {import('./types').RequestOptions} [options]
  */
 export async function aggregateOffer(
   { issuer, with: resource, proofs, audience },
-  offers,
+  piece,
+  offer,
   options = {}
 ) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
 
-  // TODO: Get commitmentProof
-  const commitmentProof = parseLink(
-    'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-  )
-
-  // Validate size for offer is valid
-  const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-  const block = await CBOR.write(offers)
+  const block = await CBOR.write(offer)
   const invocation = AggregateCapabilities.offer.invoke({
     issuer,
     /* c8 ignore next */
@@ -36,8 +31,7 @@ export async function aggregateOffer(
     with: resource,
     nb: {
       offer: block.cid,
-      commitmentProof,
-      size,
+      piece,
     },
     proofs,
   })
@@ -50,12 +44,12 @@ export async function aggregateOffer(
  * Get details of an aggregate.
  *
  * @param {import('./types').InvocationConfig} conf - Configuration
- * @param {import('@ucanto/interface').Link<unknown, number, number, 0 | 1>} commitmentProof
+ * @param {import('@ucanto/interface').UnknownLink} subject
  * @param {import('./types').RequestOptions} [options]
  */
 export async function aggregateGet(
   { issuer, with: resource, proofs, audience },
-  commitmentProof,
+  subject,
   options = {}
 ) {
   /* c8 ignore next */
@@ -68,7 +62,7 @@ export async function aggregateGet(
       audience: audience ?? servicePrincipal,
       with: resource,
       nb: {
-        commitmentProof: commitmentProof,
+        subject,
       },
       proofs,
     })

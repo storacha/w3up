@@ -11,14 +11,14 @@ import * as Aggregate from '../src/aggregate.js'
 
 import { serviceProvider } from './fixtures.js'
 import { mockService } from './helpers/mocks.js'
-import { randomCARs } from './helpers/random.js'
+import { randomCargo } from './helpers/random.js'
 
 describe('aggregate.offer', () => {
   it('places a valid offer with the service', async () => {
     const { storeFront } = await getContext()
 
     // Generate CAR Files for offer
-    const offers = (await randomCARs(100, 100))
+    const offers = (await randomCargo(100, 100))
       // Inflate size for testing within range
       .map((car) => ({
         ...car,
@@ -29,6 +29,13 @@ describe('aggregate.offer', () => {
     /** @type {import('@web3-storage/capabilities/types').AggregateOfferSuccess} */
     const aggregateOfferResponse = {
       status: 'queued',
+    }
+    // TODO: This should be generated with commP of commPs builder
+    const piece = {
+      link: parseLink(
+        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+      ),
+      size,
     }
 
     // Create Ucanto service
@@ -44,8 +51,8 @@ describe('aggregate.offer', () => {
             assert.strictEqual(invCap.can, AggregateCapabilities.offer.can)
             assert.equal(invCap.with, invocation.issuer.did())
             // size
-            assert.strictEqual(invCap.nb?.size, size)
-            assert.ok(invCap.nb?.commitmentProof)
+            assert.strictEqual(invCap.nb?.piece.size, size)
+            assert.ok(invCap.nb?.piece.link)
             // TODO: Validate commitmemnt proof
             assert.ok(invCap.nb?.offer)
             // Validate block inline exists
@@ -61,7 +68,7 @@ describe('aggregate.offer', () => {
                 audience: context.id,
                 with: context.id.did(),
                 nb: {
-                  commitmentProof: invCap.nb?.commitmentProof,
+                  pieceLink: invCap.nb?.piece.link,
                 },
               })
               .delegate()
@@ -77,8 +84,9 @@ describe('aggregate.offer', () => {
         with: storeFront.did(),
         audience: serviceProvider,
       },
+      // @ts-expect-error link not explicitly with commP codec
+      piece,
       offers,
-      // @ts-expect-error no full service implemented
       { connection: getConnection(service).connection }
     )
     assert.ok(res.out.ok)
@@ -91,7 +99,7 @@ describe('aggregate.offer', () => {
 describe('aggregate.get', () => {
   it('places a valid offer with the service', async () => {
     const { storeFront } = await getContext()
-    const commitmentProof = parseLink(
+    const subject = parseLink(
       'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
     )
     /** @type {unknown[]} */
@@ -106,7 +114,7 @@ describe('aggregate.get', () => {
           const invCap = invocation.capabilities[0]
           assert.strictEqual(invCap.can, AggregateCapabilities.get.can)
           assert.equal(invCap.with, invocation.issuer.did())
-          assert.ok(invCap.nb?.commitmentProof)
+          assert.ok(invCap.nb?.subject)
           return { ok: { deals } }
         }),
       },
@@ -118,7 +126,7 @@ describe('aggregate.get', () => {
         with: storeFront.did(),
         audience: serviceProvider,
       },
-      commitmentProof,
+      subject,
       // @ts-expect-error no full service implemented
       { connection: getConnection(service).connection }
     )

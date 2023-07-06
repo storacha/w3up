@@ -82,6 +82,7 @@
     },
     "rules": {
       "unicorn/expiring-todo-comments": "off",
+      "unicorn/numeric-separators-style": "off",
       "unicorn/prefer-number-properties": "off",
       "unicorn/prefer-export-from": "off",
       "unicorn/no-array-reduce": "off",

@@ -12,6 +12,15 @@ import { capability, Schema, ok } from '@ucanto/validator'
 import { checkLink, equalWith, equal, and } from './utils.js'
 
 /**
+ * @see https://github.com/multiformats/go-multihash/blob/dc3bd6897fcd17f6acd8d4d6ffd2cea3d4d3ebeb/multihash.go#L73
+ */
+const SHA2_256_TRUNC254_PADDED = 0x1012
+/**
+ * @see https://github.com/ipfs/go-cid/blob/829c826f6be23320846f4b7318aee4d17bf8e094/cid.go#L104
+ */
+const FilCommitmentUnsealed = 0xf101
+
+/**
  * `aggregate/offer` capability allows agent to create an offer to get an aggregate
  * of CARs files in the market to be fetched and stored by a Storage provider.
  */
@@ -29,25 +38,33 @@ export const offer = capability({
     offer: Schema.link(),
     /**
      * Commitment proof for the aggregate being offered.
+     * https://github.com/filecoin-project/go-state-types/blob/1e6cf0d47cdda75383ef036fc2725d1cf51dbde8/abi/piece.go#L47-L50
      */
-    commitmentProof: Schema.link(),
-    /**
-     * Size of the combined CAR files to be offered as aggregate.
-     */
-    size: Schema.integer(),
+    piece: Schema.struct({
+      /**
+       * CID of the aggregate piece.
+       */
+      link: Schema.link({
+        code: FilCommitmentUnsealed,
+        version: 1,
+        multihash: {
+          code: SHA2_256_TRUNC254_PADDED,
+        },
+      }),
+      /**
+       * Size in nodes. For BLS12-381 (capacity 254 bits), must be >= 16. (16 * 8 = 128)
+       */
+      size: Schema.integer(),
+    }),
   }),
   derives: (claim, from) => {
     return (
       and(equalWith(claim, from)) ||
       and(checkLink(claim.nb.offer, from.nb.offer, 'nb.offer')) ||
       and(
-        checkLink(
-          claim.nb.commitmentProof,
-          from.nb.commitmentProof,
-          'nb.commitmentProof'
-        )
+        checkLink(claim.nb.piece.link, from.nb.piece.link, 'nb.piece.link')
       ) ||
-      and(equal(claim.nb.size, from.nb.size, 'nb.size')) ||
+      and(equal(claim.nb.piece.size, from.nb.piece.size, 'nb.piece.size')) ||
       ok({})
     )
   },
@@ -64,18 +81,12 @@ export const get = capability({
     /**
      * Commitment proof for the aggregate being requested.
      */
-    commitmentProof: Schema.link(),
+    subject: Schema.link(),
   }),
   derives: (claim, from) => {
     return (
       and(equalWith(claim, from)) ||
-      and(
-        checkLink(
-          claim.nb.commitmentProof,
-          from.nb.commitmentProof,
-          'nb.commitmentProof'
-        )
-      ) ||
+      and(checkLink(claim.nb.subject, from.nb.subject, 'nb.subject')) ||
       ok({})
     )
   },
