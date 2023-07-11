@@ -1,5 +1,16 @@
 # Changelog
 
+## [7.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v6.0.1...capabilities-v7.0.0) (2023-07-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* aggregate capabilities now have different nb properties and aggregate client api was simplified
+
+### Bug Fixes
+
+* update aggregate spec in client and api ([#824](https://github.com/web3-storage/w3up/issues/824)) ([ebefd88](https://github.com/web3-storage/w3up/commit/ebefd889a028f325690370db8043c7b9e9fdf7bb))
+
 ## [6.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v6.0.0...capabilities-v6.0.1) (2023-06-09)
 
 
