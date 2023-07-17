@@ -1,5 +1,5 @@
 import { Link } from 'multiformats/link'
-import type { CommP } from '@web3-storage/data-segment'
+import type { PieceLink } from '@web3-storage/data-segment'
 import { CAR } from '@ucanto/transport'
 import {
   ConnectionView,
@@ -8,7 +8,6 @@ import {
   Proof,
   DID,
   Principal,
-  ToString,
 } from '@ucanto/interface'
 import {
   AggregateOffer,
@@ -70,19 +69,12 @@ export interface Connectable {
  */
 export type CARLink = Link<unknown, typeof CAR.codec.code>
 
-export type OfferSrc = ToString<URL>
-
 /**
- * [Piece CID](https://spec.filecoin.io/systems/filecoin_files/piece/) of some
- * content.
- */
-export type PieceCID = ReturnType<typeof CommP.toCID>
-
-/**
+ * Filecoin piece proof that can be used to derivew `PieceInfo`.
  * [Piece](https://spec.filecoin.io/systems/filecoin_files/piece/) information
  * for this CAR file.
  */
 export interface Piece {
-  link: PieceCID
-  size: number
+  link: PieceLink
+  height: number
 }

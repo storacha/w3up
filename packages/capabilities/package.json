@@ -59,7 +59,8 @@
     "@ucanto/interface": "^8.0.0",
     "@ucanto/principal": "^8.0.0",
     "@ucanto/transport": "^8.0.0",
-    "@ucanto/validator": "^8.0.0"
+    "@ucanto/validator": "^8.0.0",
+    "@web3-storage/data-segment": "^2.1.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",

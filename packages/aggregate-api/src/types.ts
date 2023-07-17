@@ -10,6 +10,7 @@ import type {
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
 
+import type { PieceLink } from '@web3-storage/data-segment'
 import type { Piece } from '@web3-storage/aggregate-client/types'
 export * from '@web3-storage/aggregate-client/types'
 
@@ -30,9 +31,7 @@ export interface ServiceContext
     OfferServiceContext {}
 
 export interface ArrangedOfferStore {
-  get: (
-    pieceLink: Link<unknown, number, number, 0 | 1>
-  ) => Promise<string | undefined>
+  get: (pieceLink: PieceLink) => Promise<string | undefined>
 }
 
 export interface OfferStore {
@@ -45,9 +44,7 @@ export interface OfferToQueue {
 }
 
 export interface AggregateStore {
-  get: (
-    pieceLink: Link<unknown, number, number, 0 | 1>
-  ) => Promise<unknown[] | undefined>
+  get: (pieceLink: PieceLink) => Promise<unknown[] | undefined>
 }
 
 export interface UcantoServerContext extends ServiceContext {

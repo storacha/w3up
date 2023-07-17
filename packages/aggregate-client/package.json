@@ -57,7 +57,7 @@
     "@types/mocha": "^10.0.1",
     "@ucanto/principal": "^8.0.0",
     "@ucanto/server": "^8.0.1",
-    "@web3-storage/data-segment": "^1.0.1",
+    "@web3-storage/data-segment": "^2.1.0",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "hd-scripts": "^4.0.0",
