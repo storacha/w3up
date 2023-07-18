@@ -21,6 +21,8 @@ import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
+import { RateLimitsStorage as RateLimits } from './types/rate-limits'
+
 
 export type ValidationEmailSend = {
   to: string
@@ -83,6 +85,9 @@ export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
 } from './types/delegations'
+export type {
+  RateLimitsStorage
+} from './types/rate-limits'
 
 export interface Service {
   store: {
@@ -189,6 +194,10 @@ export interface ProviderServiceContext {
   provisionsStorage: Provisions
 }
 
+export interface RateLimitsServiceContext {
+  rateLimitsStorage: RateLimits
+}
+
 export interface ServiceContext
   extends AccessServiceContext,
     ConsoleServiceContext,
@@ -197,6 +206,7 @@ export interface ServiceContext
     ProviderServiceContext,
     SpaceServiceContext,
     StoreServiceContext,
+    RateLimitsServiceContext,
     UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {
