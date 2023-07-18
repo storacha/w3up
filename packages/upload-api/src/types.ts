@@ -86,7 +86,8 @@ export type {
   Query as DelegationsStorageQuery,
 } from './types/delegations'
 export type {
-  RateLimitsStorage
+  RateLimitsStorage,
+  RateLimit
 } from './types/rate-limits'
 
 export interface Service {

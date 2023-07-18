@@ -10,7 +10,7 @@ export interface RateLimit {
   /**
    * Identifier of this rate limit - can used to remove a limit.
    */
-  RateLimitID?: string
+  id?: string
   /**
    * Rate limit applied to the subject - intentionally unitless, should be interpreted by consumer.
    */

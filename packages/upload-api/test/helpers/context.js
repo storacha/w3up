@@ -7,6 +7,7 @@ import { DudewhereBucket } from '../dude-where-bucket.js'
 import * as AccessVerifier from '../access-verifier.js'
 import { ProvisionsStorage } from '../provisions-storage.js'
 import { DelegationsStorage } from '../delegations-storage.js'
+import { RateLimitsStorage } from '../rate-limits-storage.js'
 import * as Email from '../../src/utils/email.js'
 import { createServer, connect } from '../../src/lib.js'
 import * as Types from '../../src/types.js'
@@ -34,6 +35,7 @@ export const createContext = async (options = {}) => {
     url: new URL('http://localhost:8787'),
     provisionsStorage: new ProvisionsStorage(options.providers),
     delegationsStorage: new DelegationsStorage(),
+    rateLimitsStorage: new RateLimitsStorage(),
     errorReporter: {
       catch(error) {
         assert.fail(error)
