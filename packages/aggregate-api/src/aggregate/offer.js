@@ -1,13 +1,14 @@
 import * as Server from '@ucanto/server'
 import { CBOR } from '@ucanto/core'
-import { Node, Aggregate as AggregateBuilder } from '@web3-storage/data-segment'
+import { Node, Piece, Aggregate as AggregateBuilder } from '@web3-storage/data-segment'
 import * as Aggregate from '@web3-storage/capabilities/aggregate'
 import * as Offer from '@web3-storage/capabilities/offer'
 import * as API from '../types.js'
 
-export const MIN_SIZE = 1 + 127 * (1 << 27)
-// export const MAX_SIZE = 127 * (1 << 28)
-export const MAX_SIZE = AggregateBuilder.DEFAULT_DEAL_SIZE
+// 16 GiB
+export const MIN_SIZE = Piece.PaddedSize.from(2n ** 34n)
+// 32 GiB
+export const MAX_SIZE = Piece.PaddedSize.from(2n ** 35n)
 
 /**
  * @param {API.AggregateServiceContext} context
@@ -60,10 +61,11 @@ export const claim = async (
 
   // Validate commP of commPs
   const aggregateBuild = AggregateBuilder.build({
-    pieces: offers.map((o) => ({
-      link: o.link,
-      size: 2n ** BigInt(o.height) * BigInt(Node.Size),
-    })),
+    size: aggregateSize,
+    pieces: offers.map(offer => Piece.fromJSON({
+      height: offer.height,
+      link: { '/': offer.link.toString() }
+    }))
   })
   if (!aggregateBuild.link.equals(piece.link)) {
     return {

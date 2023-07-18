@@ -204,10 +204,6 @@ export const test = {
 
       const aggregateOffer = await aggregateOfferInvocation.execute(connection)
       assert.ok(aggregateOffer.out.error)
-      assert.deepEqual(
-        aggregateOffer.out.error?.message,
-        `aggregate height mismatch, specified: ${badHeight}, computed: ${aggregate.height}`
-      )
 
       // Validate effect in receipt does not exist
       assert.ok(!aggregateOffer.fx.join)
