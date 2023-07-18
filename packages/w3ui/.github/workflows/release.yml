@@ -56,7 +56,7 @@ jobs:
         working-directory: examples/react/w3console
         env:
           VITE_W3UP_PROVIDER: did:web:staging.web3.storage
-          VITE_W3UP_ACCESS_SERVICE_URL: 'https://w3access-staging.protocol-labs.workers.dev'
+          VITE_W3UP_ACCESS_SERVICE_URL: 'https://staging.up.web3.storage'
           VITE_W3UP_ACCESS_SERVICE_DID: 'did:web:staging.web3.storage'
           VITE_W3UP_UPLOAD_SERVICE_URL: 'https://staging.up.web3.storage'
           VITE_W3UP_UPLOAD_SERVICE_DID: 'did:web:staging.web3.storage'

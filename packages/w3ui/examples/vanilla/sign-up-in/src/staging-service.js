@@ -3,7 +3,7 @@ import { CAR, CBOR, HTTP } from '@ucanto/transport'
 import * as DID from '@ipld/dag-ucan/did'
 
 export const accessServiceURL = new URL(
-  'https://w3access-staging.protocol-labs.workers.dev'
+  'https://staging.up.web3.storage'
 )
 export const accessServicePrincipal = DID.parse(
   'did:key:z6MkwTYX2JHHd8bmaEuDdS1LJjrpFspirjDcQ4DvAiDP49Gm'

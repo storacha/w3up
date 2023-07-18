@@ -5,7 +5,7 @@ import * as DID from '@ipld/dag-ucan/did'
 
 
 export const accessServiceURL = new URL(
-  //'https://w3access-staging.protocol-labs.workers.dev'
+  //'https://staging.up.web3.storage'
   import.meta.env.VITE_W3UP_ACCESS_SERVICE_URL ?? 'https://access.web3.storage'
 )
 export const accessServicePrincipal = DID.parse(
