@@ -32,7 +32,7 @@ export interface RateLimitsStorage {
   /**
    * Returns rate limits on subject.
    *
-   * @param subject identifier for subject - could be a DID, a URI, or anything else
+   * @param subjects a subject identifier - could be a DID, a URI, or anything else
    * @returns a list of rate limits for the idenfied subject
    */
   list: (subject: string) => Promise<Ucanto.Result<RateLimit[], Ucanto.Failure>>
@@ -41,4 +41,9 @@ export interface RateLimitsStorage {
    * Remove a rate limit with a given ID.
    */
   remove: (id: RateLimitID) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+
+  /**
+   * Returns true if the given subject has a limit equal to 0.
+   */
+  areAnyBlocked: (subjects: string[]) => Promise<Ucanto.Result<boolean, Ucanto.Failure>>
 }

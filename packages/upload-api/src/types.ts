@@ -171,6 +171,7 @@ export type AccessServiceContext = AccessClaimContext & {
   email: Email
   url: URL
   provisionsStorage: Provisions
+  rateLimitsStorage: RateLimits
 }
 
 export interface ConsumerServiceContext {
@@ -188,10 +189,12 @@ export interface ConsoleServiceContext {}
 export interface SpaceServiceContext {
   provisionsStorage: Provisions
   delegationsStorage: Delegations
+  rateLimitsStorage: RateLimits
 }
 
 export interface ProviderServiceContext {
   provisionsStorage: Provisions
+  rateLimitsStorage: RateLimits
 }
 
 export interface RateLimitsServiceContext {
