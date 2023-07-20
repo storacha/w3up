@@ -30,7 +30,7 @@ import {
 export { AgentData }
 export * from './agent-use-cases.js'
 
-const HOST = 'https://access.web3.storage'
+const HOST = 'https://up.web3.storage'
 const PRINCIPAL = DID.parse('did:web:web3.storage')
 
 /**
