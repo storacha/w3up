@@ -2,7 +2,7 @@ import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
 import * as DID from '@ipld/dag-ucan/did'
 
-export const accessServiceURL = new URL('https://access.web3.storage')
+export const accessServiceURL = new URL('https://up.web3.storage')
 export const accessServicePrincipal = DID.parse('did:web:web3.storage')
 
 export const accessServiceConnection = connect({
