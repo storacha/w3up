@@ -79,7 +79,7 @@
     "@ucanto/interface": "^8.0.0",
     "@ucanto/principal": "^8.0.0",
     "@ucanto/transport": "^8.0.0",
-    "@web3-storage/access": "workspace:^15",
+    "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/upload-client": "workspace:^"
   },
