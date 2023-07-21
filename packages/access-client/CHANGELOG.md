@@ -1,5 +1,16 @@
 # Changelog
 
+## [15.0.0](https://github.com/web3-storage/w3up/compare/access-v14.0.0...access-v15.0.0) (2023-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* stop using access.web3.storage ([#833](https://github.com/web3-storage/w3up/issues/833))
+
+### Features
+
+* stop using access.web3.storage ([#833](https://github.com/web3-storage/w3up/issues/833)) ([0df3f2c](https://github.com/web3-storage/w3up/commit/0df3f2c0341244b2404702e8a8878cf0f6e31bc0))
+
 ## [14.0.0](https://github.com/web3-storage/w3up/compare/access-v13.0.2...access-v14.0.0) (2023-06-07)
 
 
