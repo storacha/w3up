@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.1](https://github.com/web3-storage/w3up/compare/upload-client-v9.1.0...upload-client-v9.1.1) (2023-07-25)
+
+
+### Bug Fixes
+
+* support for Node.js 20 ([#840](https://github.com/web3-storage/w3up/issues/840)) ([93e4d61](https://github.com/web3-storage/w3up/commit/93e4d612d3b700ffd8089908d6e6ce02aa342077))
+
 ## [9.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.0.1...upload-client-v9.1.0) (2023-06-20)
 
 
