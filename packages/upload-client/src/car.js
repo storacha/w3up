@@ -55,7 +55,7 @@ export class BlockStream extends ReadableStream {
       blocksPromise = CarBlockIterator.fromIterable(toIterable(car.stream()))
       return blocksPromise
     }
-    
+
     /** @type {AsyncIterator<Block>?} */
     let iterator = null
     super({
