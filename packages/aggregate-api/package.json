@@ -64,7 +64,7 @@
     "@ucanto/server": "^8.0.0",
     "@ucanto/transport": "^8.0.0",
     "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/data-segment": "^2.1.0"
+    "@web3-storage/data-segment": "^2.2.0"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",

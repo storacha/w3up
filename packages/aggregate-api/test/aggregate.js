@@ -1,5 +1,5 @@
 import { Aggregate, Offer } from '@web3-storage/capabilities'
-import { Node } from '@web3-storage/data-segment'
+import { Piece } from '@web3-storage/data-segment'
 
 import { CBOR, parseLink } from '@ucanto/core'
 import * as Signer from '@ucanto/principal/ed25519'
@@ -40,7 +40,6 @@ export const test = {
 
     const aggregateOffer = await aggregateOfferInvocation.execute(connection)
     if (aggregateOffer.out.error) {
-      console.log('eee', aggregateOffer.out.error)
       throw new Error('invocation failed', { cause: aggregateOffer.out.error })
     }
     assert.ok(aggregateOffer.out.ok)
@@ -107,7 +106,7 @@ export const test = {
     // Generate Pieces for offer
     const { pieces, aggregate } = await randomAggregate(100, 128)
     const badHeight = 3
-    const size = 2n ** BigInt(badHeight) * BigInt(Node.Size)
+    const size = Piece.PaddedSize.fromHeight(badHeight)
 
     const block = await CBOR.write(pieces)
     const aggregateOfferInvocation = Aggregate.offer.invoke({
@@ -148,7 +147,7 @@ export const test = {
     // Generate Pieces for offer
     const { pieces, aggregate } = await randomAggregate(100, 128)
     const badHeight = 31
-    const size = 2n ** BigInt(badHeight) * BigInt(Node.Size)
+    const size = Piece.PaddedSize.fromHeight(badHeight)
 
     const block = await CBOR.write(pieces)
     const aggregateOfferInvocation = Aggregate.offer.invoke({

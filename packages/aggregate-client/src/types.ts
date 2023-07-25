@@ -1,5 +1,4 @@
 import { Link } from 'multiformats/link'
-import type { PieceLink } from '@web3-storage/data-segment'
 import { CAR } from '@ucanto/transport'
 import {
   ConnectionView,
@@ -68,13 +67,3 @@ export interface Connectable {
  * An IPLD Link that has the CAR codec code.
  */
 export type CARLink = Link<unknown, typeof CAR.codec.code>
-
-/**
- * Filecoin piece proof that can be used to derivew `PieceInfo`.
- * [Piece](https://spec.filecoin.io/systems/filecoin_files/piece/) information
- * for this CAR file.
- */
-export interface Piece {
-  link: PieceLink
-  height: number
-}
