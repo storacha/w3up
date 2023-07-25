@@ -1,6 +1,17 @@
 # Changelog
 
 
+## [4.0.0](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v3.0.1...react-uploads-list-v4.0.0) (2023-07-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade access client, ucanto and other packages ([#530](https://github.com/web3-storage/w3ui/issues/530))
+
+### Features
+
+* upgrade access client, ucanto and other packages ([#530](https://github.com/web3-storage/w3ui/issues/530)) ([8e7321b](https://github.com/web3-storage/w3ui/commit/8e7321be61bded29ac8b29c781dabf665865ec97))
+
 ## [3.0.1](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v3.0.0...react-uploads-list-v3.0.1) (2023-03-30)
 
 
