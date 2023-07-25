@@ -11,31 +11,19 @@ import * as Aggregate from '../src/aggregate.js'
 
 import { serviceProvider } from './fixtures.js'
 import { mockService } from './helpers/mocks.js'
-import { randomCargo } from './helpers/random.js'
+import { randomAggregate } from './helpers/random.js'
 
 describe('aggregate.offer', () => {
   it('places a valid offer with the service', async () => {
     const { storeFront } = await getContext()
 
-    // Generate CAR Files for offer
-    const offers = (await randomCargo(100, 100))
-      // Inflate size for testing within range
-      .map((car) => ({
-        ...car,
-        size: car.size * 10e5,
-      }))
-    const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-    const offerBlock = await CBOR.write(offers)
+    // Generate Pieces for offer
+    const { pieces, aggregate } = await randomAggregate(100, 100)
+
+    const offerBlock = await CBOR.write(pieces)
     /** @type {import('@web3-storage/capabilities/types').AggregateOfferSuccess} */
     const aggregateOfferResponse = {
       status: 'queued',
-    }
-    // TODO: This should be generated with commP of commPs builder
-    const piece = {
-      link: parseLink(
-        'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-      ),
-      size,
     }
 
     // Create Ucanto service
@@ -51,7 +39,7 @@ describe('aggregate.offer', () => {
             assert.strictEqual(invCap.can, AggregateCapabilities.offer.can)
             assert.equal(invCap.with, invocation.issuer.did())
             // size
-            assert.strictEqual(invCap.nb?.piece.size, size)
+            assert.strictEqual(invCap.nb?.piece.height, aggregate.height)
             assert.ok(invCap.nb?.piece.link)
             // TODO: Validate commitmemnt proof
             assert.ok(invCap.nb?.offer)
@@ -84,9 +72,9 @@ describe('aggregate.offer', () => {
         with: storeFront.did(),
         audience: serviceProvider,
       },
-      // @ts-expect-error link not explicitly with commP codec
-      piece,
-      offers,
+      aggregate,
+      pieces,
+      // @ts-expect-error no full service implemented
       { connection: getConnection(service).connection }
     )
     assert.ok(res.out.ok)
@@ -99,9 +87,12 @@ describe('aggregate.offer', () => {
 describe('aggregate.get', () => {
   it('places a valid offer with the service', async () => {
     const { storeFront } = await getContext()
-    const subject = parseLink(
-      'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
-    )
+    const subject =
+      /** @type {import('@web3-storage/data-segment').PieceLink} */ (
+        parseLink(
+          'baga6ea4seaqm2u43527zehkqqcpyyopgsw2c4mapyy2vbqzqouqtzhxtacueeki'
+        )
+      )
     /** @type {unknown[]} */
     const deals = []
 

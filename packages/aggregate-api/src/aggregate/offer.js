@@ -1,11 +1,14 @@
 import * as Server from '@ucanto/server'
 import { CBOR } from '@ucanto/core'
+import { Node, Piece, Aggregate as AggregateBuilder } from '@web3-storage/data-segment'
 import * as Aggregate from '@web3-storage/capabilities/aggregate'
 import * as Offer from '@web3-storage/capabilities/offer'
 import * as API from '../types.js'
 
-export const MIN_SIZE = 1 + 127 * (1 << 27)
-export const MAX_SIZE = 127 * (1 << 28)
+// 16 GiB
+export const MIN_SIZE = Piece.PaddedSize.from(2n ** 34n)
+// 32 GiB
+export const MAX_SIZE = Piece.PaddedSize.from(2n ** 35n)
 
 /**
  * @param {API.AggregateServiceContext} context
@@ -39,28 +42,44 @@ export const claim = async (
   }
 
   // Validate offer content
-  const size = offers.reduce((accum, offer) => accum + offer.size, 0)
-  if (size < MIN_SIZE) {
+  const aggregateLeafs = 2n ** BigInt(piece.height)
+  const aggregateSize = aggregateLeafs * BigInt(Node.Size)
+
+  if (aggregateSize < MIN_SIZE) {
     return {
       error: new AggregateOfferInvalidSizeError(
-        `offer under size, offered: ${size}, minimum: ${MIN_SIZE}`
+        `offer under size, offered: ${aggregateSize}, minimum: ${MIN_SIZE}`
       ),
     }
-  } else if (size > MAX_SIZE) {
+  } else if (aggregateSize > MAX_SIZE) {
     return {
       error: new AggregateOfferInvalidSizeError(
-        `offer over size, offered: ${size}, maximum: ${MAX_SIZE}`
-      ),
-    }
-  } else if (size !== piece.size) {
-    return {
-      error: new AggregateOfferInvalidSizeError(
-        `offer size mismatch, specified: ${piece.size}, actual: ${size}`
+        `offer over size, offered: ${aggregateSize}, maximum: ${MAX_SIZE}`
       ),
     }
   }
 
-  // TODO: Validate commP of commPs
+  // Validate commP of commPs
+  const aggregateBuild = AggregateBuilder.build({
+    size: aggregateSize,
+    pieces: offers.map(offer => Piece.fromJSON({
+      height: offer.height,
+      link: { '/': offer.link.toString() }
+    }))
+  })
+  if (!aggregateBuild.link.equals(piece.link)) {
+    return {
+      error: new AggregateOfferInvalidSizeError(
+        `aggregate piece CID mismatch, specified: ${piece.link}, computed: ${aggregateBuild.link}`
+      ),
+    }
+  } else if (aggregateBuild.height !== piece.height) {
+    return {
+      error: new AggregateOfferInvalidSizeError(
+        `aggregate height mismatch, specified: ${piece.height}, computed: ${aggregateBuild.height}`
+      ),
+    }
+  }
 
   // Create effect for receipt
   const fx = await Offer.arrange
@@ -90,7 +109,7 @@ function getOfferBlock(offerCid, blockIterator) {
   for (const block of blockIterator) {
     if (block.cid.equals(offerCid)) {
       const decoded =
-        /** @type {import('@web3-storage/aggregate-client/types').Piece[]} */ (
+        /** @type {import('@web3-storage/data-segment').PieceView[]} */ (
           CBOR.decode(block.bytes)
         )
       return decoded

@@ -1,5 +1,5 @@
 /**
- * @typedef {import('@web3-storage/aggregate-client/types').Piece[]} Offers
+ * @typedef {import('@web3-storage/data-segment').PieceView[]} Offers
  */
 
 export class OfferStore {
