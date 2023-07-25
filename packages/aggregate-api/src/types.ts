@@ -10,8 +10,7 @@ import type {
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
 
-import type { PieceLink } from '@web3-storage/data-segment'
-import type { Piece } from '@web3-storage/aggregate-client/types'
+import type { PieceLink, PieceView } from '@web3-storage/data-segment'
 export * from '@web3-storage/aggregate-client/types'
 
 export * from '@web3-storage/capabilities/types'
@@ -39,8 +38,8 @@ export interface OfferStore {
 }
 
 export interface OfferToQueue {
-  piece: Piece
-  offers: Piece[]
+  piece: PieceView
+  offers: PieceView[]
 }
 
 export interface AggregateStore {

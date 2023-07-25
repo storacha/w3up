@@ -109,7 +109,7 @@ function getOfferBlock(offerCid, blockIterator) {
   for (const block of blockIterator) {
     if (block.cid.equals(offerCid)) {
       const decoded =
-        /** @type {import('@web3-storage/aggregate-client/types').Piece[]} */ (
+        /** @type {import('@web3-storage/data-segment').PieceView[]} */ (
           CBOR.decode(block.bytes)
         )
       return decoded
