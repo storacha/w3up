@@ -42,10 +42,20 @@ export class BlockStream extends ReadableStream {
     let blocksPromise = null
     const getBlocksIterable = () => {
       if (blocksPromise) return blocksPromise
+      // FIXME: remove when resolved: https://github.com/nodejs/node/issues/48916
+      /* c8 ignore next 10 */
+      if (parseInt(globalThis.process?.versions?.node) > 18) {
+        blocksPromise = (async () => {
+          // @ts-expect-error
+          const bytes = await car.arrayBuffer()
+          return CarBlockIterator.fromBytes(new Uint8Array(bytes))
+        })()
+        return blocksPromise
+      }
       blocksPromise = CarBlockIterator.fromIterable(toIterable(car.stream()))
       return blocksPromise
     }
-
+    
     /** @type {AsyncIterator<Block>?} */
     let iterator = null
     super({
@@ -77,11 +87,11 @@ export class BlockStream extends ReadableStream {
  * @param {{ getReader: () => ReadableStreamDefaultReader<T> } | AsyncIterable<T>} stream
  * @returns {AsyncIterable<T>}
  */
+/* c8 ignore next 16 */
 function toIterable(stream) {
   return Symbol.asyncIterator in stream
     ? stream
-    : /* c8 ignore next 12 */
-      (async function* () {
+    : (async function* () {
         const reader = stream.getReader()
         try {
           while (true) {
