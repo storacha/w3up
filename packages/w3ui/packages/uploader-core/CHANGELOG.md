@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v5.2.0...uploader-core-v6.0.0) (2023-07-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade access client, ucanto and other packages ([#530](https://github.com/web3-storage/w3ui/issues/530))
+
+### Features
+
+* upgrade access client, ucanto and other packages ([#530](https://github.com/web3-storage/w3ui/issues/530)) ([8e7321b](https://github.com/web3-storage/w3ui/commit/8e7321be61bded29ac8b29c781dabf665865ec97))
+
 ## [5.2.0](https://github.com/web3-storage/w3ui/compare/uploader-core-v5.1.0...uploader-core-v5.2.0) (2023-05-19)
 
 
