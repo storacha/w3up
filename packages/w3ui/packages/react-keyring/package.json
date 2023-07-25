@@ -37,8 +37,8 @@
   "devDependencies": {
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
-    "@ucanto/interface": "^7.1.0",
-    "@ucanto/principal": "^7.0.0"
+    "@ucanto/interface": "^8.0.0",
+    "@ucanto/principal": "^8.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

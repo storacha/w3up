@@ -28,12 +28,12 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-keyring",
   "dependencies": {
-    "@ucanto/interface": "^7.1.0",
-    "@ucanto/principal": "^7.0.0",
+    "@ucanto/interface": "^8.0.0",
+    "@ucanto/principal": "^8.0.0",
     "@w3ui/keyring-core": "workspace:^"
   },
   "peerDependencies": {
-    "solid-js": "^1.5.0"
+    "solid-js": "^1.7.8"
   },
   "eslintConfig": {
     "extends": [

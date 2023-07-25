@@ -30,11 +30,11 @@
   "dependencies": {
     "@w3ui/solid-keyring": "workspace:^",
     "@w3ui/uploader-core": "workspace:^",
-    "@web3-storage/capabilities": "^4.0.0",
+    "@web3-storage/capabilities": "^7.0.0",
     "multiformats": "^11.0.1"
   },
   "peerDependencies": {
-    "solid-js": "^1.5.0"
+    "solid-js": "^1.7.8"
   },
   "eslintConfig": {
     "extends": [

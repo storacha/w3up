@@ -30,13 +30,13 @@
   "dependencies": {
     "@w3ui/solid-keyring": "workspace:^",
     "@w3ui/uploads-list-core": "workspace:^",
-    "@web3-storage/capabilities": "^4.0.0"
+    "@web3-storage/capabilities": "^7.0.0"
   },
   "peerDependencies": {
-    "solid-js": "^1.5.0"
+    "solid-js": "^1.7.8"
   },
   "devDependencies": {
-    "@ucanto/interface": "^7.1.0"
+    "@ucanto/interface": "^8.0.0"
   },
   "eslintConfig": {
     "extends": [

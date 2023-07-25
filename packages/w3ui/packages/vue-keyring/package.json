@@ -33,8 +33,8 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@ucanto/interface": "^7.1.0",
-    "@ucanto/principal": "^7.0.0"
+    "@ucanto/interface": "^8.0.0",
+    "@ucanto/principal": "^8.0.0"
   },
   "eslintConfig": {
     "extends": [

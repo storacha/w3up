@@ -28,8 +28,8 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/uploader-core",
   "dependencies": {
-    "@ucanto/interface": "^7.1.0",
-    "@web3-storage/upload-client": "^9.0.0",
+    "@ucanto/interface": "^8.0.0",
+    "@web3-storage/upload-client": "^9.1.0",
     "multiformats": "^11.0.1"
   },
   "eslintConfig": {
