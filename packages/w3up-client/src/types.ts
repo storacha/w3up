@@ -4,12 +4,14 @@ import {
   type AgentDataExport,
 } from '@web3-storage/access/types'
 import { type Service as UploadService } from '@web3-storage/upload-client/types'
+import type { Service as ClaimService } from '@web3-storage/content-claims/server/service/api'
 import type { ConnectionView, Signer, DID } from '@ucanto/interface'
 import { type Client } from './client'
 
 export interface ServiceConf {
   access: ConnectionView<AccessService>
   upload: ConnectionView<UploadService>
+  claim: ConnectionView<ClaimService>
 }
 
 export interface ClientFactoryOptions {

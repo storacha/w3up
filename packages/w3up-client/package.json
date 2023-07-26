@@ -81,7 +81,11 @@
     "@ucanto/transport": "^8.0.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/upload-client": "workspace:^"
+    "@web3-storage/content-claims": "^3.0.1",
+    "@web3-storage/upload-client": "workspace:^",
+    "cardex": "^2.3.1",
+    "carstream": "^1.1.0",
+    "p-queue": "^7.3.0"
   },
   "devDependencies": {
     "@docusaurus/core": "^2.2.0",

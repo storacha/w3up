@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -513,9 +513,21 @@ importers:
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
+      '@web3-storage/content-claims':
+        specifier: ^3.0.1
+        version: 3.0.1
       '@web3-storage/upload-client':
         specifier: workspace:^
         version: link:../upload-client
+      cardex:
+        specifier: ^2.3.1
+        version: 2.3.1
+      carstream:
+        specifier: ^1.1.0
+        version: 1.1.0
+      p-queue:
+        specifier: ^7.3.0
+        version: 7.3.0
     devDependencies:
       '@docusaurus/core':
         specifier: ^2.2.0
@@ -2356,6 +2368,14 @@ packages:
       cborg: 1.10.2
       multiformats: 11.0.2
 
+  /@ipld/dag-cbor@9.0.3:
+    resolution: {integrity: sha512-A2UFccS0+sARK9xwXiVZIaWbLbPxLGP3UZOjBeOMWfDY04SXi8h1+t4rHBzOlKYF/yWNm3RbFLyclWO7hZcy4g==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      cborg: 2.0.2
+      multiformats: 12.0.1
+    dev: false
+
   /@ipld/dag-json@10.1.2:
     resolution: {integrity: sha512-z38JDQXzDW6mtU+ZfLO6/lXbJ4BEEDYY5cyW6+Nl7OpjWSV0mt57cE8LK6+krXlhxwuCnA+/sOtaXuJ3lImvfw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -3351,6 +3371,16 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
+  /@web3-storage/content-claims@3.0.1:
+    resolution: {integrity: sha512-7+JLmQaw4mDgs+VREtkHtk3Q0Bp1rv4Kt5YN2Qw/g73xvRja28/Uioy7iv83YHez52lAPwXFkSkGb0ifJy5PLw==}
+    dependencies:
+      '@ucanto/client': 8.0.0
+      '@ucanto/server': 8.0.1
+      '@ucanto/transport': 8.0.0
+      carstream: 1.1.0
+      multiformats: 12.0.1
+    dev: false
+
   /@web3-storage/data-segment@1.0.1:
     resolution: {integrity: sha512-qgVSLN/VZhNgprFJvzLTK4wGTAQYpQ9O42FrskGxlDgGjBx7ZCw4VL8mgzDVhR4MHXL/yA/bXFQtm5JST+JAZQ==}
     dependencies:
@@ -4122,6 +4152,25 @@ packages:
   /caniuse-lite@1.0.30001512:
     resolution: {integrity: sha512-2S9nK0G/mE+jasCUsMPlARhRCts1ebcp2Ji8Y8PWi4NDE1iRdLCnEPHkEfeBrGC45L4isBx5ur3IQ6yTE2mRZw==}
     dev: true
+
+  /cardex@2.3.1:
+    resolution: {integrity: sha512-850vVrRGg48z3aPuEmPvDjQBs+Bp4shSEF8Smmr412NvhCJ7ka2kBQzruoBF6FrotexGxftvmILRH3gUTZQmpQ==}
+    hasBin: true
+    dependencies:
+      '@ipld/car': 5.1.1
+      multiformats: 11.0.2
+      sade: 1.8.1
+      uint8arrays: 4.0.3
+      varint: 6.0.0
+    dev: false
+
+  /carstream@1.1.0:
+    resolution: {integrity: sha512-tbf8FOnGX1+0kOe77nm9MG53REiqQopDwzwbXYVxUcsKOAHG2KSD++qy95v1vrtRt1Q6L0Sb01it7QwJ+Yt1sQ==}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.3
+      multiformats: 12.0.1
+      uint8arraylist: 2.4.3
+    dev: false
 
   /cborg@1.10.2:
     resolution: {integrity: sha512-b3tFPA9pUr2zCUiCfRd2+wok2/LBSNUMKOuRRok+WlvvAgEt/PlbgPTsZUcwCOs53IJvLgTp0eotwtosE6njug==}
@@ -8338,7 +8387,6 @@ packages:
   /mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
-    dev: true
 
   /mrmime@1.0.1:
     resolution: {integrity: sha512-hzzEagAgDyoU1Q6yg5uI+AorQgdvMCur3FcKf7NhMKWsaYg+RnbTyHRa/9IlLF9rf455MOCtcqqrQQ83pPP7Uw==}
@@ -10148,7 +10196,6 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       mri: 1.2.0
-    dev: true
 
   /safe-buffer@5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
@@ -11190,6 +11237,13 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /uint8arraylist@2.4.3:
+    resolution: {integrity: sha512-oEVZr4/GrH87K0kjNce6z8pSCzLEPqHNLNR5sj8cJOySrTP8Vb/pMIbZKLJGhQKxm1TiZ31atNrpn820Pyqpow==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      uint8arrays: 4.0.3
+    dev: false
 
   /uint8arrays@4.0.3:
     resolution: {integrity: sha512-b+aKlI2oTnxnfeSQWV1sMacqSNxqhtXySaH6bflvONGxF8V/fT3ZlYH7z2qgGfydsvpVo4JUgM/Ylyfl2YouCg==}

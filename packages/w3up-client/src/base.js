@@ -17,10 +17,10 @@ export class Base {
   /**
    * @param {import('@web3-storage/access').AgentData} agentData
    * @param {object} [options]
-   * @param {import('./types').ServiceConf} [options.serviceConf]
+   * @param {Partial<import('./types').ServiceConf>} [options.serviceConf]
    */
   constructor(agentData, options = {}) {
-    this._serviceConf = options.serviceConf ?? serviceConf
+    this._serviceConf = { ...serviceConf, ...options.serviceConf }
     this._agent = new Agent(agentData, {
       servicePrincipal: this._serviceConf.access.id,
       // @ts-expect-error I know but it will be HTTP for the forseeable.

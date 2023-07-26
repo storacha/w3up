@@ -97,7 +97,7 @@ export class ShardStoringStream extends TransformStream {
                 const opts = { ...options, signal: abortController.signal }
                 const cid = await add(conf, car, opts)
                 const { version, roots, size } = car
-                controller.enqueue({ version, roots, cid, size })
+                controller.enqueue(new ShardMetadata(version, roots, cid, size, car))
               } catch (err) {
                 controller.error(err)
                 abortController.abort(err)
@@ -115,5 +115,28 @@ export class ShardStoringStream extends TransformStream {
         await queue.onIdle()
       },
     })
+  }
+}
+
+class ShardMetadata {
+  #blob
+
+  /**
+   * @param {number} version
+   * @param {import('multiformats').UnknownLink[]} roots 
+   * @param {import('./types').CARLink} cid
+   * @param {number} size
+   * @param {Blob} blob
+   */
+  constructor (version, roots, cid, size, blob) {
+    this.version = version
+    this.roots = roots
+    this.cid = cid
+    this.size = size
+    this.#blob = blob
+  }
+
+  async blob () {
+    return this.#blob
   }
 }

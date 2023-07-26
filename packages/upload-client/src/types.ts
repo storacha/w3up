@@ -175,6 +175,10 @@ export interface CARMetadata extends CARHeaderInfo {
    * Size of the CAR file in bytes.
    */
   size: number
+  /**
+   * The CAR file data that was stored.
+   */
+  blob(): Promise<Blob>
 }
 
 export interface Retryable {
@@ -254,6 +258,10 @@ export interface UploadOptions
     ShardingOptions,
     ShardStoringOptions,
     UploadProgressTrackable {
+  /**
+   * A function called after a DAG shard has been successfully stored by the
+   * service.
+   */
   onShardStored?: (meta: CARMetadata) => void
 }
 

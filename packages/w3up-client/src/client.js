@@ -14,6 +14,7 @@ import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
 import { AccessClient } from './capability/access.js'
+import { ContentClaimsBuilder } from './content-claims.js'
 
 export class Client extends Base {
   /**
@@ -59,7 +60,11 @@ export class Client extends Base {
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
-    return uploadFile(conf, file, options)
+    const claimsBuilder = new ContentClaimsBuilder(this.capability.store)
+    const root = await uploadFile(conf, file, options)
+    const claims = await claimsBuilder.setRoot(root).close()
+    // TODO: submit claims
+    return root
   }
 
   /**

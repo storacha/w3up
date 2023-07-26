@@ -466,6 +466,10 @@ export interface CARMetadata {
    * Size of the CAR file in bytes.
    */
   size: number
+  /**
+   * The CAR file data that was stored.
+   */
+  blob(): Promise<Blob>
 }
 ```
 
