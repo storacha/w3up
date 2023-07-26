@@ -1,6 +1,6 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
-import { InferInvokedCapability, Unit, DID } from '@ucanto/interface'
+import { InferInvokedCapability, Unit, DID, DIDKey } from '@ucanto/interface'
 import { space, info, recover, recoverValidation } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -10,8 +10,15 @@ import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
 import * as AggregateCaps from './aggregate.js'
 import * as OfferCaps from './offer.js'
+import * as CustomerCaps from './customer.js'
+import * as ConsumerCaps from './consumer.js'
+import * as SubscriptionCaps from './subscription.js'
+import * as RateLimitCaps from './rate-limit.js'
 
 export type { Unit }
+
+export type AccountDID = DID<'mailto'>
+
 /**
  * failure due to a resource not having enough storage capacity.
  */
@@ -63,6 +70,68 @@ export type ProviderDID = DID<'web'>
 export interface InvalidProvider extends Ucanto.Failure {
   name: 'InvalidProvider'
 }
+
+// Customer
+export type CustomerGet = InferInvokedCapability<typeof CustomerCaps.get>
+export interface CustomerGetSuccess {
+    did: AccountDID
+}
+export interface CustomerNotFound extends Ucanto.Failure { 
+  name: 'CustomerNotFound'
+}
+export type CustomerGetFailure = CustomerNotFound
+
+// Consumer
+export type ConsumerHas = InferInvokedCapability<typeof ConsumerCaps.has>
+export type ConsumerHasSuccess = boolean
+export type ConsumerHasFailure = Ucanto.Failure
+export type ConsumerGet = InferInvokedCapability<typeof ConsumerCaps.get>
+export interface ConsumerGetSuccess {
+  did: DIDKey,
+  allocated: number,
+  total: number,
+  subscription: string
+}
+export interface ConsumerNotFound extends Ucanto.Failure {
+  name: 'ConsumerNotFound'
+}
+export type ConsumerGetFailure = ConsumerNotFound
+
+// Subscription
+export type SubscriptionGet = InferInvokedCapability<typeof SubscriptionCaps.get>
+export interface SubscriptionGetSuccess {
+  customer: AccountDID
+  consumer: DIDKey
+}
+export interface SubscriptionNotFound extends Ucanto.Failure {
+  name: 'SubscriptionNotFound'
+}
+export type SubscriptionGetFailure = SubscriptionNotFound
+
+// Rate Limit
+export type RateLimitAdd = InferInvokedCapability<typeof RateLimitCaps.add>
+export interface RateLimitAddSuccess {
+  id: string
+}
+export type RateLimitAddFailure = Ucanto.Failure
+
+export type RateLimitRemove = InferInvokedCapability<typeof RateLimitCaps.remove>
+export type RateLimitRemoveSuccess = {}
+export interface RateLimitsNotFound extends Ucanto.Failure {
+  name: 'RateLimitsNotFound'
+}
+export type RateLimitRemoveFailure = RateLimitsNotFound
+
+export type RateLimitList = InferInvokedCapability<typeof RateLimitCaps.list>
+export interface RateLimit {
+  id: string,
+  limit: number
+}
+export interface RateLimitListSuccess {
+  limits: RateLimit[]
+}
+export type RateLimitListFailure = Ucanto.Failure
+
 
 // Space
 export type Space = InferInvokedCapability<typeof space>
@@ -143,5 +212,12 @@ export type AbilitiesArray = [
   AccessSession['can'],
   AggregateOffer['can'],
   AggregateGet['can'],
-  OfferArrange['can']
+  OfferArrange['can'],
+  CustomerGet['can'],
+  ConsumerHas['can'],
+  ConsumerGet['can'],
+  SubscriptionGet['can'],
+  RateLimitAdd['can'],
+  RateLimitRemove['can'],
+  RateLimitList['can']
 ]
