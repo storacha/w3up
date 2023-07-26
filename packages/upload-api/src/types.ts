@@ -33,7 +33,7 @@ export type SpaceDID = DIDKey
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
 export interface SpaceProviderRegistry {
-  hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
+  hasStorageProvider (space: SpaceDID): Promise<Result<boolean, never>>
 }
 
 export interface InsufficientStorage extends Failure {
@@ -220,6 +220,11 @@ export interface ProviderServiceContext {
   rateLimitsStorage: RateLimits
 }
 
+export interface SubscriptionServiceContext {
+  signer: EdSigner.Signer
+  provisionsStorage: Provisions
+}
+
 export interface RateLimitsServiceContext {
   rateLimitsStorage: RateLimits
 }
@@ -232,6 +237,7 @@ export interface ServiceContext
   ProviderServiceContext,
   SpaceServiceContext,
   StoreServiceContext,
+  SubscriptionServiceContext,
   RateLimitsServiceContext,
   UploadServiceContext {}
 
@@ -328,6 +334,7 @@ export interface UnknownProvider extends Failure {
   name: 'UnknownProvider'
 }
 export type CustomerGetResult = Result<CustomerGetSuccess, CustomerGetFailure>
+export type SubscriptionGetResult = Result<SubscriptionGetSuccess, SubscriptionGetFailure>
 
 export interface StoreAddInput {
   space: DID

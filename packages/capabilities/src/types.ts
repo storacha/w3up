@@ -27,6 +27,11 @@ export interface InsufficientStorage {
   message: string
 }
 
+export interface UnknownProvider {
+  name: 'UnknownProvider',
+  did: DID
+}
+
 // Access
 export type Access = InferInvokedCapability<typeof AccessCaps.access>
 export type AccessAuthorize = InferInvokedCapability<
@@ -106,7 +111,7 @@ export interface SubscriptionGetSuccess {
 export interface SubscriptionNotFound extends Ucanto.Failure {
   name: 'SubscriptionNotFound'
 }
-export type SubscriptionGetFailure = SubscriptionNotFound
+export type SubscriptionGetFailure = SubscriptionNotFound | UnknownProvider
 
 // Rate Limit
 export type RateLimitAdd = InferInvokedCapability<typeof RateLimitCaps.add>
