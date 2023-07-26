@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.5.0...w3console-v2.0.0) (2023-07-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade access client, ucanto and other packages ([#530](https://github.com/web3-storage/w3ui/issues/530))
+
+### Features
+
+* upgrade access client, ucanto and other packages ([#530](https://github.com/web3-storage/w3ui/issues/530)) ([8e7321b](https://github.com/web3-storage/w3ui/commit/8e7321be61bded29ac8b29c781dabf665865ec97))
+
+
+### Bug Fixes
+
+* use unified endpoint for staging services ([#528](https://github.com/web3-storage/w3ui/issues/528)) ([82ecaf7](https://github.com/web3-storage/w3ui/commit/82ecaf748ed3da9f560b0967159335fd6196b386))
+
 ## [1.5.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.4.1...w3console-v1.5.0) (2023-05-09)
 
 
