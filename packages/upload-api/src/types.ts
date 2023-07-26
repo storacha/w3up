@@ -30,7 +30,6 @@ export type ValidationEmailSend = {
 }
 
 export type SpaceDID = DIDKey
-export type AccountDID = DID<'mailto'>
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
 export interface SpaceProviderRegistry {
@@ -70,6 +69,27 @@ import {
   AccessConfirm,
   AccessConfirmSuccess,
   AccessConfirmFailure,
+  ConsumerHas,
+  ConsumerHasSuccess,
+  ConsumerHasFailure,
+  ConsumerGet,
+  ConsumerGetSuccess,
+  ConsumerGetFailure,
+  CustomerGet,
+  CustomerGetSuccess,
+  CustomerGetFailure,
+  SubscriptionGet,
+  SubscriptionGetSuccess,
+  SubscriptionGetFailure,
+  RateLimitAdd,
+  RateLimitAddSuccess,
+  RateLimitAddFailure,
+  RateLimitRemove,
+  RateLimitRemoveSuccess,
+  RateLimitRemoveFailure,
+  RateLimitList,
+  RateLimitListSuccess,
+  RateLimitListFailure,
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
@@ -128,18 +148,20 @@ export interface Service {
     >
   }
   consumer: {
-    has: ServiceMethod<
-      InferInvokedCapability<typeof Capabilities.Consumer.has>,
-      boolean,
-      Failure
+    has: ServiceMethod<ConsumerHas, ConsumerHasSuccess, ConsumerHasFailure>
+    get: ServiceMethod<ConsumerGet, ConsumerGetSuccess, ConsumerGetFailure
     >
   }
   customer: {
-    get: ServiceMethod<
-      InferInvokedCapability<typeof Capabilities.Customer.get>,
-      CustomerGetOk,
-      CustomerGetError
-    >
+    get: ServiceMethod<CustomerGet, CustomerGetSuccess, CustomerGetFailure>
+  }
+  subscription: {
+    get: ServiceMethod<SubscriptionGet, SubscriptionGetSuccess, SubscriptionGetFailure>
+  },
+  "rate-limits": {
+    add: ServiceMethod<RateLimitAdd, RateLimitAddSuccess, RateLimitAddFailure>
+    remove: ServiceMethod<RateLimitRemove, RateLimitRemoveSuccess, RateLimitRemoveFailure>
+    list: ServiceMethod<RateLimitList, RateLimitListSuccess, RateLimitListFailure>
   }
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
@@ -204,14 +226,14 @@ export interface RateLimitsServiceContext {
 
 export interface ServiceContext
   extends AccessServiceContext,
-    ConsoleServiceContext,
-    ConsumerServiceContext,
-    CustomerServiceContext,
-    ProviderServiceContext,
-    SpaceServiceContext,
-    StoreServiceContext,
-    RateLimitsServiceContext,
-    UploadServiceContext {}
+  ConsoleServiceContext,
+  ConsumerServiceContext,
+  CustomerServiceContext,
+  ProviderServiceContext,
+  SpaceServiceContext,
+  StoreServiceContext,
+  RateLimitsServiceContext,
+  UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
@@ -221,8 +243,8 @@ export interface UcantoServerContext extends ServiceContext {
 
 export interface UcantoServerTestContext
   extends UcantoServerContext,
-    StoreTestContext,
-    UploadTestContext {
+  StoreTestContext,
+  UploadTestContext {
   connection: ConnectionView<Service>
   mail: DebugEmail
   service: Signer<ServiceDID>
@@ -264,7 +286,7 @@ export interface CarStoreBucketOptions {
 }
 
 export interface CarStoreBucketService {
-  use(options?: CarStoreBucketOptions): Promise<CarStoreBucket>
+  use (options?: CarStoreBucketOptions): Promise<CarStoreBucket>
 }
 
 export interface DudewhereBucket {
@@ -282,7 +304,7 @@ export interface StoreTable {
 }
 
 export interface TestStoreTable {
-  get(
+  get (
     space: DID,
     link: UnknownLink
   ): Promise<(StoreAddInput & StoreListItem) | undefined>
@@ -305,16 +327,7 @@ export type SpaceInfoResult = {
 export interface UnknownProvider extends Failure {
   name: 'UnknownProvider'
 }
-
-export type CustomerGetError = UnknownProvider
-
-export interface CustomerGetOk {
-  customer: null | {
-    did: AccountDID
-  }
-}
-
-export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>
+export type CustomerGetResult = Result<CustomerGetSuccess, CustomerGetFailure>
 
 export interface StoreAddInput {
   space: DID

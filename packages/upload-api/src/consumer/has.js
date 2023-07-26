@@ -11,7 +11,7 @@ export const provide = (context) =>
 /**
  * @param {API.Input<Consumer.has>} input
  * @param {API.ConsumerServiceContext} context
- * @returns {Promise<API.Result<boolean, API.Failure>>}
+ * @returns {Promise<API.Result<API.ConsumerHasSuccess, API.ConsumerHasFailure>>}
  */
 const has = async ({ capability }, context) => {
   if (capability.with !== context.signer.did()) {
