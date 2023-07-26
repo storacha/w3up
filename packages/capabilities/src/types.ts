@@ -128,12 +128,12 @@ export interface RateLimitsNotFound extends Ucanto.Failure {
 export type RateLimitRemoveFailure = RateLimitsNotFound
 
 export type RateLimitList = InferInvokedCapability<typeof RateLimitCaps.list>
-export interface RateLimit {
+export interface RateLimitSubject {
   id: string,
   limit: number
 }
 export interface RateLimitListSuccess {
-  limits: RateLimit[]
+  limits: RateLimitSubject[]
 }
 export type RateLimitListFailure = Ucanto.Failure
 
