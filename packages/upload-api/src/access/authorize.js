@@ -29,7 +29,7 @@ export const authorize = async ({ capability }, ctx) => {
     return {
       error: {
         name: 'AccountBlocked',
-        message: `Account identified by {capability.nb.iss} is blocked`,
+        message: `Account identified by ${capability.nb.iss} is blocked`,
       },
     }
   }
