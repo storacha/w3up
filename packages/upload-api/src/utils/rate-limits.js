@@ -27,7 +27,7 @@ export async function areAnyBlocked(storage, subjects) {
     if (result.error) {
       return result
     } else {
-      anyBlocks = anyBlocks && areAnyBlocks(result.ok)
+      anyBlocks = anyBlocks || areAnyBlocks(result.ok)
     }
   }
   return { ok: anyBlocks }
