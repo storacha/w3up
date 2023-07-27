@@ -24,11 +24,11 @@ const get = async ({ capability }, context) => {
     return { error: new UnknownProvider(capability.with) }
   }
 
-  const customer = await context.provisionsStorage.getCustomer(
+  const result = await context.provisionsStorage.getCustomer(
     capability.with,
     capability.nb.customer
   )
-  return { ok: { customer: customer.ok ? { did: customer.ok.did } : null } }
+  return result.ok ? { ok: { did: result.ok.did } } : result
 }
 
 class UnknownProvider extends Provider.Failure {

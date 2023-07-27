@@ -88,7 +88,7 @@ export interface CustomerGetSuccess {
 export interface CustomerNotFound extends Ucanto.Failure {
   name: 'CustomerNotFound'
 }
-export type CustomerGetFailure = CustomerNotFound
+export type CustomerGetFailure = CustomerNotFound | Ucanto.Failure
 
 // Consumer
 export type ConsumerHas = InferInvokedCapability<typeof ConsumerCaps.has>

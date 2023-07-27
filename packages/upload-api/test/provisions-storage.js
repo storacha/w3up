@@ -71,7 +71,7 @@ export class ProvisionsStorage {
     const exists = Object.values(this.provisions).find(
       (p) => p.provider === provider && p.customer === customer
     )
-    return { ok: exists ? { did: customer } : null }
+    return exists ? { ok: { did: customer } } : { error: { name: 'CustomerNotFound', message: 'customer does not exist' } }
   }
 
   async count() {

@@ -72,7 +72,7 @@ export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
   getCustomer: (
     provider: ProviderDID,
     customer: AccountDID
-  ) => Promise<Ucanto.Result<Customer | null, Ucanto.Failure>>
+  ) => Promise<Ucanto.Result<Customer, Ucanto.Failure>>
 
   /**
    * Returns information about a subscription to a provider.
