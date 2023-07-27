@@ -74,6 +74,45 @@ export class ProvisionsStorage {
     return exists ? { ok: { did: customer } } : { error: { name: 'CustomerNotFound', message: 'customer does not exist' } }
   }
 
+  /**
+   * 
+   * @param {Types.ProviderDID} provider 
+   * @param {string} subscription 
+   * @returns 
+   */
+  async getSubscription(provider, subscription) {
+    const provision = Object.values(this.provisions)
+      .find(p => ((p.customer === subscription) && (p.provider === provider)))
+    if (provision) {
+      return { ok: provision }
+    } else {
+      return { error: { name: 'SubscriptionNotFound', message: `could not find ${subscription}` } }
+    }
+  }
+
+  /**
+   * 
+   * @param {Types.ProviderDID} provider 
+   * @param {*} consumer 
+   * @returns 
+   */
+  async getConsumer(provider, consumer) {
+    const provision = Object.values(this.provisions)
+      .find(p => ((p.consumer === consumer) && (p.provider === provider)))
+    if (provision) {
+      return {
+        ok: {
+          did: provision.consumer,
+          allocated: 0,
+          total: 100,
+          subscription: provision.customer
+        }
+      }
+    } else {
+      return { error: { name: 'ConsumerNotFound', message: `could not find ${consumer}` } }
+    }
+  }
+
   async count() {
     return BigInt(Object.values(this.provisions).length)
   }
