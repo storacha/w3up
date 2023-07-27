@@ -4,6 +4,7 @@ import * as Access from '@web3-storage/capabilities/access'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { delegationToString } from '@web3-storage/access/encoding'
 import { emailAndDomainFromMailtoDid } from '../utils/did-mailto.js'
+import { areAnyBlocked } from '../utils/rate-limits.js'
 
 /**
  * @param {API.AccessServiceContext} ctx
@@ -16,7 +17,8 @@ export const provide = (ctx) =>
  * @param {API.AccessServiceContext} ctx
  */
 export const authorize = async ({ capability }, ctx) => {
-  const isBlocked = await ctx.rateLimitsStorage.areAnyBlocked(
+  const isBlocked = await areAnyBlocked(
+    ctx.rateLimitsStorage,
     emailAndDomainFromMailtoDid(
       /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
         capability.nb.iss

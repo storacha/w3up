@@ -50,17 +50,4 @@ export class RateLimitsStorage {
     delete this.rateLimits[id]
     return { ok: {} }
   }
-
-  /**
-   *
-   * @param {string[]} subjects
-   */
-  async areAnyBlocked(subjects) {
-    return {
-      ok: Object.values(this.rateLimits).some(
-        ({ subject, rate }) =>
-          subject && subjects.includes(subject) && rate === 0
-      ),
-    }
-  }
 }

@@ -3,6 +3,7 @@ import * as Server from '@ucanto/server'
 import { Provider } from '@web3-storage/capabilities'
 import * as validator from '@ucanto/validator'
 import { emailAndDomainFromMailtoDid } from './utils/did-mailto.js'
+import { areAnyBlocked } from './utils/rate-limits.js'
 
 /**
  * @param {API.ProviderServiceContext} ctx
@@ -30,7 +31,8 @@ export const add = async (
       },
     }
   }
-  const isBlocked = await rateLimits.areAnyBlocked(
+  const isBlocked = await areAnyBlocked(
+    rateLimits,
     emailAndDomainFromMailtoDid(
       /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
         accountDID

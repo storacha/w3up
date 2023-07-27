@@ -40,11 +40,4 @@ export interface RateLimitsStorage {
    * Remove a rate limit with given ID.
    */
   remove: (id: RateLimitID) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
-
-  /**
-   * Returns true if the given subject has a limit equal to 0.
-   */
-  areAnyBlocked: (
-    subjects: string[]
-  ) => Promise<Ucanto.Result<boolean, Ucanto.Failure>>
 }

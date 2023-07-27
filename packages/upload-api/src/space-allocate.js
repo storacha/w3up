@@ -1,6 +1,7 @@
 import * as API from './types.js'
 import * as Server from '@ucanto/server'
 import * as Space from '@web3-storage/capabilities/space'
+import { areAnyBlocked } from './utils/rate-limits.js'
 
 /**
  *
@@ -10,7 +11,7 @@ import * as Space from '@web3-storage/capabilities/space'
  */
 export const allocate = async ({ capability }, context) => {
   const { with: space, nb } = capability
-  const isBlocked = await context.rateLimitsStorage.areAnyBlocked([space])
+  const isBlocked = await areAnyBlocked(context.rateLimitsStorage, [space])
   if (isBlocked.error || isBlocked.ok) {
     return {
       error: {
