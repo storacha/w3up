@@ -23,7 +23,6 @@ import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits'
 
-
 export type ValidationEmailSend = {
   to: string
   url: string
@@ -105,10 +104,7 @@ export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
 } from './types/delegations'
-export type {
-  RateLimitsStorage,
-  RateLimit
-} from './types/rate-limits'
+export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
 export interface Service {
   store: {
@@ -149,19 +145,30 @@ export interface Service {
   }
   consumer: {
     has: ServiceMethod<ConsumerHas, ConsumerHasSuccess, ConsumerHasFailure>
-    get: ServiceMethod<ConsumerGet, ConsumerGetSuccess, ConsumerGetFailure
-    >
+    get: ServiceMethod<ConsumerGet, ConsumerGetSuccess, ConsumerGetFailure>
   }
   customer: {
     get: ServiceMethod<CustomerGet, CustomerGetSuccess, CustomerGetFailure>
   }
   subscription: {
-    get: ServiceMethod<SubscriptionGet, SubscriptionGetSuccess, SubscriptionGetFailure>
-  },
-  "rate-limits": {
+    get: ServiceMethod<
+      SubscriptionGet,
+      SubscriptionGetSuccess,
+      SubscriptionGetFailure
+    >
+  }
+  'rate-limit': {
     add: ServiceMethod<RateLimitAdd, RateLimitAddSuccess, RateLimitAddFailure>
-    remove: ServiceMethod<RateLimitRemove, RateLimitRemoveSuccess, RateLimitRemoveFailure>
-    list: ServiceMethod<RateLimitList, RateLimitListSuccess, RateLimitListFailure>
+    remove: ServiceMethod<
+      RateLimitRemove,
+      RateLimitRemoveSuccess,
+      RateLimitRemoveFailure
+    >
+    list: ServiceMethod<
+      RateLimitList,
+      RateLimitListSuccess,
+      RateLimitListFailure
+    >
   }
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
@@ -225,7 +232,7 @@ export interface SubscriptionServiceContext {
   provisionsStorage: Provisions
 }
 
-export interface RateLimitsServiceContext {
+export interface RateLimitServiceContext {
   rateLimitsStorage: RateLimits
 }
 
@@ -238,7 +245,7 @@ export interface ServiceContext
   SpaceServiceContext,
   StoreServiceContext,
   SubscriptionServiceContext,
-  RateLimitsServiceContext,
+  RateLimitServiceContext,
   UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {
@@ -334,7 +341,10 @@ export interface UnknownProvider extends Failure {
   name: 'UnknownProvider'
 }
 export type CustomerGetResult = Result<CustomerGetSuccess, CustomerGetFailure>
-export type SubscriptionGetResult = Result<SubscriptionGetSuccess, SubscriptionGetFailure>
+export type SubscriptionGetResult = Result<
+  SubscriptionGetSuccess,
+  SubscriptionGetFailure
+>
 
 export interface StoreAddInput {
   space: DID

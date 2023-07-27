@@ -17,7 +17,7 @@ describe('rate-limit/add', function () {
       with: provider,
       nb: {
         subject: space.did(),
-        rate: 0
+        rate: 0,
       },
       // TODO: check in with @gozala about whether passing provider as account makes sense
       proofs: await createAuthorization({ agent, service, account: provider }),
@@ -48,7 +48,7 @@ describe('rate-limit/add', function () {
       with: provider,
       nb: {
         subject: space.did(),
-        rate: 0
+        rate: 0,
       },
     })
 
@@ -69,7 +69,7 @@ describe('rate-limit/add', function () {
         with: provider,
         // @ts-ignore
         nb: {
-          rate: 0
+          rate: 0,
         },
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "resource"/)
@@ -83,7 +83,7 @@ describe('rate-limit/add', function () {
         with: provider,
         // @ts-ignore
         nb: {
-          subject: alice.did()
+          subject: alice.did(),
         },
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "rate"/)
@@ -99,7 +99,7 @@ describe('rate-limit/remove', function () {
       audience: service,
       with: provider,
       nb: {
-        id: '123'
+        ids: ['123'],
       },
       // TODO: check in with @gozala about whether passing provider as account makes sense
       proofs: await createAuthorization({ agent, service, account: provider }),
@@ -115,7 +115,7 @@ describe('rate-limit/remove', function () {
       assert.deepEqual(result.ok.audience.did(), service.did())
       assert.equal(result.ok.capability.can, 'rate-limit/remove')
       assert.deepEqual(result.ok.capability.nb, {
-        resource: space.did()
+        resource: space.did(),
       })
     }
   })
@@ -127,7 +127,7 @@ describe('rate-limit/remove', function () {
       audience: service,
       with: provider,
       nb: {
-        id: '123'
+        ids: ['123'],
       },
     })
 
@@ -147,8 +147,7 @@ describe('rate-limit/remove', function () {
         audience: service,
         with: provider,
         // @ts-ignore
-        nb: {
-        },
+        nb: {},
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "resource"/)
   })

@@ -1,4 +1,7 @@
-import type { ProviderDID } from '@web3-storage/capabilities/src/types'
+import type {
+  AccountDID,
+  ProviderDID,
+} from '@web3-storage/capabilities/src/types'
 import * as Ucanto from '@ucanto/interface'
 import { ProviderAdd } from '@web3-storage/capabilities/src/types'
 
@@ -12,8 +15,20 @@ export interface Provision {
   provider: ProviderDID
 }
 
+export interface Consumer {
+  did: Ucanto.DIDKey
+  allocated: number
+  total: number
+  subscription: string
+}
+
 export interface Customer {
   did: Ucanto.DID<'mailto'>
+}
+
+export interface Subscription {
+  customer: AccountDID
+  consumer: Ucanto.DIDKey
 }
 
 /**
@@ -34,8 +49,21 @@ export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
   /**
    * Returns information about a customer related to the given provider.
    *
-   * TODO: this should probably be moved to its own Storage interface, but
-   * I'd like to tackle that once we've finished consolidating the access and upload services.
+   * TODO: this should be moved out to a consumers store
+   *
+   * @param provider DID of the provider we care about
+   * @param consumer DID of the consumer
+   * @returns record for the specified customer, if it is in our system
+   */
+  getConsumer: (
+    provider: ProviderDID,
+    consumer: Ucanto.DIDKey
+  ) => Promise<Ucanto.Result<Consumer, Ucanto.Failure>>
+
+  /**
+   * Returns information about a customer related to the given provider.
+   *
+   * TODO: this should be moved out to a subscriptions store (and maybe eventually a "customers" store)
    *
    * @param provider DID of the provider we care about
    * @param customer DID of the customer
@@ -43,8 +71,20 @@ export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
    */
   getCustomer: (
     provider: ProviderDID,
-    customer: Ucanto.DID<'mailto'>
+    customer: AccountDID
   ) => Promise<Ucanto.Result<Customer | null, Ucanto.Failure>>
+
+  /**
+   * Returns information about a subscription to a provider.
+   *
+   * TODO: this should be moved out to a subscriptions store
+   *
+   * @returns subscription information for a given subscription ID at the given provider
+   */
+  getSubscription: (
+    provider: ProviderDID,
+    subscription: string
+  ) => Promise<Ucanto.Result<Subscription, Ucanto.Failure>>
 
   /**
    * get number of stored items

@@ -4,13 +4,9 @@ export type RateLimitID = string
 
 export interface RateLimit {
   /**
-   * Identifier of rate limited subject - could be a DID, an email address, a URL or any other string.
-   */
-  subject?: string
-  /**
    * Identifier of this rate limit - can used to remove a limit.
    */
-  id?: string
+  id: RateLimitID
   /**
    * Rate limit applied to the subject - intentionally unitless, should be interpreted by consumer.
    */
@@ -27,7 +23,10 @@ export interface RateLimitsStorage {
    * @param subject identifier for subject - could be a DID, a URI, or anything else
    * @param rate a limit to be interpreted by the consuming system - intentionally unitless
    */
-  add: (subject: string, rate: number) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+  add: (
+    subject: string,
+    rate: number
+  ) => Promise<Ucanto.Result<{ id: RateLimitID }, Ucanto.Failure>>
 
   /**
    * Returns rate limits on subject.
@@ -38,12 +37,14 @@ export interface RateLimitsStorage {
   list: (subject: string) => Promise<Ucanto.Result<RateLimit[], Ucanto.Failure>>
 
   /**
-   * Remove a rate limit with a given ID.
+   * Remove a rate limit with given IDs.
    */
-  remove: (id: RateLimitID) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+  remove: (id: RateLimitID[]) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
 
   /**
    * Returns true if the given subject has a limit equal to 0.
    */
-  areAnyBlocked: (subjects: string[]) => Promise<Ucanto.Result<boolean, Ucanto.Failure>>
+  areAnyBlocked: (
+    subjects: string[]
+  ) => Promise<Ucanto.Result<boolean, Ucanto.Failure>>
 }

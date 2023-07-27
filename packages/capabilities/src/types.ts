@@ -27,8 +27,8 @@ export interface InsufficientStorage {
   message: string
 }
 
-export interface UnknownProvider {
-  name: 'UnknownProvider',
+export interface UnknownProvider extends Ucanto.Failure {
+  name: 'UnknownProvider'
   did: DID
 }
 
@@ -79,9 +79,9 @@ export interface InvalidProvider extends Ucanto.Failure {
 // Customer
 export type CustomerGet = InferInvokedCapability<typeof CustomerCaps.get>
 export interface CustomerGetSuccess {
-    did: AccountDID
+  did: AccountDID
 }
-export interface CustomerNotFound extends Ucanto.Failure { 
+export interface CustomerNotFound extends Ucanto.Failure {
   name: 'CustomerNotFound'
 }
 export type CustomerGetFailure = CustomerNotFound
@@ -92,18 +92,20 @@ export type ConsumerHasSuccess = boolean
 export type ConsumerHasFailure = Ucanto.Failure
 export type ConsumerGet = InferInvokedCapability<typeof ConsumerCaps.get>
 export interface ConsumerGetSuccess {
-  did: DIDKey,
-  allocated: number,
-  total: number,
+  did: DIDKey
+  allocated: number
+  total: number
   subscription: string
 }
 export interface ConsumerNotFound extends Ucanto.Failure {
   name: 'ConsumerNotFound'
 }
-export type ConsumerGetFailure = ConsumerNotFound
+export type ConsumerGetFailure = ConsumerNotFound | Ucanto.Failure
 
 // Subscription
-export type SubscriptionGet = InferInvokedCapability<typeof SubscriptionCaps.get>
+export type SubscriptionGet = InferInvokedCapability<
+  typeof SubscriptionCaps.get
+>
 export interface SubscriptionGetSuccess {
   customer: AccountDID
   consumer: DIDKey
@@ -111,7 +113,10 @@ export interface SubscriptionGetSuccess {
 export interface SubscriptionNotFound extends Ucanto.Failure {
   name: 'SubscriptionNotFound'
 }
-export type SubscriptionGetFailure = SubscriptionNotFound | UnknownProvider
+export type SubscriptionGetFailure =
+  | SubscriptionNotFound
+  | UnknownProvider
+  | Ucanto.Failure
 
 // Rate Limit
 export type RateLimitAdd = InferInvokedCapability<typeof RateLimitCaps.add>
@@ -120,17 +125,20 @@ export interface RateLimitAddSuccess {
 }
 export type RateLimitAddFailure = Ucanto.Failure
 
-export type RateLimitRemove = InferInvokedCapability<typeof RateLimitCaps.remove>
-export type RateLimitRemoveSuccess = {}
+export type RateLimitRemove = InferInvokedCapability<
+  typeof RateLimitCaps.remove
+>
+export type RateLimitRemoveSuccess = Unit
+
 export interface RateLimitsNotFound extends Ucanto.Failure {
   name: 'RateLimitsNotFound'
 }
-export type RateLimitRemoveFailure = RateLimitsNotFound
+export type RateLimitRemoveFailure = RateLimitsNotFound | Ucanto.Failure
 
 export type RateLimitList = InferInvokedCapability<typeof RateLimitCaps.list>
 export interface RateLimitSubject {
-  id: string,
-  limit: number
+  id: string
+  rate: number
 }
 export interface RateLimitListSuccess {
   limits: RateLimitSubject[]

@@ -22,7 +22,7 @@ export const add = capability({
   with: Provider,
   nb: struct({
     subject: Schema.string(),
-    rate: Schema.number()
+    rate: Schema.number(),
   }),
   derives: (child, parent) => {
     return (
@@ -41,12 +41,12 @@ export const remove = capability({
   can: 'rate-limit/remove',
   with: Provider,
   nb: struct({
-    id: Schema.string()
+    ids: Schema.string().array(),
   }),
   derives: (child, parent) => {
     return (
       and(equalWith(child, parent)) ||
-      and(equal(child.nb.id, parent.nb.id, 'id')) ||
+      and(equal(child.nb.ids, parent.nb.ids, 'ids')) ||
       ok({})
     )
   },
@@ -59,7 +59,7 @@ export const list = capability({
   can: 'rate-limit/list',
   with: Provider,
   nb: struct({
-    subject: Schema.string()
+    subject: Schema.string(),
   }),
   derives: (child, parent) => {
     return (
