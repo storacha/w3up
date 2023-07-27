@@ -17,14 +17,18 @@ export const provide = (ctx) =>
  */
 export const authorize = async ({ capability }, ctx) => {
   const isBlocked = await ctx.rateLimitsStorage.areAnyBlocked(
-    emailAndDomainFromMailtoDid(/** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(capability.nb.iss))
+    emailAndDomainFromMailtoDid(
+      /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+        capability.nb.iss
+      )
+    )
   )
   if (isBlocked.error || isBlocked.ok) {
     return {
       error: {
         name: 'AccountBlocked',
-        message: `Account identified by {capability.nb.iss} is blocked`
-      }
+        message: `Account identified by {capability.nb.iss} is blocked`,
+      },
     }
   }
 

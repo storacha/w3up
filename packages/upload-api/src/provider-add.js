@@ -16,10 +16,7 @@ export const provide = (ctx) =>
  */
 export const add = async (
   { capability, invocation },
-  {
-    provisionsStorage: provisions,
-    rateLimitsStorage: rateLimits
-  }
+  { provisionsStorage: provisions, rateLimitsStorage: rateLimits }
 ) => {
   const {
     nb: { consumer, provider },
@@ -34,14 +31,18 @@ export const add = async (
     }
   }
   const isBlocked = await rateLimits.areAnyBlocked(
-    emailAndDomainFromMailtoDid(/** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(accountDID))
+    emailAndDomainFromMailtoDid(
+      /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+        accountDID
+      )
+    )
   )
   if (isBlocked.error || isBlocked.ok) {
     return {
       error: {
         name: 'AccountBlocked',
-        message: `Account identified by {capability.nb.iss} is blocked`
-      }
+        message: `Account identified by {capability.nb.iss} is blocked`,
+      },
     }
   }
   if (!provisions.services.includes(provider)) {

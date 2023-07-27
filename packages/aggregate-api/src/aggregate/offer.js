@@ -1,6 +1,10 @@
 import * as Server from '@ucanto/server'
 import { CBOR } from '@ucanto/core'
-import { Node, Piece, Aggregate as AggregateBuilder } from '@web3-storage/data-segment'
+import {
+  Node,
+  Piece,
+  Aggregate as AggregateBuilder,
+} from '@web3-storage/data-segment'
 import * as Aggregate from '@web3-storage/capabilities/aggregate'
 import * as Offer from '@web3-storage/capabilities/offer'
 import * as API from '../types.js'
@@ -62,10 +66,12 @@ export const claim = async (
   // Validate commP of commPs
   const aggregateBuild = AggregateBuilder.build({
     size: aggregateSize,
-    pieces: offers.map(offer => Piece.fromJSON({
-      height: offer.height,
-      link: { '/': offer.link.toString() }
-    }))
+    pieces: offers.map((offer) =>
+      Piece.fromJSON({
+        height: offer.height,
+        link: { '/': offer.link.toString() },
+      })
+    ),
   })
   if (!aggregateBuild.link.equals(piece.link)) {
     return {

@@ -15,8 +15,8 @@ export const allocate = async ({ capability }, context) => {
     return {
       error: {
         name: 'InsufficientStorage',
-        message: `${space} is blocked`
-      }
+        message: `${space} is blocked`,
+      },
     }
   }
   const { size } = nb

@@ -32,7 +32,7 @@ export type SpaceDID = DIDKey
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
 export interface SpaceProviderRegistry {
-  hasStorageProvider (space: SpaceDID): Promise<Result<boolean, never>>
+  hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
 }
 
 export interface InsufficientStorage extends Failure {
@@ -238,15 +238,15 @@ export interface RateLimitServiceContext {
 
 export interface ServiceContext
   extends AccessServiceContext,
-  ConsoleServiceContext,
-  ConsumerServiceContext,
-  CustomerServiceContext,
-  ProviderServiceContext,
-  SpaceServiceContext,
-  StoreServiceContext,
-  SubscriptionServiceContext,
-  RateLimitServiceContext,
-  UploadServiceContext {}
+    ConsoleServiceContext,
+    ConsumerServiceContext,
+    CustomerServiceContext,
+    ProviderServiceContext,
+    SpaceServiceContext,
+    StoreServiceContext,
+    SubscriptionServiceContext,
+    RateLimitServiceContext,
+    UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
@@ -256,8 +256,8 @@ export interface UcantoServerContext extends ServiceContext {
 
 export interface UcantoServerTestContext
   extends UcantoServerContext,
-  StoreTestContext,
-  UploadTestContext {
+    StoreTestContext,
+    UploadTestContext {
   connection: ConnectionView<Service>
   mail: DebugEmail
   service: Signer<ServiceDID>
@@ -299,7 +299,7 @@ export interface CarStoreBucketOptions {
 }
 
 export interface CarStoreBucketService {
-  use (options?: CarStoreBucketOptions): Promise<CarStoreBucket>
+  use(options?: CarStoreBucketOptions): Promise<CarStoreBucket>
 }
 
 export interface DudewhereBucket {
@@ -317,7 +317,7 @@ export interface StoreTable {
 }
 
 export interface TestStoreTable {
-  get (
+  get(
     space: DID,
     link: UnknownLink
   ): Promise<(StoreAddInput & StoreListItem) | undefined>

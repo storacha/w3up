@@ -149,7 +149,6 @@ export interface RateLimitListSuccess {
 }
 export type RateLimitListFailure = Ucanto.Failure
 
-
 // Space
 export type Space = InferInvokedCapability<typeof space>
 export type SpaceInfo = InferInvokedCapability<typeof info>
