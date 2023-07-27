@@ -1,5 +1,23 @@
 # Changelog
 
+## [8.0.1](https://github.com/web3-storage/w3up/compare/w3up-client-v8.0.0...w3up-client-v8.0.1) (2023-07-21)
+
+
+### Bug Fixes
+
+* bump package number to ensure w3up-client depends on &gt;= access@15 ([#836](https://github.com/web3-storage/w3up/issues/836)) ([b095b7c](https://github.com/web3-storage/w3up/commit/b095b7cfaea30f1230b8da884fb580fdf56ec732))
+
+## [8.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v7.0.0...w3up-client-v8.0.0) (2023-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* stop using access.web3.storage ([#833](https://github.com/web3-storage/w3up/issues/833))
+
+### Features
+
+* stop using access.web3.storage ([#833](https://github.com/web3-storage/w3up/issues/833)) ([0df3f2c](https://github.com/web3-storage/w3up/commit/0df3f2c0341244b2404702e8a8878cf0f6e31bc0))
+
 ## [7.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v6.0.1...w3up-client-v7.0.0) (2023-06-08)
 
 

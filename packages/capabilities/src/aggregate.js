@@ -44,17 +44,20 @@ export const offer = capability({
       /**
        * CID of the aggregate piece.
        */
-      link: Schema.link({
-        code: FilCommitmentUnsealed,
-        version: 1,
-        multihash: {
-          code: SHA2_256_TRUNC254_PADDED,
-        },
-      }),
+      link: /** @type {import('./types').PieceLinkSchema} */ (
+        Schema.link({
+          code: FilCommitmentUnsealed,
+          version: 1,
+          multihash: {
+            code: SHA2_256_TRUNC254_PADDED,
+          },
+        })
+      ),
       /**
-       * Size in nodes. For BLS12-381 (capacity 254 bits), must be >= 16. (16 * 8 = 128)
+       * Height of the perfect binary tree for the piece.
+       * It can be used to derive leafCount and consequently `size` of the piece.
        */
-      size: Schema.integer(),
+      height: Schema.integer(),
     }),
   }),
   derives: (claim, from) => {
@@ -64,7 +67,9 @@ export const offer = capability({
       and(
         checkLink(claim.nb.piece.link, from.nb.piece.link, 'nb.piece.link')
       ) ||
-      and(equal(claim.nb.piece.size, from.nb.piece.size, 'nb.piece.size')) ||
+      and(
+        equal(claim.nb.piece.height, from.nb.piece.height, 'nb.piece.height')
+      ) ||
       ok({})
     )
   },
@@ -81,7 +86,7 @@ export const get = capability({
     /**
      * Commitment proof for the aggregate being requested.
      */
-    subject: Schema.link(),
+    subject: /** @type {import('./types').PieceLinkSchema} */ (Schema.link()),
   }),
   derives: (claim, from) => {
     return (

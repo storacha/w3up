@@ -21,7 +21,7 @@ export const arrange = capability({
     /**
      * Commitment proof for the aggregate being requested.
      */
-    pieceLink: Schema.link(),
+    pieceLink: /** @type {import('./types').PieceLinkSchema} */ (Schema.link()),
   }),
   derives: (claim, from) => {
     return (

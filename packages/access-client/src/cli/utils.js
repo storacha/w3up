@@ -6,9 +6,9 @@ import inquirer from 'inquirer'
 
 /** @type {Record<string,string>} */
 const envs = {
-  production: 'https://access.web3.storage',
-  staging: 'https://w3access-staging.protocol-labs.workers.dev',
-  dev: 'https://w3access-dev.protocol-labs.workers.dev',
+  production: 'https://up.web3.storage',
+  staging: 'https://staging.up.web3.storage',
+  dev: 'https://dev.up.web3.storage',
   local: 'http://127.0.0.1:8787',
 }
 

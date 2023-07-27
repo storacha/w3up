@@ -16,6 +16,11 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version:
+          - 18
+          - 20
     defaults:
       run:
         working-directory: ./packages/w3up-client
@@ -29,7 +34,7 @@ jobs:
       - name: Setup
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ matrix.node_version }}
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
       - run: pnpm --filter '@web3-storage/w3up-client...' install

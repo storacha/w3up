@@ -1,6 +1,8 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
+import type { Schema } from '@ucanto/core'
 import { InferInvokedCapability, Unit, DID, DIDKey } from '@ucanto/interface'
+import type { PieceLink } from '@web3-storage/data-segment'
 import { space, info, recover, recoverValidation } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -31,6 +33,8 @@ export interface UnknownProvider extends Ucanto.Failure {
   name: 'UnknownProvider'
   did: DID
 }
+
+export type PieceLinkSchema = Schema.Schema<PieceLink>
 
 // Access
 export type Access = InferInvokedCapability<typeof AccessCaps.access>

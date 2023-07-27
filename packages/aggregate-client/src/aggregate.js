@@ -10,8 +10,8 @@ export const MAX_SIZE = 127 * (1 << 28)
  * Offer an aggregate to be assembled and stored.
  *
  * @param {import('./types').InvocationConfig} conf - Configuration
- * @param {import('./types').Piece} piece
- * @param {import('./types').Piece[]} offer
+ * @param {import('@web3-storage/data-segment').PieceView} piece
+ * @param {import('@web3-storage/data-segment').PieceView[]} offer
  * @param {import('./types').RequestOptions} [options]
  */
 export async function aggregateOffer(
@@ -44,7 +44,7 @@ export async function aggregateOffer(
  * Get details of an aggregate.
  *
  * @param {import('./types').InvocationConfig} conf - Configuration
- * @param {import('@ucanto/interface').UnknownLink} subject
+ * @param {import('@web3-storage/data-segment').PieceLink} subject
  * @param {import('./types').RequestOptions} [options]
  */
 export async function aggregateGet(
