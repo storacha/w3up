@@ -37,9 +37,9 @@ export interface RateLimitsStorage {
   list: (subject: string) => Promise<Ucanto.Result<RateLimit[], Ucanto.Failure>>
 
   /**
-   * Remove a rate limit with given IDs.
+   * Remove a rate limit with given ID.
    */
-  remove: (id: RateLimitID[]) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+  remove: (id: RateLimitID) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
 
   /**
    * Returns true if the given subject has a limit equal to 0.

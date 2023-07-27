@@ -13,5 +13,5 @@ export const provide = (ctx) =>
  * @param {API.RateLimitServiceContext} ctx
  */
 export const remove = async ({ capability }, ctx) => {
-  return ctx.rateLimitsStorage.remove(capability.nb.ids)
+  return ctx.rateLimitsStorage.remove(capability.nb.id)
 }

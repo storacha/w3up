@@ -41,12 +41,12 @@ export const remove = capability({
   can: 'rate-limit/remove',
   with: Provider,
   nb: struct({
-    ids: Schema.string().array(),
+    id: Schema.string(),
   }),
   derives: (child, parent) => {
     return (
       and(equalWith(child, parent)) ||
-      and(equal(child.nb.ids, parent.nb.ids, 'ids')) ||
+      and(equal(child.nb.id, parent.nb.id, 'id')) ||
       ok({})
     )
   },

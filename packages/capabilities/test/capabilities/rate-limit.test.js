@@ -99,7 +99,7 @@ describe('rate-limit/remove', function () {
       audience: service,
       with: provider,
       nb: {
-        ids: ['123'],
+        id: '123',
       },
       // TODO: check in with @gozala about whether passing provider as account makes sense
       proofs: await createAuthorization({ agent, service, account: provider }),
@@ -127,7 +127,7 @@ describe('rate-limit/remove', function () {
       audience: service,
       with: provider,
       nb: {
-        ids: ['123'],
+        id: '123',
       },
     })
 

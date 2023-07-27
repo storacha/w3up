@@ -44,12 +44,10 @@ export class RateLimitsStorage {
 
   /**
    *
-   * @param {string[]} ids
+   * @param {string} id
    */
-  async remove(ids) {
-    for (const id of ids) {
-      delete this.rateLimits[id]
-    }
+  async remove(id) {
+    delete this.rateLimits[id]
     return { ok: {} }
   }
 
