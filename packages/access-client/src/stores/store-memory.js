@@ -9,6 +9,6 @@ import { MemoryDriver } from "../drivers/memory.js";
  * import { StoreMemory } from '@web3-storage/access/stores/store-memory'
  * ```
  *
- * @extends {MemoryDriver<import('@web3-storage/access/src/types.js').AgentDataExport>}
+ * @extends {MemoryDriver<import('../types').AgentDataExport>}
  */
 export class StoreMemory extends MemoryDriver {}
