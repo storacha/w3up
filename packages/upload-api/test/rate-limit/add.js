@@ -6,8 +6,6 @@ import { Access, RateLimit, Store } from '@web3-storage/capabilities'
 import * as CAR from '@ucanto/transport/car'
 import * as DidMailto from '@web3-storage/did-mailto'
 
-
-
 /**
  * @type {API.Tests}
  */

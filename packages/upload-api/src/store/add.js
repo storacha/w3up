@@ -18,7 +18,7 @@ export function storeAddProvider(context) {
     const space = /** @type {import('@ucanto/interface').DIDKey} */ (Server.DID.parse(capability.with).did())
     const issuer = invocation.issuer.did()
     const [allocated, carIsLinkedToAccount, carExists] = await Promise.all([
-      // TODO: ask @gozala if this is the right way to call this - maybe it should be an actual UCAN execution?
+      // TODO: is the right way to call this - maybe it should be an actual UCAN execution?
       allocate({
         capability: {
           with: space,

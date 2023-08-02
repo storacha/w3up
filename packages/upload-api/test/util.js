@@ -70,7 +70,6 @@ export const registerSpace = async (audience, context) => {
     connection
   })
   if (provisionResult.out.error){
-    console.log(provisionResult.out.error)
     throw new Error(`Error provisioning space for ${audience.did()}`, {cause: provisionResult.out.error})
   }
 

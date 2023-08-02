@@ -301,7 +301,6 @@ export const test = {
 
     assert.ok(storeAdd.out.error)
     assert.equal(storeAdd.out.error?.message.includes('no storage'), true)
-
     
     // Register space and retry
     const account = Absentee.from({ id: 'did:mailto:test.web3.storage:alice' })
