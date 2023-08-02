@@ -8,25 +8,26 @@ import { allocate } from '../space-allocate.js'
  * @returns {API.ServiceMethod<API.StoreAdd, API.StoreAddOk, API.Failure>}
  */
 export function storeAddProvider(context) {
-  const {
-    storeTable,
-    carStoreBucket,
-    maxUploadSize,
-  } = context
+  const { storeTable, carStoreBucket, maxUploadSize } = context
   return Server.provide(Store.add, async ({ capability, invocation }) => {
     const { link, origin, size } = capability.nb
-    const space = /** @type {import('@ucanto/interface').DIDKey} */ (Server.DID.parse(capability.with).did())
+    const space = /** @type {import('@ucanto/interface').DIDKey} */ (
+      Server.DID.parse(capability.with).did()
+    )
     const issuer = invocation.issuer.did()
     const [allocated, carIsLinkedToAccount, carExists] = await Promise.all([
       // TODO: is the right way to call this - maybe it should be an actual UCAN execution?
-      allocate({
-        capability: {
-          with: space,
-          nb: {
-            size
-          }
-        }
-      }, context),
+      allocate(
+        {
+          capability: {
+            with: space,
+            nb: {
+              size,
+            },
+          },
+        },
+        context
+      ),
       storeTable.exists(space, link),
       carStoreBucket.has(link),
     ])

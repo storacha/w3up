@@ -21,10 +21,13 @@ export const test = {
           subject: space.did(),
           rate: 0,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+          }),
+        ],
       })
       .execute(connection)
     assert.ok(result.out.ok)
@@ -38,10 +41,13 @@ export const test = {
         nb: {
           subject: space.did(),
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/list' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/list' }],
+          }),
+        ],
       })
       .execute(connection)
 

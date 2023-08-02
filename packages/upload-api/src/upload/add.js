@@ -11,16 +11,23 @@ import { has as hasProvider } from '../consumer/has.js'
 export function uploadAddProvider(context) {
   return Server.provide(Upload.add, async ({ capability, invocation }) => {
     const { uploadTable, dudewhereBucket, signer } = context
-    const serviceDID = /** @type {import('../types.js').ProviderDID} */ (signer.did())
+    const serviceDID = /** @type {import('../types.js').ProviderDID} */ (
+      signer.did()
+    )
     const { root, shards } = capability.nb
-    const space = /** @type {import('@ucanto/interface').DIDKey} */ (Server.DID.parse(capability.with).did())
+    const space = /** @type {import('@ucanto/interface').DIDKey} */ (
+      Server.DID.parse(capability.with).did()
+    )
     const issuer = invocation.issuer.did()
-    const hasProviderResult = await hasProvider({
-      capability: {
-        with: serviceDID,
-        nb: { consumer: space }
-      }
-    }, context)
+    const hasProviderResult = await hasProvider(
+      {
+        capability: {
+          with: serviceDID,
+          nb: { consumer: space },
+        },
+      },
+      context
+    )
     if (hasProviderResult.error) {
       return hasProviderResult
     }
@@ -28,8 +35,8 @@ export function uploadAddProvider(context) {
       return {
         error: {
           name: 'NoStorageProvider',
-          message: `${space} has no storage provider`
-        }
+          message: `${space} has no storage provider`,
+        },
       }
     }
 

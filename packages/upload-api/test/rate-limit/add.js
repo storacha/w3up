@@ -22,10 +22,13 @@ export const test = {
           subject: space.did(),
           rate: 0,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+          }),
+        ],
       })
       .execute(connection)
 
@@ -44,10 +47,13 @@ export const test = {
           subject: space.did(),
           rate: 0,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+          }),
+        ],
       })
       .execute(connection)
 
@@ -61,10 +67,13 @@ export const test = {
         nb: {
           subject: space.did(),
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/list' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/list' }],
+          }),
+        ],
       })
       .execute(connection)
 
@@ -73,7 +82,10 @@ export const test = {
     assert.equal(listResult.out.ok?.limits[0].id, result.out.ok?.id)
   },
 
-  'rate-limit/add can be used to block space allocation': async (assert, context) => {
+  'rate-limit/add can be used to block space allocation': async (
+    assert,
+    context
+  ) => {
     const { service, agent, space, connection } = await setup(context)
 
     const result = await RateLimit.add
@@ -85,10 +97,13 @@ export const test = {
           subject: space.did(),
           rate: 0,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+          }),
+        ],
       })
       .execute(connection)
 
@@ -103,10 +118,13 @@ export const test = {
         audience: service,
         with: space.did(),
         nb: { link, size },
-        proofs: [await delegate({
-          issuer: space, audience: agent,
-          capabilities: [{ with: space.did(), can: 'store/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: space,
+            audience: agent,
+            capabilities: [{ with: space.did(), can: 'store/add' }],
+          }),
+        ],
       })
       .execute(connection)
 
@@ -115,7 +133,10 @@ export const test = {
     assert.equal(storeResult.out.error?.message, `${space.did()} is blocked`)
   },
 
-  'rate-limit/add can be used to block authorization by email address': async (assert, context) => {
+  'rate-limit/add can be used to block authorization by email address': async (
+    assert,
+    context
+  ) => {
     const { service, agent, account, connection } = await setup(context)
 
     // ensure the account can normally be authorized
@@ -144,10 +165,13 @@ export const test = {
           subject: email,
           rate: 0,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+          }),
+        ],
       })
       .execute(connection)
 
@@ -169,7 +193,10 @@ export const test = {
     assert.equal(errorAccessResult.out.error?.name, 'AccountBlocked')
   },
 
-  'rate-limit/add can be used to block authorization by domain': async (assert, context) => {
+  'rate-limit/add can be used to block authorization by domain': async (
+    assert,
+    context
+  ) => {
     const { service, agent, account, connection } = await setup(context)
 
     // ensure the account can normally be authorized
@@ -188,7 +215,9 @@ export const test = {
     assert.ok(okAccessResult.out.ok)
 
     // block the account's domain
-    const domain = DidMailto.toEmail(DidMailto.fromString(account.did())).split('@')[1]
+    const domain = DidMailto.toEmail(DidMailto.fromString(account.did())).split(
+      '@'
+    )[1]
     const blockResult = await RateLimit.add
       .invoke({
         issuer: agent,
@@ -198,10 +227,13 @@ export const test = {
           subject: domain,
           rate: 0,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+          }),
+        ],
       })
       .execute(connection)
 

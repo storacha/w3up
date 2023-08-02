@@ -21,10 +21,13 @@ export const test = {
           subject: space.did(),
           rate: 0,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+          }),
+        ],
       })
       .execute(connection)
     assert.ok(result.out.ok)
@@ -38,10 +41,13 @@ export const test = {
         nb: {
           subject: space.did(),
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/list' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/list' }],
+          }),
+        ],
       })
       .execute(connection)
     assert.equal(listResult.out.ok?.limits.length, 1)
@@ -56,10 +62,13 @@ export const test = {
           // @ts-ignore we've verified this exists but TS doesn't know that
           id: result.out.ok.id,
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/remove' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/remove' }],
+          }),
+        ],
       })
       .execute(connection)
 
@@ -74,14 +83,16 @@ export const test = {
         nb: {
           subject: space.did(),
         },
-        proofs: [await delegate({
-          issuer: service, audience: agent,
-          capabilities: [{ with: service.did(), can: 'rate-limit/list' }]
-        })]
+        proofs: [
+          await delegate({
+            issuer: service,
+            audience: agent,
+            capabilities: [{ with: service.did(), can: 'rate-limit/list' }],
+          }),
+        ],
       })
       .execute(connection)
     assert.equal(listResult2.out.ok?.limits.length, 0)
-
   },
 }
 

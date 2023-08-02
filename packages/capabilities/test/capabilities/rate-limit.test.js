@@ -15,7 +15,7 @@ describe('rate-limit/add', function () {
       nb: {
         subject: space.did(),
         rate: 0,
-      }
+      },
     })
     const result = await access(await invocation.delegate(), {
       capability: RateLimit.add,
@@ -45,10 +45,13 @@ describe('rate-limit/add', function () {
         subject: space.did(),
         rate: 0,
       },
-      proofs: [await delegate({
-        issuer: service, audience: agent,
-        capabilities: [{ with: service.did(), can: 'rate-limit/add' }]
-      })],
+      proofs: [
+        await delegate({
+          issuer: service,
+          audience: agent,
+          capabilities: [{ with: service.did(), can: 'rate-limit/add' }],
+        }),
+      ],
     })
     const result = await access(await auth.delegate(), {
       capability: RateLimit.add,
@@ -56,7 +59,9 @@ describe('rate-limit/add', function () {
       authority: service,
     })
     if (result.error) {
-      assert.fail(`error in self issue: ${JSON.stringify(result.error.message)}`)
+      assert.fail(
+        `error in self issue: ${JSON.stringify(result.error.message)}`
+      )
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
       assert.equal(result.ok.capability.can, 'rate-limit/add')
@@ -129,10 +134,13 @@ describe('rate-limit/remove', function () {
       nb: {
         id: rateLimitId,
       },
-      proofs: [await delegate({
-        issuer: service, audience: agent,
-        capabilities: [{ with: service.did(), can: 'rate-limit/remove' }]
-      })],
+      proofs: [
+        await delegate({
+          issuer: service,
+          audience: agent,
+          capabilities: [{ with: service.did(), can: 'rate-limit/remove' }],
+        }),
+      ],
     })
     const result = await access(await auth.delegate(), {
       capability: RateLimit.remove,
@@ -194,10 +202,13 @@ describe('rate-limit/list', function () {
       nb: {
         subject: space.did(),
       },
-      proofs: [await delegate({
-        issuer: service, audience: agent,
-        capabilities: [{ with: service.did(), can: 'rate-limit/list' }]
-      })],
+      proofs: [
+        await delegate({
+          issuer: service,
+          audience: agent,
+          capabilities: [{ with: service.did(), can: 'rate-limit/list' }],
+        }),
+      ],
     })
     const result = await access(await auth.delegate(), {
       capability: RateLimit.list,

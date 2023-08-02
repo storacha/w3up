@@ -14,7 +14,7 @@ describe('subscription/get', function () {
       with: service.did(),
       nb: {
         subscription: bob.did(),
-      }
+      },
     })
     const result = await access(await invocation.delegate(), {
       capability: Subscription.get,
@@ -40,10 +40,13 @@ describe('subscription/get', function () {
       nb: {
         subscription: bob.did(),
       },
-      proofs: [await delegate({
-        issuer: service, audience: agent,
-        capabilities: [{ with: service.did(), can: 'subscription/get' }]
-      })],
+      proofs: [
+        await delegate({
+          issuer: service,
+          audience: agent,
+          capabilities: [{ with: service.did(), can: 'subscription/get' }],
+        }),
+      ],
     })
     const result = await access(await auth.delegate(), {
       capability: Subscription.get,
@@ -51,7 +54,9 @@ describe('subscription/get', function () {
       authority: service,
     })
     if (result.error) {
-      assert.fail(`error in self issue: ${JSON.stringify(result.error.message)}`)
+      assert.fail(
+        `error in self issue: ${JSON.stringify(result.error.message)}`
+      )
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
       assert.equal(result.ok.capability.can, 'subscription/get')
@@ -88,8 +93,7 @@ describe('subscription/get', function () {
         audience: service,
         with: service.did(),
         // @ts-ignore
-        nb: {
-        },
+        nb: {},
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "subscription"/)
   })

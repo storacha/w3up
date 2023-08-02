@@ -60,17 +60,19 @@ export const registerSpace = async (audience, context) => {
     id: context.id,
     channel: createServer(context),
   })
-  const account = Absentee.from({id: 'did:mailto:test.web3.storage:alice'})
+  const account = Absentee.from({ id: 'did:mailto:test.web3.storage:alice' })
 
   const provisionResult = await provisionProvider({
     service: /** @type {API.Signer<API.DID<'web'>>} */ (context.signer),
     agent: /** @type {API.Signer<API.DIDKey>} */ (audience),
     space,
     account,
-    connection
+    connection,
   })
-  if (provisionResult.out.error){
-    throw new Error(`Error provisioning space for ${audience.did()}`, {cause: provisionResult.out.error})
+  if (provisionResult.out.error) {
+    throw new Error(`Error provisioning space for ${audience.did()}`, {
+      cause: provisionResult.out.error,
+    })
   }
 
   return { proof, space, spaceDid }

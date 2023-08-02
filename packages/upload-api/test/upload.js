@@ -249,7 +249,7 @@ export const test = {
     // invoke a upload/add with proof
     const [root] = car.roots
     const shards = [car.cid, otherCar.cid].sort()
-    
+
     const uploadAdd = await Upload.add
       .invoke({
         issuer: alice,

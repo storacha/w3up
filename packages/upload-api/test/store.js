@@ -301,7 +301,7 @@ export const test = {
 
     assert.ok(storeAdd.out.error)
     assert.equal(storeAdd.out.error?.message.includes('no storage'), true)
-    
+
     // Register space and retry
     const account = Absentee.from({ id: 'did:mailto:test.web3.storage:alice' })
     const providerAdd = await provisionProvider({
@@ -309,7 +309,7 @@ export const test = {
       agent: alice,
       space,
       account,
-      connection
+      connection,
     })
     assert.ok(providerAdd.out.ok)
 
