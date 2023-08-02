@@ -15,13 +15,12 @@ export function storeAddProvider(context) {
   } = context
   return Server.provide(Store.add, async ({ capability, invocation }) => {
     const { link, origin, size } = capability.nb
-    const space = Server.DID.parse(capability.with).did()
+    const space = /** @type {import('@ucanto/interface').DIDKey} */ (Server.DID.parse(capability.with).did())
     const issuer = invocation.issuer.did()
     const [allocated, carIsLinkedToAccount, carExists] = await Promise.all([
       // TODO: ask @gozala if this is the right way to call this - maybe it should be an actual UCAN execution?
       allocate({
         capability: {
-          // @ts-expect-error
           with: space,
           nb: {
             size

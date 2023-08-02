@@ -1,6 +1,5 @@
 import type {
   Failure,
-  Invocation,
   ServiceMethod,
   UCANLink,
   HandlerExecutionError,
@@ -178,18 +177,17 @@ export interface Service {
   }
 }
 
-export interface StoreServiceContext {
+export type StoreServiceContext = SpaceServiceContext & {
   maxUploadSize: number
 
   storeTable: StoreTable
   carStoreBucket: CarStoreBucket
-  access: AccessVerifier
 }
 
-export interface UploadServiceContext {
+export type UploadServiceContext = ConsumerServiceContext & {
+  signer: EdSigner.Signer
   uploadTable: UploadTable
   dudewhereBucket: DudewhereBucket
-  access: AccessVerifier
 }
 
 export interface AccessClaimContext {
@@ -266,7 +264,6 @@ export interface UcantoServerTestContext
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
-  testSpaceRegistry: TestSpaceRegistry
 }
 
 export interface UploadTestContext {}
@@ -421,18 +418,6 @@ export interface ListResponse<R> {
   size: number
   results: R[]
 }
-
-export interface AccessVerifier {
-  /**
-   * Determines if the issuer of the invocation has received a delegation
-   * allowing them to issue the passed invocation.
-   */
-  allocateSpace: (
-    invocation: Invocation
-  ) => Promise<Result<AllocateOk, Failure>>
-}
-
-interface AllocateOk {}
 
 export interface TestSpaceRegistry {
   /**

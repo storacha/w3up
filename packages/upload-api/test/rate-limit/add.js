@@ -31,7 +31,6 @@ export const test = {
       })
       .execute(connection)
 
-    console.log(result.out)
     assert.ok(result.out.ok)
   },
 

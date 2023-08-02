@@ -9,15 +9,14 @@ export const provide = (context) =>
   Provider.provide(Consumer.has, (input) => has(input, context))
 
 /**
- * @param {API.Input<Consumer.has>} input
+ * @param {{capability: {with: API.ProviderDID, nb: { consumer: API.DIDKey }}}} input
  * @param {API.ConsumerServiceContext} context
  * @returns {Promise<API.Result<API.ConsumerHasSuccess, API.ConsumerHasFailure>>}
  */
-const has = async ({ capability }, context) => {
+export const has = async ({ capability }, context) => {
   if (capability.with !== context.signer.did()) {
     return Provider.fail(
-      `Expected with to be ${context.signer.did()}} instead got ${
-        capability.with
+      `Expected with to be ${context.signer.did()}} instead got ${capability.with
       }`
     )
   }

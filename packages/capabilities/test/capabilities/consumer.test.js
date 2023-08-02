@@ -3,7 +3,7 @@ import { access } from '@ucanto/validator'
 import { delegate } from '@ucanto/core'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Consumer from '../../src/consumer.js'
-import { bob, bobAccount, service, alice } from '../helpers/fixtures.js'
+import { bob, service, alice } from '../helpers/fixtures.js'
 
 describe('consumer/get', function () {
   const agent = alice

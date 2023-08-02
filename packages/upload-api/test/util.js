@@ -1,4 +1,5 @@
 import * as API from '../src/types.js'
+import { createServer, connect } from '../src/lib.js'
 import { ed25519 } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
 import { CID } from 'multiformats'
@@ -8,6 +9,8 @@ import * as CAR from '@ucanto/transport/car'
 import * as raw from 'multiformats/codecs/raw'
 import { CarWriter } from '@ipld/car'
 import { Blob } from '@web-std/blob'
+import { provisionProvider } from './helpers/utils.js'
+import { Absentee } from '@ucanto/principal'
 
 /** did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi */
 export const alice = ed25519.parse(
@@ -41,20 +44,37 @@ export async function createSpace(audience) {
       audience,
       capabilities: [{ can: '*', with: spaceDid }],
     }),
+    space,
     spaceDid,
   }
 }
 
 /**
  *
- * @param {API.Principal} audience
- * @param {object} context
- * @param {API.TestSpaceRegistry} context.testSpaceRegistry
+ * @param {API.Principal & API.Signer} audience
+ * @param {import('./types.js').UcantoServerTestContext} context
  */
-export const registerSpace = async (audience, { testSpaceRegistry }) => {
-  const { proof, spaceDid } = await createSpace(audience)
-  await testSpaceRegistry.registerSpace(spaceDid)
-  return { proof, spaceDid }
+export const registerSpace = async (audience, context) => {
+  const { proof, space, spaceDid } = await createSpace(audience)
+  const connection = connect({
+    id: context.id,
+    channel: createServer(context),
+  })
+  const account = Absentee.from({id: 'did:mailto:test.web3.storage:alice'})
+
+  const provisionResult = await provisionProvider({
+    service: /** @type {API.Signer<API.DID<'web'>>} */ (context.signer),
+    agent: /** @type {API.Signer<API.DIDKey>} */ (audience),
+    space,
+    account,
+    connection
+  })
+  if (provisionResult.out.error){
+    console.log(provisionResult.out.error)
+    throw new Error(`Error provisioning space for ${audience.did()}`, {cause: provisionResult.out.error})
+  }
+
+  return { proof, space, spaceDid }
 }
 
 /** @param {number} size */

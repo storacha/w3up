@@ -2,26 +2,41 @@ import pRetry from 'p-retry'
 import * as Server from '@ucanto/server'
 import * as Upload from '@web3-storage/capabilities/upload'
 import * as API from '../types.js'
+import { has as hasProvider } from '../consumer/has.js'
 
 /**
  * @param {API.UploadServiceContext} context
  * @returns {API.ServiceMethod<API.UploadAdd, API.UploadAddOk, API.Failure>}
  */
-export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
+export function uploadAddProvider(context) {
   return Server.provide(Upload.add, async ({ capability, invocation }) => {
+    const { uploadTable, dudewhereBucket, signer } = context
+    const serviceDID = /** @type {import('../types.js').ProviderDID} */ (signer.did())
     const { root, shards } = capability.nb
-    const space = Server.DID.parse(capability.with)
+    const space = /** @type {import('@ucanto/interface').DIDKey} */ (Server.DID.parse(capability.with).did())
     const issuer = invocation.issuer.did()
-    const allocated = await access.allocateSpace(invocation)
-
-    if (allocated.error) {
-      return allocated
+    const hasProviderResult = await hasProvider({
+      capability: {
+        with: serviceDID,
+        nb: { consumer: space }
+      }
+    }, context)
+    if (hasProviderResult.error) {
+      return hasProviderResult
+    }
+    if (hasProviderResult.ok === false) {
+      return {
+        error: {
+          name: 'NoStorageProvider',
+          message: `${space} has no storage provider`
+        }
+      }
     }
 
     const [res] = await Promise.all([
       // Store in Database
       uploadTable.insert({
-        space: space.did(),
+        space,
         root,
         shards,
         issuer,

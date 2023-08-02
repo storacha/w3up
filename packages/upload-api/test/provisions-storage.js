@@ -54,7 +54,10 @@ export class ProvisionsStorage {
         storedItem.consumer !== item.consumer ||
         storedItem.cause.link() !== item.cause.link())
     ) {
-      return { error: new Error(`could not store ${JSON.stringify(item)}`) }
+      return { error: {
+        name: 'Error',
+        message: `could not store item - a provision with that key already exists`
+      }}
     } else {
       this.provisions[itemKey(item)] = item
       return { ok: {} }

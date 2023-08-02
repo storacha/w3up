@@ -4,7 +4,6 @@ import { CarStoreBucket } from '../car-store-bucket.js'
 import { StoreTable } from '../store-table.js'
 import { UploadTable } from '../upload-table.js'
 import { DudewhereBucket } from '../dude-where-bucket.js'
-import * as AccessVerifier from '../access-verifier.js'
 import { ProvisionsStorage } from '../provisions-storage.js'
 import { DelegationsStorage } from '../delegations-storage.js'
 import { RateLimitsStorage } from '../rate-limits-storage.js'
@@ -25,7 +24,6 @@ export const createContext = async (options = {}) => {
   const dudewhereBucket = new DudewhereBucket()
   const signer = await Signer.generate()
   const id = signer.withDID('did:web:test.web3.storage')
-  const access = AccessVerifier.create({ id })
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
@@ -46,7 +44,6 @@ export const createContext = async (options = {}) => {
     uploadTable,
     carStoreBucket,
     dudewhereBucket,
-    access,
   }
 
   const connection = connect({
@@ -60,7 +57,6 @@ export const createContext = async (options = {}) => {
     service: /** @type {TestTypes.ServiceSigner} */ (serviceContext.id),
     connection,
     testStoreTable: storeTable,
-    testSpaceRegistry: access,
     fetch,
   }
 }
