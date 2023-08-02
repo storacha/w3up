@@ -347,6 +347,125 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0
 
+  packages/filecoin-api:
+    dependencies:
+      '@ucanto/client':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/core':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/interface':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/server':
+        specifier: ^8.0.0
+        version: 8.0.1
+      '@ucanto/transport':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@web3-storage/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
+      '@web3-storage/data-segment':
+        specifier: ^2.2.0
+        version: 2.2.0
+    devDependencies:
+      '@ipld/car':
+        specifier: ^5.1.1
+        version: 5.1.1
+      '@types/mocha':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@ucanto/principal':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@web-std/blob':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@web3-storage/filecoin-client':
+        specifier: workspace:^
+        version: link:../filecoin-client
+      hd-scripts:
+        specifier: ^4.1.0
+        version: 4.1.0
+      mocha:
+        specifier: ^10.2.0
+        version: 10.2.0
+      multiformats:
+        specifier: ^11.0.2
+        version: 11.0.2
+
+  packages/filecoin-client:
+    dependencies:
+      '@ipld/dag-cbor':
+        specifier: ^9.0.0
+        version: 9.0.0
+      '@ipld/dag-ucan':
+        specifier: ^3.3.2
+        version: 3.3.2
+      '@ucanto/client':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/core':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/interface':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/transport':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@web3-storage/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
+    devDependencies:
+      '@ipld/car':
+        specifier: ^5.1.1
+        version: 5.1.1
+      '@types/assert':
+        specifier: ^1.5.6
+        version: 1.5.6
+      '@types/mocha':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@ucanto/principal':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/server':
+        specifier: ^8.0.1
+        version: 8.0.1
+      '@web3-storage/data-segment':
+        specifier: ^2.2.0
+        version: 2.2.0
+      assert:
+        specifier: ^2.0.0
+        version: 2.0.0
+      c8:
+        specifier: ^7.13.0
+        version: 7.13.0
+      hd-scripts:
+        specifier: ^4.0.0
+        version: 4.1.0
+      hundreds:
+        specifier: ^0.0.9
+        version: 0.0.9
+      mocha:
+        specifier: ^10.2.0
+        version: 10.2.0
+      multiformats:
+        specifier: ^11.0.2
+        version: 11.0.2
+      npm-run-all:
+        specifier: ^4.1.5
+        version: 4.1.5
+      playwright-test:
+        specifier: ^8.1.2
+        version: 8.1.2
+      typescript:
+        specifier: 4.9.5
+        version: 4.9.5
+
   packages/upload-api:
     dependencies:
       '@ucanto/client':

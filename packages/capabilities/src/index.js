@@ -9,8 +9,7 @@ import * as Utils from './utils.js'
 import * as Consumer from './consumer.js'
 import * as Customer from './customer.js'
 import * as Console from './console.js'
-import * as Offer from './offer.js'
-import * as Aggregate from './aggregate.js'
+import * as Filecoin from './filecoin.js'
 
 export {
   Access,
@@ -24,8 +23,7 @@ export {
   Customer,
   Console,
   Utils,
-  Aggregate,
-  Offer,
+  Filecoin,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
@@ -49,7 +47,8 @@ export const abilitiesAsStrings = [
   Access.access.can,
   Access.authorize.can,
   Access.session.can,
-  Aggregate.offer.can,
-  Aggregate.get.can,
-  Offer.arrange.can,
+  Filecoin.filecoinAdd.can,
+  Filecoin.pieceAdd.can,
+  Filecoin.aggregateAdd.can,
+  Filecoin.chainInfo.can,
 ]
