@@ -8,8 +8,8 @@ import { createServer, connect } from '../../src/aggregator.js'
 
 /**
  * @type {API.Tests<API.AggregatorServiceContext & {
- *  addQueue: API.TestQueue<API.AggregatorQueueRecord>
- *  pieceStore: API.TestStore<any>
+ *  addQueue: API.TestQueue<API.AggregatorRecord>
+ *  pieceStore: API.TestStore<API.AggregatorRecord>
  * }>}
  */
 export const test = {
@@ -22,7 +22,8 @@ export const test = {
 
     // Generate piece for test
     const [cargo] = await randomCargo(1, 128)
-    const group = storefront.did()
+    const space = storefront.did()
+    const group = 'did:web:free.web3.storage'
 
     // storefront invocation
     const pieceAddInv = Filecoin.pieceAdd.invoke({
@@ -31,6 +32,7 @@ export const test = {
       with: storefront.did(),
       nb: {
         piece: cargo.link.link(),
+        space,
         group,
       },
     })
@@ -50,6 +52,7 @@ export const test = {
         with: context.id.did(),
         nb: {
           piece: cargo.link.link(),
+          space,
           group,
         },
       })
@@ -77,7 +80,8 @@ export const test = {
 
     // Generate piece for test
     const [cargo] = await randomCargo(1, 128)
-    const group = storefront.did()
+    const space = storefront.did()
+    const group = 'did:web:free.web3.storage'
 
     // aggregator invocation
     const pieceAddInv = Filecoin.pieceAdd.invoke({
@@ -86,6 +90,7 @@ export const test = {
       with: context.id.did(),
       nb: {
         piece: cargo.link.link(),
+        space,
         group,
       },
     })
@@ -114,7 +119,8 @@ export const test = {
 
       // Generate piece for test
       const [cargo] = await randomCargo(1, 128)
-      const group = storefront.did()
+      const space = storefront.did()
+      const group = 'did:web:free.web3.storage'
 
       // aggregator invocation
       const pieceAddInv = Filecoin.pieceAdd.invoke({
@@ -123,6 +129,7 @@ export const test = {
         with: context.id.did(),
         nb: {
           piece: cargo.link.link(),
+          space,
           group,
         },
       })

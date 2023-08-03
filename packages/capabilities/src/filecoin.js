@@ -83,7 +83,11 @@ export const pieceAdd = capability({
       })
     ),
     /**
-     * CID of the content that resulted in Filecoin piece.
+     * Space where the piece is aggregated
+     */
+    space: Schema.text(),
+    /**
+     * Grouping for the piece to be aggregated
      */
     group: Schema.text(),
   }),

@@ -9,8 +9,8 @@ import { createServer, connect } from '../../src/broker.js'
 
 /**
  * @type {API.Tests<API.BrokerServiceContext & {
- *  addQueue: API.TestQueue<any>
- *  offerStore: API.TestStore<any>
+ *  addQueue: API.TestQueue<API.BrokerRecord>
+ *  offerStore: API.TestStore<API.BrokerRecord>
  * }>}
  */
 export const test = {

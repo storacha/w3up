@@ -24,12 +24,14 @@ export const connection = connect({
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece
+ * @param {string} space
  * @param {string} group
  * @param {import('./types.js').RequestOptions} [options]
  */
 export async function pieceAdd(
   { issuer, with: resource, proofs, audience },
   piece,
+  space,
   group,
   options = {}
 ) {
@@ -43,6 +45,7 @@ export async function pieceAdd(
     with: resource,
     nb: {
       group,
+      space,
       piece,
     },
     proofs,

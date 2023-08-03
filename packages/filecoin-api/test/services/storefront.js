@@ -8,7 +8,7 @@ import { createServer, connect } from '../../src/storefront.js'
 
 /**
  * @type {API.Tests<API.StorefrontServiceContext & {
- *  addQueue: API.TestQueue<API.StorefrontQueueRecord>
+ *  addQueue: API.TestQueue<API.StorefrontRecord>
  *  pieceStore: API.TestStore<API.StorefrontRecord>
  * }>}
  */

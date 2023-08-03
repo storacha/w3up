@@ -10,6 +10,7 @@ import type {
 import type { ProviderInput } from '@ucanto/server'
 import { PieceLink } from '@web3-storage/data-segment'
 import { UnknownLink } from '@ucanto/interface'
+import { DealConfig } from '@web3-storage/filecoin-client/types'
 
 export * as UcantoInterface from '@ucanto/interface'
 export * from '@web3-storage/filecoin-client/types'
@@ -27,7 +28,7 @@ export interface Store<Record> {
 // Services
 export interface StorefrontServiceContext {
   id: Signer
-  addQueue: Queue<StorefrontQueueRecord>
+  addQueue: Queue<StorefrontRecord>
   pieceStore: Store<StorefrontRecord>
   aggregatorDid: string
   aggregatorUrl: string
@@ -35,33 +36,36 @@ export interface StorefrontServiceContext {
 
 export interface AggregatorServiceContext {
   id: Signer
-  addQueue: Queue<AggregatorQueueRecord>
-  pieceStore: Store<any>
+  addQueue: Queue<AggregatorRecord>
+  pieceStore: Store<AggregatorRecord>
   brokerDid: string
   brokerUrl: string
 }
 
 export interface BrokerServiceContext {
   id: Signer
-  addQueue: Queue<any>
-  offerStore: Store<any>
+  addQueue: Queue<BrokerRecord>
+  offerStore: Store<BrokerRecord>
 }
 
 // Service Types
 
-export interface StorefrontQueueRecord {
+export interface StorefrontRecord {
   piece: PieceLink
   content: UnknownLink
   // TODO: Source
 }
 
-export interface StorefrontRecord {
+export interface AggregatorRecord {
   piece: PieceLink
-  content: UnknownLink
+  space: string
+  group: string
 }
 
-export interface AggregatorQueueRecord {
+export interface BrokerRecord {
   piece: PieceLink
+  offer: PieceLink[]
+  deal: DealConfig
 }
 
 // Errors

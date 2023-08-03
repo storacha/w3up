@@ -18,7 +18,8 @@ describe('piece.add', () => {
 
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const group = 'group'
+    const space = storefront.did()
+    const group = 'did:web:free.web3.storage'
 
     /** @type {import('@web3-storage/capabilities/types').PieceAddSuccess} */
     const pieceAddResponse = {
@@ -67,6 +68,7 @@ describe('piece.add', () => {
         audience: aggregatorService,
       },
       cargo.link.link(),
+      space,
       group,
       { connection: getConnection(service).connection }
     )
@@ -78,9 +80,12 @@ describe('piece.add', () => {
   })
 
   it('aggregator self invokes add a filecoin piece to accept the piece queued', async () => {
+    const { storefront } = await getContext()
+
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const group = 'group'
+    const space = storefront.did()
+    const group = 'did:web:free.web3.storage'
 
     /** @type {import('@web3-storage/capabilities/types').PieceAddSuccess} */
     const pieceAddResponse = {
@@ -118,6 +123,7 @@ describe('piece.add', () => {
         audience: aggregatorService,
       },
       cargo.link.link(),
+      space,
       group,
       { connection: getConnection(service).connection }
     )
@@ -129,9 +135,12 @@ describe('piece.add', () => {
   })
 
   it('aggregator self invokes add a filecoin piece to reject the piece queued', async () => {
+    const { storefront } = await getContext()
+
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const group = 'group'
+    const space = storefront.did()
+    const group = 'did:web:free.web3.storage'
 
     /** @type {import('@web3-storage/capabilities/types').PieceAddFailure} */
     const pieceAddResponse = new OperationFailed(
@@ -171,6 +180,7 @@ describe('piece.add', () => {
         audience: aggregatorService,
       },
       cargo.link.link(),
+      space,
       group,
       { connection: getConnection(service).connection }
     )
