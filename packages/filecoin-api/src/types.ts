@@ -22,7 +22,11 @@ export interface Queue<Record> {
 }
 
 export interface Store<Record> {
-  put: (key: Record) => Promise<Result<{}, StorePutError>>
+  put: (record: Record) => Promise<Result<{}, StorePutError>>
+  /**
+   * Gets content data from the store.
+   */
+  get(key: any): Promise<Result<Record, StoreGetError>>
 }
 
 // Services
@@ -30,16 +34,12 @@ export interface StorefrontServiceContext {
   id: Signer
   addQueue: Queue<StorefrontRecord>
   pieceStore: Store<StorefrontRecord>
-  aggregatorDid: string
-  aggregatorUrl: string
 }
 
 export interface AggregatorServiceContext {
   id: Signer
   addQueue: Queue<AggregatorRecord>
   pieceStore: Store<AggregatorRecord>
-  brokerDid: string
-  brokerUrl: string
 }
 
 export interface BrokerServiceContext {
@@ -53,7 +53,6 @@ export interface BrokerServiceContext {
 export interface StorefrontRecord {
   piece: PieceLink
   content: UnknownLink
-  // TODO: Source
 }
 
 export interface AggregatorRecord {
@@ -72,6 +71,7 @@ export interface BrokerRecord {
 
 export type QueueAddError = QueueOperationError
 export type StorePutError = StoreOperationError
+export type StoreGetError = StoreOperationError
 
 export interface QueueOperationError extends Error {
   name: 'QueueOperationFailed'
@@ -140,9 +140,13 @@ export type Variant<U extends Record<string, unknown>> = {
 
 // test
 
+export interface UcantoServerContextTest extends UcantoServerContext {
+  queuedMessages: unknown[]
+}
+
 export type Test<S> = (
   assert: Assert,
-  context: UcantoServerContext & S
+  context: UcantoServerContextTest & S
 ) => unknown
 export type Tests<S> = Record<string, Test<S>>
 
@@ -161,14 +165,4 @@ export interface Assert {
     message?: string
   ) => unknown
   ok: <Actual>(actual: Actual, message?: string) => unknown
-}
-
-export interface TestQueue<Record> extends Queue<Record> {
-  add: (record: Record, options?: any) => Promise<Result<{}, QueueAddError>>
-  all: () => Record[]
-}
-
-export interface TestStore<Record> extends Store<Record> {
-  put: (key: Record) => Promise<Result<{}, StorePutError>>
-  all: () => Record[]
 }

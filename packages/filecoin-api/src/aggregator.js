@@ -29,13 +29,11 @@ export const claim = async ({ capability }, context) => {
  * @returns {Promise<API.UcantoInterface.Result<API.PieceAddSuccess, API.PieceAddFailure> | API.UcantoInterface.JoinBuilder<API.PieceAddSuccess>>}
  */
 async function queueAdd(piece, space, group, context) {
-  const queued = await context.addQueue.add(
-    {
-      piece,
-      space,
-      group
-    }
-  )
+  const queued = await context.addQueue.add({
+    piece,
+    space,
+    group,
+  })
   if (queued.error) {
     return {
       error: new QueueOperationFailed(queued.error.message, piece),
@@ -73,7 +71,7 @@ async function queueHandler(piece, space, group, context) {
   const put = await context.pieceStore.put({
     piece,
     space,
-    group
+    group,
   })
 
   if (put.error) {
@@ -81,8 +79,6 @@ async function queueHandler(piece, space, group, context) {
       error: new StoreOperationFailed(put.error.message, piece),
     }
   }
-
-  // TODO: send to broker?
 
   return {
     ok: {

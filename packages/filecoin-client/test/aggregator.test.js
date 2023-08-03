@@ -200,9 +200,7 @@ async function getContext() {
 }
 
 /**
- * @param {Partial<
- * import('../src/types').AggregatorService
- * >} service
+ * @param {Partial<import('../src/types').AggregatorService>} service
  */
 function getConnection(service) {
   const server = Server.create({

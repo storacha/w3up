@@ -68,6 +68,7 @@ async function queueAdd(piece, content, context) {
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAddSuccess, API.FilecoinAddFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinAddSuccess>>}
  */
 async function queueHandler(piece, content, context) {
+  // store piece
   const put = await context.pieceStore.put({
     content,
     piece,
@@ -77,8 +78,6 @@ async function queueHandler(piece, content, context) {
       error: new StoreOperationFailed(put.error.message, piece),
     }
   }
-
-  // TODO: call piece/add to aggregator
 
   return {
     ok: {

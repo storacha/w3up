@@ -48,7 +48,7 @@ export const claim = async ({ capability, invocation }, context) => {
 async function queueAdd(piece, offerCid, deal, offer, context) {
   const queued = await context.addQueue.add({
     piece,
-    offer, // TODO: not store in queue but proper data structure
+    offer, // add queue can opt to store offers in separate datastore
     deal,
   })
   if (queued.error) {
@@ -96,7 +96,7 @@ async function queueHandler(piece, offer, deal, context) {
     }
   }
 
-  // TODO: how to failure?
+  // TODO: failure
 
   return {
     ok: {

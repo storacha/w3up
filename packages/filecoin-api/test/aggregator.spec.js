@@ -19,10 +19,18 @@ describe('piece/*', () => {
       const id = signer.withDID('did:web:test.aggregator.web3.storage')
 
       // resources
-      const addQueue = new Queue()
-      const pieceStore = new Store()
-      const brokerDid = ''
-      const brokerUrl = ''
+      /** @type {unknown[]} */
+      const queuedMessages = []
+      const addQueue = new Queue({
+        onMessage: (message) => queuedMessages.push(message)
+      })
+      const pieceLookupFn = (
+        /** @type {Iterable<any> | ArrayLike<any>} */ items,
+        /** @type {any} */ record
+      ) => {
+        return Array.from(items).find((i) => i.piece.equals(record.piece))
+      }
+      const pieceStore = new Store(pieceLookupFn)
 
       await test(
         {
@@ -39,8 +47,7 @@ describe('piece/*', () => {
           },
           addQueue,
           pieceStore,
-          brokerDid,
-          brokerUrl,
+          queuedMessages
         }
       )
     })

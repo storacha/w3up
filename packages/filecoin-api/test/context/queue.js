@@ -2,12 +2,18 @@ import * as API from '../../src/types.js'
 
 /**
  * @template T
- * @implements {API.TestQueue<T>}
+ * @implements {API.Queue<T>}
  */
 export class Queue {
-  constructor() {
+  /**
+   * @param {object} [options]
+   * @param {(message: T) => void} [options.onMessage]
+   */
+  constructor(options = {}) {
     /** @type {Set<T>} */
     this.items = new Set()
+
+    this.onMessage = options.onMessage || (() => {})
   }
 
   /**
@@ -16,12 +22,9 @@ export class Queue {
   async add(record) {
     this.items.add(record)
 
+    this.onMessage(record)
     return Promise.resolve({
       ok: {},
     })
-  }
-
-  all() {
-    return Array.from(this.items)
   }
 }

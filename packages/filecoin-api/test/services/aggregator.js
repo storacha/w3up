@@ -7,10 +7,7 @@ import { randomCargo } from '../utils.js'
 import { createServer, connect } from '../../src/aggregator.js'
 
 /**
- * @type {API.Tests<API.AggregatorServiceContext & {
- *  addQueue: API.TestQueue<API.AggregatorRecord>
- *  pieceStore: API.TestStore<API.AggregatorRecord>
- * }>}
+ * @type {API.Tests<API.AggregatorServiceContext>}
  */
 export const test = {
   'piece/add inserts piece into processing queue': async (assert, context) => {
@@ -61,12 +58,14 @@ export const test = {
     assert.ok(response.fx.join)
     assert.ok(fx.link().equals(response.fx.join?.link()))
 
-    const queuedItems = context.addQueue.all()
-    assert.equal(queuedItems.length, 1)
-    assert.ok(queuedItems.find((item) => item.piece.equals(cargo.link.link())))
+    // Validate queue and store
+    assert.ok(context.queuedMessages.length === 1)
 
-    const storedItems = context.pieceStore.all()
-    assert.equal(storedItems.length, 0)
+    const hasStoredPiece = await context.pieceStore.get({
+      piece: cargo.link.link(),
+      space,
+    })
+    assert.ok(!hasStoredPiece.ok)
   },
   'piece/add from signer inserts piece into store and returns accepted': async (
     assert,
@@ -102,12 +101,14 @@ export const test = {
     assert.ok(response.out.ok)
     assert.deepEqual(response.out.ok.status, 'accepted')
 
-    const queuedItems = context.addQueue.all()
-    assert.equal(queuedItems.length, 0)
+    // Validate queue and store
+    assert.ok(context.queuedMessages.length === 0)
 
-    const storedItems = context.pieceStore.all()
-    assert.equal(storedItems.length, 1)
-    assert.ok(storedItems.find((item) => item.piece.equals(cargo.link.link())))
+    const hasStoredPiece = await context.pieceStore.get({
+      piece: cargo.link.link(),
+      space,
+    })
+    assert.ok(hasStoredPiece.ok)
   },
   'skip piece/add from signer inserts piece into store and returns rejected':
     async (assert, context) => {
@@ -141,11 +142,14 @@ export const test = {
       assert.ok(response.out.ok)
       assert.deepEqual(response.out.ok.status, 'rejected')
 
-      const queuedItems = context.addQueue.all()
-      assert.equal(queuedItems.length, 0)
+      // Validate queue and store
+      assert.ok(context.queuedMessages.length === 0)
 
-      const storedItems = context.pieceStore.all()
-      assert.equal(storedItems.length, 0)
+      const hasStoredPiece = await context.pieceStore.get({
+        piece: cargo.link.link(),
+        space,
+      })
+      assert.ok(!hasStoredPiece.ok)
     },
 }
 

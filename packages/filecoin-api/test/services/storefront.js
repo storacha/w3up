@@ -7,10 +7,7 @@ import { randomCargo } from '../utils.js'
 import { createServer, connect } from '../../src/storefront.js'
 
 /**
- * @type {API.Tests<API.StorefrontServiceContext & {
- *  addQueue: API.TestQueue<API.StorefrontRecord>
- *  pieceStore: API.TestStore<API.StorefrontRecord>
- * }>}
+ * @type {API.Tests<API.StorefrontServiceContext>}
  */
 export const test = {
   'filecoin/add inserts piece into verification queue': async (
@@ -60,18 +57,13 @@ export const test = {
     assert.ok(response.fx.join)
     assert.ok(fx.link().equals(response.fx.join?.link()))
 
-    const queuedItems = context.addQueue.all()
-    assert.equal(queuedItems.length, 1)
-    assert.ok(
-      queuedItems.find(
-        (item) =>
-          item.piece.equals(cargo.link.link()) &&
-          item.content.equals(cargo.content.link())
-      )
-    )
+    // Validate queue and store
+    assert.ok(context.queuedMessages.length === 1)
 
-    const storedItems = context.pieceStore.all()
-    assert.equal(storedItems.length, 0)
+    const hasStoredPiece = await context.pieceStore.get({
+      piece: cargo.link.link(),
+    })
+    assert.ok(!hasStoredPiece.ok)
   },
   'filecoin/add from signer inserts piece into store and returns accepted':
     async (assert, context) => {
@@ -101,18 +93,13 @@ export const test = {
       assert.ok(response.out.ok)
       assert.deepEqual(response.out.ok.status, 'accepted')
 
-      const queuedItems = context.addQueue.all()
-      assert.equal(queuedItems.length, 0)
+      // Validate queue and store
+      assert.ok(context.queuedMessages.length === 0)
 
-      const storedItems = context.pieceStore.all()
-      assert.equal(storedItems.length, 1)
-      assert.ok(
-        storedItems.find(
-          (item) =>
-            item.piece.equals(cargo.link.link()) &&
-            item.content.equals(cargo.content.link())
-        )
-      )
+      const hasStoredPiece = await context.pieceStore.get({
+        piece: cargo.link.link(),
+      })
+      assert.ok(hasStoredPiece.ok)
     },
   'skip filecoin/add from signer inserts piece into store and returns rejected':
     async (assert, context) => {
@@ -142,11 +129,13 @@ export const test = {
       assert.ok(response.out.ok)
       assert.deepEqual(response.out.ok.status, 'rejected')
 
-      const queuedItems = context.addQueue.all()
-      assert.equal(queuedItems.length, 0)
+      // Validate queue and store
+      assert.ok(context.queuedMessages.length === 0)
 
-      const storedItems = context.pieceStore.all()
-      assert.equal(storedItems.length, 0)
+      const hasStoredPiece = await context.pieceStore.get({
+        piece: cargo.link.link(),
+      })
+      assert.ok(!hasStoredPiece.ok)
     },
 }
 

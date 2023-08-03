@@ -19,8 +19,18 @@ describe('aggregate/*', () => {
       const id = signer.withDID('did:web:test.spade-proxy.web3.storage')
 
       // resources
-      const addQueue = new Queue()
-      const offerStore = new Store()
+      /** @type {unknown[]} */
+      const queuedMessages = []
+      const addQueue = new Queue({
+        onMessage: (message) => queuedMessages.push(message)
+      })
+      const offerLookupFn = (
+        /** @type {Iterable<any> | ArrayLike<any>} */ items,
+        /** @type {any} */ record
+      ) => {
+        return Array.from(items).find((i) => i.piece.equals(record.piece))
+      }
+      const offerStore = new Store(offerLookupFn)
 
       await test(
         {
@@ -37,6 +47,7 @@ describe('aggregate/*', () => {
           },
           addQueue,
           offerStore,
+          queuedMessages
         }
       )
     })
