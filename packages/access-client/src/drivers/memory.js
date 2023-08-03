@@ -19,29 +19,29 @@ export class MemoryDriver {
   /**
    * @type {T|undefined}
    */
-  #data;
-  
+  #data
+
   constructor() {
-    this.#data = undefined;
+    this.#data = undefined
   }
 
   async open() {}
 
   async close() {}
-  
+
   async reset() {
-    this.#data = undefined;
+    this.#data = undefined
   }
 
   /** @param {T} data */
   async save(data) {
-    this.#data = { ...data };
+    this.#data = { ...data }
   }
 
   /** @returns {Promise<T|undefined>} */
   async load() {
-    if (this.#data === undefined) return;
-    if (Object.keys(this.#data).length === 0) return;
-    return this.#data;
+    if (this.#data === undefined) return
+    if (Object.keys(this.#data).length === 0) return
+    return this.#data
   }
 }
