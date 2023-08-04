@@ -1,5 +1,6 @@
 import { Filecoin } from '@web3-storage/capabilities'
 import * as Signer from '@ucanto/principal/ed25519'
+import pWaitFor from 'p-wait-for'
 
 import * as API from '../../src/types.js'
 
@@ -58,7 +59,7 @@ export const test = {
     assert.ok(fx.link().equals(response.fx.join?.link()))
 
     // Validate queue and store
-    assert.ok(context.queuedMessages.length === 1)
+    await pWaitFor(() => context.queuedMessages.length === 1)
 
     const hasStoredPiece = await context.pieceStore.get({
       piece: cargo.link.link(),
@@ -94,7 +95,7 @@ export const test = {
       assert.deepEqual(response.out.ok.status, 'accepted')
 
       // Validate queue and store
-      assert.ok(context.queuedMessages.length === 0)
+      await pWaitFor(() => context.queuedMessages.length === 0)
 
       const hasStoredPiece = await context.pieceStore.get({
         piece: cargo.link.link(),
@@ -130,7 +131,7 @@ export const test = {
       assert.deepEqual(response.out.ok.status, 'rejected')
 
       // Validate queue and store
-      assert.ok(context.queuedMessages.length === 0)
+      await pWaitFor(() => context.queuedMessages.length === 0)
 
       const hasStoredPiece = await context.pieceStore.get({
         piece: cargo.link.link(),

@@ -83,7 +83,6 @@ export interface FilecoinAddSuccess {
 }
 export interface FilecoinAddFailure extends Ucanto.Failure {
   reason: string
-  piece: PieceLink
 }
 
 export interface PieceAddSuccess {
@@ -93,7 +92,6 @@ export interface PieceAddSuccess {
 }
 export interface PieceAddFailure extends Ucanto.Failure {
   reason: string
-  piece: PieceLink
 }
 
 export interface AggregateAddSuccess {
@@ -101,7 +99,21 @@ export interface AggregateAddSuccess {
   piece?: PieceLink
 }
 
-export interface AggregateAddFailure extends Ucanto.Failure {}
+export type AggregateAddFailure = AggregateAddParseFailure | AggregateAddFailureWithBadPiece
+
+export interface AggregateAddParseFailure extends Ucanto.Failure {
+  reason: string
+}
+
+export interface AggregateAddFailureWithBadPiece extends Ucanto.Failure {
+  piece?: PieceLink
+  cause?: AggregateAddFailureCause[] | unknown
+}
+
+export interface AggregateAddFailureCause {
+  piece: PieceLink
+  reason: string
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ChainInfoSuccess {

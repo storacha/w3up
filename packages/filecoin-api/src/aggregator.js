@@ -36,7 +36,7 @@ async function queueAdd(piece, storefront, group, context) {
   })
   if (queued.error) {
     return {
-      error: new QueueOperationFailed(queued.error.message, piece),
+      error: new QueueOperationFailed(queued.error.message),
     }
   }
 
@@ -76,7 +76,7 @@ async function queueHandler(piece, storefront, group, context) {
 
   if (put.error) {
     return {
-      error: new StoreOperationFailed(put.error.message, piece),
+      error: new StoreOperationFailed(put.error.message),
     }
   }
 

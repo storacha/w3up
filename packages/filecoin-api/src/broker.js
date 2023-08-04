@@ -23,8 +23,7 @@ export const claim = async ({ capability, invocation }, context) => {
   if (!offer) {
     return {
       error: new DecodeBlockOperationFailed(
-        `missing offer block in invocation: ${offerCid.toString()}`,
-        piece
+        `missing offer block in invocation: ${offerCid.toString()}`
       ),
     }
   }
@@ -53,7 +52,7 @@ async function queueAdd(piece, offerCid, deal, offer, context) {
   })
   if (queued.error) {
     return {
-      error: new QueueOperationFailed(queued.error.message, piece),
+      error: new QueueOperationFailed(queued.error.message),
     }
   }
 
@@ -85,6 +84,8 @@ async function queueAdd(piece, offerCid, deal, offer, context) {
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
  */
 async function queueHandler(piece, offer, deal, context) {
+  // TODO: failure - needs to read from store
+
   const put = await context.offerStore.put({
     offer,
     piece,
@@ -92,11 +93,9 @@ async function queueHandler(piece, offer, deal, context) {
   })
   if (put.error) {
     return {
-      error: new StoreOperationFailed(put.error.message, piece),
+      error: new StoreOperationFailed(put.error.message),
     }
   }
-
-  // TODO: failure
 
   return {
     ok: {

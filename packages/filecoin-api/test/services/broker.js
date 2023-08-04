@@ -1,5 +1,6 @@
 import { Filecoin } from '@web3-storage/capabilities'
 import * as Signer from '@ucanto/principal/ed25519'
+import pWaitFor from 'p-wait-for'
 import { CBOR } from '@ucanto/core'
 
 import * as API from '../../src/types.js'
@@ -67,7 +68,7 @@ export const test = {
     assert.ok(fx.link().equals(response.fx.join?.link()))
 
     // Validate queue and store
-    assert.ok(context.queuedMessages.length === 1)
+    await pWaitFor(() => context.queuedMessages.length === 1)
 
     const hasStoredOffer = await context.offerStore.get({
       piece: aggregate.link.link(),
@@ -110,7 +111,7 @@ export const test = {
       assert.deepEqual(response.out.ok.status, 'accepted')
 
       // Validate queue and store
-      assert.ok(context.queuedMessages.length === 0)
+      await pWaitFor(() => context.queuedMessages.length === 0)
 
       const hasStoredOffer = await context.offerStore.get({
         piece: aggregate.link.link(),
@@ -153,7 +154,7 @@ export const test = {
       assert.deepEqual(response.out.ok.status, 'rejected')
 
       // Validate queue and store
-      assert.ok(context.queuedMessages.length === 0)
+      await pWaitFor(() => context.queuedMessages.length === 0)
 
       const hasStoredOffer = await context.offerStore.get({
         piece: aggregate.link.link(),

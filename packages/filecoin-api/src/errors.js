@@ -6,11 +6,9 @@ export const QueueOperationErrorName = /** @type {const} */ (
 export class QueueOperationFailed extends Server.Failure {
   /**
    * @param {string} message
-   * @param {import('@web3-storage/data-segment').PieceLink} piece
    */
-  constructor(message, piece) {
+  constructor(message) {
     super(message)
-    this.piece = piece
   }
   get reason() {
     return this.message
@@ -26,11 +24,9 @@ export const StoreOperationErrorName = /** @type {const} */ (
 export class StoreOperationFailed extends Server.Failure {
   /**
    * @param {string} message
-   * @param {import('@web3-storage/data-segment').PieceLink} piece
    */
-  constructor(message, piece) {
+  constructor(message) {
     super(message)
-    this.piece = piece
   }
   get reason() {
     return this.message
@@ -40,17 +36,33 @@ export class StoreOperationFailed extends Server.Failure {
   }
 }
 
+export const StoreNotFoundErrorName = /** @type {const} */ (
+  'StoreNotFound'
+)
+export class StoreNotFound extends Server.Failure {
+  /**
+   * @param {string} message
+   */
+  constructor(message) {
+    super(message)
+  }
+  get reason() {
+    return this.message
+  }
+  get name() {
+    return StoreNotFoundErrorName
+  }
+}
+
 export const DecodeBlockOperationErrorName = /** @type {const} */ (
   'DecodeBlockOperationFailed'
 )
 export class DecodeBlockOperationFailed extends Server.Failure {
   /**
    * @param {string} message
-   * @param {import('@web3-storage/data-segment').PieceLink} piece
    */
-  constructor(message, piece) {
+  constructor(message) {
     super(message)
-    this.piece = piece
   }
   get reason() {
     return this.message
