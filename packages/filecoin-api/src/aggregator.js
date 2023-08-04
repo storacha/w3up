@@ -33,6 +33,7 @@ async function queueAdd(piece, storefront, group, context) {
     piece,
     storefront,
     group,
+    insertedAt: Date.now(),
   })
   if (queued.error) {
     return {
@@ -72,6 +73,7 @@ async function queueHandler(piece, storefront, group, context) {
     piece,
     storefront,
     group,
+    insertedAt: Date.now(),
   })
 
   if (put.error) {

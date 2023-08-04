@@ -35,6 +35,7 @@ async function queueAdd(piece, content, context) {
   const queued = await context.addQueue.add({
     piece,
     content,
+    insertedAt: Date.now(),
   })
   if (queued.error) {
     return {
@@ -72,6 +73,7 @@ async function queueHandler(piece, content, context) {
   const put = await context.pieceStore.put({
     content,
     piece,
+    insertedAt: Date.now(),
   })
   if (put.error) {
     return {

@@ -53,18 +53,21 @@ export interface BrokerServiceContext {
 export interface StorefrontRecord {
   piece: PieceLink
   content: UnknownLink
+  insertedAt: number
 }
 
 export interface AggregatorRecord {
   piece: PieceLink
   storefront: string
   group: string
+  insertedAt: number
 }
 
 export interface BrokerRecord {
   piece: PieceLink
   offer: PieceLink[]
   deal: DealConfig
+  insertedAt: number
 }
 
 // Errors

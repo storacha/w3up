@@ -49,6 +49,7 @@ async function queueAdd(piece, offerCid, deal, offer, context) {
     piece,
     offer, // add queue can opt to store offers in separate datastore
     deal,
+    insertedAt: Date.now(),
   })
   if (queued.error) {
     return {
@@ -90,6 +91,7 @@ async function queueHandler(piece, offer, deal, context) {
     offer,
     piece,
     deal,
+    insertedAt: Date.now(),
   })
   if (put.error) {
     return {
