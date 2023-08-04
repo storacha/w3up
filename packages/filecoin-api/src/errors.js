@@ -36,9 +36,7 @@ export class StoreOperationFailed extends Server.Failure {
   }
 }
 
-export const StoreNotFoundErrorName = /** @type {const} */ (
-  'StoreNotFound'
-)
+export const StoreNotFoundErrorName = /** @type {const} */ ('StoreNotFound')
 export class StoreNotFound extends Server.Failure {
   /**
    * @param {string} message
@@ -51,6 +49,22 @@ export class StoreNotFound extends Server.Failure {
   }
   get name() {
     return StoreNotFoundErrorName
+  }
+}
+
+export const EncodeRecordErrorName = /** @type {const} */ ('EncodeRecordFailed')
+export class EncodeRecordFailed extends Server.Failure {
+  /**
+   * @param {string} message
+   */
+  constructor(message) {
+    super(message)
+  }
+  get reason() {
+    return this.message
+  }
+  get name() {
+    return EncodeRecordErrorName
   }
 }
 

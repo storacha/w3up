@@ -69,9 +69,12 @@ export interface BrokerRecord {
 
 // Errors
 
-export type QueueAddError = QueueOperationError
-export type StorePutError = StoreOperationError
-export type StoreGetError = StoreOperationError
+export type QueueAddError = QueueOperationError | EncodeRecordFailed
+export type StorePutError = StoreOperationError | EncodeRecordFailed
+export type StoreGetError =
+  | StoreOperationError
+  | EncodeRecordFailed
+  | StoreNotFound
 
 export interface QueueOperationError extends Error {
   name: 'QueueOperationFailed'
@@ -79,6 +82,14 @@ export interface QueueOperationError extends Error {
 
 export interface StoreOperationError extends Error {
   name: 'StoreOperationFailed'
+}
+
+export interface StoreNotFound extends Error {
+  name: 'StoreNotFound'
+}
+
+export interface EncodeRecordFailed extends Error {
+  name: 'EncodeRecordFailed'
 }
 
 // Service utils

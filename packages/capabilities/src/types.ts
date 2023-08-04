@@ -99,7 +99,9 @@ export interface AggregateAddSuccess {
   piece?: PieceLink
 }
 
-export type AggregateAddFailure = AggregateAddParseFailure | AggregateAddFailureWithBadPiece
+export type AggregateAddFailure =
+  | AggregateAddParseFailure
+  | AggregateAddFailureWithBadPiece
 
 export interface AggregateAddParseFailure extends Ucanto.Failure {
   reason: string

@@ -22,7 +22,7 @@ describe('aggregate/*', () => {
       /** @type {unknown[]} */
       const queuedMessages = []
       const addQueue = new Queue({
-        onMessage: (message) => queuedMessages.push(message)
+        onMessage: (message) => queuedMessages.push(message),
       })
       const offerLookupFn = (
         /** @type {Iterable<any> | ArrayLike<any>} */ items,
@@ -47,7 +47,7 @@ describe('aggregate/*', () => {
           },
           addQueue,
           offerStore,
-          queuedMessages
+          queuedMessages,
         }
       )
     })

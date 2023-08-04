@@ -22,7 +22,7 @@ describe('piece/*', () => {
       /** @type {unknown[]} */
       const queuedMessages = []
       const addQueue = new Queue({
-        onMessage: (message) => queuedMessages.push(message)
+        onMessage: (message) => queuedMessages.push(message),
       })
       const pieceLookupFn = (
         /** @type {Iterable<any> | ArrayLike<any>} */ items,
@@ -47,7 +47,7 @@ describe('piece/*', () => {
           },
           addQueue,
           pieceStore,
-          queuedMessages
+          queuedMessages,
         }
       )
     })

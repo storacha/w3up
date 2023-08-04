@@ -23,7 +23,7 @@ describe('filecoin/*', () => {
       /** @type {unknown[]} */
       const queuedMessages = []
       const addQueue = new Queue({
-        onMessage: (message) => queuedMessages.push(message)
+        onMessage: (message) => queuedMessages.push(message),
       })
       const pieceLookupFn = (
         /** @type {Iterable<any> | ArrayLike<any>} */ items,
@@ -48,7 +48,7 @@ describe('filecoin/*', () => {
           },
           addQueue,
           pieceStore,
-          queuedMessages
+          queuedMessages,
         }
       )
     })
