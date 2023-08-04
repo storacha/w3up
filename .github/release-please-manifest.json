@@ -1,7 +1,7 @@
 {
   "packages/access-client": "15.0.0",
   "packages/aggregate-api": "1.0.0",
-  "packages/aggregate-client": "1.0.0",
+  "packages/aggregate-client": "2.0.0",
   "packages/capabilities": "7.0.0",
   "packages/upload-api": "4.1.0",
   "packages/upload-client": "9.1.1",
