@@ -19,7 +19,6 @@ export const test = {
 
     // Generate piece for test
     const [cargo] = await randomCargo(1, 128)
-    const space = storefront.did()
     const group = 'did:web:free.web3.storage'
 
     // storefront invocation
@@ -29,7 +28,7 @@ export const test = {
       with: storefront.did(),
       nb: {
         piece: cargo.link.link(),
-        space,
+        storefront: storefront.did(),
         group,
       },
     })
@@ -49,7 +48,7 @@ export const test = {
         with: context.id.did(),
         nb: {
           piece: cargo.link.link(),
-          space,
+          storefront: storefront.did(),
           group,
         },
       })
@@ -63,7 +62,7 @@ export const test = {
 
     const hasStoredPiece = await context.pieceStore.get({
       piece: cargo.link.link(),
-      space,
+      storefront: storefront.did(),
     })
     assert.ok(!hasStoredPiece.ok)
   },
@@ -79,7 +78,6 @@ export const test = {
 
     // Generate piece for test
     const [cargo] = await randomCargo(1, 128)
-    const space = storefront.did()
     const group = 'did:web:free.web3.storage'
 
     // aggregator invocation
@@ -89,7 +87,7 @@ export const test = {
       with: context.id.did(),
       nb: {
         piece: cargo.link.link(),
-        space,
+        storefront: storefront.did(),
         group,
       },
     })
@@ -106,7 +104,7 @@ export const test = {
 
     const hasStoredPiece = await context.pieceStore.get({
       piece: cargo.link.link(),
-      space,
+      storefront: storefront.did(),
     })
     assert.ok(hasStoredPiece.ok)
   },
@@ -120,7 +118,6 @@ export const test = {
 
       // Generate piece for test
       const [cargo] = await randomCargo(1, 128)
-      const space = storefront.did()
       const group = 'did:web:free.web3.storage'
 
       // aggregator invocation
@@ -130,7 +127,7 @@ export const test = {
         with: context.id.did(),
         nb: {
           piece: cargo.link.link(),
-          space,
+          storefront: storefront.did(),
           group,
         },
       })
@@ -147,7 +144,7 @@ export const test = {
 
       const hasStoredPiece = await context.pieceStore.get({
         piece: cargo.link.link(),
-        space,
+        storefront: storefront.did(),
       })
       assert.ok(!hasStoredPiece.ok)
     },

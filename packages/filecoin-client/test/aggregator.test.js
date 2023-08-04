@@ -18,7 +18,7 @@ describe('piece.add', () => {
 
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const space = storefront.did()
+    const storefrontId = storefront.did()
     const group = 'did:web:free.web3.storage'
 
     /** @type {import('@web3-storage/capabilities/types').PieceAddSuccess} */
@@ -68,7 +68,7 @@ describe('piece.add', () => {
         audience: aggregatorService,
       },
       cargo.link.link(),
-      space,
+      storefrontId,
       group,
       { connection: getConnection(service).connection }
     )
@@ -84,7 +84,7 @@ describe('piece.add', () => {
 
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const space = storefront.did()
+    const storefrontId = storefront.did()
     const group = 'did:web:free.web3.storage'
 
     /** @type {import('@web3-storage/capabilities/types').PieceAddSuccess} */
@@ -123,7 +123,7 @@ describe('piece.add', () => {
         audience: aggregatorService,
       },
       cargo.link.link(),
-      space,
+      storefrontId,
       group,
       { connection: getConnection(service).connection }
     )
@@ -139,7 +139,7 @@ describe('piece.add', () => {
 
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const space = storefront.did()
+    const storefrontId = storefront.did()
     const group = 'did:web:free.web3.storage'
 
     /** @type {import('@web3-storage/capabilities/types').PieceAddFailure} */
@@ -180,7 +180,7 @@ describe('piece.add', () => {
         audience: aggregatorService,
       },
       cargo.link.link(),
-      space,
+      storefrontId,
       group,
       { connection: getConnection(service).connection }
     )

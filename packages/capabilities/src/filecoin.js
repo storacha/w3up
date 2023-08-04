@@ -83,9 +83,9 @@ export const pieceAdd = capability({
       })
     ),
     /**
-     * Space where the piece is aggregated
+     * Storefront requestin piece to be aggregated
      */
-    space: Schema.text(),
+    storefront: Schema.text(),
     /**
      * Grouping for the piece to be aggregated
      */

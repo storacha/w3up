@@ -12,26 +12,26 @@ import { QueueOperationFailed, StoreOperationFailed } from './errors.js'
  * @returns {Promise<API.UcantoInterface.Result<API.PieceAddSuccess, API.PieceAddFailure> | API.UcantoInterface.JoinBuilder<API.PieceAddSuccess>>}
  */
 export const claim = async ({ capability }, context) => {
-  const { piece, space, group } = capability.nb
+  const { piece, storefront, group } = capability.nb
   // Check if self signed to call queue handler
   if (context.id.did() === capability.with) {
-    return queueHandler(piece, space, group, context)
+    return queueHandler(piece, storefront, group, context)
   }
 
-  return queueAdd(piece, space, group, context)
+  return queueAdd(piece, storefront, group, context)
 }
 
 /**
  * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {string} space
+ * @param {string} storefront
  * @param {string} group
  * @param {API.AggregatorServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.PieceAddSuccess, API.PieceAddFailure> | API.UcantoInterface.JoinBuilder<API.PieceAddSuccess>>}
  */
-async function queueAdd(piece, space, group, context) {
+async function queueAdd(piece, storefront, group, context) {
   const queued = await context.addQueue.add({
     piece,
-    space,
+    storefront,
     group,
   })
   if (queued.error) {
@@ -48,7 +48,7 @@ async function queueAdd(piece, space, group, context) {
       with: context.id.did(),
       nb: {
         piece,
-        space,
+        storefront,
         group,
       },
     })
@@ -62,15 +62,15 @@ async function queueAdd(piece, space, group, context) {
 
 /**
  * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {string} space
+ * @param {string} storefront
  * @param {string} group
  * @param {API.AggregatorServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.PieceAddSuccess, API.PieceAddFailure> | API.UcantoInterface.JoinBuilder<API.PieceAddSuccess>>}
  */
-async function queueHandler(piece, space, group, context) {
+async function queueHandler(piece, storefront, group, context) {
   const put = await context.pieceStore.put({
     piece,
-    space,
+    storefront,
     group,
   })
 

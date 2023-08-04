@@ -57,7 +57,7 @@ export interface StorefrontRecord {
 
 export interface AggregatorRecord {
   piece: PieceLink
-  space: string
+  storefront: string
   group: string
 }
 
