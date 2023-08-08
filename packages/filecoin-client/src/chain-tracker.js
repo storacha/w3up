@@ -6,7 +6,8 @@ import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 import { services } from './service.js'
 
 /**
- * @typedef {import('@ucanto/interface').ConnectionView<import('./types.js').ChainTrackerService>} ConnectionView
+ * @typedef {import('./types.js').ChainTrackerService} ChainTrackerService
+ * @typedef {import('@ucanto/interface').ConnectionView<ChainTrackerService>} ConnectionView
  */
 
 /** @type {ConnectionView} */
@@ -24,7 +25,7 @@ export const connection = connect({
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {import('./types.js').RequestOptions} [options]
+ * @param {import('./types.js').RequestOptions<ChainTrackerService>} [options]
  */
 export async function chainInfo(
   { issuer, with: resource, proofs, audience },

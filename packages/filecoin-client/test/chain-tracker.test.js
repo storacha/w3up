@@ -70,9 +70,7 @@ async function getContext() {
 }
 
 /**
- * @param {Partial<
- * import('../src/types.js').ChainTrackerService
- * >} service
+ * @param {import('../src/types.js').ChainTrackerService} service
  */
 function getConnection(service) {
   const server = Server.create({

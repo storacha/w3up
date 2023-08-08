@@ -6,7 +6,8 @@ import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 import { services } from './service.js'
 
 /**
- * @typedef {import('@ucanto/interface').ConnectionView<import('./types.js').AggregatorService>} ConnectionView
+ * @typedef {import('./types.js').AggregatorService} AggregatorService
+ * @typedef {import('@ucanto/interface').ConnectionView<AggregatorService>} ConnectionView
  */
 
 /** @type {ConnectionView} */
@@ -26,7 +27,7 @@ export const connection = connect({
  * @param {import('@web3-storage/data-segment').PieceLink} piece
  * @param {string} storefront
  * @param {string} group
- * @param {import('./types.js').RequestOptions} [options]
+ * @param {import('./types.js').RequestOptions<AggregatorService>} [options]
  */
 export async function aggregateAdd(
   { issuer, with: resource, proofs, audience },

@@ -74,7 +74,9 @@ export interface ChainTrackerService {
   }
 }
 
-export interface RequestOptions extends Connectable<any> {}
+export interface RequestOptions<S extends Record<string, any>> {
+  connection?: ConnectionView<S>
+}
 
 export interface Connectable<S extends Record<string, any>> {
   connection?: ConnectionView<S>

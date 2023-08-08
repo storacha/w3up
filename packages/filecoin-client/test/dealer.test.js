@@ -210,7 +210,6 @@ describe('aggregate.add', () => {
     )
 
     assert.ok(res.out.error)
-    // @ts-expect-error no name inferred
     assert.deepEqual(res.out.error.name, OperationErrorName)
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
@@ -225,9 +224,7 @@ async function getContext() {
 }
 
 /**
- * @param {Partial<
- *import('../src/types.js').DealerService
- * >} service
+ * @param {import('../src/types.js').DealerService} service
  */
 function getConnection(service) {
   const server = Server.create({

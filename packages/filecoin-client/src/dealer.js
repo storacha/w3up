@@ -7,7 +7,8 @@ import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 import { services } from './service.js'
 
 /**
- * @typedef {import('@ucanto/interface').ConnectionView<import('./types.js').DealerService>} ConnectionView
+ * @typedef {import('./types.js').DealerService} DealerService
+ * @typedef {import('@ucanto/interface').ConnectionView<DealerService>} ConnectionView
  */
 
 /** @type {ConnectionView} */
@@ -28,7 +29,7 @@ export const connection = connect({
  * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
  * @param {string} storefront
  * @param {string} label
- * @param {import('./types.js').RequestOptions} [options]
+ * @param {import('./types.js').RequestOptions<DealerService>} [options]
  */
 export async function dealAdd(
   { issuer, with: resource, proofs, audience },
