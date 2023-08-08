@@ -10,18 +10,18 @@ import {
   FilecoinAdd,
   FilecoinAddSuccess,
   FilecoinAddFailure,
-  PieceAdd,
-  PieceAddSuccess,
-  PieceAddFailure,
   AggregateAdd,
   AggregateAddSuccess,
   AggregateAddFailure,
-  ChainInfo,
-  ChainInfoSuccess,
-  ChainInfoFailure,
+  DealAddSuccess,
+  DealAdd,
+  DealAddFailure,
+  ChainTrackerInfo,
+  ChainTrackerInfoSuccess,
+  ChainTrackerInfoFailure,
 } from '@web3-storage/capabilities/types'
 
-export type SERVICE = 'STORE_FRONT' | 'AGGREGATOR' | 'BROKER' | 'CHAIN'
+export type SERVICE = 'STOREFRONT' | 'AGGREGATOR' | 'DEALER' | 'CHAIN_TRACKER'
 export interface ServiceConfig {
   url: URL
   principal: Principal
@@ -53,26 +53,21 @@ export interface StorefrontService {
 }
 
 export interface AggregatorService {
-  piece: {
-    add: ServiceMethod<PieceAdd, PieceAddSuccess, PieceAddFailure>
-  }
-}
-
-export interface BrokerService {
   aggregate: {
     add: ServiceMethod<AggregateAdd, AggregateAddSuccess, AggregateAddFailure>
   }
 }
 
-export interface ChainService {
-  chain: {
-    info: ServiceMethod<ChainInfo, ChainInfoSuccess, ChainInfoFailure>
+export interface DealerService {
+  deal: {
+    add: ServiceMethod<DealAdd, DealAddSuccess, DealAddFailure>
   }
 }
 
-export interface DealConfig {
-  tenantId: string
-  label?: string
+export interface ChainTrackerService {
+  'chain-tracker': {
+    info: ServiceMethod<ChainTrackerInfo, ChainTrackerInfoSuccess, ChainTrackerInfoFailure>
+  }
 }
 
 export interface RequestOptions extends Connectable<any> {}

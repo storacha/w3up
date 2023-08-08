@@ -9,7 +9,7 @@ import * as DID from '@ipld/dag-ucan/did'
  * @type {Record<Service, ServiceConfig>}
  */
 export const services = {
-  STORE_FRONT: {
+  STOREFRONT: {
     url: new URL('https://up.web3.storage'),
     principal: DID.parse('did:web:web3.storage'),
   },
@@ -17,11 +17,11 @@ export const services = {
     url: new URL('https://aggregator.web3.storage'),
     principal: DID.parse('did:web:web3.storage'),
   },
-  BROKER: {
+  DEALER: {
     url: new URL('https://spade-proxy.web3.storage'),
     principal: DID.parse('did:web:spade.web3.storage'),
   },
-  CHAIN: {
+  CHAIN_TRACKER: {
     url: new URL('https://spade-proxy.web3.storage'),
     principal: DID.parse('did:web:spade.web3.storage'),
   },

@@ -6,7 +6,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import { Store } from './context/store.js'
 import { Queue } from './context/queue.js'
 
-describe('piece/*', () => {
+describe('aggregate/*', () => {
   for (const [name, test] of Object.entries(Aggregator.test)) {
     const define = name.startsWith('only ')
       ? it.only

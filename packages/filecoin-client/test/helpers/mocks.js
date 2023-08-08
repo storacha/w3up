@@ -8,8 +8,8 @@ const notImplemented = () => {
  * @param {Partial<
  * import('../../src/types').StorefrontService &
  * import('../../src/types').AggregatorService &
- * import('../../src/types').BrokerService &
- * import('../../src/types').ChainService
+ * import('../../src/types').DealerService &
+ * import('../../src/types').ChainTrackerService
  * >} impl
  */
 export function mockService(impl) {
@@ -17,14 +17,14 @@ export function mockService(impl) {
     filecoin: {
       add: withCallCount(impl.filecoin?.add ?? notImplemented),
     },
-    piece: {
-      add: withCallCount(impl.piece?.add ?? notImplemented),
-    },
     aggregate: {
       add: withCallCount(impl.aggregate?.add ?? notImplemented),
     },
-    chain: {
-      info: withCallCount(impl.chain?.info ?? notImplemented),
+    deal: {
+      add: withCallCount(impl.deal?.add ?? notImplemented),
+    },
+    'chain-tracker': {
+      info: withCallCount(impl['chain-tracker']?.info ?? notImplemented),
     },
   }
 }

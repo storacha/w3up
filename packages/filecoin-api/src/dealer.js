@@ -12,15 +12,15 @@ import {
 } from './errors.js'
 
 /**
- * @param {API.Input<FilecoinCapabilities.aggregateAdd>} input
- * @param {API.BrokerServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
+ * @param {API.Input<FilecoinCapabilities.dealAdd>} input
+ * @param {API.DealerServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
 export const claim = async ({ capability, invocation }, context) => {
-  const { piece, offer: offerCid, deal } = capability.nb
-  const offer = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
+  const { aggregate, pieces: offerCid, storefront, label } = capability.nb
+  const pieces = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
 
-  if (!offer) {
+  if (!pieces) {
     return {
       error: new DecodeBlockOperationFailed(
         `missing offer block in invocation: ${offerCid.toString()}`
@@ -30,25 +30,27 @@ export const claim = async ({ capability, invocation }, context) => {
 
   // Check if self signed to call queue handler
   if (context.id.did() === capability.with) {
-    return queueHandler(piece, offer, deal, context)
+    return queueHandler(aggregate, pieces, storefront, label, context)
   }
 
-  return queueAdd(piece, offerCid, deal, offer, context)
+  return queueAdd(aggregate, offerCid, storefront, label, pieces, context)
 }
 
 /**
- * @param {import('@web3-storage/data-segment').PieceLink} piece
+ * @param {import('@web3-storage/data-segment').PieceLink} aggregate
  * @param {Server.API.Link<unknown, number, number, 0 | 1>} offerCid
- * @param {import('@web3-storage/data-segment').PieceLink[]} offer
- * @param {import('@web3-storage/filecoin-client/types').DealConfig} deal
- * @param {API.BrokerServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
+ * @param {string} storefront
+ * @param {string | undefined} label
+ * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
+ * @param {API.DealerServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-async function queueAdd(piece, offerCid, deal, offer, context) {
+async function queueAdd(aggregate, offerCid, storefront, label, pieces, context) {
   const queued = await context.addQueue.add({
-    piece,
-    offer, // add queue can opt to store offers in separate datastore
-    deal,
+    aggregate,
+    pieces, // add queue can opt to store offers in separate datastore
+    storefront,
+    label,
     insertedAt: Date.now(),
   })
   if (queued.error) {
@@ -58,39 +60,41 @@ async function queueAdd(piece, offerCid, deal, offer, context) {
   }
 
   // Create effect for receipt
-  const fx = await FilecoinCapabilities.aggregateAdd
+  const fx = await FilecoinCapabilities.dealAdd
     .invoke({
       issuer: context.id,
       audience: context.id,
       with: context.id.did(),
       nb: {
-        piece,
-        offer: offerCid,
-        deal,
+        aggregate,
+        pieces: offerCid,
+        storefront,
+        label,
       },
     })
     .delegate()
 
   return Server.ok({
-    status: /** @type {API.QUEUE_STATUS} */ ('queued'),
-    piece,
+    aggregate,
   }).join(fx.link())
 }
 
 /**
- * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {import('@web3-storage/data-segment').PieceLink[]} offer
- * @param {import('@web3-storage/filecoin-client/types').DealConfig} deal
- * @param {API.BrokerServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
+ * @param {import('@web3-storage/data-segment').PieceLink} aggregate
+ * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
+ * @param {string} storefront
+ * @param {string | undefined} label
+ * @param {API.DealerServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-async function queueHandler(piece, offer, deal, context) {
+async function queueHandler(aggregate, pieces, storefront, label, context) {
   // TODO: failure - needs to read from store
 
   const put = await context.offerStore.put({
-    offer,
-    piece,
-    deal,
+    aggregate,
+    pieces,
+    storefront,
+    label,
     insertedAt: Date.now(),
   })
   if (put.error) {
@@ -101,8 +105,7 @@ async function queueHandler(piece, offer, deal, context) {
 
   return {
     ok: {
-      status: 'accepted',
-      piece,
+      aggregate,
     },
   }
 }
@@ -125,13 +128,13 @@ function getOfferBlock(offerCid, blockIterator) {
 }
 
 /**
- * @param {API.BrokerServiceContext} context
+ * @param {API.DealerServiceContext} context
  */
 export function createService(context) {
   return {
-    aggregate: {
+    deal: {
       add: Server.provideAdvanced({
-        capability: FilecoinCapabilities.aggregateAdd,
+        capability: FilecoinCapabilities.dealAdd,
         handler: (input) => claim(input, context),
       }),
     },
@@ -139,7 +142,7 @@ export function createService(context) {
 }
 
 /**
- * @param {API.UcantoServerContext & API.BrokerServiceContext} context
+ * @param {API.UcantoServerContext & API.DealerServiceContext} context
  */
 export const createServer = (context) =>
   Server.create({
@@ -152,7 +155,7 @@ export const createServer = (context) =>
 /**
  * @param {object} options
  * @param {API.UcantoInterface.Principal} options.id
- * @param {API.UcantoInterface.Transport.Channel<API.BrokerService>} options.channel
+ * @param {API.UcantoInterface.Transport.Channel<API.DealerService>} options.channel
  * @param {API.UcantoInterface.OutboundCodec} [options.codec]
  */
 export const connect = ({ id, channel, codec = CAR.outbound }) =>

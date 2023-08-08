@@ -17,11 +17,11 @@
       "aggregator": [
         "dist/src/aggregator.d.ts"
       ],
-      "broker": [
-        "dist/src/broker.d.ts"
+      "dealer": [
+        "dist/src/dealer.d.ts"
       ],
-      "chain": [
-        "dist/src/chain.d.ts"
+      "chain-tracker": [
+        "dist/src/chain-tracker.d.ts"
       ],
       "errors": [
         "dist/src/errors.d.ts"
@@ -50,13 +50,13 @@
       "types": "./dist/src/aggregator.d.ts",
       "import": "./src/aggregator.js"
     },
-    "./broker": {
-      "types": "./dist/src/broker.d.ts",
-      "import": "./src/broker.js"
+    "./dealer": {
+      "types": "./dist/src/dealer.d.ts",
+      "import": "./src/dealer.js"
     },
-    "./chain": {
-      "types": "./dist/src/chain.d.ts",
-      "import": "./src/chain.js"
+    "./chain-tracker": {
+      "types": "./dist/src/chain-tracker.d.ts",
+      "import": "./src/chain-tracker.js"
     },
     "./storefront": {
       "types": "./dist/src/storefront.d.ts",

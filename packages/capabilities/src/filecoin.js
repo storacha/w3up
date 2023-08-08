@@ -60,11 +60,11 @@ export const filecoinAdd = capability({
 })
 
 /**
- * `piece/add` capability allows agent to add a piece piece to be aggregated
+ * `aggregate/add` capability allows agent to add a piece to be aggregated
  * so that it can be stored by a Storage provider on a future time.
  */
-export const pieceAdd = capability({
-  can: 'piece/add',
+export const aggregateAdd = capability({
+  can: 'aggregate/add',
   /**
    * did:key identifier of the broker authority where offer is made available.
    */
@@ -95,6 +95,7 @@ export const pieceAdd = capability({
     return (
       and(equalWith(claim, from)) ||
       and(checkLink(claim.nb.piece, from.nb.piece, 'nb.piece')) ||
+      and(equal(claim.nb.storefront, from.nb.storefront, 'nb.storefront')) ||
       and(equal(claim.nb.group, from.nb.group, 'nb.group')) ||
       ok({})
     )
@@ -102,11 +103,11 @@ export const pieceAdd = capability({
 })
 
 /**
- * `aggregate/add` capability allows agent to create an offer to get an aggregate
+ * `deal/add` capability allows agent to create a deal offer to get an aggregate
  * of CARs files in the market to be fetched and stored by a Storage provider.
  */
-export const aggregateAdd = capability({
-  can: 'aggregate/add',
+export const dealAdd = capability({
+  can: 'deal/add',
   /**
    * did:key identifier of the broker authority where offer is made available.
    */
@@ -116,12 +117,12 @@ export const aggregateAdd = capability({
      * CID of the DAG-CBOR encoded block with offer details.
      * Service will queue given offer to be validated and handled.
      */
-    offer: Schema.link(),
+    pieces: Schema.link(),
     /**
      * Commitment proof for the aggregate being offered.
      * https://github.com/filecoin-project/go-state-types/blob/1e6cf0d47cdda75383ef036fc2725d1cf51dbde8/abi/piece.go#L47-L50
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (
+    aggregate: /** @type {import('./types').PieceLinkSchema} */ (
       Schema.link({
         code: FilCommitmentUnsealed,
         version: 1,
@@ -131,38 +132,33 @@ export const aggregateAdd = capability({
       })
     ),
     /**
-     * Necessary fields for a Filecoin Deal proposal.
+     * Storefront requesting deal
      */
-    deal: Schema.struct({
-      /**
-       * with tenantId broker can select one of their configured wallets
-       */
-      tenantId: Schema.text(),
-      /**
-       * arbitrary label to be added to the deal on chain
-       */
-      label: Schema.text().optional(),
-    }),
+    storefront: Schema.text(),
+    /**
+     * arbitrary label to be added to the deal on chain
+     */
+    label: Schema.text().optional(),
   }),
   derives: (claim, from) => {
     return (
       and(equalWith(claim, from)) ||
-      and(checkLink(claim.nb.offer, from.nb.offer, 'nb.offer')) ||
-      and(checkLink(claim.nb.piece, from.nb.piece, 'nb.piece')) ||
+      and(checkLink(claim.nb.aggregate, from.nb.aggregate, 'nb.aggregate')) ||
+      and(checkLink(claim.nb.pieces, from.nb.pieces, 'nb.pieces')) ||
       and(
-        equal(claim.nb.deal.tenantId, from.nb.deal.tenantId, 'nb.deal.tenantId')
+        equal(claim.nb.storefront, from.nb.storefront, 'nb.storefront')
       ) ||
-      and(equal(claim.nb.deal.label, from.nb.deal.label, 'nb.deal.label')) ||
+      and(equal(claim.nb.label, from.nb.label, 'nb.label')) ||
       ok({})
     )
   },
 })
 
 /**
- * `chain/info` capability allows agent to get chain info of a given piece.
+ * `chain-tracker/info` capability allows agent to get chain info of a given piece.
  */
-export const chainInfo = capability({
-  can: 'chain/info',
+export const chainTrackerInfo = capability({
+  can: 'chain-tracker/info',
   /**
    * did:key identifier of the broker authority where offer is made available.
    */

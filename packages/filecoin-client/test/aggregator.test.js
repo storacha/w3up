@@ -5,14 +5,14 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 
-import { pieceAdd } from '../src/aggregator.js'
+import { aggregateAdd } from '../src/aggregator.js'
 
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import { OperationFailed, OperationErrorName } from './helpers/errors.js'
 import { serviceProvider as aggregatorService } from './fixtures.js'
 
-describe('piece.add', () => {
+describe('aggregate/add', () => {
   it('storefront adds a filecoin piece to aggregator, getting the piece queued', async () => {
     const { storefront } = await getContext()
 
@@ -21,23 +21,21 @@ describe('piece.add', () => {
     const storefrontId = storefront.did()
     const group = 'did:web:free.web3.storage'
 
-    /** @type {import('@web3-storage/capabilities/types').PieceAddSuccess} */
+    /** @type {import('@web3-storage/capabilities/types').AggregateAddSuccess} */
     const pieceAddResponse = {
-      status: 'queued',
       piece: cargo.link,
     }
 
     // Create Ucanto service
     const service = mockService({
-      piece: {
+      aggregate: {
         add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.pieceAdd,
-          // @ts-expect-error not failure type expected because of assert throw
+          capability: FilecoinCapabilities.aggregateAdd,
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), storefront.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.pieceAdd.can)
+            assert.strictEqual(invCap.can, FilecoinCapabilities.aggregateAdd.can)
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
             assert.ok(invCap.nb?.piece.equals(cargo.link.link()))
@@ -45,7 +43,7 @@ describe('piece.add', () => {
             assert.strictEqual(invCap.nb?.group, group)
 
             // Create effect for receipt with self signed queued operation
-            const fx = await FilecoinCapabilities.pieceAdd
+            const fx = await FilecoinCapabilities.aggregateAdd
               .invoke({
                 issuer: context.id,
                 audience: context.id,
@@ -61,7 +59,7 @@ describe('piece.add', () => {
     })
 
     // invoke piece add from storefront
-    const res = await pieceAdd(
+    const res = await aggregateAdd(
       {
         issuer: storefront,
         with: storefront.did(),
@@ -87,22 +85,21 @@ describe('piece.add', () => {
     const storefrontId = storefront.did()
     const group = 'did:web:free.web3.storage'
 
-    /** @type {import('@web3-storage/capabilities/types').PieceAddSuccess} */
+    /** @type {import('@web3-storage/capabilities/types').AggregateAddSuccess} */
     const pieceAddResponse = {
-      status: 'accepted',
       piece: cargo.link,
     }
 
     // Create Ucanto service
     const service = mockService({
-      piece: {
+      aggregate: {
         add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.pieceAdd,
+          capability: FilecoinCapabilities.aggregateAdd,
           handler: async ({ invocation }) => {
             assert.strictEqual(invocation.issuer.did(), aggregatorService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.pieceAdd.can)
+            assert.strictEqual(invCap.can, FilecoinCapabilities.aggregateAdd.can)
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
             assert.ok(invCap.nb?.piece.equals(cargo.link.link()))
@@ -116,7 +113,7 @@ describe('piece.add', () => {
     })
 
     // self invoke piece/add from aggregator
-    const res = await pieceAdd(
+    const res = await aggregateAdd(
       {
         issuer: aggregatorService,
         with: aggregatorService.did(),
@@ -142,7 +139,7 @@ describe('piece.add', () => {
     const storefrontId = storefront.did()
     const group = 'did:web:free.web3.storage'
 
-    /** @type {import('@web3-storage/capabilities/types').PieceAddFailure} */
+    /** @type {import('@web3-storage/capabilities/types').AggregateAddFailure} */
     const pieceAddResponse = new OperationFailed(
       'failed to add to aggregate',
       cargo.link
@@ -150,14 +147,14 @@ describe('piece.add', () => {
 
     // Create Ucanto service
     const service = mockService({
-      piece: {
+      aggregate: {
         add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.pieceAdd,
+          capability: FilecoinCapabilities.aggregateAdd,
           handler: async ({ invocation }) => {
             assert.strictEqual(invocation.issuer.did(), aggregatorService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.pieceAdd.can)
+            assert.strictEqual(invCap.can, FilecoinCapabilities.aggregateAdd.can)
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
             assert.ok(invCap.nb?.piece.equals(cargo.link.link()))
@@ -173,7 +170,7 @@ describe('piece.add', () => {
     })
 
     // self invoke piece add from aggregator
-    const res = await pieceAdd(
+    const res = await aggregateAdd(
       {
         issuer: aggregatorService,
         with: aggregatorService.did(),

@@ -1,12 +1,12 @@
 import * as Aggregator from './services/aggregator.js'
-import * as Broker from './services/broker.js'
+import * as Dealer from './services/dealer.js'
 import * as Storefront from './services/storefront.js'
 export * from './utils.js'
 
 export const test = {
   ...Aggregator.test,
-  ...Broker.test,
+  ...Dealer.test,
   ...Storefront.test,
 }
 
-export { Aggregator, Broker, Storefront }
+export { Aggregator, Dealer, Storefront }

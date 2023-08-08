@@ -5,7 +5,7 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 
-import { chainInfo } from '../src/chain.js'
+import { chainInfo } from '../src/chain-tracker.js'
 
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -18,22 +18,21 @@ describe('chain.info', () => {
     // Generate cargo to get info
     const [cargo] = await randomCargo(1, 100)
 
-    /** @type {import('@web3-storage/capabilities/types').ChainInfoSuccess} */
+    /** @type {import('@web3-storage/capabilities/types').ChainTrackerInfoSuccess} */
     const chainInfoResponse = {
-      status: 'queued',
       piece: cargo.link,
     }
 
     // Create Ucanto service
     const service = mockService({
-      chain: {
+      'chain-tracker': {
         info: Server.provideAdvanced({
-          capability: FilecoinCapabilities.chainInfo,
+          capability: FilecoinCapabilities.chainTrackerInfo,
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), storefront.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.chainInfo.can)
+            assert.strictEqual(invCap.can, FilecoinCapabilities.chainTrackerInfo.can)
             assert.equal(invCap.with, invocation.issuer.did())
 
             // piece link
@@ -69,7 +68,7 @@ async function getContext() {
 
 /**
  * @param {Partial<
- * import('../src/types').ChainService
+ * import('../src/types.js').ChainTrackerService
  * >} service
  */
 function getConnection(service) {

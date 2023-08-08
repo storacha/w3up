@@ -28,7 +28,7 @@ export const connection = connect({
  * @param {string} group
  * @param {import('./types.js').RequestOptions} [options]
  */
-export async function pieceAdd(
+export async function aggregateAdd(
   { issuer, with: resource, proofs, audience },
   piece,
   storefront,
@@ -38,10 +38,10 @@ export async function pieceAdd(
   /* c8 ignore next */
   const conn = options.connection ?? connection
 
-  const invocation = FilecoinCapabilities.pieceAdd.invoke({
+  const invocation = FilecoinCapabilities.aggregateAdd.invoke({
     issuer,
     /* c8 ignore next */
-    audience: audience ?? services.STORE_FRONT.principal,
+    audience: audience ?? services.AGGREGATOR.principal,
     with: resource,
     nb: {
       piece,

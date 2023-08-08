@@ -25,8 +25,8 @@
   "exports": {
     ".": "./src/index.js",
     "./aggregator": "./src/aggregator.js",
-    "./broker": "./src/broker.js",
-    "./chain": "./src/chain.js",
+    "./dealer": "./src/dealer.js",
+    "./chain-tracker": "./src/chain-tracker.js",
     "./storefront": "./src/storefront.js",
     "./types": "./src/types.js"
   },
@@ -38,11 +38,11 @@
       "aggregator": [
         "dist/src/aggregator.d.ts"
       ],
-      "broker": [
-        "dist/src/broker.d.ts"
+      "dealer": [
+        "dist/src/dealer.d.ts"
       ],
-      "chain": [
-        "dist/src/chain.d.ts"
+      "chain-tracker": [
+        "dist/src/chain-tracker.d.ts"
       ],
       "storefront": [
         "dist/src/storefront.d.ts"

@@ -11,10 +11,10 @@ import { services } from './service.js'
 
 /** @type {ConnectionView} */
 export const connection = connect({
-  id: services.STORE_FRONT.principal,
+  id: services.STOREFRONT.principal,
   codec: CAR.outbound,
   channel: HTTP.open({
-    url: services.STORE_FRONT.url,
+    url: services.STOREFRONT.url,
     method: 'POST',
   }),
 })
@@ -39,7 +39,7 @@ export async function filecoinAdd(
   const invocation = FilecoinCapabilities.filecoinAdd.invoke({
     issuer,
     /* c8 ignore next */
-    audience: audience ?? services.STORE_FRONT.principal,
+    audience: audience ?? services.STOREFRONT.principal,
     with: resource,
     nb: {
       content: content,

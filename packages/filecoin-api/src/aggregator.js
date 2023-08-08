@@ -7,9 +7,9 @@ import * as API from './types.js'
 import { QueueOperationFailed, StoreOperationFailed } from './errors.js'
 
 /**
- * @param {API.Input<FilecoinCapabilities.pieceAdd>} input
+ * @param {API.Input<FilecoinCapabilities.aggregateAdd>} input
  * @param {API.AggregatorServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.PieceAddSuccess, API.PieceAddFailure> | API.UcantoInterface.JoinBuilder<API.PieceAddSuccess>>}
+ * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
  */
 export const claim = async ({ capability }, context) => {
   const { piece, storefront, group } = capability.nb
@@ -26,7 +26,7 @@ export const claim = async ({ capability }, context) => {
  * @param {string} storefront
  * @param {string} group
  * @param {API.AggregatorServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.PieceAddSuccess, API.PieceAddFailure> | API.UcantoInterface.JoinBuilder<API.PieceAddSuccess>>}
+ * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
  */
 async function queueAdd(piece, storefront, group, context) {
   const queued = await context.addQueue.add({
@@ -42,7 +42,7 @@ async function queueAdd(piece, storefront, group, context) {
   }
 
   // Create effect for receipt
-  const fx = await FilecoinCapabilities.pieceAdd
+  const fx = await FilecoinCapabilities.aggregateAdd
     .invoke({
       issuer: context.id,
       audience: context.id,
@@ -56,7 +56,6 @@ async function queueAdd(piece, storefront, group, context) {
     .delegate()
 
   return Server.ok({
-    status: /** @type {API.QUEUE_STATUS} */ ('queued'),
     piece,
   }).join(fx.link())
 }
@@ -66,7 +65,7 @@ async function queueAdd(piece, storefront, group, context) {
  * @param {string} storefront
  * @param {string} group
  * @param {API.AggregatorServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.PieceAddSuccess, API.PieceAddFailure> | API.UcantoInterface.JoinBuilder<API.PieceAddSuccess>>}
+ * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
  */
 async function queueHandler(piece, storefront, group, context) {
   const put = await context.pieceStore.put({
@@ -84,7 +83,6 @@ async function queueHandler(piece, storefront, group, context) {
 
   return {
     ok: {
-      status: 'accepted',
       piece,
     },
   }
@@ -95,9 +93,9 @@ async function queueHandler(piece, storefront, group, context) {
  */
 export function createService(context) {
   return {
-    piece: {
+    aggregate: {
       add: Server.provideAdvanced({
-        capability: FilecoinCapabilities.pieceAdd,
+        capability: FilecoinCapabilities.aggregateAdd,
         handler: (input) => claim(input, context),
       }),
     },

@@ -57,7 +57,6 @@ async function queueAdd(piece, content, context) {
     .delegate()
 
   return Server.ok({
-    status: /** @type {API.QUEUE_STATUS} */ ('queued'),
     piece,
   }).join(fx.link())
 }
@@ -83,7 +82,6 @@ async function queueHandler(piece, content, context) {
 
   return {
     ok: {
-      status: 'accepted',
       piece,
     },
   }

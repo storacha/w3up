@@ -12,7 +12,7 @@ import { mockService } from './helpers/mocks.js'
 import { OperationFailed, OperationErrorName } from './helpers/errors.js'
 import { serviceProvider as storefrontService } from './fixtures.js'
 
-describe('filecoin.add', () => {
+describe('filecoin/add', () => {
   it('agent adds a filecoin piece to a storefront, getting the piece queued', async () => {
     const { agent } = await getContext()
 
@@ -21,7 +21,6 @@ describe('filecoin.add', () => {
 
     /** @type {import('@web3-storage/capabilities/types').FilecoinAddSuccess} */
     const filecoinAddResponse = {
-      status: 'queued',
       piece: cargo.link,
     }
 
@@ -30,7 +29,6 @@ describe('filecoin.add', () => {
       filecoin: {
         add: Server.provideAdvanced({
           capability: FilecoinCapabilities.filecoinAdd,
-          // @ts-expect-error not failure type expected because of assert throw
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), agent.did())
             assert.strictEqual(invocation.capabilities.length, 1)
@@ -82,7 +80,6 @@ describe('filecoin.add', () => {
 
     /** @type {import('@web3-storage/capabilities/types').FilecoinAddSuccess} */
     const filecoinAddResponse = {
-      status: 'accepted',
       piece: cargo.link,
     }
 

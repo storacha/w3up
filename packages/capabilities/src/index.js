@@ -48,7 +48,7 @@ export const abilitiesAsStrings = [
   Access.authorize.can,
   Access.session.can,
   Filecoin.filecoinAdd.can,
-  Filecoin.pieceAdd.can,
   Filecoin.aggregateAdd.can,
-  Filecoin.chainInfo.can,
+  Filecoin.dealAdd.can,
+  Filecoin.chainTrackerInfo.can,
 ]

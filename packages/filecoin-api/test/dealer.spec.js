@@ -1,12 +1,12 @@
 /* eslint-disable no-only-tests/no-only-tests */
 import * as assert from 'assert'
-import * as Broker from './services/broker.js'
+import * as Broker from './services/dealer.js'
 import * as Signer from '@ucanto/principal/ed25519'
 
 import { Store } from './context/store.js'
 import { Queue } from './context/queue.js'
 
-describe('aggregate/*', () => {
+describe('deal/*', () => {
   for (const [name, test] of Object.entries(Broker.test)) {
     const define = name.startsWith('only ')
       ? it.only
@@ -28,7 +28,7 @@ describe('aggregate/*', () => {
         /** @type {Iterable<any> | ArrayLike<any>} */ items,
         /** @type {any} */ record
       ) => {
-        return Array.from(items).find((i) => i.piece.equals(record.piece))
+        return Array.from(items).find((i) => i.aggregate.equals(record.aggregate))
       }
       const offerStore = new Store(offerLookupFn)
 

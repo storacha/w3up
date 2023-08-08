@@ -76,53 +76,50 @@ export type SpaceRecoverValidation = InferInvokedCapability<
 export type SpaceRecover = InferInvokedCapability<typeof recover>
 
 // filecoin
-export type QUEUE_STATUS = 'queued' | 'accepted' | 'rejected'
+export type FILECOIN_PROCESSING_STATUS = 'pending' | 'done'
 export interface FilecoinAddSuccess {
-  status: QUEUE_STATUS
   piece: PieceLink
 }
 export interface FilecoinAddFailure extends Ucanto.Failure {
-  reason: string
-}
-
-export interface PieceAddSuccess {
-  status: QUEUE_STATUS
-  piece: PieceLink
-  aggregate?: PieceLink
-}
-export interface PieceAddFailure extends Ucanto.Failure {
-  reason: string
+  name: string
 }
 
 export interface AggregateAddSuccess {
-  status: QUEUE_STATUS
+  piece: PieceLink
+  aggregate?: PieceLink
+}
+export interface AggregateAddFailure extends Ucanto.Failure {
+  name: string
+}
+
+export interface DealAddSuccess {
+  aggregate?: PieceLink
+}
+
+export type DealAddFailure =
+  | DealAddParseFailure
+  | DealAddFailureWithBadPiece
+
+export interface DealAddParseFailure extends Ucanto.Failure {
+  name: string
+}
+
+export interface DealAddFailureWithBadPiece extends Ucanto.Failure {
   piece?: PieceLink
+  cause?: DealAddFailureCause[] | unknown
 }
 
-export type AggregateAddFailure =
-  | AggregateAddParseFailure
-  | AggregateAddFailureWithBadPiece
-
-export interface AggregateAddParseFailure extends Ucanto.Failure {
-  reason: string
-}
-
-export interface AggregateAddFailureWithBadPiece extends Ucanto.Failure {
-  piece?: PieceLink
-  cause?: AggregateAddFailureCause[] | unknown
-}
-
-export interface AggregateAddFailureCause {
+export interface DealAddFailureCause {
   piece: PieceLink
   reason: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ChainInfoSuccess {
+export interface ChainTrackerInfoSuccess {
   // TODO
 }
 
-export interface ChainInfoFailure extends Ucanto.Failure {
+export interface ChainTrackerInfoFailure extends Ucanto.Failure {
   // TODO
 }
 
@@ -143,11 +140,11 @@ export type StoreList = InferInvokedCapability<typeof list>
 export type FilecoinAdd = InferInvokedCapability<
   typeof FilecoinCaps.filecoinAdd
 >
-export type PieceAdd = InferInvokedCapability<typeof FilecoinCaps.pieceAdd>
 export type AggregateAdd = InferInvokedCapability<
   typeof FilecoinCaps.aggregateAdd
 >
-export type ChainInfo = InferInvokedCapability<typeof FilecoinCaps.chainInfo>
+export type DealAdd = InferInvokedCapability<typeof FilecoinCaps.dealAdd>
+export type ChainTrackerInfo = InferInvokedCapability<typeof FilecoinCaps.chainTrackerInfo>
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
@@ -174,7 +171,7 @@ export type AbilitiesArray = [
   AccessAuthorize['can'],
   AccessSession['can'],
   FilecoinAdd['can'],
-  PieceAdd['can'],
   AggregateAdd['can'],
-  ChainInfo['can']
+  DealAdd['can'],
+  ChainTrackerInfo['can']
 ]

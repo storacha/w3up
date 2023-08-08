@@ -7,48 +7,51 @@ import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 import { services } from './service.js'
 
 /**
- * @typedef {import('@ucanto/interface').ConnectionView<import('./types.js').BrokerService>} ConnectionView
+ * @typedef {import('@ucanto/interface').ConnectionView<import('./types.js').DealerService>} ConnectionView
  */
 
 /** @type {ConnectionView} */
 export const connection = connect({
-  id: services.BROKER.principal,
+  id: services.DEALER.principal,
   codec: CAR.outbound,
   channel: HTTP.open({
-    url: services.BROKER.url,
+    url: services.DEALER.url,
     method: 'POST',
   }),
 })
 
 /**
- * Add a piece (aggregate) to the broker system of the filecoin pipeline to offer to SPs.
+ * Add a piece (aggregate) to the dealer system of the filecoin pipeline to offer to SPs.
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
- * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {import('@web3-storage/data-segment').PieceLink[]} offer
- * @param {import('./types.js').DealConfig} deal
+ * @param {import('@web3-storage/data-segment').PieceLink} aggregate
+ * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
+ * @param {string} storefront
+ * @param {string} label
  * @param {import('./types.js').RequestOptions} [options]
  */
-export async function aggregateAdd(
+export async function dealAdd(
   { issuer, with: resource, proofs, audience },
-  piece,
-  offer,
-  deal,
+  aggregate,
+  pieces,
+  storefront,
+  label,
   options = {}
 ) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
 
-  const block = await CBOR.write(offer)
-  const invocation = FilecoinCapabilities.aggregateAdd.invoke({
+  const block = await CBOR.write(pieces)
+  const invocation = FilecoinCapabilities.dealAdd.invoke({
     issuer,
     /* c8 ignore next */
     audience: audience ?? services.AGGREGATOR.principal,
     with: resource,
     nb: {
-      piece,
-      offer: block.cid,
-      deal,
+      aggregate,
+      pieces: block.cid,
+      storefront,
+      label
     },
     proofs,
   })

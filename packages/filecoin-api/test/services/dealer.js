@@ -6,17 +6,17 @@ import { CBOR } from '@ucanto/core'
 import * as API from '../../src/types.js'
 
 import { randomAggregate } from '../utils.js'
-import { createServer, connect } from '../../src/broker.js'
+import { createServer, connect } from '../../src/dealer.js'
 
 /**
- * @type {API.Tests<API.BrokerServiceContext>}
+ * @type {API.Tests<API.DealerServiceContext>}
  */
 export const test = {
   'aggregate/add inserts piece into processing queue': async (
     assert,
     context
   ) => {
-    const { aggregator } = await getServiceContext()
+    const { aggregator, storefront: storefrontSigner } = await getServiceContext()
     const connection = connect({
       id: context.id,
       channel: createServer(context),
@@ -25,41 +25,42 @@ export const test = {
     // Generate piece for test
     const { pieces, aggregate } = await randomAggregate(100, 128)
     const offer = pieces.map((p) => p.link)
-    const offerBlock = await CBOR.write(offer)
-    const dealConfig = {
-      tenantId: 'web3.storage',
-    }
+    const piecesBlock = await CBOR.write(offer)
+    const storefront = storefrontSigner.did()
+    const label = 'label'
 
     // aggregator invocation
-    const pieceAddInv = Filecoin.aggregateAdd.invoke({
+    const pieceAddInv = Filecoin.dealAdd.invoke({
       issuer: aggregator,
       audience: connection.id,
       with: aggregator.did(),
       nb: {
-        piece: aggregate.link,
-        offer: offerBlock.cid,
-        deal: dealConfig,
+        aggregate: aggregate.link,
+        pieces: piecesBlock.cid,
+        storefront,
+        label,
       },
     })
-    pieceAddInv.attach(offerBlock)
+    pieceAddInv.attach(piecesBlock)
 
     const response = await pieceAddInv.execute(connection)
     if (response.out.error) {
       throw new Error('invocation failed', { cause: response.out.error })
     }
     assert.ok(response.out.ok)
-    assert.deepEqual(response.out.ok.status, 'queued')
+    assert.deepEqual(response.out.ok.aggregate, aggregate.link)
 
     // Validate effect in receipt
-    const fx = await Filecoin.aggregateAdd
+    const fx = await Filecoin.dealAdd
       .invoke({
         issuer: context.id,
         audience: context.id,
         with: context.id.did(),
         nb: {
-          piece: aggregate.link,
-          offer: offerBlock.cid,
-          deal: dealConfig,
+          aggregate: aggregate.link,
+          pieces: piecesBlock.cid,
+          storefront,
+          label,
         },
       })
       .delegate()
@@ -77,6 +78,7 @@ export const test = {
   },
   'aggregate/add from signer inserts piece into store and returns accepted':
     async (assert, context) => {
+      const { storefront: storefrontSigner } = await getServiceContext()
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -85,41 +87,42 @@ export const test = {
       // Generate piece for test
       const { pieces, aggregate } = await randomAggregate(100, 128)
       const offer = pieces.map((p) => p.link)
-      const offerBlock = await CBOR.write(offer)
-      const dealConfig = {
-        tenantId: 'web3.storage',
-      }
+      const piecesBlock = await CBOR.write(offer)
+      const storefront = storefrontSigner.did()
+      const label = 'label'
 
       // aggregator invocation
-      const pieceAddInv = Filecoin.aggregateAdd.invoke({
+      const pieceAddInv = Filecoin.dealAdd.invoke({
         issuer: context.id,
         audience: connection.id,
         with: context.id.did(),
         nb: {
-          piece: aggregate.link,
-          offer: offerBlock.cid,
-          deal: dealConfig,
+          aggregate: aggregate.link,
+          pieces: piecesBlock.cid,
+          storefront,
+          label
         },
       })
-      pieceAddInv.attach(offerBlock)
+      pieceAddInv.attach(piecesBlock)
 
       const response = await pieceAddInv.execute(connection)
       if (response.out.error) {
         throw new Error('invocation failed', { cause: response.out.error })
       }
       assert.ok(response.out.ok)
-      assert.deepEqual(response.out.ok.status, 'accepted')
+      assert.deepEqual(response.out.ok.aggregate, aggregate.link)
 
       // Validate queue and store
       await pWaitFor(() => context.queuedMessages.length === 0)
 
       const hasStoredOffer = await context.offerStore.get({
-        piece: aggregate.link.link(),
+        aggregate: aggregate.link.link(),
       })
       assert.ok(hasStoredOffer.ok)
     },
   'skip aggregate/add from signer inserts piece into store and returns rejected':
     async (assert, context) => {
+      const { storefront: storefrontSigner } = await getServiceContext()
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -128,36 +131,36 @@ export const test = {
       // Generate piece for test
       const { pieces, aggregate } = await randomAggregate(100, 128)
       const offer = pieces.map((p) => p.link)
-      const offerBlock = await CBOR.write(offer)
-      const dealConfig = {
-        tenantId: 'web3.storage',
-      }
+      const piecesBlock = await CBOR.write(offer)
+      const storefront = storefrontSigner.did()
+      const label = 'label'
 
       // aggregator invocation
-      const pieceAddInv = Filecoin.aggregateAdd.invoke({
+      const pieceAddInv = Filecoin.dealAdd.invoke({
         issuer: context.id,
         audience: connection.id,
         with: context.id.did(),
         nb: {
-          piece: aggregate.link,
-          offer: offerBlock.cid,
-          deal: dealConfig,
+          aggregate: aggregate.link,
+          pieces: piecesBlock.cid,
+          storefront,
+          label
         },
       })
-      pieceAddInv.attach(offerBlock)
+      pieceAddInv.attach(piecesBlock)
 
       const response = await pieceAddInv.execute(connection)
       if (response.out.error) {
         throw new Error('invocation failed', { cause: response.out.error })
       }
       assert.ok(response.out.ok)
-      assert.deepEqual(response.out.ok.status, 'rejected')
+      assert.deepEqual(response.out.ok.aggregate, aggregate.link)
 
       // Validate queue and store
       await pWaitFor(() => context.queuedMessages.length === 0)
 
       const hasStoredOffer = await context.offerStore.get({
-        piece: aggregate.link.link(),
+        aggregate: aggregate.link.link(),
       })
       assert.ok(!hasStoredOffer.ok)
     },
@@ -165,6 +168,7 @@ export const test = {
 
 async function getServiceContext() {
   const aggregator = await Signer.generate()
+  const storefront = await Signer.generate()
 
-  return { aggregator }
+  return { aggregator, storefront }
 }
