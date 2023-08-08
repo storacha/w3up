@@ -35,7 +35,10 @@ describe('aggregate/add', () => {
             assert.strictEqual(invocation.issuer.did(), storefront.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.aggregateAdd.can)
+            assert.strictEqual(
+              invCap.can,
+              FilecoinCapabilities.aggregateAdd.can
+            )
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
             assert.ok(invCap.nb?.piece.equals(cargo.link.link()))
@@ -99,7 +102,10 @@ describe('aggregate/add', () => {
             assert.strictEqual(invocation.issuer.did(), aggregatorService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.aggregateAdd.can)
+            assert.strictEqual(
+              invCap.can,
+              FilecoinCapabilities.aggregateAdd.can
+            )
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
             assert.ok(invCap.nb?.piece.equals(cargo.link.link()))
@@ -154,7 +160,10 @@ describe('aggregate/add', () => {
             assert.strictEqual(invocation.issuer.did(), aggregatorService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.aggregateAdd.can)
+            assert.strictEqual(
+              invCap.can,
+              FilecoinCapabilities.aggregateAdd.can
+            )
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
             assert.ok(invCap.nb?.piece.equals(cargo.link.link()))

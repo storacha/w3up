@@ -16,7 +16,8 @@ export const test = {
     assert,
     context
   ) => {
-    const { aggregator, storefront: storefrontSigner } = await getServiceContext()
+    const { aggregator, storefront: storefrontSigner } =
+      await getServiceContext()
     const connection = connect({
       id: context.id,
       channel: createServer(context),
@@ -100,7 +101,7 @@ export const test = {
           aggregate: aggregate.link,
           pieces: piecesBlock.cid,
           storefront,
-          label
+          label,
         },
       })
       pieceAddInv.attach(piecesBlock)
@@ -144,7 +145,7 @@ export const test = {
           aggregate: aggregate.link,
           pieces: piecesBlock.cid,
           storefront,
-          label
+          label,
         },
       })
       pieceAddInv.attach(piecesBlock)

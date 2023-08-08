@@ -28,7 +28,9 @@ describe('deal/*', () => {
         /** @type {Iterable<any> | ArrayLike<any>} */ items,
         /** @type {any} */ record
       ) => {
-        return Array.from(items).find((i) => i.aggregate.equals(record.aggregate))
+        return Array.from(items).find((i) =>
+          i.aggregate.equals(record.aggregate)
+        )
       }
       const offerStore = new Store(offerLookupFn)
 

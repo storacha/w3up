@@ -51,7 +51,7 @@ export async function dealAdd(
       aggregate,
       pieces: block.cid,
       storefront,
-      label
+      label,
     },
     proofs,
   })

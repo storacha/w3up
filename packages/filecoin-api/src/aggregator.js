@@ -11,14 +11,13 @@ import { QueueOperationFailed, StoreOperationFailed } from './errors.js'
  * @param {API.AggregatorServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
  */
-export const claim = async ({ capability }, context) => {
+export const add = async ({ capability }, context) => {
   const { piece, storefront, group } = capability.nb
-  // Check if self signed to call queue handler
-  if (context.id.did() === capability.with) {
-    return queueHandler(piece, storefront, group, context)
-  }
 
-  return queueAdd(piece, storefront, group, context)
+  // If self issued we accept without verification
+  return context.id.did() === capability.with
+    ? accept(piece, storefront, group, context)
+    : enqueue(piece, storefront, group, context)
 }
 
 /**
@@ -28,7 +27,7 @@ export const claim = async ({ capability }, context) => {
  * @param {API.AggregatorServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
  */
-async function queueAdd(piece, storefront, group, context) {
+async function enqueue(piece, storefront, group, context) {
   const queued = await context.addQueue.add({
     piece,
     storefront,
@@ -67,7 +66,8 @@ async function queueAdd(piece, storefront, group, context) {
  * @param {API.AggregatorServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
  */
-async function queueHandler(piece, storefront, group, context) {
+async function accept(piece, storefront, group, context) {
+  // Store piece into the store. Store events MAY be used to propagate piece over
   const put = await context.pieceStore.put({
     piece,
     storefront,
@@ -96,7 +96,7 @@ export function createService(context) {
     aggregate: {
       add: Server.provideAdvanced({
         capability: FilecoinCapabilities.aggregateAdd,
-        handler: (input) => claim(input, context),
+        handler: (input) => add(input, context),
       }),
     },
   }

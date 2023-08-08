@@ -32,7 +32,10 @@ describe('chain.info', () => {
             assert.strictEqual(invocation.issuer.did(), storefront.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.chainTrackerInfo.can)
+            assert.strictEqual(
+              invCap.can,
+              FilecoinCapabilities.chainTrackerInfo.can
+            )
             assert.equal(invCap.with, invocation.issuer.did())
 
             // piece link

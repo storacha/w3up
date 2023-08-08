@@ -17,7 +17,10 @@ export * from '@web3-storage/capabilities/types'
 
 // Resources
 export interface Queue<Record> {
-  add: (record: Record, options?: QueueMessageOptions) => Promise<Result<{}, QueueAddError>>
+  add: (
+    record: Record,
+    options?: QueueMessageOptions
+  ) => Promise<Result<{}, QueueAddError>>
 }
 
 export interface Store<Record> {

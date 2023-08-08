@@ -37,10 +37,7 @@ describe('aggregate.add', () => {
             assert.strictEqual(invocation.issuer.did(), aggregator.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(
-              invCap.can,
-              FilecoinCapabilities.dealAdd.can
-            )
+            assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
 
@@ -113,10 +110,7 @@ describe('aggregate.add', () => {
             assert.strictEqual(invocation.issuer.did(), brokerService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(
-              invCap.can,
-              FilecoinCapabilities.dealAdd.can
-            )
+            assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
 
@@ -180,10 +174,7 @@ describe('aggregate.add', () => {
             assert.strictEqual(invocation.issuer.did(), brokerService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(
-              invCap.can,
-              FilecoinCapabilities.dealAdd.can
-            )
+            assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
 

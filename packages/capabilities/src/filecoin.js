@@ -145,9 +145,7 @@ export const dealAdd = capability({
       and(equalWith(claim, from)) ||
       and(checkLink(claim.nb.aggregate, from.nb.aggregate, 'nb.aggregate')) ||
       and(checkLink(claim.nb.pieces, from.nb.pieces, 'nb.pieces')) ||
-      and(
-        equal(claim.nb.storefront, from.nb.storefront, 'nb.storefront')
-      ) ||
+      and(equal(claim.nb.storefront, from.nb.storefront, 'nb.storefront')) ||
       and(equal(claim.nb.label, from.nb.label, 'nb.label')) ||
       ok({})
     )

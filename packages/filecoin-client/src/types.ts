@@ -66,7 +66,11 @@ export interface DealerService {
 
 export interface ChainTrackerService {
   'chain-tracker': {
-    info: ServiceMethod<ChainTrackerInfo, ChainTrackerInfoSuccess, ChainTrackerInfoFailure>
+    info: ServiceMethod<
+      ChainTrackerInfo,
+      ChainTrackerInfoSuccess,
+      ChainTrackerInfoFailure
+    >
   }
 }
 

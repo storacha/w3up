@@ -16,7 +16,7 @@ import {
  * @param {API.DealerServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-export const claim = async ({ capability, invocation }, context) => {
+export const add = async ({ capability, invocation }, context) => {
   const { aggregate, pieces: offerCid, storefront, label } = capability.nb
   const pieces = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
 
@@ -28,12 +28,10 @@ export const claim = async ({ capability, invocation }, context) => {
     }
   }
 
-  // Check if self signed to call queue handler
-  if (context.id.did() === capability.with) {
-    return queueHandler(aggregate, pieces, storefront, label, context)
-  }
-
-  return queueAdd(aggregate, offerCid, storefront, label, pieces, context)
+  // If self issued we accept without verification
+  return context.id.did() === capability.with
+    ? accept(aggregate, pieces, storefront, label, context)
+    : enqueue(aggregate, offerCid, storefront, label, pieces, context)
 }
 
 /**
@@ -45,7 +43,14 @@ export const claim = async ({ capability, invocation }, context) => {
  * @param {API.DealerServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-async function queueAdd(aggregate, offerCid, storefront, label, pieces, context) {
+async function enqueue(
+  aggregate,
+  offerCid,
+  storefront,
+  label,
+  pieces,
+  context
+) {
   const queued = await context.addQueue.add({
     aggregate,
     pieces, // add queue can opt to store offers in separate datastore
@@ -87,9 +92,10 @@ async function queueAdd(aggregate, offerCid, storefront, label, pieces, context)
  * @param {API.DealerServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-async function queueHandler(aggregate, pieces, storefront, label, context) {
+async function accept(aggregate, pieces, storefront, label, context) {
   // TODO: failure - needs to read from store
 
+  // Store aggregate into the store. Store events MAY be used to propagate aggregate over
   const put = await context.offerStore.put({
     aggregate,
     pieces,
@@ -135,7 +141,7 @@ export function createService(context) {
     deal: {
       add: Server.provideAdvanced({
         capability: FilecoinCapabilities.dealAdd,
-        handler: (input) => claim(input, context),
+        handler: (input) => add(input, context),
       }),
     },
   }

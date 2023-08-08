@@ -96,9 +96,7 @@ export interface DealAddSuccess {
   aggregate?: PieceLink
 }
 
-export type DealAddFailure =
-  | DealAddParseFailure
-  | DealAddFailureWithBadPiece
+export type DealAddFailure = DealAddParseFailure | DealAddFailureWithBadPiece
 
 export interface DealAddParseFailure extends Ucanto.Failure {
   name: string
@@ -144,7 +142,9 @@ export type AggregateAdd = InferInvokedCapability<
   typeof FilecoinCaps.aggregateAdd
 >
 export type DealAdd = InferInvokedCapability<typeof FilecoinCaps.dealAdd>
-export type ChainTrackerInfo = InferInvokedCapability<typeof FilecoinCaps.chainTrackerInfo>
+export type ChainTrackerInfo = InferInvokedCapability<
+  typeof FilecoinCaps.chainTrackerInfo
+>
 // Top
 export type Top = InferInvokedCapability<typeof top>
 

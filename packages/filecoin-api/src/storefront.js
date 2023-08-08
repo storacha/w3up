@@ -11,18 +11,14 @@ import { QueueOperationFailed, StoreOperationFailed } from './errors.js'
  * @param {API.StorefrontServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAddSuccess, API.FilecoinAddFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinAddSuccess>>}
  */
-export const claim = async ({ capability }, context) => {
+export const add = async ({ capability }, context) => {
   // TODO: source
   const { piece, content } = capability.nb
 
-  // Check if self signed to call queue handler
-  if (context.id.did() === capability.with) {
-    return queueHandler(piece, content, context)
-  }
-
-  // TODO: queue verify
-
-  return queueAdd(piece, content, context)
+  // If self issued we accept without verification
+  return context.id.did() === capability.with
+    ? accept(piece, content, context)
+    : enqueue(piece, content, context)
 }
 
 /**
@@ -31,7 +27,7 @@ export const claim = async ({ capability }, context) => {
  * @param {API.StorefrontServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAddSuccess, API.FilecoinAddFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinAddSuccess>>}
  */
-async function queueAdd(piece, content, context) {
+async function enqueue(piece, content, context) {
   const queued = await context.addQueue.add({
     piece,
     content,
@@ -67,8 +63,8 @@ async function queueAdd(piece, content, context) {
  * @param {API.StorefrontServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAddSuccess, API.FilecoinAddFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinAddSuccess>>}
  */
-async function queueHandler(piece, content, context) {
-  // store piece
+async function accept(piece, content, context) {
+  // Store piece into the store. Store events MAY be used to propagate piece over
   const put = await context.pieceStore.put({
     content,
     piece,
@@ -95,7 +91,7 @@ export function createService(context) {
     filecoin: {
       add: Server.provideAdvanced({
         capability: FilecoinCapabilities.filecoinAdd,
-        handler: (input) => claim(input, context),
+        handler: (input) => add(input, context),
       }),
     },
   }
