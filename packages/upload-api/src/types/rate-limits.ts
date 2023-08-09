@@ -1,5 +1,12 @@
 import * as Ucanto from '@ucanto/interface'
 
+// An opaque identifier used to identify rate limits. We use this instead of 
+// deriving it from, eg, {rate, subject} because we'd like to allow implementors
+// to support more than one identical rate limit - an example of where this might
+// be useful is a fraud prevention department flagging and blocking an account 
+// because they detected phishing sites being uploaded and, separately, a billing 
+// department blocking an account for non-payment. In this case the removal of one
+// "block" should not result in both "blocks" being lifted.
 export type RateLimitID = string
 
 export interface RateLimit {
