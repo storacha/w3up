@@ -34,6 +34,134 @@ describe('rate-limit/add', function () {
     }
   })
 
+  it('should fail when changing rate constraint', async function () {
+    const subject = 'travis@example.com'
+    const delegation = await RateLimit.add.delegate({
+      issuer: service,
+      audience: bob,
+      with: service.did(),
+      nb: {
+        rate: 0
+      }
+    })
+
+    {
+      const add = RateLimit.add.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          rate: 0,
+          subject 
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await add.delegate(), {
+        capability: RateLimit.add,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail(result.error.message)
+      }
+
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'rate-limit/add')
+      assert.deepEqual(result.ok.capability.nb, {
+        rate: 0,
+        subject
+      })
+    }
+
+    {
+      const add = RateLimit.add.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          rate: 1,
+          subject 
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await add.delegate(), {
+        capability: RateLimit.add,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.ok(result.error)
+      assert(result.error.message.includes('1 violates imposed rate constraint 0'))
+    }
+  })
+
+  it('should fail when changing subject constraint', async function () {
+    const rate = 0
+    const delegation = await RateLimit.add.delegate({
+      issuer: service,
+      audience: bob,
+      with: service.did(),
+      nb: {
+        subject: 'example.com'
+      }
+    })
+
+    {
+      const add = RateLimit.add.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          rate,
+          subject: 'example.com' 
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await add.delegate(), {
+        capability: RateLimit.add,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail(result.error.message)
+      }
+
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'rate-limit/add')
+      assert.deepEqual(result.ok.capability.nb, {
+        rate,
+        subject: 'example.com'
+      })
+    }
+
+    {
+      const add = RateLimit.add.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          rate: 1,
+          subject: 'different.example.com' 
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await add.delegate(), {
+        capability: RateLimit.add,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.ok(result.error)
+      assert(result.error.message.includes('different.example.com violates imposed subject constraint example.com'))
+    }
+  })
+
   it('can be invoked by an agent delegated permissions by the service', async function () {
     const agent = alice
 
@@ -189,6 +317,66 @@ describe('rate-limit/remove', function () {
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "id"/)
   })
+
+  it('should fail when changing id constraint', async function () {
+    const delegation = await RateLimit.remove.delegate({
+      issuer: service,
+      audience: bob,
+      with: service.did(),
+      nb: {
+        id: '123'
+      }
+    })
+
+    {
+      const remove = RateLimit.remove.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          id: '123' 
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await remove.delegate(), {
+        capability: RateLimit.remove,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail(result.error.message)
+      }
+
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'rate-limit/remove')
+      assert.deepEqual(result.ok.capability.nb, {
+        id: '123'
+      })
+    }
+
+    {
+      const add = RateLimit.remove.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          id: '456'
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await add.delegate(), {
+        capability: RateLimit.remove,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.ok(result.error)
+      assert(result.error.message.includes('456 violates imposed id constraint 123'))
+    }
+  })
 })
 
 describe('rate-limit/list', function () {
@@ -256,5 +444,65 @@ describe('rate-limit/list', function () {
         nb: {},
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "subject"/)
+  })
+
+  it('should fail when changing subject constraint', async function () {
+    const delegation = await RateLimit.list.delegate({
+      issuer: service,
+      audience: bob,
+      with: service.did(),
+      nb: {
+        subject: 'travis@example.com'
+      }
+    })
+
+    {
+      const list = RateLimit.list.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          subject: 'travis@example.com' 
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await list.delegate(), {
+        capability: RateLimit.list,
+        principal: Verifier,
+        authority: service,
+      })
+
+      if (result.error) {
+        assert.fail(result.error.message)
+      }
+
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'rate-limit/list')
+      assert.deepEqual(result.ok.capability.nb, {
+        subject: 'travis@example.com'
+      })
+    }
+
+    {
+      const list = RateLimit.list.invoke({
+        issuer: bob,
+        audience: service,
+        with: service.did(),
+        nb: {
+          subject: 'alice@example.com'
+        },
+        proofs: [delegation]
+      })
+
+      const result = await access(await list.delegate(), {
+        capability: RateLimit.list,
+        principal: Verifier,
+        authority: service,
+      })
+
+      assert.ok(result.error)
+      assert(result.error.message.includes('alice@example.com violates imposed subject constraint travis@example.com'))
+    }
   })
 })
