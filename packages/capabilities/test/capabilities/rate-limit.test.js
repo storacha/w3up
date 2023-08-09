@@ -41,8 +41,8 @@ describe('rate-limit/add', function () {
       audience: bob,
       with: service.did(),
       nb: {
-        rate: 0
-      }
+        rate: 0,
+      },
     })
 
     {
@@ -52,9 +52,9 @@ describe('rate-limit/add', function () {
         with: service.did(),
         nb: {
           rate: 0,
-          subject 
+          subject,
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await add.delegate(), {
@@ -71,7 +71,7 @@ describe('rate-limit/add', function () {
       assert.equal(result.ok.capability.can, 'rate-limit/add')
       assert.deepEqual(result.ok.capability.nb, {
         rate: 0,
-        subject
+        subject,
       })
     }
 
@@ -82,9 +82,9 @@ describe('rate-limit/add', function () {
         with: service.did(),
         nb: {
           rate: 1,
-          subject 
+          subject,
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await add.delegate(), {
@@ -94,7 +94,9 @@ describe('rate-limit/add', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes('1 violates imposed rate constraint 0'))
+      assert(
+        result.error.message.includes('1 violates imposed rate constraint 0')
+      )
     }
   })
 
@@ -105,8 +107,8 @@ describe('rate-limit/add', function () {
       audience: bob,
       with: service.did(),
       nb: {
-        subject: 'example.com'
-      }
+        subject: 'example.com',
+      },
     })
 
     {
@@ -116,9 +118,9 @@ describe('rate-limit/add', function () {
         with: service.did(),
         nb: {
           rate,
-          subject: 'example.com' 
+          subject: 'example.com',
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await add.delegate(), {
@@ -135,7 +137,7 @@ describe('rate-limit/add', function () {
       assert.equal(result.ok.capability.can, 'rate-limit/add')
       assert.deepEqual(result.ok.capability.nb, {
         rate,
-        subject: 'example.com'
+        subject: 'example.com',
       })
     }
 
@@ -146,9 +148,9 @@ describe('rate-limit/add', function () {
         with: service.did(),
         nb: {
           rate: 1,
-          subject: 'different.example.com' 
+          subject: 'different.example.com',
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await add.delegate(), {
@@ -158,7 +160,11 @@ describe('rate-limit/add', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes('different.example.com violates imposed subject constraint example.com'))
+      assert(
+        result.error.message.includes(
+          'different.example.com violates imposed subject constraint example.com'
+        )
+      )
     }
   })
 
@@ -324,8 +330,8 @@ describe('rate-limit/remove', function () {
       audience: bob,
       with: service.did(),
       nb: {
-        id: '123'
-      }
+        id: '123',
+      },
     })
 
     {
@@ -334,9 +340,9 @@ describe('rate-limit/remove', function () {
         audience: service,
         with: service.did(),
         nb: {
-          id: '123' 
+          id: '123',
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await remove.delegate(), {
@@ -352,7 +358,7 @@ describe('rate-limit/remove', function () {
       assert.deepEqual(result.ok.audience.did(), service.did())
       assert.equal(result.ok.capability.can, 'rate-limit/remove')
       assert.deepEqual(result.ok.capability.nb, {
-        id: '123'
+        id: '123',
       })
     }
 
@@ -362,9 +368,9 @@ describe('rate-limit/remove', function () {
         audience: service,
         with: service.did(),
         nb: {
-          id: '456'
+          id: '456',
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await add.delegate(), {
@@ -374,7 +380,9 @@ describe('rate-limit/remove', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes('456 violates imposed id constraint 123'))
+      assert(
+        result.error.message.includes('456 violates imposed id constraint 123')
+      )
     }
   })
 })
@@ -452,8 +460,8 @@ describe('rate-limit/list', function () {
       audience: bob,
       with: service.did(),
       nb: {
-        subject: 'travis@example.com'
-      }
+        subject: 'travis@example.com',
+      },
     })
 
     {
@@ -462,9 +470,9 @@ describe('rate-limit/list', function () {
         audience: service,
         with: service.did(),
         nb: {
-          subject: 'travis@example.com' 
+          subject: 'travis@example.com',
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await list.delegate(), {
@@ -480,7 +488,7 @@ describe('rate-limit/list', function () {
       assert.deepEqual(result.ok.audience.did(), service.did())
       assert.equal(result.ok.capability.can, 'rate-limit/list')
       assert.deepEqual(result.ok.capability.nb, {
-        subject: 'travis@example.com'
+        subject: 'travis@example.com',
       })
     }
 
@@ -490,9 +498,9 @@ describe('rate-limit/list', function () {
         audience: service,
         with: service.did(),
         nb: {
-          subject: 'alice@example.com'
+          subject: 'alice@example.com',
         },
-        proofs: [delegation]
+        proofs: [delegation],
       })
 
       const result = await access(await list.delegate(), {
@@ -502,7 +510,11 @@ describe('rate-limit/list', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes('alice@example.com violates imposed subject constraint travis@example.com'))
+      assert(
+        result.error.message.includes(
+          'alice@example.com violates imposed subject constraint travis@example.com'
+        )
+      )
     }
   })
 })

@@ -1,8 +1,7 @@
-
 /**
  * Query rate limits storage and find out if any of the given subjects
  * have rate below the given limitThreshold. Return a Ucanto.Success result if
- * not, and a Ucanto.Error if so, or if we get an error from the underlying 
+ * not, and a Ucanto.Error if so, or if we get an error from the underlying
  * store.
  *
  * @param {import("../types").RateLimitsStorage} storage
@@ -23,8 +22,8 @@ export async function ensureRateLimitAbove(storage, subjects, limitThreshold) {
           return {
             error: {
               name: 'RateLimitExceeded',
-              message: `Rate limit of ${limit.rate} found which is above threshold of ${limitThreshold}`
-            }
+              message: `Rate limit of ${limit.rate} found which is above threshold of ${limitThreshold}`,
+            },
           }
         }
       }

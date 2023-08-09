@@ -17,15 +17,13 @@ export const provide = (ctx) =>
  * @param {API.AccessServiceContext} ctx
  */
 export const authorize = async ({ capability }, ctx) => {
-  const accountMailtoDID = /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(
-    capability.nb.iss
-  )
+  const accountMailtoDID =
+    /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+      capability.nb.iss
+    )
   const rateLimitResult = await ensureRateLimitAbove(
     ctx.rateLimitsStorage,
-    [
-      mailtoDidToDomain(accountMailtoDID),
-      mailtoDidToEmail(accountMailtoDID)
-    ],
+    [mailtoDidToDomain(accountMailtoDID), mailtoDidToEmail(accountMailtoDID)],
     0
   )
   if (rateLimitResult.error) {

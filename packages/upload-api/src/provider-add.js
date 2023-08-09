@@ -31,15 +31,13 @@ export const add = async (
       },
     }
   }
-  const accountMailtoDID = /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(
-    accountDID
-  )
+  const accountMailtoDID =
+    /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+      accountDID
+    )
   const rateLimitResult = await ensureRateLimitAbove(
     rateLimits,
-    [
-      mailtoDidToDomain(accountMailtoDID),
-      mailtoDidToEmail(accountMailtoDID)
-    ],
+    [mailtoDidToDomain(accountMailtoDID), mailtoDidToEmail(accountMailtoDID)],
     0
   )
 

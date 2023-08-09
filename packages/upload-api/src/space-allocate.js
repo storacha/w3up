@@ -11,7 +11,11 @@ import { ensureRateLimitAbove } from './utils/rate-limits.js'
  */
 export const allocate = async ({ capability }, context) => {
   const { with: space, nb } = capability
-  const rateLimitResult = await ensureRateLimitAbove(context.rateLimitsStorage, [space], 0)
+  const rateLimitResult = await ensureRateLimitAbove(
+    context.rateLimitsStorage,
+    [space],
+    0
+  )
   if (rateLimitResult.error) {
     return {
       error: {
