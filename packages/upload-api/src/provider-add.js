@@ -2,7 +2,7 @@ import * as API from './types.js'
 import * as Server from '@ucanto/server'
 import { Provider } from '@web3-storage/capabilities'
 import * as validator from '@ucanto/validator'
-import { emailAndDomainFromMailtoDid } from './utils/did-mailto.js'
+import { mailtoDidToDomain, mailtoDidToEmail } from './utils/did-mailto.js'
 import { areAnyBlocked } from './utils/rate-limits.js'
 
 /**
@@ -31,13 +31,15 @@ export const add = async (
       },
     }
   }
+  const accountMailtoDID = /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(
+    accountDID
+  )
   const isBlocked = await areAnyBlocked(
     rateLimits,
-    emailAndDomainFromMailtoDid(
-      /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(
-        accountDID
-      )
-    )
+    [
+      mailtoDidToDomain(accountMailtoDID),
+      mailtoDidToEmail(accountMailtoDID)
+    ]
   )
   // If we get an error here we return an error rather than continuing: users can
   // always retry and we don't really want to let them provision if we're not sure they

@@ -111,7 +111,7 @@ export class ProvisionsStorage {
   /**
    *
    * @param {Types.ProviderDID} provider
-   * @param {*} consumer
+   * @param {string} consumer
    * @returns
    */
   async getConsumer(provider, consumer) {

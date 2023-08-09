@@ -3,7 +3,7 @@ import * as API from '../types.js'
 import * as Access from '@web3-storage/capabilities/access'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { delegationToString } from '@web3-storage/access/encoding'
-import { emailAndDomainFromMailtoDid } from '../utils/did-mailto.js'
+import { mailtoDidToDomain, mailtoDidToEmail } from '../utils/did-mailto.js'
 import { areAnyBlocked } from '../utils/rate-limits.js'
 
 /**
@@ -17,13 +17,15 @@ export const provide = (ctx) =>
  * @param {API.AccessServiceContext} ctx
  */
 export const authorize = async ({ capability }, ctx) => {
+  const accountMailtoDID = /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(
+    capability.nb.iss
+  )
   const isBlocked = await areAnyBlocked(
     ctx.rateLimitsStorage,
-    emailAndDomainFromMailtoDid(
-      /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
-        capability.nb.iss
-      )
-    )
+    [
+      mailtoDidToDomain(accountMailtoDID),
+      mailtoDidToEmail(accountMailtoDID)
+    ]
   )
   // If we get an error here we return an error rather than continuing: users can
   // always retry and we don't have an easy way to invalidate this authorization once
