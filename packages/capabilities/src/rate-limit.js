@@ -15,7 +15,7 @@ import { equalWith, and, equal } from './utils.js'
 export const Provider = DID
 
 /**
- * Capability can be invoked by an agent to add a rate limit to a subject.
+ * Capability can be invoked by the provider or an authorized delegate to add a rate limit to a subject.
  */
 export const add = capability({
   can: 'rate-limit/add',
