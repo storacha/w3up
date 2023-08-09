@@ -35,7 +35,7 @@ export const add = capability({
 })
 
 /**
- * Capability can be invoked by an agent to remove rate limits from a subject.
+ * Capability can be invoked by the provider are an authorized delegate to remove rate limits from a subject.
  */
 export const remove = capability({
   can: 'rate-limit/remove',
