@@ -53,7 +53,7 @@ export const remove = capability({
 })
 
 /**
- * Capability can be invoked by an agent to list rate limits on a subject
+ * Capability can be invoked by the provider or an authorized delegate to list rate limits on the given subject
  */
 export const list = capability({
   can: 'rate-limit/list',
