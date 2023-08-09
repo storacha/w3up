@@ -63,13 +63,13 @@ export async function randomCargo(length, size) {
   )
 
   return cars.map((car) => {
-    const piece = Piece.build(car.bytes)
+    const piece = Piece.fromPayload(car.bytes)
 
     return {
       link: piece.link,
-      content: car.cid,
       height: piece.height,
-      size: piece.size,
+      root: piece.root,
+      content: car.cid,
     }
   })
 }
@@ -80,19 +80,12 @@ export async function randomCargo(length, size) {
  */
 export async function randomAggregate(length, size) {
   const pieces = await randomCargo(length, size)
-
   const aggregateBuild = Aggregate.build({
     pieces,
   })
 
   return {
-    pieces: pieces.map((p) => ({
-      link: p.link,
-      height: p.height,
-    })),
-    aggregate: {
-      link: aggregateBuild.link,
-      height: aggregateBuild.height,
-    },
+    pieces,
+    aggregate: aggregateBuild.toInfo(),
   }
 }

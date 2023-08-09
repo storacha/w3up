@@ -2,7 +2,7 @@ import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
 import { InferInvokedCapability, Unit, DID } from '@ucanto/interface'
-import type { PieceLink } from '@web3-storage/data-segment'
+import type { PieceLink, LegacyPieceLink } from '@web3-storage/data-segment'
 import { space, info, recover, recoverValidation } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -21,7 +21,12 @@ export interface InsufficientStorage {
   message: string
 }
 
+/**
+ * @see https://github.com/filecoin-project/FIPs/pull/758/files
+ */
 export type PieceLinkSchema = Schema.Schema<PieceLink>
+
+export type LegacyPieceLinkSchema = Schema.Schema<LegacyPieceLink>
 
 // Access
 export type Access = InferInvokedCapability<typeof AccessCaps.access>
@@ -86,14 +91,14 @@ export interface FilecoinAddFailure extends Ucanto.Failure {
 
 export interface AggregateAddSuccess {
   piece: PieceLink
-  aggregate?: PieceLink
+  aggregate?: LegacyPieceLink
 }
 export interface AggregateAddFailure extends Ucanto.Failure {
   name: string
 }
 
 export interface DealAddSuccess {
-  aggregate?: PieceLink
+  aggregate?: LegacyPieceLink
 }
 
 export type DealAddFailure = DealAddParseFailure | DealAddFailureWithBadPiece

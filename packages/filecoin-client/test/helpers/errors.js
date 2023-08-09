@@ -4,7 +4,7 @@ export const OperationErrorName = /** @type {const} */ ('OperationFailed')
 export class OperationFailed extends Server.Failure {
   /**
    * @param {string} message
-   * @param {import('@web3-storage/data-segment').PieceLink} piece
+   * @param {import('@web3-storage/data-segment').PieceLink | import('@web3-storage/data-segment').LegacyPieceLink} piece
    */
   constructor(message, piece) {
     super(message)

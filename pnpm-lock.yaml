@@ -179,8 +179,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@web3-storage/data-segment':
-        specifier: ^2.2.0
-        version: 2.2.0
+        specifier: ^3.0.0
+        version: 3.0.0
     devDependencies:
       '@types/assert':
         specifier: ^1.5.6
@@ -252,8 +252,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/data-segment':
-        specifier: ^2.2.0
-        version: 2.2.0
+        specifier: ^3.0.0
+        version: 3.0.0
     devDependencies:
       '@ipld/car':
         specifier: ^5.1.1
@@ -323,8 +323,8 @@ importers:
         specifier: ^8.0.1
         version: 8.0.1
       '@web3-storage/data-segment':
-        specifier: ^2.2.0
-        version: 2.2.0
+        specifier: ^3.0.0
+        version: 3.0.0
       assert:
         specifier: ^2.0.0
         version: 2.0.0
@@ -3333,8 +3333,8 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
-  /@web3-storage/data-segment@2.2.0:
-    resolution: {integrity: sha512-kzCDxgIb6j9rUZTe/BzS4bnG+SO32s5WWJoUAoB34wPNeBPAX/35SyUBYJrh7TLwjoDbGTL89BgGJi0xV25vcA==}
+  /@web3-storage/data-segment@3.0.0:
+    resolution: {integrity: sha512-EEwW9+rkVAHgHRZSTopp+VO6FLHWeY+uxlHEUSSeuKF6QiK4AOeAuyCERb3ULwFHmNQzVd+lnQAnLnxt702cpQ==}
     dependencies:
       multiformats: 11.0.2
       sync-multihash-sha2: 1.0.0

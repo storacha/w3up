@@ -69,7 +69,7 @@ describe('filecoin/add', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, filecoinAddResponse)
+    assert.ok(res.out.ok.piece.equals(filecoinAddResponse.piece))
     // includes effect fx in receipt
     assert.ok(res.fx.join)
   })
@@ -119,7 +119,7 @@ describe('filecoin/add', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, filecoinAddResponse)
+    assert.ok(res.out.ok.piece.equals(filecoinAddResponse.piece))
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })

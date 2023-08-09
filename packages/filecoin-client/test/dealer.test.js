@@ -11,10 +11,10 @@ import { dealAdd } from '../src/dealer.js'
 import { randomAggregate } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import { OperationFailed, OperationErrorName } from './helpers/errors.js'
-import { serviceProvider as brokerService } from './fixtures.js'
+import { serviceProvider as dealerService } from './fixtures.js'
 
-describe('aggregate.add', () => {
-  it('aggregator adds an aggregate piece to the broker, getting the piece queued', async () => {
+describe('dealer.add', () => {
+  it('aggregator adds an aggregate piece to the dealer, getting the piece queued', async () => {
     const { aggregator, storefront: storefrontSigner } = await getContext()
 
     // generate aggregate to add
@@ -71,7 +71,7 @@ describe('aggregate.add', () => {
       {
         issuer: aggregator,
         with: aggregator.did(),
-        audience: brokerService,
+        audience: dealerService,
       },
       aggregate.link.link(),
       offer,
@@ -86,7 +86,7 @@ describe('aggregate.add', () => {
     assert.ok(res.fx.join)
   })
 
-  it('broker self invokes add an aggregate piece to accept the piece queued', async () => {
+  it('dealer self invokes add an aggregate piece to accept the piece queued', async () => {
     const { storefront: storefrontSigner } = await getContext()
 
     // generate aggregate to add
@@ -107,7 +107,7 @@ describe('aggregate.add', () => {
         add: Server.provideAdvanced({
           capability: FilecoinCapabilities.dealAdd,
           handler: async ({ invocation }) => {
-            assert.strictEqual(invocation.issuer.did(), brokerService.did())
+            assert.strictEqual(invocation.issuer.did(), dealerService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
@@ -132,9 +132,9 @@ describe('aggregate.add', () => {
     // invoke piece add from storefront
     const res = await dealAdd(
       {
-        issuer: brokerService,
-        with: brokerService.did(),
-        audience: brokerService,
+        issuer: dealerService,
+        with: dealerService.did(),
+        audience: dealerService,
       },
       aggregate.link.link(),
       offer,
@@ -149,7 +149,7 @@ describe('aggregate.add', () => {
     assert.ok(!res.fx.join)
   })
 
-  it('broker self invokes add an aggregate piece to reject the piece queued', async () => {
+  it('dealer self invokes add an aggregate piece to reject the piece queued', async () => {
     const { storefront: storefrontSigner } = await getContext()
 
     // generate aggregate to add
@@ -171,7 +171,7 @@ describe('aggregate.add', () => {
         add: Server.provideAdvanced({
           capability: FilecoinCapabilities.dealAdd,
           handler: async ({ invocation, context }) => {
-            assert.strictEqual(invocation.issuer.did(), brokerService.did())
+            assert.strictEqual(invocation.issuer.did(), dealerService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
@@ -198,9 +198,9 @@ describe('aggregate.add', () => {
     // invoke piece add from storefront
     const res = await dealAdd(
       {
-        issuer: brokerService,
-        with: brokerService.did(),
-        audience: brokerService,
+        issuer: dealerService,
+        with: dealerService.did(),
+        audience: dealerService,
       },
       aggregate.link.link(),
       offer,
@@ -228,12 +228,12 @@ async function getContext() {
  */
 function getConnection(service) {
   const server = Server.create({
-    id: brokerService,
+    id: dealerService,
     service,
     codec: CAR.inbound,
   })
   const connection = Client.connect({
-    id: brokerService,
+    id: dealerService,
     codec: CAR.outbound,
     channel: server,
   })

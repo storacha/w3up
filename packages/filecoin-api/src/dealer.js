@@ -35,7 +35,7 @@ export const add = async ({ capability, invocation }, context) => {
 }
 
 /**
- * @param {import('@web3-storage/data-segment').PieceLink} aggregate
+ * @param {import('@web3-storage/data-segment').LegacyPieceLink} aggregate
  * @param {Server.API.Link<unknown, number, number, 0 | 1>} offerCid
  * @param {string} storefront
  * @param {string | undefined} label
@@ -85,7 +85,7 @@ async function enqueue(
 }
 
 /**
- * @param {import('@web3-storage/data-segment').PieceLink} aggregate
+ * @param {import('@web3-storage/data-segment').LegacyPieceLink} aggregate
  * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
  * @param {string} storefront
  * @param {string | undefined} label
