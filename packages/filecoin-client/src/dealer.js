@@ -25,7 +25,7 @@ export const connection = connect({
  * Add a piece (aggregate) to the dealer system of the filecoin pipeline to offer to SPs.
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
- * @param {import('@web3-storage/data-segment').LegacyPieceLink} aggregate
+ * @param {import('@web3-storage/data-segment').PieceLink} aggregate
  * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
  * @param {string} storefront
  * @param {string} label

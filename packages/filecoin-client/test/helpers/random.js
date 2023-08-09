@@ -80,6 +80,6 @@ export async function randomAggregate(length, size) {
 
   return {
     pieces,
-    aggregate: aggregateBuild.toInfo(),
+    aggregate: aggregateBuild,
   }
 }

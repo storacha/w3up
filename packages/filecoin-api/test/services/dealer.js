@@ -49,7 +49,7 @@ export const test = {
       throw new Error('invocation failed', { cause: response.out.error })
     }
     assert.ok(response.out.ok)
-    assert.deepEqual(response.out.ok.aggregate, aggregate.link)
+    assert.ok(response.out.ok.aggregate?.equals(aggregate.link))
 
     // Validate effect in receipt
     const fx = await Filecoin.dealAdd
@@ -111,7 +111,7 @@ export const test = {
         throw new Error('invocation failed', { cause: response.out.error })
       }
       assert.ok(response.out.ok)
-      assert.deepEqual(response.out.ok.aggregate, aggregate.link)
+      assert.ok(response.out.ok.aggregate?.equals(aggregate.link))
 
       // Validate queue and store
       await pWaitFor(() => context.queuedMessages.length === 0)

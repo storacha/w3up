@@ -8,7 +8,7 @@ import type {
   Match,
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
-import { PieceLink, LegacyPieceLink } from '@web3-storage/data-segment'
+import { PieceLink } from '@web3-storage/data-segment'
 import { UnknownLink } from '@ucanto/interface'
 
 export * as UcantoInterface from '@ucanto/interface'
@@ -70,7 +70,7 @@ export interface AggregatorRecord {
 }
 
 export interface DealerRecord {
-  aggregate: LegacyPieceLink
+  aggregate: PieceLink
   pieces: PieceLink[]
   storefront: string
   label?: string

@@ -21,28 +21,11 @@ const FR32_SHA2_256_TRUNC254_PADDED_BINARY_TREE = 0x1011
  */
 const RAW_CODE = 0x55
 
-/**
- * @see https://github.com/multiformats/go-multihash/blob/dc3bd6897fcd17f6acd8d4d6ffd2cea3d4d3ebeb/multihash.go#L73
- */
-const SHA2_256_TRUNC254_PADDED = 0x1012
-/**
- * @see https://github.com/ipfs/go-cid/blob/829c826f6be23320846f4b7318aee4d17bf8e094/cid.go#L104
- */
-const FilCommitmentUnsealed = 0xf101
-
-const PIECE_CID_V2 = Schema.link({
+const PIECE_LINK = Schema.link({
   code: RAW_CODE,
   version: 1,
   multihash: {
     code: FR32_SHA2_256_TRUNC254_PADDED_BINARY_TREE,
-  },
-})
-
-const PIECE_CID_V1 = Schema.link({
-  code: FilCommitmentUnsealed,
-  version: 1,
-  multihash: {
-    code: SHA2_256_TRUNC254_PADDED,
   },
 })
 
@@ -66,7 +49,7 @@ export const filecoinAdd = capability({
      *
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_CID_V2),
+    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
   }),
   derives: (claim, from) => {
     return (
@@ -94,7 +77,7 @@ export const aggregateAdd = capability({
      *
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_CID_V2),
+    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
     /**
      * Storefront requestin piece to be aggregated
      */
@@ -137,9 +120,7 @@ export const dealAdd = capability({
      * @see https://github.com/filecoin-project/go-state-types/blob/1e6cf0d47cdda75383ef036fc2725d1cf51dbde8/abi/piece.go#L47-L50
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    aggregate: /** @type {import('./types').LegacyPieceLinkSchema} */ (
-      PIECE_CID_V1
-    ),
+    aggregate: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
     /**
      * Storefront requesting deal
      */
@@ -176,7 +157,7 @@ export const chainTrackerInfo = capability({
      *
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_CID_V2),
+    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
   }),
   derives: (claim, from) => {
     return (

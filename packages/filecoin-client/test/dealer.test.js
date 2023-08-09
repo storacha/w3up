@@ -81,7 +81,7 @@ describe('dealer.add', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, dealAddResponse)
+    assert.ok(res.out.ok.aggregate?.equals(dealAddResponse.aggregate))
     // includes effect fx in receipt
     assert.ok(res.fx.join)
   })
@@ -144,7 +144,7 @@ describe('dealer.add', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, dealAddResponse)
+    assert.ok(res.out.ok.aggregate?.equals(dealAddResponse.aggregate))
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })
