@@ -3,8 +3,8 @@
   "bootstrap-sha": "c918ffc59eafa01fbc63d5df11ba621cc1888c64",
   "packages": {
     "packages/access-client": {},
-    "packages/aggregate-api": {},
-    "packages/aggregate-client": {},
+    "packages/filecoin-api": {},
+    "packages/filecoin-client": {},
     "packages/capabilities": {},
     "packages/did-mailto": {},
     "packages/upload-api": {},

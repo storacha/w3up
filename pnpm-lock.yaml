@@ -161,8 +161,78 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
 
-  packages/aggregate-api:
+  packages/capabilities:
     dependencies:
+      '@ucanto/core':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/interface':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/principal':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/transport':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@ucanto/validator':
+        specifier: ^8.0.0
+        version: 8.0.0
+      '@web3-storage/data-segment':
+        specifier: ^2.2.0
+        version: 2.2.0
+    devDependencies:
+      '@types/assert':
+        specifier: ^1.5.6
+        version: 1.5.6
+      '@types/mocha':
+        specifier: ^10.0.0
+        version: 10.0.1
+      '@types/node':
+        specifier: ^18.11.18
+        version: 18.11.18
+      assert:
+        specifier: ^2.0.0
+        version: 2.0.0
+      hd-scripts:
+        specifier: ^4.0.0
+        version: 4.1.0
+      mocha:
+        specifier: ^10.2.0
+        version: 10.2.0
+      playwright-test:
+        specifier: ^8.1.2
+        version: 8.1.2
+      type-fest:
+        specifier: ^3.3.0
+        version: 3.3.0
+      typescript:
+        specifier: 4.9.5
+        version: 4.9.5
+      watch:
+        specifier: ^1.0.2
+        version: 1.0.2
+
+  packages/did-mailto:
+    devDependencies:
+      '@types/mocha':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@types/node':
+        specifier: ^18.11.18
+        version: 18.11.18
+      hd-scripts:
+        specifier: ^4.1.0
+        version: 4.1.0
+      mocha:
+        specifier: ^10.2.0
+        version: 10.2.0
+
+  packages/filecoin-api:
+    dependencies:
+      '@ipld/dag-ucan':
+        specifier: ^3.3.2
+        version: 3.3.2
       '@ucanto/client':
         specifier: ^8.0.0
         version: 8.0.0
@@ -197,9 +267,9 @@ importers:
       '@web-std/blob':
         specifier: ^3.0.4
         version: 3.0.4
-      '@web3-storage/aggregate-client':
+      '@web3-storage/filecoin-client':
         specifier: workspace:^
-        version: link:../aggregate-client
+        version: link:../filecoin-client
       hd-scripts:
         specifier: ^4.1.0
         version: 4.1.0
@@ -209,8 +279,11 @@ importers:
       multiformats:
         specifier: ^11.0.2
         version: 11.0.2
+      p-wait-for:
+        specifier: ^5.0.2
+        version: 5.0.2
 
-  packages/aggregate-client:
+  packages/filecoin-client:
     dependencies:
       '@ipld/dag-cbor':
         specifier: ^9.0.0
@@ -279,73 +352,6 @@ importers:
       typescript:
         specifier: 4.9.5
         version: 4.9.5
-
-  packages/capabilities:
-    dependencies:
-      '@ucanto/core':
-        specifier: ^8.0.0
-        version: 8.0.0
-      '@ucanto/interface':
-        specifier: ^8.0.0
-        version: 8.0.0
-      '@ucanto/principal':
-        specifier: ^8.0.0
-        version: 8.0.0
-      '@ucanto/transport':
-        specifier: ^8.0.0
-        version: 8.0.0
-      '@ucanto/validator':
-        specifier: ^8.0.0
-        version: 8.0.0
-      '@web3-storage/data-segment':
-        specifier: ^2.2.0
-        version: 2.2.0
-    devDependencies:
-      '@types/assert':
-        specifier: ^1.5.6
-        version: 1.5.6
-      '@types/mocha':
-        specifier: ^10.0.0
-        version: 10.0.1
-      '@types/node':
-        specifier: ^18.11.18
-        version: 18.11.18
-      assert:
-        specifier: ^2.0.0
-        version: 2.0.0
-      hd-scripts:
-        specifier: ^4.0.0
-        version: 4.1.0
-      mocha:
-        specifier: ^10.2.0
-        version: 10.2.0
-      playwright-test:
-        specifier: ^8.1.2
-        version: 8.1.2
-      type-fest:
-        specifier: ^3.3.0
-        version: 3.3.0
-      typescript:
-        specifier: 4.9.5
-        version: 4.9.5
-      watch:
-        specifier: ^1.0.2
-        version: 1.0.2
-
-  packages/did-mailto:
-    devDependencies:
-      '@types/mocha':
-        specifier: ^10.0.1
-        version: 10.0.1
-      '@types/node':
-        specifier: ^18.11.18
-        version: 18.11.18
-      hd-scripts:
-        specifier: ^4.1.0
-        version: 4.1.0
-      mocha:
-        specifier: ^10.2.0
-        version: 10.2.0
 
   packages/upload-api:
     dependencies:
@@ -8808,7 +8814,6 @@ packages:
   /p-timeout@6.1.2:
     resolution: {integrity: sha512-UbD77BuZ9Bc9aABo74gfXhNvzC9Tx7SxtHSh1fxvx3jTLLYvmVhiQZZrJzqqU0jKbN32kb5VOKiLEQI/3bIjgQ==}
     engines: {node: '>=14.16'}
-    dev: false
 
   /p-try@2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
@@ -8827,6 +8832,13 @@ packages:
     dependencies:
       p-timeout: 6.1.2
     dev: false
+
+  /p-wait-for@5.0.2:
+    resolution: {integrity: sha512-lwx6u1CotQYPVju77R+D0vFomni/AqRfqLmqQ8hekklqZ6gAY9rONh7lBQ0uxWMkC2AuX9b2DVAl8To0NyP1JA==}
+    engines: {node: '>=12'}
+    dependencies:
+      p-timeout: 6.1.2
+    dev: true
 
   /package-json@6.5.0:
     resolution: {integrity: sha512-k3bdm2n25tkyxcjSKzB5x8kfVxlMdgsbPr0GkZcwHsLpba6cBjqCt1KlcChKEvxHIcTB1FVMuwoijZ26xex5MQ==}

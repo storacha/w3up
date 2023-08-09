@@ -9,10 +9,9 @@ import * as Utils from './utils.js'
 import * as Consumer from './consumer.js'
 import * as Customer from './customer.js'
 import * as Console from './console.js'
-import * as Offer from './offer.js'
-import * as Aggregate from './aggregate.js'
 import * as RateLimit from './rate-limit.js'
 import * as Subscription from './subscription.js'
+import * as Filecoin from './filecoin.js'
 
 export {
   Access,
@@ -26,10 +25,9 @@ export {
   Customer,
   Console,
   Utils,
-  Aggregate,
-  Offer,
   RateLimit,
   Subscription,
+  Filecoin,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
@@ -53,9 +51,6 @@ export const abilitiesAsStrings = [
   Access.access.can,
   Access.authorize.can,
   Access.session.can,
-  Aggregate.offer.can,
-  Aggregate.get.can,
-  Offer.arrange.can,
   Customer.get.can,
   Consumer.has.can,
   Consumer.get.can,
@@ -63,4 +58,8 @@ export const abilitiesAsStrings = [
   RateLimit.add.can,
   RateLimit.remove.can,
   RateLimit.list.can,
+  Filecoin.filecoinAdd.can,
+  Filecoin.aggregateAdd.can,
+  Filecoin.dealAdd.can,
+  Filecoin.chainTrackerInfo.can,
 ]

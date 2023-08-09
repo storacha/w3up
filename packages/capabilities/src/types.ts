@@ -10,12 +10,11 @@ import { add, list, remove, store } from './store.js'
 import * as UploadCaps from './upload.js'
 import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
-import * as AggregateCaps from './aggregate.js'
-import * as OfferCaps from './offer.js'
 import * as CustomerCaps from './customer.js'
 import * as ConsumerCaps from './consumer.js'
 import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
+import * as FilecoinCaps from './filecoin.js'
 
 export type { Unit }
 
@@ -157,29 +156,50 @@ export type SpaceRecoverValidation = InferInvokedCapability<
 >
 export type SpaceRecover = InferInvokedCapability<typeof recover>
 
-// Aggregate
-export interface AggregateGetSuccess {
-  deals: unknown[]
+// filecoin
+export type FILECOIN_PROCESSING_STATUS = 'pending' | 'done'
+export interface FilecoinAddSuccess {
+  piece: PieceLink
 }
-export interface AggregateGetFailure extends Ucanto.Failure {
-  name: 'AggregateNotFound'
-}
-
-export interface AggregateOfferSuccess {
-  status: string
-}
-export interface AggregateOfferFailure extends Ucanto.Failure {
-  name:
-    | 'AggregateOfferInvalidSize'
-    | 'AggregateOfferBlockNotFound'
-    | 'AggregateOfferInvalidUrl'
+export interface FilecoinAddFailure extends Ucanto.Failure {
+  name: string
 }
 
-export interface OfferArrangeSuccess {
-  status: string
+export interface AggregateAddSuccess {
+  piece: PieceLink
+  aggregate?: PieceLink
 }
-export interface OfferArrangeFailure extends Ucanto.Failure {
-  name: 'OfferArrangeNotFound'
+export interface AggregateAddFailure extends Ucanto.Failure {
+  name: string
+}
+
+export interface DealAddSuccess {
+  aggregate?: PieceLink
+}
+
+export type DealAddFailure = DealAddParseFailure | DealAddFailureWithBadPiece
+
+export interface DealAddParseFailure extends Ucanto.Failure {
+  name: string
+}
+
+export interface DealAddFailureWithBadPiece extends Ucanto.Failure {
+  piece?: PieceLink
+  cause?: DealAddFailureCause[] | unknown
+}
+
+export interface DealAddFailureCause {
+  piece: PieceLink
+  reason: string
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ChainTrackerInfoSuccess {
+  // TODO
+}
+
+export interface ChainTrackerInfoFailure extends Ucanto.Failure {
+  // TODO
 }
 
 // Voucher Protocol
@@ -195,12 +215,17 @@ export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
-// Aggregate
-export type AggregateOffer = InferInvokedCapability<typeof AggregateCaps.offer>
-export type AggregateGet = InferInvokedCapability<typeof AggregateCaps.get>
-// Offer
-export type OfferArrange = InferInvokedCapability<typeof OfferCaps.arrange>
-
+// Filecoin
+export type FilecoinAdd = InferInvokedCapability<
+  typeof FilecoinCaps.filecoinAdd
+>
+export type AggregateAdd = InferInvokedCapability<
+  typeof FilecoinCaps.aggregateAdd
+>
+export type DealAdd = InferInvokedCapability<typeof FilecoinCaps.dealAdd>
+export type ChainTrackerInfo = InferInvokedCapability<
+  typeof FilecoinCaps.chainTrackerInfo
+>
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
@@ -226,14 +251,15 @@ export type AbilitiesArray = [
   Access['can'],
   AccessAuthorize['can'],
   AccessSession['can'],
-  AggregateOffer['can'],
-  AggregateGet['can'],
-  OfferArrange['can'],
   CustomerGet['can'],
   ConsumerHas['can'],
   ConsumerGet['can'],
   SubscriptionGet['can'],
   RateLimitAdd['can'],
   RateLimitRemove['can'],
-  RateLimitList['can']
+  RateLimitList['can'],
+  FilecoinAdd['can'],
+  AggregateAdd['can'],
+  DealAdd['can'],
+  ChainTrackerInfo['can']
 ]
