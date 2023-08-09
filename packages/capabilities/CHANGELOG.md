@@ -1,5 +1,32 @@
 # Changelog
 
+## [9.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v8.0.0...capabilities-v9.0.0) (2023-08-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* introduce new administrative capabilities ([#832](https://github.com/web3-storage/w3up/issues/832))
+
+### Features
+
+* introduce new administrative capabilities ([#832](https://github.com/web3-storage/w3up/issues/832)) ([7b8037a](https://github.com/web3-storage/w3up/commit/7b8037a6ab92f830af4aa7ba07a91bc2a20c0d8c))
+
+## [8.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v7.0.0...capabilities-v8.0.0) (2023-08-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* update aggregation capabilitites to use height instead of size together with client and api ([#831](https://github.com/web3-storage/w3up/issues/831))
+
+### Features
+
+* w3filecoin new client and api ([#848](https://github.com/web3-storage/w3up/issues/848)) ([7a58fbe](https://github.com/web3-storage/w3up/commit/7a58fbe8f6c6fbe98e700b7affd5825ddccf6547))
+
+
+### Bug Fixes
+
+* update aggregation capabilitites to use height instead of size together with client and api ([#831](https://github.com/web3-storage/w3up/issues/831)) ([31730f0](https://github.com/web3-storage/w3up/commit/31730f0cb37b16f12f778ee8d2ecb5693bb2cd23))
+
 ## [7.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v6.0.1...capabilities-v7.0.0) (2023-07-06)
 
 

@@ -2,18 +2,28 @@ import pRetry from 'p-retry'
 import * as Server from '@ucanto/server'
 import * as Upload from '@web3-storage/capabilities/upload'
 import * as API from '../types.js'
+import { allocate } from '../space-allocate.js'
 
 /**
  * @param {API.UploadServiceContext} context
  * @returns {API.ServiceMethod<API.UploadAdd, API.UploadAddOk, API.Failure>}
  */
-export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
+export function uploadAddProvider(context) {
   return Server.provide(Upload.add, async ({ capability, invocation }) => {
+    const { uploadTable, dudewhereBucket } = context
     const { root, shards } = capability.nb
-    const space = Server.DID.parse(capability.with)
+    const space = /** @type {import('@ucanto/interface').DIDKey} */ (
+      Server.DID.parse(capability.with).did()
+    )
     const issuer = invocation.issuer.did()
-    const allocated = await access.allocateSpace(invocation)
-
+    const allocated = await allocate(
+      {
+        capability: {
+          with: space
+        },
+      },
+      context
+    )
     if (allocated.error) {
       return allocated
     }
@@ -21,7 +31,7 @@ export function uploadAddProvider({ access, uploadTable, dudewhereBucket }) {
     const [res] = await Promise.all([
       // Store in Database
       uploadTable.insert({
-        space: space.did(),
+        space,
         root,
         shards,
         issuer,

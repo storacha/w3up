@@ -24,3 +24,21 @@ export const has = capability({
     )
   },
 })
+
+/**
+ * Capability can be invoked by a provider to get information about a consumer.
+ */
+export const get = capability({
+  can: 'consumer/get',
+  with: ProviderDID,
+  nb: struct({
+    consumer: SpaceDID,
+  }),
+  derives: (child, parent) => {
+    return (
+      and(equalWith(child, parent)) ||
+      and(equal(child.nb.consumer, parent.nb.consumer, 'consumer')) ||
+      ok({})
+    )
+  },
+})

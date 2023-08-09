@@ -1,23 +1,29 @@
 import * as Server from '@ucanto/server'
 import * as Store from '@web3-storage/capabilities/store'
 import * as API from '../types.js'
+import { allocate } from '../space-allocate.js'
 
 /**
  * @param {API.StoreServiceContext} context
  * @returns {API.ServiceMethod<API.StoreAdd, API.StoreAddOk, API.Failure>}
  */
-export function storeAddProvider({
-  access,
-  storeTable,
-  carStoreBucket,
-  maxUploadSize,
-}) {
+export function storeAddProvider(context) {
+  const { storeTable, carStoreBucket, maxUploadSize } = context
   return Server.provide(Store.add, async ({ capability, invocation }) => {
     const { link, origin, size } = capability.nb
-    const space = Server.DID.parse(capability.with).did()
+    const space = /** @type {import('@ucanto/interface').DIDKey} */ (
+      Server.DID.parse(capability.with).did()
+    )
     const issuer = invocation.issuer.did()
     const [allocated, carIsLinkedToAccount, carExists] = await Promise.all([
-      access.allocateSpace(invocation),
+      allocate(
+        {
+          capability: {
+            with: space
+          },
+        },
+        context
+      ),
       storeTable.exists(space, link),
       carStoreBucket.has(link),
     ])

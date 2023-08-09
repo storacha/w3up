@@ -1,6 +1,5 @@
 import type {
   Failure,
-  Invocation,
   ServiceMethod,
   UCANLink,
   HandlerExecutionError,
@@ -21,6 +20,7 @@ import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
+import { RateLimitsStorage as RateLimits } from './types/rate-limits'
 
 export type ValidationEmailSend = {
   to: string
@@ -28,7 +28,6 @@ export type ValidationEmailSend = {
 }
 
 export type SpaceDID = DIDKey
-export type AccountDID = DID<'mailto'>
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
 export interface SpaceProviderRegistry {
@@ -68,6 +67,27 @@ import {
   AccessConfirm,
   AccessConfirmSuccess,
   AccessConfirmFailure,
+  ConsumerHas,
+  ConsumerHasSuccess,
+  ConsumerHasFailure,
+  ConsumerGet,
+  ConsumerGetSuccess,
+  ConsumerGetFailure,
+  CustomerGet,
+  CustomerGetSuccess,
+  CustomerGetFailure,
+  SubscriptionGet,
+  SubscriptionGetSuccess,
+  SubscriptionGetFailure,
+  RateLimitAdd,
+  RateLimitAddSuccess,
+  RateLimitAddFailure,
+  RateLimitRemove,
+  RateLimitRemoveSuccess,
+  RateLimitRemoveFailure,
+  RateLimitList,
+  RateLimitListSuccess,
+  RateLimitListFailure,
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
@@ -83,6 +103,7 @@ export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
 } from './types/delegations'
+export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
 export interface Service {
   store: {
@@ -122,17 +143,30 @@ export interface Service {
     >
   }
   consumer: {
-    has: ServiceMethod<
-      InferInvokedCapability<typeof Capabilities.Consumer.has>,
-      boolean,
-      Failure
-    >
+    has: ServiceMethod<ConsumerHas, ConsumerHasSuccess, ConsumerHasFailure>
+    get: ServiceMethod<ConsumerGet, ConsumerGetSuccess, ConsumerGetFailure>
   }
   customer: {
+    get: ServiceMethod<CustomerGet, CustomerGetSuccess, CustomerGetFailure>
+  }
+  subscription: {
     get: ServiceMethod<
-      InferInvokedCapability<typeof Capabilities.Customer.get>,
-      CustomerGetOk,
-      CustomerGetError
+      SubscriptionGet,
+      SubscriptionGetSuccess,
+      SubscriptionGetFailure
+    >
+  }
+  'rate-limit': {
+    add: ServiceMethod<RateLimitAdd, RateLimitAddSuccess, RateLimitAddFailure>
+    remove: ServiceMethod<
+      RateLimitRemove,
+      RateLimitRemoveSuccess,
+      RateLimitRemoveFailure
+    >
+    list: ServiceMethod<
+      RateLimitList,
+      RateLimitListSuccess,
+      RateLimitListFailure
     >
   }
   provider: {
@@ -143,18 +177,17 @@ export interface Service {
   }
 }
 
-export interface StoreServiceContext {
+export type StoreServiceContext = SpaceServiceContext & {
   maxUploadSize: number
 
   storeTable: StoreTable
   carStoreBucket: CarStoreBucket
-  access: AccessVerifier
 }
 
-export interface UploadServiceContext {
+export type UploadServiceContext = ConsumerServiceContext & SpaceServiceContext & {
+  signer: EdSigner.Signer
   uploadTable: UploadTable
   dudewhereBucket: DudewhereBucket
-  access: AccessVerifier
 }
 
 export interface AccessClaimContext {
@@ -166,6 +199,7 @@ export type AccessServiceContext = AccessClaimContext & {
   email: Email
   url: URL
   provisionsStorage: Provisions
+  rateLimitsStorage: RateLimits
 }
 
 export interface ConsumerServiceContext {
@@ -183,10 +217,21 @@ export interface ConsoleServiceContext {}
 export interface SpaceServiceContext {
   provisionsStorage: Provisions
   delegationsStorage: Delegations
+  rateLimitsStorage: RateLimits
 }
 
 export interface ProviderServiceContext {
   provisionsStorage: Provisions
+  rateLimitsStorage: RateLimits
+}
+
+export interface SubscriptionServiceContext {
+  signer: EdSigner.Signer
+  provisionsStorage: Provisions
+}
+
+export interface RateLimitServiceContext {
+  rateLimitsStorage: RateLimits
 }
 
 export interface ServiceContext
@@ -197,6 +242,8 @@ export interface ServiceContext
     ProviderServiceContext,
     SpaceServiceContext,
     StoreServiceContext,
+    SubscriptionServiceContext,
+    RateLimitServiceContext,
     UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {
@@ -217,7 +264,6 @@ export interface UcantoServerTestContext
 
 export interface StoreTestContext {
   testStoreTable: TestStoreTable
-  testSpaceRegistry: TestSpaceRegistry
 }
 
 export interface UploadTestContext {}
@@ -291,16 +337,11 @@ export type SpaceInfoResult = {
 export interface UnknownProvider extends Failure {
   name: 'UnknownProvider'
 }
-
-export type CustomerGetError = UnknownProvider
-
-export interface CustomerGetOk {
-  customer: null | {
-    did: AccountDID
-  }
-}
-
-export type CustomerGetResult = Result<CustomerGetOk, CustomerGetError>
+export type CustomerGetResult = Result<CustomerGetSuccess, CustomerGetFailure>
+export type SubscriptionGetResult = Result<
+  SubscriptionGetSuccess,
+  SubscriptionGetFailure
+>
 
 export interface StoreAddInput {
   space: DID
@@ -377,18 +418,6 @@ export interface ListResponse<R> {
   size: number
   results: R[]
 }
-
-export interface AccessVerifier {
-  /**
-   * Determines if the issuer of the invocation has received a delegation
-   * allowing them to issue the passed invocation.
-   */
-  allocateSpace: (
-    invocation: Invocation
-  ) => Promise<Result<AllocateOk, Failure>>
-}
-
-interface AllocateOk {}
 
 export interface TestSpaceRegistry {
   /**
