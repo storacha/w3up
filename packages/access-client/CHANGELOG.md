@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.1.0](https://github.com/web3-storage/w3up/compare/access-v15.0.0...access-v15.1.0) (2023-08-09)
+
+
+### Features
+
+* In-Memory Driver ([#847](https://github.com/web3-storage/w3up/issues/847)) ([23bb83a](https://github.com/web3-storage/w3up/commit/23bb83a3a8d4761385819f4d8af194d9f52466b0))
+
 ## [15.0.0](https://github.com/web3-storage/w3up/compare/access-v14.0.0...access-v15.0.0) (2023-07-21)
 
 
