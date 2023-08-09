@@ -34,16 +34,19 @@ export const add = async (
   const isBlocked = await areAnyBlocked(
     rateLimits,
     emailAndDomainFromMailtoDid(
-      /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+      /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */(
         accountDID
       )
     )
   )
+  // If we get an error here we return an error rather than continuing: users can
+  // always retry and we don't really want to let them provision if we're not sure they
+  // are allowed to. It might be worth reconsidering this in the future.f
   if (isBlocked.error || isBlocked.ok) {
     return {
       error: {
         name: 'AccountBlocked',
-        message: `Account identified by {capability.nb.iss} is blocked`,
+        message: `Account identified by ${accountDID} is blocked`,
       },
     }
   }

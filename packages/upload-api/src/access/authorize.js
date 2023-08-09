@@ -25,6 +25,9 @@ export const authorize = async ({ capability }, ctx) => {
       )
     )
   )
+  // If we get an error here we return an error rather than continuing: users can
+  // always retry and we don't have an easy way to invalidate this authorization once
+  // it's granted. It might be worth reconsidering this in the future.
   if (isBlocked.error || isBlocked.ok) {
     return {
       error: {
