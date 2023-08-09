@@ -6,14 +6,14 @@ import { Consumer } from '@web3-storage/capabilities'
  * @param {API.ConsumerServiceContext} context
  */
 export const provide = (context) =>
-  Provider.provide(Consumer.has, (input) => has(input, context))
+  Provider.provide(Consumer.get, (input) => get(input, context))
 
 /**
- * @param {{capability: {with: API.ProviderDID, nb: { consumer: API.DIDKey }}}} input
+ * @param {API.Input<Consumer.get>} input
  * @param {API.ConsumerServiceContext} context
- * @returns {Promise<API.Result<API.ConsumerHasSuccess, API.ConsumerHasFailure>>}
+ * @returns {Promise<API.Result<API.ConsumerGetSuccess, API.ConsumerGetFailure>>}
  */
-export const has = async ({ capability }, context) => {
+const get = async ({ capability }, context) => {
   if (capability.with !== context.signer.did()) {
     return Provider.fail(
       `Expected with to be ${context.signer.did()}} instead got ${
@@ -22,5 +22,8 @@ export const has = async ({ capability }, context) => {
     )
   }
 
-  return context.provisionsStorage.hasStorageProvider(capability.nb.consumer)
+  return context.provisionsStorage.getConsumer(
+    capability.with,
+    capability.nb.consumer
+  )
 }

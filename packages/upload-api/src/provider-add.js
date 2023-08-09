@@ -2,6 +2,8 @@ import * as API from './types.js'
 import * as Server from '@ucanto/server'
 import { Provider } from '@web3-storage/capabilities'
 import * as validator from '@ucanto/validator'
+import { mailtoDidToDomain, mailtoDidToEmail } from './utils/did-mailto.js'
+import { ensureRateLimitAbove } from './utils/rate-limits.js'
 
 /**
  * @param {API.ProviderServiceContext} ctx
@@ -15,7 +17,7 @@ export const provide = (ctx) =>
  */
 export const add = async (
   { capability, invocation },
-  { provisionsStorage: provisions }
+  { provisionsStorage: provisions, rateLimitsStorage: rateLimits }
 ) => {
   const {
     nb: { consumer, provider },
@@ -26,6 +28,24 @@ export const add = async (
       error: {
         name: 'Unauthorized',
         message: 'Issuer must be a mailto DID',
+      },
+    }
+  }
+  const accountMailtoDID =
+    /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+      accountDID
+    )
+  const rateLimitResult = await ensureRateLimitAbove(
+    rateLimits,
+    [mailtoDidToDomain(accountMailtoDID), mailtoDidToEmail(accountMailtoDID)],
+    0
+  )
+
+  if (rateLimitResult.error) {
+    return {
+      error: {
+        name: 'AccountBlocked',
+        message: `Account identified by ${accountDID} is blocked`,
       },
     }
   }
