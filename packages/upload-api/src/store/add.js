@@ -16,14 +16,10 @@ export function storeAddProvider(context) {
     )
     const issuer = invocation.issuer.did()
     const [allocated, carIsLinkedToAccount, carExists] = await Promise.all([
-      // TODO: is the right way to call this - maybe it should be an actual UCAN execution?
       allocate(
         {
           capability: {
-            with: space,
-            nb: {
-              size,
-            },
+            with: space
           },
         },
         context

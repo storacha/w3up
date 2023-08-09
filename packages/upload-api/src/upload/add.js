@@ -2,7 +2,7 @@ import pRetry from 'p-retry'
 import * as Server from '@ucanto/server'
 import * as Upload from '@web3-storage/capabilities/upload'
 import * as API from '../types.js'
-import { has as hasProvider } from '../consumer/has.js'
+import { allocate } from '../space-allocate.js'
 
 /**
  * @param {API.UploadServiceContext} context
@@ -10,34 +10,22 @@ import { has as hasProvider } from '../consumer/has.js'
  */
 export function uploadAddProvider(context) {
   return Server.provide(Upload.add, async ({ capability, invocation }) => {
-    const { uploadTable, dudewhereBucket, signer } = context
-    const serviceDID = /** @type {import('../types.js').ProviderDID} */ (
-      signer.did()
-    )
+    const { uploadTable, dudewhereBucket } = context
     const { root, shards } = capability.nb
     const space = /** @type {import('@ucanto/interface').DIDKey} */ (
       Server.DID.parse(capability.with).did()
     )
     const issuer = invocation.issuer.did()
-    const hasProviderResult = await hasProvider(
+    const allocated = await allocate(
       {
         capability: {
-          with: serviceDID,
-          nb: { consumer: space },
+          with: space
         },
       },
       context
     )
-    if (hasProviderResult.error) {
-      return hasProviderResult
-    }
-    if (hasProviderResult.ok === false) {
-      return {
-        error: {
-          name: 'NoStorageProvider',
-          message: `${space} has no storage provider`,
-        },
-      }
+    if (allocated.error) {
+      return allocated
     }
 
     const [res] = await Promise.all([

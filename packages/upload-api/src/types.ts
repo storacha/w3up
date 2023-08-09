@@ -184,7 +184,7 @@ export type StoreServiceContext = SpaceServiceContext & {
   carStoreBucket: CarStoreBucket
 }
 
-export type UploadServiceContext = ConsumerServiceContext & {
+export type UploadServiceContext = ConsumerServiceContext & SpaceServiceContext & {
   signer: EdSigner.Signer
   uploadTable: UploadTable
   dudewhereBucket: DudewhereBucket
