@@ -52,8 +52,11 @@ export const abilitiesAsStrings = [
   RateLimit.add.can,
   RateLimit.remove.can,
   RateLimit.list.can,
+  Filecoin.filecoinQueue.can,
   Filecoin.filecoinAdd.can,
+  Filecoin.aggregateQueue.can,
   Filecoin.aggregateAdd.can,
+  Filecoin.dealQueue.can,
   Filecoin.dealAdd.can,
   Filecoin.chainTrackerInfo.can,
 ]

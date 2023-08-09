@@ -21,7 +21,39 @@ export const connection = connect({
 })
 
 /**
- * Adds a piece to the aggregator system of the filecoin pipeline.
+ * Queues a piece to the aggregator system of the filecoin pipeline.
+ *
+ * @param {import('./types.js').InvocationConfig} conf - Configuration
+ * @param {import('@web3-storage/data-segment').PieceLink} piece
+ * @param {string} group
+ * @param {import('./types.js').RequestOptions<AggregatorService>} [options]
+ */
+export async function aggregateQueue(
+  { issuer, with: resource, proofs, audience },
+  piece,
+  group,
+  options = {}
+) {
+  /* c8 ignore next */
+  const conn = options.connection ?? connection
+
+  const invocation = FilecoinCapabilities.aggregateQueue.invoke({
+    issuer,
+    /* c8 ignore next */
+    audience: audience ?? services.AGGREGATOR.principal,
+    with: resource,
+    nb: {
+      piece,
+      group,
+    },
+    proofs,
+  })
+
+  return await invocation.execute(conn)
+}
+
+/**
+ * Add a piece to the aggregator system of the filecoin pipeline.
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece

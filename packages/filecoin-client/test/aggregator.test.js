@@ -5,7 +5,7 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 
-import { aggregateAdd } from '../src/aggregator.js'
+import { aggregateQueue, aggregateAdd } from '../src/aggregator.js'
 
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -13,12 +13,11 @@ import { OperationFailed, OperationErrorName } from './helpers/errors.js'
 import { serviceProvider as aggregatorService } from './fixtures.js'
 
 describe('aggregate/add', () => {
-  it('storefront adds a filecoin piece to aggregator, getting the piece queued', async () => {
+  it('storefront queues a filecoin piece for aggregator to handle', async () => {
     const { storefront } = await getContext()
 
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const storefrontId = storefront.did()
     const group = 'did:web:free.web3.storage'
 
     /** @type {import('@web3-storage/capabilities/types').AggregateAddSuccess} */
@@ -29,15 +28,15 @@ describe('aggregate/add', () => {
     // Create Ucanto service
     const service = mockService({
       aggregate: {
-        add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.aggregateAdd,
+        queue: Server.provideAdvanced({
+          capability: FilecoinCapabilities.aggregateQueue,
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), storefront.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.strictEqual(
               invCap.can,
-              FilecoinCapabilities.aggregateAdd.can
+              FilecoinCapabilities.aggregateQueue.can
             )
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
@@ -51,25 +50,31 @@ describe('aggregate/add', () => {
                 issuer: context.id,
                 audience: context.id,
                 with: context.id.did(),
-                nb: invCap.nb,
+                nb: {
+                  ...invCap.nb,
+                  // add storefront
+                  storefront: invCap.with,
+                },
               })
               .delegate()
 
             return Server.ok(pieceAddResponse).join(fx.link())
           },
         }),
+        add: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 
     // invoke piece add from storefront
-    const res = await aggregateAdd(
+    const res = await aggregateQueue(
       {
         issuer: storefront,
         with: storefront.did(),
         audience: aggregatorService,
       },
       cargo.link.link(),
-      storefrontId,
       group,
       { connection: getConnection(service).connection }
     )
@@ -115,6 +120,9 @@ describe('aggregate/add', () => {
             return Server.ok(pieceAddResponse)
           },
         }),
+        queue: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 
@@ -175,6 +183,9 @@ describe('aggregate/add', () => {
             }
           },
         }),
+        queue: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 

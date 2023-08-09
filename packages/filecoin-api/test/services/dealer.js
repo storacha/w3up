@@ -12,7 +12,7 @@ import { createServer, connect } from '../../src/dealer.js'
  * @type {API.Tests<API.DealerServiceContext>}
  */
 export const test = {
-  'aggregate/add inserts piece into processing queue': async (
+  'aggregate/queue inserts piece into processing queue': async (
     assert,
     context
   ) => {
@@ -31,7 +31,7 @@ export const test = {
     const label = 'label'
 
     // aggregator invocation
-    const pieceAddInv = Filecoin.dealAdd.invoke({
+    const pieceAddInv = Filecoin.dealQueue.invoke({
       issuer: aggregator,
       audience: connection.id,
       with: aggregator.did(),

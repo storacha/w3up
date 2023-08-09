@@ -16,12 +16,15 @@ export function mockService(impl) {
   return {
     filecoin: {
       add: withCallCount(impl.filecoin?.add ?? notImplemented),
+      queue: withCallCount(impl.filecoin?.queue ?? notImplemented),
     },
     aggregate: {
       add: withCallCount(impl.aggregate?.add ?? notImplemented),
+      queue: withCallCount(impl.aggregate?.queue ?? notImplemented),
     },
     deal: {
       add: withCallCount(impl.deal?.add ?? notImplemented),
+      queue: withCallCount(impl.deal?.queue ?? notImplemented),
     },
     'chain-tracker': {
       info: withCallCount(impl['chain-tracker']?.info ?? notImplemented),

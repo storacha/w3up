@@ -6,7 +6,7 @@ import * as CAR from '@ucanto/transport/car'
 import { CBOR } from '@ucanto/core'
 import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 
-import { dealAdd } from '../src/dealer.js'
+import { dealQueue, dealAdd } from '../src/dealer.js'
 
 import { randomAggregate } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -31,13 +31,13 @@ describe('dealer.add', () => {
     // Create Ucanto service
     const service = mockService({
       deal: {
-        add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.dealAdd,
+        queue: Server.provideAdvanced({
+          capability: FilecoinCapabilities.dealQueue,
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), aggregator.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
+            assert.strictEqual(invCap.can, FilecoinCapabilities.dealQueue.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
 
@@ -63,11 +63,14 @@ describe('dealer.add', () => {
             return Server.ok(dealAddResponse).join(fx.link())
           },
         }),
+        add: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 
     // invoke piece add from storefront
-    const res = await dealAdd(
+    const res = await dealQueue(
       {
         issuer: aggregator,
         with: aggregator.did(),
@@ -126,6 +129,9 @@ describe('dealer.add', () => {
             return Server.ok(dealAddResponse)
           },
         }),
+        queue: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 
@@ -192,6 +198,9 @@ describe('dealer.add', () => {
             }
           },
         }),
+        queue: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 

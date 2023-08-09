@@ -14,59 +14,6 @@ import { QueueOperationFailed, StoreOperationFailed } from './errors.js'
 export const add = async ({ capability }, context) => {
   const { piece, storefront, group } = capability.nb
 
-  // If self issued we accept without verification
-  return context.id.did() === capability.with
-    ? accept(piece, storefront, group, context)
-    : enqueue(piece, storefront, group, context)
-}
-
-/**
- * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {string} storefront
- * @param {string} group
- * @param {API.AggregatorServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
- */
-async function enqueue(piece, storefront, group, context) {
-  const queued = await context.addQueue.add({
-    piece,
-    storefront,
-    group,
-    insertedAt: Date.now(),
-  })
-  if (queued.error) {
-    return {
-      error: new QueueOperationFailed(queued.error.message),
-    }
-  }
-
-  // Create effect for receipt
-  const fx = await FilecoinCapabilities.aggregateAdd
-    .invoke({
-      issuer: context.id,
-      audience: context.id,
-      with: context.id.did(),
-      nb: {
-        piece,
-        storefront,
-        group,
-      },
-    })
-    .delegate()
-
-  return Server.ok({
-    piece,
-  }).join(fx.link())
-}
-
-/**
- * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {string} storefront
- * @param {string} group
- * @param {API.AggregatorServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
- */
-async function accept(piece, storefront, group, context) {
   // Store piece into the store. Store events MAY be used to propagate piece over
   const put = await context.pieceStore.put({
     piece,
@@ -89,11 +36,53 @@ async function accept(piece, storefront, group, context) {
 }
 
 /**
+ * @param {API.Input<FilecoinCapabilities.aggregateQueue>} input
+ * @param {API.AggregatorServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.AggregateAddSuccess, API.AggregateAddFailure> | API.UcantoInterface.JoinBuilder<API.AggregateAddSuccess>>}
+ */
+export const queue = async ({ capability }, context) => {
+  const { piece, group } = capability.nb
+
+  const queued = await context.addQueue.add({
+    piece,
+    group,
+    insertedAt: Date.now(),
+  })
+  if (queued.error) {
+    return {
+      error: new QueueOperationFailed(queued.error.message),
+    }
+  }
+
+  // Create effect for receipt
+  const fx = await FilecoinCapabilities.aggregateAdd
+    .invoke({
+      issuer: context.id,
+      audience: context.id,
+      with: context.id.did(),
+      nb: {
+        piece,
+        storefront: capability.with,
+        group,
+      },
+    })
+    .delegate()
+
+  return Server.ok({
+    piece,
+  }).join(fx.link())
+}
+
+/**
  * @param {API.AggregatorServiceContext} context
  */
 export function createService(context) {
   return {
     aggregate: {
+      queue: Server.provideAdvanced({
+        capability: FilecoinCapabilities.aggregateQueue,
+        handler: (input) => queue(input, context),
+      }),
       add: Server.provideAdvanced({
         capability: FilecoinCapabilities.aggregateAdd,
         handler: (input) => add(input, context),

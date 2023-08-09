@@ -22,6 +22,46 @@ export const connection = connect({
 })
 
 /**
+ * Queues a piece (aggregate) to the dealer system of the filecoin pipeline to offer to SPs.
+ *
+ * @param {import('./types.js').InvocationConfig} conf - Configuration
+ * @param {import('@web3-storage/data-segment').PieceLink} aggregate
+ * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
+ * @param {string} storefront
+ * @param {string} label
+ * @param {import('./types.js').RequestOptions<DealerService>} [options]
+ */
+export async function dealQueue(
+  { issuer, with: resource, proofs, audience },
+  aggregate,
+  pieces,
+  storefront,
+  label,
+  options = {}
+) {
+  /* c8 ignore next */
+  const conn = options.connection ?? connection
+
+  const block = await CBOR.write(pieces)
+  const invocation = FilecoinCapabilities.dealQueue.invoke({
+    issuer,
+    /* c8 ignore next */
+    audience: audience ?? services.AGGREGATOR.principal,
+    with: resource,
+    nb: {
+      aggregate,
+      pieces: block.cid,
+      storefront,
+      label,
+    },
+    proofs,
+  })
+  invocation.attach(block)
+
+  return await invocation.execute(conn)
+}
+
+/**
  * Add a piece (aggregate) to the dealer system of the filecoin pipeline to offer to SPs.
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
