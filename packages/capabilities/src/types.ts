@@ -33,6 +33,9 @@ export interface UnknownProvider extends Ucanto.Failure {
   did: DID
 }
 
+/**
+ * @see https://github.com/filecoin-project/FIPs/pull/758/files
+ */
 export type PieceLinkSchema = Schema.Schema<PieceLink>
 
 // Access

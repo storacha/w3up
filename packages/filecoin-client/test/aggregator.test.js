@@ -75,7 +75,7 @@ describe('aggregate/add', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, pieceAddResponse)
+    assert.ok(res.out.ok.piece.equals(pieceAddResponse.piece))
     // includes effect fx in receipt
     assert.ok(res.fx.join)
   })
@@ -132,7 +132,7 @@ describe('aggregate/add', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, pieceAddResponse)
+    assert.ok(res.out.ok.piece.equals(pieceAddResponse.piece))
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })
