@@ -93,7 +93,7 @@ async function enqueue(
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
 async function accept(aggregate, pieces, storefront, label, context) {
-  // TODO: failure - needs to read from store
+  // TODO: failure - needs to read from the store
 
   // Store aggregate into the store. Store events MAY be used to propagate aggregate over
   const put = await context.offerStore.put({

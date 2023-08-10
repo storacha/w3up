@@ -21,7 +21,7 @@ export const connection = connect({
 })
 
 /**
- * Add a piece to the aggregator system of the filecoin pipeline.
+ * Adds a piece to the aggregator system of the filecoin pipeline.
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece
