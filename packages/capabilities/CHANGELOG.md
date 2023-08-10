@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v9.0.0...capabilities-v9.0.1) (2023-08-10)
+
+
+### Bug Fixes
+
+* upgrade data segment ([#850](https://github.com/web3-storage/w3up/issues/850)) ([fba281f](https://github.com/web3-storage/w3up/commit/fba281f8cd3ce2a0a00ffd50a4a73d7701b489ce))
+
 ## [9.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v8.0.0...capabilities-v9.0.0) (2023-08-09)
 
 
