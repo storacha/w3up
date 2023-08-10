@@ -19,7 +19,7 @@ export function uploadAddProvider(context) {
     const allocated = await allocate(
       {
         capability: {
-          with: space
+          with: space,
         },
       },
       context

@@ -10,8 +10,8 @@
  */
 
 import * as Store from './store.js'
-import { capability, URI, Schema, ok, fail } from '@ucanto/validator'
-import { canDelegateURI, equalWith, and } from './utils.js'
+import { capability, Schema, ok, fail } from '@ucanto/validator'
+import { equalWith } from './utils.js'
 import * as Upload from './upload.js'
 export { top } from './top.js'
 
@@ -44,29 +44,6 @@ export const info = Store.add
     }),
     derives: equalWith,
   })
-
-export const recoverValidation = capability({
-  can: 'space/recover-validation',
-  with: SpaceDID,
-  nb: Schema.struct({
-    identity: URI.match({ protocol: 'mailto:' }),
-  }),
-})
-
-export const recover = capability({
-  can: 'space/recover',
-  with: Schema.did(),
-  nb: Schema.struct({
-    identity: URI.match({ protocol: 'mailto:' }),
-  }),
-  derives: (child, parent) => {
-    return (
-      and(equalWith(child, parent)) ||
-      and(canDelegateURI(child.nb.identity, parent.nb.identity)) ||
-      ok({})
-    )
-  },
-})
 
 export const allocate = capability({
   can: 'space/allocate',
