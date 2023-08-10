@@ -177,7 +177,7 @@ describe('store capabilities', function () {
           size: 2048,
           link: parseLink('bafkqaaa'),
         },
-        proofs: [await delegation],
+        proofs: [delegation],
       })
 
       const result = await access(await add.delegate(), {

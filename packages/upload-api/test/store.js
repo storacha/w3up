@@ -7,6 +7,8 @@ import { base64pad } from 'multiformats/bases/base64'
 import * as Link from '@ucanto/core/link'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import { createSpace, registerSpace } from './util.js'
+import { Absentee } from '@ucanto/principal'
+import { provisionProvider } from './helpers/utils.js'
 
 /**
  * @type {API.Tests}
@@ -277,7 +279,7 @@ export const test = {
     context
   ) => {
     const alice = await Signer.generate()
-    const { proof, spaceDid } = await createSpace(alice)
+    const { proof, space, spaceDid } = await createSpace(alice)
     const connection = connect({
       id: context.id,
       channel: createServer(context),
@@ -301,7 +303,15 @@ export const test = {
     assert.equal(storeAdd.out.error?.message.includes('no storage'), true)
 
     // Register space and retry
-    await context.testSpaceRegistry.registerSpace(spaceDid)
+    const account = Absentee.from({ id: 'did:mailto:test.web3.storage:alice' })
+    const providerAdd = await provisionProvider({
+      service: /** @type {API.Signer<API.DID<'web'>>} */ (context.signer),
+      agent: alice,
+      space,
+      account,
+      connection,
+    })
+    assert.ok(providerAdd.out.ok)
 
     const retryStoreAdd = await StoreCapabilities.add
       .invoke({

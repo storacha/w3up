@@ -54,7 +54,12 @@ export class ProvisionsStorage {
         storedItem.consumer !== item.consumer ||
         storedItem.cause.link() !== item.cause.link())
     ) {
-      return { error: new Error(`could not store ${JSON.stringify(item)}`) }
+      return {
+        error: {
+          name: 'Error',
+          message: `could not store item - a provision with that key already exists`,
+        },
+      }
     } else {
       this.provisions[itemKey(item)] = item
       return { ok: {} }
@@ -71,7 +76,65 @@ export class ProvisionsStorage {
     const exists = Object.values(this.provisions).find(
       (p) => p.provider === provider && p.customer === customer
     )
-    return { ok: exists ? { did: customer } : null }
+    return exists
+      ? { ok: { did: customer } }
+      : {
+          error: {
+            name: 'CustomerNotFound',
+            message: 'customer does not exist',
+          },
+        }
+  }
+
+  /**
+   *
+   * @param {Types.ProviderDID} provider
+   * @param {string} subscription
+   * @returns
+   */
+  async getSubscription(provider, subscription) {
+    const provision = Object.values(this.provisions).find(
+      (p) => p.customer === subscription && p.provider === provider
+    )
+    if (provision) {
+      return { ok: provision }
+    } else {
+      return {
+        error: {
+          name: 'SubscriptionNotFound',
+          message: `could not find ${subscription}`,
+        },
+      }
+    }
+  }
+
+  /**
+   *
+   * @param {Types.ProviderDID} provider
+   * @param {string} consumer
+   * @returns
+   */
+  async getConsumer(provider, consumer) {
+    const provision = Object.values(this.provisions).find(
+      (p) => p.consumer === consumer && p.provider === provider
+    )
+    if (provision) {
+      return {
+        ok: {
+          did: provision.consumer,
+          allocated: 0,
+          total: 100,
+          subscription: provision.customer,
+        },
+      }
+    } else {
+      return {
+        error: {
+          name: 'ConsumerNotFound',
+          message: `could not find ${consumer}`,
+        },
+      }
+    }
   }
 
   async count() {

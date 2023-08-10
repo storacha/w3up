@@ -19,16 +19,11 @@ export const delegate = async ({ capability, invocation }, context) => {
   if (delegated.error) {
     return delegated
   }
-  const size = delegated.ok.reduce(
-    (total, proof) => total + proof.root.bytes.byteLength,
-    0
-  )
 
   const result = await Allocator.allocate(
     {
       capability: {
-        with: capability.with,
-        nb: { size },
+        with: capability.with
       },
     },
     context

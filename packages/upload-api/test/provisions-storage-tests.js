@@ -83,7 +83,6 @@ export const test = {
       provider,
       'did:mailto:example.com:travis'
     )
-    assert.ok(!fakeCustomerResult.error, 'error getting fake customer record')
-    assert.equal(fakeCustomerResult.ok, null)
+    assert.equal(fakeCustomerResult.error?.name, 'CustomerNotFound')
   },
 }

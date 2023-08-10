@@ -3,6 +3,8 @@ import * as API from '../types.js'
 import * as Access from '@web3-storage/capabilities/access'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { delegationToString } from '@web3-storage/access/encoding'
+import { mailtoDidToDomain, mailtoDidToEmail } from '../utils/did-mailto.js'
+import { ensureRateLimitAbove } from '../utils/rate-limits.js'
 
 /**
  * @param {API.AccessServiceContext} ctx
@@ -15,6 +17,24 @@ export const provide = (ctx) =>
  * @param {API.AccessServiceContext} ctx
  */
 export const authorize = async ({ capability }, ctx) => {
+  const accountMailtoDID =
+    /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+      capability.nb.iss
+    )
+  const rateLimitResult = await ensureRateLimitAbove(
+    ctx.rateLimitsStorage,
+    [mailtoDidToDomain(accountMailtoDID), mailtoDidToEmail(accountMailtoDID)],
+    0
+  )
+  if (rateLimitResult.error) {
+    return {
+      error: {
+        name: 'AccountBlocked',
+        message: `Account identified by ${capability.nb.iss} is blocked`,
+      },
+    }
+  }
+
   /**
    * We issue `access/confirm` invocation which will
    * get embedded in the URL that we send to the user. When user clicks the

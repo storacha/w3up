@@ -1,17 +1,17 @@
 import * as API from '../types.js'
-import * as Provider from '@ucanto/server'
-import { Customer } from '@web3-storage/capabilities'
+import * as Server from '@ucanto/server'
+import { Subscription } from '@web3-storage/capabilities'
 
 /**
- * @param {API.CustomerServiceContext} context
+ * @param {API.SubscriptionServiceContext} context
  */
 export const provide = (context) =>
-  Provider.provide(Customer.get, (input) => get(input, context))
+  Server.provide(Subscription.get, (input) => get(input, context))
 
 /**
- * @param {API.Input<Customer.get>} input
- * @param {API.CustomerServiceContext} context
- * @returns {Promise<API.CustomerGetResult>}
+ * @param {API.Input<Subscription.get>} input
+ * @param {API.SubscriptionServiceContext} context
+ * @returns {Promise<API.SubscriptionGetResult>}
  */
 const get = async ({ capability }, context) => {
   /**
@@ -24,14 +24,13 @@ const get = async ({ capability }, context) => {
     return { error: new UnknownProvider(capability.with) }
   }
 
-  const result = await context.provisionsStorage.getCustomer(
+  return await context.provisionsStorage.getSubscription(
     capability.with,
-    capability.nb.customer
+    capability.nb.subscription
   )
-  return result.ok ? { ok: { did: result.ok.did } } : result
 }
 
-class UnknownProvider extends Provider.Failure {
+class UnknownProvider extends Server.Failure {
   /**
    * @param {API.DID} did
    */
