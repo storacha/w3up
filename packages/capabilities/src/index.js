@@ -3,7 +3,6 @@ import * as Space from './space.js'
 import * as Top from './top.js'
 import * as Store from './store.js'
 import * as Upload from './upload.js'
-import * as Voucher from './voucher.js'
 import * as Access from './access.js'
 import * as Utils from './utils.js'
 import * as Consumer from './consumer.js'
@@ -20,7 +19,6 @@ export {
   Top,
   Store,
   Upload,
-  Voucher,
   Consumer,
   Customer,
   Console,
@@ -36,8 +34,6 @@ export const abilitiesAsStrings = [
   Provider.add.can,
   Space.space.can,
   Space.info.can,
-  Space.recover.can,
-  Space.recoverValidation.can,
   Upload.upload.can,
   Upload.add.can,
   Upload.remove.can,
@@ -46,8 +42,6 @@ export const abilitiesAsStrings = [
   Store.add.can,
   Store.remove.can,
   Store.list.can,
-  Voucher.claim.can,
-  Voucher.redeem.can,
   Access.access.can,
   Access.authorize.can,
   Access.session.can,

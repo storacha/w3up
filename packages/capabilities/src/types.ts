@@ -3,12 +3,11 @@ import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
 import { InferInvokedCapability, Unit, DID, DIDKey } from '@ucanto/interface'
 import type { PieceLink } from '@web3-storage/data-segment'
-import { space, info, recover, recoverValidation } from './space.js'
+import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
 import { add, list, remove, store } from './store.js'
 import * as UploadCaps from './upload.js'
-import { claim, redeem } from './voucher.js'
 import * as AccessCaps from './access.js'
 import * as CustomerCaps from './customer.js'
 import * as ConsumerCaps from './consumer.js'
@@ -154,10 +153,6 @@ export type RateLimitListFailure = Ucanto.Failure
 // Space
 export type Space = InferInvokedCapability<typeof space>
 export type SpaceInfo = InferInvokedCapability<typeof info>
-export type SpaceRecoverValidation = InferInvokedCapability<
-  typeof recoverValidation
->
-export type SpaceRecover = InferInvokedCapability<typeof recover>
 
 // filecoin
 export type FILECOIN_PROCESSING_STATUS = 'pending' | 'done'
@@ -205,9 +200,6 @@ export interface ChainTrackerInfoFailure extends Ucanto.Failure {
   // TODO
 }
 
-// Voucher Protocol
-export type VoucherRedeem = InferInvokedCapability<typeof redeem>
-export type VoucherClaim = InferInvokedCapability<typeof claim>
 // Upload
 export type Upload = InferInvokedCapability<typeof UploadCaps.upload>
 export type UploadAdd = InferInvokedCapability<typeof UploadCaps.add>
@@ -239,8 +231,6 @@ export type AbilitiesArray = [
   ProviderAdd['can'],
   Space['can'],
   SpaceInfo['can'],
-  SpaceRecover['can'],
-  SpaceRecoverValidation['can'],
   Upload['can'],
   UploadAdd['can'],
   UploadRemove['can'],
@@ -249,8 +239,6 @@ export type AbilitiesArray = [
   StoreAdd['can'],
   StoreRemove['can'],
   StoreList['can'],
-  VoucherClaim['can'],
-  VoucherRedeem['can'],
   Access['can'],
   AccessAuthorize['can'],
   AccessSession['can'],

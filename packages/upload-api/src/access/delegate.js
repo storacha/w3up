@@ -23,7 +23,7 @@ export const delegate = async ({ capability, invocation }, context) => {
   const result = await Allocator.allocate(
     {
       capability: {
-        with: capability.with
+        with: capability.with,
       },
     },
     context

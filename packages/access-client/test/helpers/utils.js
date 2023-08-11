@@ -53,13 +53,6 @@ export function createServer(handlers = {}) {
             },
           }
         }),
-        recover: Server.provide(Space.recover, async ({ capability }) => {
-          return {
-            ok: {
-              recover: true,
-            },
-          }
-        }),
       },
       ...handlers,
     },

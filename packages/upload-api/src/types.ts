@@ -184,11 +184,12 @@ export type StoreServiceContext = SpaceServiceContext & {
   carStoreBucket: CarStoreBucket
 }
 
-export type UploadServiceContext = ConsumerServiceContext & SpaceServiceContext & {
-  signer: EdSigner.Signer
-  uploadTable: UploadTable
-  dudewhereBucket: DudewhereBucket
-}
+export type UploadServiceContext = ConsumerServiceContext &
+  SpaceServiceContext & {
+    signer: EdSigner.Signer
+    uploadTable: UploadTable
+    dudewhereBucket: DudewhereBucket
+  }
 
 export interface AccessClaimContext {
   delegationsStorage: Delegations

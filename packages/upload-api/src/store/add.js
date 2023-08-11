@@ -19,7 +19,7 @@ export function storeAddProvider(context) {
       allocate(
         {
           capability: {
-            with: space
+            with: space,
           },
         },
         context
