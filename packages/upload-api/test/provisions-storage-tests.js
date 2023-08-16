@@ -77,7 +77,10 @@ export const test = {
     // verify that provisions are returned as part of customer record
     const customerResult = await storage.getCustomer(provider, issuer.did())
     assert.ok(!customerResult.error, 'error getting customer record')
-    assert.deepEqual(customerResult.ok, { did: issuer.did() })
+    assert.deepEqual(customerResult.ok, {
+      did: issuer.did(),
+      subscriptions: []
+    })
 
     const fakeCustomerResult = await storage.getCustomer(
       provider,

@@ -24,6 +24,7 @@ export interface Consumer {
 
 export interface Customer {
   did: Ucanto.DID<'mailto'>
+  subscriptions: string[]
 }
 
 export interface Subscription {
