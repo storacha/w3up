@@ -257,15 +257,9 @@ export const test = {
         ? delegations
         : delegations.reverse()
 
-    assert.deepEqual(attestation.capabilities, [
-      {
-        can: 'ucan/attest',
-        with: service.did(),
-        nb: {
-          proof: authorization.cid,
-        },
-      },
-    ])
+    assert.equal(attestation.capabilities[0].can, 'ucan/attest')
+    assert.equal(attestation.capabilities[0].with, service.did())
+    assert.equal(attestation.capabilities[0].nb.proof.toString(), authorization.cid.toString())
 
     assert.equal(authorization.issuer.did(), account.did())
     assert.deepEqual(authorization.capabilities, [

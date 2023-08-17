@@ -43,7 +43,7 @@ export const test = {
 
     assert.equal(storeAdd.out.ok.status, 'upload')
     assert.equal(storeAdd.out.ok.with, spaceDid)
-    assert.deepEqual(storeAdd.out.ok.link, link)
+    assert.deepEqual(storeAdd.out.ok.link.toString(), link.toString())
 
     assert.equal(storeAdd.out.ok.headers?.['content-length'], String(size))
     assert.deepEqual(
@@ -84,13 +84,13 @@ export const test = {
     assert.deepEqual(
       {
         space: item.space,
-        link: item.link,
+        link: item.link.toString(),
         size: item.size,
         issuer: item.issuer,
       },
       {
         space: spaceDid,
-        link,
+        link: link.toString(),
         size: data.byteLength,
         issuer: alice.did(),
       }
@@ -243,7 +243,7 @@ export const test = {
 
     assert.equal(storeAdd.out.ok.status, 'done')
     assert.equal(storeAdd.out.ok.with, spaceDid)
-    assert.deepEqual(storeAdd.out.ok.link, link)
+    assert.deepEqual(storeAdd.out.ok.link.toString(), link.toString())
     assert.equal(storeAdd.out.ok.url == null, true)
 
     const item = await context.testStoreTable.get(spaceDid, link)
@@ -254,13 +254,13 @@ export const test = {
     assert.deepEqual(
       {
         space: item.space,
-        link: item.link,
+        link: item.link.toString(),
         size: item.size,
         issuer: item.issuer,
       },
       {
         space: spaceDid,
-        link,
+        link: link.toString(),
         size: data.byteLength,
         issuer: alice.did(),
       }
