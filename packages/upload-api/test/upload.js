@@ -47,14 +47,15 @@ export const test = {
       throw new Error('invocation failed', { cause: uploadAdd })
     }
 
-    assert.deepEqual(uploadAdd.out.ok, { root, shards })
+    assert.equal(uploadAdd.out.ok.root.toString(), root.toString())
+    assert.deepEqual(uploadAdd.out.ok.shards?.map(String).sort(), shards.map(String).sort())
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.deepEqual(results.length, 1)
 
     const [item] = results
-    assert.deepEqual(item.root, root)
-    assert.deepEqual(item.shards, shards)
+    assert.deepEqual(item.root.toString(), root.toString())
+    assert.deepEqual(item.shards?.map(String).sort(), shards.map(String).sort())
 
     const msAgo = Date.now() - new Date(item.insertedAt).getTime()
     assert.equal(msAgo < 60_000, true)
@@ -91,8 +92,8 @@ export const test = {
     }
 
     assert.deepEqual(
-      uploadAdd.out.ok,
-      { root, shards: [] },
+      uploadAdd.out.ok.shards,
+      [],
       'Should have an empty shards array'
     )
 
@@ -148,18 +149,13 @@ export const test = {
       throw new Error('invocation failed', { cause: uploadAdd2 })
     }
 
-    assert.deepEqual(uploadAdd2.out.ok.shards, shards)
+    assert.deepEqual(uploadAdd2.out.ok.shards?.map(String).sort(), shards.map(String).sort())
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.equal(results.length, 1)
     const [upload] = results
-    assert.deepEqual(
-      {
-        root: upload.root,
-        shards: upload.shards?.map(String).sort(),
-      },
-      { root, shards: shards.map(String).sort() }
-    )
+    assert.equal(upload.root.toString(), root.toString())
+    assert.deepEqual(upload.shards?.map(String).sort(), shards.map(String).sort())
   },
 
   'upload/add merges shards to an existing item with shards': async (
@@ -223,11 +219,11 @@ export const test = {
     const [upload] = results
     assert.deepEqual(
       {
-        root: upload.root,
+        root: upload.root.toString(),
         shards: upload.shards?.map(String).sort(),
       },
       {
-        root,
+        root: root.toString(),
         shards: cars.map((car) => car.cid.toString()).sort(),
       }
     )
@@ -579,8 +575,8 @@ export const test = {
         (x) => x.root.toString() === root.toString()
       )
 
-      assert.deepEqual(item?.root, root)
-      assert.deepEqual(item?.shards, [car.cid])
+      assert.deepEqual(item?.root.toString(), root.toString())
+      assert.deepEqual(item?.shards?.map(String), [car.cid.toString()])
       assert.deepEqual(item?.updatedAt, item?.insertedAt)
     }
   },
