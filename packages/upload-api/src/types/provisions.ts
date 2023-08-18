@@ -29,7 +29,7 @@ export interface Customer {
 
 export interface Subscription {
   customer: AccountDID
-  consumer: Ucanto.DIDKey
+  consumer?: Ucanto.DIDKey
 }
 
 /**

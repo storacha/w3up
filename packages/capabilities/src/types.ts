@@ -114,7 +114,7 @@ export type SubscriptionGet = InferInvokedCapability<
 >
 export interface SubscriptionGetSuccess {
   customer: AccountDID
-  consumer: DIDKey
+  consumer?: DIDKey
 }
 export interface SubscriptionNotFound extends Ucanto.Failure {
   name: 'SubscriptionNotFound'
