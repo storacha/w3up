@@ -24,11 +24,12 @@ export interface Consumer {
 
 export interface Customer {
   did: Ucanto.DID<'mailto'>
+  subscriptions: string[]
 }
 
 export interface Subscription {
   customer: AccountDID
-  consumer: Ucanto.DIDKey
+  consumer?: Ucanto.DIDKey
 }
 
 /**

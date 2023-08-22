@@ -85,6 +85,7 @@ export interface InvalidProvider extends Ucanto.Failure {
 export type CustomerGet = InferInvokedCapability<typeof CustomerCaps.get>
 export interface CustomerGetSuccess {
   did: AccountDID
+  subscriptions: string[]
 }
 export interface CustomerNotFound extends Ucanto.Failure {
   name: 'CustomerNotFound'
@@ -113,7 +114,7 @@ export type SubscriptionGet = InferInvokedCapability<
 >
 export interface SubscriptionGetSuccess {
   customer: AccountDID
-  consumer: DIDKey
+  consumer?: DIDKey
 }
 export interface SubscriptionNotFound extends Ucanto.Failure {
   name: 'SubscriptionNotFound'

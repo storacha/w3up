@@ -12,7 +12,8 @@ export const test = {
     const spaceA = await principal.ed25519.generate()
     const spaceB = await principal.ed25519.generate()
     const issuerKey = await principal.ed25519.generate()
-    const issuer = issuerKey.withDID('did:mailto:example.com:foo')
+    const issuerDID = 'did:mailto:example.com:foo'
+    const issuer = issuerKey.withDID(issuerDID)
     const provider = 'did:web:web3.storage:providers:w3up-alpha'
     const invocation = await Provider.add
       .invoke({
@@ -77,7 +78,10 @@ export const test = {
     // verify that provisions are returned as part of customer record
     const customerResult = await storage.getCustomer(provider, issuer.did())
     assert.ok(!customerResult.error, 'error getting customer record')
-    assert.deepEqual(customerResult.ok, { did: issuer.did() })
+    assert.deepEqual(customerResult.ok, {
+      did: issuer.did(),
+      subscriptions: [`${issuerDID}@${provider}`]
+    })
 
     const fakeCustomerResult = await storage.getCustomer(
       provider,

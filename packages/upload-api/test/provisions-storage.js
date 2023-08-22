@@ -92,17 +92,25 @@ export class ProvisionsStorage {
    * @returns
    */
   async getCustomer(provider, customer) {
-    const exists = Object.values(this.provisions).find(
+    const provisions = Object.values(this.provisions).filter(
       (p) => p.provider === provider && p.customer === customer
     )
-    return exists
-      ? { ok: { did: customer } }
-      : {
+    const exists = provisions.length > 0
+    if (exists) {
+      return {
+        ok: {
+          did: customer,
+          subscriptions: provisions.map(itemKey)
+        }
+      }
+    } else {
+      return {
         error: {
           name: 'CustomerNotFound',
           message: 'customer does not exist',
         },
       }
+    }
   }
 
   /**
