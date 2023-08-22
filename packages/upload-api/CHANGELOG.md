@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.0.0...upload-api-v5.1.0) (2023-08-22)
+
+
+### Features
+
+* add providers to space/info ([#862](https://github.com/web3-storage/w3up/issues/862)) ([ac72921](https://github.com/web3-storage/w3up/commit/ac7292177767e6456492200653f0a8b33a4cd98e))
+* add subscriptions to CustomerGetSuccess ([#863](https://github.com/web3-storage/w3up/issues/863)) ([dd2e77c](https://github.com/web3-storage/w3up/commit/dd2e77c51d84a517cb50ff05199b8eebf9223bf2))
+* change "total" to "limit" ([#867](https://github.com/web3-storage/w3up/issues/867)) ([8295070](https://github.com/web3-storage/w3up/commit/8295070c8fbbc508da2cfe6f32846090a530f282))
+
+
+### Bug Fixes
+
+* re-enable upload-api tests ([#864](https://github.com/web3-storage/w3up/issues/864)) ([d76a6af](https://github.com/web3-storage/w3up/commit/d76a6af5b48aae60e66f164f61f3c9e010395f29))
+
 ## [5.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v4.1.0...upload-api-v5.0.0) (2023-08-09)
 
 
