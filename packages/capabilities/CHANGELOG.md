@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.1.0...capabilities-v9.2.0) (2023-08-22)
+
+
+### Features
+
+* change "total" to "limit" ([#867](https://github.com/web3-storage/w3up/issues/867)) ([8295070](https://github.com/web3-storage/w3up/commit/8295070c8fbbc508da2cfe6f32846090a530f282))
+
 ## [9.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.0.1...capabilities-v9.1.0) (2023-08-22)
 
 
