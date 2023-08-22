@@ -150,7 +150,7 @@ export class ProvisionsStorage {
         ok: {
           did: provision.consumer,
           allocated: 0,
-          total: 100,
+          limit: 100,
           subscription: provision.customer,
         },
       }
