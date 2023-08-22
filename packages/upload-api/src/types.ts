@@ -92,6 +92,7 @@ import {
   ProviderAddSuccess,
   ProviderAddFailure,
   SpaceInfo,
+  ProviderDID,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 
@@ -173,7 +174,7 @@ export interface Service {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
   }
   space: {
-    info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
+    info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
   }
 }
 
@@ -331,9 +332,11 @@ export interface UploadTable {
   ) => Promise<ListResponse<UploadListItem>>
 }
 
-export type SpaceInfoResult = {
+export type SpaceInfoSuccess = {
   did: SpaceDID
+  providers: ProviderDID[]
 }
+export type SpaceInfoFailure = Failure | SpaceUnknown
 
 export interface UnknownProvider extends Failure {
   name: 'UnknownProvider'

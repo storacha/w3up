@@ -34,11 +34,30 @@ export class ProvisionsStorage {
    *
    * @param {Types.DIDKey} consumer
    */
-  async hasStorageProvider(consumer) {
+  async getStorageProviders(consumer) {
     return {
-      ok: !!Object.values(this.provisions).find((i) => i.consumer === consumer),
+      ok: Array.from(
+        Object.values(this.provisions)
+          .reduce((m, p) => {
+            if (p.consumer === consumer) {
+              m.add(p.provider)
+            }
+            return m
+          }, new Set())
+      )
     }
   }
+
+  /**
+ *
+ * @param {Types.DIDKey} consumer
+ */
+  async hasStorageProvider(consumer) {
+    return {
+      ok: (await this.getStorageProviders(consumer)).ok.length > 0
+    }
+  }
+
 
   /**
    *

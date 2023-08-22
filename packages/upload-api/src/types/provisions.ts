@@ -38,8 +38,11 @@ export interface Subscription {
 export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
   services: ProviderDID[]
   hasStorageProvider: (
-    consumer: Ucanto.DID<'key'>
+    consumer: Ucanto.DIDKey
   ) => Promise<Ucanto.Result<boolean, never>>
+  getStorageProviders: (
+    consumer: Ucanto.DIDKey
+  ) => Promise<Ucanto.Result<ProviderDID[], never>>
   /**
    * ensure item is stored
    *
