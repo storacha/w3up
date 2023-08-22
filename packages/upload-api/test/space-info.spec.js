@@ -68,11 +68,8 @@ describe('space/info', function () {
     if (inv.out.error) {
       assert.fail(inv.out.error.message)
     } else {
-      assert.ok(
-        isSubset(inv.out.ok, {
-          did: space.did(),
-        })
-      )
+      assert.equal(inv.out.ok.did, space.did())
+      assert.deepEqual(inv.out.ok.providers, [service.did()])
     }
   })
 

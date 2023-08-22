@@ -6,7 +6,7 @@ import * as API from './types.js'
 /**
  * @param {API.Input<Space.info>} input
  * @param {API.SpaceServiceContext} ctx
- * @returns {Promise<API.Result<{ did: API.SpaceDID }, API.Failure>>}
+ * @returns {Promise<API.Result<API.SpaceInfoSuccess, API.SpaceInfoFailure>>}
  */
 export const info = async ({ capability }, ctx) => {
   const { provisionsStorage: provisions } = ctx
@@ -23,10 +23,14 @@ export const info = async ({ capability }, ctx) => {
     }
   }
 
-  const result = await provisions.hasStorageProvider(spaceDid)
-  if (result.ok) {
+  const result = await provisions.getStorageProviders(spaceDid)
+  const providers = result.ok
+  if (providers && (providers.length > 0)) {
     return {
-      ok: { did: spaceDid },
+      ok: {
+        did: spaceDid,
+        providers
+      },
     }
   }
 
