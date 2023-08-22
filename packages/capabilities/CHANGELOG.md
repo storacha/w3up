@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.0.1...capabilities-v9.1.0) (2023-08-22)
+
+
+### Features
+
+* add subscriptions to CustomerGetSuccess ([#863](https://github.com/web3-storage/w3up/issues/863)) ([dd2e77c](https://github.com/web3-storage/w3up/commit/dd2e77c51d84a517cb50ff05199b8eebf9223bf2))
+
 ## [9.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v9.0.0...capabilities-v9.0.1) (2023-08-10)
 
 
