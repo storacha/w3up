@@ -100,7 +100,7 @@ export type ConsumerGet = InferInvokedCapability<typeof ConsumerCaps.get>
 export interface ConsumerGetSuccess {
   did: DIDKey
   allocated: number
-  total: number
+  limit: number
   subscription: string
 }
 export interface ConsumerNotFound extends Ucanto.Failure {
