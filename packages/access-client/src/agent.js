@@ -380,7 +380,7 @@ export class Agent {
   /**
    * Requests a subscription from a provider and attaches it to a space.
    *
-   * It also adds a full space delegation to the service that can later 
+   * It also adds a full space delegation to the service that can later
    * be claimed by the currently authorized account to restore access to the space.
    *
    * @param {string} email
