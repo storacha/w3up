@@ -378,9 +378,10 @@ export class Agent {
   }
 
   /**
-   * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
+   * Requests a subscription from a provider and attaches it to a space.
    *
-   * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
+   * It also adds a full space delegation to the service that can later
+   * be claimed by the currently authorized account to restore access to the space.
    *
    * @param {string} email
    * @param {object} [opts]
