@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.1.1](https://github.com/web3-storage/w3up/compare/access-v15.1.0...access-v15.1.1) (2023-08-25)
+
+
+### Bug Fixes
+
+* update docs to bump version ([#870](https://github.com/web3-storage/w3up/issues/870)) ([d2eec7c](https://github.com/web3-storage/w3up/commit/d2eec7cff1125898c0388957aa7a91fbba2e54f2))
+
 ## [15.1.0](https://github.com/web3-storage/w3up/compare/access-v15.0.0...access-v15.1.0) (2023-08-09)
 
 
