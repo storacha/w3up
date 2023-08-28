@@ -193,9 +193,9 @@ export interface SpaceMeta {
  * Agent class types
  */
 
-export interface AgentOptions {
+export interface AgentOptions<S extends Record<string, any>> {
   url?: URL
-  connection?: ConnectionView<Service>
+  connection?: ConnectionView<S>
   servicePrincipal?: Principal
 }
 
