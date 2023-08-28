@@ -80,7 +80,7 @@ export const test = {
     assert.ok(!customerResult.error, 'error getting customer record')
     assert.deepEqual(customerResult.ok, {
       did: issuer.did(),
-      subscriptions: [`${issuerDID}@${provider}`]
+      subscriptions: [/** @type {string} */ (result.ok?.id)]
     })
 
     const fakeCustomerResult = await storage.getCustomer(
