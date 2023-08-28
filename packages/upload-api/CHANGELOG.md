@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.1.0...upload-api-v5.2.0) (2023-08-28)
+
+
+### Features
+
+* return ID from ProvisionsStorage `put` ([#869](https://github.com/web3-storage/w3up/issues/869)) ([d165c23](https://github.com/web3-storage/w3up/commit/d165c234d8ee6bf0fa31e954b3743d39c6d91699))
+
 ## [5.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.0.0...upload-api-v5.1.0) (2023-08-22)
 
 
