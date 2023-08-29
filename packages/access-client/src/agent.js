@@ -35,7 +35,7 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
  *
  * @deprecated - remove this when deprecated addSpacesFromDelegations is removed
  */
-/** @type {WeakMap<Agent, AgentData>} */
+/** @type {WeakMap<Agent<Record<string, any>>, AgentData>} */
 const agentToData = new WeakMap()
 
 /**
@@ -53,12 +53,13 @@ const agentToData = new WeakMap()
  * ```
  *
  * @template {Ucanto.DID} T - DID method
+ * @template {Record<string, any>} [S=Service]
  * @param {object} [options]
  * @param {Ucanto.Principal<T>} [options.principal] - w3access API Principal
  * @param {URL} [options.url] - w3access API URL
- * @param {Ucanto.Transport.Channel<Service>} [options.channel] - Ucanto channel to use
+ * @param {Ucanto.Transport.Channel<S>} [options.channel] - Ucanto channel to use
  * @param {typeof fetch} [options.fetch] - Fetch implementation to use
- * @returns {Ucanto.ConnectionView<Service>}
+ * @returns {Ucanto.ConnectionView<S>}
  */
 export function connection(options = {}) {
   return Client.connect({
@@ -82,6 +83,8 @@ export function connection(options = {}) {
  * ```js
  * import { Agent } from '@web3-storage/access/agent'
  * ```
+ *
+ * @template {Record<string, any>} [S=Service]
  */
 export class Agent {
   /** @type {import('./agent-data').AgentData} */
@@ -89,10 +92,10 @@ export class Agent {
 
   /**
    * @param {import('./agent-data').AgentData} data - Agent data
-   * @param {import('./types').AgentOptions} [options]
+   * @param {import('./types').AgentOptions<S>} [options]
    */
   constructor(data, options = {}) {
-    /** @type { Client.Channel<Service> & { url?: URL } | undefined } */
+    /** @type { Client.Channel<S> & { url?: URL } | undefined } */
     const channel = options.connection?.channel
     this.url = options.url ?? channel?.url ?? new URL(HOST)
     this.connection =
@@ -108,8 +111,9 @@ export class Agent {
   /**
    * Create a new Agent instance, optionally with the passed initialization data.
    *
+   * @template {Record<string, any>} [R=Service]
    * @param {Partial<import('./types').AgentDataModel>} [init]
-   * @param {import('./types').AgentOptions & import('./types').AgentDataOptions} [options]
+   * @param {import('./types').AgentOptions<R> & import('./types').AgentDataOptions} [options]
    */
   static async create(init, options = {}) {
     const data = await AgentData.create(init, options)
@@ -119,8 +123,9 @@ export class Agent {
   /**
    * Instantiate an Agent from pre-exported agent data.
    *
+   * @template {Record<string, any>} [R=Service]
    * @param {import('./types').AgentDataExport} raw
-   * @param {import('./types').AgentOptions & import('./types').AgentDataOptions} [options]
+   * @param {import('./types').AgentOptions<R> & import('./types').AgentDataOptions} [options]
    */
   static from(raw, options = {}) {
     const data = AgentData.fromExport(raw, options)
@@ -463,7 +468,7 @@ export class Agent {
    * @template {Ucanto.Caveats} C
    * @param {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} cap
    * @param {import('./types').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
-   * @returns {Promise<Ucanto.InferReceipt<Ucanto.Capability<A, R, C>, import('./types').Service>>}
+   * @returns {Promise<Ucanto.InferReceipt<Ucanto.Capability<A, R, C>, S>>}
    */
   async invokeAndExecute(cap, options) {
     const inv = await this.invoke(cap, options)
@@ -487,7 +492,7 @@ export class Agent {
    *
    * ```
    * @template {Ucanto.Capability} C
-   * @template {Ucanto.Tuple<Ucanto.ServiceInvocation<C, import('./types').Service>>} I
+   * @template {Ucanto.Tuple<Ucanto.ServiceInvocation<C, S>>} I
    * @param {I} invocations
    */
   execute(...invocations) {
@@ -583,7 +588,7 @@ export class Agent {
       throw inv.out.error
     }
 
-    return inv.out.ok
+    return /** @type {import('./types').SpaceInfoResult} */ (inv.out.ok)
   }
 }
 
@@ -593,7 +598,8 @@ export class Agent {
  * @deprecated - trying to remove explicit space tracking from Agent/AgentData
  * in favor of functions that derive the space set from access.delegations
  *
- * @param {Agent} access
+ * @template {Record<string, any>} [S=Service]
+ * @param {Agent<S>} access
  * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
  */
 export async function addSpacesFromDelegations(access, delegations) {
