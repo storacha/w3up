@@ -588,7 +588,7 @@ export class Agent {
       throw inv.out.error
     }
 
-    return /** @type {import('./types').SpaceInfoResult} */(inv.out.ok)
+    return /** @type {import('./types').SpaceInfoResult} */ (inv.out.ok)
   }
 }
 
