@@ -11,7 +11,10 @@ import { createServer, connect } from '../../src/aggregator.js'
  * @type {API.Tests<API.AggregatorServiceContext>}
  */
 export const test = {
-  'piece/add inserts piece into processing queue': async (assert, context) => {
+  'piece/queue inserts piece into processing queue': async (
+    assert,
+    context
+  ) => {
     const { storefront } = await getServiceContext()
     const connection = connect({
       id: context.id,
@@ -23,13 +26,12 @@ export const test = {
     const group = 'did:web:free.web3.storage'
 
     // storefront invocation
-    const pieceAddInv = Filecoin.aggregateAdd.invoke({
+    const pieceAddInv = Filecoin.aggregateQueue.invoke({
       issuer: storefront,
       audience: connection.id,
       with: storefront.did(),
       nb: {
         piece: cargo.link.link(),
-        storefront: storefront.did(),
         group,
       },
     })

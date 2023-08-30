@@ -5,7 +5,7 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 
-import { filecoinAdd } from '../src/storefront.js'
+import { filecoinQueue, filecoinAdd } from '../src/storefront.js'
 
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -13,7 +13,7 @@ import { OperationFailed, OperationErrorName } from './helpers/errors.js'
 import { serviceProvider as storefrontService } from './fixtures.js'
 
 describe('filecoin/add', () => {
-  it('agent adds a filecoin piece to a storefront, getting the piece queued', async () => {
+  it('agent queues a filecoin piece for storefront to handle', async () => {
     const { agent } = await getContext()
 
     // Generate cargo to add
@@ -27,13 +27,16 @@ describe('filecoin/add', () => {
     // Create Ucanto service
     const service = mockService({
       filecoin: {
-        add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.filecoinAdd,
+        queue: Server.provideAdvanced({
+          capability: FilecoinCapabilities.filecoinQueue,
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), agent.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.filecoinAdd.can)
+            assert.strictEqual(
+              invCap.can,
+              FilecoinCapabilities.filecoinQueue.can
+            )
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
             // piece link
@@ -54,10 +57,13 @@ describe('filecoin/add', () => {
             return Server.ok(filecoinAddResponse).join(fx.link())
           },
         }),
+        add: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 
-    const res = await filecoinAdd(
+    const res = await filecoinQueue(
       {
         issuer: agent,
         with: agent.did(),
@@ -103,6 +109,9 @@ describe('filecoin/add', () => {
             return Server.ok(filecoinAddResponse)
           },
         }),
+        queue: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 
@@ -156,6 +165,9 @@ describe('filecoin/add', () => {
             }
           },
         }),
+        queue: () => {
+          throw new Error('not implemented')
+        },
       },
     })
 

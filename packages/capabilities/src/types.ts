@@ -212,12 +212,19 @@ export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
 // Filecoin
+export type FilecoinQueue = InferInvokedCapability<
+  typeof FilecoinCaps.filecoinQueue
+>
 export type FilecoinAdd = InferInvokedCapability<
   typeof FilecoinCaps.filecoinAdd
+>
+export type AggregateQueue = InferInvokedCapability<
+  typeof FilecoinCaps.aggregateQueue
 >
 export type AggregateAdd = InferInvokedCapability<
   typeof FilecoinCaps.aggregateAdd
 >
+export type DealQueue = InferInvokedCapability<typeof FilecoinCaps.dealQueue>
 export type DealAdd = InferInvokedCapability<typeof FilecoinCaps.dealAdd>
 export type ChainTrackerInfo = InferInvokedCapability<
   typeof FilecoinCaps.chainTrackerInfo
@@ -250,8 +257,11 @@ export type AbilitiesArray = [
   RateLimitAdd['can'],
   RateLimitRemove['can'],
   RateLimitList['can'],
+  FilecoinQueue['can'],
   FilecoinAdd['can'],
+  AggregateQueue['can'],
   AggregateAdd['can'],
+  DealQueue['can'],
   DealAdd['can'],
   ChainTrackerInfo['can']
 ]
