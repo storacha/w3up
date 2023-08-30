@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/capabilities",
-  "version": "9.2.0",
+  "version": "9.2.1",
   "description": "Capabilities provided by web3.storage",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/capabilities",
   "repository": {
