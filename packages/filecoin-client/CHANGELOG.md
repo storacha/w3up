@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/web3-storage/w3up/compare/filecoin-client-v1.2.0...filecoin-client-v1.2.1) (2023-08-30)
+
+
+### Bug Fixes
+
+* w3filecoin spec separate capabilities to queue and enqueue ([#856](https://github.com/web3-storage/w3up/issues/856)) ([6bf9142](https://github.com/web3-storage/w3up/commit/6bf9142636fa65367faed8414c50beb9c1791726)), closes [#855](https://github.com/web3-storage/w3up/issues/855)
+
 ## [1.2.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v1.1.0...filecoin-client-v1.2.0) (2023-08-10)
 
 
