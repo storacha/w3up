@@ -44,7 +44,7 @@ export interface StorefrontServiceContext {
 
 export interface AggregatorServiceContext {
   id: Signer
-  addQueue: Queue<AggregatorRecord>
+  addQueue: Queue<AggregatorMessageRecord>
   pieceStore: Store<AggregatorRecord>
 }
 
@@ -62,9 +62,15 @@ export interface StorefrontRecord {
   insertedAt: number
 }
 
+export interface AggregatorMessageRecord {
+  piece: PieceLink
+  group: string
+  insertedAt: number
+}
+
 export interface AggregatorRecord {
   piece: PieceLink
-  storefront?: string
+  storefront: string
   group: string
   insertedAt: number
 }
