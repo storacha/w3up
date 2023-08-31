@@ -85,12 +85,12 @@ export interface DealerRecord {
 
 // Errors
 
-export type QueueAddError = QueueOperationError | EncodeRecordFailed
 export type StorePutError = StoreOperationError | EncodeRecordFailed
 export type StoreGetError =
   | StoreOperationError
   | EncodeRecordFailed
   | StoreNotFound
+export type QueueAddError = QueueOperationError | EncodeRecordFailed | StorePutError
 
 export interface QueueOperationError extends Error {
   name: 'QueueOperationFailed'
