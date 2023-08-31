@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.0...filecoin-api-v1.4.1) (2023-08-31)
+
+
+### Bug Fixes
+
+* extend queue add errors ([#890](https://github.com/web3-storage/w3up/issues/890)) ([0ecd4bb](https://github.com/web3-storage/w3up/commit/0ecd4bb8db5c7e296f62ec1d48ecece6bcb4a8d5))
+
 ## [1.4.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.3.1...filecoin-api-v1.4.0) (2023-08-30)
 
 
