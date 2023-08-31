@@ -8,7 +8,7 @@
 </p>
 
 > ### ⚠️❗ w3up-client and the available hosted APIs are currently beta preview features
-> Please read the beta Terms of Service ([web3.storage](https://console.web3.storage/terms), [NFT.Storage](https://console.nft.storage/terms)) for more details.
+> Please read the beta [Terms of Service](https://console.web3.storage/terms) for more details.
 >
 > Open an issue on the repo or reach out to the #web3-storage channel on [IPFS Discord](https://docs.ipfs.tech/community/chat/#discord) if you have any 
 questions!
@@ -47,46 +47,39 @@ npm install @web3-storage/w3up-client
 
 [API Reference](#api)
 
-### Core concepts
+Most users' usage of `w3up-client` will be for interacting with web3.storage, a hosted storage product that developed w3up for their upload APIs. However, any user that has an implementation of w3up ([specs](https://github.com/web3-storage/specs), [protocol](https://github.com/web3-storage/w3protocol/)) can configure `w3up-client` for their usage.
 
-w3up services use [ucanto][ucanto], a Remote Procedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_. See our [intro to UCAN blog post](https://blog.web3.storage/posts/intro-to-ucan) for an overview of UCAN.
+For authorization, w3up services use [ucanto][ucanto], a Remote Procedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_ on top of [public key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography). See our [intro to UCAN blog post](https://blog.web3.storage/posts/intro-to-ucan) for an overview of UCAN.
+
+You can think about UCAN replacing bearer tokens in traditional APIs for authorization with w3up. Since any actor can be represented by a cryptographic keypair and permissions can be delegated to them, users can interact with w3up directly in cases where a developer might have needed to previously run additional back-end infrastructure to keep API keys secure. This can be extended even to have end users using applications integrated with w3up using their own keypair-based identity.
+
+### How w3up and w3up-client use UCANs
 
 `w3up-client` and `ucanto` take care of the details of UCANs for you, but a few of the underlying terms and concepts may "bubble up" to the surface of the API, so we'll cover the basics here. We'll also go over some terms that are specific to w3up that you might not have encountered elsewhere.
 
-UCAN-based APIs are centered around _capabilities_, which are comprised of an _ability_ and a _resource_. Together, the ability and resource determine what action a client can perform and what objects in the system can be acted upon. When invoking a service method, a client will present a UCAN token that includes an ability and resource, along with _proofs_ that verify that they should be allowed to exercise the capability.
+UCAN-based APIs are centered around _capabilities_, which are comprised of an _ability_ and a _resource_. Together, the ability and resource determine what action a client can perform and what objects in the system can be acted upon. When invoking a service method, a client will present a UCAN token that includes an ability and resource, along with _proofs_ that verify that they should be allowed to exercise the capability. The proof might be signed directly by the capability owner, or have a chain of signatures (_delegations_) where the actor invoking the capability has been verifiably delegated permission to do so.
 
-To invoke a capability, the client must have a private signing key, which is managed by a component called an _Agent_. When you [create a client object](#creating-a-client-object) with `w3up-client`, an Agent is automatically created for you and used when making requests. The Agent's keys and metadata are securely stored and are loaded the next time you create a client. 
+#### Space
 
-Each device or browser should create its own Agent, so that private keys are never shared across multiple devices. Instead of sharing keys, a user can delegate some or all of their capabilities from one Agent to another.
+When you upload data to w3up, your uploads are linked to a unique _Space_ that acts as a "namespace" for the data you upload. Each Space corresponds to a _DID_, or [Decentralized Identity Document](https://www.w3.org/TR/did-core/). Specifically, a Space corresponds to a [`did:key`](https://w3c-ccg.github.io/did-method-key/), which is a public key with a corresponding private signing key. 
 
-When you upload data to w3up, your uploads are linked to a unique _Space_ acts as a "namespace" for the data you upload. Spaces are used to keep track of which uploads belong to which users, among other things.
+When creating a Space using `w3up-client`, it generates this private key and `did:key` for you locally. To use web3.storage, you then register a Space by associating it with your email address. From there, when invoking storage capabilities with web3.storage, the Space `did:key` is the "resource" portion of the capability, while the ability is an action like `store/add` or `store/remove`. (A Space registered with web3.storage is imperfectly analogous to an "account" with web3.storage.)
 
-When invoking storage capabilities, the Space ID is the "resource" portion of the capability, while the ability is an action like `store/add` or `store/remove`.
+Under the hood in the email registration process, your Space delegates to your email address the ability to call any capability; this delegation is stored by web3.storage. So if you ever need access to your Space in the future from any device, web3.storage allows you to "sign in" by verifying your email, so you don't need keep your Space private key around - no complex local key management needed! (`w3up-client` actually throws this private away for safety reasons after registration.) More on this "sign in" process is detailed in the next section on Agents.
 
-Both Agents and Spaces are identified using _DIDs_, or Decentralized Identity Documents. DIDs are a [W3C specification](https://www.w3.org/TR/did-core/) for verifiable identities in decentralized systems. There are several DID "methods," but the ones most commonly used by w3up are [`did:key`](https://w3c-ccg.github.io/did-method-key/), which includes a public key directly in the DID string. Agents and Spaces both use `did:key` URI strings as their primary identifiers. The other DID method used by w3up is [`did:web`](https://w3c-ccg.github.io/did-method-web/), which is used to identify the service providers.
+#### Agent
 
-Agents and Spaces are both generated by `w3up-client` on the user's local machine. Before they can be used for storage, the user will need to [register the space](#creating-and-registering-spaces) by confirming their email address. Once registered, a Space can be used to [upload files and directories](#uploading-data).
+To invoke a capability like `store/add` to a Space using `w3up-client`, the client must have an _Agent_. Like a Space, an Agent corresponds to a `did:key` whose private key is generated locally. An Agent is useful once `w3up-client` has a UCAN delegation where a registered Space(s) delegates the Agent its capabilities. (An imperfect analogy is Agent with login session.)
 
-### Basic usage
+The first time `w3up-client` is instantiated on a device, it creates an Agent automatically. Alternatively, if you have your own Agent corresponding to a specific private key locally available, you can pass it to the client.
 
-This section shows some of the basic operations available in the `w3up-client` package. See the [API reference docs][docs] or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
+The delegation from Space to your Agent that `w3up-client` needs can be passed either by verifying the email address the Space is registered to and claiming the UCAN delegation (`authorize(email)` then `capability.access.claim`) or directly if you have the UCAN delegation available locally (`addSpace(delegation)`).
 
-Before data can be uploaded via the client, the client needs to have permissions to upload to the target service either by having permissions to a registered `Space`. This means either you (the developer) or your user needs to have a registered Space.
+### Basic usage with web3.storage
 
-Currently, `w3up-client` offers as defaults two beta services to register Spaces with and upload data to that the w3up core maintainers also run: 
-- [web3.storage](http://web3.storage) w3up beta: A developer storage platform for any data
-- [NFT.Storage](http://NFT.Storage) w3up beta: A free service for archiving specifically off-chain NFT data
+This section shows the basic flows to start storing data using the `w3up-client` package with web3.storage. For more complex integration options, check out the [integration options][integration options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
 
-However, `w3up-client` can be used for any service that complies to the w3up [specs](https://github.com/web3-storage/specs) and [protocol](https://github.com/web3-storage/w3protocol/).
-
-> By you or your users registering a w3up beta Space via email confirmation with either [NFT.Storage](http://NFT.Storage) or [web3.storage](http://web3.storage), you agree to the relevant w3up beta Terms of Service ([web3.storage](https://console.web3.storage/terms), [NFT.Storage](https://console.nft.storage/terms)). If you have an existing non-w3up beta account with NFT.Storage or web3.storage and register for the w3up beta version of the same product (NFT.Storage or web3.storage) using the same email, then at the end of the beta period, these accounts will be combined. Until the beta period is over and this migration occurs, uploads to w3up will not appear in your NFT.Storage or web3.storage account (and vice versa), even if you register with the same email (_coming soon!_).
-
-In terms of whether you or your user should register the Space (and more broadly how to integrate `w3up-client`), there are three general wasy to integrate.
-- (Simplest) Client-server: You (the developer) own the Space and register it with the service of your choosing, and your user uploads to your backend infra before you upload it to the service
-- (More complex) [Server-owned space with direct upload from end-user](#server-owned-space-with-direct-upload-from-end-user): You own the Space and register it with the service of your choosing, but you give a delegated UCAN token to your user to upload directly to the service
-- (Most complex) [User-owned](#user-owned): Your user owns the Space and registers it (likely with the service you choose for them in your code, but not necessarily), and they use it to upload directly with the service (if you want to instrument visibility into what they’re uploading, you’ll have to write separate code in your app for it)
-
-The first and simplest of these options (client-server) is covered in-depth in this section, though the other two options are discussed further down in the README as well.
+> By you or your users registering a w3up beta Space via email confirmation with [web3.storage](http://web3.storage), you agree to the beta [Terms of Service](https://console.web3.storage/terms). Uploads to w3up will not appear in your web3.storage account (and vice versa).
 
 #### Creating a client object
 
@@ -98,39 +91,29 @@ import { create } from '@web3-storage/w3up-client'
 const client = await create()
 ```
 
-By default, clients will be configured to use the production w3up service endpoints, and the client will create a new [`Agent`][access-docs-Agent] with a persistent `Store` if it can't find one locally to load.
+By default, clients will create a new [`Agent`][access-docs-Agent] and put it in a peristent local [`Store`](https://github.com/web3-storage/w3up/tree/main/packages/access-client) if it can't find an existing one to load (so the next time the client is initialized on the same device, it will use the same `Agent`).
 
-Agents are entities that control the private signing keys used to interact with the w3up service layer. You can access the client's `Agent` with the [`agent()` accessor method][docs-Client#agent]. 
-
-`create` accepts an optional [`ClientFactoryOptions` object][docs-ClientFactoryOptions], which can be used to target a non-production instance of the w3up access and upload services, or to use a non-default persistent `Store`. See the [`@web3-storage/access` docs](https://web3-storage.github.io/w3protocol/modules/_web3_storage_access.html) for more about `Store` configuration.
-
-#### Authorizing your agent
-
-In order to store data with w3up, you'll need to authorize your agent. Currently you can only authorize your agent by confirming your email address. By confirming your email address w3up will attest that you are not a robot and are ok to upload data to the service! Hooray.
-
-Authorizing your agent allows you to claim spaces and other delegations that you created on a _different_ agent that is authorized to the _same_ email account. Authorization needs to happen only once per agent.
+`create` accepts an optional [`ClientFactoryOptions` object][docs-ClientFactoryOptions] that can be used configured to use a non-default persistent `Store`. See the [`@web3-storage/access` docs](https://github.com/web3-storage/w3up/tree/main/packages/access-client) for more about `Store` configuration. If you'd like to bring your own Agent, you can initialize the client with your own storage [Driver](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#driver). An example would be using `Signer` from the [ucanto][ucanto] package.
 
 ```js
-await client.authorize('zaphod@beeblebrox.galaxy')
+import { create } from '@web3-storage/w3up-client'
+import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use Ed25519 keys
+
+const principal = Signer.parse(agentPrivateKey) // created by `npx ucan-key ed --json` in command line
+const client = await create({ principal })
 ```
 
-Calling `authorize` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `authorize` method will resolve. Make sure to check for errors, as `authorize` will fail if the email is not confirmed within the expiration timeout.
-
-Note: Alternatively, you can add a delegation for access to a space created by a different authorized agent, see the [`addSpace` client method](docs-client#addSpace).
-
-If this is not the first time you authorized an agent with your email, then you'll want to claim any spaces and delegations you have on your other agent(s):
-
-```js
-await client.capability.access.claim()
-```
+Once initialized, you can access the client's `Agent` with the [`agent()` accessor method][docs-Client#agent].
 
 #### Creating and registering Spaces
 
-Before you can upload data, you'll need to create a [`Space`][docs-Space] and register it with the service. A Space acts as a namespace for your uploads. Spaces are created using the [`createSpace` client method][docs-client#createSpace]:
+A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agent will need a delegation from to store data with w3up. Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
 
 ```js
 const space = await client.createSpace('my-awesome-space')
 ```
+
+or using the w3cli's [`w3 space create`](https://github.com/web3-storage/w3cli#w3-space-create-name).
 
 The name parameter is optional. If provided, it will be stored in your client's local state store and can be used to provide a friendly name for user interfaces.
 
@@ -142,7 +125,7 @@ First, set the space as your "current" space using the [`setCurrentSpace` method
 await client.setCurrentSpace(space.did())
 ```
 
-Next, call the [`registerSpace` method][docs-Client#registerSpace], passing in the _same_ email address you used to authorize your agent. You
+Next, call the [`registerSpace` method][docs-Client#registerSpace], passing in the email addres you want to associate with your account. You
 can specify a storage provider for the space to use by passing a provider DID as the `provider` option:
 
 ```js
@@ -153,19 +136,61 @@ try {
 }
 ```
 
-By default, calling `registerSpace` registers the Space with web3.storage w3up. You can pass the optional `provider` param to register with NFT.Storage w3up instead.
+If you created the Space in w3cli using `w3 space create`, you can register the space by calling [`w3 space register`](https://github.com/web3-storage/w3cli#w3-space-register).
+
+#### Delegating from Space to Agent
+
+In order to store data with w3up, your Agent will need a delegation from a Space. The easiest way to do this is by authorizing your Agent. This allows you to claim delegations to the Space that is authorized to the _same_ email account. Authorization needs to happen only once per agent.
 
 ```js
-try {
-  await client.registerSpace('zaphod@beeblebrox.galaxy', { provider: 'did:web:nft.storage' })
-} catch (err) {
-  console.error('registration failed: ', err)
+await client.authorize('zaphod@beeblebrox.galaxy')
+```
+
+Calling `authorize` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `authorize` method will resolve. Make sure to check for errors, as `authorize` will fail if the email is not confirmed within the expiration timeout.
+
+If this is not the first time you authorized an agent with your email, then you'll want to claim any spaces and delegations you have on your other agent(s):
+
+```js
+await client.capability.access.claim()
+```
+
+##### Bringing your own Agent and delegation
+
+For uses of `w3up-client` in environments where the Agent is not persisted and/or the email verification step would be prohibitive (e.g., serverless backend environment where local Store with the Agent is dropped in between runs, and going through the email verification flow isn't practical), you can manually add a delegation for access to a space created by a different authorized agent (see the [`addSpace` client method](docs-client#addSpace)). An example:
+
+```js
+import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use Ed25519 keys
+import { importDAG } from '@ucanto/core/delegation'
+import { CarReader } from '@ipld/car'
+import * as Client from '@web3-storage/w3up-client'
+
+async function main () {
+  // from "bring your own Agent" example in `Creating a client object" section`
+  const principal = Signer.parse(process.env.KEY) // created by `npx ucan-key ed --json` in command line, which returns private key and DID for Agent which were stored in environment variables KEY and PROOF
+  const client = await Client.create({ principal })
+  
+  // now give Agent the delegation from a Space created in w3cli using `w3 space create`
+  const proof = await parseProof(process.env.PROOF) // function created locally
+  const space = await client.addSpace(proof)
+  await client.setCurrentSpace(space.did())
+  
+  // READY to go!
+}
+
+/** @param {string} data Base64 encoded CAR file */
+async function parseProof (data) {
+  const blocks = []
+  const reader = await CarReader.fromBytes(Buffer.from(data, 'base64'))
+  for await (const block of reader.blocks()) {
+    blocks.push(block)
+  }
+  return importDAG(blocks)
 }
 ```
 
 #### Uploading data
 
-Once you've [authorized](#authorizing-your-agent), [created and registered a space](#creating-and-registering-spaces), you can upload files to the w3up platform.
+Once you've [created and registered a Space](#creating-and-registering-spaces) and [authorized your Agent](#authorizing-your-agent), you can upload files to the w3up platform.
 
 Call [`uploadFile`][docs-Client#uploadFile] to upload a single file, or [`uploadDirectory`][docs-Client#uploadDirectory] to upload multiple files.
 
@@ -195,25 +220,41 @@ In the example above, `directoryCid` resolves to an IPFS directory with the foll
 └── src
     └── main.py
 ```
-### Alternate implementation options
 
-As discussed above, there are options outside the traditional client-server model that w3up supports. We how to use `w3up-client` to achieve these options in this section.
 
-#### Server-owned space with direct upload from end-user
+### Integration options
 
-In this option, you (the developer) own your Space, but delegate permissions to your users to directly upload content to the service on your behalf. This isn’t completely “serverless” - you still need some infrastructure to create delegated UCAN tokens, but it’s minimal, and potentially saves a ton of bandwidth and overhead.
+As mentioned, UCAN opens up a number of options in how to integrate with w3up: Should you, the developer, own the Space? Should you delegate permissions to your users? Or should your user own their own Space? Broadly, there are three ways to integrate:
+- (Simplest) Client-server: You (the developer) own the Space, and your user uploads to your backend infra before you upload it to the service
+- (More complex) Delegated: You own the Space, but you give a delegated UCAN token to your user's Agent to upload directly to the service (rather than needing to touch the upload in your backend)
+- (Most complex) User-owned: Your user owns the Space and registers it and they use it to upload directly with the service; if you want to instrument visibility into what they’re uploading, you’ll have to write separate code in your app for it
 
-> 🔜 _More detail coming soon!_
+You can implement each of these in a number of ways, but we talk through some considerations when implementing a given option.
 
-If you explore this option, contributions are welcome to these docs to help others in the future (and to reveal feature requests and bugs that we can patch to improve this implementation path)! Also feel free to chime into the discussion [here](https://github.com/web3-storage/w3up-client/discussions/92).
+1. Client-server
+- For your backend to be scalable, you might consider using serverless workers or a queue in front of a server
+- In either case, it's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so
+- You can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](#bringing-your-own-agent-and-delegation)
+- Once your user uploads data to your backend, you can run any of the `upload` methods
 
-#### User-owned
+2. Delegated
+- You will likely have `w3up-client` running in your end-user's client code, as well as backend code that's able to generate UCANs that delegate the ability to upload and pass them to your users (e.g., `w3up-client` running in a serverless worker)
+- As the developer, you should create and register a Space; it's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so
+- `w3up-client` in the end user environment should have a unique Agent for each user, which should happen by default (since when `w3up-client` is instantiated it creates a new Agent anyway, or uses the one in local Store)
+- From there, when your end user is ready to upload, they should request from your backend a delegation from your developer-owned Space to their Agent (which can be derived via [`client.agent()`](#agent))
+    - If you are running `w3up-client` in your backend should follow the instructions in the "Client-server" section to set it up
+    - From there, you can call [`client.createDelegation()`](#createDelegation) passing in the Agent object from `client.agent()` in your end user's instance, and passing through `options?` params to limit the scope of the delegation (__todo: documentation on options for delegations__)
+    - The end user instance of the client should not need to call `client.authorize(email)`, as it is not claiming any delegations via email address (but rather getting the delegation directly from your backend)
+- Once your user receives the delegation, they can pass it in using `client.addSpace()`, and from there they can run any of the `upload` methods
+    - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
+- If you have code snippet(s) that works for you, please share them in a PR or [Github issue](https://github.com/web3-storage/w3up/issues) and we'll link them here!
 
-In this option, your user owns their own Space. This option is the most web3-native (since your user owns their own identity, and thus their own data) and probably the most interesting one. It comes with a world of possibilities; for instance, instead of generating  a new Space keypair for your user, you might look into using the existing keypair from their Metamask wallet or Apple Passkey. However, there are also likely edge cases that will appear early on for developers developing these types of apps that we haven’t had a chance to think much about yet, best-practices for various requirements (e.g., how much visibility do you want into user activity), and useful features that we could support.
-
-> 🔜 _More detail coming soon!_
-
-If you explore this option, contributions are welcome to these docs to help others in the future (and to reveal feature requests and bugs that we can patch to improve this implementation path)! Also feel free to chime into the discussion [here](https://github.com/web3-storage/w3up-client/discussions/93).
+3. User-owned
+- If you want your user to own their own Space, you'll likely be relying on the `w3up-client` methods to create a Space, authorize the Space, and authorize the Agent on the end user-side; from there they can run any of the `upload` methods
+    - Doing this does take some of the UX out of your control; for instance, when web3.storage fully launches with w3up, your users will have to set up their payment methods with web3.storage
+    - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
+- There is a world of possibilities with your users "bringing their own identity" for their Space; you could explore how crypto wallet private keys, Apple Passkey, and more might map to Space DIDs and have the client use those
+- If you have code snippet(s) that works for you, please share them in a PR or [Github issue](https://github.com/web3-storage/w3up/issues) and we'll link them here!
 
 ## API
 
@@ -416,7 +457,7 @@ Get all the proofs matching the capabilities. Proofs are delegations with an _au
 function addProof (proof: Delegation): Promise<void>
 ```
 
-Add a proof to the agent. Proofs are delegations with an _audience_ matching the agent DID. Note: you probably want to use `addSpace` unless you know the delegation you received targets a resource _other_ than a w3 space.
+Add a proof to the agent. Proofs are delegations with an _audience_ matching the agent DID. Note: `addSpace` should be used for delegating from `Space` to `Agent` (i.e., you want the Agent to fully be able to act on behalf of the Space), as it calls `addProof` with some additional client logic. `addProof` is for more generically adding delegations to the Agent (e.g., delegation targets a resource _other_ than a Space).
 
 ### `delegations`
 
@@ -650,7 +691,7 @@ Delegations can be serialized by calling `export()` and piping the returned `Blo
 
 ### `Driver`
 
-Storage drivers can be obtained from [`@web3-storage/access/stores`](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client/src/stores). They persist data created and managed by an agent.
+Storage drivers can be obtained from [`@web3-storage/access/stores`](https://github.com/web3-storage/w3up/tree/main/packages/access-client). They persist data created and managed by an agent.
 
 ### `ListResponse`
 
