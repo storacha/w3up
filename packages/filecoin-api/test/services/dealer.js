@@ -92,6 +92,14 @@ export const test = {
       const storefront = storefrontSigner.did()
       const label = 'label'
 
+      await context.dealStore.put({
+        aggregate: aggregate.link,
+        offer: aggregate.link.toString(),
+        storefront,
+        stat: 1,
+        insertedAt: Date.now()
+      })
+
       // aggregator invocation
       const pieceAddInv = Filecoin.dealAdd.invoke({
         issuer: context.id,
@@ -115,14 +123,6 @@ export const test = {
 
       // Validate queue and store
       await pWaitFor(() => context.queuedMessages.length === 0)
-
-      await context.dealStore.put({
-        aggregate: aggregate.link,
-        offer: aggregate.link.toString(),
-        storefront,
-        stat: 1,
-        insertedAt: Date.now()
-      })
 
       const hasStoredDeal = await context.dealStore.get({
         aggregate: aggregate.link.link(),
