@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.2...filecoin-api-v1.4.3) (2023-09-01)
+
+
+### Bug Fixes
+
+* dealer test ([#897](https://github.com/web3-storage/w3up/issues/897)) ([5ae5eac](https://github.com/web3-storage/w3up/commit/5ae5eacc47440c5749f85751d496198e17cdb8da))
+
 ## [1.4.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.1...filecoin-api-v1.4.2) (2023-09-01)
 
 
