@@ -24,7 +24,7 @@ describe('deal/*', () => {
       const addQueue = new Queue({
         onMessage: (message) => queuedMessages.push(message),
       })
-      const offerLookupFn = (
+      const dealLookupFn = (
         /** @type {Iterable<any> | ArrayLike<any>} */ items,
         /** @type {any} */ record
       ) => {
@@ -32,7 +32,7 @@ describe('deal/*', () => {
           i.aggregate.equals(record.aggregate)
         )
       }
-      const offerStore = new Store(offerLookupFn)
+      const dealStore = new Store(dealLookupFn)
 
       await test(
         {
@@ -48,7 +48,7 @@ describe('deal/*', () => {
             },
           },
           addQueue,
-          offerStore,
+          dealStore,
           queuedMessages,
         }
       )

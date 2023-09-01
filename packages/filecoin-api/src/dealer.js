@@ -67,7 +67,7 @@ export const queue = async ({ capability, invocation }, context) => {
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
 export const add = async ({ capability, invocation }, context) => {
-  const { aggregate, pieces: offerCid, storefront, label } = capability.nb
+  const { aggregate, pieces: offerCid, storefront } = capability.nb
   const pieces = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
 
   if (!pieces) {
@@ -78,17 +78,14 @@ export const add = async ({ capability, invocation }, context) => {
     }
   }
 
-  // Store aggregate into the store. Store events MAY be used to propagate aggregate over
-  const put = await context.offerStore.put({
+  // Get deal status from the store.
+  const get = await context.dealStore.get({
     aggregate,
-    pieces,
-    storefront,
-    label,
-    insertedAt: Date.now(),
+    storefront
   })
-  if (put.error) {
+  if (get.error) {
     return {
-      error: new StoreOperationFailed(put.error.message),
+      error: new StoreOperationFailed(get.error.message),
     }
   }
 
