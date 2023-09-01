@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.1...filecoin-api-v1.4.2) (2023-09-01)
+
+
+### Bug Fixes
+
+* rename dealer offer store ([#895](https://github.com/web3-storage/w3up/issues/895)) ([d3f8e06](https://github.com/web3-storage/w3up/commit/d3f8e06590c5608420d61e20b98007076da0b6f7))
+
 ## [1.4.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.0...filecoin-api-v1.4.1) (2023-08-31)
 
 
