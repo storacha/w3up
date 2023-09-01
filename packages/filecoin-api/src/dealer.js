@@ -12,11 +12,11 @@ import {
 } from './errors.js'
 
 /**
- * @param {API.Input<FilecoinCapabilities.dealAdd>} input
+ * @param {API.Input<FilecoinCapabilities.dealQueue>} input
  * @param {API.DealerServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-export const add = async ({ capability, invocation }, context) => {
+export const queue = async ({ capability, invocation }, context) => {
   const { aggregate, pieces: offerCid, storefront, label } = capability.nb
   const pieces = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
 
@@ -28,29 +28,6 @@ export const add = async ({ capability, invocation }, context) => {
     }
   }
 
-  // If self issued we accept without verification
-  return context.id.did() === capability.with
-    ? accept(aggregate, pieces, storefront, label, context)
-    : enqueue(aggregate, offerCid, storefront, label, pieces, context)
-}
-
-/**
- * @param {import('@web3-storage/data-segment').PieceLink} aggregate
- * @param {Server.API.Link<unknown, number, number, 0 | 1>} offerCid
- * @param {string} storefront
- * @param {string | undefined} label
- * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
- * @param {API.DealerServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
- */
-async function enqueue(
-  aggregate,
-  offerCid,
-  storefront,
-  label,
-  pieces,
-  context
-) {
   const queued = await context.addQueue.add({
     aggregate,
     pieces, // add queue can opt to store offers in separate datastore
@@ -85,15 +62,21 @@ async function enqueue(
 }
 
 /**
- * @param {import('@web3-storage/data-segment').PieceLink} aggregate
- * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
- * @param {string} storefront
- * @param {string | undefined} label
+ * @param {API.Input<FilecoinCapabilities.dealAdd>} input
  * @param {API.DealerServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-async function accept(aggregate, pieces, storefront, label, context) {
-  // TODO: failure - needs to read from the store
+export const add = async ({ capability, invocation }, context) => {
+  const { aggregate, pieces: offerCid, storefront, label } = capability.nb
+  const pieces = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
+
+  if (!pieces) {
+    return {
+      error: new DecodeBlockOperationFailed(
+        `missing offer block in invocation: ${offerCid.toString()}`
+      ),
+    }
+  }
 
   // Store aggregate into the store. Store events MAY be used to propagate aggregate over
   const put = await context.offerStore.put({
@@ -139,6 +122,10 @@ function getOfferBlock(offerCid, blockIterator) {
 export function createService(context) {
   return {
     deal: {
+      queue: Server.provideAdvanced({
+        capability: FilecoinCapabilities.dealQueue,
+        handler: (input) => queue(input, context),
+      }),
       add: Server.provideAdvanced({
         capability: FilecoinCapabilities.dealAdd,
         handler: (input) => add(input, context),

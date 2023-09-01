@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-api",
-  "version": "5.0.0",
+  "version": "5.2.0",
   "type": "module",
   "main": "./src/lib.js",
   "files": [
@@ -103,7 +103,7 @@
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",
-    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
+    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch 'test/**/*.spec.js'",
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "dependencies": {

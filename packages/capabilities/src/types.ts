@@ -85,6 +85,7 @@ export interface InvalidProvider extends Ucanto.Failure {
 export type CustomerGet = InferInvokedCapability<typeof CustomerCaps.get>
 export interface CustomerGetSuccess {
   did: AccountDID
+  subscriptions: string[]
 }
 export interface CustomerNotFound extends Ucanto.Failure {
   name: 'CustomerNotFound'
@@ -99,7 +100,7 @@ export type ConsumerGet = InferInvokedCapability<typeof ConsumerCaps.get>
 export interface ConsumerGetSuccess {
   did: DIDKey
   allocated: number
-  total: number
+  limit: number
   subscription: string
 }
 export interface ConsumerNotFound extends Ucanto.Failure {
@@ -113,7 +114,7 @@ export type SubscriptionGet = InferInvokedCapability<
 >
 export interface SubscriptionGetSuccess {
   customer: AccountDID
-  consumer: DIDKey
+  consumer?: DIDKey
 }
 export interface SubscriptionNotFound extends Ucanto.Failure {
   name: 'SubscriptionNotFound'
@@ -211,12 +212,19 @@ export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
 // Filecoin
+export type FilecoinQueue = InferInvokedCapability<
+  typeof FilecoinCaps.filecoinQueue
+>
 export type FilecoinAdd = InferInvokedCapability<
   typeof FilecoinCaps.filecoinAdd
+>
+export type AggregateQueue = InferInvokedCapability<
+  typeof FilecoinCaps.aggregateQueue
 >
 export type AggregateAdd = InferInvokedCapability<
   typeof FilecoinCaps.aggregateAdd
 >
+export type DealQueue = InferInvokedCapability<typeof FilecoinCaps.dealQueue>
 export type DealAdd = InferInvokedCapability<typeof FilecoinCaps.dealAdd>
 export type ChainTrackerInfo = InferInvokedCapability<
   typeof FilecoinCaps.chainTrackerInfo
@@ -249,8 +257,11 @@ export type AbilitiesArray = [
   RateLimitAdd['can'],
   RateLimitRemove['can'],
   RateLimitList['can'],
+  FilecoinQueue['can'],
   FilecoinAdd['can'],
+  AggregateQueue['can'],
   AggregateAdd['can'],
+  DealQueue['can'],
   DealAdd['can'],
   ChainTrackerInfo['can']
 ]

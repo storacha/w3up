@@ -11,7 +11,7 @@ import { createServer, connect } from '../../src/storefront.js'
  * @type {API.Tests<API.StorefrontServiceContext>}
  */
 export const test = {
-  'filecoin/add inserts piece into verification queue': async (
+  'filecoin/queue inserts piece into verification queue': async (
     assert,
     context
   ) => {
@@ -25,7 +25,7 @@ export const test = {
     const [cargo] = await randomCargo(1, 128)
 
     // agent invocation
-    const filecoinAddInv = Filecoin.filecoinAdd.invoke({
+    const filecoinAddInv = Filecoin.filecoinQueue.invoke({
       issuer: agent,
       audience: connection.id,
       with: agent.did(),

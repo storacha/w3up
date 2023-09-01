@@ -7,14 +7,17 @@ import {
   Principal,
 } from '@ucanto/interface'
 import {
+  FilecoinQueue,
   FilecoinAdd,
   FilecoinAddSuccess,
   FilecoinAddFailure,
+  AggregateQueue,
   AggregateAdd,
   AggregateAddSuccess,
   AggregateAddFailure,
-  DealAddSuccess,
+  DealQueue,
   DealAdd,
+  DealAddSuccess,
   DealAddFailure,
   ChainTrackerInfo,
   ChainTrackerInfoSuccess,
@@ -48,18 +51,25 @@ export interface InvocationConfig {
 
 export interface StorefrontService {
   filecoin: {
+    queue: ServiceMethod<FilecoinQueue, FilecoinAddSuccess, FilecoinAddFailure>
     add: ServiceMethod<FilecoinAdd, FilecoinAddSuccess, FilecoinAddFailure>
   }
 }
 
 export interface AggregatorService {
   aggregate: {
+    queue: ServiceMethod<
+      AggregateQueue,
+      AggregateAddSuccess,
+      AggregateAddFailure
+    >
     add: ServiceMethod<AggregateAdd, AggregateAddSuccess, AggregateAddFailure>
   }
 }
 
 export interface DealerService {
   deal: {
+    queue: ServiceMethod<DealQueue, DealAddSuccess, DealAddFailure>
     add: ServiceMethod<DealAdd, DealAddSuccess, DealAddFailure>
   }
 }

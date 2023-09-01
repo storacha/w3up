@@ -12,22 +12,35 @@ import { QueueOperationFailed, StoreOperationFailed } from './errors.js'
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAddSuccess, API.FilecoinAddFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinAddSuccess>>}
  */
 export const add = async ({ capability }, context) => {
-  // TODO: source
   const { piece, content } = capability.nb
 
-  // If self issued we accept without verification
-  return context.id.did() === capability.with
-    ? accept(piece, content, context)
-    : enqueue(piece, content, context)
+  /// Store piece into the store. Store events MAY be used to propagate piece over
+  const put = await context.pieceStore.put({
+    content,
+    piece,
+    insertedAt: Date.now(),
+  })
+  if (put.error) {
+    return {
+      error: new StoreOperationFailed(put.error.message),
+    }
+  }
+
+  return {
+    ok: {
+      piece,
+    },
+  }
 }
 
 /**
- * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {import('multiformats').UnknownLink} content
+ * @param {API.Input<FilecoinCapabilities.filecoinQueue>} input
  * @param {API.StorefrontServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAddSuccess, API.FilecoinAddFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinAddSuccess>>}
  */
-async function enqueue(piece, content, context) {
+export const queue = async ({ capability }, context) => {
+  const { piece, content } = capability.nb
+
   const queued = await context.addQueue.add({
     piece,
     content,
@@ -58,37 +71,15 @@ async function enqueue(piece, content, context) {
 }
 
 /**
- * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {import('multiformats').UnknownLink} content
- * @param {API.StorefrontServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAddSuccess, API.FilecoinAddFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinAddSuccess>>}
- */
-async function accept(piece, content, context) {
-  // Store piece into the store. Store events MAY be used to propagate piece over
-  const put = await context.pieceStore.put({
-    content,
-    piece,
-    insertedAt: Date.now(),
-  })
-  if (put.error) {
-    return {
-      error: new StoreOperationFailed(put.error.message),
-    }
-  }
-
-  return {
-    ok: {
-      piece,
-    },
-  }
-}
-
-/**
  * @param {API.StorefrontServiceContext} context
  */
 export function createService(context) {
   return {
     filecoin: {
+      queue: Server.provideAdvanced({
+        capability: FilecoinCapabilities.filecoinQueue,
+        handler: (input) => queue(input, context),
+      }),
       add: Server.provideAdvanced({
         capability: FilecoinCapabilities.filecoinAdd,
         handler: (input) => add(input, context),

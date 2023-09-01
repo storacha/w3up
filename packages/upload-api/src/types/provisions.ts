@@ -1,5 +1,6 @@
 import type {
   AccountDID,
+  ConsumerGetSuccess,
   ProviderDID,
 } from '@web3-storage/capabilities/src/types'
 import * as Ucanto from '@ucanto/interface'
@@ -15,20 +16,15 @@ export interface Provision {
   provider: ProviderDID
 }
 
-export interface Consumer {
-  did: Ucanto.DIDKey
-  allocated: number
-  total: number
-  subscription: string
-}
 
 export interface Customer {
   did: Ucanto.DID<'mailto'>
+  subscriptions: string[]
 }
 
 export interface Subscription {
   customer: AccountDID
-  consumer: Ucanto.DIDKey
+  consumer?: Ucanto.DIDKey
 }
 
 /**
@@ -37,14 +33,17 @@ export interface Subscription {
 export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
   services: ProviderDID[]
   hasStorageProvider: (
-    consumer: Ucanto.DID<'key'>
+    consumer: Ucanto.DIDKey
   ) => Promise<Ucanto.Result<boolean, never>>
+  getStorageProviders: (
+    consumer: Ucanto.DIDKey
+  ) => Promise<Ucanto.Result<ProviderDID[], never>>
   /**
    * ensure item is stored
    *
    * @param item - provision to store
    */
-  put: (item: Provision) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+  put: (item: Provision) => Promise<Ucanto.Result<{ id: string }, Ucanto.Failure>>
 
   /**
    * Returns information about a customer related to the given provider.
@@ -58,7 +57,7 @@ export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
   getConsumer: (
     provider: ProviderDID,
     consumer: Ucanto.DIDKey
-  ) => Promise<Ucanto.Result<Consumer, Ucanto.Failure>>
+  ) => Promise<Ucanto.Result<ConsumerGetSuccess, Ucanto.Failure>>
 
   /**
    * Returns information about a customer related to the given provider.

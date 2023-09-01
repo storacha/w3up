@@ -30,7 +30,7 @@ export const test = {
 
     const space = await agent.createSpace('test-add')
     const [proof] = agent.proofs()
-    assert.deepEqual(space.proof.cid, /** @type {API.Link} */ (proof.cid))
+    assert.deepEqual(space.proof.cid, /** @type {API.Link} */(proof.cid))
   },
   'can requestAuthorization': async (assert, context) => {
     const { agent, mail, account, accountEmail } = await setup(context)
@@ -146,7 +146,7 @@ export const test = {
     )
     assert.ok(attestation, 'claimed attestation')
     assert.equal(
-      /** @type {any} */ (attestation).capabilities[0].nb.proof.toString(),
+      /** @type {any} */(attestation).capabilities[0].nb.proof.toString(),
       delegationFromAccountToSession?.cid.toString(),
       'ucan/attest proof cid matches delegation cid'
     )
@@ -305,7 +305,8 @@ export const test = {
     assert.equal(spaceInfoResult.out.error, undefined)
 
     assert.ok(spaceInfoResult.out.ok)
-    assert.deepEqual(spaceInfoResult.out.ok?.did, spaceCreation.did)
+    const result = /** @type {import('@web3-storage/access/types').SpaceInfoResult} */(spaceInfoResult.out.ok)
+    assert.deepEqual(result.did, spaceCreation.did)
   },
   'can addSpacesFromDelegations': async (assert, context) => {
     const { agent } = await setup(context)

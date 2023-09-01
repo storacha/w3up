@@ -1,5 +1,19 @@
 # Changelog
 
+## [15.2.0](https://github.com/web3-storage/w3up/compare/access-v15.1.1...access-v15.2.0) (2023-08-29)
+
+
+### Features
+
+* make agent Service generic ([#875](https://github.com/web3-storage/w3up/issues/875)) ([cdfe36d](https://github.com/web3-storage/w3up/commit/cdfe36dc7298e92066d0454144f598b0e0535b19))
+
+## [15.1.1](https://github.com/web3-storage/w3up/compare/access-v15.1.0...access-v15.1.1) (2023-08-25)
+
+
+### Bug Fixes
+
+* update docs to bump version ([#870](https://github.com/web3-storage/w3up/issues/870)) ([d2eec7c](https://github.com/web3-storage/w3up/commit/d2eec7cff1125898c0388957aa7a91fbba2e54f2))
+
 ## [15.1.0](https://github.com/web3-storage/w3up/compare/access-v15.0.0...access-v15.1.0) (2023-08-09)
 
 

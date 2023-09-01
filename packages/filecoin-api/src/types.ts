@@ -44,7 +44,7 @@ export interface StorefrontServiceContext {
 
 export interface AggregatorServiceContext {
   id: Signer
-  addQueue: Queue<AggregatorRecord>
+  addQueue: Queue<AggregatorMessageRecord>
   pieceStore: Store<AggregatorRecord>
 }
 
@@ -59,6 +59,12 @@ export interface DealerServiceContext {
 export interface StorefrontRecord {
   piece: PieceLink
   content: UnknownLink
+  insertedAt: number
+}
+
+export interface AggregatorMessageRecord {
+  piece: PieceLink
+  group: string
   insertedAt: number
 }
 
@@ -79,12 +85,12 @@ export interface DealerRecord {
 
 // Errors
 
-export type QueueAddError = QueueOperationError | EncodeRecordFailed
 export type StorePutError = StoreOperationError | EncodeRecordFailed
 export type StoreGetError =
   | StoreOperationError
   | EncodeRecordFailed
   | StoreNotFound
+export type QueueAddError = QueueOperationError | EncodeRecordFailed | StorePutError
 
 export interface QueueOperationError extends Error {
   name: 'QueueOperationFailed'
