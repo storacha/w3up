@@ -152,7 +152,7 @@ export class ProvisionsStorage {
           did: provision.consumer,
           allocated: 0,
           limit: 100,
-          subscription: provision.customer,
+          subscription: itemKey(provision),
         },
       }
     } else {
