@@ -116,9 +116,7 @@ export const test = {
       // Validate queue and store
       await pWaitFor(() => context.queuedMessages.length === 0)
 
-      const hasStoredOffer = await context.offerStore.get({
-        aggregate: aggregate.link.link(),
-      })
+      const hasStoredOffer = await context.offerStore.get(aggregate.link.link())
       assert.ok(hasStoredOffer.ok)
     },
   'skip aggregate/add from signer inserts piece into store and returns rejected':

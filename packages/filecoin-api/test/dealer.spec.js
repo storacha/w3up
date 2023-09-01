@@ -29,7 +29,7 @@ describe('deal/*', () => {
         /** @type {any} */ record
       ) => {
         return Array.from(items).find((i) =>
-          i.aggregate.equals(record.aggregate)
+          i.aggregate.equals(record)
         )
       }
       const offerStore = new Store(offerLookupFn)
