@@ -28,7 +28,7 @@ export interface Store<Record> {
   /**
    * Gets content data from the store.
    */
-  get(key: any): Promise<Result<Record, StoreGetError>>
+  get: (key: any) => Promise<Result<Record, StoreGetError>>
 }
 
 export interface QueueMessageOptions {
@@ -50,8 +50,8 @@ export interface AggregatorServiceContext {
 
 export interface DealerServiceContext {
   id: Signer
-  addQueue: Queue<DealerRecord>
-  offerStore: Store<DealerRecord>
+  addQueue: Queue<DealerMessageRecord>
+  dealStore: Store<DealerRecord>
 }
 
 // Service Types
@@ -75,11 +75,19 @@ export interface AggregatorRecord {
   insertedAt: number
 }
 
-export interface DealerRecord {
+export interface DealerMessageRecord {
   aggregate: PieceLink
   pieces: PieceLink[]
   storefront: string
   label?: string
+  insertedAt: number
+}
+
+export interface DealerRecord {
+  aggregate: PieceLink
+  storefront: string
+  offer: string
+  stat: number
   insertedAt: number
 }
 

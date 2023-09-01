@@ -72,10 +72,10 @@ export const test = {
     // Validate queue and store
     await pWaitFor(() => context.queuedMessages.length === 1)
 
-    const hasStoredOffer = await context.offerStore.get({
+    const hasStoredDeal = await context.dealStore.get({
       piece: aggregate.link.link(),
     })
-    assert.ok(!hasStoredOffer.ok)
+    assert.ok(!hasStoredDeal.ok)
   },
   'aggregate/add from signer inserts piece into store and returns accepted':
     async (assert, context) => {
@@ -116,10 +116,18 @@ export const test = {
       // Validate queue and store
       await pWaitFor(() => context.queuedMessages.length === 0)
 
-      const hasStoredOffer = await context.offerStore.get({
+      await context.dealStore.put({
+        aggregate: aggregate.link,
+        offer: aggregate.link.toString(),
+        storefront,
+        stat: 1,
+        insertedAt: Date.now()
+      })
+
+      const hasStoredDeal = await context.dealStore.get({
         aggregate: aggregate.link.link(),
       })
-      assert.ok(hasStoredOffer.ok)
+      assert.ok(hasStoredDeal.ok)
     },
   'skip aggregate/add from signer inserts piece into store and returns rejected':
     async (assert, context) => {
@@ -160,10 +168,10 @@ export const test = {
       // Validate queue and store
       await pWaitFor(() => context.queuedMessages.length === 0)
 
-      const hasStoredOffer = await context.offerStore.get({
+      const hasStoredDeal = await context.dealStore.get({
         aggregate: aggregate.link.link(),
       })
-      assert.ok(!hasStoredOffer.ok)
+      assert.ok(!hasStoredDeal.ok)
     },
 }
 
