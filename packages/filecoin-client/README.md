@@ -22,7 +22,7 @@ Request a Storefront service to add computed filecoin piece into Filecoin Storag
 ```js
 import { Storefront } from '@web3-storage/filecoin-client'
 
-const add = await Storefront.filecoinAdd(
+const add = await Storefront.filecoinQueue(
   invocationConfig,
   piece,
   content
@@ -30,7 +30,7 @@ const add = await Storefront.filecoinAdd(
 ```
 
 ```typescript
-function filecoinAdd(
+function filecoinQueue(
   conf: InvocationConfig,
   piece: Piece, // Filecoin piece
   content: Link, // Content CID
@@ -46,52 +46,46 @@ Request an Aggregator service to add a filecoin piece into an aggregate to be of
 ```js
 import { Aggregator } from '@web3-storage/filecoin-client'
 
-const add = await Aggregator.pieceAdd(
+const add = await Aggregator.aggregateQueue(
   invocationConfig,
   piece,
-  storefront,
   group
 )
 ```
 
 ```typescript
-function pieceAdd(
+function aggregateQueue(
   conf: InvocationConfig,
   piece: Piece, // Filecoin piece
-  storefront: string, // Storefront identifier
-  group: string, // Aggregate grouping with different criterium
+  group: string, // Aggregate grouping with different criterium like storefront
 ): Promise<Receipt>
 ```
 
 More information: [`InvocationConfig`](#invocationconfig)
 
-### `Broker.aggregateAdd`
+### `Dealer.aggregateAdd`
 
-Request a Broker service to offer a filecoin piece (larger aggregate of pieces) to Filecoin Storage Providers.
+Request a Dealer service to offer a filecoin piece (larger aggregate of pieces) to Filecoin Storage Providers.
 
 ```js
-import { Broker } from '@web3-storage/filecoin-client'
+import { Dealer } from '@web3-storage/filecoin-client'
 
-const add = await Broker.aggregateAdd(
+const add = await Dealer.dealQueue(
   invocationConfig,
-  piece,
-  offer,
-  deal
+  aggregate,
+  pieces,
+  storefront,
+  label
 )
 ```
 
 ```typescript
-function pieceAdd(
+function dealQueue(
   conf: InvocationConfig,
-  piece: Piece, // Filecoin piece representing aggregate
-  offer: Piece[], // Filecoin pieces part of the aggregate (sorted)
-  deal: DealConfig, // Aggregate grouping with different criterium
+  aggregate: Piece, // Filecoin piece representing aggregate
+  pieces: Piece[],  // Filecoin pieces part of the aggregate (sorted)
+  label: string     // optional label for deal
 ): Promise<Receipt>
-
-interface DealConfig {
-  tenantId: string // Identifier of the tenant (storefront) for Broker
-  label?: string // optionaal label for deal
-}
 ```
 
 More information: [`InvocationConfig`](#invocationconfig)
@@ -103,7 +97,7 @@ Request a Chain service to find chain information of a given piece. It will retu
 ```js
 import { Chain } from '@web3-storage/filecoin-client'
 
-const add = await Broker.chainInfo(
+const add = await Chain.chainInfo(
   invocationConfig,
   piece
 )
