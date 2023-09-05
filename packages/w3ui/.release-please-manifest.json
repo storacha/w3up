@@ -11,5 +11,5 @@
   "packages/solid-keyring": "5.0.0",
   "packages/solid-uploader": "5.0.0",
   "packages/solid-uploads-list": "4.0.0",
-  "examples/react/w3console": "2.0.0"
+  "examples/react/w3console": "2.0.1"
 }

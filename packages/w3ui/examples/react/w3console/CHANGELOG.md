@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/web3-storage/w3ui/compare/w3console-v2.0.0...w3console-v2.0.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* beta ToS ([#546](https://github.com/web3-storage/w3ui/issues/546)) ([671d601](https://github.com/web3-storage/w3ui/commit/671d6016e337db5ce34211903112caa016fc31d9))
+
 ## [2.0.0](https://github.com/web3-storage/w3ui/compare/w3console-v1.5.0...w3console-v2.0.0) (2023-07-26)
 
 
