@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.3.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.2.0...upload-api-v5.3.0) (2023-09-05)
+
+
+### Features
+
+* make agent Service generic ([#875](https://github.com/web3-storage/w3up/issues/875)) ([cdfe36d](https://github.com/web3-storage/w3up/commit/cdfe36dc7298e92066d0454144f598b0e0535b19))
+
+
+### Bug Fixes
+
+* add a test that exercises ProvisionsStorage#getConsumer ([#893](https://github.com/web3-storage/w3up/issues/893)) ([ed60572](https://github.com/web3-storage/w3up/commit/ed605725a71102b6584bb1c7039ee1a1f50dd7c6))
+
 ## [5.2.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.1.0...upload-api-v5.2.0) (2023-08-28)
 
 
