@@ -61,11 +61,11 @@ UCAN-based APIs are centered around _capabilities_, which are comprised of an _a
 
 #### Space
 
-When you upload data to w3up, your uploads are linked to a unique _Space_ that acts as a "namespace" for the data you upload. Each Space corresponds to a _DID_, or [Decentralized Identity Document](https://www.w3.org/TR/did-core/). Specifically, a Space corresponds to a [`did:key`](https://w3c-ccg.github.io/did-method-key/), which is a public key with a corresponding private signing key. 
+When you upload data to w3up, your uploads are linked to a unique _Space_ that acts as a "namespace" for the data you upload. Each Space corresponds to a _DID_, or [Decentralized Identity Document](https://www.w3.org/TR/did-core/). In web3.storage's implementation of w3up, these Space DIDs generally use the key DID method, of the form `did:key:publicKey` with a corresponding private signing key.
 
 When creating a Space using `w3up-client`, it generates this private key and `did:key` for you locally. To use web3.storage, you then register a Space by associating it with your email address. From there, when invoking storage capabilities with web3.storage, the Space `did:key` is the "resource" portion of the capability, while the ability is an action like `store/add` or `store/remove`. (A Space registered with web3.storage is imperfectly analogous to an "account" with web3.storage.)
 
-Under the hood in the email registration process, your Space delegates to your email address the ability to call any capability; this delegation is stored by web3.storage. So if you ever need access to your Space in the future from any device, web3.storage allows you to "sign in" by verifying your email, so you don't need keep your Space private key around - no complex local key management needed! (`w3up-client` actually throws this private away for safety reasons after registration.) More on this "sign in" process is detailed in the next section on Agents.
+Under the hood in the email registration process, your Space delegates the capabilities needed to use w3up to your email address, and this delegation is stored by web3.storage. If you need access to your Space in the future from any device, web3.storage allows you to reclaim those capabilities the same way you would reset a password in other services - using an email verification process. This means you don't need to store or manage Space private keys to use w3up - just create a new space, register it with w3up and use it from as many devices as you like. More on this "sign in" process is detailed in the next section on Agents.
 
 #### Agent
 
@@ -148,12 +148,6 @@ await client.authorize('zaphod@beeblebrox.galaxy')
 
 Calling `authorize` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `authorize` method will resolve. Make sure to check for errors, as `authorize` will fail if the email is not confirmed within the expiration timeout.
 
-If this is not the first time you authorized an agent with your email, then you'll want to claim any spaces and delegations you have on your other agent(s):
-
-```js
-await client.capability.access.claim()
-```
-
 ##### Bringing your own Agent and delegation
 
 For uses of `w3up-client` in environments where the Agent is not persisted and/or the email verification step would be prohibitive (e.g., serverless backend environment where local Store with the Agent is dropped in between runs, and going through the email verification flow isn't practical), you can manually add a delegation for access to a space created by a different authorized agent (see the [`addSpace` client method](docs-client#addSpace)). An example:
@@ -170,7 +164,7 @@ async function main () {
   const client = await Client.create({ principal })
   
   // now give Agent the delegation from a Space created in w3cli using `w3 space create`
-  const proof = await parseProof(process.env.PROOF) // function created locally
+  const proof = await parseProof(process.env.PROOF)
   const space = await client.addSpace(proof)
   await client.setCurrentSpace(space.did())
   
