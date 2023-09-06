@@ -64,6 +64,7 @@ export interface StorefrontRecord {
 
 export interface AggregatorMessageRecord {
   piece: PieceLink
+  storefront: string
   group: string
   insertedAt: number
 }
