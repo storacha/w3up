@@ -15,6 +15,8 @@ import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
 import { AccessClient } from './capability/access.js'
 
+export { StoreClient, UploadClient, SpaceClient, AccessClient }
+
 export class Client extends Base {
   /**
    * @param {import('@web3-storage/access').AgentData} agentData
