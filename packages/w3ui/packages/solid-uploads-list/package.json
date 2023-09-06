@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-uploads-list",
   "dependencies": {
-    "@w3ui/solid-keyring": "workspace:^",
+    "@w3ui/solid-keyring": "workspace:^5.0.1",
     "@w3ui/uploads-list-core": "workspace:^",
     "@web3-storage/capabilities": "^7.0.0"
   },
