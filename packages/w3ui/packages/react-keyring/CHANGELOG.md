@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.1](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.0.0...react-keyring-v6.0.1) (2023-09-06)
+
+
+### Bug Fixes
+
+* bump keyring package versions to bring in latest keyring-core ([#550](https://github.com/web3-storage/w3ui/issues/550)) ([3402edb](https://github.com/web3-storage/w3ui/commit/3402edb4740ebec45b576be4260363ec9b646b2c))
+
 ## [6.0.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v5.2.0...react-keyring-v6.0.0) (2023-07-25)
 
 
