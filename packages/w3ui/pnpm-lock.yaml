@@ -543,7 +543,7 @@ importers:
   packages/react-keyring:
     dependencies:
       '@w3ui/keyring-core':
-        specifier: workspace:^
+        specifier: workspace:^5.0.1
         version: link:../keyring-core
       ariakit-react-utils:
         specifier: 0.17.0-next.27
@@ -627,7 +627,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       '@w3ui/keyring-core':
-        specifier: workspace:^
+        specifier: workspace:^5.0.1
         version: link:../keyring-core
       solid-js:
         specifier: ^1.7.8
@@ -700,7 +700,7 @@ importers:
   packages/vue-keyring:
     dependencies:
       '@w3ui/keyring-core':
-        specifier: workspace:^
+        specifier: workspace:^5.0.1
         version: link:../keyring-core
       vue:
         specifier: ^3.0.0

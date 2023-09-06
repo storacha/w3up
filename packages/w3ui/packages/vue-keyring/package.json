@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/vue-keyring",
   "dependencies": {
-    "@w3ui/keyring-core": "workspace:^"
+    "@w3ui/keyring-core": "workspace:^5.0.1"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
