@@ -37,7 +37,10 @@ export class ShardingStream extends TransformStream {
           throw new Error(`block exceeds shard size: ${block.cid}`)
         }
 
-        if (shard.length && headerEncodingLength() + shardBlockLength + blockLength > shardSize) {
+        if (
+          shard.length &&
+          headerEncodingLength() + shardBlockLength + blockLength > shardSize
+        ) {
           readyShard = shard
           shard = []
           shardBlockLength = 0
@@ -64,7 +67,8 @@ export class ShardingStream extends TransformStream {
           let lastShardBlockLength = 0
           while (lastShardBlockLength < overage) {
             // need at least 1 block in original shard
-            if (shard.length < 2) throw new Error(`block exceeds shard size: ${shard.at(-1)?.cid}`)
+            if (shard.length < 2)
+              throw new Error(`block exceeds shard size: ${shard.at(-1)?.cid}`)
             const block = shard[shard.length - 1]
             shard.pop()
             lastShard.unshift(block)

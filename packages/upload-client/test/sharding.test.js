@@ -63,27 +63,31 @@ describe('ShardingStream', () => {
 
   it('fails to shard block that exceeds shard size when encoded', async () => {
     const file = new Blob([await randomBytes(128)])
-    await assert.rejects(() => createFileEncoderStream(file)
-      .pipeThrough(new ShardingStream({ shardSize: 64 }))
-      .pipeTo(new WritableStream()), /block exceeds shard size/)
+    await assert.rejects(
+      () =>
+        createFileEncoderStream(file)
+          .pipeThrough(new ShardingStream({ shardSize: 64 }))
+          .pipeTo(new WritableStream()),
+      /block exceeds shard size/
+    )
   })
 
   it('reduces final shard to accomodate CAR header with root CID', async () => {
     const blocks = [
       await randomBlock(128), // encoded block length = 166
-      await randomBlock(64),  // encoded block length = 102
-      await randomBlock(32)   // encoded block length = 70
+      await randomBlock(64), // encoded block length = 102
+      await randomBlock(32), // encoded block length = 70
     ]
 
     /** @type {import('../src/types').CARFile[]} */
     const shards = []
     await new ReadableStream({
-        pull (controller) {
-          const block = blocks.shift()
-          if (!block) return controller.close()
-          controller.enqueue(block)
-        }
-      })
+      pull(controller) {
+        const block = blocks.shift()
+        if (!block) return controller.close()
+        controller.enqueue(block)
+      },
+    })
       // shard with no roots = encoded block (166) + CAR header (17) = 183
       // shard with no roots = encoded block (102) + CAR header (17) = 119
       // shard with 1 root = encoded block (70) + CAR header (17) = 87
@@ -93,38 +97,56 @@ describe('ShardingStream', () => {
       // will actually exceed the shard size. It must then be refactored into
       // 2 shards.
       .pipeThrough(new ShardingStream({ shardSize: 206 }))
-      .pipeTo(new WritableStream({ write: s => { shards.push(s) } }))
+      .pipeTo(
+        new WritableStream({
+          write: (s) => {
+            shards.push(s)
+          },
+        })
+      )
 
     assert.equal(shards.length, 3)
   })
 
   it('fails to shard block that exceeds shard size when encoded with root CID', async () => {
     const blocks = [
-      await randomBlock(128) // encoded block length = 166
+      await randomBlock(128), // encoded block length = 166
     ]
 
     await assert.rejects(() => {
-      return new ReadableStream({
-        pull (controller) {
-          const block = blocks.shift()
-          if (!block) return controller.close()
-          controller.enqueue(block)
-        }
-      })
-      // shard with no roots = encoded block (166) + CAR header (17) = 183
-      // shard with 1 root = encoded block (166) + CAR header (59) = 225
-      // i.e. shard size of 183 should allow us 1 shard with no roots and then
-      // we'll fail to create a shard with 1 root.
-      .pipeThrough(new ShardingStream({ shardSize: 183 }))
-      .pipeTo(new WritableStream())
+      return (
+        new ReadableStream({
+          pull(controller) {
+            const block = blocks.shift()
+            if (!block) return controller.close()
+            controller.enqueue(block)
+          },
+        })
+          // shard with no roots = encoded block (166) + CAR header (17) = 183
+          // shard with 1 root = encoded block (166) + CAR header (59) = 225
+          // i.e. shard size of 183 should allow us 1 shard with no roots and then
+          // we'll fail to create a shard with 1 root.
+          .pipeThrough(new ShardingStream({ shardSize: 183 }))
+          .pipeTo(new WritableStream())
+      )
     }, /block exceeds shard size/)
   })
 
   it('no blocks no shards', async () => {
     let shards = 0
-    await new ReadableStream({ pull: controller => { controller.close() } })
+    await new ReadableStream({
+      pull: (controller) => {
+        controller.close()
+      },
+    })
       .pipeThrough(new ShardingStream({ shardSize: 206 }))
-      .pipeTo(new WritableStream({ write: () => { shards++ } }))
+      .pipeTo(
+        new WritableStream({
+          write: () => {
+            shards++
+          },
+        })
+      )
     assert.equal(shards, 0)
   })
 })

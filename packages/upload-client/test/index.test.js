@@ -12,7 +12,11 @@ import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
-import { blockEncodingLength, encode, headerEncodingLength } from '../src/car.js'
+import {
+  blockEncodingLength,
+  encode,
+  headerEncodingLength,
+} from '../src/car.js'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -372,9 +376,11 @@ describe('uploadCAR', () => {
     const car = await encode(blocks, blocks.at(-1)?.cid)
     // Wanted: 2 shards
     // 2 * CAR header (34) + 2 * blocks (256), 2 * block encoding prefix (78)
-    const shardSize = (headerEncodingLength() * 2) + blocks
-      .slice(0, -1)
-      .reduce((size, block) => size + blockEncodingLength(block), 0)
+    const shardSize =
+      headerEncodingLength() * 2 +
+      blocks
+        .slice(0, -1)
+        .reduce((size, block) => size + blockEncodingLength(block), 0)
 
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
