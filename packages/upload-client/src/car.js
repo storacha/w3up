@@ -62,16 +62,6 @@ export class BlockStream extends ReadableStream {
     let blocksPromise = null
     const getBlocksIterable = () => {
       if (blocksPromise) return blocksPromise
-      // FIXME: remove when resolved: https://github.com/nodejs/node/issues/48916
-      /* c8 ignore next 10 */
-      if (parseInt(globalThis.process?.versions?.node) > 18) {
-        blocksPromise = (async () => {
-          // @ts-expect-error
-          const bytes = await car.arrayBuffer()
-          return CarBlockIterator.fromBytes(new Uint8Array(bytes))
-        })()
-        return blocksPromise
-      }
       blocksPromise = CarBlockIterator.fromIterable(toIterable(car.stream()))
       return blocksPromise
     }
