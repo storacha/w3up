@@ -343,4 +343,19 @@ describe('Client', () => {
       assert.equal(alice.defaultProvider(), 'did:web:web3.storage')
     })
   })
+
+  describe('capability', () => {
+    it('should allow typed access to capability specific clients', async () => {
+      const client = new Client(await AgentData.create())
+      assert.equal(typeof client.capability.access.authorize, 'function')
+      assert.equal(typeof client.capability.access.claim, 'function')
+      assert.equal(typeof client.capability.space.info, 'function')
+      assert.equal(typeof client.capability.store.add, 'function')
+      assert.equal(typeof client.capability.store.list, 'function')
+      assert.equal(typeof client.capability.store.remove, 'function')
+      assert.equal(typeof client.capability.upload.add, 'function')
+      assert.equal(typeof client.capability.upload.list, 'function')
+      assert.equal(typeof client.capability.upload.remove, 'function')
+    })
+  })
 })
