@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.2](https://github.com/web3-storage/w3up/compare/upload-client-v9.1.1...upload-client-v9.1.2) (2023-09-06)
+
+
+### Bug Fixes
+
+* revert workaround for bug in nodejs 20.5 ([#905](https://github.com/web3-storage/w3up/issues/905)) ([a47ddd9](https://github.com/web3-storage/w3up/commit/a47ddd92e696c5e751778abbf4241bea52ceea9c))
+
 ## [9.1.1](https://github.com/web3-storage/w3up/compare/upload-client-v9.1.0...upload-client-v9.1.1) (2023-07-25)
 
 
