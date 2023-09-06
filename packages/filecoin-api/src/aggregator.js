@@ -42,9 +42,11 @@ export const add = async ({ capability }, context) => {
  */
 export const queue = async ({ capability }, context) => {
   const { piece, group } = capability.nb
+  const storefront = capability.with
 
   const queued = await context.addQueue.add({
     piece,
+    storefront,
     group,
     insertedAt: Date.now(),
   })
@@ -62,7 +64,7 @@ export const queue = async ({ capability }, context) => {
       with: context.id.did(),
       nb: {
         piece,
-        storefront: capability.with,
+        storefront,
         group,
       },
     })
