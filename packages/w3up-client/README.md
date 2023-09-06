@@ -47,7 +47,7 @@ npm install @web3-storage/w3up-client
 
 [API Reference](#api)
 
-Most users' usage of `w3up-client` will be for interacting with web3.storage, a hosted storage product that developed w3up for their upload APIs. However, any user that has an implementation of w3up ([specs](https://github.com/web3-storage/specs), [protocol](https://github.com/web3-storage/w3protocol/)) can configure `w3up-client` for their usage.
+Most users' usage of `w3up-client` will be for interacting with web3.storage, a hosted storage product that developed w3up for their upload APIs. However, any user that has an implementation of w3up ([specs](https://github.com/web3-storage/specs), [protocol](https://github.com/web3-storage/w3up)) can configure `w3up-client` for their usage.
 
 For authorization, w3up services use [ucanto][ucanto], a Remote Procedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_ on top of [public key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography). See our [intro to UCAN blog post](https://blog.web3.storage/posts/intro-to-ucan) for an overview of UCAN.
 
