@@ -1,8 +1,28 @@
 import { CarBlockIterator, CarWriter } from '@ipld/car'
+import * as dagCBOR from '@ipld/dag-cbor'
+import varint from 'varint'
 
 /**
  * @typedef {import('@ipld/unixfs').Block} Block
  */
+
+/** Byte length of a CBOR encoded CAR header with zero roots. */
+const NO_ROOTS_HEADER_LENGTH = 17
+
+/** @param {import('./types').AnyLink} [root] */
+export function headerEncodingLength(root) {
+  if (!root) return NO_ROOTS_HEADER_LENGTH
+  const headerLength = dagCBOR.encode({ version: 1, roots: [root] }).length
+  const varintLength = varint.encodingLength(headerLength)
+  return varintLength + headerLength
+}
+
+/** @param {Block} block */
+export function blockEncodingLength(block) {
+  const varintLength = varint.encodingLength(block.cid.bytes.length + block.bytes.length)
+  const cidLength = block.cid.bytes.length
+  return varintLength + cidLength + block.bytes.length
+}
 
 /**
  * @param {Iterable<Block> | AsyncIterable<Block>} blocks

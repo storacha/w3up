@@ -59,7 +59,7 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    let progressStatusCalls = 0
+    let loaded = 0
     const carCID = await Store.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
@@ -67,14 +67,14 @@ describe('Store.add', () => {
         connection,
         onUploadProgress: (status) => {
           assert(typeof status.loaded === 'number' && status.loaded > 0)
-          progressStatusCalls++
+          loaded = status.loaded
         },
       }
     )
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
-    assert.equal(progressStatusCalls, 1)
+    assert.equal(loaded, 225)
 
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())

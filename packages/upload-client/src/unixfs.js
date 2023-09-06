@@ -34,8 +34,12 @@ export function createFileEncoderStream(blob) {
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
   const fileBuilder = new UnixFSFileBuilder('', blob)
   void (async () => {
-    await fileBuilder.finalize(unixfsWriter)
-    await unixfsWriter.close()
+    try {
+      await fileBuilder.finalize(unixfsWriter)
+      await unixfsWriter.close()
+    } catch (err) {
+      console.error(err)
+    }
   })()
   return readable
 }

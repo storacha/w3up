@@ -1,8 +1,9 @@
 import Queue from 'p-queue'
-import { encode } from './car.js'
+import { blockEncodingLength, encode, headerEncodingLength } from './car.js'
 import { add } from './store.js'
 
-const SHARD_SIZE = 1024 * 1024 * 100
+// https://observablehq.com/@gozala/w3up-shard-size
+const SHARD_SIZE = 133_169_152
 const CONCURRENT_UPLOADS = 3
 
 /**
@@ -22,7 +23,7 @@ export class ShardingStream extends TransformStream {
     let shard = []
     /** @type {import('@ipld/unixfs').Block[] | null} */
     let readyShard = null
-    let size = 0
+    let shardBlockLength = 0
 
     super({
       async transform(block, controller) {
@@ -30,13 +31,19 @@ export class ShardingStream extends TransformStream {
           controller.enqueue(await encode(readyShard))
           readyShard = null
         }
-        if (shard.length && size + block.bytes.length > shardSize) {
+
+        const blockLength = blockEncodingLength(block)
+        if (headerEncodingLength() + blockLength > shardSize) {
+          throw new Error(`block exceeds shard size: ${block.cid}`)
+        }
+
+        if (shard.length && headerEncodingLength() + shardBlockLength + blockLength > shardSize) {
           readyShard = shard
           shard = []
-          size = 0
+          shardBlockLength = 0
         }
         shard.push(block)
-        size += block.bytes.length
+        shardBlockLength += blockLength
       },
 
       async flush(controller) {
@@ -45,10 +52,28 @@ export class ShardingStream extends TransformStream {
         }
 
         const rootBlock = shard.at(-1)
-        if (rootBlock != null) {
-          controller.enqueue(
-            await encode(shard, options.rootCID ?? rootBlock.cid)
-          )
+        if (rootBlock == null) return
+
+        const rootCID = options.rootCID ?? rootBlock.cid
+        const headerLength = headerEncodingLength(rootCID)
+        // does the shard with the CAR header that _includes_ a root CID
+        // exceed the shard size?
+        if (headerLength + shardBlockLength > shardSize) {
+          const overage = headerLength + shardBlockLength - shardSize
+          const lastShard = []
+          let lastShardBlockLength = 0
+          while (lastShardBlockLength < overage) {
+            // need at least 1 block in original shard
+            if (shard.length < 2) throw new Error(`block exceeds shard size: ${shard.at(-1)?.cid}`)
+            const block = shard[shard.length - 1]
+            shard.pop()
+            lastShard.unshift(block)
+            lastShardBlockLength += blockEncodingLength(block)
+          }
+          controller.enqueue(await encode(shard))
+          controller.enqueue(await encode(lastShard, rootCID))
+        } else {
+          controller.enqueue(await encode(shard, rootCID))
         }
       },
     })
