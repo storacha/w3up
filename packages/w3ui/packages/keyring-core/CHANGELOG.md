@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/web3-storage/w3ui/compare/keyring-core-v5.0.0...keyring-core-v5.0.1) (2023-09-06)
+
+
+### Bug Fixes
+
+* bump access package to stop using voucher protocol ([#548](https://github.com/web3-storage/w3ui/issues/548)) ([984ed7a](https://github.com/web3-storage/w3ui/commit/984ed7a3e0f8cbc395ba806ce1a4eb398d4fd3ee))
+
 ## [5.0.0](https://github.com/web3-storage/w3ui/compare/keyring-core-v4.2.0...keyring-core-v5.0.0) (2023-07-25)
 
 
