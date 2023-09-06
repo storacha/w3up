@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.3...filecoin-api-v1.4.4) (2023-09-06)
+
+
+### Bug Fixes
+
+* aggregator queue must send storefront in queue message ([#901](https://github.com/web3-storage/w3up/issues/901)) ([e5873fb](https://github.com/web3-storage/w3up/commit/e5873fb5b2f929c7493480b30c034344ad766b1a))
+
 ## [1.4.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.2...filecoin-api-v1.4.3) (2023-09-01)
 
 
