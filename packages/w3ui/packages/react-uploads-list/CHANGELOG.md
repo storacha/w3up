@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [4.0.1](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v4.0.0...react-uploads-list-v4.0.1) (2023-09-06)
+
+
+### Bug Fixes
+
+* set minimum workspace dep versions to bump package numbers ([#554](https://github.com/web3-storage/w3ui/issues/554)) ([6f44a4e](https://github.com/web3-storage/w3ui/commit/6f44a4ebc9a05fc3f029a029787665c470208fd7))
+
 ## [4.0.0](https://github.com/web3-storage/w3ui/compare/react-uploads-list-v3.0.1...react-uploads-list-v4.0.0) (2023-07-25)
 
 

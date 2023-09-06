@@ -4,7 +4,7 @@
   "packages/uploads-list-core": "4.0.0",
   "packages/react-keyring": "6.0.1",
   "packages/react-uploader": "5.0.1",
-  "packages/react-uploads-list": "4.0.0",
+  "packages/react-uploads-list": "4.0.1",
   "packages/vue-keyring": "5.0.1",
   "packages/vue-uploader": "5.0.0",
   "packages/vue-uploads-list": "4.0.0",
