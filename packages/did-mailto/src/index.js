@@ -1,5 +1,3 @@
-export const foo = 1
-
 /**
  * create a did:mailto from an email address
  *
