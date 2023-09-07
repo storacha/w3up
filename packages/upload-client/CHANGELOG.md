@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.1.2...upload-client-v9.2.0) (2023-09-07)
+
+
+### Features
+
+* adjust shard size ([#908](https://github.com/web3-storage/w3up/issues/908)) ([944182a](https://github.com/web3-storage/w3up/commit/944182ae97c5e69899d6a307cd73683852fb89dd))
+
 ## [9.1.2](https://github.com/web3-storage/w3up/compare/upload-client-v9.1.1...upload-client-v9.1.2) (2023-09-06)
 
 
