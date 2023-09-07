@@ -67,6 +67,7 @@ export type {
 
 export type {
   StoreAddOk,
+  UploadAddOk,
   UploadAddOk as UploadAddResponse,
   ListResponse,
   StoreListOk,
