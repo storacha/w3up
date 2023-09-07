@@ -21,6 +21,7 @@ describe('SpaceClient', () => {
             return {
               ok: {
                 did: /** @type {`did:key:${string}`} */ (space.did()),
+                providers: []
               },
             }
           }),
@@ -47,6 +48,7 @@ describe('SpaceClient', () => {
       assert.equal(service.space.info.callCount, 1)
 
       assert.equal(info.did, space.did())
+      assert.deepEqual(info.providers, [])
     })
   })
 })
