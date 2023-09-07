@@ -71,6 +71,7 @@ export type {
   ListResponse,
   StoreListOk,
   UploadListOk,
+  UploadRemoveOk,
   AnyLink,
   CARLink,
   CARFile,
