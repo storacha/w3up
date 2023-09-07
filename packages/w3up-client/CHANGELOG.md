@@ -1,5 +1,14 @@
 # Changelog
 
+## [8.0.2](https://github.com/web3-storage/w3up/compare/w3up-client-v8.0.1...w3up-client-v8.0.2) (2023-09-07)
+
+
+### Bug Fixes
+
+* node version ([#907](https://github.com/web3-storage/w3up/issues/907)) ([366a940](https://github.com/web3-storage/w3up/commit/366a94049d9256e9a6b6bfcee16dcffc6a6b9c31))
+* README for clarity ([#892](https://github.com/web3-storage/w3up/issues/892)) ([2e75726](https://github.com/web3-storage/w3up/commit/2e7572604664c4746303169d7173257c8a123cb3))
+* types for capability specific clients ([#904](https://github.com/web3-storage/w3up/issues/904)) ([b69d4aa](https://github.com/web3-storage/w3up/commit/b69d4aa11385cd23bdcda2240f7e1ba507da44b8))
+
 ## [8.0.1](https://github.com/web3-storage/w3up/compare/w3up-client-v8.0.0...w3up-client-v8.0.1) (2023-07-21)
 
 
