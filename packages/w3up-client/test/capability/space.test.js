@@ -21,7 +21,7 @@ describe('SpaceClient', () => {
             return {
               ok: {
                 did: /** @type {`did:key:${string}`} */ (space.did()),
-                providers: []
+                providers: [],
               },
             }
           }),
