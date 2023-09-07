@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/w3up-client",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "description": "Client for the w3up API",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
