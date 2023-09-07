@@ -21,7 +21,6 @@ export function headerEncodingLength(root) {
 export function blockEncodingLength(block) {
   const payloadLength = block.cid.bytes.length + block.bytes.length
   const varintLength = varint.encodingLength(payloadLength)
-  
   return varintLength + payloadLength
 }
 

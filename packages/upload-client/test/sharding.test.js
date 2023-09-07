@@ -61,18 +61,22 @@ describe('ShardingStream', () => {
     assert.equal(shards[0].roots[0].toString(), rootCID.toString())
   })
 
-  it('fails to shard block that exceeds shard size when encoded', async () => {
-    const file = new Blob([await randomBytes(128)])
+  it('exceeds shard size when block bigger than shard size is encoded', async () => {
     await assert.rejects(
-      () =>
-        createFileEncoderStream(file)
-          .pipeThrough(new ShardingStream({ shardSize: 64 }))
-          .pipeTo(new WritableStream()),
-      /block exceeds shard size/
+      () => new ReadableStream({
+          async pull(controller) {
+            const block =  await randomBlock(128)
+            controller.enqueue(block)
+            controller.close()
+          },
+        })
+        .pipeThrough(new ShardingStream({ shardSize: 64 }))
+        .pipeTo(new WritableStream()),
+      /block will cause CAR to exceed shard size/
     )
   })
 
-  it('reduces final shard to accomodate CAR header with root CID', async () => {
+  it('creates overflow shard when CAR header with root CID exceeds shard size', async () => {
     const blocks = [
       await randomBlock(128), // encoded block length = 166
       await randomBlock(64), // encoded block length = 102
@@ -108,7 +112,7 @@ describe('ShardingStream', () => {
     assert.equal(shards.length, 3)
   })
 
-  it('fails to shard block that exceeds shard size when encoded with root CID', async () => {
+  it('exceeds shard size when block is encoded with root CID', async () => {
     const blocks = [
       await randomBlock(128), // encoded block length = 166
     ]
@@ -129,7 +133,7 @@ describe('ShardingStream', () => {
           .pipeThrough(new ShardingStream({ shardSize: 183 }))
           .pipeTo(new WritableStream())
       )
-    }, /block exceeds shard size/)
+    }, /block will cause CAR to exceed shard size/)
   })
 
   it('no blocks no shards', async () => {

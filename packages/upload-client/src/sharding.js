@@ -19,65 +19,65 @@ export class ShardingStream extends TransformStream {
    */
   constructor(options = {}) {
     const shardSize = options.shardSize ?? SHARD_SIZE
+    const maxBlockLength = shardSize - headerEncodingLength()
     /** @type {import('@ipld/unixfs').Block[]} */
-    let shard = []
+    let blocks = []
     /** @type {import('@ipld/unixfs').Block[] | null} */
-    let readyShard = null
-    let shardBlockLength = 0
+    let readyBlocks = null
+    let currentLength = 0
 
     super({
       async transform(block, controller) {
-        if (readyShard != null) {
-          controller.enqueue(await encode(readyShard))
-          readyShard = null
+        if (readyBlocks != null) {
+          controller.enqueue(await encode(readyBlocks))
+          readyBlocks = null
         }
 
         const blockLength = blockEncodingLength(block)
-        if (headerEncodingLength() + blockLength > shardSize) {
-          throw new Error(`block exceeds shard size: ${block.cid}`)
+        if (blockLength > maxBlockLength) {
+          throw new Error(`block will cause CAR to exceed shard size: ${block.cid}`)
         }
 
-        if (
-          shard.length &&
-          headerEncodingLength() + shardBlockLength + blockLength > shardSize
-        ) {
-          readyShard = shard
-          shard = []
-          shardBlockLength = 0
+        if (blocks.length && currentLength + blockLength > maxBlockLength) {
+          readyBlocks = blocks
+          blocks = []
+          currentLength = 0
         }
-        shard.push(block)
-        shardBlockLength += blockLength
+        blocks.push(block)
+        currentLength += blockLength
       },
 
       async flush(controller) {
-        if (readyShard != null) {
-          controller.enqueue(await encode(readyShard))
+        if (readyBlocks != null) {
+          controller.enqueue(await encode(readyBlocks))
         }
 
-        const rootBlock = shard.at(-1)
+        const rootBlock = blocks.at(-1)
         if (rootBlock == null) return
 
         const rootCID = options.rootCID ?? rootBlock.cid
         const headerLength = headerEncodingLength(rootCID)
-        // If adding CAR root overflows the shard limit we move overflowing blocks
-        // into a another CAR.
-        if (headerLength + shardBlockLength > shardSize) {
-          const overage = headerLength + shardBlockLength - shardSize
-          const lastShard = []
-          let lastShardBlockLength = 0
-          while (lastShardBlockLength < overage) {
+
+        // if adding CAR root overflows the shard limit we move overflowing
+        // blocks into a another CAR.
+        if (headerLength + currentLength > shardSize) {
+          const overage = headerLength + currentLength - shardSize
+          const overflowBlocks = []
+          let overflowCurrentLength = 0
+          while (overflowCurrentLength < overage) {
+            const block = blocks[blocks.length - 1]
+            blocks.pop()
+            overflowBlocks.unshift(block)
+            overflowCurrentLength += blockEncodingLength(block)
+
             // need at least 1 block in original shard
-            if (shard.length < 2)
-              throw new Error(`block exceeds shard size: ${shard.at(-1)?.cid}`)
-            const block = shard[shard.length - 1]
-            shard.pop()
-            lastShard.unshift(block)
-            lastShardBlockLength += blockEncodingLength(block)
+            if (blocks.length < 1)
+              throw new Error(`block will cause CAR to exceed shard size: ${block.cid}`)
           }
-          controller.enqueue(await encode(shard))
-          controller.enqueue(await encode(lastShard, rootCID))
+          controller.enqueue(await encode(blocks))
+          controller.enqueue(await encode(overflowBlocks, rootCID))
         } else {
-          controller.enqueue(await encode(shard, rootCID))
+          controller.enqueue(await encode(blocks, rootCID))
         }
       },
     })
