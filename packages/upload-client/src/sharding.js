@@ -35,7 +35,9 @@ export class ShardingStream extends TransformStream {
 
         const blockLength = blockEncodingLength(block)
         if (blockLength > maxBlockLength) {
-          throw new Error(`block will cause CAR to exceed shard size: ${block.cid}`)
+          throw new Error(
+            `block will cause CAR to exceed shard size: ${block.cid}`
+          )
         }
 
         if (blocks.length && currentLength + blockLength > maxBlockLength) {
@@ -72,7 +74,9 @@ export class ShardingStream extends TransformStream {
 
             // need at least 1 block in original shard
             if (blocks.length < 1)
-              throw new Error(`block will cause CAR to exceed shard size: ${block.cid}`)
+              throw new Error(
+                `block will cause CAR to exceed shard size: ${block.cid}`
+              )
           }
           controller.enqueue(await encode(blocks))
           controller.enqueue(await encode(overflowBlocks, rootCID))

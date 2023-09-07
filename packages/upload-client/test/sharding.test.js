@@ -63,15 +63,16 @@ describe('ShardingStream', () => {
 
   it('exceeds shard size when block bigger than shard size is encoded', async () => {
     await assert.rejects(
-      () => new ReadableStream({
+      () =>
+        new ReadableStream({
           async pull(controller) {
-            const block =  await randomBlock(128)
+            const block = await randomBlock(128)
             controller.enqueue(block)
             controller.close()
           },
         })
-        .pipeThrough(new ShardingStream({ shardSize: 64 }))
-        .pipeTo(new WritableStream()),
+          .pipeThrough(new ShardingStream({ shardSize: 64 }))
+          .pipeTo(new WritableStream()),
       /block will cause CAR to exceed shard size/
     )
   })
