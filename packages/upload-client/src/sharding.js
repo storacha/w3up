@@ -59,8 +59,8 @@ export class ShardingStream extends TransformStream {
 
         const rootCID = options.rootCID ?? rootBlock.cid
         const headerLength = headerEncodingLength(rootCID)
-        // does the shard with the CAR header that _includes_ a root CID
-        // exceed the shard size?
+        // If adding CAR root overflows the shard limit we move overflowing blocks
+        // into a another CAR.
         if (headerLength + shardBlockLength > shardSize) {
           const overage = headerLength + shardBlockLength - shardSize
           const lastShard = []
