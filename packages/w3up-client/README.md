@@ -94,7 +94,7 @@ flowchart TD
     C --> D(Upload to Space using Agent)
 ```
 
-All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the basic flows to start storing data. For more complex integration options, check out the [integration options][docs#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
+All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the basic flows to start storing data. For more complex integration options, check out the [integration options][#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
 
 > By you or your users registering a w3up beta Space via email confirmation with [web3.storage](http://web3.storage), you agree to the beta [Terms of Service](https://console.web3.storage/terms). Uploads to w3up will not appear in your web3.storage account (and vice versa).
 
@@ -260,8 +260,8 @@ sequenceDiagram
 ```
 - For your backend to be scalable, you might consider using serverless workers or a queue in front of a server
 - In either case, you'll need a registered Space, and your client instance in your backend to have an Agent with a delegation from this Space
-  - (Recommended) It's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so (especially if your backend isn't persistent); you can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](docs#bringing-your-own-agent-and-delegation)
-  - If your backend is persistent, you can do this or do everything in the client directly ([create Space](docs#creating-and-registering-spaces) and [get delegation](docs#delegating-from-space-to-agent))
+  - (Recommended) It's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so (especially if your backend isn't persistent); you can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](#bringing-your-own-agent-and-delegation)
+  - If your backend is persistent, you can do this or do everything in the client directly ([create Space](#creating-and-registering-spaces) and [get delegation](#delegating-from-space-to-agent))
 - After this, once your user uploads data to your backend, you can run any of the `upload` methods
 
 #### Delegated
@@ -279,8 +279,8 @@ sequenceDiagram
 - You will likely have `w3up-client` running in your end-user's client code, as well as backend code that's able to generate UCANs that delegate the ability to upload and pass them to your users (e.g., `w3up-client` running in a serverless worker)
 - For your backend to be scalable, you might consider using serverless workers or a queue in front of a server
 - As the developer, you'll need a registered Space, and your client instance in your backend to have an Agent with a delegation from this Space
-    - (Recommended) It's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so (especially if your backend isn't persistent); you can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](docs#bringing-your-own-agent-and-delegation)
-  - If your backend is persistent, you can do this or do everything in the client directly ([create Space](docs#creating-and-registering-spaces) and [get delegation](docs#delegating-from-space-to-agent))
+    - (Recommended) It's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so (especially if your backend isn't persistent); you can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](#bringing-your-own-agent-and-delegation)
+  - If your backend is persistent, you can do this or do everything in the client directly ([create Space](#creating-and-registering-spaces) and [get delegation](#delegating-from-space-to-agent))
 - Your user does not need a registered Space - just an Agent with a delegation from your Space
   - `w3up-client` in the end user environment should have a unique Agent for each user, which should happen by default (since when `w3up-client` is instantiated it creates a new Agent anyway, or uses the one in local Store)
   - From there, when your end user is ready to upload, they should request from your backend a delegation from your developer-owned Space to their Agent (which can be derived via [`client.agent()`](docs-Client#agent))
@@ -902,10 +902,6 @@ Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up-clie
 [web3storage-docs-cars]: https://web3.storage/docs/how-tos/work-with-car-files/
 
 [docs]: https://web3-storage.github.io/w3up-client
-[docs#creating-and-registering-spaces]: https://web3-storage.github.io/w3up-client#creating-and-registering-spaces
-[docs#delegating-from-space-to-agent]: https://web3-storage.github.io/w3up-client#delegating-from-space-to-agent
-[docs#bringing-your-own-agent-and-delegation]: https://web3-storage.github.io/w3up-client#bringing-your-own-agent-and-delegation
-[docs#integration-options]: https://web3-storage.github.io/w3up-client#integration-options
 [docs-Client]: https://web3-storage.github.io/w3up-client/classes/client.Client.html
 [docs-Client#agent]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#agent
 [docs-Client#createDelegation]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#createDelegation
