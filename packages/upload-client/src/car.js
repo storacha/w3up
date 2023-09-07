@@ -19,11 +19,10 @@ export function headerEncodingLength(root) {
 
 /** @param {Block} block */
 export function blockEncodingLength(block) {
-  const varintLength = varint.encodingLength(
-    block.cid.bytes.length + block.bytes.length
-  )
-  const cidLength = block.cid.bytes.length
-  return varintLength + cidLength + block.bytes.length
+  const payloadLength = block.cid.bytes.length + block.bytes.length
+  const varintLength = varint.encodingLength(payloadLength)
+  
+  return varintLength + payloadLength
 }
 
 /**
