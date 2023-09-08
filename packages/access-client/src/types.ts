@@ -72,6 +72,7 @@ export type SpaceRecord = Selectable<SpaceTable>
 export interface SpaceInfoResult {
   // space did
   did: DID<'key'>
+  providers: Array<DID<'web'>>
 }
 
 export interface AccountTable {

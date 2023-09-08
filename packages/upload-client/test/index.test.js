@@ -12,7 +12,11 @@ import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
-import { encode } from '../src/car.js'
+import {
+  blockEncodingLength,
+  encode,
+  headerEncodingLength,
+} from '../src/car.js'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -173,12 +177,19 @@ describe('uploadFile', () => {
       file,
       {
         connection,
-        shardSize: 1024 * 1024 * 2, // should end up with 2 CAR files
+        // chunk size = 1_048_576
+        // encoded block size = 1_048_615
+        // shard size = 2_097_152 (as configured below)
+        // total file size = 5_242_880 (as above)
+        // so, at least 2 shards, but 2 encoded blocks (_without_ CAR header) = 2_097_230
+        // ...which is > shard size of 2_097_152
+        // so we actually end up with a shard for each block - 5 CARs!
+        shardSize: 1024 * 1024 * 2,
         onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )
 
-    assert.equal(carCIDs.length, 3)
+    assert.equal(carCIDs.length, 5)
   })
 })
 
@@ -344,7 +355,7 @@ describe('uploadDirectory', () => {
       files,
       {
         connection,
-        shardSize: 400_000, // should end up with 2 CAR files
+        shardSize: 500_056, // should end up with 2 CAR files
         onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )
@@ -358,15 +369,18 @@ describe('uploadCAR', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const blocks = [
-      await randomBlock(32),
-      await randomBlock(32),
-      await randomBlock(32),
+      await randomBlock(128),
+      await randomBlock(128),
+      await randomBlock(128),
     ]
     const car = await encode(blocks, blocks.at(-1)?.cid)
-    // shard size 1 block less than total = 2 expected CAR shards
-    const shardSize = blocks
-      .slice(0, -1)
-      .reduce((size, block) => size + block.bytes.length, 0)
+    // Wanted: 2 shards
+    // 2 * CAR header (34) + 2 * blocks (256), 2 * block encoding prefix (78)
+    const shardSize =
+      headerEncodingLength() * 2 +
+      blocks
+        .slice(0, -1)
+        .reduce((size, block) => size + blockEncodingLength(block), 0)
 
     /** @type {import('../src/types').CARLink[]} */
     const carCIDs = []
