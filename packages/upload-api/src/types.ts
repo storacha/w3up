@@ -306,6 +306,7 @@ export interface DudewhereBucket {
 }
 
 export interface StoreTable {
+  getCID: (link: UnknownLink) => Promise<StoreGetOk>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
   remove: (space: DID, link: UnknownLink) => Promise<void>
@@ -323,6 +324,7 @@ export interface TestStoreTable {
 }
 
 export interface UploadTable {
+  getCID: (link: UnknownLink) => Promise<UploadGetOk>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
   insert: (item: UploadAddInput) => Promise<UploadAddOk>
   remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>
@@ -358,6 +360,10 @@ export interface StoreAddInput {
 
 export interface StoreAddOutput
   extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
+
+export interface StoreGetOk {
+  spaces: Array<{ did: DID, insertedAt: Date }>
+}
 
 export interface StoreListItem extends StoreAddOutput {
   insertedAt: string
@@ -399,6 +405,10 @@ export interface UploadDIDRemove extends UploadAddOk {}
 export interface UploadDidNotRemove {
   root?: undefined
   shards?: undefined
+}
+
+export interface UploadGetOk {
+  spaces: Array<{ did: DID, insertedAt: Date }>
 }
 
 export interface UploadListItem extends UploadAddOk {

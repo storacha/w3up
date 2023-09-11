@@ -6,7 +6,7 @@ import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
 import * as Link from '@ucanto/core/link'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
-import { createSpace, registerSpace } from './util.js'
+import { alice, bob, createSpace, registerSpace } from './util.js'
 import { Absentee } from '@ucanto/principal'
 import { provisionProvider } from './helpers/utils.js'
 
@@ -15,7 +15,6 @@ import { provisionProvider } from './helpers/utils.js'
  */
 export const test = {
   'store/add returns signed url for uploading': async (assert, context) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -101,11 +100,54 @@ export const test = {
       Date.now() - new Date(item?.insertedAt).getTime() < 60_000,
       true
     )
+
+    const { spaces } = await context.storeTable.getCID(link)
+    assert.equal(spaces.length, 1)
+    assert.equal(spaces[0].did, spaceDid)
+  },
+
+  'store/add should allow add the same content to be stored in multiple spaces': async (assert, context) => {
+    const { proof: aliceProof, spaceDid: aliceSpaceDid } = await registerSpace(alice, context)
+    const { proof: bobProof, spaceDid: bobSpaceDid } = await registerSpace(bob, context, 'bob')
+
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const link = await CAR.codec.link(data)
+    const size = data.byteLength
+
+    const aliceStoreAdd = await StoreCapabilities.add.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: aliceSpaceDid,
+      nb: { link, size },
+      proofs: [aliceProof],
+    }).execute(connection)
+
+    assert.ok(aliceStoreAdd.out.ok, `Alice failed to store ${link.toString()}`)
+
+    const bobStoreAdd = await StoreCapabilities.add.invoke({
+      issuer: bob,
+      audience: context.id,
+      with: bobSpaceDid,
+      nb: { link, size },
+      proofs: [bobProof],
+    }).execute(connection)
+
+    assert.ok(bobStoreAdd.out.ok, `Bob failed to store ${link.toString()}`)
+
+    const { spaces } = await context.storeTable.getCID(link)
+    assert.equal(spaces.length, 2)
+    const spaceDids = spaces.map(space => space.did)
+    assert.ok(spaceDids.includes(aliceSpaceDid))
+    assert.ok(spaceDids.includes(bobSpaceDid))
   },
 
   'store/add should create a presigned url that can only PUT a payload with the right length':
     async (assert, context) => {
-      const alice = await Signer.generate()
       const { proof, spaceDid } = await registerSpace(alice, context)
       const connection = connect({
         id: context.id,
@@ -156,7 +198,6 @@ export const test = {
 
   'store/add should create a presigned url that can only PUT the exact bytes we signed for':
     async (assert, context) => {
-      const alice = await Signer.generate()
       const { proof, spaceDid } = await registerSpace(alice, context)
       const connection = connect({
         id: context.id,
@@ -203,7 +244,6 @@ export const test = {
     },
 
   'store/add returns done if already uploaded': async (assert, context) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -278,7 +318,6 @@ export const test = {
     assert,
     context
   ) => {
-    const alice = await Signer.generate()
     const { proof, space, spaceDid } = await createSpace(alice)
     const connection = connect({
       id: context.id,
@@ -327,7 +366,6 @@ export const test = {
   },
 
   'store/add fails when size too large to PUT': async (assert, context) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -358,7 +396,6 @@ export const test = {
     assert,
     context
   ) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -396,7 +433,6 @@ export const test = {
   },
 
   'store/list does not fail for empty list': async (assert, context) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -420,7 +456,6 @@ export const test = {
     assert,
     context
   ) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -475,7 +510,6 @@ export const test = {
   },
 
   'store/list can be paginated with custom size': async (assert, context) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -555,7 +589,6 @@ export const test = {
   },
 
   'store/list can page backwards': async (assert, context) => {
-    const alice = await Signer.generate()
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
