@@ -1,3 +1,4 @@
+import { parseLink } from '@ucanto/core'
 import { Absentee } from '@ucanto/principal'
 import { Signer } from '@ucanto/principal/ed25519'
 
@@ -31,3 +32,7 @@ export const malloryAccount = Absentee.from({
 export const service = Signer.parse(
   'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
 ).withDID('did:web:test.web3.storage')
+
+export const readmeCID = parseLink(
+  'bafybeihqfdg2ereoijjoyrqzr2x2wsasqm2udurforw7pa3tvbnxhojao4'
+)
