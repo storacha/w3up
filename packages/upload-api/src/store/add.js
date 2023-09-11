@@ -13,11 +13,9 @@ export function storeAddProvider(context) {
     const { link, origin, size } = capability.nb
 
     if (size > maxUploadSize) {
-      // checking this last, as larger CAR may already exist in bucket from pinning service fetch.
-      // we only want to prevent this here so we don't give the user a PUT url they can't use.
       return {
         error: new Server.Failure(
-          `Size must not exceed ${maxUploadSize}. Split CAR into smaller shards`
+          `Maximum size exceeded: ${maxUploadSize}, split DAG into smaller shards.`
         ),
       }
     }
