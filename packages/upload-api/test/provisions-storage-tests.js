@@ -47,7 +47,7 @@ export const test = {
 
     const consumer = await storage.getConsumer(provider, spaceA.did())
     assert.equal(result.ok?.id, consumer.ok?.subscription)
-    
+
     // ensure no error if we try to store same provision twice
     const dupeResult = await storage.put(provision)
     assert.ok(

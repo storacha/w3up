@@ -37,27 +37,25 @@ export class ProvisionsStorage {
   async getStorageProviders(consumer) {
     return {
       ok: Array.from(
-        Object.values(this.provisions)
-          .reduce((m, p) => {
-            if (p.consumer === consumer) {
-              m.add(p.provider)
-            }
-            return m
-          }, new Set())
-      )
+        Object.values(this.provisions).reduce((m, p) => {
+          if (p.consumer === consumer) {
+            m.add(p.provider)
+          }
+          return m
+        }, new Set())
+      ),
     }
   }
 
   /**
- *
- * @param {Types.DIDKey} consumer
- */
+   *
+   * @param {Types.DIDKey} consumer
+   */
   async hasStorageProvider(consumer) {
     return {
-      ok: (await this.getStorageProviders(consumer)).ok.length > 0
+      ok: (await this.getStorageProviders(consumer)).ok.length > 0,
     }
   }
-
 
   /**
    *
@@ -101,8 +99,8 @@ export class ProvisionsStorage {
       return {
         ok: {
           did: customer,
-          subscriptions: provisions.map(itemKey)
-        }
+          subscriptions: provisions.map(itemKey),
+        },
       }
     } else {
       return {

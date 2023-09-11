@@ -25,11 +25,11 @@ export const info = async ({ capability }, ctx) => {
 
   const result = await provisions.getStorageProviders(spaceDid)
   const providers = result.ok
-  if (providers && (providers.length > 0)) {
+  if (providers && providers.length > 0) {
     return {
       ok: {
         did: spaceDid,
-        providers
+        providers,
       },
     }
   }

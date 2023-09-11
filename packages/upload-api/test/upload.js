@@ -48,7 +48,10 @@ export const test = {
     }
 
     assert.equal(uploadAdd.out.ok.root.toString(), root.toString())
-    assert.deepEqual(uploadAdd.out.ok.shards?.map(String).sort(), shards.map(String).sort())
+    assert.deepEqual(
+      uploadAdd.out.ok.shards?.map(String).sort(),
+      shards.map(String).sort()
+    )
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.deepEqual(results.length, 1)
@@ -149,13 +152,19 @@ export const test = {
       throw new Error('invocation failed', { cause: uploadAdd2 })
     }
 
-    assert.deepEqual(uploadAdd2.out.ok.shards?.map(String).sort(), shards.map(String).sort())
+    assert.deepEqual(
+      uploadAdd2.out.ok.shards?.map(String).sort(),
+      shards.map(String).sort()
+    )
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.equal(results.length, 1)
     const [upload] = results
     assert.equal(upload.root.toString(), root.toString())
-    assert.deepEqual(upload.shards?.map(String).sort(), shards.map(String).sort())
+    assert.deepEqual(
+      upload.shards?.map(String).sort(),
+      shards.map(String).sort()
+    )
   },
 
   'upload/add merges shards to an existing item with shards': async (

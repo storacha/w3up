@@ -16,7 +16,6 @@ export interface Provision {
   provider: ProviderDID
 }
 
-
 export interface Customer {
   did: Ucanto.DID<'mailto'>
   subscriptions: string[]
@@ -43,7 +42,9 @@ export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
    *
    * @param item - provision to store
    */
-  put: (item: Provision) => Promise<Ucanto.Result<{ id: string }, Ucanto.Failure>>
+  put: (
+    item: Provision
+  ) => Promise<Ucanto.Result<{ id: string }, Ucanto.Failure>>
 
   /**
    * Returns information about a customer related to the given provider.

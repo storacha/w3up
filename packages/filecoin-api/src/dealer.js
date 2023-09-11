@@ -81,7 +81,7 @@ export const add = async ({ capability, invocation }, context) => {
   // Get deal status from the store.
   const get = await context.dealStore.get({
     aggregate,
-    storefront
+    storefront,
   })
   if (get.error) {
     return {

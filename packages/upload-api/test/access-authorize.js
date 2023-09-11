@@ -257,11 +257,12 @@ export const test = {
         ? delegations
         : delegations.reverse()
 
-
     assert.equal(attestation.capabilities[0].can, 'ucan/attest')
     assert.equal(attestation.capabilities[0].with, service.did())
     assert.equal(
-      /** @type {import('@ucanto/interface').Capability} */(attestation.capabilities[0]).nb.proof.toString(),
+      /** @type {import('@ucanto/interface').Capability} */ (
+        attestation.capabilities[0]
+      ).nb.proof.toString(),
       authorization.cid.toString()
     )
 

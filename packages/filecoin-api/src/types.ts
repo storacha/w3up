@@ -99,7 +99,10 @@ export type StoreGetError =
   | StoreOperationError
   | EncodeRecordFailed
   | StoreNotFound
-export type QueueAddError = QueueOperationError | EncodeRecordFailed | StorePutError
+export type QueueAddError =
+  | QueueOperationError
+  | EncodeRecordFailed
+  | StorePutError
 
 export interface QueueOperationError extends Error {
   name: 'QueueOperationFailed'
