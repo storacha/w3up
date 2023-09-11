@@ -14,6 +14,9 @@ import * as ConsumerCaps from './consumer.js'
 import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
+import * as RootCaps from './root.js'
+import * as ShardCaps from './shard.js'
+
 
 export type { Unit }
 
@@ -211,6 +214,12 @@ export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
+// Root
+export type Root = InferInvokedCapability<typeof RootCaps.root>
+export type RootGet = InferInvokedCapability<typeof RootCaps.get>
+// Shard
+export type Shard = InferInvokedCapability<typeof ShardCaps.shard>
+export type ShardGet = InferInvokedCapability<typeof ShardCaps.get>
 // Filecoin
 export type FilecoinQueue = InferInvokedCapability<
   typeof FilecoinCaps.filecoinQueue
@@ -263,5 +272,9 @@ export type AbilitiesArray = [
   AggregateAdd['can'],
   DealQueue['can'],
   DealAdd['can'],
-  ChainTrackerInfo['can']
+  ChainTrackerInfo['can'],
+  Root['can'],
+  RootGet['can'],
+  Shard['can'],
+  ShardGet['can']
 ]
