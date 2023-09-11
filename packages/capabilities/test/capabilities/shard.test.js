@@ -95,6 +95,6 @@ describe('shard/get', function () {
         // @ts-ignore
         nb: {},
       })
-    }, /Error: Invalid 'nb' - Object contains invalid field "shard"/)
+    }, /Error: Invalid 'nb' - Object contains invalid field "cid"/)
   })
 })
