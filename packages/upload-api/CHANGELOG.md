@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.1](https://github.com/web3-storage/w3up/compare/upload-api-v5.3.0...upload-api-v5.3.1) (2023-09-12)
+
+
+### Bug Fixes
+
+* store add should validate size right away ([#917](https://github.com/web3-storage/w3up/issues/917)) ([2770e6c](https://github.com/web3-storage/w3up/commit/2770e6cfde60236b12d043caa72fd944f6b80918))
+
 ## [5.3.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.2.0...upload-api-v5.3.0) (2023-09-05)
 
 
