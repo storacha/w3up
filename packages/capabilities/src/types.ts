@@ -14,8 +14,7 @@ import * as ConsumerCaps from './consumer.js'
 import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
-import * as RootCaps from './root.js'
-import * as ShardCaps from './shard.js'
+import * as TraceCaps from './trace.js'
 
 export type { Unit }
 
@@ -213,21 +212,22 @@ export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
-// Root
-export type Root = InferInvokedCapability<typeof RootCaps.root>
-export type RootGet = InferInvokedCapability<typeof RootCaps.get>
-export interface RootGetSuccess {
-  spaces: Array<{ did: DID; insertedAt: Date }>
+// Trace
+export type Trace = InferInvokedCapability<typeof TraceCaps.trace>
+export type TraceUploadAdd = InferInvokedCapability<typeof TraceCaps.upload.add>
+export type TraceStoreAdd = InferInvokedCapability<typeof TraceCaps.store.add>
+export interface SpaceTrace {
+  did: DID
+  insertedAt: Date
 }
-export type RootGetFailure = Ucanto.Failure
-// Shard
-export type Shard = InferInvokedCapability<typeof ShardCaps.shard>
-export type ShardGet = InferInvokedCapability<typeof ShardCaps.get>
-export interface ShardGetSuccess {
-  spaces: Array<{ did: DID; insertedAt: Date }>
+export interface TraceUploadAddSuccess {
+  spaces: SpaceTrace[]
 }
-export type ShardGetFailure = Ucanto.Failure
-
+export type TraceUploadAddFailure = Ucanto.Failure
+export interface TraceStoreAddSuccess {
+  spaces: SpaceTrace[]
+}
+export type TraceStoreAddFailure = Ucanto.Failure
 // Filecoin
 export type FilecoinQueue = InferInvokedCapability<
   typeof FilecoinCaps.filecoinQueue
@@ -281,8 +281,7 @@ export type AbilitiesArray = [
   DealQueue['can'],
   DealAdd['can'],
   ChainTrackerInfo['can'],
-  Root['can'],
-  RootGet['can'],
-  Shard['can'],
-  ShardGet['can']
+  Trace['can'],
+  TraceUploadAdd['can'],
+  TraceStoreAdd['can']
 ]
