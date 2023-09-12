@@ -1,19 +1,19 @@
-import * as API from '../types.js'
+import * as API from '../../types.js'
 import * as Provider from '@ucanto/server'
-import { Shard } from '@web3-storage/capabilities'
+import { Admin } from '@web3-storage/capabilities'
 
 /**
- * @param {API.ShardServiceContext} context
+ * @param {API.AdminServiceContext} context
  */
 export const provide = (context) =>
-  Provider.provide(Shard.get, (input) => get(input, context))
+  Provider.provide(Admin.store.inspect, (input) => inspect(input, context))
 
 /**
- * @param {API.Input<Shard.get>} input
- * @param {API.ShardServiceContext} context
- * @returns {Promise<API.ShardGetResult>}
+ * @param {API.Input<typeof Admin.store.inspect>} input
+ * @param {API.AdminServiceContext} context
+ * @returns {Promise<API.AdminStoreInspectResult>}
  */
-const get = async ({ capability }, context) => {
+const inspect = async ({ capability }, context) => {
   /**
    * Ensure that resource is the service DID, which implies it's either
    * invoked by service itself or an authorized delegate (like admin).
@@ -26,9 +26,7 @@ const get = async ({ capability }, context) => {
 
   return {
     ok: await context.storeTable.getCID(
-      // I shouldn't need to typecast this (and it looks alright in Visual Studio!) but
-      // tsc complains that `capability.nb.cid` is of type unknown...
-      /** @type {API.UnknownLink} */(capability.nb.cid)
+      capability.nb.link
     ),
   }
 }

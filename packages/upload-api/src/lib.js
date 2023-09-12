@@ -12,8 +12,7 @@ import { createService as createCustomerService } from './customer.js'
 import { createService as createSpaceService } from './space.js'
 import { createService as createProviderService } from './provider.js'
 import { createService as createSubscriptionService } from './subscription.js'
-import { createService as createRootService } from './root.js'
-import { createService as createShardService } from './shard.js'
+import { createService as createAdminService } from './admin.js'
 import { createService as createRateLimitService } from './rate-limit.js'
 
 export * from './types.js'
@@ -40,8 +39,7 @@ export const createService = (context) => ({
   customer: createCustomerService(context),
   provider: createProviderService(context),
   'rate-limit': createRateLimitService(context),
-  root: createRootService(context),
-  shard: createShardService(context),
+  admin: createAdminService(context),
   space: createSpaceService(context),
   store: createStoreService(context),
   subscription: createSubscriptionService(context),

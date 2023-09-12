@@ -1,15 +1,15 @@
-import * as API from '../types.js'
-import { alice, registerSpace, randomCAR } from '../util.js'
-import { createServer, connect } from '../../src/lib.js'
+import * as API from '../../types.js'
+import { alice, registerSpace, randomCAR } from '../../util.js'
+import { createServer, connect } from '../../../src/lib.js'
 
 import { delegate } from '@ucanto/core'
-import { Root, Upload } from '@web3-storage/capabilities'
+import { Admin, Upload } from '@web3-storage/capabilities'
 
 /**
  * @type {API.Tests}
  */
 export const test = {
-  'root/get returns information about an uploaded CID': async (
+  'admin/upload/inspect returns information about an uploaded CID': async (
     assert,
     context
   ) => {
@@ -39,26 +39,26 @@ export const test = {
     assert.ok(uploadAdd.out.ok)
 
     const service = context.service
-    const rootGet = await Root.get
+    const adminUploadInspect = await Admin.upload.inspect
       .invoke({
         issuer: alice,
         audience: connection.id,
         with: service.did(),
-        nb: { cid: car.roots[0] },
+        nb: { root: car.roots[0] },
         proofs: [
           await delegate({
             issuer: service,
             audience: alice,
-            capabilities: [{ with: service.did(), can: 'root/get' }],
+            capabilities: [{ with: service.did(), can: 'admin/upload/inspect' }],
           }),
         ],
       })
       .execute(connection)
 
     assert.ok(
-      rootGet.out.ok,
-      `failed to get root: ${rootGet.out.error?.message}`
+      adminUploadInspect.out.ok,
+      `failed to get root: ${adminUploadInspect.out.error?.message}`
     )
-    assert.equal(rootGet.out.ok?.spaces[0].did, spaceDid)
+    assert.equal(adminUploadInspect.out.ok?.spaces[0].did, spaceDid)
   },
 }

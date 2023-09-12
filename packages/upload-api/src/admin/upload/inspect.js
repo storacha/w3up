@@ -1,19 +1,19 @@
-import * as API from '../types.js'
+import * as API from '../../types.js'
 import * as Provider from '@ucanto/server'
-import { Root } from '@web3-storage/capabilities'
+import { Admin } from '@web3-storage/capabilities'
 
 /**
- * @param {API.RootServiceContext} context
+ * @param {API.AdminServiceContext} context
  */
 export const provide = (context) =>
-  Provider.provide(Root.get, (input) => get(input, context))
+  Provider.provide(Admin.upload.inspect, (input) => inspect(input, context))
 
 /**
- * @param {API.Input<Root.get>} input
- * @param {API.RootServiceContext} context
- * @returns {Promise<API.RootGetResult>}
+ * @param {API.Input<typeof Admin.upload.inspect>} input
+ * @param {API.AdminServiceContext} context
+ * @returns {Promise<API.AdminUploadInspectResult>}
  */
-const get = async ({ capability }, context) => {
+const inspect = async ({ capability }, context) => {
   /**
    * Ensure that resource is the service DID, which implies it's either
    * invoked by service itself or an authorized delegate (like admin).
@@ -26,9 +26,7 @@ const get = async ({ capability }, context) => {
 
   return {
     ok: await context.uploadTable.getCID(
-      // I shouldn't need to typecast this (and it looks alright in Visual Studio!) but
-      // tsc complains that `capability.nb.cid` is of type unknown...
-      /** @type {API.UnknownLink} */(capability.nb.cid)
+      capability.nb.root
     ),
   }
 }

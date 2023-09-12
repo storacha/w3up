@@ -31,7 +31,7 @@ export type SpaceDID = DIDKey
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
 export interface SpaceProviderRegistry {
-  hasStorageProvider(space: SpaceDID): Promise<Result<boolean, never>>
+  hasStorageProvider (space: SpaceDID): Promise<Result<boolean, never>>
 }
 
 export interface InsufficientStorage extends Failure {
@@ -88,12 +88,12 @@ import {
   RateLimitList,
   RateLimitListSuccess,
   RateLimitListFailure,
-  RootGet,
-  RootGetSuccess,
-  RootGetFailure,
-  ShardGet,
-  ShardGetSuccess,
-  ShardGetFailure,
+  AdminStoreInspect,
+  AdminStoreInspectSuccess,
+  AdminStoreInspectFailure,
+  AdminUploadInspect,
+  AdminUploadInspectSuccess,
+  AdminUploadInspectFailure,
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
@@ -176,11 +176,13 @@ export interface Service {
       RateLimitListFailure
     >
   }
-  root: {
-    get: ServiceMethod<RootGet, RootGetSuccess, RootGetFailure>
-  }
-  shard: {
-    get: ServiceMethod<ShardGet, ShardGetSuccess, ShardGetFailure>
+  admin: {
+    store: {
+      inspect: ServiceMethod<AdminStoreInspect, AdminStoreInspectSuccess, AdminStoreInspectFailure>
+    }
+    upload: {
+      inspect: ServiceMethod<AdminUploadInspect, AdminUploadInspectSuccess, AdminUploadInspectFailure>
+    }
   }
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
@@ -226,14 +228,10 @@ export interface CustomerServiceContext {
   provisionsStorage: Provisions
 }
 
-export interface ShardServiceContext {
-  signer: EdSigner.Signer
-  storeTable: StoreTable
-}
-
-export interface RootServiceContext {
+export interface AdminServiceContext {
   signer: EdSigner.Signer
   uploadTable: UploadTable
+  storeTable: StoreTable
 }
 
 export interface ConsoleServiceContext {}
@@ -260,15 +258,15 @@ export interface RateLimitServiceContext {
 
 export interface ServiceContext
   extends AccessServiceContext,
-    ConsoleServiceContext,
-    ConsumerServiceContext,
-    CustomerServiceContext,
-    ProviderServiceContext,
-    SpaceServiceContext,
-    StoreServiceContext,
-    SubscriptionServiceContext,
-    RateLimitServiceContext,
-    UploadServiceContext {}
+  ConsoleServiceContext,
+  ConsumerServiceContext,
+  CustomerServiceContext,
+  ProviderServiceContext,
+  SpaceServiceContext,
+  StoreServiceContext,
+  SubscriptionServiceContext,
+  RateLimitServiceContext,
+  UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {
   id: Signer
@@ -278,8 +276,8 @@ export interface UcantoServerContext extends ServiceContext {
 
 export interface UcantoServerTestContext
   extends UcantoServerContext,
-    StoreTestContext,
-    UploadTestContext {
+  StoreTestContext,
+  UploadTestContext {
   connection: ConnectionView<Service>
   mail: DebugEmail
   service: Signer<ServiceDID>
@@ -320,7 +318,7 @@ export interface CarStoreBucketOptions {
 }
 
 export interface CarStoreBucketService {
-  use(options?: CarStoreBucketOptions): Promise<CarStoreBucket>
+  use (options?: CarStoreBucketOptions): Promise<CarStoreBucket>
 }
 
 export interface DudewhereBucket {
@@ -339,7 +337,7 @@ export interface StoreTable {
 }
 
 export interface TestStoreTable {
-  get(
+  get (
     space: DID,
     link: UnknownLink
   ): Promise<(StoreAddInput & StoreListItem) | undefined>
@@ -370,8 +368,8 @@ export type SubscriptionGetResult = Result<
   SubscriptionGetSuccess,
   SubscriptionGetFailure
 >
-export type ShardGetResult = Result<ShardGetSuccess, ShardGetFailure>
-export type RootGetResult = Result<RootGetSuccess, RootGetFailure>
+export type AdminStoreInspectResult = Result<AdminStoreInspectSuccess, AdminStoreInspectFailure>
+export type AdminUploadInspectResult = Result<AdminUploadInspectSuccess, AdminUploadInspectFailure>
 
 export interface StoreAddInput {
   space: DID

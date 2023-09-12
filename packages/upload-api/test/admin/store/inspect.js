@@ -1,16 +1,16 @@
-import * as API from '../types.js'
-import { alice, registerSpace } from '../util.js'
-import { createServer, connect } from '../../src/lib.js'
+import * as API from '../../types.js'
+import { alice, registerSpace } from '../../util.js'
+import { createServer, connect } from '../../../src/lib.js'
 
 import { delegate } from '@ucanto/core'
 import * as CAR from '@ucanto/transport/car'
-import { Shard, Store } from '@web3-storage/capabilities'
+import { Admin, Store } from '@web3-storage/capabilities'
 
 /**
  * @type {API.Tests}
  */
 export const test = {
-  'shard/get returns information about an uploaded CID': async (
+  'admin/store/inspect returns information about an uploaded CID': async (
     assert,
     context
   ) => {
@@ -37,26 +37,26 @@ export const test = {
     assert.ok(storeAdd.out.ok)
 
     const service = context.service
-    const shardGet = await Shard.get
+    const adminStoreInspect = await Admin.store.inspect
       .invoke({
         issuer: alice,
         audience: connection.id,
         with: service.did(),
-        nb: { cid: link },
+        nb: { link },
         proofs: [
           await delegate({
             issuer: service,
             audience: alice,
-            capabilities: [{ with: service.did(), can: 'shard/get' }],
+            capabilities: [{ with: service.did(), can: 'admin/store/inspect' }],
           }),
         ],
       })
       .execute(connection)
 
     assert.ok(
-      shardGet.out.ok,
-      `failed to get shard: ${shardGet.out.error?.message}`
+      adminStoreInspect.out.ok,
+      `failed to get shard: ${adminStoreInspect.out.error?.message}`
     )
-    assert.equal(shardGet.out.ok?.spaces[0].did, spaceDid)
+    assert.equal(adminStoreInspect.out.ok?.spaces[0].did, spaceDid)
   },
 }
