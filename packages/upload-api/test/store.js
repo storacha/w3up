@@ -349,7 +349,7 @@ export const test = {
 
     assert.ok(storeAdd.out.error)
     assert.equal(
-      storeAdd.out.error?.message.startsWith('Size must not exceed'),
+      storeAdd.out.error?.message.startsWith('Maximum size exceeded:'),
       true
     )
   },
