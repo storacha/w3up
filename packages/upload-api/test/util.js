@@ -60,7 +60,9 @@ export const registerSpace = async (audience, context, username = 'alice') => {
     id: context.id,
     channel: createServer(context),
   })
-  const account = Absentee.from({ id: `did:mailto:test.web3.storage:${username}` })
+  const account = Absentee.from({
+    id: `did:mailto:test.web3.storage:${username}`,
+  })
 
   const provisionResult = await provisionProvider({
     service: /** @type {API.Signer<API.DID<'web'>>} */ (context.id),

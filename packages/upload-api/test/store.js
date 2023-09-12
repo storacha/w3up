@@ -105,45 +105,58 @@ export const test = {
     assert.equal(spaces[0].did, spaceDid)
   },
 
-  'store/add should allow add the same content to be stored in multiple spaces': async (assert, context) => {
-    const { proof: aliceProof, spaceDid: aliceSpaceDid } = await registerSpace(alice, context)
-    const { proof: bobProof, spaceDid: bobSpaceDid } = await registerSpace(bob, context, 'bob')
+  'store/add should allow add the same content to be stored in multiple spaces':
+    async (assert, context) => {
+      const { proof: aliceProof, spaceDid: aliceSpaceDid } =
+        await registerSpace(alice, context)
+      const { proof: bobProof, spaceDid: bobSpaceDid } = await registerSpace(
+        bob,
+        context,
+        'bob'
+      )
 
-    const connection = connect({
-      id: context.id,
-      channel: createServer(context),
-    })
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
 
-    const data = new Uint8Array([11, 22, 34, 44, 55])
-    const link = await CAR.codec.link(data)
-    const size = data.byteLength
+      const data = new Uint8Array([11, 22, 34, 44, 55])
+      const link = await CAR.codec.link(data)
+      const size = data.byteLength
 
-    const aliceStoreAdd = await StoreCapabilities.add.invoke({
-      issuer: alice,
-      audience: context.id,
-      with: aliceSpaceDid,
-      nb: { link, size },
-      proofs: [aliceProof],
-    }).execute(connection)
+      const aliceStoreAdd = await StoreCapabilities.add
+        .invoke({
+          issuer: alice,
+          audience: context.id,
+          with: aliceSpaceDid,
+          nb: { link, size },
+          proofs: [aliceProof],
+        })
+        .execute(connection)
 
-    assert.ok(aliceStoreAdd.out.ok, `Alice failed to store ${link.toString()}`)
+      assert.ok(
+        aliceStoreAdd.out.ok,
+        `Alice failed to store ${link.toString()}`
+      )
 
-    const bobStoreAdd = await StoreCapabilities.add.invoke({
-      issuer: bob,
-      audience: context.id,
-      with: bobSpaceDid,
-      nb: { link, size },
-      proofs: [bobProof],
-    }).execute(connection)
+      const bobStoreAdd = await StoreCapabilities.add
+        .invoke({
+          issuer: bob,
+          audience: context.id,
+          with: bobSpaceDid,
+          nb: { link, size },
+          proofs: [bobProof],
+        })
+        .execute(connection)
 
-    assert.ok(bobStoreAdd.out.ok, `Bob failed to store ${link.toString()}`)
+      assert.ok(bobStoreAdd.out.ok, `Bob failed to store ${link.toString()}`)
 
-    const { spaces } = await context.storeTable.getCID(link)
-    assert.equal(spaces.length, 2)
-    const spaceDids = spaces.map(space => space.did)
-    assert.ok(spaceDids.includes(aliceSpaceDid))
-    assert.ok(spaceDids.includes(bobSpaceDid))
-  },
+      const { spaces } = await context.storeTable.getCID(link)
+      assert.equal(spaces.length, 2)
+      const spaceDids = spaces.map((space) => space.did)
+      assert.ok(spaceDids.includes(aliceSpaceDid))
+      assert.ok(spaceDids.includes(bobSpaceDid))
+    },
 
   'store/add should create a presigned url that can only PUT a payload with the right length':
     async (assert, context) => {

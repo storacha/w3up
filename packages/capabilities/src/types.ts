@@ -17,7 +17,6 @@ import * as FilecoinCaps from './filecoin.js'
 import * as RootCaps from './root.js'
 import * as ShardCaps from './shard.js'
 
-
 export type { Unit }
 
 export type AccountDID = DID<'mailto'>
@@ -218,14 +217,14 @@ export type StoreList = InferInvokedCapability<typeof list>
 export type Root = InferInvokedCapability<typeof RootCaps.root>
 export type RootGet = InferInvokedCapability<typeof RootCaps.get>
 export interface RootGetSuccess {
-  spaces: Array<{ did: DID, insertedAt: Date }>
+  spaces: Array<{ did: DID; insertedAt: Date }>
 }
 export type RootGetFailure = Ucanto.Failure
 // Shard
 export type Shard = InferInvokedCapability<typeof ShardCaps.shard>
 export type ShardGet = InferInvokedCapability<typeof ShardCaps.get>
 export interface ShardGetSuccess {
-  spaces: Array<{ did: DID, insertedAt: Date }>
+  spaces: Array<{ did: DID; insertedAt: Date }>
 }
 export type ShardGetFailure = Ucanto.Failure
 

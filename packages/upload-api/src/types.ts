@@ -175,10 +175,10 @@ export interface Service {
       RateLimitListSuccess,
       RateLimitListFailure
     >
-  },
+  }
   root: {
     get: ServiceMethod<RootGet, RootGetSuccess, RootGetFailure>
-  },
+  }
   shard: {
     get: ServiceMethod<ShardGet, ShardGetSuccess, ShardGetFailure>
   }
@@ -230,7 +230,6 @@ export interface ShardServiceContext {
   signer: EdSigner.Signer
   storeTable: StoreTable
 }
-
 
 export interface RootServiceContext {
   signer: EdSigner.Signer
@@ -387,7 +386,7 @@ export interface StoreAddOutput
   extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
 
 export interface StoreGetOk {
-  spaces: Array<{ did: DID, insertedAt: Date }>
+  spaces: Array<{ did: DID; insertedAt: Date }>
 }
 
 export interface StoreListItem extends StoreAddOutput {
@@ -433,7 +432,7 @@ export interface UploadDidNotRemove {
 }
 
 export interface UploadGetOk {
-  spaces: Array<{ did: DID, insertedAt: Date }>
+  spaces: Array<{ did: DID; insertedAt: Date }>
 }
 
 export interface UploadListItem extends UploadAddOk {

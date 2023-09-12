@@ -49,7 +49,10 @@ export const test = {
     }
 
     assert.equal(uploadAdd.out.ok.root.toString(), root.toString())
-    assert.deepEqual(uploadAdd.out.ok.shards?.map(String).sort(), shards.map(String).sort())
+    assert.deepEqual(
+      uploadAdd.out.ok.shards?.map(String).sort(),
+      shards.map(String).sort()
+    )
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.deepEqual(results.length, 1)
@@ -67,53 +70,59 @@ export const test = {
     assert.equal(spaces[0].did, spaceDid)
   },
 
-  'upload/add should allow the same content to be uploaded to multiple spaces': async (
-    assert,
-    context
-  ) => {
-    const { proof: aliceProof, spaceDid: aliceSpaceDid } = await registerSpace(alice, context)
-    const { proof: bobProof, spaceDid: bobSpaceDid } = await registerSpace(bob, context, 'bob')
+  'upload/add should allow the same content to be uploaded to multiple spaces':
+    async (assert, context) => {
+      const { proof: aliceProof, spaceDid: aliceSpaceDid } =
+        await registerSpace(alice, context)
+      const { proof: bobProof, spaceDid: bobSpaceDid } = await registerSpace(
+        bob,
+        context,
+        'bob'
+      )
 
-    const connection = connect({
-      id: context.id,
-      channel: createServer(context),
-    })
-
-    const car = await randomCAR(128)
-    const otherCar = await randomCAR(40)
-
-    // invoke a upload/add with proof
-    const [root] = car.roots
-    const shards = [car.cid, otherCar.cid].sort()
-
-    const aliceUploadAdd = await Upload.add
-      .invoke({
-        issuer: alice,
-        audience: connection.id,
-        with: aliceSpaceDid,
-        nb: { root, shards },
-        proofs: [aliceProof],
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
       })
-      .execute(connection)
-    assert.ok(aliceUploadAdd.out.ok, `Alice failed to upload ${root.toString()}`)
 
-    const bobUploadAdd = await Upload.add
-      .invoke({
-        issuer: bob,
-        audience: connection.id,
-        with: bobSpaceDid,
-        nb: { root, shards },
-        proofs: [bobProof],
-      })
-      .execute(connection)
-    assert.ok(bobUploadAdd.out.ok, `Bob failed to upload ${root.toString()}`)
+      const car = await randomCAR(128)
+      const otherCar = await randomCAR(40)
 
-    const { spaces } = await context.uploadTable.getCID(root)
-    assert.equal(spaces.length, 2)
-    const spaceDids = spaces.map(space => space.did)
-    assert.ok(spaceDids.includes(aliceSpaceDid))
-    assert.ok(spaceDids.includes(bobSpaceDid))
-  },
+      // invoke a upload/add with proof
+      const [root] = car.roots
+      const shards = [car.cid, otherCar.cid].sort()
+
+      const aliceUploadAdd = await Upload.add
+        .invoke({
+          issuer: alice,
+          audience: connection.id,
+          with: aliceSpaceDid,
+          nb: { root, shards },
+          proofs: [aliceProof],
+        })
+        .execute(connection)
+      assert.ok(
+        aliceUploadAdd.out.ok,
+        `Alice failed to upload ${root.toString()}`
+      )
+
+      const bobUploadAdd = await Upload.add
+        .invoke({
+          issuer: bob,
+          audience: connection.id,
+          with: bobSpaceDid,
+          nb: { root, shards },
+          proofs: [bobProof],
+        })
+        .execute(connection)
+      assert.ok(bobUploadAdd.out.ok, `Bob failed to upload ${root.toString()}`)
+
+      const { spaces } = await context.uploadTable.getCID(root)
+      assert.equal(spaces.length, 2)
+      const spaceDids = spaces.map((space) => space.did)
+      assert.ok(spaceDids.includes(aliceSpaceDid))
+      assert.ok(spaceDids.includes(bobSpaceDid))
+    },
 
   'upload/add does not fail with no shards provided': async (
     assert,
@@ -202,13 +211,19 @@ export const test = {
       throw new Error('invocation failed', { cause: uploadAdd2 })
     }
 
-    assert.deepEqual(uploadAdd2.out.ok.shards?.map(String).sort(), shards.map(String).sort())
+    assert.deepEqual(
+      uploadAdd2.out.ok.shards?.map(String).sort(),
+      shards.map(String).sort()
+    )
 
     const { results } = await context.uploadTable.list(spaceDid)
     assert.equal(results.length, 1)
     const [upload] = results
     assert.equal(upload.root.toString(), root.toString())
-    assert.deepEqual(upload.shards?.map(String).sort(), shards.map(String).sort())
+    assert.deepEqual(
+      upload.shards?.map(String).sort(),
+      shards.map(String).sort()
+    )
   },
 
   'upload/add merges shards to an existing item with shards': async (

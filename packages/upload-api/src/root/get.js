@@ -25,9 +25,7 @@ const get = async ({ capability }, context) => {
   }
 
   return {
-    ok: await context.uploadTable.getCID(
-      capability.nb.cid
-    )
+    ok: await context.uploadTable.getCID(capability.nb.cid),
   }
 }
 

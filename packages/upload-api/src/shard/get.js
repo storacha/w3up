@@ -25,9 +25,7 @@ const get = async ({ capability }, context) => {
   }
 
   return {
-    ok: await context.storeTable.getCID(
-      capability.nb.cid
-    )
+    ok: await context.storeTable.getCID(capability.nb.cid),
   }
 }
 
