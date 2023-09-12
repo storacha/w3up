@@ -2,13 +2,13 @@ import assert from 'assert'
 import { access } from '@ucanto/validator'
 import { delegate } from '@ucanto/core'
 import { Verifier } from '@ucanto/principal/ed25519'
-import * as Trace from '../../src/trace.js'
+import * as Admin from '../../src/admin.js'
 import { service, alice, readmeCID } from '../helpers/fixtures.js'
 
-describe('trace/upload/add', async function () {
+describe('admin/upload/inspect', async function () {
   const agent = alice
   it('can be invoked by the service on the service', async function () {
-    const invocation = Trace.upload.add.invoke({
+    const invocation = Admin.upload.inspect.invoke({
       issuer: service,
       audience: service,
       with: service.did(),
@@ -17,7 +17,7 @@ describe('trace/upload/add', async function () {
       },
     })
     const result = await access(await invocation.delegate(), {
-      capability: Trace.upload.add,
+      capability: Admin.upload.inspect,
       principal: Verifier,
       authority: service,
     })
@@ -25,7 +25,7 @@ describe('trace/upload/add', async function () {
       assert.fail('error in self issue')
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
-      assert.equal(result.ok.capability.can, 'trace/upload/add')
+      assert.equal(result.ok.capability.can, 'admin/upload/inspect')
       assert.deepEqual(result.ok.capability.nb, {
         root: readmeCID,
       })
@@ -33,7 +33,7 @@ describe('trace/upload/add', async function () {
   })
 
   it('can be invoked by an agent delegated permissions by the service', async function () {
-    const auth = Trace.upload.add.invoke({
+    const auth = Admin.upload.inspect.invoke({
       issuer: agent,
       audience: service,
       with: service.did(),
@@ -44,12 +44,12 @@ describe('trace/upload/add', async function () {
         await delegate({
           issuer: service,
           audience: agent,
-          capabilities: [{ with: service.did(), can: 'trace/upload/add' }],
+          capabilities: [{ with: service.did(), can: 'admin/upload/inspect' }],
         }),
       ],
     })
     const result = await access(await auth.delegate(), {
-      capability: Trace.upload.add,
+      capability: Admin.upload.inspect,
       principal: Verifier,
       authority: service,
     })
@@ -59,7 +59,7 @@ describe('trace/upload/add', async function () {
       )
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
-      assert.equal(result.ok.capability.can, 'trace/upload/add')
+      assert.equal(result.ok.capability.can, 'admin/upload/inspect')
       assert.deepEqual(result.ok.capability.nb, {
         root: readmeCID,
       })
@@ -68,7 +68,7 @@ describe('trace/upload/add', async function () {
 
   it('fails without a delegation from the service delegation', async function () {
     const agent = alice
-    const auth = Trace.upload.add.invoke({
+    const auth = Admin.upload.inspect.invoke({
       issuer: agent,
       audience: service,
       with: service.did(),
@@ -78,7 +78,7 @@ describe('trace/upload/add', async function () {
     })
 
     const result = await access(await auth.delegate(), {
-      capability: Trace.upload.add,
+      capability: Admin.upload.inspect,
       principal: Verifier,
       authority: service,
     })
@@ -88,7 +88,7 @@ describe('trace/upload/add', async function () {
 
   it('requires nb.root', async function () {
     assert.throws(() => {
-      Trace.upload.add.invoke({
+      Admin.upload.inspect.invoke({
         issuer: alice,
         audience: service,
         with: service.did(),
@@ -99,10 +99,10 @@ describe('trace/upload/add', async function () {
   })
 })
 
-describe('trace/store/add', function () {
+describe('admin/store/inspect', function () {
   const agent = alice
   it('can be invoked by the service on the service', async function () {
-    const invocation = Trace.store.add.invoke({
+    const invocation = Admin.store.inspect.invoke({
       issuer: service,
       audience: service,
       with: service.did(),
@@ -111,7 +111,7 @@ describe('trace/store/add', function () {
       },
     })
     const result = await access(await invocation.delegate(), {
-      capability: Trace.store.add,
+      capability: Admin.store.inspect,
       principal: Verifier,
       authority: service,
     })
@@ -119,7 +119,7 @@ describe('trace/store/add', function () {
       assert.fail('error in self issue')
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
-      assert.equal(result.ok.capability.can, 'trace/store/add')
+      assert.equal(result.ok.capability.can, 'admin/store/inspect')
       assert.deepEqual(result.ok.capability.nb, {
         link: readmeCID,
       })
@@ -127,7 +127,7 @@ describe('trace/store/add', function () {
   })
 
   it('can be invoked by an agent delegated permissions by the service', async function () {
-    const auth = Trace.store.add.invoke({
+    const auth = Admin.store.inspect.invoke({
       issuer: agent,
       audience: service,
       with: service.did(),
@@ -138,12 +138,12 @@ describe('trace/store/add', function () {
         await delegate({
           issuer: service,
           audience: agent,
-          capabilities: [{ with: service.did(), can: 'trace/store/add' }],
+          capabilities: [{ with: service.did(), can: 'admin/store/inspect' }],
         }),
       ],
     })
     const result = await access(await auth.delegate(), {
-      capability: Trace.store.add,
+      capability: Admin.store.inspect,
       principal: Verifier,
       authority: service,
     })
@@ -153,7 +153,7 @@ describe('trace/store/add', function () {
       )
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
-      assert.equal(result.ok.capability.can, 'trace/store/add')
+      assert.equal(result.ok.capability.can, 'admin/store/inspect')
       assert.deepEqual(result.ok.capability.nb, {
         link: readmeCID,
       })
@@ -162,7 +162,7 @@ describe('trace/store/add', function () {
 
   it('fails without a delegation from the service delegation', async function () {
     const agent = alice
-    const auth = Trace.store.add.invoke({
+    const auth = Admin.store.inspect.invoke({
       issuer: agent,
       audience: service,
       with: service.did(),
@@ -172,7 +172,7 @@ describe('trace/store/add', function () {
     })
 
     const result = await access(await auth.delegate(), {
-      capability: Trace.store.add,
+      capability: Admin.store.inspect,
       principal: Verifier,
       authority: service,
     })
@@ -182,7 +182,7 @@ describe('trace/store/add', function () {
 
   it('requires nb.shard', async function () {
     assert.throws(() => {
-      Trace.store.add.invoke({
+      Admin.store.inspect.invoke({
         issuer: alice,
         audience: service,
         with: service.did(),

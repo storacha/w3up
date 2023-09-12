@@ -1,8 +1,8 @@
 import { capability, struct, ok, Link } from '@ucanto/validator'
 import { equalWith, and, equal, ProviderDID } from './utils.js'
 
-export const trace = capability({
-  can: 'trace/*',
+export const admin = capability({
+  can: 'admin/*',
   with: ProviderDID,
   derives: equalWith,
 })
@@ -11,8 +11,8 @@ export const upload = {
   /**
    * Capability can be invoked by a provider to get information about a content CID.
    */
-  add: capability({
-    can: 'trace/upload/add',
+  inspect: capability({
+    can: 'admin/upload/inspect',
     with: ProviderDID,
     nb: struct({
       root: Link,
@@ -31,8 +31,8 @@ export const store = {
   /**
    * Capability can be invoked by a provider to get information an upload shard CID.
    */
-  add: capability({
-    can: 'trace/store/add',
+  inspect: capability({
+    can: 'admin/store/inspect',
     with: ProviderDID,
     nb: struct({
       link: Link,

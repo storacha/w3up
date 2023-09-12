@@ -14,7 +14,7 @@ import * as ConsumerCaps from './consumer.js'
 import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
-import * as TraceCaps from './trace.js'
+import * as AdminCaps from './admin.js'
 
 export type { Unit }
 
@@ -212,22 +212,22 @@ export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
-// Trace
-export type Trace = InferInvokedCapability<typeof TraceCaps.trace>
-export type TraceUploadAdd = InferInvokedCapability<typeof TraceCaps.upload.add>
-export type TraceStoreAdd = InferInvokedCapability<typeof TraceCaps.store.add>
-export interface SpaceTrace {
+// Admin
+export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
+export type AdminUploadInspect = InferInvokedCapability<typeof AdminCaps.upload.inspect>
+export type AdminStoreInspect = InferInvokedCapability<typeof AdminCaps.store.inspect>
+export interface SpaceAdmin {
   did: DID
   insertedAt: Date
 }
-export interface TraceUploadAddSuccess {
-  spaces: SpaceTrace[]
+export interface AdminUploadInspectSuccess {
+  spaces: SpaceAdmin[]
 }
-export type TraceUploadAddFailure = Ucanto.Failure
-export interface TraceStoreAddSuccess {
-  spaces: SpaceTrace[]
+export type AdminUploadInspectFailure = Ucanto.Failure
+export interface AdminStoreInspectSuccess {
+  spaces: SpaceAdmin[]
 }
-export type TraceStoreAddFailure = Ucanto.Failure
+export type AdminStoreInspectFailure = Ucanto.Failure
 // Filecoin
 export type FilecoinQueue = InferInvokedCapability<
   typeof FilecoinCaps.filecoinQueue
@@ -281,7 +281,7 @@ export type AbilitiesArray = [
   DealQueue['can'],
   DealAdd['can'],
   ChainTrackerInfo['can'],
-  Trace['can'],
-  TraceUploadAdd['can'],
-  TraceStoreAdd['can']
+  Admin['can'],
+  AdminUploadInspect['can'],
+  AdminStoreInspect['can']
 ]
