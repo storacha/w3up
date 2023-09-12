@@ -24,7 +24,7 @@ export const upload = {
         ok({})
       )
     },
-  })
+  }),
 }
 
 export const store = {
@@ -44,5 +44,5 @@ export const store = {
         ok({})
       )
     },
-  })
+  }),
 }

@@ -214,8 +214,12 @@ export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
-export type AdminUploadInspect = InferInvokedCapability<typeof AdminCaps.upload.inspect>
-export type AdminStoreInspect = InferInvokedCapability<typeof AdminCaps.store.inspect>
+export type AdminUploadInspect = InferInvokedCapability<
+  typeof AdminCaps.upload.inspect
+>
+export type AdminStoreInspect = InferInvokedCapability<
+  typeof AdminCaps.store.inspect
+>
 export interface SpaceAdmin {
   did: DID
   insertedAt: Date

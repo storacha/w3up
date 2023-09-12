@@ -11,6 +11,6 @@ export const createService = (context) => ({
   },
 
   upload: {
-    inspect: UploadInspect.provide(context)
-  }
+    inspect: UploadInspect.provide(context),
+  },
 })

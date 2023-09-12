@@ -49,7 +49,9 @@ export const test = {
           await delegate({
             issuer: service,
             audience: alice,
-            capabilities: [{ with: service.did(), can: 'admin/upload/inspect' }],
+            capabilities: [
+              { with: service.did(), can: 'admin/upload/inspect' },
+            ],
           }),
         ],
       })
