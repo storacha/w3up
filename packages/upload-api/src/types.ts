@@ -88,6 +88,12 @@ import {
   RateLimitList,
   RateLimitListSuccess,
   RateLimitListFailure,
+  RootGet,
+  RootGetSuccess,
+  RootGetFailure,
+  ShardGet,
+  ShardGetSuccess,
+  ShardGetFailure,
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
@@ -169,6 +175,12 @@ export interface Service {
       RateLimitListSuccess,
       RateLimitListFailure
     >
+  },
+  root: {
+    get: ServiceMethod<RootGet, RootGetSuccess, RootGetFailure>
+  },
+  shard: {
+    get: ServiceMethod<ShardGet, ShardGetSuccess, ShardGetFailure>
   }
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
@@ -212,6 +224,17 @@ export interface ConsumerServiceContext {
 export interface CustomerServiceContext {
   signer: EdSigner.Signer
   provisionsStorage: Provisions
+}
+
+export interface ShardServiceContext {
+  signer: EdSigner.Signer
+  storeTable: StoreTable
+}
+
+
+export interface RootServiceContext {
+  signer: EdSigner.Signer
+  uploadTable: UploadTable
 }
 
 export interface ConsoleServiceContext {}
@@ -348,6 +371,8 @@ export type SubscriptionGetResult = Result<
   SubscriptionGetSuccess,
   SubscriptionGetFailure
 >
+export type ShardGetResult = Result<ShardGetSuccess, ShardGetFailure>
+export type RootGetResult = Result<RootGetSuccess, RootGetFailure>
 
 export interface StoreAddInput {
   space: DID

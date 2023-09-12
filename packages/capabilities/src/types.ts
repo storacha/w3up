@@ -217,9 +217,18 @@ export type StoreList = InferInvokedCapability<typeof list>
 // Root
 export type Root = InferInvokedCapability<typeof RootCaps.root>
 export type RootGet = InferInvokedCapability<typeof RootCaps.get>
+export interface RootGetSuccess {
+  spaces: Array<{ did: DID, insertedAt: Date }>
+}
+export type RootGetFailure = Ucanto.Failure
 // Shard
 export type Shard = InferInvokedCapability<typeof ShardCaps.shard>
 export type ShardGet = InferInvokedCapability<typeof ShardCaps.get>
+export interface ShardGetSuccess {
+  spaces: Array<{ did: DID, insertedAt: Date }>
+}
+export type ShardGetFailure = Ucanto.Failure
+
 // Filecoin
 export type FilecoinQueue = InferInvokedCapability<
   typeof FilecoinCaps.filecoinQueue

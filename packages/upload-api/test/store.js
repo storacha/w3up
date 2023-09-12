@@ -1,6 +1,5 @@
 import { createServer, connect } from '../src/lib.js'
 import * as API from '../src/types.js'
-import * as Signer from '@ucanto/principal/ed25519'
 import { CID } from 'multiformats'
 import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
