@@ -25,7 +25,11 @@ const get = async ({ capability }, context) => {
   }
 
   return {
-    ok: await context.uploadTable.getCID(capability.nb.cid),
+    ok: await context.uploadTable.getCID(
+      // I shouldn't need to typecast this (and it looks alright in Visual Studio!) but
+      // tsc complains that `capability.nb.cid` is of type unknown...
+      /** @type {API.UnknownLink} */(capability.nb.cid)
+    ),
   }
 }
 
