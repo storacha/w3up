@@ -1,6 +1,9 @@
-import { fail, ok } from '@ucanto/validator'
+import { DID, fail, ok } from '@ucanto/validator'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
+
+// e.g. did:web:web3.storage or did:web:staging.web3.storage
+export const ProviderDID = DID.match({ method: 'web' })
 
 /**
  * Check URI can be delegated

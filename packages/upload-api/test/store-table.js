@@ -27,6 +27,23 @@ export class StoreTable {
 
   /**
    *
+   * @param {API.UnknownLink} link
+   * @returns {Promise<API.StoreGetOk>}
+   */
+  async getCID(link) {
+    const items =
+      this.items?.filter((item) => item.link.toString() === link.toString()) ||
+      []
+    return {
+      spaces: items.map((item) => ({
+        did: item.space,
+        insertedAt: item.insertedAt,
+      })),
+    }
+  }
+
+  /**
+   *
    * @param {API.DID} space
    * @param {API.UnknownLink} link
    */

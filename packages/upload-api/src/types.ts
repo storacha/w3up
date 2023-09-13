@@ -88,6 +88,12 @@ import {
   RateLimitList,
   RateLimitListSuccess,
   RateLimitListFailure,
+  AdminStoreInspect,
+  AdminStoreInspectSuccess,
+  AdminStoreInspectFailure,
+  AdminUploadInspect,
+  AdminUploadInspectSuccess,
+  AdminUploadInspectFailure,
   ProviderAdd,
   ProviderAddSuccess,
   ProviderAddFailure,
@@ -170,6 +176,22 @@ export interface Service {
       RateLimitListFailure
     >
   }
+  admin: {
+    store: {
+      inspect: ServiceMethod<
+        AdminStoreInspect,
+        AdminStoreInspectSuccess,
+        AdminStoreInspectFailure
+      >
+    }
+    upload: {
+      inspect: ServiceMethod<
+        AdminUploadInspect,
+        AdminUploadInspectSuccess,
+        AdminUploadInspectFailure
+      >
+    }
+  }
   provider: {
     add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
   }
@@ -212,6 +234,12 @@ export interface ConsumerServiceContext {
 export interface CustomerServiceContext {
   signer: EdSigner.Signer
   provisionsStorage: Provisions
+}
+
+export interface AdminServiceContext {
+  signer: EdSigner.Signer
+  uploadTable: UploadTable
+  storeTable: StoreTable
 }
 
 export interface ConsoleServiceContext {}
@@ -306,6 +334,7 @@ export interface DudewhereBucket {
 }
 
 export interface StoreTable {
+  getCID: (link: UnknownLink) => Promise<StoreGetOk>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
   remove: (space: DID, link: UnknownLink) => Promise<void>
@@ -323,6 +352,7 @@ export interface TestStoreTable {
 }
 
 export interface UploadTable {
+  getCID: (link: UnknownLink) => Promise<UploadGetOk>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
   insert: (item: UploadAddInput) => Promise<UploadAddOk>
   remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>
@@ -346,6 +376,14 @@ export type SubscriptionGetResult = Result<
   SubscriptionGetSuccess,
   SubscriptionGetFailure
 >
+export type AdminStoreInspectResult = Result<
+  AdminStoreInspectSuccess,
+  AdminStoreInspectFailure
+>
+export type AdminUploadInspectResult = Result<
+  AdminUploadInspectSuccess,
+  AdminUploadInspectFailure
+>
 
 export interface StoreAddInput {
   space: DID
@@ -358,6 +396,10 @@ export interface StoreAddInput {
 
 export interface StoreAddOutput
   extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
+
+export interface StoreGetOk {
+  spaces: Array<{ did: DID; insertedAt: string }>
+}
 
 export interface StoreListItem extends StoreAddOutput {
   insertedAt: string
@@ -399,6 +441,10 @@ export interface UploadDIDRemove extends UploadAddOk {}
 export interface UploadDidNotRemove {
   root?: undefined
   shards?: undefined
+}
+
+export interface UploadGetOk {
+  spaces: Array<{ did: DID; insertedAt: string }>
 }
 
 export interface UploadListItem extends UploadAddOk {
