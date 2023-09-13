@@ -62,5 +62,7 @@ export const test = {
       `failed to get root: ${adminUploadInspect.out.error?.message}`
     )
     assert.equal(adminUploadInspect.out.ok?.spaces[0].did, spaceDid)
+    assert.equal(typeof adminUploadInspect.out.ok?.spaces[0].insertedAt, 'string')
+
   },
 }

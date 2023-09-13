@@ -22,7 +22,7 @@ export class UploadTable {
     return {
       spaces: items.map((item) => ({
         did: item.space,
-        insertedAt: new Date(item.insertedAt),
+        insertedAt: item.insertedAt,
       })),
     }
   }

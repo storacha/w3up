@@ -222,7 +222,7 @@ export type AdminStoreInspect = InferInvokedCapability<
 >
 export interface SpaceAdmin {
   did: DID
-  insertedAt: Date
+  insertedAt: string
 }
 export interface AdminUploadInspectSuccess {
   spaces: SpaceAdmin[]

@@ -398,7 +398,7 @@ export interface StoreAddOutput
   extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
 
 export interface StoreGetOk {
-  spaces: Array<{ did: DID; insertedAt: Date }>
+  spaces: Array<{ did: DID; insertedAt: string }>
 }
 
 export interface StoreListItem extends StoreAddOutput {
@@ -444,7 +444,7 @@ export interface UploadDidNotRemove {
 }
 
 export interface UploadGetOk {
-  spaces: Array<{ did: DID; insertedAt: Date }>
+  spaces: Array<{ did: DID; insertedAt: string }>
 }
 
 export interface UploadListItem extends UploadAddOk {
