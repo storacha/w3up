@@ -1,14 +1,14 @@
-import * as API from './types.js'
+import * as API from '../types.js'
 import { Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
 import { Access, Space } from '@web3-storage/capabilities'
-import { alice, bob, provisionProvider } from './helpers/utils.js'
+import { alice, bob, provisionProvider } from '../helpers/utils.js'
 import * as DidMailto from '@web3-storage/did-mailto'
 import {
   stringToDelegation,
   bytesToDelegations,
 } from '@web3-storage/access/encoding'
-import { authorizeFromUrl } from '../src/validate.js'
+import { authorizeFromUrl } from '../../src/validate.js'
 
 /**
  * @type {API.Tests}

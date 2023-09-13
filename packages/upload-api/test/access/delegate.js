@@ -1,9 +1,9 @@
-import * as API from './types.js'
+import * as API from '../types.js'
 import { Absentee } from '@ucanto/principal'
 import * as Server from '@ucanto/server'
 import { Access } from '@web3-storage/capabilities'
-import { alice, bob, mallory, provisionProvider } from './helpers/utils.js'
-import * as delegationsResponse from '../src/utils/delegations-response.js'
+import { alice, bob, mallory, provisionProvider } from '../helpers/utils.js'
+import * as delegationsResponse from '../../src/utils/delegations-response.js'
 
 /**
  * @type {API.Tests}

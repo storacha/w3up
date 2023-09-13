@@ -1,4 +1,4 @@
-import * as API from '../src/types.js'
+import * as API from '../../src/types.js'
 import { parseLink } from '@ucanto/core'
 
 /**

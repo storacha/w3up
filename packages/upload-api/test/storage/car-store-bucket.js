@@ -1,4 +1,4 @@
-import * as API from '../src/types.js'
+import * as API from '../../src/types.js'
 import { base64pad } from 'multiformats/bases/base64'
 import HTTP from 'node:http'
 import { SigV4 } from '@web3-storage/sigv4'

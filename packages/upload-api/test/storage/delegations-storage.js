@@ -1,4 +1,4 @@
-import * as Types from '../src/types.js'
+import * as Types from '../../src/types.js'
 
 /**
  * @implements {Types.DelegationsStorage}

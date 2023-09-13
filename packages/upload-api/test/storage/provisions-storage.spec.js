@@ -1,9 +1,9 @@
-import * as RateLimitsStorage from './rate-limits-storage-tests.js'
+import * as ProvisionsStorage from './provisions-storage-tests.js'
 import * as assert from 'assert'
-import { cleanupContext, createContext } from './helpers/context.js'
+import { cleanupContext, createContext } from '../helpers/context.js'
 
-describe('in memory rate limits storage', async () => {
-  for (const [name, test] of Object.entries(RateLimitsStorage.test)) {
+describe('in memory provisions storage', async () => {
+  for (const [name, test] of Object.entries(ProvisionsStorage.test)) {
     const define = name.startsWith('only ')
       ? it.only
       : name.startsWith('skip ')

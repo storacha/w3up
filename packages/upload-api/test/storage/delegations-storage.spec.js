@@ -1,6 +1,6 @@
 import * as DelegationsStorage from './delegations-storage-tests.js'
 import * as assert from 'assert'
-import { cleanupContext, createContext } from './helpers/context.js'
+import { cleanupContext, createContext } from '../helpers/context.js'
 
 describe('in memory delegations storage', async () => {
   for (const [name, test] of Object.entries(DelegationsStorage.test)) {

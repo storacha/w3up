@@ -1,5 +1,5 @@
-import * as API from '../src/types.js'
-import * as Types from './types.js'
+import * as API from '../../src/types.js'
+import * as Types from '../types.js'
 import * as principal from '@ucanto/principal'
 import { Provider } from '@web3-storage/capabilities'
 

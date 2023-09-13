@@ -1,8 +1,8 @@
-import * as API from '../src/types.js'
+import * as API from '../../src/types.js'
 import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
-import { createSampleDelegation } from '../src/utils/ucan.js'
+import { createSampleDelegation } from '../../src/utils/ucan.js'
 
 /**
  * @param {object} [opts]

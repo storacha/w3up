@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-only-tests/no-only-tests */
-import * as Suite from './access-authorize.js'
+import * as Suite from './authorize.js'
 import * as assert from 'assert'
-import { cleanupContext, createContext } from './helpers/context.js'
+import { cleanupContext, createContext } from '../helpers/context.js'
 
 describe('access/authorize', () => {
   for (const [name, test] of Object.entries(Suite.test)) {
