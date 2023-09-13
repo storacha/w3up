@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.3.1...upload-api-v5.4.0) (2023-09-13)
+
+
+### Features
+
+* implement `admin/upload/inspect` and `admin/store/inspect` capabilities ([#918](https://github.com/web3-storage/w3up/issues/918)) ([5616a12](https://github.com/web3-storage/w3up/commit/5616a12125500a1d5ee41f0504812d82c0451852))
+
 ## [5.3.1](https://github.com/web3-storage/w3up/compare/upload-api-v5.3.0...upload-api-v5.3.1) (2023-09-12)
 
 
