@@ -1,7 +1,7 @@
 /* eslint-disable no-only-tests/no-only-tests */
 import * as Upload from './upload.js'
 import * as assert from 'assert'
-import { cleanupContext, createContext } from './helpers/context.js'
+import { cleanupContext, createContext } from '../helpers/context.js'
 
 describe('upload/*', () => {
   for (const [name, test] of Object.entries(Upload.test)) {

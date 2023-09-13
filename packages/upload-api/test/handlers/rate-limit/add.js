@@ -1,5 +1,5 @@
-import * as API from '../types.js'
-import { alice, bob } from '../helpers/utils.js'
+import * as API from '../../types.js'
+import { alice, bob } from '../../helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
 import { Access, RateLimit, Store } from '@web3-storage/capabilities'

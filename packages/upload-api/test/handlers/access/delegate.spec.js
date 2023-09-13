@@ -1,11 +1,11 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-only-tests/no-only-tests */
-import * as Suite from './claim.js'
+import * as Delegate from './delegate.js'
 import * as assert from 'assert'
-import { cleanupContext, createContext } from '../helpers/context.js'
+import { cleanupContext, createContext } from '../../helpers/context.js'
 
-describe('access/claim', () => {
-  for (const [name, test] of Object.entries(Suite.test)) {
+describe('access/delegate', () => {
+  for (const [name, test] of Object.entries(Delegate.test)) {
     const define = name.startsWith('only! ')
       ? it.only
       : name.startsWith('skip! ')

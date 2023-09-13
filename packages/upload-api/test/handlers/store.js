@@ -1,13 +1,13 @@
-import { createServer, connect } from '../src/lib.js'
-import * as API from '../src/types.js'
+import { createServer, connect } from '../../src/lib.js'
+import * as API from '../../src/types.js'
 import { CID } from 'multiformats'
 import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
 import * as Link from '@ucanto/core/link'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
-import { alice, bob, createSpace, registerSpace } from './util.js'
+import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { Absentee } from '@ucanto/principal'
-import { provisionProvider } from './helpers/utils.js'
+import { provisionProvider } from '../helpers/utils.js'
 
 /**
  * @type {API.Tests}

@@ -1,6 +1,6 @@
-import * as API from '../../types.js'
-import { alice, registerSpace } from '../../util.js'
-import { createServer, connect } from '../../../src/lib.js'
+import * as API from '../../../types.js'
+import { alice, registerSpace } from '../../../util.js'
+import { createServer, connect } from '../../../../src/lib.js'
 
 import { delegate } from '@ucanto/core'
 import * as CAR from '@ucanto/transport/car'

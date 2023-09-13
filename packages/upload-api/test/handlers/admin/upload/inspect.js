@@ -1,6 +1,6 @@
-import * as API from '../../types.js'
-import { alice, registerSpace, randomCAR } from '../../util.js'
-import { createServer, connect } from '../../../src/lib.js'
+import * as API from '../../../types.js'
+import { alice, registerSpace, randomCAR } from '../../../util.js'
+import { createServer, connect } from '../../../../src/lib.js'
 
 import { delegate } from '@ucanto/core'
 import { Admin, Upload } from '@web3-storage/capabilities'

@@ -1,7 +1,7 @@
 import * as Space from '@web3-storage/capabilities/space'
 import assert from 'assert'
-import { cleanupContext, createContext } from './helpers/context.js'
-import { createSpace } from './helpers/utils.js'
+import { cleanupContext, createContext } from '../helpers/context.js'
+import { createSpace } from '../helpers/utils.js'
 import { parseLink } from '@ucanto/core'
 import * as principal from '@ucanto/principal'
 import * as Store from '@web3-storage/capabilities/store'
@@ -11,7 +11,7 @@ import * as Upload from '@web3-storage/capabilities/upload'
 import isSubset from 'is-subset'
 
 describe('space/info', function () {
-  /** @type {import('./types.js').UcantoServerTestContext} */
+  /** @type {import('../types.js').UcantoServerTestContext} */
   let ctx
   beforeEach(async function () {
     ctx = await createContext()

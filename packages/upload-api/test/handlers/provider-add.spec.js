@@ -1,14 +1,14 @@
 import * as principal from '@ucanto/principal'
 import * as assert from 'assert'
 import * as ucanto from '@ucanto/core'
-import * as API from '../src/types.js'
-import * as Types from './types.js'
-import { cleanupContext, createContext } from './helpers/context.js'
+import * as API from '../../src/types.js'
+import * as Types from '../types.js'
+import { cleanupContext, createContext } from '../helpers/context.js'
 import { Access, Provider, Consumer } from '@web3-storage/capabilities'
-import * as delegationsResponse from '../src/utils/delegations-response.js'
+import * as delegationsResponse from '../../src/utils/delegations-response.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
-import { createAuthorization } from './helpers/utils.js'
-import { authorizeFromUrl } from '../src/validate.js'
+import { createAuthorization } from '../helpers/utils.js'
+import { authorizeFromUrl } from '../../src/validate.js'
 
 describe(`provider/add`, () => {
   it(`can invoke as did:mailto after authorize confirmation`, async () => {
@@ -275,7 +275,7 @@ const setup = async (options = {}) => {
 }
 
 /**
- * @typedef {import('../src/utils/email.js').ValidationEmailSend} ValidationEmailSend
+ * @typedef {import('../../src/utils/email.js').ValidationEmailSend} ValidationEmailSend
  */
 
 /**

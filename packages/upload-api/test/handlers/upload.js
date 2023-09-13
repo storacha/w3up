@@ -1,4 +1,4 @@
-import * as API from '../src/types.js'
+import * as API from '../../src/types.js'
 import {
   alice,
   bob,
@@ -6,8 +6,8 @@ import {
   randomCAR,
   createSpace,
   service,
-} from './util.js'
-import { createServer, connect } from '../src/lib.js'
+} from '../util.js'
+import { createServer, connect } from '../../src/lib.js'
 import { Upload } from '@web3-storage/capabilities'
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/batchwriteitemcommand.html

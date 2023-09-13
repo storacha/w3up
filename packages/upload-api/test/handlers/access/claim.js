@@ -1,7 +1,7 @@
-import * as API from '../types.js'
+import * as API from '../../types.js'
 import { Absentee } from '@ucanto/principal'
 import { Access } from '@web3-storage/capabilities'
-import { alice, bob } from '../helpers/utils.js'
+import { alice, bob } from '../../helpers/utils.js'
 
 /**
  * @type {API.Tests}
