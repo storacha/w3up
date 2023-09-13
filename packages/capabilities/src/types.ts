@@ -14,6 +14,7 @@ import * as ConsumerCaps from './consumer.js'
 import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
+import * as AdminCaps from './admin.js'
 
 export type { Unit }
 
@@ -211,6 +212,26 @@ export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
+// Admin
+export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
+export type AdminUploadInspect = InferInvokedCapability<
+  typeof AdminCaps.upload.inspect
+>
+export type AdminStoreInspect = InferInvokedCapability<
+  typeof AdminCaps.store.inspect
+>
+export interface SpaceAdmin {
+  did: DID
+  insertedAt: string
+}
+export interface AdminUploadInspectSuccess {
+  spaces: SpaceAdmin[]
+}
+export type AdminUploadInspectFailure = Ucanto.Failure
+export interface AdminStoreInspectSuccess {
+  spaces: SpaceAdmin[]
+}
+export type AdminStoreInspectFailure = Ucanto.Failure
 // Filecoin
 export type FilecoinQueue = InferInvokedCapability<
   typeof FilecoinCaps.filecoinQueue
@@ -263,5 +284,8 @@ export type AbilitiesArray = [
   AggregateAdd['can'],
   DealQueue['can'],
   DealAdd['can'],
-  ChainTrackerInfo['can']
+  ChainTrackerInfo['can'],
+  Admin['can'],
+  AdminUploadInspect['can'],
+  AdminStoreInspect['can']
 ]

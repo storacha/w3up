@@ -1,6 +1,7 @@
 import * as API from '../src/types.js'
 import {
   alice,
+  bob,
   registerSpace,
   randomCAR,
   createSpace,
@@ -63,7 +64,65 @@ export const test = {
     const msAgo = Date.now() - new Date(item.insertedAt).getTime()
     assert.equal(msAgo < 60_000, true)
     assert.equal(msAgo >= 0, true)
+
+    const { spaces } = await context.uploadTable.getCID(root)
+    assert.equal(spaces.length, 1)
+    assert.equal(spaces[0].did, spaceDid)
   },
+
+  'upload/add should allow the same content to be uploaded to multiple spaces':
+    async (assert, context) => {
+      const { proof: aliceProof, spaceDid: aliceSpaceDid } =
+        await registerSpace(alice, context)
+      const { proof: bobProof, spaceDid: bobSpaceDid } = await registerSpace(
+        bob,
+        context,
+        'bob'
+      )
+
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
+
+      const car = await randomCAR(128)
+      const otherCar = await randomCAR(40)
+
+      // invoke a upload/add with proof
+      const [root] = car.roots
+      const shards = [car.cid, otherCar.cid].sort()
+
+      const aliceUploadAdd = await Upload.add
+        .invoke({
+          issuer: alice,
+          audience: connection.id,
+          with: aliceSpaceDid,
+          nb: { root, shards },
+          proofs: [aliceProof],
+        })
+        .execute(connection)
+      assert.ok(
+        aliceUploadAdd.out.ok,
+        `Alice failed to upload ${root.toString()}`
+      )
+
+      const bobUploadAdd = await Upload.add
+        .invoke({
+          issuer: bob,
+          audience: connection.id,
+          with: bobSpaceDid,
+          nb: { root, shards },
+          proofs: [bobProof],
+        })
+        .execute(connection)
+      assert.ok(bobUploadAdd.out.ok, `Bob failed to upload ${root.toString()}`)
+
+      const { spaces } = await context.uploadTable.getCID(root)
+      assert.equal(spaces.length, 2)
+      const spaceDids = spaces.map((space) => space.did)
+      assert.ok(spaceDids.includes(aliceSpaceDid))
+      assert.ok(spaceDids.includes(bobSpaceDid))
+    },
 
   'upload/add does not fail with no shards provided': async (
     assert,

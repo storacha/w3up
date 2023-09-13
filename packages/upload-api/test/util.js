@@ -54,13 +54,15 @@ export async function createSpace(audience) {
  * @param {API.Principal & API.Signer} audience
  * @param {import('./types.js').UcantoServerTestContext} context
  */
-export const registerSpace = async (audience, context) => {
+export const registerSpace = async (audience, context, username = 'alice') => {
   const { proof, space, spaceDid } = await createSpace(audience)
   const connection = connect({
     id: context.id,
     channel: createServer(context),
   })
-  const account = Absentee.from({ id: 'did:mailto:test.web3.storage:alice' })
+  const account = Absentee.from({
+    id: `did:mailto:test.web3.storage:${username}`,
+  })
 
   const provisionResult = await provisionProvider({
     service: /** @type {API.Signer<API.DID<'web'>>} */ (context.id),

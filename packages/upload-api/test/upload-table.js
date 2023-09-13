@@ -11,6 +11,23 @@ export class UploadTable {
   }
 
   /**
+   *
+   * @param {API.UnknownLink} link
+   * @returns {Promise<API.StoreGetOk>}
+   */
+  async getCID(link) {
+    const items =
+      this.items?.filter((item) => item.root.toString() === link.toString()) ||
+      []
+    return {
+      spaces: items.map((item) => ({
+        did: item.space,
+        insertedAt: item.insertedAt,
+      })),
+    }
+  }
+
+  /**
    * @param {API.UploadAddInput} input
    * @returns
    */

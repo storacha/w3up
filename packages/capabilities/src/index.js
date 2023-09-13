@@ -9,6 +9,7 @@ import * as Consumer from './consumer.js'
 import * as Customer from './customer.js'
 import * as Console from './console.js'
 import * as RateLimit from './rate-limit.js'
+import * as Admin from './admin.js'
 import * as Subscription from './subscription.js'
 import * as Filecoin from './filecoin.js'
 
@@ -26,6 +27,7 @@ export {
   RateLimit,
   Subscription,
   Filecoin,
+  Admin,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
@@ -59,4 +61,7 @@ export const abilitiesAsStrings = [
   Filecoin.dealQueue.can,
   Filecoin.dealAdd.can,
   Filecoin.chainTrackerInfo.can,
+  Admin.admin.can,
+  Admin.upload.inspect.can,
+  Admin.store.inspect.can,
 ]

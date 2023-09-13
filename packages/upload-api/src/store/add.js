@@ -11,6 +11,15 @@ export function storeAddProvider(context) {
   const { storeTable, carStoreBucket, maxUploadSize } = context
   return Server.provide(Store.add, async ({ capability, invocation }) => {
     const { link, origin, size } = capability.nb
+
+    if (size > maxUploadSize) {
+      return {
+        error: new Server.Failure(
+          `Maximum size exceeded: ${maxUploadSize}, split DAG into smaller shards.`
+        ),
+      }
+    }
+
     const space = /** @type {import('@ucanto/interface').DIDKey} */ (
       Server.DID.parse(capability.with).did()
     )
@@ -51,16 +60,6 @@ export function storeAddProvider(context) {
           with: space,
           link,
         },
-      }
-    }
-
-    if (size > maxUploadSize) {
-      // checking this last, as larger CAR may already exist in bucket from pinning service fetch.
-      // we only want to prevent this here so we don't give the user a PUT url they can't use.
-      return {
-        error: new Server.Failure(
-          `Size must not exceed ${maxUploadSize}. Split CAR into smaller shards`
-        ),
       }
     }
 
