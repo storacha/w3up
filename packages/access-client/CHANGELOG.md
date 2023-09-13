@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.2.1](https://github.com/web3-storage/w3up/compare/access-v15.2.0...access-v15.2.1) (2023-09-13)
+
+
+### Bug Fixes
+
+* add providers to space/info result type ([#911](https://github.com/web3-storage/w3up/issues/911)) ([877f1a8](https://github.com/web3-storage/w3up/commit/877f1a8cf03884dcd40f979c0974b9123be8d915))
+
 ## [15.2.0](https://github.com/web3-storage/w3up/compare/access-v15.1.1...access-v15.2.0) (2023-08-29)
 
 
