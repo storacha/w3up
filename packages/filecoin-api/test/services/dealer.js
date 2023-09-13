@@ -97,7 +97,7 @@ export const test = {
         offer: aggregate.link.toString(),
         storefront,
         stat: 1,
-        insertedAt: Date.now()
+        insertedAt: Date.now(),
       })
 
       // aggregator invocation
