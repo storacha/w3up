@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.2.1...capabilities-v9.3.0) (2023-09-13)
+
+
+### Features
+
+* implement `admin/upload/inspect` and `admin/store/inspect` capabilities ([#918](https://github.com/web3-storage/w3up/issues/918)) ([5616a12](https://github.com/web3-storage/w3up/commit/5616a12125500a1d5ee41f0504812d82c0451852))
+
 ## [9.2.1](https://github.com/web3-storage/w3up/compare/capabilities-v9.2.0...capabilities-v9.2.1) (2023-08-30)
 
 
