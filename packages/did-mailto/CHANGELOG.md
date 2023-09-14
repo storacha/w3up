@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/web3-storage/w3up/compare/did-mailto-v2.0.0...did-mailto-v2.0.1) (2023-09-14)
+
+
+### Bug Fixes
+
+* remove unnecessary export ([#915](https://github.com/web3-storage/w3up/issues/915)) ([de12020](https://github.com/web3-storage/w3up/commit/de12020889ebb01c371afc7004194d33cef96c1b))
+
 ## [2.0.0](https://github.com/web3-storage/w3up/compare/did-mailto-v1.0.0...did-mailto-v2.0.0) (2023-05-02)
 
 
