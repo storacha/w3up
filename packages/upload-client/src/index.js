@@ -1,10 +1,10 @@
+import { Parallel } from 'parallel-transform-web'
+import { Piece } from '@web3-storage/data-segment'
 import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream } from './sharding.js'
-import { Parallel } from 'parallel-transform-web'
-import { Piece } from '@web3-storage/data-segment'
 
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
