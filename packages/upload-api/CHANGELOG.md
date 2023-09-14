@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.5.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.4.0...upload-api-v5.5.0) (2023-09-14)
+
+
+### Features
+
+* reorg tests ([#926](https://github.com/web3-storage/w3up/issues/926)) ([946db3c](https://github.com/web3-storage/w3up/commit/946db3c329c893139ee3e5eac640899796aa307c))
+
 ## [5.4.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.3.1...upload-api-v5.4.0) (2023-09-13)
 
 
