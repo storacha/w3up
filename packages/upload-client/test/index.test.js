@@ -559,7 +559,7 @@ describe('uploadCAR', () => {
       car,
       {
         connection,
-        onShardStored: (meta) => pieceCIDs.push(meta.piece)
+        onShardStored: (meta) => pieceCIDs.push(meta.piece),
       }
     )
 
@@ -568,6 +568,9 @@ describe('uploadCAR', () => {
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
     assert.equal(pieceCIDs.length, 1)
-    assert.equal(pieceCIDs[0].toString(), 'bafkzcibbammseumg3mjlev5odi5bpcsrp4gg62d7xnx44zkxzvgedq7nxldbc')
+    assert.equal(
+      pieceCIDs[0].toString(),
+      'bafkzcibbammseumg3mjlev5odi5bpcsrp4gg62d7xnx44zkxzvgedq7nxldbc'
+    )
   })
 })

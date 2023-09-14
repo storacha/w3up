@@ -119,15 +119,17 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
   await blocks
     .pipeThrough(new ShardingStream(options))
-    .pipeThrough(new Parallel(concurrency, async car => {
-      const bytes = new Uint8Array(await car.arrayBuffer())
-      const [cid, piece] = await Promise.all([
-        Store.add(conf, bytes, options),
-        Piece.fromPayload(bytes)
-      ])
-      const { version, roots, size } = car
-      return { version, roots, size, cid, piece: piece.link }
-    }))
+    .pipeThrough(
+      new Parallel(concurrency, async (car) => {
+        const bytes = new Uint8Array(await car.arrayBuffer())
+        const [cid, piece] = await Promise.all([
+          Store.add(conf, bytes, options),
+          Piece.fromPayload(bytes),
+        ])
+        const { version, roots, size } = car
+        return { version, roots, size, cid, piece: piece.link }
+      })
+    )
     .pipeTo(
       new WritableStream({
         write(meta) {
