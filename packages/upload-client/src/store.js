@@ -41,7 +41,7 @@ function createUploadProgressHandler(url, handler) {
  * has the capability to perform the action.
  *
  * The issuer needs the `store/add` delegated capability.
- * @param {Blob} car CAR file data.
+ * @param {Blob|Uint8Array} car CAR file data.
  * @param {import('./types').RequestOptions} [options]
  * @returns {Promise<import('./types').CARLink>}
  */
@@ -51,7 +51,7 @@ export async function add(
   options = {}
 ) {
   // TODO: validate blob contains CAR data
-  const bytes = new Uint8Array(await car.arrayBuffer())
+  const bytes = car instanceof Uint8Array ? car : new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
   /* c8 ignore next */
   const conn = options.connection ?? connection
@@ -63,7 +63,7 @@ export async function add(
           /* c8 ignore next */
           audience: audience ?? servicePrincipal,
           with: resource,
-          nb: { link, size: car.size },
+          nb: { link, size: bytes.length },
           proofs,
         })
         .execute(conn)

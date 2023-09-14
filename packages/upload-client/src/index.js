@@ -2,10 +2,14 @@ import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
-import { ShardingStream, ShardStoringStream } from './sharding.js'
+import { ShardingStream } from './sharding.js'
+import { Parallel } from 'parallel-transform-web'
+import { Piece } from '@web3-storage/data-segment'
 
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
+
+const CONCURRENT_UPLOADS = 3
 
 /**
  * Uploads a file to the service and returns the root data CID for the
@@ -112,9 +116,18 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   const shards = []
   /** @type {import('./types').AnyLink?} */
   let root = null
+  const concurrency = options.concurrentRequests ?? CONCURRENT_UPLOADS
   await blocks
     .pipeThrough(new ShardingStream(options))
-    .pipeThrough(new ShardStoringStream(conf, options))
+    .pipeThrough(new Parallel(concurrency, async car => {
+      const bytes = new Uint8Array(await car.arrayBuffer())
+      const [cid, piece] = await Promise.all([
+        Store.add(conf, bytes, options),
+        Piece.fromPayload(bytes)
+      ])
+      const { version, roots, size } = car
+      return { version, roots, size, cid, piece: piece.link }
+    }))
     .pipeTo(
       new WritableStream({
         write(meta) {
