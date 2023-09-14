@@ -9,7 +9,7 @@ import { ShardingStream } from './sharding.js'
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
-const CONCURRENT_UPLOADS = 3
+const CONCURRENT_REQUESTS = 3
 
 /**
  * Uploads a file to the service and returns the root data CID for the
@@ -116,7 +116,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   const shards = []
   /** @type {import('./types').AnyLink?} */
   let root = null
-  const concurrency = options.concurrentRequests ?? CONCURRENT_UPLOADS
+  const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
   await blocks
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(new Parallel(concurrency, async car => {
