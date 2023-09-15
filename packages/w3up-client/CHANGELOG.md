@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.0.3](https://github.com/web3-storage/w3up/compare/w3up-client-v8.0.2...w3up-client-v8.0.3) (2023-09-15)
+
+
+### Bug Fixes
+
+* add providers to space/info result type ([#911](https://github.com/web3-storage/w3up/issues/911)) ([877f1a8](https://github.com/web3-storage/w3up/commit/877f1a8cf03884dcd40f979c0974b9123be8d915))
+* export missing UploadRemoveOk type ([#912](https://github.com/web3-storage/w3up/issues/912)) ([8b8353c](https://github.com/web3-storage/w3up/commit/8b8353cce7ce324bf966da75654ff8d92b3e68b0))
+
 ## [8.0.2](https://github.com/web3-storage/w3up/compare/w3up-client-v8.0.1...w3up-client-v8.0.2) (2023-09-07)
 
 
