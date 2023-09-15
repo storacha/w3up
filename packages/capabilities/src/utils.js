@@ -5,6 +5,8 @@ import * as Types from '@ucanto/interface'
 // e.g. did:web:web3.storage or did:web:staging.web3.storage
 export const ProviderDID = DID.match({ method: 'web' })
 
+export const SpaceDID = DID.match({ method: 'key' })
+
 /**
  * Check URI can be delegated
  *

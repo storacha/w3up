@@ -5,6 +5,7 @@ import type {
 } from '@web3-storage/capabilities/src/types'
 import * as Ucanto from '@ucanto/interface'
 import { ProviderAdd } from '@web3-storage/capabilities/src/types'
+import { SpaceDID } from '../types'
 
 /**
  * action which results in provisionment of a space consuming a storage provider
@@ -32,10 +33,10 @@ export interface Subscription {
 export interface ProvisionsStorage<ProviderDID = Ucanto.DID<'web'>> {
   services: ProviderDID[]
   hasStorageProvider: (
-    consumer: Ucanto.DIDKey
+    consumer: SpaceDID
   ) => Promise<Ucanto.Result<boolean, never>>
   getStorageProviders: (
-    consumer: Ucanto.DIDKey
+    consumer: SpaceDID
   ) => Promise<Ucanto.Result<ProviderDID[], never>>
   /**
    * ensure item is stored

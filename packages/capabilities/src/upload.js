@@ -8,22 +8,22 @@
  *
  * @module
  */
-import { capability, Link, URI, Schema, ok } from '@ucanto/validator'
+import { capability, Link, Schema, ok } from '@ucanto/validator'
 import { codec as CAR } from '@ucanto/transport/car'
-import { equalWith, and, equal } from './utils.js'
+import { equalWith, and, equal, SpaceDID } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
  * derived any `upload/` prefixed capability for the (memory) space identified
- * by did:key in the `with` field.
+ * by DID in the `with` field.
  */
 export const upload = capability({
   can: 'upload/*',
   /**
-   * did:key identifier of the (memory) space where upload is add to the
+   * DID of the (memory) space where upload is add to the
    * upload list.
    */
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   derives: equalWith,
 })
 
@@ -54,9 +54,9 @@ const CARLink = Link.match({ code: CAR.code, version: 1 })
 export const add = capability({
   can: 'upload/add',
   /**
-   * did:key identifier of the (memory) space where uploaded is added.
+   * DID of the (memory) space where uploaded is added.
    */
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   nb: Schema.struct({
     /**
      * Root CID of the DAG to be added to the upload list.
@@ -85,9 +85,9 @@ export const add = capability({
 export const remove = capability({
   can: 'upload/remove',
   /**
-   * did:key identifier of the (memory) space where uploaded is removed from.
+   * DID of the (memory) space where uploaded is removed from.
    */
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   nb: Schema.struct({
     /**
      * Root CID of the DAG to be removed from the upload list.
@@ -109,7 +109,7 @@ export const remove = capability({
  */
 export const list = capability({
   can: 'upload/list',
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   nb: Schema.struct({
     /**
      * A pointer that can be moved back and forth on the list.

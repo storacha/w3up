@@ -11,7 +11,7 @@
 
 import * as Store from './store.js'
 import { capability, Schema, ok, fail } from '@ucanto/validator'
-import { equalWith } from './utils.js'
+import { SpaceDID, equalWith } from './utils.js'
 import * as Upload from './upload.js'
 export { top } from './top.js'
 
@@ -19,7 +19,6 @@ export { top } from './top.js'
 // @see https://github.com/microsoft/TypeScript/issues/51548
 export { Store }
 
-export const SpaceDID = Schema.did({ method: 'key' })
 export const space = capability({
   can: 'space/*',
   with: SpaceDID,
