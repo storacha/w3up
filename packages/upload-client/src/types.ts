@@ -24,6 +24,9 @@ import {
   UploadRemove,
 } from '@web3-storage/capabilities/types'
 import * as UnixFS from '@ipld/unixfs/src/unixfs'
+import type { PieceLink } from '@web3-storage/data-segment'
+
+export type { PieceLink }
 
 export type {
   FetchOptions,
@@ -171,6 +174,12 @@ export interface CARMetadata extends CARHeaderInfo {
    * CID of the CAR file (not the data it contains).
    */
   cid: CARLink
+  /**
+   * Piece CID of the CAR file. Note: represents Piece link V2.
+   *
+   * @see https://github.com/filecoin-project/FIPs/pull/758/files
+   */
+  piece: PieceLink
   /**
    * Size of the CAR file in bytes.
    */

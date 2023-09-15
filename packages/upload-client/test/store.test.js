@@ -292,6 +292,49 @@ describe('Store.add', () => {
       { name: 'Error', message: 'upload aborted' }
     )
   })
+
+  it('throws on service error', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, () => {
+          throw new Server.Failure('boom')
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Store.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car,
+        { connection }
+      ),
+      { message: 'failed store/add invocation' }
+    )
+  })
 })
 
 describe('Store.list', () => {
