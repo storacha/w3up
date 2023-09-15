@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.3.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.2.0...upload-client-v9.3.0) (2023-09-15)
+
+
+### Features
+
+* compute piece CID in client ([#925](https://github.com/web3-storage/w3up/issues/925)) ([2297f01](https://github.com/web3-storage/w3up/commit/2297f01a09cc14526c9e210b22e9420d698c5413))
+
 ## [9.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.1.2...upload-client-v9.2.0) (2023-09-07)
 
 
