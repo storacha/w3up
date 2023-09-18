@@ -287,7 +287,7 @@ sequenceDiagram
     - In your backend, you can call [`client.createDelegation()`](docs-Client#createDelegation) passing in the Agent object from `client.agent()` in your end user's instance, and passing through `options?` params to limit the scope of the delegation (e.g., `store/add`, `upload/add`, expiration time)
     - You can serialize this using `delegation.archive()` and send it to your user
     - The end user instance of the client should not need to call `client.authorize(email)`, as it is not claiming any delegations via email address (but rather getting the delegation directly from your backend)
-- Once your user receives the delegation, they can deserialize it using `ucanto.Delegation.extract()` and pass it in using `client.addSpace()`, and from there they can run any of the `upload` methods
+- Once your user receives the delegation, they can deserialize it using [`ucanto.Delegation.extract()`](https://github.com/web3-storage/ucanto/blob/c8999a59852b61549d163532a83bac62290b629d/packages/core/src/delegation.js#L399) and pass it in using `client.addSpace()`, and from there they can run any of the `upload` methods
     - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
 - A code example that does this can be found below
 
