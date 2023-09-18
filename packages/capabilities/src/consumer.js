@@ -1,10 +1,8 @@
 import { capability, DID, struct, ok } from '@ucanto/validator'
-import { equalWith, and, equal } from './utils.js'
+import { equalWith, and, equal, SpaceDID } from './utils.js'
 
 // e.g. did:web:web3.storage or did:web:staging.web3.storage
 export const ProviderDID = DID.match({ method: 'web' })
-
-export const SpaceDID = DID.match({ method: 'key' })
 
 /**
  * Capability can be invoked by a provider to check if it has given space as

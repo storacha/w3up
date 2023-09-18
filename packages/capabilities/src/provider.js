@@ -9,7 +9,7 @@
  * @module
  */
 import { capability, DID, struct, ok } from '@ucanto/validator'
-import { equalWith, and, equal } from './utils.js'
+import { equalWith, and, equal, SpaceDID } from './utils.js'
 
 // e.g. did:web:web3.storage or did:web:staging.web3.storage
 export const Provider = DID.match({ method: 'web' })
@@ -24,7 +24,7 @@ export const add = capability({
   with: AccountDID,
   nb: struct({
     provider: Provider,
-    consumer: DID.match({ method: 'key' }),
+    consumer: SpaceDID,
   }),
   derives: (child, parent) => {
     return (

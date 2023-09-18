@@ -1,5 +1,6 @@
 import { CAR } from '@ucanto/transport'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
+import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
@@ -63,7 +64,7 @@ export async function add(
           issuer,
           /* c8 ignore next */
           audience: audience ?? servicePrincipal,
-          with: resource,
+          with: SpaceDID.from(resource),
           nb: { link, size: bytes.length },
           proofs,
         })
@@ -165,7 +166,7 @@ export async function list(
       issuer,
       /* c8 ignore next */
       audience: audience ?? servicePrincipal,
-      with: resource,
+      with: SpaceDID.from(resource),
       proofs,
       nb: {
         cursor: options.cursor,
@@ -215,7 +216,7 @@ export async function remove(
       issuer,
       /* c8 ignore next */
       audience: audience ?? servicePrincipal,
-      with: resource,
+      with: SpaceDID.from(resource),
       nb: { link },
       proofs,
     })

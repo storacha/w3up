@@ -281,7 +281,7 @@ const setup = async (options = {}) => {
 /**
  * @param {object} options
  * @param {API.Signer<API.DID<'key'>>} options.deviceA
- * @param {API.Signer<API.DID<'key'>>} options.space
+ * @param {API.Signer<API.SpaceDID>} options.space
  * @param {API.Principal<API.DID<'mailto'>>} options.accountA
  * @param {API.Signer<API.DID<'web'>>} options.service - web3.storage service
  * @param {API.ConnectionView<API.Service>} options.conn

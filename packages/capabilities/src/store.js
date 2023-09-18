@@ -8,21 +8,21 @@
  *
  * @module
  */
-import { capability, Link, URI, Schema, ok, fail } from '@ucanto/validator'
-import { equalLink, equalWith } from './utils.js'
+import { capability, Link, Schema, ok, fail } from '@ucanto/validator'
+import { equalLink, equalWith, SpaceDID } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
  * derived any `store/` prefixed capability for the (memory) space identified
- * by did:key in the `with` field.
+ * by DID in the `with` field.
  */
 export const store = capability({
   can: 'store/*',
   /**
-   * did:key identifier of the (memory) space where CAR is intended to
+   * DID of the (memory) space where CAR is intended to
    * be stored.
    */
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   derives: equalWith,
 })
 
@@ -36,10 +36,10 @@ export const store = capability({
 export const add = capability({
   can: 'store/add',
   /**
-   * did:key identifier of the (memory) space where CAR is intended to
+   * DID of the (memory) space where CAR is intended to
    * be stored.
    */
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   nb: Schema.struct({
     /**
      * CID of the CAR file to be stored. Service will provision write target
@@ -84,10 +84,10 @@ export const add = capability({
 export const remove = capability({
   can: 'store/remove',
   /**
-   * did:key identifier of the (memory) space where CAR is intended to
+   * DID of the (memory) space where CAR is intended to
    * be stored.
    */
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   nb: Schema.struct({
     /**
      * CID of the CAR file to be removed from the store.
@@ -104,10 +104,10 @@ export const remove = capability({
 export const list = capability({
   can: 'store/list',
   /**
-   * did:key identifier of the (memory) space where CAR is intended to
+   * DID of the (memory) space where CAR is intended to
    * be stored.
    */
-  with: URI.match({ protocol: 'did:' }),
+  with: SpaceDID,
   nb: Schema.struct({
     /**
      * A pointer that can be moved back and forth on the list.

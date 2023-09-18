@@ -188,7 +188,7 @@ describe('upload capabilities', function () {
           root,
         },
       })
-    }, /Expected did: URI instead got mailto:alice@web.mail/)
+    }, /Expected a did:key: but got "mailto:alice@web.mail" instead/)
   })
 
   it('upload/add validation requires with to be a did', async () => {
@@ -216,7 +216,7 @@ describe('upload capabilities', function () {
     assert.ok(result.error)
     assert(
       result.error.message.includes(
-        'Expected did: URI instead got mailto:alice@web.mail'
+        'Expected a did:key: but got "mailto:alice@web.mail" instead'
       )
     )
   })
@@ -427,7 +427,7 @@ describe('upload capabilities', function () {
         // @ts-expect-error - not a CAR cid
         with: 'mailto:alice@web.mail',
       })
-    }, /Expected did: URI instead got mailto:alice@web.mail/)
+    }, /Expected a did:key: but got "mailto:alice@web.mail" instead/)
   })
 
   it('upload/list validation requires with to be a did', async () => {
@@ -453,7 +453,7 @@ describe('upload capabilities', function () {
     assert.ok(result.error)
     assert(
       result.error.message.includes(
-        'Expected did: URI instead got mailto:alice@web.mail'
+        'Expected a did:key: but got "mailto:alice@web.mail" instead'
       )
     )
   })
@@ -569,7 +569,7 @@ describe('upload capabilities', function () {
         with: 'mailto:alice@web.mail',
         root: parseLink('bafkqaaa'),
       })
-    }, /Expected did: URI instead got mailto:alice@web.mail/)
+    }, /Expected a did:key: but got "mailto:alice@web.mail" instead/)
   })
 
   it('upload/list validation requires with to be a did', async () => {
@@ -595,7 +595,7 @@ describe('upload capabilities', function () {
     assert.ok(result.error)
     assert(
       result.error.message.includes(
-        'Expected did: URI instead got mailto:alice@web.mail'
+        'Expected a did:key: but got "mailto:alice@web.mail" instead'
       )
     )
   })

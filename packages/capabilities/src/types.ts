@@ -19,6 +19,7 @@ import * as AdminCaps from './admin.js'
 export type { Unit }
 
 export type AccountDID = DID<'mailto'>
+export type SpaceDID = DID<'key'>
 
 /**
  * failure due to a resource not having enough storage capacity.

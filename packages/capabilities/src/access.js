@@ -10,7 +10,7 @@
  */
 import { capability, URI, DID, Link, Schema, fail, ok } from '@ucanto/validator'
 import * as Types from '@ucanto/interface'
-import { equalWith, equal, and } from './utils.js'
+import { equalWith, equal, and, SpaceDID } from './utils.js'
 export { top } from './top.js'
 
 /**
@@ -146,7 +146,7 @@ export const delegate = capability({
    *
    * @see https://github.com/web3-storage/specs/blob/main/w3-access.md#delegate-with
    */
-  with: DID.match({ method: 'key' }),
+  with: SpaceDID,
   nb: Schema.struct({
     // keys SHOULD be CIDs, but we won't require it in the schema
     /**
