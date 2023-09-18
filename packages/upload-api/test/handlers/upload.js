@@ -65,7 +65,7 @@ export const test = {
     assert.equal(msAgo < 60_000, true)
     assert.equal(msAgo >= 0, true)
 
-    const { spaces } = await context.uploadTable.getCID(root)
+    const { spaces } = await context.uploadTable.inspect(root)
     assert.equal(spaces.length, 1)
     assert.equal(spaces[0].did, spaceDid)
   },
@@ -117,7 +117,7 @@ export const test = {
         .execute(connection)
       assert.ok(bobUploadAdd.out.ok, `Bob failed to upload ${root.toString()}`)
 
-      const { spaces } = await context.uploadTable.getCID(root)
+      const { spaces } = await context.uploadTable.inspect(root)
       assert.equal(spaces.length, 2)
       const spaceDids = spaces.map((space) => space.did)
       assert.ok(spaceDids.includes(aliceSpaceDid))
