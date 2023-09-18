@@ -270,7 +270,7 @@ sequenceDiagram
     participant w3up-client in user
     participant w3up-client in backend
     participant web3.storage w3up service
-    w3up-client in backend->>w3up-client in backend: Client set with Agent and delegation from Space
+    w3up-client in backend->>w3up-client in backend: Client created with Agent and delegation from Space
     w3up-client in user->>w3up-client in user: Client instantiated with default Agent
     w3up-client in user->>w3up-client in backend: Request delegation with user's Agent DID
     w3up-client in backend->>w3up-client in user: Send delegation from Space to user's Agent DID
