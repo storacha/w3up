@@ -1,5 +1,8 @@
 import { Parallel } from 'parallel-transform-web'
-import { Piece } from '@web3-storage/data-segment'
+import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash'
+import * as Link from 'multiformats/link'
+import * as Digest from 'multiformats/hashes/digest'
+import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
@@ -124,7 +127,14 @@ async function uploadBlockStream(conf, blocks, options = {}) {
         const bytes = new Uint8Array(await car.arrayBuffer())
         const [cid, piece] = await Promise.all([
           Store.add(conf, bytes, options),
-          Piece.fromPayload(bytes),
+          (async () => {
+            const hasher = PieceHasher.create()
+            const digestBytes = new Uint8Array(36)
+            hasher.write(bytes)
+            hasher.digestInto(digestBytes, 0, true)
+            const digest = Digest.create(PieceHasher.code, digestBytes)
+            return Link.create(raw.code, digest)
+          })()
         ])
         const { version, roots, size } = car
         return { version, roots, size, cid, piece: piece.link }

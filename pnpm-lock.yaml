@@ -443,9 +443,9 @@ importers:
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
-      '@web3-storage/data-segment':
-        specifier: ^3.0.1
-        version: 3.0.1
+      fr32-sha2-256-trunc254-padded-binary-tree-multihash:
+        specifier: ^1.0.0
+        version: 1.0.0
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14
@@ -6389,6 +6389,10 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
     dev: true
+
+  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@1.0.0:
+    resolution: {integrity: sha512-DCbk3xRVsEASc4zfeSyplhYkioLnW0I5PSouFqVVtWr5M8V26+OzvYQqYhznyhpDqBcmHKzcBje8Tsi+TH0O0Q==}
+    dev: false
 
   /fraction.js@4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
