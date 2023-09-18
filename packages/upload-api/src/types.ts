@@ -334,7 +334,7 @@ export interface DudewhereBucket {
 }
 
 export interface StoreTable {
-  getCID: (link: UnknownLink) => Promise<StoreGetOk>
+  inspect: (link: UnknownLink) => Promise<StoreGetOk>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
   remove: (space: DID, link: UnknownLink) => Promise<void>
@@ -352,7 +352,7 @@ export interface TestStoreTable {
 }
 
 export interface UploadTable {
-  getCID: (link: UnknownLink) => Promise<UploadGetOk>
+  inspect: (link: UnknownLink) => Promise<UploadGetOk>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
   insert: (item: UploadAddInput) => Promise<UploadAddOk>
   remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>

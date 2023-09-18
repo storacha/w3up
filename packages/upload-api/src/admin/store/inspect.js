@@ -25,7 +25,7 @@ const inspect = async ({ capability }, context) => {
   }
 
   return {
-    ok: await context.storeTable.getCID(capability.nb.link),
+    ok: await context.storeTable.inspect(capability.nb.link),
   }
 }
 

@@ -100,7 +100,7 @@ export const test = {
       true
     )
 
-    const { spaces } = await context.storeTable.getCID(link)
+    const { spaces } = await context.storeTable.inspect(link)
     assert.equal(spaces.length, 1)
     assert.equal(spaces[0].did, spaceDid)
   },
@@ -151,7 +151,7 @@ export const test = {
 
       assert.ok(bobStoreAdd.out.ok, `Bob failed to store ${link.toString()}`)
 
-      const { spaces } = await context.storeTable.getCID(link)
+      const { spaces } = await context.storeTable.inspect(link)
       assert.equal(spaces.length, 2)
       const spaceDids = spaces.map((space) => space.did)
       assert.ok(spaceDids.includes(aliceSpaceDid))
