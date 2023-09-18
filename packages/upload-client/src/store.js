@@ -1,10 +1,10 @@
 import { CAR } from '@ucanto/transport'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
+import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
 import fetchPkg from 'ipfs-utils/src/http/fetch.js'
-import { ensureSpaceDID } from './util.js'
 const { fetch } = fetchPkg
 
 /**
@@ -63,7 +63,7 @@ export async function add(
           issuer,
           /* c8 ignore next */
           audience: audience ?? servicePrincipal,
-          with: ensureSpaceDID(resource),
+          with: SpaceDID.from(resource),
           nb: { link, size: car.size },
           proofs,
         })
@@ -165,7 +165,7 @@ export async function list(
       issuer,
       /* c8 ignore next */
       audience: audience ?? servicePrincipal,
-      with: ensureSpaceDID(resource),
+      with: SpaceDID.from(resource),
       proofs,
       nb: {
         cursor: options.cursor,
@@ -215,7 +215,7 @@ export async function remove(
       issuer,
       /* c8 ignore next */
       audience: audience ?? servicePrincipal,
-      with: ensureSpaceDID(resource),
+      with: SpaceDID.from(resource),
       nb: { link },
       proofs,
     })

@@ -1,8 +1,8 @@
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
+import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
-import { ensureSpaceDID } from './util.js'
 
 /**
  * Register an "upload" with the service. The issuer needs the `upload/add`
@@ -43,7 +43,7 @@ export async function add(
           issuer,
           /* c8 ignore next */
           audience: audience ?? servicePrincipal,
-          with: ensureSpaceDID(resource),
+          with: SpaceDID.from(resource),
           nb: { root, shards },
           proofs,
         })
@@ -95,7 +95,7 @@ export async function list(
       issuer,
       /* c8 ignore next */
       audience: audience ?? servicePrincipal,
-      with: ensureSpaceDID(resource),
+      with: SpaceDID.from(resource),
       proofs,
       nb: {
         cursor: options.cursor,
@@ -145,7 +145,7 @@ export async function remove(
       issuer,
       /* c8 ignore next */
       audience: audience ?? servicePrincipal,
-      with: ensureSpaceDID(resource),
+      with: SpaceDID.from(resource),
       nb: { root },
       proofs,
     })
