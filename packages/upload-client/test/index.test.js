@@ -17,6 +17,7 @@ import {
   encode,
   headerEncodingLength,
 } from '../src/car.js'
+import { toBlock } from './helpers/block.js'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -471,5 +472,105 @@ describe('uploadCAR', () => {
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
     assert.equal(carCIDs.length, 2)
+  })
+
+  it('computes piece CID', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const blocks = [
+      await toBlock(new Uint8Array([1, 3, 8])),
+      await toBlock(new Uint8Array([1, 1, 3, 8])),
+    ]
+    const car = await encode(blocks, blocks.at(-1)?.cid)
+
+    /** @type {import('../src/types').PieceLink[]} */
+    const pieceCIDs = []
+
+    const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      UploadCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ])
+
+    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
+
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, StoreCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
+          return {
+            ok: {
+              ...res,
+              link: /** @type {import('../src/types').CARLink} */ (
+                capability.nb.link
+              ),
+            },
+          }
+        }),
+      },
+      upload: {
+        add: provide(UploadCapabilities.add, ({ invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, UploadCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
+          if (!invCap.nb) throw new Error('nb must be present')
+          assert.equal(invCap.nb.shards?.length, 1)
+          return {
+            ok: invCap.nb,
+          }
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await uploadCAR(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car,
+      {
+        connection,
+        onShardStored: (meta) => pieceCIDs.push(meta.piece),
+      }
+    )
+
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+    assert(service.upload.add.called)
+    assert.equal(service.upload.add.callCount, 1)
+    assert.equal(pieceCIDs.length, 1)
+    assert.equal(
+      pieceCIDs[0].toString(),
+      'bafkzcibbammseumg3mjlev5odi5bpcsrp4gg62d7xnx44zkxzvgedq7nxldbc'
+    )
   })
 })

@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-client",
-  "version": "9.2.0",
+  "version": "9.3.0",
   "description": "The web3.storage upload client",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client",
   "repository": {
@@ -72,10 +72,11 @@
     "@ucanto/interface": "^8.0.0",
     "@ucanto/transport": "^8.0.0",
     "@web3-storage/capabilities": "workspace:^",
+    "@web3-storage/data-segment": "^3.0.1",
     "ipfs-utils": "^9.0.14",
     "multiformats": "^11.0.2",
-    "p-queue": "^7.3.0",
     "p-retry": "^5.1.2",
+    "parallel-transform-web": "^1.0.0",
     "varint": "^6.0.0"
   },
   "devDependencies": {

@@ -15,7 +15,7 @@ export class UploadTable {
    * @param {API.UnknownLink} link
    * @returns {Promise<API.StoreGetOk>}
    */
-  async getCID(link) {
+  async inspect(link) {
     const items =
       this.items?.filter((item) => item.root.toString() === link.toString()) ||
       []

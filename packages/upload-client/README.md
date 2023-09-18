@@ -97,31 +97,26 @@ This API offers streaming DAG generation, allowing CAR "shards" to be sent to th
 import {
   UnixFS,
   ShardingStream,
-  ShardStoringStream,
+  Store,
   Upload,
 } from '@web3-storage/upload-client'
 
-const metadatas = []
+let rootCID, carCIDs
 // Encode a file as a DAG, get back a readable stream of blocks.
 await UnixFS.createFileEncoderStream(file)
   // Pipe blocks to a stream that yields CARs files - shards of the DAG.
   .pipeThrough(new ShardingStream())
-  // Pipe CARs to a stream that stores them to the service and yields metadata
-  // about the CARs that were stored.
-  .pipeThrough(new ShardStoringStream(conf))
-  // Collect the metadata, we're mostly interested in the CID of each CAR file
-  // and the root data CID (which can be found in the _last_ CAR file).
+  // Each chunk written is a CAR file - store it with the service and collect
+  // the CID of the CAR shard.
   .pipeTo(
     new WritableStream({
-      write: (meta) => {
-        metadatas.push(meta)
+      async write (car) {
+        const carCID = await Store.add(conf, car)
+        carCIDs.push(carCID)
+        rootCID = rootCID || car.roots[0]
       },
     })
   )
-
-// The last CAR stored contains the root data CID
-const rootCID = metadatas.at(-1).roots[0]
-const carCIDs = metadatas.map((meta) => meta.cid)
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
 await Upload.add(conf, rootCID, carCIDs)
@@ -143,7 +138,6 @@ await Upload.add(conf, rootCID, carCIDs)
   - [`CAR.BlockStream`](#carblockstream)
   - [`CAR.encode`](#carencode)
   - [`ShardingStream`](#shardingstream)
-  - [`ShardStoringStream`](#shardstoringstream)
   - [`Store.add`](#storeadd)
   - [`Store.list`](#storelist)
   - [`Store.remove`](#storeremove)
@@ -267,34 +261,6 @@ class ShardingStream extends TransformStream<Block, CARFile>
 Shard a set of blocks into a set of CAR files. The last block written to the stream is assumed to be the DAG root and becomes the CAR root CID for the last CAR output.
 
 More information: [`CARFile`](#carfile)
-
-### `ShardStoringStream`
-
-```ts
-class ShardStoringStream extends TransformStream<CARFile, CARMetadata>
-```
-
-Stores multiple DAG shards (encoded as CAR files) to the service.
-
-Note: an "upload" must be registered in order to link multiple shards together as a complete upload.
-
-The writeable side of this transform stream accepts `CARFile`s and the readable side yields `CARMetadata`, which contains the CAR CID, it's size (in bytes) and it's roots (if it has any).
-
-### `Store.add`
-
-```ts
-function add(
-  conf: InvocationConfig,
-  car: Blob,
-  options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<CID>
-```
-
-Store a CAR file to the service. Returns the CID of the CAR file stored.
-
-Required delegated capability proofs: `store/add`
-
-More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Store.list`
 

@@ -25,7 +25,7 @@ const inspect = async ({ capability }, context) => {
   }
 
   return {
-    ok: await context.uploadTable.getCID(capability.nb.root),
+    ok: await context.uploadTable.inspect(capability.nb.root),
   }
 }
 
