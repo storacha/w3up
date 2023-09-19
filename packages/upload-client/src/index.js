@@ -13,6 +13,7 @@ export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 const CONCURRENT_REQUESTS = 3
+const PIECE_MULTIHASH_SIZE = PieceHasher.prefix.length + PieceHasher.size
 
 /**
  * Uploads a file to the service and returns the root data CID for the
@@ -129,7 +130,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
           Store.add(conf, bytes, options),
           (async () => {
             const hasher = PieceHasher.create()
-            const digestBytes = new Uint8Array(36)
+            const digestBytes = new Uint8Array(PIECE_MULTIHASH_SIZE)
             hasher.write(bytes)
             hasher.digestInto(digestBytes, 0, true)
             const digest = Digest.create(PieceHasher.code, digestBytes)

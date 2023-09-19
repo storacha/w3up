@@ -444,8 +444,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       fr32-sha2-256-trunc254-padded-binary-tree-multihash:
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.1.4
+        version: 1.1.4
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14
@@ -5793,9 +5793,9 @@ packages:
       eslint-plugin-promise: ^6.0.0
     dependencies:
       eslint: 8.46.0
-      eslint-plugin-import: 2.28.0(@typescript-eslint/parser@5.62.0)(eslint@8.49.0)
-      eslint-plugin-n: 15.7.0(eslint@8.49.0)
-      eslint-plugin-promise: 6.1.1(eslint@8.49.0)
+      eslint-plugin-import: 2.28.0(@typescript-eslint/parser@5.62.0)(eslint@8.46.0)
+      eslint-plugin-n: 15.7.0(eslint@8.46.0)
+      eslint-plugin-promise: 6.1.1(eslint@8.46.0)
     dev: true
 
   /eslint-config-standard@17.1.0(eslint-plugin-import@2.28.0)(eslint-plugin-n@15.7.0)(eslint-plugin-promise@6.1.1)(eslint@8.46.0):
@@ -6753,8 +6753,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@1.0.0:
-    resolution: {integrity: sha512-DCbk3xRVsEASc4zfeSyplhYkioLnW0I5PSouFqVVtWr5M8V26+OzvYQqYhznyhpDqBcmHKzcBje8Tsi+TH0O0Q==}
+  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@1.1.4:
+    resolution: {integrity: sha512-+IpghzGszM7ebMuYzoILYvQMHXgtyZbIwlx2VYY4yLsT4SVU02ur6g7LCoLAxaD9GIv2oTAdiuHUxBH1liEQ7g==}
     dev: false
 
   /fraction.js@4.2.0:
