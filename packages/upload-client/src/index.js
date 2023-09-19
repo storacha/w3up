@@ -133,7 +133,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
             const digestBytes = new Uint8Array(PIECE_MULTIHASH_SIZE)
             hasher.write(bytes)
             hasher.digestInto(digestBytes, 0, true)
-            const digest = Digest.create(PieceHasher.code, digestBytes)
+            const digest = Digest.decode(digestBytes)
             return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
               Link.create(raw.code, digest)
             )
