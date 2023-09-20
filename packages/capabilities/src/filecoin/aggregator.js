@@ -45,7 +45,7 @@ export const pieceOffer = capability({
 
 /**
  * Capability that allows an Aggregator to signal a piece has been accepted
- * for inclusion in an aggregate.
+ * or rejected for inclusion in an aggregate.
  */
 export const pieceAccept = capability({
   can: 'piece/accept',
