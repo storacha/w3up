@@ -1,7 +1,7 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
-import { InferInvokedCapability, Unit, DID, DIDKey, Link } from '@ucanto/interface'
+import { InferInvokedCapability, Unit, DID, DIDKey } from '@ucanto/interface'
 import { Phantom, PieceLink, ProofData, uint64 } from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
@@ -237,10 +237,6 @@ export interface AggregateOfferSuccess {
    * Commitment proof for aggregate.
    */
   aggregate: PieceLink
-  /**
-   * Link to a dag-cbor node with details of content pieces.
-   */
-  pieces: Link
 }
 export type AggregateOfferFailure = Ucanto.Failure
 
