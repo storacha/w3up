@@ -1,7 +1,7 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
-import { InferInvokedCapability, Unit, DID, DIDKey } from '@ucanto/interface'
+import { InferInvokedCapability, Unit, DID, DIDKey, Link } from '@ucanto/interface'
 import { Phantom, PieceLink, ProofData, uint64 } from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
@@ -197,7 +197,12 @@ export interface FilecoinOfferSuccess {
    */
   piece: PieceLink
 }
-export type FilecoinOfferFailure = Ucanto.Failure
+export type FilecoinOfferFailure = ContentNotFound | Ucanto.Failure
+
+export interface ContentNotFound extends Ucanto.Failure {
+  name: 'ContentNotFound'
+  content: Link
+}
 
 export type FilecoinAcceptSuccess = DataAggregationProof
 
@@ -270,6 +275,12 @@ export interface DealDetails {
 }
 
 export type FilecoinAddress = `f${string}`
+
+export type DealInfoFailure = DealNotFound | Ucanto.Failure
+
+export interface DealNotFound extends Ucanto.Failure {
+  name: 'DealNotFound'
+}
 
 // Upload
 export type Upload = InferInvokedCapability<typeof UploadCaps.upload>
