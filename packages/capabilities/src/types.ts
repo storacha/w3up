@@ -204,6 +204,15 @@ export interface ContentNotFound extends Ucanto.Failure {
   content: Link
 }
 
+export interface FilecoinSubmitSuccess {
+  /**
+   * Commitment proof for piece.
+   */
+  piece: PieceLink
+}
+
+export type FilecoinSubmitFailure = InvalidPieceCID | Ucanto.Failure
+
 export type FilecoinAcceptSuccess = DataAggregationProof
 
 export type FilecoinAcceptFailure = InvalidContentPiece | Ucanto.Failure
