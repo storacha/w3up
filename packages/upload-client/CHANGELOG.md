@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.4.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.3.0...upload-client-v9.4.0) (2023-09-20)
+
+
+### Features
+
+* add piece CID to car metadata ([1e52687](https://github.com/web3-storage/w3up/commit/1e52687020ea01c661d3acb612380c80f61d2b6a))
+
 ## [9.3.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.2.0...upload-client-v9.3.0) (2023-09-15)
 
 

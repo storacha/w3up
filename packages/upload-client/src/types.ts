@@ -22,9 +22,9 @@ import {
   UploadAdd,
   UploadList,
   UploadRemove,
+  PieceLink,
 } from '@web3-storage/capabilities/types'
 import * as UnixFS from '@ipld/unixfs/src/unixfs'
-import type { PieceLink } from '@web3-storage/data-segment'
 
 export type { PieceLink }
 

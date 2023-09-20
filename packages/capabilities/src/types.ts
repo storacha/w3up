@@ -19,7 +19,7 @@ import * as DealTrackerCaps from './filecoin/deal-tracker.js'
 import * as DealerCaps from './filecoin/dealer.js'
 import * as AdminCaps from './admin.js'
 
-export type { Unit }
+export type { Unit, PieceLink }
 
 export type AccountDID = DID<'mailto'>
 export type SpaceDID = DID<'key'>
