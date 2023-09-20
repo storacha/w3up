@@ -1,33 +1,31 @@
 import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
-
-import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
-
+import * as DealTracker from '@web3-storage/capabilities/filecoin/deal-tracker'
 import { services } from './service.js'
 
 /**
- * @typedef {import('./types.js').ChainTrackerService} ChainTrackerService
- * @typedef {import('@ucanto/interface').ConnectionView<ChainTrackerService>} ConnectionView
+ * @typedef {import('./types.js').DealTrackerService} DealTrackerService
+ * @typedef {import('@ucanto/interface').ConnectionView<DealTrackerService>} ConnectionView
  */
 
 /** @type {ConnectionView} */
 export const connection = connect({
-  id: services.CHAIN_TRACKER.principal,
+  id: services.DEAL_TRACKER.principal,
   codec: CAR.outbound,
   channel: HTTP.open({
-    url: services.CHAIN_TRACKER.url,
+    url: services.DEAL_TRACKER.url,
     method: 'POST',
   }),
 })
 
 /**
- * Get chain information for a given a piece..
+ * Get deal information for a given piece.
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece
- * @param {import('./types.js').RequestOptions<ChainTrackerService>} [options]
+ * @param {import('./types.js').RequestOptions<DealTrackerService>} [options]
  */
-export async function chainInfo(
+export async function dealInfo(
   { issuer, with: resource, proofs, audience },
   piece,
   options = {}
@@ -35,10 +33,10 @@ export async function chainInfo(
   /* c8 ignore next */
   const conn = options.connection ?? connection
 
-  const invocation = FilecoinCapabilities.chainTrackerInfo.invoke({
+  const invocation = DealTracker.dealInfo.invoke({
     issuer,
     /* c8 ignore next */
-    audience: audience ?? services.CHAIN_TRACKER.principal,
+    audience: audience ?? services.DEAL_TRACKER.principal,
     with: resource,
     nb: {
       piece,

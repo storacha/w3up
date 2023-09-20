@@ -3,7 +3,7 @@
 
 ## About
 
-The `@web3-storage/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [web3-storage/specs/w3-filecoin.md])https://github.com/web3-storage/specs/blob/feat/filecoin-spec/w3-filecoin.md) and is not intended for web3.storage end users.
+The `@web3-storage/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [web3-storage/specs/w3-filecoin.md](https://github.com/web3-storage/specs/blob/feat/filecoin-spec/w3-filecoin.md) and is not intended for web3.storage end users.
 
 ## Install
 
@@ -15,38 +15,86 @@ npm install @web3-storage/filecoin-client
 
 ## Usage
 
-### `Storefront.filecoinAdd`
+### `Storefront.filecoinOffer`
 
-Request a Storefront service to add computed filecoin piece into Filecoin Storage Providers.
+Request storing a content piece in Filecoin.
 
 ```js
 import { Storefront } from '@web3-storage/filecoin-client'
 
-const add = await Storefront.filecoinQueue(
+const res = await Storefront.filecoinOffer(
   invocationConfig,
-  piece,
-  content
+  content,
+  piece
 )
 ```
 
 ```typescript
-function filecoinQueue(
+function filecoinOffer(
   conf: InvocationConfig,
-  piece: Piece, // Filecoin piece
   content: Link, // Content CID
+  piece: Piece, // Filecoin piece
 ): Promise<Receipt>
 ```
 
 More information: [`InvocationConfig`](#invocationconfig)
 
-### `Aggregator.pieceAdd`
+### `Storefront.filecoinSubmit`
 
-Request an Aggregator service to add a filecoin piece into an aggregate to be offered to Filecoin Storage Providers.
+Signal that an offered piece has been submitted to the filecoin storage pipeline.
+
+```js
+import { Storefront } from '@web3-storage/filecoin-client'
+
+const res = await Storefront.filecoinSubmit(
+  invocationConfig,
+  content,
+  piece
+)
+```
+
+```typescript
+function filecoinSubmit(
+  conf: InvocationConfig,
+  content: Link, // Content CID
+  piece: Piece, // Filecoin piece
+): Promise<Receipt>
+```
+
+More information: [`InvocationConfig`](#invocationconfig)
+
+### `Storefront.filecoinAccept`
+
+Signal that a submitted piece has been accepted in a Filecoin deal.
+
+```js
+import { Storefront } from '@web3-storage/filecoin-client'
+
+const res = await Storefront.filecoinAccept(
+  invocationConfig,
+  content,
+  piece
+)
+```
+
+```typescript
+function filecoinAccept(
+  conf: InvocationConfig,
+  content: Link, // Content CID
+  piece: Piece, // Filecoin piece
+): Promise<Receipt>
+```
+
+More information: [`InvocationConfig`](#invocationconfig)
+
+### `Aggregator.pieceOffer`
+
+Request that a piece be aggregated for inclusion in an upcoming an Filecoin deal.
 
 ```js
 import { Aggregator } from '@web3-storage/filecoin-client'
 
-const add = await Aggregator.aggregateQueue(
+const res = await Aggregator.pieceOffer(
   invocationConfig,
   piece,
   group
@@ -54,7 +102,7 @@ const add = await Aggregator.aggregateQueue(
 ```
 
 ```typescript
-function aggregateQueue(
+function pieceOffer(
   conf: InvocationConfig,
   piece: Piece, // Filecoin piece
   group: string, // Aggregate grouping with different criterium like storefront
@@ -63,48 +111,93 @@ function aggregateQueue(
 
 More information: [`InvocationConfig`](#invocationconfig)
 
-### `Dealer.aggregateAdd`
+### `Aggregator.pieceAccept`
 
-Request a Dealer service to offer a filecoin piece (larger aggregate of pieces) to Filecoin Storage Providers.
+Signal a piece has been accepted or rejected for inclusion in an aggregate.
 
 ```js
-import { Dealer } from '@web3-storage/filecoin-client'
+import { Aggregator } from '@web3-storage/filecoin-client'
 
-const add = await Dealer.dealQueue(
+const res = await Aggregator.pieceAccept(
   invocationConfig,
-  aggregate,
-  pieces,
-  storefront,
-  label
+  piece,
+  group
 )
 ```
 
 ```typescript
-function dealQueue(
+function pieceAccept(
   conf: InvocationConfig,
-  aggregate: Piece, // Filecoin piece representing aggregate
-  pieces: Piece[],  // Filecoin pieces part of the aggregate (sorted)
-  label: string     // optional label for deal
+  piece: Piece, // Filecoin piece
+  group: string, // Aggregate grouping with different criterium like storefront
 ): Promise<Receipt>
 ```
 
 More information: [`InvocationConfig`](#invocationconfig)
 
-### `Chain.chainInfo`
+### `Dealer.aggregateOffer`
 
-Request a Chain service to find chain information of a given piece. It will return deals where given piece is present in Receipt.
+Request an aggregate to be added to a deal with a Storage Provider.
 
 ```js
-import { Chain } from '@web3-storage/filecoin-client'
+import { Dealer } from '@web3-storage/filecoin-client'
 
-const add = await Chain.chainInfo(
+const res = await Dealer.aggregateOffer(
+  invocationConfig,
+  aggregate,
+  pieces
+)
+```
+
+```typescript
+function aggregateOffer(
+  conf: InvocationConfig,
+  aggregate: Piece, // Filecoin piece representing aggregate
+  pieces: Piece[],  // Filecoin pieces part of the aggregate (sorted)
+): Promise<Receipt>
+```
+
+More information: [`InvocationConfig`](#invocationconfig)
+
+### `Dealer.aggregateAccept`
+
+Signal an aggregate has been accepted for inclusion in a Filecoin deal.
+
+```js
+import { Dealer } from '@web3-storage/filecoin-client'
+
+const res = await Dealer.aggregateAccept(
+  invocationConfig,
+  aggregate,
+  pieces
+)
+```
+
+```typescript
+function aggregateAccept(
+  conf: InvocationConfig,
+  aggregate: Piece, // Filecoin piece representing aggregate
+  pieces: Piece[],  // Filecoin pieces part of the aggregate (sorted)
+): Promise<Receipt>
+```
+
+More information: [`InvocationConfig`](#invocationconfig)
+
+### `DealTracker.dealInfo`
+
+Get deal information for a given piece.
+
+```js
+import { DealTracker } from '@web3-storage/filecoin-client'
+
+const add = await DealTracker.dealInfo(
   invocationConfig,
   piece
 )
 ```
 
 ```typescript
-function chainInfo(
+function dealInfo(
   conf: InvocationConfig,
   piece: Piece, // Filecoin piece to check
 ): Promise<Receipt>

@@ -7,24 +7,33 @@ import {
   Principal,
 } from '@ucanto/interface'
 import {
-  FilecoinQueue,
-  FilecoinAdd,
-  FilecoinAddSuccess,
-  FilecoinAddFailure,
-  AggregateQueue,
-  AggregateAdd,
-  AggregateAddSuccess,
-  AggregateAddFailure,
-  DealQueue,
-  DealAdd,
-  DealAddSuccess,
-  DealAddFailure,
-  ChainTrackerInfo,
-  ChainTrackerInfoSuccess,
-  ChainTrackerInfoFailure,
+  FilecoinOffer,
+  FilecoinOfferSuccess,
+  FilecoinOfferFailure,
+  FilecoinSubmit,
+  FilecoinSubmitSuccess,
+  FilecoinSubmitFailure,
+  FilecoinAccept,
+  FilecoinAcceptSuccess,
+  FilecoinAcceptFailure,
+  PieceOffer,
+  PieceOfferSuccess,
+  PieceOfferFailure,
+  PieceAccept,
+  PieceAcceptSuccess,
+  PieceAcceptFailure,
+  AggregateOffer,
+  AggregateOfferSuccess,
+  AggregateOfferFailure,
+  AggregateAccept,
+  AggregateAcceptSuccess,
+  AggregateAcceptFailure,
+  DealInfo,
+  DealInfoSuccess,
+  DealInfoFailure
 } from '@web3-storage/capabilities/types'
 
-export type SERVICE = 'STOREFRONT' | 'AGGREGATOR' | 'DEALER' | 'CHAIN_TRACKER'
+export type SERVICE = 'STOREFRONT' | 'AGGREGATOR' | 'DEALER' | 'DEAL_TRACKER'
 export interface ServiceConfig {
   url: URL
   principal: Principal
@@ -51,36 +60,29 @@ export interface InvocationConfig {
 
 export interface StorefrontService {
   filecoin: {
-    queue: ServiceMethod<FilecoinQueue, FilecoinAddSuccess, FilecoinAddFailure>
-    add: ServiceMethod<FilecoinAdd, FilecoinAddSuccess, FilecoinAddFailure>
+    offer: ServiceMethod<FilecoinOffer, FilecoinOfferSuccess, FilecoinOfferFailure>
+    submit: ServiceMethod<FilecoinSubmit, FilecoinSubmitSuccess, FilecoinSubmitFailure>
+    accept: ServiceMethod<FilecoinAccept, FilecoinAcceptSuccess, FilecoinAcceptFailure>
   }
 }
 
 export interface AggregatorService {
-  aggregate: {
-    queue: ServiceMethod<
-      AggregateQueue,
-      AggregateAddSuccess,
-      AggregateAddFailure
-    >
-    add: ServiceMethod<AggregateAdd, AggregateAddSuccess, AggregateAddFailure>
+  piece: {
+    offer: ServiceMethod<PieceOffer, PieceOfferSuccess, PieceOfferFailure>
+    accept: ServiceMethod<PieceAccept, PieceAcceptSuccess, PieceAcceptFailure>
   }
 }
 
 export interface DealerService {
-  deal: {
-    queue: ServiceMethod<DealQueue, DealAddSuccess, DealAddFailure>
-    add: ServiceMethod<DealAdd, DealAddSuccess, DealAddFailure>
+  aggregate: {
+    offer: ServiceMethod<AggregateOffer, AggregateOfferSuccess, AggregateOfferFailure>
+    accept: ServiceMethod<AggregateAccept, AggregateAcceptSuccess, AggregateAcceptFailure>
   }
 }
 
-export interface ChainTrackerService {
-  'chain-tracker': {
-    info: ServiceMethod<
-      ChainTrackerInfo,
-      ChainTrackerInfoSuccess,
-      ChainTrackerInfoFailure
-    >
+export interface DealTrackerService {
+  deal: {
+    info: ServiceMethod<DealInfo, DealInfoSuccess, DealInfoFailure>
   }
 }
 

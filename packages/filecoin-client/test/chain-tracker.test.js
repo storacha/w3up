@@ -5,7 +5,7 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 
-import { chainInfo } from '../src/chain-tracker.js'
+import { chainInfo } from '../src/deal-tracker.js'
 
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
