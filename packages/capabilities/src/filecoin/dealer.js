@@ -20,7 +20,7 @@ import { equalWith, checkLink, and } from '../utils.js'
 export const aggregateOffer = capability({
   can: 'aggregate/offer',
   /**
-   * DID of the Aggregator.
+   * DID of an authorized Storefront.
    */
   with: Schema.did(),
   nb: Schema.struct({

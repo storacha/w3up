@@ -20,7 +20,7 @@ import { equal, equalWith, checkLink, and } from '../utils.js'
 export const pieceOffer = capability({
   can: 'piece/offer',
   /**
-   * DID of the Storefront.
+   * DID of an authorized Storefront.
    */
   with: Schema.did(),
   nb: Schema.struct({
@@ -45,7 +45,7 @@ export const pieceOffer = capability({
 
 /**
  * Capability that allows an Aggregator to signal a piece has been accepted
- * for inclusion in an aggregate.
+ * or rejected for inclusion in an aggregate.
  */
 export const pieceAccept = capability({
   can: 'piece/accept',

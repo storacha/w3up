@@ -161,6 +161,7 @@ export type Space = InferInvokedCapability<typeof space>
 export type SpaceInfo = InferInvokedCapability<typeof info>
 
 // filecoin
+/** @see https://github.com/filecoin-project/go-data-segment/blob/e3257b64fa2c84e0df95df35de409cfed7a38438/datasegment/verifier.go#L8-L14 */
 export interface DataAggregationProof {
   /**
    * Proof the piece is included in the aggregate.
@@ -169,6 +170,7 @@ export interface DataAggregationProof {
   auxDataType: uint64
   auxDataSource: SingletonMarketSource
 }
+/** @see https://github.com/filecoin-project/go-data-segment/blob/e3257b64fa2c84e0df95df35de409cfed7a38438/datasegment/inclusion.go#L30-L39 */
 export interface InclusionProof {
   /**
    * Proof of inclusion of the client's data segment in the data aggregator's
