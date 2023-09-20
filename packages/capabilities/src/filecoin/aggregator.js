@@ -20,7 +20,7 @@ import { equal, equalWith, checkLink, and } from '../utils.js'
 export const pieceOffer = capability({
   can: 'piece/offer',
   /**
-   * DID of the Storefront.
+   * DID of an authorized Storefront.
    */
   with: Schema.did(),
   nb: Schema.struct({
