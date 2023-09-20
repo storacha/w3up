@@ -72,7 +72,7 @@
     "@ucanto/interface": "^8.0.0",
     "@ucanto/transport": "^8.0.0",
     "@web3-storage/capabilities": "workspace:^",
-    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^1.0.0",
+    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^1.1.4",
     "ipfs-utils": "^9.0.14",
     "multiformats": "^11.0.2",
     "p-retry": "^5.1.2",
@@ -93,7 +93,7 @@
     "ipfs-unixfs-exporter": "^10.0.0",
     "mocha": "^10.2.0",
     "npm-run-all": "^4.1.5",
-    "playwright-test": "^8.1.2",
+    "playwright-test": "^12.3.4",
     "typescript": "4.9.5"
   },
   "eslintConfig": {

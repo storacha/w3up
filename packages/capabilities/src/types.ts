@@ -16,7 +16,7 @@ import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
 import * as AdminCaps from './admin.js'
 
-export type { Unit }
+export type { Unit, PieceLink }
 
 export type AccountDID = DID<'mailto'>
 

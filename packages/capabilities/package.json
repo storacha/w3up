@@ -69,7 +69,7 @@
     "assert": "^2.0.0",
     "hd-scripts": "^4.0.0",
     "mocha": "^10.2.0",
-    "playwright-test": "^8.1.2",
+    "playwright-test": "^12.3.4",
     "type-fest": "^3.3.0",
     "typescript": "4.9.5",
     "watch": "^1.0.2"
