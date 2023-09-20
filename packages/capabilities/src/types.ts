@@ -170,6 +170,7 @@ export interface DataAggregationProof {
   auxDataType: uint64
   auxDataSource: SingletonMarketSource
 }
+/** @see https://github.com/filecoin-project/go-data-segment/blob/e3257b64fa2c84e0df95df35de409cfed7a38438/datasegment/inclusion.go#L30-L39 */
 export interface InclusionProof {
   /**
    * Proof of inclusion of the client's data segment in the data aggregator's
