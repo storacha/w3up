@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",
+    "@ipld/dag-json": "^10.1.4",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@ucanto/principal": "^8.0.0",

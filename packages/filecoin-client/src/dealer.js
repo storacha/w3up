@@ -1,9 +1,7 @@
 import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
 import { CBOR } from '@ucanto/core'
-
-import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
-
+import * as Dealer from '@web3-storage/capabilities/filecoin/dealer'
 import { services } from './service.js'
 
 /**
@@ -22,28 +20,35 @@ export const connection = connect({
 })
 
 /**
- * Queues a piece (aggregate) to the dealer system of the filecoin pipeline to offer to SPs.
+ * The `aggregate/offer` task can be executed to request an aggregate be added
+ * to a deal with a Storage Provider. It issues a signed receipt of the
+ * execution result. It is _also_ an effect linked from successful execution of
+ * a `piece/accept` task.
+ *
+ * A receipt for successful execution will contain an effect, linking to an
+ * `aggregate/accept` task that will complete asynchronously.
+ *
+ * Otherwise the task is failed and the receipt will contain details of the
+ * reason behind the failure.
+ * 
+ * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateoffer
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} aggregate
  * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
- * @param {string} storefront
- * @param {string} label
  * @param {import('./types.js').RequestOptions<DealerService>} [options]
  */
-export async function dealQueue(
+export async function aggregateOffer(
   { issuer, with: resource, proofs, audience },
   aggregate,
   pieces,
-  storefront,
-  label,
   options = {}
 ) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const block = await CBOR.write(pieces)
-  const invocation = FilecoinCapabilities.dealQueue.invoke({
+  const invocation = Dealer.aggregateOffer.invoke({
     issuer,
     /* c8 ignore next */
     audience: audience ?? services.AGGREGATOR.principal,
@@ -51,8 +56,6 @@ export async function dealQueue(
     nb: {
       aggregate,
       pieces: block.cid,
-      storefront,
-      label,
     },
     proofs,
   })
@@ -62,28 +65,37 @@ export async function dealQueue(
 }
 
 /**
- * Add a piece (aggregate) to the dealer system of the filecoin pipeline to offer to SPs.
+ * The `aggregate/accept` task is an _effect_ linked from successful execution
+ * of a `aggregate/offer` task, it is executed to issue a receipt for the
+ * success or failure of the task.
+ *
+ * A receipt for successful execution indicates that an aggregate has been
+ * accepted for inclusion in a Filecoin deal. In this case the receipt will
+ * contain proofs that the piece was included in an aggregate and deal.
+ *
+ * Otherwise the task is failed and the receipt will contain details of the
+ * reason behind the failure, as well as multiple effects, linking to
+ * `piece/offer` tasks that will retry _valid_ pieces and complete
+ * asynchronously.
+ *
+ * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateaccept
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} aggregate
  * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
- * @param {string} storefront
- * @param {string} label
  * @param {import('./types.js').RequestOptions<DealerService>} [options]
  */
-export async function dealAdd(
+export async function aggregateAccept(
   { issuer, with: resource, proofs, audience },
   aggregate,
   pieces,
-  storefront,
-  label,
   options = {}
 ) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const block = await CBOR.write(pieces)
-  const invocation = FilecoinCapabilities.dealAdd.invoke({
+  const invocation = Dealer.aggregateAccept.invoke({
     issuer,
     /* c8 ignore next */
     audience: audience ?? services.AGGREGATOR.principal,
@@ -91,8 +103,6 @@ export async function dealAdd(
     nb: {
       aggregate,
       pieces: block.cid,
-      storefront,
-      label,
     },
     proofs,
   })

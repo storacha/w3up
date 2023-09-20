@@ -18,11 +18,11 @@ export const services = {
     principal: DID.parse('did:web:web3.storage'),
   },
   DEALER: {
-    url: new URL('https://spade-proxy.web3.storage'),
-    principal: DID.parse('did:web:spade.web3.storage'),
+    url: new URL('https://dealer.web3.storage'),
+    principal: DID.parse('did:web:dealer.web3.storage'),
   },
-  CHAIN_TRACKER: {
-    url: new URL('https://spade-proxy.web3.storage'),
-    principal: DID.parse('did:web:spade.web3.storage'),
+  DEAL_TRACKER: {
+    url: new URL('https://tracker.web3.storage'),
+    principal: DID.parse('did:web:tracker.web3.storage'),
   },
 }
