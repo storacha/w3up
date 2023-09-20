@@ -12,6 +12,7 @@ import * as RateLimit from './rate-limit.js'
 import * as Admin from './admin.js'
 import * as Subscription from './subscription.js'
 import * as Filecoin from './filecoin/index.js'
+import * as Storefront from './filecoin/storefront.js'
 import * as Aggregator from './filecoin/aggregator.js'
 import * as Dealer from './filecoin/dealer.js'
 import * as DealTracker from './filecoin/deal-tracker.js'
@@ -30,6 +31,7 @@ export {
   RateLimit,
   Subscription,
   Filecoin,
+  Storefront,
   Aggregator,
   Dealer,
   DealTracker,
@@ -60,9 +62,9 @@ export const abilitiesAsStrings = [
   RateLimit.add.can,
   RateLimit.remove.can,
   RateLimit.list.can,
-  Filecoin.filecoinOffer.can,
-  Filecoin.filecoinSubmit.can,
-  Filecoin.filecoinAccept.can,
+  Storefront.filecoinOffer.can,
+  Storefront.filecoinSubmit.can,
+  Storefront.filecoinAccept.can,
   Aggregator.pieceOffer.can,
   Aggregator.pieceAccept.can,
   Dealer.aggregateOffer.can,
