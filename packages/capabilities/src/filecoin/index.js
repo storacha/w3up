@@ -1,6 +1,6 @@
 /**
  * Filecoin Capabilities
- * 
+ *
  * These capabilities are the entrypoint to the filecoin pipeline and are
  * aliases for the filecoin storefront capabilities.
  *
@@ -15,5 +15,5 @@
 export {
   filecoinOffer as offer,
   filecoinSubmit as submit,
-  filecoinAccept as accept
+  filecoinAccept as accept,
 } from './storefront.js'

@@ -11,7 +11,12 @@ import {
   UnknownLink,
 } from '@ucanto/interface'
 import { CAR } from '@ucanto/transport'
-import { Phantom, PieceLink, ProofData, uint64 } from '@web3-storage/data-segment'
+import {
+  Phantom,
+  PieceLink,
+  ProofData,
+  uint64,
+} from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -284,7 +289,7 @@ export interface InvalidPiece extends Ucanto.Failure {
 }
 
 export interface InvalidPieceCID extends Ucanto.Failure {
-  name: 'InvalidPieceCID',
+  name: 'InvalidPieceCID'
   piece: PieceLink
 }
 
@@ -490,9 +495,7 @@ export type AggregateOffer = InferInvokedCapability<
 export type AggregateAccept = InferInvokedCapability<
   typeof DealerCaps.aggregateAccept
 >
-export type DealInfo = InferInvokedCapability<
-  typeof DealTrackerCaps.dealInfo
->
+export type DealInfo = InferInvokedCapability<typeof DealTrackerCaps.dealInfo>
 // Top
 export type Top = InferInvokedCapability<typeof top>
 

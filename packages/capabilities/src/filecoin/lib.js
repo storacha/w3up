@@ -9,10 +9,12 @@ const FR32_SHA2_256_TRUNC254_PADDED_BINARY_TREE = /** @type {const} */ (0x1011)
  */
 const RAW_CODE = /** @type {const} */ (0x55)
 
-export const PieceLink = /** @type {import('../types').PieceLinkSchema} */ (Schema.link({
-  code: RAW_CODE,
-  version: 1,
-  multihash: {
-    code: FR32_SHA2_256_TRUNC254_PADDED_BINARY_TREE,
-  },
-}))
+export const PieceLink = /** @type {import('../types').PieceLinkSchema} */ (
+  Schema.link({
+    code: RAW_CODE,
+    version: 1,
+    multihash: {
+      code: FR32_SHA2_256_TRUNC254_PADDED_BINARY_TREE,
+    },
+  })
+)
