@@ -31,6 +31,26 @@
       "types": "./dist/src/*.d.ts",
       "import": "./src/*.js"
     },
+    "./filecoin": {
+      "types": "./dist/src/filecoin/index.d.ts",
+      "import": "./src/filecoin/index.js"
+    },
+    "./filecoin/storefront": {
+      "types": "./dist/src/filecoin/storefront.d.ts",
+      "import": "./src/filecoin/storefront.js"
+    },
+    "./filecoin/aggregator": {
+      "types": "./dist/src/filecoin/aggregator.d.ts",
+      "import": "./src/filecoin/aggregator.js"
+    },
+    "./filecoin/deal-tracker": {
+      "types": "./dist/src/filecoin/deal-tracker.d.ts",
+      "import": "./src/filecoin/deal-tracker.js"
+    },
+    "./filecoin/dealer": {
+      "types": "./dist/src/filecoin/dealer.d.ts",
+      "import": "./src/filecoin/dealer.js"
+    },
     "./types": "./dist/src/types.d.ts"
   },
   "typesVersions": {
