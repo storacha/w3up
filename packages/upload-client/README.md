@@ -429,6 +429,10 @@ export interface CARMetadata {
    */
   cid: CID
   /**
+   * Piece CID of the CAR file.
+   */
+  piece: CID
+  /**
    * Size of the CAR file in bytes.
    */
   size: number
