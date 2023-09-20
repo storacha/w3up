@@ -30,6 +30,10 @@ import * as Types from '@web3-storage/capabilities/types'
 import * as Upload from '@web3-storage/capabilities/upload'
 import * as Utils from '@web3-storage/capabilities/utils'
 import * as Voucher from '@web3-storage/capabilities/voucher'
+import * as Filecoin from '@web3-storage/capabilities/filecoin'
+import * as Aggregator from '@web3-storage/capabilities/filecoin/aggregator'
+import * as DealTracker from '@web3-storage/capabilities/filecoin/deal-tracker'
+import * as Dealer from '@web3-storage/capabilities/filecoin/dealer'
 
 // This package has a "main" entrypoint but we recommend the usage of the specific imports above
 ```
