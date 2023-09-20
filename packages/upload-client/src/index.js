@@ -1,5 +1,8 @@
 import { Parallel } from 'parallel-transform-web'
-import { Piece } from '@web3-storage/data-segment'
+import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash'
+import * as Link from 'multiformats/link'
+import * as Digest from 'multiformats/hashes/digest'
+import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
@@ -10,6 +13,7 @@ export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 const CONCURRENT_REQUESTS = 3
+const PIECE_MULTIHASH_SIZE = PieceHasher.prefix.length + PieceHasher.size
 
 /**
  * Uploads a file to the service and returns the root data CID for the
@@ -124,10 +128,19 @@ async function uploadBlockStream(conf, blocks, options = {}) {
         const bytes = new Uint8Array(await car.arrayBuffer())
         const [cid, piece] = await Promise.all([
           Store.add(conf, bytes, options),
-          Piece.fromPayload(bytes),
+          (async () => {
+            const hasher = PieceHasher.create()
+            const digestBytes = new Uint8Array(PIECE_MULTIHASH_SIZE)
+            hasher.write(bytes)
+            hasher.digestInto(digestBytes, 0, true)
+            const digest = Digest.decode(digestBytes)
+            return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
+              Link.create(raw.code, digest)
+            )
+          })(),
         ])
         const { version, roots, size } = car
-        return { version, roots, size, cid, piece: piece.link }
+        return { version, roots, size, cid, piece }
       })
     )
     .pipeTo(
