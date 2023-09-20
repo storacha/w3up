@@ -13,7 +13,7 @@ import * as CustomerCaps from './customer.js'
 import * as ConsumerCaps from './consumer.js'
 import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
-import * as FilecoinCaps from './filecoin/index.js'
+import * as StorefrontCaps from './filecoin/storefront.js'
 import * as AggregatorCaps from './filecoin/aggregator.js'
 import * as DealTrackerCaps from './filecoin/deal-tracker.js'
 import * as DealerCaps from './filecoin/dealer.js'
@@ -314,13 +314,13 @@ export interface AdminStoreInspectSuccess {
 export type AdminStoreInspectFailure = Ucanto.Failure
 // Filecoin
 export type FilecoinOffer = InferInvokedCapability<
-  typeof FilecoinCaps.filecoinOffer
+  typeof StorefrontCaps.filecoinOffer
 >
 export type FilecoinSubmit = InferInvokedCapability<
-  typeof FilecoinCaps.filecoinSubmit
+  typeof StorefrontCaps.filecoinSubmit
 >
 export type FilecoinAccept = InferInvokedCapability<
-  typeof FilecoinCaps.filecoinAccept
+  typeof StorefrontCaps.filecoinAccept
 >
 export type PieceOffer = InferInvokedCapability<
   typeof AggregatorCaps.pieceOffer

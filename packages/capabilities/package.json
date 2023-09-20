@@ -35,6 +35,10 @@
       "types": "./dist/src/filecoin/index.d.ts",
       "import": "./src/filecoin/index.js"
     },
+    "./filecoin/storefront": {
+      "types": "./dist/src/filecoin/storefront.d.ts",
+      "import": "./src/filecoin/storefront.js"
+    },
     "./filecoin/aggregator": {
       "types": "./dist/src/filecoin/aggregator.d.ts",
       "import": "./src/filecoin/aggregator.js"
