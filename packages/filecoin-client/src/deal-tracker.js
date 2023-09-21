@@ -19,7 +19,16 @@ export const connection = connect({
 })
 
 /**
- * Get deal information for a given piece.
+ * The `deal/info` task can be executed to request deal information for a given
+ * piece. It issues a signed receipt of the execution result.
+ *
+ * A receipt for successful execution will contain details of deals the
+ * provided piece CID is currently active in.
+ *
+ * Otherwise the task is failed and the receipt will contain details of the
+ * reason behind the failure.
+ *
+ * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#dealinfo
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece

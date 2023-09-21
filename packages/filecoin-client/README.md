@@ -17,7 +17,11 @@ npm install @web3-storage/filecoin-client
 
 ### `Storefront.filecoinOffer`
 
-Request storing a content piece in Filecoin.
+The [`filecoin/offer`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinoffer) task can be executed to request storing a content piece in Filecoin. It issues a signed receipt of the execution result.
+
+A receipt for successful execution will contain an effect, linking to a `filecoin/submit` task that will complete asynchronously.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
 import { Storefront } from '@web3-storage/filecoin-client'
@@ -41,7 +45,11 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Storefront.filecoinSubmit`
 
-Signal that an offered piece has been submitted to the filecoin storage pipeline.
+The [`filecoin/submit`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinsubmit) task is an _effect_ linked from successful execution of a `filecoin/offer` task, it is executed to issue a receipt for the success or failure of the task.
+
+A receipt for successful execution indicates that the offered piece has been submitted to the pipeline. In this case the receipt will contain an effect, linking to a `piece/offer` task that will complete asynchronously.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
 import { Storefront } from '@web3-storage/filecoin-client'
@@ -65,7 +73,11 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Storefront.filecoinAccept`
 
-Signal that a submitted piece has been accepted in a Filecoin deal.
+The [`filecoin/accept`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinsubmit) task is an _effect_ linked from successful execution of a `filecoin/offer` task, it is executed to issue a receipt for the success or failure of the task.
+
+A receipt for successful execution indicates that the offered piece has been accepted in a Filecoin deal. In this case the receipt will contain proofs that the piece was included in an aggregate and deal.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
 import { Storefront } from '@web3-storage/filecoin-client'
@@ -89,7 +101,11 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Aggregator.pieceOffer`
 
-Request that a piece be aggregated for inclusion in an upcoming an Filecoin deal.
+The [`piece/offer`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#pieceoffer) task can be executed to request that a piece be aggregated for inclusion in an upcoming an Filecoin deal. It issues a signed receipt of the execution result. It is _also_ an effect linked from successful execution of a `filecoin/submit` task.
+
+A receipt for successful execution will contain an effect, linking to a `piece/accept` task that will complete asynchronously.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
 import { Aggregator } from '@web3-storage/filecoin-client'
@@ -113,7 +129,11 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Aggregator.pieceAccept`
 
-Signal a piece has been accepted or rejected for inclusion in an aggregate.
+The [`piece/accept`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#pieceaccept) task is an _effect_ linked from successful execution of a `piece/offer` task, it is executed to issue a receipt for the success or failure of the task.
+
+A receipt for successful execution indicates that the offered piece was included in an aggregate. In this case the receipt will contain the aggregate piece CID and a proof that the piece was included in the aggregate. It also includes an effect, linking to an `aggregate/offer` task that will complete asynchronously.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
 import { Aggregator } from '@web3-storage/filecoin-client'
@@ -137,7 +157,11 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Dealer.aggregateOffer`
 
-Request an aggregate to be added to a deal with a Storage Provider.
+The [`aggregate/offer`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateoffer) task can be executed to request an aggregate be added to a deal with a Storage Provider. It issues a signed receipt of the execution result. It is _also_ an effect linked from successful execution of a `piece/accept` task.
+
+A receipt for successful execution will contain an effect, linking to an `aggregate/accept` task that will complete asynchronously.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
 import { Dealer } from '@web3-storage/filecoin-client'
@@ -161,7 +185,11 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Dealer.aggregateAccept`
 
-Signal an aggregate has been accepted for inclusion in a Filecoin deal.
+The [`aggregate/accept`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateaccept) task is an _effect_ linked from successful execution of a `aggregate/offer` task, it is executed to issue a receipt for the success or failure of the task.
+
+A receipt for successful execution indicates that an aggregate has been accepted for inclusion in a Filecoin deal. In this case the receipt will contain proofs that the piece was included in an aggregate and deal.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure, as well as multiple effects, linking to `piece/offer` tasks that will retry _valid_ pieces and complete asynchronously.
 
 ```js
 import { Dealer } from '@web3-storage/filecoin-client'
@@ -185,7 +213,11 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `DealTracker.dealInfo`
 
-Get deal information for a given piece.
+The [`deal/info`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#dealinfo) task can be executed to request deal information for a given piece. It issues a signed receipt of the execution result.
+
+A receipt for successful execution will contain details of deals the provided piece CID is currently active in.
+
+Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
 import { DealTracker } from '@web3-storage/filecoin-client'

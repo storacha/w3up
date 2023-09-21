@@ -19,7 +19,16 @@ export const connection = connect({
 })
 
 /**
- * Request storing a content piece in Filecoin.
+ * The `filecoin/offer` task can be executed to request storing a content piece
+ * in Filecoin. It issues a signed receipt of the execution result.
+ *
+ * A receipt for successful execution will contain an effect, linking to a
+ * `filecoin/submit` task that will complete asynchronously.
+ *
+ * Otherwise the task is failed and the receipt will contain details of the
+ * reason behind the failure.
+ *
+ * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinoffer
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('multiformats').UnknownLink} content
@@ -51,8 +60,18 @@ export async function filecoinOffer(
 }
 
 /**
- * Signal that an offered piece has been submitted to the filecoin storage
- * pipeline.
+ * The `filecoin/submit` task is an _effect_ linked from successful execution
+ * of a `filecoin/offer` task, it is executed to issue a receipt for the
+ * success or failure of the task.
+ *
+ * A receipt for successful execution indicates that the offered piece has been
+ * submitted to the pipeline. In this case the receipt will contain an effect,
+ * linking to a `piece/offer` task that will complete asynchronously.
+ *
+ * Otherwise the task is failed and the receipt will contain details of the
+ * reason behind the failure.
+ *
+ * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinsubmit
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('multiformats').UnknownLink} content
@@ -84,7 +103,18 @@ export async function filecoinSubmit(
 }
 
 /**
- * Signal that a submitted piece has been accepted in a Filecoin deal.
+ * The `filecoin/accept` task is an _effect_ linked from successful execution
+ * of a `filecoin/offer` task, it is executed to issue a receipt for the
+ * success or failure of the task.
+ *
+ * A receipt for successful execution indicates that the offered piece has been
+ * accepted in a Filecoin deal. In this case the receipt will contain proofs
+ * that the piece was included in an aggregate and deal.
+ *
+ * Otherwise the task is failed and the receipt will contain details of the
+ * reason behind the failure.
+ *
+ * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinaccept
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('multiformats').UnknownLink} content
