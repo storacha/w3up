@@ -175,7 +175,7 @@ Calling `authorize` will cause an email to be sent to the given address. Once a 
 
 ##### Bringing your own Agent and delegation
 
-For uses of `w3up-client` in environments where the Agent is not persisted and/or the email verification step would be prohibitive (e.g., serverless backend environment where local Store with the Agent is dropped in between runs, and going through the email verification flow isn't practical), you can manually add a delegation for access to a Space created by a different authorized agent (see the [`addSpace` client method](docs-client#addSpace)). An example using w3cli, assuming it already is set up with a Space (e.g., already ran `w3 space create`):
+For uses of `w3up-client` in environments where the Agent is not persisted and/or the email verification step would be prohibitive (e.g., serverless backend environment where local Store with the Agent is dropped in between runs, and going through the email verification flow isn't practical), you can manually add a delegation for access to a Space created by a different authorized agent (see the [`addSpace` client method](docs-client#addSpace)). An example (where [w3cli](https://github.com/web3-storage/w3cli) is set up with the Space that we want to delegate permissions from in our client instance):
 
 ```js
 import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use Ed25519 keys
