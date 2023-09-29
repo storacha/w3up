@@ -185,11 +185,11 @@ import * as Client from '@web3-storage/w3up-client'
 
 async function main () {
   // from "bring your own Agent" example in `Creating a client object" section`
-  const principal = Signer.parse(process.env.KEY) // created by `npx ucan-key ed --json` in command line, which returns private key and DID for Agent which were stored in environment variables KEY and PROOF
+  const principal = Signer.parse(process.env.KEY) // created by `npx ucan-key ed --json` in command line, which returns private key for Agent DID which was stored in environment variables KEY
   const client = await Client.create({ principal })
   
   // now give Agent the delegation from a Space created in w3cli using `w3 space create`
-  const proof = await parseProof(process.env.PROOF)
+  const proof = await parseProof(process.env.PROOF) // PROOF created by delegating abilities from Space to the Agent DID associated with the KEY passed in when initializing client a few rows above, using `w3 delegation create <did_from_ucan-key_command_above> --can 'store/add' --can 'upload/add' | base64`
   const space = await client.addSpace(proof)
   await client.setCurrentSpace(space.did())
   
