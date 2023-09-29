@@ -175,7 +175,7 @@ Calling `authorize` will cause an email to be sent to the given address. Once a 
 
 ##### Bringing your own Agent and delegation
 
-For uses of `w3up-client` in environments where the Agent is not persisted and/or the email verification step would be prohibitive (e.g., serverless backend environment where local Store with the Agent is dropped in between runs, and going through the email verification flow isn't practical), you can manually add a delegation for access to a space created by a different authorized agent (see the [`addSpace` client method](docs-client#addSpace)). An example:
+For uses of `w3up-client` in environments where the Agent is not persisted and/or the email verification step would be prohibitive (e.g., serverless backend environment where local Store with the Agent is dropped in between runs, and going through the email verification flow isn't practical), you can manually add a delegation for access to a Space created by a different authorized agent (see the [`addSpace` client method](docs-client#addSpace)). An example using w3cli, assuming it already is set up with a Space (e.g., already ran `w3 space create`):
 
 ```js
 import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use Ed25519 keys
@@ -185,10 +185,13 @@ import * as Client from '@web3-storage/w3up-client'
 
 async function main () {
   // from "bring your own Agent" example in `Creating a client object" section`
-  const principal = Signer.parse(process.env.KEY) // created by `npx ucan-key ed --json` in command line, which returns private key and DID for Agent which were stored in environment variables KEY and PROOF
+  // used command line to generate KEY and PROOF (stored in env variables)
+  // KEY: `npx ucan-key ed --json` in command line, which returns private key and DID for Agent (the private key is stored in KEY)
+  // PROOF: w3cli used to run `w3 delegation create <did_from_ucan-key_command_above> --can 'store/add' --can 'upload/add' | base64`, which returns the delegation from Space to the Agent we're using (stored in PROOF)
+  const principal = Signer.parse(process.env.KEY)
   const client = await Client.create({ principal })
   
-  // now give Agent the delegation from a Space created in w3cli using `w3 space create`
+  // now give Agent the delegation from the Space
   const proof = await parseProof(process.env.PROOF)
   const space = await client.addSpace(proof)
   await client.setCurrentSpace(space.did())
