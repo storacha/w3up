@@ -283,19 +283,19 @@ export interface UCANBasicOptions {
  */
 export type InferNb<C extends Record<string, unknown> | undefined> =
   keyof C extends never
-  ? {
-    nb?: never
-  }
-  : {
-    /**
-     * Non-normative fields for the capability
-     *
-     * Check the capability definition for more details on the `nb` field.
-     *
-     * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
-     */
-    nb: C
-  }
+    ? {
+        nb?: never
+      }
+    : {
+        /**
+         * Non-normative fields for the capability
+         *
+         * Check the capability definition for more details on the `nb` field.
+         *
+         * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
+         */
+        nb: C
+      }
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
 
