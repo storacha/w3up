@@ -23,7 +23,6 @@ import type {
   SignerArchive,
   SigAlg,
   Caveats,
-  Capability,
 } from '@ucanto/interface'
 
 import type {
