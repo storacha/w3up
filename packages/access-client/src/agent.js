@@ -467,7 +467,7 @@ export class Agent {
    * @template {Ucanto.URI} R
    * @template {Ucanto.Caveats} C
    * @param {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} cap
-   * @param {import('./types').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
+   * @param {import('./types').InvokeOptions<A, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
    * @returns {Promise<Ucanto.InferReceipt<Ucanto.Capability<A, R, C>, S>>}
    */
   async invokeAndExecute(cap, options) {
@@ -520,7 +520,7 @@ export class Agent {
    * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
    * @template {Ucanto.Caveats} [C={}]
    * @param {CAP} cap
-   * @param {import('./types').InvokeOptions<A, R, CAP>} options
+   * @param {import('./types').InvokeOptions<A, CAP>} options
    */
   async invoke(cap, options) {
     const space = options.with || this.currentSpace()

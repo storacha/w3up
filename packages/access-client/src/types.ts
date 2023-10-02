@@ -23,6 +23,7 @@ import type {
   SignerArchive,
   SigAlg,
   Caveats,
+  Capability,
 } from '@ucanto/interface'
 
 import type {
@@ -206,9 +207,8 @@ export interface AgentDataOptions {
 
 export type InvokeOptions<
   A extends Ability,
-  R extends Resource,
   CAP extends CapabilityParser<
-    Match<{ can: A; with: R; nb: Caveats }, UnknownMatch>
+    Match<{ can: A; with: Resource; nb: Caveats }, UnknownMatch>
   >
 > = UCANBasicOptions &
   InferNb<InferInvokedCapability<CAP>['nb']> & {
@@ -216,7 +216,7 @@ export type InvokeOptions<
      * Resource for the capability, normally a Space DID
      * Defaults to the current selected Space
      */
-    with?: R
+    with?: Resource
 
     /**
      * Extra proofs to be added to the invocation
@@ -284,19 +284,19 @@ export interface UCANBasicOptions {
  */
 export type InferNb<C extends Record<string, unknown> | undefined> =
   keyof C extends never
-    ? {
-        nb?: never
-      }
-    : {
-        /**
-         * Non-normative fields for the capability
-         *
-         * Check the capability definition for more details on the `nb` field.
-         *
-         * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
-         */
-        nb: C
-      }
+  ? {
+    nb?: never
+  }
+  : {
+    /**
+     * Non-normative fields for the capability
+     *
+     * Check the capability definition for more details on the `nb` field.
+     *
+     * @see {@link https://github.com/ucan-wg/spec#241-nb-non-normative-fields Spec}
+     */
+    nb: C
+  }
 
 export interface ClientCodec extends RequestEncoder, ResponseDecoder {}
 
