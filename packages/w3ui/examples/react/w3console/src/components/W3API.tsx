@@ -14,7 +14,7 @@ import {
   KeyringContextValue,
   KeyringProvider
 } from '@w3ui/react-keyring'
-import { accessServiceConnection, accessServicePrincipal, uploadServiceConnection, uploadServicePrincipal } from './services'
+import { serviceConnection, servicePrincipal } from './services'
 
 export interface W3APIContextValue {
   keyring: KeyringContextValue
@@ -32,9 +32,9 @@ export function W3APIProvider ({
   uploadsListPageSize
 }: W3APIProviderProps): JSX.Element {
   return (
-    <KeyringProvider servicePrincipal={accessServicePrincipal} connection={accessServiceConnection}>
-      <UploaderProvider servicePrincipal={uploadServicePrincipal} connection={uploadServiceConnection}>
-        <UploadsListProvider servicePrincipal={uploadServicePrincipal} connection={uploadServiceConnection} size={uploadsListPageSize}>
+    <KeyringProvider servicePrincipal={servicePrincipal} connection={serviceConnection}>
+      <UploaderProvider servicePrincipal={servicePrincipal} connection={serviceConnection}>
+        <UploadsListProvider servicePrincipal={servicePrincipal} connection={serviceConnection} size={uploadsListPageSize}>
           <>{children}</>
         </UploadsListProvider>
       </UploaderProvider>

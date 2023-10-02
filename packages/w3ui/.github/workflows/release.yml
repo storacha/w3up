@@ -56,10 +56,8 @@ jobs:
         working-directory: examples/react/w3console
         env:
           VITE_W3UP_PROVIDER: did:web:staging.web3.storage
-          VITE_W3UP_ACCESS_SERVICE_URL: 'https://staging.up.web3.storage'
-          VITE_W3UP_ACCESS_SERVICE_DID: 'did:web:staging.web3.storage'
-          VITE_W3UP_UPLOAD_SERVICE_URL: 'https://staging.up.web3.storage'
-          VITE_W3UP_UPLOAD_SERVICE_DID: 'did:web:staging.web3.storage'
+          VITE_W3UP_SERVICE_URL: 'https://staging.up.web3.storage'
+          VITE_W3UP_SERVICE_DID: 'did:web:staging.web3.storage'
           VITE_W3UP_SERVICE_BRAND_NAME: 'staging.web3.storage'
       - name: Publish staging.console.web3.storage
         uses: ./.github/actions/preview
