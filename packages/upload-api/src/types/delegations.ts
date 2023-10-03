@@ -43,12 +43,12 @@ export interface DelegationsStorage<
   >
 
   /**
-   * Given a list of invocation CIDs, return a Ucanto Result with a boolean
-   * success value that will be true if any of the identified invocations
+   * Given a list of delegation CIDs, return a Ucanto Result with a boolean
+   * success value that will be true if any of the identified delegations
    * have been revoked and false if all are valid.
    */
   areAnyRevoked: (
-    invocationCids: Ucanto.Link[]
+    delegationCids: Ucanto.Link[]
   ) => Promise<
     Ucanto.Result<Boolean, Ucanto.Failure>
   >

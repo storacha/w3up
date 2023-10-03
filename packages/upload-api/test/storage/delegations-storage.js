@@ -45,11 +45,11 @@ export class DelegationsStorage {
 
   /**
    * 
-   * @param {Types.Link[]} invocationCids 
+   * @param {Types.Link[]} delegationCids 
    * @returns 
    */
-  async areAnyRevoked(invocationCids) {
-    return { ok: invocationCids.some(i => this.revocations.has(i.toString())) }
+  async areAnyRevoked(delegationCids) {
+    return { ok: delegationCids.some(i => this.revocations.has(i.toString())) }
   }
 
   /**
