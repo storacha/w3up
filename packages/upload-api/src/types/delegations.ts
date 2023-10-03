@@ -9,6 +9,7 @@ export type Revocation = {
   iss: Ucanto.DID
   revoke: Ucanto.Link
   challenge: string
+  cid: Ucanto.Link
 }
 
 export interface DelegationsStorage<

@@ -91,7 +91,7 @@ export const test = {
     const goodDelegation = await createSampleDelegation()
     const badDelegation = await createSampleDelegation()
 
-    storage.putMany([goodDelegation, badDelegation])
+    await storage.putMany([goodDelegation, badDelegation])
 
     const { ok: goodDelegations } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did()) })
     assert.equal(goodDelegations?.length, 1)
@@ -102,7 +102,13 @@ export const test = {
     const { ok: revoked } = await storage.areAnyRevoked([goodDelegation.cid, badDelegation.cid])
     assert.equal(revoked, false)
 
-    await storage.revoke({ iss: 'did:key:z6mktrav', revoke: badDelegation.cid, challenge: '' })
+    const revocation = {
+      iss: /** @type {Ucanto.DIDKey} */('did:key:z6mktrav'),
+      revoke: badDelegation.cid,
+      challenge: ''
+    }
+    const { cid } = await ucanto.CBOR.write(revocation)
+    await storage.revoke({ ...revocation, cid })
 
     const { ok: goodDelegationsAfterRevoke } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did()) })
     assert.equal(goodDelegationsAfterRevoke?.length, 1)
