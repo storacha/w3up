@@ -9,6 +9,11 @@ export class DelegationsStorage {
      * @type {Array<Types.Delegation<Types.Tuple<any>>>}
      */
     this.delegations = []
+
+    /**
+     * @type {Set<string>}
+     */
+    this.revocations = new Set()
   }
 
   /**
@@ -29,12 +34,31 @@ export class DelegationsStorage {
   async find(query) {
     const delegations = []
     for (const delegation of this.delegations) {
-      if (query.audience === delegation.audience.did()) {
+      if ((query.audience === delegation.audience.did()) && !this.revocations.has(delegation.cid.toString())) {
         delegations.push(delegation)
       }
     }
     return {
       ok: delegations,
     }
+  }
+
+  /**
+   * 
+   * @param {Types.Link[]} invocationCids 
+   * @returns 
+   */
+  async areAnyRevoked(invocationCids) {
+    return { ok: invocationCids.some(i => this.revocations.has(i.toString())) }
+  }
+
+  /**
+   * 
+   * @param {Types.Revocation} revocation 
+   * @returns 
+   */
+  async revoke(revocation) {
+    this.revocations.add(revocation.revoke.toString())
+    return { ok: {} }
   }
 }

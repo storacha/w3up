@@ -86,4 +86,31 @@ export const test = {
       .ok
     assert.deepEqual(carolDelegations?.length, 0)
   },
+  'can revoke delegations': async (assert, context) => {
+    const storage = context.delegationsStorage
+    const goodDelegation = await createSampleDelegation()
+    const badDelegation = await createSampleDelegation()
+
+    storage.putMany([goodDelegation, badDelegation])
+
+    const { ok: goodDelegations } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did()) })
+    assert.equal(goodDelegations?.length, 1)
+
+    const { ok: badDelegations } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did()) })
+    assert.equal(badDelegations?.length, 1)
+
+    const { ok: revoked } = await storage.areAnyRevoked([goodDelegation.cid, badDelegation.cid])
+    assert.equal(revoked, false)
+
+    await storage.revoke({ iss: 'did:key:z6mktrav', revoke: badDelegation.cid, challenge: '' })
+
+    const { ok: goodDelegationsAfterRevoke } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did()) })
+    assert.equal(goodDelegationsAfterRevoke?.length, 1)
+
+    const { ok: badDelegationsAfterRevoke } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did()) })
+    assert.equal(badDelegationsAfterRevoke?.length, 0)
+
+    const { ok: revokedAfterRevoke } = await storage.areAnyRevoked([goodDelegation.cid, badDelegation.cid])
+    assert.equal(revokedAfterRevoke, true)
+  }
 }

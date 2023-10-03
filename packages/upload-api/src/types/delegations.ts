@@ -5,6 +5,12 @@ interface ByAudience {
 }
 export type Query = ByAudience
 
+export type Revocation = {
+  iss: Ucanto.DID
+  revoke: Ucanto.Link
+  challenge: string
+}
+
 export interface DelegationsStorage<
   Cap extends Ucanto.Capability = Ucanto.Capability
 > {
@@ -33,5 +39,29 @@ export interface DelegationsStorage<
     query: Query
   ) => Promise<
     Ucanto.Result<Ucanto.Delegation<Ucanto.Tuple<Cap>>[], Ucanto.Failure>
+  >
+
+  /**
+   * Given a list of invocation CIDs, return a Ucanto Result with a boolean
+   * success value that will be true if any of the identified invocations
+   * have been revoked and false if all are valid.
+   */
+  areAnyRevoked: (
+    invocationCids: Ucanto.Link[]
+  ) => Promise<
+    Ucanto.Result<Boolean, Ucanto.Failure>
+  >
+
+  /**
+   * Revoke the delegations identified by the given Revocation.
+   * 
+   * Once a delegation has been revoked, it should no longer be returned by 
+   * the `find` method in this interface and calling areAnyRevoked with
+   * the CID in the given revocation should return true.
+   */
+  revoke: (
+    revocation: Revocation
+  ) => Promise<
+    Ucanto.Result<{}, Ucanto.Failure>
   >
 }
