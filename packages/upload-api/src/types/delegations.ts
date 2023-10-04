@@ -5,12 +5,15 @@ interface ByAudience {
 }
 export type Query = ByAudience
 
-export type Revocation = {
-  iss: Ucanto.DID
-  revoke: Ucanto.Link
-  challenge: string
-  cid: Ucanto.Link
+export interface RevocationMeta {
+  context: Ucanto.Link
+  cause: Ucanto.Link 
 }
+
+export type RevocationsToMeta = Record<
+  Ucanto.ToString<Ucanto.Link>,
+  RevocationMeta[]
+>
 
 export interface DelegationsStorage<
   Cap extends Ucanto.Capability = Ucanto.Capability
@@ -43,25 +46,29 @@ export interface DelegationsStorage<
   >
 
   /**
-   * Given a list of delegation CIDs, return a Ucanto Result with a boolean
-   * success value that will be true if any of the identified delegations
-   * have been revoked and false if all are valid.
+   * Given a list of delegation CIDs, return a Ucanto Result with a map from
+   * some or all of the CIDs to a list of "revocation context CIDs" for a
+   * given CID - that is, a list of delegation CIDs that should no longer
+   * be considered valid proof for the given CID.
    */
-  areAnyRevoked: (
-    delegationCids: Ucanto.Link[]
+  getRevocations: (
+    delegationCIDs: Ucanto.Link[]
   ) => Promise<
-    Ucanto.Result<Boolean, Ucanto.Failure>
+    Ucanto.Result<RevocationsToMeta, Ucanto.Failure>
   >
 
   /**
-   * Revoke the delegations identified by the given Revocation.
+   * Revoke the delegation identified by delegationCID in a context
+   * identified by revocationContextCID.
    * 
    * Once a delegation has been revoked, it should no longer be returned by 
    * the `find` method in this interface and calling areAnyRevoked with
    * the CID in the given revocation should return true.
    */
   revoke: (
-    revocation: Revocation
+    delegationCID: Ucanto.Link,
+    revocationContextCID: Ucanto.Link,
+    revocationInvocationCID: Ucanto.Link
   ) => Promise<
     Ucanto.Result<{}, Ucanto.Failure>
   >

@@ -112,3 +112,9 @@ export async function randomCAR(size) {
 
   return Object.assign(blob, { cid, roots: [root] })
 }
+
+export async function randomCID() {
+  const bytes = await randomBytes(10)
+  const hash = await sha256.digest(bytes)
+  return CID.create(1, raw.code, hash)
+}

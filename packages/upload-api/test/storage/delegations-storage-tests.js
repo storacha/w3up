@@ -3,6 +3,7 @@ import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import { createSampleDelegation } from '../../src/utils/ucan.js'
+import { randomCID } from '../util.js'
 
 /**
  * @param {object} [opts]
@@ -88,50 +89,30 @@ export const test = {
   },
   'can revoke delegations': async (assert, context) => {
     const storage = context.delegationsStorage
-    const goodDelegation = await createSampleDelegation()
     const badDelegation = await createSampleDelegation()
+    const proofDelegation = await createSampleDelegation()
+    const invocationCID = await randomCID()
 
-    await storage.putMany([goodDelegation, badDelegation])
+    const { ok: revoked } = await storage.getRevocations([proofDelegation.cid, badDelegation.cid])
+    assert.deepEqual(revoked, {})
 
-    const { ok: goodDelegations } = await storage.find({
-      audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did())
+    await storage.revoke(badDelegation.cid, proofDelegation.cid, invocationCID)
+
+    // it should return revocations that have been recorded
+    const { ok: revocationsToMeta } = await storage.getRevocations([badDelegation.cid])
+    assert.deepEqual(revocationsToMeta, {
+      [badDelegation.cid.toString()]: [{ context: proofDelegation.cid, cause: invocationCID }]
     })
-    assert.equal(goodDelegations?.length, 1)
 
-    const { ok: badDelegations } = await storage.find({
-      audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did())
+    // it should not return revocations that have not been recorded
+    const { ok: noRevocations } = await storage.getRevocations([proofDelegation.cid])
+    assert.deepEqual(noRevocations, {})
+
+    // it should return revocations that have been recorded
+    const { ok: someRevocations } = await storage.getRevocations([badDelegation.cid, proofDelegation.cid])
+    assert.deepEqual(someRevocations, {
+      [badDelegation.cid.toString()]: [{ context: proofDelegation.cid, cause: invocationCID }]
     })
-    assert.equal(badDelegations?.length, 1)
 
-    const { ok: revoked } = await storage.areAnyRevoked([goodDelegation.cid, badDelegation.cid])
-    assert.equal(revoked, false)
-
-    // revoke badDelegation
-    const revocation = {
-      iss: /** @type {Ucanto.DIDKey} */('did:key:z6mktrav'),
-      revoke: badDelegation.cid,
-      challenge: ''
-    }
-    const { cid } = await ucanto.CBOR.write(revocation)
-    await storage.revoke({ ...revocation, cid })
-
-    const { ok: goodDelegationsAfterRevoke } = await storage.find({
-      audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did())
-    })
-    assert.equal(goodDelegationsAfterRevoke?.length, 1)
-
-    // find should not return the revoked delegation
-    const { ok: badDelegationsAfterRevoke } = await storage.find({
-      audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did())
-    })
-    assert.equal(badDelegationsAfterRevoke?.length, 0)
-
-    // goodDelegation should not be revoked
-    const { ok: notrevokedAfterRevoke } = await storage.areAnyRevoked([goodDelegation.cid])
-    assert.equal(notrevokedAfterRevoke, false)
-
-    // any list containing badDelegation should mean areAnyRevoked returns true
-    const { ok: revokedAfterRevoke } = await storage.areAnyRevoked([goodDelegation.cid, badDelegation.cid])
-    assert.equal(revokedAfterRevoke, true)
   }
 }

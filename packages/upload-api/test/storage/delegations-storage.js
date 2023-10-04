@@ -11,9 +11,9 @@ export class DelegationsStorage {
     this.delegations = []
 
     /**
-     * @type {Set<string>}
+     * @type {Types.RevocationsToMeta}
      */
-    this.revocations = new Set()
+    this.revocations = {}
   }
 
   /**
@@ -34,7 +34,7 @@ export class DelegationsStorage {
   async find(query) {
     const delegations = []
     for (const delegation of this.delegations) {
-      if ((query.audience === delegation.audience.did()) && !this.revocations.has(delegation.cid.toString())) {
+      if ((query.audience === delegation.audience.did())) {
         delegations.push(delegation)
       }
     }
@@ -48,17 +48,36 @@ export class DelegationsStorage {
    * @param {Types.Link[]} delegationCids 
    * @returns 
    */
-  async areAnyRevoked(delegationCids) {
-    return { ok: delegationCids.some(i => this.revocations.has(i.toString())) }
+  async getRevocations(delegationCids) {
+    const allRevocations = delegationCids.reduce((m, cid) => {
+      /** @type {string} */
+      const cidStr = cid.toString()
+      const revocations = this.revocations[cidStr]
+      if (revocations) {
+        m[cidStr] = revocations
+      }
+      return m
+    }, /** @type {Types.RevocationsToMeta} */({}))
+    return { ok: allRevocations }
   }
 
   /**
    * 
-   * @param {Types.Revocation} revocation 
+   * @param {Types.Link} delegationCID
+   * @param {Types.Link} revocationContextCID
+   * @param {Types.Link} revocationInvocationCID
    * @returns 
    */
-  async revoke(revocation) {
-    this.revocations.add(revocation.revoke.toString())
+  async revoke(delegationCID, revocationContextCID, revocationInvocationCID) {
+    /** @type {string} */
+    const delegationCIDStr = delegationCID.toString()
+    /** @type {Types.RevocationMeta[]} */
+    const existingRevocationContexts = this.revocations[delegationCIDStr] || []
+    this.revocations[delegationCIDStr] = [
+      ...existingRevocationContexts,
+      { context: revocationContextCID, cause: revocationInvocationCID }
+    ]
+
     return { ok: {} }
   }
 }

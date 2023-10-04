@@ -109,7 +109,8 @@ export type { ProvisionsStorage, Provision } from './types/provisions'
 export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
-  Revocation
+  RevocationsToMeta,
+  RevocationMeta
 } from './types/delegations'
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
