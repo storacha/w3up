@@ -93,15 +93,20 @@ export const test = {
 
     await storage.putMany([goodDelegation, badDelegation])
 
-    const { ok: goodDelegations } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did()) })
+    const { ok: goodDelegations } = await storage.find({
+      audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did())
+    })
     assert.equal(goodDelegations?.length, 1)
 
-    const { ok: badDelegations } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did()) })
+    const { ok: badDelegations } = await storage.find({
+      audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did())
+    })
     assert.equal(badDelegations?.length, 1)
 
     const { ok: revoked } = await storage.areAnyRevoked([goodDelegation.cid, badDelegation.cid])
     assert.equal(revoked, false)
 
+    // revoke badDelegation
     const revocation = {
       iss: /** @type {Ucanto.DIDKey} */('did:key:z6mktrav'),
       revoke: badDelegation.cid,
@@ -110,12 +115,22 @@ export const test = {
     const { cid } = await ucanto.CBOR.write(revocation)
     await storage.revoke({ ...revocation, cid })
 
-    const { ok: goodDelegationsAfterRevoke } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did()) })
+    const { ok: goodDelegationsAfterRevoke } = await storage.find({
+      audience: /** @type {import('@ucanto/interface').DIDKey} */(goodDelegation.audience.did())
+    })
     assert.equal(goodDelegationsAfterRevoke?.length, 1)
 
-    const { ok: badDelegationsAfterRevoke } = await storage.find({ audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did()) })
+    // find should not return the revoked delegation
+    const { ok: badDelegationsAfterRevoke } = await storage.find({
+      audience: /** @type {import('@ucanto/interface').DIDKey} */(badDelegation.audience.did())
+    })
     assert.equal(badDelegationsAfterRevoke?.length, 0)
 
+    // goodDelegation should not be revoked
+    const { ok: notrevokedAfterRevoke } = await storage.areAnyRevoked([goodDelegation.cid])
+    assert.equal(notrevokedAfterRevoke, false)
+
+    // any list containing badDelegation should mean areAnyRevoked returns true
     const { ok: revokedAfterRevoke } = await storage.areAnyRevoked([goodDelegation.cid, badDelegation.cid])
     assert.equal(revokedAfterRevoke, true)
   }
