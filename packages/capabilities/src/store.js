@@ -80,11 +80,11 @@ export const add = capability({
 /**
  * Capability to get store metadata by shard CID.
  * Use to check for inclusion, or get shard size and origin
- * 
- * `nb.link` is optional to allow delegation of `store/get` 
+ *
+ * `nb.link` is optional to allow delegation of `store/get`
  * capability for any shard cid. If link is specified, then the
  * capability only allows a get for that single cid.
- * 
+ *
  * When used as as an invocation, `nb.link` should be specified.
  */
 export const get = capability({
@@ -94,9 +94,9 @@ export const get = capability({
     /**
      * shard CID to fetch info about.
      */
-    link: Link.optional()
+    link: Link.optional(),
   }),
-  derives: equalLink
+  derives: equalLink,
 })
 
 /**

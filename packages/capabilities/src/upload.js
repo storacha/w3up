@@ -80,11 +80,11 @@ export const add = capability({
 /**
  * Capability to get upload metadata by root CID.
  * Use to check for inclusion, or find the shards for a root.
- * 
- * `nb.root` is optional to allow delegation of `upload/get` 
+ *
+ * `nb.root` is optional to allow delegation of `upload/get`
  * capability for any root. If root is specified, then the
  * capability only allows a get for that single cid.
- * 
+ *
  * When used as as an invocation, `nb.root` should be specified.
  */
 export const get = capability({
@@ -94,7 +94,7 @@ export const get = capability({
     /**
      * Root CID of the DAG to fetch upload info about.
      */
-    root: Link.optional()
+    root: Link.optional(),
   }),
   derives: (self, from) => {
     const res = equalWith(self, from)
@@ -106,7 +106,7 @@ export const get = capability({
     }
     // root must match if specified in the proof
     return equal(self.nb.root, from.nb.root, 'root')
-  }
+  },
 })
 
 /**
