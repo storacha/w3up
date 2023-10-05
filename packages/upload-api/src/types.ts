@@ -101,6 +101,7 @@ import {
   ProviderDID,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
+import { RevocationsStorage } from './types/revocations'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
@@ -109,9 +110,11 @@ export type { ProvisionsStorage, Provision } from './types/provisions'
 export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
-  RevocationsToMeta,
-  RevocationMeta
 } from './types/delegations'
+export type {
+  Revocation,
+  RevocationsStorage, 
+} from './types/revocations'
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
 export interface Service {
@@ -266,6 +269,10 @@ export interface RateLimitServiceContext {
   rateLimitsStorage: RateLimits
 }
 
+export interface RevocationServiceContext {
+  revocationsStorage: RevocationsStorage
+}
+
 export interface ServiceContext
   extends AccessServiceContext,
     ConsoleServiceContext,
@@ -276,6 +283,7 @@ export interface ServiceContext
     StoreServiceContext,
     SubscriptionServiceContext,
     RateLimitServiceContext,
+    RevocationServiceContext,
     UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext {

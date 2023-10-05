@@ -3,7 +3,6 @@ import * as principal from '@ucanto/principal'
 import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
 import { createSampleDelegation } from '../../src/utils/ucan.js'
-import { randomCID } from '../util.js'
 
 /**
  * @param {object} [opts]
@@ -87,32 +86,4 @@ export const test = {
       .ok
     assert.deepEqual(carolDelegations?.length, 0)
   },
-  'can revoke delegations': async (assert, context) => {
-    const storage = context.delegationsStorage
-    const badDelegation = await createSampleDelegation()
-    const proofDelegation = await createSampleDelegation()
-    const invocationCID = await randomCID()
-
-    const { ok: revoked } = await storage.getRevocations([proofDelegation.cid, badDelegation.cid])
-    assert.deepEqual(revoked, {})
-
-    await storage.revoke(badDelegation.cid, proofDelegation.cid, invocationCID)
-
-    // it should return revocations that have been recorded
-    const { ok: revocationsToMeta } = await storage.getRevocations([badDelegation.cid])
-    assert.deepEqual(revocationsToMeta, {
-      [badDelegation.cid.toString()]: [{ context: proofDelegation.cid, cause: invocationCID }]
-    })
-
-    // it should not return revocations that have not been recorded
-    const { ok: noRevocations } = await storage.getRevocations([proofDelegation.cid])
-    assert.deepEqual(noRevocations, {})
-
-    // it should return revocations that have been recorded
-    const { ok: someRevocations } = await storage.getRevocations([badDelegation.cid, proofDelegation.cid])
-    assert.deepEqual(someRevocations, {
-      [badDelegation.cid.toString()]: [{ context: proofDelegation.cid, cause: invocationCID }]
-    })
-
-  }
 }
