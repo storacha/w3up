@@ -6,95 +6,45 @@ import type {
   ParsedCapability,
   InferInvokedCapability,
   Match,
+  Unit,
+  Result
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
-import { PieceLink } from '@web3-storage/data-segment'
-import { UnknownLink } from '@ucanto/interface'
 
 export * as UcantoInterface from '@ucanto/interface'
+export type { Result, Variant } from '@ucanto/interface'
 export * from '@web3-storage/filecoin-client/types'
 export * from '@web3-storage/capabilities/types'
 
 // Resources
-export interface Queue<Record> {
+export interface Queue<Message> {
   add: (
-    record: Record,
+    message: Message,
     options?: QueueMessageOptions
-  ) => Promise<Result<{}, QueueAddError>>
+  ) => Promise<Result<Unit, QueueAddError>>
 }
 
 export interface Store<Record> {
-  put: (record: Record) => Promise<Result<{}, StorePutError>>
+  put: (record: Record) => Promise<Result<Unit, StorePutError>>
   /**
-   * Gets content data from the store.
+   * Gets a record from the store.
    */
   get: (key: any) => Promise<Result<Record, StoreGetError>>
+  /**
+   * Determine if a record already exists in the store for the given key.
+   */
+  has: (key: any) => Promise<Result<boolean, StoreGetError>>
 }
 
 export interface QueueMessageOptions {
   messageGroupId?: string
 }
 
-// Services
-export interface StorefrontServiceContext {
-  id: Signer
-  addQueue: Queue<StorefrontRecord>
-  pieceStore: Store<StorefrontRecord>
-}
-
-export interface AggregatorServiceContext {
-  id: Signer
-  addQueue: Queue<AggregatorMessageRecord>
-  pieceStore: Store<AggregatorRecord>
-}
-
-export interface DealerServiceContext {
-  id: Signer
-  addQueue: Queue<DealerMessageRecord>
-  dealStore: Store<DealerRecord>
-}
-
-// Service Types
-
-export interface StorefrontRecord {
-  piece: PieceLink
-  content: UnknownLink
-  insertedAt: number
-}
-
-export interface AggregatorMessageRecord {
-  piece: PieceLink
-  storefront: string
-  group: string
-  insertedAt: number
-}
-
-export interface AggregatorRecord {
-  piece: PieceLink
-  storefront: string
-  group: string
-  insertedAt: number
-}
-
-export interface DealerMessageRecord {
-  aggregate: PieceLink
-  pieces: PieceLink[]
-  storefront: string
-  label?: string
-  insertedAt: number
-}
-
-export interface DealerRecord {
-  aggregate: PieceLink
-  storefront: string
-  offer: string
-  stat: number
-  insertedAt: number
-}
-
 // Errors
 
-export type StorePutError = StoreOperationError | EncodeRecordFailed
+export type StorePutError =
+  | StoreOperationError
+  | EncodeRecordFailed
 export type StoreGetError =
   | StoreOperationError
   | EncodeRecordFailed
@@ -102,7 +52,6 @@ export type StoreGetError =
 export type QueueAddError =
   | QueueOperationError
   | EncodeRecordFailed
-  | StorePutError
 
 export interface QueueOperationError extends Error {
   name: 'QueueOperationFailed'
@@ -131,51 +80,6 @@ export interface UcantoServerContext {
 export interface ErrorReporter {
   catch: (error: HandlerExecutionError) => void
 }
-
-export type Result<T = unknown, X extends {} = {}> = Variant<{
-  ok: T
-  error: X
-}>
-
-/**
- * Utility type for defining a [keyed union] type as in IPLD Schema. In practice
- * this just works around typescript limitation that requires discriminant field
- * on all variants.
- *
- * ```ts
- * type Result<T, X> =
- *   | { ok: T }
- *   | { error: X }
- *
- * const demo = (result: Result<string, Error>) => {
- *   if (result.ok) {
- *   //  ^^^^^^^^^ Property 'ok' does not exist on type '{ error: Error; }`
- *   }
- * }
- * ```
- *
- * Using `Variant` type we can define same union type that works as expected:
- *
- * ```ts
- * type Result<T, X> = Variant<{
- *   ok: T
- *   error: X
- * }>
- *
- * const demo = (result: Result<string, Error>) => {
- *   if (result.ok) {
- *     result.ok.toUpperCase()
- *   }
- * }
- * ```
- *
- * [keyed union]:https://ipld.io/docs/schemas/features/representation-strategies/#union-keyed-representation
- */
-export type Variant<U extends Record<string, unknown>> = {
-  [Key in keyof U]: { [K in Exclude<keyof U, Key>]?: never } & {
-    [K in Key]: U[Key]
-  }
-}[keyof U]
 
 // test
 

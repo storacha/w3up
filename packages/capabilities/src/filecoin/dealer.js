@@ -32,7 +32,7 @@ export const aggregateOffer = capability({
      * CID of the DAG-CBOR encoded block with offer details.
      * Service will queue given offer to be validated and handled.
      */
-    pieces: Schema.link(),
+    pieces: Schema.link({ version: 1 }),
   }),
   derives: (claim, from) => {
     return (

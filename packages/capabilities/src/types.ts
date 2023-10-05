@@ -215,11 +215,15 @@ export type FilecoinSubmitFailure = InvalidPieceCID | Ucanto.Failure
 
 export type FilecoinAcceptSuccess = DataAggregationProof
 
-export type FilecoinAcceptFailure = InvalidContentPiece | Ucanto.Failure
+export type FilecoinAcceptFailure = InvalidContentPiece | ProofNotFound | Ucanto.Failure
 
 export interface InvalidContentPiece extends Ucanto.Failure {
   name: 'InvalidContentPiece'
   content: PieceLink
+}
+
+export interface ProofNotFound extends Ucanto.Failure {
+  name: 'ProofNotFound'
 }
 
 // filecoin aggregator
