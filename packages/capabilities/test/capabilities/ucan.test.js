@@ -3,8 +3,7 @@ import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as UCAN from '../../src/ucan.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
-import * as Ucanto from '@ucanto/interface'
-import { delegate, invoke, parseLink, API } from '@ucanto/core'
+import { delegate, parseLink, API } from '@ucanto/core'
 
 /** @type {API.UCANLink} */
 const delegation = parseLink(
