@@ -29,7 +29,7 @@ export class DelegationsStorage {
   async find(query) {
     const delegations = []
     for (const delegation of this.delegations) {
-      if ((query.audience === delegation.audience.did())) {
+      if (query.audience === delegation.audience.did()) {
         delegations.push(delegation)
       }
     }
