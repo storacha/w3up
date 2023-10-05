@@ -8,10 +8,9 @@ export interface Revocation {
 
 export interface RevocationsStorage {
   /**
-   * Given a list of delegation CIDs, return a Ucanto Result with a map from
-   * some or all of the CIDs to a list of "revocation context CIDs" for a
-   * given CID - that is, a list of delegation CIDs that should no longer
-   * be considered valid proof for the given CID.
+   * Given a list of delegation CIDs, return a Ucanto Result with
+   * any revocations in the store whose `revoke` field matches one of
+   * the given CIDs.
    */
   getAll: (
     query: Revocation['revoke'][]
