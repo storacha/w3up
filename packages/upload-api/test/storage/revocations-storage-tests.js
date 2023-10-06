@@ -8,30 +8,49 @@ import { createSampleDelegation } from '../../src/utils/ucan.js'
 export const test = {
   'can add and retrieve revocations': async (assert, context) => {
     const storage = context.revocationsStorage
-    const badRevocation = await createSampleDelegation()
-    const proofRevocation = await createSampleDelegation()
+    const badDelegation = await createSampleDelegation()
+    const scopeDelegation = await createSampleDelegation()
     const invocationCID = await randomCID()
 
-    const { ok: revoked } = await storage.getAll([proofRevocation.cid, badRevocation.cid])
+    const { ok: revoked } = await storage.getAll([scopeDelegation.cid, badDelegation.cid])
     assert.deepEqual(revoked, [])
 
-    await storage.addAll([{ revoke: badRevocation.cid, scope: proofRevocation.cid, cause: invocationCID }])
+    await storage.addAll([{
+      revoke: badDelegation.cid,
+      scope: scopeDelegation.cid,
+      cause: invocationCID
+    }])
 
     // it should return revocations that have been recorded
-    const { ok: revocationsToMeta } = await storage.getAll([badRevocation.cid])
+    const { ok: revocationsToMeta } = await storage.getAll([badDelegation.cid])
     assert.deepEqual(revocationsToMeta, [
-      { revoke: badRevocation.cid, scope: proofRevocation.cid, cause: invocationCID }
+      { revoke: badDelegation.cid, scope: scopeDelegation.cid, cause: invocationCID }
     ])
 
     // it should not return revocations that have not been recorded
-    const { ok: noRevocations } = await storage.getAll([proofRevocation.cid])
+    const { ok: noRevocations } = await storage.getAll([scopeDelegation.cid])
     assert.deepEqual(noRevocations, [])
 
     // it should return revocations that have been recorded
-    const { ok: someRevocations } = await storage.getAll([badRevocation.cid, proofRevocation.cid])
+    const { ok: someRevocations } = await storage.getAll([badDelegation.cid, scopeDelegation.cid])
     assert.deepEqual(someRevocations, [
-      { revoke: badRevocation.cid, scope: proofRevocation.cid, cause: invocationCID }
+      { revoke: badDelegation.cid, scope: scopeDelegation.cid, cause: invocationCID }
     ])
 
+    // if we revoke from and alternate scope
+    const alternateScopeDelegation = await createSampleDelegation()
+    const secondInvocationCID = await randomCID()
+    await storage.addAll([{
+      revoke: badDelegation.cid,
+      scope: alternateScopeDelegation.cid,
+      cause: secondInvocationCID
+    }])
+
+    // it should return both revocations
+    const { ok: moreRevocations } = await storage.getAll([badDelegation.cid])
+    assert.deepEqual(moreRevocations, [
+      { revoke: badDelegation.cid, scope: scopeDelegation.cid, cause: invocationCID },
+      { revoke: badDelegation.cid, scope: alternateScopeDelegation.cid, cause: secondInvocationCID }
+    ])
   }
 }
