@@ -3,7 +3,7 @@
 
 ## About
 
-The `@web3-storage/upload-client` package provides an implementation of the w3up
+The `@web3-storage/upload-api` package provides an implementation of the w3up
 UCAN invocation service. It provides a set of storage interfaces that can
 be implemented to run w3up on top of arbitrary data stores.
 
