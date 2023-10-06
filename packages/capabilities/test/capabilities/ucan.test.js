@@ -4,6 +4,7 @@ import { Verifier } from '@ucanto/principal/ed25519'
 import * as UCAN from '../../src/ucan.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
 import { delegate, parseLink, API } from '@ucanto/core'
+import { validateAuthorization } from '../helpers/utils.js'
 
 /** @type {API.UCANLink} */
 const delegation = parseLink(
@@ -26,6 +27,7 @@ describe('ucan/* capabilities', () => {
         capability: UCAN.revoke,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.ok)
@@ -52,6 +54,7 @@ describe('ucan/* capabilities', () => {
         capability: UCAN.revoke,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.ok)
@@ -89,6 +92,7 @@ describe('ucan/* capabilities', () => {
         capability: UCAN.revoke,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.error)
@@ -115,6 +119,7 @@ describe('ucan/* capabilities', () => {
         capability: UCAN.revoke,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.ok)
@@ -141,6 +146,7 @@ describe('ucan/* capabilities', () => {
         capability: UCAN.revoke,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.error)
@@ -170,6 +176,7 @@ describe('ucan/* capabilities', () => {
         capability: UCAN.revoke,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.error)
