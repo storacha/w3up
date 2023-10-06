@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.8.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.7.0...upload-api-v5.8.0) (2023-10-06)
+
+
+### Features
+
+* Add basic README to upload-api ([#949](https://github.com/web3-storage/w3up/issues/949)) ([d09db73](https://github.com/web3-storage/w3up/commit/d09db734da5eec55d5a21106fecc07bddd5f14dc))
+
 ## [5.7.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.6.0...upload-api-v5.7.0) (2023-10-05)
 
 
