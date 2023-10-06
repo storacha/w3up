@@ -5,6 +5,7 @@ import type {
   CapabilityParser,
   ParsedCapability,
   InferInvokedCapability,
+  RevocationChecker,
   Match,
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
@@ -122,7 +123,7 @@ export interface EncodeRecordFailed extends Error {
 
 // Service utils
 
-export interface UcantoServerContext {
+export interface UcantoServerContext extends RevocationChecker {
   id: Signer
   codec?: InboundCodec
   errorReporter: ErrorReporter

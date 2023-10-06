@@ -6,6 +6,7 @@ import * as AccessCapabilities from '@web3-storage/capabilities/access'
 import { AgentData } from '@web3-storage/access/agent'
 import { mockService, mockServiceConf } from '../helpers/mocks.js'
 import { Client } from '../../src/client.js'
+import { validateAuthorization } from '../helpers/utils.js'
 
 describe('AccessClient', () => {
   describe('claim', () => {
@@ -30,6 +31,7 @@ describe('AccessClient', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {

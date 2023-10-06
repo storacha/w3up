@@ -11,6 +11,7 @@ import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import { OperationFailed, OperationErrorName } from './helpers/errors.js'
 import { serviceProvider as storefrontService } from './fixtures.js'
+import { validateAuthorization } from './helpers/utils.js'
 
 describe('filecoin/add', () => {
   it('agent queues a filecoin piece for storefront to handle', async () => {
@@ -204,6 +205,7 @@ function getConnection(service) {
     id: storefrontService,
     service,
     codec: CAR.inbound,
+    validateAuthorization,
   })
   const connection = Client.connect({
     id: storefrontService,

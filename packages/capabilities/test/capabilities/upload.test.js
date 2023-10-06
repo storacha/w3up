@@ -9,7 +9,12 @@ import {
   service as w3,
   mallory as account,
 } from '../helpers/fixtures.js'
-import { createCarCid, parseCarLink, createCborCid } from '../helpers/utils.js'
+import {
+  createCarCid,
+  parseCarLink,
+  createCborCid,
+  validateAuthorization,
+} from '../helpers/utils.js'
 
 describe('upload capabilities', function () {
   // delegation from account to agent
@@ -48,6 +53,7 @@ describe('upload capabilities', function () {
       capability: Upload.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -84,6 +90,7 @@ describe('upload capabilities', function () {
       capability: Upload.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -162,6 +169,7 @@ describe('upload capabilities', function () {
       capability: Upload.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -245,6 +253,7 @@ describe('upload capabilities', function () {
       capability: Upload.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -286,6 +295,7 @@ describe('upload capabilities', function () {
       capability: Upload.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     assert.ok(result.error)
@@ -322,6 +332,7 @@ describe('upload capabilities', function () {
       capability: Upload.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     assert.ok(result.error)
@@ -345,6 +356,7 @@ describe('upload capabilities', function () {
       capability: Upload.list,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -376,6 +388,7 @@ describe('upload capabilities', function () {
       capability: Upload.list,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -408,6 +421,7 @@ describe('upload capabilities', function () {
       capability: Upload.list,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -473,6 +487,7 @@ describe('upload capabilities', function () {
       capability: Upload.remove,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -508,6 +523,7 @@ describe('upload capabilities', function () {
       capability: Upload.remove,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -546,6 +562,7 @@ describe('upload capabilities', function () {
       capability: Upload.remove,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -629,6 +646,7 @@ describe('upload capabilities', function () {
       capability: Upload.remove,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     assert.ok(result.error)

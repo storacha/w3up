@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.4.1](https://github.com/web3-storage/w3up/compare/upload-client-v9.4.0...upload-client-v9.4.1) (2023-10-06)
+
+
+### Bug Fixes
+
+* a couple URLs in the README ([#947](https://github.com/web3-storage/w3up/issues/947)) ([c948321](https://github.com/web3-storage/w3up/commit/c94832107ba46ad1811348645b73704d609e7055))
+
 ## [9.4.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.3.0...upload-client-v9.4.0) (2023-09-20)
 
 

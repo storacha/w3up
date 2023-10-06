@@ -7,6 +7,7 @@ import { DudewhereBucket } from '../storage/dude-where-bucket.js'
 import { ProvisionsStorage } from '../storage/provisions-storage.js'
 import { DelegationsStorage } from '../storage/delegations-storage.js'
 import { RateLimitsStorage } from '../storage/rate-limits-storage.js'
+import { RevocationsStorage } from '../storage/revocations-storage.js'
 import * as Email from '../../src/utils/email.js'
 import { createServer, connect } from '../../src/lib.js'
 import * as Types from '../../src/types.js'
@@ -34,11 +35,13 @@ export const createContext = async (options = {}) => {
     provisionsStorage: new ProvisionsStorage(options.providers),
     delegationsStorage: new DelegationsStorage(),
     rateLimitsStorage: new RateLimitsStorage(),
+    revocationsStorage: new RevocationsStorage(),
     errorReporter: {
       catch(error) {
         assert.fail(error)
       },
     },
+    validateAuthorization: () => ({ ok: {} }),
     maxUploadSize: 5_000_000_000,
     storeTable,
     uploadTable,
