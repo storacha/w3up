@@ -37,6 +37,7 @@ export async function authorize(encodedUcan, env) {
     const confirmResult = await confirm(request, {
       id: env.signer,
       principal: Verifier,
+      validateAuthorization: () => ({ ok: {} }),
     })
 
     if (!confirmResult.ok) {

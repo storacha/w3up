@@ -13,6 +13,7 @@ import type {
   Match,
   ParsedCapability,
   InferInvokedCapability,
+  RevocationChecker,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
@@ -276,7 +277,7 @@ export interface ServiceContext
     RateLimitServiceContext,
     UploadServiceContext {}
 
-export interface UcantoServerContext extends ServiceContext {
+export interface UcantoServerContext extends ServiceContext, RevocationChecker {
   id: Signer
   codec?: InboundCodec
   errorReporter: ErrorReporter

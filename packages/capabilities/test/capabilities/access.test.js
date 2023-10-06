@@ -3,6 +3,7 @@ import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Access from '../../src/access.js'
 import { alice, bob, service, mallory } from '../helpers/fixtures.js'
+import { validateAuthorization } from '../helpers/utils.js'
 import * as Ucanto from '@ucanto/interface'
 import { delegate, invoke, parseLink } from '@ucanto/core'
 
@@ -24,6 +25,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
       if (result.error) {
         assert.fail('error in self issue')
@@ -64,6 +66,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -102,6 +105,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -140,6 +144,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -181,6 +186,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -216,6 +222,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.equal(result.error, undefined, 'should be authorized')
@@ -247,6 +254,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.equal(result.error, undefined, 'should be authorized')
@@ -278,6 +286,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -311,6 +320,7 @@ describe('access capabilities', function () {
         capability: Access.authorize,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -354,6 +364,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
       if (result.error) {
         assert.fail('error in self issue')
@@ -396,6 +407,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -436,6 +448,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -476,6 +489,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -519,6 +533,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -555,6 +570,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.equal(result.error, undefined, 'should be authorized')
@@ -587,6 +603,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.equal(result.error, undefined, 'should be authorized')
@@ -619,6 +636,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -653,6 +671,7 @@ describe('access capabilities', function () {
         capability: Access.confirm,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -704,6 +723,7 @@ describe('access capabilities', function () {
           capability: Access.claim,
           principal: Verifier,
           authority: audience,
+          validateAuthorization,
         })
 
         assert.ok(result.ok, 'result of access(invocation) is not an error')
@@ -749,6 +769,7 @@ describe('access capabilities', function () {
           capability: Access.claim,
           principal: Verifier,
           authority: service,
+          validateAuthorization,
         })
         assert.ok(result.ok, 'result of access(invocation) is not an error')
       }
@@ -812,6 +833,7 @@ describe('access capabilities', function () {
         capability: Access.claim,
         principal: Verifier,
         authority: audience,
+        validateAuthorization,
       })
       assert.ok(result.error, 'result of access(invocation) is an error')
       assert.deepEqual(result.error.name, 'Unauthorized')
@@ -840,6 +862,7 @@ describe('access/delegate', () => {
       capability: Access.delegate,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     assert.ok(accessResult.ok, 'result of access(invocation) is not an error')
   })
@@ -872,6 +895,7 @@ describe('access/delegate', () => {
         capability: Access.delegate,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
       assert.ok(accessResult.ok, 'result of access(invocation) is not an error')
     })
@@ -913,6 +937,7 @@ describe('access/delegate', () => {
         capability: Access.delegate,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
       assert.ok(accessResult.ok, 'result of access(invocation) is not an error')
     })
@@ -959,6 +984,7 @@ describe('access/delegate', () => {
       capability: Access.delegate,
       principal: Verifier,
       authority: audience,
+      validateAuthorization,
     })
     assert.ok(result.error, 'result of access(invocation) is an error')
     assert.deepEqual(result.error.failedProofs.length, 1)
@@ -993,6 +1019,7 @@ describe('access/delegate', () => {
       capability: Access.delegate,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     assert.ok(result.error, 'result is error')
     assert.ok(

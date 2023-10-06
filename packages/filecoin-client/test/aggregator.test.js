@@ -10,6 +10,7 @@ import { aggregateQueue, aggregateAdd } from '../src/aggregator.js'
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import { OperationFailed, OperationErrorName } from './helpers/errors.js'
+import { validateAuthorization } from './helpers/utils.js'
 import { serviceProvider as aggregatorService } from './fixtures.js'
 
 describe('aggregate/add', () => {
@@ -223,6 +224,7 @@ function getConnection(service) {
     id: aggregatorService,
     service,
     codec: CAR.inbound,
+    validateAuthorization,
   })
   const connection = Client.connect({
     id: aggregatorService,

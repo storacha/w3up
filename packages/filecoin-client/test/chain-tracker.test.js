@@ -9,6 +9,7 @@ import { chainInfo } from '../src/chain-tracker.js'
 
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
+import { validateAuthorization } from './helpers/utils.js'
 import { serviceProvider as chainService } from './fixtures.js'
 
 describe('chain.info', () => {
@@ -78,6 +79,7 @@ function getConnection(service) {
     id: chainService,
     service,
     codec: CAR.inbound,
+    validateAuthorization,
   })
   const connection = Client.connect({
     id: chainService,

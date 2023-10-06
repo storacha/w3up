@@ -26,6 +26,7 @@ export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
     codec,
     service: createService(context),
     catch: (error) => context.errorReporter.catch(error),
+    validateAuthorization: (auth) => context.validateAuthorization(auth),
   })
 
 /**
