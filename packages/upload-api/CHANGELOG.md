@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.7.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.6.0...upload-api-v5.7.0) (2023-10-05)
+
+
+### Features
+
+* add `RevocationsStorage` ([#941](https://github.com/web3-storage/w3up/issues/941)) ([0069701](https://github.com/web3-storage/w3up/commit/0069701c76eff9ce0ac229658d217dac42d9adc8))
+
 ## [5.6.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.5.0...upload-api-v5.6.0) (2023-09-18)
 
 
