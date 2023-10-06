@@ -276,8 +276,8 @@ export const test = {
 
     assert.deepEqual(
       // @ts-expect-error - it could be a link but we know it's delegation
-      authorization.proofs[0].cid,
-      delegation.cid,
+      authorization.proofs[0].cid.toString(),
+      delegation.cid.toString(),
       'delegation to an account is included'
     )
 
