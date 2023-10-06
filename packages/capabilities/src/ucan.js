@@ -39,9 +39,9 @@ export const revoke = capability({
      * principal matching `with` field or depend on the delegation issued by
      * the principal matching `with` field.
      *
-     * Alternatively `with` field MAY match the `audience` of the this UCAN,
+     * Alternatively `with` field MAY match the `audience` of the UCAN been revoked,
      * which would imply that that delegate is revoking capabilities delegated
-     * to it. This allows delegate to proof that it is unable to invoke
+     * to it. This allows delegate to prove that it is unable to invoke
      * delegated capabilities.
      */
     delegation: UCANLink,
