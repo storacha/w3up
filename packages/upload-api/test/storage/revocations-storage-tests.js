@@ -37,7 +37,7 @@ export const test = {
       { revoke: badDelegation.cid, scope: scopeDelegation.cid, cause: invocationCID }
     ])
 
-    // if we revoke from and alternate scope
+    // if we revoke from an alternate scope
     const alternateScopeDelegation = await createSampleDelegation()
     const secondInvocationCID = await randomCID()
     await storage.addAll([{
