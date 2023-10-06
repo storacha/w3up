@@ -9,6 +9,7 @@ import * as Store from '../src/store.js'
 import { serviceSigner } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
+import { validateAuthorization } from './helpers/utils.js'
 
 describe('Store.add', () => {
   it('stores a DAG with the service', async () => {
@@ -52,6 +53,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -113,6 +115,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -165,6 +168,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -215,6 +219,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -261,6 +266,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -319,6 +325,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -380,6 +387,7 @@ describe('Store.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -457,6 +465,7 @@ describe('Store.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -518,6 +527,7 @@ describe('Store.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -570,6 +580,7 @@ describe('Store.remove', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -613,6 +624,7 @@ describe('Store.remove', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,

@@ -5,6 +5,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 
 import { Store } from './context/store.js'
 import { Queue } from './context/queue.js'
+import { validateAuthorization } from './helpers/utils.js'
 
 describe('deal/*', () => {
   for (const [name, test] of Object.entries(Broker.test)) {
@@ -50,6 +51,7 @@ describe('deal/*', () => {
           addQueue,
           dealStore,
           queuedMessages,
+          validateAuthorization,
         }
       )
     })

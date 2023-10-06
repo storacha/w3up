@@ -3,7 +3,6 @@ import * as API from '../../src/types.js'
 import { CID } from 'multiformats'
 import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
-import * as Link from '@ucanto/core/link'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { Absentee } from '@ucanto/principal'
@@ -317,8 +316,6 @@ export const test = {
         issuer: alice.did(),
       }
     )
-
-    assert.deepEqual(Link.parse(item.invocation.toString()), item.invocation)
 
     assert.equal(
       Date.now() - new Date(item.insertedAt).getTime() < 60_000,

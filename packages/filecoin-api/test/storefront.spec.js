@@ -6,6 +6,7 @@ import * as Storefront from './services/storefront.js'
 
 import { Store } from './context/store.js'
 import { Queue } from './context/queue.js'
+import { validateAuthorization } from './helpers/utils.js'
 
 describe('filecoin/*', () => {
   for (const [name, test] of Object.entries(Storefront.test)) {
@@ -49,6 +50,7 @@ describe('filecoin/*', () => {
           addQueue,
           pieceStore,
           queuedMessages,
+          validateAuthorization,
         }
       )
     })

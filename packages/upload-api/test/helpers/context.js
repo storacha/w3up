@@ -41,6 +41,7 @@ export const createContext = async (options = {}) => {
         assert.fail(error)
       },
     },
+    validateAuthorization: () => ({ ok: {} }),
     maxUploadSize: 5_000_000_000,
     storeTable,
     uploadTable,

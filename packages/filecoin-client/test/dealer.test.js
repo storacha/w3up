@@ -9,6 +9,7 @@ import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 import { dealQueue, dealAdd } from '../src/dealer.js'
 
 import { randomAggregate } from './helpers/random.js'
+import { validateAuthorization } from './helpers/utils.js'
 import { mockService } from './helpers/mocks.js'
 import { OperationFailed, OperationErrorName } from './helpers/errors.js'
 import { serviceProvider as dealerService } from './fixtures.js'
@@ -240,6 +241,7 @@ function getConnection(service) {
     id: dealerService,
     service,
     codec: CAR.inbound,
+    validateAuthorization,
   })
   const connection = Client.connect({
     id: dealerService,
