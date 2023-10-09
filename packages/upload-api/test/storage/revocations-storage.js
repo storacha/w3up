@@ -17,22 +17,36 @@ export class RevocationsStorage {
   }
 
   /**
-   * 
-   * @param {Types.Link[]} delegationCids 
-   * @returns 
+   *
+   * @param {Types.Link[]} delegationCids
+   * @returns
    */
   async getAll(delegationCids) {
-    const revoked = new Set(delegationCids.map(c => c.toString()))
-    return { ok: this.revocations.filter(r => revoked.has(r.revoke.toString())) }
+    const revoked = new Set(delegationCids.map((c) => c.toString()))
+    return {
+      ok: this.revocations.filter((r) => revoked.has(r.revoke.toString())),
+    }
   }
 
   /**
-   * 
-   * @param {Types.Revocation[]} revocations
-   * @returns 
+   *
+   * @param {Types.Revocation} revocation
    */
-  async addAll(revocations) {
-    this.revocations = this.revocations.concat(revocations)
+  async add(revocation) {
+    this.revocations = [...this.revocations, revocation]
+    return { ok: {} }
+  }
+  /**
+   * @param {Types.Revocation} revocation
+   */
+  async reset(revocation) {
+    this.revocations = [
+      ...this.revocations.filter(
+        (r) => r.revoke.toString() !== revocation.revoke.toString()
+      ),
+      revocation,
+    ]
+
     return { ok: {} }
   }
 }

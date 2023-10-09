@@ -3,10 +3,10 @@ import { revoke } from '@web3-storage/capabilities/ucan'
 import * as API from '../types.js'
 
 /**
- * @param {API.UploadServiceContext} context
+ * @param {API.RevocationServiceContext} context
  * @returns {API.ServiceMethod<API.UCANRevoke, API.Unit, API.UCANRevokeFailure>}
  */
-export const ucanRevokeProvider = (context) =>
+export const ucanRevokeProvider = ({ revocationsStorage }) =>
   provide(revoke, async ({ capability, invocation }) => {
     // First attempt to resolve linked UCANS to ensure that proof chain
     // has been provided.
@@ -14,18 +14,30 @@ export const ucanRevokeProvider = (context) =>
     if (result.error) {
       return result
     }
-    const { ucan, proof, principal } = result.ok
+    const { ucan, principal } = result.ok
 
     // If the principal is issuer or audience of the UCAN been revoked then
     // we can store it as a sole revocation as it will always apply.
     if (isParticipant(ucan, principal)) {
-      return { ok: {} }
+      const result = await revocationsStorage.reset({
+        revoke: ucan.cid,
+        scope: principal,
+        cause: invocation.cid,
+      })
+
+      return result
     }
     // Otherwise we could verify that the principal authorizing revocation
     // is a participant in the proof chain, however we do not do that here
     // since such revocations are not going to apply.
     else {
-      return { ok: {} }
+      const result = await revocationsStorage.add({
+        revoke: ucan.cid,
+        scope: principal,
+        cause: invocation.cid,
+      })
+
+      return result
     }
   })
 
