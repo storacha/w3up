@@ -13,11 +13,12 @@ export const test = {
     const proofRevocation = await createSampleDelegation()
     const invocationCID = await randomCID()
 
-    const { ok: revoked } = await storage.getAll([
-      proofRevocation.cid,
-      badRevocation.cid,
-    ])
-    assert.deepEqual(revoked, [])
+    const notFound = await storage.query({
+      [proofRevocation.cid.toString()]: {},
+      [badRevocation.cid.toString()]: {},
+    })
+
+    assert.deepEqual(notFound, { ok: {} })
 
     await storage.add({
       revoke: badRevocation.cid,
@@ -26,31 +27,42 @@ export const test = {
     })
 
     // it should return revocations that have been recorded
-    const { ok: revocationsToMeta } = await storage.getAll([badRevocation.cid])
-    assert.deepEqual(revocationsToMeta, [
-      {
-        revoke: badRevocation.cid,
-        scope: badRevocation.issuer.did(),
-        cause: invocationCID,
+    const exactMatch = await storage.query({
+      [badRevocation.cid.toString()]: {},
+    })
+
+    assert.deepEqual(exactMatch, {
+      ok: {
+        [badRevocation.cid.toString()]: {
+          [badRevocation.issuer.did()]: {
+            cause: invocationCID,
+          },
+        },
       },
-    ])
+    })
 
     // it should not return revocations that have not been recorded
-    const { ok: noRevocations } = await storage.getAll([proofRevocation.cid])
-    assert.deepEqual(noRevocations, [])
+    const nomatch = await storage.query({
+      [proofRevocation.cid.toString()]: {},
+    })
+
+    assert.deepEqual(nomatch, { ok: {} })
 
     // it should return revocations that have been recorded
-    const { ok: someRevocations } = await storage.getAll([
-      badRevocation.cid,
-      proofRevocation.cid,
-    ])
-    assert.deepEqual(someRevocations, [
-      {
-        revoke: badRevocation.cid,
-        scope: badRevocation.issuer.did(),
-        cause: invocationCID,
+    const partialMatch = await storage.query({
+      [badRevocation.cid.toString()]: {},
+      [proofRevocation.cid.toString()]: {},
+    })
+
+    assert.deepEqual(partialMatch, {
+      ok: {
+        [badRevocation.cid.toString()]: {
+          [badRevocation.issuer.did()]: {
+            cause: invocationCID,
+          },
+        },
       },
-    ])
+    })
   },
 
   'can reset revocations': async (assert, context) => {
@@ -69,19 +81,17 @@ export const test = {
       scope: bob.did(),
     })
 
-    assert.deepEqual(await storage.getAll([revoke]), {
-      ok: [
-        {
-          revoke,
-          cause,
-          scope: alice.did(),
+    assert.deepEqual(await storage.query({ [revoke.toString()]: {} }), {
+      ok: {
+        [revoke.toString()]: {
+          [alice.did()]: {
+            cause,
+          },
+          [bob.did()]: {
+            cause,
+          },
         },
-        {
-          revoke,
-          cause,
-          scope: bob.did(),
-        },
-      ],
+      },
     })
 
     await storage.reset({
@@ -90,14 +100,14 @@ export const test = {
       scope: mallory.did(),
     })
 
-    assert.deepEqual(await storage.getAll([revoke]), {
-      ok: [
-        {
-          revoke,
-          cause,
-          scope: mallory.did(),
+    assert.deepEqual(await storage.query({ [revoke.toString()]: {} }), {
+      ok: {
+        [revoke.toString()]: {
+          [mallory.did()]: {
+            cause,
+          },
         },
-      ],
+      },
     })
   },
 }

@@ -6,7 +6,7 @@ import * as Types from '../../src/types.js'
 export class RevocationsStorage {
   constructor() {
     /**
-     * @type {Array<Types.Delegation<Types.Tuple<any>>>}
+     * @type {Array<Types.Delegation>}
      */
     this.delegations = []
 
@@ -18,14 +18,23 @@ export class RevocationsStorage {
 
   /**
    *
-   * @param {Types.Link[]} delegationCids
-   * @returns
+   * @param {Types.RevocationQuery} ucans
    */
-  async getAll(delegationCids) {
-    const revoked = new Set(delegationCids.map((c) => c.toString()))
-    return {
-      ok: this.revocations.filter((r) => revoked.has(r.revoke.toString())),
+  async query(ucans) {
+    const { revocations } = this
+    /** @type {Types.MatchingRevocations} */
+    const matches = {}
+    for (const { revoke, scope, ...output } of revocations) {
+      const key = /** @type {Types.ToString<Types.UCANLink>} */ (`${revoke}`)
+
+      if (ucans[key]) {
+        const match = matches[key] || {}
+        match[scope] = output
+        matches[key] = match
+      }
     }
+
+    return { ok: matches }
   }
 
   /**
@@ -36,6 +45,7 @@ export class RevocationsStorage {
     this.revocations = [...this.revocations, revocation]
     return { ok: {} }
   }
+
   /**
    * @param {Types.Revocation} revocation
    */

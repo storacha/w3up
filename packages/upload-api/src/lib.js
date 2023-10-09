@@ -1,4 +1,5 @@
 import * as Server from '@ucanto/server'
+import { Revoked } from '@ucanto/validator'
 import * as Client from '@ucanto/client'
 import * as Types from './types.js'
 import * as Legacy from '@ucanto/transport/legacy'
@@ -19,7 +20,7 @@ import { createService as createUcanService } from './ucan.js'
 export * from './types.js'
 
 /**
- * @param {Types.UcantoServerContext} options
+ * @param {Omit<Types.UcantoServerContext, 'validateAuthorization'>} options
  */
 export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
   Server.create({
@@ -27,8 +28,82 @@ export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
     codec,
     service: createService(context),
     catch: (error) => context.errorReporter.catch(error),
-    validateAuthorization: (auth) => context.validateAuthorization(auth),
+    validateAuthorization: createRevocationChecker(context),
   })
+
+/**
+ *
+ * @param {Types.RevocationServiceContext} context
+ * @returns {Types.UcantoServerContext['validateAuthorization']}
+ */
+export const createRevocationChecker =
+  ({ revocationsStorage }) =>
+  async (auth) => {
+    // Compute map of UCANs to principals with revocation authority.
+    const authority = toRevocationAuthority(auth)
+    // Fetch all the revocations for all the UCANs in the authorization chain.
+    const result = await revocationsStorage.query(authority)
+
+    // If query failed we also fail the verification. TODO: Define other error
+    // types because here we do not know if ucan had been revoked or not.
+    if (result.error) {
+      return { error: new Revoked(auth.delegation) }
+    }
+
+    // Now we go through each revocation and check if revocation issuer has
+    // an authority to revoke the UCAN. If so we fail, otherwise we continue.
+    for (const [revoke, scope = {}] of Object.entries(result.ok)) {
+      for (const principal of Object.keys(scope)) {
+        const ucan = (authority[revoke] || {})[
+          /** @type {Types.DID} */ (principal)
+        ]
+        if (ucan) {
+          return { error: new Revoked(ucan) }
+        }
+      }
+    }
+
+    // If no relevant revocation had been found we succeed the verification.
+    return { ok: {} }
+  }
+
+/**
+ * Takes an authorization chain and computes mapping between delegation (CID)
+ * and principals with revocation authority.
+ *
+ * @param {Types.Authorization} authorization
+ * @param {Record<Types.DID, true>} [scope]
+ * @param {Record<string, Record<Types.DID, Types.Delegation>>} [authority]
+ * @returns {Record<string, Record<Types.DID, Types.Delegation>>}
+ */
+
+const toRevocationAuthority = (
+  { delegation, proofs },
+  // These arguments are used for recursion and are not meant to be provided
+  // by the outside caller.
+  scope = {},
+  authority = {}
+) => {
+  // Add delegation issuer and audience as principals with revocation authority.
+  const delegationScope = {
+    ...scope,
+    [delegation.issuer.did()]: delegation,
+    [delegation.audience.did()]: delegation,
+  }
+
+  // Map delegation to corresponding revocations authorities. Given that we can
+  // not see the same delegation twice in the same delegation chain we not need
+  // to worry about overwriting same entry.
+  authority[delegation.cid.toString()] = delegationScope
+
+  // Recursively compute revocation authorities for each proof and incorporate
+  // them into the final result.
+  for (const proof of proofs) {
+    Object.assign(authority, toRevocationAuthority(proof, delegationScope))
+  }
+
+  return authority
+}
 
 /**
  * @param {Types.ServiceContext} context
