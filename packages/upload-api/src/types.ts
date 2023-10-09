@@ -100,6 +100,8 @@ import {
   ProviderAddFailure,
   SpaceInfo,
   ProviderDID,
+  UCANRevoke,
+  UCANRevokeFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations'
@@ -112,10 +114,7 @@ export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
 } from './types/delegations'
-export type {
-  Revocation,
-  RevocationsStorage, 
-} from './types/revocations'
+export type { Revocation, RevocationsStorage } from './types/revocations'
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
 export interface Service {
@@ -182,6 +181,11 @@ export interface Service {
       RateLimitListFailure
     >
   }
+
+  ucan: {
+    revoke: ServiceMethod<UCANRevoke, Unit, UCANRevokeFailure>
+  }
+
   admin: {
     store: {
       inspect: ServiceMethod<
