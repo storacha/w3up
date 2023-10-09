@@ -101,7 +101,6 @@ import {
   SpaceInfo,
   ProviderDID,
   UCANRevoke,
-  UCANRevokeFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations'
@@ -183,7 +182,7 @@ export interface Service {
   }
 
   ucan: {
-    revoke: ServiceMethod<UCANRevoke, Unit, UCANRevokeFailure>
+    revoke: ServiceMethod<UCANRevoke, Unit, Failure>
   }
 
   admin: {
@@ -218,7 +217,8 @@ export type StoreServiceContext = SpaceServiceContext & {
 }
 
 export type UploadServiceContext = ConsumerServiceContext &
-  SpaceServiceContext & {
+  SpaceServiceContext &
+  RevocationServiceContext & {
     signer: EdSigner.Signer
     uploadTable: UploadTable
     dudewhereBucket: DudewhereBucket

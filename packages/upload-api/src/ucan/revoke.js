@@ -4,61 +4,38 @@ import * as API from '../types.js'
 
 /**
  * @param {API.RevocationServiceContext} context
- * @returns {API.ServiceMethod<API.UCANRevoke, API.Unit, API.UCANRevokeFailure>}
+ * @returns {API.ServiceMethod<API.UCANRevoke, API.Unit, API.Failure>}
  */
 export const ucanRevokeProvider = ({ revocationsStorage }) =>
   provide(revoke, async ({ capability, invocation }) => {
     // First attempt to resolve linked UCANS to ensure that proof chain
     // has been provided.
-    const result = resolve({ capability, blocks: invocation.blocks })
-    if (result.error) {
-      return result
+    const resolveResult = resolve({ capability, blocks: invocation.blocks })
+    if (resolveResult.error) {
+      return resolveResult
     }
-    const { ucan, principal } = result.ok
+    const { ucan, principal } = resolveResult.ok
 
-    // If the principal is issuer or audience of the UCAN been revoked then
-    // we can store it as a sole revocation as it will always apply.
-    if (isParticipant(ucan, principal)) {
-      const result = await revocationsStorage.reset({
-        revoke: ucan.cid,
-        scope: principal,
-        cause: invocation.cid,
-      })
+    const result =
+      // If the principal is issuer or audience of the UCAN been revoked then
+      // we can store it as a sole revocation as it will always apply.
+      isParticipant(ucan, principal)
+        ? await revocationsStorage.reset({
+            revoke: ucan.cid,
+            scope: principal,
+            cause: invocation.cid,
+          })
+        : // Otherwise we could verify that the principal authorizing revocation
+          // is a participant in the proof chain, however we do not do that here
+          // since such revocations are not going to apply.
+          await revocationsStorage.add({
+            revoke: ucan.cid,
+            scope: principal,
+            cause: invocation.cid,
+          })
 
-      return result
-    }
-    // Otherwise we could verify that the principal authorizing revocation
-    // is a participant in the proof chain, however we do not do that here
-    // since such revocations are not going to apply.
-    else {
-      const result = await revocationsStorage.add({
-        revoke: ucan.cid,
-        scope: principal,
-        cause: invocation.cid,
-      })
-
-      return result
-    }
+    return result
   })
-
-/**
- *
- * @param {API.DID} principal
- * @param {API.Delegation} scope
- * @returns {API.Result<API.Unit, API.UnauthorizedRevocation>}
- */
-const validatePrincipal = (principal, scope) => {
-  if (principal !== scope.issuer.did() && principal !== scope.audience.did()) {
-    return {
-      error: new UnauthorizedRevocation({
-        scope,
-        principal,
-      }),
-    }
-  } else {
-    return { ok: {} }
-  }
-}
 
 /**
  * @param {API.Delegation} ucan
@@ -125,42 +102,6 @@ class UCANNotFound extends Failure {
       message: this.message,
       stack: this.stack,
       ucan: { '/': this.ucan.toString() },
-    }
-  }
-}
-
-class UnauthorizedRevocation extends Failure {
-  /**
-   * @param {object} input
-   *
-   * @param {API.DID} input.principal
-   * @param {API.Delegation} input.scope
-   */
-  constructor({ principal, scope }) {
-    super()
-    this.principal = principal
-    this.scope = scope
-  }
-  get name() {
-    return /** @type {const} */ ('UnauthorizedRevocation')
-  }
-  describe() {
-    return `The principal ${this.principal} is not authorized to revoke in the scope ${this.scope.cid} where it is neither issuer ${this.issuer} nor audience ${this.audience}.`
-  }
-  get issuer() {
-    return this.scope.issuer.did()
-  }
-  get audience() {
-    return this.scope.audience.did()
-  }
-  toJSON() {
-    return {
-      name: this.name,
-      message: this.message,
-      stack: this.stack,
-      issuer: this.issuer,
-      audience: this.audience,
-      scope: { '/': this.scope.cid.toString() },
     }
   }
 }

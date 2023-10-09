@@ -16,7 +16,6 @@ import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
-import exp from 'constants'
 
 export type { Unit, PieceLink }
 
