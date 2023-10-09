@@ -103,11 +103,7 @@ import {
   UCANRevoke,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
-import {
-  RevocationsStorage,
-  RevocationQuery,
-  MatchingRevocations,
-} from './types/revocations'
+import { RevocationsStorage } from './types/revocations'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
