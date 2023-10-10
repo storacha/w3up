@@ -19,7 +19,7 @@ describe('ucan/* capabilities', () => {
         audience: service,
         with: alice.did(),
         nb: {
-          delegation,
+          ucan: delegation,
         },
       })
 
@@ -39,7 +39,7 @@ describe('ucan/* capabilities', () => {
         audience: service,
         with: alice.did(),
         nb: {
-          delegation,
+          ucan: delegation,
         },
         proofs: [
           await UCAN.revoke.delegate({
@@ -77,7 +77,7 @@ describe('ucan/* capabilities', () => {
         audience: service,
         with: alice.did(),
         nb: {
-          delegation: proof.cid,
+          ucan: proof.cid,
         },
         proofs: [
           await UCAN.revoke.delegate({
@@ -104,7 +104,7 @@ describe('ucan/* capabilities', () => {
         audience: service,
         with: alice.did(),
         nb: {
-          delegation,
+          ucan: delegation,
         },
         proofs: [
           await UCAN.ucan.delegate({
@@ -131,7 +131,7 @@ describe('ucan/* capabilities', () => {
         audience: service,
         with: mallory.did(),
         nb: {
-          delegation,
+          ucan: delegation,
         },
         proofs: [
           await UCAN.ucan.delegate({
@@ -158,7 +158,7 @@ describe('ucan/* capabilities', () => {
         audience: service,
         with: alice.did(),
         nb: {
-          delegation,
+          ucan: delegation,
         },
         proofs: [
           await UCAN.revoke.delegate({
@@ -166,7 +166,7 @@ describe('ucan/* capabilities', () => {
             with: alice.did(),
             audience: bob,
             nb: {
-              delegation: parseLink('bafkqaaa'),
+              ucan: parseLink('bafkqaaa'),
             },
           }),
         ],

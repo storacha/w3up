@@ -28,6 +28,13 @@ export type ValidationEmailSend = {
   url: string
 }
 
+export interface Timestamp {
+  /**
+   * Unix timestamp in seconds.
+   */
+  time: number
+}
+
 export type SpaceDID = DIDKey
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
@@ -100,6 +107,7 @@ import {
   ProviderAddFailure,
   SpaceInfo,
   ProviderDID,
+  UCANRevoke,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations'
@@ -114,7 +122,9 @@ export type {
 } from './types/delegations'
 export type {
   Revocation,
-  RevocationsStorage, 
+  RevocationQuery,
+  MatchingRevocations,
+  RevocationsStorage,
 } from './types/revocations'
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
@@ -182,6 +192,11 @@ export interface Service {
       RateLimitListFailure
     >
   }
+
+  ucan: {
+    revoke: ServiceMethod<UCANRevoke, Timestamp, Failure>
+  }
+
   admin: {
     store: {
       inspect: ServiceMethod<
@@ -214,7 +229,8 @@ export type StoreServiceContext = SpaceServiceContext & {
 }
 
 export type UploadServiceContext = ConsumerServiceContext &
-  SpaceServiceContext & {
+  SpaceServiceContext &
+  RevocationServiceContext & {
     signer: EdSigner.Signer
     uploadTable: UploadTable
     dudewhereBucket: DudewhereBucket
