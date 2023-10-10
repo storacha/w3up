@@ -34,7 +34,7 @@ export const ucanRevokeProvider = ({ revocationsStorage }) =>
             cause: invocation.cid,
           })
 
-    return result
+    return result.error ? result : { ok: { time: Date.now() } }
   })
 
 /**

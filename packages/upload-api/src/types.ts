@@ -28,6 +28,13 @@ export type ValidationEmailSend = {
   url: string
 }
 
+export interface Timestamp {
+  /**
+   * Unix timestamp in seconds.
+   */
+  time: number
+}
+
 export type SpaceDID = DIDKey
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
@@ -187,7 +194,7 @@ export interface Service {
   }
 
   ucan: {
-    revoke: ServiceMethod<UCANRevoke, Unit, Failure>
+    revoke: ServiceMethod<UCANRevoke, Timestamp, Failure>
   }
 
   admin: {

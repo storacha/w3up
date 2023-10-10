@@ -12,6 +12,7 @@ import * as RateLimit from './rate-limit.js'
 import * as Admin from './admin.js'
 import * as Subscription from './subscription.js'
 import * as Filecoin from './filecoin.js'
+import * as UCAN from './ucan.js'
 
 export {
   Access,
@@ -28,6 +29,7 @@ export {
   Subscription,
   Filecoin,
   Admin,
+  UCAN,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
