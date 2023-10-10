@@ -108,7 +108,7 @@ import { create } from '@web3-storage/w3up-client'
 const client = await create()
 ```
 
-By default, clients will create a new [`Agent`][access-docs-Agent] and put it in a peristent local [`Store`](https://github.com/web3-storage/w3up/tree/main/packages/access-client) if it can't find an existing one to load (so the next time the client is initialized on the same device, it will use the same `Agent`).
+By default, clients will create a new [`Agent`][access-docs-Agent] and put it in a persistent local [`Store`](https://github.com/web3-storage/w3up/tree/main/packages/access-client) if it can't find an existing one to load (so the next time the client is initialized on the same device, it will use the same `Agent`).
 
 `create` accepts an optional [`ClientFactoryOptions` object][docs-ClientFactoryOptions] that can be used configured to use a non-default persistent `Store`. See the [`@web3-storage/access` docs](https://github.com/web3-storage/w3up/tree/main/packages/access-client) for more about `Store` configuration. If you'd like to bring your own Agent, you can initialize the client with your own storage [Driver](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#driver). An example would be using `Signer` from the [ucanto][ucanto] package.
 
