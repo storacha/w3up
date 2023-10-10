@@ -74,7 +74,7 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
  * @param {import('./api').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
  */
-export const add = async ({ capability, invocation }, context) => {
+export const aggregateAccept = async ({ capability, invocation }, context) => {
   const { aggregate, pieces: offerCid, storefront } = capability.nb
   const pieces = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
 

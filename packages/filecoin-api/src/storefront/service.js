@@ -22,18 +22,6 @@ export const filecoinOffer = async ({ capability }, context) => {
   const group = context.id.did()
   
   if (!exists) {
-    const putRes = await context.pieceStore.put({
-      piece,
-      content,
-      group,
-      status: 'offered',
-      insertedAt: Date.now(),
-      updatedAt: Date.now()
-    })
-    if (putRes.error) {
-      return { error: new StoreOperationFailed(putRes.error.message) }
-    }
-
     // Queue the piece for validation etc.
     const queueRes = await context.filecoinSubmitQueue.add({
       piece,
