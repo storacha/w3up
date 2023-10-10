@@ -6,7 +6,6 @@ import * as Ucanto from '@ucanto/interface'
 import * as CAR from '@ucanto/transport/car'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
-import { Peer } from './awake/peer.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Access from '@web3-storage/capabilities/access'
 
@@ -560,14 +559,6 @@ export class Agent {
     return /** @type {Ucanto.IssuedInvocationView<Ucanto.InferInvokedCapability<CAP>>} */ (
       inv
     )
-  }
-
-  /**
-   *
-   * @param {import('../src/awake/types').Channel} channel
-   */
-  peer(channel) {
-    return new Peer({ agent: this, channel })
   }
 
   /**

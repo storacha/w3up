@@ -1,10 +1,9 @@
 import { addSpacesFromDelegations, Agent as AccessAgent } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
-import { bytesToDelegations, stringToDelegation } from './encoding.js'
+import { bytesToDelegations } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
-import { Websocket, AbortError } from './utils/ws.js'
 import { AgentData, isSessionProof } from './agent-data.js'
 import * as ucanto from '@ucanto/core'
 import { DID as DIDValidator } from '@ucanto/validator'
@@ -131,43 +130,6 @@ export async function pollAccessClaimUntil(
 }
 
 /**
- * @param {AccessAgent} access
- * @param {object} [opts]
- * @param {AbortSignal} [opts.signal]
- * @deprecated - use waitForAuthorizationOnSocket
- */
-export async function waitForDelegationOnSocket(access, opts) {
-  const ws = new Websocket(access.url, 'validate-ws')
-  await ws.open(opts)
-
-  ws.send({
-    did: access.did(),
-  })
-
-  try {
-    const msg = await ws.awaitMsg(opts)
-
-    if (msg.type === 'timeout') {
-      await ws.close(1000, 'agent got timeout waiting for validation')
-      throw new Error('Email validation timed out.')
-    }
-
-    if (msg.type === 'delegation') {
-      const delegation = stringToDelegation(msg.delegation)
-      await ws.close(1000, 'received delegation, agent is done with ws')
-      return delegation
-    }
-  } catch (error) {
-    if (error instanceof AbortError) {
-      await ws.close(1000, 'AbortError: agent failed to get delegation')
-      throw new TypeError('Failed to get delegation', { cause: error })
-    }
-    throw error
-  }
-  throw new TypeError('Failed to get delegation')
-}
-
-/**
  * @template [T={}]
  * @typedef {{ signal?: AbortSignal } & T} AuthorizationWaiterOpts
  */
@@ -175,19 +137,6 @@ export async function waitForDelegationOnSocket(access, opts) {
  * @template [U={}]
  * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts<U>) => Promise<Iterable<Ucanto.Delegation>>} AuthorizationWaiter
  */
-
-/**
- * Wait for the authorization process to complete by waiting on a
- * well-known websocket endpoint for the access-api server to
- * receive and forward a session delegation from the authorization
- * email flow.
- *
- * @type AuthorizationWaiter
- */
-export async function waitForAuthorizationOnSocket(access, opts = {}) {
-  const delegation = await waitForDelegationOnSocket(access, opts)
-  return [delegation]
-}
 
 /**
  * Wait for authorization process to complete by polling executions of the
@@ -257,24 +206,6 @@ export async function authorizeWaitAndClaim(accessAgent, email, opts) {
   await authorizeAndWait(accessAgent, email, opts)
   await claimAccess(accessAgent, accessAgent.issuer.did(), {
     addProofs: opts?.addProofs ?? true,
-  })
-}
-
-/**
- * Request authorization of a session allowing this agent to issue UCANs
- * signed by the passed email address.
- *
- * @param {AccessAgent} access
- * @param {`${string}@${string}`} email
- * @param {object} [opts]
- * @param {AbortSignal} [opts.signal]
- * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
- * @deprecated use authorizeWaitAndClaim directly going forward, passing it the expectAuthorization: waitForAuthorizationOnSocket to replicate this function's behavior
- */
-export async function authorizeWithSocket(access, email, opts) {
-  return authorizeWaitAndClaim(access, email, {
-    ...opts,
-    expectAuthorization: waitForAuthorizationOnSocket,
   })
 }
 
