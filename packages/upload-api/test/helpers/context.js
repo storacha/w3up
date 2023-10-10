@@ -9,6 +9,7 @@ import { DelegationsStorage } from '../storage/delegations-storage.js'
 import { RateLimitsStorage } from '../storage/rate-limits-storage.js'
 import { RevocationsStorage } from '../storage/revocations-storage.js'
 import * as Email from '../../src/utils/email.js'
+import { create as createRevocationChecker } from '../../src/utils/revocation.js'
 import { createServer, connect } from '../../src/lib.js'
 import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
@@ -23,6 +24,7 @@ export const createContext = async (options = {}) => {
   const uploadTable = new UploadTable()
   const carStoreBucket = await CarStoreBucket.activate()
   const dudewhereBucket = new DudewhereBucket()
+  const revocationsStorage = new RevocationsStorage()
   const signer = await Signer.generate()
   const id = signer.withDID('did:web:test.web3.storage')
 
@@ -35,18 +37,18 @@ export const createContext = async (options = {}) => {
     provisionsStorage: new ProvisionsStorage(options.providers),
     delegationsStorage: new DelegationsStorage(),
     rateLimitsStorage: new RateLimitsStorage(),
-    revocationsStorage: new RevocationsStorage(),
+    revocationsStorage,
     errorReporter: {
       catch(error) {
         assert.fail(error)
       },
     },
-    validateAuthorization: () => ({ ok: {} }),
     maxUploadSize: 5_000_000_000,
     storeTable,
     uploadTable,
     carStoreBucket,
     dudewhereBucket,
+    ...createRevocationChecker({ revocationsStorage }),
   }
 
   const connection = connect({

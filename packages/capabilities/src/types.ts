@@ -15,6 +15,7 @@ import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
 import * as AdminCaps from './admin.js'
+import * as UCANCaps from './ucan.js'
 
 export type { Unit, PieceLink }
 
@@ -213,6 +214,39 @@ export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
+// UCAN core events
+
+export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
+
+/**
+ * Error is raised when `UCAN` being revoked is not supplied or it's proof chain
+ * leading to supplied `scope` is not supplied.
+ */
+export interface UCANNotFound extends Ucanto.Failure {
+  name: 'UCANNotFound'
+}
+
+/**
+ * Error is raised when `UCAN` being revoked does not have provided `scope` in
+ * the proof chain.
+ */
+export interface InvalidRevocationScope extends Ucanto.Failure {
+  name: 'InvalidRevocationScope'
+}
+
+/**
+ * Error is raised when `UCAN` revocation is issued by unauthorized principal,
+ * that is `with` field is not an `iss` of the `scope`.
+ */
+export interface UnauthorizedRevocation extends Ucanto.Failure {
+  name: 'UnauthorizedRevocation'
+}
+
+export type UCANRevokeFailure =
+  | UCANNotFound
+  | InvalidRevocationScope
+  | UnauthorizedRevocation
+
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
 export type AdminUploadInspect = InferInvokedCapability<
