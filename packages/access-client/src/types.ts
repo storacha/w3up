@@ -208,7 +208,7 @@ export type InvokeOptions<
   A extends Ability,
   R extends Resource,
   CAP extends CapabilityParser<
-    Match<{ can: A; with: R; nb: Caveats }, UnknownMatch>
+    Match<{ can: A; with: R & Resource; nb: Caveats }, UnknownMatch>
   >
 > = UCANBasicOptions &
   InferNb<InferInvokedCapability<CAP>['nb']> & {
