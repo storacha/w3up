@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.4.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.3.0...capabilities-v9.4.0) (2023-10-10)
+
+
+### Features
+
+* define ucan/revoke capability ([#943](https://github.com/web3-storage/w3up/issues/943)) ([5d957ef](https://github.com/web3-storage/w3up/commit/5d957ef1e644557f557dc45a048150d73894e801))
+* upgrade to ucanto@9 ([#951](https://github.com/web3-storage/w3up/issues/951)) ([d72faf1](https://github.com/web3-storage/w3up/commit/d72faf1bb07dd11462ae6dff8ee0469f8ae7e9e7))
+
 ## [9.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.2.1...capabilities-v9.3.0) (2023-09-13)
 
 
