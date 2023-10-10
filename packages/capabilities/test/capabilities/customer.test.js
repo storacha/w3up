@@ -4,6 +4,7 @@ import { delegate } from '@ucanto/core'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Customer from '../../src/customer.js'
 import { bobAccount, service, alice } from '../helpers/fixtures.js'
+import { validateAuthorization } from '../helpers/utils.js'
 
 describe('customer/get', function () {
   const agent = alice
@@ -20,6 +21,7 @@ describe('customer/get', function () {
       capability: Customer.get,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -52,6 +54,7 @@ describe('customer/get', function () {
       capability: Customer.get,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail(
@@ -81,6 +84,7 @@ describe('customer/get', function () {
       capability: Customer.get,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)

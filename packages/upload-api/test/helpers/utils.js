@@ -57,6 +57,7 @@ export const createServer = ({ id = w3, service, codec = CAR.inbound }) =>
     id,
     codec,
     service,
+    validateAuthorization,
   })
 
 /**
@@ -231,3 +232,5 @@ export async function createSpace(issuer, service, conn, email) {
     delegation: spaceDelegation,
   }
 }
+
+export const validateAuthorization = () => ({ ok: {} })

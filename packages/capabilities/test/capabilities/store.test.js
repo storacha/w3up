@@ -12,7 +12,7 @@ import {
   mallory as account,
   bob,
 } from '../helpers/fixtures.js'
-import { createCarCid } from '../helpers/utils.js'
+import { createCarCid, validateAuthorization } from '../helpers/utils.js'
 
 const top = async () =>
   Capability.top.delegate({
@@ -46,6 +46,7 @@ describe('store capabilities', function () {
       capability: Store.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -76,6 +77,7 @@ describe('store capabilities', function () {
       capability: Store.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -113,6 +115,7 @@ describe('store capabilities', function () {
       capability: Store.add,
       principal: Verifier,
       authority: w3,
+      validateAuthorization,
     })
 
     if (result.error) {
@@ -154,6 +157,7 @@ describe('store capabilities', function () {
         capability: Store.add,
         principal: Verifier,
         authority: w3,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -184,6 +188,7 @@ describe('store capabilities', function () {
         capability: Store.add,
         principal: Verifier,
         authority: w3,
+        validateAuthorization,
       })
 
       assert.ok(result.error)

@@ -61,3 +61,5 @@ export const createAuthorization = async ({ account, agent, service }) => {
 
   return [delegation, attestation]
 }
+
+export const validateAuthorization = () => ({ ok: {} })

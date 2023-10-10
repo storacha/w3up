@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.3.0](https://github.com/web3-storage/w3up/compare/access-v15.2.1...access-v15.3.0) (2023-10-06)
+
+
+### Features
+
+* upgrade to ucanto@9 ([#951](https://github.com/web3-storage/w3up/issues/951)) ([d72faf1](https://github.com/web3-storage/w3up/commit/d72faf1bb07dd11462ae6dff8ee0469f8ae7e9e7))
+
 ## [15.2.1](https://github.com/web3-storage/w3up/compare/access-v15.2.0...access-v15.2.1) (2023-09-13)
 
 

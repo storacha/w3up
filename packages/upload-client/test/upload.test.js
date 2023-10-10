@@ -9,6 +9,7 @@ import * as Upload from '../src/upload.js'
 import { serviceSigner } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
+import { validateAuthorization } from './helpers/utils.js'
 
 describe('Upload.add', () => {
   it('registers an upload with the service', async () => {
@@ -50,6 +51,7 @@ describe('Upload.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -100,6 +102,7 @@ describe('Upload.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -163,6 +166,7 @@ describe('Upload.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -246,6 +250,7 @@ describe('Upload.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -315,6 +320,7 @@ describe('Upload.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -369,6 +375,7 @@ describe('Upload.remove', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -412,6 +419,7 @@ describe('Upload.remove', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,

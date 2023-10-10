@@ -12,6 +12,7 @@ import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
+import { validateAuthorization } from './helpers/utils.js'
 import {
   blockEncodingLength,
   encode,
@@ -88,6 +89,7 @@ describe('uploadFile', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -167,6 +169,7 @@ describe('uploadFile', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -266,6 +269,7 @@ describe('uploadDirectory', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -345,6 +349,7 @@ describe('uploadDirectory', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -450,6 +455,7 @@ describe('uploadCAR', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -547,6 +553,7 @@ describe('uploadCAR', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,

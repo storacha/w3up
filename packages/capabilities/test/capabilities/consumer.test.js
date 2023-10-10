@@ -4,6 +4,7 @@ import { delegate } from '@ucanto/core'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Consumer from '../../src/consumer.js'
 import { bob, service, alice } from '../helpers/fixtures.js'
+import { validateAuthorization } from '../helpers/utils.js'
 
 describe('consumer/get', function () {
   const agent = alice
@@ -21,6 +22,7 @@ describe('consumer/get', function () {
       capability: Consumer.get,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -53,6 +55,7 @@ describe('consumer/get', function () {
       capability: Consumer.get,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail(
@@ -82,6 +85,7 @@ describe('consumer/get', function () {
       capability: Consumer.get,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -116,6 +120,7 @@ describe('consumer/has', function () {
       capability: Consumer.has,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -148,6 +153,7 @@ describe('consumer/has', function () {
       capability: Consumer.has,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail(
@@ -177,6 +183,7 @@ describe('consumer/has', function () {
       capability: Consumer.has,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)

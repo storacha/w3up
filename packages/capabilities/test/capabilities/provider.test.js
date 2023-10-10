@@ -4,7 +4,7 @@ import * as principal from '@ucanto/principal'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Provider from '../../src/provider.js'
 import { bob, service, alice, mallory } from '../helpers/fixtures.js'
-import { createAuthorization } from '../helpers/utils.js'
+import { createAuthorization, validateAuthorization } from '../helpers/utils.js'
 import * as ucanto from '@ucanto/core'
 import * as Ucanto from '@ucanto/interface'
 
@@ -28,6 +28,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -59,6 +60,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -88,6 +90,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -117,6 +120,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -214,6 +218,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error, undefined)
@@ -248,6 +253,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error, undefined)
@@ -282,6 +288,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error, undefined)
@@ -316,6 +323,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('Constrain violation'), true)
@@ -356,6 +364,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.ok(result.error)
@@ -396,6 +405,7 @@ describe('provider/add', function () {
       capability: Provider.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.ok(result.error)
@@ -428,6 +438,7 @@ describe('provider/add', function () {
         capability: Provider.add,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
       assert.ok(result.error, 'validator.access result')
     })

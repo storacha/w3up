@@ -6,6 +6,7 @@ import * as SpaceCapabilities from '@web3-storage/capabilities/space'
 import { AgentData } from '@web3-storage/access/agent'
 import { mockService, mockServiceConf } from '../helpers/mocks.js'
 import { Client } from '../../src/client.js'
+import { validateAuthorization } from '../helpers/utils.js'
 
 describe('SpaceClient', () => {
   describe('info', () => {
@@ -32,6 +33,7 @@ describe('SpaceClient', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {

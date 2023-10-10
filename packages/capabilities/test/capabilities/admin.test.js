@@ -4,6 +4,7 @@ import { delegate } from '@ucanto/core'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as Admin from '../../src/admin.js'
 import { service, alice, readmeCID } from '../helpers/fixtures.js'
+import { validateAuthorization } from '../helpers/utils.js'
 
 describe('admin/upload/inspect', async function () {
   const agent = alice
@@ -20,6 +21,7 @@ describe('admin/upload/inspect', async function () {
       capability: Admin.upload.inspect,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -52,6 +54,7 @@ describe('admin/upload/inspect', async function () {
       capability: Admin.upload.inspect,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail(
@@ -81,6 +84,7 @@ describe('admin/upload/inspect', async function () {
       capability: Admin.upload.inspect,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -114,6 +118,7 @@ describe('admin/store/inspect', function () {
       capability: Admin.store.inspect,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -146,6 +151,7 @@ describe('admin/store/inspect', function () {
       capability: Admin.store.inspect,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail(
@@ -175,6 +181,7 @@ describe('admin/store/inspect', function () {
       capability: Admin.store.inspect,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)

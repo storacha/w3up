@@ -56,8 +56,11 @@ export function createServer(handlers = {}) {
       },
       ...handlers,
     },
+    validateAuthorization,
   })
 
   // @ts-ignore
   return server
 }
+
+export const validateAuthorization = () => ({ ok: {} })

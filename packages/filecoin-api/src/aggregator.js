@@ -102,6 +102,7 @@ export const createServer = (context) =>
     codec: context.codec || CAR.inbound,
     service: createService(context),
     catch: (error) => context.errorReporter.catch(error),
+    validateAuthorization: () => ({ ok: {} }),
   })
 
 /**
