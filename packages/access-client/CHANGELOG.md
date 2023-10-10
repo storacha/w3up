@@ -1,5 +1,17 @@
 # Changelog
 
+## [16.0.0](https://github.com/web3-storage/w3up/compare/access-v15.3.0...access-v16.0.0) (2023-10-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove websocket support ([#966](https://github.com/web3-storage/w3up/issues/966))
+
+### Bug Fixes
+
+* remove websocket support ([#966](https://github.com/web3-storage/w3up/issues/966)) ([77bf7ea](https://github.com/web3-storage/w3up/commit/77bf7ea8c67c5bb1bbce9b298fd72919dad7bd43))
+* upgrade to latest ts ([#962](https://github.com/web3-storage/w3up/issues/962)) ([711e3f7](https://github.com/web3-storage/w3up/commit/711e3f73f6905fde0d929952fff70be845a55fa1))
+
 ## [15.3.0](https://github.com/web3-storage/w3up/compare/access-v15.2.1...access-v15.3.0) (2023-10-06)
 
 
