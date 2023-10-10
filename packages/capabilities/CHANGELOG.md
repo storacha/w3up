@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.5.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.4.0...capabilities-v9.5.0) (2023-10-10)
+
+
+### Features
+
+* revocation handler ([#960](https://github.com/web3-storage/w3up/issues/960)) ([91f52c6](https://github.com/web3-storage/w3up/commit/91f52c6d35e4aea2a98c75d8b95ff61cdffac452))
+
+
+### Bug Fixes
+
+* upgrade to latest ts ([#962](https://github.com/web3-storage/w3up/issues/962)) ([711e3f7](https://github.com/web3-storage/w3up/commit/711e3f73f6905fde0d929952fff70be845a55fa1))
+
 ## [9.4.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.3.0...capabilities-v9.4.0) (2023-10-10)
 
 
