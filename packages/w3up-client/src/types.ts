@@ -66,13 +66,14 @@ export type {
 } from '@web3-storage/access/types'
 
 export type {
-  StoreAddOk,
-  UploadAddOk,
-  UploadAddOk as UploadAddResponse,
+  StoreAddSuccess,
+  StoreRemoveSuccess,
+  StoreRemoveFailure,
+  StoreListSuccess,
+  UploadAddSuccess,
+  UploadRemoveSuccess,
+  UploadListSuccess,
   ListResponse,
-  StoreListOk,
-  UploadListOk,
-  UploadRemoveOk,
   AnyLink,
   CARLink,
   CARFile,

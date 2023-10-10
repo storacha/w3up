@@ -5,7 +5,7 @@ import { allocate } from '../space-allocate.js'
 
 /**
  * @param {API.StoreServiceContext} context
- * @returns {API.ServiceMethod<API.StoreAdd, API.StoreAddOk, API.Failure>}
+ * @returns {API.ServiceMethod<API.StoreAdd, API.StoreAddSuccess, API.Failure>}
  */
 export function storeAddProvider(context) {
   const { storeTable, carStoreBucket, maxUploadSize } = context
@@ -69,7 +69,7 @@ export function storeAddProvider(context) {
         status: 'upload',
         with: space,
         link,
-        url,
+        url: url.toString(),
         headers,
       },
     }

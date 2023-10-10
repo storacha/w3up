@@ -4,7 +4,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.StoreServiceContext} context
- * @returns {API.ServiceMethod<API.StoreList, API.StoreListOk, API.Failure>}
+ * @returns {API.ServiceMethod<API.StoreList, API.StoreListSuccess, API.Failure>}
  */
 export function storeListProvider(context) {
   return Server.provide(Store.list, async ({ capability }) => {

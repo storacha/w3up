@@ -6,7 +6,7 @@ import { allocate } from '../space-allocate.js'
 
 /**
  * @param {API.UploadServiceContext} context
- * @returns {API.ServiceMethod<API.UploadAdd, API.UploadAddOk, API.Failure>}
+ * @returns {API.ServiceMethod<API.UploadAdd, API.UploadAddSuccess, API.Failure>}
  */
 export function uploadAddProvider(context) {
   return Server.provide(Upload.add, async ({ capability, invocation }) => {

@@ -123,7 +123,7 @@ describe('StoreClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.remove.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
-            return { ok: {} }
+            return { ok: { size: 128 } }
           }),
         },
       })
