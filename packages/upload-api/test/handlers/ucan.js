@@ -261,4 +261,95 @@ export const test = {
 
     assert.deepEqual(success.out, { ok: 'hello' })
   },
+
+  'revocation capability can be delegated': async (assert, context) => {
+    const proof = await Console.log.delegate({
+      issuer: context.id,
+      audience: alice,
+      with: context.id.did(),
+    })
+
+    const success = await Console.log
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: context.id.did(),
+        nb: { value: 'hello' },
+        proofs: [proof],
+      })
+      .execute(context.connection)
+
+    assert.deepEqual(success.out, { ok: 'hello' })
+
+    const revocation = await UCAN.revoke.delegate({
+      issuer: context.id,
+      audience: bob,
+      with: context.id.did(),
+      proofs: [proof],
+    })
+
+    const revoke = await UCAN.revoke
+      .invoke({
+        issuer: bob,
+        audience: context.id,
+        with: context.id.did(),
+        nb: {
+          ucan: proof.cid,
+        },
+        proofs: [revocation],
+      })
+      .execute(context.connection)
+
+    assert.ok(revoke.out.ok?.time)
+
+    const failure = await Console.log
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: context.id.did(),
+        nb: { value: 'bye' },
+        proofs: [proof],
+      })
+      .execute(context.connection)
+
+    assert.ok(failure.out.error?.message.includes('has been revoked'))
+  },
+
+  'can delegate specific revocation': async (assert, context) => {
+    const proof = await Console.log.delegate({
+      issuer: context.id,
+      audience: alice,
+      with: context.id.did(),
+    })
+
+    const unrelated = await Console.log.delegate({
+      issuer: context.id,
+      audience: mallory,
+      with: context.id.did(),
+    })
+
+    const revocation = await UCAN.revoke.delegate({
+      issuer: context.id,
+      audience: bob,
+      with: context.id.did(),
+      nb: {
+        ucan: unrelated.cid,
+      },
+      proofs: [unrelated],
+    })
+
+    const revoke = await UCAN.revoke
+      .invoke({
+        issuer: bob,
+        audience: context.id,
+        with: context.id.did(),
+        nb: {
+          ucan: proof.cid,
+        },
+        proofs: [revocation],
+      })
+      .execute(context.connection)
+
+    assert.ok(String(revoke.out.error?.message).match(/Constrain violation/))
+  },
 }
