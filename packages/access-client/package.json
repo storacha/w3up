@@ -13,9 +13,6 @@
   "type": "module",
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",
-  "bin": {
-    "w3access": "./src/cli/index.js"
-  },
   "scripts": {
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
@@ -72,7 +69,6 @@
     "bigint-mod-arith": "^3.1.2",
     "conf": "10.2.0",
     "inquirer": "^9.1.4",
-    "isomorphic-ws": "^5.0.0",
     "kysely": "^0.23.4",
     "multiformats": "^12.1.2",
     "one-webcrypto": "^1.0.3",
