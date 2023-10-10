@@ -89,12 +89,12 @@ The delegation from a Space to your Agent that `w3up-client` needs can be passed
 ```mermaid
 flowchart TD
     A[w3up-client instance] -->|Automatic if specific Agent is not passed when client object created|B(Create local Agent DID and key)
-    B --> |If Space has not yet been created|S(Create local Space and register it)
+    B --> |If Space has not yet been created|S(Create local Space, authorize client with your email address, and register Space + email address with web3.storage)
     S --> C(Get UCAN delegation from Space to Agent)
     C --> D(Upload to Space using Agent)
 ```
 
-All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the basic flows to start storing data. For more complex integration options, check out the [integration options][#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
+All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
 
 > By you or your users registering a w3up beta Space via email confirmation with [web3.storage](http://web3.storage), you agree to the beta [Terms of Service](https://console.web3.storage/terms). Uploads to w3up will not appear in your web3.storage account (and vice versa).
 
@@ -124,7 +124,13 @@ Once initialized, you can access the client's `Agent` with the [`agent()` access
 
 #### Creating and registering Spaces
 
-A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agent will need a delegation from to store data with w3up. Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
+A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agent will need a delegation from to store data with w3up. The first thing to do is authorize your Agent with your email address. Calling `authorize` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `authorize` method will resolve. Make sure to check for errors, as `authorize` will fail if the email is not confirmed within the expiration timeout. Authorization needs to happen only once per agent.
+
+```js
+await client.authorize('zaphod@beeblebrox.galaxy')
+```
+
+Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
 
 ```js
 const space = await client.createSpace('my-awesome-space')
@@ -142,25 +148,24 @@ First, set the space as your "current" space using the [`setCurrentSpace` method
 await client.setCurrentSpace(space.did())
 ```
 
-Next, call the [`registerSpace` method][docs-Client#registerSpace], passing in the email addres you want to associate with your account. You
-can specify a storage provider for the space to use by passing a provider DID as the `provider` option:
+Next, call the [`registerSpace` method][docs-Client#registerSpace], which registers the Space with web3.storage and associates it with the email address you authorized:
 
 ```js
 try {
-  await client.registerSpace('zaphod@beeblebrox.galaxy', { provider: 'did:web:web3.storage' })
+  await client.registerSpace()
 } catch (err) {
   console.error('registration failed: ', err)
 }
 ```
 
-If you created the Space in w3cli using `w3 space create`, you can register the space by calling [`w3 space register`](https://github.com/web3-storage/w3cli#w3-space-register).
-
 #### Delegating from Space to Agent
 
-In order to store data with w3up, your Agent will need a delegation from a Space. The easiest way to do this is by authorizing your Agent. This allows you to claim delegations to the Space that is authorized to the _same_ email account. Authorization needs to happen only once per agent.
+In order to store data with w3up, your Agent will need a delegation from a Space. This automatically happens if you called `authorize(email)` then `registerSpace()`. However, if you are initializing the client with a previously created Space, you can `authorize(email)` then claim a delegation granted to the account associated with your email:
 
 ```js
 await client.authorize('zaphod@beeblebrox.galaxy')
+await capability.access.claim()
+await client.setCurrentSpace(space.did()) # select the relevant Space DID that is associated with your account
 ```
 
 ```mermaid
@@ -170,8 +175,6 @@ sequenceDiagram
     Client-->>web3.storage w3up service: Email address validated
     web3.storage w3up service->>Client: Here is a UCAN delegating permission from Space DID to Agent DID
 ```
-
-Calling `authorize` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `authorize` method will resolve. Make sure to check for errors, as `authorize` will fail if the email is not confirmed within the expiration timeout.
 
 ##### Bringing your own Agent and delegation
 
