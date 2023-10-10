@@ -4,7 +4,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.RevocationServiceContext} context
- * @returns {API.ServiceMethod<API.UCANRevoke, API.Unit, API.Failure>}
+ * @returns {API.ServiceMethod<API.UCANRevoke, API.Timestamp, API.Failure>}
  */
 export const ucanRevokeProvider = ({ revocationsStorage }) =>
   provide(revoke, async ({ capability, invocation }) => {
