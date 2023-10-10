@@ -28,7 +28,7 @@ export const ucan = capability({
  * members.
  *
  * Capability can be used to revoke `nb.ucan` authorization from all proofs
- * chains that lead to the UCAN issued or been delegated to the principal
+ * chains that lead to the UCAN issued or being delegated to the principal
  * identified by the `with` field. Note that revoked UCAN MUST continue to
  * be valid in the invocation where proof chain does not lead to the principal
  * identified by the `with` field.
@@ -41,22 +41,22 @@ export const revoke = capability({
   with: Schema.did(),
   nb: Schema.struct({
     /**
-     * UCAN been revoked from all proof chains that lead to the UCAN that is
-     * either issued (iss) or been delegated to (aud) the principal identified
+     * UCAN being revoked from all proof chains that lead to the UCAN that is
+     * either issued (iss) by or delegated to (aud) the principal identified
      * by the `with` field.
      */
     ucan: UCANLink,
     /**
-     * Proof chain illustrating path from revoked UCAN to the one that is
-     * either issued (iss) or been delegated to (aud) the principal identified
+     * Proof chain illustrating the path from revoked UCAN to the one that is
+     * either issued (iss) by or delegated to (aud) the principal identified
      * by the `with` field.
      *
-     * If UCAN been revoked is either issued (iss) or been delegated to (aud)
+     * If the UCAN being revoked is either issued (iss) by or delegated to (aud)
      * the principal identified by the `with` field no `proof` is required and
      * it can be omitted or set to an empty array.
      *
      * It is RECOMMENDED that `proof` is provided in all other cases otherwise
-     * it MAY not be possible to verify that revoking principal is participant
+     * it MAY not be possible to verify that revoking principal is a participant
      * in the proof chain.
      */
     proof: UCANLink.array().optional(),

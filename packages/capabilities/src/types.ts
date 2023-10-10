@@ -219,7 +219,7 @@ export type StoreList = InferInvokedCapability<typeof list>
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
 
 /**
- * Error is raised when `UCAN` been revoked is not supplied or it's proof chain
+ * Error is raised when `UCAN` being revoked is not supplied or it's proof chain
  * leading to supplied `scope` is not supplied.
  */
 export interface UCANNotFound extends Ucanto.Failure {
@@ -227,7 +227,7 @@ export interface UCANNotFound extends Ucanto.Failure {
 }
 
 /**
- * Error is raised when `UCAN` been revoked does not have provided `scope` in
+ * Error is raised when `UCAN` being revoked does not have provided `scope` in
  * the proof chain.
  */
 export interface InvalidRevocationScope extends Ucanto.Failure {

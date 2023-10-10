@@ -8,7 +8,7 @@ import * as API from '../types.js'
  */
 export const ucanRevokeProvider = ({ revocationsStorage }) =>
   provide(revoke, async ({ capability, invocation }) => {
-    // First attempt to resolve linked UCANS to ensure that proof chain
+    // First attempt to resolve linked UCANs to ensure that proof chain
     // has been provided.
     const resolveResult = resolve({ capability, blocks: invocation.blocks })
     if (resolveResult.error) {
@@ -17,7 +17,7 @@ export const ucanRevokeProvider = ({ revocationsStorage }) =>
     const { ucan, principal } = resolveResult.ok
 
     const result =
-      // If the principal is issuer or audience of the UCAN been revoked then
+      // If the principal is issuer or audience of the UCAN being revoked then
       // we can store it as a sole revocation as it will always apply.
       isParticipant(ucan, principal)
         ? await revocationsStorage.reset({

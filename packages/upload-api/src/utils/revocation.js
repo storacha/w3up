@@ -10,7 +10,8 @@ export const create = (context) => ({
 
 /**
  * Verifies that no UCAN in the provided invocation authorization has been
- * revoked. If any of the UCANs had been revoked returns `Revoked` error.
+ * revoked. If any of the UCANs have been revoked it returns a
+ * `Revoked` error.
  *
  * @param {API.RevocationServiceContext} context
  * @param {API.Authorization} auth
@@ -23,7 +24,7 @@ export const validateAuthorization = async ({ revocationsStorage }, auth) => {
   const match = await revocationsStorage.query(query)
 
   // If query failed we also fail the verification. TODO: Define other error
-  // types because here we do not know if ucan had been revoked or not.
+  // types because here we do not know if the UCAN has been revoked or not.
   if (match.error) {
     return { error: new Revoked(auth.delegation) }
   }
@@ -39,7 +40,7 @@ export const validateAuthorization = async ({ revocationsStorage }, auth) => {
     }
   }
 
-  // If no relevant revocation had been found we succeed the verification.
+  // If no relevant revocation has been found we succeed the verification.
   return { ok: {} }
 }
 

@@ -29,8 +29,9 @@ export interface RevocationsStorage {
    * Creates or updates revocation for given `revoke` by setting `scope` to
    * the one passed in the argument. This is intended to compact revocation
    * store by dropping all existing revocations for given `revoke` in favor of
-   * given one. It supposed to be called when revocation authority is the same
-   * as ucan issue as such revocation will apply to all possible invocations.
+   * given one. It is supposed to be called when the revocation authority is the
+   * same as the UCAN issuer, as such a revocation will apply to all possible
+   * invocations.
    */
   reset: (
     revocation: Revocation
