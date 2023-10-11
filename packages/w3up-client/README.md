@@ -400,7 +400,6 @@ sequenceDiagram
   - [`capability.access.authorize`](#capabilityaccessauthorize)
   - [`capability.access.claim`](#capabilityaccessclaim)
   - [`capability.space.info`](#capabilityspaceinfo)
-  - [`capability.space.recover`](#capabilityspacerecover)
   - [`capability.store.add`](#capabilitystoreadd)
   - [`capability.store.list`](#capabilitystorelist)
   - [`capability.store.remove`](#capabilitystoreremove)
