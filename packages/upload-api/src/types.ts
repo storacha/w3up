@@ -387,7 +387,9 @@ export interface TestStoreTable {
   get(
     space: DID,
     link: UnknownLink
-  ): Promise<(StoreAddInput & StoreListItem & { insertedAt: string }) | undefined>
+  ): Promise<
+    (StoreAddInput & StoreListItem & { insertedAt: string }) | undefined
+  >
 }
 
 export interface UploadTable {
@@ -398,7 +400,9 @@ export interface UploadTable {
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<ListResponse<UploadListItem & { insertedAt: string, updatedAt: string }>>
+  ) => Promise<
+    ListResponse<UploadListItem & { insertedAt: string; updatedAt: string }>
+  >
 }
 
 export type SpaceInfoSuccess = {

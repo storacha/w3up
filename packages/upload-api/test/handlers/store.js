@@ -401,10 +401,7 @@ export const test = {
     )
   },
 
-  'store/remove fails for non existent link': async (
-    assert,
-    context
-  ) => {
+  'store/remove fails for non existent link': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,

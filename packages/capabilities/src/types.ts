@@ -1,7 +1,15 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
-import { InferInvokedCapability, Unit, DID, DIDKey, ToString, Link, UnknownLink } from '@ucanto/interface'
+import {
+  InferInvokedCapability,
+  Unit,
+  DID,
+  DIDKey,
+  ToString,
+  Link,
+  UnknownLink,
+} from '@ucanto/interface'
 import { CAR } from '@ucanto/transport'
 import type { PieceLink } from '@web3-storage/data-segment'
 import { space, info } from './space.js'

@@ -27,17 +27,17 @@ class StoreItemNotFound extends Server.Failure {
    * @param {import('@ucanto/interface').DID} space
    * @param {import('@ucanto/interface').UnknownLink} link
    */
-  constructor (space, link) {
+  constructor(space, link) {
     super()
     this.space = space
     this.link = link
   }
 
-  get name () {
+  get name() {
     return 'StoreItemNotFound'
   }
 
-  describe () {
+  describe() {
     return `${this.link} not found in ${this.space}`
   }
 
@@ -45,7 +45,7 @@ class StoreItemNotFound extends Server.Failure {
     return {
       ...super.toJSON(),
       space: this.space,
-      link: { '/': this.link.toString() }
+      link: { '/': this.link.toString() },
     }
   }
 }
