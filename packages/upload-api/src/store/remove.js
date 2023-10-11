@@ -13,7 +13,7 @@ export function storeRemoveProvider(context) {
 
     const item = await context.storeTable.get(space, link)
     if (!item) {
-      return Server.error(new StoreItemNotFound())
+      return Server.error(new StoreItemNotFound(space, link))
     }
 
     await context.storeTable.remove(space, link)
@@ -23,7 +23,29 @@ export function storeRemoveProvider(context) {
 }
 
 class StoreItemNotFound extends Server.Failure {
+  /**
+   * @param {import('@ucanto/interface').DID} space
+   * @param {import('@ucanto/interface').UnknownLink} link
+   */
+  constructor (space, link) {
+    super()
+    this.space = space
+    this.link = link
+  }
+
   get name () {
     return 'StoreItemNotFound'
+  }
+
+  describe () {
+    return `${this.link} not found in ${this.space}`
+  }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      space: this.space,
+      link: { '/': this.link.toString() }
+    }
   }
 }

@@ -6,7 +6,7 @@ import { parseLink } from '@ucanto/core'
  */
 export class UploadTable {
   constructor() {
-    /** @type {(API.UploadListItem & Omit<API.UploadAddInput, 'root'|'shards'> & { insertedAt: string, updatedAt: string })[]} */
+    /** @type {(API.UploadListItem & API.UploadAddInput & { insertedAt: string, updatedAt: string })[]} */
     this.items = []
   }
 

@@ -6,7 +6,7 @@ import * as API from '../../src/types.js'
  */
 export class StoreTable {
   constructor() {
-    /** @type {(API.StoreAddInput & Omit<API.StoreListItem, 'link'> & { insertedAt: string })[]} */
+    /** @type {(API.StoreAddInput & API.StoreListItem & { insertedAt: string })[]} */
     this.items = []
   }
 

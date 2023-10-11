@@ -13,11 +13,12 @@ import type {
   ParsedCapability,
   InferInvokedCapability,
   RevocationChecker,
+  ToString,
+  UnknownLink,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
-import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits'
@@ -386,7 +387,7 @@ export interface TestStoreTable {
   get(
     space: DID,
     link: UnknownLink
-  ): Promise<(StoreAddInput & Omit<StoreListItem, 'link'> & { insertedAt: string }) | undefined>
+  ): Promise<(StoreAddInput & StoreListItem & { insertedAt: string }) | undefined>
 }
 
 export interface UploadTable {
