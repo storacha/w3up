@@ -1,5 +1,19 @@
 # Changelog
 
+## [8.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v8.0.3...w3up-client-v8.1.0) (2023-10-10)
+
+
+### Features
+
+* diagrams in readme, delegated example ([#909](https://github.com/web3-storage/w3up/issues/909)) ([329354d](https://github.com/web3-storage/w3up/commit/329354d75a03c2e6281696b6b12628e0b65e27b2))
+* upgrade to ucanto@9 ([#951](https://github.com/web3-storage/w3up/issues/951)) ([d72faf1](https://github.com/web3-storage/w3up/commit/d72faf1bb07dd11462ae6dff8ee0469f8ae7e9e7))
+
+
+### Bug Fixes
+
+* clarity for bring your own agent example ([#939](https://github.com/web3-storage/w3up/issues/939)) ([acaafd1](https://github.com/web3-storage/w3up/commit/acaafd160b6168d470d2cf73517b23887dee62f8))
+* upgrade to latest ts ([#962](https://github.com/web3-storage/w3up/issues/962)) ([711e3f7](https://github.com/web3-storage/w3up/commit/711e3f73f6905fde0d929952fff70be845a55fa1))
+
 ## [8.0.3](https://github.com/web3-storage/w3up/compare/w3up-client-v8.0.2...w3up-client-v8.0.3) (2023-09-15)
 
 
