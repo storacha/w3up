@@ -7,7 +7,7 @@ import type {
   InferInvokedCapability,
   Match,
   Unit,
-  Result
+  Result,
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
 
@@ -24,17 +24,41 @@ export interface Queue<Message> {
   ) => Promise<Result<Unit, QueueAddError>>
 }
 
-export interface Store<Record> {
-  put: (record: Record) => Promise<Result<Unit, StorePutError>>
+export interface Store<RecKey, Rec> {
+  /**
+   * Puts a record in the store.
+   */
+  put: (record: Rec) => Promise<Result<Unit, StorePutError>>
   /**
    * Gets a record from the store.
    */
-  get: (key: any) => Promise<Result<Record, StoreGetError>>
+  get: (key: RecKey) => Promise<Result<Rec, StoreGetError>>
   /**
    * Determine if a record already exists in the store for the given key.
    */
-  has: (key: any) => Promise<Result<boolean, StoreGetError>>
+  has: (key: RecKey) => Promise<Result<boolean, StoreGetError>>
 }
+
+export interface UpdatableStore<RecKey, Rec> extends Store<RecKey, Rec> {
+  /**
+   * Updates a record from the store.
+   */
+  update: (
+    key: RecKey,
+    record: Partial<Rec>
+  ) => Promise<Result<Rec, StoreGetError>>
+}
+
+export interface QueryableStore<RecKey, Rec, Query> extends Store<RecKey, Rec> {
+  /**
+   * Queries for record matching a given criterium.
+   */
+  query: (search: Query) => Promise<Result<Rec[], StoreGetError>>
+}
+
+export interface UpdatableAndQueryableStore<RecKey, Rec, Query>
+  extends UpdatableStore<RecKey, Rec>,
+    QueryableStore<RecKey, Rec, Query> {}
 
 export interface QueueMessageOptions {
   messageGroupId?: string
@@ -42,16 +66,12 @@ export interface QueueMessageOptions {
 
 // Errors
 
-export type StorePutError =
-  | StoreOperationError
-  | EncodeRecordFailed
+export type StorePutError = StoreOperationError | EncodeRecordFailed
 export type StoreGetError =
   | StoreOperationError
   | EncodeRecordFailed
   | StoreNotFound
-export type QueueAddError =
-  | QueueOperationError
-  | EncodeRecordFailed
+export type QueueAddError = QueueOperationError | EncodeRecordFailed
 
 export interface QueueOperationError extends Error {
   name: 'QueueOperationFailed'
@@ -84,7 +104,7 @@ export interface ErrorReporter {
 // test
 
 export interface UcantoServerContextTest extends UcantoServerContext {
-  queuedMessages: unknown[]
+  queuedMessages: Map<string, unknown[]>
 }
 
 export type Test<S> = (

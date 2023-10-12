@@ -85,20 +85,10 @@ describe('dealer', () => {
 
     /** @type {import('@web3-storage/capabilities/types').AggregateAcceptSuccess} */
     const aggregateAcceptResponse = {
-      inclusion: {
-        subtree: {
-          path: [],
-          index: 0n,
-        },
-        index: {
-          path: [],
-          index: 0n,
-        },
-      },
       auxDataType: 0n,
       auxDataSource: {
-        dealID: 1138n
-      }
+        dealID: 1138n,
+      },
     }
 
     // Create Ucanto service
@@ -117,12 +107,6 @@ describe('dealer', () => {
             // piece link
             assert.ok(invCap.nb.aggregate.equals(aggregate.link.link()))
 
-            // Validate block inline exists
-            const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
-            assert.ok(
-              invocationBlocks.find((b) => b.cid.equals(piecesBlock.cid))
-            )
-
             return Server.ok(aggregateAcceptResponse)
           },
         }),
@@ -137,7 +121,7 @@ describe('dealer', () => {
         audience: dealerService,
       },
       aggregate.link.link(),
-      offer,
+      piecesBlock.cid,
       { connection: getConnection(service).connection }
     )
 
@@ -157,10 +141,12 @@ describe('dealer', () => {
       name: 'InvalidPiece',
       message: 'Aggregate is not a valid piece.',
       // piece 1 was a bad
-      cause: [{
-        name: 'InvalidPieceCID',
-        piece: pieces[1].link
-      }]
+      cause: [
+        {
+          name: 'InvalidPieceCID',
+          piece: pieces[1].link,
+        },
+      ],
     }
 
     // Create Ucanto service
@@ -179,12 +165,6 @@ describe('dealer', () => {
             // piece link
             assert.ok(invCap.nb.aggregate.equals(aggregate.link.link()))
 
-            // Validate block inline exists
-            const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
-            assert.ok(
-              invocationBlocks.find((b) => b.cid.equals(piecesBlock.cid))
-            )
-
             return {
               error: aggregateAcceptResponse,
             }
@@ -201,12 +181,15 @@ describe('dealer', () => {
         audience: dealerService,
       },
       aggregate.link.link(),
-      offer,
+      piecesBlock.cid,
       { connection: getConnection(service).connection }
     )
 
     assert.ok(res.out.error)
-    assert.equal(dagJSON.stringify(res.out.error), dagJSON.stringify(aggregateAcceptResponse))
+    assert.equal(
+      dagJSON.stringify(res.out.error),
+      dagJSON.stringify(aggregateAcceptResponse)
+    )
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })

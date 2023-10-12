@@ -1,8 +1,34 @@
-import { DataAggregationProof, Store } from '../types.js'
+import type { Signer } from '@ucanto/interface'
+import { PieceLink } from '@web3-storage/data-segment'
+import { QueryableStore } from '../types.js'
 
 export interface ServiceContext {
   /**
+   * Service signer
+   */
+  id: Signer
+
+  /**
    * Stores information about deals for a given aggregate piece CID.
    */
-  dealStore: Store<DataAggregationProof[]>
+  dealStore: QueryableStore<DealRecordKey, DealRecord, DealRecordQueryByPiece>
 }
+
+export interface DealRecord {
+  // PieceCid of an Aggregate `bagy...aggregate`
+  piece: PieceLink
+  // address of the Filecoin storage provider storing deal
+  provider: string
+  // deal identifier
+  dealId: number
+  // epoch of deal expiration
+  expirationEpoch: number
+  // source of the deal information
+  source: string
+  // number of milliseconds elapsed since the epoch when deal was added
+  insertedAt: number
+}
+
+export interface DealRecordKey extends Pick<DealRecord, 'piece' | 'dealId'> {}
+
+export interface DealRecordQueryByPiece extends Pick<DealRecord, 'piece'> {}

@@ -1,12 +1,14 @@
-import * as Aggregator from './services/aggregator.js'
-import * as Dealer from './services/dealer.js'
-import * as Storefront from './services/storefront.js'
+import * as AggregatorService from './services/aggregator.js'
+import * as DealerService from './services/dealer.js'
+import * as StorefrontService from './services/storefront.js'
+
 export * from './utils.js'
 
 export const test = {
-  ...Aggregator.test,
-  ...Dealer.test,
-  ...Storefront.test,
+  service: {
+    ...AggregatorService.test,
+    ...DealerService.test,
+    ...StorefrontService.test,
+  },
+  events: {},
 }
-
-export { Aggregator, Dealer, Storefront }

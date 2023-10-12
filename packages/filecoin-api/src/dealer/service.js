@@ -3,54 +3,69 @@ import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import { CBOR } from '@ucanto/core'
 import { sha256 } from 'multiformats/hashes/sha2'
-import * as Bytes from 'multiformats/bytes'
 import * as Block from 'multiformats/block'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import {
-  QueueOperationFailed,
-  StoreOperationFailed,
-  DecodeBlockOperationFailed,
-} from '../errors.js'
+import { StoreOperationFailed, DecodeBlockOperationFailed } from '../errors.js'
 
 /**
  * @param {API.Input<DealerCaps.aggregateOffer>} input
  * @param {import('./api').ServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.AggregateOfferSuccess, API.AggregateOfferFailure> | API.UcantoInterface.JoinBuilder<API.AggregateOfferSuccess>>}
  */
 export const aggregateOffer = async ({ capability, invocation }, context) => {
+  const issuer = invocation.issuer.did()
   const { aggregate, pieces } = capability.nb
 
-  const hasRes = await context.aggregateStore.has(aggregate)
+  const hasRes = await context.aggregateStore.has({ aggregate })
   if (hasRes.error) {
     return {
-      error: new StoreOperationFailed(hasRes.error.message)
+      error: new StoreOperationFailed(hasRes.error.message),
     }
   }
   const exists = hasRes.ok
 
   if (!exists) {
+    const piecesBlockRes = await findCBORBlock(
+      pieces,
+      invocation.iterateIPLDBlocks()
+    )
+    if (piecesBlockRes.error) {
+      return piecesBlockRes
+    }
+
+    // Write Spade formatted doc to offerStore before putting aggregate for tracking
+    const putOfferRes = await context.offerStore.put({
+      key: piecesBlockRes.ok.cid.toString(),
+      value: {
+        issuer,
+        aggregate,
+        pieces: piecesBlockRes.ok.value,
+      },
+    })
+    if (putOfferRes.error) {
+      return {
+        error: new StoreOperationFailed(putOfferRes.error.message),
+      }
+    }
+
+    // Put aggregate offered into store
     const putRes = await context.aggregateStore.put({
       aggregate,
       pieces,
       status: 'offered',
       insertedAt: Date.now(),
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     })
     if (putRes.error) {
       return {
-        error: new StoreOperationFailed(putRes.error.message)
+        error: new StoreOperationFailed(putRes.error.message),
       }
     }
-
-    const piecesBlockRes = await findCBORBlock(pieces, invocation.iterateIPLDBlocks())
-    if (piecesBlockRes.error) {
-      return piecesBlockRes
-    }
-
-    // TODO: write Spade formatted doc to offerStore
   }
 
+  // Effect
   const fx = await DealerCaps.aggregateAccept
     .invoke({
       issuer: context.id,
@@ -70,36 +85,32 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
 }
 
 /**
- * @param {API.Input<FilecoinCapabilities.dealAdd>} input
+ * @param {API.Input<DealerCaps.aggregateAccept>} input
  * @param {import('./api').ServiceContext} context
- * @returns {Promise<API.UcantoInterface.Result<API.DealAddSuccess, API.DealAddFailure> | API.UcantoInterface.JoinBuilder<API.DealAddSuccess>>}
+ * @returns {Promise<API.UcantoInterface.Result<API.AggregateAcceptSuccess, API.AggregateAcceptFailure>>}
  */
-export const aggregateAccept = async ({ capability, invocation }, context) => {
-  const { aggregate, pieces: offerCid, storefront } = capability.nb
-  const pieces = getOfferBlock(offerCid, invocation.iterateIPLDBlocks())
-
-  if (!pieces) {
-    return {
-      error: new DecodeBlockOperationFailed(
-        `missing offer block in invocation: ${offerCid.toString()}`
-      ),
-    }
-  }
+export const aggregateAccept = async ({ capability }, context) => {
+  const { aggregate } = capability.nb
 
   // Get deal status from the store.
-  const get = await context.dealStore.get({
+  const get = await context.aggregateStore.get({
     aggregate,
-    storefront,
   })
   if (get.error) {
     return {
       error: new StoreOperationFailed(get.error.message),
     }
   }
+  if (!get.ok.deal) {
+    return {
+      error: new StoreOperationFailed('no deal available'),
+    }
+  }
 
   return {
     ok: {
-      aggregate,
+      auxDataSource: get.ok.deal.auxDataSource,
+      auxDataType: get.ok.deal.auxDataType,
     },
   }
 }
@@ -122,23 +133,21 @@ const findCBORBlock = async (cid, blocks) => {
     }
   }
   return {
-    ok: await Block.create({ cid, bytes, codec: CBOR, hasher: sha256 })
+    ok: await Block.create({ cid, bytes, codec: CBOR, hasher: sha256 }),
   }
 }
-
-
 
 /**
  * @param {import('./api').ServiceContext} context
  */
 export function createService(context) {
   return {
-    dealer: {
-      aggregateOffer: Server.provideAdvanced({
+    aggregate: {
+      offer: Server.provideAdvanced({
         capability: DealerCaps.aggregateOffer,
         handler: (input) => aggregateOffer(input, context),
       }),
-      aggregateAccept: Server.provideAdvanced({
+      accept: Server.provideAdvanced({
         capability: DealerCaps.aggregateAccept,
         handler: (input) => aggregateAccept(input, context),
       }),

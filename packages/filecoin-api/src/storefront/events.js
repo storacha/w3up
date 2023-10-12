@@ -1,10 +1,36 @@
-import { StoreOperationFailed } from '../errors.js'
+import { Storefront, Aggregator } from '@web3-storage/filecoin-client'
+import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
+
+// eslint-disable-next-line no-unused-vars
+import * as API from '../types.js'
+import {
+  StoreNotFoundErrorName,
+  StoreOperationFailed,
+  UnexpectedState,
+} from '../errors.js'
 
 /**
- * @param {import('./api').ServiceContext} context
+ * @typedef {import('./api').PieceRecord} PieceRecord
+ * @typedef {import('./api').PieceRecordKey} PieceRecordKey
+ * @typedef {import('../types.js').UpdatableAndQueryableStore<PieceRecordKey, PieceRecord, Pick<PieceRecord, 'status'>>} PieceStore
+ */
+
+/**
+ * On filecoin submit queue messages, validate piece for given content and store it in store.
+ *
+ * @param {import('./api').FilecoinSubmitMessageContext} context
  * @param {import('./api').FilecoinSubmitMessage} message
  */
 export const handleFilecoinSubmitMessage = async (context, message) => {
+  // dedupe concurrent writes
+  const hasRes = await context.pieceStore.has({ piece: message.piece })
+  if (hasRes.error) {
+    return { error: new StoreOperationFailed(hasRes.error.message) }
+  }
+  if (hasRes.ok) {
+    return { ok: {} }
+  }
+
   // TODO: verify piece
 
   const putRes = await context.pieceStore.put({
@@ -13,7 +39,7 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
     group: message.group,
     status: 'submitted',
     insertedAt: Date.now(),
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   })
   if (putRes.error) {
     return { error: new StoreOperationFailed(putRes.error.message) }
@@ -22,28 +48,220 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
 }
 
 /**
- * @param {import('./api').ServiceContext} context
- * @param {import('./api').PieceRecord} record
+ * On piece offer queue message, offer piece for aggregation.
+ *
+ * @param {import('./api').PieceOfferMessageContext} context
+ * @param {import('./api').PieceOfferMessage} message
+ */
+export const handlePieceOfferMessage = async (context, message) => {
+  const pieceOfferInv = await Aggregator.pieceOffer(
+    context.aggregatorInvocationConfig,
+    message.piece,
+    message.group,
+    { connection: context.aggregatorConnection }
+  )
+  if (pieceOfferInv.out.error) {
+    return {
+      error: pieceOfferInv.out.error,
+    }
+  }
+
+  return { ok: {} }
+}
+
+/**
+ * On piece inserted into store, invoke submit to queue piece to be offered for aggregate.
+ *
+ * @param {import('./api').StorefrontClientContext} context
+ * @param {PieceRecord} record
  */
 export const handlePieceInsert = async (context, record) => {
-  // TODO: invoke filecoin/submit
+  const filecoinSubmitInv = await Storefront.filecoinSubmit(
+    context.storefrontInvocationConfig,
+    record.content,
+    record.piece,
+    { connection: context.storefrontConnection }
+  )
+
+  if (filecoinSubmitInv.out.error) {
+    return {
+      error: filecoinSubmitInv.out.error,
+    }
+  }
+
   return { ok: {} }
 }
 
 /**
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api').StorefrontClientContext} context
+ * @param {PieceRecord} record
+ */
+export const handlePieceStatusUpdate = async (context, record) => {
+  // Validate expected status
+  if (record.status === 'submitted') {
+    return {
+      error: new UnexpectedState(
+        `record status for ${record.piece} is "${record.status}"`
+      ),
+    }
+  }
+
+  const filecoinAcceptInv = await Storefront.filecoinAccept(
+    context.storefrontInvocationConfig,
+    record.content,
+    record.piece,
+    { connection: context.storefrontConnection }
+  )
+
+  if (filecoinAcceptInv.out.error) {
+    return {
+      error: filecoinAcceptInv.out.error,
+    }
+  }
+
+  return { ok: {} }
+}
+
+/**
+ * @param {import('./api').CronContext} context
  */
 export const handleCronTick = async (context) => {
-  // TODO: get pieces where status === submitted
-  //       read receipts to determine if an aggregate accepted for each piece
-  //       update piece status to accepted if yes
+  const submittedPieces = await context.pieceStore.query({
+    status: 'submitted',
+  })
+  if (submittedPieces.error) {
+    return {
+      error: submittedPieces.error,
+    }
+  }
+  // Update approved pieces from the ones resolved
+  const updatedResponses = await Promise.all(
+    submittedPieces.ok.map((pieceRecord) =>
+      updatePiecesWithDeal({
+        id: context.id,
+        aggregatorId: context.aggregatorId,
+        pieceRecord,
+        pieceStore: context.pieceStore,
+        taskStore: context.taskStore,
+        receiptStore: context.receiptStore,
+      })
+    )
+  )
+
+  // Fail if one or more update operations did not succeed.
+  // The successful ones are still valid, but we should keep track of errors for monitoring/alerting.
+  const updateErrorResponse = updatedResponses.find((r) => r.error)
+  if (updateErrorResponse) {
+    return {
+      error: updateErrorResponse.error,
+    }
+  }
+
+  // Return successful update operation
+  // Include in response the ones that were Updated, and the ones still pending response.
+  const updatedPiecesCount = updatedResponses.filter(
+    (r) => r.ok?.updated
+  ).length
+  return {
+    ok: {
+      updatedCount: updatedPiecesCount,
+      pendingCount: updatedResponses.length - updatedPiecesCount,
+    },
+  }
 }
 
 /**
- * @param {import('./api').ServiceContext} context
- * @param {import('./api').PieceRecord} record
+ * Read receipt chain to determine if an aggregate was accepted for the piece.
+ * Update its status if there is an accepted aggregate.
+ *
+ * @param {object} context
+ * @param {import('@ucanto/interface').Signer} context.id
+ * @param {import('@ucanto/interface').Principal} context.aggregatorId
+ * @param {PieceRecord} context.pieceRecord
+ * @param {PieceStore} context.pieceStore
+ * @param {API.Store<import('@ucanto/interface').UnknownLink, API.UcantoInterface.Invocation>} context.taskStore
+ * @param {API.Store<import('@ucanto/interface').UnknownLink, API.UcantoInterface.Receipt>} context.receiptStore
  */
-export const handlePieceStatusAccepted = async (context, record) => {
-  // TODO: invoke filecoin/accept /w content & piece
-  return { ok: {} }
+async function updatePiecesWithDeal({
+  id,
+  aggregatorId,
+  pieceRecord,
+  pieceStore,
+  taskStore,
+  receiptStore,
+}) {
+  let aggregateAcceptReceipt
+
+  let task = /** @type {API.UcantoInterface.Link} */ (
+    (
+      await AggregatorCaps.pieceOffer
+        .invoke({
+          issuer: id,
+          audience: aggregatorId,
+          with: id.did(),
+          nb: {
+            piece: pieceRecord.piece,
+            group: pieceRecord.group,
+          },
+          expiration: Infinity,
+        })
+        .delegate()
+    ).cid
+  )
+
+  while (true) {
+    const [taskRes, receiptRes] = await Promise.all([
+      taskStore.get(task),
+      receiptStore.get(task),
+    ])
+    // Should fail if errored and not with StoreNotFound Error
+    if (
+      (taskRes.error && taskRes.error.name !== StoreNotFoundErrorName) ||
+      (receiptRes.error && receiptRes.error.name !== StoreNotFoundErrorName)
+    ) {
+      return {
+        error: taskRes.error || receiptRes.error,
+      }
+    }
+    // Might not be available still, as piece is in progress to get into a deal
+    if (taskRes.error || receiptRes.error) {
+      // Store not found
+      break
+    }
+
+    // Save very last receipt - aggregate/accept
+    const ability = taskRes.ok.capabilities[0]?.can
+    if (ability === 'aggregate/accept') {
+      aggregateAcceptReceipt = receiptRes.ok
+    }
+    if (!receiptRes.ok.fx.join) break
+    task = receiptRes.ok.fx.join.link()
+  }
+
+  // If there is a receipt, status can be updated
+  if (aggregateAcceptReceipt) {
+    const updateRes = await pieceStore.update(
+      {
+        piece: pieceRecord.piece,
+      },
+      {
+        status: !!aggregateAcceptReceipt.out.ok ? 'accepted' : 'invalid',
+        updatedAt: Date.now(),
+      }
+    )
+
+    if (updateRes.ok) {
+      return {
+        ok: {
+          updated: true,
+        },
+      }
+    }
+  }
+
+  return {
+    ok: {
+      updated: false,
+    },
+  }
 }

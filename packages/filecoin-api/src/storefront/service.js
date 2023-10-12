@@ -10,27 +10,32 @@ import { QueueOperationFailed, StoreOperationFailed } from '../errors.js'
 /**
  * @param {API.Input<StorefrontCaps.filecoinOffer>} input
  * @param {import('./api').ServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.FilecoinOfferSuccess, API.FilecoinOfferFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinOfferSuccess>>}
  */
 export const filecoinOffer = async ({ capability }, context) => {
   const { piece, content } = capability.nb
 
-  const hasRes = await context.pieceStore.has(piece)
-  if (hasRes.error) {
-    return { error: new StoreOperationFailed(hasRes.error.message) }
-  }
-  const exists = hasRes.ok
-  const group = context.id.did()
-  
-  if (!exists) {
-    // Queue the piece for validation etc.
-    const queueRes = await context.filecoinSubmitQueue.add({
-      piece,
-      content,
-      group,
-    })
-    if (queueRes.error) {
-      return {
-        error: new QueueOperationFailed(queueRes.error.message),
+  // Queue offer for filecoin submission
+  if (!context.config?.skipFilecoinSubmitQueue) {
+    // dedupe
+    const hasRes = await context.pieceStore.has({ piece })
+    if (hasRes.error) {
+      return { error: new StoreOperationFailed(hasRes.error.message) }
+    }
+    const exists = hasRes.ok
+    const group = context.id.did()
+
+    if (!exists) {
+      // Queue the piece for validation etc.
+      const queueRes = await context.filecoinSubmitQueue.add({
+        piece,
+        content,
+        group,
+      })
+      if (queueRes.error) {
+        return {
+          error: new QueueOperationFailed(queueRes.error.message),
+        }
       }
     }
   }
@@ -60,9 +65,10 @@ export const filecoinOffer = async ({ capability }, context) => {
         },
         expiration: Infinity,
       })
-      .delegate()
+      .delegate(),
   ])
 
+  // TODO: receipt timestamp?
   /** @type {API.UcantoInterface.OkBuilder<API.FilecoinOfferSuccess, API.FilecoinOfferFailure>} */
   const result = Server.ok({ piece })
   return result.fork(submitfx.link()).join(acceptfx.link())
@@ -71,11 +77,13 @@ export const filecoinOffer = async ({ capability }, context) => {
 /**
  * @param {API.Input<StorefrontCaps.filecoinSubmit>} input
  * @param {import('./api').ServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.FilecoinSubmitSuccess, API.FilecoinSubmitFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinSubmitSuccess>>}
  */
 export const filecoinSubmit = async ({ capability }, context) => {
   const { piece, content } = capability.nb
   const group = context.id.did()
 
+  // Queue `piece/offer` invocation
   const res = await context.pieceOfferQueue.add({
     piece,
     content,
@@ -91,7 +99,7 @@ export const filecoinSubmit = async ({ capability }, context) => {
   const fx = await AggregatorCaps.pieceOffer
     .invoke({
       issuer: context.id,
-      audience: context.id,
+      audience: context.aggregatorId,
       with: context.id.did(),
       nb: {
         piece,
@@ -101,6 +109,7 @@ export const filecoinSubmit = async ({ capability }, context) => {
     })
     .delegate()
 
+  // TODO: receipt timestamp?
   /** @type {API.UcantoInterface.OkBuilder<API.FilecoinSubmitSuccess, API.FilecoinSubmitFailure>} */
   const result = Server.ok({ piece })
   return result.join(fx.link())
@@ -113,7 +122,7 @@ export const filecoinSubmit = async ({ capability }, context) => {
  */
 export const filecoinAccept = async ({ capability }, context) => {
   const { piece } = capability.nb
-  const getPieceRes = await context.pieceStore.get(piece)
+  const getPieceRes = await context.pieceStore.get({ piece })
   if (getPieceRes.error) {
     return { error: new StoreOperationFailed(getPieceRes.error.message) }
   }
@@ -122,7 +131,7 @@ export const filecoinAccept = async ({ capability }, context) => {
   const fx = await AggregatorCaps.pieceOffer
     .invoke({
       issuer: context.id,
-      audience: context.id,
+      audience: context.aggregatorId,
       with: context.id.did(),
       nb: {
         piece,
@@ -137,16 +146,17 @@ export const filecoinAccept = async ({ capability }, context) => {
 
 /**
  * Find a DataAggregationProof by following the receipt chain for a piece
- * offered to the Filecoin pipeline.
+ * offered to the Filecoin pipeline. Starts on `piece/offer` and issued `piece/accept` receipt,
+ * making its way into `aggregate/offer` and `aggregate/accept` receipt for getting DealAggregationProof.
  *
  * @param {{
- *   taskStore: API.Store<API.UcantoInterface.Invocation>
- *   receiptStore: API.Store<API.UcantoInterface.Receipt>
+ *   taskStore: API.Store<import('@ucanto/interface').UnknownLink, API.UcantoInterface.Invocation>
+ *   receiptStore: API.Store<import('@ucanto/interface').UnknownLink, API.UcantoInterface.Receipt>
  * }} stores
  * @param {API.UcantoInterface.Link} task
  * @returns {Promise<API.UcantoInterface.Result<API.DataAggregationProof, API.StoreOperationError|ProofNotFound>>}
  */
-async function findDataAggregationProof ({ taskStore, receiptStore }, task) {
+async function findDataAggregationProof({ taskStore, receiptStore }, task) {
   /** @type {API.InclusionProof|undefined} */
   let inclusion
   /** @type {API.DataAggregationProof|undefined} */
@@ -154,16 +164,20 @@ async function findDataAggregationProof ({ taskStore, receiptStore }, task) {
   while (true) {
     const [taskRes, receiptRes] = await Promise.all([
       taskStore.get(task),
-      receiptStore.get(task)
+      receiptStore.get(task),
     ])
     if (taskRes.error) {
       return {
-        error: new StoreOperationFailed(`failed to fetch task: ${task}: ${taskRes.error.message}`)
+        error: new StoreOperationFailed(
+          `failed to fetch task: ${task}: ${taskRes.error.message}`
+        ),
       }
     }
     if (receiptRes.error) {
       return {
-        error: new StoreOperationFailed(`failed to fetch receipt for task: ${task}: ${receiptRes.error.message}`)
+        error: new StoreOperationFailed(
+          `failed to fetch receipt for task: ${task}: ${receiptRes.error.message}`
+        ),
       }
     }
     const ability = taskRes.ok.capabilities[0]?.can
@@ -176,7 +190,11 @@ async function findDataAggregationProof ({ taskStore, receiptStore }, task) {
     task = receiptRes.ok.fx.join
   }
   if (!inclusion) {
-    return { error: new ProofNotFound('missing inclusion proof for piece in aggregate') }
+    return {
+      error: new ProofNotFound(
+        'missing inclusion proof for piece in aggregate'
+      ),
+    }
   }
   if (!dataAggregation) {
     return { error: new ProofNotFound('missing data aggregation proof') }

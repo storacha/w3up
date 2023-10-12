@@ -1,5 +1,16 @@
 import * as Server from '@ucanto/server'
 
+export const UnexpectedStateErrorName = /** @type {const} */ ('UnexpectedState')
+export class UnexpectedState extends Server.Failure {
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return UnexpectedStateErrorName
+  }
+}
+
 export const QueueOperationErrorName = /** @type {const} */ (
   'QueueOperationFailed'
 )

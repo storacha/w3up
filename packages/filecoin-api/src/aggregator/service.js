@@ -5,15 +5,21 @@ import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import { QueueOperationFailed, StoreOperationFailed } from '../errors.js'
+import {
+  QueueOperationFailed,
+  StoreOperationFailed,
+  UnexpectedState,
+} from '../errors.js'
 
 /**
  * @param {API.Input<AggregatorCaps.pieceOffer>} input
  * @param {import('./api').ServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.PieceOfferSuccess, API.PieceOfferFailure> | API.UcantoInterface.JoinBuilder<API.PieceOfferSuccess>>}
  */
 export const pieceOffer = async ({ capability }, context) => {
   const { piece, group } = capability.nb
 
+  // dedupe
   const hasRes = await context.pieceStore.has({ piece, group })
   if (hasRes.error) {
     return {
@@ -21,22 +27,8 @@ export const pieceOffer = async ({ capability }, context) => {
     }
   }
   const exists = hasRes.ok
-  
-  if (!exists) {
-    // Store piece into the store. Store events MAY be used to propagate piece over
-    const putRes = await context.pieceStore.put({
-      piece,
-      group,
-      status: 'offered',
-      insertedAt: Date.now(),
-      updatedAt: Date.now(),
-    })
-    if (putRes.error) {
-      return {
-        error: new StoreOperationFailed(putRes.error.message),
-      }
-    }
 
+  if (!exists) {
     const addRes = await context.pieceQueue.add({ piece, group })
     if (addRes.error) {
       return {
@@ -66,19 +58,28 @@ export const pieceOffer = async ({ capability }, context) => {
 /**
  * @param {API.Input<AggregatorCaps.pieceAccept>} input
  * @param {import('./api').ServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.PieceAcceptSuccess, API.PieceAcceptFailure> | API.UcantoInterface.JoinBuilder<API.PieceAcceptSuccess>>}
  */
 export const pieceAccept = async ({ capability }, context) => {
   const { piece, group } = capability.nb
-  
-  const getInclusionRes = await context.inclusionStore.get({ piece, group })
+
+  // Get inclusion proof for piece associated with this group
+  const getInclusionRes = await context.inclusionStore.query({ piece, group })
   if (getInclusionRes.error) {
     return {
-      error: new StoreOperationFailed(getInclusionRes.error.message),
+      error: new StoreOperationFailed(getInclusionRes.error?.message),
     }
   }
-  const { aggregate, inclusion } = getInclusionRes.ok
+  if (!getInclusionRes.ok.length) {
+    return {
+      error: new UnexpectedState(
+        `no inclusion proof found for pair {${piece}, ${group}}`
+      ),
+    }
+  }
 
-  const getAggregateRes = await context.aggregateStore.get(aggregate)
+  const [{ aggregate, inclusion }] = getInclusionRes.ok
+  const getAggregateRes = await context.aggregateStore.get({ aggregate })
   if (getAggregateRes.error) {
     return {
       error: new StoreOperationFailed(getAggregateRes.error.message),
@@ -90,7 +91,7 @@ export const pieceAccept = async ({ capability }, context) => {
   const fx = await DealerCaps.aggregateOffer
     .invoke({
       issuer: context.id,
-      audience: context.id,
+      audience: context.dealerId,
       with: context.id.did(),
       nb: {
         aggregate,

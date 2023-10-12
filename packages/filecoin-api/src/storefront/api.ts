@@ -1,13 +1,40 @@
-import type { Signer, UnknownLink, Receipt, Invocation, Failure } from '@ucanto/interface'
+import type {
+  Signer,
+  Principal,
+  UnknownLink,
+  Receipt,
+  Invocation,
+  Failure,
+  ConnectionView,
+} from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
-import { Store, Queue } from '../types.js'
+import { InvocationConfig } from '@web3-storage/filecoin-client/types'
+import { Store, UpdatableAndQueryableStore, Queue } from '../types.js'
+
+export interface Config {
+  /**
+   * Implementer MAY handle submission without user request.
+   */
+  skipFilecoinSubmitQueue?: boolean
+}
 
 export interface ServiceContext {
+  /**
+   * Service signer
+   */
   id: Signer
+  /**
+   * Principal for aggregator service
+   */
+  aggregatorId: Principal
   /**
    * Stores pieces that have been offered to the Storefront.
    */
-  pieceStore: Store<PieceRecord>
+  pieceStore: UpdatableAndQueryableStore<
+    PieceRecordKey,
+    PieceRecord,
+    Pick<PieceRecord, 'status'>
+  >
   /**
    * Queues pieces for verification.
    */
@@ -19,11 +46,51 @@ export interface ServiceContext {
   /**
    * Stores task invocations.
    */
-  taskStore: Store<Invocation>
+  taskStore: Store<UnknownLink, Invocation>
   /**
    * Stores receipts for tasks.
    */
-  receiptStore: Store<Receipt>
+  receiptStore: Store<UnknownLink, Receipt>
+  /**
+   * Service config.
+   */
+  config?: Config
+}
+
+export interface FilecoinSubmitMessageContext
+  extends Pick<ServiceContext, 'pieceStore'> {}
+
+export interface PieceOfferMessageContext {
+  /**
+   * Aggregator connection to moves pieces into the pipeline.
+   */
+  aggregatorConnection: ConnectionView<any>
+  /**
+   * Invocation configuration.
+   */
+  aggregatorInvocationConfig: InvocationConfig
+}
+
+export interface StorefrontClientContext {
+  /**
+   * Storefront own connection to issue receipts.
+   */
+  storefrontConnection: ConnectionView<any>
+  /**
+   * Invocation configuration.
+   */
+  storefrontInvocationConfig: InvocationConfig
+}
+
+export interface CronContext
+  extends Pick<
+    ServiceContext,
+    'id' | 'pieceStore' | 'receiptStore' | 'taskStore'
+  > {
+  /**
+   * Principal for aggregator service
+   */
+  aggregatorId: Signer
 }
 
 export interface PieceRecord {
@@ -41,12 +108,11 @@ export interface PieceRecord {
   group: string
   /**
    * Status of the offered filecoin piece.
-   * - offered = acknowledged received for inclusion in filecoin deals
    * - submitted = verified valid piece and submitted to the aggregation pipeline
    * - accepted = accepted and included in filecoin deal(s)
    * - invalid = content/piece CID mismatch
    */
-  status: 'offered'|'submitted'|'accepted'|'invalid'
+  status: 'submitted' | 'accepted' | 'invalid'
   /**
    * Insertion date in milliseconds since unix epoch.
    */
@@ -56,6 +122,7 @@ export interface PieceRecord {
    */
   updatedAt: number
 }
+export interface PieceRecordKey extends Pick<PieceRecord, 'piece'> {}
 
 export interface FilecoinSubmitMessage {
   /**
@@ -89,4 +156,18 @@ export interface PieceOfferMessage {
 
 export interface DataAggregationProofNotFound extends Failure {
   name: 'DataAggregationProofNotFound'
+}
+
+export interface TestEventsContext
+  extends FilecoinSubmitMessageContext,
+    PieceOfferMessageContext,
+    StorefrontClientContext,
+    CronContext {
+  id: Signer
+  service: Partial<{
+    filecoin: Partial<import('../types').StorefrontService['filecoin']>
+    piece: Partial<import('../types').AggregatorService['piece']>
+    aggregate: Partial<import('../../src/types').DealerService['aggregate']>
+    deal: Partial<import('../../src/types').DealTrackerService['deal']>
+  }>
 }

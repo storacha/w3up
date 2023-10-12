@@ -58,6 +58,9 @@ export const test = {
       `failed to get shard: ${adminStoreInspect.out.error?.message}`
     )
     assert.equal(adminStoreInspect.out.ok?.spaces[0].did, spaceDid)
-    assert.equal(typeof adminStoreInspect.out.ok?.spaces[0].insertedAt, 'string')
+    assert.equal(
+      typeof adminStoreInspect.out.ok?.spaces[0].insertedAt,
+      'string'
+    )
   },
 }

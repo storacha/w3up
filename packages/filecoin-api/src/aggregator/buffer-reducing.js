@@ -1,0 +1,263 @@
+import { Aggregate, Piece, NODE_SIZE, Index } from '@web3-storage/data-segment'
+import { CBOR } from '@ucanto/core'
+
+import { StoreOperationFailed, QueueOperationFailed } from '../errors.js'
+
+/**
+ * @typedef {import('@ucanto/interface').Link} Link
+ * @typedef {import('@web3-storage/data-segment').AggregateView} AggregateView
+ *
+ * @typedef {import('./api').BufferedPiece} BufferedPiece
+ * @typedef {import('./api').BufferRecord} BufferRecord
+ * @typedef {import('./api').BufferMessage} BufferMessage
+ * @typedef {import('./api').AggregateOfferMessage} AggregateOfferMessage
+ * @typedef {import('../types').StoreGetError} StoreGetError
+ * @typedef {{ bufferedPieces: BufferedPiece[], group: string }} GetBufferedPieces
+ * @typedef {import('../types.js').Result<GetBufferedPieces, StoreGetError>} GetBufferedPiecesResult
+ *
+ * @typedef {object} AggregateInfo
+ * @property {BufferedPiece[]} addedBufferedPieces
+ * @property {BufferedPiece[]} remainingBufferedPieces
+ * @property {AggregateView} aggregate
+ */
+
+/**
+ * @param {object} props
+ * @param {AggregateInfo} props.aggregateInfo
+ * @param {import('../types').Store<Link, BufferRecord>} props.bufferStore
+ * @param {import('../types').Queue<BufferMessage>} props.bufferQueue
+ * @param {import('../types').Queue<AggregateOfferMessage>} props.aggregateOfferQueue
+ * @param {string} props.group
+ */
+export async function handleBufferReducingWithAggregate({
+  aggregateInfo,
+  bufferStore,
+  bufferQueue,
+  aggregateOfferQueue,
+  group,
+}) {
+  // If aggregate has enough space
+  // store buffered pieces that are part of aggregate and queue aggregate
+  // store remaining pieces and queue them to be reduced
+  /** @type {import('./api.js').Buffer} */
+  const aggregateReducedBuffer = {
+    aggregate: aggregateInfo.aggregate.link,
+    pieces: aggregateInfo.addedBufferedPieces,
+    group,
+  }
+  const aggregateBlock = await CBOR.write(aggregateReducedBuffer)
+
+  // Store buffered pieces for aggregate
+  const bufferStoreAggregatePut = await bufferStore.put({
+    buffer: aggregateReducedBuffer,
+    block: aggregateBlock.cid,
+  })
+  if (bufferStoreAggregatePut.error) {
+    return {
+      error: new StoreOperationFailed(bufferStoreAggregatePut.error.message),
+    }
+  }
+
+  // Propagate message for aggregate offer queue
+  const aggregateOfferQueueAdd = await aggregateOfferQueue.add({
+    // TODO task CID drop?
+    task: aggregateInfo.aggregate.link,
+    aggregate: aggregateInfo.aggregate.link,
+    pieces: aggregateBlock.cid,
+    group,
+  })
+  if (aggregateOfferQueueAdd.error) {
+    return {
+      error: new QueueOperationFailed(aggregateOfferQueueAdd.error.message),
+    }
+  }
+
+  // Store remaining buffered pieces to reduce if they exist
+  if (!aggregateInfo.remainingBufferedPieces.length) {
+    return { ok: {} }
+  }
+
+  const remainingReducedBuffer = {
+    pieces: aggregateInfo.remainingBufferedPieces,
+    group: group,
+  }
+  const remainingBlock = await CBOR.write(remainingReducedBuffer)
+
+  // Store remaining buffered pieces
+  const bufferStoreRemainingPut = await bufferStore.put({
+    buffer: remainingReducedBuffer,
+    block: remainingBlock.cid,
+  })
+  if (bufferStoreRemainingPut.error) {
+    return {
+      error: new StoreOperationFailed(bufferStoreRemainingPut.error.message),
+    }
+  }
+
+  // Propagate message for buffer queue
+  const bufferQueueAdd = await bufferQueue.add({
+    pieces: remainingBlock.cid,
+    group: group,
+  })
+  if (bufferQueueAdd.error) {
+    return {
+      error: new QueueOperationFailed(bufferQueueAdd.error.message),
+    }
+  }
+
+  return { ok: {} }
+}
+
+/**
+ * Store given buffer into store and queue it to further reducing.
+ *
+ * @param {object} props
+ * @param {import('./api.js').Buffer} props.buffer
+ * @param {import('../types').Store<Link, BufferRecord>} props.bufferStore
+ * @param {import('../types').Queue<BufferMessage>} props.bufferQueue
+ */
+export async function handleBufferReducingWithoutAggregate({
+  buffer,
+  bufferStore,
+  bufferQueue,
+}) {
+  const block = await CBOR.write(buffer)
+
+  // Store block in buffer store
+  const bufferStorePut = await bufferStore.put({
+    buffer,
+    block: block.cid,
+  })
+  if (bufferStorePut.error) {
+    return {
+      error: new StoreOperationFailed(bufferStorePut.error.message),
+    }
+  }
+
+  // Propagate message
+  const bufferQueueAdd = await bufferQueue.add({
+    pieces: block.cid,
+    group: buffer.group,
+  })
+  if (bufferQueueAdd.error) {
+    return {
+      error: new QueueOperationFailed(bufferQueueAdd.error.message),
+    }
+  }
+
+  return { ok: {} }
+}
+
+/**
+ * Attempt to build an aggregate with buffered pieces within ranges.
+ *
+ * @param {BufferedPiece[]} bufferedPieces
+ * @param {object} sizes
+ * @param {number} sizes.maxAggregateSize
+ * @param {number} sizes.minAggregateSize
+ * @param {number} sizes.minUtilizationFactor
+ */
+export function aggregatePieces(bufferedPieces, sizes) {
+  // Guarantee buffered pieces total size is bigger than the minimum utilization
+  const bufferUtilizationSize = bufferedPieces.reduce((total, p) => {
+    const piece = Piece.fromLink(p.piece)
+    total += piece.size
+    return total
+  }, 0n)
+  if (
+    bufferUtilizationSize <
+    sizes.maxAggregateSize / sizes.minUtilizationFactor
+  ) {
+    return
+  }
+
+  // Create builder with maximum size and try to fill it up
+  const builder = Aggregate.createBuilder({
+    size: Piece.PaddedSize.from(sizes.maxAggregateSize),
+  })
+
+  // add pieces to an aggregate until there is no more space, or no more pieces
+  /** @type {BufferedPiece[]} */
+  const addedBufferedPieces = []
+  /** @type {BufferedPiece[]} */
+  const remainingBufferedPieces = []
+
+  for (const bufferedPiece of bufferedPieces) {
+    const p = Piece.fromLink(bufferedPiece.piece)
+    if (builder.estimate(p).error) {
+      remainingBufferedPieces.push(bufferedPiece)
+      continue
+    }
+    builder.write(p)
+    addedBufferedPieces.push(bufferedPiece)
+  }
+  const totalUsedSpace =
+    builder.offset * BigInt(NODE_SIZE) +
+    BigInt(builder.limit) * BigInt(Index.EntrySize)
+
+  // If not enough space return undefined
+  if (totalUsedSpace < BigInt(sizes.minAggregateSize)) {
+    return
+  }
+
+  const aggregate = builder.build()
+
+  return {
+    addedBufferedPieces,
+    remainingBufferedPieces,
+    aggregate,
+  }
+}
+
+/**
+ * Get buffered pieces from queue buffer records.
+ *
+ * @param {Link[]} bufferPieces
+ * @param {import('../types').Store<Link, BufferRecord>} bufferStore
+ * @returns {Promise<GetBufferedPiecesResult>}
+ */
+export async function getBufferedPieces(bufferPieces, bufferStore) {
+  const getBufferRes = await Promise.all(
+    bufferPieces.map((bufferPiece) => bufferStore.get(bufferPiece))
+  )
+
+  // Check if one of the buffers failed to get
+  const bufferReferenceGetError = getBufferRes.find((get) => get.error)
+  if (bufferReferenceGetError?.error) {
+    return {
+      error: bufferReferenceGetError.error,
+    }
+  }
+
+  // Concatenate pieces and sort them by policy and size
+  /** @type {BufferedPiece[]} */
+  let bufferedPieces = []
+  for (const b of getBufferRes) {
+    // eslint-disable-next-line unicorn/prefer-spread
+    bufferedPieces = bufferedPieces.concat(b.ok?.buffer.pieces || [])
+  }
+
+  bufferedPieces.sort(sortPieces)
+
+  return {
+    ok: {
+      bufferedPieces,
+      // extract group from one entry
+      // TODO: needs to change to support multi group buffering
+      // @ts-expect-error typescript does not understand with find that no error and group MUST exist
+      group: getBufferRes[0].ok?.buffer.group,
+    },
+  }
+}
+
+/**
+ * Sort given buffered pieces by policy and then by size.
+ *
+ * @param {BufferedPiece} a
+ * @param {BufferedPiece} b
+ */
+export function sortPieces(a, b) {
+  return a.policy !== b.policy
+    ? a.policy - b.policy
+    : Piece.fromLink(a.piece).height - Piece.fromLink(b.piece).height
+}
