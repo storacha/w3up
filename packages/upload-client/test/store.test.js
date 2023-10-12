@@ -26,7 +26,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -96,7 +96,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -149,7 +149,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -202,7 +202,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddDone} */
+    /** @type {import('../src/types.js').StoreAddSuccessDone} */
     const res = {
       status: 'done',
       // @ts-expect-error
@@ -247,7 +247,7 @@ describe('Store.add', () => {
     const agent = await Signer.generate()
     const car = await randomCAR(128)
 
-    /** @type {import('../src/types.js').StoreAddOk} */
+    /** @type {import('../src/types.js').StoreAddSuccess} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -571,7 +571,7 @@ describe('Store.remove', () => {
           assert.equal(invCap.can, StoreCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), car.cid.toString())
-          return { ok: {} }
+          return { ok: { size: car.size } }
         }),
       },
     })
@@ -588,7 +588,7 @@ describe('Store.remove', () => {
       channel: server,
     })
 
-    await Store.remove(
+    const result = await Store.remove(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car.cid,
       { connection }
@@ -596,6 +596,9 @@ describe('Store.remove', () => {
 
     assert(service.store.remove.called)
     assert.equal(service.store.remove.callCount, 1)
+
+    assert(result.ok)
+    assert.equal(result.ok.size, car.size)
   })
 
   it('throws on service error', async () => {

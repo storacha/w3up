@@ -8,17 +8,17 @@ import type {
   DIDKey,
   InboundCodec,
   Result,
-  Unit,
   CapabilityParser,
   Match,
   ParsedCapability,
   InferInvokedCapability,
   RevocationChecker,
+  ToString,
+  UnknownLink,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
-import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits'
@@ -59,11 +59,20 @@ export interface DebugEmail extends Email {
 
 import {
   StoreAdd,
+  StoreAddSuccess,
   StoreRemove,
+  StoreRemoveSuccess,
+  StoreRemoveFailure,
   StoreList,
+  StoreListSuccess,
+  StoreListItem,
   UploadAdd,
+  UploadAddSuccess,
   UploadRemove,
+  UploadRemoveSuccess,
   UploadList,
+  UploadListSuccess,
+  UploadListItem,
   AccessAuthorize,
   AccessAuthorizeSuccess,
   AccessDelegate,
@@ -108,6 +117,8 @@ import {
   SpaceInfo,
   ProviderDID,
   UCANRevoke,
+  ListResponse,
+  CARLink,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations'
@@ -130,14 +141,14 @@ export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
 export interface Service {
   store: {
-    add: ServiceMethod<StoreAdd, StoreAddOk, Failure>
-    remove: ServiceMethod<StoreRemove, Unit, Failure>
-    list: ServiceMethod<StoreList, StoreListOk, Failure>
+    add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
+    remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
+    list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
   upload: {
-    add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
-    list: ServiceMethod<UploadList, UploadListOk, Failure>
+    add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
+    list: ServiceMethod<UploadList, UploadListSuccess, Failure>
   }
   console: {
     log: ServiceMethod<
@@ -363,6 +374,7 @@ export interface DudewhereBucket {
 export interface StoreTable {
   inspect: (link: UnknownLink) => Promise<StoreGetOk>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
+  get: (space: DID, link: UnknownLink) => Promise<StoreAddOutput | undefined>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
   remove: (space: DID, link: UnknownLink) => Promise<void>
   list: (
@@ -375,18 +387,22 @@ export interface TestStoreTable {
   get(
     space: DID,
     link: UnknownLink
-  ): Promise<(StoreAddInput & StoreListItem) | undefined>
+  ): Promise<
+    (StoreAddInput & StoreListItem & { insertedAt: string }) | undefined
+  >
 }
 
 export interface UploadTable {
   inspect: (link: UnknownLink) => Promise<UploadGetOk>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
-  insert: (item: UploadAddInput) => Promise<UploadAddOk>
-  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>
+  insert: (item: UploadAddInput) => Promise<UploadAddSuccess>
+  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveSuccess | null>
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<ListResponse<UploadListItem>>
+  ) => Promise<
+    ListResponse<UploadListItem & { insertedAt: string; updatedAt: string }>
+  >
 }
 
 export type SpaceInfoSuccess = {
@@ -428,72 +444,22 @@ export interface StoreGetOk {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 
-export interface StoreListItem extends StoreAddOutput {
-  insertedAt: string
-}
-
-export interface StoreListOk extends ListResponse<StoreListItem> {}
-
-export type StoreAddOk = StoreAddDone | StoreAddUpload
-
-export interface StoreAddDone {
-  status: 'done'
-  with: DID
-  link: UnknownLink
-  url?: undefined
-  headers?: undefined
-}
-
-export interface StoreAddUpload {
-  status: 'upload'
-  with: DID
-  link: UnknownLink
-  url: URL
-  headers: Record<string, string>
-}
-
 export interface UploadAddInput {
   space: DID
   root: UnknownLink
-  shards?: UnknownLink[]
+  shards?: CARLink[]
   issuer: DID
   invocation: UCANLink
-}
-
-export interface UploadAddOk
-  extends Omit<UploadAddInput, 'space' | 'issuer' | 'invocation'> {}
-export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
-
-export interface UploadDIDRemove extends UploadAddOk {}
-export interface UploadDidNotRemove {
-  root?: undefined
-  shards?: undefined
 }
 
 export interface UploadGetOk {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 
-export interface UploadListItem extends UploadAddOk {
-  insertedAt: string
-  updatedAt: string
-}
-
-export interface UploadListOk extends ListResponse<UploadListItem> {}
-
 export interface ListOptions {
   size?: number
   cursor?: string
   pre?: boolean
-}
-
-export interface ListResponse<R> {
-  // cursor and after should be identical
-  cursor?: string
-  before?: string
-  after?: string
-  size: number
-  results: R[]
 }
 
 export interface TestSpaceRegistry {

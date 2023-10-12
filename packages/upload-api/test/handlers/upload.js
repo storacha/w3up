@@ -645,7 +645,6 @@ export const test = {
 
       assert.deepEqual(item?.root.toString(), root.toString())
       assert.deepEqual(item?.shards?.map(String), [car.cid.toString()])
-      assert.deepEqual(item?.updatedAt, item?.insertedAt)
     }
   },
 

@@ -46,7 +46,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -138,7 +138,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -224,7 +224,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -318,7 +318,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -406,7 +406,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -507,7 +507,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },

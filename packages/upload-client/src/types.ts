@@ -2,9 +2,8 @@ import type {
   FetchOptions,
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types'
-import { Link, ToString, UnknownLink, Version } from 'multiformats/link'
+import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
-import { CAR } from '@ucanto/transport'
 import {
   ServiceMethod,
   ConnectionView,
@@ -12,30 +11,54 @@ import {
   Proof,
   DID,
   Principal,
-  Unit,
   Failure,
 } from '@ucanto/interface'
 import {
   StoreAdd,
+  StoreAddSuccess,
+  StoreAddSuccessUpload,
+  StoreAddSuccessDone,
   StoreList,
+  StoreListSuccess,
+  StoreListItem,
   StoreRemove,
+  StoreRemoveSuccess,
+  StoreRemoveFailure,
   UploadAdd,
+  UploadAddSuccess,
   UploadList,
+  UploadListSuccess,
+  UploadListItem,
   UploadRemove,
+  UploadRemoveSuccess,
+  ListResponse,
+  CARLink,
   PieceLink,
 } from '@web3-storage/capabilities/types'
 import * as UnixFS from '@ipld/unixfs/src/unixfs'
 
-export type { PieceLink }
-
 export type {
   FetchOptions,
   StoreAdd,
+  StoreAddSuccess,
+  StoreAddSuccessUpload,
+  StoreAddSuccessDone,
   StoreList,
+  StoreListSuccess,
+  StoreListItem,
   StoreRemove,
+  StoreRemoveSuccess,
+  StoreRemoveFailure,
   UploadAdd,
+  UploadAddSuccess,
   UploadList,
+  UploadListSuccess,
+  UploadListItem,
   UploadRemove,
+  UploadRemoveSuccess,
+  ListResponse,
+  CARLink,
+  PieceLink,
 }
 
 export interface ProgressStatus extends XHRProgressStatus {
@@ -46,66 +69,16 @@ export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service {
   store: {
-    add: ServiceMethod<StoreAdd, StoreAddOk, Failure>
-    remove: ServiceMethod<StoreRemove, Unit, Failure>
-    list: ServiceMethod<StoreList, StoreListOk, Failure>
+    add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
+    remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
+    list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
   upload: {
-    add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
-    list: ServiceMethod<UploadList, UploadListOk, Failure>
+    add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
+    list: ServiceMethod<UploadList, UploadListSuccess, Failure>
   }
 }
-
-export type StoreAddOk = StoreAddDone | StoreAddUpload
-
-export interface StoreListOk extends ListResponse<StoreListItem> {}
-
-export interface StoreAddDone {
-  status: 'done'
-  with: DID
-  link: UnknownLink
-  url?: undefined
-  headers?: undefined
-}
-
-export interface StoreAddUpload {
-  status: 'upload'
-  with: DID
-  link: UnknownLink
-  url: ToString<URL>
-  headers: Record<string, string>
-}
-
-export interface UploadAddOk {
-  root: AnyLink
-  shards?: CARLink[]
-}
-
-export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
-export interface UploadDidNotRemove {
-  root?: undefined
-  shards?: undefined
-}
-
-export interface UploadDIDRemove extends UploadAddOk {}
-export interface UploadListOk extends ListResponse<UploadListItem> {}
-
-export interface ListResponse<R> {
-  cursor?: string
-  before?: string
-  after?: string
-  size: number
-  results: R[]
-}
-
-export interface StoreListItem {
-  link: CARLink
-  size: number
-  origin?: CARLink
-}
-
-export interface UploadListItem extends UploadAddOk {}
 
 export interface InvocationConfig {
   /**
@@ -155,11 +128,6 @@ export interface CARHeaderInfo {
  * A DAG encoded as a CAR.
  */
 export interface CARFile extends CARHeaderInfo, Blob {}
-
-/**
- * An IPLD Link that has the CAR codec code.
- */
-export type CARLink = Link<unknown, typeof CAR.codec.code>
 
 /**
  * Any IPLD link.

@@ -1,7 +1,16 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
-import { InferInvokedCapability, Unit, DID, DIDKey } from '@ucanto/interface'
+import {
+  InferInvokedCapability,
+  Unit,
+  DID,
+  DIDKey,
+  ToString,
+  Link,
+  UnknownLink,
+} from '@ucanto/interface'
+import { CAR } from '@ucanto/transport'
 import type { PieceLink } from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
@@ -18,6 +27,11 @@ import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 
 export type { Unit, PieceLink }
+
+/**
+ * An IPLD Link that has the CAR codec code.
+ */
+export type CARLink = Link<unknown, typeof CAR.codec.code>
 
 export type AccountDID = DID<'mailto'>
 export type SpaceDID = DID<'key'>
@@ -209,11 +223,74 @@ export type Upload = InferInvokedCapability<typeof UploadCaps.upload>
 export type UploadAdd = InferInvokedCapability<typeof UploadCaps.add>
 export type UploadRemove = InferInvokedCapability<typeof UploadCaps.remove>
 export type UploadList = InferInvokedCapability<typeof UploadCaps.list>
+
 // Store
 export type Store = InferInvokedCapability<typeof store>
 export type StoreAdd = InferInvokedCapability<typeof add>
 export type StoreRemove = InferInvokedCapability<typeof remove>
 export type StoreList = InferInvokedCapability<typeof list>
+
+export type StoreAddSuccess = StoreAddSuccessDone | StoreAddSuccessUpload
+export interface StoreAddSuccessDone {
+  status: 'done'
+  with: DID
+  link: UnknownLink
+  url?: undefined
+  headers?: undefined
+}
+
+export interface StoreAddSuccessUpload {
+  status: 'upload'
+  with: DID
+  link: UnknownLink
+  url: ToString<URL>
+  headers: Record<string, string>
+}
+
+export interface StoreRemoveSuccess {
+  size: number
+}
+
+export interface StoreItemNotFound extends Ucanto.Failure {
+  name: 'StoreItemNotFound'
+}
+
+export type StoreRemoveFailure = StoreItemNotFound | Ucanto.Failure
+
+export interface StoreListSuccess extends ListResponse<StoreListItem> {}
+
+export interface ListResponse<R> {
+  cursor?: string
+  before?: string
+  after?: string
+  size: number
+  results: R[]
+}
+
+export interface StoreListItem {
+  link: UnknownLink
+  size: number
+  origin?: UnknownLink
+}
+
+export interface UploadAddSuccess {
+  root: UnknownLink
+  shards?: CARLink[]
+}
+
+export type UploadRemoveSuccess = UploadDidRemove | UploadDidNotRemove
+
+export interface UploadDidRemove extends UploadAddSuccess {}
+
+export interface UploadDidNotRemove {
+  root?: undefined
+  shards?: undefined
+}
+
+export interface UploadListSuccess extends ListResponse<UploadListItem> {}
+
+export interface UploadListItem extends UploadAddSuccess {}
+
 // UCAN core events
 
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>

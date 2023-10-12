@@ -6,7 +6,7 @@ import { parseLink } from '@ucanto/core'
  */
 export class UploadTable {
   constructor() {
-    /** @type {(API.UploadListItem & API.UploadAddInput)[]} */
+    /** @type {(API.UploadListItem & API.UploadAddInput & { insertedAt: string, updatedAt: string })[]} */
     this.items = []
   }
 
@@ -29,7 +29,6 @@ export class UploadTable {
 
   /**
    * @param {API.UploadAddInput} input
-   * @returns
    */
   async insert({ space, issuer, invocation, root, shards = [] }) {
     const time = new Date().toISOString()

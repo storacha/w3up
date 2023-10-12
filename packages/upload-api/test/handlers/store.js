@@ -401,10 +401,7 @@ export const test = {
     )
   },
 
-  'store/remove does not fail for non existent link': async (
-    assert,
-    context
-  ) => {
+  'store/remove fails for non existent link': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -424,21 +421,7 @@ export const test = {
       })
       .execute(connection)
 
-    // expect no response for a remove
-    assert.deepEqual(storeRemove.out.ok, {})
-
-    const storeRemove2 = await StoreCapabilities.remove
-      .invoke({
-        issuer: alice,
-        audience: connection.id,
-        with: spaceDid,
-        nb: { link },
-        proofs: [proof],
-      })
-      .execute(connection)
-
-    // expect no response for a remove
-    assert.deepEqual(storeRemove2.out.ok, {})
+    assert.equal(storeRemove.out.error?.name, 'StoreItemNotFound')
   },
 
   'store/list does not fail for empty list': async (assert, context) => {

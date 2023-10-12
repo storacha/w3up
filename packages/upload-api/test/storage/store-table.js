@@ -6,13 +6,12 @@ import * as API from '../../src/types.js'
  */
 export class StoreTable {
   constructor() {
-    /** @type {(API.StoreAddInput & API.StoreListItem)[]} */
+    /** @type {(API.StoreAddInput & API.StoreListItem & { insertedAt: string })[]} */
     this.items = []
   }
 
   /**
    * @param {API.StoreAddInput} input
-   * @returns
    */
   async insert({ space, issuer, invocation, ...output }) {
     this.items.unshift({
