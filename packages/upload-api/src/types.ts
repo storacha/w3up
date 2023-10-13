@@ -51,9 +51,11 @@ export interface DebugEmail extends Email {
 
 import {
   StoreAdd,
+  StoreGet,
   StoreRemove,
   StoreList,
   UploadAdd,
+  UploadGet,
   UploadRemove,
   UploadList,
   AccessAuthorize,
@@ -99,6 +101,8 @@ import {
   ProviderAddFailure,
   SpaceInfo,
   ProviderDID,
+  StoreGetFailure,
+  UploadGetFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 
@@ -115,12 +119,14 @@ export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddOk, Failure>
+    get: ServiceMethod<StoreGet, StoreGetOk, StoreGetFailure>
     remove: ServiceMethod<StoreRemove, Unit, Failure>
     list: ServiceMethod<StoreList, StoreListOk, Failure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk, Failure>
+    get: ServiceMethod<UploadGet, UploadGetOk, Failure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveOk, UploadGetFailure>
     list: ServiceMethod<UploadList, UploadListOk, Failure>
   }
   console: {
@@ -292,9 +298,7 @@ export interface UcantoServerTestContext
   fetch: typeof fetch
 }
 
-export interface StoreTestContext {
-  testStoreTable: TestStoreTable
-}
+export interface StoreTestContext {}
 
 export interface UploadTestContext {}
 
@@ -334,7 +338,7 @@ export interface DudewhereBucket {
 }
 
 export interface StoreTable {
-  inspect: (link: UnknownLink) => Promise<StoreGetOk>
+  inspect: (link: UnknownLink) => Promise<StoreInspectOk>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
   remove: (space: DID, link: UnknownLink) => Promise<void>
@@ -342,17 +346,14 @@ export interface StoreTable {
     space: DID,
     options?: ListOptions
   ) => Promise<ListResponse<StoreListItem>>
-}
-
-export interface TestStoreTable {
   get(
     space: DID,
     link: UnknownLink
-  ): Promise<(StoreAddInput & StoreListItem) | undefined>
+  ): Promise<(StoreGetItem) | undefined>
 }
 
 export interface UploadTable {
-  inspect: (link: UnknownLink) => Promise<UploadGetOk>
+  inspect: (link: UnknownLink) => Promise<UploadInspectOk>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
   insert: (item: UploadAddInput) => Promise<UploadAddOk>
   remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>
@@ -360,6 +361,10 @@ export interface UploadTable {
     space: DID,
     options?: ListOptions
   ) => Promise<ListResponse<UploadListItem>>
+  get(
+    space: DID,
+    link: UnknownLink
+  ): Promise<(UploadGetItem) | undefined>
 }
 
 export type SpaceInfoSuccess = {
@@ -394,18 +399,24 @@ export interface StoreAddInput {
   invocation: UCANLink
 }
 
-export interface StoreAddOutput
-  extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
-
-export interface StoreGetOk {
-  spaces: Array<{ did: DID; insertedAt: string }>
-}
-
-export interface StoreListItem extends StoreAddOutput {
+export interface StoreMetadata {
   insertedAt: string
 }
 
+export interface StoreAddOutput
+  extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
+
+export interface StoreInspectOk {
+  spaces: Array<{ did: DID; insertedAt: string }>
+}
+
+export type StoreListItem = StoreAddOutput & StoreMetadata
+
+export type StoreGetItem = StoreAddInput & StoreMetadata
+
 export interface StoreListOk extends ListResponse<StoreListItem> {}
+
+export type StoreGetOk = StoreGetItem
 
 export type StoreAddOk = StoreAddDone | StoreAddUpload
 
@@ -433,9 +444,17 @@ export interface UploadAddInput {
   invocation: UCANLink
 }
 
+export interface UploadMetadata {
+  insertedAt: string
+  updatedAt: string  
+}
+
 export interface UploadAddOk
   extends Omit<UploadAddInput, 'space' | 'issuer' | 'invocation'> {}
 export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
+
+export type UploadListItem =  UploadAddOk & UploadMetadata
+export type UploadGetItem =  UploadAddInput & UploadMetadata
 
 export interface UploadDIDRemove extends UploadAddOk {}
 export interface UploadDidNotRemove {
@@ -443,16 +462,13 @@ export interface UploadDidNotRemove {
   shards?: undefined
 }
 
-export interface UploadGetOk {
+export interface UploadInspectOk {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 
-export interface UploadListItem extends UploadAddOk {
-  insertedAt: string
-  updatedAt: string
-}
-
 export interface UploadListOk extends ListResponse<UploadListItem> {}
+
+export interface UploadGetOk extends UploadGetItem {}
 
 export interface ListOptions {
   size?: number

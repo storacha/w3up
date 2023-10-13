@@ -9,6 +9,7 @@ import {
 } from '../util.js'
 import { createServer, connect } from '../../src/lib.js'
 import { Upload } from '@web3-storage/capabilities'
+import { uploadListProvider } from '../../src/upload/list.js'
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/batchwriteitemcommand.html
 const BATCH_MAX_SAFE_LIMIT = 25
@@ -858,5 +859,79 @@ export const test = {
       true,
       'mentions passed audience'
     )
+  },
+
+  'upload/get returns info for one upload': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // invoke multiple upload/add with proof
+    const cars = [await randomCAR(128), await randomCAR(128)]
+
+    for (const car of cars) {
+      await Upload.add
+        .invoke({
+          issuer: alice,
+          audience: connection.id,
+          with: spaceDid,
+          nb: { root: car.roots[0], shards: [car.cid] },
+          proofs: [proof],
+        })
+        .execute(connection)
+    }
+
+    const uploadGet = await Upload.get
+      .invoke({
+        issuer: alice,
+        audience: connection.id,
+        with: spaceDid,
+        proofs: [proof],
+        nb: {
+          root: cars[0].roots[0]
+        },
+      })
+      .execute(connection)
+
+    if (!uploadGet.out.ok) {
+      throw new Error('invocation failed', { cause: uploadGet })
+    }
+
+    assert.equal(uploadGet.out.ok.issuer, alice.toDIDKey())
+    assert.equal(uploadGet.out.ok.space, spaceDid)
+    assert.equal(uploadGet.out.ok.shards?.[0].toString(), cars[0].cid.toString())
+    assert.equal(uploadGet.out.ok.root.toString(), cars[0].roots[0].toString())
+  },
+
+  'upload/get returns UploadNotFound when root is not in uploads': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const car = await randomCAR(128)
+
+    const uploadGet = await Upload.get
+      .invoke({
+        issuer: alice,
+        audience: connection.id,
+        with: spaceDid,
+        proofs: [proof],
+        nb: {
+          root: car.roots[0]
+        },
+      })
+      .execute(connection)
+
+    assert.equal(uploadGet.out.error?.name, 'UploadNotFound')
   },
 }

@@ -2,17 +2,16 @@ import * as API from '../../src/types.js'
 
 /**
  * @implements {API.StoreTable}
- * @implements {API.TestStoreTable}
  */
 export class StoreTable {
   constructor() {
-    /** @type {(API.StoreAddInput & API.StoreListItem)[]} */
+    /** @type {(API.StoreGetItem)[]} */
     this.items = []
   }
 
   /**
    * @param {API.StoreAddInput} input
-   * @returns
+   * @returns {Promise<API.StoreAddOutput>}
    */
   async insert({ space, issuer, invocation, ...output }) {
     this.items.unshift({
@@ -28,7 +27,7 @@ export class StoreTable {
   /**
    *
    * @param {API.UnknownLink} link
-   * @returns {Promise<API.StoreGetOk>}
+   * @returns {Promise<API.StoreInspectOk>}
    */
   async inspect(link) {
     const items =
@@ -43,9 +42,10 @@ export class StoreTable {
   }
 
   /**
-   *
+   * Get info for a single shard or undefined if it doesn't exist
    * @param {API.DID} space
    * @param {API.UnknownLink} link
+   * @returns {Promise<API.StoreGetItem | undefined>}
    */
   async get(space, link) {
     return this.items.find(

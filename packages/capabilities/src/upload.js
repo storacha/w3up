@@ -85,7 +85,7 @@ export const add = capability({
  * capability for any root. If root is specified, then the
  * capability only allows a get for that single cid.
  *
- * When used as as an invocation, `nb.root` should be specified.
+ * When used as as an invocation, `nb.root` must be specified.
  */
 export const get = capability({
   can: 'upload/get',

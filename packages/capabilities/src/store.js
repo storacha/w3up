@@ -85,7 +85,7 @@ export const add = capability({
  * capability for any shard cid. If link is specified, then the
  * capability only allows a get for that single cid.
  *
- * When used as as an invocation, `nb.link` should be specified.
+ * When used as as an invocation, `nb.link` must be specified.
  */
 export const get = capability({
   can: 'store/get',
