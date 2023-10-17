@@ -262,9 +262,9 @@ describe('Agent', function () {
         revoke: provide(UCAN.revoke, async ({ capability, invocation }) => {
           // copy a bit of the production revocation handler to do basic validation
           const { nb: input } = capability
-          // eslint-disable-next-line unicorn/no-null
           const ucan = Delegation.view(
             { root: input.ucan, blocks: invocation.blocks },
+            // eslint-disable-next-line unicorn/no-null
             null
           )
           return ucan
