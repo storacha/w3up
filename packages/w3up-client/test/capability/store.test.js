@@ -7,6 +7,7 @@ import { AgentData } from '@web3-storage/access/agent'
 import { randomCAR } from '../helpers/random.js'
 import { mockService, mockServiceConf } from '../helpers/mocks.js'
 import { Client } from '../../src/client.js'
+import { validateAuthorization } from '../helpers/utils.js'
 
 describe('StoreClient', () => {
   describe('add', () => {
@@ -36,6 +37,7 @@ describe('StoreClient', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -87,6 +89,7 @@ describe('StoreClient', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -120,7 +123,7 @@ describe('StoreClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.remove.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
-            return { ok: {} }
+            return { ok: { size: 128 } }
           }),
         },
       })
@@ -129,6 +132,7 @@ describe('StoreClient', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {

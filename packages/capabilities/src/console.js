@@ -1,6 +1,12 @@
 import { capability, Schema } from '@ucanto/validator'
 import { equalWith } from './utils.js'
 
+export const console = capability({
+  can: 'console/*',
+  with: Schema.did(),
+  derives: equalWith,
+})
+
 /**
  * Capability that succeeds with the `nb.value` value.
  */

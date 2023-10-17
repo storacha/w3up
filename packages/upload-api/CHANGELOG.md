@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.9.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.8.0...upload-api-v5.9.0) (2023-10-10)
+
+
+### Features
+
+* revocation handler ([#960](https://github.com/web3-storage/w3up/issues/960)) ([91f52c6](https://github.com/web3-storage/w3up/commit/91f52c6d35e4aea2a98c75d8b95ff61cdffac452))
+* upgrade to ucanto@9 ([#951](https://github.com/web3-storage/w3up/issues/951)) ([d72faf1](https://github.com/web3-storage/w3up/commit/d72faf1bb07dd11462ae6dff8ee0469f8ae7e9e7))
+
+## [5.8.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.7.0...upload-api-v5.8.0) (2023-10-06)
+
+
+### Features
+
+* Add basic README to upload-api ([#949](https://github.com/web3-storage/w3up/issues/949)) ([d09db73](https://github.com/web3-storage/w3up/commit/d09db734da5eec55d5a21106fecc07bddd5f14dc))
+
+## [5.7.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.6.0...upload-api-v5.7.0) (2023-10-05)
+
+
+### Features
+
+* add `RevocationsStorage` ([#941](https://github.com/web3-storage/w3up/issues/941)) ([0069701](https://github.com/web3-storage/w3up/commit/0069701c76eff9ce0ac229658d217dac42d9adc8))
+
 ## [5.6.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.5.0...upload-api-v5.6.0) (2023-09-18)
 
 

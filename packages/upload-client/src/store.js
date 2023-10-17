@@ -153,7 +153,7 @@ export async function add(
  *
  * The issuer needs the `store/list` delegated capability.
  * @param {import('./types').ListRequestOptions} [options]
- * @returns {Promise<import('./types').StoreListOk>}
+ * @returns {Promise<import('./types').StoreListSuccess>}
  */
 export async function list(
   { issuer, with: resource, proofs, audience },
@@ -227,4 +227,6 @@ export async function remove(
       cause: result.out.error,
     })
   }
+
+  return result.out
 }

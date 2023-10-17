@@ -4,7 +4,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.UploadServiceContext} context
- * @returns {API.ServiceMethod<API.UploadList, API.UploadListOk, API.Failure>}
+ * @returns {API.ServiceMethod<API.UploadList, API.UploadListSuccess, API.Failure>}
  */
 export function uploadListProvider(context) {
   return Server.provide(Upload.list, async ({ capability }) => {

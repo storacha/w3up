@@ -1,5 +1,36 @@
 # Changelog
 
+## [10.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.5.0...capabilities-v10.0.0) (2023-10-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Returning the `size` means that we need to fetch the stored item beforehand, and if it does not exist throw a `StoreItemNotFound` error. This is a change from the current behaviour which returns successfully even if the item is not present in the space.
+
+### Features
+
+* add size to `store/remove` receipt ([#969](https://github.com/web3-storage/w3up/issues/969)) ([d2100eb](https://github.com/web3-storage/w3up/commit/d2100eb0ffa5968c326d58d583a258187f9119eb))
+
+## [9.5.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.4.0...capabilities-v9.5.0) (2023-10-10)
+
+
+### Features
+
+* revocation handler ([#960](https://github.com/web3-storage/w3up/issues/960)) ([91f52c6](https://github.com/web3-storage/w3up/commit/91f52c6d35e4aea2a98c75d8b95ff61cdffac452))
+
+
+### Bug Fixes
+
+* upgrade to latest ts ([#962](https://github.com/web3-storage/w3up/issues/962)) ([711e3f7](https://github.com/web3-storage/w3up/commit/711e3f73f6905fde0d929952fff70be845a55fa1))
+
+## [9.4.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.3.0...capabilities-v9.4.0) (2023-10-10)
+
+
+### Features
+
+* define ucan/revoke capability ([#943](https://github.com/web3-storage/w3up/issues/943)) ([5d957ef](https://github.com/web3-storage/w3up/commit/5d957ef1e644557f557dc45a048150d73894e801))
+* upgrade to ucanto@9 ([#951](https://github.com/web3-storage/w3up/issues/951)) ([d72faf1](https://github.com/web3-storage/w3up/commit/d72faf1bb07dd11462ae6dff8ee0469f8ae7e9e7))
+
 ## [9.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v9.2.1...capabilities-v9.3.0) (2023-09-13)
 
 

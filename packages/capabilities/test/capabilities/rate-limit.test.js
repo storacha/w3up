@@ -4,6 +4,7 @@ import { delegate } from '@ucanto/core'
 import { Verifier } from '@ucanto/principal/ed25519'
 import * as RateLimit from '../../src/rate-limit.js'
 import { bob, service, alice } from '../helpers/fixtures.js'
+import { validateAuthorization } from '../helpers/utils.js'
 
 describe('rate-limit/add', function () {
   const space = bob
@@ -21,6 +22,7 @@ describe('rate-limit/add', function () {
       capability: RateLimit.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -61,6 +63,7 @@ describe('rate-limit/add', function () {
         capability: RateLimit.add,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -91,6 +94,7 @@ describe('rate-limit/add', function () {
         capability: RateLimit.add,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.error)
@@ -127,6 +131,7 @@ describe('rate-limit/add', function () {
         capability: RateLimit.add,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -157,6 +162,7 @@ describe('rate-limit/add', function () {
         capability: RateLimit.add,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.error)
@@ -191,6 +197,7 @@ describe('rate-limit/add', function () {
       capability: RateLimit.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail(
@@ -223,6 +230,7 @@ describe('rate-limit/add', function () {
       capability: RateLimit.add,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -280,6 +288,7 @@ describe('rate-limit/remove', function () {
       capability: RateLimit.remove,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -307,6 +316,7 @@ describe('rate-limit/remove', function () {
       capability: RateLimit.remove,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -349,6 +359,7 @@ describe('rate-limit/remove', function () {
         capability: RateLimit.remove,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -377,6 +388,7 @@ describe('rate-limit/remove', function () {
         capability: RateLimit.remove,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.error)
@@ -410,6 +422,7 @@ describe('rate-limit/list', function () {
       capability: RateLimit.list,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
     if (result.error) {
       assert.fail('error in self issue')
@@ -437,6 +450,7 @@ describe('rate-limit/list', function () {
       capability: RateLimit.list,
       principal: Verifier,
       authority: service,
+      validateAuthorization,
     })
 
     assert.equal(result.error?.message.includes('not authorized'), true)
@@ -479,6 +493,7 @@ describe('rate-limit/list', function () {
         capability: RateLimit.list,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       if (result.error) {
@@ -507,6 +522,7 @@ describe('rate-limit/list', function () {
         capability: RateLimit.list,
         principal: Verifier,
         authority: service,
+        validateAuthorization,
       })
 
       assert.ok(result.error)

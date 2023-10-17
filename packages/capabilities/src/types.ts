@@ -1,7 +1,16 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
-import { InferInvokedCapability, Unit, DID, DIDKey } from '@ucanto/interface'
+import {
+  InferInvokedCapability,
+  Unit,
+  DID,
+  DIDKey,
+  ToString,
+  Link,
+  UnknownLink,
+} from '@ucanto/interface'
+import { CAR } from '@ucanto/transport'
 import type { PieceLink } from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
@@ -15,8 +24,14 @@ import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
 import * as FilecoinCaps from './filecoin.js'
 import * as AdminCaps from './admin.js'
+import * as UCANCaps from './ucan.js'
 
 export type { Unit, PieceLink }
+
+/**
+ * An IPLD Link that has the CAR codec code.
+ */
+export type CARLink = Link<unknown, typeof CAR.codec.code>
 
 export type AccountDID = DID<'mailto'>
 export type SpaceDID = DID<'key'>
@@ -213,6 +228,7 @@ export type UploadList = InferInvokedCapability<typeof UploadCaps.list>
 export interface UploadNotFound extends Ucanto.Failure {
   name: 'UploadNotFound'
 }
+
 export type UploadGetFailure = UploadNotFound | Ucanto.Failure
 
 // Store
@@ -222,10 +238,101 @@ export type StoreGet = InferInvokedCapability<typeof StoreCaps.get>
 export type StoreRemove = InferInvokedCapability<typeof StoreCaps.remove>
 export type StoreList = InferInvokedCapability<typeof StoreCaps.list>
 
-export interface ShardNotFound extends Ucanto.Failure {
-  name: 'ShardNotFound'
+export type StoreAddSuccess = StoreAddSuccessDone | StoreAddSuccessUpload
+export interface StoreAddSuccessDone {
+  status: 'done'
+  with: DID
+  link: UnknownLink
+  url?: undefined
+  headers?: undefined
 }
-export type StoreGetFailure = ShardNotFound | Ucanto.Failure
+
+export interface StoreAddSuccessUpload {
+  status: 'upload'
+  with: DID
+  link: UnknownLink
+  url: ToString<URL>
+  headers: Record<string, string>
+}
+
+export interface StoreRemoveSuccess {
+  size: number
+}
+
+export interface StoreItemNotFound extends Ucanto.Failure {
+  name: 'StoreItemNotFound'
+}
+
+export type StoreRemoveFailure = StoreItemNotFound | Ucanto.Failure
+
+export type StoreGetFailure = StoreItemNotFound | Ucanto.Failure
+
+export interface StoreListSuccess extends ListResponse<StoreListItem> {}
+
+export interface ListResponse<R> {
+  cursor?: string
+  before?: string
+  after?: string
+  size: number
+  results: R[]
+}
+
+export interface StoreListItem {
+  link: UnknownLink
+  size: number
+  origin?: UnknownLink
+}
+
+export interface UploadAddSuccess {
+  root: UnknownLink
+  shards?: CARLink[]
+}
+
+export type UploadRemoveSuccess = UploadDidRemove | UploadDidNotRemove
+
+export interface UploadDidRemove extends UploadAddSuccess {}
+
+export interface UploadDidNotRemove {
+  root?: undefined
+  shards?: undefined
+}
+
+export interface UploadListSuccess extends ListResponse<UploadListItem> {}
+
+export interface UploadListItem extends UploadAddSuccess {}
+
+// UCAN core events
+
+export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
+
+/**
+ * Error is raised when `UCAN` being revoked is not supplied or it's proof chain
+ * leading to supplied `scope` is not supplied.
+ */
+export interface UCANNotFound extends Ucanto.Failure {
+  name: 'UCANNotFound'
+}
+
+/**
+ * Error is raised when `UCAN` being revoked does not have provided `scope` in
+ * the proof chain.
+ */
+export interface InvalidRevocationScope extends Ucanto.Failure {
+  name: 'InvalidRevocationScope'
+}
+
+/**
+ * Error is raised when `UCAN` revocation is issued by unauthorized principal,
+ * that is `with` field is not an `iss` of the `scope`.
+ */
+export interface UnauthorizedRevocation extends Ucanto.Failure {
+  name: 'UnauthorizedRevocation'
+}
+
+export type UCANRevokeFailure =
+  | UCANNotFound
+  | InvalidRevocationScope
+  | UnauthorizedRevocation
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>

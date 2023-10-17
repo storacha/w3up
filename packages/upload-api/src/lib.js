@@ -3,6 +3,7 @@ import * as Client from '@ucanto/client'
 import * as Types from './types.js'
 import * as Legacy from '@ucanto/transport/legacy'
 import * as CAR from '@ucanto/transport/car'
+import { create as createRevocationChecker } from './utils/revocation.js'
 import { createService as createStoreService } from './store.js'
 import { createService as createUploadService } from './upload.js'
 import { createService as createConsoleService } from './console.js'
@@ -14,14 +15,16 @@ import { createService as createProviderService } from './provider.js'
 import { createService as createSubscriptionService } from './subscription.js'
 import { createService as createAdminService } from './admin.js'
 import { createService as createRateLimitService } from './rate-limit.js'
+import { createService as createUcanService } from './ucan.js'
 
 export * from './types.js'
 
 /**
- * @param {Types.UcantoServerContext} options
+ * @param {Omit<Types.UcantoServerContext, 'validateAuthorization'>} options
  */
 export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
   Server.create({
+    ...createRevocationChecker(context),
     id,
     codec,
     service: createService(context),
@@ -44,6 +47,7 @@ export const createService = (context) => ({
   store: createStoreService(context),
   subscription: createSubscriptionService(context),
   upload: createUploadService(context),
+  ucan: createUcanService(context),
 })
 
 /**

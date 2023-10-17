@@ -8,16 +8,17 @@ import type {
   DIDKey,
   InboundCodec,
   Result,
-  Unit,
   CapabilityParser,
   Match,
   ParsedCapability,
   InferInvokedCapability,
+  RevocationChecker,
+  ToString,
+  UnknownLink,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
-import { ToString, UnknownLink } from 'multiformats'
 import { DelegationsStorage as Delegations } from './types/delegations'
 import { ProvisionsStorage as Provisions } from './types/provisions'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits'
@@ -25,6 +26,13 @@ import { RateLimitsStorage as RateLimits } from './types/rate-limits'
 export type ValidationEmailSend = {
   to: string
   url: string
+}
+
+export interface Timestamp {
+  /**
+   * Unix timestamp in seconds.
+   */
+  time: number
 }
 
 export type SpaceDID = DIDKey
@@ -52,12 +60,21 @@ export interface DebugEmail extends Email {
 import {
   StoreAdd,
   StoreGet,
+  StoreAddSuccess,
   StoreRemove,
+  StoreRemoveSuccess,
+  StoreRemoveFailure,
   StoreList,
+  StoreListSuccess,
+  StoreListItem,
   UploadAdd,
   UploadGet,
+  UploadAddSuccess,
   UploadRemove,
+  UploadRemoveSuccess,
   UploadList,
+  UploadListSuccess,
+  UploadListItem,
   AccessAuthorize,
   AccessAuthorizeSuccess,
   AccessDelegate,
@@ -103,8 +120,12 @@ import {
   ProviderDID,
   StoreGetFailure,
   UploadGetFailure,
+  UCANRevoke,
+  ListResponse,
+  CARLink,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
+import { RevocationsStorage } from './types/revocations'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
@@ -114,20 +135,26 @@ export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
 } from './types/delegations'
+export type {
+  Revocation,
+  RevocationQuery,
+  MatchingRevocations,
+  RevocationsStorage,
+} from './types/revocations'
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 
 export interface Service {
   store: {
-    add: ServiceMethod<StoreAdd, StoreAddOk, Failure>
+    add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetOk, StoreGetFailure>
-    remove: ServiceMethod<StoreRemove, Unit, Failure>
-    list: ServiceMethod<StoreList, StoreListOk, Failure>
+    remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
+    list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
   upload: {
-    add: ServiceMethod<UploadAdd, UploadAddOk, Failure>
-    get: ServiceMethod<UploadGet, UploadGetOk, Failure>
-    remove: ServiceMethod<UploadRemove, UploadRemoveOk, UploadGetFailure>
-    list: ServiceMethod<UploadList, UploadListOk, Failure>
+    add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
+    get: ServiceMethod<UploadGet, UploadGetOk, UploadGetFailure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
+    list: ServiceMethod<UploadList, UploadListSuccess, Failure>
   }
   console: {
     log: ServiceMethod<
@@ -182,6 +209,11 @@ export interface Service {
       RateLimitListFailure
     >
   }
+
+  ucan: {
+    revoke: ServiceMethod<UCANRevoke, Timestamp, Failure>
+  }
+
   admin: {
     store: {
       inspect: ServiceMethod<
@@ -214,7 +246,8 @@ export type StoreServiceContext = SpaceServiceContext & {
 }
 
 export type UploadServiceContext = ConsumerServiceContext &
-  SpaceServiceContext & {
+  SpaceServiceContext &
+  RevocationServiceContext & {
     signer: EdSigner.Signer
     uploadTable: UploadTable
     dudewhereBucket: DudewhereBucket
@@ -270,6 +303,10 @@ export interface RateLimitServiceContext {
   rateLimitsStorage: RateLimits
 }
 
+export interface RevocationServiceContext {
+  revocationsStorage: RevocationsStorage
+}
+
 export interface ServiceContext
   extends AccessServiceContext,
     ConsoleServiceContext,
@@ -280,9 +317,10 @@ export interface ServiceContext
     StoreServiceContext,
     SubscriptionServiceContext,
     RateLimitServiceContext,
+    RevocationServiceContext,
     UploadServiceContext {}
 
-export interface UcantoServerContext extends ServiceContext {
+export interface UcantoServerContext extends ServiceContext, RevocationChecker {
   id: Signer
   codec?: InboundCodec
   errorReporter: ErrorReporter
@@ -345,7 +383,9 @@ export interface StoreTable {
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<ListResponse<StoreListItem>>
+  ) => Promise<
+    (StoreAddInput & StoreListItem & { insertedAt: string }) | undefined
+  >
   get(
     space: DID,
     link: UnknownLink
@@ -355,12 +395,14 @@ export interface StoreTable {
 export interface UploadTable {
   inspect: (link: UnknownLink) => Promise<UploadInspectOk>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
-  insert: (item: UploadAddInput) => Promise<UploadAddOk>
-  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveOk | null>
+  insert: (item: UploadAddInput) => Promise<UploadAddSuccess>
+  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveSuccess | null>
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<ListResponse<UploadListItem>>
+  ) => Promise<
+    ListResponse<UploadListItem & { insertedAt: string; updatedAt: string }>
+  >
   get(
     space: DID,
     link: UnknownLink
@@ -439,7 +481,7 @@ export interface StoreAddUpload {
 export interface UploadAddInput {
   space: DID
   root: UnknownLink
-  shards?: UnknownLink[]
+  shards?: CARLink[]
   issuer: DID
   invocation: UCANLink
 }
@@ -474,15 +516,6 @@ export interface ListOptions {
   size?: number
   cursor?: string
   pre?: boolean
-}
-
-export interface ListResponse<R> {
-  // cursor and after should be identical
-  cursor?: string
-  before?: string
-  after?: string
-  size: number
-  results: R[]
 }
 
 export interface TestSpaceRegistry {

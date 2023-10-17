@@ -10,6 +10,7 @@ import { toCAR } from './helpers/car.js'
 import { mockService, mockServiceConf } from './helpers/mocks.js'
 import { File } from './helpers/shims.js'
 import { Client } from '../src/client.js'
+import { validateAuthorization } from './helpers/utils.js'
 
 describe('Client', () => {
   describe('uploadFile', () => {
@@ -65,6 +66,7 @@ describe('Client', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -154,6 +156,7 @@ describe('Client', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {
@@ -230,6 +233,7 @@ describe('Client', () => {
         id: await Signer.generate(),
         service,
         codec: CAR.inbound,
+        validateAuthorization,
       })
 
       const alice = new Client(await AgentData.create(), {

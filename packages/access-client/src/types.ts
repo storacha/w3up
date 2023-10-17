@@ -10,7 +10,6 @@ import type {
   Resource,
   ResponseDecoder,
   ServiceMethod,
-  URI,
   InferInvokedCapability,
   CapabilityParser,
   Match,
@@ -18,7 +17,6 @@ import type {
   UnknownMatch,
   Delegation,
   DID,
-  DIDKey,
   Signer,
   SignerArchive,
   SigAlg,
@@ -46,45 +44,15 @@ import type {
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
 import { SpaceUnknown } from './errors.js'
-import type { ColumnType, Generated, Selectable } from 'kysely'
 
 // export other types
 export * from '@web3-storage/capabilities/types'
 export * from './errors.js'
 
-/**
- * D1 Types
- */
-
-export interface SpaceTable {
-  did: DIDKey
-  agent: DID
-  email: string
-  product: URI
-  inserted_at: Generated<Date>
-  updated_at: ColumnType<Date, never, Date>
-  metadata: SpaceTableMetadata | null
-  invocation: string
-  delegation: string | null
-}
-export type SpaceRecord = Selectable<SpaceTable>
-
 export interface SpaceInfoResult {
   // space did
   did: DID<'key'>
   providers: Array<DID<'web'>>
-}
-
-export interface AccountTable {
-  did: DID<'mailto'>
-  inserted_at: Generated<Date>
-  updated_at: ColumnType<Date, never, Date>
-}
-export type AccountRecord = Selectable<AccountTable>
-
-export interface SpaceTableMetadata {
-  space: SpaceMeta
-  agent: AgentMeta
 }
 
 /**
@@ -208,7 +176,7 @@ export type InvokeOptions<
   A extends Ability,
   R extends Resource,
   CAP extends CapabilityParser<
-    Match<{ can: A; with: R; nb: Caveats }, UnknownMatch>
+    Match<{ can: A; with: R & Resource; nb: Caveats }, UnknownMatch>
   >
 > = UCANBasicOptions &
   InferNb<InferInvokedCapability<CAP>['nb']> & {

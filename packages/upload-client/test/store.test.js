@@ -9,6 +9,7 @@ import * as Store from '../src/store.js'
 import { serviceSigner } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
+import { validateAuthorization } from './helpers/utils.js'
 
 describe('Store.add', () => {
   it('stores a DAG with the service', async () => {
@@ -25,7 +26,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -52,6 +53,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -94,7 +96,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -113,6 +115,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -146,7 +149,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -165,6 +168,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -198,7 +202,7 @@ describe('Store.add', () => {
       }),
     ]
 
-    /** @type {import('../src/types.js').StoreAddDone} */
+    /** @type {import('../src/types.js').StoreAddSuccessDone} */
     const res = {
       status: 'done',
       // @ts-expect-error
@@ -215,6 +219,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -242,7 +247,7 @@ describe('Store.add', () => {
     const agent = await Signer.generate()
     const car = await randomCAR(128)
 
-    /** @type {import('../src/types.js').StoreAddOk} */
+    /** @type {import('../src/types.js').StoreAddSuccess} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -261,6 +266,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -319,6 +325,7 @@ describe('Store.add', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -380,6 +387,7 @@ describe('Store.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -457,6 +465,7 @@ describe('Store.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -518,6 +527,7 @@ describe('Store.list', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -561,7 +571,7 @@ describe('Store.remove', () => {
           assert.equal(invCap.can, StoreCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
           assert.equal(String(invCap.nb?.link), car.cid.toString())
-          return { ok: {} }
+          return { ok: { size: car.size } }
         }),
       },
     })
@@ -570,6 +580,7 @@ describe('Store.remove', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -577,7 +588,7 @@ describe('Store.remove', () => {
       channel: server,
     })
 
-    await Store.remove(
+    const result = await Store.remove(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car.cid,
       { connection }
@@ -585,6 +596,9 @@ describe('Store.remove', () => {
 
     assert(service.store.remove.called)
     assert.equal(service.store.remove.callCount, 1)
+
+    assert(result.ok)
+    assert.equal(result.ok.size, car.size)
   })
 
   it('throws on service error', async () => {
@@ -613,6 +627,7 @@ describe('Store.remove', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,

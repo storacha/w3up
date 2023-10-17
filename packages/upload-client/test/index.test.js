@@ -12,6 +12,7 @@ import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
+import { validateAuthorization } from './helpers/utils.js'
 import {
   blockEncodingLength,
   encode,
@@ -45,7 +46,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {import('../src/types.js').StoreAddUpload} */
+    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -88,6 +89,7 @@ describe('uploadFile', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -136,7 +138,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -167,6 +169,7 @@ describe('uploadFile', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -221,7 +224,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -266,6 +269,7 @@ describe('uploadDirectory', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -314,7 +318,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -345,6 +349,7 @@ describe('uploadDirectory', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -401,7 +406,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -450,6 +455,7 @@ describe('uploadCAR', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,
@@ -501,7 +507,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -547,6 +553,7 @@ describe('uploadCAR', () => {
       id: serviceSigner,
       service,
       codec: CAR.inbound,
+      validateAuthorization,
     })
     const connection = Client.connect({
       id: serviceSigner,

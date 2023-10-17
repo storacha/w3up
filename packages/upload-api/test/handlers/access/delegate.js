@@ -121,8 +121,8 @@ export const test = {
     ]
 
     assert.deepEqual(
-      received,
-      [delegation],
+      received.map((d) => d.cid.toString()),
+      [delegation.cid.toString()],
       'claimed all delegated delegations'
     )
   },
