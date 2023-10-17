@@ -256,25 +256,27 @@ describe('Agent', function () {
     const server = createServer({
       ucan: {
         /**
-         * 
+         *
          * @type {import('@ucanto/interface').ServiceMethod<import('../src/types.js').UCANRevoke, import('../src/types.js').UCANRevokeSuccess, import('../src/types.js').UCANRevokeFailure>}
          */
         revoke: provide(UCAN.revoke, async ({ capability, invocation }) => {
           // copy a bit of the production revocation handler to do basic validation
           const { nb: input } = capability
-          const ucan = Delegation.view({ root: input.ucan, blocks: invocation.blocks }, null)
-          if (ucan) {
-            return { ok: { time: Date.now() } }
-          } else {
-            return {
-              error: {
-                name: 'UCANNotFound',
-                message: 'Could not find delegation in invocation blocks'
+          // eslint-disable-next-line unicorn/no-null
+          const ucan = Delegation.view(
+            { root: input.ucan, blocks: invocation.blocks },
+            null
+          )
+          return ucan
+            ? { ok: { time: Date.now() } }
+            : {
+                error: {
+                  name: 'UCANNotFound',
+                  message: 'Could not find delegation in invocation blocks',
+                },
               }
-            }
-          }
-        })
-      }
+        }),
+      },
     })
     const agent = await Agent.create(undefined, {
       connection: connection({ principal: server.id, channel: server }),

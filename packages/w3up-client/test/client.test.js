@@ -346,21 +346,25 @@ describe('Client', () => {
     it('should revoke a delegation by CID', async () => {
       const service = mockService({
         ucan: {
-          revoke: provide(UCANCapabilities.revoke, ({ capability, invocation }) => {
-            // copy a bit of the production revocation handler to do basic validation
-            const { nb: input } = capability
-            const ucan = Delegation.view({ root: input.ucan, blocks: invocation.blocks }, null)
-            if (ucan) {
-              return { ok: { time: Date.now() } }
-            } else {
-              return {
-                error: {
-                  name: 'UCANNotFound',
-                  message: 'Could not find delegation in invocation blocks'
-                }
-              }
+          revoke: provide(
+            UCANCapabilities.revoke,
+            ({ capability, invocation }) => {
+              // copy a bit of the production revocation handler to do basic validation
+              const { nb: input } = capability
+              const ucan = Delegation.view(
+                { root: input.ucan, blocks: invocation.blocks },
+                null
+              )
+              return ucan
+                ? { ok: { time: Date.now() } }
+                : {
+                    error: {
+                      name: 'UCANNotFound',
+                      message: 'Could not find delegation in invocation blocks',
+                    },
+                  }
             }
-          }),
+          ),
         },
       })
 
