@@ -295,6 +295,15 @@ export interface UploadListItem extends UploadAddSuccess {}
 
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
 
+export interface Timestamp {
+  /**
+   * Unix timestamp in seconds.
+   */
+  time: number
+}
+
+export type UCANRevokeSuccess = Timestamp
+
 /**
  * Error is raised when `UCAN` being revoked is not supplied or it's proof chain
  * leading to supplied `scope` is not supplied.
@@ -323,6 +332,7 @@ export type UCANRevokeFailure =
   | UCANNotFound
   | InvalidRevocationScope
   | UnauthorizedRevocation
+  | Ucanto.Failure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>

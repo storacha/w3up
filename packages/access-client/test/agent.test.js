@@ -1,7 +1,9 @@
 import assert from 'assert'
 import { URI } from '@ucanto/validator'
+import { Delegation, provide } from '@ucanto/server'
 import { Agent, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
+import * as UCAN from '@web3-storage/capabilities/ucan'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 
@@ -248,5 +250,49 @@ describe('Agent', function () {
         }),
       /cannot delegate capability store\/remove/
     )
+  })
+
+  it('should revoke', async function () {
+    const server = createServer({
+      ucan: {
+        /**
+         * 
+         * @type {import('@ucanto/interface').ServiceMethod<import('../src/types.js').UCANRevoke, import('../src/types.js').UCANRevokeSuccess, import('../src/types.js').UCANRevokeFailure>}
+         */
+        revoke: provide(UCAN.revoke, async ({ capability, invocation }) => {
+          // copy a bit of the production revocation handler to do basic validation
+          const { nb: input } = capability
+          const ucan = Delegation.view({ root: input.ucan, blocks: invocation.blocks }, null)
+          if (ucan) {
+            return { ok: { time: Date.now() } }
+          } else {
+            return {
+              error: {
+                name: 'UCANNotFound',
+                message: 'Could not find delegation in invocation blocks'
+              }
+            }
+          }
+        })
+      }
+    })
+    const agent = await Agent.create(undefined, {
+      connection: connection({ principal: server.id, channel: server }),
+    })
+
+    const space = await agent.createSpace('execute')
+    await agent.setCurrentSpace(space.did)
+
+    const delegation = await agent.delegate({
+      abilities: ['*'],
+      audience: fixtures.alice,
+      audienceMeta: {
+        name: 'sss',
+        type: 'app',
+      },
+    })
+
+    const receipt = await agent.revokeDelegation(delegation.cid)
+    assert(receipt.out.ok, `failed to revoke: ${receipt.out.error?.message}`)
   })
 })

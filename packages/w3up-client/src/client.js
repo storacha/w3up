@@ -130,7 +130,7 @@ export class Client extends Base {
    * @param {import('./types').DID} did
    */
   async setCurrentSpace(did) {
-    await this._agent.setCurrentSpace(/** @type {`did:key:${string}`} */ (did))
+    await this._agent.setCurrentSpace(/** @type {`did:key:${string}`} */(did))
   }
 
   /**
@@ -237,5 +237,21 @@ export class Client extends Base {
       audienceMeta,
     })
     return new AgentDelegation(root, blocks, { audience: audienceMeta })
+  }
+
+  /**
+    * Revoke a delegation by CID.
+    * 
+    * If the delegation was issued by this agent (and therefore is stored in the
+    * delegation store) you can just pass the CID. If not, or if the current agent's
+    * delegation store no longer contains the delegation, you MUST pass a chain of 
+    * proofs that proves your authority to revoke this delegation as `options.proofs`.
+    * 
+    * @param {import('@ucanto/interface').UCANLink} delegationCID 
+    * @param {object} [options]
+    * @param {import('@ucanto/interface').Delegation[]} [options.proofs]
+    */
+  async revokeDelegation(delegationCID, options = {}) {
+    return this._agent.revokeDelegation(delegationCID, { proofs: options.proofs })
   }
 }

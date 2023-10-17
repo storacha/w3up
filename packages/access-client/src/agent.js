@@ -20,6 +20,7 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { addProviderAndDelegateToAccount } from './agent-use-cases.js'
+import { UCAN } from '@web3-storage/capabilities'
 
 export { AgentData }
 export * from './agent-use-cases.js'
@@ -203,6 +204,33 @@ export class Agent {
         await this.#data.removeDelegation(value.delegation.cid)
       }
     }
+  }
+
+  /**
+   * Revoke a delegation by CID.
+   * 
+   * If the delegation was issued by this agent (and therefore is stored in the
+   * delegation store) you can just pass the CID. If not, or if the current agent's
+   * delegation store no longer contains the delegation, you MUST pass a chain of 
+   * proofs that proves your authority to revoke this delegation as `options.proofs`.
+   * 
+   * @param {import('@ucanto/interface').UCANLink} delegationCID
+   * @param {object} [options]
+   * @param {import('@ucanto/interface').Delegation[]} [options.proofs]
+   */
+  async revokeDelegation(delegationCID, options = {}) {
+    // look for the identified delegation in the delegation store and the passed proofs
+    const delegation = [...this.delegations(), ...(options.proofs ?? [])]
+      .find(delegation => delegation.cid.equals(delegationCID))
+    if (!delegation) {
+      throw new Error(`could not find delegation ${delegationCID.toString()} - please include the delegation in options.proofs`)
+    }
+    return this.invokeAndExecute(UCAN.revoke, {
+      nb: {
+        ucan: delegation.cid
+      },
+      proofs: options.proofs ?? [delegation]
+    })
   }
 
   /**
@@ -471,7 +499,7 @@ export class Agent {
    */
   async invokeAndExecute(cap, options) {
     const inv = await this.invoke(cap, options)
-    const out = inv.execute(/** @type {*} */ (this.connection))
+    const out = inv.execute(/** @type {*} */(this.connection))
     return /** @type {*} */ (out)
   }
 
@@ -610,7 +638,7 @@ export async function addSpacesFromDelegations(access, delegations) {
 
     for (const [did, value] of Object.entries(allows)) {
       if (did.startsWith('did:key') && value['space/*']) {
-        data.addSpace(/** @type {Ucanto.DID} */ (did), {
+        data.addSpace(/** @type {Ucanto.DID} */(did), {
           isRegistered: true,
         })
       }
