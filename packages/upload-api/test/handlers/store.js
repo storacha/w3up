@@ -83,10 +83,8 @@ export const test = {
         size: item.size,
       },
       {
-        space: spaceDid,
         link: link.toString(),
         size: data.byteLength,
-        issuer: alice.did(),
       }
     )
 
@@ -301,13 +299,11 @@ export const test = {
     assert.deepEqual(
       {
         link: item.link.toString(),
-        size: item.size,
+        size: item.size
       },
       {
-        space: spaceDid,
         link: link.toString(),
-        size: data.byteLength,
-        issuer: alice.did(),
+        size: data.byteLength
       }
     )
 

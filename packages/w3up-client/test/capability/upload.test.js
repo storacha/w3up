@@ -68,8 +68,8 @@ describe('StoreClient', () => {
           {
             root: car.roots[0],
             shards: [car.cid],
-            insertedAt: 'foo',
-            updatedAt: 'bar'
+            insertedAt: '1970-01-01T00:00:00.000Z',
+            updatedAt: '1970-01-01T00:00:00.000Z'
           },
         ],
       }

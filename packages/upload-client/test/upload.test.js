@@ -137,8 +137,8 @@ describe('Upload.list', () => {
         {
           root: car.roots[0],
           shards: [car.cid],
-          insertedAt: 'foo',
-          updatedAt: 'bar'
+          insertedAt: '1970-01-01T00:00:00.000Z',
+          updatedAt: '1970-01-01T00:00:00.000Z'
         },
       ],
     }
@@ -210,8 +210,8 @@ describe('Upload.list', () => {
         {
           root: car0.roots[0],
           shards: [car0.cid],
-          insertedAt: 'foo',
-          updatedAt: 'bar'
+          insertedAt: '1970-01-01T00:00:00.000Z',
+          updatedAt: '1970-01-01T00:00:00.000Z'
         },
       ],
     }
@@ -222,8 +222,8 @@ describe('Upload.list', () => {
         {
           root: car1.roots[0],
           shards: [car1.cid],
-          insertedAt: 'foo',
-          updatedAt: 'bar'
+          insertedAt: '1970-01-01T00:00:00.000Z',
+          updatedAt: '1970-01-01T00:00:00.000Z'
         },
       ],
     }
