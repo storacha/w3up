@@ -5,7 +5,7 @@ import * as API from '../../src/types.js'
  */
 export class StoreTable {
   constructor() {
-    /** @type {(API.StoreGetItem)[]} */
+    /** @type {(API.StoreAddInput & API.StoreListItem)[]} */
     this.items = []
   }
 
@@ -45,7 +45,7 @@ export class StoreTable {
    * Get info for a single shard or undefined if it doesn't exist
    * @param {API.DID} space
    * @param {API.UnknownLink} link
-   * @returns {Promise<API.StoreGetItem | undefined>}
+   * @returns {Promise<(API.StoreAddInput & API.StoreListItem) | undefined>}
    */
   async get(space, link) {
     return this.items.find(

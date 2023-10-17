@@ -4,7 +4,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.UploadServiceContext} context
- * @returns {API.ServiceMethod<API.UploadGet, API.UploadGetOk, API.Failure>}
+ * @returns {API.ServiceMethod<API.UploadGet, API.UploadGetSuccess, API.Failure>}
  */
 export function uploadGetProvider(context) {
   return Server.provide(Upload.get, async ({ capability }) => {

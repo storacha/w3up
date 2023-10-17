@@ -68,6 +68,7 @@ describe('StoreClient', () => {
           {
             link: (await randomCAR(128)).cid,
             size: 123,
+            insertedAt: 'foo'
           },
         ],
       }

@@ -9,7 +9,6 @@ import {
 } from '../util.js'
 import { createServer, connect } from '../../src/lib.js'
 import { Upload } from '@web3-storage/capabilities'
-import { uploadListProvider } from '../../src/upload/list.js'
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/batchwriteitemcommand.html
 const BATCH_MAX_SAFE_LIMIT = 25
@@ -901,8 +900,6 @@ export const test = {
       throw new Error('invocation failed', { cause: uploadGet })
     }
 
-    assert.equal(uploadGet.out.ok.issuer, alice.toDIDKey())
-    assert.equal(uploadGet.out.ok.space, spaceDid)
     assert.equal(uploadGet.out.ok.shards?.[0].toString(), cars[0].cid.toString())
     assert.equal(uploadGet.out.ok.root.toString(), cars[0].roots[0].toString())
   },

@@ -1,6 +1,5 @@
 import { createServer, connect } from '../../src/lib.js'
 import * as API from '../../src/types.js'
-import { CID } from 'multiformats'
 import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
@@ -80,10 +79,8 @@ export const test = {
 
     assert.deepEqual(
       {
-        space: item.space,
         link: item.link.toString(),
         size: item.size,
-        issuer: item.issuer,
       },
       {
         space: spaceDid,
@@ -93,7 +90,6 @@ export const test = {
       }
     )
 
-    assert.equal(CID.parse(item.invocation.toString()) != null, true)
     assert.equal(
       Date.now() - new Date(item?.insertedAt).getTime() < 60_000,
       true
@@ -304,10 +300,8 @@ export const test = {
 
     assert.deepEqual(
       {
-        space: item.space,
         link: item.link.toString(),
         size: item.size,
-        issuer: item.issuer,
       },
       {
         space: spaceDid,
@@ -739,7 +733,6 @@ export const test = {
 
     assert.deepEqual(storeGet.out.ok.link,  links[0])
     assert.equal(storeGet.out.ok.size,  data[0].byteLength)
-    assert.equal(storeGet.out.ok.space,  spaceDid)
     assert.ok(storeGet.out.ok.insertedAt)
   },
 

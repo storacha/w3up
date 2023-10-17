@@ -354,6 +354,7 @@ describe('Store.list', () => {
         {
           link: car.cid,
           size: 123,
+          insertedAt: 'foo'
         },
       ],
     }
@@ -422,6 +423,7 @@ describe('Store.list', () => {
         {
           link: (await randomCAR(128)).cid,
           size: 123,
+          insertedAt: 'time1'
         },
       ],
     }
@@ -431,6 +433,7 @@ describe('Store.list', () => {
         {
           link: (await randomCAR(128)).cid,
           size: 123,
+          insertedAt: 'time1'
         },
       ],
     }

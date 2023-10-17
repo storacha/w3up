@@ -123,6 +123,8 @@ import {
   UCANRevoke,
   ListResponse,
   CARLink,
+  StoreGetSuccess,
+  UploadGetSuccess,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations'
@@ -146,13 +148,13 @@ export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
-    get: ServiceMethod<StoreGet, StoreGetOk, StoreGetFailure>
+    get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
     remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
     list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
-    get: ServiceMethod<UploadGet, UploadGetOk, UploadGetFailure>
+    get: ServiceMethod<UploadGet, UploadGetSuccess, UploadGetFailure>
     remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
     list: ServiceMethod<UploadList, UploadListSuccess, Failure>
   }
@@ -383,13 +385,8 @@ export interface StoreTable {
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<
-    (StoreAddInput & StoreListItem & { insertedAt: string }) | undefined
-  >
-  get(
-    space: DID,
-    link: UnknownLink
-  ): Promise<(StoreGetItem) | undefined>
+    ) => Promise<ListResponse<StoreAddInput & StoreListItem>>
+  get: (space: DID,link: UnknownLink) => Promise<(StoreListItem) | undefined>
 }
 
 export interface UploadTable {
@@ -400,13 +397,8 @@ export interface UploadTable {
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<
-    ListResponse<UploadListItem & { insertedAt: string; updatedAt: string }>
-  >
-  get(
-    space: DID,
-    link: UnknownLink
-  ): Promise<(UploadGetItem) | undefined>
+    ) => Promise<ListResponse<UploadListItem>>
+  get: (space: DID,link: UnknownLink) => Promise<(UploadListItem) | undefined>
 }
 
 export type SpaceInfoSuccess = {
@@ -452,32 +444,6 @@ export interface StoreInspectOk {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 
-export type StoreListItem = StoreAddOutput & StoreMetadata
-
-export type StoreGetItem = StoreAddInput & StoreMetadata
-
-export interface StoreListOk extends ListResponse<StoreListItem> {}
-
-export type StoreGetOk = StoreGetItem
-
-export type StoreAddOk = StoreAddDone | StoreAddUpload
-
-export interface StoreAddDone {
-  status: 'done'
-  with: DID
-  link: UnknownLink
-  url?: undefined
-  headers?: undefined
-}
-
-export interface StoreAddUpload {
-  status: 'upload'
-  with: DID
-  link: UnknownLink
-  url: URL
-  headers: Record<string, string>
-}
-
 export interface UploadAddInput {
   space: DID
   root: UnknownLink
@@ -486,31 +452,9 @@ export interface UploadAddInput {
   invocation: UCANLink
 }
 
-export interface UploadMetadata {
-  insertedAt: string
-  updatedAt: string  
-}
-
-export interface UploadAddOk
-  extends Omit<UploadAddInput, 'space' | 'issuer' | 'invocation'> {}
-export type UploadRemoveOk = UploadDIDRemove | UploadDidNotRemove
-
-export type UploadListItem =  UploadAddOk & UploadMetadata
-export type UploadGetItem =  UploadAddInput & UploadMetadata
-
-export interface UploadDIDRemove extends UploadAddOk {}
-export interface UploadDidNotRemove {
-  root?: undefined
-  shards?: undefined
-}
-
 export interface UploadInspectOk {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
-
-export interface UploadListOk extends ListResponse<UploadListItem> {}
-
-export interface UploadGetOk extends UploadGetItem {}
 
 export interface ListOptions {
   size?: number

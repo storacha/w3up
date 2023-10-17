@@ -265,6 +265,8 @@ export interface StoreItemNotFound extends Ucanto.Failure {
 
 export type StoreRemoveFailure = StoreItemNotFound | Ucanto.Failure
 
+export type StoreGetSuccess = StoreListItem
+
 export type StoreGetFailure = StoreItemNotFound | Ucanto.Failure
 
 export interface StoreListSuccess extends ListResponse<StoreListItem> {}
@@ -281,12 +283,20 @@ export interface StoreListItem {
   link: UnknownLink
   size: number
   origin?: UnknownLink
+  insertedAt: string
 }
 
-export interface UploadAddSuccess {
+export interface UploadListItem {
   root: UnknownLink
   shards?: CARLink[]
+  insertedAt: string
+  updatedAt: string
 }
+
+// TODO: (olizilla) make this an UploadListItem too?
+export type UploadAddSuccess = Omit<UploadListItem, 'insertedAt' | 'updatedAt'>
+
+export type UploadGetSuccess = UploadListItem
 
 export type UploadRemoveSuccess = UploadDidRemove | UploadDidNotRemove
 
@@ -298,8 +308,6 @@ export interface UploadDidNotRemove {
 }
 
 export interface UploadListSuccess extends ListResponse<UploadListItem> {}
-
-export interface UploadListItem extends UploadAddSuccess {}
 
 // UCAN core events
 
