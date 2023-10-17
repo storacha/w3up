@@ -380,25 +380,25 @@ export interface DudewhereBucket {
 export interface StoreTable {
   inspect: (link: UnknownLink) => Promise<StoreInspectOk>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
+  get: (space: DID,link: UnknownLink) => Promise<(StoreListItem) | undefined>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
   remove: (space: DID, link: UnknownLink) => Promise<void>
   list: (
     space: DID,
     options?: ListOptions
     ) => Promise<ListResponse<StoreAddInput & StoreListItem>>
-  get: (space: DID,link: UnknownLink) => Promise<(StoreListItem) | undefined>
 }
 
 export interface UploadTable {
   inspect: (link: UnknownLink) => Promise<UploadInspectOk>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
+  get: (space: DID,link: UnknownLink) => Promise<(UploadListItem) | undefined>
   insert: (item: UploadAddInput) => Promise<UploadAddSuccess>
   remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveSuccess | null>
   list: (
     space: DID,
     options?: ListOptions
     ) => Promise<ListResponse<UploadListItem>>
-  get: (space: DID,link: UnknownLink) => Promise<(UploadListItem) | undefined>
 }
 
 export type SpaceInfoSuccess = {
