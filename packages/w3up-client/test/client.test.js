@@ -405,7 +405,8 @@ describe('Client', () => {
         audienceMeta: { type: 'device', name },
       })
 
-      assert.rejects(bob.revokeDelegation(delegation.cid))
+      const result = await bob.revokeDelegation(delegation.cid)
+      assert.ok(result.error, 'revoke succeeded when it should not have')
     })
   })
 
