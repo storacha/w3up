@@ -82,8 +82,8 @@ export const add = capability({
  * Use to check for inclusion, or get shard size and origin
  *
  * `nb.link` is optional to allow delegation of `store/get`
- * capability for any shard cid. If link is specified, then the
- * capability only allows a get for that single cid.
+ * capability for any shard CID. If link is specified, then the
+ * capability only allows a get for that specific CID.
  *
  * When used as as an invocation, `nb.link` must be specified.
  */
