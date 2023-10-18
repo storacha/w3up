@@ -1,5 +1,22 @@
 # Changelog
 
+## [10.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.4.1...upload-client-v10.0.0) (2023-10-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* Returning the `size` means that we need to fetch the stored item beforehand, and if it does not exist throw a `StoreItemNotFound` error. This is a change from the current behaviour which returns successfully even if the item is not present in the space.
+
+### Features
+
+* add size to `store/remove` receipt ([#969](https://github.com/web3-storage/w3up/issues/969)) ([d2100eb](https://github.com/web3-storage/w3up/commit/d2100eb0ffa5968c326d58d583a258187f9119eb))
+* upgrade to ucanto@9 ([#951](https://github.com/web3-storage/w3up/issues/951)) ([d72faf1](https://github.com/web3-storage/w3up/commit/d72faf1bb07dd11462ae6dff8ee0469f8ae7e9e7))
+
+
+### Bug Fixes
+
+* upgrade to latest ts ([#962](https://github.com/web3-storage/w3up/issues/962)) ([711e3f7](https://github.com/web3-storage/w3up/commit/711e3f73f6905fde0d929952fff70be845a55fa1))
+
 ## [9.4.1](https://github.com/web3-storage/w3up/compare/upload-client-v9.4.0...upload-client-v9.4.1) (2023-10-06)
 
 
