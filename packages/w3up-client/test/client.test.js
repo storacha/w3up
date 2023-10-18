@@ -391,7 +391,7 @@ describe('Client', () => {
       })
 
       const result = await alice.revokeDelegation(delegation.cid)
-      assert.ok(result.out.ok)
+      assert.ok(result.ok)
     })
 
     it('should fail to revoke a delegation it does not know about', async () => {

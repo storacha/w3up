@@ -252,7 +252,7 @@ export class Client extends Base {
    * @param {import('@ucanto/interface').Delegation[]} [options.proofs]
    */
   async revokeDelegation(delegationCID, options = {}) {
-    return this._agent.revokeDelegation(delegationCID, {
+    return this._agent.revoke(delegationCID, {
       proofs: options.proofs,
     })
   }

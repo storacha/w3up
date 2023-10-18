@@ -218,22 +218,26 @@ export class Agent {
    * @param {object} [options]
    * @param {import('@ucanto/interface').Delegation[]} [options.proofs]
    */
-  async revokeDelegation(delegationCID, options = {}) {
+  async revoke(delegationCID, options = {}) {
+    const additionalProofs = options.proofs ?? []
     // look for the identified delegation in the delegation store and the passed proofs
-    const delegation = [...this.delegations(), ...(options.proofs ?? [])].find(
+    const delegation = [...this.delegations(), ...additionalProofs].find(
       (delegation) => delegation.cid.equals(delegationCID)
     )
     if (!delegation) {
-      throw new Error(
-        `could not find delegation ${delegationCID.toString()} - please include the delegation in options.proofs`
-      )
+      return {
+        error: new Error(
+          `could not find delegation ${delegationCID.toString()} - please include the delegation in options.proofs`
+        )
+      }
     }
-    return this.invokeAndExecute(UCAN.revoke, {
+    const receipt = await this.invokeAndExecute(UCAN.revoke, {
       nb: {
         ucan: delegation.cid,
       },
-      proofs: options.proofs ?? [delegation],
+      proofs: [delegation, ...additionalProofs],
     })
+    return receipt.out
   }
 
   /**
