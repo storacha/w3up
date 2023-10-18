@@ -299,11 +299,11 @@ export const test = {
     assert.deepEqual(
       {
         link: item.link.toString(),
-        size: item.size
+        size: item.size,
       },
       {
         link: link.toString(),
-        size: data.byteLength
+        size: data.byteLength,
       }
     )
 
@@ -677,10 +677,7 @@ export const test = {
     assert.deepEqual(prevListResponse.out.ok.after, listResponse.out.ok.after)
   },
 
-  'store/get returns shard info': async (
-    assert,
-    context
-  ) => {
+  'store/get returns shard info': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -718,7 +715,7 @@ export const test = {
         with: spaceDid,
         proofs: [proof],
         nb: {
-          link: links[0]
+          link: links[0],
         },
       })
       .execute(connection)
@@ -727,15 +724,12 @@ export const test = {
       throw new Error('invocation failed', { cause: storeGet })
     }
 
-    assert.deepEqual(storeGet.out.ok.link,  links[0])
-    assert.equal(storeGet.out.ok.size,  data[0].byteLength)
+    assert.deepEqual(storeGet.out.ok.link, links[0])
+    assert.equal(storeGet.out.ok.size, data[0].byteLength)
     assert.ok(storeGet.out.ok.insertedAt)
   },
 
-  'store/get returns StoreItemNotFound Failure': async (
-    assert,
-    context
-  ) => {
+  'store/get returns StoreItemNotFound Failure': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -751,7 +745,7 @@ export const test = {
         with: spaceDid,
         proofs: [proof],
         nb: {
-          link
+          link,
         },
       })
       .execute(connection)

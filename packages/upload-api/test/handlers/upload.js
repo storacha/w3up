@@ -859,10 +859,7 @@ export const test = {
     )
   },
 
-  'upload/get returns info for one upload': async (
-    assert,
-    context
-  ) => {
+  'upload/get returns info for one upload': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -891,7 +888,7 @@ export const test = {
         with: spaceDid,
         proofs: [proof],
         nb: {
-          root: cars[0].roots[0]
+          root: cars[0].roots[0],
         },
       })
       .execute(connection)
@@ -900,7 +897,10 @@ export const test = {
       throw new Error('invocation failed', { cause: uploadGet })
     }
 
-    assert.equal(uploadGet.out.ok.shards?.[0].toString(), cars[0].cid.toString())
+    assert.equal(
+      uploadGet.out.ok.shards?.[0].toString(),
+      cars[0].cid.toString()
+    )
     assert.equal(uploadGet.out.ok.root.toString(), cars[0].roots[0].toString())
   },
 
@@ -923,7 +923,7 @@ export const test = {
         with: spaceDid,
         proofs: [proof],
         nb: {
-          root: car.roots[0]
+          root: car.roots[0],
         },
       })
       .execute(connection)

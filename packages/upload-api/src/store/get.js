@@ -15,15 +15,15 @@ export function storeGetProvider(context) {
     const space = Server.DID.parse(capability.with).did()
     const res = await context.storeTable.get(space, link)
     if (!res) {
-      return { 
+      return {
         error: {
           name: 'StoreItemNotFound',
-          message: 'Store item not found'
-        }
+          message: 'Store item not found',
+        },
       }
     }
     return {
-      ok: res
+      ok: res,
     }
   })
 }

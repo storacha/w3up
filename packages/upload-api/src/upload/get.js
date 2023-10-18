@@ -15,15 +15,15 @@ export function uploadGetProvider(context) {
     const space = Server.DID.parse(capability.with).did()
     const res = await context.uploadTable.get(space, root)
     if (!res) {
-      return { 
+      return {
         error: {
           name: 'UploadNotFound',
-          message: 'Upload not found'
-        }
+          message: 'Upload not found',
+        },
       }
     }
     return {
-      ok: res
+      ok: res,
     }
   })
 }
