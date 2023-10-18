@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.9.0...upload-api-v6.0.0) (2023-10-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* Returning the `size` means that we need to fetch the stored item beforehand, and if it does not exist throw a `StoreItemNotFound` error. This is a change from the current behaviour which returns successfully even if the item is not present in the space.
+
+### Features
+
+* add size to `store/remove` receipt ([#969](https://github.com/web3-storage/w3up/issues/969)) ([d2100eb](https://github.com/web3-storage/w3up/commit/d2100eb0ffa5968c326d58d583a258187f9119eb))
+
 ## [5.9.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.8.0...upload-api-v5.9.0) (2023-10-10)
 
 
