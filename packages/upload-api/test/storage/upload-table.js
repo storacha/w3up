@@ -13,7 +13,7 @@ export class UploadTable {
   /**
    *
    * @param {API.UnknownLink} link
-   * @returns {Promise<API.StoreInspectOk>}
+   * @returns {Promise<API.StoreInspectSuccess>}
    */
   async inspect(link) {
     const items =

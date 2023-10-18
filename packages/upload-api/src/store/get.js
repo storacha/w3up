@@ -17,8 +17,8 @@ export function storeGetProvider(context) {
     if (!res) {
       return { 
         error: {
-          name: 'ShardNotFound',
-          message: 'Shard not found'
+          name: 'StoreItemNotFound',
+          message: 'Store item not found'
         }
       }
     }

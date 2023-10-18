@@ -378,7 +378,7 @@ export interface DudewhereBucket {
 }
 
 export interface StoreTable {
-  inspect: (link: UnknownLink) => Promise<StoreInspectOk>
+  inspect: (link: UnknownLink) => Promise<StoreInspectSuccess>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
   get: (space: DID, link: UnknownLink) => Promise<StoreGetSuccess | undefined>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
@@ -390,7 +390,7 @@ export interface StoreTable {
 }
 
 export interface UploadTable {
-  inspect: (link: UnknownLink) => Promise<UploadInspectOk>
+  inspect: (link: UnknownLink) => Promise<UploadInspectSuccess>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
   get: (space: DID, link: UnknownLink) => Promise<UploadGetSuccess | undefined>
   insert: (item: UploadAddInput) => Promise<UploadAddSuccess>
@@ -436,7 +436,7 @@ export interface StoreAddInput {
 export interface StoreAddOutput
   extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
 
-export interface StoreInspectOk {
+export interface StoreInspectSuccess {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 
@@ -448,7 +448,7 @@ export interface UploadAddInput {
   invocation: UCANLink
 }
 
-export interface UploadInspectOk {
+export interface UploadInspectSuccess {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 

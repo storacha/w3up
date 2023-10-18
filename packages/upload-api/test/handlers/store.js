@@ -732,7 +732,7 @@ export const test = {
     assert.ok(storeGet.out.ok.insertedAt)
   },
 
-  'store/get returns ShardNotFound Failure': async (
+  'store/get returns StoreItemNotFound Failure': async (
     assert,
     context
   ) => {
@@ -757,6 +757,6 @@ export const test = {
       .execute(connection)
 
     assert.ok(storeGet.out.error)
-    assert.equal(storeGet.out.error?.name, 'ShardNotFound')
+    assert.equal(storeGet.out.error?.name, 'StoreItemNotFound')
   },
 }
