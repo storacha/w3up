@@ -328,11 +328,19 @@ export interface UnauthorizedRevocation extends Ucanto.Failure {
   name: 'UnauthorizedRevocation'
 }
 
+/**
+ * Error is raised when `UCAN` revocation cannot be stored. This
+ * is usually not a client error.
+ */
+export interface RevocationsStoreFailure extends Ucanto.Failure {
+  name: 'RevocationsStoreFailure'
+}
+
 export type UCANRevokeFailure =
   | UCANNotFound
   | InvalidRevocationScope
   | UnauthorizedRevocation
-  | Ucanto.Failure
+  | RevocationsStoreFailure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>

@@ -34,7 +34,14 @@ export const ucanRevokeProvider = ({ revocationsStorage }) =>
             cause: invocation.cid,
           })
 
-    return result.error ? result : { ok: { time: Date.now() } }
+    return result.error
+      ? {
+          error: {
+            name: 'RevocationsStoreFailure',
+            message: result.error.message,
+          },
+        }
+      : { ok: { time: Date.now() } }
   })
 
 /**
