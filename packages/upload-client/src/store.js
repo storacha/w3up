@@ -124,7 +124,6 @@ export async function add(
       }
     },
     {
-      onFailedAttempt: console.warn,
       retries: options.retries ?? REQUEST_RETRIES,
     }
   )
