@@ -228,7 +228,7 @@ export class Agent {
       return {
         error: new Error(
           `could not find delegation ${delegationCID.toString()} - please include the delegation in options.proofs`
-        )
+        ),
       }
     }
     const receipt = await this.invokeAndExecute(UCAN.revoke, {
