@@ -28,13 +28,6 @@ export type ValidationEmailSend = {
   url: string
 }
 
-export interface Timestamp {
-  /**
-   * Unix timestamp in seconds.
-   */
-  time: number
-}
-
 export type SpaceDID = DIDKey
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
@@ -119,6 +112,8 @@ import {
   UCANRevoke,
   ListResponse,
   CARLink,
+  UCANRevokeSuccess,
+  UCANRevokeFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations'
@@ -205,7 +200,7 @@ export interface Service {
   }
 
   ucan: {
-    revoke: ServiceMethod<UCANRevoke, Timestamp, Failure>
+    revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
   }
 
   admin: {

@@ -1,9 +1,10 @@
 import assert from 'assert'
-import { create as createServer, provide } from '@ucanto/server'
+import { Delegation, create as createServer, provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
+import * as UCANCapabilities from '@web3-storage/capabilities/ucan'
 import { AgentData } from '@web3-storage/access/agent'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
@@ -338,6 +339,74 @@ describe('Client', () => {
       assert.equal(delegations.length, 1)
       assert.equal(delegations[0].cid.toString(), delegation.cid.toString())
       assert.equal(delegations[0].meta()?.audience?.name, name)
+    })
+  })
+
+  describe('revokeDelegation', () => {
+    it('should revoke a delegation by CID', async () => {
+      const service = mockService({
+        ucan: {
+          revoke: provide(
+            UCANCapabilities.revoke,
+            ({ capability, invocation }) => {
+              // copy a bit of the production revocation handler to do basic validation
+              const { nb: input } = capability
+              const ucan = Delegation.view(
+                { root: input.ucan, blocks: invocation.blocks },
+                null
+              )
+              return ucan
+                ? { ok: { time: Date.now() } }
+                : {
+                    error: {
+                      name: 'UCANNotFound',
+                      message: 'Could not find delegation in invocation blocks',
+                    },
+                  }
+            }
+          ),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+      const bob = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+
+      const space = await alice.createSpace()
+      await alice.setCurrentSpace(space.did())
+      const name = `delegation-${Date.now()}`
+      const delegation = await alice.createDelegation(bob.agent(), ['*'], {
+        audienceMeta: { type: 'device', name },
+      })
+
+      const result = await alice.revokeDelegation(delegation.cid)
+      assert.ok(result.ok)
+    })
+
+    it('should fail to revoke a delegation it does not know about', async () => {
+      const alice = new Client(await AgentData.create())
+      const bob = new Client(await AgentData.create())
+
+      const space = await alice.createSpace()
+      await alice.setCurrentSpace(space.did())
+      const name = `delegation-${Date.now()}`
+      const delegation = await alice.createDelegation(bob.agent(), ['*'], {
+        audienceMeta: { type: 'device', name },
+      })
+
+      const result = await bob.revokeDelegation(delegation.cid)
+      assert.ok(result.error, 'revoke succeeded when it should not have')
     })
   })
 
