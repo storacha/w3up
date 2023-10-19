@@ -386,7 +386,7 @@ export interface StoreTable {
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<ListResponse<StoreAddInput & StoreListItem>>
+  ) => Promise<ListResponse<StoreListItem>>
 }
 
 export interface UploadTable {
