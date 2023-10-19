@@ -313,6 +313,15 @@ export interface UploadListSuccess extends ListResponse<UploadListItem> {}
 
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
 
+export interface Timestamp {
+  /**
+   * Unix timestamp in seconds.
+   */
+  time: number
+}
+
+export type UCANRevokeSuccess = Timestamp
+
 /**
  * Error is raised when `UCAN` being revoked is not supplied or it's proof chain
  * leading to supplied `scope` is not supplied.
@@ -337,10 +346,19 @@ export interface UnauthorizedRevocation extends Ucanto.Failure {
   name: 'UnauthorizedRevocation'
 }
 
+/**
+ * Error is raised when `UCAN` revocation cannot be stored. This
+ * is usually not a client error.
+ */
+export interface RevocationsStoreFailure extends Ucanto.Failure {
+  name: 'RevocationsStoreFailure'
+}
+
 export type UCANRevokeFailure =
   | UCANNotFound
   | InvalidRevocationScope
   | UnauthorizedRevocation
+  | RevocationsStoreFailure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>

@@ -20,6 +20,7 @@ import {
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { addProviderAndDelegateToAccount } from './agent-use-cases.js'
+import { UCAN } from '@web3-storage/capabilities'
 
 export { AgentData }
 export * from './agent-use-cases.js'
@@ -203,6 +204,40 @@ export class Agent {
         await this.#data.removeDelegation(value.delegation.cid)
       }
     }
+  }
+
+  /**
+   * Revoke a delegation by CID.
+   *
+   * If the delegation was issued by this agent (and therefore is stored in the
+   * delegation store) you can just pass the CID. If not, or if the current agent's
+   * delegation store no longer contains the delegation, you MUST pass a chain of
+   * proofs that proves your authority to revoke this delegation as `options.proofs`.
+   *
+   * @param {import('@ucanto/interface').UCANLink} delegationCID
+   * @param {object} [options]
+   * @param {import('@ucanto/interface').Delegation[]} [options.proofs]
+   */
+  async revoke(delegationCID, options = {}) {
+    const additionalProofs = options.proofs ?? []
+    // look for the identified delegation in the delegation store and the passed proofs
+    const delegation = [...this.delegations(), ...additionalProofs].find(
+      (delegation) => delegation.cid.equals(delegationCID)
+    )
+    if (!delegation) {
+      return {
+        error: new Error(
+          `could not find delegation ${delegationCID.toString()} - please include the delegation in options.proofs`
+        ),
+      }
+    }
+    const receipt = await this.invokeAndExecute(UCAN.revoke, {
+      nb: {
+        ucan: delegation.cid,
+      },
+      proofs: [delegation, ...additionalProofs],
+    })
+    return receipt.out
   }
 
   /**
