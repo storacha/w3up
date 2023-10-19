@@ -78,6 +78,28 @@ export const add = capability({
 })
 
 /**
+ * Capability to get store metadata by shard CID.
+ * Use to check for inclusion, or get shard size and origin
+ *
+ * `nb.link` is optional to allow delegation of `store/get`
+ * capability for any shard CID. If link is specified, then the
+ * capability only allows a get for that specific CID.
+ *
+ * When used as as an invocation, `nb.link` must be specified.
+ */
+export const get = capability({
+  can: 'store/get',
+  with: SpaceDID,
+  nb: Schema.struct({
+    /**
+     * shard CID to fetch info about.
+     */
+    link: Link.optional(),
+  }),
+  derives: equalLink,
+})
+
+/**
  * Capability can be used to remove the stored CAR file from the (memory)
  * space identified by `with` field.
  */

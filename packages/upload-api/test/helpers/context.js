@@ -61,7 +61,6 @@ export const createContext = async (options = {}) => {
     mail: /** @type {TestTypes.DebugEmail} */ (serviceContext.email),
     service: /** @type {TestTypes.ServiceSigner} */ (serviceContext.id),
     connection,
-    testStoreTable: storeTable,
     fetch,
   }
 }

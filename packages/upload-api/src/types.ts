@@ -52,6 +52,7 @@ export interface DebugEmail extends Email {
 
 import {
   StoreAdd,
+  StoreGet,
   StoreAddSuccess,
   StoreRemove,
   StoreRemoveSuccess,
@@ -60,6 +61,7 @@ import {
   StoreListSuccess,
   StoreListItem,
   UploadAdd,
+  UploadGet,
   UploadAddSuccess,
   UploadRemove,
   UploadRemoveSuccess,
@@ -109,9 +111,13 @@ import {
   ProviderAddFailure,
   SpaceInfo,
   ProviderDID,
+  StoreGetFailure,
+  UploadGetFailure,
   UCANRevoke,
   ListResponse,
   CARLink,
+  StoreGetSuccess,
+  UploadGetSuccess,
   UCANRevokeSuccess,
   UCANRevokeFailure,
 } from '@web3-storage/capabilities/types'
@@ -137,11 +143,13 @@ export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
 export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
+    get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
     remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
     list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
+    get: ServiceMethod<UploadGet, UploadGetSuccess, UploadGetFailure>
     remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
     list: ServiceMethod<UploadList, UploadListSuccess, Failure>
   }
@@ -325,9 +333,7 @@ export interface UcantoServerTestContext
   fetch: typeof fetch
 }
 
-export interface StoreTestContext {
-  testStoreTable: TestStoreTable
-}
+export interface StoreTestContext {}
 
 export interface UploadTestContext {}
 
@@ -367,9 +373,9 @@ export interface DudewhereBucket {
 }
 
 export interface StoreTable {
-  inspect: (link: UnknownLink) => Promise<StoreGetOk>
+  inspect: (link: UnknownLink) => Promise<StoreInspectSuccess>
   exists: (space: DID, link: UnknownLink) => Promise<boolean>
-  get: (space: DID, link: UnknownLink) => Promise<StoreAddOutput | undefined>
+  get: (space: DID, link: UnknownLink) => Promise<StoreGetSuccess | undefined>
   insert: (item: StoreAddInput) => Promise<StoreAddOutput>
   remove: (space: DID, link: UnknownLink) => Promise<void>
   list: (
@@ -378,26 +384,16 @@ export interface StoreTable {
   ) => Promise<ListResponse<StoreListItem>>
 }
 
-export interface TestStoreTable {
-  get(
-    space: DID,
-    link: UnknownLink
-  ): Promise<
-    (StoreAddInput & StoreListItem & { insertedAt: string }) | undefined
-  >
-}
-
 export interface UploadTable {
-  inspect: (link: UnknownLink) => Promise<UploadGetOk>
+  inspect: (link: UnknownLink) => Promise<UploadInspectSuccess>
   exists: (space: DID, root: UnknownLink) => Promise<boolean>
+  get: (space: DID, link: UnknownLink) => Promise<UploadGetSuccess | undefined>
   insert: (item: UploadAddInput) => Promise<UploadAddSuccess>
   remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveSuccess | null>
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<
-    ListResponse<UploadListItem & { insertedAt: string; updatedAt: string }>
-  >
+  ) => Promise<ListResponse<UploadListItem>>
 }
 
 export type SpaceInfoSuccess = {
@@ -435,7 +431,7 @@ export interface StoreAddInput {
 export interface StoreAddOutput
   extends Omit<StoreAddInput, 'space' | 'issuer' | 'invocation'> {}
 
-export interface StoreGetOk {
+export interface StoreInspectSuccess {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 
@@ -447,7 +443,7 @@ export interface UploadAddInput {
   invocation: UCANLink
 }
 
-export interface UploadGetOk {
+export interface UploadInspectSuccess {
   spaces: Array<{ did: DID; insertedAt: string }>
 }
 

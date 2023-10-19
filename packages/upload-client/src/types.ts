@@ -18,6 +18,8 @@ import {
   StoreAddSuccess,
   StoreAddSuccessUpload,
   StoreAddSuccessDone,
+  StoreGet,
+  StoreGetFailure,
   StoreList,
   StoreListSuccess,
   StoreListItem,
@@ -34,6 +36,10 @@ import {
   ListResponse,
   CARLink,
   PieceLink,
+  StoreGetSuccess,
+  UploadGet,
+  UploadGetSuccess,
+  UploadGetFailure,
 } from '@web3-storage/capabilities/types'
 import * as UnixFS from '@ipld/unixfs/src/unixfs'
 
@@ -70,11 +76,13 @@ export type ProgressFn = (status: ProgressStatus) => void
 export interface Service {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
+    get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
     remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
     list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
+    get: ServiceMethod<UploadGet, UploadGetSuccess, UploadGetFailure>
     remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
     list: ServiceMethod<UploadList, UploadListSuccess, Failure>
   }

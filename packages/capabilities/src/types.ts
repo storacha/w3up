@@ -15,7 +15,7 @@ import type { PieceLink } from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
-import { add, list, remove, store } from './store.js'
+import * as StoreCaps from './store.js'
 import * as UploadCaps from './upload.js'
 import * as AccessCaps from './access.js'
 import * as CustomerCaps from './customer.js'
@@ -221,14 +221,22 @@ export interface ChainTrackerInfoFailure extends Ucanto.Failure {
 // Upload
 export type Upload = InferInvokedCapability<typeof UploadCaps.upload>
 export type UploadAdd = InferInvokedCapability<typeof UploadCaps.add>
+export type UploadGet = InferInvokedCapability<typeof UploadCaps.get>
 export type UploadRemove = InferInvokedCapability<typeof UploadCaps.remove>
 export type UploadList = InferInvokedCapability<typeof UploadCaps.list>
 
+export interface UploadNotFound extends Ucanto.Failure {
+  name: 'UploadNotFound'
+}
+
+export type UploadGetFailure = UploadNotFound | Ucanto.Failure
+
 // Store
-export type Store = InferInvokedCapability<typeof store>
-export type StoreAdd = InferInvokedCapability<typeof add>
-export type StoreRemove = InferInvokedCapability<typeof remove>
-export type StoreList = InferInvokedCapability<typeof list>
+export type Store = InferInvokedCapability<typeof StoreCaps.store>
+export type StoreAdd = InferInvokedCapability<typeof StoreCaps.add>
+export type StoreGet = InferInvokedCapability<typeof StoreCaps.get>
+export type StoreRemove = InferInvokedCapability<typeof StoreCaps.remove>
+export type StoreList = InferInvokedCapability<typeof StoreCaps.list>
 
 export type StoreAddSuccess = StoreAddSuccessDone | StoreAddSuccessUpload
 export interface StoreAddSuccessDone {
@@ -257,6 +265,10 @@ export interface StoreItemNotFound extends Ucanto.Failure {
 
 export type StoreRemoveFailure = StoreItemNotFound | Ucanto.Failure
 
+export type StoreGetSuccess = StoreListItem
+
+export type StoreGetFailure = StoreItemNotFound | Ucanto.Failure
+
 export interface StoreListSuccess extends ListResponse<StoreListItem> {}
 
 export interface ListResponse<R> {
@@ -271,12 +283,20 @@ export interface StoreListItem {
   link: UnknownLink
   size: number
   origin?: UnknownLink
+  insertedAt: string
 }
 
-export interface UploadAddSuccess {
+export interface UploadListItem {
   root: UnknownLink
   shards?: CARLink[]
+  insertedAt: string
+  updatedAt: string
 }
+
+// TODO: (olizilla) make this an UploadListItem too?
+export type UploadAddSuccess = Omit<UploadListItem, 'insertedAt' | 'updatedAt'>
+
+export type UploadGetSuccess = UploadListItem
 
 export type UploadRemoveSuccess = UploadDidRemove | UploadDidNotRemove
 
@@ -288,8 +308,6 @@ export interface UploadDidNotRemove {
 }
 
 export interface UploadListSuccess extends ListResponse<UploadListItem> {}
-
-export interface UploadListItem extends UploadAddSuccess {}
 
 // UCAN core events
 
@@ -392,10 +410,12 @@ export type AbilitiesArray = [
   SpaceInfo['can'],
   Upload['can'],
   UploadAdd['can'],
+  UploadGet['can'],
   UploadRemove['can'],
   UploadList['can'],
   Store['can'],
   StoreAdd['can'],
+  StoreGet['can'],
   StoreRemove['can'],
   StoreList['can'],
   Access['can'],

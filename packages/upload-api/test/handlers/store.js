@@ -1,6 +1,5 @@
 import { createServer, connect } from '../../src/lib.js'
 import * as API from '../../src/types.js'
-import { CID } from 'multiformats'
 import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
@@ -72,7 +71,7 @@ export const test = {
 
     assert.equal(goodPut.status, 200, await goodPut.text())
 
-    const item = await context.testStoreTable.get(spaceDid, link)
+    const item = await context.storeTable.get(spaceDid, link)
 
     if (!item) {
       return assert.equal(item != null, true)
@@ -80,20 +79,15 @@ export const test = {
 
     assert.deepEqual(
       {
-        space: item.space,
         link: item.link.toString(),
         size: item.size,
-        issuer: item.issuer,
       },
       {
-        space: spaceDid,
         link: link.toString(),
         size: data.byteLength,
-        issuer: alice.did(),
       }
     )
 
-    assert.equal(CID.parse(item.invocation.toString()) != null, true)
     assert.equal(
       Date.now() - new Date(item?.insertedAt).getTime() < 60_000,
       true
@@ -297,23 +291,19 @@ export const test = {
     assert.deepEqual(storeAdd.out.ok.link.toString(), link.toString())
     assert.equal(storeAdd.out.ok.url == null, true)
 
-    const item = await context.testStoreTable.get(spaceDid, link)
+    const item = await context.storeTable.get(spaceDid, link)
     if (!item) {
       throw assert.equal(item != null, true, 'should have stored item')
     }
 
     assert.deepEqual(
       {
-        space: item.space,
         link: item.link.toString(),
         size: item.size,
-        issuer: item.issuer,
       },
       {
-        space: spaceDid,
         link: link.toString(),
         size: data.byteLength,
-        issuer: alice.did(),
       }
     )
 
@@ -685,5 +675,82 @@ export const test = {
     )
     assert.deepEqual(prevListResponse.out.ok.before, listResponse.out.ok.before)
     assert.deepEqual(prevListResponse.out.ok.after, listResponse.out.ok.after)
+  },
+
+  'store/get returns shard info': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const data = [
+      new Uint8Array([11, 22, 34, 44, 55]),
+      new Uint8Array([22, 34, 44, 55, 66]),
+    ]
+    const links = []
+    for (const datum of data) {
+      const storeAdd = await StoreCapabilities.add
+        .invoke({
+          issuer: alice,
+          audience: connection.id,
+          with: spaceDid,
+          nb: { link: await CAR.codec.link(datum), size: datum.byteLength },
+          proofs: [proof],
+        })
+        .execute(connection)
+
+      if (storeAdd.out.error) {
+        throw new Error('invocation failed', { cause: storeAdd })
+      }
+
+      assert.equal(storeAdd.out.ok.status, 'upload')
+      links.push(storeAdd.out.ok.link)
+    }
+
+    const storeGet = await StoreCapabilities.get
+      .invoke({
+        issuer: alice,
+        audience: connection.id,
+        with: spaceDid,
+        proofs: [proof],
+        nb: {
+          link: links[0],
+        },
+      })
+      .execute(connection)
+
+    if (storeGet.out.error) {
+      throw new Error('invocation failed', { cause: storeGet })
+    }
+
+    assert.deepEqual(storeGet.out.ok.link, links[0])
+    assert.equal(storeGet.out.ok.size, data[0].byteLength)
+    assert.ok(storeGet.out.ok.insertedAt)
+  },
+
+  'store/get returns StoreItemNotFound Failure': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const link = await CAR.codec.link(new Uint8Array([11, 22, 34, 44, 55]))
+
+    const storeGet = await StoreCapabilities.get
+      .invoke({
+        issuer: alice,
+        audience: connection.id,
+        with: spaceDid,
+        proofs: [proof],
+        nb: {
+          link,
+        },
+      })
+      .execute(connection)
+
+    assert.ok(storeGet.out.error)
+    assert.equal(storeGet.out.error?.name, 'StoreItemNotFound')
   },
 }
