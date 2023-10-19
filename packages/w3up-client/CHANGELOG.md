@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v9.0.0...w3up-client-v9.1.0) (2023-10-19)
+
+
+### Features
+
+* add revocation to access-client and w3up-client ([#975](https://github.com/web3-storage/w3up/issues/975)) ([6c877aa](https://github.com/web3-storage/w3up/commit/6c877aac78eddb924e999dc3270cba010e48e30a))
+
+
+### Bug Fixes
+
+* update README to reflect authorize-first flow ([#961](https://github.com/web3-storage/w3up/issues/961)) ([9f59720](https://github.com/web3-storage/w3up/commit/9f59720890e38cf225794a4893b803532c916c50))
+
 ## [9.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v8.1.0...w3up-client-v9.0.0) (2023-10-18)
 
 
