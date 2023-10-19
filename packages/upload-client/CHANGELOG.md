@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.1](https://github.com/web3-storage/w3up/compare/upload-client-v10.0.0...upload-client-v10.0.1) (2023-10-19)
+
+
+### Bug Fixes
+
+* do not log warning on failed retry ([#976](https://github.com/web3-storage/w3up/issues/976)) ([25b51ce](https://github.com/web3-storage/w3up/commit/25b51ce0a384a3d4ffc65fc5469a0f98e91a8507))
+
 ## [10.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v9.4.1...upload-client-v10.0.0) (2023-10-18)
 
 
