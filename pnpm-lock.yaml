@@ -12,18 +12,18 @@ importers:
         specifier: ^1.4.3
         version: 1.4.6
       typedoc:
-        specifier: ^0.23.28
-        version: 0.23.28(typescript@5.2.2)
+        specifier: ^0.25.2
+        version: 0.25.2(typescript@5.2.2)
       typedoc-plugin-missing-exports:
-        specifier: ^1.0.0
-        version: 1.0.0(typedoc@0.23.28)
+        specifier: ^2.1.0
+        version: 2.1.0(typedoc@0.25.2)
     devDependencies:
       '@docusaurus/core':
         specifier: ^2.3.1
         version: 2.4.3(eslint@8.51.0)(typescript@5.2.2)
       docusaurus-plugin-typedoc:
         specifier: ^0.18.0
-        version: 0.18.0(typedoc-plugin-markdown@3.16.0)(typedoc@0.23.28)
+        version: 0.18.0(typedoc-plugin-markdown@3.16.0)(typedoc@0.25.2)
       lint-staged:
         specifier: ^13.2.0
         version: 13.3.0
@@ -32,7 +32,7 @@ importers:
         version: 2.8.3
       typedoc-plugin-markdown:
         specifier: ^3.14.0
-        version: 3.16.0(typedoc@0.23.28)
+        version: 3.16.0(typedoc@0.25.2)
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -5354,6 +5354,16 @@ packages:
       typedoc-plugin-markdown: 3.16.0(typedoc@0.23.28)
     dev: true
 
+  /docusaurus-plugin-typedoc@0.18.0(typedoc-plugin-markdown@3.16.0)(typedoc@0.25.2):
+    resolution: {integrity: sha512-kurIUu8LhVIOPT88HoeBcu0/D2GMDdg0pUYaFlqeuXT9an6Wlgvuy0C22ZMYcJUcp/gA/Mw2XdUHubsLK2M4uA==}
+    peerDependencies:
+      typedoc: '>=0.23.0'
+      typedoc-plugin-markdown: '>=3.13.0'
+    dependencies:
+      typedoc: 0.25.2(typescript@5.2.2)
+      typedoc-plugin-markdown: 3.16.0(typedoc@0.25.2)
+    dev: true
+
   /dom-converter@0.2.0:
     resolution: {integrity: sha512-gd3ypIPfOMr9h5jIKq8E3sHOTCjeirnl0WK5ZdS1AW0Odt0b1PaWaHdJ4Qk4klv+YB9aJBS7mESXjFoDQPu6DA==}
     dependencies:
@@ -8697,6 +8707,13 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+    dev: true
+
+  /minimatch@9.0.3:
+    resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
+    engines: {node: '>=16 || 14 >=14.17'}
+    dependencies:
+      brace-expansion: 2.0.1
 
   /minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
@@ -11558,12 +11575,30 @@ packages:
       typedoc: 0.23.28(typescript@5.2.2)
     dev: true
 
+  /typedoc-plugin-markdown@3.16.0(typedoc@0.25.2):
+    resolution: {integrity: sha512-eeiC78fDNGFwemPIHiwRC+mEC7W5jwt3fceUev2gJ2nFnXpVHo8eRrpC9BLWZDee6ehnz/sPmNjizbXwpfaTBw==}
+    peerDependencies:
+      typedoc: '>=0.24.0'
+    dependencies:
+      handlebars: 4.7.8
+      typedoc: 0.25.2(typescript@5.2.2)
+    dev: true
+
   /typedoc-plugin-missing-exports@1.0.0(typedoc@0.23.28):
     resolution: {integrity: sha512-7s6znXnuAj1eD9KYPyzVzR1lBF5nwAY8IKccP5sdoO9crG4lpd16RoFpLsh2PccJM+I2NASpr0+/NMka6ThwVA==}
     peerDependencies:
       typedoc: 0.22.x || 0.23.x
     dependencies:
       typedoc: 0.23.28(typescript@5.2.2)
+    dev: true
+
+  /typedoc-plugin-missing-exports@2.1.0(typedoc@0.25.2):
+    resolution: {integrity: sha512-+1DhqZCEu7Vu5APnrqpPwl31D+hXpt1fV0Le9ycCRL1eLVdatdl6KVt4SEVwPxnEpKwgOn2dNX6I9+0F1aO2aA==}
+    peerDependencies:
+      typedoc: 0.24.x || 0.25.x
+    dependencies:
+      typedoc: 0.25.2(typescript@5.2.2)
+    dev: false
 
   /typedoc@0.23.28(typescript@5.2.2):
     resolution: {integrity: sha512-9x1+hZWTHEQcGoP7qFmlo4unUoVJLB0H/8vfO/7wqTnZxg4kPuji9y3uRzEu0ZKez63OJAUmiGhUrtukC6Uj3w==}
@@ -11575,6 +11610,20 @@ packages:
       lunr: 2.3.9
       marked: 4.3.0
       minimatch: 7.4.6
+      shiki: 0.14.4
+      typescript: 5.2.2
+    dev: true
+
+  /typedoc@0.25.2(typescript@5.2.2):
+    resolution: {integrity: sha512-286F7BeATBiWe/qC4PCOCKlSTwfnsLbC/4cZ68oGBbvAqb9vV33quEOXx7q176OXotD+JdEerdQ1OZGJ818lnA==}
+    engines: {node: '>= 16'}
+    hasBin: true
+    peerDependencies:
+      typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
+    dependencies:
+      lunr: 2.3.9
+      marked: 4.3.0
+      minimatch: 9.0.3
       shiki: 0.14.4
       typescript: 5.2.2
 

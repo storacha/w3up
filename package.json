@@ -35,8 +35,8 @@
   },
   "dependencies": {
     "depcheck": "^1.4.3",
-    "typedoc": "^0.23.28",
-    "typedoc-plugin-missing-exports": "^1.0.0"
+    "typedoc": "^0.25.2",
+    "typedoc-plugin-missing-exports": "^2.1.0"
   },
   "packageManager": "pnpm@7.24.3",
   "pnpm": {
