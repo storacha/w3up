@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.0.0...upload-api-v6.1.0) (2023-10-19)
+
+
+### Features
+
+* add revocation to access-client and w3up-client ([#975](https://github.com/web3-storage/w3up/issues/975)) ([6c877aa](https://github.com/web3-storage/w3up/commit/6c877aac78eddb924e999dc3270cba010e48e30a))
+
 ## [6.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v5.9.0...upload-api-v6.0.0) (2023-10-13)
 
 
