@@ -232,6 +232,7 @@ export class Agent {
       }
     }
     const receipt = await this.invokeAndExecute(UCAN.revoke, {
+      with: this.issuer.did(),
       nb: {
         ucan: delegation.cid,
       },
