@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v10.0.1...upload-client-v10.1.0) (2023-10-20)
+
+
+### Features
+
+* add `store/get` and `upload/get` capabilities ([#942](https://github.com/web3-storage/w3up/issues/942)) ([40c79eb](https://github.com/web3-storage/w3up/commit/40c79eb8f246775b9e1828240f271fa75ef696be))
+
 ## [10.0.1](https://github.com/web3-storage/w3up/compare/upload-client-v10.0.0...upload-client-v10.0.1) (2023-10-19)
 
 
