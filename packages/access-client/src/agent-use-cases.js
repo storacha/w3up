@@ -184,7 +184,7 @@ export async function authorizeAndWait(access, email, opts = {}) {
       { can: 'upload/*' },
       { can: 'ucan/*' },
       { can: 'plan/*' },
-      { can: 'w3up/*' }
+      { can: 'w3up/*' },
     ]
   )
   const sessionDelegations = [...(await expectAuthorization(access, opts))]
