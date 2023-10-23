@@ -5,7 +5,6 @@ import { CBOR } from '@ucanto/core'
 
 import * as API from '../../src/types.js'
 import * as TestAPI from '../types.js'
-import * as AggregatorApi from '../../src/aggregator/api.js'
 import * as AggregatorEvents from '../../src/aggregator/events.js'
 
 import { FailingStore } from '../context/store.js'

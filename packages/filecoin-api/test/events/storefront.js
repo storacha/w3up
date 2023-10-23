@@ -5,7 +5,6 @@ import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 
 import * as API from '../../src/types.js'
 import * as TestAPI from '../types.js'
-import * as StorefrontApi from '../../src/storefront/api.js'
 import * as StorefrontEvents from '../../src/storefront/events.js'
 import {
   StoreOperationErrorName,

@@ -6,7 +6,6 @@ import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-track
 
 import * as API from '../../src/types.js'
 import * as TestAPI from '../types.js'
-import * as DealerApi from '../../src/dealer/api.js'
 import * as DealerEvents from '../../src/dealer/events.js'
 
 import { FailingStore } from '../context/store.js'
