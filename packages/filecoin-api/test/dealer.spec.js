@@ -7,6 +7,7 @@ import * as DealerEvents from './events/dealer.js'
 
 import { getStoreImplementations } from './context/store-implementations.js'
 import { getMockService, getConnection } from './context/service.js'
+import { validateAuthorization } from './utils.js'
 
 describe('Dealer', () => {
   describe('aggregate/*', () => {
@@ -43,6 +44,7 @@ describe('Dealer', () => {
             aggregateStore,
             offerStore,
             queuedMessages,
+            validateAuthorization
           }
         )
       })
@@ -107,6 +109,7 @@ describe('Dealer', () => {
               },
             },
             service,
+            validateAuthorization
           }
         )
       })

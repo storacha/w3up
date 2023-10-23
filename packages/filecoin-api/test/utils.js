@@ -89,3 +89,5 @@ export async function randomAggregate(length, size) {
     aggregate: aggregateBuild,
   }
 }
+
+export const validateAuthorization = () => ({ ok: {} })

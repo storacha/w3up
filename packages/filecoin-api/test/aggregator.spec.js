@@ -8,6 +8,7 @@ import * as AggregatorEvents from './events/aggregator.js'
 import { getStoreImplementations } from './context/store-implementations.js'
 import { Queue } from './context/queue.js'
 import { getMockService, getConnection } from './context/service.js'
+import { validateAuthorization } from './utils.js'
 
 describe('Aggregator', () => {
   describe('piece/*', () => {
@@ -63,6 +64,7 @@ describe('Aggregator', () => {
             pieceAcceptQueue,
             aggregateOfferQueue,
             queuedMessages,
+            validateAuthorization
           }
         )
       })
@@ -145,6 +147,7 @@ describe('Aggregator', () => {
               minAggregateSize: 2 ** 34,
               minUtilizationFactor: 4,
             },
+            validateAuthorization
           }
         )
       })

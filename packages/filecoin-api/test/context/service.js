@@ -10,6 +10,7 @@ import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-track
 // eslint-disable-next-line no-unused-vars
 import * as API from '../../src/types.js'
 
+import { validateAuthorization } from '../utils.js'
 import { mockService } from './mocks.js'
 
 export function getMockService() {
@@ -220,6 +221,7 @@ export function getConnection(id, service) {
     id: id,
     service,
     codec: CAR.inbound,
+    validateAuthorization
   })
   const connection = Client.connect({
     id: id,
