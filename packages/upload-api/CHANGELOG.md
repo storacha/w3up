@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.1.0...upload-api-v6.2.0) (2023-10-20)
+
+
+### Features
+
+* add `store/get` and `upload/get` capabilities ([#942](https://github.com/web3-storage/w3up/issues/942)) ([40c79eb](https://github.com/web3-storage/w3up/commit/40c79eb8f246775b9e1828240f271fa75ef696be))
+
 ## [6.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.0.0...upload-api-v6.1.0) (2023-10-19)
 
 

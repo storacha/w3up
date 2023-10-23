@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.2.0](https://github.com/web3-storage/w3up/compare/access-v16.1.0...access-v16.2.0) (2023-10-20)
+
+
+### Features
+
+* add more capabilities to the set we request on authorize ([#990](https://github.com/web3-storage/w3up/issues/990)) ([e61b3ce](https://github.com/web3-storage/w3up/commit/e61b3cef426a15c377f370406a4134bdc8567898))
+
 ## [16.1.0](https://github.com/web3-storage/w3up/compare/access-v16.0.0...access-v16.1.0) (2023-10-18)
 
 
