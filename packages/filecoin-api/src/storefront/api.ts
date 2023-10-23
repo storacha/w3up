@@ -156,17 +156,3 @@ export interface PieceOfferMessage {
 export interface DataAggregationProofNotFound extends Failure {
   name: 'DataAggregationProofNotFound'
 }
-
-export interface TestEventsContext
-  extends FilecoinSubmitMessageContext,
-    PieceOfferMessageContext,
-    StorefrontClientContext,
-    CronContext {
-  id: Signer
-  service: Partial<{
-    filecoin: Partial<import('../types').StorefrontService['filecoin']>
-    piece: Partial<import('../types').AggregatorService['piece']>
-    aggregate: Partial<import('../../src/types').DealerService['aggregate']>
-    deal: Partial<import('../../src/types').DealTrackerService['deal']>
-  }>
-}

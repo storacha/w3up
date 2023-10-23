@@ -436,8 +436,8 @@ export const test = {
 }
 
 /**
- * @param {API.Test<DealerApi.TestEventsContext>} testFn
- * @param {(context: DealerApi.TestEventsContext) => Promise<DealerApi.TestEventsContext>} mockContextFunction
+ * @param {API.Test<TestAPI.DealerTestEventsContext>} testFn
+ * @param {(context: TestAPI.DealerTestEventsContext) => Promise<TestAPI.DealerTestEventsContext>} mockContextFunction
  */
 function wichMockableContext(testFn, mockContextFunction) {
   // @ts-ignore

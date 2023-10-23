@@ -1226,8 +1226,8 @@ async function getBuffers(length, group, piecesOptions = {}) {
 }
 
 /**
- * @param {API.Test<AggregatorApi.TestEventsContext>} testFn
- * @param {(context: AggregatorApi.TestEventsContext) => Promise<AggregatorApi.TestEventsContext>} mockContextFunction
+ * @param {API.Test<TestAPI.AggregatorTestEventsContext>} testFn
+ * @param {(context: TestAPI.AggregatorTestEventsContext) => Promise<TestAPI.AggregatorTestEventsContext>} mockContextFunction
  */
 function wichMockableContext(testFn, mockContextFunction) {
   // @ts-ignore

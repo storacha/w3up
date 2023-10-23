@@ -114,16 +114,3 @@ export interface OfferValue {
    */
   pieces: PieceLink[]
 }
-
-export interface TestEventsContext
-  extends AggregateInsertEventContext,
-    AggregateUpdatedStatusEventContext,
-    CronContext {
-  id: Signer
-  service: Partial<{
-    filecoin: Partial<import('../types').StorefrontService['filecoin']>
-    piece: Partial<import('../types').AggregatorService['piece']>
-    aggregate: Partial<import('../../src/types').DealerService['aggregate']>
-    deal: Partial<import('../../src/types').DealTrackerService['deal']>
-  }>
-}
