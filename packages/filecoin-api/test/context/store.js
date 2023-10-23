@@ -63,8 +63,14 @@ export class Store {
     if (!this.getFn) {
       throw new Error('has not supported')
     }
+    const t = this.getFn(this.items, item)
+    if (!t) {
+      return {
+        error: new RecordNotFound(),
+      }
+    }
     return {
-      ok: Boolean(this.getFn(this.items, item)),
+      ok: Boolean(t),
     }
   }
 

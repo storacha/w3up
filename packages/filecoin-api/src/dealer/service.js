@@ -7,7 +7,7 @@ import * as Block from 'multiformats/block'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import { StoreOperationFailed, DecodeBlockOperationFailed } from '../errors.js'
+import { StoreOperationFailed, DecodeBlockOperationFailed, RecordNotFoundErrorName } from '../errors.js'
 
 /**
  * @param {API.Input<DealerCaps.aggregateOffer>} input
@@ -19,12 +19,14 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
   const { aggregate, pieces } = capability.nb
 
   const hasRes = await context.aggregateStore.has({ aggregate })
-  if (hasRes.error) {
+  let exists = true
+  if (hasRes.error?.name === RecordNotFoundErrorName) {
+    exists = false
+  } else if (hasRes.error) {
     return {
       error: new StoreOperationFailed(hasRes.error.message),
     }
   }
-  const exists = hasRes.ok
 
   if (!exists) {
     const piecesBlockRes = await findCBORBlock(

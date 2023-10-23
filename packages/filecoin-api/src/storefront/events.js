@@ -24,11 +24,8 @@ import {
 export const handleFilecoinSubmitMessage = async (context, message) => {
   // dedupe concurrent writes
   const hasRes = await context.pieceStore.has({ piece: message.piece })
-  if (hasRes.error) {
+  if (hasRes.error && hasRes.error.name !== RecordNotFoundErrorName) {
     return { error: new StoreOperationFailed(hasRes.error.message) }
-  }
-  if (hasRes.ok) {
-    return { ok: {} }
   }
 
   // TODO: verify piece
