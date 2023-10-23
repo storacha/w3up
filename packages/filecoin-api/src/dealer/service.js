@@ -109,6 +109,7 @@ export const aggregateAccept = async ({ capability }, context) => {
 
   return {
     ok: {
+      aggregate,
       dataSource: get.ok.deal.dataSource,
       dataType: get.ok.deal.dataType,
     },

@@ -368,7 +368,10 @@ export const test = {
           subtree: inclusionProof.ok[0],
           index: inclusionProof.ok[1],
         },
-        dealMetadata,
+        aggregateAcceptStatus: {
+          ...dealMetadata,
+          aggregate: aggregate.link,
+        },
       })
 
     const storedInvocationsAndReceiptsRes = await storeInvocationsAndReceipts({

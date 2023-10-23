@@ -230,7 +230,10 @@ export interface FilecoinSubmitSuccess {
 
 export type FilecoinSubmitFailure = InvalidPieceCID | Ucanto.Failure
 
-export type FilecoinAcceptSuccess = DataAggregationProof
+export interface FilecoinAcceptSuccess extends DataAggregationProof {
+  aggregate: PieceLink
+  piece: PieceLink
+}
 
 export type FilecoinAcceptFailure =
   | InvalidContentPiece
@@ -280,7 +283,9 @@ export interface AggregateOfferSuccess {
 }
 export type AggregateOfferFailure = Ucanto.Failure
 
-export type AggregateAcceptSuccess = DealMetadata
+export interface AggregateAcceptSuccess extends DealMetadata {
+  aggregate: PieceLink
+}
 export type AggregateAcceptFailure = InvalidPiece | Ucanto.Failure
 
 export interface InvalidPiece extends Ucanto.Failure {

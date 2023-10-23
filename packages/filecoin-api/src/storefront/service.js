@@ -141,7 +141,22 @@ export const filecoinAccept = async ({ capability }, context) => {
     })
     .delegate()
 
-  return await findDataAggregationProof(context, fx.link())
+  const dataAggregationProof = await findDataAggregationProof(
+    context,
+    fx.link()
+  )
+  if (dataAggregationProof.error) {
+    return { error: new ProofNotFound(dataAggregationProof.error.message) }
+  }
+
+  return {
+    ok: {
+      aux: dataAggregationProof.ok.aux,
+      inclusion: dataAggregationProof.ok.inclusion,
+      piece,
+      aggregate: dataAggregationProof.ok.aggregate,
+    },
+  }
 }
 
 /**
@@ -154,13 +169,13 @@ export const filecoinAccept = async ({ capability }, context) => {
  *   receiptStore: API.Store<import('@ucanto/interface').UnknownLink, API.UcantoInterface.Receipt>
  * }} stores
  * @param {API.UcantoInterface.Link} task
- * @returns {Promise<API.UcantoInterface.Result<API.DataAggregationProof, API.StoreOperationError|ProofNotFound>>}
+ * @returns {Promise<API.UcantoInterface.Result<API.DataAggregationProof & { aggregate: import('@web3-storage/data-segment').PieceLink}, API.StoreOperationError|ProofNotFound>>}
  */
 async function findDataAggregationProof({ taskStore, receiptStore }, task) {
   /** @type {API.InclusionProof|undefined} */
   let inclusion
-  /** @type {API.DealMetadata|undefined} */
-  let dataAggregation
+  /** @type {API.AggregateAcceptSuccess|undefined} */
+  let aggregateAcceptReceipt
   while (true) {
     const [taskRes, receiptRes] = await Promise.all([
       taskStore.get(task),
@@ -184,7 +199,7 @@ async function findDataAggregationProof({ taskStore, receiptStore }, task) {
     if (ability === 'piece/accept' && receiptRes.ok.out.ok) {
       inclusion = receiptRes.ok.out.ok.inclusion
     } else if (ability === 'aggregate/accept' && receiptRes.ok.out.ok) {
-      dataAggregation = receiptRes.ok.out.ok
+      aggregateAcceptReceipt = receiptRes.ok.out.ok
     }
     if (!receiptRes.ok.fx.join) break
     task = receiptRes.ok.fx.join
@@ -196,10 +211,19 @@ async function findDataAggregationProof({ taskStore, receiptStore }, task) {
       ),
     }
   }
-  if (!dataAggregation) {
+  if (!aggregateAcceptReceipt) {
     return { error: new ProofNotFound('missing data aggregation proof') }
   }
-  return { ok: { aux: dataAggregation, inclusion } }
+  return {
+    ok: {
+      aux: {
+        dataSource: aggregateAcceptReceipt.dataSource,
+        dataType: aggregateAcceptReceipt.dataType,
+      },
+      aggregate: aggregateAcceptReceipt.aggregate,
+      inclusion,
+    },
+  }
 }
 
 export const ProofNotFoundName = /** @type {const} */ ('ProofNotFound')

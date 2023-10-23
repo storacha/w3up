@@ -14,7 +14,7 @@ import * as API from '../../src/types.js'
  * @param {API.PieceLink} context.piece
  * @param {import('@ucanto/interface').Block} context.piecesBlock
  * @param {API.InclusionProof} context.inclusionProof
- * @param {API.AggregateAcceptSuccess} context.dealMetadata
+ * @param {API.AggregateAcceptSuccess} context.aggregateAcceptStatus
  */
 export async function createInvocationsAndReceiptsForDealDataProofChain({
   storefront,
@@ -25,7 +25,7 @@ export async function createInvocationsAndReceiptsForDealDataProofChain({
   piece,
   piecesBlock,
   inclusionProof,
-  dealMetadata,
+  aggregateAcceptStatus,
 }) {
   const pieceOfferInvocation = await AggregatorCaps.pieceOffer
     .invoke({
@@ -124,7 +124,7 @@ export async function createInvocationsAndReceiptsForDealDataProofChain({
     issuer: dealer,
     ran: aggregateAcceptInvocation.cid,
     result: {
-      ok: /** @type {API.AggregateAcceptSuccess} */ (dealMetadata),
+      ok: /** @type {API.AggregateAcceptSuccess} */ (aggregateAcceptStatus),
     },
   })
 

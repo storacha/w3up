@@ -368,7 +368,10 @@ export const test = {
           subtree: inclusionProof.ok[0],
           index: inclusionProof.ok[1],
         },
-        dealMetadata,
+        aggregateAcceptStatus: {
+          ...dealMetadata,
+          aggregate: aggregate.link,
+        },
       })
 
     // Store all invocations and receipts, except for the very last receipt on the chain

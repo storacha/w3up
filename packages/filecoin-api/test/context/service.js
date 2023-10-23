@@ -47,6 +47,7 @@ export function getMockService() {
           }
 
           return Server.ok({
+            aggregate: invCap.nb.aggregate,
             dataSource: {
               dealID: 15151n,
             },
@@ -159,6 +160,8 @@ export function getMockService() {
 
           /** @type {API.UcantoInterface.OkBuilder<API.FilecoinAcceptSuccess, API.FilecoinAcceptFailure>} */
           const result = Server.ok({
+            piece: invCap.nb.piece,
+            aggregate: invCap.nb.piece,
             inclusion: {
               subtree:
                 /** @type {import('@web3-storage/data-segment').ProofData} */ [
