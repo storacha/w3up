@@ -35,7 +35,7 @@ export interface DealerTestEventsContext
   }>
 }
 
-export interface TestEventsContext
+export interface StorefrontTestEventsContext
   extends StorefrontInterface.FilecoinSubmitMessageContext,
     StorefrontInterface.PieceOfferMessageContext,
     StorefrontInterface.StorefrontClientContext,
