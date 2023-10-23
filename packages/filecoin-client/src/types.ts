@@ -30,7 +30,7 @@ import {
   AggregateAcceptFailure,
   DealInfo,
   DealInfoSuccess,
-  DealInfoFailure
+  DealInfoFailure,
 } from '@web3-storage/capabilities/types'
 
 export type SERVICE = 'STOREFRONT' | 'AGGREGATOR' | 'DEALER' | 'DEAL_TRACKER'
@@ -60,9 +60,21 @@ export interface InvocationConfig {
 
 export interface StorefrontService {
   filecoin: {
-    offer: ServiceMethod<FilecoinOffer, FilecoinOfferSuccess, FilecoinOfferFailure>
-    submit: ServiceMethod<FilecoinSubmit, FilecoinSubmitSuccess, FilecoinSubmitFailure>
-    accept: ServiceMethod<FilecoinAccept, FilecoinAcceptSuccess, FilecoinAcceptFailure>
+    offer: ServiceMethod<
+      FilecoinOffer,
+      FilecoinOfferSuccess,
+      FilecoinOfferFailure
+    >
+    submit: ServiceMethod<
+      FilecoinSubmit,
+      FilecoinSubmitSuccess,
+      FilecoinSubmitFailure
+    >
+    accept: ServiceMethod<
+      FilecoinAccept,
+      FilecoinAcceptSuccess,
+      FilecoinAcceptFailure
+    >
   }
 }
 
@@ -75,8 +87,16 @@ export interface AggregatorService {
 
 export interface DealerService {
   aggregate: {
-    offer: ServiceMethod<AggregateOffer, AggregateOfferSuccess, AggregateOfferFailure>
-    accept: ServiceMethod<AggregateAccept, AggregateAcceptSuccess, AggregateAcceptFailure>
+    offer: ServiceMethod<
+      AggregateOffer,
+      AggregateOfferSuccess,
+      AggregateOfferFailure
+    >
+    accept: ServiceMethod<
+      AggregateAccept,
+      AggregateAcceptSuccess,
+      AggregateAcceptFailure
+    >
   }
 }
 

@@ -1,8 +1,19 @@
 import type { TupleToUnion } from 'type-fest'
 import * as Ucanto from '@ucanto/interface'
 import type { Schema } from '@ucanto/core'
-import { InferInvokedCapability, Unit, DID, DIDKey, Link } from '@ucanto/interface'
-import { Phantom, PieceLink, ProofData, uint64 } from '@web3-storage/data-segment'
+import {
+  InferInvokedCapability,
+  Unit,
+  DID,
+  DIDKey,
+  Link,
+} from '@ucanto/interface'
+import {
+  Phantom,
+  PieceLink,
+  ProofData,
+  uint64,
+} from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -161,14 +172,20 @@ export type Space = InferInvokedCapability<typeof space>
 export type SpaceInfo = InferInvokedCapability<typeof info>
 
 // filecoin
+export interface DealMetadata {
+  dataType: uint64
+  dataSource: SingletonMarketSource
+}
 /** @see https://github.com/filecoin-project/go-data-segment/blob/e3257b64fa2c84e0df95df35de409cfed7a38438/datasegment/verifier.go#L8-L14 */
 export interface DataAggregationProof {
   /**
    * Proof the piece is included in the aggregate.
    */
   inclusion: InclusionProof
-  auxDataType: uint64
-  auxDataSource: SingletonMarketSource
+  /**
+   * Filecoin deal metadata.
+   */
+  aux: DealMetadata
 }
 /** @see https://github.com/filecoin-project/go-data-segment/blob/e3257b64fa2c84e0df95df35de409cfed7a38438/datasegment/inclusion.go#L30-L39 */
 export interface InclusionProof {
@@ -213,13 +230,23 @@ export interface FilecoinSubmitSuccess {
 
 export type FilecoinSubmitFailure = InvalidPieceCID | Ucanto.Failure
 
-export type FilecoinAcceptSuccess = DataAggregationProof
+export interface FilecoinAcceptSuccess extends DataAggregationProof {
+  aggregate: PieceLink
+  piece: PieceLink
+}
 
-export type FilecoinAcceptFailure = InvalidContentPiece | Ucanto.Failure
+export type FilecoinAcceptFailure =
+  | InvalidContentPiece
+  | ProofNotFound
+  | Ucanto.Failure
 
 export interface InvalidContentPiece extends Ucanto.Failure {
   name: 'InvalidContentPiece'
   content: PieceLink
+}
+
+export interface ProofNotFound extends Ucanto.Failure {
+  name: 'ProofNotFound'
 }
 
 // filecoin aggregator
@@ -256,7 +283,9 @@ export interface AggregateOfferSuccess {
 }
 export type AggregateOfferFailure = Ucanto.Failure
 
-export type AggregateAcceptSuccess = DataAggregationProof
+export interface AggregateAcceptSuccess extends DealMetadata {
+  aggregate: PieceLink
+}
 export type AggregateAcceptFailure = InvalidPiece | Ucanto.Failure
 
 export interface InvalidPiece extends Ucanto.Failure {
@@ -269,7 +298,7 @@ export interface InvalidPiece extends Ucanto.Failure {
 }
 
 export interface InvalidPieceCID extends Ucanto.Failure {
-  name: 'InvalidPieceCID',
+  name: 'InvalidPieceCID'
   piece: PieceLink
 }
 
@@ -283,7 +312,7 @@ export interface DealDetails {
   // TODO: start/end epoch? etc.
 }
 
-export type FilecoinAddress = `f${string}`
+export type FilecoinAddress = string
 
 export type DealInfoFailure = DealNotFound | Ucanto.Failure
 
@@ -343,9 +372,7 @@ export type AggregateOffer = InferInvokedCapability<
 export type AggregateAccept = InferInvokedCapability<
   typeof DealerCaps.aggregateAccept
 >
-export type DealInfo = InferInvokedCapability<
-  typeof DealTrackerCaps.dealInfo
->
+export type DealInfo = InferInvokedCapability<typeof DealTrackerCaps.dealInfo>
 // Top
 export type Top = InferInvokedCapability<typeof top>
 

@@ -19,10 +19,10 @@ describe('deal tracker', () => {
     /** @type {import('@web3-storage/capabilities/types').DealInfoSuccess} */
     const dealInfoResponse = {
       deals: {
-        '12345': {
-          provider: 'f099'
-        }
-      }
+        12_345: {
+          provider: 'f099',
+        },
+      },
     }
 
     // Create Ucanto service

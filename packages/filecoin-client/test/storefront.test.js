@@ -5,8 +5,12 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
 import * as dagJSON from '@ipld/dag-json'
-import { filecoinOffer, filecoinSubmit, filecoinAccept } from '../src/storefront.js'
-import { randomCargo } from './helpers/random.js'
+import {
+  filecoinOffer,
+  filecoinSubmit,
+  filecoinAccept,
+} from '../src/storefront.js'
+import { randomAggregate, randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import { serviceProvider as storefrontService } from './fixtures.js'
 
@@ -56,7 +60,9 @@ describe('storefront', () => {
               })
               .delegate()
 
-            return Server.ok(filecoinOfferResponse).fork(submitfx.link()).join(acceptfx.link())
+            return Server.ok(filecoinOfferResponse)
+              .fork(submitfx.link())
+              .join(acceptfx.link())
           },
         }),
       },
@@ -85,7 +91,7 @@ describe('storefront', () => {
 
     /** @type {import('@web3-storage/capabilities/types').FilecoinSubmitSuccess} */
     const filecoinSubmitResponse = {
-      piece: cargo.link
+      piece: cargo.link,
     }
 
     // Create Ucanto service
@@ -125,24 +131,29 @@ describe('storefront', () => {
   })
 
   it('storefront accepts a filecoin piece', async () => {
-    const [cargo] = await randomCargo(1, 100)
+    const { pieces, aggregate } = await randomAggregate(100, 100)
+    const cargo = pieces[0]
+
+    // compute proof for piece in aggregate
+    const proof = aggregate.resolveProof(cargo.link)
+    if (proof.error) {
+      throw new Error('could not compute proof')
+    }
 
     /** @type {import('@web3-storage/capabilities/types').FilecoinAcceptSuccess} */
     const filecoinAcceptResponse = {
+      aggregate: aggregate.link,
+      piece: cargo.link,
       inclusion: {
-        subtree: {
-          path: [],
-          index: 0n,
-        },
-        index: {
-          path: [],
-          index: 0n,
+        subtree: proof.ok[0],
+        index: proof.ok[1],
+      },
+      aux: {
+        dataType: 0n,
+        dataSource: {
+          dealID: 1138n,
         },
       },
-      auxDataType: 0n,
-      auxDataSource: {
-        dealID: 1138n
-      }
     }
 
     // Create Ucanto service
@@ -181,7 +192,13 @@ describe('storefront', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, filecoinAcceptResponse)
+    assert.ok(res.out.ok.aggregate.equals(aggregate.link))
+    assert.ok(res.out.ok.piece.equals(cargo.link))
+    assert.equal(
+      BigInt(res.out.ok.aux.dataSource.dealID),
+      BigInt(filecoinAcceptResponse.aux.dataSource.dealID)
+    )
+    assert.deepEqual(res.out.ok.inclusion, filecoinAcceptResponse.inclusion)
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })
@@ -193,7 +210,7 @@ describe('storefront', () => {
     const filecoinAcceptResponse = {
       name: 'InvalidContentPiece',
       message: 'Piece is a bad one.',
-      content: cargo.link
+      content: cargo.link,
     }
 
     // Create Ucanto service
@@ -234,7 +251,10 @@ describe('storefront', () => {
     )
 
     assert.ok(res.out.error)
-    assert.equal(dagJSON.stringify(res.out.error), dagJSON.stringify(filecoinAcceptResponse))
+    assert.equal(
+      dagJSON.stringify(res.out.error),
+      dagJSON.stringify(filecoinAcceptResponse)
+    )
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })

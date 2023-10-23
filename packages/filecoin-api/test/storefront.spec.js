@@ -2,55 +2,140 @@
 import * as assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
 
-import * as Storefront from './services/storefront.js'
+import * as StorefrontService from './services/storefront.js'
+import * as StorefrontEvents from './events/storefront.js'
 
-import { Store } from './context/store.js'
+import { getStoreImplementations } from './context/store-implementations.js'
 import { Queue } from './context/queue.js'
+import { getMockService, getConnection } from './context/service.js'
 
-describe('filecoin/*', () => {
-  for (const [name, test] of Object.entries(Storefront.test)) {
-    const define = name.startsWith('only ')
-      ? it.only
-      : name.startsWith('skip ')
-      ? it.skip
-      : it
+describe('storefront', () => {
+  describe('filecoin/*', () => {
+    for (const [name, test] of Object.entries(StorefrontService.test)) {
+      const define = name.startsWith('only ')
+        ? it.only
+        : name.startsWith('skip ')
+        ? it.skip
+        : it
 
-    define(name, async () => {
-      const signer = await Signer.generate()
-      const id = signer.withDID('did:web:test.web3.storage')
+      define(name, async () => {
+        const storefrontSigner = await Signer.generate()
+        const aggregatorSigner = await Signer.generate()
 
-      // resources
-      /** @type {unknown[]} */
-      const queuedMessages = []
-      const addQueue = new Queue({
-        onMessage: (message) => queuedMessages.push(message),
-      })
-      const pieceLookupFn = (
-        /** @type {Iterable<any> | ArrayLike<any>} */ items,
-        /** @type {any} */ record
-      ) => {
-        return Array.from(items).find((i) => i.piece.equals(record.piece))
-      }
-      const pieceStore = new Store(pieceLookupFn)
-
-      await test(
-        {
-          equal: assert.strictEqual,
-          deepEqual: assert.deepStrictEqual,
-          ok: assert.ok,
-        },
-        {
-          id,
-          errorReporter: {
-            catch(error) {
-              assert.fail(error)
-            },
+        // resources
+        /** @type {Map<string, unknown[]>} */
+        const queuedMessages = new Map()
+        queuedMessages.set('filecoinSubmitQueue', [])
+        queuedMessages.set('pieceOfferQueue', [])
+        const filecoinSubmitQueue = new Queue({
+          onMessage: (message) => {
+            const messages = queuedMessages.get('filecoinSubmitQueue') || []
+            messages.push(message)
+            queuedMessages.set('filecoinSubmitQueue', messages)
           },
-          addQueue,
-          pieceStore,
-          queuedMessages,
-        }
-      )
-    })
-  }
+        })
+        const pieceOfferQueue = new Queue({
+          onMessage: (message) => {
+            const messages = queuedMessages.get('pieceOfferQueue') || []
+            messages.push(message)
+            queuedMessages.set('pieceOfferQueue', messages)
+          },
+        })
+        const {
+          storefront: { pieceStore, receiptStore, taskStore },
+        } = getStoreImplementations()
+
+        await test(
+          {
+            equal: assert.strictEqual,
+            deepEqual: assert.deepStrictEqual,
+            ok: assert.ok,
+          },
+          {
+            id: storefrontSigner,
+            aggregatorId: aggregatorSigner,
+            errorReporter: {
+              catch(error) {
+                assert.fail(error)
+              },
+            },
+            pieceStore,
+            filecoinSubmitQueue,
+            pieceOfferQueue,
+            taskStore,
+            receiptStore,
+            queuedMessages,
+          }
+        )
+      })
+    }
+  })
+
+  describe('events', () => {
+    for (const [name, test] of Object.entries(StorefrontEvents.test)) {
+      const define = name.startsWith('only ')
+        ? it.only
+        : name.startsWith('skip ')
+        ? it.skip
+        : it
+
+      define(name, async () => {
+        const storefrontSigner = await Signer.generate()
+        const aggregatorSigner = await Signer.generate()
+
+        const service = getMockService()
+        const storefrontConnection = getConnection(
+          storefrontSigner,
+          service
+        ).connection
+        const aggregatorConnection = getConnection(
+          aggregatorSigner,
+          service
+        ).connection
+
+        // context
+        const {
+          storefront: { pieceStore, taskStore, receiptStore },
+        } = getStoreImplementations()
+
+        await test(
+          {
+            equal: assert.strictEqual,
+            deepEqual: assert.deepStrictEqual,
+            ok: assert.ok,
+          },
+          {
+            id: storefrontSigner,
+            aggregatorId: aggregatorSigner,
+            pieceStore,
+            receiptStore,
+            taskStore,
+            storefrontService: {
+              connection: storefrontConnection,
+              invocationConfig: {
+                issuer: storefrontSigner,
+                with: storefrontSigner.did(),
+                audience: storefrontSigner,
+              },
+            },
+            aggregatorService: {
+              connection: aggregatorConnection,
+              invocationConfig: {
+                issuer: storefrontSigner,
+                with: storefrontSigner.did(),
+                audience: aggregatorSigner,
+              },
+            },
+            queuedMessages: new Map(),
+            service,
+            errorReporter: {
+              catch(error) {
+                assert.fail(error)
+              },
+            },
+          }
+        )
+      })
+    }
+  })
 })
