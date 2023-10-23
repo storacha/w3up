@@ -31,7 +31,6 @@ export const handlePieceMessage = async (context, message) => {
     insertedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   })
-  // TODO: we should make sure to ignore error already there
   if (putRes.error) {
     return {
       error: new StoreOperationFailed(putRes.error.message),
