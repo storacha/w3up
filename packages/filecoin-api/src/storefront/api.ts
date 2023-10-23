@@ -18,7 +18,7 @@ import {
   ServiceConfig,
 } from '../types.js'
 
-export interface Config {
+export interface ServiceOptions {
   /**
    * Implementer MAY handle submission without user request.
    */
@@ -59,9 +59,9 @@ export interface ServiceContext {
    */
   receiptStore: Store<UnknownLink, Receipt>
   /**
-   * Service config.
+   * Service options.
    */
-  config?: Config
+  options?: ServiceOptions
 }
 
 export interface FilecoinSubmitMessageContext
