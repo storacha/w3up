@@ -142,14 +142,18 @@ describe('storefront', () => {
 
     /** @type {import('@web3-storage/capabilities/types').FilecoinAcceptSuccess} */
     const filecoinAcceptResponse = {
+      aggregate: aggregate.link,
+      piece: cargo.link,
       inclusion: {
         subtree: proof.ok[0],
         index: proof.ok[1],
       },
-      auxDataType: 0n,
-      auxDataSource: {
-        dealID: 1138n,
-      },
+      aux: {
+        dataType: 0n,
+        dataSource: {
+          dealID: 1138n,
+        },
+      }
     }
 
     // Create Ucanto service
@@ -188,7 +192,10 @@ describe('storefront', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, filecoinAcceptResponse)
+    assert.ok(res.out.ok.aggregate.equals(aggregate.link))
+    assert.ok(res.out.ok.piece.equals(cargo.link))
+    assert.equal(BigInt(res.out.ok.aux.dataSource.dealID), BigInt(filecoinAcceptResponse.aux.dataSource.dealID))
+    assert.deepEqual(res.out.ok.inclusion, filecoinAcceptResponse.inclusion)
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })

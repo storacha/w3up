@@ -85,10 +85,11 @@ describe('dealer', () => {
 
     /** @type {import('@web3-storage/capabilities/types').AggregateAcceptSuccess} */
     const aggregateAcceptResponse = {
-      auxDataType: 0n,
-      auxDataSource: {
+      dataType: 0n,
+      dataSource: {
         dealID: 1138n,
       },
+      aggregate: aggregate.link
     }
 
     // Create Ucanto service
@@ -126,7 +127,8 @@ describe('dealer', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, aggregateAcceptResponse)
+    assert.ok(res.out.ok.aggregate.equals(aggregate.link))
+    assert.deepEqual(BigInt(res.out.ok.dataSource.dealID), BigInt(aggregateAcceptResponse.dataSource.dealID))
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })
