@@ -82,7 +82,7 @@ export async function aggregateOffer(
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} aggregate
- * @param {import('@web3-storage/data-segment').PieceLink[]} pieces
+ * @param {import('@ucanto/interface').Link} pieces
  * @param {import('./types.js').RequestOptions<DealerService>} [options]
  */
 export async function aggregateAccept(
@@ -93,8 +93,6 @@ export async function aggregateAccept(
 ) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
-
-  const block = await CBOR.write(pieces)
   const invocation = Dealer.aggregateAccept.invoke({
     issuer,
     /* c8 ignore next */
@@ -102,11 +100,10 @@ export async function aggregateAccept(
     with: resource,
     nb: {
       aggregate,
-      pieces: block.cid,
+      pieces,
     },
     proofs,
   })
-  invocation.attach(block)
 
   return await invocation.execute(conn)
 }

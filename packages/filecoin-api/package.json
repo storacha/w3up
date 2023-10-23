@@ -20,8 +20,8 @@
       "dealer": [
         "dist/src/dealer.d.ts"
       ],
-      "chain-tracker": [
-        "dist/src/chain-tracker.d.ts"
+      "deal-tracker": [
+        "dist/src/deal-tracker.d.ts"
       ],
       "errors": [
         "dist/src/errors.d.ts"
@@ -54,9 +54,9 @@
       "types": "./dist/src/dealer.d.ts",
       "import": "./src/dealer.js"
     },
-    "./chain-tracker": {
-      "types": "./dist/src/chain-tracker.d.ts",
-      "import": "./src/chain-tracker.js"
+    "./deal-tracker": {
+      "types": "./dist/src/deal-tracker.d.ts",
+      "import": "./src/deal-tracker.js"
     },
     "./storefront": {
       "types": "./dist/src/storefront.d.ts",
@@ -108,7 +108,9 @@
       "project": "./tsconfig.json"
     },
     "rules": {
-      "unicorn/expiring-todo-comments": "off"
+      "unicorn/expiring-todo-comments": "off",
+      "unicorn/prefer-number-properties": "off",
+      "jsdoc/check-indentation": "off"
     },
     "env": {
       "mocha": true

@@ -86,20 +86,11 @@ describe('dealer', () => {
 
     /** @type {import('@web3-storage/capabilities/types').AggregateAcceptSuccess} */
     const aggregateAcceptResponse = {
-      inclusion: {
-        subtree: {
-          path: [],
-          index: 0n,
-        },
-        index: {
-          path: [],
-          index: 0n,
-        },
-      },
-      auxDataType: 0n,
-      auxDataSource: {
+      dataType: 0n,
+      dataSource: {
         dealID: 1138n,
       },
+      aggregate: aggregate.link,
     }
 
     // Create Ucanto service
@@ -118,12 +109,6 @@ describe('dealer', () => {
             // piece link
             assert.ok(invCap.nb.aggregate.equals(aggregate.link.link()))
 
-            // Validate block inline exists
-            const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
-            assert.ok(
-              invocationBlocks.find((b) => b.cid.equals(piecesBlock.cid))
-            )
-
             return Server.ok(aggregateAcceptResponse)
           },
         }),
@@ -138,12 +123,16 @@ describe('dealer', () => {
         audience: dealerService,
       },
       aggregate.link.link(),
-      offer,
+      piecesBlock.cid,
       { connection: getConnection(service).connection }
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, aggregateAcceptResponse)
+    assert.ok(res.out.ok.aggregate.equals(aggregate.link))
+    assert.deepEqual(
+      BigInt(res.out.ok.dataSource.dealID),
+      BigInt(aggregateAcceptResponse.dataSource.dealID)
+    )
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })
@@ -182,12 +171,6 @@ describe('dealer', () => {
             // piece link
             assert.ok(invCap.nb.aggregate.equals(aggregate.link.link()))
 
-            // Validate block inline exists
-            const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
-            assert.ok(
-              invocationBlocks.find((b) => b.cid.equals(piecesBlock.cid))
-            )
-
             return {
               error: aggregateAcceptResponse,
             }
@@ -204,7 +187,7 @@ describe('dealer', () => {
         audience: dealerService,
       },
       aggregate.link.link(),
-      offer,
+      piecesBlock.cid,
       { connection: getConnection(service).connection }
     )
 
