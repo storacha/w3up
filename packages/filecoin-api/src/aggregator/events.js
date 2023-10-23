@@ -321,10 +321,10 @@ export const handleInclusionInsertToIssuePieceAccept = async (
 ) => {
   // invoke piece/accept to issue receipt
   const pieceAcceptInv = await Aggregator.pieceAccept(
-    context.aggregatorInvocationConfig,
+    context.aggregatorService.invocationConfig,
     record.piece,
     record.group,
-    { connection: context.aggregatorConnection }
+    { connection: context.aggregatorService.connection }
   )
 
   if (pieceAcceptInv.out.error) {
@@ -357,10 +357,10 @@ export const handleAggregateInsertToAggregateOffer = async (
 
   // invoke aggregate/offer
   const aggregateOfferInv = await Dealer.aggregateOffer(
-    context.dealerInvocationConfig,
+    context.dealerService.invocationConfig,
     record.aggregate,
     pieces,
-    { connection: context.dealerConnection }
+    { connection: context.dealerService.connection }
   )
 
   if (aggregateOfferInv.out.error) {

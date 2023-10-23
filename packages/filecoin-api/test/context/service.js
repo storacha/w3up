@@ -212,7 +212,7 @@ export function getMockService() {
 }
 
 /**
- * @param {import('../../src/types').StorefrontService} service
+ * @param {any} service
  * @param {any} id
  */
 export function getConnection(id, service) {

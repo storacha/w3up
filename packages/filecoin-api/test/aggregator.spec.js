@@ -117,17 +117,21 @@ describe('Aggregator', () => {
             bufferQueue,
             pieceAcceptQueue,
             aggregateOfferQueue,
-            dealerConnection,
-            dealerInvocationConfig: {
-              issuer: aggregatorSigner,
-              with: aggregatorSigner.did(),
-              audience: dealerSigner,
+            dealerService: {
+              connection: dealerConnection,
+              invocationConfig: {
+                issuer: aggregatorSigner,
+                with: aggregatorSigner.did(),
+                audience: dealerSigner,
+              }
             },
-            aggregatorConnection,
-            aggregatorInvocationConfig: {
-              issuer: aggregatorSigner,
-              with: aggregatorSigner.did(),
-              audience: aggregatorSigner,
+            aggregatorService: {
+              connection: aggregatorConnection,
+              invocationConfig: {
+                issuer: aggregatorSigner,
+                with: aggregatorSigner.did(),
+                audience: aggregatorSigner,
+              }
             },
             queuedMessages,
             service,

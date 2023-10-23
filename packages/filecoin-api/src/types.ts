@@ -8,8 +8,10 @@ import type {
   Match,
   Unit,
   Result,
+  ConnectionView
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
+import { InvocationConfig } from '@web3-storage/filecoin-client/types'
 
 export * as UcantoInterface from '@ucanto/interface'
 export type { Result, Variant } from '@ucanto/interface'
@@ -62,6 +64,11 @@ export interface UpdatableAndQueryableStore<RecKey, Rec, Query>
 
 export interface QueueMessageOptions {
   messageGroupId?: string
+}
+
+export interface ServiceConfig <T extends Record<string, any>> {
+  connection: ConnectionView<T>
+  invocationConfig: InvocationConfig
 }
 
 // Errors

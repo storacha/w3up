@@ -5,11 +5,10 @@ import type {
   Receipt,
   Invocation,
   Failure,
-  ConnectionView,
 } from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
-import { InvocationConfig } from '@web3-storage/filecoin-client/types'
-import { Store, UpdatableAndQueryableStore, Queue } from '../types.js'
+import { AggregatorService, StorefrontService } from '@web3-storage/filecoin-client/types'
+import { Store, UpdatableAndQueryableStore, Queue, ServiceConfig } from '../types.js'
 
 export interface Config {
   /**
@@ -64,22 +63,14 @@ export interface PieceOfferMessageContext {
   /**
    * Aggregator connection to moves pieces into the pipeline.
    */
-  aggregatorConnection: ConnectionView<any>
-  /**
-   * Invocation configuration.
-   */
-  aggregatorInvocationConfig: InvocationConfig
+  aggregatorService: ServiceConfig<AggregatorService>
 }
 
 export interface StorefrontClientContext {
   /**
    * Storefront own connection to issue receipts.
    */
-  storefrontConnection: ConnectionView<any>
-  /**
-   * Invocation configuration.
-   */
-  storefrontInvocationConfig: InvocationConfig
+  storefrontService: ServiceConfig<StorefrontService>
 }
 
 export interface CronContext

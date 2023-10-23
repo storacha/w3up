@@ -34,10 +34,10 @@ export const handleAggregateInsert = async (context, record) => {
  */
 export const handleAggregatUpdatedStatus = async (context, record) => {
   const aggregateAcceptInv = await Dealer.aggregateAccept(
-    context.dealerInvocationConfig,
+    context.dealerService.invocationConfig,
     record.aggregate,
     record.pieces,
-    { connection: context.dealerConnection }
+    { connection: context.dealerService.connection }
   )
   if (aggregateAcceptInv.out.error) {
     return {
@@ -71,8 +71,8 @@ export const handleCronTick = async (context) => {
       updateApprovedDeals({
         deal,
         aggregateStore: context.aggregateStore,
-        dealTrackerServiceConnection: context.dealTrackerConnection,
-        dealTrackerInvocationConfig: context.dealTrackerInvocationConfig,
+        dealTrackerServiceConnection: context.dealTrackerService.connection,
+        dealTrackerInvocationConfig: context.dealTrackerService.invocationConfig,
       })
     )
   )

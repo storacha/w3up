@@ -90,17 +90,21 @@ describe('Dealer', () => {
             aggregateStore,
             offerStore,
             queuedMessages,
-            dealerConnection,
-            dealerInvocationConfig: {
-              issuer: dealerSigner,
-              with: dealerSigner.did(),
-              audience: dealerSigner,
+            dealerService: {
+              connection: dealerConnection,
+              invocationConfig: {
+                issuer: dealerSigner,
+                with: dealerSigner.did(),
+                audience: dealerSigner,
+              }
             },
-            dealTrackerConnection,
-            dealTrackerInvocationConfig: {
-              issuer: dealerSigner,
-              with: dealerSigner.did(),
-              audience: dealTrackerSigner,
+            dealTrackerService: {
+              connection: dealTrackerConnection,
+              invocationConfig: {
+                issuer: dealerSigner,
+                with: dealerSigner.did(),
+                audience: dealTrackerSigner,
+              }
             },
             service,
           }

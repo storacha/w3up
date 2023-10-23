@@ -1,8 +1,8 @@
-import type { Signer, Link, ConnectionView } from '@ucanto/interface'
+import type { Signer, Link } from '@ucanto/interface'
 import { DealMetadata } from '@web3-storage/capabilities/types'
 import { PieceLink } from '@web3-storage/data-segment'
-import { InvocationConfig } from '@web3-storage/filecoin-client/types'
-import { UpdatableStore, UpdatableAndQueryableStore } from '../types.js'
+import { DealerService, DealTrackerService } from '@web3-storage/filecoin-client/types'
+import { UpdatableStore, UpdatableAndQueryableStore, ServiceConfig } from '../types.js'
 
 export interface ServiceContext<OfferDoc = OfferDocument> {
   id: Signer
@@ -28,22 +28,14 @@ export interface AggregateUpdatedStatusEventContext {
   /**
    * Dealer connection to offer aggregates for deals.
    */
-  dealerConnection: ConnectionView<any>
-  /**
-   * Invocation configuration.
-   */
-  dealerInvocationConfig: InvocationConfig
+  dealerService: ServiceConfig<DealerService>
 }
 
 export interface CronContext extends Pick<ServiceContext, 'aggregateStore'> {
   /**
    * Deal tracker connection to find out available deals for an aggregate.
    */
-  dealTrackerConnection: ConnectionView<any>
-  /**
-   * Invocation configuration.
-   */
-  dealTrackerInvocationConfig: InvocationConfig
+  dealTrackerService: ServiceConfig<DealTrackerService>
 }
 
 export interface AggregateRecord {

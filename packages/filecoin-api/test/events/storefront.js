@@ -182,12 +182,14 @@ export const test = {
         return {
           ...context,
           service,
-          aggregatorConnection,
-          aggregatorInvocationConfig: {
-            issuer: context.id,
-            with: context.id.did(),
-            audience: aggregatorSigner,
-          },
+          aggregatorService: {
+            connection: aggregatorConnection,
+            invocationConfig: {
+              issuer: context.id,
+              with: context.id.did(),
+              audience: aggregatorSigner,
+            }
+          }
         }
       }
     ),

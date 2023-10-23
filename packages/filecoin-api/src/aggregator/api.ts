@@ -1,8 +1,8 @@
-import type { Signer, Principal, Link, ConnectionView } from '@ucanto/interface'
+import type { Signer, Principal, Link } from '@ucanto/interface'
 import { InclusionProof } from '@web3-storage/capabilities/types'
 import { PieceLink } from '@web3-storage/data-segment'
-import { InvocationConfig } from '@web3-storage/filecoin-client/types'
-import { Store, UpdatableStore, QueryableStore, Queue } from '../types.js'
+import { AggregatorService, DealerService } from '@web3-storage/filecoin-client/types'
+import { Store, UpdatableStore, QueryableStore, Queue, ServiceConfig } from '../types.js'
 
 export interface ServiceContext {
   /**
@@ -70,11 +70,7 @@ export interface InclusionInsertEventToIssuePieceAccept {
   /**
    * Aggregator connection to moves pieces into the pipeline.
    */
-  aggregatorConnection: ConnectionView<any>
-  /**
-   * Invocation configuration.
-   */
-  aggregatorInvocationConfig: InvocationConfig
+  aggregatorService: ServiceConfig<AggregatorService>
 }
 
 export interface AggregateInsertEventToPieceAcceptQueueContext
@@ -88,13 +84,9 @@ export interface AggregateInsertEventToPieceAcceptQueueContext
 export interface AggregateInsertEventToAggregateOfferContext
   extends Pick<ServiceContext, 'bufferStore'> {
   /**
-   * Dealer connection to offer aggregates for deals.
+   * Dealer connection to moves pieces into the pipeline.
    */
-  dealerConnection: ConnectionView<any>
-  /**
-   * Invocation configuration.
-   */
-  dealerInvocationConfig: InvocationConfig
+  dealerService: ServiceConfig<DealerService>
 }
 
 export interface BufferMessageContext

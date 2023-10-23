@@ -207,7 +207,10 @@ export const test = {
         return {
           ...context,
           service,
-          dealerConnection,
+          dealerService: {
+            ...context.dealerService,
+            connection: dealerConnection
+          }
         }
       }
     ),
@@ -342,12 +345,14 @@ export const test = {
       return {
         ...context,
         service,
-        dealTrackerConnection,
-        dealTrackerInvocationConfig: {
-          issuer: context.id,
-          with: context.id.did(),
-          audience: dealTrackerSigner,
-        },
+        dealTrackerService: {
+          connection: dealTrackerConnection,
+          invocationConfig: {
+            issuer: context.id,
+            with: context.id.did(),
+            audience: dealTrackerSigner,
+          }
+        }
       }
     }
   ),
@@ -416,12 +421,14 @@ export const test = {
         return {
           ...context,
           service,
-          dealTrackerConnection,
-          dealTrackerInvocationConfig: {
-            issuer: context.id,
-            with: context.id.did(),
-            audience: dealTrackerSigner,
-          },
+          dealTrackerService: {
+            connection: dealTrackerConnection,
+            invocationConfig: {
+              issuer: context.id,
+              with: context.id.did(),
+              audience: dealTrackerSigner,
+            }
+          }
         }
       }
     ),

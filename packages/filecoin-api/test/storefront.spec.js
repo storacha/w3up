@@ -110,17 +110,21 @@ describe('storefront', () => {
             pieceStore,
             receiptStore,
             taskStore,
-            storefrontConnection,
-            storefrontInvocationConfig: {
-              issuer: storefrontSigner,
-              with: storefrontSigner.did(),
-              audience: storefrontSigner,
+            storefrontService: {
+              connection: storefrontConnection,
+              invocationConfig: {
+                issuer: storefrontSigner,
+                with: storefrontSigner.did(),
+                audience: storefrontSigner,
+              }
             },
-            aggregatorConnection,
-            aggregatorInvocationConfig: {
-              issuer: storefrontSigner,
-              with: storefrontSigner.did(),
-              audience: aggregatorSigner,
+            aggregatorService: {
+              connection: aggregatorConnection,
+              invocationConfig: {
+                issuer: storefrontSigner,
+                with: storefrontSigner.did(),
+                audience: aggregatorSigner,
+              }
             },
             queuedMessages: new Map(),
             service,

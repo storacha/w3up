@@ -55,10 +55,10 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
  */
 export const handlePieceOfferMessage = async (context, message) => {
   const pieceOfferInv = await Aggregator.pieceOffer(
-    context.aggregatorInvocationConfig,
+    context.aggregatorService.invocationConfig,
     message.piece,
     message.group,
-    { connection: context.aggregatorConnection }
+    { connection: context.aggregatorService.connection }
   )
   if (pieceOfferInv.out.error) {
     return {
@@ -77,10 +77,10 @@ export const handlePieceOfferMessage = async (context, message) => {
  */
 export const handlePieceInsert = async (context, record) => {
   const filecoinSubmitInv = await Storefront.filecoinSubmit(
-    context.storefrontInvocationConfig,
+    context.storefrontService.invocationConfig,
     record.content,
     record.piece,
-    { connection: context.storefrontConnection }
+    { connection: context.storefrontService.connection }
   )
 
   if (filecoinSubmitInv.out.error) {
@@ -107,10 +107,10 @@ export const handlePieceStatusUpdate = async (context, record) => {
   }
 
   const filecoinAcceptInv = await Storefront.filecoinAccept(
-    context.storefrontInvocationConfig,
+    context.storefrontService.invocationConfig,
     record.content,
     record.piece,
-    { connection: context.storefrontConnection }
+    { connection: context.storefrontService.connection }
   )
 
   if (filecoinAcceptInv.out.error) {
