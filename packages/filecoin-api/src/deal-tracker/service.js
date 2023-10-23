@@ -8,6 +8,10 @@ import * as API from '../types.js'
 import { StoreOperationFailed } from '../errors.js'
 
 /**
+ * @typedef {import('@web3-storage/capabilities/types.js').DealDetails} DealDetails
+ */
+
+/**
  * @param {API.Input<DealTrackerCaps.dealInfo>} input
  * @param {import('./api').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealInfoSuccess, API.DealInfoFailure>>}

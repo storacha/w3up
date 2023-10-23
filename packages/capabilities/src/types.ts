@@ -312,7 +312,7 @@ export interface DealDetails {
   // TODO: start/end epoch? etc.
 }
 
-export type FilecoinAddress = `f${string}`
+export type FilecoinAddress = string
 
 export type DealInfoFailure = DealNotFound | Ucanto.Failure
 
