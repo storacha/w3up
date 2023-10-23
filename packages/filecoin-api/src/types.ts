@@ -8,7 +8,7 @@ import type {
   Match,
   Unit,
   Result,
-  ConnectionView
+  ConnectionView,
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
 import { InvocationConfig } from '@web3-storage/filecoin-client/types'
@@ -66,7 +66,7 @@ export interface QueueMessageOptions {
   messageGroupId?: string
 }
 
-export interface ServiceConfig <T extends Record<string, any>> {
+export interface ServiceConfig<T extends Record<string, any>> {
   connection: ConnectionView<T>
   invocationConfig: InvocationConfig
 }

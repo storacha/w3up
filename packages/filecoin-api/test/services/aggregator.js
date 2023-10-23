@@ -109,8 +109,8 @@ export const test = {
         piece: cargo.link.link(),
         group: context.id.did(),
         status: 'offered',
-        insertedAt: Date.now(),
-        updatedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
       assert.ok(putRes.ok)
 
@@ -242,7 +242,7 @@ export const test = {
       aggregate: aggregate.link,
       pieces: piecesBlock.cid,
       group,
-      insertedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
     })
     assert.ok(aggregatePutRes.ok)
 
@@ -261,7 +261,7 @@ export const test = {
         subtree: proof.ok[0],
         index: proof.ok[1],
       },
-      insertedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
     })
     assert.ok(inclusionPutRes.ok)
 
@@ -375,7 +375,7 @@ export const test = {
             subtree: proof.ok[0],
             index: proof.ok[1],
           },
-          insertedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
         })
         assert.ok(inclusionPutRes.ok)
 

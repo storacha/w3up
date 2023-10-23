@@ -1,8 +1,15 @@
 import type { Signer, Link } from '@ucanto/interface'
 import { DealMetadata } from '@web3-storage/capabilities/types'
 import { PieceLink } from '@web3-storage/data-segment'
-import { DealerService, DealTrackerService } from '@web3-storage/filecoin-client/types'
-import { UpdatableStore, UpdatableAndQueryableStore, ServiceConfig } from '../types.js'
+import {
+  DealerService,
+  DealTrackerService,
+} from '@web3-storage/filecoin-client/types'
+import {
+  UpdatableStore,
+  UpdatableAndQueryableStore,
+  ServiceConfig,
+} from '../types.js'
 
 export interface ServiceContext<OfferDoc = OfferDocument> {
   id: Signer
@@ -59,13 +66,13 @@ export interface AggregateRecord {
    */
   status: 'offered' | 'accepted' | 'invalid'
   /**
-   * Insertion date in milliseconds since unix epoch.
+   * Insertion date ISO string.
    */
-  insertedAt: number
+  insertedAt: string
   /**
-   * Update date in milliseconds since unix epoch.
+   * Update date ISO string.
    */
-  updatedAt: number
+  updatedAt: string
 }
 
 export interface AggregateRecordKey {

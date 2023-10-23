@@ -188,8 +188,8 @@ export const test = {
       aggregate: aggregate.link,
       pieces: piecesBlock.cid,
       status: 'offered',
-      insertedAt: Date.now(),
-      updatedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       deal,
     })
     assert.ok(putRes.ok)

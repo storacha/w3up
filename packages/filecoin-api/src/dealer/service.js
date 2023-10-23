@@ -55,8 +55,8 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
       aggregate,
       pieces,
       status: 'offered',
-      insertedAt: Date.now(),
-      updatedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     })
     if (putRes.error) {
       return {

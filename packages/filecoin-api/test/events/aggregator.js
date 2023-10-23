@@ -94,8 +94,8 @@ export const test = {
         piece: p.link,
         group,
         status: 'offered',
-        insertedAt: Date.now(),
-        updatedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }))
     )
     assert.ok(handledPieceInsertsRes.ok)
@@ -131,8 +131,8 @@ export const test = {
               piece: p.link,
               group,
               status: 'offered',
-              insertedAt: Date.now(),
-              updatedAt: Date.now(),
+              insertedAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
             }))
           )
         assert.ok(handledPieceInsertsRes.error)
@@ -161,8 +161,8 @@ export const test = {
               piece: p.link,
               group,
               status: 'offered',
-              insertedAt: Date.now(),
-              updatedAt: Date.now(),
+              insertedAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
             }))
           )
         assert.ok(handledPieceInsertsRes.error)
@@ -552,7 +552,7 @@ export const test = {
     const buffer = {
       pieces: pieces.map((p) => ({
         piece: p.link,
-        insertedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
         policy: 0,
       })),
       group,
@@ -591,7 +591,7 @@ export const test = {
         const buffer = {
           pieces: pieces.map((p) => ({
             piece: p.link,
-            insertedAt: Date.now(),
+            insertedAt: new Date().toISOString(),
             policy: 0,
           })),
           group,
@@ -629,7 +629,7 @@ export const test = {
     const buffer = {
       pieces: pieces.map((p) => ({
         piece: p.link,
-        insertedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
         policy: 0,
       })),
       group,
@@ -648,7 +648,7 @@ export const test = {
       pieces: block.cid,
       aggregate: aggregate.link,
       group,
-      insertedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -696,7 +696,7 @@ export const test = {
         const buffer = {
           pieces: pieces.map((p) => ({
             piece: p.link,
-            insertedAt: Date.now(),
+            insertedAt: new Date().toISOString(),
             policy: 0,
           })),
           group,
@@ -708,7 +708,7 @@ export const test = {
           pieces: block.cid,
           aggregate: aggregate.link,
           group,
-          insertedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -744,7 +744,7 @@ export const test = {
         const buffer = {
           pieces: pieces.map((p) => ({
             piece: p.link,
-            insertedAt: Date.now(),
+            insertedAt: new Date().toISOString(),
             policy: 0,
           })),
           group,
@@ -762,7 +762,7 @@ export const test = {
           pieces: block.cid,
           aggregate: aggregate.link,
           group,
-          insertedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -879,8 +879,8 @@ export const test = {
       piece,
       group,
       status: 'offered',
-      insertedAt: Date.now(),
-      updatedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     })
     assert.ok(piecePut.ok)
 
@@ -899,7 +899,7 @@ export const test = {
         subtree: inclusionProof.ok[0],
         index: inclusionProof.ok[1],
       },
-      insertedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
     }
     const inclusionPut = await context.inclusionStore.put(inclusionRecord)
     assert.ok(inclusionPut.ok)
@@ -944,7 +944,7 @@ export const test = {
             subtree: inclusionProof.ok[0],
             index: inclusionProof.ok[1],
           },
-          insertedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
         }
         const inclusionPut = await context.inclusionStore.put(inclusionRecord)
         assert.ok(inclusionPut.ok)
@@ -986,7 +986,7 @@ export const test = {
         subtree: inclusionProof.ok[0],
         index: inclusionProof.ok[1],
       },
-      insertedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
     }
     const inclusionPut = await context.inclusionStore.put(inclusionRecord)
     assert.ok(inclusionPut.ok)
@@ -1036,7 +1036,7 @@ export const test = {
             subtree: inclusionProof.ok[0],
             index: inclusionProof.ok[1],
           },
-          insertedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
         }
         const inclusionPut = await context.inclusionStore.put(inclusionRecord)
         assert.ok(inclusionPut.ok)
@@ -1078,8 +1078,8 @@ export const test = {
               issuer: context.id,
               with: context.id.did(),
               audience: context.id,
-            }
-          }
+            },
+          },
         }
       }
     ),
@@ -1095,7 +1095,7 @@ export const test = {
     const buffer = {
       pieces: pieces.map((p) => ({
         piece: p.link,
-        insertedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
         policy: 0,
       })),
       group,
@@ -1115,7 +1115,7 @@ export const test = {
       pieces: blockBuffer.cid,
       aggregate: aggregate.link,
       group,
-      insertedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -1155,7 +1155,7 @@ export const test = {
         const buffer = {
           pieces: pieces.map((p) => ({
             piece: p.link,
-            insertedAt: Date.now(),
+            insertedAt: new Date().toISOString(),
             policy: 0,
           })),
           group,
@@ -1167,7 +1167,7 @@ export const test = {
           pieces: blockBuffer.cid,
           aggregate: aggregate.link,
           group,
-          insertedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -1212,7 +1212,7 @@ async function getBuffers(length, group, piecesOptions = {}) {
   const buffers = pieceBatches.map((b) => ({
     pieces: b.map((p) => ({
       piece: p.link,
-      insertedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
       policy: /** @type {PiecePolicy} */ (0),
     })),
     group,

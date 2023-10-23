@@ -114,8 +114,8 @@ export const test = {
         content: cargo.content.link(),
         group: context.id.did(),
         status: 'submitted',
-        insertedAt: Date.now(),
-        updatedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
       assert.ok(putRes.ok)
 
@@ -337,8 +337,8 @@ export const test = {
       content: piece.content,
       group: context.id.did(),
       status: 'submitted',
-      insertedAt: Date.now(),
-      updatedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     })
     assert.ok(putRes.ok)
 

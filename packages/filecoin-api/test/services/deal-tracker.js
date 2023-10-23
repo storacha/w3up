@@ -67,7 +67,7 @@ export const test = {
           provider: `f0${dealId}`,
           expirationEpoch: Date.now() + 10e9,
           source: 'cargo.dag.haus',
-          insertedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
         })
 
         assert.ok(dealPutRes.ok)

@@ -7,8 +7,16 @@ import type {
   Failure,
 } from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
-import { AggregatorService, StorefrontService } from '@web3-storage/filecoin-client/types'
-import { Store, UpdatableAndQueryableStore, Queue, ServiceConfig } from '../types.js'
+import {
+  AggregatorService,
+  StorefrontService,
+} from '@web3-storage/filecoin-client/types'
+import {
+  Store,
+  UpdatableAndQueryableStore,
+  Queue,
+  ServiceConfig,
+} from '../types.js'
 
 export interface Config {
   /**
@@ -105,13 +113,13 @@ export interface PieceRecord {
    */
   status: 'submitted' | 'accepted' | 'invalid'
   /**
-   * Insertion date in milliseconds since unix epoch.
+   * Insertion date ISO string.
    */
-  insertedAt: number
+  insertedAt: string
   /**
-   * Update date in milliseconds since unix epoch.
+   * Update date ISO string.
    */
-  updatedAt: number
+  updatedAt: string
 }
 export interface PieceRecordKey extends Pick<PieceRecord, 'piece'> {}
 

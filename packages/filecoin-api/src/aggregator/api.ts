@@ -1,8 +1,17 @@
 import type { Signer, Principal, Link } from '@ucanto/interface'
 import { InclusionProof } from '@web3-storage/capabilities/types'
 import { PieceLink } from '@web3-storage/data-segment'
-import { AggregatorService, DealerService } from '@web3-storage/filecoin-client/types'
-import { Store, UpdatableStore, QueryableStore, Queue, ServiceConfig } from '../types.js'
+import {
+  AggregatorService,
+  DealerService,
+} from '@web3-storage/filecoin-client/types'
+import {
+  Store,
+  UpdatableStore,
+  QueryableStore,
+  Queue,
+  ServiceConfig,
+} from '../types.js'
 
 export interface ServiceContext {
   /**
@@ -116,13 +125,13 @@ export interface PieceRecord {
    */
   status: 'offered' | 'accepted'
   /**
-   * Insertion date in milliseconds since unix epoch.
+   * Insertion date ISO string.
    */
-  insertedAt: number
+  insertedAt: string
   /**
-   * Update date in milliseconds since unix epoch.
+   * Update date ISO string.
    */
-  updatedAt: number
+  updatedAt: string
 }
 
 export interface PieceRecordKey extends Pick<PieceRecord, 'piece' | 'group'> {}
@@ -152,9 +161,9 @@ export interface AggregateRecord {
    */
   group: string
   /**
-   * Insertion date in milliseconds since unix epoch.
+   * Insertion date ISO string.
    */
-  insertedAt: number
+  insertedAt: string
 }
 
 // TODO: probably group should also be key!
@@ -179,9 +188,9 @@ export interface InclusionRecord {
    */
   inclusion: InclusionProof
   /**
-   * Insertion date in milliseconds since unix epoch.
+   * Insertion date ISO string.
    */
-  insertedAt: number
+  insertedAt: string
 }
 
 export interface InclusionRecordKey
@@ -200,9 +209,9 @@ export type BufferedPiece = {
    */
   policy: PiecePolicy
   /**
-   * Insertion date in milliseconds since unix epoch.
+   * Insertion date ISO string.
    */
-  insertedAt: number
+  insertedAt: string
 }
 
 export interface Buffer {

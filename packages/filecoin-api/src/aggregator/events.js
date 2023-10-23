@@ -28,8 +28,8 @@ export const handlePieceMessage = async (context, message) => {
     piece,
     group,
     status: 'offered',
-    insertedAt: Date.now(),
-    updatedAt: Date.now(),
+    insertedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   })
   // TODO: we should make sure to ignore error already there
   if (putRes.error) {
@@ -178,7 +178,7 @@ export const handleAggregateOfferMessage = async (context, message) => {
     pieces,
     aggregate,
     group,
-    insertedAt: Date.now(),
+    insertedAt: new Date().toISOString(),
   })
 
   // TODO: should we ignore error already there?
@@ -272,7 +272,7 @@ export const handlePieceAcceptMessage = async (context, message) => {
     aggregate,
     group,
     inclusion,
-    insertedAt: Date.now(),
+    insertedAt: new Date().toISOString(),
   })
 
   // TODO: should we ignore error already there?
@@ -299,7 +299,7 @@ export const handleInclusionInsertToUpdateState = async (context, record) => {
     },
     {
       status: 'accepted',
-      updatedAt: Date.now(),
+      updatedAt: new Date().toISOString(),
     }
   )
   if (updateRes.error) {

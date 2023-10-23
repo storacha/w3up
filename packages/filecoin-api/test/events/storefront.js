@@ -66,8 +66,8 @@ export const test = {
     const pieceRecord = {
       ...message,
       status: 'submitted',
-      insertedAt: Date.now() - 10,
-      updatedAt: Date.now() - 5,
+      insertedAt: new Date(Date.now() - 10).toISOString(),
+      updatedAt: new Date(Date.now() - 5).toISOString(),
     }
     const putRes = await context.pieceStore.put(pieceRecord)
     assert.ok(putRes.ok)
@@ -188,8 +188,8 @@ export const test = {
               issuer: context.id,
               with: context.id.did(),
               audience: aggregatorSigner,
-            }
-          }
+            },
+          },
         }
       }
     ),
@@ -207,8 +207,8 @@ export const test = {
     const pieceRecord = {
       ...message,
       status: 'submitted',
-      insertedAt: Date.now() - 10,
-      updatedAt: Date.now() - 5,
+      insertedAt: new Date(Date.now() - 10).toISOString(),
+      updatedAt: new Date(Date.now() - 5).toISOString(),
     }
 
     // Handle message
@@ -248,8 +248,8 @@ export const test = {
     const pieceRecord = {
       ...message,
       status: 'accepted',
-      insertedAt: Date.now() - 10,
-      updatedAt: Date.now() - 5,
+      insertedAt: new Date(Date.now() - 10).toISOString(),
+      updatedAt: new Date(Date.now() - 5).toISOString(),
     }
 
     // Handle message
@@ -292,8 +292,8 @@ export const test = {
     const pieceRecord = {
       ...message,
       status: 'submitted',
-      insertedAt: Date.now() - 10,
-      updatedAt: Date.now() - 5,
+      insertedAt: new Date(Date.now() - 10).toISOString(),
+      updatedAt: new Date(Date.now() - 5).toISOString(),
     }
 
     // Handle message
@@ -325,8 +325,8 @@ export const test = {
           content: p.content,
           group: context.id.did(),
           status: 'submitted',
-          insertedAt: Date.now(),
-          updatedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         })
         assert.ok(putRes.ok)
       })

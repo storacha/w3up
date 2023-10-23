@@ -50,8 +50,8 @@ export const test = {
       pieces: piecesBlock.cid,
       aggregate: aggregate.link,
       status: 'offered',
-      insertedAt: Date.now(),
-      updatedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -90,8 +90,8 @@ export const test = {
           pieces: piecesBlock.cid,
           aggregate: aggregate.link,
           status: 'offered',
-          insertedAt: Date.now(),
-          updatedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -129,8 +129,8 @@ export const test = {
       pieces: piecesBlock.cid,
       aggregate: aggregate.link,
       status: 'offered',
-      insertedAt: Date.now(),
-      updatedAt: Date.now(),
+      insertedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -170,8 +170,8 @@ export const test = {
           pieces: piecesBlock.cid,
           aggregate: aggregate.link,
           status: 'offered',
-          insertedAt: Date.now(),
-          updatedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -209,8 +209,8 @@ export const test = {
           service,
           dealerService: {
             ...context.dealerService,
-            connection: dealerConnection
-          }
+            connection: dealerConnection,
+          },
         }
       }
     ),
@@ -227,8 +227,8 @@ export const test = {
         pieces: piecesBlock.cid,
         aggregate: aggregate.link,
         status: 'offered',
-        insertedAt: Date.now(),
-        updatedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }
       const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
       assert.ok(putAggregateRes.ok)
@@ -276,8 +276,8 @@ export const test = {
         pieces: piecesBlock.cid,
         aggregate: aggregate.link,
         status: 'offered',
-        insertedAt: Date.now(),
-        updatedAt: Date.now(),
+        insertedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }
       const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
       assert.ok(putAggregateRes.ok)
@@ -351,8 +351,8 @@ export const test = {
             issuer: context.id,
             with: context.id.did(),
             audience: dealTrackerSigner,
-          }
-        }
+          },
+        },
       }
     }
   ),
@@ -384,8 +384,8 @@ export const test = {
           pieces: piecesBlock.cid,
           aggregate: aggregate.link,
           status: 'offered',
-          insertedAt: Date.now(),
-          updatedAt: Date.now(),
+          insertedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -427,8 +427,8 @@ export const test = {
               issuer: context.id,
               with: context.id.did(),
               audience: dealTrackerSigner,
-            }
-          }
+            },
+          },
         }
       }
     ),

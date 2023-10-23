@@ -96,7 +96,7 @@ describe('Dealer', () => {
                 issuer: dealerSigner,
                 with: dealerSigner.did(),
                 audience: dealerSigner,
-              }
+              },
             },
             dealTrackerService: {
               connection: dealTrackerConnection,
@@ -104,7 +104,7 @@ describe('Dealer', () => {
                 issuer: dealerSigner,
                 with: dealerSigner.did(),
                 audience: dealTrackerSigner,
-              }
+              },
             },
             service,
           }

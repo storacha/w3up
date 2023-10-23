@@ -116,7 +116,7 @@ describe('storefront', () => {
                 issuer: storefrontSigner,
                 with: storefrontSigner.did(),
                 audience: storefrontSigner,
-              }
+              },
             },
             aggregatorService: {
               connection: aggregatorConnection,
@@ -124,7 +124,7 @@ describe('storefront', () => {
                 issuer: storefrontSigner,
                 with: storefrontSigner.did(),
                 audience: aggregatorSigner,
-              }
+              },
             },
             queuedMessages: new Map(),
             service,

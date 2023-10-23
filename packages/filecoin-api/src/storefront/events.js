@@ -38,8 +38,8 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
     content: message.content,
     group: message.group,
     status: 'submitted',
-    insertedAt: Date.now(),
-    updatedAt: Date.now(),
+    insertedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   })
   if (putRes.error) {
     return { error: new StoreOperationFailed(putRes.error.message) }
@@ -246,7 +246,7 @@ async function updatePiecesWithDeal({
       },
       {
         status: !!aggregateAcceptReceipt.out.ok ? 'accepted' : 'invalid',
-        updatedAt: Date.now(),
+        updatedAt: new Date().toISOString(),
       }
     )
 

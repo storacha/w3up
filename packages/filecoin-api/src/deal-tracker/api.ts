@@ -25,8 +25,8 @@ export interface DealRecord {
   expirationEpoch: number
   // source of the deal information
   source: string
-  // number of milliseconds elapsed since the epoch when deal was added
-  insertedAt: number
+  // Date when deal was added as ISO string
+  insertedAt: string
 }
 
 export interface DealRecordKey extends Pick<DealRecord, 'piece' | 'dealId'> {}

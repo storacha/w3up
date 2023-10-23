@@ -72,7 +72,8 @@ export const handleCronTick = async (context) => {
         deal,
         aggregateStore: context.aggregateStore,
         dealTrackerServiceConnection: context.dealTrackerService.connection,
-        dealTrackerInvocationConfig: context.dealTrackerService.invocationConfig,
+        dealTrackerInvocationConfig:
+          context.dealTrackerService.invocationConfig,
       })
     )
   )
@@ -140,7 +141,7 @@ async function updateApprovedDeals({
     { aggregate: deal.aggregate },
     {
       status: 'accepted',
-      updatedAt: Date.now(),
+      updatedAt: new Date().toISOString(),
       deal: {
         dataType: 0n,
         dataSource: {

@@ -123,7 +123,7 @@ describe('Aggregator', () => {
                 issuer: aggregatorSigner,
                 with: aggregatorSigner.did(),
                 audience: dealerSigner,
-              }
+              },
             },
             aggregatorService: {
               connection: aggregatorConnection,
@@ -131,7 +131,7 @@ describe('Aggregator', () => {
                 issuer: aggregatorSigner,
                 with: aggregatorSigner.did(),
                 audience: aggregatorSigner,
-              }
+              },
             },
             queuedMessages,
             service,
