@@ -5,6 +5,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as DealTrackerService from './services/deal-tracker.js'
 
 import { getStoreImplementations } from './context/store-implementations.js'
+import { validateAuthorization } from './utils.js'
 
 /**
  * @typedef {import('../src/deal-tracker/api.js').DealRecord} DealRecord
@@ -43,6 +44,7 @@ describe('deal-tracker', () => {
                 assert.fail(error)
               },
             },
+            validateAuthorization
           }
         )
       })

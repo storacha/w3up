@@ -8,6 +8,7 @@ import * as StorefrontEvents from './events/storefront.js'
 import { getStoreImplementations } from './context/store-implementations.js'
 import { Queue } from './context/queue.js'
 import { getMockService, getConnection } from './context/service.js'
+import { validateAuthorization } from './utils.js'
 
 describe('storefront', () => {
   describe('filecoin/*', () => {
@@ -65,6 +66,7 @@ describe('storefront', () => {
             taskStore,
             receiptStore,
             queuedMessages,
+            validateAuthorization
           }
         )
       })
@@ -133,6 +135,7 @@ describe('storefront', () => {
                 assert.fail(error)
               },
             },
+            validateAuthorization
           }
         )
       })
