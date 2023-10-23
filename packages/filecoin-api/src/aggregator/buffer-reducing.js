@@ -60,8 +60,6 @@ export async function handleBufferReducingWithAggregate({
 
   // Propagate message for aggregate offer queue
   const aggregateOfferQueueAdd = await aggregateOfferQueue.add({
-    // TODO task CID drop?
-    task: aggregateInfo.aggregate.link,
     aggregate: aggregateInfo.aggregate.link,
     pieces: aggregateBlock.cid,
     group,

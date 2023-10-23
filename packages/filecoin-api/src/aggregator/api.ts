@@ -276,11 +276,6 @@ export interface PieceAcceptMessage {
 
 export interface AggregateOfferMessage {
   /**
-   * Link to the task invocation for `aggregate/offer`.
-   */
-  // TODO: do we need?
-  task?: Link
-  /**
    * Piece CID of an aggregate.
    */
   aggregate: PieceLink
