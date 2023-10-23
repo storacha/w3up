@@ -7,7 +7,11 @@ import * as Block from 'multiformats/block'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import { StoreOperationFailed, DecodeBlockOperationFailed, RecordNotFoundErrorName } from '../errors.js'
+import {
+  StoreOperationFailed,
+  DecodeBlockOperationFailed,
+  RecordNotFoundErrorName,
+} from '../errors.js'
 
 /**
  * @param {API.Input<DealerCaps.aggregateOffer>} input

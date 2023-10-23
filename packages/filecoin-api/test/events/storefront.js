@@ -4,6 +4,7 @@ import { CBOR } from '@ucanto/core'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 
 import * as API from '../../src/types.js'
+import * as TestAPI from '../types.js'
 import * as StorefrontApi from '../../src/storefront/api.js'
 import * as StorefrontEvents from '../../src/storefront/events.js'
 import {
@@ -23,7 +24,7 @@ import { createInvocationsAndReceiptsForDealDataProofChain } from '../context/re
  */
 
 /**
- * @type {API.Tests<StorefrontApi.TestEventsContext>}
+ * @type {API.Tests<TestAPI.StorefrontTestEventsContext>}
  */
 export const test = {
   'handles filecoin submit messages successfully': async (assert, context) => {

@@ -89,7 +89,7 @@ describe('dealer', () => {
       dataSource: {
         dealID: 1138n,
       },
-      aggregate: aggregate.link
+      aggregate: aggregate.link,
     }
 
     // Create Ucanto service
@@ -128,7 +128,10 @@ describe('dealer', () => {
 
     assert.ok(res.out.ok)
     assert.ok(res.out.ok.aggregate.equals(aggregate.link))
-    assert.deepEqual(BigInt(res.out.ok.dataSource.dealID), BigInt(aggregateAcceptResponse.dataSource.dealID))
+    assert.deepEqual(
+      BigInt(res.out.ok.dataSource.dealID),
+      BigInt(aggregateAcceptResponse.dataSource.dealID)
+    )
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })

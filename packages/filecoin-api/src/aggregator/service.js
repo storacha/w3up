@@ -9,7 +9,7 @@ import {
   QueueOperationFailed,
   StoreOperationFailed,
   UnexpectedState,
-  RecordNotFoundErrorName
+  RecordNotFoundErrorName,
 } from '../errors.js'
 
 /**

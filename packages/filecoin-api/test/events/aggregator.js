@@ -4,6 +4,7 @@ import pWaitFor from 'p-wait-for'
 import { CBOR } from '@ucanto/core'
 
 import * as API from '../../src/types.js'
+import * as TestAPI from '../types.js'
 import * as AggregatorApi from '../../src/aggregator/api.js'
 import * as AggregatorEvents from '../../src/aggregator/events.js'
 
@@ -30,7 +31,7 @@ import {
  */
 
 /**
- * @type {API.Tests<AggregatorApi.TestEventsContext>}
+ * @type {API.Tests<TestAPI.AggregatorTestEventsContext>}
  */
 export const test = {
   'handles piece queue messages successfully': async (assert, context) => {

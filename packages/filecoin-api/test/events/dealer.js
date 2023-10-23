@@ -5,6 +5,7 @@ import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
 import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
 
 import * as API from '../../src/types.js'
+import * as TestAPI from '../types.js'
 import * as DealerApi from '../../src/dealer/api.js'
 import * as DealerEvents from '../../src/dealer/events.js'
 
@@ -20,7 +21,7 @@ import { StoreOperationErrorName } from '../../src/errors.js'
  */
 
 /**
- * @type {API.Tests<DealerApi.TestEventsContext>}
+ * @type {API.Tests<TestAPI.DealerTestEventsContext>}
  */
 export const test = {
   'handles aggregate insert event successfully': async (assert, context) => {
