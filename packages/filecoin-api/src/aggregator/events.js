@@ -69,9 +69,7 @@ export const handlePiecesInsert = async (context, records) => {
     block: block.cid,
   })
   if (bufferStorePut.error) {
-    return {
-      error: new StoreOperationFailed(bufferStorePut.error.message),
-    }
+    return bufferStorePut
   }
 
   // Propagate message
@@ -183,12 +181,10 @@ export const handleAggregateOfferMessage = async (context, message) => {
 
   // TODO: should we ignore error already there?
   if (putRes.error) {
-    return {
-      error: new StoreOperationFailed(putRes.error.message),
-    }
+    return putRes
   }
 
-  return { ok: {} }
+  return { ok: {}, error: undefined }
 }
 
 /**
@@ -203,9 +199,7 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
 ) => {
   const bufferStoreRes = await context.bufferStore.get(record.pieces)
   if (bufferStoreRes.error) {
-    return {
-      error: bufferStoreRes.error,
-    }
+    return bufferStoreRes
   }
 
   // Get pieces from buffer
@@ -231,9 +225,7 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
   for (const piece of pieces) {
     const inclusionProof = aggregateBuilder.resolveProof(piece.link)
     if (inclusionProof.error) {
-      return {
-        error: inclusionProof.error,
-      }
+      return inclusionProof
     }
     const addMessage = await context.pieceAcceptQueue.add({
       piece: piece.link,
@@ -246,9 +238,7 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
     })
 
     if (addMessage.error) {
-      return {
-        error: addMessage.error,
-      }
+      return addMessage
     }
   }
 
@@ -277,12 +267,10 @@ export const handlePieceAcceptMessage = async (context, message) => {
 
   // TODO: should we ignore error already there?
   if (putRes.error) {
-    return {
-      error: new StoreOperationFailed(putRes.error.message),
-    }
+    return putRes
   }
 
-  return { ok: {} }
+  return { ok: {}, error: undefined }
 }
 
 /**
@@ -303,12 +291,10 @@ export const handleInclusionInsertToUpdateState = async (context, record) => {
     }
   )
   if (updateRes.error) {
-    return {
-      error: new StoreOperationFailed(updateRes.error.message),
-    }
+    return updateRes
   }
 
-  return { ok: {} }
+  return { ok: {}, error: undefined }
 }
 
 /**

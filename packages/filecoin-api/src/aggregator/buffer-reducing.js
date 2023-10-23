@@ -1,7 +1,7 @@
 import { Aggregate, Piece, NODE_SIZE, Index } from '@web3-storage/data-segment'
 import { CBOR } from '@ucanto/core'
 
-import { StoreOperationFailed, QueueOperationFailed } from '../errors.js'
+import { UnexpectedState } from '../errors.js'
 
 /**
  * @typedef {import('@ucanto/interface').Link} Link
@@ -13,7 +13,7 @@ import { StoreOperationFailed, QueueOperationFailed } from '../errors.js'
  * @typedef {import('./api').AggregateOfferMessage} AggregateOfferMessage
  * @typedef {import('../types').StoreGetError} StoreGetError
  * @typedef {{ bufferedPieces: BufferedPiece[], group: string }} GetBufferedPieces
- * @typedef {import('../types.js').Result<GetBufferedPieces, StoreGetError>} GetBufferedPiecesResult
+ * @typedef {import('../types.js').Result<GetBufferedPieces, StoreGetError | UnexpectedState>} GetBufferedPiecesResult
  *
  * @typedef {object} AggregateInfo
  * @property {BufferedPiece[]} addedBufferedPieces
@@ -53,9 +53,7 @@ export async function handleBufferReducingWithAggregate({
     block: aggregateBlock.cid,
   })
   if (bufferStoreAggregatePut.error) {
-    return {
-      error: new StoreOperationFailed(bufferStoreAggregatePut.error.message),
-    }
+    return bufferStoreAggregatePut
   }
 
   // Propagate message for aggregate offer queue
@@ -65,9 +63,7 @@ export async function handleBufferReducingWithAggregate({
     group,
   })
   if (aggregateOfferQueueAdd.error) {
-    return {
-      error: new QueueOperationFailed(aggregateOfferQueueAdd.error.message),
-    }
+    return aggregateOfferQueueAdd
   }
 
   // Store remaining buffered pieces to reduce if they exist
@@ -87,9 +83,7 @@ export async function handleBufferReducingWithAggregate({
     block: remainingBlock.cid,
   })
   if (bufferStoreRemainingPut.error) {
-    return {
-      error: new StoreOperationFailed(bufferStoreRemainingPut.error.message),
-    }
+    return bufferStoreRemainingPut
   }
 
   // Propagate message for buffer queue
@@ -98,12 +92,10 @@ export async function handleBufferReducingWithAggregate({
     group: group,
   })
   if (bufferQueueAdd.error) {
-    return {
-      error: new QueueOperationFailed(bufferQueueAdd.error.message),
-    }
+    return bufferQueueAdd
   }
 
-  return { ok: {} }
+  return { ok: {}, error: undefined }
 }
 
 /**
@@ -127,9 +119,7 @@ export async function handleBufferReducingWithoutAggregate({
     block: block.cid,
   })
   if (bufferStorePut.error) {
-    return {
-      error: new StoreOperationFailed(bufferStorePut.error.message),
-    }
+    return bufferStorePut
   }
 
   // Propagate message
@@ -138,12 +128,10 @@ export async function handleBufferReducingWithoutAggregate({
     group: buffer.group,
   })
   if (bufferQueueAdd.error) {
-    return {
-      error: new QueueOperationFailed(bufferQueueAdd.error.message),
-    }
+    return bufferQueueAdd
   }
 
-  return { ok: {} }
+  return { ok: {}, error: undefined }
 }
 
 /**
@@ -215,24 +203,23 @@ export function aggregatePieces(bufferedPieces, sizes) {
  * @returns {Promise<GetBufferedPiecesResult>}
  */
 export async function getBufferedPieces(bufferPieces, bufferStore) {
+  if (!bufferPieces.length) {
+    return {
+      error: new UnexpectedState('received buffer pieces are empty'),
+    }
+  }
+
   const getBufferRes = await Promise.all(
     bufferPieces.map((bufferPiece) => bufferStore.get(bufferPiece))
   )
-
-  // Check if one of the buffers failed to get
-  const bufferReferenceGetError = getBufferRes.find((get) => get.error)
-  if (bufferReferenceGetError?.error) {
-    return {
-      error: bufferReferenceGetError.error,
-    }
-  }
 
   // Concatenate pieces and sort them by policy and size
   /** @type {BufferedPiece[]} */
   let bufferedPieces = []
   for (const b of getBufferRes) {
+    if (b.error) return b
     // eslint-disable-next-line unicorn/prefer-spread
-    bufferedPieces = bufferedPieces.concat(b.ok?.buffer.pieces || [])
+    bufferedPieces = bufferedPieces.concat(b.ok.buffer.pieces || [])
   }
 
   bufferedPieces.sort(sortPieces)
@@ -243,7 +230,7 @@ export async function getBufferedPieces(bufferPieces, bufferStore) {
       // extract group from one entry
       // TODO: needs to change to support multi group buffering
       // @ts-expect-error typescript does not understand with find that no error and group MUST exist
-      group: getBufferRes[0].ok?.buffer.group,
+      group: getBufferRes[0].ok.buffer.group,
     },
   }
 }
