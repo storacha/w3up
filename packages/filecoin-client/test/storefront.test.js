@@ -10,7 +10,7 @@ import {
   filecoinSubmit,
   filecoinAccept,
 } from '../src/storefront.js'
-import { randomCargo } from './helpers/random.js'
+import { randomAggregate, randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import { serviceProvider as storefrontService } from './fixtures.js'
 import { validateAuthorization } from './helpers/utils.js'
@@ -132,23 +132,28 @@ describe('storefront', () => {
   })
 
   it('storefront accepts a filecoin piece', async () => {
-    const [cargo] = await randomCargo(1, 100)
+    const { pieces, aggregate } = await randomAggregate(100, 100)
+    const cargo = pieces[0]
+
+    // compute proof for piece in aggregate
+    const proof = aggregate.resolveProof(cargo.link)
+    if (proof.error) {
+      throw new Error('could not compute proof')
+    }
 
     /** @type {import('@web3-storage/capabilities/types').FilecoinAcceptSuccess} */
     const filecoinAcceptResponse = {
+      aggregate: aggregate.link,
+      piece: cargo.link,
       inclusion: {
-        subtree: {
-          path: [],
-          index: 0n,
-        },
-        index: {
-          path: [],
-          index: 0n,
-        },
+        subtree: proof.ok[0],
+        index: proof.ok[1],
       },
-      auxDataType: 0n,
-      auxDataSource: {
-        dealID: 1138n,
+      aux: {
+        dataType: 0n,
+        dataSource: {
+          dealID: 1138n,
+        },
       },
     }
 
@@ -188,7 +193,13 @@ describe('storefront', () => {
     )
 
     assert.ok(res.out.ok)
-    assert.deepEqual(res.out.ok, filecoinAcceptResponse)
+    assert.ok(res.out.ok.aggregate.equals(aggregate.link))
+    assert.ok(res.out.ok.piece.equals(cargo.link))
+    assert.equal(
+      BigInt(res.out.ok.aux.dataSource.dealID),
+      BigInt(filecoinAcceptResponse.aux.dataSource.dealID)
+    )
+    assert.deepEqual(res.out.ok.inclusion, filecoinAcceptResponse.inclusion)
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })

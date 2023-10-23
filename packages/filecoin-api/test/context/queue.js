@@ -1,5 +1,7 @@
 import * as API from '../../src/types.js'
 
+import { QueueOperationFailed } from '../../src/errors.js'
+
 /**
  * @template T
  * @implements {API.Queue<T>}
@@ -25,6 +27,21 @@ export class Queue {
     this.onMessage(record)
     return Promise.resolve({
       ok: {},
+    })
+  }
+}
+
+/**
+ * @template T
+ * @implements {API.Queue<T>}
+ */
+export class FailingQueue {
+  /**
+   * @param {T} record
+   */
+  async add(record) {
+    return Promise.resolve({
+      error: new QueueOperationFailed('failed to add to queue'),
     })
   }
 }

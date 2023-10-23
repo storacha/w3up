@@ -77,21 +77,22 @@ describe('aggregator', () => {
 
   it('aggregator accepts a filecoin piece', async () => {
     const { pieces, aggregate } = await randomAggregate(100, 100)
+    const piece = pieces[0].link
     const group = 'did:web:free.web3.storage'
+
+    // compute proof for piece in aggregate
+    const proof = aggregate.resolveProof(piece)
+    if (proof.error) {
+      throw new Error('could not compute proof')
+    }
 
     /** @type {import('@web3-storage/capabilities/types').PieceAcceptSuccess} */
     const pieceAcceptResponse = {
-      piece: pieces[0].link,
+      piece,
       aggregate: aggregate.link,
       inclusion: {
-        subtree: {
-          path: [],
-          index: 0n,
-        },
-        index: {
-          path: [],
-          index: 0n,
-        },
+        subtree: proof.ok[0],
+        index: proof.ok[1],
       },
     }
 
@@ -107,7 +108,7 @@ describe('aggregator', () => {
             assert.strictEqual(invCap.can, AggregatorCaps.pieceAccept.can)
             assert.equal(invCap.with, invocation.issuer.did())
             // piece link
-            assert.ok(invCap.nb?.piece.equals(pieces[0].link))
+            assert.ok(invCap.nb?.piece.equals(piece))
             // group
             assert.strictEqual(invCap.nb?.group, group)
 
@@ -124,7 +125,7 @@ describe('aggregator', () => {
         with: aggregatorService.did(),
         audience: aggregatorService,
       },
-      pieces[0].link,
+      piece,
       group,
       { connection: getConnection(service).connection }
     )
