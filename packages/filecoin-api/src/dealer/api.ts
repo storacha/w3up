@@ -11,21 +11,24 @@ import {
   ServiceConfig,
 } from '../types.js'
 
+export type OfferStore<OfferDoc> = UpdatableStore<string, OfferDoc>
+export type AggregateStore = UpdatableAndQueryableStore<
+  AggregateRecordKey,
+  AggregateRecord,
+  Pick<AggregateRecord, 'status'>
+>
+
 export interface ServiceContext<OfferDoc = OfferDocument> {
   id: Signer
   /**
    * Stores serialized broker specific offer document containing details of the
    * aggregate and it's pieces.
    */
-  offerStore: UpdatableStore<string, OfferDoc>
+  offerStore: OfferStore<OfferDoc>
   /**
    * Stores aggregates and their deal proofs.
    */
-  aggregateStore: UpdatableAndQueryableStore<
-    AggregateRecordKey,
-    AggregateRecord,
-    Pick<AggregateRecord, 'status'>
-  >
+  aggregateStore: AggregateStore
 }
 
 export interface AggregateInsertEventContext

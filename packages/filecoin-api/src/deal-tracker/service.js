@@ -34,7 +34,7 @@ export const dealInfo = async ({ capability }, context) => {
         }
 
         return acc
-      }, /** @type {Record<string, any>} */ ({})),
+      }, /** @type {Record<string, DealDetails>} */ ({})),
     },
   }
 }
