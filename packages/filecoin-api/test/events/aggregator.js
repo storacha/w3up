@@ -15,7 +15,7 @@ import { getStoreImplementations } from '../context/store-implementations.js'
 import { randomAggregate, randomCargo } from '../utils.js'
 import {
   QueueOperationErrorName,
-  StoreNotFoundErrorName,
+  RecordNotFoundErrorName,
   StoreOperationErrorName,
 } from '../../src/errors.js'
 
@@ -246,7 +246,7 @@ export const test = {
         }))
       )
       assert.ok(handledMessageRes.error)
-      assert.equal(handledMessageRes.error?.name, StoreNotFoundErrorName)
+      assert.equal(handledMessageRes.error?.name, RecordNotFoundErrorName)
     },
   'handles buffer queue messages successfully to requeue bigger buffer if does not have minimum utilization':
     async (assert, context) => {

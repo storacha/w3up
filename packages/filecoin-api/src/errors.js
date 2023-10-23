@@ -37,14 +37,14 @@ export class StoreOperationFailed extends Server.Failure {
   }
 }
 
-export const StoreNotFoundErrorName = /** @type {const} */ ('StoreNotFound')
-export class StoreNotFound extends Server.Failure {
+export const RecordNotFoundErrorName = /** @type {const} */ ('RecordNotFound')
+export class RecordNotFound extends Server.Failure {
   get reason() {
     return this.message
   }
 
   get name() {
-    return StoreNotFoundErrorName
+    return RecordNotFoundErrorName
   }
 }
 

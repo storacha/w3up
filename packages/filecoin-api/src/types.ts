@@ -77,7 +77,7 @@ export type StorePutError = StoreOperationError | EncodeRecordFailed
 export type StoreGetError =
   | StoreOperationError
   | EncodeRecordFailed
-  | StoreNotFound
+  | RecordNotFound
 export type QueueAddError = QueueOperationError | EncodeRecordFailed
 
 export interface QueueOperationError extends Error {
@@ -88,8 +88,8 @@ export interface StoreOperationError extends Error {
   name: 'StoreOperationFailed'
 }
 
-export interface StoreNotFound extends Error {
-  name: 'StoreNotFound'
+export interface RecordNotFound extends Error {
+  name: 'RecordNotFound'
 }
 
 export interface EncodeRecordFailed extends Error {

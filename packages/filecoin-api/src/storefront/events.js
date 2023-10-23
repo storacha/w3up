@@ -4,7 +4,7 @@ import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
 import {
-  StoreNotFoundErrorName,
+  RecordNotFoundErrorName,
   StoreOperationFailed,
   UnexpectedState,
 } from '../errors.js'
@@ -216,8 +216,8 @@ async function updatePiecesWithDeal({
     ])
     // Should fail if errored and not with StoreNotFound Error
     if (
-      (taskRes.error && taskRes.error.name !== StoreNotFoundErrorName) ||
-      (receiptRes.error && receiptRes.error.name !== StoreNotFoundErrorName)
+      (taskRes.error && taskRes.error.name !== RecordNotFoundErrorName) ||
+      (receiptRes.error && receiptRes.error.name !== RecordNotFoundErrorName)
     ) {
       return {
         error: taskRes.error || receiptRes.error,
