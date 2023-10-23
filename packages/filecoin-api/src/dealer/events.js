@@ -142,8 +142,8 @@ async function updateApprovedDeals({
       status: 'accepted',
       updatedAt: Date.now(),
       deal: {
-        auxDataType: 0n,
-        auxDataSource: {
+        dataType: 0n,
+        dataSource: {
           dealID: BigInt(deals[0]),
         },
       },

@@ -244,8 +244,8 @@ export const test = {
       // Validate stores
       // Deal as in mocked service
       const deal = {
-        auxDataType: 0n,
-        auxDataSource: {
+        dataType: 0n,
+        dataSource: {
           dealID: 111n,
         },
       }

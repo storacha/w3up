@@ -348,8 +348,8 @@ export const test = {
 
     // Create invocations and receipts for chain into DealDataProof
     const dealMetadata = {
-      auxDataType: 0n,
-      auxDataSource: {
+      dataType: 0n,
+      dataSource: {
         dealID: 100n,
       },
     }

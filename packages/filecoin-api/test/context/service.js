@@ -47,10 +47,10 @@ export function getMockService() {
           }
 
           return Server.ok({
-            auxDataSource: {
+            dataSource: {
               dealID: 15151n,
             },
-            auxDataType: 1n,
+            dataType: 1n,
           })
         },
       }),
@@ -171,9 +171,11 @@ export function getMockService() {
                   /** @type {import('@web3-storage/data-segment').MerkleTreePath} */ ([]),
                 ],
             },
-            auxDataType: 0n,
-            auxDataSource: {
-              dealID: 1138n,
+            aux: {
+              dataType: 0n,
+              dataSource: {
+                dealID: 1138n,
+              },
             },
           })
 

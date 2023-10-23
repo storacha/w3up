@@ -350,8 +350,8 @@ export const test = {
 
     // Create invocations and receipts for chain into DealDataProof
     const dealMetadata = {
-      auxDataType: 0n,
-      auxDataSource: {
+      dataType: 0n,
+      dataSource: {
         dealID: 100n,
       },
     }
@@ -379,7 +379,6 @@ export const test = {
     })
     assert.ok(storedInvocationsAndReceiptsRes.ok)
 
-    // TODO: Create receipts
     const filecoinAddInv = Filecoin.accept.invoke({
       issuer: agent,
       audience: connection.id,
@@ -412,12 +411,12 @@ export const test = {
       BigInt(inclusionProof.ok[1][0])
     )
     assert.deepEqual(
-      BigInt(response.out.ok.auxDataType),
-      BigInt(dealMetadata.auxDataType)
+      BigInt(response.out.ok.aux.dataType),
+      BigInt(dealMetadata.dataType)
     )
     assert.deepEqual(
-      BigInt(response.out.ok.auxDataSource.dealID),
-      BigInt(dealMetadata.auxDataSource.dealID)
+      BigInt(response.out.ok.aux.dataSource.dealID),
+      BigInt(dealMetadata.dataSource.dealID)
     )
   },
   'filecoin/accept fails if fails to read from piece store':

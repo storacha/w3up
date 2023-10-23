@@ -179,8 +179,8 @@ export const test = {
 
     // Set aggregate with deal
     const deal = {
-      auxDataType: 0n,
-      auxDataSource: {
+      dataType: 0n,
+      dataSource: {
         dealID: 100n,
       },
     }
@@ -212,10 +212,10 @@ export const test = {
     }
     assert.ok(response.out.ok)
     assert.equal(
-      BigInt(response.out.ok.auxDataSource.dealID),
-      BigInt(deal.auxDataSource.dealID)
+      BigInt(response.out.ok.dataSource.dealID),
+      BigInt(deal.dataSource.dealID)
     )
-    assert.equal(BigInt(response.out.ok.auxDataType), BigInt(deal.auxDataType))
+    assert.equal(BigInt(response.out.ok.dataType), BigInt(deal.dataType))
   },
   'aggregate/accept fails if not able to read from aggregate store':
     wichMockableContext(

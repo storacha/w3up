@@ -159,7 +159,7 @@ export const filecoinAccept = async ({ capability }, context) => {
 async function findDataAggregationProof({ taskStore, receiptStore }, task) {
   /** @type {API.InclusionProof|undefined} */
   let inclusion
-  /** @type {API.DataAggregationProof|undefined} */
+  /** @type {API.DealMetadata|undefined} */
   let dataAggregation
   while (true) {
     const [taskRes, receiptRes] = await Promise.all([
@@ -199,7 +199,7 @@ async function findDataAggregationProof({ taskStore, receiptStore }, task) {
   if (!dataAggregation) {
     return { error: new ProofNotFound('missing data aggregation proof') }
   }
-  return { ok: { ...dataAggregation, inclusion } }
+  return { ok: { aux: dataAggregation, inclusion } }
 }
 
 export const ProofNotFoundName = /** @type {const} */ ('ProofNotFound')
