@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { decode, NodeType } from '@ipld/unixfs'
 import { exporter } from 'ipfs-unixfs-exporter'
-// @ts-ignore
+// @ts-expect-error this version of blockstore-core doesn't point to correct types file in package.json, and upgrading to latest version that fixes that leads to api changes
 import { MemoryBlockstore } from 'blockstore-core/memory'
 import * as raw from 'multiformats/codecs/raw'
 import path from 'path'
