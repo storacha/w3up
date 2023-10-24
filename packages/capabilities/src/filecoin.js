@@ -47,7 +47,7 @@ export const filecoinQueue = capability({
     /**
      * CID of the piece.
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
+    piece: /** @type {import('./types.js').PieceLinkSchema} */ (PIECE_LINK),
   }),
   derives: (claim, from) => {
     return (
@@ -79,7 +79,7 @@ export const filecoinAdd = capability({
      *
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
+    piece: /** @type {import('./types.js').PieceLinkSchema} */ (PIECE_LINK),
   }),
   derives: (claim, from) => {
     return (
@@ -105,7 +105,7 @@ export const aggregateQueue = capability({
     /**
      * CID of the piece.
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
+    piece: /** @type {import('./types.js').PieceLinkSchema} */ (PIECE_LINK),
     /**
      * Grouping for the piece to be aggregated
      */
@@ -137,7 +137,7 @@ export const aggregateAdd = capability({
      *
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
+    piece: /** @type {import('./types.js').PieceLinkSchema} */ (PIECE_LINK),
     /**
      * Storefront requesting piece to be aggregated
      */
@@ -178,7 +178,7 @@ export const dealQueue = capability({
      * Commitment proof for the aggregate being offered.
      * https://github.com/filecoin-project/go-state-types/blob/1e6cf0d47cdda75383ef036fc2725d1cf51dbde8/abi/piece.go#L47-L50
      */
-    aggregate: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
+    aggregate: /** @type {import('./types.js').PieceLinkSchema} */ (PIECE_LINK),
     /**
      * Storefront requesting deal
      */
@@ -222,7 +222,7 @@ export const dealAdd = capability({
      * @see https://github.com/filecoin-project/go-state-types/blob/1e6cf0d47cdda75383ef036fc2725d1cf51dbde8/abi/piece.go#L47-L50
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    aggregate: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
+    aggregate: /** @type {import('./types.js').PieceLinkSchema} */ (PIECE_LINK),
     /**
      * Storefront requesting deal
      */
@@ -259,7 +259,7 @@ export const chainTrackerInfo = capability({
      *
      * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    piece: /** @type {import('./types').PieceLinkSchema} */ (PIECE_LINK),
+    piece: /** @type {import('./types.js').PieceLinkSchema} */ (PIECE_LINK),
   }),
   derives: (claim, from) => {
     return (
