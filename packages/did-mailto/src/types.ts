@@ -10,3 +10,5 @@ export type PercentEncoded<T extends string> = string
 // did:mailto
 export type DidMailto =
   `did:mailto:${PercentEncoded<Domain>}:${PercentEncoded<LocalPart>}`
+
+export const test = 1;

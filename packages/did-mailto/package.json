@@ -14,17 +14,21 @@
   "files": [
     "src",
     "test",
-    "dist/**/*.d.ts",
-    "dist/**/*.d.ts.map"
+    "dist"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./src/index.js"
-    },
+  "exports": {  
+    ".": "./dist/src/index.js",
     "./types": "./dist/src/types.js"
   },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "dist/src/types"
+      ]
+    }
+  },
   "scripts": {
+    "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",

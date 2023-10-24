@@ -14,7 +14,7 @@ import {
 
 /**
  * @param {API.Input<AggregatorCaps.pieceOffer>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.PieceOfferSuccess, API.PieceOfferFailure> | API.UcantoInterface.JoinBuilder<API.PieceOfferSuccess>>}
  */
 export const pieceOffer = async ({ capability }, context) => {
@@ -60,7 +60,7 @@ export const pieceOffer = async ({ capability }, context) => {
 
 /**
  * @param {API.Input<AggregatorCaps.pieceAccept>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.PieceAcceptSuccess, API.PieceAcceptFailure> | API.UcantoInterface.JoinBuilder<API.PieceAcceptSuccess>>}
  */
 export const pieceAccept = async ({ capability }, context) => {
@@ -109,7 +109,7 @@ export const pieceAccept = async ({ capability }, context) => {
 }
 
 /**
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  */
 export function createService(context) {
   return {
@@ -127,7 +127,7 @@ export function createService(context) {
 }
 
 /**
- * @param {API.UcantoServerContext & import('./api').ServiceContext} context
+ * @param {API.UcantoServerContext & import('./api.js').ServiceContext} context
  */
 export const createServer = (context) =>
   Server.create({

@@ -93,6 +93,7 @@
     }
   },
   "scripts": {
+    "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",

@@ -105,10 +105,6 @@
       "types": "./dist/src/deal-tracker/service.d.ts",
       "import": "./src/deal-tracker/service.js"
     },
-    "./storefront": {
-      "types": "./dist/src/storefront.d.ts",
-      "import": "./src/storefront.js"
-    },
     "./storefront/api": {
       "types": "./dist/src/storefront/api.d.ts",
       "import": "./src/storefront/api.js"
@@ -135,6 +131,7 @@
     }
   },
   "scripts": {
+    "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",
