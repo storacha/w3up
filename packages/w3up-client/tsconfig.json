@@ -4,7 +4,9 @@
     "outDir": "dist",
     "emitDeclarationOnly": true,
     "composite": true,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": ["./src", "./test"],
   "typedocOptions": {
