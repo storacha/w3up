@@ -48,7 +48,7 @@ export function uploadAddProvider(context) {
  * Writes to a "bucket DB" the mapping from a data CID to the car CIDs it is composed of.
  * Retries up to 3 times, in case of failures.
  *
- * @param {import("../types").DudewhereBucket} dudewhereStore
+ * @param {import("../types.js").DudewhereBucket} dudewhereStore
  * @param {Server.API.Link<unknown, number, number, 0 | 1>} root
  * @param {Server.API.Link<unknown, 514, number, 1>[] | undefined} shards
  */

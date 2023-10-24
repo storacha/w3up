@@ -21,7 +21,8 @@
     ".": {
       "types": "./dist/src/index.d.ts",
       "import": "./src/index.js"
-    }
+    },
+    "./types": "./dist/src/types.js"
   },
   "scripts": {
     "build": "tsc --build",

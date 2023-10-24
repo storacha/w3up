@@ -14,9 +14,6 @@
       "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
-      "access": [
-        "dist/src/access.d.ts"
-      ],
       "console": [
         "dist/src/console.d.ts"
       ],
@@ -57,10 +54,6 @@
     "./types": {
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
-    },
-    "./access": {
-      "types": "./dist/src/access.d.ts",
-      "import": "./src/access.js"
     },
     "./console": {
       "types": "./dist/src/console.d.ts",
