@@ -13,6 +13,15 @@ import {
   ServiceConfig,
 } from '../types.js'
 
+export type PieceStore = UpdatableStore<PieceRecordKey, PieceRecord>
+export type PieceQueue = Queue<PieceMessage>
+export type BufferQueue = Queue<BufferMessage>
+export type BufferStore = Store<Link, BufferRecord>
+export type AggregateStore = Store<AggregateRecordKey, AggregateRecord>
+export type PieceAcceptQueue = Queue<PieceAcceptMessage>
+export type InclusionStore = QueryableStore<InclusionRecordKey, InclusionRecord, InclusionRecordQueryByGroup>
+export type AggregateOfferQueue = Queue<AggregateOfferMessage>
+
 export interface ServiceContext {
   /**
    * Service signer
@@ -25,39 +34,35 @@ export interface ServiceContext {
   /**
    * Stores pieces that have been offered to the aggregator.
    */
-  pieceStore: UpdatableStore<PieceRecordKey, PieceRecord>
+  pieceStore: PieceStore
   /**
    * Queues pieces being buffered into an aggregate.
    */
-  pieceQueue: Queue<PieceMessage>
+  pieceQueue: PieceQueue
   /**
    * Queues pieces being buffered into an aggregate.
    */
-  bufferQueue: Queue<BufferMessage>
+  bufferQueue: BufferQueue
   /**
    * Store of CID => Buffer Record
    */
-  bufferStore: Store<Link, BufferRecord>
+  bufferStore: BufferStore
   /**
    * Stores fully buffered aggregates.
    */
-  aggregateStore: Store<AggregateRecordKey, AggregateRecord>
+  aggregateStore: AggregateStore
   /**
    * Queues pieces, their aggregate and their inclusion proofs.
    */
-  pieceAcceptQueue: Queue<PieceAcceptMessage>
+  pieceAcceptQueue: PieceAcceptQueue
   /**
    * Stores inclusion proofs for pieces included in an aggregate.
    */
-  inclusionStore: QueryableStore<
-    InclusionRecordKey,
-    InclusionRecord,
-    InclusionRecordQueryByGroup
-  >
+  inclusionStore: InclusionStore
   /**
    * Queues buffered aggregates to be offered to the Dealer.
    */
-  aggregateOfferQueue: Queue<AggregateOfferMessage>
+  aggregateOfferQueue: AggregateOfferQueue
 }
 
 export interface PieceMessageContext

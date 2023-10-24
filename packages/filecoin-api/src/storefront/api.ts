@@ -18,6 +18,12 @@ import {
   ServiceConfig,
 } from '../types.js'
 
+export type PieceStore = UpdatableAndQueryableStore<PieceRecordKey, PieceRecord, Pick<PieceRecord, 'status'>>
+export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
+export type PieceOfferQueue = Queue<PieceOfferMessage>
+export type TaskStore = Store<UnknownLink, Invocation>
+export type ReceiptStore = Store<UnknownLink, Receipt>
+
 export interface ServiceOptions {
   /**
    * Implementer MAY handle submission without user request.
@@ -37,27 +43,23 @@ export interface ServiceContext {
   /**
    * Stores pieces that have been offered to the Storefront.
    */
-  pieceStore: UpdatableAndQueryableStore<
-    PieceRecordKey,
-    PieceRecord,
-    Pick<PieceRecord, 'status'>
-  >
+  pieceStore: PieceStore
   /**
    * Queues pieces for verification.
    */
-  filecoinSubmitQueue: Queue<FilecoinSubmitMessage>
+  filecoinSubmitQueue: FilecoinSubmitQueue
   /**
    * Queues pieces for offering to an Aggregator.
    */
-  pieceOfferQueue: Queue<PieceOfferMessage>
+  pieceOfferQueue: PieceOfferQueue
   /**
    * Stores task invocations.
    */
-  taskStore: Store<UnknownLink, Invocation>
+  taskStore: TaskStore
   /**
    * Stores receipts for tasks.
    */
-  receiptStore: Store<UnknownLink, Receipt>
+  receiptStore: ReceiptStore
   /**
    * Service options.
    */
