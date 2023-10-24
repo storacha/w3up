@@ -1,5 +1,5 @@
 import * as API from '../../src/types.js'
-import { alice, bob, mallory } from '../util.js'
+import { alice } from '../util.js'
 import { UCAN, Console } from '@web3-storage/capabilities'
 
 /**
