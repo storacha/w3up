@@ -11,7 +11,12 @@ import {
   UnknownLink,
 } from '@ucanto/interface'
 import { CAR } from '@ucanto/transport'
-import type { PieceLink } from '@web3-storage/data-segment'
+import {
+  Phantom,
+  PieceLink,
+  ProofData,
+  uint64,
+} from '@web3-storage/data-segment'
 import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
@@ -22,7 +27,10 @@ import * as CustomerCaps from './customer.js'
 import * as ConsumerCaps from './consumer.js'
 import * as SubscriptionCaps from './subscription.js'
 import * as RateLimitCaps from './rate-limit.js'
-import * as FilecoinCaps from './filecoin.js'
+import * as StorefrontCaps from './filecoin/storefront.js'
+import * as AggregatorCaps from './filecoin/aggregator.js'
+import * as DealTrackerCaps from './filecoin/deal-tracker.js'
+import * as DealerCaps from './filecoin/dealer.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 
@@ -173,49 +181,152 @@ export type Space = InferInvokedCapability<typeof space>
 export type SpaceInfo = InferInvokedCapability<typeof info>
 
 // filecoin
-export type FILECOIN_PROCESSING_STATUS = 'pending' | 'done'
-export interface FilecoinAddSuccess {
+export interface DealMetadata {
+  dataType: uint64
+  dataSource: SingletonMarketSource
+}
+/** @see https://github.com/filecoin-project/go-data-segment/blob/e3257b64fa2c84e0df95df35de409cfed7a38438/datasegment/verifier.go#L8-L14 */
+export interface DataAggregationProof {
+  /**
+   * Proof the piece is included in the aggregate.
+   */
+  inclusion: InclusionProof
+  /**
+   * Filecoin deal metadata.
+   */
+  aux: DealMetadata
+}
+/** @see https://github.com/filecoin-project/go-data-segment/blob/e3257b64fa2c84e0df95df35de409cfed7a38438/datasegment/inclusion.go#L30-L39 */
+export interface InclusionProof {
+  /**
+   * Proof of inclusion of the client's data segment in the data aggregator's
+   * Merkle tree (includes position information). i.e. a proof that the root
+   * node of the subtree containing all the nodes (leafs) of a data segment is
+   * contained in CommDA.
+   */
+  subtree: ProofData
+  /**
+   * Proof that an entry for the user's data is contained in the index of the
+   * aggregator's deal. i.e. a proof that the data segment index constructed
+   * from the root of the user's data segment subtree is contained in the index
+   * of the deal tree.
+   */
+  index: ProofData
+}
+export interface SingletonMarketSource {
+  dealID: uint64
+}
+
+export interface FilecoinOfferSuccess {
+  /**
+   * Commitment proof for piece.
+   */
   piece: PieceLink
 }
-export interface FilecoinAddFailure extends Ucanto.Failure {
-  name: string
+export type FilecoinOfferFailure = ContentNotFound | Ucanto.Failure
+
+export interface ContentNotFound extends Ucanto.Failure {
+  name: 'ContentNotFound'
+  content: Link
 }
 
-export interface AggregateAddSuccess {
+export interface FilecoinSubmitSuccess {
+  /**
+   * Commitment proof for piece.
+   */
   piece: PieceLink
-  aggregate?: PieceLink
-}
-export interface AggregateAddFailure extends Ucanto.Failure {
-  name: string
 }
 
-export interface DealAddSuccess {
-  aggregate?: PieceLink
-}
+export type FilecoinSubmitFailure = InvalidPieceCID | Ucanto.Failure
 
-export type DealAddFailure = DealAddParseFailure | DealAddFailureWithBadPiece
-
-export interface DealAddParseFailure extends Ucanto.Failure {
-  name: string
-}
-
-export interface DealAddFailureWithBadPiece extends Ucanto.Failure {
-  piece?: PieceLink
-  cause?: DealAddFailureCause[] | unknown
-}
-
-export interface DealAddFailureCause {
+export interface FilecoinAcceptSuccess extends DataAggregationProof {
+  aggregate: PieceLink
   piece: PieceLink
-  reason: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ChainTrackerInfoSuccess {
-  // TODO
+export type FilecoinAcceptFailure =
+  | InvalidContentPiece
+  | ProofNotFound
+  | Ucanto.Failure
+
+export interface InvalidContentPiece extends Ucanto.Failure {
+  name: 'InvalidContentPiece'
+  content: PieceLink
 }
 
-export interface ChainTrackerInfoFailure extends Ucanto.Failure {
-  // TODO
+export interface ProofNotFound extends Ucanto.Failure {
+  name: 'ProofNotFound'
+}
+
+// filecoin aggregator
+export interface PieceOfferSuccess {
+  /**
+   * Commitment proof for piece.
+   */
+  piece: PieceLink
+}
+export type PieceOfferFailure = Ucanto.Failure
+
+export interface PieceAcceptSuccess {
+  /**
+   * Commitment proof for piece.
+   */
+  piece: PieceLink
+  /**
+   * Commitment proof for aggregate.
+   */
+  aggregate: PieceLink
+  /**
+   * Proof the piece is included in the aggregate.
+   */
+  inclusion: InclusionProof
+}
+export type PieceAcceptFailure = Ucanto.Failure
+
+// filecoin dealer
+export interface AggregateOfferSuccess {
+  /**
+   * Commitment proof for aggregate.
+   */
+  aggregate: PieceLink
+}
+export type AggregateOfferFailure = Ucanto.Failure
+
+export interface AggregateAcceptSuccess extends DealMetadata {
+  aggregate: PieceLink
+}
+export type AggregateAcceptFailure = InvalidPiece | Ucanto.Failure
+
+export interface InvalidPiece extends Ucanto.Failure {
+  name: 'InvalidPiece'
+  /**
+   * Commitment proof for aggregate.
+   */
+  aggregate: PieceLink
+  cause: InvalidPieceCID[]
+}
+
+export interface InvalidPieceCID extends Ucanto.Failure {
+  name: 'InvalidPieceCID'
+  piece: PieceLink
+}
+
+// filecoin deal tracker
+export interface DealInfoSuccess {
+  deals: Record<string & Phantom<uint64>, DealDetails>
+}
+
+export interface DealDetails {
+  provider: FilecoinAddress
+  // TODO: start/end epoch? etc.
+}
+
+export type FilecoinAddress = string
+
+export type DealInfoFailure = DealNotFound | Ucanto.Failure
+
+export interface DealNotFound extends Ucanto.Failure {
+  name: 'DealNotFound'
 }
 
 // Upload
@@ -381,23 +492,28 @@ export interface AdminStoreInspectSuccess {
 }
 export type AdminStoreInspectFailure = Ucanto.Failure
 // Filecoin
-export type FilecoinQueue = InferInvokedCapability<
-  typeof FilecoinCaps.filecoinQueue
+export type FilecoinOffer = InferInvokedCapability<
+  typeof StorefrontCaps.filecoinOffer
 >
-export type FilecoinAdd = InferInvokedCapability<
-  typeof FilecoinCaps.filecoinAdd
+export type FilecoinSubmit = InferInvokedCapability<
+  typeof StorefrontCaps.filecoinSubmit
 >
-export type AggregateQueue = InferInvokedCapability<
-  typeof FilecoinCaps.aggregateQueue
+export type FilecoinAccept = InferInvokedCapability<
+  typeof StorefrontCaps.filecoinAccept
 >
-export type AggregateAdd = InferInvokedCapability<
-  typeof FilecoinCaps.aggregateAdd
+export type PieceOffer = InferInvokedCapability<
+  typeof AggregatorCaps.pieceOffer
 >
-export type DealQueue = InferInvokedCapability<typeof FilecoinCaps.dealQueue>
-export type DealAdd = InferInvokedCapability<typeof FilecoinCaps.dealAdd>
-export type ChainTrackerInfo = InferInvokedCapability<
-  typeof FilecoinCaps.chainTrackerInfo
+export type PieceAccept = InferInvokedCapability<
+  typeof AggregatorCaps.pieceAccept
 >
+export type AggregateOffer = InferInvokedCapability<
+  typeof DealerCaps.aggregateOffer
+>
+export type AggregateAccept = InferInvokedCapability<
+  typeof DealerCaps.aggregateAccept
+>
+export type DealInfo = InferInvokedCapability<typeof DealTrackerCaps.dealInfo>
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
@@ -428,13 +544,14 @@ export type AbilitiesArray = [
   RateLimitAdd['can'],
   RateLimitRemove['can'],
   RateLimitList['can'],
-  FilecoinQueue['can'],
-  FilecoinAdd['can'],
-  AggregateQueue['can'],
-  AggregateAdd['can'],
-  DealQueue['can'],
-  DealAdd['can'],
-  ChainTrackerInfo['can'],
+  FilecoinOffer['can'],
+  FilecoinSubmit['can'],
+  FilecoinAccept['can'],
+  PieceOffer['can'],
+  PieceAccept['can'],
+  AggregateOffer['can'],
+  AggregateAccept['can'],
+  DealInfo['can'],
   Admin['can'],
   AdminUploadInspect['can'],
   AdminStoreInspect['can']

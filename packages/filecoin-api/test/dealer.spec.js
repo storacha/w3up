@@ -1,59 +1,118 @@
 /* eslint-disable no-only-tests/no-only-tests */
 import * as assert from 'assert'
-import * as Broker from './services/dealer.js'
 import * as Signer from '@ucanto/principal/ed25519'
 
-import { Store } from './context/store.js'
-import { Queue } from './context/queue.js'
-import { validateAuthorization } from './helpers/utils.js'
+import * as DealerService from './services/dealer.js'
+import * as DealerEvents from './events/dealer.js'
 
-describe('deal/*', () => {
-  for (const [name, test] of Object.entries(Broker.test)) {
-    const define = name.startsWith('only ')
-      ? it.only
-      : name.startsWith('skip ')
-      ? it.skip
-      : it
+import { getStoreImplementations } from './context/store-implementations.js'
+import { getMockService, getConnection } from './context/service.js'
+import { validateAuthorization } from './utils.js'
 
-    define(name, async () => {
-      const signer = await Signer.generate()
-      const id = signer.withDID('did:web:test.spade-proxy.web3.storage')
+describe('Dealer', () => {
+  describe('aggregate/*', () => {
+    for (const [name, test] of Object.entries(DealerService.test)) {
+      const define = name.startsWith('only ')
+        ? it.only
+        : name.startsWith('skip ')
+        ? it.skip
+        : it
 
-      // resources
-      /** @type {unknown[]} */
-      const queuedMessages = []
-      const addQueue = new Queue({
-        onMessage: (message) => queuedMessages.push(message),
-      })
-      const dealLookupFn = (
-        /** @type {Iterable<any> | ArrayLike<any>} */ items,
-        /** @type {any} */ record
-      ) => {
-        return Array.from(items).find((i) =>
-          i.aggregate.equals(record.aggregate)
-        )
-      }
-      const dealStore = new Store(dealLookupFn)
+      define(name, async () => {
+        const dealerSigner = await Signer.generate()
 
-      await test(
-        {
-          equal: assert.strictEqual,
-          deepEqual: assert.deepStrictEqual,
-          ok: assert.ok,
-        },
-        {
-          id,
-          errorReporter: {
-            catch(error) {
-              assert.fail(error)
-            },
+        // resources
+        /** @type {Map<string, unknown[]>} */
+        const queuedMessages = new Map()
+        const {
+          dealer: { aggregateStore, offerStore },
+        } = getStoreImplementations()
+
+        await test(
+          {
+            equal: assert.strictEqual,
+            deepEqual: assert.deepStrictEqual,
+            ok: assert.ok,
           },
-          addQueue,
-          dealStore,
-          queuedMessages,
-          validateAuthorization,
-        }
-      )
-    })
-  }
+          {
+            id: dealerSigner,
+            errorReporter: {
+              catch(error) {
+                assert.fail(error)
+              },
+            },
+            aggregateStore,
+            offerStore,
+            queuedMessages,
+            validateAuthorization
+          }
+        )
+      })
+    }
+  })
+
+  describe('events', () => {
+    for (const [name, test] of Object.entries(DealerEvents.test)) {
+      const define = name.startsWith('only ')
+        ? it.only
+        : name.startsWith('skip ')
+        ? it.skip
+        : it
+
+      define(name, async () => {
+        const dealerSigner = await Signer.generate()
+        const dealTrackerSigner = await Signer.generate()
+        const service = getMockService()
+        const dealerConnection = getConnection(dealerSigner, service).connection
+        const dealTrackerConnection = getConnection(
+          dealTrackerSigner,
+          service
+        ).connection
+
+        // resources
+        /** @type {Map<String, unknown[]>} */
+        const queuedMessages = new Map()
+        const {
+          dealer: { aggregateStore, offerStore },
+        } = getStoreImplementations()
+
+        await test(
+          {
+            equal: assert.strictEqual,
+            deepEqual: assert.deepStrictEqual,
+            ok: assert.ok,
+          },
+          {
+            id: dealerSigner,
+            errorReporter: {
+              catch(error) {
+                assert.fail(error)
+              },
+            },
+            aggregateStore,
+            offerStore,
+            queuedMessages,
+            dealerService: {
+              connection: dealerConnection,
+              invocationConfig: {
+                issuer: dealerSigner,
+                with: dealerSigner.did(),
+                audience: dealerSigner,
+              },
+            },
+            dealTrackerService: {
+              connection: dealTrackerConnection,
+              invocationConfig: {
+                issuer: dealerSigner,
+                with: dealerSigner.did(),
+                audience: dealTrackerSigner,
+              },
+            },
+            service,
+            validateAuthorization
+          }
+        )
+      })
+    }
+  })
 })

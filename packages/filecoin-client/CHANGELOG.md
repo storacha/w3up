@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v1.4.0...filecoin-client-v2.0.0) (2023-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* see latest specs https://github.com/web3-storage/specs/blob/cbdb706f18567900c5c24d7fb16ccbaf93d0d023/w3-filecoin.md
+* filecoin client to use new capabilities
+
+### Bug Fixes
+
+* client tests ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+* upgrade ucanto in filecoin api ([c95fb54](https://github.com/web3-storage/w3up/commit/c95fb54cdb04f50ff78e5113e70d73c1cd6d8b47))
+
+
+### Code Refactoring
+
+* filecoin api services events and tests ([#974](https://github.com/web3-storage/w3up/issues/974)) ([953537b](https://github.com/web3-storage/w3up/commit/953537bcb98d94b9e9655797a7f9026643ab949f))
+* filecoin client to use new capabilities ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+
 ## [1.4.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v1.3.0...filecoin-client-v1.4.0) (2023-10-11)
 
 

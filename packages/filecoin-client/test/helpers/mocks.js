@@ -5,29 +5,30 @@ const notImplemented = () => {
 }
 
 /**
- * @param {Partial<
- * import('../../src/types.js').StorefrontService &
- * import('../../src/types.js').AggregatorService &
- * import('../../src/types.js').DealerService &
- * import('../../src/types.js').ChainTrackerService
- * >} impl
+ * @param {Partial<{
+ * filecoin: Partial<import('../../src/types.js').StorefrontService['filecoin']>
+ * piece: Partial<import('../../src/types.js').AggregatorService['piece']>
+ * aggregate: Partial<import('../../src/types.js').DealerService['aggregate']>
+ * deal: Partial<import('../../src/types.js').DealTrackerService['deal']>
+ * }>} impl
  */
 export function mockService(impl) {
   return {
     filecoin: {
-      add: withCallCount(impl.filecoin?.add ?? notImplemented),
-      queue: withCallCount(impl.filecoin?.queue ?? notImplemented),
+      offer: withCallCount(impl.filecoin?.offer ?? notImplemented),
+      submit: withCallCount(impl.filecoin?.submit ?? notImplemented),
+      accept: withCallCount(impl.filecoin?.accept ?? notImplemented),
+    },
+    piece: {
+      offer: withCallCount(impl.piece?.offer ?? notImplemented),
+      accept: withCallCount(impl.piece?.accept ?? notImplemented),
     },
     aggregate: {
-      add: withCallCount(impl.aggregate?.add ?? notImplemented),
-      queue: withCallCount(impl.aggregate?.queue ?? notImplemented),
+      offer: withCallCount(impl.aggregate?.offer ?? notImplemented),
+      accept: withCallCount(impl.aggregate?.accept ?? notImplemented),
     },
     deal: {
-      add: withCallCount(impl.deal?.add ?? notImplemented),
-      queue: withCallCount(impl.deal?.queue ?? notImplemented),
-    },
-    'chain-tracker': {
-      info: withCallCount(impl['chain-tracker']?.info ?? notImplemented),
+      info: withCallCount(impl.deal?.info ?? notImplemented),
     },
   }
 }

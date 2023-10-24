@@ -4,41 +4,35 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import { CBOR } from '@ucanto/core'
-import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
-
-import { dealQueue, dealAdd } from '../src/dealer.js'
-
+import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
+import * as dagJSON from '@ipld/dag-json'
+import { aggregateOffer, aggregateAccept } from '../src/dealer.js'
 import { randomAggregate } from './helpers/random.js'
 import { validateAuthorization } from './helpers/utils.js'
 import { mockService } from './helpers/mocks.js'
-import { OperationFailed, OperationErrorName } from './helpers/errors.js'
 import { serviceProvider as dealerService } from './fixtures.js'
 
-describe('dealer.add', () => {
-  it('aggregator adds an aggregate piece to the dealer, getting the piece queued', async () => {
-    const { aggregator, storefront: storefrontSigner } = await getContext()
-
-    // generate aggregate to add
+describe('dealer', () => {
+  it('aggregator offers an aggregate', async () => {
+    const { aggregator } = await getContext()
     const { pieces, aggregate } = await randomAggregate(100, 100)
     const offer = pieces.map((p) => p.link)
     const piecesBlock = await CBOR.write(offer)
-    const storefront = storefrontSigner.did()
-    const label = 'label'
-    /** @type {import('@web3-storage/capabilities/types').DealAddSuccess} */
-    const dealAddResponse = {
+    /** @type {import('@web3-storage/capabilities/types').AggregateOfferSuccess} */
+    const aggregateOfferResponse = {
       aggregate: aggregate.link,
     }
 
     // Create Ucanto service
     const service = mockService({
-      deal: {
-        queue: Server.provideAdvanced({
-          capability: FilecoinCapabilities.dealQueue,
+      aggregate: {
+        offer: Server.provideAdvanced({
+          capability: DealerCaps.aggregateOffer,
           handler: async ({ invocation, context }) => {
             assert.strictEqual(invocation.issuer.did(), aggregator.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.dealQueue.can)
+            assert.strictEqual(invCap.can, DealerCaps.aggregateOffer.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
 
@@ -52,7 +46,7 @@ describe('dealer.add', () => {
             )
 
             // Create effect for receipt with self signed queued operation
-            const fx = await FilecoinCapabilities.dealAdd
+            const fx = await DealerCaps.aggregateAccept
               .invoke({
                 issuer: context.id,
                 audience: context.id,
@@ -61,166 +55,147 @@ describe('dealer.add', () => {
               })
               .delegate()
 
-            return Server.ok(dealAddResponse).join(fx.link())
+            return Server.ok(aggregateOfferResponse).join(fx.link())
           },
         }),
-        add: () => {
-          throw new Error('not implemented')
-        },
       },
     })
 
-    // invoke piece add from storefront
-    const res = await dealQueue(
+    // invoke aggregate/offer from aggregator
+    const res = await aggregateOffer(
       {
         issuer: aggregator,
         with: aggregator.did(),
         audience: dealerService,
       },
-      aggregate.link.link(),
+      aggregate.link,
       offer,
-      storefront,
-      label,
       { connection: getConnection(service).connection }
     )
 
     assert.ok(res.out.ok)
-    assert.ok(res.out.ok.aggregate?.equals(dealAddResponse.aggregate))
+    assert.ok(res.out.ok.aggregate?.equals(aggregateOfferResponse.aggregate))
     // includes effect fx in receipt
     assert.ok(res.fx.join)
   })
 
-  it('dealer self invokes add an aggregate piece to accept the piece queued', async () => {
-    const { storefront: storefrontSigner } = await getContext()
-
-    // generate aggregate to add
+  it('dealer accepts an aggregate', async () => {
     const { pieces, aggregate } = await randomAggregate(100, 100)
     const offer = pieces.map((p) => p.link)
     const piecesBlock = await CBOR.write(offer)
-    const storefront = storefrontSigner.did()
-    const label = 'label'
 
-    /** @type {import('@web3-storage/capabilities/types').DealAddSuccess} */
-    const dealAddResponse = {
+    /** @type {import('@web3-storage/capabilities/types').AggregateAcceptSuccess} */
+    const aggregateAcceptResponse = {
+      dataType: 0n,
+      dataSource: {
+        dealID: 1138n,
+      },
       aggregate: aggregate.link,
     }
 
     // Create Ucanto service
     const service = mockService({
-      deal: {
-        add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.dealAdd,
+      aggregate: {
+        accept: Server.provideAdvanced({
+          capability: DealerCaps.aggregateAccept,
           handler: async ({ invocation }) => {
             assert.strictEqual(invocation.issuer.did(), dealerService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
+            assert.strictEqual(invCap.can, DealerCaps.aggregateAccept.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
 
             // piece link
             assert.ok(invCap.nb.aggregate.equals(aggregate.link.link()))
 
-            // Validate block inline exists
-            const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
-            assert.ok(
-              invocationBlocks.find((b) => b.cid.equals(piecesBlock.cid))
-            )
-
-            return Server.ok(dealAddResponse)
+            return Server.ok(aggregateAcceptResponse)
           },
         }),
-        queue: () => {
-          throw new Error('not implemented')
-        },
       },
     })
 
-    // invoke piece add from storefront
-    const res = await dealAdd(
+    // invoke aggregate accept from dealer
+    const res = await aggregateAccept(
       {
         issuer: dealerService,
         with: dealerService.did(),
         audience: dealerService,
       },
       aggregate.link.link(),
-      offer,
-      storefront,
-      label,
+      piecesBlock.cid,
       { connection: getConnection(service).connection }
     )
 
     assert.ok(res.out.ok)
-    assert.ok(res.out.ok.aggregate?.equals(dealAddResponse.aggregate))
+    assert.ok(res.out.ok.aggregate.equals(aggregate.link))
+    assert.deepEqual(
+      BigInt(res.out.ok.dataSource.dealID),
+      BigInt(aggregateAcceptResponse.dataSource.dealID)
+    )
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })
 
-  it('dealer self invokes add an aggregate piece to reject the piece queued', async () => {
-    const { storefront: storefrontSigner } = await getContext()
-
-    // generate aggregate to add
+  it('dealer rejects an aggregate', async () => {
     const { pieces, aggregate } = await randomAggregate(100, 100)
     const offer = pieces.map((p) => p.link)
     const piecesBlock = await CBOR.write(offer)
-    const storefront = storefrontSigner.did()
-    const label = 'label'
 
-    /** @type {import('@web3-storage/capabilities/types').DealAddFailure} */
-    const dealAddResponse = new OperationFailed(
-      'failed to add to aggregate',
-      aggregate.link
-    )
+    /** @type {import('@web3-storage/capabilities/types').AggregateAcceptFailure} */
+    const aggregateAcceptResponse = {
+      name: 'InvalidPiece',
+      message: 'Aggregate is not a valid piece.',
+      // piece 1 was a bad
+      cause: [
+        {
+          name: 'InvalidPieceCID',
+          piece: pieces[1].link,
+        },
+      ],
+    }
 
     // Create Ucanto service
     const service = mockService({
-      deal: {
-        add: Server.provideAdvanced({
-          capability: FilecoinCapabilities.dealAdd,
-          handler: async ({ invocation, context }) => {
+      aggregate: {
+        accept: Server.provideAdvanced({
+          capability: DealerCaps.aggregateAccept,
+          handler: async ({ invocation }) => {
             assert.strictEqual(invocation.issuer.did(), dealerService.did())
             assert.strictEqual(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
-            assert.strictEqual(invCap.can, FilecoinCapabilities.dealAdd.can)
+            assert.strictEqual(invCap.can, DealerCaps.aggregateAccept.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
 
             // piece link
             assert.ok(invCap.nb.aggregate.equals(aggregate.link.link()))
 
-            // Validate block inline exists
-            const invocationBlocks = Array.from(invocation.iterateIPLDBlocks())
-            assert.ok(
-              invocationBlocks.find((b) => b.cid.equals(piecesBlock.cid))
-            )
-
             return {
-              error: dealAddResponse,
+              error: aggregateAcceptResponse,
             }
           },
         }),
-        queue: () => {
-          throw new Error('not implemented')
-        },
       },
     })
 
-    // invoke piece add from storefront
-    const res = await dealAdd(
+    // invoke aggregate accept from dealer
+    const res = await aggregateAccept(
       {
         issuer: dealerService,
         with: dealerService.did(),
         audience: dealerService,
       },
       aggregate.link.link(),
-      offer,
-      storefront,
-      label,
+      piecesBlock.cid,
       { connection: getConnection(service).connection }
     )
 
     assert.ok(res.out.error)
-    assert.deepEqual(res.out.error.name, OperationErrorName)
+    assert.equal(
+      dagJSON.stringify(res.out.error),
+      dagJSON.stringify(aggregateAcceptResponse)
+    )
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
   })
@@ -228,9 +203,8 @@ describe('dealer.add', () => {
 
 async function getContext() {
   const aggregator = await Signer.generate()
-  const storefront = await Signer.generate()
 
-  return { aggregator, storefront }
+  return { aggregator }
 }
 
 /**
