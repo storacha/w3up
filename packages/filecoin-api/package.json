@@ -81,10 +81,6 @@
       "types": "./dist/src/deal-tracker/service.d.ts",
       "import": "./src/deal-tracker/service.js"
     },
-    "./deal-tracker/events": {
-      "types": "./dist/src/deal-tracker/events.d.ts",
-      "import": "./src/deal-tracker/events.js"
-    },
     "./storefront/service": {
       "types": "./dist/src/storefront/service.d.ts",
       "import": "./src/storefront/service.js"
