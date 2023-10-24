@@ -37,3 +37,4 @@ jobs:
       - run: pnpm -r --filter @web3-storage/access run lint
       - run: pnpm -r --filter @web3-storage/access run test
       - run: pnpm -r --filter @web3-storage/access exec depcheck
+      - run: pnpm --filter '@web3-storage/access' attw
