@@ -6,7 +6,6 @@ import { Consumer } from '@web3-storage/capabilities'
  * @param {API.ConsumerServiceContext} context
  */
 export const provide = (context) =>
-  // @ts-ignore
   Provider.provide(Consumer.has, (input) => has(input, context))
 
 /**
