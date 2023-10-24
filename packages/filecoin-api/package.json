@@ -14,17 +14,26 @@
       "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
+      "aggregator/api": [
+        "dist/src/aggregator/api.d.ts"
+      ],
       "aggregator/service": [
         "dist/src/aggregator/service.d.ts"
       ],
       "aggregator/events": [
         "dist/src/aggregator/events.d.ts"
       ],
+      "dealer/api": [
+        "dist/src/dealer/api.d.ts"
+      ],
       "dealer/service": [
         "dist/src/dealer/service.d.ts"
       ],
       "dealer/events": [
         "dist/src/dealer/events.d.ts"
+      ],
+      "deal-tracker/api": [
+        "dist/src/deal-tracker/api.d.ts"
       ],
       "deal-tracker/service": [
         "dist/src/deal-tracker/service.d.ts"
@@ -34,6 +43,9 @@
       ],
       "errors": [
         "dist/src/errors.d.ts"
+      ],
+      "storefront/api": [
+        "dist/src/storefront/api.d.ts"
       ],
       "storefront/service": [
         "dist/src/storefront/service.d.ts"
@@ -61,6 +73,10 @@
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
     },
+    "./aggregator/api": {
+      "types": "./dist/src/aggregator/api.d.ts",
+      "import": "./src/aggregator/api.js"
+    },
     "./aggregator/service": {
       "types": "./dist/src/aggregator/service.d.ts",
       "import": "./src/aggregator/service.js"
@@ -68,6 +84,10 @@
     "./aggregator/events": {
       "types": "./dist/src/aggregator/events.d.ts",
       "import": "./src/aggregator/events.js"
+    },
+    "./dealer/api": {
+      "types": "./dist/src/dealer/api.d.ts",
+      "import": "./src/dealer/api.js"
     },
     "./dealer/service": {
       "types": "./dist/src/dealer/service.d.ts",
@@ -77,9 +97,17 @@
       "types": "./dist/src/dealer/events.d.ts",
       "import": "./src/dealer/events.js"
     },
+    "./deal-tracker/api": {
+      "types": "./dist/src/deal-tracker/api.d.ts",
+      "import": "./src/deal-tracker/api.js"
+    },
     "./deal-tracker/service": {
       "types": "./dist/src/deal-tracker/service.d.ts",
       "import": "./src/deal-tracker/service.js"
+    },
+    "./storefront/api": {
+      "types": "./dist/src/storefront/api.d.ts",
+      "import": "./src/storefront/api.js"
     },
     "./storefront/service": {
       "types": "./dist/src/storefront/service.d.ts",

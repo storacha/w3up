@@ -2,6 +2,8 @@ import type { Signer } from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
 import { QueryableStore } from '../types.js'
 
+export type DealStore = QueryableStore<DealRecordKey, DealRecord, DealRecordQueryByPiece>
+
 export interface ServiceContext {
   /**
    * Service signer
@@ -11,7 +13,7 @@ export interface ServiceContext {
   /**
    * Stores information about deals for a given aggregate piece CID.
    */
-  dealStore: QueryableStore<DealRecordKey, DealRecord, DealRecordQueryByPiece>
+  dealStore: DealStore
 }
 
 export interface DealRecord {
