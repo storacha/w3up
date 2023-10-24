@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { decode, NodeType } from '@ipld/unixfs'
 import { exporter } from 'ipfs-unixfs-exporter'
+// @ts-ignore
 import { MemoryBlockstore } from 'blockstore-core/memory'
 import * as raw from 'multiformats/codecs/raw'
 import path from 'path'
@@ -25,7 +26,7 @@ async function collectDir(dir) {
 async function blocksToBlockstore(blocks) {
   const blockstore = new MemoryBlockstore()
   for (const block of blocks) {
-    // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
+    // @ts-expect-error
     await blockstore.put(block.cid, block.bytes)
   }
   return blockstore

@@ -10,7 +10,7 @@ import { REQUEST_RETRIES } from './constants.js'
  *
  * Required delegated capability proofs: `upload/add`
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -24,9 +24,9 @@ import { REQUEST_RETRIES } from './constants.js'
  *
  * The issuer needs the `upload/add` delegated capability.
  * @param {import('multiformats/link').UnknownLink} root Root data CID for the DAG that was stored.
- * @param {import('./types').CARLink[]} shards CIDs of CAR files that contain the DAG.
- * @param {import('./types').RequestOptions} [options]
- * @returns {Promise<import('./types').UploadAddSuccess>}
+ * @param {import('./types.js').CARLink[]} shards CIDs of CAR files that contain the DAG.
+ * @param {import('./types.js').RequestOptions} [options]
+ * @returns {Promise<import('./types.js').UploadAddSuccess>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
@@ -67,7 +67,7 @@ export async function add(
 /**
  * List uploads created by the issuer.
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -80,8 +80,8 @@ export async function add(
  * has the capability to perform the action.
  *
  * The issuer needs the `upload/list` delegated capability.
- * @param {import('./types').ListRequestOptions} [options]
- * @returns {Promise<import('./types').UploadListSuccess>}
+ * @param {import('./types.js').ListRequestOptions} [options]
+ * @returns {Promise<import('./types.js').UploadListSuccess>}
  */
 export async function list(
   { issuer, with: resource, proofs, audience },
@@ -117,7 +117,7 @@ export async function list(
 /**
  * Remove an upload by root data CID.
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -131,7 +131,7 @@ export async function list(
  *
  * The issuer needs the `upload/remove` delegated capability.
  * @param {import('multiformats').UnknownLink} root Root data CID to remove.
- * @param {import('./types').RequestOptions} [options]
+ * @param {import('./types.js').RequestOptions} [options]
  */
 export async function remove(
   { issuer, with: resource, proofs, audience },
