@@ -524,7 +524,11 @@ export interface PlanGetSuccess {
   product: DID
 }
 
-export type PlanGetFailure = never
+export interface PlanNotFound extends Ucanto.Failure {
+  name: 'PlanNotFound'
+}
+
+export type PlanGetFailure = PlanNotFound
 
 // Top
 export type Top = InferInvokedCapability<typeof top>
