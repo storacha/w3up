@@ -1,3 +1,8 @@
 export * as Storefront from './storefront/service.js'
+export * as StorefronEvents from './storefront/events.js'
 export * as Aggregator from './aggregator/service.js'
+export * as AggregatorEvents from './aggregator/service.js'
 export * as Dealer from './dealer/service.js'
+export * as DealerEvents from './dealer/events.js'
+export * as DealTracker from './dealer/service.js'
+export * as DealTrackerEvents from './dealer/events.js'
