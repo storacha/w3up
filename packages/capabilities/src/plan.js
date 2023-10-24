@@ -11,9 +11,6 @@ export const get = capability({
   can: 'plan/get',
   with: AccountDID,
   derives: (child, parent) => {
-    return (
-      and(equalWith(child, parent)) ||
-      ok({})
-    )
+    return and(equalWith(child, parent)) || ok({})
   },
 })

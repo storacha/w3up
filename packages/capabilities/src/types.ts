@@ -33,6 +33,7 @@ import * as DealTrackerCaps from './filecoin/deal-tracker.js'
 import * as DealerCaps from './filecoin/dealer.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
+import * as PlanCaps from './plan.js'
 
 export type { Unit, PieceLink }
 
@@ -514,6 +515,17 @@ export type AggregateAccept = InferInvokedCapability<
   typeof DealerCaps.aggregateAccept
 >
 export type DealInfo = InferInvokedCapability<typeof DealTrackerCaps.dealInfo>
+
+// Plan
+
+export type PlanGet = InferInvokedCapability<typeof PlanCaps.get>
+export interface PlanGetSuccess {
+  updatedAt: string
+  product: DID
+}
+
+export type PlanGetFailure = never
+
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
@@ -554,5 +566,6 @@ export type AbilitiesArray = [
   DealInfo['can'],
   Admin['can'],
   AdminUploadInspect['can'],
-  AdminStoreInspect['can']
+  AdminStoreInspect['can'],
+  PlanGet['can']
 ]

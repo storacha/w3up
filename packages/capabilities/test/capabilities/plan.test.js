@@ -13,7 +13,7 @@ describe('plan/get', function () {
       issuer: agent,
       audience: service,
       with: account,
-      proofs: await createAuthorization({ agent, service, account })
+      proofs: await createAuthorization({ agent, service, account }),
     })
     const result = await access(await auth.delegate(), {
       capability: Plan.get,
@@ -35,7 +35,7 @@ describe('plan/get', function () {
     const auth = Plan.get.invoke({
       issuer: agent,
       audience: service,
-      with: account
+      with: account,
     })
 
     const result = await access(await auth.delegate(), {
@@ -53,7 +53,7 @@ describe('plan/get', function () {
       issuer: bob,
       audience: service,
       with: account,
-      proofs: await createAuthorization({ agent, service, account })
+      proofs: await createAuthorization({ agent, service, account }),
     })
 
     const result = await access(await auth.delegate(), {
@@ -70,12 +70,14 @@ describe('plan/get', function () {
       issuer: bob,
       audience: service,
       with: account,
-      proofs: [await Plan.get.delegate({
-        issuer: agent,
-        audience: bob,
-        with: account,
-        proofs: await createAuthorization({ agent, service, account })
-      })]
+      proofs: [
+        await Plan.get.delegate({
+          issuer: agent,
+          audience: bob,
+          with: account,
+          proofs: await createAuthorization({ agent, service, account }),
+        }),
+      ],
     })
     const result = await access(await invocation.delegate(), {
       capability: Plan.get,
