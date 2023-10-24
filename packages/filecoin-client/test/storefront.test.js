@@ -198,7 +198,7 @@ async function getContext() {
 }
 
 /**
- * @param {import('../src/types').StorefrontService} service
+ * @param {import('../src/types.js').StorefrontService} service
  */
 function getConnection(service) {
   const server = Server.create({

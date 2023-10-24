@@ -217,7 +217,7 @@ async function getContext() {
 }
 
 /**
- * @param {import('../src/types').AggregatorService} service
+ * @param {import('../src/types.js').AggregatorService} service
  */
 function getConnection(service) {
   const server = Server.create({

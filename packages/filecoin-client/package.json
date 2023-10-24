@@ -23,12 +23,12 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./src/index.js",
-    "./aggregator": "./src/aggregator.js",
-    "./dealer": "./src/dealer.js",
-    "./chain-tracker": "./src/chain-tracker.js",
-    "./storefront": "./src/storefront.js",
-    "./types": "./src/types.js"
+    ".": "./dist/src/index.js",
+    "./aggregator": "./dist/src/aggregator.js",
+    "./dealer": "./dist/src/dealer.js",
+    "./chain-tracker": "./dist/src/chain-tracker.js",
+    "./storefront": "./dist/src/storefront.js",
+    "./types": "./dist/src/types.js"
   },
   "typesVersions": {
     "*": {

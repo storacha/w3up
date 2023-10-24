@@ -6,10 +6,10 @@ const notImplemented = () => {
 
 /**
  * @param {Partial<
- * import('../../src/types').StorefrontService &
- * import('../../src/types').AggregatorService &
- * import('../../src/types').DealerService &
- * import('../../src/types').ChainTrackerService
+ * import('../../src/types.js').StorefrontService &
+ * import('../../src/types.js').AggregatorService &
+ * import('../../src/types.js').DealerService &
+ * import('../../src/types.js').ChainTrackerService
  * >} impl
  */
 export function mockService(impl) {
