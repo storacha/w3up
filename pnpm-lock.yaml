@@ -423,8 +423,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       fr32-sha2-256-trunc254-padded-binary-tree-multihash:
-        specifier: ^1.1.4
-        version: 1.1.4
+        specifier: ^2.0.0
+        version: 2.0.0
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14
@@ -6442,8 +6442,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@1.1.4:
-    resolution: {integrity: sha512-+IpghzGszM7ebMuYzoILYvQMHXgtyZbIwlx2VYY4yLsT4SVU02ur6g7LCoLAxaD9GIv2oTAdiuHUxBH1liEQ7g==}
+  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@2.0.0:
+    resolution: {integrity: sha512-Gmxst5vaJd8dO/Ip+/F+9IbdNY1Ujp9gL0eWN3fiHS4/ORTvC5WUnM4QlJw+wci0yKIIzXfPBUP/SppxcXolAQ==}
     dev: false
 
   /fraction.js@4.3.7:
