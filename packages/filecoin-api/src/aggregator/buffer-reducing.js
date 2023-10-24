@@ -159,7 +159,7 @@ export function aggregatePieces(bufferedPieces, sizes) {
 
   // Create builder with maximum size and try to fill it up
   const builder = Aggregate.createBuilder({
-    size: Piece.PaddedSize.from(sizes.maxAggregateSize),
+    size: Aggregate.Size.from(sizes.maxAggregateSize),
   })
 
   // add pieces to an aggregate until there is no more space, or no more pieces
