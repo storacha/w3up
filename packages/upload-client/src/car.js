@@ -37,7 +37,6 @@ export async function encode(blocks, root) {
   void (async () => {
     try {
       for await (const block of blocks) {
-        // @ts-expect-error
         await writer.put(block)
       }
     } catch (/** @type {any} */ err) {

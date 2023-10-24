@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "lib": ["ESNext", "DOM"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "lib": ["ESNext", "DOM"]
   },
   "include": ["src", "scripts", "test", "package.json"],
   "exclude": ["**/node_modules/**"],

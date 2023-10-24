@@ -26,7 +26,6 @@ async function collectDir(dir) {
 async function blocksToBlockstore(blocks) {
   const blockstore = new MemoryBlockstore()
   for (const block of blocks) {
-    // @ts-expect-error
     await blockstore.put(block.cid, block.bytes)
   }
   return blockstore
@@ -62,7 +61,6 @@ describe('UnixFS', () => {
     assert.equal(dirEntry.type, 'directory')
 
     const expectedPaths = files.map((f) => path.join(cid.toString(), f.name))
-    // @ts-expect-error
     const entries = await collectDir(dirEntry)
     const actualPaths = entries.map((e) => e.path)
 
@@ -81,14 +79,12 @@ describe('UnixFS', () => {
     assert.equal(dirEntry.type, 'directory')
 
     const expectedPaths = files.map((f) => path.join(cid.toString(), f.name))
-    // @ts-expect-error
     const entries = await collectDir(dirEntry)
     const actualPaths = entries.map((e) => e.path)
 
     expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
 
     // check root node is a HAMT sharded directory
-    // @ts-expect-error
     const bytes = await blockstore.get(cid)
     const node = decode(bytes)
     assert.equal(node.type, NodeType.HAMTShard)

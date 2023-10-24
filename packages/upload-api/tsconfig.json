@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["mocha"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "types": ["mocha"]
   },
   "include": ["src", "test"],
   "exclude": ["**/node_modules/**", "dist"],
