@@ -201,7 +201,8 @@ export interface RequestOptions
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}
 
-export type DirectoryEntryLink = import('@ipld/unixfs/directory').DirectoryEntryLink
+export type DirectoryEntryLink =
+  import('@ipld/unixfs/directory').DirectoryEntryLink
 
 export interface UnixFSDirectoryEncoderOptions {
   /**
