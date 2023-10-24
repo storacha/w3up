@@ -113,16 +113,18 @@ import {
   ProviderDID,
   StoreGetFailure,
   UploadGetFailure,
-  UCANRevoke,
   ListResponse,
   CARLink,
   StoreGetSuccess,
   UploadGetSuccess,
+  UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  PlanGet,
+  PlanGetSuccess,
+  PlanGetFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
-import { RevocationsStorage } from './types/revocations'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
@@ -132,6 +134,7 @@ export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
 } from './types/delegations'
+import { RevocationsStorage } from './types/revocations'
 export type {
   Revocation,
   RevocationQuery,
@@ -139,6 +142,8 @@ export type {
   RevocationsStorage,
 } from './types/revocations'
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
+import { PlansStorage } from './types/plans'
+export type { PlansStorage } from './types/plans'
 
 export interface Service {
   store: {
@@ -233,6 +238,9 @@ export interface Service {
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
   }
+  plan: {
+    get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
+  }
 }
 
 export type StoreServiceContext = SpaceServiceContext & {
@@ -304,6 +312,10 @@ export interface RevocationServiceContext {
   revocationsStorage: RevocationsStorage
 }
 
+export interface PlanServiceContext {
+  plansStorage: PlansStorage
+}
+
 export interface ServiceContext
   extends AccessServiceContext,
     ConsoleServiceContext,
@@ -315,6 +327,7 @@ export interface ServiceContext
     SubscriptionServiceContext,
     RateLimitServiceContext,
     RevocationServiceContext,
+    PlanServiceContext,
     UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {

@@ -79,5 +79,5 @@ export const abilitiesAsStrings = [
   Admin.admin.can,
   Admin.upload.inspect.can,
   Admin.store.inspect.can,
-  Plan.get.can
+  Plan.get.can,
 ]
