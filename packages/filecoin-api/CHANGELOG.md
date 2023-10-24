@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.1...filecoin-api-v2.0.2) (2023-10-24)
+
+
+### Bug Fixes
+
+* export tests in lib for events ([#1001](https://github.com/web3-storage/w3up/issues/1001)) ([e442f32](https://github.com/web3-storage/w3up/commit/e442f32ce09d1457bc1df6c96ad006ec082d428d))
+
 ## [2.0.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.0...filecoin-api-v2.0.1) (2023-10-24)
 
 
