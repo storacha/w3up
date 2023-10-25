@@ -27,7 +27,6 @@
     ".": "./dist/src/index.js",
     "./aggregator": "./dist/src/aggregator.js",
     "./dealer": "./dist/src/dealer.js",
-    "./chain-tracker": "./dist/src/chain-tracker.js",
     "./storefront": "./dist/src/storefront.js",
     "./types": "./dist/src/types.js"
   },
@@ -41,9 +40,6 @@
       ],
       "dealer": [
         "dist/src/dealer.d.ts"
-      ],
-      "chain-tracker": [
-        "dist/src/chain-tracker.d.ts"
       ],
       "storefront": [
         "dist/src/storefront.d.ts"
