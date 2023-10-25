@@ -35,6 +35,8 @@ import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 import * as PlanCaps from './plan.js'
 
+export type ISO8601Date = string
+
 export type { Unit, PieceLink }
 
 /**
@@ -395,14 +397,14 @@ export interface StoreListItem {
   link: UnknownLink
   size: number
   origin?: UnknownLink
-  insertedAt: string
+  insertedAt: ISO8601Date
 }
 
 export interface UploadListItem {
   root: UnknownLink
   shards?: CARLink[]
-  insertedAt: string
-  updatedAt: string
+  insertedAt: ISO8601Date
+  updatedAt: ISO8601Date
 }
 
 // TODO: (olizilla) make this an UploadListItem too?
@@ -520,7 +522,7 @@ export type DealInfo = InferInvokedCapability<typeof DealTrackerCaps.dealInfo>
 
 export type PlanGet = InferInvokedCapability<typeof PlanCaps.get>
 export interface PlanGetSuccess {
-  updatedAt: string
+  updatedAt: ISO8601Date
   product: DID
 }
 
