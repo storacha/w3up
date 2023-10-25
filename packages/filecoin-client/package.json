@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/filecoin-client",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "The w3filecoin client for web3.storage",
   "homepage": "https://github.com/web3-storage/w3up/tree/main/packages/filecoin-client",
   "repository": {
@@ -27,7 +27,6 @@
     ".": "./dist/src/index.js",
     "./aggregator": "./dist/src/aggregator.js",
     "./dealer": "./dist/src/dealer.js",
-    "./chain-tracker": "./dist/src/chain-tracker.js",
     "./storefront": "./dist/src/storefront.js",
     "./types": "./dist/src/types.js"
   },
@@ -42,16 +41,14 @@
       "dealer": [
         "dist/src/dealer.d.ts"
       ],
-      "chain-tracker": [
-        "dist/src/chain-tracker.d.ts"
-      ],
       "storefront": [
         "dist/src/storefront.d.ts"
       ]
     }
   },
   "files": [
-    "src",
+    "dist/src/**/*.js",
+    "dist/src/**/*.js.map",
     "dist/src/**/*.d.ts",
     "dist/src/**/*.d.ts.map"
   ],

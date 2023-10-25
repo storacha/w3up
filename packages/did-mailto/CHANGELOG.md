@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.2](https://github.com/web3-storage/w3up/compare/did-mailto-v2.0.1...did-mailto-v2.0.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+* upgrade to latest ts ([#962](https://github.com/web3-storage/w3up/issues/962)) ([711e3f7](https://github.com/web3-storage/w3up/commit/711e3f73f6905fde0d929952fff70be845a55fa1))
+
 ## [2.0.1](https://github.com/web3-storage/w3up/compare/did-mailto-v2.0.0...did-mailto-v2.0.1) (2023-09-14)
 
 
