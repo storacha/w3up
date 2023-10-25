@@ -1,10 +1,10 @@
 /* eslint-disable no-only-tests/no-only-tests */
-import * as Plan from './plan.js'
+import * as UCAN from './ucan.js'
 import * as assert from 'assert'
 import { cleanupContext, createContext } from '../helpers/context.js'
 
-describe('plan/*', () => {
-  for (const [name, test] of Object.entries(Plan.test)) {
+describe('ucan/*', () => {
+  for (const [name, test] of Object.entries(UCAN.test)) {
     const define = name.startsWith('only ')
       ? it.only
       : name.startsWith('skip ')

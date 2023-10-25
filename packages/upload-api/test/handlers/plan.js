@@ -1,54 +1,34 @@
 import * as API from '../../src/types.js'
+import { createServer, connect } from '../../src/lib.js'
 import { alice } from '../util.js'
-import { UCAN, Console } from '@web3-storage/capabilities'
+import { Plan } from '@web3-storage/capabilities'
+import { createAuthorization } from '../helpers/utils.js'
+import { Absentee } from '@ucanto/principal'
 
 /**
  * @type {API.Tests}
  */
 export const test = {
-  'issuer can revoke delegation': async (assert, context) => {
-    const proof = await Console.log.delegate({
-      issuer: context.id,
-      audience: alice,
-      with: context.id.did(),
+  'an account can get plan information': async (assert, context) => {
+    const account = 'did:mailto:example.com:alice'
+    const product = 'did:web:test.web3.storage'
+    context.plansStorage.set(account, product)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
     })
-
-    const success = await Console.log
-      .invoke({
-        issuer: alice,
-        audience: context.id,
-        with: context.id.did(),
-        nb: { value: 'hello' },
-        proofs: [proof],
+    const result = await Plan.get.invoke({
+      issuer: alice,
+      audience: context.service,
+      with: account,
+      proofs: await createAuthorization({
+        agent: alice,
+        account: Absentee.from({ id: account }),
+        service: context.service
       })
-      .execute(context.connection)
+    }).execute(connection)
 
-    assert.deepEqual(success.out, { ok: 'hello' })
-
-    const revoke = await UCAN.revoke
-      .invoke({
-        issuer: context.id,
-        audience: context.id,
-        with: context.id.did(),
-        nb: {
-          ucan: proof.cid,
-        },
-        proofs: [proof],
-      })
-      .execute(context.connection)
-
-    assert.ok(revoke.out.ok?.time)
-
-    const failure = await Console.log
-      .invoke({
-        issuer: alice,
-        audience: context.id,
-        with: context.id.did(),
-        nb: { value: 'bye' },
-        proofs: [proof],
-      })
-      .execute(context.connection)
-
-    assert.ok(failure.out.error?.message.includes('has been revoked'))
+    assert.ok(result.out.ok)
+    assert.equal(result.out.ok?.product, product)
   },
 }
