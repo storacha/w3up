@@ -17,7 +17,17 @@ export class PlansStorage {
    * @returns
    */
   async get(account) {
-    return { ok: this.plans[account] }
+    const plan = this.plans[account]
+    if (plan) {
+      return { ok: this.plans[account] }
+    } else {
+      return {
+        error: {
+          name: /** @type {const} */ ('PlanNotFound'),
+          message: `could not find a plan for ${account}`
+        }
+      }
+    }
   }
 
   /**

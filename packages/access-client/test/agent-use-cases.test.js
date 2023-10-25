@@ -1,13 +1,17 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import * as Server from '@ucanto/server'
+import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import * as Space from '@web3-storage/capabilities/space'
+import * as Plan from '@web3-storage/capabilities/plan'
+import { createAuthorization } from '@web3-storage/capabilities/test/helpers/utils'
 import { Agent, connection } from '../src/agent.js'
 import {
   delegationsIncludeSessionProof,
   authorizeWaitAndClaim,
   waitForAuthorizationByPolling,
+  getAccountPlan,
 } from '../src/agent-use-cases.js'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
@@ -186,5 +190,52 @@ describe('authorizeWaitAndClaim', async function () {
     )
     assert(authorizeHandler.calledOnce)
     assert(claimHandler.notCalled)
+  })
+})
+
+describe('getAccountPlan', async function () {
+  const accountWithAPlan = 'did:mailto:example.com:i-have-a-plan'
+  const accountWithoutAPlan = 'did:mailto:example.com:i-have-no-plan'
+
+  /** @type {Record<Ucanto.DID, {product: Ucanto.DID, updatedAt: string}>} */
+  const plans = {
+    [accountWithAPlan]: {
+      product: 'did:web:test.web3.storage',
+      updatedAt: new Date().toISOString()
+    }
+  }
+
+  const server = createServer({
+    plan: {
+      get: Server.provide(Plan.get, ({ capability }) => {
+        const plan = plans[capability.with]
+        if (plan) {
+          return { ok: plan }
+        } else {
+          return {
+            error: {
+              name: 'PlanNotFound',
+              message: ''
+            }
+          }
+        }
+      }),
+    },
+  })
+  const agent = await Agent.create(undefined, {
+    connection: connection({ principal: server.id, channel: server }),
+  })
+
+  await Promise.all([
+    ...await createAuthorization({ account: accountWithAPlan, agent: agent.issuer, service: server.id }),
+    ...await createAuthorization({ account: accountWithoutAPlan, agent: agent.issuer, service: server.id })
+  ].map(proof => agent.addProof(proof)))
+
+  it("should succeed for accounts with plans", async function () {
+    assert((await getAccountPlan(agent, accountWithAPlan)).ok)
+  })
+
+  it("should fail for accounts without a plan", async function () {
+    assert((await getAccountPlan(agent, accountWithoutAPlan)).error)
   })
 })

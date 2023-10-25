@@ -2,7 +2,7 @@ import { addSpacesFromDelegations, Agent as AccessAgent } from './agent.js'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
-import { Provider } from '@web3-storage/capabilities'
+import { Provider, Plan } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
 import { AgentData, isSessionProof } from './agent-data.js'
 import * as ucanto from '@ucanto/core'
@@ -329,4 +329,16 @@ async function createIssuerSaysAccountCanAdminSpace(
     proofs,
     expiration,
   })
+}
+
+/**
+ * 
+ * @param {AccessAgent} agent 
+ * @param {import('@web3-storage/did-mailto/src/types.js').DidMailto} account
+ */
+export async function getAccountPlan(agent, account){
+  const receipt = await agent.invokeAndExecute(Plan.get, {
+    with: account
+  })
+  return receipt.out
 }
