@@ -332,13 +332,13 @@ async function createIssuerSaysAccountCanAdminSpace(
 }
 
 /**
- * 
- * @param {AccessAgent} agent 
+ *
+ * @param {AccessAgent} agent
  * @param {import('@web3-storage/did-mailto/src/types.js').DidMailto} account
  */
-export async function getAccountPlan(agent, account){
+export async function getAccountPlan(agent, account) {
   const receipt = await agent.invokeAndExecute(Plan.get, {
-    with: account
+    with: account,
   })
   return receipt.out
 }

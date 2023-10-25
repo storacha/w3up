@@ -201,24 +201,22 @@ describe('getAccountPlan', async function () {
   const plans = {
     [accountWithAPlan]: {
       product: 'did:web:test.web3.storage',
-      updatedAt: new Date().toISOString()
-    }
+      updatedAt: new Date().toISOString(),
+    },
   }
 
   const server = createServer({
     plan: {
       get: Server.provide(Plan.get, ({ capability }) => {
         const plan = plans[capability.with]
-        if (plan) {
-          return { ok: plan }
-        } else {
-          return {
-            error: {
-              name: 'PlanNotFound',
-              message: ''
+        return plan
+          ? { ok: plan }
+          : {
+              error: {
+                name: 'PlanNotFound',
+                message: '',
+              },
             }
-          }
-        }
       }),
     },
   })
@@ -226,16 +224,29 @@ describe('getAccountPlan', async function () {
     connection: connection({ principal: server.id, channel: server }),
   })
 
-  await Promise.all([
-    ...await createAuthorization({ account: accountWithAPlan, agent: agent.issuer, service: server.id }),
-    ...await createAuthorization({ account: accountWithoutAPlan, agent: agent.issuer, service: server.id })
-  ].map(proof => agent.addProof(proof)))
+  await Promise.all(
+    [
+      ...(await createAuthorization({
+        account: accountWithAPlan,
+        agent: agent.issuer,
+        service: server.id,
+      })),
+      ...(await createAuthorization({
+        account: accountWithoutAPlan,
+        agent: agent.issuer,
+        service: server.id,
+      })),
+    ].map((proof) => agent.addProof(proof))
+  )
 
-  it("should succeed for accounts with plans", async function () {
-    assert((await getAccountPlan(agent, accountWithAPlan)).ok)
+  it('should succeed for accounts with plans', async function () {
+    const result = await getAccountPlan(agent, accountWithAPlan)
+    assert(result.ok)
   })
 
-  it("should fail for accounts without a plan", async function () {
-    assert((await getAccountPlan(agent, accountWithoutAPlan)).error)
+  it('should fail for accounts without a plan', async function () {
+    const result = await getAccountPlan(agent, accountWithoutAPlan)
+    assert(result.error)
+    assert.equal(result.error.name, 'PlanNotFound')
   })
 })
