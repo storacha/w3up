@@ -30,5 +30,8 @@ export const test = {
 
     assert.ok(result.out.ok)
     assert.equal(result.out.ok?.product, product)
+    assert.ok(result.out.ok?.updatedAt)
+    const date = /** @type {string} */(result.out.ok?.updatedAt)
+    assert.equal(new Date(Date.parse(date)).toISOString(), date)
   },
 }
