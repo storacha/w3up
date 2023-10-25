@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/web3-storage/w3up/compare/filecoin-client-v2.0.1...filecoin-client-v2.0.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* touch filecoin-client README as fix conventional commits in order to trigger release-please patch version ([65245ef](https://github.com/web3-storage/w3up/commit/65245effd6c7e06c4d3b495e03a598e557a98c8e))
+
 ## [2.0.1](https://github.com/web3-storage/w3up/compare/filecoin-client-v2.0.0...filecoin-client-v2.0.1) (2023-10-25)
 
 

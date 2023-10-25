@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/filecoin-client",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "The w3filecoin client for web3.storage",
   "homepage": "https://github.com/web3-storage/w3up/tree/main/packages/filecoin-client",
   "repository": {
