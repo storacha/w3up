@@ -64,7 +64,7 @@ describe('Aggregator', () => {
             pieceAcceptQueue,
             aggregateOfferQueue,
             queuedMessages,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
@@ -147,7 +147,7 @@ describe('Aggregator', () => {
               minAggregateSize: 2 ** 34,
               minUtilizationFactor: 4,
             },
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })

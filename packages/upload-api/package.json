@@ -102,7 +102,7 @@
   "scripts": {
     "build": "tsc --build",
     "check": "tsc --build",
-    "lint": "tsc --build",
+    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch 'test/**/*.spec.js'",
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },

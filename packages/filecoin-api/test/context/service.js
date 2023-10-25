@@ -221,7 +221,7 @@ export function getConnection(id, service) {
     id: id,
     service,
     codec: CAR.inbound,
-    validateAuthorization
+    validateAuthorization,
   })
   const connection = Client.connect({
     id: id,

@@ -44,7 +44,7 @@ describe('Dealer', () => {
             aggregateStore,
             offerStore,
             queuedMessages,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
@@ -109,7 +109,7 @@ describe('Dealer', () => {
               },
             },
             service,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })

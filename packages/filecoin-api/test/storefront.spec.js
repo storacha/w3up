@@ -66,7 +66,7 @@ describe('storefront', () => {
             taskStore,
             receiptStore,
             queuedMessages,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
@@ -135,7 +135,7 @@ describe('storefront', () => {
                 assert.fail(error)
               },
             },
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
