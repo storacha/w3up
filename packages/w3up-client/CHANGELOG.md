@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.1](https://github.com/web3-storage/w3up/compare/w3up-client-v9.2.0...w3up-client-v9.2.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+
 ## [9.2.0](https://github.com/web3-storage/w3up/compare/w3up-client-v9.1.0...w3up-client-v9.2.0) (2023-10-20)
 
 
