@@ -65,7 +65,7 @@ describe('plan/get', function () {
     assert.equal(result.error?.message.includes('not authorized'), true)
   })
 
-  it('can delegate plan/add', async function () {
+  it('can delegate plan/get', async function () {
     const invocation = Plan.get.invoke({
       issuer: bob,
       audience: service,
