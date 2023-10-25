@@ -26,7 +26,7 @@ export const uploadServiceConnection = connect({
   }),
 })
 
-/** @type {import('./types').ServiceConf} */
+/** @type {import('./types.js').ServiceConf} */
 export const serviceConf = {
   access: accessServiceConnection,
   upload: uploadServiceConnection,

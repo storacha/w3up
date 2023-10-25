@@ -9,7 +9,7 @@ describe('ShardingStream', () => {
     const file = new Blob([await randomBytes(1024 * 1024 * 5)])
     const shardSize = 1024 * 1024 * 2
 
-    /** @type {import('../src/types').CARFile[]} */
+    /** @type {import('../src/types.js').CARFile[]} */
     const shards = []
 
     await createFileEncoderStream(file)
@@ -36,7 +36,7 @@ describe('ShardingStream', () => {
     const rootCID = CID.parse(
       'bafybeibrqc2se2p3k4kfdwg7deigdggamlumemkiggrnqw3edrjosqhvnm'
     )
-    /** @type {import('../src/types').CARFile[]} */
+    /** @type {import('../src/types.js').CARFile[]} */
     const shards = []
 
     await createFileEncoderStream(file)
@@ -76,7 +76,7 @@ describe('ShardingStream', () => {
       await randomBlock(32), // encoded block length = 70
     ]
 
-    /** @type {import('../src/types').CARFile[]} */
+    /** @type {import('../src/types.js').CARFile[]} */
     const shards = []
     await new ReadableStream({
       pull(controller) {

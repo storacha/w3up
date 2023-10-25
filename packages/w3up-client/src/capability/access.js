@@ -13,7 +13,7 @@ export class AccessClient extends Base {
    * @param {`${string}@${string}`} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
-   * @param {Iterable<{ can: import('../types').Ability }>} [options.capabilities]
+   * @param {Iterable<{ can: import('../types.js').Ability }>} [options.capabilities]
    */
   async authorize(email, options) {
     return authorizeWaitAndClaim(this._agent, email, options)

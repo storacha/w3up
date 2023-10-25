@@ -18,7 +18,7 @@ export const provide = (ctx) =>
  */
 export const authorize = async ({ capability }, ctx) => {
   const accountMailtoDID =
-    /** @type {import('@web3-storage/did-mailto/dist/src/types').DidMailto} */ (
+    /** @type {import('@web3-storage/did-mailto/types').DidMailto} */ (
       capability.nb.iss
     )
   const rateLimitResult = await ensureRateLimitAbove(

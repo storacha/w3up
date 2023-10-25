@@ -2,7 +2,7 @@ import defer from 'p-defer'
 
 /**
  * @template T
- * @typedef {import('./types').Driver<T>} Driver
+ * @typedef {import('./types.js').Driver<T>} Driver
  */
 
 const STORE_NAME = 'AccessStore'

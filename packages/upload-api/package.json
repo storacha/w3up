@@ -14,9 +14,6 @@
       "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
-      "access": [
-        "dist/src/access.d.ts"
-      ],
       "console": [
         "dist/src/console.d.ts"
       ],
@@ -58,10 +55,6 @@
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
     },
-    "./access": {
-      "types": "./dist/src/access.d.ts",
-      "import": "./src/access.js"
-    },
     "./console": {
       "types": "./dist/src/console.d.ts",
       "import": "./src/console.js"
@@ -100,6 +93,7 @@
     }
   },
   "scripts": {
+    "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",

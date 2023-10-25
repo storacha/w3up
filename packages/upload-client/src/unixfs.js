@@ -14,8 +14,8 @@ const settings = UnixFS.configure({
 })
 
 /**
- * @param {import('./types').BlobLike} blob
- * @returns {Promise<import('./types').UnixFSEncodeResult>}
+ * @param {import('./types.js').BlobLike} blob
+ * @returns {Promise<import('./types.js').UnixFSEncodeResult>}
  */
 export async function encodeFile(blob) {
   const readable = createFileEncoderStream(blob)
@@ -25,7 +25,7 @@ export async function encodeFile(blob) {
 }
 
 /**
- * @param {import('./types').BlobLike} blob
+ * @param {import('./types.js').BlobLike} blob
  * @returns {ReadableStream<import('@ipld/unixfs').Block>}
  */
 export function createFileEncoderStream(blob) {
@@ -45,7 +45,7 @@ class UnixFSFileBuilder {
 
   /**
    * @param {string} name
-   * @param {import('./types').BlobLike} file
+   * @param {import('./types.js').BlobLike} file
    */
   constructor(name, file) {
     this.name = name
@@ -74,7 +74,7 @@ class UnixFSDirectoryBuilder {
 
   /**
    * @param {string} name
-   * @param {import('./types').UnixFSDirectoryEncoderOptions} [options]
+   * @param {import('./types.js').UnixFSDirectoryEncoderOptions} [options]
    */
   constructor(name, options) {
     this.name = name
@@ -100,9 +100,9 @@ class UnixFSDirectoryBuilder {
 }
 
 /**
- * @param {Iterable<import('./types').FileLike>} files
- * @param {import('./types').UnixFSDirectoryEncoderOptions} [options]
- * @returns {Promise<import('./types').UnixFSEncodeResult>}
+ * @param {Iterable<import('./types.js').FileLike>} files
+ * @param {import('./types.js').UnixFSDirectoryEncoderOptions} [options]
+ * @returns {Promise<import('./types.js').UnixFSEncodeResult>}
  */
 export async function encodeDirectory(files, options) {
   const readable = createDirectoryEncoderStream(files, options)
@@ -112,8 +112,8 @@ export async function encodeDirectory(files, options) {
 }
 
 /**
- * @param {Iterable<import('./types').FileLike>} files
- * @param {import('./types').UnixFSDirectoryEncoderOptions} [options]
+ * @param {Iterable<import('./types.js').FileLike>} files
+ * @param {import('./types.js').UnixFSDirectoryEncoderOptions} [options]
  * @returns {ReadableStream<import('@ipld/unixfs').Block>}
  */
 export function createDirectoryEncoderStream(files, options) {

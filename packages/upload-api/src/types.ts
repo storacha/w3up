@@ -19,9 +19,9 @@ import type {
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
-import { DelegationsStorage as Delegations } from './types/delegations'
-import { ProvisionsStorage as Provisions } from './types/provisions'
-import { RateLimitsStorage as RateLimits } from './types/rate-limits'
+import { DelegationsStorage as Delegations } from './types/delegations.js'
+import { ProvisionsStorage as Provisions } from './types/provisions.js'
+import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
 
 export type ValidationEmailSend = {
   to: string
@@ -125,25 +125,25 @@ import {
   PlanGetFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
+import { RevocationsStorage } from './types/revocations.js'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
 
-export type { ProvisionsStorage, Provision } from './types/provisions'
+export type { ProvisionsStorage, Provision } from './types/provisions.js'
 export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
-} from './types/delegations'
-import { RevocationsStorage } from './types/revocations'
+} from './types/delegations.js'
 export type {
   Revocation,
   RevocationQuery,
   MatchingRevocations,
   RevocationsStorage,
-} from './types/revocations'
-export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
-import { PlansStorage } from './types/plans'
-export type { PlansStorage } from './types/plans'
+} from './types/revocations.js'
+export type { RateLimitsStorage, RateLimit } from './types/rate-limits.js'
+import { PlansStorage } from './types/plans.js'
+export type { PlansStorage } from './types/plans.js'
 
 export interface Service {
   store: {

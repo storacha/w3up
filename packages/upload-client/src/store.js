@@ -10,12 +10,12 @@ const { fetch } = fetchPkg
 /**
  *
  * @param {string} url
- * @param {import('./types').ProgressFn} handler
+ * @param {import('./types.js').ProgressFn} handler
  */
 function createUploadProgressHandler(url, handler) {
   /**
    *
-   * @param {import('./types').ProgressStatus} status
+   * @param {import('./types.js').ProgressStatus} status
    */
   function onUploadProgress({ total, loaded, lengthComputable }) {
     return handler({ total, loaded, lengthComputable, url })
@@ -29,7 +29,7 @@ function createUploadProgressHandler(url, handler) {
  *
  * Required delegated capability proofs: `store/add`
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -43,8 +43,8 @@ function createUploadProgressHandler(url, handler) {
  *
  * The issuer needs the `store/add` delegated capability.
  * @param {Blob|Uint8Array} car CAR file data.
- * @param {import('./types').RequestOptions} [options]
- * @returns {Promise<import('./types').CARLink>}
+ * @param {import('./types.js').RequestOptions} [options]
+ * @returns {Promise<import('./types.js').CARLink>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
@@ -90,7 +90,7 @@ export async function add(
   const responseAddUpload = result.out.ok
 
   const fetchWithUploadProgress =
-    /** @type {(url: string, init?: import('./types').FetchOptions) => Promise<Response>} */ (
+    /** @type {(url: string, init?: import('./types.js').FetchOptions) => Promise<Response>} */ (
       fetch
     )
 
@@ -138,7 +138,7 @@ export async function add(
 /**
  * List CAR files stored by the issuer.
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -151,8 +151,8 @@ export async function add(
  * has the capability to perform the action.
  *
  * The issuer needs the `store/list` delegated capability.
- * @param {import('./types').ListRequestOptions} [options]
- * @returns {Promise<import('./types').StoreListSuccess>}
+ * @param {import('./types.js').ListRequestOptions} [options]
+ * @returns {Promise<import('./types.js').StoreListSuccess>}
  */
 export async function list(
   { issuer, with: resource, proofs, audience },
@@ -187,7 +187,7 @@ export async function list(
 /**
  * Remove a stored CAR file by CAR CID.
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -200,8 +200,8 @@ export async function list(
  * has the capability to perform the action.
  *
  * The issuer needs the `store/remove` delegated capability.
- * @param {import('./types').CARLink} link CID of CAR file to remove.
- * @param {import('./types').RequestOptions} [options]
+ * @param {import('./types.js').CARLink} link CID of CAR file to remove.
+ * @param {import('./types.js').RequestOptions} [options]
  */
 export async function remove(
   { issuer, with: resource, proofs, audience },

@@ -19,7 +19,7 @@ import { Client } from './client.js'
  *
  * If the backing store already has data stored, it will be loaded and used.
  *
- * @type {import('./types').ClientFactory}
+ * @type {import('./types.js').ClientFactory}
  */
 export async function create(options = {}) {
   const store = options.store ?? new StoreConf({ profile: 'w3up-client' })

@@ -5,7 +5,7 @@ import {
 } from '@web3-storage/access/types'
 import { type Service as UploadService } from '@web3-storage/upload-client/types'
 import type { ConnectionView, Signer, DID } from '@ucanto/interface'
-import { type Client } from './client'
+import { type Client } from './client.js'
 
 export interface ServiceConf {
   access: ConnectionView<AccessService>
@@ -31,7 +31,7 @@ export interface ClientFactoryOptions {
 
 export type ClientFactory = (options?: ClientFactoryOptions) => Promise<Client>
 
-export { Client } from './client'
+export { Client } from './client.js'
 
 export type { UnknownLink } from 'multiformats'
 

@@ -13,7 +13,7 @@ import {
 
 /**
  * @param {API.Input<StorefrontCaps.filecoinOffer>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinOfferSuccess, API.FilecoinOfferFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinOfferSuccess>>}
  */
 export const filecoinOffer = async ({ capability }, context) => {
@@ -82,7 +82,7 @@ export const filecoinOffer = async ({ capability }, context) => {
 
 /**
  * @param {API.Input<StorefrontCaps.filecoinSubmit>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinSubmitSuccess, API.FilecoinSubmitFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinSubmitSuccess>>}
  */
 export const filecoinSubmit = async ({ capability }, context) => {
@@ -123,7 +123,7 @@ export const filecoinSubmit = async ({ capability }, context) => {
 
 /**
  * @param {API.Input<StorefrontCaps.filecoinAccept>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAcceptSuccess, API.FilecoinAcceptFailure>>}
  */
 export const filecoinAccept = async ({ capability }, context) => {
@@ -244,7 +244,7 @@ export class ProofNotFound extends Server.Failure {
 }
 
 /**
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  */
 export function createService(context) {
   return {
@@ -266,7 +266,7 @@ export function createService(context) {
 }
 
 /**
- * @param {API.UcantoServerContext & import('./api').ServiceContext} context
+ * @param {API.UcantoServerContext & import('./api.js').ServiceContext} context
  */
 export const createServer = (context) =>
   Server.create({

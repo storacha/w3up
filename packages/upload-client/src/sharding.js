@@ -8,11 +8,11 @@ const SHARD_SIZE = 133_169_152
  * received is assumed to be the DAG root and becomes the CAR root CID for the
  * last CAR output. Set the `rootCID` option to override.
  *
- * @extends {TransformStream<import('@ipld/unixfs').Block, import('./types').CARFile>}
+ * @extends {TransformStream<import('@ipld/unixfs').Block, import('./types.js').CARFile>}
  */
 export class ShardingStream extends TransformStream {
   /**
-   * @param {import('./types').ShardingOptions} [options]
+   * @param {import('./types.js').ShardingOptions} [options]
    */
   constructor(options = {}) {
     const shardSize = options.shardSize ?? SHARD_SIZE

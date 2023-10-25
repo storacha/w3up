@@ -3,7 +3,7 @@ import * as uint8arrays from 'uint8arrays'
 import { randomIV } from './encoding.js'
 
 /**
- * @typedef {import('./types').EncryptionKeypair} EncryptionKeypair
+ * @typedef {import('./types.js').EncryptionKeypair} EncryptionKeypair
  * @implements {EncryptionKeypair}
  */
 export class AesKey {

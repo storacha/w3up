@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { decode, NodeType } from '@ipld/unixfs'
 import { exporter } from 'ipfs-unixfs-exporter'
+// @ts-expect-error this version of blockstore-core doesn't point to correct types file in package.json, and upgrading to latest version that fixes that leads to api changes
 import { MemoryBlockstore } from 'blockstore-core/memory'
 import * as raw from 'multiformats/codecs/raw'
 import path from 'path'
@@ -25,7 +26,6 @@ async function collectDir(dir) {
 async function blocksToBlockstore(blocks) {
   const blockstore = new MemoryBlockstore()
   for (const block of blocks) {
-    // @ts-expect-error https://github.com/ipld/js-unixfs/issues/30
     await blockstore.put(block.cid, block.bytes)
   }
   return blockstore
@@ -61,7 +61,6 @@ describe('UnixFS', () => {
     assert.equal(dirEntry.type, 'directory')
 
     const expectedPaths = files.map((f) => path.join(cid.toString(), f.name))
-    // @ts-expect-error
     const entries = await collectDir(dirEntry)
     const actualPaths = entries.map((e) => e.path)
 
@@ -80,14 +79,12 @@ describe('UnixFS', () => {
     assert.equal(dirEntry.type, 'directory')
 
     const expectedPaths = files.map((f) => path.join(cid.toString(), f.name))
-    // @ts-expect-error
     const entries = await collectDir(dirEntry)
     const actualPaths = entries.map((e) => e.path)
 
     expectedPaths.forEach((p) => assert(actualPaths.includes(p)))
 
     // check root node is a HAMT sharded directory
-    // @ts-expect-error
     const bytes = await blockstore.get(cid)
     const node = decode(bytes)
     assert.equal(node.type, NodeType.HAMTShard)

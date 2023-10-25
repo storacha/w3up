@@ -4,7 +4,7 @@
  * not, and a Ucanto.Error if so, or if we get an error from the underlying
  * store.
  *
- * @param {import("../types").RateLimitsStorage} storage
+ * @param {import("../types.js").RateLimitsStorage} storage
  * @param {string[]} subjects
  * @param {number} limitThreshold
  * @return {Promise<import("@ucanto/interface").Result<import("@ucanto/interface").Unit, import("@ucanto/interface").Failure>>}

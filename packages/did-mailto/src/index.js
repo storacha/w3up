@@ -1,8 +1,8 @@
 /**
  * create a did:mailto from an email address
  *
- * @param {import("./types").EmailAddress} email
- * @returns {import("./types").DidMailto}
+ * @param {import("./types.js").EmailAddress} email
+ * @returns {import("./types.js").DidMailto}
  */
 export function fromEmail(email) {
   const { domain, local } = parseEmail(email)
@@ -13,8 +13,8 @@ export function fromEmail(email) {
 }
 
 /**
- * @param {import("./types").DidMailto} did
- * @returns {import("./types").EmailAddress}
+ * @param {import("./types.js").DidMailto} did
+ * @returns {import("./types.js").EmailAddress}
  */
 export function toEmail(did) {
   const parts = did.split(':')
@@ -30,11 +30,11 @@ export function toEmail(did) {
  * This is not meant to be a general RFC5322 (et al) email address validator, which would be more expensive.
  *
  * @param {string} input
- * @returns {import("./types").EmailAddress}
+ * @returns {import("./types.js").EmailAddress}
  */
 export function email(input) {
   const { domain, local } = parseEmail(input)
-  /** @type {import("./types").EmailAddress} */
+  /** @type {import("./types.js").EmailAddress} */
   const emailAddress = `${local}@${domain}`
   return emailAddress
 }
@@ -43,7 +43,7 @@ export function email(input) {
  * parse a did mailto from a string
  *
  * @param {string} input
- * @returns {import("./types").DidMailto}
+ * @returns {import("./types.js").DidMailto}
  */
 export function fromString(input) {
   const colonParts = input.split(':')

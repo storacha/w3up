@@ -9,7 +9,7 @@ export class Base {
   _agent
 
   /**
-   * @type {import('./types').ServiceConf}
+   * @type {import('./types.js').ServiceConf}
    * @protected
    */
   _serviceConf
@@ -17,7 +17,7 @@ export class Base {
   /**
    * @param {import('@web3-storage/access').AgentData} agentData
    * @param {object} [options]
-   * @param {import('./types').ServiceConf} [options.serviceConf]
+   * @param {import('./types.js').ServiceConf} [options.serviceConf]
    */
   constructor(agentData, options = {}) {
     this._serviceConf = options.serviceConf ?? serviceConf
@@ -31,7 +31,7 @@ export class Base {
 
   /**
    * @protected
-   * @param {import('./types').Ability[]} abilities
+   * @param {import('./types.js').Ability[]} abilities
    */
   async _invocationConfig(abilities) {
     const resource = this._agent.currentSpace()
