@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.2...filecoin-api-v2.0.3) (2023-10-25)
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+
 ## [2.0.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.1...filecoin-api-v2.0.2) (2023-10-24)
 
 
