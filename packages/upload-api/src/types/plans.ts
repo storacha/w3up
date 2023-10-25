@@ -1,5 +1,5 @@
 import * as Ucanto from '@ucanto/interface'
-import { AccountDID, DID, PlanGetFailure, PlanGetSuccess } from '../types'
+import { AccountDID, DID, PlanGetFailure, PlanGetSuccess } from '../types.js'
 
 export type PlanID = DID
 
