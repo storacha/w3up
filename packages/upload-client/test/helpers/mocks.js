@@ -6,8 +6,8 @@ const notImplemented = () => {
 
 /**
  * @param {Partial<{
- *   store: Partial<import('../../src/types').Service['store']>
- *   upload: Partial<import('../../src/types').Service['upload']>
+ *   store: Partial<import('../../src/types.js').Service['store']>
+ *   upload: Partial<import('../../src/types.js').Service['upload']>
  * }>} impl
  */
 export function mockService(impl) {

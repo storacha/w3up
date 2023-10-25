@@ -1,8 +1,8 @@
 import * as DID from '@ipld/dag-ucan/did'
 
 /**
- * @typedef {import('./types').SERVICE} Service
- * @typedef {import('./types').ServiceConfig} ServiceConfig
+ * @typedef {import('./types.js').SERVICE} Service
+ * @typedef {import('./types.js').ServiceConfig} ServiceConfig
  */
 
 /**

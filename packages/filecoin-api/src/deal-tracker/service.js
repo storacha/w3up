@@ -8,12 +8,12 @@ import * as API from '../types.js'
 import { StoreOperationFailed } from '../errors.js'
 
 /**
- * @typedef {import('@web3-storage/capabilities/types.js').DealDetails} DealDetails
+ * @typedef {import('@web3-storage/capabilities/types').DealDetails} DealDetails
  */
 
 /**
  * @param {API.Input<DealTrackerCaps.dealInfo>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.DealInfoSuccess, API.DealInfoFailure>>}
  */
 export const dealInfo = async ({ capability }, context) => {
@@ -28,6 +28,7 @@ export const dealInfo = async ({ capability }, context) => {
 
   return {
     ok: {
+      // eslint-disable-next-line unicorn/no-array-reduce
       deals: storeGet.ok.reduce((acc, curr) => {
         acc[`${curr.dealId}`] = {
           provider: curr.provider,
@@ -40,7 +41,7 @@ export const dealInfo = async ({ capability }, context) => {
 }
 
 /**
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  */
 export function createService(context) {
   return {
@@ -53,7 +54,7 @@ export function createService(context) {
 }
 
 /**
- * @param {API.UcantoServerContext & import('./api').ServiceContext} context
+ * @param {API.UcantoServerContext & import('./api.js').ServiceContext} context
  */
 export const createServer = (context) =>
   Server.create({

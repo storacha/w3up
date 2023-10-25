@@ -10,7 +10,7 @@ export class StoreClient extends Base {
    * Store a DAG encoded as a CAR file.
    *
    * @param {Blob} car - CAR file data.
-   * @param {import('../types').RequestOptions} [options]
+   * @param {import('../types.js').RequestOptions} [options]
    */
   async add(car, options = {}) {
     const conf = await this._invocationConfig([StoreCapabilities.add.can])
@@ -21,7 +21,7 @@ export class StoreClient extends Base {
   /**
    * List CAR files stored to the resource.
    *
-   * @param {import('../types').ListRequestOptions} [options]
+   * @param {import('../types.js').ListRequestOptions} [options]
    */
   async list(options = {}) {
     const conf = await this._invocationConfig([StoreCapabilities.add.can])
@@ -32,8 +32,8 @@ export class StoreClient extends Base {
   /**
    * Remove a stored CAR file by CAR CID.
    *
-   * @param {import('../types').CARLink} link - CID of CAR file to remove.
-   * @param {import('../types').RequestOptions} [options]
+   * @param {import('../types.js').CARLink} link - CID of CAR file to remove.
+   * @param {import('../types.js').RequestOptions} [options]
    */
   async remove(link, options = {}) {
     const conf = await this._invocationConfig([StoreCapabilities.remove.can])

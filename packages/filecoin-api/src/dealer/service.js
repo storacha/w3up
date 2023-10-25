@@ -15,7 +15,7 @@ import {
 
 /**
  * @param {API.Input<DealerCaps.aggregateOffer>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateOfferSuccess, API.AggregateOfferFailure> | API.UcantoInterface.JoinBuilder<API.AggregateOfferSuccess>>}
  */
 export const aggregateOffer = async ({ capability, invocation }, context) => {
@@ -92,7 +92,7 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
 
 /**
  * @param {API.Input<DealerCaps.aggregateAccept>} input
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateAcceptSuccess, API.AggregateAcceptFailure>>}
  */
 export const aggregateAccept = async ({ capability }, context) => {
@@ -145,7 +145,7 @@ const findCBORBlock = async (cid, blocks) => {
 }
 
 /**
- * @param {import('./api').ServiceContext} context
+ * @param {import('./api.js').ServiceContext} context
  */
 export function createService(context) {
   return {
@@ -163,7 +163,7 @@ export function createService(context) {
 }
 
 /**
- * @param {API.UcantoServerContext & import('./api').ServiceContext} context
+ * @param {API.UcantoServerContext & import('./api.js').ServiceContext} context
  */
 export const createServer = (context) =>
   Server.create({

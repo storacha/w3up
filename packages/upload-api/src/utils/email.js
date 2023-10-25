@@ -1,5 +1,5 @@
 /**
- * @typedef { import("../types").ValidationEmailSend } ValidationEmailSend
+ * @typedef { import("../types.js").ValidationEmailSend } ValidationEmailSend
  */
 
 export const debug = () => new DebugEmail()

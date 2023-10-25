@@ -9,7 +9,7 @@ import varint from 'varint'
 /** Byte length of a CBOR encoded CAR header with zero roots. */
 const NO_ROOTS_HEADER_LENGTH = 17
 
-/** @param {import('./types').AnyLink} [root] */
+/** @param {import('./types.js').AnyLink} [root] */
 export function headerEncodingLength(root) {
   if (!root) return NO_ROOTS_HEADER_LENGTH
   const headerLength = dagCBOR.encode({ version: 1, roots: [root] }).length
@@ -26,8 +26,8 @@ export function blockEncodingLength(block) {
 
 /**
  * @param {Iterable<Block> | AsyncIterable<Block>} blocks
- * @param {import('./types').AnyLink} [root]
- * @returns {Promise<import('./types').CARFile>}
+ * @param {import('./types.js').AnyLink} [root]
+ * @returns {Promise<import('./types.js').CARFile>}
  */
 export async function encode(blocks, root) {
   // @ts-expect-error
@@ -37,7 +37,6 @@ export async function encode(blocks, root) {
   void (async () => {
     try {
       for await (const block of blocks) {
-        // @ts-expect-error
         await writer.put(block)
       }
     } catch (/** @type {any} */ err) {
@@ -56,7 +55,7 @@ export async function encode(blocks, root) {
 
 /** @extends {ReadableStream<Block>} */
 export class BlockStream extends ReadableStream {
-  /** @param {import('./types').BlobLike} car */
+  /** @param {import('./types.js').BlobLike} car */
   constructor(car) {
     /** @type {Promise<CarBlockIterator>?} */
     let blocksPromise = null
@@ -84,7 +83,7 @@ export class BlockStream extends ReadableStream {
       },
     })
 
-    /** @returns {Promise<import('./types').AnyLink[]>} */
+    /** @returns {Promise<import('./types.js').AnyLink[]>} */
     this.getRoots = async () => {
       const blocks = await getBlocksIterable()
       return await blocks.getRoots()

@@ -66,7 +66,7 @@ export function delegationsToBytes(delegations) {
  * Decode bytes into Delegations
  *
  * @template {Types.Capabilities} [T=Types.Capabilities]
- * @param {import('./types').BytesDelegation<T>} bytes
+ * @param {import('./types.js').BytesDelegation<T>} bytes
  */
 export function bytesToDelegations(bytes) {
   if (!(bytes instanceof Uint8Array) || bytes.length === 0) {
@@ -122,7 +122,7 @@ export function delegationToString(delegation, encoding) {
  * Decode string into {@link Types.Delegation Delegation}
  *
  * @template {Types.Capabilities} [T=Types.Capabilities]
- * @param {import('./types').EncodedDelegation<T>} raw
+ * @param {import('./types.js').EncodedDelegation<T>} raw
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
 export function stringToDelegations(raw, encoding = 'base64url') {
@@ -135,7 +135,7 @@ export function stringToDelegations(raw, encoding = 'base64url') {
  * Decode string into a {@link Types.Delegation Delegation}
  *
  * @template {Types.Capabilities} [T=Types.Capabilities]
- * @param {import('./types').EncodedDelegation<T>} raw
+ * @param {import('./types.js').EncodedDelegation<T>} raw
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
  */
 export function stringToDelegation(raw, encoding) {

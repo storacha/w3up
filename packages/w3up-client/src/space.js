@@ -1,12 +1,12 @@
 export class Space {
-  /** @type {import('./types').DID} */
+  /** @type {import('./types.js').DID} */
   #did
 
   /** @type {Record<string, any>} */
   #meta
 
   /**
-   * @param {import('./types').DID} did
+   * @param {import('./types.js').DID} did
    * @param {Record<string, any>} meta
    */
   constructor(did, meta = {}) {
