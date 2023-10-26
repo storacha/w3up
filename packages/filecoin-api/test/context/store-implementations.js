@@ -170,7 +170,7 @@ export const getStoreImplementations = (
         /** @type {Set<DealerAggregateRecord>} */ items,
         /** @type {Partial<DealerAggregateRecord>} */ search
       ) => {
-        return Array.from(items).filter((i) => i.status === search.status)
+        return Array.from(items).filter((i) => i.status === search.status || i.aggregate.equals(search.aggregate))
       },
       updateFn: (
         /** @type {Set<DealerAggregateRecord>} */ items,

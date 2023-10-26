@@ -95,15 +95,17 @@ export const aggregateAccept = async ({ capability }, context) => {
   const { aggregate } = capability.nb
 
   // Get deal status from the store.
-  const get = await context.aggregateStore.get({
+  const query = await context.aggregateStore.query({
     aggregate,
   })
-  if (get.error) {
+  if (query.error) {
     return {
-      error: new StoreOperationFailed(get.error.message),
+      error: new StoreOperationFailed(query.error.message),
     }
   }
-  if (!get.ok.deal) {
+  // We just care about one deal for issuing receipt
+  const succeededAggregate = query.ok.find(r => r.deal)
+  if (!succeededAggregate?.deal) {
     return {
       error: new StoreOperationFailed('no deal available'),
     }
@@ -112,8 +114,8 @@ export const aggregateAccept = async ({ capability }, context) => {
   return {
     ok: {
       aggregate,
-      dataSource: get.ok.deal.dataSource,
-      dataType: get.ok.deal.dataType,
+      dataSource: succeededAggregate.deal.dataSource,
+      dataType: succeededAggregate.deal.dataType,
     },
   }
 }
