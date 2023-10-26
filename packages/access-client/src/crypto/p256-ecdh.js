@@ -48,7 +48,7 @@ export async function pubkeyBytesFromDID(did) {
 }
 
 /**
- * @typedef {import('./types').KeyExchangeKeypair} SharedKey
+ * @typedef {import('./types.js').KeyExchangeKeypair} SharedKey
  * @implements {SharedKey}
  */
 export class EcdhKeypair {

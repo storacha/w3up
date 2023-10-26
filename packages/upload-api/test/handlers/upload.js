@@ -420,9 +420,7 @@ export const test = {
     )
   },
 
-  // skip for now since it's not possible for a single account to register multiple spaces
-  // TODO: revisit whether this is a reasonable assumption in tests
-  'skip upload/remove only removes an upload for the given space': async (
+  'upload/remove only removes an upload for the given space': async (
     assert,
     context
   ) => {

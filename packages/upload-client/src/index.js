@@ -21,7 +21,7 @@ const PIECE_MULTIHASH_SIZE = PieceHasher.prefix.length + PieceHasher.size
  *
  * Required delegated capability proofs: `store/add`, `upload/add`
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -34,8 +34,8 @@ const PIECE_MULTIHASH_SIZE = PieceHasher.prefix.length + PieceHasher.size
  * has the capability to perform the action.
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
- * @param {import('./types').BlobLike} file File data.
- * @param {import('./types').UploadOptions} [options]
+ * @param {import('./types.js').BlobLike} file File data.
+ * @param {import('./types.js').UploadOptions} [options]
  */
 export async function uploadFile(conf, file, options = {}) {
   return await uploadBlockStream(
@@ -52,7 +52,7 @@ export async function uploadFile(conf, file, options = {}) {
  *
  * Required delegated capability proofs: `store/add`, `upload/add`
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -65,8 +65,8 @@ export async function uploadFile(conf, file, options = {}) {
  * has the capability to perform the action.
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
- * @param {import('./types').FileLike[]} files File data.
- * @param {import('./types').UploadDirectoryOptions} [options]
+ * @param {import('./types.js').FileLike[]} files File data.
+ * @param {import('./types.js').UploadDirectoryOptions} [options]
  */
 export async function uploadDirectory(conf, files, options = {}) {
   return await uploadBlockStream(
@@ -87,7 +87,7 @@ export async function uploadDirectory(conf, files, options = {}) {
  *
  * Required delegated capability proofs: `store/add`, `upload/add`
  *
- * @param {import('./types').InvocationConfig} conf Configuration
+ * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -100,8 +100,8 @@ export async function uploadDirectory(conf, files, options = {}) {
  * has the capability to perform the action.
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
- * @param {import('./types').BlobLike} car CAR file.
- * @param {import('./types').UploadOptions} [options]
+ * @param {import('./types.js').BlobLike} car CAR file.
+ * @param {import('./types.js').UploadOptions} [options]
  */
 export async function uploadCAR(conf, car, options = {}) {
   const blocks = new CAR.BlockStream(car)
@@ -110,15 +110,15 @@ export async function uploadCAR(conf, car, options = {}) {
 }
 
 /**
- * @param {import('./types').InvocationConfig} conf
+ * @param {import('./types.js').InvocationConfig} conf
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
- * @param {import('./types').UploadOptions} [options]
- * @returns {Promise<import('./types').AnyLink>}
+ * @param {import('./types.js').UploadOptions} [options]
+ * @returns {Promise<import('./types.js').AnyLink>}
  */
 async function uploadBlockStream(conf, blocks, options = {}) {
-  /** @type {import('./types').CARLink[]} */
+  /** @type {import('./types.js').CARLink[]} */
   const shards = []
-  /** @type {import('./types').AnyLink?} */
+  /** @type {import('./types.js').AnyLink?} */
   let root = null
   const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
   await blocks

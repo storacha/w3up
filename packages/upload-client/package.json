@@ -14,6 +14,7 @@
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",
   "scripts": {
+    "attw": "attw --pack .",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "check": "tsc --build",
@@ -28,13 +29,13 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./src/index.js",
-    "./car": "./src/car.js",
-    "./sharding": "./src/sharding.js",
-    "./upload": "./src/upload.js",
-    "./store": "./src/store.js",
-    "./unixfs": "./src/unixfs.js",
-    "./types": "./src/types.js"
+    ".": "./dist/src/index.js",
+    "./car": "./dist/src/car.js",
+    "./sharding": "./dist/src/sharding.js",
+    "./upload": "./dist/src/upload.js",
+    "./store": "./dist/src/store.js",
+    "./unixfs": "./dist/src/unixfs.js",
+    "./types": "./dist/src/types.js"
   },
   "typesVersions": {
     "*": {
@@ -59,7 +60,8 @@
     }
   },
   "files": [
-    "src",
+    "dist/src/**/*.js",
+    "dist/src/**/*.js.map",
     "dist/src/**/*.d.ts",
     "dist/src/**/*.d.ts.map"
   ],

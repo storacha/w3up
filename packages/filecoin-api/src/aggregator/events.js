@@ -17,8 +17,8 @@ import {
 /**
  * On piece queue messages, store piece.
  *
- * @param {import('./api').PieceMessageContext} context
- * @param {import('./api').PieceMessage} message
+ * @param {import('./api.js').PieceMessageContext} context
+ * @param {import('./api.js').PieceMessage} message
  */
 export const handlePieceMessage = async (context, message) => {
   const { piece, group } = message
@@ -43,8 +43,8 @@ export const handlePieceMessage = async (context, message) => {
 /**
  * On Piece store insert batch, buffer pieces together to resume buffer processing.
  *
- * @param {import('./api').PieceInsertEventContext} context
- * @param {import('./api').PieceRecord[]} records
+ * @param {import('./api.js').PieceInsertEventContext} context
+ * @param {import('./api.js').PieceRecord[]} records
  */
 export const handlePiecesInsert = async (context, records) => {
   // TODO: separate buffers per group after MVP
@@ -93,8 +93,8 @@ export const handlePiecesInsert = async (context, records) => {
  *   into aggregateOfferQueue. Remaining of the new buffer (in case buffer bigger
  *   than maximum aggregate size) is re-queued into the buffer queue.
  *
- * @param {import('./api').BufferMessageContext} context
- * @param {import('./api').BufferMessage[]} records
+ * @param {import('./api.js').BufferMessageContext} context
+ * @param {import('./api.js').BufferMessage[]} records
  */
 export const handleBufferQueueMessage = async (context, records) => {
   // Get reduced buffered pieces
@@ -164,8 +164,8 @@ export const handleBufferQueueMessage = async (context, records) => {
 /**
  * On aggregate offer queue message, store aggregate record in store.
  *
- * @param {import('./api').AggregateOfferMessageContext} context
- * @param {import('./api').AggregateOfferMessage} message
+ * @param {import('./api.js').AggregateOfferMessageContext} context
+ * @param {import('./api.js').AggregateOfferMessage} message
  */
 export const handleAggregateOfferMessage = async (context, message) => {
   const { pieces, aggregate, group } = message
@@ -189,8 +189,8 @@ export const handleAggregateOfferMessage = async (context, message) => {
 /**
  * On Aggregate store insert, offer inserted aggregate for deal.
  *
- * @param {import('./api').AggregateInsertEventToPieceAcceptQueueContext} context
- * @param {import('./api').AggregateRecord} record
+ * @param {import('./api.js').AggregateInsertEventToPieceAcceptQueueContext} context
+ * @param {import('./api.js').AggregateRecord} record
  */
 export const handleAggregateInsertToPieceAcceptQueue = async (
   context,
@@ -249,8 +249,8 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
 /**
  * On piece accept queue message, store inclusion record in store.
  *
- * @param {import('./api').PieceAcceptMessageContext} context
- * @param {import('./api').PieceAcceptMessage} message
+ * @param {import('./api.js').PieceAcceptMessageContext} context
+ * @param {import('./api.js').PieceAcceptMessage} message
  */
 export const handlePieceAcceptMessage = async (context, message) => {
   const { piece, aggregate, group, inclusion } = message
@@ -275,8 +275,8 @@ export const handlePieceAcceptMessage = async (context, message) => {
 /**
  * On Inclusion store insert, piece table can be updated to reflect piece state.
  *
- * @param {import('./api').InclusionInsertEventToUpdateState} context
- * @param {import('./api').InclusionRecord} record
+ * @param {import('./api.js').InclusionInsertEventToUpdateState} context
+ * @param {import('./api.js').InclusionRecord} record
  */
 export const handleInclusionInsertToUpdateState = async (context, record) => {
   const updateRes = await context.pieceStore.update(
@@ -297,8 +297,8 @@ export const handleInclusionInsertToUpdateState = async (context, record) => {
 }
 
 /**
- * @param {import('./api').InclusionInsertEventToIssuePieceAccept} context
- * @param {import('./api').InclusionRecord} record
+ * @param {import('./api.js').InclusionInsertEventToIssuePieceAccept} context
+ * @param {import('./api.js').InclusionRecord} record
  */
 export const handleInclusionInsertToIssuePieceAccept = async (
   context,
@@ -324,8 +324,8 @@ export const handleInclusionInsertToIssuePieceAccept = async (
 /**
  * On Aggregate store insert, offer inserted aggregate for deal.
  *
- * @param {import('./api').AggregateInsertEventToAggregateOfferContext} context
- * @param {import('./api').AggregateRecord} record
+ * @param {import('./api.js').AggregateInsertEventToAggregateOfferContext} context
+ * @param {import('./api.js').AggregateRecord} record
  */
 export const handleAggregateInsertToAggregateOffer = async (
   context,

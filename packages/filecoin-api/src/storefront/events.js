@@ -10,16 +10,16 @@ import {
 } from '../errors.js'
 
 /**
- * @typedef {import('./api').PieceRecord} PieceRecord
- * @typedef {import('./api').PieceRecordKey} PieceRecordKey
+ * @typedef {import('./api.js').PieceRecord} PieceRecord
+ * @typedef {import('./api.js').PieceRecordKey} PieceRecordKey
  * @typedef {import('../types.js').UpdatableAndQueryableStore<PieceRecordKey, PieceRecord, Pick<PieceRecord, 'status'>>} PieceStore
  */
 
 /**
  * On filecoin submit queue messages, validate piece for given content and store it in store.
  *
- * @param {import('./api').FilecoinSubmitMessageContext} context
- * @param {import('./api').FilecoinSubmitMessage} message
+ * @param {import('./api.js').FilecoinSubmitMessageContext} context
+ * @param {import('./api.js').FilecoinSubmitMessage} message
  */
 export const handleFilecoinSubmitMessage = async (context, message) => {
   // dedupe concurrent writes
@@ -47,8 +47,8 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
 /**
  * On piece offer queue message, offer piece for aggregation.
  *
- * @param {import('./api').PieceOfferMessageContext} context
- * @param {import('./api').PieceOfferMessage} message
+ * @param {import('./api.js').PieceOfferMessageContext} context
+ * @param {import('./api.js').PieceOfferMessage} message
  */
 export const handlePieceOfferMessage = async (context, message) => {
   const pieceOfferInv = await Aggregator.pieceOffer(
@@ -69,7 +69,7 @@ export const handlePieceOfferMessage = async (context, message) => {
 /**
  * On piece inserted into store, invoke submit to queue piece to be offered for aggregate.
  *
- * @param {import('./api').StorefrontClientContext} context
+ * @param {import('./api.js').StorefrontClientContext} context
  * @param {PieceRecord} record
  */
 export const handlePieceInsert = async (context, record) => {
@@ -90,7 +90,7 @@ export const handlePieceInsert = async (context, record) => {
 }
 
 /**
- * @param {import('./api').StorefrontClientContext} context
+ * @param {import('./api.js').StorefrontClientContext} context
  * @param {PieceRecord} record
  */
 export const handlePieceStatusUpdate = async (context, record) => {
@@ -120,7 +120,7 @@ export const handlePieceStatusUpdate = async (context, record) => {
 }
 
 /**
- * @param {import('./api').CronContext} context
+ * @param {import('./api.js').CronContext} context
  */
 export const handleCronTick = async (context) => {
   const submittedPieces = await context.pieceStore.query({

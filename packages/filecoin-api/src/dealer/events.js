@@ -3,14 +3,14 @@ import { Dealer, DealTracker } from '@web3-storage/filecoin-client'
 import { StoreOperationFailed } from '../errors.js'
 
 /**
- * @typedef {import('./api').AggregateRecord} AggregateRecord
- * @typedef {import('./api').AggregateRecordKey} AggregateRecordKey
+ * @typedef {import('./api.js').AggregateRecord} AggregateRecord
+ * @typedef {import('./api.js').AggregateRecordKey} AggregateRecordKey
  */
 
 /**
  * On aggregate insert event, update offer key with date to be retrievable by broker.
  *
- * @param {import('./api').AggregateInsertEventContext} context
+ * @param {import('./api.js').AggregateInsertEventContext} context
  * @param {AggregateRecord} record
  */
 export const handleAggregateInsert = async (context, record) => {
@@ -29,7 +29,7 @@ export const handleAggregateInsert = async (context, record) => {
 /**
  * On Aggregate update status event, issue aggregate accept receipt.
  *
- * @param {import('./api').AggregateUpdatedStatusEventContext} context
+ * @param {import('./api.js').AggregateUpdatedStatusEventContext} context
  * @param {AggregateRecord} record
  */
 export const handleAggregatUpdatedStatus = async (context, record) => {
@@ -52,7 +52,7 @@ export const handleAggregatUpdatedStatus = async (context, record) => {
  * On cron tick event, get aggregates without deals, and verify if there are updates on them.
  * If there are deals for pending aggregates, their state can be updated.
  *
- * @param {import('./api').CronContext} context
+ * @param {import('./api.js').CronContext} context
  */
 export const handleCronTick = async (context) => {
   // Get offered deals pending approval/rejection

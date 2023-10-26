@@ -64,7 +64,7 @@ export const test = {
     )
     assert.deepEqual(confirmationInvocations.length, 1)
     const serviceSaysAccountCanConfirm =
-      /** @type {API.Invocation<import('@web3-storage/capabilities/src/types.js').AccessConfirm>} */ (
+      /** @type {API.Invocation<import('@web3-storage/capabilities/types').AccessConfirm>} */ (
         confirmationInvocations[0]
       )
 

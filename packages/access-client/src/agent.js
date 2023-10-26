@@ -39,7 +39,7 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
 const agentToData = new WeakMap()
 
 /**
- * @typedef {import('./types').Service} Service
+ * @typedef {import('./types.js').Service} Service
  * @typedef {import('@ucanto/interface').Receipt<any, any>} Receipt
  */
 
@@ -87,12 +87,12 @@ export function connection(options = {}) {
  * @template {Record<string, any>} [S=Service]
  */
 export class Agent {
-  /** @type {import('./agent-data').AgentData} */
+  /** @type {import('./agent-data.js').AgentData} */
   #data
 
   /**
-   * @param {import('./agent-data').AgentData} data - Agent data
-   * @param {import('./types').AgentOptions<S>} [options]
+   * @param {import('./agent-data.js').AgentData} data - Agent data
+   * @param {import('./types.js').AgentOptions<S>} [options]
    */
   constructor(data, options = {}) {
     /** @type { Client.Channel<S> & { url?: URL } | undefined } */
@@ -112,8 +112,8 @@ export class Agent {
    * Create a new Agent instance, optionally with the passed initialization data.
    *
    * @template {Record<string, any>} [R=Service]
-   * @param {Partial<import('./types').AgentDataModel>} [init]
-   * @param {import('./types').AgentOptions<R> & import('./types').AgentDataOptions} [options]
+   * @param {Partial<import('./types.js').AgentDataModel>} [init]
+   * @param {import('./types.js').AgentOptions<R> & import('./types.js').AgentDataOptions} [options]
    */
   static async create(init, options = {}) {
     const data = await AgentData.create(init, options)
@@ -124,8 +124,8 @@ export class Agent {
    * Instantiate an Agent from pre-exported agent data.
    *
    * @template {Record<string, any>} [R=Service]
-   * @param {import('./types').AgentDataExport} raw
-   * @param {import('./types').AgentOptions<R> & import('./types').AgentDataOptions} [options]
+   * @param {import('./types.js').AgentDataExport} raw
+   * @param {import('./types.js').AgentOptions<R> & import('./types.js').AgentDataOptions} [options]
    */
   static from(raw, options = {}) {
     const data = AgentData.fromExport(raw, options)
@@ -171,7 +171,7 @@ export class Agent {
    */
   #delegations(caps) {
     const _caps = new Set(caps)
-    /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types').DelegationMeta }>} */
+    /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types.js').DelegationMeta }>} */
     const values = []
     for (const [, value] of this.#data.delegations) {
       // check expiration
@@ -320,7 +320,7 @@ export class Agent {
       expiration: Infinity,
     })
 
-    /** @type {import('./types').SpaceMeta} */
+    /** @type {import('./types.js').SpaceMeta} */
     const meta = { isRegistered: false }
     // eslint-disable-next-line eqeqeq
     if (name != undefined) {
@@ -345,7 +345,7 @@ export class Agent {
    * @param {Ucanto.Delegation} delegation
    */
   async importSpaceFromDelegation(delegation) {
-    const meta = /** @type {import('./types').SpaceMeta} */ (
+    const meta = /** @type {import('./types.js').SpaceMeta} */ (
       delegation.facts[0]?.space ?? { isRegistered: false }
     )
     // @ts-ignore
@@ -434,7 +434,7 @@ export class Agent {
 
   /**
    *
-   * @param {import('./types').DelegationOptions} options
+   * @param {import('./types.js').DelegationOptions} options
    */
   async delegate(options) {
     const space = this.currentSpaceWithMeta()
@@ -501,7 +501,7 @@ export class Agent {
    * @template {Ucanto.URI} R
    * @template {Ucanto.Caveats} C
    * @param {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} cap
-   * @param {import('./types').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
+   * @param {import('./types.js').InvokeOptions<A, R, Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>>} options
    * @returns {Promise<Ucanto.InferReceipt<Ucanto.Capability<A, R, C>, S>>}
    */
   async invokeAndExecute(cap, options) {
@@ -554,7 +554,7 @@ export class Agent {
    * @template {Ucanto.TheCapabilityParser<Ucanto.CapabilityMatch<A, R, C>>} CAP
    * @template {Ucanto.Caveats} [C={}]
    * @param {CAP} cap
-   * @param {import('./types').InvokeOptions<A, R, CAP>} options
+   * @param {import('./types.js').InvokeOptions<A, R, CAP>} options
    */
   async invoke(cap, options) {
     const space = options.with || this.currentSpace()
@@ -614,7 +614,7 @@ export class Agent {
       throw inv.out.error
     }
 
-    return /** @type {import('./types').SpaceInfoResult} */ (inv.out.ok)
+    return /** @type {import('./types.js').SpaceInfoResult} */ (inv.out.ok)
   }
 }
 

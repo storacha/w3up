@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.2...filecoin-api-v2.0.3) (2023-10-25)
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+
+## [2.0.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.1...filecoin-api-v2.0.2) (2023-10-24)
+
+
+### Bug Fixes
+
+* export tests in lib for events ([#1001](https://github.com/web3-storage/w3up/issues/1001)) ([e442f32](https://github.com/web3-storage/w3up/commit/e442f32ce09d1457bc1df6c96ad006ec082d428d))
+
+## [2.0.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.0...filecoin-api-v2.0.1) (2023-10-24)
+
+
+### Bug Fixes
+
+* import exports and types ([#998](https://github.com/web3-storage/w3up/issues/998)) ([844d938](https://github.com/web3-storage/w3up/commit/844d93837f0ac503f93533899f22984a7b293cd2))
+
 ## [2.0.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v1.4.4...filecoin-api-v2.0.0) (2023-10-24)
 
 

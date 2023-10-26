@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/did-mailto",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "did:mailto",
   "repository": {
     "type": "git",
@@ -14,16 +14,21 @@
   "files": [
     "src",
     "test",
-    "dist/**/*.d.ts",
-    "dist/**/*.d.ts.map"
+    "dist"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./src/index.js"
+    ".": "./dist/src/index.js",
+    "./types": "./dist/src/types.js"
+  },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "dist/src/types"
+      ]
     }
   },
   "scripts": {
+    "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",

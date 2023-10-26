@@ -188,7 +188,7 @@ describe('Client', () => {
     it('uploads a CAR file to the service', async () => {
       const car = await randomCAR(32)
 
-      /** @type {import('../src/types').CARLink?} */
+      /** @type {import('../src/types.js').CARLink?} */
       let carCID
 
       const service = mockService({

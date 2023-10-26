@@ -1,7 +1,7 @@
 import type {
   FetchOptions,
   ProgressStatus as XHRProgressStatus,
-} from 'ipfs-utils/src/types'
+} from 'ipfs-utils/src/types.js'
 import { Link, UnknownLink, Version } from 'multiformats/link'
 import { Block } from '@ipld/unixfs'
 import {
@@ -41,7 +41,6 @@ import {
   UploadGetSuccess,
   UploadGetFailure,
 } from '@web3-storage/capabilities/types'
-import * as UnixFS from '@ipld/unixfs/src/unixfs'
 
 export type {
   FetchOptions,
@@ -202,7 +201,8 @@ export interface RequestOptions
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}
 
-export type DirectoryEntryLink = UnixFS.DirectoryEntryLink
+export type DirectoryEntryLink =
+  import('@ipld/unixfs/directory').DirectoryEntryLink
 
 export interface UnixFSDirectoryEncoderOptions {
   /**

@@ -9,9 +9,9 @@ export class UploadClient extends Base {
   /**
    * Register an "upload" to the resource.
    *
-   * @param {import('../types').UnknownLink} root - Root data CID for the DAG that was stored.
-   * @param {import('../types').CARLink[]} shards - CIDs of CAR files that contain the DAG.
-   * @param {import('../types').RequestOptions} [options]
+   * @param {import('../types.js').UnknownLink} root - Root data CID for the DAG that was stored.
+   * @param {import('../types.js').CARLink[]} shards - CIDs of CAR files that contain the DAG.
+   * @param {import('../types.js').RequestOptions} [options]
    */
   async add(root, shards, options = {}) {
     const conf = await this._invocationConfig([UploadCapabilities.add.can])
@@ -22,7 +22,7 @@ export class UploadClient extends Base {
   /**
    * List uploads registered to the resource.
    *
-   * @param {import('../types').ListRequestOptions} [options]
+   * @param {import('../types.js').ListRequestOptions} [options]
    */
   async list(options = {}) {
     const conf = await this._invocationConfig([UploadCapabilities.list.can])
@@ -33,8 +33,8 @@ export class UploadClient extends Base {
   /**
    * Remove an upload by root data CID.
    *
-   * @param {import('../types').UnknownLink} root - Root data CID to remove.
-   * @param {import('../types').RequestOptions} [options]
+   * @param {import('../types.js').UnknownLink} root - Root data CID to remove.
+   * @param {import('../types.js').RequestOptions} [options]
    */
   async remove(root, options = {}) {
     const conf = await this._invocationConfig([UploadCapabilities.remove.can])

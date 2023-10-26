@@ -7,11 +7,11 @@ import { UnexpectedState } from '../errors.js'
  * @typedef {import('@ucanto/interface').Link} Link
  * @typedef {import('@web3-storage/data-segment').AggregateView} AggregateView
  *
- * @typedef {import('./api').BufferedPiece} BufferedPiece
- * @typedef {import('./api').BufferRecord} BufferRecord
- * @typedef {import('./api').BufferMessage} BufferMessage
- * @typedef {import('./api').AggregateOfferMessage} AggregateOfferMessage
- * @typedef {import('../types').StoreGetError} StoreGetError
+ * @typedef {import('./api.js').BufferedPiece} BufferedPiece
+ * @typedef {import('./api.js').BufferRecord} BufferRecord
+ * @typedef {import('./api.js').BufferMessage} BufferMessage
+ * @typedef {import('./api.js').AggregateOfferMessage} AggregateOfferMessage
+ * @typedef {import('../types.js').StoreGetError} StoreGetError
  * @typedef {{ bufferedPieces: BufferedPiece[], group: string }} GetBufferedPieces
  * @typedef {import('../types.js').Result<GetBufferedPieces, StoreGetError | UnexpectedState>} GetBufferedPiecesResult
  *
@@ -24,9 +24,9 @@ import { UnexpectedState } from '../errors.js'
 /**
  * @param {object} props
  * @param {AggregateInfo} props.aggregateInfo
- * @param {import('../types').Store<Link, BufferRecord>} props.bufferStore
- * @param {import('../types').Queue<BufferMessage>} props.bufferQueue
- * @param {import('../types').Queue<AggregateOfferMessage>} props.aggregateOfferQueue
+ * @param {import('../types.js').Store<Link, BufferRecord>} props.bufferStore
+ * @param {import('../types.js').Queue<BufferMessage>} props.bufferQueue
+ * @param {import('../types.js').Queue<AggregateOfferMessage>} props.aggregateOfferQueue
  * @param {string} props.group
  */
 export async function handleBufferReducingWithAggregate({
@@ -103,8 +103,8 @@ export async function handleBufferReducingWithAggregate({
  *
  * @param {object} props
  * @param {import('./api.js').Buffer} props.buffer
- * @param {import('../types').Store<Link, BufferRecord>} props.bufferStore
- * @param {import('../types').Queue<BufferMessage>} props.bufferQueue
+ * @param {import('../types.js').Store<Link, BufferRecord>} props.bufferStore
+ * @param {import('../types.js').Queue<BufferMessage>} props.bufferQueue
  */
 export async function handleBufferReducingWithoutAggregate({
   buffer,
@@ -199,7 +199,7 @@ export function aggregatePieces(bufferedPieces, sizes) {
  * Get buffered pieces from queue buffer records.
  *
  * @param {Link[]} bufferPieces
- * @param {import('../types').Store<Link, BufferRecord>} bufferStore
+ * @param {import('../types.js').Store<Link, BufferRecord>} bufferStore
  * @returns {Promise<GetBufferedPiecesResult>}
  */
 export async function getBufferedPieces(bufferPieces, bufferStore) {

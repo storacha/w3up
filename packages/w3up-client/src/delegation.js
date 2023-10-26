@@ -1,7 +1,7 @@
 import { Delegation as CoreDelegation } from '@ucanto/core/delegation'
 
 /**
- * @template {import('./types').Capabilities} C
+ * @template {import('./types.js').Capabilities} C
  * @extends {CoreDelegation<C>}
  */
 export class Delegation extends CoreDelegation {
@@ -9,8 +9,8 @@ export class Delegation extends CoreDelegation {
   #meta
 
   /**
-   * @param {import('./types').UCANBlock<C>} root
-   * @param {Map<string, import('./types').Block>} [blocks]
+   * @param {import('./types.js').UCANBlock<C>} root
+   * @param {Map<string, import('./types.js').Block>} [blocks]
    * @param {Record<string, any>} [meta]
    */
   constructor(root, blocks, meta = {}) {

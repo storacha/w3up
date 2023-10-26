@@ -9,6 +9,6 @@ import { IndexedDBDriver } from '../drivers/indexeddb.js'
  * import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
  * ```
  *
- * @extends {IndexedDBDriver<import('../types').AgentDataExport>}
+ * @extends {IndexedDBDriver<import('../types.js').AgentDataExport>}
  */
 export class StoreIndexedDB extends IndexedDBDriver {}
