@@ -13,6 +13,7 @@ import { create as createRevocationChecker } from '../../src/utils/revocation.js
 import { createServer, connect } from '../../src/lib.js'
 import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
+import { PlansStorage } from '../storage/plans-storage.js'
 
 /**
  * @param {object} options
@@ -25,6 +26,7 @@ export const createContext = async (options = {}) => {
   const carStoreBucket = await CarStoreBucket.activate()
   const dudewhereBucket = new DudewhereBucket()
   const revocationsStorage = new RevocationsStorage()
+  const plansStorage = new PlansStorage()
   const signer = await Signer.generate()
   const id = signer.withDID('did:web:test.web3.storage')
 
@@ -37,6 +39,7 @@ export const createContext = async (options = {}) => {
     provisionsStorage: new ProvisionsStorage(options.providers),
     delegationsStorage: new DelegationsStorage(),
     rateLimitsStorage: new RateLimitsStorage(),
+    plansStorage,
     revocationsStorage,
     errorReporter: {
       catch(error) {

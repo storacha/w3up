@@ -33,6 +33,9 @@ import * as DealTrackerCaps from './filecoin/deal-tracker.js'
 import * as DealerCaps from './filecoin/dealer.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
+import * as PlanCaps from './plan.js'
+
+export type ISO8601Date = string
 
 export type { Unit, PieceLink }
 
@@ -394,14 +397,14 @@ export interface StoreListItem {
   link: UnknownLink
   size: number
   origin?: UnknownLink
-  insertedAt: string
+  insertedAt: ISO8601Date
 }
 
 export interface UploadListItem {
   root: UnknownLink
   shards?: CARLink[]
-  insertedAt: string
-  updatedAt: string
+  insertedAt: ISO8601Date
+  updatedAt: ISO8601Date
 }
 
 // TODO: (olizilla) make this an UploadListItem too?
@@ -514,6 +517,21 @@ export type AggregateAccept = InferInvokedCapability<
   typeof DealerCaps.aggregateAccept
 >
 export type DealInfo = InferInvokedCapability<typeof DealTrackerCaps.dealInfo>
+
+// Plan
+
+export type PlanGet = InferInvokedCapability<typeof PlanCaps.get>
+export interface PlanGetSuccess {
+  updatedAt: ISO8601Date
+  product: DID
+}
+
+export interface PlanNotFound extends Ucanto.Failure {
+  name: 'PlanNotFound'
+}
+
+export type PlanGetFailure = PlanNotFound
+
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
@@ -554,5 +572,6 @@ export type AbilitiesArray = [
   DealInfo['can'],
   Admin['can'],
   AdminUploadInspect['can'],
-  AdminStoreInspect['can']
+  AdminStoreInspect['can'],
+  PlanGet['can']
 ]
