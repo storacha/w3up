@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.3...filecoin-api-v3.0.0) (2023-10-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade data segment v4 ([#996](https://github.com/web3-storage/w3up/issues/996))
+
+### Bug Fixes
+
+* upgrade data segment v4 ([#996](https://github.com/web3-storage/w3up/issues/996)) ([348e4b0](https://github.com/web3-storage/w3up/commit/348e4b065909e48ab1e97c0eaee9fa0b5ad2e223))
+
 ## [2.0.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.2...filecoin-api-v2.0.3) (2023-10-25)
 
 
