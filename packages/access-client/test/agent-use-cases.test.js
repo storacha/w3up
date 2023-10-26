@@ -196,11 +196,11 @@ describe('authorizeWaitAndClaim', async function () {
 describe('getAccountPlan', async function () {
   const accountWithAPlan = 'did:mailto:example.com:i-have-a-plan'
   const accountWithoutAPlan = 'did:mailto:example.com:i-have-no-plan'
-
+  const product = 'did:web:test.web3.storage'
   /** @type {Record<Ucanto.DID, {product: Ucanto.DID, updatedAt: string}>} */
   const plans = {
     [accountWithAPlan]: {
-      product: 'did:web:test.web3.storage',
+      product,
       updatedAt: new Date().toISOString(),
     },
   }
@@ -242,6 +242,7 @@ describe('getAccountPlan', async function () {
   it('should succeed for accounts with plans', async function () {
     const result = await getAccountPlan(agent, accountWithAPlan)
     assert(result.ok)
+    assert.equal(result.ok.product, product)
   })
 
   it('should fail for accounts without a plan', async function () {
