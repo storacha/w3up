@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.1...filecoin-api-v3.0.2) (2023-10-26)
+
+
+### Bug Fixes
+
+* aggregate accept must query with aggregate only ([#1024](https://github.com/web3-storage/w3up/issues/1024)) ([6fd909c](https://github.com/web3-storage/w3up/commit/6fd909ccdc108a83b3ea122e2d66b0663c6f3484))
+
 ## [3.0.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.0...filecoin-api-v3.0.1) (2023-10-26)
 
 
