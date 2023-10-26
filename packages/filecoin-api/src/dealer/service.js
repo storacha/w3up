@@ -10,7 +10,6 @@ import * as API from '../types.js'
 import {
   StoreOperationFailed,
   DecodeBlockOperationFailed,
-  RecordNotFoundErrorName,
 } from '../errors.js'
 
 /**
@@ -23,16 +22,13 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
   const { aggregate, pieces } = capability.nb
 
   const hasRes = await context.aggregateStore.has({ aggregate })
-  let exists = true
-  if (hasRes.error?.name === RecordNotFoundErrorName) {
-    exists = false
-  } else if (hasRes.error) {
+  if (hasRes.error) {
     return {
       error: new StoreOperationFailed(hasRes.error.message),
     }
   }
 
-  if (!exists) {
+  if (!hasRes.ok) {
     const piecesBlockRes = await findCBORBlock(
       pieces,
       invocation.iterateIPLDBlocks()
