@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.0.1...capabilities-v11.1.0) (2023-10-27)
+
+
+### Features
+
+* implement `plan/get` capability ([#1005](https://github.com/web3-storage/w3up/issues/1005)) ([f0456d2](https://github.com/web3-storage/w3up/commit/f0456d2e2aab462666810e22abd7dfb7e1ce21be))
+
 ## [11.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v11.0.0...capabilities-v11.0.1) (2023-10-25)
 
 
