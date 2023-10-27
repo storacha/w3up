@@ -43,6 +43,9 @@ import type {
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  PlanGet,
+  PlanGetSuccess,
+  PlanGetFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -85,6 +88,9 @@ export interface Service {
   }
   ucan: {
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
+  }
+  plan: {
+    get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
   }
 }
 

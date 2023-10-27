@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/w3up-client",
-  "version": "9.2.0",
+  "version": "9.2.1",
   "description": "Client for the w3up API",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
@@ -58,6 +58,7 @@
     "dist"
   ],
   "scripts": {
+    "attw": "attw --pack .",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "check": "tsc --build",

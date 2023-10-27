@@ -1,5 +1,43 @@
 # Changelog
 
+## [11.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.0.1...capabilities-v11.1.0) (2023-10-27)
+
+
+### Features
+
+* implement `plan/get` capability ([#1005](https://github.com/web3-storage/w3up/issues/1005)) ([f0456d2](https://github.com/web3-storage/w3up/commit/f0456d2e2aab462666810e22abd7dfb7e1ce21be))
+
+## [11.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v11.0.0...capabilities-v11.0.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+
+## [11.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v10.2.0...capabilities-v11.0.0) (2023-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* see latest specs https://github.com/web3-storage/specs/blob/cbdb706f18567900c5c24d7fb16ccbaf93d0d023/w3-filecoin.md
+* filecoin client to use new capabilities
+* filecoin capabilities
+
+### Bug Fixes
+
+* add missing ContentNotFound definition for filecoin offer failure ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* add missing filecoin submit success and failure types ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* client tests ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+* type errors ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* upgrade ucanto in filecoin api ([c95fb54](https://github.com/web3-storage/w3up/commit/c95fb54cdb04f50ff78e5113e70d73c1cd6d8b47))
+
+
+### Code Refactoring
+
+* filecoin api services events and tests ([#974](https://github.com/web3-storage/w3up/issues/974)) ([953537b](https://github.com/web3-storage/w3up/commit/953537bcb98d94b9e9655797a7f9026643ab949f))
+* filecoin capabilities ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* filecoin client to use new capabilities ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+
 ## [10.2.0](https://github.com/web3-storage/w3up/compare/capabilities-v10.1.0...capabilities-v10.2.0) (2023-10-19)
 
 

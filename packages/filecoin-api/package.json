@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/filecoin-api",
-  "version": "1.4.4",
+  "version": "3.0.4",
   "type": "module",
   "main": "./src/lib.js",
   "files": [
@@ -14,26 +14,56 @@
       "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
-      "aggregator": [
-        "dist/src/aggregator.d.ts"
+      "aggregator/api": [
+        "dist/src/aggregator/api.d.ts"
       ],
-      "dealer": [
-        "dist/src/dealer.d.ts"
+      "aggregator/service": [
+        "dist/src/aggregator/service.d.ts"
       ],
-      "chain-tracker": [
-        "dist/src/chain-tracker.d.ts"
+      "aggregator/events": [
+        "dist/src/aggregator/events.d.ts"
+      ],
+      "dealer/api": [
+        "dist/src/dealer/api.d.ts"
+      ],
+      "dealer/service": [
+        "dist/src/dealer/service.d.ts"
+      ],
+      "dealer/events": [
+        "dist/src/dealer/events.d.ts"
+      ],
+      "deal-tracker/api": [
+        "dist/src/deal-tracker/api.d.ts"
+      ],
+      "deal-tracker/service": [
+        "dist/src/deal-tracker/service.d.ts"
+      ],
+      "deal-tracker/events": [
+        "dist/src/deal-tracker/events.d.ts"
       ],
       "errors": [
         "dist/src/errors.d.ts"
       ],
-      "storefront": [
-        "dist/src/storefront.d.ts"
+      "storefront/api": [
+        "dist/src/storefront/api.d.ts"
+      ],
+      "storefront/service": [
+        "dist/src/storefront/service.d.ts"
+      ],
+      "storefront/events": [
+        "dist/src/storefront/events.d.ts"
       ],
       "types": [
         "dist/src/types.d.ts"
       ],
       "test": [
         "dist/test/lib.d.ts"
+      ],
+      "test/context/service": [
+        "dist/test/context/service.d.ts"
+      ],
+      "test/types": [
+        "dist/test/types.d.ts"
       ]
     }
   },
@@ -46,21 +76,49 @@
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
     },
-    "./aggregator": {
-      "types": "./dist/src/aggregator.d.ts",
-      "import": "./src/aggregator.js"
+    "./aggregator/api": {
+      "types": "./dist/src/aggregator/api.d.ts",
+      "import": "./src/aggregator/api.js"
     },
-    "./dealer": {
-      "types": "./dist/src/dealer.d.ts",
-      "import": "./src/dealer.js"
+    "./aggregator/service": {
+      "types": "./dist/src/aggregator/service.d.ts",
+      "import": "./src/aggregator/service.js"
     },
-    "./chain-tracker": {
-      "types": "./dist/src/chain-tracker.d.ts",
-      "import": "./src/chain-tracker.js"
+    "./aggregator/events": {
+      "types": "./dist/src/aggregator/events.d.ts",
+      "import": "./src/aggregator/events.js"
     },
-    "./storefront": {
-      "types": "./dist/src/storefront.d.ts",
-      "import": "./src/storefront.js"
+    "./dealer/api": {
+      "types": "./dist/src/dealer/api.d.ts",
+      "import": "./src/dealer/api.js"
+    },
+    "./dealer/service": {
+      "types": "./dist/src/dealer/service.d.ts",
+      "import": "./src/dealer/service.js"
+    },
+    "./dealer/events": {
+      "types": "./dist/src/dealer/events.d.ts",
+      "import": "./src/dealer/events.js"
+    },
+    "./deal-tracker/api": {
+      "types": "./dist/src/deal-tracker/api.d.ts",
+      "import": "./src/deal-tracker/api.js"
+    },
+    "./deal-tracker/service": {
+      "types": "./dist/src/deal-tracker/service.d.ts",
+      "import": "./src/deal-tracker/service.js"
+    },
+    "./storefront/api": {
+      "types": "./dist/src/storefront/api.d.ts",
+      "import": "./src/storefront/api.js"
+    },
+    "./storefront/service": {
+      "types": "./dist/src/storefront/service.d.ts",
+      "import": "./src/storefront/service.js"
+    },
+    "./storefront/events": {
+      "types": "./dist/src/storefront/events.d.ts",
+      "import": "./src/storefront/events.js"
     },
     "./errors": {
       "types": "./dist/src/errors.d.ts",
@@ -69,9 +127,18 @@
     "./test": {
       "types": "./dist/test/lib.d.ts",
       "import": "./test/lib.js"
+    },
+    "./test/context/service": {
+      "types": "./dist/test/context/service.d.ts",
+      "import": "./test/context/service.js"
+    },
+    "./test/types": {
+      "types": "./dist/test/types.d.ts",
+      "import": "./test/types.js"
     }
   },
   "scripts": {
+    "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build",
@@ -86,7 +153,7 @@
     "@ucanto/server": "^9.0.1",
     "@ucanto/transport": "^9.0.0",
     "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/data-segment": "^3.2.0"
+    "@web3-storage/data-segment": "^4.0.0"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",
@@ -108,7 +175,9 @@
       "project": "./tsconfig.json"
     },
     "rules": {
-      "unicorn/expiring-todo-comments": "off"
+      "unicorn/expiring-todo-comments": "off",
+      "unicorn/prefer-number-properties": "off",
+      "jsdoc/check-indentation": "off"
     },
     "env": {
       "mocha": true

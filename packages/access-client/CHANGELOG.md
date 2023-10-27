@@ -1,5 +1,25 @@
 # Changelog
 
+## [16.3.0](https://github.com/web3-storage/w3up/compare/access-v16.2.1...access-v16.3.0) (2023-10-27)
+
+
+### Features
+
+* implement `plan/get` capability ([#1005](https://github.com/web3-storage/w3up/issues/1005)) ([f0456d2](https://github.com/web3-storage/w3up/commit/f0456d2e2aab462666810e22abd7dfb7e1ce21be))
+
+
+### Bug Fixes
+
+* make `plan/get` return value is typed properly ([#1029](https://github.com/web3-storage/w3up/issues/1029)) ([075e341](https://github.com/web3-storage/w3up/commit/075e3414f528dfdf872ba29c8daf7ea5ba1cf8c9))
+
+## [16.2.1](https://github.com/web3-storage/w3up/compare/access-v16.2.0...access-v16.2.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+* package.json files excludes 'src' and includes .js and .js.map in dist for packages that now export their module from dist  ([#1012](https://github.com/web3-storage/w3up/issues/1012)) ([d2537de](https://github.com/web3-storage/w3up/commit/d2537deed533a39f39e312a1dfcfbd048e1d83e5))
+
 ## [16.2.0](https://github.com/web3-storage/w3up/compare/access-v16.1.0...access-v16.2.0) (2023-10-20)
 
 

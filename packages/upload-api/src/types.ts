@@ -19,9 +19,9 @@ import type {
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
-import { DelegationsStorage as Delegations } from './types/delegations'
-import { ProvisionsStorage as Provisions } from './types/provisions'
-import { RateLimitsStorage as RateLimits } from './types/rate-limits'
+import { DelegationsStorage as Delegations } from './types/delegations.js'
+import { ProvisionsStorage as Provisions } from './types/provisions.js'
+import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
 
 export type ValidationEmailSend = {
   to: string
@@ -113,32 +113,37 @@ import {
   ProviderDID,
   StoreGetFailure,
   UploadGetFailure,
-  UCANRevoke,
   ListResponse,
   CARLink,
   StoreGetSuccess,
   UploadGetSuccess,
+  UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  PlanGet,
+  PlanGetSuccess,
+  PlanGetFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
-import { RevocationsStorage } from './types/revocations'
+import { RevocationsStorage } from './types/revocations.js'
 
 export * from '@web3-storage/capabilities/types'
 export * from '@ucanto/interface'
 
-export type { ProvisionsStorage, Provision } from './types/provisions'
+export type { ProvisionsStorage, Provision } from './types/provisions.js'
 export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
-} from './types/delegations'
+} from './types/delegations.js'
 export type {
   Revocation,
   RevocationQuery,
   MatchingRevocations,
   RevocationsStorage,
-} from './types/revocations'
-export type { RateLimitsStorage, RateLimit } from './types/rate-limits'
+} from './types/revocations.js'
+export type { RateLimitsStorage, RateLimit } from './types/rate-limits.js'
+import { PlansStorage } from './types/plans.js'
+export type { PlansStorage } from './types/plans.js'
 
 export interface Service {
   store: {
@@ -233,6 +238,9 @@ export interface Service {
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
   }
+  plan: {
+    get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
+  }
 }
 
 export type StoreServiceContext = SpaceServiceContext & {
@@ -304,6 +312,10 @@ export interface RevocationServiceContext {
   revocationsStorage: RevocationsStorage
 }
 
+export interface PlanServiceContext {
+  plansStorage: PlansStorage
+}
+
 export interface ServiceContext
   extends AccessServiceContext,
     ConsoleServiceContext,
@@ -315,6 +327,7 @@ export interface ServiceContext
     SubscriptionServiceContext,
     RateLimitServiceContext,
     RevocationServiceContext,
+    PlanServiceContext,
     UploadServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {

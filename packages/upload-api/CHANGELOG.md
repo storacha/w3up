@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.3.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.2.0...upload-api-v6.3.0) (2023-10-25)
+
+
+### Features
+
+* allow customers to create more than one space ([#989](https://github.com/web3-storage/w3up/issues/989)) ([06e0ca9](https://github.com/web3-storage/w3up/commit/06e0ca9fd3e34104002023f81fc605b666ef9a5b))
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+
 ## [6.2.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.1.0...upload-api-v6.2.0) (2023-10-20)
 
 

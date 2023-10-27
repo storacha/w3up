@@ -7,7 +7,7 @@ describe('did-mailto', () => {
 
 /**
  * @param {typeof didMailto} didMailto
- * @param {import("./test-types").TestAdder} test
+ * @param {import("./test-types.js").TestAdder} test
  */
 function testDidMailto(didMailto, test) {
   test('module is an object', async () => {

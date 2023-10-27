@@ -11,8 +11,13 @@ import * as Console from './console.js'
 import * as RateLimit from './rate-limit.js'
 import * as Admin from './admin.js'
 import * as Subscription from './subscription.js'
-import * as Filecoin from './filecoin.js'
+import * as Filecoin from './filecoin/index.js'
+import * as Storefront from './filecoin/storefront.js'
+import * as Aggregator from './filecoin/aggregator.js'
+import * as Dealer from './filecoin/dealer.js'
+import * as DealTracker from './filecoin/deal-tracker.js'
 import * as UCAN from './ucan.js'
+import * as Plan from './plan.js'
 
 export {
   Access,
@@ -28,8 +33,13 @@ export {
   RateLimit,
   Subscription,
   Filecoin,
+  Storefront,
+  Aggregator,
+  Dealer,
+  DealTracker,
   Admin,
   UCAN,
+  Plan,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
@@ -58,14 +68,16 @@ export const abilitiesAsStrings = [
   RateLimit.add.can,
   RateLimit.remove.can,
   RateLimit.list.can,
-  Filecoin.filecoinQueue.can,
-  Filecoin.filecoinAdd.can,
-  Filecoin.aggregateQueue.can,
-  Filecoin.aggregateAdd.can,
-  Filecoin.dealQueue.can,
-  Filecoin.dealAdd.can,
-  Filecoin.chainTrackerInfo.can,
+  Storefront.filecoinOffer.can,
+  Storefront.filecoinSubmit.can,
+  Storefront.filecoinAccept.can,
+  Aggregator.pieceOffer.can,
+  Aggregator.pieceAccept.can,
+  Dealer.aggregateOffer.can,
+  Dealer.aggregateAccept.can,
+  DealTracker.dealInfo.can,
   Admin.admin.can,
   Admin.upload.inspect.can,
   Admin.store.inspect.can,
+  Plan.get.can,
 ]

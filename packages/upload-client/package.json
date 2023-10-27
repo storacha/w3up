@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-client",
-  "version": "10.1.0",
+  "version": "11.0.0",
   "description": "The web3.storage upload client",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client",
   "repository": {
@@ -14,11 +14,12 @@
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",
   "scripts": {
+    "attw": "attw --pack .",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "check": "tsc --build",
     "test": "npm-run-all -p -r mock test:all",
-    "test:all": "run-s test:browser test:node",
+    "test:all": "run-s test:node test:browser",
     "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "mock": "run-p mock:*",
@@ -28,13 +29,13 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./src/index.js",
-    "./car": "./src/car.js",
-    "./sharding": "./src/sharding.js",
-    "./upload": "./src/upload.js",
-    "./store": "./src/store.js",
-    "./unixfs": "./src/unixfs.js",
-    "./types": "./src/types.js"
+    ".": "./dist/src/index.js",
+    "./car": "./dist/src/car.js",
+    "./sharding": "./dist/src/sharding.js",
+    "./upload": "./dist/src/upload.js",
+    "./store": "./dist/src/store.js",
+    "./unixfs": "./dist/src/unixfs.js",
+    "./types": "./dist/src/types.js"
   },
   "typesVersions": {
     "*": {
@@ -59,7 +60,8 @@
     }
   },
   "files": [
-    "src",
+    "dist/src/**/*.js",
+    "dist/src/**/*.js.map",
     "dist/src/**/*.d.ts",
     "dist/src/**/*.d.ts.map"
   ],
@@ -72,7 +74,7 @@
     "@ucanto/interface": "^9.0.0",
     "@ucanto/transport": "^9.0.0",
     "@web3-storage/capabilities": "workspace:^",
-    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^1.1.4",
+    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^3.0.0",
     "ipfs-utils": "^9.0.14",
     "multiformats": "^12.1.2",
     "p-retry": "^5.1.2",

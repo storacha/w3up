@@ -29,7 +29,7 @@ export async function authorizeFromUrl(url, env) {
 export async function authorize(encodedUcan, env) {
   try {
     /**
-     * @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/src/types.js').AccessConfirm]>}
+     * @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/types').AccessConfirm]>}
      */
     const request = stringToDelegation(encodedUcan)
 

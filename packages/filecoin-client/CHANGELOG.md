@@ -1,5 +1,50 @@
 # Changelog
 
+## [3.0.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v2.0.2...filecoin-client-v3.0.0) (2023-10-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade data segment v4 ([#996](https://github.com/web3-storage/w3up/issues/996))
+
+### Bug Fixes
+
+* upgrade data segment v4 ([#996](https://github.com/web3-storage/w3up/issues/996)) ([348e4b0](https://github.com/web3-storage/w3up/commit/348e4b065909e48ab1e97c0eaee9fa0b5ad2e223))
+
+## [2.0.2](https://github.com/web3-storage/w3up/compare/filecoin-client-v2.0.1...filecoin-client-v2.0.2) (2023-10-25)
+
+
+### Bug Fixes
+
+* touch filecoin-client README as fix conventional commits in order to trigger release-please patch version ([65245ef](https://github.com/web3-storage/w3up/commit/65245effd6c7e06c4d3b495e03a598e557a98c8e))
+
+## [2.0.1](https://github.com/web3-storage/w3up/compare/filecoin-client-v2.0.0...filecoin-client-v2.0.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+* package.json files excludes 'src' and includes .js and .js.map in dist for packages that now export their module from dist  ([#1012](https://github.com/web3-storage/w3up/issues/1012)) ([d2537de](https://github.com/web3-storage/w3up/commit/d2537deed533a39f39e312a1dfcfbd048e1d83e5))
+
+## [2.0.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v1.4.0...filecoin-client-v2.0.0) (2023-10-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* see latest specs https://github.com/web3-storage/specs/blob/cbdb706f18567900c5c24d7fb16ccbaf93d0d023/w3-filecoin.md
+* filecoin client to use new capabilities
+
+### Bug Fixes
+
+* client tests ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+* upgrade ucanto in filecoin api ([c95fb54](https://github.com/web3-storage/w3up/commit/c95fb54cdb04f50ff78e5113e70d73c1cd6d8b47))
+
+
+### Code Refactoring
+
+* filecoin api services events and tests ([#974](https://github.com/web3-storage/w3up/issues/974)) ([953537b](https://github.com/web3-storage/w3up/commit/953537bcb98d94b9e9655797a7f9026643ab949f))
+* filecoin client to use new capabilities ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+
 ## [1.4.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v1.3.0...filecoin-client-v1.4.0) (2023-10-11)
 
 

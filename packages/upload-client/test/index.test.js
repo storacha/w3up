@@ -28,7 +28,7 @@ describe('uploadFile', () => {
     const file = new Blob([bytes])
     const expectedCar = await toCAR(bytes)
 
-    /** @type {import('../src/types').CARLink|undefined} */
+    /** @type {import('../src/types.js').CARLink|undefined} */
     let carCID
 
     const proofs = await Promise.all([
@@ -120,7 +120,7 @@ describe('uploadFile', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const file = new Blob([await randomBytes(1024 * 1024 * 5)])
-    /** @type {import('../src/types').CARLink[]} */
+    /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
     const proofs = await Promise.all([
@@ -151,7 +151,7 @@ describe('uploadFile', () => {
         add: provide(StoreCapabilities.add, ({ capability }) => ({
           ok: {
             ...res,
-            link: /** @type {import('../src/types').CARLink} */ (
+            link: /** @type {import('../src/types.js').CARLink} */ (
               capability.nb.link
             ),
           },
@@ -206,7 +206,7 @@ describe('uploadDirectory', () => {
       new File([await randomBytes(32)], '2.txt'),
     ]
 
-    /** @type {import('../src/types').CARLink?} */
+    /** @type {import('../src/types.js').CARLink?} */
     let carCID = null
 
     const proofs = await Promise.all([
@@ -243,7 +243,7 @@ describe('uploadDirectory', () => {
           return {
             ok: {
               ...res,
-              link: /** @type {import('../src/types').CARLink} */ (
+              link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
             },
@@ -300,7 +300,7 @@ describe('uploadDirectory', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const files = [new File([await randomBytes(500_000)], '1.txt')]
-    /** @type {import('../src/types').CARLink[]} */
+    /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
     const proofs = await Promise.all([
@@ -331,7 +331,7 @@ describe('uploadDirectory', () => {
         add: provide(StoreCapabilities.add, ({ capability }) => ({
           ok: {
             ...res,
-            link: /** @type {import('../src/types').CARLink} */ (
+            link: /** @type {import('../src/types.js').CARLink} */ (
               capability.nb.link
             ),
           },
@@ -388,7 +388,7 @@ describe('uploadCAR', () => {
         .slice(0, -1)
         .reduce((size, block) => size + blockEncodingLength(block), 0)
 
-    /** @type {import('../src/types').CARLink[]} */
+    /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
     const proofs = await Promise.all([
@@ -425,7 +425,7 @@ describe('uploadCAR', () => {
           return {
             ok: {
               ...res,
-              link: /** @type {import('../src/types').CARLink} */ (
+              link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
             },
@@ -489,7 +489,7 @@ describe('uploadCAR', () => {
     ]
     const car = await encode(blocks, blocks.at(-1)?.cid)
 
-    /** @type {import('../src/types').PieceLink[]} */
+    /** @type {import('../src/types.js').PieceLink[]} */
     const pieceCIDs = []
 
     const proofs = await Promise.all([
@@ -526,7 +526,7 @@ describe('uploadCAR', () => {
           return {
             ok: {
               ...res,
-              link: /** @type {import('../src/types').CARLink} */ (
+              link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
             },
@@ -577,7 +577,7 @@ describe('uploadCAR', () => {
     assert.equal(pieceCIDs.length, 1)
     assert.equal(
       pieceCIDs[0].toString(),
-      'bafkzcibbammseumg3mjlev5odi5bpcsrp4gg62d7xnx44zkxzvgedq7nxldbc'
+      'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
     )
   })
 })

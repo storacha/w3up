@@ -6,16 +6,16 @@ import { CID } from 'multiformats'
 import { Access } from '@web3-storage/capabilities'
 import { isExpired } from './delegations.js'
 
-/** @typedef {import('./types').AgentDataModel} AgentDataModel */
+/** @typedef {import('./types.js').AgentDataModel} AgentDataModel */
 
 /** @implements {AgentDataModel} */
 export class AgentData {
-  /** @type {(data: import('./types').AgentDataExport) => Promise<void> | void} */
+  /** @type {(data: import('./types.js').AgentDataExport) => Promise<void> | void} */
   #save
 
   /**
-   * @param {import('./types').AgentDataModel} data
-   * @param {import('./types').AgentDataOptions} [options]
+   * @param {import('./types.js').AgentDataModel} data
+   * @param {import('./types.js').AgentDataOptions} [options]
    */
   constructor(data, options = {}) {
     this.meta = data.meta
@@ -30,8 +30,8 @@ export class AgentData {
   /**
    * Create a new AgentData instance from the passed initialization data.
    *
-   * @param {Partial<import('./types').AgentDataModel>} [init]
-   * @param {import('./types').AgentDataOptions} [options]
+   * @param {Partial<import('./types.js').AgentDataModel>} [init]
+   * @param {import('./types.js').AgentDataOptions} [options]
    */
   static async create(init = {}, options = {}) {
     const agentData = new AgentData(
@@ -53,11 +53,11 @@ export class AgentData {
   /**
    * Instantiate AgentData from previously exported data.
    *
-   * @param {import('./types').AgentDataExport} raw
-   * @param {import('./types').AgentDataOptions} [options]
+   * @param {import('./types.js').AgentDataExport} raw
+   * @param {import('./types.js').AgentDataOptions} [options]
    */
   static fromExport(raw, options) {
-    /** @type {import('./types').AgentDataModel['delegations']} */
+    /** @type {import('./types.js').AgentDataModel['delegations']} */
     const dels = new Map()
 
     for (const [key, value] of raw.delegations) {
@@ -89,7 +89,7 @@ export class AgentData {
    * Export data in a format safe to pass to `structuredClone()`.
    */
   export() {
-    /** @type {import('./types').AgentDataExport} */
+    /** @type {import('./types.js').AgentDataExport} */
     const raw = {
       meta: this.meta,
       principal: this.principal.toArchive(),
@@ -112,7 +112,7 @@ export class AgentData {
   /**
    * @deprecated
    * @param {import('@ucanto/interface').DID} did
-   * @param {import('./types').SpaceMeta} meta
+   * @param {import('./types.js').SpaceMeta} meta
    * @param {import('@ucanto/interface').Delegation} [proof]
    */
   async addSpace(did, meta, proof) {
@@ -131,7 +131,7 @@ export class AgentData {
 
   /**
    * @param {import('@ucanto/interface').Delegation} delegation
-   * @param {import('./types').DelegationMeta} [meta]
+   * @param {import('./types.js').DelegationMeta} [meta]
    */
   async addDelegation(delegation, meta) {
     this.delegations.set(delegation.cid.toString(), {
@@ -162,7 +162,7 @@ const isSessionCapability = (cap) => cap.can === Access.session.can
  * Is the given delegation a session proof?
  *
  * @param {Ucanto.Delegation} delegation
- * @returns {delegation is Ucanto.Delegation<[import('./types').AccessSession]>}
+ * @returns {delegation is Ucanto.Delegation<[import('./types.js').AccessSession]>}
  */
 export const isSessionProof = (delegation) =>
   delegation.capabilities.some((cap) => isSessionCapability(cap))

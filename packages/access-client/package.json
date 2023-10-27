@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "16.2.0",
+  "version": "16.3.0",
   "description": "w3access client",
   "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access-client",
   "repository": {
@@ -14,6 +14,7 @@
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",
   "scripts": {
+    "attw": "attw --pack .",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "check": "tsc --build",
@@ -24,12 +25,12 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./src/index.js",
-    "./agent": "./src/agent.js",
-    "./drivers/*": "./src/drivers/*.js",
-    "./stores/*": "./src/stores/*.js",
-    "./types": "./src/types.js",
-    "./encoding": "./src/encoding.js"
+    ".": "./dist/src/index.js",
+    "./agent": "./dist/src/agent.js",
+    "./drivers/*": "./dist/src/drivers/*.js",
+    "./stores/*": "./dist/src/stores/*.js",
+    "./types": "./dist/src/types.js",
+    "./encoding": "./dist/src/encoding.js"
   },
   "typesVersions": {
     "*": {
@@ -51,7 +52,8 @@
     }
   },
   "files": [
-    "src",
+    "dist/src/**/*.js",
+    "dist/src/**/*.js.map",
     "dist/src/**/*.d.ts",
     "dist/src/**/*.d.ts.map"
   ],
@@ -67,9 +69,9 @@
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
-    "conf": "10.2.0",
+    "conf": "11.0.2",
     "multiformats": "^12.1.2",
-    "one-webcrypto": "^1.0.3",
+    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
     "p-defer": "^4.0.0",
     "type-fest": "^3.3.0",
     "uint8arrays": "^4.0.6"

@@ -1,6 +1,6 @@
 /**
  * @template T
- * @typedef {import('./types').Driver<T>} Driver
+ * @typedef {import('./types.js').Driver<T>} Driver
  */
 
 /**

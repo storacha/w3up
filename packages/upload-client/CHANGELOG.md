@@ -1,5 +1,29 @@
 # Changelog
 
+## [11.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v10.1.0...upload-client-v11.0.0) (2023-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* filecoin client to use new capabilities
+* filecoin capabilities
+
+### Bug Fixes
+
+* add missing ContentNotFound definition for filecoin offer failure ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* add missing filecoin submit success and failure types ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* client tests ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/web3-storage/w3up/issues/1004)) ([2e2936a](https://github.com/web3-storage/w3up/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+* package.json files excludes 'src' and includes .js and .js.map in dist for packages that now export their module from dist  ([#1012](https://github.com/web3-storage/w3up/issues/1012)) ([d2537de](https://github.com/web3-storage/w3up/commit/d2537deed533a39f39e312a1dfcfbd048e1d83e5))
+* type errors ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* upgrade fr32-sha2-256-trunc-254-padded-binary-tree-multihash ([#997](https://github.com/web3-storage/w3up/issues/997)) ([f6828ec](https://github.com/web3-storage/w3up/commit/f6828ecbcfe113d9e03e62ef65162b7d4e5774fd))
+
+
+### Code Refactoring
+
+* filecoin capabilities ([c0b97bf](https://github.com/web3-storage/w3up/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* filecoin client to use new capabilities ([b0d9c3f](https://github.com/web3-storage/w3up/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+
 ## [10.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v10.0.1...upload-client-v10.1.0) (2023-10-20)
 
 

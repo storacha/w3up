@@ -37,7 +37,7 @@ export function encode(delegations) {
 export function* decode(encoded) {
   for (const carBytes of Object.values(encoded)) {
     const delegations = bytesToDelegations(
-      /** @type {import('@web3-storage/access/src/types.js').BytesDelegation<Ucanto.Capabilities>} */ (
+      /** @type {import('@web3-storage/access/types').BytesDelegation<Ucanto.Capabilities>} */ (
         carBytes
       )
     )

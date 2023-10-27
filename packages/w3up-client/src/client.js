@@ -21,7 +21,7 @@ export class Client extends Base {
   /**
    * @param {import('@web3-storage/access').AgentData} agentData
    * @param {object} [options]
-   * @param {import('./types').ServiceConf} [options.serviceConf]
+   * @param {import('./types.js').ServiceConf} [options.serviceConf]
    */
   constructor(agentData, options) {
     super(agentData, options)
@@ -41,7 +41,7 @@ export class Client extends Base {
    * @param {`${string}@${string}`} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
-   * @param {Iterable<{ can: import('./types').Ability }>} [options.capabilities]
+   * @param {Iterable<{ can: import('./types.js').Ability }>} [options.capabilities]
    */
   async authorize(email, options) {
     await this.capability.access.authorize(email, options)
@@ -52,8 +52,8 @@ export class Client extends Base {
    * Uploads a file to the service and returns the root data CID for the
    * generated DAG.
    *
-   * @param {import('./types').BlobLike} file - File data.
-   * @param {import('./types').UploadOptions} [options]
+   * @param {import('./types.js').BlobLike} file - File data.
+   * @param {import('./types.js').UploadOptions} [options]
    */
   async uploadFile(file, options = {}) {
     const conf = await this._invocationConfig([
@@ -69,8 +69,8 @@ export class Client extends Base {
    * for the generated DAG. All files are added to a container directory, with
    * paths in file names preserved.
    *
-   * @param {import('./types').FileLike[]} files - File data.
-   * @param {import('./types').UploadDirectoryOptions} [options]
+   * @param {import('./types.js').FileLike[]} files - File data.
+   * @param {import('./types.js').UploadDirectoryOptions} [options]
    */
   async uploadDirectory(files, options = {}) {
     const conf = await this._invocationConfig([
@@ -90,8 +90,8 @@ export class Client extends Base {
    *
    * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
    *
-   * @param {import('./types').BlobLike} car - CAR file.
-   * @param {import('./types').UploadOptions} [options]
+   * @param {import('./types.js').BlobLike} car - CAR file.
+   * @param {import('./types.js').UploadOptions} [options]
    */
   async uploadCAR(car, options = {}) {
     const conf = await this._invocationConfig([
@@ -127,7 +127,7 @@ export class Client extends Base {
   /**
    * Use a specific space.
    *
-   * @param {import('./types').DID} did
+   * @param {import('./types.js').DID} did
    */
   async setCurrentSpace(did) {
     await this._agent.setCurrentSpace(/** @type {`did:key:${string}`} */ (did))
@@ -158,13 +158,13 @@ export class Client extends Base {
    *
    * @param {string} email
    * @param {object} [options]
-   * @param {import('./types').DID<'web'>} [options.provider]
+   * @param {import('./types.js').DID<'web'>} [options.provider]
    * @param {AbortSignal} [options.signal]
    */
   async registerSpace(email, options = {}) {
     options.provider =
       options.provider ??
-      /** @type {import('./types').DID<'web'>} */ (this.defaultProvider())
+      /** @type {import('./types.js').DID<'web'>} */ (this.defaultProvider())
     await this._agent.registerSpace(email, options)
   }
   /* c8 ignore stop */
@@ -172,7 +172,7 @@ export class Client extends Base {
   /**
    * Add a space from a received proof.
    *
-   * @param {import('./types').Delegation} proof
+   * @param {import('./types.js').Delegation} proof
    */
   async addSpace(proof) {
     const { did, meta } = await this._agent.importSpaceFromDelegation(proof)
@@ -184,7 +184,7 @@ export class Client extends Base {
    *
    * Proofs are delegations with an _audience_ matching the agent DID.
    *
-   * @param {import('./types').Capability[]} [caps] - Capabilities to
+   * @param {import('./types.js').Capability[]} [caps] - Capabilities to
    * filter by. Empty or undefined caps with return all the proofs.
    */
   proofs(caps) {
@@ -195,7 +195,7 @@ export class Client extends Base {
    * Add a proof to the agent. Proofs are delegations with an _audience_
    * matching the agent DID.
    *
-   * @param {import('./types').Delegation} proof
+   * @param {import('./types.js').Delegation} proof
    */
   async addProof(proof) {
     await this._agent.addProof(proof)
@@ -204,7 +204,7 @@ export class Client extends Base {
   /**
    * Get delegations created by the agent for others.
    *
-   * @param {import('./types').Capability[]} [caps] - Capabilities to
+   * @param {import('./types.js').Capability[]} [caps] - Capabilities to
    * filter by. Empty or undefined caps with return all the delegations.
    */
   delegations(caps) {
@@ -221,9 +221,9 @@ export class Client extends Base {
    * Create a delegation to the passed audience for the given abilities with
    * the _current_ space as the resource.
    *
-   * @param {import('./types').Principal} audience
-   * @param {import('./types').Abilities[]} abilities
-   * @param {Omit<import('./types').UCANOptions, 'audience'> & { audienceMeta?: import('./types').AgentMeta }} [options]
+   * @param {import('./types.js').Principal} audience
+   * @param {import('./types.js').Abilities[]} abilities
+   * @param {Omit<import('./types.js').UCANOptions, 'audience'> & { audienceMeta?: import('./types.js').AgentMeta }} [options]
    */
   async createDelegation(audience, abilities, options = {}) {
     const audienceMeta = options.audienceMeta ?? {
