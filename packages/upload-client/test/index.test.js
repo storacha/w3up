@@ -577,7 +577,7 @@ describe('uploadCAR', () => {
     assert.equal(pieceCIDs.length, 1)
     assert.equal(
       pieceCIDs[0].toString(),
-      'bafkzcibbammseumg3mjlev5odi5bpcsrp4gg62d7xnx44zkxzvgedq7nxldbc'
+      'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
     )
   })
 })
