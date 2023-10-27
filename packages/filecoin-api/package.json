@@ -59,8 +59,8 @@
       "test": [
         "dist/test/lib.d.ts"
       ],
-      "test/context": [
-        "dist/test/context.d.ts"
+      "test/context/service": [
+        "dist/test/context/service.d.ts"
       ],
       "test/types": [
         "dist/test/types.d.ts"
@@ -128,9 +128,9 @@
       "types": "./dist/test/lib.d.ts",
       "import": "./test/lib.js"
     },
-    "./test/context": {
-      "types": "./dist/test/context.d.ts",
-      "import": "./test/context.js"
+    "./test/context/service": {
+      "types": "./dist/test/context/service.d.ts",
+      "import": "./test/context/service.js"
     },
     "./test/types": {
       "types": "./dist/test/types.d.ts",
