@@ -59,6 +59,9 @@
       "test": [
         "dist/test/lib.d.ts"
       ],
+      "test/context": [
+        "dist/test/context.d.ts"
+      ],
       "test/types": [
         "dist/test/types.d.ts"
       ]
@@ -124,6 +127,10 @@
     "./test": {
       "types": "./dist/test/lib.d.ts",
       "import": "./test/lib.js"
+    },
+    "./test/context": {
+      "types": "./dist/test/context.d.ts",
+      "import": "./test/context.js"
     },
     "./test/types": {
       "types": "./dist/test/types.d.ts",
