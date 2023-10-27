@@ -1,5 +1,17 @@
 # Changelog
 
+## [16.3.0](https://github.com/web3-storage/w3up/compare/access-v16.2.1...access-v16.3.0) (2023-10-27)
+
+
+### Features
+
+* implement `plan/get` capability ([#1005](https://github.com/web3-storage/w3up/issues/1005)) ([f0456d2](https://github.com/web3-storage/w3up/commit/f0456d2e2aab462666810e22abd7dfb7e1ce21be))
+
+
+### Bug Fixes
+
+* make `plan/get` return value is typed properly ([#1029](https://github.com/web3-storage/w3up/issues/1029)) ([075e341](https://github.com/web3-storage/w3up/commit/075e3414f528dfdf872ba29c8daf7ea5ba1cf8c9))
+
 ## [16.2.1](https://github.com/web3-storage/w3up/compare/access-v16.2.0...access-v16.2.1) (2023-10-25)
 
 
