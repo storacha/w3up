@@ -20,6 +20,12 @@ describe('Dealer', () => {
 
       define(name, async () => {
         const dealerSigner = await Signer.generate()
+        const dealTrackerSigner = await Signer.generate()
+        const service = getMockService()
+        const dealTrackerConnection = getConnection(
+          dealTrackerSigner,
+          service
+        ).connection
 
         // resources
         /** @type {Map<string, unknown[]>} */
@@ -44,6 +50,14 @@ describe('Dealer', () => {
             aggregateStore,
             offerStore,
             queuedMessages,
+            dealTrackerService: {
+              connection: dealTrackerConnection,
+              invocationConfig: {
+                issuer: dealerSigner,
+                with: dealerSigner.did(),
+                audience: dealTrackerSigner,
+              },
+            },
             validateAuthorization
           }
         )

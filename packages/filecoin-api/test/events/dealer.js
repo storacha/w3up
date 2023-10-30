@@ -245,20 +245,11 @@ export const test = {
       assert.equal(handledCronTick.ok?.pendingCount, 0)
 
       // Validate stores
-      // Deal as in mocked service
-      const deal = {
-        dataType: 0n,
-        dataSource: {
-          dealID: 111n,
-        },
-      }
       const storedDealAfterCron = await context.aggregateStore.get({
-        aggregate: aggregate.link.link(),
-        deal,
+        aggregate: aggregate.link.link()
       })
       assert.ok(storedDealAfterCron.ok)
       assert.equal(storedDealAfterCron.ok?.status, 'accepted')
-      assert.deepEqual(storedDealAfterCron.ok?.deal, deal)
       assert.ok(
         storedDealBeforeCron.ok?.updatedAt !== storedDealAfterCron.ok?.updatedAt
       )

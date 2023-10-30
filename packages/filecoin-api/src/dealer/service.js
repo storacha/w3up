@@ -5,6 +5,7 @@ import { CBOR } from '@ucanto/core'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Block from 'multiformats/block'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
+import { DealTracker } from '@web3-storage/filecoin-client'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
 import {
@@ -94,28 +95,41 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
 export const aggregateAccept = async ({ capability }, context) => {
   const { aggregate } = capability.nb
 
-  // Get deal status from the store.
-  const query = await context.aggregateStore.query({
+  // Query current state
+  const info = await DealTracker.dealInfo(
+    context.dealTrackerService.invocationConfig,
     aggregate,
-  })
-  if (query.error) {
+    { connection: context.dealTrackerService.connection }
+  )
+
+  if (info.out.error) {
     return {
-      error: new StoreOperationFailed(query.error.message),
+      error: info.out.error,
     }
   }
-  // We just care about one deal for issuing receipt
-  const succeededAggregate = query.ok.find(r => r.deal)
-  if (!succeededAggregate?.deal) {
+
+  // If there are no deals for it, we can skip
+  const deals = Object.keys(info.out.ok.deals || {})
+  if (!deals.length) {
     return {
-      error: new StoreOperationFailed('no deal available'),
+      error: new Server.Failure('no deals were obtained for given aggregate CID')
+    }
+  }
+  
+  // For receipts, we only care about first deal
+  // TODO: We need to revisit this with renewals
+  const deal = {
+    dataType: 0n,
+    dataSource: {
+      dealID: BigInt(deals[0])
     }
   }
 
   return {
     ok: {
       aggregate,
-      dataSource: succeededAggregate.deal.dataSource,
-      dataType: succeededAggregate.deal.dataType,
+      dataSource: deal.dataSource,
+      dataType: deal.dataType,
     },
   }
 }
