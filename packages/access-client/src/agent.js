@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable max-depth */
 import * as Client from '@ucanto/client'
 // @ts-ignore
@@ -168,8 +169,9 @@ export class Agent {
    * Query the delegations store for all the delegations matching the capabilities provided.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps]
+   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with. 
    */
-  #delegations(caps) {
+  #delegations(caps, invocationAudience) {
     const _caps = new Set(caps)
     /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types.js').DelegationMeta }>} */
     const values = []
@@ -186,9 +188,9 @@ export class Agent {
               values.push(value)
             }
           }
-        } else {
-          values.push(value)
         }
+      } else { // no caps param is provided. Caller must want all delegations.
+        values.push(value)
       }
     }
     return values
