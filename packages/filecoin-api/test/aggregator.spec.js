@@ -28,14 +28,10 @@ describe('Aggregator', () => {
         const queuedMessages = new Map()
         const {
           pieceQueue,
-          bufferQueue,
-          pieceAcceptQueue,
-          aggregateOfferQueue,
         } = getQueues(queuedMessages)
         const {
           aggregator: {
             pieceStore,
-            bufferStore,
             aggregateStore,
             inclusionStore,
           },
@@ -56,13 +52,9 @@ describe('Aggregator', () => {
               },
             },
             pieceStore,
-            bufferStore,
             aggregateStore,
             inclusionStore,
             pieceQueue,
-            bufferQueue,
-            pieceAcceptQueue,
-            aggregateOfferQueue,
             queuedMessages,
             validateAuthorization
           }
