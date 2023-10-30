@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v11.0.0...upload-client-v11.1.0) (2023-10-30)
+
+
+### Features
+
+* upgrade fr32-sha2-256-trunc254-padded-binary-tree-multihash for async hasher ([#1044](https://github.com/web3-storage/w3up/issues/1044)) ([22ea6aa](https://github.com/web3-storage/w3up/commit/22ea6aa1a96e619d0f924c5bd60151866f8cc6df))
+
 ## [11.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v10.1.0...upload-client-v11.0.0) (2023-10-27)
 
 
