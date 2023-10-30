@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable max-depth */
 import * as Client from '@ucanto/client'
 // @ts-ignore
@@ -18,7 +19,7 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
-import { AgentData, getSessionProofs } from './agent-data.js'
+import { AgentData, getSessionProofs, matchSessionProof } from './agent-data.js'
 import { addProviderAndDelegateToAccount } from './agent-use-cases.js'
 import { UCAN } from '@web3-storage/capabilities'
 
@@ -168,28 +169,45 @@ export class Agent {
    * Query the delegations store for all the delegations matching the capabilities provided.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps]
+   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with. 
    */
-  #delegations(caps) {
+  #delegations(caps, invocationAudience) {
     const _caps = new Set(caps)
     /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types.js').DelegationMeta }>} */
     const values = []
     for (const [, value] of this.#data.delegations) {
       // check expiration
-      if (
-        !isExpired(value.delegation) && // check if delegation can be used
-        !isTooEarly(value.delegation)
-      ) {
-        // check if we need to filter for caps
-        if (Array.isArray(caps) && caps.length > 0) {
-          for (const cap of _caps) {
-            if (canDelegateCapability(value.delegation, cap)) {
+      if (isExpired(value.delegation)) { continue; }
+      if (isTooEarly(value.delegation)) { continue; }
+
+      if (Array.isArray(caps) && caps.length > 0) {
+        // caps param is provided. Ensure that the delegations we're looping over can delegate to these caps
+        for (const cap of _caps) {
+          const capProbablyRequiresSessionProof = value.delegation.signature.code === ucanto.Signature.NON_STANDARD
+          const findSessionProofs = () => [...this.#data.delegations.values()].filter(m => matchSessionProof(m.delegation, {
+            attestedProof: value.delegation.cid,
+            issuer: invocationAudience,
+          }))
+          if (canDelegateCapability(value.delegation, cap)) {
+            const noSessionRequired = ! capProbablyRequiresSessionProof
+            const sessionProofs = capProbablyRequiresSessionProof ? findSessionProofs() : []
+            const hasRequiredSessionProof = capProbablyRequiresSessionProof && findSessionProofs().length > 0
+            const proofs =
+              // eslint-disable-next-line no-nested-ternary
+              (noSessionRequired)
+              ? [value]
+              : hasRequiredSessionProof
+              ? [value, ...sessionProofs]
+              : []
+            
+            values.push(...proofs)
+            if (proofs.length) {
               _caps.delete(cap)
-              values.push(value)
             }
           }
-        } else {
-          values.push(value)
         }
+      } else { // no caps param is provided. Caller must want all delegations.
+        values.push(value)
       }
     }
     return values
@@ -250,11 +268,11 @@ export class Agent {
    * proofs matching the passed capabilities require it.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with. 
    */
-  proofs(caps) {
+  proofs(caps, invocationAudience) {
     const arr = []
-
-    for (const { delegation } of this.#delegations(caps)) {
+    for (const { delegation } of this.#delegations(caps, invocationAudience)) {
       if (delegation.audience.did() === this.issuer.did()) {
         arr.push(delegation)
       }
@@ -557,6 +575,8 @@ export class Agent {
    * @param {import('./types.js').InvokeOptions<A, R, CAP>} options
    */
   async invoke(cap, options) {
+    const audience = options.audience || this.connection.id
+
     const space = options.with || this.currentSpace()
     if (!space) {
       throw new Error(
@@ -566,12 +586,15 @@ export class Agent {
 
     const proofs = [
       ...(options.proofs || []),
-      ...this.proofs([
-        {
-          with: space,
-          can: cap.can,
-        },
-      ]),
+      ...this.proofs(
+        [
+          {
+            with: space,
+            can: cap.can,
+          },
+        ],
+        audience.did()
+      ),
     ]
 
     if (proofs.length === 0 && options.with !== this.did()) {
@@ -581,7 +604,7 @@ export class Agent {
     }
     const inv = invoke({
       ...options,
-      audience: options.audience || this.connection.id,
+      audience,
       // @ts-ignore
       capability: cap.create({
         with: space,

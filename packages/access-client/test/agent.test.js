@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import assert from 'assert'
+import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
 import { Agent, connection } from '../src/agent.js'
@@ -6,6 +8,10 @@ import * as Space from '@web3-storage/capabilities/space'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
+import * as ed25519 from '@ucanto/principal/ed25519'
+import { Access } from '@web3-storage/capabilities'
+import { Absentee } from '@ucanto/principal'
+import * as DidMailto from '@web3-storage/did-mailto'
 
 describe('Agent', function () {
   it('should return did', async function () {
@@ -334,5 +340,60 @@ describe('Agent', function () {
       result4.ok,
       `failed to revoke even though proof was passed: ${result4.error?.message}`
     )
+  })
+
+  /**
+   * An agent may manage a bunch of different proofs for the same agent key. e.g. proofs may authorize agent key to access various audiences or sessions on those audiences.
+   * When one of the proofs is a session proof issued by w3upA or w3upB, the Agent#proofs result should contain proofs appropriate for the session host.
+   */
+  it('should include session proof based on connection', async () => {
+    // const space = await ed25519.Signer.generate()
+    const account = DidMailto.fromEmail(`test-${Math.random().toString().slice(2)}@dag.house`)
+    const serviceA = await ed25519.Signer.generate()
+    const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
+    const serviceB = await ed25519.Signer.generate()
+    const serviceBWeb = serviceB.withDID('did:web:b.up.web3.storage')
+
+    const server = createServer()
+    const agent = await Agent.create(undefined, {
+      connection: connection({ channel: server }),
+    })
+
+    // the agent has a delegation+sesssion for each service
+    const services = [serviceAWeb, serviceBWeb]
+    for (const service of services) {
+      const delegation = await ucanto.delegate({
+        issuer: Absentee.from({ id: account }),
+        audience: agent,
+        capabilities: [
+          {
+            can: 'provider/add',
+            with: 'ucan:*',
+          }
+        ]
+      })
+      const session = await Access.session.delegate({
+        issuer: service,
+        audience: agent,
+        with: service.did(),
+        nb: { proof: delegation.cid },
+      })
+      agent.addProof(delegation)
+      agent.addProof(session)
+    }
+
+    // now let's say we want to send provider/add invocation to serviceB
+    const desiredInvocationAudience = serviceAWeb
+    const proofsA = agent.proofs(
+      [
+        {
+          can: 'provider/add',
+          with: account
+        }
+      ],
+      desiredInvocationAudience.did(),
+    )
+    assert.ok(proofsA)
+    assert.equal(proofsA[1].issuer.did(), desiredInvocationAudience.did())
   })
 })
