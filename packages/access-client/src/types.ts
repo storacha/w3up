@@ -157,11 +157,7 @@ export interface SpaceMeta {
   /**
    * Human readable name for the space
    */
-  name?: string
-  /**
-   * Was this space already registered with w3up?
-   */
-  isRegistered: boolean
+  name: string
 }
 
 /**

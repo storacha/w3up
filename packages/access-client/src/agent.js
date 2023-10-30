@@ -6,11 +6,10 @@ import * as Ucanto from '@ucanto/interface'
 import * as CAR from '@ucanto/transport/car'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
-import * as Space from '@web3-storage/capabilities/space'
+import * as Capabilities from '@web3-storage/capabilities/space'
 import * as Access from '@web3-storage/capabilities/access'
+import * as Space from './space.js'
 
-import { Signer } from '@ucanto/principal/ed25519'
-import { Verifier } from '@ucanto/principal'
 import { invoke, delegate, DID } from '@ucanto/core'
 import {
   isExpired,
@@ -309,57 +308,63 @@ export class Agent {
   /**
    * Creates a space signer and a delegation to the agent
    *
-   * @param {string} [name]
+   * @param {string} name
    */
   async createSpace(name) {
-    const signer = await Signer.generate()
-    const proof = await Space.top.delegate({
-      issuer: signer,
-      audience: this.issuer,
-      with: signer.did(),
-      expiration: Infinity,
-    })
-
-    /** @type {import('./types.js').SpaceMeta} */
-    const meta = { isRegistered: false }
-    // eslint-disable-next-line eqeqeq
-    if (name != undefined) {
-      if (typeof name !== 'string') {
-        throw new TypeError('invalid name')
-      }
-      meta.name = name
-    }
-
-    await this.#data.addSpace(signer.did(), meta, proof)
-
-    return {
-      did: signer.did(),
-      meta,
-      proof,
-    }
+    return await Space.generate({ name })
   }
+
+  //   const signer = await Signer.generate()
+  //   const proof = await Capabilities.top.delegate({
+  //     issuer: signer,
+  //     audience: this.issuer,
+  //     with: signer.did(),
+  //     expiration: Infinity,
+  //   })
+
+  //   /** @type {import('./types.js').SpaceMeta} */
+  //   const meta = { isRegistered: false }
+  //   // eslint-disable-next-line eqeqeq
+  //   if (name != undefined) {
+  //     if (typeof name !== 'string') {
+  //       throw new TypeError('invalid name')
+  //     }
+  //     meta.name = name
+  //   }
+
+  //   await this.#data.addSpace(signer.did(), meta, proof)
+
+  //   return {
+  //     did: signer.did(),
+  //     meta,
+  //     proof,
+  //   }
+  // }
 
   /**
    * Import a space from a delegation.
    *
    * @param {Ucanto.Delegation} delegation
+   * @param {object} [options]
+   * @param {string} [options.name]
    */
-  async importSpaceFromDelegation(delegation) {
-    const meta = /** @type {import('./types.js').SpaceMeta} */ (
-      delegation.facts[0]?.space ?? { isRegistered: false }
-    )
-    // @ts-ignore
-    const did = Verifier.parse(delegation.capabilities[0].with).did()
+  async importSpaceFromDelegation(delegation, { name = '' } = {}) {
+    const space =
+      name === ''
+        ? Space.fromDelegation(delegation)
+        : Space.fromDelegation(delegation).withName(name)
 
-    this.#data.spaces.set(did, meta)
-
-    await this.addProof(delegation)
-
-    return {
-      did,
-      meta,
-      proof: delegation,
+    if (space.name === '') {
+      throw new Error(
+        'Space has no name please pass `option.name` to specify it'
+      )
     }
+
+    this.#data.spaces.set(space.did(), { ...space.meta, name: space.name })
+
+    await this.addProof(space.delegation)
+
+    return space
   }
 
   /**
@@ -606,7 +611,7 @@ export class Agent {
     if (!_space) {
       throw new Error('No space selected, you need pass a resource.')
     }
-    const inv = await this.invokeAndExecute(Space.info, {
+    const inv = await this.invokeAndExecute(Capabilities.info, {
       with: _space,
     })
 
@@ -626,7 +631,7 @@ export class Agent {
  *
  * @template {Record<string, any>} [S=Service]
  * @param {Agent<S>} access
- * @param {Ucanto.Delegation<Ucanto.Capabilities>[]} delegations
+ * @param {Ucanto.Delegation[]} delegations
  */
 export async function addSpacesFromDelegations(access, delegations) {
   const data = agentToData.get(access)
@@ -639,14 +644,15 @@ export async function addSpacesFromDelegations(access, delegations) {
   // it may or may not involve look at delegations
   if (delegations.length > 0) {
     const allows = ucanto.Delegation.allows(
-      delegations[0],
-      ...delegations.slice(1)
+      .../** @type {Ucanto.Tuple<Ucanto.Delegation>} */ (delegations)
     )
 
     for (const [did, value] of Object.entries(allows)) {
-      if (did.startsWith('did:key') && value['space/*']) {
+      // If we discovered a delegation to any DID, we add it to the spaces list.
+      // We may not have
+      if (did.startsWith('did:key') && Object.keys(value).length > 0) {
         data.addSpace(/** @type {Ucanto.DID} */ (did), {
-          isRegistered: true,
+          name: '',
         })
       }
     }

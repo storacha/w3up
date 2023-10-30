@@ -33,6 +33,10 @@ export class Client extends Base {
     }
   }
 
+  did() {
+    return this._agent.did()
+  }
+
   /* c8 ignore start - testing websockets is hard */
   /**
    * Authorize the current agent to use capabilities granted to the passed
@@ -143,13 +147,12 @@ export class Client extends Base {
   }
 
   /**
-   * Create a new space with an optional name.
+   * Create a new space with a given name.
    *
-   * @param {string} [name]
+   * @param {string} name
    */
-  async createSpace(name) {
-    const { did, meta } = await this._agent.createSpace(name)
-    return new Space(did, meta)
+  createSpace(name) {
+    return this._agent.createSpace(name)
   }
 
   /* c8 ignore start - hard to test this without authorize tests which require websockets */
@@ -175,8 +178,7 @@ export class Client extends Base {
    * @param {import('./types.js').Delegation} proof
    */
   async addSpace(proof) {
-    const { did, meta } = await this._agent.importSpaceFromDelegation(proof)
-    return new Space(did, meta)
+    return await this._agent.importSpaceFromDelegation(proof)
   }
 
   /**

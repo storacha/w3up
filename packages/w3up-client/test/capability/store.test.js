@@ -45,7 +45,12 @@ describe('StoreClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice, {
+        can: '*',
+        expiration: Infinity,
+      })
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const car = await randomCAR(128)
@@ -98,7 +103,12 @@ describe('StoreClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice, {
+        can: '*',
+        expiration: Infinity,
+      })
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const res = await alice.capability.store.list()
@@ -141,7 +151,12 @@ describe('StoreClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice, {
+        can: '*',
+        expiration: Infinity,
+      })
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       await alice.capability.store.remove((await randomCAR(128)).cid)
