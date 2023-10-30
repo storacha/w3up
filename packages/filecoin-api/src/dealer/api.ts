@@ -14,7 +14,7 @@ export type OfferStore<OfferDoc> = UpdatableStore<string, OfferDoc>
 export type AggregateStore = UpdatableAndQueryableStore<
   AggregateRecordKey,
   AggregateRecord,
-  Pick<AggregateRecord, 'status'> | Pick<AggregateRecord, 'aggregate'>
+  Pick<AggregateRecord, 'status'>
 >
 
 export interface ServiceContext<OfferDoc = OfferDocument> {
