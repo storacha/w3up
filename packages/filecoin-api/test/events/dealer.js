@@ -137,7 +137,7 @@ export const test = {
 
     // Handle event
     const handledPieceInsertsRes =
-      await DealerEvents.handleAggregatUpdatedStatus(context, aggregateRecord)
+      await DealerEvents.handleAggregateUpdatedStatus(context, aggregateRecord)
     assert.ok(handledPieceInsertsRes.ok)
 
     // Verify invocation
@@ -180,7 +180,7 @@ export const test = {
 
         // Handle event
         const handledPieceInsertsRes =
-          await DealerEvents.handleAggregatUpdatedStatus(
+          await DealerEvents.handleAggregateUpdatedStatus(
             context,
             aggregateRecord
           )

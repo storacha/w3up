@@ -32,7 +32,7 @@ export const handleAggregateInsert = async (context, record) => {
  * @param {import('./api.js').AggregateUpdatedStatusEventContext} context
  * @param {AggregateRecord} record
  */
-export const handleAggregatUpdatedStatus = async (context, record) => {
+export const handleAggregateUpdatedStatus = async (context, record) => {
   const aggregateAcceptInv = await Dealer.aggregateAccept(
     context.dealerService.invocationConfig,
     record.aggregate,
