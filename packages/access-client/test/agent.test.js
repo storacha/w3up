@@ -23,7 +23,7 @@ describe('Agent', function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test-create')
 
-    assert(typeof space.did === 'string')
+    assert(typeof space.did() === 'string')
   })
 
   it('should add proof when creating acccount', async function () {
@@ -56,7 +56,7 @@ describe('Agent', function () {
     if (!accWithMeta) {
       assert.fail('should have space')
     }
-    assert.equal(accWithMeta.did, space.did)
+    assert.equal(accWithMeta.did, space.did())
     assert(accWithMeta.proofs.length === 1)
     assert.deepStrictEqual(accWithMeta.capabilities, ['*'])
   })
@@ -260,7 +260,7 @@ describe('Agent', function () {
     assert.deepStrictEqual(out.capabilities, [
       {
         can: '*',
-        with: space.did,
+        with: space.did(),
       },
     ])
   })
