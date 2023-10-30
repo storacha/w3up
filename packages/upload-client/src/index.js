@@ -1,7 +1,6 @@
 import { Parallel } from 'parallel-transform-web'
-import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash'
+import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash/async'
 import * as Link from 'multiformats/link'
-import * as Digest from 'multiformats/hashes/digest'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
 import * as Upload from './upload.js'
@@ -128,14 +127,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
         const [cid, piece] = await Promise.all([
           Store.add(conf, bytes, options),
           (async () => {
-            const hasher = PieceHasher.create()
-            hasher.write(bytes)
-            const digest = new Uint8Array(hasher.multihashByteLength())
-            hasher.digestInto(digest, 0, true)
-            // There's no GC (yet) in WASM so you should free up
-            // memory manually once you're done.
-            hasher.free()
-            const multihashDigest = Digest.decode(digest)
+            const multihashDigest = await PieceHasher.digest(bytes)
             return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
               Link.create(raw.code, multihashDigest)
             )
