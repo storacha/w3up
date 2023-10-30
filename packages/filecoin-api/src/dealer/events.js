@@ -141,13 +141,7 @@ async function updateApprovedDeals({
     { aggregate: deal.aggregate },
     {
       status: 'accepted',
-      updatedAt: new Date().toISOString(),
-      deal: {
-        dataType: 0n,
-        dataSource: {
-          dealID: BigInt(deals[0]),
-        },
-      },
+      updatedAt: new Date().toISOString()
     }
   )
 

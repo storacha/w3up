@@ -178,7 +178,7 @@ export const getStoreImplementations = (
         /** @type {Partial<DealerAggregateRecord>} */ item
       ) => {
         const itemToUpdate = Array.from(items).find(
-          (i) => i.aggregate.equals(key.aggregate) && i.deal === key.deal
+          (i) => i.aggregate.equals(key.aggregate)
         )
         if (!itemToUpdate) {
           throw new Error('not found')
