@@ -250,7 +250,7 @@ export async function addProviderAndDelegateToAccount(
     throw new Error('No space selected')
   }
 
-  if (spaceMeta && spaceMeta.isRegistered) {
+  if (spaceMeta) {
     throw new Error('Space already registered with web3.storage.')
   }
   const account = { did: () => DidMailto.fromEmail(DidMailto.email(email)) }
@@ -263,7 +263,7 @@ export async function addProviderAndDelegateToAccount(
   if (delegateSpaceAccessResult.out.error) {
     throw delegateSpaceAccessResult.out.error
   }
-  spaceMeta.isRegistered = true
+
   await agentData.addSpace(space, spaceMeta)
 }
 

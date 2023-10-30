@@ -41,7 +41,12 @@ describe('SpaceClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice, {
+        can: '*',
+        expiration: Infinity,
+      })
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const info = await alice.capability.space.info(space.did())

@@ -24,22 +24,33 @@ describe('Agent', function () {
     const space = await agent.createSpace('test-create')
 
     assert(typeof space.did === 'string')
-    assert(space.proof)
   })
 
   it('should add proof when creating acccount', async function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test-add')
+    const authorization = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
+
+    await agent.importSpaceFromDelegation(authorization)
     const delegations = agent.proofs()
 
-    assert.equal(space.proof.cid, delegations[0].cid)
+    assert.equal(authorization.cid, delegations[0].cid)
   })
 
   it('should set current space', async function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test')
+    const authorization = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
 
-    await agent.setCurrentSpace(space.did)
+    await agent.importSpaceFromDelegation(authorization)
+
+    await agent.setCurrentSpace(space.did())
 
     const accWithMeta = await agent.currentSpaceWithMeta()
     if (!accWithMeta) {
@@ -68,7 +79,12 @@ describe('Agent', function () {
     const bob = await Agent.create()
 
     const space = await alice.createSpace('videos')
-    await alice.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(alice, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(auth)
+    await alice.setCurrentSpace(space.did())
 
     const proof = await alice.delegate({
       audience: bob,
@@ -77,9 +93,9 @@ describe('Agent', function () {
     })
 
     await bob.importSpaceFromDelegation(proof)
-    await bob.setCurrentSpace(space.did)
+    await bob.setCurrentSpace(space.did())
 
-    const proofs = bob.proofs([{ can: 'store/add', with: space.did }])
+    const proofs = bob.proofs([{ can: 'store/add', with: space.did() }])
     assert(proofs.length)
   })
 
@@ -88,7 +104,12 @@ describe('Agent', function () {
     const bob = await Agent.create()
 
     const space = await alice.createSpace('videos')
-    await alice.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(alice, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(auth)
+    await alice.setCurrentSpace(space.did())
 
     const proof = await alice.delegate({
       audience: bob,
@@ -97,9 +118,9 @@ describe('Agent', function () {
     })
 
     await bob.importSpaceFromDelegation(proof)
-    await bob.setCurrentSpace(space.did)
+    await bob.setCurrentSpace(space.did())
 
-    const proofs = bob.proofs([{ can: 'store/add', with: space.did }])
+    const proofs = bob.proofs([{ can: 'store/add', with: space.did() }])
     assert(proofs.length)
   })
 
@@ -109,7 +130,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const { out } = await agent.invokeAndExecute(Space.info, {
       audience: fixtures.service,
@@ -131,7 +157,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const i1 = await agent.invoke(Space.info, {
       audience: fixtures.service,
@@ -184,7 +215,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const out = await agent.getSpaceInfo()
     assert.deepEqual(out, {
@@ -204,7 +240,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const out = await agent.delegate({
       abilities: ['*'],
@@ -234,7 +275,12 @@ describe('Agent', function () {
     })
 
     const space = await alice.createSpace('execute')
-    await alice.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(alice, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(auth)
+    await alice.setCurrentSpace(space.did())
 
     const delegation = await alice.delegate({
       abilities: ['space/info'],
@@ -243,7 +289,7 @@ describe('Agent', function () {
     })
 
     await bob.importSpaceFromDelegation(delegation)
-    await bob.setCurrentSpace(space.did)
+    await bob.setCurrentSpace(space.did())
 
     // should not be able to store/remove - bob only has ability to space/info
     await assert.rejects(
@@ -294,7 +340,12 @@ describe('Agent', function () {
     })
 
     const space = await alice.createSpace('alice')
-    await alice.setCurrentSpace(space.did)
+    const aliceAuth = await space.createAuthorization(alice, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(aliceAuth)
+    await alice.setCurrentSpace(space.did())
 
     const delegation = await alice.delegate({
       abilities: ['store/add'],
@@ -316,8 +367,13 @@ describe('Agent', function () {
       `failed to revoke when proofs passed: ${result2.error?.message}`
     )
 
-    await bob.importSpaceFromDelegation(delegation)
-    await bob.setCurrentSpace(space.did)
+    const bobSpace = await bob.createSpace('bob')
+    const bobAuth = await bobSpace.createAuthorization(bob, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await bob.importSpaceFromDelegation(bobAuth)
+    await bob.setCurrentSpace(bobSpace.did())
     const bobDelegation = await bob.delegate({
       abilities: ['store/add'],
       audience: mallory.issuer,
