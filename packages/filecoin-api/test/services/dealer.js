@@ -94,7 +94,7 @@ export const test = {
     )
   },
   'aggregate/offer fails if not able to check aggregate store':
-    wichMockableContext(
+    withMockableContext(
       async (assert, context) => {
         const { storefront } = await getServiceContext()
         const connection = connect({
@@ -130,7 +130,7 @@ export const test = {
       })
     ),
   'aggregate/offer fails if not able to put to offer store':
-    wichMockableContext(
+    withMockableContext(
       async (assert, context) => {
         const { storefront } = await getServiceContext()
         const connection = connect({
@@ -219,7 +219,7 @@ export const test = {
     assert.equal(BigInt(response.out.ok.dataType), BigInt(deal.dataType))
   },
   'aggregate/accept fails if not able to invoke deal info':
-    wichMockableContext(
+    withMockableContext(
       async (assert, context) => {
         const { storefront } = await getServiceContext()
         const connection = connect({
@@ -296,7 +296,7 @@ async function getServiceContext() {
  * @param {API.Test<DealerApi.ServiceContext>} testFn
  * @param {(context: DealerApi.ServiceContext) => Promise<DealerApi.ServiceContext>} mockContextFunction
  */
-function wichMockableContext(testFn, mockContextFunction) {
+function withMockableContext(testFn, mockContextFunction) {
   // @ts-ignore
   return async function (...args) {
     const modifiedArgs = [args[0], await mockContextFunction(args[1])]
