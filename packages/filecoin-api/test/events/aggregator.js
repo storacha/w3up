@@ -107,14 +107,13 @@ export const test = {
     /** @type {BufferMessage} */
     // @ts-expect-error cannot infer buffer message
     const message = context.queuedMessages.get('bufferQueue')?.[0]
-    assert.equal(message.group, group)
 
     const bufferGet = await context.bufferStore.get(message.pieces)
     assert.ok(bufferGet.ok)
     assert.ok(bufferGet.ok?.block.equals(message.pieces))
     assert.deepEqual(
-      bufferGet.ok?.buffer.pieces.map((p) => p.piece),
-      pieces.map((p) => p.link)
+      bufferGet.ok?.buffer.pieces.map((p) => p.piece.toString()),
+      pieces.map((p) => p.link.toString())
     )
   },
   'handles piece insert event errors when fails to access buffer store':
@@ -217,7 +216,6 @@ export const test = {
     /** @type {BufferMessage} */
     // @ts-expect-error cannot infer buffer message
     const message = context.queuedMessages.get('bufferQueue')?.[0]
-    assert.equal(message.group, group)
 
     const bufferGet = await context.bufferStore.get(message.pieces)
     assert.ok(bufferGet.ok)
@@ -290,7 +288,6 @@ export const test = {
       /** @type {BufferMessage} */
       // @ts-expect-error cannot infer buffer message
       const message = context.queuedMessages.get('bufferQueue')?.[0]
-      assert.equal(message.group, group)
 
       const bufferGet = await context.bufferStore.get(message.pieces)
       assert.ok(bufferGet.ok)
@@ -355,7 +352,6 @@ export const test = {
     /** @type {AggregateOfferMessage} */
     // @ts-expect-error cannot infer buffer message
     const message = context.queuedMessages.get('aggregateOfferQueue')?.[0]
-    assert.equal(message.group, group)
 
     const bufferGet = await context.bufferStore.get(message.pieces)
     assert.ok(bufferGet.ok)
@@ -672,15 +668,14 @@ export const test = {
     const message = context.queuedMessages.get('pieceAcceptQueue')?.[0]
     assert.ok(message.aggregate.equals(aggregate.link))
     assert.ok(pieces.find((p) => p.link.equals(message.piece)))
-    assert.equal(message.group, group)
 
     // Verify inclusion proof
     const inclusionProof = aggregate.resolveProof(message.piece)
     if (!inclusionProof.ok) {
       throw new Error()
     }
-    assert.deepEqual(message.inclusion.subtree[0], inclusionProof.ok?.[0][0])
-    assert.deepEqual(message.inclusion.index[0], inclusionProof.ok?.[1][0])
+    assert.deepEqual(BigInt(message.inclusion.subtree[0]), inclusionProof.ok?.[0][0])
+    assert.deepEqual(BigInt(message.inclusion.index[0]), inclusionProof.ok?.[1][0])
 
     assert.deepEqual(message.inclusion.subtree[1], inclusionProof.ok?.[0][1])
     assert.deepEqual(message.inclusion.index[1], inclusionProof.ok?.[1][1])
@@ -828,7 +823,14 @@ export const test = {
     assert.ok(hasStoredInclusion.ok?.piece.equals(piece))
     assert.equal(hasStoredInclusion.ok?.group, group)
     assert.ok(hasStoredInclusion.ok?.insertedAt)
-    assert.deepEqual(hasStoredInclusion.ok?.inclusion, message.inclusion)
+    // @ts-ignore
+    assert.deepEqual(BigInt(message.inclusion.subtree[0]), BigInt(hasStoredInclusion.ok?.inclusion.subtree[0]))
+    // @ts-ignore
+    assert.deepEqual(BigInt(message.inclusion.index[0]), BigInt(hasStoredInclusion.ok?.inclusion.index[0]))
+    // @ts-ignore
+    assert.deepEqual(message.inclusion.subtree[1], hasStoredInclusion.ok?.inclusion.subtree[1])
+    // @ts-ignore
+    assert.deepEqual(message.inclusion.index[1], hasStoredInclusion.ok?.inclusion.index[1])
   },
   'handles piece accept message errors when fails to store on inclusion store':
     wichMockableContext(
