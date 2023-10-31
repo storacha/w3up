@@ -391,29 +391,25 @@ describe('Agent', function () {
       agent.addProof(session)
     }
 
-    // now let's say we want to send provider/add invocation to serviceB
-    const proofsA = agent.proofs(
-      [
-        {
-          can: 'provider/add',
-          with: account,
-        },
-      ],
-      { sessionProofIssuer: serviceAWeb.did() }
-    )
-    assert.ok(proofsA)
-    assert.ok(
-      proofsA.find((proof) => {
-        if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
-          return false
-        }
-        if (proof.issuer.did() !== serviceAWeb.did()) {
-          return false
-        }
-        return true
-      }),
-      'proofs returns a session proof signed by serviceAWeb'
-    )
+    for (const service of [serviceAWeb, serviceBWeb]) {
+      const proofsForService = agent.proofs(
+        [{ can: 'provider/add', with: account }],
+        { sessionProofIssuer: service.did() }
+      )
+      assert.ok(proofsForService, 'proofs returned some proofs')
+      assert.ok(
+        proofsForService.find((proof) => {
+          if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
+            return false
+          }
+          if (proof.issuer.did() !== service.did()) {
+            return false
+          }
+          return true
+        }),
+        'proofs returns a session proof signed by service'
+      )
+    }
   })
 
   it('invoke() chooses proofs appropriate for invocation audience', async () => {
@@ -435,6 +431,8 @@ describe('Agent', function () {
     // the agent has a delegation+sesssion for each service
     const services = [serviceAWeb, serviceBWeb]
     for (const service of services) {
+      // eslint-disable-next-line unicorn/no-await-expression-member
+      const nonce = (await ed25519.Signer.generate()).did()
       const delegation = await ucanto.delegate({
         issuer: Absentee.from({ id: account }),
         audience: agent,
@@ -444,11 +442,7 @@ describe('Agent', function () {
             with: 'ucan:*',
           },
         ],
-        facts: [
-          {
-            service: service.did(),
-          },
-        ],
+        facts: [{ nonce }],
       })
       const session = await Access.session.delegate({
         issuer: service,

@@ -68,6 +68,12 @@ export async function confirm({ capability, invocation }, ctx) {
     // implement sudo access anyway.
     delegationProofs: delegationsResult.ok,
     expiration: Infinity,
+    attestationFacts: [
+      {
+        // include this so that the attestation CID is unique across confirmations
+        cause: invocation.cid,
+      }
+    ]
   })
 
   // Store the delegations so that they can be pulled with access/claim.
@@ -92,6 +98,7 @@ export async function confirm({ capability, invocation }, ctx) {
  * @param {API.Capabilities} opts.capabilities
  * @param {API.Delegation[]} opts.delegationProofs
  * @param {number} opts.expiration
+ * @param {import('@ipld/dag-ucan').Fact[]} [opts.attestationFacts]
  * @returns {Promise<[delegation: API.Delegation, attestation: API.Delegation]>}
  */
 export async function createSessionProofs({
@@ -103,6 +110,7 @@ export async function createSessionProofs({
   // default to Infinity is reasonable here because
   // account consented to this.
   expiration = Infinity,
+  attestationFacts,
 }) {
   // create an delegation on behalf of the account with an absent signature.
   const delegation = await Provider.delegate({
@@ -111,11 +119,7 @@ export async function createSessionProofs({
     capabilities,
     expiration,
     proofs: delegationProofs,
-    facts: [
-      {
-        service: service.did(),
-      }
-    ]
+    facts: attestationFacts,
   })
 
   const attestation = await Access.session.delegate({
