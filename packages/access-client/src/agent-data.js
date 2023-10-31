@@ -217,9 +217,6 @@ export function matchSessionProof(ucan, options) {
   const matchesRequiredProof =
     !options.attestedProof ||
     options.attestedProof.toString() === cap.nb.proof.toString()
-  if (!isSessionProof(ucan)) {
-    return false
-  }
   if (isExpiredButNotAllowed) {
     return false
   }
