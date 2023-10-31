@@ -1,5 +1,6 @@
 import * as assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
+import { getStoreImplementations, getQueueImplementations } from '@web3-storage/filecoin-api/test/context/service'
 import { CarStoreBucket } from '../storage/car-store-bucket.js'
 import { StoreTable } from '../storage/store-table.js'
 import { UploadTable } from '../storage/upload-table.js'
@@ -28,11 +29,22 @@ export const createContext = async (options = {}) => {
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
   const signer = await Signer.generate()
+  const aggregatorSigner = await Signer.generate()
   const id = signer.withDID('did:web:test.web3.storage')
+
+  /** @type {Map<string, unknown[]>} */
+  const queuedMessages = new Map()
+  const {
+    storefront: { filecoinSubmitQueue, pieceOfferQueue }
+  } = getQueueImplementations(queuedMessages)
+  const {
+    storefront: { pieceStore, receiptStore, taskStore },
+  } = getStoreImplementations()
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
     id,
+    aggregatorId: aggregatorSigner,
     signer: id,
     email: Email.debug(),
     url: new URL('http://localhost:8787'),
@@ -51,6 +63,11 @@ export const createContext = async (options = {}) => {
     uploadTable,
     carStoreBucket,
     dudewhereBucket,
+    filecoinSubmitQueue,
+    pieceOfferQueue,
+    pieceStore,
+    receiptStore,
+    taskStore,
     ...createRevocationChecker({ revocationsStorage }),
   }
 
