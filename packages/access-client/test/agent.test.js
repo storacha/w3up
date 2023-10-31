@@ -380,6 +380,11 @@ describe('Agent', function () {
             with: 'ucan:*',
           },
         ],
+        // facts: [
+        //   {
+        //     service: service.did(),
+        //   },
+        // ],
       })
       const session = await Access.session.delegate({
         issuer: service,
@@ -402,7 +407,18 @@ describe('Agent', function () {
       { sessionProofIssuer: serviceAWeb.did() }
     )
     assert.ok(proofsA)
-    assert.equal(proofsA[1].issuer.did(), serviceAWeb.did())
+    assert.ok(
+      proofsA.find((proof) => {
+        if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
+          return false
+        }
+        if (proof.issuer.did() !== serviceAWeb.did()) {
+          return false
+        }
+        return true
+      }),
+      'proofs returns a session proof signed by serviceAWeb'
+    )
 
     /**
      * now let's consider a new Agent that reuses the AgentData for the first agent. e.g. in the common case of an Agent being instantiated with an pre-existing AgentData.
@@ -427,7 +443,18 @@ describe('Agent', function () {
         { sessionProofIssuer: serviceBWeb.did() }
       )
       assert.ok(proofsB)
-      assert.equal(proofsB[1].issuer.did(), serviceBWeb.did())
+      assert.ok(
+        proofsB.find((proof) => {
+          if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
+            return false
+          }
+          if (proof.issuer.did() !== serviceBWeb.did()) {
+            return false
+          }
+          return true
+        }),
+        'proofs returns a session proof signed by serviceBWeb'
+      )
 
       const providerAddInvocation = await agentConnectedToServiceB.invoke(
         // @ts-expect-error - complaint about options.nb.provider not matching a did:mailto type, but it is. Seems like ucanto error with complex types.
