@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.0.1...react-keyring-v6.1.0) (2023-10-31)
+
+
+### Features
+
+* add support for getting an account's plan ([#564](https://github.com/web3-storage/w3ui/issues/564)) ([11023a4](https://github.com/web3-storage/w3ui/commit/11023a4a0a8a3ecf061befd4480ede23ea45d143))
+
 ## [6.0.1](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.0.0...react-keyring-v6.0.1) (2023-09-06)
 
 
