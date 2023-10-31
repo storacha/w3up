@@ -399,7 +399,7 @@ describe('Agent', function () {
           with: account,
         },
       ],
-      desiredInvocationAudience.did()
+      { sessionProofIssuer: desiredInvocationAudience.did() }
     )
     assert.ok(proofsA)
     assert.equal(proofsA[1].issuer.did(), desiredInvocationAudience.did())

@@ -1,4 +1,3 @@
-/* eslint-disable no-continue */
 /* eslint-disable max-depth */
 import * as Client from '@ucanto/client'
 // @ts-ignore
@@ -255,9 +254,11 @@ export class Agent {
    * proofs matching the passed capabilities require it.
    *
    * @param {import('@ucanto/interface').Capability[]|undefined} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
-   * @param {Ucanto.DID|undefined} [invocationAudience] - audience of invocation these proofs will be bundled with.
+   * @param {object} [options] - options
+   * @param {Ucanto.DID|undefined} [options.sessionProofIssuer] - When proofs require ucan/attest session proofs, filter them to this issuer.
+   * e.g. use this if you are calling this to get proofs to build a UCAN invocation that will rely on session proofs issued by the invocation audience
    */
-  proofs(caps, invocationAudience) {
+  proofs(caps, options = {}) {
     const arr = []
     for (const { delegation } of this.#delegations(caps)) {
       if (delegation.audience.did() === this.issuer.did()) {
@@ -265,7 +266,7 @@ export class Agent {
       }
     }
 
-    const sessions = getSessionProofs(this.#data, invocationAudience)
+    const sessions = getSessionProofs(this.#data, options.sessionProofIssuer)
     for (const proof of arr) {
       const session = sessions[proof.asCID.toString()]
       if (session) {
@@ -580,7 +581,7 @@ export class Agent {
             can: cap.can,
           },
         ],
-        audience.did()
+        { sessionProofIssuer: audience.did() }
       ),
     ]
 
