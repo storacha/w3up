@@ -194,36 +194,3 @@ export function getSessionProofs(data, issuer) {
   }
   return proofs
 }
-
-/**
- * Given a UCAN, return whether it is a session proof matching some options
- *
- * @param {Ucanto.Delegation} ucan
- * @param {object} options
- * @param {Ucanto.DID} [options.issuer] - issuer of session proof
- * @param {import('@ucanto/interface').UCANLink} [options.attestedProof] - CID of proof that the session proof attests to
- * @param {boolean} [options.allowExpired]
- * @returns {boolean} whether the ucan matches the options
- */
-export function matchSessionProof(ucan, options) {
-  if (!isSessionProof(ucan)) {
-    return false
-  }
-  const cap = ucan.capabilities[0]
-  const matchesRequiredIssuer =
-    options.issuer === undefined || options.issuer === ucan.issuer.did()
-  const isExpiredButNotAllowed = !options.allowExpired && isExpired(ucan)
-  const matchesRequiredProof =
-    !options.attestedProof ||
-    options.attestedProof.toString() === cap.nb.proof.toString()
-  if (isExpiredButNotAllowed) {
-    return false
-  }
-  if (!matchesRequiredIssuer) {
-    return false
-  }
-  if (!matchesRequiredProof) {
-    return false
-  }
-  return true
-}
