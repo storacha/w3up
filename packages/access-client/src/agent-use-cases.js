@@ -4,9 +4,7 @@ import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
 import { Provider } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
-import { AgentData, isSessionProof } from './agent-data.js'
-import * as ucanto from '@ucanto/core'
-import { DID as DIDValidator } from '@ucanto/validator'
+import { isSessionProof } from './agent-data.js'
 import * as DidMailto from '@web3-storage/did-mailto'
 
 /**
@@ -209,124 +207,5 @@ export async function authorizeWaitAndClaim(accessAgent, email, opts) {
   await authorizeAndWait(accessAgent, email, opts)
   await claimAccess(accessAgent, accessAgent.issuer.did(), {
     addProofs: opts?.addProofs ?? true,
-  })
-}
-
-/**
- * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
- *
- * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
- *
- * @param {AccessAgent} access
- * @param {AgentData} agentData
- * @param {string} email
- * @param {object} [opts]
- * @param {AbortSignal} [opts.signal]
- * @param {Ucanto.DID<'key'>} [opts.space]
- * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
- */
-export async function addProviderAndDelegateToAccount(
-  access,
-  agentData,
-  email,
-  opts
-) {
-  const space = opts?.space || access.currentSpace()
-  const spaceMeta = space ? agentData.spaces.get(space) : undefined
-  const provider =
-    opts?.provider ||
-    (() => {
-      const service = access.connection.id.did()
-      if (DIDValidator.match({ method: 'web' }).is(service)) {
-        // connection.id did is a valid provider value. Try using that.
-        return service
-      }
-      throw new Error(
-        `unable to determine provider to use to addProviderAndDelegateToAccount using access.connection.id did ${service}. expected a did:web:`
-      )
-    })()
-
-  if (!space || !spaceMeta) {
-    throw new Error('No space selected')
-  }
-
-  if (spaceMeta) {
-    throw new Error('Space already registered with web3.storage.')
-  }
-  const account = { did: () => DidMailto.fromEmail(DidMailto.email(email)) }
-  await addProvider({ access, space, account, provider })
-  const delegateSpaceAccessResult = await delegateSpaceAccessToAccount(
-    access,
-    space,
-    account
-  )
-  if (delegateSpaceAccessResult.out.error) {
-    throw delegateSpaceAccessResult.out.error
-  }
-
-  await agentData.addSpace(space, spaceMeta)
-}
-
-/**
- * @param {AccessAgent} access
- * @param {Ucanto.DID<'key'>} space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- */
-async function delegateSpaceAccessToAccount(access, space, account) {
-  const issuerSaysAccountCanAdminSpace =
-    await createIssuerSaysAccountCanAdminSpace(
-      access.issuer,
-      space,
-      account,
-      undefined,
-      access.proofs([{ with: space, can: '*' }]),
-      // we want to sign over control of this space forever
-      Infinity
-    )
-  return access.invokeAndExecute(Access.delegate, {
-    audience: access.connection.id,
-    with: space,
-    expiration: Infinity,
-    nb: {
-      delegations: {
-        [issuerSaysAccountCanAdminSpace.cid.toString()]:
-          issuerSaysAccountCanAdminSpace.cid,
-      },
-    },
-    proofs: [
-      // must be embedded here because it's referenced by cid in .nb.delegations
-      issuerSaysAccountCanAdminSpace,
-    ],
-  })
-}
-
-/**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
- * @param {Ucanto.DID} space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Ucanto.Capabilities} capabilities
- * @param {Ucanto.Delegation[]} proofs
- * @param {number} expiration
- * @returns
- */
-async function createIssuerSaysAccountCanAdminSpace(
-  issuer,
-  space,
-  account,
-  capabilities = [
-    {
-      can: '*',
-      with: space,
-    },
-  ],
-  proofs = [],
-  expiration
-) {
-  return ucanto.delegate({
-    issuer,
-    audience: account,
-    capabilities,
-    proofs,
-    expiration,
   })
 }

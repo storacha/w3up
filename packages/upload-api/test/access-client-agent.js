@@ -10,7 +10,8 @@ import {
   stringToDelegation,
 } from '@web3-storage/access/encoding'
 import {
-  Agent as AccessAgent,
+  Agent,
+  Access as AgentAccess,
   claimAccess,
   addProvider,
   authorizeAndWait,
@@ -29,8 +30,13 @@ export const test = {
     const { agent } = await setup(context)
 
     const space = await agent.createSpace('test-add')
+    const auth = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
     const [proof] = agent.proofs()
-    assert.deepEqual(space.proof.cid, /** @type {API.Link} */ (proof.cid))
+    assert.deepEqual(auth.cid, /** @type {API.Link} */ (proof.cid))
   },
   'can requestAuthorization': async (assert, context) => {
     const { agent, mail, account, accountEmail } = await setup(context)
@@ -154,31 +160,36 @@ export const test = {
     const accountProofs = [delegationFromAccountToSession, attestation]
     assert.ok(accountProofs)
   },
-  'can registerSpace': async (assert, context) => {
-    const { agent, mail } = await setup(context)
-    const accountEmail = DidMailto.email('foo@dag.house')
-    const account = Absentee.from({ id: DidMailto.fromEmail(accountEmail) })
+  // 'can registerSpace': async (assert, context) => {
+  //   const { agent, mail } = await setup(context)
+  //   const accountEmail = DidMailto.email('foo@dag.house')
+  //   const account = Absentee.from({ id: DidMailto.fromEmail(accountEmail) })
 
-    // request agent authorization from account
-    await requestAccess(agent, account, [{ can: '*' }])
-    const confirmationEmail = await mail.take()
+  //   // request agent authorization from account
+  //   await requestAccess(agent, account, [{ can: '*' }])
+  //   const confirmationEmail = await mail.take()
 
-    await confirmConfirmationUrl(agent.connection, confirmationEmail)
-    // claim delegations after confirmation
-    await claimAccess(agent, agent.issuer.did(), {
-      addProofs: true,
-    })
+  //   await confirmConfirmationUrl(agent.connection, confirmationEmail)
+  //   // claim delegations after confirmation
+  //   await claimAccess(agent, agent.issuer.did(), {
+  //     addProofs: true,
+  //   })
 
-    // create space
-    const spaceName = `space-test-${Math.random().toString().slice(2)}`
-    const spaceCreation = await agent.createSpace(spaceName)
-    await agent.setCurrentSpace(spaceCreation.did)
+  //   // create space
+  //   const spaceName = `space-test-${Math.random().toString().slice(2)}`
+  //   const spaceCreation = await agent.createSpace(spaceName)
+  //   const spaceAuth = await spaceCreation.createAuthorization(agent, {
+  //     can: '*',
+  //     expiration: Infinity,
+  //   })
+  //   await agent.importSpaceFromDelegation(spaceAuth)
+  //   await agent.setCurrentSpace(spaceCreation.did())
 
-    // 'register space' - i.e. add a storage provider as an account
-    await agent.registerSpace(accountEmail, {
-      provider: /** @type {API.DID<'web'>} */ (agent.connection.id.did()),
-    })
-  },
+  //   // 'register space' - i.e. add a storage provider as an account
+  //   await agent.registerSpace(accountEmail, {
+  //     provider: /** @type {API.DID<'web'>} */ (agent.connection.id.did()),
+  //   })
+  // },
   'same agent, multiple accounts, provider/add': async (assert, context) => {
     const { connection, mail } = context
 
@@ -188,7 +199,7 @@ export const test = {
     ])
 
     const accessAgentData = await AgentData.create()
-    const agent = await AccessAgent.create(accessAgentData, {
+    const agent = await Agent.create(accessAgentData, {
       connection,
     })
 
@@ -224,6 +235,12 @@ export const test = {
       // create space
       const spaceName = `space-test-${Math.random().toString().slice(2)}`
       const spaceCreation = await agent.createSpace(spaceName)
+      const auth = await spaceCreation.createAuthorization(agent, {
+        can: '*',
+        expiration: Infinity,
+      })
+      await agent.importSpaceFromDelegation(auth)
+
       // expect 1 new delegation from space.did() -> accessAgent.issuer.did()
       expectedDataDelegations += 1
       assert.deepEqual(
@@ -232,25 +249,25 @@ export const test = {
         `agentData has ${expectedDataDelegations} after calling accessClientAgent.createSpace(...)`
       )
 
-      await agent.setCurrentSpace(spaceCreation.did)
+      await agent.setCurrentSpace(spaceCreation.did())
 
       const provider = /** @type {API.DID<'web'>} */ (agent.connection.id.did())
       await addProvider({
         access: agent,
-        space: spaceCreation.did,
+        space: spaceCreation.did(),
         account,
         provider,
       })
     }
   },
   'can use second device with same account': async (assert, context) => {
-    const { connection, service, mail } = context
+    const { connection, mail } = context
     const email = 'example@dag.house'
     const account = Absentee.from({ id: DidMailto.fromEmail(email) })
 
     // first device
     const deviceAAgentData = await AgentData.create()
-    const deviceA = await AccessAgent.create(deviceAAgentData, {
+    const deviceA = await Agent.create(deviceAAgentData, {
       connection,
     })
 
@@ -267,16 +284,34 @@ export const test = {
     const spaceCreation = await deviceA.createSpace(
       `space-test-${Math.random().toString().slice(2)}`
     )
-    assert.ok(spaceCreation.did)
-    // deviceA registers a space
-    await deviceA.registerSpace(email, {
-      provider: service.did(),
-      space: spaceCreation.did,
+
+    assert.ok(spaceCreation.did())
+    // provision space with an account so it can store delegations
+    const provisionResult = await deviceA.provisionSpace({
+      account: account.did(),
+      space: spaceCreation.did(),
     })
+    assert.ok(provisionResult.ok)
+
+    // authorize deviceA
+    const auth = await spaceCreation.createAuthorization(deviceA, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await deviceA.importSpaceFromDelegation(auth)
+
+    // make space current
+    deviceA.setCurrentSpace(spaceCreation.did())
+
+    const recovery = await spaceCreation.createRecovery(account.did())
+    const delegateResult = await AgentAccess.delegate(deviceA, {
+      delegations: [recovery],
+    })
+    assert.ok(delegateResult.ok)
 
     // second device - deviceB
     const deviceBData = await AgentData.create()
-    const deviceB = await AccessAgent.create(deviceBData, {
+    const deviceB = await Agent.create(deviceBData, {
       connection,
     })
     // authorize deviceB
@@ -299,7 +334,7 @@ export const test = {
 
     // issuer + account proofs should authorize deviceB to invoke space/info
     const spaceInfoResult = await deviceB.invokeAndExecute(Space.info, {
-      with: spaceCreation.did,
+      with: spaceCreation.did(),
     })
 
     assert.equal(spaceInfoResult.out.error, undefined)
@@ -309,7 +344,7 @@ export const test = {
       /** @type {import('@web3-storage/access/types').SpaceInfoResult} */ (
         spaceInfoResult.out.ok
       )
-    assert.deepEqual(result.did, spaceCreation.did)
+    assert.deepEqual(result.did, spaceCreation.did())
   },
   'can addSpacesFromDelegations': async (assert, context) => {
     const { agent } = await setup(context)
@@ -330,15 +365,20 @@ export const test = {
     await confirmConfirmationUrl(deviceA.connection, confirmationEmail)
     await authorized
 
-    const space = await deviceA.createSpace()
+    const space = await deviceA.createSpace('test')
     await addProvider({
       access: deviceA,
-      space: space.did,
+      space: space.did(),
       account,
       provider: service.did(),
     })
+    const auth = await space.createAuthorization(deviceA, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await deviceA.importSpaceFromDelegation(auth)
     const spaceInfoResult = await deviceA.invokeAndExecute(Space.info, {
-      with: space.did,
+      with: space.did(),
     })
     assert.equal(spaceInfoResult.out.error, undefined)
 
@@ -357,16 +397,21 @@ export const test = {
     await confirmConfirmationUrl(agent.connection, confirmationEmail)
     await authorized
 
-    const space = await agent.createSpace()
+    const space = await agent.createSpace('test')
     await addProvider({
       access: agent,
-      space: space.did,
+      space: space.did(),
       account,
       provider: service.did(),
     })
+    const auth = await space.createAuthorization(agent, {
+      can: '*',
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
 
     const spaceInfoResult = await agent.invokeAndExecute(Space.info, {
-      with: space.did,
+      with: space.did(),
     })
 
     assert.ok(spaceInfoResult.out.ok)
@@ -396,7 +441,7 @@ export const test = {
 const setup = async ({ accountEmail = 'alice@web.mail', ...context }) => {
   const space = alice
   const account = Absentee.from({ id: DidMailto.fromEmail(accountEmail) })
-  const agent = await AccessAgent.create(undefined, {
+  const agent = await Agent.create(undefined, {
     connection: context.connection,
   })
 

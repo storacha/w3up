@@ -2,6 +2,7 @@ import * as API from '../types.js'
 import * as Provider from '@ucanto/server'
 import { Absentee, Verifier } from '@ucanto/principal'
 import * as Access from '@web3-storage/capabilities/access'
+import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as delegationsResponse from '../utils/delegations-response.js'
 
 /**
@@ -113,7 +114,7 @@ export async function createSessionProofs({
     proofs: delegationProofs,
   })
 
-  const attestation = await Access.session.delegate({
+  const attestation = await UCAN.attest.delegate({
     issuer: service,
     audience: agent,
     with: service.did(),

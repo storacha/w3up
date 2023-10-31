@@ -7,7 +7,8 @@ import * as CAR from '@ucanto/transport/car'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
 import * as Capabilities from '@web3-storage/capabilities/space'
-import * as Access from '@web3-storage/capabilities/access'
+import { attest } from '@web3-storage/capabilities/ucan'
+import * as Access from './access.js'
 import * as Space from './space.js'
 
 import { invoke, delegate, DID } from '@ucanto/core'
@@ -18,10 +19,10 @@ import {
   canDelegateCapability,
 } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
-import { addProviderAndDelegateToAccount } from './agent-use-cases.js'
-import { UCAN } from '@web3-storage/capabilities'
+import { Provider, UCAN } from '@web3-storage/capabilities'
+// import * as Access from './access.js'
 
-export { AgentData }
+export { AgentData, Access, Space }
 export * from './agent-use-cases.js'
 
 const HOST = 'https://up.web3.storage'
@@ -295,7 +296,7 @@ export class Agent {
     for (const value of this.#delegations(caps)) {
       const { delegation } = value
       const isSession = delegation.capabilities.some(
-        (c) => c.can === Access.session.can
+        (c) => c.can === attest.can
       )
       if (!isSession && delegation.audience.did() !== this.issuer.did()) {
         arr.push(value)
@@ -345,7 +346,7 @@ export class Agent {
    * Import a space from a delegation.
    *
    * @param {Ucanto.Delegation} delegation
-   * @param {object} [options]
+   * @param {object} options
    * @param {string} [options.name]
    */
   async importSpaceFromDelegation(delegation, { name = '' } = {}) {
@@ -422,20 +423,30 @@ export class Agent {
   }
 
   /**
-   * Requests a subscription from a provider and attaches it to a space.
-   *
-   * It also adds a full space delegation to the service that can later
-   * be claimed by the currently authorized account to restore access to the space.
-   *
-   * @param {string} email
-   * @param {object} [opts]
-   * @param {AbortSignal} [opts.signal]
-   * @param {Ucanto.DID<'key'>} [opts.space] - space to register
-   * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
+   * @param {object} options
+   * @param {Ucanto.DID<'mailto'>} options.account
+   * @param {Ucanto.DIDKey} options.space
+   * @param {Ucanto.DID<'web'>} [options.provider]
    */
-  async registerSpace(email, opts = {}) {
-    return await addProviderAndDelegateToAccount(this, this.#data, email, opts)
+  async provisionSpace({ account, provider, space }) {
+    return provisionSpace(this, { account, provider, space })
   }
+
+  // /**
+  //  * Requests a subscription from a provider and attaches it to a space.
+  //  *
+  //  * It also adds a full space delegation to the service that can later
+  //  * be claimed by the currently authorized account to restore access to the space.
+  //  *
+  //  * @param {string} email
+  //  * @param {object} [opts]
+  //  * @param {AbortSignal} [opts.signal]
+  //  * @param {Ucanto.DID<'key'>} [opts.space] - space to register
+  //  * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
+  //  */
+  // async registerSpace(email, opts = {}) {
+  //   return await addProviderAndDelegateToAccount(this, this.#data, email, opts)
+  // }
 
   /**
    *
@@ -657,4 +668,43 @@ export async function addSpacesFromDelegations(access, delegations) {
       }
     }
   }
+}
+
+const DIDWeb = ucanto.Schema.DID.match({ method: 'web' })
+
+/**
+ * @template {Record<string, any>} [S=Service]
+ * @param {Agent<S>} agent
+ * @param {object} input
+ * @param {Ucanto.DID<'mailto'>} input.account
+ * @param {Ucanto.DIDKey} [input.space]
+ * @param {*} input.provider
+ */
+export const provisionSpace = async (
+  agent,
+  {
+    account,
+    space = agent.currentSpace(),
+    provider = agent.connection.id.did(),
+  }
+) => {
+  if (!DIDWeb.is(provider)) {
+    throw new Error(
+      `Unable to determine provider from agent.connection.id did ${provider}. expected a did:web:`
+    )
+  }
+
+  if (!space) {
+    throw new Error('No space selected')
+  }
+
+  const { out } = await agent.invokeAndExecute(Provider.add, {
+    with: account,
+    nb: {
+      provider,
+      consumer: space,
+    },
+  })
+
+  return out
 }

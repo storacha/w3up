@@ -73,3 +73,43 @@ export const revoke = capability({
       'nb.proof'
     ),
 })
+
+/**
+ * Issued by trusted authority (usually the one handling invocation) that attest
+ * that specific UCAN delegation has been considered authentic.
+ *
+ * @see https://github.com/web3-storage/specs/blob/main/w3-session.md#authorization-session
+ * 
+ * @example
+ * ```js
+ * {
+    iss: "did:web:web3.storage",
+    aud: "did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi",
+    att: [{
+      "with": "did:web:web3.storage",
+      "can": "ucan/attest",
+      "nb": {
+        "proof": {
+          "/": "bafyreifer23oxeyamllbmrfkkyvcqpujevuediffrpvrxmgn736f4fffui"
+        }
+      }
+    }],
+    exp: null
+    sig: "..."
+  }
+ * ```
+ */
+export const attest = capability({
+  can: 'ucan/attest',
+  // Should be web3.storage DID
+  with: Schema.did(),
+  nb: Schema.struct({
+    // UCAN delegation that is being attested.
+    proof: Schema.link({ version: 1 }),
+  }),
+  derives: (claim, from) =>
+    // With field MUST be the same
+    and(equalWith(claim, from)) ??
+    // UCAN link MUST be the same
+    checkLink(claim.nb.proof, from.nb.proof, 'nb.proof'),
+})

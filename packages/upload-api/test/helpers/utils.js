@@ -6,7 +6,7 @@ import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as Context from './context.js'
-import { Access, Provider, Space } from '@web3-storage/capabilities'
+import { Provider, UCAN, Space } from '@web3-storage/capabilities'
 import * as DidMailto from '@web3-storage/did-mailto'
 
 // eslint-disable-next-line unicorn/prefer-export-from
@@ -118,7 +118,7 @@ export const createAuthorization = async ({ account, agent, service }) => {
     expiration: Infinity,
   })
 
-  const attest = await Access.session
+  const attest = await UCAN.attest
     .invoke({
       issuer: service,
       audience: agent,
