@@ -171,12 +171,18 @@ export const isSessionProof = (delegation) =>
  * Get a map from CIDs to the session proofs that reference them
  *
  * @param {AgentData} data
+ * @param {Ucanto.DID} [issuer] - if provided, will only return session proofs issued by this id
  * @returns {Record<string, Ucanto.Delegation>}
  */
-export function getSessionProofs(data) {
+export function getSessionProofs(data, issuer) {
   /** @type {Record<string, Ucanto.Delegation>} */
   const proofs = {}
   for (const { delegation } of data.delegations.values()) {
+    if (issuer !== undefined && issuer !== delegation.issuer.did()) {
+      // delegation doesn't match issuer
+      // eslint-disable-next-line no-continue
+      continue
+    }
     if (isSessionProof(delegation)) {
       const cap = delegation.capabilities[0]
       if (cap && !isExpired(delegation)) {
@@ -201,14 +207,27 @@ export function getSessionProofs(data) {
  * @returns {boolean} whether the ucan matches the options
  */
 export function matchSessionProof(ucan, options) {
-  if ( ! isSessionProof(ucan)) { return false; }
+  if (!isSessionProof(ucan)) {
+    return false
+  }
   const cap = ucan.capabilities[0]
-  const matchesRequiredIssuer = (options.issuer === undefined) || options.issuer === ucan.issuer.did()
-  const isExpiredButNotAllowed = ( ! options.allowExpired) && isExpired(ucan)
-  const matchesRequiredProof = ( ! options.attestedProof) || (options.attestedProof.toString() === cap.nb.proof.toString())
-  if ( ! isSessionProof(ucan)) { return false; }
-  if (isExpiredButNotAllowed) { return false; }
-  if ( ! matchesRequiredIssuer) { return false; }
-  if ( ! matchesRequiredProof) { return false; }
+  const matchesRequiredIssuer =
+    options.issuer === undefined || options.issuer === ucan.issuer.did()
+  const isExpiredButNotAllowed = !options.allowExpired && isExpired(ucan)
+  const matchesRequiredProof =
+    !options.attestedProof ||
+    options.attestedProof.toString() === cap.nb.proof.toString()
+  if (!isSessionProof(ucan)) {
+    return false
+  }
+  if (isExpiredButNotAllowed) {
+    return false
+  }
+  if (!matchesRequiredIssuer) {
+    return false
+  }
+  if (!matchesRequiredProof) {
+    return false
+  }
   return true
 }

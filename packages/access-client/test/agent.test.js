@@ -348,7 +348,9 @@ describe('Agent', function () {
    */
   it('should include session proof based on connection', async () => {
     // const space = await ed25519.Signer.generate()
-    const account = DidMailto.fromEmail(`test-${Math.random().toString().slice(2)}@dag.house`)
+    const account = DidMailto.fromEmail(
+      `test-${Math.random().toString().slice(2)}@dag.house`
+    )
     const serviceA = await ed25519.Signer.generate()
     const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
     const serviceB = await ed25519.Signer.generate()
@@ -369,8 +371,8 @@ describe('Agent', function () {
           {
             can: 'provider/add',
             with: 'ucan:*',
-          }
-        ]
+          },
+        ],
       })
       const session = await Access.session.delegate({
         issuer: service,
@@ -388,12 +390,14 @@ describe('Agent', function () {
       [
         {
           can: 'provider/add',
-          with: account
-        }
+          with: account,
+        },
       ],
-      desiredInvocationAudience.did(),
+      desiredInvocationAudience.did()
     )
     assert.ok(proofsA)
     assert.equal(proofsA[1].issuer.did(), desiredInvocationAudience.did())
+
+    // TODO(bengo): Show that the proofs vary based on agent.connection.id (like w3cli does)
   })
 })

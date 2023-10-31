@@ -19,7 +19,7 @@ import {
   validate,
   canDelegateCapability,
 } from './delegations.js'
-import { AgentData, getSessionProofs, matchSessionProof } from './agent-data.js'
+import { AgentData, getSessionProofs } from './agent-data.js'
 import { addProviderAndDelegateToAccount } from './agent-use-cases.js'
 import { UCAN } from '@web3-storage/capabilities'
 
@@ -169,44 +169,30 @@ export class Agent {
    * Query the delegations store for all the delegations matching the capabilities provided.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps]
-   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with. 
    */
-  #delegations(caps, invocationAudience) {
+  #delegations(caps) {
     const _caps = new Set(caps)
     /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types.js').DelegationMeta }>} */
     const values = []
     for (const [, value] of this.#data.delegations) {
       // check expiration
-      if (isExpired(value.delegation)) { continue; }
-      if (isTooEarly(value.delegation)) { continue; }
+      if (isExpired(value.delegation)) {
+        continue
+      }
+      if (isTooEarly(value.delegation)) {
+        continue
+      }
 
       if (Array.isArray(caps) && caps.length > 0) {
         // caps param is provided. Ensure that the delegations we're looping over can delegate to these caps
         for (const cap of _caps) {
-          const capProbablyRequiresSessionProof = value.delegation.signature.code === ucanto.Signature.NON_STANDARD
-          const findSessionProofs = () => [...this.#data.delegations.values()].filter(m => matchSessionProof(m.delegation, {
-            attestedProof: value.delegation.cid,
-            issuer: invocationAudience,
-          }))
           if (canDelegateCapability(value.delegation, cap)) {
-            const noSessionRequired = ! capProbablyRequiresSessionProof
-            const sessionProofs = capProbablyRequiresSessionProof ? findSessionProofs() : []
-            const hasRequiredSessionProof = capProbablyRequiresSessionProof && findSessionProofs().length > 0
-            const proofs =
-              // eslint-disable-next-line no-nested-ternary
-              (noSessionRequired)
-              ? [value]
-              : hasRequiredSessionProof
-              ? [value, ...sessionProofs]
-              : []
-            
-            values.push(...proofs)
-            if (proofs.length) {
-              _caps.delete(cap)
-            }
+            values.push(value)
+            _caps.delete(cap)
           }
         }
-      } else { // no caps param is provided. Caller must want all delegations.
+      } else {
+        // no caps param is provided. Caller must want all delegations.
         values.push(value)
       }
     }
@@ -268,17 +254,17 @@ export class Agent {
    * proofs matching the passed capabilities require it.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
-   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with. 
+   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with.
    */
   proofs(caps, invocationAudience) {
     const arr = []
-    for (const { delegation } of this.#delegations(caps, invocationAudience)) {
+    for (const { delegation } of this.#delegations(caps)) {
       if (delegation.audience.did() === this.issuer.did()) {
         arr.push(delegation)
       }
     }
 
-    const sessions = getSessionProofs(this.#data)
+    const sessions = getSessionProofs(this.#data, invocationAudience)
     for (const proof of arr) {
       const session = sessions[proof.asCID.toString()]
       if (session) {
