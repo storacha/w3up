@@ -171,7 +171,7 @@ export const isSessionProof = (delegation) =>
  * Get a map from CIDs to the session proofs that reference them
  *
  * @param {AgentData} data
- * @param {Ucanto.DID} [issuer] - if provided, will only return session proofs issued by this id
+ * @param {Ucanto.DID|undefined} [issuer] - if provided, will only return session proofs issued by this id
  * @returns {Record<string, Ucanto.Delegation>}
  */
 export function getSessionProofs(data, issuer) {

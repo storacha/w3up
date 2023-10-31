@@ -254,8 +254,8 @@ export class Agent {
    * Proof of session will also be included in the returned proofs if any
    * proofs matching the passed capabilities require it.
    *
-   * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
-   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with.
+   * @param {import('@ucanto/interface').Capability[]|undefined} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {Ucanto.DID|undefined} [invocationAudience] - audience of invocation these proofs will be bundled with.
    */
   proofs(caps, invocationAudience) {
     const arr = []
