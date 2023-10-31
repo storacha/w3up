@@ -68,7 +68,8 @@ export const AuthenticatorContext = createContext<AuthenticatorContextValue>([
       throw new Error('missing keyring context provider')
     },
     addSpace: async () => {},
-    authorize: async () => {}
+    authorize: async () => {},
+    getPlan: async () => ({ error: { name: 'KeyringContextMissing', message: 'missing keyring context provider' } })
   }
 ])
 

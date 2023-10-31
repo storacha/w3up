@@ -1,4 +1,4 @@
-import type { Abilities, AgentMeta, Service } from '@web3-storage/access/types'
+import type { Abilities, AgentMeta, PlanGetFailure, PlanGetSuccess, Service } from '@web3-storage/access/types'
 import type {
   Capability,
   DID,
@@ -9,17 +9,20 @@ import type {
   Delegation,
   UCANOptions
 } from '@ucanto/interface'
-import { Agent, authorizeWaitAndClaim } from '@web3-storage/access/agent'
+import { Agent as AccessAgent, authorizeWaitAndClaim, getAccountPlan } from '@web3-storage/access/agent'
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 import * as RSASigner from '@ucanto/principal/rsa'
+import * as Ucanto from '@ucanto/interface'
+import * as DidMailto from '@web3-storage/did-mailto'
 
-export { Agent, Abilities, AgentMeta, Service }
+export { Abilities, AgentMeta, Service }
 export const authorize = authorizeWaitAndClaim
 
 const DB_NAME = 'w3ui'
 const DB_STORE_NAME = 'keyring'
 export const W3UI_ACCOUNT_LOCALSTORAGE_KEY = 'w3ui-account-email'
-
+export type Agent = AccessAgent & { store: StoreIndexedDB }
+export type PlanGetResult = Ucanto.Result<PlanGetSuccess, PlanGetFailure | Ucanto.Failure>
 /**
  * A Space is the core organizational structure of web3-storage,
  * similar to a bucket in S3 but with some special properties.
@@ -101,6 +104,11 @@ export interface RegisterSpaceOpts {
   provider?: DID<'web'>
 }
 
+export type Email = `${string}@${string}`
+export interface Plan {
+  product?: DID
+}
+
 export interface KeyringContextActions {
   /**
    * Load the user agent and all stored data from secure storage.
@@ -119,7 +127,7 @@ export interface KeyringContextActions {
   /**
    * Authorize this device to act as the account linked to email.
    */
-  authorize: (email: `${string}@${string}`) => Promise<void>
+  authorize: (email: Email) => Promise<void>
   /**
    * Abort an ongoing account authorization.
    */
@@ -136,7 +144,7 @@ export interface KeyringContextActions {
    * Register the current space and store in secure storage. Automatically sets the
    * newly registered space as the current space.
    */
-  registerSpace: (email: string, opts?: RegisterSpaceOpts) => Promise<void>
+  registerSpace: (email: Email, opts?: RegisterSpaceOpts) => Promise<void>
   /**
    * Get all the proofs matching the capabilities. Proofs are delegations with
    * an audience matching the agent DID.
@@ -155,6 +163,10 @@ export interface KeyringContextActions {
    * Import a proof that delegates `*` ability on a space to this agent
    */
   addSpace: (proof: Delegation) => Promise<void>
+  /**
+   * Get the plan
+   */
+  getPlan: (email: Email) => Promise<PlanGetResult>
 }
 
 export type CreateDelegationOptions = Omit<UCANOptions, 'audience'> & {
@@ -191,6 +203,13 @@ export function getSpaces (agent: Agent): Space[] {
   return spaces
 }
 
+/**
+ * Get plan of the account identified by the given email.
+ */
+export async function getPlan (agent: Agent, email: Email): Promise<Ucanto.Result<PlanGetSuccess, PlanGetFailure | Ucanto.Failure>> {
+  return await getAccountPlan(agent, DidMailto.fromEmail(email))
+}
+
 export interface CreateAgentOptions extends ServiceConfig {}
 
 /**
@@ -200,20 +219,18 @@ export interface CreateAgentOptions extends ServiceConfig {}
 export async function createAgent (
   options: CreateAgentOptions = {}
 ): Promise<Agent> {
-  const dbName = `${DB_NAME}${
-    options.servicePrincipal != null ? '@' + options.servicePrincipal.did() : ''
-  }`
+  const dbName = `${DB_NAME}${options.servicePrincipal != null ? '@' + options.servicePrincipal.did() : ''}`
   const store = new StoreIndexedDB(dbName, {
     dbVersion: 1,
     dbStoreName: DB_STORE_NAME
   })
   const raw = await store.load()
   if (raw != null) {
-    return Object.assign(Agent.from(raw, { ...options, store }), { store })
+    return Object.assign(AccessAgent.from(raw, { ...options, store }), { store })
   }
   const principal = await RSASigner.generate()
   return Object.assign(
-    await Agent.create({ principal }, { ...options, store }),
+    await AccessAgent.create({ principal }, { ...options, store }),
     { store }
   )
 }

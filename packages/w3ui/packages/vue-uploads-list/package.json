@@ -29,7 +29,7 @@
   "dependencies": {
     "@w3ui/uploads-list-core": "workspace:^",
     "@w3ui/vue-keyring": "workspace:^5.0.1",
-    "@web3-storage/capabilities": "^7.0.0"
+    "@web3-storage/capabilities": "^11.1.0"
   },
   "peerDependencies": {
     "vue": "^3.0.0"

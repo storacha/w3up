@@ -28,8 +28,8 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-keyring",
   "dependencies": {
-    "@ucanto/interface": "^8.0.0",
-    "@ucanto/principal": "^8.0.0",
+    "@ucanto/interface": "^9.0.0",
+    "@ucanto/principal": "^9.0.0",
     "@w3ui/keyring-core": "workspace:^5.0.1"
   },
   "peerDependencies": {

@@ -30,7 +30,7 @@
   "dependencies": {
     "@w3ui/solid-keyring": "workspace:^5.0.1",
     "@w3ui/uploader-core": "workspace:^",
-    "@web3-storage/capabilities": "^7.0.0",
+    "@web3-storage/capabilities": "^11.1.0",
     "multiformats": "^11.0.1"
   },
   "peerDependencies": {

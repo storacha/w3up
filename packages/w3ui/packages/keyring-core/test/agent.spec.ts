@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest'
 import 'fake-indexeddb/auto'
 
-import { createAgent } from '../src/index'
+import { createAgent } from '../src/index.js'
 
 test('createAgent', async () => {
   const agent = await createAgent()

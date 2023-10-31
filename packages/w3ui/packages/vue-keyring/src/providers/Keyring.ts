@@ -2,7 +2,8 @@ import type {
   Agent,
   KeyringContextState,
   KeyringContextActions,
-  ServiceConfig
+  ServiceConfig,
+  Email
 } from '@w3ui/keyring-core'
 import type { Capability, DID, Proof } from '@ucanto/interface'
 
@@ -20,6 +21,7 @@ import {
   createAgent,
   getCurrentSpace as getCurrentSpaceInAgent,
   getSpaces,
+  getPlan as getPlanWithAgent,
   W3UI_ACCOUNT_LOCALSTORAGE_KEY
 } from '@w3ui/keyring-core'
 
@@ -39,6 +41,7 @@ interface KeyringProviderInjectionKeyType {
   getProofs: InjectionKey<KeyringContextActions['getProofs']>
   authorize: InjectionKey<KeyringContextActions['authorize']>
   cancelAuthorize: InjectionKey<KeyringContextActions['cancelAuthorize']>
+  getPlan: InjectionKey<KeyringContextActions['getPlan']>
 }
 
 /**
@@ -57,7 +60,8 @@ export const KeyringProviderInjectionKey: KeyringProviderInjectionKeyType = {
   registerSpace: Symbol('w3ui keyring registerSpace'),
   getProofs: Symbol('w3ui keyring getProofs'),
   authorize: Symbol('w3ui keyring authorize'),
-  cancelAuthorize: Symbol('w3ui keyring cancelAuthorize')
+  cancelAuthorize: Symbol('w3ui keyring cancelAuthorize'),
+  getPlan: Symbol('w3ui keyring getPlan')
 }
 
 export interface KeyringProviderProps extends ServiceConfig { }
@@ -188,7 +192,6 @@ export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<
 
     provide(KeyringProviderInjectionKey.resetAgent, async (): Promise<void> => {
       const agent = await getAgent()
-      // @ts-expect-error TODO: expose store in access client
       await Promise.all([agent.store.reset(), unloadAgent()])
     })
 
@@ -197,6 +200,14 @@ export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<
       async (caps: Capability[]): Promise<Proof[]> => {
         const agent = await getAgent()
         return agent.proofs(caps)
+      }
+    )
+
+    provide(
+      KeyringProviderInjectionKey.getPlan,
+      async (email: Email) => {
+        const agent = await getAgent()
+        return await getPlanWithAgent(agent, email)
       }
     )
 
