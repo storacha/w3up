@@ -175,25 +175,21 @@ export class Agent {
     /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types.js').DelegationMeta }>} */
     const values = []
     for (const [, value] of this.#data.delegations) {
-      // check expiration
-      if (isExpired(value.delegation)) {
-        continue
-      }
-      if (isTooEarly(value.delegation)) {
-        continue
-      }
-
-      if (Array.isArray(caps) && caps.length > 0) {
-        // caps param is provided. Ensure that the delegations we're looping over can delegate to these caps
-        for (const cap of _caps) {
-          if (canDelegateCapability(value.delegation, cap)) {
-            values.push(value)
-            _caps.delete(cap)
+      if (
+        !isExpired(value.delegation) && // check if delegation can be used
+        !isTooEarly(value.delegation)
+      ) {
+        // check if we need to filter for caps
+        if (Array.isArray(caps) && caps.length > 0) {
+          for (const cap of _caps) {
+            if (canDelegateCapability(value.delegation, cap)) {
+              _caps.delete(cap)
+              values.push(value)
+            }
           }
+        } else {
+          values.push(value)
         }
-      } else {
-        // no caps param is provided. Caller must want all delegations.
-        values.push(value)
       }
     }
     return values
