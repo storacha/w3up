@@ -209,7 +209,7 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
 
   const aggregateBuilder = Aggregate.build({
     pieces,
-    size: Piece.PaddedSize.from(context.config.maxAggregateSize),
+    size: Aggregate.Size.from(context.config.maxAggregateSize),
   })
 
   if (aggregate && !aggregateBuilder.link.equals(aggregate)) {

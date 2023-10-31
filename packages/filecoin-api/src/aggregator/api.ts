@@ -40,29 +40,13 @@ export interface ServiceContext {
    */
   pieceQueue: PieceQueue
   /**
-   * Queues pieces being buffered into an aggregate.
-   */
-  bufferQueue: BufferQueue
-  /**
-   * Store of CID => Buffer Record
-   */
-  bufferStore: BufferStore
-  /**
    * Stores fully buffered aggregates.
    */
   aggregateStore: AggregateStore
   /**
-   * Queues pieces, their aggregate and their inclusion proofs.
-   */
-  pieceAcceptQueue: PieceAcceptQueue
-  /**
    * Stores inclusion proofs for pieces included in an aggregate.
    */
   inclusionStore: InclusionStore
-  /**
-   * Queues buffered aggregates to be offered to the Dealer.
-   */
-  aggregateOfferQueue: AggregateOfferQueue
 }
 
 export interface PieceMessageContext
@@ -74,8 +58,16 @@ export interface PieceAcceptMessageContext
 export interface AggregateOfferMessageContext
   extends Pick<ServiceContext, 'aggregateStore'> {}
 
-export interface PieceInsertEventContext
-  extends Pick<ServiceContext, 'bufferStore' | 'bufferQueue'> {}
+export interface PieceInsertEventContext {
+  /**
+   * Queues pieces being buffered into an aggregate.
+   */
+  bufferQueue: BufferQueue
+  /**
+   * Store of CID => Buffer Record
+   */
+  bufferStore: BufferStore
+}
 
 export interface InclusionInsertEventToUpdateState
   extends Pick<ServiceContext, 'pieceStore'> {}
@@ -87,27 +79,45 @@ export interface InclusionInsertEventToIssuePieceAccept {
   aggregatorService: ServiceConfig<AggregatorService>
 }
 
-export interface AggregateInsertEventToPieceAcceptQueueContext
-  extends Pick<ServiceContext, 'bufferStore' | 'pieceAcceptQueue'> {
+export interface AggregateInsertEventToPieceAcceptQueueContext {
+  /**
+   * Store of CID => Buffer Record
+   */
+  bufferStore: BufferStore
+  /**
+   * Queues pieces, their aggregate and their inclusion proofs.
+   */
+  pieceAcceptQueue: PieceAcceptQueue
   /**
    * Buffer configuration for aggregation.
    */
   config: AggregateConfig
 }
 
-export interface AggregateInsertEventToAggregateOfferContext
-  extends Pick<ServiceContext, 'bufferStore'> {
+export interface AggregateInsertEventToAggregateOfferContext {
+  /**
+   * Store of CID => Buffer Record
+   */
+  bufferStore: BufferStore
   /**
    * Dealer connection to moves pieces into the pipeline.
    */
   dealerService: ServiceConfig<DealerService>
 }
 
-export interface BufferMessageContext
-  extends Pick<
-    ServiceContext,
-    'bufferStore' | 'bufferQueue' | 'aggregateOfferQueue'
-  > {
+export interface BufferMessageContext {
+  /**
+   * Queues pieces being buffered into an aggregate.
+   */
+  bufferQueue: BufferQueue
+  /**
+   * Store of CID => Buffer Record
+   */
+  bufferStore: BufferStore
+  /**
+   * Queues buffered aggregates to be offered to the Dealer.
+   */
+  aggregateOfferQueue: AggregateOfferQueue
   /**
    * Buffer configuration for aggregation.
    */

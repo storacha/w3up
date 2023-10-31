@@ -236,6 +236,10 @@ export class Agent {
       }
     }
     const receipt = await this.invokeAndExecute(UCAN.revoke, {
+      // per https://github.com/web3-storage/w3up/blob/main/packages/capabilities/src/ucan.js#L38C6-L38C6 the resource here should be
+      // the current issuer - using the space DID here works for simple cases but falls apart when a delegee tries to revoke a delegation
+      // they have re-delegated, since they don't have "ucan/revoke" capabilities on the space
+      with: this.issuer.did(),
       nb: {
         ucan: delegation.cid,
       },

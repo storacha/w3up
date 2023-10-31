@@ -290,13 +290,16 @@ describe('Agent', function () {
     const bob = await Agent.create(undefined, {
       connection: connection({ principal: server.id, channel: server }),
     })
+    const mallory = await Agent.create(undefined, {
+      connection: connection({ principal: server.id, channel: server }),
+    })
 
     const space = await alice.createSpace('alice')
     await alice.setCurrentSpace(space.did)
 
     const delegation = await alice.delegate({
-      abilities: ['*'],
-      audience: fixtures.alice,
+      abilities: ['store/add'],
+      audience: bob.issuer,
       audienceMeta: {
         name: 'sss',
         type: 'app',
@@ -314,11 +317,11 @@ describe('Agent', function () {
       `failed to revoke when proofs passed: ${result2.error?.message}`
     )
 
-    const bobSpace = await bob.createSpace('bob')
-    await bob.setCurrentSpace(bobSpace.did)
+    await bob.importSpaceFromDelegation(delegation)
+    await bob.setCurrentSpace(space.did)
     const bobDelegation = await bob.delegate({
-      abilities: ['*'],
-      audience: fixtures.alice,
+      abilities: ['store/add'],
+      audience: mallory.issuer,
       audienceMeta: {
         name: 'sss',
         type: 'app',
@@ -332,7 +335,7 @@ describe('Agent', function () {
       `revoke resolved but should have rejected because delegation is not passed`
     )
 
-    //
+    // but it should succeed if the delegation is passed
     const result4 = await alice.revoke(bobDelegation.cid, {
       proofs: [bobDelegation],
     })
@@ -340,6 +343,10 @@ describe('Agent', function () {
       result4.ok,
       `failed to revoke even though proof was passed: ${result4.error?.message}`
     )
+
+    // bob should be able to revoke his own delegation
+    const result5 = await bob.revoke(bobDelegation.cid)
+    assert(result5.ok, `failed to revoke: ${result5.error?.message}`)
   })
 
   /**

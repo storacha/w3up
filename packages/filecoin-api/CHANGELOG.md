@@ -1,5 +1,60 @@
 # Changelog
 
+## [3.0.6](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.5...filecoin-api-v3.0.6) (2023-10-30)
+
+
+### Bug Fixes
+
+* dealer aggregate store query type does not need aggregate anymore ([#1042](https://github.com/web3-storage/w3up/issues/1042)) ([0b3c1d0](https://github.com/web3-storage/w3up/commit/0b3c1d0b891208d035abdb5bf7bf43dba853d8a7))
+
+## [3.0.5](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.4...filecoin-api-v3.0.5) (2023-10-30)
+
+
+### Bug Fixes
+
+* aggregate accept should rely on deal tracker response to issue receipt ([#1038](https://github.com/web3-storage/w3up/issues/1038)) ([42985ea](https://github.com/web3-storage/w3up/commit/42985ea526984dbc51d9afbdd1e1dc35a08c0639))
+* aggregator service types have unused types ([#1039](https://github.com/web3-storage/w3up/issues/1039)) ([eba8e51](https://github.com/web3-storage/w3up/commit/eba8e514e90d266408b1271f438a339359206b1f))
+* typo dealer event function name ([#1040](https://github.com/web3-storage/w3up/issues/1040)) ([7900624](https://github.com/web3-storage/w3up/commit/7900624469e3ec79f83adccd591e1c47a7034724))
+
+## [3.0.4](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.3...filecoin-api-v3.0.4) (2023-10-27)
+
+
+### Bug Fixes
+
+* filecoin api test service context explicit exported ([#1034](https://github.com/web3-storage/w3up/issues/1034)) ([aeceec8](https://github.com/web3-storage/w3up/commit/aeceec8007426db9104b67fd68b2eace23bde0c5))
+
+## [3.0.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.2...filecoin-api-v3.0.3) (2023-10-27)
+
+
+### Bug Fixes
+
+* trigger release filecoin api ([#1032](https://github.com/web3-storage/w3up/issues/1032)) ([7289a6b](https://github.com/web3-storage/w3up/commit/7289a6b2d735db76cd0159c5b7d9fc881ff0c903))
+
+## [3.0.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.1...filecoin-api-v3.0.2) (2023-10-26)
+
+
+### Bug Fixes
+
+* aggregate accept must query with aggregate only ([#1024](https://github.com/web3-storage/w3up/issues/1024)) ([6fd909c](https://github.com/web3-storage/w3up/commit/6fd909ccdc108a83b3ea122e2d66b0663c6f3484))
+
+## [3.0.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.0...filecoin-api-v3.0.1) (2023-10-26)
+
+
+### Bug Fixes
+
+* filecoin api store has returns false ([#1022](https://github.com/web3-storage/w3up/issues/1022)) ([1960130](https://github.com/web3-storage/w3up/commit/1960130d2e39135b6b2327c08a9dae3cce59b2c3))
+
+## [3.0.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.3...filecoin-api-v3.0.0) (2023-10-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade data segment v4 ([#996](https://github.com/web3-storage/w3up/issues/996))
+
+### Bug Fixes
+
+* upgrade data segment v4 ([#996](https://github.com/web3-storage/w3up/issues/996)) ([348e4b0](https://github.com/web3-storage/w3up/commit/348e4b065909e48ab1e97c0eaee9fa0b5ad2e223))
+
 ## [2.0.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v2.0.2...filecoin-api-v2.0.3) (2023-10-25)
 
 

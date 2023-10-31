@@ -13,6 +13,9 @@ import * as API from '../../src/types.js'
 import { validateAuthorization } from '../utils.js'
 import { mockService } from './mocks.js'
 
+/**
+ * Mocked w3filecoin services
+ */
 export function getMockService() {
   return mockService({
     aggregate: {

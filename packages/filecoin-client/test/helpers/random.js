@@ -62,6 +62,7 @@ export async function randomCargo(length, size) {
       link: piece.link,
       height: piece.height,
       root: piece.root,
+      padding: piece.padding,
       content: car.cid,
     }
   })

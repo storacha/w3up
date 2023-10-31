@@ -9,7 +9,6 @@ import {
   QueueOperationFailed,
   StoreOperationFailed,
   UnexpectedState,
-  RecordNotFoundErrorName,
 } from '../errors.js'
 
 /**
@@ -22,16 +21,13 @@ export const pieceOffer = async ({ capability }, context) => {
 
   // dedupe
   const hasRes = await context.pieceStore.has({ piece, group })
-  let exists = true
-  if (hasRes.error?.name === RecordNotFoundErrorName) {
-    exists = false
-  } else if (hasRes.error) {
+  if (hasRes.error) {
     return {
       error: new StoreOperationFailed(hasRes.error.message),
     }
   }
 
-  if (!exists) {
+  if (!hasRes.ok) {
     const addRes = await context.pieceQueue.add({ piece, group })
     if (addRes.error) {
       return {

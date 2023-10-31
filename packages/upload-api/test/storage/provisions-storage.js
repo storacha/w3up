@@ -5,7 +5,8 @@ import * as Types from '../../src/types.js'
  * @param {Types.Provision} item
  * @returns {string}
  */
-const itemKey = ({customer, consumer, provider}) => `${customer}:${consumer}@${provider}`
+const itemKey = ({ customer, consumer, provider }) =>
+  `${customer}:${consumer}@${provider}`
 
 /**
  * @implements {Types.ProvisionsStorage}

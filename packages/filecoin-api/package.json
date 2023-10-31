@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/filecoin-api",
-  "version": "2.0.3",
+  "version": "3.0.6",
   "type": "module",
   "main": "./src/lib.js",
   "files": [
@@ -58,6 +58,9 @@
       ],
       "test": [
         "dist/test/lib.d.ts"
+      ],
+      "test/context/service": [
+        "dist/test/context/service.d.ts"
       ],
       "test/types": [
         "dist/test/types.d.ts"
@@ -125,6 +128,10 @@
       "types": "./dist/test/lib.d.ts",
       "import": "./test/lib.js"
     },
+    "./test/context/service": {
+      "types": "./dist/test/context/service.d.ts",
+      "import": "./test/context/service.js"
+    },
     "./test/types": {
       "types": "./dist/test/types.d.ts",
       "import": "./test/types.js"
@@ -146,7 +153,7 @@
     "@ucanto/server": "^9.0.1",
     "@ucanto/transport": "^9.0.0",
     "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/data-segment": "^3.2.0"
+    "@web3-storage/data-segment": "^4.0.0"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",

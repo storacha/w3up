@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -231,8 +231,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/data-segment':
-        specifier: ^3.2.0
-        version: 3.2.0
+        specifier: ^4.0.0
+        version: 4.0.0
     devDependencies:
       '@ipld/car':
         specifier: ^5.1.1
@@ -305,8 +305,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@web3-storage/data-segment':
-        specifier: ^3.2.0
-        version: 3.2.0
+        specifier: ^4.0.0
+        version: 4.0.0
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -426,8 +426,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       fr32-sha2-256-trunc254-padded-binary-tree-multihash:
-        specifier: ^1.1.4
-        version: 1.1.4
+        specifier: ^3.1.0
+        version: 3.1.0
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14
@@ -2105,7 +2105,7 @@ packages:
       react-router: 5.3.4
       react-router-config: 5.1.1(react-router@5.3.4)
       react-router-dom: 5.3.4
-      rtl-detect: 1.0.4
+      rtl-detect: 1.1.2
       semver: 7.5.4
       serve-handler: 6.1.5
       shelljs: 0.8.5
@@ -3317,7 +3317,7 @@ packages:
       '@typescript-eslint/parser': 5.62.0(eslint@8.50.0)(typescript@5.2.2)
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.50.0)(typescript@5.2.2)
-      '@typescript-eslint/utils': 5.62.0(eslint@8.50.0)(typescript@5.2.2)
+      '@typescript-eslint/utils': 5.62.0(eslint@8.50.0)(typescript@4.9.5)
       debug: 4.3.4(supports-color@8.1.1)
       eslint: 8.50.0
       graphemer: 1.4.0
@@ -3450,7 +3450,7 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.2.2)
-      '@typescript-eslint/utils': 5.62.0(eslint@8.50.0)(typescript@5.2.2)
+      '@typescript-eslint/utils': 5.62.0(eslint@8.50.0)(typescript@4.9.5)
       debug: 4.3.4(supports-color@8.1.1)
       eslint: 8.50.0
       tsutils: 3.21.0(typescript@5.2.2)
@@ -3506,26 +3506,6 @@ packages:
     dev: true
 
   /@typescript-eslint/utils@5.62.0(eslint@8.50.0)(typescript@4.9.5):
-    resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@8.50.0)
-      '@types/json-schema': 7.0.13
-      '@types/semver': 7.5.3
-      '@typescript-eslint/scope-manager': 5.62.0
-      '@typescript-eslint/types': 5.62.0
-      '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.2.2)
-      eslint: 8.50.0
-      eslint-scope: 5.1.1
-      semver: 7.5.4
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
-    dev: true
-
-  /@typescript-eslint/utils@5.62.0(eslint@8.50.0)(typescript@5.2.2):
     resolution: {integrity: sha512-n8oxjeb5aIbPFEtmQxQYOLI0i9n5ySBEY/ZEHHZqKQSFnxio1rv6dthascc9dLuwrL0RC5mPCxB7vnAVGAYWAQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -3703,6 +3683,14 @@ packages:
 
   /@web3-storage/data-segment@3.2.0:
     resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.6
+      multiformats: 11.0.2
+      sync-multihash-sha2: 1.0.0
+    dev: false
+
+  /@web3-storage/data-segment@4.0.0:
+    resolution: {integrity: sha512-AnNyJp3wHMa7LBzguQzm4rmXSi8vQBz4uFs+jiXnSNtLR5dAqHfhMvi9XdWonWPYvxNvT5ZhYCSF0mpDjymqKg==}
     dependencies:
       '@ipld/dag-cbor': 9.0.6
       multiformats: 11.0.2
@@ -6794,8 +6782,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@1.1.4:
-    resolution: {integrity: sha512-+IpghzGszM7ebMuYzoILYvQMHXgtyZbIwlx2VYY4yLsT4SVU02ur6g7LCoLAxaD9GIv2oTAdiuHUxBH1liEQ7g==}
+  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@3.1.0:
+    resolution: {integrity: sha512-rpE+Ex1Hke2lPMonENYjqNJSF00fQqDMlECV8KvCLUlkv+l/PkLeZfo2/VFu909hOJQfGXHk/TXrANic0Z/Ymg==}
     dev: false
 
   /fraction.js@4.3.6:
@@ -10689,8 +10677,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rtl-detect@1.0.4:
-    resolution: {integrity: sha512-EBR4I2VDSSYr7PkBmFy04uhycIpDKp+21p/jARYXlCSjQksTBQcJ0HFUPOO79EPPH5JS6VAhiIQbycf0O3JAxQ==}
+  /rtl-detect@1.1.2:
+    resolution: {integrity: sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==}
     dev: true
 
   /run-parallel@1.2.0:

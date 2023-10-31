@@ -5,12 +5,12 @@ import { CBOR } from '@ucanto/core'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Block from 'multiformats/block'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
+import { DealTracker } from '@web3-storage/filecoin-client'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
 import {
   StoreOperationFailed,
   DecodeBlockOperationFailed,
-  RecordNotFoundErrorName,
 } from '../errors.js'
 
 /**
@@ -23,16 +23,13 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
   const { aggregate, pieces } = capability.nb
 
   const hasRes = await context.aggregateStore.has({ aggregate })
-  let exists = true
-  if (hasRes.error?.name === RecordNotFoundErrorName) {
-    exists = false
-  } else if (hasRes.error) {
+  if (hasRes.error) {
     return {
       error: new StoreOperationFailed(hasRes.error.message),
     }
   }
 
-  if (!exists) {
+  if (!hasRes.ok) {
     const piecesBlockRes = await findCBORBlock(
       pieces,
       invocation.iterateIPLDBlocks()
@@ -98,26 +95,41 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
 export const aggregateAccept = async ({ capability }, context) => {
   const { aggregate } = capability.nb
 
-  // Get deal status from the store.
-  const get = await context.aggregateStore.get({
+  // Query current state
+  const info = await DealTracker.dealInfo(
+    context.dealTrackerService.invocationConfig,
     aggregate,
-  })
-  if (get.error) {
+    { connection: context.dealTrackerService.connection }
+  )
+
+  if (info.out.error) {
     return {
-      error: new StoreOperationFailed(get.error.message),
+      error: info.out.error,
     }
   }
-  if (!get.ok.deal) {
+
+  // If there are no deals for it, we can skip
+  const deals = Object.keys(info.out.ok.deals || {})
+  if (!deals.length) {
     return {
-      error: new StoreOperationFailed('no deal available'),
+      error: new Server.Failure('no deals were obtained for given aggregate CID')
+    }
+  }
+  
+  // For receipts, we only care about first deal
+  // TODO: We need to revisit this with renewals
+  const deal = {
+    dataType: 0n,
+    dataSource: {
+      dealID: BigInt(deals[0])
     }
   }
 
   return {
     ok: {
       aggregate,
-      dataSource: get.ok.deal.dataSource,
-      dataType: get.ok.deal.dataType,
+      dataSource: deal.dataSource,
+      dataType: deal.dataType,
     },
   }
 }

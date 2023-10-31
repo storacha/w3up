@@ -17,6 +17,7 @@ import * as Aggregator from './filecoin/aggregator.js'
 import * as Dealer from './filecoin/dealer.js'
 import * as DealTracker from './filecoin/deal-tracker.js'
 import * as UCAN from './ucan.js'
+import * as Plan from './plan.js'
 
 export {
   Access,
@@ -38,6 +39,7 @@ export {
   DealTracker,
   Admin,
   UCAN,
+  Plan,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
@@ -77,4 +79,5 @@ export const abilitiesAsStrings = [
   Admin.admin.can,
   Admin.upload.inspect.can,
   Admin.store.inspect.can,
+  Plan.get.can,
 ]

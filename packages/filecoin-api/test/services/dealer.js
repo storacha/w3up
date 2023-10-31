@@ -1,5 +1,7 @@
 import { Dealer } from '@web3-storage/capabilities'
 import * as Signer from '@ucanto/principal/ed25519'
+import * as Server from '@ucanto/server'
+import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
 import { CBOR } from '@ucanto/core'
 
 import * as API from '../../src/types.js'
@@ -8,6 +10,8 @@ import * as DealerApi from '../../src/dealer/api.js'
 import { createServer, connect } from '../../src/dealer/service.js'
 import { randomAggregate } from '../utils.js'
 import { FailingStore } from '../context/store.js'
+import { mockService } from '../context/mocks.js'
+import { getConnection } from '../context/service.js'
 import { getStoreImplementations } from '../context/store-implementations.js'
 import { StoreOperationErrorName } from '../../src/errors.js'
 
@@ -79,8 +83,6 @@ export const test = {
     assert.equal(storedDeal.ok?.status, 'offered')
     assert.ok(storedDeal.ok?.insertedAt)
     assert.ok(storedDeal.ok?.updatedAt)
-    // Still pending resolution
-    assert.ok(!storedDeal.ok?.deal)
 
     const storedOffer = await context.offerStore.get(piecesBlock.cid.toString())
     assert.ok(storedOffer.ok)
@@ -92,7 +94,7 @@ export const test = {
     )
   },
   'aggregate/offer fails if not able to check aggregate store':
-    wichMockableContext(
+    withMockableContext(
       async (assert, context) => {
         const { storefront } = await getServiceContext()
         const connection = connect({
@@ -121,14 +123,14 @@ export const test = {
         assert.ok(response.out.error)
         assert.equal(response.out.error?.name, StoreOperationErrorName)
       },
-      (context) => ({
+      async (context) => ({
         ...context,
         aggregateStore:
           getStoreImplementations(FailingStore).dealer.aggregateStore,
       })
     ),
   'aggregate/offer fails if not able to put to offer store':
-    wichMockableContext(
+    withMockableContext(
       async (assert, context) => {
         const { storefront } = await getServiceContext()
         const connection = connect({
@@ -157,7 +159,7 @@ export const test = {
         assert.ok(response.out.error)
         assert.equal(response.out.error?.name, StoreOperationErrorName)
       },
-      (context) => ({
+      async (context) => ({
         ...context,
         offerStore: getStoreImplementations(FailingStore).dealer.offerStore,
       })
@@ -177,11 +179,11 @@ export const test = {
     const offer = pieces.map((p) => p.link)
     const piecesBlock = await CBOR.write(offer)
 
-    // Set aggregate with deal
+    // Deal as in mocked service
     const deal = {
       dataType: 0n,
       dataSource: {
-        dealID: 100n,
+        dealID: 111n,
       },
     }
     const putRes = await context.aggregateStore.put({
@@ -190,7 +192,6 @@ export const test = {
       status: 'offered',
       insertedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      deal,
     })
     assert.ok(putRes.ok)
 
@@ -217,8 +218,8 @@ export const test = {
     )
     assert.equal(BigInt(response.out.ok.dataType), BigInt(deal.dataType))
   },
-  'aggregate/accept fails if not able to read from aggregate store':
-    wichMockableContext(
+  'aggregate/accept fails if not able to invoke deal info':
+    withMockableContext(
       async (assert, context) => {
         const { storefront } = await getServiceContext()
         const connection = connect({
@@ -245,13 +246,42 @@ export const test = {
 
         const response = await pieceAddInv.execute(connection)
         assert.ok(response.out.error)
-        assert.equal(response.out.error?.name, StoreOperationErrorName)
       },
-      (context) => ({
-        ...context,
-        aggregateStore:
-          getStoreImplementations(FailingStore).dealer.aggregateStore,
-      })
+      async (context) => {
+        /**
+         * Mock deal tracker to fail
+         */
+        const dealTrackerSigner = await Signer.generate()
+        const service = mockService({
+          deal: {
+            info: Server.provideAdvanced({
+              capability: DealTrackerCaps.dealInfo,
+              handler: async ({ invocation, context }) => {
+                return {
+                  error: new Server.Failure(),
+                }
+              },
+            }),
+          },
+        })
+        const dealTrackerConnection = getConnection(
+          dealTrackerSigner,
+          service
+        ).connection
+
+        return {
+          ...context,
+          service,
+          dealTrackerService: {
+            connection: dealTrackerConnection,
+            invocationConfig: {
+              issuer: context.id,
+              with: context.id.did(),
+              audience: dealTrackerSigner,
+            },
+          },
+        }
+      }
     ),
 }
 
@@ -264,12 +294,12 @@ async function getServiceContext() {
 
 /**
  * @param {API.Test<DealerApi.ServiceContext>} testFn
- * @param {(context: DealerApi.ServiceContext) => DealerApi.ServiceContext} mockContextFunction
+ * @param {(context: DealerApi.ServiceContext) => Promise<DealerApi.ServiceContext>} mockContextFunction
  */
-function wichMockableContext(testFn, mockContextFunction) {
+function withMockableContext(testFn, mockContextFunction) {
   // @ts-ignore
-  return function (...args) {
-    const modifiedArgs = [args[0], mockContextFunction(args[1])]
+  return async function (...args) {
+    const modifiedArgs = [args[0], await mockContextFunction(args[1])]
     // @ts-ignore
     return testFn(...modifiedArgs)
   }

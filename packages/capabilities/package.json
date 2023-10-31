@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/capabilities",
-  "version": "11.0.1",
+  "version": "11.1.0",
   "description": "Capabilities provided by web3.storage",
   "homepage": "https://github.com/web3-storage/w3protocol/tree/main/packages/capabilities",
   "repository": {
@@ -31,6 +31,10 @@
     "./*": {
       "types": "./dist/src/*.d.ts",
       "import": "./src/*.js"
+    },
+    "./test/helpers/*": {
+      "types": "./dist/test/helpers/*.d.ts",
+      "import": "./test/helpers/*.js"
     },
     "./filecoin": {
       "types": "./dist/src/filecoin/index.d.ts",

@@ -1,5 +1,4 @@
 import type { Signer, Link } from '@ucanto/interface'
-import { DealMetadata } from '@web3-storage/capabilities/types'
 import { PieceLink } from '@web3-storage/data-segment'
 import {
   DealerService,
@@ -29,6 +28,10 @@ export interface ServiceContext<OfferDoc = OfferDocument> {
    * Stores aggregates and their deal proofs.
    */
   aggregateStore: AggregateStore
+  /**
+   * Deal tracker connection to find out available deals for an aggregate.
+   */
+  dealTrackerService: ServiceConfig<DealTrackerService>
 }
 
 export interface AggregateInsertEventContext
@@ -41,12 +44,7 @@ export interface AggregateUpdatedStatusEventContext {
   dealerService: ServiceConfig<DealerService>
 }
 
-export interface CronContext extends Pick<ServiceContext, 'aggregateStore'> {
-  /**
-   * Deal tracker connection to find out available deals for an aggregate.
-   */
-  dealTrackerService: ServiceConfig<DealTrackerService>
-}
+export interface CronContext extends Pick<ServiceContext, 'aggregateStore' | 'dealTrackerService'> {}
 
 export interface AggregateRecord {
   /**
@@ -57,10 +55,6 @@ export interface AggregateRecord {
    * List of pieces in an aggregate.
    */
   pieces: Link
-  /**
-   * Filecoin deal where aggregate is present.
-   */
-  deal?: DealMetadata
   /**
    * Status of the offered aggregate piece.
    * - offered = acknowledged received for inclusion in filecoin deals.
@@ -83,10 +77,6 @@ export interface AggregateRecordKey {
    * Piece CID of an aggregate.
    */
   aggregate: PieceLink
-  /**
-   * Filecoin deal where aggregate is present.
-   */
-  deal?: DealMetadata
 }
 
 export interface OfferDocument {

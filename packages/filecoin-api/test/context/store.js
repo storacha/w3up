@@ -66,7 +66,7 @@ export class Store {
     const t = this.getFn(this.items, item)
     if (!t) {
       return {
-        error: new RecordNotFound(),
+        ok: false,
       }
     }
     return {

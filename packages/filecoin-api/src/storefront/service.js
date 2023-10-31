@@ -7,7 +7,6 @@ import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 import * as API from '../types.js'
 import {
   QueueOperationFailed,
-  RecordNotFoundErrorName,
   StoreOperationFailed,
 } from '../errors.js'
 
@@ -23,15 +22,12 @@ export const filecoinOffer = async ({ capability }, context) => {
   if (!context.options?.skipFilecoinSubmitQueue) {
     // dedupe
     const hasRes = await context.pieceStore.has({ piece })
-    let exists = true
-    if (hasRes.error?.name === RecordNotFoundErrorName) {
-      exists = false
-    } else if (hasRes.error) {
+    if (hasRes.error) {
       return { error: new StoreOperationFailed(hasRes.error.message) }
     }
 
     const group = context.id.did()
-    if (!exists) {
+    if (!hasRes.ok) {
       // Queue the piece for validation etc.
       const queueRes = await context.filecoinSubmitQueue.add({
         piece,
