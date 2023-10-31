@@ -2,15 +2,16 @@ import assert from 'assert'
 import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
-import { Agent, connection } from '../src/agent.js'
+import { Agent, AgentData, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 import * as ed25519 from '@ucanto/principal/ed25519'
-import { Access } from '@web3-storage/capabilities'
+import { Access, Provider } from '@web3-storage/capabilities'
 import { Absentee } from '@ucanto/principal'
 import * as DidMailto from '@web3-storage/did-mailto'
+import { isSessionProof } from '../src/agent-data.js'
 
 describe('Agent', function () {
   it('should return did', async function () {
@@ -349,11 +350,11 @@ describe('Agent', function () {
   })
 
   /**
-   * An agent may manage a bunch of different proofs for the same agent key. e.g. proofs may authorize agent key to access various audiences or sessions on those audiences.
+   * An agent may manage a bunch of different proofs for the same agent key. e.g. proofs may authorize agent key to access various other service providers, each of which may have issued its own session.
    * When one of the proofs is a session proof issued by w3upA or w3upB, the Agent#proofs result should contain proofs appropriate for the session host.
    */
-  it('should include session proof based on connection', async () => {
-    // const space = await ed25519.Signer.generate()
+  it('can filter proofs based on sessionProofIssuer', async () => {
+    const space = await ed25519.Signer.generate()
     const account = DidMailto.fromEmail(
       `test-${Math.random().toString().slice(2)}@dag.house`
     )
@@ -363,7 +364,8 @@ describe('Agent', function () {
     const serviceBWeb = serviceB.withDID('did:web:b.up.web3.storage')
 
     const server = createServer()
-    const agent = await Agent.create(undefined, {
+    const agentData = await AgentData.create()
+    const agent = new Agent(agentData, {
       connection: connection({ channel: server }),
     })
 
@@ -391,7 +393,6 @@ describe('Agent', function () {
     }
 
     // now let's say we want to send provider/add invocation to serviceB
-    const desiredInvocationAudience = serviceAWeb
     const proofsA = agent.proofs(
       [
         {
@@ -399,11 +400,65 @@ describe('Agent', function () {
           with: account,
         },
       ],
-      { sessionProofIssuer: desiredInvocationAudience.did() }
+      { sessionProofIssuer: serviceAWeb.did() }
     )
     assert.ok(proofsA)
-    assert.equal(proofsA[1].issuer.did(), desiredInvocationAudience.did())
+    assert.equal(proofsA[1].issuer.did(), serviceAWeb.did())
 
-    // TODO(bengo): Show that the proofs vary based on agent.connection.id (like w3cli does)
+    /**
+     * now let's consider a new Agent that reuses the AgentData for the first agent. e.g. in the case of a long running db of AgentData but a transient Agent that exists only for a bit to access/use the data.
+     * Unlike the first agentA which made connections to serviceA, this agentB has a connection to serviceB. But all these Agents reuse an underlying AgentData with proofs for everyone.
+     * That Agent should be able to call proofs to get proofs incl. sessionProofs issued by that invo
+     */
+    {
+      const agentConnectedToServiceB = new Agent(agentData, {
+        connection: connection({
+          principal: serviceB,
+          channel: server,
+        }),
+      })
+
+      const proofsB = agentConnectedToServiceB.proofs(
+        [
+          {
+            can: 'provider/add',
+            with: account,
+          },
+        ],
+        { sessionProofIssuer: serviceBWeb.did() }
+      )
+      assert.ok(proofsB)
+      assert.equal(proofsB[1].issuer.did(), serviceBWeb.did())
+
+      const providerAddInvocation = await agentConnectedToServiceB.invoke(
+        // @ts-expect-error - complaint about options.nb.provider not matching a did:mailto type, but it is. Seems like ucanto error with complex types.
+        Provider.add,
+        {
+          audience: serviceBWeb,
+          with: account,
+          nb: {
+            provider: serviceBWeb.did(),
+            consumer: space.did(),
+          },
+        }
+      )
+      const serviceBWebSessionProofInProviderAddInvocationForServiceBWeb =
+        providerAddInvocation.proofs.find((proof) => {
+          // @ts-expect-error complicated ucanto
+          const isSessionProof = proof.capabilities.some(
+            (cap) => cap.can === 'ucan/attest'
+          )
+          // @ts-expect-error complicated ucanto
+          const isIssuedByServiceBWeb = proof.issuer.did() === serviceBWeb.did()
+          return isSessionProof && isIssuedByServiceBWeb
+        })
+      assert.ok(serviceBWebSessionProofInProviderAddInvocationForServiceBWeb)
+      assert.equal(
+        // @ts-expect-error comoplicated ucanto type
+        serviceBWebSessionProofInProviderAddInvocationForServiceBWeb.issuer.did(),
+        serviceBWeb.did(),
+        'agent invoke method built an invocation containing the session proof issued by the right invocation audience'
+      )
+    }
   })
 })

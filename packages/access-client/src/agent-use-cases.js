@@ -74,6 +74,9 @@ export async function claimAccess(
  * @param {Ucanto.DID<'web'>} opts.provider - e.g. 'did:web:staging.web3.storage'
  */
 export async function addProvider({ access, space, account, provider }) {
+  console.log('addProvider called. calling invokeAndExecute with', {
+    audience: access.connection.id,
+  })
   const result = await access.invokeAndExecute(Provider.add, {
     audience: access.connection.id,
     with: account.did(),
