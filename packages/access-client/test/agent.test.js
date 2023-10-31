@@ -390,13 +390,11 @@ describe('Agent', function () {
       agent.addProof(delegation)
       agent.addProof(session)
     }
-
+    const proofsForService = agent.proofs([
+      { can: 'provider/add', with: account },
+    ])
+    assert.ok(proofsForService, 'proofs returned some proofs')
     for (const service of [serviceAWeb, serviceBWeb]) {
-      const proofsForService = agent.proofs(
-        [{ can: 'provider/add', with: account }],
-        { sessionProofIssuer: service.did() }
-      )
-      assert.ok(proofsForService, 'proofs returned some proofs')
       assert.ok(
         proofsForService.find((proof) => {
           if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
@@ -467,15 +465,12 @@ describe('Agent', function () {
       }),
     })
 
-    const proofsB = agentConnectedToServiceB.proofs(
-      [
-        {
-          can: 'provider/add',
-          with: account,
-        },
-      ],
-      { sessionProofIssuer: serviceBWeb.did() }
-    )
+    const proofsB = agentConnectedToServiceB.proofs([
+      {
+        can: 'provider/add',
+        with: account,
+      },
+    ])
     assert.ok(proofsB)
     assert.ok(
       proofsB.find((proof) => {

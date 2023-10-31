@@ -171,23 +171,19 @@ export const isSessionProof = (delegation) =>
  * Get a map from CIDs to the session proofs that reference them
  *
  * @param {AgentData} data
- * @param {Ucanto.DID|undefined} [issuer] - if provided, will only return session proofs issued by this id
- * @returns {Record<string, Ucanto.Delegation>}
+ * @returns {Record<string, [Ucanto.Delegation, ...Ucanto.Delegation[]]>}
  */
-export function getSessionProofs(data, issuer) {
-  /** @type {Record<string, Ucanto.Delegation>} */
+export function getSessionProofs(data) {
+  /** @type {Record<string, [Ucanto.Delegation, ...Ucanto.Delegation[]]>} */
   const proofs = {}
   for (const { delegation } of data.delegations.values()) {
-    if (issuer !== undefined && issuer !== delegation.issuer.did()) {
-      // delegation doesn't match issuer
-      continue
-    }
     if (isSessionProof(delegation)) {
       const cap = delegation.capabilities[0]
       if (cap && !isExpired(delegation)) {
         const proof = cap.nb.proof
         if (proof) {
-          proofs[proof.toString()] = delegation
+          proofs[proof.toString()] = proofs[proof.toString()] ?? []
+          proofs[proof.toString()].push(delegation)
         }
       }
     }

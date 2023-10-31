@@ -253,11 +253,8 @@ export class Agent {
    * proofs matching the passed capabilities require it.
    *
    * @param {import('@ucanto/interface').Capability[]|undefined} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
-   * @param {object} [options] - options
-   * @param {Ucanto.DID|undefined} [options.sessionProofIssuer] - When proofs require ucan/attest session proofs, filter them to this issuer.
-   * e.g. use this if you are calling this to get proofs to build a UCAN invocation that will rely on session proofs issued by the invocation audience
    */
-  proofs(caps, options = {}) {
+  proofs(caps) {
     const arr = []
     for (const { delegation } of this.#delegations(caps)) {
       if (delegation.audience.did() === this.issuer.did()) {
@@ -265,11 +262,11 @@ export class Agent {
       }
     }
 
-    const sessions = getSessionProofs(this.#data, options.sessionProofIssuer)
+    const sessions = getSessionProofs(this.#data)
     for (const proof of arr) {
-      const session = sessions[proof.asCID.toString()]
-      if (session) {
-        arr.push(session)
+      const sessionProofs = sessions[proof.asCID.toString()]
+      if (sessionProofs) {
+        arr.push(...sessionProofs)
       }
     }
     return arr
@@ -573,15 +570,12 @@ export class Agent {
 
     const proofs = [
       ...(options.proofs || []),
-      ...this.proofs(
-        [
-          {
-            with: space,
-            can: cap.can,
-          },
-        ],
-        { sessionProofIssuer: audience.did() }
-      ),
+      ...this.proofs([
+        {
+          with: space,
+          can: cap.can,
+        },
+      ]),
     ]
 
     if (proofs.length === 0 && options.with !== this.did()) {
