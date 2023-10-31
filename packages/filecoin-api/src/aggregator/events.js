@@ -276,7 +276,7 @@ export const handlePieceAcceptMessage = async (context, message) => {
  * On Inclusion store insert, piece table can be updated to reflect piece state.
  *
  * @param {import('./api.js').InclusionInsertEventToUpdateState} context
- * @param {import('./api.js').InclusionRecord} record
+ * @param {Pick<import('./api.js').InclusionRecord, 'piece' | 'group'>} record
  */
 export const handleInclusionInsertToUpdateState = async (context, record) => {
   const updateRes = await context.pieceStore.update(
@@ -298,7 +298,7 @@ export const handleInclusionInsertToUpdateState = async (context, record) => {
 
 /**
  * @param {import('./api.js').InclusionInsertEventToIssuePieceAccept} context
- * @param {import('./api.js').InclusionRecord} record
+ * @param {Pick<import('./api.js').InclusionRecord, 'piece' | 'group'>} record
  */
 export const handleInclusionInsertToIssuePieceAccept = async (
   context,
