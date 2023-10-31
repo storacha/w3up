@@ -180,7 +180,6 @@ export function getSessionProofs(data, issuer) {
   for (const { delegation } of data.delegations.values()) {
     if (issuer !== undefined && issuer !== delegation.issuer.did()) {
       // delegation doesn't match issuer
-      // eslint-disable-next-line no-continue
       continue
     }
     if (isSessionProof(delegation)) {

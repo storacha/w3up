@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import assert from 'assert'
 import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
