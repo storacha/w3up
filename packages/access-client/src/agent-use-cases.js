@@ -4,9 +4,7 @@ import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
 import { Provider, Plan } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
-import { AgentData, isSessionProof } from './agent-data.js'
-import * as ucanto from '@ucanto/core'
-import { DID as DIDValidator } from '@ucanto/validator'
+import { isSessionProof } from './agent-data.js'
 import * as DidMailto from '@web3-storage/did-mailto'
 
 /**
