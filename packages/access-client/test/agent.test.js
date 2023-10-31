@@ -11,7 +11,6 @@ import * as ed25519 from '@ucanto/principal/ed25519'
 import { Access, Provider } from '@web3-storage/capabilities'
 import { Absentee } from '@ucanto/principal'
 import * as DidMailto from '@web3-storage/did-mailto'
-import { isSessionProof } from '../src/agent-data.js'
 
 describe('Agent', function () {
   it('should return did', async function () {
@@ -446,7 +445,7 @@ describe('Agent', function () {
         providerAddInvocation.proofs.find((proof) => {
           // @ts-expect-error complicated ucanto
           const isSessionProof = proof.capabilities.some(
-            (cap) => cap.can === 'ucan/attest'
+            (/** @type {any} */ cap) => cap.can === 'ucan/attest'
           )
           // @ts-expect-error complicated ucanto
           const isIssuedByServiceBWeb = proof.issuer.did() === serviceBWeb.did()
