@@ -183,7 +183,6 @@ export class Agent {
         if (Array.isArray(caps) && caps.length > 0) {
           for (const cap of _caps) {
             if (canDelegateCapability(value.delegation, cap)) {
-              _caps.delete(cap)
               values.push(value)
             }
           }
