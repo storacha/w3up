@@ -175,6 +175,7 @@ export class Agent {
     /** @type {Array<{ delegation: Ucanto.Delegation, meta: import('./types.js').DelegationMeta }>} */
     const values = []
     for (const [, value] of this.#data.delegations) {
+      // check expiration
       if (
         !isExpired(value.delegation) && // check if delegation can be used
         !isTooEarly(value.delegation)
