@@ -405,7 +405,7 @@ describe('Agent', function () {
     assert.equal(proofsA[1].issuer.did(), serviceAWeb.did())
 
     /**
-     * now let's consider a new Agent that reuses the AgentData for the first agent. e.g. in the case of a long running db of AgentData but a transient Agent that exists only for a bit to access/use the data.
+     * now let's consider a new Agent that reuses the AgentData for the first agent. e.g. in the common case of an Agent being instantiated with an pre-existing AgentData.
      * Unlike the first agentA which made connections to serviceA, this agentB has a connection to serviceB. But all these Agents reuse an underlying AgentData with proofs for everyone.
      * That Agent should be able to call proofs to get proofs incl. sessionProofs issued by that invo
      */
@@ -443,17 +443,22 @@ describe('Agent', function () {
       )
       const serviceBWebSessionProofInProviderAddInvocationForServiceBWeb =
         providerAddInvocation.proofs.find((proof) => {
-          // @ts-expect-error complicated ucanto
+          if (!('capabilities' in proof)) {
+            return false
+          }
           const isSessionProof = proof.capabilities.some(
-            (/** @type {any} */ cap) => cap.can === 'ucan/attest'
+            (cap) => cap.can === 'ucan/attest'
           )
-          // @ts-expect-error complicated ucanto
           const isIssuedByServiceBWeb = proof.issuer.did() === serviceBWeb.did()
           return isSessionProof && isIssuedByServiceBWeb
         })
       assert.ok(serviceBWebSessionProofInProviderAddInvocationForServiceBWeb)
+      assert.ok(
+        'issuer' in
+          serviceBWebSessionProofInProviderAddInvocationForServiceBWeb,
+        'session proof on invocation is a delegation and not just a link'
+      )
       assert.equal(
-        // @ts-expect-error comoplicated ucanto type
         serviceBWebSessionProofInProviderAddInvocationForServiceBWeb.issuer.did(),
         serviceBWeb.did(),
         'agent invoke method built an invocation containing the session proof issued by the right invocation audience'
