@@ -111,6 +111,11 @@ export async function createSessionProofs({
     capabilities,
     expiration,
     proofs: delegationProofs,
+    facts: [
+      {
+        service: service.did(),
+      }
+    ]
   })
 
   const attestation = await Access.session.delegate({
