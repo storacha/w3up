@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.8](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.7...filecoin-api-v3.0.8) (2023-10-31)
+
+
+### Bug Fixes
+
+* aggregator events inclusion record type simplified ([#1050](https://github.com/web3-storage/w3up/issues/1050)) ([2131eac](https://github.com/web3-storage/w3up/commit/2131eac64c5225508be41ca3cba5f924cb1e596a))
+
 ## [3.0.7](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.6...filecoin-api-v3.0.7) (2023-10-31)
 
 
