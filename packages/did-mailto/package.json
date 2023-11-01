@@ -31,32 +31,30 @@
     "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
-    "lint": "tsc --build",
+    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.8.4",
-    "hd-scripts": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "mocha": "^10.2.0"
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:jsdoc/recommended"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
     "rules": {
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "Iterable"
-          ]
-        }
-      ]
+      "jsdoc/require-param-description": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-returns-description": "off"
     },
     "env": {
       "mocha": true
