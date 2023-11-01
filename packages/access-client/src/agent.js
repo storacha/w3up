@@ -32,7 +32,7 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
 /**
  * Keeps track of AgentData for all Agents constructed.
  * Used by
- * * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
+ * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
  *
  * @deprecated - remove this when deprecated addSpacesFromDelegations is removed
  */
@@ -169,7 +169,7 @@ export class Agent {
    * Query the delegations store for all the delegations matching the capabilities provided.
    *
    * @param {import('@ucanto/interface').Capability[]} [caps]
-   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with. 
+   * @param {Ucanto.DID} [invocationAudience] - audience of invocation these proofs will be bundled with.
    */
   #delegations(caps, invocationAudience) {
     const _caps = new Set(caps)
@@ -189,7 +189,8 @@ export class Agent {
             }
           }
         }
-      } else { // no caps param is provided. Caller must want all delegations.
+      } else {
+        // no caps param is provided. Caller must want all delegations.
         values.push(value)
       }
     }

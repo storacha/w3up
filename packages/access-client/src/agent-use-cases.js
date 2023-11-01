@@ -114,6 +114,7 @@ export async function pollAccessClaimUntil(
   opts
 ) {
   const interval = opts?.interval || 250
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     if (opts?.signal?.aborted)
       throw opts.signal.reason ?? new Error('operation aborted')

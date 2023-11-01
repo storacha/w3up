@@ -270,7 +270,6 @@ describe('Agent', function () {
           const { nb: input } = capability
           const ucan = Delegation.view(
             { root: input.ucan, blocks: invocation.blocks },
-            // eslint-disable-next-line unicorn/no-null
             null
           )
           return ucan
@@ -425,7 +424,6 @@ describe('Agent', function () {
     // the agent has a delegation+sesssion for each service
     const services = [serviceAWeb, serviceBWeb]
     for (const service of services) {
-      // eslint-disable-next-line unicorn/no-await-expression-member
       const nonce = (await ed25519.Signer.generate()).did()
       const delegation = await ucanto.delegate({
         issuer: Absentee.from({ id: account }),
@@ -523,7 +521,9 @@ describe('Agent', function () {
    */
   it('should include session proof based on connection', async () => {
     // const space = await ed25519.Signer.generate()
-    const account = DidMailto.fromEmail(`test-${Math.random().toString().slice(2)}@dag.house`)
+    const account = DidMailto.fromEmail(
+      `test-${Math.random().toString().slice(2)}@dag.house`
+    )
     const serviceA = await ed25519.Signer.generate()
     const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
     const serviceB = await ed25519.Signer.generate()
@@ -544,8 +544,8 @@ describe('Agent', function () {
           {
             can: 'provider/add',
             with: 'ucan:*',
-          }
-        ]
+          },
+        ],
       })
       const session = await Access.session.delegate({
         issuer: service,
@@ -563,8 +563,8 @@ describe('Agent', function () {
       [
         {
           can: 'provider/add',
-          with: account
-        }
+          with: account,
+        },
       ],
       { sessionProofIssuer: desiredInvocationAudience.did() },
     )

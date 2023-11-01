@@ -211,14 +211,27 @@ export function getSessionProofs(data) {
  * @returns {boolean} whether the ucan matches the options
  */
 export function matchSessionProof(ucan, options) {
-  if ( ! isSessionProof(ucan)) { return false; }
+  if (!isSessionProof(ucan)) {
+    return false
+  }
   const cap = ucan.capabilities[0]
-  const matchesRequiredIssuer = (options.issuer === undefined) || options.issuer === ucan.issuer.did()
-  const isExpiredButNotAllowed = ( ! options.allowExpired) && isExpired(ucan)
-  const matchesRequiredProof = ( ! options.attestedProof) || (options.attestedProof.toString() === cap.nb.proof.toString())
-  if ( ! isSessionProof(ucan)) { return false; }
-  if (isExpiredButNotAllowed) { return false; }
-  if ( ! matchesRequiredIssuer) { return false; }
-  if ( ! matchesRequiredProof) { return false; }
+  const matchesRequiredIssuer =
+    options.issuer === undefined || options.issuer === ucan.issuer.did()
+  const isExpiredButNotAllowed = !options.allowExpired && isExpired(ucan)
+  const matchesRequiredProof =
+    !options.attestedProof ||
+    options.attestedProof.toString() === cap.nb.proof.toString()
+  if (!isSessionProof(ucan)) {
+    return false
+  }
+  if (isExpiredButNotAllowed) {
+    return false
+  }
+  if (!matchesRequiredIssuer) {
+    return false
+  }
+  if (!matchesRequiredProof) {
+    return false
+  }
   return true
 }

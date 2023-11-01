@@ -84,9 +84,13 @@
     "@types/sinon": "^10.0.19",
     "@types/varint": "^6.0.1",
     "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "@ucanto/server": "^9.0.1",
     "assert": "^2.0.0",
-    "hd-scripts": "^4.0.0",
+    "eslint": "^8.52.0",
+    "eslint-plugin-jsdoc": "^46.8.2",
+    "eslint-plugin-unicorn": "^49.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
     "sinon": "^15.0.3",
@@ -95,18 +99,40 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:jsdoc/recommended"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
     "rules": {
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-export-from": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
       "unicorn/expiring-todo-comments": "off",
-      "unicorn/no-array-reduce": "off",
       "unicorn/explicit-length-check": "off",
       "no-continue": "off",
+      "unicorn/no-array-reduce": "off",
+      "unicorn/no-for-loop": "off",
+      "unicorn/prefer-export-from": "off",
+      "unicorn/prefer-node-protocol": "off",
+      "unicorn/prefer-number-properties": "off",
+      "unicorn/prevent-abbreviations": "off",
+      "jsdoc/check-values": "off",
+      "jsdoc/check-tag-names": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-returns-type": "off",
+      "jsdoc/require-throws": "off",
+      "jsdoc/require-param-description": "off",
+      "jsdoc/require-returns-description": "off",
+      "jsdoc/valid-types": "off",
+      "jsdoc/tag-lines": [
+        "error",
+        "any",
+        {
+          "startLines": 1
+        }
+      ],
       "jsdoc/no-undefined-types": [
         "error",
         {
@@ -126,7 +152,10 @@
       ]
     },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist"
@@ -138,7 +167,6 @@
     ],
     "ignores": [
       "@types/*",
-      "hd-scripts",
       "assert"
     ]
   }

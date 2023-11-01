@@ -12,7 +12,6 @@
  *
  * @module
  */
-/* eslint-disable unicorn/prefer-spread */
 import { CarBufferReader } from '@ipld/car/buffer-reader'
 import * as CarBufferWriter from '@ipld/car/buffer-writer'
 import { Delegation } from '@ucanto/core/delegation'
