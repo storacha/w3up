@@ -141,7 +141,7 @@
     "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
-    "lint": "tsc --build",
+    "lint": "tsc --build && eslint '**/*.{js,ts}'",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
@@ -162,29 +162,74 @@
     "@ucanto/principal": "^9.0.0",
     "@web-std/blob": "^3.0.5",
     "@web3-storage/filecoin-client": "workspace:^",
-    "hd-scripts": "^4.1.0",
     "mocha": "^10.2.0",
     "multiformats": "^12.1.2",
     "p-wait-for": "^5.0.2"
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:jsdoc/recommended"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
     "rules": {
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
       "unicorn/expiring-todo-comments": "off",
       "unicorn/prefer-number-properties": "off",
-      "jsdoc/check-indentation": "off"
+      "jsdoc/check-indentation": "off",
+      "jsdoc/check-values": "off",
+      "jsdoc/check-tag-names": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-returns-type": "off",
+      "jsdoc/require-jsdoc": "off",
+      "jsdoc/check-param-names": "off",
+      "jsdoc/require-param": "off",
+      "jsdoc/require-throws": "off",
+      "jsdoc/require-param-description": "off",
+      "jsdoc/require-returns-description": "off",
+      "jsdoc/require-property-description": "off",
+      "jsdoc/valid-types": "off",
+      "jsdoc/tag-lines": [
+        "error",
+        "any",
+        {
+          "startLines": 1
+        }
+      ],
+      "jsdoc/no-undefined-types": [
+        "error",
+        {
+          "definedTypes": [
+            "ArrayLike",
+            "AsyncIterable",
+            "AsyncIterableIterator",
+            "Iterable",
+            "IterableIterator",
+            "Generator",
+            "CryptoKeyPair",
+            "NodeJS",
+            "ErrorOptions",
+            "IDBTransactionMode"
+          ]
+        }
+      ]
     },
     "env": {
       "mocha": true
     },
     "ignorePatterns": [
       "dist",
-      "coverage"
+      "coverage",
+      "src/aggregator/api.js",
+      "src/deal-tracker/api.js",
+      "src/dealer/api.js",
+      "src/storefront/api.js",
+      "src/types.js",
+      "test/types.js"
     ]
   },
   "depcheck": {
@@ -197,7 +242,6 @@
     "ignores": [
       "dist",
       "@types/*",
-      "hd-scripts",
       "eslint-config-prettier"
     ]
   },

@@ -218,7 +218,6 @@ export async function getBufferedPieces(bufferPieces, bufferStore) {
   let bufferedPieces = []
   for (const b of getBufferRes) {
     if (b.error) return b
-    // eslint-disable-next-line unicorn/prefer-spread
     bufferedPieces = bufferedPieces.concat(b.ok.buffer.pieces || [])
   }
 

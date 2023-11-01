@@ -1,4 +1,3 @@
-/* eslint-disable no-only-tests/no-only-tests */
 import * as assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
 
@@ -84,7 +83,7 @@ describe('Dealer', () => {
         ).connection
 
         // resources
-        /** @type {Map<String, unknown[]>} */
+        /** @type {Map<string, unknown[]>} */
         const queuedMessages = new Map()
         const {
           dealer: { aggregateStore, offerStore },
