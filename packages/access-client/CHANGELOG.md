@@ -1,5 +1,17 @@
 # Changelog
 
+## [16.4.0](https://github.com/web3-storage/w3up/compare/access-v16.3.0...access-v16.4.0) (2023-11-01)
+
+
+### Features
+
+* access agent proofs method would fail to return some session proofs ([#1047](https://github.com/web3-storage/w3up/issues/1047)) ([d23a1c9](https://github.com/web3-storage/w3up/commit/d23a1c972f91b855ee91f862da15bab0e68cca0a))
+
+
+### Bug Fixes
+
+* use the issuer as the resource in revocation ([#992](https://github.com/web3-storage/w3up/issues/992)) ([7346d1f](https://github.com/web3-storage/w3up/commit/7346d1f70c5931123babc31c4d9819559ef284a5))
+
 ## [16.3.0](https://github.com/web3-storage/w3up/compare/access-v16.2.1...access-v16.3.0) (2023-10-27)
 
 
