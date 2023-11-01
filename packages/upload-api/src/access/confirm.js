@@ -107,6 +107,9 @@ export async function createSessionProofs({
   expiration = Infinity,
   accessConfirmInvocation,
 }) {
+  // if accessConfirmInvocation was provided, we'll create both proofs with facts about the access/confirm invocation that led to them.
+  const accessConfirmInvocationFacts = accessConfirmInvocation ? [{ cause: accessConfirmInvocation }] : []
+
   // create an delegation on behalf of the account with an absent signature.
   const delegation = await Provider.delegate({
     issuer: Absentee.from({ id: account.did() }),
@@ -115,7 +118,7 @@ export async function createSessionProofs({
     expiration,
     proofs: delegationProofs,
     facts: [
-      ...(accessConfirmInvocation ?[{ cause: accessConfirmInvocation }] : []),
+      ...accessConfirmInvocationFacts,
     ],
   })
 
@@ -125,6 +128,9 @@ export async function createSessionProofs({
     with: service.did(),
     nb: { proof: delegation.cid },
     expiration,
+    facts: [
+      ...accessConfirmInvocationFacts,
+    ]
   })
 
   return [delegation, attestation]
