@@ -5,9 +5,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as StorefrontService from './services/storefront.js'
 import * as StorefrontEvents from './events/storefront.js'
 
-import { getStoreImplementations } from './context/store-implementations.js'
-import { Queue } from './context/queue.js'
-import { getMockService, getConnection } from './context/service.js'
+import { getMockService, getConnection, getStoreImplementations, getQueueImplementations } from './context/service.js'
 import { validateAuthorization } from './utils.js'
 
 describe('storefront', () => {
@@ -26,22 +24,9 @@ describe('storefront', () => {
         // resources
         /** @type {Map<string, unknown[]>} */
         const queuedMessages = new Map()
-        queuedMessages.set('filecoinSubmitQueue', [])
-        queuedMessages.set('pieceOfferQueue', [])
-        const filecoinSubmitQueue = new Queue({
-          onMessage: (message) => {
-            const messages = queuedMessages.get('filecoinSubmitQueue') || []
-            messages.push(message)
-            queuedMessages.set('filecoinSubmitQueue', messages)
-          },
-        })
-        const pieceOfferQueue = new Queue({
-          onMessage: (message) => {
-            const messages = queuedMessages.get('pieceOfferQueue') || []
-            messages.push(message)
-            queuedMessages.set('pieceOfferQueue', messages)
-          },
-        })
+        const {
+          storefront: { filecoinSubmitQueue, pieceOfferQueue }
+        } = getQueueImplementations(queuedMessages)
         const {
           storefront: { pieceStore, receiptStore, taskStore },
         } = getStoreImplementations()

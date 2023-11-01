@@ -41,6 +41,11 @@ jobs:
       - name: Prepare
         run: pnpm install
 
+      - name: Build
+        run: |
+          pnpm install
+          pnpm run --if-present build
+
       - name: Check
         uses: gozala/typescript-error-reporter-action@v1.0.8
         with:

@@ -13,6 +13,9 @@ import * as API from '../../src/types.js'
 import { validateAuthorization } from '../utils.js'
 import { mockService } from './mocks.js'
 
+export { getStoreImplementations } from './store-implementations.js'
+export { getQueueImplementations } from './queue-implementations.js'
+
 /**
  * Mocked w3filecoin services
  */
