@@ -163,6 +163,7 @@ export interface Service extends StorefrontService {
   console: {
     log: ServiceMethod<
       InferInvokedCapability<typeof Capabilities.Console.log>,
+      // eslint-disable-next-line @typescript-eslint/ban-types
       {},
       never
     >
