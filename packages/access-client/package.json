@@ -90,7 +90,6 @@
     "assert": "^2.0.0",
     "eslint": "^8.52.0",
     "eslint-plugin-jsdoc": "^46.8.2",
-    "eslint-plugin-unicorn": "^49.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
     "sinon": "^15.0.3",
@@ -159,7 +158,10 @@
     ],
     "ignores": [
       "@types/*",
-      "assert"
+      "assert",
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
+      "eslint-plugin-jsdoc"
     ]
   }
 }
