@@ -200,6 +200,8 @@
     "ignores": [
       "dist",
       "@types/*",
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
       "eslint-config-prettier"
     ]
   },
