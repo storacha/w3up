@@ -1,11 +1,16 @@
 import assert from 'assert'
+import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
-import { Agent, connection } from '../src/agent.js'
+import { Agent, AgentData, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
+import * as ed25519 from '@ucanto/principal/ed25519'
+import { Access, Provider } from '@web3-storage/capabilities'
+import { Absentee } from '@ucanto/principal'
+import * as DidMailto from '@web3-storage/did-mailto'
 
 describe('Agent', function () {
   it('should return did', async function () {
@@ -342,4 +347,186 @@ describe('Agent', function () {
     const result5 = await bob.revoke(bobDelegation.cid)
     assert(result5.ok, `failed to revoke: ${result5.error?.message}`)
   })
+
+  /**
+   * An agent may manage a bunch of different proofs for the same agent key. e.g. proofs may authorize agent key to access various other service providers, each of which may have issued its own session.
+   * When one of the proofs is a session proof issued by w3upA or w3upB, the Agent#proofs result should contain proofs appropriate for the session host.
+   */
+  it('can filter proofs based on sessionProofIssuer', async () => {
+    const account = DidMailto.fromEmail(
+      `test-${Math.random().toString().slice(2)}@dag.house`
+    )
+    const serviceA = await ed25519.Signer.generate()
+    const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
+    const serviceB = await ed25519.Signer.generate()
+    const serviceBWeb = serviceB.withDID('did:web:b.up.web3.storage')
+
+    const server = createServer()
+    const agentData = await AgentData.create()
+    const agent = new Agent(agentData, {
+      connection: connection({ channel: server }),
+    })
+
+    // the agent has a delegation+sesssion for each service
+    const services = [serviceAWeb, serviceBWeb]
+    for (const service of services) {
+      // note: these delegations will have the same CID regardless of `service`
+      const delegation = await ucanto.delegate({
+        issuer: Absentee.from({ id: account }),
+        audience: agent,
+        capabilities: [
+          {
+            can: 'provider/add',
+            with: 'ucan:*',
+          },
+        ],
+      })
+      const session = await Access.session.delegate({
+        issuer: service,
+        audience: agent,
+        with: service.did(),
+        nb: { proof: delegation.cid },
+      })
+      agent.addProof(delegation)
+      agent.addProof(session)
+    }
+    const proofsForService = agent.proofs([
+      { can: 'provider/add', with: account },
+    ])
+    assert.ok(proofsForService, 'proofs returned some proofs')
+
+    for (const service of [serviceAWeb, serviceBWeb]) {
+      assert.ok(
+        proofsForService.find((proof) =>
+          matchSessionProof(proof, service.did())
+        ),
+        'proofs returns a session proof signed by service'
+      )
+    }
+  })
+
+  it('invoke() chooses proofs appropriate for invocation audience', async () => {
+    const space = await ed25519.Signer.generate()
+    const account = DidMailto.fromEmail(
+      `test-${Math.random().toString().slice(2)}@dag.house`
+    )
+    const serviceA = await ed25519.Signer.generate()
+    const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
+    const serviceB = await ed25519.Signer.generate()
+    const serviceBWeb = serviceB.withDID('did:web:b.up.web3.storage')
+
+    const server = createServer()
+    const agentData = await AgentData.create()
+    const agent = new Agent(agentData, {
+      connection: connection({ channel: server }),
+    })
+
+    // the agent has a delegation+sesssion for each service
+    const services = [serviceAWeb, serviceBWeb]
+    for (const service of services) {
+      // eslint-disable-next-line unicorn/no-await-expression-member
+      const nonce = (await ed25519.Signer.generate()).did()
+      const delegation = await ucanto.delegate({
+        issuer: Absentee.from({ id: account }),
+        audience: agent,
+        capabilities: [
+          {
+            can: 'provider/add',
+            with: 'ucan:*',
+          },
+        ],
+        facts: [{ nonce }],
+      })
+      const session = await Access.session.delegate({
+        issuer: service,
+        audience: agent,
+        with: service.did(),
+        nb: { proof: delegation.cid },
+      })
+      agent.addProof(delegation)
+      agent.addProof(session)
+    }
+
+    /**
+     * now let's consider a new Agent that reuses the AgentData for the first agent. e.g. in the common case of an Agent being instantiated with an pre-existing AgentData.
+     * Unlike the first agentA which made connections to serviceA, this agentB has a connection to serviceB. But all these Agents reuse an underlying AgentData with proofs for everyone.
+     * That Agent should be able to call proofs to get proofs incl. sessionProofs issued by that invo
+     */
+
+    const agentConnectedToServiceB = new Agent(agentData, {
+      connection: connection({
+        principal: serviceB,
+        channel: server,
+      }),
+    })
+
+    const proofsForProviderAdd = agentConnectedToServiceB.proofs([
+      {
+        can: 'provider/add',
+        with: account,
+      },
+    ])
+    assert.ok(proofsForProviderAdd)
+    assert.ok(
+      proofsForProviderAdd.find((proof) =>
+        matchSessionProof(proof, serviceBWeb.did())
+      ),
+      'proofs returns a session proof signed by serviceBWeb'
+    )
+
+    const providerAddInvocation = await agentConnectedToServiceB.invoke(
+      // @ts-expect-error - complaint about options.nb.provider not matching a did:mailto type, but it is. Seems like ucanto error with complex types.
+      Provider.add,
+      {
+        audience: serviceBWeb,
+        with: account,
+        nb: {
+          provider: serviceBWeb.did(),
+          consumer: space.did(),
+        },
+      }
+    )
+
+    const proofIssuedByServiceB = providerAddInvocation.proofs.find((proof) => {
+      if (!('capabilities' in proof)) {
+        return false
+      }
+      return matchSessionProof(proof, serviceBWeb.did())
+    })
+    assert.ok(proofIssuedByServiceB)
+    assert.ok(
+      'issuer' in proofIssuedByServiceB,
+      'session proof on invocation is a delegation and not just a link'
+    )
+    assert.equal(
+      proofIssuedByServiceB.issuer.did(),
+      serviceBWeb.did(),
+      'agent invoke method built an invocation containing the session proof issued by the right invocation audience'
+    )
+
+    // There should not be a session proof issued by serviceA.
+    // because this invocation's audience is serviceB
+    const proofIssuedByServiceA = providerAddInvocation.proofs.find(
+      (proof) =>
+        'capabilities' in proof && matchSessionProof(proof, serviceAWeb.did())
+    )
+    assert.ok(
+      !proofIssuedByServiceA,
+      'invocation for serviceBWeb does not have sessionProof from serviceAWeb'
+    )
+  })
 })
+
+/**
+ * @param {import('@ucanto/interface').Delegation} proof
+ * @param {import('@ucanto/interface').DID} [issuer] - if provided, only return true if the session proof is issued by this issuer
+ */
+function matchSessionProof(proof, issuer) {
+  if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
+    return false
+  }
+  if (issuer !== undefined && proof.issuer.did() !== issuer) {
+    return false
+  }
+  return true
+}

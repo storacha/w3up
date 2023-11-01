@@ -183,7 +183,6 @@ export class Agent {
         if (Array.isArray(caps) && caps.length > 0) {
           for (const cap of _caps) {
             if (canDelegateCapability(value.delegation, cap)) {
-              _caps.delete(cap)
               values.push(value)
             }
           }
@@ -253,25 +252,30 @@ export class Agent {
    * Proof of session will also be included in the returned proofs if any
    * proofs matching the passed capabilities require it.
    *
-   * @param {import('@ucanto/interface').Capability[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {import('@ucanto/interface').Capability[]|undefined} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {object} [options]
+   * @param {Ucanto.DID} [options.sessionProofIssuer] - only include session proofs for this issuer
    */
-  proofs(caps) {
-    const arr = []
-
+  proofs(caps, options) {
+    const authorizations = []
     for (const { delegation } of this.#delegations(caps)) {
       if (delegation.audience.did() === this.issuer.did()) {
-        arr.push(delegation)
+        authorizations.push(delegation)
       }
     }
 
+    // now let's add any session proofs that refer to those authorizations
     const sessions = getSessionProofs(this.#data)
-    for (const proof of arr) {
-      const session = sessions[proof.asCID.toString()]
-      if (session) {
-        arr.push(session)
+    for (const proof of authorizations) {
+      const proofsByIssuer = sessions[proof.asCID.toString()] ?? {}
+      const sessionProofs = options?.sessionProofIssuer
+        ? proofsByIssuer[options.sessionProofIssuer] ?? []
+        : Object.values(proofsByIssuer).flat()
+      if (sessionProofs.length) {
+        authorizations.push(...sessionProofs)
       }
     }
-    return arr
+    return authorizations
   }
 
   /**
@@ -561,6 +565,8 @@ export class Agent {
    * @param {import('./types.js').InvokeOptions<A, R, CAP>} options
    */
   async invoke(cap, options) {
+    const audience = options.audience || this.connection.id
+
     const space = options.with || this.currentSpace()
     if (!space) {
       throw new Error(
@@ -570,12 +576,15 @@ export class Agent {
 
     const proofs = [
       ...(options.proofs || []),
-      ...this.proofs([
-        {
-          with: space,
-          can: cap.can,
-        },
-      ]),
+      ...this.proofs(
+        [
+          {
+            with: space,
+            can: cap.can,
+          },
+        ],
+        { sessionProofIssuer: audience.did() }
+      ),
     ]
 
     if (proofs.length === 0 && options.with !== this.did()) {
@@ -585,7 +594,7 @@ export class Agent {
     }
     const inv = invoke({
       ...options,
-      audience: options.audience || this.connection.id,
+      audience,
       // @ts-ignore
       capability: cap.create({
         with: space,

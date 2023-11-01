@@ -106,6 +106,7 @@
       "unicorn/expiring-todo-comments": "off",
       "unicorn/no-array-reduce": "off",
       "unicorn/explicit-length-check": "off",
+      "no-continue": "off",
       "jsdoc/no-undefined-types": [
         "error",
         {
