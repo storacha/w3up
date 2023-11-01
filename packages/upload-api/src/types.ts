@@ -19,6 +19,8 @@ import type {
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
+import { StorefrontService } from '@web3-storage/filecoin-api/types'
+import { ServiceContext as FilecoinServiceContext } from '@web3-storage/filecoin-api/storefront/api'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
@@ -145,7 +147,7 @@ export type { RateLimitsStorage, RateLimit } from './types/rate-limits.js'
 import { PlansStorage } from './types/plans.js'
 export type { PlansStorage } from './types/plans.js'
 
-export interface Service {
+export interface Service extends StorefrontService {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
@@ -328,7 +330,8 @@ export interface ServiceContext
     RateLimitServiceContext,
     RevocationServiceContext,
     PlanServiceContext,
-    UploadServiceContext {}
+    UploadServiceContext,
+    FilecoinServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {
   id: Signer

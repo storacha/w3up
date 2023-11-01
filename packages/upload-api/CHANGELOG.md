@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.3.0...upload-api-v7.0.0) (2023-11-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* add storefront filecoin api to upload api ([#1052](https://github.com/web3-storage/w3up/issues/1052))
+
+### Features
+
+* add storefront filecoin api to upload api ([#1052](https://github.com/web3-storage/w3up/issues/1052)) ([39916c2](https://github.com/web3-storage/w3up/commit/39916c25cbbfce6392fbb7cc71112987185c798c))
+* implement `plan/get` capability ([#1005](https://github.com/web3-storage/w3up/issues/1005)) ([f0456d2](https://github.com/web3-storage/w3up/commit/f0456d2e2aab462666810e22abd7dfb7e1ce21be))
+
 ## [6.3.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.2.0...upload-api-v6.3.0) (2023-10-25)
 
 
