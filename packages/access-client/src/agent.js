@@ -31,7 +31,7 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
 /**
  * Keeps track of AgentData for all Agents constructed.
  * Used by
- * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
+ * * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
  *
  * @deprecated - remove this when deprecated addSpacesFromDelegations is removed
  */
@@ -186,9 +186,9 @@ export class Agent {
               values.push(value)
             }
           }
+        } else {
+          values.push(value)
         }
-      } else {
-        values.push(value)
       }
     }
     return values
