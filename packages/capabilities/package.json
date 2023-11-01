@@ -91,8 +91,9 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.4",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "assert": "^2.0.0",
-    "hd-scripts": "^4.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
     "type-fest": "^3.3.0",
@@ -101,17 +102,16 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:jsdoc/recommended"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
     "rules": {
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/numeric-separators-style": "off",
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/no-array-reduce": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
       "jsdoc/no-undefined-types": [
         "error",
         {
@@ -119,10 +119,25 @@
             "Iterable"
           ]
         }
+      ],
+      "jsdoc/require-param-description": "off",
+      "jsdoc/require-property-description": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-returns-description": "off",
+      "jsdoc/require-yields": "off",
+      "jsdoc/tag-lines": [
+        "error",
+        "any",
+        {
+          "startLines": 1
+        }
       ]
     },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist",
@@ -135,8 +150,10 @@
     ],
     "ignores": [
       "@types/*",
-      "hd-scripts",
-      "assert"
+      "assert",
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
+      "eslint-plugin-jsdoc"
     ]
   }
 }
