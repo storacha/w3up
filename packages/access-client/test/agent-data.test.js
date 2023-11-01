@@ -54,6 +54,7 @@ describe('AgentData', () => {
     })
     agentData.addDelegation(delegation)
 
+    const mapIssuerToSession = new Map()
     for (const service of services) {
       const session = await Access.session.delegate({
         issuer: service,
@@ -62,6 +63,7 @@ describe('AgentData', () => {
         nb: { proof: delegation.cid },
       })
       agentData.addDelegation(session)
+      mapIssuerToSession.set(service.did(), session)
     }
 
     const gotSessions = getSessionProofs(agentData)
@@ -69,14 +71,26 @@ describe('AgentData', () => {
       delegation.cid.toString() in gotSessions,
       'sessions map has entry for delegation cid'
     )
-    assert.ok(
-      Array.isArray(gotSessions[delegation.cid.toString()]),
-      'values of session map are Arrays'
+    assert.equal(
+      'object',
+      typeof gotSessions[delegation.cid.toString()],
+      'values of session map are objects'
     )
     assert.equal(
-      gotSessions[delegation.cid.toString()].length,
+      Object.values(gotSessions[delegation.cid.toString()]).flat().length,
       services.length,
       'sessions map has all session proofs even when there are multiple with same .nb.proof cid'
     )
+    for (const service of services) {
+      assert.equal(
+        gotSessions[delegation.cid.toString()][service.did()].length,
+        1
+      )
+      assert.equal(
+        gotSessions[delegation.cid.toString()][service.did()][0].cid.toString(),
+        mapIssuerToSession.get(service.did()).cid.toString(),
+        'index has correct session for issuer'
+      )
+    }
   })
 })

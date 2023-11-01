@@ -264,7 +264,9 @@ export class Agent {
 
     const sessions = getSessionProofs(this.#data)
     for (const proof of arr) {
-      const sessionProofs = sessions[proof.asCID.toString()]
+      const sessionProofs = Object.values(
+        sessions[proof.asCID.toString()] ?? {}
+      ).flat()
       if (sessionProofs) {
         arr.push(...sessionProofs)
       }

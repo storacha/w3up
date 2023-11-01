@@ -64,7 +64,7 @@ export class AgentData {
       dels.set(key, {
         delegation: importDAG(
           value.delegation.map((d) => ({
-            cid: CID.parse(d.cid),
+            cid: CID.parse(d.cid).toV1(),
             bytes: d.bytes,
           }))
         ),
@@ -168,13 +168,19 @@ export const isSessionProof = (delegation) =>
   delegation.capabilities.some((cap) => isSessionCapability(cap))
 
 /**
+ * @typedef {string} SessionProofAuthorizationCid - the nb.proof CID of the ucan/attest in the session proof
+ * @typedef {Ucanto.DID} SessionProofIssuer - issuer of ucan/attest session proof
+ * @typedef {Record<SessionProofAuthorizationCid, Record<SessionProofIssuer, [Ucanto.Delegation, ...Ucanto.Delegation[]]>>} SessionProofIndexedByAuthorizationAndIssuer
+ */
+
+/**
  * Get a map from CIDs to the session proofs that reference them
  *
  * @param {AgentData} data
- * @returns {Record<string, [Ucanto.Delegation, ...Ucanto.Delegation[]]>}
+ * @returns {SessionProofIndexedByAuthorizationAndIssuer}
  */
 export function getSessionProofs(data) {
-  /** @type {Record<string, [Ucanto.Delegation, ...Ucanto.Delegation[]]>} */
+  /** @type {SessionProofIndexedByAuthorizationAndIssuer} */
   const proofs = {}
   for (const { delegation } of data.delegations.values()) {
     if (isSessionProof(delegation)) {
@@ -182,8 +188,11 @@ export function getSessionProofs(data) {
       if (cap && !isExpired(delegation)) {
         const proof = cap.nb.proof
         if (proof) {
-          proofs[proof.toString()] = proofs[proof.toString()] ?? []
-          proofs[proof.toString()].push(delegation)
+          const proofCid = proof.toString()
+          const issuerDid = delegation.issuer.did()
+          proofs[proofCid] = proofs[proofCid] ?? {}
+          proofs[proofCid][issuerDid] = proofs[proofCid][issuerDid] ?? []
+          proofs[proofCid][issuerDid].push(delegation)
         }
       }
     }
