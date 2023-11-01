@@ -86,13 +86,8 @@ export interface StorefrontClientContext {
 export interface CronContext
   extends Pick<
     ServiceContext,
-    'id' | 'pieceStore' | 'receiptStore' | 'taskStore'
-  > {
-  /**
-   * Principal for aggregator service
-   */
-  aggregatorId: Signer
-}
+    'id' | 'pieceStore' | 'receiptStore' | 'taskStore' | 'aggregatorId'
+  > {}
 
 export interface PieceRecord {
   /**

@@ -41,6 +41,7 @@ export interface StorefrontTestEventsContext
     StorefrontInterface.StorefrontClientContext,
     StorefrontInterface.CronContext {
   id: Signer
+  aggregatorId: Signer
   service: Partial<{
     filecoin: Partial<import('../src/types.js').StorefrontService['filecoin']>
     piece: Partial<import('../src/types.js').AggregatorService['piece']>
