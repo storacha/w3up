@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.8...filecoin-api-v4.0.0) (2023-11-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* add storefront filecoin api to upload api ([#1052](https://github.com/web3-storage/w3up/issues/1052))
+
+### Features
+
+* add storefront filecoin api to upload api ([#1052](https://github.com/web3-storage/w3up/issues/1052)) ([39916c2](https://github.com/web3-storage/w3up/commit/39916c25cbbfce6392fbb7cc71112987185c798c))
+
 ## [3.0.8](https://github.com/web3-storage/w3up/compare/filecoin-api-v3.0.7...filecoin-api-v3.0.8) (2023-10-31)
 
 
