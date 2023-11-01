@@ -253,25 +253,29 @@ export class Agent {
    * proofs matching the passed capabilities require it.
    *
    * @param {import('@ucanto/interface').Capability[]|undefined} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {object} [options]
+   * @param {Ucanto.DID} [options.sessionProofIssuer] - only include session proofs for this issuer
    */
-  proofs(caps) {
-    const arr = []
+  proofs(caps, options) {
+    const authorizations = []
     for (const { delegation } of this.#delegations(caps)) {
       if (delegation.audience.did() === this.issuer.did()) {
-        arr.push(delegation)
+        authorizations.push(delegation)
       }
     }
 
+    // now let's add any session proofs that refer to those authorizations
     const sessions = getSessionProofs(this.#data)
-    for (const proof of arr) {
-      const sessionProofs = Object.values(
-        sessions[proof.asCID.toString()] ?? {}
-      ).flat()
-      if (sessionProofs) {
-        arr.push(...sessionProofs)
+    for (const proof of authorizations) {
+      const proofsByIssuer = sessions[proof.asCID.toString()] ?? {}
+      const sessionProofs = options?.sessionProofIssuer
+        ? proofsByIssuer[options.sessionProofIssuer] ?? []
+        : Object.values(proofsByIssuer).flat()
+      if (sessionProofs.length) {
+        authorizations.push(...sessionProofs)
       }
     }
-    return arr
+    return authorizations
   }
 
   /**
@@ -572,12 +576,15 @@ export class Agent {
 
     const proofs = [
       ...(options.proofs || []),
-      ...this.proofs([
-        {
-          with: space,
-          can: cap.can,
-        },
-      ]),
+      ...this.proofs(
+        [
+          {
+            with: space,
+            can: cap.can,
+          },
+        ],
+        { sessionProofIssuer: audience.did() }
+      ),
     ]
 
     if (proofs.length === 0 && options.with !== this.did()) {

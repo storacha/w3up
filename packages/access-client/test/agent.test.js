@@ -394,17 +394,12 @@ describe('Agent', function () {
       { can: 'provider/add', with: account },
     ])
     assert.ok(proofsForService, 'proofs returned some proofs')
+
     for (const service of [serviceAWeb, serviceBWeb]) {
       assert.ok(
-        proofsForService.find((proof) => {
-          if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
-            return false
-          }
-          if (proof.issuer.did() !== service.did()) {
-            return false
-          }
-          return true
-        }),
+        proofsForService.find((proof) =>
+          matchSessionProof(proof, service.did())
+        ),
         'proofs returns a session proof signed by service'
       )
     }
@@ -465,23 +460,17 @@ describe('Agent', function () {
       }),
     })
 
-    const proofsB = agentConnectedToServiceB.proofs([
+    const proofsForProviderAdd = agentConnectedToServiceB.proofs([
       {
         can: 'provider/add',
         with: account,
       },
     ])
-    assert.ok(proofsB)
+    assert.ok(proofsForProviderAdd)
     assert.ok(
-      proofsB.find((proof) => {
-        if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
-          return false
-        }
-        if (proof.issuer.did() !== serviceBWeb.did()) {
-          return false
-        }
-        return true
-      }),
+      proofsForProviderAdd.find((proof) =>
+        matchSessionProof(proof, serviceBWeb.did())
+      ),
       'proofs returns a session proof signed by serviceBWeb'
     )
 
@@ -497,26 +486,47 @@ describe('Agent', function () {
         },
       }
     )
-    const serviceBWebSessionProofInProviderAddInvocationForServiceBWeb =
-      providerAddInvocation.proofs.find((proof) => {
-        if (!('capabilities' in proof)) {
-          return false
-        }
-        const isSessionProof = proof.capabilities.some(
-          (cap) => cap.can === 'ucan/attest'
-        )
-        const isIssuedByServiceBWeb = proof.issuer.did() === serviceBWeb.did()
-        return isSessionProof && isIssuedByServiceBWeb
-      })
-    assert.ok(serviceBWebSessionProofInProviderAddInvocationForServiceBWeb)
+
+    const proofIssuedByServiceB = providerAddInvocation.proofs.find((proof) => {
+      if (!('capabilities' in proof)) {
+        return false
+      }
+      return matchSessionProof(proof, serviceBWeb.did())
+    })
+    assert.ok(proofIssuedByServiceB)
     assert.ok(
-      'issuer' in serviceBWebSessionProofInProviderAddInvocationForServiceBWeb,
+      'issuer' in proofIssuedByServiceB,
       'session proof on invocation is a delegation and not just a link'
     )
     assert.equal(
-      serviceBWebSessionProofInProviderAddInvocationForServiceBWeb.issuer.did(),
+      proofIssuedByServiceB.issuer.did(),
       serviceBWeb.did(),
       'agent invoke method built an invocation containing the session proof issued by the right invocation audience'
     )
+
+    // There should not be a session proof issued by serviceA.
+    // because this invocation's audience is serviceB
+    const proofIssuedByServiceA = providerAddInvocation.proofs.find(
+      (proof) =>
+        'capabilities' in proof && matchSessionProof(proof, serviceAWeb.did())
+    )
+    assert.ok(
+      !proofIssuedByServiceA,
+      'invocation for serviceBWeb does not have sessionProof from serviceAWeb'
+    )
   })
 })
+
+/**
+ * @param {import('@ucanto/interface').Delegation} proof
+ * @param {import('@ucanto/interface').DID} [issuer] - if provided, only return true if the session proof is issued by this issuer
+ */
+function matchSessionProof(proof, issuer) {
+  if (!proof.capabilities.some((cap) => cap.can === 'ucan/attest')) {
+    return false
+  }
+  if (issuer !== undefined && proof.issuer.did() !== issuer) {
+    return false
+  }
+  return true
+}
