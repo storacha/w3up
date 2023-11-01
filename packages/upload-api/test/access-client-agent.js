@@ -5,10 +5,11 @@ import * as DidMailto from '@web3-storage/did-mailto'
 import { Access, Space } from '@web3-storage/capabilities'
 import { AgentData } from '@web3-storage/access'
 import { alice } from './helpers/utils.js'
+import { stringToDelegations } from '@web3-storage/access/encoding'
 import {
-  stringToDelegations,
-  stringToDelegation,
-} from '@web3-storage/access/encoding'
+  confirmConfirmationUrl,
+  extractConfirmInvocation,
+} from './helpers/utils.js'
 import {
   Agent,
   Access as AgentAccess,
@@ -450,35 +451,3 @@ const setup = async ({ accountEmail = 'alice@web.mail', ...context }) => {
 
 /** @param {AgentData} agentData */
 const countDelegations = ({ delegations }) => [...delegations.values()].length
-
-/**
- * @param {URL} confirmationUrl
- * @returns {Promise<API.Invocation<API.AccessConfirm>>}
- */
-async function extractConfirmInvocation(confirmationUrl) {
-  const delegation = stringToDelegation(
-    confirmationUrl.searchParams.get('ucan') ?? ''
-  )
-  if (
-    delegation.capabilities.length !== 1 ||
-    delegation.capabilities[0].can !== 'access/confirm'
-  ) {
-    throw new Error(`parsed unexpected delegation from confirmationUrl`)
-  }
-  const confirm = /** @type {API.Invocation<API.AccessConfirm>} */ (delegation)
-  return confirm
-}
-
-/**
- * @param {API.ConnectionView<import('@web3-storage/access').Service>} connection
- * @param {{ url: string|URL }} confirmation
- */
-async function confirmConfirmationUrl(connection, confirmation) {
-  // extract confirmation invocation from email that was sent by service while handling access/authorize
-  const confirm = await extractConfirmInvocation(new URL(confirmation.url))
-  // invoke the access/confirm invocation as if the user had clicked the email
-  const [confirmResult] = await connection.execute(confirm)
-  if (confirmResult.out.error) {
-    throw confirmResult.out.error
-  }
-}

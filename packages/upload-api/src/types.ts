@@ -125,6 +125,7 @@ import {
   PlanGet,
   PlanGetSuccess,
   PlanGetFailure,
+  AccessAuthorizeFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -173,7 +174,11 @@ export interface Service extends StorefrontService {
     >
   }
   access: {
-    authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
+    authorize: ServiceMethod<
+      AccessAuthorize,
+      AccessAuthorizeSuccess,
+      AccessAuthorizeFailure
+    >
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
     confirm: ServiceMethod<
       AccessConfirm,
@@ -347,6 +352,8 @@ export interface UcantoServerTestContext
   mail: DebugEmail
   service: Signer<ServiceDID>
   fetch: typeof fetch
+
+  grantAccess: (mail: { url: string | URL }) => Promise<void>
 }
 
 export interface StoreTestContext {}

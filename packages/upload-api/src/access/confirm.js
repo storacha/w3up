@@ -61,6 +61,8 @@ export async function confirm({ capability, invocation }, ctx) {
     service: ctx.signer,
     account,
     agent,
+    cause: invocation.cid,
+    request: capability.nb.cause,
     capabilities,
     // We include all the delegations to the account so that the agent will
     // have delegation chains to all the delegated resources.
@@ -91,6 +93,8 @@ export async function confirm({ capability, invocation }, ctx) {
  * @param {API.Signer} opts.service
  * @param {API.Principal<API.DID<'mailto'>>} opts.account
  * @param {API.Principal<API.DID>} opts.agent
+ * @param {API.Link} opts.cause
+ * @param {API.Link} opts.request
  * @param {API.Capabilities} opts.capabilities
  * @param {API.Delegation[]} opts.delegationProofs
  * @param {number} opts.expiration
@@ -102,6 +106,8 @@ export async function createSessionProofs({
   account,
   agent,
   capabilities,
+  cause,
+  request,
   delegationProofs,
   // default to Infinity is reasonable here because
   // account consented to this.
@@ -109,7 +115,9 @@ export async function createSessionProofs({
   accessConfirmInvocation,
 }) {
   // if accessConfirmInvocation was provided, we'll create both proofs with facts about the access/confirm invocation that led to them.
-  const accessConfirmInvocationFacts = accessConfirmInvocation ? [{ cause: accessConfirmInvocation }] : []
+  const accessConfirmInvocationFacts = accessConfirmInvocation
+    ? [{ cause: accessConfirmInvocation }]
+    : []
 
   // create an delegation on behalf of the account with an absent signature.
   const delegation = await Provider.delegate({
@@ -120,6 +128,8 @@ export async function createSessionProofs({
     proofs: delegationProofs,
     facts: [
       ...accessConfirmInvocationFacts,
+      { 'access/authorize': request },
+      { cause },
     ],
   })
 
@@ -129,9 +139,7 @@ export async function createSessionProofs({
     with: service.did(),
     nb: { proof: delegation.cid },
     expiration,
-    facts: [
-      ...accessConfirmInvocationFacts,
-    ]
+    facts: [...accessConfirmInvocationFacts],
   })
 
   return [delegation, attestation]
