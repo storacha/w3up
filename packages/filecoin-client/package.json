@@ -53,7 +53,6 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ipld/dag-cbor": "^9.0.6",
     "@ipld/dag-ucan": "^3.4.0",
     "@ucanto/client": "^9.0.0",
     "@ucanto/core": "^9.0.0",

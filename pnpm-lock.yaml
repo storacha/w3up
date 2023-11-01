@@ -279,9 +279,6 @@ importers:
 
   packages/filecoin-client:
     dependencies:
-      '@ipld/dag-cbor':
-        specifier: ^9.0.6
-        version: 9.0.6
       '@ipld/dag-ucan':
         specifier: ^3.4.0
         version: 3.4.0
