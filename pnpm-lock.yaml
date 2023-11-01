@@ -218,6 +218,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.9.1
         version: 6.9.1(eslint@8.52.0)(typescript@5.2.2)
+      eslint-plugin-jsdoc:
+        specifier: ^46.8.2
+        version: 46.8.2(eslint@8.52.0)
       mocha:
         specifier: ^10.2.0
         version: 10.2.0
