@@ -46,7 +46,6 @@ export function equalWith(child, parent) {
  * @param {unknown} parent
  * @param {string} constraint
  */
-
 export function equal(child, parent, constraint) {
   if (parent === undefined || parent === '*') {
     return ok({})

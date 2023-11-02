@@ -85,12 +85,12 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@types/varint": "^6.0.1",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@ucanto/principal": "^9.0.0",
     "@ucanto/server": "^9.0.1",
     "assert": "^2.0.0",
     "blockstore-core": "^3.0.0",
     "c8": "^7.13.0",
-    "hd-scripts": "^4.0.0",
     "hundreds": "^0.0.9",
     "ipfs-unixfs-exporter": "^10.0.0",
     "mocha": "^10.2.0",
@@ -100,32 +100,16 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {
-      "eqeqeq": "off",
-      "jsdoc/check-indentation": "off",
-      "jsdoc/require-hyphen-before-param-description": "off",
-      "no-console": "off",
-      "no-continue": "off",
-      "no-void": "off",
-      "unicorn/catch-error-name": "off",
-      "unicorn/explicit-length-check": "off",
-      "unicorn/no-array-for-each": "off",
-      "unicorn/no-await-expression-member": "off",
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/no-null": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-set-has": "off",
-      "unicorn/prefer-type-error": "off",
-      "unicorn/no-negated-condition": "off"
-    },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist",
@@ -138,9 +122,9 @@
     ],
     "ignores": [
       "@types/*",
-      "hd-scripts",
       "assert",
-      "c8"
+      "c8",
+      "@web3-storage/eslint-config-w3up"
     ]
   }
 }

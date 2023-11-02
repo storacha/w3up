@@ -6,8 +6,8 @@ describe('did-mailto', () => {
 })
 
 /**
- * @param {typeof didMailto} didMailto
- * @param {import("./test-types.js").TestAdder} test
+ * @param {typeof didMailto} didMailto - did-mailto module to test
+ * @param {import("./test-types.js").TestAdder} test - function to call to add a named test
  */
 function testDidMailto(didMailto, test) {
   test('module is an object', async () => {
@@ -37,6 +37,7 @@ function testDidMailto(didMailto, test) {
   }
 }
 
+/** @yields examples for testing */
 function* examples() {
   yield {
     email: didMailto.email('example+123@example.com'),
@@ -48,6 +49,9 @@ function* examples() {
   }
 }
 
+/**
+ * @yields many valid-but-unusual email addresses
+ */
 function* validEmailAddresses() {
   // https://gist.github.com/cjaoude/fd9910626629b53c4d25#file-gistfile1-txt-L5
   yield* [

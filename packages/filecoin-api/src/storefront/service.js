@@ -178,6 +178,7 @@ async function findDataAggregationProof({ taskStore, receiptStore }, task) {
   let inclusion
   /** @type {API.AggregateAcceptSuccess|undefined} */
   let aggregateAcceptReceipt
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const [taskRes, receiptRes] = await Promise.all([
       taskStore.get(task),

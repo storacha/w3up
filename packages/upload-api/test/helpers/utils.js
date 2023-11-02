@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-number-properties */
 import * as Types from '../../src/types.js'
 import { ed25519 } from '@ucanto/principal'
 import * as principal from '@ucanto/principal'
@@ -9,7 +8,6 @@ import * as Context from './context.js'
 import { Access, Provider, Space } from '@web3-storage/capabilities'
 import * as DidMailto from '@web3-storage/did-mailto'
 
-// eslint-disable-next-line unicorn/prefer-export-from
 export { Context }
 
 /**

@@ -46,5 +46,6 @@ export interface RateLimitsStorage {
   /**
    * Remove a rate limit with given ID.
    */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   remove: (id: RateLimitID) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
 }

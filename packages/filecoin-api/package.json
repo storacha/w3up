@@ -141,7 +141,7 @@
     "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
-    "lint": "tsc --build",
+    "lint": "tsc --build && eslint '**/*.{js,ts}'",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
@@ -161,30 +161,31 @@
     "@ucanto/client": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
     "@web-std/blob": "^3.0.5",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@web3-storage/filecoin-client": "workspace:^",
-    "hd-scripts": "^4.1.0",
     "mocha": "^10.2.0",
     "multiformats": "^12.1.2",
     "p-wait-for": "^5.0.2"
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "rules": {
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/prefer-number-properties": "off",
-      "jsdoc/check-indentation": "off"
     },
     "env": {
       "mocha": true
     },
     "ignorePatterns": [
       "dist",
-      "coverage"
+      "coverage",
+      "src/aggregator/api.js",
+      "src/deal-tracker/api.js",
+      "src/dealer/api.js",
+      "src/storefront/api.js",
+      "src/types.js",
+      "test/types.js"
     ]
   },
   "depcheck": {
@@ -197,8 +198,7 @@
     "ignores": [
       "dist",
       "@types/*",
-      "hd-scripts",
-      "eslint-config-prettier"
+      "@web3-storage/eslint-config-w3up"
     ]
   },
   "engines": {

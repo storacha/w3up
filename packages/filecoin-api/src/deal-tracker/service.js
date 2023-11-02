@@ -28,7 +28,6 @@ export const dealInfo = async ({ capability }, context) => {
 
   return {
     ok: {
-      // eslint-disable-next-line unicorn/no-array-reduce
       deals: storeGet.ok.reduce((acc, curr) => {
         acc[`${curr.dealId}`] = {
           provider: curr.provider,

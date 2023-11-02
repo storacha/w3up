@@ -7,7 +7,6 @@ export async function randomBytes(size) {
   const bytes = new Uint8Array(size)
   while (size) {
     const chunk = new Uint8Array(Math.min(size, 65_536))
-    // eslint-disable-next-line unicorn/no-negated-condition
     if (!globalThis.crypto) {
       try {
         const { webcrypto } = await import('node:crypto')

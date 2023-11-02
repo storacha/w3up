@@ -4,7 +4,7 @@ import { toBlock } from './block.js'
 
 /**
  * @param {Uint8Array} bytes
- **/
+ */
 export async function toCAR(bytes) {
   const block = await toBlock(bytes)
   const { writer, out } = CarWriter.create(block.cid)

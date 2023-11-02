@@ -67,6 +67,7 @@ export interface QueueMessageOptions {
   messageGroupId?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ServiceConfig<T extends Record<string, any>> {
   connection: ConnectionView<T>
   invocationConfig: InvocationConfig

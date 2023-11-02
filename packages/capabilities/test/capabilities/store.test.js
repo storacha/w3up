@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-null */
 import assert from 'assert'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'

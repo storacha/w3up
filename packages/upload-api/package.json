@@ -96,7 +96,7 @@
     "attw": "attw --pack .",
     "build": "tsc --build",
     "check": "tsc --build",
-    "lint": "tsc --build",
+    "lint": "tsc --build && eslint '**/*.{js,ts}'",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch 'test/**/*.spec.js'",
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
@@ -121,44 +121,28 @@
     "@ucanto/core": "^9.0.0",
     "@web-std/blob": "^3.0.5",
     "@web3-storage/sigv4": "^1.0.2",
-    "hd-scripts": "^4.1.0",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "is-subset": "^0.1.1",
     "mocha": "^10.2.0"
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/no-array-reduce": "off",
-      "unicorn/no-null": "off",
-      "unicorn/no-zero-fractions": "off",
-      "unicorn/no-negated-condition": "off",
-      "@typescript-eslint/method-signature-style": "off",
-      "@typescript-eslint/no-empty-interface": "off",
-      "unicorn/no-useless-undefined": "off",
-      "no-nested-ternary": "off",
-      "yoda": "off",
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "Iterable"
-          ]
-        }
-      ]
-    },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist",
-      "coverage"
+      "coverage",
+      "src/types.js",
+      "test/types.js"
     ]
   },
   "depcheck": {
@@ -171,8 +155,7 @@
     "ignores": [
       "dist",
       "@types/*",
-      "hd-scripts",
-      "eslint-config-prettier"
+      "@web3-storage/eslint-config-w3up"
     ]
   },
   "engines": {

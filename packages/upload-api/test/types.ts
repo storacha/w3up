@@ -1,4 +1,3 @@
-/* eslint-disable import/export */
 import * as API from '../src/types.js'
 
 export * from '../src/types.js'

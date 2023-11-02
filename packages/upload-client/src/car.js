@@ -91,12 +91,12 @@ export class BlockStream extends ReadableStream {
   }
 }
 
+/* c8 ignore next 20 */
 /**
  * @template T
  * @param {{ getReader: () => ReadableStreamDefaultReader<T> } | AsyncIterable<T>} stream
  * @returns {AsyncIterable<T>}
  */
-/* c8 ignore next 16 */
 function toIterable(stream) {
   return Symbol.asyncIterator in stream
     ? stream

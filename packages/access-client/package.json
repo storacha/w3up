@@ -77,6 +77,7 @@
     "uint8arrays": "^4.0.6"
   },
   "devDependencies": {
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/inquirer": "^9.0.4",
     "@types/mocha": "^10.0.1",
@@ -86,7 +87,6 @@
     "@types/ws": "^8.5.4",
     "@ucanto/server": "^9.0.1",
     "assert": "^2.0.0",
-    "hd-scripts": "^4.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
     "sinon": "^15.0.3",
@@ -95,37 +95,14 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/no-array-reduce": "off",
-      "unicorn/explicit-length-check": "off",
-      "no-continue": "off",
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "ArrayLike",
-            "AsyncIterable",
-            "AsyncIterableIterator",
-            "Iterable",
-            "IterableIterator",
-            "Generator",
-            "CryptoKeyPair",
-            "NodeJS",
-            "ErrorOptions",
-            "IDBTransactionMode"
-          ]
-        }
-      ]
-    },
     "env": {
+      "browser": true,
+      "es2022": true,
       "mocha": true
     },
     "ignorePatterns": [
@@ -138,8 +115,8 @@
     ],
     "ignores": [
       "@types/*",
-      "hd-scripts",
-      "assert"
+      "assert",
+      "@web3-storage/eslint-config-w3up"
     ]
   }
 }

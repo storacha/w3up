@@ -47,7 +47,6 @@ export class AesKey {
     )
     const encryptedBytes = new Uint8Array(buf)
     const encrypted = uint8arrays.toString(
-      // eslint-disable-next-line unicorn/prefer-spread
       uint8arrays.concat([iv, encryptedBytes]),
       'base64pad'
     )
