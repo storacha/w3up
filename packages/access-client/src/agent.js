@@ -255,7 +255,9 @@ export class Agent {
    * Proof of session will also be included in the returned proofs if any
    * proofs matching the passed capabilities require it.
    *
-   * @param {API.CapabilityQuery[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {import('@ucanto/interface').Capability[]|undefined} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {object} [options]
+   * @param {API.DID} [options.sessionProofIssuer] - only include session proofs for this issuer
    */
   proofs(caps, options) {
     const authorizations = []
@@ -674,7 +676,6 @@ export async function addSpacesFromDelegations(access, delegations) {
 
     for (const [did, value] of Object.entries(allows)) {
       // If we discovered a delegation to any DID, we add it to the spaces list.
-      // We may not have
       if (did.startsWith('did:key') && Object.keys(value).length > 0) {
         data.addSpace(/** @type {API.DID} */ (did), {
           name: '',

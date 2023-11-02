@@ -4,11 +4,10 @@ import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
 import { Agent, AgentData, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
-import * as UCAN from '@web3-storage/capabilities/ucan'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 import * as ed25519 from '@ucanto/principal/ed25519'
-import { Access, Provider } from '@web3-storage/capabilities'
+import { UCAN, Provider } from '@web3-storage/capabilities'
 import { Absentee } from '@ucanto/principal'
 import * as DidMailto from '@web3-storage/did-mailto'
 
@@ -437,7 +436,7 @@ describe('Agent', function () {
           },
         ],
       })
-      const session = await Access.session.delegate({
+      const session = await UCAN.attest.delegate({
         issuer: service,
         audience: agent,
         with: service.did(),
@@ -493,7 +492,7 @@ describe('Agent', function () {
         ],
         facts: [{ nonce }],
       })
-      const session = await Access.session.delegate({
+      const session = await UCAN.attest.delegate({
         issuer: service,
         audience: agent,
         with: service.did(),

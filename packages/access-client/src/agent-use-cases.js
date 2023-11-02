@@ -1,20 +1,22 @@
 import { addSpacesFromDelegations, Agent as AccessAgent } from './agent.js'
-import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
 import { Provider, Plan } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
-import { isSessionProof } from './agent-data.js'
+import { Schema, delegate } from '@ucanto/core'
+import { AgentData, isSessionProof } from './agent-data.js'
 import * as DidMailto from '@web3-storage/did-mailto'
 import * as API from './types.js'
+
+const DIDWeb = Schema.DID.match({ method: 'web' })
 
 /**
  * Request access by a session allowing this agent to issue UCANs
  * signed by the account.
  *
  * @param {AccessAgent} access
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Iterable<{ can: Ucanto.Ability }>} capabilities
+ * @param {API.Principal<API.AccountDID>} account
+ * @param {Iterable<{ can: API.Ability }>} capabilities
  */
 export async function requestAccess(access, account, capabilities) {
   const res = await access.invokeAndExecute(Access.authorize, {
@@ -34,7 +36,7 @@ export async function requestAccess(access, account, capabilities) {
  * claim delegations delegated to an audience
  *
  * @param {AccessAgent} access
- * @param {Ucanto.DID} [audienceOfClaimedDelegations] - audience of claimed delegations. defaults to access.connection.id.did()
+ * @param {API.DID} [audienceOfClaimedDelegations] - audience of claimed delegations. defaults to access.connection.id.did()
  * @param {object} opts
  * @param {boolean} [opts.addProofs] - whether to addProof to access agent
  * @returns
@@ -68,9 +70,9 @@ export async function claimAccess(
 /**
  * @param {object} opts
  * @param {AccessAgent} opts.access
- * @param {Ucanto.DID<'key'>} opts.space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} opts.account
- * @param {Ucanto.DID<'web'>} opts.provider - e.g. 'did:web:staging.web3.storage'
+ * @param {API.SpaceDID} opts.space
+ * @param {API.Principal<API.AccountDID>} opts.account
+ * @param {API.ProviderDID} opts.provider - e.g. 'did:web:staging.web3.storage'
  */
 export async function addProvider({ access, space, account, provider }) {
   const result = await access.invokeAndExecute(Provider.add, {
@@ -87,7 +89,7 @@ export async function addProvider({ access, space, account, provider }) {
 }
 
 /**
- * @typedef {(delegations: Ucanto.Delegation<Ucanto.Capabilities>[]) => boolean} DelegationsChecker
+ * @typedef {(delegations: API.Delegation[]) => boolean} DelegationsChecker
  */
 
 /**
@@ -100,11 +102,11 @@ export function delegationsIncludeSessionProof(delegations) {
 /**
  * @param {DelegationsChecker} delegationsMatch
  * @param {AccessAgent} access
- * @param {Ucanto.DID} delegee
+ * @param {API.DID} delegee
  * @param {object} [opts]
  * @param {number} [opts.interval]
  * @param {AbortSignal} [opts.signal]
- * @returns {Promise<Iterable<Ucanto.Delegation>>}
+ * @returns {Promise<Iterable<API.Delegation>>}
  */
 export async function pollAccessClaimUntil(
   delegationsMatch,
@@ -134,7 +136,7 @@ export async function pollAccessClaimUntil(
  */
 /**
  * @template [U={}]
- * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts<U>) => Promise<Iterable<Ucanto.Delegation>>} AuthorizationWaiter
+ * @typedef {(accessAgent: AccessAgent, opts: AuthorizationWaiterOpts<U>) => Promise<Iterable<API.Delegation>>} AuthorizationWaiter
  */
 
 /**
@@ -166,7 +168,7 @@ export async function waitForAuthorizationByPolling(access, opts = {}) {
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
  * @param {boolean} [opts.dontAddProofs] - whether to skip adding proofs to the agent
- * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+ * @param {Iterable<{ can: API.Ability }>} [opts.capabilities]
  * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
 export async function authorizeAndWait(access, email, opts = {}) {
@@ -193,21 +195,6 @@ export async function authorizeAndWait(access, email, opts = {}) {
 }
 
 /**
- * @param {AccessAgent} client
- * @param {object} input
- * @param {DidMailto.EmailAddress} input.account
- * @param {API.Access} [input.access]
- * @param {AbortSignal} [input.signal]
- */
-export const queryAccess = (client, { account, access, signal }) =>
-  pollAccessClaimUntil(
-    (delegations) => delegations.some((_proof) => false),
-    client,
-    client.did(),
-    { signal }
-  )
-
-/**
  * Request authorization of a session allowing this agent to issue UCANs
  * signed by the passed email address.
  *
@@ -215,7 +202,7 @@ export const queryAccess = (client, { account, access, signal }) =>
  * @param {`${string}@${string}`} email
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
- * @param {Iterable<{ can: Ucanto.Ability }>} [opts.capabilities]
+ * @param {Iterable<{ can: API.Ability }>} [opts.capabilities]
  * @param {boolean} [opts.addProofs]
  * @param {AuthorizationWaiter} [opts.expectAuthorization] - function that will resolve once account has confirmed the authorization request
  */
@@ -236,8 +223,8 @@ export async function authorizeWaitAndClaim(accessAgent, email, opts) {
  * @param {string} email
  * @param {object} [opts]
  * @param {AbortSignal} [opts.signal]
- * @param {Ucanto.DID<'key'>} [opts.space]
- * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
+ * @param {API.DID<'key'>} [opts.space]
+ * @param {API.ProviderDID} [opts.provider] - provider to register - defaults to this.connection.id
  */
 export async function addProviderAndDelegateToAccount(
   access,
@@ -251,7 +238,7 @@ export async function addProviderAndDelegateToAccount(
     opts?.provider ||
     (() => {
       const service = access.connection.id.did()
-      if (DIDValidator.match({ method: 'web' }).is(service)) {
+      if (DIDWeb.is(service)) {
         // connection.id did is a valid provider value. Try using that.
         return service
       }
@@ -283,8 +270,8 @@ export async function addProviderAndDelegateToAccount(
 
 /**
  * @param {AccessAgent} access
- * @param {Ucanto.DID<'key'>} space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
+ * @param {API.SpaceDID} space
+ * @param {API.Principal<API.AccountDID>} account
  */
 async function delegateSpaceAccessToAccount(access, space, account) {
   const issuerSaysAccountCanAdminSpace =
@@ -315,11 +302,11 @@ async function delegateSpaceAccessToAccount(access, space, account) {
 }
 
 /**
- * @param {Ucanto.Signer<Ucanto.DID<'key'>>} issuer
- * @param {Ucanto.DID} space
- * @param {Ucanto.Principal<Ucanto.DID<'mailto'>>} account
- * @param {Ucanto.Capabilities} capabilities
- * @param {Ucanto.Delegation[]} proofs
+ * @param {API.Signer<API.DIDKey>} issuer
+ * @param {API.SpaceDID} space
+ * @param {API.Principal<API.AccountDID>} account
+ * @param {API.Capabilities} capabilities
+ * @param {API.Delegation[]} proofs
  * @param {number} expiration
  * @returns
  */
@@ -336,7 +323,7 @@ async function createIssuerSaysAccountCanAdminSpace(
   proofs = [],
   expiration
 ) {
-  return ucanto.delegate({
+  return delegate({
     issuer,
     audience: account,
     capabilities,
@@ -348,7 +335,7 @@ async function createIssuerSaysAccountCanAdminSpace(
 /**
  *
  * @param {AccessAgent} agent
- * @param {import('@web3-storage/did-mailto/types').DidMailto} account
+ * @param {API.AccountDID} account
  */
 export async function getAccountPlan(agent, account) {
   const receipt = await agent.invokeAndExecute(Plan.get, {
