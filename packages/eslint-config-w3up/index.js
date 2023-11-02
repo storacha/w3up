@@ -10,6 +10,12 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/ban-ts-comment": "off",
   
+    /**
+     * many of these rules are inherited from hd-scripts.
+     * It may be useful over time to remove these rules
+     * and juse use plugin:jsdoc/recommended defaults.
+     * But that might require updating src.
+     */
     "jsdoc/check-values": "off",
     "jsdoc/check-tag-names": "off",
     "jsdoc/require-returns": "off",

@@ -316,6 +316,9 @@ importers:
       '@web3-storage/data-segment':
         specifier: ^4.0.0
         version: 4.0.0
+      '@web3-storage/eslint-config-w3up':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       assert:
         specifier: ^2.0.0
         version: 2.1.0
