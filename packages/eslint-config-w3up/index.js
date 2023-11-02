@@ -15,7 +15,9 @@ module.exports = {
     "jsdoc/require-returns": "off",
     "jsdoc/require-returns-type": "off",
     "jsdoc/require-throws": "off",
+    "jsdoc/require-yields": "off",
     "jsdoc/require-param-description": "off",
+    "jsdoc/require-property-description": "off",
     "jsdoc/require-returns-description": "off",
     "jsdoc/valid-types": "off",
     "jsdoc/tag-lines": [

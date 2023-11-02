@@ -88,11 +88,10 @@
     "@web3-storage/data-segment": "^3.2.0"
   },
   "devDependencies": {
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.4",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
     "assert": "^2.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
@@ -102,36 +101,10 @@
   },
   "eslintConfig": {
     "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:jsdoc/recommended"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "rules": {
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "Iterable"
-          ]
-        }
-      ],
-      "jsdoc/require-param-description": "off",
-      "jsdoc/require-property-description": "off",
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-returns-description": "off",
-      "jsdoc/require-yields": "off",
-      "jsdoc/tag-lines": [
-        "error",
-        "any",
-        {
-          "startLines": 1
-        }
-      ]
     },
     "env": {
       "es2022": true,
@@ -151,9 +124,7 @@
     "ignores": [
       "@types/*",
       "assert",
-      "@typescript-eslint/eslint-plugin",
-      "@typescript-eslint/parser",
-      "eslint-plugin-jsdoc"
+      "@web3-storage/eslint-config-w3up"
     ]
   }
 }
