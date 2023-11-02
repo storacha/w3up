@@ -36,9 +36,8 @@
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
     "@web3-storage/eslint-config-w3up": "workspace:^",
-    "assert": "^2.0.0",
+    "@types/mocha": "^10.0.1",
     "mocha": "^10.2.0"
   },
   "eslintConfig": {

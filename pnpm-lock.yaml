@@ -200,9 +200,6 @@ importers:
       '@web3-storage/eslint-config-w3up':
         specifier: workspace:^
         version: link:../eslint-config-w3up
-      assert:
-        specifier: ^2.0.0
-        version: 2.1.0
       mocha:
         specifier: ^10.2.0
         version: 10.2.0
@@ -407,9 +404,6 @@ importers:
       '@web3-storage/sigv4':
         specifier: ^1.0.2
         version: 1.0.2
-      assert:
-        specifier: ^2.0.0
-        version: 2.1.0
       is-subset:
         specifier: ^0.1.1
         version: 0.1.1
