@@ -85,8 +85,7 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@types/varint": "^6.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@ucanto/principal": "^9.0.0",
     "@ucanto/server": "^9.0.1",
     "assert": "^2.0.0",
@@ -101,65 +100,10 @@
   },
   "eslintConfig": {
     "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:jsdoc/recommended"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "rules": {
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "jsdoc/check-values": "off",
-      "jsdoc/check-tag-names": "off",
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-returns-type": "off",
-      "jsdoc/require-throws": "off",
-      "jsdoc/require-param-description": "off",
-      "jsdoc/require-returns-description": "off",
-      "jsdoc/valid-types": "off",
-      "jsdoc/tag-lines": [
-        "error",
-        "any",
-        {
-          "startLines": 1
-        }
-      ],
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "ArrayLike",
-            "AsyncIterable",
-            "AsyncIterableIterator",
-            "Iterable",
-            "IterableIterator",
-            "Generator",
-            "CryptoKeyPair",
-            "NodeJS",
-            "ErrorOptions",
-            "IDBTransactionMode"
-          ]
-        }
-      ],
-      "eqeqeq": "off",
-      "jsdoc/check-indentation": "off",
-      "jsdoc/require-hyphen-before-param-description": "off",
-      "no-console": "off",
-      "no-continue": "off",
-      "no-void": "off",
-      "unicorn/catch-error-name": "off",
-      "unicorn/explicit-length-check": "off",
-      "unicorn/no-array-for-each": "off",
-      "unicorn/no-await-expression-member": "off",
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/no-null": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-set-has": "off",
-      "unicorn/prefer-type-error": "off",
-      "unicorn/no-negated-condition": "off"
     },
     "env": {
       "es2022": true,
