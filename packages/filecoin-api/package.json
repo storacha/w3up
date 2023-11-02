@@ -198,7 +198,7 @@
     "ignores": [
       "dist",
       "@types/*",
-      "eslint-config-prettier"
+      "@web3-storage/eslint-config-w3up"
     ]
   },
   "engines": {

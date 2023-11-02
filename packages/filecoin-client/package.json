@@ -104,9 +104,7 @@
       "@types/*",
       "assert",
       "c8",
-      "@typescript-eslint/eslint-plugin",
-      "@typescript-eslint/parser",
-      "eslint-plugin-jsdoc"
+      "@web3-storage/eslint-config-w3up"
     ]
   }
 }

@@ -155,9 +155,7 @@
     "ignores": [
       "dist",
       "@types/*",
-      "@typescript-eslint/eslint-plugin",
-      "@typescript-eslint/parser",
-      "eslint-config-prettier"
+      "@web3-storage/eslint-config-w3up"
     ]
   },
   "engines": {
