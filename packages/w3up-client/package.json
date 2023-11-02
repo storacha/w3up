@@ -85,16 +85,14 @@
     "@web3-storage/upload-client": "workspace:^"
   },
   "devDependencies": {
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@docusaurus/core": "^2.2.0",
     "@ipld/car": "^5.1.1",
     "@types/mocha": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
     "@ucanto/server": "^9.0.1",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "docusaurus-plugin-typedoc": "^0.18.0",
-    "eslint-plugin-jsdoc": "^46.8.2",
     "hundreds": "^0.0.9",
     "mocha": "^10.1.0",
     "multiformats": "^12.1.2",
@@ -107,50 +105,10 @@
   },
   "eslintConfig": {
     "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:jsdoc/recommended"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "rules": {
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "import/extensions": "off",
-      "jsdoc/check-tag-names": "off",
-      "jsdoc/check-values": "off",
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-returns-type": "off",
-      "jsdoc/require-throws": "off",
-      "jsdoc/require-param-description": "off",
-      "jsdoc/require-returns-description": "off",
-      "jsdoc/tag-lines": [
-        "error",
-        "any",
-        {
-          "startLines": 1
-        }
-      ],
-      "jsdoc/valid-types": "off",
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "ArrayLike",
-            "AsyncIterable",
-            "AsyncIterableIterator",
-            "BlobPart",
-            "Iterable",
-            "IterableIterator",
-            "Generator",
-            "CryptoKeyPair",
-            "NodeJS",
-            "ErrorOptions",
-            "IDBTransactionMode"
-          ]
-        }
-      ]
     },
     "env": {
       "es2022": true,
