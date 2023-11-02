@@ -548,7 +548,7 @@ importers:
         specifier: workspace:^
         version: link:../eslint-config-w3up
       assert:
-        specifier: ^2.0.0
+        specifier: ^2.1.0
         version: 2.1.0
       c8:
         specifier: ^7.13.0
