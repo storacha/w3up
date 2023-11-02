@@ -36,25 +36,16 @@
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "devDependencies": {
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@types/mocha": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
-    "eslint-plugin-jsdoc": "^46.8.2",
     "mocha": "^10.2.0"
   },
   "eslintConfig": {
     "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:jsdoc/recommended"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "rules": {
-      "jsdoc/require-param-description": "off",
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-returns-description": "off"
     },
     "env": {
       "mocha": true

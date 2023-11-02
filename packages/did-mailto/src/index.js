@@ -1,5 +1,6 @@
 /**
  * create a did:mailto from an email address
+ *
  * @param {import("./types.js").EmailAddress} email
  * @returns {import("./types.js").DidMailto}
  */
@@ -27,6 +28,7 @@ export function toEmail(did) {
  * given a string, if it is an EmailAddress, return it, otherwise throw an error.
  * Use this to parse string input to `EmailAddress` type to pass to `fromEmail` (when needed).
  * This is not meant to be a general RFC5322 (et al) email address validator, which would be more expensive.
+ *
  * @param {string} input
  * @returns {import("./types.js").EmailAddress}
  */
@@ -39,6 +41,7 @@ export function email(input) {
 
 /**
  * parse a did mailto from a string
+ *
  * @param {string} input
  * @returns {import("./types.js").DidMailto}
  */
