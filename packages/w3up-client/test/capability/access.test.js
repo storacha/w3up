@@ -14,7 +14,7 @@ describe('AccessClient', () => {
       const service = mockService({
         access: {
           claim: provide(AccessCapabilities.claim, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, AccessCapabilities.claim.can)

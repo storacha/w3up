@@ -5,7 +5,7 @@ import { create } from '../src/index.js'
 describe('create', () => {
   it('should create RSA key', async () => {
     const client = await create()
-    const signer = client.agent()
+    const signer = client.agent.issuer
     assert.equal(signer.signatureAlgorithm, 'RS256')
     assert.equal(signer.signatureCode, RS256)
   })

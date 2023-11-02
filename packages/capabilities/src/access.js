@@ -10,7 +10,7 @@
  */
 import { capability, URI, DID, Schema, fail, ok } from '@ucanto/validator'
 import * as Types from '@ucanto/interface'
-import { equalWith, equal, and, SpaceDID } from './utils.js'
+import { equalWith, equal, and, SpaceDID, checkLink } from './utils.js'
 export { top } from './top.js'
 
 /**
@@ -83,6 +83,11 @@ export const confirm = capability({
   can: 'access/confirm',
   with: DID,
   nb: Schema.struct({
+    /**
+     * Link to the `access/authorize` request that this delegation was created
+     * for.
+     */
+    cause: Schema.link({ version: 1 }),
     iss: Account,
     aud: Schema.did(),
     att: CapabilityRequest.array(),
@@ -93,6 +98,7 @@ export const confirm = capability({
       and(equal(claim.nb.iss, proof.nb.iss, 'iss')) ||
       and(equal(claim.nb.aud, proof.nb.aud, 'aud')) ||
       and(subsetCapabilities(claim.nb.att, proof.nb.att)) ||
+      and(checkLink(claim.nb.cause, proof.nb.cause, 'nb.cause')) ||
       ok({})
     )
   },

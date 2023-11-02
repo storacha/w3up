@@ -26,7 +26,7 @@ describe('Agent', function () {
     assert(typeof space.did() === 'string')
   })
 
-  it('should add proof when creating acccount', async function () {
+  it('should add proof when creating account', async function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test-add')
     const authorization = await space.createAuthorization(agent, {

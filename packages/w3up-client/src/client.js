@@ -114,13 +114,6 @@ export class Client extends Base {
   }
 
   /**
-   * The current user agent (this device).
-   */
-  agent() {
-    return this._agent.issuer
-  }
-
-  /**
    * The current space.
    */
   currentSpace() {

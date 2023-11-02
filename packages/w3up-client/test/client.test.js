@@ -26,7 +26,7 @@ describe('Client', () => {
       const service = mockService({
         store: {
           add: provide(StoreCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.add.can)
@@ -46,7 +46,7 @@ describe('Client', () => {
         },
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.add.can)
@@ -124,7 +124,7 @@ describe('Client', () => {
       const service = mockService({
         store: {
           add: provide(StoreCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.add.can)
@@ -144,7 +144,7 @@ describe('Client', () => {
         },
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.add.can)
@@ -205,7 +205,7 @@ describe('Client', () => {
       const service = mockService({
         store: {
           add: provide(StoreCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.add.can)
@@ -225,7 +225,7 @@ describe('Client', () => {
         },
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.add.can)
@@ -327,7 +327,7 @@ describe('Client', () => {
       )
       await alice.setCurrentSpace(space.did())
 
-      const delegation = await alice.createDelegation(bob.agent(), ['*'])
+      const delegation = await alice.createDelegation(bob.agent, ['*'])
 
       assert.equal(bob.spaces().length, 0)
       await bob.addSpace(delegation)
@@ -353,7 +353,7 @@ describe('Client', () => {
       )
       await alice.setCurrentSpace(space.did())
 
-      const delegation = await alice.createDelegation(bob.agent(), ['*'])
+      const delegation = await alice.createDelegation(bob.agent, ['*'])
 
       await bob.addProof(delegation)
 
@@ -377,7 +377,7 @@ describe('Client', () => {
       )
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
-      const delegation = await alice.createDelegation(bob.agent(), ['*'], {
+      const delegation = await alice.createDelegation(bob.agent, ['*'], {
         audienceMeta: { type: 'device', name },
       })
 
@@ -438,7 +438,7 @@ describe('Client', () => {
       )
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
-      const delegation = await alice.createDelegation(bob.agent(), ['*'], {
+      const delegation = await alice.createDelegation(bob.agent, ['*'], {
         audienceMeta: { type: 'device', name },
       })
 
@@ -459,7 +459,7 @@ describe('Client', () => {
       )
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
-      const delegation = await alice.createDelegation(bob.agent(), ['*'], {
+      const delegation = await alice.createDelegation(bob.agent, ['*'], {
         audienceMeta: { type: 'device', name },
       })
 

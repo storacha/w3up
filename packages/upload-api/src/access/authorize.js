@@ -91,7 +91,7 @@ export const authorize = async ({ capability, invocation }, ctx) => {
 
   const ok = Server.ok({
     // let client know when the confirmation will expire
-    expiration: confirmation.expiration * 100,
+    expiration: confirmation.expiration * 1000,
     // link to this authorization request
     request: invocation.cid,
   })

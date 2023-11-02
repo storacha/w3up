@@ -6,6 +6,7 @@ import { Provider, Plan } from '@web3-storage/capabilities'
 import * as w3caps from '@web3-storage/capabilities'
 import { isSessionProof } from './agent-data.js'
 import * as DidMailto from '@web3-storage/did-mailto'
+import * as API from './types.js'
 
 /**
  * Request access by a session allowing this agent to issue UCANs
@@ -190,6 +191,21 @@ export async function authorizeAndWait(access, email, opts = {}) {
     await Promise.all(sessionDelegations.map(async (d) => access.addProof(d)))
   }
 }
+
+/**
+ * @param {AccessAgent} client
+ * @param {object} input
+ * @param {DidMailto.EmailAddress} input.account
+ * @param {API.Access} [input.access]
+ * @param {AbortSignal} [input.signal]
+ */
+export const queryAccess = (client, { account, access, signal }) =>
+  pollAccessClaimUntil(
+    (delegations) => delegations.some((_proof) => false),
+    client,
+    client.did(),
+    { signal }
+  )
 
 /**
  * Request authorization of a session allowing this agent to issue UCANs

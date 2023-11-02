@@ -61,7 +61,6 @@ export async function confirm({ capability, invocation }, ctx) {
     service: ctx.signer,
     account,
     agent,
-    cause: invocation.cid,
     request: capability.nb.cause,
     capabilities,
     // We include all the delegations to the account so that the agent will
@@ -93,7 +92,6 @@ export async function confirm({ capability, invocation }, ctx) {
  * @param {API.Signer} opts.service
  * @param {API.Principal<API.DID<'mailto'>>} opts.account
  * @param {API.Principal<API.DID>} opts.agent
- * @param {API.Link} opts.cause
  * @param {API.Link} opts.request
  * @param {API.Capabilities} opts.capabilities
  * @param {API.Delegation[]} opts.delegationProofs
@@ -106,7 +104,6 @@ export async function createSessionProofs({
   account,
   agent,
   capabilities,
-  cause,
   request,
   delegationProofs,
   // default to Infinity is reasonable here because
@@ -139,6 +136,7 @@ export async function createSessionProofs({
     with: service.did(),
     nb: { proof: delegation.cid },
     expiration,
+    facts: [{ 'access/request': request }],
     facts: [...accessConfirmInvocationFacts],
   })
 

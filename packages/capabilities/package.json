@@ -56,7 +56,10 @@
       "types": "./dist/src/filecoin/dealer.d.ts",
       "import": "./src/filecoin/dealer.js"
     },
-    "./types": "./dist/src/types.d.ts"
+    "./types": {
+      "types": "./dist/src/types.d.ts",
+      "import": "./src/types.js"
+    }
   },
   "typesVersions": {
     "*": {

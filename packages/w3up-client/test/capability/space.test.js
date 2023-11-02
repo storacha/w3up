@@ -14,7 +14,7 @@ describe('SpaceClient', () => {
       const service = mockService({
         space: {
           info: provide(SpaceCapabilities.info, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, SpaceCapabilities.info.can)

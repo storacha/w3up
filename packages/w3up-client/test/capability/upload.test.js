@@ -22,7 +22,7 @@ describe('StoreClient', () => {
       const service = mockService({
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.add.can)
@@ -82,7 +82,7 @@ describe('StoreClient', () => {
       const service = mockService({
         upload: {
           list: provide(UploadCapabilities.list, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.list.can)
@@ -130,7 +130,7 @@ describe('StoreClient', () => {
       const service = mockService({
         upload: {
           remove: provide(UploadCapabilities.remove, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.remove.can)

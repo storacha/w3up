@@ -522,6 +522,9 @@ importers:
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
+      '@web3-storage/did-mailto':
+        specifier: workspace:^
+        version: link:../did-mailto
       '@web3-storage/upload-client':
         specifier: workspace:^
         version: link:../upload-client
@@ -538,6 +541,9 @@ importers:
       '@ucanto/server':
         specifier: ^9.0.1
         version: 9.0.1
+      '@web3-storage/upload-api':
+        specifier: workspace:^
+        version: link:../upload-api
       assert:
         specifier: ^2.0.0
         version: 2.1.0

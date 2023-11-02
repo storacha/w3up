@@ -30,6 +30,15 @@ export class Base {
   }
 
   /**
+   * The current user agent (this device).
+   *
+   * @type {Agent}
+   */
+  get agent() {
+    return this._agent
+  }
+
+  /**
    * @protected
    * @param {import('./types.js').Ability[]} abilities
    */

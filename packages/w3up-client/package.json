@@ -80,11 +80,13 @@
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
     "@ucanto/transport": "^9.0.0",
+    "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/upload-client": "workspace:^"
   },
   "devDependencies": {
+    "@web3-storage/upload-api": "workspace:^",
     "@docusaurus/core": "^2.2.0",
     "@ipld/car": "^5.1.1",
     "@types/mocha": "^10.0.1",
