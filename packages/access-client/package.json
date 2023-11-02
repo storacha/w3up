@@ -101,10 +101,9 @@
       "project": "./tsconfig.json"
     },
     "env": {
-      "es2022": true,
-      "mocha": true,
       "browser": true,
-      "node": true
+      "es2022": true,
+      "mocha": true
     },
     "ignorePatterns": [
       "dist"
