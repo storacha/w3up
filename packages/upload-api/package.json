@@ -118,64 +118,19 @@
     "@ipld/car": "^5.1.1",
     "@ipld/dag-ucan": "^3.4.0",
     "@types/mocha": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
     "@ucanto/core": "^9.0.0",
     "@web-std/blob": "^3.0.5",
     "@web3-storage/sigv4": "^1.0.2",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "is-subset": "^0.1.1",
     "mocha": "^10.2.0"
   },
   "eslintConfig": {
     "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:jsdoc/recommended"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "rules": {
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/no-array-reduce": "off",
-      "unicorn/no-null": "off",
-      "unicorn/no-zero-fractions": "off",
-      "unicorn/no-negated-condition": "off",
-      "@typescript-eslint/method-signature-style": "off",
-      "@typescript-eslint/no-empty-interface": "off",
-      "unicorn/no-useless-undefined": "off",
-      "no-nested-ternary": "off",
-      "yoda": "off",
-      "jsdoc/check-values": "off",
-      "jsdoc/check-tag-names": "off",
-      "jsdoc/require-yields": "off",
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-returns-type": "off",
-      "jsdoc/require-param": "off",
-      "jsdoc/require-jsdoc": "off",
-      "jsdoc/no-multi-asterisks": "off",
-      "jsdoc/require-throws": "off",
-      "jsdoc/require-param-description": "off",
-      "jsdoc/require-returns-description": "off",
-      "jsdoc/valid-types": "off",
-      "jsdoc/tag-lines": [
-        "warn",
-        "any",
-        {
-          "startLines": 1
-        }
-      ],
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "Iterable"
-          ]
-        }
-      ]
     },
     "env": {
       "es2022": true,
