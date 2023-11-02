@@ -103,8 +103,7 @@
     "env": {
       "es2022": true,
       "mocha": true,
-      "browser": true,
-      "node": true
+      "browser": true
     },
     "ignorePatterns": [
       "dist"
