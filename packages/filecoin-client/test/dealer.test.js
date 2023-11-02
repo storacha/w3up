@@ -201,9 +201,6 @@ describe('dealer', () => {
   })
 })
 
-/**
- *
- */
 async function getContext() {
   const aggregator = await Signer.generate()
 

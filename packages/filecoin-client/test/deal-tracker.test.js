@@ -61,9 +61,6 @@ describe('deal tracker', () => {
   })
 })
 
-/**
- *
- */
 async function getContext() {
   const storefront = await Signer.generate()
 

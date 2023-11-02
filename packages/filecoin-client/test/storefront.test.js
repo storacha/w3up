@@ -261,9 +261,6 @@ describe('storefront', () => {
   })
 })
 
-/**
- *
- */
 async function getContext() {
   const agent = await Signer.generate()
 

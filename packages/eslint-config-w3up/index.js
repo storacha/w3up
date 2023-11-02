@@ -18,6 +18,12 @@ module.exports = {
      */
     "jsdoc/check-values": "off",
     "jsdoc/check-tag-names": "off",
+    "jsdoc/require-jsdoc": [
+      "warn",
+      {
+        "publicOnly": true
+      }
+    ],
     "jsdoc/require-returns": "off",
     "jsdoc/require-returns-type": "off",
     "jsdoc/require-throws": "off",
