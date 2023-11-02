@@ -258,6 +258,9 @@ importers:
       '@web-std/blob':
         specifier: ^3.0.5
         version: 3.0.5
+      '@web3-storage/eslint-config-w3up':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       '@web3-storage/filecoin-client':
         specifier: workspace:^
         version: link:../filecoin-client
