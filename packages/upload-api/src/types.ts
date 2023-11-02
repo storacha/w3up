@@ -15,6 +15,7 @@ import type {
   RevocationChecker,
   ToString,
   UnknownLink,
+  Unit,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
@@ -164,7 +165,7 @@ export interface Service extends StorefrontService {
   console: {
     log: ServiceMethod<
       InferInvokedCapability<typeof Capabilities.Console.log>,
-      {},
+      Unit,
       never
     >
     error: ServiceMethod<

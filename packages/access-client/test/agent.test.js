@@ -314,7 +314,6 @@ describe('Agent', function () {
           const { nb: input } = capability
           const ucan = Delegation.view(
             { root: input.ucan, blocks: invocation.blocks },
-            // eslint-disable-next-line unicorn/no-null
             null
           )
           return ucan
@@ -479,7 +478,6 @@ describe('Agent', function () {
     // the agent has a delegation+sesssion for each service
     const services = [serviceAWeb, serviceBWeb]
     for (const service of services) {
-      // eslint-disable-next-line unicorn/no-await-expression-member
       const nonce = (await ed25519.Signer.generate()).did()
       const delegation = await ucanto.delegate({
         issuer: Absentee.from({ id: account }),

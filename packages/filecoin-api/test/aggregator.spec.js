@@ -1,4 +1,3 @@
-/* eslint-disable no-only-tests/no-only-tests */
 import * as assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
 

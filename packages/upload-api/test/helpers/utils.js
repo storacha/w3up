@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-number-properties */
 import * as Types from '../../src/types.js'
 import { ed25519 } from '@ucanto/principal'
 import * as principal from '@ucanto/principal'
@@ -11,7 +10,6 @@ import * as DidMailto from '@web3-storage/did-mailto'
 import * as API from '../types.js'
 import { stringToDelegation } from '@web3-storage/access/encoding'
 
-// eslint-disable-next-line unicorn/prefer-export-from
 export { Context }
 
 /**

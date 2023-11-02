@@ -1,4 +1,3 @@
-/* eslint-disable no-only-tests/no-only-tests */
 import * as Plan from './plan.js'
 import * as assert from 'assert'
 import { cleanupContext, createContext } from '../helpers/context.js'

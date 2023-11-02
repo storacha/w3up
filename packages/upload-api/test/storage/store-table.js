@@ -43,6 +43,7 @@ export class StoreTable {
 
   /**
    * Get info for a single shard or undefined if it doesn't exist
+   *
    * @param {API.DID} space
    * @param {API.UnknownLink} link
    * @returns {Promise<(API.StoreAddInput & API.StoreListItem) | undefined>}

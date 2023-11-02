@@ -67,7 +67,6 @@ export function validate(delegation, opts) {
  */
 export function canDelegateCapability(delegation, capability) {
   const allowsCapabilities = ucanto.Delegation.allows(delegation)
-  // debugger console.log(allowsCapabilities)
   for (const [uri, abilities] of Object.entries(allowsCapabilities)) {
     if (matchResource(/** @type {API.Resource} */ (uri), capability.with)) {
       const cans = /** @type {API.Ability[]} */ (Object.keys(abilities))

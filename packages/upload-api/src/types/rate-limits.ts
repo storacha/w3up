@@ -46,5 +46,7 @@ export interface RateLimitsStorage {
   /**
    * Remove a rate limit with given ID.
    */
-  remove: (id: RateLimitID) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+  remove: (
+    id: RateLimitID
+  ) => Promise<Ucanto.Result<Ucanto.Unit, Ucanto.Failure>>
 }

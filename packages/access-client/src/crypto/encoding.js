@@ -91,7 +91,6 @@ export function decompressP256(comp) {
   yPadded.set(y, offset)
 
   // concat coords & prepend P-256 prefix
-  // eslint-disable-next-line unicorn/prefer-spread
   const publicKey = uint8arrays.concat([[0x04], x, yPadded])
   return publicKey
 }

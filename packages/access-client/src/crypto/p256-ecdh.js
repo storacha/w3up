@@ -15,10 +15,7 @@ async function didFromPubkey(pubkey) {
   const buf = await webcrypto.subtle.exportKey('raw', pubkey)
   const bytes = new Uint8Array(buf)
   return DID.format(
-    DID.decode(
-      // eslint-disable-next-line unicorn/prefer-spread
-      uint8arrays.concat([P256_DID_PREFIX, compressP256Pubkey(bytes)])
-    )
+    DID.decode(uint8arrays.concat([P256_DID_PREFIX, compressP256Pubkey(bytes)]))
   )
 }
 

@@ -106,10 +106,12 @@ export interface DealTrackerService {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface RequestOptions<S extends Record<string, any>> {
   connection?: ConnectionView<S>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface Connectable<S extends Record<string, any>> {
   connection?: ConnectionView<S>
 }

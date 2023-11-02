@@ -61,7 +61,16 @@ export async function confirm({ capability, invocation }, ctx) {
     service: ctx.signer,
     account,
     agent,
-    request: capability.nb.cause,
+    // facts are used by the client to find delegations that were created
+    // for the invoked `access/authorize` request.
+    facts: [
+      {
+        // link to the `access/authorize` invocation that requested access
+        'access/request': capability.nb.cause,
+        // link to the `access/confirm` invocation that approved access
+        'access/confirm': invocation.cid,
+      },
+    ],
     capabilities,
     // We include all the delegations to the account so that the agent will
     // have delegation chains to all the delegated resources.
@@ -70,7 +79,6 @@ export async function confirm({ capability, invocation }, ctx) {
     // implement sudo access anyway.
     delegationProofs: delegationsResult.ok,
     expiration: Infinity,
-    accessConfirmInvocation: invocation.cid,
   })
 
   // Store the delegations so that they can be pulled with access/claim.
@@ -92,30 +100,23 @@ export async function confirm({ capability, invocation }, ctx) {
  * @param {API.Signer} opts.service
  * @param {API.Principal<API.DID<'mailto'>>} opts.account
  * @param {API.Principal<API.DID>} opts.agent
- * @param {API.Link} opts.request
+ * @param {API.Fact[]} opts.facts
  * @param {API.Capabilities} opts.capabilities
  * @param {API.Delegation[]} opts.delegationProofs
  * @param {number} opts.expiration
- * @param {import('@ucanto/interface').UCANLink} [opts.accessConfirmInvocation] - link to invocation of access/confirm that confirmed the issuance of these session proofs
  * @returns {Promise<[delegation: API.Delegation, attestation: API.Delegation]>}
  */
 export async function createSessionProofs({
   service,
   account,
   agent,
+  facts,
   capabilities,
-  request,
   delegationProofs,
   // default to Infinity is reasonable here because
   // account consented to this.
   expiration = Infinity,
-  accessConfirmInvocation,
 }) {
-  // if accessConfirmInvocation was provided, we'll create both proofs with facts about the access/confirm invocation that led to them.
-  const accessConfirmInvocationFacts = accessConfirmInvocation
-    ? [{ cause: accessConfirmInvocation }]
-    : []
-
   // create an delegation on behalf of the account with an absent signature.
   const delegation = await Provider.delegate({
     issuer: Absentee.from({ id: account.did() }),
@@ -123,11 +124,7 @@ export async function createSessionProofs({
     capabilities,
     expiration,
     proofs: delegationProofs,
-    facts: [
-      ...accessConfirmInvocationFacts,
-      { 'access/authorize': request },
-      { cause },
-    ],
+    facts,
   })
 
   const attestation = await UCAN.attest.delegate({
@@ -136,8 +133,7 @@ export async function createSessionProofs({
     with: service.did(),
     nb: { proof: delegation.cid },
     expiration,
-    facts: [{ 'access/request': request }],
-    facts: [...accessConfirmInvocationFacts],
+    facts,
   })
 
   return [delegation, attestation]

@@ -56,10 +56,7 @@
       "types": "./dist/src/filecoin/dealer.d.ts",
       "import": "./src/filecoin/dealer.js"
     },
-    "./types": {
-      "types": "./dist/src/types.d.ts",
-      "import": "./src/types.js"
-    }
+    "./types": "./dist/src/types.d.ts"
   },
   "typesVersions": {
     "*": {
@@ -91,11 +88,11 @@
     "@web3-storage/data-segment": "^3.2.0"
   },
   "devDependencies": {
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.4",
     "assert": "^2.0.0",
-    "hd-scripts": "^4.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
     "type-fest": "^3.3.0",
@@ -104,28 +101,16 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/numeric-separators-style": "off",
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/no-array-reduce": "off",
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "Iterable"
-          ]
-        }
-      ]
-    },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist",
@@ -138,8 +123,8 @@
     ],
     "ignores": [
       "@types/*",
-      "hd-scripts",
-      "assert"
+      "assert",
+      "@web3-storage/eslint-config-w3up"
     ]
   }
 }

@@ -89,18 +89,19 @@
     "@web3-storage/upload-api": "workspace:^",
     "@docusaurus/core": "^2.2.0",
     "@ipld/car": "^5.1.1",
+    "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^20.8.4",
     "@ucanto/server": "^9.0.1",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "docusaurus-plugin-typedoc": "^0.18.0",
-    "hd-scripts": "^5.0.0",
     "hundreds": "^0.0.9",
     "mocha": "^10.1.0",
     "multiformats": "^12.1.2",
     "npm-run-all": "^4.1.5",
     "playwright-test": "^12.3.4",
-    "standard": "^17.0.0",
     "typedoc": "^0.23.24",
     "typedoc-plugin-markdown": "^3.14.0",
     "typedoc-plugin-missing-exports": "^1.0.0",
@@ -108,41 +109,16 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {
-      "unicorn/prefer-number-properties": "off",
-      "unicorn/prefer-export-from": "off",
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/no-array-reduce": "off",
-      "unicorn/no-null": "off",
-      "unicorn/no-await-expression-member": "off",
-      "import/extensions": "off",
-      "jsdoc/check-tag-names": "off",
-      "jsdoc/no-undefined-types": [
-        "error",
-        {
-          "definedTypes": [
-            "ArrayLike",
-            "AsyncIterable",
-            "AsyncIterableIterator",
-            "BlobPart",
-            "Iterable",
-            "IterableIterator",
-            "Generator",
-            "CryptoKeyPair",
-            "NodeJS",
-            "ErrorOptions",
-            "IDBTransactionMode"
-          ]
-        }
-      ]
-    },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist",
@@ -171,10 +147,18 @@
     "url": "https://github.com/web3-storage/w3up-client/issues"
   },
   "homepage": "https://github.com/web3-storage/w3up-client#readme",
-  "standard": {
-    "env": [
-      "browser",
-      "mocha"
+  "depcheck": {
+    "ignorePatterns": [
+      "dist"
+    ],
+    "ignores": [
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
+      "assert",
+      "c8",
+      "docusaurus-plugin-typedoc",
+      "typedoc-plugin-markdown",
+      "typedoc-plugin-missing-exports"
     ]
   }
 }

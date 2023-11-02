@@ -53,7 +53,6 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ipld/dag-cbor": "^9.0.6",
     "@ipld/dag-ucan": "^3.4.0",
     "@ucanto/client": "^9.0.0",
     "@ucanto/core": "^9.0.0",
@@ -69,9 +68,9 @@
     "@ucanto/principal": "^9.0.0",
     "@ucanto/server": "^9.0.1",
     "@web3-storage/data-segment": "^4.0.0",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
-    "hd-scripts": "^4.0.0",
     "hundreds": "^0.0.9",
     "mocha": "^10.2.0",
     "multiformats": "^12.1.2",
@@ -81,19 +80,16 @@
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/hd-scripts/eslint/index.js"
+      "@web3-storage/eslint-config-w3up"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "rules": {
-      "unicorn/no-await-expression-member": "off",
-      "unicorn/expiring-todo-comments": "off",
-      "unicorn/prefer-spread": "off",
-      "no-new": "off"
-    },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist",
@@ -106,9 +102,9 @@
     ],
     "ignores": [
       "@types/*",
-      "hd-scripts",
       "assert",
-      "c8"
+      "c8",
+      "@web3-storage/eslint-config-w3up"
     ]
   }
 }
