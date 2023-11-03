@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.2](https://github.com/web3-storage/w3up/compare/w3up-client-v9.2.1...w3up-client-v9.2.2) (2023-11-03)
+
+
+### Bug Fixes
+
+* trigger commit for release of w3up client ([#1070](https://github.com/web3-storage/w3up/issues/1070)) ([8edcbf8](https://github.com/web3-storage/w3up/commit/8edcbf827269495a112272b1e59ee6a286b5bd3b))
+
 ## [9.2.1](https://github.com/web3-storage/w3up/compare/w3up-client-v9.2.0...w3up-client-v9.2.1) (2023-10-25)
 
 
