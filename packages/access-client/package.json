@@ -27,6 +27,7 @@
   "exports": {
     ".": "./dist/src/index.js",
     "./agent": "./dist/src/agent.js",
+    "./space": "./dist/src/space.js",
     "./drivers/*": "./dist/src/drivers/*.js",
     "./stores/*": "./dist/src/stores/*.js",
     "./types": "./dist/src/types.js",
@@ -36,6 +37,9 @@
     "*": {
       "agent": [
         "dist/src/agent"
+      ],
+      "space": [
+        "dist/src/space"
       ],
       "types": [
         "dist/src/types"

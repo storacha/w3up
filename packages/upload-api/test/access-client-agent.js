@@ -32,7 +32,7 @@ export const test = {
 
     const space = await agent.createSpace('test-add')
     const auth = await space.createAuthorization(agent, {
-      can: '*',
+      access: AgentAccess.spaceAccess,
       expiration: Infinity,
     })
     await agent.importSpaceFromDelegation(auth)
@@ -237,7 +237,7 @@ export const test = {
       const spaceName = `space-test-${Math.random().toString().slice(2)}`
       const spaceCreation = await agent.createSpace(spaceName)
       const auth = await spaceCreation.createAuthorization(agent, {
-        can: '*',
+        access: AgentAccess.spaceAccess,
         expiration: Infinity,
       })
       await agent.importSpaceFromDelegation(auth)
@@ -296,7 +296,7 @@ export const test = {
 
     // authorize deviceA
     const auth = await spaceCreation.createAuthorization(deviceA, {
-      can: '*',
+      access: AgentAccess.spaceAccess,
       expiration: Infinity,
     })
     await deviceA.importSpaceFromDelegation(auth)
@@ -374,7 +374,7 @@ export const test = {
       provider: service.did(),
     })
     const auth = await space.createAuthorization(deviceA, {
-      can: '*',
+      access: AgentAccess.spaceAccess,
       expiration: Infinity,
     })
     await deviceA.importSpaceFromDelegation(auth)
@@ -406,7 +406,7 @@ export const test = {
       provider: service.did(),
     })
     const auth = await space.createAuthorization(agent, {
-      can: '*',
+      access: AgentAccess.spaceAccess,
       expiration: Infinity,
     })
     await agent.importSpaceFromDelegation(auth)

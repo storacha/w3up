@@ -90,6 +90,10 @@
     "./test": {
       "types": "./dist/test/lib.d.ts",
       "import": "./test/lib.js"
+    },
+    "./test/context": {
+      "types": "./dist/test/helpers/context.d.ts",
+      "import": "./test/helpers/context.js"
     }
   },
   "scripts": {
@@ -123,7 +127,8 @@
     "@web3-storage/sigv4": "^1.0.2",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "is-subset": "^0.1.1",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto"
   },
   "eslintConfig": {
     "extends": [

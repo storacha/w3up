@@ -1,9 +1,16 @@
 import * as API from './types.js'
 import * as Access from './capability/access.js'
-import { Delegation, provisionSpace } from '@web3-storage/access/agent'
+import {
+  Delegation,
+  provisionSpace,
+  importAuthorization,
+  Schema,
+} from '@web3-storage/access/agent'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
 
 export { fromEmail }
+
+const AccountDID = Schema.did({ method: 'mailto' })
 
 /**
  * @param {{agent: API.Agent}} client
@@ -13,7 +20,7 @@ export { fromEmail }
 export const list = ({ agent }, { account } = {}) => {
   const query = /** @type {API.CapabilityQuery} */ ({
     with: account ?? /did:mailto:.*/,
-    can: 'ucan/*',
+    can: '*',
   })
 
   const proofs = agent.proofs([query])
@@ -24,7 +31,7 @@ export const list = ({ agent }, { account } = {}) => {
   for (const proof of proofs) {
     const access = Delegation.allows(proof)
     for (const [resource, abilities] of Object.entries(access)) {
-      if (abilities['ucan/*']) {
+      if (AccountDID.is(resource) && abilities['*']) {
         const id = /** @type {API.DidMailto} */ (resource)
 
         const account =
@@ -58,6 +65,7 @@ export const list = ({ agent }, { account } = {}) => {
 /**
  * @param {{agent: API.Agent}} client
  * @param {API.EmailAddress} email
+ * @returns {Promise<API.Result<Account, Error>>}
  */
 export const login = async ({ agent }, email) => {
   const account = fromEmail(email)
@@ -70,20 +78,16 @@ export const login = async ({ agent }, email) => {
   )
 
   const { ok: access, error } = result
+  /* c8 ignore next 2 - don't know how to test this */
   if (error) {
     return { error }
   } else {
     const { ok, error } = await access.claim()
+    /* c8 ignore next 2 - don't know how to test this */
     if (error) {
       return { error }
     } else {
-      try {
-        for (const proof of ok) {
-          await agent.addProof(proof)
-        }
-      } catch {}
-
-      return { ok: new Account({ id: account, proofs: ok, agent }) }
+      return { ok: new Account({ id: account, proofs: ok.proofs, agent }) }
     }
   }
 }
@@ -126,6 +130,15 @@ class Account {
       ...input,
       account: this.did(),
       space,
+      proofs: this.proofs,
     })
+  }
+
+  /**
+   * @param {object} input
+   * @param {API.Agent} [input.agent]
+   */
+  async save({ agent = this.agent } = {}) {
+    return await importAuthorization(agent, this)
   }
 }

@@ -14,6 +14,7 @@ import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
 import { AccessClient } from './capability/access.js'
+export * as Access from './capability/access.js'
 
 export { StoreClient, UploadClient, SpaceClient, AccessClient }
 
@@ -144,8 +145,8 @@ export class Client extends Base {
    *
    * @param {string} name
    */
-  createSpace(name) {
-    return this._agent.createSpace(name)
+  async createSpace(name) {
+    return await this._agent.createSpace(name)
   }
 
   // /* c8 ignore start - hard to test this without authorize tests which require websockets */

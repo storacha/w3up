@@ -2,7 +2,7 @@ import assert from 'assert'
 import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
-import { Agent, AgentData, connection } from '../src/agent.js'
+import { Agent, Access, AgentData, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
@@ -10,6 +10,7 @@ import * as ed25519 from '@ucanto/principal/ed25519'
 import { UCAN, Provider } from '@web3-storage/capabilities'
 import { Absentee } from '@ucanto/principal'
 import * as DidMailto from '@web3-storage/did-mailto'
+import * as API from '../src/types.js'
 
 describe('Agent', function () {
   it('should return did', async function () {
@@ -29,7 +30,7 @@ describe('Agent', function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test-add')
     const authorization = await space.createAuthorization(agent, {
-      can: '*',
+      access: { '*': {} },
       expiration: Infinity,
     })
 
@@ -43,7 +44,7 @@ describe('Agent', function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test')
     const authorization = await space.createAuthorization(agent, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
 
@@ -57,7 +58,10 @@ describe('Agent', function () {
     }
     assert.equal(accWithMeta.did, space.did())
     assert(accWithMeta.proofs.length === 1)
-    assert.deepStrictEqual(accWithMeta.capabilities, ['*'])
+    assert.deepStrictEqual(
+      accWithMeta.capabilities,
+      Object.keys(Access.spaceAccess)
+    )
   })
 
   it('fails set current space with no proofs', async function () {
@@ -79,7 +83,7 @@ describe('Agent', function () {
 
     const space = await alice.createSpace('videos')
     const auth = await space.createAuthorization(alice, {
-      can: '*',
+      access: { '*': {} },
       expiration: Infinity,
     })
     await alice.importSpaceFromDelegation(auth)
@@ -104,7 +108,7 @@ describe('Agent', function () {
 
     const space = await alice.createSpace('videos')
     const auth = await space.createAuthorization(alice, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
     await alice.importSpaceFromDelegation(auth)
@@ -130,7 +134,7 @@ describe('Agent', function () {
 
     const space = await agent.createSpace('execute')
     const auth = await space.createAuthorization(agent, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
     await agent.importSpaceFromDelegation(auth)
@@ -157,7 +161,7 @@ describe('Agent', function () {
 
     const space = await agent.createSpace('execute')
     const auth = await space.createAuthorization(agent, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
     await agent.importSpaceFromDelegation(auth)
@@ -215,7 +219,7 @@ describe('Agent', function () {
 
     const space = await agent.createSpace('execute')
     const auth = await space.createAuthorization(agent, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
     await agent.importSpaceFromDelegation(auth)
@@ -240,7 +244,7 @@ describe('Agent', function () {
 
     const space = await agent.createSpace('execute')
     const auth = await space.createAuthorization(agent, {
-      can: '*',
+      access: { '*': {} },
       expiration: Infinity,
     })
     await agent.importSpaceFromDelegation(auth)
@@ -275,7 +279,7 @@ describe('Agent', function () {
 
     const space = await alice.createSpace('execute')
     const auth = await space.createAuthorization(alice, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
     await alice.importSpaceFromDelegation(auth)
@@ -339,7 +343,7 @@ describe('Agent', function () {
 
     const space = await alice.createSpace('alice')
     const aliceAuth = await space.createAuthorization(alice, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
     await alice.importSpaceFromDelegation(aliceAuth)
@@ -367,7 +371,7 @@ describe('Agent', function () {
 
     const bobSpace = await bob.createSpace('bob')
     const bobAuth = await bobSpace.createAuthorization(bob, {
-      can: '*',
+      access: Access.spaceAccess,
       expiration: Infinity,
     })
     await bob.importSpaceFromDelegation(bobAuth)
@@ -528,11 +532,10 @@ describe('Agent', function () {
     )
 
     const providerAddInvocation = await agentConnectedToServiceB.invoke(
-      // @ts-expect-error - complaint about options.nb.provider not matching a did:mailto type, but it is. Seems like ucanto error with complex types.
       Provider.add,
       {
         audience: serviceBWeb,
-        with: account,
+        with: /** @type {API.AccountDID} */ (account),
         nb: {
           provider: serviceBWeb.did(),
           consumer: space.did(),

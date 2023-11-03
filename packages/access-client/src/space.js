@@ -1,8 +1,9 @@
 import * as ED25519 from '@ucanto/principal/ed25519'
-import * as Ucanto from '@ucanto/interface'
-import { delegate, Schema } from '@ucanto/core'
+import { delegate, Schema, UCAN } from '@ucanto/core'
 import * as BIP39 from '@scure/bip39'
 import { wordlist } from '@scure/bip39/wordlists/english'
+import * as API from './types.js'
+import * as Access from './access.js'
 
 /**
  * @typedef {object} Model
@@ -53,7 +54,7 @@ export const toMnemonic = ({ signer }) => {
  * to be used as an `account`.
  *
  * @param {Model} space
- * @param {Ucanto.DID<'mailto'>} account
+ * @param {API.AccountDID} account
  */
 export const createRecovery = async ({ signer, name }, account) => {
   return await delegate({
@@ -65,29 +66,57 @@ export const createRecovery = async ({ signer, name }, account) => {
   })
 }
 
+// Default authorization session is valid for 1 year
+export const SESSION_LIFETIME = 60 * 60 * 24 * 365
 /**
  * Creates (UCAN) delegation that gives specified `agent` an access to
  * specified ability (passed as `access.can` field) on the this space.
  * Optionally, you can specify `access.expiration` field to set the
  *
  * @param {Model} space
- * @param {Ucanto.Principal} agent
- * @param {object} access
- * @param {Ucanto.Ability} access.can
- * @param {Ucanto.UCAN.UTCUnixTimestamp} access.expiration
+ * @param {object} options
+ * @param {API.Principal} options.agent
+ * @param {API.Access} [options.access]
+ * @param {API.UCAN.UTCUnixTimestamp} [options.expiration]
  */
 export const createAuthorization = async (
   { signer, name },
-  agent,
-  { can, expiration }
+  {
+    agent,
+    access = Access.spaceAccess,
+    expiration = UCAN.now() + SESSION_LIFETIME,
+  }
 ) => {
   return await delegate({
     issuer: signer,
     audience: agent,
-    capabilities: [{ with: signer.did(), can }],
+    capabilities: toCapabilities({
+      [signer.did()]: access,
+    }),
     ...(expiration ? { expiration } : {}),
     facts: [{ space: { name } }],
   })
+}
+
+/**
+ * @param {Record<API.Resource, API.Access>} allow
+ * @returns {API.Capabilities}
+ */
+const toCapabilities = (allow) => {
+  const capabilities = []
+  for (const [subject, access] of Object.entries(allow)) {
+    const entries = /** @type {[API.Ability, API.Unit][]} */ (
+      Object.entries(access)
+    )
+
+    for (const [can, details] of entries) {
+      if (details) {
+        capabilities.push({ can, with: subject })
+      }
+    }
+  }
+
+  return /** @type {API.Capabilities} */ (capabilities)
 }
 
 class OwnedSpace {
@@ -118,7 +147,7 @@ class OwnedSpace {
    * specified `account`. At the moment we only allow `did:mailto` principal
    * to be used as an `account`.
    *
-   * @param {Ucanto.DID<'mailto'>} account
+   * @param {API.AccountDID} account
    */
   async createRecovery(account) {
     return createRecovery(this, account)
@@ -129,13 +158,13 @@ class OwnedSpace {
    * specified ability (passed as `access.can` field) on the this space.
    * Optionally, you can specify `access.expiration` field to set the
    *
-   * @param {Ucanto.Principal} agent
-   * @param {object} access
-   * @param {Ucanto.Ability} access.can
-   * @param {Ucanto.UCAN.UTCUnixTimestamp} access.expiration
+   * @param {API.Principal} agent
+   * @param {object} [input]
+   * @param {API.Access} [input.access]
+   * @param {API.UCAN.UTCUnixTimestamp} [input.expiration]
    */
-  createAuthorization(agent, access) {
-    return createAuthorization(this, agent, access)
+  createAuthorization(agent, input) {
+    return createAuthorization(this, { ...input, agent })
   }
 
   /**
@@ -148,12 +177,14 @@ class OwnedSpace {
   }
 }
 
+const SpaceDID = Schema.did({ method: 'key' })
+
 /**
  *
- * @param {Ucanto.Delegation} delegation
+ * @param {API.Delegation} delegation
  */
 export const fromDelegation = (delegation) => {
-  const result = Schema.DID.read(delegation.capabilities[0].with)
+  const result = SpaceDID.read(delegation.capabilities[0].with)
   if (result.error) {
     throw Object.assign(
       new Error(
@@ -174,8 +205,8 @@ export const fromDelegation = (delegation) => {
 class SharedSpace {
   /**
    * @param {object} input
-   * @param {Ucanto.DID} input.id
-   * @param {Ucanto.Delegation} input.delegation
+   * @param {API.SpaceDID} input.id
+   * @param {API.Delegation} input.delegation
    * @param {{name?:string}} input.meta
    */
   constructor({ id, delegation, meta }) {

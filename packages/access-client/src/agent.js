@@ -10,7 +10,7 @@ import { attest } from '@web3-storage/capabilities/ucan'
 import * as Access from './access.js'
 import * as Space from './space.js'
 
-import { invoke, delegate, DID, Delegation } from '@ucanto/core'
+import { invoke, delegate, DID, Delegation, Schema } from '@ucanto/core'
 import {
   isExpired,
   isTooEarly,
@@ -22,10 +22,9 @@ import { Provider, UCAN } from '@web3-storage/capabilities'
 
 import * as API from './types.js'
 
-// eslint-disable-next-line import/export
 export * from './types.js'
 export * from './delegations.js'
-export { AgentData, Access, Space, Delegation }
+export { AgentData, Access, Space, Delegation, Schema }
 export * from './agent-use-cases.js'
 
 const HOST = 'https://up.web3.storage'
@@ -159,12 +158,26 @@ export class Agent {
    * @param {API.Delegation} delegation
    */
   async addProof(delegation) {
-    validate(delegation, {
-      checkAudience: this.issuer,
-      checkIsExpired: true,
-    })
-    await this.#data.addDelegation(delegation, { audience: this.meta })
+    return await this.addProofs([delegation])
+  }
+
+  /**
+   * Adds set of proofs to the agent store. Throws if the proofs are invalid.
+   * does not match the agent DID.
+   *
+   * @param {Iterable<API.Delegation>} delegations
+   */
+  async addProofs(delegations) {
+    for (const proof of delegations) {
+      validate(proof, {
+        checkAudience: this.issuer,
+        checkIsExpired: true,
+      })
+      await this.#data.addDelegation(proof, { audience: this.meta })
+    }
     await this.removeExpiredDelegations()
+
+    return {}
   }
 
   /**
@@ -255,7 +268,7 @@ export class Agent {
    * Proof of session will also be included in the returned proofs if any
    * proofs matching the passed capabilities require it.
    *
-   * @param {import('@ucanto/interface').Capability[]|undefined} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
+   * @param {API.CapabilityQuery[]} [caps] - Capabilities to filter by. Empty or undefined caps with return all the proofs.
    * @param {object} [options]
    * @param {API.DID} [options.sessionProofIssuer] - only include session proofs for this issuer
    */
@@ -375,6 +388,11 @@ export class Agent {
     this.#data.spaces.set(space.did(), { ...space.meta, name: space.name })
 
     await this.addProof(space.delegation)
+
+    // if we do not have a current space, make this one current
+    if (!this.currentSpace()) {
+      await this.setCurrentSpace(space.did())
+    }
 
     return space
   }
@@ -694,6 +712,7 @@ const DIDWeb = ucanto.Schema.DID.match({ method: 'web' })
  * @param {API.AccountDID} input.account
  * @param {API.SpaceDID} [input.space]
  * @param {API.ProviderDID} [input.provider]
+ * @param {API.Delegation[]} [input.proofs]
  */
 export const provisionSpace = async (
   agent,
@@ -701,6 +720,7 @@ export const provisionSpace = async (
     account,
     space = agent.currentSpace(),
     provider = /** @type {API.ProviderDID} */ (agent.connection.id.did()),
+    proofs,
   }
 ) => {
   if (!DIDWeb.is(provider)) {
@@ -719,7 +739,27 @@ export const provisionSpace = async (
       provider,
       consumer: space,
     },
+    proofs,
   })
 
   return out
+}
+
+/**
+ * Stores given delegations in the agent's data store and adds discovered spaces
+ * to the agent's space list.
+ *
+ * @param {Agent} agent
+ * @param {object} authorization
+ * @param {API.Delegation[]} authorization.proofs
+ * @returns {Promise<API.Result<API.Unit, Error>>}
+ */
+export const importAuthorization = async (agent, { proofs }) => {
+  try {
+    await agent.addProofs(proofs)
+    await addSpacesFromDelegations(agent, proofs)
+    return { ok: {} }
+  } catch (error) {
+    return /** @type {{error:Error}} */ ({ error })
+  }
 }

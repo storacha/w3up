@@ -1,6 +1,6 @@
 import { Aggregate, Piece } from '@web3-storage/data-segment'
 import { CID } from 'multiformats'
-import { webcrypto } from 'crypto'
+import { webcrypto } from 'one-webcrypto'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as CAR from '@ucanto/transport/car'
 import * as raw from 'multiformats/codecs/raw'
@@ -70,7 +70,7 @@ export async function randomCargo(length, size) {
       height: piece.height,
       root: piece.root,
       content: car.cid,
-      padding: piece.padding
+      padding: piece.padding,
     }
   })
 }

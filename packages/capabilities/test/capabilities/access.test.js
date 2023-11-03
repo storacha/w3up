@@ -376,6 +376,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         })
       }
     })
@@ -464,6 +465,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         })
       }
     })
@@ -703,6 +705,7 @@ describe('access capabilities', function () {
             iss: 'did:NOT_MAILTO:web3.storage:test',
             aud: bob.did(),
             att: [{ can: '*' }],
+            cause: parseLink('bafkqaaa'),
           },
         })
       }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)

@@ -43,7 +43,7 @@ describe('SpaceClient', () => {
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice, {
-        can: '*',
+        access: { 'space/info': {} },
         expiration: Infinity,
       })
       alice.addSpace(auth)

@@ -76,10 +76,7 @@ describe('Client', () => {
       })
 
       const space = await alice.createSpace('upload-test')
-      const auth = await space.createAuthorization(alice, {
-        can: '*',
-        expiration: Infinity,
-      })
+      const auth = await space.createAuthorization(alice)
       alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
@@ -171,10 +168,7 @@ describe('Client', () => {
       })
 
       const space = await alice.createSpace('upload-dir-test')
-      const auth = await space.createAuthorization(alice, {
-        can: '*',
-        expiration: Infinity,
-      })
+      const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 
       await alice.setCurrentSpace(space.did())
@@ -254,12 +248,7 @@ describe('Client', () => {
       })
 
       const space = await alice.createSpace('car-space')
-      await alice.addSpace(
-        await space.createAuthorization(alice, {
-          can: '*',
-          expiration: Infinity,
-        })
-      )
+      await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       await alice.uploadCAR(car, {
         onShardStored: (meta) => {
@@ -282,12 +271,7 @@ describe('Client', () => {
       assert(current0 === undefined)
 
       const space = await alice.createSpace('new-space')
-      alice.addSpace(
-        await space.createAuthorization(alice, {
-          can: '*',
-          expiration: Infinity,
-        })
-      )
+      alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
       const current1 = alice.currentSpace()
@@ -302,10 +286,7 @@ describe('Client', () => {
 
       const name = `space-${Date.now()}`
       const space = await alice.createSpace(name)
-      const auth = await space.createAuthorization(alice, {
-        can: '*',
-        expiration: Infinity,
-      })
+      const auth = await space.createAuthorization(alice)
       alice.addSpace(auth)
 
       const spaces = alice.spaces()
@@ -321,7 +302,7 @@ describe('Client', () => {
       const space = await alice.createSpace('new-space')
       await alice.addSpace(
         await space.createAuthorization(alice, {
-          can: '*',
+          access: { '*': {} },
           expiration: Infinity,
         })
       )
@@ -345,15 +326,10 @@ describe('Client', () => {
       const bob = new Client(await AgentData.create())
 
       const space = await alice.createSpace('proof-space')
-      alice.addSpace(
-        await space.createAuthorization(alice, {
-          can: '*',
-          expiration: Infinity,
-        })
-      )
+      alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
-      const delegation = await alice.createDelegation(bob.agent, ['*'])
+      const delegation = await alice.createDelegation(bob.agent, ['store/*'])
 
       await bob.addProof(delegation)
 
@@ -369,17 +345,16 @@ describe('Client', () => {
       const bob = new Client(await AgentData.create())
 
       const space = await alice.createSpace('test')
-      await alice.addSpace(
-        await space.createAuthorization(alice, {
-          can: '*',
-          expiration: Infinity,
-        })
-      )
+      await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
-      const delegation = await alice.createDelegation(bob.agent, ['*'], {
-        audienceMeta: { type: 'device', name },
-      })
+      const delegation = await alice.createDelegation(
+        bob.agent,
+        ['upload/*', 'store/*'],
+        {
+          audienceMeta: { type: 'device', name },
+        }
+      )
 
       const delegations = alice.delegations()
       assert.equal(delegations.length, 1)
@@ -432,8 +407,7 @@ describe('Client', () => {
       const space = await alice.createSpace('test')
       await alice.addSpace(
         await space.createAuthorization(alice, {
-          can: '*',
-          expiration: Infinity,
+          access: { '*': {} },
         })
       )
       await alice.setCurrentSpace(space.did())
@@ -451,15 +425,10 @@ describe('Client', () => {
       const bob = new Client(await AgentData.create())
 
       const space = await alice.createSpace('test')
-      alice.addSpace(
-        await space.createAuthorization(alice, {
-          can: '*',
-          expiration: Infinity,
-        })
-      )
+      alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
-      const delegation = await alice.createDelegation(bob.agent, ['*'], {
+      const delegation = await alice.createDelegation(bob.agent, ['space/*'], {
         audienceMeta: { type: 'device', name },
       })
 

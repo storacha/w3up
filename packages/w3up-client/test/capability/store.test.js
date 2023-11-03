@@ -46,10 +46,7 @@ describe('StoreClient', () => {
       })
 
       const space = await alice.createSpace('test')
-      const auth = await space.createAuthorization(alice, {
-        can: '*',
-        expiration: Infinity,
-      })
+      const auth = await space.createAuthorization(alice)
       alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
@@ -104,10 +101,7 @@ describe('StoreClient', () => {
       })
 
       const space = await alice.createSpace('test')
-      const auth = await space.createAuthorization(alice, {
-        can: '*',
-        expiration: Infinity,
-      })
+      const auth = await space.createAuthorization(alice)
       alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
@@ -152,10 +146,7 @@ describe('StoreClient', () => {
       })
 
       const space = await alice.createSpace('test')
-      const auth = await space.createAuthorization(alice, {
-        can: '*',
-        expiration: Infinity,
-      })
+      const auth = await space.createAuthorization(alice)
       alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 

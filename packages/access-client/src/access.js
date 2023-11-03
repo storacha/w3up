@@ -1,7 +1,7 @@
 import * as Access from '@web3-storage/capabilities/access'
 import * as API from './types.js'
-import { Failure, fail } from '@ucanto/core'
-import { Agent } from './agent.js'
+import { Failure, fail, DID } from '@ucanto/core'
+import { Agent, importAuthorization } from './agent.js'
 import { bytesToDelegations } from './encoding.js'
 
 /**
@@ -14,11 +14,12 @@ import { bytesToDelegations } from './encoding.js'
  * @param {Agent} agent - Agent connected to the w3up service.
  * @param {object} input
  * @param {API.Delegation[]} input.delegations - Delegations to propagate.
- * @param {API.DID} [input.space] - Space to propagate through.
+ * @param {API.SpaceDID} [input.space] - Space to propagate through.
+ * @param {API.Delegation[]} [input.proofs]
  */
 export const delegate = async (
   agent,
-  { delegations, space = agent.currentSpace() }
+  { delegations, proofs = [], space = agent.currentSpace() }
 ) => {
   if (!space) {
     return fail('Space must be specified')
@@ -35,7 +36,7 @@ export const delegate = async (
       delegations: Object.fromEntries(entries),
     },
     // must be embedded here because it's referenced by cid in .nb.delegations
-    proofs: delegations,
+    proofs: [...delegations, ...proofs],
   })
 
   return out
@@ -49,17 +50,23 @@ export const delegate = async (
  * @param {API.Agent} agent
  * @param {object} input
  * @param {API.AccountDID} input.account
+ * @param {API.ProviderDID} [input.provider]
  * @param {API.DID} [input.audience]
  * @param {API.Access} [input.access]
  * @returns {Promise<API.Result<PendingAccessRequest, API.AccessAuthorizeFailure|API.InvocationError>>}
  */
 export const request = async (
   agent,
-  { account, audience = agent.did(), access = spaceAccess }
+  {
+    account,
+    provider = /** @type {API.ProviderDID} */ (agent.connection.id.did()),
+    audience = agent.did(),
+    access = spaceAccess,
+  }
 ) => {
   // Request access from the account.
   const { out: result } = await agent.invokeAndExecute(Access.authorize, {
-    audience: agent.connection.id,
+    audience: DID.parse(provider),
     with: audience,
     nb: {
       iss: account,
@@ -72,7 +79,14 @@ export const request = async (
 
   return result.error
     ? result
-    : { ok: new PendingAccessRequest({ ...result.ok, agent, audience }) }
+    : {
+        ok: new PendingAccessRequest({
+          ...result.ok,
+          agent,
+          audience,
+          provider,
+        }),
+      }
 }
 
 /**
@@ -82,10 +96,18 @@ export const request = async (
  * @param {API.Agent} agent
  * @param {object} input
  * @param {API.DID} [input.audience]
- * @returns {Promise<API.Result<API.Delegation[], API.AccessClaimFailure|API.InvocationError>>}
+ * @param {API.ProviderDID} [input.provider]
+ * @returns {Promise<API.Result<GrantedAccess, API.AccessClaimFailure|API.InvocationError>>}
  */
-export const claim = async (agent, { audience = agent.did() } = {}) => {
+export const claim = async (
+  agent,
+  {
+    provider = /** @type {API.ProviderDID} */ (agent.connection.id.did()),
+    audience = agent.did(),
+  } = {}
+) => {
   const { out: result } = await agent.invokeAndExecute(Access.claim, {
+    audience: DID.parse(provider),
     with: audience,
   })
 
@@ -94,7 +116,7 @@ export const claim = async (agent, { audience = agent.did() } = {}) => {
   } else {
     const delegations = Object.values(result.ok.delegations)
     const proofs = delegations.flatMap((proof) => bytesToDelegations(proof))
-    return { ok: proofs }
+    return { ok: new GrantedAccess({ agent, provider, audience, proofs }) }
   }
 }
 
@@ -107,14 +129,16 @@ class PendingAccessRequest {
    * @param {object} source
    * @param {API.Agent} source.agent
    * @param {API.DID} source.audience
+   * @param {API.ProviderDID} source.provider
    * @param {number} source.expiration
    * @param {API.Link} source.request
    */
-  constructor({ agent, audience, expiration, request }) {
+  constructor({ agent, audience, provider, expiration, request }) {
     this.agent = agent
     this.audience = audience
     this.expiration = expiration
     this.request = request
+    this.provider = provider
   }
 
   /**
@@ -122,15 +146,19 @@ class PendingAccessRequest {
    * @returns {Promise<API.Result<API.Delegation[], API.InvocationError|API.AccessClaimFailure|RequestExpired>>}
    */
   async poll() {
-    const { agent, audience, expiration, request } = this
+    const { agent, audience, provider, expiration, request } = this
     const timeout = expiration - Date.now()
     if (timeout <= 0) {
       return { error: new RequestExpired({ expiration, request }) }
     } else {
-      const result = await claim(agent, { audience })
+      const result = await claim(agent, { audience, provider })
       return result.error
         ? result
-        : { ok: result.ok.filter((proof) => isRequestedAccess(proof, this)) }
+        : {
+            ok: result.ok.proofs.filter((proof) =>
+              isRequestedAccess(proof, this)
+            ),
+          }
     }
   }
 
@@ -138,7 +166,7 @@ class PendingAccessRequest {
    * @param {object} options
    * @param {number} [options.interval]
    * @param {AbortSignal} [options.signal]
-   * @returns {Promise<API.Result<API.Delegation[], Error>>}
+   * @returns {Promise<API.Result<GrantedAccess, Error>>}
    */
   async claim({ signal, interval = 250 } = {}) {
     while (signal?.aborted !== true) {
@@ -149,7 +177,14 @@ class PendingAccessRequest {
       }
       // If we got some matching proofs, return them.
       else if (result.ok.length > 0) {
-        return result
+        return {
+          ok: new GrantedAccess({
+            agent: this.agent,
+            provider: this.provider,
+            audience: this.audience,
+            proofs: result.ok,
+          }),
+        }
       }
 
       await new Promise((resolve) => setTimeout(resolve, interval))
@@ -181,6 +216,36 @@ class RequestExpired extends Failure {
     return `Access request expired at ${new Date(this.expiration)} for ${
       this.request
     } request.`
+  }
+}
+
+class GrantedAccess {
+  /**
+   * @param {object} source
+   * @param {API.Agent} source.agent
+   * @param {API.Delegation[]} source.proofs
+   * @param {API.ProviderDID} source.provider
+   * @param {API.DID} source.audience
+   */
+  constructor(source) {
+    this.source = source
+  }
+  get proofs() {
+    return this.source.proofs
+  }
+  get provider() {
+    return this.source.provider
+  }
+  get authority() {
+    return this.source.audience
+  }
+
+  /**
+   * @param {object} input
+   * @param {API.Agent} [input.agent]
+   */
+  save({ agent = this.source.agent } = {}) {
+    return importAuthorization(agent, this)
   }
 }
 
@@ -229,10 +294,5 @@ export const spaceAccess = {
  * Set of capabilities required for by the agent to manage an account.
  */
 export const accountAccess = {
-  /**
-   * By obtaining `ucan/*` capability an agent can attest UCANs signed by
-   * the account and revoke capabilities that were delegated by the account.
-   */
-  'ucan/*': {},
-  'provider/*': {},
+  '*': {},
 }
