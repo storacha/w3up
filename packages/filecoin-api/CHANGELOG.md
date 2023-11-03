@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.2...filecoin-api-v4.0.3) (2023-11-03)
+
+
+### Bug Fixes
+
+* aggregate offer invocation cid wrong ([#1063](https://github.com/web3-storage/w3up/issues/1063)) ([90a5a4d](https://github.com/web3-storage/w3up/commit/90a5a4d815cff19d9421811a78dbefa01d486ebf))
+
 ## [4.0.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.1...filecoin-api-v4.0.2) (2023-11-03)
 
 
