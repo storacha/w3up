@@ -48,6 +48,7 @@ describe('aggregator', () => {
                 nb: {
                   ...invCap.nb,
                 },
+                expiration: Infinity,
               })
               .delegate()
 

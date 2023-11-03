@@ -49,6 +49,7 @@ describe('storefront', () => {
                 audience: context.id,
                 with: context.id.did(),
                 nb: invCap.nb,
+                expiration: Infinity,
               })
               .delegate()
 
@@ -58,6 +59,7 @@ describe('storefront', () => {
                 audience: context.id,
                 with: context.id.did(),
                 nb: invCap.nb,
+                expiration: Infinity,
               })
               .delegate()
 

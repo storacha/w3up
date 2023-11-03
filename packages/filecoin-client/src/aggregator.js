@@ -56,6 +56,7 @@ export async function pieceOffer(
       group,
     },
     proofs,
+    expiration: Infinity,
   })
 
   return await invocation.execute(conn)
@@ -101,6 +102,7 @@ export async function pieceAccept(
       group,
     },
     proofs,
+    expiration: Infinity,
   })
 
   return await invocation.execute(conn)
