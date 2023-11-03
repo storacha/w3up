@@ -17,7 +17,7 @@ export const handleAggregateInsert = async (context, record) => {
   const updateRes = await context.offerStore.update(record.pieces.toString(), {
     key: `${new Date(
       record.insertedAt
-    ).toISOString()} ${record.aggregate.toString()}.json`,
+    ).toISOString()}_${record.aggregate.toString()}.json`,
   })
   if (updateRes.error) {
     return { error: new StoreOperationFailed(updateRes.error.message) }
