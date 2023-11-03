@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.1.0...react-keyring-v6.2.0) (2023-11-03)
+
+
+### Features
+
+* re-export Service from `react-keyring` ([#577](https://github.com/web3-storage/w3ui/issues/577)) ([308816d](https://github.com/web3-storage/w3ui/commit/308816defbd4ecf4d23a69548292660538915e91))
+
 ## [6.1.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.0.1...react-keyring-v6.1.0) (2023-10-31)
 
 
