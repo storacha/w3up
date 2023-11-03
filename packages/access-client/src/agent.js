@@ -1,7 +1,4 @@
-/* eslint-disable max-depth */
 import * as Client from '@ucanto/client'
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
 import * as CAR from '@ucanto/transport/car'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
@@ -32,8 +29,8 @@ const PRINCIPAL = DID.parse('did:web:web3.storage')
 
 /**
  * Keeps track of AgentData for all Agents constructed.
- * Used by
- * * addSpacesFromDelegations - so it can only accept Agent as param, but still mutate corresponding AgentData
+ * Used by addSpacesFromDelegations - so it can only accept Agent as param, but
+ * still mutate corresponding AgentData
  *
  * @deprecated - remove this when deprecated addSpacesFromDelegations is removed
  */

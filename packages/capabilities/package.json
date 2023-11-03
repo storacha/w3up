@@ -117,7 +117,8 @@
     },
     "ignorePatterns": [
       "dist",
-      "coverage"
+      "coverage",
+      "src/types.js"
     ]
   },
   "depcheck": {

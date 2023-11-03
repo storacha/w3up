@@ -111,7 +111,8 @@
       "mocha": true
     },
     "ignorePatterns": [
-      "dist"
+      "dist",
+      "src/types.js"
     ]
   },
   "depcheck": {

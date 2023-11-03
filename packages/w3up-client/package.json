@@ -122,7 +122,8 @@
     },
     "ignorePatterns": [
       "dist",
-      "coverage"
+      "coverage",
+      "src/types.js"
     ]
   },
   "directories": {
