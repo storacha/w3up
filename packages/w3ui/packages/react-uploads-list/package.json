@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/react-uploads-list",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "React adapter for w3ui uploads list.",
   "main": "src/index.ts",
   "publishConfig": {
