@@ -6,5 +6,5 @@
   },
   "include": ["src", "test"],
   "exclude": ["**/node_modules/**", "dist"],
-  "references": [{ "path": "../capabilities" }, { "path": "../access-client"}]
+  "references": [{ "path": "../capabilities" }, { "path": "../access-client"}, { "path": "../filecoin-api" }]
 }
