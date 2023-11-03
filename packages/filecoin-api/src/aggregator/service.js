@@ -96,6 +96,7 @@ export const pieceAccept = async ({ capability }, context) => {
         aggregate,
         pieces,
       },
+      expiration: Infinity,
     })
     .delegate()
 
