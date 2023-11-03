@@ -339,33 +339,6 @@ export class Agent {
     return await Space.generate({ name })
   }
 
-  //   const signer = await Signer.generate()
-  //   const proof = await Capabilities.top.delegate({
-  //     issuer: signer,
-  //     audience: this.issuer,
-  //     with: signer.did(),
-  //     expiration: Infinity,
-  //   })
-
-  //   /** @type {import('./types.js').SpaceMeta} */
-  //   const meta = { isRegistered: false }
-  //   // eslint-disable-next-line eqeqeq
-  //   if (name != undefined) {
-  //     if (typeof name !== 'string') {
-  //       throw new TypeError('invalid name')
-  //     }
-  //     meta.name = name
-  //   }
-
-  //   await this.#data.addSpace(signer.did(), meta, proof)
-
-  //   return {
-  //     did: signer.did(),
-  //     meta,
-  //     proof,
-  //   }
-  // }
-
   /**
    * Import a space from a delegation.
    *
@@ -460,22 +433,6 @@ export class Agent {
   async provisionSpace({ account, provider, space }) {
     return provisionSpace(this, { account, provider, space })
   }
-
-  // /**
-  //  * Requests a subscription from a provider and attaches it to a space.
-  //  *
-  //  * It also adds a full space delegation to the service that can later
-  //  * be claimed by the currently authorized account to restore access to the space.
-  //  *
-  //  * @param {string} email
-  //  * @param {object} [opts]
-  //  * @param {AbortSignal} [opts.signal]
-  //  * @param {Ucanto.DID<'key'>} [opts.space] - space to register
-  //  * @param {Ucanto.DID<'web'>} [opts.provider] - provider to register - defaults to this.connection.id
-  //  */
-  // async registerSpace(email, opts = {}) {
-  //   return await addProviderAndDelegateToAccount(this, this.#data, email, opts)
-  // }
 
   /**
    *
