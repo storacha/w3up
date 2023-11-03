@@ -31,6 +31,7 @@ describe('Client', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.add.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
+
             return {
               ok: {
                 status: 'upload',
