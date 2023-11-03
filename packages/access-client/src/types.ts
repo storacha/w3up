@@ -198,6 +198,7 @@ export interface SpaceMeta {
  * Agent class types
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface AgentOptions<S extends Record<string, any>> {
   url?: URL
   connection?: ConnectionView<S>
