@@ -30,7 +30,7 @@
   "dependencies": {
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
-    "@w3ui/keyring-core": "workspace:^5.0.1"
+    "@w3ui/keyring-core": "workspace:^"
   },
   "peerDependencies": {
     "solid-js": "^1.7.8"

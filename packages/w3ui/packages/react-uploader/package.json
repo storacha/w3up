@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-uploader",
   "dependencies": {
-    "@w3ui/react-keyring": "workspace:^6.0.1",
+    "@w3ui/react-keyring": "workspace:^",
     "@w3ui/uploader-core": "workspace:^",
     "@web3-storage/capabilities": "^11.1.0",
     "ariakit-react-utils": "0.17.0-next.27"

@@ -28,7 +28,7 @@
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/vue-uploads-list",
   "dependencies": {
     "@w3ui/uploads-list-core": "workspace:^",
-    "@w3ui/vue-keyring": "workspace:^5.0.1",
+    "@w3ui/vue-keyring": "workspace:^",
     "@web3-storage/capabilities": "^11.1.0"
   },
   "peerDependencies": {

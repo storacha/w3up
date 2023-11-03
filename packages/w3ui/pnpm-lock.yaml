@@ -550,7 +550,7 @@ importers:
   packages/react-keyring:
     dependencies:
       '@w3ui/keyring-core':
-        specifier: workspace:^5.0.1
+        specifier: workspace:^
         version: link:../keyring-core
       ariakit-react-utils:
         specifier: 0.17.0-next.27
@@ -578,7 +578,7 @@ importers:
   packages/react-uploader:
     dependencies:
       '@w3ui/react-keyring':
-        specifier: workspace:^6.0.1
+        specifier: workspace:^
         version: link:../react-keyring
       '@w3ui/uploader-core':
         specifier: workspace:^
@@ -603,7 +603,7 @@ importers:
   packages/react-uploads-list:
     dependencies:
       '@w3ui/react-keyring':
-        specifier: workspace:^6.0.1
+        specifier: workspace:^
         version: link:../react-keyring
       '@w3ui/uploads-list-core':
         specifier: workspace:^
@@ -634,7 +634,7 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@w3ui/keyring-core':
-        specifier: workspace:^5.0.1
+        specifier: workspace:^
         version: link:../keyring-core
       solid-js:
         specifier: ^1.7.8
@@ -643,7 +643,7 @@ importers:
   packages/solid-uploader:
     dependencies:
       '@w3ui/solid-keyring':
-        specifier: workspace:^5.0.1
+        specifier: workspace:^
         version: link:../solid-keyring
       '@w3ui/uploader-core':
         specifier: workspace:^
@@ -661,7 +661,7 @@ importers:
   packages/solid-uploads-list:
     dependencies:
       '@w3ui/solid-keyring':
-        specifier: workspace:^5.0.1
+        specifier: workspace:^
         version: link:../solid-keyring
       '@w3ui/uploads-list-core':
         specifier: workspace:^
@@ -707,7 +707,7 @@ importers:
   packages/vue-keyring:
     dependencies:
       '@w3ui/keyring-core':
-        specifier: workspace:^5.0.1
+        specifier: workspace:^
         version: link:../keyring-core
       vue:
         specifier: ^3.0.0
@@ -726,7 +726,7 @@ importers:
         specifier: workspace:^
         version: link:../uploader-core
       '@w3ui/vue-keyring':
-        specifier: workspace:^5.0.1
+        specifier: workspace:^
         version: link:../vue-keyring
       '@web3-storage/capabilities':
         specifier: ^11.1.0
@@ -744,7 +744,7 @@ importers:
         specifier: workspace:^
         version: link:../uploads-list-core
       '@w3ui/vue-keyring':
-        specifier: workspace:^5.0.1
+        specifier: workspace:^
         version: link:../vue-keyring
       '@web3-storage/capabilities':
         specifier: ^11.1.0
