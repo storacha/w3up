@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v7.0.0...upload-api-v7.1.0) (2023-11-03)
+
+
+### Features
+
+* access agent proofs method would fail to return some session proofs ([#1047](https://github.com/web3-storage/w3up/issues/1047)) ([d23a1c9](https://github.com/web3-storage/w3up/commit/d23a1c972f91b855ee91f862da15bab0e68cca0a))
+* expose test context of upload-api ([#1069](https://github.com/web3-storage/w3up/issues/1069)) ([f0757d1](https://github.com/web3-storage/w3up/commit/f0757d15fbe653ae4914960ac401385afd752e57))
+
 ## [7.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v6.3.0...upload-api-v7.0.0) (2023-11-01)
 
 
