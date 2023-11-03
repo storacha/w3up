@@ -45,6 +45,7 @@ export async function handleBufferReducingWithAggregate({
     pieces: aggregateInfo.addedBufferedPieces,
     group,
   }
+  const piecesBlock = await CBOR.write(aggregateInfo.addedBufferedPieces.map(bf => bf.piece))
   const aggregateBlock = await CBOR.write(aggregateReducedBuffer)
 
   // Store buffered pieces for aggregate
@@ -59,7 +60,8 @@ export async function handleBufferReducingWithAggregate({
   // Propagate message for aggregate offer queue
   const aggregateOfferQueueAdd = await aggregateOfferQueue.add({
     aggregate: aggregateInfo.aggregate.link,
-    pieces: aggregateBlock.cid,
+    buffer: aggregateBlock.cid,
+    pieces: piecesBlock.cid,
     group,
   })
   if (aggregateOfferQueueAdd.error) {
