@@ -54,6 +54,7 @@ export async function filecoinOffer(
       piece,
     },
     proofs,
+    expiration: Infinity,
   })
 
   return await invocation.execute(conn)
@@ -97,6 +98,7 @@ export async function filecoinSubmit(
       piece,
     },
     proofs,
+    expiration: Infinity,
   })
 
   return await invocation.execute(conn)
@@ -140,6 +142,7 @@ export async function filecoinAccept(
       piece,
     },
     proofs,
+    expiration: Infinity,
   })
 
   return await invocation.execute(conn)

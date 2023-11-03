@@ -274,6 +274,7 @@ export const test = {
         piece,
         group,
       },
+      expiration: Infinity
     })
 
     const response = await pieceAcceptInv.execute(connection)
@@ -305,6 +306,7 @@ export const test = {
           aggregate: aggregate.link,
           pieces: piecesBlock.cid,
         },
+        expiration: Infinity
       })
       .delegate()
     assert.ok(response.fx.join)

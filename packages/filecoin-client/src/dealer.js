@@ -58,6 +58,7 @@ export async function aggregateOffer(
       pieces: block.cid,
     },
     proofs,
+    expiration: Infinity,
   })
   invocation.attach(block)
 
@@ -103,6 +104,7 @@ export async function aggregateAccept(
       pieces,
     },
     proofs,
+    expiration: Infinity,
   })
 
   return await invocation.execute(conn)
