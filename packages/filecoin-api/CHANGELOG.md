@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.4](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.3...filecoin-api-v4.0.4) (2023-11-03)
+
+
+### Bug Fixes
+
+* dealer offer store keys without space ([#1066](https://github.com/web3-storage/w3up/issues/1066)) ([301f411](https://github.com/web3-storage/w3up/commit/301f411de74bca6b70c6b867c1bdc724a0a3af20))
+
 ## [4.0.3](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.2...filecoin-api-v4.0.3) (2023-11-03)
 
 
