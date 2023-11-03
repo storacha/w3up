@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-api",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "type": "module",
   "main": "./src/lib.js",
   "files": [
@@ -43,6 +43,9 @@
       ],
       "test": [
         "dist/test/lib.d.ts"
+      ],
+      "test/context": [
+        "dist/test/helpers/context.d.ts"
       ]
     }
   },
@@ -90,6 +93,10 @@
     "./test": {
       "types": "./dist/test/lib.d.ts",
       "import": "./test/lib.js"
+    },
+    "./test/context": {
+      "types": "./dist/test/helpers/context.d.ts",
+      "import": "./test/helpers/context.js"
     }
   },
   "scripts": {
