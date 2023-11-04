@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.5](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.4...filecoin-api-v4.0.5) (2023-11-04)
+
+
+### Bug Fixes
+
+* enable storefront signer to be different from main service signer ([#1072](https://github.com/web3-storage/w3up/issues/1072)) ([21ded3c](https://github.com/web3-storage/w3up/commit/21ded3c171ca66480e4f74329943527dcc2bac3e))
+
 ## [4.0.4](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.3...filecoin-api-v4.0.4) (2023-11-03)
 
 
