@@ -8,12 +8,7 @@ import * as Access from './access.js'
 import * as Space from './space.js'
 
 import { invoke, delegate, DID, Delegation, Schema } from '@ucanto/core'
-import {
-  isExpired,
-  isTooEarly,
-  validate,
-  canDelegateCapability,
-} from './delegations.js'
+import { isExpired, isTooEarly, canDelegateCapability } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { Provider, UCAN } from '@web3-storage/capabilities'
 
@@ -148,9 +143,7 @@ export class Agent {
   }
 
   /**
-   * Add a proof to the agent store
-   *
-   * A proof is a delegation with an audience matching agent DID
+   * Add a proof to the agent store.
    *
    * @param {API.Delegation} delegation
    */
@@ -159,17 +152,12 @@ export class Agent {
   }
 
   /**
-   * Adds set of proofs to the agent store. Throws if the proofs are invalid.
-   * does not match the agent DID.
+   * Adds set of proofs to the agent store.
    *
    * @param {Iterable<API.Delegation>} delegations
    */
   async addProofs(delegations) {
     for (const proof of delegations) {
-      validate(proof, {
-        checkAudience: this.issuer,
-        checkIsExpired: true,
-      })
       await this.#data.addDelegation(proof, { audience: this.meta })
     }
     await this.removeExpiredDelegations()
@@ -629,29 +617,32 @@ export class Agent {
  * in favor of functions that derive the space set from access.delegations
  *
  * @template {Record<string, any>} [S=Service]
- * @param {Agent<S>} access
+ * @param {Agent<S>} agent
  * @param {API.Delegation[]} delegations
  */
-export async function addSpacesFromDelegations(access, delegations) {
-  const data = agentToData.get(access)
+export async function addSpacesFromDelegations(agent, delegations) {
+  const data = agentToData.get(agent)
   if (!data) {
     throw Object.assign(new Error(`cannot determine AgentData for Agent`), {
-      agent: access,
+      agent: agent,
     })
   }
-  // TODO: we need a more robust way to determine which spaces a user has access to
-  // it may or may not involve look at delegations
-  if (delegations.length > 0) {
-    const allows = ucanto.Delegation.allows(
-      .../** @type {API.Tuple<API.Delegation>} */ (delegations)
-    )
 
-    for (const [did, value] of Object.entries(allows)) {
-      // If we discovered a delegation to any DID, we add it to the spaces list.
-      if (did.startsWith('did:key') && Object.keys(value).length > 0) {
-        data.addSpace(/** @type {API.DID} */ (did), {
-          name: '',
-        })
+  for (const delegation of delegations) {
+    // We only consider delegations to this agent as those are only spaces that
+    // this agent will be able to interact with.
+    if (delegation.audience.did() === agent.did()) {
+      // TODO: we need a more robust way to determine which spaces a user has access to
+      // it may or may not involve look at delegations
+      const allows = ucanto.Delegation.allows(delegation)
+
+      for (const [did, value] of Object.entries(allows)) {
+        // If we discovered a delegation to any DID, we add it to the spaces list.
+        if (did.startsWith('did:key') && Object.keys(value).length > 0) {
+          data.addSpace(/** @type {API.DID} */ (did), {
+            name: '',
+          })
+        }
       }
     }
   }
