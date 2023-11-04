@@ -10,7 +10,7 @@ import * as Space from './space.js'
 import { invoke, delegate, DID, Delegation, Schema } from '@ucanto/core'
 import { isExpired, isTooEarly, canDelegateCapability } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
-import { Provider, UCAN } from '@web3-storage/capabilities'
+import { UCAN } from '@web3-storage/capabilities'
 
 import * as API from './types.js'
 
@@ -410,16 +410,6 @@ export class Agent {
   }
 
   /**
-   * @param {object} options
-   * @param {API.AccountDID} options.account
-   * @param {API.SpaceDID} options.space
-   * @param {API.ProviderDID} [options.provider]
-   */
-  async provisionSpace({ account, provider, space }) {
-    return provisionSpace(this, { account, provider, space })
-  }
-
-  /**
    *
    * @param {import('./types.js').DelegationOptions} options
    */
@@ -646,48 +636,6 @@ export async function addSpacesFromDelegations(agent, delegations) {
       }
     }
   }
-}
-
-const DIDWeb = ucanto.Schema.DID.match({ method: 'web' })
-
-/**
- * @template {Record<string, any>} [S=Service]
- * @param {Agent<S>} agent
- * @param {object} input
- * @param {API.AccountDID} input.account
- * @param {API.SpaceDID} [input.space]
- * @param {API.ProviderDID} [input.provider]
- * @param {API.Delegation[]} [input.proofs]
- */
-export const provisionSpace = async (
-  agent,
-  {
-    account,
-    space = agent.currentSpace(),
-    provider = /** @type {API.ProviderDID} */ (agent.connection.id.did()),
-    proofs,
-  }
-) => {
-  if (!DIDWeb.is(provider)) {
-    throw new Error(
-      `Unable to determine provider from agent.connection.id did ${provider}. expected a did:web:`
-    )
-  }
-
-  if (!space) {
-    throw new Error('No space selected')
-  }
-
-  const { out } = await agent.invokeAndExecute(Provider.add, {
-    with: account,
-    nb: {
-      provider,
-      consumer: space,
-    },
-    proofs,
-  })
-
-  return out
 }
 
 /**

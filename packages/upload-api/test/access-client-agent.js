@@ -22,6 +22,7 @@ import {
   addSpacesFromDelegations,
   requestAccess,
 } from '@web3-storage/access/agent'
+import * as Provider from '@web3-storage/access/provider'
 
 /**
  * @type {API.Tests}
@@ -258,9 +259,9 @@ export const test = {
 
     assert.ok(spaceCreation.did())
     // provision space with an account so it can store delegations
-    const provisionResult = await deviceA.provisionSpace({
+    const provisionResult = await Provider.add(deviceA, {
       account: account.did(),
-      space: spaceCreation.did(),
+      consumer: spaceCreation.did(),
     })
     assert.ok(provisionResult.ok)
 

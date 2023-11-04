@@ -1,16 +1,10 @@
 import * as API from './types.js'
 import * as Access from './capability/access.js'
-import {
-  Delegation,
-  provisionSpace,
-  importAuthorization,
-  Schema,
-} from '@web3-storage/access/agent'
+import { Delegation, importAuthorization } from '@web3-storage/access/agent'
+import { add as provision, AccountDID } from '@web3-storage/access/provider'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
 
 export { fromEmail }
-
-const AccountDID = Schema.did({ method: 'mailto' })
 
 /**
  * @param {{agent: API.Agent}} client
@@ -126,10 +120,10 @@ class Account {
    * @param {API.ProviderDID} [input.provider]
    */
   provision(space, input = {}) {
-    return provisionSpace(this.agent, {
+    return provision(this.agent, {
       ...input,
       account: this.did(),
-      space,
+      consumer: space,
       proofs: this.proofs,
     })
   }

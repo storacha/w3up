@@ -25,13 +25,42 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./dist/src/index.js",
-    "./agent": "./dist/src/agent.js",
-    "./space": "./dist/src/space.js",
-    "./drivers/*": "./dist/src/drivers/*.js",
-    "./stores/*": "./dist/src/stores/*.js",
-    "./types": "./dist/src/types.js",
-    "./encoding": "./dist/src/encoding.js"
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./agent": {
+      "types": "./dist/src/agent.d.ts",
+      "import": "./src/agent.js"
+    },
+    "./space": {
+      "types": "./dist/src/space.d.ts",
+      "import": "./src/space.js"
+    },
+    "./provider": {
+      "types": "./dist/src/provider.d.ts",
+      "import": "./src/provider.js"
+    },
+    "./access": {
+      "types": "./dist/src/access.d.ts",
+      "import": "./src/access.js"
+    },
+    "./encoding": {
+      "types": "./dist/src/encoding.d.ts",
+      "import": "./src/encoding.js"
+    },
+    "./types": {
+      "types": "./dist/src/types.d.ts",
+      "import": "./src/types.js"
+    },
+    "./drivers/*": {
+      "types": "./dist/src/drivers/*.d.ts",
+      "import": "./src/drivers/*.js"
+    },
+    "./stores/*": {
+      "types": "./dist/src/stores/*.d.ts",
+      "import": "./src/stores/*.js"
+    }
   },
   "typesVersions": {
     "*": {
@@ -40,6 +69,12 @@
       ],
       "space": [
         "dist/src/space"
+      ],
+      "access": [
+        "dist/src/access"
+      ],
+      "provider": [
+        "dist/src/provider"
       ],
       "types": [
         "dist/src/types"
