@@ -161,36 +161,6 @@ export const test = {
     const accountProofs = [delegationFromAccountToSession, attestation]
     assert.ok(accountProofs)
   },
-  // 'can registerSpace': async (assert, context) => {
-  //   const { agent, mail } = await setup(context)
-  //   const accountEmail = DidMailto.email('foo@dag.house')
-  //   const account = Absentee.from({ id: DidMailto.fromEmail(accountEmail) })
-
-  //   // request agent authorization from account
-  //   await requestAccess(agent, account, [{ can: '*' }])
-  //   const confirmationEmail = await mail.take()
-
-  //   await confirmConfirmationUrl(agent.connection, confirmationEmail)
-  //   // claim delegations after confirmation
-  //   await claimAccess(agent, agent.issuer.did(), {
-  //     addProofs: true,
-  //   })
-
-  //   // create space
-  //   const spaceName = `space-test-${Math.random().toString().slice(2)}`
-  //   const spaceCreation = await agent.createSpace(spaceName)
-  //   const spaceAuth = await spaceCreation.createAuthorization(agent, {
-  //     can: '*',
-  //     expiration: Infinity,
-  //   })
-  //   await agent.importSpaceFromDelegation(spaceAuth)
-  //   await agent.setCurrentSpace(spaceCreation.did())
-
-  //   // 'register space' - i.e. add a storage provider as an account
-  //   await agent.registerSpace(accountEmail, {
-  //     provider: /** @type {API.DID<'web'>} */ (agent.connection.id.did()),
-  //   })
-  // },
   'same agent, multiple accounts, provider/add': async (assert, context) => {
     const { connection, mail } = context
 

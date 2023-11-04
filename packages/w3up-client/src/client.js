@@ -148,22 +148,6 @@ export class Client extends Base {
   async createSpace(name) {
     return await this._agent.createSpace(name)
   }
-
-  // /* c8 ignore start - hard to test this without authorize tests which require websockets */
-  // /**
-  //  * Register the _current_ space with the service.
-  //  *
-  //  * @param {string} email
-  //  * @param {object} [options]
-  //  * @param {import('./types.js').DID<'web'>} [options.provider]
-  //  * @param {AbortSignal} [options.signal]
-  //  */
-  // async registerSpace(email, options = {}) {
-  //   options.provider =
-  //     options.provider ??
-  //     /** @type {import('./types.js').DID<'web'>} */ (this.defaultProvider())
-  //   await this._agent.registerSpace(email, options)
-  // }
   /* c8 ignore stop */
 
   /**
