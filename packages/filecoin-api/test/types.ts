@@ -40,7 +40,7 @@ export interface StorefrontTestEventsContext
     StorefrontInterface.PieceOfferMessageContext,
     StorefrontInterface.StorefrontClientContext,
     StorefrontInterface.CronContext {
-  id: Signer
+  storefrontSigner: Signer
   aggregatorId: Signer
   service: Partial<{
     filecoin: Partial<import('../src/types.js').StorefrontService['filecoin']>

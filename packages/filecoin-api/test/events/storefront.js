@@ -34,7 +34,7 @@ export const test = {
     const message = {
       piece: cargo.link.link(),
       content: cargo.content.link(),
-      group: context.id.did(),
+      group: context.storefrontSigner.did(),
     }
 
     // Handle message
@@ -60,7 +60,7 @@ export const test = {
     const message = {
       piece: cargo.link.link(),
       content: cargo.content.link(),
-      group: context.id.did(),
+      group: context.storefrontSigner.did(),
     }
     /** @type {PieceRecord} */
     const pieceRecord = {
@@ -95,7 +95,7 @@ export const test = {
         const message = {
           piece: cargo.link.link(),
           content: cargo.content.link(),
-          group: context.id.did(),
+          group: context.storefrontSigner.did(),
         }
 
         // Handle message
@@ -117,7 +117,7 @@ export const test = {
     const message = {
       piece: cargo.link.link(),
       content: cargo.content.link(),
-      group: context.id.did(),
+      group: context.storefrontSigner.did(),
     }
 
     // Handle message
@@ -150,7 +150,7 @@ export const test = {
         const message = {
           piece: cargo.link.link(),
           content: cargo.content.link(),
-          group: context.id.did(),
+          group: context.storefrontSigner.did(),
         }
 
         // Handle message
@@ -185,8 +185,8 @@ export const test = {
           aggregatorService: {
             connection: aggregatorConnection,
             invocationConfig: {
-              issuer: context.id,
-              with: context.id.did(),
+              issuer: context.storefrontSigner,
+              with: context.storefrontSigner.did(),
               audience: aggregatorSigner,
             },
           },
@@ -201,7 +201,7 @@ export const test = {
     const message = {
       piece: cargo.link.link(),
       content: cargo.content.link(),
-      group: context.id.did(),
+      group: context.storefrontSigner.did(),
     }
     /** @type {PieceRecord} */
     const pieceRecord = {
@@ -242,7 +242,7 @@ export const test = {
     const message = {
       piece: cargo.link.link(),
       content: cargo.content.link(),
-      group: context.id.did(),
+      group: context.storefrontSigner.did(),
     }
     /** @type {PieceRecord} */
     const pieceRecord = {
@@ -286,7 +286,7 @@ export const test = {
     const message = {
       piece: cargo.link.link(),
       content: cargo.content.link(),
-      group: context.id.did(),
+      group: context.storefrontSigner.did(),
     }
     /** @type {PieceRecord} */
     const pieceRecord = {
@@ -309,7 +309,7 @@ export const test = {
     context
   ) => {
     const { dealer } = await getServiceContext()
-    const group = context.id.did()
+    const group = context.storefrontSigner.did()
 
     // Create piece and aggregate for test
     const { aggregate, pieces } = await randomAggregate(10, 128)
@@ -323,7 +323,7 @@ export const test = {
         const putRes = await context.pieceStore.put({
           piece: p.link,
           content: p.content,
-          group: context.id.did(),
+          group: context.storefrontSigner.did(),
           status: 'submitted',
           insertedAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -359,7 +359,7 @@ export const test = {
     // Create invocation and receipts chain until deal
     const { invocations, receipts } =
       await createInvocationsAndReceiptsForDealDataProofChain({
-        storefront: context.id,
+        storefront: context.storefrontSigner,
         aggregator: context.aggregatorId,
         dealer,
         aggregate: aggregate.link,

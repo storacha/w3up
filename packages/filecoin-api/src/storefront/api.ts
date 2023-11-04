@@ -35,7 +35,7 @@ export interface ServiceContext {
   /**
    * Service signer
    */
-  id: Signer
+  storefrontSigner: Signer
   /**
    * Principal for aggregator service
    */
@@ -86,7 +86,7 @@ export interface StorefrontClientContext {
 export interface CronContext
   extends Pick<
     ServiceContext,
-    'id' | 'pieceStore' | 'receiptStore' | 'taskStore' | 'aggregatorId'
+    'storefrontSigner' | 'pieceStore' | 'receiptStore' | 'taskStore' | 'aggregatorId'
   > {}
 
 export interface PieceRecord {
