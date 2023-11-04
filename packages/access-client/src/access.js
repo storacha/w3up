@@ -15,7 +15,8 @@ import { bytesToDelegations } from './encoding.js'
  * @param {object} input
  * @param {API.Delegation[]} input.delegations - Delegations to propagate.
  * @param {API.SpaceDID} [input.space] - Space to propagate through.
- * @param {API.Delegation[]} [input.proofs]
+ * @param {API.Delegation[]} [input.proofs] - Optional set of proofs to be
+ * included in the invocation.
  */
 export const delegate = async (
   agent,
@@ -43,16 +44,18 @@ export const delegate = async (
 }
 
 /**
- * Requests specified `access` level from specified `account`. It will invoke
- * `access/authorize` capability and keep polling `access/claim` capability
- * until access is granted or request is aborted.
+ * Requests specified `access` level from specified `account`. It invokes
+ * `access/authorize` capability, if invocation succeeds it will return a
+ * `PendingAccessRequest` object that can be used to poll for the requested
+ * delegation through `access/claim` capability.
+ *
  *
  * @param {API.Agent} agent
  * @param {object} input
- * @param {API.AccountDID} input.account
- * @param {API.ProviderDID} [input.provider]
- * @param {API.DID} [input.audience]
- * @param {API.Access} [input.access]
+ * @param {API.AccountDID} input.account - Account from which access is requested.
+ * @param {API.ProviderDID} [input.provider] - Provider that will receive the invocation.
+ * @param {API.DID} [input.audience] - Principal requesting an access.
+ * @param {API.Access} [input.access] - Access been requested.
  * @returns {Promise<API.Result<PendingAccessRequest, API.AccessAuthorizeFailure|API.InvocationError>>}
  */
 export const request = async (
@@ -60,7 +63,7 @@ export const request = async (
   {
     account,
     provider = /** @type {API.ProviderDID} */ (agent.connection.id.did()),
-    audience = agent.did(),
+    audience: audience = agent.did(),
     access = spaceAccess,
   }
 ) => {
@@ -95,8 +98,8 @@ export const request = async (
  *
  * @param {API.Agent} agent
  * @param {object} input
- * @param {API.DID} [input.audience]
- * @param {API.ProviderDID} [input.provider]
+ * @param {API.DID} [input.audience] - Principal requesting an access.
+ * @param {API.ProviderDID} [input.provider] - Provider handling the invocation.
  * @returns {Promise<API.Result<GrantedAccess, API.AccessClaimFailure|API.InvocationError>>}
  */
 export const claim = async (
@@ -126,19 +129,35 @@ export const claim = async (
  */
 class PendingAccessRequest {
   /**
-   * @param {object} source
-   * @param {API.Agent} source.agent
-   * @param {API.DID} source.audience
-   * @param {API.ProviderDID} source.provider
-   * @param {API.UTCUnixTimestamp} source.expiration - Seconds in UTC.
-   * @param {API.Link} source.request
+   * @typedef {object} PendingAccessRequestModel
+   * @property {API.Agent} source.agent - Agent handling interaction.
+   * @property {API.DID} source.audience - Principal requesting an access.
+   * @property {API.ProviderDID} source.provider - Provider handling request.
+   * @property {API.UTCUnixTimestamp} source.expiration - Seconds in UTC.
+   * @property {API.Link} source.request - Link to the `access/authorize` invocation.
+   *
+   * @param {PendingAccessRequestModel} model
    */
-  constructor({ agent, audience, provider, expiration, request }) {
-    this.agent = agent
-    this.audience = audience
-    this.expiration = expiration
-    this.request = request
-    this.provider = provider
+  constructor(model) {
+    this.model = model
+  }
+
+  get agent() {
+    return this.model.agent
+  }
+  get audience() {
+    return this.model.audience
+  }
+  get expiration() {
+    return new Date(this.model.expiration * 1000)
+  }
+
+  get request() {
+    return this.model.request
+  }
+
+  get provider() {
+    return this.model.provider
   }
 
   /**
@@ -146,17 +165,17 @@ class PendingAccessRequest {
    * @returns {Promise<API.Result<API.Delegation[], API.InvocationError|API.AccessClaimFailure|RequestExpired>>}
    */
   async poll() {
-    const { agent, audience, provider, expiration, request } = this
-    const timeout = expiration - Date.now()
+    const { agent, audience, provider, expiration } = this.model
+    const timeout = expiration * 1000 - Date.now()
     if (timeout <= 0) {
-      return { error: new RequestExpired({ expiration, request }) }
+      return { error: new RequestExpired(this.model) }
     } else {
       const result = await claim(agent, { audience, provider })
       return result.error
         ? result
         : {
             ok: result.ok.proofs.filter((proof) =>
-              isRequestedAccess(proof, this)
+              isRequestedAccess(proof, this.model)
             ),
           }
     }
@@ -196,55 +215,68 @@ class PendingAccessRequest {
   }
 }
 
+/**
+ * Error returned when pending access request expires.
+ */
 class RequestExpired extends Failure {
   /**
-   * @param {object} source
-   * @param {API.UTCUnixTimestamp} source.expiration - Seconds in UTC.
-   * @param {API.Link} source.request
+   * @param {PendingAccessRequestModel} model
    */
-  constructor({ request, expiration }) {
+  constructor(model) {
     super()
-    this.request = request
-    this.expiration = expiration
+    this.model = model
   }
 
   get name() {
     return 'RequestExpired'
   }
 
+  get request() {
+    return this.model.request
+  }
+  get expiredAt() {
+    return new Date(this.model.expiration * 1000)
+  }
+
   describe() {
-    return `Access request expired at ${new Date(this.expiration)} for ${
-      this.request
-    } request.`
+    return `Access request expired at ${this.expiredAt} for ${this.request} request.`
   }
 }
 
+/**
+ * View over the UCAN Delegations that grant access to a specific principal.
+ */
 class GrantedAccess {
   /**
-   * @param {object} source
-   * @param {API.Agent} source.agent
-   * @param {API.Delegation[]} source.proofs
-   * @param {API.ProviderDID} source.provider
-   * @param {API.DID} source.audience
+   * @typedef {object} GrantedAccessModel
+   * @property {API.Agent} agent - Agent that processed the request.
+   * @property {API.DID} audience - Principal access was granted to.
+   * @property {API.Delegation[]} proofs - Delegations that grant access.
+   * @property {API.ProviderDID} provider - Provider that handled the request.
+   *
+   * @param {GrantedAccessModel} model
    */
-  constructor(source) {
-    this.source = source
+  constructor(model) {
+    this.model = model
   }
   get proofs() {
-    return this.source.proofs
+    return this.model.proofs
   }
   get provider() {
-    return this.source.provider
+    return this.model.provider
   }
   get authority() {
-    return this.source.audience
+    return this.model.audience
   }
 
   /**
+   * Saves access into the agents proofs store so that it can be retained
+   * between sessions.
+   *
    * @param {object} input
    * @param {API.Agent} [input.agent]
    */
-  save({ agent = this.source.agent } = {}) {
+  save({ agent = this.model.agent } = {}) {
     return importAuthorization(agent, this)
   }
 }
@@ -258,9 +290,16 @@ class GrantedAccess {
  * @returns
  */
 const isRequestedAccess = (delegation, { request }) =>
+  // `access/confirm` handler adds facts to the delegation issued by the account
+  // so that principal requesting access can identify correct delegation when
+  // access is granted.
   delegation.facts.some((fact) => `${fact['access/request']}` === `${request}`)
 
 /**
+ * Maps access object that follows new UCAN spec inspired by recap style layout
+ * into legacy UCAN 0.9 format used by various w3up capabilities that predate
+ * the new format.
+ *
  * @param {API.Access} access
  * @returns {{ can: API.Ability }[]}
  */

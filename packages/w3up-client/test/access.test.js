@@ -21,7 +21,7 @@ export const testAccess = {
     await grantAccess(message)
 
     assert.deepEqual(request.audience, client.did())
-    assert.ok(request.expiration >= Date.now())
+    assert.ok(request.expiration.getTime() >= Date.now())
 
     const access = Result.try(await request.claim())
     assert.deepEqual(access.authority, client.did())
