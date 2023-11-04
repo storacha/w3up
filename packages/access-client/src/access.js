@@ -49,7 +49,6 @@ export const delegate = async (
  * `PendingAccessRequest` object that can be used to poll for the requested
  * delegation through `access/claim` capability.
  *
- *
  * @param {API.Agent} agent
  * @param {object} input
  * @param {API.AccountDID} input.account - Account from which access is requested.
