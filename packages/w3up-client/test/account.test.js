@@ -85,7 +85,7 @@ export const testAccount = {
     const message = await mail.take()
     assert.deepEqual(message.to, email)
     await grantAccess(message)
-    const account = Result.expect(await login)
+    const account = Result.try(await login)
 
     const result = await account.provision(space.did())
     assert.equal(result.error, undefined)
@@ -114,10 +114,10 @@ export const testAccount = {
     const login = Account.login(laptop, email)
     // confirm by clicking a link
     await grantAccess(await mail.take())
-    const account = Result.expect(await login)
+    const account = Result.try(await login)
 
     // Authorized account can provision space
-    Result.expect(await account.provision(space.did()))
+    Result.try(await account.provision(space.did()))
 
     // Want to setup a recovery for this space ?
     const recovery = await space.createRecovery(account.did())
@@ -135,9 +135,9 @@ export const testAccount = {
     const phoneLogin = Account.login(phone, email)
     // confirm by clicking a link
     await grantAccess(await mail.take())
-    const session = Result.expect(await phoneLogin)
+    const session = Result.try(await phoneLogin)
     // save session on the phone
-    Result.expect(await session.save())
+    Result.try(await session.save())
 
     const result = await phone.capability.space.info(space.did())
     asserts.deepEqual(result.did, space.did())
@@ -150,9 +150,9 @@ export const testAccount = {
     const message = await mail.take()
     assert.deepEqual(message.to, email)
     await grantAccess(message)
-    const account = Result.expect(await login)
+    const account = Result.try(await login)
 
-    Result.expect(await account.provision(space.did()))
+    Result.try(await account.provision(space.did()))
 
     const recovery = await space.createRecovery(account.did())
     const share = await client.capability.access.delegate({
@@ -174,9 +174,9 @@ export const testAccount = {
     // ucanto and then pull delegations for each account.
     const secondLogin = Account.login(client, email)
     await grantAccess(await mail.take())
-    const secondAccount = Result.expect(await secondLogin)
+    const secondAccount = Result.try(await secondLogin)
 
-    Result.expect(await secondAccount.save())
+    Result.try(await secondAccount.save())
 
     assert.deepEqual(client.spaces().length, 1, 'spaces had been added')
   },

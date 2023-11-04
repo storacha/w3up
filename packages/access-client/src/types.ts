@@ -24,6 +24,8 @@ import type {
   Unit,
 } from '@ucanto/interface'
 
+export type { UTCUnixTimestamp } from '@ipld/dag-ucan'
+
 import type {
   Abilities,
   SpaceInfo,

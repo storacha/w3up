@@ -68,16 +68,20 @@ export const createRecovery = async ({ signer, name }, account) => {
 
 // Default authorization session is valid for 1 year
 export const SESSION_LIFETIME = 60 * 60 * 24 * 365
+
 /**
  * Creates (UCAN) delegation that gives specified `agent` an access to
  * specified ability (passed as `access.can` field) on the this space.
  * Optionally, you can specify `access.expiration` field to set the
+ * expiration time for the authorization. By default the authorization
+ * is valid for 1 year and gives access to all capabilities on the space
+ * that are needed to use the space.
  *
  * @param {Model} space
  * @param {object} options
  * @param {API.Principal} options.agent
  * @param {API.Access} [options.access]
- * @param {API.UCAN.UTCUnixTimestamp} [options.expiration]
+ * @param {API.UTCUnixTimestamp} [options.expiration]
  */
 export const createAuthorization = async (
   { signer, name },
@@ -180,6 +184,7 @@ class OwnedSpace {
 const SpaceDID = Schema.did({ method: 'key' })
 
 /**
+ * Creates a space from the given delegation.
  *
  * @param {API.Delegation} delegation
  */

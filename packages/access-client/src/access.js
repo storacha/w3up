@@ -130,7 +130,7 @@ class PendingAccessRequest {
    * @param {API.Agent} source.agent
    * @param {API.DID} source.audience
    * @param {API.ProviderDID} source.provider
-   * @param {number} source.expiration
+   * @param {API.UTCUnixTimestamp} source.expiration - Seconds in UTC.
    * @param {API.Link} source.request
    */
   constructor({ agent, audience, provider, expiration, request }) {
@@ -199,7 +199,7 @@ class PendingAccessRequest {
 class RequestExpired extends Failure {
   /**
    * @param {object} source
-   * @param {number} source.expiration
+   * @param {API.UTCUnixTimestamp} source.expiration - Seconds in UTC.
    * @param {API.Link} source.request
    */
   constructor({ request, expiration }) {
@@ -257,7 +257,6 @@ class GrantedAccess {
  * @param {API.Link} selector.request
  * @returns
  */
-
 const isRequestedAccess = (delegation, { request }) =>
   delegation.facts.some((fact) => `${fact['access/request']}` === `${request}`)
 

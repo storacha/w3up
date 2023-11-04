@@ -13,7 +13,7 @@ export const testAccess = {
     const email = 'alice@web.mail'
 
     const account = Access.DIDMailto.fromEmail(email)
-    const request = Result.expect(
+    const request = Result.try(
       await client.capability.access.request({ account })
     )
     const message = await mail.take()
@@ -23,7 +23,7 @@ export const testAccess = {
     assert.deepEqual(request.audience, client.did())
     assert.ok(request.expiration >= Date.now())
 
-    const access = Result.expect(await request.claim())
+    const access = Result.try(await request.claim())
     assert.deepEqual(access.authority, client.did())
     assert.ok(access.proofs.length > 0)
 

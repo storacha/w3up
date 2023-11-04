@@ -25,9 +25,9 @@ export class AccessClient extends Base {
    */
   async authorize(email, options) {
     const account = DIDMailto.fromEmail(email)
-    const authorization = Result.expect(await request(this, { account }))
-    const access = Result.expect(await authorization.claim(options))
-    await Result.expect(await access.save())
+    const authorization = Result.unwrap(await request(this, { account }))
+    const access = Result.unwrap(await authorization.claim(options))
+    await Result.unwrap(await access.save())
 
     return access.proofs
   }
@@ -40,8 +40,8 @@ export class AccessClient extends Base {
    * @param {API.DID} [input.audience]
    */
   async claim(input) {
-    const access = Result.expect(await claim(this, input))
-    await Result.expect(await access.save())
+    const access = Result.unwrap(await claim(this, input))
+    await Result.unwrap(await access.save())
     return access.proofs
   }
 
