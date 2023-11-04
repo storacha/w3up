@@ -1,6 +1,3 @@
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
-
 import * as ucanto from '@ucanto/core'
 import * as API from './types.js'
 import { canDelegateAbility } from '@web3-storage/capabilities/utils'
@@ -61,6 +58,7 @@ export function validate(delegation, opts) {
 }
 
 /**
+ * Returns true if the delegation includes capability been queried.
  *
  * @param {API.Delegation} delegation
  * @param {API.CapabilityQuery} capability
@@ -82,6 +80,9 @@ export function canDelegateCapability(delegation, capability) {
 }
 
 /**
+ * Returns true if given `resource` matches the resource query per UCAN
+ * specification.
+ *
  * @param {API.Resource} resource
  * @param {API.ResourceQuery} query
  */

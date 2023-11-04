@@ -6,6 +6,8 @@ import * as API from './types.js'
 import * as Access from './access.js'
 
 /**
+ * Data model for the (owned) space.
+ *
  * @typedef {object} Model
  * @property {ED25519.EdSigner} signer
  * @property {string} name
@@ -24,11 +26,11 @@ export const generate = async ({ name }) => {
 }
 
 /**
- * Recovers space from the mnemonic.
+ * Recovers space from the saved mnemonic.
  *
  * @param {string} mnemonic
  * @param {object} options
- * @param {string} options.name
+ * @param {string} options.name - Name to give to the recovered space.
  */
 export const fromMnemonic = async (mnemonic, { name }) => {
   const secret = BIP39.mnemonicToEntropy(mnemonic, wordlist)
@@ -37,6 +39,9 @@ export const fromMnemonic = async (mnemonic, { name }) => {
 }
 
 /**
+ * Turns (owned) space into a BIP39 mnemonic that later can be used to recover
+ * the space using `fromMnemonic` function.
+ *
  * @param {object} space
  * @param {ED25519.EdSigner} space.signer
  */
@@ -56,15 +61,12 @@ export const toMnemonic = ({ signer }) => {
  * @param {Model} space
  * @param {API.AccountDID} account
  */
-export const createRecovery = async ({ signer, name }, account) => {
-  return await delegate({
-    issuer: signer,
-    audience: signer.withDID(account),
-    capabilities: [{ with: signer.did(), can: '*' }],
+export const createRecovery = (space, account) =>
+  createAuthorization(space, {
+    agent: space.signer.withDID(account),
+    access: Access.accountAccess,
     expiration: Infinity,
-    facts: [{ space: { name } }],
   })
-}
 
 // Default authorization session is valid for 1 year
 export const SESSION_LIFETIME = 60 * 60 * 24 * 365
@@ -123,15 +125,24 @@ const toCapabilities = (allow) => {
   return /** @type {API.Capabilities} */ (capabilities)
 }
 
+/**
+ * Represents an owned space, meaning a space for which we have a private key
+ * and consequently have full authority over.
+ */
 class OwnedSpace {
   /**
-   * @param {object} input
-   * @param {ED25519.EdSigner} input.signer
-   * @param {string} input.name
+   * @param {Model} model
    */
-  constructor({ signer, name }) {
-    this.signer = signer
-    this.name = name
+  constructor(model) {
+    this.model = model
+  }
+
+  get signer() {
+    return this.model.signer
+  }
+
+  get name() {
+    return this.model.name
   }
 
   did() {
@@ -139,6 +150,7 @@ class OwnedSpace {
   }
 
   /**
+   * Creates a renamed version of this space.
    *
    * @param {string} name
    */
@@ -184,7 +196,7 @@ class OwnedSpace {
 const SpaceDID = Schema.did({ method: 'key' })
 
 /**
- * Creates a space from the given delegation.
+ * Creates a (shared) space from given delegation.
  *
  * @param {API.Delegation} delegation
  */
@@ -207,21 +219,37 @@ export const fromDelegation = (delegation) => {
   return new SharedSpace({ id: result.ok, delegation, meta })
 }
 
+/**
+ * Represents a shared space, meaning a space for which we have a delegation
+ * and consequently have limited authority over.
+ */
 class SharedSpace {
   /**
-   * @param {object} input
-   * @param {API.SpaceDID} input.id
-   * @param {API.Delegation} input.delegation
-   * @param {{name?:string}} input.meta
+   * @typedef {object} SharedSpaceModel
+   * @property {API.SpaceDID} id
+   * @property {API.Delegation} delegation
+   * @property {{name?:string}} meta
+   *
+   * @param {SharedSpaceModel} model
    */
-  constructor({ id, delegation, meta }) {
-    this.delegation = delegation
-    this.id = id
-    this.meta = meta
+  constructor(model) {
+    this.model = model
+  }
+
+  get delegation() {
+    return this.model.delegation
+  }
+
+  get meta() {
+    return this.model.meta
   }
 
   get name() {
     return this.meta.name ?? ''
+  }
+
+  did() {
+    return this.model.id
   }
 
   /**
@@ -229,13 +257,8 @@ class SharedSpace {
    */
   withName(name) {
     return new SharedSpace({
-      id: this.id,
-      delegation: this.delegation,
+      ...this.model,
       meta: { ...this.meta, name },
     })
-  }
-
-  did() {
-    return this.id
   }
 }
