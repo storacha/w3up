@@ -168,6 +168,10 @@ export interface AggregateRecord {
    */
   aggregate: PieceLink
   /**
+   * `bafy...cbor` as CID of dag-cbor block with buffer of pieces in an aggregate.
+   */
+  buffer: Link
+  /**
    * `bafy...cbor` as CID of dag-cbor block with list of pieces in an aggregate.
    */
   pieces: Link
@@ -298,6 +302,10 @@ export interface AggregateOfferMessage {
    * List of pieces in an aggregate.
    */
   pieces: Link
+  /**
+   * `bafy...cbor` as CID of dag-cbor block with buffer of pieces in an aggregate.
+   */
+  buffer: Link
   /**
    * Grouping information for submitted piece.
    */

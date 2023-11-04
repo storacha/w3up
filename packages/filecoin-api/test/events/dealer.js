@@ -72,7 +72,7 @@ export const test = {
     const offerStoreGetAfterRename1 = await context.offerStore.get(
       `${new Date(
         aggregateRecord.insertedAt
-      ).toISOString()} ${aggregateRecord.aggregate.toString()}.json`
+      ).toISOString()}_${aggregateRecord.aggregate.toString()}.json`
     )
     assert.ok(offerStoreGetAfterRename1.ok)
   },

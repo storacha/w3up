@@ -168,12 +168,13 @@ export const handleBufferQueueMessage = async (context, records) => {
  * @param {import('./api.js').AggregateOfferMessage} message
  */
 export const handleAggregateOfferMessage = async (context, message) => {
-  const { pieces, aggregate, group } = message
+  const { pieces, aggregate, buffer, group } = message
 
   // Store aggregate information into the store. Store events MAY be used to propagate aggregate over
   const putRes = await context.aggregateStore.put({
     pieces,
     aggregate,
+    buffer,
     group,
     insertedAt: new Date().toISOString(),
   })
@@ -196,7 +197,7 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
   context,
   record
 ) => {
-  const bufferStoreRes = await context.bufferStore.get(record.pieces)
+  const bufferStoreRes = await context.bufferStore.get(record.buffer)
   if (bufferStoreRes.error) {
     return bufferStoreRes
   }
@@ -331,7 +332,7 @@ export const handleAggregateInsertToAggregateOffer = async (
   context,
   record
 ) => {
-  const bufferStoreRes = await context.bufferStore.get(record.pieces)
+  const bufferStoreRes = await context.bufferStore.get(record.buffer)
   if (bufferStoreRes.error) {
     return {
       error: bufferStoreRes.error,

@@ -52,6 +52,7 @@ describe('dealer', () => {
                 audience: context.id,
                 with: context.id.did(),
                 nb: invCap.nb,
+                expiration: Infinity,
               })
               .delegate()
 

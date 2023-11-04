@@ -353,9 +353,9 @@ export const test = {
     // @ts-expect-error cannot infer buffer message
     const message = context.queuedMessages.get('aggregateOfferQueue')?.[0]
 
-    const bufferGet = await context.bufferStore.get(message.pieces)
+    const bufferGet = await context.bufferStore.get(message.buffer)
     assert.ok(bufferGet.ok)
-    assert.ok(bufferGet.ok?.block.equals(message.pieces))
+    assert.ok(bufferGet.ok?.block.equals(message.buffer))
     assert.equal(bufferGet.ok?.buffer.group, group)
     assert.ok(message.aggregate.equals(bufferGet.ok?.buffer.aggregate))
     assert.equal(bufferGet.ok?.buffer.pieces.length, totalPieces)
@@ -414,7 +414,7 @@ export const test = {
       const bufferMessage = context.queuedMessages.get('bufferQueue')?.[0]
 
       const aggregateBufferGet = await context.bufferStore.get(
-        aggregateOfferMessage.pieces
+        aggregateOfferMessage.buffer
       )
       assert.ok(aggregateBufferGet.ok)
       const remainingBufferGet = await context.bufferStore.get(
@@ -554,11 +554,13 @@ export const test = {
       group,
     }
     const block = await CBOR.write(buffer)
+    const piecesBlock = await CBOR.write(pieces.map((p) => p.link))
 
     /** @type {AggregateOfferMessage} */
     const message = {
       aggregate: aggregate.link,
-      pieces: block.cid,
+      pieces: piecesBlock.cid,
+      buffer: block.cid,
       group,
     }
 
@@ -573,7 +575,8 @@ export const test = {
     })
     assert.ok(hasStoredAggregate.ok)
     assert.ok(hasStoredAggregate.ok?.aggregate.equals(aggregate.link))
-    assert.ok(hasStoredAggregate.ok?.pieces.equals(block.cid))
+    assert.ok(hasStoredAggregate.ok?.buffer.equals(block.cid))
+    assert.ok(hasStoredAggregate.ok?.pieces.equals(piecesBlock.cid))
     assert.equal(hasStoredAggregate.ok?.group, group)
     assert.ok(hasStoredAggregate.ok?.insertedAt)
   },
@@ -593,11 +596,13 @@ export const test = {
           group,
         }
         const block = await CBOR.write(buffer)
+        const piecesBlock = await CBOR.write(pieces.map((p) => p.link))
 
         /** @type {AggregateOfferMessage} */
         const message = {
           aggregate: aggregate.link,
-          pieces: block.cid,
+          buffer: block.cid,
+          pieces: piecesBlock.cid,
           group,
         }
 
@@ -631,6 +636,7 @@ export const test = {
       group,
     }
     const block = await CBOR.write(buffer)
+    const piecesBlock = await CBOR.write(pieces.map((p) => p.link))
 
     // Put buffer record
     const putBufferRes = await context.bufferStore.put({
@@ -641,7 +647,8 @@ export const test = {
 
     // Put aggregate record
     const aggregateRecord = {
-      pieces: block.cid,
+      buffer: block.cid,
+      pieces: piecesBlock.cid,
       aggregate: aggregate.link,
       group,
       insertedAt: new Date().toISOString(),
@@ -697,11 +704,13 @@ export const test = {
           group,
         }
         const block = await CBOR.write(buffer)
+        const piecesBlock = await CBOR.write(pieces.map((p) => p.link))
 
         // Put aggregate record
         const aggregateRecord = {
-          pieces: block.cid,
+          buffer: block.cid,
           aggregate: aggregate.link,
+          pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
         }
@@ -745,6 +754,8 @@ export const test = {
           group,
         }
         const block = await CBOR.write(buffer)
+        const piecesBlock = await CBOR.write(pieces.map((p) => p.link))
+        
         // Put buffer record
         const putBufferRes = await context.bufferStore.put({
           buffer,
@@ -754,8 +765,9 @@ export const test = {
 
         // Put aggregate record
         const aggregateRecord = {
-          pieces: block.cid,
+          buffer: block.cid,
           aggregate: aggregate.link,
+          pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
         }
@@ -1114,8 +1126,9 @@ export const test = {
 
     // Put aggregate record
     const aggregateRecord = {
-      pieces: blockBuffer.cid,
+      buffer: blockBuffer.cid,
       aggregate: aggregate.link,
+      pieces: blockPieces.cid,
       group,
       insertedAt: new Date().toISOString(),
     }
@@ -1163,11 +1176,13 @@ export const test = {
           group,
         }
         const blockBuffer = await CBOR.write(buffer)
+        const piecesBlock = await CBOR.write(pieces.map((p) => p.link))
 
         // Put aggregate record
         const aggregateRecord = {
-          pieces: blockBuffer.cid,
+          buffer: blockBuffer.cid,
           aggregate: aggregate.link,
+          pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
         }

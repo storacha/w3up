@@ -20,6 +20,7 @@ import {
 /**
  * @typedef {import('@web3-storage/data-segment').PieceLink} PieceLink
  * @typedef {import('@ucanto/interface').Link} Link
+ * @typedef {import('../../src/aggregator/api.js').Buffer} Buffer
  * @typedef {import('../../src/aggregator/api.js').PieceRecord} PieceRecord
  * @typedef {import('../../src/aggregator/api.js').PieceRecordKey} PieceRecordKey
  * @typedef {import('../../src/aggregator/api.js').BufferRecord} BufferRecord
@@ -234,6 +235,16 @@ export const test = {
     const group = storefront.did()
     const { pieces, aggregate } = await randomAggregate(100, 128)
     const piece = pieces[0].link
+    /** @type {Buffer} */
+    const buffer = {
+      pieces: pieces.map((p) => ({
+        piece: p.link,
+        insertedAt: new Date().toISOString(),
+        policy: 0,
+      })),
+      group,
+    }
+    const block = await CBOR.write(buffer)
 
     // Store aggregate record into store
     const offer = pieces.map((p) => p.link)
@@ -241,6 +252,7 @@ export const test = {
     const aggregatePutRes = await context.aggregateStore.put({
       aggregate: aggregate.link,
       pieces: piecesBlock.cid,
+      buffer: block.cid,
       group,
       insertedAt: new Date().toISOString(),
     })
@@ -274,6 +286,7 @@ export const test = {
         piece,
         group,
       },
+      expiration: Infinity
     })
 
     const response = await pieceAcceptInv.execute(connection)
@@ -305,6 +318,7 @@ export const test = {
           aggregate: aggregate.link,
           pieces: piecesBlock.cid,
         },
+        expiration: Infinity
       })
       .delegate()
     assert.ok(response.fx.join)
