@@ -44,7 +44,6 @@ export const createContext = async (options = {}) => {
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
     id,
-    storefrontSigner: id,
     aggregatorId: aggregatorSigner,
     signer: id,
     email: Email.debug(),

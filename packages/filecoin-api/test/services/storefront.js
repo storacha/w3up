@@ -30,7 +30,7 @@ export const test = {
     async (assert, context) => {
       const { agent } = await getServiceContext()
       const connection = connect({
-        id: context.storefrontSigner,
+        id: context.id,
         channel: createServer(context),
       })
 
@@ -58,9 +58,9 @@ export const test = {
       // Validate effects in receipt
       const fxFork = await Filecoin.submit
         .invoke({
-          issuer: context.storefrontSigner,
-          audience: context.storefrontSigner,
-          with: context.storefrontSigner.did(),
+          issuer: context.id,
+          audience: context.id,
+          with: context.id.did(),
           nb: {
             piece: cargo.link.link(),
             content: cargo.content.link(),
@@ -70,9 +70,9 @@ export const test = {
         .delegate()
       const fxJoin = await Filecoin.accept
         .invoke({
-          issuer: context.storefrontSigner,
-          audience: context.storefrontSigner,
-          with: context.storefrontSigner.did(),
+          issuer: context.id,
+          audience: context.id,
+          with: context.id.did(),
           nb: {
             piece: cargo.link.link(),
             content: cargo.content.link(),
@@ -101,7 +101,7 @@ export const test = {
     async (assert, context) => {
       const { agent } = await getServiceContext()
       const connection = connect({
-        id: context.storefrontSigner,
+        id: context.id,
         channel: createServer(context),
       })
 
@@ -112,7 +112,7 @@ export const test = {
       const putRes = await context.pieceStore.put({
         piece: cargo.link.link(),
         content: cargo.content.link(),
-        group: context.storefrontSigner.did(),
+        group: context.id.did(),
         status: 'submitted',
         insertedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -140,9 +140,9 @@ export const test = {
       // Validate effects in receipt
       const fxFork = await Filecoin.submit
         .invoke({
-          issuer: context.storefrontSigner,
-          audience: context.storefrontSigner,
-          with: context.storefrontSigner.did(),
+          issuer: context.id,
+          audience: context.id,
+          with: context.id.did(),
           nb: {
             piece: cargo.link.link(),
             content: cargo.content.link(),
@@ -152,9 +152,9 @@ export const test = {
         .delegate()
       const fxJoin = await Filecoin.accept
         .invoke({
-          issuer: context.storefrontSigner,
-          audience: context.storefrontSigner,
-          with: context.storefrontSigner.did(),
+          issuer: context.id,
+          audience: context.id,
+          with: context.id.did(),
           nb: {
             piece: cargo.link.link(),
             content: cargo.content.link(),
@@ -178,7 +178,7 @@ export const test = {
       async (assert, context) => {
         const { agent } = await getServiceContext()
         const connection = connect({
-          id: context.storefrontSigner,
+          id: context.id,
           channel: createServer(context),
         })
 
@@ -210,7 +210,7 @@ export const test = {
       async (assert, context) => {
         const { agent } = await getServiceContext()
         const connection = connect({
-          id: context.storefrontSigner,
+          id: context.id,
           channel: createServer(context),
         })
 
@@ -241,7 +241,7 @@ export const test = {
     async (assert, context) => {
       const { agent } = await getServiceContext()
       const connection = connect({
-        id: context.storefrontSigner,
+        id: context.id,
         channel: createServer(context),
       })
 
@@ -267,12 +267,12 @@ export const test = {
       // Validate effects in receipt
       const fxJoin = await Aggregator.pieceOffer
         .invoke({
-          issuer: context.storefrontSigner,
+          issuer: context.id,
           audience: context.aggregatorId,
-          with: context.storefrontSigner.did(),
+          with: context.id.did(),
           nb: {
             piece: cargo.link.link(),
-            group: context.storefrontSigner.did(),
+            group: context.id.did(),
           },
           expiration: Infinity,
         })
@@ -286,7 +286,7 @@ export const test = {
       async (assert, context) => {
         const { agent } = await getServiceContext()
         const connection = connect({
-          id: context.storefrontSigner,
+          id: context.id,
           channel: createServer(context),
         })
 
@@ -316,9 +316,9 @@ export const test = {
     context
   ) => {
     const { agent, aggregator, dealer } = await getServiceContext()
-    const group = context.storefrontSigner.did()
+    const group = context.id.did()
     const connection = connect({
-      id: context.storefrontSigner,
+      id: context.id,
       channel: createServer({
         ...context,
         aggregatorId: aggregator,
@@ -335,7 +335,7 @@ export const test = {
     const putRes = await context.pieceStore.put({
       piece: piece.link,
       content: piece.content,
-      group: context.storefrontSigner.did(),
+      group: context.id.did(),
       status: 'submitted',
       insertedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -357,7 +357,7 @@ export const test = {
     }
     const { invocations, receipts } =
       await createInvocationsAndReceiptsForDealDataProofChain({
-        storefront: context.storefrontSigner,
+        storefront: context.id,
         aggregator,
         dealer,
         aggregate: aggregate.link,
@@ -427,7 +427,7 @@ export const test = {
       async (assert, context) => {
         const { agent } = await getServiceContext()
         const connection = connect({
-          id: context.storefrontSigner,
+          id: context.id,
           channel: createServer(context),
         })
 

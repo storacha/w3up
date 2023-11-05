@@ -26,7 +26,7 @@ export const filecoinOffer = async ({ capability }, context) => {
       return { error: new StoreOperationFailed(hasRes.error.message) }
     }
 
-    const group = context.storefrontSigner.did()
+    const group = context.id.did()
     if (!hasRes.ok) {
       // Queue the piece for validation etc.
       const queueRes = await context.filecoinSubmitQueue.add({
@@ -46,9 +46,9 @@ export const filecoinOffer = async ({ capability }, context) => {
   const [submitfx, acceptfx] = await Promise.all([
     StorefrontCaps.filecoinSubmit
       .invoke({
-        issuer: context.storefrontSigner,
-        audience: context.storefrontSigner,
-        with: context.storefrontSigner.did(),
+        issuer: context.id,
+        audience: context.id,
+        with: context.id.did(),
         nb: {
           piece,
           content,
@@ -58,9 +58,9 @@ export const filecoinOffer = async ({ capability }, context) => {
       .delegate(),
     StorefrontCaps.filecoinAccept
       .invoke({
-        issuer: context.storefrontSigner,
-        audience: context.storefrontSigner,
-        with: context.storefrontSigner.did(),
+        issuer: context.id,
+        audience: context.id,
+        with: context.id.did(),
         nb: {
           piece,
           content,
@@ -83,7 +83,7 @@ export const filecoinOffer = async ({ capability }, context) => {
  */
 export const filecoinSubmit = async ({ capability }, context) => {
   const { piece, content } = capability.nb
-  const group = context.storefrontSigner.did()
+  const group = context.id.did()
 
   // Queue `piece/offer` invocation
   const res = await context.pieceOfferQueue.add({
@@ -100,9 +100,9 @@ export const filecoinSubmit = async ({ capability }, context) => {
   // Create effect for receipt
   const fx = await AggregatorCaps.pieceOffer
     .invoke({
-      issuer: context.storefrontSigner,
+      issuer: context.id,
       audience: context.aggregatorId,
-      with: context.storefrontSigner.did(),
+      with: context.id.did(),
       nb: {
         piece,
         group,
@@ -132,9 +132,9 @@ export const filecoinAccept = async ({ capability }, context) => {
   const { group } = getPieceRes.ok
   const fx = await AggregatorCaps.pieceOffer
     .invoke({
-      issuer: context.storefrontSigner,
+      issuer: context.id,
       audience: context.aggregatorId,
-      with: context.storefrontSigner.did(),
+      with: context.id.did(),
       nb: {
         piece,
         group,
@@ -267,7 +267,7 @@ export function createService(context) {
  */
 export const createServer = (context) =>
   Server.create({
-    id: context.storefrontSigner,
+    id: context.id,
     codec: context.codec || CAR.inbound,
     service: createService(context),
     catch: (error) => context.errorReporter.catch(error),
