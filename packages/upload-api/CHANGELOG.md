@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.1.2](https://github.com/web3-storage/w3up/compare/upload-api-v7.1.1...upload-api-v7.1.2) (2023-11-05)
+
+
+### Bug Fixes
+
+* revert enable storefront signer to be different from main service signer ([#1075](https://github.com/web3-storage/w3up/issues/1075)) ([80cdde0](https://github.com/web3-storage/w3up/commit/80cdde0f5b610cf6328dc17cb505759eddda821a))
+
 ## [7.1.1](https://github.com/web3-storage/w3up/compare/upload-api-v7.1.0...upload-api-v7.1.1) (2023-11-04)
 
 
