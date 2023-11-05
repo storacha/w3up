@@ -140,7 +140,7 @@ export const handleCronTick = async (context) => {
   const updatedResponses = await Promise.all(
     submittedPieces.ok.map((pieceRecord) =>
       updatePiecesWithDeal({
-        id: context.storefrontSigner,
+        id: context.id,
         aggregatorId: context.aggregatorId,
         pieceRecord,
         pieceStore: context.pieceStore,

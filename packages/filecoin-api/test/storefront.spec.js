@@ -38,7 +38,6 @@ describe('storefront', () => {
           },
           {
             id: storefrontSigner,
-            storefrontSigner,
             aggregatorId: aggregatorSigner,
             errorReporter: {
               catch(error) {
@@ -93,7 +92,6 @@ describe('storefront', () => {
           },
           {
             id: storefrontSigner,
-            storefrontSigner,
             aggregatorId: aggregatorSigner,
             pieceStore,
             receiptStore,
