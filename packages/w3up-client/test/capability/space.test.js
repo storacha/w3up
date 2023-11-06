@@ -14,7 +14,7 @@ describe('SpaceClient', () => {
       const service = mockService({
         space: {
           info: provide(SpaceCapabilities.info, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, SpaceCapabilities.info.can)
@@ -41,7 +41,12 @@ describe('SpaceClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice, {
+        access: { 'space/info': {} },
+        expiration: Infinity,
+      })
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const info = await alice.capability.space.info(space.did())

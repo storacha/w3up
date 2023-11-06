@@ -21,7 +21,10 @@ import type {
   SignerArchive,
   SigAlg,
   Caveats,
+  Unit,
 } from '@ucanto/interface'
+
+export type { UTCUnixTimestamp } from '@ipld/dag-ucan'
 
 import type {
   Abilities,
@@ -43,6 +46,9 @@ import type {
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  AccountDID,
+  ProviderDID,
+  SpaceDID,
   PlanGet,
   PlanGetSuccess,
   PlanGetFailure,
@@ -52,14 +58,38 @@ import { Driver } from './drivers/types.js'
 import { SpaceUnknown } from './errors.js'
 
 // export other types
+export * from '@ucanto/interface'
 export * from '@web3-storage/capabilities/types'
 export * from './errors.js'
+export * from '@web3-storage/did-mailto'
+export type { Agent } from './agent.js'
 
 export interface SpaceInfoResult {
   // space did
   did: DID<'key'>
   providers: Array<DID<'web'>>
 }
+
+export interface CapabilityQuery {
+  can: Ability
+  with: ResourceQuery
+  nb?: unknown
+}
+
+export type { AccountDID, ProviderDID, SpaceDID }
+
+/**
+ * Describes level of access to a resource.
+ */
+export type Access =
+  // This complicates type workarounds the issue with TS which will would have
+  // complained about missing `*` key if we have used `Record<Ability, Unit>`
+  // instead.
+  Record<Exclude<Ability, '*'>, Unit> & {
+    ['*']?: Unit
+  }
+
+export type ResourceQuery = Resource | RegExp
 
 /**
  * Access api service definition type
@@ -163,11 +193,7 @@ export interface SpaceMeta {
   /**
    * Human readable name for the space
    */
-  name?: string
-  /**
-   * Was this space already registered with w3up?
-   */
-  isRegistered: boolean
+  name: string
 }
 
 /**

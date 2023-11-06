@@ -9,7 +9,7 @@ export const provide = (context) =>
   Provider.provide(Consumer.has, (input) => has(input, context))
 
 /**
- * @param {{capability: {with: API.ProviderDID, nb: { consumer: API.DIDKey }}}} input
+ * @param {API.Input<Consumer.has>} input
  * @param {API.ConsumerServiceContext} context
  * @returns {Promise<API.Result<API.ConsumerHasSuccess, API.ConsumerHasFailure>>}
  */

@@ -1,3 +1,5 @@
+export * from './types.js'
+
 /**
  * create a did:mailto from an email address
  *

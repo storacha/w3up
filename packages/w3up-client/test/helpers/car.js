@@ -6,7 +6,7 @@ import * as CAR from '@ucanto/transport/car'
 
 /**
  * @param {Uint8Array} bytes
- **/
+ */
 export async function toCAR(bytes) {
   const hash = await sha256.digest(bytes)
   const root = CID.create(1, raw.code, hash)

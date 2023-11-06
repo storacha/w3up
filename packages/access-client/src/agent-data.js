@@ -3,7 +3,7 @@ import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { importDAG } from '@ucanto/core/delegation'
 import * as Ucanto from '@ucanto/interface'
 import { CID } from 'multiformats'
-import { Access } from '@web3-storage/capabilities'
+import { UCAN } from '@web3-storage/capabilities'
 import { isExpired } from './delegations.js'
 
 /** @typedef {import('./types.js').AgentDataModel} AgentDataModel */
@@ -156,13 +156,13 @@ export class AgentData {
  * @param {Ucanto.Capability} cap
  * @returns {boolean}
  */
-const isSessionCapability = (cap) => cap.can === Access.session.can
+const isSessionCapability = (cap) => cap.can === UCAN.attest.can
 
 /**
  * Is the given delegation a session proof?
  *
  * @param {Ucanto.Delegation} delegation
- * @returns {delegation is Ucanto.Delegation<[import('./types.js').AccessSession]>}
+ * @returns {delegation is Ucanto.Delegation<[import('./types.js').UCANAttest]>}
  */
 export const isSessionProof = (delegation) =>
   delegation.capabilities.some((cap) => isSessionCapability(cap))

@@ -357,6 +357,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         },
       })
 
@@ -375,6 +376,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         })
       }
     })
@@ -390,6 +392,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.confirm.delegate({
@@ -419,6 +422,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         })
       }
     })
@@ -434,6 +438,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.access.delegate({
@@ -460,6 +465,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         })
       }
     })
@@ -475,6 +481,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.top.delegate({
@@ -501,6 +508,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         })
       }
     })
@@ -516,6 +524,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:ANOTHER_TEST',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.confirm.delegate({
@@ -552,6 +561,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web.mail:alice',
           aud: bob.did(),
           att: [{ can: 'store/*' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.confirm.delegate({
@@ -585,6 +595,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web.mail:alice',
           aud: bob.did(),
           att: [{ can: 'store/add' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.confirm.delegate({
@@ -618,6 +629,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web.mail:alice',
           aud: bob.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.confirm.delegate({
@@ -657,6 +669,7 @@ describe('access capabilities', function () {
           iss: 'did:mailto:web3.storage:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
+          cause: parseLink('bafkqaaa'),
         },
         proofs: [
           await Access.top.delegate({
@@ -692,6 +705,7 @@ describe('access capabilities', function () {
             iss: 'did:NOT_MAILTO:web3.storage:test',
             aud: bob.did(),
             att: [{ can: '*' }],
+            cause: parseLink('bafkqaaa'),
           },
         })
       }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)

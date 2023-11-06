@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { AgentData, getSessionProofs } from '../src/agent-data.js'
 import * as ed25519 from '@ucanto/principal/ed25519'
-import { Access } from '@web3-storage/capabilities'
+import { UCAN } from '@web3-storage/capabilities'
 import { Absentee } from '@ucanto/principal'
 import * as DidMailto from '@web3-storage/did-mailto'
 import * as ucanto from '@ucanto/core'
@@ -55,7 +55,7 @@ describe('AgentData', () => {
 
     const mapIssuerToSession = new Map()
     for (const service of services) {
-      const session = await Access.session.delegate({
+      const session = await UCAN.attest.delegate({
         issuer: service,
         audience: agent,
         with: service.did(),

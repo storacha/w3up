@@ -14,6 +14,7 @@ import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
 import { AccessClient } from './capability/access.js'
+export * as Access from './capability/access.js'
 
 export { StoreClient, UploadClient, SpaceClient, AccessClient }
 
@@ -31,6 +32,10 @@ export class Client extends Base {
       upload: new UploadClient(agentData, options),
       space: new SpaceClient(agentData, options),
     }
+  }
+
+  did() {
+    return this._agent.did()
   }
 
   /* c8 ignore start - testing websockets is hard */
@@ -110,13 +115,6 @@ export class Client extends Base {
   }
 
   /**
-   * The current user agent (this device).
-   */
-  agent() {
-    return this._agent.issuer
-  }
-
-  /**
    * The current space.
    */
   currentSpace() {
@@ -143,29 +141,12 @@ export class Client extends Base {
   }
 
   /**
-   * Create a new space with an optional name.
+   * Create a new space with a given name.
    *
-   * @param {string} [name]
+   * @param {string} name
    */
   async createSpace(name) {
-    const { did, meta } = await this._agent.createSpace(name)
-    return new Space(did, meta)
-  }
-
-  /* c8 ignore start - hard to test this without authorize tests which require websockets */
-  /**
-   * Register the _current_ space with the service.
-   *
-   * @param {string} email
-   * @param {object} [options]
-   * @param {import('./types.js').DID<'web'>} [options.provider]
-   * @param {AbortSignal} [options.signal]
-   */
-  async registerSpace(email, options = {}) {
-    options.provider =
-      options.provider ??
-      /** @type {import('./types.js').DID<'web'>} */ (this.defaultProvider())
-    await this._agent.registerSpace(email, options)
+    return await this._agent.createSpace(name)
   }
   /* c8 ignore stop */
 
@@ -175,8 +156,7 @@ export class Client extends Base {
    * @param {import('./types.js').Delegation} proof
    */
   async addSpace(proof) {
-    const { did, meta } = await this._agent.importSpaceFromDelegation(proof)
-    return new Space(did, meta)
+    return await this._agent.importSpaceFromDelegation(proof)
   }
 
   /**

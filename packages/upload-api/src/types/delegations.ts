@@ -19,8 +19,7 @@ export interface DelegationsStorage<
   putMany: (
     delegations: Ucanto.Delegation<Ucanto.Tuple<Cap>>[],
     options?: { cause?: Ucanto.Link }
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  ) => Promise<Ucanto.Result<{}, Ucanto.Failure>>
+  ) => Promise<Ucanto.Result<Ucanto.Unit, Ucanto.Failure>>
 
   /**
    * get number of stored items

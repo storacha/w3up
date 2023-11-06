@@ -60,7 +60,7 @@ export const abilitiesAsStrings = [
   Store.list.can,
   Access.access.can,
   Access.authorize.can,
-  Access.session.can,
+  UCAN.attest.can,
   Customer.get.can,
   Consumer.has.can,
   Consumer.get.can,

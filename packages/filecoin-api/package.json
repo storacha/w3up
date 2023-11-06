@@ -165,7 +165,8 @@
     "@web3-storage/filecoin-client": "workspace:^",
     "mocha": "^10.2.0",
     "multiformats": "^12.1.2",
-    "p-wait-for": "^5.0.2"
+    "p-wait-for": "^5.0.2",
+    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto"
   },
   "eslintConfig": {
     "extends": [

@@ -7,7 +7,7 @@ import { create } from '../src/index.node.js'
 describe('create', () => {
   it('should create Ed25519 key', async () => {
     const client = await create()
-    const signer = client.agent()
+    const signer = client.agent.issuer
     assert.equal(signer.signatureAlgorithm, 'EdDSA')
     assert.equal(signer.signatureCode, EdDSA)
   })
@@ -19,7 +19,7 @@ describe('create', () => {
     const client0 = await create({ store })
     const client1 = await create({ store })
 
-    assert.equal(client0.agent().did(), client1.agent().did())
+    assert.equal(client0.agent.did(), client1.agent.did())
   })
 
   it('should allow BYO principal', async () => {
@@ -29,7 +29,7 @@ describe('create', () => {
     const principal = await Signer.generate()
     const client = await create({ principal, store })
 
-    assert.equal(client.agent().did(), principal.did())
+    assert.equal(client.agent.did(), principal.did())
   })
 
   it('should throw for mismatched BYO principal', async () => {

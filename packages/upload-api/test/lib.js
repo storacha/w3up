@@ -14,6 +14,7 @@ import { test as rateLimitsStorageTests } from './storage/rate-limits-storage-te
 import { test as revocationsStorageTests } from './storage/revocations-storage-tests.js'
 import { test as plansStorageTests } from './storage/plans-storage-tests.js'
 import { DebugEmail } from '../src/utils/email.js'
+export * as Context from './helpers/context.js'
 
 export * from './util.js'
 

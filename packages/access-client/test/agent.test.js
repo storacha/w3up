@@ -2,15 +2,15 @@ import assert from 'assert'
 import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
-import { Agent, AgentData, connection } from '../src/agent.js'
+import { Agent, Access, AgentData, connection } from '../src/agent.js'
 import * as Space from '@web3-storage/capabilities/space'
-import * as UCAN from '@web3-storage/capabilities/ucan'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 import * as ed25519 from '@ucanto/principal/ed25519'
-import { Access, Provider } from '@web3-storage/capabilities'
+import { UCAN, Provider } from '@web3-storage/capabilities'
 import { Absentee } from '@ucanto/principal'
 import * as DidMailto from '@web3-storage/did-mailto'
+import * as API from '../src/types.js'
 
 describe('Agent', function () {
   it('should return did', async function () {
@@ -23,31 +23,45 @@ describe('Agent', function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test-create')
 
-    assert(typeof space.did === 'string')
-    assert(space.proof)
+    assert(typeof space.did() === 'string')
   })
 
-  it('should add proof when creating acccount', async function () {
+  it('should add proof when creating account', async function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test-add')
+    const authorization = await space.createAuthorization(agent, {
+      access: { '*': {} },
+      expiration: Infinity,
+    })
+
+    await agent.importSpaceFromDelegation(authorization)
     const delegations = agent.proofs()
 
-    assert.equal(space.proof.cid, delegations[0].cid)
+    assert.equal(authorization.cid, delegations[0].cid)
   })
 
   it('should set current space', async function () {
     const agent = await Agent.create()
     const space = await agent.createSpace('test')
+    const authorization = await space.createAuthorization(agent, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
 
-    await agent.setCurrentSpace(space.did)
+    await agent.importSpaceFromDelegation(authorization)
+
+    await agent.setCurrentSpace(space.did())
 
     const accWithMeta = await agent.currentSpaceWithMeta()
     if (!accWithMeta) {
       assert.fail('should have space')
     }
-    assert.equal(accWithMeta.did, space.did)
+    assert.equal(accWithMeta.did, space.did())
     assert(accWithMeta.proofs.length === 1)
-    assert.deepStrictEqual(accWithMeta.capabilities, ['*'])
+    assert.deepStrictEqual(
+      accWithMeta.capabilities,
+      Object.keys(Access.spaceAccess)
+    )
   })
 
   it('fails set current space with no proofs', async function () {
@@ -68,7 +82,12 @@ describe('Agent', function () {
     const bob = await Agent.create()
 
     const space = await alice.createSpace('videos')
-    await alice.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(alice, {
+      access: { '*': {} },
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(auth)
+    await alice.setCurrentSpace(space.did())
 
     const proof = await alice.delegate({
       audience: bob,
@@ -77,9 +96,9 @@ describe('Agent', function () {
     })
 
     await bob.importSpaceFromDelegation(proof)
-    await bob.setCurrentSpace(space.did)
+    await bob.setCurrentSpace(space.did())
 
-    const proofs = bob.proofs([{ can: 'store/add', with: space.did }])
+    const proofs = bob.proofs([{ can: 'store/add', with: space.did() }])
     assert(proofs.length)
   })
 
@@ -88,7 +107,12 @@ describe('Agent', function () {
     const bob = await Agent.create()
 
     const space = await alice.createSpace('videos')
-    await alice.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(alice, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(auth)
+    await alice.setCurrentSpace(space.did())
 
     const proof = await alice.delegate({
       audience: bob,
@@ -97,9 +121,9 @@ describe('Agent', function () {
     })
 
     await bob.importSpaceFromDelegation(proof)
-    await bob.setCurrentSpace(space.did)
+    await bob.setCurrentSpace(space.did())
 
-    const proofs = bob.proofs([{ can: 'store/add', with: space.did }])
+    const proofs = bob.proofs([{ can: 'store/add', with: space.did() }])
     assert(proofs.length)
   })
 
@@ -109,7 +133,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const { out } = await agent.invokeAndExecute(Space.info, {
       audience: fixtures.service,
@@ -131,7 +160,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const i1 = await agent.invoke(Space.info, {
       audience: fixtures.service,
@@ -184,7 +218,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const out = await agent.getSpaceInfo()
     assert.deepEqual(out, {
@@ -204,7 +243,12 @@ describe('Agent', function () {
     })
 
     const space = await agent.createSpace('execute')
-    await agent.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(agent, {
+      access: { '*': {} },
+      expiration: Infinity,
+    })
+    await agent.importSpaceFromDelegation(auth)
+    await agent.setCurrentSpace(space.did())
 
     const out = await agent.delegate({
       abilities: ['*'],
@@ -219,7 +263,7 @@ describe('Agent', function () {
     assert.deepStrictEqual(out.capabilities, [
       {
         can: '*',
-        with: space.did,
+        with: space.did(),
       },
     ])
   })
@@ -234,7 +278,12 @@ describe('Agent', function () {
     })
 
     const space = await alice.createSpace('execute')
-    await alice.setCurrentSpace(space.did)
+    const auth = await space.createAuthorization(alice, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(auth)
+    await alice.setCurrentSpace(space.did())
 
     const delegation = await alice.delegate({
       abilities: ['space/info'],
@@ -243,7 +292,7 @@ describe('Agent', function () {
     })
 
     await bob.importSpaceFromDelegation(delegation)
-    await bob.setCurrentSpace(space.did)
+    await bob.setCurrentSpace(space.did())
 
     // should not be able to store/remove - bob only has ability to space/info
     await assert.rejects(
@@ -293,7 +342,12 @@ describe('Agent', function () {
     })
 
     const space = await alice.createSpace('alice')
-    await alice.setCurrentSpace(space.did)
+    const aliceAuth = await space.createAuthorization(alice, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
+    await alice.importSpaceFromDelegation(aliceAuth)
+    await alice.setCurrentSpace(space.did())
 
     const delegation = await alice.delegate({
       abilities: ['store/add'],
@@ -315,8 +369,13 @@ describe('Agent', function () {
       `failed to revoke when proofs passed: ${result2.error?.message}`
     )
 
-    await bob.importSpaceFromDelegation(delegation)
-    await bob.setCurrentSpace(space.did)
+    const bobSpace = await bob.createSpace('bob')
+    const bobAuth = await bobSpace.createAuthorization(bob, {
+      access: Access.spaceAccess,
+      expiration: Infinity,
+    })
+    await bob.importSpaceFromDelegation(bobAuth)
+    await bob.setCurrentSpace(bobSpace.did())
     const bobDelegation = await bob.delegate({
       abilities: ['store/add'],
       audience: mallory.issuer,
@@ -380,7 +439,7 @@ describe('Agent', function () {
           },
         ],
       })
-      const session = await Access.session.delegate({
+      const session = await UCAN.attest.delegate({
         issuer: service,
         audience: agent,
         with: service.did(),
@@ -435,7 +494,7 @@ describe('Agent', function () {
         ],
         facts: [{ nonce }],
       })
-      const session = await Access.session.delegate({
+      const session = await UCAN.attest.delegate({
         issuer: service,
         audience: agent,
         with: service.did(),
@@ -473,11 +532,10 @@ describe('Agent', function () {
     )
 
     const providerAddInvocation = await agentConnectedToServiceB.invoke(
-      // @ts-expect-error - complaint about options.nb.provider not matching a did:mailto type, but it is. Seems like ucanto error with complex types.
       Provider.add,
       {
         audience: serviceBWeb,
-        with: account,
+        with: /** @type {API.AccountDID} */ (account),
         nb: {
           provider: serviceBWeb.did(),
           consumer: space.did(),

@@ -1,12 +1,10 @@
-// @ts-ignore
-// eslint-disable-next-line no-unused-vars
-import * as Ucanto from '@ucanto/interface'
 import * as ucanto from '@ucanto/core'
+import * as API from './types.js'
 import { canDelegateAbility } from '@web3-storage/capabilities/utils'
 
 /**
  *
- * @param {Ucanto.Delegation} delegation
+ * @param {API.Delegation} delegation
  */
 export function isExpired(delegation) {
   if (
@@ -20,7 +18,7 @@ export function isExpired(delegation) {
 
 /**
  *
- * @param {Ucanto.Delegation} delegation
+ * @param {API.Delegation} delegation
  */
 export function isTooEarly(delegation) {
   if (!delegation.notBefore) {
@@ -31,9 +29,9 @@ export function isTooEarly(delegation) {
 
 /**
  *
- * @param {Ucanto.Delegation} delegation
+ * @param {API.Delegation} delegation
  * @param {object} [opts]
- * @param {Ucanto.Principal} [opts.checkAudience]
+ * @param {API.Principal} [opts.checkAudience]
  * @param {boolean} [opts.checkIsExpired]
  * @param {boolean} [opts.checkIsTooEarly]
  */
@@ -60,21 +58,40 @@ export function validate(delegation, opts) {
 }
 
 /**
+ * Returns true if the delegation includes capability been queried.
  *
- * @param {import('@ucanto/interface').Delegation} delegation
- * @param {import('@ucanto/interface').Capability} child
+ * @param {API.Delegation} delegation
+ * @param {API.CapabilityQuery} capability
  */
-export function canDelegateCapability(delegation, child) {
+export function canDelegateCapability(delegation, capability) {
   const allowsCapabilities = ucanto.Delegation.allows(delegation)
-  if (allowsCapabilities[child.with]) {
-    const cans = /** @type {import('@ucanto/interface').Ability[]} */ (
-      Object.keys(allowsCapabilities[child.with])
-    )
-    for (const can of cans) {
-      if (canDelegateAbility(can, child.can)) {
-        return true
+  for (const [uri, abilities] of Object.entries(allowsCapabilities)) {
+    if (matchResource(/** @type {API.Resource} */ (uri), capability.with)) {
+      const cans = /** @type {API.Ability[]} */ (Object.keys(abilities))
+
+      for (const can of cans) {
+        if (canDelegateAbility(can, capability.can)) {
+          return true
+        }
       }
     }
   }
   return false
+}
+
+/**
+ * Returns true if given `resource` matches the resource query per UCAN
+ * specification.
+ *
+ * @param {API.Resource} resource
+ * @param {API.ResourceQuery} query
+ */
+export const matchResource = (resource, query) => {
+  if (query === 'ucan:*') {
+    return true
+  } else if (typeof query === 'string') {
+    return resource === query
+  } else {
+    return query.test(resource)
+  }
 }

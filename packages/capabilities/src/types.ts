@@ -8,6 +8,7 @@ import {
   DIDKey,
   ToString,
   Link,
+  Failure,
   UnknownLink,
 } from '@ucanto/interface'
 import { CAR } from '@ucanto/transport'
@@ -55,7 +56,7 @@ export interface InsufficientStorage {
   message: string
 }
 
-export interface UnknownProvider extends Ucanto.Failure {
+export interface UnknownProvider extends Failure {
   name: 'UnknownProvider'
   did: DID
 }
@@ -72,7 +73,13 @@ export type AccessAuthorize = InferInvokedCapability<
 >
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export type AccessAuthorizeSuccess = Unit
+export interface AccessAuthorizeSuccess {
+  request: Link
+  expiration: number
+}
+
+export interface AccessAuthorizeFailure extends Ucanto.Failure {}
+
 export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
 export interface AccessClaimSuccess {
   delegations: Record<string, Ucanto.ByteView<Ucanto.Delegation>>
@@ -95,7 +102,6 @@ export interface DelegationNotFound extends Ucanto.Failure {
   name: 'DelegationNotFound'
 }
 
-export type AccessSession = InferInvokedCapability<typeof AccessCaps.session>
 export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 
 // Provider
@@ -426,6 +432,7 @@ export interface UploadListSuccess extends ListResponse<UploadListItem> {}
 // UCAN core events
 
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
+export type UCANAttest = InferInvokedCapability<typeof UCANCaps.attest>
 
 export interface Timestamp {
   /**
@@ -554,7 +561,7 @@ export type AbilitiesArray = [
   StoreList['can'],
   Access['can'],
   AccessAuthorize['can'],
-  AccessSession['can'],
+  UCANAttest['can'],
   CustomerGet['can'],
   ConsumerHas['can'],
   ConsumerGet['can'],

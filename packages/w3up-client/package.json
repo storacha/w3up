@@ -66,7 +66,7 @@
     "test": "npm-run-all -p -r mock test:all",
     "test:all": "run-s test:node test:browser",
     "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings -n stack-trace-limit=1000",
-    "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
+    "test:browser": "playwright-test --runner mocha 'test/**/!(*.node).test.js'",
     "mock": "run-p mock:*",
     "mock:bucket-200": "PORT=9200 STATUS=200 node test/helpers/bucket-server.js",
     "rc": "npm version prerelease --preid rc",
@@ -80,11 +80,13 @@
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
     "@ucanto/transport": "^9.0.0",
+    "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/upload-client": "workspace:^"
   },
   "devDependencies": {
+    "@web3-storage/upload-api": "workspace:^",
     "@docusaurus/core": "^2.2.0",
     "@ipld/car": "^5.1.1",
     "@types/assert": "^1.5.6",
@@ -120,7 +122,8 @@
     },
     "ignorePatterns": [
       "dist",
-      "coverage"
+      "coverage",
+      "src/types.js"
     ]
   },
   "directories": {

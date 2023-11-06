@@ -15,7 +15,7 @@ describe('StoreClient', () => {
       const service = mockService({
         store: {
           add: provide(StoreCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.add.can)
@@ -45,7 +45,9 @@ describe('StoreClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice)
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const car = await randomCAR(128)
@@ -76,7 +78,7 @@ describe('StoreClient', () => {
       const service = mockService({
         store: {
           list: provide(StoreCapabilities.list, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.list.can)
@@ -98,7 +100,9 @@ describe('StoreClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice)
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const res = await alice.capability.store.list()
@@ -119,7 +123,7 @@ describe('StoreClient', () => {
       const service = mockService({
         store: {
           remove: provide(StoreCapabilities.remove, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent().did())
+            assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, StoreCapabilities.remove.can)
@@ -141,7 +145,9 @@ describe('StoreClient', () => {
         serviceConf: await mockServiceConf(server),
       })
 
-      const space = await alice.createSpace()
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice)
+      alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       await alice.capability.store.remove((await randomCAR(128)).cid)

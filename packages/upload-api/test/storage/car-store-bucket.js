@@ -1,6 +1,5 @@
 import * as API from '../../src/types.js'
 import { base64pad } from 'multiformats/bases/base64'
-import HTTP from 'node:http'
 import { SigV4 } from '@web3-storage/sigv4'
 import { sha256 } from 'multiformats/hashes/sha2'
 
@@ -9,58 +8,68 @@ import { sha256 } from 'multiformats/hashes/sha2'
  */
 export class CarStoreBucket {
   /**
-   * @param {API.CarStoreBucketOptions} [options]
+   * @param {API.CarStoreBucketOptions & {http?: import('http')}} options
    */
-  static async activate(options) {
+  static async activate({ http, ...options } = {}) {
     const content = new Map()
-    const server = HTTP.createServer(async (request, response) => {
-      if (request.method === 'PUT') {
-        const buffer = new Uint8Array(
-          parseInt(request.headers['content-length'] || '0')
-        )
-        let offset = 0
+    if (http) {
+      const server = http.createServer(async (request, response) => {
+        if (request.method === 'PUT') {
+          const buffer = new Uint8Array(
+            parseInt(request.headers['content-length'] || '0')
+          )
+          let offset = 0
 
-        for await (const chunk of request) {
-          buffer.set(chunk, offset)
-          offset += chunk.length
-        }
+          for await (const chunk of request) {
+            buffer.set(chunk, offset)
+            offset += chunk.length
+          }
 
-        const hash = await sha256.digest(buffer)
-        const checksum = base64pad.baseEncode(hash.digest)
+          const hash = await sha256.digest(buffer)
+          const checksum = base64pad.baseEncode(hash.digest)
 
-        if (checksum !== request.headers['x-amz-checksum-sha256']) {
-          response.writeHead(400, `checksum mismatch`)
+          if (checksum !== request.headers['x-amz-checksum-sha256']) {
+            response.writeHead(400, `checksum mismatch`)
+          } else {
+            const { pathname } = new URL(request.url || '/', url)
+            content.set(pathname, buffer)
+            response.writeHead(200)
+          }
         } else {
-          const { pathname } = new URL(request.url || '/', url)
-          content.set(pathname, buffer)
-          response.writeHead(200)
+          response.writeHead(405)
         }
-      } else {
-        response.writeHead(405)
-      }
 
-      response.end()
-      // otherwise it keep connection lingering
-      response.destroy()
-    })
-    await new Promise((resolve) => server.listen(resolve))
+        response.end()
+        // otherwise it keep connection lingering
+        response.destroy()
+      })
+      await new Promise((resolve) => server.listen(resolve))
 
-    // @ts-ignore - this is actually what it returns on http
-    const port = server.address().port
-    const url = new URL(`http://localhost:${port}`)
+      // @ts-ignore - this is actually what it returns on http
+      const port = server.address().port
+      const url = new URL(`http://localhost:${port}`)
 
-    return new CarStoreBucket({
-      ...options,
-      content,
-      server: Object.assign(server, { url }),
-    })
+      return new CarStoreBucket({
+        ...options,
+        content,
+        url,
+        server,
+      })
+    } else {
+      return new CarStoreBucket({
+        ...options,
+        content,
+        url: new URL(`http://localhost:8989`),
+      })
+    }
   }
 
   /**
-   * @param {API.CarStoreBucketOptions & { server: HTTP.Server & { url: URL }, content: Map<string, Uint8Array> }} options
+   * @param {API.CarStoreBucketOptions & { server?: import('http').Server, url: URL, content: Map<string, Uint8Array> }} options
    */
   constructor({
     content,
+    url,
     server,
     accessKeyId = 'id',
     secretAccessKey = 'secret',
@@ -69,6 +78,7 @@ export class CarStoreBucket {
     expires,
   }) {
     this.server = server
+    this.baseURL = url
     this.accessKeyId = accessKeyId
     this.secretAccessKey = secretAccessKey
     this.bucket = bucket
@@ -80,21 +90,24 @@ export class CarStoreBucket {
   /**
    * @returns {Promise<void>}
    */
-  deactivate() {
-    return new Promise((resolve, reject) => {
-      // does not exist in node 16
-      if (typeof this.server.closeAllConnections === 'function') {
-        this.server.closeAllConnections()
-      }
-
-      this.server.close((error) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve()
+  async deactivate() {
+    const { server } = this
+    if (server) {
+      await new Promise((resolve, reject) => {
+        // does not exist in node 16
+        if (typeof server.closeAllConnections === 'function') {
+          server.closeAllConnections()
         }
+
+        server.close((error) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(undefined)
+          }
+        })
       })
-    })
+    }
   }
 
   /**
@@ -110,7 +123,7 @@ export class CarStoreBucket {
    * @param {number} size
    */
   async createUploadUrl(link, size) {
-    const { bucket, expires, accessKeyId, secretAccessKey, region, server } =
+    const { bucket, expires, accessKeyId, secretAccessKey, region, baseURL } =
       this
     // sigv4
     const sig = new SigV4({
@@ -127,7 +140,7 @@ export class CarStoreBucket {
       expires,
     })
 
-    const url = new URL(server.url)
+    const url = new URL(baseURL)
     url.search = search
     url.pathname = `/${bucket}${pathname}`
     url.hash = hash

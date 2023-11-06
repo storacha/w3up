@@ -1,6 +1,8 @@
-import * as assert from 'assert'
 import * as Signer from '@ucanto/principal/ed25519'
-import { getStoreImplementations, getQueueImplementations } from '@web3-storage/filecoin-api/test/context/service'
+import {
+  getStoreImplementations,
+  getQueueImplementations,
+} from '@web3-storage/filecoin-api/test/context/service'
 import { CarStoreBucket } from '../storage/car-store-bucket.js'
 import { StoreTable } from '../storage/store-table.js'
 import { UploadTable } from '../storage/upload-table.js'
@@ -14,17 +16,20 @@ import { create as createRevocationChecker } from '../../src/utils/revocation.js
 import { createServer, connect } from '../../src/lib.js'
 import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
+import { confirmConfirmationUrl } from './utils.js'
 import { PlansStorage } from '../storage/plans-storage.js'
 
 /**
  * @param {object} options
  * @param {string[]} [options.providers]
+ * @param {import('http')} [options.http]
+ * @param {{fail(error:unknown): unknown}} [options.assert]
  * @returns {Promise<Types.UcantoServerTestContext>}
  */
 export const createContext = async (options = {}) => {
   const storeTable = new StoreTable()
   const uploadTable = new UploadTable()
-  const carStoreBucket = await CarStoreBucket.activate()
+  const carStoreBucket = await CarStoreBucket.activate(options)
   const dudewhereBucket = new DudewhereBucket()
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
@@ -35,18 +40,19 @@ export const createContext = async (options = {}) => {
   /** @type {Map<string, unknown[]>} */
   const queuedMessages = new Map()
   const {
-    storefront: { filecoinSubmitQueue, pieceOfferQueue }
+    storefront: { filecoinSubmitQueue, pieceOfferQueue },
   } = getQueueImplementations(queuedMessages)
   const {
     storefront: { pieceStore, receiptStore, taskStore },
   } = getStoreImplementations()
+  const email = Email.debug()
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
     id,
     aggregatorId: aggregatorSigner,
     signer: id,
-    email: Email.debug(),
+    email,
     url: new URL('http://localhost:8787'),
     provisionsStorage: new ProvisionsStorage(options.providers),
     delegationsStorage: new DelegationsStorage(),
@@ -55,7 +61,11 @@ export const createContext = async (options = {}) => {
     revocationsStorage,
     errorReporter: {
       catch(error) {
-        assert.fail(error)
+        if (options.assert) {
+          options.assert.fail(error)
+        } else {
+          throw error
+        }
       },
     },
     maxUploadSize: 5_000_000_000,
@@ -81,6 +91,7 @@ export const createContext = async (options = {}) => {
     mail: /** @type {TestTypes.DebugEmail} */ (serviceContext.email),
     service: /** @type {TestTypes.ServiceSigner} */ (serviceContext.id),
     connection,
+    grantAccess: (mail) => confirmConfirmationUrl(connection, mail),
     fetch,
   }
 }

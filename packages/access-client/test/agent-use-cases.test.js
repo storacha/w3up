@@ -3,6 +3,7 @@ import sinon from 'sinon'
 import * as Server from '@ucanto/server'
 import * as Ucanto from '@ucanto/interface'
 import * as Access from '@web3-storage/capabilities/access'
+import * as Ucan from '@web3-storage/capabilities/ucan'
 import * as Space from '@web3-storage/capabilities/space'
 import * as Plan from '@web3-storage/capabilities/plan'
 import { createAuthorization } from '@web3-storage/capabilities/test/helpers/utils'
@@ -20,7 +21,7 @@ import { delegationsToBytes } from '../src/encoding.js'
 describe('delegationsIncludeSessionProof', function () {
   it('should return true if and only if one of the delegations is a session proof', async function () {
     const agent = await Agent.create()
-    const sessionProof = await Access.session.delegate({
+    const sessionProof = await Ucan.attest.delegate({
       issuer: agent.issuer,
       audience: fixtures.service,
       with: fixtures.alice.did(),
@@ -57,7 +58,7 @@ describe('authorizeWaitAndClaim', async function () {
       audience: agent.issuer,
       with: fixtures.alice.did(),
     })
-    const sessionProof = await Access.session.delegate({
+    const sessionProof = await Ucan.attest.delegate({
       issuer: agent.issuer,
       audience: agent.issuer,
       with: fixtures.alice.did(),

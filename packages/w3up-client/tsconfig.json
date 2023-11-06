@@ -19,6 +19,8 @@
   "references": [
     { "path": "../access-client" },
     { "path": "../capabilities" },
-    { "path": "../upload-client" }
+    { "path": "../upload-client" },
+    { "path": "../did-mailto" },
+    { "path": "../upload-api" }
   ]
 }

@@ -4,8 +4,26 @@ import {
   type AgentDataExport,
 } from '@web3-storage/access/types'
 import { type Service as UploadService } from '@web3-storage/upload-client/types'
-import type { ConnectionView, Signer, DID } from '@ucanto/interface'
+import type {
+  ConnectionView,
+  Signer,
+  DID,
+  Ability,
+  Resource,
+  Unit,
+} from '@ucanto/interface'
 import { type Client } from './client.js'
+export * from '@ucanto/interface'
+export * from '@web3-storage/did-mailto'
+export type { Agent, CapabilityQuery } from '@web3-storage/access/agent'
+export type {
+  Access,
+  AccountDID,
+  ProviderDID,
+  SpaceDID,
+} from '@web3-storage/access/types'
+
+export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 
 export interface ServiceConf {
   access: ConnectionView<AccessService>

@@ -10,13 +10,17 @@ import { ensureRateLimitAbove } from '../utils/rate-limits.js'
  * @param {API.AccessServiceContext} ctx
  */
 export const provide = (ctx) =>
-  Server.provide(Access.authorize, (input) => authorize(input, ctx))
+  Server.provideAdvanced({
+    capability: Access.authorize,
+    handler: (input) => authorize(input, ctx),
+  })
 
 /**
  * @param {API.Input<Access.authorize>} input
  * @param {API.AccessServiceContext} ctx
+ * @returns {Promise<API.Transaction<API.AccessAuthorizeSuccess, API.AccessAuthorizeFailure>>}
  */
-export const authorize = async ({ capability }, ctx) => {
+export const authorize = async ({ capability, invocation }, ctx) => {
   const accountMailtoDID =
     /** @type {import('@web3-storage/did-mailto/types').DidMailto} */ (
       capability.nb.iss
@@ -27,13 +31,15 @@ export const authorize = async ({ capability }, ctx) => {
     0
   )
   if (rateLimitResult.error) {
-    return {
-      error: {
-        name: 'AccountBlocked',
-        message: `Account identified by ${capability.nb.iss} is blocked`,
-      },
-    }
+    return Server.error(
+      new AccountBlocked(
+        `Account identified by ${capability.nb.iss} is blocked`
+      )
+    )
   }
+
+  // We allow granting access within the next 15 minutes
+  const lifetimeInSeconds = 60 * 15
 
   /**
    * We issue `access/confirm` invocation which will
@@ -58,7 +64,7 @@ export const authorize = async ({ capability }, ctx) => {
       // Because with is set to our DID no other actor will be able to issue
       // this delegation without our private key.
       with: ctx.signer.did(),
-      lifetimeInSeconds: 60 * 15, // 15 minutes
+      lifetimeInSeconds,
       // We link to the authorization request so that this attestation can
       // not be used to authorize a different request.
       nb: {
@@ -66,6 +72,8 @@ export const authorize = async ({ capability }, ctx) => {
         // that requested the authorization.
         ...capability.nb,
         aud: capability.with,
+        // Link to the invocation that requested the authorization.
+        cause: invocation.cid,
       },
     })
     .delegate()
@@ -81,7 +89,20 @@ export const authorize = async ({ capability }, ctx) => {
     url,
   })
 
-  return {
-    ok: {},
+  const ok = Server.ok({
+    // let client know when the confirmation will expire
+    expiration: confirmation.expiration,
+    // link to this authorization request
+    request: invocation.cid,
+  })
+
+  // link to the authorization confirmation so it could be used to lookup
+  // the delegation by the authorization request.
+  return ok.join(confirmation.cid)
+}
+
+class AccountBlocked extends Server.Failure {
+  get name() {
+    return 'AccountBlocked'
   }
 }
