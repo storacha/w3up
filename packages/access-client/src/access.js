@@ -160,7 +160,7 @@ class PendingAccessRequest {
   }
 
   /**
-   * Low level method and most likely you want to use `.claim` instead. This method will poll 
+   * Low level method and most likely you want to use `.claim` instead. This method will poll
    * fetch delegations **just once** and will return proofs matching to this request. Please note
    * that there may not be any matches in which case result will be `{ ok: [] }`.
    *
