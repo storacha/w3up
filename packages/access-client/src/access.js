@@ -160,6 +160,12 @@ class PendingAccessRequest {
   }
 
   /**
+   * Low level method and most likely you want to use `.claim` instead. This method will poll 
+   * fetch delegations **just once** and will return proofs matching to this request. Please note
+   * that there may not be any matches in which case result will be `{ ok: [] }`.
+   *
+   * If you do want to continuously poll until request is approved or expired, you should use
+   * `.claim` method instead.
    *
    * @returns {Promise<API.Result<API.Delegation[], API.InvocationError|API.AccessClaimFailure|RequestExpired>>}
    */
@@ -181,6 +187,10 @@ class PendingAccessRequest {
   }
 
   /**
+   * Continuously polls delegations until this request is approved or expired. Returns
+   * a `GrantedAccess` object (view over the delegations) that can be used in the
+   * invocations or can be saved in the agent (store) using `.save()` method.
+   *
    * @param {object} options
    * @param {number} [options.interval]
    * @param {AbortSignal} [options.signal]
@@ -295,9 +305,8 @@ const isRequestedAccess = (delegation, { request }) =>
   delegation.facts.some((fact) => `${fact['access/request']}` === `${request}`)
 
 /**
- * Maps access object that follows new UCAN spec inspired by recap style layout
- * into legacy UCAN 0.9 format used by various w3up capabilities that predate
- * the new format.
+ * Maps access object that uses UCAN 0.10 capabilities format as opposed
+ * to legacy UCAN 0.9 format used by w3up  which predates new format.
  *
  * @param {API.Access} access
  * @returns {{ can: API.Ability }[]}
@@ -317,7 +326,7 @@ export const toCapabilities = (access) => {
 }
 
 /**
- * Set of capabilities required for by the agent to manage a space.
+ * Set of capabilities required by the agent to manage a space.
  */
 export const spaceAccess = {
   'space/*': {},

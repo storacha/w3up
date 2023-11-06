@@ -73,7 +73,7 @@ export const SESSION_LIFETIME = 60 * 60 * 24 * 365
 
 /**
  * Creates (UCAN) delegation that gives specified `agent` an access to
- * specified ability (passed as `access.can` field) on the this space.
+ * specified ability (passed as `access.can` field) on this space.
  * Optionally, you can specify `access.expiration` field to set the
  * expiration time for the authorization. By default the authorization
  * is valid for 1 year and gives access to all capabilities on the space

@@ -339,7 +339,7 @@ export class Agent {
 
     if (space.name === '') {
       throw new Error(
-        'Space has no name please pass `option.name` to specify it'
+        'Space has no name, please pass a `name` option to specify it'
       )
     }
 
