@@ -129,11 +129,11 @@ export const claim = async (
 class PendingAccessRequest {
   /**
    * @typedef {object} PendingAccessRequestModel
-   * @property {API.Agent} source.agent - Agent handling interaction.
-   * @property {API.DID} source.audience - Principal requesting an access.
-   * @property {API.ProviderDID} source.provider - Provider handling request.
-   * @property {API.UTCUnixTimestamp} source.expiration - Seconds in UTC.
-   * @property {API.Link} source.request - Link to the `access/authorize` invocation.
+   * @property {API.Agent} agent - Agent handling interaction.
+   * @property {API.DID} audience - Principal requesting an access.
+   * @property {API.ProviderDID} provider - Provider handling request.
+   * @property {API.UTCUnixTimestamp} expiration - Seconds in UTC.
+   * @property {API.Link} request - Link to the `access/authorize` invocation.
    *
    * @param {PendingAccessRequestModel} model
    */
