@@ -10,6 +10,7 @@ import { PieceLink } from '@web3-storage/data-segment'
 import {
   AggregatorService,
   StorefrontService,
+  DealTrackerService,
 } from '@web3-storage/filecoin-client/types'
 import {
   Store,
@@ -64,6 +65,10 @@ export interface ServiceContext {
    * Stores receipts for tasks.
    */
   receiptStore: ReceiptStore
+  /**
+   * Deal tracker connection to find out available deals for an aggregate.
+   */
+  dealTrackerService: ServiceConfig<DealTrackerService>
   /**
    * Service options.
    */

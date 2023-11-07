@@ -24,6 +24,7 @@ describe('storefront', () => {
       define(name, async () => {
         const storefrontSigner = await Signer.generate()
         const aggregatorSigner = await Signer.generate()
+        const dealTrackerSigner = await Signer.generate()
 
         // resources
         /** @type {Map<string, unknown[]>} */
@@ -34,6 +35,11 @@ describe('storefront', () => {
         const {
           storefront: { pieceStore, receiptStore, taskStore },
         } = getStoreImplementations()
+        const service = getMockService()
+        const dealTrackerConnection = getConnection(
+          dealTrackerSigner,
+          service
+        ).connection
 
         await test(
           {
@@ -54,6 +60,14 @@ describe('storefront', () => {
             pieceOfferQueue,
             taskStore,
             receiptStore,
+            dealTrackerService: {
+              connection: dealTrackerConnection,
+              invocationConfig: {
+                issuer: storefrontSigner,
+                with: storefrontSigner.did(),
+                audience: dealTrackerSigner,
+              },
+            },
             queuedMessages,
             validateAuthorization,
           }

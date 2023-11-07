@@ -22,5 +22,5 @@ export async function toCAR(bytes) {
   const blob = new Blob(chunks)
   const cid = await CAR.codec.link(new Uint8Array(await blob.arrayBuffer()))
 
-  return Object.assign(blob, { cid, roots: [root] })
+  return Object.assign(blob, { cid, roots: [root], bytes })
 }

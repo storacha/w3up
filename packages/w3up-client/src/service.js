@@ -26,8 +26,21 @@ export const uploadServiceConnection = connect({
   }),
 })
 
+export const filecoinServiceURL = new URL('https://up.web3.storage')
+export const filecoinServicePrincipal = DID.parse('did:web:web3.storage')
+
+export const filecoinServiceConnection = connect({
+  id: filecoinServicePrincipal,
+  codec: CAR.outbound,
+  channel: HTTP.open({
+    url: filecoinServiceURL,
+    method: 'POST',
+  }),
+})
+
 /** @type {import('./types.js').ServiceConf} */
 export const serviceConf = {
   access: accessServiceConnection,
   upload: uploadServiceConnection,
+  filecoin: filecoinServiceConnection,
 }

@@ -18,6 +18,7 @@ export function mockService(impl) {
       offer: withCallCount(impl.filecoin?.offer ?? notImplemented),
       submit: withCallCount(impl.filecoin?.submit ?? notImplemented),
       accept: withCallCount(impl.filecoin?.accept ?? notImplemented),
+      info: withCallCount(impl.filecoin?.info ?? notImplemented),
     },
     piece: {
       offer: withCallCount(impl.piece?.offer ?? notImplemented),

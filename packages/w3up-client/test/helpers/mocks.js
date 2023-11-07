@@ -14,6 +14,7 @@ const notImplemented = () => {
  * upload: Partial<import('@web3-storage/upload-client/types').Service['upload']>
  * space: Partial<import('@web3-storage/access/types').Service['space']>
  * ucan: Partial<import('@web3-storage/access/types').Service['ucan']>
+ * filecoin: Partial<import('@web3-storage/filecoin-client/types').StorefrontService['filecoin']>
  * }>} impl
  */
 export function mockService(impl) {
@@ -41,6 +42,10 @@ export function mockService(impl) {
     },
     ucan: {
       revoke: withCallCount(impl.ucan?.revoke ?? notImplemented),
+    },
+    filecoin: {
+      offer: withCallCount(impl.filecoin?.offer ?? notImplemented),
+      info: withCallCount(impl.filecoin?.info ?? notImplemented),
     },
   }
 }
@@ -72,5 +77,5 @@ export async function mockServiceConf(server) {
     codec: CAR.outbound,
     channel: server,
   })
-  return { access: connection, upload: connection }
+  return { access: connection, upload: connection, filecoin: connection }
 }

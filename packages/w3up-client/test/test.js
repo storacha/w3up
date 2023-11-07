@@ -42,6 +42,7 @@ export const setup = async () => {
       serviceConf: {
         access: context.connection,
         upload: context.connection,
+        filecoin: context.connection,
       },
     })
 

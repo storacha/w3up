@@ -14,6 +14,7 @@ import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
 import { AccessClient } from './capability/access.js'
+import { FilecoinClient } from './capability/filecoin.js'
 export * as Access from './capability/access.js'
 
 export { StoreClient, UploadClient, SpaceClient, AccessClient }
@@ -31,6 +32,7 @@ export class Client extends Base {
       store: new StoreClient(agentData, options),
       upload: new UploadClient(agentData, options),
       space: new SpaceClient(agentData, options),
+      filecoin: new FilecoinClient(agentData, options),
     }
   }
 

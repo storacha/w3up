@@ -406,6 +406,8 @@ sequenceDiagram
   - [`capability.upload.add`](#capabilityuploadadd)
   - [`capability.upload.list`](#capabilityuploadlist)
   - [`capability.upload.remove`](#capabilityuploadremove)
+  - [`capability.filecoin.offer`](#capabilityfilecoinoffer)
+  - [`capability.filecoin.info`](#capabilityfilecoininfo)
 - [Types](#types)
   - [`Capability`](#capability)
   - [`CARMetadata`](#carmetadata)
@@ -687,6 +689,28 @@ function remove(
 ```
 
 Remove a upload by root data CID.
+
+### `capability.filecoin.offer`
+
+```ts
+function offer (
+  content: CID,
+  piece: PieceLink,
+): Promise<FilecoinOfferResponse>
+```
+
+Offer a Filecoin "piece" to be added to an aggregate that will be offered for Filecoin deal(s).
+
+### `capability.filecoin.info`
+
+```ts
+function info (
+  content: CID,
+  piece: PieceLink
+): Promise<FilecoinInfoResponse>
+```
+
+Get know deals and aggregate info of a Filecoin "piece" previously offered.
 
 ## Types
 

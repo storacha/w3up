@@ -3,9 +3,15 @@ import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
+import { DealTracker } from '@web3-storage/filecoin-client'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import { QueueOperationFailed, StoreOperationFailed } from '../errors.js'
+import {
+  QueueOperationFailed,
+  StoreOperationFailed,
+  ContentNotFound,
+  InvalidContentPiece,
+} from '../errors.js'
 
 /**
  * @param {API.Input<StorefrontCaps.filecoinOffer>} input
@@ -226,6 +232,105 @@ async function findDataAggregationProof({ taskStore, receiptStore }, task) {
   }
 }
 
+/**
+ * @param {API.Input<StorefrontCaps.filecoinInfo>} input
+ * @param {import('./api.js').ServiceContext} context
+ * @returns {Promise<API.UcantoInterface.Result<API.FilecoinInfoSuccess, API.FilecoinInfoFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinInfoSuccess>>}
+ */
+export const filecoinInfo = async ({ capability }, context) => {
+  const { piece, content } = capability.nb
+
+  const queryRecords = await context.pieceStore.query({ content })
+  if (queryRecords.error) {
+    return { error: new StoreOperationFailed(queryRecords.error.message) }
+  } else if (!queryRecords.ok.length) {
+    return {
+      error: new ContentNotFound(
+        `no piece record was previously stored for content ${content.toString()}`
+      ),
+    }
+  }
+  if (Boolean(piece) && !queryRecords.ok[0].piece.equals(piece)) {
+    return {
+      error: new InvalidContentPiece(
+        `received piece ${piece?.toString()} is not the same as previously computed ${
+          queryRecords.ok[0].piece
+        } for content ${content.toString()}`
+      ),
+    }
+  }
+
+  // Check if `piece/accept` receipt exists to get to know aggregate where it is included on a deal
+  const pieceAcceptInvocation = await StorefrontCaps.filecoinAccept
+    .invoke({
+      issuer: context.id,
+      audience: context.id,
+      with: context.id.did(),
+      nb: {
+        piece: queryRecords.ok[0].piece,
+        content,
+      },
+      expiration: Infinity,
+    })
+    .delegate()
+
+  const pieceAcceptReceiptGet = await context.receiptStore.get(
+    pieceAcceptInvocation.link()
+  )
+  if (pieceAcceptReceiptGet.error) {
+    // TODO: see receipt chain to report processing
+    /** @type {API.UcantoInterface.OkBuilder<API.FilecoinInfoSuccess, API.FilecoinInfoFailure>} */
+    const processingResult = Server.ok({
+      piece: queryRecords.ok[0].piece,
+      deals: [],
+    })
+    return processingResult
+  }
+
+  const pieceAcceptOut = /** @type {API.FilecoinAcceptSuccess} */ (
+    pieceAcceptReceiptGet.ok?.out.ok
+  )
+
+  // Query current info of aggregate from deal tracker
+  const info = await DealTracker.dealInfo(
+    context.dealTrackerService.invocationConfig,
+    pieceAcceptOut.aggregate,
+    { connection: context.dealTrackerService.connection }
+  )
+
+  if (info.out.error) {
+    return {
+      error: info.out.error,
+    }
+  }
+  const deals = Object.entries(info.out.ok.deals || {})
+  if (!deals.length) {
+    // Should not happen if there is `piece/accept` receipt
+    return {
+      error: new Server.Failure(
+        `no deals were obtained for aggregate ${pieceAcceptOut.aggregate} where piece ${queryRecords.ok[0].piece} is included`
+      ),
+    }
+  }
+
+  /** @type {API.UcantoInterface.OkBuilder<API.FilecoinInfoSuccess, API.FilecoinInfoFailure>} */
+  const result = Server.ok({
+    piece: queryRecords.ok[0].piece,
+    deals: deals.map(([dealId, dealDetails]) => ({
+      aggregate: pieceAcceptOut.aggregate,
+      provider: dealDetails.provider,
+      inclusion: pieceAcceptOut.inclusion,
+      aux: {
+        dataType: 0n,
+        dataSource: {
+          dealID: BigInt(dealId),
+        },
+      },
+    })),
+  })
+  return result
+}
+
 export const ProofNotFoundName = /** @type {const} */ ('ProofNotFound')
 export class ProofNotFound extends Server.Failure {
   get reason() {
@@ -254,6 +359,10 @@ export function createService(context) {
       accept: Server.provideAdvanced({
         capability: StorefrontCaps.filecoinAccept,
         handler: (input) => filecoinAccept(input, context),
+      }),
+      info: Server.provideAdvanced({
+        capability: StorefrontCaps.filecoinInfo,
+        handler: (input) => filecoinInfo(input, context),
       }),
     },
   }
