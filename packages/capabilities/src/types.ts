@@ -113,7 +113,7 @@ export type UsageReportSuccess = Record<ProviderDID, UsageData>
 export type UsageReportFailure = Ucanto.Failure
 
 export interface UsageData {
-  /** Space the report concerns. */
+  /** Provider the report concerns, e.g. `did:web:web3.storage` */
   provider: ProviderDID
   /** Space the report concerns. */
   space: SpaceDID
