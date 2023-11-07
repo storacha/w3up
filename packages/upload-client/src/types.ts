@@ -40,6 +40,9 @@ import {
   UploadGet,
   UploadGetSuccess,
   UploadGetFailure,
+  UsageReport,
+  UsageReportSuccess,
+  UsageReportFailure,
 } from '@web3-storage/capabilities/types'
 
 export type {
@@ -61,6 +64,9 @@ export type {
   UploadListItem,
   UploadRemove,
   UploadRemoveSuccess,
+  UsageReport,
+  UsageReportSuccess,
+  UsageReportFailure,
   ListResponse,
   CARLink,
   PieceLink,
@@ -84,6 +90,9 @@ export interface Service {
     get: ServiceMethod<UploadGet, UploadGetSuccess, UploadGetFailure>
     remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
     list: ServiceMethod<UploadList, UploadListSuccess, Failure>
+  },
+  usage: {
+    report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
   }
 }
 

@@ -186,6 +186,7 @@ export async function authorizeAndWait(access, email, opts = {}) {
       { can: 'upload/*' },
       { can: 'ucan/*' },
       { can: 'plan/*' },
+      { can: 'usage/*' },
       { can: 'w3up/*' },
     ]
   )

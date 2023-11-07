@@ -25,6 +25,7 @@ import { ServiceContext as FilecoinServiceContext } from '@web3-storage/filecoin
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
+import { UsageStorage } from './types/usage.js'
 
 export type ValidationEmailSend = {
   to: string
@@ -127,6 +128,9 @@ import {
   PlanGetSuccess,
   PlanGetFailure,
   AccessAuthorizeFailure,
+  UsageReportSuccess,
+  UsageReportFailure,
+  UsageReport,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -249,6 +253,9 @@ export interface Service extends StorefrontService {
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
   }
+  usage: {
+    report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
+  }
 }
 
 export type StoreServiceContext = SpaceServiceContext & {
@@ -324,6 +331,11 @@ export interface PlanServiceContext {
   plansStorage: PlansStorage
 }
 
+export interface UsageServiceContext {
+  provisionsStorage: Provisions
+  usageStorage: UsageStorage
+}
+
 export interface ServiceContext
   extends AccessServiceContext,
     ConsoleServiceContext,
@@ -337,7 +349,8 @@ export interface ServiceContext
     RevocationServiceContext,
     PlanServiceContext,
     UploadServiceContext,
-    FilecoinServiceContext {}
+    FilecoinServiceContext,
+    UsageServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {
   id: Signer

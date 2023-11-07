@@ -18,6 +18,7 @@ import * as Dealer from './filecoin/dealer.js'
 import * as DealTracker from './filecoin/deal-tracker.js'
 import * as UCAN from './ucan.js'
 import * as Plan from './plan.js'
+import * as Usage from './usage.js'
 
 export {
   Access,
@@ -40,6 +41,7 @@ export {
   Admin,
   UCAN,
   Plan,
+  Usage,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
@@ -80,4 +82,6 @@ export const abilitiesAsStrings = [
   Admin.upload.inspect.can,
   Admin.store.inspect.can,
   Plan.get.can,
+  Usage.usage.can,
+  Usage.report.can,
 ]

@@ -35,6 +35,7 @@ import * as DealerCaps from './filecoin/dealer.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 import * as PlanCaps from './plan.js'
+import * as UsageCaps from './usage.js'
 
 export type ISO8601Date = string
 
@@ -103,6 +104,43 @@ export interface DelegationNotFound extends Ucanto.Failure {
 }
 
 export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
+
+// Usage
+
+export type Usage = InferInvokedCapability<typeof UsageCaps.usage>
+export type UsageReport = InferInvokedCapability<typeof UsageCaps.report>
+export type UsageReportSuccess = Record<ProviderDID, UsageData> 
+export type UsageReportFailure = Ucanto.Failure
+
+export interface UsageData {
+  /** Space the report concerns. */
+  provider: ProviderDID
+  /** Space the report concerns. */
+  space: SpaceDID
+  /** Period the report applies to. */
+  period: {
+    /** ISO datetime the report begins from (inclusive). */
+    from: ISO8601Date
+    /** ISO datetime the report ends at (inclusive). */
+    to: ISO8601Date
+  }
+  /** Observed space size for the period. */
+  size: {
+    /** Size at the beginning of the report period. */
+    initial: number
+    /** Size at the end of the report period. */
+    final: number
+  }
+  /** Events that caused the size to change during the period. */
+  events: Array<{
+    /** CID of the invoked task that caused the size to change. */
+    cause: Link
+    /** Number of bytes that were added or removed. */
+    delta: number
+    /** ISO datetime that the receipt was issued for the change. */
+    receiptAt: ISO8601Date
+  }>
+}
 
 // Provider
 export type ProviderAdd = InferInvokedCapability<typeof provider.add>
@@ -580,5 +618,7 @@ export type AbilitiesArray = [
   Admin['can'],
   AdminUploadInspect['can'],
   AdminStoreInspect['can'],
-  PlanGet['can']
+  PlanGet['can'],
+  Usage['can'],
+  UsageReport['can'],
 ]

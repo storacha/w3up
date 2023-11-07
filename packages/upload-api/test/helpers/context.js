@@ -18,6 +18,7 @@ import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
 import { confirmConfirmationUrl } from './utils.js'
 import { PlansStorage } from '../storage/plans-storage.js'
+import { UsageStorage } from '../storage/usage-storage.js'
 
 /**
  * @param {object} options
@@ -33,6 +34,7 @@ export const createContext = async (options = {}) => {
   const dudewhereBucket = new DudewhereBucket()
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
+  const usageStorage = new UsageStorage(storeTable)
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
   const id = signer.withDID('did:web:test.web3.storage')
@@ -58,6 +60,7 @@ export const createContext = async (options = {}) => {
     delegationsStorage: new DelegationsStorage(),
     rateLimitsStorage: new RateLimitsStorage(),
     plansStorage,
+    usageStorage,
     revocationsStorage,
     errorReporter: {
       catch(error) {
