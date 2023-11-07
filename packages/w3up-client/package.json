@@ -32,6 +32,14 @@
       "types": "./dist/src/client.d.ts",
       "import": "./src/client.js"
     },
+    "./agent": {
+      "types": "./dist/src/agent.d.ts",
+      "import": "./src/agent.js"
+    },
+    "./account": {
+      "types": "./dist/src/account.d.ts",
+      "import": "./src/account.js"
+    },
     "./capability/access": {
       "types": "./dist/src/capability/access.d.ts",
       "import": "./src/capability/access.js"
@@ -48,7 +56,54 @@
       "types": "./dist/src/capability/upload.d.ts",
       "import": "./src/capability/upload.js"
     },
-    "./types": "./src/types.js"
+    "./capability/upload/sharding": {
+      "types": "./dist/src/capability/upload/sharding.d.ts",
+      "import": "./src/capability/upload/sharding.js"
+    },
+    "./capability/upload/car": {
+      "types": "./dist/src/capability/upload/car.d.ts",
+      "import": "./src/capability/upload/car.js"
+    },
+    "./capability/upload/unixfs": {
+      "types": "./dist/src/capability/upload/unixfs.d.ts",
+      "import": "./src/capability/upload/unixfs.js"
+    },
+    "./capability/provider": {
+      "types": "./dist/src/capability/provider.d.ts",
+      "import": "./src/capability/provider.js"
+    },
+    "./types": {
+      "types": "./dist/src/types.d.ts",
+      "import": "./src/types.js"
+    },
+    "./store/conf": {
+      "types": "./dist/src/store/conf.d.ts",
+      "import": "./src/store/conf.js"
+    },
+    "./store/indexed-db": {
+      "types": "./dist/src/store/indexed-db.d.ts",
+      "import": "./src/store/indexed-db.js"
+    },
+    "./store/memory": {
+      "types": "./dist/src/store/memory.d.ts",
+      "import": "./src/store/memory.js"
+    },
+    "./driver/conf": {
+      "types": "./dist/src/driver/conf.d.ts",
+      "import": "./src/driver/conf.js"
+    },
+    "./driver/indexed-db": {
+      "types": "./dist/src/driver/indexed-db.d.ts",
+      "import": "./src/driver/indexed-db.js"
+    },
+    "./driver/memory": {
+      "types": "./dist/src/driver/memory.d.ts",
+      "import": "./src/driver/memory.js"
+    },
+    "./agent/encoding": {
+      "types": "./dist/src/agent/encoding.d.ts",
+      "import": "./src/agent/encoding.js"
+    }
   },
   "publishConfig": {
     "access": "public"
@@ -69,21 +124,35 @@
     "test:browser": "playwright-test --runner mocha 'test/**/!(*.node).test.js'",
     "mock": "run-p mock:*",
     "mock:bucket-200": "PORT=9200 STATUS=200 node test/helpers/bucket-server.js",
+    "mock:bucket-401": "PORT=9400 STATUS=400 node test/helpers/bucket-server.js",
+    "mock:bucket-500": "PORT=9500 STATUS=500 node test/helpers/bucket-server.js",
     "rc": "npm version prerelease --preid rc",
     "docs": "npm run build && typedoc --out docs-generated",
     "docs:markdown": "npm run build && docusaurus generate-typedoc"
   },
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.0",
+    "@ipld/car": "^5.2.2",
+    "@ipld/dag-cbor": "^9.0.6",
+    "@ipld/unixfs": "^2.1.1",
     "@ucanto/client": "^9.0.0",
     "@ucanto/core": "^9.0.0",
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
     "@ucanto/transport": "^9.0.0",
+    "@scure/bip39": "^1.2.1",
+    "p-defer": "^4.0.0",
+    "conf": "11.0.2",
+    "uint8arrays": "^4.0.6",
     "@web3-storage/did-mailto": "workspace:^",
-    "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/upload-client": "workspace:^"
+    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^3.1.0",
+    "ipfs-utils": "^9.0.14",
+    "multiformats": "^12.1.2",
+    "p-retry": "^5.1.2",
+    "parallel-transform-web": "^1.0.0",
+    "bigint-mod-arith": "^3.1.2",
+    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto"
   },
   "devDependencies": {
     "@web3-storage/upload-api": "workspace:^",
@@ -105,7 +174,11 @@
     "typedoc": "^0.23.24",
     "typedoc-plugin-markdown": "^3.14.0",
     "typedoc-plugin-missing-exports": "^1.0.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "@types/sinon": "^10.0.19",
+    "sinon": "^15.0.3",
+    "ipfs-unixfs-exporter": "^10.0.0",
+    "blockstore-core": "^3.0.0"
   },
   "eslintConfig": {
     "extends": [
@@ -123,7 +196,8 @@
     "ignorePatterns": [
       "dist",
       "coverage",
-      "src/types.js"
+      "src/types.js",
+      "src/agent/types.js"
     ]
   },
   "directories": {

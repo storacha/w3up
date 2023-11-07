@@ -5,7 +5,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as UCANCapabilities from '@web3-storage/capabilities/ucan'
-import { AgentData } from '@web3-storage/access/agent'
+import { AgentData } from '../src/agent.js'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { mockService, mockServiceConf } from './helpers/mocks.js'
@@ -20,7 +20,7 @@ describe('Client', () => {
       const file = new Blob([bytes])
       const expectedCar = await toCAR(bytes)
 
-      /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
+      /** @type {import('../src/index.js').CARLink|undefined} */
       let carCID
 
       const service = mockService({
@@ -37,7 +37,7 @@ describe('Client', () => {
                 status: 'upload',
                 headers: { 'x-test': 'true' },
                 url: 'http://localhost:9200',
-                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                link: /** @type {import('@web3-storage/w3up-client').CARLink} */ (
                   invocation.capabilities[0].nb?.link
                 ),
                 with: space.did(),
@@ -116,7 +116,7 @@ describe('Client', () => {
         new File([await randomBytes(32)], '2.txt'),
       ]
 
-      /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
+      /** @type {import('@web3-storage/w3up-client').CARLink|undefined} */
       let carCID
 
       const service = mockService({
@@ -132,7 +132,7 @@ describe('Client', () => {
                 status: 'upload',
                 headers: { 'x-test': 'true' },
                 url: 'http://localhost:9200',
-                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                link: /** @type {import('@web3-storage/w3up-client').CARLink} */ (
                   invocation.capabilities[0].nb?.link
                 ),
                 with: space.did(),
@@ -210,7 +210,7 @@ describe('Client', () => {
                 status: 'upload',
                 headers: { 'x-test': 'true' },
                 url: 'http://localhost:9200',
-                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
+                link: /** @type {import('@web3-storage/w3up-client').CARLink} */ (
                   invocation.capabilities[0].nb?.link
                 ),
                 with: space.did(),

@@ -1,6 +1,6 @@
 import * as Test from './test.js'
+import * as Space from '../src/capability/space.js'
 import * as Account from '../src/account.js'
-import * as Space from '../src/space.js'
 import * as Result from '../src/result.js'
 
 /**
@@ -72,6 +72,8 @@ export const testAccount = {
     { client, mail, grantAccess }
   ) => {
     const space = await client.createSpace('test')
+    assert.deepEqual(space.name, 'test')
+    assert.deepEqual(space.withName('another').name, 'another')
     const mnemonic = space.toMnemonic()
     const { signer } = await Space.fromMnemonic(mnemonic, { name: 'import' })
     assert.deepEqual(
@@ -95,6 +97,9 @@ export const testAccount = {
       access: { 'space/info': {} },
       expiration: Infinity,
     })
+
+    const importedSpace = Space.fromDelegation(proof)
+    assert.deepEqual(importedSpace.name, 'test')
 
     await client.addSpace(proof)
 

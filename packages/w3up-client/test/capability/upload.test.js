@@ -3,10 +3,9 @@ import { create as createServer, provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import { Upload as UploadCapabilities } from '@web3-storage/capabilities'
-import { AgentData } from '@web3-storage/access/agent'
 import { randomCAR } from '../helpers/random.js'
 import { mockService, mockServiceConf } from '../helpers/mocks.js'
-import { Client } from '../../src/client.js'
+import { Client, AgentData } from '../../src/client.js'
 import { validateAuthorization } from '../helpers/utils.js'
 
 describe('StoreClient', () => {

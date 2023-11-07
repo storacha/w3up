@@ -34,7 +34,7 @@ export const info = async ({ capability }, ctx) => {
     }
   }
 
-  /** @type {import('@web3-storage/access/types').SpaceUnknown} */
+  /** @type {import('@web3-storage/w3up-client').SpaceUnknown} */
   const spaceUnknownFailure = {
     name: 'SpaceUnknown',
     message: `Space not found.`,

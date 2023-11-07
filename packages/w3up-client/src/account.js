@@ -1,7 +1,7 @@
 import * as API from './types.js'
 import * as Access from './capability/access.js'
-import { Delegation, importAuthorization } from '@web3-storage/access/agent'
-import { add as provision, AccountDID } from '@web3-storage/access/provider'
+import { Delegation, importAuthorization } from './agent.js'
+import { add as provision, AccountDID } from './capability/provider.js'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
 
 export { fromEmail }
@@ -75,13 +75,10 @@ export const list = ({ agent }, { account } = {}) => {
  */
 export const login = async ({ agent }, email) => {
   const account = fromEmail(email)
-  const result = await Access.request(
-    { agent },
-    {
-      account,
-      access: Access.accountAccess,
-    }
-  )
+  const result = await Access.request(agent, {
+    account,
+    access: Access.accountAccess,
+  })
 
   const { ok: access, error } = result
   /* c8 ignore next 2 - don't know how to test this */

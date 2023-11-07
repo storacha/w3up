@@ -1,7 +1,7 @@
 import {
   delegationsToString,
   stringToDelegation,
-} from '@web3-storage/access/encoding'
+} from '@web3-storage/w3up-client/agent/encoding'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from './utils/delegations-response.js'

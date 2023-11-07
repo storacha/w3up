@@ -3,16 +3,15 @@ import { Absentee } from '@ucanto/principal'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import * as DidMailto from '@web3-storage/did-mailto'
 import { Access, Space } from '@web3-storage/capabilities'
-import { AgentData } from '@web3-storage/access'
+import { AgentData } from '@web3-storage/w3up-client/agent'
 import { alice } from './helpers/utils.js'
-import { stringToDelegations } from '@web3-storage/access/encoding'
+import { stringToDelegations } from '@web3-storage/w3up-client/agent/encoding'
 import {
   confirmConfirmationUrl,
   extractConfirmInvocation,
 } from './helpers/utils.js'
 import {
   Agent,
-  Access as AgentAccess,
   claimAccess,
   addProvider,
   authorizeAndWait,
@@ -21,8 +20,9 @@ import {
   delegationsIncludeSessionProof,
   addSpacesFromDelegations,
   requestAccess,
-} from '@web3-storage/access/agent'
-import * as Provider from '@web3-storage/access/provider'
+} from '@web3-storage/w3up-client/agent'
+import * as AgentAccess from '@web3-storage/w3up-client/capability/access'
+import * as Provider from '@web3-storage/w3up-client/capability/provider'
 
 /**
  * @type {API.Tests}
@@ -313,7 +313,7 @@ export const test = {
 
     assert.ok(spaceInfoResult.out.ok)
     const result =
-      /** @type {import('@web3-storage/access/types').SpaceInfoResult} */ (
+      /** @type {import('@web3-storage/w3up-client').SpaceInfoResult} */ (
         spaceInfoResult.out.ok
       )
     assert.deepEqual(result.did, spaceCreation.did())

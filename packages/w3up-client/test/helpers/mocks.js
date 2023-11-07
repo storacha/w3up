@@ -8,23 +8,25 @@ const notImplemented = () => {
 
 /**
  * @param {Partial<{
- * access: Partial<import('@web3-storage/access/types').Service['access']>
- * provider: Partial<import('@web3-storage/access/types').Service['provider']>
- * store: Partial<import('@web3-storage/upload-client/types').Service['store']>
- * upload: Partial<import('@web3-storage/upload-client/types').Service['upload']>
- * space: Partial<import('@web3-storage/access/types').Service['space']>
- * ucan: Partial<import('@web3-storage/access/types').Service['ucan']>
+ * access: Partial<import('@web3-storage/w3up-client').Service['access']>
+ * provider: Partial<import('@web3-storage/w3up-client').Service['provider']>
+ * store: Partial<import('@web3-storage/w3up-client').Service['store']>
+ * upload: Partial<import('@web3-storage/w3up-client').Service['upload']>
+ * space: Partial<import('@web3-storage/w3up-client').Service['space']>
+ * ucan: Partial<import('@web3-storage/w3up-client').Service['ucan']>
  * }>} impl
  */
 export function mockService(impl) {
   return {
     store: {
       add: withCallCount(impl.store?.add ?? notImplemented),
+      get: withCallCount(impl.store?.get ?? notImplemented),
       list: withCallCount(impl.store?.list ?? notImplemented),
       remove: withCallCount(impl.store?.remove ?? notImplemented),
     },
     upload: {
       add: withCallCount(impl.upload?.add ?? notImplemented),
+      get: withCallCount(impl.upload?.get ?? notImplemented),
       list: withCallCount(impl.upload?.list ?? notImplemented),
       remove: withCallCount(impl.upload?.remove ?? notImplemented),
     },

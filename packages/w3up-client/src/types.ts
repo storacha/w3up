@@ -1,9 +1,9 @@
-import { type Driver } from '@web3-storage/access/drivers/types'
+import { type Driver } from './driver/types.js'
 import {
   type Service as AccessService,
   type AgentDataExport,
-} from '@web3-storage/access/types'
-import { type Service as UploadService } from '@web3-storage/upload-client/types'
+} from './agent/types.js'
+import { type Service as UploadService } from './capability/upload/types.js'
 import type {
   ConnectionView,
   Signer,
@@ -12,16 +12,36 @@ import type {
   Resource,
   Unit,
 } from '@ucanto/interface'
+export type { UTCUnixTimestamp } from '@ipld/dag-ucan'
 import { type Client } from './client.js'
 export * from '@ucanto/interface'
 export * from '@web3-storage/did-mailto'
-export type { Agent, CapabilityQuery } from '@web3-storage/access/agent'
+export type {
+  Agent,
+  CapabilityQuery,
+  BytesDelegation,
+  SpaceInfoResult,
+  EncodedDelegation,
+} from './agent/types.js'
+
+export * from './capability/upload/types.js'
+export * from './agent/types.js'
+export type { DelegationOptions } from './agent/types.js'
+
 export type {
   Access,
   AccountDID,
   ProviderDID,
   SpaceDID,
-} from '@web3-storage/access/types'
+  UCANRevoke,
+  UCANRevokeSuccess,
+  UCANRevokeFailure,
+} from './agent/types.js'
+
+export type { Service as UploadService } from './capability/upload/types.js'
+export type { Service as AccessService } from './agent/types.js'
+
+export type Service = AccessService & UploadService
 
 export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 
@@ -81,7 +101,7 @@ export type {
   AgentDataExport,
   AgentMeta,
   DelegationMeta,
-} from '@web3-storage/access/types'
+} from './agent/types.js'
 
 export type {
   StoreAddSuccess,
@@ -108,4 +128,4 @@ export type {
   UploadDirectoryOptions,
   FileLike,
   BlobLike,
-} from '@web3-storage/upload-client/types'
+} from './capability/upload/types.js'

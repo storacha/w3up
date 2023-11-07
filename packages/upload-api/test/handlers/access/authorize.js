@@ -7,7 +7,7 @@ import * as DidMailto from '@web3-storage/did-mailto'
 import {
   stringToDelegation,
   bytesToDelegations,
-} from '@web3-storage/access/encoding'
+} from '@web3-storage/w3up-client/agent/encoding'
 import { authorizeFromUrl } from '../../../src/validate.js'
 
 /**
@@ -36,7 +36,7 @@ export const test = {
 
     const url = new URL(email.url)
     const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessConfirm]>} */ (
+      /** @type {import('@web3-storage/w3up-client').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessConfirm]>} */ (
         url.searchParams.get('ucan')
       )
     const delegation = stringToDelegation(encoded)

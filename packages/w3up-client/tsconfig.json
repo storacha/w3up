@@ -16,11 +16,5 @@
     },
     "customCss": "./static/docs.css"
   },
-  "references": [
-    { "path": "../access-client" },
-    { "path": "../capabilities" },
-    { "path": "../upload-client" },
-    { "path": "../did-mailto" },
-    { "path": "../upload-api" }
-  ]
+  "references": [{ "path": "../capabilities" }, { "path": "../did-mailto" }]
 }
