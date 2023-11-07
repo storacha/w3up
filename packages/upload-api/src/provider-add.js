@@ -17,7 +17,7 @@ export const provide = (ctx) =>
  */
 export const add = async (
   { capability, invocation },
-  { provisionsStorage: provisions, rateLimitsStorage: rateLimits }
+  { provisionsStorage: provisions, rateLimitsStorage: rateLimits, plansStorage, planRequiredForProvisioning }
 ) => {
   const {
     nb: { consumer, provider },
@@ -40,15 +40,27 @@ export const add = async (
     [mailtoDidToDomain(accountMailtoDID), mailtoDidToEmail(accountMailtoDID)],
     0
   )
-
   if (rateLimitResult.error) {
     return {
       error: {
         name: 'AccountBlocked',
-        message: `Account identified by ${accountDID} is blocked`,
+        message: `Account identified by ${accountMailtoDID} is blocked`,
       },
     }
   }
+
+  if (planRequiredForProvisioning) {
+    const planGetResult = await plansStorage.get(accountMailtoDID)
+    if (!planGetResult.ok?.product) {
+      return {
+        error: {
+          name: 'AccountPlanMissing',
+          message: `Account identified by ${accountMailtoDID} has not selected a payment plan`,
+        },
+      }
+    }
+  }
+
   if (!provisions.services.includes(provider)) {
     return {
       error: {

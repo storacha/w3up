@@ -23,11 +23,13 @@ import { UsageStorage } from '../storage/usage-storage.js'
 /**
  * @param {object} options
  * @param {string[]} [options.providers]
+ * @param {boolean} [options.planRequiredForProvisioning]
  * @param {import('http')} [options.http]
  * @param {{fail(error:unknown): unknown}} [options.assert]
  * @returns {Promise<Types.UcantoServerTestContext>}
  */
-export const createContext = async (options = {}) => {
+export const createContext = async (options = { planRequiredForProvisioning: false }) => {
+  const planRequiredForProvisioning = options.planRequiredForProvisioning
   const storeTable = new StoreTable()
   const uploadTable = new UploadTable()
   const carStoreBucket = await CarStoreBucket.activate(options)
@@ -81,6 +83,7 @@ export const createContext = async (options = {}) => {
     pieceStore,
     receiptStore,
     taskStore,
+    planRequiredForProvisioning,
     ...createRevocationChecker({ revocationsStorage }),
   }
 

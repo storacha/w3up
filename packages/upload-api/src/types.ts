@@ -312,6 +312,8 @@ export interface SpaceServiceContext {
 export interface ProviderServiceContext {
   provisionsStorage: Provisions
   rateLimitsStorage: RateLimits
+  plansStorage: PlansStorage
+  planRequiredForProvisioning?: boolean
 }
 
 export interface SubscriptionServiceContext {
