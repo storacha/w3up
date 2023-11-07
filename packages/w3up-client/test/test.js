@@ -1,5 +1,6 @@
 import { StoreMemory } from '../src/store/memory.js'
 import * as Client from '../src/index.js'
+// @ts-ignore - break the circular dependency between @web3-storage/upload-api and @web3-storage/w3up-client
 import * as Context from '@web3-storage/upload-api/test/context'
 import * as assert from 'assert'
 

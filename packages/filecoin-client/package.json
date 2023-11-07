@@ -24,26 +24,25 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./dist/src/index.js",
-    "./aggregator": "./dist/src/aggregator.js",
-    "./dealer": "./dist/src/dealer.js",
-    "./storefront": "./dist/src/storefront.js",
-    "./types": "./dist/src/types.js"
-  },
-  "typesVersions": {
-    "*": {
-      "types": [
-        "dist/src/types.d.ts"
-      ],
-      "aggregator": [
-        "dist/src/aggregator.d.ts"
-      ],
-      "dealer": [
-        "dist/src/dealer.d.ts"
-      ],
-      "storefront": [
-        "dist/src/storefront.d.ts"
-      ]
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./aggregator": {
+      "types": "./dist/src/aggregator.d.ts",
+      "import": "./src/aggregator.js"
+    },
+    "./dealer": {
+      "types": "./dist/src/dealer.d.ts",
+      "import": "./src/dealer.js"
+    },
+    "./storefront": {
+      "types": "./dist/src/storefront.d.ts",
+      "import": "./src/storefront.js"
+    },
+    "./types": {
+      "types": "./dist/src/types.d.ts",
+      "import": "./src/types.js"
     }
   },
   "files": [
