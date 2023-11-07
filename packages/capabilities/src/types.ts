@@ -109,7 +109,7 @@ export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 
 export type Usage = InferInvokedCapability<typeof UsageCaps.usage>
 export type UsageReport = InferInvokedCapability<typeof UsageCaps.report>
-export type UsageReportSuccess = Record<ProviderDID, UsageData> 
+export type UsageReportSuccess = Record<ProviderDID, UsageData>
 export type UsageReportFailure = Ucanto.Failure
 
 export interface UsageData {
@@ -620,5 +620,5 @@ export type AbilitiesArray = [
   AdminStoreInspect['can'],
   PlanGet['can'],
   Usage['can'],
-  UsageReport['can'],
+  UsageReport['can']
 ]

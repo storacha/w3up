@@ -32,7 +32,7 @@ export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
     codec,
     service: createService({
       ...context,
-      id
+      id,
     }),
     catch: (error) => context.errorReporter.catch(error),
   })

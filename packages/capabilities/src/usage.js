@@ -32,7 +32,9 @@ export const report = capability({
   derives: (child, parent) => {
     return (
       and(equalWith(child, parent)) ||
-      and(equal(child.nb.period?.from, parent.nb.period?.from, 'period.from')) ||
+      and(
+        equal(child.nb.period?.from, parent.nb.period?.from, 'period.from')
+      ) ||
       and(equal(child.nb.period?.to, parent.nb.period?.to, 'period.to')) ||
       ok({})
     )

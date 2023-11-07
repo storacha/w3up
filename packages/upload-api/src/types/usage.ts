@@ -5,6 +5,6 @@ export interface UsageStorage {
   report: (
     provider: ProviderDID,
     space: SpaceDID,
-    period: { from: Date, to: Date }
+    period: { from: Date; to: Date }
   ) => Promise<Result<UsageData, Failure>>
 }

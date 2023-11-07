@@ -27,7 +27,7 @@ export function mockService(impl) {
     },
     usage: {
       report: withCallCount(impl.usage?.report ?? notImplemented),
-    }
+    },
   }
 }
 

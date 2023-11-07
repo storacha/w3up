@@ -139,7 +139,13 @@ describe('usage capabilities', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes(`${period.from + 1} violates imposed period.from constraint ${period.from}`))
+      assert(
+        result.error.message.includes(
+          `${period.from + 1} violates imposed period.from constraint ${
+            period.from
+          }`
+        )
+      )
     }
 
     {
@@ -159,7 +165,11 @@ describe('usage capabilities', function () {
       })
 
       assert.ok(result.error)
-      assert(result.error.message.includes(`${period.to + 1} violates imposed period.to constraint ${period.to}`))
+      assert(
+        result.error.message.includes(
+          `${period.to + 1} violates imposed period.to constraint ${period.to}`
+        )
+      )
     }
   })
 

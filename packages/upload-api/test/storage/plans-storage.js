@@ -24,8 +24,8 @@ export class PlansStorage {
       return {
         error: {
           name: /** @type {const} */ ('PlanNotFound'),
-          message: `could not find a plan for ${account}`
-        }
+          message: `could not find a plan for ${account}`,
+        },
       }
     }
   }

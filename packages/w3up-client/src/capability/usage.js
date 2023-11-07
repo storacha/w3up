@@ -14,7 +14,7 @@ export class UsageClient extends Base {
    */
   async report(period, options) {
     const conf = await this._invocationConfig([UsageCapabilities.report.can])
-    
+
     const result = await UsageCapabilities.report
       .invoke({
         issuer: conf.issuer,
@@ -25,8 +25,8 @@ export class UsageClient extends Base {
         nb: {
           period: {
             from: Math.floor(period.from.getTime() / 1000),
-            to: Math.floor(period.to.getTime() / 1000)
-          }
+            to: Math.floor(period.to.getTime() / 1000),
+          },
         },
       })
       .execute(this._serviceConf.upload)
