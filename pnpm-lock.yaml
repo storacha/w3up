@@ -209,6 +209,9 @@ importers:
       mocha:
         specifier: ^10.2.0
         version: 10.2.0
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
 
   packages/eslint-config-w3up:
     dependencies:
@@ -282,6 +285,9 @@ importers:
       p-wait-for:
         specifier: ^5.0.2
         version: 5.0.2
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
 
   packages/filecoin-client:
     dependencies:
@@ -422,6 +428,9 @@ importers:
       one-webcrypto:
         specifier: git://github.com/web3-storage/one-webcrypto
         version: github.com/web3-storage/one-webcrypto/5148cd14d5489a8ac4cd38223870e02db15a2382
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
 
   packages/upload-client:
     dependencies:

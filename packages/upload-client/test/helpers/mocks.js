@@ -8,6 +8,7 @@ const notImplemented = () => {
  * @param {Partial<{
  *   store: Partial<import('../../src/types.js').Service['store']>
  *   upload: Partial<import('../../src/types.js').Service['upload']>
+ *   usage: Partial<import('../../src/types.js').Service['usage']>
  * }>} impl
  */
 export function mockService(impl) {
@@ -24,6 +25,9 @@ export function mockService(impl) {
       list: withCallCount(impl.upload?.list ?? notImplemented),
       remove: withCallCount(impl.upload?.remove ?? notImplemented),
     },
+    usage: {
+      report: withCallCount(impl.usage?.report ?? notImplemented),
+    }
   }
 }
 
