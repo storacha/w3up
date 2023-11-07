@@ -3,7 +3,7 @@ import { and, equal, equalWith, SpaceDID } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
- * derived any `usage/` prefixed capability for the (memory) space identified
+ * be derived any `usage/` prefixed capability for the (memory) space identified
  * by DID in the `with` field.
  */
 export const usage = capability({
