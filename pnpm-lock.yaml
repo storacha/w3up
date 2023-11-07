@@ -418,9 +418,18 @@ importers:
       '@docusaurus/core':
         specifier: ^2.2.0
         version: 2.4.3(typescript@5.2.2)
+      '@types/assert':
+        specifier: ^1.5.6
+        version: 1.5.9
       '@types/mocha':
         specifier: ^10.0.1
         version: 10.0.3
+      '@types/node':
+        specifier: ^20.8.4
+        version: 20.8.10
+      '@types/sinon':
+        specifier: ^10.0.19
+        version: 10.0.20
       '@ucanto/server':
         specifier: ^9.0.1
         version: 9.0.1
@@ -3088,6 +3097,16 @@ packages:
       '@types/http-errors': 2.0.4
       '@types/mime': 3.0.3
       '@types/node': 20.8.10
+    dev: true
+
+  /@types/sinon@10.0.20:
+    resolution: {integrity: sha512-2APKKruFNCAZgx3daAyACGzWuJ028VVCUDk6o2rw/Z4PXT0ogwdV4KUegW0MwVs0Zu59auPXbbuBJHF12Sx1Eg==}
+    dependencies:
+      '@types/sinonjs__fake-timers': 8.1.4
+    dev: true
+
+  /@types/sinonjs__fake-timers@8.1.4:
+    resolution: {integrity: sha512-GDV68H0mBSN449sa5HEj51E0wfpVQb8xNSMzxf/PrypMFcLTMwJMOM/cgXiv71Mq5drkOQmUGvL1okOZcu6RrQ==}
     dev: true
 
   /@types/sockjs@0.3.35:
