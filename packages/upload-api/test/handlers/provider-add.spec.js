@@ -260,7 +260,7 @@ describe(`provider/add`, () => {
 
   it('provider/add fails if plans are required and a plan has not been configured', async () => {
     const { space, agent, account, ...context } = await setup({
-      planRequiredForProvisioning: true
+      requirePaymentPlan: true
     })
     const { service } = context
 

@@ -17,7 +17,7 @@ export const provide = (ctx) =>
  */
 export const add = async (
   { capability, invocation },
-  { provisionsStorage: provisions, rateLimitsStorage: rateLimits, plansStorage, planRequiredForProvisioning }
+  { provisionsStorage: provisions, rateLimitsStorage: rateLimits, plansStorage, requirePaymentPlan }
 ) => {
   const {
     nb: { consumer, provider },
@@ -49,7 +49,7 @@ export const add = async (
     }
   }
 
-  if (planRequiredForProvisioning) {
+  if (requirePaymentPlan) {
     const planGetResult = await plansStorage.get(accountMailtoDID)
     if (!planGetResult.ok?.product) {
       return {

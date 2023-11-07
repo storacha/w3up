@@ -313,7 +313,7 @@ export interface ProviderServiceContext {
   provisionsStorage: Provisions
   rateLimitsStorage: RateLimits
   plansStorage: PlansStorage
-  planRequiredForProvisioning?: boolean
+  requirePaymentPlan?: boolean
 }
 
 export interface SubscriptionServiceContext {
