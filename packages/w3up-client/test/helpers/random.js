@@ -1,4 +1,5 @@
 import { toCAR } from './car.js'
+import { toBlock } from './block.js'
 
 /** @param {number} size */
 export async function randomBytes(size) {
@@ -28,4 +29,10 @@ export async function randomBytes(size) {
 export async function randomCAR(size) {
   const bytes = await randomBytes(size)
   return toCAR(bytes)
+}
+
+/** @param {number} size */
+export async function randomBlock(size) {
+  const bytes = await randomBytes(size)
+  return await toBlock(bytes)
 }

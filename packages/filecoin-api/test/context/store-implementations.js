@@ -1,6 +1,7 @@
 import { UpdatableStore } from './store.js'
 
 /**
+ * @param StoreImplementation
  * @typedef {import('@ucanto/interface').Link} Link
  * @typedef {import('../../src/storefront/api.js').PieceRecord} PieceRecord
  * @typedef {import('../../src/storefront/api.js').PieceRecordKey} PieceRecordKey

@@ -1,6 +1,6 @@
-import { StoreMemory } from '@web3-storage/access/stores/store-memory'
+import { StoreMemory } from '../src/store/memory.js'
+import * as Client from '../src/index.js'
 import * as Context from '@web3-storage/upload-api/test/context'
-import * as Client from '@web3-storage/w3up-client'
 import * as assert from 'assert'
 
 /**

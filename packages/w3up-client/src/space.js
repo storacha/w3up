@@ -1,4 +1,4 @@
-export * from '@web3-storage/access/space'
+export * from './capability/space.js'
 
 export class Space {
   /** @type {import('./types.js').DID} */

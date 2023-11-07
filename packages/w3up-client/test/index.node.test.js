@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { Signer } from '@ucanto/principal/ed25519'
 import { EdDSA } from '@ipld/dag-ucan/signature'
-import { StoreConf } from '@web3-storage/access/stores/store-conf'
+import { StoreConf } from '../src/store/conf.js'
 import { create } from '../src/index.node.js'
 
 describe('create', () => {

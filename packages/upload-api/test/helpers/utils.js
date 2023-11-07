@@ -8,7 +8,7 @@ import * as Context from './context.js'
 import { Provider, UCAN, Space } from '@web3-storage/capabilities'
 import * as DidMailto from '@web3-storage/did-mailto'
 import * as API from '../types.js'
-import { stringToDelegation } from '@web3-storage/access/encoding'
+import { stringToDelegation } from '@web3-storage/w3up-client/agent/encoding'
 
 export { Context }
 
@@ -202,7 +202,7 @@ export const queue = (buffer = []) => {
 /**
  * @param {Types.Signer} issuer
  * @param {Types.Signer<Types.ServiceDID>} service
- * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
+ * @param {Types.ConnectionView<import('@web3-storage/w3up-client').Service>} conn
  * @param {`${string}@${string}`} email
  */
 export async function createSpace(issuer, service, conn, email) {
@@ -254,7 +254,7 @@ export async function extractConfirmInvocation(confirmationUrl) {
 }
 
 /**
- * @param {API.ConnectionView<import('@web3-storage/access').Service>} connection
+ * @param {API.ConnectionView<import('@web3-storage/w3up-client').Service>} connection
  * @param {{ url: string|URL }} confirmation
  */
 export async function confirmConfirmationUrl(connection, confirmation) {

@@ -2,6 +2,7 @@ import { Queue } from './queue.js'
 
 /**
  * @param {Map<string, unknown[]>} queuedMessages 
+ * @param QueueImplementation
  */
 export const getQueueImplementations = (
   queuedMessages,

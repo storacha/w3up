@@ -18,10 +18,6 @@
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "check": "tsc --build",
-    "test": "pnpm -r run build && npm run test:node && npm run test:browser",
-    "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
-    "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
-    "testw": "watch 'pnpm test' src test --interval 1",
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
@@ -107,14 +103,7 @@
     "@ucanto/validator": "^9.0.0",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
-    "bigint-mod-arith": "^3.1.2",
-    "conf": "11.0.2",
-    "multiformats": "^12.1.2",
-    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
-    "p-defer": "^4.0.0",
-    "type-fest": "^3.3.0",
-    "uint8arrays": "^4.0.6",
-    "@scure/bip39": "^1.2.1"
+    "@web3-storage/w3up-client": "workspace:^"
   },
   "devDependencies": {
     "@web3-storage/eslint-config-w3up": "workspace:^",
@@ -123,13 +112,13 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.8.4",
     "@types/sinon": "^10.0.19",
+    "sinon": "^15.0.3",
     "@types/varint": "^6.0.1",
     "@types/ws": "^8.5.4",
     "@ucanto/server": "^9.0.1",
     "assert": "^2.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
-    "sinon": "^15.0.3",
     "typescript": "5.2.2",
     "watch": "^1.0.2"
   },

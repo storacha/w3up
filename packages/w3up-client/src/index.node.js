@@ -2,10 +2,10 @@
  * @hidden
  * @module
  */
-import { AgentData } from '@web3-storage/access/agent'
-import { StoreConf } from '@web3-storage/access/stores/store-conf'
+import { AgentData } from '@web3-storage/w3up-client/agent'
+import { StoreConf } from '@web3-storage/w3up-client/store/conf'
 import { generate } from '@ucanto/principal/ed25519'
-import { Client } from './client.js'
+import { Client } from '@web3-storage/w3up-client/client'
 
 /**
  * Create a new w3up client.

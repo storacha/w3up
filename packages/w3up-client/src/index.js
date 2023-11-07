@@ -5,10 +5,11 @@
  *
  * @module
  */
-import { AgentData } from '@web3-storage/access/agent'
-import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
+import { AgentData } from './agent.js'
+import { StoreIndexedDB } from './store/indexed-db.js'
 import { generate } from '@ucanto/principal/rsa'
 import { Client } from './client.js'
+export * from './types.js'
 
 /**
  * Create a new w3up client.
@@ -25,6 +26,7 @@ import { Client } from './client.js'
  * @type {import('./types.js').ClientFactory}
  */
 export async function create(options = {}) {
+  /* c8 ignore next 11 */
   const store = options.store ?? new StoreIndexedDB('w3up-client')
   const raw = await store.load()
   if (raw) {

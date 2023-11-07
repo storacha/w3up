@@ -2,7 +2,7 @@ import {
   uploadFile,
   uploadDirectory,
   uploadCAR,
-} from '@web3-storage/upload-client'
+} from './capability/upload/index.js'
 import {
   Store as StoreCapabilities,
   Upload as UploadCapabilities,
@@ -14,13 +14,14 @@ import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
 import { AccessClient } from './capability/access.js'
+import { AgentData } from './agent.js'
 export * as Access from './capability/access.js'
 
-export { StoreClient, UploadClient, SpaceClient, AccessClient }
+export { StoreClient, UploadClient, SpaceClient, AccessClient, AgentData }
 
 export class Client extends Base {
   /**
-   * @param {import('@web3-storage/access').AgentData} agentData
+   * @param {AgentData} agentData
    * @param {object} [options]
    * @param {import('./types.js').ServiceConf} [options.serviceConf]
    */

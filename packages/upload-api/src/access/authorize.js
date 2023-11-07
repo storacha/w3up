@@ -2,7 +2,7 @@ import * as Server from '@ucanto/server'
 import * as API from '../types.js'
 import * as Access from '@web3-storage/capabilities/access'
 import * as DidMailto from '@web3-storage/did-mailto'
-import { delegationToString } from '@web3-storage/access/encoding'
+import { delegationToString } from '@web3-storage/w3up-client/agent/encoding'
 import { mailtoDidToDomain, mailtoDidToEmail } from '../utils/did-mailto.js'
 import { ensureRateLimitAbove } from '../utils/rate-limits.js'
 

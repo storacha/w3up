@@ -1,0 +1,14 @@
+import { MemoryDriver } from '../driver/memory.js'
+
+/**
+ * Store implementation with in-memory storage
+ *
+ * Usage:
+ *
+ * ```js
+ * import { StoreMemory } from '@web3-storage/access/stores/store-memory'
+ * ```
+ *
+ * @extends {MemoryDriver<import('../types.js').AgentDataExport>}
+ */
+export class StoreMemory extends MemoryDriver {}
