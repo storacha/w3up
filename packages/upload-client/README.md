@@ -471,4 +471,3 @@ Feel free to join in. All welcome. Please [open an issue](https://github.com/web
 ## License
 
 Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up/blob/main/license.md)
-
