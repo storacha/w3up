@@ -67,6 +67,7 @@ export const abilitiesAsStrings = [
   Consumer.has.can,
   Consumer.get.can,
   Subscription.get.can,
+  Subscription.list.can,
   RateLimit.add.can,
   RateLimit.remove.can,
   RateLimit.list.can,

@@ -196,6 +196,19 @@ export type SubscriptionGetFailure =
   | UnknownProvider
   | Ucanto.Failure
 
+export type SubscriptionList = InferInvokedCapability<
+  typeof SubscriptionCaps.list
+>
+export interface SubscriptionListSuccess {
+  results: Array<SubscriptionListItem>
+}
+export interface SubscriptionListItem {
+  subscription: string
+  provider: ProviderDID
+  consumers: SpaceDID[]
+}
+export type SubscriptionListFailure = Ucanto.Failure
+
 // Rate Limit
 export type RateLimitAdd = InferInvokedCapability<typeof RateLimitCaps.add>
 export interface RateLimitAddSuccess {
@@ -622,6 +635,7 @@ export type AbilitiesArray = [
   ConsumerHas['can'],
   ConsumerGet['can'],
   SubscriptionGet['can'],
+  SubscriptionList['can'],
   RateLimitAdd['can'],
   RateLimitRemove['can'],
   RateLimitList['can'],

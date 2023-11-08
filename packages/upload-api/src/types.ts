@@ -95,6 +95,9 @@ import {
   SubscriptionGet,
   SubscriptionGetSuccess,
   SubscriptionGetFailure,
+  SubscriptionList,
+  SubscriptionListSuccess,
+  SubscriptionListFailure,
   RateLimitAdd,
   RateLimitAddSuccess,
   RateLimitAddFailure,
@@ -152,6 +155,8 @@ export type {
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits.js'
 import { PlansStorage } from './types/plans.js'
 export type { PlansStorage } from './types/plans.js'
+import { SubscriptionsStorage } from './types/subscriptions.js'
+export type { SubscriptionsStorage } from './types/subscriptions.js'
 
 export interface Service extends StorefrontService {
   store: {
@@ -208,6 +213,11 @@ export interface Service extends StorefrontService {
       SubscriptionGet,
       SubscriptionGetSuccess,
       SubscriptionGetFailure
+    >
+    list: ServiceMethod<
+      SubscriptionList,
+      SubscriptionListSuccess,
+      SubscriptionListFailure
     >
   }
   'rate-limit': {
@@ -319,6 +329,7 @@ export interface ProviderServiceContext {
 export interface SubscriptionServiceContext {
   signer: EdSigner.Signer
   provisionsStorage: Provisions
+  subscriptionsStorage: SubscriptionsStorage
 }
 
 export interface RateLimitServiceContext {

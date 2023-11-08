@@ -11,6 +11,7 @@ const notImplemented = () => {
  * access: Partial<import('@web3-storage/access/types').Service['access']>
  * provider: Partial<import('@web3-storage/access/types').Service['provider']>
  * store: Partial<import('@web3-storage/upload-client/types').Service['store']>
+ * subscription: Partial<import('@web3-storage/access/types').Service['subscription']>
  * upload: Partial<import('@web3-storage/upload-client/types').Service['upload']>
  * space: Partial<import('@web3-storage/access/types').Service['space']>
  * ucan: Partial<import('@web3-storage/access/types').Service['ucan']>
@@ -31,6 +32,9 @@ export function mockService(impl) {
     },
     space: {
       info: withCallCount(impl.space?.info ?? notImplemented),
+    },
+    subscription: {
+      list: withCallCount(impl.subscription?.list ?? notImplemented),
     },
     access: {
       claim: withCallCount(impl.access?.claim ?? notImplemented),

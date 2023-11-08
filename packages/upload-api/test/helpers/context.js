@@ -21,6 +21,7 @@ import * as TestTypes from '../types.js'
 import { confirmConfirmationUrl } from './utils.js'
 import { PlansStorage } from '../storage/plans-storage.js'
 import { UsageStorage } from '../storage/usage-storage.js'
+import { SubscriptionsStorage } from '../storage/subscriptions-storage.js'
 
 /**
  * @param {object} options
@@ -41,6 +42,8 @@ export const createContext = async (
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
   const usageStorage = new UsageStorage(storeTable)
+  const provisionsStorage = new ProvisionsStorage(options.providers)
+  const subscriptionsStorage = new SubscriptionsStorage(provisionsStorage)
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
   const dealTrackerSigner = await Signer.generate()
@@ -69,7 +72,8 @@ export const createContext = async (
     signer: id,
     email,
     url: new URL('http://localhost:8787'),
-    provisionsStorage: new ProvisionsStorage(options.providers),
+    provisionsStorage,
+    subscriptionsStorage,
     delegationsStorage: new DelegationsStorage(),
     rateLimitsStorage: new RateLimitsStorage(),
     plansStorage,
