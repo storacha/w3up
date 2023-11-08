@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.2.0...capabilities-v11.3.0) (2023-11-08)
+
+
+### Features
+
+* filecoin info ([#1091](https://github.com/web3-storage/w3up/issues/1091)) ([adb2442](https://github.com/web3-storage/w3up/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+
 ## [11.2.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.1.0...capabilities-v11.2.0) (2023-11-07)
 
 
