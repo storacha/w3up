@@ -944,3 +944,4 @@ Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up-clie
 [docs-ClientFactoryOptions]: #clientfactoryoptions
 
 [access-docs-Agent]: https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html
+
