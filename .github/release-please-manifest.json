@@ -1,6 +1,6 @@
 {
   "packages/access-client": "16.5.1",
-  "packages/filecoin-api": "4.0.6",
+  "packages/filecoin-api": "4.1.0",
   "packages/filecoin-client": "3.1.0",
   "packages/capabilities": "11.3.0",
   "packages/upload-api": "7.2.0",
