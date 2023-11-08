@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.0.1...filecoin-client-v3.0.2) (2023-11-08)
+
+
+### Bug Fixes
+
+* upgrade filecoin client deal tracker principal ([#1092](https://github.com/web3-storage/w3up/issues/1092)) ([cde7113](https://github.com/web3-storage/w3up/commit/cde71134ab8fdd4a72e3764da30ae0a414a8690b))
+
 ## [3.0.1](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.0.0...filecoin-client-v3.0.1) (2023-11-03)
 
 
