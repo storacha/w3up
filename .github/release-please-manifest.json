@@ -4,7 +4,7 @@
   "packages/filecoin-client": "3.0.1",
   "packages/capabilities": "11.2.0",
   "packages/upload-api": "7.2.0",
-  "packages/upload-client": "11.1.0",
+  "packages/upload-client": "11.2.0",
   "packages/w3up-client": "9.3.0",
   "packages/did-mailto": "2.0.2"
 }
