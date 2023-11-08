@@ -156,7 +156,7 @@ export type { RateLimitsStorage, RateLimit } from './types/rate-limits.js'
 import { PlansStorage } from './types/plans.js'
 export type { PlansStorage } from './types/plans.js'
 import { SubscriptionsStorage } from './types/subscriptions.js'
-export type { SubscriptionsStorage } from './types/subscriptions.js'
+export type { SubscriptionsStorage }
 
 export interface Service extends StorefrontService {
   store: {

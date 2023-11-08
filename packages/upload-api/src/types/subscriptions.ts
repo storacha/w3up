@@ -7,6 +7,6 @@ import {
 
 export interface SubscriptionsStorage {
   list: (
-    account: AccountDID
+    customer: AccountDID
   ) => Promise<Result<SubscriptionListSuccess, SubscriptionListFailure>>
 }

@@ -11,17 +11,17 @@ export class SubscriptionsStorage {
     this.provisionsStore = provisions
   }
 
-  /** @param {import('../types.js').AccountDID} account */
-  async list(account) {
+  /** @param {import('../types.js').AccountDID} customer */
+  async list(customer) {
     /** @type {import('../types.js').SubscriptionListItem[]} */
     const results = []
     const entries = Object.entries(this.provisionsStore.provisions)
-    for (const [subscription, { customer, provider, consumer }] of entries) {
-      if (customer !== account) continue
+    for (const [subscription, provision] of entries) {
+      if (provision.customer !== customer) continue
       results.push({
         subscription,
-        provider,
-        consumers: [consumer]
+        provider: provision.provider,
+        consumers: [provision.consumer]
       })
     }
     return { ok: { results } }
