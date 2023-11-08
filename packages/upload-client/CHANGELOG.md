@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v11.1.0...upload-client-v11.2.0) (2023-11-08)
+
+
+### Features
+
+* add usage/report capability ([#1079](https://github.com/web3-storage/w3up/issues/1079)) ([6418b4b](https://github.com/web3-storage/w3up/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
+
 ## [11.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v11.0.0...upload-client-v11.1.0) (2023-10-30)
 
 
