@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.1.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.6...filecoin-api-v4.1.0) (2023-11-08)
+
+
+### Features
+
+* add usage/report capability ([#1079](https://github.com/web3-storage/w3up/issues/1079)) ([6418b4b](https://github.com/web3-storage/w3up/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
+* filecoin info ([#1091](https://github.com/web3-storage/w3up/issues/1091)) ([adb2442](https://github.com/web3-storage/w3up/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+
+
+### Bug Fixes
+
+* lint ([#1095](https://github.com/web3-storage/w3up/issues/1095)) ([f9cc770](https://github.com/web3-storage/w3up/commit/f9cc77029d7c0651cb2961d08eca6f94dc1aef6c))
+
 ## [4.0.6](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.0.5...filecoin-api-v4.0.6) (2023-11-05)
 
 
