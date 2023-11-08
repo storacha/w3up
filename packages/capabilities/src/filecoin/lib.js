@@ -3,13 +3,11 @@ import { Schema } from '@ucanto/validator'
 /**
  * @see https://github.com/filecoin-project/FIPs/pull/758/files
  */
-export const FR32_SHA2_256_TRUNC254_PADDED_BINARY_TREE = /** @type {const} */ (
-  0x1011
-)
+const FR32_SHA2_256_TRUNC254_PADDED_BINARY_TREE = /** @type {const} */ (0x1011)
 /**
  * @see https://github.com/filecoin-project/FIPs/pull/758/files
  */
-export const RAW_CODE = /** @type {const} */ (0x55)
+const RAW_CODE = /** @type {const} */ (0x55)
 
 export const PieceLink = /** @type {import('../types.js').PieceLinkSchema} */ (
   Schema.link({

@@ -9,8 +9,7 @@ import * as API from '../types.js'
 import {
   QueueOperationFailed,
   StoreOperationFailed,
-  ContentNotFound,
-  InvalidContentPiece,
+  RecordNotFoundErrorName,
 } from '../errors.js'
 
 /**
@@ -238,26 +237,16 @@ async function findDataAggregationProof({ taskStore, receiptStore }, task) {
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinInfoSuccess, API.FilecoinInfoFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinInfoSuccess>>}
  */
 export const filecoinInfo = async ({ capability }, context) => {
-  const { piece, content } = capability.nb
+  const { piece } = capability.nb
 
-  const queryRecords = await context.pieceStore.query({ content })
-  if (queryRecords.error) {
-    return { error: new StoreOperationFailed(queryRecords.error.message) }
-  } else if (!queryRecords.ok.length) {
+  // Get piece in store
+  const getPiece = await context.pieceStore.get({ piece })
+  if (getPiece.error && getPiece.error.name === RecordNotFoundErrorName) {
     return {
-      error: new ContentNotFound(
-        `no piece record was previously stored for content ${content.toString()}`
-      ),
+      error: getPiece.error,
     }
-  }
-  if (Boolean(piece) && !queryRecords.ok[0].piece.equals(piece)) {
-    return {
-      error: new InvalidContentPiece(
-        `received piece ${piece?.toString()} is not the same as previously computed ${
-          queryRecords.ok[0].piece
-        } for content ${content.toString()}`
-      ),
-    }
+  } else if (getPiece.error) {
+    return { error: new StoreOperationFailed(getPiece.error.message) }
   }
 
   // Check if `piece/accept` receipt exists to get to know aggregate where it is included on a deal
@@ -267,8 +256,8 @@ export const filecoinInfo = async ({ capability }, context) => {
       audience: context.id,
       with: context.id.did(),
       nb: {
-        piece: queryRecords.ok[0].piece,
-        content,
+        piece,
+        content: getPiece.ok.content,
       },
       expiration: Infinity,
     })
@@ -278,10 +267,9 @@ export const filecoinInfo = async ({ capability }, context) => {
     pieceAcceptInvocation.link()
   )
   if (pieceAcceptReceiptGet.error) {
-    // TODO: see receipt chain to report processing
     /** @type {API.UcantoInterface.OkBuilder<API.FilecoinInfoSuccess, API.FilecoinInfoFailure>} */
     const processingResult = Server.ok({
-      piece: queryRecords.ok[0].piece,
+      piece,
       deals: [],
     })
     return processingResult
@@ -308,14 +296,14 @@ export const filecoinInfo = async ({ capability }, context) => {
     // Should not happen if there is `piece/accept` receipt
     return {
       error: new Server.Failure(
-        `no deals were obtained for aggregate ${pieceAcceptOut.aggregate} where piece ${queryRecords.ok[0].piece} is included`
+        `no deals were obtained for aggregate ${pieceAcceptOut.aggregate} where piece ${piece} is included`
       ),
     }
   }
 
   /** @type {API.UcantoInterface.OkBuilder<API.FilecoinInfoSuccess, API.FilecoinInfoFailure>} */
   const result = Server.ok({
-    piece: queryRecords.ok[0].piece,
+    piece,
     deals: deals.map(([dealId, dealDetails]) => ({
       aggregate: pieceAcceptOut.aggregate,
       provider: dealDetails.provider,

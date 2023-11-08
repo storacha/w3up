@@ -22,12 +22,11 @@ export class FilecoinClient extends Base {
   /**
    * Request info about a content piece in Filecoin deals
    *
-   * @param {import('multiformats').UnknownLink} content
-   * @param {import('@web3-storage/capabilities/types').PieceLink} [piece]
+   * @param {import('@web3-storage/capabilities/types').PieceLink} piece
    */
-  async info(content, piece) {
+  async info(piece) {
     const conf = await this._invocationConfig([FilecoinCapabilities.info.can])
-    return Storefront.filecoinInfo(conf, content, piece, {
+    return Storefront.filecoinInfo(conf, piece, {
       connection: this._serviceConf.filecoin,
     })
   }

@@ -284,12 +284,9 @@ describe('storefront', () => {
             assert.strictEqual(invCap.can, StorefrontCaps.filecoinInfo.can)
             assert.equal(invCap.with, invocation.issuer.did())
             assert.ok(invCap.nb)
-            const { content, piece } = invCap.nb
+            const { piece } = invCap.nb
             // piece link
-            assert.ok(piece)
-            assert.ok(piece?.equals(cargo.link.link()))
-            // content
-            assert.ok(content.equals(cargo.content.link()))
+            assert.ok(piece.equals(cargo.link.link()))
 
             return Server.ok({
               piece,
@@ -306,7 +303,6 @@ describe('storefront', () => {
         with: agent.did(),
         audience: storefrontService,
       },
-      cargo.content,
       cargo.link,
       { connection: getConnection(service).connection }
     )

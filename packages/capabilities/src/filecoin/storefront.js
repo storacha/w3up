@@ -119,18 +119,16 @@ export const filecoinInfo = capability({
   with: Schema.did(),
   nb: Schema.struct({
     /**
-     * CID of the content that resulted in Filecoin piece.
-     */
-    content: Schema.link(),
-    /**
      * CID of the piece.
+     *
+     * @see https://github.com/filecoin-project/FIPs/pull/758/files
      */
-    piece: PieceLink.optional(),
+    piece: PieceLink,
   }),
   derives: (claim, from) => {
     return (
       and(equalWith(claim, from)) ||
-      and(checkLink(claim.nb.content, from.nb.content, 'nb.content')) ||
+      and(checkLink(claim.nb.piece, from.nb.piece, 'nb.piece')) ||
       ok({})
     )
   },

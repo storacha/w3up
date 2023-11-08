@@ -705,7 +705,6 @@ Offer a Filecoin "piece" to be added to an aggregate that will be offered for Fi
 
 ```ts
 function info (
-  content: CID,
   piece: PieceLink
 ): Promise<FilecoinInfoResponse>
 ```

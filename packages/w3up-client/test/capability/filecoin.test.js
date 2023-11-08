@@ -143,10 +143,7 @@ describe('FilecoinClient', () => {
       alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
-      const res = await alice.capability.filecoin.info(
-        cargo.content,
-        cargo.link
-      )
+      const res = await alice.capability.filecoin.info(cargo.link)
 
       assert(service.filecoin.info.called)
       assert.equal(service.filecoin.info.callCount, 1)

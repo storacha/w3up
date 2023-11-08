@@ -48,30 +48,6 @@ export class RecordNotFound extends Server.Failure {
   }
 }
 
-export const ContentNotFoundErrorName = /** @type {const} */ ('ContentNotFound')
-export class ContentNotFound extends Server.Failure {
-  get reason() {
-    return this.message
-  }
-
-  get name() {
-    return ContentNotFoundErrorName
-  }
-}
-
-export const InvalidContentPieceErrorName = /** @type {const} */ (
-  'InvalidContentPiece'
-)
-export class InvalidContentPiece extends Server.Failure {
-  get reason() {
-    return this.message
-  }
-
-  get name() {
-    return InvalidContentPieceErrorName
-  }
-}
-
 export const EncodeRecordErrorName = /** @type {const} */ ('EncodeRecordFailed')
 export class EncodeRecordFailed extends Server.Failure {
   get reason() {

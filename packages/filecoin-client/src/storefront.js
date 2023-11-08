@@ -153,13 +153,11 @@ export async function filecoinAccept(
  * in Filecoin. It issues a signed receipt of the execution result.
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
- * @param {import('multiformats').UnknownLink} content
- * @param {import('@web3-storage/data-segment').PieceLink} [piece]
+ * @param {import('@web3-storage/data-segment').PieceLink} piece
  * @param {import('./types.js').RequestOptions<StorefrontService>} [options]
  */
 export async function filecoinInfo(
   { issuer, with: resource, proofs, audience },
-  content,
   piece,
   options = {}
 ) {
@@ -172,11 +170,9 @@ export async function filecoinInfo(
     audience: audience ?? services.STOREFRONT.principal,
     with: resource,
     nb: {
-      content,
       piece,
     },
     proofs,
-    expiration: Infinity,
   })
 
   return await invocation.execute(conn)
