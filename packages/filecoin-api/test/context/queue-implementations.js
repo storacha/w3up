@@ -1,7 +1,7 @@
 import { Queue } from './queue.js'
 
 /**
- * @param {Map<string, unknown[]>} queuedMessages 
+ * @param {Map<string, unknown[]>} queuedMessages
  */
 export const getQueueImplementations = (
   queuedMessages,
@@ -26,7 +26,7 @@ export const getQueueImplementations = (
   return {
     storefront: {
       filecoinSubmitQueue,
-      pieceOfferQueue
-    }
+      pieceOfferQueue,
+    },
   }
 }

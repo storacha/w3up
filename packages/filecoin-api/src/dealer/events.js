@@ -141,7 +141,7 @@ async function updateApprovedDeals({
     { aggregate: deal.aggregate },
     {
       status: 'accepted',
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     }
   )
 

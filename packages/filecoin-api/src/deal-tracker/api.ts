@@ -2,7 +2,11 @@ import type { Signer } from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
 import { QueryableStore } from '../types.js'
 
-export type DealStore = QueryableStore<DealRecordKey, DealRecord, DealRecordQueryByPiece>
+export type DealStore = QueryableStore<
+  DealRecordKey,
+  DealRecord,
+  DealRecordQueryByPiece
+>
 
 export interface ServiceContext {
   /**

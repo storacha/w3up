@@ -45,7 +45,9 @@ export async function handleBufferReducingWithAggregate({
     pieces: aggregateInfo.addedBufferedPieces,
     group,
   }
-  const piecesBlock = await CBOR.write(aggregateInfo.addedBufferedPieces.map(bf => bf.piece))
+  const piecesBlock = await CBOR.write(
+    aggregateInfo.addedBufferedPieces.map((bf) => bf.piece)
+  )
   const aggregateBlock = await CBOR.write(aggregateReducedBuffer)
 
   // Store buffered pieces for aggregate

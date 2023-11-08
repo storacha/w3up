@@ -17,7 +17,12 @@ export const provide = (ctx) =>
  */
 export const add = async (
   { capability, invocation },
-  { provisionsStorage: provisions, rateLimitsStorage: rateLimits, plansStorage, requirePaymentPlan }
+  {
+    provisionsStorage: provisions,
+    rateLimitsStorage: rateLimits,
+    plansStorage,
+    requirePaymentPlan,
+  }
 ) => {
   const {
     nb: { consumer, provider },

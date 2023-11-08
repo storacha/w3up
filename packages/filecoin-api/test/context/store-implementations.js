@@ -170,15 +170,18 @@ export const getStoreImplementations = (
         /** @type {Set<DealerAggregateRecord>} */ items,
         /** @type {Partial<DealerAggregateRecord>} */ search
       ) => {
-        return Array.from(items).filter((i) => i.status === search.status || i.aggregate.equals(search.aggregate))
+        return Array.from(items).filter(
+          (i) =>
+            i.status === search.status || i.aggregate.equals(search.aggregate)
+        )
       },
       updateFn: (
         /** @type {Set<DealerAggregateRecord>} */ items,
         /** @type {DealerAggregateRecordKey} */ key,
         /** @type {Partial<DealerAggregateRecord>} */ item
       ) => {
-        const itemToUpdate = Array.from(items).find(
-          (i) => i.aggregate.equals(key.aggregate)
+        const itemToUpdate = Array.from(items).find((i) =>
+          i.aggregate.equals(key.aggregate)
         )
         if (!itemToUpdate) {
           throw new Error('not found')

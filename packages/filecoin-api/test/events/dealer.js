@@ -246,7 +246,7 @@ export const test = {
 
       // Validate stores
       const storedDealAfterCron = await context.aggregateStore.get({
-        aggregate: aggregate.link.link()
+        aggregate: aggregate.link.link(),
       })
       assert.ok(storedDealAfterCron.ok)
       assert.equal(storedDealAfterCron.ok?.status, 'accepted')

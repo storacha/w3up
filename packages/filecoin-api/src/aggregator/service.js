@@ -77,7 +77,7 @@ export const pieceAccept = async ({ capability }, context) => {
     }
   }
 
-  // Get buffered pieces 
+  // Get buffered pieces
   const [{ aggregate, inclusion }] = getInclusionRes.ok
   const getAggregateRes = await context.aggregateStore.get({ aggregate })
   if (getAggregateRes.error) {

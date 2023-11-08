@@ -218,71 +218,70 @@ export const test = {
     )
     assert.equal(BigInt(response.out.ok.dataType), BigInt(deal.dataType))
   },
-  'aggregate/accept fails if not able to invoke deal info':
-    withMockableContext(
-      async (assert, context) => {
-        const { storefront } = await getServiceContext()
-        const connection = connect({
-          id: context.id,
-          channel: createServer(context),
-        })
+  'aggregate/accept fails if not able to invoke deal info': withMockableContext(
+    async (assert, context) => {
+      const { storefront } = await getServiceContext()
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
 
-        // Generate piece for test
-        const { pieces, aggregate } = await randomAggregate(100, 128)
-        const offer = pieces.map((p) => p.link)
-        const piecesBlock = await CBOR.write(offer)
+      // Generate piece for test
+      const { pieces, aggregate } = await randomAggregate(100, 128)
+      const offer = pieces.map((p) => p.link)
+      const piecesBlock = await CBOR.write(offer)
 
-        // aggregator invocation
-        const pieceAddInv = Dealer.aggregateAccept.invoke({
-          issuer: storefront,
-          audience: connection.id,
-          with: storefront.did(),
-          nb: {
-            aggregate: aggregate.link,
-            pieces: piecesBlock.cid,
-          },
-        })
-        pieceAddInv.attach(piecesBlock)
+      // aggregator invocation
+      const pieceAddInv = Dealer.aggregateAccept.invoke({
+        issuer: storefront,
+        audience: connection.id,
+        with: storefront.did(),
+        nb: {
+          aggregate: aggregate.link,
+          pieces: piecesBlock.cid,
+        },
+      })
+      pieceAddInv.attach(piecesBlock)
 
-        const response = await pieceAddInv.execute(connection)
-        assert.ok(response.out.error)
-      },
-      async (context) => {
-        /**
-         * Mock deal tracker to fail
-         */
-        const dealTrackerSigner = await Signer.generate()
-        const service = mockService({
-          deal: {
-            info: Server.provideAdvanced({
-              capability: DealTrackerCaps.dealInfo,
-              handler: async ({ invocation, context }) => {
-                return {
-                  error: new Server.Failure(),
-                }
-              },
-            }),
-          },
-        })
-        const dealTrackerConnection = getConnection(
-          dealTrackerSigner,
-          service
-        ).connection
-
-        return {
-          ...context,
-          service,
-          dealTrackerService: {
-            connection: dealTrackerConnection,
-            invocationConfig: {
-              issuer: context.id,
-              with: context.id.did(),
-              audience: dealTrackerSigner,
+      const response = await pieceAddInv.execute(connection)
+      assert.ok(response.out.error)
+    },
+    async (context) => {
+      /**
+       * Mock deal tracker to fail
+       */
+      const dealTrackerSigner = await Signer.generate()
+      const service = mockService({
+        deal: {
+          info: Server.provideAdvanced({
+            capability: DealTrackerCaps.dealInfo,
+            handler: async ({ invocation, context }) => {
+              return {
+                error: new Server.Failure(),
+              }
             },
+          }),
+        },
+      })
+      const dealTrackerConnection = getConnection(
+        dealTrackerSigner,
+        service
+      ).connection
+
+      return {
+        ...context,
+        service,
+        dealTrackerService: {
+          connection: dealTrackerConnection,
+          invocationConfig: {
+            issuer: context.id,
+            with: context.id.did(),
+            audience: dealTrackerSigner,
           },
-        }
+        },
       }
-    ),
+    }
+  ),
 }
 
 async function getServiceContext() {
