@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.3.0](https://github.com/web3-storage/w3up/compare/w3up-client-v9.2.2...w3up-client-v9.3.0) (2023-11-08)
+
+
+### Features
+
+* add usage/report capability ([#1079](https://github.com/web3-storage/w3up/issues/1079)) ([6418b4b](https://github.com/web3-storage/w3up/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
+
 ## [9.2.2](https://github.com/web3-storage/w3up/compare/w3up-client-v9.2.1...w3up-client-v9.2.2) (2023-11-03)
 
 
