@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.5.0](https://github.com/web3-storage/w3up/compare/access-v16.4.0...access-v16.5.0) (2023-11-07)
+
+
+### Features
+
+* add usage/report capability ([#1079](https://github.com/web3-storage/w3up/issues/1079)) ([6418b4b](https://github.com/web3-storage/w3up/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
+
 ## [16.4.0](https://github.com/web3-storage/w3up/compare/access-v16.3.0...access-v16.4.0) (2023-11-01)
 
 
