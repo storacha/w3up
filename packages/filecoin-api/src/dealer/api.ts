@@ -44,7 +44,8 @@ export interface AggregateUpdatedStatusEventContext {
   dealerService: ServiceConfig<DealerService>
 }
 
-export interface CronContext extends Pick<ServiceContext, 'aggregateStore' | 'dealTrackerService'> {}
+export interface CronContext
+  extends Pick<ServiceContext, 'aggregateStore' | 'dealTrackerService'> {}
 
 export interface AggregateRecord {
   /**

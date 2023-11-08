@@ -43,7 +43,7 @@ describe('deal-tracker', () => {
                 assert.fail(error)
               },
             },
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })

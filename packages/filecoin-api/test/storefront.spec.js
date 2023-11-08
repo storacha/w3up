@@ -4,7 +4,12 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as StorefrontService from './services/storefront.js'
 import * as StorefrontEvents from './events/storefront.js'
 
-import { getMockService, getConnection, getStoreImplementations, getQueueImplementations } from './context/service.js'
+import {
+  getMockService,
+  getConnection,
+  getStoreImplementations,
+  getQueueImplementations,
+} from './context/service.js'
 import { validateAuthorization } from './utils.js'
 
 describe('storefront', () => {
@@ -24,7 +29,7 @@ describe('storefront', () => {
         /** @type {Map<string, unknown[]>} */
         const queuedMessages = new Map()
         const {
-          storefront: { filecoinSubmitQueue, pieceOfferQueue }
+          storefront: { filecoinSubmitQueue, pieceOfferQueue },
         } = getQueueImplementations(queuedMessages)
         const {
           storefront: { pieceStore, receiptStore, taskStore },
@@ -50,7 +55,7 @@ describe('storefront', () => {
             taskStore,
             receiptStore,
             queuedMessages,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
@@ -119,7 +124,7 @@ describe('storefront', () => {
                 assert.fail(error)
               },
             },
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })

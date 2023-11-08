@@ -260,7 +260,7 @@ describe(`provider/add`, () => {
 
   it('provider/add fails if plans are required and a plan has not been configured', async () => {
     const { space, agent, account, ...context } = await setup({
-      requirePaymentPlan: true
+      requirePaymentPlan: true,
     })
     const { service } = context
 
@@ -280,8 +280,14 @@ describe(`provider/add`, () => {
         })
         .execute(context.connection)
 
-      assert.ok(addResult.out.error, 'Expected error provisioning without adding a plan')
-      assert.equal(addResult.out.error.message, `Account identified by ${account.did()} has not selected a payment plan`)
+      assert.ok(
+        addResult.out.error,
+        'Expected error provisioning without adding a plan'
+      )
+      assert.equal(
+        addResult.out.error.message,
+        `Account identified by ${account.did()} has not selected a payment plan`
+      )
     } finally {
       cleanupContext(context)
     }

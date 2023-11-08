@@ -28,7 +28,9 @@ import { UsageStorage } from '../storage/usage-storage.js'
  * @param {{fail(error:unknown): unknown}} [options.assert]
  * @returns {Promise<Types.UcantoServerTestContext>}
  */
-export const createContext = async (options = { requirePaymentPlan: false }) => {
+export const createContext = async (
+  options = { requirePaymentPlan: false }
+) => {
   const requirePaymentPlan = options.requirePaymentPlan
   const storeTable = new StoreTable()
   const uploadTable = new UploadTable()

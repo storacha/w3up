@@ -681,8 +681,14 @@ export const test = {
     if (!inclusionProof.ok) {
       throw new Error()
     }
-    assert.deepEqual(BigInt(message.inclusion.subtree[0]), inclusionProof.ok?.[0][0])
-    assert.deepEqual(BigInt(message.inclusion.index[0]), inclusionProof.ok?.[1][0])
+    assert.deepEqual(
+      BigInt(message.inclusion.subtree[0]),
+      inclusionProof.ok?.[0][0]
+    )
+    assert.deepEqual(
+      BigInt(message.inclusion.index[0]),
+      inclusionProof.ok?.[1][0]
+    )
 
     assert.deepEqual(message.inclusion.subtree[1], inclusionProof.ok?.[0][1])
     assert.deepEqual(message.inclusion.index[1], inclusionProof.ok?.[1][1])
@@ -755,7 +761,7 @@ export const test = {
         }
         const block = await CBOR.write(buffer)
         const piecesBlock = await CBOR.write(pieces.map((p) => p.link))
-        
+
         // Put buffer record
         const putBufferRes = await context.bufferStore.put({
           buffer,
@@ -835,14 +841,26 @@ export const test = {
     assert.ok(hasStoredInclusion.ok?.piece.equals(piece))
     assert.equal(hasStoredInclusion.ok?.group, group)
     assert.ok(hasStoredInclusion.ok?.insertedAt)
-    // @ts-ignore
-    assert.deepEqual(BigInt(message.inclusion.subtree[0]), BigInt(hasStoredInclusion.ok?.inclusion.subtree[0]))
-    // @ts-ignore
-    assert.deepEqual(BigInt(message.inclusion.index[0]), BigInt(hasStoredInclusion.ok?.inclusion.index[0]))
-    // @ts-ignore
-    assert.deepEqual(message.inclusion.subtree[1], hasStoredInclusion.ok?.inclusion.subtree[1])
-    // @ts-ignore
-    assert.deepEqual(message.inclusion.index[1], hasStoredInclusion.ok?.inclusion.index[1])
+    assert.deepEqual(
+      BigInt(message.inclusion.subtree[0]),
+      // @ts-ignore
+      BigInt(hasStoredInclusion.ok?.inclusion.subtree[0])
+    )
+    assert.deepEqual(
+      BigInt(message.inclusion.index[0]),
+      // @ts-ignore
+      BigInt(hasStoredInclusion.ok?.inclusion.index[0])
+    )
+    assert.deepEqual(
+      message.inclusion.subtree[1],
+      // @ts-ignore
+      hasStoredInclusion.ok?.inclusion.subtree[1]
+    )
+    assert.deepEqual(
+      message.inclusion.index[1],
+      // @ts-ignore
+      hasStoredInclusion.ok?.inclusion.index[1]
+    )
   },
   'handles piece accept message errors when fails to store on inclusion store':
     wichMockableContext(

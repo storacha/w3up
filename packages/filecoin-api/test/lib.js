@@ -15,21 +15,21 @@ export const test = {
       ...StorefrontService.test,
     },
     aggregator: {
-      ...AggregatorService.test
+      ...AggregatorService.test,
     },
     dealer: {
       ...DealerService.test,
     },
     dealTracker: {
-      ...DealTrackerService.test
-    }
+      ...DealTrackerService.test,
+    },
   },
   events: {
     storefront: {
       ...StorefrontEvents.test,
     },
     aggregator: {
-      ...AggregatorEvents.test
+      ...AggregatorEvents.test,
     },
     dealer: {
       ...DealerEvents.test,

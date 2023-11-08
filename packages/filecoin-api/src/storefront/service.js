@@ -5,10 +5,7 @@ import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import {
-  QueueOperationFailed,
-  StoreOperationFailed,
-} from '../errors.js'
+import { QueueOperationFailed, StoreOperationFailed } from '../errors.js'
 
 /**
  * @param {API.Input<StorefrontCaps.filecoinOffer>} input

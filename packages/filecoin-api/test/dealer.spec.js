@@ -57,7 +57,7 @@ describe('Dealer', () => {
                 audience: dealTrackerSigner,
               },
             },
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
@@ -122,7 +122,7 @@ describe('Dealer', () => {
               },
             },
             service,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })

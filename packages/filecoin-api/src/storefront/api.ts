@@ -18,7 +18,11 @@ import {
   ServiceConfig,
 } from '../types.js'
 
-export type PieceStore = UpdatableAndQueryableStore<PieceRecordKey, PieceRecord, Pick<PieceRecord, 'status'>>
+export type PieceStore = UpdatableAndQueryableStore<
+  PieceRecordKey,
+  PieceRecord,
+  Pick<PieceRecord, 'status'>
+>
 export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
 export type PieceOfferQueue = Queue<PieceOfferMessage>
 export type TaskStore = Store<UnknownLink, Invocation>
