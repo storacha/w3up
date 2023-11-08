@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.0.2...filecoin-client-v3.1.0) (2023-11-08)
+
+
+### Features
+
+* filecoin info ([#1091](https://github.com/web3-storage/w3up/issues/1091)) ([adb2442](https://github.com/web3-storage/w3up/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+
 ## [3.0.2](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.0.1...filecoin-client-v3.0.2) (2023-11-08)
 
 
