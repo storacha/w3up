@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -552,6 +552,9 @@ importers:
       '@web3-storage/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto
+      '@web3-storage/filecoin-client':
+        specifier: workspace:^
+        version: link:../filecoin-client
       '@web3-storage/upload-client':
         specifier: workspace:^
         version: link:../upload-client
@@ -574,6 +577,9 @@ importers:
       '@ucanto/server':
         specifier: ^9.0.1
         version: 9.0.1
+      '@web3-storage/data-segment':
+        specifier: ^5.0.0
+        version: 5.0.0
       '@web3-storage/eslint-config-w3up':
         specifier: workspace:^
         version: link:../eslint-config-w3up
@@ -3566,6 +3572,14 @@ packages:
       '@ipld/dag-cbor': 9.0.6
       multiformats: 11.0.2
       sync-multihash-sha2: 1.0.0
+
+  /@web3-storage/data-segment@5.0.0:
+    resolution: {integrity: sha512-5CbElsxec2DsKhEHEh3XRGISAyna+bCjKjjvFrLcYyXLCaiSt/nF3ypcllxwjpE4newMUArymGKGzzZnRWL2kg==}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.6
+      multiformats: 11.0.2
+      sync-multihash-sha2: 1.0.0
+    dev: true
 
   /@web3-storage/sigv4@1.0.2:
     resolution: {integrity: sha512-ZUXKK10NmuQgPkqByhb1H3OQxkIM0CIn2BMPhGQw7vQw8WIzrBkk9IJiAVfJ/UVBFrf6uzPbx2lEBLt4diCMnQ==}

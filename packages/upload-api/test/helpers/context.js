@@ -1,5 +1,7 @@
 import * as Signer from '@ucanto/principal/ed25519'
 import {
+  getConnection,
+  getMockService,
   getStoreImplementations,
   getQueueImplementations,
 } from '@web3-storage/filecoin-api/test/context/service'
@@ -41,7 +43,14 @@ export const createContext = async (
   const usageStorage = new UsageStorage(storeTable)
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
+  const dealTrackerSigner = await Signer.generate()
   const id = signer.withDID('did:web:test.web3.storage')
+
+  const service = getMockService()
+  const dealTrackerConnection = getConnection(
+    dealTrackerSigner,
+    service
+  ).connection
 
   /** @type {Map<string, unknown[]>} */
   const queuedMessages = new Map()
@@ -86,6 +95,14 @@ export const createContext = async (
     receiptStore,
     taskStore,
     requirePaymentPlan,
+    dealTrackerService: {
+      connection: dealTrackerConnection,
+      invocationConfig: {
+        issuer: id,
+        with: id.did(),
+        audience: dealTrackerSigner,
+      },
+    },
     ...createRevocationChecker({ revocationsStorage }),
   }
 

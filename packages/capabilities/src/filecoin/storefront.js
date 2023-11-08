@@ -106,3 +106,30 @@ export const filecoinAccept = capability({
     )
   },
 })
+
+/**
+ * Capability allowing an agent to _request_ info about a content piece in
+ * Filecoin deals.
+ */
+export const filecoinInfo = capability({
+  can: 'filecoin/info',
+  /**
+   * DID of the space the content is stored in.
+   */
+  with: Schema.did(),
+  nb: Schema.struct({
+    /**
+     * CID of the piece.
+     *
+     * @see https://github.com/filecoin-project/FIPs/pull/758/files
+     */
+    piece: PieceLink,
+  }),
+  derives: (claim, from) => {
+    return (
+      and(equalWith(claim, from)) ||
+      and(checkLink(claim.nb.piece, from.nb.piece, 'nb.piece')) ||
+      ok({})
+    )
+  },
+})

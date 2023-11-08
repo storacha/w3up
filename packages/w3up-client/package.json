@@ -80,9 +80,10 @@
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
     "@ucanto/transport": "^9.0.0",
-    "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
+    "@web3-storage/did-mailto": "workspace:^",
+    "@web3-storage/filecoin-client": "workspace:^",
     "@web3-storage/upload-client": "workspace:^"
   },
   "devDependencies": {
@@ -93,6 +94,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.8.4",
     "@ucanto/server": "^9.0.1",
+    "@web3-storage/data-segment": "^5.0.0",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "assert": "^2.0.0",
     "c8": "^7.13.0",

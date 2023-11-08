@@ -147,3 +147,33 @@ export async function filecoinAccept(
 
   return await invocation.execute(conn)
 }
+
+/**
+ * The `filecoin/info` task can be executed to request info about a content piece
+ * in Filecoin. It issues a signed receipt of the execution result.
+ *
+ * @param {import('./types.js').InvocationConfig} conf - Configuration
+ * @param {import('@web3-storage/data-segment').PieceLink} piece
+ * @param {import('./types.js').RequestOptions<StorefrontService>} [options]
+ */
+export async function filecoinInfo(
+  { issuer, with: resource, proofs, audience },
+  piece,
+  options = {}
+) {
+  /* c8 ignore next */
+  const conn = options.connection ?? connection
+
+  const invocation = Storefront.filecoinInfo.invoke({
+    issuer,
+    /* c8 ignore next */
+    audience: audience ?? services.STOREFRONT.principal,
+    with: resource,
+    nb: {
+      piece,
+    },
+    proofs,
+  })
+
+  return await invocation.execute(conn)
+}

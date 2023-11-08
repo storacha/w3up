@@ -305,6 +305,21 @@ export interface ProofNotFound extends Ucanto.Failure {
   name: 'ProofNotFound'
 }
 
+export interface FilecoinInfoSuccess {
+  piece: PieceLink
+  deals: FilecoinInfoAcceptedDeal[]
+}
+export interface FilecoinInfoAcceptedDeal
+  extends DataAggregationProof,
+    DealDetails {
+  aggregate: PieceLink
+}
+
+export type FilecoinInfoFailure =
+  | ContentNotFound
+  | InvalidContentPiece
+  | Ucanto.Failure
+
 // filecoin aggregator
 export interface PieceOfferSuccess {
   /**
@@ -549,6 +564,9 @@ export type FilecoinSubmit = InferInvokedCapability<
 export type FilecoinAccept = InferInvokedCapability<
   typeof StorefrontCaps.filecoinAccept
 >
+export type FilecoinInfo = InferInvokedCapability<
+  typeof StorefrontCaps.filecoinInfo
+>
 export type PieceOffer = InferInvokedCapability<
   typeof AggregatorCaps.pieceOffer
 >
@@ -610,6 +628,7 @@ export type AbilitiesArray = [
   FilecoinOffer['can'],
   FilecoinSubmit['can'],
   FilecoinAccept['can'],
+  FilecoinInfo['can'],
   PieceOffer['can'],
   PieceAccept['can'],
   AggregateOffer['can'],

@@ -1,5 +1,5 @@
 import * as API from '../../src/types.js'
-import { RecordNotFound, StoreOperationFailed } from '../../src/errors.js'
+import { StoreOperationFailed, RecordNotFound } from '../../src/errors.js'
 
 /**
  * @typedef {import('../../src/types.js').StorePutError} StorePutError
@@ -47,7 +47,7 @@ export class Store {
     const t = this.getFn(this.items, item)
     if (!t) {
       return {
-        error: new RecordNotFound(),
+        error: new RecordNotFound('not found'),
       }
     }
     return {
@@ -85,7 +85,7 @@ export class Store {
     const t = this.queryFn(this.items, search)
     if (!t) {
       return {
-        error: new RecordNotFound(),
+        error: new RecordNotFound('not found'),
       }
     }
     return {
@@ -123,7 +123,7 @@ export class UpdatableStore extends Store {
     const t = this.updateFn(this.items, key, item)
     if (!t) {
       return {
-        error: new RecordNotFound(),
+        error: new RecordNotFound('not found'),
       }
     }
     return {

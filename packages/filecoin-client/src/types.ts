@@ -16,6 +16,9 @@ import {
   FilecoinAccept,
   FilecoinAcceptSuccess,
   FilecoinAcceptFailure,
+  FilecoinInfo,
+  FilecoinInfoSuccess,
+  FilecoinInfoFailure,
   PieceOffer,
   PieceOfferSuccess,
   PieceOfferFailure,
@@ -75,6 +78,7 @@ export interface StorefrontService {
       FilecoinAcceptSuccess,
       FilecoinAcceptFailure
     >
+    info: ServiceMethod<FilecoinInfo, FilecoinInfoSuccess, FilecoinInfoFailure>
   }
 }
 

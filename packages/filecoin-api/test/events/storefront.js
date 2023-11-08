@@ -365,6 +365,7 @@ export const test = {
         aggregate: aggregate.link,
         group,
         piece: piece.link,
+        content: piece.content,
         piecesBlock,
         inclusionProof: {
           subtree: inclusionProof.ok[0],

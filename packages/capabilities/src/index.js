@@ -73,6 +73,7 @@ export const abilitiesAsStrings = [
   Storefront.filecoinOffer.can,
   Storefront.filecoinSubmit.can,
   Storefront.filecoinAccept.can,
+  Storefront.filecoinInfo.can,
   Aggregator.pieceOffer.can,
   Aggregator.pieceAccept.can,
   Dealer.aggregateOffer.can,
