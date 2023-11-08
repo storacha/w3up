@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.1](https://github.com/web3-storage/w3up/compare/capabilities-v11.3.0...capabilities-v11.3.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* put access.session back ([#1100](https://github.com/web3-storage/w3up/issues/1100)) ([10a1a4b](https://github.com/web3-storage/w3up/commit/10a1a4bfc5ec79ea0b7b2049fd7d1953ca0810ef))
+
 ## [11.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.2.0...capabilities-v11.3.0) (2023-11-08)
 
 
