@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.5.1](https://github.com/web3-storage/w3up/compare/access-v16.5.0...access-v16.5.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* fix export paths for JS files ([#1089](https://github.com/web3-storage/w3up/issues/1089)) ([1a5d1aa](https://github.com/web3-storage/w3up/commit/1a5d1aa1b1bfdb188cb69712a74404b89d8200af))
+
 ## [16.5.0](https://github.com/web3-storage/w3up/compare/access-v16.4.0...access-v16.5.0) (2023-11-07)
 
 
