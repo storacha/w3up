@@ -28,6 +28,18 @@
       "node": "./src/index.node.js",
       "import": "./src/index.js"
     },
+    "./account": {
+      "types": "./dist/src/account.d.ts",
+      "import": "./src/account.js"
+    },
+    "./space": {
+      "types": "./dist/src/space.d.ts",
+      "import": "./src/space.js"
+    },
+    "./result": {
+      "types": "./dist/src/result.d.ts",
+      "import": "./src/result.js"
+    },
     "./client": {
       "types": "./dist/src/client.d.ts",
       "import": "./src/client.js"
