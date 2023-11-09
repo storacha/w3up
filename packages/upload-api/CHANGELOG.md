@@ -1,5 +1,33 @@
 # Changelog
 
+## [7.3.1](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.0...upload-api-v7.3.1) (2023-11-09)
+
+
+### Bug Fixes
+
+* trigger release for upload api ([#1107](https://github.com/web3-storage/w3up/issues/1107)) ([9930b10](https://github.com/web3-storage/w3up/commit/9930b10962d365303ae45467a44f414aeac3dccb))
+
+## [7.3.0](https://github.com/web3-storage/w3up/compare/upload-api-v7.2.0...upload-api-v7.3.0) (2023-11-09)
+
+
+### Features
+
+* add `subscription/list` capability ([#1088](https://github.com/web3-storage/w3up/issues/1088)) ([471d7e5](https://github.com/web3-storage/w3up/commit/471d7e5db24e12a06c1c52ae76bf95ff9471bac8))
+* filecoin info ([#1091](https://github.com/web3-storage/w3up/issues/1091)) ([adb2442](https://github.com/web3-storage/w3up/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+
+
+### Bug Fixes
+
+* lint ([#1095](https://github.com/web3-storage/w3up/issues/1095)) ([f9cc770](https://github.com/web3-storage/w3up/commit/f9cc77029d7c0651cb2961d08eca6f94dc1aef6c))
+
+## [7.2.0](https://github.com/web3-storage/w3up/compare/upload-api-v7.1.2...upload-api-v7.2.0) (2023-11-07)
+
+
+### Features
+
+* add usage/report capability ([#1079](https://github.com/web3-storage/w3up/issues/1079)) ([6418b4b](https://github.com/web3-storage/w3up/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
+* optionally require plans for provisioning ([#1087](https://github.com/web3-storage/w3up/issues/1087)) ([b24731b](https://github.com/web3-storage/w3up/commit/b24731b0bdde785eef7785468cc1f49b92af2563))
+
 ## [7.1.2](https://github.com/web3-storage/w3up/compare/upload-api-v7.1.1...upload-api-v7.1.2) (2023-11-05)
 
 

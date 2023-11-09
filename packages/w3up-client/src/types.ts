@@ -13,6 +13,7 @@ import type {
   Unit,
 } from '@ucanto/interface'
 import { type Client } from './client.js'
+import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
 export * from '@ucanto/interface'
 export * from '@web3-storage/did-mailto'
 export type { Agent, CapabilityQuery } from '@web3-storage/access/agent'
@@ -28,6 +29,7 @@ export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 export interface ServiceConf {
   access: ConnectionView<AccessService>
   upload: ConnectionView<UploadService>
+  filecoin: ConnectionView<StorefrontService>
 }
 
 export interface ClientFactoryOptions {

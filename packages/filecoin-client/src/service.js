@@ -19,10 +19,10 @@ export const services = {
   },
   DEALER: {
     url: new URL('https://dealer.web3.storage'),
-    principal: DID.parse('did:web:dealer.web3.storage'),
+    principal: DID.parse('did:web:web3.storage'),
   },
   DEAL_TRACKER: {
     url: new URL('https://tracker.web3.storage'),
-    principal: DID.parse('did:web:tracker.web3.storage'),
+    principal: DID.parse('did:web:web3.storage'),
   },
 }

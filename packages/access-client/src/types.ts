@@ -52,6 +52,9 @@ import type {
   PlanGet,
   PlanGetSuccess,
   PlanGetFailure,
+  SubscriptionList,
+  SubscriptionListSuccess,
+  SubscriptionListFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -115,6 +118,13 @@ export interface Service {
   }
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
+  }
+  subscription: {
+    list: ServiceMethod<
+      SubscriptionList,
+      SubscriptionListSuccess,
+      SubscriptionListFailure
+    >
   }
   ucan: {
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>

@@ -16,4 +16,5 @@ export {
   filecoinOffer as offer,
   filecoinSubmit as submit,
   filecoinAccept as accept,
+  filecoinInfo as info,
 } from './storefront.js'

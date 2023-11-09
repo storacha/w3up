@@ -183,9 +183,11 @@ export async function authorizeAndWait(access, email, opts = {}) {
       { can: 'space/*' },
       { can: 'store/*' },
       { can: 'provider/add' },
+      { can: 'subscription/list' },
       { can: 'upload/*' },
       { can: 'ucan/*' },
       { can: 'plan/*' },
+      { can: 'usage/*' },
       { can: 'w3up/*' },
     ]
   )

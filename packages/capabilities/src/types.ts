@@ -35,6 +35,7 @@ import * as DealerCaps from './filecoin/dealer.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 import * as PlanCaps from './plan.js'
+import * as UsageCaps from './usage.js'
 
 export type ISO8601Date = string
 
@@ -104,6 +105,43 @@ export interface DelegationNotFound extends Ucanto.Failure {
 
 export type AccessConfirm = InferInvokedCapability<typeof AccessCaps.confirm>
 
+// Usage
+
+export type Usage = InferInvokedCapability<typeof UsageCaps.usage>
+export type UsageReport = InferInvokedCapability<typeof UsageCaps.report>
+export type UsageReportSuccess = Record<ProviderDID, UsageData>
+export type UsageReportFailure = Ucanto.Failure
+
+export interface UsageData {
+  /** Provider the report concerns, e.g. `did:web:web3.storage` */
+  provider: ProviderDID
+  /** Space the report concerns. */
+  space: SpaceDID
+  /** Period the report applies to. */
+  period: {
+    /** ISO datetime the report begins from (inclusive). */
+    from: ISO8601Date
+    /** ISO datetime the report ends at (inclusive). */
+    to: ISO8601Date
+  }
+  /** Observed space size for the period. */
+  size: {
+    /** Size at the beginning of the report period. */
+    initial: number
+    /** Size at the end of the report period. */
+    final: number
+  }
+  /** Events that caused the size to change during the period. */
+  events: Array<{
+    /** CID of the invoked task that caused the size to change. */
+    cause: Link
+    /** Number of bytes that were added or removed. */
+    delta: number
+    /** ISO datetime that the receipt was issued for the change. */
+    receiptAt: ISO8601Date
+  }>
+}
+
 // Provider
 export type ProviderAdd = InferInvokedCapability<typeof provider.add>
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -157,6 +195,19 @@ export type SubscriptionGetFailure =
   | SubscriptionNotFound
   | UnknownProvider
   | Ucanto.Failure
+
+export type SubscriptionList = InferInvokedCapability<
+  typeof SubscriptionCaps.list
+>
+export interface SubscriptionListSuccess {
+  results: Array<SubscriptionListItem>
+}
+export interface SubscriptionListItem {
+  subscription: string
+  provider: ProviderDID
+  consumers: SpaceDID[]
+}
+export type SubscriptionListFailure = Ucanto.Failure
 
 // Rate Limit
 export type RateLimitAdd = InferInvokedCapability<typeof RateLimitCaps.add>
@@ -266,6 +317,21 @@ export interface InvalidContentPiece extends Ucanto.Failure {
 export interface ProofNotFound extends Ucanto.Failure {
   name: 'ProofNotFound'
 }
+
+export interface FilecoinInfoSuccess {
+  piece: PieceLink
+  deals: FilecoinInfoAcceptedDeal[]
+}
+export interface FilecoinInfoAcceptedDeal
+  extends DataAggregationProof,
+    DealDetails {
+  aggregate: PieceLink
+}
+
+export type FilecoinInfoFailure =
+  | ContentNotFound
+  | InvalidContentPiece
+  | Ucanto.Failure
 
 // filecoin aggregator
 export interface PieceOfferSuccess {
@@ -511,6 +577,9 @@ export type FilecoinSubmit = InferInvokedCapability<
 export type FilecoinAccept = InferInvokedCapability<
   typeof StorefrontCaps.filecoinAccept
 >
+export type FilecoinInfo = InferInvokedCapability<
+  typeof StorefrontCaps.filecoinInfo
+>
 export type PieceOffer = InferInvokedCapability<
   typeof AggregatorCaps.pieceOffer
 >
@@ -566,12 +635,14 @@ export type AbilitiesArray = [
   ConsumerHas['can'],
   ConsumerGet['can'],
   SubscriptionGet['can'],
+  SubscriptionList['can'],
   RateLimitAdd['can'],
   RateLimitRemove['can'],
   RateLimitList['can'],
   FilecoinOffer['can'],
   FilecoinSubmit['can'],
   FilecoinAccept['can'],
+  FilecoinInfo['can'],
   PieceOffer['can'],
   PieceAccept['can'],
   AggregateOffer['can'],
@@ -580,5 +651,7 @@ export type AbilitiesArray = [
   Admin['can'],
   AdminUploadInspect['can'],
   AdminStoreInspect['can'],
-  PlanGet['can']
+  PlanGet['can'],
+  Usage['can'],
+  UsageReport['can']
 ]

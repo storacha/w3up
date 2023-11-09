@@ -8,10 +8,7 @@ import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
 import { DealTracker } from '@web3-storage/filecoin-client'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import {
-  StoreOperationFailed,
-  DecodeBlockOperationFailed,
-} from '../errors.js'
+import { StoreOperationFailed, DecodeBlockOperationFailed } from '../errors.js'
 
 /**
  * @param {API.Input<DealerCaps.aggregateOffer>} input
@@ -112,17 +109,19 @@ export const aggregateAccept = async ({ capability }, context) => {
   const deals = Object.keys(info.out.ok.deals || {})
   if (!deals.length) {
     return {
-      error: new Server.Failure('no deals were obtained for given aggregate CID')
+      error: new Server.Failure(
+        'no deals were obtained for given aggregate CID'
+      ),
     }
   }
-  
+
   // For receipts, we only care about first deal
   // TODO: We need to revisit this with renewals
   const deal = {
     dataType: 0n,
     dataSource: {
-      dealID: BigInt(deals[0])
-    }
+      dealID: BigInt(deals[0]),
+    },
   }
 
   return {

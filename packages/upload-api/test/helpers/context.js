@@ -1,5 +1,7 @@
 import * as Signer from '@ucanto/principal/ed25519'
 import {
+  getConnection,
+  getMockService,
   getStoreImplementations,
   getQueueImplementations,
 } from '@web3-storage/filecoin-api/test/context/service'
@@ -18,24 +20,40 @@ import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
 import { confirmConfirmationUrl } from './utils.js'
 import { PlansStorage } from '../storage/plans-storage.js'
+import { UsageStorage } from '../storage/usage-storage.js'
+import { SubscriptionsStorage } from '../storage/subscriptions-storage.js'
 
 /**
  * @param {object} options
  * @param {string[]} [options.providers]
+ * @param {boolean} [options.requirePaymentPlan]
  * @param {import('http')} [options.http]
  * @param {{fail(error:unknown): unknown}} [options.assert]
  * @returns {Promise<Types.UcantoServerTestContext>}
  */
-export const createContext = async (options = {}) => {
+export const createContext = async (
+  options = { requirePaymentPlan: false }
+) => {
+  const requirePaymentPlan = options.requirePaymentPlan
   const storeTable = new StoreTable()
   const uploadTable = new UploadTable()
   const carStoreBucket = await CarStoreBucket.activate(options)
   const dudewhereBucket = new DudewhereBucket()
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
+  const usageStorage = new UsageStorage(storeTable)
+  const provisionsStorage = new ProvisionsStorage(options.providers)
+  const subscriptionsStorage = new SubscriptionsStorage(provisionsStorage)
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
+  const dealTrackerSigner = await Signer.generate()
   const id = signer.withDID('did:web:test.web3.storage')
+
+  const service = getMockService()
+  const dealTrackerConnection = getConnection(
+    dealTrackerSigner,
+    service
+  ).connection
 
   /** @type {Map<string, unknown[]>} */
   const queuedMessages = new Map()
@@ -54,10 +72,12 @@ export const createContext = async (options = {}) => {
     signer: id,
     email,
     url: new URL('http://localhost:8787'),
-    provisionsStorage: new ProvisionsStorage(options.providers),
+    provisionsStorage,
+    subscriptionsStorage,
     delegationsStorage: new DelegationsStorage(),
     rateLimitsStorage: new RateLimitsStorage(),
     plansStorage,
+    usageStorage,
     revocationsStorage,
     errorReporter: {
       catch(error) {
@@ -78,6 +98,15 @@ export const createContext = async (options = {}) => {
     pieceStore,
     receiptStore,
     taskStore,
+    requirePaymentPlan,
+    dealTrackerService: {
+      connection: dealTrackerConnection,
+      invocationConfig: {
+        issuer: id,
+        with: id.did(),
+        audience: dealTrackerSigner,
+      },
+    },
     ...createRevocationChecker({ revocationsStorage }),
   }
 

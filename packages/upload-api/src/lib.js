@@ -17,6 +17,7 @@ import { createService as createAdminService } from './admin.js'
 import { createService as createRateLimitService } from './rate-limit.js'
 import { createService as createUcanService } from './ucan.js'
 import { createService as createPlanService } from './plan.js'
+import { createService as createUsageService } from './usage.js'
 import { createService as createFilecoinService } from '@web3-storage/filecoin-api/storefront/service'
 
 export * from './types.js'
@@ -31,7 +32,7 @@ export const createServer = ({ id, codec = Legacy.inbound, ...context }) =>
     codec,
     service: createService({
       ...context,
-      id
+      id,
     }),
     catch: (error) => context.errorReporter.catch(error),
   })
@@ -55,6 +56,7 @@ export const createService = (context) => ({
   ucan: createUcanService(context),
   plan: createPlanService(context),
   filecoin: createFilecoinService(context).filecoin,
+  usage: createUsageService(context),
 })
 
 /**

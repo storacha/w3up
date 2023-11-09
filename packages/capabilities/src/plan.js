@@ -1,7 +1,5 @@
-import { capability, DID, ok } from '@ucanto/validator'
-import { equalWith, and } from './utils.js'
-
-export const AccountDID = DID.match({ method: 'mailto' })
+import { capability, ok } from '@ucanto/validator'
+import { AccountDID, equalWith, and } from './utils.js'
 
 /**
  * Capability can be invoked by an account to get information about

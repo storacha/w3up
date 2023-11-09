@@ -4,7 +4,12 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as StorefrontService from './services/storefront.js'
 import * as StorefrontEvents from './events/storefront.js'
 
-import { getMockService, getConnection, getStoreImplementations, getQueueImplementations } from './context/service.js'
+import {
+  getMockService,
+  getConnection,
+  getStoreImplementations,
+  getQueueImplementations,
+} from './context/service.js'
 import { validateAuthorization } from './utils.js'
 
 describe('storefront', () => {
@@ -19,16 +24,22 @@ describe('storefront', () => {
       define(name, async () => {
         const storefrontSigner = await Signer.generate()
         const aggregatorSigner = await Signer.generate()
+        const dealTrackerSigner = await Signer.generate()
 
         // resources
         /** @type {Map<string, unknown[]>} */
         const queuedMessages = new Map()
         const {
-          storefront: { filecoinSubmitQueue, pieceOfferQueue }
+          storefront: { filecoinSubmitQueue, pieceOfferQueue },
         } = getQueueImplementations(queuedMessages)
         const {
           storefront: { pieceStore, receiptStore, taskStore },
         } = getStoreImplementations()
+        const service = getMockService()
+        const dealTrackerConnection = getConnection(
+          dealTrackerSigner,
+          service
+        ).connection
 
         await test(
           {
@@ -49,8 +60,16 @@ describe('storefront', () => {
             pieceOfferQueue,
             taskStore,
             receiptStore,
+            dealTrackerService: {
+              connection: dealTrackerConnection,
+              invocationConfig: {
+                issuer: storefrontSigner,
+                with: storefrontSigner.did(),
+                audience: dealTrackerSigner,
+              },
+            },
             queuedMessages,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
@@ -119,7 +138,7 @@ describe('storefront', () => {
                 assert.fail(error)
               },
             },
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })

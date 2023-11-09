@@ -25,6 +25,7 @@ import { ServiceContext as FilecoinServiceContext } from '@web3-storage/filecoin
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
+import { UsageStorage } from './types/usage.js'
 
 export type ValidationEmailSend = {
   to: string
@@ -94,6 +95,9 @@ import {
   SubscriptionGet,
   SubscriptionGetSuccess,
   SubscriptionGetFailure,
+  SubscriptionList,
+  SubscriptionListSuccess,
+  SubscriptionListFailure,
   RateLimitAdd,
   RateLimitAddSuccess,
   RateLimitAddFailure,
@@ -127,6 +131,9 @@ import {
   PlanGetSuccess,
   PlanGetFailure,
   AccessAuthorizeFailure,
+  UsageReportSuccess,
+  UsageReportFailure,
+  UsageReport,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -148,6 +155,8 @@ export type {
 export type { RateLimitsStorage, RateLimit } from './types/rate-limits.js'
 import { PlansStorage } from './types/plans.js'
 export type { PlansStorage } from './types/plans.js'
+import { SubscriptionsStorage } from './types/subscriptions.js'
+export type { SubscriptionsStorage }
 
 export interface Service extends StorefrontService {
   store: {
@@ -205,6 +214,11 @@ export interface Service extends StorefrontService {
       SubscriptionGetSuccess,
       SubscriptionGetFailure
     >
+    list: ServiceMethod<
+      SubscriptionList,
+      SubscriptionListSuccess,
+      SubscriptionListFailure
+    >
   }
   'rate-limit': {
     add: ServiceMethod<RateLimitAdd, RateLimitAddSuccess, RateLimitAddFailure>
@@ -248,6 +262,9 @@ export interface Service extends StorefrontService {
   }
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
+  }
+  usage: {
+    report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
   }
 }
 
@@ -305,11 +322,14 @@ export interface SpaceServiceContext {
 export interface ProviderServiceContext {
   provisionsStorage: Provisions
   rateLimitsStorage: RateLimits
+  plansStorage: PlansStorage
+  requirePaymentPlan?: boolean
 }
 
 export interface SubscriptionServiceContext {
   signer: EdSigner.Signer
   provisionsStorage: Provisions
+  subscriptionsStorage: SubscriptionsStorage
 }
 
 export interface RateLimitServiceContext {
@@ -322,6 +342,11 @@ export interface RevocationServiceContext {
 
 export interface PlanServiceContext {
   plansStorage: PlansStorage
+}
+
+export interface UsageServiceContext {
+  provisionsStorage: Provisions
+  usageStorage: UsageStorage
 }
 
 export interface ServiceContext
@@ -337,7 +362,8 @@ export interface ServiceContext
     RevocationServiceContext,
     PlanServiceContext,
     UploadServiceContext,
-    FilecoinServiceContext {}
+    FilecoinServiceContext,
+    UsageServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {
   id: Signer

@@ -1,3 +1,4 @@
+import { Aggregate, Piece } from '@web3-storage/data-segment'
 import { toCAR } from './car.js'
 
 /** @param {number} size */
@@ -28,4 +29,43 @@ export async function randomBytes(size) {
 export async function randomCAR(size) {
   const bytes = await randomBytes(size)
   return toCAR(bytes)
+}
+
+/**
+ * @param {number} length
+ * @param {number} size
+ */
+export async function randomCargo(length, size) {
+  const cars = await Promise.all(
+    Array.from({ length }).map(() => randomCAR(size))
+  )
+
+  return cars.map((car) => {
+    const piece = Piece.fromPayload(car.bytes)
+
+    return {
+      link: piece.link,
+      height: piece.height,
+      root: piece.root,
+      padding: piece.padding,
+      content: car.cid,
+    }
+  })
+}
+
+/**
+ * @param {number} length
+ * @param {number} size
+ */
+export async function randomAggregate(length, size) {
+  const pieces = await randomCargo(length, size)
+
+  const aggregateBuild = Aggregate.build({
+    pieces,
+  })
+
+  return {
+    pieces,
+    aggregate: aggregateBuild,
+  }
 }

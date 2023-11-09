@@ -29,7 +29,7 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
   }
   if (hasRes.ok) {
     return {
-      ok: {}
+      ok: {},
     }
   }
 

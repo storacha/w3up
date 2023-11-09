@@ -232,7 +232,7 @@ const files = [
   new File([someBinaryData], 'images/example.png'),
 ]
 
-const directoryCid = await client.storeDirectory(files)
+const directoryCid = await client.uploadDirectory(files)
 ```
 
 In the example above, `directoryCid` resolves to an IPFS directory with the following layout:
@@ -406,6 +406,8 @@ sequenceDiagram
   - [`capability.upload.add`](#capabilityuploadadd)
   - [`capability.upload.list`](#capabilityuploadlist)
   - [`capability.upload.remove`](#capabilityuploadremove)
+  - [`capability.filecoin.offer`](#capabilityfilecoinoffer)
+  - [`capability.filecoin.info`](#capabilityfilecoininfo)
 - [Types](#types)
   - [`Capability`](#capability)
   - [`CARMetadata`](#carmetadata)
@@ -688,6 +690,27 @@ function remove(
 
 Remove a upload by root data CID.
 
+### `capability.filecoin.offer`
+
+```ts
+function offer (
+  content: CID,
+  piece: PieceLink,
+): Promise<FilecoinOfferResponse>
+```
+
+Offer a Filecoin "piece" to be added to an aggregate that will be offered for Filecoin deal(s).
+
+### `capability.filecoin.info`
+
+```ts
+function info (
+  piece: PieceLink
+): Promise<FilecoinInfoResponse>
+```
+
+Get know deals and aggregate info of a Filecoin "piece" previously offered.
+
 ## Types
 
 ### `Capability`
@@ -921,3 +944,4 @@ Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up-clie
 [docs-ClientFactoryOptions]: #clientfactoryoptions
 
 [access-docs-Agent]: https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html
+

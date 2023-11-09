@@ -257,6 +257,41 @@ describe(`provider/add`, () => {
       cleanupContext(context)
     }
   })
+
+  it('provider/add fails if plans are required and a plan has not been configured', async () => {
+    const { space, agent, account, ...context } = await setup({
+      requirePaymentPlan: true,
+    })
+    const { service } = context
+
+    try {
+      const proofs = await createAuthorization({ agent, service, account })
+
+      const addResult = await Provider.add
+        .invoke({
+          issuer: agent,
+          audience: service,
+          with: account.did(),
+          nb: {
+            provider: 'did:web:web3.storage',
+            consumer: space.did(),
+          },
+          proofs,
+        })
+        .execute(context.connection)
+
+      assert.ok(
+        addResult.out.error,
+        'Expected error provisioning without adding a plan'
+      )
+      assert.equal(
+        addResult.out.error.message,
+        `Account identified by ${account.did()} has not selected a payment plan`
+      )
+    } finally {
+      cleanupContext(context)
+    }
+  })
 })
 
 /**

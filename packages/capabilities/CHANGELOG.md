@@ -1,5 +1,33 @@
 # Changelog
 
+## [11.4.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.3.1...capabilities-v11.4.0) (2023-11-09)
+
+
+### Features
+
+* add `subscription/list` capability ([#1088](https://github.com/web3-storage/w3up/issues/1088)) ([471d7e5](https://github.com/web3-storage/w3up/commit/471d7e5db24e12a06c1c52ae76bf95ff9471bac8))
+
+## [11.3.1](https://github.com/web3-storage/w3up/compare/capabilities-v11.3.0...capabilities-v11.3.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* put access.session back ([#1100](https://github.com/web3-storage/w3up/issues/1100)) ([10a1a4b](https://github.com/web3-storage/w3up/commit/10a1a4bfc5ec79ea0b7b2049fd7d1953ca0810ef))
+
+## [11.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.2.0...capabilities-v11.3.0) (2023-11-08)
+
+
+### Features
+
+* filecoin info ([#1091](https://github.com/web3-storage/w3up/issues/1091)) ([adb2442](https://github.com/web3-storage/w3up/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+
+## [11.2.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.1.0...capabilities-v11.2.0) (2023-11-07)
+
+
+### Features
+
+* add usage/report capability ([#1079](https://github.com/web3-storage/w3up/issues/1079)) ([6418b4b](https://github.com/web3-storage/w3up/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
+
 ## [11.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.0.1...capabilities-v11.1.0) (2023-10-27)
 
 

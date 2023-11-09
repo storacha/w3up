@@ -10,8 +10,14 @@
  */
 import { capability, URI, DID, Schema, fail, ok } from '@ucanto/validator'
 import * as Types from '@ucanto/interface'
+import { attest } from './ucan.js'
 import { equalWith, equal, and, SpaceDID, checkLink } from './utils.js'
 export { top } from './top.js'
+
+/**
+ * @deprecated - Use `ucan.attest` instead.
+ */
+export const session = attest
 
 /**
  * Account identifier.

@@ -10,6 +10,7 @@ import { PieceLink } from '@web3-storage/data-segment'
 import {
   AggregatorService,
   StorefrontService,
+  DealTrackerService,
 } from '@web3-storage/filecoin-client/types'
 import {
   Store,
@@ -18,7 +19,11 @@ import {
   ServiceConfig,
 } from '../types.js'
 
-export type PieceStore = UpdatableAndQueryableStore<PieceRecordKey, PieceRecord, Pick<PieceRecord, 'status'>>
+export type PieceStore = UpdatableAndQueryableStore<
+  PieceRecordKey,
+  PieceRecord,
+  Pick<PieceRecord, 'status'>
+>
 export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
 export type PieceOfferQueue = Queue<PieceOfferMessage>
 export type TaskStore = Store<UnknownLink, Invocation>
@@ -60,6 +65,10 @@ export interface ServiceContext {
    * Stores receipts for tasks.
    */
   receiptStore: ReceiptStore
+  /**
+   * Deal tracker connection to find out available deals for an aggregate.
+   */
+  dealTrackerService: ServiceConfig<DealTrackerService>
   /**
    * Service options.
    */

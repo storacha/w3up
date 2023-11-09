@@ -1,6 +1,8 @@
 import { Filecoin, Aggregator } from '@web3-storage/capabilities'
+import * as Server from '@ucanto/server'
 import { CBOR } from '@ucanto/core'
 import * as Signer from '@ucanto/principal/ed25519'
+import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
 import pWaitFor from 'p-wait-for'
 
 import * as API from '../../src/types.js'
@@ -16,6 +18,8 @@ import { createInvocationsAndReceiptsForDealDataProofChain } from '../context/re
 import { getStoreImplementations } from '../context/store-implementations.js'
 import { FailingStore } from '../context/store.js'
 import { FailingQueue } from '../context/queue.js'
+import { mockService } from '../context/mocks.js'
+import { getConnection } from '../context/service.js'
 
 /**
  * @typedef {import('../../src/storefront/api.js').PieceRecord} PieceRecord
@@ -200,7 +204,7 @@ export const test = {
         assert.ok(response.out.error)
         assert.equal(response.out.error?.name, QueueOperationErrorName)
       },
-      (context) => ({
+      async (context) => ({
         ...context,
         filecoinSubmitQueue: new FailingQueue(),
       })
@@ -232,7 +236,7 @@ export const test = {
         assert.ok(response.out.error)
         assert.equal(response.out.error?.name, StoreOperationErrorName)
       },
-      (context) => ({
+      async (context) => ({
         ...context,
         pieceStore: getStoreImplementations(FailingStore).storefront.pieceStore,
       })
@@ -306,7 +310,7 @@ export const test = {
         assert.ok(response.out.error)
         assert.equal(response.out.error?.name, QueueOperationErrorName)
       },
-      (context) => ({
+      async (context) => ({
         ...context,
         pieceOfferQueue: new FailingQueue(),
       })
@@ -363,6 +367,7 @@ export const test = {
         aggregate: aggregate.link,
         group,
         piece: piece.link,
+        content: piece.content,
         piecesBlock,
         inclusionProof: {
           subtree: inclusionProof.ok[0],
@@ -447,11 +452,176 @@ export const test = {
         assert.ok(response.out.error)
         assert.equal(response.out.error?.name, StoreOperationErrorName)
       },
-      (context) => ({
+      async (context) => ({
         ...context,
         pieceStore: getStoreImplementations(FailingStore).storefront.pieceStore,
       })
     ),
+  'filecoin/info gets aggregate where piece was included together with deals and inclusion proof':
+    wichMockableContext(
+      async (assert, context) => {
+        const { agent, aggregator, dealer } = await getServiceContext()
+        const group = context.id.did()
+        const connection = connect({
+          id: context.id,
+          channel: createServer(context),
+        })
+
+        // Create piece and aggregate for test
+        const { aggregate, pieces } = await randomAggregate(10, 128)
+        const piece = pieces[0]
+        const offer = pieces.map((p) => p.link)
+        const piecesBlock = await CBOR.write(offer)
+
+        // Store piece into store
+        const putRes = await context.pieceStore.put({
+          piece: piece.link.link(),
+          content: piece.content.link(),
+          group: context.id.did(),
+          status: 'submitted',
+          insertedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
+        assert.ok(putRes.ok)
+
+        // Create inclusion proof for test
+        const inclusionProof = aggregate.resolveProof(piece.link)
+        if (inclusionProof.error) {
+          throw new Error('could not compute inclusion proof')
+        }
+
+        // Create invocations and receipts for chain into DealDataProof
+        const dealMetadata = {
+          dataType: 0n,
+          dataSource: {
+            dealID: 111n,
+          },
+        }
+        const { invocations, receipts } =
+          await createInvocationsAndReceiptsForDealDataProofChain({
+            storefront: context.id,
+            aggregator,
+            dealer,
+            aggregate: aggregate.link,
+            group,
+            piece: piece.link,
+            content: piece.content,
+            piecesBlock,
+            inclusionProof: {
+              subtree: inclusionProof.ok[0],
+              index: inclusionProof.ok[1],
+            },
+            aggregateAcceptStatus: {
+              ...dealMetadata,
+              aggregate: aggregate.link,
+            },
+          })
+
+        const storedInvocationsAndReceiptsRes =
+          await storeInvocationsAndReceipts({
+            invocations,
+            receipts,
+            taskStore: context.taskStore,
+            receiptStore: context.receiptStore,
+          })
+        assert.ok(storedInvocationsAndReceiptsRes.ok)
+
+        // agent invocation
+        const filecoinInfoInv = Filecoin.info.invoke({
+          issuer: agent,
+          audience: connection.id,
+          with: agent.did(),
+          nb: {
+            piece: piece.link.link(),
+          },
+        })
+
+        const response = await filecoinInfoInv.execute(connection)
+        if (response.out.error) {
+          throw new Error('invocation failed', { cause: response.out.error })
+        }
+        assert.ok(response.out.ok)
+        assert.ok(response.out.ok.piece.equals(piece.link.link()))
+        assert.equal(response.out.ok.deals.length, 1)
+        assert.ok(response.out.ok.deals[0].aggregate.equals(aggregate.link))
+        assert.deepEqual(
+          BigInt(response.out.ok.deals[0].aux.dataType),
+          dealMetadata.dataType
+        )
+        assert.deepEqual(
+          BigInt(response.out.ok.deals[0].aux.dataSource.dealID),
+          dealMetadata.dataSource.dealID
+        )
+        assert.ok(response.out.ok.deals[0].inclusion.index)
+        assert.ok(response.out.ok.deals[0].inclusion.subtree)
+      },
+      async (context) => {
+        /**
+         * Mock deal tracker to return deals
+         */
+        const dealTrackerSigner = await Signer.generate()
+        const service = mockService({
+          deal: {
+            info: Server.provideAdvanced({
+              capability: DealTrackerCaps.dealInfo,
+              handler: async () => {
+                /** @type {API.UcantoInterface.OkBuilder<API.DealInfoSuccess, API.DealInfoFailure>} */
+                const result = Server.ok({
+                  deals: {
+                    111: {
+                      provider: 'f11111',
+                    },
+                  },
+                })
+
+                return result
+              },
+            }),
+          },
+        })
+        const dealTrackerConnection = getConnection(
+          dealTrackerSigner,
+          service
+        ).connection
+
+        return {
+          ...context,
+          service,
+          dealTrackerService: {
+            connection: dealTrackerConnection,
+            invocationConfig: {
+              issuer: context.id,
+              with: context.id.did(),
+              audience: dealTrackerSigner,
+            },
+          },
+        }
+      }
+    ),
+  'filecoin/info fails if content is not known': async (assert, context) => {
+    const { agent } = await getServiceContext()
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // Create piece and aggregate for test
+    const { pieces } = await randomAggregate(10, 128)
+    const piece = pieces[0]
+
+    // agent invocation
+    const filecoinInfoInv = Filecoin.info.invoke({
+      issuer: agent,
+      audience: connection.id,
+      with: agent.did(),
+      nb: {
+        piece: piece.link,
+      },
+    })
+
+    const response = await filecoinInfoInv.execute(connection)
+    assert.ok(response.out.error)
+  },
 }
 
 /**
@@ -501,12 +671,12 @@ async function getServiceContext() {
 
 /**
  * @param {API.Test<StorefrontApi.ServiceContext>} testFn
- * @param {(context: StorefrontApi.ServiceContext) => StorefrontApi.ServiceContext} mockContextFunction
+ * @param {(context: StorefrontApi.ServiceContext) => Promise<StorefrontApi.ServiceContext>} mockContextFunction
  */
 function wichMockableContext(testFn, mockContextFunction) {
   // @ts-ignore
-  return function (...args) {
-    const modifiedArgs = [args[0], mockContextFunction(args[1])]
+  return async function (...args) {
+    const modifiedArgs = [args[0], await mockContextFunction(args[1])]
     // @ts-ignore
     return testFn(...modifiedArgs)
   }

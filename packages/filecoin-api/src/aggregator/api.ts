@@ -19,7 +19,11 @@ export type BufferQueue = Queue<BufferMessage>
 export type BufferStore = Store<Link, BufferRecord>
 export type AggregateStore = Store<AggregateRecordKey, AggregateRecord>
 export type PieceAcceptQueue = Queue<PieceAcceptMessage>
-export type InclusionStore = QueryableStore<InclusionRecordKey, InclusionRecord, InclusionRecordQueryByGroup>
+export type InclusionStore = QueryableStore<
+  InclusionRecordKey,
+  InclusionRecord,
+  InclusionRecordQueryByGroup
+>
 export type AggregateOfferQueue = Queue<AggregateOfferMessage>
 
 export interface ServiceContext {

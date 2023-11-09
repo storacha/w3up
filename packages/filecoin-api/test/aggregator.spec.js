@@ -25,15 +25,9 @@ describe('Aggregator', () => {
         // resources
         /** @type {Map<string, unknown[]>} */
         const queuedMessages = new Map()
+        const { pieceQueue } = getQueues(queuedMessages)
         const {
-          pieceQueue,
-        } = getQueues(queuedMessages)
-        const {
-          aggregator: {
-            pieceStore,
-            aggregateStore,
-            inclusionStore,
-          },
+          aggregator: { pieceStore, aggregateStore, inclusionStore },
         } = getStoreImplementations()
 
         await test(
@@ -55,7 +49,7 @@ describe('Aggregator', () => {
             inclusionStore,
             pieceQueue,
             queuedMessages,
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })
@@ -138,7 +132,7 @@ describe('Aggregator', () => {
               minAggregateSize: 2 ** 34,
               minUtilizationFactor: 4,
             },
-            validateAuthorization
+            validateAuthorization,
           }
         )
       })

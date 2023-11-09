@@ -9,6 +9,7 @@ import {
   filecoinOffer,
   filecoinSubmit,
   filecoinAccept,
+  filecoinInfo,
 } from '../src/storefront.js'
 import { randomAggregate, randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -260,6 +261,55 @@ describe('storefront', () => {
     )
     // does not include effect fx in receipt
     assert.ok(!res.fx.join)
+  })
+
+  it('agent asks info of a filecoin piece', async () => {
+    const { agent } = await getContext()
+    const [cargo] = await randomCargo(1, 100)
+
+    /** @type {import('@web3-storage/capabilities/types').FilecoinOfferSuccess} */
+    const filecoinOfferResponse = {
+      piece: cargo.link,
+    }
+
+    // Create Ucanto service
+    const service = mockService({
+      filecoin: {
+        info: Server.provideAdvanced({
+          capability: StorefrontCaps.filecoinInfo,
+          handler: async ({ invocation }) => {
+            assert.strictEqual(invocation.issuer.did(), agent.did())
+            assert.strictEqual(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.strictEqual(invCap.can, StorefrontCaps.filecoinInfo.can)
+            assert.equal(invCap.with, invocation.issuer.did())
+            assert.ok(invCap.nb)
+            const { piece } = invCap.nb
+            // piece link
+            assert.ok(piece.equals(cargo.link.link()))
+
+            return Server.ok({
+              piece,
+              deals: [],
+            })
+          },
+        }),
+      },
+    })
+
+    const res = await filecoinInfo(
+      {
+        issuer: agent,
+        with: agent.did(),
+        audience: storefrontService,
+      },
+      cargo.link,
+      { connection: getConnection(service).connection }
+    )
+
+    assert.ok(res.out.ok)
+    assert.ok(res.out.ok.piece.equals(filecoinOfferResponse.piece))
+    assert.deepEqual(res.out.ok.deals, [])
   })
 })
 
