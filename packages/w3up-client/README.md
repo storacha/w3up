@@ -387,6 +387,7 @@ sequenceDiagram
   - [`uploadCAR`](#uploadcar)
   - [`agent`](#agent)
   - [`authorize`](#authorize)
+  - [`accounts`](#accounts)
   - [`currentSpace`](#currentspace)
   - [`setCurrentSpace`](#setcurrentspace)
   - [`spaces`](#spaces)
@@ -512,6 +513,14 @@ function authorize (email: string, options?: { signal?: AbortSignal }): Promise<
 ```
 
 Authorize the current agent to use capabilities granted to the passed email account.
+
+### `accounts`
+
+```ts
+function accounts (): Record<DID, Account>
+```
+
+List all accounts the agent has stored access to.
 
 ### `currentSpace`
 
@@ -729,7 +738,6 @@ export interface Capability<
   can: Can
   nb?: Caveats
 }
-
 
 export type Ability = `${string}/${string}` | "*"
 
