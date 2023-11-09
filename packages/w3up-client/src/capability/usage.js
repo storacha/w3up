@@ -6,7 +6,7 @@ import { Base } from '../base.js'
  */
 export class UsageClient extends Base {
   /**
-   * Get a usage report for thepassed space in the given time period.
+   * Get a usage report for the passed space in the given time period.
    *
    * @param {import('../types.js').SpaceDID} space
    * @param {{ from: Date, to: Date }} period
