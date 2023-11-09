@@ -1,5 +1,16 @@
 # Changelog
 
+## [12.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v11.2.0...upload-client-v12.0.0) (2023-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* tweak readmes to get release-please to bump major version ([#1102](https://github.com/web3-storage/w3up/issues/1102))
+
+### Features
+
+* tweak readmes to get release-please to bump major version ([#1102](https://github.com/web3-storage/w3up/issues/1102)) ([a411255](https://github.com/web3-storage/w3up/commit/a4112551f5dbac00f4b5a0da8c81ea35783f3ef9))
+
 ## [11.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v11.1.0...upload-client-v11.2.0) (2023-11-08)
 
 
