@@ -31,7 +31,7 @@ export const testClientAccounts = {
     assert.equal(account.toEmail(), email)
     assert.equal(account.did(), Account.fromEmail(email))
     assert.equal(account.proofs.length, 2)
-  }
+  },
 }
 
 Test.test({ 'Client accounts': testClientAccounts })
