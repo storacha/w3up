@@ -232,7 +232,7 @@ const files = [
   new File([someBinaryData], 'images/example.png'),
 ]
 
-const directoryCid = await client.storeDirectory(files)
+const directoryCid = await client.uploadDirectory(files)
 ```
 
 In the example above, `directoryCid` resolves to an IPFS directory with the following layout:
