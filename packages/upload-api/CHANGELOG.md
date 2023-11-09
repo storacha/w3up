@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.1](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.0...upload-api-v7.3.1) (2023-11-09)
+
+
+### Bug Fixes
+
+* trigger release for upload api ([#1107](https://github.com/web3-storage/w3up/issues/1107)) ([9930b10](https://github.com/web3-storage/w3up/commit/9930b10962d365303ae45467a44f414aeac3dccb))
+
 ## [7.3.0](https://github.com/web3-storage/w3up/compare/upload-api-v7.2.0...upload-api-v7.3.0) (2023-11-09)
 
 
