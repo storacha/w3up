@@ -9,12 +9,12 @@
  * @module
  */
 import { capability, DID, struct, ok } from '@ucanto/validator'
-import { equalWith, and, equal, SpaceDID } from './utils.js'
+import { AccountDID, equalWith, and, equal, SpaceDID } from './utils.js'
 
 // e.g. did:web:web3.storage or did:web:staging.web3.storage
 export const Provider = DID.match({ method: 'web' })
 
-export const AccountDID = DID.match({ method: 'mailto' })
+export { AccountDID }
 
 /**
  * Capability can be invoked by an agent to add a provider to a space.

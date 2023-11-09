@@ -50,9 +50,9 @@ export async function createSpace(audience) {
 }
 
 /**
- *
  * @param {API.Principal & API.Signer} audience
  * @param {import('./types.js').UcantoServerTestContext} context
+ * @param {string} [username]
  */
 export const registerSpace = async (audience, context, username = 'alice') => {
   const { proof, space, spaceDid } = await createSpace(audience)
@@ -77,7 +77,7 @@ export const registerSpace = async (audience, context, username = 'alice') => {
     })
   }
 
-  return { proof, space, spaceDid }
+  return { proof, space, spaceDid, account }
 }
 
 /** @param {number} size */

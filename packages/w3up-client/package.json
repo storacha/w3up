@@ -44,9 +44,17 @@
       "types": "./dist/src/capability/store.d.ts",
       "import": "./src/capability/store.js"
     },
+    "./capability/subscription": {
+      "types": "./dist/src/capability/subscription.d.ts",
+      "import": "./src/capability/subscription.js"
+    },
     "./capability/upload": {
       "types": "./dist/src/capability/upload.d.ts",
       "import": "./src/capability/upload.js"
+    },
+    "./capability/usage": {
+      "types": "./dist/src/capability/usage.d.ts",
+      "import": "./src/capability/usage.js"
     },
     "./types": "./src/types.js"
   },

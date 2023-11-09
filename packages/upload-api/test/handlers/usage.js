@@ -43,7 +43,6 @@ export const test = {
       /** @type {import('../types.js').ProviderDID} */
       (context.id.did())
     const report = usageReportRes.out.ok?.[provider]
-    console.log(report)
     assert.equal(report?.space, spaceDid)
     assert.equal(report?.size.initial, 0)
     assert.equal(report?.size.final, size)

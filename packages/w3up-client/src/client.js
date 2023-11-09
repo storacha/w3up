@@ -13,6 +13,8 @@ import { Delegation as AgentDelegation } from './delegation.js'
 import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
+import { SubscriptionClient } from './capability/subscription.js'
+import { UsageClient } from './capability/usage.js'
 import { AccessClient } from './capability/access.js'
 import { FilecoinClient } from './capability/filecoin.js'
 export * as Access from './capability/access.js'
@@ -29,10 +31,12 @@ export class Client extends Base {
     super(agentData, options)
     this.capability = {
       access: new AccessClient(agentData, options),
-      store: new StoreClient(agentData, options),
-      upload: new UploadClient(agentData, options),
-      space: new SpaceClient(agentData, options),
       filecoin: new FilecoinClient(agentData, options),
+      space: new SpaceClient(agentData, options),
+      store: new StoreClient(agentData, options),
+      subscription: new SubscriptionClient(agentData, options),
+      upload: new UploadClient(agentData, options),
+      usage: new UsageClient(agentData, options),
     }
   }
 

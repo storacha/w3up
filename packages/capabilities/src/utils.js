@@ -7,6 +7,8 @@ export const ProviderDID = DID.match({ method: 'web' })
 
 export const SpaceDID = DID.match({ method: 'key' })
 
+export const AccountDID = DID.match({ method: 'mailto' })
+
 /**
  * Check URI can be delegated
  *
