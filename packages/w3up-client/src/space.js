@@ -19,8 +19,9 @@ export class Space {
   /**
    * The given space name.
    */
-  name() {
-    return this.#meta.name
+  get name() {
+    /* c8 ignore next */
+    return String(this.#meta.name ?? '')
   }
 
   /**
