@@ -17,7 +17,7 @@ describe('SubscriptionClient', () => {
       const subscription = {
         provider: 'did:web:web3.storage',
         subscription: 'test',
-        consumers: [space.did()]
+        consumers: [space.did()],
       }
       const account = Absentee.from({ id: 'did:mailto:example.com:alice' })
       const service = mockService({
@@ -49,7 +49,7 @@ describe('SubscriptionClient', () => {
       const auths = await createAuthorization({
         account,
         service: serviceSigner,
-        agent: alice.agent.issuer
+        agent: alice.agent.issuer,
       })
       await alice.agent.addProofs(auths)
 
@@ -87,14 +87,13 @@ describe('SubscriptionClient', () => {
       const auths = await createAuthorization({
         account,
         service: serviceSigner,
-        agent: alice.agent.issuer
+        agent: alice.agent.issuer,
       })
       await alice.agent.addProofs(auths)
 
-      await assert.rejects(
-        alice.capability.subscription.list(account.did()),
-        { message: 'failed subscription/list invocation' }
-      )
+      await assert.rejects(alice.capability.subscription.list(account.did()), {
+        message: 'failed subscription/list invocation',
+      })
 
       assert(service.subscription.list.called)
       assert.equal(service.subscription.list.callCount, 1)

@@ -7,7 +7,7 @@
  */
 export class SubscriptionsStorage {
   /** @param {import('./provisions-storage.js').ProvisionsStorage} provisions */
-  constructor (provisions) {
+  constructor(provisions) {
     this.provisionsStore = provisions
   }
 
@@ -21,7 +21,7 @@ export class SubscriptionsStorage {
       results.push({
         subscription,
         provider: provision.provider,
-        consumers: [provision.consumer]
+        consumers: [provision.consumer],
       })
     }
     return { ok: { results } }

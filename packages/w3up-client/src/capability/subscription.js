@@ -7,7 +7,7 @@ import { Base } from '../base.js'
 export class SubscriptionClient extends Base {
   /**
    * List subscriptions for the passed account.
-   * 
+   *
    * @param {import('@web3-storage/access').AccountDID} account
    */
   async list(account) {
@@ -16,18 +16,23 @@ export class SubscriptionClient extends Base {
         issuer: this._agent.issuer,
         audience: this._serviceConf.access.id,
         with: account,
-        proofs: this._agent.proofs([{
-          can: SubscriptionCapabilities.list.can,
-          with: account
-        }]),
+        proofs: this._agent.proofs([
+          {
+            can: SubscriptionCapabilities.list.can,
+            with: account,
+          },
+        ]),
         nb: {},
       })
       .execute(this._serviceConf.access)
 
     if (!result.out.ok) {
-      throw new Error(`failed ${SubscriptionCapabilities.list.can} invocation`, {
-        cause: result.out.error,
-      })
+      throw new Error(
+        `failed ${SubscriptionCapabilities.list.can} invocation`,
+        {
+          cause: result.out.error,
+        }
+      )
     }
 
     return result.out.ok

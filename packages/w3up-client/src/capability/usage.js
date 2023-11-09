@@ -17,10 +17,12 @@ export class UsageClient extends Base {
         issuer: this._agent.issuer,
         audience: this._serviceConf.upload.id,
         with: space,
-        proofs: this._agent.proofs([{
-          can: UsageCapabilities.report.can,
-          with: space
-        }]),
+        proofs: this._agent.proofs([
+          {
+            can: UsageCapabilities.report.can,
+            with: space,
+          },
+        ]),
         nb: {
           period: {
             from: Math.floor(period.from.getTime() / 1000),

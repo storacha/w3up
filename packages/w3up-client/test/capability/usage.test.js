@@ -43,9 +43,9 @@ describe('UsageClient', () => {
         size: { initial: 0, final: 0 },
         period: {
           from: period.from.toISOString(),
-          to: period.to.toISOString()
+          to: period.to.toISOString(),
         },
-        events: []
+        events: [],
       }
 
       const subs = await alice.capability.usage.report(space.did(), period)

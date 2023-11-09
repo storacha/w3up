@@ -2,7 +2,7 @@ import { Result } from '@ucanto/interface'
 import {
   AccountDID,
   SubscriptionListSuccess,
-  SubscriptionListFailure
+  SubscriptionListFailure,
 } from '@web3-storage/capabilities/types'
 
 export interface SubscriptionsStorage {

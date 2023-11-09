@@ -6,10 +6,13 @@ import { createAuthorization } from '../helpers/utils.js'
 
 /** @type {API.Tests} */
 export const test = {
-  'subscription/list retrieves subscriptions for account': async (assert, context) => {
+  'subscription/list retrieves subscriptions for account': async (
+    assert,
+    context
+  ) => {
     const spaces = await Promise.all([
       registerSpace(alice, context, 'alic_e'),
-      registerSpace(alice, context, 'alic_e')
+      registerSpace(alice, context, 'alic_e'),
     ])
     const connection = connect({
       id: context.id,
@@ -33,11 +36,14 @@ export const test = {
     assert.ok(subListRes.out.ok)
 
     const results = subListRes.out.ok?.results
-    const totalConsumers = results?.reduce((total, s) => total + s.consumers.length, 0)
+    const totalConsumers = results?.reduce(
+      (total, s) => total + s.consumers.length,
+      0
+    )
     assert.equal(totalConsumers, spaces.length)
 
     for (const space of spaces) {
-      assert.ok(results?.some(s => s.consumers[0] === space.spaceDid))
+      assert.ok(results?.some((s) => s.consumers[0] === space.spaceDid))
     }
   },
 }
