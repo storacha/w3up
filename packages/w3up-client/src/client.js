@@ -21,13 +21,13 @@ import { FilecoinClient } from './capability/filecoin.js'
 export * as Access from './capability/access.js'
 
 export {
-  StoreClient,
-  UploadClient,
-  SpaceClient,
   AccessClient,
+  FilecoinClient,
+  StoreClient,
+  SpaceClient,
   SubscriptionClient,
+  UploadClient,
   UsageClient,
-  FilecoinClient
 }
 
 export class Client extends Base {
