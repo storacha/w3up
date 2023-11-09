@@ -16,6 +16,7 @@ const notImplemented = () => {
  * space: Partial<import('@web3-storage/access/types').Service['space']>
  * ucan: Partial<import('@web3-storage/access/types').Service['ucan']>
  * filecoin: Partial<import('@web3-storage/filecoin-client/types').StorefrontService['filecoin']>
+ * usage: Partial<import('@web3-storage/upload-client/types').Service['usage']>
  * }>} impl
  */
 export function mockService(impl) {
@@ -50,6 +51,9 @@ export function mockService(impl) {
     filecoin: {
       offer: withCallCount(impl.filecoin?.offer ?? notImplemented),
       info: withCallCount(impl.filecoin?.info ?? notImplemented),
+    },
+    usage: {
+      report: withCallCount(impl.usage?.report ?? notImplemented),
     },
   }
 }

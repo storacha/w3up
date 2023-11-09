@@ -6,22 +6,21 @@ import { Base } from '../base.js'
  */
 export class UsageClient extends Base {
   /**
-   * Get a usage report for the given time period.
+   * Get a usage report for thepassed space in the given time period.
    *
+   * @param {import('../types.js').SpaceDID} space
    * @param {{ from: Date, to: Date }} period
-   * @param {object} [options]
-   * @param {import('../types.js').SpaceDID} [options.space] Obtain usage for a different space.
    */
-  async report(period, options) {
-    const conf = await this._invocationConfig([UsageCapabilities.report.can])
-
+  async report(space, period) {
     const result = await UsageCapabilities.report
       .invoke({
-        issuer: conf.issuer,
-        /* c8 ignore next */
-        audience: conf.audience,
-        with: options?.space ?? conf.with,
-        proofs: conf.proofs,
+        issuer: this._agent.issuer,
+        audience: this._serviceConf.upload.id,
+        with: space,
+        proofs: this._agent.proofs([{
+          can: UsageCapabilities.report.can,
+          with: space
+        }]),
         nb: {
           period: {
             from: Math.floor(period.from.getTime() / 1000),

@@ -11,14 +11,15 @@ export class SubscriptionClient extends Base {
    * @param {import('@web3-storage/access').AccountDID} account
    */
   async list(account) {
-    const conf = await this._invocationConfig([SubscriptionCapabilities.list.can])
-
     const result = await SubscriptionCapabilities.list
       .invoke({
-        issuer: conf.issuer,
-        audience: conf.audience,
+        issuer: this._agent.issuer,
+        audience: this._serviceConf.access.id,
         with: account,
-        proofs: conf.proofs,
+        proofs: this._agent.proofs([{
+          can: SubscriptionCapabilities.list.can,
+          with: account
+        }]),
         nb: {},
       })
       .execute(this._serviceConf.access)

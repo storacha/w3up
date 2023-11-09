@@ -334,6 +334,7 @@ export const spaceAccess = {
   'upload/*': {},
   'access/*': {},
   'filecoin/*': {},
+  'usage/*': {},
 }
 
 /**
