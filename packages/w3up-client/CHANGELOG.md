@@ -1,5 +1,25 @@
 # Changelog
 
+## [10.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v9.3.0...w3up-client-v10.0.0) (2023-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* tweak readmes to get release-please to bump major version ([#1102](https://github.com/web3-storage/w3up/issues/1102))
+
+### Features
+
+* add `subscription/list` capability ([#1088](https://github.com/web3-storage/w3up/issues/1088)) ([471d7e5](https://github.com/web3-storage/w3up/commit/471d7e5db24e12a06c1c52ae76bf95ff9471bac8))
+* expose accounts list on client instance ([#1109](https://github.com/web3-storage/w3up/issues/1109)) ([1810684](https://github.com/web3-storage/w3up/commit/1810684e1a21109a8f03685eb9a15ae5b2bc1782))
+* filecoin info ([#1091](https://github.com/web3-storage/w3up/issues/1091)) ([adb2442](https://github.com/web3-storage/w3up/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+* tweak readmes to get release-please to bump major version ([#1102](https://github.com/web3-storage/w3up/issues/1102)) ([a411255](https://github.com/web3-storage/w3up/commit/a4112551f5dbac00f4b5a0da8c81ea35783f3ef9))
+* **w3up-client:** export additional modules ([#1110](https://github.com/web3-storage/w3up/issues/1110)) ([5ce43bc](https://github.com/web3-storage/w3up/commit/5ce43bc309f4029232f70d827f1fcc71a13c3758))
+
+
+### Bug Fixes
+
+* README with uploadDirectory, not store ([#1106](https://github.com/web3-storage/w3up/issues/1106)) ([22773bf](https://github.com/web3-storage/w3up/commit/22773bf7e06742658d175d0959fd3f1edcd4a0bd))
+
 ## [9.3.0](https://github.com/web3-storage/w3up/compare/w3up-client-v9.2.2...w3up-client-v9.3.0) (2023-11-08)
 
 
