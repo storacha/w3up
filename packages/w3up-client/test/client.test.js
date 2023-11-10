@@ -1,5 +1,12 @@
 import assert from 'assert'
-import { Delegation, create as createServer, provide } from '@ucanto/server'
+import {
+  Delegation,
+  Receipt,
+  Message,
+  parseLink,
+  create as createServer,
+  provide,
+} from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
@@ -435,6 +442,61 @@ describe('Client', () => {
 
       const result = await bob.revokeDelegation(delegation.cid)
       assert.ok(result.error, 'revoke succeeded when it should not have')
+    })
+  })
+
+  describe('getTaskReceipts', () => {
+    it('should get a receipt of an executed task from its CID', async () => {
+      const issuer = await Signer.generate()
+      const service = mockService({
+        ucan: {
+          receipt: provide(
+            UCANCapabilities.receipt,
+            async ({ capability, invocation }) => {
+              const { task } = capability.nb
+              const receipt = await Receipt.issue({
+                issuer,
+                // @ts-expect-error not specific CID multicoded
+                ran: task,
+                result: {
+                  ok: {},
+                },
+              })
+              // Encode receipts as an `ucanto` message so that they can be decoded on the other end
+              const message = await Message.build({ receipts: [receipt] })
+              const request = await CAR.outbound.encode(message)
+
+              return {
+                ok: request,
+              }
+            }
+          ),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+      const task = parseLink(
+        'bafyreie4sutqdtk36msxzdnrgy3iawlgjfinszfl4hxkg3plvnhv7a2dea'
+      )
+      const receiptChain = await alice.getTaskReceipts(task)
+
+      assert.ok(receiptChain)
+      assert.equal(receiptChain.size, 1)
+      assert.ok(
+        receiptChain
+          .get(Array.from(receiptChain.keys())[0])
+          ?.ran.link()
+          .equals(task)
+      )
     })
   })
 

@@ -1,6 +1,8 @@
+import { UCAN, Console } from '@web3-storage/capabilities'
+import { CAR } from '@ucanto/transport'
 import * as API from '../../src/types.js'
 import { alice, bob, mallory } from '../util.js'
-import { UCAN, Console } from '@web3-storage/capabilities'
+import { getReceipts } from '../helpers/receipts.js'
 
 /**
  * @type {API.Tests}
@@ -351,5 +353,105 @@ export const test = {
       .execute(context.connection)
 
     assert.ok(String(revoke.out.error?.message).match(/Constrain violation/))
+  },
+
+  'issuer can retrieve a receipt without following effects': async (
+    assert,
+    context
+  ) => {
+    const receipts = await getReceipts()
+    const storage = context.receiptsStorage
+
+    // Store receipts
+    await Promise.all(
+      // @ts-expect-error no specific receipt types
+      receipts.map((r) => storage.put(r))
+    )
+
+    const receiptsInv = await UCAN.receipt
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.did(),
+        nb: {
+          task: receipts[0].ran.link(),
+          follow: false,
+        },
+      })
+      .execute(context.connection)
+
+    assert.ok(receiptsInv.out.ok)
+    if (receiptsInv.out.error) {
+      throw new Error('should not error to invoke receipt')
+    }
+    const message = await CAR.outbound.decode(receiptsInv.out.ok)
+    assert.equal(message.receipts.size, 1)
+  },
+
+  'issuer can retrieve a receipt following effects fully resolved': async (
+    assert,
+    context
+  ) => {
+    const receipts = await getReceipts()
+    const storage = context.receiptsStorage
+
+    // Store receipts
+    await Promise.all(
+      // @ts-expect-error no specific receipt types
+      receipts.map((r) => storage.put(r))
+    )
+
+    const receiptsInv = await UCAN.receipt
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.did(),
+        nb: {
+          task: receipts[0].ran.link(),
+          follow: true,
+        },
+      })
+      .execute(context.connection)
+
+    assert.ok(receiptsInv.out.ok)
+    if (receiptsInv.out.error) {
+      throw new Error('should not error to invoke receipt')
+    }
+    const message = await CAR.outbound.decode(receiptsInv.out.ok)
+    assert.equal(message.receipts.size, receipts.length)
+  },
+
+  'issuer can retrieve a receipt following effects partially resolved': async (
+    assert,
+    context
+  ) => {
+    const receipts = await getReceipts()
+    const readyReceipts = receipts.slice(0, receipts.length - 2)
+    const storage = context.receiptsStorage
+
+    // Store receipts
+    await Promise.all(
+      // @ts-expect-error no specific receipt types
+      readyReceipts.map((r) => storage.put(r))
+    )
+
+    const receiptsInv = await UCAN.receipt
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.did(),
+        nb: {
+          task: receipts[0].ran.link(),
+          follow: true,
+        },
+      })
+      .execute(context.connection)
+
+    assert.ok(receiptsInv.out.ok)
+    if (receiptsInv.out.error) {
+      throw new Error('should not error to invoke receipt')
+    }
+    const message = await CAR.outbound.decode(receiptsInv.out.ok)
+    assert.equal(message.receipts.size, readyReceipts.length)
   },
 }

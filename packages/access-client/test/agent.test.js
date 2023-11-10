@@ -1,5 +1,6 @@
 import assert from 'assert'
 import * as ucanto from '@ucanto/core'
+import { CAR } from '@ucanto/transport'
 import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
 import { Agent, Access, AgentData, connection } from '../src/agent.js'
@@ -404,6 +405,142 @@ describe('Agent', function () {
     // bob should be able to revoke his own delegation
     const result5 = await bob.revoke(bobDelegation.cid)
     assert(result5.ok, `failed to revoke: ${result5.error?.message}`)
+  })
+
+  it('can get receipts for a given task', async () => {
+    const service = await ed25519.Signer.generate()
+    const server = createServer({
+      ucan: {
+        /**
+         *
+         * @type {import('@ucanto/interface').ServiceMethod<import('../src/types.js').UCANReceipt, import('../src/types.js').UCANReceiptSuccess, import('../src/types.js').UCANReceiptFailure>}
+         */
+        receipt: provide(UCAN.receipt, async ({ capability, invocation }) => {
+          const { task } = capability.nb
+          const receipt = await ucanto.Receipt.issue({
+            issuer: service,
+            // @ts-expect-error not specific CID multicoded
+            ran: task,
+            result: {
+              ok: {},
+            },
+          })
+          // Encode receipts as an `ucanto` message so that they can be decoded on the other end
+          const message = await ucanto.Message.build({ receipts: [receipt] })
+          const request = await CAR.outbound.encode(message)
+
+          return {
+            ok: request,
+          }
+        }),
+      },
+    })
+
+    const alice = await Agent.create(undefined, {
+      connection: connection({ principal: server.id, channel: server }),
+    })
+    const task = ucanto.parseLink(
+      'bafyreie4sutqdtk36msxzdnrgy3iawlgjfinszfl4hxkg3plvnhv7a2dea'
+    )
+    const receiptChain = await alice.getTaskReceipts(task)
+
+    assert.ok(receiptChain)
+    assert.equal(receiptChain.size, 1)
+    assert.ok(
+      receiptChain
+        .get(Array.from(receiptChain.keys())[0])
+        ?.ran.link()
+        .equals(task)
+    )
+  })
+
+  it('can get receipts for a given task and follow their effects', async () => {
+    const service = await ed25519.Signer.generate()
+    const server = createServer({
+      ucan: {
+        /**
+         *
+         * @type {import('@ucanto/interface').ServiceMethod<import('../src/types.js').UCANReceipt, import('../src/types.js').UCANReceiptSuccess, import('../src/types.js').UCANReceiptFailure>}
+         */
+        receipt: provide(UCAN.receipt, async ({ capability, invocation }) => {
+          const { task } = capability.nb
+          const effectCid = ucanto.parseLink(
+            'bafyreia5hlrtz52ozd2nnnru6kx2xqewgh3bb5itnydkgt6olrdlrmpdui'
+          )
+          const effectReceipt = await ucanto.Receipt.issue({
+            issuer: service,
+            // another invocation CID
+            ran: effectCid,
+            result: {
+              ok: {},
+            },
+          })
+          const receipt = await ucanto.Receipt.issue({
+            issuer: service,
+            // @ts-expect-error not specific CID multicoded
+            ran: task,
+            result: {
+              ok: {},
+            },
+            fx: {
+              join: effectCid,
+              fork: [],
+            },
+          })
+          // Encode receipts as an `ucanto` message so that they can be decoded on the other end
+          const message = await ucanto.Message.build({
+            receipts: [receipt, effectReceipt],
+          })
+          const request = await CAR.outbound.encode(message)
+
+          return {
+            ok: request,
+          }
+        }),
+      },
+    })
+
+    const alice = await Agent.create(undefined, {
+      connection: connection({ principal: server.id, channel: server }),
+    })
+    const task = ucanto.parseLink(
+      'bafyreie4sutqdtk36msxzdnrgy3iawlgjfinszfl4hxkg3plvnhv7a2dea'
+    )
+    const receiptChain = await alice.getTaskReceipts(task)
+
+    assert.ok(receiptChain)
+    assert.equal(receiptChain.size, 2)
+  })
+
+  it('can handle receipt not found response', async () => {
+    const server = createServer({
+      ucan: {
+        /**
+         *
+         * @type {import('@ucanto/interface').ServiceMethod<import('../src/types.js').UCANReceipt, import('../src/types.js').UCANReceiptSuccess, import('../src/types.js').UCANReceiptFailure>}
+         */
+        receipt: provide(UCAN.receipt, async ({ capability, invocation }) => {
+          return {
+            error: {
+              name: 'ReceiptNotFound',
+              message: 'Could not find receipt',
+            },
+          }
+        }),
+      },
+    })
+
+    const alice = await Agent.create(undefined, {
+      connection: connection({ principal: server.id, channel: server }),
+    })
+    const task = ucanto.parseLink(
+      'bafyreie4sutqdtk36msxzdnrgy3iawlgjfinszfl4hxkg3plvnhv7a2dea'
+    )
+
+    await assert.rejects(
+      () => alice.getTaskReceipts(task),
+      /failed ucan\/receipt invocation/
+    )
   })
 
   /**

@@ -47,6 +47,7 @@ export function mockService(impl) {
     },
     ucan: {
       revoke: withCallCount(impl.ucan?.revoke ?? notImplemented),
+      receipt: withCallCount(impl.ucan?.receipt ?? notImplemented),
     },
     filecoin: {
       offer: withCallCount(impl.filecoin?.offer ?? notImplemented),

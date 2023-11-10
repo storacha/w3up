@@ -499,6 +499,7 @@ export interface UploadListSuccess extends ListResponse<UploadListItem> {}
 
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
 export type UCANAttest = InferInvokedCapability<typeof UCANCaps.attest>
+export type UCANReceipt = InferInvokedCapability<typeof UCANCaps.receipt>
 
 export interface Timestamp {
   /**
@@ -546,6 +547,17 @@ export type UCANRevokeFailure =
   | InvalidRevocationScope
   | UnauthorizedRevocation
   | RevocationsStoreFailure
+
+export type UCANReceiptSuccess = Ucanto.HTTPRequest
+
+/**
+ * Error is raised when Requested `Receipt` is not found.
+ */
+export interface ReceiptNotFound extends Ucanto.Failure {
+  name: 'ReceiptNotFound'
+}
+
+export type UCANReceiptFailure = ReceiptNotFound
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
@@ -631,6 +643,7 @@ export type AbilitiesArray = [
   Access['can'],
   AccessAuthorize['can'],
   UCANAttest['can'],
+  UCANReceipt['can'],
   CustomerGet['can'],
   ConsumerHas['can'],
   ConsumerGet['can'],

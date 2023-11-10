@@ -113,3 +113,49 @@ export const attest = capability({
     // UCAN link MUST be the same
     checkLink(claim.nb.proof, from.nb.proof, 'nb.proof'),
 })
+
+/**
+ * Issued by agent looking for receipts for a given executed task CID.
+ * 
+ * @example
+ * ```js
+ * {
+    iss: "did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi",
+    aud: "did:web:web3.storage",
+    att: [{
+      "with": "did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi",
+      "can": "ucan/receipt",
+      "nb": {
+        "task": {
+          "/": "bafyreifer23oxeyamllbmrfkkyvcqpujevuediffrpvrxmgn736f4fffui"
+        },
+        ""
+      }
+    }],
+    exp: null
+    sig: "..."
+  }
+ * ```
+ */
+export const receipt = capability({
+  can: 'ucan/receipt',
+  /**
+   * DID of the agent.
+   */
+  with: Schema.did(),
+  nb: Schema.struct({
+    /**
+     * CID of the task that was execute.
+     */
+    task: Schema.link(),
+    /**
+     * Whether should follow the receipt chain for forks and join effects.
+     */
+    follow: Schema.boolean().optional(),
+  }),
+  derives: (claim, from) =>
+    // With field MUST be the same
+    and(equalWith(claim, from)) ??
+    // task link MUST be the same
+    checkLink(claim.nb.task, from.nb.task, 'nb.task'),
+})

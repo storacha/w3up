@@ -22,6 +22,7 @@ import { confirmConfirmationUrl } from './utils.js'
 import { PlansStorage } from '../storage/plans-storage.js'
 import { UsageStorage } from '../storage/usage-storage.js'
 import { SubscriptionsStorage } from '../storage/subscriptions-storage.js'
+import { ReceiptsStorage } from '../storage/receipts-storage.js'
 
 /**
  * @param {object} options
@@ -79,6 +80,7 @@ export const createContext = async (
     plansStorage,
     usageStorage,
     revocationsStorage,
+    receiptsStorage: new ReceiptsStorage(),
     errorReporter: {
       catch(error) {
         if (options.assert) {
