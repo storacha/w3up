@@ -127,6 +127,9 @@ import {
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  UCANReceipt,
+  UCANReceiptSuccess,
+  UCANReceiptFailure,
   PlanGet,
   PlanGetSuccess,
   PlanGetFailure,
@@ -157,6 +160,8 @@ import { PlansStorage } from './types/plans.js'
 export type { PlansStorage } from './types/plans.js'
 import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
+import { ReceiptsStorage } from './types/receipts.js'
+export type { ReceiptsStorage }
 
 export interface Service extends StorefrontService {
   store: {
@@ -236,6 +241,7 @@ export interface Service extends StorefrontService {
 
   ucan: {
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
+    receipt: ServiceMethod<UCANReceipt, UCANReceiptSuccess, UCANReceiptFailure>
   }
 
   admin: {
@@ -277,6 +283,7 @@ export type StoreServiceContext = SpaceServiceContext & {
 
 export type UploadServiceContext = ConsumerServiceContext &
   SpaceServiceContext &
+  UcanReceiptServiceContext &
   RevocationServiceContext & {
     signer: EdSigner.Signer
     uploadTable: UploadTable
@@ -340,6 +347,10 @@ export interface RevocationServiceContext {
   revocationsStorage: RevocationsStorage
 }
 
+export interface UcanReceiptServiceContext {
+  receiptsStorage: ReceiptsStorage
+}
+
 export interface PlanServiceContext {
   plansStorage: PlansStorage
 }
@@ -360,6 +371,7 @@ export interface ServiceContext
     SubscriptionServiceContext,
     RateLimitServiceContext,
     RevocationServiceContext,
+    UcanReceiptServiceContext,
     PlanServiceContext,
     UploadServiceContext,
     FilecoinServiceContext,

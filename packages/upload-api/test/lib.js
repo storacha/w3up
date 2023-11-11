@@ -16,6 +16,7 @@ import { test as provisionsStorageTests } from './storage/provisions-storage-tes
 import { test as rateLimitsStorageTests } from './storage/rate-limits-storage-tests.js'
 import { test as revocationsStorageTests } from './storage/revocations-storage-tests.js'
 import { test as plansStorageTests } from './storage/plans-storage-tests.js'
+import { test as receiptsStorageTests } from './storage/receipts-storage-tests.js'
 import { DebugEmail } from '../src/utils/email.js'
 export * as Context from './helpers/context.js'
 
@@ -32,6 +33,7 @@ export const storageTests = {
   ...rateLimitsStorageTests,
   ...revocationsStorageTests,
   ...plansStorageTests,
+  ...receiptsStorageTests,
 }
 
 export const handlerTests = {
@@ -58,5 +60,6 @@ export {
   rateLimitsStorageTests,
   revocationsStorageTests,
   plansStorageTests,
+  receiptsStorageTests,
   DebugEmail,
 }

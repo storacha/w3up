@@ -398,6 +398,7 @@ sequenceDiagram
   - [`addProof`](#addproof)
   - [`delegations`](#delegations)
   - [`createDelegation`](#createdelegation)
+  - [`getTaskReceipts`](#gettaskreceipts)
   - [`capability.access.authorize`](#capabilityaccessauthorize)
   - [`capability.access.claim`](#capabilityaccessclaim)
   - [`capability.space.info`](#capabilityspaceinfo)
@@ -610,6 +611,17 @@ function createDelegation (
 ```
 
 Create a delegation to the passed audience for the given abilities with the _current_ space as the resource.
+
+### `getTaskReceipts`
+
+```ts
+function getTaskReceipts (
+  task: CID,
+  options?: { follow: boolean }
+): Promise<Map<string, Receipt>>
+```
+
+Get receipts from executed task. Optionally follow tasks effects if already available.
 
 ### `capability.access.authorize`
 

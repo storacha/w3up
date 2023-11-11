@@ -63,6 +63,7 @@ export const abilitiesAsStrings = [
   Access.access.can,
   Access.authorize.can,
   UCAN.attest.can,
+  UCAN.receipt.can,
   Customer.get.can,
   Consumer.has.can,
   Consumer.get.can,

@@ -243,6 +243,17 @@ export class Client extends Base {
   }
 
   /**
+   * Get receipts from executed task. Optionally follow tasks effects if already available.
+   *
+   * @param {import('@ucanto/interface').UnknownLink} taskCid
+   * @param {object} [options]
+   * @param {boolean} [options.follow]
+   */
+  async getTaskReceipts(taskCid, options = {}) {
+    return this._agent.getTaskReceipts(taskCid, options)
+  }
+
+  /**
    * Revoke a delegation by CID.
    *
    * If the delegation was issued by this agent (and therefore is stored in the

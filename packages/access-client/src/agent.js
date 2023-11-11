@@ -245,6 +245,33 @@ export class Agent {
   }
 
   /**
+   * Get receipts from executed task. Optionally follow tasks effects if already available.
+   *
+   * @param {API.UnknownLink} taskCid
+   * @param {object} [options]
+   * @param {boolean} [options.follow]
+   */
+  async getTaskReceipts(taskCid, options = {}) {
+    const result = await this.invokeAndExecute(UCAN.receipt, {
+      with: this.issuer.did(),
+      nb: {
+        task: taskCid,
+        follow: options.follow || false,
+      },
+    })
+
+    if (!result.out.ok) {
+      throw new Error(`failed ${UCAN.receipt.can} invocation`, {
+        cause: result.out.error,
+      })
+    }
+
+    // @ts-ignore no type on receipt output
+    const message = await CAR.outbound.decode(result.out.ok)
+    return message.receipts
+  }
+
+  /**
    * Get all the proofs matching the capabilities.
    *
    * Proofs are delegations with an audience matching agent DID, or with an
