@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/w3up-client",
-  "version": "9.3.0",
+  "version": "10.0.0",
   "description": "Client for the w3up API",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
@@ -27,6 +27,18 @@
       "types": "./dist/src/index.d.ts",
       "node": "./src/index.node.js",
       "import": "./src/index.js"
+    },
+    "./account": {
+      "types": "./dist/src/account.d.ts",
+      "import": "./src/account.js"
+    },
+    "./space": {
+      "types": "./dist/src/space.d.ts",
+      "import": "./src/space.js"
+    },
+    "./result": {
+      "types": "./dist/src/result.d.ts",
+      "import": "./src/result.js"
     },
     "./client": {
       "types": "./dist/src/client.d.ts",

@@ -8,6 +8,7 @@ import {
   Upload as UploadCapabilities,
 } from '@web3-storage/capabilities'
 import { Base } from './base.js'
+import * as Account from './account.js'
 import { Space } from './space.js'
 import { Delegation as AgentDelegation } from './delegation.js'
 import { StoreClient } from './capability/store.js'
@@ -19,7 +20,15 @@ import { AccessClient } from './capability/access.js'
 import { FilecoinClient } from './capability/filecoin.js'
 export * as Access from './capability/access.js'
 
-export { StoreClient, UploadClient, SpaceClient, AccessClient }
+export {
+  AccessClient,
+  FilecoinClient,
+  StoreClient,
+  SpaceClient,
+  SubscriptionClient,
+  UploadClient,
+  UsageClient,
+}
 
 export class Client extends Base {
   /**
@@ -58,6 +67,14 @@ export class Client extends Base {
     await this.capability.access.authorize(email, options)
   }
   /* c8 ignore stop */
+
+  /**
+   * List all accounts that agent has stored access to. Returns a dictionary
+   * of accounts keyed by their `did:mailto` identifier.
+   */
+  accounts() {
+    return Account.list(this)
+  }
 
   /**
    * Uploads a file to the service and returns the root data CID for the

@@ -293,7 +293,7 @@ describe('Client', () => {
       const spaces = alice.spaces()
       assert.equal(spaces.length, 1)
       assert.equal(spaces[0].did(), space.did())
-      assert.equal(spaces[0].name(), name)
+      assert.equal(spaces[0].name, name)
     })
 
     it('should add space', async () => {

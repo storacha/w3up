@@ -9,7 +9,7 @@ describe('spaces', () => {
     const isRegistered = true
     const space = new Space(signer.did(), { name, isRegistered })
     assert.equal(space.did(), signer.did())
-    assert.equal(space.name(), name)
+    assert.equal(space.name, name)
     assert.equal(space.registered(), isRegistered)
     assert.equal(space.meta().name, name)
   })

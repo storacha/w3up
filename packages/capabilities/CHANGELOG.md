@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.4.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.3.1...capabilities-v11.4.0) (2023-11-09)
+
+
+### Features
+
+* add `subscription/list` capability ([#1088](https://github.com/web3-storage/w3up/issues/1088)) ([471d7e5](https://github.com/web3-storage/w3up/commit/471d7e5db24e12a06c1c52ae76bf95ff9471bac8))
+
 ## [11.3.1](https://github.com/web3-storage/w3up/compare/capabilities-v11.3.0...capabilities-v11.3.1) (2023-11-08)
 
 
