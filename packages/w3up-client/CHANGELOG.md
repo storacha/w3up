@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.0.0...w3up-client-v10.1.0) (2023-11-13)
+
+
+### Features
+
+* export Account so we can use it in w3ui ([#1116](https://github.com/web3-storage/w3up/issues/1116)) ([9c7266e](https://github.com/web3-storage/w3up/commit/9c7266ea296e567784feba62e2737d5d700bf2ac))
+
+
+### Bug Fixes
+
+* export new subscription, usage and filecoin clients ([#1111](https://github.com/web3-storage/w3up/issues/1111)) ([7fe797d](https://github.com/web3-storage/w3up/commit/7fe797d4e4920ff01e668e228cc237da9f81ed9f))
+
 ## [10.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v9.3.0...w3up-client-v10.0.0) (2023-11-09)
 
 
