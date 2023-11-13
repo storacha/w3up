@@ -98,7 +98,7 @@ export const login = async ({ agent }, email) => {
   }
 }
 
-class Account {
+export class Account {
   /**
    * @typedef {object} AccountModel
    * @property {API.DidMailto} id
