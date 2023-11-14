@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.2.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.1.0...w3up-client-v10.2.0) (2023-11-14)
+
+
+### Features
+
+* account.plan.get method ([#1117](https://github.com/web3-storage/w3up/issues/1117)) ([1385a9c](https://github.com/web3-storage/w3up/commit/1385a9c4f722e678090fc4371a0c4959cef3c6cd))
+
 ## [10.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.0.0...w3up-client-v10.1.0) (2023-11-13)
 
 
