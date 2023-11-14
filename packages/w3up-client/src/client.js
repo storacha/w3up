@@ -179,9 +179,16 @@ export class Client extends Base {
    * Create a new space with a given name.
    *
    * @param {string} name
+   * @param {object} [options]
+   * @param {boolean} [options.skipSetCurrent]
    */
-  async createSpace(name) {
-    return await this._agent.createSpace(name)
+  async createSpace(name, options = {}) {
+    const space = await this._agent.createSpace(name)
+    if (options.skipSetCurrent) {
+      return space
+    }
+    await this.setCurrentSpace(space.did())
+    return space
   }
   /* c8 ignore stop */
 
