@@ -321,7 +321,16 @@ export class Agent {
    * @param {string} name
    */
   async createSpace(name) {
-    return await Space.generate({ name })
+    return await Space.generate({ name, agent: this })
+  }
+
+  /**
+   * @param {string} secret
+   * @param {object} options
+   * @param {string} options.name
+   */
+  async recoverSpace(secret, { name }) {
+    return await Space.fromMnemonic(secret, { name, agent: this })
   }
 
   /**
