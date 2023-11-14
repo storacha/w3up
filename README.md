@@ -6,7 +6,7 @@ It's the core of the web3.storage server and client implementations.
 
 ## Usage
 
-Store your files with web3.storage and retrieve them via their unique Content ID. Our tools make it simple to hash your content locally, so you can verify the service only ever stores the exact bytes you asked us to. Pick the method of using with web3.storage that works for you!
+Store your files with web3.storage and retrieve them via their unique Content ID. Our tools make it simple to hash your content locally, so you can verify the service only ever stores the exact bytes you asked us to. Pick the method of using web3.storage that works for you!
 
 ### Website
 
@@ -33,12 +33,9 @@ await client.authorize('you@example.org')
 const space = await client.createSpace('my-awesome-space')
 await client.setCurrentSpace(space.did())
 
-// tell web3.storage about your new space
-await client.registerSpace()
-
 // lets go!
 const files = await getFilesFromPaths(process.env.PATH_TO_ADD)
-const cid = await client.put(files)
+const cid = await client.uploadDirectory(files)
 
 console.log(`Space DID: ${space.did()}`)
 console.log(`IPFS CID: ${cid}`)
@@ -49,7 +46,7 @@ See https://web3.storage/docs/w3up-client for a guide to using the js client for
 
 ### Command Line
 
-Install [`@web3-storage/w3cli`](https://github.com/web3-storage/w3cli#readme) globally and save your api token then add your files to web3! It calculates the root CID for your files locally before sending them to web3.storage.
+Install [`@web3-storage/w3cli`](https://github.com/web3-storage/w3cli#readme) globally, authorize it to act on your behalf, create a space and upload your files. It calculates the root CID for your files locally before sending them to web3.storage.
 
 **shell**
 ```shell
@@ -61,9 +58,6 @@ $ w3 authorize alice@example.com
 
 # create a Space, a DID namespace for your files... like a bucket.
 $ w3 space create Documents
-
-# defaults to registering you with web3.storage
-$ w3 space register 
 
 # lets go!
 $ w3 up ~/Pictures/ayy-lamo.jpg
@@ -77,7 +71,7 @@ Run `w3 --help` or have a look at https://github.com/web3-storage/w3cli to find 
 
 All welcome! web3.storage is open-source. See the [contributing guide](./CONTRIBUTING.md)
 
-This project uses node v18 and `pnpm`. It's a monorepo that use [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local [`packages`](https://github.com/web3-storage/w3up/tree/main/packages)
+This project uses node v18 and `pnpm`. It's a monorepo that uses [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local [`packages`](https://github.com/web3-storage/w3up/tree/main/packages)
 
 ## License
 
