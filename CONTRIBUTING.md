@@ -1,14 +1,12 @@
-# w3up UCAN Protocol
+# Contributing
 
-Implementation of the w3up UCAN protocols.
+Join in. All welcome! web3.storage is open-source. The code is dual-licensed under [MIT + Apache 2.0](license.md)
 
-## Contributing
-
-Feel free to join in. All welcome. [Open an issue](https://github.com/web3-storage/w3-protocol/issues/new)!
+This project uses node v18 and `pnpm`. It's a monorepo that use [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local `packages/*` folders.
 
 If you're opening a pull request, please see the [guidelines](#how-should-i-write-my-commits) on structuring your commit messages so that your PR will be compatible with our [release process](#release-process).
 
-### Setup a development environment
+## Setup a development environment
 
 We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
 
@@ -45,9 +43,7 @@ Add these lines to your vscode workspace settings at `.vscode/settings.json`
 
 ## Release Process
 
-[Release Please](https://github.com/googleapis/release-please) automates CHANGELOG generation, the creation of GitHub releases,
-and version bumps for our packages. Release Please does so by parsing your
-git history, looking for [Conventional Commit messages](https://www.conventionalcommits.org/),
+[Release Please](https://github.com/googleapis/release-please) automates CHANGELOG generation, the creation of GitHub releases, and version bumps for our packages. Release Please does so by parsing your git history, looking for [Conventional Commit messages](https://www.conventionalcommits.org/),
 and creating release PRs.
 
 ### What's a Release PR?
@@ -72,6 +68,3 @@ The most important prefixes you should have in mind are:
 - `feat!:`, or `fix!:`, `refactor!:`, etc., which represent a breaking change
   (indicated by the `!`) and will result in a SemVer major.
 
-## License
-
-Dual-licensed under [MIT + Apache 2.0](license.md)
