@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -595,6 +595,9 @@ importers:
       docusaurus-plugin-typedoc:
         specifier: ^0.18.0
         version: 0.18.0(typedoc-plugin-markdown@3.17.0)(typedoc@0.23.28)
+      files-from-path:
+        specifier: ^1.0.1
+        version: 1.0.1
       hundreds:
         specifier: ^0.0.9
         version: 0.0.9
@@ -5859,6 +5862,13 @@ packages:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
       webpack: 5.89.0
+    dev: true
+
+  /files-from-path@1.0.1:
+    resolution: {integrity: sha512-laySl80uFX+VkIo86FnvzG1mAdfea/arDrO3JBelF8sEJmWUr2rnQs6ntrqZ+5zEnmXTZNg4gMFWC8NmLCys/g==}
+    engines: {node: '>=18'}
+    dependencies:
+      graceful-fs: 4.2.11
     dev: true
 
   /filesize@8.0.7:
