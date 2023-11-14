@@ -82,14 +82,14 @@ To invoke a capability like `store/add` on a Space using `w3up-client`, the clie
 
 The first time `w3up-client` is instantiated on a device, it creates an Agent automatically. Alternatively, if you have your own Agent corresponding to a specific private key locally available, you can pass it to the client.
 
-The delegation from a Space to your Agent that `w3up-client` needs can be passed either by verifying the email address the Space is registered to and claiming the UCAN delegation (`authorize(email)` then `capability.access.claim`) or directly if you have the UCAN delegation available locally (`addSpace(delegation)`).
+The delegation from a Space to your Agent that `w3up-client` needs can be passed either by verifying the email address the Space is registered to and claiming the UCAN delegation (`login(email)` then `capability.access.claim`) or directly if you have the UCAN delegation available locally (`addSpace(delegation)`).
 
 ### Basic usage with web3.storage
 
 ```mermaid
 flowchart TD
     A[w3up-client instance] -->|Automatic if specific Agent is not passed when client object created|B(Create local Agent DID and key)
-    B --> |If Space has not yet been created|S(Create local Space, authorize client with your email address, and register Space + email address with web3.storage)
+    B --> |If Space has not yet been created|S(Create local Space, login client with your email address, and register Space + email address with web3.storage)
     S --> C(Get UCAN delegation from Space to Agent)
     C --> D(Upload to Space using Agent)
 ```
@@ -124,10 +124,10 @@ Once initialized, you can access the client's `Agent` with the [`agent()` access
 
 #### Creating and registering Spaces
 
-A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agent will need a delegation from to store data with w3up. The first thing to do is authorize your Agent with your email address. Calling `authorize` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `authorize` method will resolve. Make sure to check for errors, as `authorize` will fail if the email is not confirmed within the expiration timeout. Authorization needs to happen only once per agent.
+A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agent will need a delegation from to store data with w3up. The first thing to do is login your Agent with your email address. Calling `login` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `login` method will resolve. Make sure to check for errors, as `login` will fail if the email is not confirmed within the expiration timeout. Authorization needs to happen only once per agent.
 
 ```js
-await client.authorize('zaphod@beeblebrox.galaxy')
+await client.login('zaphod@beeblebrox.galaxy')
 ```
 
 Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
@@ -148,7 +148,7 @@ First, set the space as your "current" space using the [`setCurrentSpace` method
 await client.setCurrentSpace(space.did())
 ```
 
-Next, call the [`registerSpace` method][docs-Client#registerSpace], which registers the Space with web3.storage and associates it with the email address you authorized:
+Next, call the [`registerSpace` method][docs-Client#registerSpace], which registers the Space with web3.storage and associates it with the email address you login:
 
 ```js
 try {
@@ -160,10 +160,10 @@ try {
 
 #### Delegating from Space to Agent
 
-In order to store data with w3up, your Agent will need a delegation from a Space. This automatically happens if you called `authorize(email)` then `registerSpace()`. However, if you are initializing the client with a previously created Space, you can `authorize(email)` then claim a delegation granted to the account associated with your email:
+In order to store data with w3up, your Agent will need a delegation from a Space. This automatically happens if you called `login(email)` then `registerSpace()`. However, if you are initializing the client with a previously created Space, you can `login(email)` then claim a delegation granted to the account associated with your email:
 
 ```js
-await client.authorize('zaphod@beeblebrox.galaxy')
+await client.login('zaphod@beeblebrox.galaxy')
 await capability.access.claim()
 await client.setCurrentSpace(space.did()) # select the relevant Space DID that is associated with your account
 ```
@@ -292,7 +292,7 @@ sequenceDiagram
   - From there, when your end user is ready to upload, they should request from your backend a delegation from your developer-owned Space to their Agent (which can be derived via [`client.agent()`](docs-Client#agent))
     - In your backend, you can call [`client.createDelegation()`](docs-Client#createDelegation) passing in the Agent object from `client.agent()` in your end user's instance, and passing through `options?` params to limit the scope of the delegation (e.g., `store/add`, `upload/add`, expiration time)
     - You can serialize this using `delegation.archive()` and send it to your user
-    - The end user instance of the client should not need to call `client.authorize(email)`, as it is not claiming any delegations via email address (but rather getting the delegation directly from your backend)
+    - The end user instance of the client should not need to call `client.login(email)`, as it is not claiming any delegations via email address (but rather getting the delegation directly from your backend)
 - Once your user receives the delegation, they can deserialize it using [`ucanto.Delegation.extract()`](https://github.com/web3-storage/ucanto/blob/c8999a59852b61549d163532a83bac62290b629d/packages/core/src/delegation.js#L399) and pass it in using `client.addSpace()`, and from there they can run any of the `upload` methods
     - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
 - A code example that does this can be found below
@@ -386,7 +386,7 @@ sequenceDiagram
   - [`uploadFile`](#uploadfile)
   - [`uploadCAR`](#uploadcar)
   - [`agent`](#agent)
-  - [`authorize`](#authorize)
+  - [`login`](#login)
   - [`accounts`](#accounts)
   - [`currentSpace`](#currentspace)
   - [`setCurrentSpace`](#setcurrentspace)
