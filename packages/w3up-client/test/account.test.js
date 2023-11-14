@@ -212,6 +212,22 @@ export const testAccount = {
 
     assert.ok(plan?.product, 'did:web:free.web3.storage')
   },
+
+  'space.save': async (assert, { client, mail, grantAccess }) => {
+    const space = await client.createSpace('test')
+    assert.deepEqual(client.spaces(), [])
+
+    console.log(space)
+
+    const result = await space.save()
+    assert.ok(result.ok)
+
+    const spaces = client.spaces()
+    assert.deepEqual(spaces.length, 1)
+    assert.deepEqual(spaces[0].did(), space.did())
+
+    assert.deepEqual(client.currentSpace()?.did(), space.did())
+  },
 }
 
 Test.test({ Account: testAccount })
