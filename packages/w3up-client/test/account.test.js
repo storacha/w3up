@@ -67,6 +67,18 @@ export const testAccount = {
     assert.ok(two[Account.fromEmail(bobEmail)].toEmail(), bobEmail)
   },
 
+  'client.login': async (assert, { client, mail, grantAccess }) => {
+    const account = client.login('alice@web.mail')
+
+    await grantAccess(await mail.take())
+
+    const alice = await account
+    assert.deepEqual(alice.toEmail(), 'alice@web.mail')
+
+    const accounts = client.accounts()
+    assert.deepEqual(Object.keys(accounts), [alice.did()])
+  },
+
   'create account and provision space': async (
     assert,
     { client, mail, grantAccess }
@@ -199,6 +211,22 @@ export const testAccount = {
     const { ok: plan } = await account.plan.get()
 
     assert.ok(plan?.product, 'did:web:free.web3.storage')
+  },
+
+  'space.save': async (assert, { client, mail, grantAccess }) => {
+    const space = await client.createSpace('test')
+    assert.deepEqual(client.spaces(), [])
+
+    console.log(space)
+
+    const result = await space.save()
+    assert.ok(result.ok)
+
+    const spaces = client.spaces()
+    assert.deepEqual(spaces.length, 1)
+    assert.deepEqual(spaces[0].did(), space.did())
+
+    assert.deepEqual(client.currentSpace()?.did(), space.did())
   },
 }
 

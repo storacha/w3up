@@ -11,6 +11,7 @@ import * as Access from './access.js'
  * @typedef {object} Model
  * @property {ED25519.EdSigner} signer
  * @property {string} name
+ * @property {API.Agent} [agent]
  */
 
 /**
@@ -18,11 +19,12 @@ import * as Access from './access.js'
  *
  * @param {object} options
  * @param {string} options.name
+ * @param {API.Agent} [options.agent]
  */
-export const generate = async ({ name }) => {
+export const generate = async ({ name, agent }) => {
   const { signer } = await ED25519.generate()
 
-  return new OwnedSpace({ signer, name })
+  return new OwnedSpace({ signer, name, agent })
 }
 
 /**
@@ -31,11 +33,12 @@ export const generate = async ({ name }) => {
  * @param {string} mnemonic
  * @param {object} options
  * @param {string} options.name - Name to give to the recovered space.
+ * @param {API.Agent} [options.agent]
  */
-export const fromMnemonic = async (mnemonic, { name }) => {
+export const fromMnemonic = async (mnemonic, { name, agent }) => {
   const secret = BIP39.mnemonicToEntropy(mnemonic, wordlist)
   const signer = await ED25519.derive(secret)
-  return new OwnedSpace({ signer, name })
+  return new OwnedSpace({ signer, name, agent })
 }
 
 /**
@@ -159,6 +162,27 @@ class OwnedSpace {
   }
 
   /**
+   * Saves account in the agent store so it can be accessed across sessions.
+   *
+   * @param {object} input
+   * @param {API.Agent} [input.agent]
+   * @returns {Promise<API.Result<API.Unit, Error>>}
+   */
+  async save({ agent = this.model.agent } = {}) {
+    if (!agent) {
+      return {
+        error: new Error('Please provide an agent to save the space into'),
+      }
+    }
+
+    const proof = await createAuthorization(this, { agent })
+    await agent.importSpaceFromDelegation(proof)
+    agent.setCurrentSpace(this.did())
+
+    return { ok: {} }
+  }
+
+  /**
    * Creates a (UCAN) delegation that gives full access to the space to the
    * specified `account`. At the moment we only allow `did:mailto` principal
    * to be used as an `account`.
@@ -229,6 +253,7 @@ class SharedSpace {
    * @property {API.SpaceDID} id
    * @property {API.Delegation} delegation
    * @property {{name?:string}} meta
+   * @property {API.Agent} [agent]
    *
    * @param {SharedSpaceModel} model
    */
