@@ -1,5 +1,6 @@
 import * as API from './types.js'
 import * as Access from './capability/access.js'
+import * as Plan from './capability/plan.js'
 import { Delegation, importAuthorization } from '@web3-storage/access/agent'
 import { add as provision, AccountDID } from '@web3-storage/access/provider'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
@@ -98,17 +99,20 @@ export const login = async ({ agent }, email) => {
   }
 }
 
+/**
+ * @typedef {object} Model
+ * @property {API.DidMailto} id
+ * @property {API.Agent} agent
+ * @property {API.Delegation[]} proofs
+ */
+
 export class Account {
   /**
-   * @typedef {object} AccountModel
-   * @property {API.DidMailto} id
-   * @property {API.Agent} agent
-   * @property {API.Delegation[]} proofs
-   *
-   * @param {AccountModel} model
+   * @param {Model} model
    */
   constructor(model) {
     this.model = model
+    this.plan = new AccountPlan(model)
   }
   get agent() {
     return this.model.agent
@@ -156,5 +160,24 @@ export class Account {
    */
   async save({ agent = this.agent } = {}) {
     return await importAuthorization(agent, this)
+  }
+}
+
+export class AccountPlan {
+  /**
+   * @param {Model} model
+   */
+  constructor(model) {
+    this.model = model
+  }
+
+  /**
+   * Gets information about the plan associated with this account.
+   */
+  async get() {
+    return await Plan.get(this.model, {
+      account: this.model.id,
+      proofs: this.model.proofs,
+    })
   }
 }
