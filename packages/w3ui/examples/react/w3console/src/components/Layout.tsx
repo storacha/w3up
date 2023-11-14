@@ -2,6 +2,8 @@ import { Logo } from '../brand'
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useKeyring } from '@w3ui/react-keyring'
+import { useNavigate } from 'react-router-dom'
 
 const navLinks = [
   { name: 'Terms', href: '/terms' },
@@ -14,6 +16,12 @@ interface SidebarComponentProps {
 }
 
 function Sidebar ({ sidebar = <div></div> }: SidebarComponentProps): JSX.Element {
+  const navigate = useNavigate()
+  const [, { unloadAgent }] = useKeyring()
+  async function logout () {
+    await unloadAgent()
+    navigate('/')
+  }
   return (
     <nav className='flex-none w-64 bg-gray-900 text-white px-4 pb-4 border-r border-gray-800 h-screen'>
       <div className='flex flex-col justify-between h-full'>
@@ -25,6 +33,7 @@ function Sidebar ({ sidebar = <div></div> }: SidebarComponentProps): JSX.Element
               <a className='text-xs block text-center mt-2' href={link.href}>{link.name}</a>
             ))}
           </div>
+          <button onClick={() => unloadAgent()}>log out</button>
         </div>
       </div>
     </nav>
