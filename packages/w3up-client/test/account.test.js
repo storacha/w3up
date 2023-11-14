@@ -67,6 +67,18 @@ export const testAccount = {
     assert.ok(two[Account.fromEmail(bobEmail)].toEmail(), bobEmail)
   },
 
+  'client.login': async (assert, { client, mail, grantAccess }) => {
+    const account = client.login('alice@web.mail')
+
+    await grantAccess(await mail.take())
+
+    const alice = await account
+    assert.deepEqual(alice.toEmail(), 'alice@web.mail')
+
+    const accounts = client.accounts()
+    assert.deepEqual(Object.keys(accounts), [alice.did()])
+  },
+
   'create account and provision space': async (
     assert,
     { client, mail, grantAccess }

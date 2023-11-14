@@ -19,6 +19,7 @@ import { UsageClient } from './capability/usage.js'
 import { AccessClient } from './capability/access.js'
 import { FilecoinClient } from './capability/filecoin.js'
 export * as Access from './capability/access.js'
+import * as Result from './result.js'
 
 export {
   AccessClient,
@@ -55,6 +56,8 @@ export class Client extends Base {
 
   /* c8 ignore start - testing websockets is hard */
   /**
+   * @deprecated - Use client.login instead.
+   *
    * Authorize the current agent to use capabilities granted to the passed
    * email account.
    *
@@ -65,6 +68,15 @@ export class Client extends Base {
    */
   async authorize(email, options) {
     await this.capability.access.authorize(email, options)
+  }
+
+  /**
+   * @param {Account.EmailAddress} email
+   */
+  async login(email) {
+    const account = Result.unwrap(await Account.login(this, email))
+    Result.unwrap(await account.save())
+    return account
   }
   /* c8 ignore stop */
 

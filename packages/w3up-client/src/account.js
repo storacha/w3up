@@ -8,6 +8,10 @@ import { fromEmail, toEmail } from '@web3-storage/did-mailto'
 export { fromEmail }
 
 /**
+ * @typedef {import('@web3-storage/did-mailto').EmailAddress} EmailAddress
+ */
+
+/**
  * List all accounts that agent has stored access to. Returns a dictionary
  * of accounts keyed by their `did:mailto` identifier.
  *
@@ -71,7 +75,7 @@ export const list = ({ agent }, { account } = {}) => {
  * resolve to an error.
  *
  * @param {{agent: API.Agent}} client
- * @param {API.EmailAddress} email
+ * @param {EmailAddress} email
  * @returns {Promise<API.Result<Account, Error>>}
  */
 export const login = async ({ agent }, email) => {
