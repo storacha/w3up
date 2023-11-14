@@ -180,6 +180,26 @@ export const testAccount = {
 
     assert.deepEqual(client.spaces().length, 1, 'spaces had been added')
   },
+
+  'check account plan': async (
+    assert,
+    { client, mail, grantAccess, plansStorage }
+  ) => {
+    const login = Account.login(client, 'alice@web.mail')
+    await grantAccess(await mail.take())
+    const account = Result.try(await login)
+
+    const { error } = await account.plan.get()
+    assert.ok(error)
+
+    Result.unwrap(
+      await plansStorage.set(account.did(), 'did:web:free.web3.storage')
+    )
+
+    const { ok: plan } = await account.plan.get()
+
+    assert.ok(plan?.product, 'did:web:free.web3.storage')
+  },
 }
 
 Test.test({ Account: testAccount })
