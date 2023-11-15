@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.4.1](https://github.com/web3-storage/w3up/compare/capabilities-v11.4.0...capabilities-v11.4.1) (2023-11-15)
+
+
+### Bug Fixes
+
+* upgrade ucanto core ([#1127](https://github.com/web3-storage/w3up/issues/1127)) ([5ce4d22](https://github.com/web3-storage/w3up/commit/5ce4d2292d7e980da4a2ea0f1583f608a81157d2))
+
 ## [11.4.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.3.1...capabilities-v11.4.0) (2023-11-09)
 
 
