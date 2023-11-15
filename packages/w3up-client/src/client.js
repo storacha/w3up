@@ -154,6 +154,9 @@ export class Client extends Base {
     const workflowResponse = await fetch(
       new URL(taskCid.toString(), this._receiptsEndpoint)
     )
+    if (!workflowResponse.ok) {
+      throw new Error(`no receipt available for requested task ${taskCid.toString()}`)
+    }
     // Get receipt from Message Archive
     const agentMessageBytes = new Uint8Array(
       await workflowResponse.arrayBuffer()
