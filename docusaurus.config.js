@@ -25,7 +25,7 @@ const config = {
         tsconfig: './tsconfig.json',
         out: 'markdown',
         sidebar: {
-          categoryLabel: 'w3protocol',
+          categoryLabel: 'w3up',
         },
       },
     ],
