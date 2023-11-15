@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.1.0](https://github.com/web3-storage/w3up/compare/access-v17.0.0...access-v17.1.0) (2023-11-14)
+
+
+### Features
+
+* w3up client login ([#1120](https://github.com/web3-storage/w3up/issues/1120)) ([8279bf6](https://github.com/web3-storage/w3up/commit/8279bf6371182709b46e83e5ac86d89ed1f292e8))
+
 ## [17.0.0](https://github.com/web3-storage/w3up/compare/access-v16.4.0...access-v17.0.0) (2023-11-09)
 
 
