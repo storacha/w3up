@@ -13,16 +13,19 @@
     "test": "pnpm -r --if-present run test",
     "check": "pnpm -r --if-present run check",
     "build": "pnpm -r --if-present run build",
-    "docs": "pnpm run build && typedoc --out docs",
+    "docs": "pnpm run build && typedoc --plugin typedoc-plugin-missing-exports --out docs",
     "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.12.2",
-    "@docusaurus/core": "^2.3.1",
-    "docusaurus-plugin-typedoc": "^0.18.0",
+    "@docusaurus/core": "^3.0.0",
+    "@docusaurus/preset-classic": "^3.0.0",
+    "docusaurus-plugin-typedoc": "^0.21.0",
     "lint-staged": "^13.2.0",
     "prettier": "2.8.3",
-    "typedoc-plugin-markdown": "^3.14.0",
+    "react": "^18.2.0",
+    "typedoc": "^0.25.3",
+    "typedoc-plugin-markdown": "^3.17.0",
     "typescript": "5.2.2"
   },
   "prettier": {
@@ -36,7 +39,6 @@
   },
   "dependencies": {
     "depcheck": "^1.4.3",
-    "typedoc": "^0.25.2",
     "typedoc-plugin-missing-exports": "^2.1.0"
   },
   "packageManager": "pnpm@7.24.3",

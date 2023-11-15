@@ -117,6 +117,7 @@
     },
     "ignorePatterns": [
       "dist",
+      "docs",
       "coverage",
       "src/types.js"
     ]

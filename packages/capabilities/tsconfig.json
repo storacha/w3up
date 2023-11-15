@@ -5,5 +5,8 @@
     "emitDeclarationOnly": true
   },
   "include": ["src", "test", "package.json"],
-  "exclude": ["**/node_modules/**"]
+  "exclude": ["**/node_modules/**"],
+  "typedocOptions": {
+    "entryPoints": ["./src"]
+  }
 }

@@ -10,5 +10,8 @@
     { "path": "../capabilities" },
     { "path": "../access-client" },
     { "path": "../filecoin-api" }
-  ]
+  ],
+  "typedocOptions": {
+    "entryPoints": ["./src"]
+  }
 }
