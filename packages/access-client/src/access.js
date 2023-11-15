@@ -117,8 +117,12 @@ export const claim = async (
     return result
   } else {
     const delegations = Object.values(result.ok.delegations)
-    const proofs = delegations.flatMap((proof) => bytesToDelegations(proof))
-    return { ok: new GrantedAccess({ agent, provider, audience, proofs }) }
+
+    const proofs = /** @type {API.Tuple<API.Delegation>} */ (
+      delegations.flatMap((proof) => bytesToDelegations(proof))
+    )
+
+    return { ok: new GrantedAccess({ agent, proofs }) }
   }
 }
 
@@ -208,9 +212,7 @@ class PendingAccessRequest {
         return {
           ok: new GrantedAccess({
             agent: this.agent,
-            provider: this.provider,
-            audience: this.audience,
-            proofs: result.ok,
+            proofs: /** @type {API.Tuple<API.Delegation>} */ (result.ok),
           }),
         }
       }
@@ -255,13 +257,11 @@ class RequestExpired extends Failure {
 /**
  * View over the UCAN Delegations that grant access to a specific principal.
  */
-class GrantedAccess {
+export class GrantedAccess {
   /**
    * @typedef {object} GrantedAccessModel
    * @property {API.Agent} agent - Agent that processed the request.
-   * @property {API.DID} audience - Principal access was granted to.
-   * @property {API.Delegation[]} proofs - Delegations that grant access.
-   * @property {API.ProviderDID} provider - Provider that handled the request.
+   * @property {API.Tuple<API.Delegation>} proofs - Delegations that grant access.
    *
    * @param {GrantedAccessModel} model
    */
@@ -270,12 +270,6 @@ class GrantedAccess {
   }
   get proofs() {
     return this.model.proofs
-  }
-  get provider() {
-    return this.model.provider
-  }
-  get authority() {
-    return this.model.audience
   }
 
   /**
