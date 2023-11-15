@@ -8,13 +8,9 @@
   },
   "include": ["./src", "./test"],
   "typedocOptions": {
-    "entryPoints": ["./src"],
-    "entryPointStrategy": "expand",
-    "darkHighlightTheme": "github-dark",
-    "navigationLinks": {
-      "Github": "https://github.com/web3-storage/w3up-client"
-    },
-    "customCss": "./static/docs.css"
+    "entryPoints": [
+      "./src",
+    ],
   },
   "references": [
     { "path": "../access-client" },

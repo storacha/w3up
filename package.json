@@ -13,13 +13,10 @@
     "test": "pnpm -r --if-present run test",
     "check": "pnpm -r --if-present run check",
     "build": "pnpm -r --if-present run build",
-    "docs": "pnpm run build && typedoc --out docs",
-    "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
+    "docs": "pnpm run build && typedoc --plugin typedoc-plugin-missing-exports --out docs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.12.2",
-    "@docusaurus/core": "^2.3.1",
-    "docusaurus-plugin-typedoc": "^0.18.0",
     "lint-staged": "^13.2.0",
     "prettier": "2.8.3",
     "typedoc-plugin-markdown": "^3.14.0",

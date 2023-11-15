@@ -6,5 +6,10 @@
   },
   "include": ["src", "scripts", "test", "package.json"],
   "exclude": ["**/node_modules/**"],
-  "references": [{ "path": "../access-client" }, { "path": "../capabilities" }]
+  "references": [{ "path": "../access-client" }, { "path": "../capabilities" }],
+  "typedocOptions": {
+    "entryPoints": [
+      "./src",
+    ]
+  }
 }

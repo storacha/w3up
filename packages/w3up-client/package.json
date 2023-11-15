@@ -108,7 +108,6 @@
     "@web3-storage/upload-client": "workspace:^"
   },
   "devDependencies": {
-    "@web3-storage/upload-api": "workspace:^",
     "@docusaurus/core": "^2.2.0",
     "@ipld/car": "^5.1.1",
     "@types/assert": "^1.5.6",
@@ -117,6 +116,7 @@
     "@ucanto/server": "^9.0.1",
     "@web3-storage/data-segment": "^5.0.0",
     "@web3-storage/eslint-config-w3up": "workspace:^",
+    "@web3-storage/upload-api": "workspace:^",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "docusaurus-plugin-typedoc": "^0.18.0",
@@ -127,7 +127,6 @@
     "playwright-test": "^12.3.4",
     "typedoc": "^0.23.24",
     "typedoc-plugin-markdown": "^3.14.0",
-    "typedoc-plugin-missing-exports": "^1.0.0",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {
@@ -181,8 +180,7 @@
       "assert",
       "c8",
       "docusaurus-plugin-typedoc",
-      "typedoc-plugin-markdown",
-      "typedoc-plugin-missing-exports"
+      "typedoc-plugin-markdown"
     ]
   }
 }

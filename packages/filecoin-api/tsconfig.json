@@ -9,5 +9,8 @@
   "references": [
     { "path": "../capabilities" },
     { "path": "../filecoin-client" }
-  ]
+  ],
+  "typedocOptions": {
+    "entryPoints": ["./src"]
+  }
 }
