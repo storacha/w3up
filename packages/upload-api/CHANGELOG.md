@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.2](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.1...upload-api-v7.3.2) (2023-11-15)
+
+
+### Bug Fixes
+
+* upgrade ucanto core ([#1127](https://github.com/web3-storage/w3up/issues/1127)) ([5ce4d22](https://github.com/web3-storage/w3up/commit/5ce4d2292d7e980da4a2ea0f1583f608a81157d2))
+
 ## [7.3.1](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.0...upload-api-v7.3.1) (2023-11-09)
 
 
