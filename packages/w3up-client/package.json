@@ -140,6 +140,8 @@
     },
     "ignorePatterns": [
       "dist",
+      "docs",
+      "docs-generated",
       "coverage",
       "src/types.js"
     ]

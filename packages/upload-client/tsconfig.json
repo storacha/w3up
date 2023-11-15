@@ -8,8 +8,6 @@
   "exclude": ["**/node_modules/**"],
   "references": [{ "path": "../access-client" }, { "path": "../capabilities" }],
   "typedocOptions": {
-    "entryPoints": [
-      "./src",
-    ]
+    "entryPoints": ["./src"]
   }
 }

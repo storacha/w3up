@@ -8,9 +8,7 @@
   },
   "include": ["./src", "./test"],
   "typedocOptions": {
-    "entryPoints": [
-      "./src",
-    ],
+    "entryPoints": ["./src"]
   },
   "references": [
     { "path": "../access-client" },

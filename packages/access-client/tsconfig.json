@@ -7,9 +7,7 @@
   "include": ["src", "scripts", "test", "package.json"],
   "exclude": ["**/node_modules/**"],
   "typedocOptions": {
-    "entryPoints": [
-      "./src",
-    ]
+    "entryPoints": ["./src"]
   },
   "references": [{ "path": "../capabilities" }, { "path": "../did-mailto" }]
 }
