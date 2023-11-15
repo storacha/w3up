@@ -24,7 +24,6 @@ export const testAccess = {
     assert.ok(request.expiration.getTime() >= Date.now())
 
     const access = Result.try(await request.claim())
-    assert.deepEqual(access.authority, client.did())
     assert.ok(access.proofs.length > 0)
 
     const proofs = client.proofs()

@@ -18,6 +18,7 @@ import { SubscriptionClient } from './capability/subscription.js'
 import { UsageClient } from './capability/usage.js'
 import { AccessClient } from './capability/access.js'
 import { FilecoinClient } from './capability/filecoin.js'
+import { CouponAPI } from './coupon.js'
 export * as Access from './capability/access.js'
 import * as Result from './result.js'
 
@@ -48,6 +49,7 @@ export class Client extends Base {
       upload: new UploadClient(agentData, options),
       usage: new UsageClient(agentData, options),
     }
+    this.coupon = new CouponAPI(agentData, options)
   }
 
   did() {

@@ -1,9 +1,10 @@
 import * as ED25519 from '@ucanto/principal/ed25519'
-import { delegate, Schema, UCAN } from '@ucanto/core'
+import { delegate, Schema, UCAN, error, fail } from '@ucanto/core'
 import * as BIP39 from '@scure/bip39'
 import { wordlist } from '@scure/bip39/wordlists/english'
 import * as API from './types.js'
 import * as Access from './access.js'
+import * as Provider from './provider.js'
 
 /**
  * Data model for the (owned) space.
@@ -24,6 +25,7 @@ import * as Access from './access.js'
 export const generate = async ({ name, agent }) => {
   const { signer } = await ED25519.generate()
 
+  return new OwnedSpace({ signer, name, agent })
   return new OwnedSpace({ signer, name, agent })
 }
 
@@ -170,9 +172,7 @@ class OwnedSpace {
    */
   async save({ agent = this.model.agent } = {}) {
     if (!agent) {
-      return {
-        error: new Error('Please provide an agent to save the space into'),
-      }
+      return fail('Please provide an agent to save the space into')
     }
 
     const proof = await createAuthorization(this, { agent })
@@ -180,6 +180,19 @@ class OwnedSpace {
     agent.setCurrentSpace(this.did())
 
     return { ok: {} }
+  }
+
+  /**
+   * @param {Authorization} authorization
+   * @param {object} options
+   * @param {API.Agent} [options.agent]
+   */
+  provision({ proofs }, { agent = this.model.agent } = {}) {
+    if (!agent) {
+      return fail('Please provide an agent to save the space into')
+    }
+
+    return provision(this, { proofs, agent })
   }
 
   /**
@@ -241,6 +254,37 @@ export const fromDelegation = (delegation) => {
   const meta = delegation.facts[0]?.space ?? {}
 
   return new SharedSpace({ id: result.ok, delegation, meta })
+}
+
+/**
+ * @typedef {object} Authorization
+ * @property {API.Delegation[]} proofs
+ *
+ * @typedef {object} Space
+ * @property {() => API.SpaceDID} did
+ */
+
+/**
+ * @param {Space} space
+ * @param {object} options
+ * @param {API.Delegation[]} options.proofs
+ * @param {API.Agent} options.agent
+ */
+export const provision = async (space, { proofs, agent }) => {
+  const [capability] = proofs[0].capabilities
+
+  const { ok: account, error: reason } = Provider.AccountDID.read(
+    capability.with
+  )
+  if (reason) {
+    return error(reason)
+  }
+
+  return await Provider.add(agent, {
+    consumer: space.did(),
+    account,
+    proofs,
+  })
 }
 
 /**
