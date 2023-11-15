@@ -11,17 +11,22 @@ console.log({email, spaceName, path})
 
 const client = await Client.create()
 
+let space
+
 // first time setup!
 if (!client.accounts().length) {
   // waits for you to click the link in your email to verify your identity
-  console.log('💌 Sending a verification link. Plz check your inbox', email)
+  console.log('💌 sending a verification link to', email)
   const account = await client.login(email)
 
   // create a space for your uploads
-  const space = await client.createSpace(spaceName)
-
+  space = await client.createSpace(spaceName)
+  console.log('✨ created space', space.did(), space.name)
+  
+  console.log('💾 saving space')
   await space.save()
 
+  console.log('💳 provisioning space')
   // associate this space with your account
   await account.provision(space.did())
 }
@@ -32,5 +37,5 @@ console.log('🚀 uploading', path)
 const root = await client.uploadDirectory(files)
 
 console.log('root', root.toString())
-console.log('space', space.did(), space.name())
+
 console.log('done!')
