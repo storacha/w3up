@@ -47,6 +47,10 @@ export interface ClientFactoryOptions {
    * here an error will be thrown.
    */
   principal?: Signer<DID<'key'>>
+  /**
+   * URL configuration of endpoint where receipts from UCAN Log can be read from.
+   */
+  receiptsEndpoint?: URL
 }
 
 export type ClientFactory = (options?: ClientFactoryOptions) => Promise<Client>

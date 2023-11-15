@@ -7,6 +7,7 @@ import {
   Store as StoreCapabilities,
   Upload as UploadCapabilities,
 } from '@web3-storage/capabilities'
+import { CAR } from '@ucanto/transport'
 import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
@@ -37,6 +38,7 @@ export class Client extends Base {
    * @param {import('@web3-storage/access').AgentData} agentData
    * @param {object} [options]
    * @param {import('./types.js').ServiceConf} [options.serviceConf]
+   * @param {URL} [options.receiptsEndpoint]
    */
   constructor(agentData, options) {
     super(agentData, options)
@@ -142,6 +144,36 @@ export class Client extends Base {
     ])
     options.connection = this._serviceConf.upload
     return uploadCAR(conf, car, options)
+  }
+
+  /**
+   * Get a receipt for an executed task by its CID.
+   *
+   * @param {import('multiformats').UnknownLink} taskCid
+   */
+  async getReceipt(taskCid) {
+    // Fetch receipt from endpoint
+    const workflowResponse = await fetch(
+      new URL(taskCid.toString(), this._receiptsEndpoint)
+    )
+    /* c8 ignore start */
+    if (!workflowResponse.ok) {
+      throw new Error(
+        `no receipt available for requested task ${taskCid.toString()}`
+      )
+    }
+    /* c8 ignore stop */
+    // Get receipt from Message Archive
+    const agentMessageBytes = new Uint8Array(
+      await workflowResponse.arrayBuffer()
+    )
+    // Decode message
+    const agentMessage = await CAR.request.decode({
+      body: agentMessageBytes,
+      headers: {},
+    })
+    // Get receipt from the potential multiple receipts in the message
+    return agentMessage.receipts.get(taskCid.toString())
   }
 
   /**

@@ -1,5 +1,5 @@
 import { Agent } from '@web3-storage/access/agent'
-import { serviceConf } from './service.js'
+import { serviceConf, receiptsEndpoint } from './service.js'
 
 export class Base {
   /**
@@ -18,6 +18,7 @@ export class Base {
    * @param {import('@web3-storage/access').AgentData} agentData
    * @param {object} [options]
    * @param {import('./types.js').ServiceConf} [options.serviceConf]
+   * @param {URL} [options.receiptsEndpoint]
    */
   constructor(agentData, options = {}) {
     this._serviceConf = options.serviceConf ?? serviceConf
@@ -27,6 +28,7 @@ export class Base {
       url: this._serviceConf.access.channel.url,
       connection: this._serviceConf.access,
     })
+    this._receiptsEndpoint = options.receiptsEndpoint ?? receiptsEndpoint
   }
 
   /**

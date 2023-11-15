@@ -1,5 +1,10 @@
 import assert from 'assert'
-import { Delegation, create as createServer, provide } from '@ucanto/server'
+import {
+  Delegation,
+  create as createServer,
+  parseLink,
+  provide,
+} from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
@@ -261,6 +266,22 @@ describe('Client', () => {
       assert.equal(service.store.add.callCount, 1)
       assert(service.upload.add.called)
       assert.equal(service.upload.add.callCount, 1)
+    })
+  })
+
+  describe('getReceipt', () => {
+    it('should find a receipt', async () => {
+      const taskCid = parseLink(
+        'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
+      )
+      const alice = new Client(await AgentData.create(), {
+        receiptsEndpoint: new URL('http://localhost:9201'),
+      })
+      const receipt = await alice.getReceipt(taskCid)
+      // This is a real `piece/accept` receipt exported as fixture
+      assert(receipt)
+      assert.ok(receipt.ran.link().equals(taskCid))
+      assert.ok(receipt.out.ok)
     })
   })
 

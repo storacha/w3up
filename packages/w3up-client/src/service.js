@@ -44,3 +44,5 @@ export const serviceConf = {
   upload: uploadServiceConnection,
   filecoin: filecoinServiceConnection,
 }
+
+export const receiptsEndpoint = 'https://up.web3.storage/receipt/'
