@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.1](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.2.0...react-keyring-v6.2.1) (2023-11-14)
+
+
+### Bug Fixes
+
+* correctly clear local storage ([#582](https://github.com/web3-storage/w3ui/issues/582)) ([6593030](https://github.com/web3-storage/w3ui/commit/65930308728d0c8f5edff010afac144c51681067))
+
 ## [6.2.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.1.0...react-keyring-v6.2.0) (2023-11-03)
 
 
