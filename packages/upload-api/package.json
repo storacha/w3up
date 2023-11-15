@@ -125,7 +125,7 @@
     "@ipld/car": "^5.1.1",
     "@ipld/dag-ucan": "^3.4.0",
     "@types/mocha": "^10.0.1",
-    "@ucanto/core": "^9.0.0",
+    "@ucanto/core": "^9.0.1",
     "@web-std/blob": "^3.0.5",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "@web3-storage/sigv4": "^1.0.2",
