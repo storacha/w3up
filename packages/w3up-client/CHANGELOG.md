@@ -1,5 +1,22 @@
 # Changelog
 
+## [11.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.3.0...w3up-client-v11.0.0) (2023-11-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* coupon ([#1136](https://github.com/web3-storage/w3up/issues/1136))
+
+### Features
+
+* coupon ([#1136](https://github.com/web3-storage/w3up/issues/1136)) ([1b94f2d](https://github.com/web3-storage/w3up/commit/1b94f2d3f6538d717d38b21dcb76657fd1f3e268))
+* get receipt support in client ([#1135](https://github.com/web3-storage/w3up/issues/1135)) ([660d088](https://github.com/web3-storage/w3up/commit/660d0886e468d373b142470b50282b231e645d19))
+
+
+### Bug Fixes
+
+* upgrade ucanto core ([#1127](https://github.com/web3-storage/w3up/issues/1127)) ([5ce4d22](https://github.com/web3-storage/w3up/commit/5ce4d2292d7e980da4a2ea0f1583f608a81157d2))
+
 ## [10.3.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.2.0...w3up-client-v10.3.0) (2023-11-15)
 
 
