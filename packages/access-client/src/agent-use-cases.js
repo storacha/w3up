@@ -217,9 +217,8 @@ export async function authorizeWaitAndClaim(accessAgent, email, opts) {
 }
 
 /**
- * Invokes voucher/redeem for the free tier, wait on the websocket for the voucher/claim and invokes it
- *
- * It also adds a full space delegation to the service in the voucher/claim invocation to allow for recovery
+ * Provisions space with the specified account and sets up a recovery with the
+ * same account.
  *
  * @param {AccessAgent} access
  * @param {AgentData} agentData

@@ -146,6 +146,7 @@ export class Account {
    * @param {API.SpaceDID} space
    * @param {object} input
    * @param {API.ProviderDID} [input.provider]
+   * @param {API.Agent} [input.agent]
    */
   provision(space, input = {}) {
     return provision(this.agent, {
