@@ -55,8 +55,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/core':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@ucanto/interface':
         specifier: ^9.0.0
         version: 9.0.0
@@ -146,8 +146,8 @@ importers:
   packages/capabilities:
     dependencies:
       '@ucanto/core':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@ucanto/interface':
         specifier: ^9.0.0
         version: 9.0.0
@@ -237,8 +237,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/core':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@ucanto/interface':
         specifier: ^9.0.0
         version: 9.0.0
@@ -298,8 +298,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/core':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@ucanto/interface':
         specifier: ^9.0.0
         version: 9.0.0
@@ -408,8 +408,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.3
       '@ucanto/core':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@web-std/blob':
         specifier: ^3.0.5
         version: 3.0.5
@@ -532,8 +532,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/core':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@ucanto/interface':
         specifier: ^9.0.0
         version: 9.0.0
@@ -3432,12 +3432,12 @@ packages:
   /@ucanto/client@9.0.0:
     resolution: {integrity: sha512-Fl8ZGuWoVQygBtLISPlFb5Ej/LKUofghTTAT4kjFNc8WB9bD7AS+yvSPowwd+4uTnxfEOeKWV2lzO1+gRxQF0w==}
     dependencies:
-      '@ucanto/core': 9.0.0
+      '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0
     dev: false
 
-  /@ucanto/core@9.0.0:
-    resolution: {integrity: sha512-O2c+UOQ5wAvUsuN7BbZR6QAoUgYpWzN0HAAVbNBLT4I8/OUzMcxSYeu08/ph0sNtLGlOPDcPn+ANclTwxc5UcA==}
+  /@ucanto/core@9.0.1:
+    resolution: {integrity: sha512-SsYvKCO3FD27roTVcg8ASxnixjn+j96sPlijpVq1uBUxq7SmuNxNPYFZqpxXKj2R4gty/Oc8XTse12ebB9Kofg==}
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-cbor': 9.0.6
@@ -3465,7 +3465,7 @@ packages:
   /@ucanto/server@9.0.1:
     resolution: {integrity: sha512-EGhgKLjPgvM39j86WxSD7UoR0rr7jpTMclCOcpOEVC9r91sob8BReW2i7cm1zPvhSNFqS8rLjlGEgUIAhdAxmg==}
     dependencies:
-      '@ucanto/core': 9.0.0
+      '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0
       '@ucanto/principal': 9.0.0
       '@ucanto/validator': 9.0.0
@@ -3473,7 +3473,7 @@ packages:
   /@ucanto/transport@9.0.0:
     resolution: {integrity: sha512-eN9kkhdp5vC8iYSlT+4YeqyLdV+3g4kYLvuDojdR1lqEcJM2/1W8KjGgmGt6dhE7eBlMqD2hqujS1ePPtY2mKw==}
     dependencies:
-      '@ucanto/core': 9.0.0
+      '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0
     dev: false
 
@@ -3482,7 +3482,7 @@ packages:
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-cbor': 9.0.6
-      '@ucanto/core': 9.0.0
+      '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0
       multiformats: 11.0.2
 
