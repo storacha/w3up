@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.3.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.2.0...w3up-client-v10.3.0) (2023-11-15)
+
+
+### Features
+
+* w3up client login ([#1120](https://github.com/web3-storage/w3up/issues/1120)) ([8279bf6](https://github.com/web3-storage/w3up/commit/8279bf6371182709b46e83e5ac86d89ed1f292e8))
+
+
+### Bug Fixes
+
+* authorize renamed to login in docs ([#1125](https://github.com/web3-storage/w3up/issues/1125)) ([1c3e773](https://github.com/web3-storage/w3up/commit/1c3e773b7e2572d68a8c64bdefc08f8839f17670))
+
 ## [10.2.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.1.0...w3up-client-v10.2.0) (2023-11-14)
 
 
