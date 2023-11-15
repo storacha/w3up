@@ -26,7 +26,6 @@ export const generate = async ({ name, agent }) => {
   const { signer } = await ED25519.generate()
 
   return new OwnedSpace({ signer, name, agent })
-  return new OwnedSpace({ signer, name, agent })
 }
 
 /**
