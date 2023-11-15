@@ -1,5 +1,16 @@
 # Changelog
 
+## [12.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v11.4.1...capabilities-v12.0.0) (2023-11-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* coupon ([#1136](https://github.com/web3-storage/w3up/issues/1136))
+
+### Features
+
+* coupon ([#1136](https://github.com/web3-storage/w3up/issues/1136)) ([1b94f2d](https://github.com/web3-storage/w3up/commit/1b94f2d3f6538d717d38b21dcb76657fd1f3e268))
+
 ## [11.4.1](https://github.com/web3-storage/w3up/compare/capabilities-v11.4.0...capabilities-v11.4.1) (2023-11-15)
 
 
