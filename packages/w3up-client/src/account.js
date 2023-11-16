@@ -80,6 +80,22 @@ export const list = ({ agent }, { account } = {}) => {
  */
 export const login = async ({ agent }, email) => {
   const account = fromEmail(email)
+
+  // If we already have a session for this account we
+  // skip the authentication process, otherwise we will
+  // end up adding more UCAN proofs and attestations to
+  // the store which we then will be sending when using
+  // this account.
+  // Note: This is not a robust solution as there may be
+  // reasons to re-authenticate e.g. previous session is
+  // no longer valid because it was revoked. But dropping
+  // revoked UCANs from store is something we should do
+  // anyway.
+  const session = list({ agent }, { account })[account]
+  if (session) {
+    return { ok: session }
+  }
+
   const result = await Access.request(
     { agent },
     {
@@ -138,6 +154,16 @@ export class Account {
    */
   addProof(proof) {
     this.proofs.push(proof)
+  }
+
+  toJSON() {
+    return {
+      id: this.did(),
+      proofs: this.proofs
+        // we sort proofs to get a deterministic JSON representation.
+        .sort((a, b) => a.cid.toString().localeCompare(b.cid.toString()))
+        .map((proof) => proof.toJSON()),
+    }
   }
 
   /**

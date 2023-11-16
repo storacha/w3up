@@ -67,6 +67,33 @@ export const testAccount = {
     assert.ok(two[Account.fromEmail(bobEmail)].toEmail(), bobEmail)
   },
 
+  'login idempotence': async (assert, { client, mail, grantAccess }) => {
+    const email = 'alice@web.mail'
+    const login = client.login(email)
+    await grantAccess(await mail.take())
+    const alice = await login
+
+    assert.deepEqual(
+      Object.keys(client.accounts()),
+      [alice.did()],
+      'no accounts have been saved'
+    )
+
+    const retry = await client.login(email)
+    assert.deepEqual(
+      alice.toJSON(),
+      retry.toJSON(),
+      'same account view is returned'
+    )
+
+    const loginResult = await Account.login(client, email)
+    assert.deepEqual(
+      alice.toJSON(),
+      loginResult.ok?.toJSON(),
+      'same account is returned with low level API'
+    )
+  },
+
   'client.login': async (assert, { client, mail, grantAccess }) => {
     const account = client.login('alice@web.mail')
 
@@ -216,8 +243,6 @@ export const testAccount = {
   'space.save': async (assert, { client, mail, grantAccess }) => {
     const space = await client.createSpace('test')
     assert.deepEqual(client.spaces(), [])
-
-    console.log(space)
 
     const result = await space.save()
     assert.ok(result.ok)
