@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.3.3](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.2...upload-api-v7.3.3) (2023-11-16)
+
+
+### Bug Fixes
+
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/web3-storage/w3up/issues/1141)) ([0b8d3f3](https://github.com/web3-storage/w3up/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+* upgrade @ucanto/validator with bugfix ([#1151](https://github.com/web3-storage/w3up/issues/1151)) ([d4e961b](https://github.com/web3-storage/w3up/commit/d4e961bab09e88245e7d9323146849271e78eb57))
+
 ## [7.3.2](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.1...upload-api-v7.3.2) (2023-11-15)
 
 
