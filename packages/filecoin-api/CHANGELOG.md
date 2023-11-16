@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.1.1...filecoin-api-v4.1.2) (2023-11-16)
+
+
+### Bug Fixes
+
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/web3-storage/w3up/issues/1141)) ([0b8d3f3](https://github.com/web3-storage/w3up/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+
 ## [4.1.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.1.0...filecoin-api-v4.1.1) (2023-11-15)
 
 

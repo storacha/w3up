@@ -73,8 +73,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/validator':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -164,8 +164,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/validator':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@web3-storage/data-segment':
         specifier: ^3.2.0
         version: 3.2.0
@@ -383,8 +383,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/validator':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.0.1
+        version: 9.0.1
       '@web3-storage/access':
         specifier: workspace:^
         version: link:../access-client
@@ -4277,7 +4277,7 @@ packages:
       '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0
       '@ucanto/principal': 9.0.0
-      '@ucanto/validator': 9.0.0
+      '@ucanto/validator': 9.0.1
 
   /@ucanto/transport@9.0.0:
     resolution: {integrity: sha512-eN9kkhdp5vC8iYSlT+4YeqyLdV+3g4kYLvuDojdR1lqEcJM2/1W8KjGgmGt6dhE7eBlMqD2hqujS1ePPtY2mKw==}
@@ -4286,8 +4286,8 @@ packages:
       '@ucanto/interface': 9.0.0
     dev: false
 
-  /@ucanto/validator@9.0.0:
-    resolution: {integrity: sha512-ZgwVAHAMOzqNsl4fn1qTP1J5Y8oSB2qGn0NzMtSj2FwWzPUBog0WTXSiDqV6H60aNJt38l4pL+R4JaqUg0Z3uQ==}
+  /@ucanto/validator@9.0.1:
+    resolution: {integrity: sha512-H9GMOXHNW3vCv36eQZN1/h8zOXHEljRV5yNZ/huyOaJLVAKxt7Va1Ww8VBf2Ho/ac6P7jwvQRT7WgxaXx1/3Hg==}
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-cbor': 9.0.6
