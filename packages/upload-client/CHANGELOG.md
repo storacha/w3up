@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.1](https://github.com/web3-storage/w3up/compare/upload-client-v12.0.0...upload-client-v12.0.1) (2023-11-16)
+
+
+### Bug Fixes
+
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/web3-storage/w3up/issues/1141)) ([0b8d3f3](https://github.com/web3-storage/w3up/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+
 ## [12.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v11.2.0...upload-client-v12.0.0) (2023-11-09)
 
 

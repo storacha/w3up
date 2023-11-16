@@ -1,5 +1,13 @@
 # Changelog
 
+## [18.0.1](https://github.com/web3-storage/w3up/compare/access-v18.0.0...access-v18.0.1) (2023-11-16)
+
+
+### Bug Fixes
+
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/web3-storage/w3up/issues/1141)) ([0b8d3f3](https://github.com/web3-storage/w3up/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+* upgrade @ucanto/validator with bugfix ([#1151](https://github.com/web3-storage/w3up/issues/1151)) ([d4e961b](https://github.com/web3-storage/w3up/commit/d4e961bab09e88245e7d9323146849271e78eb57))
+
 ## [18.0.0](https://github.com/web3-storage/w3up/compare/access-v17.1.0...access-v18.0.0) (2023-11-15)
 
 
