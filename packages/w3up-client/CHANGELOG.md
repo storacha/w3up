@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.0.1](https://github.com/web3-storage/w3up/compare/w3up-client-v11.0.0...w3up-client-v11.0.1) (2023-11-16)
+
+
+### Bug Fixes
+
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/web3-storage/w3up/issues/1141)) ([0b8d3f3](https://github.com/web3-storage/w3up/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+* make login idempotent ([#1149](https://github.com/web3-storage/w3up/issues/1149)) ([c1df8d8](https://github.com/web3-storage/w3up/commit/c1df8d8a2cfcf3a8706028a367b1d6b75f5ebb4f))
+
 ## [11.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v10.3.0...w3up-client-v11.0.0) (2023-11-15)
 
 
