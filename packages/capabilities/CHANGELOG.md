@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.0.2](https://github.com/web3-storage/w3up/compare/capabilities-v12.0.1...capabilities-v12.0.2) (2023-11-16)
+
+
+### Bug Fixes
+
+* upgrade @ucanto/validator with bugfix ([#1151](https://github.com/web3-storage/w3up/issues/1151)) ([d4e961b](https://github.com/web3-storage/w3up/commit/d4e961bab09e88245e7d9323146849271e78eb57))
+
 ## [12.0.1](https://github.com/web3-storage/w3up/compare/capabilities-v12.0.0...capabilities-v12.0.1) (2023-11-15)
 
 
