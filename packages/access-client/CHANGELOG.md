@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.2](https://github.com/web3-storage/w3up/compare/access-v18.0.1...access-v18.0.2) (2023-11-17)
+
+
+### Bug Fixes
+
+* access-client package.json uses https instead of git for one-webcrypto dep to help with yarn compat ([#1157](https://github.com/web3-storage/w3up/issues/1157)) ([e1d0798](https://github.com/web3-storage/w3up/commit/e1d079811cceb0a68da371ba422ba6147e0fae4a))
+
 ## [18.0.1](https://github.com/web3-storage/w3up/compare/access-v18.0.0...access-v18.0.1) (2023-11-16)
 
 
