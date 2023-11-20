@@ -45,11 +45,11 @@ If you've already got a space you can authorize your client and upload like this
 **node.js**
 ```js
 import { getFilesFromPaths } from 'files-from-path'
-import { create } from '@web3-storage/w3up-client'
+import * as Client from '@web3-storage/w3up-client'
 
 // authorize your local agent to act on your behalf
-const client = await create()
-await client.authorize('you@example.org')
+const client = await Client.create()
+await client.login('you@example.org')
 
 // lets go!
 const files = await getFilesFromPaths(process.env.PATH_TO_ADD)
@@ -63,11 +63,11 @@ To make a new space programmatically use [`client.createSpace`](https://github.c
 
 **node.js**
 ```js
-import { create } from '@web3-storage/w3up-client'
+import * as Client from '@web3-storage/w3up-client'
 
 // authorize your local agent to act on your behalf
-const client = await create()
-await client.authorize('you@example.org')
+const client = await Client.create()
+await client.login('you@example.org')
 
 // give you space a nickname to remember it by
 const space = await client.createSpace('my space')
