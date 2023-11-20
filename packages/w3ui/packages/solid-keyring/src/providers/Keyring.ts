@@ -4,12 +4,12 @@ import type {
   KeyringContextActions,
   ServiceConfig,
   CreateDelegationOptions,
-  Agent,
   Abilities,
   Email,
-  PlanGetResult
+  PlanGetResult,
+  Client
 } from '@w3ui/keyring-core'
-import type { Delegation, Capability, DID, Principal } from '@ucanto/interface'
+import type { Delegation, Capability, DID, Principal, DIDKey } from '@ucanto/interface'
 
 import {
   createContext,
@@ -19,12 +19,11 @@ import {
 } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import {
-  authorize as accessAuthorize,
-  createAgent,
-  getCurrentSpace as getCurrentSpaceInAgent,
-  getSpaces,
+  createClient,
   getPlan as getPlanWithAgent,
-  W3UI_ACCOUNT_LOCALSTORAGE_KEY
+  W3UI_ACCOUNT_LOCALSTORAGE_KEY,
+  useAccount,
+  login
 } from '@w3ui/keyring-core'
 
 export { KeyringContextState, KeyringContextActions }
@@ -38,6 +37,7 @@ const defaultState: KeyringContextState = {
   space: undefined,
   spaces: [],
   agent: undefined,
+  client: undefined,
   account: window.localStorage.getItem(W3UI_ACCOUNT_LOCALSTORAGE_KEY) ?? undefined
 }
 
@@ -75,40 +75,42 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     space: defaultState.space,
     spaces: defaultState.spaces,
     agent: defaultState.agent,
+    client: defaultState.client,
     account: defaultState.account
   })
 
-  const [agent, setAgent] = createSignal<Agent>()
+  const [client, setClient] = createSignal<Client>()
   const [registerAbortController, setRegisterAbortController] =
     createSignal<AbortController>()
 
-  const getAgent = async (): Promise<Agent> => {
-    let a = agent()
-    if (a == null) {
-      a = await createAgent({
+  const getClient = async (): Promise<Client> => {
+    let c = client()
+    if (c == null) {
+      c = await createClient({
         servicePrincipal: props.servicePrincipal,
         connection: props.connection
       })
-      setAgent(a)
-      setState('agent', a.issuer)
-      setState('space', getCurrentSpaceInAgent(a))
-      setState('spaces', getSpaces(a))
+      setClient(c)
+      setState('client', c)
+      setState('agent', c.agent.issuer)
+      setState('space', c.currentSpace())
+      setState('spaces', c.spaces())
     }
-    return a
+    return c
   }
 
   const authorize = async (email: `${string}@${string}`): Promise<void> => {
-    const agent = await getAgent()
+    const c = await getClient()
     const controller = new AbortController()
     setRegisterAbortController(controller)
 
     try {
-      await accessAuthorize(agent, email, { signal: controller.signal })
+      await login(c, email)
       setState('account', email)
       window.localStorage.setItem(W3UI_ACCOUNT_LOCALSTORAGE_KEY, email)
-      const newSpaces = getSpaces(agent)
+      const newSpaces = c.spaces()
       setState('spaces', newSpaces)
-      const newCurrentSpace = getCurrentSpaceInAgent(agent) ?? newSpaces[0]
+      const newCurrentSpace = c.currentSpace() ?? newSpaces[0]
       if (newCurrentSpace != null) {
         await setCurrentSpace(newCurrentSpace.did() as DID<'key'>)
       }
@@ -127,52 +129,60 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
   }
 
   const createSpace = async (name?: string): Promise<DID> => {
-    const agent = await getAgent()
-    const { did } = await agent.createSpace(name)
-    await agent.setCurrentSpace(did)
-    setState('space', getCurrentSpaceInAgent(agent))
+    const c = await getClient()
+    const space = await c.createSpace(name ?? 'Unnamed Space')
+    const did = space.did()
+    await c.setCurrentSpace(did)
+    setState('space', c.currentSpace())
     return did
   }
 
   const registerSpace = async (email: string): Promise<void> => {
-    const agent = await getAgent()
-    await agent.registerSpace(email)
-    setState('space', getCurrentSpaceInAgent(agent))
-    setState('spaces', getSpaces(agent))
+    const c = await getClient()
+    const account = useAccount(c, { email })
+    const space = c.currentSpace()
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (account && space) {
+      await account.provision(space.did() as DIDKey)
+      setState('space', c.currentSpace())
+      setState('spaces', c.spaces())
+    }
   }
 
   const setCurrentSpace = async (did: DID): Promise<void> => {
-    const agent = await getAgent()
-    await agent.setCurrentSpace(did as DID<'key'>)
-    setState('space', getCurrentSpaceInAgent(agent))
+    const c = await getClient()
+    await c.setCurrentSpace(did as DID<'key'>)
+    setState('space', c.currentSpace())
   }
 
   const loadAgent = async (): Promise<void> => {
-    if (agent() != null) return
-    await getAgent()
+    if (client() != null) return
+    await getClient()
   }
 
   const unloadAgent = async (): Promise<void> => {
     setState('space', undefined)
     setState('spaces', [])
     setState('agent', undefined)
+    setState('client', undefined)
     setState('account', undefined)
-    setAgent(undefined)
+    setClient(undefined)
   }
 
   const resetAgent = async (): Promise<void> => {
-    const agent = await getAgent()
-    await Promise.all([agent.store.reset(), unloadAgent()])
+    const c = await getClient()
+    // @ts-expect-error store is there but the type doesn't expose it - TODO add store to Agent type
+    await Promise.all([c.store.reset(), unloadAgent()])
   }
 
   const getProofs = async (caps: Capability[]): Promise<Delegation[]> => {
-    const agent = await getAgent()
-    return agent.proofs(caps)
+    const c = await getClient()
+    return c.proofs(caps)
   }
 
   const getPlan = async (email: Email): Promise<PlanGetResult> => {
-    const agent = await getAgent()
-    return await getPlanWithAgent(agent, email)
+    const c = await getClient()
+    return await getPlanWithAgent(c, email)
   }
 
   const createDelegation = async (
@@ -180,12 +190,12 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
     abilities: Abilities[],
     options: CreateDelegationOptions
   ): Promise<Delegation> => {
-    const agent = await getAgent()
+    const c = await getClient()
     const audienceMeta = options.audienceMeta ?? {
       name: 'agent',
       type: 'device'
     }
-    return await agent.delegate({
+    return await c.agent.delegate({
       ...options,
       abilities,
       audience,
@@ -194,8 +204,8 @@ export const KeyringProvider: ParentComponent<KeyringProviderProps> = (
   }
 
   const addSpace = async (proof: Delegation): Promise<void> => {
-    const agent = await getAgent()
-    await agent.importSpaceFromDelegation(proof)
+    const c = await getClient()
+    await c.agent.importSpaceFromDelegation(proof)
   }
 
   const actions = {

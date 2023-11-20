@@ -73,7 +73,7 @@ export const AuthenticatorContext = createContext<AuthenticatorContextValue>([
   }
 ])
 
-export const AgentLoader = ({
+export const ClientLoader = ({
   children
 }: {
   children: JSX.Element
@@ -84,6 +84,11 @@ export const AgentLoader = ({
   }, []) // load agent - once.
   return children
 }
+
+/**
+ * @deprecated use ClientLoader
+ */
+export const AgentLoader = ClientLoader
 
 export type AuthenticatorRootOptions<T extends As = typeof Fragment> =
   Options<T>
@@ -131,11 +136,11 @@ export const AuthenticatorRoot: Component<AuthenticatorRootProps> =
       [state, actions, email, submitted, handleRegisterSubmit]
     )
     return (
-      <AgentLoader>
+      <ClientLoader>
         <AuthenticatorContext.Provider value={value}>
           {createElement(Fragment, props)}
         </AuthenticatorContext.Provider>
-      </AgentLoader>
+      </ClientLoader>
     )
   })
 

@@ -534,18 +534,36 @@ importers:
 
   packages/keyring-core:
     dependencies:
+      '@ipld/dag-ucan':
+        specifier: ^3.2.0
+        version: 3.4.0
+      '@ucanto/client':
+        specifier: ^9.0.0
+        version: 9.0.0
       '@ucanto/interface':
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/principal':
         specifier: ^9.0.0
         version: 9.0.0
+      '@ucanto/transport':
+        specifier: ^9.0.0
+        version: 9.0.0
       '@web3-storage/access':
-        specifier: ^16.3.0
-        version: 16.3.0(typescript@4.9.5)
+        specifier: ^17.0.0
+        version: 17.0.0(typescript@4.9.5)
       '@web3-storage/did-mailto':
         specifier: ^2.0.2
         version: 2.0.2
+      '@web3-storage/filecoin-client':
+        specifier: ^3.1.0
+        version: 3.1.0
+      '@web3-storage/upload-client':
+        specifier: ^12.0.0
+        version: 12.0.0
+      '@web3-storage/w3up-client':
+        specifier: 10.1.0
+        version: 10.1.0(typescript@4.9.5)
 
   packages/react-keyring:
     dependencies:
@@ -683,8 +701,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@web3-storage/upload-client':
-        specifier: ^11.1.0
-        version: 11.1.0
+        specifier: ^12.0.0
+        version: 12.0.0
       multiformats:
         specifier: ^11.0.1
         version: 11.0.2
@@ -695,8 +713,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@web3-storage/upload-client':
-        specifier: ^11.1.0
-        version: 11.1.0
+        specifier: ^12.0.0
+        version: 12.0.0
 
   packages/vitest-environment-w3ui:
     dependencies:
@@ -2725,7 +2743,7 @@ packages:
   /@ipld/dag-ucan@3.4.0:
     resolution: {integrity: sha512-sW4R43w3DbEdoGWWJZCwsblwXa600HCanG9p2w1MJPVBNTNjhvqc3XI0uEqKhT2oqKWrND7uInVtcPmZme7hhA==}
     dependencies:
-      '@ipld/dag-cbor': 9.0.0
+      '@ipld/dag-cbor': 9.0.6
       '@ipld/dag-json': 10.0.1
       multiformats: 11.0.2
 
@@ -3076,6 +3094,17 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.3.1
     dev: true
+
+  /@scure/base@1.1.3:
+    resolution: {integrity: sha512-/+SgoRjLq7Xlf0CWuLHq2LUZeL/w65kfzAPG5NH9pcmBhs+nunQTn4gvdwgMTIXnt9b2C/1SeL2XiysZEyIC9Q==}
+    dev: false
+
+  /@scure/bip39@1.2.1:
+    resolution: {integrity: sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==}
+    dependencies:
+      '@noble/hashes': 1.3.2
+      '@scure/base': 1.1.3
+    dev: false
 
   /@sinclair/typebox@0.25.24:
     resolution: {integrity: sha512-XJfwUVUKDHF5ugKwIcxEgc9k8b7HbznCp6eUfWgu710hMPNIO4aw4/zB5RogDQz8nd6gyCDpU9O/m6qYEWY6yQ==}
@@ -3699,18 +3728,19 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
-  /@web3-storage/access@16.3.0(typescript@4.9.5):
-    resolution: {integrity: sha512-5JeRsaWABwFEpuLBnJekJ2SR6cRUKbpgxlgV0c9bj+4IH6AidSuNeyzsudbrCrjwtY2jLWRC4R3S08oez0dF8A==}
+  /@web3-storage/access@17.0.0(typescript@4.9.5):
+    resolution: {integrity: sha512-5tU7cD7tZx1Izv3EzQMhhd9BPxBk7b6AZu97fYQNqNgXPxKEnD4nJ/RrQGqAn82aAOM8tMPn/D7jb6IA1nsApg==}
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-ucan': 3.4.0
+      '@scure/bip39': 1.2.1
       '@ucanto/client': 9.0.0
       '@ucanto/core': 9.0.0
       '@ucanto/interface': 9.0.0
       '@ucanto/principal': 9.0.0
       '@ucanto/transport': 9.0.0
       '@ucanto/validator': 9.0.0
-      '@web3-storage/capabilities': 11.1.0
+      '@web3-storage/capabilities': 11.4.0
       '@web3-storage/did-mailto': 2.0.2
       bigint-mod-arith: 3.2.1
       conf: 11.0.2
@@ -3733,6 +3763,17 @@ packages:
       '@ucanto/validator': 9.0.0
       '@web3-storage/data-segment': 3.2.0
 
+  /@web3-storage/capabilities@11.4.0:
+    resolution: {integrity: sha512-OGiNVBcivotl05PcQTK/9cqzS3vZ68LUKmwmvyXZkNziCv+09/mneHdLVOCXwEFJdk8IQNVeejB35KWSiEUuGQ==}
+    dependencies:
+      '@ucanto/core': 9.0.0
+      '@ucanto/interface': 9.0.0
+      '@ucanto/principal': 9.0.0
+      '@ucanto/transport': 9.0.0
+      '@ucanto/validator': 9.0.0
+      '@web3-storage/data-segment': 3.2.0
+    dev: false
+
   /@web3-storage/data-segment@3.2.0:
     resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}
     dependencies:
@@ -3745,8 +3786,24 @@ packages:
     engines: {node: '>=16.15'}
     dev: false
 
-  /@web3-storage/upload-client@11.1.0:
-    resolution: {integrity: sha512-MzGhOv6+Y/feV6F0J7/TslHwrRM/oJvGIob/ZRwYmRfRk8qnOf4nmRbfVyc4cyG2Dsfyjhlv+mtF6qOaVwiT2Q==}
+  /@web3-storage/did-mailto@2.1.0:
+    resolution: {integrity: sha512-TRmfSXj1IhtX3ESurSNOylZSBKi0z/VJNoMLpof+AVRdovgZjjocpiePQTs2pfHKqHTHfJXc9AboWyK4IKTWMw==}
+    engines: {node: '>=16.15'}
+    dev: false
+
+  /@web3-storage/filecoin-client@3.1.0:
+    resolution: {integrity: sha512-hR+uEpYpKNv4kcpx1PpAFC2p+hJ27XwVPnP6bc7ZC5p/JMjIAwa2TBm479WdncH/v2uJDqn06J4ux9vYNEFkfw==}
+    dependencies:
+      '@ipld/dag-ucan': 3.4.0
+      '@ucanto/client': 9.0.0
+      '@ucanto/core': 9.0.0
+      '@ucanto/interface': 9.0.0
+      '@ucanto/transport': 9.0.0
+      '@web3-storage/capabilities': 11.4.0
+    dev: false
+
+  /@web3-storage/upload-client@12.0.0:
+    resolution: {integrity: sha512-iQZFIxjsO/NgkPVgpAaRTWPKhvvf83eQFjws23ZVgc9UNVt0kW5pUb6FdEQauMg2HJ46uoQ2BLVmGrHm9QPagw==}
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-cbor': 9.0.6
@@ -3755,7 +3812,7 @@ packages:
       '@ucanto/client': 9.0.0
       '@ucanto/interface': 9.0.0
       '@ucanto/transport': 9.0.0
-      '@web3-storage/capabilities': 11.1.0
+      '@web3-storage/capabilities': 11.4.0
       fr32-sha2-256-trunc254-padded-binary-tree-multihash: 3.1.0
       ipfs-utils: 9.0.14
       multiformats: 12.1.3
@@ -3764,6 +3821,25 @@ packages:
       varint: 6.0.0
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@web3-storage/w3up-client@10.1.0(typescript@4.9.5):
+    resolution: {integrity: sha512-Dqf/tfWTFeDegS738wqWuT6SDSjmpFWAYCWkgFDWbyCU+RY5OKR7XSDBjNrbPxavlnfKJrfMVl61GSEDK2uM0w==}
+    dependencies:
+      '@ipld/dag-ucan': 3.4.0
+      '@ucanto/client': 9.0.0
+      '@ucanto/core': 9.0.0
+      '@ucanto/interface': 9.0.0
+      '@ucanto/principal': 9.0.0
+      '@ucanto/transport': 9.0.0
+      '@web3-storage/access': 17.0.0(typescript@4.9.5)
+      '@web3-storage/capabilities': 11.4.0
+      '@web3-storage/did-mailto': 2.1.0
+      '@web3-storage/filecoin-client': 3.1.0
+      '@web3-storage/upload-client': 12.0.0
+    transitivePeerDependencies:
+      - encoding
+      - typescript
     dev: false
 
   /@zeit/schemas@2.29.0:

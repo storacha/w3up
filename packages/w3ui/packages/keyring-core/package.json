@@ -31,10 +31,16 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/keyring-core",
   "dependencies": {
+    "@ipld/dag-ucan": "^3.2.0",
+    "@ucanto/client": "^9.0.0",
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
-    "@web3-storage/access": "^16.3.0",
-    "@web3-storage/did-mailto": "^2.0.2"
+    "@ucanto/transport": "^9.0.0",
+    "@web3-storage/access": "^17.0.0",
+    "@web3-storage/did-mailto": "^2.0.2",
+    "@web3-storage/filecoin-client": "^3.1.0",
+    "@web3-storage/upload-client": "^12.0.0",
+    "@web3-storage/w3up-client": "10.1.0"
   },
   "eslintConfig": {
     "extends": [

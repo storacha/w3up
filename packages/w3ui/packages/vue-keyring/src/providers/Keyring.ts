@@ -1,11 +1,11 @@
 import type {
-  Agent,
   KeyringContextState,
   KeyringContextActions,
   ServiceConfig,
-  Email
+  Email,
+  Client
 } from '@w3ui/keyring-core'
-import type { Capability, DID, Proof } from '@ucanto/interface'
+import type { Capability, DID, DIDKey, Proof } from '@ucanto/interface'
 
 import {
   defineComponent,
@@ -17,11 +17,10 @@ import {
   Component
 } from 'vue'
 import {
-  authorize as accessAuthorize,
-  createAgent,
-  getCurrentSpace as getCurrentSpaceInAgent,
-  getSpaces,
-  getPlan as getPlanWithAgent,
+  createClient,
+  getPlan as getPlanWithClient,
+  login,
+  useAccount,
   W3UI_ACCOUNT_LOCALSTORAGE_KEY
 } from '@w3ui/keyring-core'
 
@@ -32,6 +31,7 @@ interface KeyringProviderInjectionKeyType {
   space: InjectionKey<Ref<KeyringContextState['space']>>
   spaces: InjectionKey<Ref<KeyringContextState['spaces']>>
   agent: InjectionKey<Ref<KeyringContextState['agent']>>
+  client: InjectionKey<Ref<KeyringContextState['client']>>
   loadAgent: InjectionKey<KeyringContextActions['loadAgent']>
   unloadAgent: InjectionKey<KeyringContextActions['unloadAgent']>
   resetAgent: InjectionKey<KeyringContextActions['resetAgent']>
@@ -52,6 +52,7 @@ export const KeyringProviderInjectionKey: KeyringProviderInjectionKeyType = {
   space: Symbol('w3ui keyring space'),
   spaces: Symbol('w3ui keyring spaces'),
   agent: Symbol('w3ui keyring agent'),
+  client: Symbol('w3ui keyring client'),
   loadAgent: Symbol('w3ui keyring loadAgent'),
   unloadAgent: Symbol('w3ui keyring unloadAgent'),
   resetAgent: Symbol('w3ui keyring resetAgent'),
@@ -73,16 +74,21 @@ export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<
   setup ({ servicePrincipal, connection }) {
     const state = shallowReactive<KeyringContextState>({
       agent: undefined,
+      client: undefined,
       space: undefined,
       spaces: [],
       account: window.localStorage.getItem(W3UI_ACCOUNT_LOCALSTORAGE_KEY) ?? undefined
     })
-    let agent: Agent | undefined
+    let client: Client | undefined
     let registerAbortController: AbortController
 
     provide(
       KeyringProviderInjectionKey.agent,
       computed(() => state.agent)
+    )
+    provide(
+      KeyringProviderInjectionKey.client,
+      computed(() => state.client)
     )
     provide(
       KeyringProviderInjectionKey.space,
@@ -97,29 +103,30 @@ export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<
       computed(() => state.account)
     )
 
-    const getAgent = async (): Promise<Agent> => {
-      if (agent == null) {
-        agent = await createAgent({ servicePrincipal, connection })
-        state.agent = agent.issuer
-        state.space = getCurrentSpaceInAgent(agent)
-        state.spaces = getSpaces(agent)
+    const getClient = async (): Promise<Client> => {
+      if (client == null) {
+        client = await createClient({ servicePrincipal, connection })
+        state.client = client
+        state.agent = client.agent.issuer
+        state.space = client.currentSpace()
+        state.spaces = client.spaces()
       }
-      return agent
+      return client
     }
 
     provide(KeyringProviderInjectionKey.authorize,
       async (email: `${string}@${string}`): Promise<void> => {
-        const agent = await getAgent()
+        const c = await getClient()
         const controller = new AbortController()
         registerAbortController = controller
 
         try {
-          await accessAuthorize(agent, email, { signal: controller.signal })
+          await login(c, email)
           state.account = email
           window.localStorage.setItem(W3UI_ACCOUNT_LOCALSTORAGE_KEY, email)
-          const newSpaces = getSpaces(agent)
+          const newSpaces = c.spaces()
           state.spaces = newSpaces
-          const newCurrentSpace = getCurrentSpaceInAgent(agent) ?? newSpaces[0]
+          const newCurrentSpace = c.currentSpace() ?? newSpaces[0]
           if (newCurrentSpace != null) {
             state.space = newCurrentSpace
           }
@@ -139,10 +146,11 @@ export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<
     provide(
       KeyringProviderInjectionKey.createSpace,
       async (name?: string): Promise<DID> => {
-        const agent = await getAgent()
-        const { did } = await agent.createSpace(name)
-        await agent.setCurrentSpace(did)
-        state.space = getCurrentSpaceInAgent(agent)
+        const c = await getClient()
+        const space = await c.createSpace(name ?? 'Unnamed Space')
+        const did = space.did()
+        await c.setCurrentSpace(did)
+        state.space = c.currentSpace()
         return did
       }
     )
@@ -150,17 +158,21 @@ export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<
     provide(
       KeyringProviderInjectionKey.registerSpace,
       async (email: string): Promise<void> => {
-        const agent = await getAgent()
+        const c = await getClient()
         const controller = new AbortController()
         registerAbortController = controller
-
-        try {
-          await agent.registerSpace(email, { signal: controller.signal })
-          state.space = getCurrentSpaceInAgent(agent)
-          state.spaces = getSpaces(agent)
-        } catch (error) {
-          if (!controller.signal.aborted) {
-            throw error
+        const account = useAccount(c, { email })
+        const space = c.currentSpace()
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        if (account && space) {
+          try {
+            await account.provision(space.did() as DID<'key'>)
+            state.space = c.currentSpace()
+            state.spaces = c.spaces()
+          } catch (error) {
+            if (!controller.signal.aborted) {
+              throw error
+            }
           }
         }
       }
@@ -169,45 +181,46 @@ export const KeyringProvider: Component<KeyringProviderProps> = defineComponent<
     provide(
       KeyringProviderInjectionKey.setCurrentSpace,
       async (did: DID): Promise<void> => {
-        const agent = await getAgent()
-        await agent.setCurrentSpace(did as DID<'key'>)
-        state.space = getCurrentSpaceInAgent(agent)
+        const c = await getClient()
+        await c.setCurrentSpace(did as DIDKey)
+        state.space = c.currentSpace()
       }
     )
 
     const loadAgent = async (): Promise<void> => {
-      if (agent != null) return
-      await getAgent()
+      if (client != null) return
+      await getClient()
     }
     provide(KeyringProviderInjectionKey.loadAgent, loadAgent)
 
     const unloadAgent = async (): Promise<void> => {
       state.space = undefined
       state.spaces = []
-      state.agent = undefined
+      state.client = undefined
       state.account = undefined
-      agent = undefined
+      client = undefined
     }
     provide(KeyringProviderInjectionKey.unloadAgent, unloadAgent)
 
     provide(KeyringProviderInjectionKey.resetAgent, async (): Promise<void> => {
-      const agent = await getAgent()
+      const agent = await getClient()
+      // @ts-expect-error store is there but the type doesn't expose it - TODO add store to Agent type
       await Promise.all([agent.store.reset(), unloadAgent()])
     })
 
     provide(
       KeyringProviderInjectionKey.getProofs,
       async (caps: Capability[]): Promise<Proof[]> => {
-        const agent = await getAgent()
-        return agent.proofs(caps)
+        const c = await getClient()
+        return c.agent.proofs(caps)
       }
     )
 
     provide(
       KeyringProviderInjectionKey.getPlan,
       async (email: Email) => {
-        const agent = await getAgent()
-        return await getPlanWithAgent(agent, email)
+        const c = await getClient()
+        return await getPlanWithClient(c, email)
       }
     )
 

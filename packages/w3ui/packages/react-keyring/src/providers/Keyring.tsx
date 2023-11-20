@@ -1,18 +1,19 @@
 import type {
-  Agent,
   Abilities,
+  Client,
   KeyringContextState,
   KeyringContextActions,
-  ServiceConfig,
-  RegisterSpaceOpts,
   Email,
   Plan,
-  PlanGetResult
+  PlanGetResult,
+  ServiceConfig,
+  Space
 } from '@w3ui/keyring-core'
 import type {
   Capability,
   Delegation,
   DID,
+  DIDKey,
   Principal,
   Proof,
   Signer
@@ -21,14 +22,12 @@ import type {
 import React, { createContext, useState, useContext } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 import {
-  authorize as accessAuthorize,
-  createAgent,
-  Space,
-  getCurrentSpace as getCurrentSpaceInAgent,
-  getSpaces,
-  getPlan as getPlanWithAgent,
+  getPlan as getPlanWithClient,
   CreateDelegationOptions,
-  W3UI_ACCOUNT_LOCALSTORAGE_KEY
+  W3UI_ACCOUNT_LOCALSTORAGE_KEY,
+  createClient,
+  useAccount,
+  login
 } from '@w3ui/keyring-core'
 
 export { Plan, KeyringContextState, KeyringContextActions }
@@ -43,6 +42,7 @@ export const keyringContextDefaultValue: KeyringContextValue = [
     space: undefined,
     spaces: [],
     agent: undefined,
+    client: undefined,
     account: undefined
   },
   {
@@ -81,37 +81,37 @@ export function KeyringProvider ({
   servicePrincipal,
   connection
 }: KeyringProviderProps): JSX.Element {
-  const [agent, setAgent] = useState<Agent>()
+  const [client, setClient] = useState<Client>()
+  const [agent, setAgent] = useState<Signer>()
   const [account, setAccount, { removeItem: unsetAccount }] = useLocalStorageState<string>(W3UI_ACCOUNT_LOCALSTORAGE_KEY)
   const [space, setSpace] = useState<Space>()
   const [spaces, setSpaces] = useState<Space[]>([])
-  const [issuer, setIssuer] = useState<Signer>()
   const [registerAbortController, setRegisterAbortController] =
     useState<AbortController>()
 
-  const getAgent = async (): Promise<Agent> => {
-    if (agent == null) {
-      const a = await createAgent({ servicePrincipal, connection })
-      setAgent(a)
-      setIssuer(a.issuer)
-      setSpace(getCurrentSpaceInAgent(a))
-      setSpaces(getSpaces(a))
-      return a
+  const getClient = async (): Promise<Client> => {
+    if (client == null) {
+      const client = await createClient({ servicePrincipal, connection })
+      setClient(client)
+      setAgent(client.agent.issuer)
+      setSpace(client.currentSpace())
+      setSpaces(client.spaces())
+      return client
     }
-    return agent
+    return client
   }
 
   const authorize = async (email: `${string}@${string}`): Promise<void> => {
-    const agent = await getAgent()
+    const c = await getClient()
     const controller = new AbortController()
     setRegisterAbortController(controller)
 
     try {
-      await accessAuthorize(agent, email, { signal: controller.signal })
+      await login(c, email)
       setAccount(email)
-      const newSpaces = getSpaces(agent)
+      const newSpaces = c.spaces()
       setSpaces(newSpaces)
-      const newCurrentSpace = getCurrentSpaceInAgent(agent) ?? newSpaces[0]
+      const newCurrentSpace = c.currentSpace()
       if (newCurrentSpace != null) {
         await setCurrentSpace(newCurrentSpace.did() as DID<'key'>)
       }
@@ -129,49 +129,53 @@ export function KeyringProvider ({
   }
 
   const createSpace = async (name?: string): Promise<DID> => {
-    const agent = await getAgent()
-    const { did } = await agent.createSpace(name)
-    await agent.setCurrentSpace(did)
-    setSpace(getCurrentSpaceInAgent(agent))
+    const c = await getClient()
+    const space = await c.createSpace(name ?? 'Unnamed Space')
+    const did = space.did()
+    await c.setCurrentSpace(did)
+    setSpace(c.currentSpace())
     return did
   }
 
-  const registerSpace = async (email: string, opts: RegisterSpaceOpts = {}): Promise<void> => {
-    const agent = await getAgent()
-    await agent.registerSpace(email, {
-      provider: opts.provider ?? (agent.connection.id.did() as DID<'web'>)
-    })
-    setSpace(getCurrentSpaceInAgent(agent))
-    setSpaces(getSpaces(agent))
+  const registerSpace = async (email: string): Promise<void> => {
+    const c = await getClient()
+    const account = useAccount(c, { email })
+    const space = c.currentSpace()
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (account && space) {
+      await account.provision(space.did() as DIDKey)
+      setSpace(c.currentSpace())
+      setSpaces(c.spaces())
+    }
   }
 
   const setCurrentSpace = async (did: DID): Promise<void> => {
-    const agent = await getAgent()
-    await agent.setCurrentSpace(did as DID<'key'>)
-    setSpace(getCurrentSpaceInAgent(agent))
+    const c = await getClient()
+    await c.setCurrentSpace(did as DID<'key'>)
+    setSpace(c.currentSpace())
   }
 
   const loadAgent = async (): Promise<void> => {
-    if (agent != null) return
-    await getAgent()
+    if (client != null) return
+    await getClient()
   }
 
   const unloadAgent = async (): Promise<void> => {
     setSpace(undefined)
     setSpaces([])
-    setIssuer(undefined)
-    setAgent(undefined)
+    setClient(undefined)
     unsetAccount()
   }
 
   const resetAgent = async (): Promise<void> => {
-    const agent = await getAgent()
-    await Promise.all([agent.store.reset(), unloadAgent()])
+    const c = await getClient()
+    // @ts-expect-error store is there but the type doesn't expose it - TODO add store to Agent type
+    await Promise.all([c.agent.store.reset(), unloadAgent()])
   }
 
   const getProofs = async (caps: Capability[]): Promise<Proof[]> => {
-    const agent = await getAgent()
-    return agent.proofs(caps)
+    const c = await getClient()
+    return c.agent.proofs(caps)
   }
 
   const createDelegation = async (
@@ -179,12 +183,12 @@ export function KeyringProvider ({
     abilities: Abilities[],
     options: CreateDelegationOptions
   ): Promise<Delegation> => {
-    const agent = await getAgent()
+    const c = await getClient()
     const audienceMeta = options.audienceMeta ?? {
       name: 'agent',
       type: 'device'
     }
-    return await agent.delegate({
+    return await c.agent.delegate({
       ...options,
       abilities,
       audience,
@@ -193,19 +197,20 @@ export function KeyringProvider ({
   }
 
   const addSpace = async (proof: Delegation): Promise<void> => {
-    const agent = await getAgent()
-    await agent.importSpaceFromDelegation(proof)
+    const c = await getClient()
+    await c.agent.importSpaceFromDelegation(proof)
   }
 
   const getPlan = async (email: Email): Promise<PlanGetResult> => {
-    const agent = await getAgent()
-    return await getPlanWithAgent(agent, email)
+    const c = await getClient()
+    return await getPlanWithClient(c, email)
   }
 
   const state = {
     space,
     spaces,
-    agent: issuer,
+    agent,
+    client,
     account
   }
   const actions = {

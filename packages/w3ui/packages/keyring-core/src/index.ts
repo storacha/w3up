@@ -3,83 +3,28 @@ import type {
   Capability,
   DID,
   Proof,
-  Signer,
-  ConnectionView,
   Principal,
   Delegation,
-  UCANOptions
+  UCANOptions,
+  Signer
 } from '@ucanto/interface'
-import { Agent as AccessAgent, authorizeWaitAndClaim, getAccountPlan } from '@web3-storage/access/agent'
+import type { ServiceConfig } from './service'
+import type { EmailAddress } from '@web3-storage/w3up-client/types'
+import { getAccountPlan } from '@web3-storage/access/agent'
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
-import * as RSASigner from '@ucanto/principal/rsa'
 import * as Ucanto from '@ucanto/interface'
-import * as DidMailto from '@web3-storage/did-mailto'
+import { fromEmail as mailtoDidFromEmail } from '@web3-storage/did-mailto'
+import { Client, create as createW3UPClient } from '@web3-storage/w3up-client'
+import * as W3Account from '@web3-storage/w3up-client/account'
+import { Space } from '@web3-storage/w3up-client/space'
+import { createServiceConf } from './service'
 
-export { Abilities, AgentMeta, Service }
-export const authorize = authorizeWaitAndClaim
+export { Abilities, AgentMeta, Service, Client, Space, ServiceConfig }
 
 const DB_NAME = 'w3ui'
 const DB_STORE_NAME = 'keyring'
 export const W3UI_ACCOUNT_LOCALSTORAGE_KEY = 'w3ui-account-email'
-export type Agent = AccessAgent & { store: StoreIndexedDB }
 export type PlanGetResult = Ucanto.Result<PlanGetSuccess, PlanGetFailure | Ucanto.Failure>
-/**
- * A Space is the core organizational structure of web3-storage,
- * similar to a bucket in S3 but with some special properties.
- *
- * At its core, a Space is just a public/private keypair that
- * that users can associate web3-storage uploads with. The keypair
- * is stored locally in a user's browser and can be registered with
- * web3-storage to enable uploads and allow for recovery of upload
- * capabilities in case the keypair is lost.
- */
-export class Space implements Principal {
-  #did: DID
-  #meta: Record<string, any>
-
-  constructor (did: DID, meta: Record<string, any> = {}) {
-    this.#did = did
-    this.#meta = meta
-  }
-
-  /**
-   * The given space name.
-   */
-  name (): string | undefined {
-    return this.#meta.name != null ? String(this.#meta.name) : undefined
-  }
-
-  /**
-   * The DID of the space.
-   */
-  did (): DID {
-    return this.#did
-  }
-
-  /**
-   * Whether the space has been registered with the service.
-   */
-  registered (): boolean {
-    return Boolean(this.#meta.isRegistered)
-  }
-
-  /**
-   * User defined space metadata.
-   */
-  meta (): Record<string, any> {
-    return this.#meta
-  }
-
-  /**
-   * Compares this space's DID to `space`'s DID, returns
-   * true if they are the same, false otherwise.
-   * If `space` is null or undefined, returns false since
-   * this space is neither.
-   */
-  sameAs (space?: Space): boolean {
-    return this.did() === space?.did()
-  }
-}
 
 export interface KeyringContextState {
   /**
@@ -94,6 +39,10 @@ export interface KeyringContextState {
    * The current user agent (this device).
    */
   agent?: Signer
+  /**
+   * The w3up client representing the current user agent (this device).
+   */
+  client?: Client
   /**
    * The account this device is authorized to act as. Currently just an email address.
    */
@@ -173,41 +122,12 @@ export type CreateDelegationOptions = Omit<UCANOptions, 'audience'> & {
   audienceMeta?: AgentMeta
 }
 
-export interface ServiceConfig {
-  servicePrincipal?: Principal
-  connection?: ConnectionView<Service>
-}
-
-/**
- * Convenience function for returning an agent's current Space.
- * @param agent
- * @returns the currently selected Space for the given agent
- */
-export function getCurrentSpace (agent: Agent): Space | undefined {
-  const did = agent.currentSpace()
-  if (did == null) return
-  const meta = agent.spaces.get(did)
-  return new Space(did, meta)
-}
-
-/**
- * Convenience function for returning all of an agent's Spaces.
- * @param agent
- * @returns all of the given agent's Spaces
- */
-export function getSpaces (agent: Agent): Space[] {
-  const spaces: Space[] = []
-  for (const [did, meta] of agent.spaces.entries()) {
-    spaces.push(new Space(did, meta))
-  }
-  return spaces
-}
-
 /**
  * Get plan of the account identified by the given email.
  */
-export async function getPlan (agent: Agent, email: Email): Promise<Ucanto.Result<PlanGetSuccess, PlanGetFailure | Ucanto.Failure>> {
-  return await getAccountPlan(agent, DidMailto.fromEmail(email))
+export async function getPlan (client: Client, email: Email): Promise<Ucanto.Result<PlanGetSuccess, PlanGetFailure | Ucanto.Failure>> {
+  const agent = client.agent
+  return await getAccountPlan(agent, mailtoDidFromEmail(email))
 }
 
 export interface CreateAgentOptions extends ServiceConfig {}
@@ -216,21 +136,24 @@ export interface CreateAgentOptions extends ServiceConfig {}
  * Create an agent for managing identity. It uses RSA keys that are stored in
  * IndexedDB as unextractable `CryptoKey`s.
  */
-export async function createAgent (
+export async function createClient (
   options: CreateAgentOptions = {}
-): Promise<Agent> {
+): Promise<Client> {
   const dbName = `${DB_NAME}${options.servicePrincipal != null ? '@' + options.servicePrincipal.did() : ''}`
   const store = new StoreIndexedDB(dbName, {
     dbVersion: 1,
     dbStoreName: DB_STORE_NAME
   })
-  const raw = await store.load()
-  if (raw != null) {
-    return Object.assign(AccessAgent.from(raw, { ...options, store }), { store })
-  }
-  const principal = await RSASigner.generate()
-  return Object.assign(
-    await AccessAgent.create({ principal }, { ...options, store }),
-    { store }
-  )
+  return await createW3UPClient({
+    store, serviceConf: createServiceConf(options)
+  })
+}
+
+export const useAccount = (client: Client, { email }: { email?: string }): W3Account.Account | undefined => {
+  const accounts = Object.values(W3Account.list(client))
+  return accounts.find((account) => account.toEmail() === email)
+}
+
+export async function login (client: Client, email: EmailAddress): Promise<Ucanto.Result<W3Account.Account, Ucanto.Failure>> {
+  return await W3Account.login(client, email)
 }
