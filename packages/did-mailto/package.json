@@ -2,6 +2,7 @@
   "name": "@web3-storage/did-mailto",
   "version": "2.1.0",
   "description": "did:mailto",
+  "homepage": "https://web3.storage",
   "repository": {
     "type": "git",
     "url": "https://github.com/web3-storage/w3up.git",

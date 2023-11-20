@@ -2,10 +2,10 @@
   "name": "@web3-storage/access",
   "version": "18.0.2",
   "description": "w3access client",
-  "homepage": "https://github.com/web3-storage/w3-protocol/tree/main/packages/access-client",
+  "homepage": "https://web3.storage",
   "repository": {
     "type": "git",
-    "url": "https://github.com/web3-storage/w3-protocol.git",
+    "url": "https://github.com/web3-storage/w3up.git",
     "directory": "packages/access-client"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",

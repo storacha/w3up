@@ -3,6 +3,12 @@
   "version": "4.1.2",
   "type": "module",
   "main": "./src/lib.js",
+  "homepage": "https://web3.storage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3up.git",
+    "directory": "packages/filecoin-api"
+  },
   "files": [
     "src",
     "test",

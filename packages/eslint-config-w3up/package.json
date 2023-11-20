@@ -1,7 +1,13 @@
 {
   "name": "@web3-storage/eslint-config-w3up",
   "version": "1.0.0",
-  "description": "",
+  "description": "eslint rules for w3up",
+  "homepage": "https://web3.storage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3up.git",
+    "directory": "packages/eslint-config-w3up"
+  },
   "main": "index.js",
   "scripts": {
     "lint": "eslint '**/*.{js,ts}'"
