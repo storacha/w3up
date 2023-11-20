@@ -2,9 +2,9 @@
   "separate-pull-requests": true,
   "bootstrap-sha": "c918ffc59eafa01fbc63d5df11ba621cc1888c64",
   "changelog-sections": [
-    { "type":"feat", "section":"Features", "hidden":false },
-    { "type":"fix", "section":"Fixes", "hidden":false },
-    { "type":"chore", "section":"Other Changes", "hidden":false }
+    { "type": "feat", "section": "Features", "hidden": false },
+    { "type": "fix", "section": "Fixes", "hidden": false },
+    { "type": "chore", "section": "Other Changes", "hidden": false }
   ],
   "packages": {
     "packages/access-client": {},
