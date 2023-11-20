@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/w3up-client",
   "version": "11.0.1",
-  "description": "Client for the w3up API",
+  "description": "Client for the web3.storage w3up api",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "main": "src/index.js",
@@ -151,7 +151,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/web3-storage/w3up-client.git"
+    "url": "https://github.com/web3-storage/w3up.git",
+    "directory": "packages/w3up-client"
   },
   "keywords": [
     "web3",
@@ -165,9 +166,9 @@
   ],
   "author": "DAG House",
   "bugs": {
-    "url": "https://github.com/web3-storage/w3up-client/issues"
+    "url": "https://github.com/web3-storage/w3up/issues"
   },
-  "homepage": "https://github.com/web3-storage/w3up-client#readme",
+  "homepage": "https://web3.storage",
   "depcheck": {
     "ignorePatterns": [
       "dist"

@@ -1,8 +1,15 @@
 {
   "name": "@web3-storage/upload-api",
+  "description": "The upload api for web3.storage",
   "version": "7.3.3",
   "type": "module",
   "main": "./src/lib.js",
+  "homepage": "https://web3.storage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3up.git",
+    "directory": "packages/upload-api"
+  },
   "files": [
     "src",
     "test",
