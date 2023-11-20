@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.0.2](https://github.com/web3-storage/w3up/compare/w3up-client-v11.0.1...w3up-client-v11.0.2) (2023-11-20)
+
+
+### Bug Fixes
+
+* package metadata ([#1161](https://github.com/web3-storage/w3up/issues/1161)) ([b8a1cc2](https://github.com/web3-storage/w3up/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+
 ## [11.0.1](https://github.com/web3-storage/w3up/compare/w3up-client-v11.0.0...w3up-client-v11.0.1) (2023-11-16)
 
 
