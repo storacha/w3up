@@ -1,6 +1,19 @@
 # Changelog
 
 
+## [5.0.0](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v4.0.1...solid-uploads-list-v5.0.0) (2023-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* pin solid and vue upload packages ([#589](https://github.com/web3-storage/w3ui/issues/589))
+
+### Features
+
+* add support for getting an account's plan ([#564](https://github.com/web3-storage/w3ui/issues/564)) ([11023a4](https://github.com/web3-storage/w3ui/commit/11023a4a0a8a3ecf061befd4480ede23ea45d143))
+* pin solid and vue upload packages ([#589](https://github.com/web3-storage/w3ui/issues/589)) ([2f7707f](https://github.com/web3-storage/w3ui/commit/2f7707fbdc88ebec88fd42953e1fde2cc0ab34db))
+* re-export Service from `react-keyring` ([#577](https://github.com/web3-storage/w3ui/issues/577)) ([308816d](https://github.com/web3-storage/w3ui/commit/308816defbd4ecf4d23a69548292660538915e91))
+
 ## [4.0.1](https://github.com/web3-storage/w3ui/compare/solid-uploads-list-v4.0.0...solid-uploads-list-v4.0.1) (2023-09-06)
 
 
