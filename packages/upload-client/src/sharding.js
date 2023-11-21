@@ -84,3 +84,55 @@ export class ShardingStream extends TransformStream {
     })
   }
 }
+
+/**
+ * @template T
+ * wrap an iterable in a new iterable that will iterate the same items,
+ * but will error if the iterated items aren't sorted according to a comparator
+ * @implements {Iterable<T>}
+ */
+class Sorted {
+  sorted = /** @type {const} */ (true)
+  /**
+   * @param {Iterable<T>} iterable
+   * @param {(a: T, b: T) => number} comparator
+   */
+  constructor(iterable, comparator) {
+    this.iterable = iterable
+    this.comparator = comparator
+  }
+  [Symbol.iterator]() {
+    const { comparator, iterable } = this
+    return function* () {
+      let prev = null
+      for (const cur of iterable) {
+        if (prev && comparator(prev, cur) === 1) {
+          throw Object.assign(
+            new Error(`expected items to be sorted, but they were not`),
+            { unsorted: [prev, cur] }
+          )
+        }
+        yield cur
+        prev = cur
+      }
+    }.bind(this)()
+  }
+}
+
+/**
+ * given an iterable of files, return another iterable that ensures
+ * that the files are iterated in a sorted order.
+ *
+ * @param {Iterable<import('./types.js').FileLike>} files
+ * @param {(file: import('./types.js').FileLike) => string} getSortKey - given a FileLike, return a value by which all the FileLikes should be sorted
+ * @returns
+ */
+export const requireSortedFiles = (files, getSortKey = (a) => a.name) => {
+  return new Sorted(files, function (a, b) {
+    const ask = getSortKey(a)
+    const bsk = getSortKey(b)
+    if (ask === bsk) return 0
+    else if (ask < bsk) return -1
+    return 1
+  })
+}

@@ -368,6 +368,94 @@ describe('uploadDirectory', () => {
 
     assert.equal(carCIDs.length, 2)
   })
+
+  it('ensures files is sorted unless wrapped with allowUnsorted', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
+    const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      UploadCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ])
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability }) => ({
+          ok: {
+            status: 'upload',
+            headers: { 'x-test': 'true' },
+            url: 'http://localhost:9200',
+            with: space.did(),
+            link: /** @type {import('../src/types.js').CARLink} */ (
+              capability.nb.link
+            ),
+          },
+        })),
+      },
+      upload: {
+        add: provide(UploadCapabilities.add, ({ capability }) => {
+          if (!capability.nb) throw new Error('nb must be present')
+          return { ok: capability.nb }
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+    /**
+     * @param {Iterable<import('../src/types.js').FileLike>} files
+     */
+    const upload = (files) =>
+      uploadDirectory(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        files,
+        {
+          connection,
+        }
+      )
+
+    const unsortedFiles = [
+      new File([await randomBytes(32)], 'b.txt'),
+      new File([await randomBytes(32)], 'c.txt'),
+      new File([await randomBytes(32)], 'a.txt'),
+    ]
+    assert.rejects(
+      upload(unsortedFiles),
+      'uploading unsorted files returns rejected promise'
+    )
+
+    // sorted files should work
+    const sortedFiles = [...unsortedFiles].sort(function (a, b) {
+      return a.name < b.name ? -1 : 1
+    })
+    assert.doesNotReject(
+      upload(sortedFiles),
+      'uploading unsorted files returns rejected promise'
+    )
+
+    // can mark files as sortingNotRequired
+    assert.doesNotReject(
+      upload(Object.assign([...unsortedFiles], { sorted: false })),
+      'can upload usnorted files if wrapped in allowUnsorted'
+    )
+  })
 })
 
 describe('uploadCAR', () => {
