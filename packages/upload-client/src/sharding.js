@@ -112,8 +112,10 @@ class Sorted {
       for (const cur of iterable) {
         if (prev && comparator(prev, cur) === 1) {
           throw Object.assign(
-            new Error(`expected items to be sorted, but they were not`),
-            { unsorted: [prev, cur] }
+            new Error(
+              `sequentially iterated items were not sorted as expected`
+            ),
+            { unsorted: [prev, cur], code: 'SORTED_EXPECTATION_UNMET' }
           )
         }
         yield cur
