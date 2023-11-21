@@ -2,7 +2,7 @@
   "packages/keyring-core": "6.0.0",
   "packages/uploader-core": "7.0.0",
   "packages/uploads-list-core": "5.0.0",
-  "packages/react-keyring": "6.2.1",
+  "packages/react-keyring": "7.0.0",
   "packages/react-uploader": "5.2.0",
   "packages/react-uploads-list": "4.2.0",
   "packages/vue-keyring": "5.0.1",

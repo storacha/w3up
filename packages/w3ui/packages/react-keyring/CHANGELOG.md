@@ -1,5 +1,16 @@
 # Changelog
 
+## [7.0.0](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.2.1...react-keyring-v7.0.0) (2023-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* use w3up-client in keyring ([#581](https://github.com/web3-storage/w3ui/issues/581))
+
+### Features
+
+* use w3up-client in keyring ([#581](https://github.com/web3-storage/w3ui/issues/581)) ([bd5f341](https://github.com/web3-storage/w3ui/commit/bd5f34186b14c4817924a93658f79be16898902a))
+
 ## [6.2.1](https://github.com/web3-storage/w3ui/compare/react-keyring-v6.2.0...react-keyring-v6.2.1) (2023-11-14)
 
 
