@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/uploads-list-core",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "description": "w3ui uploads list core.",
   "main": "src/index.ts",
   "publishConfig": {
