@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/web3-storage/w3ui/compare/keyring-core-v5.1.0...keyring-core-v6.0.0) (2023-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* use w3up-client in keyring ([#581](https://github.com/web3-storage/w3ui/issues/581))
+
+### Features
+
+* use w3up-client in keyring ([#581](https://github.com/web3-storage/w3ui/issues/581)) ([bd5f341](https://github.com/web3-storage/w3ui/commit/bd5f34186b14c4817924a93658f79be16898902a))
+
 ## [5.1.0](https://github.com/web3-storage/w3ui/compare/keyring-core-v5.0.1...keyring-core-v5.1.0) (2023-10-31)
 
 
