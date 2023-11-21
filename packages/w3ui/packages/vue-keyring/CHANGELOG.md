@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.0.0](https://github.com/web3-storage/w3ui/compare/vue-keyring-v5.0.1...vue-keyring-v6.0.0) (2023-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* use w3up-client in keyring ([#581](https://github.com/web3-storage/w3ui/issues/581))
+
+### Features
+
+* add support for getting an account's plan ([#564](https://github.com/web3-storage/w3ui/issues/564)) ([11023a4](https://github.com/web3-storage/w3ui/commit/11023a4a0a8a3ecf061befd4480ede23ea45d143))
+* re-export Service from `react-keyring` ([#577](https://github.com/web3-storage/w3ui/issues/577)) ([308816d](https://github.com/web3-storage/w3ui/commit/308816defbd4ecf4d23a69548292660538915e91))
+* use w3up-client in keyring ([#581](https://github.com/web3-storage/w3ui/issues/581)) ([bd5f341](https://github.com/web3-storage/w3ui/commit/bd5f34186b14c4817924a93658f79be16898902a))
+
 ## [5.0.1](https://github.com/web3-storage/w3ui/compare/vue-keyring-v5.0.0...vue-keyring-v5.0.1) (2023-09-06)
 
 
