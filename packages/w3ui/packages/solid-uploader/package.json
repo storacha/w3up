@@ -28,8 +28,8 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/solid-uploader",
   "dependencies": {
-    "@w3ui/solid-keyring": "workspace:^",
-    "@w3ui/uploader-core": "workspace:^",
+    "@w3ui/solid-keyring": "workspace:>=6",
+    "@w3ui/uploader-core": "workspace:>=7",
     "@web3-storage/capabilities": "^11.1.0",
     "multiformats": "^11.0.1"
   },
