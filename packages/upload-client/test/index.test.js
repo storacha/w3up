@@ -437,7 +437,8 @@ describe('uploadDirectory', () => {
       )
 
     const unsortedFiles = [
-      new File([await randomBytes(32)], 'b.txt'),
+      new File([await randomBytes(32)], '/b.txt'),
+      new File([await randomBytes(32)], '/b.txt'),
       new File([await randomBytes(32)], 'c.txt'),
       new File([await randomBytes(32)], 'a.txt'),
     ]

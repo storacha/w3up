@@ -134,13 +134,7 @@ class Sorted {
  * @returns
  */
 export const requireSortedFiles = (files, getSortKey = (a) => a.name) => {
-  return new Sorted(files, function (a, b) {
-    const ask = getSortKey(a)
-    const bsk = getSortKey(b)
-    if (ask === bsk) return 0
-    else if (ask < bsk) return -1
-    return 1
-  })
+  return new Sorted(files, (a, b) => defaultFileComparator(a, b, getSortKey))
 }
 
 /**
