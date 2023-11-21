@@ -156,7 +156,7 @@ export const defaultFileComparator = (a, b, getSortKey = (a) => a.name) => {
  * @param {T} b
  * @param {(i: T) => any} getSortKey - given an item being sorted, return the value by which it should be sorted
  */
-function ascending(a, b, getSortKey = (a) => a) {
+function ascending(a, b, getSortKey) {
   const ask = getSortKey(a)
   const bsk = getSortKey(b)
   if (ask === bsk) return 0
