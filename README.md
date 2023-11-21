@@ -40,43 +40,30 @@ Run `w3 --help` or have a look at https://github.com/web3-storage/w3cli to find 
 
 Add the [`@web3-storage/w3up-client`](https://www.npmjs.com/package/@web3-storage/w3up-client) module into your project with `npm i @web3-storage/w3up-client` and upload a single file with [`client.uploadFile`](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#uploadfile) or many with [`client.uploadDirectory`](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#uploaddirectory).
 
-If you've already got a space you can authorize your client and upload like this:
+If you've already got a space you can upload like this:
  
 **node.js**
 ```js
-import { getFilesFromPaths } from 'files-from-path'
+import { filesFromPaths } from 'files-from-path'
 import * as Client from '@web3-storage/w3up-client'
+
+const [,,yourEmail, pathToAdd] = process.argv
 
 // authorize your local agent to act on your behalf
 const client = await Client.create()
-await client.login('you@example.org')
+await client.login(yourEmail)
 
 // lets go!
-const files = await getFilesFromPaths(process.env.PATH_TO_ADD)
+const files = await filesFromPaths(pathToAdd)
 const cid = await client.uploadDirectory(files)
 
 console.log(`IPFS CID: ${cid}`)
 console.log(`Gateway URL: https://w3s.link/ipfs/${cid}`)
 ```
 
-To make a new space programmatically use [`client.createSpace`](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#createspace)
-
-**node.js**
-```js
-import * as Client from '@web3-storage/w3up-client'
-
-// authorize your local agent to act on your behalf
-const client = await Client.create()
-await client.login('you@example.org')
-
-// give you space a nickname to remember it by
-const space = await client.createSpace('my space')
-
-console.log(space.name()) // 'my space'
-console.log(space.did())  // 'did:key:xyz...'
-```
-
 See https://web3.storage/docs/w3up-client for a guide to using the js client for the first time.
+
+For an interactive command line adventure into the using w3up check out `learnyouw3up` here https://github.com/web3-storage/learnyouw3up
 
 
 ## Contributing
