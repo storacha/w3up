@@ -6,7 +6,12 @@ import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
-import { uploadFile, uploadDirectory, uploadCAR } from '../src/index.js'
+import {
+  uploadFile,
+  uploadDirectory,
+  uploadCAR,
+  defaultFileComparator,
+} from '../src/index.js'
 import { serviceSigner } from './fixtures.js'
 import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
@@ -369,7 +374,7 @@ describe('uploadDirectory', () => {
     assert.equal(carCIDs.length, 2)
   })
 
-  it('ensures files is sorted unless wrapped with allowUnsorted', async () => {
+  it('ensures files is sorted unless sorted property also provided', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const proofs = await Promise.all([
@@ -442,18 +447,15 @@ describe('uploadDirectory', () => {
     )
 
     // sorted files should work
-    const sortedFiles = [...unsortedFiles].sort(function (a, b) {
-      return a.name < b.name ? -1 : 1
-    })
+    const sortedFiles = [...unsortedFiles].sort(defaultFileComparator)
     assert.doesNotReject(
       upload(sortedFiles),
       'uploading unsorted files returns rejected promise'
     )
 
-    // can mark files as sortingNotRequired
     assert.doesNotReject(
       upload(Object.assign([...unsortedFiles], { sorted: false })),
-      'can upload usnorted files if wrapped in allowUnsorted'
+      'can upload unsorted files if sorted property is provided'
     )
   })
 })

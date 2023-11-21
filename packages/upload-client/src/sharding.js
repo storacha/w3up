@@ -1,5 +1,9 @@
 import { blockEncodingLength, encode, headerEncodingLength } from './car.js'
 
+/**
+ * @typedef {import('./types.js').FileLike} FileLike
+ */
+
 // https://observablehq.com/@gozala/w3up-shard-size
 const SHARD_SIZE = 133_169_152
 
@@ -135,4 +139,31 @@ export const requireSortedFiles = (files, getSortKey = (a) => a.name) => {
     else if (ask < bsk) return -1
     return 1
   })
+}
+
+/**
+ * Default comparator for FileLikes. Sorts by file name in ascending order.
+ *
+ * @param {FileLike} a
+ * @param {FileLike} b
+ * @param {(file: FileLike) => string} getSortKey
+ */
+export const defaultFileComparator = (a, b, getSortKey = (a) => a.name) => {
+  return ascending(a, b, getSortKey)
+}
+
+/**
+ * a comparator for sorting in ascending order. Use with Sorted or Array#sort.
+ *
+ * @template T
+ * @param {T} a
+ * @param {T} b
+ * @param {(i: T) => any} getSortKey - given an item being sorted, return the value by which it should be sorted
+ */
+function ascending(a, b, getSortKey = (a) => a) {
+  const ask = getSortKey(a)
+  const bsk = getSortKey(b)
+  if (ask === bsk) return 0
+  else if (ask < bsk) return -1
+  return 1
 }
