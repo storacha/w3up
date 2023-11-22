@@ -97,6 +97,8 @@ export type {
   UploadAddSuccess,
   UploadRemoveSuccess,
   UploadListSuccess,
+  UsageReportSuccess,
+  UsageReportFailure,
   ListResponse,
   AnyLink,
   CARLink,

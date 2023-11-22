@@ -1,6 +1,7 @@
 import * as API from './types.js'
 import * as Access from './capability/access.js'
 import * as Plan from './capability/plan.js'
+import * as Subscription from './capability/subscription.js'
 import { Delegation, importAuthorization } from '@web3-storage/access/agent'
 import { add as provision, AccountDID } from '@web3-storage/access/provider'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
@@ -207,6 +208,13 @@ export class AccountPlan {
    */
   async get() {
     return await Plan.get(this.model, {
+      account: this.model.id,
+      proofs: this.model.proofs,
+    })
+  }
+
+  async subscriptions() {
+    return await Subscription.list(this.model, {
       account: this.model.id,
       proofs: this.model.proofs,
     })

@@ -1,4 +1,5 @@
 import { Subscription as SubscriptionCapabilities } from '@web3-storage/capabilities'
+import * as API from '../types.js'
 import { Base } from '../base.js'
 
 /**
@@ -11,30 +12,33 @@ export class SubscriptionClient extends Base {
    * @param {import('@web3-storage/access').AccountDID} account
    */
   async list(account) {
-    const result = await SubscriptionCapabilities.list
-      .invoke({
-        issuer: this._agent.issuer,
-        audience: this._serviceConf.access.id,
-        with: account,
-        proofs: this._agent.proofs([
-          {
-            can: SubscriptionCapabilities.list.can,
-            with: account,
-          },
-        ]),
-        nb: {},
-      })
-      .execute(this._serviceConf.access)
-
-    if (!result.out.ok) {
+    const out = await list({ agent: this.agent }, { account })
+    if (!out.ok) {
       throw new Error(
         `failed ${SubscriptionCapabilities.list.can} invocation`,
         {
-          cause: result.out.error,
+          cause: out.error,
         }
       )
     }
 
-    return result.out.ok
+    return out.ok
   }
+}
+
+/**
+ * Gets subscriptions associated with the account.
+ *
+ * @param {{agent: API.Agent}} client
+ * @param {object} options
+ * @param {API.AccountDID} options.account
+ * @param {API.Delegation[]} [options.proofs]
+ */
+export const list = async ({ agent }, { account, proofs = [] }) => {
+  const receipt = await agent.invokeAndExecute(SubscriptionCapabilities.list, {
+    with: account,
+    proofs,
+    nb: {},
+  })
+  return receipt.out
 }
