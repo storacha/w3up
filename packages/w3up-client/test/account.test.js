@@ -240,6 +240,29 @@ export const testAccount = {
     assert.ok(plan?.product, 'did:web:free.web3.storage')
   },
 
+  'check account subscriptions': async (
+    assert,
+    { client, mail, grantAccess }
+  ) => {
+    const space = await client.createSpace('test')
+
+    const email = 'alice@web.mail'
+    const login = Account.login(client, email)
+    const message = await mail.take()
+    assert.deepEqual(message.to, email)
+    await grantAccess(message)
+    const account = Result.try(await login)
+
+    Result.try(await account.provision(space.did()))
+
+    const subs = Result.unwrap(await account.plan.subscriptions())
+
+    assert.equal(subs.results.length, 1)
+    assert.equal(subs.results[0].provider, client.defaultProvider())
+    assert.deepEqual(subs.results[0].consumers, [space.did()])
+    assert.equal(typeof subs.results[0].subscription, 'string')
+  },
+
   'space.save': async (assert, { client, mail, grantAccess }) => {
     const space = await client.createSpace('test')
     assert.deepEqual(client.spaces(), [])
