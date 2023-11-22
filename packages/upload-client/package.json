@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-client",
-  "version": "12.0.1",
+  "version": "12.0.2",
   "description": "The web3.storage upload client",
   "homepage": "https://web3.storage",
   "repository": {
