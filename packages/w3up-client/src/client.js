@@ -187,8 +187,11 @@ export class Client extends Base {
    * The current space.
    */
   currentSpace() {
-    const did = this._agent.currentSpace()
-    return did ? new Space(did, this._agent.spaces.get(did)) : undefined
+    const agent = this._agent
+    const id = agent.currentSpace()
+    if (!id) return
+    const meta = agent.spaces.get(id)
+    return new Space({ id, meta, agent })
   }
 
   /**
@@ -204,8 +207,9 @@ export class Client extends Base {
    * Spaces available to this agent.
    */
   spaces() {
-    return [...this._agent.spaces].map(([did, meta]) => {
-      return new Space(did, meta)
+    return [...this._agent.spaces].map(([id, meta]) => {
+      // @ts-expect-error id is not did:key
+      return new Space({ id, meta, agent: this._agent })
     })
   }
 
