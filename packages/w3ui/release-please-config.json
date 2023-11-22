@@ -15,8 +15,6 @@
 
     "packages/keyring-core": {},
     "packages/uploader-core": {},
-    "packages/uploads-list-core": {},
-
-    "examples/react/w3console": {}
+    "packages/uploads-list-core": {}
   }
 }
