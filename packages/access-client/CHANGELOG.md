@@ -1,5 +1,13 @@
 # Changelog
 
+## [18.0.3](https://github.com/web3-storage/w3up/compare/access-v18.0.2...access-v18.0.3) (2023-11-22)
+
+
+### Fixes
+
+* don't error when we can't figure out a name for a space ([#1177](https://github.com/web3-storage/w3up/issues/1177)) ([a31f667](https://github.com/web3-storage/w3up/commit/a31f6671b52d37b8493ca1690ca737ddd311558b))
+* package metadata ([#1161](https://github.com/web3-storage/w3up/issues/1161)) ([b8a1cc2](https://github.com/web3-storage/w3up/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+
 ## [18.0.2](https://github.com/web3-storage/w3up/compare/access-v18.0.1...access-v18.0.2) (2023-11-17)
 
 
