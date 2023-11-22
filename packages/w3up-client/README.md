@@ -605,6 +605,16 @@ function createDelegation (
 
 Create a delegation to the passed audience for the given abilities with the _current_ space as the resource.
 
+### `getReceipt`
+
+```ts
+function getReceipt (
+  taskCid: CID
+): Promise<Receipt>
+```
+
+Get a receipt for an executed task by its CID.
+
 ### `capability.access.authorize`
 
 ```ts
