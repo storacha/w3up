@@ -1,4 +1,5 @@
 import { Usage as UsageCapabilities } from '@web3-storage/capabilities'
+import * as API from '../types.js'
 import { Base } from '../base.js'
 
 /**
@@ -12,32 +13,37 @@ export class UsageClient extends Base {
    * @param {{ from: Date, to: Date }} period
    */
   async report(space, period) {
-    const result = await UsageCapabilities.report
-      .invoke({
-        issuer: this._agent.issuer,
-        audience: this._serviceConf.upload.id,
-        with: space,
-        proofs: this._agent.proofs([
-          {
-            can: UsageCapabilities.report.can,
-            with: space,
-          },
-        ]),
-        nb: {
-          period: {
-            from: Math.floor(period.from.getTime() / 1000),
-            to: Math.floor(period.to.getTime() / 1000),
-          },
-        },
-      })
-      .execute(this._serviceConf.upload)
-
-    if (!result.out.ok) {
+    const out = await report({ agent: this.agent }, { space, period })
+    if (!out.ok) {
       throw new Error(`failed ${UsageCapabilities.report.can} invocation`, {
-        cause: result.out.error,
+        cause: out.error,
       })
     }
 
-    return result.out.ok
+    return out.ok
   }
+}
+
+/**
+ * Get a usage report for the period.
+ *
+ * @param {{agent: API.Agent}} client
+ * @param {object} options
+ * @param {API.SpaceDID} options.space
+ * @param {{ from: Date, to: Date }} options.period
+ * @param {API.Delegation[]} [options.proofs]
+ * @returns {Promise<API.Result<API.UsageReportSuccess, API.UsageReportFailure>>}
+ */
+export const report = async ({ agent }, { space, period, proofs = [] }) => {
+  const receipt = await agent.invokeAndExecute(UsageCapabilities.report, {
+    with: space,
+    proofs,
+    nb: {
+      period: {
+        from: Math.floor(period.from.getTime() / 1000),
+        to: Math.ceil(period.to.getTime() / 1000),
+      },
+    },
+  })
+  return receipt.out
 }
