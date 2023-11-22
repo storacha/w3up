@@ -346,12 +346,6 @@ export class Agent {
         ? Space.fromDelegation(delegation)
         : Space.fromDelegation(delegation).withName(name)
 
-    if (space.name === '') {
-      throw new Error(
-        'Space has no name, please pass a `name` option to specify it'
-      )
-    }
-
     this.#data.spaces.set(space.did(), { ...space.meta, name: space.name })
 
     await this.addProof(space.delegation)
