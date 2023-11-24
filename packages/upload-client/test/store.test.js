@@ -677,7 +677,7 @@ describe('Store.get', () => {
               link: car.cid,
               size: car.size,
               insertedAt: new Date().toISOString(),
-            }
+            },
           }
         }),
       },

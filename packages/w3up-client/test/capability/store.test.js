@@ -173,7 +173,7 @@ describe('StoreClient', () => {
                 link: car.cid,
                 size: car.size,
                 insertedAt: new Date().toISOString(),
-              }
+              },
             }
           }),
         },
