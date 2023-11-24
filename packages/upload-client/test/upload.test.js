@@ -443,3 +443,108 @@ describe('Upload.remove', () => {
     )
   })
 })
+
+describe('Upload.get', () => {
+  it('gets an upload', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await UploadCapabilities.get.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        get: provide(UploadCapabilities.get, ({ invocation, capability }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          assert.equal(capability.can, UploadCapabilities.get.can)
+          assert.equal(capability.with, space.did())
+          assert.equal(String(capability.nb?.root), car.roots[0].toString())
+          return {
+            ok: {
+              root: car.roots[0],
+              shards: [car.cid],
+              insertedAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          }
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    const result = await Upload.get(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car.roots[0],
+      { connection }
+    )
+
+    assert(service.upload.get.called)
+    assert.equal(service.upload.get.callCount, 1)
+
+    assert.equal(result.root.toString(), car.roots[0].toString())
+    assert.equal(result.shards?.[0].toString(), car.cid)
+  })
+
+  it('throws on service error', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await UploadCapabilities.get.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      upload: {
+        get: provide(UploadCapabilities.get, () => {
+          throw new Server.Failure('boom')
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Upload.get(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car.roots[0],
+        { connection }
+      ),
+      { message: 'failed upload/get invocation' }
+    )
+  })
+})

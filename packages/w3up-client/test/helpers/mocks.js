@@ -23,11 +23,13 @@ export function mockService(impl) {
   return {
     store: {
       add: withCallCount(impl.store?.add ?? notImplemented),
+      get: withCallCount(impl.store?.get ?? notImplemented),
       list: withCallCount(impl.store?.list ?? notImplemented),
       remove: withCallCount(impl.store?.remove ?? notImplemented),
     },
     upload: {
       add: withCallCount(impl.upload?.add ?? notImplemented),
+      get: withCallCount(impl.upload?.get ?? notImplemented),
       list: withCallCount(impl.upload?.list ?? notImplemented),
       remove: withCallCount(impl.upload?.remove ?? notImplemented),
     },
