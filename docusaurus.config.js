@@ -33,3 +33,6 @@ const config = {
 }
 
 module.exports = config
+editUrl: ({ docPath }) => {
+    return `https://holocron.so/github/pr/web3-storage/w3up/main/editor//docs/${docPath}`
+},
