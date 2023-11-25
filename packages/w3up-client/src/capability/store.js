@@ -19,6 +19,18 @@ export class StoreClient extends Base {
   }
 
   /**
+   * Get details of a stored item.
+   *
+   * @param {import('../types.js').UnknownLink} link - Root data CID for the DAG that was stored.
+   * @param {import('../types.js').RequestOptions} [options]
+   */
+  async get(link, options = {}) {
+    const conf = await this._invocationConfig([StoreCapabilities.get.can])
+    options.connection = this._serviceConf.upload
+    return Store.get(conf, link, options)
+  }
+
+  /**
    * List CAR files stored to the resource.
    *
    * @param {import('../types.js').ListRequestOptions} [options]

@@ -20,6 +20,18 @@ export class UploadClient extends Base {
   }
 
   /**
+   * Get details of an "upload".
+   *
+   * @param {import('../types.js').UnknownLink} root - Root data CID for the DAG that was stored.
+   * @param {import('../types.js').RequestOptions} [options]
+   */
+  async get(root, options = {}) {
+    const conf = await this._invocationConfig([UploadCapabilities.add.can])
+    options.connection = this._serviceConf.upload
+    return Upload.get(conf, root, options)
+  }
+
+  /**
    * List uploads registered to the resource.
    *
    * @param {import('../types.js').ListRequestOptions} [options]

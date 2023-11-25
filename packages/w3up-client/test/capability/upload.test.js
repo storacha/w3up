@@ -157,4 +157,54 @@ describe('StoreClient', () => {
       assert.equal(service.upload.remove.callCount, 1)
     })
   })
+
+  describe('get', () => {
+    it('should get an upload', async () => {
+      const car = await randomCAR(128)
+
+      const service = mockService({
+        upload: {
+          get: provide(UploadCapabilities.get, ({ invocation, capability }) => {
+            assert.equal(invocation.issuer.did(), alice.agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            assert.equal(capability.can, UploadCapabilities.get.can)
+            assert.equal(capability.with, alice.currentSpace()?.did())
+            return {
+              ok: {
+                root: car.roots[0],
+                shards: [car.cid],
+                insertedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            }
+          }),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice)
+      alice.addSpace(auth)
+      await alice.setCurrentSpace(space.did())
+
+      const result = await alice.capability.upload.get(car.cid)
+
+      assert(service.upload.get.called)
+      assert.equal(service.upload.get.callCount, 1)
+
+      assert.equal(result.root.toString(), car.roots[0].toString())
+      assert.equal(result.shards?.[0].toString(), car.cid)
+    })
+  })
 })

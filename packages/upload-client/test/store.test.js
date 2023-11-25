@@ -648,3 +648,107 @@ describe('Store.remove', () => {
     )
   })
 })
+
+describe('Store.get', () => {
+  it('gets stored item', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await StoreCapabilities.get.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      store: {
+        get: provide(StoreCapabilities.get, ({ invocation, capability }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          assert.equal(capability.can, StoreCapabilities.get.can)
+          assert.equal(capability.with, space.did())
+          assert.equal(String(capability.nb?.link), car.cid.toString())
+          return {
+            ok: {
+              link: car.cid,
+              size: car.size,
+              insertedAt: new Date().toISOString(),
+            },
+          }
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    const result = await Store.get(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car.cid,
+      { connection }
+    )
+
+    assert(service.store.get.called)
+    assert.equal(service.store.get.callCount, 1)
+
+    assert.equal(result.link.toString(), car.cid.toString())
+    assert.equal(result.size, car.size)
+  })
+
+  it('throws on service error', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const car = await randomCAR(128)
+
+    const proofs = [
+      await StoreCapabilities.get.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      store: {
+        get: provide(StoreCapabilities.get, () => {
+          throw new Server.Failure('boom')
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Store.get(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        car.cid,
+        { connection }
+      ),
+      { message: 'failed store/get invocation' }
+    )
+  })
+})

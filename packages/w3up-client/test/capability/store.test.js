@@ -156,4 +156,53 @@ describe('StoreClient', () => {
       assert.equal(service.store.remove.callCount, 1)
     })
   })
+
+  describe('get', () => {
+    it('should get a stored item', async () => {
+      const car = await randomCAR(128)
+
+      const service = mockService({
+        store: {
+          get: provide(StoreCapabilities.get, ({ invocation, capability }) => {
+            assert.equal(invocation.issuer.did(), alice.agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            assert.equal(capability.can, StoreCapabilities.get.can)
+            assert.equal(capability.with, alice.currentSpace()?.did())
+            return {
+              ok: {
+                link: car.cid,
+                size: car.size,
+                insertedAt: new Date().toISOString(),
+              },
+            }
+          }),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice)
+      alice.addSpace(auth)
+      await alice.setCurrentSpace(space.did())
+
+      const result = await alice.capability.store.get(car.cid)
+
+      assert(service.store.get.called)
+      assert.equal(service.store.get.callCount, 1)
+
+      assert.equal(result.link.toString(), car.cid.toString())
+      assert.equal(result.size, car.size)
+    })
+  })
 })
