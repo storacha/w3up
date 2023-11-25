@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v11.0.2...w3up-client-v11.1.0) (2023-11-25)
+
+
+### Features
+
+* add store.get and upload.get to clients ([#1178](https://github.com/web3-storage/w3up/issues/1178)) ([d1be42a](https://github.com/web3-storage/w3up/commit/d1be42a642e04d290710e824dc4c9b924de8d8ac))
+
 ## [11.0.2](https://github.com/web3-storage/w3up/compare/w3up-client-v11.0.1...w3up-client-v11.0.2) (2023-11-20)
 
 
