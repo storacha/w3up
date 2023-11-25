@@ -136,6 +136,63 @@ export async function add(
 }
 
 /**
+ * Get details of a stored item.
+ *
+ * Required delegated capability proofs: `store/get`
+ *
+ * @param {import('./types.js').InvocationConfig} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
+ *
+ * The `issuer` is the signing authority that is issuing the UCAN
+ * invocation(s). It is typically the user _agent_.
+ *
+ * The `with` is the resource the invocation applies to. It is typically the
+ * DID of a space.
+ *
+ * The `proofs` are a set of capability delegations that prove the issuer
+ * has the capability to perform the action.
+ *
+ * The issuer needs the `store/get` delegated capability.
+ * @param {import('multiformats/link').UnknownLink} link CID of stored CAR file.
+ * @param {import('./types.js').RequestOptions} [options]
+ * @returns {Promise<import('./types.js').StoreGetSuccess>}
+ */
+export async function get(
+  { issuer, with: resource, proofs, audience },
+  link,
+  options = {}
+) {
+  /* c8 ignore next */
+  const conn = options.connection ?? connection
+  const result = await retry(
+    async () => {
+      return await StoreCapabilities.get
+        .invoke({
+          issuer,
+          /* c8 ignore next */
+          audience: audience ?? servicePrincipal,
+          with: SpaceDID.from(resource),
+          nb: { link },
+          proofs,
+        })
+        .execute(conn)
+    },
+    {
+      onFailedAttempt: console.warn,
+      retries: options.retries ?? REQUEST_RETRIES,
+    }
+  )
+
+  if (!result.out.ok) {
+    throw new Error(`failed ${StoreCapabilities.get.can} invocation`, {
+      cause: result.out.error,
+    })
+  }
+
+  return result.out.ok
+}
+
+/**
  * List CAR files stored by the issuer.
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration

@@ -91,12 +91,17 @@ export type {
 
 export type {
   StoreAddSuccess,
+  StoreGetSuccess,
+  StoreGetFailure,
   StoreRemoveSuccess,
   StoreRemoveFailure,
   StoreListSuccess,
   UploadAddSuccess,
+  UploadGetSuccess,
+  UploadGetFailure,
   UploadRemoveSuccess,
   UploadListSuccess,
+  UploadListItem,
   UsageReportSuccess,
   UsageReportFailure,
   ListResponse,
