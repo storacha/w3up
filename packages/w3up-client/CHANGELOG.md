@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.1](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.0...w3up-client-v11.1.1) (2023-11-27)
+
+
+### Fixes
+
+* export filecoin types ([#1185](https://github.com/web3-storage/w3up/issues/1185)) ([9b1f526](https://github.com/web3-storage/w3up/commit/9b1f52609903b40d965d51a87f8ba7a530ca74cd))
+
 ## [11.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v11.0.2...w3up-client-v11.1.0) (2023-11-25)
 
 
