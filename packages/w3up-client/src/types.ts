@@ -26,6 +26,8 @@ export type {
 
 export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 
+export type Service = AccessService & UploadService & StorefrontService
+
 export interface ServiceConf {
   access: ConnectionView<AccessService>
   upload: ConnectionView<UploadService>
