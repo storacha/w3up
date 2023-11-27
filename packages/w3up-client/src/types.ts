@@ -26,6 +26,8 @@ export type {
 
 export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 
+export type Service = AccessService & UploadService & StorefrontService
+
 export interface ServiceConf {
   access: ConnectionView<AccessService>
   upload: ConnectionView<UploadService>
@@ -80,6 +82,21 @@ export type {
   UploadAdd,
   UploadList,
   UploadRemove,
+  PlanGet,
+  PlanGetSuccess,
+  PlanGetFailure,
+  FilecoinOffer,
+  FilecoinOfferSuccess,
+  FilecoinOfferFailure,
+  FilecoinSubmit,
+  FilecoinSubmitSuccess,
+  FilecoinSubmitFailure,
+  FilecoinAccept,
+  FilecoinAcceptSuccess,
+  FilecoinAcceptFailure,
+  FilecoinInfo,
+  FilecoinInfoSuccess,
+  FilecoinInfoFailure,
 } from '@web3-storage/capabilities/types'
 
 export type {
