@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.2](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.1...w3up-client-v11.1.2) (2023-11-27)
+
+
+### Fixes
+
+* export ProgressStatus ([ab29c05](https://github.com/web3-storage/w3up/commit/ab29c05a05390e63538ef71ed2dd1f65dbb326d5))
+
 ## [11.1.1](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.0...w3up-client-v11.1.1) (2023-11-27)
 
 
