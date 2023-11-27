@@ -80,6 +80,18 @@ export type {
   UploadAdd,
   UploadList,
   UploadRemove,
+  FilecoinOffer,
+  FilecoinOfferSuccess,
+  FilecoinOfferFailure,
+  FilecoinSubmit,
+  FilecoinSubmitSuccess,
+  FilecoinSubmitFailure,
+  FilecoinAccept,
+  FilecoinAcceptSuccess,
+  FilecoinAcceptFailure,
+  FilecoinInfo,
+  FilecoinInfoSuccess,
+  FilecoinInfoFailure,
 } from '@web3-storage/capabilities/types'
 
 export type {
