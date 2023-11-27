@@ -138,4 +138,5 @@ export type {
   UploadDirectoryOptions,
   FileLike,
   BlobLike,
+  ProgressStatus,
 } from '@web3-storage/upload-client/types'
