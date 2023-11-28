@@ -82,7 +82,9 @@ describe('IndexedDB store', () => {
       expiration: Infinity,
     })
 
-    data0.addDelegation(del0, { audience: { name: 'test', type: 'device' } })
+    await data0.addDelegation(del0, {
+      audience: { name: 'test', type: 'device' },
+    })
     await store.save(data0.export())
 
     const exportData1 = await store.load()

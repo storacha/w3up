@@ -123,7 +123,7 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    assert.rejects(
+    await assert.rejects(
       Store.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
         car,
@@ -176,7 +176,7 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    assert.rejects(
+    await assert.rejects(
       Store.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
         car,

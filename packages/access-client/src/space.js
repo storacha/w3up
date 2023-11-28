@@ -176,7 +176,7 @@ class OwnedSpace {
 
     const proof = await createAuthorization(this, { agent })
     await agent.importSpaceFromDelegation(proof)
-    agent.setCurrentSpace(this.did())
+    await agent.setCurrentSpace(this.did())
 
     return { ok: {} }
   }
