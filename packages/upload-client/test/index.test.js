@@ -24,6 +24,7 @@ import {
   headerEncodingLength,
 } from '../src/car.js'
 import { toBlock } from './helpers/block.js'
+import { Store } from '@web3-storage/capabilities'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -374,7 +375,7 @@ describe('uploadDirectory', () => {
     assert.equal(carCIDs.length, 2)
   })
 
-  it('ensures files is sorted unless sorted property also provided', async () => {
+  it('sorts files unless options.customOrder', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const proofs = await Promise.all([
@@ -391,50 +392,50 @@ describe('uploadDirectory', () => {
         expiration: Infinity,
       }),
     ])
-    const service = mockService({
-      store: {
-        add: provide(StoreCapabilities.add, ({ capability }) => ({
-          ok: {
-            status: 'upload',
-            headers: { 'x-test': 'true' },
-            url: 'http://localhost:9200',
-            with: space.did(),
-            link: /** @type {import('../src/types.js').CARLink} */ (
-              capability.nb.link
-            ),
-          },
-        })),
-      },
-      upload: {
-        add: provide(UploadCapabilities.add, ({ capability }) => {
-          if (!capability.nb) throw new Error('nb must be present')
-          return { ok: capability.nb }
-        }),
-      },
-    })
-
-    const server = Server.create({
-      id: serviceSigner,
-      service,
-      codec: CAR.inbound,
-      validateAuthorization,
-    })
-    const connection = Client.connect({
-      id: serviceSigner,
-      codec: CAR.outbound,
-      channel: server,
-    })
-    /**
-     * @param {Iterable<import('../src/types.js').FileLike>} files
-     */
-    const upload = (files) =>
-      uploadDirectory(
-        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
-        files,
-        {
-          connection,
-        }
-      )
+    function createSimpleMockUploadServer() {
+      /**
+       * @type {Array<Server.ProviderInput<import('@ucanto/interface').InferInvokedCapability<import('@web3-storage/capabilities').Store['add']|import('@web3-storage/capabilities').Upload['add']>>>}
+       */
+      const invocations = []
+      const service = mockService({
+        store: {
+          add: provide(StoreCapabilities.add, (invocation) => {
+            invocations.push(invocation)
+            return {
+              ok: {
+                status: 'upload',
+                headers: { 'x-test': 'true' },
+                url: 'http://localhost:9200',
+                with: invocation.capability.with,
+                link: /** @type {import('../src/types.js').CARLink} */ (
+                  invocation.capability.nb.link
+                ),
+              },
+            }
+          }),
+        },
+        upload: {
+          add: provide(UploadCapabilities.add, (invocation) => {
+            invocations.push(invocation)
+            const { capability } = invocation
+            if (!capability.nb) throw new Error('nb must be present')
+            return { ok: capability.nb }
+          }),
+        },
+      })
+      const server = Server.create({
+        id: serviceSigner,
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+      const connection = Client.connect({
+        id: serviceSigner,
+        codec: CAR.outbound,
+        channel: server,
+      })
+      return { invocations, service, server, connection }
+    }
 
     const unsortedFiles = [
       new File([await randomBytes(32)], '/b.txt'),
@@ -442,21 +443,69 @@ describe('uploadDirectory', () => {
       new File([await randomBytes(32)], 'c.txt'),
       new File([await randomBytes(32)], 'a.txt'),
     ]
-    assert.rejects(
-      upload(unsortedFiles),
-      'uploading unsorted files returns rejected promise'
+
+    const uploadServiceForUnordered = createSimpleMockUploadServer()
+    // uploading unsorted files should work because they should be sorted by `uploadDirectory`
+    const uploadedDirUnsorted = await uploadDirectory(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      unsortedFiles,
+      { connection: uploadServiceForUnordered.connection }
     )
 
-    // sorted files should work
-    const sortedFiles = [...unsortedFiles].sort(defaultFileComparator)
-    assert.doesNotReject(
-      upload(sortedFiles),
-      'uploading unsorted files returns rejected promise'
+    const uploadServiceForOrdered = createSimpleMockUploadServer()
+    // uploading sorted files should also work
+    const uploadedDirSorted = await uploadDirectory(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      [...unsortedFiles].sort(defaultFileComparator),
+      { connection: uploadServiceForOrdered.connection }
     )
 
-    assert.doesNotReject(
-      upload(Object.assign([...unsortedFiles], { sorted: false })),
-      'can upload unsorted files if sorted property is provided'
+    // upload/add roots should be the same.
+    assert.equal(
+      uploadedDirUnsorted.toString(),
+      uploadedDirSorted.toString(),
+      'CID of upload/add root is same regardless of whether files param is sorted or unsorted'
+    )
+
+    // We also need to make sure the underlying shards are the same.
+    const shardsForUnordered = uploadServiceForUnordered.invocations
+      .flatMap((i) =>
+        i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+      )
+      .map((cid) => cid.toString())
+    const shardsForOrdered = uploadServiceForOrdered.invocations
+      .flatMap((i) =>
+        i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+      )
+      .map((cid) => cid.toString())
+    assert.deepEqual(
+      shardsForUnordered,
+      shardsForOrdered,
+      'upload/add .nb.shards is identical regardless of ordering of files passed to uploadDirectory'
+    )
+
+    // but if options.customOrder is truthy, the caller is indicating
+    // they have customized the order of files, so `uploadDirectory` will not sort them
+    const uploadServiceForCustomOrder = createSimpleMockUploadServer()
+    const uploadedDirCustomOrder = await uploadDirectory(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      [...unsortedFiles],
+      { connection: uploadServiceForCustomOrder.connection, customOrder: true }
+    )
+    const shardsForCustomOrder = uploadServiceForCustomOrder.invocations
+      .flatMap((i) =>
+        i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+      )
+      .map((cid) => cid.toString())
+    assert.notDeepEqual(
+      shardsForCustomOrder,
+      shardsForOrdered,
+      'should not produce sorted shards for customOrder files'
+    )
+    // upload/add roots will also be different
+    assert.notEqual(
+      uploadedDirCustomOrder.toString(),
+      shardsForOrdered.toSorted()
     )
   })
 })

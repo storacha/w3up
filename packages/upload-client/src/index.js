@@ -6,16 +6,12 @@ import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
-import { ShardingStream, requireSortedFiles } from './sharding.js'
+import { ShardingStream, defaultFileComparator } from './sharding.js'
 
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 const CONCURRENT_REQUESTS = 3
-
-/**
- * @typedef {import('./types.js').FileLike} FileLike
- */
 
 /**
  * Uploads a file to the service and returns the root data CID for the
@@ -67,13 +63,14 @@ export async function uploadFile(conf, file, options = {}) {
  * has the capability to perform the action.
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
- * @param {Iterable<FileLike> & { sorted?: boolean }} files  Files that should be in the directory.
+ * @param {import('./types.js').FileLike[]} files  Files that should be in the directory.
  * To ensure determinism in the IPLD encoding, by default these files MUST be sorted by file.name or this function will return a rejected promise .
  * To explicitly upload unsorted files in an indeterminate way, pass `files` with `files.sorted === false`.
  * @param {import('./types.js').UploadDirectoryOptions} [options]
  */
 export async function uploadDirectory(conf, files, options = {}) {
-  const entries = 'sorted' in files ? files : requireSortedFiles(files)
+  const { customOrder = false } = options
+  const entries = customOrder ? files : [...files].sort(defaultFileComparator)
   return await uploadBlockStream(
     conf,
     UnixFS.createDirectoryEncoderStream(entries, options),
