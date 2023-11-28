@@ -187,6 +187,10 @@ export interface AggregateRecord {
    * Insertion date ISO string.
    */
   insertedAt: string
+  /**
+   * ISO string date of oldest piece in the pipeline included into the aggregate.
+   */
+  minPieceInsertedAt: string
 }
 
 // TODO: probably group should also be key!
@@ -314,6 +318,10 @@ export interface AggregateOfferMessage {
    * Grouping information for submitted piece.
    */
   group: string
+  /**
+   * ISO string date of oldest piece in the pipeline included into the aggregate.
+   */
+  minPieceInsertedAt: string
 }
 
 export interface AggregateConfig {

@@ -255,6 +255,7 @@ export const test = {
       buffer: block.cid,
       group,
       insertedAt: new Date().toISOString(),
+      minPieceInsertedAt: new Date().toISOString(),
     })
     assert.ok(aggregatePutRes.ok)
 
