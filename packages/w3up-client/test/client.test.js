@@ -83,7 +83,7 @@ describe('Client', () => {
 
       const space = await alice.createSpace('upload-test')
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const dataCID = await alice.uploadFile(file, {
@@ -293,7 +293,7 @@ describe('Client', () => {
       assert(current0 === undefined)
 
       const space = await alice.createSpace('new-space')
-      alice.addSpace(await space.createAuthorization(alice))
+      await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
       const current1 = alice.currentSpace()
@@ -309,7 +309,7 @@ describe('Client', () => {
       const name = `space-${Date.now()}`
       const space = await alice.createSpace(name)
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
 
       const spaces = alice.spaces()
       assert.equal(spaces.length, 1)
@@ -348,7 +348,7 @@ describe('Client', () => {
       const bob = new Client(await AgentData.create())
 
       const space = await alice.createSpace('proof-space')
-      alice.addSpace(await space.createAuthorization(alice))
+      await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
       const delegation = await alice.createDelegation(bob.agent, ['store/*'])
@@ -447,7 +447,7 @@ describe('Client', () => {
       const bob = new Client(await AgentData.create())
 
       const space = await alice.createSpace('test')
-      alice.addSpace(await space.createAuthorization(alice))
+      await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
       const delegation = await alice.createDelegation(bob.agent, ['space/*'], {
