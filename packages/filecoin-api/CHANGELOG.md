@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.2.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.1.2...filecoin-api-v4.2.0) (2023-11-28)
+
+
+### Features
+
+* aggregator keeping oldest piece ts ([#1188](https://github.com/web3-storage/w3up/issues/1188)) ([97a7def](https://github.com/web3-storage/w3up/commit/97a7defa433b57591f23eddee692445437a718a1))
+
+
+### Fixes
+
+* package metadata ([#1161](https://github.com/web3-storage/w3up/issues/1161)) ([b8a1cc2](https://github.com/web3-storage/w3up/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+* storefront events cron with max concurrency ([#1191](https://github.com/web3-storage/w3up/issues/1191)) ([11010c9](https://github.com/web3-storage/w3up/commit/11010c94b9682e93b6209a169871021d37b76011))
+
 ## [4.1.2](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.1.1...filecoin-api-v4.1.2) (2023-11-16)
 
 
