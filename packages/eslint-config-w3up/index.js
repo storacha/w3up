@@ -7,6 +7,9 @@ module.exports = {
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:jsdoc/recommended',
   ],
+  parserOptions: {
+    EXPERIMENTAL_useProjectService: true,
+  },
   rules: {
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
