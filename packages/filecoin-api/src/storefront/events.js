@@ -1,3 +1,4 @@
+import pMap from 'p-map'
 import { Storefront, Aggregator } from '@web3-storage/filecoin-client'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 
@@ -137,8 +138,9 @@ export const handleCronTick = async (context) => {
     }
   }
   // Update approved pieces from the ones resolved
-  const updatedResponses = await Promise.all(
-    submittedPieces.ok.map((pieceRecord) =>
+  const updatedResponses = await pMap(
+    submittedPieces.ok,
+    (pieceRecord) =>
       updatePiecesWithDeal({
         id: context.id,
         aggregatorId: context.aggregatorId,
@@ -147,7 +149,10 @@ export const handleCronTick = async (context) => {
         taskStore: context.taskStore,
         receiptStore: context.receiptStore,
       })
-    )
+    ,
+    {
+      concurrency: 20
+    }
   )
 
   // Fail if one or more update operations did not succeed.
