@@ -51,7 +51,7 @@ export async function handleBufferReducingWithAggregate({
   const aggregateBlock = await CBOR.write(aggregateReducedBuffer)
 
   // Get timestamp of oldest piece in the pipeline included in the aggregate
-  const oldestPieceInsertedAtDate = new Date(
+  const minPieceInsertedAtDate = new Date(
     Math.min(
       ...aggregateInfo.addedBufferedPieces.map((bf) =>
         new Date(bf.insertedAt).getTime()
@@ -74,7 +74,7 @@ export async function handleBufferReducingWithAggregate({
     buffer: aggregateBlock.cid,
     pieces: piecesBlock.cid,
     group,
-    oldestPieceInsertedAt: oldestPieceInsertedAtDate.toISOString(),
+    minPieceInsertedAt: minPieceInsertedAtDate.toISOString(),
   })
   if (aggregateOfferQueueAdd.error) {
     return aggregateOfferQueueAdd

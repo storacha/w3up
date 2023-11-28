@@ -358,10 +358,10 @@ export const test = {
     assert.equal(bufferGet.ok?.buffer.group, group)
     assert.ok(message.aggregate.equals(bufferGet.ok?.buffer.aggregate))
     assert.equal(bufferGet.ok?.buffer.pieces.length, totalPieces)
-    // Validate oldest piece date
-    assert.ok(message.oldestPieceInsertedAt)
+    // Validate min piece date
+    assert.ok(message.minPieceInsertedAt)
 
-    const oldestPieceInsertedAtDate = new Date(
+    const minPieceInsertedAtDate = new Date(
       Math.min(
         ...(bufferGet.ok?.buffer.pieces?.map((bf) =>
           new Date(bf.insertedAt).getTime()
@@ -369,8 +369,8 @@ export const test = {
       )
     )
     assert.equal(
-      oldestPieceInsertedAtDate.toISOString(),
-      message.oldestPieceInsertedAt
+      minPieceInsertedAtDate.toISOString(),
+      message.minPieceInsertedAt
     )
   },
   'handles buffer queue messages successfully to queue aggregate and remaining buffer':
@@ -575,7 +575,7 @@ export const test = {
       pieces: piecesBlock.cid,
       buffer: block.cid,
       group,
-      oldestPieceInsertedAt: new Date().toISOString(),
+      minPieceInsertedAt: new Date().toISOString(),
     }
 
     // Handle message
@@ -618,7 +618,7 @@ export const test = {
           buffer: block.cid,
           pieces: piecesBlock.cid,
           group,
-          oldestPieceInsertedAt: new Date().toISOString(),
+          minPieceInsertedAt: new Date().toISOString(),
         }
 
         // Handle message
@@ -667,7 +667,7 @@ export const test = {
       aggregate: aggregate.link,
       group,
       insertedAt: new Date().toISOString(),
-      oldestPieceInsertedAt: new Date().toISOString(),
+      minPieceInsertedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -735,7 +735,7 @@ export const test = {
           pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
-          oldestPieceInsertedAt: new Date().toISOString(),
+          minPieceInsertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord,
@@ -793,7 +793,7 @@ export const test = {
           pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
-          oldestPieceInsertedAt: new Date().toISOString(),
+          minPieceInsertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -1167,7 +1167,7 @@ export const test = {
       pieces: blockPieces.cid,
       group,
       insertedAt: new Date().toISOString(),
-      oldestPieceInsertedAt: new Date().toISOString(),
+      minPieceInsertedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -1222,7 +1222,7 @@ export const test = {
           pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
-          oldestPieceInsertedAt: new Date().toISOString(),
+          minPieceInsertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
