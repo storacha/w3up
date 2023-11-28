@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.3](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.1.2...filecoin-client-v3.1.3) (2023-11-28)
+
+
+### Fixes
+
+* package metadata ([#1161](https://github.com/web3-storage/w3up/issues/1161)) ([b8a1cc2](https://github.com/web3-storage/w3up/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+
 ## [3.1.2](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.1.1...filecoin-client-v3.1.2) (2023-11-16)
 
 
