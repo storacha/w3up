@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.4](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.3...upload-api-v7.3.4) (2023-11-28)
+
+
+### Fixes
+
+* package metadata ([#1161](https://github.com/web3-storage/w3up/issues/1161)) ([b8a1cc2](https://github.com/web3-storage/w3up/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+
 ## [7.3.3](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.2...upload-api-v7.3.3) (2023-11-16)
 
 
