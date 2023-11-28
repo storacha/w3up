@@ -24,7 +24,6 @@ import {
   headerEncodingLength,
 } from '../src/car.js'
 import { toBlock } from './helpers/block.js'
-import { Store } from '@web3-storage/capabilities'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
