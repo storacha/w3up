@@ -99,14 +99,19 @@ describe('FilecoinClient', () => {
       /** @type {import('@web3-storage/capabilities/types').FilecoinInfoSuccess} */
       const filecoinAcceptResponse = {
         piece: cargo.link,
-        deals: [
+        aggregates: [
           {
             aggregate: aggregate.link,
-            provider: 'f1111',
             inclusion: {
               subtree: proof.ok[0],
               index: proof.ok[1],
             },
+          },
+        ],
+        deals: [
+          {
+            aggregate: aggregate.link,
+            provider: 'f1111',
             aux: {
               dataType: 0n,
               dataSource: {
@@ -153,7 +158,7 @@ describe('FilecoinClient', () => {
       assert(res.out.ok.deals[0].aggregate.equals(aggregate.link))
       assert(res.out.ok.deals[0].aux.dataSource.dealID)
       assert(res.out.ok.deals[0].provider)
-      assert.deepEqual(res.out.ok.deals[0].inclusion, {
+      assert.deepEqual(res.out.ok.aggregates[0].inclusion, {
         subtree: proof.ok[0],
         index: proof.ok[1],
       })

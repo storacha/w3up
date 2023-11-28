@@ -148,10 +148,9 @@ export const handleCronTick = async (context) => {
         pieceStore: context.pieceStore,
         taskStore: context.taskStore,
         receiptStore: context.receiptStore,
-      })
-    ,
+      }),
     {
-      concurrency: 20
+      concurrency: 20,
     }
   )
 
