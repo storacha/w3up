@@ -5,11 +5,13 @@ on:
       - main
     paths:
       - 'packages/did-mailto/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/did-mailto.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
       - 'packages/did-mailto/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/did-mailto.yml'
       - 'pnpm-lock.yaml'
 jobs:

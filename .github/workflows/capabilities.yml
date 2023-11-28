@@ -8,11 +8,13 @@ on:
       - main
     paths:
       - 'packages/capabilities/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/capabilities.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
       - 'packages/capabilities/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/capabilities.yml'
       - 'pnpm-lock.yaml'
 jobs:
