@@ -105,23 +105,21 @@ class Sorted {
     this.iterable = iterable
     this.comparator = comparator
   }
-  [Symbol.iterator]() {
+  * [Symbol.iterator]() {
     const { comparator, iterable } = this
-    return function* () {
-      let prev = null
-      for (const cur of iterable) {
-        if (prev && comparator(prev, cur) === 1) {
-          throw Object.assign(
-            new Error(
-              `sequentially iterated items were not sorted as expected`
-            ),
-            { unsorted: [prev, cur], code: 'SORTED_EXPECTATION_UNMET' }
-          )
-        }
-        yield cur
-        prev = cur
+    let prev = null
+    for (const cur of iterable) {
+      if (prev && comparator(prev, cur) === 1) {
+        throw Object.assign(
+          new Error(
+            `sequentially iterated items were not sorted as expected`
+          ),
+          { unsorted: [prev, cur], code: 'SORTED_EXPECTATION_UNMET' }
+        )
       }
-    }.bind(this)()
+      yield cur
+      prev = cur
+    }
   }
 }
 
