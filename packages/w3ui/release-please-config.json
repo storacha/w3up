@@ -1,6 +1,9 @@
 {
   "separate-pull-requests": true,
   "packages": {
+    "packages/core": {},
+    "packages/react": {},
+
     "packages/react-keyring": {},
     "packages/react-uploader": {},
     "packages/react-uploads-list": {},

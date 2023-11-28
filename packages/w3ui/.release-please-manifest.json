@@ -1,4 +1,6 @@
 {
+  "packages/core": "0.0.0",
+  "packages/react": "0.0.0",
   "packages/keyring-core": "6.0.0",
   "packages/uploader-core": "7.0.0",
   "packages/uploads-list-core": "5.0.0",
@@ -10,5 +12,5 @@
   "packages/vue-uploads-list": "5.0.0",
   "packages/solid-keyring": "6.0.0",
   "packages/solid-uploader": "6.0.0",
-  "packages/solid-uploads-list": "5.0.0",
+  "packages/solid-uploads-list": "5.0.0"
 }

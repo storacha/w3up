@@ -1,0 +1,53 @@
+{
+  "name": "@w3ui/core",
+  "version": "0.0.0",
+  "description": "w3ui core.",
+  "module": "build/esm/index.js",
+  "main": "build/cjs/index.js",
+  "browser": "build/umd/index.development.js",
+  "types": "build/types/src/index.d.ts",
+  "publishConfig": {
+    "browser": "build/umd/index.production.js"
+  },
+  "scripts": {
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false",
+    "lint": "tsc --build && eslint '**/*.{js,jsx,ts,tsx}'",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
+  },
+  "files": [
+    "build/*",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
+  "author": "Alan Shaw",
+  "license": "Apache-2.0 OR MIT",
+  "bugs": {
+    "url": "https://github.com/web3-storage/w3ui/issues"
+  },
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/core",
+  "dependencies": {
+    "@ipld/dag-ucan": "^3.2.0",
+    "@ucanto/client": "^9.0.0",
+    "@ucanto/interface": "^9.0.0",
+    "@ucanto/principal": "^9.0.0",
+    "@ucanto/transport": "^9.0.0",
+    "@web3-storage/access": "^18.0.3",
+    "@web3-storage/did-mailto": "^2.0.2",
+    "@web3-storage/filecoin-client": "^3.1.0",
+    "@web3-storage/upload-client": "^12.0.2",
+    "@web3-storage/w3up-client": "^11.1.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../../eslint.packages.js"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules",
+    "build"
+  ]
+}

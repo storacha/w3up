@@ -35,6 +35,25 @@ const babelPlugin = babel({
 export default function rollup(options: RollupOptions): RollupOptions[] {
   return [
     ...buildConfigs({
+      name: '@w3ui/core',
+      packageDir: 'packages/core',
+      jsName: 'w3uiCore',
+      outputFile: 'core',
+      entryFile: 'src/index.ts',
+      globals: {},
+    }),
+    ...buildConfigs({
+      name: '@w3ui/react',
+      packageDir: 'packages/react',
+      jsName: 'w3uiReact',
+      outputFile: 'react',
+      entryFile: 'src/index.ts',
+      globals: {
+        react: 'React',
+        'ariakit-react-utils': 'AriakitReactUtils'
+      },
+    }),
+    ...buildConfigs({
       name: 'uploader-core',
       packageDir: 'packages/uploader-core',
       jsName: 'UploaderCore',
@@ -309,7 +328,7 @@ function createBanner(libraryName: string): string {
   return `/**
  * ${libraryName}
  *
- * Copyright (c) Web3.Storage
+ * Copyright (c) web3.storage
  *
  * This source code is licensed under Apache-2.0 OR MIT license found in the
  * LICENSE.md file in the root directory of this source tree.

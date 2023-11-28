@@ -20,6 +20,9 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@w3ui/core": ["packages/core/src"],
+      "@w3ui/react": ["packages/react/src"],
+
       "@w3ui/react-keyring": ["packages/react-keyring/src"],
       "@w3ui/react-uploader": ["packages/react-uploader/src"],
       "@w3ui/react-uploads-list": ["packages/react-uploads-list/src"],
