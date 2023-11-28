@@ -294,10 +294,12 @@ export const filecoinInfo = async ({ capability }, context) => {
   /** @type {API.UcantoInterface.OkBuilder<API.FilecoinInfoSuccess, API.FilecoinInfoFailure>} */
   const result = Server.ok({
     piece,
-    aggregates: [{
-      aggregate: pieceAcceptOut.aggregate,
-      inclusion: pieceAcceptOut.inclusion
-    }],
+    aggregates: [
+      {
+        aggregate: pieceAcceptOut.aggregate,
+        inclusion: pieceAcceptOut.inclusion,
+      },
+    ],
     deals: deals.map(([dealId, dealDetails]) => ({
       aggregate: pieceAcceptOut.aggregate,
       provider: dealDetails.provider,

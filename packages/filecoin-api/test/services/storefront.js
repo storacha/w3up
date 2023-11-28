@@ -552,7 +552,9 @@ export const test = {
           BigInt(response.out.ok.deals[0].aux.dataSource.dealID),
           dealMetadata.dataSource.dealID
         )
-        const respAggregate = response.out.ok.aggregates.find(a => a.aggregate.equals(aggregate.link))
+        const respAggregate = response.out.ok.aggregates.find((a) =>
+          a.aggregate.equals(aggregate.link)
+        )
         assert.ok(respAggregate?.inclusion.index)
         assert.ok(respAggregate?.inclusion.subtree)
       },

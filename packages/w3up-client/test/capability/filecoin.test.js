@@ -99,13 +99,15 @@ describe('FilecoinClient', () => {
       /** @type {import('@web3-storage/capabilities/types').FilecoinInfoSuccess} */
       const filecoinAcceptResponse = {
         piece: cargo.link,
-        aggregates: [{
-          aggregate: aggregate.link,
-          inclusion: {
-            subtree: proof.ok[0],
-            index: proof.ok[1],
-          }
-        }],
+        aggregates: [
+          {
+            aggregate: aggregate.link,
+            inclusion: {
+              subtree: proof.ok[0],
+              index: proof.ok[1],
+            },
+          },
+        ],
         deals: [
           {
             aggregate: aggregate.link,
