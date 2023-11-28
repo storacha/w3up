@@ -270,6 +270,7 @@ export const filecoinInfo = async ({ capability }, context) => {
     /** @type {API.UcantoInterface.OkBuilder<API.FilecoinInfoSuccess, API.FilecoinInfoFailure>} */
     const processingResult = Server.ok({
       piece,
+      aggregates: [],
       deals: [],
     })
     return processingResult
@@ -287,27 +288,19 @@ export const filecoinInfo = async ({ capability }, context) => {
   )
 
   if (info.out.error) {
-    return {
-      error: info.out.error,
-    }
+    return info.out
   }
   const deals = Object.entries(info.out.ok.deals || {})
-  if (!deals.length) {
-    // Should not happen if there is `piece/accept` receipt
-    return {
-      error: new Server.Failure(
-        `no deals were obtained for aggregate ${pieceAcceptOut.aggregate} where piece ${piece} is included`
-      ),
-    }
-  }
-
   /** @type {API.UcantoInterface.OkBuilder<API.FilecoinInfoSuccess, API.FilecoinInfoFailure>} */
   const result = Server.ok({
     piece,
+    aggregates: [{
+      aggregate: pieceAcceptOut.aggregate,
+      inclusion: pieceAcceptOut.inclusion
+    }],
     deals: deals.map(([dealId, dealDetails]) => ({
       aggregate: pieceAcceptOut.aggregate,
       provider: dealDetails.provider,
-      inclusion: pieceAcceptOut.inclusion,
       aux: {
         dataType: 0n,
         dataSource: {
