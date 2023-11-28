@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.3](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.2...w3up-client-v11.1.3) (2023-11-28)
+
+
+### Fixes
+
+* thread abort signal through login functions ([#1189](https://github.com/web3-storage/w3up/issues/1189)) ([8e908a9](https://github.com/web3-storage/w3up/commit/8e908a9fbacaedb40fdaf214f862720fb8454fca))
+
 ## [11.1.2](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.1...w3up-client-v11.1.2) (2023-11-27)
 
 
