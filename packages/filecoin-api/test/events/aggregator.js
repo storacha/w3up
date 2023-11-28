@@ -352,13 +352,26 @@ export const test = {
     /** @type {AggregateOfferMessage} */
     // @ts-expect-error cannot infer buffer message
     const message = context.queuedMessages.get('aggregateOfferQueue')?.[0]
-
     const bufferGet = await context.bufferStore.get(message.buffer)
     assert.ok(bufferGet.ok)
     assert.ok(bufferGet.ok?.block.equals(message.buffer))
     assert.equal(bufferGet.ok?.buffer.group, group)
     assert.ok(message.aggregate.equals(bufferGet.ok?.buffer.aggregate))
     assert.equal(bufferGet.ok?.buffer.pieces.length, totalPieces)
+    // Validate min piece date
+    assert.ok(message.minPieceInsertedAt)
+
+    const minPieceInsertedAtDate = new Date(
+      Math.min(
+        ...(bufferGet.ok?.buffer.pieces?.map((bf) =>
+          new Date(bf.insertedAt).getTime()
+        ) || [])
+      )
+    )
+    assert.equal(
+      minPieceInsertedAtDate.toISOString(),
+      message.minPieceInsertedAt
+    )
   },
   'handles buffer queue messages successfully to queue aggregate and remaining buffer':
     async (assert, context) => {
@@ -562,6 +575,7 @@ export const test = {
       pieces: piecesBlock.cid,
       buffer: block.cid,
       group,
+      minPieceInsertedAt: new Date().toISOString(),
     }
 
     // Handle message
@@ -604,6 +618,7 @@ export const test = {
           buffer: block.cid,
           pieces: piecesBlock.cid,
           group,
+          minPieceInsertedAt: new Date().toISOString(),
         }
 
         // Handle message
@@ -652,6 +667,7 @@ export const test = {
       aggregate: aggregate.link,
       group,
       insertedAt: new Date().toISOString(),
+      minPieceInsertedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -719,9 +735,10 @@ export const test = {
           pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
+          minPieceInsertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
-          aggregateRecord
+          aggregateRecord,
         )
         assert.ok(putAggregateRes.ok)
 
@@ -776,6 +793,7 @@ export const test = {
           pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
+          minPieceInsertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
@@ -1149,6 +1167,7 @@ export const test = {
       pieces: blockPieces.cid,
       group,
       insertedAt: new Date().toISOString(),
+      minPieceInsertedAt: new Date().toISOString(),
     }
     const putAggregateRes = await context.aggregateStore.put(aggregateRecord)
     assert.ok(putAggregateRes.ok)
@@ -1203,6 +1222,7 @@ export const test = {
           pieces: piecesBlock.cid,
           group,
           insertedAt: new Date().toISOString(),
+          minPieceInsertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
           aggregateRecord
