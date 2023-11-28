@@ -77,9 +77,11 @@ export const list = ({ agent }, { account } = {}) => {
  *
  * @param {{agent: API.Agent}} client
  * @param {EmailAddress} email
+ * @param {object} [options]
+ * @param {AbortSignal} [options.signal]
  * @returns {Promise<API.Result<Account, Error>>}
  */
-export const login = async ({ agent }, email) => {
+export const login = async ({ agent }, email, options = {}) => {
   const account = fromEmail(email)
 
   // If we already have a session for this account we
@@ -110,7 +112,7 @@ export const login = async ({ agent }, email) => {
   if (error) {
     return { error }
   } else {
-    const { ok, error } = await access.claim()
+    const { ok, error } = await access.claim({ signal: options.signal })
     /* c8 ignore next 2 - don't know how to test this */
     if (error) {
       return { error }

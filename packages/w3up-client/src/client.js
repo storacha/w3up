@@ -76,9 +76,11 @@ export class Client extends Base {
 
   /**
    * @param {Account.EmailAddress} email
+   * @param {object} [options]
+   * @param {AbortSignal} [options.signal]
    */
-  async login(email) {
-    const account = Result.unwrap(await Account.login(this, email))
+  async login(email, options = {}) {
+    const account = Result.unwrap(await Account.login(this, email, options))
     Result.unwrap(await account.save())
     return account
   }
