@@ -504,7 +504,7 @@ describe('uploadDirectory', () => {
     // upload/add roots will also be different
     assert.notEqual(
       uploadedDirCustomOrder.toString(),
-      shardsForOrdered.toSorted()
+      shardsForOrdered.toString()
     )
   })
 })
