@@ -290,6 +290,7 @@ describe('storefront', () => {
 
             return Server.ok({
               piece,
+              aggregates: [],
               deals: [],
             })
           },

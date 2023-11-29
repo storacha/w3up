@@ -445,8 +445,8 @@ describe('Agent', function () {
         with: service.did(),
         nb: { proof: delegation.cid },
       })
-      agent.addProof(delegation)
-      agent.addProof(session)
+      await agent.addProof(delegation)
+      await agent.addProof(session)
     }
     const proofsForService = agent.proofs([
       { can: 'provider/add', with: account },
@@ -500,8 +500,8 @@ describe('Agent', function () {
         with: service.did(),
         nb: { proof: delegation.cid },
       })
-      agent.addProof(delegation)
-      agent.addProof(session)
+      await agent.addProof(delegation)
+      await agent.addProof(session)
     }
 
     /**

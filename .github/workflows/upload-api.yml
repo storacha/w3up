@@ -9,12 +9,14 @@ on:
       - main
     paths:
       - 'packages/upload-api/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/upload-api.yml'
       - 'pnpm-lock.yaml'
       - '.env.tpl'
   pull_request:
     paths:
       - 'packages/upload-api/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/upload-api.yml'
       - 'pnpm-lock.yaml'
       - '.env.tpl'

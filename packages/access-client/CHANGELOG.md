@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.4](https://github.com/web3-storage/w3up/compare/access-v18.0.3...access-v18.0.4) (2023-11-29)
+
+
+### Fixes
+
+* floating promises and add no-floating-promises to eslint-config-w3up ([#1198](https://github.com/web3-storage/w3up/issues/1198)) ([1b8c5aa](https://github.com/web3-storage/w3up/commit/1b8c5aa86ec3d177bf77df4e2916699c1f522598))
+
 ## [18.0.3](https://github.com/web3-storage/w3up/compare/access-v18.0.2...access-v18.0.3) (2023-11-22)
 
 

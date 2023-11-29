@@ -8,11 +8,13 @@ on:
       - main
     paths:
       - 'packages/upload-client/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/client.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
       - 'packages/upload-client/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/client.yml'
       - 'pnpm-lock.yaml'
 jobs:
