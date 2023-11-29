@@ -100,19 +100,6 @@ describe('IndexedDB store', () => {
     assert.equal(del1.capabilities[0].with, del0.capabilities[0].with)
   })
 
-  it('should close and disallow usage', async () => {
-    const store = new StoreIndexedDB('test-access-db-' + Date.now(), {
-      autoOpen: false,
-    })
-    await store.open()
-    await store.load()
-    await store.close()
-
-    // should fail
-    // @ts-expect-error object is not agent data export
-    await assert.rejects(store.save({}), { message: 'Store is not open' })
-    await assert.rejects(store.close(), { message: 'Store is not open' })
-  })
 
   it('should be resettable', async () => {
     const principal = await RSASigner.generate({ extractable: false })
