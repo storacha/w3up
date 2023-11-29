@@ -28,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/web3-storage/w3ui/issues"
   },
-  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react-keyring",
+  "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react",
   "dependencies": {
     "@ariakit/react": "^0.3.6",
     "@ariakit/react-core": "^0.3.6",
