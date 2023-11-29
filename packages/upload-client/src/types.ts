@@ -259,7 +259,7 @@ export interface UploadDirectoryOptions
   extends UploadOptions,
     UnixFSDirectoryEncoderOptions,
     UploadProgressTrackable {
-  // whether the directory files have already been ordered in a custom way. indicates that the upload must not use a different order than the one provided.
+  /** whether the directory files have already been ordered in a custom way. indicates that the upload must not use a different order than the one provided. */
   customOrder?: boolean
 }
 
