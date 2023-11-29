@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.2.0](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.3...w3up-client-v11.2.0) (2023-11-29)
+
+
+### Features
+
+* move aggregate information out of deals in filecoin/info ([#1192](https://github.com/web3-storage/w3up/issues/1192)) ([18dc590](https://github.com/web3-storage/w3up/commit/18dc590ad50a023ef3094bfc1a2d729459e5d68e))
+
+
+### Fixes
+
+* floating promises and add no-floating-promises to eslint-config-w3up ([#1198](https://github.com/web3-storage/w3up/issues/1198)) ([1b8c5aa](https://github.com/web3-storage/w3up/commit/1b8c5aa86ec3d177bf77df4e2916699c1f522598))
+
 ## [11.1.3](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.2...w3up-client-v11.1.3) (2023-11-28)
 
 
