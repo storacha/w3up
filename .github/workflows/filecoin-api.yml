@@ -9,12 +9,14 @@ on:
       - main
     paths:
       - 'packages/filecoin-api/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/filecoin-api.yml'
       - 'pnpm-lock.yaml'
       - '.env.tpl'
   pull_request:
     paths:
       - 'packages/filecoin-api/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/filecoin-api.yml'
       - 'pnpm-lock.yaml'
       - '.env.tpl'

@@ -51,7 +51,7 @@ describe('AgentData', () => {
         },
       ],
     })
-    agentData.addDelegation(delegation)
+    await agentData.addDelegation(delegation)
 
     const mapIssuerToSession = new Map()
     for (const service of services) {
@@ -61,7 +61,7 @@ describe('AgentData', () => {
         with: service.did(),
         nb: { proof: delegation.cid },
       })
-      agentData.addDelegation(session)
+      await agentData.addDelegation(session)
       mapIssuerToSession.set(service.did(), session)
     }
 

@@ -254,7 +254,7 @@ describe(`provider/add`, () => {
 
       assert.ok(addW3Storage.out.error, 'Provider already added to this space')
     } finally {
-      cleanupContext(context)
+      await cleanupContext(context)
     }
   })
 
@@ -289,7 +289,7 @@ describe(`provider/add`, () => {
         `Account identified by ${account.did()} has not selected a payment plan`
       )
     } finally {
-      cleanupContext(context)
+      await cleanupContext(context)
     }
   })
 })
