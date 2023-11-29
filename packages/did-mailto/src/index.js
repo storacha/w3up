@@ -65,7 +65,7 @@ function parseEmail(email) {
   const atParts = email.split('@')
   if (atParts.length < 2) {
     throw new TypeError(
-      `expected at least 2 @-delimtied segments, but got ${atParts.length}`
+      `expected at least 2 @-delimited segments, but got ${atParts.length}`
     )
   }
   const domain = atParts.at(-1) ?? ''

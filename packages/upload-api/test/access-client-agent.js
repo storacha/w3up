@@ -273,7 +273,7 @@ export const test = {
     await deviceA.importSpaceFromDelegation(auth)
 
     // make space current
-    deviceA.setCurrentSpace(spaceCreation.did())
+    await deviceA.setCurrentSpace(spaceCreation.did())
 
     const recovery = await spaceCreation.createRecovery(account.did())
     const delegateResult = await AgentAccess.delegate(deviceA, {
@@ -395,7 +395,7 @@ export const test = {
     const { account, agent, mail } = await setup(context)
 
     // fire off request
-    requestAccess(agent, account, [{ can: '*' }])
+    await requestAccess(agent, account, [{ can: '*' }])
     const claimed = pollAccessClaimUntil(
       delegationsIncludeSessionProof,
       agent,

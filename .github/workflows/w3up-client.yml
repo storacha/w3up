@@ -5,11 +5,13 @@ on:
       - main
     paths:
       - 'packages/w3up-client/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/w3up-client.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
       - 'packages/w3up-client/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/w3up-client.yml'
       - 'pnpm-lock.yaml'
 jobs:

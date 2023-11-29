@@ -47,7 +47,7 @@ describe('StoreClient', () => {
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const car = await randomCAR(128)
@@ -102,7 +102,7 @@ describe('StoreClient', () => {
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const res = await alice.capability.store.list()
@@ -147,7 +147,7 @@ describe('StoreClient', () => {
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       await alice.capability.store.remove((await randomCAR(128)).cid)
@@ -193,7 +193,7 @@ describe('StoreClient', () => {
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const result = await alice.capability.store.get(car.cid)

@@ -1,5 +1,20 @@
 # Changelog
 
+## [18.0.5](https://github.com/web3-storage/w3up/compare/access-v18.0.4...access-v18.0.5) (2023-11-29)
+
+
+### Fixes
+
+* fix IndexedDB reset function ([#1199](https://github.com/web3-storage/w3up/issues/1199)) ([48cf555](https://github.com/web3-storage/w3up/commit/48cf55596162f68833f4cea49364a9dd5a845362))
+* sync space names from proofs ([#1193](https://github.com/web3-storage/w3up/issues/1193)) ([f552036](https://github.com/web3-storage/w3up/commit/f552036913cf7172e93e83e27fd4af6f7b6a4673))
+
+## [18.0.4](https://github.com/web3-storage/w3up/compare/access-v18.0.3...access-v18.0.4) (2023-11-29)
+
+
+### Fixes
+
+* floating promises and add no-floating-promises to eslint-config-w3up ([#1198](https://github.com/web3-storage/w3up/issues/1198)) ([1b8c5aa](https://github.com/web3-storage/w3up/commit/1b8c5aa86ec3d177bf77df4e2916699c1f522598))
+
 ## [18.0.3](https://github.com/web3-storage/w3up/compare/access-v18.0.2...access-v18.0.3) (2023-11-22)
 
 
