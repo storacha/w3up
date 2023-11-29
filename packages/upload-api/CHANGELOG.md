@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.5](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.4...upload-api-v7.3.5) (2023-11-29)
+
+
+### Fixes
+
+* floating promises and add no-floating-promises to eslint-config-w3up ([#1198](https://github.com/web3-storage/w3up/issues/1198)) ([1b8c5aa](https://github.com/web3-storage/w3up/commit/1b8c5aa86ec3d177bf77df4e2916699c1f522598))
+
 ## [7.3.4](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.3...upload-api-v7.3.4) (2023-11-28)
 
 
