@@ -101,4 +101,20 @@ describe('IndexedDB store', () => {
     assert.equal(del1.capabilities[0].can, del0.capabilities[0].can)
     assert.equal(del1.capabilities[0].with, del0.capabilities[0].with)
   })
+
+  it('should be resettable', async () => {
+    const principal = await RSASigner.generate({ extractable: false })
+    const data = await AgentData.create({ principal })
+
+    const store = new StoreIndexedDB('test-access-db-' + Date.now())
+    await store.open()
+    await store.save(data.export())
+
+    const exportData = await store.load()
+    assert.equal(exportData?.principal.id, principal.did())
+
+    await store.reset()
+    const resetExportData = await store.load()
+    assert.equal(resetExportData?.principal.id, undefined)
+  })
 })
