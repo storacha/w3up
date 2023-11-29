@@ -7,7 +7,14 @@ import { attest } from '@web3-storage/capabilities/ucan'
 import * as Access from './access.js'
 import * as Space from './space.js'
 
-import { invoke, delegate, DID, Delegation, Schema } from '@ucanto/core'
+import {
+  invoke,
+  delegate,
+  DID,
+  Delegation,
+  Schema,
+  isDelegation,
+} from '@ucanto/core'
 import { isExpired, isTooEarly, canDelegateCapability } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { UCAN } from '@web3-storage/capabilities'
@@ -621,23 +628,44 @@ export async function addSpacesFromDelegations(agent, delegations) {
     })
   }
 
-  for (const delegation of delegations) {
-    // We only consider delegations to this agent as those are only spaces that
-    // this agent will be able to interact with.
-    if (delegation.audience.did() === agent.did()) {
-      // TODO: we need a more robust way to determine which spaces a user has access to
-      // it may or may not involve look at delegations
-      const allows = ucanto.Delegation.allows(delegation)
+  // spaces we find along the way.
+  const spaces = new Map()
+  // only consider ucans with this agent as the audience
+  const ours = delegations.filter((x) => x.audience.did() === agent.did())
+  // space names are stored as facts in proofs in the special `ucan:*` delegation from email to agent.
+  const ucanStars = ours.filter(
+    (x) => x.capabilities[0].can === '*' && x.capabilities[0].with === 'ucan:*'
+  )
+  for (const delegation of ucanStars) {
+    for (const proof of delegation.proofs) {
+      if (
+        !isDelegation(proof) ||
+        !proof.capabilities[0].with.startsWith('did:key')
+      ) {
+        continue
+      }
+      const space = Space.fromDelegation(proof)
+      spaces.set(space.did(), space.meta)
+    }
+  }
 
-      for (const [did, value] of Object.entries(allows)) {
-        // If we discovered a delegation to any DID, we add it to the spaces list.
-        if (did.startsWith('did:key') && Object.keys(value).length > 0) {
-          await data.addSpace(/** @type {API.DID} */ (did), {
-            name: '',
-          })
+  // Find any other spaces the user may have access to
+  for (const delegation of ours) {
+    // TODO: we need a more robust way to determine which spaces a user has access to
+    // it may or may not involve look at delegations
+    const allows = ucanto.Delegation.allows(delegation)
+    for (const [resource, value] of Object.entries(allows)) {
+      // If we discovered a delegation to any DID, we add it to the spaces list.
+      if (resource.startsWith('did:key') && Object.keys(value).length > 0) {
+        if (!spaces.has(resource)) {
+          spaces.set(resource, {})
         }
       }
     }
+  }
+
+  for (const [did, meta] of spaces) {
+    await data.addSpace(did, meta)
   }
 }
 
