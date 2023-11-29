@@ -112,7 +112,7 @@ export const defaultFileComparator = (
  * @param {T} b
  * @param {(i: T) => any} getComparedValue - given an item being sorted, return the value by which it should be sorted, if it is different than the item
  */
-function ascending(a, b, getComparedValue = (a) => a) {
+function ascending(a, b, getComparedValue) {
   const ask = getComparedValue(a)
   const bsk = getComparedValue(b)
   if (ask === bsk) return 0
