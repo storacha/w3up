@@ -320,10 +320,23 @@ export interface ProofNotFound extends Ucanto.Failure {
 
 export interface FilecoinInfoSuccess {
   piece: PieceLink
+  aggregates: FilecoinInfoAcceptedAggregate[]
   deals: FilecoinInfoAcceptedDeal[]
 }
+
+export interface FilecoinInfoAcceptedAggregate {
+  /**
+   * Aggregate piece CID.
+   */
+  aggregate: PieceLink
+  /**
+   * Proof the piece is included in the aggregate.
+   */
+  inclusion: InclusionProof
+}
+
 export interface FilecoinInfoAcceptedDeal
-  extends DataAggregationProof,
+  extends Omit<DataAggregationProof, 'inclusion'>,
     DealDetails {
   aggregate: PieceLink
 }

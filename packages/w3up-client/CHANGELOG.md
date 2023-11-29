@@ -1,5 +1,26 @@
 # Changelog
 
+## [11.1.3](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.2...w3up-client-v11.1.3) (2023-11-28)
+
+
+### Fixes
+
+* thread abort signal through login functions ([#1189](https://github.com/web3-storage/w3up/issues/1189)) ([8e908a9](https://github.com/web3-storage/w3up/commit/8e908a9fbacaedb40fdaf214f862720fb8454fca))
+
+## [11.1.2](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.1...w3up-client-v11.1.2) (2023-11-27)
+
+
+### Fixes
+
+* export ProgressStatus ([ab29c05](https://github.com/web3-storage/w3up/commit/ab29c05a05390e63538ef71ed2dd1f65dbb326d5))
+
+## [11.1.1](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.0...w3up-client-v11.1.1) (2023-11-27)
+
+
+### Fixes
+
+* export filecoin types ([#1185](https://github.com/web3-storage/w3up/issues/1185)) ([9b1f526](https://github.com/web3-storage/w3up/commit/9b1f52609903b40d965d51a87f8ba7a530ca74cd))
+
 ## [11.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v11.0.2...w3up-client-v11.1.0) (2023-11-25)
 
 
