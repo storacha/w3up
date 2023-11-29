@@ -100,7 +100,6 @@ describe('IndexedDB store', () => {
     assert.equal(del1.capabilities[0].with, del0.capabilities[0].with)
   })
 
-
   it('should be resettable', async () => {
     const principal = await RSASigner.generate({ extractable: false })
     const data = await AgentData.create({ principal })
