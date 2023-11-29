@@ -1,5 +1,9 @@
 import { blockEncodingLength, encode, headerEncodingLength } from './car.js'
 
+/**
+ * @typedef {import('./types.js').FileLike} FileLike
+ */
+
 // https://observablehq.com/@gozala/w3up-shard-size
 const SHARD_SIZE = 133_169_152
 
@@ -83,4 +87,35 @@ export class ShardingStream extends TransformStream {
       },
     })
   }
+}
+
+/**
+ * Default comparator for FileLikes. Sorts by file name in ascending order.
+ *
+ * @param {FileLike} a
+ * @param {FileLike} b
+ * @param {(file: FileLike) => string} getComparedValue - given a file being sorted, return the value by which its order should be determined, if it is different than the file object itself (e.g. file.name)
+ */
+export const defaultFileComparator = (
+  a,
+  b,
+  getComparedValue = (file) => file.name
+) => {
+  return ascending(a, b, getComparedValue)
+}
+
+/**
+ * a comparator for sorting in ascending order. Use with Sorted or Array#sort.
+ *
+ * @template T
+ * @param {T} a
+ * @param {T} b
+ * @param {(i: T) => any} getComparedValue - given an item being sorted, return the value by which it should be sorted, if it is different than the item
+ */
+function ascending(a, b, getComparedValue) {
+  const ask = getComparedValue(a)
+  const bsk = getComparedValue(b)
+  if (ask === bsk) return 0
+  else if (ask < bsk) return -1
+  return 1
 }

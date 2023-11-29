@@ -6,7 +6,7 @@ import * as Store from './store.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
-import { ShardingStream } from './sharding.js'
+import { ShardingStream, defaultFileComparator } from './sharding.js'
 
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -63,13 +63,17 @@ export async function uploadFile(conf, file, options = {}) {
  * has the capability to perform the action.
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
- * @param {import('./types.js').FileLike[]} files File data.
+ * @param {import('./types.js').FileLike[]} files  Files that should be in the directory.
+ * To ensure determinism in the IPLD encoding, files are automatically sorted by `file.name`.
+ * To retain the order of the files as passed in the array, set `customOrder` option to `true`.
  * @param {import('./types.js').UploadDirectoryOptions} [options]
  */
 export async function uploadDirectory(conf, files, options = {}) {
+  const { customOrder = false } = options
+  const entries = customOrder ? files : [...files].sort(defaultFileComparator)
   return await uploadBlockStream(
     conf,
-    UnixFS.createDirectoryEncoderStream(files, options),
+    UnixFS.createDirectoryEncoderStream(entries, options),
     options
   )
 }
