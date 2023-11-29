@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v12.0.3...capabilities-v12.1.0) (2023-11-28)
+
+
+### Features
+
+* move aggregate information out of deals in filecoin/info ([#1192](https://github.com/web3-storage/w3up/issues/1192)) ([18dc590](https://github.com/web3-storage/w3up/commit/18dc590ad50a023ef3094bfc1a2d729459e5d68e))
+
 ## [12.0.3](https://github.com/web3-storage/w3up/compare/capabilities-v12.0.2...capabilities-v12.0.3) (2023-11-22)
 
 
