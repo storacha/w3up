@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.1.3...filecoin-client-v3.2.0) (2023-11-29)
+
+
+### Features
+
+* move aggregate information out of deals in filecoin/info ([#1192](https://github.com/web3-storage/w3up/issues/1192)) ([18dc590](https://github.com/web3-storage/w3up/commit/18dc590ad50a023ef3094bfc1a2d729459e5d68e))
+
 ## [3.1.3](https://github.com/web3-storage/w3up/compare/filecoin-client-v3.1.2...filecoin-client-v3.1.3) (2023-11-28)
 
 
