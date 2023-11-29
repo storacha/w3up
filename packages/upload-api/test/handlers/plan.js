@@ -12,7 +12,7 @@ export const test = {
   'an account can get plan information': async (assert, context) => {
     const account = 'did:mailto:example.com:alice'
     const product = 'did:web:test.web3.storage'
-    context.plansStorage.set(account, product)
+    await context.plansStorage.set(account, product)
     const connection = connect({
       id: context.id,
       channel: createServer(context),

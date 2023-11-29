@@ -1,37 +1,37 @@
 import * as assert from 'assert'
 import * as didMailto from '../src/index.js'
 
-describe('did-mailto', () => {
-  testDidMailto(didMailto, async (name, test) => it(name, test))
+describe('did-mailto', async () => {
+  await testDidMailto(didMailto, async (name, test) => it(name, test))
 })
 
 /**
  * @param {typeof didMailto} didMailto - did-mailto module to test
  * @param {import("./test-types.js").TestAdder} test - function to call to add a named test
  */
-function testDidMailto(didMailto, test) {
-  test('module is an object', async () => {
+async function testDidMailto(didMailto, test) {
+  await test('module is an object', async () => {
     assert.equal(typeof didMailto, 'object')
   })
   for (const { email, did } of examples()) {
-    test(`fromEmail("${email}")`, async () => {
+    await test(`fromEmail("${email}")`, async () => {
       assert.deepStrictEqual(didMailto.fromEmail(email), did)
     })
-    test(`toEmail("${did}")`, async () => {
+    await test(`toEmail("${did}")`, async () => {
       assert.deepStrictEqual(didMailto.toEmail(did), email)
     })
-    test(`toEmail(fromEmail("${email}"))`, async () => {
+    await test(`toEmail(fromEmail("${email}"))`, async () => {
       assert.deepStrictEqual(
         didMailto.toEmail(didMailto.fromEmail(email)),
         email
       )
     })
-    test(`fromEmail(toEmail("${did}"))`, async () => {
+    await test(`fromEmail(toEmail("${did}"))`, async () => {
       assert.deepStrictEqual(didMailto.fromEmail(didMailto.toEmail(did)), did)
     })
   }
   for (const email of validEmailAddresses()) {
-    test(`email("${email}")`, async () => {
+    await test(`email("${email}")`, async () => {
       assert.doesNotThrow(() => didMailto.email(email), 'can parse to email')
     })
   }

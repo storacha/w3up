@@ -46,7 +46,7 @@ describe('SpaceClient', () => {
         access: { 'space/info': {} },
         expiration: Infinity,
       })
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const info = await alice.capability.space.info(space.did())

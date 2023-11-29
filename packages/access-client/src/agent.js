@@ -632,7 +632,7 @@ export async function addSpacesFromDelegations(agent, delegations) {
       for (const [did, value] of Object.entries(allows)) {
         // If we discovered a delegation to any DID, we add it to the spaces list.
         if (did.startsWith('did:key') && Object.keys(value).length > 0) {
-          data.addSpace(/** @type {API.DID} */ (did), {
+          await data.addSpace(/** @type {API.DID} */ (did), {
             name: '',
           })
         }

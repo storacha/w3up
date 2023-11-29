@@ -70,7 +70,7 @@ describe('FilecoinClient', () => {
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const [cargo] = await randomCargo(1, 100)
@@ -145,7 +145,7 @@ describe('FilecoinClient', () => {
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
-      alice.addSpace(auth)
+      await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
       const res = await alice.capability.filecoin.info(cargo.link)

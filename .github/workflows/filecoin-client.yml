@@ -8,11 +8,13 @@ on:
       - main
     paths:
       - 'packages/filecoin-client/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/filecoin-client.yml'
       - 'pnpm-lock.yaml'
   pull_request:
     paths:
       - 'packages/filecoin-client/**'
+      - 'packages/eslint-config-w3up/**'
       - '.github/workflows/filecoin-client.yml'
       - 'pnpm-lock.yaml'
 jobs:
