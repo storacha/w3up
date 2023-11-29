@@ -653,7 +653,7 @@ export async function addSpacesFromDelegations(agent, delegations) {
   }
   
   for (const [did, meta] of spaces) {
-    data.addSpace(did, meta)
+    await data.addSpace(did, meta)
   }
 }
 
