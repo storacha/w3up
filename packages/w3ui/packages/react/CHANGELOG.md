@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/web3-storage/w3ui/compare/react-v1.0.0...react-v1.0.1) (2023-11-29)
+
+
+### Bug Fixes
+
+* homepage URL in package.json ([1229119](https://github.com/web3-storage/w3ui/commit/122911934e4be0114e7f71a50350ec9443d423e1))
+
 ## 1.0.0 (2023-11-28)
 
 
