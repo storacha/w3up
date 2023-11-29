@@ -64,8 +64,8 @@ export async function uploadFile(conf, file, options = {}) {
  *
  * The issuer needs the `store/add` and `upload/add` delegated capability.
  * @param {import('./types.js').FileLike[]} files  Files that should be in the directory.
- * To ensure determinism in the IPLD encoding, by default these files MUST be sorted by file.name or this function will return a rejected promise .
- * To explicitly upload unsorted files in an indeterminate way, pass `files` with `files.sorted === false`.
+ * To ensure determinism in the IPLD encoding, files are automatically sorted by `file.name`. 
+ * To retain the order of the files as passed in the array, set `customOrder` option to `true`.
  * @param {import('./types.js').UploadDirectoryOptions} [options]
  */
 export async function uploadDirectory(conf, files, options = {}) {
