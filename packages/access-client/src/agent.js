@@ -7,7 +7,14 @@ import { attest } from '@web3-storage/capabilities/ucan'
 import * as Access from './access.js'
 import * as Space from './space.js'
 
-import { invoke, delegate, DID, Delegation, Schema, isDelegation } from '@ucanto/core'
+import {
+  invoke,
+  delegate,
+  DID,
+  Delegation,
+  Schema,
+  isDelegation,
+} from '@ucanto/core'
 import { isExpired, isTooEarly, canDelegateCapability } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
 import { UCAN } from '@web3-storage/capabilities'
@@ -624,12 +631,17 @@ export async function addSpacesFromDelegations(agent, delegations) {
   // spaces we find along the way.
   const spaces = new Map()
   // only consider ucans with this agent as the audience
-  const ours = delegations.filter(x => x.audience.did() === agent.did())
+  const ours = delegations.filter((x) => x.audience.did() === agent.did())
   // space names are stored as facts in proofs in the special `ucan:*` delegation from email to agent.
-  const ucanStars = ours.filter(x => x.capabilities[0].can === '*' && x.capabilities[0].with === 'ucan:*')
+  const ucanStars = ours.filter(
+    (x) => x.capabilities[0].can === '*' && x.capabilities[0].with === 'ucan:*'
+  )
   for (const delegation of ucanStars) {
     for (const proof of delegation.proofs) {
-      if (!isDelegation(proof) || !proof.capabilities[0].with.startsWith('did:key')) {
+      if (
+        !isDelegation(proof) ||
+        !proof.capabilities[0].with.startsWith('did:key')
+      ) {
         continue
       }
       const space = Space.fromDelegation(proof)
@@ -651,7 +663,7 @@ export async function addSpacesFromDelegations(agent, delegations) {
       }
     }
   }
-  
+
   for (const [did, meta] of spaces) {
     await data.addSpace(did, meta)
   }
