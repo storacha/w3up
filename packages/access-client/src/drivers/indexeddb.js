@@ -142,7 +142,7 @@ export class IndexedDBDriver {
   async reset() {
     const db = await this.#getOpenDB()
 
-    withObjectStore(db, 'readwrite', this.#dbStoreName, (s) => {
+    const clear = withObjectStore(db, 'readwrite', this.#dbStoreName, (s) => {
       /** @type {import('p-defer').DeferredPromise<void>} */
       const { resolve, reject, promise } = defer()
       const req = s.clear()
@@ -156,6 +156,8 @@ export class IndexedDBDriver {
 
       return promise
     })
+
+    await clear()
   }
 }
 
