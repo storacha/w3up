@@ -94,10 +94,14 @@ export class ShardingStream extends TransformStream {
  *
  * @param {FileLike} a
  * @param {FileLike} b
- * @param {(file: FileLike) => string} getSortKey
+ * @param {(file: FileLike) => string} getComparedValue - given a file being sorted, return the value by which its order should be determined, if it is different than the file object itself (e.g. file.name)
  */
-export const defaultFileComparator = (a, b, getSortKey = (a) => a.name) => {
-  return ascending(a, b, getSortKey)
+export const defaultFileComparator = (
+  a,
+  b,
+  getComparedValue = (file) => file.name
+) => {
+  return ascending(a, b, getComparedValue)
 }
 
 /**
@@ -106,11 +110,11 @@ export const defaultFileComparator = (a, b, getSortKey = (a) => a.name) => {
  * @template T
  * @param {T} a
  * @param {T} b
- * @param {(i: T) => any} getSortKey - given an item being sorted, return the value by which it should be sorted
+ * @param {(i: T) => any} getComparedValue - given an item being sorted, return the value by which it should be sorted, if it is different than the item
  */
-function ascending(a, b, getSortKey) {
-  const ask = getSortKey(a)
-  const bsk = getSortKey(b)
+function ascending(a, b, getComparedValue = (a) => a) {
+  const ask = getComparedValue(a)
+  const bsk = getComparedValue(b)
   if (ask === bsk) return 0
   else if (ask < bsk) return -1
   return 1
