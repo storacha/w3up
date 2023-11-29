@@ -157,7 +157,7 @@ export class IndexedDBDriver {
       return promise
     })
 
-    await clear();
+    await clear()
   }
 }
 
