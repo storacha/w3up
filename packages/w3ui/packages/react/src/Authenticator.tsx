@@ -60,6 +60,9 @@ export const AuthenticatorContextDefaultValue: AuthenticatorContextValue = [
     },
     cancelLogin: () => {
       throw new Error('missing cancel login function')
+    },
+    logout: () => {
+      throw new Error('missing logout function')
     }
   }
 ]
@@ -112,6 +115,7 @@ export const AuthenticatorRoot: Component<AuthenticatorRootProps> =
       () => [
         { ...state, email, submitted, handleRegisterSubmit },
         {
+          ...actions,
           setEmail,
           cancelLogin: () => {
             loginAbortController?.abort()

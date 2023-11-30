@@ -6,9 +6,11 @@ import { Client, create as createW3UPClient } from '@web3-storage/w3up-client'
 import { Account } from '@web3-storage/w3up-client/account'
 import { Space } from '@web3-storage/w3up-client/space'
 import { createServiceConf } from './service'
+import { Driver } from '@web3-storage/access/drivers/types'
 
 export * from '@web3-storage/w3up-client/types'
 export { Client, Account, Space, ServiceConfig }
+export type Store = Driver<AgentDataExport>
 
 const DB_NAME = '@w3ui'
 const DB_STORE_NAME = 'core'
@@ -29,7 +31,12 @@ export interface ContextState {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ContextActions {}
+export interface ContextActions {
+  /**
+   * Reset local store (deleting existing agent), logging the user out.
+   */
+  logout: () => Promise<void>
+}
 
 export interface CreateClientOptions extends ServiceConfig {
   events?: EventTarget
@@ -59,11 +66,11 @@ class IndexedDBEventDispatcherStore extends StoreIndexedDB {
  */
 export async function createClient (
   options?: CreateClientOptions
-): Promise<{ client: Client, events: EventTarget }> {
+): Promise<{ client: Client, events: EventTarget, store: Store }> {
   const dbName = `${DB_NAME}${options?.servicePrincipal != null ? '@' + options?.servicePrincipal.did() : ''}`
   const events = options?.events ?? new EventTarget()
   const store = new IndexedDBEventDispatcherStore(dbName, events)
   const serviceConf = createServiceConf(options)
   const client = await createW3UPClient({ store, serviceConf })
-  return { client, events }
+  return { client, events, store }
 }
