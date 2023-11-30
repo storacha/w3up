@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/web3-storage/w3ui/compare/react-v1.0.1...react-v1.1.0) (2023-11-30)
+
+
+### Features
+
+* add a logout function  ([#595](https://github.com/web3-storage/w3ui/issues/595)) ([0995fd5](https://github.com/web3-storage/w3ui/commit/0995fd525a3be7f5224af845dbd7ffcb76450c63))
+
 ## [1.0.1](https://github.com/web3-storage/w3ui/compare/react-v1.0.0...react-v1.0.1) (2023-11-29)
 
 
