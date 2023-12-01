@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v12.1.0...upload-client-v12.2.0) (2023-11-29)
+
+
+### Features
+
+* upload-client uploadDirectory, by default, sorts the provided files by file name to help the user call us in a way that is deterministic and minimizes cost ([#1173](https://github.com/web3-storage/w3up/issues/1173)) ([8cd2555](https://github.com/web3-storage/w3up/commit/8cd2555d901d7e684a9a5cc2516e5a91edd58621))
+
+
+### Fixes
+
+* floating promises and add no-floating-promises to eslint-config-w3up ([#1198](https://github.com/web3-storage/w3up/issues/1198)) ([1b8c5aa](https://github.com/web3-storage/w3up/commit/1b8c5aa86ec3d177bf77df4e2916699c1f522598))
+
 ## [12.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v12.0.2...upload-client-v12.1.0) (2023-11-25)
 
 
