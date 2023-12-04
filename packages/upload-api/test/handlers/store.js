@@ -293,7 +293,7 @@ export const test = {
     }
 
     assert.equal(storeAdd.out.ok.status, 'done')
-    assert.equal(storeAdd.out.ok.allocated, 5)
+    assert.equal(storeAdd.out.ok.allocated, data.byteLength)
     assert.equal(storeAdd.out.ok.with, spaceDid)
     assert.deepEqual(storeAdd.out.ok.link.toString(), link.toString())
     // @ts-expect-error making sure it's not an upload status
@@ -359,7 +359,7 @@ export const test = {
     const r0 = await inv0.execute(connection)
 
     assert.equal(r0.out.ok?.status, 'done')
-    assert.equal(r0.out.ok?.allocated, 5)
+    assert.equal(r0.out.ok?.allocated, data.byteLength)
     assert.equal(r0.out.ok?.with, spaceDid)
 
     const inv1 = StoreCapabilities.add.invoke({
