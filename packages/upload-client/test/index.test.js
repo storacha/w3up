@@ -411,6 +411,7 @@ describe('uploadDirectory', () => {
                 link: /** @type {import('../src/types.js').CARLink} */ (
                   invocation.capability.nb.link
                 ),
+                allocated: invocation.capability.nb.size,
               },
             }
           }),
