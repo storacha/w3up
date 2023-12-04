@@ -36,7 +36,10 @@
     "ariakit-react-utils": "0.17.0-next.27"
   },
   "devDependencies": {
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "@ipld/dag-ucan": "^3.2.0",
     "@testing-library/react": "^13.4.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.3",
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
@@ -47,7 +50,8 @@
   },
   "eslintConfig": {
     "extends": [
-      "../../eslint.packages.js"
+      "../../eslint.packages.js",
+      "plugin:react-hooks/recommended"
     ]
   },
   "eslintIgnore": [

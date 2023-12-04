@@ -14,6 +14,7 @@ export type Store = Driver<AgentDataExport>
 
 const DB_NAME = '@w3ui'
 const DB_STORE_NAME = 'core'
+export const STORE_SAVE_EVENT = 'store:save'
 
 export interface ContextState {
   /**
