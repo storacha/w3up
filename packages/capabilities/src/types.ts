@@ -444,7 +444,7 @@ export type StoreAddSuccessStatusDone = 'done'
 
 export interface StoreAddSuccessResult {
   /**
-   * Status of the item to store. A "done" status incidactes that it is not
+   * Status of the item to store. A "done" status indicates that it is not
    * necessary to upload the item. An "upload" status indicates that the item
    * should be uploaded to the provided URL.
    */
