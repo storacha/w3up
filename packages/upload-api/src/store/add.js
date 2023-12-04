@@ -24,7 +24,7 @@ export function storeAddProvider(context) {
       Server.DID.parse(capability.with).did()
     )
     const issuer = invocation.issuer.did()
-    const [allocated, carIsLinkedToAccount, carExists] = await Promise.all([
+    const [allocated, carIsLinkedToSpace, carExists] = await Promise.all([
       allocate(
         {
           capability: {
@@ -42,7 +42,7 @@ export function storeAddProvider(context) {
       return allocated
     }
 
-    if (!carIsLinkedToAccount) {
+    if (!carIsLinkedToSpace) {
       await storeTable.insert({
         space,
         link,
@@ -57,6 +57,7 @@ export function storeAddProvider(context) {
       return {
         ok: {
           status: 'done',
+          allocated: carIsLinkedToSpace ? 0 : size,
           with: space,
           link,
         },
@@ -67,6 +68,7 @@ export function storeAddProvider(context) {
     return {
       ok: {
         status: 'upload',
+        allocated: size,
         with: space,
         link,
         url: url.toString(),

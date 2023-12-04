@@ -33,6 +33,7 @@ describe('Store.add', () => {
       url: 'http://localhost:9200',
       link: car.cid,
       with: space.did(),
+      allocated: car.size,
     }
 
     const service = mockService({
@@ -103,6 +104,7 @@ describe('Store.add', () => {
       url: 'http://localhost:9400', // this bucket always returns a 400
       link: car.cid,
       with: space.did(),
+      allocated: car.size,
     }
 
     const service = mockService({
@@ -156,6 +158,7 @@ describe('Store.add', () => {
       url: 'http://localhost:9500', // this bucket always returns a 500
       link: car.cid,
       with: space.did(),
+      allocated: car.size,
     }
 
     const service = mockService({
@@ -254,6 +257,7 @@ describe('Store.add', () => {
       url: 'http://localhost:9200',
       link: car.cid,
       with: space.did(),
+      allocated: car.size,
     }
 
     const service = mockService({

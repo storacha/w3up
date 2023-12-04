@@ -51,7 +51,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -62,13 +62,12 @@ describe('uploadFile', () => {
 
     const service = mockService({
       store: {
-        add: provide(StoreCapabilities.add, ({ invocation }) => {
+        add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, StoreCapabilities.add.can)
-          assert.equal(invCap.with, space.did())
-          return { ok: res }
+          assert.equal(capability.can, StoreCapabilities.add.can)
+          assert.equal(capability.with, space.did())
+          return { ok: { ...res, allocated: capability.nb.size } }
         }),
       },
       upload: {
@@ -143,7 +142,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -159,6 +158,7 @@ describe('uploadFile', () => {
             link: /** @type {import('../src/types.js').CARLink} */ (
               capability.nb.link
             ),
+            allocated: capability.nb.size,
           },
         })),
       },
@@ -229,7 +229,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -251,6 +251,7 @@ describe('uploadDirectory', () => {
               link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
+              allocated: capability.nb.size,
             },
           }
         }),
@@ -323,7 +324,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -339,6 +340,7 @@ describe('uploadDirectory', () => {
             link: /** @type {import('../src/types.js').CARLink} */ (
               capability.nb.link
             ),
+            allocated: capability.nb.size,
           },
         })),
       },
@@ -545,7 +547,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -567,6 +569,7 @@ describe('uploadCAR', () => {
               link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
+              allocated: capability.nb.size,
             },
           }
         }),
@@ -646,7 +649,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -659,15 +662,15 @@ describe('uploadCAR', () => {
         add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, StoreCapabilities.add.can)
-          assert.equal(invCap.with, space.did())
+          assert.equal(capability.can, StoreCapabilities.add.can)
+          assert.equal(capability.with, space.did())
           return {
             ok: {
               ...res,
               link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
+              allocated: capability.nb.size,
             },
           }
         }),
