@@ -321,7 +321,10 @@ export const test = {
     )
   },
 
-  'store/add returns allocated: 0 if already added to space': async (assert, context) => {
+  'store/add returns allocated: 0 if already added to space': async (
+    assert,
+    context
+  ) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,

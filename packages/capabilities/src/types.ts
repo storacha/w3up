@@ -448,7 +448,7 @@ export interface StoreAddSuccessResult {
    * necessary to upload the item. An "upload" status indicates that the item
    * should be uploaded to the provided URL.
    */
-  status: StoreAddSuccessStatusUpload|StoreAddSuccessStatusDone
+  status: StoreAddSuccessStatusUpload | StoreAddSuccessStatusDone
   /**
    * Total bytes allocated in the space to accommodate this stored item.
    * May be zero if the item is _already_ stored in _this_ space.
