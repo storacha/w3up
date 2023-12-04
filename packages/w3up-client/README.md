@@ -88,7 +88,7 @@ flowchart TD
     C --> D(Upload to Space using Agent)
 ```
 
-All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3up-cli` package][w3up-cli-github], which uses `w3up-client` throughout.
+All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3cli` package][w3up-cli-github], which uses `w3up-client` throughout.
 
 > By you or your users registering a w3up Space via email confirmation with [web3.storage](http://web3.storage), you agree to the [Terms of Service](https://web3.storage/docs/terms/). 
 
@@ -121,7 +121,7 @@ Once initialized, you can access the client's `Agent` with the [`agent()` access
 A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agent will need a delegation from to store data with w3up. The first thing to do is login your Agent with your email address. Calling `login` will cause an email to be sent to the given address. Once a user clicks the confirmation link in the email, the `login` method will resolve. Make sure to check for errors, as `login` will fail if the email is not confirmed within the expiration timeout. Authorization needs to happen only once per agent.
 
 ```js
-await client.login('zaphod@beeblebrox.galaxy')
+const account = await client.login('zaphod@beeblebrox.galaxy')
 ```
 
 Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
@@ -134,22 +134,24 @@ or using the w3cli's [`w3 space create`](https://github.com/web3-storage/w3cli#w
 
 The name parameter is optional. If provided, it will be stored in your client's local state store and can be used to provide a friendly name for user interfaces.
 
-After creating a `Space`, you'll need to register it with the w3up service before you can upload data.
+Before anything can be stored with a space using web3.storage, the space must also be provisioned by a specific account that is responsible for the stored data. Note: after this succeeds, `account`'s payment method will be charged for data stored in `space`.
 
-First, set the space as your "current" space using the [`setCurrentSpace` method][docs-Client#setCurrentSpace], passing in the DID of the `space` object you created above:
+```js
+await account.provision(space.did())
+```
+
+If provisioning succeeds, you're ready to use the Space.
+
+Create a delegation of authority from the space to your client, and add it to your client so future invocations can use it as authorization
+```js
+const spaceAuthorizesClient = await space.createAuthorization(client)
+await client.addSpace(spaceAuthorizesClient)
+```
+
+Set the space as your "current" space using the [`setCurrentSpace` method][docs-Client#setCurrentSpace], passing in the DID of the `space` object you created above. This way, any future method calls on `client` will default to storing with `space`.
 
 ```js
 await client.setCurrentSpace(space.did())
-```
-
-Next, call the [`registerSpace` method][docs-Client#registerSpace], which registers the Space with web3.storage and associates it with the email address you login:
-
-```js
-try {
-  await client.registerSpace()
-} catch (err) {
-  console.error('registration failed: ', err)
-}
 ```
 
 #### Delegating from Space to Agent
@@ -386,7 +388,6 @@ sequenceDiagram
   - [`setCurrentSpace`](#setcurrentspace)
   - [`spaces`](#spaces)
   - [`createSpace`](#createspace)
-  - [`registerSpace`](#registerSpace)
   - [`addSpace`](#addSpace)
   - [`proofs`](#proofs)
   - [`addProof`](#addproof)
@@ -932,10 +933,9 @@ Feel free to join in. All welcome. Please [open an issue](https://github.com/web
 
 Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up-client/blob/main/license.md)
 
-
-[w3up-cli-github]: https://github.com/web3-storage/w3up-cli
-[access-client-github]: https://github.com/web3-storage/w3protocol/tree/main/packages/access-client
-[upload-client-github]: https://github.com/web3-storage/w3protocol/tree/main/packages/upload-client
+[w3up-cli-github]: https://github.com/web3-storage/w3cli
+[access-client-github]: https://github.com/web3-storage/w3up/tree/main/packages/access-client
+[upload-client-github]: https://github.com/web3-storage/w3up/tree/main/packages/upload-client
 [elastic-ipfs]: https://github.com/elastic-ipfs/elastic-ipfs
 [ucanto]: https://github.com/web3-storage/ucanto
 [car-spec]: https://ipld.io/specs/transport/car/
