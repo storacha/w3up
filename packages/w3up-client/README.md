@@ -156,7 +156,7 @@ await client.setCurrentSpace(space.did())
 
 #### Delegating from Space to Agent
 
-In order to store data with w3up, your Agent will need a delegation from a Space. This automatically happens if you called `Account#provision` on a space. However, if you are initializing the client with a previously created Space, you can `login(email)` then claim a delegation granted to the account associated with your email:
+In order to store data with w3up, your Agent will need a delegation from a Space. This automatically happens if you called `createSpace`. However, if you are initializing the client with a previously created Space, you can `login(email)` then claim a delegation granted to the account associated with your email:
 
 ```js
 await client.login('zaphod@beeblebrox.galaxy')
