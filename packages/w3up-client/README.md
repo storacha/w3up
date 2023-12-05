@@ -160,7 +160,6 @@ In order to store data with w3up, your Agent will need a delegation from a Space
 
 ```js
 await client.login('zaphod@beeblebrox.galaxy')
-await capability.access.claim()
 await client.setCurrentSpace(space.did()) # select the relevant Space DID that is associated with your account
 ```
 
