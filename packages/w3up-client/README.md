@@ -88,7 +88,7 @@ flowchart TD
     C --> D(Upload to Space using Agent)
 ```
 
-All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3cli` package][w3up-cli-github], which uses `w3up-client` throughout.
+All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3cli` package][w3cli-github], which uses `w3up-client` throughout.
 
 > By you or your users registering a w3up Space via email confirmation with [web3.storage](http://web3.storage), you agree to the [Terms of Service](https://web3.storage/docs/terms/). 
 
@@ -114,7 +114,7 @@ const principal = Signer.parse(agentPrivateKey) // created by `npx ucan-key ed -
 const client = await create({ principal })
 ```
 
-Once initialized, you can access the client's `Agent` with the [`agent()` accessor method][docs-Client#agent].
+Once initialized, you can access the client's `Agent` with the [`agent` getter][docs-Client#agent].
 
 #### Creating and registering Spaces
 
@@ -156,11 +156,10 @@ await client.setCurrentSpace(space.did())
 
 #### Delegating from Space to Agent
 
-In order to store data with w3up, your Agent will need a delegation from a Space. This automatically happens if you called `login(email)` then `registerSpace()`. However, if you are initializing the client with a previously created Space, you can `login(email)` then claim a delegation granted to the account associated with your email:
+In order to store data with w3up, your Agent will need a delegation from a Space. This automatically happens if you called `createSpace`. However, if you are initializing the client with a previously created Space, you can `login(email)` then claim a delegation granted to the account associated with your email:
 
 ```js
 await client.login('zaphod@beeblebrox.galaxy')
-await capability.access.claim()
 await client.setCurrentSpace(space.did()) # select the relevant Space DID that is associated with your account
 ```
 
@@ -285,7 +284,7 @@ sequenceDiagram
   - If your backend is persistent, you can do this or do everything in the client directly ([create Space](#creating-and-registering-spaces) and [get delegation](#delegating-from-space-to-agent))
 - Your user does not need a registered Space - just an Agent with a delegation from your Space
   - `w3up-client` in the end user environment should have a unique Agent for each user, which should happen by default (since when `w3up-client` is instantiated it creates a new Agent anyway, or uses the one in local Store)
-  - From there, when your end user is ready to upload, they should request from your backend a delegation from your developer-owned Space to their Agent (which can be derived via [`client.agent()`](docs-Client#agent))
+  - From there, when your end user is ready to upload, they should request from your backend a delegation from your developer-owned Space to their Agent (which can be derived via [`client.agent`](docs-Client#agent))
     - In your backend, you can call [`client.createDelegation()`](docs-Client#createDelegation) passing in the Agent object from `client.agent()` in your end user's instance, and passing through `options?` params to limit the scope of the delegation (e.g., `store/add`, `upload/add`, expiration time)
     - You can serialize this using `delegation.archive()` and send it to your user
     - The end user instance of the client should not need to call `client.login(email)`, as it is not claiming any delegations via email address (but rather getting the delegation directly from your backend)
@@ -549,19 +548,6 @@ async function createSpace (name?: string): Promise<Space>
 
 Create a new space with an optional name.
 
-### `registerSpace`
-
-```ts
-async function registerSpace (
-  email: string,
-  options?: { provider?: string, signal?: AbortSignal }
-): Promise<Space>
-```
-
-Register the _current_ space with the service.
-
-By default, the provider is set to web3.storage w3up, but you can register instead of NFT.Storage w3up by setting `provider` to `did:web:nft.storage`.
-
 ### `addSpace`
 
 ```ts
@@ -755,7 +741,7 @@ The `with` field contains a resource URI, often a `did:key` URI that identifies 
 
 The optional `nb` (_nota bene_) field contains "caveats" that add supplemental information to a UCAN invocation or delegation.
 
-See [the capability spec](https://github.com/web3-storage/w3protocol/blob/main/spec/capabilities.md) for more information about capabilities and how they are defined in w3up services.
+See [the `@web3-storage/capabilities` package](https://github.com/web3-storage/w3up/tree/main/packages/capabilities) for more information about capabilities and how they are defined in w3up services.
 
 ### `CARMetadata`
 
@@ -781,25 +767,6 @@ export interface CARMetadata {
   size: number
 }
 ```
-
-### `ClientFactoryOptions`
-
-Options for constructing new `Client` instances.
-
-```ts
-interface ClientFactoryOptions {
-  /**
-   * A storage driver that persists exported agent data.
-   */
-  store?: Driver<AgentDataExport>
-  /**
-   * Service DID and URL configuration.
-   */
-  serviceConf?: ServiceConf
-}
-```
-
-More information: [`Driver`](#driver), [`ServiceConf`](#serviceconf)
 
 ### `Delegation`
 
@@ -927,33 +894,31 @@ interface UploadListResult {
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/web3-storage/w3up-client/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/web3-storage/w3up/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up-client/blob/main/license.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/LICENSE.md)
 
-[w3up-cli-github]: https://github.com/web3-storage/w3cli
+[w3cli-github]: https://github.com/web3-storage/w3cli
 [access-client-github]: https://github.com/web3-storage/w3up/tree/main/packages/access-client
 [upload-client-github]: https://github.com/web3-storage/w3up/tree/main/packages/upload-client
 [elastic-ipfs]: https://github.com/elastic-ipfs/elastic-ipfs
 [ucanto]: https://github.com/web3-storage/ucanto
 [car-spec]: https://ipld.io/specs/transport/car/
-[web3storage-docs-cars]: https://web3.storage/docs/how-tos/work-with-car-files/
+[web3storage-docs-cars]: https://web3.storage/docs/concepts/car/
 
-[docs]: https://web3-storage.github.io/w3up-client
-[docs-Client]: https://web3-storage.github.io/w3up-client/classes/client.Client.html
-[docs-Client#agent]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#agent
-[docs-Client#createDelegation]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#createDelegation
-[docs-Client#createSpace]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#createSpace
-[docs-Client#setCurrentSpace]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#setCurrentSpace
-[docs-Client#registerSpace]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#registerSpace
-[docs-Client#uploadFile]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#uploadFile
-[docs-Client#uploadDirectory]: https://web3-storage.github.io/w3up-client/classes/client.Client.html#uploadDirectory 
-[docs-Space]: https://web3-storage.github.io/w3up-client/classes/space.Space.html
+[docs]: https://web3-storage.github.io/w3up/modules/_web3_storage_w3up_client.html
+[docs-Client]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html
+[docs-Client#agent]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#agent
+[docs-Client#createDelegation]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#createDelegation
+[docs-Client#createSpace]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#createSpace
+[docs-Client#setCurrentSpace]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#setCurrentSpace
+[docs-Client#uploadFile]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#uploadFile
+[docs-Client#uploadDirectory]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#uploadDirectory
+[docs-Space]: https://web3-storage.github.io/w3up/modules/_web3_storage_access.Space.html
 
 [docs-create]: #create
-[docs-ClientFactoryOptions]: #clientfactoryoptions
+[docs-ClientFactoryOptions]: https://web3-storage.github.io/w3up/interfaces/_web3_storage_w3up_client.unknown.ClientFactoryOptions.html
 
-[access-docs-Agent]: https://web3-storage.github.io/w3protocol/classes/_web3_storage_access.Agent.html
-
+[access-docs-Agent]: https://web3-storage.github.io/w3up/classes/_web3_storage_access.Agent.html
