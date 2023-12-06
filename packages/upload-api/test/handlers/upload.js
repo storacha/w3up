@@ -389,10 +389,7 @@ export const test = {
     )
   },
 
-  'upload/remove fails for non existent upload': async (
-    assert,
-    context
-  ) => {
+  'upload/remove fails for non existent upload': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -492,7 +489,9 @@ export const test = {
       })
       .execute(connection)
 
-    const { results: spaceAItems } = Result.unwrap(await context.uploadTable.list(spaceDidA))
+    const { results: spaceAItems } = Result.unwrap(
+      await context.uploadTable.list(spaceDidA)
+    )
     assert.equal(
       spaceAItems.some((x) => x.root.toString() === carA.roots[0].toString()),
       false,
@@ -505,7 +504,9 @@ export const test = {
       'SpaceA should have upload for carB.root'
     )
 
-    const { results: spaceBItems } = Result.unwrap(await context.uploadTable.list(spaceDidB))
+    const { results: spaceBItems } = Result.unwrap(
+      await context.uploadTable.list(spaceDidB)
+    )
     assert.equal(
       spaceBItems.some((x) => x.root.toString() === carB.roots[0].toString()),
       false,
@@ -567,7 +568,9 @@ export const test = {
       })
       .execute(connection)
 
-    const { results: resultsAfter } = Result.unwrap(await context.uploadTable.list(spaceDid))
+    const { results: resultsAfter } = Result.unwrap(
+      await context.uploadTable.list(spaceDid)
+    )
     assert.equal(resultsAfter.length, 0)
   },
 

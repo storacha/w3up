@@ -135,7 +135,7 @@ describe('UploadClient', () => {
               ok: {
                 root: car.roots[0],
                 shards: [car.cid],
-              }
+              },
             }
           }),
         },

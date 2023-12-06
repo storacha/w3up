@@ -440,11 +440,19 @@ export interface RecordKeyConflict extends Failure {
 export interface StoreTable {
   inspect: (link: UnknownLink) => Promise<Result<StoreInspectSuccess, Failure>>
   exists: (space: DID, link: UnknownLink) => Promise<Result<boolean, Failure>>
-  get: (space: DID, link: UnknownLink) => Promise<Result<StoreGetSuccess, RecordNotFound>>
+  get: (
+    space: DID,
+    link: UnknownLink
+  ) => Promise<Result<StoreGetSuccess, RecordNotFound>>
   /** Inserts an item in the table if it does not already exist. */
-  insert: (item: StoreAddInput) => Promise<Result<StoreAddOutput, RecordKeyConflict>>
+  insert: (
+    item: StoreAddInput
+  ) => Promise<Result<StoreAddOutput, RecordKeyConflict>>
   /** Removes an item from the table but fails if the item does not exist. */
-  remove: (space: DID, link: UnknownLink) => Promise<Result<StoreRemoveSuccess, RecordNotFound>>
+  remove: (
+    space: DID,
+    link: UnknownLink
+  ) => Promise<Result<StoreRemoveSuccess, RecordNotFound>>
   list: (
     space: DID,
     options?: ListOptions
@@ -454,14 +462,20 @@ export interface StoreTable {
 export interface UploadTable {
   inspect: (link: UnknownLink) => Promise<Result<UploadInspectSuccess, Failure>>
   exists: (space: DID, root: UnknownLink) => Promise<Result<boolean, Failure>>
-  get: (space: DID, link: UnknownLink) => Promise<Result<UploadGetSuccess, RecordNotFound>>
+  get: (
+    space: DID,
+    link: UnknownLink
+  ) => Promise<Result<UploadGetSuccess, RecordNotFound>>
   /**
    * Inserts an item in the table if it does not already exist or updates an
    * existing item if it does exist.
    */
   upsert: (item: UploadAddInput) => Promise<Result<UploadAddSuccess, Failure>>
   /** Removes an item from the table but fails if the item does not exist. */
-  remove: (space: DID, root: UnknownLink) => Promise<Result<UploadRemoveSuccess, RecordNotFound>>
+  remove: (
+    space: DID,
+    root: UnknownLink
+  ) => Promise<Result<UploadRemoveSuccess, RecordNotFound>>
   list: (
     space: DID,
     options?: ListOptions

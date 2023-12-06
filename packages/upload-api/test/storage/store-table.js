@@ -14,9 +14,11 @@ export class StoreTable {
    * @returns {ReturnType<API.StoreTable['insert']>}
    */
   async insert({ space, issuer, invocation, ...output }) {
-    if (this.items.some(i => i.space === space && i.link.equals(output.link))) {
+    if (
+      this.items.some((i) => i.space === space && i.link.equals(output.link))
+    ) {
       return {
-        error: { name: 'RecordKeyConflict', message: 'record key conflict' }
+        error: { name: 'RecordKeyConflict', message: 'record key conflict' },
       }
     }
     this.items.unshift({
@@ -41,7 +43,7 @@ export class StoreTable {
           did: item.space,
           insertedAt: item.insertedAt,
         })),
-      }
+      },
     }
   }
 
@@ -51,7 +53,9 @@ export class StoreTable {
    * @returns {ReturnType<API.StoreTable['get']>}
    */
   async get(space, link) {
-    const item = this.items.find(i => i.space === space && i.link.equals(link))
+    const item = this.items.find(
+      (i) => i.space === space && i.link.equals(link)
+    )
     if (!item) {
       return { error: { name: 'RecordNotFound', message: 'record not found' } }
     }
@@ -64,7 +68,9 @@ export class StoreTable {
    * @returns {ReturnType<API.StoreTable['exists']>}
    */
   async exists(space, link) {
-    const item = this.items.find(i => i.space === space && i.link.equals(link))
+    const item = this.items.find(
+      (i) => i.space === space && i.link.equals(link)
+    )
     return { ok: !!item }
   }
 
@@ -74,11 +80,13 @@ export class StoreTable {
    * @returns {ReturnType<API.StoreTable['remove']>}
    */
   async remove(space, link) {
-    const item = this.items.find(i => i.space === space && i.link.equals(link))
+    const item = this.items.find(
+      (i) => i.space === space && i.link.equals(link)
+    )
     if (!item) {
       return { error: { name: 'RecordNotFound', message: 'record not found' } }
     }
-    this.items = this.items.filter(i => i !== item)
+    this.items = this.items.filter((i) => i !== item)
     return { ok: item }
   }
 
@@ -120,7 +128,7 @@ export class StoreTable {
         after,
         cursor: after,
         results,
-      }
+      },
     }
   }
 }

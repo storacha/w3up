@@ -69,11 +69,13 @@ export class UploadTable {
    * @returns {ReturnType<API.UploadTable['remove']>}
    */
   async remove(space, root) {
-    const item = this.items.find(i => i.space === space && i.root.equals(root))
+    const item = this.items.find(
+      (i) => i.space === space && i.root.equals(root)
+    )
     if (!item) {
       return { error: { name: 'RecordNotFound', message: 'record not found' } }
     }
-    this.items = this.items.filter(i => i !== item)
+    this.items = this.items.filter((i) => i !== item)
     return { ok: item }
   }
 
@@ -83,7 +85,9 @@ export class UploadTable {
    * @returns {ReturnType<API.UploadTable['get']>}
    */
   async get(space, root) {
-    const item = this.items.find(i => i.space === space && i.root.equals(root))
+    const item = this.items.find(
+      (i) => i.space === space && i.root.equals(root)
+    )
     if (!item) {
       return { error: { name: 'RecordNotFound', message: 'record not found' } }
     }
@@ -96,7 +100,9 @@ export class UploadTable {
    * @returns {ReturnType<API.UploadTable['exists']>}
    */
   async exists(space, link) {
-    const item = this.items.find(i => i.space === space && i.root.equals(link))
+    const item = this.items.find(
+      (i) => i.space === space && i.root.equals(link)
+    )
     return { ok: !!item }
   }
 
@@ -138,7 +144,7 @@ export class UploadTable {
         after,
         cursor: after,
         results,
-      }
+      },
     }
   }
 }
