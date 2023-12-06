@@ -175,7 +175,7 @@ export type AgentDataExport = Pick<
 
 /**
  * Agent data to be imported after loading from a store.
- * 
+ *
  * This should be nearly the same as AgentDataExport, and can be
  * used to reflect changing schemas, eg: moving the type of bytes
  * from Uint8Array to Arraybuffer

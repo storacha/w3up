@@ -12,12 +12,15 @@ import { isExpired } from './delegations.js'
  * Convert a Uint8Array to an ArrayBuffer, taking into account
  * that we may be looking at a "data view".
  * thanks, https://stackoverflow.com/a/54646864
- * 
- * @param {Uint8Array} array 
+ *
+ * @param {Uint8Array} array
  * @returns ArrayBuffer
  */
 function uint8ArrayToArrayBuffer(array) {
-  return array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset)
+  return array.buffer.slice(
+    array.byteOffset,
+    array.byteLength + array.byteOffset
+  )
 }
 
 /** @implements {AgentDataModel} */
@@ -109,7 +112,7 @@ export class AgentData {
       spaces: this.spaces,
       delegations: new Map(),
     }
-    console.log("EXPORTING")
+    console.log('EXPORTING')
     for (const [key, value] of this.delegations) {
       raw.delegations.set(key, {
         meta: value.meta,
