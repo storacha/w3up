@@ -8,6 +8,18 @@ import { isExpired } from './delegations.js'
 
 /** @typedef {import('./types.js').AgentDataModel} AgentDataModel */
 
+/**
+ * Convert a Uint8Array to an ArrayBuffer, taking into account
+ * that we may be looking at a "data view".
+ * thanks, https://stackoverflow.com/a/54646864
+ * 
+ * @param {Uint8Array} array 
+ * @returns ArrayBuffer
+ */
+function uint8ArrayToArrayBuffer(array) {
+  return array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset)
+}
+
 /** @implements {AgentDataModel} */
 export class AgentData {
   /** @type {(data: import('./types.js').AgentDataExport) => Promise<void> | void} */
@@ -53,7 +65,7 @@ export class AgentData {
   /**
    * Instantiate AgentData from previously exported data.
    *
-   * @param {import('./types.js').AgentDataExport} raw
+   * @param {import('./types.js').AgentDataImport} raw
    * @param {import('./types.js').AgentDataOptions} [options]
    */
   static fromExport(raw, options) {
@@ -65,7 +77,7 @@ export class AgentData {
         delegation: importDAG(
           value.delegation.map((d) => ({
             cid: CID.parse(d.cid).toV1(),
-            bytes: d.bytes,
+            bytes: new Uint8Array(d.bytes),
           }))
         ),
         meta: value.meta,
@@ -97,12 +109,13 @@ export class AgentData {
       spaces: this.spaces,
       delegations: new Map(),
     }
+    console.log("EXPORTING")
     for (const [key, value] of this.delegations) {
       raw.delegations.set(key, {
         meta: value.meta,
         delegation: [...value.delegation.export()].map((b) => ({
           cid: b.cid.toString(),
-          bytes: b.bytes,
+          bytes: uint8ArrayToArrayBuffer(b.bytes),
         })),
       })
     }
