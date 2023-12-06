@@ -92,9 +92,9 @@ export const test = {
       true
     )
 
-    const { ok: info } = await context.storeTable.inspect(link)
-    assert.equal(info?.spaces.length, 1)
-    assert.equal(info?.spaces[0].did, spaceDid)
+    const { spaces } = Result.unwrap(await context.storeTable.inspect(link))
+    assert.equal(spaces.length, 1)
+    assert.equal(spaces[0].did, spaceDid)
   },
 
   'store/add should allow add the same content to be stored in multiple spaces':
@@ -145,7 +145,7 @@ export const test = {
 
       const { spaces } = Result.unwrap(await context.storeTable.inspect(link))
       assert.equal(spaces.length, 2)
-      const spaceDids = (spaces ?? []).map((space) => space.did)
+      const spaceDids = spaces.map((space) => space.did)
       assert.ok(spaceDids.includes(aliceSpaceDid))
       assert.ok(spaceDids.includes(bobSpaceDid))
     },
@@ -290,7 +290,7 @@ export const test = {
     }
 
     assert.equal(storeAdd.out.ok.status, 'done')
-    assert.equal(storeAdd.out.ok.allocated, data.byteLength)
+    assert.equal(storeAdd.out.ok.allocated, 5)
     assert.equal(storeAdd.out.ok.with, spaceDid)
     assert.deepEqual(storeAdd.out.ok.link.toString(), link.toString())
     // @ts-expect-error making sure it's not an upload status
@@ -353,7 +353,7 @@ export const test = {
     const r0 = await inv0.execute(connection)
 
     assert.equal(r0.out.ok?.status, 'done')
-    assert.equal(r0.out.ok?.allocated, data.byteLength)
+    assert.equal(r0.out.ok?.allocated, 5)
     assert.equal(r0.out.ok?.with, spaceDid)
 
     const inv1 = StoreCapabilities.add.invoke({
