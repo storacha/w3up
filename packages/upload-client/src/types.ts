@@ -167,7 +167,7 @@ export interface CARMetadata extends CARHeaderInfo {
    *
    * @see https://github.com/filecoin-project/FIPs/pull/758/files
    */
-  piece: PieceLink
+  piece?: PieceLink
   /**
    * Size of the CAR file in bytes.
    */
@@ -253,6 +253,7 @@ export interface UploadOptions
     ShardStoringOptions,
     UploadProgressTrackable {
   onShardStored?: (meta: CARMetadata) => void
+  skipPieceLink?: boolean
 }
 
 export interface UploadDirectoryOptions

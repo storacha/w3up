@@ -705,7 +705,7 @@ describe('uploadCAR', () => {
       car,
       {
         connection,
-        onShardStored: (meta) => pieceCIDs.push(meta.piece),
+        onShardStored: (meta) => meta.piece && pieceCIDs.push(meta.piece),
       }
     )
 
@@ -718,5 +718,20 @@ describe('uploadCAR', () => {
       pieceCIDs[0].toString(),
       'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
     )
+
+    // can also skipPiece
+    /** @type {Array<import('@web3-storage/upload-client/types').CARMetadata>} */
+    const shards2 = []
+    await uploadCAR(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car,
+      {
+        connection,
+        onShardStored: (meta) => shards2.push(meta),
+        skipPieceLink: true,
+      }
+    )
+    assert.equal(shards2.length, 1)
+    assert.equal(shards2[0].piece, undefined, 'shard piece cid is undefined because skipPieceLink=true')
   })
 })
