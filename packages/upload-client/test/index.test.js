@@ -705,7 +705,7 @@ describe('uploadCAR', () => {
       car,
       {
         connection,
-        onShardStored: (meta) => pieceCIDs.push(meta.piece),
+        onShardStored: (meta) => meta.piece && pieceCIDs.push(meta.piece),
       }
     )
 
@@ -713,9 +713,28 @@ describe('uploadCAR', () => {
     assert.equal(service.store.add.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
-    assert.equal(pieceCIDs.length, 1)
+    // pieceCID calculation is disabled by default
+    assert.equal(pieceCIDs.length, 0)
+
+    // can opt in to calculating piece link
+    /** @type {Array<import('@web3-storage/upload-client/types').CARMetadata>} */
+    const shards2 = []
+    await uploadCAR(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car,
+      {
+        connection,
+        onShardStored: (meta) => shards2.push(meta),
+        piece: true,
+      }
+    )
+    assert.equal(shards2.length, 1)
+    assert.ok(
+      shards2[0].piece,
+      'shard piece cid is truthy because options.piece=true'
+    )
     assert.equal(
-      pieceCIDs[0].toString(),
+      shards2[0].piece.toString(),
       'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
     )
   })
