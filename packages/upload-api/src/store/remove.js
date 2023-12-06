@@ -14,9 +14,7 @@ export function storeRemoveProvider(context) {
 
     const res = await context.storeTable.remove(space, link)
     if (res.error && res.error.name === 'RecordNotFound') {
-      if (res.error.name === 'RecordNotFound') {
-        return Server.error(new StoreItemNotFound(space, link))
-      }
+      return Server.error(new StoreItemNotFound(space, link))
     }
 
     return res

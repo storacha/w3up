@@ -13,10 +13,8 @@ export function uploadRemoveProvider(context) {
     const space = Server.DID.parse(capability.with).did()
 
     const res = await context.uploadTable.remove(space, root)
-    if (res.error) {
-      if (res.error.name === 'RecordNotFound') {
-        return Server.error(new UploadNotFound(space, root))
-      }
+    if (res.error && res.error.name === 'RecordNotFound') {
+      return Server.error(new UploadNotFound(space, root))
     }
 
     return res
