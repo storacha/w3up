@@ -123,39 +123,47 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   /** @type {import('./types.js').AnyLink?} */
   let root = null
   const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
-  await blocks
-    .pipeThrough(new ShardingStream(options))
-    .pipeThrough(
-      new Parallel(concurrency, async (car) => {
-        const bytes = new Uint8Array(await car.arrayBuffer())
-        const [cid, piece] = await Promise.all([
-          Store.add(conf, bytes, options),
-          options.piece
-            ? (async () => {
-                const multihashDigest = await PieceHasher.digest(bytes)
-                return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
-                  Link.create(raw.code, multihashDigest)
-                )
-              })()
-            : undefined,
-        ])
-        const { version, roots, size } = car
-        return { version, roots, size, cid, piece }
-      })
-    )
-    .pipeTo(
-      new WritableStream({
-        write(meta) {
-          root = root || meta.roots[0]
-          shards.push(meta.cid)
-          if (options.onShardStored) options.onShardStored(meta)
-        },
-      })
-    )
+
+  for await (const car of iterateReadable(blocks.pipeThrough(new ShardingStream(options)))) {
+    console.log('iterated from shardstream', car)
+    const bytes = new Uint8Array(await car.arrayBuffer())
+    const cid = await Store.add(conf, bytes, options)
+    const piece = await (options.piece
+      ? (async () => {
+        const multihashDigest = await PieceHasher.digest(bytes)
+        return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
+          Link.create(raw.code, multihashDigest)
+        )
+      })()
+    : undefined)
+    const { version, roots, size } = car
+    const meta = { version, roots, size, cid, piece }
+    root = root || meta.roots[0]
+    shards.push(cid)
+    if (options.onShardStored) options.onShardStored(meta)
+  }
 
   /* c8 ignore next */
   if (!root) throw new Error('missing root CID')
 
   await Upload.add(conf, root, shards, options)
   return root
+}
+
+/**
+ * @param {ReadableStream} readable
+ */
+async function * iterateReadable(readable) {
+  const reader = readable.getReader()
+  try {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read()
+      console.log('uploadBlockStream read from blocks', { done, value })
+      if (done) break;
+      yield value
+    }
+  } finally {
+    reader.releaseLock()
+  }
 }

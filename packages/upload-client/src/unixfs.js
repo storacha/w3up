@@ -32,13 +32,28 @@ export function createFileEncoderStream(blob) {
   /** @type {TransformStream<import('@ipld/unixfs').Block, import('@ipld/unixfs').Block>} */
   const { readable, writable } = new TransformStream({}, queuingStrategy)
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
-  const fileBuilder = new UnixFSFileBuilder('', blob)
+  // kick off coroutine to pump data to readable
   void (async () => {
-    await fileBuilder.finalize(unixfsWriter)
+    const unixfsFileWriter = UnixFS.createFileWriter(unixfsWriter)
+    const fileStream = blob.stream();
+    const reader = fileStream.getReader()
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) {
+        break;
+      }
+      await unixfsFileWriter.write(value)
+    }
+    reader.releaseLock()
+    await unixfsFileWriter.close()
     await unixfsWriter.close()
   })()
   return readable
 }
+
+
+
 
 class UnixFSFileBuilder {
   #file
@@ -55,13 +70,17 @@ class UnixFSFileBuilder {
   /** @param {import('@ipld/unixfs').View} writer */
   async finalize(writer) {
     const unixfsFileWriter = UnixFS.createFileWriter(writer)
-    await this.#file.stream().pipeTo(
-      new WritableStream({
-        async write(chunk) {
-          await unixfsFileWriter.write(chunk)
-        },
-      })
-    )
+    const fileStream = this.#file.stream();
+    const reader = fileStream.getReader()
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) {
+        break;
+      }
+      await unixfsFileWriter.write(value)
+    }
+    reader.releaseLock()
     return await unixfsFileWriter.close()
   }
 }

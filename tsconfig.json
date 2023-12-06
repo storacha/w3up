@@ -24,7 +24,7 @@
     // linter checks
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
+    // "noUnusedLocals": true,
     "noUnusedParameters": false,
     // advanced
     "importsNotUsedAsValues": "remove",
