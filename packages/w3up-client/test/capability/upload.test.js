@@ -9,7 +9,7 @@ import { mockService, mockServiceConf } from '../helpers/mocks.js'
 import { Client } from '../../src/client.js'
 import { validateAuthorization } from '../helpers/utils.js'
 
-describe('StoreClient', () => {
+describe('UploadClient', () => {
   describe('add', () => {
     it('should register an upload', async () => {
       const car = await randomCAR(128)
@@ -121,6 +121,8 @@ describe('StoreClient', () => {
 
   describe('remove', () => {
     it('should remove an upload', async () => {
+      const car = await randomCAR(128)
+
       const service = mockService({
         upload: {
           remove: provide(UploadCapabilities.remove, ({ invocation }) => {
@@ -129,7 +131,12 @@ describe('StoreClient', () => {
             const invCap = invocation.capabilities[0]
             assert.equal(invCap.can, UploadCapabilities.remove.can)
             assert.equal(invCap.with, alice.currentSpace()?.did())
-            return { ok: {} }
+            return {
+              ok: {
+                root: car.roots[0],
+                shards: [car.cid],
+              }
+            }
           }),
         },
       })
@@ -151,7 +158,7 @@ describe('StoreClient', () => {
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
-      await alice.capability.upload.remove((await randomCAR(128)).roots[0])
+      await alice.capability.upload.remove(car.roots[0])
 
       assert(service.upload.remove.called)
       assert.equal(service.upload.remove.callCount, 1)

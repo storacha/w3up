@@ -6,6 +6,7 @@ import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { Absentee } from '@ucanto/principal'
 import { provisionProvider } from '../helpers/utils.js'
+import * as Result from '../helpers/result.js'
 
 /**
  * @type {API.Tests}
@@ -73,11 +74,7 @@ export const test = {
 
     assert.equal(goodPut.status, 200, await goodPut.text())
 
-    const item = await context.storeTable.get(spaceDid, link)
-
-    if (!item) {
-      return assert.equal(item != null, true)
-    }
+    const item = Result.unwrap(await context.storeTable.get(spaceDid, link))
 
     assert.deepEqual(
       {
@@ -95,9 +92,9 @@ export const test = {
       true
     )
 
-    const { spaces } = await context.storeTable.inspect(link)
-    assert.equal(spaces.length, 1)
-    assert.equal(spaces[0].did, spaceDid)
+    const { ok: info } = await context.storeTable.inspect(link)
+    assert.equal(info?.spaces.length, 1)
+    assert.equal(info?.spaces[0].did, spaceDid)
   },
 
   'store/add should allow add the same content to be stored in multiple spaces':
@@ -146,9 +143,9 @@ export const test = {
 
       assert.ok(bobStoreAdd.out.ok, `Bob failed to store ${link.toString()}`)
 
-      const { spaces } = await context.storeTable.inspect(link)
+      const { spaces } = Result.unwrap(await context.storeTable.inspect(link))
       assert.equal(spaces.length, 2)
-      const spaceDids = spaces.map((space) => space.did)
+      const spaceDids = (spaces ?? []).map((space) => space.did)
       assert.ok(spaceDids.includes(aliceSpaceDid))
       assert.ok(spaceDids.includes(bobSpaceDid))
     },
@@ -299,10 +296,7 @@ export const test = {
     // @ts-expect-error making sure it's not an upload status
     assert.equal(storeAdd.out.ok.url == null, true)
 
-    const item = await context.storeTable.get(spaceDid, link)
-    if (!item) {
-      throw assert.equal(item != null, true, 'should have stored item')
-    }
+    const item = Result.unwrap(await context.storeTable.get(spaceDid, link))
 
     assert.deepEqual(
       {

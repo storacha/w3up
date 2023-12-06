@@ -422,28 +422,50 @@ export interface DudewhereBucket {
   put: (dataCid: string, carCid: string) => Promise<void>
 }
 
+/**
+ * Indicates the requested record was not present in the table.
+ */
+export interface RecordNotFound extends Failure {
+  name: 'RecordNotFound'
+}
+
+/**
+ * Indicates the inserted record key conflicts with an existing key of a record
+ * that already exists in the table.
+ */
+export interface RecordKeyConflict extends Failure {
+  name: 'RecordKeyConflict'
+}
+
 export interface StoreTable {
-  inspect: (link: UnknownLink) => Promise<StoreInspectSuccess>
-  exists: (space: DID, link: UnknownLink) => Promise<boolean>
-  get: (space: DID, link: UnknownLink) => Promise<StoreGetSuccess | undefined>
-  insert: (item: StoreAddInput) => Promise<StoreAddOutput>
-  remove: (space: DID, link: UnknownLink) => Promise<void>
+  inspect: (link: UnknownLink) => Promise<Result<StoreInspectSuccess, Failure>>
+  exists: (space: DID, link: UnknownLink) => Promise<Result<boolean, Failure>>
+  get: (space: DID, link: UnknownLink) => Promise<Result<StoreGetSuccess, RecordNotFound>>
+  /** Inserts an item in the table if it does not already exist. */
+  insert: (item: StoreAddInput) => Promise<Result<StoreAddOutput, RecordKeyConflict>>
+  /** Removes an item from the table but fails if the item does not exist. */
+  remove: (space: DID, link: UnknownLink) => Promise<Result<StoreRemoveSuccess, RecordNotFound>>
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<ListResponse<StoreListItem>>
+  ) => Promise<Result<ListResponse<StoreListItem>, Failure>>
 }
 
 export interface UploadTable {
-  inspect: (link: UnknownLink) => Promise<UploadInspectSuccess>
-  exists: (space: DID, root: UnknownLink) => Promise<boolean>
-  get: (space: DID, link: UnknownLink) => Promise<UploadGetSuccess | undefined>
-  insert: (item: UploadAddInput) => Promise<UploadAddSuccess>
-  remove: (space: DID, root: UnknownLink) => Promise<UploadRemoveSuccess | null>
+  inspect: (link: UnknownLink) => Promise<Result<UploadInspectSuccess, Failure>>
+  exists: (space: DID, root: UnknownLink) => Promise<Result<boolean, Failure>>
+  get: (space: DID, link: UnknownLink) => Promise<Result<UploadGetSuccess, RecordNotFound>>
+  /**
+   * Inserts an item in the table if it does not already exist or updates an
+   * existing item if it does exist.
+   */
+  upsert: (item: UploadAddInput) => Promise<Result<UploadAddSuccess, Failure>>
+  /** Removes an item from the table but fails if the item does not exist. */
+  remove: (space: DID, root: UnknownLink) => Promise<Result<UploadRemoveSuccess, RecordNotFound>>
   list: (
     space: DID,
     options?: ListOptions
-  ) => Promise<ListResponse<UploadListItem>>
+  ) => Promise<Result<ListResponse<UploadListItem>, Failure>>
 }
 
 export type SpaceInfoSuccess = {

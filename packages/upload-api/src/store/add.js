@@ -24,7 +24,7 @@ export function storeAddProvider(context) {
       Server.DID.parse(capability.with).did()
     )
     const issuer = invocation.issuer.did()
-    const [allocated, carIsLinkedToSpace, carExists] = await Promise.all([
+    const [allocated, carExists] = await Promise.all([
       allocate(
         {
           capability: {
@@ -33,7 +33,6 @@ export function storeAddProvider(context) {
         },
         context
       ),
-      storeTable.exists(space, link),
       carStoreBucket.has(link),
     ])
 
@@ -42,22 +41,30 @@ export function storeAddProvider(context) {
       return allocated
     }
 
-    if (!carIsLinkedToSpace) {
-      await storeTable.insert({
-        space,
-        link,
-        size,
-        origin,
-        issuer,
-        invocation: invocation.cid,
-      })
+    let allocatedSize = size
+    const res = await storeTable.insert({
+      space,
+      link,
+      size,
+      origin,
+      issuer,
+      invocation: invocation.cid,
+    })
+    if (res.error) {
+      // if the insert failed with conflict then this item has already been
+      // added to the space and there is no allocation change.
+      if (res.error.name === 'RecordKeyConflict') {
+        allocatedSize = 0
+      } else {
+        return res
+      }
     }
 
     if (carExists) {
       return {
         ok: {
           status: 'done',
-          allocated: carIsLinkedToSpace ? 0 : size,
+          allocated: allocatedSize,
           with: space,
           link,
         },
@@ -68,7 +75,7 @@ export function storeAddProvider(context) {
     return {
       ok: {
         status: 'upload',
-        allocated: size,
+        allocated: allocatedSize,
         with: space,
         link,
         url: url.toString(),

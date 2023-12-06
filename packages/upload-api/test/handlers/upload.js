@@ -9,6 +9,7 @@ import {
 } from '../util.js'
 import { createServer, connect } from '../../src/lib.js'
 import { Upload } from '@web3-storage/capabilities'
+import * as Result from '../helpers/result.js'
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/batchwriteitemcommand.html
 const BATCH_MAX_SAFE_LIMIT = 25
@@ -54,7 +55,7 @@ export const test = {
       shards.map(String).sort()
     )
 
-    const { results } = await context.uploadTable.list(spaceDid)
+    const { results } = Result.unwrap(await context.uploadTable.list(spaceDid))
     assert.deepEqual(results.length, 1)
 
     const [item] = results
@@ -65,7 +66,7 @@ export const test = {
     assert.equal(msAgo < 60_000, true)
     assert.equal(msAgo >= 0, true)
 
-    const { spaces } = await context.uploadTable.inspect(root)
+    const { spaces } = Result.unwrap(await context.uploadTable.inspect(root))
     assert.equal(spaces.length, 1)
     assert.equal(spaces[0].did, spaceDid)
   },
@@ -117,7 +118,7 @@ export const test = {
         .execute(connection)
       assert.ok(bobUploadAdd.out.ok, `Bob failed to upload ${root.toString()}`)
 
-      const { spaces } = await context.uploadTable.inspect(root)
+      const { spaces } = Result.unwrap(await context.uploadTable.inspect(root))
       assert.equal(spaces.length, 2)
       const spaceDids = spaces.map((space) => space.did)
       assert.ok(spaceDids.includes(aliceSpaceDid))
@@ -159,7 +160,7 @@ export const test = {
       'Should have an empty shards array'
     )
 
-    const { results } = await context.uploadTable.list(spaceDid)
+    const { results } = Result.unwrap(await context.uploadTable.list(spaceDid))
     assert.equal(results.length, 1)
     const [upload] = results
     assert.deepEqual(upload.shards, [])
@@ -216,7 +217,7 @@ export const test = {
       shards.map(String).sort()
     )
 
-    const { results } = await context.uploadTable.list(spaceDid)
+    const { results } = Result.unwrap(await context.uploadTable.list(spaceDid))
     assert.equal(results.length, 1)
     const [upload] = results
     assert.equal(upload.root.toString(), root.toString())
@@ -282,7 +283,7 @@ export const test = {
       [cars[0].cid, cars[1].cid, cars[2].cid].map(String).sort()
     )
 
-    const { results } = await context.uploadTable.list(spaceDid)
+    const { results } = Result.unwrap(await context.uploadTable.list(spaceDid))
     assert.equal(results.length, 1)
     const [upload] = results
     assert.deepEqual(
@@ -388,7 +389,7 @@ export const test = {
     )
   },
 
-  'upload/remove does not fail for non existent upload': async (
+  'upload/remove fails for non existent upload': async (
     assert,
     context
   ) => {
@@ -413,11 +414,7 @@ export const test = {
       })
       .execute(connection)
 
-    assert.deepEqual(
-      uploadRemove.out.ok,
-      {},
-      'expect falsy response when removing an upload you do not have'
-    )
+    assert.equal(uploadRemove.out.error?.name, 'UploadNotFound')
   },
 
   'upload/remove only removes an upload for the given space': async (
@@ -495,7 +492,7 @@ export const test = {
       })
       .execute(connection)
 
-    const { results: spaceAItems } = await context.uploadTable.list(spaceDidA)
+    const { results: spaceAItems } = Result.unwrap(await context.uploadTable.list(spaceDidA))
     assert.equal(
       spaceAItems.some((x) => x.root.toString() === carA.roots[0].toString()),
       false,
@@ -508,7 +505,7 @@ export const test = {
       'SpaceA should have upload for carB.root'
     )
 
-    const { results: spaceBItems } = await context.uploadTable.list(spaceDidB)
+    const { results: spaceBItems } = Result.unwrap(await context.uploadTable.list(spaceDidB))
     assert.equal(
       spaceBItems.some((x) => x.root.toString() === carB.roots[0].toString()),
       false,
@@ -556,7 +553,7 @@ export const test = {
     assert.equal(uploadAdd.out.ok.shards?.length, shards.length)
 
     // Validate DB before remove
-    const { results } = await context.uploadTable.list(spaceDid)
+    const { results } = Result.unwrap(await context.uploadTable.list(spaceDid))
     assert.equal(results.length, 1)
 
     // Remove Car from Space
@@ -570,7 +567,7 @@ export const test = {
       })
       .execute(connection)
 
-    const { results: resultsAfter } = await context.uploadTable.list(spaceDid)
+    const { results: resultsAfter } = Result.unwrap(await context.uploadTable.list(spaceDid))
     assert.equal(resultsAfter.length, 0)
   },
 

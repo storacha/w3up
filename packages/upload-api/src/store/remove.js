@@ -1,6 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Store from '@web3-storage/capabilities/store'
 import * as API from '../types.js'
+import { StoreItemNotFound } from './lib.js'
 
 /**
  * @param {API.StoreServiceContext} context
@@ -11,41 +12,13 @@ export function storeRemoveProvider(context) {
     const { link } = capability.nb
     const space = Server.DID.parse(capability.with).did()
 
-    const item = await context.storeTable.get(space, link)
-    if (!item) {
-      return Server.error(new StoreItemNotFound(space, link))
+    const res = await context.storeTable.remove(space, link)
+    if (res.error && res.error.name === 'RecordNotFound') {
+      if (res.error.name === 'RecordNotFound') {
+        return Server.error(new StoreItemNotFound(space, link))
+      }
     }
 
-    await context.storeTable.remove(space, link)
-
-    return Server.ok({ size: item.size })
+    return res
   })
-}
-
-class StoreItemNotFound extends Server.Failure {
-  /**
-   * @param {import('@ucanto/interface').DID} space
-   * @param {import('@ucanto/interface').UnknownLink} link
-   */
-  constructor(space, link) {
-    super()
-    this.space = space
-    this.link = link
-  }
-
-  get name() {
-    return 'StoreItemNotFound'
-  }
-
-  describe() {
-    return `${this.link} not found in ${this.space}`
-  }
-
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      space: this.space,
-      link: { '/': this.link.toString() },
-    }
-  }
 }

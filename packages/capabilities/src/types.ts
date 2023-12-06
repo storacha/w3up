@@ -513,14 +513,7 @@ export type UploadAddSuccess = Omit<UploadListItem, 'insertedAt' | 'updatedAt'>
 
 export type UploadGetSuccess = UploadListItem
 
-export type UploadRemoveSuccess = UploadDidRemove | UploadDidNotRemove
-
-export interface UploadDidRemove extends UploadAddSuccess {}
-
-export interface UploadDidNotRemove {
-  root?: undefined
-  shards?: undefined
-}
+export type UploadRemoveSuccess = UploadAddSuccess
 
 export interface UploadListSuccess extends ListResponse<UploadListItem> {}
 

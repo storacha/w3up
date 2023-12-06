@@ -1,6 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Store from '@web3-storage/capabilities/store'
 import * as API from '../types.js'
+import { StoreItemNotFound } from './lib.js'
 
 /**
  * @param {API.StoreServiceContext} context
@@ -14,16 +15,9 @@ export function storeGetProvider(context) {
     }
     const space = Server.DID.parse(capability.with).did()
     const res = await context.storeTable.get(space, link)
-    if (!res) {
-      return {
-        error: {
-          name: 'StoreItemNotFound',
-          message: 'Store item not found',
-        },
-      }
+    if (res.error && res.error.name === 'RecordNotFound') {
+      return Server.error(new StoreItemNotFound(space, link))
     }
-    return {
-      ok: res,
-    }
+    return res
   })
 }

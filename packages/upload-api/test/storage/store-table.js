@@ -11,9 +11,14 @@ export class StoreTable {
 
   /**
    * @param {API.StoreAddInput} input
-   * @returns {Promise<API.StoreAddOutput>}
+   * @returns {ReturnType<API.StoreTable['insert']>}
    */
   async insert({ space, issuer, invocation, ...output }) {
+    if (this.items.some(i => i.space === space && i.link.equals(output.link))) {
+      return {
+        error: { name: 'RecordKeyConflict', message: 'record key conflict' }
+      }
+    }
     this.items.unshift({
       space,
       issuer,
@@ -21,62 +26,66 @@ export class StoreTable {
       ...output,
       insertedAt: new Date().toISOString(),
     })
-    return output
+    return { ok: output }
   }
 
   /**
-   *
    * @param {API.UnknownLink} link
-   * @returns {Promise<API.StoreInspectSuccess>}
+   * @returns {ReturnType<API.StoreTable['inspect']>}
    */
   async inspect(link) {
-    const items =
-      this.items?.filter((item) => item.link.toString() === link.toString()) ||
-      []
+    const items = this.items.filter((item) => item.link.equals(link))
     return {
-      spaces: items.map((item) => ({
-        did: item.space,
-        insertedAt: item.insertedAt,
-      })),
+      ok: {
+        spaces: items.map((item) => ({
+          did: item.space,
+          insertedAt: item.insertedAt,
+        })),
+      }
     }
   }
 
   /**
-   * Get info for a single shard or undefined if it doesn't exist
-   *
    * @param {API.DID} space
    * @param {API.UnknownLink} link
-   * @returns {Promise<(API.StoreAddInput & API.StoreListItem) | undefined>}
+   * @returns {ReturnType<API.StoreTable['get']>}
    */
   async get(space, link) {
-    return this.items.find(
-      (item) => item.space === space && item.link.toString() === link.toString()
-    )
+    const item = this.items.find(i => i.space === space && i.link.equals(link))
+    if (!item) {
+      return { error: { name: 'RecordNotFound', message: 'record not found' } }
+    }
+    return { ok: item }
   }
 
   /**
    * @param {API.DID} space
    * @param {API.UnknownLink} link
-   * @returns
+   * @returns {ReturnType<API.StoreTable['exists']>}
    */
   async exists(space, link) {
-    // eslint-disable-next-line yoda
-    return null != (await this.get(space, link))
+    const item = this.items.find(i => i.space === space && i.link.equals(link))
+    return { ok: !!item }
   }
 
   /**
    * @param {API.DID} space
    * @param {API.UnknownLink} link
+   * @returns {ReturnType<API.StoreTable['remove']>}
    */
   async remove(space, link) {
-    this.items = this.items.filter(
-      (item) => item.space !== space && item.link.toString() !== link.toString()
-    )
+    const item = this.items.find(i => i.space === space && i.link.equals(link))
+    if (!item) {
+      return { error: { name: 'RecordNotFound', message: 'record not found' } }
+    }
+    this.items = this.items.filter(i => i !== item)
+    return { ok: item }
   }
 
   /**
    * @param {API.DID} space
    * @param {API.ListOptions} options
+   * @returns {ReturnType<API.StoreTable['list']>}
    */
   async list(
     space,
@@ -90,10 +99,7 @@ export class StoreTable {
       .slice(0, size)
 
     if (matches.length === 0) {
-      return {
-        size: 0,
-        results: [],
-      }
+      return { ok: { size: 0, results: [] } }
     }
 
     const first = matches[0]
@@ -108,11 +114,13 @@ export class StoreTable {
       : [`${start + offset}`, `${end + 1 + offset}`, values]
 
     return {
-      size: values.length,
-      before,
-      after,
-      cursor: after,
-      results,
+      ok: {
+        size: values.length,
+        before,
+        after,
+        cursor: after,
+        results,
+      }
     }
   }
 }

@@ -10,13 +10,6 @@ export function storeListProvider(context) {
   return Server.provide(Store.list, async ({ capability }) => {
     const { cursor, size, pre } = capability.nb
     const space = Server.DID.parse(capability.with).did()
-
-    return {
-      ok: await context.storeTable.list(space, {
-        size,
-        cursor,
-        pre,
-      }),
-    }
+    return await context.storeTable.list(space, { size, cursor, pre })
   })
 }
