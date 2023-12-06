@@ -713,13 +713,10 @@ describe('uploadCAR', () => {
     assert.equal(service.store.add.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
-    assert.equal(pieceCIDs.length, 1)
-    assert.equal(
-      pieceCIDs[0].toString(),
-      'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
-    )
+    // pieceCID calculation is disabled by default
+    assert.equal(pieceCIDs.length, 0)
 
-    // can also skipPiece
+    // can opt in to calculating piece link
     /** @type {Array<import('@web3-storage/upload-client/types').CARMetadata>} */
     const shards2 = []
     await uploadCAR(
@@ -728,10 +725,17 @@ describe('uploadCAR', () => {
       {
         connection,
         onShardStored: (meta) => shards2.push(meta),
-        skipPieceLink: true,
+        piece: true,
       }
     )
     assert.equal(shards2.length, 1)
-    assert.equal(shards2[0].piece, undefined, 'shard piece cid is undefined because skipPieceLink=true')
+    assert.ok(
+      shards2[0].piece,
+      'shard piece cid is truthy because options.piece=true'
+    )
+    assert.equal(
+      shards2[0].piece.toString(),
+      'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
+    )
   })
 })
