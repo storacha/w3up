@@ -253,6 +253,7 @@ export interface UploadOptions
     ShardStoringOptions,
     UploadProgressTrackable {
   onShardStored?: (meta: CARMetadata) => void
+  /** when true, uploading will skip calculation of filecoin piece link */
   skipPieceLink?: boolean
 }
 
