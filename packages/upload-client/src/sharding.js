@@ -84,6 +84,7 @@ export class ShardingStream extends TransformStream {
         } else {
           controller.enqueue(await encode(blocks, rootCID))
         }
+        console.debug('ShardedStream flushed, blocks now', blocks)
       },
     })
   }

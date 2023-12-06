@@ -35,19 +35,21 @@ export function createFileEncoderStream(blob) {
   // kick off coroutine to pump data to readable
   void (async () => {
     const unixfsFileWriter = UnixFS.createFileWriter(unixfsWriter)
-    const fileStream = blob.stream();
-    const reader = fileStream.getReader()
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) {
-        break;
+    const reader = blob.stream().getReader()
+    try {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) {
+          break;
+        }
+        await unixfsFileWriter.write(value)
       }
-      await unixfsFileWriter.write(value)
+    } finally {
+      reader.releaseLock()
+      await unixfsFileWriter.close()
+      await unixfsWriter.close()
     }
-    reader.releaseLock()
-    await unixfsFileWriter.close()
-    await unixfsWriter.close()
   })()
   return readable
 }
