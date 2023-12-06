@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.3.0](https://github.com/web3-storage/w3up/compare/upload-client-v12.2.0...upload-client-v12.3.0) (2023-12-06)
+
+
+### Features
+
+* upload-client funcs have options.piece to opt in to piece link calculation ([#1220](https://github.com/web3-storage/w3up/issues/1220)) ([c38000e](https://github.com/web3-storage/w3up/commit/c38000ecff19f9d402d1f1912e67153a0fe7284c))
+
 ## [12.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v12.1.0...upload-client-v12.2.0) (2023-11-29)
 
 
