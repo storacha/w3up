@@ -128,11 +128,6 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   for await (const car of iterateReadable(shardCars)) {
     const bytes = new Uint8Array(await car.arrayBuffer())
     const cid = await Store.add(conf, bytes, options)
-    console.warn(
-      'uploadBlockStream got shard car bytes',
-      cid,
-      process.memoryUsage()
-    )
     const piece = await (options.piece
       ? (async () => {
           const multihashDigest = await PieceHasher.digest(bytes)

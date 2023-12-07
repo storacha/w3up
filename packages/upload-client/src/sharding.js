@@ -1,3 +1,4 @@
+import { withCapacity } from '@ipld/unixfs'
 import { blockEncodingLength, encode, headerEncodingLength } from './car.js'
 
 /**
@@ -118,11 +119,11 @@ export class ShardingStream extends TransformStream {
    */
   constructor(
     options = {},
-    writableStrategy = undefined,
-    readableStrategy = undefined
+    writableStrategy = withCapacity(),
+    readableStrategy = { size: x => 1, highWaterMark: 1 },
   ) {
     super(
-      new ShardingStreamTransformer(new ShardingStreamTransformer(options)),
+      new ShardingStreamTransformer(options),
       writableStrategy,
       readableStrategy
     )
