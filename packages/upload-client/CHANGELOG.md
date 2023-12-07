@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.3.2](https://github.com/web3-storage/w3up/compare/upload-client-v12.3.1...upload-client-v12.3.2) (2023-12-07)
+
+
+### Fixes
+
+* memory usage ([#1227](https://github.com/web3-storage/w3up/issues/1227)) ([c9e7a49](https://github.com/web3-storage/w3up/commit/c9e7a49a32249408d89f8cdfe39433fdd9b6a527))
+
 ## [12.3.1](https://github.com/web3-storage/w3up/compare/upload-client-v12.3.0...upload-client-v12.3.1) (2023-12-07)
 
 
