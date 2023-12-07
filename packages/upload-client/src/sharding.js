@@ -120,7 +120,7 @@ export class ShardingStream extends TransformStream {
   constructor(
     options = {},
     writableStrategy = withCapacity(),
-    readableStrategy = { size: x => 1, highWaterMark: 1 },
+    readableStrategy = undefined,
   ) {
     super(
       new ShardingStreamTransformer(options),
