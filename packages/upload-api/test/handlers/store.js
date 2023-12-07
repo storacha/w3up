@@ -6,6 +6,7 @@ import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { Absentee } from '@ucanto/principal'
 import { provisionProvider } from '../helpers/utils.js'
+import * as Result from '../helpers/result.js'
 
 /**
  * @type {API.Tests}
@@ -36,8 +37,10 @@ export const test = {
     if (!storeAdd.out.ok) {
       throw new Error('invocation failed', { cause: storeAdd })
     }
+    if (storeAdd.out.ok.status !== 'upload') {
+      throw new Error(`unexpected status: ${storeAdd.out.ok.status}`)
+    }
 
-    assert.equal(storeAdd.out.ok.status, 'upload')
     assert.equal(storeAdd.out.ok.with, spaceDid)
     assert.deepEqual(storeAdd.out.ok.link.toString(), link.toString())
 
@@ -71,11 +74,7 @@ export const test = {
 
     assert.equal(goodPut.status, 200, await goodPut.text())
 
-    const item = await context.storeTable.get(spaceDid, link)
-
-    if (!item) {
-      return assert.equal(item != null, true)
-    }
+    const item = Result.unwrap(await context.storeTable.get(spaceDid, link))
 
     assert.deepEqual(
       {
@@ -93,7 +92,7 @@ export const test = {
       true
     )
 
-    const { spaces } = await context.storeTable.inspect(link)
+    const { spaces } = Result.unwrap(await context.storeTable.inspect(link))
     assert.equal(spaces.length, 1)
     assert.equal(spaces[0].did, spaceDid)
   },
@@ -144,7 +143,7 @@ export const test = {
 
       assert.ok(bobStoreAdd.out.ok, `Bob failed to store ${link.toString()}`)
 
-      const { spaces } = await context.storeTable.inspect(link)
+      const { spaces } = Result.unwrap(await context.storeTable.inspect(link))
       assert.equal(spaces.length, 2)
       const spaceDids = spaces.map((space) => space.did)
       assert.ok(spaceDids.includes(aliceSpaceDid))
@@ -177,9 +176,11 @@ export const test = {
       if (!storeAdd.out.ok) {
         throw new Error('invocation failed', { cause: storeAdd })
       }
+      if (storeAdd.out.ok.status !== 'upload') {
+        throw new Error(`unexpected status: ${storeAdd.out.ok.status}`)
+      }
 
-      const url =
-        storeAdd.out.ok.status === 'upload' && new URL(storeAdd.out.ok.url)
+      const url = new URL(storeAdd.out.ok.url)
       if (!url) {
         throw new Error('Expected presigned url in response')
       }
@@ -227,9 +228,11 @@ export const test = {
       if (!storeAdd.out.ok) {
         throw new Error('invocation failed', { cause: storeAdd })
       }
+      if (storeAdd.out.ok.status !== 'upload') {
+        throw new Error(`unexpected status: ${storeAdd.out.ok.status}`)
+      }
 
-      const url =
-        storeAdd.out.ok.status === 'upload' && new URL(storeAdd.out.ok.url)
+      const url = new URL(storeAdd.out.ok.url)
       if (!url) {
         throw new Error('Expected presigned url in response')
       }
@@ -287,14 +290,13 @@ export const test = {
     }
 
     assert.equal(storeAdd.out.ok.status, 'done')
+    assert.equal(storeAdd.out.ok.allocated, 5)
     assert.equal(storeAdd.out.ok.with, spaceDid)
     assert.deepEqual(storeAdd.out.ok.link.toString(), link.toString())
+    // @ts-expect-error making sure it's not an upload status
     assert.equal(storeAdd.out.ok.url == null, true)
 
-    const item = await context.storeTable.get(spaceDid, link)
-    if (!item) {
-      throw assert.equal(item != null, true, 'should have stored item')
-    }
+    const item = Result.unwrap(await context.storeTable.get(spaceDid, link))
 
     assert.deepEqual(
       {
@@ -311,6 +313,62 @@ export const test = {
       Date.now() - new Date(item.insertedAt).getTime() < 60_000,
       true
     )
+  },
+
+  'store/add returns allocated: 0 if already added to space': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const link = await CAR.codec.link(data)
+
+    const { url, headers } = await context.carStoreBucket.createUploadUrl(
+      link,
+      data.length
+    )
+
+    // simulate an already stored CAR
+    const put = await fetch(url, {
+      method: 'PUT',
+      mode: 'cors',
+      body: data,
+      headers,
+    })
+    assert.equal(put.ok, true, 'should be able to upload to presigned url')
+
+    const inv0 = StoreCapabilities.add.invoke({
+      issuer: alice,
+      audience: connection.id,
+      with: spaceDid,
+      nb: { link, size: data.byteLength },
+      proofs: [proof],
+    })
+
+    const r0 = await inv0.execute(connection)
+
+    assert.equal(r0.out.ok?.status, 'done')
+    assert.equal(r0.out.ok?.allocated, 5)
+    assert.equal(r0.out.ok?.with, spaceDid)
+
+    const inv1 = StoreCapabilities.add.invoke({
+      issuer: alice,
+      audience: connection.id,
+      with: spaceDid,
+      nb: { link, size: data.byteLength },
+      proofs: [proof],
+    })
+
+    const r1 = await inv1.execute(connection)
+
+    assert.equal(r1.out.ok?.status, 'done')
+    assert.equal(r1.out.ok?.allocated, 0)
+    assert.equal(r1.out.ok?.with, spaceDid)
   },
 
   'store/add disallowed if invocation fails access verification': async (

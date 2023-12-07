@@ -24,9 +24,7 @@ const inspect = async ({ capability }, context) => {
     return { error: new UnknownProvider(capability.with) }
   }
 
-  return {
-    ok: await context.storeTable.inspect(capability.nb.link),
-  }
+  return await context.storeTable.inspect(capability.nb.link)
 }
 
 class UnknownProvider extends Provider.Failure {

@@ -30,12 +30,11 @@ describe('Client', () => {
 
       const service = mockService({
         store: {
-          add: provide(StoreCapabilities.add, ({ invocation }) => {
+          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
             assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, StoreCapabilities.add.can)
-            assert.equal(invCap.with, alice.currentSpace()?.did())
+            assert.equal(capability.can, StoreCapabilities.add.can)
+            assert.equal(capability.with, alice.currentSpace()?.did())
 
             return {
               ok: {
@@ -46,6 +45,7 @@ describe('Client', () => {
                   invocation.capabilities[0].nb?.link
                 ),
                 with: space.did(),
+                allocated: capability.nb.size,
               },
             }
           }),
@@ -126,12 +126,11 @@ describe('Client', () => {
 
       const service = mockService({
         store: {
-          add: provide(StoreCapabilities.add, ({ invocation }) => {
+          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
             assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, StoreCapabilities.add.can)
-            assert.equal(invCap.with, alice.currentSpace()?.did())
+            assert.equal(capability.can, StoreCapabilities.add.can)
+            assert.equal(capability.with, alice.currentSpace()?.did())
             return {
               ok: {
                 status: 'upload',
@@ -141,6 +140,7 @@ describe('Client', () => {
                   invocation.capabilities[0].nb?.link
                 ),
                 with: space.did(),
+                allocated: capability.nb.size,
               },
             }
           }),
@@ -204,12 +204,11 @@ describe('Client', () => {
 
       const service = mockService({
         store: {
-          add: provide(StoreCapabilities.add, ({ invocation }) => {
+          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
             assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, StoreCapabilities.add.can)
-            assert.equal(invCap.with, space.did())
+            assert.equal(capability.can, StoreCapabilities.add.can)
+            assert.equal(capability.with, space.did())
             return {
               ok: {
                 status: 'upload',
@@ -219,6 +218,7 @@ describe('Client', () => {
                   invocation.capabilities[0].nb?.link
                 ),
                 with: space.did(),
+                allocated: capability.nb.size,
               },
             }
           }),

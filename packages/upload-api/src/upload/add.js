@@ -30,7 +30,7 @@ export function uploadAddProvider(context) {
 
     const [res] = await Promise.all([
       // Store in Database
-      uploadTable.insert({
+      uploadTable.upsert({
         space,
         root,
         shards,
@@ -40,7 +40,7 @@ export function uploadAddProvider(context) {
       writeDataCidToCarCidsMapping(dudewhereBucket, root, shards),
     ])
 
-    return { ok: res }
+    return res
   })
 }
 

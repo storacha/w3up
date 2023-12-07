@@ -14,7 +14,7 @@ describe('StoreClient', () => {
     it('should store a CAR file', async () => {
       const service = mockService({
         store: {
-          add: provide(StoreCapabilities.add, ({ invocation }) => {
+          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
             assert.equal(invocation.issuer.did(), alice.agent.did())
             assert.equal(invocation.capabilities.length, 1)
             const invCap = invocation.capabilities[0]
@@ -27,6 +27,7 @@ describe('StoreClient', () => {
                 url: 'http://localhost:9200',
                 link: car.cid,
                 with: space.did(),
+                allocated: capability.nb.size,
               },
             }
           }),

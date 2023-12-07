@@ -738,7 +738,7 @@ export const test = {
           minPieceInsertedAt: new Date().toISOString(),
         }
         const putAggregateRes = await context.aggregateStore.put(
-          aggregateRecord,
+          aggregateRecord
         )
         assert.ok(putAggregateRes.ok)
 
