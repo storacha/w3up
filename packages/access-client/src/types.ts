@@ -174,27 +174,6 @@ export type AgentDataExport = Pick<
 }
 
 /**
- * Agent data to be imported after loading from a store.
- *
- * This should be nearly the same as AgentDataExport, and can be
- * used to reflect changing schemas, eg: moving the type of bytes
- * from Uint8Array to Arraybuffer
- */
-export type AgentDataImport = Pick<
-  AgentDataModel,
-  'meta' | 'currentSpace' | 'spaces'
-> & {
-  principal: SignerArchive<DID, SigAlg>
-  delegations: Map<
-    CIDString,
-    {
-      meta: DelegationMeta
-      delegation: Array<{ cid: CIDString; bytes: Uint8Array | ArrayBuffer }>
-    }
-  >
-}
-
-/**
  * Agent metadata used to describe an agent ("audience")
  * with a more human and UI friendly data
  */
