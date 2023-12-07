@@ -2,8 +2,8 @@ import assert from 'assert'
 import { uint8ArrayToArrayBuffer } from '../../src/utils/buffers.js'
 
 /**
- * 
- * @param {any[]} array 
+ *
+ * @param {any[]} array
  * @returns ArrayBuffer
  */
 function arrayBufferFromArray(array) {
@@ -27,10 +27,7 @@ describe('uint8ArrayToArrayBuffer', function () {
 
   it('should return the ArrayBuffer instance underlying the Uint8Array if the Uint8Array represents the whole array', function () {
     const uint8Array = Uint8Array.from([1, 2, 3])
-    assert.strictEqual(
-      uint8ArrayToArrayBuffer(uint8Array),
-      uint8Array.buffer
-    )
+    assert.strictEqual(uint8ArrayToArrayBuffer(uint8Array), uint8Array.buffer)
   })
 
   it('should convert a Uint8Array that is a view over an ArrayBuffer to an ArrayBuffer with the same elements', function () {
@@ -45,14 +42,11 @@ describe('uint8ArrayToArrayBuffer', function () {
 
 // this test simply verifies that a Uint8Array doesn't make a copy of an ArrayBuffer
 // passed to its constructor - technically this is verifying the implementation
-// of the JavaScript platform behaves as advertised, but it's an important part 
+// of the JavaScript platform behaves as advertised, but it's an important part
 // of our performance assumptions about AgentData so worth proving here
 describe('new Uint8Array()', function () {
-  it ('should use a passed ArrayBuffer as its underlying buffer', function(){
+  it('should use a passed ArrayBuffer as its underlying buffer', function () {
     const arrayBuffer = arrayBufferFromArray([1, 2, 3])
-    assert.strictEqual(
-      new Uint8Array(arrayBuffer).buffer,
-      arrayBuffer
-    )
+    assert.strictEqual(new Uint8Array(arrayBuffer).buffer, arrayBuffer)
   })
 })

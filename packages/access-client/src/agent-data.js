@@ -66,7 +66,8 @@ export class AgentData {
         delegation: importDAG(
           value.delegation.map((d) => ({
             cid: CID.parse(d.cid).toV1(),
-            bytes: (d.bytes instanceof Uint8Array) ? d.bytes : new Uint8Array(d.bytes),
+            bytes:
+              d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),
           }))
         ),
         meta: value.meta,
