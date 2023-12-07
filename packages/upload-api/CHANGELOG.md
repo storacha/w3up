@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.5...upload-api-v8.0.0) (2023-12-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213))
+
+### Features
+
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213)) ([5d52e44](https://github.com/web3-storage/w3up/commit/5d52e447c14e7f7fd334e7ff575e032b7b0d89d7))
+
 ## [7.3.5](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.4...upload-api-v7.3.5) (2023-11-29)
 
 
