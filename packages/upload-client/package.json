@@ -78,16 +78,16 @@
     "ipfs-utils": "^9.0.14",
     "multiformats": "^12.1.2",
     "p-retry": "^5.1.2",
-    "parallel-transform-web": "^1.0.0",
+    "parallel-transform-web": "^1.0.1",
     "varint": "^6.0.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@types/varint": "^6.0.1",
-    "@web3-storage/eslint-config-w3up": "workspace:^",
     "@ucanto/principal": "^9.0.0",
     "@ucanto/server": "^9.0.1",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
     "assert": "^2.0.0",
     "blockstore-core": "^3.0.0",
     "c8": "^7.13.0",
