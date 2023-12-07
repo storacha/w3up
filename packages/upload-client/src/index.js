@@ -7,6 +7,7 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
+import { withCapacity } from '@ipld/unixfs'
 
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -123,11 +124,11 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   /** @type {import('./types.js').AnyLink?} */
   let root = null
   const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
-
-  for await (const car of iterateReadable(blocks.pipeThrough(new ShardingStream(options)))) {
-    console.log('iterated from shardstream', car)
+  const shardCars = blocks.pipeThrough(new ShardingStream(options))
+  for await (const car of iterateReadable(shardCars)) {
     const bytes = new Uint8Array(await car.arrayBuffer())
     const cid = await Store.add(conf, bytes, options)
+    console.warn('uploadBlockStream got shard car bytes', cid, process.memoryUsage())
     const piece = await (options.piece
       ? (async () => {
         const multihashDigest = await PieceHasher.digest(bytes)
@@ -146,7 +147,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   /* c8 ignore next */
   if (!root) throw new Error('missing root CID')
 
-  await Upload.add(conf, root, shards, options)
+  // await Upload.add(conf, root, shards, options)
   return root
 }
 
@@ -159,7 +160,6 @@ async function * iterateReadable(readable) {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { done, value } = await reader.read()
-      console.log('uploadBlockStream read from blocks', { done, value })
       if (done) break;
       yield value
     }
