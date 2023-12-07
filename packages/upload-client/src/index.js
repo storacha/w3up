@@ -1,4 +1,3 @@
-import { Parallel } from 'parallel-transform-web'
 import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash/async'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
@@ -7,7 +6,6 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
-import { withCapacity } from '@ipld/unixfs'
 
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -123,6 +121,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   const shards = []
   /** @type {import('./types.js').AnyLink?} */
   let root = null
+  // @ts-expect-error unused variable but TODO to renable it
   const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
   const shardCars = blocks.pipeThrough(new ShardingStream(options))
   for await (const car of iterateReadable(shardCars)) {
