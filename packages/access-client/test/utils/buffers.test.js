@@ -33,6 +33,17 @@ describe('uint8ArrayToArrayBuffer', function () {
   it('should convert a Uint8Array that is a view over an ArrayBuffer to an ArrayBuffer with the same elements', function () {
     const originalArrayBuffer = Uint8Array.from([1, 2, 3, 4, 5, 6, 7, 8]).buffer
     const uint8Array = new Uint8Array(originalArrayBuffer, 3, 3)
+    // uint8Array is a view on the original buffer
+    assert.deepEqual(
+      uint8Array,
+      Uint8Array.from([4, 5, 6])
+    )
+    // if we just get the uint8Array.buffer it is equal to the whole original buffer, not the uint8array's view
+    assert.deepEqual(
+      uint8Array.buffer,
+      arrayBufferFromArray([1, 2, 3, 4, 5, 6, 7, 8])
+    )
+    // but if we use uint8ArrayToArraybuffer it just returns an ArrayBuffer of the Uint8Array's view
     assert.deepEqual(
       uint8ArrayToArrayBuffer(uint8Array),
       arrayBufferFromArray([4, 5, 6])
