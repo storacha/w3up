@@ -34,10 +34,7 @@ describe('uint8ArrayToArrayBuffer', function () {
     const originalArrayBuffer = Uint8Array.from([1, 2, 3, 4, 5, 6, 7, 8]).buffer
     const uint8Array = new Uint8Array(originalArrayBuffer, 3, 3)
     // uint8Array is a view on the original buffer
-    assert.deepEqual(
-      uint8Array,
-      Uint8Array.from([4, 5, 6])
-    )
+    assert.deepEqual(uint8Array, Uint8Array.from([4, 5, 6]))
     // if we just get the uint8Array.buffer it is equal to the whole original buffer, not the uint8array's view
     assert.deepEqual(
       uint8Array.buffer,
