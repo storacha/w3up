@@ -20,7 +20,11 @@ export class ShardingStream extends TransformStream {
    * @param {QueuingStrategy<import('@ipld/unixfs').Block>|undefined} writableStrategy
    * @param {QueuingStrategy<import('./types.js').CARFile>|undefined} readableStrategy
    */
-  constructor(options = {}, writableStrategy=undefined, readableStrategy=undefined) {
+  constructor(
+    options = {},
+    writableStrategy = undefined,
+    readableStrategy = undefined
+  ) {
     const shardSize = options.shardSize ?? SHARD_SIZE
     const maxBlockLength = shardSize - headerEncodingLength()
     /** @type {import('@ipld/unixfs').Block[]} */
@@ -90,7 +94,7 @@ export class ShardingStream extends TransformStream {
         },
       },
       writableStrategy,
-      readableStrategy,
+      readableStrategy
     )
   }
 }

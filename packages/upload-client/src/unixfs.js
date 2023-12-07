@@ -41,7 +41,7 @@ export function createFileEncoderStream(blob) {
       while (true) {
         const { done, value } = await reader.read()
         if (done) {
-          break;
+          break
         }
         await unixfsFileWriter.write(value)
       }
@@ -53,9 +53,6 @@ export function createFileEncoderStream(blob) {
   })()
   return readable
 }
-
-
-
 
 class UnixFSFileBuilder {
   #file
@@ -72,13 +69,13 @@ class UnixFSFileBuilder {
   /** @param {import('@ipld/unixfs').View} writer */
   async finalize(writer) {
     const unixfsFileWriter = UnixFS.createFileWriter(writer)
-    const fileStream = this.#file.stream();
+    const fileStream = this.#file.stream()
     const reader = fileStream.getReader()
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { done, value } = await reader.read()
       if (done) {
-        break;
+        break
       }
       await unixfsFileWriter.write(value)
     }

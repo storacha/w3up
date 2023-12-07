@@ -128,15 +128,19 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   for await (const car of iterateReadable(shardCars)) {
     const bytes = new Uint8Array(await car.arrayBuffer())
     const cid = await Store.add(conf, bytes, options)
-    console.warn('uploadBlockStream got shard car bytes', cid, process.memoryUsage())
+    console.warn(
+      'uploadBlockStream got shard car bytes',
+      cid,
+      process.memoryUsage()
+    )
     const piece = await (options.piece
       ? (async () => {
-        const multihashDigest = await PieceHasher.digest(bytes)
-        return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
-          Link.create(raw.code, multihashDigest)
-        )
-      })()
-    : undefined)
+          const multihashDigest = await PieceHasher.digest(bytes)
+          return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
+            Link.create(raw.code, multihashDigest)
+          )
+        })()
+      : undefined)
     const { version, roots, size } = car
     const meta = { version, roots, size, cid, piece }
     root = root || meta.roots[0]
@@ -154,13 +158,13 @@ async function uploadBlockStream(conf, blocks, options = {}) {
 /**
  * @param {ReadableStream} readable
  */
-async function * iterateReadable(readable) {
+async function* iterateReadable(readable) {
   const reader = readable.getReader()
   try {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const { done, value } = await reader.read()
-      if (done) break;
+      if (done) break
       yield value
     }
   } finally {
