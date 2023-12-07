@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.6](https://github.com/web3-storage/w3up/compare/access-v18.0.5...access-v18.0.6) (2023-12-07)
+
+
+### Fixes
+
+* use an ArrayBuffer for delegation bits in AgentData ([#1219](https://github.com/web3-storage/w3up/issues/1219)) ([bddf874](https://github.com/web3-storage/w3up/commit/bddf87445755fa977768d636481eaee678a06e79))
+
 ## [18.0.5](https://github.com/web3-storage/w3up/compare/access-v18.0.4...access-v18.0.5) (2023-11-29)
 
 
