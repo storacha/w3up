@@ -39,26 +39,28 @@ export class ShardingStreamTransformer {
    * @param {TransformStreamDefaultController<import('./types.js').CARFile>} controller
    */
   async transform(block, controller) {
-    if (this.readyBlocks != null) {
-      controller.enqueue(await encode(this.readyBlocks))
-      this.readyBlocks = null
+    const { maxBlockLength } = this
+    let { blocks, currentLength, readyBlocks } = this
+    if (readyBlocks != null) {
+      controller.enqueue(await encode(readyBlocks))
+      readyBlocks = null
     }
 
     const blockLength = blockEncodingLength(block)
-    if (blockLength > this.maxBlockLength) {
+    if (blockLength > maxBlockLength) {
       throw new Error(`block will cause CAR to exceed shard size: ${block.cid}`)
     }
 
-    if (
-      this.blocks.length &&
-      this.currentLength + blockLength > this.maxBlockLength
-    ) {
-      this.readyBlocks = this.blocks
-      this.blocks = []
-      this.currentLength = 0
+    if (blocks.length && currentLength + blockLength > maxBlockLength) {
+      readyBlocks = blocks
+      blocks = []
+      currentLength = 0
     }
-    this.blocks.push(block)
-    this.currentLength += blockLength
+    blocks.push(block)
+    currentLength += blockLength
+
+    this.blocks = blocks
+    this.currentLength = currentLength
   }
 
   /**
