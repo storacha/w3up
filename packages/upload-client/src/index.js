@@ -145,7 +145,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   /* c8 ignore next */
   if (!root) throw new Error('missing root CID')
 
-  // await Upload.add(conf, root, shards, options)
+  await Upload.add(conf, root, shards, options)
   return root
 }
 
