@@ -550,8 +550,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@web3-storage/access':
-        specifier: ^18.0.5
-        version: 18.0.5
+        specifier: ^18.0.6
+        version: 18.0.6
       '@web3-storage/did-mailto':
         specifier: ^2.0.2
         version: 2.1.0
@@ -3491,8 +3491,8 @@ packages:
       uint8arrays: 4.0.9
     dev: false
 
-  /@web3-storage/access@18.0.5:
-    resolution: {integrity: sha512-dTojMu7UWb7esbnX3F18eTC+hwlYkDhxBZAogmHX7legRGRK5MwwoRMpk8qz6zI6ImUmkApWFYrF2U8OaGC0bQ==}
+  /@web3-storage/access@18.0.6:
+    resolution: {integrity: sha512-IuzqkqRp53ILoSeALsyXmZO7zPn6syJGM6X1a+hsmbCGoVG1821i2WWMRz5aCsdgfJxl6Ge0rec+gCMfPx5h8Q==}
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-ucan': 3.4.0
@@ -3503,7 +3503,7 @@ packages:
       '@ucanto/principal': 9.0.0
       '@ucanto/transport': 9.0.0
       '@ucanto/validator': 9.0.1
-      '@web3-storage/capabilities': 12.1.0
+      '@web3-storage/capabilities': 13.0.0
       '@web3-storage/did-mailto': 2.1.0
       bigint-mod-arith: 3.3.1
       conf: 11.0.2
@@ -3537,6 +3537,17 @@ packages:
 
   /@web3-storage/capabilities@12.1.0:
     resolution: {integrity: sha512-SlYdPqCokDHb55zlZOvh+n8uEMOrEU413Z1MzQ8HvULpbzfcEtGyOiDgrAhdNEZtPnWHqaUEtU7o829Yw2Ra5w==}
+    dependencies:
+      '@ucanto/core': 9.0.1
+      '@ucanto/interface': 9.0.0
+      '@ucanto/principal': 9.0.0
+      '@ucanto/transport': 9.0.0
+      '@ucanto/validator': 9.0.1
+      '@web3-storage/data-segment': 3.2.0
+    dev: false
+
+  /@web3-storage/capabilities@13.0.0:
+    resolution: {integrity: sha512-SSviDXFweCu8FhaQ7BjsK1WDPBdwoduJhfD2DFRKkZT/V25vdBkqtW4qVc6tfO5IhTVxRpnn62PmbIbbcHzBRQ==}
     dependencies:
       '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0
@@ -3628,7 +3639,7 @@ packages:
       '@ucanto/interface': 9.0.0
       '@ucanto/principal': 9.0.0
       '@ucanto/transport': 9.0.0
-      '@web3-storage/access': 18.0.5
+      '@web3-storage/access': 18.0.6
       '@web3-storage/capabilities': 12.1.0
       '@web3-storage/did-mailto': 2.1.0
       '@web3-storage/filecoin-client': 3.2.0
