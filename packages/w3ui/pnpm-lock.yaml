@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -556,8 +556,8 @@ importers:
         specifier: ^2.0.2
         version: 2.1.0
       '@web3-storage/w3up-client':
-        specifier: ^11.2.0
-        version: 11.2.0
+        specifier: ^11.2.1
+        version: 11.2.1
 
   packages/keyring-core:
     dependencies:
@@ -3612,6 +3612,27 @@ packages:
       - encoding
     dev: false
 
+  /@web3-storage/upload-client@12.3.2:
+    resolution: {integrity: sha512-vtf8Sb9GWfde9+tL+9Yu6bpB2Erzk/w99LTW55V6VPF6IdhmvPqAD83/X6w5G7VfxfEbFZ3ElRCqA8hOasP8aQ==}
+    dependencies:
+      '@ipld/car': 5.2.4
+      '@ipld/dag-cbor': 9.0.6
+      '@ipld/dag-ucan': 3.4.0
+      '@ipld/unixfs': 2.1.2
+      '@ucanto/client': 9.0.0
+      '@ucanto/interface': 9.0.0
+      '@ucanto/transport': 9.0.0
+      '@web3-storage/capabilities': 12.1.0
+      fr32-sha2-256-trunc254-padded-binary-tree-multihash: 3.1.1
+      ipfs-utils: 9.0.14
+      multiformats: 12.1.3
+      p-retry: 5.1.2
+      parallel-transform-web: 1.0.1
+      varint: 6.0.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@web3-storage/w3up-client@10.1.0:
     resolution: {integrity: sha512-Dqf/tfWTFeDegS738wqWuT6SDSjmpFWAYCWkgFDWbyCU+RY5OKR7XSDBjNrbPxavlnfKJrfMVl61GSEDK2uM0w==}
     dependencies:
@@ -3630,8 +3651,8 @@ packages:
       - encoding
     dev: false
 
-  /@web3-storage/w3up-client@11.2.0:
-    resolution: {integrity: sha512-ZHXoca1mj32Q2SbNzRtjG/YRIYaA5q6si7PQfv1/5cUgZx60XqD9uBpSB88fCJhzIPHWwPBvDNVFQPL0ASy4cA==}
+  /@web3-storage/w3up-client@11.2.1:
+    resolution: {integrity: sha512-04/OfMKUjPoF+l87VjItYFb1wBaljiV8YJbBMlNm9Zf7gazWPDxjfuSWYUMYb8UAPhxQZnV2uGrqUaNqPlUqUg==}
     dependencies:
       '@ipld/dag-ucan': 3.4.0
       '@ucanto/client': 9.0.0
@@ -3643,7 +3664,7 @@ packages:
       '@web3-storage/capabilities': 12.1.0
       '@web3-storage/did-mailto': 2.1.0
       '@web3-storage/filecoin-client': 3.2.0
-      '@web3-storage/upload-client': 12.1.0
+      '@web3-storage/upload-client': 12.3.2
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -5689,6 +5710,10 @@ packages:
     resolution: {integrity: sha512-rpE+Ex1Hke2lPMonENYjqNJSF00fQqDMlECV8KvCLUlkv+l/PkLeZfo2/VFu909hOJQfGXHk/TXrANic0Z/Ymg==}
     dev: false
 
+  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@3.1.1:
+    resolution: {integrity: sha512-4nYelGDFTB/gvCK2QdbAKyLcir0uELmzsFSBAJmqHI6JktlIickWFOITRINGdKQU6nqkg+7kWu7i80w1QjAW9Q==}
+    dev: false
+
   /fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
     dev: true
@@ -7150,6 +7175,10 @@ packages:
 
   /parallel-transform-web@1.0.0:
     resolution: {integrity: sha512-LgvgIhpDB7f47eI5Wxss4cYQXeWoTCbPr0XVBeFB4icHbrdyEIO8viOoSFRYwufmHobeFbsMuwq+XiWetvwBpA==}
+    dev: false
+
+  /parallel-transform-web@1.0.1:
+    resolution: {integrity: sha512-RtPU/7IuwPZ4ePcqoPxNCpjtaXYOkCVtnhh5tW3O78wy9jqVoV2hQHms17kUeu8DTYoOP+mykFLg2agwVKlwBw==}
     dev: false
 
   /parent-module@1.0.1:
