@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/web3-storage/w3ui/compare/react-v1.2.0...react-v1.3.0) (2023-12-08)
+
+
+### Features
+
+* pin core dep to trigger a new release ([#607](https://github.com/web3-storage/w3ui/issues/607)) ([82fbd62](https://github.com/web3-storage/w3ui/commit/82fbd62aa63022b0f0a1d6d9df6a20dddc7146b5))
+
 ## [1.2.0](https://github.com/web3-storage/w3ui/compare/react-v1.1.1...react-v1.2.0) (2023-11-30)
 
 
