@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/web3-storage/w3ui/compare/core-v1.1.0...core-v1.1.1) (2023-12-08)
+
+
+### Bug Fixes
+
+* package.json explicitly wants w3up-client@11.2.1 ([#606](https://github.com/web3-storage/w3ui/issues/606)) ([ffa8d1a](https://github.com/web3-storage/w3ui/commit/ffa8d1a81faf5a6069bd816c5c0d71cc3c65f1ba))
+* upgrade access client to incorporate fixed indexeddb store ([#604](https://github.com/web3-storage/w3ui/issues/604)) ([2eb8a20](https://github.com/web3-storage/w3ui/commit/2eb8a20597b38d831afb323a31d88ab499d2d662))
+
 ## [1.1.0](https://github.com/web3-storage/w3ui/compare/core-v1.0.1...core-v1.1.0) (2023-11-30)
 
 

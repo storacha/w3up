@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "w3ui core.",
   "module": "build/esm/index.js",
   "main": "build/cjs/index.js",
