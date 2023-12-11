@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3ui/compare/react-v1.3.0...react-v2.0.0) (2023-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* fix example, buncheefication, cleanup ([#603](https://github.com/web3-storage/w3ui/issues/603))
+
+### Features
+
+* fix example, buncheefication, cleanup ([#603](https://github.com/web3-storage/w3ui/issues/603)) ([4a1c660](https://github.com/web3-storage/w3ui/commit/4a1c6602041c5b9053378655dbc8382519184221))
+
+
+### Bug Fixes
+
+* unpin core version ([#611](https://github.com/web3-storage/w3ui/issues/611)) ([69a8241](https://github.com/web3-storage/w3ui/commit/69a824156afc8589646e69ddd8a38047146538b2))
+
 ## [1.3.0](https://github.com/web3-storage/w3ui/compare/react-v1.2.0...react-v1.3.0) (2023-12-08)
 
 
