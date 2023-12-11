@@ -1,6 +1,6 @@
 # core
 
-W3UI core.
+W3UI core - utilities useful in any UI framework.
 
 ## Install
 
