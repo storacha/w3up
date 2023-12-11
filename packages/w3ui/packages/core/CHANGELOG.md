@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/w3ui/compare/core-v1.1.1...core-v2.0.0) (2023-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* fix example, buncheefication, cleanup ([#603](https://github.com/web3-storage/w3ui/issues/603))
+
+### Features
+
+* fix example, buncheefication, cleanup ([#603](https://github.com/web3-storage/w3ui/issues/603)) ([4a1c660](https://github.com/web3-storage/w3ui/commit/4a1c6602041c5b9053378655dbc8382519184221))
+
 ## [1.1.1](https://github.com/web3-storage/w3ui/compare/core-v1.1.0...core-v1.1.1) (2023-12-08)
 
 
