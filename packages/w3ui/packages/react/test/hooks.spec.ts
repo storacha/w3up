@@ -1,6 +1,6 @@
 import { test, expect } from 'vitest'
 import 'fake-indexeddb/auto'
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook, waitFor } from '@testing-library/react'
 import * as DID from '@ipld/dag-ucan/did'
 import { Principal, ConnectionView } from '@ucanto/interface'
 import { connect } from '@ucanto/client'
@@ -18,9 +18,9 @@ test('should create a new client instance if and only if servicePrincipal or con
       method: 'POST'
     })
   })
-  const { result, rerender, waitForValueToChange } = renderHook(() => useDatamodel({ servicePrincipal, connection }))
+  const { result, rerender } = renderHook(() => useDatamodel({ servicePrincipal, connection }))
   // wait for client to be initialized
-  await waitForValueToChange(() => result.current.client)
+  await waitFor(() => { expect(result.current.client).toBeTruthy() })
 
   const firstClient = result.current.client
   expect(firstClient).not.toBeFalsy()
@@ -31,10 +31,7 @@ test('should create a new client instance if and only if servicePrincipal or con
   servicePrincipal = DID.parse('did:web:web3.porridge')
   rerender()
   // wait for the client to change
-  await waitForValueToChange(() => result.current.client)
-  // this is a little superfluous - if it's false then the line before this will hang
-  // I still think it's worth keeping to illustrate the point
-  expect(result.current.client).not.toBe(firstClient)
+  await waitFor(() => { expect(result.current.client).not.toBe(firstClient) })
   const secondClient = result.current.client
 
   connection = connect({
@@ -46,7 +43,6 @@ test('should create a new client instance if and only if servicePrincipal or con
     })
   })
   rerender()
-  await waitForValueToChange(() => result.current.client)
-  expect(result.current.client).not.toBe(firstClient)
-  expect(result.current.client).not.toBe(secondClient)
+  await waitFor(() => { expect(result.current.client).not.toBe(firstClient) })
+  await waitFor(() => { expect(result.current.client).not.toBe(secondClient) })
 })

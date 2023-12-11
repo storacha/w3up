@@ -1,11 +1,11 @@
 import type { AgentDataExport } from '@web3-storage/access/types'
-import type { ServiceConfig } from './service'
+import type { ServiceConfig } from './service.js'
 
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 import { Client, create as createW3UPClient } from '@web3-storage/w3up-client'
 import { Account } from '@web3-storage/w3up-client/account'
 import { Space } from '@web3-storage/w3up-client/space'
-import { createServiceConf } from './service'
+import { createServiceConf } from './service.js'
 import { Driver } from '@web3-storage/access/drivers/types'
 
 export * from '@web3-storage/w3up-client/types'

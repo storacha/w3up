@@ -2,21 +2,18 @@
   "name": "@w3ui/core",
   "version": "1.1.1",
   "description": "w3ui core.",
-  "module": "build/esm/index.js",
-  "main": "build/cjs/index.js",
-  "browser": "build/umd/index.development.js",
-  "types": "build/types/src/index.d.ts",
-  "publishConfig": {
-    "browser": "build/umd/index.production.js"
-  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false",
+    "build": "bunchee",
     "lint": "tsc --build && eslint '**/*.{js,jsx,ts,tsx}'",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },
   "files": [
-    "build/*",
+    "dist/*",
     "src"
   ],
   "repository": {
@@ -47,5 +44,11 @@
   "eslintIgnore": [
     "node_modules",
     "build"
-  ]
+  ],
+  "devDependencies": {
+    "bunchee": "^3.9.3",
+    "fake-indexeddb": "^5.0.1",
+    "happy-dom": "^12.10.3",
+    "vitest": "^1.0.1"
+  }
 }

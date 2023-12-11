@@ -17,27 +17,6 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@w3ui/core": ["packages/core/src"],
-      "@w3ui/react": ["packages/react/src"],
-
-      "@w3ui/react-keyring": ["packages/react-keyring/src"],
-      "@w3ui/react-uploader": ["packages/react-uploader/src"],
-      "@w3ui/react-uploads-list": ["packages/react-uploads-list/src"],
-
-      "@w3ui/solid-keyring": ["packages/solid-keyring/src"],
-      "@w3ui/solid-uploader": ["packages/solid-uploader/src"],
-      "@w3ui/solid-uploads-list": ["packages/solid-uploads-list/src"],
-
-      "@w3ui/vue-keyring": ["packages/vue-keyring/src"],
-      "@w3ui/vue-uploader": ["packages/vue-uploader/src"],
-      "@w3ui/vue-uploads-list": ["packages/vue-uploads-list/src"],
-
-      "@w3ui/keyring-core": ["packages/keyring-core/src"],
-      "@w3ui/uploader-core": ["packages/uploader-core/src"],
-      "@w3ui/uploads-list-core": ["packages/uploads-list-core/src"]
-    }
+    "skipLibCheck": true
   }
 }

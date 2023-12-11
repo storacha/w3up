@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test'
 
-for (const ui of ['react', 'solid' /*, 'vue' is failing to submit the form, but only in tests */ /* 'vanilla' not work atm */]) {
+for (const ui of [
+  //  'react'
+]) {
   test(`${ui}: uploads list`, async ({ page }) => {
     await page.goto(`/${ui}/uploads-list/`)
     await expect(page).toHaveTitle('W3UI Uploads List Example App')

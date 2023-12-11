@@ -1,23 +1,8 @@
-# Example
+# React + Vite
 
-To run this example:
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-- Clone the w3ui repository and enter the `w3ui` directory
+Currently, two official plugins are available:
 
-  ```sh
-  git clone https://github.com/web3-storage/w3ui
-  cd w3ui
-  ```
-
-- Install dependencies:
-
-  ```sh
-  pnpm install
-  ```
-
-- Change to this example directory and run the example:
-
-  ```sh
-  cd examples/react/sign-up-in
-  pnpm run dev
-  ```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

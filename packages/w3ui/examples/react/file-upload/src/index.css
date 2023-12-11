@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .w3ui-button {
+    @apply text-white bg-slate-800 hover:bg-blue-800 rounded-sm py-2 px-8 text-sm font-medium transition-colors ease-in;
+  }
+  
+  .w3ui-button.active {
+    @apply bg-transparent;
+  }
+
+  .authenticator {
+    @apply bg-zinc-950 w-full h-screen flex flex-col justify-center items-center;
+  }
+}
+
+@layer utilities {
+  .bg-grad {
+    background-color: rgb(244 244 245);
+    background-image: linear-gradient(225deg, #ff149296 0%, #00ffff96 100%);
+    background-size: 400% 400%;
+    animation: bgPosDrift 60s ease infinite;
+  }
+}

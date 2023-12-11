@@ -11,17 +11,11 @@
   <a href="https://github.com/web3-storage/w3ui/blob/main/LICENSE.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
 </p>
 
-> ### ⚠️❗ w3ui and the underlying APIs are currently BETA preview features
-> Please read the beta Terms of Service ([web3.storage](https://console.web3.storage/terms), [NFT.Storage](https://console.nft.storage/terms)) for more details.
->
-> Open an issue on the repo or reach out to the #web3-storage channel on [IPFS Discord](https://docs.ipfs.tech/community/chat/#discord) if you have any 
-questions!
-
-This repo contains reusauble UI modules for the web3.storage w3up beta in your favourite UI framework, and a set of example apps to see them dance.
+This repo contains reusauble UI modules for the web3.storage w3up service in React and vanilla JavaScript, and a set of example apps to see them dance.
 
 ## Documentation
 
-[beta.ui.web3.storage](https://beta.ui.web3.storage)
+The documentation at [beta.ui.web3.storage](https://beta.ui.web3.storage) is currently out of date - updates coming soon!
 
 ### API
 

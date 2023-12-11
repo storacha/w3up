@@ -10,42 +10,6 @@
     },
     {
       "path": "packages/react"
-    },
-    {
-      "path": "packages/react-keyring"
-    },
-    {
-      "path": "packages/react-uploader"
-    },
-    {
-      "path": "packages/react-uploads-list"
-    },
-    {
-      "path": "packages/solid-keyring"
-    },
-    {
-      "path": "packages/solid-uploader"
-    },
-    {
-      "path": "packages/solid-uploads-list"
-    },
-    {
-      "path": "packages/vue-keyring"
-    },
-    {
-      "path": "packages/vue-uploader"
-    },
-    {
-      "path": "packages/vue-uploads-list"
-    },
-    {
-      "path": "packages/keyring-core"
-    },
-    {
-      "path": "packages/uploader-core"
-    },
-    {
-      "path": "packages/uploads-list-core"
     }
   ]
 }

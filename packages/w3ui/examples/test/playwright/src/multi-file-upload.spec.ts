@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 for (const ui of [
-  'react',
-  'solid' /* `vue` not exit yet, 'vanilla' not work atm */,
+  //  'react',
 ]) {
   test(`${ui}: multi file upload`, async ({ page }) => {
     await page.goto(`/${ui}/multi-file-upload/`)

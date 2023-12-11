@@ -21,4 +21,5 @@ module.exports = {
     'jsdoc/require-param-type': 'off',
     'import/extensions': 'off'
   },
+  ignorePatterns: ['dist/', 'vitest.config.ts']
 }

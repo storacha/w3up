@@ -14,7 +14,7 @@ import {
   useW3,
   ContextState,
   ContextActions
-} from './providers/Provider'
+} from './providers/Provider.jsx'
 
 export type AuthenticatorContextState = ContextState & {
   /**
