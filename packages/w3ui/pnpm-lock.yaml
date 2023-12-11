@@ -203,7 +203,7 @@ importers:
         specifier: ^0.3.6
         version: 0.3.8(react-dom@18.2.0)(react@18.2.0)
       '@w3ui/core':
-        specifier: workspace:^1.1.1
+        specifier: workspace:^
         version: link:../core
       ariakit-react-utils:
         specifier: 0.17.0-next.27
