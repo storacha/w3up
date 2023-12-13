@@ -31,6 +31,7 @@
   "exports": {
     ".": "./dist/src/index.js",
     "./car": "./dist/src/car.js",
+    "./fetch-with-upload-progress": "./dist/src/fetch-with-upload-progress.js",
     "./sharding": "./dist/src/sharding.js",
     "./upload": "./dist/src/upload.js",
     "./store": "./dist/src/store.js",
