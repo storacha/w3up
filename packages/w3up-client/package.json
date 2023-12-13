@@ -4,7 +4,7 @@
   "description": "Client for the web3.storage w3up api",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "typesVersions": {
     "*": {
@@ -25,56 +25,55 @@
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "node": "./src/index.node.js",
-      "import": "./src/index.js"
+      "node": "./dist/src/index.node.js",
+      "import": "./dist/src/index.js"
     },
     "./account": {
       "types": "./dist/src/account.d.ts",
-      "import": "./src/account.js"
+      "import": "./dist/src/account.js"
     },
     "./space": {
       "types": "./dist/src/space.d.ts",
-      "import": "./src/space.js"
+      "import": "./dist/src/space.js"
     },
     "./result": {
       "types": "./dist/src/result.d.ts",
-      "import": "./src/result.js"
+      "import": "./dist/src/result.js"
     },
     "./client": {
       "types": "./dist/src/client.d.ts",
-      "import": "./src/client.js"
+      "import": "./dist/src/client.js"
     },
     "./capability/access": {
       "types": "./dist/src/capability/access.d.ts",
-      "import": "./src/capability/access.js"
+      "import": "./dist/src/capability/access.js"
     },
     "./capability/space": {
       "types": "./dist/src/capability/space.d.ts",
-      "import": "./src/capability/space.js"
+      "import": "./dist/src/capability/space.js"
     },
     "./capability/store": {
       "types": "./dist/src/capability/store.d.ts",
-      "import": "./src/capability/store.js"
+      "import": "./dist/src/capability/store.js"
     },
     "./capability/subscription": {
       "types": "./dist/src/capability/subscription.d.ts",
-      "import": "./src/capability/subscription.js"
+      "import": "./dist/src/capability/subscription.js"
     },
     "./capability/upload": {
       "types": "./dist/src/capability/upload.d.ts",
-      "import": "./src/capability/upload.js"
+      "import": "./dist/src/capability/upload.js"
     },
     "./capability/usage": {
       "types": "./dist/src/capability/usage.d.ts",
-      "import": "./src/capability/usage.js"
+      "import": "./dist/src/capability/usage.js"
     },
-    "./types": "./src/types.js"
+    "./types": "./dist/src/types.js"
   },
   "publishConfig": {
     "access": "public"
   },
   "files": [
-    "src",
     "dist"
   ],
   "scripts": {
