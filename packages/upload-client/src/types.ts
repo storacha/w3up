@@ -1,5 +1,5 @@
 import type {
-  FetchOptions,
+  FetchOptions as IpfsUtilsFetchOptions,
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types.js'
 import { Link, UnknownLink, Version } from 'multiformats/link'
@@ -44,6 +44,16 @@ import {
   UsageReportSuccess,
   UsageReportFailure,
 } from '@web3-storage/capabilities/types'
+
+type Override<T, R> = Omit<T, keyof R> & R
+
+type FetchOptions = Override<
+  IpfsUtilsFetchOptions,
+  {
+    // `fetch` is a browser API and browsers don't have `Readable`
+    body: Exclude<IpfsUtilsFetchOptions['body'], import('node:stream').Readable>
+  }
+>
 
 export type {
   FetchOptions,
@@ -186,7 +196,13 @@ export interface Connectable {
   connection?: ConnectionView<Service>
 }
 
+export type FetchWithUploadProgress = (
+  url: string,
+  init?: FetchOptions
+) => Promise<Response>
+
 export interface UploadProgressTrackable {
+  fetchWithUploadProgress?: FetchWithUploadProgress
   onUploadProgress?: ProgressFn
 }
 
@@ -210,7 +226,9 @@ export interface RequestOptions
   extends Retryable,
     Abortable,
     Connectable,
-    UploadProgressTrackable {}
+    UploadProgressTrackable {
+  fetch?: typeof globalThis.fetch
+}
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}
 

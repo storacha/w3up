@@ -4,8 +4,6 @@ import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
-import fetchPkg from 'ipfs-utils/src/http/fetch.js'
-const { fetch } = fetchPkg
 
 /**
  *
@@ -90,10 +88,9 @@ export async function add(
   const responseAddUpload = result.out.ok
 
   const fetchWithUploadProgress =
-    /** @type {(url: string, init?: import('./types.js').FetchOptions) => Promise<Response>} */ (
-      fetch
-    )
+    options.fetchWithUploadProgress || options.fetch || globalThis.fetch
 
+  let fetchDidCallUploadProgressCb = false
   const res = await retry(
     async () => {
       try {
@@ -103,12 +100,14 @@ export async function add(
           body: car,
           headers: responseAddUpload.headers,
           signal: options.signal,
-          onUploadProgress: options.onUploadProgress
-            ? createUploadProgressHandler(
+          onUploadProgress: (status) => {
+            fetchDidCallUploadProgressCb = true
+            if (options.onUploadProgress)
+              createUploadProgressHandler(
                 responseAddUpload.url,
                 options.onUploadProgress
-              )
-            : undefined,
+              )(status)
+          },
           // @ts-expect-error - this is needed by recent versions of node - see https://github.com/bluesky-social/atproto/pull/470 for more info
           duplex: 'half',
         })
@@ -127,6 +126,16 @@ export async function add(
       retries: options.retries ?? REQUEST_RETRIES,
     }
   )
+
+  if (!fetchDidCallUploadProgressCb && options.onUploadProgress) {
+    // the fetch implementation didn't support onUploadProgress
+    const carBlob = new Blob([car])
+    options.onUploadProgress({
+      total: carBlob.size,
+      loaded: carBlob.size,
+      lengthComputable: false,
+    })
+  }
 
   if (!res.ok) {
     throw new Error(`upload failed: ${res.status}`)
