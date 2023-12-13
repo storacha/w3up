@@ -88,7 +88,9 @@ export async function add(
   const responseAddUpload = result.out.ok
 
   const fetchWithUploadProgress =
-    options.fetchWithUploadProgress || options.fetch || globalThis.fetch.bind(globalThis)
+    options.fetchWithUploadProgress ||
+    options.fetch ||
+    globalThis.fetch.bind(globalThis)
 
   let fetchDidCallUploadProgressCb = false
   const res = await retry(
