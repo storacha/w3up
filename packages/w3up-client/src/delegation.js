@@ -1,11 +1,12 @@
 import { Delegation as CoreDelegation } from '@ucanto/core/delegation'
 
+/* c8 ignore start */
 /**
  * @template {import('./types.js').Capabilities} C
  * @extends {CoreDelegation<C>}
  */
-/* c8 ignore next */
 export class Delegation extends CoreDelegation {
+  /* c8 ignore stop */
   /** @type {Record<string, any>} */
   #meta
 
