@@ -10,6 +10,7 @@ import { serviceSigner } from './fixtures.js'
 import { randomCAR } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import { validateAuthorization } from './helpers/utils.js'
+import { fetchWithUploadProgress } from '../src/fetch-with-upload-progress.js'
 
 describe('Store.add', () => {
   it('stores a DAG with the service', async () => {
@@ -71,6 +72,7 @@ describe('Store.add', () => {
           assert(typeof status.loaded === 'number' && status.loaded > 0)
           loaded = status.loaded
         },
+        fetchWithUploadProgress,
       }
     )
 
