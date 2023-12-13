@@ -5,6 +5,7 @@ import * as Ucanto from '@ucanto/interface'
 import { CID } from 'multiformats'
 import { UCAN } from '@web3-storage/capabilities'
 import { isExpired } from './delegations.js'
+import { uint8ArrayToArrayBuffer } from './utils/buffers.js'
 
 /** @typedef {import('./types.js').AgentDataModel} AgentDataModel */
 
@@ -65,7 +66,8 @@ export class AgentData {
         delegation: importDAG(
           value.delegation.map((d) => ({
             cid: CID.parse(d.cid).toV1(),
-            bytes: d.bytes,
+            bytes:
+              d.bytes instanceof Uint8Array ? d.bytes : new Uint8Array(d.bytes),
           }))
         ),
         meta: value.meta,
@@ -102,7 +104,7 @@ export class AgentData {
         meta: value.meta,
         delegation: [...value.delegation.export()].map((b) => ({
           cid: b.cid.toString(),
-          bytes: b.bytes,
+          bytes: uint8ArrayToArrayBuffer(b.bytes),
         })),
       })
     }

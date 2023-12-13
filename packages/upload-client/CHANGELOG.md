@@ -1,5 +1,20 @@
 # Changelog
 
+## [12.3.2](https://github.com/web3-storage/w3up/compare/upload-client-v12.3.1...upload-client-v12.3.2) (2023-12-07)
+
+
+### Fixes
+
+* memory usage ([#1227](https://github.com/web3-storage/w3up/issues/1227)) ([c9e7a49](https://github.com/web3-storage/w3up/commit/c9e7a49a32249408d89f8cdfe39433fdd9b6a527))
+
+## [12.3.1](https://github.com/web3-storage/w3up/compare/upload-client-v12.3.0...upload-client-v12.3.1) (2023-12-07)
+
+
+### Fixes
+
+* revert "feat: upload-client funcs have options.piece to opt in to piece link calculation ([#1220](https://github.com/web3-storage/w3up/issues/1220)) ([#1224](https://github.com/web3-storage/w3up/issues/1224)) ([2f238bf](https://github.com/web3-storage/w3up/commit/2f238bfe9eb9d4c184737069c9ecea10a2c4f9b3))
+* upgrade fr32-sha2-256-trunc-254-padded-binary-tree-multihash to 3.1.1. ([#1223](https://github.com/web3-storage/w3up/issues/1223)) ([0801d90](https://github.com/web3-storage/w3up/commit/0801d90a5acbdcca65e1afd8046021a01f8d60e8))
+
 ## [12.3.0](https://github.com/web3-storage/w3up/compare/upload-client-v12.2.0...upload-client-v12.3.0) (2023-12-06)
 
 

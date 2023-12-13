@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -468,8 +468,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       fr32-sha2-256-trunc254-padded-binary-tree-multihash:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^3.1.1
+        version: 3.1.1
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14
@@ -480,8 +480,8 @@ importers:
         specifier: ^5.1.2
         version: 5.1.2
       parallel-transform-web:
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.0.1
+        version: 1.0.1
       varint:
         specifier: ^6.0.0
         version: 6.0.0
@@ -7063,8 +7063,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@3.1.0:
-    resolution: {integrity: sha512-rpE+Ex1Hke2lPMonENYjqNJSF00fQqDMlECV8KvCLUlkv+l/PkLeZfo2/VFu909hOJQfGXHk/TXrANic0Z/Ymg==}
+  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@3.1.1:
+    resolution: {integrity: sha512-4nYelGDFTB/gvCK2QdbAKyLcir0uELmzsFSBAJmqHI6JktlIickWFOITRINGdKQU6nqkg+7kWu7i80w1QjAW9Q==}
     dev: false
 
   /fraction.js@4.3.7:
@@ -10074,8 +10074,8 @@ packages:
       semver: 7.5.4
     dev: true
 
-  /parallel-transform-web@1.0.0:
-    resolution: {integrity: sha512-LgvgIhpDB7f47eI5Wxss4cYQXeWoTCbPr0XVBeFB4icHbrdyEIO8viOoSFRYwufmHobeFbsMuwq+XiWetvwBpA==}
+  /parallel-transform-web@1.0.1:
+    resolution: {integrity: sha512-RtPU/7IuwPZ4ePcqoPxNCpjtaXYOkCVtnhh5tW3O78wy9jqVoV2hQHms17kUeu8DTYoOP+mykFLg2agwVKlwBw==}
     dev: false
 
   /param-case@3.0.4:

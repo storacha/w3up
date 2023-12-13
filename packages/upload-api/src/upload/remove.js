@@ -1,6 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Upload from '@web3-storage/capabilities/upload'
 import * as API from '../types.js'
+import { UploadNotFound } from './lib.js'
 
 /**
  * @param {API.UploadServiceContext} context
@@ -11,10 +12,11 @@ export function uploadRemoveProvider(context) {
     const { root } = capability.nb
     const space = Server.DID.parse(capability.with).did()
 
-    const result = await context.uploadTable.remove(space, root)
-
-    return {
-      ok: result || {},
+    const res = await context.uploadTable.remove(space, root)
+    if (res.error && res.error.name === 'RecordNotFound') {
+      return Server.error(new UploadNotFound(space, root))
     }
+
+    return res
   })
 }

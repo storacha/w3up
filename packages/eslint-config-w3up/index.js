@@ -10,7 +10,7 @@ module.exports = {
     EXPERIMENTAL_useProjectService: true,
   },
   rules: {
-    "@typescript-eslint/no-floating-promises": "error",
+    '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
 

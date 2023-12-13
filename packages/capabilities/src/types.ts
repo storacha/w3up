@@ -438,18 +438,34 @@ export type StoreRemove = InferInvokedCapability<typeof StoreCaps.remove>
 export type StoreList = InferInvokedCapability<typeof StoreCaps.list>
 
 export type StoreAddSuccess = StoreAddSuccessDone | StoreAddSuccessUpload
-export interface StoreAddSuccessDone {
-  status: 'done'
+
+export type StoreAddSuccessStatusUpload = 'upload'
+export type StoreAddSuccessStatusDone = 'done'
+
+export interface StoreAddSuccessResult {
+  /**
+   * Status of the item to store. A "done" status indicates that it is not
+   * necessary to upload the item. An "upload" status indicates that the item
+   * should be uploaded to the provided URL.
+   */
+  status: StoreAddSuccessStatusUpload | StoreAddSuccessStatusDone
+  /**
+   * Total bytes allocated in the space to accommodate this stored item.
+   * May be zero if the item is _already_ stored in _this_ space.
+   */
+  allocated: number
+  /** DID of the space this item will be stored in. */
   with: DID
+  /** CID of the item. */
   link: UnknownLink
-  url?: undefined
-  headers?: undefined
 }
 
-export interface StoreAddSuccessUpload {
-  status: 'upload'
-  with: DID
-  link: UnknownLink
+export interface StoreAddSuccessDone extends StoreAddSuccessResult {
+  status: StoreAddSuccessStatusDone
+}
+
+export interface StoreAddSuccessUpload extends StoreAddSuccessResult {
+  status: StoreAddSuccessStatusUpload
   url: ToString<URL>
   headers: Record<string, string>
 }
@@ -497,14 +513,7 @@ export type UploadAddSuccess = Omit<UploadListItem, 'insertedAt' | 'updatedAt'>
 
 export type UploadGetSuccess = UploadListItem
 
-export type UploadRemoveSuccess = UploadDidRemove | UploadDidNotRemove
-
-export interface UploadDidRemove extends UploadAddSuccess {}
-
-export interface UploadDidNotRemove {
-  root?: undefined
-  shards?: undefined
-}
+export type UploadRemoveSuccess = UploadAddSuccess
 
 export interface UploadListSuccess extends ListResponse<UploadListItem> {}
 

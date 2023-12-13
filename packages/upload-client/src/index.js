@@ -130,14 +130,12 @@ async function uploadBlockStream(conf, blocks, options = {}) {
         const bytes = new Uint8Array(await car.arrayBuffer())
         const [cid, piece] = await Promise.all([
           Store.add(conf, bytes, options),
-          options.piece
-            ? (async () => {
-                const multihashDigest = await PieceHasher.digest(bytes)
-                return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
-                  Link.create(raw.code, multihashDigest)
-                )
-              })()
-            : undefined,
+          (async () => {
+            const multihashDigest = await PieceHasher.digest(bytes)
+            return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
+              Link.create(raw.code, multihashDigest)
+            )
+          })(),
         ])
         const { version, roots, size } = car
         return { version, roots, size, cid, piece }

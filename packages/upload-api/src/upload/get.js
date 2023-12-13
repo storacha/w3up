@@ -1,6 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Upload from '@web3-storage/capabilities/upload'
 import * as API from '../types.js'
+import { UploadNotFound } from './lib.js'
 
 /**
  * @param {API.UploadServiceContext} context
@@ -14,16 +15,9 @@ export function uploadGetProvider(context) {
     }
     const space = Server.DID.parse(capability.with).did()
     const res = await context.uploadTable.get(space, root)
-    if (!res) {
-      return {
-        error: {
-          name: 'UploadNotFound',
-          message: 'Upload not found',
-        },
-      }
+    if (res.error && res.error.name === 'RecordNotFound') {
+      return Server.error(new UploadNotFound(space, root))
     }
-    return {
-      ok: res,
-    }
+    return res
   })
 }

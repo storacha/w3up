@@ -168,7 +168,7 @@ export type AgentDataExport = Pick<
     CIDString,
     {
       meta: DelegationMeta
-      delegation: Array<{ cid: CIDString; bytes: Uint8Array }>
+      delegation: Array<{ cid: CIDString; bytes: ArrayBuffer }>
     }
   >
 }

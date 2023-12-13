@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.2.1](https://github.com/web3-storage/w3up/compare/w3up-client-v11.2.0...w3up-client-v11.2.1) (2023-12-07)
+
+
+### Fixes
+
+* remove mention of registerSpace from w3up-client README ([#1214](https://github.com/web3-storage/w3up/issues/1214)) ([38c5b37](https://github.com/web3-storage/w3up/commit/38c5b3762b71e5cf70fe5d916c27b85cbfbb8c73))
+
 ## [11.2.0](https://github.com/web3-storage/w3up/compare/w3up-client-v11.1.3...w3up-client-v11.2.0) (2023-11-29)
 
 

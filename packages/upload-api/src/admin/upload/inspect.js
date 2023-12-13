@@ -24,9 +24,7 @@ const inspect = async ({ capability }, context) => {
     return { error: new UnknownProvider(capability.with) }
   }
 
-  return {
-    ok: await context.uploadTable.inspect(capability.nb.root),
-  }
+  return await context.uploadTable.inspect(capability.nb.root)
 }
 
 class UnknownProvider extends Provider.Failure {

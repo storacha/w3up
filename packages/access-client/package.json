@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "18.0.5",
+  "version": "18.0.7",
   "description": "w3access client",
   "homepage": "https://web3.storage",
   "repository": {
@@ -18,11 +18,11 @@
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "check": "tsc --build",
-    "test": "pnpm -r run build && npm run test:node && npm run test:browser",
+    "test": "pnpm -r run build && pnpm run test:node && pnpm run test:browser",
     "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "testw": "watch 'pnpm test' src test --interval 1",
-    "rc": "npm version prerelease --preid rc"
+    "rc": "pnpm version prerelease --preid rc"
   },
   "exports": {
     ".": {

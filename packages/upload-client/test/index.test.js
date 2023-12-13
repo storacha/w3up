@@ -51,7 +51,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {import('../src/types.js').StoreAddSuccessUpload} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -62,13 +62,12 @@ describe('uploadFile', () => {
 
     const service = mockService({
       store: {
-        add: provide(StoreCapabilities.add, ({ invocation }) => {
+        add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, StoreCapabilities.add.can)
-          assert.equal(invCap.with, space.did())
-          return { ok: res }
+          assert.equal(capability.can, StoreCapabilities.add.can)
+          assert.equal(capability.with, space.did())
+          return { ok: { ...res, allocated: capability.nb.size } }
         }),
       },
       upload: {
@@ -143,7 +142,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -159,6 +158,7 @@ describe('uploadFile', () => {
             link: /** @type {import('../src/types.js').CARLink} */ (
               capability.nb.link
             ),
+            allocated: capability.nb.size,
           },
         })),
       },
@@ -229,7 +229,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -251,6 +251,7 @@ describe('uploadDirectory', () => {
               link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
+              allocated: capability.nb.size,
             },
           }
         }),
@@ -323,7 +324,7 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -339,6 +340,7 @@ describe('uploadDirectory', () => {
             link: /** @type {import('../src/types.js').CARLink} */ (
               capability.nb.link
             ),
+            allocated: capability.nb.size,
           },
         })),
       },
@@ -409,6 +411,7 @@ describe('uploadDirectory', () => {
                 link: /** @type {import('../src/types.js').CARLink} */ (
                   invocation.capability.nb.link
                 ),
+                allocated: invocation.capability.nb.size,
               },
             }
           }),
@@ -545,7 +548,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -567,6 +570,7 @@ describe('uploadCAR', () => {
               link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
+              allocated: capability.nb.size,
             },
           }
         }),
@@ -646,7 +650,7 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'>} */
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
     const res = {
       status: 'upload',
       headers: { 'x-test': 'true' },
@@ -659,15 +663,15 @@ describe('uploadCAR', () => {
         add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, StoreCapabilities.add.can)
-          assert.equal(invCap.with, space.did())
+          assert.equal(capability.can, StoreCapabilities.add.can)
+          assert.equal(capability.with, space.did())
           return {
             ok: {
               ...res,
               link: /** @type {import('../src/types.js').CARLink} */ (
                 capability.nb.link
               ),
+              allocated: capability.nb.size,
             },
           }
         }),
@@ -705,7 +709,7 @@ describe('uploadCAR', () => {
       car,
       {
         connection,
-        onShardStored: (meta) => meta.piece && pieceCIDs.push(meta.piece),
+        onShardStored: (meta) => pieceCIDs.push(meta.piece),
       }
     )
 
@@ -713,28 +717,9 @@ describe('uploadCAR', () => {
     assert.equal(service.store.add.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
-    // pieceCID calculation is disabled by default
-    assert.equal(pieceCIDs.length, 0)
-
-    // can opt in to calculating piece link
-    /** @type {Array<import('@web3-storage/upload-client/types').CARMetadata>} */
-    const shards2 = []
-    await uploadCAR(
-      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
-      car,
-      {
-        connection,
-        onShardStored: (meta) => shards2.push(meta),
-        piece: true,
-      }
-    )
-    assert.equal(shards2.length, 1)
-    assert.ok(
-      shards2[0].piece,
-      'shard piece cid is truthy because options.piece=true'
-    )
+    assert.equal(pieceCIDs.length, 1)
     assert.equal(
-      shards2[0].piece.toString(),
+      pieceCIDs[0].toString(),
       'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
     )
   })
