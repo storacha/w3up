@@ -133,7 +133,7 @@ const toCapabilities = (allow) => {
  * Represents an owned space, meaning a space for which we have a private key
  * and consequently have full authority over.
  */
-class OwnedSpace {
+export class OwnedSpace {
   /**
    * @param {Model} model
    */
@@ -290,7 +290,7 @@ export const provision = async (space, { proofs, agent }) => {
  * Represents a shared space, meaning a space for which we have a delegation
  * and consequently have limited authority over.
  */
-class SharedSpace {
+export class SharedSpace {
   /**
    * @typedef {object} SharedSpaceModel
    * @property {API.SpaceDID} id
