@@ -12,7 +12,7 @@
   "license": "Apache-2.0 OR MIT",
   "type": "module",
   "types": "dist/src/index.d.ts",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "attw": "attw --pack .",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
