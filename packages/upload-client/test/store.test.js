@@ -63,7 +63,8 @@ describe('Store.add', () => {
       channel: server,
     })
 
-    let loaded = 0
+    /** @type {import('../src/types.js').ProgressStatus[]} */
+    const progress = []
     const carCID = await Store.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
@@ -71,7 +72,7 @@ describe('Store.add', () => {
         connection,
         onUploadProgress: (status) => {
           assert(typeof status.loaded === 'number' && status.loaded > 0)
-          loaded = status.loaded
+          progress.push(status)
         },
         fetchWithUploadProgress,
       }
@@ -79,10 +80,35 @@ describe('Store.add', () => {
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
-    assert.equal(loaded, 225)
+    assert.equal(
+      progress.reduce((max, { loaded }) => Math.max(max, loaded), 0),
+      225
+    )
 
     assert(carCID)
     assert.equal(carCID.toString(), car.cid.toString())
+
+    // make sure it can also work without fetchWithUploadProgress
+    /** @type {import('../src/types.js').ProgressStatus[]} */
+    let progressWithoutUploadProgress = []
+    const addedWithoutUploadProgress = await Store.add(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      car,
+      {
+        connection,
+        onUploadProgress: (status) => {
+          progressWithoutUploadProgress.push(status)
+        },
+      }
+    )
+    assert.equal(addedWithoutUploadProgress.toString(), car.cid.toString())
+    assert.equal(
+      progressWithoutUploadProgress.reduce(
+        (max, { loaded }) => Math.max(max, loaded),
+        0
+      ),
+      225
+    )
   })
 
   it('throws for bucket URL client error 4xx', async () => {
