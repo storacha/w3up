@@ -1,5 +1,17 @@
 # Changelog
 
+## [18.1.0](https://github.com/web3-storage/w3up/compare/access-v18.0.7...access-v18.1.0) (2023-12-14)
+
+
+### Features
+
+* expose OwnedSpace and SharedSpace from access-client ([#1244](https://github.com/web3-storage/w3up/issues/1244)) ([8ec1b44](https://github.com/web3-storage/w3up/commit/8ec1b446590399aa236904c1b6937b7be5d83054))
+
+
+### Fixes
+
+* point `main` at files included in the package ([#1241](https://github.com/web3-storage/w3up/issues/1241)) ([c0b306d](https://github.com/web3-storage/w3up/commit/c0b306df75b21d0979e407f04f0a23f67d5248af))
+
 ## [18.0.7](https://github.com/web3-storage/w3up/compare/access-v18.0.6...access-v18.0.7) (2023-12-13)
 
 
