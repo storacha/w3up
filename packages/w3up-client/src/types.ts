@@ -22,6 +22,8 @@ export type {
   AccountDID,
   ProviderDID,
   SpaceDID,
+  OwnedSpace,
+  SharedSpace,
 } from '@web3-storage/access/types'
 
 export type ProofQuery = Record<Resource, Record<Ability, Unit>>

@@ -66,6 +66,7 @@ export * from '@web3-storage/capabilities/types'
 export * from './errors.js'
 export * from '@web3-storage/did-mailto'
 export type { Agent } from './agent.js'
+export type { OwnedSpace, SharedSpace } from './space.js'
 
 export interface SpaceInfoResult {
   // space did
