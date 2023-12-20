@@ -93,6 +93,58 @@ importers:
         specifier: ^5.0.0
         version: 5.0.5
 
+  examples/react/multi-file-upload:
+    dependencies:
+      '@heroicons/react':
+        specifier: ^2.0.17
+        version: 2.0.18(react@18.2.0)
+      '@w3ui/example-react-components':
+        specifier: workspace:^
+        version: link:../components
+      '@w3ui/react':
+        specifier: workspace:^
+        version: link:../../../packages/react
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.42
+      '@types/react-dom':
+        specifier: ^18.2.15
+        version: 18.2.17
+      '@vitejs/plugin-react':
+        specifier: ^4.2.0
+        version: 4.2.1(vite@5.0.5)
+      autoprefixer:
+        specifier: ^10.4.13
+        version: 10.4.16(postcss@8.4.32)
+      eslint:
+        specifier: ^8.53.0
+        version: 8.55.0
+      eslint-plugin-react:
+        specifier: ^7.33.2
+        version: 7.33.2(eslint@8.55.0)
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.0
+        version: 4.6.0(eslint@8.55.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.4
+        version: 0.4.5(eslint@8.55.0)
+      postcss:
+        specifier: ^8.4.21
+        version: 8.4.32
+      tailwindcss:
+        specifier: ^3.2.4
+        version: 3.3.6
+      vite:
+        specifier: ^5.0.0
+        version: 5.0.5
+
   examples/react/sign-up-in:
     dependencies:
       '@heroicons/react':
@@ -110,6 +162,61 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.37
+        version: 18.2.42
+      '@types/react-dom':
+        specifier: ^18.2.15
+        version: 18.2.17
+      '@vitejs/plugin-react':
+        specifier: ^4.2.0
+        version: 4.2.1(vite@5.0.5)
+      autoprefixer:
+        specifier: ^10.4.13
+        version: 10.4.16(postcss@8.4.32)
+      eslint:
+        specifier: ^8.53.0
+        version: 8.55.0
+      eslint-plugin-react:
+        specifier: ^7.33.2
+        version: 7.33.2(eslint@8.55.0)
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.0
+        version: 4.6.0(eslint@8.55.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.4
+        version: 0.4.5(eslint@8.55.0)
+      postcss:
+        specifier: ^8.4.21
+        version: 8.4.32
+      tailwindcss:
+        specifier: ^3.2.4
+        version: 3.3.6
+      vite:
+        specifier: ^5.0.0
+        version: 5.0.5
+
+  examples/react/uploads-list:
+    dependencies:
+      '@heroicons/react':
+        specifier: ^2.0.17
+        version: 2.0.18(react@18.2.0)
+      '@w3ui/example-react-components':
+        specifier: workspace:^
+        version: link:../components
+      '@w3ui/react':
+        specifier: workspace:^
+        version: link:../../../packages/react
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      swr:
+        specifier: ^2.2.4
+        version: 2.2.4(react@18.2.0)
     devDependencies:
       '@types/react':
         specifier: ^18.2.37
@@ -2489,6 +2596,10 @@ packages:
     dependencies:
       slice-ansi: 5.0.0
       string-width: 5.1.2
+    dev: false
+
+  /client-only@0.0.1:
+    resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
     dev: false
 
   /clipboardy@3.0.0:
@@ -5756,6 +5867,16 @@ packages:
   /supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  /swr@2.2.4(react@18.2.0):
+    resolution: {integrity: sha512-njiZ/4RiIhoOlAaLYDqwz5qH/KZXVilRLvomrx83HjzCWTfa+InyfAjv05PSFxnmLzZkNO9ZfvgoqzAaEI4sGQ==}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      client-only: 0.0.1
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
 
   /symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}

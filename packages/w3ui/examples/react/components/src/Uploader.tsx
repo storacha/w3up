@@ -9,14 +9,16 @@ function humanFileSize (bytes: number): string {
 
 interface UploadingProps {
   file?: File
+  files?: File[]
   storedDAGShards: CARMetadata[]
   uploadProgress: UploadProgress
 }
 
-function Uploading ({ file, storedDAGShards, uploadProgress }: UploadingProps): ReactNode {
+function Uploading ({ file, files, storedDAGShards, uploadProgress }: UploadingProps): ReactNode {
+  const fileName = ((files != null) && files.length > 1) ? 'your files' : file?.name
   return (
     <div className='flex flex-col items-center w-full'>
-      <h1 className='font-bold text-sm uppercase text-zinc-950'>Uploading {file?.name}</h1>
+      <h1 className='font-bold text-sm uppercase text-zinc-950'>Uploading {fileName}</h1>
       <UploadLoader uploadProgress={uploadProgress} />
       {storedDAGShards?.map(({ cid, size }) => (
         <p className='text-xs max-w-full overflow-hidden text-ellipsis' key={cid.toString()}>
@@ -40,20 +42,22 @@ function Errored ({ error }: { error?: Error }): ReactNode {
 
 interface DoneProps {
   file?: File
+  files?: File[]
   dataCID?: AnyLink
   storedDAGShards: CARMetadata[]
 }
 
-const Done = ({ file, dataCID, storedDAGShards }: DoneProps): ReactNode => {
+const Done = ({ file, files, dataCID, storedDAGShards }: DoneProps): ReactNode => {
   const cidString: string = dataCID?.toString() ?? ''
+  const fileName = ((files != null) && files.length > 1) ? 'your files' : file?.name
   return (
     <div>
-      <h1 className='near-white'>Done!</h1>
-      <p className='f6 code truncate'>{cidString}</p>
-      <p><a href={`https://w3s.link/ipfs/${cidString}`} className='blue'>View {file?.name} on IPFS Gateway.</a></p>
-      <p className='near-white'>Chunks ({storedDAGShards.length}):</p>
+      <h1 className='text-gray-800'>Done!</h1>
+      <p className='truncate'>{cidString}</p>
+      <p><a href={`https://w3s.link/ipfs/${cidString}`} className='text-blue-800'>View {fileName} on IPFS Gateway.</a></p>
+      <p className='text-gray-800'>Chunks ({storedDAGShards.length}):</p>
       {storedDAGShards.map(({ cid, size }) => (
-        <p key={cid.toString()} className='f7 truncate'>
+        <p key={cid.toString()} className='truncate'>
           {cid.toString()} ({size} bytes)
         </p>
       ))}
@@ -62,16 +66,16 @@ const Done = ({ file, dataCID, storedDAGShards }: DoneProps): ReactNode => {
 }
 
 function UploaderConsole (): ReactNode {
-  const [{ status, file, error, dataCID, storedDAGShards, uploadProgress }] =
+  const [{ status, file, files, error, dataCID, storedDAGShards, uploadProgress }] =
     useUploader()
 
   switch (status) {
     case UploadStatus.Uploading: {
-      return <Uploading file={file} storedDAGShards={storedDAGShards} uploadProgress={uploadProgress} />
+      return <Uploading file={file} files={files} storedDAGShards={storedDAGShards} uploadProgress={uploadProgress} />
     }
     case UploadStatus.Succeeded: {
       return (
-        <Done file={file} dataCID={dataCID} storedDAGShards={storedDAGShards} />
+        <Done file={file} files={files} dataCID={dataCID} storedDAGShards={storedDAGShards} />
       )
     }
     case UploadStatus.Failed: {
@@ -84,19 +88,21 @@ function UploaderConsole (): ReactNode {
 }
 
 function UploaderContents (): ReactNode {
-  const [{ status, file }] = useUploader()
+  const [{ status, file, files }] = useUploader()
   const hasFile = file !== undefined
   if (status === UploadStatus.Idle) {
     return hasFile
       ? (
         <>
-          <div className='flex flex-row'>
-            <div className='flex flex-col justify-around'>
-              <span className='text-sm'>{file.name}</span>
-              <span className='text-xs text-white/75 font-mono'>
-                {humanFileSize(file.size)}
-              </span>
-            </div>
+          <div className='flex flex-row space-x-2 flex-wrap max-w-xl'>
+            {files?.map((f, i) => (
+              <div className='flex flex-col justify-around' key={i}>
+                <span className='text-sm'>{f.name}</span>
+                <span className='text-xs text-white/75 font-mono'>
+                  {humanFileSize(f.size)}
+                </span>
+              </div>
+            ))}
           </div>
           <div className='p-4'>
             <button
@@ -119,14 +125,19 @@ function UploaderContents (): ReactNode {
   }
 }
 
-export function UploaderForm (): ReactNode {
+interface UploaderFormProps {
+  multiple?: boolean
+  allowDirectory?: boolean
+}
+
+export function UploaderForm ({ multiple, allowDirectory }: UploaderFormProps): ReactNode {
   const [{ file }] = useUploader()
   const hasFile = file !== undefined
   return (
     <Uploader.Form className="m-12">
       <div className='relative shadow h-52 p-8 rounded-md bg-white/5 hover:bg-white/20 border-2 border-dotted border-zinc-950 flex flex-col justify-center items-center text-center'>
         <label className={`${hasFile ? 'hidden' : 'block h-px w-px overflow-hidden absolute whitespace-nowrap'}`}>File:</label>
-        <Uploader.Input className={`${hasFile ? 'hidden' : 'block absolute inset-0 cursor-pointer w-full opacity-0'}`} />
+        <Uploader.Input multiple={multiple} allowDirectory={allowDirectory} className={`${hasFile ? 'hidden' : 'block absolute inset-0 cursor-pointer w-full opacity-0'}`} />
         <UploaderContents />
         {hasFile ? '' : <span>Drag files or Click to Browse</span>}
       </div>
