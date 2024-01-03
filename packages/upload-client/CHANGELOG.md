@@ -1,5 +1,23 @@
 # Changelog
 
+## [13.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v12.3.2...upload-client-v13.0.0) (2023-12-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213))
+
+### Features
+
+* dont use ipfs-utils fetch with upload progress by default  ([#1240](https://github.com/web3-storage/w3up/issues/1240)) ([86aedbc](https://github.com/web3-storage/w3up/commit/86aedbcb070ae67093f30b2b724766dee4c43f2c))
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213)) ([5d52e44](https://github.com/web3-storage/w3up/commit/5d52e447c14e7f7fd334e7ff575e032b7b0d89d7))
+
+
+### Fixes
+
+* bind globalThis.fetch to globalThis ([#1242](https://github.com/web3-storage/w3up/issues/1242)) ([ef59358](https://github.com/web3-storage/w3up/commit/ef5935831eeedd35870a56abd2c7db2bcf47d1ca))
+* point `main` at files included in the package ([#1241](https://github.com/web3-storage/w3up/issues/1241)) ([c0b306d](https://github.com/web3-storage/w3up/commit/c0b306df75b21d0979e407f04f0a23f67d5248af))
+
 ## [12.3.2](https://github.com/web3-storage/w3up/compare/upload-client-v12.3.1...upload-client-v12.3.2) (2023-12-07)
 
 
