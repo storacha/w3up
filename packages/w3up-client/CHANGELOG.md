@@ -1,5 +1,22 @@
 # Changelog
 
+## [12.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v11.2.1...w3up-client-v12.0.0) (2024-01-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213))
+
+### Features
+
+* expose OwnedSpace and SharedSpace from access-client ([#1244](https://github.com/web3-storage/w3up/issues/1244)) ([8ec1b44](https://github.com/web3-storage/w3up/commit/8ec1b446590399aa236904c1b6937b7be5d83054))
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213)) ([5d52e44](https://github.com/web3-storage/w3up/commit/5d52e447c14e7f7fd334e7ff575e032b7b0d89d7))
+
+
+### Fixes
+
+* copy src into dist in w3up-client ([#1239](https://github.com/web3-storage/w3up/issues/1239)) ([468bb79](https://github.com/web3-storage/w3up/commit/468bb79cfd6cbc7d513d0174da5b3b43a3f82cba))
+
 ## [11.2.1](https://github.com/web3-storage/w3up/compare/w3up-client-v11.2.0...w3up-client-v11.2.1) (2023-12-07)
 
 
