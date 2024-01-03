@@ -285,8 +285,8 @@ importers:
         specifier: ^2.0.2
         version: 2.1.0
       '@web3-storage/w3up-client':
-        specifier: ^11.2.1
-        version: 11.2.1
+        specifier: ^12.0.0
+        version: 12.0.0
     devDependencies:
       bunchee:
         specifier: ^3.9.3
@@ -1985,6 +1985,29 @@ packages:
       uint8arrays: 4.0.9
     dev: false
 
+  /@web3-storage/access@18.1.0:
+    resolution: {integrity: sha512-M6hMIm7GRJxN+l41u2+aK97whe15YF7vYVqvpm4dsbk8HQBzmjrRXw9jKhh71jPNgVRCpwvhLYpUM+lEgImvhw==}
+    dependencies:
+      '@ipld/car': 5.2.4
+      '@ipld/dag-ucan': 3.4.0
+      '@scure/bip39': 1.2.1
+      '@ucanto/client': 9.0.0
+      '@ucanto/core': 9.0.1
+      '@ucanto/interface': 9.0.0
+      '@ucanto/principal': 9.0.0
+      '@ucanto/transport': 9.0.0
+      '@ucanto/validator': 9.0.1
+      '@web3-storage/capabilities': 13.0.0
+      '@web3-storage/did-mailto': 2.1.0
+      bigint-mod-arith: 3.3.1
+      conf: 11.0.2
+      multiformats: 12.1.3
+      one-webcrypto: github.com/web3-storage/one-webcrypto/5148cd14d5489a8ac4cd38223870e02db15a2382
+      p-defer: 4.0.0
+      type-fest: 3.13.1
+      uint8arrays: 4.0.9
+    dev: false
+
   /@web3-storage/capabilities@12.1.0:
     resolution: {integrity: sha512-SlYdPqCokDHb55zlZOvh+n8uEMOrEU413Z1MzQ8HvULpbzfcEtGyOiDgrAhdNEZtPnWHqaUEtU7o829Yw2Ra5w==}
     dependencies:
@@ -2031,8 +2054,8 @@ packages:
       '@web3-storage/capabilities': 12.1.0
     dev: false
 
-  /@web3-storage/upload-client@12.3.2:
-    resolution: {integrity: sha512-vtf8Sb9GWfde9+tL+9Yu6bpB2Erzk/w99LTW55V6VPF6IdhmvPqAD83/X6w5G7VfxfEbFZ3ElRCqA8hOasP8aQ==}
+  /@web3-storage/upload-client@13.0.0:
+    resolution: {integrity: sha512-NCasbk7msHiQ+e+7TIYiOJyYcoiUlcK44FIYffDX+k4mb9J0qfA93Cw3FQSHe4D/3nEm5nCYs1rNxl07OIOpoQ==}
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-cbor': 9.0.6
@@ -2041,7 +2064,7 @@ packages:
       '@ucanto/client': 9.0.0
       '@ucanto/interface': 9.0.0
       '@ucanto/transport': 9.0.0
-      '@web3-storage/capabilities': 12.1.0
+      '@web3-storage/capabilities': 13.0.0
       fr32-sha2-256-trunc254-padded-binary-tree-multihash: 3.1.1
       ipfs-utils: 9.0.14
       multiformats: 12.1.3
@@ -2052,8 +2075,8 @@ packages:
       - encoding
     dev: false
 
-  /@web3-storage/w3up-client@11.2.1:
-    resolution: {integrity: sha512-04/OfMKUjPoF+l87VjItYFb1wBaljiV8YJbBMlNm9Zf7gazWPDxjfuSWYUMYb8UAPhxQZnV2uGrqUaNqPlUqUg==}
+  /@web3-storage/w3up-client@12.0.0:
+    resolution: {integrity: sha512-94nEsrLf93U3ym4C/Ae9kqu4MtQG9YgRp2tXkOwZdVqGR7NCf92CMBfbM2aIPxIM5i1CIe7EMbb+SLFZYRzh4A==}
     dependencies:
       '@ipld/dag-ucan': 3.4.0
       '@ucanto/client': 9.0.0
@@ -2061,11 +2084,11 @@ packages:
       '@ucanto/interface': 9.0.0
       '@ucanto/principal': 9.0.0
       '@ucanto/transport': 9.0.0
-      '@web3-storage/access': 18.0.6
-      '@web3-storage/capabilities': 12.1.0
+      '@web3-storage/access': 18.1.0
+      '@web3-storage/capabilities': 13.0.0
       '@web3-storage/did-mailto': 2.1.0
       '@web3-storage/filecoin-client': 3.2.0
-      '@web3-storage/upload-client': 12.3.2
+      '@web3-storage/upload-client': 13.0.0
     transitivePeerDependencies:
       - encoding
     dev: false
