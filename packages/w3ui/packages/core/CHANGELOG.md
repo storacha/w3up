@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/web3-storage/w3ui/compare/core-v2.0.1...core-v2.0.2) (2024-01-03)
+
+
+### Bug Fixes
+
+* upgrade upload client ([#617](https://github.com/web3-storage/w3ui/issues/617)) ([24e348c](https://github.com/web3-storage/w3ui/commit/24e348ce2451a9feb1b8cb5918a7d2f0a63a20b6))
+
 ## [2.0.1](https://github.com/web3-storage/w3ui/compare/core-v2.0.0...core-v2.0.1) (2023-12-11)
 
 
