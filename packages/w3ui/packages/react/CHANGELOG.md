@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/web3-storage/w3ui/compare/react-v2.0.0...react-v2.1.0) (2024-01-03)
+
+
+### Features
+
+* support multi file upload and directory wrapping ([#615](https://github.com/web3-storage/w3ui/issues/615)) ([a924abf](https://github.com/web3-storage/w3ui/commit/a924abf4c18a3845dd6bcb0514802f513efbd247))
+
 ## [2.0.0](https://github.com/web3-storage/w3ui/compare/react-v1.3.0...react-v2.0.0) (2023-12-11)
 
 
