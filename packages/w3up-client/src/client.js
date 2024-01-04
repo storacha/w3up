@@ -311,4 +311,46 @@ export class Client extends Base {
       proofs: options.proofs,
     })
   }
+
+  /**
+   * Removes association of a content CID with the space. Optionally, also removes
+   * association of CAR shards with space.
+   *
+   * @param {import('multiformats').UnknownLink} contentCID
+   * @param {object} [options]
+   * @param {boolean} [options.shards]
+   */
+  async remove(contentCID, options = {}) {
+    // Remove association of content CID with selected space.
+    let upload
+    try {
+      upload = await this.capability.upload.remove(contentCID)
+      /* c8 ignore start */
+    } catch (/** @type {any} */ err) {
+      throw new Error(`remove failed for ${contentCID}: ${err.message ?? err}`)
+    }
+    /* c8 ignore stop */
+
+    // Shortcut if there is no request to remove shards
+    if (!options.shards) {
+      return
+    }
+
+    // Check if we have information about the shards to remove
+    if (!upload.root) {
+      throw new Error(
+        `⁂ upload not found. could not determine shards to remove.`
+      )
+    }
+    /* c8 ignore start */
+    if (!upload.shards || !upload.shards.length) {
+      return
+    }
+    /* c8 ignore stop */
+
+    // Remove shards
+    await Promise.allSettled(
+      upload.shards.map((shard) => this.capability.store.remove(shard))
+    )
+  }
 }
