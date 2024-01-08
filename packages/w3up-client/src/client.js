@@ -57,23 +57,27 @@ export class Client extends Base {
 
   /**
    * Verify and return Abilities.
-   * 
-   * Given a list of strings representing capability names (Abilities), 
+   *
+   * Given a list of strings representing capability names (Abilities),
    * verify that all the strings are valid Abilities and return Abilities[].
-   * 
+   *
    * Abilities[] is still just a list of strings, but this helps us play
    * nice with Typescript.
-   * 
+   *
    * @param {string[]} abilities
    * @returns {import('@web3-storage/access').Abilities[]}
    */
   static abilities(abilities) {
     for (const ability of abilities) {
-      if (!abilitiesAsStrings.includes(/** @type {import('@web3-storage/access').Abilities} */(ability))) {
+      if (
+        !abilitiesAsStrings.includes(
+          /** @type {import('@web3-storage/access').Abilities} */ (ability)
+        )
+      ) {
         throw new Error(`${ability} is not a supported capability`)
       }
     }
-    return /** @type {import('@web3-storage/access').Abilities[]} */(abilities)
+    return /** @type {import('@web3-storage/access').Abilities[]} */ (abilities)
   }
 
   did() {
