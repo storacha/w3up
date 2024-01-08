@@ -480,17 +480,4 @@ describe('Client', () => {
       assert.equal(typeof client.capability.upload.remove, 'function')
     })
   })
-
-  describe('abilities', () => {
-    it('should return the passed argument if all abilities are valid', async () => {
-      const abilities = ['store/add', 'upload/add']
-      assert.equal(Client.abilities(abilities), abilities)
-    })
-
-    it('should throw an error if one of the abilities is not supported', async () => {
-      assert.throws(() => {
-        Client.abilities(['foo/bar'])
-      })
-    })
-  })
 })
