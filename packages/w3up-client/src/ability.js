@@ -12,13 +12,13 @@ const setOfAbilities = new Set(abilitiesAsStrings)
  * nice with Typescript.
  *
  * @param {string[]} abilities
- * @returns {import('@web3-storage/capabilities/types').Ability[]}
+ * @returns {import('@web3-storage/capabilities/types').W3UpAbility[]}
  */
 export function asAbilities(abilities) {
   for (const ability of abilities) {
     if (
       !setOfAbilities.has(
-        /** @type {import('@web3-storage/capabilities/types').Ability} */ (
+        /** @type {import('@web3-storage/capabilities/types').W3UpAbility} */ (
           ability
         )
       )
@@ -26,7 +26,7 @@ export function asAbilities(abilities) {
       throw new Error(`${ability} is not a supported capability`)
     }
   }
-  return /** @type {import('@web3-storage/capabilities/types').Ability[]} */ (
+  return /** @type {import('@web3-storage/capabilities/types').W3UpAbility[]} */ (
     abilities
   )
 }
