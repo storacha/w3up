@@ -122,3 +122,41 @@ test('wrapping a file in a directory', async () => {
 
   expect(client.uploadDirectory).toHaveBeenCalled()
 })
+
+test('uploading a CAR directly', async () => {
+  const cid = Link.parse('bafybeibrqc2se2p3k4kfdwg7deigdggamlumemkiggrnqw3edrjosqhvnm')
+  const client = {
+    uploadCAR: vi.fn().mockImplementation(() => cid)
+  }
+
+  const contextValue: ContextValue = [
+    {
+      ...ContextDefaultValue[0],
+      // @ts-expect-error not a real client
+      client
+    },
+    ContextDefaultValue[1]
+  ]
+  const handleComplete = vi.fn()
+  render(
+    <Context.Provider value={contextValue}>
+      <Uploader onUploadComplete={handleComplete} defaultUploadAsCAR>
+        <Uploader.Form>
+          <Uploader.Input data-testid='file-upload' />
+          <input type='submit' value='Upload' />
+        </Uploader.Form>
+      </Uploader>
+    </Context.Provider>
+  )
+
+  // this isn't a real CAR but that's probably ok for a test
+  const file = new File(['hello'], 'hello.car', { type: 'application/vnd.ipld.car' })
+
+  const fileInput = screen.getByTestId('file-upload')
+  await user.upload(fileInput, file)
+
+  const submitButton = screen.getByText('Upload')
+  await user.click(submitButton)
+
+  expect(client.uploadCAR).toHaveBeenCalled()
+})
