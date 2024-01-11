@@ -293,7 +293,7 @@ export const WrapInDirectoryCheckbox: Component<WrapInDirectoryCheckboxProps> = 
     },
     []
   )
-  return createElement('input', { ...props, type: 'checkbox', value: wrapInDirectory, onChange })
+  return createElement('input', { ...props, type: 'checkbox', checked: wrapInDirectory, onChange })
 })
 
 export type UploaderFormOptions<T extends As = 'form'> = Options<T>
