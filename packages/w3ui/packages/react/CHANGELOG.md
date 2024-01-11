@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.0](https://github.com/web3-storage/w3ui/compare/react-v2.1.0...react-v2.2.0) (2024-01-11)
+
+
+### Features
+
+* support CAR uploads ([#620](https://github.com/web3-storage/w3ui/issues/620)) ([57ebba2](https://github.com/web3-storage/w3ui/commit/57ebba2ef1013d06f329c6f0e714b1b5c2b9bf15))
+
+
+### Bug Fixes
+
+* checkbox state uses `checked` not `value` ([#622](https://github.com/web3-storage/w3ui/issues/622)) ([608bdc1](https://github.com/web3-storage/w3ui/commit/608bdc1fc299b2e369c6ef77ab2ac6526eae0a7b))
+
 ## [2.1.0](https://github.com/web3-storage/w3ui/compare/react-v2.0.0...react-v2.1.0) (2024-01-03)
 
 
