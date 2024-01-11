@@ -633,9 +633,9 @@ export type PlanGetFailure = PlanNotFound
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
-export type W3UpAbility = TupleToUnion<W3UpAbilityArray>
+export type ServiceAbility = TupleToUnion<ServiceAbilityArray>
 
-export type W3UpAbilityArray = [
+export type ServiceAbilityArray = [
   Top['can'],
   ProviderAdd['can'],
   Space['can'],
@@ -679,11 +679,11 @@ export type W3UpAbilityArray = [
 ]
 
 /**
- * @deprecated use Ability
+ * @deprecated use ServiceAbility
  */
-export type Abilities = W3UpAbility
+export type Abilities = ServiceAbility
 
 /**
- * @deprecated use AbilityArray
+ * @deprecated use ServiceAbilityArray
  */
-export type AbilitiesArray = W3UpAbilityArray
+export type AbilitiesArray = ServiceAbilityArray
