@@ -6,6 +6,7 @@ import { CBOR } from '@ucanto/core'
 import * as API from '../../src/types.js'
 import * as TestAPI from '../types.js'
 import * as AggregatorEvents from '../../src/aggregator/events.js'
+import { getBufferedPieces } from '../../src/aggregator/buffer-reducing.js'
 
 import { FailingStore } from '../context/store.js'
 import { FailingQueue } from '../context/queue.js'
@@ -175,6 +176,29 @@ export const test = {
         bufferQueue: new FailingQueue(),
       })
     ),
+    'handles buffer queue messages repeated items as unique': async (
+      assert,
+      context
+    ) => {
+      const group = context.id.did()
+      const { buffers, blocks } = await getBuffers(1, group)
+  
+      // Store buffers
+      for (let i = 0; i < blocks.length; i++) {
+        const putBufferRes = await context.bufferStore.put({
+          buffer: buffers[i],
+          block: blocks[i].cid,
+        })
+        assert.ok(putBufferRes.ok)
+      }
+ 
+      const bufferedPieces = await getBufferedPieces(
+        [blocks[0].cid, blocks[0].cid],
+        context.bufferStore
+      )
+
+      assert.equal(bufferedPieces.ok?.bufferedPieces.length, buffers[0].pieces.length)
+    },
   'handles buffer queue messages successfully to requeue bigger buffer': async (
     assert,
     context

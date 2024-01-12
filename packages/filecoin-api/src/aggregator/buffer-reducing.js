@@ -232,9 +232,15 @@ export async function getBufferedPieces(bufferPieces, bufferStore) {
   let bufferedPieces = []
   for (const b of getBufferRes) {
     if (b.error) return b
-    bufferedPieces = bufferedPieces.concat(b.ok.buffer.pieces || [])
+    for (const piece of b.ok.buffer.pieces) {
+      const isDuplicate = bufferedPieces.some(
+        existingPiece => existingPiece.piece.equals(piece.piece)
+      )
+      if (!isDuplicate) {
+        bufferedPieces.push(piece)
+      }
+    }
   }
-
   bufferedPieces.sort(sortPieces)
 
   return {
