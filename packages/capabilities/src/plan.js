@@ -16,8 +16,8 @@ export const get = capability({
 /**
  * Capability can be invoked by an account to change its billing plan.
  */
-export const update = capability({
-  can: 'plan/update',
+export const set = capability({
+  can: 'plan/set',
   with: AccountDID,
   nb: struct({
     product: DID,
