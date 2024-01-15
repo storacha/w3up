@@ -227,14 +227,20 @@ export async function getBufferedPieces(bufferPieces, bufferStore) {
     bufferPieces.map((bufferPiece) => bufferStore.get(bufferPiece))
   )
 
-  // Concatenate pieces and sort them by policy and size
+  // Concatenate pieces uniquely and sort them by policy and size
   /** @type {BufferedPiece[]} */
   let bufferedPieces = []
+  const uniquePieces = new Set()
   for (const b of getBufferRes) {
     if (b.error) return b
-    bufferedPieces = bufferedPieces.concat(b.ok.buffer.pieces || [])
+    for (const piece of b.ok.buffer.pieces) {
+      const isDuplicate = uniquePieces.has(piece.piece.toString())
+      if (!isDuplicate) {
+        bufferedPieces.push(piece)
+        uniquePieces.add(piece.piece.toString())
+      }
+    }
   }
-
   bufferedPieces.sort(sortPieces)
 
   return {
