@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.3.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.3.0...filecoin-api-v4.3.1) (2024-01-15)
+
+
+### Fixes
+
+* avoid duplicates on aggregator buffer concat ([#1259](https://github.com/web3-storage/w3up/issues/1259)) ([9e64bab](https://github.com/web3-storage/w3up/commit/9e64babe93edeb474fc740d9be74c709d47bed1a))
+
 ## [4.3.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.2.0...filecoin-api-v4.3.0) (2023-11-29)
 
 
