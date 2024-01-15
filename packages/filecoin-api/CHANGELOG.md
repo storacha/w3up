@@ -1,16 +1,6 @@
 # Changelog
 
-## [5.0.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.3.0...filecoin-api-v5.0.0) (2024-01-15)
-
-
-### ⚠ BREAKING CHANGES
-
-* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213))
-
-### Features
-
-* return allocated bytes in `store/add` receipt ([#1213](https://github.com/web3-storage/w3up/issues/1213)) ([5d52e44](https://github.com/web3-storage/w3up/commit/5d52e447c14e7f7fd334e7ff575e032b7b0d89d7))
-* upload-client uploadDirectory, by default, sorts the provided files by file name to help the user call us in a way that is deterministic and minimizes cost ([#1173](https://github.com/web3-storage/w3up/issues/1173)) ([8cd2555](https://github.com/web3-storage/w3up/commit/8cd2555d901d7e684a9a5cc2516e5a91edd58621))
+## [4.3.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.3.0...filecoin-api-v4.3.1) (2024-01-15)
 
 
 ### Fixes
