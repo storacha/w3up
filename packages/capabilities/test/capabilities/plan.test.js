@@ -95,11 +95,11 @@ describe('plan/get', function () {
   })
 })
 
-describe('plan/update', function () {
+describe('plan/set', function () {
   const agent = alice
   const account = 'did:mailto:mallory.com:mallory'
   it('can invoke as an account', async function () {
-    const auth = Plan.update.invoke({
+    const auth = Plan.set.invoke({
       issuer: agent,
       audience: service,
       with: account,
@@ -109,7 +109,7 @@ describe('plan/update', function () {
       proofs: await createAuthorization({ agent, service, account }),
     })
     const result = await access(await auth.delegate(), {
-      capability: Plan.update,
+      capability: Plan.set,
       principal: Verifier,
       authority: service,
       validateAuthorization,
@@ -118,14 +118,14 @@ describe('plan/update', function () {
       assert.fail(`error in self issue: ${result.error.message}`)
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
-      assert.equal(result.ok.capability.can, 'plan/update')
+      assert.equal(result.ok.capability.can, 'plan/set')
       assert.deepEqual(result.ok.capability.with, account)
     }
   })
 
   it('fails without account delegation', async function () {
     const agent = alice
-    const auth = Plan.update.invoke({
+    const auth = Plan.set.invoke({
       issuer: agent,
       audience: service,
       with: account,
@@ -135,7 +135,7 @@ describe('plan/update', function () {
     })
 
     const result = await access(await auth.delegate(), {
-      capability: Plan.update,
+      capability: Plan.set,
       principal: Verifier,
       authority: service,
       validateAuthorization,
@@ -145,7 +145,7 @@ describe('plan/update', function () {
   })
 
   it('fails when invoked by a different agent', async function () {
-    const auth = Plan.update.invoke({
+    const auth = Plan.set.invoke({
       issuer: bob,
       audience: service,
       with: account,
@@ -156,7 +156,7 @@ describe('plan/update', function () {
     })
 
     const result = await access(await auth.delegate(), {
-      capability: Plan.update,
+      capability: Plan.set,
       principal: Verifier,
       authority: service,
       validateAuthorization,
@@ -164,8 +164,8 @@ describe('plan/update', function () {
     assert.equal(result.error?.message.includes('not authorized'), true)
   })
 
-  it('can delegate plan/update', async function () {
-    const invocation = Plan.update.invoke({
+  it('can delegate plan/set', async function () {
+    const invocation = Plan.set.invoke({
       issuer: bob,
       audience: service,
       with: account,
@@ -173,7 +173,7 @@ describe('plan/update', function () {
         product: 'did:web:lite.web3.storage',
       },
       proofs: [
-        await Plan.update.delegate({
+        await Plan.set.delegate({
           issuer: agent,
           audience: bob,
           with: account,
@@ -182,7 +182,7 @@ describe('plan/update', function () {
       ],
     })
     const result = await access(await invocation.delegate(), {
-      capability: Plan.update,
+      capability: Plan.set,
       principal: Verifier,
       authority: service,
       validateAuthorization,
@@ -191,13 +191,13 @@ describe('plan/update', function () {
       assert.fail(`error in self issue: ${result.error.message}`)
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
-      assert.equal(result.ok.capability.can, 'plan/update')
+      assert.equal(result.ok.capability.can, 'plan/set')
       assert.deepEqual(result.ok.capability.with, account)
     }
   })
 
-  it('can invoke plan/update with the product that its delegation specifies', async function () {
-    const invocation = Plan.update.invoke({
+  it('can invoke plan/set with the product that its delegation specifies', async function () {
+    const invocation = Plan.set.invoke({
       issuer: bob,
       audience: service,
       with: account,
@@ -205,7 +205,7 @@ describe('plan/update', function () {
         product: 'did:web:lite.web3.storage',
       },
       proofs: [
-        await Plan.update.delegate({
+        await Plan.set.delegate({
           issuer: agent,
           audience: bob,
           with: account,
@@ -217,7 +217,7 @@ describe('plan/update', function () {
       ],
     })
     const result = await access(await invocation.delegate(), {
-      capability: Plan.update,
+      capability: Plan.set,
       principal: Verifier,
       authority: service,
       validateAuthorization,
@@ -226,13 +226,13 @@ describe('plan/update', function () {
       assert.fail(`error in self issue: ${result.error.message}`)
     } else {
       assert.deepEqual(result.ok.audience.did(), service.did())
-      assert.equal(result.ok.capability.can, 'plan/update')
+      assert.equal(result.ok.capability.can, 'plan/set')
       assert.deepEqual(result.ok.capability.with, account)
     }
   })
 
-  it('cannot invoke plan/update with a different product than its delegation specifies', async function () {
-    const invocation = Plan.update.invoke({
+  it('cannot invoke plan/set with a different product than its delegation specifies', async function () {
+    const invocation = Plan.set.invoke({
       issuer: bob,
       audience: service,
       with: account,
@@ -240,7 +240,7 @@ describe('plan/update', function () {
         product: 'did:web:lite.web3.storage',
       },
       proofs: [
-        await Plan.update.delegate({
+        await Plan.set.delegate({
           issuer: agent,
           audience: bob,
           with: account,
@@ -252,7 +252,7 @@ describe('plan/update', function () {
       ],
     })
     const result = await access(await invocation.delegate(), {
-      capability: Plan.update,
+      capability: Plan.set,
       principal: Verifier,
       authority: service,
       validateAuthorization,

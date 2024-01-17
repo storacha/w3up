@@ -1,5 +1,5 @@
 import * as Ucanto from '@ucanto/interface'
-import { AccountDID, DID, PlanGetFailure, PlanGetSuccess } from '../types.js'
+import { AccountDID, DID, PlanGetFailure, PlanGetSuccess, PlanSetFailure, PlanSetSuccess } from '../types.js'
 
 export type PlanID = DID
 
@@ -17,12 +17,13 @@ export interface PlansStorage {
   ) => Promise<Ucanto.Result<PlanGetSuccess, PlanGetFailure>>
 
   /**
-   * Set an account's plan
+   * Set an account's plan. Update our systems and any third party billing systems.
    *
    * @param account account DID
+   * @param plan the DID of the new plan
    */
   set: (
     account: AccountDID,
     plan: DID
-  ) => Promise<Ucanto.Result<Ucanto.Unit, Ucanto.Failure>>
+  ) => Promise<Ucanto.Result<PlanSetSuccess, PlanSetFailure>>
 }
