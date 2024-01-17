@@ -65,6 +65,28 @@ See https://web3.storage/docs/w3up-client for a guide to using the js client for
 
 For an interactive command line adventure into the using w3up check out `learnyouw3up` here https://github.com/web3-storage/learnyouw3up
 
+### GitHub Action 
+
+The Action [`add_to_web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/web3-storage/w3cli) to let you add files to web3.storage from your GitHub Workflows.
+
+**github-workflow.yaml**
+```yaml
+- run: npm run build # e.g output your static site to `./dist`
+
+- uses: web3-storage/add-to-web3@v3.0.0
+  id: w3up
+  with:
+    path_to_add: 'dist'
+    secret_key: ${{ secrets.W3_PRINCIPAL }}
+    proof: ${{ secrets.W3_PROOF }}
+
+- run: echo ${{ steps.w3up.outputs.cid }}
+# "bafkreicysg23kiwv34eg2d7qweipxwosdo2py4ldv42nbauguluen5v6am"
+- run: echo ${{ steps.w3up.outputs.url }}
+# "https://dweb.link/ipfs/bafkreicysg23kiwv34eg2d7qweipxwosdo2py4ldv42nbauguluen5v6am"
+```
+
+To generate a `secret_key` and delegate permissions to it as a `proof` to use in CI see: https://github.com/web3-storage/add-to-web3#generating-a-secret_key-and-proof
 
 ## Contributing
 
