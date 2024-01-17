@@ -37,7 +37,7 @@ export function createFileEncoderStream(blob) {
     try {
       await fileBuilder.finalize(unixfsWriter)
     } catch (e) {
-      console.log("Error finalizing file builder: ", e)
+      console.log('Error finalizing file builder: ', e)
     } finally {
       await unixfsWriter.close()
     }
@@ -158,7 +158,7 @@ export function createDirectoryEncoderStream(files, options) {
         options.onDirectoryEntryLink({ name: '', ...link })
       }
     } catch (e) {
-      console.log("Error finalizing directory builder:", e)
+      console.log('Error finalizing directory builder:', e)
     } finally {
       await unixfsWriter.close()
     }
