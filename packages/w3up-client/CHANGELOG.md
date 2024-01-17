@@ -1,5 +1,14 @@
 # Changelog
 
+## [12.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.0.0...w3up-client-v12.1.0) (2024-01-17)
+
+
+### Features
+
+* add a function to verify and return Abilities. ([#1252](https://github.com/web3-storage/w3up/issues/1252)) ([2f026a2](https://github.com/web3-storage/w3up/commit/2f026a2483a4f323c4e2c6a8a8cb10afd92e21c4))
+* re-export Store implementations from w3up-client ([#1266](https://github.com/web3-storage/w3up/issues/1266)) ([b3c6b46](https://github.com/web3-storage/w3up/commit/b3c6b4608b5aa66290128613e029c70a870b05f1))
+* strictly require nodejs version ([#1264](https://github.com/web3-storage/w3up/issues/1264)) ([bc9f427](https://github.com/web3-storage/w3up/commit/bc9f4279aa509ebf2a90b54fa6e68a962621b37a))
+
 ## [12.0.0](https://github.com/web3-storage/w3up/compare/w3up-client-v11.2.1...w3up-client-v12.0.0) (2024-01-03)
 
 
