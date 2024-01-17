@@ -34,8 +34,13 @@ export function createFileEncoderStream(blob) {
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
   const fileBuilder = new UnixFSFileBuilder('', blob)
   void (async () => {
-    await fileBuilder.finalize(unixfsWriter)
-    await unixfsWriter.close()
+    try {
+      await fileBuilder.finalize(unixfsWriter)
+    } catch (e) {
+      console.log("Error finalizing file builder: ", e)
+    } finally {
+      await unixfsWriter.close()
+    }
   })()
   return readable
 }
@@ -147,11 +152,16 @@ export function createDirectoryEncoderStream(files, options) {
   const { readable, writable } = new TransformStream({}, queuingStrategy)
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
   void (async () => {
-    const link = await rootDir.finalize(unixfsWriter)
-    if (options?.onDirectoryEntryLink) {
-      options.onDirectoryEntryLink({ name: '', ...link })
+    try {
+      const link = await rootDir.finalize(unixfsWriter)
+      if (options?.onDirectoryEntryLink) {
+        options.onDirectoryEntryLink({ name: '', ...link })
+      }
+    } catch (e) {
+      console.log("Error finalizing directory builder:", e)
+    } finally {
+      await unixfsWriter.close()
     }
-    await unixfsWriter.close()
   })()
 
   return readable
