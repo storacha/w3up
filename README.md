@@ -67,7 +67,7 @@ For an interactive command line adventure into the using w3up check out `learnyo
 
 ### GitHub Action 
 
-The Action [`add_to_web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/web3-storage/w3cli) to let you add files to web3.storage from your GitHub Workflows.
+The Action [`add-to-web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/web3-storage/w3cli) to let you add files to web3.storage from your GitHub Workflows.
 
 **github-workflow.yaml**
 ```yaml
