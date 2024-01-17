@@ -68,6 +68,10 @@
       "types": "./dist/src/capability/usage.d.ts",
       "import": "./dist/src/capability/usage.js"
     },
+    "./stores": {
+      "types": "./dist/src/stores.d.ts",
+      "import": "./dist/src/stores.js"
+    },
     "./types": "./dist/src/types.js"
   },
   "publishConfig": {
