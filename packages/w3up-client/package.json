@@ -178,5 +178,9 @@
       "assert",
       "c8"
     ]
-  }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "engineStrict": true
 }
