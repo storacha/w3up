@@ -158,7 +158,7 @@ export function createDirectoryEncoderStream(files, options) {
       if (options?.onDirectoryEntryLink) {
         options.onDirectoryEntryLink({ name: '', ...link })
       }
-    /* c8 ignore next 2 */
+      /* c8 ignore next 2 */
     } catch (e) {
       console.log('Error finalizing directory builder:', e)
     } finally {
