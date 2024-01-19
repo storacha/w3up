@@ -36,11 +36,10 @@ export function createFileEncoderStream(blob) {
   void (async () => {
     try {
       await fileBuilder.finalize(unixfsWriter)
-      /* c8 ignore next 2 */
-    } catch (e) {
-      console.log('Error finalizing file builder: ', e)
-    } finally {
       await unixfsWriter.close()
+      /* c8 ignore next 3 */
+    } catch (e) {
+      await unixfsWriter.writer.abort(/** @type {Error} */ (e))
     }
   })()
   return readable
@@ -158,11 +157,9 @@ export function createDirectoryEncoderStream(files, options) {
       if (options?.onDirectoryEntryLink) {
         options.onDirectoryEntryLink({ name: '', ...link })
       }
-      /* c8 ignore next 2 */
-    } catch (e) {
-      console.log('Error finalizing directory builder:', e)
-    } finally {
       await unixfsWriter.close()
+    } catch (e) {
+      await unixfsWriter.writer.abort(/** @type {Error} */ (e))
     }
   })()
 
