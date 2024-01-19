@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "18.1.0",
+  "version": "18.1.1",
   "description": "w3access client",
   "homepage": "https://web3.storage",
   "repository": {
@@ -112,7 +112,7 @@
     "multiformats": "^12.1.2",
     "one-webcrypto": "https://github.com/web3-storage/one-webcrypto",
     "p-defer": "^4.0.0",
-    "type-fest": "^3.3.0",
+    "type-fest": "^4.9.0",
     "uint8arrays": "^4.0.6",
     "@scure/bip39": "^1.2.1"
   },

@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.1.1](https://github.com/web3-storage/w3up/compare/access-v18.1.0...access-v18.1.1) (2024-01-17)
+
+
+### Fixes
+
+* upgrade type-fest in access ([#1263](https://github.com/web3-storage/w3up/issues/1263)) ([47a4589](https://github.com/web3-storage/w3up/commit/47a458964aaf1ebe07db4e29db60e558b9871fb6))
+
 ## [18.1.0](https://github.com/web3-storage/w3up/compare/access-v18.0.7...access-v18.1.0) (2023-12-14)
 
 

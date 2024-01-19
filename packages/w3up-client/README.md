@@ -180,6 +180,7 @@ import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use
 import { importDAG } from '@ucanto/core/delegation'
 import { CarReader } from '@ipld/car'
 import * as Client from '@web3-storage/w3up-client'
+import { StoreMemory } from '@web3-storage/w3up-client/stores'
 
 async function main () {
   // from "bring your own Agent" example in `Creating a client object" section`
@@ -187,7 +188,8 @@ async function main () {
   // KEY: `npx ucan-key ed --json` in command line, which returns private key and DID for Agent (the private key is stored in KEY)
   // PROOF: w3cli used to run `w3 delegation create <did_from_ucan-key_command_above> --can 'store/add' --can 'upload/add' | base64`, which returns the delegation from Space to the Agent we're using (stored in PROOF)
   const principal = Signer.parse(process.env.KEY)
-  const client = await Client.create({ principal })
+  const store = new StoreMemory()
+  const client = await Client.create({ principal, store })
   
   // now give Agent the delegation from the Space
   const proof = await parseProof(process.env.PROOF)

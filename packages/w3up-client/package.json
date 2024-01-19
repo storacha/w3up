@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/w3up-client",
-  "version": "12.0.0",
+  "version": "12.1.0",
   "description": "Client for the web3.storage w3up api",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
@@ -67,6 +67,10 @@
     "./capability/usage": {
       "types": "./dist/src/capability/usage.d.ts",
       "import": "./dist/src/capability/usage.js"
+    },
+    "./stores": {
+      "types": "./dist/src/stores.d.ts",
+      "import": "./dist/src/stores.js"
     },
     "./types": "./dist/src/types.js"
   },
@@ -178,5 +182,9 @@
       "assert",
       "c8"
     ]
-  }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "engineStrict": true
 }
