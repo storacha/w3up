@@ -394,6 +394,7 @@ sequenceDiagram
   - [`addProof`](#addproof)
   - [`delegations`](#delegations)
   - [`createDelegation`](#createdelegation)
+  - [`remove`](#remove)
   - [`capability.access.authorize`](#capabilityaccessauthorize)
   - [`capability.access.claim`](#capabilityaccessclaim)
   - [`capability.space.info`](#capabilityspaceinfo)
@@ -593,6 +594,21 @@ function createDelegation (
 ```
 
 Create a delegation to the passed audience for the given abilities with the _current_ space as the resource.
+
+### `remove`
+
+```ts
+function remove (
+  contentCID?: CID
+  options: {
+    shards?: boolean
+  } = {}
+): Promise<Delegation>
+```
+
+Removes association of a content CID with the space. Optionally, also removes association of CAR shards with space.
+
+⚠️ Please be aware that all shards will be deleted even if there is another upload(s) that reference same shards, which in turn could corrupt those uploads.
 
 ### `getReceipt`
 
