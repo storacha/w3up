@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.2.1](https://github.com/web3-storage/w3up/compare/w3up-client-v12.2.0...w3up-client-v12.2.1) (2024-01-24)
+
+
+### Fixes
+
+* allow import memory store in the browser ([#1276](https://github.com/web3-storage/w3up/issues/1276)) ([301e0fc](https://github.com/web3-storage/w3up/commit/301e0fcb8941c0a517d270c9b731b24cbdf00eb9))
+
 ## [12.2.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.1.0...w3up-client-v12.2.0) (2024-01-24)
 
 
