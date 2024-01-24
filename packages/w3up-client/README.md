@@ -180,7 +180,7 @@ import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use
 import { importDAG } from '@ucanto/core/delegation'
 import { CarReader } from '@ipld/car'
 import * as Client from '@web3-storage/w3up-client'
-import { StoreMemory } from '@web3-storage/w3up-client/stores'
+import { StoreMemory } from '@web3-storage/w3up-client/stores/memory'
 
 async function main () {
   // from "bring your own Agent" example in `Creating a client object" section`
