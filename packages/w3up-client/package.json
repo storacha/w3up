@@ -69,8 +69,20 @@
       "import": "./dist/src/capability/usage.js"
     },
     "./stores": {
-      "types": "./dist/src/stores.d.ts",
-      "import": "./dist/src/stores.js"
+      "types": "./dist/src/stores/index.d.ts",
+      "import": "./dist/src/stores/index.js"
+    },
+    "./stores/conf": {
+      "types": "./dist/src/stores/conf.d.ts",
+      "import": "./dist/src/stores/conf.js"
+    },
+    "./stores/indexeddb": {
+      "types": "./dist/src/stores/indexeddb.d.ts",
+      "import": "./dist/src/stores/indexeddb.js"
+    },
+    "./stores/memory": {
+      "types": "./dist/src/stores/memory.d.ts",
+      "import": "./dist/src/stores/memory.js"
     },
     "./types": "./dist/src/types.js"
   },
