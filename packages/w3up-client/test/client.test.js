@@ -612,13 +612,10 @@ describe('Client', () => {
 
       const service = mockService({
         upload: {
-          // @ts-expect-error root should be a link
           get: provide(UploadCapabilities.get, ({ invocation }) => {
-            return {
-              ok: {
-                root: undefined,
-              },
-            }
+            return error(
+              new StoreItemNotFound('did:web:any', uploadedCar.cid)
+            )
           }),
         },
       })

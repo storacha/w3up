@@ -327,65 +327,34 @@ export class Client extends Base {
     // Shortcut if there is no request to remove shards
     if (!options.shards) {
       // Remove association of content CID with selected space.
-      try {
-        await this.capability.upload.remove(contentCID)
-        /* c8 ignore start */
-      } catch (/** @type {any} */ err) {
-        throw new Error(
-          `remove failed for ${contentCID}: ${err.message ?? err}`
-        )
-      }
+      await this.capability.upload.remove(contentCID)
       return
     }
 
     // Get shards associated with upload.
-    let upload
-    try {
-      upload = await this.capability.upload.get(contentCID)
-      /* c8 ignore start */
-    } catch (/** @type {any} */ err) {
-      throw new Error(`remove failed for ${contentCID}: ${err.message ?? err}`)
-    }
-    /* c8 ignore stop */
-
-    // Check if we have information about the shards to remove
-    if (!upload.root) {
-      throw new Error(
-        `⁂ upload not found. could not determine shards to remove.`
-      )
-    }
-    /* c8 ignore start */
-    if (!upload.shards || !upload.shards.length) {
-      return
-    }
-    /* c8 ignore stop */
+    const upload = await this.capability.upload.get(contentCID)
 
     // Remove shards
-    await Promise.allSettled(
-      upload.shards.map(async (shard) => {
-        try {
-          await this.capability.store.remove(shard)
-        } catch (/** @type {any} */ error) {
-          /* c8 ignore start */
-          // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
-          if (error?.cause?.name !== 'StoreItemNotFound') {
-            throw new Error(
-              `remove failed for shard ${shard.link()} from ${contentCID}: ${
-                error?.message
-              }`
-            )
+    if (upload.shards?.length) {
+      await Promise.allSettled(
+        upload.shards.map(async (shard) => {
+          try {
+            await this.capability.store.remove(shard)
+          } catch (/** @type {any} */ error) {
+            /* c8 ignore start */
+            // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
+            if (error?.cause?.name !== 'StoreItemNotFound') {
+              throw new Error(`failed to remove shard: ${shard}`, {
+                cause: error,
+              })
+            }
+            /* c8 ignore stop */
           }
-          /* c8 ignore stop */
-        }
-      })
-    )
+        })
+      )
+    }
 
     // Remove association of content CID with selected space.
-    try {
-      await this.capability.upload.remove(contentCID)
-      /* c8 ignore start */
-    } catch (/** @type {any} */ err) {
-      throw new Error(`remove failed for ${contentCID}: ${err.message ?? err}`)
-    }
+    await this.capability.upload.remove(contentCID)
   }
 }
