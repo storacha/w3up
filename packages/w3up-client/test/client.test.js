@@ -613,9 +613,7 @@ describe('Client', () => {
       const service = mockService({
         upload: {
           get: provide(UploadCapabilities.get, ({ invocation }) => {
-            return error(
-              new StoreItemNotFound('did:web:any', uploadedCar.cid)
-            )
+            return error(new StoreItemNotFound('did:web:any', uploadedCar.cid))
           }),
         },
       })
