@@ -316,7 +316,7 @@ export class Client extends Base {
    * Removes association of a content CID with the space. Optionally, also removes
    * association of CAR shards with space.
    *
-   * ⚠️ Please be aware that all shards will be deleted even if there is another upload(s) that
+   * ⚠️ If `shards` option is `true` all shards will be deleted even if there is another upload(s) that
    * reference same shards, which in turn could corrupt those uploads.
    *
    * @param {import('multiformats').UnknownLink} contentCID
