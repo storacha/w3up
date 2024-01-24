@@ -603,7 +603,7 @@ function remove (
   options: {
     shards?: boolean
   } = {}
-): Promise<Delegation>
+): Promise<void>
 ```
 
 Removes association of a content CID with the space. Optionally, also removes association of CAR shards with space.

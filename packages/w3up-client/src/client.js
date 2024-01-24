@@ -324,20 +324,29 @@ export class Client extends Base {
    * @param {boolean} [options.shards]
    */
   async remove(contentCID, options = {}) {
-    // Remove association of content CID with selected space.
+    // Shortcut if there is no request to remove shards
+    if (!options.shards) {
+      // Remove association of content CID with selected space.
+      try {
+        await this.capability.upload.remove(contentCID)
+        /* c8 ignore start */
+      } catch (/** @type {any} */ err) {
+        throw new Error(
+          `remove failed for ${contentCID}: ${err.message ?? err}`
+        )
+      }
+      return
+    }
+
+    // Get shards associated with upload.
     let upload
     try {
-      upload = await this.capability.upload.remove(contentCID)
+      upload = await this.capability.upload.get(contentCID)
       /* c8 ignore start */
     } catch (/** @type {any} */ err) {
       throw new Error(`remove failed for ${contentCID}: ${err.message ?? err}`)
     }
     /* c8 ignore stop */
-
-    // Shortcut if there is no request to remove shards
-    if (!options.shards) {
-      return
-    }
 
     // Check if we have information about the shards to remove
     if (!upload.root) {
@@ -353,7 +362,30 @@ export class Client extends Base {
 
     // Remove shards
     await Promise.allSettled(
-      upload.shards.map((shard) => this.capability.store.remove(shard))
+      upload.shards.map(async (shard) => {
+        try {
+          await this.capability.store.remove(shard)
+        } catch (/** @type {any} */ error) {
+          /* c8 ignore start */
+          // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
+          if (error?.cause?.name !== 'StoreItemNotFound') {
+            throw new Error(
+              `remove failed for shard ${shard.link()} from ${contentCID}: ${
+                error?.message
+              }`
+            )
+          }
+          /* c8 ignore stop */
+        }
+      })
     )
+
+    // Remove association of content CID with selected space.
+    try {
+      await this.capability.upload.remove(contentCID)
+      /* c8 ignore start */
+    } catch (/** @type {any} */ err) {
+      throw new Error(`remove failed for ${contentCID}: ${err.message ?? err}`)
+    }
   }
 }
