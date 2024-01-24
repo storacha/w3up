@@ -634,15 +634,15 @@ export type PlanSet = InferInvokedCapability<typeof PlanCaps.set>
 
 export type PlanSetSuccess = Unit
 
-export interface AccountNotFound extends Ucanto.Failure {
-  name: 'AccountNotFound'
+export interface CustomerNotFound extends Ucanto.Failure {
+  name: 'CustomerNotFound'
 }
 
 export interface InvalidPlanName extends Ucanto.Failure {
   name: 'InvalidPlanName'
 }
 
-export type PlanSetFailure = AccountNotFound
+export type PlanSetFailure = CustomerNotFound
 
 // Top
 export type Top = InferInvokedCapability<typeof top>
