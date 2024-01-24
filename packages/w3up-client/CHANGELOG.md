@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.2.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.1.0...w3up-client-v12.2.0) (2024-01-24)
+
+
+### Features
+
+* add remove high level function to client ([#1248](https://github.com/web3-storage/w3up/issues/1248)) ([104b8de](https://github.com/web3-storage/w3up/commit/104b8deaf487320f682540aff7fbeede26eca861))
+
+
+### Fixes
+
+* update "byo agent" example to match website snippet ([#1268](https://github.com/web3-storage/w3up/issues/1268)) ([e34eed1](https://github.com/web3-storage/w3up/commit/e34eed1fa3d6ef24ce2c01982764f2012dbf30d8))
+
 ## [12.1.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.0.0...w3up-client-v12.1.0) (2024-01-17)
 
 
