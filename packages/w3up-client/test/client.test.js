@@ -4,6 +4,7 @@ import {
   create as createServer,
   parseLink,
   provide,
+  error,
 } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
@@ -11,6 +12,7 @@ import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as UCANCapabilities from '@web3-storage/capabilities/ucan'
 import { AgentData } from '@web3-storage/access/agent'
+import { StoreItemNotFound } from '../../upload-api/src/store/lib.js'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { mockService, mockServiceConf } from './helpers/mocks.js'
@@ -478,6 +480,249 @@ describe('Client', () => {
       assert.equal(typeof client.capability.upload.add, 'function')
       assert.equal(typeof client.capability.upload.list, 'function')
       assert.equal(typeof client.capability.upload.remove, 'function')
+    })
+  })
+
+  describe('remove', () => {
+    it('should remove an uploaded file from the service with its shards', async () => {
+      const bytes = await randomBytes(128)
+      const uploadedCar = await toCAR(bytes)
+      const contentCID = uploadedCar.roots[0]
+
+      const service = mockService({
+        store: {
+          remove: provide(StoreCapabilities.remove, ({ invocation }) => {
+            return { ok: { size: uploadedCar.size } }
+          }),
+        },
+        upload: {
+          get: provide(UploadCapabilities.get, ({ invocation }) => {
+            return {
+              ok: {
+                root: uploadedCar.roots[0],
+                shards: [uploadedCar.cid],
+                insertedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            }
+          }),
+          remove: provide(UploadCapabilities.remove, ({ invocation }) => {
+            return {
+              ok: {
+                root: uploadedCar.roots[0],
+                shards: [uploadedCar.cid],
+              },
+            }
+          }),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+
+      // setup space
+      const space = await alice.createSpace('upload-test')
+      const auth = await space.createAuthorization(alice)
+      await alice.addSpace(auth)
+      await alice.setCurrentSpace(space.did())
+
+      await assert.doesNotReject(() =>
+        alice.remove(contentCID, { shards: true })
+      )
+
+      assert(service.upload.get.called)
+      assert.equal(service.upload.get.callCount, 1)
+      assert(service.upload.remove.called)
+      assert.equal(service.upload.remove.callCount, 1)
+      assert(service.store.remove.called)
+      assert.equal(service.store.remove.callCount, 1)
+    })
+
+    it('should remove an uploaded file from the service without its shards by default', async () => {
+      const bytes = await randomBytes(128)
+      const uploadedCar = await toCAR(bytes)
+      const contentCID = uploadedCar.roots[0]
+
+      const service = mockService({
+        upload: {
+          get: provide(UploadCapabilities.get, ({ invocation }) => {
+            return {
+              ok: {
+                root: uploadedCar.roots[0],
+                shards: [uploadedCar.cid],
+                insertedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            }
+          }),
+          remove: provide(UploadCapabilities.remove, ({ invocation }) => {
+            return {
+              ok: {
+                root: uploadedCar.roots[0],
+                shards: [uploadedCar.cid],
+              },
+            }
+          }),
+        },
+        store: {
+          remove: provide(StoreCapabilities.remove, ({ invocation }) => {
+            return { ok: { size: uploadedCar.size } }
+          }),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+
+      // setup space
+      const space = await alice.createSpace('upload-test')
+      const auth = await space.createAuthorization(alice)
+      await alice.addSpace(auth)
+      await alice.setCurrentSpace(space.did())
+
+      await assert.doesNotReject(() => alice.remove(contentCID))
+
+      assert(service.upload.remove.called)
+      assert.equal(service.upload.remove.callCount, 1)
+      assert.equal(service.store.remove.callCount, 0)
+    })
+
+    it('should fail to remove uploaded shards if upload is not found', async () => {
+      const bytes = await randomBytes(128)
+      const uploadedCar = await toCAR(bytes)
+      const contentCID = uploadedCar.roots[0]
+
+      const service = mockService({
+        upload: {
+          get: provide(UploadCapabilities.get, ({ invocation }) => {
+            return error(new StoreItemNotFound('did:web:any', uploadedCar.cid))
+          }),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+
+      // setup space
+      const space = await alice.createSpace('upload-test')
+      const auth = await space.createAuthorization(alice)
+      await alice.addSpace(auth)
+      await alice.setCurrentSpace(space.did())
+
+      await assert.rejects(alice.remove(contentCID, { shards: true }))
+
+      assert(service.upload.get.called)
+      assert.equal(service.upload.get.callCount, 1)
+      assert.equal(service.store.remove.callCount, 0)
+      assert.equal(service.upload.remove.callCount, 0)
+    })
+
+    it('should not fail to remove if shard is not found', async () => {
+      const bytesArray = [await randomBytes(128), await randomBytes(128)]
+      const uploadedCars = await Promise.all(
+        bytesArray.map((bytes) => toCAR(bytes))
+      )
+      const contentCID = uploadedCars[0].roots[0]
+
+      const service = mockService({
+        upload: {
+          get: provide(UploadCapabilities.get, ({ invocation }) => {
+            return {
+              ok: {
+                root: uploadedCars[0].roots[0],
+                shards: uploadedCars.map((car) => car.cid),
+                insertedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            }
+          }),
+          remove: provide(UploadCapabilities.remove, ({ invocation }) => {
+            return {
+              ok: {
+                root: uploadedCars[0].roots[0],
+                shards: uploadedCars.map((car) => car.cid),
+              },
+            }
+          }),
+        },
+        store: {
+          remove: provide(
+            StoreCapabilities.remove,
+            ({ invocation, capability }) => {
+              // Fail for first as not found)
+              if (capability.nb.link.equals(uploadedCars[0].cid)) {
+                return error(
+                  new StoreItemNotFound('did:web:any', uploadedCars[0].cid)
+                )
+              }
+              return { ok: { size: uploadedCars[1].size } }
+            }
+          ),
+        },
+      })
+
+      const server = createServer({
+        id: await Signer.generate(),
+        service,
+        codec: CAR.inbound,
+        validateAuthorization,
+      })
+
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: await mockServiceConf(server),
+      })
+
+      // setup space
+      const space = await alice.createSpace('upload-test')
+      const auth = await space.createAuthorization(alice)
+      await alice.addSpace(auth)
+      await alice.setCurrentSpace(space.did())
+
+      await assert.doesNotReject(() =>
+        alice.remove(contentCID, { shards: true })
+      )
+
+      assert(service.upload.remove.called)
+      assert.equal(service.upload.remove.callCount, 1)
+      assert.equal(service.store.remove.callCount, 2)
+    })
+
+    it('should not allow remove without a current space', async () => {
+      const alice = new Client(await AgentData.create())
+
+      const bytes = await randomBytes(128)
+      const uploadedCar = await toCAR(bytes)
+      const contentCID = uploadedCar.roots[0]
+
+      await assert.rejects(alice.remove(contentCID, { shards: true }))
     })
   })
 })
