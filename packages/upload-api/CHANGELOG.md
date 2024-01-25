@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v8.0.0...upload-api-v8.1.0) (2024-01-25)
+
+
+### Features
+
+* add `initialize` method to `PlansStorage` ([#1278](https://github.com/web3-storage/w3up/issues/1278)) ([6792126](https://github.com/web3-storage/w3up/commit/6792126d63a1e983713c3886eeba64038cb7cf34))
+* change `plan/update` to `plan/set` and use existing `PlansStorage#set` to implement an invocation handler ([#1258](https://github.com/web3-storage/w3up/issues/1258)) ([1ccbfe9](https://github.com/web3-storage/w3up/commit/1ccbfe9f84ae5b2e99e315c92d15d2b54e9723ba))
+
 ## [8.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v7.3.5...upload-api-v8.0.0) (2023-12-07)
 
 
