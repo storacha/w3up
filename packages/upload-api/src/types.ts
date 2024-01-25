@@ -402,6 +402,7 @@ export interface CarStoreBucket {
       'x-amz-checksum-sha256': string
       'content-length': string
     } & Record<string, string>
+    method?: string
   }>
 }
 
