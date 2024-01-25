@@ -1,5 +1,15 @@
 # Changelog
 
+## [13.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v13.0.0...capabilities-v13.1.0) (2024-01-25)
+
+
+### Features
+
+* add `initialize` method to `PlansStorage` ([#1278](https://github.com/web3-storage/w3up/issues/1278)) ([6792126](https://github.com/web3-storage/w3up/commit/6792126d63a1e983713c3886eeba64038cb7cf34))
+* add a function to verify and return Abilities. ([#1252](https://github.com/web3-storage/w3up/issues/1252)) ([2f026a2](https://github.com/web3-storage/w3up/commit/2f026a2483a4f323c4e2c6a8a8cb10afd92e21c4))
+* change `plan/update` to `plan/set` and use existing `PlansStorage#set` to implement an invocation handler ([#1258](https://github.com/web3-storage/w3up/issues/1258)) ([1ccbfe9](https://github.com/web3-storage/w3up/commit/1ccbfe9f84ae5b2e99e315c92d15d2b54e9723ba))
+* introduce capability for changing billing plan ([#1253](https://github.com/web3-storage/w3up/issues/1253)) ([d33b3a9](https://github.com/web3-storage/w3up/commit/d33b3a9f72a5e7a738d2a084eb19388fa70d9433))
+
 ## [13.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v12.1.0...capabilities-v13.0.0) (2023-12-07)
 
 
