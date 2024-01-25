@@ -11,8 +11,9 @@ import { Absentee } from '@ucanto/principal'
 export const test = {
   'an account can get plan information': async (assert, context) => {
     const account = 'did:mailto:example.com:alice'
+    const billingID = 'stripe:abc123'
     const product = 'did:web:test.web3.storage'
-    await context.plansStorage.set(account, product)
+    await context.plansStorage.initialize(account, billingID, product)
     const connection = connect({
       id: context.id,
       channel: createServer(context),

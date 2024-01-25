@@ -3,12 +3,35 @@ import { AccountDID, DID, PlanGetFailure, PlanGetSuccess, PlanSetFailure, PlanSe
 
 export type PlanID = DID
 
+export interface CustomerExists extends Ucanto.Failure {
+  name: 'CustomerExists'
+}
+
+type PlanInitializeFailure = CustomerExists
+
 /**
  * Stores subscription plan information.
  */
 export interface PlansStorage {
   /**
-   * Get plan information for an account
+   * Initialize a customer in our system, tracking the external billing
+   * system ID and the plan they have chosen.
+   * 
+   * Designed to be use from, eg, a webhook handler for an account creation event
+   * in a third party billing system.
+   * 
+   * @param account account DID
+   * @param billingID ID used by billing system to track this account
+   * @param plan the ID of the initial plan
+   */
+  initialize: (
+    account: AccountDID,
+    billingID: string,
+    plan: PlanID
+  ) => Promise<Ucanto.Result<Ucanto.Unit, PlanInitializeFailure>>
+
+  /**
+   * Get plan information for a customer
    *
    * @param account account DID
    */
@@ -17,13 +40,13 @@ export interface PlansStorage {
   ) => Promise<Ucanto.Result<PlanGetSuccess, PlanGetFailure>>
 
   /**
-   * Set an account's plan. Update our systems and any third party billing systems.
+   * Set a customer's plan. Update our systems and any third party billing systems.
    *
    * @param account account DID
-   * @param plan the DID of the new plan
+   * @param plan the ID of the new plan
    */
   set: (
     account: AccountDID,
-    plan: DID
+    plan: PlanID
   ) => Promise<Ucanto.Result<PlanSetSuccess, PlanSetFailure>>
 }

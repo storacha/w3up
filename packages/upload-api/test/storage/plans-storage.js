@@ -1,3 +1,4 @@
+import { CustomerNotFound, CustomerExists } from '../../src/plan.js'
 import * as Types from '../../src/types.js'
 
 /**
@@ -6,14 +7,28 @@ import * as Types from '../../src/types.js'
 export class PlansStorage {
   constructor() {
     /**
-     * @type {Record<Types.DID, {product: Types.DID, updatedAt: string}>}
+     * @type {Record<Types.DID, {product: Types.DID, billingID: string, updatedAt: string}>}
      */
     this.plans = {}
   }
 
   /**
+   * 
+   * @param {Types.AccountDID} account 
+   * @param {string} billingID 
+   * @param {Types.DID} product 
+   */
+  async initialize(account, billingID, product) {
+    if (this.plans[account]) {
+      return { error: new CustomerExists(account) }
+    }
+    this.plans[account] = { product, billingID, updatedAt: new Date().toISOString() }
+    return { ok: {} }
+  }
+
+  /**
    *
-   * @param {Types.DID} account
+   * @param {Types.AccountDID} account
    * @returns
    */
   async get(account) {
@@ -32,15 +47,16 @@ export class PlansStorage {
 
   /**
    *
-   * @param {Types.DID} account
+   * @param {Types.AccountDID} account
    * @param {Types.DID} product
    * @returns
    */
   async set(account, product) {
-    this.plans[account] = {
-      product,
-      updatedAt: new Date().toISOString(),
+    if (!this.plans[account]) {
+      return { error: new CustomerNotFound(account) }
     }
+    this.plans[account].product = product
+    this.plans[account].updatedAt = new Date().toISOString()
     return { ok: {} }
   }
 }
