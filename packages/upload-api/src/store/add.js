@@ -79,6 +79,7 @@ export function storeAddProvider(context) {
         with: space,
         link,
         url: url.toString(),
+        method: 'PUT',
         headers,
       },
     }
