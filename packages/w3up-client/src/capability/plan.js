@@ -16,3 +16,21 @@ export const get = async ({ agent }, { account, proofs = [] }) => {
   })
   return receipt.out
 }
+
+/**
+ * Sets the plan currently associated with the account.
+ *
+ * @param {{agent: API.Agent}} client
+ * @param {object} options
+ * @param {API.DID} options.product
+ * @param {API.AccountDID} options.account
+ * @param {API.Delegation[]} [options.proofs]
+ */
+export const set = async ({ agent }, { account, product, proofs = [] }) => {
+  const receipt = await agent.invokeAndExecute(Plan.set, {
+    with: account,
+    nb: { product },
+    proofs,
+  })
+  return receipt.out
+}
