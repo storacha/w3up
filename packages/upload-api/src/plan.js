@@ -51,5 +51,5 @@ export class CustomerExists extends Failure {
  */
 export const createService = (context) => ({
   get: Get.provide(context),
-  set: Set.provide(context)
+  set: Set.provide(context),
 })

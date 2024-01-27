@@ -217,14 +217,14 @@ export class AccountPlan {
 
   /**
    * Sets the plan associated with this account.
-   * 
-   * @param {import('@ucanto/interface').DID} productDID 
+   *
+   * @param {import('@ucanto/interface').DID} productDID
    */
   async set(productDID) {
     return await Plan.set(this.model, {
       account: this.model.id,
       product: productDID,
-      proofs: this.model.proofs
+      proofs: this.model.proofs,
     })
   }
 

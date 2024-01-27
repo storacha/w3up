@@ -232,19 +232,21 @@ export const testAccount = {
     assert.ok(error)
 
     Result.unwrap(
-      await plansStorage.initialize(account.did(), 'stripe:123xyz', 'did:web:free.web3.storage')
+      await plansStorage.initialize(
+        account.did(),
+        'stripe:123xyz',
+        'did:web:free.web3.storage'
+      )
     )
 
     const { ok: plan } = await account.plan.get()
 
     assert.ok(plan?.product, 'did:web:free.web3.storage')
 
-    Result.unwrap(
-      await account.plan.set('did:web:lite.web3.storage')
-    )
+    Result.unwrap(await account.plan.set('did:web:lite.web3.storage'))
 
     const { ok: newPlan } = await account.plan.get()
-    
+
     assert.ok(newPlan?.product, 'did:web:lite.web3.storage')
   },
 
