@@ -50,6 +50,15 @@ export type AccountDID = DID<'mailto'>
 export type SpaceDID = DID<'key'>
 
 /**
+ * Error for cases where an interface implementation needs to return an
+ * error that isn't defined explicitly in the interface.
+ */
+export interface UnexpectedError extends Ucanto.Failure {
+  name: 'UnexpectedError'
+  cause: unknown
+}
+
+/**
  * failure due to a resource not having enough storage capacity.
  */
 export interface InsufficientStorage {
@@ -628,7 +637,7 @@ export interface PlanNotFound extends Ucanto.Failure {
   name: 'PlanNotFound'
 }
 
-export type PlanGetFailure = PlanNotFound
+export type PlanGetFailure = PlanNotFound | UnexpectedError
 
 export type PlanSet = InferInvokedCapability<typeof PlanCaps.set>
 
@@ -645,7 +654,14 @@ export interface InvalidPlanName extends Ucanto.Failure {
   name: 'InvalidPlanName'
 }
 
-export type PlanSetFailure = CustomerNotFound
+export interface PlanUpdateError extends Ucanto.Failure {
+  name: 'PlanUpdateError'
+}
+
+export type PlanSetFailure =
+  | CustomerNotFound
+  | PlanUpdateError
+  | UnexpectedError
 
 // Top
 export type Top = InferInvokedCapability<typeof top>

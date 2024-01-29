@@ -13,16 +13,20 @@ export class PlansStorage {
   }
 
   /**
-   * 
-   * @param {Types.AccountDID} account 
-   * @param {string} billingID 
-   * @param {Types.DID} product 
+   *
+   * @param {Types.AccountDID} account
+   * @param {string} billingID
+   * @param {Types.DID} product
    */
   async initialize(account, billingID, product) {
     if (this.plans[account]) {
       return { error: new CustomerExists(account) }
     }
-    this.plans[account] = { product, billingID, updatedAt: new Date().toISOString() }
+    this.plans[account] = {
+      product,
+      billingID,
+      updatedAt: new Date().toISOString(),
+    }
     return { ok: {} }
   }
 

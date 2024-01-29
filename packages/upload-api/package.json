@@ -30,6 +30,9 @@
       "customer": [
         "dist/src/customer.d.ts"
       ],
+      "plan": [
+        "dist/src/plan.d.ts"
+      ],
       "provider": [
         "dist/src/provider.d.ts"
       ],
@@ -80,6 +83,10 @@
     "./provider": {
       "types": "./dist/src/provider.d.ts",
       "import": "./src/provider.js"
+    },
+    "./plan": {
+      "types": "./dist/src/plan.d.ts",
+      "import": "./src/plan.js"
     },
     "./space": {
       "types": "./dist/src/space.d.ts",

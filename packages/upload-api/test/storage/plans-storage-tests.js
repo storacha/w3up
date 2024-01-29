@@ -11,7 +11,11 @@ export const test = {
   'can initialize a customer': async (assert, context) => {
     const storage = context.plansStorage
 
-    const initializeResult = await storage.initialize(account, billingID, product)
+    const initializeResult = await storage.initialize(
+      account,
+      billingID,
+      product
+    )
 
     assert.ok(initializeResult.ok)
 
@@ -19,7 +23,10 @@ export const test = {
     assert.equal(getResult.ok?.product, product)
   },
 
-  'should not allow plans to be updated for uninitialized customers': async (assert, context) => {
+  'should not allow plans to be updated for uninitialized customers': async (
+    assert,
+    context
+  ) => {
     const storage = context.plansStorage
 
     const setResult = await storage.set(account, product)
@@ -28,10 +35,17 @@ export const test = {
     assert.equal(setResult.error?.name, 'CustomerNotFound')
   },
 
-  'should allow plans to be updated for initialized customers': async (assert, context) => {
+  'should allow plans to be updated for initialized customers': async (
+    assert,
+    context
+  ) => {
     const storage = context.plansStorage
 
-    const initializeResult = await storage.initialize(account, billingID, product)
+    const initializeResult = await storage.initialize(
+      account,
+      billingID,
+      product
+    )
 
     assert.ok(initializeResult.ok)
 
