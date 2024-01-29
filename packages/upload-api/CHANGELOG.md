@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.2.0](https://github.com/web3-storage/w3up/compare/upload-api-v8.1.0...upload-api-v8.2.0) (2024-01-29)
+
+
+### Features
+
+* add `set` method to `AccountPlan` ([#1281](https://github.com/web3-storage/w3up/issues/1281)) ([b94f0d4](https://github.com/web3-storage/w3up/commit/b94f0d48ea71454cef867feb9291c500f676faa3))
+
+
+### Fixes
+
+* one more tweak to the `PlanStorage` interface ([#1280](https://github.com/web3-storage/w3up/issues/1280)) ([5a44565](https://github.com/web3-storage/w3up/commit/5a44565feb33fc08102cd2559a2f22fb0476e86b))
+
 ## [8.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v8.0.0...upload-api-v8.1.0) (2024-01-25)
 
 

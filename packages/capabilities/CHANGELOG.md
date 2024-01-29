@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.1.1](https://github.com/web3-storage/w3up/compare/capabilities-v13.1.0...capabilities-v13.1.1) (2024-01-29)
+
+
+### Fixes
+
+* one more tweak to the `PlanStorage` interface ([#1280](https://github.com/web3-storage/w3up/issues/1280)) ([5a44565](https://github.com/web3-storage/w3up/commit/5a44565feb33fc08102cd2559a2f22fb0476e86b))
+
 ## [13.1.0](https://github.com/web3-storage/w3up/compare/capabilities-v13.0.0...capabilities-v13.1.0) (2024-01-25)
 
 
