@@ -55,6 +55,9 @@ import type {
   SubscriptionList,
   SubscriptionListSuccess,
   SubscriptionListFailure,
+  PlanSet,
+  PlanSetSuccess,
+  PlanSetFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -132,6 +135,7 @@ export interface Service {
   }
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
+    set: ServiceMethod<PlanSet, PlanSetSuccess, PlanSetFailure>
   }
 }
 
