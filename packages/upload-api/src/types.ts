@@ -134,6 +134,9 @@ import {
   UsageReportSuccess,
   UsageReportFailure,
   UsageReport,
+  PlanSetSuccess,
+  PlanSetFailure,
+  PlanSet,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -262,6 +265,7 @@ export interface Service extends StorefrontService {
   }
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
+    set: ServiceMethod<PlanSet, PlanSetSuccess, PlanSetFailure>
   }
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
