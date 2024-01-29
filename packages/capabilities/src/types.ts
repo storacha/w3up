@@ -55,6 +55,7 @@ export type SpaceDID = DID<'key'>
  */
 export interface UnexpectedError extends Ucanto.Failure {
   name: 'UnexpectedError'
+  cause: unknown
 }
 
 /**
