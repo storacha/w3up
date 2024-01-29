@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.2.0](https://github.com/web3-storage/w3up/compare/access-v18.1.1...access-v18.2.0) (2024-01-29)
+
+
+### Features
+
+* two more interface tweaks ([#1287](https://github.com/web3-storage/w3up/issues/1287)) ([bc3c364](https://github.com/web3-storage/w3up/commit/bc3c36452454398ea8e0f574aed44b318561ad94))
+
 ## [18.1.1](https://github.com/web3-storage/w3up/compare/access-v18.1.0...access-v18.1.1) (2024-01-17)
 
 
