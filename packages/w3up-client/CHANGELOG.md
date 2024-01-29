@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.3.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.2.1...w3up-client-v12.3.0) (2024-01-29)
+
+
+### Features
+
+* add `set` method to `AccountPlan` ([#1281](https://github.com/web3-storage/w3up/issues/1281)) ([b94f0d4](https://github.com/web3-storage/w3up/commit/b94f0d48ea71454cef867feb9291c500f676faa3))
+
 ## [12.2.1](https://github.com/web3-storage/w3up/compare/w3up-client-v12.2.0...w3up-client-v12.2.1) (2024-01-24)
 
 
