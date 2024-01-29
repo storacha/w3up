@@ -1,5 +1,6 @@
 import * as Types from './types.js'
 import * as Get from './plan/get.js'
+import * as Set from './plan/set.js'
 
 import { Failure } from '@ucanto/server'
 
@@ -50,4 +51,5 @@ export class CustomerExists extends Failure {
  */
 export const createService = (context) => ({
   get: Get.provide(context),
+  set: Set.provide(context),
 })
