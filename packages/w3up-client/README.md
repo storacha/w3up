@@ -124,6 +124,18 @@ A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agen
 const account = await client.login('zaphod@beeblebrox.galaxy')
 ```
 
+If your account does not yet have a payment plan, you'll be prompted to choose one after your email address has been verified. You will need a payment plan in order to provision your space. You can use the following code to wait for a payment plan to be selected:
+
+```js
+// wait for payment plan to be selected
+while (true) {
+  const res = await account.plan.get()
+  if (res.ok) break
+  console.log('Waiting for payment plan to be selected...')
+  await new Promise(resolve => setTimeout(resolve, 1000))
+}
+```
+
 Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
 
 ```js
@@ -140,18 +152,26 @@ Before anything can be stored with a space using web3.storage, the space must al
 await account.provision(space.did())
 ```
 
-If provisioning succeeds, you're ready to use the Space.
+If provisioning succeeds, you're ready to use the Space. Save your space to your agent's state store:
 
-Create a delegation of authority from the space to your client, and add it to your client so future invocations can use it as authorization
 ```js
-const spaceAuthorizesClient = await space.createAuthorization(client)
-await client.addSpace(spaceAuthorizesClient)
+await space.save()
 ```
 
-Set the space as your "current" space using the [`setCurrentSpace` method][docs-Client#setCurrentSpace], passing in the DID of the `space` object you created above. This way, any future method calls on `client` will default to storing with `space`.
+If your agent has no other spaces, saving the space will set it as the "current space" in your agent. If you already have other spaces, you may want to set it as the current:
 
 ```js
 await client.setCurrentSpace(space.did())
+```
+
+One last thing - now that you've saved your space locally, it's a good idea to setup recovery, so that when you move to a different device you can still access your space: 
+
+```js
+const recovery = await space.createRecovery(account.did())
+await client.capability.access.delegate({
+  space: space.did(),
+  delegations: [recovery],
+})
 ```
 
 #### Delegating from Space to Agent
