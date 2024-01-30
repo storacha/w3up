@@ -1,26 +1,23 @@
-import * as API from './types.js'
-import * as Access from './capability/access.js'
-import * as Plan from './capability/plan.js'
-import * as Subscription from './capability/subscription.js'
-import { Delegation, importAuthorization } from '@web3-storage/access/agent'
-import { add as provision, AccountDID } from '@web3-storage/access/provider'
+import * as API from '../types.js'
+import * as Access from '../capability/access.js'
+import * as Plan from '../capability/plan.js'
+import * as Subscription from '../capability/subscription.js'
+import { Delegation, importAuthorization } from '../agent.js'
+import { add as provision, AccountDID } from '../capability/provider.js'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
+import * as Result from '../result.js'
 
 export { fromEmail }
-
-/**
- * @typedef {import('@web3-storage/did-mailto').EmailAddress} EmailAddress
- */
 
 /**
  * List all accounts that agent has stored access to. Returns a dictionary
  * of accounts keyed by their `did:mailto` identifier.
  *
- * @param {{agent: API.Agent}} client
+ * @param {API.Agent<API.AccessService>} agent
  * @param {object} query
  * @param {API.DID<'mailto'>} [query.account]
  */
-export const list = ({ agent }, { account } = {}) => {
+export const list = (agent, { account } = {}) => {
   const query = /** @type {API.CapabilityQuery} */ ({
     with: account ?? /did:mailto:.*/,
     can: '*',
@@ -75,13 +72,13 @@ export const list = ({ agent }, { account } = {}) => {
  * authorization session time bounds (currently 15 minutes), the promise will
  * resolve to an error.
  *
- * @param {{agent: API.Agent}} client
- * @param {EmailAddress} email
+ * @param {API.Agent<API.AccessService>} agent
+ * @param {API.EmailAddress} email
  * @param {object} [options]
  * @param {AbortSignal} [options.signal]
  * @returns {Promise<API.Result<Account, Error>>}
  */
-export const login = async ({ agent }, email, options = {}) => {
+export const login = async (agent, email, options = {}) => {
   const account = fromEmail(email)
 
   // If we already have a session for this account we
@@ -94,18 +91,15 @@ export const login = async ({ agent }, email, options = {}) => {
   // no longer valid because it was revoked. But dropping
   // revoked UCANs from store is something we should do
   // anyway.
-  const session = list({ agent }, { account })[account]
+  const session = list(agent, { account })[account]
   if (session) {
     return { ok: session }
   }
 
-  const result = await Access.request(
-    { agent },
-    {
-      account,
-      access: Access.accountAccess,
-    }
-  )
+  const result = await Access.request(agent, {
+    account,
+    access: Access.accountAccess,
+  })
 
   const { ok: access, error } = result
   /* c8 ignore next 2 - don't know how to test this */
@@ -125,7 +119,7 @@ export const login = async ({ agent }, email, options = {}) => {
 /**
  * @typedef {object} Model
  * @property {API.DidMailto} id
- * @property {API.Agent} agent
+ * @property {API.Agent<API.AccessService>} agent
  * @property {API.Delegation[]} proofs
  */
 
@@ -175,7 +169,7 @@ export class Account {
    * @param {API.SpaceDID} space
    * @param {object} input
    * @param {API.ProviderDID} [input.provider]
-   * @param {API.Agent} [input.agent]
+   * @param {API.Agent<API.AccessService>} [input.agent]
    */
   provision(space, input = {}) {
     return provision(this.agent, {
@@ -190,7 +184,7 @@ export class Account {
    * Saves account in the agent store so it can be accessed across sessions.
    *
    * @param {object} input
-   * @param {API.Agent} [input.agent]
+   * @param {API.Agent<{}>} [input.agent]
    */
   async save({ agent = this.agent } = {}) {
     return await importAuthorization(agent, this)
@@ -216,9 +210,11 @@ export class AccountPlan {
   }
 
   async subscriptions() {
-    return await Subscription.list(this.model, {
-      account: this.model.id,
-      proofs: this.model.proofs,
-    })
+    return Result.unwrap(
+      await Subscription.list(this.model.agent, {
+        account: this.model.id,
+        proofs: this.model.proofs,
+      })
+    )
   }
 }

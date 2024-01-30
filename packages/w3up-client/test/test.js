@@ -48,3 +48,25 @@ export const setup = async () => {
 
   return { ...context, connect, client: await connect() }
 }
+
+/**
+ * @typedef {Record<string, (assert:Assert) => unknown>} BasicSuite
+ * @param {BasicSuite|Record<string, BasicSuite>} suite
+ */
+export const basic = (suite) => {
+  for (const [name, member] of Object.entries(suite)) {
+    if (typeof member === 'function') {
+      const define = name.startsWith('only ')
+        ? it.only
+        : name.startsWith('skip ')
+        ? it.skip
+        : it
+
+      define(name, async () => {
+        await member(assert)
+      })
+    } else {
+      describe(name, () => test(member))
+    }
+  }
+}

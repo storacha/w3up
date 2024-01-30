@@ -16,6 +16,7 @@ export const accessServiceConnection = connect({
 
 export const uploadServiceURL = new URL('https://up.web3.storage')
 export const uploadServicePrincipal = DID.parse('did:web:web3.storage')
+export const receiptsEndpoint = new URL('https://up.web3.storage/receipt/')
 
 export const uploadServiceConnection = connect({
   id: uploadServicePrincipal,
@@ -44,5 +45,3 @@ export const serviceConf = {
   upload: uploadServiceConnection,
   filecoin: filecoinServiceConnection,
 }
-
-export const receiptsEndpoint = 'https://up.web3.storage/receipt/'

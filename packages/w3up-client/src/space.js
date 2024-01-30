@@ -1,12 +1,12 @@
-export * from '@web3-storage/access/space'
 import * as Usage from './capability/usage.js'
 import * as API from './types.js'
+export * from './capability/space.js'
 
 /**
  * @typedef {object} Model
  * @property {API.SpaceDID} id
  * @property {{name?:string}} [meta]
- * @property {API.Agent} agent
+ * @property {API.Agent<API.UploadService>} agent
  */
 
 export class Space {
@@ -66,7 +66,7 @@ export class StorageUsage {
       from: startOfLastMonth(now),
       to: now,
     }
-    const result = await Usage.report({ agent }, { space, period })
+    const result = await Usage.report(agent, { space, period })
     /* c8 ignore next */
     if (result.error) return result
 

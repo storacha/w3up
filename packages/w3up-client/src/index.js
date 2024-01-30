@@ -10,7 +10,7 @@ import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
 import { generate } from '@ucanto/principal/rsa'
 import { Client } from './client.js'
 export * as Result from './result.js'
-export * as Account from './account.js'
+export * as Account from './view/account.js'
 
 /**
  * Create a new w3up client.

@@ -1,44 +1,35 @@
-import { Subscription as SubscriptionCapabilities } from '@web3-storage/capabilities'
+import { Subscription } from '@web3-storage/capabilities'
+import * as Result from '../result.js'
 import * as API from '../types.js'
-import { Base } from '../base.js'
+import { issueInvocation } from '../agent.js'
 
-/**
- * Client for interacting with the `subscription/*` capabilities.
- */
-export class SubscriptionClient extends Base {
-  /**
-   * List subscriptions for the passed account.
-   *
-   * @param {import('@web3-storage/access').AccountDID} account
-   */
-  async list(account) {
-    const out = await list({ agent: this.agent }, { account })
-    if (!out.ok) {
-      throw new Error(
-        `failed ${SubscriptionCapabilities.list.can} invocation`,
-        {
-          cause: out.error,
-        }
-      )
-    }
-
-    return out.ok
-  }
-}
+export { Subscription }
 
 /**
  * Gets subscriptions associated with the account.
  *
- * @param {{agent: API.Agent}} client
+ * @param {API.Agent<API.AccessService>} agent
  * @param {object} options
  * @param {API.AccountDID} options.account
  * @param {API.Delegation[]} [options.proofs]
+ * @returns {Promise<API.Result<API.SubscriptionListSuccess, Error>>}
  */
-export const list = async ({ agent }, { account, proofs = [] }) => {
-  const receipt = await agent.invokeAndExecute(SubscriptionCapabilities.list, {
+export const list = async (agent, { account, proofs = [] }) => {
+  const task = await issueInvocation(agent, Subscription.list, {
     with: account,
     proofs,
     nb: {},
   })
-  return receipt.out
+
+  const { out } = await task.execute(agent.connection)
+
+  if (out.error) {
+    return Result.error(
+      new Error(`failed ${Subscription.list.can} invocation`, {
+        cause: out.error,
+      })
+    )
+  }
+
+  return out
 }

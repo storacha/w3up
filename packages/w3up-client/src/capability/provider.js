@@ -1,5 +1,5 @@
-import * as API from './types.js'
 import * as Provider from '@web3-storage/capabilities/provider'
+import * as API from '../types.js'
 
 export const { Provider: ProviderDID, AccountDID } = Provider
 

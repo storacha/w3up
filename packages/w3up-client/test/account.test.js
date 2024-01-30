@@ -1,5 +1,5 @@
 import * as Test from './test.js'
-import * as Account from '../src/account.js'
+import * as Account from '../src/view/account.js'
 import * as Space from '../src/space.js'
 import * as Result from '../src/result.js'
 

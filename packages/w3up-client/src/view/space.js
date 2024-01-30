@@ -3,28 +3,8 @@ import { delegate, Schema, UCAN, error, fail } from '@ucanto/core'
 import * as BIP39 from '@scure/bip39'
 import { wordlist } from '@scure/bip39/wordlists/english'
 import * as API from '../types.js'
-import * as Access from './access.js'
-import * as Provider from './provider.js'
-import * as Space from '@web3-storage/capabilities/space'
-import { issueInvocation } from '../agent.js'
-import { Result } from '../index.js'
-
-/**
- *
- * Get Space information from Access service
- *
- * @param {API.Agent<API.AccessService>} agent
- * @param {API.SpaceDID} space
- * @returns
- */
-export const info = async (agent, space) => {
-  const task = await issueInvocation(agent, Space.info, {
-    with: space,
-  })
-  const receipt = await task.execute(agent.connection)
-
-  return Result.unwrap(receipt.out)
-}
+import * as Access from '../capability/access.js'
+import * as Provider from '../capability/provider.js'
 
 /**
  * Data model for the (owned) space.
@@ -186,7 +166,7 @@ class OwnedSpace {
    * Saves account in the agent store so it can be accessed across sessions.
    *
    * @param {object} input
-   * @param {API.Agent<{}>} [input.agent]
+   * @param {API.Agent<API.AccessService>} [input.agent]
    * @returns {Promise<API.Result<API.Unit, Error>>}
    */
   async save({ agent = this.model.agent } = {}) {
@@ -272,7 +252,7 @@ export const fromDelegation = (delegation) => {
   /** @type {{name?:string}} */
   const meta = delegation.facts[0]?.space ?? {}
 
-  return new SharedSpace({ id: result.ok, proofs: [delegation], meta })
+  return new SharedSpace({ id: result.ok, delegation, meta })
 }
 
 /**
@@ -314,7 +294,7 @@ class SharedSpace {
   /**
    * @typedef {object} SharedSpaceModel
    * @property {API.SpaceDID} id
-   * @property {API.Tuple<API.Delegation>} proofs
+   * @property {API.Delegation} delegation
    * @property {{name?:string}} meta
    * @property {API.Agent} [agent]
    *
@@ -324,8 +304,8 @@ class SharedSpace {
     this.model = model
   }
 
-  get proofs() {
-    return this.model.proofs
+  get delegation() {
+    return this.model.delegation
   }
 
   get meta() {

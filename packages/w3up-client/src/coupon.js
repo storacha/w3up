@@ -1,11 +1,14 @@
-import * as API from '@web3-storage/access/types'
+import * as API from './types.js'
 import { sha256, delegate, Delegation } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import * as Result from './result.js'
-import { GrantedAccess } from '@web3-storage/access/access'
-import { Base } from './base.js'
+import { GrantedAccess } from './capability/access.js'
+import { Client } from './client/client.js'
 
-export class CouponAPI extends Base {
+/**
+ * @extends {Client}
+ */
+export class CouponAPI extends Client {
   /**
    * Redeems coupon from the the the archive. Throws an error if the coupon
    * password is invalid or if provided archive is not a valid.
@@ -59,7 +62,7 @@ export const archive = async (coupon) => {
 /**
  * Issues a coupon for the given delegation.
  *
- * @typedef {Omit<import('@ucanto/interface').DelegationOptions<API.Capabilities>, 'audience'> & { password?: string }} CouponOptions
+ * @typedef {Omit<API.DelegationOptions<API.Capabilities>, 'audience'> & { password?: string }} CouponOptions
  * @param {CouponOptions} options
  */
 export const issue = async ({ password = '', ...options }) => {
@@ -82,7 +85,7 @@ export const issue = async ({ password = '', ...options }) => {
  *
  * @param {Model} coupon
  * @param {object} options
- * @param {API.Agent} options.agent
+ * @param {API.Agent<API.AccessService>} options.agent
  * @param {string} [options.password]
  * @returns {Promise<API.Result<GrantedAccess, Error>>}
  */
@@ -134,7 +137,7 @@ export class Coupon {
 
   /**
    *
-   * @param {API.Agent} agent
+   * @param {API.Agent<API.AccessService>} agent
    * @param {object} [options]
    * @param {string} [options.password]
    */

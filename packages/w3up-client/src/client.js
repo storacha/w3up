@@ -1,27 +1,21 @@
-import {
-  uploadFile,
-  uploadDirectory,
-  uploadCAR,
-} from '@web3-storage/upload-client'
-import {
-  Store as StoreCapabilities,
-  Upload as UploadCapabilities,
-} from '@web3-storage/capabilities'
 import { CAR } from '@ucanto/transport'
-import { Base } from './base.js'
-import * as Account from './account.js'
-import { Space } from './space.js'
+import * as Account from './view/account.js'
+import { Space as SpaceView } from './space.js'
 import { Delegation as AgentDelegation } from './delegation.js'
-import { StoreClient } from './capability/store.js'
-import { UploadClient } from './capability/upload.js'
-import { SpaceClient } from './capability/space.js'
-import { SubscriptionClient } from './capability/subscription.js'
-import { UsageClient } from './capability/usage.js'
-import { AccessClient } from './capability/access.js'
-import { FilecoinClient } from './capability/filecoin.js'
+import { StoreClient } from './client/store.js'
+import { UploadClient } from './client/upload.js'
+import { SpaceClient } from './client/space.js'
+import { SubscriptionClient } from './client/subscription.js'
+import { UsageClient } from './client/usage.js'
+import { AccessClient } from './client/access.js'
+import { FilecoinClient } from './client/filecoin.js'
 import { CouponAPI } from './coupon.js'
+import * as Agent from './agent.js'
 export * as Access from './capability/access.js'
+import * as Space from './capability/space.js'
 import * as Result from './result.js'
+import * as API from './types.js'
+import * as Config from './service.js'
 
 export {
   AccessClient,
@@ -33,29 +27,63 @@ export {
   UsageClient,
 }
 
-export class Client extends Base {
+export class Client {
   /**
-   * @param {import('@web3-storage/access').AgentData} agentData
+   * @param {API.AgentData} data
    * @param {object} [options]
-   * @param {import('./types.js').ServiceConf} [options.serviceConf]
+   * @param {API.ServiceConf} [options.serviceConf]
    * @param {URL} [options.receiptsEndpoint]
    */
-  constructor(agentData, options) {
-    super(agentData, options)
-    this.capability = {
-      access: new AccessClient(agentData, options),
-      filecoin: new FilecoinClient(agentData, options),
-      space: new SpaceClient(agentData, options),
-      store: new StoreClient(agentData, options),
-      subscription: new SubscriptionClient(agentData, options),
-      upload: new UploadClient(agentData, options),
-      usage: new UsageClient(agentData, options),
+  constructor(
+    data,
+    {
+      serviceConf = Config.serviceConf,
+      receiptsEndpoint = Config.receiptsEndpoint,
+    } = {}
+  ) {
+    this.agents = {
+      access: Agent.from({
+        data,
+        connection: serviceConf.access,
+        receiptsEndpoint,
+      }),
+      upload: Agent.from({
+        data,
+        connection: serviceConf.upload,
+        receiptsEndpoint,
+      }),
+      filecoin: Agent.from({
+        data,
+        connection: serviceConf.filecoin,
+        receiptsEndpoint,
+      }),
     }
-    this.coupon = new CouponAPI(agentData, options)
+
+    const upload = new UploadClient(this.agents.upload)
+    this.data = data
+    this._receiptsEndpoint = receiptsEndpoint
+    this.capability = {
+      access: new AccessClient(this.agents.access),
+      filecoin: new FilecoinClient(this.agents.filecoin),
+      space: new SpaceClient(this.agents.access),
+      store: new StoreClient(this.agents.upload),
+      upload,
+      subscription: new SubscriptionClient(this.agents.upload),
+      usage: new UsageClient(this.agents.upload),
+    }
+    this.coupon = new CouponAPI(this.agents.upload)
+
+    this.uploadFile = upload.uploadFile.bind(upload)
+    this.uploadDirectory = upload.uploadDirectory.bind(upload)
+    this.uploadCAR = upload.uploadCAR.bind(upload)
+  }
+
+  get issuer() {
+    return this.data.principal
   }
 
   did() {
-    return this._agent.did()
+    return this.data.principal.did()
   }
 
   /* c8 ignore start - testing websockets is hard */
@@ -75,12 +103,14 @@ export class Client extends Base {
   }
 
   /**
-   * @param {Account.EmailAddress} email
+   * @param {API.EmailAddress} email
    * @param {object} [options]
    * @param {AbortSignal} [options.signal]
    */
   async login(email, options = {}) {
-    const account = Result.unwrap(await Account.login(this, email, options))
+    const account = Result.unwrap(
+      await Account.login(this.agents.access, email, options)
+    )
     Result.unwrap(await account.save())
     return account
   }
@@ -91,61 +121,7 @@ export class Client extends Base {
    * of accounts keyed by their `did:mailto` identifier.
    */
   accounts() {
-    return Account.list(this)
-  }
-
-  /**
-   * Uploads a file to the service and returns the root data CID for the
-   * generated DAG.
-   *
-   * @param {import('./types.js').BlobLike} file - File data.
-   * @param {import('./types.js').UploadOptions} [options]
-   */
-  async uploadFile(file, options = {}) {
-    const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
-      UploadCapabilities.add.can,
-    ])
-    options.connection = this._serviceConf.upload
-    return uploadFile(conf, file, options)
-  }
-
-  /**
-   * Uploads a directory of files to the service and returns the root data CID
-   * for the generated DAG. All files are added to a container directory, with
-   * paths in file names preserved.
-   *
-   * @param {import('./types.js').FileLike[]} files - File data.
-   * @param {import('./types.js').UploadDirectoryOptions} [options]
-   */
-  async uploadDirectory(files, options = {}) {
-    const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
-      UploadCapabilities.add.can,
-    ])
-    options.connection = this._serviceConf.upload
-    return uploadDirectory(conf, files, options)
-  }
-
-  /**
-   * Uploads a CAR file to the service.
-   *
-   * The difference between this function and `capability.store.add` is that the
-   * CAR file is automatically sharded and an "upload" is registered, linking
-   * the individual shards (see `capability.upload.add`).
-   *
-   * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
-   *
-   * @param {import('./types.js').BlobLike} car - CAR file.
-   * @param {import('./types.js').UploadOptions} [options]
-   */
-  async uploadCAR(car, options = {}) {
-    const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
-      UploadCapabilities.add.can,
-    ])
-    options.connection = this._serviceConf.upload
-    return uploadCAR(conf, car, options)
+    return Account.list(this.agents.access)
   }
 
   /**
@@ -182,36 +158,38 @@ export class Client extends Base {
    * Return the default provider.
    */
   defaultProvider() {
-    return this._agent.connection.id.did()
+    return this.agents.upload.connection.id.did()
   }
 
   /**
    * The current space.
    */
   currentSpace() {
-    const agent = this._agent
-    const id = agent.currentSpace()
+    const id = this.data.currentSpace
     if (!id) return
-    const meta = agent.spaces.get(id)
-    return new Space({ id, meta, agent })
+    const meta = this.data.spaces.get(id)
+    const proofs = Agent.selectAuthorization(this, [{ with: id }])
+
+    return new SpaceView({ id, meta, agent: this.agents.upload })
   }
 
   /**
    * Use a specific space.
    *
-   * @param {import('./types.js').DID} did
+   * @param {API.SpaceDID} did
    */
   async setCurrentSpace(did) {
-    await this._agent.setCurrentSpace(/** @type {`did:key:${string}`} */ (did))
+    await this.data.setCurrentSpace(did)
   }
 
   /**
    * Spaces available to this agent.
    */
   spaces() {
-    return [...this._agent.spaces].map(([id, meta]) => {
-      // @ts-expect-error id is not did:key
-      return new Space({ id, meta, agent: this._agent })
+    return [...this.data.spaces].map(([did, meta]) => {
+      const id = /** @type {API.SpaceDID} */ (did)
+      const proofs = Agent.selectAuthorization(this, [{ with: id }])
+      return new SpaceView({ id, meta, agent: this.agents.upload })
     })
   }
 
@@ -221,17 +199,39 @@ export class Client extends Base {
    * @param {string} name
    */
   async createSpace(name) {
-    return await this._agent.createSpace(name)
+    return await Space.generate({ name, agent: this.agents.access })
   }
+
+  /**
+   * @param {string} secret
+   * @param {object} options
+   * @param {string} options.name
+   */
+  async recoverSpace(secret, { name }) {
+    return await Space.fromMnemonic(secret, { name, agent: this.agents.access })
+  }
+
   /* c8 ignore stop */
 
   /**
    * Add a space from a received proof.
    *
-   * @param {import('./types.js').Delegation} proof
+   * @param {API.Delegation} proof
    */
   async addSpace(proof) {
-    return await this._agent.importSpaceFromDelegation(proof)
+    const space = Space.fromDelegation(proof)
+
+    // save space in agent's space store
+    this.data.spaces.set(space.did(), { ...space.meta, name: space.name })
+    // save the proof in the agent's delegation store
+    await Agent.addProofs(this.data, space.proofs)
+
+    // If we do not have a current space, make this one the current space
+    if (!this.currentSpace()) {
+      await this.data.setCurrentSpace(space.did())
+    }
+
+    return space
   }
 
   /**
@@ -243,7 +243,7 @@ export class Client extends Base {
    * filter by. Empty or undefined caps with return all the proofs.
    */
   proofs(caps) {
-    return this._agent.proofs(caps)
+    return Agent.selectAuthorization(this, caps)
   }
 
   /**
@@ -259,12 +259,15 @@ export class Client extends Base {
   /**
    * Get delegations created by the agent for others.
    *
-   * @param {import('./types.js').Capability[]} [caps] - Capabilities to
+   * @param {API.Capability[]} [caps] - Capabilities to
    * filter by. Empty or undefined caps with return all the delegations.
    */
   delegations(caps) {
     const delegations = []
-    for (const { delegation, meta } of this._agent.delegationsWithMeta(caps)) {
+    for (const { delegation, meta } of Agent.selectIssuedDelegationsWithMeta(
+      this.data,
+      caps
+    )) {
       delegations.push(
         new AgentDelegation(delegation.root, delegation.blocks, meta)
       )
@@ -285,7 +288,7 @@ export class Client extends Base {
       name: 'agent',
       type: 'device',
     }
-    const { root, blocks } = await this._agent.delegate({
+    const { root, blocks } = await Agent.issueDelegation(this, {
       ...options,
       abilities,
       audience,

@@ -20,6 +20,9 @@ import * as UCAN from './ucan.js'
 import * as Plan from './plan.js'
 import * as Usage from './usage.js'
 
+export * from './types.js'
+export { capability, Schema } from '@ucanto/validator'
+
 export {
   Access,
   Provider,

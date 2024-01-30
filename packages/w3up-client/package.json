@@ -104,7 +104,9 @@
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-client": "workspace:^",
-    "@web3-storage/upload-client": "workspace:^"
+    "@web3-storage/upload-client": "workspace:^",
+    "@scure/bip39": "^1.2.1",
+    "uint8arrays": "^4.0.9"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",

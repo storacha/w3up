@@ -2,7 +2,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as Test from './test.js'
 import { Space } from '../src/space.js'
-import * as Account from '../src/account.js'
+import * as Account from '../src/view/account.js'
 import * as Result from '../src/result.js'
 import { randomCAR } from './helpers/random.js'
 

@@ -1,5 +1,5 @@
 import * as Test from './test.js'
-import * as Account from '../src/account.js'
+import * as Account from '../src/view/account.js'
 
 /**
  * @type {Test.Suite}
