@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.4.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.3.0...w3up-client-v12.4.0) (2024-01-30)
+
+
+### Features
+
+* export PlanSet{Success|Failure} from w3up-client ([#1291](https://github.com/web3-storage/w3up/issues/1291)) ([47a2954](https://github.com/web3-storage/w3up/commit/47a2954630097df220d1998f29a9026764b7e76c))
+
+
+### Fixes
+
+* additional space setup steps ([#1284](https://github.com/web3-storage/w3up/issues/1284)) ([42804ff](https://github.com/web3-storage/w3up/commit/42804ff8b123874389f63f3b5387e6a578c3bbc9))
+
 ## [12.3.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.2.1...w3up-client-v12.3.0) (2024-01-29)
 
 
