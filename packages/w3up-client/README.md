@@ -34,6 +34,7 @@ This library is the user-facing "porcelain" client for interacting with w3up ser
     - [Client-server](#client-server)
     - [Delegated](#delegated)
     - [User owned](#user-owned)
+  - [Environments requiring wasm import](#environments-requiring-wasm-imports)
 - [API](#api)
 - [Contributing](#contributing)
 - [License](#license)
@@ -394,6 +395,12 @@ sequenceDiagram
     - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
 - There is a world of possibilities with your users "bringing their own identity" for their Space; you could explore how crypto wallet private keys, Apple Passkey, and more might map to Space DIDs and have the client use those
 - If you have code snippet(s) that works for you, please share them in a PR or [Github issue](https://github.com/web3-storage/w3up/issues) and we'll link them here!
+
+### Environments requiring wasm import
+
+Some environments (for instance Cloudflare Workers) require wasm bytecode to be imported. All other paths to load wasmm are disallowed by embedder. For these use cases, the default export of `w3up-client` (most compatible) won't work out of the box. A custom build will need to be created to get the client working.
+
+We created a `esbuild-plugin` [esbuild-plugin-w3up-client-wasm-import](https://github.com/vasco-santos/esbuild-plugin-w3up-client-wasm-import) that you can easily use. There is also an [example repository](https://github.com/vasco-santos/worker-w3up-client-example).
 
 ## API
 

@@ -98,7 +98,6 @@ export async function add(
       try {
         const res = await fetchWithUploadProgress(responseAddUpload.url, {
           method: 'PUT',
-          mode: 'cors',
           body: car,
           headers: responseAddUpload.headers,
           signal: options.signal,
