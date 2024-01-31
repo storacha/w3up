@@ -1,175 +1,212 @@
-import * as DB from '../../src/agent/db2.js'
+import * as DB from '../../src/agent/db.js'
 import * as Test from '../test.js'
-import * as movieDB from '../fixtures/movie-facts.js'
-
-const proofsDB = /** @type {const} */ ({
-  facts: [
-    ['bafy...upload', 'issuer', 'did:key:zAlice'],
-    ['bafy...upload', 'audience', 'did:key:zBob'],
-    ['bafy...upload', 'expiration', 1702413523],
-    ['bafy...upload', 'capabilities', 'bafy...upload/capabilities/0'],
-    ['bafy...upload/capabilities/0', 'can', 'upload/add'],
-    ['bafy...upload/capabilities/0', 'with', 'did:key:zAlice'],
-
-    ['bafy...store', 'issuer', 'did:key:zAlice'],
-    ['bafy...store', 'audience', 'did:key:zBob'],
-    ['bafy...store', 'expiration', 1702413523],
-    ['bafy...store', 'capabilities', 'bafy...store/capabilities/0'],
-    ['bafy...store/capabilities/0', 'can', 'store/add'],
-    ['bafy...store/capabilities/0', 'with', 'did:key:zAlice'],
-
-    ['bafy...store', 'capabilities', 'bafy...store/capabilities/1'],
-    ['bafy...store/capabilities/1', 'can', 'store/list'],
-    ['bafy...store/capabilities/1', 'with', 'did:key:zAlice'],
-  ],
-})
+import * as Space from '../../src/capability/space.js'
+import * as Account from '../../src/view/account.js'
+import { delegate } from '@ucanto/core'
+import { Absentee, Verifier } from '@ucanto/principal'
+import * as Capability from '@web3-storage/capabilities'
+import { alice, bob, mallory, service } from '../fixtures/principals.js'
+import { assert } from 'console'
 
 /**
  * @type {Test.BasicSuite}
  */
 export const testDB = {
-  'test capabilities across ucans': async (assert) => {
-    const uploadLink = DB.Schema.string()
-    const storeLink = DB.Schema.string()
+  'test find space': async (assert) => {
+    const space = await Space.generate({
+      name: 'beet-box',
+    })
+    const auth = await space.createAuthorization(alice)
+    const db = DB.from({ proofs: [auth] })
 
-    const space = DB.Schema.string()
-    const uploadID = DB.Schema.string()
-    const storeID = DB.Schema.string()
+    const result = DB.find(db, {
+      can: { 'store/add': [] },
+      audience: alice,
+    })
 
-    const result = DB.query(proofsDB, {
+    assert.deepEqual(result, [
+      {
+        audience: alice,
+        subject: space.did(),
+        proofs: [auth],
+      },
+    ])
+  },
+
+  'test find several spaces': async (assert) => {
+    const beetBox = await Space.generate({
+      name: 'beet-box',
+    })
+    const beetBoxAuth = await beetBox.createAuthorization(alice)
+
+    const plumBox = await Space.generate({
+      name: 'plum-box',
+    })
+    const plumBoxAuth = await plumBox.createAuthorization(alice)
+
+    const db = DB.from({ proofs: [beetBoxAuth, plumBoxAuth] })
+
+    const result = DB.find(db, {
+      can: { 'store/add': [], 'store/remove': [] },
+      audience: alice,
+    })
+
+    assert.deepEqual(result, [
+      {
+        audience: alice,
+        subject: beetBox.did(),
+        proofs: [beetBoxAuth],
+      },
+      {
+        audience: alice,
+        subject: plumBox.did(),
+        proofs: [plumBoxAuth],
+      },
+    ])
+  },
+
+  'test finds authorization across multiple ucans': async (assert) => {
+    const spaceInfo = await Capability.Space.info.delegate({
+      issuer: alice,
+      audience: bob,
+      with: alice.did(),
+    })
+
+    const uploadList = await Capability.Upload.list.delegate({
+      issuer: alice,
+      audience: bob,
+      with: alice.did(),
+    })
+
+    const db = DB.from({ proofs: [spaceInfo, uploadList] })
+
+    const result = DB.find(db, {
+      can: { 'space/info': [], 'upload/list': [] },
+      audience: bob,
+    })
+
+    assert.deepEqual(result, [
+      {
+        audience: bob,
+        subject: alice.did(),
+        proofs: [spaceInfo, uploadList],
+      },
+    ])
+  },
+
+  'test find accounts ignoring spaces': async (assert) => {
+    const localSpace = await Space.generate({
+      name: 'local-box',
+    })
+    const localAuth = await localSpace.createAuthorization(alice)
+
+    const {
+      login,
+      attestation,
+      account,
+      space: remoteSpace,
+    } = await setupAccount()
+
+    const db = DB.from({
+      proofs: [login, attestation, localAuth],
+    })
+
+    const result = DB.find(db, {
+      subject: 'did:mailto:%',
+      can: { '*': [] },
+      audience: alice,
+    })
+
+    assert.deepEqual(result, [
+      {
+        subject: account.did(),
+        audience: alice,
+        proofs: [login],
+      },
+    ])
+
+    const spaces = DB.find(db, {
+      subject: 'did:key:%',
+      can: { 'store/add': [] },
+      audience: alice,
+    })
+
+    assert.deepEqual(spaces, [
+      {
+        subject: remoteSpace.did(),
+        audience: alice,
+        proofs: [login],
+      },
+      {
+        subject: localSpace.did(),
+        audience: alice,
+        proofs: [localAuth],
+      },
+    ])
+  },
+
+  'only test find accounts and attestations': async (assert) => {
+    const { login, attestation, account } = await setupAccount()
+
+    const db = DB.from({ proofs: [login, attestation] })
+
+    const loginProof = DB.link()
+    const loginCan = DB.link()
+    const attestProof = DB.link()
+    const attestCan = DB.link()
+
+    const result = DB.query(db.index, {
       select: {
-        uploadLink,
-        storeLink,
-        space,
+        loginProof,
+        attestProof,
       },
       where: [
-        [uploadLink, 'capabilities', uploadID],
-        [uploadID, 'can', 'upload/add'],
-        [uploadID, 'with', space],
-        [storeLink, 'capabilities', storeID],
-        [storeID, 'can', 'store/add'],
-        [storeID, 'with', space],
+        DB.match([loginProof, 'ucan/audience', alice.did()]),
+        DB.match([loginProof, 'ucan/capability', loginCan]),
+        DB.match([loginCan, 'capability/with', account.did()]),
+
+        DB.match([attestProof, 'ucan/audience', alice.did()]),
+        DB.match([attestProof, 'ucan/capability', attestCan]),
+        DB.match([attestCan, 'capability/can', 'ucan/attest']),
+        DB.match([attestCan, 'capability/nb/proof', loginProof]),
       ],
     })
 
     assert.deepEqual(result, [
       {
-        uploadLink: 'bafy...upload',
-        storeLink: 'bafy...store',
-        space: 'did:key:zAlice',
+        loginProof: login.cid,
+        attestProof: attestation.cid,
       },
     ])
   },
-  'test query builder': async (assert) => {
-    const query = DB.select({
-      uploadLink: DB.Schema.string(),
-      storeLink: DB.Schema.string(),
-    }).where(({ uploadLink, storeLink }) => {
-      const space = DB.Schema.string()
-      const uploadID = DB.Schema.string()
-      const storeID = DB.Schema.string()
+}
 
-      return [
-        [uploadLink, 'capabilities', uploadID],
-        [uploadID, 'can', 'upload/add'],
-        [uploadID, 'with', space],
-        [storeLink, 'capabilities', storeID],
-        [storeID, 'can', 'store/add'],
-        [storeID, 'with', space],
-      ]
-    })
+const setupAccount = async () => {
+  const space = await Space.generate({ name: 'stuff' })
+  const account = Absentee.from({ id: 'did:mailto:web.mail:alice' })
 
-    assert.deepEqual(query.execute(proofsDB), [
+  const recovery = await space.createRecovery(account.did())
+  const login = await delegate({
+    issuer: account,
+    audience: alice,
+    capabilities: [
       {
-        uploadLink: 'bafy...upload',
-        storeLink: 'bafy...store',
+        with: 'ucan:*',
+        can: '*',
       },
-    ])
-  },
+    ],
+    proofs: [recovery],
+  })
 
-  'test baisc': async (assert) => {
-    const facts = [
-      DB.assert('sally', 'age', 21),
-      DB.assert('fred', 'age', 42),
-      DB.assert('ethel', 'age', 42),
-      DB.assert('fred', 'likes', 'pizza'),
-      DB.assert('sally', 'likes', 'opera'),
-      DB.assert('ethel', 'likes', 'sushi'),
-    ]
+  const attestation = await Capability.UCAN.attest.delegate({
+    issuer: service,
+    audience: alice,
+    with: service.did(),
+    nb: { proof: login.cid },
+    expiration: Infinity,
+  })
 
-    const e = DB.Schema.number()
-
-    assert.deepEqual(
-      DB.query(
-        { facts },
-        {
-          select: { e },
-          where: [[e, 'age', 42]],
-        }
-      ),
-      [{ e: 'fred' }, { e: 'ethel' }]
-    )
-
-    const x = DB.Schema.number()
-    assert.deepEqual(
-      DB.query(
-        { facts },
-        {
-          select: { x },
-          where: [[DB.Schema._, 'likes', x]],
-        }
-      ),
-      [{ x: 'pizza' }, { x: 'opera' }, { x: 'sushi' }]
-    )
-  },
-
-  'sketch pull pattern': (assert) => {
-    const director = DB.entity({
-      'person/name': DB.Schema.string(),
-    })
-
-    const actor = DB.entity({
-      'person/name': DB.Schema.string(),
-    })
-
-    const movie = DB.entity({
-      'movie/title': DB.Schema.string(),
-      'movie/director': director,
-      'movie/cast': actor,
-    })
-
-    assert.deepEqual(
-      DB.query(
-        {
-          facts: [...actor.assert({ 'person/name': 'Arnold Schwarzenegger' })],
-        },
-        {
-          select: {
-            director: director['person/name'],
-            movie: movie['movie/title'],
-          },
-          where: [
-            actor.match({ 'person/name': 'Arnold Schwarzenegger' }),
-            movie.match({
-              'movie/cast': actor,
-              'movie/director': director,
-            }),
-          ],
-        }
-      ),
-      [
-        ,
-        { director: 'James Cameron', movie: 'The Terminator' },
-        { director: 'John McTiernan', movie: 'Predator' },
-        { director: 'Mark L. Lester', movie: 'Commando' },
-        { director: 'James Cameron', movie: 'Terminator 2: Judgment Day' },
-        {
-          director: 'Jonathan Mostow',
-          movie: 'Terminator 3: Rise of the Machines',
-        },
-      ]
-    )
-  },
+  return { space, account, recovery, login, attestation }
 }
 
 Test.basic({ DB: testDB })

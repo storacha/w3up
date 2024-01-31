@@ -1,7 +1,6 @@
 import * as ucanto from '@ucanto/core'
 import * as API from '../types.js'
 import { canDelegateAbility } from '@web3-storage/capabilities/utils'
-import { ok } from 'assert'
 
 /**
  *

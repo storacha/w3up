@@ -23,6 +23,7 @@ import type {
   Match,
   CapabilityParser,
   InferInvokedCapability,
+  Variant,
 } from '@ucanto/interface'
 
 import type {
@@ -457,4 +458,24 @@ export type Access =
   // instead.
   Record<Exclude<Ability, '*'>, Unit> & {
     ['*']?: Unit
+  }
+
+export type LikePattern = string
+
+/**
+ * In the future, we want to implement AccessRequestSchema per spec, but for
+ * now we do not support passing any clauses.
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type Clause = Variant<{}>
+
+/**
+ * Describes level of access to a resource.
+ */
+export type Can =
+  // This complicates type workarounds the issue with TS which will would have
+  // complained about missing `*` key if we have used `Record<Ability, Unit>`
+  // instead.
+  Record<Exclude<Ability, '*'>, Clause[]> & {
+    ['*']?: Clause[]
   }

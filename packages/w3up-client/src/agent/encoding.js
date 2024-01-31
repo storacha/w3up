@@ -107,7 +107,7 @@ export function delegationsToString(delegations, encoding = 'base64url') {
 }
 
 /**
- * Encode one {@link Types.Delegation Delegation} into a string
+ * Encode one {@link API.Delegation Delegation} into a string
  *
  * @param {API.Delegation} delegation
  * @param {import('uint8arrays/to-string').SupportedEncodings} [encoding]
@@ -117,7 +117,7 @@ export function delegationToString(delegation, encoding) {
 }
 
 /**
- * Decode string into {@link Types.Delegation Delegation}
+ * Decode string into {@link API.Delegation Delegation}
  *
  * @template {API.Capabilities} [T=API.Capabilities]
  * @param {API.EncodedDelegation<T>} raw
