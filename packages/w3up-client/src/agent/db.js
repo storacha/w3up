@@ -1,7 +1,6 @@
 import * as Datalogia from 'datalogia'
 import * as API from '../types.js'
 import * as Delegation from './delegation.js'
-import { like } from './db/like.js'
 
 export * from 'datalogia'
 
@@ -115,58 +114,57 @@ export const facts = function* (proofs) {
  * @typedef {object} Authorization
  * @property {API.SpaceDID} subject
  * @property {API.Delegation[]} proofs
- * @property {API.Audience} audience
+ * @property {API.DID} audience
  *
  * @param {DB} db
  * @param {object} query
- * @param {API.Audience} query.audience
- * @param {API.LikePattern} [query.subject]
+ * @param {API.TextConstraint} query.audience
+ * @param {API.TextConstraint} [query.subject]
  * @param {API.Can} [query.can]
  * @param {API.UTCUnixTimestamp} [query.time]
  * @returns {Authorization[]}
  */
 export const find = (
   db,
-  { subject = '%', audience, time = Date.now() / 1000, can = {} }
+  { subject = { like: '%' }, audience, time = Date.now() / 1000, can = {} }
 ) => {
   const space = Datalogia.string()
   const abilities = Object.keys(can)
-  const proofs =
-    abilities.length > 0
-      ? Object.fromEntries(abilities.map((can) => [can, Datalogia.link()]))
-      : { '%': Datalogia.link() }
+  const principal = Datalogia.string()
+  const proofs = Object.fromEntries(
+    abilities.map((can) => [can, Datalogia.link()])
+  )
 
   const matches = Datalogia.query(db.index, {
     select: {
       ...proofs,
       space,
+      principal,
     },
     where: [
       ...Object.entries(proofs).flatMap(([need, proof]) => {
         const capability = Datalogia.link()
-        const expiration = Datalogia.integer()
-        const can = Datalogia.string()
         return [
           Datalogia.match([capability, 'capability/with', space]),
-          Datalogia.match([capability, 'capability/can', can]),
-          can.confirm((can) => matchAbility(need, can)),
+          providesAbility({ capability, ability: need }),
           Datalogia.match([proof, 'ucan/capability', capability]),
-          Datalogia.match([proof, 'ucan/audience', audience.did()]),
-          Datalogia.match([proof, 'ucan/expiration', expiration]),
-          expiration.confirm((value) => value > time),
+          Datalogia.match([proof, 'ucan/audience', principal]),
+          matchText(principal, audience),
+          Datalogia.not(isExpired({ ucan: proof, time })),
+          Datalogia.not(isTooEarly({ ucan: proof, time })),
         ]
       }),
-      space.confirm((did) => like`${subject}`.test(did)),
+      matchText(space, subject),
     ],
   })
 
-  return matches.map(({ space: did, ...proofs }) => {
+  return matches.map(({ space: did, principal, ...proofs }) => {
     // query engine will provide proof for each requested capability, so we may
     // have duplicates here, which we prune.
     const keys = [...new Set(Object.values(proofs).map(String))]
 
     return {
-      audience,
+      audience: /** @type {API.DID} */ (principal),
       subject: /** @type {API.SpaceDID} */ (did),
       // Dereference proofs from the store.
       proofs: keys.map(
@@ -177,17 +175,59 @@ export const find = (
 }
 
 /**
- * Returns true if requested `need` ability is satisfied by the given `can`
- * ability.
  *
- * @param {string} can
- * @param {string} need
+ * @param {Datalogia.Term<string>} source
+ * @param {API.TextConstraint} constraint
  */
-const matchAbility = (need, can) =>
-  can === '*'
-    ? true
-    : need === '%'
-    ? true
-    : can.endsWith('/*')
-    ? need.startsWith(can.slice(0, -1))
-    : can === need
+const matchText = (source, constraint) =>
+  constraint.glob != null
+    ? Datalogia.glob(source, constraint.glob)
+    : constraint.like != null
+    ? Datalogia.like(source, constraint.like)
+    : Datalogia.Constraint.is(source, constraint)
+
+/**
+ * Composes the clause that matches given `query.ucan` only if it has expired,
+ * that is it has `exp` field set and is less than given `query.time`.
+ *
+ * @param {object} query
+ * @param {Datalogia.Term<Datalogia.Entity>} query.ucan
+ * @param {Datalogia.API.Term<Datalogia.Int32>} query.time
+ * @returns {Datalogia.Clause}
+ */
+const isExpired = ({ ucan, time }) => {
+  const expiration = Datalogia.integer()
+  return Datalogia.match([ucan, 'ucan/expiration', expiration]).and(
+    Datalogia.Constraint.greater(time, expiration)
+  )
+}
+
+/**
+ * Composes the clause that will match a `query.ucan` only if is not active yet,
+ * that is it's `nbf` field is set and greater than given `query.time`.
+ *
+ * @param {object} query
+ * @param {Datalogia.Term<Datalogia.Entity>} query.ucan
+ * @param {Datalogia.API.Term<Datalogia.Int32>} query.time
+ * @returns {Datalogia.Clause}
+ */
+const isTooEarly = ({ ucan, time }) => {
+  const notBefore = Datalogia.integer()
+  return Datalogia.match([ucan, 'ucan/notBefore', notBefore]).and(
+    Datalogia.Constraint.less(time, notBefore)
+  )
+}
+
+/**
+ *
+ * @param {object} query
+ * @param {Datalogia.Term<Datalogia.Entity>} query.capability
+ * @param {string} query.ability
+ */
+const providesAbility = ({ capability, ability }) => {
+  const can = Datalogia.string()
+  return Datalogia.match([capability, 'capability/can', can]).and(
+    // can is a glob pattern that we try to match against
+    Datalogia.glob(ability, can)
+  )
+}

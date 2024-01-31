@@ -571,8 +571,8 @@ importers:
         specifier: workspace:^
         version: link:../upload-client
       datalogia:
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^0.3.0
+        version: 0.3.0
       uint8arrays:
         specifier: ^4.0.9
         version: 4.0.9
@@ -3471,7 +3471,6 @@ packages:
   /@noble/hashes@1.3.3:
     resolution: {integrity: sha512-V7/fPHgl+jsVPXqqeOzT8egNj2iBIVt+ECeMMG8TdcnTikP3oaBtUVqpT/gYCR68aEBJSF+XbYUxStjbFMqIIA==}
     engines: {node: '>= 16'}
-    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -5923,8 +5922,8 @@ packages:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
     dev: true
 
-  /datalogia@0.2.0:
-    resolution: {integrity: sha512-E2iPJAQWRf1V91V7ZktzJ1c7RMW/D8avzTOBHXzD9qkEq8FT4Itm41OEcZJ/OxMS5XSSkMJUgeXogabG09Nclw==}
+  /datalogia@0.3.0:
+    resolution: {integrity: sha512-n5cFthKC1mvfUSee03aN76NO5bt6TR7jkcmN28iq1hTns5Qwpf7/8XSlxdmue+I5fnwhTynqaqQDAMISaZ6frA==}
     dependencies:
       '@ipld/dag-cbor': 9.1.0
       '@noble/hashes': 1.3.3
@@ -12199,7 +12198,7 @@ packages:
   /sync-multihash-sha2@1.0.0:
     resolution: {integrity: sha512-A5gVpmtKF0ov+/XID0M0QRJqF2QxAsj3x/LlDC8yivzgoYCoWkV+XaZPfVu7Vj1T/hYzYS1tfjwboSbXjqocug==}
     dependencies:
-      '@noble/hashes': 1.3.2
+      '@noble/hashes': 1.3.3
 
   /tapable@1.1.3:
     resolution: {integrity: sha512-4WK/bYZmj8xLr+HUCODHGF1ZFzsYffasLUgEiMBY4fgtltdO6B4WJtlSbPaDTLpYTcGVwM2qLnFTICEcNxs3kA==}

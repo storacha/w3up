@@ -6,7 +6,6 @@ import { delegate } from '@ucanto/core'
 import { Absentee, Verifier } from '@ucanto/principal'
 import * as Capability from '@web3-storage/capabilities'
 import { alice, bob, mallory, service } from '../fixtures/principals.js'
-import { assert } from 'console'
 
 /**
  * @type {Test.BasicSuite}
@@ -21,12 +20,12 @@ export const testDB = {
 
     const result = DB.find(db, {
       can: { 'store/add': [] },
-      audience: alice,
+      audience: alice.did(),
     })
 
     assert.deepEqual(result, [
       {
-        audience: alice,
+        audience: alice.did(),
         subject: space.did(),
         proofs: [auth],
       },
@@ -48,17 +47,17 @@ export const testDB = {
 
     const result = DB.find(db, {
       can: { 'store/add': [], 'store/remove': [] },
-      audience: alice,
+      audience: alice.did(),
     })
 
     assert.deepEqual(result, [
       {
-        audience: alice,
+        audience: alice.did(),
         subject: beetBox.did(),
         proofs: [beetBoxAuth],
       },
       {
-        audience: alice,
+        audience: alice.did(),
         subject: plumBox.did(),
         proofs: [plumBoxAuth],
       },
@@ -82,12 +81,12 @@ export const testDB = {
 
     const result = DB.find(db, {
       can: { 'space/info': [], 'upload/list': [] },
-      audience: bob,
+      audience: bob.did(),
     })
 
     assert.deepEqual(result, [
       {
-        audience: bob,
+        audience: bob.did(),
         subject: alice.did(),
         proofs: [spaceInfo, uploadList],
       },
@@ -112,40 +111,40 @@ export const testDB = {
     })
 
     const result = DB.find(db, {
-      subject: 'did:mailto:%',
+      subject: { like: 'did:mailto:%' },
       can: { '*': [] },
-      audience: alice,
+      audience: alice.did(),
     })
 
     assert.deepEqual(result, [
       {
         subject: account.did(),
-        audience: alice,
+        audience: alice.did(),
         proofs: [login],
       },
     ])
 
     const spaces = DB.find(db, {
-      subject: 'did:key:%',
+      subject: { like: 'did:key:%' },
       can: { 'store/add': [] },
-      audience: alice,
+      audience: alice.did(),
     })
 
     assert.deepEqual(spaces, [
       {
         subject: remoteSpace.did(),
-        audience: alice,
+        audience: alice.did(),
         proofs: [login],
       },
       {
         subject: localSpace.did(),
-        audience: alice,
+        audience: alice.did(),
         proofs: [localAuth],
       },
     ])
   },
 
-  'only test find accounts and attestations': async (assert) => {
+  'test find accounts and attestations': async (assert) => {
     const { login, attestation, account } = await setupAccount()
 
     const db = DB.from({ proofs: [login, attestation] })
@@ -176,6 +175,79 @@ export const testDB = {
       {
         loginProof: login.cid,
         attestProof: attestation.cid,
+      },
+    ])
+  },
+
+  'does not match expired ucans': async (assert) => {
+    const space = await Space.generate({ name: 'space' })
+    const time = (Date.now() / 1000) | 0
+    const expired = await space.createAuthorization(alice, {
+      expiration: time - 60 * 60 * 24,
+    })
+
+    const valid = await space.createAuthorization(alice, {
+      expiration: time + 60 * 60 * 24,
+    })
+
+    const db = DB.from({
+      proofs: [valid, expired],
+    })
+
+    const withoutExpired = DB.find(db, {
+      can: { 'store/add': [] },
+      audience: alice.did(),
+      time,
+    })
+
+    assert.deepEqual(withoutExpired, [
+      {
+        audience: alice.did(),
+        subject: space.did(),
+        proofs: [valid],
+      },
+    ])
+
+    const withExpired = DB.find(db, {
+      can: { 'store/add': [] },
+      audience: alice.did(),
+      time: time - 60 * 60 * 24 * 2,
+    })
+
+    assert.deepEqual(withExpired, [
+      {
+        audience: alice.did(),
+        subject: space.did(),
+        proofs: [valid],
+      },
+      {
+        audience: alice.did(),
+        subject: space.did(),
+        proofs: [expired],
+      },
+    ])
+  },
+
+  'does match non-expiring ucans': async (assert) => {
+    const space = await Space.generate({ name: 'space' })
+    const proof = await space.createAuthorization(alice, {
+      expiration: Infinity,
+    })
+
+    const db = DB.from({
+      proofs: [proof],
+    })
+
+    const result = DB.find(db, {
+      can: { 'store/add': [] },
+      audience: alice.did(),
+    })
+
+    assert.deepEqual(result, [
+      {
+        audience: alice.did(),
+        subject: space.did(),
+        proofs: [proof],
       },
     ])
   },

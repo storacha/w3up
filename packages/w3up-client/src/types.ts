@@ -462,6 +462,15 @@ export type Access =
 
 export type LikePattern = string
 
+export type GlobPattern = string
+
+export type TextConstraint =
+  | Variant<{
+      like: LikePattern
+      glob: GlobPattern
+    }>
+  | (string & { like?: undefined; glob?: undefined })
+
 /**
  * In the future, we want to implement AccessRequestSchema per spec, but for
  * now we do not support passing any clauses.

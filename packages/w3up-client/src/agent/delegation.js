@@ -1,7 +1,7 @@
 import * as API from '../types.js'
 import * as DB from 'datalogia'
 import * as Block from './block.js'
-import { importDAG, allows, isDelegation } from '@ucanto/core/delegation'
+import { importDAG, allows } from '@ucanto/core/delegation'
 import * as Association from './db/association.js'
 
 /**
