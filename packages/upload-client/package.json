@@ -75,7 +75,7 @@
     "@ucanto/interface": "^9.0.0",
     "@ucanto/transport": "^9.0.0",
     "@web3-storage/capabilities": "workspace:^",
-    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^3.1.1",
+    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^3.2.1",
     "ipfs-utils": "^9.0.14",
     "multiformats": "^12.1.2",
     "p-retry": "^5.1.2",
