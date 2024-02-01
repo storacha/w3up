@@ -1,5 +1,13 @@
 # Changelog
 
+## [13.0.1](https://github.com/web3-storage/w3up/compare/upload-client-v13.0.0...upload-client-v13.0.1) (2024-02-01)
+
+
+### Fixes
+
+* update fr32 lib to support wasm import ([#1294](https://github.com/web3-storage/w3up/issues/1294)) ([4a00845](https://github.com/web3-storage/w3up/commit/4a00845bfaf9d1481501dc9f2c2c818aeee06dd6))
+* upload client does not need cors mode on presigned url put ([#1295](https://github.com/web3-storage/w3up/issues/1295)) ([ef70a2b](https://github.com/web3-storage/w3up/commit/ef70a2b45d98583842c95980e5c6de5d20870e0d))
+
 ## [13.0.0](https://github.com/web3-storage/w3up/compare/upload-client-v12.3.2...upload-client-v13.0.0) (2023-12-14)
 
 
