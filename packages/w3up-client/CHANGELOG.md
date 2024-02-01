@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.4.1](https://github.com/web3-storage/w3up/compare/w3up-client-v12.4.0...w3up-client-v12.4.1) (2024-02-01)
+
+
+### Fixes
+
+* upload client does not need cors mode on presigned url put ([#1295](https://github.com/web3-storage/w3up/issues/1295)) ([ef70a2b](https://github.com/web3-storage/w3up/commit/ef70a2b45d98583842c95980e5c6de5d20870e0d))
+
 ## [12.4.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.3.0...w3up-client-v12.4.0) (2024-01-30)
 
 
