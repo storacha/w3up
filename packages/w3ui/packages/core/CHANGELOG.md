@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/web3-storage/w3ui/compare/core-v2.0.2...core-v2.1.0) (2024-02-01)
+
+
+### Features
+
+* upgrade `core` dependencies for `plan/set` ([#623](https://github.com/web3-storage/w3ui/issues/623)) ([823b0ef](https://github.com/web3-storage/w3ui/commit/823b0ef04a874ef3d5664d84b6b3611dbea95a18))
+
 ## [2.0.2](https://github.com/web3-storage/w3ui/compare/core-v2.0.1...core-v2.0.2) (2024-01-03)
 
 
