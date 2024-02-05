@@ -6,7 +6,7 @@ export { Usage }
 /**
  * Get a usage report for the period.
  *
- * @param {API.Agent<API.UploadService>} agent
+ * @param {API.AgentView<API.UploadService>} agent
  * @param {object} options
  * @param {API.SpaceDID} options.space
  * @param {{ from: Date, to: Date }} options.period

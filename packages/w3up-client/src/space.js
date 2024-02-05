@@ -6,7 +6,7 @@ export * from './capability/space.js'
  * @typedef {object} Model
  * @property {API.SpaceDID} id
  * @property {{name?:string}} [meta]
- * @property {API.Agent<API.UploadService>} agent
+ * @property {API.AgentView<API.UploadService>} agent
  */
 
 export class Space {

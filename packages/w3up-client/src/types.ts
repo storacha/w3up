@@ -1,5 +1,8 @@
 import { type Driver } from '@web3-storage/access/drivers/types'
 import { type Service as UploadService } from '@web3-storage/upload-client/types'
+import { Querier, Transactor } from 'datalogia'
+
+export type { Querier, Transactor }
 import type {
   ConnectionView,
   Signer,
@@ -24,6 +27,10 @@ import type {
   CapabilityParser,
   InferInvokedCapability,
   Variant,
+  Result,
+  IPLDBlock,
+  DIDKey,
+  Protocol,
 } from '@ucanto/interface'
 
 import type {
@@ -56,6 +63,9 @@ import type {
 } from '@web3-storage/capabilities'
 import { type Client } from './client.js'
 import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
+import exp from 'constants'
+import { CID } from 'multiformats'
+import { Block } from '@ipld/car/buffer-reader'
 
 export * from '@ipld/dag-ucan'
 export * from '@ucanto/interface'
@@ -74,7 +84,7 @@ export type {
 } from '@ucanto/interface'
 export type { UCAN } from '@web3-storage/capabilities'
 
-export { Agent, AgentData, type AgentModel } from './agent.js'
+export type { Driver as Storage }
 
 export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 
@@ -468,8 +478,9 @@ export type TextConstraint =
   | Variant<{
       like: LikePattern
       glob: GlobPattern
+      '=': string
     }>
-  | (string & { like?: undefined; glob?: undefined })
+  | (string & { like?: undefined; glob?: undefined; ['=']?: undefined })
 
 /**
  * In the future, we want to implement AccessRequestSchema per spec, but for
@@ -488,3 +499,227 @@ export type Can =
   Record<Exclude<Ability, '*'>, Clause[]> & {
     ['*']?: Clause[]
   }
+
+export type { Driver }
+
+export interface DataStore extends Driver<DatabaseArchive> {}
+
+export interface StoredDelegation {
+  meta: DelegationMeta
+  delegation: Delegation
+}
+export interface StoredProofs extends Map<CIDString, StoredDelegation> {}
+
+/**
+ * An {@link IPLDBlock} formatted for storage, making it compatible with
+ * `structuredClone()` used by `indexedDB`.
+ */
+export interface BlockArchive {
+  cid: CIDString
+  bytes: Uint8Array
+}
+
+/**
+ * A {@link API.Delegation} formatted for storage, making it compatible with
+ * `structuredClone()` used by `indexedDB`.
+ */
+export interface DelegationArchive extends Array<BlockArchive> {}
+
+/**
+ * {@link StoredDelegation} formatted for storage, making it compatible with
+ * `structuredClone()` used by `indexedDB`.
+ */
+export interface StoredDelegationArchive {
+  meta: DelegationMeta
+  delegation: DelegationArchive
+}
+
+/**
+ * Snapshot of the agent database state that can be persisted into a store.
+ */
+export interface DatabaseArchive {
+  meta?: AgentMeta
+  principal?: SignerArchive
+  delegations: Map<CIDString, StoredDelegationArchive>
+}
+
+/**
+ * Database consists of `proofs` and an `index` of those proofs used for
+ * querying. We may drop `proofs` in the future and persist `index` directly,
+ * but right now we keep them both around.
+ *
+ * For legacy reason database also stores key material and an agent metadata.
+ */
+export interface Database {
+  meta: AgentMeta
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  signer?: SignerArchive<DID, any>
+  proofs: StoredProofs
+
+  index: Querier
+  transactor: Transactor
+
+  store?: DataStore
+}
+
+export interface Address<Protocol extends UnknownProtocol = UnknownProtocol>
+  extends Phantom<Protocol> {
+  id: Principal
+  url: URL
+}
+
+export interface AddressArchive<
+  Protocol extends UnknownProtocol = UnknownProtocol
+> extends Phantom<Protocol> {
+  id: DID
+  url: ToString<URL>
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface UnknownProtocol extends Record<string, any> {}
+
+export interface W3UpOpen {
+  as?: Signer
+  store: DataStore
+}
+
+export interface W3Load {
+  as?: Signer
+  store: DataStore
+}
+
+export interface W3Create {
+  as?: Signer
+  store: DataStore
+}
+
+export type W3From = Variant<{
+  load: W3Load
+  open: W3UpOpen
+  create: W3Create
+}>
+
+/**
+ * W3Up is the interface that main library module implements.
+ */
+export interface W3Up {
+  /**
+   * Restores an archived agent from the given {@link DataStore} or creates a
+   * new one if storage contains no agent data yet. If optional {@link Signer}
+   * is provided agent will act on its behalf, otherwise it will create a new
+   * keypair and use it as the signing authority.
+   *
+   * If {@link Signer} is provided, it will attempt to load the keypair from the
+   * store and if store does not contain a keypair, it will generate a new one
+   * and store it in the store. If you do provide a {@link Signer} it will not
+   * be persisted in the store.
+   *
+   * If {@link DataStore} is not provided, ephemeral agent is returned, meaning
+   * no keypair or delegations will be persisted.
+   *
+   * If you want to restore archived agent without creating one you should use
+   * the `load` method instead.
+   */
+  open(source: W3UpOpen): AgentView
+
+  /**
+   * Loads archived agent from the given {@link DataStore}. If optional
+   * {@link Signer} is provided returned agent will act on its behalf, but
+   * corresponding keypair will not be persisted in the agent store.
+   *
+   * If you do not pass a signer and one is not persisted in the store load will
+   * fail.
+   */
+  load(source: W3Load): AgentView
+
+  /**
+   * Creates a new agent that will be persisted in the given {@link DataStore}.
+   * If you do not pass an optional {@link Signer}, new one will be generated,
+   * either way {@link Signer} will be persisted in the given store.
+   *
+   * If you want to create an ephemeral agent use `open` method without passing
+   * the store.
+   *
+   * ⚠️ Please note that if store already contains a principal calling this
+   * method will overwrite it.
+   */
+  create(source: W3Create): AgentView
+
+  /**
+   * General function that does `load`, `create` or `open` based on input.
+   */
+  from(source: W3From): AgentView
+}
+
+export interface Agent {
+  signer: Signer
+  db: Database
+}
+
+/**
+ * Agent is effectively a signing authority coupled with a persisted or
+ * ephemeral database of (UCAN) delegations. It can be used to query
+ * capabilities or issue authorizations. It's primary use case is to
+ * create sessions with service providers that can be used to invoke
+ * provided capabilities on behalf of the signing authority.
+ */
+export interface AgentView {
+  /**
+   * Store used to persist agent delegations and signing authority.
+   */
+  db: Database
+
+  did(): DID
+
+  /**
+   * Connects to a service provider and returns a session that can be used to
+   * invoke capabilities provided by the service.
+   */
+  connect<Protocol extends UnknownProtocol = Service>(
+    connection?: ConnectionView<Protocol>
+  ): Promise<
+    Result<
+      Session<Protocol>,
+      SignerLoadError | DataStoreOpenError | DataStoreSaveError
+    >
+  >
+}
+
+export type ConnectError =
+  | SignerLoadError
+  | DataStoreOpenError
+  | DataStoreSaveError
+  | DatabaseTransactionError
+
+/**
+ * Error occurs when session is loaded from session store that does not store
+ * a principal.
+ */
+export interface SignerLoadError extends Failure {
+  name: 'SignerLoadError'
+}
+
+export interface DataStoreOpenError extends Failure {
+  name: 'DataStoreOpenError'
+}
+
+export interface DataStoreSaveError extends Failure {
+  name: 'DataStoreSaveError'
+}
+
+export interface DatabaseTransactionError extends Failure {
+  name: 'DatabaseTransactionError'
+}
+
+/**
+ * Session an agent has with a service provider.
+ */
+export interface Session<Protocol extends UnknownProtocol = Service> {
+  agent: AgentView
+  connection: Connection<Protocol>
+}
+
+export interface Connection<Protocol extends UnknownProtocol = Service>
+  extends ConnectionView<Protocol> {
+  address: Address
+}

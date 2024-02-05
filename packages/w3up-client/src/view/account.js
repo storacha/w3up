@@ -13,7 +13,7 @@ export { fromEmail }
  * List all accounts that agent has stored access to. Returns a dictionary
  * of accounts keyed by their `did:mailto` identifier.
  *
- * @param {API.Agent<API.AccessService>} agent
+ * @param {API.AgentView<API.AccessService>} agent
  * @param {object} query
  * @param {API.DID<'mailto'>} [query.account]
  */
@@ -72,7 +72,7 @@ export const list = (agent, { account } = {}) => {
  * authorization session time bounds (currently 15 minutes), the promise will
  * resolve to an error.
  *
- * @param {API.Agent<API.AccessService>} agent
+ * @param {API.AgentView<API.AccessService>} agent
  * @param {API.EmailAddress} email
  * @param {object} [options]
  * @param {AbortSignal} [options.signal]
@@ -119,7 +119,7 @@ export const login = async (agent, email, options = {}) => {
 /**
  * @typedef {object} Model
  * @property {API.DidMailto} id
- * @property {API.Agent<API.AccessService>} agent
+ * @property {API.AgentView<API.AccessService>} agent
  * @property {API.Delegation[]} proofs
  */
 
@@ -169,7 +169,7 @@ export class Account {
    * @param {API.SpaceDID} space
    * @param {object} input
    * @param {API.ProviderDID} [input.provider]
-   * @param {API.Agent<API.AccessService>} [input.agent]
+   * @param {API.AgentView<API.AccessService>} [input.agent]
    */
   provision(space, input = {}) {
     return provision(this.agent, {
@@ -184,7 +184,7 @@ export class Account {
    * Saves account in the agent store so it can be accessed across sessions.
    *
    * @param {object} input
-   * @param {API.Agent<{}>} [input.agent]
+   * @param {API.AgentView<{}>} [input.agent]
    */
   async save({ agent = this.agent } = {}) {
     return await importAuthorization(agent, this)

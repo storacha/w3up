@@ -1,6 +1,6 @@
-import { StoreMemory } from '@web3-storage/access/stores/store-memory'
+// import { StoreMemory } from '@web3-storage/access/stores/store-memory'
 import * as Context from '@web3-storage/upload-api/test/context'
-import * as Client from '@web3-storage/w3up-client'
+// import * as Client from '@web3-storage/w3up-client'
 import * as assert from 'assert'
 
 /**
@@ -36,15 +36,15 @@ export const setup = async () => {
     assert,
   })
 
-  const connect = () =>
-    Client.create({
-      store: new StoreMemory(),
-      serviceConf: {
-        access: context.connection,
-        upload: context.connection,
-        filecoin: context.connection,
-      },
-    })
+  const connect = () => {}
+  // Client.create({
+  //   store: new StoreMemory(),
+  //   serviceConf: {
+  //     access: context.connection,
+  //     upload: context.connection,
+  //     filecoin: context.connection,
+  //   },
+  // })
 
   return { ...context, connect, client: await connect() }
 }

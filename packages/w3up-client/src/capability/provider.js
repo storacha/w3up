@@ -8,7 +8,7 @@ export const { Provider: ProviderDID, AccountDID } = Provider
  * that delegation from the account authorizing agent is either stored in the
  * agent proofs or provided explicitly.
  *
- * @param {API.Agent<API.AccessService>} agent
+ * @param {API.AgentView<API.AccessService>} agent
  * @param {object} input
  * @param {API.AccountDID} input.account - Account provisioning the space.
  * @param {API.SpaceDID} input.consumer - Space been provisioned.

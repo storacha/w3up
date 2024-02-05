@@ -1,4 +1,4 @@
-import { addSpacesFromDelegations, Agent as AccessAgent } from '../agent.js'
+import { addSpacesFromDelegations, AgentView as AccessAgent } from '../agent.js'
 import * as Access from '@web3-storage/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
 import { Provider, Plan } from '@web3-storage/capabilities'

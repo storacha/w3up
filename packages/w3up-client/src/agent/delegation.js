@@ -5,12 +5,56 @@ import { importDAG, allows } from '@ucanto/core/delegation'
 import * as Association from './db/association.js'
 
 /**
+ * Composes the clause that matches given `query.ucan` only if it has expired,
+ * that is it has `exp` field set and is less than given `query.time`.
+ *
+ * @param {DB.Term<DB.Entity>} ucan
+ * @param {DB.API.Term<DB.Int32>} time
+ * @returns {DB.Clause}
+ */
+export const isExpired = (ucan, time) => {
+  const expiration = DB.integer()
+  return DB.match([ucan, 'ucan/expiration', expiration]).and(
+    DB.Constraint.greater(time, expiration)
+  )
+}
+
+/**
+ * Composes the clause that will match a `ucan` only if is not active yet,
+ * that is it's `nbf` field is set and greater than given `query.time`.
+ *
+ * @param {DB.Term<DB.Entity>} ucan
+ * @param {DB.Term<DB.Int32>} time
+ * @returns {DB.Clause}
+ */
+export const isTooEarly = (ucan, time) => {
+  const notBefore = DB.integer()
+  return DB.match([ucan, 'ucan/notBefore', notBefore]).and(
+    DB.Constraint.less(time, notBefore)
+  )
+}
+
+/**
+ *
+ * @param {DB.Term<DB.Entity>} ucan
+ * @param {object} constraints
+ * @param {DB.Term<DB.Entity>} constraints.capability
+ * @param {DB.Term<API.UTCUnixTimestamp>} constraints.time
+ * @param {DB.Term<API.DID>} constraints.audience
+ */
+export const match = (ucan, { capability, audience, time }) =>
+  DB.match([ucan, 'ucan/capability', capability])
+    .and(DB.match([ucan, 'ucan/audience', audience]))
+    .and(DB.not(isExpired(ucan, time)))
+    .and(DB.not(isTooEarly(ucan, time)))
+
+/**
  * Derives set of facts about the given delegation.
  *
  * @param {API.Delegation} delegation
  * @returns {Iterable<DB.Fact>}
  */
-export const assert = function* (delegation) {
+export const facts = function* (delegation) {
   const entity = /** @type {API.Link & DB.Entity} */ (delegation.cid)
   yield [entity, 'ucan/issuer', delegation.issuer.did()]
   yield [entity, 'ucan/audience', delegation.audience.did()]

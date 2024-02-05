@@ -1,4 +1,4 @@
-import { Agent } from '../agent.js'
+import { AgentView } from '../agent.js'
 import * as API from '../types.js'
 
 /**
@@ -6,13 +6,13 @@ import * as API from '../types.js'
  */
 export class Client {
   /**
-   * @type {Agent<Service>}
+   * @type {AgentView<Service>}
    * @protected
    */
   _agent
 
   /**
-   * @param {API.Agent<Service>} agent
+   * @param {API.AgentView<Service>} agent
    */
   constructor(agent) {
     this._agent = agent
@@ -21,7 +21,7 @@ export class Client {
   /**
    * The current user agent (this device).
    *
-   * @type {Agent<Service>}
+   * @type {AgentView<Service>}
    */
   get agent() {
     return this._agent

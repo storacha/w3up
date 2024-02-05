@@ -1,220 +1,133 @@
 import * as API from '../types.js'
-import { Schema, ok, error, Delegation } from '@ucanto/core'
+import * as Connection from './connection.js'
+import * as DB from './db.js'
+import { Signer, ed25519 } from '@ucanto/principal'
 
-export { Schema, Delegation } from '@ucanto/core'
-
-export const {
-  literal,
-  text,
-  did,
-  link,
-  uri,
-  integer,
-  float,
-  boolean,
-  uint64,
-  struct,
-  variant,
-  tuple,
-  dictionary,
-  unknown,
-} = Schema
-export const now = () => Math.floor(Date.now() / 1000)
-
-/**
- * @template {API.Ability} Ability
- * @extends {Schema.API<Ability, string, Ability>}
- */
-class AbilitySchema extends Schema.API {
-  /**
-   * @param {string} source
-   * @param {Ability} ability
-   */
-  readWith(source, ability) {
-    // If same ability then it can be derived
-    if (source === ability) {
-      return { ok: ability }
-    }
-
-    // if source is is wildcard then `ability` can be derived
-    if (source === '*') {
-      return { ok: ability }
-    }
-
-    // Source contains this ability
-    if (source.endsWith('/*') && ability.startsWith(source.slice(0, -1))) {
-      return { ok: ability }
-    }
-
-    return {
-      error: new RangeError(
-        `Ability '${ability}' can not be derived from '${source}'`
-      ),
-    }
-  }
-
-  /**
-   * @param {string} source
-   */
-  static parse(source) {
-    const [namespace, ...segments] = source.split('/')
-    return { namespace, segments }
-  }
+/** @type {Connection.Archive} */
+const ADDRESS = {
+  id: 'did:web:web3.storage',
+  url: 'https://up.web3.storage',
 }
-
-/**
- * @param {API.Ability} ability
- */
-export const ability = (ability) => new AbilitySchema(ability)
 
 /**
  * @typedef {object} Model
- * @property {Map<string, API.Delegation>} proofs
+ * @property {Connection.Address} address
+ * @property {API.Signer} principal
+ * @property {DB.DB} delegations
+ * @property {API.AgentMeta} meta
+ * @property {API.DIDKey} [currentSpace]
  */
 
 /**
- * @param {object} source
- * @param {Iterable<API.Delegation>} source.proofs
- * @returns {Model}
+ * @typedef {object} Store
+ * @property {Model} state
+ * @property {API.Storage<Archive>} storage
  */
-export const from = (source) => {
-  const proofs = new Map()
-
-  for (const proof of source.proofs) {
-    proofs.set(proof.cid.toString(), proof)
-  }
-
-  return { proofs }
-}
 
 /**
- * Type describes a query that could be used to query ucan store with.
  *
- * @typedef {object} Query
- * @property {API.Reader<API.DID>} [issuer] - Issuer of the delegation.
- * @property {API.Reader<API.DID>} [audience] - Audience of the delegation.
- * @property {API.Reader<API.Schema.Integer>} [expiration] - Expiration time.
- * @property {API.Reader<API.Schema.Integer>} [notBefore] - Not before time.
- * @property {API.Reader<string>} [can] - Ability delegated.
- * @property {API.Reader<API.DID>} [with] - Resource delegated.
- * @property {API.Reader<{}>} [nb] - Caveats of the delegation.
+ * @param {object} store
+ * @param {Model} store.state
+ * @returns {Archive}
+ */
+export const toArchive = ({ state }) => ({
+  connection: Connection.toArchive(state.address),
+  meta: state.meta,
+  principal: state.principal.toArchive(),
+  delegations: DB.toArchive(state.delegations),
+  currentSpace: state.currentSpace,
+})
+
+/**
+ * @typedef {object} Archive
+ * @property {Connection.Archive} [connection]
+ * @property {API.AgentMeta} meta
+ * @property {API.SignerArchive<API.DID, any>} principal
+ * @property {DB.Archive} delegations
+ * @property {API.DIDKey} [currentSpace]
  */
 
 /**
- * @param {Model} model
- * @param {Query} selector
- * @returns {IterableIterator<API.Delegation>}
+ * @param {API.Storage<Archive>} storage
+ * @param {object} options
+ * @param {API.Signer} [options.principal]
+ * @param {API.Delegation[]} [options.proofs]
  */
-export const query = function* (model, selector) {
-  for (const [, proof] of model.proofs) {
-    const result = match(proof, selector)
-    if (result.ok) {
-      yield result.ok
-    }
-  }
-}
-
-/**
- * Return `proof` if the proof matches given `query` otherwise returns `null`.
- *
- * @template {API.Delegation} Proof
- * @param {Proof} proof
- * @param {Query} query
- * @returns {API.Result<Proof, Error>}
- */
-export const match = (
-  proof,
-  { issuer, audience, expiration, notBefore, can, with: subject, nb }
-) => {
-  if (issuer) {
-    const result = issuer.read(proof.issuer.did())
-    if (result.error) {
-      return result
-    }
-  }
-
-  if (audience) {
-    const result = audience.read(proof.audience.did())
-    if (result.error) {
-      return result
-    }
-  }
-
-  if (expiration) {
-    const result = expiration.read(proof.expiration)
-    if (result.error) {
-      return result
-    }
-  }
-
-  if (notBefore) {
-    const result = notBefore.read(proof.notBefore)
-    if (result.error) {
-      return result
-    }
-  }
-
-  const access = Delegation.allows(proof)
-  for (const [resource, abilities] of Object.entries(access)) {
-    if (subject && !subject.read(resource).ok) {
-      continue
-    }
-
-    for (const [ability, constraint] of Object.entries(abilities)) {
-      if (can && !can.read(ability).ok) {
-        continue
+export const open = async (storage, options = {}) => {
+  try {
+    const archive = await storage.load()
+    if (archive) {
+      const state = {
+        meta: archive.meta,
+        principal: options.principal ?? Signer.from(archive.principal),
+        delegations: DB.fromArchive(archive.delegations),
+        currentSpace: archive.currentSpace,
+        address: Connection.fromArchive(archive.connection ?? ADDRESS),
       }
 
-      if (
-        nb &&
-        /** @type {API.Caveats[]} */ (constraint).every(
-          (caveats) => nb && !nb.read(caveats).ok
-        )
-      ) {
-        continue
+      if (options.proofs) {
+        await assert({ storage, state }, { delegations: options.proofs })
       }
 
-      // If we got this far we found a capability in the current proof that
-      // meets the query criteria.
-      return ok(proof)
+      return { ok: { storage, state } }
+    } else {
+      const state = {
+        meta: {},
+        principal: options.principal ?? (await ed25519.generate()),
+        delegations: DB.fromProofs(options.proofs ?? []),
+        currentSpace: undefined,
+        address: Connection.fromArchive(ADDRESS),
+      }
+
+      return { ok: { storage, state } }
+    }
+  } catch (error) {
+    return { error: new Error('Failed to load agent data from storage') }
+  }
+}
+
+export const load = async (storage) => {
+  const result = await open(storage, options)
+  if (result.ok) {
+    return result.ok
+  } else {
+    throw result.error
+  }
+}
+
+/**
+ * @param {Store} store
+ * @param {API.Variant<{
+ *  meta: API.AgentMeta
+ *  delegations: API.Delegation[]
+ *  currentSpace: API.DIDKey
+ * }>} fact
+ */
+export const assert = async ({ storage, state }, fact) => {
+  if (fact.meta) {
+    state.meta = { ...state.meta, ...fact.meta }
+  } else if (fact.currentSpace) {
+    state.currentSpace = fact.currentSpace
+  } else if (fact.delegations) {
+    for (const delegation of fact.delegations) {
+      await DB.assert(state.delegations, delegation)
     }
   }
-
-  return error(new RangeError('No matching capability found.'))
+  await storage.save(toArchive({ state }))
 }
 
 /**
- * @template {Record<string, API.Reader<unknown>>} Selector
- * @param {Selector} selector
+ * @param {Store} store
+ * @param {API.Variant<{
+ * delegations: API.Delegation[]
+ * }>} fact
  */
-export const select = (selector) => new Select(selector)
-
-/**
- * @template {Record<string, API.Reader<unknown>>} Selector
- * @param {Selector} selector
- */
-class Select {
-  /**
-   *
-   * @param {Selector} selector
-   */
-  constructor(selector) {
-    this.selector = selector
+export const retract = async ({ state, storage }, fact) => {
+  if (fact.delegations) {
+    for (const delegation of fact.delegations) {
+      state.delegations.proofs.delete(`${delegation.cid}`)
+    }
+    state.delegations = DB.reindex(state.delegations)
   }
-  /**
-   * @param {Selector} variables
-   */
-  where(variables) {}
+  await storage.save(toArchive({ state }))
 }
-
-/**
- * Triples
- *
- * [cid, issuer, "did:key:zAlice"]
- * [cid, audience, "did:key:zBob"]
- * [cid, expiration, 1702413523]
- * [cid, notBefore, undefined]
- * [cid, can, "store/add"]
- * [cid, with "did:key:zAlice"]
- *
- */

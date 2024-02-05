@@ -1,110 +1,171 @@
 import * as Datalogia from 'datalogia'
 import * as API from '../types.js'
 import * as Delegation from './delegation.js'
-
+import * as Authorization from './authorization.js'
+import * as Delegations from './delegations.js'
 export * from 'datalogia'
 
 /**
- * {@link Proofs} formatted for storage, making it compatible with
- * `structuredClone()` used by `indexedDB`.
- *
- * @typedef {API.AgentDataExport['delegations']} Archive
+ * @param {API.Variant<{
+ * proofs: Iterable<API.Delegation>,
+ * archive: API.DatabaseArchive
+ * }>} source
+ * @returns  {API.Database}
  */
+export const from = (source) =>
+  source.proofs ? fromProofs(source.proofs) : fromArchive(source.archive)
 
 /**
- * Set of delegations available to the agent. For legacy reasons, they are boxed
- * and have optional `meta` field.
- *
- * @typedef {API.AgentData['delegations']} Proofs
- */
-
-/**
- * Database consists of `proofs` and an `index` of those proofs used for
- * querying. We may drop `proofs` in the future and persist `index` directly,
- * but right now we keep them both around.
- *
- * @typedef {object} DB
- * @property {Proofs} proofs
- * @property {Datalogia.Querier & Datalogia.Transactor} index
- */
-
-/**
- * Takes {@link Archive} and returns {@link DB} which can be used to restore
- * persisted session.
- *
- * @param {Archive} archive
- * @returns {DB}
- */
-export const fromArchive = (archive) => {
-  const delegations = []
-  const proofs = new Map()
-
-  for (const { meta, delegation } of archive.values()) {
-    const proof = Delegation.fromArchive(delegation)
-    delegations.push(proof)
-    proofs.set(`${proof.cid}`, { delegation, meta })
-  }
-
-  return {
-    index: Datalogia.Memory.create(facts(delegations)),
-    proofs,
-  }
-}
-
-/**
- * Formats {@link DB} into {@link Archive} so it can be stored in the database.
- * This is used to persist the state of the agent across sessions.
- *
- * @param {DB} db
- * @returns {Archive}
+ * @param {API.Database} db
+ * @returns {API.DatabaseArchive}
  */
 export const toArchive = (db) => {
-  const archive = new Map()
+  const delegations = new Map()
   for (const [key, { meta, delegation }] of db.proofs) {
-    archive.set(key, {
+    delegations.set(key, {
       meta,
       delegation: Delegation.toArchive(delegation),
     })
   }
 
-  return archive
+  return { principal: db.signer, meta: db.meta, delegations }
+}
+
+/**
+ * @param {Partial<API.DatabaseArchive>} archive
+ * @returns {API.Database}
+ */
+export const fromArchive = ({
+  principal,
+  meta = { name: 'agent', type: 'device' },
+  delegations = new Map(),
+}) => {
+  const proofs = new Map()
+
+  for (const { meta, delegation } of delegations.values()) {
+    const proof = Delegation.fromArchive(delegation)
+    proofs.set(`${proof.cid}`, { delegation, meta })
+  }
+
+  const db = Datalogia.Memory.create(Delegations.facts(proofs.values()))
+
+  return {
+    meta,
+    signer: principal,
+    proofs,
+    index: db,
+    transactor: db,
+  }
 }
 
 /**
  * Builds a database from the given set of proofs.
  *
- * @param {Iterable<API.Delegation>} proofs
- * @returns  {DB}
+ * @param {Iterable<API.Delegation>} source
+ * @returns  {API.Database}
  */
-export const fromProofs = (proofs) => ({
-  proofs: new Map(
-    [...proofs].map((proof) => [
+export const fromProofs = (source) => {
+  const proofs = new Map(
+    [...source].map((proof) => [
       `${proof.cid}`,
       {
         meta: {},
         delegation: proof,
       },
     ])
-  ),
-  index: Datalogia.Memory.create(facts(proofs)),
-})
+  )
 
-/**
- * @param {API.Variant<{proofs: Iterable<API.Delegation>, archive: Archive }>} source
- * @returns  {DB}
- */
-export const from = (source) =>
-  source.proofs ? fromProofs(source.proofs) : fromArchive(source.archive)
-
-/**
- *
- * @param {Iterable<API.Delegation>} proofs
- * @returns {Iterable<Datalogia.Fact>}
- */
-export const facts = function* (proofs) {
-  for (const proof of proofs) {
-    yield* Delegation.assert(proof)
+  const db = Datalogia.Memory.create(Delegations.facts(proofs.values()))
+  return {
+    meta: { name: 'agent', type: 'device' },
+    proofs,
+    signer: undefined,
+    index: db,
+    transactor: db,
   }
+}
+
+/**
+ * @param {object} source
+ * @param {API.DataStore} [source.store]
+ * @returns {Promise<API.Result<API.Database, API.DataStoreOpenError>>}
+ */
+export const open = async ({ store }) => {
+  try {
+    const archive = store ? await store.load() : null
+    const db = fromArchive(archive ?? {})
+    return { ok: { ...db, store } }
+  } catch (cause) {
+    return {
+      error: new DataStoreOpenError('Failed to open a datastore', {
+        cause,
+      }),
+    }
+  }
+}
+
+/**
+ * @param {API.Database} db
+ * @returns {Promise<API.Result<API.Unit, API.DataStoreSaveError>>}
+ */
+export const save = async (db) => {
+  const archive = toArchive(db)
+  if (db.store) {
+    try {
+      await db.store.save(archive)
+    } catch (cause) {
+      return {
+        error: new DataStoreSaveError('Failed to store data', { cause }),
+      }
+    }
+  }
+
+  return { ok: {} }
+}
+
+/**
+ * Rebuilds proofs index from the proofs the proofs.
+ *
+ * @param {API.Database} db
+ */
+export const reindex = (db) => {
+  db.index = Datalogia.Memory.create(Delegations.facts(db.proofs.values()))
+
+  return db
+}
+
+/**
+ * @typedef {API.Variant<{ proof: API.Delegation, signer: API.SignerArchive<API.DID, any> }>} Instruction
+ * @param {API.Database} db
+ * @param {Iterable<Instruction>} transaction
+ * @returns {Promise<API.Result<API.Database, API.DatabaseTransactionError|API.DataStoreSaveError>>}
+ */
+export const transact = async (db, transaction) => {
+  const instructions = []
+  for (const each of transaction) {
+    if (each.proof) {
+      const { proof } = each
+      db.proofs.set(`${proof.cid}`, { meta: {}, delegation: proof })
+      for (const fact of Delegation.facts(proof)) {
+        instructions.push({ Associate: fact })
+      }
+    } else if (each.signer) {
+      db.signer = each.signer
+    }
+  }
+  const result = await db.transactor.transact(instructions)
+  if (result.error) {
+    return {
+      error: new DatabaseTransactionError(transaction, { cause: result.error }),
+    }
+  }
+
+  const { error } = await save(db)
+  if (error) {
+    return { error }
+  }
+
+  return { ok: db }
 }
 
 /**
@@ -116,7 +177,7 @@ export const facts = function* (proofs) {
  * @property {API.Delegation[]} proofs
  * @property {API.DID} audience
  *
- * @param {DB} db
+ * @param {API.Database} db
  * @param {object} query
  * @param {API.TextConstraint} query.audience
  * @param {API.TextConstraint} [query.subject]
@@ -127,107 +188,49 @@ export const facts = function* (proofs) {
 export const find = (
   db,
   { subject = { like: '%' }, audience, time = Date.now() / 1000, can = {} }
-) => {
-  const space = Datalogia.string()
-  const abilities = Object.keys(can)
-  const principal = Datalogia.string()
-  const proofs = Object.fromEntries(
-    abilities.map((can) => [can, Datalogia.link()])
-  )
-
-  const matches = Datalogia.query(db.index, {
-    select: {
-      ...proofs,
-      space,
-      principal,
-    },
-    where: [
-      ...Object.entries(proofs).flatMap(([need, proof]) => {
-        const capability = Datalogia.link()
-        return [
-          Datalogia.match([capability, 'capability/with', space]),
-          providesAbility({ capability, ability: need }),
-          Datalogia.match([proof, 'ucan/capability', capability]),
-          Datalogia.match([proof, 'ucan/audience', principal]),
-          matchText(principal, audience),
-          Datalogia.not(isExpired({ ucan: proof, time })),
-          Datalogia.not(isTooEarly({ ucan: proof, time })),
-        ]
-      }),
-      matchText(space, subject),
-    ],
-  })
-
-  return matches.map(({ space: did, principal, ...proofs }) => {
+) =>
+  Datalogia.query(
+    db.index,
+    Authorization.query({
+      can,
+      subject,
+      audience,
+      time,
+    })
+  ).map(({ subject, audience, ...proofs }) => {
     // query engine will provide proof for each requested capability, so we may
     // have duplicates here, which we prune.
     const keys = [...new Set(Object.values(proofs).map(String))]
 
     return {
-      audience: /** @type {API.DID} */ (principal),
-      subject: /** @type {API.SpaceDID} */ (did),
+      audience: /** @type {API.DID} */ (audience),
+      subject: /** @type {API.SpaceDID} */ (subject),
       // Dereference proofs from the store.
       proofs: keys.map(
         ($) => /** @type {API.Delegation} */ (db.proofs.get($)?.delegation)
       ),
     }
   })
+
+class DataStoreOpenError extends Error {
+  name = /** @type {const} */ ('DataStoreOpenError')
 }
 
-/**
- *
- * @param {Datalogia.Term<string>} source
- * @param {API.TextConstraint} constraint
- */
-const matchText = (source, constraint) =>
-  constraint.glob != null
-    ? Datalogia.glob(source, constraint.glob)
-    : constraint.like != null
-    ? Datalogia.like(source, constraint.like)
-    : Datalogia.Constraint.is(source, constraint)
-
-/**
- * Composes the clause that matches given `query.ucan` only if it has expired,
- * that is it has `exp` field set and is less than given `query.time`.
- *
- * @param {object} query
- * @param {Datalogia.Term<Datalogia.Entity>} query.ucan
- * @param {Datalogia.API.Term<Datalogia.Int32>} query.time
- * @returns {Datalogia.Clause}
- */
-const isExpired = ({ ucan, time }) => {
-  const expiration = Datalogia.integer()
-  return Datalogia.match([ucan, 'ucan/expiration', expiration]).and(
-    Datalogia.Constraint.greater(time, expiration)
-  )
+class DataStoreSaveError extends Error {
+  name = /** @type {const} */ ('DataStoreSaveError')
 }
 
-/**
- * Composes the clause that will match a `query.ucan` only if is not active yet,
- * that is it's `nbf` field is set and greater than given `query.time`.
- *
- * @param {object} query
- * @param {Datalogia.Term<Datalogia.Entity>} query.ucan
- * @param {Datalogia.API.Term<Datalogia.Int32>} query.time
- * @returns {Datalogia.Clause}
- */
-const isTooEarly = ({ ucan, time }) => {
-  const notBefore = Datalogia.integer()
-  return Datalogia.match([ucan, 'ucan/notBefore', notBefore]).and(
-    Datalogia.Constraint.less(time, notBefore)
-  )
-}
-
-/**
- *
- * @param {object} query
- * @param {Datalogia.Term<Datalogia.Entity>} query.capability
- * @param {string} query.ability
- */
-const providesAbility = ({ capability, ability }) => {
-  const can = Datalogia.string()
-  return Datalogia.match([capability, 'capability/can', can]).and(
-    // can is a glob pattern that we try to match against
-    Datalogia.glob(ability, can)
-  )
+class DatabaseTransactionError extends Error {
+  name = /** @type {const} */ ('DatabaseTransactionError')
+  /**
+   *
+   * @param {Iterable<Instruction>} transaction
+   * @param {object} options
+   * @param {Error} options.cause
+   */
+  constructor(transaction, { cause }) {
+    super('Failed to transact')
+    this.transaction = transaction
+    this.cause = cause
+  }
 }
