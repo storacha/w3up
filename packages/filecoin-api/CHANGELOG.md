@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.3.1...filecoin-api-v4.4.0) (2024-02-06)
+
+
+### Features
+
+* add support to prepend pieces while buffering to aggregate ([#1301](https://github.com/web3-storage/w3up/issues/1301)) ([dff1846](https://github.com/web3-storage/w3up/commit/dff1846ad8b6ff5bb9e5fd8ff71f79df5bf79e4d))
+
 ## [4.3.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.3.0...filecoin-api-v4.3.1) (2024-01-15)
 
 
