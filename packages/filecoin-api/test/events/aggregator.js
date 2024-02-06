@@ -397,6 +397,77 @@ export const test = {
       message.minPieceInsertedAt
     )
   },
+  'handles buffer queue messages successfully to queue aggregate prepended with a buffer piece': async (
+    assert,
+    context
+  ) => {
+    const group = context.id.did()
+    const { buffers, blocks } = await getBuffers(2, group, {
+      length: 100,
+      size: 128,
+    })
+
+    const [cargo] = await randomCargo(1, 128)
+    /** @type {import('../../src/aggregator/api.js').BufferedPiece} */
+    const bufferedPiece = {
+      piece: cargo.link.link(),
+      policy: 0,
+      insertedAt: (new Date()).toISOString()
+    }
+
+    const totalPieces = buffers.reduce((acc, v) => {
+      acc += v.pieces.length
+      return acc
+    }, 0)
+
+    // Store buffers
+    for (let i = 0; i < blocks.length; i++) {
+      const putBufferRes = await context.bufferStore.put({
+        buffer: buffers[i],
+        block: blocks[i].cid,
+      })
+      assert.ok(putBufferRes.ok)
+    }
+
+    // Handle messages
+    const handledMessageRes = await AggregatorEvents.handleBufferQueueMessage(
+      {
+        ...context,
+        config: {
+          minAggregateSize: 2 ** 19,
+          minUtilizationFactor: 10e5,
+          maxAggregateSize: 2 ** 35,
+          prependBufferedPieces: [bufferedPiece]
+        },
+      },
+      blocks.map((b) => ({
+        pieces: b.cid,
+        group,
+      }))
+    )
+    assert.ok(handledMessageRes.ok)
+    assert.equal(handledMessageRes.ok?.aggregatedPieces, totalPieces + 1)
+
+    // Validate queue and store
+    await pWaitFor(
+      () =>
+        context.queuedMessages.get('aggregateOfferQueue')?.length === 1
+    )
+
+    /** @type {AggregateOfferMessage} */
+    // @ts-expect-error cannot infer buffer message
+    const message = context.queuedMessages.get('aggregateOfferQueue')?.[0]
+    const bufferGet = await context.bufferStore.get(message.buffer)
+    assert.ok(bufferGet.ok)
+    assert.ok(bufferGet.ok?.block.equals(message.buffer))
+    assert.equal(bufferGet.ok?.buffer.group, group)
+    assert.ok(message.aggregate.equals(bufferGet.ok?.buffer.aggregate))
+    assert.equal(bufferGet.ok?.buffer.pieces.length, totalPieces + 1)
+
+    // prepended piece
+    assert.ok(bufferGet.ok?.buffer.pieces.find(p => p.piece.link().equals(bufferedPiece.piece.link())))
+    assert.ok(bufferGet.ok?.buffer.pieces[0].piece.link().equals(bufferedPiece.piece.link()))
+  },
   'handles buffer queue messages successfully to queue aggregate and remaining buffer':
     async (assert, context) => {
       const group = context.id.did()

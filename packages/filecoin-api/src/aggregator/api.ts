@@ -328,6 +328,7 @@ export interface AggregateConfig {
   maxAggregateSize: number
   minAggregateSize: number
   minUtilizationFactor: number
+  prependBufferedPieces?: BufferedPiece[]
 }
 
 // Enums
