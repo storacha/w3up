@@ -159,12 +159,8 @@ export async function handleBufferReducingWithoutAggregate({
  * @param {BufferedPiece[]} [config.prependBufferedPieces]
  */
 export function aggregatePieces(bufferedPieces, config) {
-  const transformedBufferedPieces = [
-    ...(config.prependBufferedPieces || []),
-    ...bufferedPieces
-  ]
   // Guarantee buffered pieces total size is bigger than the minimum utilization
-  const bufferUtilizationSize = transformedBufferedPieces.reduce((total, p) => {
+  const bufferUtilizationSize = bufferedPieces.reduce((total, p) => {
     const piece = Piece.fromLink(p.piece)
     total += piece.size
     return total
@@ -187,7 +183,17 @@ export function aggregatePieces(bufferedPieces, config) {
   /** @type {BufferedPiece[]} */
   const remainingBufferedPieces = []
 
-  for (const bufferedPiece of transformedBufferedPieces) {
+  // start by adding prepend buffered pieces if available
+  for (const bufferedPiece of (config.prependBufferedPieces || [])) {
+    const p = Piece.fromLink(bufferedPiece.piece)
+    if (builder.estimate(p).error) {
+      throw new Error('aggregate builder is not able to create aggregates with only prepend buffered pieces')
+    }
+    builder.write(p)
+    addedBufferedPieces.push(bufferedPiece)
+  }
+
+  for (const bufferedPiece of bufferedPieces) {
     const p = Piece.fromLink(bufferedPiece.piece)
     if (builder.estimate(p).error) {
       remainingBufferedPieces.push(bufferedPiece)
