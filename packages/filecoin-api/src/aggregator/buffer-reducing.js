@@ -152,12 +152,13 @@ export async function handleBufferReducingWithoutAggregate({
  * Attempt to build an aggregate with buffered pieces within ranges.
  *
  * @param {BufferedPiece[]} bufferedPieces
- * @param {object} sizes
- * @param {number} sizes.maxAggregateSize
- * @param {number} sizes.minAggregateSize
- * @param {number} sizes.minUtilizationFactor
+ * @param {object} config
+ * @param {number} config.maxAggregateSize
+ * @param {number} config.minAggregateSize
+ * @param {number} config.minUtilizationFactor
+ * @param {BufferedPiece[]} [config.prependBufferedPieces]
  */
-export function aggregatePieces(bufferedPieces, sizes) {
+export function aggregatePieces(bufferedPieces, config) {
   // Guarantee buffered pieces total size is bigger than the minimum utilization
   const bufferUtilizationSize = bufferedPieces.reduce((total, p) => {
     const piece = Piece.fromLink(p.piece)
@@ -166,14 +167,14 @@ export function aggregatePieces(bufferedPieces, sizes) {
   }, 0n)
   if (
     bufferUtilizationSize <
-    sizes.maxAggregateSize / sizes.minUtilizationFactor
+    config.maxAggregateSize / config.minUtilizationFactor
   ) {
     return
   }
 
   // Create builder with maximum size and try to fill it up
   const builder = Aggregate.createBuilder({
-    size: Aggregate.Size.from(sizes.maxAggregateSize),
+    size: Aggregate.Size.from(config.maxAggregateSize),
   })
 
   // add pieces to an aggregate until there is no more space, or no more pieces
@@ -181,6 +182,16 @@ export function aggregatePieces(bufferedPieces, sizes) {
   const addedBufferedPieces = []
   /** @type {BufferedPiece[]} */
   const remainingBufferedPieces = []
+
+  // start by adding prepend buffered pieces if available
+  for (const bufferedPiece of (config.prependBufferedPieces || [])) {
+    const p = Piece.fromLink(bufferedPiece.piece)
+    if (builder.estimate(p).error) {
+      throw new Error('aggregate builder is not able to create aggregates with only prepend buffered pieces')
+    }
+    builder.write(p)
+    addedBufferedPieces.push(bufferedPiece)
+  }
 
   for (const bufferedPiece of bufferedPieces) {
     const p = Piece.fromLink(bufferedPiece.piece)
@@ -196,7 +207,7 @@ export function aggregatePieces(bufferedPieces, sizes) {
     BigInt(builder.limit) * BigInt(Index.EntrySize)
 
   // If not enough space return undefined
-  if (totalUsedSpace < BigInt(sizes.minAggregateSize)) {
+  if (totalUsedSpace < BigInt(config.minAggregateSize)) {
     return
   }
 
