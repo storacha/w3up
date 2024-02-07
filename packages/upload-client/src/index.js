@@ -123,7 +123,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(
       new TransformStream({
-        async transform (car, controller) {
+        async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
           const multihashDigest = await PieceHasher.digest(bytes)
           /** @type {import('@web3-storage/capabilities/types').PieceLink} */
