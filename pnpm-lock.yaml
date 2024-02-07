@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -479,9 +479,6 @@ importers:
       p-retry:
         specifier: ^5.1.2
         version: 5.1.2
-      parallel-transform-web:
-        specifier: ^1.0.1
-        version: 1.0.1
       varint:
         specifier: ^6.0.0
         version: 6.0.0
@@ -10073,10 +10070,6 @@ packages:
       registry-url: 6.0.1
       semver: 7.5.4
     dev: true
-
-  /parallel-transform-web@1.0.1:
-    resolution: {integrity: sha512-RtPU/7IuwPZ4ePcqoPxNCpjtaXYOkCVtnhh5tW3O78wy9jqVoV2hQHms17kUeu8DTYoOP+mykFLg2agwVKlwBw==}
-    dev: false
 
   /param-case@3.0.4:
     resolution: {integrity: sha512-RXlj7zCYokReqWpOPH9oYivUzLYZ5vAPIfEmCTNViosC78F8F0H9y7T7gG2M39ymgutxF5gcFEsyZQSph9Bp3A==}

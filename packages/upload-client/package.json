@@ -79,7 +79,6 @@
     "ipfs-utils": "^9.0.14",
     "multiformats": "^12.1.2",
     "p-retry": "^5.1.2",
-    "parallel-transform-web": "^1.0.1",
     "varint": "^6.0.0"
   },
   "devDependencies": {
