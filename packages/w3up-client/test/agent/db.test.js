@@ -372,29 +372,28 @@ export const testDB = {
     //     const proof = DB.link()
     //     const proofCap = DB.link()
 
-    assert.deepEqual(
-      DB.query(
-        db.index,
-        Spaces.indirect({
-          audience: alice.did(),
-          can: { 'store/*': [] },
-        })
-      ),
-      [
-        {
-          subject: aliceLogin.space.did(),
-          audience: alice.did(),
-          account: aliceLogin.account.did(),
-          'store/*': aliceLogin.login.cid,
-        },
-        {
-          subject: aliLogin.space.did(),
-          audience: alice.did(),
-          account: aliLogin.account.did(),
-          'store/*': aliLogin.login.cid,
-        },
-      ]
+    const result = DB.query(
+      db.index,
+      Spaces.indirect({
+        audience: alice.did(),
+        can: { 'store/*': [] },
+      })
     )
+
+    assert.deepEqual(result, [
+      {
+        subject: aliceLogin.space.did(),
+        audience: alice.did(),
+        account: aliceLogin.account.did(),
+        'store/*': aliceLogin.login.cid,
+      },
+      {
+        subject: aliLogin.space.did(),
+        audience: alice.did(),
+        account: aliLogin.account.did(),
+        'store/*': aliLogin.login.cid,
+      },
+    ])
 
     assert.deepEqual(
       DB.query(
@@ -540,6 +539,30 @@ export const testDB = {
         },
       },
     ])
+  },
+
+  'find whatever capabilities match': async (assert) => {
+    const space = await Space.generate({
+      name: 'beet-box',
+    })
+    const proof = await space.createAuthorization(alice)
+    const db = DB.from({ proofs: [proof] })
+
+    const result = Authorization.find(db, {
+      authority: alice.did(),
+    })
+
+    assert.deepEqual(
+      result,
+      proof.capabilities.map(({ can }) =>
+        Authorization.from({
+          authority: alice.did(),
+          can: { [can]: [] },
+          subject: space.did(),
+          proofs: [proof],
+        })
+      )
+    )
   },
 }
 

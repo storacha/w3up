@@ -4,6 +4,8 @@ import * as Capability from './capability.js'
 import * as Delegation from './delegation.js'
 import * as Text from './db/text.js'
 
+export { Capability, Delegation, Text }
+
 /**
  * @param {API.Authorization} model
  */
@@ -63,7 +65,7 @@ class AccessDenied extends Error {
  * @param {object} query
  * @param {API.TextConstraint} query.authority
  * @param {API.TextConstraint} [query.subject]
- * @param {API.Can} query.can
+ * @param {API.Can} [query.can]
  * @param {API.UTCUnixTimestamp} [query.time]
  * @returns {Authorization[]}
  */
@@ -79,15 +81,15 @@ export const find = (
       authority,
       time,
     })
-  ).map(({ subject, authority, ...proofs }) => {
+  ).map(({ subject, authority, proofs }) => {
     // query engine will provide proof for each requested capability, so we may
     // have duplicates here, which we prune.
-    const keys = [...new Set(Object.values(proofs).map(String))]
+    const keys = [...new Set(proofs.map(({ proof }) => String(proof)))]
 
     return new Authorization({
       authority: /** @type {API.DID} */ (authority),
       subject: /** @type {API.SpaceDID} */ (subject),
-      can,
+      can: can ?? Object.fromEntries(proofs.map(({ can }) => [can, []])),
       // Dereference proofs from the store.
       proofs: keys.map(
         ($) => /** @type {API.Delegation} */ (db.proofs.get($)?.delegation)
@@ -102,31 +104,38 @@ export const find = (
  *
  * @param {object} selector
  * @param {API.TextConstraint} selector.authority
- * @param {API.Can} selector.can
+ * @param {API.Can} [selector.can]
  * @param {API.TextConstraint} [selector.subject]
  * @param {API.UTCUnixTimestamp} [selector.time]
  */
-export const query = ({ time = Date.now() / 1000, ...selector }) => {
+export const query = ({ can = {}, time = Date.now() / 1000, ...selector }) => {
   const subject = DB.string()
   const authority = DB.string()
-  const abilities = Object.keys(selector.can)
-  const proofs = Object.fromEntries(abilities.map((can) => [can, DB.link()]))
+  const need = Object.keys(can)
+  /** @type {{proof: DB.Term<DB.Entity>, can: DB.Term<string>, need?: string }[]} */
+  const proofs = need.length
+    ? need.map((need) => ({ proof: DB.link(), need, can: DB.string() }))
+    : [{ proof: DB.link(), can: DB.string() }]
+
+  const where = proofs.map(({ proof, need, can }) => {
+    const clause = match(proof, {
+      subject,
+      can,
+      authority,
+      time,
+    })
+
+    return need ? clause.and(DB.glob(need, can)) : clause
+  })
 
   return {
     select: {
-      ...proofs,
+      proofs,
       subject,
       authority,
     },
     where: [
-      ...Object.entries(proofs).map(([can, delegation]) =>
-        match(delegation, {
-          subject,
-          can,
-          authority,
-          time,
-        })
-      ),
+      ...where,
       Text.match(subject, selector.subject ?? { glob: '*' }),
       Text.match(authority, selector.authority),
     ],
@@ -136,14 +145,14 @@ export const query = ({ time = Date.now() / 1000, ...selector }) => {
 /**
  * @param {DB.Term<DB.Link>} delegation
  * @param {object} selector
- * @param {string} selector.can
  * @param {API.UTCUnixTimestamp} selector.time
+ * @param {DB.Term<string>} [selector.can]
  * @param {DB.Term<string>} [selector.subject]
  * @param {DB.Term<API.DID>} [selector.authority]
  */
 export const match = (
   delegation,
-  { authority = DB.string(), subject = DB.string(), can, time }
+  { authority = DB.string(), subject = DB.string(), can = DB.string(), time }
 ) => {
   const capability = DB.link()
 

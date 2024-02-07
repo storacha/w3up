@@ -85,7 +85,8 @@ export const indirect = ({
       account: accountPrincipal,
     },
     where: [
-      ...Object.entries(proofs).flatMap(([can, delegation]) => {
+      ...Object.entries(proofs).flatMap(([need, delegation]) => {
+        const can = DB.string()
         const login = DB.link()
         const proof = DB.link()
         const capability = DB.link()
@@ -114,7 +115,7 @@ export const indirect = ({
               Capability.match(capability, {
                 subject: space,
                 can,
-              })
+              }).and(DB.glob(need, can))
             ),
         ]
       }),
