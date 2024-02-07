@@ -1,9 +1,9 @@
 import * as Datalogia from 'datalogia'
 import * as API from '../types.js'
 import * as Delegation from './delegation.js'
-import * as Authorization from './authorization.js'
 import * as Delegations from './delegations.js'
 export * from 'datalogia'
+export * as Text from './db/text.js'
 
 /**
  * @param {API.Variant<{
@@ -124,42 +124,74 @@ export const save = async (db) => {
 }
 
 /**
- * Rebuilds proofs index from the proofs the proofs.
- *
  * @param {API.Database} db
- */
-export const reindex = (db) => {
-  db.index = Datalogia.Memory.create(Delegations.facts(db.proofs.values()))
-
-  return db
-}
-
-/**
- * @typedef {API.Variant<{ proof: API.Delegation, signer: API.SignerArchive<API.DID, any> }>} Instruction
- * @param {API.Database} db
- * @param {Iterable<Instruction>} transaction
+ * @param {API.DBTransaction} transaction
  * @returns {Promise<API.Result<API.Database, API.DatabaseTransactionError|API.DataStoreSaveError>>}
  */
 export const transact = async (db, transaction) => {
-  const instructions = []
-  for (const each of transaction) {
-    if (each.proof) {
-      const { proof } = each
-      db.proofs.set(`${proof.cid}`, { meta: {}, delegation: proof })
-      for (const fact of Delegation.facts(proof)) {
-        instructions.push({ Associate: fact })
+  const assertions = []
+  let reindex = false
+  for (const { assert, retract } of transaction) {
+    if (assert) {
+      const { proof, signer } = assert
+      if (proof) {
+        db.proofs.set(`${proof.cid}`, { meta: {}, delegation: proof })
+        for (const fact of Delegation.facts(proof)) {
+          assertions.push({ Associate: fact })
+        }
+      } else if (signer) {
+        db.signer = signer
+      } else {
+        return {
+          error: new DatabaseTransactionError(
+            `Transaction contains unknown assertion`,
+            { cause: assert, transaction }
+          ),
+        }
       }
-    } else if (each.signer) {
-      db.signer = each.signer
     }
-  }
-  const result = await db.transactor.transact(instructions)
-  if (result.error) {
-    return {
-      error: new DatabaseTransactionError(transaction, { cause: result.error }),
+
+    if (retract) {
+      const { proof, signer } = retract
+      // Note we do not delete delegation proofs from the database as they
+      // may be referenced by other proofs. In fact we should probably just
+      // mark this proof as retracted instead of deleting them, and re-indexing
+      // but for now this will do.
+      if (proof) {
+        db.proofs.delete(`${proof.cid}`)
+        reindex = true
+      } else if (signer) {
+        delete db.signer
+      } else {
+        return {
+          error: new DatabaseTransactionError(
+            `Transaction contains unknown retraction`,
+            { cause: retract, transaction }
+          ),
+        }
+      }
     }
   }
 
+  const commit = await db.transactor.transact(assertions)
+  if (commit.error) {
+    return {
+      error: new DatabaseTransactionError(commit.error.message, {
+        cause: commit.error,
+        transaction,
+      }),
+    }
+  }
+
+  // If we end up removing some proofs we need to rebuild index in order to
+  // prune facts that are no longer valid.
+  if (reindex) {
+    const state = Datalogia.Memory.create(Delegations.facts(db.proofs.values()))
+    db.index = state
+    db.transactor = state
+  }
+
+  // Finally we save changes in the database store.
   const { error } = await save(db)
   if (error) {
     return { error }
@@ -169,48 +201,20 @@ export const transact = async (db, transaction) => {
 }
 
 /**
- * Returns authorizations that match the given query, that is they provide
- * abilities to the given audience.
+ * Creates a retraction instruction.
  *
- * @typedef {object} Authorization
- * @property {API.SpaceDID} subject
- * @property {API.Delegation[]} proofs
- * @property {API.DID} audience
- *
- * @param {API.Database} db
- * @param {object} query
- * @param {API.TextConstraint} query.audience
- * @param {API.TextConstraint} [query.subject]
- * @param {API.Can} [query.can]
- * @param {API.UTCUnixTimestamp} [query.time]
- * @returns {Authorization[]}
+ * @param {API.DBAssertion} assertion
+ * @returns {API.DBInstruction}
  */
-export const find = (
-  db,
-  { subject = { like: '%' }, audience, time = Date.now() / 1000, can = {} }
-) =>
-  Datalogia.query(
-    db.index,
-    Authorization.query({
-      can,
-      subject,
-      audience,
-      time,
-    })
-  ).map(({ subject, audience, ...proofs }) => {
-    // query engine will provide proof for each requested capability, so we may
-    // have duplicates here, which we prune.
-    const keys = [...new Set(Object.values(proofs).map(String))]
+export const retract = (assertion) => ({ retract: assertion })
 
-    return {
-      audience: /** @type {API.DID} */ (audience),
-      subject: /** @type {API.SpaceDID} */ (subject),
-      // Dereference proofs from the store.
-      proofs: keys.map(
-        ($) => /** @type {API.Delegation} */ (db.proofs.get($)?.delegation)
-      ),
-    }
-  })
+/**
+ * Creates an assertion instruction.
+ *
+ * @param {API.DBAssertion} assertion
+ * @returns {API.DBInstruction}
+ */
+export const assert = (assertion) => ({ assert: assertion })
 
 class DataStoreOpenError extends Error {
   name = /** @type {const} */ ('DataStoreOpenError')
@@ -223,13 +227,13 @@ class DataStoreSaveError extends Error {
 class DatabaseTransactionError extends Error {
   name = /** @type {const} */ ('DatabaseTransactionError')
   /**
-   *
-   * @param {Iterable<Instruction>} transaction
+   * @param {string} message
    * @param {object} options
+   * @param {API.DBTransaction} options.transaction
    * @param {Error} options.cause
    */
-  constructor(transaction, { cause }) {
-    super('Failed to transact')
+  constructor(message, { transaction, cause }) {
+    super(message)
     this.transaction = transaction
     this.cause = cause
   }

@@ -1,6 +1,6 @@
 import * as Test from '../test.js'
 import { alice, bob, mallory } from '../fixtures/principals.js'
-import * as Store from '../../src/agent/store.js'
+import * as Store from '../../src/agent/ex-store.js'
 
 /**
  * @type {Test.Suite}

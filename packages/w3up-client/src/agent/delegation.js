@@ -1,11 +1,19 @@
 import * as API from '../types.js'
 import * as DB from 'datalogia'
 import * as Block from './block.js'
-import { importDAG, allows } from '@ucanto/core/delegation'
+import { importDAG, allows, isDelegation } from '@ucanto/core/delegation'
 import * as Association from './db/association.js'
 
 /**
- * Composes the clause that matches given `query.ucan` only if it has expired,
+ * @param {DB.Term<DB.Link>} ucan
+ * @param {DB.Term<string>} issuer
+ * @returns
+ */
+export const issuedBy = (ucan, issuer) =>
+  DB.match([ucan, 'ucan/issuer', issuer])
+
+/**
+ * Composes the clause that matches given `ucan` only if it has expired,
  * that is it has `exp` field set and is less than given `query.time`.
  *
  * @param {DB.Term<DB.Entity>} ucan
@@ -35,7 +43,6 @@ export const isTooEarly = (ucan, time) => {
 }
 
 /**
- *
  * @param {DB.Term<DB.Entity>} ucan
  * @param {object} constraints
  * @param {DB.Term<DB.Entity>} constraints.capability
@@ -62,40 +69,50 @@ export const facts = function* (delegation) {
     yield [entity, 'ucan/expiration', delegation.expiration]
   }
 
-  for (const [uri, can] of Object.entries(allows(delegation))) {
-    for (const [ability, constraints] of Object.entries(can)) {
-      for (const constraint of /** @type {{}[]} */ (constraints)) {
-        const capability = {
-          with: uri,
-          can: ability,
-          nb: constraint,
-        }
-        const id = DB.Memory.entity(capability)
-
-        yield* Association.assert(capability, {
-          entity: id,
-          path: ['capability'],
-        })
-
-        yield [entity, 'ucan/capability', id]
-      }
-    }
+  for (const { can, with: uri, nb = {} } of delegation.capabilities) {
+    const capability = { with: uri, can, nb }
+    const id = DB.Memory.entity(capability)
+    yield* Association.assert(capability, { entity: id, path: ['capability'] })
+    yield [entity, 'ucan/capability', id]
   }
+
+  // for (const [uri, can] of Object.entries(allows(delegation))) {
+  //   for (const [ability, constraints] of Object.entries(can)) {
+  //     for (const constraint of /** @type {{}[]} */ (constraints)) {
+  //       const capability = {
+  //         with: uri,
+  //         can: ability,
+  //         nb: constraint,
+  //       }
+  //       const id = DB.Memory.entity(capability)
+
+  //       yield* Association.assert(capability, {
+  //         entity: id,
+  //         path: ['capability'],
+  //       })
+
+  //       yield [entity, 'ucan/capability', id]
+  //     }
+  //   }
+  // }
 
   for (const fact of delegation.facts) {
     yield* Association.assert(fact, { entity, path: ['ucan', 'fact'] })
   }
 
-  // for (const proof of delegation.proofs) {
-  //   if (isDelegation(proof)) {
-  //     yield* assert(proof)
-  //     yield [
-  //       entity,
-  //       'ucan/proof',
-  //       /** @type {API.Link & DB.Entity} */ (proof.cid),
-  //     ]
-  //   }
-  // }
+  for (const proof of delegation.proofs) {
+    if (isDelegation(proof)) {
+      yield* facts(proof)
+
+      yield [
+        entity,
+        'ucan/proof',
+        /** @type {API.Link & DB.Entity} */ (proof.cid),
+      ]
+    } else {
+      yield [entity, 'ucan/proof', /** @type {API.Link & DB.Entity} */ (proof)]
+    }
+  }
 }
 
 /**

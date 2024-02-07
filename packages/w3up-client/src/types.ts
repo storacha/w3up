@@ -520,7 +520,7 @@ export interface BlockArchive {
 }
 
 /**
- * A {@link API.Delegation} formatted for storage, making it compatible with
+ * A {@link Delegation} formatted for storage, making it compatible with
  * `structuredClone()` used by `indexedDB`.
  */
 export interface DelegationArchive extends Array<BlockArchive> {}
@@ -561,6 +561,31 @@ export interface Database {
 
   store?: DataStore
 }
+
+/**
+ * Database transaction is a list of instructions that update database state.
+ */
+export interface DBTransaction extends Iterable<DBInstruction> {}
+
+/**
+ * Database instruction is either a single assertion (insert) or (retraction)
+ * that either adds or removes facts into the database.
+ */
+export type DBInstruction = Variant<{
+  assert: DBAssertion
+  retract: DBAssertion
+}>
+
+/**
+ * Database assertion describes set of facts to be added to the database. It can
+ * either be a `proof` assertion that adds {@link Delegation} and associated
+ * facts to the database or a `signer` assertion that overrides signer keypair
+ * material stored in database.
+ */
+export type DBAssertion = Variant<{
+  proof: Delegation
+  signer: SignerArchive
+}>
 
 export interface Address<Protocol extends UnknownProtocol = UnknownProtocol>
   extends Phantom<Protocol> {
@@ -653,6 +678,10 @@ export interface W3Up {
 
 export interface Agent {
   signer: Signer
+
+  /**
+   * DB used to persist agent delegations and signing authority.
+   */
   db: Database
 }
 
@@ -663,13 +692,8 @@ export interface Agent {
  * create sessions with service providers that can be used to invoke
  * provided capabilities on behalf of the signing authority.
  */
-export interface AgentView {
-  /**
-   * Store used to persist agent delegations and signing authority.
-   */
-  db: Database
-
-  did(): DID
+export interface AgentView extends Agent {
+  did(): DIDKey
 
   /**
    * Connects to a service provider and returns a session that can be used to
@@ -722,4 +746,25 @@ export interface Session<Protocol extends UnknownProtocol = Service> {
 export interface Connection<Protocol extends UnknownProtocol = Service>
   extends ConnectionView<Protocol> {
   address: Address
+}
+
+export interface Authorization {
+  /**
+   * Principal that is authorized.
+   */
+  authority: DID
+  /**
+   * Resource that principal is authorized to invoke capabilities on.
+   */
+  subject: DID
+  /**
+   * Capabilities that `authority` has been granted authorization on the
+   * `subject`.
+   */
+  can: Can
+
+  /**
+   * Set of proofs representing this authorization.
+   */
+  proofs: Delegation[]
 }

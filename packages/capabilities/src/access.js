@@ -64,7 +64,7 @@ export const access = capability({
  */
 export const authorize = capability({
   can: 'access/authorize',
-  with: DID.match({ method: 'key' }),
+  with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
   /**
    * Authorization request describing set of desired capabilities
    */

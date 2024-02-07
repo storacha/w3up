@@ -7,7 +7,7 @@ import * as Access from './access.js'
 import * as Provider from './provider.js'
 import * as Space from '@web3-storage/capabilities/space'
 import { issueInvocation } from '../agent.js'
-import { Result } from '../index.js'
+import * as Result from '../result.js'
 
 /**
  *

@@ -80,6 +80,9 @@ export interface AccessAuthorizeSuccess {
 }
 
 export interface AccessAuthorizeFailure extends Ucanto.Failure {}
+export interface AccessDenied extends Ucanto.Failure {
+  name: 'AccessDenied'
+}
 
 export type AccessClaim = InferInvokedCapability<typeof AccessCaps.claim>
 export interface AccessClaimSuccess {

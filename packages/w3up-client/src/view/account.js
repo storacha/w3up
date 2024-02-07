@@ -9,15 +9,30 @@ import * as Result from '../result.js'
 
 export { fromEmail }
 
+class View {
+  /**
+   * @param {API.Session<API.AccessService>} session
+   */
+  constructor(session) {
+    this.session = session
+  }
+  list() {
+    return list(this.session)
+  }
+  login(email, options) {
+    return login(this.session, email, options)
+  }
+}
+
 /**
  * List all accounts that agent has stored access to. Returns a dictionary
  * of accounts keyed by their `did:mailto` identifier.
  *
- * @param {API.AgentView<API.AccessService>} agent
+ * @param {API.Session<API.AccessService>} session
  * @param {object} query
  * @param {API.DID<'mailto'>} [query.account]
  */
-export const list = (agent, { account } = {}) => {
+export const list = (session, { account } = {}) => {
   const query = /** @type {API.CapabilityQuery} */ ({
     with: account ?? /did:mailto:.*/,
     can: '*',
@@ -72,13 +87,13 @@ export const list = (agent, { account } = {}) => {
  * authorization session time bounds (currently 15 minutes), the promise will
  * resolve to an error.
  *
- * @param {API.AgentView<API.AccessService>} agent
+ * @param {API.Session<API.AccessService>} session
  * @param {API.EmailAddress} email
  * @param {object} [options]
  * @param {AbortSignal} [options.signal]
  * @returns {Promise<API.Result<Account, Error>>}
  */
-export const login = async (agent, email, options = {}) => {
+export const login = async (session, email, options = {}) => {
   const account = fromEmail(email)
 
   // If we already have a session for this account we
@@ -91,12 +106,12 @@ export const login = async (agent, email, options = {}) => {
   // no longer valid because it was revoked. But dropping
   // revoked UCANs from store is something we should do
   // anyway.
-  const session = list(agent, { account })[account]
-  if (session) {
-    return { ok: session }
+  const login = list(session, { account })[account]
+  if (login) {
+    return { ok: login }
   }
 
-  const result = await Access.request(agent, {
+  const result = await Access.request(session, {
     account,
     access: Access.accountAccess,
   })
@@ -111,16 +126,15 @@ export const login = async (agent, email, options = {}) => {
     if (error) {
       return { error }
     } else {
-      return { ok: new Account({ id: account, proofs: ok.proofs, agent }) }
+      return { ok: new Account({ proofs: ok.proofs, session }) }
     }
   }
 }
 
 /**
  * @typedef {object} Model
- * @property {API.DidMailto} id
- * @property {API.AgentView<API.AccessService>} agent
- * @property {API.Delegation[]} proofs
+ * @property {API.Session<API.AccessService>} session
+ * @property {API.Tuple<API.Delegation>} proofs
  */
 
 export class Account {
@@ -131,15 +145,18 @@ export class Account {
     this.model = model
     this.plan = new AccountPlan(model)
   }
+  get session() {
+    return this.model.session
+  }
   get agent() {
-    return this.model.agent
+    return this.model.session.agent
   }
   get proofs() {
     return this.model.proofs
   }
 
   did() {
-    return this.model.id
+    return /** @type {API.DidMailto} */ (this.model.proofs[0].issuer.did())
   }
 
   toEmail() {
@@ -184,9 +201,9 @@ export class Account {
    * Saves account in the agent store so it can be accessed across sessions.
    *
    * @param {object} input
-   * @param {API.AgentView<{}>} [input.agent]
+   * @param {API.Agent} [input.agent]
    */
-  async save({ agent = this.agent } = {}) {
+  async save({ agent = this.session.agent } = {}) {
     return await importAuthorization(agent, this)
   }
 }

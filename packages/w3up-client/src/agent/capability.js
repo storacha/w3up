@@ -24,7 +24,7 @@ export const hasAbility = (capability, can) => {
  *
  * @param {DB.Term<DB.Entity>} capability
  * @param {object} constraints
- * @param {DB.Term<API.DID>} constraints.subject
+ * @param {DB.Term<string>} constraints.subject
  * @param {string} constraints.can
  */
 export const match = (capability, { subject, can }) =>

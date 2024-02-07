@@ -1,11 +1,17 @@
 import * as DB from '../../src/agent/db.js'
 import * as Test from '../test.js'
 import * as Space from '../../src/capability/space.js'
-import * as Account from '../../src/view/account.js'
-import { delegate } from '@ucanto/core'
+import * as Account from '../../src/agent/account.js'
+import * as Delegation from '../../src/agent/delegation.js'
+import * as Spaces from '../../src/agent/space.js'
+import { createLegacyLink, delegate } from '@ucanto/core'
 import { Absentee, Verifier } from '@ucanto/principal'
 import * as Capability from '@web3-storage/capabilities'
+import * as Cap from '../../src/agent/capability.js'
+import { fromEmail, toEmail } from '@web3-storage/did-mailto'
+
 import { alice, bob, mallory, service } from '../fixtures/principals.js'
+import * as Authorization from '../../src/agent/authorization.js'
 
 /**
  * @type {Test.BasicSuite}
@@ -15,20 +21,21 @@ export const testDB = {
     const space = await Space.generate({
       name: 'beet-box',
     })
-    const auth = await space.createAuthorization(alice)
-    const db = DB.from({ proofs: [auth] })
+    const proof = await space.createAuthorization(alice)
+    const db = DB.from({ proofs: [proof] })
 
-    const result = DB.find(db, {
+    const result = Authorization.find(db, {
       can: { 'store/add': [] },
-      audience: alice.did(),
+      authority: alice.did(),
     })
 
     assert.deepEqual(result, [
-      {
-        audience: alice.did(),
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [] },
         subject: space.did(),
-        proofs: [auth],
-      },
+        proofs: [proof],
+      }),
     ])
   },
 
@@ -45,22 +52,24 @@ export const testDB = {
 
     const db = DB.from({ proofs: [beetBoxAuth, plumBoxAuth] })
 
-    const result = DB.find(db, {
+    const result = Authorization.find(db, {
       can: { 'store/add': [], 'store/remove': [] },
-      audience: alice.did(),
+      authority: alice.did(),
     })
 
     assert.deepEqual(result, [
-      {
-        audience: alice.did(),
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [], 'store/remove': [] },
         subject: beetBox.did(),
         proofs: [beetBoxAuth],
-      },
-      {
-        audience: alice.did(),
+      }),
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [], 'store/remove': [] },
         subject: plumBox.did(),
         proofs: [plumBoxAuth],
-      },
+      }),
     ])
   },
 
@@ -79,17 +88,18 @@ export const testDB = {
 
     const db = DB.from({ proofs: [spaceInfo, uploadList] })
 
-    const result = DB.find(db, {
+    const result = Authorization.find(db, {
       can: { 'space/info': [], 'upload/list': [] },
-      audience: bob.did(),
+      authority: bob.did(),
     })
 
     assert.deepEqual(result, [
-      {
-        audience: bob.did(),
+      Authorization.from({
+        authority: bob.did(),
+        can: { 'space/info': [], 'upload/list': [] },
         subject: alice.did(),
         proofs: [spaceInfo, uploadList],
-      },
+      }),
     ])
   },
 
@@ -110,37 +120,40 @@ export const testDB = {
       proofs: [login, attestation, localAuth],
     })
 
-    const result = DB.find(db, {
-      subject: { like: 'did:mailto:%' },
+    const result = Authorization.find(db, {
+      subject: { glob: 'did:mailto:*' },
       can: { '*': [] },
-      audience: alice.did(),
+      authority: alice.did(),
     })
 
     assert.deepEqual(result, [
-      {
+      Authorization.from({
         subject: account.did(),
-        audience: alice.did(),
+        authority: alice.did(),
+        can: { '*': [] },
         proofs: [login],
-      },
+      }),
     ])
 
-    const spaces = DB.find(db, {
+    const spaces = Authorization.find(db, {
       subject: { like: 'did:key:%' },
       can: { 'store/add': [] },
-      audience: alice.did(),
+      authority: alice.did(),
     })
 
     assert.deepEqual(spaces, [
-      {
-        subject: remoteSpace.did(),
-        audience: alice.did(),
-        proofs: [login],
-      },
-      {
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [] },
         subject: localSpace.did(),
-        audience: alice.did(),
         proofs: [localAuth],
-      },
+      }),
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [] },
+        subject: remoteSpace.did(),
+        proofs: [login],
+      }),
     ])
   },
 
@@ -162,7 +175,7 @@ export const testDB = {
       where: [
         DB.match([loginProof, 'ucan/audience', alice.did()]),
         DB.match([loginProof, 'ucan/capability', loginCan]),
-        DB.match([loginCan, 'capability/with', account.did()]),
+        DB.match([loginCan, 'capability/with', 'ucan:*']),
 
         DB.match([attestProof, 'ucan/audience', alice.did()]),
         DB.match([attestProof, 'ucan/capability', attestCan]),
@@ -194,37 +207,40 @@ export const testDB = {
       proofs: [valid, expired],
     })
 
-    const withoutExpired = DB.find(db, {
+    const withoutExpired = Authorization.find(db, {
       can: { 'store/add': [] },
-      audience: alice.did(),
+      authority: alice.did(),
       time,
     })
 
     assert.deepEqual(withoutExpired, [
-      {
-        audience: alice.did(),
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [] },
         subject: space.did(),
         proofs: [valid],
-      },
+      }),
     ])
 
-    const withExpired = DB.find(db, {
+    const withExpired = Authorization.find(db, {
       can: { 'store/add': [] },
-      audience: alice.did(),
+      authority: alice.did(),
       time: time - 60 * 60 * 24 * 2,
     })
 
     assert.deepEqual(withExpired, [
-      {
-        audience: alice.did(),
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [] },
         subject: space.did(),
         proofs: [valid],
-      },
-      {
-        audience: alice.did(),
+      }),
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [] },
         subject: space.did(),
         proofs: [expired],
-      },
+      }),
     ])
   },
 
@@ -238,29 +254,307 @@ export const testDB = {
       proofs: [proof],
     })
 
-    const result = DB.find(db, {
+    const result = Authorization.find(db, {
       can: { 'store/add': [] },
-      audience: alice.did(),
+      authority: alice.did(),
+    })
+
+    assert.deepEqual(result, [
+      Authorization.from({
+        authority: alice.did(),
+        can: { 'store/add': [] },
+        subject: space.did(),
+        proofs: [proof],
+      }),
+    ])
+  },
+
+  'account view': async (assert) => {
+    const aliceAccount = await setupAccount({
+      email: 'alice@web.mail',
+      agent: alice,
+    })
+    const bobAccount = await setupAccount({
+      email: 'bob@web3.storage',
+      agent: bob,
+    })
+
+    const db = DB.from({
+      proofs: [...aliceAccount.proofs, ...bobAccount.proofs],
+    })
+
+    const time = Date.now() / 1000
+    const ucan = DB.link()
+    const audience = DB.string()
+    const account = DB.string()
+
+    const accounts = DB.query(db.index, {
+      select: {
+        ucan,
+        account,
+      },
+      where: [
+        Account.match(ucan, {
+          time,
+          audience,
+          account,
+        }),
+      ],
+    })
+
+    assert.deepEqual(
+      accounts,
+      [
+        {
+          ucan: aliceAccount.login.cid,
+          account: 'did:mailto:web.mail:alice',
+        },
+        {
+          ucan: bobAccount.login.cid,
+          account: 'did:mailto:web3.storage:bob',
+        },
+      ],
+      'found both accounts'
+    )
+
+    DB.query(db.index, {
+      select: {
+        ucan,
+        account,
+      },
+      where: [
+        Account.match(ucan, {
+          time,
+          audience,
+          account,
+        }),
+      ],
+    })
+  },
+
+  'find account spaces': async (assert) => {
+    const aliceLogin = await setupAccount({
+      name: 'Alice',
+      email: 'alice@web.mail',
+      agent: alice,
+    })
+    const bobLogin = await setupAccount({
+      name: 'Bob',
+      email: 'bob@web3.storage',
+      agent: bob,
+    })
+    const aliLogin = await setupAccount({
+      name: 'Ali',
+      email: 'alice@web.mail',
+      agent: alice,
+    })
+
+    const space = await Space.generate({ name: 'space' })
+    const proof = await space.createAuthorization(alice, {
+      expiration: Infinity,
+    })
+
+    const db = DB.from({
+      proofs: [
+        ...aliceLogin.proofs,
+        ...bobLogin.proofs,
+        ...aliLogin.proofs,
+        proof,
+      ],
+    })
+
+    const time = Date.now() / 1000
+    const ucan = DB.link()
+    const audience = DB.string()
+    const account = DB.string()
+
+    //     const space = DB.string()
+    //     const proof = DB.link()
+    //     const proofCap = DB.link()
+
+    assert.deepEqual(
+      DB.query(
+        db.index,
+        Spaces.indirect({
+          audience: alice.did(),
+          can: { 'store/*': [] },
+        })
+      ),
+      [
+        {
+          subject: aliceLogin.space.did(),
+          audience: alice.did(),
+          account: aliceLogin.account.did(),
+          'store/*': aliceLogin.login.cid,
+        },
+        {
+          subject: aliLogin.space.did(),
+          audience: alice.did(),
+          account: aliLogin.account.did(),
+          'store/*': aliLogin.login.cid,
+        },
+      ]
+    )
+
+    assert.deepEqual(
+      DB.query(
+        db.index,
+        Spaces.indirect({ audience: bob.did(), can: { '*': [] } })
+      ),
+      [
+        {
+          subject: bobLogin.space.did(),
+          audience: bob.did(),
+          account: bobLogin.account.did(),
+          '*': bobLogin.login.cid,
+        },
+      ],
+      'finds account spaces delegated to bob'
+    )
+
+    assert.deepEqual(
+      DB.query(
+        db.index,
+        Spaces.indirect({ audience: bob.did(), can: { '*': [] } })
+      ),
+      [
+        {
+          subject: bobLogin.space.did(),
+          audience: bob.did(),
+          account: bobLogin.account.did(),
+          '*': bobLogin.login.cid,
+        },
+      ]
+    )
+
+    assert.deepEqual(
+      DB.query(
+        db.index,
+        Spaces.direct({
+          subject: { glob: 'did:key:*' },
+          audience: alice.did(),
+          can: { 'store/*': [] },
+        })
+      ),
+      [
+        {
+          audience: alice.did(),
+          subject: space.did(),
+          'store/*': proof.cid,
+        },
+      ],
+      'finds spaces delegated to agent directly'
+    )
+
+    assert.deepEqual(
+      DB.query(
+        db.index,
+        Spaces.indirect({
+          account: aliceLogin.account.did(),
+        })
+      ),
+      [
+        {
+          subject: aliceLogin.space.did(),
+          audience: alice.did(),
+          account: aliceLogin.account.did(),
+          '*': aliceLogin.login.cid,
+        },
+        {
+          subject: aliLogin.space.did(),
+          audience: alice.did(),
+          account: aliLogin.account.did(),
+          '*': aliLogin.login.cid,
+        },
+      ]
+    )
+  },
+
+  'account authority from login': async (assert) => {
+    const account = Absentee.from({ id: fromEmail('alice@web.mail') })
+    const proof = await delegate({
+      issuer: account,
+      audience: alice,
+      capabilities: [
+        {
+          with: 'ucan:*',
+          can: '*',
+        },
+      ],
+      proofs: [],
+    })
+
+    const db = DB.from({
+      proofs: [proof],
+    })
+
+    const result = Authorization.find(db, {
+      can: { 'store/add': [] },
+      authority: alice.did(),
+      subject: account.did(),
     })
 
     assert.deepEqual(result, [
       {
-        audience: alice.did(),
-        subject: space.did(),
-        proofs: [proof],
+        model: {
+          authority: alice.did(),
+          subject: account.did(),
+          can: { 'store/add': [] },
+          proofs: [proof],
+        },
+      },
+    ])
+  },
+
+  'account authority from authorization': async (assert) => {
+    const account = Absentee.from({ id: fromEmail('alice@web.mail') })
+    const proof = await delegate({
+      issuer: account,
+      audience: alice,
+      capabilities: [
+        {
+          with: 'ucan:*',
+          can: 'store/*',
+        },
+      ],
+      proofs: [],
+    })
+
+    const db = DB.from({
+      proofs: [proof],
+    })
+
+    const result = Authorization.find(db, {
+      can: { 'store/add': [] },
+      authority: alice.did(),
+      subject: account.did(),
+    })
+
+    assert.deepEqual(result, [
+      {
+        model: {
+          authority: alice.did(),
+          subject: account.did(),
+          can: { 'store/add': [] },
+          proofs: [proof],
+        },
       },
     ])
   },
 }
 
-const setupAccount = async () => {
-  const space = await Space.generate({ name: 'stuff' })
-  const account = Absentee.from({ id: 'did:mailto:web.mail:alice' })
+const setupAccount = async ({
+  email = /** @type {`${string}@${string}`} */ ('alice@web.mail'),
+  name = 'stuff',
+  agent = alice,
+} = {}) => {
+  const space = await Space.generate({ name })
+  const account = Absentee.from({ id: fromEmail(email) })
 
   const recovery = await space.createRecovery(account.did())
   const login = await delegate({
     issuer: account,
-    audience: alice,
+    audience: agent,
     capabilities: [
       {
         with: 'ucan:*',
@@ -272,13 +566,20 @@ const setupAccount = async () => {
 
   const attestation = await Capability.UCAN.attest.delegate({
     issuer: service,
-    audience: alice,
+    audience: agent,
     with: service.did(),
     nb: { proof: login.cid },
     expiration: Infinity,
   })
 
-  return { space, account, recovery, login, attestation }
+  return {
+    space,
+    account,
+    recovery,
+    login,
+    attestation,
+    proofs: [login, attestation],
+  }
 }
 
 Test.basic({ DB: testDB })

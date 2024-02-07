@@ -1,7 +1,10 @@
 // import { StoreMemory } from '@web3-storage/access/stores/store-memory'
 import * as Context from '@web3-storage/upload-api/test/context'
 // import * as Client from '@web3-storage/w3up-client'
+import { memory } from '../src/store/memory.js'
+import * as Agent from '../src/agent.js'
 import * as assert from 'assert'
+import * as API from '../src/types.js'
 
 /**
  * @typedef {Omit<typeof assert, 'ok'> & {ok(value:unknown, message?:string):void}} Assert
@@ -31,22 +34,36 @@ export const test = (suite) => {
   }
 }
 
-export const setup = async () => {
-  const context = await Context.createContext({
-    assert,
+const setupContext = async () => {
+  const context = await Context.createContext({ assert })
+  return Object.assign(context, {
+    connection: Object.assign(context.connection, {
+      address: {
+        id: context.connection.id,
+        url: context.url,
+      },
+    }),
   })
+}
 
-  const connect = () => {}
-  // Client.create({
-  //   store: new StoreMemory(),
-  //   serviceConf: {
-  //     access: context.connection,
-  //     upload: context.connection,
-  //     filecoin: context.connection,
-  //   },
-  // })
+/**
+ * @template {API.UnknownProtocol} Protocol
+ * @param {API.Connection<Protocol>} connection
+ */
+export const connect = (connection) =>
+  Agent.open({
+    store: memory(),
+  }).connect(connection)
 
-  return { ...context, connect, client: await connect() }
+export const setup = async () => {
+  const context = await setupContext()
+
+  const { error, ok: session } = await connect(context.connection)
+  if (error) {
+    throw error
+  }
+
+  return { ...context, session }
 }
 
 /**
