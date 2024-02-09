@@ -6,7 +6,11 @@ import * as AggregatorEvents from './events/aggregator.js'
 
 import { getStoreImplementations } from './context/store-implementations.js'
 import { Queue } from './context/queue.js'
-import { getMockService, getConnection } from './context/service.js'
+import {
+  getMockService,
+  getContentClaimsMockService,
+  getConnection,
+} from './context/service.js'
 import { validateAuthorization } from './utils.js'
 
 describe('Aggregator', () => {
@@ -67,13 +71,20 @@ describe('Aggregator', () => {
       define(name, async () => {
         const aggregatorSigner = await Signer.generate()
         const dealerSigner = await Signer.generate()
+        const assertSigner = await Signer.generate()
 
         const service = getMockService()
+        const contentClaimsService = getContentClaimsMockService()
+
         const aggregatorConnection = getConnection(
           aggregatorSigner,
           service
         ).connection
         const dealerConnection = getConnection(dealerSigner, service).connection
+        const assertConnect = getConnection(
+          assertSigner,
+          contentClaimsService
+        ).connection
 
         // resources
         /** @type {Map<string, unknown[]>} */
@@ -120,8 +131,17 @@ describe('Aggregator', () => {
                 audience: aggregatorSigner,
               },
             },
+            assertService: {
+              connection: assertConnect,
+              invocationConfig: {
+                issuer: assertSigner,
+                with: assertSigner.did(),
+                audience: assertSigner,
+              },
+            },
             queuedMessages,
             service,
+            contentClaimsService,
             errorReporter: {
               catch(error) {
                 assert.fail(error)

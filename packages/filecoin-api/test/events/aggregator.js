@@ -176,29 +176,32 @@ export const test = {
         bufferQueue: new FailingQueue(),
       })
     ),
-    'handles buffer queue messages repeated items as unique': async (
-      assert,
-      context
-    ) => {
-      const group = context.id.did()
-      const { buffers, blocks } = await getBuffers(1, group)
-  
-      // Store buffers
-      for (let i = 0; i < blocks.length; i++) {
-        const putBufferRes = await context.bufferStore.put({
-          buffer: buffers[i],
-          block: blocks[i].cid,
-        })
-        assert.ok(putBufferRes.ok)
-      }
- 
-      const bufferedPieces = await getBufferedPieces(
-        [blocks[0].cid, blocks[0].cid],
-        context.bufferStore
-      )
+  'handles buffer queue messages repeated items as unique': async (
+    assert,
+    context
+  ) => {
+    const group = context.id.did()
+    const { buffers, blocks } = await getBuffers(1, group)
 
-      assert.equal(bufferedPieces.ok?.bufferedPieces.length, buffers[0].pieces.length)
-    },
+    // Store buffers
+    for (let i = 0; i < blocks.length; i++) {
+      const putBufferRes = await context.bufferStore.put({
+        buffer: buffers[i],
+        block: blocks[i].cid,
+      })
+      assert.ok(putBufferRes.ok)
+    }
+
+    const bufferedPieces = await getBufferedPieces(
+      [blocks[0].cid, blocks[0].cid],
+      context.bufferStore
+    )
+
+    assert.equal(
+      bufferedPieces.ok?.bufferedPieces.length,
+      buffers[0].pieces.length
+    )
+  },
   'handles buffer queue messages successfully to requeue bigger buffer': async (
     assert,
     context
@@ -397,77 +400,82 @@ export const test = {
       message.minPieceInsertedAt
     )
   },
-  'handles buffer queue messages successfully to queue aggregate prepended with a buffer piece': async (
-    assert,
-    context
-  ) => {
-    const group = context.id.did()
-    const { buffers, blocks } = await getBuffers(2, group, {
-      length: 100,
-      size: 128,
-    })
-
-    const [cargo] = await randomCargo(1, 128)
-    /** @type {import('../../src/aggregator/api.js').BufferedPiece} */
-    const bufferedPiece = {
-      piece: cargo.link.link(),
-      policy: 0,
-      insertedAt: (new Date()).toISOString()
-    }
-
-    const totalPieces = buffers.reduce((acc, v) => {
-      acc += v.pieces.length
-      return acc
-    }, 0)
-
-    // Store buffers
-    for (let i = 0; i < blocks.length; i++) {
-      const putBufferRes = await context.bufferStore.put({
-        buffer: buffers[i],
-        block: blocks[i].cid,
+  'handles buffer queue messages successfully to queue aggregate prepended with a buffer piece':
+    async (assert, context) => {
+      const group = context.id.did()
+      const { buffers, blocks } = await getBuffers(2, group, {
+        length: 100,
+        size: 128,
       })
-      assert.ok(putBufferRes.ok)
-    }
 
-    // Handle messages
-    const handledMessageRes = await AggregatorEvents.handleBufferQueueMessage(
-      {
-        ...context,
-        config: {
-          minAggregateSize: 2 ** 19,
-          minUtilizationFactor: 10e5,
-          maxAggregateSize: 2 ** 35,
-          prependBufferedPieces: [bufferedPiece]
+      const [cargo] = await randomCargo(1, 128)
+      /** @type {import('../../src/aggregator/api.js').BufferedPiece} */
+      const bufferedPiece = {
+        piece: cargo.link.link(),
+        policy: 0,
+        insertedAt: new Date().toISOString(),
+      }
+
+      const totalPieces = buffers.reduce((acc, v) => {
+        acc += v.pieces.length
+        return acc
+      }, 0)
+
+      // Store buffers
+      for (let i = 0; i < blocks.length; i++) {
+        const putBufferRes = await context.bufferStore.put({
+          buffer: buffers[i],
+          block: blocks[i].cid,
+        })
+        assert.ok(putBufferRes.ok)
+      }
+
+      // Handle messages
+      const handledMessageRes = await AggregatorEvents.handleBufferQueueMessage(
+        {
+          ...context,
+          config: {
+            minAggregateSize: 2 ** 19,
+            minUtilizationFactor: 10e5,
+            maxAggregateSize: 2 ** 35,
+            prependBufferedPieces: [bufferedPiece],
+          },
         },
-      },
-      blocks.map((b) => ({
-        pieces: b.cid,
-        group,
-      }))
-    )
-    assert.ok(handledMessageRes.ok)
-    assert.equal(handledMessageRes.ok?.aggregatedPieces, totalPieces + 1)
+        blocks.map((b) => ({
+          pieces: b.cid,
+          group,
+        }))
+      )
+      assert.ok(handledMessageRes.ok)
+      assert.equal(handledMessageRes.ok?.aggregatedPieces, totalPieces + 1)
 
-    // Validate queue and store
-    await pWaitFor(
-      () =>
-        context.queuedMessages.get('aggregateOfferQueue')?.length === 1
-    )
+      // Validate queue and store
+      await pWaitFor(
+        () => context.queuedMessages.get('aggregateOfferQueue')?.length === 1
+      )
 
-    /** @type {AggregateOfferMessage} */
-    // @ts-expect-error cannot infer buffer message
-    const message = context.queuedMessages.get('aggregateOfferQueue')?.[0]
-    const bufferGet = await context.bufferStore.get(message.buffer)
-    assert.ok(bufferGet.ok)
-    assert.ok(bufferGet.ok?.block.equals(message.buffer))
-    assert.equal(bufferGet.ok?.buffer.group, group)
-    assert.ok(message.aggregate.equals(bufferGet.ok?.buffer.aggregate))
-    assert.equal(bufferGet.ok?.buffer.pieces.length, totalPieces + 1)
+      /** @type {AggregateOfferMessage} */
+      // @ts-expect-error cannot infer buffer message
+      const message = context.queuedMessages.get('aggregateOfferQueue')?.[0]
+      const bufferGet = await context.bufferStore.get(message.buffer)
+      assert.ok(bufferGet.ok)
+      assert.ok(bufferGet.ok?.block.equals(message.buffer))
+      assert.equal(bufferGet.ok?.buffer.group, group)
+      assert.ok(message.aggregate.equals(bufferGet.ok?.buffer.aggregate))
+      assert.equal(bufferGet.ok?.buffer.pieces.length, totalPieces + 1)
 
-    // prepended piece
-    assert.ok(bufferGet.ok?.buffer.pieces.find(p => p.piece.link().equals(bufferedPiece.piece.link())))
-    assert.ok(bufferGet.ok?.buffer.pieces[0].piece.link().equals(bufferedPiece.piece.link()))
-  },
+      // prepended piece
+      assert.ok(
+        bufferGet.ok?.buffer.pieces.find((p) =>
+          p.piece.link().equals(bufferedPiece.piece.link())
+        )
+      )
+      assert.ok(
+        bufferGet.ok?.buffer.pieces[0].piece
+          .link()
+          .equals(bufferedPiece.piece.link())
+      )
+    },
   'handles buffer queue messages successfully to queue aggregate and remaining buffer':
     async (assert, context) => {
       const group = context.id.did()
@@ -1228,6 +1236,64 @@ export const test = {
         }
       }
     ),
+  'handles inclusion insert to issue inclusion claim successfully': async (
+    assert,
+    context
+  ) => {
+    const group = context.id.did()
+    const { aggregate, pieces } = await randomAggregate(100, 128)
+    const piece = pieces[0].link
+
+    // Create inclusion proof
+    const inclusionProof = aggregate.resolveProof(piece)
+    if (!inclusionProof.ok) {
+      throw new Error()
+    }
+    const inclusionBlock = await CBOR.write(inclusionProof.ok)
+
+    // Insert inclusion
+    const inclusionRecord = {
+      aggregate: aggregate.link,
+      piece,
+      group,
+      inclusion: {
+        subtree: inclusionProof.ok[0],
+        index: inclusionProof.ok[1],
+      },
+      insertedAt: new Date().toISOString(),
+      proof: inclusionBlock.cid,
+    }
+
+    // Handle insert event
+    const handledMessageRes =
+      await AggregatorEvents.handleInclusionInsertToIssueInclusionClaim(
+        context,
+        inclusionRecord
+      )
+    assert.ok(handledMessageRes.ok)
+
+    // Verify invocation
+    // @ts-expect-error not typed hooks
+    assert.equal(context.contentClaimsService?.assert.inclusion.callCount, 1)
+    assert.ok(
+      inclusionRecord.piece.equals(
+        // @ts-expect-error not typed hooks
+        context.contentClaimsService?.assert.inclusion._params[0].nb.includes
+      )
+    )
+    assert.ok(
+      inclusionRecord.aggregate.equals(
+        // @ts-expect-error not typed hooks
+        context.contentClaimsService?.assert.inclusion._params[0].nb.content
+      )
+    )
+    assert.ok(
+      inclusionRecord.proof.equals(
+        // @ts-expect-error not typed hooks
+        context.contentClaimsService?.assert.inclusion._params[0].nb.proof
+      )
+    )
+  },
   'handles aggregate insert to invoke aggregate offer successfully': async (
     assert,
     context
