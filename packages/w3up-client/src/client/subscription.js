@@ -6,7 +6,7 @@ import * as Result from '../result.js'
 /**
  * Client for interacting with the `subscription/*` capabilities.
  *
- * @extends {Client<API.AccessService>}
+ * @extends {Client<API.W3Protocol>}
  */
 export class SubscriptionClient extends Client {
   /**

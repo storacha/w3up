@@ -16,7 +16,7 @@ import { bytesToDelegations } from '../agent/encoding.js'
  * Returns error result if agent has no current space and no space was provided.
  * Also returns error result if invocation fails.
  *
- * @param {API.AgentView<API.AccessService>} agent - Agent connected to the w3up service.
+ * @param {API.AgentView<API.W3Protocol>} agent - Agent connected to the w3up service.
  * @param {object} input
  * @param {API.Delegation[]} input.delegations - Delegations to propagate.
  * @param {API.SpaceDID} [input.space] - Space to propagate through.
@@ -54,7 +54,7 @@ export const delegate = async (
  * `PendingAccessRequest` object that can be used to poll for the requested
  * delegation through `access/claim` capability.
  *
- * @param {API.AgentView<API.AccessService>} agent
+ * @param {API.AgentView<API.W3Protocol>} agent
  * @param {object} input
  * @param {API.AccountDID} input.account - Account from which access is requested.
  * @param {API.ProviderDID} [input.provider] - Provider that will receive the invocation.
@@ -100,7 +100,7 @@ export const request = async (
  * Claims access that has been delegated to the given audience, which by
  * default is the agent's DID.
  *
- * @param {API.AgentView<API.AccessService>} agent
+ * @param {API.AgentView<API.W3Protocol>} agent
  * @param {object} input
  * @param {API.DID} [input.audience] - Principal requesting an access.
  * @param {API.ProviderDID} [input.provider] - Provider handling the invocation.
@@ -138,7 +138,7 @@ export const claim = async (
 class PendingAccessRequest {
   /**
    * @typedef {object} PendingAccessRequestModel
-   * @property {API.AgentView<API.AccessService>} agent - Agent handling interaction.
+   * @property {API.AgentView<API.W3Protocol>} agent - Agent handling interaction.
    * @property {API.DID} audience - Principal requesting an access.
    * @property {API.ProviderDID} provider - Provider handling request.
    * @property {API.UTCUnixTimestamp} expiration - Seconds in UTC.
@@ -265,7 +265,7 @@ class RequestExpired extends Failure {
 export class GrantedAccess {
   /**
    * @typedef {object} GrantedAccessModel
-   * @property {API.AgentView<API.AccessService>} agent - Agent that processed the request.
+   * @property {API.AgentView<API.W3Protocol>} agent - Agent that processed the request.
    * @property {API.Tuple<API.Delegation>} proofs - Delegations that grant access.
    *
    * @param {GrantedAccessModel} model

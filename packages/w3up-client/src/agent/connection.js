@@ -14,7 +14,7 @@ export * as Address from './connection/address.js'
  * function. In runtime where `fetch` global is not available this option MUST
  * be provided.
  *
- * @template {Record<string, any>} [Protocol=API.Service]
+ * @template {Record<string, any>} [Protocol=API.W3UpProtocol]
  * @param {object} source
  * @param {API.Address<Protocol>} [source.address]
  * @param {typeof fetch} [source.fetch] - Fetch implementation to use

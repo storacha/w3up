@@ -6,24 +6,38 @@ import * as API from '../types.js'
 import * as Access from './access.js'
 import * as Provider from './provider.js'
 import * as Space from '@web3-storage/capabilities/space'
-import { issueInvocation } from '../agent.js'
-import * as Result from '../result.js'
+import * as Authorization from '../agent/authorization.js'
+import * as Database from '../agent/db.js'
+import * as Agent from '../agent.js'
 
 /**
  *
  * Get Space information from Access service
  *
- * @param {API.AgentView<API.AccessService>} agent
- * @param {API.SpaceDID} space
- * @returns
+ * @param {API.Session<API.SpaceProtocol>} session
+ * @param {object} source
+ * @param {API.SpaceDID} source.id
  */
-export const info = async (agent, space) => {
-  const task = await issueInvocation(agent, Space.info, {
-    with: space,
+export const info = async (session, { id }) => {
+  const auth = session.agent.authorize({
+    subject: id,
+    can: { 'space/info': [] },
   })
-  const receipt = await task.execute(agent.connection)
 
-  return Result.unwrap(receipt.out)
+  if (auth.error) {
+    return auth
+  }
+
+  const { out: result } = await Space.info
+    .invoke({
+      issuer: session.agent.signer,
+      audience: session.connection.id,
+      with: id,
+      proofs: auth.ok.proofs,
+    })
+    .execute(session.connection)
+
+  return result
 }
 
 /**
@@ -32,7 +46,7 @@ export const info = async (agent, space) => {
  * @typedef {object} Model
  * @property {ED25519.EdSigner} signer
  * @property {string} name
- * @property {API.AgentView<API.AccessService>} [agent]
+ * @property {API.Session<API.W3UpProtocol>} [session]
  */
 
 /**
@@ -40,12 +54,12 @@ export const info = async (agent, space) => {
  *
  * @param {object} options
  * @param {string} options.name
- * @param {API.AgentView<API.AccessService>} [options.agent]
+ * @param {API.Session<API.W3UpProtocol>} [options.session]
  */
-export const generate = async ({ name, agent }) => {
+export const generate = async ({ name, session }) => {
   const { signer } = await ED25519.generate()
 
-  return new OwnedSpace({ signer, name, agent })
+  return new OwnedSpace({ signer, name, session })
 }
 
 /**
@@ -54,12 +68,12 @@ export const generate = async ({ name, agent }) => {
  * @param {string} mnemonic
  * @param {object} options
  * @param {string} options.name - Name to give to the recovered space.
- * @param {API.AgentView<API.AccessService>} [options.agent]
+ * @param {API.Session<API.W3UpProtocol>} [options.session]
  */
-export const fromMnemonic = async (mnemonic, { name, agent }) => {
+export const fromMnemonic = async (mnemonic, { name, session }) => {
   const secret = BIP39.mnemonicToEntropy(mnemonic, wordlist)
   const signer = await ED25519.derive(secret)
-  return new OwnedSpace({ signer, name, agent })
+  return new OwnedSpace({ signer, name, session })
 }
 
 /**
@@ -186,10 +200,10 @@ class OwnedSpace {
    * Saves account in the agent store so it can be accessed across sessions.
    *
    * @param {object} input
-   * @param {API.AgentView<{}>} [input.agent]
+   * @param {API.AgentView} [input.agent]
    * @returns {Promise<API.Result<API.Unit, Error>>}
    */
-  async save({ agent = this.model.agent } = {}) {
+  async save({ agent = this.model.session?.agent } = {}) {
     if (!agent) {
       return fail('Please provide an agent to save the space into')
     }
@@ -204,7 +218,7 @@ class OwnedSpace {
   /**
    * @param {Authorization} authorization
    * @param {object} options
-   * @param {API.AgentView<API.AccessService>} [options.agent]
+   * @param {API.AgentView<API.W3Protocol>} [options.agent]
    */
   provision({ proofs }, { agent = this.model.agent } = {}) {
     if (!agent) {
@@ -239,6 +253,20 @@ class OwnedSpace {
     return createAuthorization(this, { ...input, agent })
   }
 
+  /**
+   * @template {API.UnknownProtocol} Protocol
+   * @param {API.Connection<Protocol>} connection
+   */
+  async connect(connection) {
+    return this.open().connect(connection)
+  }
+
+  open() {
+    return Agent.view({
+      signer: this.signer,
+      db: Database.from({ proofs: [] }),
+    })
+  }
   /**
    * Derives BIP39 mnemonic that can be used to recover the space.
    *
@@ -287,7 +315,7 @@ export const fromDelegation = (delegation) => {
  * @param {Space} space
  * @param {object} options
  * @param {API.Delegation[]} options.proofs
- * @param {API.AgentView<API.AccessService>} options.agent
+ * @param {API.AgentView<API.W3Protocol>} options.agent
  */
 export const provision = async (space, { proofs, agent }) => {
   const [capability] = proofs[0].capabilities
@@ -348,5 +376,28 @@ class SharedSpace {
       ...this.model,
       meta: { ...this.meta, name },
     })
+  }
+}
+
+/**
+ * @template {API.UnknownProtocol} Protocol
+ */
+class SpaceSession {
+  /**
+   * @param {object} model
+   * @param {API.Connection<Protocol>} model.connection
+   * @param {ED25519.EdSigner} model.signer
+   */
+  constructor(model) {
+    this.model = model
+  }
+  did() {
+    return this.model.signer.did()
+  }
+  get connection() {
+    return this.model.connection
+  }
+  get agent() {
+    return this
   }
 }

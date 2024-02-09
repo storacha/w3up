@@ -11,7 +11,7 @@ export { fromEmail }
 
 class View {
   /**
-   * @param {API.Session<API.AccessService>} session
+   * @param {API.Session<API.W3Protocol>} session
    */
   constructor(session) {
     this.session = session
@@ -28,7 +28,7 @@ class View {
  * List all accounts that agent has stored access to. Returns a dictionary
  * of accounts keyed by their `did:mailto` identifier.
  *
- * @param {API.Session<API.AccessService>} session
+ * @param {API.Session<API.W3Protocol>} session
  * @param {object} query
  * @param {API.DID<'mailto'>} [query.account]
  */
@@ -87,7 +87,7 @@ export const list = (session, { account } = {}) => {
  * authorization session time bounds (currently 15 minutes), the promise will
  * resolve to an error.
  *
- * @param {API.Session<API.AccessService>} session
+ * @param {API.Session<API.W3Protocol>} session
  * @param {API.EmailAddress} email
  * @param {object} [options]
  * @param {AbortSignal} [options.signal]
@@ -133,7 +133,7 @@ export const login = async (session, email, options = {}) => {
 
 /**
  * @typedef {object} Model
- * @property {API.Session<API.AccessService>} session
+ * @property {API.Session<API.W3Protocol>} session
  * @property {API.Tuple<API.Delegation>} proofs
  */
 
@@ -186,7 +186,7 @@ export class Account {
    * @param {API.SpaceDID} space
    * @param {object} input
    * @param {API.ProviderDID} [input.provider]
-   * @param {API.AgentView<API.AccessService>} [input.agent]
+   * @param {API.AgentView<API.W3Protocol>} [input.agent]
    */
   provision(space, input = {}) {
     return provision(this.agent, {

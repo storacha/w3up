@@ -1,7 +1,7 @@
 import * as DB from '../../src/agent/db.js'
 import * as Test from '../test.js'
 import * as Space from '../../src/capability/space.js'
-import * as Account from '../../src/agent/account.js'
+import * as Account from '../../src/agent/login.js'
 import * as Delegation from '../../src/agent/delegation.js'
 import * as Spaces from '../../src/agent/space.js'
 import { createLegacyLink, delegate } from '@ucanto/core'
@@ -10,7 +10,7 @@ import * as Capability from '@web3-storage/capabilities'
 import * as Cap from '../../src/agent/capability.js'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
 
-import { alice, bob, mallory, service } from '../fixtures/principals.js'
+import { alice, bob, mallory, w3up } from '../fixtures/principals.js'
 import * as Authorization from '../../src/agent/authorization.js'
 
 /**
@@ -296,7 +296,7 @@ export const testDB = {
       where: [
         Account.match(ucan, {
           time,
-          audience,
+          authority: audience,
           account,
         }),
       ],
@@ -325,7 +325,7 @@ export const testDB = {
       where: [
         Account.match(ucan, {
           time,
-          audience,
+          authority: audience,
           account,
         }),
       ],
@@ -564,6 +564,107 @@ export const testDB = {
       )
     )
   },
+
+  'find capabilities grouped by spaces': async (assert) => {
+    const beetBox = await Space.generate({ name: 'beet-box' })
+    const yumBox = await Space.generate({ name: 'yum-box' })
+    const aliceLogin = await setupAccount({
+      name: 'Alice',
+      email: 'alice@web.mail',
+      agent: alice,
+    })
+
+    const db = DB.from({
+      proofs: [
+        await Capability.Space.space.delegate({
+          issuer: bob,
+          audience: alice,
+          with: bob.did(),
+        }),
+
+        await beetBox.createAuthorization(alice),
+        await beetBox.createAuthorization(alice, { access: { 'debug/*': {} } }),
+        await yumBox.createAuthorization(alice, { access: { 'store/*': {} } }),
+        await yumBox.createAuthorization(alice, { access: { 'upload/*': {} } }),
+        await yumBox.createAuthorization(alice, { access: { 'space/*': {} } }),
+        await yumBox.createAuthorization(alice, { access: { 'access/*': {} } }),
+        aliceLogin.login,
+        aliceLogin.attestation,
+      ],
+    })
+
+    const space = DB.string()
+    const proof = DB.link()
+    const name = DB.string()
+
+    const explicit = DB.query(db.index, {
+      select: {
+        space,
+        name,
+      },
+      where: [
+        Spaces.explicit(proof, {
+          authority: alice.did(),
+          name,
+          space,
+        }),
+      ],
+    })
+
+    assert.deepEqual(
+      Object.fromEntries(explicit.map(({ space, name }) => [space, name])),
+      {
+        [beetBox.did()]: 'beet-box',
+        [yumBox.did()]: 'yum-box',
+        [bob.did()]: undefined,
+      }
+    )
+
+    const implicit = DB.query(db.index, {
+      select: {
+        space,
+        name,
+      },
+      where: [
+        Spaces.implicit(proof, {
+          authority: alice.did(),
+          name,
+          space,
+        }),
+      ],
+    })
+
+    assert.deepEqual(implicit, [
+      {
+        space: aliceLogin.space.did(),
+        name: 'Alice',
+      },
+    ])
+
+    const all = DB.query(db.index, {
+      select: {
+        space,
+        name,
+      },
+      where: [
+        Spaces.match(proof, {
+          authority: alice.did(),
+          name,
+          space,
+        }),
+      ],
+    })
+
+    assert.deepEqual(
+      Object.fromEntries(all.map(({ space, name }) => [space, name])),
+      {
+        [beetBox.did()]: 'beet-box',
+        [yumBox.did()]: 'yum-box',
+        [aliceLogin.space.did()]: 'Alice',
+        [bob.did()]: undefined,
+      }
+    )
+  },
 }
 
 const setupAccount = async ({
@@ -588,9 +689,9 @@ const setupAccount = async ({
   })
 
   const attestation = await Capability.UCAN.attest.delegate({
-    issuer: service,
+    issuer: w3up,
     audience: agent,
-    with: service.did(),
+    with: w3up.did(),
     nb: { proof: login.cid },
     expiration: Infinity,
   })

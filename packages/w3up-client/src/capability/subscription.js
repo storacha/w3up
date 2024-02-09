@@ -8,7 +8,7 @@ export { Subscription }
 /**
  * Gets subscriptions associated with the account.
  *
- * @param {API.AgentView<API.AccessService>} agent
+ * @param {API.AgentView<API.W3Protocol>} agent
  * @param {object} options
  * @param {API.AccountDID} options.account
  * @param {API.Delegation[]} [options.proofs]

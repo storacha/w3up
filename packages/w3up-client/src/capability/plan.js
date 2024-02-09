@@ -4,7 +4,7 @@ import * as Plan from '@web3-storage/capabilities/plan'
 /**
  * Gets the plan currently associated with the account.
  *
- * @param {{agent: API.AgentView<API.AccessService>}} client
+ * @param {{agent: API.AgentView<API.W3Protocol>}} client
  * @param {object} options
  * @param {API.AccountDID} options.account
  * @param {API.Delegation[]} [options.proofs]

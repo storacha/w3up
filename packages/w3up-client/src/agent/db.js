@@ -6,6 +6,13 @@ export * from 'datalogia'
 export * as Text from './db/text.js'
 
 /**
+ *
+ * @param {Datalogia.Clause} clause
+ * @returns
+ */
+export const optional = (clause) => Datalogia.or(clause, Datalogia.not(clause))
+
+/**
  * @param {API.Variant<{
  * proofs: Iterable<API.Delegation>,
  * archive: API.DatabaseArchive

@@ -17,3 +17,5 @@ export const mallory = Signer.parse(
 export const service = Signer.parse(
   'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
 )
+
+export const w3up = service.withDID('did:web:web3.storage')

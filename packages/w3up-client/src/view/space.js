@@ -12,7 +12,7 @@ import * as Provider from '../capability/provider.js'
  * @typedef {object} Model
  * @property {ED25519.EdSigner} signer
  * @property {string} name
- * @property {API.AgentView<API.AccessService>} [agent]
+ * @property {API.AgentView<API.W3Protocol>} [agent]
  */
 
 /**
@@ -20,7 +20,7 @@ import * as Provider from '../capability/provider.js'
  *
  * @param {object} options
  * @param {string} options.name
- * @param {API.AgentView<API.AccessService>} [options.agent]
+ * @param {API.AgentView<API.W3Protocol>} [options.agent]
  */
 export const generate = async ({ name, agent }) => {
   const { signer } = await ED25519.generate()
@@ -34,7 +34,7 @@ export const generate = async ({ name, agent }) => {
  * @param {string} mnemonic
  * @param {object} options
  * @param {string} options.name - Name to give to the recovered space.
- * @param {API.AgentView<API.AccessService>} [options.agent]
+ * @param {API.AgentView<API.W3Protocol>} [options.agent]
  */
 export const fromMnemonic = async (mnemonic, { name, agent }) => {
   const secret = BIP39.mnemonicToEntropy(mnemonic, wordlist)
@@ -166,7 +166,7 @@ class OwnedSpace {
    * Saves account in the agent store so it can be accessed across sessions.
    *
    * @param {object} input
-   * @param {API.AgentView<API.AccessService>} [input.agent]
+   * @param {API.AgentView<API.W3Protocol>} [input.agent]
    * @returns {Promise<API.Result<API.Unit, Error>>}
    */
   async save({ agent = this.model.agent } = {}) {
@@ -184,7 +184,7 @@ class OwnedSpace {
   /**
    * @param {Authorization} authorization
    * @param {object} options
-   * @param {API.AgentView<API.AccessService>} [options.agent]
+   * @param {API.AgentView<API.W3Protocol>} [options.agent]
    */
   provision({ proofs }, { agent = this.model.agent } = {}) {
     if (!agent) {
@@ -267,7 +267,7 @@ export const fromDelegation = (delegation) => {
  * @param {Space} space
  * @param {object} options
  * @param {API.Delegation[]} options.proofs
- * @param {API.AgentView<API.AccessService>} options.agent
+ * @param {API.AgentView<API.W3Protocol>} options.agent
  */
 export const provision = async (space, { proofs, agent }) => {
   const [capability] = proofs[0].capabilities

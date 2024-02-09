@@ -43,8 +43,19 @@ export const hasSubject = (capability, subject) =>
  *
  * @param {DB.Term<DB.Entity>} capability
  * @param {object} constraints
- * @param {DB.Term<string>} constraints.subject
- * @param {DB.Term<string>} constraints.can
+ * @param {DB.Term<string>} [constraints.subject]
+ * @param {DB.Term<string>} [constraints.can]
  */
-export const match = (capability, { subject, can }) =>
-  hasSubject(capability, subject).and(hasAbility(capability, can))
+export const match = (
+  capability,
+  { subject = DB.string(), can = DB.string() }
+) => hasSubject(capability, subject).and(hasAbility(capability, can))
+
+/**
+ * @param {DB.Term<DB.Entity>} capability
+ * @param {object} constraints
+ * @param {DB.Term<string>} [constraints.subject]
+ * @param {DB.Term<string>} [constraints.can]
+ */
+export const forwards = (capability, { can = DB.string() }) =>
+  match(capability, { subject: 'ucan:*', can })

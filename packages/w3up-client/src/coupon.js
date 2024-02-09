@@ -85,7 +85,7 @@ export const issue = async ({ password = '', ...options }) => {
  *
  * @param {Model} coupon
  * @param {object} options
- * @param {API.AgentView<API.AccessService>} options.agent
+ * @param {API.AgentView<API.W3Protocol>} options.agent
  * @param {string} [options.password]
  * @returns {Promise<API.Result<GrantedAccess, Error>>}
  */
@@ -137,7 +137,7 @@ export class Coupon {
 
   /**
    *
-   * @param {API.AgentView<API.AccessService>} agent
+   * @param {API.AgentView<API.W3Protocol>} agent
    * @param {object} [options]
    * @param {string} [options.password]
    */

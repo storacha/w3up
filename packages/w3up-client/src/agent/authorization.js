@@ -81,21 +81,19 @@ export const find = (
       authority,
       time,
     })
-  ).map(({ subject, authority, proofs }) => {
-    // query engine will provide proof for each requested capability, so we may
-    // have duplicates here, which we prune.
-    const keys = [...new Set(proofs.map(({ proof }) => String(proof)))]
+  ).map((match) => select(db, match))
 
-    return new Authorization({
-      authority: /** @type {API.DID} */ (authority),
-      subject: /** @type {API.SpaceDID} */ (subject),
-      can: can ?? Object.fromEntries(proofs.map(({ can }) => [can, []])),
-      // Dereference proofs from the store.
-      proofs: keys.map(
-        ($) => /** @type {API.Delegation} */ (db.proofs.get($)?.delegation)
-      ),
-    })
-  })
+/**
+ * @typedef {object} ProofSelector
+ * @property {DB.Term<DB.Entity>} proof
+ * @property {DB.Term<string>} can
+ * @property {string} [need]
+ *
+ * @typedef {object} Selector
+ * @property {DB.Term<API.DID>} authority
+ * @property {DB.Term<API.DID>} subject
+ * @property {ProofSelector[]} proofs
+ */
 
 /**
  * Creates query that select set of proofs that would allow the
@@ -107,12 +105,13 @@ export const find = (
  * @param {API.Can} [selector.can]
  * @param {API.TextConstraint} [selector.subject]
  * @param {API.UTCUnixTimestamp} [selector.time]
+ * @returns {API.Query<Selector>}
  */
 export const query = ({ can = {}, time = Date.now() / 1000, ...selector }) => {
   const subject = DB.string()
   const authority = DB.string()
   const need = Object.keys(can)
-  /** @type {{proof: DB.Term<DB.Entity>, can: DB.Term<string>, need?: string }[]} */
+  /** @type {{proof: DB.Term<DB.Entity>, can: DB.Term<API.Ability>, need?: string }[]} */
   const proofs = need.length
     ? need.map((need) => ({ proof: DB.link(), need, can: DB.string() }))
     : [{ proof: DB.link(), can: DB.string() }]
@@ -143,77 +142,125 @@ export const query = ({ can = {}, time = Date.now() / 1000, ...selector }) => {
 }
 
 /**
+ * @param {API.Database} db
+ * @param {DB.InferBindings<Selector>} match
+ */
+export const select = (db, { authority, subject, proofs }) => {
+  // query engine will provide proof for each requested capability, so we may
+  // have duplicates here, which we prune.
+  const keys = [...new Set(proofs.map(({ proof }) => String(proof)))]
+
+  return new Authorization({
+    authority: /** @type {API.DID} */ (authority),
+    subject: /** @type {API.SpaceDID} */ (subject),
+    can: Object.fromEntries(proofs.map(({ can, need }) => [need ?? can, []])),
+    // Dereference proofs from the store.
+    proofs: keys.map(
+      ($) => /** @type {API.Delegation} */ (db.proofs.get($)?.delegation)
+    ),
+  })
+}
+
+/**
+ * Matches a delegation that authorizes the `selector.authority` with an ability
+ * to invoke `selector.can` on `selector.subject` at `selector.time`. Please note
+ * that it will only match explicit authorization that is one that specifies
+ * `selector.subject` and will not match implicit authorizations that uses
+ * `ucan:*` capability.
+ *
  * @param {DB.Term<DB.Link>} delegation
  * @param {object} selector
- * @param {API.UTCUnixTimestamp} selector.time
+ * @param {DB.Term<API.UTCUnixTimestamp>} [selector.time]
  * @param {DB.Term<string>} [selector.can]
  * @param {DB.Term<string>} [selector.subject]
  * @param {DB.Term<API.DID>} [selector.authority]
  */
-export const match = (
+export const explicit = (
   delegation,
-  { authority = DB.string(), subject = DB.string(), can = DB.string(), time }
+  {
+    authority = DB.string(),
+    subject = DB.string(),
+    can = DB.string(),
+    time = DB.integer(),
+  }
 ) => {
   const capability = DB.link()
 
-  // simple case where capability is directly delegated to the audience
-  const direct = Capability.match(capability, {
-    can,
-    subject,
-  }).and(
+  return Capability.match(capability, { can, subject }).and(
     Delegation.match(delegation, {
       capability,
       audience: authority,
       time,
     })
   )
-
-  const everything = DB.link()
-  const proof = DB.link()
-  const account = DB.string()
-  // Complicated case when all owned and delegated resources are delegated
-  // resources
-  const indirect = Capability.match(everything, {
-    subject: 'ucan:*',
-    can,
-  })
-    .and(
-      Delegation.match(delegation, {
-        capability: everything,
-        audience: authority,
-        time,
-      })
-    )
-    // ucan:* resource implies both own and delegated resources
-    .and(
-      // Issuer owns their DID resource and since `ucan:*` implies all
-      // resources, it also implies the issuer DID. Which is why if the
-      // subject matches the issuer we have a match.
-      Delegation.issuedBy(delegation, subject)
-        // Otherwise we need to match subject with one of the resources
-        // in the proofs as those are re-delegated by `ucan:*` resource.
-        .or(
-          DB.match([delegation, 'ucan/proof', proof])
-            .and(
-              Capability.match(capability, {
-                subject,
-                can,
-              })
-            )
-            .and(
-              Delegation.match(proof, {
-                capability,
-                // In this instance account must be the audience of the
-                // proof, as account is re-delegating it.
-                audience: account,
-                time,
-              })
-            )
-        )
-    )
-
-  return direct.or(indirect)
 }
+
+/**
+ * Matches a delegation that authorizes the `selector.authority` with an ability
+ * to invoke `selector.can` on `selector.subject` at `selector.time`. Please note
+ * that it will only match implicit authorization that is one that has `ucan:*`
+ * subject and is either issued by `selector.subject` or has a proof which
+ * explicitly delegates `selector.can` to `selector.subject`.
+ *
+ * @param {DB.Term<DB.Link>} delegation
+ * @param {object} selector
+ * @param {DB.Term<API.UTCUnixTimestamp>} [selector.time]
+ * @param {DB.Term<API.Ability>} [selector.can]
+ * @param {DB.Term<API.DID>} [selector.subject]
+ * @param {DB.Term<API.DID>} [selector.authority]
+ * @returns {DB.Clause}
+ */
+export const implicit = (
+  delegation,
+  {
+    subject = DB.string(),
+    can = DB.string(),
+    time = DB.integer(),
+    authority = DB.string(),
+  }
+) => {
+  const proof = DB.link()
+  return DB.and(
+    Delegation.forwards(delegation, {
+      audience: authority,
+      can,
+      time,
+    }),
+    DB.or(
+      Delegation.issuedBy(delegation, subject),
+      DB.and(
+        Delegation.hasProof(delegation, proof),
+        DB.or(
+          explicit(proof, { subject, can, time })
+          // TODO: Add support for recursive implicit delegation
+          // implicit(proof, { subject, can, time, authority })
+        )
+      )
+    )
+  )
+}
+
+/**
+ * @param {DB.Term<DB.Link>} delegation
+ * @param {object} selector
+ * @param {DB.Term<API.UTCUnixTimestamp>} [selector.time]
+ * @param {DB.Term<API.Ability>} [selector.can]
+ * @param {DB.Term<API.DID>} [selector.subject]
+ * @param {DB.Term<API.DID>} [selector.authority]
+ */
+export const match = (
+  delegation,
+  {
+    authority = DB.string(),
+    subject = DB.string(),
+    can = DB.string(),
+    time = DB.integer(),
+  }
+) =>
+  DB.or(
+    explicit(delegation, { authority, can, subject, time }),
+    implicit(delegation, { authority, can, subject, time })
+  )
 
 /**
  * @typedef {object} Model

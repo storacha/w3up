@@ -3,44 +3,20 @@ import * as API from './types.js'
 export * from './capability/space.js'
 
 /**
- * @typedef {object} Model
- * @property {API.SpaceDID} id
- * @property {{name?:string}} [meta]
- * @property {API.AgentView<API.UploadService>} agent
+ * @template {API.UnknownProtocol} [Protocol=API.W3UpProtocol]
  */
-
-export class Space {
-  #model
-
+class SessionSpaces {
   /**
-   * @param {Model} model
+   * @param {API.Session<Protocol>} session
    */
-  constructor(model) {
-    this.#model = model
-    this.usage = new StorageUsage(model)
+  constructor(session) {
+    this.session = session
   }
+  list() {}
+}
 
-  /**
-   * The given space name.
-   */
-  get name() {
-    /* c8 ignore next */
-    return String(this.#model.meta?.name ?? '')
-  }
-
-  /**
-   * The DID of the space.
-   */
-  did() {
-    return this.#model.id
-  }
-
-  /**
-   * User defined space metadata.
-   */
-  meta() {
-    return this.#model.meta
-  }
+class SpaceView {
+  constructor() {}
 }
 
 export class StorageUsage {

@@ -8,6 +8,7 @@ import { DID } from '@ucanto/core'
 import * as API from './types.js'
 import * as Session from './session.js'
 import * as Connection from './agent/connection.js'
+import * as Authorization from './agent/authorization.js'
 
 export * from './types.js'
 
@@ -47,6 +48,19 @@ export const load = (source) => AgentPromise.from(Agent.load(source))
 export const create = (source) => AgentPromise.from(Agent.create(source))
 
 /**
+ * @param {API.Agent} agent
+ * @param {object} access
+ * @param {API.DID} access.subject
+ * @param {API.Can} access.can
+ */
+export const authorize = (agent, { subject, can }) =>
+  Authorization.get(agent.db, {
+    authority: agent.signer.did(),
+    subject,
+    can,
+  })
+
+/**
  * @extends {Promise<API.Result<API.AgentView, API.ConnectError>>}
  */
 class AgentPromise extends Promise {
@@ -74,12 +88,19 @@ class AgentPromise extends Promise {
 }
 
 /**
+ * @param {object} source
+ * @param {API.Signer<API.DIDKey>} source.signer
+ * @param {API.Database} source.db
+ */
+export const view = (source) => new Agent(source)
+
+/**
  * @implements {API.AgentView}
  */
 class Agent {
   /**
    * @param {object} source
-   * @param {API.Signer} source.signer
+   * @param {API.Signer<API.DIDKey>} source.signer
    * @param {API.Database} source.db
    */
   constructor(source) {
@@ -96,6 +117,15 @@ class Agent {
 
   get db() {
     return this.model.db
+  }
+
+  /**
+   * @param {object} access
+   * @param {API.DID} access.subject
+   * @param {API.Can} access.can
+   */
+  authorize(access) {
+    return authorize(this, access)
   }
 
   /**
@@ -200,7 +230,7 @@ class SignerLoadError extends Error {
 // const agentToData = new WeakMap()
 
 /**
- * @typedef {API.Service} Service
+ * @typedef {API.W3UpProtocol} Service
  * @typedef {API.Receipt<any, any>} Receipt
  */
 

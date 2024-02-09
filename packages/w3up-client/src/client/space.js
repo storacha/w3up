@@ -5,7 +5,7 @@ import * as Space from '../capability/space.js'
 /**
  * Client for interacting with the `space/*` capabilities.
  *
- * @extends {Client<API.AccessService>}
+ * @extends {Client<API.W3Protocol>}
  */
 export class SpaceClient extends Client {
   /**

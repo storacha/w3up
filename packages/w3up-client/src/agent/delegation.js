@@ -1,8 +1,11 @@
 import * as API from '../types.js'
 import * as DB from 'datalogia'
 import * as Block from './block.js'
-import { importDAG, allows, isDelegation } from '@ucanto/core/delegation'
+import { importDAG, isDelegation } from '@ucanto/core/delegation'
 import * as Association from './db/association.js'
+import * as Meta from './meta.js'
+import { Capability } from './authorization.js'
+import { Delegation } from '@ucanto/core'
 
 /**
  * @param {DB.Term<DB.Link>} ucan
@@ -11,6 +14,18 @@ import * as Association from './db/association.js'
  */
 export const issuedBy = (ucan, issuer) =>
   DB.match([ucan, 'ucan/issuer', issuer])
+
+/**
+ * @param {DB.Term<DB.Entity>} delegation
+ * @param {DB.Term<DB.Entity>} proof
+ */
+export const hasProof = (delegation, proof) => {
+  const principal = DB.string()
+
+  return DB.match([delegation, 'ucan/proof', proof])
+    .and(DB.match([delegation, 'ucan/issuer', principal]))
+    .and(DB.match([proof, 'ucan/audience', principal]))
+}
 
 /**
  * Composes the clause that matches given `ucan` only if it has expired,
@@ -25,6 +40,16 @@ export const isExpired = (ucan, time) => {
   return DB.match([ucan, 'ucan/expiration', expiration]).and(
     DB.Constraint.greater(time, expiration)
   )
+}
+
+/**
+ *
+ * @param {DB.Term<DB.Entity>} ucan
+ * @param  {Record<string, DB.Term>} selector
+ */
+export const hasMeta = (ucan, selector) => {
+  const meta = DB.link()
+  return DB.match([ucan, 'ucan/meta', meta]).and(Meta.match(meta, selector))
 }
 
 /**
@@ -45,15 +70,36 @@ export const isTooEarly = (ucan, time) => {
 /**
  * @param {DB.Term<DB.Entity>} ucan
  * @param {object} constraints
- * @param {DB.Term<DB.Entity>} constraints.capability
- * @param {DB.Term<API.UTCUnixTimestamp>} constraints.time
- * @param {DB.Term<API.DID>} constraints.audience
+ * @param {DB.Term<DB.Entity>} [constraints.capability]
+ * @param {DB.Term<API.UTCUnixTimestamp>} [constraints.time]
+ * @param {DB.Term<API.DID>} [constraints.audience]
  */
-export const match = (ucan, { capability, audience, time }) =>
+export const match = (
+  ucan,
+  { capability = DB.link(), audience = DB.string(), time = DB.integer() }
+) =>
   DB.match([ucan, 'ucan/capability', capability])
     .and(DB.match([ucan, 'ucan/audience', audience]))
     .and(DB.not(isExpired(ucan, time)))
     .and(DB.not(isTooEarly(ucan, time)))
+
+/**
+ * @param {DB.Term<DB.Entity>} ucan
+ * @param {object} constraints
+ * @param {DB.Term<DB.Entity>} [constraints.capability]
+ * @param {DB.Term<API.UTCUnixTimestamp>} [constraints.time]
+ * @param {DB.Term<API.DID>} [constraints.audience]
+ * @param {DB.Term<string>} [constraints.can]
+ */
+export const forwards = (
+  ucan,
+  { audience = DB.string(), time = DB.integer(), can = DB.string() }
+) => {
+  const capability = DB.link()
+  return Capability.forwards(capability, { can }).and(
+    match(ucan, { capability, audience, time })
+  )
+}
 
 /**
  * Derives set of facts about the given delegation.
@@ -97,7 +143,9 @@ export const facts = function* (delegation) {
   // }
 
   for (const fact of delegation.facts) {
-    yield* Association.assert(fact, { entity, path: ['ucan', 'fact'] })
+    const id = DB.Memory.entity(fact)
+    yield* Association.assert(fact, { entity: id, path: ['meta'] })
+    yield [entity, 'ucan/meta', id]
   }
 
   for (const proof of delegation.proofs) {

@@ -17,7 +17,7 @@ import * as DB from './agent/db.js'
  * Returns error result if agent has no current space and no space was provided.
  * Also returns error result if invocation fails.
  *
- * @param {API.Session<API.AccessService>} session - w3up service session.
+ * @param {API.Session<API.W3Protocol>} session - w3up service session.
  * @param {object} input
  * @param {API.Delegation[]} input.delegations - Delegations to propagate.
  * @param {API.SpaceDID} [input.subject] - Space to propagate through.
@@ -37,8 +37,7 @@ export const delegate = async (
     proof.cid,
   ])
 
-  const auth = Authorization.get(session.agent.db, {
-    authority: session.agent.did(),
+  const auth = session.agent.authorize({
     subject,
     can: { 'access/delegate': [] },
   })
@@ -69,13 +68,14 @@ export const delegate = async (
  * `PendingAccessRequest` object that can be used to poll for the requested
  * delegation through `access/claim` capability.
  *
- * @param {API.Session<API.AccessService>} session
+ * @template {API.AccessRequestProvider} Protocol
+ * @param {API.Session<Protocol>} session
  * @param {object} input
  * @param {API.AccountDID} input.account - Account from which access is requested.
  * @param {API.DIDKey|API.DidMailto} [input.authority] - Principal requesting access.
  * @param {API.ProviderDID} [input.provider] - Provider that will receive the invocation.
  * @param {API.Can} [input.can] - Capabilities been requested.
- * @returns {Promise<API.Result<PendingAccessRequest, API.AccessAuthorizeFailure|API.AccessDenied|API.InvocationError>>}
+ * @returns {Promise<API.Result<PendingAccessRequest<Protocol>, API.AccessAuthorizeFailure|API.AccessDenied|API.InvocationError>>}
  */
 export const request = async (
   session,
@@ -88,8 +88,7 @@ export const request = async (
 ) => {
   // Find proofs that allows this agent to invoke `access/authorize` capability
   // on behalf of the principal requesting access.
-  const auth = Authorization.get(session.agent.db, {
-    authority: session.agent.did(),
+  const auth = session.agent.authorize({
     subject: authority,
     can: { 'access/authorize': [] },
   })
@@ -113,7 +112,11 @@ export const request = async (
       },
       proofs: auth.ok.proofs,
     })
-    .execute(session.connection)
+    .execute(
+      /** @type {API.Connection<API.AccessRequestProvider>} */ (
+        session.connection
+      )
+    )
 
   return result.error
     ? result
@@ -131,11 +134,12 @@ export const request = async (
  * Claims access that has been delegated to the given `authority`, which by
  * default is the agent's DID.
  *
- * @param {API.Session<API.AccessService>} session
+ * @template {API.AccessClaimProvider} Protocol
+ * @param {API.Session<Protocol>} session
  * @param {object} input
  * @param {API.DIDKey|API.DidMailto} [input.authority] - Principal claiming an access.
  * @param {API.ProviderDID} [input.provider] - Provider handling the invocation.
- * @returns {Promise<API.Result<GrantedAccess, API.AccessClaimFailure|API.InvocationError|API.AccessDenied>>}
+ * @returns {Promise<API.Result<GrantedAccess<Protocol>, API.AccessClaimFailure|API.InvocationError|API.AccessDenied>>}
  */
 export const claim = async (
   session,
@@ -144,8 +148,7 @@ export const claim = async (
     authority = session.agent.did(),
   } = {}
 ) => {
-  const auth = Authorization.get(session.agent.db, {
-    authority: session.agent.did(),
+  const auth = session.agent.authorize({
     subject: authority,
     can: { 'access/claim': [] },
   })
@@ -161,10 +164,14 @@ export const claim = async (
       with: authority,
       proofs: auth.ok.proofs,
     })
-    .execute(session.connection)
+    .execute(
+      /** @type {API.Connection<API.AccessClaimProvider>} */ (
+        session.connection
+      )
+    )
 
   if (result.error) {
-    return result
+    return { error: result.error }
   } else {
     const delegations = Object.values(result.ok.delegations)
 
@@ -179,11 +186,13 @@ export const claim = async (
 /**
  * Represents a pending access request. It can be used to poll for the requested
  * delegation.
+ *
+ * @template {API.AccessClaimProvider} Protocol
  */
 class PendingAccessRequest {
   /**
    * @typedef {object} PendingAccessRequestModel
-   * @property {API.Session<API.AccessService>} session - Session with a service.
+   * @property {API.Session<Protocol>} session - Session with a service.
    * @property {API.ProviderDID} provider - Provider handling request.
    * @property {API.UTCUnixTimestamp} expiration - Seconds in UTC.
    * @property {API.DIDKey|API.DidMailto} authority - Principal requesting an access.
@@ -249,7 +258,7 @@ class PendingAccessRequest {
    * @param {object} options
    * @param {number} [options.interval]
    * @param {AbortSignal} [options.signal]
-   * @returns {Promise<API.Result<GrantedAccess, Error>>}
+   * @returns {Promise<API.Result<GrantedAccess<Protocol>, Error>>}
    */
   async claim({ signal, interval = 250 } = {}) {
     while (signal?.aborted !== true) {
@@ -306,12 +315,13 @@ class RequestExpired extends Failure {
 }
 
 /**
+ * @template {API.UnknownProtocol} [Protocol=API.W3UpProtocol]
  * View over the UCAN Delegations that grant access to a specific principal.
  */
 export class GrantedAccess {
   /**
    * @typedef {object} GrantedAccessModel
-   * @property {API.Session<API.AccessService>} session - Agent that processed the request.
+   * @property {API.Session<Protocol>} session - Agent that processed the request.
    * @property {API.Tuple<API.Delegation>} proofs - Delegations that grant access.
    *
    * @param {GrantedAccessModel} model

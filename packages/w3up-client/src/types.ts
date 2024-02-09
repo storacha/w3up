@@ -1,6 +1,37 @@
 import { type Driver } from '@web3-storage/access/drivers/types'
-import { type Service as UploadService } from '@web3-storage/upload-client/types'
-import { Querier, Transactor } from 'datalogia'
+import { Querier, Transactor, Selector, Clause } from 'datalogia'
+
+import {
+  StoreAdd,
+  StoreAddSuccess,
+  StoreAddSuccessUpload,
+  StoreAddSuccessDone,
+  StoreGet,
+  StoreGetFailure,
+  StoreList,
+  StoreListSuccess,
+  StoreListItem,
+  StoreRemove,
+  StoreRemoveSuccess,
+  StoreRemoveFailure,
+  UploadAdd,
+  UploadAddSuccess,
+  UploadList,
+  UploadListSuccess,
+  UploadListItem,
+  UploadRemove,
+  UploadRemoveSuccess,
+  ListResponse,
+  CARLink,
+  PieceLink,
+  StoreGetSuccess,
+  UploadGet,
+  UploadGetSuccess,
+  UploadGetFailure,
+  UsageReport,
+  UsageReportSuccess,
+  UsageReportFailure,
+} from '@web3-storage/capabilities/types'
 
 export type { Querier, Transactor }
 import type {
@@ -60,9 +91,12 @@ import type {
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  AccountDID,
+  ProviderDID,
+  AccessDenied,
 } from '@web3-storage/capabilities'
 import { type Client } from './client.js'
-import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
+import { StorefrontService as FilecoinProtocol } from '@web3-storage/filecoin-client/storefront'
 import exp from 'constants'
 import { CID } from 'multiformats'
 import { Block } from '@ipld/car/buffer-reader'
@@ -109,35 +143,72 @@ export interface UCANProtocol {
   }
 }
 
-/**
- * Access api service definition type
- */
-export interface AccessService extends UCANProtocol {
+export interface AccessAuthorizeProvider {
   access: {
     authorize: ServiceMethod<
       AccessAuthorize,
       AccessAuthorizeSuccess,
       AccessAuthorizeFailure
     >
+  }
+}
+
+export interface AccessRequestProvider {
+  access: AccessAuthorizeProvider['access'] & AccessClaimProvider['access']
+}
+
+export interface AccessClaimProvider {
+  access: {
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    confirm: ServiceMethod<
-      AccessConfirm,
-      AccessConfirmSuccess,
-      AccessConfirmFailure
-    >
+  }
+}
+
+export interface AccessDelegateProvider {
+  access: {
     delegate: ServiceMethod<
       AccessDelegate,
       AccessDelegateSuccess,
       AccessDelegateFailure
     >
   }
-  provider: {
-    add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
+}
+
+export interface AccessConfirmProvider {
+  access: {
+    confirm: ServiceMethod<
+      AccessConfirm,
+      AccessConfirmSuccess,
+      AccessConfirmFailure
+    >
   }
+}
+
+export interface PlanProtocol {
+  plan: {
+    get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
+  }
+}
+
+export interface AccessProtocol {
+  access: AccessAuthorizeProvider['access'] &
+    AccessClaimProvider['access'] &
+    AccessDelegateProvider['access'] &
+    AccessConfirmProvider['access']
+}
+
+export interface SpaceProtocol {
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
   }
+}
+
+export interface ProviderProtocol {
+  provider: {
+    add: ServiceMethod<ProviderAdd, ProviderAddSuccess, ProviderAddFailure>
+  }
+}
+
+export interface SubscriptionProtocol {
   subscription: {
     list: ServiceMethod<
       SubscriptionList,
@@ -145,20 +216,48 @@ export interface AccessService extends UCANProtocol {
       SubscriptionListFailure
     >
   }
+}
 
-  plan: {
-    get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
+export type { FilecoinProtocol }
+
+export interface StoreProtocol {
+  store: {
+    add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
+    get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
+    remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
+    list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
 }
 
-export type { StorefrontService, UploadService }
-export type Service = AccessService & UploadService & StorefrontService
-
-export interface ServiceConf {
-  access: ConnectionView<AccessService>
-  upload: ConnectionView<UploadService>
-  filecoin: ConnectionView<StorefrontService>
+export interface UploadProtocol {
+  upload: {
+    add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
+    get: ServiceMethod<UploadGet, UploadGetSuccess, UploadGetFailure>
+    remove: ServiceMethod<UploadRemove, UploadRemoveSuccess, Failure>
+    list: ServiceMethod<UploadList, UploadListSuccess, Failure>
+  }
 }
+
+export interface UsageProtocol {
+  usage: {
+    report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
+  }
+}
+
+/**
+ * Access api service definition type
+ */
+export interface W3UpProtocol
+  extends UCANProtocol,
+    AccessProtocol,
+    PlanProtocol,
+    SpaceProtocol,
+    ProviderProtocol,
+    SubscriptionProtocol,
+    StoreProtocol,
+    UploadProtocol,
+    UsageProtocol,
+    FilecoinProtocol {}
 
 export interface ClientFactoryOptions {
   /**
@@ -168,7 +267,7 @@ export interface ClientFactoryOptions {
   /**
    * Service DID and URL configuration.
    */
-  serviceConf?: ServiceConf
+  // serviceConf?: ServiceConf
   /**
    * Use this principal to sign UCANs. Note: if the store is non-empty and the
    * principal saved in the store is not the same principal as the one passed
@@ -487,7 +586,7 @@ export type TextConstraint =
  * now we do not support passing any clauses.
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type Clause = Variant<{}>
+export type CapabilityConstraint = Variant<{}>
 
 /**
  * Describes level of access to a resource.
@@ -496,8 +595,8 @@ export type Can =
   // This complicates type workarounds the issue with TS which will would have
   // complained about missing `*` key if we have used `Record<Ability, Unit>`
   // instead.
-  Record<Exclude<Ability, '*'>, Clause[]> & {
-    ['*']?: Clause[]
+  Record<Exclude<Ability, '*'>, CapabilityConstraint[]> & {
+    ['*']?: CapabilityConstraint[]
   }
 
 export type { Driver }
@@ -562,6 +661,14 @@ export interface Database {
   store?: DataStore
 }
 
+export interface Query<
+  Select extends Selector,
+  Where extends Clause[] = Clause[]
+> {
+  select: Select
+  where: Where
+}
+
 /**
  * Database transaction is a list of instructions that update database state.
  */
@@ -604,17 +711,17 @@ export interface AddressArchive<
 export interface UnknownProtocol extends Record<string, any> {}
 
 export interface W3UpOpen {
-  as?: Signer
+  as?: Signer<DIDKey>
   store: DataStore
 }
 
 export interface W3Load {
-  as?: Signer
+  as?: Signer<DIDKey>
   store: DataStore
 }
 
 export interface W3Create {
-  as?: Signer
+  as?: Signer<DIDKey>
   store: DataStore
 }
 
@@ -699,7 +806,7 @@ export interface AgentView extends Agent {
    * Connects to a service provider and returns a session that can be used to
    * invoke capabilities provided by the service.
    */
-  connect<Protocol extends UnknownProtocol = Service>(
+  connect<Protocol extends UnknownProtocol = W3UpProtocol>(
     connection?: ConnectionView<Protocol>
   ): Promise<
     Result<
@@ -707,6 +814,11 @@ export interface AgentView extends Agent {
       SignerLoadError | DataStoreOpenError | DataStoreSaveError
     >
   >
+
+  authorize(access: {
+    subject: DID
+    can: Can
+  }): Result<Authorization, AccessDenied>
 }
 
 export type ConnectError =
@@ -738,12 +850,12 @@ export interface DatabaseTransactionError extends Failure {
 /**
  * Session an agent has with a service provider.
  */
-export interface Session<Protocol extends UnknownProtocol = Service> {
+export interface Session<Protocol extends UnknownProtocol = W3UpProtocol> {
   agent: AgentView
   connection: Connection<Protocol>
 }
 
-export interface Connection<Protocol extends UnknownProtocol = Service>
+export interface Connection<Protocol extends UnknownProtocol = W3UpProtocol>
   extends ConnectionView<Protocol> {
   address: Address
 }
@@ -767,4 +879,27 @@ export interface Authorization {
    * Set of proofs representing this authorization.
    */
   proofs: Delegation[]
+}
+
+/**
+ * Describes limits of the subscription e.g. how much content can be stored
+ * in billing cycle.
+ *
+ * At the moment we do not support any limits which is why only allowed value
+ * is an empty object.
+ */
+export interface Limit extends Record<string, never> {}
+
+export interface AccountView<Protocol extends UnknownProtocol = W3UpProtocol> {
+  did(): AccountDID
+  session: Session<Protocol>
+  proofs: Delegation[]
+}
+
+export interface BillingPlan<
+  Protocol extends ProviderProtocol = ProviderProtocol
+> {
+  account: AccountView<Protocol>
+  customer: AccountDID
+  provider: ProviderDID
 }

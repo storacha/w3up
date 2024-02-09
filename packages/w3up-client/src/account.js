@@ -1,30 +1,24 @@
 import * as API from './types.js'
-import * as Account from './agent/account.js'
+import * as Login from './agent/login.js'
+import * as Access from './access.js'
 import * as DB from './agent/db.js'
-import { fromEmail, toEmail } from '@web3-storage/did-mailto'
+import * as DIDMailto from '@web3-storage/did-mailto'
+import * as Plan from './account/plan.js'
 
+export { DIDMailto }
 /**
- * @template {API.UnknownProtocol} [Protocol=API.Service]
- * @typedef {object} Model
- * @property {API.Session<Protocol>} session
- */
-
-/**
- * @template {API.UnknownProtocol} [Protocol=API.Service]
+ * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
  */
 export class AccountsView {
   /**
-   * @param {Model<Protocol>} model
+   * @param {API.Session<Protocol>} session
    */
-  constructor(model) {
-    this.model = model
-  }
-  get session() {
-    return this.model.session
+  constructor(session) {
+    this.session = session
   }
 
   [Symbol.iterator]() {
-    return list(this)
+    return list(this.session)
   }
 
   /**
@@ -33,14 +27,14 @@ export class AccountsView {
    * @param {AbortSignal} [source.signal]
    */
   login(source) {
-    return login(this, source)
+    return login(this.session, source)
   }
 
   /**
    * Returns iterable of all the accounts saved in the agent's database.
    */
   list() {
-    return list(this)
+    return list(this.session)
   }
 
   /**
@@ -50,161 +44,165 @@ export class AccountsView {
    * @param {API.EmailAddress} email
    */
   get(email) {
-    return get(this, email)
-  }
-
-  /**
-   * Removes all the delegations corresponding to the account logins for the
-   * given email address.
-   *
-   * @param {object} account
-   * @param {API.EmailAddress} account.email
-   */
-  remove({ email }) {
-    return remove(this, email)
+    return get(this.session, email)
   }
 }
 
 /**
- * @template {API.UnknownProtocol} [Protocol=API.Service]
- * @param {Model<Protocol>} param0
+ * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @param {API.Session<Protocol>} session
  * @param {object} source
  * @param {API.EmailAddress} source.email
  * @param {AbortSignal} [source.signal]
+ * @returns {Promise<API.Result<AccountView<Protocol>, API.AccessDenied|API.InvocationError|API.AccessAuthorizeFailure>>}
  */
-export const login = async ({ session }, { email, signal }) => {
-  const login = get({ session }, email)
-  if (login) {
-    return { ok: login }
+export const login = async (session, { email, signal }) => {
+  const account = get(session, email)
+  if (account) {
+    return { ok: account }
   }
 
-  const result = await Access.request(session, {
+  const id = DIDMailto.fromEmail(email)
+  const { ok: access, error } = await Access.request(session, {
     account: id,
-    access: Access.accountAccess,
+    can: Access.accountAccess,
   })
+
+  /* c8 ignore next 2 - don't know how to test this */
+  if (error) {
+    return { error }
+  } else {
+    const { ok, error } = await access.claim({ signal })
+    /* c8 ignore next 2 - don't know how to test this */
+    if (error) {
+      return { error }
+    } else {
+      const login = Login.from({ account: id })
+      for (const proof of ok.proofs) {
+        if (proof.capabilities?.[0].can === 'ucan/attest') {
+          login.attestations.set(`${proof.cid}`, proof)
+        } else {
+          login.proofs.set(`${proof.cid}`, proof)
+        }
+      }
+      return { ok: new AccountView({ session, login }) }
+    }
+  }
 }
 
 /**
- * @template {API.UnknownProtocol} [Protocol=API.Service]
- * @param {Model<Protocol>} model
- * @returns {Iterable<AccountView<Protocol>>}
+ * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @param {API.Session<Protocol>} session
+ * @returns {Record<API.AccountDID, AccountView<Protocol>>}
  */
 
-export const list = ({ session }) => {
-  const proof = DB.link()
-  const account = DB.string()
-  const results = DB.query(session.agent.db.index, {
-    select: {
-      id: account,
-      proof,
-    },
-    where: [
-      Account.match(proof, {
-        audience: session.agent.did(),
-        time: Date.now() / 1000,
-        account,
-      }),
-    ],
-  })
+export const list = (session) => {
+  const logins = Login.select(
+    session.agent.db,
+    DB.query(
+      session.agent.db.index,
+      Login.query({ authority: session.agent.did() })
+    )
+  )
 
-  const map = new Map()
-  for (const { id } of results) {
-    if (!map.has(id)) {
-      const account = new AccountView({
-        session,
-        id: /** @type {API.DidMailto} */ (id),
-      })
-      map.set(id, account)
-    }
-  }
-
-  return map.values()
+  return Object.fromEntries(
+    [...logins].map(([account, login]) => [
+      account,
+      new AccountView({ session, login }),
+    ])
+  )
 }
 
 /**
  * Gets the account view for the login with a given email address. Returns
  * `undefined` if no matching login is found.
  *
- * @template {API.UnknownProtocol} [Protocol=API.Service]
- * @param {Model<Protocol>} model
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @param {API.Session<Protocol>} session
  * @param {API.EmailAddress} email
  */
-export const get = ({ session }, email) => {
-  const id = fromEmail(email)
-  const proof = DB.link()
-  const result = DB.query(session.agent.db.index, {
-    select: {
-      proof,
-    },
-    where: [
-      Account.match(proof, {
-        audience: session.agent.did(),
-        time: Date.now() / 1000,
-        account: id,
-      }),
-    ],
-  })
+export const get = (session, email) => {
+  const account = DIDMailto.fromEmail(email)
+  const [login] = Login.select(
+    session.agent.db,
+    DB.query(
+      session.agent.db.index,
+      Login.query({ authority: session.agent.did(), account })
+    )
+  ).values()
 
-  return result.length ? new AccountView({ session, id }) : undefined
+  return login ? new AccountView({ session, login }) : undefined
 }
 
 /**
- * Removes all the delegations corresponding to the account logins for the given
- * email address.
- *
- * @template {API.UnknownProtocol} [Protocol=API.Service]
- * @param {Model<Protocol>} model
- * @param {API.EmailAddress} email
- */
-export const remove = async ({ session }, email) => {
-  const id = fromEmail(email)
-  const proof = DB.link()
-  // Find all the delegations that are logins for the account with this a given
-  // email address.
-  const matches = DB.query(session.agent.db.index, {
-    select: {
-      proof,
-    },
-    where: [
-      Account.match(proof, {
-        audience: session.agent.did(),
-        time: Date.now() / 1000,
-        account: id,
-      }),
-    ],
-  })
-
-  // Build a transaction that retracts all matching delegations.
-  const transaction = []
-  for (const { proof } of matches) {
-    const record = session.agent.db.proofs.get(proof.toString())
-    if (record) {
-      transaction.push(DB.retract({ proof: record.delegation }))
-    }
-  }
-
-  // Execute the transaction.
-  const { error } = await DB.transact(session.agent.db, transaction)
-  return error ? { error } : { ok: {} }
-}
-
-/**
- * @template {API.UnknownProtocol} [Protocol=API.Service]
+ * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
  */
 class AccountView {
   /**
    * @param {object} source
    * @param {API.Session<Protocol>} source.session
-   * @param {API.DidMailto} source.id
+   * @param {object} source.login
+   * @param {Map<string, API.Delegation>} source.login.proofs
+   * @param {Map<string, API.Delegation>} source.login.attestations
+   * @param {API.DidMailto} source.login.id
    */
   constructor(source) {
     this.model = source
+
+    this.plans = Plan.from(this)
+  }
+  get session() {
+    return this.model.session
+  }
+  did() {
+    return this.model.login.id
   }
 
   /**
-   * @type {API.EmailAddress}
+   * @returns {API.EmailAddress}
    */
-  get email() {
-    return toEmail(this.model.id)
+  toEmail() {
+    return DIDMailto.toEmail(this.did())
+  }
+
+  get proofs() {
+    return [
+      ...this.model.login.proofs.values(),
+      ...this.model.login.attestations.values(),
+    ]
+  }
+
+  /**
+   * Saves access into the agents proofs store so that it can be retained
+   * between sessions.
+   *
+   * @param {object} input
+   * @param {API.Agent} [input.agent]
+   */
+  save({ agent = this.model.session.agent } = {}) {
+    return DB.transact(
+      agent.db,
+      [...this.proofs].map((proof) => DB.assert({ proof }))
+    )
+  }
+
+  /**
+   * Deletes access to this account from the agent's proofs store.
+   *
+   * @param {object} input
+   * @param {API.Agent} [input.agent]
+   */
+  delete({ agent = this.model.session.agent } = {}) {
+    return DB.transact(
+      agent.db,
+      [...this.proofs].map((proof) => DB.retract({ proof }))
+    )
+  }
+
+  toJSON() {
+    return {
+      email: this.toEmail(),
+      proofs: [...this.proofs],
+    }
   }
 }

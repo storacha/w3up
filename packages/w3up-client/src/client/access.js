@@ -10,7 +10,7 @@ export { DIDMailto }
 /**
  * Client for interacting with the `access/*` capabilities.
  *
- * @extends {Client<API.AccessService>}
+ * @extends {Client<API.W3Protocol>}
  */
 export class AccessClient extends Client {
   /* c8 ignore start - testing websocket code is hard */
@@ -73,7 +73,7 @@ export class AccessClient extends Client {
 }
 
 /**
- * @param {{agent: API.AgentView<API.AccessService>}} client
+ * @param {{agent: API.AgentView<API.W3Protocol>}} client
  * @param {object} [input]
  * @param {API.DID} [input.audience]
  */
@@ -84,7 +84,7 @@ export const claim = async ({ agent }, input) => Access.claim(agent, input)
  * `access/authorize` capability and keep polling `access/claim` capability
  * until access is granted or request is aborted.
  *
- * @param {{agent: API.AgentView<API.AccessService>}} agent
+ * @param {{agent: API.AgentView<API.W3Protocol>}} agent
  * @param {object} input
  * @param {API.AccountDID} input.account
  * @param {API.Access} [input.access]
@@ -94,7 +94,7 @@ export const request = async ({ agent }, input) => Access.request(agent, input)
 
 /**
  *
- * @param {{agent: API.AgentView<API.AccessService>}} agent
+ * @param {{agent: API.AgentView<API.W3Protocol>}} agent
  * @param {object} input
  * @param {API.Delegation[]} input.delegations
  * @param {API.SpaceDID} [input.space]
