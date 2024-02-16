@@ -60,6 +60,7 @@ export const abilitiesAsStrings = [
   Store.get.can,
   Store.remove.can,
   Store.list.can,
+  Store.deliver.can,
   Access.access.can,
   Access.authorize.can,
   UCAN.attest.can,

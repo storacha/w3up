@@ -3,7 +3,7 @@ import {
   getConnection,
   getMockService,
   getStoreImplementations,
-  getQueueImplementations,
+  getQueueImplementations as getFilecoinQueueImplementations,
 } from '@web3-storage/filecoin-api/test/context/service'
 import { CarStoreBucket } from '../storage/car-store-bucket.js'
 import { StoreTable } from '../storage/store-table.js'
@@ -22,6 +22,9 @@ import { confirmConfirmationUrl } from './utils.js'
 import { PlansStorage } from '../storage/plans-storage.js'
 import { UsageStorage } from '../storage/usage-storage.js'
 import { SubscriptionsStorage } from '../storage/subscriptions-storage.js'
+import {
+  getQueueImplementations,
+} from './queue-implementations.js'
 
 /**
  * @param {object} options
@@ -59,10 +62,12 @@ export const createContext = async (
   const queuedMessages = new Map()
   const {
     storefront: { filecoinSubmitQueue, pieceOfferQueue },
-  } = getQueueImplementations(queuedMessages)
+  } = getFilecoinQueueImplementations(queuedMessages)
   const {
     storefront: { pieceStore, receiptStore, taskStore },
   } = getStoreImplementations()
+  const queues = getQueueImplementations(queuedMessages)
+
   const email = Email.debug()
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
@@ -107,6 +112,7 @@ export const createContext = async (
         audience: dealTrackerSigner,
       },
     },
+    storeDeliverQueue: queues.storeDeliverQueue,
     ...createRevocationChecker({ revocationsStorage }),
   }
 

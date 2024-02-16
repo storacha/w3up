@@ -27,3 +27,16 @@ export class StoreItemNotFound extends Failure {
     }
   }
 }
+
+export const QueueOperationErrorName = /** @type {const} */ (
+  'QueueOperationFailed'
+)
+export class QueueOperationFailed extends Failure {
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return QueueOperationErrorName
+  }
+}

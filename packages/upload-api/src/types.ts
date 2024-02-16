@@ -64,6 +64,9 @@ import {
   StoreList,
   StoreListSuccess,
   StoreListItem,
+  StoreDeliver,
+  StoreDeliverSuccess,
+  StoreDeliverFailure,
   UploadAdd,
   UploadGet,
   UploadAddSuccess,
@@ -167,6 +170,7 @@ export interface Service extends StorefrontService {
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
     remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
     list: ServiceMethod<StoreList, StoreListSuccess, Failure>
+    deliver: ServiceMethod<StoreDeliver, StoreDeliverSuccess, StoreDeliverFailure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
@@ -273,10 +277,26 @@ export interface Service extends StorefrontService {
 }
 
 export type StoreServiceContext = SpaceServiceContext & {
+  /**
+   * Service signer
+   */
+  id: Signer
+  /**
+   * Maximum size that may be uploaded for a file.
+   */
   maxUploadSize: number
-
+  /**
+   * Stores mapping between content CIDs request for storage and their associated spaces.
+   */
   storeTable: StoreTable
+  /**
+   * Stores content bytes keyed by their CID, or a derivation of it.
+   */
   carStoreBucket: CarStoreBucket
+  /**
+   * Queues pieces for deliver self invocation.
+   */
+  storeDeliverQueue: StoreDeliverQueue
 }
 
 export type UploadServiceContext = ConsumerServiceContext &
@@ -542,6 +562,30 @@ export interface ListOptions {
   cursor?: string
   pre?: boolean
 }
+
+// Queue
+export type QueueAddError = QueueOperationError | EncodeRecordFailed
+
+export interface EncodeRecordFailed extends Error {
+  name: 'EncodeRecordFailed'
+}
+export interface QueueOperationError extends Error {
+  name: 'QueueOperationFailed'
+}
+
+export interface Queue<Message> {
+  add: (
+    message: Message
+  ) => Promise<Result<Unit, QueueAddError>>
+}
+
+export type StoreDeliverQueue = Queue<StoreDeliverMessage>
+
+export interface StoreDeliverMessage {
+  link: UnknownLink
+}
+
+// Test
 
 export interface TestSpaceRegistry {
   /**

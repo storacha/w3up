@@ -445,6 +445,7 @@ export type StoreAdd = InferInvokedCapability<typeof StoreCaps.add>
 export type StoreGet = InferInvokedCapability<typeof StoreCaps.get>
 export type StoreRemove = InferInvokedCapability<typeof StoreCaps.remove>
 export type StoreList = InferInvokedCapability<typeof StoreCaps.list>
+export type StoreDeliver = InferInvokedCapability<typeof StoreCaps.deliver>
 
 export type StoreAddSuccess = StoreAddSuccessDone | StoreAddSuccessUpload
 
@@ -509,6 +510,9 @@ export interface StoreListItem {
   origin?: UnknownLink
   insertedAt: ISO8601Date
 }
+
+export interface StoreDeliverSuccess {}
+export type StoreDeliverFailure = StoreItemNotFound | Ucanto.Failure
 
 export interface UploadListItem {
   root: UnknownLink
@@ -683,6 +687,7 @@ export type ServiceAbilityArray = [
   StoreGet['can'],
   StoreRemove['can'],
   StoreList['can'],
+  StoreDeliver['can'],
   Access['can'],
   AccessAuthorize['can'],
   UCANAttest['can'],

@@ -155,7 +155,27 @@ export const list = capability({
   },
 })
 
-export const all = add.or(remove).or(list)
+/**
+ * Capability can be invoked by a client to notify the service that content bytes were stored,
+ * as well as by the service to confirm a given content bytes were stored.
+ */
+export const deliver = capability({
+  can: 'store/deliver',
+  /**
+   * DID of the (memory) space where content is intended to
+   * be stored.
+   */
+  with: SpaceDID,
+  nb: Schema.struct({
+    /**
+     * CID of the content delivered to the store.
+     */
+    link: Link,
+  }),
+  derives: equalLink,
+})
+
+export const all = add.or(remove).or(list).or(deliver)
 
 // ⚠️ We export imports here so they are not omitted in generated typedes
 // @see https://github.com/microsoft/TypeScript/issues/51548

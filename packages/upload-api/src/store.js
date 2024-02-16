@@ -2,6 +2,7 @@ import { storeAddProvider } from './store/add.js'
 import { storeGetProvider } from './store/get.js'
 import { storeListProvider } from './store/list.js'
 import { storeRemoveProvider } from './store/remove.js'
+import { storeDeliverProvider } from './store/deliver.js'
 import * as API from './types.js'
 
 /**
@@ -13,5 +14,6 @@ export function createService(context) {
     get: storeGetProvider(context),
     list: storeListProvider(context),
     remove: storeRemoveProvider(context),
+    deliver: storeDeliverProvider(context),
   }
 }
