@@ -35,10 +35,9 @@ const enqueue = async ({ capability }, context) => {
   const [acceptfx] = await Promise.all([
     Store.deliver
       .invoke({
-        issuer: context.id,
-        audience: context.id,
-        // @ts-expect-error did:string:string to did:key:key
-        with: context.id.did(),
+        issuer: context.signer,
+        audience: context.signer,
+        with: context.signer.toDIDKey(),
         nb: {
           link
         },
@@ -69,7 +68,7 @@ const enqueue = async ({ capability }, context) => {
  */
 export const storeDeliver = async (input, context) => {
   // If self issued we accept without verification
-  return context.id.did() === input.capability.with
+  return context.signer.did() === input.capability.with
     ? accept(input, context)
     : enqueue(input, context)
 }

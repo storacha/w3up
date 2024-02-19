@@ -1,3 +1,4 @@
+import * as Signer from '@ucanto/principal/ed25519'
 import { createServer, connect } from '../../src/lib.js'
 import * as API from '../../src/types.js'
 import * as CAR from '@ucanto/transport/car'
@@ -810,5 +811,133 @@ export const test = {
 
     assert.ok(storeGet.out.error)
     assert.equal(storeGet.out.error?.name, 'StoreItemNotFound')
+  },
+
+  'store/deliver returns StoreItemNotFound Failure': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const link = await CAR.codec.link(new Uint8Array([11, 22, 34, 44, 55]))
+
+    const storeDeliver = await StoreCapabilities.deliver
+      .invoke({
+        issuer: alice,
+        audience: connection.id,
+        with: spaceDid,
+        proofs: [proof],
+        nb: {
+          link,
+        },
+      })
+      .execute(connection)
+
+    assert.ok(storeDeliver.out.error)
+    assert.equal(storeDeliver.out.error?.name, 'StoreItemNotFound')
+  },
+
+  'store/deliver should return receipt with effect with self signed store/deliver task when already stored': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const link = await CAR.codec.link(data)
+
+    // Request to add file
+    const storeAdd = await StoreCapabilities.add
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: { link, size: data.length },
+        proofs: [proof],
+      })
+      .execute(connection)
+
+    if (!storeAdd.out.ok || storeAdd.out.ok.status !== 'upload') {
+      throw new Error('invocation failed', { cause: storeAdd })
+    }
+
+    const url = new URL(storeAdd.out.ok.url)
+    if (!url) {
+      throw new Error('Expected presigned url in response')
+    }
+
+    // Put file
+    const goodPut = await fetch(url, {
+      method: 'PUT',
+      mode: 'cors',
+      body: data,
+      headers: storeAdd.out.ok.headers,
+    })
+    assert.equal(goodPut.status, 200, await goodPut.text())
+
+    // Client signs file delivered
+    const storeDeliver = await StoreCapabilities.deliver
+      .invoke({
+        issuer: alice,
+        audience: connection.id,
+        with: spaceDid,
+        proofs: [proof],
+        nb: {
+          link,
+        },
+      })
+      .execute(connection)
+
+    assert.ok(storeDeliver.out.ok)
+    assert.ok(storeDeliver.out.ok?.link.equals(link))
+
+    // Verify join task CID
+    const joinTask = await StoreCapabilities.deliver
+      .invoke({
+        issuer: context.signer,
+        audience: context.signer,
+        with: context.signer.toDIDKey(),
+        nb: {
+          link
+        },
+        expiration: Infinity,
+      })
+      .delegate()
+    
+    assert.ok(joinTask.link().equals(storeDeliver.fx.join))
+  },
+
+  'store/deliver can be invoked by service to confirm delivery without further effect': async (assert, context) => {
+    // Force signer with did:web
+    const signer = await Signer.generate()
+    const connection = connect({
+      id: signer,
+      channel: createServer({
+        ...context,
+        id: signer,
+        signer
+      }),
+    })
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const link = await CAR.codec.link(data)
+
+    // Service signs file delivered 
+    const storeDeliver = await StoreCapabilities.deliver
+      .invoke({
+        issuer: signer,
+        audience: signer,
+        with: signer.did(),
+        nb: {
+          link,
+        },
+      })
+      .execute(connection)
+
+    assert.ok(storeDeliver.out.ok)
+    assert.ok(storeDeliver.out.ok?.link.equals(link))
+    assert.equal(storeDeliver.fx.join, undefined)
   },
 }

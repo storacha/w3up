@@ -280,7 +280,7 @@ export type StoreServiceContext = SpaceServiceContext & {
   /**
    * Service signer
    */
-  id: Signer
+  signer: Signer
   /**
    * Maximum size that may be uploaded for a file.
    */

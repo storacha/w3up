@@ -511,7 +511,10 @@ export interface StoreListItem {
   insertedAt: ISO8601Date
 }
 
-export interface StoreDeliverSuccess {}
+export interface StoreDeliverSuccess {
+  link: UnknownLink
+}
+
 export type StoreDeliverFailure = StoreItemNotFound | Ucanto.Failure
 
 export interface UploadListItem {
