@@ -112,7 +112,7 @@ export const createContext = async (
         audience: dealTrackerSigner,
       },
     },
-    storeDeliverQueue: queues.storeDeliverQueue,
+    storeConfirmQueue: queues.storeConfirmQueue,
     ...createRevocationChecker({ revocationsStorage }),
   }
 

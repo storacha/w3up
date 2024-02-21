@@ -838,7 +838,7 @@ export const test = {
     assert.equal(storeDeliver.out.error?.name, 'StoreItemNotFound')
   },
 
-  'store/deliver should return receipt with effect with self signed store/deliver task when already stored': async (assert, context) => {
+  'store/deliver should return receipt with effect with self signed store/confirm task when already stored': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
     const connection = connect({
       id: context.id,
@@ -894,7 +894,7 @@ export const test = {
     assert.ok(storeDeliver.out.ok?.link.equals(link))
 
     // Verify join task CID
-    const joinTask = await StoreCapabilities.deliver
+    const joinTask = await StoreCapabilities.confirm
       .invoke({
         issuer: context.signer,
         audience: context.signer,
@@ -909,7 +909,7 @@ export const test = {
     assert.ok(joinTask.link().equals(storeDeliver.fx.join))
   },
 
-  'store/deliver can be invoked by service to confirm delivery without further effect': async (assert, context) => {
+  'store/confirm can be invoked by service to confirm delivery without further effect': async (assert, context) => {
     // Force signer with did:web
     const signer = await Signer.generate()
     const connection = connect({
@@ -925,7 +925,7 @@ export const test = {
     const link = await CAR.codec.link(data)
 
     // Service signs file delivered 
-    const storeDeliver = await StoreCapabilities.deliver
+    const storeDeliver = await StoreCapabilities.confirm
       .invoke({
         issuer: signer,
         audience: signer,
@@ -936,6 +936,7 @@ export const test = {
       })
       .execute(connection)
 
+    console.log('xxxx', storeDeliver.out.error)
     assert.ok(storeDeliver.out.ok)
     assert.ok(storeDeliver.out.ok?.link.equals(link))
     assert.equal(storeDeliver.fx.join, undefined)

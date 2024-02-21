@@ -67,6 +67,9 @@ import {
   StoreDeliver,
   StoreDeliverSuccess,
   StoreDeliverFailure,
+  StoreConfirm,
+  StoreConfirmSuccess,
+  StoreConfirmFailure,
   UploadAdd,
   UploadGet,
   UploadAddSuccess,
@@ -171,6 +174,7 @@ export interface Service extends StorefrontService {
     remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
     list: ServiceMethod<StoreList, StoreListSuccess, Failure>
     deliver: ServiceMethod<StoreDeliver, StoreDeliverSuccess, StoreDeliverFailure>
+    confirm: ServiceMethod<StoreConfirm, StoreConfirmSuccess, StoreConfirmFailure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
@@ -296,7 +300,7 @@ export type StoreServiceContext = SpaceServiceContext & {
   /**
    * Queues pieces for deliver self invocation.
    */
-  storeDeliverQueue: StoreDeliverQueue
+  storeConfirmQueue: StoreConfirmQueue
 }
 
 export type UploadServiceContext = ConsumerServiceContext &
@@ -579,9 +583,9 @@ export interface Queue<Message> {
   ) => Promise<Result<Unit, QueueAddError>>
 }
 
-export type StoreDeliverQueue = Queue<StoreDeliverMessage>
+export type StoreConfirmQueue = Queue<StoreConfirmMessage>
 
-export interface StoreDeliverMessage {
+export interface StoreConfirmMessage {
   link: UnknownLink
 }
 

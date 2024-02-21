@@ -4,24 +4,13 @@ import * as API from '../types.js'
 import { StoreItemNotFound, QueueOperationFailed } from './lib.js'
 
 /**
- * @param {API.Input<Store.deliver>} input
- * @param {API.StoreServiceContext} context
- * @returns {Promise<API.Result<API.StoreDeliverSuccess, API.StoreDeliverFailure> | API.JoinBuilder<API.StoreDeliverSuccess>>}
- */
-const accept = async ({ capability }, context) => {
-  const { link } = capability.nb
-  return Server.ok({ link })
-}
-
-/**
- * Handle invocation from client by checking that bytes were written, and queueing it for
- * self signing issue.
+ * Handle invocation from client by checking that bytes were written, and queueing it for `store/confirm`.
  *
  * @param {API.Input<Store.deliver>} input
  * @param {API.StoreServiceContext} context
  * @returns {Promise<API.Result<API.StoreDeliverSuccess, API.StoreDeliverFailure> | API.JoinBuilder<API.StoreDeliverSuccess>>}
  */
-const enqueue = async ({ capability }, context) => {
+export const storeDeliver = async ({ capability }, context) => {
   const { carStoreBucket } = context
   const { link } = capability.nb
   const space = Server.DID.parse(capability.with).did()
@@ -31,9 +20,9 @@ const enqueue = async ({ capability }, context) => {
     return Server.error(new StoreItemNotFound(space, link))
   }
 
-  // Create effect for receipt for self-signed store/deliver from service
+  // Create effect for receipt for self-signed store/confirm from service
   const [acceptfx] = await Promise.all([
-    Store.deliver
+    Store.confirm
       .invoke({
         issuer: context.signer,
         audience: context.signer,
@@ -45,9 +34,10 @@ const enqueue = async ({ capability }, context) => {
       })
       .delegate(),
   ])
+  // TODO: Once we implement invocation spec, we should also have fork task CID for `store/deliver` from agent
 
-  // Queue `store/deliver` self invocation
-  const res = await context.storeDeliverQueue.add({
+  // Queue `store/confirm` self invocation
+  const res = await context.storeConfirmQueue.add({
     link
   })
   if (res.error) {
@@ -59,18 +49,6 @@ const enqueue = async ({ capability }, context) => {
   /** @type {API.OkBuilder<API.StoreDeliverSuccess, API.StoreDeliverFailure>} */
   const result = Server.ok({ link })
   return result.join(acceptfx.link())
-}
-
-/**
- * @param {API.Input<Store.deliver>} input
- * @param {API.StoreServiceContext} context
- * @returns {Promise<API.Result<API.StoreDeliverSuccess, API.StoreDeliverFailure> | API.JoinBuilder<API.StoreDeliverSuccess>>}
- */
-export const storeDeliver = async (input, context) => {
-  // If self issued we accept without verification
-  return context.signer.did() === input.capability.with
-    ? accept(input, context)
-    : enqueue(input, context)
 }
 
 /**

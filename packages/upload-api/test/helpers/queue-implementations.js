@@ -7,18 +7,18 @@ export const getQueueImplementations = (
   queuedMessages,
   QueueImplementation = Queue
 ) => {
-  queuedMessages.set('storeDeliverQueue', [])
-  const storeDeliverQueue = new QueueImplementation({
+  queuedMessages.set('storeConfirmQueue', [])
+  const storeConfirmQueue = new QueueImplementation({
     /**
      * @param {any} message 
      */
     onMessage: (message) => {
-      const messages = queuedMessages.get('storeDeliverQueue') || []
+      const messages = queuedMessages.get('storeConfirmQueue') || []
       messages.push(message)
-      queuedMessages.set('storeDeliverQueue', messages)
+      queuedMessages.set('storeConfirmQueue', messages)
     },
   })
   return {
-    storeDeliverQueue,
+    storeConfirmQueue,
   }
 }
