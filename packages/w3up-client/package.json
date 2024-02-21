@@ -114,7 +114,7 @@
     "@ucanto/core": "^9.0.1",
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
-    "@ucanto/transport": "^9.0.0",
+    "@ucanto/transport": "^9.1.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
