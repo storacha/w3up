@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -70,8 +70,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@ucanto/validator':
         specifier: ^9.0.1
         version: 9.0.1
@@ -161,8 +161,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@ucanto/validator':
         specifier: ^9.0.1
         version: 9.0.1
@@ -252,8 +252,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -313,8 +313,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -383,8 +383,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@ucanto/validator':
         specifier: ^9.0.1
         version: 9.0.1
@@ -462,8 +462,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -550,8 +550,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/access':
         specifier: workspace:^
         version: link:../access-client
@@ -4298,8 +4298,8 @@ packages:
       '@ucanto/principal': 9.0.0
       '@ucanto/validator': 9.0.1
 
-  /@ucanto/transport@9.0.0:
-    resolution: {integrity: sha512-eN9kkhdp5vC8iYSlT+4YeqyLdV+3g4kYLvuDojdR1lqEcJM2/1W8KjGgmGt6dhE7eBlMqD2hqujS1ePPtY2mKw==}
+  /@ucanto/transport@9.1.0:
+    resolution: {integrity: sha512-3pLXEg9YIH0NN1faBh0Xaioxbb2JtPL+4AFtQtmO8LnRyqGnTahZwwaM8XFL5eMBAp0pYDoZaQ6wdMce0t1cAQ==}
     dependencies:
       '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0

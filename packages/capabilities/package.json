@@ -86,7 +86,7 @@
     "@ucanto/core": "^9.0.1",
     "@ucanto/interface": "^9.0.0",
     "@ucanto/principal": "^9.0.0",
-    "@ucanto/transport": "^9.0.0",
+    "@ucanto/transport": "^9.1.0",
     "@ucanto/validator": "^9.0.1",
     "@web3-storage/data-segment": "^3.2.0"
   },
