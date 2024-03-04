@@ -4,7 +4,7 @@ import * as Block from './block.js'
 import { importDAG, isDelegation } from '@ucanto/core/delegation'
 import * as Association from './db/association.js'
 import * as Meta from './meta.js'
-import { Capability } from './authorization.js'
+import { Capability } from '../authorization/query.js'
 import { Delegation } from '@ucanto/core'
 
 /**

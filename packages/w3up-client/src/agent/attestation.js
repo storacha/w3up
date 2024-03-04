@@ -12,17 +12,17 @@ import * as Delegation from './delegation.js'
  * @param {DB.Term<DB.Entity>} ucan
  * @param {object} constraints
  * @param {DB.Term<DB.Entity>} [constraints.capability]
- * @param {DB.Term<API.DID>} constraints.authority
+ * @param {DB.Term<API.DID>} [constraints.subject]
  * @param {DB.Term<API.UTCUnixTimestamp>} constraints.time
  * @param {DB.Term<API.DID>} constraints.audience
  * @param {DB.Term<DB.Link>} constraints.proof
  */
 export const match = (
   ucan,
-  { capability = DB.link(), authority, audience, proof, time }
+  { capability = DB.link(), subject = DB.string(), audience, proof, time }
 ) =>
   Capability.match(capability, {
-    subject: authority,
+    subject,
     can: 'ucan/attest',
   })
     .and(DB.match([capability, 'capability/nb/proof', proof]))

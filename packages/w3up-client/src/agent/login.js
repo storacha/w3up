@@ -62,7 +62,7 @@ export const query = ({ time = Date.now() / 1000, ...selector }) => {
     where: [
       match(proof, { account, authority, time }),
       Attestation.match(attestation, {
-        authority: provider,
+        subject: provider,
         audience: authority,
         time,
         proof,

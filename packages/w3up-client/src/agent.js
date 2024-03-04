@@ -6,9 +6,9 @@ import { Signer, ed25519 } from '@ucanto/principal'
 import { DID } from '@ucanto/core'
 
 import * as API from './types.js'
-import * as Session from './session.js'
+import * as Session from './w3up.js'
 import * as Connection from './agent/connection.js'
-import * as Authorization from './agent/authorization.js'
+import * as Authorization from './authorization.js'
 
 export * from './types.js'
 
@@ -75,7 +75,7 @@ class AgentPromise extends Promise {
   /**
    * @template {API.UnknownProtocol} Protocol
    * @param {API.ConnectionView<Protocol>} [connection]
-   * @returns {Promise<API.Result<API.Session<Protocol>, API.ConnectError>>}
+   * @returns {Promise<API.Result<API.W3UpSession, API.ConnectError>>}
    */
   async connect(connection) {
     const result = await this
@@ -131,7 +131,7 @@ class Agent {
   /**
    * @template {API.UnknownProtocol} Protocol
    * @param {API.Connection<Protocol>} [connection]
-   * @returns {Promise<API.Result<API.Session<Protocol>, API.SignerLoadError>>}
+   * @returns {Promise<API.Result<API.W3UpSession, API.SignerLoadError>>}
    */
   async connect(connection = Connection.open()) {
     return {
@@ -148,7 +148,7 @@ class Agent {
     }
     const signer = as ?? (await ed25519.generate())
     const archive = signer.toArchive()
-    const result = await DB.transact(db, [{ signer: archive }])
+    const result = await DB.transact(db, [DB.assert({ signer: archive })])
     if (result.error) {
       return result
     }
@@ -203,7 +203,9 @@ class Agent {
     } else {
       const signer = await ed25519.generate()
 
-      const { error } = await DB.transact(db, [{ signer: signer.toArchive() }])
+      const { error } = await DB.transact(db, [
+        DB.assert({ signer: signer.toArchive() }),
+      ])
       if (error) {
         return { error }
       } else {
@@ -470,24 +472,24 @@ class SignerLoadError extends Error {
 //   }
 // }
 
-/**
- * Stores given delegations in the agent's data store and adds discovered spaces
- * to the agent's space list.
- *
- * @param {Agent<{}>} agent
- * @param {object} authorization
- * @param {API.Delegation[]} authorization.proofs
- * @returns {Promise<API.Result<API.Unit, Error>>}
- */
-export const importAuthorization = async (agent, { proofs }) => {
-  try {
-    await addProofs(agent.data, proofs)
-    await addSpacesFromDelegations(agent, proofs)
-    return { ok: {} }
-  } catch (error) {
-    return /** @type {{error:Error}} */ ({ error })
-  }
-}
+// /**
+//  * Stores given delegations in the agent's data store and adds discovered spaces
+//  * to the agent's space list.
+//  *
+//  * @param {Agent<{}>} agent
+//  * @param {object} authorization
+//  * @param {API.Delegation[]} authorization.proofs
+//  * @returns {Promise<API.Result<API.Unit, Error>>}
+//  */
+// export const importAuthorization = async (agent, { proofs }) => {
+//   try {
+//     await addProofs(agent.data, proofs)
+//     await addSpacesFromDelegations(agent, proofs)
+//     return { ok: {} }
+//   } catch (error) {
+//     return /** @type {{error:Error}} */ ({ error })
+//   }
+// }
 
 // /**
 //  * Get all the proofs matching the capabilities.
@@ -608,36 +610,36 @@ export const importAuthorization = async (agent, { proofs }) => {
 //   return await addProofs(data, [delegation])
 // }
 
-/**
- * Adds set of proofs to the agent store.
- *
- * @param {AgentData} data
- * @param {Iterable<API.Delegation>} delegations
- */
-export const addProofs = async (data, delegations) => {
-  for (const proof of delegations) {
-    await data.addDelegation(proof, { audience: data.meta })
-  }
+// /**
+//  * Adds set of proofs to the agent store.
+//  *
+//  * @param {AgentData} data
+//  * @param {Iterable<API.Delegation>} delegations
+//  */
+// export const addProofs = async (data, delegations) => {
+//   for (const proof of delegations) {
+//     await data.addDelegation(proof, { audience: data.meta })
+//   }
 
-  await removeExpiredDelegations(data, { time: Date.now() / 1000 })
+//   await removeExpiredDelegations(data, { time: Date.now() / 1000 })
 
-  return {}
-}
+//   return {}
+// }
 
-/**
- * Clean up any expired delegations.
- *
- * @param {AgentData} data
- * @param {object} options
- * @param {API.UTCUnixTimestamp} options.time
- */
-export const removeExpiredDelegations = async (data, options) => {
-  for (const [, value] of data.delegations) {
-    if (isExpired(value.delegation, options.time)) {
-      await data.removeDelegation(value.delegation.cid)
-    }
-  }
-}
+// /**
+//  * Clean up any expired delegations.
+//  *
+//  * @param {AgentData} data
+//  * @param {object} options
+//  * @param {API.UTCUnixTimestamp} options.time
+//  */
+// export const removeExpiredDelegations = async (data, options) => {
+//   for (const [, value] of data.delegations) {
+//     if (isExpired(value.delegation, options.time)) {
+//       await data.removeDelegation(value.delegation.cid)
+//     }
+//   }
+// }
 
 // /**
 //  * Get current space DID, proofs and abilities
@@ -721,81 +723,81 @@ export const removeExpiredDelegations = async (data, options) => {
 //   return delegation
 // }
 
-/**
- * Creates an invocation for the given capability with Agent's proofs, service, issuer and space.
- *
- * @example
- * ```js
- * const spaceList = await Agent.issueInvocation(agent, Store.list, {
- *   nb: {
- *     size: 10,
- *   },
- * })
- *
- * await spaceList.execute(agent.connection)
- * ```
- *
- * @template {API.Ability} A
- * @template {API.URI} R
- * @template {API.TheCapabilityParser<API.CapabilityMatch<A, R, C>>} CAP
- * @template {API.Caveats} [C={}]
- *
- * @param {object} agent
- * @param {AgentData} agent.data
- * @param {API.Signer} agent.issuer
- * @param {{id: API.Principal}} agent.connection
- * @param {CAP} cap
- * @param {API.InvokeOptions<A, R, CAP>} options
- */
-export const issueInvocation = async (
-  { connection, issuer, data },
-  cap,
-  options
-) => {
-  const audience = options.audience || connection.id
-  const time = Date.now() / 1000
+// /**
+//  * Creates an invocation for the given capability with Agent's proofs, service, issuer and space.
+//  *
+//  * @example
+//  * ```js
+//  * const spaceList = await Agent.issueInvocation(agent, Store.list, {
+//  *   nb: {
+//  *     size: 10,
+//  *   },
+//  * })
+//  *
+//  * await spaceList.execute(agent.connection)
+//  * ```
+//  *
+//  * @template {API.Ability} A
+//  * @template {API.URI} R
+//  * @template {API.TheCapabilityParser<API.CapabilityMatch<A, R, C>>} CAP
+//  * @template {API.Caveats} [C={}]
+//  *
+//  * @param {object} agent
+//  * @param {AgentData} agent.data
+//  * @param {API.Signer} agent.issuer
+//  * @param {{id: API.Principal}} agent.connection
+//  * @param {CAP} cap
+//  * @param {API.InvokeOptions<A, R, CAP>} options
+//  */
+// export const issueInvocation = async (
+//   { connection, issuer, data },
+//   cap,
+//   options
+// ) => {
+//   const audience = options.audience || connection.id
+//   const time = Date.now() / 1000
 
-  const space = options.with || data.currentSpace
-  if (!space) {
-    throw new Error('No space or resource selected, you need pass a resource.')
-  }
+//   const space = options.with || data.currentSpace
+//   if (!space) {
+//     throw new Error('No space or resource selected, you need pass a resource.')
+//   }
 
-  const proofs = [
-    ...(options.proofs || []),
-    ...selectAuthorization(
-      { data, issuer },
-      [
-        {
-          with: space,
-          can: cap.can,
-        },
-      ],
-      { sessionProofIssuer: audience.did(), time }
-    ),
-  ]
+//   const proofs = [
+//     ...(options.proofs || []),
+//     ...selectAuthorization(
+//       { data, issuer },
+//       [
+//         {
+//           with: space,
+//           can: cap.can,
+//         },
+//       ],
+//       { sessionProofIssuer: audience.did(), time }
+//     ),
+//   ]
 
-  if (proofs.length === 0 && options.with !== issuer.did()) {
-    throw new Error(
-      `no proofs available for resource ${space} and ability ${cap.can}`
-    )
-  }
+//   if (proofs.length === 0 && options.with !== issuer.did()) {
+//     throw new Error(
+//       `no proofs available for resource ${space} and ability ${cap.can}`
+//     )
+//   }
 
-  const inv = invoke({
-    ...options,
-    issuer,
-    audience,
-    // @ts-ignore
-    capability: cap.create({
-      with: space,
-      nb: options.nb,
-    }),
-    proofs: [...proofs],
-  })
+//   const inv = invoke({
+//     ...options,
+//     issuer,
+//     audience,
+//     // @ts-ignore
+//     capability: cap.create({
+//       with: space,
+//       nb: options.nb,
+//     }),
+//     proofs: [...proofs],
+//   })
 
-  return /** @type {API.IssuedInvocationView<API.InferInvokedCapability<CAP>>} */ (
-    inv
-  )
-}
+//   return /** @type {API.IssuedInvocationView<API.InferInvokedCapability<CAP>>} */ (
+//     inv
+//   )
+// }
 
 // /**
 //  * Returns iterable of all the proofs that contain capabilities matching

@@ -1,7 +1,6 @@
 import { Subscription } from '@web3-storage/capabilities'
 import * as Result from '../result.js'
 import * as API from '../types.js'
-import { issueInvocation } from '../agent.js'
 
 export { Subscription }
 

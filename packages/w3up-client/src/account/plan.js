@@ -1,25 +1,39 @@
 import * as API from '../types.js'
 import { Plan } from '@web3-storage/capabilities'
 import * as Subscriptions from './subscription.js'
+import * as Agent from '../agent.js'
 
 /**
  * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
- * @param {API.AccountView<Protocol>} account
+ * @param {API.AccountSession<Protocol>} account
+ * @returns {API.AccountPlans<Protocol>}
  */
 export const from = (account) => new AccountPlans(account)
 
 /**
  * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
- * @param {API.AccountView<Protocol>} account
+ * @param {API.AccountSession<Protocol>} account
+ * @returns {Promise<API.Result<Record<API.DID, BillingPlan<Protocol>>, API.AccessDenied | API.PlanNotFound | API.InvocationError>>}
  */
 export const list = async (account) => {
   const { session } = account
+  const auth = Agent.authorize(account.session.agent, {
+    subject: account.did(),
+    can: {
+      'plan/get': [],
+    },
+  })
+
+  if (auth.error) {
+    return auth
+  }
+
   const { out: result } = await Plan.get
     .invoke({
       issuer: session.agent.signer,
       audience: session.connection.id,
       with: account.did(),
-      proofs: account.proofs,
+      proofs: auth.ok.proofs,
     })
     .execute(/** @type {API.Session<API.PlanProtocol>} */ (session).connection)
 
@@ -39,10 +53,11 @@ export const list = async (account) => {
 
 /**
  * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @implements {API.AccountPlans<Protocol>}
  */
 class AccountPlans {
   /**
-   * @param {API.AccountView<Protocol>} account
+   * @param {API.AccountSession<Protocol>} account
    */
   constructor(account) {
     this.account = account
@@ -58,11 +73,12 @@ class AccountPlans {
 class BillingPlan {
   /**
    * @param {object} source
-   * @param {API.AccountView<Protocol>} source.account
+   * @param {API.AccountSession<Protocol>} source.account
    * @param {API.PlanGetSuccess} source.plan
    */
   constructor(source) {
     this.model = source
+    /** @type {API.AccountSubscriptions} */
     this.subscriptions = Subscriptions.from(this)
   }
   get account() {

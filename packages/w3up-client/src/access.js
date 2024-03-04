@@ -7,8 +7,9 @@ export { DIDMailto }
 import * as Access from '@web3-storage/capabilities/access'
 import { Failure, fail, DID } from '@ucanto/core'
 import { bytesToDelegations } from './agent/encoding.js'
-import * as Authorization from './agent/authorization.js'
+import * as Authorization from './authorization/query.js'
 import * as DB from './agent/db.js'
+import * as Agent from './agent.js'
 
 /**
  * Takes array of delegations and propagates them to their respective audiences
@@ -17,17 +18,12 @@ import * as DB from './agent/db.js'
  * Returns error result if agent has no current space and no space was provided.
  * Also returns error result if invocation fails.
  *
- * @param {API.Session<API.W3Protocol>} session - w3up service session.
+ * @param {API.Session<API.W3UpProtocol>} session - w3up service session.
  * @param {object} input
  * @param {API.Delegation[]} input.delegations - Delegations to propagate.
  * @param {API.SpaceDID} [input.subject] - Space to propagate through.
- * @param {API.Delegation[]} [input.proofs] - Optional set of proofs to be
- * included in the invocation.
  */
-export const delegate = async (
-  session,
-  { delegations, proofs = [], subject }
-) => {
+export const delegate = async (session, { delegations, subject }) => {
   if (!subject) {
     return fail('Space must be specified')
   }
@@ -37,7 +33,7 @@ export const delegate = async (
     proof.cid,
   ])
 
-  const auth = session.agent.authorize({
+  const auth = Agent.authorize(session.agent, {
     subject,
     can: { 'access/delegate': [] },
   })
@@ -81,14 +77,14 @@ export const request = async (
   session,
   {
     account,
-    authority = session.agent.did(),
+    authority = /** @type {API.DIDKey} */ (session.agent.signer.did()),
     provider = /** @type {API.ProviderDID} */ (session.connection.id.did()),
     can = spaceAccess,
   }
 ) => {
   // Find proofs that allows this agent to invoke `access/authorize` capability
   // on behalf of the principal requesting access.
-  const auth = session.agent.authorize({
+  const auth = Agent.authorize(session.agent, {
     subject: authority,
     can: { 'access/authorize': [] },
   })
@@ -145,10 +141,10 @@ export const claim = async (
   session,
   {
     provider = /** @type {API.ProviderDID} */ (session.connection.id.did()),
-    authority = session.agent.did(),
+    authority = /** @type {API.DIDKey} */ (session.agent.signer.did()),
   } = {}
 ) => {
-  const auth = session.agent.authorize({
+  const auth = Agent.authorize(session.agent, {
     subject: authority,
     can: { 'access/claim': [] },
   })

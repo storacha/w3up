@@ -9,78 +9,87 @@ import * as DB from '../src/agent/db.js'
  * @type {Test.Suite}
  */
 export const testAccount = {
-  'only list accounts': async (assert, { session, mail, grantAccess }) => {
-    const email = 'alice@web.mail'
+  'list accounts': async (assert, { session, mail, grantAccess }) =>
+    Task.perform(function* () {
+      const email = 'alice@web.mail'
 
-    assert.deepEqual(Account.list(session), {}, 'no accounts yet')
+      assert.deepEqual(session.accounts.list(), {}, 'no accounts yet')
+      assert.deepEqual([...session.accounts], [], 'is iterable')
 
-    const login = Account.login(session, { email })
-    const message = await mail.take()
-    assert.deepEqual(message.to, email)
-    await grantAccess(message)
-    const account = Result.unwrap(await login)
-    assert.equal(account.did(), Account.DIDMailto.fromEmail(email))
-    assert.equal(account.toEmail(), email)
-    assert.equal([...account.proofs].length, 2)
+      const login = session.accounts.login({ email })
+      const message = yield* Task.wait(mail.take())
+      assert.deepEqual(message.to, email)
+      yield* Task.wait(grantAccess(message))
+      const account = yield* Task.join(login)
+      assert.equal(account.did(), Account.DIDMailto.fromEmail(email))
+      assert.equal(account.toEmail(), email)
+      assert.equal([...account.proofs].length, 2)
 
-    assert.deepEqual(Account.list(session), {}, 'no accounts have been saved')
-    Result.unwrap(await account.save())
-    const accounts = Account.list(session)
+      assert.deepEqual(Account.list(session), {}, 'no accounts have been saved')
+      yield* Task.join(session.accounts.add(account))
+      const accounts = session.accounts.list()
 
-    assert.deepEqual(Object.values(accounts).length, 1)
-    assert.ok(accounts[Account.DIDMailto.fromEmail(email)])
+      assert.deepEqual(Object.values(accounts).length, 1)
+      assert.ok(accounts[Account.DIDMailto.fromEmail(email)])
 
-    const savedAccount = accounts[Account.DIDMailto.fromEmail(email)]
-    assert.equal(savedAccount.toEmail(), email)
-    assert.equal(savedAccount.did(), Account.DIDMailto.fromEmail(email))
-    assert.equal([...savedAccount.proofs].length, 2)
-  },
+      const savedAccount = accounts[Account.DIDMailto.fromEmail(email)]
+      assert.equal(savedAccount.toEmail(), email)
+      assert.equal(savedAccount.did(), Account.DIDMailto.fromEmail(email))
+      assert.equal([...savedAccount.proofs].length, 2)
 
-  'only two logins': async (assert, { session, mail, grantAccess }) => {
-    const aliceEmail = 'alice@web.mail'
-    const bobEmail = 'bob@web.mail'
+      return { ok: {} }
+    }),
 
-    assert.deepEqual(Account.list(session), {}, 'no accounts yet')
-    const aliceLogin = Account.login(session, { email: aliceEmail })
-    await grantAccess(await mail.take())
-    const alice = Result.unwrap(await aliceLogin)
-    assert.deepEqual(alice.toEmail(), aliceEmail)
+  'two logins': async (assert, { session, mail, grantAccess }) =>
+    Task.perform(function* () {
+      const aliceEmail = 'alice@web.mail'
+      const bobEmail = 'bob@web.mail'
 
-    assert.deepEqual(Account.list(session), {}, 'no accounts have been saved')
-    Result.unwrap(await alice.save())
+      assert.deepEqual(session.accounts.list(), {}, 'no accounts yet')
+      const aliceLogin = session.accounts.login({ email: aliceEmail })
+      const aliceConfirm = yield* Task.wait(mail.take())
+      yield* Task.wait(grantAccess(aliceConfirm))
+      const alice = yield* Task.join(aliceLogin)
+      assert.deepEqual(alice.toEmail(), aliceEmail)
 
-    const one = Account.list(session)
-    assert.deepEqual(Object.values(one).length, 1)
-    assert.ok(
-      one[Account.DIDMailto.fromEmail(aliceEmail)],
-      'alice in the account list'
-    )
+      assert.deepEqual(
+        session.accounts.list(),
+        {},
+        'no accounts have been saved'
+      )
+      yield* Task.join(session.accounts.add(alice))
 
-    const bobLogin = Account.login(session, { email: bobEmail })
-    await grantAccess(await mail.take())
-    const bob = Result.unwrap(await bobLogin)
-    assert.deepEqual(bob.toEmail(), bobEmail)
-    await bob.save()
+      const [one] = session.accounts
+      assert.equal(one.did(), alice.did(), 'alice in the account list')
 
-    const two = Account.list(session)
+      const bobLogin = Account.login(session, { email: bobEmail })
+      const bobConfirm = yield* Task.wait(mail.take())
+      yield* Task.wait(grantAccess(bobConfirm))
+      const bob = yield* Task.join(bobLogin)
+      assert.deepEqual(bob.toEmail(), bobEmail)
+      yield* Task.join(session.accounts.add(bob))
 
-    assert.deepEqual(Object.values(two).length, 2)
+      const two = Account.list(session)
+      assert.deepEqual(Object.values(two).length, 2)
 
-    assert.ok(
-      two[Account.DIDMailto.fromEmail(aliceEmail)].toEmail(),
-      aliceEmail
-    )
-    assert.ok(two[Account.DIDMailto.fromEmail(bobEmail)].toEmail(), bobEmail)
-  },
+      assert.ok(
+        two[Account.DIDMailto.fromEmail(aliceEmail)].toEmail(),
+        aliceEmail
+      )
+      assert.ok(two[Account.DIDMailto.fromEmail(bobEmail)].toEmail(), bobEmail)
 
-  'only login idempotence': async (assert, { session, mail, grantAccess }) =>
+      return { ok: {} }
+    }),
+
+  'login idempotence': (assert, { session, mail, grantAccess }) =>
     Task.perform(function* () {
       const email = 'alice@web.mail'
       const login = Account.login(session, { email })
       const message = yield* Task.wait(mail.take())
       yield* Task.wait(grantAccess(message))
       const alice = yield* Task.join(login)
-      yield* Task.join(alice.save())
+
+      yield* Task.join(session.accounts.add(alice))
 
       assert.deepEqual(
         Object.keys(Account.list(session)),
@@ -97,18 +106,18 @@ export const testAccount = {
 
       return { ok: {} }
     }),
-  'only account login': async (assert, { session, mail, grantAccess }) =>
+  'account login': async (assert, { session, mail, grantAccess }) =>
     Task.perform(function* () {
-      const login = Account.login(session, { email: 'alice@web.mail' })
+      const login = session.accounts.login({ email: 'alice@web.mail' })
 
       const message = yield* Task.wait(mail.take())
       yield* Task.wait(grantAccess(message))
 
       const alice = yield* Task.join(login)
       assert.deepEqual(alice.toEmail(), 'alice@web.mail')
-      yield* Task.join(alice.save())
+      yield* Task.join(session.accounts.add(alice))
 
-      const accounts = Account.list(session)
+      const accounts = session.accounts.list()
       assert.deepEqual(Object.keys(accounts), [alice.did()])
 
       return { ok: {} }
@@ -116,41 +125,48 @@ export const testAccount = {
 
   'create account and provision space': async (
     assert,
-    { session, mail, grantAccess }
+    { session, mail, grantAccess, plansStorage }
   ) =>
     Task.perform(function* () {
-      const space = yield* Task.wait(Space.generate({ name: 'test' }))
+      const space = yield* Task.join(session.spaces.create({ name: 'test' }))
       const mnemonic = space.toMnemonic()
+
       const { signer } = yield* Task.wait(
         Space.fromMnemonic(mnemonic, { name: 'import' })
       )
+
       assert.deepEqual(
-        space.signer.encode(),
+        space.agent.signer.encode(),
         signer.encode(),
         'arrived to same signer'
       )
 
       const email = 'alice@web.mail'
-      const login = Account.login(session, { email })
+      const login = session.accounts.login({ email })
       const message = yield* Task.wait(mail.take())
       assert.deepEqual(message.to, email)
       yield* Task.wait(grantAccess(message))
       const account = yield* Task.join(login)
 
-      yield* Task.join(account.provision(space.did()))
+      yield* Task.join(
+        plansStorage.set(account.did(), 'did:web:free.web3.storage')
+      )
+      const plans = yield* Task.join(account.plans.list())
+      const [{ subscriptions }] = Object.values(plans)
+
+      yield* Task.join(subscriptions.add({ consumer: space.did() }))
 
       // authorize agent to use space
 
-      const proof = yield* Task.wait(
-        space.createAuthorization(session.agent, {
-          access: { 'space/info': {} },
-          expiration: Infinity,
+      const shared = yield* Task.join(
+        space.share(session.agent.signer, {
+          can: { 'space/info': [] },
         })
       )
 
-      yield* Task.join(DB.transact(session.agent.db, [DB.assert({ proof })]))
+      // yield* Task.join(session.spaces.add(shared))
 
-      const info = yield* Task.join(Space.info(session, { id: space.did() }))
+      const info = yield* Task.join(shared.info())
 
       assert.deepEqual(info, {
         did: space.did(),
@@ -160,138 +176,144 @@ export const testAccount = {
       return { ok: {} }
     }),
 
-  'multi device workflow': async (asserts, { connect, mail, grantAccess }) => {
-    const laptop = await connect()
-    const space = await laptop.createSpace('main')
+  'multi device workflow': async (
+    assert,
+    { connection, mail, grantAccess, plansStorage }
+  ) =>
+    Task.perform(function* () {
+      const laptop = yield* Task.join(Test.connect(connection))
+      const space = yield* Task.join(laptop.spaces.create({ name: 'main' }))
 
-    // want to provision space ?
-    const email = 'alice@web.mail'
-    const login = Account.login(laptop, email)
-    // confirm by clicking a link
-    await grantAccess(await mail.take())
-    const account = Result.try(await login)
+      // want to provision space ?
+      const email = 'alice@web.mail'
+      const login = laptop.accounts.login({ email })
+      // confirm by clicking a link
+      const laptopMessage = yield* Task.wait(mail.take())
+      yield* Task.wait(grantAccess(laptopMessage))
+      const account = yield* Task.join(login)
 
-    // Authorized account can provision space
-    Result.try(await account.provision(space.did()))
+      // setup billing
+      yield* Task.join(
+        plansStorage.set(account.did(), 'did:web:free.web3.storage')
+      )
+      // Authorized account can provision space
+      const plans = yield* Task.join(account.plans.list())
+      const [{ subscriptions }] = Object.values(plans)
 
-    // Want to setup a recovery for this space ?
-    const recovery = await space.createRecovery(account.did())
-    // Authorize laptop to use the space, we need to do it in order
-    // to be able to store the recovery delegation in the space.
-    await laptop.addSpace(await space.createAuthorization(laptop.agent))
+      yield* Task.join(subscriptions.add({ consumer: space.did() }))
 
-    // Store delegation to the account so it can be used for recovery
-    await laptop.capability.access.delegate({
-      delegations: [recovery],
-    })
+      // // Want to setup a recovery for this space ?
+      const recovery = yield* Task.join(space.createRecovery(account))
 
-    // now connect with a second device
-    const phone = await connect()
-    const phoneLogin = Account.login(phone, email)
-    // confirm by clicking a link
-    await grantAccess(await mail.take())
-    const session = Result.try(await phoneLogin)
-    // save session on the phone
-    Result.try(await session.save())
+      // Store space delegation in the space so that account can claim it.
+      yield* Task.join(space.delegations.add(recovery))
 
-    const result = await phone.capability.space.info(space.did())
-    asserts.deepEqual(result.did, space.did())
-  },
-  'setup recovery': async (assert, { client, mail, grantAccess }) => {
-    const space = await client.createSpace('test')
+      // now connect with a second device
+      const phone = yield* Task.join(Test.connect(connection))
+      const phoneLogin = phone.accounts.login({ email })
+      // confirm by clicking a link
+      const phoneMessage = yield* Task.wait(mail.take())
+      yield* Task.wait(grantAccess(phoneMessage))
+      const phoneAccount = yield* Task.join(phoneLogin)
 
-    const email = 'alice@web.mail'
-    const login = Account.login(client, email)
-    const message = await mail.take()
-    assert.deepEqual(message.to, email)
-    await grantAccess(message)
-    const account = Result.try(await login)
+      const [phoneSpace] = phoneAccount.spaces
+      assert.deepEqual(phoneSpace.did(), space.did())
 
-    Result.try(await account.provision(space.did()))
-
-    const recovery = await space.createRecovery(account.did())
-    const share = await client.capability.access.delegate({
-      space: space.did(),
-      delegations: [recovery],
-      proofs: [await space.createAuthorization(client)],
-    })
-    assert.equal(share.error, undefined)
-    assert.deepEqual(client.spaces(), [])
-
-    assert.deepEqual(client.spaces().length, 0, 'no spaces had been added')
-
-    // waiting for a sec so that request CID will come out different
-    // otherwise we will find previous authorization which does not
-    // have the space delegation yet.
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // This is not a great flow but to fix this we need a new to upgrade
-    // ucanto and then pull delegations for each account.
-    const secondLogin = Account.login(client, email)
-    await grantAccess(await mail.take())
-    const secondAccount = Result.try(await secondLogin)
-
-    Result.try(await secondAccount.save())
-
-    assert.deepEqual(client.spaces().length, 1, 'spaces had been added')
-  },
+      return { ok: {} }
+    }),
 
   'check account plan': async (
     assert,
-    { client, mail, grantAccess, plansStorage }
+    { session, mail, grantAccess, plansStorage }
   ) => {
-    const login = Account.login(client, 'alice@web.mail')
-    await grantAccess(await mail.take())
-    const account = Result.try(await login)
+    const result = Task.perform(function* () {
+      const login = session.accounts.login({ email: 'alice@web.mail' })
 
-    const { error } = await account.plan.get()
-    assert.ok(error)
+      const message = yield* Task.wait(mail.take())
+      yield* Task.wait(grantAccess(message))
 
-    Result.unwrap(
-      await plansStorage.set(account.did(), 'did:web:free.web3.storage')
-    )
+      const account = yield* Task.join(login)
 
-    const { ok: plan } = await account.plan.get()
+      const plans = yield* Task.join(account.plans.list())
+      assert.deepEqual(plans, {}, 'no plans yet')
 
-    assert.ok(plan?.product, 'did:web:free.web3.storage')
+      yield* Task.join(
+        plansStorage.set(account.did(), 'did:web:free.web3.storage')
+      )
+
+      const updatePlans = yield* Task.join(account.plans.list())
+      assert.deepEqual(Object.keys(updatePlans), ['did:web:free.web3.storage'])
+
+      return { ok: {} }
+    })
+
+    try {
+      await result
+    } catch (error) {
+      // throw new Error(error)
+      console.log('error', error)
+      throw error
+    }
   },
 
   'check account subscriptions': async (
     assert,
-    { client, mail, grantAccess }
-  ) => {
-    const space = await client.createSpace('test')
+    { session, mail, grantAccess, plansStorage }
+  ) =>
+    Task.perform(function* () {
+      const space = yield* Task.join(session.spaces.create({ name: 'test' }))
 
-    const email = 'alice@web.mail'
-    const login = Account.login(client, email)
-    const message = await mail.take()
-    assert.deepEqual(message.to, email)
-    await grantAccess(message)
-    const account = Result.try(await login)
+      const email = 'alice@web.mail'
+      const login = session.accounts.login({ email })
+      // confirm by clicking a link
+      const message = yield* Task.wait(mail.take())
+      assert.deepEqual(message.to, email)
+      yield* Task.wait(grantAccess(message))
+      const account = yield* Task.join(login)
 
-    Result.try(await account.provision(space.did()))
+      // setup billing
+      yield* Task.join(
+        plansStorage.set(account.did(), 'did:web:test.web3.storage')
+      )
+      // Authorized account can provision space
+      const plans = yield* Task.join(account.plans.list())
+      const [{ subscriptions }] = Object.values(plans)
 
-    const subs = Result.unwrap(await account.plan.subscriptions())
+      yield* Task.join(subscriptions.add({ consumer: space.did() }))
 
-    assert.equal(subs.results.length, 1)
-    assert.equal(subs.results[0].provider, client.defaultProvider())
-    assert.deepEqual(subs.results[0].consumers, [space.did()])
-    assert.equal(typeof subs.results[0].subscription, 'string')
-  },
+      const [...subs] = yield* Task.join(subscriptions.list())
 
-  'space.save': async (assert, { client, mail, grantAccess }) => {
-    const space = await client.createSpace('test')
-    assert.deepEqual(client.spaces(), [])
+      assert.deepEqual(subs, [
+        {
+          customer: account.did(),
+          consumer: space.did(),
+          provider: 'did:web:test.web3.storage',
+          limit: {},
+        },
+      ])
 
-    const result = await space.save()
-    assert.ok(result.ok)
+      const second = yield* Task.join(session.spaces.create({ name: 'second' }))
+      yield* Task.join(subscriptions.add({ consumer: second.did() }))
 
-    const spaces = client.spaces()
-    assert.deepEqual(spaces.length, 1)
-    assert.deepEqual(spaces[0].did(), space.did())
+      const [...subs2] = yield* Task.join(subscriptions.list())
 
-    assert.deepEqual(client.currentSpace()?.did(), space.did())
-  },
+      assert.deepEqual(subs2, [
+        {
+          customer: account.did(),
+          consumer: space.did(),
+          provider: 'did:web:test.web3.storage',
+          limit: {},
+        },
+        {
+          customer: account.did(),
+          consumer: second.did(),
+          provider: 'did:web:test.web3.storage',
+          limit: {},
+        },
+      ])
+
+      return { ok: {} }
+    }),
 }
 
 Test.test({ Account: testAccount })

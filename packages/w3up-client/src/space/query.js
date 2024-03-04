@@ -1,32 +1,37 @@
 import * as API from '../types.js'
-import * as Delegation from './delegation.js'
-import * as Capability from './capability.js'
-import * as Text from './db/text.js'
+import * as Delegation from '../agent/delegation.js'
+import * as Capability from '../agent/capability.js'
+import * as Text from '../agent/db/text.js'
 import * as DB from 'datalogia'
-import * as Authorization from './authorization.js'
-import { optional } from './db.js'
+import * as Authorization from '../authorization/query.js'
+import { optional } from '../agent/db.js'
 
 /**
  * @param {object} constraints
  * @param {typeof match | typeof implicit | typeof explicit} [constraints.match]
  * @param {DB.Term<API.UTCUnixTimestamp>} [constraints.time]
  * @param {DB.Term<API.DID>} [constraints.authority]
- * @param {DB.Term<API.DID>} [constraints.space]
+ * @param {DB.Term<API.DIDKey>} [constraints.space]
  * @param {DB.Term<API.Ability>} [constraints.can]
  * @param {DB.Term<string>} [constraints.name]
  * @param {boolean} [constraints.implicit]
- * @returns {API.Query<{ space: DB.Term<API.DIDKey>; name?: DB.Term<string> }>
+ * @returns {API.Query<{ proof: DB.Term<DB.Entity>; space: DB.Term<API.DIDKey>; name?: DB.Term<string> }>}
  */
-export const query = (constraints) => {
-  const space = DB.string()
-  const name = DB.string()
+export const query = ({
+  space = DB.string(),
+  name = DB.string(),
+  ...constraints
+}) => {
   const ucan = DB.link()
   return {
     select: {
       space,
       name,
+      proof: ucan,
     },
-    where: [(constraints.match ?? match)(ucan, constraints)],
+    where: [
+      (constraints.match ?? match)(ucan, { name, space, ...constraints }),
+    ],
   }
 }
 
@@ -194,8 +199,8 @@ export const direct = ({
  * @param {API.UTCUnixTimestamp} [selector.time]
  */
 export const indirect = ({
-  subject = { like: '%' },
-  audience = { like: '%' },
+  subject = { glob: '*' },
+  audience = { glob: '*' },
   time = Date.now() / 1000,
   account = { glob: 'did:mailto:*' },
   can = { '*': [] },

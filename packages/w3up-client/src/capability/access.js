@@ -6,7 +6,6 @@ export { DIDMailto }
 
 import * as Access from '@web3-storage/capabilities/access'
 import { Failure, fail, DID } from '@ucanto/core'
-import { importAuthorization } from '../agent.js'
 import { bytesToDelegations } from '../agent/encoding.js'
 
 /**

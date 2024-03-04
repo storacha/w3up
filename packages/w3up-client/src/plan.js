@@ -1,6 +1,6 @@
 import * as API from './types.js'
 import * as Plan from '@web3-storage/capabilities/plan'
-import * as Authorization from './agent/authorization.js'
+import * as Authorization from './authorization/query.js'
 
 /**
  * Gets the plan currently associated with the account.

@@ -31,6 +31,7 @@ import {
   UsageReport,
   UsageReportSuccess,
   UsageReportFailure,
+  PlanNotFound,
 } from '@web3-storage/capabilities/types'
 
 export type { Querier, Transactor }
@@ -62,6 +63,8 @@ import type {
   IPLDBlock,
   DIDKey,
   Protocol,
+  InvocationError,
+  MultihashDigest,
 } from '@ucanto/interface'
 
 import type {
@@ -94,12 +97,17 @@ import type {
   AccountDID,
   ProviderDID,
   AccessDenied,
+  SpaceDID,
 } from '@web3-storage/capabilities'
 import { type Client } from './client.js'
 import { StorefrontService as FilecoinProtocol } from '@web3-storage/filecoin-client/storefront'
 import exp from 'constants'
 import { CID } from 'multiformats'
 import { Block } from '@ipld/car/buffer-reader'
+import { SpaceInfoFailure } from '@web3-storage/upload-api'
+import { EmailAddress, DidMailto } from '@web3-storage/did-mailto'
+import { UTCUnixTimestamp } from '@ipld/dag-ucan'
+import { extname } from 'path'
 
 export * from '@ipld/dag-ucan'
 export * from '@ucanto/interface'
@@ -354,8 +362,6 @@ export type {
   ShardStoringOptions,
   UploadOptions,
   UploadDirectoryOptions,
-  FileLike,
-  BlobLike,
   ProgressStatus,
 } from '@web3-storage/upload-client/types'
 
@@ -810,7 +816,7 @@ export interface AgentView extends Agent {
     connection?: ConnectionView<Protocol>
   ): Promise<
     Result<
-      Session<Protocol>,
+      W3UpSession,
       SignerLoadError | DataStoreOpenError | DataStoreSaveError
     >
   >
@@ -851,8 +857,49 @@ export interface DatabaseTransactionError extends Failure {
  * Session an agent has with a service provider.
  */
 export interface Session<Protocol extends UnknownProtocol = W3UpProtocol> {
-  agent: AgentView
+  agent: Agent
   connection: Connection<Protocol>
+}
+
+export interface W3UpSession extends Session<W3UpProtocol> {
+  spaces: SpacesSession
+  accounts: AccountsSession<W3UpProtocol>
+}
+
+export interface SpacesSession extends Iterable<SharedSpaceSession> {
+  create(source: {
+    name: string
+  }): Promise<Result<OwnSpaceSession<W3UpProtocol>, never>>
+  list(): Record<DIDKey, SharedSpaceSession>
+
+  add(space: SharedSpace): Promise<Result<Unit, Error>>
+  remove(space: SharedSpace): Promise<Result<Unit, Error>>
+}
+
+export interface AccountsSession<
+  Protocol extends AccessRequestProvider & PlanProtocol & ProviderProtocol
+> extends Iterable<AccountSession<Protocol>> {
+  login(source: {
+    email: EmailAddress
+    signal?: AbortSignal
+  }): Promise<
+    Result<
+      AccountSession<Protocol>,
+      AccessDenied | InvocationError | AccessAuthorizeFailure
+    >
+  >
+
+  list(): Record<DidMailto, AccountSession<Protocol>>
+
+  get(email: EmailAddress): AccountSession<Protocol> | undefined
+
+  add(
+    account: AccountSession<UnknownProtocol>
+  ): Promise<Result<Unit, DataStoreSaveError | DatabaseTransactionError>>
+
+  remove(
+    account: AccountSession<UnknownProtocol>
+  ): Promise<Result<Unit, DataStoreSaveError | DatabaseTransactionError>>
 }
 
 export interface Connection<Protocol extends UnknownProtocol = W3UpProtocol>
@@ -890,16 +937,258 @@ export interface Authorization {
  */
 export interface Limit extends Record<string, never> {}
 
-export interface AccountView<Protocol extends UnknownProtocol = W3UpProtocol> {
+export interface AccountSession<
+  Protocol extends UnknownProtocol = W3UpProtocol
+> {
   did(): AccountDID
   session: Session<Protocol>
   proofs: Delegation[]
+
+  toEmail(): EmailAddress
+
+  plans: AccountPlans
+  spaces: SpacesSession
+}
+
+export interface AccountPlans<
+  Protocol extends ProviderProtocol &
+    PlanProtocol &
+    SubscriptionProtocol = ProviderProtocol &
+    PlanProtocol &
+    SubscriptionProtocol
+> {
+  list(): Promise<
+    Result<
+      Record<DID, BillingPlan<Protocol>>,
+      AccessDenied | PlanNotFound | InvocationError
+    >
+  >
 }
 
 export interface BillingPlan<
-  Protocol extends ProviderProtocol = ProviderProtocol
+  Protocol extends ProviderProtocol &
+    PlanProtocol &
+    SubscriptionProtocol = ProviderProtocol &
+    PlanProtocol &
+    SubscriptionProtocol
 > {
-  account: AccountView<Protocol>
+  account: AccountSession<Protocol>
   customer: AccountDID
   provider: ProviderDID
+
+  subscriptions: AccountSubscriptions
+}
+
+export interface AccountSubscriptions {
+  add(subscription: {
+    consumer: SpaceDID
+    limit?: Limit
+  }): Promise<Result<Unit, ProviderAddFailure | InvocationError>>
+
+  list(): Promise<Result<Subscriptions, SubscriptionListFailure | AccessDenied>>
+}
+
+export interface Subscription {
+  provider: ProviderDID
+  customer: AccountDID
+  consumer: SpaceDID
+  limit: Limit
+}
+
+export interface Subscriptions extends Iterable<Subscription> {
+  [key: string]: Subscription
+}
+
+export interface OwnSpace {
+  signer: Signer<DIDKey>
+  name: string
+}
+
+export interface SpaceSession<Protocol extends UnknownProtocol = W3UpProtocol>
+  extends Session<Protocol> {
+  name: string
+  did(): DIDKey
+}
+
+export interface SpaceSessionView<Protocol extends SpaceProtocol>
+  extends SpaceSession<Protocol> {
+  info(): Promise<Result<SpaceInfoResult, SpaceInfoFailure | InvocationError>>
+
+  delegations: SpaceDelegationsView
+
+  blobs: SpaceBlobsView
+}
+
+export interface SpaceUploadsView {
+  create(source: UploadSource): UploadSession
+
+  add(upload: Upload): Promise<Result<Unit, AccessDenied | InvocationError>>
+  remove(upload: Upload): Promise<Result<Unit, AccessDenied | InvocationError>>
+  list(): Promise<Result<Record<ToString<Link>, Upload>, never>>
+}
+
+export interface BlobLike {
+  /**
+   * Returns a ReadableStream which yields the Blob data.
+   */
+  stream: () => ReadableStream
+}
+
+export interface FileLike extends BlobLike {
+  /**
+   * Name of the file. May include path information.
+   */
+  name: string
+}
+
+export type UploadSource = Variant<{
+  blob: BlobLike
+  directory: FileLike[]
+}>
+
+export interface Upload {
+  shard: Link[]
+  root: Link
+}
+
+export interface UploadSession {
+  store(): Promise<Result<Upload, AccessDenied | InvocationError>>
+
+  upload(): Promise<Result<Unit, AccessDenied | InvocationError>>
+}
+
+export interface SpaceBlobsView {
+  allocate(source: {
+    hash: MultihashDigest
+    size: number
+  }): Promise<
+    Result<
+      Allocation | Nope,
+      AccessDenied | InvocationError | DataStoreSaveError
+    >
+  >
+
+  list(): Promise<
+    Result<
+      Record<ToString<MultihashDigest>, BlobInfo>,
+      AccessDenied | InvocationError
+    >
+  >
+  remove(
+    hash: MultihashDigest
+  ): Promise<Result<Unit, AccessDenied | InvocationError | DataStoreSaveError>>
+}
+
+export interface Uploader {
+  /**
+   * Writes contents of the upload to the space without adding it to the upload
+   * list.
+   */
+  store(space?: SpaceView): Promise<Upload>
+  /**
+   * Writes content of the upload to the space and adds it to the upload list.
+   */
+  upload(space?: SpaceView): Promise<Upload>
+}
+
+interface FileUploader extends Uploader {}
+
+interface DirectoryUploader extends Uploader {}
+
+interface ArchiveUploader extends Uploader {}
+
+interface Nope {
+  status: 'done'
+}
+
+interface Allocation {
+  status: 'pending'
+  size: number
+
+  write(
+    blob: StreambleBytes
+  ): Promise<Result<Unit, AccessDenied | InvocationError>>
+}
+
+interface StreambleBytes {
+  stream(): ReadableStream<Uint8Array>
+}
+
+interface SpaceDelegationsView {
+  add(
+    authorization: Authorization
+  ): Promise<Result<Unit, AccessDenied | InvocationError>>
+}
+
+export interface ShareAccess {
+  can: Can
+  expiration?: UTCUnixTimestamp
+}
+
+export interface OwnSpaceView extends OwnSpace {
+  did(): DIDKey
+  rename(name: string): OwnSpace
+
+  toMnemonic(): string
+
+  connect<Protocol extends SpaceProtocol & UsageProtocol>(
+    connection: Connection<Protocol>
+  ): OwnSpaceSession<Protocol>
+
+  share(
+    authority: Signer,
+    access?: ShareAccess
+  ): Promise<Result<SharedSpaceView, never>>
+
+  createRecovery(
+    authority: Principal,
+    access?: { expiration?: UTCUnixTimestamp }
+  ): Promise<Result<Authorization, never>>
+}
+
+export interface OwnSpaceSession<Protocol extends SpaceProtocol & UsageProtocol>
+  extends SpaceSessionView<Protocol> {
+  rename(name: string): OwnSpaceSession<Protocol>
+  did(): DIDKey
+  rename(name: string): OwnSpaceSession<Protocol>
+  toMnemonic(): string
+
+  share(
+    authority: Signer,
+    access?: ShareAccess
+  ): Promise<Result<SharedSpaceSession<Protocol>, Unit>>
+
+  createRecovery(
+    authority: Principal,
+    access?: ShareAccess
+  ): Promise<Result<Authorization, never>>
+}
+
+export interface OwnSpacePromise extends Promise<Result<OwnSpaceView, Unit>> {
+  connect<Protocol extends SpaceProtocol & UsageProtocol>(
+    connection: Connection<Protocol>
+  ): Promise<Result<OwnSpaceSession<Protocol>, Unit>>
+}
+
+export interface SharedSpace {
+  did(): DIDKey
+  authority: DID
+
+  proofs: Delegation[]
+}
+
+export interface SharedSpaceView extends SharedSpace {
+  name: string
+  subject: DID
+
+  connect<Protocol extends UsageProtocol & SpaceProtocol = W3UpProtocol>(
+    connection: Connection<Protocol>
+  ): SharedSpaceSession<Protocol>
+}
+
+export interface SharedSpaceSession<
+  Protocol extends SpaceProtocol = W3UpProtocol
+> extends SharedSpace,
+    SpaceSessionView<Protocol> {
+  name: string
 }

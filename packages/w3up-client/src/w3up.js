@@ -1,10 +1,14 @@
 import * as API from './types.js'
+import * as Space from './space.js'
+import * as Account from './account.js'
 
 /**
  * @template {API.UnknownProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.Session<Protocol>} model
+ * @returns {API.W3UpSession}
  */
-export const create = (model) => new Session(model)
+export const create = (model) =>
+  new Session(/** @type {API.Session<any>} */ (model))
 
 /**
  * @template {API.UnknownProtocol} [Protocol=API.W3UpProtocol]
@@ -16,6 +20,8 @@ class Session {
    */
   constructor(model) {
     this.model = model
+    this.spaces = Space.view(/** @type {API.Session<any>} */ (this.model))
+    this.accounts = Account.view(/** @type {API.Session<any>} */ (this.model))
   }
   get connection() {
     return this.model.connection
@@ -23,17 +29,4 @@ class Session {
   get agent() {
     return this.model.agent
   }
-}
-
-/**
- * @template {API.UnknownProtocol} [Protocol=API.W3UpProtocol]
- */
-class SessionSpaces {
-  /**
-   * @param {API.Session<Protocol>} session
-   */
-  constructor(session) {
-    this.session = session
-  }
-  list() {}
 }

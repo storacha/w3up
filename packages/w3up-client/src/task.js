@@ -15,8 +15,8 @@ const isPromiseLike = (value) =>
 
 /**
  * @template T
- * @param {API.Await<T>} source
- * @returns {Generator<Wait, T, void>}
+ * @param {T} source
+ * @returns {Generator<Wait, Awaited<T>, void>}
  */
 export const wait = function* (source) {
   if (isPromiseLike(source)) {
@@ -24,15 +24,15 @@ export const wait = function* (source) {
     yield source.then((value) => {
       ok = value
     })
-    return /** @type {T} */ (ok)
+    return /** @type {Awaited<T>} */ (ok)
   } else {
-    return source
+    return /** @type {Awaited<T>} */ (source)
   }
 }
 
 /**
  * @template {API.Result} R
- * @param {API.Await<R>} source
+ * @param {PromiseLike<R>|R} source
  * @returns {Generator<Wait|R, R['ok'] & {}>}
  */
 export const join = function* (source) {
@@ -51,7 +51,7 @@ export const join = function* (source) {
  * @param {() => Generator<R|Wait, API.Result<Ok, Error>, void>} task
  * @returns {Promise<API.Result<Ok, (R['error'] & {}) | Error>>}
  */
-export const execute = async (task) => {
+const execute = async (task) => {
   const process = task()
   let state = process.next()
   try {
@@ -70,6 +70,8 @@ export const execute = async (task) => {
     return { error: /** @type {Error} */ (cause) }
   }
 }
+
+export { execute as try }
 
 /**
  * @template {API.Result} R

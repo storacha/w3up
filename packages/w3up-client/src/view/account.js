@@ -2,16 +2,16 @@ import * as API from '../types.js'
 import * as Access from '../capability/access.js'
 import * as Plan from '../capability/plan.js'
 import * as Subscription from '../capability/subscription.js'
-import { Delegation, importAuthorization } from '../agent.js'
 import { add as provision, AccountDID } from '../capability/provider.js'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
+import { Delegation } from '@ucanto/core'
 import * as Result from '../result.js'
 
 export { fromEmail }
 
 class View {
   /**
-   * @param {API.Session<API.W3Protocol>} session
+   * @param {API.Session<API.W3UpProtocol>} session
    */
   constructor(session) {
     this.session = session
@@ -28,7 +28,7 @@ class View {
  * List all accounts that agent has stored access to. Returns a dictionary
  * of accounts keyed by their `did:mailto` identifier.
  *
- * @param {API.Session<API.W3Protocol>} session
+ * @param {API.Session<API.W3UpProtocol>} session
  * @param {object} query
  * @param {API.DID<'mailto'>} [query.account]
  */

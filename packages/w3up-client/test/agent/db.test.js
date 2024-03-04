@@ -3,7 +3,7 @@ import * as Test from '../test.js'
 import * as Space from '../../src/capability/space.js'
 import * as Account from '../../src/agent/login.js'
 import * as Delegation from '../../src/agent/delegation.js'
-import * as Spaces from '../../src/agent/space.js'
+import * as Spaces from '../../src/space/query.js'
 import { createLegacyLink, delegate } from '@ucanto/core'
 import { Absentee, Verifier } from '@ucanto/principal'
 import * as Capability from '@web3-storage/capabilities'
@@ -11,7 +11,7 @@ import * as Cap from '../../src/agent/capability.js'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
 
 import { alice, bob, mallory, w3up } from '../fixtures/principals.js'
-import * as Authorization from '../../src/agent/authorization.js'
+import * as Authorization from '../../src/authorization/query.js'
 
 /**
  * @type {Test.BasicSuite}
@@ -136,7 +136,7 @@ export const testDB = {
     ])
 
     const spaces = Authorization.find(db, {
-      subject: { like: 'did:key:%' },
+      subject: { glob: 'did:key:*' },
       can: { 'store/add': [] },
       authority: alice.did(),
     })

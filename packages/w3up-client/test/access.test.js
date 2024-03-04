@@ -1,7 +1,7 @@
 import * as Test from './test.js'
 import * as Access from '../src/access.js'
 import * as Result from '../src/result.js'
-import * as Authorization from '../src/agent/authorization.js'
+import * as Authorization from '../src/authorization/query.js'
 import * as Space from '../src/space.js'
 import * as API from '../src/types.js'
 import * as DB from '../src/agent/db.js'
