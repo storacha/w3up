@@ -1,5 +1,5 @@
 import { Parallel } from 'parallel-transform-web'
-import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash/async'
+import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
@@ -123,6 +123,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   /** @type {import('./types.js').AnyLink?} */
   let root = null
   const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
+  const hasher = options.pieceHasher ?? PieceHasher
   await blocks
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(
@@ -131,7 +132,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
         const [cid, piece] = await Promise.all([
           Store.add(conf, bytes, options),
           (async () => {
-            const multihashDigest = await PieceHasher.digest(bytes)
+            const multihashDigest = await hasher.digest(bytes)
             return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
               Link.create(raw.code, multihashDigest)
             )

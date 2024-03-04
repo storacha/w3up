@@ -2,7 +2,7 @@ import type {
   FetchOptions as IpfsUtilsFetchOptions,
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types.js'
-import { Link, UnknownLink, Version } from 'multiformats/link'
+import { Link, UnknownLink, Version, MultihashHasher } from 'multiformats'
 import { Block } from '@ipld/unixfs'
 import {
   ServiceMethod,
@@ -44,6 +44,7 @@ import {
   UsageReportSuccess,
   UsageReportFailure,
 } from '@web3-storage/capabilities/types'
+import { code as pieceHashCode } from '@web3-storage/data-segment/multihash'
 
 type Override<T, R> = Omit<T, keyof R> & R
 
@@ -271,6 +272,7 @@ export interface UploadOptions
     ShardStoringOptions,
     UploadProgressTrackable {
   onShardStored?: (meta: CARMetadata) => void
+  pieceHasher?: MultihashHasher<typeof pieceHashCode>
 }
 
 export interface UploadDirectoryOptions

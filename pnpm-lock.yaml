@@ -467,9 +467,9 @@ importers:
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
-      fr32-sha2-256-trunc254-padded-binary-tree-multihash:
-        specifier: ^3.3.0
-        version: 3.3.0
+      '@web3-storage/data-segment':
+        specifier: ^5.1.0
+        version: 5.1.0
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14
@@ -4411,6 +4411,14 @@ packages:
       sync-multihash-sha2: 1.0.0
     dev: true
 
+  /@web3-storage/data-segment@5.1.0:
+    resolution: {integrity: sha512-FYdmtKvNiVz+maZ++k4PdD43rfJW5DeagLpstq2y84CyOKNRBWbHLCZ/Ec5zT9iGI+0WgsCGbpC/WlG0jlrnhA==}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.6
+      multiformats: 11.0.2
+      sync-multihash-sha2: 1.0.0
+    dev: false
+
   /@web3-storage/sigv4@1.0.2:
     resolution: {integrity: sha512-ZUXKK10NmuQgPkqByhb1H3OQxkIM0CIn2BMPhGQw7vQw8WIzrBkk9IJiAVfJ/UVBFrf6uzPbx2lEBLt4diCMnQ==}
     dependencies:
@@ -7062,10 +7070,6 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
     dev: true
-
-  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@3.3.0:
-    resolution: {integrity: sha512-O11VDxPmPvbQj5eac2BJXyieNacyd+RCMhwOzXQQM/NCI25x3c32YWB4/JwgOWPCpKnNXF6lpK/j0lj7GWOnYQ==}
-    dev: false
 
   /fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
