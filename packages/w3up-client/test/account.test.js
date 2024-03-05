@@ -136,6 +136,7 @@ export const testAccount = {
       )
 
       assert.deepEqual(
+        // @ts-expect-error
         space.agent.signer.encode(),
         signer.encode(),
         'arrived to same signer'

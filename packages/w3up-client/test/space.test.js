@@ -97,7 +97,7 @@ export const testSpace = {
 
       return { ok: {} }
 
-      const size = 1138
+      // const size = 1138
       // const archive = await randomCAR(size)
       // await client.agent.invokeAndExecute(StoreCapabilities.add, {
       //   nb: {

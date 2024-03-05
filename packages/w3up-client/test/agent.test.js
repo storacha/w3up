@@ -1,6 +1,5 @@
 import * as Test from './test.js'
 import { alice, bob, mallory, service } from './fixtures/principals.js'
-import * as API from '../src/types.js'
 import * as Agent from '../src/agent.js'
 import * as Result from '../src/result.js'
 

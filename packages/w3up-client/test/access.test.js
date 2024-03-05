@@ -1,7 +1,7 @@
 import * as Test from './test.js'
 import * as Access from '../src/access.js'
 import * as Result from '../src/result.js'
-import * as Authorization from '../src/authorization/query.js'
+import * as Authorization from '../src/authorization.js'
 import * as Space from '../src/space.js'
 import * as API from '../src/types.js'
 import * as DB from '../src/agent/db.js'
@@ -26,7 +26,7 @@ export const testAccess = {
     assert.ok(access.proofs.length > 0)
 
     const results = Authorization.find(session.agent.db, {
-      authority: session.agent.did(),
+      audience: session.agent.did(),
       can: { 'store/add': [] },
     })
 
@@ -34,7 +34,7 @@ export const testAccess = {
 
     Result.unwrap(await access.save())
     const [login] = Authorization.find(session.agent.db, {
-      authority: session.agent.did(),
+      audience: session.agent.did(),
       can: { 'store/add': [] },
     })
     assert.ok(login)
@@ -45,7 +45,7 @@ export const testAccess = {
 
     const [auth] = Authorization.find(session.agent.db, {
       can: { 'store/add': [] },
-      authority: session.agent.did(),
+      audience: session.agent.did(),
       subject: account,
     })
 
@@ -59,11 +59,13 @@ export const testAccess = {
     assert,
     { session, provisionsStorage }
   ) => {
-    const space = await Space.create({ name: 'main' })
+    const space = Result.unwrap(await Space.create({ name: 'main' }))
+    const { proofs } = Result.unwrap(await space.share(session.agent.signer))
     Result.unwrap(
-      await DB.transact(session.agent.db, [
-        DB.assert({ proof: await space.createAuthorization(session.agent) }),
-      ])
+      await DB.transact(
+        session.agent.db,
+        proofs.map((proof) => DB.assert({ proof }))
+      )
     )
 
     Result.unwrap(
@@ -76,21 +78,23 @@ export const testAccess = {
       })
     )
 
-    const shared = await Space.generate({ name: 'shared' })
-    const delegation = await shared.createAuthorization(session.agent)
+    const shared = Result.unwrap(await Space.create({ name: 'shared' }))
+    const { proofs: delegations } = Result.unwrap(
+      await shared.share(session.agent.signer)
+    )
 
     const result = await Access.delegate(session, {
-      delegations: [delegation],
+      delegations,
       subject: space.did(),
     })
 
     assert.ok(result.ok)
 
     const claim = Result.unwrap(await Access.claim(session))
-    assert.deepEqual(claim.proofs, [delegation])
+    assert.deepEqual(claim.proofs, delegations)
 
     const none = Authorization.find(session.agent.db, {
-      authority: session.agent.did(),
+      audience: session.agent.did(),
       subject: shared.did(),
       can: { 'store/add': [] },
     })
@@ -100,7 +104,7 @@ export const testAccess = {
     Result.unwrap(await claim.save())
 
     const [auth] = Authorization.find(session.agent.db, {
-      authority: session.agent.did(),
+      audience: session.agent.did(),
       subject: shared.did(),
       can: { 'store/add': [] },
     })
@@ -111,7 +115,7 @@ export const testAccess = {
         authority: session.agent.did(),
         subject: shared.did(),
         can: { 'store/add': [] },
-        proofs: [delegation],
+        proofs: delegations,
       }),
       'claimed access has been added to an agent'
     )
