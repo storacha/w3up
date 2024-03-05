@@ -52,6 +52,12 @@ export const match = (
 ) => hasSubject(capability, subject).and(hasAbility(capability, can))
 
 /**
+ * Matches forwarding capability, that is a capability where the subject
+ * (`with`) is `ucan:*`. Forwarding capability allows re-delegation of
+ * the capabilities matching `can` field from all the subjects. This is
+ * typically used during the login process where account re-delegates
+ * everything delegated to it to it the logged in agent.
+ *
  * @param {DB.Term<DB.Entity>} capability
  * @param {object} constraints
  * @param {DB.Term<string>} [constraints.subject]

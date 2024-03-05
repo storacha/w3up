@@ -5,7 +5,6 @@ import { importDAG, isDelegation } from '@ucanto/core/delegation'
 import * as Association from './db/association.js'
 import * as Meta from './meta.js'
 import { Capability } from '../authorization/query.js'
-import { Delegation } from '@ucanto/core'
 
 /**
  * @param {DB.Term<DB.Link>} ucan
@@ -73,31 +72,48 @@ export const isTooEarly = (ucan, time) => {
  * @param {DB.Term<DB.Entity>} [constraints.capability]
  * @param {DB.Term<API.UTCUnixTimestamp>} [constraints.time]
  * @param {DB.Term<API.DID>} [constraints.audience]
+ * @param {DB.Term<API.DID>} [constraints.issuer]
  */
 export const match = (
   ucan,
-  { capability = DB.link(), audience = DB.string(), time = DB.integer() }
+  {
+    capability = DB.link(),
+    audience = DB.string(),
+    issuer = DB.string(),
+    time = DB.integer(),
+  }
 ) =>
   DB.match([ucan, 'ucan/capability', capability])
     .and(DB.match([ucan, 'ucan/audience', audience]))
+    .and(DB.match([ucan, 'ucan/issuer', issuer]))
     .and(DB.not(isExpired(ucan, time)))
     .and(DB.not(isTooEarly(ucan, time)))
 
 /**
+ * Matches forwarding delegations a.k.a power line delegation where `issuer`
+ * delegates `ucan:*` resource to the `audience` implying that it re-delegates
+ * all resources delegated to it.
+ *
  * @param {DB.Term<DB.Entity>} ucan
  * @param {object} constraints
  * @param {DB.Term<DB.Entity>} [constraints.capability]
  * @param {DB.Term<API.UTCUnixTimestamp>} [constraints.time]
  * @param {DB.Term<API.DID>} [constraints.audience]
+ * @param {DB.Term<API.DID>} [constraints.issuer]
  * @param {DB.Term<string>} [constraints.can]
  */
 export const forwards = (
   ucan,
-  { audience = DB.string(), time = DB.integer(), can = DB.string() }
+  {
+    audience = DB.string(),
+    issuer = DB.string(),
+    time = DB.integer(),
+    can = DB.string(),
+  }
 ) => {
   const capability = DB.link()
   return Capability.forwards(capability, { can }).and(
-    match(ucan, { capability, audience, time })
+    match(ucan, { capability, issuer, audience, time })
   )
 }
 

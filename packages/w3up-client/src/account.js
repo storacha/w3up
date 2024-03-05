@@ -9,14 +9,14 @@ import * as Space from './space.js'
 export { DIDMailto }
 
 /**
- * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.Session<Protocol>} session
  * @returns {API.AccountsSession<Protocol>}
  */
 export const view = (session) => new AccountsView(session)
 
 /**
- * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  */
 export class AccountsView {
   /**
@@ -73,7 +73,7 @@ export class AccountsView {
 }
 
 /**
- * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.AccessRequestProvider & API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.Session<Protocol>} session
  * @param {object} source
  * @param {API.EmailAddress} source.email
@@ -118,7 +118,7 @@ export const login = async (session, { email, signal }) => {
 }
 
 /**
- * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.Session<Protocol>} session
  * @returns {Record<API.AccountDID, AccountSession<Protocol>>}
  */
@@ -144,7 +144,7 @@ export const list = (session) => {
  * Gets the account view for the login with a given email address. Returns
  * `undefined` if no matching login is found.
  *
- * @template {API.PlanProtocol & API.ProviderProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.Session<Protocol>} session
  * @param {API.EmailAddress} email
  */
@@ -194,11 +194,11 @@ export const remove = async ({ agent }, account) => {
 }
 
 /**
- * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  */
 class AccountSession {
   /**
-   * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+   * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
    * @param {object} source
    * @param {object} source.login
    * @param {API.DidMailto} source.login.id

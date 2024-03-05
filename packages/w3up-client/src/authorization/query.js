@@ -15,7 +15,7 @@ export { Capability, Delegation, Text }
  * @property {string} [need]
  *
  * @typedef {object} Selector
- * @property {DB.Term<API.DID>} authority
+ * @property {DB.Term<API.DID>} audience
  * @property {DB.Term<API.DID>} subject
  * @property {ProofSelector[]} proofs
  */
@@ -26,7 +26,7 @@ export { Capability, Delegation, Text }
  * `selector.subject` when time is `selector.time`.
  *
  * @param {object} selector
- * @param {API.TextConstraint} selector.authority
+ * @param {API.TextConstraint} selector.audience
  * @param {API.Can} [selector.can]
  * @param {API.TextConstraint} [selector.subject]
  * @param {API.UTCUnixTimestamp} [selector.time]
@@ -34,31 +34,51 @@ export { Capability, Delegation, Text }
  */
 export const query = ({ can = {}, time = Date.now() / 1000, ...selector }) => {
   const subject = DB.string()
-  const authority = DB.string()
+  const audience = DB.string()
+  // Get all abilities we will try to find proofs for, at the moment we do not
+  // allow passing constraints which is why we simply use keys.
   const need = Object.keys(can)
-  /** @type {{proof: DB.Term<DB.Entity>, attestation: DB.Term<DB.Entity>, can: DB.Term<API.Ability>, need?: string }[]} */
-  const proofs = need.length
-    ? need.map((need) => ({
-        proof: DB.link(),
-        need,
-        can: DB.string(),
-        attestation: DB.link(),
-      }))
-    : [{ proof: DB.link(), can: DB.string(), attestation: DB.link() }]
+  // For each requested ability we generate group of corresponding variables
+  // that we will try to resolve, however if no abilities were requested we
+  // will generate a single group without `need` field.
+  const proofs = (need.length > 0 ? need : [undefined]).map((need) => ({
+    // Issuer of the proof
+    issuer: DB.string(),
+    // Ability that is delegated
+    can: DB.string(),
+    // Proof that delegates needed ability
+    proof: DB.link(),
+    // Attestation for the given proof if it was issued by an account did.
+    attestation: DB.link(),
+    // Omit need if it was not provided
+    ...(need && { need }),
+  }))
 
-  const where = proofs.map(({ proof, need, can, attestation }) => {
+  // Here we generate selector clause for each proof that we will try to match
+  const where = proofs.map(({ proof, issuer, need, can, attestation }) => {
+    // main clause will find a relevant proof.
     const clause = match(proof, {
       subject,
       can,
-      authority,
+      audience,
+      issuer,
       time,
     })
 
+    // Then we try to find an attestations for the proof, however attestations
+    // are required only for `did:mailto:` issued proofs, there for we compose
+    // this confusing `or` clause that succeeds either when proof was not
+    // issued by `did:mailto:` principal or when we have an attestation for
+    // the found proof.
     const attestations = DB.or(
-      DB.not(DB.Constraint.glob(subject, 'did:mailto:*')),
-      Attestation.match(attestation, { proof, time, audience: authority })
+      DB.not(DB.Constraint.glob(issuer, 'did:mailto:*')),
+      Attestation.match(attestation, { proof, time, audience })
     )
 
+    // If `need` was provided we constraint `can` of the proof by it, if it
+    // was not provided we are looking for all proofs so we do not restrict it.
+    // We also join primary clause with attestation clause so that only proofs
+    // matched either do not require attestations or are accompanied by them.
     return (need ? clause.and(DB.glob(need, can)) : clause).and(attestations)
   })
 
@@ -66,18 +86,20 @@ export const query = ({ can = {}, time = Date.now() / 1000, ...selector }) => {
     select: {
       proofs,
       subject,
-      authority,
+      audience,
     },
     where: [
       ...where,
+      // If subject pattern was provided we constraint matches by it.
       Text.match(subject, selector.subject ?? { glob: '*' }),
-      Text.match(authority, selector.authority),
+      // If audience was provided we constraint matches by it.
+      Text.match(audience, selector.audience),
     ],
   }
 }
 
 /**
- * Matches a delegation that authorizes the `selector.authority` with an ability
+ * Matches a delegation that authorizes the `selector.audience` with an ability
  * to invoke `selector.can` on `selector.subject` at `selector.time`. Please note
  * that it will only match explicit authorization that is one that specifies
  * `selector.subject` and will not match implicit authorizations that uses
@@ -88,12 +110,14 @@ export const query = ({ can = {}, time = Date.now() / 1000, ...selector }) => {
  * @param {DB.Term<API.UTCUnixTimestamp>} [selector.time]
  * @param {DB.Term<string>} [selector.can]
  * @param {DB.Term<string>} [selector.subject]
- * @param {DB.Term<API.DID>} [selector.authority]
+ * @param {DB.Term<API.DID>} [selector.audience]
+ * @param {DB.Term<API.DID>} [selector.issuer]
  */
 export const explicit = (
   delegation,
   {
-    authority = DB.string(),
+    audience = DB.string(),
+    issuer = DB.string(),
     subject = DB.string(),
     can = DB.string(),
     time = DB.integer(),
@@ -104,14 +128,15 @@ export const explicit = (
   return Capability.match(capability, { can, subject }).and(
     Delegation.match(delegation, {
       capability,
-      audience: authority,
+      audience,
+      issuer,
       time,
     })
   )
 }
 
 /**
- * Matches a delegation that authorizes the `selector.authority` with an ability
+ * Matches a delegation that authorizes the `selector.audience` with an ability
  * to invoke `selector.can` on `selector.subject` at `selector.time`. Please note
  * that it will only match implicit authorization that is one that has `ucan:*`
  * subject and is either issued by `selector.subject` or has a proof which
@@ -122,7 +147,8 @@ export const explicit = (
  * @param {DB.Term<API.UTCUnixTimestamp>} [selector.time]
  * @param {DB.Term<API.Ability>} [selector.can]
  * @param {DB.Term<API.DID>} [selector.subject]
- * @param {DB.Term<API.DID>} [selector.authority]
+ * @param {DB.Term<API.DID>} [selector.audience]
+ * @param {DB.Term<API.DID>} [selector.issuer]
  * @returns {DB.Clause}
  */
 export const implicit = (
@@ -131,13 +157,15 @@ export const implicit = (
     subject = DB.string(),
     can = DB.string(),
     time = DB.integer(),
-    authority = DB.string(),
+    audience = DB.string(),
+    issuer = DB.string(),
   }
 ) => {
   const proof = DB.link()
   return DB.and(
     Delegation.forwards(delegation, {
-      audience: authority,
+      issuer,
+      audience,
       can,
       time,
     }),
@@ -146,9 +174,9 @@ export const implicit = (
       DB.and(
         Delegation.hasProof(delegation, proof),
         DB.or(
-          explicit(proof, { subject, can, time })
+          explicit(proof, { audience: issuer, subject, can, time })
           // TODO: Add support for recursive implicit delegation
-          // implicit(proof, { subject, can, time, authority })
+          // implicit(proof, { subject, can, time, audience })
         )
       )
     )
@@ -156,23 +184,29 @@ export const implicit = (
 }
 
 /**
+ * Matches a delegation that authorizes the `selector.audience` with an ability
+ * to invoke `selector.can` on `selector.subject` at `selector.time`. It will
+ * match both explicit and implicit authorizations.
+ *
  * @param {DB.Term<DB.Link>} delegation
  * @param {object} selector
  * @param {DB.Term<API.UTCUnixTimestamp>} [selector.time]
  * @param {DB.Term<API.Ability>} [selector.can]
  * @param {DB.Term<API.DID>} [selector.subject]
- * @param {DB.Term<API.DID>} [selector.authority]
+ * @param {DB.Term<API.DID>} [selector.audience]
+ * @param {DB.Term<API.DID>} [selector.issuer]
  */
 export const match = (
   delegation,
   {
-    authority = DB.string(),
+    audience = DB.string(),
     subject = DB.string(),
+    issuer = DB.string(),
     can = DB.string(),
     time = DB.integer(),
   }
 ) =>
   DB.or(
-    explicit(delegation, { authority, can, subject, time }),
-    implicit(delegation, { authority, can, subject, time })
+    explicit(delegation, { issuer, audience, can, subject, time }),
+    implicit(delegation, { issuer, audience, can, subject, time })
   )

@@ -2,15 +2,17 @@ import * as API from '../types.js'
 import * as Access from '../access.js'
 
 /**
- * @param {API.SpaceSession} session
+ * @param {API.Session<API.AccessProtocol>} session
+ * @returns {API.SpaceDelegationsView}
  */
 export const view = (session) => new Delegations(session)
 
 /**
+ * @implements {API.SpaceDelegationsView}
  */
 class Delegations {
   /**
-   * @param {API.SpaceSession} session
+   * @param {API.Session<API.AccessProtocol>} session
    */
   constructor(session) {
     this.session = session
@@ -23,7 +25,7 @@ class Delegations {
   add(authorization) {
     return Access.delegate(this.session, {
       delegations: authorization.proofs,
-      subject: this.session.did(),
+      subject: /** @type {API.DIDKey} */ (this.session.agent.signer.did()),
     })
   }
 

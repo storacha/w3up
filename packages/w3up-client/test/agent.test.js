@@ -78,7 +78,9 @@ export const testAgent = {
 
     const tr = await Agent.DB.transact(agent.db, [
       {
-        signer: bob.toArchive(),
+        assert: {
+          signer: bob.toArchive(),
+        },
       },
     ])
 

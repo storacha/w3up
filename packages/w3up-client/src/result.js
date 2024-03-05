@@ -15,8 +15,3 @@ export const unwrap = ({ ok, error }) => {
     return /** @type {T} */ (ok)
   }
 }
-
-/**
- * Also expose as `Result.try` which is arguably more clear.
- */
-export { unwrap as try }

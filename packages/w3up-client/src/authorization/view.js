@@ -40,7 +40,7 @@ export const get = (db, { authority, subject, can }) => {
     }
   } else {
     const result = find(db, {
-      authority,
+      audience: authority,
       subject,
       can,
     })
@@ -64,7 +64,7 @@ export const get = (db, { authority, subject, can }) => {
  *
  * @param {API.Database} db
  * @param {object} query
- * @param {API.TextConstraint} query.authority
+ * @param {API.TextConstraint} query.audience
  * @param {API.TextConstraint} [query.subject]
  * @param {API.Can} [query.can]
  * @param {API.UTCUnixTimestamp} [query.time]
@@ -72,14 +72,14 @@ export const get = (db, { authority, subject, can }) => {
  */
 export const find = (
   db,
-  { subject = { glob: '*' }, authority, time = Date.now() / 1000, can }
+  { subject = { glob: '*' }, audience, time = Date.now() / 1000, can }
 ) =>
   DB.query(
     db.index,
     Query.query({
       can,
       subject,
-      authority,
+      audience,
       time,
     })
   ).map((match) => select(db, match))
@@ -88,7 +88,7 @@ export const find = (
  * @param {API.Database} db
  * @param {DB.InferBindings<Query.Selector>} match
  */
-export const select = (db, { authority, subject, proofs }) => {
+export const select = (db, { audience, subject, proofs }) => {
   // query engine will provide proof for each requested capability, so we may
   // have duplicates here, which we prune.
   const [, ...keys] = new Set([
@@ -98,7 +98,7 @@ export const select = (db, { authority, subject, proofs }) => {
   ])
 
   return from({
-    authority: /** @type {API.DID} */ (authority),
+    authority: /** @type {API.DID} */ (audience),
     subject: /** @type {API.SpaceDID} */ (subject),
     can: Object.fromEntries(proofs.map(({ can, need }) => [need ?? can, []])),
     // Dereference proofs from the store.

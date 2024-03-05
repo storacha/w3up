@@ -54,7 +54,7 @@ class SharedSpace {
   }
 
   /**
-   * @template {API.UsageProtocol & API.SpaceProtocol} Protocol
+   * @template {API.UsageProtocol & API.SpaceProtocol & API.AccessProtocol} Protocol
    * @param {API.Connection<Protocol>} connection
    * @returns {API.SharedSpaceSession<Protocol>}
    */
@@ -74,7 +74,7 @@ class SharedSpace {
  */
 
 /**
- * @template {API.UsageProtocol & API.SpaceProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.UsageProtocol & API.SpaceProtocol & API.AccessProtocol} [Protocol=API.W3UpProtocol]
  * @implements {API.SharedSpaceSession<Protocol>}
  */
 class SharedSpaceSession {
@@ -89,9 +89,7 @@ class SharedSpaceSession {
     this.model = model
     this.usage = Usage.view(this)
 
-    this.delegations = Delegations.view(
-      /** @type {API.SpaceSession<any>} */ (this)
-    )
+    this.delegations = Delegations.view(this)
   }
   get connection() {
     return this.model.connection

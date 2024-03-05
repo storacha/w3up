@@ -11,15 +11,21 @@ import * as Delegation from './delegation.js'
  *
  * @param {DB.Term<DB.Entity>} ucan
  * @param {object} constraints
+ * @param {DB.Term<DB.Link>} constraints.proof
+ * @param {DB.Term<API.UTCUnixTimestamp>} constraints.time
  * @param {DB.Term<DB.Entity>} [constraints.capability]
  * @param {DB.Term<API.DID>} [constraints.subject]
- * @param {DB.Term<API.UTCUnixTimestamp>} constraints.time
- * @param {DB.Term<API.DID>} constraints.audience
- * @param {DB.Term<DB.Link>} constraints.proof
+ * @param {DB.Term<API.DID>} [constraints.audience]
  */
 export const match = (
   ucan,
-  { capability = DB.link(), subject = DB.string(), audience, proof, time }
+  {
+    capability = DB.link(),
+    subject = DB.string(),
+    audience = DB.string(),
+    proof,
+    time,
+  }
 ) =>
   Capability.match(capability, {
     subject,

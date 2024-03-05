@@ -63,7 +63,7 @@ export const remove = (session, space) =>
   )
 
 /**
- * @template {API.PlanProtocol & API.UsageProtocol & API.SpaceProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.UsageProtocol & API.SpaceProtocol & API.AccessProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.Session<Protocol>} session
  * @param {{space:API.DIDKey, name?: string, proof: DB.Link}[]} spaces
  */
@@ -130,6 +130,7 @@ class SessionSpaces {
    *
    * @param {object} source
    * @param {string} source.name
+   * @returns {Promise<API.Result<API.OwnSpaceSession<API.W3UpProtocol>, never>>}
    */
   async create(source) {
     return OwnSpace.create(source).connect(this.session.connection)

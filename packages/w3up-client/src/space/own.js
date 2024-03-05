@@ -9,6 +9,7 @@ import * as DB from '../agent/db.js'
 import * as Session from './session.js'
 import * as Authorization from '../authorization.js'
 import * as Delegations from './delegations.js'
+import * as Usage from './usage.js'
 
 /**
  * @param {object} options
@@ -172,7 +173,7 @@ class OwnSpacePromise extends Promise {
    * Connects to a remote replica of the owned space so that it can be used to
    * query state of the replica and invoke actions on it.
    *
-   * @template {API.SpaceProtocol & API.UsageProtocol} Protocol
+   * @template {API.SpaceProtocol & API.UsageProtocol & API.AccessProtocol} Protocol
    * @param {API.Connection<Protocol>} connection
    * @returns {Promise<API.Result<API.OwnSpaceSession<Protocol>, never>>}
    */
@@ -236,7 +237,7 @@ class OwnSpace {
    * Connects to a remote replica of the owned space so that it can be used to
    * query state of the replica and invoke actions on it.
    *
-   * @template {API.SpaceProtocol & API.UsageProtocol} Protocol
+   * @template {API.SpaceProtocol & API.UsageProtocol & API.AccessProtocol} Protocol
    * @param {API.Connection<Protocol>} connection
    * @returns {API.OwnSpaceSession<Protocol>}
    */
@@ -286,7 +287,7 @@ class OwnSpace {
  * Represents a remote replica of the owned space. It can be used to query
  * state of the replica and invoke actions on it.
  *
- * @template {API.SpaceProtocol & API.UsageProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.SpaceProtocol & API.UsageProtocol & API.AccessProtocol} [Protocol=API.W3UpProtocol]
  * @implements {API.OwnSpaceSession<Protocol>}
  */
 class OwnSpaceSession {
@@ -299,9 +300,8 @@ class OwnSpaceSession {
   constructor(model) {
     this.model = model
 
-    this.delegations = Delegations.view(
-      /** @type {API.SpaceSession<any>} */ (this)
-    )
+    this.usage = Usage.view(this)
+    this.delegations = Delegations.view(this)
   }
 
   get signer() {

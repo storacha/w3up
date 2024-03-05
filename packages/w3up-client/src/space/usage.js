@@ -4,7 +4,7 @@ import * as Task from '../task.js'
 import * as Agent from '../agent.js'
 
 /**
- * @param {API.SharedSpaceSession<API.UsageProtocol>} session
+ * @param {API.Session<API.UsageProtocol>} session
  * @returns
  */
 export const view = (session) => new UsageSession(session)
@@ -12,14 +12,14 @@ export const view = (session) => new UsageSession(session)
 /**
  * Get a usage report for the period.
  *
- * @param {API.SharedSpaceSession<API.UsageProtocol>} session
+ * @param {API.Session<API.UsageProtocol>} session
  * @param {object} options
  * @param {API.SpaceDID} options.space
  * @param {{ from: Date, to: Date }} options.period
  * @param {API.Delegation[]} [options.proofs]
  */
-export const report = async (session, { space, period, proofs = [] }) =>
-  Task.execute(function* () {
+export const report = async (session, { space, period }) =>
+  Task.try(function* () {
     const auth = yield* Task.join(
       Agent.authorize(session.agent, {
         subject: space,
@@ -47,25 +47,22 @@ export const report = async (session, { space, period, proofs = [] }) =>
     return receipt.out
   })
 
+/**
+ * @implements {API.SpaceUsageView}
+ */
 class UsageSession {
   /**
-   * @param {API.SharedSpaceSession<API.UsageProtocol>} session
+   * @param {API.Session<API.UsageProtocol>} session
    */
   constructor(session) {
     this.session = session
   }
-  /**
-   * @param {object} options
-   * @param {API.SpaceDID} options.space
-   * @param {{ from: Date, to: Date }} options.period
-   * @param {API.Delegation[]} [options.proofs]
-   */
-  report(options) {
-    return report(this.session, options)
-  }
 
+  /**
+   * @returns {Promise<API.Result<bigint, API.UsageReportFailure | API.InvocationError>>}
+   */
   async get() {
-    const space = /** @type {API.DIDKey} */ (this.session.did())
+    const space = /** @type {API.DIDKey} */ (this.session.agent.signer.did())
     const now = new Date()
     const period = {
       // we may not have done a snapshot for this month _yet_, so get report
@@ -86,8 +83,19 @@ class UsageSession {
 
     return {
       /* c8 ignore next */
-      ok: usage?.size.final == null ? undefined : BigInt(usage.size.final),
+      ok: BigInt(usage.size.final ?? -1),
     }
+  }
+
+  /**
+   * Get a usage report for the passed space in the given time period.
+   *
+   * @param {{from: Date, to: Date}} period
+   * @returns {Promise<API.Result<API.UsageReportSuccess, API.AccessDenied | API.UsageReportFailure | API.InvocationError>>}
+   */
+  async report(period) {
+    const space = /** @type {API.DIDKey} */ (this.session.agent.signer.did())
+    return report(this.session, { space, period })
   }
 }
 

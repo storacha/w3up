@@ -5,9 +5,8 @@ import * as API from './types.js'
 export { DIDMailto }
 
 import * as Access from '@web3-storage/capabilities/access'
-import { Failure, fail, DID } from '@ucanto/core'
+import { Failure, DID } from '@ucanto/core'
 import { bytesToDelegations } from './agent/encoding.js'
-import * as Authorization from './authorization/query.js'
 import * as DB from './agent/db.js'
 import * as Agent from './agent.js'
 
@@ -18,16 +17,13 @@ import * as Agent from './agent.js'
  * Returns error result if agent has no current space and no space was provided.
  * Also returns error result if invocation fails.
  *
- * @param {API.Session<API.W3UpProtocol>} session - w3up service session.
+ * @param {API.Session<API.AccessProtocol>} session - w3up service session.
  * @param {object} input
  * @param {API.Delegation[]} input.delegations - Delegations to propagate.
- * @param {API.SpaceDID} [input.subject] - Space to propagate through.
+ * @param {API.SpaceDID} input.subject - Space to propagate through.
+ * @returns {Promise<API.Result<API.Unit, API.AccessDenied | API.AccessDelegateFailure | API.InvocationError>>}
  */
 export const delegate = async (session, { delegations, subject }) => {
-  if (!subject) {
-    return fail('Space must be specified')
-  }
-
   const entries = Object.values(delegations).map((proof) => [
     proof.cid.toString(),
     proof.cid,

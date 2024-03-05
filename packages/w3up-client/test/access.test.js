@@ -19,10 +19,10 @@ export const testAccess = {
     assert.deepEqual(message.to, email)
     await grantAccess(message)
 
-    assert.deepEqual(request.authority, session.agent.did())
+    assert.deepEqual(request.authority, session.agent.signer.did())
     assert.ok(request.expiration.getTime() >= Date.now())
 
-    const access = Result.try(await request.claim())
+    const access = Result.unwrap(await request.claim())
     assert.ok(access.proofs.length > 0)
 
     const results = Authorization.find(session.agent.db, {
@@ -59,7 +59,7 @@ export const testAccess = {
     assert,
     { session, provisionsStorage }
   ) => {
-    const space = await Space.generate({ name: 'main' })
+    const space = await Space.create({ name: 'main' })
     Result.unwrap(
       await DB.transact(session.agent.db, [
         DB.assert({ proof: await space.createAuthorization(session.agent) }),

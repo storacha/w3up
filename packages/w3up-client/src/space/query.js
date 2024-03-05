@@ -62,7 +62,12 @@ export const explicit = (
   }
 ) => {
   return DB.and(
-    Authorization.explicit(ucan, { authority, can, subject: space, time }),
+    Authorization.explicit(ucan, {
+      audience: authority,
+      can,
+      subject: space,
+      time,
+    }),
     named(ucan, name),
     Text.match(space, { glob: 'did:key:*' })
   )
@@ -91,7 +96,12 @@ export const match = (
   return DB.or(
     // It may be a an explicit delegation
     DB.and(
-      Authorization.explicit(ucan, { authority, can, subject: space, time }),
+      Authorization.explicit(ucan, {
+        audience: authority,
+        can,
+        subject: space,
+        time,
+      }),
       named(ucan, name)
     ),
     // Or it could be an implicit delegation issued by the space

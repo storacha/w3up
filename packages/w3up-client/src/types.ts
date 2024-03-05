@@ -98,16 +98,16 @@ import type {
   ProviderDID,
   AccessDenied,
   SpaceDID,
+  UsageData,
 } from '@web3-storage/capabilities'
 import { type Client } from './client.js'
 import { StorefrontService as FilecoinProtocol } from '@web3-storage/filecoin-client/storefront'
-import exp from 'constants'
+
 import { CID } from 'multiformats'
 import { Block } from '@ipld/car/buffer-reader'
 import { SpaceInfoFailure } from '@web3-storage/upload-api'
 import { EmailAddress, DidMailto } from '@web3-storage/did-mailto'
-import { UTCUnixTimestamp } from '@ipld/dag-ucan'
-import { extname } from 'path'
+import { UTCUnixTimestamp, Signer as UCANSigner } from '@ipld/dag-ucan'
 
 export * from '@ipld/dag-ucan'
 export * from '@ucanto/interface'
@@ -124,6 +124,7 @@ export type {
   ToString,
   View,
 } from '@ucanto/interface'
+
 export type { UCAN } from '@web3-storage/capabilities'
 
 export type { Driver as Storage }
@@ -330,6 +331,9 @@ export type {
   FilecoinInfo,
   FilecoinInfoSuccess,
   FilecoinInfoFailure,
+  UsageData,
+  UsageReportSuccess,
+  UsageReportFailure,
 } from '@web3-storage/capabilities/types'
 
 export type {
@@ -345,8 +349,6 @@ export type {
   UploadRemoveSuccess,
   UploadListSuccess,
   UploadListItem,
-  UsageReportSuccess,
-  UsageReportFailure,
   ListResponse,
   AnyLink,
   CARLink,
@@ -862,6 +864,7 @@ export interface Session<Protocol extends UnknownProtocol = W3UpProtocol> {
 }
 
 export interface W3UpSession extends Session<W3UpProtocol> {
+  agent: AgentView
   spaces: SpacesSession
   accounts: AccountsSession<W3UpProtocol>
 }
@@ -877,7 +880,10 @@ export interface SpacesSession extends Iterable<SharedSpaceSession> {
 }
 
 export interface AccountsSession<
-  Protocol extends AccessRequestProvider & PlanProtocol & ProviderProtocol
+  Protocol extends AccessRequestProvider &
+    PlanProtocol &
+    ProviderProtocol &
+    SubscriptionProtocol
 > extends Iterable<AccountSession<Protocol>> {
   login(source: {
     email: EmailAddress
@@ -966,10 +972,10 @@ export interface AccountPlans<
 }
 
 export interface BillingPlan<
-  Protocol extends ProviderProtocol &
-    PlanProtocol &
-    SubscriptionProtocol = ProviderProtocol &
-    PlanProtocol &
+  Protocol extends PlanProtocol &
+    ProviderProtocol &
+    SubscriptionProtocol = PlanProtocol &
+    ProviderProtocol &
     SubscriptionProtocol
 > {
   account: AccountSession<Protocol>
@@ -1014,9 +1020,10 @@ export interface SpaceSessionView<Protocol extends SpaceProtocol>
   extends SpaceSession<Protocol> {
   info(): Promise<Result<SpaceInfoResult, SpaceInfoFailure | InvocationError>>
 
+  usage: SpaceUsageView
   delegations: SpaceDelegationsView
 
-  blobs: SpaceBlobsView
+  // blobs: SpaceBlobsView
 }
 
 export interface SpaceUploadsView {
@@ -1091,6 +1098,7 @@ export interface Uploader {
   upload(space?: SpaceView): Promise<Upload>
 }
 
+export interface SpaceView {}
 interface FileUploader extends Uploader {}
 
 interface DirectoryUploader extends Uploader {}
@@ -1114,14 +1122,31 @@ interface StreambleBytes {
   stream(): ReadableStream<Uint8Array>
 }
 
-interface SpaceDelegationsView {
+export interface SpaceDelegationsView {
   add(
     authorization: Authorization
-  ): Promise<Result<Unit, AccessDenied | InvocationError>>
+  ): Promise<
+    Result<Unit, AccessDenied | AccessDelegateFailure | InvocationError>
+  >
+}
+
+export interface SpaceUsageView {
+  report(period: {
+    from: Date
+    to: Date
+  }): Promise<
+    Result<
+      UsageReportSuccess,
+      UsageReportFailure | AccessDenied | InvocationError
+    >
+  >
+  get(): Promise<
+    Result<bigint, UsageReportFailure | AccessDenied | InvocationError>
+  >
 }
 
 export interface ShareAccess {
-  can: Can
+  can?: Can
   expiration?: UTCUnixTimestamp
 }
 
@@ -1131,12 +1156,12 @@ export interface OwnSpaceView extends OwnSpace {
 
   toMnemonic(): string
 
-  connect<Protocol extends SpaceProtocol & UsageProtocol>(
+  connect<Protocol extends SpaceProtocol & UsageProtocol & AccessProtocol>(
     connection: Connection<Protocol>
   ): OwnSpaceSession<Protocol>
 
   share(
-    authority: Signer,
+    authority: UCANSigner,
     access?: ShareAccess
   ): Promise<Result<SharedSpaceView, never>>
 
@@ -1154,7 +1179,7 @@ export interface OwnSpaceSession<Protocol extends SpaceProtocol & UsageProtocol>
   toMnemonic(): string
 
   share(
-    authority: Signer,
+    authority: UCANSigner,
     access?: ShareAccess
   ): Promise<Result<SharedSpaceSession<Protocol>, Unit>>
 
@@ -1165,9 +1190,9 @@ export interface OwnSpaceSession<Protocol extends SpaceProtocol & UsageProtocol>
 }
 
 export interface OwnSpacePromise extends Promise<Result<OwnSpaceView, Unit>> {
-  connect<Protocol extends SpaceProtocol & UsageProtocol>(
+  connect<Protocol extends SpaceProtocol & UsageProtocol & AccessProtocol>(
     connection: Connection<Protocol>
-  ): Promise<Result<OwnSpaceSession<Protocol>, Unit>>
+  ): Promise<Result<OwnSpaceSession<Protocol>, never>>
 }
 
 export interface SharedSpace {
@@ -1181,13 +1206,17 @@ export interface SharedSpaceView extends SharedSpace {
   name: string
   subject: DID
 
-  connect<Protocol extends UsageProtocol & SpaceProtocol = W3UpProtocol>(
+  connect<
+    Protocol extends UsageProtocol &
+      SpaceProtocol &
+      AccessProtocol = W3UpProtocol
+  >(
     connection: Connection<Protocol>
   ): SharedSpaceSession<Protocol>
 }
 
 export interface SharedSpaceSession<
-  Protocol extends SpaceProtocol = W3UpProtocol
+  Protocol extends SpaceProtocol & UsageProtocol = W3UpProtocol
 > extends SharedSpace,
     SpaceSessionView<Protocol> {
   name: string

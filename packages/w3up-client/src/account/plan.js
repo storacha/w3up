@@ -4,14 +4,14 @@ import * as Subscriptions from './subscription.js'
 import * as Agent from '../agent.js'
 
 /**
- * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.AccountSession<Protocol>} account
  * @returns {API.AccountPlans<Protocol>}
  */
 export const from = (account) => new AccountPlans(account)
 
 /**
- * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.AccountSession<Protocol>} account
  * @returns {Promise<API.Result<Record<API.DID, BillingPlan<Protocol>>, API.AccessDenied | API.PlanNotFound | API.InvocationError>>}
  */
@@ -52,7 +52,7 @@ export const list = async (account) => {
 }
 
 /**
- * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @implements {API.AccountPlans<Protocol>}
  */
 class AccountPlans {
@@ -68,7 +68,8 @@ class AccountPlans {
 }
 
 /**
- * @template {API.PlanProtocol & API.ProviderProtocol} [Protocol=API.W3UpProtocol]
+ * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
+ * @implements {API.BillingPlan<Protocol>}
  */
 class BillingPlan {
   /**
