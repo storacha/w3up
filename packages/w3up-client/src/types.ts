@@ -65,6 +65,7 @@ import type {
   Protocol,
   InvocationError,
   MultihashDigest,
+  Tuple,
 } from '@ucanto/interface'
 
 import type {
@@ -108,6 +109,8 @@ import { Block } from '@ipld/car/buffer-reader'
 import { SpaceInfoFailure } from '@web3-storage/upload-api'
 import { EmailAddress, DidMailto } from '@web3-storage/did-mailto'
 import { UTCUnixTimestamp, Signer as UCANSigner } from '@ipld/dag-ucan'
+import exp from 'constants'
+import { Delegation } from '@ucanto/core'
 
 export * from '@ipld/dag-ucan'
 export * from '@ucanto/interface'
@@ -867,6 +870,50 @@ export interface W3UpSession extends Session<W3UpProtocol> {
   agent: AgentView
   spaces: SpacesSession
   accounts: AccountsSession<W3UpProtocol>
+
+  coupons: CouponAPI<W3UpProtocol>
+}
+
+export interface CouponSession<Protocol extends UnknownProtocol = W3UpProtocol>
+  extends Session<Protocol>,
+    Coupon {
+  spaces: SpacesSession
+  accounts: AccountsSession<W3UpProtocol>
+
+  redeem(options: {
+    agent: Agent
+  }): Promise<Result<CouponSession<Protocol>, Error>>
+
+  archive(): Promise<Result<Uint8Array, Error>>
+}
+
+export interface CouponAPI<Protocol extends UnknownProtocol = W3UpProtocol> {
+  issue(access: {
+    subject: DID
+    can: Can
+    expiration?: UTCUnixTimestamp
+    notBefore?: UTCUnixTimestamp
+    secret?: string
+  }): Promise<Result<CouponSession<Protocol>, Error>>
+  redeem(
+    coupon: Uint8Array,
+    options?: { secret?: string }
+  ): Promise<Result<CouponSession<Protocol>, Error>>
+
+  add(coupon: Coupon): Promise<Result<Unit, Error>>
+  remove(coupon: Coupon): Promise<Result<Unit, Error>>
+}
+
+export interface Coupon {
+  signer: Signer
+  proofs: [Delegation]
+}
+
+export interface CouponView extends Coupon {
+  archive(): Promise<Result<Uint8Array, Error>>
+  connect<Protocol extends UnknownProtocol>(
+    connection: Connection<Protocol>
+  ): CouponSession<Protocol>
 }
 
 export interface SpacesSession extends Iterable<SharedSpaceSession> {
@@ -965,10 +1012,20 @@ export interface AccountPlans<
 > {
   list(): Promise<
     Result<
-      Record<DID, BillingPlan<Protocol>>,
+      AccountPlanList<Protocol>,
       AccessDenied | PlanNotFound | InvocationError
     >
   >
+}
+
+export interface AccountPlanList<
+  Protocol extends PlanProtocol &
+    ProviderProtocol &
+    SubscriptionProtocol = PlanProtocol &
+    ProviderProtocol &
+    SubscriptionProtocol
+> extends Iterable<BillingPlan<Protocol>> {
+  [key: string]: BillingPlan<Protocol>
 }
 
 export interface BillingPlan<

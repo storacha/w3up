@@ -18,7 +18,7 @@ export const { create, fromMnemonic } = OwnSpace
 export const list = (session) => {
   const results = DB.query(
     session.agent.db.index,
-    Query.query({ authority: session.agent.signer.did() })
+    Query.query({ audience: session.agent.signer.did() })
   )
 
   return build(session, results)

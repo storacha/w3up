@@ -33,7 +33,7 @@ export const wait = function* (source) {
 /**
  * @template {API.Result} R
  * @param {PromiseLike<R>|R} source
- * @returns {Generator<Wait|R, R['ok'] & {}>}
+ * @returns {Generator<Wait|R, Required<R>['ok']>}
  */
 export const join = function* (source) {
   const { ok, error } = yield* wait(source)
@@ -46,10 +46,10 @@ export const join = function* (source) {
 
 /**
  * @template {API.Result} R
- * @template {{}} Ok
+ * @template Ok
  * @template {globalThis.Error} [Error=never]
- * @param {() => Generator<R|Wait, API.Result<Ok, Error>, void>} task
- * @returns {Promise<API.Result<Ok, (R['error'] & {}) | Error>>}
+ * @param {() => Generator<R|Wait, API.Result<Ok & {}, Error>, void>} task
+ * @returns {Promise<API.Result<Ok & {}, Required<R>['error'] | Error>>}
  */
 const execute = async (task) => {
   const process = task()
@@ -75,9 +75,9 @@ export { execute as try }
 
 /**
  * @template {API.Result} R
- * @template {{}} Ok
+ * @template Ok
  * @template {globalThis.Error} [Error=never]
- * @param {() => Generator<R|Wait, API.Result<Ok, Error>, void>} task
+ * @param {() => Generator<R|Wait, API.Result<Ok & {}, Error>, void>} task
  */
 export const perform = async (task) => {
   const result = await execute(task)

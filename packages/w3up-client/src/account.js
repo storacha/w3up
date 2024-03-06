@@ -1,5 +1,5 @@
 import * as API from './types.js'
-import * as Login from './agent/login.js'
+import * as Account from './account/query.js'
 import * as Access from './access.js'
 import * as DB from './agent/db.js'
 import * as DIDMailto from '@web3-storage/did-mailto'
@@ -101,7 +101,7 @@ export const login = async (session, { email, signal }) => {
     if (error) {
       return { error }
     } else {
-      const login = Login.from({ account: id })
+      const login = { id, attestations: new Map(), proofs: new Map() }
       for (const proof of ok.proofs) {
         if (proof.capabilities?.[0].can === 'ucan/attest') {
           login.attestations.set(`${proof.cid}`, proof)
@@ -124,16 +124,16 @@ export const login = async (session, { email, signal }) => {
  */
 
 export const list = (session) => {
-  const logins = Login.select(
+  const matches = Account.select(
     session.agent.db,
     DB.query(
       session.agent.db.index,
-      Login.query({ authority: session.agent.signer.did() })
+      Account.query({ audience: session.agent.signer.did() })
     )
   )
 
   return Object.fromEntries(
-    [...logins].map(([account, login]) => [
+    [...matches].map(([account, login]) => [
       account,
       AccountSession.from({ session, login }),
     ])
@@ -150,11 +150,11 @@ export const list = (session) => {
  */
 export const get = (session, email) => {
   const account = DIDMailto.fromEmail(email)
-  const [login] = Login.select(
+  const [login] = Account.select(
     session.agent.db,
     DB.query(
       session.agent.db.index,
-      Login.query({ authority: session.agent.signer.did(), account })
+      Account.query({ audience: session.agent.signer.did(), account })
     )
   ).values()
 

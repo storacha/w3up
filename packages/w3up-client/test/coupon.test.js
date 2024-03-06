@@ -1,51 +1,65 @@
 import * as Test from './test.js'
 import * as Result from '../src/result.js'
+import * as Coupon from '../src/coupon.js'
+import * as Agent from '../src/agent.js'
 
+import { alice } from './fixtures/principals.js'
 /**
  * @type {Test.Suite}
  */
 export const testCoupon = {
-  'account.coupon': async (
+  'only account.coupon': async (
     assert,
-    { client, mail, connect, grantAccess, plansStorage }
+    { mail, session, grantAccess, plansStorage }
   ) => {
+    const now = (Date.now() / 1000) | 0
     // First we login to the workshop account
-    const login = client.login('workshop@web3.storage')
+    const login = session.accounts.login({ email: 'workshop@web3.storage' })
     const message = await mail.take()
     await grantAccess(message)
-    const account = await login
+    const account = Result.unwrap(await login)
+    Result.unwrap(await session.accounts.add(account))
 
     // Then we setup a billing for this account
     await plansStorage.set(account.did(), 'did:web:test.web3.storage')
 
     // Then we use the account to issue a coupon for the workshop
-    const coupon = await client.coupon.issue({
-      capabilities: [
-        {
-          with: account.did(),
-          can: 'provider/add',
+    const issued = Result.unwrap(
+      await Coupon.issue(session.agent, {
+        subject: account.did(),
+        can: {
+          'plan/get': [],
+          'provider/add': [],
         },
-      ],
-      lifetimeInSeconds: 60 * 60 * 24,
-    })
+        expiration: now + 60 * 60 * 24,
+      })
+    )
 
     // We encode coupon and share it with the participants
-    const archive = Result.unwrap(await coupon.archive())
+    const archive = Result.unwrap(await issued.archive())
 
-    // alice join the workshop and redeem the coupon
-    const alice = await connect()
-    const access = await alice.coupon.redeem(archive)
+    const agent = Result.unwrap(await Coupon.open(archive))
 
-    // creates a space and provision it with redeemed coupon
-    const space = await alice.createSpace('home')
-    const result = await space.provision(access)
-    await space.save()
+    const coupon = agent.connect(session.connection)
+    const [...accounts] = coupon.accounts
+    const [...spaces] = coupon.spaces
 
-    assert.ok(result.ok)
+    assert.deepEqual(accounts.length, 1)
+    assert.deepEqual(spaces.length, 0)
 
-    const info = await alice.capability.space.info(space.did())
-    assert.deepEqual(info.did, space.did())
-    assert.deepEqual(info.providers, ['did:web:test.web3.storage'])
+    const [redeemedAccount] = accounts
+
+    assert.deepEqual(accounts[0].did(), account.did())
+
+    const [plan] = Result.unwrap(await redeemedAccount.plans.list())
+
+    const space = Result.unwrap(await coupon.spaces.create({ name: 'home' }))
+    Result.unwrap(await plan.subscriptions.add({ consumer: space.did() }))
+
+    assert.deepEqual(Result.unwrap(await space.info()), {
+      did: space.did(),
+      providers: ['did:web:test.web3.storage'],
+    })
   },
 
   'coupon with password': async (

@@ -1,6 +1,7 @@
 import * as API from './types.js'
 import * as Space from './space.js'
 import * as Account from './account.js'
+import * as Coupon from './coupon.js'
 
 /**
  * @template {API.UnknownProtocol} [Protocol=API.W3UpProtocol]
@@ -22,6 +23,7 @@ class Session {
     this.model = model
     this.spaces = Space.view(/** @type {API.Session<any>} */ (this.model))
     this.accounts = Account.view(/** @type {API.Session<any>} */ (this.model))
+    this.coupons = Coupon.view(/** @type {API.Session<any>} */ (this.model))
   }
   get connection() {
     return this.model.connection

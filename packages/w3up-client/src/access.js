@@ -171,7 +171,7 @@ export const claim = async (
       delegations.flatMap((proof) => bytesToDelegations(proof))
     )
 
-    return { ok: new GrantedAccess({ session, proofs }) }
+    return { ok: new GrantedAccess({ agent: session.agent, proofs }) }
   }
 }
 
@@ -263,7 +263,7 @@ class PendingAccessRequest {
       else if (result.ok.length > 0) {
         return {
           ok: new GrantedAccess({
-            session: this.session,
+            agent: this.session.agent,
             proofs: /** @type {API.Tuple<API.Delegation>} */ (result.ok),
           }),
         }
@@ -313,7 +313,7 @@ class RequestExpired extends Failure {
 export class GrantedAccess {
   /**
    * @typedef {object} GrantedAccessModel
-   * @property {API.Session<Protocol>} session - Agent that processed the request.
+   * @property {API.Agent} agent - Agent that processed the request.
    * @property {API.Tuple<API.Delegation>} proofs - Delegations that grant access.
    *
    * @param {GrantedAccessModel} model
@@ -332,7 +332,7 @@ export class GrantedAccess {
    * @param {object} input
    * @param {API.Agent} [input.agent]
    */
-  save({ agent = this.model.session.agent } = {}) {
+  save({ agent = this.model.agent } = {}) {
     return DB.transact(
       agent.db,
       this.proofs.map((proof) => DB.assert({ proof }))

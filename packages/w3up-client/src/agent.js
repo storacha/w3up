@@ -91,6 +91,7 @@ class AgentPromise extends Promise {
  * @param {object} source
  * @param {API.Signer<API.DIDKey>} source.signer
  * @param {API.Database} source.db
+ * @returns {API.AgentView}
  */
 export const view = (source) => new Agent(source)
 

@@ -13,7 +13,7 @@ export const from = (account) => new AccountPlans(account)
 /**
  * @template {API.PlanProtocol & API.ProviderProtocol & API.SubscriptionProtocol} [Protocol=API.W3UpProtocol]
  * @param {API.AccountSession<Protocol>} account
- * @returns {Promise<API.Result<Record<API.DID, BillingPlan<Protocol>>, API.AccessDenied | API.PlanNotFound | API.InvocationError>>}
+ * @returns {Promise<API.Result<API.AccountPlanList<Protocol>, API.AccessDenied | API.PlanNotFound | API.InvocationError>>}
  */
 export const list = async (account) => {
   const { session } = account
@@ -37,17 +37,17 @@ export const list = async (account) => {
     })
     .execute(/** @type {API.Session<API.PlanProtocol>} */ (session).connection)
 
+  /** @type {API.AccountPlanList<Protocol>}  */
+  const plans = /** @type {any} */ (new AccountPlanList())
   if (result.ok) {
-    const plans = {
-      [result.ok.product]: new BillingPlan({
-        account: account,
-        plan: result.ok,
-      }),
-    }
+    plans[result.ok.product] = new BillingPlan({
+      account: account,
+      plan: result.ok,
+    })
 
     return { ok: plans }
   } else {
-    return result.error.name === 'PlanNotFound' ? { ok: {} } : result
+    return result.error.name === 'PlanNotFound' ? { ok: plans } : result
   }
 }
 
@@ -64,6 +64,12 @@ class AccountPlans {
   }
   list() {
     return list(this.account)
+  }
+}
+
+class AccountPlanList {
+  *[Symbol.iterator]() {
+    yield* Object.values(this)
   }
 }
 
