@@ -1,14 +1,16 @@
 import * as Test from './test.js'
 import * as Result from '../src/result.js'
 import * as Coupon from '../src/coupon.js'
-import * as Agent from '../src/agent.js'
+import * as Task from '../src/task.js'
+import * as API from '../src/types.js'
+import { parseLink } from '@ucanto/core'
 
 import { alice } from './fixtures/principals.js'
 /**
  * @type {Test.Suite}
  */
 export const testCoupon = {
-  'only account.coupon': async (
+  'account.coupon': async (
     assert,
     { mail, session, grantAccess, plansStorage }
   ) => {
@@ -62,42 +64,89 @@ export const testCoupon = {
     })
   },
 
-  'coupon with password': async (
-    assert,
-    { client, mail, connect, grantAccess, plansStorage }
-  ) => {
-    const coupon = await client.coupon.issue({
-      capabilities: [
-        {
-          with: client.did(),
-          can: 'store/list',
-        },
-      ],
-      password: 'secret',
-    })
+  'saving a coupon': async (assert, { session, provisionsStorage }) =>
+    Task.perform(function* () {
+      const now = (Date.now() / 1000) | 0
+      const space = yield* Task.join(session.spaces.create({ name: 'test' }))
+      yield* Task.wait(
+        provisionsStorage.put({
+          provider: /** @type {API.ProviderDID} */ (
+            session.connection.id.did()
+          ),
+          customer: 'did:mailto:web.mail:alice',
+          consumer: space.did(),
+          cause: parseLink('bafkqaaa'),
+        })
+      )
+      const coupon = yield* Task.join(
+        Coupon.issue(space.agent, {
+          subject: space.did(),
+          can: { 'space/*': [] },
+        })
+      )
 
-    const archive = Result.unwrap(await coupon.archive())
+      const [...none] = session.spaces
+      assert.deepEqual([], none)
 
-    const wrongPassword = await client.coupon
-      .redeem(archive, { password: 'wrong' })
-      .catch((e) => e)
+      const result = yield* Task.wait(session.coupons.add(coupon))
+      assert.match(result.error?.message ?? '', /Coupon audience is/)
 
-    assert.match(String(wrongPassword), /password is invalid/)
+      const archive = yield* Task.join(coupon.archive())
 
-    const requiresPassword = await client.coupon.redeem(archive).catch((e) => e)
+      const redeemed = yield* Task.join(session.coupons.redeem(archive))
 
-    assert.match(String(requiresPassword), /requires a password/)
+      yield* Task.join(session.coupons.add(redeemed))
 
-    const redeem = await coupon.redeem(client.agent, { password: 'secret' })
-    assert.ok(redeem.ok)
-  },
+      const [one, ...rest] = session.spaces
+      assert.deepEqual(rest.length, 0)
+      assert.deepEqual(one.did(), space.did())
 
-  'corrupt coupon': async (assert, { client, mail, connect, grantAccess }) => {
-    const fail = await client.coupon
-      .redeem(new Uint8Array(32).fill(1))
-      .catch((e) => e)
+      const info = yield* Task.join(one.info())
 
-    assert.match(fail.message, /Invalid CAR header format/)
+      assert.deepEqual(info, {
+        did: space.did(),
+        providers: ['did:web:test.web3.storage'],
+      })
+
+      return { ok: {} }
+    }),
+
+  'coupon with secret': async (assert, { session }) =>
+    Task.perform(function* () {
+      const coupon = yield* Task.join(
+        session.coupons.issue({
+          subject: session.agent.did(),
+          can: {
+            'store/list': [],
+          },
+          secret: 'secret',
+        })
+      )
+
+      const archive = yield* Task.join(coupon.archive())
+
+      const wrongPassword = yield* Task.wait(
+        session.coupons.redeem(archive, { secret: 'wrong' })
+      )
+
+      assert.match(String(wrongPassword.error), /secret is invalid/)
+
+      const requiresPassword = yield* Task.wait(session.coupons.redeem(archive))
+
+      assert.match(String(requiresPassword.error), /requires a secret/)
+
+      const redeem = yield* Task.join(
+        coupon.redeem(session, { secret: 'secret' })
+      )
+      assert.ok(redeem)
+
+      return { ok: {} }
+    }),
+
+  'corrupt coupon': async (assert, { session }) => {
+    const result = await session.coupons.redeem(new Uint8Array(32).fill(1))
+
+    assert.match(String(result.error), /Invalid CAR header format/)
   },
 }
 

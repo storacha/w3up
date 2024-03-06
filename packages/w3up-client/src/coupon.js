@@ -118,7 +118,7 @@ export const add = async ({ agent }, coupon) => {
   } else {
     return {
       error: new RangeError(
-        `Space is shared with ${coupon.signer.did()} not ${agent.signer.did()}`
+        `Coupon audience is ${coupon.signer.did()} not ${agent.signer.did()}`
       ),
     }
   }
@@ -200,7 +200,7 @@ export const open = (archive, { secret = '' } = {}) =>
       return Result.error(
         new RangeError(
           secret === ''
-            ? 'Extracting account requires a secret'
+            ? 'Redeeming a coupon requires a secret'
             : 'Provided secret is invalid'
         )
       )

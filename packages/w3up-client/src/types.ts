@@ -880,9 +880,12 @@ export interface CouponSession<Protocol extends UnknownProtocol = W3UpProtocol>
   spaces: SpacesSession
   accounts: AccountsSession<W3UpProtocol>
 
-  redeem(options: {
-    agent: Agent
-  }): Promise<Result<CouponSession<Protocol>, Error>>
+  redeem(
+    session: {
+      agent: Agent
+    },
+    options?: { secret?: string }
+  ): Promise<Result<CouponSession<Protocol>, Error>>
 
   archive(): Promise<Result<Uint8Array, Error>>
 }
