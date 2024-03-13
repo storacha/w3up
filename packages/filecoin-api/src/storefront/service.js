@@ -21,6 +21,7 @@ export const filecoinOffer = async ({ capability }, context) => {
   const { piece, content } = capability.nb
 
   // Queue offer for filecoin submission
+  // We need to identify new client here...
   if (!context.options?.skipFilecoinSubmitQueue) {
     // dedupe
     const hasRes = await context.pieceStore.has({ piece })

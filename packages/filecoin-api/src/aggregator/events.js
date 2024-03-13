@@ -114,7 +114,7 @@ export const handleBufferQueueMessage = async (context, records) => {
     maxAggregateSize: context.config.maxAggregateSize,
     minAggregateSize: context.config.minAggregateSize,
     minUtilizationFactor: context.config.minUtilizationFactor,
-    prependBufferedPieces: context.config.prependBufferedPieces
+    prependBufferedPieces: context.config.prependBufferedPieces,
   })
 
   // Store buffered pieces if not enough to do aggregate and re-queue them

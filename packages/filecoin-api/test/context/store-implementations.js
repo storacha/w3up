@@ -76,6 +76,14 @@ export const getStoreImplementations = (
         return Array.from(items).find((i) => i.ran.link().equals(record))
       },
     }),
+    dataStore: new StoreImplementation({
+      getFn: (
+        /** @type {Set<AsyncIterable<Uint8Array>>} */ items,
+        /** @type {import('@ucanto/interface').UnknownLink} */ record
+      ) => {
+        return Array.from(items).pop()
+      },
+    }),
   },
   aggregator: {
     pieceStore: new StoreImplementation({

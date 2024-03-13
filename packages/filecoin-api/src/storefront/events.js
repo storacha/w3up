@@ -1,12 +1,16 @@
 import pMap from 'p-map'
 import { Storefront, Aggregator } from '@web3-storage/filecoin-client'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
+import { Assert } from '@web3-storage/content-claims/capability'
 
+import { computePieceCid } from './piece.js'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
 import {
   RecordNotFoundErrorName,
+  BlobNotFound,
   StoreOperationFailed,
+  UnexpectedPiece,
   UnexpectedState,
 } from '../errors.js'
 
@@ -34,7 +38,28 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
     }
   }
 
-  // TODO: verify piece
+  // read and compute piece for content
+  // TODO: needs to be hooked with location claims
+  const contentGetRes = await context.dataStore.get(message.content)
+  if (contentGetRes.error) {
+    return { error: new BlobNotFound(contentGetRes.error.message) }
+  }
+
+  const computedPieceCid = await computePieceCid(contentGetRes.ok)
+  if (computedPieceCid.error) {
+    return computedPieceCid
+  }
+
+  // check provided piece equals the one computed
+  if (!message.piece.equals(computedPieceCid.ok.piece.link)) {
+    return {
+      error: new UnexpectedPiece(
+        `provided piece ${message.piece.toString()} is not the same as computed ${
+          computedPieceCid.ok.piece
+        }`
+      ),
+    }
+  }
 
   const putRes = await context.pieceStore.put({
     piece: message.piece,
@@ -93,6 +118,37 @@ export const handlePieceInsert = async (context, record) => {
   }
 
   return { ok: {} }
+}
+
+/**
+ * On piece inserted into store, invoke equivalency claim to enable reads.
+ *
+ * @param {import('./api.js').ClaimsClientContext} context
+ * @param {PieceRecord} record
+ */
+export const handlePieceInsertToEquivalencyClaim = async (context, record) => {
+  const claimResult = await Assert.equals
+    .invoke({
+      issuer: context.claimsService.invocationConfig.issuer,
+      audience: context.claimsService.invocationConfig.audience,
+      with: context.claimsService.invocationConfig.with,
+      nb: {
+        content: record.content,
+        equals: record.piece,
+      },
+      expiration: Infinity,
+      proofs: context.claimsService.invocationConfig.proofs,
+    })
+    .execute(context.claimsService.connection)
+  if (claimResult.out.error) {
+    return {
+      error: claimResult.out.error,
+    }
+  }
+
+  return {
+    ok: {},
+  }
 }
 
 /**

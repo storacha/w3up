@@ -2,6 +2,7 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 
+import { Assert } from '@web3-storage/content-claims/capability'
 import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
@@ -215,6 +216,13 @@ export function getMockService() {
         },
       }),
     },
+    assert: {
+      equals: Server.provide(Assert.equals, async ({ capability, invocation }) => {
+        return {
+          ok: {}
+        }
+      })
+    }
   })
 }
 

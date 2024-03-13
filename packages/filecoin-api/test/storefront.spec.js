@@ -87,7 +87,9 @@ describe('storefront', () => {
       define(name, async () => {
         const storefrontSigner = await Signer.generate()
         const aggregatorSigner = await Signer.generate()
+        const claimsSigner = await Signer.generate()
 
+        // TODO: Claims service
         const service = getMockService()
         const storefrontConnection = getConnection(
           storefrontSigner,
@@ -97,10 +99,11 @@ describe('storefront', () => {
           aggregatorSigner,
           service
         ).connection
+        const claimsConnection = getConnection(claimsSigner, service).connection
 
         // context
         const {
-          storefront: { pieceStore, taskStore, receiptStore },
+          storefront: { pieceStore, taskStore, receiptStore, dataStore },
         } = getStoreImplementations()
 
         await test(
@@ -115,6 +118,7 @@ describe('storefront', () => {
             pieceStore,
             receiptStore,
             taskStore,
+            dataStore,
             storefrontService: {
               connection: storefrontConnection,
               invocationConfig: {
@@ -129,6 +133,14 @@ describe('storefront', () => {
                 issuer: storefrontSigner,
                 with: storefrontSigner.did(),
                 audience: aggregatorSigner,
+              },
+            },
+            claimsService: {
+              connection: claimsConnection,
+              invocationConfig: {
+                issuer: storefrontSigner,
+                with: storefrontSigner.did(),
+                audience: claimsSigner,
               },
             },
             queuedMessages: new Map(),

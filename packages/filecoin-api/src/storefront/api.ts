@@ -5,6 +5,9 @@ import type {
   Receipt,
   Invocation,
   Failure,
+  DID,
+  Proof,
+  ConnectionView,
 } from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
 import {
@@ -26,6 +29,7 @@ export type PieceStore = UpdatableAndQueryableStore<
 >
 export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
 export type PieceOfferQueue = Queue<PieceOfferMessage>
+export type DataStore = Store<UnknownLink, AsyncIterable<Uint8Array>>
 export type TaskStore = Store<UnknownLink, Invocation>
 export type ReceiptStore = Store<UnknownLink, Receipt>
 
@@ -76,7 +80,9 @@ export interface ServiceContext {
 }
 
 export interface FilecoinSubmitMessageContext
-  extends Pick<ServiceContext, 'pieceStore'> {}
+  extends Pick<ServiceContext, 'pieceStore'> {
+  dataStore: DataStore
+}
 
 export interface PieceOfferMessageContext {
   /**
@@ -90,6 +96,36 @@ export interface StorefrontClientContext {
    * Storefront own connection to issue receipts.
    */
   storefrontService: ServiceConfig<StorefrontService>
+}
+
+export interface ClaimsInvocationConfig {
+  /**
+   * Signing authority that is issuing the UCAN invocation(s).
+   */
+  issuer: Signer
+  /**
+   * The principal delegated to in the current UCAN.
+   */
+  audience: Principal
+  /**
+   * The resource the invocation applies to.
+   */
+  with: DID
+  /**
+   * Proof(s) the issuer has the capability to perform the action.
+   */
+  proofs?: Proof[]
+}
+
+export interface ClaimsClientContext {
+  /**
+   * Claims own connection to issue claims.
+   */
+  claimsService: {
+    invocationConfig: ClaimsInvocationConfig
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    connection: ConnectionView<any>
+  }
 }
 
 export interface CronContext
