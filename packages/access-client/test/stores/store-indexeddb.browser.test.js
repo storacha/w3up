@@ -12,7 +12,7 @@ describe('IndexedDB store', () => {
     })
 
     const store = new StoreIndexedDB('test-access-db-' + Date.now())
-    await store.open()
+    await store.connect()
     await store.save(data.export())
 
     const exportData = await store.load()
@@ -40,13 +40,13 @@ describe('IndexedDB store', () => {
     const store = new StoreIndexedDB('test-access-db-' + Date.now(), {
       dbStoreName: `store-${Date.now()}`,
     })
-    await store.open()
+    await store.connect()
 
     const data0 = await AgentData.create()
     await store.save(data0.export())
 
     await store.close()
-    await store.open()
+    await store.connect()
 
     const exportedData = await store.load()
     assert(exportedData)
@@ -59,7 +59,7 @@ describe('IndexedDB store', () => {
     const store = new StoreIndexedDB('test-access-db-' + Date.now(), {
       autoOpen: false,
     })
-    await store.open()
+    await store.connect()
     await store.load()
     await store.close()
 
@@ -71,7 +71,7 @@ describe('IndexedDB store', () => {
 
   it('should round trip delegations', async () => {
     const store = new StoreIndexedDB('test-access-db-' + Date.now())
-    await store.open()
+    await store.connect()
 
     const data0 = await AgentData.create()
     const signer = await EdSigner.generate()
@@ -107,7 +107,7 @@ describe('IndexedDB store', () => {
     const data = await AgentData.create({ principal })
 
     const store = new StoreIndexedDB('test-access-db-' + Date.now())
-    await store.open()
+    await store.connect()
     await store.save(data.export())
 
     const exportData = await store.load()

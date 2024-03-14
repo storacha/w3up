@@ -38,7 +38,7 @@ export class ConfDriver {
     this.path = this.#config.path
   }
 
-  async open() {}
+  async connect() {}
 
   async close() {}
 

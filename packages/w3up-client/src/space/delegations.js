@@ -1,5 +1,6 @@
 import * as API from '../types.js'
 import * as Access from '../access.js'
+import * as Session from '../session.js'
 
 /**
  * @param {API.Session<API.AccessProtocol>} session
@@ -23,10 +24,12 @@ class Delegations {
    * @param {API.Authorization} authorization
    */
   add(authorization) {
-    return Access.delegate(this.session, {
+    const task = Access.delegate(this.session, {
       delegations: authorization.proofs,
       subject: /** @type {API.DIDKey} */ (this.session.agent.signer.did()),
     })
+
+    return Session.perform(task)
   }
 
   // TODO: We really should allow deleting and listing delegations also.

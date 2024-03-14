@@ -32,6 +32,12 @@ import {
   UsageReportSuccess,
   UsageReportFailure,
   PlanNotFound,
+  FilecoinOffer as FilecoinOfferCapability,
+  FilecoinOfferSuccess,
+  FilecoinOfferFailure,
+  FilecoinInfo as FilecoinInfoCapability,
+  FilecoinInfoSuccess,
+  FilecoinInfoFailure,
 } from '@web3-storage/capabilities/types'
 
 export type { Querier, Transactor }
@@ -63,9 +69,12 @@ import type {
   IPLDBlock,
   DIDKey,
   Protocol,
+  Capability,
   InvocationError,
   MultihashDigest,
+  Receipt,
   Tuple,
+  InferReceipt,
 } from '@ucanto/interface'
 
 import type {
@@ -86,6 +95,7 @@ import type {
   ProviderAddSuccess,
   ProviderAddFailure,
   SpaceInfo,
+  SpaceInfoFailure,
   SubscriptionList,
   SubscriptionListSuccess,
   SubscriptionListFailure,
@@ -95,22 +105,30 @@ import type {
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  ConsoleLog,
+  ConsoleLogOk,
+  ConsoleError,
+  ConsoleErrorError,
   AccountDID,
   ProviderDID,
   AccessDenied,
   SpaceDID,
   UsageData,
+  Space,
 } from '@web3-storage/capabilities'
 import { type Client } from './client.js'
-import { StorefrontService as FilecoinProtocol } from '@web3-storage/filecoin-client/storefront'
+import { StorefrontService } from '@web3-storage/filecoin-client/types'
+import * as Task from './task/task.js'
+export { Task }
 
 import { CID } from 'multiformats'
 import { Block } from '@ipld/car/buffer-reader'
-import { SpaceInfoFailure } from '@web3-storage/upload-api'
 import { EmailAddress, DidMailto } from '@web3-storage/did-mailto'
 import { UTCUnixTimestamp, Signer as UCANSigner } from '@ipld/dag-ucan'
+import { Storefront } from '@web3-storage/filecoin-client'
+import { AbortError } from './task.js'
 import exp from 'constants'
-import { Delegation } from '@ucanto/core'
+import { info } from 'console'
 
 export * from '@ipld/dag-ucan'
 export * from '@ucanto/interface'
@@ -143,7 +161,7 @@ export interface SpaceUnknown extends Failure {
   name: 'SpaceUnknown'
 }
 
-export interface SpaceInfoResult {
+export interface SpaceInfoSuccess {
   // space did
   did: DID<'key'>
   providers: Array<DID<'web'>>
@@ -166,7 +184,10 @@ export interface AccessAuthorizeProvider {
 }
 
 export interface AccessRequestProvider {
-  access: AccessAuthorizeProvider['access'] & AccessClaimProvider['access']
+  access: {
+    authorize: AccessAuthorizeProvider['access']['authorize']
+    claim: AccessClaimProvider['access']['claim']
+  }
 }
 
 export interface AccessClaimProvider {
@@ -210,7 +231,7 @@ export interface AccessProtocol {
 
 export interface SpaceProtocol {
   space: {
-    info: ServiceMethod<SpaceInfo, SpaceInfoResult, Failure | SpaceUnknown>
+    info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
   }
 }
 
@@ -230,7 +251,29 @@ export interface SubscriptionProtocol {
   }
 }
 
-export type { FilecoinProtocol }
+export interface ConsoleProtocol {
+  console: {
+    log: ServiceMethod<ConsoleLog, ConsoleLogOk, never>
+    error: ServiceMethod<ConsoleError, never, ConsoleErrorError>
+  }
+}
+
+export interface FilecoinProtocol {
+  filecoin: {
+    offer: StorefrontService['filecoin']['offer']
+    info: StorefrontService['filecoin']['info']
+  }
+}
+
+export type {
+  FilecoinOfferSuccess,
+  FilecoinOfferFailure,
+  FilecoinInfoSuccess,
+  FilecoinInfoFailure,
+}
+
+export type FilecoinOffer = FilecoinOfferCapability['nb']
+export type FilecoinInfo = FilecoinInfoCapability['nb']
 
 export interface StoreProtocol {
   store: {
@@ -269,6 +312,7 @@ export interface W3UpProtocol
     StoreProtocol,
     UploadProtocol,
     UsageProtocol,
+    ConsoleProtocol,
     FilecoinProtocol {}
 
 export interface ClientFactoryOptions {
@@ -322,18 +366,12 @@ export type {
   PlanGet,
   PlanGetSuccess,
   PlanGetFailure,
-  FilecoinOffer,
-  FilecoinOfferSuccess,
-  FilecoinOfferFailure,
   FilecoinSubmit,
   FilecoinSubmitSuccess,
   FilecoinSubmitFailure,
   FilecoinAccept,
   FilecoinAcceptSuccess,
   FilecoinAcceptFailure,
-  FilecoinInfo,
-  FilecoinInfoSuccess,
-  FilecoinInfoFailure,
   UsageData,
   UsageReportSuccess,
   UsageReportFailure,
@@ -610,9 +648,28 @@ export type Can =
     ['*']?: CapabilityConstraint[]
   }
 
-export type { Driver }
-
-export interface DataStore extends Driver<DatabaseArchive> {}
+export interface DataStore<Model = DatabaseArchive> {
+  /**
+   * Open driver
+   */
+  connect: () => Promise<void>
+  /**
+   * Clean up and close driver
+   */
+  close: () => Promise<void>
+  /**
+   * Persist data to the driver's backend
+   */
+  save: (data: Model) => Promise<void>
+  /**
+   * Loads data from the driver's backend
+   */
+  load: () => Promise<Model | undefined>
+  /**
+   * Clean all the data in the driver's backend
+   */
+  reset: () => Promise<void>
+}
 
 export interface StoredDelegation {
   meta: DelegationMeta
@@ -721,26 +778,47 @@ export interface AddressArchive<
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface UnknownProtocol extends Record<string, any> {}
 
-export interface W3UpOpen {
+export interface AgentOpen {
   as?: Signer<DIDKey>
   store: DataStore
 }
 
-export interface W3Load {
+export interface AgentLoad {
   as?: Signer<DIDKey>
   store: DataStore
 }
 
-export interface W3Create {
+export interface AgentCreate {
   as?: Signer<DIDKey>
   store: DataStore
 }
-
-export type W3From = Variant<{
-  load: W3Load
-  open: W3UpOpen
-  create: W3Create
+export type AgentFrom = Variant<{
+  load: AgentLoad
+  open: AgentOpen
+  create: AgentCreate
 }>
+
+export interface W3UpOpen<Protocol extends UnknownProtocol = W3UpProtocol>
+  extends AgentOpen {
+  connection?: Connection<Protocol>
+}
+
+export interface W3UpLoad<Protocol extends UnknownProtocol = W3UpProtocol>
+  extends AgentLoad {
+  connection?: Connection<Protocol>
+}
+
+export interface W3UpCreate<Protocol extends UnknownProtocol = W3UpProtocol>
+  extends AgentCreate {
+  connection?: Connection<Protocol>
+}
+
+export type W3UpFrom<Protocol extends UnknownProtocol = W3UpProtocol> =
+  Variant<{
+    load: W3UpLoad<Protocol>
+    open: W3UpOpen<Protocol>
+    create: W3UpCreate<Protocol>
+  }>
 
 /**
  * W3Up is the interface that main library module implements.
@@ -773,7 +851,7 @@ export interface W3Up {
    * If you do not pass a signer and one is not persisted in the store load will
    * fail.
    */
-  load(source: W3Load): AgentView
+  load(source: W3UpLoad): AgentView
 
   /**
    * Creates a new agent that will be persisted in the given {@link DataStore}.
@@ -786,12 +864,12 @@ export interface W3Up {
    * ⚠️ Please note that if store already contains a principal calling this
    * method will overwrite it.
    */
-  create(source: W3Create): AgentView
+  create(source: W3UpCreate): AgentView
 
   /**
    * General function that does `load`, `create` or `open` based on input.
    */
-  from(source: W3From): AgentView
+  from(source: W3UpFrom): AgentView
 }
 
 export interface Agent {
@@ -818,18 +896,13 @@ export interface AgentView extends Agent {
    * invoke capabilities provided by the service.
    */
   connect<Protocol extends UnknownProtocol = W3UpProtocol>(
-    connection?: ConnectionView<Protocol>
-  ): Promise<
-    Result<
-      W3UpSession,
-      SignerLoadError | DataStoreOpenError | DataStoreSaveError
-    >
-  >
+    connection?: Connection<Protocol>
+  ): W3UpSession<Protocol>
 
   authorize(access: {
     subject: DID
     can: Can
-  }): Result<Authorization, AccessDenied>
+  }): Task.Invocation<Authorization, AccessDenied | Task.AbortError>
 }
 
 export type ConnectError =
@@ -866,10 +939,53 @@ export interface Session<Protocol extends UnknownProtocol = W3UpProtocol> {
   connection: Connection<Protocol>
 }
 
-export interface W3UpSession extends Session<W3UpProtocol> {
+export type Connection<Protocol extends UnknownProtocol = W3UpProtocol> =
+  | Online<Protocol>
+  | Offline<Protocol>
+
+export interface Online<Protocol extends UnknownProtocol = W3UpProtocol>
+  extends ConnectionView<Protocol> {
+  address: Address
+}
+
+export interface Offline<Protocol extends UnknownProtocol>
+  extends Phantom<Protocol> {
+  id: Principal
+  address: Address
+  channel?: never
+}
+
+export interface OfflineError extends Error {
+  name: 'OfflineError'
+}
+
+export type InferReceiptOk<
+  C extends Capability,
+  Protocol extends UnknownProtocol = W3UpProtocol,
+  R = InferReceipt<C, Protocol>
+> = R extends Receipt<infer Ok, any, any> ? Ok : never
+
+export type InferReceiptError<
+  C extends Capability,
+  Protocol extends UnknownProtocol = W3UpProtocol,
+  R = InferReceipt<C, Protocol>
+> = R extends Receipt<any, infer Err extends Error, any>
+  ? Exclude<Err, Task.AbortError>
+  : never
+
+export interface TaskInvocation<
+  Ok extends {},
+  Err extends Error,
+  Fail extends Error
+> extends Task.Invocation<Ok, Err | Fail> {
+  receipt(): Task.Invocation<Receipt<Ok, Err>, Fail>
+}
+
+export interface W3UpSession<Protocol extends UnknownProtocol = W3UpProtocol>
+  extends Session<Protocol> {
   agent: AgentView
-  spaces: SpacesSession
-  accounts: AccountsSession<W3UpProtocol>
+  spaces: SpaceManager
+  accounts: AccountManager
 
   coupons: CouponAPI<W3UpProtocol>
 }
@@ -877,17 +993,14 @@ export interface W3UpSession extends Session<W3UpProtocol> {
 export interface CouponSession<Protocol extends UnknownProtocol = W3UpProtocol>
   extends Session<Protocol>,
     Coupon {
-  spaces: SpacesSession
-  accounts: AccountsSession<W3UpProtocol>
+  spaces: SpaceManager
+  accounts: AccountManager
 
-  redeem(
-    session: {
-      agent: Agent
-    },
-    options?: { secret?: string }
-  ): Promise<Result<CouponSession<Protocol>, Error>>
+  redeem<Protocol extends UnknownProtocol>(
+    session: Session<Protocol>
+  ): Task.Invocation<CouponSession<Protocol>, Error | Task.AbortError>
 
-  archive(): Promise<Result<Uint8Array, Error>>
+  archive(): Task.Invocation<Uint8Array, Error>
 }
 
 export interface CouponAPI<Protocol extends UnknownProtocol = W3UpProtocol> {
@@ -897,14 +1010,21 @@ export interface CouponAPI<Protocol extends UnknownProtocol = W3UpProtocol> {
     expiration?: UTCUnixTimestamp
     notBefore?: UTCUnixTimestamp
     secret?: string
-  }): Promise<Result<CouponSession<Protocol>, Error>>
+  }): Task.Invocation<CouponSession<Protocol>, Error>
   redeem(
     coupon: Uint8Array,
     options?: { secret?: string }
-  ): Promise<Result<CouponSession<Protocol>, Error>>
+  ): Task.Invocation<CouponSession<Protocol>, Error>
 
-  add(coupon: Coupon): Promise<Result<Unit, Error>>
-  remove(coupon: Coupon): Promise<Result<Unit, Error>>
+  add(
+    coupon: Coupon
+  ): Task.Invocation<
+    Unit,
+    DatabaseTransactionError | DataStoreSaveError | RangeError
+  >
+  remove(
+    coupon: Coupon
+  ): Task.Invocation<Unit, DatabaseTransactionError | DataStoreSaveError>
 }
 
 export interface Coupon {
@@ -913,54 +1033,59 @@ export interface Coupon {
 }
 
 export interface CouponView extends Coupon {
-  archive(): Promise<Result<Uint8Array, Error>>
+  archive(): Task.Invocation<Uint8Array, Error>
+
   connect<Protocol extends UnknownProtocol>(
     connection: Connection<Protocol>
   ): CouponSession<Protocol>
+
+  redeem<Protocol extends UnknownProtocol>(
+    session: Session<Protocol>
+  ): Task.Invocation<CouponSession<Protocol>, Error>
 }
 
-export interface SpacesSession extends Iterable<SharedSpaceSession> {
-  create(source: {
-    name: string
-  }): Promise<Result<OwnSpaceSession<W3UpProtocol>, never>>
-  list(): Record<DIDKey, SharedSpaceSession>
+export interface SpaceManager extends Iterable<SpaceView> {
+  create(source: { name: string }): Task.Invocation<OwnSpaceView>
+  list(): Record<DIDKey, SpaceView>
 
-  add(space: SharedSpace): Promise<Result<Unit, Error>>
-  remove(space: SharedSpace): Promise<Result<Unit, Error>>
+  add(space: SpaceView): Task.Invocation<Unit, SpaceStoreError>
+  remove(space: SpaceView): Task.Invocation<Unit, SpaceStoreError>
 }
 
-export interface AccountsSession<
-  Protocol extends AccessRequestProvider &
-    PlanProtocol &
-    ProviderProtocol &
-    SubscriptionProtocol
-> extends Iterable<AccountSession<Protocol>> {
+export type SpaceStoreError =
+  | PrincipalAlignmentError
+  | DatabaseTransactionError
+  | DataStoreSaveError
+
+export interface PrincipalAlignmentError extends Error {
+  name: 'PrincipalAlignmentError'
+  expect: DID
+  actual: DID
+}
+
+export interface AccountManager extends Iterable<AccountView> {
   login(source: {
     email: EmailAddress
     signal?: AbortSignal
-  }): Promise<
-    Result<
-      AccountSession<Protocol>,
-      AccessDenied | InvocationError | AccessAuthorizeFailure
-    >
+  }): Task.Invocation<
+    AccountView,
+    AccessDenied | InvocationError | AccessAuthorizeFailure
   >
 
-  list(): Record<DidMailto, AccountSession<Protocol>>
+  list(): Record<DidMailto, AccountView>
 
-  get(email: EmailAddress): AccountSession<Protocol> | undefined
+  get(email: EmailAddress): AccountView | undefined
 
   add(
-    account: AccountSession<UnknownProtocol>
-  ): Promise<Result<Unit, DataStoreSaveError | DatabaseTransactionError>>
+    account: AccountView
+  ): Task.Invocation<
+    Unit,
+    DataStoreSaveError | DatabaseTransactionError | AbortError
+  >
 
   remove(
-    account: AccountSession<UnknownProtocol>
-  ): Promise<Result<Unit, DataStoreSaveError | DatabaseTransactionError>>
-}
-
-export interface Connection<Protocol extends UnknownProtocol = W3UpProtocol>
-  extends ConnectionView<Protocol> {
-  address: Address
+    account: AccountView
+  ): Task.Invocation<Unit, DataStoreSaveError | DatabaseTransactionError>
 }
 
 export interface Authorization {
@@ -993,65 +1118,74 @@ export interface Authorization {
  */
 export interface Limit extends Record<string, never> {}
 
+export type AccountProtocol = {
+  access: AccessRequestProvider['access']
+  plan: PlanProtocol['plan']
+  provider: ProviderProtocol['provider']
+  subscription: SubscriptionProtocol['subscription']
+}
+
 export interface AccountSession<
-  Protocol extends UnknownProtocol = W3UpProtocol
+  Protocol extends UnknownProtocol = UnknownProtocol
 > {
   did(): AccountDID
   session: Session<Protocol>
+}
+
+export interface AccountView {
+  did(): AccountDID
   proofs: Delegation[]
 
   toEmail(): EmailAddress
 
   plans: AccountPlans
-  spaces: SpacesSession
+  spaces: SpaceManager
 }
 
-export interface AccountPlans<
-  Protocol extends ProviderProtocol &
-    PlanProtocol &
-    SubscriptionProtocol = ProviderProtocol &
-    PlanProtocol &
-    SubscriptionProtocol
-> {
-  list(): Promise<
-    Result<
-      AccountPlanList<Protocol>,
-      AccessDenied | PlanNotFound | InvocationError
-    >
+export interface AccountPlans {
+  list(): Task.Invocation<
+    AccountPlanList,
+    | AccessDenied
+    | PlanNotFound
+    | OfflineError
+    | InvocationError
+    | Task.AbortError
   >
 }
 
-export interface AccountPlanList<
-  Protocol extends PlanProtocol &
-    ProviderProtocol &
-    SubscriptionProtocol = PlanProtocol &
-    ProviderProtocol &
-    SubscriptionProtocol
-> extends Iterable<BillingPlan<Protocol>> {
-  [key: string]: BillingPlan<Protocol>
+export interface AccountPlanList extends Iterable<BillingPlan> {
+  [key: string]: BillingPlan
 }
 
-export interface BillingPlan<
-  Protocol extends PlanProtocol &
-    ProviderProtocol &
-    SubscriptionProtocol = PlanProtocol &
-    ProviderProtocol &
-    SubscriptionProtocol
-> {
-  account: AccountSession<Protocol>
+export interface BillingPlan {
   customer: AccountDID
   provider: ProviderDID
 
   subscriptions: AccountSubscriptions
 }
 
+export interface BillingPlanSession<
+  Protocol extends SubscriptionProtocol &
+    ProviderProtocol = SubscriptionProtocol & ProviderProtocol
+> {
+  provider: ProviderDID
+  account: AccountSession<Protocol>
+}
+
 export interface AccountSubscriptions {
   add(subscription: {
     consumer: SpaceDID
     limit?: Limit
-  }): Promise<Result<Unit, ProviderAddFailure | InvocationError>>
+  }): TaskInvocation<
+    Unit,
+    ProviderAddFailure | InvocationError,
+    OfflineError | AccessDenied
+  >
 
-  list(): Promise<Result<Subscriptions, SubscriptionListFailure | AccessDenied>>
+  list(): Task.Invocation<
+    Subscriptions,
+    SubscriptionListFailure | InvocationError | AccessDenied | OfflineError
+  >
 }
 
 export interface Subscription {
@@ -1065,25 +1199,10 @@ export interface Subscriptions extends Iterable<Subscription> {
   [key: string]: Subscription
 }
 
-export interface OwnSpace {
-  signer: Signer<DIDKey>
-  name: string
-}
-
 export interface SpaceSession<Protocol extends UnknownProtocol = W3UpProtocol>
   extends Session<Protocol> {
   name: string
   did(): DIDKey
-}
-
-export interface SpaceSessionView<Protocol extends SpaceProtocol>
-  extends SpaceSession<Protocol> {
-  info(): Promise<Result<SpaceInfoResult, SpaceInfoFailure | InvocationError>>
-
-  usage: SpaceUsageView
-  delegations: SpaceDelegationsView
-
-  // blobs: SpaceBlobsView
 }
 
 export interface SpaceUploadsView {
@@ -1146,6 +1265,8 @@ export interface SpaceBlobsView {
   ): Promise<Result<Unit, AccessDenied | InvocationError | DataStoreSaveError>>
 }
 
+export interface BlobInfo {}
+
 export interface Uploader {
   /**
    * Writes contents of the upload to the space without adding it to the upload
@@ -1158,7 +1279,6 @@ export interface Uploader {
   upload(space?: SpaceView): Promise<Upload>
 }
 
-export interface SpaceView {}
 interface FileUploader extends Uploader {}
 
 interface DirectoryUploader extends Uploader {}
@@ -1185,8 +1305,28 @@ interface StreambleBytes {
 export interface SpaceDelegationsView {
   add(
     authorization: Authorization
-  ): Promise<
-    Result<Unit, AccessDenied | AccessDelegateFailure | InvocationError>
+  ): TaskInvocation<
+    Unit,
+    AccessDelegateFailure | InvocationError,
+    AccessDenied | OfflineError
+  >
+}
+
+export interface SpaceFilecoinView {
+  offer(
+    input: FilecoinOffer
+  ): TaskInvocation<
+    FilecoinOfferSuccess,
+    FilecoinOfferFailure | InvocationError,
+    AccessDenied | OfflineError
+  >
+
+  info(
+    input: FilecoinInfo
+  ): TaskInvocation<
+    FilecoinInfoSuccess,
+    FilecoinInfoFailure | InvocationError,
+    AccessDenied | OfflineError
   >
 }
 
@@ -1194,90 +1334,81 @@ export interface SpaceUsageView {
   report(period: {
     from: Date
     to: Date
-  }): Promise<
-    Result<
-      UsageReportSuccess,
-      UsageReportFailure | AccessDenied | InvocationError
-    >
+  }): TaskInvocation<
+    UsageReportSuccess,
+    UsageReportFailure | InvocationError,
+    AccessDenied | OfflineError
   >
-  get(): Promise<
-    Result<bigint, UsageReportFailure | AccessDenied | InvocationError>
+  get(): Task.Invocation<
+    bigint,
+    UsageReportFailure | InvocationError | AccessDenied | OfflineError
   >
 }
 
-export interface ShareAccess {
+export interface SpaceAccess {
+  audience: Principal
   can?: Can
   expiration?: UTCUnixTimestamp
+  notBefore?: UTCUnixTimestamp
 }
 
-export interface OwnSpaceView extends OwnSpace {
-  did(): DIDKey
-  rename(name: string): OwnSpace
-
-  toMnemonic(): string
-
-  connect<Protocol extends SpaceProtocol & UsageProtocol & AccessProtocol>(
-    connection: Connection<Protocol>
-  ): OwnSpaceSession<Protocol>
-
-  share(
-    authority: UCANSigner,
-    access?: ShareAccess
-  ): Promise<Result<SharedSpaceView, never>>
-
-  createRecovery(
-    authority: Principal,
-    access?: { expiration?: UTCUnixTimestamp }
-  ): Promise<Result<Authorization, never>>
+export interface SpaceRecovery {
+  audience: Principal
+  expiration?: UTCUnixTimestamp
+  notBefore?: UTCUnixTimestamp
 }
 
-export interface OwnSpaceSession<Protocol extends SpaceProtocol & UsageProtocol>
-  extends SpaceSessionView<Protocol> {
-  rename(name: string): OwnSpaceSession<Protocol>
-  did(): DIDKey
-  rename(name: string): OwnSpaceSession<Protocol>
-  toMnemonic(): string
-
-  share(
-    authority: UCANSigner,
-    access?: ShareAccess
-  ): Promise<Result<SharedSpaceSession<Protocol>, Unit>>
-
-  createRecovery(
-    authority: Principal,
-    access?: ShareAccess
-  ): Promise<Result<Authorization, never>>
+export interface ShareAccess extends SpaceAccess {
+  audience: Signer
 }
 
-export interface OwnSpacePromise extends Promise<Result<OwnSpaceView, Unit>> {
-  connect<Protocol extends SpaceProtocol & UsageProtocol & AccessProtocol>(
-    connection: Connection<Protocol>
-  ): Promise<Result<OwnSpaceSession<Protocol>, never>>
-}
-
-export interface SharedSpace {
-  did(): DIDKey
+export interface SpaceView {
   authority: DID
-
-  proofs: Delegation[]
-}
-
-export interface SharedSpaceView extends SharedSpace {
   name: string
-  subject: DID
+
+  did(): DIDKey
+  info(): TaskInvocation<
+    SpaceInfoSuccess,
+    SpaceInfoFailure | InvocationError,
+    AccessDenied | OfflineError
+  >
+
+  authorize(access: SpaceAccess): Task.Invocation<Authorization, AccessDenied>
+
+  share(access: SpaceAccess): Task.Invocation<SpaceView, AccessDenied>
 
   connect<
-    Protocol extends UsageProtocol &
-      SpaceProtocol &
-      AccessProtocol = W3UpProtocol
+    Protocol extends SpaceProtocol &
+      UsageProtocol &
+      AccessProtocol &
+      FilecoinProtocol
   >(
     connection: Connection<Protocol>
-  ): SharedSpaceSession<Protocol>
+  ): SpaceView
+
+  proofs: Delegation[]
+
+  // APIs
+  usage: SpaceUsageView
+  delegations: SpaceDelegationsView
+
+  filecoin: SpaceFilecoinView
+  // blobs: SpaceBlobsView
 }
 
-export interface SharedSpaceSession<
-  Protocol extends SpaceProtocol & UsageProtocol = W3UpProtocol
-> extends SharedSpace,
-    SpaceSessionView<Protocol> {
-  name: string
+export interface OwnSpaceView extends SpaceView {
+  rename(name: string): OwnSpaceView
+  toMnemonic(): string
+  createRecovery(
+    access: SpaceRecovery
+  ): Task.Invocation<Authorization, AccessDenied>
+
+  connect<
+    Protocol extends SpaceProtocol &
+      UsageProtocol &
+      AccessProtocol &
+      FilecoinProtocol
+  >(
+    connection: Connection<Protocol>
+  ): OwnSpaceView
 }

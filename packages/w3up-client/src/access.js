@@ -9,6 +9,8 @@ import { Failure, DID } from '@ucanto/core'
 import { bytesToDelegations } from './agent/encoding.js'
 import * as DB from './agent/db.js'
 import * as Agent from './agent.js'
+import * as Task from './task.js'
+import * as Session from './session.js'
 
 /**
  * Takes array of delegations and propagates them to their respective audiences
@@ -21,37 +23,31 @@ import * as Agent from './agent.js'
  * @param {object} input
  * @param {API.Delegation[]} input.delegations - Delegations to propagate.
  * @param {API.SpaceDID} input.subject - Space to propagate through.
- * @returns {Promise<API.Result<API.Unit, API.AccessDenied | API.AccessDelegateFailure | API.InvocationError>>}
+ * @returns {Task.Task<API.Receipt<API.Unit, API.AccessDelegateFailure | API.InvocationError>, API.AccessDenied | API.OfflineError>}
  */
-export const delegate = async (session, { delegations, subject }) => {
+export function* delegate(session, { delegations, subject }) {
   const entries = Object.values(delegations).map((proof) => [
     proof.cid.toString(),
     proof.cid,
   ])
 
-  const auth = Agent.authorize(session.agent, {
+  const { proofs } = yield* Agent.authorize(session.agent, {
     subject,
     can: { 'access/delegate': [] },
   })
 
-  if (auth.error) {
-    return auth
-  }
+  const task = Access.delegate.invoke({
+    issuer: session.agent.signer,
+    audience: session.connection.id,
+    with: subject,
+    nb: {
+      delegations: Object.fromEntries(entries),
+    },
+    // must be embedded here because it's referenced by cid in .nb.delegations
+    proofs: [...proofs, ...delegations],
+  })
 
-  const { out } = await Access.delegate
-    .invoke({
-      issuer: session.agent.signer,
-      audience: session.connection.id,
-      with: subject,
-      nb: {
-        delegations: Object.fromEntries(entries),
-      },
-      // must be embedded here because it's referenced by cid in .nb.delegations
-      proofs: [...auth.ok.proofs, ...delegations],
-    })
-    .execute(session.connection)
-
-  return out
+  return yield* Session.execute(session, task).receipt()
 }
 
 /**
@@ -60,16 +56,15 @@ export const delegate = async (session, { delegations, subject }) => {
  * `PendingAccessRequest` object that can be used to poll for the requested
  * delegation through `access/claim` capability.
  *
- * @template {API.AccessRequestProvider} Protocol
- * @param {API.Session<Protocol>} session
+ * @param {API.Session<API.AccessRequestProvider>} session
  * @param {object} input
  * @param {API.AccountDID} input.account - Account from which access is requested.
  * @param {API.DIDKey|API.DidMailto} [input.authority] - Principal requesting access.
  * @param {API.ProviderDID} [input.provider] - Provider that will receive the invocation.
  * @param {API.Can} [input.can] - Capabilities been requested.
- * @returns {Promise<API.Result<PendingAccessRequest<Protocol>, API.AccessAuthorizeFailure|API.AccessDenied|API.InvocationError>>}
+
  */
-export const request = async (
+export function* request(
   session,
   {
     account,
@@ -77,118 +72,103 @@ export const request = async (
     provider = /** @type {API.ProviderDID} */ (session.connection.id.did()),
     can = spaceAccess,
   }
-) => {
+) {
   // Find proofs that allows this agent to invoke `access/authorize` capability
   // on behalf of the principal requesting access.
-  const auth = Agent.authorize(session.agent, {
+  const { proofs } = yield* Agent.authorize(session.agent, {
     subject: authority,
     can: { 'access/authorize': [] },
   })
 
-  if (auth.error) {
-    return auth
+  // Build an invocation and execute it.
+  const task = Access.authorize.invoke({
+    issuer: session.agent.signer,
+    audience: DID.parse(provider),
+    with: authority,
+    nb: {
+      iss: account,
+      // New ucan spec moved to recap style layout for capabilities and new
+      // `access/request` will use similar format as opposed to legacy one,
+      // in the meantime we translate new format to legacy format here.
+      att: [...toCapabilities(can)],
+    },
+    proofs,
+  })
+
+  const receipt = yield* Session.execute(session, task).receipt()
+  if (!receipt.out.ok) {
+    return yield* Task.fail(receipt.out.error)
   }
 
-  // Build an invocation and execute it.
-  const { out: result } = await Access.authorize
-    .invoke({
-      issuer: session.agent.signer,
-      audience: DID.parse(provider),
-      with: authority,
-      nb: {
-        iss: account,
-        // New ucan spec moved to recap style layout for capabilities and new
-        // `access/request` will use similar format as opposed to legacy one,
-        // in the meantime we translate new format to legacy format here.
-        att: [...toCapabilities(can)],
-      },
-      proofs: auth.ok.proofs,
-    })
-    .execute(
-      /** @type {API.Connection<API.AccessRequestProvider>} */ (
-        session.connection
-      )
-    )
+  const { request, expiration } = receipt.out.ok
 
-  return result.error
-    ? result
-    : {
-        ok: new PendingAccessRequest({
-          ...result.ok,
-          authority,
-          session,
-          provider,
-        }),
-      }
+  return new PendingAccessRequest({
+    request,
+    receipt,
+    expiration,
+    authority,
+    session,
+    provider,
+  })
 }
 
 /**
  * Claims access that has been delegated to the given `authority`, which by
  * default is the agent's DID.
  *
- * @template {API.AccessClaimProvider} Protocol
- * @param {API.Session<Protocol>} session
+ * @param {API.Session<API.AccessClaimProvider>} session
  * @param {object} input
  * @param {API.DIDKey|API.DidMailto} [input.authority] - Principal claiming an access.
  * @param {API.ProviderDID} [input.provider] - Provider handling the invocation.
- * @returns {Promise<API.Result<GrantedAccess<Protocol>, API.AccessClaimFailure|API.InvocationError|API.AccessDenied>>}
  */
-export const claim = async (
+export function* claim(
   session,
   {
     provider = /** @type {API.ProviderDID} */ (session.connection.id.did()),
     authority = /** @type {API.DIDKey} */ (session.agent.signer.did()),
   } = {}
-) => {
-  const auth = Agent.authorize(session.agent, {
+) {
+  const auth = yield* Agent.authorize(session.agent, {
     subject: authority,
     can: { 'access/claim': [] },
   })
 
-  if (auth.error) {
-    return auth
-  }
+  const task = Access.claim.invoke({
+    issuer: session.agent.signer,
+    audience: DID.parse(provider),
+    with: authority,
+    proofs: auth.proofs,
+  })
 
-  const { out: result } = await Access.claim
-    .invoke({
-      issuer: session.agent.signer,
-      audience: DID.parse(provider),
-      with: authority,
-      proofs: auth.ok.proofs,
-    })
-    .execute(
-      /** @type {API.Connection<API.AccessClaimProvider>} */ (
-        session.connection
-      )
-    )
+  const receipt = yield* Session.execute(session, task).receipt()
 
-  if (result.error) {
-    return { error: result.error }
-  } else {
-    const delegations = Object.values(result.ok.delegations)
+  const { delegations } = yield* Task.ok(receipt.out)
 
-    const proofs = /** @type {API.Tuple<API.Delegation>} */ (
-      delegations.flatMap((proof) => bytesToDelegations(proof))
-    )
+  const proofs = /** @type {API.Tuple<API.Delegation>} */ (
+    Object.values(delegations).flatMap((proof) => bytesToDelegations(proof))
+  )
 
-    return { ok: new GrantedAccess({ agent: session.agent, proofs }) }
-  }
+  return new GrantedAccess({ agent: session.agent, receipt, proofs })
 }
+
+/**
+ * @typedef {object} PendingAccessRequestModel
+ * @property {API.Session<API.AccessClaimProvider>} session - Session with a service.
+ * @property {API.Receipt<API.AccessAuthorizeSuccess, API.AccessAuthorizeFailure>} receipt - Receipt of the `access/authorize` invocation.
+ * @property {API.ProviderDID} provider - Provider handling request.
+ * @property {API.UTCUnixTimestamp} expiration - Seconds in UTC.
+ * @property {API.DIDKey|API.DidMailto} authority - Principal requesting an access.
+ * @property {API.Link} request - Link to the `access/authorize` invocation.
+ */
 
 /**
  * Represents a pending access request. It can be used to poll for the requested
  * delegation.
  *
- * @template {API.AccessClaimProvider} Protocol
  */
 class PendingAccessRequest {
   /**
-   * @typedef {object} PendingAccessRequestModel
-   * @property {API.Session<Protocol>} session - Session with a service.
-   * @property {API.ProviderDID} provider - Provider handling request.
-   * @property {API.UTCUnixTimestamp} expiration - Seconds in UTC.
-   * @property {API.DIDKey|API.DidMailto} authority - Principal requesting an access.
-   * @property {API.Link} request - Link to the `access/authorize` invocation.
+   
    *
    * @param {PendingAccessRequestModel} model
    */
@@ -215,6 +195,10 @@ class PendingAccessRequest {
     return this.model.provider
   }
 
+  receipt() {
+    return this.model.receipt
+  }
+
   /**
    * Low level method and most likely you want to use `.claim` instead. This method will poll
    * fetch delegations **just once** and will return proofs matching to this request. Please note
@@ -223,23 +207,10 @@ class PendingAccessRequest {
    * If you do want to continuously poll until request is approved or expired, you should use
    * `.claim` method instead.
    *
-   * @returns {Promise<API.Result<API.Delegation[], API.InvocationError|API.AccessClaimFailure|RequestExpired|API.AccessDenied>>}
+   * @returns {Task.Invocation<GrantedAccess, API.InvocationError|API.AccessClaimFailure|RequestExpired|API.AccessDenied|Task.AbortError>}
    */
-  async poll() {
-    const { session, provider, expiration, authority } = this.model
-    const timeout = expiration * 1000 - Date.now()
-    if (timeout <= 0) {
-      return { error: new RequestExpired(this.model) }
-    } else {
-      const result = await claim(session, { authority, provider })
-      return result.error
-        ? result
-        : {
-            ok: result.ok.proofs.filter((proof) =>
-              isRequestedAccess(proof, this.model)
-            ),
-          }
-    }
+  poll() {
+    return Task.perform(PendingAccessRequest.poll(this))
   }
 
   /**
@@ -247,34 +218,60 @@ class PendingAccessRequest {
    * a `GrantedAccess` object (view over the delegations) that can be used in the
    * invocations or can be saved in the agent (store) using `.save()` method.
    *
+   * @param {object} [options]
+   * @param {number} [options.interval]
+   * @param {AbortSignal} [options.signal]
+   * @returns {Task.Invocation<GrantedAccess, Error>}
+   */
+  claim(options) {
+    return Task.perform(PendingAccessRequest.claim(this, options))
+  }
+
+  /**
+   * @param {PendingAccessRequest} self
+   */
+  static *poll(self) {
+    const { session, provider, expiration, authority } = self.model
+    const timeout = expiration * 1000 - Date.now()
+    if (timeout <= 0) {
+      return yield* Task.fail(new RequestExpired(self.model))
+    } else {
+      return yield* claim(session, { authority, provider })
+    }
+  }
+
+  /**
+   * @param {PendingAccessRequest} self
    * @param {object} options
    * @param {number} [options.interval]
    * @param {AbortSignal} [options.signal]
-   * @returns {Promise<API.Result<GrantedAccess<Protocol>, Error>>}
+   * @returns {Task.Task<GrantedAccess, Error>}
    */
-  async claim({ signal, interval = 250 } = {}) {
+  static *claim(self, { signal, interval = 250 } = {}) {
     while (signal?.aborted !== true) {
-      const result = await this.poll()
-      // If polling failed, return the error.
-      if (result.error) {
-        return result
-      }
+      const access = yield* this.poll(self)
+
+      const proofs = /** @type {API.Tuple<API.Delegation>} */ (
+        access.proofs.filter((proof) => isRequestedAccess(proof, self.model))
+      )
+
       // If we got some matching proofs, return them.
-      else if (result.ok.length > 0) {
-        return {
-          ok: new GrantedAccess({
-            agent: this.session.agent,
-            proofs: /** @type {API.Tuple<API.Delegation>} */ (result.ok),
-          }),
-        }
+      if (proofs.length > 0) {
+        return new GrantedAccess({
+          agent: self.session.agent,
+          proofs,
+          receipt: access.receipt(),
+        })
       }
 
-      await new Promise((resolve) => setTimeout(resolve, interval))
+      yield* Task.sleep(interval)
     }
 
-    return {
-      error: Object.assign(new Error('Aborted'), { reason: signal.reason }),
-    }
+    return yield* Task.fail(
+      /** @type {Error & {reason:unknown}} */ (
+        new Error('Aborted'), { reason: signal.reason }
+      )
+    )
   }
 }
 
@@ -307,7 +304,6 @@ class RequestExpired extends Failure {
 }
 
 /**
- * @template {API.UnknownProtocol} [Protocol=API.W3UpProtocol]
  * View over the UCAN Delegations that grant access to a specific principal.
  */
 export class GrantedAccess {
@@ -315,11 +311,16 @@ export class GrantedAccess {
    * @typedef {object} GrantedAccessModel
    * @property {API.Agent} agent - Agent that processed the request.
    * @property {API.Tuple<API.Delegation>} proofs - Delegations that grant access.
+   * @property {API.Receipt<API.AccessClaimSuccess>} receipt
    *
    * @param {GrantedAccessModel} model
    */
   constructor(model) {
     this.model = model
+  }
+
+  receipt() {
+    return this.model.receipt
   }
   get proofs() {
     return this.model.proofs

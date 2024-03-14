@@ -32,6 +32,7 @@ export type ValidationEmailSend = {
   url: string
 }
 
+export type { SpaceInfoSuccess, SpaceInfoFailure, SpaceUnknown }
 export type SpaceDID = DIDKey
 export type ServiceDID = DID<'web'>
 export type ServiceSigner = Signer<ServiceDID>
@@ -117,6 +118,9 @@ import {
   ProviderAddSuccess,
   ProviderAddFailure,
   SpaceInfo,
+  SpaceInfoSuccess,
+  SpaceInfoFailure,
+  SpaceUnknown,
   ProviderDID,
   StoreGetFailure,
   UploadGetFailure,
@@ -446,12 +450,6 @@ export interface UploadTable {
   ) => Promise<ListResponse<UploadListItem>>
 }
 
-export type SpaceInfoSuccess = {
-  did: SpaceDID
-  providers: ProviderDID[]
-}
-export type SpaceInfoFailure = Failure | SpaceUnknown
-
 export interface UnknownProvider extends Failure {
   name: 'UnknownProvider'
 }
@@ -512,9 +510,6 @@ export interface TestSpaceRegistry {
 
 export interface LinkJSON<T extends UnknownLink = UnknownLink> {
   '/': ToString<T>
-}
-export interface SpaceUnknown extends Failure {
-  name: 'SpaceUnknown'
 }
 
 export type Input<C extends CapabilityParser<Match<ParsedCapability>>> =

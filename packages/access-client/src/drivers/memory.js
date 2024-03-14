@@ -25,7 +25,7 @@ export class MemoryDriver {
     this.#data = undefined
   }
 
-  async open() {}
+  async connect() {}
 
   async close() {}
 

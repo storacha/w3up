@@ -99,7 +99,7 @@
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
     "type-fest": "^3.3.0",
-    "typescript": "5.2.2",
+    "typescript": "^5.4.2",
     "watch": "^1.0.2"
   },
   "eslintConfig": {

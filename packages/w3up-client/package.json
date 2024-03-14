@@ -24,9 +24,18 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "node": "./src/index.node.js",
-      "import": "./src/index.js"
+      "types": "./dist/src/lib.ts",
+      "import": "./src/lib.js"
+    },
+    "./store": {
+      "types": "./dist/src/store.d.ts",
+      "node": "./src/store.node.js",
+      "import": "./src/store.js"
+    },
+    "./agent/signer": {
+      "types": "./dist/src/agent/signer.d.ts",
+      "browser": "./src/agent/signer.browser.js",
+      "import": "./src/agent/signer.js"
     },
     "./account": {
       "types": "./dist/src/account.d.ts",
@@ -101,6 +110,7 @@
     "@ucanto/principal": "^9.0.0",
     "@ucanto/transport": "^9.0.0",
     "datalogia": "^0.4.0",
+    "conf": "11.0.2",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
@@ -126,7 +136,7 @@
     "npm-run-all": "^4.1.5",
     "playwright-test": "^12.3.4",
     "typedoc": "^0.25.3",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.2"
   },
   "eslintConfig": {
     "extends": [

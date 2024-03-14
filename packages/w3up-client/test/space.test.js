@@ -13,12 +13,12 @@ import * as API from '../src/types.js'
  */
 export const testSpace = {
   'create a new space': (assert, { session, provisionsStorage }) =>
-    Task.perform(function* () {
+    Task.spawn(function* () {
       const spaces = Space.view(session)
       const none = spaces.list()
       assert.deepEqual(none, {})
 
-      const space = yield* Task.join(spaces.create({ name: 'my-space' }))
+      const space = yield* spaces.create({ name: 'my-space' })
       assert.equal(space.name, 'my-space')
 
       // Provision space so the API can be used.
@@ -33,7 +33,7 @@ export const testSpace = {
         })
       )
 
-      const info = yield* Task.join(space.info())
+      const info = yield* space.info()
 
       assert.deepEqual(info, {
         did: space.did(),
@@ -42,9 +42,9 @@ export const testSpace = {
 
       assert.deepEqual(spaces.list(), {}, 'space was not saved')
 
-      const sharedSpace = yield* Task.join(space.share(session.agent.signer))
+      const sharedSpace = yield* space.share({ audience: session.agent.signer })
 
-      yield* Task.join(spaces.add(sharedSpace))
+      yield* spaces.add(sharedSpace)
 
       assert.deepEqual(
         spaces.list(),
@@ -55,22 +55,20 @@ export const testSpace = {
       )
 
       const saved = spaces.list()[space.did()]
-      const status = yield* Task.join(saved.info())
+      const status = yield* saved.info()
 
       assert.deepEqual(status, {
         did: space.did(),
         providers: [session.connection.id.did()],
       })
-
-      return { ok: {} }
     }),
   'should get usage': async (
     assert,
     { session, grantAccess, mail, plansStorage }
   ) =>
-    Task.perform(function* () {
+    Task.spawn(function* () {
       const product = 'did:web:test.web3.storage'
-      const space = yield* Task.join(session.spaces.create({ name: 'test' }))
+      const space = yield* session.spaces.create({ name: 'test' })
 
       const email = 'alice@web.mail'
       const login = session.accounts.login({ email })
@@ -79,23 +77,21 @@ export const testSpace = {
       assert.deepEqual(message.to, email)
       yield* Task.wait(grantAccess(message))
 
-      const account = yield* Task.join(login)
+      const account = yield* login
 
       // setup billing plan
-      yield* Task.join(plansStorage.set(account.did(), product))
+      yield* Task.ok.wait(plansStorage.set(account.did(), product))
 
-      const plans = yield* Task.join(account.plans.list())
+      const plans = yield* account.plans.list()
       const [plan] = Object.values(plans)
 
-      yield* Task.join(plan.subscriptions.add({ consumer: space.did() }))
+      yield* plan.subscriptions.add({ consumer: space.did() })
 
-      const shared = yield* Task.join(space.share(session.agent.signer))
-      yield* Task.join(session.spaces.add(shared))
+      const shared = yield* space.share({ audience: session.agent.signer })
+      yield* session.spaces.add(shared)
 
       const [saved] = session.spaces
       assert.deepEqual(saved.did(), space.did())
-
-      return { ok: {} }
 
       // const size = 1138
       // const archive = await randomCAR(size)
@@ -115,10 +111,10 @@ export const testSpace = {
     assert,
     { session, mail, plansStorage, grantAccess }
   ) =>
-    Task.perform(function* () {
+    Task.spawn(function* () {
       const product = 'did:web:test.web3.storage'
       const email = 'alice@web.mail'
-      yield* Task.join(
+      yield* Task.ok.wait(
         plansStorage.set(Account.DIDMailto.fromEmail(email), product)
       )
 
@@ -126,26 +122,23 @@ export const testSpace = {
       const message = yield* Task.wait(mail.take())
 
       yield* Task.wait(grantAccess(message))
-      const alice = yield* Task.join(login)
+      const alice = yield* login
 
-      const plans = yield* Task.join(alice.plans.list())
+      const plans = yield* alice.plans.list()
       const [plan] = Object.values(plans)
 
-      assert.equal(plan.account, alice)
       assert.equal(plan.customer, alice.did())
       assert.equal(plan.provider, session.connection.id.did())
 
-      const space = yield* Task.join(Space.create({ name: 'test-space' }))
+      const space = yield* Space.create({ name: 'test-space' })
 
-      yield* Task.join(plan.subscriptions.add({ consumer: space.did() }))
+      yield* plan.subscriptions.add({ consumer: space.did() })
 
-      const info = yield* Task.join(space.connect(session.connection).info())
+      const info = yield* space.connect(session.connection).info()
       assert.deepEqual(info, {
         did: space.did(),
         providers: [session.connection.id.did()],
       })
-
-      return { ok: {} }
     }),
 }
 

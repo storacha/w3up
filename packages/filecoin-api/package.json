@@ -174,7 +174,7 @@
     "multiformats": "^12.1.2",
     "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
     "p-wait-for": "^5.0.2",
-    "typescript": "5.2.2"
+    "typescript": "^5.4.2"
   },
   "eslintConfig": {
     "extends": [

@@ -5,7 +5,7 @@ export interface Driver<T> {
   /**
    * Open driver
    */
-  open: () => Promise<void>
+  connect: () => Promise<void>
   /**
    * Clean up and close driver
    */

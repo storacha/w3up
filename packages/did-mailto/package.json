@@ -41,7 +41,7 @@
     "@types/mocha": "^10.0.1",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "mocha": "^10.2.0",
-    "typescript": "5.2.2"
+    "typescript": "^5.4.2"
   },
   "eslintConfig": {
     "extends": [

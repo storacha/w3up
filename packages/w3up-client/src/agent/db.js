@@ -4,6 +4,7 @@ import * as Delegation from './delegation.js'
 import * as Delegations from './delegations.js'
 export * from 'datalogia'
 export * as Text from './db/text.js'
+import * as Task from '../task.js'
 
 /**
  *
@@ -95,117 +96,119 @@ export const fromProofs = (source) => {
 /**
  * @param {object} source
  * @param {API.DataStore} [source.store]
- * @returns {Promise<API.Result<API.Database, API.DataStoreOpenError>>}
+ * @returns {Task.Invocation<API.Database, API.DataStoreOpenError>}
  */
-export const open = async ({ store }) => {
-  try {
-    const archive = store ? await store.load() : null
-    const db = fromArchive(archive ?? {})
-    return { ok: { ...db, store } }
-  } catch (cause) {
-    return {
-      error: new DataStoreOpenError('Failed to open a datastore', {
-        cause,
-      }),
+export const open = ({ store }) =>
+  Task.spawn(function* () {
+    try {
+      const archive = store ? yield* Task.wait(store.load()) : null
+      const db = fromArchive(archive ?? {})
+      return { ...db, store }
+    } catch (cause) {
+      return yield* Task.fail(
+        new DataStoreOpenError('Failed to open a datastore', {
+          cause,
+        })
+      )
     }
-  }
-}
+  })
 
 /**
  * @param {API.Database} db
- * @returns {Promise<API.Result<API.Unit, API.DataStoreSaveError>>}
+ * @returns {Task.Invocation<API.Unit, API.DataStoreSaveError|Task.AbortError>}
  */
-export const save = async (db) => {
-  const archive = toArchive(db)
-  if (db.store) {
-    try {
-      await db.store.save(archive)
-    } catch (cause) {
-      return {
-        error: new DataStoreSaveError('Failed to store data', { cause }),
+export const save = (db) =>
+  Task.spawn(function* () {
+    const archive = toArchive(db)
+    if (db.store) {
+      try {
+        yield* Task.wait(db.store.save(archive))
+      } catch (cause) {
+        return Task.fail(
+          new DataStoreSaveError('Failed to store data', { cause })
+        )
       }
     }
-  }
 
-  return { ok: {} }
-}
+    return {}
+  })
 
 /**
  * @param {API.Database} db
  * @param {API.DBTransaction} transaction
- * @returns {Promise<API.Result<API.Database, API.DatabaseTransactionError|API.DataStoreSaveError>>}
+ * @returns {Task.Task<API.Database, API.DatabaseTransactionError|API.DataStoreSaveError>}
  */
-export const transact = async (db, transaction) => {
-  const assertions = []
-  let reindex = false
-  for (const { assert, retract } of transaction) {
-    if (assert) {
-      const { proof, signer } = assert
-      if (proof) {
-        db.proofs.set(`${proof.cid}`, { meta: {}, delegation: proof })
-        for (const fact of Delegation.facts(proof)) {
-          assertions.push({ Associate: fact })
+export const transact = (db, transaction) =>
+  Task.spawn(function* () {
+    const assertions = []
+    let reindex = false
+    for (const { assert, retract } of transaction) {
+      if (assert) {
+        const { proof, signer } = assert
+        if (proof) {
+          db.proofs.set(`${proof.cid}`, { meta: {}, delegation: proof })
+          for (const fact of Delegation.facts(proof)) {
+            assertions.push({ Associate: fact })
+          }
+        } else if (signer) {
+          db.signer = signer
+        } else {
+          return yield* Task.fail(
+            new DatabaseTransactionError(
+              `Transaction contains unknown assertion`,
+              { cause: assert, transaction }
+            )
+          )
         }
-      } else if (signer) {
-        db.signer = signer
-      } else {
-        return {
-          error: new DatabaseTransactionError(
-            `Transaction contains unknown assertion`,
-            { cause: assert, transaction }
-          ),
+      }
+
+      if (retract) {
+        const { proof, signer } = retract
+        // Note we do not delete delegation proofs from the database as they
+        // may be referenced by other proofs. In fact we should probably just
+        // mark this proof as retracted instead of deleting them, and re-indexing
+        // but for now this will do.
+        if (proof) {
+          db.proofs.delete(`${proof.cid}`)
+          reindex = true
+        } else if (signer) {
+          delete db.signer
+        } else {
+          return yield* Task.fail(
+            new DatabaseTransactionError(
+              `Transaction contains unknown retraction`,
+              { cause: retract, transaction }
+            )
+          )
         }
+      }
+
+      const commit = yield* Task.wait(db.transactor.transact(assertions))
+      if (commit.error) {
+        return yield* Task.fail(
+          new DatabaseTransactionError(commit.error.message, {
+            cause: commit.error,
+            transaction,
+          })
+        )
       }
     }
 
-    if (retract) {
-      const { proof, signer } = retract
-      // Note we do not delete delegation proofs from the database as they
-      // may be referenced by other proofs. In fact we should probably just
-      // mark this proof as retracted instead of deleting them, and re-indexing
-      // but for now this will do.
-      if (proof) {
-        db.proofs.delete(`${proof.cid}`)
-        reindex = true
-      } else if (signer) {
-        delete db.signer
-      } else {
-        return {
-          error: new DatabaseTransactionError(
-            `Transaction contains unknown retraction`,
-            { cause: retract, transaction }
-          ),
-        }
-      }
+    // If we end up removing some proofs we need to rebuild index in order to
+    // prune facts that are no longer valid.
+    if (reindex) {
+      const state = Datalogia.Memory.create(
+        Delegations.facts(db.proofs.values())
+      )
+      db.index = state
+      db.transactor = state
     }
-  }
 
-  const commit = await db.transactor.transact(assertions)
-  if (commit.error) {
-    return {
-      error: new DatabaseTransactionError(commit.error.message, {
-        cause: commit.error,
-        transaction,
-      }),
-    }
-  }
+    // Finally we save changes in the database store.
+    yield* save(db)
 
-  // If we end up removing some proofs we need to rebuild index in order to
-  // prune facts that are no longer valid.
-  if (reindex) {
-    const state = Datalogia.Memory.create(Delegations.facts(db.proofs.values()))
-    db.index = state
-    db.transactor = state
-  }
-
-  // Finally we save changes in the database store.
-  const { error } = await save(db)
-  if (error) {
-    return { error }
-  }
-
-  return { ok: db }
-}
+    return db
+  })
 
 /**
  * Creates a retraction instruction.

@@ -36,6 +36,7 @@ import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 import * as PlanCaps from './plan.js'
 import * as UsageCaps from './usage.js'
+import * as ConsoleCaps from './console.js'
 
 export type ISO8601Date = string
 
@@ -242,6 +243,24 @@ export type RateLimitListFailure = Ucanto.Failure
 // Space
 export type Space = InferInvokedCapability<typeof space>
 export type SpaceInfo = InferInvokedCapability<typeof info>
+export type SpaceInfoSuccess = {
+  did: SpaceDID
+  providers: ProviderDID[]
+}
+export type SpaceInfoFailure = Failure | SpaceUnknown
+
+export interface SpaceUnknown extends Failure {
+  name: 'SpaceUnknown'
+}
+
+export type ConsoleLog = InferInvokedCapability<typeof ConsoleCaps.log>
+export type ConsoleLogOk = {}
+export type ConsoleError = InferInvokedCapability<typeof ConsoleCaps.error>
+export type ConsoleErrorError = {
+  name: 'Error'
+  message: string
+  cause: unknown
+}
 
 // filecoin
 export interface DealMetadata {

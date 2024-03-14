@@ -1,6 +1,5 @@
 import * as Test from './test.js'
-import * as Result from '../src/result.js'
-import * as Coupon from '../src/coupon.js'
+import * as Coupon from '../src/coupon/coupon.js'
 import * as Task from '../src/task.js'
 import * as API from '../src/types.js'
 import { parseLink } from '@ucanto/core'
@@ -19,15 +18,15 @@ export const testCoupon = {
     const login = session.accounts.login({ email: 'workshop@web3.storage' })
     const message = await mail.take()
     await grantAccess(message)
-    const account = Result.unwrap(await login)
-    Result.unwrap(await session.accounts.add(account))
+    const account = await login
+    await session.accounts.add(account)
 
     // Then we setup a billing for this account
     await plansStorage.set(account.did(), 'did:web:test.web3.storage')
 
     // Then we use the account to issue a coupon for the workshop
-    const issued = Result.unwrap(
-      await Coupon.issue(session.agent, {
+    const issued = await Task.perform(
+      Coupon.issue(session.agent, {
         subject: account.did(),
         can: {
           'plan/get': [],
@@ -38,11 +37,11 @@ export const testCoupon = {
     )
 
     // We encode coupon and share it with the participants
-    const archive = Result.unwrap(await issued.archive())
+    const archive = await issued.archive()
 
-    const agent = Result.unwrap(await Coupon.open(archive))
+    const agent = await Task.perform(Coupon.open(archive))
 
-    const coupon = agent.connect(session.connection)
+    const coupon = await agent.connect(session.connection)
     const [...accounts] = coupon.accounts
     const [...spaces] = coupon.spaces
 
@@ -53,21 +52,21 @@ export const testCoupon = {
 
     assert.deepEqual(accounts[0].did(), account.did())
 
-    const [plan] = Result.unwrap(await redeemedAccount.plans.list())
+    const [plan] = await redeemedAccount.plans.list()
 
-    const space = Result.unwrap(await coupon.spaces.create({ name: 'home' }))
-    Result.unwrap(await plan.subscriptions.add({ consumer: space.did() }))
+    const space = await coupon.spaces.create({ name: 'home' })
+    await plan.subscriptions.add({ consumer: space.did() })
 
-    assert.deepEqual(Result.unwrap(await space.info()), {
+    assert.deepEqual(await space.info(), {
       did: space.did(),
       providers: ['did:web:test.web3.storage'],
     })
   },
 
   'saving a coupon': async (assert, { session, provisionsStorage }) =>
-    Task.perform(function* () {
+    Task.spawn(function* () {
       const now = (Date.now() / 1000) | 0
-      const space = yield* Task.join(session.spaces.create({ name: 'test' }))
+      const space = yield* session.spaces.create({ name: 'test' })
       yield* Task.wait(
         provisionsStorage.put({
           provider: /** @type {API.ProviderDID} */ (
@@ -78,73 +77,64 @@ export const testCoupon = {
           cause: parseLink('bafkqaaa'),
         })
       )
-      const coupon = yield* Task.join(
-        Coupon.issue(space.agent, {
-          subject: space.did(),
-          can: { 'space/*': [] },
-        })
-      )
+      const coupon = yield* Coupon.issue(space.agent, {
+        subject: space.did(),
+        can: { 'space/*': [] },
+      })
 
       const [...none] = session.spaces
       assert.deepEqual([], none)
 
-      const result = yield* Task.wait(session.coupons.add(coupon))
+      const result = yield* session.coupons.add(coupon).result()
       assert.match(result.error?.message ?? '', /Coupon audience is/)
 
-      const archive = yield* Task.join(coupon.archive())
+      const archive = yield* coupon.archive()
 
-      const redeemed = yield* Task.join(session.coupons.redeem(archive))
+      const redeemed = yield* session.coupons.redeem(archive)
 
-      yield* Task.join(session.coupons.add(redeemed))
+      yield* session.coupons.add(redeemed)
 
       const [one, ...rest] = session.spaces
       assert.deepEqual(rest.length, 0)
       assert.deepEqual(one.did(), space.did())
 
-      const info = yield* Task.join(one.info())
+      const info = yield* one.info()
 
       assert.deepEqual(info, {
         did: space.did(),
         providers: ['did:web:test.web3.storage'],
       })
-
-      return { ok: {} }
     }),
 
   'coupon with secret': async (assert, { session }) =>
-    Task.perform(function* () {
-      const coupon = yield* Task.join(
-        session.coupons.issue({
-          subject: session.agent.did(),
-          can: {
-            'store/list': [],
-          },
-          secret: 'secret',
-        })
-      )
+    Task.spawn(function* () {
+      const coupon = yield* session.coupons.issue({
+        subject: session.agent.did(),
+        can: {
+          'store/list': [],
+        },
+        secret: 'secret',
+      })
 
-      const archive = yield* Task.join(coupon.archive())
+      const archive = yield* coupon.archive()
 
-      const wrongPassword = yield* Task.wait(
-        session.coupons.redeem(archive, { secret: 'wrong' })
-      )
+      const wrongPassword = yield* session.coupons
+        .redeem(archive, { secret: 'wrong' })
+        .result()
 
       assert.match(String(wrongPassword.error), /secret is invalid/)
 
-      const requiresPassword = yield* Task.wait(session.coupons.redeem(archive))
+      const requiresPassword = yield* session.coupons.redeem(archive).result()
 
       assert.match(String(requiresPassword.error), /requires a secret/)
 
-      const redeem = yield* Task.join(
-        coupon.redeem(session, { secret: 'secret' })
-      )
-      assert.ok(redeem)
-
-      return { ok: {} }
+      const redeem = yield* coupon.redeem(session)
     }),
 
   'corrupt coupon': async (assert, { session }) => {
-    const result = await session.coupons.redeem(new Uint8Array(32).fill(1))
+    const result = await session.coupons
+      .redeem(new Uint8Array(32).fill(1))
+      .result()
 
     assert.match(String(result.error), /Invalid CAR header format/)
   },

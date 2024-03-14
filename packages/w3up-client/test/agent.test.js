@@ -8,13 +8,13 @@ import * as Result from '../src/result.js'
  */
 export const testAgent = {
   'agent has did method': async (assert) => {
-    const result = await Agent.open({
+    const agent = await Agent.open({
       as: alice,
       store: Agent.ephemeral,
-    }).connect()
+    })
 
-    assert.ok(result.ok)
-    const session = Result.unwrap(result)
+    const session = agent.connect()
+
     assert.ok(session.agent)
     assert.ok(session.connection)
 
@@ -27,13 +27,13 @@ export const testAgent = {
   },
 
   'agent fails load if no principal': async (assert) => {
-    const result = await Agent.load({ store: Agent.ephemeral })
+    const result = await Agent.load({ store: Agent.ephemeral }).result()
 
     assert.equal(result?.error?.name, 'SignerLoadError')
   },
 
   'agent loads from store': async (assert) => {
-    const result = await Agent.load({
+    const agent = await Agent.load({
       store: {
         ...Agent.ephemeral,
         async load() {
@@ -47,11 +47,10 @@ export const testAgent = {
       },
     })
 
-    assert.ok(result?.ok)
-    assert.deepEqual(result?.ok?.did(), alice.did())
+    assert.deepEqual(agent.did(), alice.did())
   },
   'load from store but use different signer': async (assert) => {
-    const result = await Agent.load({
+    const agent = await Agent.load({
       as: bob,
       store: {
         ...Agent.ephemeral,
@@ -66,8 +65,6 @@ export const testAgent = {
       },
     })
 
-    assert.ok(result?.ok)
-    const agent = Result.unwrap(result)
     assert.deepEqual(agent.did(), bob.did())
     assert.deepEqual(
       agent.db.signer?.id,
@@ -83,7 +80,6 @@ export const testAgent = {
       },
     ])
 
-    assert.ok(tr.ok)
     assert.deepEqual(agent.db.signer?.id, bob.did(), 'signer was updated')
   },
 }

@@ -164,7 +164,16 @@ export const forwards = (
       time,
     }),
     DB.or(
+      /**
+       * iss: "did:key:zAlice"
+       * with: "ucan:*"
+       */
       Delegation.issuedBy(delegation, subject),
+      /**
+       * iss: "did:key:zBob"
+       * with: "ucan:*"
+       * "prf": [{ iss: "did:key:zAlice", can: "store/*" }]
+       */
       DB.and(
         Delegation.hasProof(delegation, proof),
         DB.or(

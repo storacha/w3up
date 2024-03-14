@@ -1,25 +1,27 @@
 import * as API from '../types.js'
 
 /**
- * @template T
- * @typedef {API.Driver<T>} Driver
- */
-
-/**
- * Driver implementation that stores data in memory."
+ * Opens in-memory data store.
  *
- * Usage:
- *
+ * @example
  * ```js
- * import { MemoryDriver } from '@web3-storage/access/drivers/memory'
+ * import * as Memory from '@web3-storage/w3up-client/store/memory'
+ * const store = Memory.open()
  * ```
  *
- * @template {Record<string, any>} T
- * @implements {Driver<T>}
+ * @template Model
+ * @returns {API.DataStore<Model>}
  */
-class MemoryDriver {
+export const open = () =>
+  /** @type {API.DataStore<Model>} */ (new MemoryStore())
+
+/**
+ * @template {Record<string, any>} Model
+ * @implements {API.DataStore<Model>}
+ */
+class MemoryStore {
   /**
-   * @type {T|undefined}
+   * @type {Model|undefined}
    */
   #data
 
@@ -27,7 +29,7 @@ class MemoryDriver {
     this.#data = undefined
   }
 
-  async open() {}
+  async connect() {}
 
   async close() {}
 
@@ -35,20 +37,17 @@ class MemoryDriver {
     this.#data = undefined
   }
 
-  /** @param {T} data */
+  /**
+   * @param {Model} data
+   */
   async save(data) {
     this.#data = { ...data }
   }
 
-  /** @returns {Promise<T|undefined>} */
+  /** @returns {Promise<Model|undefined>} */
   async load() {
     if (this.#data === undefined) return
     if (Object.keys(this.#data).length === 0) return
     return this.#data
   }
 }
-
-/**
- * @returns {API.DataStore}
- */
-export const memory = () => new MemoryDriver()

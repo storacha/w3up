@@ -54,13 +54,13 @@ export class IndexedDBDriver {
   async #getOpenDB() {
     if (!this.#db) {
       if (!this.#autoOpen) throw new Error('Store is not open')
-      await this.open()
+      await this.connect()
     }
     // @ts-expect-error open sets this.#db
     return this.#db
   }
 
-  async open() {
+  async connect() {
     const db = this.#db
     if (db) return
 

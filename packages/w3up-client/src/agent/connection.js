@@ -9,6 +9,11 @@ export const id = DID.parse('did:web:web3.storage')
 export * as Address from './connection/address.js'
 
 /**
+ * @template {API.UnknownProtocol} Protocol
+ * @typedef {API.Connection<Protocol>} Connection
+ */
+
+/**
  * Opens ucanto connection with a service at the given address. If optional
  * `fetch` implementation is passed it will be used instead of global `fetch`
  * function. In runtime where `fetch` global is not available this option MUST
@@ -38,3 +43,11 @@ export const open = ({
       address,
     }
   )
+
+/**
+ * @type {API.Offline<API.W3UpProtocol>}
+ */
+export const offline = {
+  id: id,
+  address: { id, url },
+}
