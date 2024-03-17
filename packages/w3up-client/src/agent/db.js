@@ -52,7 +52,7 @@ export const fromArchive = ({
 
   for (const { meta, delegation } of delegations.values()) {
     const proof = Delegation.fromArchive(delegation)
-    proofs.set(`${proof.cid}`, { delegation, meta })
+    proofs.set(`${proof.cid}`, { delegation: proof, meta })
   }
 
   const db = Datalogia.Memory.create(Delegations.facts(proofs.values()))
