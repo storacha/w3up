@@ -1,4 +1,3 @@
-import { Parallel } from 'parallel-transform-web'
 import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
@@ -10,8 +9,6 @@ import { ShardingStream, defaultFileComparator } from './sharding.js'
 
 export { Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
-
-const CONCURRENT_REQUESTS = 3
 
 /**
  * Uploads a file to the service and returns the root data CID for the
@@ -122,24 +119,20 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   const shards = []
   /** @type {import('./types.js').AnyLink?} */
   let root = null
-  const concurrency = options.concurrentRequests ?? CONCURRENT_REQUESTS
   const hasher = options.pieceHasher ?? PieceHasher
   await blocks
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(
-      new Parallel(concurrency, async (car) => {
-        const bytes = new Uint8Array(await car.arrayBuffer())
-        const [cid, piece] = await Promise.all([
-          Store.add(conf, bytes, options),
-          (async () => {
-            const multihashDigest = await hasher.digest(bytes)
-            return /** @type {import('@web3-storage/capabilities/types').PieceLink} */ (
-              Link.create(raw.code, multihashDigest)
-            )
-          })(),
-        ])
-        const { version, roots, size } = car
-        return { version, roots, size, cid, piece }
+      new TransformStream({
+        async transform(car, controller) {
+          const bytes = new Uint8Array(await car.arrayBuffer())
+          const multihashDigest = await hasher.digest(bytes)
+          /** @type {import('@web3-storage/capabilities/types').PieceLink} */
+          const piece = Link.create(raw.code, multihashDigest)
+          const cid = await Store.add(conf, bytes, options)
+          const { version, roots, size } = car
+          controller.enqueue({ version, roots, size, cid, piece })
+        },
       })
     )
     .pipeTo(
