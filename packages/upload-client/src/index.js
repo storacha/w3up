@@ -1,4 +1,4 @@
-import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash/async'
+import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
@@ -119,13 +119,14 @@ async function uploadBlockStream(conf, blocks, options = {}) {
   const shards = []
   /** @type {import('./types.js').AnyLink?} */
   let root = null
+  const hasher = options.pieceHasher ?? PieceHasher
   await blocks
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(
       new TransformStream({
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
-          const multihashDigest = await PieceHasher.digest(bytes)
+          const multihashDigest = await hasher.digest(bytes)
           /** @type {import('@web3-storage/capabilities/types').PieceLink} */
           const piece = Link.create(raw.code, multihashDigest)
           const cid = await Store.add(conf, bytes, options)

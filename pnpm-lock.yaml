@@ -70,8 +70,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@ucanto/validator':
         specifier: ^9.0.1
         version: 9.0.1
@@ -161,8 +161,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@ucanto/validator':
         specifier: ^9.0.1
         version: 9.0.1
@@ -252,8 +252,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -313,8 +313,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
@@ -383,8 +383,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@ucanto/validator':
         specifier: ^9.0.1
         version: 9.0.1
@@ -462,14 +462,14 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
-      fr32-sha2-256-trunc254-padded-binary-tree-multihash:
-        specifier: ^3.3.0
-        version: 3.3.0
+      '@web3-storage/data-segment':
+        specifier: ^5.1.0
+        version: 5.1.0
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14
@@ -547,8 +547,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@ucanto/transport':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/access':
         specifier: workspace:^
         version: link:../access-client
@@ -4295,8 +4295,8 @@ packages:
       '@ucanto/principal': 9.0.0
       '@ucanto/validator': 9.0.1
 
-  /@ucanto/transport@9.0.0:
-    resolution: {integrity: sha512-eN9kkhdp5vC8iYSlT+4YeqyLdV+3g4kYLvuDojdR1lqEcJM2/1W8KjGgmGt6dhE7eBlMqD2hqujS1ePPtY2mKw==}
+  /@ucanto/transport@9.1.0:
+    resolution: {integrity: sha512-3pLXEg9YIH0NN1faBh0Xaioxbb2JtPL+4AFtQtmO8LnRyqGnTahZwwaM8XFL5eMBAp0pYDoZaQ6wdMce0t1cAQ==}
     dependencies:
       '@ucanto/core': 9.0.1
       '@ucanto/interface': 9.0.0
@@ -4407,6 +4407,14 @@ packages:
       multiformats: 11.0.2
       sync-multihash-sha2: 1.0.0
     dev: true
+
+  /@web3-storage/data-segment@5.1.0:
+    resolution: {integrity: sha512-FYdmtKvNiVz+maZ++k4PdD43rfJW5DeagLpstq2y84CyOKNRBWbHLCZ/Ec5zT9iGI+0WgsCGbpC/WlG0jlrnhA==}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.6
+      multiformats: 11.0.2
+      sync-multihash-sha2: 1.0.0
+    dev: false
 
   /@web3-storage/sigv4@1.0.2:
     resolution: {integrity: sha512-ZUXKK10NmuQgPkqByhb1H3OQxkIM0CIn2BMPhGQw7vQw8WIzrBkk9IJiAVfJ/UVBFrf6uzPbx2lEBLt4diCMnQ==}
@@ -7059,10 +7067,6 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
     dev: true
-
-  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@3.3.0:
-    resolution: {integrity: sha512-O11VDxPmPvbQj5eac2BJXyieNacyd+RCMhwOzXQQM/NCI25x3c32YWB4/JwgOWPCpKnNXF6lpK/j0lj7GWOnYQ==}
-    dev: false
 
   /fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
