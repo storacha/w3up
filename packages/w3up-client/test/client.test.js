@@ -4,6 +4,7 @@ import {
   create as createServer,
   parseLink,
   provide,
+  provideAdvanced,
   error,
 } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
@@ -11,6 +12,8 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as UCANCapabilities from '@web3-storage/capabilities/ucan'
+import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
+import { Piece } from '@web3-storage/data-segment'
 import { AgentData } from '@web3-storage/access/agent'
 import { StoreItemNotFound } from '../../upload-api/src/store/lib.js'
 import { randomBytes, randomCAR } from './helpers/random.js'
@@ -19,6 +22,7 @@ import { mockService, mockServiceConf } from './helpers/mocks.js'
 import { File } from './helpers/shims.js'
 import { Client } from '../src/client.js'
 import { validateAuthorization } from './helpers/utils.js'
+import { getFilecoinOfferResponse } from './helpers/filecoin.js'
 
 describe('Client', () => {
   describe('uploadFile', () => {
@@ -26,7 +30,7 @@ describe('Client', () => {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
       const expectedCar = await toCAR(bytes)
-
+      const piece = Piece.fromPayload(bytes).link
       /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
       let carCID
 
@@ -50,6 +54,18 @@ describe('Client', () => {
                 allocated: capability.nb.size,
               },
             }
+          }),
+        },
+        filecoin: {
+          offer: provideAdvanced({
+            capability: StorefrontCapabilities.filecoinOffer,
+            handler: async ({ invocation, context }) => {
+              const invCap = invocation.capabilities[0]
+              if (!invCap.nb) {
+                throw new Error('no params received')
+              }
+              return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+            },
           }),
         },
         upload: {
@@ -118,10 +134,11 @@ describe('Client', () => {
 
   describe('uploadDirectory', () => {
     it('should upload a directory to the service', async () => {
-      const files = [
-        new File([await randomBytes(128)], '1.txt'),
-        new File([await randomBytes(32)], '2.txt'),
-      ]
+      const bytesList = [await randomBytes(128), await randomBytes(32)]
+      const files = bytesList.map(
+        (bytes, index) => new File([bytes], `${index}.txt`)
+      )
+      const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
 
       /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
       let carCID
@@ -145,6 +162,18 @@ describe('Client', () => {
                 allocated: capability.nb.size,
               },
             }
+          }),
+        },
+        filecoin: {
+          offer: provideAdvanced({
+            capability: StorefrontCapabilities.filecoinOffer,
+            handler: async ({ invocation, context }) => {
+              const invCap = invocation.capabilities[0]
+              if (!invCap.nb) {
+                throw new Error('no params received')
+              }
+              return getFilecoinOfferResponse(context.id, pieces[0], invCap.nb)
+            },
           }),
         },
         upload: {
@@ -200,6 +229,8 @@ describe('Client', () => {
   describe('uploadCAR', () => {
     it('uploads a CAR file to the service', async () => {
       const car = await randomCAR(32)
+      const someBytes = new Uint8Array(await car.arrayBuffer())
+      const piece = Piece.fromPayload(someBytes).link
 
       /** @type {import('../src/types.js').CARLink?} */
       let carCID
@@ -223,6 +254,18 @@ describe('Client', () => {
                 allocated: capability.nb.size,
               },
             }
+          }),
+        },
+        filecoin: {
+          offer: provideAdvanced({
+            capability: StorefrontCapabilities.filecoinOffer,
+            handler: async ({ invocation, context }) => {
+              const invCap = invocation.capabilities[0]
+              if (!invCap.nb) {
+                throw new Error('no params received')
+              }
+              return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+            },
           }),
         },
         upload: {

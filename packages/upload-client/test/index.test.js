@@ -6,6 +6,8 @@ import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
+import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
+import { Piece } from '@web3-storage/data-segment'
 import {
   uploadFile,
   uploadDirectory,
@@ -24,6 +26,7 @@ import {
   headerEncodingLength,
 } from '../src/car.js'
 import { toBlock } from './helpers/block.js'
+import { getFilecoinOfferResponse } from './helpers/filecoin.js'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -32,6 +35,7 @@ describe('uploadFile', () => {
     const bytes = await randomBytes(128)
     const file = new Blob([bytes])
     const expectedCar = await toCAR(bytes)
+    const piece = Piece.fromPayload(bytes).link
 
     /** @type {import('../src/types.js').CARLink|undefined} */
     let carCID
@@ -68,6 +72,18 @@ describe('uploadFile', () => {
           assert.equal(capability.can, StoreCapabilities.add.can)
           assert.equal(capability.with, space.did())
           return { ok: { ...res, allocated: capability.nb.size } }
+        }),
+      },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            const invCap = invocation.capabilities[0]
+            if (!invCap.nb) {
+              throw new Error('no params received')
+            }
+            return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+          },
         }),
       },
       upload: {
@@ -113,6 +129,8 @@ describe('uploadFile', () => {
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
+    assert(service.filecoin.offer.called)
+    assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
 
@@ -123,7 +141,9 @@ describe('uploadFile', () => {
   it('allows custom shard size to be set', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
-    const file = new Blob([await randomBytes(1024 * 1024 * 5)])
+    const bytes = await randomBytes(1024 * 1024 * 5)
+    const file = new Blob([bytes])
+    const piece = Piece.fromPayload(bytes).link
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
@@ -161,6 +181,18 @@ describe('uploadFile', () => {
             allocated: capability.nb.size,
           },
         })),
+      },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            const invCap = invocation.capabilities[0]
+            if (!invCap.nb) {
+              throw new Error('no params received')
+            }
+            return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+          },
+        }),
       },
       upload: {
         add: provide(UploadCapabilities.add, ({ capability }) => {
@@ -200,16 +232,97 @@ describe('uploadFile', () => {
 
     assert.equal(carCIDs.length, 5)
   })
+
+  it('fails to upload a file to the service if `filecoin/piece` invocation fails', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
+    const bytes = await randomBytes(128)
+    const file = new Blob([bytes])
+    const expectedCar = await toCAR(bytes)
+
+    const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      UploadCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ])
+
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'allocated'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      link: expectedCar.cid,
+      with: space.did(),
+    }
+
+    const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          assert.equal(capability.can, StoreCapabilities.add.can)
+          assert.equal(capability.with, space.did())
+          return { ok: { ...res, allocated: capability.nb.size } }
+        }),
+      },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            return {
+              error: new Server.Failure('did not find piece'),
+            }
+          },
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+    await assert.rejects(async () =>
+      uploadFile(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        file,
+        {
+          connection,
+        }
+      )
+    )
+
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+    assert(service.filecoin.offer.called)
+    assert.equal(service.filecoin.offer.callCount, 1)
+  })
 })
 
 describe('uploadDirectory', () => {
   it('uploads a directory to the service', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
-    const files = [
-      new File([await randomBytes(128)], '1.txt'),
-      new File([await randomBytes(32)], '2.txt'),
-    ]
+    const bytesList = [await randomBytes(128), await randomBytes(32)]
+    const files = bytesList.map(
+      (bytes, index) => new File([bytes], `${index}.txt`)
+    )
+    const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
 
     /** @type {import('../src/types.js').CARLink?} */
     let carCID = null
@@ -256,6 +369,18 @@ describe('uploadDirectory', () => {
           }
         }),
       },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            const invCap = invocation.capabilities[0]
+            if (!invCap.nb) {
+              throw new Error('no params received')
+            }
+            return getFilecoinOfferResponse(context.id, pieces[0], invCap.nb)
+          },
+        }),
+      },
       upload: {
         add: provide(UploadCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
@@ -295,6 +420,8 @@ describe('uploadDirectory', () => {
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
+    assert(service.filecoin.offer.called)
+    assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
 
@@ -305,7 +432,11 @@ describe('uploadDirectory', () => {
   it('allows custom shard size to be set', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
-    const files = [new File([await randomBytes(500_000)], '1.txt')]
+    const bytesList = [await randomBytes(500_000)]
+    const files = bytesList.map(
+      (bytes, index) => new File([bytes], `${index}.txt`)
+    )
+    const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
@@ -344,6 +475,18 @@ describe('uploadDirectory', () => {
           },
         })),
       },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            const invCap = invocation.capabilities[0]
+            if (!invCap.nb) {
+              throw new Error('no params received')
+            }
+            return getFilecoinOfferResponse(context.id, pieces[0], invCap.nb)
+          },
+        }),
+      },
       upload: {
         add: provide(UploadCapabilities.add, ({ capability }) => {
           if (!capability.nb) throw new Error('nb must be present')
@@ -379,6 +522,9 @@ describe('uploadDirectory', () => {
   it('sorts files unless options.customOrder', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
+    const someBytes = await randomBytes(32)
+    const piece = Piece.fromPayload(someBytes).link
+
     const proofs = await Promise.all([
       StoreCapabilities.add.delegate({
         issuer: space,
@@ -414,6 +560,18 @@ describe('uploadDirectory', () => {
                 allocated: invocation.capability.nb.size,
               },
             }
+          }),
+        },
+        filecoin: {
+          offer: Server.provideAdvanced({
+            capability: StorefrontCapabilities.filecoinOffer,
+            handler: async ({ invocation, context }) => {
+              const invCap = invocation.capabilities[0]
+              if (!invCap.nb) {
+                throw new Error('no params received')
+              }
+              return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+            },
           }),
         },
         upload: {
@@ -522,6 +680,8 @@ describe('uploadCAR', () => {
       await randomBlock(128),
     ]
     const car = await encode(blocks, blocks.at(-1)?.cid)
+    const someBytes = new Uint8Array(await car.arrayBuffer())
+    const piece = Piece.fromPayload(someBytes).link
     // Wanted: 2 shards
     // 2 * CAR header (34) + 2 * blocks (256), 2 * block encoding prefix (78)
     const shardSize =
@@ -575,6 +735,18 @@ describe('uploadCAR', () => {
           }
         }),
       },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            const invCap = invocation.capabilities[0]
+            if (!invCap.nb) {
+              throw new Error('no params received')
+            }
+            return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+          },
+        }),
+      },
       upload: {
         add: provide(UploadCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
@@ -618,6 +790,8 @@ describe('uploadCAR', () => {
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 2)
+    assert(service.filecoin.offer.called)
+    assert.equal(service.filecoin.offer.callCount, 2)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
     assert.equal(carCIDs.length, 2)
@@ -631,6 +805,8 @@ describe('uploadCAR', () => {
       await toBlock(new Uint8Array([1, 1, 3, 8])),
     ]
     const car = await encode(blocks, blocks.at(-1)?.cid)
+    const someBytes = new Uint8Array(await car.arrayBuffer())
+    const piece = Piece.fromPayload(someBytes).link
 
     /** @type {import('../src/types.js').PieceLink[]} */
     const pieceCIDs = []
@@ -676,6 +852,18 @@ describe('uploadCAR', () => {
           }
         }),
       },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            const invCap = invocation.capabilities[0]
+            if (!invCap.nb) {
+              throw new Error('no params received')
+            }
+            return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+          },
+        }),
+      },
       upload: {
         add: provide(UploadCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
@@ -715,6 +903,8 @@ describe('uploadCAR', () => {
 
     assert(service.store.add.called)
     assert.equal(service.store.add.callCount, 1)
+    assert(service.filecoin.offer.called)
+    assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
     assert.equal(pieceCIDs.length, 1)

@@ -9,6 +9,7 @@ const notImplemented = () => {
  *   store: Partial<import('../../src/types.js').Service['store']>
  *   upload: Partial<import('../../src/types.js').Service['upload']>
  *   usage: Partial<import('../../src/types.js').Service['usage']>
+ *   filecoin: Partial<import('@web3-storage/filecoin-client/storefront').StorefrontService['filecoin']>
  * }>} impl
  */
 export function mockService(impl) {
@@ -27,6 +28,12 @@ export function mockService(impl) {
     },
     usage: {
       report: withCallCount(impl.usage?.report ?? notImplemented),
+    },
+    filecoin: {
+      offer: withCallCount(impl.filecoin?.offer ?? notImplemented),
+      submit: withCallCount(impl.filecoin?.submit ?? notImplemented),
+      accept: withCallCount(impl.filecoin?.accept ?? notImplemented),
+      info: withCallCount(impl.filecoin?.info ?? notImplemented),
     },
   }
 }

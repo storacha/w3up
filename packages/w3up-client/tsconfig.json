@@ -13,6 +13,7 @@
     { "path": "../access-client" },
     { "path": "../capabilities" },
     { "path": "../upload-client" },
+    { "path": "../filecoin-client" },
     { "path": "../did-mailto" },
     { "path": "../upload-api" }
   ]
