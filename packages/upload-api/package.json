@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/upload-api",
   "description": "The upload api for web3.storage",
-  "version": "8.4.0",
+  "version": "8.4.1",
   "type": "module",
   "main": "./src/lib.js",
   "homepage": "https://web3.storage",
