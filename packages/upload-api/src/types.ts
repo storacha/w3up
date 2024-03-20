@@ -25,7 +25,6 @@ import { ServiceContext as FilecoinServiceContext } from '@web3-storage/filecoin
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
-import { UsageStorage } from './types/usage.js'
 
 export type ValidationEmailSend = {
   to: string
@@ -160,6 +159,8 @@ import { PlansStorage } from './types/plans.js'
 export type { PlansStorage } from './types/plans.js'
 import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
+import { UsageStorage } from './types/usage.js'
+export type { UsageStorage }
 
 export interface Service extends StorefrontService {
   store: {
