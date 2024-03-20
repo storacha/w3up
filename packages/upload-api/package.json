@@ -21,6 +21,12 @@
       "src/lib.js": [
         "dist/src/lib.d.ts"
       ],
+      "access": [
+        "dist/src/access.d.ts"
+      ],
+      "admin": [
+        "dist/src/admin.d.ts"
+      ],
       "console": [
         "dist/src/console.d.ts"
       ],
@@ -36,17 +42,32 @@
       "provider": [
         "dist/src/provider.d.ts"
       ],
+      "rate-limit": [
+        "dist/src/rate-limit.d.ts"
+      ],
       "space": [
         "dist/src/space.d.ts"
       ],
       "store": [
         "dist/src/store.d.ts"
       ],
+      "subscription": [
+        "dist/src/subscription.d.ts"
+      ],
+      "ucan": [
+        "dist/src/ucan.d.ts"
+      ],
       "upload": [
         "dist/src/upload.d.ts"
       ],
+      "usage": [
+        "dist/src/usage.d.ts"
+      ],
       "types": [
         "dist/src/types.d.ts"
+      ],
+      "utils/revocation": [
+        "dist/src/utils/revocation.d.ts"
       ],
       "validate": [
         "dist/src/validate.d.ts"
@@ -68,6 +89,14 @@
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
     },
+    "./access": {
+      "types": "./dist/src/access.d.ts",
+      "import": "./src/access.js"
+    },
+    "./admin": {
+      "types": "./dist/src/admin.d.ts",
+      "import": "./src/admin.js"
+    },
     "./console": {
       "types": "./dist/src/console.d.ts",
       "import": "./src/console.js"
@@ -80,13 +109,17 @@
       "types": "./dist/src/customer.d.ts",
       "import": "./src/customer.js"
     },
+    "./plan": {
+      "types": "./dist/src/plan.d.ts",
+      "import": "./src/plan.js"
+    },
     "./provider": {
       "types": "./dist/src/provider.d.ts",
       "import": "./src/provider.js"
     },
-    "./plan": {
-      "types": "./dist/src/plan.d.ts",
-      "import": "./src/plan.js"
+    "./rate-limit": {
+      "types": "./dist/src/rate-limit.d.ts",
+      "import": "./src/rate-limit.js"
     },
     "./space": {
       "types": "./dist/src/space.d.ts",
@@ -96,9 +129,25 @@
       "types": "./dist/src/store.d.ts",
       "import": "./src/store.js"
     },
+    "./subscription": {
+      "types": "./dist/src/subscription.d.ts",
+      "import": "./src/subscription.js"
+    },
+    "./ucan": {
+      "types": "./dist/src/ucan.d.ts",
+      "import": "./src/ucan.js"
+    },
     "./upload": {
       "types": "./dist/src/upload.d.ts",
       "import": "./src/upload.js"
+    },
+    "./usage": {
+      "types": "./dist/src/usage.d.ts",
+      "import": "./src/usage.js"
+    },
+    "./utils/revocation": {
+      "types": "./dist/src/utils/revocation.d.ts",
+      "import": "./src/utils/revocation.js"
     },
     "./validate": {
       "types": "./dist/src/validate.d.ts",
