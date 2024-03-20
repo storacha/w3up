@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.4.1](https://github.com/web3-storage/w3up/compare/upload-api-v8.4.0...upload-api-v8.4.1) (2024-03-20)
+
+
+### Fixes
+
+* missing exports ([#1335](https://github.com/web3-storage/w3up/issues/1335)) ([4e41ff4](https://github.com/web3-storage/w3up/commit/4e41ff4498cd75853204d9ae209fe36008cd8018))
+
 ## [8.4.0](https://github.com/web3-storage/w3up/compare/upload-api-v8.3.0...upload-api-v8.4.0) (2024-03-20)
 
 
