@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.4.0...filecoin-api-v4.5.0) (2024-03-21)
+
+
+### Features
+
+* upgrade ucanto/transport to 9.1.0 in all packages to get more verbose errors from HTTP transport on non-ok response ([#1312](https://github.com/web3-storage/w3up/issues/1312)) ([d6978d7](https://github.com/web3-storage/w3up/commit/d6978d7ab299be76987c6533d18e6857f6998fe6))
+
 ## [4.4.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.3.1...filecoin-api-v4.4.0) (2024-02-06)
 
 
