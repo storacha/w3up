@@ -148,7 +148,10 @@ async function uploadBlockStream(conf, blocks, options = {}) {
           )
 
           if (result.out.error) {
-            throw new Error('failed to offer piece for aggregation into filecoin deal', { cause: result.out.error })
+            throw new Error(
+              'failed to offer piece for aggregation into filecoin deal',
+              { cause: result.out.error }
+            )
           }
 
           const { version, roots, size } = car
