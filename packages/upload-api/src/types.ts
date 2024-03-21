@@ -54,6 +54,22 @@ export interface DebugEmail extends Email {
 }
 
 import {
+  BlobAdd,
+  BlobAddSuccess,
+  BlobAddFailure,
+  BlobRemove,
+  BlobRemoveSuccess,
+  BlobRemoveFailure,
+  BlobList,
+  BlobListItem,
+  BlobListSuccess,
+  BlobListFailure,
+  BlobAllocate,
+  BlobAllocateSuccess,
+  BlobAllocateFailure,
+  BlobAccept,
+  BlobAcceptSuccess,
+  BlobAcceptFailure,
   StoreAdd,
   StoreGet,
   StoreAddSuccess,
@@ -163,6 +179,13 @@ import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
 
 export interface Service extends StorefrontService {
+  blob: {
+    add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+    remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+    list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+    allocate: ServiceMethod<BlobAllocate, BlobAllocateSuccess, BlobAllocateFailure>
+    accept: ServiceMethod<BlobAccept, BlobAcceptSuccess, BlobAcceptFailure>
+  }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
@@ -273,9 +296,18 @@ export interface Service extends StorefrontService {
   }
 }
 
+export type BlobServiceContext = {
+  /**
+   * Service signer
+   */
+  id: Signer
+  maxUploadSize: number
+  allocationStore: AllocationStore
+  blobStore: BlobStore
+}
+
 export type StoreServiceContext = SpaceServiceContext & {
   maxUploadSize: number
-
   storeTable: StoreTable
   carStoreBucket: CarStoreBucket
 }
@@ -362,6 +394,7 @@ export interface ServiceContext
     ProviderServiceContext,
     SpaceServiceContext,
     StoreServiceContext,
+    BlobServiceContext,
     SubscriptionServiceContext,
     RateLimitServiceContext,
     RevocationServiceContext,
@@ -394,6 +427,22 @@ export interface UploadTestContext {}
 
 export interface ErrorReporter {
   catch: (error: HandlerExecutionError) => void
+}
+
+export interface BlobStore {
+  // Result<BlobRemoveSuccess, RecordNotFound>
+  // has: (content: BlobMultihash) => Promise<boolean>
+  has: (content: BlobMultihash) => Promise<Result<boolean, Failure>>
+  createUploadUrl: (
+    content: BlobMultihash,
+    size: number
+  ) => Promise<Result<{
+    url: URL
+    headers: {
+      'x-amz-checksum-sha256': string
+      'content-length': string
+    } & Record<string, string>
+  }, Failure>>
 }
 
 export interface CarStoreBucket {
@@ -440,6 +489,25 @@ export interface RecordNotFound extends Failure {
  */
 export interface RecordKeyConflict extends Failure {
   name: 'RecordKeyConflict'
+}
+
+export type BlobMultihash = Uint8Array
+
+export interface AllocationStore {
+  exists: (space: DID, content: BlobMultihash) => Promise<Result<boolean, Failure>>
+  /** Inserts an item in the table if it does not already exist. */
+  insert: (
+    item: BlobAddInput
+  ) => Promise<Result<BlobAddOutput, RecordKeyConflict>>
+  /** Removes an item from the table but fails if the item does not exist. */
+  remove: (
+    space: DID,
+    content: BlobMultihash
+  ) => Promise<Result<BlobRemoveSuccess, RecordNotFound>>
+  list: (
+    space: DID,
+    options?: ListOptions
+  ) => Promise<Result<ListResponse<BlobListItem>, Failure>>
 }
 
 export interface StoreTable {
@@ -509,6 +577,17 @@ export type AdminUploadInspectResult = Result<
   AdminUploadInspectSuccess,
   AdminUploadInspectFailure
 >
+
+export interface BlobAddInput {
+  space: DID
+  content: BlobMultihash
+  size: number
+  issuer: DID
+  invocation: UnknownLink
+}
+
+export interface BlobAddOutput
+  extends Omit<BlobAddInput, 'space' | 'issuer' | 'invocation'> {}
 
 export interface StoreAddInput {
   space: DID
