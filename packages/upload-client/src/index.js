@@ -138,7 +138,7 @@ async function uploadBlockStream(conf, blocks, options = {}) {
             {
               issuer: conf.issuer,
               audience: conf.audience,
-              // Resource of storefront is the issuer did
+              // Resource of invocation is the issuer did for being self issued
               with: conf.issuer.did(),
               proofs: conf.proofs,
             },
