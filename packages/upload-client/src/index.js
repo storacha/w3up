@@ -1,4 +1,5 @@
 import * as PieceHasher from '@web3-storage/data-segment/multihash'
+import { Storefront } from '@web3-storage/filecoin-client'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
@@ -129,7 +130,30 @@ async function uploadBlockStream(conf, blocks, options = {}) {
           const multihashDigest = await hasher.digest(bytes)
           /** @type {import('@web3-storage/capabilities/types').PieceLink} */
           const piece = Link.create(raw.code, multihashDigest)
+
+          // Invoke store/add and write bytes to write target
           const cid = await Store.add(conf, bytes, options)
+          // Invoke filecoin/offer for data
+          const result = await Storefront.filecoinOffer(
+            {
+              issuer: conf.issuer,
+              audience: conf.audience,
+              // Resource of invocation is the issuer did for being self issued
+              with: conf.issuer.did(),
+              proofs: conf.proofs,
+            },
+            cid,
+            piece,
+            options
+          )
+
+          if (result.out.error) {
+            throw new Error(
+              'failed to offer piece for aggregation into filecoin deal',
+              { cause: result.out.error }
+            )
+          }
+
           const { version, roots, size } = car
           controller.enqueue({ version, roots, size, cid, piece })
         },

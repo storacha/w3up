@@ -44,6 +44,7 @@ import {
   UsageReportSuccess,
   UsageReportFailure,
 } from '@web3-storage/capabilities/types'
+import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
 import { code as pieceHashCode } from '@web3-storage/data-segment/multihash'
 
 type Override<T, R> = Omit<T, keyof R> & R
@@ -93,7 +94,7 @@ export interface ProgressStatus extends XHRProgressStatus {
 
 export type ProgressFn = (status: ProgressStatus) => void
 
-export interface Service {
+export interface Service extends StorefrontService {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
