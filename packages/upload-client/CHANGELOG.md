@@ -1,5 +1,19 @@
 # Changelog
 
+## [13.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v13.0.1...upload-client-v13.1.0) (2024-03-21)
+
+
+### Features
+
+* byo piece hasher ([#1323](https://github.com/web3-storage/w3up/issues/1323)) ([fe2e3d5](https://github.com/web3-storage/w3up/commit/fe2e3d5cdca8ba16eadafdc3c6eb2fed37118cd9))
+* non-parallel piece hashing and CAR upload ([#1305](https://github.com/web3-storage/w3up/issues/1305)) ([7a6385b](https://github.com/web3-storage/w3up/commit/7a6385bef1dd424d5eb952528ae5d86a83837c80))
+* upgrade ucanto/transport to 9.1.0 in all packages to get more verbose errors from HTTP transport on non-ok response ([#1312](https://github.com/web3-storage/w3up/issues/1312)) ([d6978d7](https://github.com/web3-storage/w3up/commit/d6978d7ab299be76987c6533d18e6857f6998fe6))
+
+
+### Fixes
+
+* upload client should perform filecoin offer ([#1333](https://github.com/web3-storage/w3up/issues/1333)) ([466e3f7](https://github.com/web3-storage/w3up/commit/466e3f79733c30f864cb21e7ed0f0684945417ed))
+
 ## [13.0.1](https://github.com/web3-storage/w3up/compare/upload-client-v13.0.0...upload-client-v13.0.1) (2024-02-01)
 
 
