@@ -4,10 +4,10 @@ w3up blooms
 
 ## What is this?
 
-This is a proof-of-concept of running w3up on a WASM runtime. 
+This is a proof-of-concept of running w3up on a WASM-adjacent runtime. 
 
 Zinnia is "a sandboxed and resource-limited runtime for distributed workers" that
-provides an easy way to run w3up on a WASM-based execution platform. 
+provides an easy way to run w3up on an execution platform that supports WASM. 
 
 This proof-of-concept shows that it is possible to run w3up in "a sandboxed
 and resource-limited runtime" which may be useful if we'd like to enable many different
