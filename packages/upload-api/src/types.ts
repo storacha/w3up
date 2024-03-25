@@ -54,6 +54,23 @@ export interface DebugEmail extends Email {
 }
 
 import {
+  BlobMultihash,
+  BlobAdd,
+  BlobAddSuccess,
+  BlobAddFailure,
+  BlobRemove,
+  BlobRemoveSuccess,
+  BlobRemoveFailure,
+  BlobList,
+  BlobListItem,
+  BlobListSuccess,
+  BlobListFailure,
+  BlobAllocate,
+  BlobAllocateSuccess,
+  BlobAllocateFailure,
+  BlobAccept,
+  BlobAcceptSuccess,
+  BlobAcceptFailure,
   StoreAdd,
   StoreGet,
   StoreAddSuccess,
@@ -162,7 +179,12 @@ export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
 
-export interface Service extends StorefrontService {
+export interface Service extends StorefrontService, W3sService {
+  blob: {
+    add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+    remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+    list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+  }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
@@ -273,9 +295,41 @@ export interface Service extends StorefrontService {
   }
 }
 
+export interface W3sService {
+  ['web3.storage']: {
+    blob: {
+      allocate: ServiceMethod<
+        BlobAllocate,
+        BlobAllocateSuccess,
+        BlobAllocateFailure
+      >
+      accept: ServiceMethod<BlobAccept, BlobAcceptSuccess, BlobAcceptFailure>
+    }
+  }
+}
+
+export type BlobServiceContext = SpaceServiceContext & {
+  /**
+   * Service signer
+   */
+  id: Signer
+  maxUploadSize: number
+  allocationStorage: AllocationStorage
+  blobStorage: BlobStorage
+  getServiceConnection: () => ConnectionView<Service>
+}
+
+export type W3ServiceContext = SpaceServiceContext & {
+  /**
+   * Service signer
+   */
+  id: Signer
+  allocationStorage: AllocationStorage
+  blobStorage: BlobStorage
+}
+
 export type StoreServiceContext = SpaceServiceContext & {
   maxUploadSize: number
-
   storeTable: StoreTable
   carStoreBucket: CarStoreBucket
 }
@@ -362,6 +416,7 @@ export interface ServiceContext
     ProviderServiceContext,
     SpaceServiceContext,
     StoreServiceContext,
+    BlobServiceContext,
     SubscriptionServiceContext,
     RateLimitServiceContext,
     RevocationServiceContext,
@@ -394,6 +449,25 @@ export interface UploadTestContext {}
 
 export interface ErrorReporter {
   catch: (error: HandlerExecutionError) => void
+}
+
+export interface BlobStorage {
+  has: (content: BlobMultihash) => Promise<Result<boolean, Failure>>
+  createUploadUrl: (
+    content: BlobMultihash,
+    size: number
+  ) => Promise<
+    Result<
+      {
+        url: URL
+        headers: {
+          'x-amz-checksum-sha256': string
+          'content-length': string
+        } & Record<string, string>
+      },
+      Failure
+    >
+  >
 }
 
 export interface CarStoreBucket {
@@ -440,6 +514,26 @@ export interface RecordNotFound extends Failure {
  */
 export interface RecordKeyConflict extends Failure {
   name: 'RecordKeyConflict'
+}
+
+export interface AllocationStorage {
+  exists: (
+    space: DID,
+    blobMultihash: BlobMultihash
+  ) => Promise<Result<boolean, Failure>>
+  /** Inserts an item in the table if it does not already exist. */
+  insert: (
+    item: BlobAddInput
+  ) => Promise<Result<BlobAddOutput, RecordKeyConflict>>
+  /** Removes an item from the table but fails if the item does not exist. */
+  remove: (
+    space: DID,
+    blobMultihash: BlobMultihash
+  ) => Promise<Result<BlobRemoveSuccess, RecordNotFound>>
+  list: (
+    space: DID,
+    options?: ListOptions
+  ) => Promise<Result<ListResponse<BlobListItem>, Failure>>
 }
 
 export interface StoreTable {
@@ -509,6 +603,20 @@ export type AdminUploadInspectResult = Result<
   AdminUploadInspectSuccess,
   AdminUploadInspectFailure
 >
+
+export interface Blob {
+  content: BlobMultihash
+  size: number
+}
+
+export interface BlobAddInput {
+  space: DID
+  invocation: UnknownLink
+  blob: Blob
+}
+
+export interface BlobAddOutput
+  extends Omit<BlobAddInput, 'space' | 'invocation'> {}
 
 export interface StoreAddInput {
   space: DID

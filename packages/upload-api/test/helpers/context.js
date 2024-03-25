@@ -5,6 +5,8 @@ import {
   getStoreImplementations,
   getQueueImplementations,
 } from '@web3-storage/filecoin-api/test/context/service'
+import { AllocationStorage } from '../storage/allocation-storage.js'
+import { BlobStorage } from '../storage/blob-storage.js'
 import { CarStoreBucket } from '../storage/car-store-bucket.js'
 import { StoreTable } from '../storage/store-table.js'
 import { UploadTable } from '../storage/upload-table.js'
@@ -36,7 +38,9 @@ export const createContext = async (
 ) => {
   const requirePaymentPlan = options.requirePaymentPlan
   const storeTable = new StoreTable()
+  const allocationStorage = new AllocationStorage()
   const uploadTable = new UploadTable()
+  const blobStorage = await BlobStorage.activate(options)
   const carStoreBucket = await CarStoreBucket.activate(options)
   const dudewhereBucket = new DudewhereBucket()
   const revocationsStorage = new RevocationsStorage()
@@ -44,6 +48,8 @@ export const createContext = async (
   const usageStorage = new UsageStorage(storeTable)
   const provisionsStorage = new ProvisionsStorage(options.providers)
   const subscriptionsStorage = new SubscriptionsStorage(provisionsStorage)
+  const delegationsStorage = new DelegationsStorage()
+  const rateLimitsStorage = new RateLimitsStorage()
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
   const dealTrackerSigner = await Signer.generate()
@@ -74,8 +80,8 @@ export const createContext = async (
     url: new URL('http://localhost:8787'),
     provisionsStorage,
     subscriptionsStorage,
-    delegationsStorage: new DelegationsStorage(),
-    rateLimitsStorage: new RateLimitsStorage(),
+    delegationsStorage,
+    rateLimitsStorage,
     plansStorage,
     usageStorage,
     revocationsStorage,
@@ -90,8 +96,10 @@ export const createContext = async (
     },
     maxUploadSize: 5_000_000_000,
     storeTable,
+    allocationStorage,
     uploadTable,
     carStoreBucket,
+    blobStorage,
     dudewhereBucket,
     filecoinSubmitQueue,
     pieceOfferQueue,
@@ -107,6 +115,7 @@ export const createContext = async (
         audience: dealTrackerSigner,
       },
     },
+    getServiceConnection: () => connection,
     ...createRevocationChecker({ revocationsStorage }),
   }
 
@@ -132,7 +141,11 @@ export const createContext = async (
 export const cleanupContext = async (context) => {
   /** @type {CarStoreBucket & {  deactivate: () => Promise<void> }}} */
   // @ts-ignore type misses S3 bucket properties like accessKey
-  const store = context.carStoreBucket
+  const carStoreBucket = context.carStoreBucket
+  await carStoreBucket.deactivate()
 
-  await store.deactivate()
+  /** @type {BlobStorage & {  deactivate: () => Promise<void> }}} */
+  // @ts-ignore type misses S3 bucket properties like accessKey
+  const blobStorage = context.blobStorage
+  await blobStorage.deactivate()
 }
