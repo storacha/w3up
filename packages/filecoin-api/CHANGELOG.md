@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.5.0...filecoin-api-v4.6.0) (2024-03-26)
+
+
+### Features
+
+* api waits for trigger filecoin pipeline from the client ([#1332](https://github.com/web3-storage/w3up/issues/1332)) ([421bacb](https://github.com/web3-storage/w3up/commit/421bacb9bac8c251cb41f887144e953feaa5558f))
+
 ## [4.5.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.4.0...filecoin-api-v4.5.0) (2024-03-21)
 
 
