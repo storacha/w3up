@@ -2,6 +2,7 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 
+import * as AssertCaps from '@web3-storage/content-claims/capability'
 import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
@@ -11,7 +12,7 @@ import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-track
 import * as API from '../../src/types.js'
 
 import { validateAuthorization } from '../utils.js'
-import { mockService } from './mocks.js'
+import { mockService, mockContentClaimsService } from './mocks.js'
 
 export { getStoreImplementations } from './store-implementations.js'
 export { getQueueImplementations } from './queue-implementations.js'
@@ -212,6 +213,19 @@ export function getMockService() {
           })
 
           return result
+        },
+      }),
+    },
+  })
+}
+
+export function getContentClaimsMockService() {
+  return mockContentClaimsService({
+    assert: {
+      inclusion: Server.provideAdvanced({
+        capability: AssertCaps.Assert.inclusion,
+        handler: async ({ invocation, context }) => {
+          return Server.ok({})
         },
       }),
     },

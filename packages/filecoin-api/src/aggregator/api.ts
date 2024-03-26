@@ -1,10 +1,13 @@
-import type { Signer, Principal, Link } from '@ucanto/interface'
+import type { Signer, Principal, Link, ConnectionView } from '@ucanto/interface'
+import { Failure, ServiceMethod } from '@ucanto/server'
 import { InclusionProof } from '@web3-storage/capabilities/types'
 import { PieceLink } from '@web3-storage/data-segment'
 import {
   AggregatorService,
   DealerService,
+  InvocationConfig,
 } from '@web3-storage/filecoin-client/types'
+import { AssertInclusion } from '@web3-storage/content-claims/capability/api'
 import {
   Store,
   UpdatableStore,
@@ -53,6 +56,20 @@ export interface ServiceContext {
   inclusionStore: InclusionStore
 }
 
+export interface InvocationConfigWithRequiredAudience extends InvocationConfig {
+  /**
+   * The principal delegated to in the current UCAN.
+   */
+  audience: Principal
+}
+
+export interface ServiceConfigWithRequiredAudience<
+  T extends Record<string, unknown>
+> {
+  connection: ConnectionView<T>
+  invocationConfig: InvocationConfigWithRequiredAudience
+}
+
 export interface PieceMessageContext
   extends Pick<ServiceContext, 'pieceStore'> {}
 
@@ -81,6 +98,23 @@ export interface InclusionInsertEventToIssuePieceAccept {
    * Aggregator connection to moves pieces into the pipeline.
    */
   aggregatorService: ServiceConfig<AggregatorService>
+}
+
+export type AssertInclusionServiceMethod = ServiceMethod<
+  AssertInclusion,
+  object,
+  Failure
+>
+
+export interface InclusionInsertEventToIssueInclusionClaim {
+  /**
+   * Content claims connection to claim inclusion.
+   */
+  assertService: ServiceConfigWithRequiredAudience<{
+    assert: {
+      inclusion: AssertInclusionServiceMethod
+    }
+  }>
 }
 
 export interface AggregateInsertEventToPieceAcceptQueueContext {
@@ -225,6 +259,10 @@ export interface InclusionRecordKey
 
 export interface InclusionRecordQueryByGroup
   extends Pick<InclusionRecord, 'piece' | 'group'> {}
+
+export interface InclusionRecordWithProof extends InclusionRecord {
+  proof: Link
+}
 
 export type BufferedPiece = {
   /**

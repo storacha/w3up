@@ -184,10 +184,12 @@ export function aggregatePieces(bufferedPieces, config) {
   const remainingBufferedPieces = []
 
   // start by adding prepend buffered pieces if available
-  for (const bufferedPiece of (config.prependBufferedPieces || [])) {
+  for (const bufferedPiece of config.prependBufferedPieces || []) {
     const p = Piece.fromLink(bufferedPiece.piece)
     if (builder.estimate(p).error) {
-      throw new Error('aggregate builder is not able to create aggregates with only prepend buffered pieces')
+      throw new Error(
+        'aggregate builder is not able to create aggregates with only prepend buffered pieces'
+      )
     }
     builder.write(p)
     addedBufferedPieces.push(bufferedPiece)

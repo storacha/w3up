@@ -5,6 +5,21 @@ const notImplemented = () => {
 }
 
 /**
+ * @param {{
+ * assert: {
+ *   inclusion: import('../../src/aggregator/api.js').AssertInclusionServiceMethod
+ * }
+ * }} impl
+ */
+export function mockContentClaimsService(impl) {
+  return {
+    assert: {
+      inclusion: withCallParams(impl.assert.inclusion ?? notImplemented),
+    },
+  }
+}
+
+/**
  * @param {Partial<{
  * filecoin: Partial<import('../../src/types.js').StorefrontService['filecoin']>
  * piece: Partial<import('../../src/types.js').AggregatorService['piece']>

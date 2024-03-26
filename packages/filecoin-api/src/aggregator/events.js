@@ -1,4 +1,5 @@
 import { Aggregator, Dealer } from '@web3-storage/filecoin-client'
+import { Assert } from '@web3-storage/content-claims/capability'
 import { Aggregate, Piece } from '@web3-storage/data-segment'
 import { CBOR } from '@ucanto/core'
 
@@ -114,7 +115,7 @@ export const handleBufferQueueMessage = async (context, records) => {
     maxAggregateSize: context.config.maxAggregateSize,
     minAggregateSize: context.config.minAggregateSize,
     minUtilizationFactor: context.config.minUtilizationFactor,
-    prependBufferedPieces: context.config.prependBufferedPieces
+    prependBufferedPieces: context.config.prependBufferedPieces,
   })
 
   // Store buffered pieces if not enough to do aggregate and re-queue them
@@ -322,6 +323,42 @@ export const handleInclusionInsertToIssuePieceAccept = async (
   }
 
   return { ok: {} }
+}
+
+/**
+ * Handle issueing inclusion claims once piece is included in an aggregate.
+ *
+ * @param {import('./api.js').InclusionInsertEventToIssueInclusionClaim} context
+ * @param {import('./api.js').InclusionRecordWithProof} record
+ */
+export const handleInclusionInsertToIssueInclusionClaim = async (
+  context,
+  record
+) => {
+  const claimResult = await Assert.inclusion
+    .invoke({
+      issuer: context.assertService.invocationConfig.issuer,
+      audience: context.assertService.invocationConfig.audience,
+      with: context.assertService.invocationConfig.with,
+      nb: {
+        content: record.aggregate,
+        includes: record.piece,
+        proof: record.proof,
+      },
+      expiration: Infinity,
+      proofs: context.assertService.invocationConfig.proofs,
+    })
+    .execute(context.assertService.connection)
+
+  if (claimResult.out.error) {
+    return {
+      error: claimResult.out.error,
+    }
+  }
+
+  return {
+    ok: {},
+  }
 }
 
 /**

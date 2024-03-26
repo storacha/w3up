@@ -1,4 +1,5 @@
 import type { Signer } from '@ucanto/interface'
+import { AssertInclusionServiceMethod } from '../src/aggregator/api.js'
 import * as AggregatorInterface from '../src/aggregator/api.js'
 import * as DealerInterface from '../src/dealer/api.js'
 import * as StorefrontInterface from '../src/storefront/api.js'
@@ -10,6 +11,7 @@ export interface AggregatorTestEventsContext
     AggregatorInterface.PieceInsertEventContext,
     AggregatorInterface.InclusionInsertEventToUpdateState,
     AggregatorInterface.InclusionInsertEventToIssuePieceAccept,
+    AggregatorInterface.InclusionInsertEventToIssueInclusionClaim,
     AggregatorInterface.AggregateInsertEventToAggregateOfferContext,
     AggregatorInterface.AggregateInsertEventToPieceAcceptQueueContext,
     AggregatorInterface.BufferMessageContext {
@@ -20,6 +22,11 @@ export interface AggregatorTestEventsContext
     aggregate: Partial<import('../src/types.js').DealerService['aggregate']>
     deal: Partial<import('../src/types.js').DealTrackerService['deal']>
   }>
+  contentClaimsService: {
+    assert: {
+      inclusion: AssertInclusionServiceMethod
+    }
+  }
 }
 
 export interface DealerTestEventsContext
