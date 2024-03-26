@@ -1,5 +1,16 @@
 # Changelog
 
+## [9.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v8.4.1...upload-api-v9.0.0) (2024-03-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* release upload api with new filecoin api service for storefront ([#1347](https://github.com/web3-storage/w3up/issues/1347))
+
+### Fixes
+
+* release upload api with new filecoin api service for storefront ([#1347](https://github.com/web3-storage/w3up/issues/1347)) ([692751a](https://github.com/web3-storage/w3up/commit/692751aa6a178ede2820990ca9a44118bd6e8e55))
+
 ## [8.4.1](https://github.com/web3-storage/w3up/compare/upload-api-v8.4.0...upload-api-v8.4.1) (2024-03-20)
 
 
