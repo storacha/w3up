@@ -55,6 +55,7 @@ export const createService = (context) => ({
   upload: createUploadService(context),
   ucan: createUcanService(context),
   plan: createPlanService(context),
+  // storefront of filecoin pipeline
   filecoin: createFilecoinService(context).filecoin,
   usage: createUsageService(context),
 })
