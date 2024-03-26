@@ -6,3 +6,7 @@ export interface StoreOptions<K, V> {
 export interface UpdatableStoreOptions<K, V> extends StoreOptions<K, V> {
   updateFn?: (items: Set<V>, key: K, item: Partial<V>) => V
 }
+
+export interface StreammableStoreOptions<K, V> extends StoreOptions<K, V> {
+  streamFn?: (items: Set<V>, item: K) => AsyncIterable<V> | undefined
+}

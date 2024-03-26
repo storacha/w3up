@@ -18,6 +18,7 @@ import {
 import {
   Store,
   UpdatableAndQueryableStore,
+  StreammableStore,
   Queue,
   ServiceConfig,
 } from '../types.js'
@@ -29,7 +30,7 @@ export type PieceStore = UpdatableAndQueryableStore<
 >
 export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
 export type PieceOfferQueue = Queue<PieceOfferMessage>
-export type DataStore = Store<UnknownLink, AsyncIterable<Uint8Array>>
+export type DataStore = StreammableStore<UnknownLink, Uint8Array>
 export type TaskStore = Store<UnknownLink, Invocation>
 export type ReceiptStore = Store<UnknownLink, Receipt>
 
@@ -123,8 +124,7 @@ export interface ClaimsClientContext {
    */
   claimsService: {
     invocationConfig: ClaimsInvocationConfig
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    connection: ConnectionView<any>
+    connection: ConnectionView<import('@web3-storage/content-claims/server/service/api').Service>
   }
 }
 

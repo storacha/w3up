@@ -97,6 +97,53 @@ export class Store {
 /**
  * @template K
  * @template V
+ * @implements {API.StreammableStore<K,V>}
+ */
+export class StreammableStore {
+  /**
+   * @param {import('./types.js').StreammableStoreOptions<K, V>} options
+   */
+  constructor(options) {
+    /** @type {Set<V>} */
+    this.items = new Set()
+    this.streamFn = options.streamFn
+  }
+
+  /**
+   * @param {V} record
+   * @returns {Promise<import('@ucanto/interface').Result<{}, StorePutError>>}
+   */
+  async put(record) {
+    this.items.add(record)
+
+    return Promise.resolve({
+      ok: {},
+    })
+  }
+
+  /**
+   * @param {K} item
+   * @returns {Promise<import('@ucanto/interface').Result<AsyncIterable<V>, StoreGetError>>}
+   */
+  async stream(item) {
+    if (!this.streamFn) {
+      throw new Error('get not supported')
+    }
+    const t = this.streamFn(this.items, item)
+    if (!t) {
+      return {
+        error: new RecordNotFound('not found'),
+      }
+    }
+    return {
+      ok: t,
+    }
+  }
+}
+
+/**
+ * @template K
+ * @template V
  * @implements {API.UpdatableStore<K,V>}
  * @extends {Store<K, V>}
  */

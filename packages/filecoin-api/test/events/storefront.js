@@ -39,13 +39,7 @@ export const test = {
     }
 
     // Store bytes on datastore
-    const asyncIterableMock = {
-      [Symbol.asyncIterator]: async function* () {
-        // Yield the Uint8Array asynchronously
-        yield cargo.bytes
-      },
-    }
-    await context.dataStore.put(asyncIterableMock)
+    await context.dataStore.put(cargo.bytes)
 
     // Handle message
     const handledMessageRes =

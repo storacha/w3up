@@ -1,4 +1,4 @@
-import { UpdatableStore } from './store.js'
+import { UpdatableStore, StreammableStore } from './store.js'
 
 /**
  * @typedef {import('@ucanto/interface').Link} Link
@@ -18,7 +18,8 @@ import { UpdatableStore } from './store.js'
  * @typedef {import('../../src/deal-tracker/api.js').DealRecordKey} DealRecordKey
  */
 export const getStoreImplementations = (
-  StoreImplementation = UpdatableStore
+  StoreImplementation = UpdatableStore,
+  StreammableStoreImplementation = StreammableStore
 ) => ({
   storefront: {
     pieceStore: new StoreImplementation({
@@ -76,12 +77,24 @@ export const getStoreImplementations = (
         return Array.from(items).find((i) => i.ran.link().equals(record))
       },
     }),
-    dataStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<AsyncIterable<Uint8Array>>} */ items,
+    dataStore: new StreammableStore({
+      streamFn: (
+        /** @type {Set<Uint8Array>} */ items,
         /** @type {import('@ucanto/interface').UnknownLink} */ record
       ) => {
-        return Array.from(items).pop()
+        const item = Array.from(items).pop()
+        if (!item) {
+          return undefined
+        }
+        const asyncIterableRes = {
+          [Symbol.asyncIterator]: async function* () {
+            // Yield the Uint8Array asynchronously
+            if (item) {
+              yield item
+            }
+          },
+        }
+        return asyncIterableRes
       },
     }),
   },
