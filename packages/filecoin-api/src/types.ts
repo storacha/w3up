@@ -52,6 +52,17 @@ export interface UpdatableStore<RecKey, Rec> extends Store<RecKey, Rec> {
   ) => Promise<Result<Rec, StoreGetError>>
 }
 
+export interface StreammableStore<RecKey, Rec> {
+  /**
+   * Puts a record in the store.
+   */
+  put: (record: Rec) => Promise<Result<Unit, StorePutError>>
+  /**
+   * Gets a record from the store.
+   */
+  stream: (key: RecKey) => Promise<Result<AsyncIterable<Rec>, StoreGetError>>
+}
+
 export interface QueryableStore<RecKey, Rec, Query> extends Store<RecKey, Rec> {
   /**
    * Queries for record matching a given criterium.

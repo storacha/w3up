@@ -9,6 +9,7 @@ import * as StorefrontEvents from '../../src/storefront/events.js'
 import {
   StoreOperationErrorName,
   UnexpectedStateErrorName,
+  BlobNotFoundErrorName
 } from '../../src/errors.js'
 
 import { randomCargo, randomAggregate } from '../utils.js'
@@ -37,6 +38,9 @@ export const test = {
       group: context.id.did(),
     }
 
+    // Store bytes on datastore
+    await context.dataStore.put(cargo.bytes)
+
     // Handle message
     const handledMessageRes =
       await StorefrontEvents.handleFilecoinSubmitMessage(context, message)
@@ -48,6 +52,23 @@ export const test = {
     })
     assert.ok(hasStoredPiece.ok)
     assert.equal(hasStoredPiece.ok?.status, 'submitted')
+  },
+  'handles filecoin submit messages with error if blob of content is not stored': async (assert, context) => {
+    // Generate piece for test
+    const [cargo] = await randomCargo(1, 128)
+
+    // Store piece into store
+    const message = {
+      piece: cargo.link.link(),
+      content: cargo.content.link(),
+      group: context.id.did(),
+    }
+
+    // Handle message
+    const handledMessageRes =
+      await StorefrontEvents.handleFilecoinSubmitMessage(context, message)
+    assert.ok(handledMessageRes.error)
+    assert.equal(handledMessageRes.error?.name, BlobNotFoundErrorName)
   },
   'handles filecoin submit messages deduping when stored': async (
     assert,
@@ -233,6 +254,47 @@ export const test = {
         context.service.filecoin?.submit?._params[0].nb.piece
       )
     )
+  },
+  'handles piece insert event to issue equivalency claims successfully': async (assert, context) => {
+    // Generate piece for test
+    const [cargo] = await randomCargo(1, 128)
+
+    // Store piece into store
+    const message = {
+      piece: cargo.link.link(),
+      content: cargo.content.link(),
+      group: context.id.did(),
+    }
+    /** @type {PieceRecord} */
+    const pieceRecord = {
+      ...message,
+      status: 'submitted',
+      insertedAt: new Date(Date.now() - 10).toISOString(),
+      updatedAt: new Date(Date.now() - 5).toISOString(),
+    }
+
+    // Handle message
+    const handledMessageRes = await StorefrontEvents.handlePieceInsertToEquivalencyClaim(
+      context,
+      pieceRecord
+    )
+    assert.ok(handledMessageRes.ok)
+    // Verify invocation
+    // @ts-expect-error not typed hooks
+    assert.equal(context.service.assert?.equals?.callCount, 1)
+    assert.ok(
+      message.content.equals(
+        // @ts-expect-error not typed hooks
+        context.service.assert?.equals?._params[0].nb.content
+      )
+    )
+    assert.ok(
+      message.piece.equals(
+        // @ts-expect-error not typed hooks
+        context.service.assert?.equals?._params[0].nb.equals
+      )
+    )
+
   },
   'handles piece status update event successfully': async (assert, context) => {
     // Generate piece for test

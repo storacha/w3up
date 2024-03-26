@@ -5,6 +5,9 @@ import type {
   Receipt,
   Invocation,
   Failure,
+  DID,
+  Proof,
+  ConnectionView,
 } from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
 import {
@@ -15,6 +18,7 @@ import {
 import {
   Store,
   UpdatableAndQueryableStore,
+  StreammableStore,
   Queue,
   ServiceConfig,
 } from '../types.js'
@@ -26,6 +30,7 @@ export type PieceStore = UpdatableAndQueryableStore<
 >
 export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
 export type PieceOfferQueue = Queue<PieceOfferMessage>
+export type DataStore = StreammableStore<UnknownLink, Uint8Array>
 export type TaskStore = Store<UnknownLink, Invocation>
 export type ReceiptStore = Store<UnknownLink, Receipt>
 
@@ -76,7 +81,9 @@ export interface ServiceContext {
 }
 
 export interface FilecoinSubmitMessageContext
-  extends Pick<ServiceContext, 'pieceStore'> {}
+  extends Pick<ServiceContext, 'pieceStore'> {
+  dataStore: DataStore
+}
 
 export interface PieceOfferMessageContext {
   /**
@@ -90,6 +97,35 @@ export interface StorefrontClientContext {
    * Storefront own connection to issue receipts.
    */
   storefrontService: ServiceConfig<StorefrontService>
+}
+
+export interface ClaimsInvocationConfig {
+  /**
+   * Signing authority that is issuing the UCAN invocation(s).
+   */
+  issuer: Signer
+  /**
+   * The principal delegated to in the current UCAN.
+   */
+  audience: Principal
+  /**
+   * The resource the invocation applies to.
+   */
+  with: DID
+  /**
+   * Proof(s) the issuer has the capability to perform the action.
+   */
+  proofs?: Proof[]
+}
+
+export interface ClaimsClientContext {
+  /**
+   * Claims own connection to issue claims.
+   */
+  claimsService: {
+    invocationConfig: ClaimsInvocationConfig
+    connection: ConnectionView<import('@web3-storage/content-claims/server/service/api').Service>
+  }
 }
 
 export interface CronContext

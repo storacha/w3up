@@ -39,6 +39,7 @@ export interface StorefrontTestEventsContext
   extends StorefrontInterface.FilecoinSubmitMessageContext,
     StorefrontInterface.PieceOfferMessageContext,
     StorefrontInterface.StorefrontClientContext,
+    StorefrontInterface.ClaimsClientContext,
     StorefrontInterface.CronContext {
   id: Signer
   aggregatorId: Signer
@@ -47,5 +48,6 @@ export interface StorefrontTestEventsContext
     piece: Partial<import('../src/types.js').AggregatorService['piece']>
     aggregate: Partial<import('../src/types.js').DealerService['aggregate']>
     deal: Partial<import('../src/types.js').DealTrackerService['deal']>
+    assert: Partial<import('@web3-storage/content-claims/server/service/api').AssertService>
   }>
 }

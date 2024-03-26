@@ -71,3 +71,36 @@ export class DecodeBlockOperationFailed extends Server.Failure {
     return DecodeBlockOperationErrorName
   }
 }
+
+export const BlobNotFoundErrorName = /** @type {const} */ ('BlobNotFound')
+export class BlobNotFound extends Server.Failure {
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return BlobNotFoundErrorName
+  }
+}
+
+export const ComputePieceErrorName = /** @type {const} */ ('ComputePieceFailed')
+export class ComputePieceFailed extends Error {
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return ComputePieceErrorName
+  }
+}
+
+export const UnexpectedPieceErrorName = /** @type {const} */ ('UnexpectedPiece')
+export class UnexpectedPiece extends Error {
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return UnexpectedPieceErrorName
+  }
+}

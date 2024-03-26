@@ -10,6 +10,7 @@ const notImplemented = () => {
  * piece: Partial<import('../../src/types.js').AggregatorService['piece']>
  * aggregate: Partial<import('../../src/types.js').DealerService['aggregate']>
  * deal: Partial<import('../../src/types.js').DealTrackerService['deal']>
+ * assert: Partial<import('@web3-storage/content-claims/server/service/api').AssertService>
  * }>} impl
  */
 export function mockService(impl) {
@@ -30,6 +31,9 @@ export function mockService(impl) {
     deal: {
       info: withCallParams(impl.deal?.info ?? notImplemented),
     },
+    assert: {
+      equals: withCallParams(impl.assert?.equals ?? notImplemented)
+    }
   }
 }
 

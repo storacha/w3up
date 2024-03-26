@@ -71,6 +71,7 @@ export async function randomCargo(length, size) {
       root: piece.root,
       content: car.cid,
       padding: piece.padding,
+      bytes: car.bytes,
     }
   })
 }

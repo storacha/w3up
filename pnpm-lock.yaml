@@ -257,9 +257,15 @@ importers:
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
+      '@web3-storage/content-claims':
+        specifier: ^4.0.2
+        version: 4.0.2
       '@web3-storage/data-segment':
         specifier: ^4.0.0
         version: 4.0.0
+      fr32-sha2-256-trunc254-padded-binary-tree-multihash:
+        specifier: ^3.3.0
+        version: 3.3.0
       p-map:
         specifier: ^6.0.0
         version: 6.0.0
@@ -4388,6 +4394,17 @@ packages:
       web-streams-polyfill: 3.2.1
     dev: false
 
+  /@web3-storage/content-claims@4.0.2:
+    resolution: {integrity: sha512-k6tIc7YjQtdKWi01r7+5stp2lo13ztwpIz+7NQYEbu5fZEsKKes5B4FKRqPWkZYO17+rPaihOY6sICT498c9EA==}
+    dependencies:
+      '@ucanto/client': 9.0.0
+      '@ucanto/interface': 9.0.0
+      '@ucanto/server': 9.0.1
+      '@ucanto/transport': 9.1.0
+      carstream: 1.1.1
+      multiformats: 12.1.3
+    dev: false
+
   /@web3-storage/data-segment@3.2.0:
     resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}
     dependencies:
@@ -5232,6 +5249,14 @@ packages:
       ansicolors: 0.3.2
       redeyed: 2.1.1
     dev: true
+
+  /carstream@1.1.1:
+    resolution: {integrity: sha512-cgn3TqHo6SPsHBTfM5QgXngv6HtwgO1bKCHcdS35vBrweLcYrIG/+UboCbvnIGA0k8NtAYl/DvDdej/9pZGZxQ==}
+    dependencies:
+      '@ipld/dag-cbor': 9.0.6
+      multiformats: 12.1.3
+      uint8arraylist: 2.4.8
+    dev: false
 
   /cborg@4.0.5:
     resolution: {integrity: sha512-q8TAjprr8pn9Fp53rOIGp/UFDdFY6os2Nq62YogPSIzczJD9M6g2b6igxMkpCiZZKJ0kn/KzDLDvG+EqBIEeCg==}
@@ -7070,6 +7095,10 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
     dev: true
+
+  /fr32-sha2-256-trunc254-padded-binary-tree-multihash@3.3.0:
+    resolution: {integrity: sha512-O11VDxPmPvbQj5eac2BJXyieNacyd+RCMhwOzXQQM/NCI25x3c32YWB4/JwgOWPCpKnNXF6lpK/j0lj7GWOnYQ==}
+    dev: false
 
   /fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
@@ -9626,6 +9655,10 @@ packages:
   /multiformats@12.1.3:
     resolution: {integrity: sha512-eajQ/ZH7qXZQR2AgtfpmSMizQzmyYVmCql7pdhldPuYQi4atACekbJaQplk6dWyIi10jCaFnd6pqvcEFXjbaJw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+
+  /multiformats@13.1.0:
+    resolution: {integrity: sha512-HzdtdBwxsIkzpeXzhQ5mAhhuxcHbjEHH+JQoxt7hG/2HGFjjwyolLo7hbaexcnhoEuV4e0TNJ8kkpMjiEYY4VQ==}
+    dev: false
 
   /multimatch@5.0.0:
     resolution: {integrity: sha512-ypMKuglUrZUD99Tk2bUQ+xNQj43lPEfAeX2o9cTteAmShXy2VHDJpuwu1o0xqoKCt9jLVAvwyFKdLTPXKAfJyA==}
@@ -12437,10 +12470,22 @@ packages:
     dev: true
     optional: true
 
+  /uint8arraylist@2.4.8:
+    resolution: {integrity: sha512-vc1PlGOzglLF0eae1M8mLRTBivsvrGsdmJ5RbK3e+QRvRLOZfZhQROTwH/OfyF3+ZVUg9/8hE8bmKP2CvP9quQ==}
+    dependencies:
+      uint8arrays: 5.0.3
+    dev: false
+
   /uint8arrays@4.0.6:
     resolution: {integrity: sha512-4ZesjQhqOU2Ip6GPReIwN60wRxIupavL8T0Iy36BBHr2qyMrNxsPJvr7vpS4eFt8F8kSguWUPad6ZM9izs/vyw==}
     dependencies:
       multiformats: 12.1.3
+
+  /uint8arrays@5.0.3:
+    resolution: {integrity: sha512-6LBuKji28kHjgPJMkQ6GDaBb1lRwIhyOYq6pDGwYMoDPfImE9SkuYENVmR0yu9yGgs2clHUSY9fKDukR+AXfqQ==}
+    dependencies:
+      multiformats: 13.1.0
+    dev: false
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
