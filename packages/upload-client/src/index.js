@@ -115,45 +115,49 @@ export async function uploadCAR(conf, car, options = {}) {
  * @param {import('./types.js').UploadOptions} [options]
  * @returns {Promise<import('./types.js').AnyLink>}
  */
-async function uploadBlockStream(conf, blocks, options = {}) {
+async function uploadBlockStream(
+  conf,
+  blocks,
+  { pieceHasher = PieceHasher, ...options } = {}
+) {
   /** @type {import('./types.js').CARLink[]} */
   const shards = []
   /** @type {import('./types.js').AnyLink?} */
   let root = null
-  const hasher = options.pieceHasher ?? PieceHasher
   await blocks
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(
       new TransformStream({
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
-          const multihashDigest = await hasher.digest(bytes)
-          /** @type {import('@web3-storage/capabilities/types').PieceLink} */
-          const piece = Link.create(raw.code, multihashDigest)
-
           // Invoke store/add and write bytes to write target
           const cid = await Store.add(conf, bytes, options)
-          // Invoke filecoin/offer for data
-          const result = await Storefront.filecoinOffer(
-            {
-              issuer: conf.issuer,
-              audience: conf.audience,
-              // Resource of invocation is the issuer did for being self issued
-              with: conf.issuer.did(),
-              proofs: conf.proofs,
-            },
-            cid,
-            piece,
-            options
-          )
-
-          if (result.out.error) {
-            throw new Error(
-              'failed to offer piece for aggregation into filecoin deal',
-              { cause: result.out.error }
+          let piece
+          if (pieceHasher) {
+            const multihashDigest = await pieceHasher.digest(bytes)
+            /** @type {import('@web3-storage/capabilities/types').PieceLink} */
+            piece = Link.create(raw.code, multihashDigest)
+            // Invoke filecoin/offer for data
+            const result = await Storefront.filecoinOffer(
+              {
+                issuer: conf.issuer,
+                audience: conf.audience,
+                // Resource of invocation is the issuer did for being self issued
+                with: conf.issuer.did(),
+                proofs: conf.proofs,
+              },
+              cid,
+              piece,
+              options
             )
-          }
 
+            if (result.out.error) {
+              throw new Error(
+                'failed to offer piece for aggregation into filecoin deal',
+                { cause: result.out.error }
+              )
+            }
+          }
           const { version, roots, size } = car
           controller.enqueue({ version, roots, size, cid, piece })
         },

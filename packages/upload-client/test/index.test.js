@@ -897,7 +897,9 @@ describe('uploadCAR', () => {
       car,
       {
         connection,
-        onShardStored: (meta) => pieceCIDs.push(meta.piece),
+        onShardStored: (meta) => {
+          if (meta.piece) pieceCIDs.push(meta.piece)
+        },
       }
     )
 
