@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v13.1.0...upload-client-v13.2.0) (2024-04-01)
+
+
+### Features
+
+* make it possible to disable piece hashing ([#1351](https://github.com/web3-storage/w3up/issues/1351)) ([adc498d](https://github.com/web3-storage/w3up/commit/adc498db8bd2b702695b186905bd510e73b99f6a))
+
 ## [13.1.0](https://github.com/web3-storage/w3up/compare/upload-client-v13.0.1...upload-client-v13.1.0) (2024-03-21)
 
 
