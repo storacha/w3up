@@ -10,6 +10,6 @@ export function createService(context) {
     blob: {
       allocate: blobAllocateProvider(context),
       accept: blobAcceptProvider(context),
-    }
+    },
   }
 }

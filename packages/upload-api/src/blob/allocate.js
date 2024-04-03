@@ -43,14 +43,14 @@ export function blobAllocateProvider(context) {
     }
 
     // If blob is stored, we can just allocate it to the space
-    const hasBlob = await context.blobStorage.has(blob.content)
+    const hasBlob = await context.blobsStorage.has(blob.content)
     if (hasBlob.error) {
       return {
         error: new BlobItemNotFound(space),
       }
     }
     // Get presigned URL for the write target
-    const createUploadUrl = await context.blobStorage.createUploadUrl(
+    const createUploadUrl = await context.blobsStorage.createUploadUrl(
       blob.content,
       blob.size
     )
@@ -61,7 +61,7 @@ export function blobAllocateProvider(context) {
     }
 
     // Allocate in space, ignoring if already allocated
-    const allocationInsert = await context.allocationStorage.insert({
+    const allocationInsert = await context.allocationsStorage.insert({
       space,
       blob,
       invocation: cause,

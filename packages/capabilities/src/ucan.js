@@ -75,6 +75,59 @@ export const revoke = capability({
 })
 
 /**
+ * `ucan/conclude` capability represents a receipt using a special UCAN capability.
+ *
+ * The UCAN invocation specification defines receipt record, that is cryptographically
+ * signed description of the invocation output and requested effects. Receipt
+ * structure is very similar to UCAN except it has no notion of expiry nor it is
+ * possible to delegate ability to issue receipt to another principal.
+ */
+export const conclude = capability({
+  can: 'ucan/conclude',
+  /**
+   * DID of the principal representing the Conclusion Authority.
+   * MUST be the DID of the audience of the ran invocation.
+   */
+  with: Schema.did(),
+  // TODO: Should this just have bytes?
+  nb: Schema.struct({
+    /**
+     * A link to the UCAN invocation that this receipt is for.
+     */
+    ran: UCANLink,
+    /**
+     * The value output of the invocation in Result format.
+     */
+    out: Schema.unknown(),
+    /**
+     * Tasks that the invocation would like to enqueue.
+     */
+    next: Schema.array(UCANLink),
+    /**
+     * Additional data about the receipt
+     */
+    meta: Schema.unknown(),
+    /**
+     * The UTC Unix timestamp at which the Receipt was issued
+     */
+    time: Schema.integer(),
+  }),
+  derives: (claim, from) =>
+    // With field MUST be the same
+    and(equalWith(claim, from)) ??
+    // invocation MUST be the same
+    and(checkLink(claim.nb.ran, from.nb.ran, 'nb.ran')) ??
+    // value output MUST be the same
+    and(equal(claim.nb.out, from.nb.out, 'nb.out')) ??
+    // tasks to enqueue MUST be the same
+    and(equal(claim.nb.next, from.nb.next, 'nb.next')) ??
+    // additional data MUST be the same
+    and(equal(claim.nb.meta, from.nb.meta, 'nb.meta')) ??
+    // the receipt issue time MUST be the same
+    equal(claim.nb.time, from.nb.time, 'nb.time'),
+})
+
+/**
  * Issued by trusted authority (usually the one handling invocation) that attest
  * that specific UCAN delegation has been considered authentic.
  *

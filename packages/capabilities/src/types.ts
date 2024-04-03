@@ -446,6 +446,7 @@ export type BlobAdd = InferInvokedCapability<typeof BlobCaps.add>
 export type BlobRemove = InferInvokedCapability<typeof BlobCaps.remove>
 export type BlobList = InferInvokedCapability<typeof BlobCaps.list>
 export type ServiceBlob = InferInvokedCapability<typeof BlobCaps.serviceBlob>
+export type BlobPut = InferInvokedCapability<typeof BlobCaps.put>
 export type BlobAllocate = InferInvokedCapability<typeof BlobCaps.allocate>
 export type BlobAccept = InferInvokedCapability<typeof BlobCaps.accept>
 
@@ -605,6 +606,7 @@ export interface UploadListSuccess extends ListResponse<UploadListItem> {}
 
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
 export type UCANAttest = InferInvokedCapability<typeof UCANCaps.attest>
+export type UCANConclude = InferInvokedCapability<typeof UCANCaps.conclude>
 
 export interface Timestamp {
   /**
@@ -614,6 +616,8 @@ export interface Timestamp {
 }
 
 export type UCANRevokeSuccess = Timestamp
+
+export type UCANConcludeSuccess = Timestamp
 
 /**
  * Error is raised when `UCAN` being revoked is not supplied or it's proof chain
@@ -652,6 +656,12 @@ export type UCANRevokeFailure =
   | InvalidRevocationScope
   | UnauthorizedRevocation
   | RevocationsStoreFailure
+
+export interface InvocationNotFound extends Ucanto.Failure {
+  name: 'InvocationNotFound'
+}
+
+export type UCANConcludeFailure = InvocationNotFound | Ucanto.Failure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
@@ -761,6 +771,7 @@ export type ServiceAbilityArray = [
   Access['can'],
   AccessAuthorize['can'],
   UCANAttest['can'],
+  UCANConclude['can'],
   CustomerGet['can'],
   ConsumerHas['can'],
   ConsumerGet['can'],
@@ -789,6 +800,7 @@ export type ServiceAbilityArray = [
   BlobRemove['can'],
   BlobList['can'],
   ServiceBlob['can'],
+  BlobPut['can'],
   BlobAllocate['can'],
   BlobAccept['can']
 ]

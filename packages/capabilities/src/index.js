@@ -64,6 +64,7 @@ export const abilitiesAsStrings = [
   Access.access.can,
   Access.authorize.can,
   UCAN.attest.can,
+  UCAN.conclude.can,
   Customer.get.can,
   Consumer.has.can,
   Consumer.get.can,
@@ -92,6 +93,7 @@ export const abilitiesAsStrings = [
   Blob.remove.can,
   Blob.list.can,
   Blob.serviceBlob.can,
+  Blob.put.can,
   Blob.allocate.can,
   Blob.accept.can,
 ]

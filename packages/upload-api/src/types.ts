@@ -54,7 +54,6 @@ export interface DebugEmail extends Email {
 }
 
 import {
-  BlobMultihash,
   BlobAdd,
   BlobAddSuccess,
   BlobAddFailure,
@@ -62,7 +61,6 @@ import {
   BlobRemoveSuccess,
   BlobRemoveFailure,
   BlobList,
-  BlobListItem,
   BlobListSuccess,
   BlobListFailure,
   BlobAllocate,
@@ -178,6 +176,15 @@ import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
+import { ReceiptsStorage } from './types/service.js'
+export type { ReceiptsStorage }
+import {
+  AllocationsStorage,
+  BlobsStorage,
+  TasksStorage,
+  BlobAddInput,
+} from './types/blob.js'
+export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
 
 export interface Service extends StorefrontService, W3sService {
   blob: {
@@ -314,8 +321,9 @@ export type BlobServiceContext = SpaceServiceContext & {
    */
   id: Signer
   maxUploadSize: number
-  allocationStorage: AllocationStorage
-  blobStorage: BlobStorage
+  allocationsStorage: AllocationsStorage
+  blobsStorage: BlobsStorage
+  tasksStorage: TasksStorage
   getServiceConnection: () => ConnectionView<Service>
 }
 
@@ -324,8 +332,8 @@ export type W3ServiceContext = SpaceServiceContext & {
    * Service signer
    */
   id: Signer
-  allocationStorage: AllocationStorage
-  blobStorage: BlobStorage
+  allocationsStorage: AllocationsStorage
+  blobsStorage: BlobsStorage
 }
 
 export type StoreServiceContext = SpaceServiceContext & {
@@ -336,7 +344,8 @@ export type StoreServiceContext = SpaceServiceContext & {
 
 export type UploadServiceContext = ConsumerServiceContext &
   SpaceServiceContext &
-  RevocationServiceContext & {
+  RevocationServiceContext &
+  ConcludeServiceContext & {
     signer: EdSigner.Signer
     uploadTable: UploadTable
     dudewhereBucket: DudewhereBucket
@@ -399,6 +408,13 @@ export interface RevocationServiceContext {
   revocationsStorage: RevocationsStorage
 }
 
+export interface ConcludeServiceContext {
+  /**
+   * Stores receipts for tasks.
+   */
+  receiptsStorage: ReceiptsStorage
+}
+
 export interface PlanServiceContext {
   plansStorage: PlansStorage
 }
@@ -417,6 +433,7 @@ export interface ServiceContext
     SpaceServiceContext,
     StoreServiceContext,
     BlobServiceContext,
+    ConcludeServiceContext,
     SubscriptionServiceContext,
     RateLimitServiceContext,
     RevocationServiceContext,
@@ -449,25 +466,6 @@ export interface UploadTestContext {}
 
 export interface ErrorReporter {
   catch: (error: HandlerExecutionError) => void
-}
-
-export interface BlobStorage {
-  has: (content: BlobMultihash) => Promise<Result<boolean, Failure>>
-  createUploadUrl: (
-    content: BlobMultihash,
-    size: number
-  ) => Promise<
-    Result<
-      {
-        url: URL
-        headers: {
-          'x-amz-checksum-sha256': string
-          'content-length': string
-        } & Record<string, string>
-      },
-      Failure
-    >
-  >
 }
 
 export interface CarStoreBucket {
@@ -514,26 +512,6 @@ export interface RecordNotFound extends Failure {
  */
 export interface RecordKeyConflict extends Failure {
   name: 'RecordKeyConflict'
-}
-
-export interface AllocationStorage {
-  exists: (
-    space: DID,
-    blobMultihash: BlobMultihash
-  ) => Promise<Result<boolean, Failure>>
-  /** Inserts an item in the table if it does not already exist. */
-  insert: (
-    item: BlobAddInput
-  ) => Promise<Result<BlobAddOutput, RecordKeyConflict>>
-  /** Removes an item from the table but fails if the item does not exist. */
-  remove: (
-    space: DID,
-    blobMultihash: BlobMultihash
-  ) => Promise<Result<BlobRemoveSuccess, RecordNotFound>>
-  list: (
-    space: DID,
-    options?: ListOptions
-  ) => Promise<Result<ListResponse<BlobListItem>, Failure>>
 }
 
 export interface StoreTable {
@@ -603,20 +581,6 @@ export type AdminUploadInspectResult = Result<
   AdminUploadInspectSuccess,
   AdminUploadInspectFailure
 >
-
-export interface Blob {
-  content: BlobMultihash
-  size: number
-}
-
-export interface BlobAddInput {
-  space: DID
-  invocation: UnknownLink
-  blob: Blob
-}
-
-export interface BlobAddOutput
-  extends Omit<BlobAddInput, 'space' | 'invocation'> {}
 
 export interface StoreAddInput {
   space: DID

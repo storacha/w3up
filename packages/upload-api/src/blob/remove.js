@@ -12,7 +12,7 @@ export function blobRemoveProvider(context) {
     const { content } = capability.nb
     const space = Server.DID.parse(capability.with).did()
 
-    const res = await context.allocationStorage.remove(space, content)
+    const res = await context.allocationsStorage.remove(space, content)
     if (res.error && res.error.name === 'RecordNotFound') {
       return Server.error(new BlobItemNotFound(space))
     }

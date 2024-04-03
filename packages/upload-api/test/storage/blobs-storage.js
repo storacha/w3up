@@ -7,9 +7,9 @@ import { base58btc } from 'multiformats/bases/base58'
 import { sha256 } from 'multiformats/hashes/sha2'
 
 /**
- * @implements {Types.BlobStorage}
+ * @implements {Types.BlobsStorage}
  */
-export class BlobStorage {
+export class BlobsStorage {
   /**
    * @param {Types.CarStoreBucketOptions & {http?: import('http')}} options
    */
@@ -50,14 +50,14 @@ export class BlobStorage {
       const port = server.address().port
       const url = new URL(`http://localhost:${port}`)
 
-      return new BlobStorage({
+      return new BlobsStorage({
         ...options,
         content,
         url,
         server,
       })
     } else {
-      return new BlobStorage({
+      return new BlobsStorage({
         ...options,
         content,
         url: new URL(`http://localhost:8989`),

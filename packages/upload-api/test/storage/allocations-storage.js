@@ -2,9 +2,9 @@ import * as Types from '../../src/types.js'
 import { equals } from 'uint8arrays/equals'
 
 /**
- * @implements {Types.AllocationStorage}
+ * @implements {Types.AllocationsStorage}
  */
-export class AllocationStorage {
+export class AllocationsStorage {
   constructor() {
     /** @type {(Types.BlobAddInput & Types.BlobListItem)[]} */
     this.items = []
@@ -12,7 +12,7 @@ export class AllocationStorage {
 
   /**
    * @param {Types.BlobAddInput} input
-   * @returns {ReturnType<Types.AllocationStorage['insert']>}
+   * @returns {ReturnType<Types.AllocationsStorage['insert']>}
    */
   async insert({ space, invocation, ...output }) {
     if (
@@ -36,7 +36,7 @@ export class AllocationStorage {
   /**
    * @param {Types.DID} space
    * @param {Uint8Array} blobMultihash
-   * @returns {ReturnType<Types.AllocationStorage['exists']>}
+   * @returns {ReturnType<Types.AllocationsStorage['exists']>}
    */
   async exists(space, blobMultihash) {
     const item = this.items.find(
@@ -48,7 +48,7 @@ export class AllocationStorage {
   /**
    * @param {Types.DID} space
    * @param {Uint8Array} blobMultihash
-   * @returns {ReturnType<Types.AllocationStorage['remove']>}
+   * @returns {ReturnType<Types.AllocationsStorage['remove']>}
    */
   async remove(space, blobMultihash) {
     const item = this.items.find(
@@ -68,7 +68,7 @@ export class AllocationStorage {
   /**
    * @param {Types.DID} space
    * @param {Types.ListOptions} options
-   * @returns {ReturnType<Types.AllocationStorage['list']>}
+   * @returns {ReturnType<Types.AllocationsStorage['list']>}
    */
   async list(
     space,

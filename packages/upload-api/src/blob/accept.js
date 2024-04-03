@@ -11,7 +11,7 @@ export function blobAcceptProvider(context) {
   return Server.provide(Blob.accept, async ({ capability }) => {
     const { blob } = capability.nb
     // If blob is not stored, we must fail
-    const hasBlob = await context.blobStorage.has(blob.content)
+    const hasBlob = await context.blobsStorage.has(blob.content)
     if (hasBlob.error) {
       return {
         error: new BlobItemNotFound(),

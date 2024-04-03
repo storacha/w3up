@@ -122,7 +122,7 @@ export const equalBlob = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"blob/allocate"|"blob/accept", Types.URI<'did:'>, {content: Uint8Array}>} T
+ * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"blob/allocate"|"blob/accept"|"http/put", Types.URI<'did:'>, {content: Uint8Array}>} T
  * @param {T} claimed
  * @param {T} delegated
  * @returns {Types.Result<{}, Types.Failure>}
