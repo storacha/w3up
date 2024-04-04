@@ -1,8 +1,11 @@
 import * as API from '../../src/types.js'
 import { Absentee } from '@ucanto/principal'
+import { Message } from '@ucanto/core'
+import { CAR } from '@ucanto/transport'
 import { equals } from 'uint8arrays'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as UCAN from '@web3-storage/capabilities/ucan'
 import { base64pad } from 'multiformats/bases/base64'
 
 import { provisionProvider } from '../helpers/utils.js'
@@ -14,7 +17,7 @@ import { BlobItemSizeExceededName } from '../../src/blob/lib.js'
  * @type {API.Tests}
  */
 export const test = {
-  'blob/add schedules allocation and returns effects for allocation and accept':
+  'blob/add executes allocation and returns effects for allocation, accept, put and allocate receipt':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -45,24 +48,46 @@ export const test = {
       })
       const blobAdd = await invocation.execute(connection)
       if (!blobAdd.out.ok) {
-        console.log('out error')
         throw new Error('invocation failed', { cause: blobAdd })
       }
 
+      // Validate receipt
       assert.ok(blobAdd.out.ok.claim)
-      assert.equal(blobAdd.fx.fork.length, 2)
+      assert.ok(blobAdd.out.ok.claim['await/ok'].equals(blobAdd.fx.join?.link()))
       assert.ok(blobAdd.fx.join)
-      assert.ok(blobAdd.out.ok.claim['await/ok'].equals(blobAdd.fx.join))
+
+      /**
+       * @type {import('@ucanto/interface').Invocation[]}
+       **/
+      // @ts-expect-error read only effect
+      const forkInvocations = blobAdd.fx.fork
+      assert.equal(blobAdd.fx.fork.length, 3)
+      const allocatefx = forkInvocations.find(fork => fork.capabilities[0].can === BlobCapabilities.allocate.can)
+      const allocateUcanConcludefx = forkInvocations.find(fork => fork.capabilities[0].can === UCAN.conclude.can)
+      const putfx = forkInvocations.find(fork => fork.capabilities[0].can === BlobCapabilities.put.can)
+      if (!allocatefx || !allocateUcanConcludefx || !putfx) {
+        throw new Error('effects not provided')
+      }
 
       // Validate `http/put` invocation stored
-      // TODO, needs receipt to include those bytes
+      const httpPutGetTask = await context.tasksStorage.get(
+        putfx.cid
+      )
+      assert.ok(httpPutGetTask.ok)
 
-      // validate scheduled task ran and has receipt inlined
-      // const [blobAllocateInvocation] = scheduledTasks
-      // assert.equal(blobAllocateInvocation.can, BlobCapabilities.allocate.can)
-      // assert.equal(blobAllocateInvocation.nb.space, spaceDid)
-      // assert.equal(blobAllocateInvocation.nb.blob.size, size)
-      // assert.ok(equals(blobAllocateInvocation.nb.blob.content, content))
+      // validate scheduled allocate task ran an its receipt content
+      // @ts-expect-error object of type unknown
+      const messageCar = CAR.codec.decode(allocateUcanConcludefx.capabilities[0].nb.bytes)
+      const message = Message.view({ root: messageCar.roots[0].cid, store: messageCar.blocks })
+
+      const receiptKey = Array.from(message.receipts.keys())[0]
+      const receipt = message.receipts.get(receiptKey)
+      assert.ok(receipt?.out)
+      assert.ok(receipt?.out.ok)
+      // @ts-expect-error receipt out is unknown
+      assert.equal(receipt?.out.ok?.size, size)
+      // @ts-expect-error receipt out is unknown
+      assert.ok(receipt?.out.ok?.address)
     },
   'blob/add fails when a blob with size bigger than maximum size is added':
     async (assert, context) => {

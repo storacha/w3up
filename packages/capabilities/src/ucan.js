@@ -91,40 +91,42 @@ export const conclude = capability({
   with: Schema.did(),
   // TODO: Should this just have bytes?
   nb: Schema.struct({
-    /**
-     * A link to the UCAN invocation that this receipt is for.
-     */
-    ran: UCANLink,
-    /**
-     * The value output of the invocation in Result format.
-     */
-    out: Schema.unknown(),
-    /**
-     * Tasks that the invocation would like to enqueue.
-     */
-    next: Schema.array(UCANLink),
-    /**
-     * Additional data about the receipt
-     */
-    meta: Schema.unknown(),
-    /**
-     * The UTC Unix timestamp at which the Receipt was issued
-     */
-    time: Schema.integer(),
+    bytes: Schema.Bytes,
+    // /**
+    //  * A link to the UCAN invocation that this receipt is for.
+    //  */
+    // ran: UCANLink,
+    // /**
+    //  * The value output of the invocation in Result format.
+    //  */
+    // out: Schema.unknown(),
+    // /**
+    //  * Tasks that the invocation would like to enqueue.
+    //  */
+    // next: Schema.array(UCANLink),
+    // /**
+    //  * Additional data about the receipt
+    //  */
+    // meta: Schema.unknown(),
+    // /**
+    //  * The UTC Unix timestamp at which the Receipt was issued
+    //  */
+    // time: Schema.integer(),
   }),
   derives: (claim, from) =>
     // With field MUST be the same
     and(equalWith(claim, from)) ??
-    // invocation MUST be the same
-    and(checkLink(claim.nb.ran, from.nb.ran, 'nb.ran')) ??
-    // value output MUST be the same
-    and(equal(claim.nb.out, from.nb.out, 'nb.out')) ??
-    // tasks to enqueue MUST be the same
-    and(equal(claim.nb.next, from.nb.next, 'nb.next')) ??
-    // additional data MUST be the same
-    and(equal(claim.nb.meta, from.nb.meta, 'nb.meta')) ??
-    // the receipt issue time MUST be the same
-    equal(claim.nb.time, from.nb.time, 'nb.time'),
+    equal(claim.nb.bytes, from.nb.bytes, 'nb.bytes'),
+  // // invocation MUST be the same
+  // and(checkLink(claim.nb.ran, from.nb.ran, 'nb.ran')) ??
+  // // value output MUST be the same
+  // and(equal(claim.nb.out, from.nb.out, 'nb.out')) ??
+  // // tasks to enqueue MUST be the same
+  // and(equal(claim.nb.next, from.nb.next, 'nb.next')) ??
+  // // additional data MUST be the same
+  // and(equal(claim.nb.meta, from.nb.meta, 'nb.meta')) ??
+  // // the receipt issue time MUST be the same
+  // equal(claim.nb.time, from.nb.time, 'nb.time'),
 })
 
 /**

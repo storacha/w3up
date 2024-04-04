@@ -1,6 +1,9 @@
 import * as Server from '@ucanto/server'
+import { Message } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
+import { CAR } from '@ucanto/transport'
 import * as Blob from '@web3-storage/capabilities/blob'
+import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as API from '../types.js'
 
 import { BlobItemSizeExceeded } from './lib.js'
@@ -103,6 +106,7 @@ export function blobAddProvider(context) {
         space,
         blob.content
       )
+      let allocateUcanConcludefx
       if (!allocatedExistsRes.ok) {
         // Execute allocate invocation
         const allocateRes = await blobAllocate.execute(getServiceConnection())
@@ -111,6 +115,17 @@ export function blobAddProvider(context) {
             error: allocateRes.out.error,
           }
         }
+        const message = await Message.build({ receipts: [allocateRes] })
+        const messageCar = await CAR.outbound.encode(message)
+        allocateUcanConcludefx = await UCAN.conclude.invoke({
+          issuer: id,
+          audience: id,
+          with: id.toDIDKey(),
+          nb: {
+            bytes: messageCar.body
+          },
+          expiration: Infinity,
+        }).delegate()
       }
 
       /** @type {API.OkBuilder<API.BlobAddSuccess, API.BlobAddFailure>} */
@@ -119,11 +134,20 @@ export function blobAddProvider(context) {
           'await/ok': acceptfx.link(),
         },
       })
-      // TODO: not pass links, but delegation
+      // Add allocate receipt if allocate was executed
+      if (allocateUcanConcludefx) {
+        // TODO: perhaps if we allocated we need to get and write previous receipt?
+        return result
+          .fork(allocatefx)
+          .fork(allocateUcanConcludefx)
+          .fork(putfx)
+          .join(acceptfx)
+      }
+
       return result
-        .fork(allocatefx.link())
-        .fork(putfx.link())
-        .join(acceptfx.link())
+        .fork(allocatefx)
+        .fork(putfx)
+        .join(acceptfx)
     },
   })
 }
