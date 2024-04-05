@@ -23,3 +23,16 @@ export class RecordNotFound extends Server.Failure {
     return RecordNotFoundErrorName
   }
 }
+
+export const DecodeBlockOperationErrorName = /** @type {const} */ (
+  'DecodeBlockOperationFailed'
+)
+export class DecodeBlockOperationFailed extends Server.Failure {
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return DecodeBlockOperationErrorName
+  }
+}

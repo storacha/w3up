@@ -22,6 +22,8 @@ import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
 import * as BlobCaps from './blob.js'
+import * as W3sBlobCaps from './web3.storage/blob.js'
+import * as HTTPCaps from './http.js'
 import * as StoreCaps from './store.js'
 import * as UploadCaps from './upload.js'
 import * as AccessCaps from './access.js'
@@ -440,29 +442,33 @@ export interface UploadNotFound extends Ucanto.Failure {
 
 export type UploadGetFailure = UploadNotFound | Ucanto.Failure
 
+// HTTP
+export type HTTPPut = InferInvokedCapability<typeof HTTPCaps.put>
+
 // Blob
 export type Blob = InferInvokedCapability<typeof BlobCaps.blob>
 export type BlobAdd = InferInvokedCapability<typeof BlobCaps.add>
-export type BlobRemove = InferInvokedCapability<typeof BlobCaps.remove>
-export type BlobList = InferInvokedCapability<typeof BlobCaps.list>
-export type ServiceBlob = InferInvokedCapability<typeof BlobCaps.serviceBlob>
-export type BlobPut = InferInvokedCapability<typeof BlobCaps.put>
-export type BlobAllocate = InferInvokedCapability<typeof BlobCaps.allocate>
-export type BlobAccept = InferInvokedCapability<typeof BlobCaps.accept>
+export type ServiceBlob = InferInvokedCapability<typeof W3sBlobCaps.blob>
+export type BlobAllocate = InferInvokedCapability<typeof W3sBlobCaps.allocate>
+export type BlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
 
 export type BlobMultihash = Uint8Array
+export interface BlobModel {
+  content: BlobMultihash
+  size: number
+}
 
 // Blob add
 export interface BlobAddSuccess {
-  claim: {
-    'await/ok': Link
+  location: {
+    'ucan/await': ['.out.ok.claim', Link]
   }
 }
 
-export interface BlobItemSizeExceeded extends Ucanto.Failure {
-  name: 'BlobItemSizeExceeded'
+export interface BlobExceedsSizeLimit extends Ucanto.Failure {
+  name: 'BlobExceedsSizeLimit'
 }
-export type BlobAddFailure = BlobItemSizeExceeded | Ucanto.Failure
+export type BlobAddFailure = BlobExceedsSizeLimit | Ucanto.Failure
 
 // Blob remove
 export interface BlobRemoveSuccess {
@@ -473,12 +479,13 @@ export interface BlobItemNotFound extends Ucanto.Failure {
   name: 'BlobItemNotFound'
 }
 
+// TODO: Add more errors from stores
 export type BlobRemoveFailure = BlobItemNotFound | Ucanto.Failure
 
 // Blob list
 export interface BlobListSuccess extends ListResponse<BlobListItem> {}
 export interface BlobListItem {
-  blob: { content: Uint8Array; size: number }
+  blob: BlobModel
   insertedAt: ISO8601Date
 }
 
@@ -657,11 +664,14 @@ export type UCANRevokeFailure =
   | UnauthorizedRevocation
   | RevocationsStoreFailure
 
-export interface InvocationNotFound extends Ucanto.Failure {
-  name: 'InvocationNotFound'
+/**
+ * Error is raised when receipt is received for unknown invocation
+ */
+export interface InvocationNotFoundForReceipt extends Ucanto.Failure {
+  name: 'InvocationNotFoundForReceipt'
 }
 
-export type UCANConcludeFailure = InvocationNotFound | Ucanto.Failure
+export type UCANConcludeFailure = InvocationNotFoundForReceipt | Ucanto.Failure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
@@ -797,12 +807,10 @@ export type ServiceAbilityArray = [
   UsageReport['can'],
   Blob['can'],
   BlobAdd['can'],
-  BlobRemove['can'],
-  BlobList['can'],
   ServiceBlob['can'],
-  BlobPut['can'],
   BlobAllocate['can'],
-  BlobAccept['can']
+  BlobAccept['can'],
+  HTTPPut['can']
 ]
 
 /**

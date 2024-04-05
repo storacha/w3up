@@ -7,13 +7,16 @@ import { ed25519 } from '@ucanto/principal'
 import { CAR } from '@ucanto/transport'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
+import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import { base64pad } from 'multiformats/bases/base64'
 
 import { provisionProvider } from '../helpers/utils.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
-import { BlobItemSizeExceededName } from '../../src/blob/lib.js'
+import { BlobExceedsSizeLimitName } from '../../src/blob/lib.js'
+import { findBlock } from '../../src/ucan/conclude.js'
 
 /**
  * @type {API.Tests}
@@ -54,9 +57,10 @@ export const test = {
       }
 
       // Validate receipt
-      assert.ok(blobAdd.out.ok.claim)
+      assert.ok(blobAdd.out.ok.location)
+      assert.equal(blobAdd.out.ok.location['ucan/await'][0], '.out.ok.claim')
       assert.ok(
-        blobAdd.out.ok.claim['await/ok'].equals(blobAdd.fx.join?.link())
+        blobAdd.out.ok.location['ucan/await'][1].equals(blobAdd.fx.join?.link())
       )
       assert.ok(blobAdd.fx.join)
 
@@ -67,13 +71,13 @@ export const test = {
       const forkInvocations = blobAdd.fx.fork
       assert.equal(blobAdd.fx.fork.length, 3)
       const allocatefx = forkInvocations.find(
-        (fork) => fork.capabilities[0].can === BlobCapabilities.allocate.can
+        (fork) => fork.capabilities[0].can === W3sBlobCapabilities.allocate.can
       )
       const allocateUcanConcludefx = forkInvocations.find(
         (fork) => fork.capabilities[0].can === UCAN.conclude.can
       )
       const putfx = forkInvocations.find(
-        (fork) => fork.capabilities[0].can === BlobCapabilities.put.can
+        (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
       )
       if (!allocatefx || !allocateUcanConcludefx || !putfx) {
         throw new Error('effects not provided')
@@ -81,19 +85,22 @@ export const test = {
 
       // validate facts exist for `http/put`
       assert.ok(putfx.facts.length)
-      const [{ bytes, did }] = putfx.facts
-      assert.ok(bytes)
-      assert.ok(did)
+      assert.ok(putfx.facts[0]['keys'])
 
       // Validate `http/put` invocation stored
       const httpPutGetTask = await context.tasksStorage.get(putfx.cid)
       assert.ok(httpPutGetTask.ok)
 
-      // validate scheduled allocate task ran an its receipt content
-      const messageCar = CAR.codec.decode(
+      // validate that scheduled allocate task executed and has its receipt content
+      const getBlockRes = await findBlock(
         // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.bytes
+        allocateUcanConcludefx.capabilities[0].nb.message,
+        allocateUcanConcludefx.iterateIPLDBlocks()
       )
+      if (getBlockRes.error) {
+        throw new Error('receipt block should exist in invocation')
+      }
+      const messageCar = CAR.codec.decode(getBlockRes.ok)
       const message = Message.view({
         root: messageCar.roots[0].cid,
         store: messageCar.blocks,
@@ -108,7 +115,7 @@ export const test = {
       // @ts-expect-error receipt out is unknown
       assert.ok(receipt?.out.ok?.address)
     },
-    'blob/add executes allocation and returns effects for allocate (and its receipt) and accept, but not for put when blob stored':
+  'blob/add executes allocation and returns effects for allocate (and its receipt) and accept, but not for put when blob stored':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -158,15 +165,20 @@ export const test = {
         (fork) => fork.capabilities[0].can === UCAN.conclude.can
       )
       const putfx = forkInvocations.find(
-        (fork) => fork.capabilities[0].can === BlobCapabilities.put.can
+        (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
       )
       if (!allocateUcanConcludefx || !putfx) {
         throw new Error('effects not provided')
       }
-      const messageCar = CAR.codec.decode(
+      const getBlockRes = await findBlock(
         // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.bytes
+        allocateUcanConcludefx.capabilities[0].nb.message,
+        allocateUcanConcludefx.iterateIPLDBlocks()
       )
+      if (getBlockRes.error) {
+        throw new Error('receipt block should exist in invocation')
+      }
+      const messageCar = CAR.codec.decode(getBlockRes.ok)
       const message = Message.view({
         root: messageCar.roots[0].cid,
         store: messageCar.blocks,
@@ -220,9 +232,11 @@ export const test = {
       // @ts-expect-error read only effect
       const thirdForkInvocations = thirdBlobAdd.fx.fork
       // no put effect anymore
-      assert.ok(!thirdForkInvocations.find(
-        (fork) => fork.capabilities[0].can === BlobCapabilities.put.can
-      ))
+      assert.ok(
+        !thirdForkInvocations.find(
+          (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
+        )
+      )
     },
   'blob/add fails when a blob with size bigger than maximum size is added':
     async (assert, context) => {
@@ -257,7 +271,7 @@ export const test = {
         throw new Error('invocation should have failed')
       }
       assert.ok(blobAdd.out.error, 'invocation should have failed')
-      assert.equal(blobAdd.out.error.name, BlobItemSizeExceededName)
+      assert.equal(blobAdd.out.error.name, BlobExceedsSizeLimitName)
     },
   'blob/allocate allocates to space and returns presigned url': async (
     assert,
@@ -293,7 +307,7 @@ export const test = {
     })
 
     // invoke `service/blob/allocate`
-    const serviceBlobAllocate = BlobCapabilities.allocate.invoke({
+    const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
       issuer: alice,
       audience: context.id,
       with: spaceDid,
@@ -391,7 +405,7 @@ export const test = {
       })
 
       // invoke `service/blob/allocate`
-      const serviceBlobAllocate = BlobCapabilities.allocate.invoke({
+      const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: alice,
         audience: context.id,
         with: spaceDid,
@@ -469,7 +483,7 @@ export const test = {
       })
 
       // invoke `service/blob/allocate` capabilities on alice space
-      const aliceServiceBlobAllocate = BlobCapabilities.allocate.invoke({
+      const aliceServiceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: alice,
         audience: context.id,
         with: aliceSpaceDid,
@@ -510,7 +524,7 @@ export const test = {
       assert.equal(goodPut.status, 200, await goodPut.text())
 
       // invoke `service/blob/allocate` capabilities on bob space
-      const bobServiceBlobAllocate = BlobCapabilities.allocate.invoke({
+      const bobServiceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: bob,
         audience: context.id,
         with: bobSpaceDid,
@@ -577,7 +591,7 @@ export const test = {
       })
 
       // invoke `service/blob/allocate`
-      const serviceBlobAllocate = BlobCapabilities.allocate.invoke({
+      const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: alice,
         audience: context.id,
         with: spaceDid,
@@ -654,7 +668,7 @@ export const test = {
       })
 
       // invoke `service/blob/allocate`
-      const serviceBlobAllocate = BlobCapabilities.allocate.invoke({
+      const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: alice,
         audience: context.id,
         with: spaceDid,
@@ -729,7 +743,7 @@ export const test = {
     })
 
     // invoke `service/blob/allocate`
-    const serviceBlobAllocate = BlobCapabilities.allocate.invoke({
+    const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
       issuer: alice,
       audience: context.id,
       with: spaceDid,
@@ -784,7 +798,7 @@ export const test = {
               return Promise.resolve({
                 ok: {},
               })
-            }
+            },
           },
         }),
       })
@@ -817,15 +831,20 @@ export const test = {
         (fork) => fork.capabilities[0].can === UCAN.conclude.can
       )
       const putfx = forkInvocations.find(
-        (fork) => fork.capabilities[0].can === BlobCapabilities.put.can
+        (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
       )
       if (!allocateUcanConcludefx || !putfx) {
         throw new Error('effects not provided')
       }
-      const blobAllocateMessageCar = CAR.codec.decode(
+      const getBlockRes = await findBlock(
         // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.bytes
+        allocateUcanConcludefx.capabilities[0].nb.message,
+        allocateUcanConcludefx.iterateIPLDBlocks()
       )
+      if (getBlockRes.error) {
+        throw new Error('receipt block should exist in invocation')
+      }
+      const blobAllocateMessageCar = CAR.codec.decode(getBlockRes.ok)
       const blobAllocateMessage = Message.view({
         root: blobAllocateMessageCar.roots[0].cid,
         store: blobAllocateMessageCar.blocks,
@@ -851,11 +870,10 @@ export const test = {
       assert.equal(goodPut.status, 200, await goodPut.text())
 
       // Create `http/put` receipt
-      /** @type {{ bytes: Uint8Array, did: string }} */
-      // @ts-expect-error facts are unknown
-      const [{ bytes, did }] = putfx.facts
-      const putSubject = ed25519.decode(bytes)
-      const httpPut = BlobCapabilities.put.invoke({
+      const keys = putfx.facts[0]['keys']
+      // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
+      const putSubject = ed25519.from(keys)
+      const httpPut = HTTPCapabilities.put.invoke({
         issuer: putSubject,
         audience: putSubject,
         with: putSubject.toDIDKey(),
@@ -864,7 +882,7 @@ export const test = {
             content,
             size,
           },
-          address
+          address,
         },
         facts: putfx.facts,
         expiration: Infinity,
@@ -880,6 +898,8 @@ export const test = {
       })
       const message = await Message.build({ receipts: [httpPutReceipt] })
       const messageCar = await CAR.outbound.encode(message)
+      const bytes = new Uint8Array(messageCar.body)
+      const messageLink = await CAR.codec.link(bytes)
 
       // Invoke `ucan/conclude` with `http/put` receipt
       const httpPutConcludeInvocation = UCAN.conclude.invoke({
@@ -887,9 +907,13 @@ export const test = {
         audience: context.id,
         with: alice.did(),
         nb: {
-          bytes: messageCar.body,
+          message: messageLink,
         },
         expiration: Infinity,
+      })
+      httpPutConcludeInvocation.attach({
+        bytes,
+        cid: messageLink,
       })
       const ucanConclude = await httpPutConcludeInvocation.execute(connection)
       if (!ucanConclude.out.ok) {
@@ -899,12 +923,13 @@ export const test = {
       // verify accept was scheduled
       const blobAcceptInvocation = await taskScheduled.promise
       assert.ok(blobAcceptInvocation)
+      assert.equal(blobAdd.out.ok.location['ucan/await'][0], '.out.ok.claim')
       assert.ok(
-        blobAdd.out.ok.claim['await/ok'].equals(blobAcceptInvocation.cid)
+        blobAdd.out.ok.location['ucan/await'][1].equals(
+          blobAcceptInvocation.cid
+        )
       )
       assert.ok(blobAdd.fx.join?.link().equals(blobAcceptInvocation.cid))
     },
   // TODO: Blob accept
-  // TODO: list
-  // TODO: remove
 }

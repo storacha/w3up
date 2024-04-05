@@ -2,7 +2,7 @@
  * UCAN core capabilities.
  */
 
-import { capability, Schema } from '@ucanto/validator'
+import { capability, Schema, ok } from '@ucanto/validator'
 import * as API from '@ucanto/interface'
 import { equalWith, equal, and, checkLink } from './utils.js'
 
@@ -89,44 +89,17 @@ export const conclude = capability({
    * MUST be the DID of the audience of the ran invocation.
    */
   with: Schema.did(),
-  // TODO: Should this just have bytes?
   nb: Schema.struct({
-    bytes: Schema.Bytes,
-    // /**
-    //  * A link to the UCAN invocation that this receipt is for.
-    //  */
-    // ran: UCANLink,
-    // /**
-    //  * The value output of the invocation in Result format.
-    //  */
-    // out: Schema.unknown(),
-    // /**
-    //  * Tasks that the invocation would like to enqueue.
-    //  */
-    // next: Schema.array(UCANLink),
-    // /**
-    //  * Additional data about the receipt
-    //  */
-    // meta: Schema.unknown(),
-    // /**
-    //  * The UTC Unix timestamp at which the Receipt was issued
-    //  */
-    // time: Schema.integer(),
+    /**
+     * CID of the content with the UCANTO Message.
+     */
+    message: Schema.link(),
   }),
   derives: (claim, from) =>
     // With field MUST be the same
-    and(equalWith(claim, from)) ??
-    equal(claim.nb.bytes, from.nb.bytes, 'nb.bytes'),
-  // // invocation MUST be the same
-  // and(checkLink(claim.nb.ran, from.nb.ran, 'nb.ran')) ??
-  // // value output MUST be the same
-  // and(equal(claim.nb.out, from.nb.out, 'nb.out')) ??
-  // // tasks to enqueue MUST be the same
-  // and(equal(claim.nb.next, from.nb.next, 'nb.next')) ??
-  // // additional data MUST be the same
-  // and(equal(claim.nb.meta, from.nb.meta, 'nb.meta')) ??
-  // // the receipt issue time MUST be the same
-  // equal(claim.nb.time, from.nb.time, 'nb.time'),
+    and(equalWith(claim, from)) ||
+    and(checkLink(claim.nb.message, from.nb.message, 'nb.message')) ||
+    ok({}),
 })
 
 /**

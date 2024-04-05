@@ -56,6 +56,10 @@
       "types": "./dist/src/filecoin/dealer.d.ts",
       "import": "./src/filecoin/dealer.js"
     },
+    "./web3.storage/blob": {
+      "types": "./dist/src/web3.storage/blob.d.ts",
+      "import": "./src/web3.storage/blob.js"
+    },
     "./types": {
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"

@@ -20,6 +20,8 @@ import * as UCAN from './ucan.js'
 import * as Plan from './plan.js'
 import * as Usage from './usage.js'
 import * as Blob from './blob.js'
+import * as W3sBlob from './web3.storage/blob.js'
+import * as HTTP from './http.js'
 
 export {
   Access,
@@ -90,10 +92,8 @@ export const abilitiesAsStrings = [
   Usage.report.can,
   Blob.blob.can,
   Blob.add.can,
-  Blob.remove.can,
-  Blob.list.can,
-  Blob.serviceBlob.can,
-  Blob.put.can,
-  Blob.allocate.can,
-  Blob.accept.can,
+  W3sBlob.blob.can,
+  W3sBlob.allocate.can,
+  W3sBlob.accept.can,
+  HTTP.put.can,
 ]

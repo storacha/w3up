@@ -29,8 +29,8 @@ export class BlobItemNotFound extends Failure {
   }
 }
 
-export const BlobItemSizeExceededName = 'BlobItemSizeExceeded'
-export class BlobItemSizeExceeded extends Failure {
+export const BlobExceedsSizeLimitName = 'BlobExceedsSizeLimit'
+export class BlobExceedsSizeLimit extends Failure {
   /**
    * @param {Number} maxUploadSize
    */
@@ -40,11 +40,11 @@ export class BlobItemSizeExceeded extends Failure {
   }
 
   get name() {
-    return BlobItemSizeExceededName
+    return BlobExceedsSizeLimitName
   }
 
   describe() {
-    return `Maximum size exceeded: ${this.maxUploadSize}, split DAG into smaller shards.`
+    return `Blob exceeded maximum size limit: ${this.maxUploadSize}, consider splitting it into blobs that fit limit.`
   }
 
   toJSON() {

@@ -3,10 +3,12 @@ import { Message } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import { CAR } from '@ucanto/transport'
 import * as Blob from '@web3-storage/capabilities/blob'
+import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
+import * as HTTP from '@web3-storage/capabilities/http'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as API from '../types.js'
 
-import { BlobItemSizeExceeded } from './lib.js'
+import { BlobExceedsSizeLimit } from './lib.js'
 
 /**
  * @param {API.BlobServiceContext} context
@@ -31,21 +33,23 @@ export function blobAddProvider(context) {
       // Verify blob is within accept size
       if (blob.size > maxUploadSize) {
         return {
-          error: new BlobItemSizeExceeded(maxUploadSize),
+          error: new BlobExceedsSizeLimit(maxUploadSize),
         }
       }
 
-      // Create shared subject for agent to issue `http/put` receipt
+      // We derive principal from the content multihash to be an audience
+      // of the `http/put` invocation. That way anyone with blob content
+      // could perform the invocation and issue receipt by deriving same
+      // principal
       const putSubject = await ed25519.derive(blob.content.slice(0, 32))
-      const facts = Object.entries(putSubject.toArchive().keys).map(
-        ([key, value]) => ({
-          did: key,
-          bytes: value,
-        })
-      )
+      const facts = [
+        {
+          keys: putSubject.toArchive(),
+        },
+      ]
 
       // Create web3.storage/blob/* invocations
-      const blobAllocate = Blob.allocate.invoke({
+      const blobAllocate = W3sBlob.allocate.invoke({
         issuer: id,
         audience: id,
         with: id.did(),
@@ -56,7 +60,7 @@ export function blobAddProvider(context) {
         },
         expiration: Infinity,
       })
-      const blobAccept = Blob.accept.invoke({
+      const blobAccept = W3sBlob.accept.invoke({
         issuer: id,
         audience: id,
         with: id.toDIDKey(),
@@ -71,12 +75,8 @@ export function blobAddProvider(context) {
         blobAccept.delegate(),
       ])
 
-
       // Get receipt for `blob/allocate` if available, or schedule invocation if not
-      const allocatedGetRes = await allocationsStorage.get(
-        space,
-        blob.content
-      )
+      const allocatedGetRes = await allocationsStorage.get(space, blob.content)
       let blobAllocateReceipt
       let blobAllocateOutAddress
       // If already allocated, just get the allocate receipt
@@ -114,37 +114,43 @@ export function blobAddProvider(context) {
       // Create `blob/allocate` receipt invocation to inline as effect
       const message = await Message.build({ receipts: [blobAllocateReceipt] })
       const messageCar = await CAR.outbound.encode(message)
+      const bytes = new Uint8Array(messageCar.body)
+      const messageLink = await CAR.codec.link(bytes)
+
       const allocateUcanConcludefx = await UCAN.conclude
         .invoke({
           issuer: id,
           audience: id,
           with: id.toDIDKey(),
           nb: {
-            bytes: messageCar.body,
+            message: messageLink,
           },
           expiration: Infinity,
         })
         .delegate()
+      allocateUcanConcludefx.attach({
+        bytes,
+        cid: messageLink,
+      })
 
       // Create result object
       /** @type {API.OkBuilder<API.BlobAddSuccess, API.BlobAddFailure>} */
       const result = Server.ok({
-        claim: {
-          'await/ok': acceptfx.link(),
+        location: {
+          'ucan/await': ['.out.ok.claim', acceptfx.link()],
         },
       })
 
       // In case blob allocate provided an address to write
       // the blob is still not stored
       if (blobAllocateOutAddress) {
-        // Create effects for `blob/add` receipt
-        const blobPut = Blob.put.invoke({
+        const blobPut = HTTP.put.invoke({
           issuer: putSubject,
           audience: putSubject,
           with: putSubject.toDIDKey(),
           nb: {
             blob,
-            address: blobAllocateOutAddress
+            address: blobAllocateOutAddress,
           },
           facts,
           expiration: Infinity,
@@ -167,38 +173,44 @@ export function blobAddProvider(context) {
           }
         }
 
-        return result
-          // 1. System attempts to allocate memory in user space for the blob.
-          .fork(allocatefx)
-          .fork(allocateUcanConcludefx)
-          // 2. System requests user agent (or anyone really) to upload the content
-          // corresponding to the blob
-          // via HTTP PUT to given location.
-          .fork(putfx)
-          // 3. System will attempt to accept uploaded content that matches blob
-          // multihash and size.
-          .join(acceptfx)
+        return (
+          result
+            // 1. System attempts to allocate memory in user space for the blob.
+            .fork(allocatefx)
+            .fork(allocateUcanConcludefx)
+            // 2. System requests user agent (or anyone really) to upload the content
+            // corresponding to the blob
+            // via HTTP PUT to given location.
+            .fork(putfx)
+            // 3. System will attempt to accept uploaded content that matches blob
+            // multihash and size.
+            .join(acceptfx)
+        )
       }
 
       // Add allocate receipt if allocate was executed
       if (allocateUcanConcludefx) {
-        return result
-          // 1. System attempts to allocate memory in user space for the blob.
+        return (
+          result
+            // 1. System attempts to allocate memory in user space for the blob.
+            .fork(allocatefx)
+            .fork(allocateUcanConcludefx)
+            // 3. System will attempt to accept uploaded content that matches blob
+            // multihash and size.
+            .join(acceptfx)
+        )
+      }
+
+      // Blob was already allocated and is already stored in the system
+      return (
+        result
+          // 1. System allocated memory in user space for the blob.
           .fork(allocatefx)
           .fork(allocateUcanConcludefx)
           // 3. System will attempt to accept uploaded content that matches blob
           // multihash and size.
           .join(acceptfx)
-      }
-
-      // Blob was already allocated and is already stored in the system
-      return result
-        // 1. System allocated memory in user space for the blob.
-        .fork(allocatefx)
-        .fork(allocateUcanConcludefx)
-        // 3. System will attempt to accept uploaded content that matches blob
-        // multihash and size.
-        .join(acceptfx)
+      )
     },
   })
 }
