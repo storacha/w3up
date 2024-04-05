@@ -403,6 +403,9 @@ importers:
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
+      '@web3-storage/content-claims':
+        specifier: ^4.0.4
+        version: 4.0.4
       '@web3-storage/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto

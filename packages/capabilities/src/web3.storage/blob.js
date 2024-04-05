@@ -78,6 +78,7 @@ export const accept = capability({
      * Blob to accept.
      */
     blob: blobStruct,
+    // TODO: @gozala suggested we could use content length from `httt/put` to figure out size and not need to pass the blob here
     /**
      * Expiration..
      */

@@ -179,6 +179,7 @@
     "@ucanto/validator": "^9.0.2",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
+    "@web3-storage/content-claims": "^4.0.4",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-api": "workspace:^",
     "multiformats": "^12.1.2",
