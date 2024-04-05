@@ -14,7 +14,7 @@ import { RecordNotFound } from '../../src/errors.js'
  */
 export class ReceiptsStorage {
   constructor() {
-    /** @type {Map<UnknownLink, Receipt>} */
+    /** @type {Map<string, Receipt>} */
     this.items = new Map()
   }
 
@@ -23,7 +23,7 @@ export class ReceiptsStorage {
    * @returns {Promise<import('@ucanto/interface').Result<{}, StoragePutError>>}
    */
   async put(record) {
-    this.items.set(record.ran.link(), record)
+    this.items.set(record.ran.link().toString(), record)
 
     return Promise.resolve({
       ok: {},
@@ -35,7 +35,7 @@ export class ReceiptsStorage {
    * @returns {Promise<import('@ucanto/interface').Result<Receipt, StorageGetError>>}
    */
   async get(link) {
-    const record = this.items.get(link)
+    const record = this.items.get(link.toString())
     if (!record) {
       return {
         error: new RecordNotFound('not found'),
@@ -51,7 +51,7 @@ export class ReceiptsStorage {
    * @returns {Promise<import('@ucanto/interface').Result<boolean, StorageGetError>>}
    */
   async has(link) {
-    const record = this.items.get(link)
+    const record = this.items.get(link.toString())
     if (!record) {
       return {
         ok: false,

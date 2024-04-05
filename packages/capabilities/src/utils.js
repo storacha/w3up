@@ -88,7 +88,7 @@ export const equalLink = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept", Types.URI<'did:'>, {blob: { content: Uint8Array, size: number }}>} T
+ * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept"|"http/put", Types.URI<'did:'>, {blob: { content: Uint8Array, size: number }}>} T
  * @param {T} claimed
  * @param {T} delegated
  * @returns {Types.Result<{}, Types.Failure>}

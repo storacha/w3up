@@ -202,9 +202,9 @@ export const put = capability({
   with: SpaceDID,
   nb: Schema.struct({
     /**
-     * A multihash digest of the blob payload bytes, uniquely identifying blob.
+     * Blob to allocate on the space.
      */
-    content: Schema.bytes(),
+    blob: blobStruct,
     /**
      * Blob to accept.
      */
@@ -221,7 +221,8 @@ export const put = capability({
   }),
   derives: (claim, from) => {
     return (
-      and(equalContent(claim, from)) ||
+      and(equalWith(claim, from)) ||
+      and(equalBlob(claim, from)) ||
       and(equal(claim.nb.address?.url, from.nb.address, 'url')) ||
       and(equal(claim.nb.address?.headers, from.nb.address, 'headers')) ||
       ok({})

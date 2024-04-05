@@ -42,7 +42,7 @@ export function blobAllocateProvider(context) {
       }
     }
 
-    // If blob is stored, we can just allocate it to the space
+    // Check if blob already exists
     const hasBlob = await context.blobsStorage.has(blob.content)
     if (hasBlob.error) {
       return {
@@ -59,14 +59,16 @@ export function blobAllocateProvider(context) {
         error: new Server.Failure('failed to provide presigned url'),
       }
     }
+    const address = {
+      url: createUploadUrl.ok.url.toString(),
+      headers: createUploadUrl.ok.headers,
+    }
 
     // Allocate in space, ignoring if already allocated
     const allocationInsert = await context.allocationsStorage.insert({
       space,
       blob,
       invocation: cause,
-      // TODO: add write target here
-      // will the URL be enough to track?
     })
     if (allocationInsert.error) {
       // if the insert failed with conflict then this item has already been
@@ -81,6 +83,7 @@ export function blobAllocateProvider(context) {
       }
     }
 
+    // If blob is stored, we can just allocate it to the space
     if (hasBlob.ok) {
       return {
         ok: { size: blob.size },
@@ -90,10 +93,7 @@ export function blobAllocateProvider(context) {
     return {
       ok: {
         size: blob.size,
-        address: {
-          url: createUploadUrl.ok.url.toString(),
-          headers: createUploadUrl.ok.headers,
-        },
+        address,
       },
     }
   })

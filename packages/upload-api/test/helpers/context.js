@@ -59,6 +59,12 @@ export const createContext = async (
     requirePaymentPlan,
     url: new URL('http://localhost:8787'),
     ...serviceStores,
+    tasksScheduler: {
+      schedule: () =>
+        Promise.resolve({
+          ok: {},
+        }),
+    },
     getServiceConnection: () => connection,
     ...createRevocationChecker({
       revocationsStorage: serviceStores.revocationsStorage,

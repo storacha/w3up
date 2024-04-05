@@ -36,6 +36,21 @@ export class AllocationsStorage {
   /**
    * @param {Types.DID} space
    * @param {Uint8Array} blobMultihash
+   * @returns {ReturnType<Types.AllocationsStorage['get']>}
+   */
+  async get(space, blobMultihash) {
+    const item = this.items.find(
+      (i) => i.space === space && equals(i.blob.content, blobMultihash)
+    )
+    if (!item) {
+      return { error: { name: 'RecordNotFound', message: 'record not found' } }
+    }
+    return { ok: item }
+  }
+
+  /**
+   * @param {Types.DID} space
+   * @param {Uint8Array} blobMultihash
    * @returns {ReturnType<Types.AllocationsStorage['exists']>}
    */
   async exists(space, blobMultihash) {

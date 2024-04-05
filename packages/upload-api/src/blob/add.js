@@ -28,12 +28,14 @@ export function blobAddProvider(context) {
         Server.DID.parse(capability.with).did()
       )
 
+      // Verify blob is within accept size
       if (blob.size > maxUploadSize) {
         return {
           error: new BlobItemSizeExceeded(maxUploadSize),
         }
       }
 
+      // Create shared subject for agent to issue `http/put` receipt
       const putSubject = await ed25519.derive(blob.content.slice(0, 32))
       const facts = Object.entries(putSubject.toArchive().keys).map(
         ([key, value]) => ({
@@ -42,7 +44,7 @@ export function blobAddProvider(context) {
         })
       )
 
-      // Create effects for receipt
+      // Create web3.storage/blob/* invocations
       const blobAllocate = Blob.allocate.invoke({
         issuer: id,
         audience: id,
@@ -52,16 +54,6 @@ export function blobAddProvider(context) {
           cause: invocation.link(),
           space,
         },
-        expiration: Infinity,
-      })
-      const blobPut = Blob.put.invoke({
-        issuer: putSubject,
-        audience: putSubject,
-        with: putSubject.toDIDKey(),
-        nb: {
-          content: blob.content,
-        },
-        facts,
         expiration: Infinity,
       })
       const blobAccept = Blob.accept.invoke({
@@ -74,40 +66,39 @@ export function blobAddProvider(context) {
         },
         expiration: Infinity,
       })
-      const [allocatefx, putfx, acceptfx] = await Promise.all([
-        // 1. System attempts to allocate memory in user space for the blob.
+      const [allocatefx, acceptfx] = await Promise.all([
         blobAllocate.delegate(),
-        // 2. System requests user agent (or anyone really) to upload the content
-        // corresponding to the blob
-        // via HTTP PUT to given location.
-        blobPut.delegate(),
-        // 3. System will attempt to accept uploaded content that matches blob
-        // multihash and size.
         blobAccept.delegate(),
       ])
 
-      // store `http/put` invocation
-      // TODO: store implementation
-      // const archiveDelegationRes = await putfx.archive()
-      // if (archiveDelegationRes.error) {
-      //   return {
-      //     error: archiveDelegationRes.error
-      //   }
-      // }
-      const invocationPutRes = await tasksStorage.put(putfx)
-      if (invocationPutRes.error) {
-        return {
-          error: invocationPutRes.error,
-        }
-      }
 
-      // Schedule allocation if not allocated
-      const allocatedExistsRes = await allocationsStorage.exists(
+      // Get receipt for `blob/allocate` if available, or schedule invocation if not
+      const allocatedGetRes = await allocationsStorage.get(
         space,
         blob.content
       )
-      let allocateUcanConcludefx
-      if (!allocatedExistsRes.ok) {
+      let blobAllocateReceipt
+      let blobAllocateOutAddress
+      // If already allocated, just get the allocate receipt
+      // and the addresses if still pending to receive blob
+      if (allocatedGetRes.ok) {
+        const receiptGet = await context.receiptsStorage.get(allocatefx.link())
+        if (receiptGet.error) {
+          return receiptGet
+        }
+        blobAllocateReceipt = receiptGet.ok
+
+        // Check if despite allocated, the blob is still not stored
+        const blobHasRes = await context.blobsStorage.has(blob.content)
+        if (blobHasRes.error) {
+          return blobHasRes
+        } else if (!blobHasRes.ok) {
+          // @ts-expect-error receipt type is unknown
+          blobAllocateOutAddress = blobAllocateReceipt.out.ok.address
+        }
+      }
+      // if not already allocated, schedule `blob/allocate`
+      else {
         // Execute allocate invocation
         const allocateRes = await blobAllocate.execute(getServiceConnection())
         if (allocateRes.out.error) {
@@ -115,38 +106,98 @@ export function blobAddProvider(context) {
             error: allocateRes.out.error,
           }
         }
-        const message = await Message.build({ receipts: [allocateRes] })
-        const messageCar = await CAR.outbound.encode(message)
-        allocateUcanConcludefx = await UCAN.conclude.invoke({
+        // If this is a new allocation, `http/put` effect should be returned with address
+        blobAllocateOutAddress = allocateRes.out.ok.address
+        blobAllocateReceipt = allocateRes
+      }
+
+      // Create `blob/allocate` receipt invocation to inline as effect
+      const message = await Message.build({ receipts: [blobAllocateReceipt] })
+      const messageCar = await CAR.outbound.encode(message)
+      const allocateUcanConcludefx = await UCAN.conclude
+        .invoke({
           issuer: id,
           audience: id,
           with: id.toDIDKey(),
           nb: {
-            bytes: messageCar.body
+            bytes: messageCar.body,
           },
           expiration: Infinity,
-        }).delegate()
-      }
+        })
+        .delegate()
 
+      // Create result object
       /** @type {API.OkBuilder<API.BlobAddSuccess, API.BlobAddFailure>} */
       const result = Server.ok({
         claim: {
           'await/ok': acceptfx.link(),
         },
       })
-      // Add allocate receipt if allocate was executed
-      if (allocateUcanConcludefx) {
-        // TODO: perhaps if we allocated we need to get and write previous receipt?
+
+      // In case blob allocate provided an address to write
+      // the blob is still not stored
+      if (blobAllocateOutAddress) {
+        // Create effects for `blob/add` receipt
+        const blobPut = Blob.put.invoke({
+          issuer: putSubject,
+          audience: putSubject,
+          with: putSubject.toDIDKey(),
+          nb: {
+            blob,
+            address: blobAllocateOutAddress
+          },
+          facts,
+          expiration: Infinity,
+        })
+
+        const putfx = await blobPut.delegate()
+
+        // store `http/put` invocation
+        // TODO: store implementation
+        // const archiveDelegationRes = await putfx.archive()
+        // if (archiveDelegationRes.error) {
+        //   return {
+        //     error: archiveDelegationRes.error
+        //   }
+        // }
+        const invocationPutRes = await tasksStorage.put(putfx)
+        if (invocationPutRes.error) {
+          return {
+            error: invocationPutRes.error,
+          }
+        }
+
         return result
+          // 1. System attempts to allocate memory in user space for the blob.
           .fork(allocatefx)
           .fork(allocateUcanConcludefx)
+          // 2. System requests user agent (or anyone really) to upload the content
+          // corresponding to the blob
+          // via HTTP PUT to given location.
           .fork(putfx)
+          // 3. System will attempt to accept uploaded content that matches blob
+          // multihash and size.
           .join(acceptfx)
       }
 
+      // Add allocate receipt if allocate was executed
+      if (allocateUcanConcludefx) {
+        return result
+          // 1. System attempts to allocate memory in user space for the blob.
+          .fork(allocatefx)
+          .fork(allocateUcanConcludefx)
+          // 3. System will attempt to accept uploaded content that matches blob
+          // multihash and size.
+          .join(acceptfx)
+      }
+
+      // Blob was already allocated and is already stored in the system
       return result
+        // 1. System allocated memory in user space for the blob.
         .fork(allocatefx)
-        .fork(putfx)
+        .fork(allocateUcanConcludefx)
+        // 3. System will attempt to accept uploaded content that matches blob
+        // multihash and size.
         .join(acceptfx)
     },
   })

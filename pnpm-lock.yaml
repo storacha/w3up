@@ -452,6 +452,9 @@ importers:
       one-webcrypto:
         specifier: git://github.com/web3-storage/one-webcrypto
         version: github.com/web3-storage/one-webcrypto/5148cd14d5489a8ac4cd38223870e02db15a2382
+      p-defer:
+        specifier: ^4.0.1
+        version: 4.0.1
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -8393,7 +8396,7 @@ packages:
   /it-parallel@3.0.6:
     resolution: {integrity: sha512-i7UM7I9LTkDJw3YIqXHFAPZX6CWYzGc+X3irdNrVExI4vPazrJdI7t5OqrSVN8CONXLAunCiqaSV/zZRbQR56A==}
     dependencies:
-      p-defer: 4.0.0
+      p-defer: 4.0.1
     dev: true
 
   /it-pipe@2.0.5:
@@ -8408,7 +8411,7 @@ packages:
   /it-pushable@3.2.3:
     resolution: {integrity: sha512-gzYnXYK8Y5t5b/BnJUr7glfQLO4U5vyb05gPx/TyTw+4Bv1zM9gFk4YsOrnulWefMewlphCjKkakFvj1y99Tcg==}
     dependencies:
-      p-defer: 4.0.0
+      p-defer: 4.0.1
     dev: true
 
   /it-stream-types@1.0.5:
@@ -9976,6 +9979,12 @@ packages:
   /p-defer@4.0.0:
     resolution: {integrity: sha512-Vb3QRvQ0Y5XnF40ZUWW7JfLogicVh/EnA5gBIvKDJoYpeI82+1E3AlB9yOcKFS0AhHrWVnAQO39fbR0G99IVEQ==}
     engines: {node: '>=12'}
+    dev: false
+
+  /p-defer@4.0.1:
+    resolution: {integrity: sha512-Mr5KC5efvAK5VUptYEIopP1bakB85k2IWXaRC0rsh1uwn1L6M0LVml8OIQ4Gudg4oyZakf7FmeRLkMMtZW1i5A==}
+    engines: {node: '>=12'}
+    dev: true
 
   /p-event@6.0.0:
     resolution: {integrity: sha512-Xbfxd0CfZmHLGKXH32k1JKjQYX6Rkv0UtQdaFJ8OyNcf+c0oWCeXHc1C4CX/IESZLmcvfPa5aFIO/vCr5gqtag==}

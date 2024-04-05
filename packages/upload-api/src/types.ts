@@ -138,6 +138,9 @@ import {
   CARLink,
   StoreGetSuccess,
   UploadGetSuccess,
+  UCANConclude,
+  UCANConcludeSuccess,
+  UCANConcludeFailure,
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
@@ -176,8 +179,8 @@ import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
-import { ReceiptsStorage } from './types/service.js'
-export type { ReceiptsStorage }
+import { ReceiptsStorage, TasksScheduler } from './types/service.js'
+export type { ReceiptsStorage, TasksScheduler }
 import {
   AllocationsStorage,
   BlobsStorage,
@@ -268,6 +271,11 @@ export interface Service extends StorefrontService, W3sService {
   }
 
   ucan: {
+    conclude: ServiceMethod<
+      UCANConclude,
+      UCANConcludeSuccess,
+      UCANConcludeFailure
+    >
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
   }
 
@@ -324,6 +332,7 @@ export type BlobServiceContext = SpaceServiceContext & {
   allocationsStorage: AllocationsStorage
   blobsStorage: BlobsStorage
   tasksStorage: TasksStorage
+  receiptsStorage: ReceiptsStorage
   getServiceConnection: () => ConnectionView<Service>
 }
 
@@ -410,9 +419,21 @@ export interface RevocationServiceContext {
 
 export interface ConcludeServiceContext {
   /**
+   * Service signer
+   */
+  id: Signer
+  /**
    * Stores receipts for tasks.
    */
   receiptsStorage: ReceiptsStorage
+  /**
+   * Stores tasks.
+   */
+  tasksStorage: TasksStorage
+  /**
+   * Task scheduler.
+   */
+  tasksScheduler: TasksScheduler
 }
 
 export interface PlanServiceContext {

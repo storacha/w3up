@@ -22,6 +22,10 @@ import { Storage } from './storage.js'
 export type TasksStorage = Storage<UnknownLink, Invocation>
 
 export interface AllocationsStorage {
+  get: (
+    space: DID,
+    blobMultihash: BlobMultihash
+  ) => Promise<Result<BlobGetOutput, Failure>>
   exists: (
     space: DID,
     blobMultihash: BlobMultihash
@@ -54,6 +58,11 @@ export interface BlobAddInput {
 
 export interface BlobAddOutput
   extends Omit<BlobAddInput, 'space' | 'invocation'> {}
+
+export interface BlobGetOutput {
+  blob: { content: Uint8Array; size: number }
+  invocation: UnknownLink
+}
 
 export interface BlobsStorage {
   has: (content: BlobMultihash) => Promise<Result<boolean, Failure>>
