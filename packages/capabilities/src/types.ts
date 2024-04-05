@@ -468,28 +468,13 @@ export interface BlobAddSuccess {
 export interface BlobExceedsSizeLimit extends Ucanto.Failure {
   name: 'BlobExceedsSizeLimit'
 }
+// TODO: We should type the store errors and add them here, instead of Ucanto.Failure
 export type BlobAddFailure = BlobExceedsSizeLimit | Ucanto.Failure
 
-// Blob remove
-export interface BlobRemoveSuccess {
-  size: number
-}
-
-export interface BlobItemNotFound extends Ucanto.Failure {
-  name: 'BlobItemNotFound'
-}
-
-// TODO: Add more errors from stores
-export type BlobRemoveFailure = BlobItemNotFound | Ucanto.Failure
-
-// Blob list
-export interface BlobListSuccess extends ListResponse<BlobListItem> {}
 export interface BlobListItem {
   blob: BlobModel
   insertedAt: ISO8601Date
 }
-
-export type BlobListFailure = Ucanto.Failure
 
 // Blob allocate
 export interface BlobAllocateSuccess {
@@ -520,6 +505,7 @@ export interface BlobAcceptSuccess {
   claim: Link
 }
 
+// TODO: We should type the store errors and add them here, instead of Ucanto.Failure
 export type BlobAcceptFailure = BlobItemNotFound | Ucanto.Failure
 
 // Store

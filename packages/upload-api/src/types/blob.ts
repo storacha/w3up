@@ -8,12 +8,10 @@ import type {
 import {
   BlobMultihash,
   BlobListItem,
-  BlobRemoveSuccess,
 } from '@web3-storage/capabilities/types'
 
 import {
   RecordKeyConflict,
-  RecordNotFound,
   ListOptions,
   ListResponse,
 } from '../types.js'
@@ -34,11 +32,6 @@ export interface AllocationsStorage {
   insert: (
     item: BlobAddInput
   ) => Promise<Result<BlobAddOutput, RecordKeyConflict>>
-  /** Removes an item from the table but fails if the item does not exist. */
-  remove: (
-    space: DID,
-    blobMultihash: BlobMultihash
-  ) => Promise<Result<BlobRemoveSuccess, RecordNotFound>>
   list: (
     space: DID,
     options?: ListOptions
