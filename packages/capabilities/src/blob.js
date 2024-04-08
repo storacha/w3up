@@ -36,7 +36,7 @@ export const blob = capability({
 /**
  * Blob description for being ingested by the service.
  */
-export const blobStruct = Schema.struct({
+export const blobModel = Schema.struct({
   /**
    * A multihash digest of the blob payload bytes, uniquely identifying blob.
    */
@@ -66,7 +66,7 @@ export const add = capability({
     /**
      * Blob to allocate on the space.
      */
-    blob: blobStruct,
+    blob: blobModel,
   }),
   derives: equalBlob,
 })

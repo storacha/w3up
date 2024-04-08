@@ -70,8 +70,8 @@ export const ucanConcludeProvider = ({
               audience: id,
               with: id.toDIDKey(),
               nb: {
-                // @ts-expect-error blob exists in `http/put` but unknown type here
-                blob: cap.nb.blob,
+                // @ts-expect-error body exists in `http/put` but unknown type here
+                blob: cap.nb.body,
                 exp: Number.MAX_SAFE_INTEGER,
               },
               expiration: Infinity,
@@ -81,6 +81,7 @@ export const ucanConcludeProvider = ({
           return tasksScheduler.schedule(blobAccept)
         })
     )
+
     const scheduleErrors = scheduleRes.filter((res) => res.error)
     if (scheduleErrors.length && scheduleErrors[0].error) {
       return {

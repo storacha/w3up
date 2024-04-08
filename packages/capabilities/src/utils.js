@@ -88,7 +88,7 @@ export const equalLink = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept"|"http/put", Types.URI<'did:'>, {blob: { content: Uint8Array, size: number }}>} T
+ * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept", Types.URI<'did:'>, {blob: { content: Uint8Array, size: number }}>} T
  * @param {T} claimed
  * @param {T} delegated
  * @returns {Types.Result<{}, Types.Failure>}
@@ -114,6 +114,40 @@ export const equalBlob = (claimed, delegated) => {
     return claimed.nb.blob.size > delegated.nb.blob.size
       ? fail(
           `Size constraint violation: ${claimed.nb.blob.size} > ${delegated.nb.blob.size}`
+        )
+      : ok({})
+  } else {
+    return ok({})
+  }
+}
+
+/**
+ * @template {Types.ParsedCapability<"http/put", Types.URI<'did:'>, {body: { content: Uint8Array, size: number }}>} T
+ * @param {T} claimed
+ * @param {T} delegated
+ * @returns {Types.Result<{}, Types.Failure>}
+ */
+export const equalBody = (claimed, delegated) => {
+  if (claimed.with !== delegated.with) {
+    return fail(
+      `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
+    )
+  } else if (
+    delegated.nb.body.content &&
+    !equals(delegated.nb.body.content, claimed.nb.body.content)
+  ) {
+    return fail(
+      `Link ${
+        claimed.nb.body.content ? `${claimed.nb.body.content}` : ''
+      } violates imposed ${delegated.nb.body.content} constraint.`
+    )
+  } else if (
+    claimed.nb.body.size !== undefined &&
+    delegated.nb.body.size !== undefined
+  ) {
+    return claimed.nb.body.size > delegated.nb.body.size
+      ? fail(
+          `Size constraint violation: ${claimed.nb.body.size} > ${delegated.nb.body.size}`
         )
       : ok({})
   } else {

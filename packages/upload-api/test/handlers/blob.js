@@ -872,17 +872,18 @@ export const test = {
       // Create `http/put` receipt
       const keys = putfx.facts[0]['keys']
       // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
-      const putSubject = ed25519.from(keys)
+      const blobProvider = ed25519.from(keys)
       const httpPut = HTTPCapabilities.put.invoke({
-        issuer: putSubject,
-        audience: putSubject,
-        with: putSubject.toDIDKey(),
+        issuer: blobProvider,
+        audience: blobProvider,
+        with: blobProvider.toDIDKey(),
         nb: {
-          blob: {
+          body: {
             content,
             size,
           },
-          address,
+          url: address.url,
+          headers: address.headers
         },
         facts: putfx.facts,
         expiration: Infinity,
@@ -890,7 +891,7 @@ export const test = {
 
       const httpPutDelegation = await httpPut.delegate()
       const httpPutReceipt = await Receipt.issue({
-        issuer: putSubject,
+        issuer: blobProvider,
         ran: httpPutDelegation.cid,
         result: {
           ok: {},

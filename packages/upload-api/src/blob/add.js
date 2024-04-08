@@ -41,10 +41,10 @@ export function blobAddProvider(context) {
       // of the `http/put` invocation. That way anyone with blob content
       // could perform the invocation and issue receipt by deriving same
       // principal
-      const putSubject = await ed25519.derive(blob.content.slice(0, 32))
+      const blobProvider = await ed25519.derive(blob.content.slice(0, 32))
       const facts = [
         {
-          keys: putSubject.toArchive(),
+          keys: blobProvider.toArchive(),
         },
       ]
 
@@ -78,6 +78,7 @@ export function blobAddProvider(context) {
       // Get receipt for `blob/allocate` if available, or schedule invocation if not
       const allocatedGetRes = await allocationsStorage.get(space, blob.content)
       let blobAllocateReceipt
+      /** @type {API.BlobAddress | undefined} */
       let blobAllocateOutAddress
       // If already allocated, just get the allocate receipt
       // and the addresses if still pending to receive blob
@@ -92,6 +93,8 @@ export function blobAddProvider(context) {
         const blobHasRes = await context.blobsStorage.has(blob.content)
         if (blobHasRes.error) {
           return blobHasRes
+        // If still not stored, keep the allocate address to signal to the client
+        // that bytes MUST be sent through the `http/put` effect
         } else if (!blobHasRes.ok) {
           // @ts-expect-error receipt type is unknown
           blobAllocateOutAddress = blobAllocateReceipt.out.ok.address
@@ -145,12 +148,13 @@ export function blobAddProvider(context) {
       // the blob is still not stored
       if (blobAllocateOutAddress) {
         const blobPut = HTTP.put.invoke({
-          issuer: putSubject,
-          audience: putSubject,
-          with: putSubject.toDIDKey(),
+          issuer: blobProvider,
+          audience: blobProvider,
+          with: blobProvider.toDIDKey(),
           nb: {
-            blob,
-            address: blobAllocateOutAddress,
+            body: blob,
+            url: blobAllocateOutAddress.url,
+            headers: blobAllocateOutAddress.headers
           },
           facts,
           expiration: Infinity,

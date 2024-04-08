@@ -9,8 +9,8 @@
  * @module
  */
 import { capability, Schema, ok } from '@ucanto/validator'
-import { blobStruct } from './blob.js'
-import { equal, equalBlob, equalWith, SpaceDID, and } from './utils.js'
+import { blobModel } from './blob.js'
+import { equal, equalBody, equalWith, SpaceDID, and } from './utils.js'
 
 /**
  * `http/put` capability invocation MAY be performed by any agent on behalf of the subject.
@@ -26,29 +26,24 @@ export const put = capability({
   with: SpaceDID,
   nb: Schema.struct({
     /**
-     * Blob to allocate on the space.
+     * BodyBlob to allocate on the space.
      */
-    blob: blobStruct,
+    body: blobModel,
     /**
-     * Blob to accept.
+     * HTTP(S) location that can receive blob content via HTTP PUT request.
      */
-    address: Schema.struct({
-      /**
-       * HTTP(S) location that can receive blob content via HTTP PUT request.
-       */
-      url: Schema.string(),
-      /**
-       * HTTP headers.
-       */
-      headers: Schema.unknown(),
-    }).optional(),
+    url: Schema.string(),
+    /**
+     * HTTP headers.
+     */
+    headers: Schema.dictionary({ value: Schema.string() }),
   }),
   derives: (claim, from) => {
     return (
       and(equalWith(claim, from)) ||
-      and(equalBlob(claim, from)) ||
-      and(equal(claim.nb.address?.url, from.nb.address, 'url')) ||
-      and(equal(claim.nb.address?.headers, from.nb.address, 'headers')) ||
+      and(equalBody(claim, from)) ||
+      and(equal(claim.nb.url, from.nb, 'url')) ||
+      and(equal(claim.nb.headers, from.nb, 'headers')) ||
       ok({})
     )
   },

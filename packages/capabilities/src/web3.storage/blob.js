@@ -1,5 +1,5 @@
 import { capability, Schema, Link, ok, fail } from '@ucanto/validator'
-import { blobStruct } from '../blob.js'
+import { blobModel } from '../blob.js'
 import {
   equalBlob,
   equalWith,
@@ -41,7 +41,7 @@ export const allocate = capability({
     /**
      * Blob to allocate on the space.
      */
-    blob: blobStruct,
+    blob: blobModel,
     /**
      * The Link for an Add Blob task, that caused an allocation
      */
@@ -77,7 +77,7 @@ export const accept = capability({
     /**
      * Blob to accept.
      */
-    blob: blobStruct,
+    blob: blobModel,
     // TODO: @gozala suggested we could use content length from `httt/put` to figure out size and not need to pass the blob here
     /**
      * Expiration..
