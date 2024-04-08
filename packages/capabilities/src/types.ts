@@ -479,6 +479,7 @@ export interface BlobListItem {
 // Blob allocate
 export interface BlobAllocateSuccess {
   size: number
+  expiresAt?: ISO8601Date
   address?: BlobAddress
 }
 

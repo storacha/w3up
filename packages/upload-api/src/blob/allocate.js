@@ -53,13 +53,28 @@ export function blobAllocateProvider(context) {
       if (allocationInsert.error) {
         // if the insert failed with conflict then this item has already been
         // added to the space and there is no allocation change.
+        // If record exists but is expired, it can be re-written
         if (allocationInsert.error.name === 'RecordKeyConflict') {
+          // TODO: Updates to new URL and expiration if expired?
           return {
             ok: { size: 0 },
           }
         }
         return {
           error: new Server.Failure('failed to allocate blob bytes'),
+        }
+      }
+
+      // Get presigned URL for the write target
+      const expiresIn = 60 * 60 * 24 // 1 day
+      const createUploadUrl = await context.blobsStorage.createUploadUrl(
+        blob.content,
+        blob.size,
+        expiresIn
+      )
+      if (createUploadUrl.error) {
+        return {
+          error: new Server.Failure('failed to provide presigned url'),
         }
       }
 
@@ -76,16 +91,6 @@ export function blobAllocateProvider(context) {
         }
       }
 
-      // Get presigned URL for the write target
-      const createUploadUrl = await context.blobsStorage.createUploadUrl(
-        blob.content,
-        blob.size
-      )
-      if (createUploadUrl.error) {
-        return {
-          error: new Server.Failure('failed to provide presigned url'),
-        }
-      }
       const address = {
         url: createUploadUrl.ok.url.toString(),
         headers: createUploadUrl.ok.headers,
@@ -95,6 +100,7 @@ export function blobAllocateProvider(context) {
         ok: {
           size: blob.size,
           address,
+          expiresAt: (new Date(Date.now() + expiresIn)).toISOString()
         },
       }
     }

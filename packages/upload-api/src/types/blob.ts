@@ -61,7 +61,11 @@ export interface BlobsStorage {
   has: (content: BlobMultihash) => Promise<Result<boolean, Failure>>
   createUploadUrl: (
     content: BlobMultihash,
-    size: number
+    size: number,
+    /**
+     * The number of seconds before the presigned URL expires
+     */
+    expiresIn: number
   ) => Promise<
     Result<
       {

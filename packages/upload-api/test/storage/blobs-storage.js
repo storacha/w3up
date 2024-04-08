@@ -99,7 +99,6 @@ export class BlobsStorage {
     secretAccessKey = 'secret',
     bucket = 'my-bucket',
     region = 'eu-central-1',
-    expires,
   }) {
     this.server = server
     this.baseURL = url
@@ -107,7 +106,6 @@ export class BlobsStorage {
     this.secretAccessKey = secretAccessKey
     this.bucket = bucket
     this.region = region
-    this.expires = expires
     this.content = content
   }
 
@@ -126,9 +124,10 @@ export class BlobsStorage {
   /**
    * @param {Uint8Array} multihash
    * @param {number} size
+   * @param {number} expiresIn
    */
-  async createUploadUrl(multihash, size) {
-    const { bucket, expires, accessKeyId, secretAccessKey, region, baseURL } =
+  async createUploadUrl(multihash, size, expiresIn) {
+    const { bucket, accessKeyId, secretAccessKey, region, baseURL } =
       this
     const encodedMultihash = base58btc.encode(multihash)
     const multihashDigest = digestDecode(multihash)
@@ -144,7 +143,7 @@ export class BlobsStorage {
       key: `${encodedMultihash}/${encodedMultihash}.blob`,
       checksum,
       bucket,
-      expires,
+      expires: expiresIn,
     })
 
     const url = new URL(baseURL)

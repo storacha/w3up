@@ -83,6 +83,7 @@ export function blobAddProvider(context) {
       // If already allocated, just get the allocate receipt
       // and the addresses if still pending to receive blob
       if (allocatedGetRes.ok) {
+        // TODO: Check expires
         const receiptGet = await context.receiptsStorage.get(allocatefx.link())
         if (receiptGet.error) {
           return receiptGet
