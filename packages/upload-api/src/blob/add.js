@@ -8,7 +8,7 @@ import * as HTTP from '@web3-storage/capabilities/http'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as API from '../types.js'
 
-import { BlobExceedsSizeLimit } from './lib.js'
+import { BlobExceedsSizeLimit, AwaitError } from './lib.js'
 
 /**
  * @param {API.BlobServiceContext} context
@@ -107,7 +107,11 @@ export function blobAddProvider(context) {
         const allocateRes = await blobAllocate.execute(getServiceConnection())
         if (allocateRes.out.error) {
           return {
-            error: allocateRes.out.error,
+            error: new AwaitError({
+              cause: allocateRes.out.error,
+              at: 'ucan/wait',
+              reference: ['.out.ok', allocatefx.cid]
+            })
           }
         }
         // If this is a new allocation, `http/put` effect should be returned with address

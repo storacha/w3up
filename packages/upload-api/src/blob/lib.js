@@ -54,3 +54,31 @@ export class BlobExceedsSizeLimit extends Failure {
     }
   }
 }
+
+export const AwaitErrorName = 'AwaitError'
+export class AwaitError extends Failure {
+  /**
+   * @param {object} source
+   * @param {string} source.at - argument path that referenced failed `await`
+   * @param {[selector: string, task: import('@ucanto/interface').UnknownLink]} source.reference - awaited reference that failed
+   * @param {import('@ucanto/interface').Failure} source.cause - error that caused referenced `await` to fail
+   */
+  constructor({ at, reference, cause }) {
+       super()
+       this.at = at
+       this.reference = reference
+       this.cause = cause
+  }
+  describe() {
+     const [selector, task] = this.reference
+     return `Awaited (${selector} ${task}) reference at ${this.at} has failed:\n${this.cause}`
+  }
+  get name() {
+    return AwaitErrorName
+  }
+  toJSON() {
+    return {
+      ...super.toJSON(),
+    }
+  }
+}

@@ -468,8 +468,13 @@ export interface BlobAddSuccess {
 export interface BlobExceedsSizeLimit extends Ucanto.Failure {
   name: 'BlobExceedsSizeLimit'
 }
+
+export interface AwaitError extends Ucanto.Failure {
+  name: 'AwaitError'
+}
+
 // TODO: We should type the store errors and add them here, instead of Ucanto.Failure
-export type BlobAddFailure = BlobExceedsSizeLimit | Ucanto.Failure
+export type BlobAddFailure = BlobExceedsSizeLimit | AwaitError | Ucanto.Failure
 
 export interface BlobListItem {
   blob: BlobModel
