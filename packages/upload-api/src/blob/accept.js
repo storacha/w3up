@@ -8,6 +8,9 @@ import { CAR } from '@ucanto/core'
 import * as API from '../types.js'
 import { BlobItemNotFound } from './lib.js'
 
+const R2_REGION = 'auto'
+const R2_BUCKET = 'carpark-prod-0'
+
 /**
  * @param {API.W3ServiceContext} context
  * @returns {API.ServiceMethod<API.BlobAccept, API.BlobAcceptSuccess, API.BlobAcceptFailure>}
@@ -28,14 +31,12 @@ export function blobAcceptProvider(context) {
       // TODO: we need to support multihash in claims, or specify hardcoded codec
       const digest = new Digest(sha256.code, 32, blob.digest, blob.digest)
       const content = createLink(CAR.code, digest)
-      const w3link = `https://w3s.link/ipfs/${content.toString()}`
+      const w3link = `https://w3s.link/ipfs/${content.toString()}?origin=r2://${R2_REGION}/${R2_BUCKET}`
 
-      // TODO: Set bucket name
-      // TODO: return content commitment
       const locationClaim = await Assert.location
         .invoke({
           issuer: context.id,
-          // TODO: we need user agent DID
+          // TODO: we need space CID here
           audience: context.id,
           with: context.id.toDIDKey(),
           nb: {

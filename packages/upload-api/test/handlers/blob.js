@@ -15,7 +15,7 @@ import { base64pad } from 'multiformats/bases/base64'
 import { provisionProvider } from '../helpers/utils.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
-import { BlobExceedsSizeLimitName } from '../../src/blob/lib.js'
+import { BlobSizeOutsideOfSupportedRangeName } from '../../src/blob/lib.js'
 import { findBlock } from '../../src/ucan/conclude.js'
 
 /**
@@ -271,7 +271,7 @@ export const test = {
         throw new Error('invocation should have failed')
       }
       assert.ok(blobAdd.out.error, 'invocation should have failed')
-      assert.equal(blobAdd.out.error.name, BlobExceedsSizeLimitName)
+      assert.equal(blobAdd.out.error.name, BlobSizeOutsideOfSupportedRangeName)
     },
   'blob/allocate allocates to space and returns presigned url': async (
     assert,

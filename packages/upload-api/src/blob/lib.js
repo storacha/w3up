@@ -29,8 +29,9 @@ export class BlobItemNotFound extends Failure {
   }
 }
 
-export const BlobExceedsSizeLimitName = 'BlobExceedsSizeLimit'
-export class BlobExceedsSizeLimit extends Failure {
+export const BlobSizeOutsideOfSupportedRangeName =
+  'BlobSizeOutsideOfSupportedRange'
+export class BlobSizeOutsideOfSupportedRange extends Failure {
   /**
    * @param {Number} maxUploadSize
    */
@@ -40,7 +41,7 @@ export class BlobExceedsSizeLimit extends Failure {
   }
 
   get name() {
-    return BlobExceedsSizeLimitName
+    return BlobSizeOutsideOfSupportedRangeName
   }
 
   describe() {

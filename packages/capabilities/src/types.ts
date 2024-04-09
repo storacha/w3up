@@ -465,16 +465,20 @@ export interface BlobAddSuccess {
   }
 }
 
-export interface BlobExceedsSizeLimit extends Ucanto.Failure {
-  name: 'BlobExceedsSizeLimit'
+export interface BlobSizeOutsideOfSupportedRange extends Ucanto.Failure {
+  name: 'BlobSizeOutsideOfSupportedRange'
 }
 
 export interface AwaitError extends Ucanto.Failure {
   name: 'AwaitError'
 }
 
-// TODO: We should type the store errors and add them here, instead of Ucanto.Failure
-export type BlobAddFailure = BlobExceedsSizeLimit | AwaitError | Ucanto.Failure
+// TODO: We need Ucanto.Failure because provideAdvanced can't handle errors without it
+export type BlobAddFailure =
+  | BlobSizeOutsideOfSupportedRange
+  | AwaitError
+  | StorageGetError
+  | Ucanto.Failure
 
 export interface BlobListItem {
   blob: BlobModel
@@ -492,27 +496,43 @@ export interface BlobAddress {
   headers: Record<string, string>
 }
 
-export interface BlobNotFound extends Ucanto.Failure {
-  name: 'BlobNotFound'
-}
-
 // If space has not enough space to allocate the blob.
 export interface BlobNotAllocableToSpace extends Ucanto.Failure {
   name: 'BlobNotAllocableToSpace'
 }
 
-export type BlobAllocateFailure =
-  | BlobNotFound
-  | BlobNotAllocableToSpace
-  | Ucanto.Failure
+export type BlobAllocateFailure = BlobNotAllocableToSpace | Ucanto.Failure
 
 // Blob accept
 export interface BlobAcceptSuccess {
   site: Link
 }
 
+export interface BlobNotFound extends Ucanto.Failure {
+  name: 'BlobNotFound'
+}
+
 // TODO: We should type the store errors and add them here, instead of Ucanto.Failure
 export type BlobAcceptFailure = BlobNotFound | Ucanto.Failure
+
+// Storage errors
+export type StoragePutError = StorageOperationError | EncodeRecordFailed
+export type StorageGetError =
+  | StorageOperationError
+  | EncodeRecordFailed
+  | RecordNotFound
+
+export interface StorageOperationError extends Error {
+  name: 'StorageOperationFailed'
+}
+
+export interface RecordNotFound extends Error {
+  name: 'RecordNotFound'
+}
+
+export interface EncodeRecordFailed extends Error {
+  name: 'EncodeRecordFailed'
+}
 
 // Store
 export type Store = InferInvokedCapability<typeof StoreCaps.store>

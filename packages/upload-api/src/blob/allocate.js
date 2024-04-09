@@ -60,7 +60,7 @@ export function blobAllocateProvider(context) {
           }
         }
         return {
-          error: new Server.Failure('failed to allocate blob bytes'),
+          error: allocationInsert.error,
         }
       }
 
@@ -72,9 +72,7 @@ export function blobAllocateProvider(context) {
         expiresIn
       )
       if (createUploadUrl.error) {
-        return {
-          error: new Server.Failure('failed to provide presigned url'),
-        }
+        return createUploadUrl
       }
 
       // Check if blob already exists

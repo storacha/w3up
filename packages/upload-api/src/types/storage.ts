@@ -1,4 +1,8 @@
 import type { Unit, Result } from '@ucanto/interface'
+import {
+  StorageGetError,
+  StoragePutError,
+} from '@web3-storage/capabilities/types'
 
 export interface Storage<RecKey, Rec> {
   /**
@@ -13,22 +17,4 @@ export interface Storage<RecKey, Rec> {
    * Determine if a record already exists in the store for the given key.
    */
   has: (key: RecKey) => Promise<Result<boolean, StorageGetError>>
-}
-
-export type StoragePutError = StorageOperationError | EncodeRecordFailed
-export type StorageGetError =
-  | StorageOperationError
-  | EncodeRecordFailed
-  | RecordNotFound
-
-export interface StorageOperationError extends Error {
-  name: 'StorageOperationFailed'
-}
-
-export interface RecordNotFound extends Error {
-  name: 'RecordNotFound'
-}
-
-export interface EncodeRecordFailed extends Error {
-  name: 'EncodeRecordFailed'
 }

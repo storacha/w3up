@@ -3,8 +3,8 @@ import * as API from '../../src/types.js'
 import { RecordNotFound } from '../../src/errors.js'
 
 /**
- * @typedef {import('../../src/types/storage.js').StorageGetError} StorageGetError
- * @typedef {import('../../src/types/storage.js').StoragePutError} StoragePutError
+ * @typedef {import('@web3-storage/capabilities/types').StorageGetError} StorageGetError
+ * @typedef {import('@web3-storage/capabilities/types').StoragePutError} StoragePutError
  * @typedef {import('@ucanto/interface').UnknownLink} UnknownLink
  * @typedef {import('@ucanto/interface').Invocation} Invocation
  */

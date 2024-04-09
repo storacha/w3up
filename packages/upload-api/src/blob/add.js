@@ -8,7 +8,7 @@ import * as HTTP from '@web3-storage/capabilities/http'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as API from '../types.js'
 
-import { BlobExceedsSizeLimit, AwaitError } from './lib.js'
+import { BlobSizeOutsideOfSupportedRange, AwaitError } from './lib.js'
 
 /**
  * @param {API.BlobServiceContext} context
@@ -33,7 +33,7 @@ export function blobAddProvider(context) {
       // Verify blob is within accept size
       if (blob.size > maxUploadSize) {
         return {
-          error: new BlobExceedsSizeLimit(maxUploadSize),
+          error: new BlobSizeOutsideOfSupportedRange(maxUploadSize),
         }
       }
 
@@ -89,10 +89,12 @@ export function blobAddProvider(context) {
       // If already allocated, just get the allocate receipt
       // and the addresses if still pending to receive blob
       if (allocatedGetRes.ok) {
-        // TODO: Check expires?
+        // TODO: How to check expired?
         const receiptGet = await context.receiptsStorage.get(allocatefx.link())
         if (receiptGet.error) {
-          return receiptGet
+          return {
+            error: receiptGet.error,
+          }
         }
         blobAllocateReceipt = receiptGet.ok
 

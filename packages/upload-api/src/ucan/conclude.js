@@ -18,31 +18,23 @@ export const ucanConcludeProvider = ({
   tasksScheduler,
 }) =>
   provide(conclude, async ({ capability, invocation }) => {
-    const getBlockRes = await findBlock(
+    const receiptGet = await getReceipt(
       capability.nb.receipt,
       invocation.iterateIPLDBlocks()
     )
-    if (getBlockRes.error) {
-      return getBlockRes
-    }
-    const messageCar = CAR.codec.decode(getBlockRes.ok)
-    const message = Message.view({
-      root: messageCar.roots[0].cid,
-      store: messageCar.blocks,
-    })
-
-    // TODO: check number of receipts
-    const receiptKey = Array.from(message.receipts.keys())[0]
-    const receipt = message.receipts.get(receiptKey)
-
-    if (!receipt) {
-      throw new Error('receipt should exist')
+    if (receiptGet.error) {
+      return receiptGet
     }
 
-    // TODO: Verify invocation exists failing with ReceiptInvocationNotFound
+    // Verify invocation exists failing with ReceiptInvocationNotFound
+    const ranInvocation = receiptGet.ok.ran
+    const httpPutTaskGetRes = await tasksStorage.get(ranInvocation.link())
+    if (httpPutTaskGetRes.error) {
+      return httpPutTaskGetRes
+    }
 
     // Store receipt
-    const receiptPutRes = await receiptsStorage.put(receipt)
+    const receiptPutRes = await receiptsStorage.put(receiptGet.ok)
     if (receiptPutRes.error) {
       return {
         error: receiptPutRes.error,
@@ -50,15 +42,6 @@ export const ucanConcludeProvider = ({
     }
 
     // THIS IS A TEMPORARY HACK
-    // Schedule `blob/accept`
-    const ranInvocation = receipt.ran
-
-    // Get invocation
-    const httpPutTaskGetRes = await tasksStorage.get(ranInvocation.link())
-    if (httpPutTaskGetRes.error) {
-      return httpPutTaskGetRes
-    }
-
     // Schedule `blob/accept` if there is a `http/put` capability
     const scheduleRes = await Promise.all(
       httpPutTaskGetRes.ok.capabilities
@@ -73,7 +56,7 @@ export const ucanConcludeProvider = ({
                 // @ts-expect-error body exists in `http/put` but unknown type here
                 blob: cap.nb.body,
                 exp: Number.MAX_SAFE_INTEGER,
-                // TOOD: space
+                // TODO: space
               },
               expiration: Infinity,
             })
@@ -94,6 +77,43 @@ export const ucanConcludeProvider = ({
       ok: { time: Date.now() },
     }
   })
+
+/**
+ * @param {import('multiformats').UnknownLink} receiptLink
+ * @param {IterableIterator<import('@ucanto/interface').Block<unknown, number, number, 1>>} blocks
+ */
+export const getReceipt = async (receiptLink, blocks) => {
+  const getBlockRes = await findBlock(receiptLink, blocks)
+  if (getBlockRes.error) {
+    return getBlockRes
+  }
+
+  const messageCar = CAR.codec.decode(getBlockRes.ok)
+  const message = Message.view({
+    root: messageCar.roots[0].cid,
+    store: messageCar.blocks,
+  })
+
+  const receiptKeys = Array.from(message.receipts.keys())
+  if (receiptKeys.length !== 1) {
+    return {
+      error: {
+        name: 'UnexpectedNumberOfReceipts',
+        message: `${receiptKeys.length} receipts received`,
+      },
+    }
+  }
+
+  const receiptId = receiptKeys[0]
+  const receipt = message.receipts.get(receiptId)
+  if (!receipt) {
+    throw new Error('receipt must exist given a key exists for it')
+  }
+
+  return {
+    ok: receipt
+  }
+}
 
 /**
  * @param {import('multiformats').UnknownLink} cid
