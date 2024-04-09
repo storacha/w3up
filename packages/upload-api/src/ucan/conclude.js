@@ -19,7 +19,7 @@ export const ucanConcludeProvider = ({
 }) =>
   provide(conclude, async ({ capability, invocation }) => {
     const getBlockRes = await findBlock(
-      capability.nb.message,
+      capability.nb.receipt,
       invocation.iterateIPLDBlocks()
     )
     if (getBlockRes.error) {

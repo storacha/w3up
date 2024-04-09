@@ -69,6 +69,8 @@ export function blobAddProvider(context) {
           exp: Number.MAX_SAFE_INTEGER,
           // TODO:
           // space
+          // TODO: awaits
+          //_put: { "ucan/await", [".out.ok",  blobPut.link()] },
         },
         expiration: Infinity,
       })
@@ -122,6 +124,7 @@ export function blobAddProvider(context) {
       }
 
       // Create `blob/allocate` receipt invocation to inline as effect
+      // TODO: needs ucanto to accept any block
       const message = await Message.build({ receipts: [blobAllocateReceipt] })
       const messageCar = await CAR.outbound.encode(message)
       const bytes = new Uint8Array(messageCar.body)
@@ -133,7 +136,7 @@ export function blobAddProvider(context) {
           audience: id,
           with: id.toDIDKey(),
           nb: {
-            message: messageLink,
+            receipt: messageLink,
           },
           expiration: Infinity,
         })

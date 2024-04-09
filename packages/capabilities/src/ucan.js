@@ -91,14 +91,14 @@ export const conclude = capability({
   with: Schema.did(),
   nb: Schema.struct({
     /**
-     * CID of the content with the UCANTO Message.
+     * CID of the content with the Receipt.
      */
-    message: Schema.link(),
+    receipt: Schema.link(),
   }),
   derives: (claim, from) =>
     // With field MUST be the same
     and(equalWith(claim, from)) ||
-    and(checkLink(claim.nb.message, from.nb.message, 'nb.message')) ||
+    and(checkLink(claim.nb.receipt, from.nb.receipt, 'nb.receipt')) ||
     ok({}),
 })
 

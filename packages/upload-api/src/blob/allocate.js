@@ -55,7 +55,6 @@ export function blobAllocateProvider(context) {
         // added to the space and there is no allocation change.
         // If record exists but is expired, it can be re-written
         if (allocationInsert.error.name === 'RecordKeyConflict') {
-          // TODO: Should we return the same anyway and read the store to get address?
           return {
             ok: { size: 0 },
           }

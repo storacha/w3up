@@ -88,6 +88,7 @@ export const accept = capability({
     // TODO: space
     // space: SpaceDID,
     // TODO: _put?
+    // TODO: _allocate?
   }),
   derives: (claim, from) => {
     const result = equalBlob(claim, from)

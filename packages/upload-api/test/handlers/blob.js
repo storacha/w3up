@@ -94,7 +94,7 @@ export const test = {
       // validate that scheduled allocate task executed and has its receipt content
       const getBlockRes = await findBlock(
         // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.message,
+        allocateUcanConcludefx.capabilities[0].nb.receipt,
         allocateUcanConcludefx.iterateIPLDBlocks()
       )
       if (getBlockRes.error) {
@@ -172,7 +172,7 @@ export const test = {
       }
       const getBlockRes = await findBlock(
         // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.message,
+        allocateUcanConcludefx.capabilities[0].nb.receipt,
         allocateUcanConcludefx.iterateIPLDBlocks()
       )
       if (getBlockRes.error) {
@@ -837,7 +837,7 @@ export const test = {
       }
       const getBlockRes = await findBlock(
         // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.message,
+        allocateUcanConcludefx.capabilities[0].nb.receipt,
         allocateUcanConcludefx.iterateIPLDBlocks()
       )
       if (getBlockRes.error) {
@@ -907,7 +907,7 @@ export const test = {
         audience: context.id,
         with: alice.did(),
         nb: {
-          message: messageLink,
+          receipt: messageLink,
         },
         expiration: Infinity,
       })
