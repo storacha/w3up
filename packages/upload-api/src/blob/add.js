@@ -37,11 +37,11 @@ export function blobAddProvider(context) {
         }
       }
 
-      // We derive principal from the content multihash to be an audience
-      // of the `http/put` invocation. That way anyone with blob content
+      // We derive principal from the blob multihash to be an audience
+      // of the `http/put` invocation. That way anyone with blob digest
       // could perform the invocation and issue receipt by deriving same
       // principal
-      const blobProvider = await ed25519.derive(blob.content.slice(0, 32))
+      const blobProvider = await ed25519.derive(blob.digest.slice(0, 32))
       const facts = [
         {
           keys: blobProvider.toArchive(),
@@ -67,6 +67,8 @@ export function blobAddProvider(context) {
         nb: {
           blob,
           exp: Number.MAX_SAFE_INTEGER,
+          // TODO:
+          // space
         },
         expiration: Infinity,
       })
@@ -76,14 +78,14 @@ export function blobAddProvider(context) {
       ])
 
       // Get receipt for `blob/allocate` if available, or schedule invocation if not
-      const allocatedGetRes = await allocationsStorage.get(space, blob.content)
+      const allocatedGetRes = await allocationsStorage.get(space, blob.digest)
       let blobAllocateReceipt
       /** @type {API.BlobAddress | undefined} */
       let blobAllocateOutAddress
       // If already allocated, just get the allocate receipt
       // and the addresses if still pending to receive blob
       if (allocatedGetRes.ok) {
-        // TODO: Check expires
+        // TODO: Check expires?
         const receiptGet = await context.receiptsStorage.get(allocatefx.link())
         if (receiptGet.error) {
           return receiptGet
@@ -91,11 +93,11 @@ export function blobAddProvider(context) {
         blobAllocateReceipt = receiptGet.ok
 
         // Check if despite allocated, the blob is still not stored
-        const blobHasRes = await context.blobsStorage.has(blob.content)
+        const blobHasRes = await context.blobsStorage.has(blob.digest)
         if (blobHasRes.error) {
           return blobHasRes
-        // If still not stored, keep the allocate address to signal to the client
-        // that bytes MUST be sent through the `http/put` effect
+          // If still not stored, keep the allocate address to signal to the client
+          // that bytes MUST be sent through the `http/put` effect
         } else if (!blobHasRes.ok) {
           // @ts-expect-error receipt type is unknown
           blobAllocateOutAddress = blobAllocateReceipt.out.ok.address
@@ -110,8 +112,8 @@ export function blobAddProvider(context) {
             error: new AwaitError({
               cause: allocateRes.out.error,
               at: 'ucan/wait',
-              reference: ['.out.ok', allocatefx.cid]
-            })
+              reference: ['.out.ok', allocatefx.cid],
+            }),
           }
         }
         // If this is a new allocation, `http/put` effect should be returned with address
@@ -144,8 +146,8 @@ export function blobAddProvider(context) {
       // Create result object
       /** @type {API.OkBuilder<API.BlobAddSuccess, API.BlobAddFailure>} */
       const result = Server.ok({
-        location: {
-          'ucan/await': ['.out.ok.claim', acceptfx.link()],
+        site: {
+          'ucan/await': ['.out.ok.site', acceptfx.link()],
         },
       })
 
@@ -159,7 +161,7 @@ export function blobAddProvider(context) {
           nb: {
             body: blob,
             url: blobAllocateOutAddress.url,
-            headers: blobAllocateOutAddress.headers
+            headers: blobAllocateOutAddress.headers,
           },
           facts,
           expiration: Infinity,

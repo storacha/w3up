@@ -127,8 +127,7 @@ export class BlobsStorage {
    * @param {number} expiresIn
    */
   async createUploadUrl(multihash, size, expiresIn) {
-    const { bucket, accessKeyId, secretAccessKey, region, baseURL } =
-      this
+    const { bucket, accessKeyId, secretAccessKey, region, baseURL } = this
     const encodedMultihash = base58btc.encode(multihash)
     const multihashDigest = digestDecode(multihash)
     // sigv4

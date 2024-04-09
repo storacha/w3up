@@ -5,16 +5,9 @@ import type {
   Failure,
   DID,
 } from '@ucanto/interface'
-import {
-  BlobMultihash,
-  BlobListItem,
-} from '@web3-storage/capabilities/types'
+import { BlobMultihash, BlobListItem } from '@web3-storage/capabilities/types'
 
-import {
-  RecordKeyConflict,
-  ListOptions,
-  ListResponse,
-} from '../types.js'
+import { RecordKeyConflict, ListOptions, ListResponse } from '../types.js'
 import { Storage } from './storage.js'
 
 export type TasksStorage = Storage<UnknownLink, Invocation>
@@ -39,7 +32,7 @@ export interface AllocationsStorage {
 }
 
 export interface Blob {
-  content: BlobMultihash
+  digest: BlobMultihash
   size: number
 }
 
@@ -53,7 +46,7 @@ export interface BlobAddOutput
   extends Omit<BlobAddInput, 'space' | 'invocation'> {}
 
 export interface BlobGetOutput {
-  blob: { content: Uint8Array; size: number }
+  blob: { digest: Uint8Array; size: number }
   invocation: UnknownLink
 }
 

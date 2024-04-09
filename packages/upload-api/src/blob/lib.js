@@ -64,14 +64,14 @@ export class AwaitError extends Failure {
    * @param {import('@ucanto/interface').Failure} source.cause - error that caused referenced `await` to fail
    */
   constructor({ at, reference, cause }) {
-       super()
-       this.at = at
-       this.reference = reference
-       this.cause = cause
+    super()
+    this.at = at
+    this.reference = reference
+    this.cause = cause
   }
   describe() {
-     const [selector, task] = this.reference
-     return `Awaited (${selector} ${task}) reference at ${this.at} has failed:\n${this.cause}`
+    const [selector, task] = this.reference
+    return `Awaited (${selector} ${task}) reference at ${this.at} has failed:\n${this.cause}`
   }
   get name() {
     return AwaitErrorName

@@ -17,7 +17,7 @@ export class AllocationsStorage {
   async insert({ space, invocation, ...output }) {
     if (
       this.items.some(
-        (i) => i.space === space && equals(i.blob.content, output.blob.content)
+        (i) => i.space === space && equals(i.blob.digest, output.blob.digest)
       )
     ) {
       return {
@@ -40,7 +40,7 @@ export class AllocationsStorage {
    */
   async get(space, blobMultihash) {
     const item = this.items.find(
-      (i) => i.space === space && equals(i.blob.content, blobMultihash)
+      (i) => i.space === space && equals(i.blob.digest, blobMultihash)
     )
     if (!item) {
       return { error: { name: 'RecordNotFound', message: 'record not found' } }
@@ -55,7 +55,7 @@ export class AllocationsStorage {
    */
   async exists(space, blobMultihash) {
     const item = this.items.find(
-      (i) => i.space === space && equals(i.blob.content, blobMultihash)
+      (i) => i.space === space && equals(i.blob.digest, blobMultihash)
     )
     return { ok: !!item }
   }

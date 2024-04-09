@@ -55,7 +55,7 @@ export function blobAllocateProvider(context) {
         // added to the space and there is no allocation change.
         // If record exists but is expired, it can be re-written
         if (allocationInsert.error.name === 'RecordKeyConflict') {
-          // TODO: Updates to new URL and expiration if expired?
+          // TODO: Should we return the same anyway and read the store to get address?
           return {
             ok: { size: 0 },
           }
@@ -68,7 +68,7 @@ export function blobAllocateProvider(context) {
       // Get presigned URL for the write target
       const expiresIn = 60 * 60 * 24 // 1 day
       const createUploadUrl = await context.blobsStorage.createUploadUrl(
-        blob.content,
+        blob.digest,
         blob.size,
         expiresIn
       )
@@ -79,7 +79,7 @@ export function blobAllocateProvider(context) {
       }
 
       // Check if blob already exists
-      const hasBlobStore = await context.blobsStorage.has(blob.content)
+      const hasBlobStore = await context.blobsStorage.has(blob.digest)
       if (hasBlobStore.error) {
         return hasBlobStore
       }
@@ -100,7 +100,6 @@ export function blobAllocateProvider(context) {
         ok: {
           size: blob.size,
           address,
-          expiresAt: (new Date(Date.now() + expiresIn)).toISOString()
         },
       }
     }

@@ -1,5 +1,5 @@
 import { capability, Schema, Link, ok, fail } from '@ucanto/validator'
-import { blobModel } from '../blob.js'
+import { content } from '../blob.js'
 import {
   equalBlob,
   equalWith,
@@ -41,7 +41,7 @@ export const allocate = capability({
     /**
      * Blob to allocate on the space.
      */
-    blob: blobModel,
+    blob: content,
     /**
      * The Link for an Add Blob task, that caused an allocation
      */
@@ -77,12 +77,17 @@ export const accept = capability({
     /**
      * Blob to accept.
      */
-    blob: blobModel,
-    // TODO: @gozala suggested we could use content length from `httt/put` to figure out size and not need to pass the blob here
+    blob: content,
     /**
-     * Expiration..
+     * Expiration of location site.
      */
     exp: Schema.integer(),
+    /**
+     * DID of the user space where allocation took place
+     */
+    // TODO: space
+    // space: SpaceDID,
+    // TODO: _put?
   }),
   derives: (claim, from) => {
     const result = equalBlob(claim, from)

@@ -73,6 +73,7 @@ export const ucanConcludeProvider = ({
                 // @ts-expect-error body exists in `http/put` but unknown type here
                 blob: cap.nb.body,
                 exp: Number.MAX_SAFE_INTEGER,
+                // TOOD: space
               },
               expiration: Infinity,
             })

@@ -29,7 +29,7 @@ export const test = {
       // prepare data
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
       const size = data.byteLength
 
       // create service connection
@@ -45,7 +45,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -57,10 +57,10 @@ export const test = {
       }
 
       // Validate receipt
-      assert.ok(blobAdd.out.ok.location)
-      assert.equal(blobAdd.out.ok.location['ucan/await'][0], '.out.ok.claim')
+      assert.ok(blobAdd.out.ok.site)
+      assert.equal(blobAdd.out.ok.site['ucan/await'][0], '.out.ok.site')
       assert.ok(
-        blobAdd.out.ok.location['ucan/await'][1].equals(blobAdd.fx.join?.link())
+        blobAdd.out.ok.site['ucan/await'][1].equals(blobAdd.fx.join?.link())
       )
       assert.ok(blobAdd.fx.join)
 
@@ -122,7 +122,7 @@ export const test = {
       // prepare data
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
       const size = data.byteLength
 
       // create service connection
@@ -138,7 +138,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -245,7 +245,7 @@ export const test = {
       // prepare data
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
 
       // create service connection
       const connection = connect({
@@ -260,7 +260,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size: Number.MAX_SAFE_INTEGER,
           },
         },
@@ -282,8 +282,7 @@ export const test = {
     // prepare data
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const multihash = await sha256.digest(data)
-    const content = multihash.bytes
-    const digest = multihash.digest
+    const digest = multihash.bytes
     const size = data.byteLength
 
     // create service connection
@@ -299,7 +298,7 @@ export const test = {
       with: spaceDid,
       nb: {
         blob: {
-          content,
+          digest,
           size,
         },
       },
@@ -313,7 +312,7 @@ export const test = {
       with: spaceDid,
       nb: {
         blob: {
-          content,
+          digest,
           size,
         },
         cause: (await blobAddInvocation.delegate()).cid,
@@ -337,7 +336,7 @@ export const test = {
     )
     assert.deepEqual(
       blobAllocate.out.ok.address?.headers?.['x-amz-checksum-sha256'],
-      base64pad.baseEncode(digest)
+      base64pad.baseEncode(multihash.digest)
     )
 
     const url =
@@ -362,7 +361,7 @@ export const test = {
     if (!allocatedEntry) {
       throw new Error('Expected presigned allocatedEntry in response')
     }
-    assert.ok(equals(allocatedEntry.blob.content, content))
+    assert.ok(equals(allocatedEntry.blob.digest, digest))
     assert.equal(allocatedEntry.blob.size, size)
 
     // Validate presigned url usage
@@ -381,7 +380,7 @@ export const test = {
       // prepare data
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
       const size = data.byteLength
 
       // create service connection
@@ -397,7 +396,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -411,7 +410,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
           cause: (await blobAddInvocation.delegate()).cid,
@@ -447,7 +446,7 @@ export const test = {
       // prepare data
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
       const size = data.byteLength
 
       // create service connection
@@ -463,7 +462,7 @@ export const test = {
         with: aliceSpaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -475,7 +474,7 @@ export const test = {
         with: bobSpaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -489,7 +488,7 @@ export const test = {
         with: aliceSpaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
           cause: (await aliceBlobAddInvocation.delegate()).cid,
@@ -530,7 +529,7 @@ export const test = {
         with: bobSpaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
           cause: (await bobBlobAddInvocation.delegate()).cid,
@@ -567,7 +566,7 @@ export const test = {
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const longer = new Uint8Array([11, 22, 34, 44, 55, 66])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
       const size = data.byteLength
 
       // create service connection
@@ -583,7 +582,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -597,7 +596,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
           cause: (await blobAddInvocation.delegate()).cid,
@@ -644,7 +643,7 @@ export const test = {
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const other = new Uint8Array([10, 22, 34, 44, 55])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
       const size = data.byteLength
 
       // create service connection
@@ -660,7 +659,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -674,7 +673,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
           cause: (await blobAddInvocation.delegate()).cid,
@@ -719,7 +718,7 @@ export const test = {
     // prepare data
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const multihash = await sha256.digest(data)
-    const content = multihash.bytes
+    const digest = multihash.bytes
     const size = data.byteLength
 
     // create service connection
@@ -735,7 +734,7 @@ export const test = {
       with: spaceDid,
       nb: {
         blob: {
-          content,
+          digest,
           size,
         },
       },
@@ -749,7 +748,7 @@ export const test = {
       with: spaceDid,
       nb: {
         blob: {
-          content,
+          digest,
           size,
         },
         cause: (await blobAddInvocation.delegate()).cid,
@@ -783,7 +782,7 @@ export const test = {
       // prepare data
       const data = new Uint8Array([11, 22, 34, 44, 55])
       const multihash = await sha256.digest(data)
-      const content = multihash.bytes
+      const digest = multihash.bytes
       const size = data.byteLength
 
       // create service connection
@@ -810,7 +809,7 @@ export const test = {
         with: spaceDid,
         nb: {
           blob: {
-            content,
+            digest,
             size,
           },
         },
@@ -879,11 +878,11 @@ export const test = {
         with: blobProvider.toDIDKey(),
         nb: {
           body: {
-            content,
+            digest,
             size,
           },
           url: address.url,
-          headers: address.headers
+          headers: address.headers,
         },
         facts: putfx.facts,
         expiration: Infinity,
@@ -924,11 +923,9 @@ export const test = {
       // verify accept was scheduled
       const blobAcceptInvocation = await taskScheduled.promise
       assert.ok(blobAcceptInvocation)
-      assert.equal(blobAdd.out.ok.location['ucan/await'][0], '.out.ok.claim')
+      assert.equal(blobAdd.out.ok.site['ucan/await'][0], '.out.ok.site')
       assert.ok(
-        blobAdd.out.ok.location['ucan/await'][1].equals(
-          blobAcceptInvocation.cid
-        )
+        blobAdd.out.ok.site['ucan/await'][1].equals(blobAcceptInvocation.cid)
       )
       assert.ok(blobAdd.fx.join?.link().equals(blobAcceptInvocation.cid))
     },

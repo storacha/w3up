@@ -454,14 +454,14 @@ export type BlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
 
 export type BlobMultihash = Uint8Array
 export interface BlobModel {
-  content: BlobMultihash
+  digest: BlobMultihash
   size: number
 }
 
 // Blob add
 export interface BlobAddSuccess {
-  location: {
-    'ucan/await': ['.out.ok.claim', Link]
+  site: {
+    'ucan/await': ['.out.ok.site', Link]
   }
 }
 
@@ -484,7 +484,6 @@ export interface BlobListItem {
 // Blob allocate
 export interface BlobAllocateSuccess {
   size: number
-  expiresAt?: ISO8601Date
   address?: BlobAddress
 }
 
@@ -508,7 +507,7 @@ export type BlobAllocateFailure =
 
 // Blob accept
 export interface BlobAcceptSuccess {
-  claim: Link
+  site: Link
 }
 
 // TODO: We should type the store errors and add them here, instead of Ucanto.Failure

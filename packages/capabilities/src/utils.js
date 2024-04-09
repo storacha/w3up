@@ -88,7 +88,7 @@ export const equalLink = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept", Types.URI<'did:'>, {blob: { content: Uint8Array, size: number }}>} T
+ * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept", Types.URI<'did:'>, {blob: { digest: Uint8Array, size: number }}>} T
  * @param {T} claimed
  * @param {T} delegated
  * @returns {Types.Result<{}, Types.Failure>}
@@ -99,13 +99,13 @@ export const equalBlob = (claimed, delegated) => {
       `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
     )
   } else if (
-    delegated.nb.blob.content &&
-    !equals(delegated.nb.blob.content, claimed.nb.blob.content)
+    delegated.nb.blob.digest &&
+    !equals(delegated.nb.blob.digest, claimed.nb.blob.digest)
   ) {
     return fail(
       `Link ${
-        claimed.nb.blob.content ? `${claimed.nb.blob.content}` : ''
-      } violates imposed ${delegated.nb.blob.content} constraint.`
+        claimed.nb.blob.digest ? `${claimed.nb.blob.digest}` : ''
+      } violates imposed ${delegated.nb.blob.digest} constraint.`
     )
   } else if (
     claimed.nb.blob.size !== undefined &&
@@ -122,7 +122,7 @@ export const equalBlob = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"http/put", Types.URI<'did:'>, {body: { content: Uint8Array, size: number }}>} T
+ * @template {Types.ParsedCapability<"http/put", Types.URI<'did:'>, {body: { digest: Uint8Array, size: number }}>} T
  * @param {T} claimed
  * @param {T} delegated
  * @returns {Types.Result<{}, Types.Failure>}
@@ -133,13 +133,13 @@ export const equalBody = (claimed, delegated) => {
       `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
     )
   } else if (
-    delegated.nb.body.content &&
-    !equals(delegated.nb.body.content, claimed.nb.body.content)
+    delegated.nb.body.digest &&
+    !equals(delegated.nb.body.digest, claimed.nb.body.digest)
   ) {
     return fail(
       `Link ${
-        claimed.nb.body.content ? `${claimed.nb.body.content}` : ''
-      } violates imposed ${delegated.nb.body.content} constraint.`
+        claimed.nb.body.digest ? `${claimed.nb.body.digest}` : ''
+      } violates imposed ${delegated.nb.body.digest} constraint.`
     )
   } else if (
     claimed.nb.body.size !== undefined &&

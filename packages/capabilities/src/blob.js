@@ -36,11 +36,11 @@ export const blob = capability({
 /**
  * Blob description for being ingested by the service.
  */
-export const blobModel = Schema.struct({
+export const content = Schema.struct({
   /**
    * A multihash digest of the blob payload bytes, uniquely identifying blob.
    */
-  content: Schema.bytes(),
+  digest: Schema.bytes(),
   /**
    * Size of the Blob file to be stored. Service will provision write target
    * for this exact size. Attempt to write a larger Blob file will fail.
@@ -51,7 +51,7 @@ export const blobModel = Schema.struct({
 /**
  * `blob/add` capability allows agent to store a Blob into a (memory) space
  * identified by did:key in the `with` field. Agent must precompute Blob locally
- * and provide it's multihash and size using `nb.content` and `nb.size` fields, allowing
+ * and provide it's multihash and size using `nb.blob` field, allowing
  * a service to provision a write location for the agent to PUT or POST desired
  * Blob into.
  */
@@ -66,7 +66,7 @@ export const add = capability({
     /**
      * Blob to allocate on the space.
      */
-    blob: blobModel,
+    blob: content,
   }),
   derives: equalBlob,
 })

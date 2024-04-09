@@ -9,7 +9,7 @@
  * @module
  */
 import { capability, Schema, ok } from '@ucanto/validator'
-import { blobModel } from './blob.js'
+import { content } from './blob.js'
 import { equal, equalBody, equalWith, SpaceDID, and } from './utils.js'
 
 /**
@@ -28,7 +28,20 @@ export const put = capability({
     /**
      * BodyBlob to allocate on the space.
      */
-    body: blobModel,
+    body: content,
+    // TODO: what should be used?
+    /**
+     * HTTP(S) location that can receive blob content via HTTP PUT request.
+     */
+    // url: Schema.struct({
+    //   'ucan/await': Schema.unknown(),
+    // }).optional(),
+    // /**
+    //  * HTTP headers.
+    //  */
+    // headers: Schema.struct({
+    //   'ucan/await': Schema.unknown(),
+    // }).optional(),
     /**
      * HTTP(S) location that can receive blob content via HTTP PUT request.
      */

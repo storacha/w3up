@@ -18,14 +18,15 @@ export function blobAcceptProvider(context) {
     handler: async ({ capability }) => {
       const { blob } = capability.nb
       // If blob is not stored, we must fail
-      const hasBlob = await context.blobsStorage.has(blob.content)
+      const hasBlob = await context.blobsStorage.has(blob.digest)
       if (hasBlob.error) {
         return {
           error: new BlobItemNotFound(),
         }
       }
 
-      const digest = new Digest(sha256.code, 32, blob.content, blob.content)
+      // TODO: we need to support multihash in claims, or specify hardcoded codec
+      const digest = new Digest(sha256.code, 32, blob.digest, blob.digest)
       const content = createLink(CAR.code, digest)
       const w3link = `https://w3s.link/ipfs/${content.toString()}`
 
@@ -41,22 +42,20 @@ export function blobAcceptProvider(context) {
             content,
             location: [
               // @ts-expect-error Type 'string' is not assignable to type '`${string}:${string}`'
-              w3link
-            ]
+              w3link,
+            ],
           },
           expiration: Infinity,
         })
         .delegate()
-      // TODO: we need to support multihash in claims, or specify hardcoded codec
 
       // Create result object
       /** @type {API.OkBuilder<API.BlobAcceptSuccess, API.BlobAcceptFailure>} */
       const result = Server.ok({
-        claim: locationClaim.cid
+        site: locationClaim.cid,
       })
 
-      return result
-        .fork(locationClaim)
-    }
+      return result.fork(locationClaim)
+    },
   })
 }
