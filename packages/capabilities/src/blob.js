@@ -71,6 +71,6 @@ export const add = capability({
   derives: equalBlob,
 })
 
-// ⚠️ We export imports here so they are not omitted in generated typedes
+// ⚠️ We export imports here so they are not omitted in generated typedefs
 // @see https://github.com/microsoft/TypeScript/issues/51548
 export { Schema }

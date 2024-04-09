@@ -41,7 +41,9 @@ export function blobAddProvider(context) {
       // of the `http/put` invocation. That way anyone with blob digest
       // could perform the invocation and issue receipt by deriving same
       // principal
-      const blobProvider = await ed25519.derive(blob.digest.slice(blob.digest.length - 32))
+      const blobProvider = await ed25519.derive(
+        blob.digest.slice(blob.digest.length - 32)
+      )
       const facts = [
         {
           keys: blobProvider.toArchive(),

@@ -39,7 +39,7 @@ export const ucanConcludeProvider = ({
       throw new Error('receipt should exist')
     }
 
-    // TODO: Verify invocation exists failing with InvocationNotFoundForReceipt
+    // TODO: Verify invocation exists failing with ReceiptInvocationNotFound
 
     // Store receipt
     const receiptPutRes = await receiptsStorage.put(receipt)

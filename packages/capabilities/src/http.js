@@ -26,7 +26,7 @@ export const put = capability({
   with: SpaceDID,
   nb: Schema.struct({
     /**
-     * BodyBlob to allocate on the space.
+     * Description of body to send (digest/size).
      */
     body: content,
     // TODO: what should be used?

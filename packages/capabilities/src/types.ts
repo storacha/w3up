@@ -492,16 +492,17 @@ export interface BlobAddress {
   headers: Record<string, string>
 }
 
-export interface BlobItemNotFound extends Ucanto.Failure {
-  name: 'BlobItemNotFound'
+export interface BlobNotFound extends Ucanto.Failure {
+  name: 'BlobNotFound'
 }
 
+// If space has not enough space to allocate the blob.
 export interface BlobNotAllocableToSpace extends Ucanto.Failure {
   name: 'BlobNotAllocableToSpace'
 }
 
 export type BlobAllocateFailure =
-  | BlobItemNotFound
+  | BlobNotFound
   | BlobNotAllocableToSpace
   | Ucanto.Failure
 
@@ -511,7 +512,7 @@ export interface BlobAcceptSuccess {
 }
 
 // TODO: We should type the store errors and add them here, instead of Ucanto.Failure
-export type BlobAcceptFailure = BlobItemNotFound | Ucanto.Failure
+export type BlobAcceptFailure = BlobNotFound | Ucanto.Failure
 
 // Store
 export type Store = InferInvokedCapability<typeof StoreCaps.store>
@@ -658,11 +659,11 @@ export type UCANRevokeFailure =
 /**
  * Error is raised when receipt is received for unknown invocation
  */
-export interface InvocationNotFoundForReceipt extends Ucanto.Failure {
-  name: 'InvocationNotFoundForReceipt'
+export interface ReceiptInvocationNotFound extends Ucanto.Failure {
+  name: 'ReceiptInvocationNotFound'
 }
 
-export type UCANConcludeFailure = InvocationNotFoundForReceipt | Ucanto.Failure
+export type UCANConcludeFailure = ReceiptInvocationNotFound | Ucanto.Failure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
