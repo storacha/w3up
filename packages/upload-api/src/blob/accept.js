@@ -1,4 +1,5 @@
 import * as Server from '@ucanto/server'
+import * as DID from '@ipld/dag-ucan/did'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import { Assert } from '@web3-storage/content-claims/capability'
 import { create as createLink } from 'multiformats/link'
@@ -19,7 +20,7 @@ export function blobAcceptProvider(context) {
   return Server.provideAdvanced({
     capability: W3sBlob.accept,
     handler: async ({ capability }) => {
-      const { blob } = capability.nb
+      const { blob, space } = capability.nb
       // If blob is not stored, we must fail
       const hasBlob = await context.blobsStorage.has(blob.digest)
       if (hasBlob.error) {
@@ -36,8 +37,7 @@ export function blobAcceptProvider(context) {
       const locationClaim = await Assert.location
         .invoke({
           issuer: context.id,
-          // TODO: we need space CID here
-          audience: context.id,
+          audience: DID.parse(space),
           with: context.id.toDIDKey(),
           nb: {
             content,

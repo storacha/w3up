@@ -40,6 +40,7 @@ export function blobAddProvider(context) {
       // Schedule allocate
       const scheduleAllocateRes = await scheduleAllocate({
         context,
+        blob,
         allocate: next.allocate,
         allocatefx: next.allocatefx,
       })
@@ -232,10 +233,12 @@ async function schedulePut({ context, putfx }) {
  *
  * @param {object} scheduleAllocateProps
  * @param {API.BlobServiceContext} scheduleAllocateProps.context
+ * @param {API.BlobModel} scheduleAllocateProps.blob
  * @param {API.IssuedInvocationView<API.BlobAllocate>} scheduleAllocateProps.allocate
  * @param {API.Invocation<API.BlobAllocate>} scheduleAllocateProps.allocatefx
  */
-async function scheduleAllocate({ context, allocate, allocatefx }) {
+async function scheduleAllocate({ context, blob, allocate, allocatefx }) {
+  /** @type {import('@ucanto/interface').Receipt<import('@web3-storage/capabilities/types').BlobAllocateSuccess> | undefined} */
   let blobAllocateReceipt
 
   // Get receipt for `blob/allocate` if available, otherwise schedule invocation
@@ -245,8 +248,21 @@ async function scheduleAllocate({ context, allocate, allocatefx }) {
       error: receiptGet.error,
     }
   } else if (receiptGet.ok) {
-    // TODO: check expired by adding to receipt?
+    // @ts-expect-error ts not able to cast receipt
     blobAllocateReceipt = receiptGet.ok
+
+    // Verify if allocation is expired before "accepting" this receipt.
+    // Note that if there is no address, means it was already allocated successfully before
+    const expiresAt = blobAllocateReceipt?.out.ok?.address?.expiresAt
+    if (expiresAt && (new Date()).getTime() > (new Date(expiresAt)).getTime()) {
+      // if expired, we must see if blob was written to avoid allocating one more time
+      const hasBlobStore = await context.blobsStorage.has(blob.digest)
+      if (hasBlobStore.error) {
+        return hasBlobStore
+      } else if (!hasBlobStore.ok) {
+        blobAllocateReceipt = undefined
+      }
+    }
   }
 
   // if not already allocated (or expired) schedule `blob/allocate`
@@ -338,7 +354,7 @@ async function createNextTasks({ context, blob, space, cause }) {
   const accept = W3sBlob.accept.invoke({
     issuer: context.id,
     audience: context.id,
-    with: context.id.toDIDKey(),
+    with: context.id.did(),
     nb: {
       blob,
       exp: Number.MAX_SAFE_INTEGER,

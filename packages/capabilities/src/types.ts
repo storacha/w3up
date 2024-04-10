@@ -494,6 +494,7 @@ export interface BlobAllocateSuccess {
 export interface BlobAddress {
   url: ToString<URL>
   headers: Record<string, string>
+  expiresAt: ISO8601Date
 }
 
 // If space has not enough space to allocate the blob.

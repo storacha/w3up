@@ -1,10 +1,11 @@
+import * as API from '../types.js'
 import { provide } from '@ucanto/server'
 import { Receipt } from '@ucanto/core'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import * as HTTP from '@web3-storage/capabilities/http'
 import { conclude } from '@web3-storage/capabilities/ucan'
+import { equals } from 'uint8arrays/equals'
 import { DecodeBlockOperationFailed } from '../errors.js'
-import * as API from '../types.js'
 
 /**
  * @param {API.ConcludeServiceContext} context
@@ -35,22 +36,40 @@ export const ucanConcludeProvider = ({
     }
 
     // THIS IS A TEMPORARY HACK
-    // Schedule `blob/accept` if there is a `http/put` capability
+    // Schedule `blob/accept` if there is a `http/put` capabilities
+    // inside the invocation that this receipt comes from
     const scheduleRes = await Promise.all(
       httpPutTaskGetRes.ok.capabilities
+        // Go through invocation tasks and get all `http/put`
         .filter((cap) => cap.can === HTTP.put.can)
-        .map(async (cap) => {
+        // @ts-expect-error body exists in `http/put` but unknown type here
+        .map(async (/** @type {API.HTTPPut} */ cap) => {
+          // Get triggering task (blob/allocate) by checking blocking task from `url`
+          /** @type {API.UnknownLink} */
+          // @ts-expect-error ts does not know how to get this
+          const blobAllocateTaskCid = cap.nb.url['ucan/await'][1]
+          const blobAllocateTaskGet = await tasksStorage.get(blobAllocateTaskCid)
+          if (blobAllocateTaskGet.error) {
+            return blobAllocateTaskGet
+          }
+
+          /** @type {API.BlobAllocate} */
+          // @ts-expect-error ts does not know how to get this
+          const allocateCapability = blobAllocateTaskGet.ok.capabilities.find(
+            // @ts-expect-error ts does not know how to get this
+            (/** @type {API.BlobAllocate} */ allocateCap) =>
+              equals(allocateCap.nb.blob.digest, cap.nb.body.digest) && allocateCap.can === W3sBlob.allocate.can
+          )
+          
           const blobAccept = await W3sBlob.accept
             .invoke({
               issuer: id,
               audience: id,
               with: id.toDIDKey(),
               nb: {
-                // @ts-expect-error body exists in `http/put` but unknown type here
                 blob: cap.nb.body,
                 exp: Number.MAX_SAFE_INTEGER,
-                // TODO: corect space
-                space: id.toDIDKey(),
+                space: allocateCapability.nb.space,
                 _put: {
                   'ucan/await': ['.out.ok', ranInvocation.link()],
                 },
