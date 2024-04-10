@@ -1,13 +1,11 @@
 import * as Server from '@ucanto/server'
-import { Message } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
-import { CAR } from '@ucanto/transport'
 import * as Blob from '@web3-storage/capabilities/blob'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import * as HTTP from '@web3-storage/capabilities/http'
-import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as API from '../types.js'
 
+import { createConcludeInvocation } from '../ucan/conclude.js'
 import { BlobSizeOutsideOfSupportedRange, AwaitError } from './lib.js'
 
 /**
@@ -18,217 +16,345 @@ export function blobAddProvider(context) {
   return Server.provideAdvanced({
     capability: Blob.add,
     handler: async ({ capability, invocation }) => {
-      const {
-        id,
-        allocationsStorage,
-        maxUploadSize,
-        getServiceConnection,
-        tasksStorage,
-      } = context
+      // Prepare context
       const { blob } = capability.nb
       const space = /** @type {import('@ucanto/interface').DIDKey} */ (
         Server.DID.parse(capability.with).did()
       )
 
       // Verify blob is within accept size
-      if (blob.size > maxUploadSize) {
+      if (blob.size > context.maxUploadSize) {
         return {
-          error: new BlobSizeOutsideOfSupportedRange(maxUploadSize),
+          error: new BlobSizeOutsideOfSupportedRange(context.maxUploadSize),
         }
       }
 
-      // We derive principal from the blob multihash to be an audience
-      // of the `http/put` invocation. That way anyone with blob digest
-      // could perform the invocation and issue receipt by deriving same
-      // principal
-      const blobProvider = await ed25519.derive(
-        blob.digest.slice(blob.digest.length - 32)
-      )
-      const facts = [
-        {
-          keys: blobProvider.toArchive(),
-        },
-      ]
-
-      // Create web3.storage/blob/* invocations
-      const blobAllocate = W3sBlob.allocate.invoke({
-        issuer: id,
-        audience: id,
-        with: id.did(),
-        nb: {
-          blob,
-          cause: invocation.link(),
-          space,
-        },
-        expiration: Infinity,
+      // Create next tasks
+      const next = await createNextTasks({
+        context,
+        blob,
+        space,
+        cause: invocation.link(),
       })
-      const blobAccept = W3sBlob.accept.invoke({
-        issuer: id,
-        audience: id,
-        with: id.toDIDKey(),
-        nb: {
-          blob,
-          exp: Number.MAX_SAFE_INTEGER,
-          // TODO:
-          // space
-          // TODO: awaits
-          //_put: { "ucan/await", [".out.ok",  blobPut.link()] },
-        },
-        expiration: Infinity,
+
+      // Schedule allocate
+      const scheduleAllocateRes = await scheduleAllocate({
+        context,
+        allocate: next.allocate,
+        allocatefx: next.allocatefx,
       })
-      const [allocatefx, acceptfx] = await Promise.all([
-        blobAllocate.delegate(),
-        blobAccept.delegate(),
-      ])
-
-      // Get receipt for `blob/allocate` if available, or schedule invocation if not
-      const allocatedGetRes = await allocationsStorage.get(space, blob.digest)
-      let blobAllocateReceipt
-      /** @type {API.BlobAddress | undefined} */
-      let blobAllocateOutAddress
-      // If already allocated, just get the allocate receipt
-      // and the addresses if still pending to receive blob
-      if (allocatedGetRes.ok) {
-        // TODO: How to check expired?
-        const receiptGet = await context.receiptsStorage.get(allocatefx.link())
-        if (receiptGet.error) {
-          return {
-            error: receiptGet.error,
-          }
-        }
-        blobAllocateReceipt = receiptGet.ok
-
-        // Check if despite allocated, the blob is still not stored
-        const blobHasRes = await context.blobsStorage.has(blob.digest)
-        if (blobHasRes.error) {
-          return blobHasRes
-          // If still not stored, keep the allocate address to signal to the client
-          // that bytes MUST be sent through the `http/put` effect
-        } else if (!blobHasRes.ok) {
-          // @ts-expect-error receipt type is unknown
-          blobAllocateOutAddress = blobAllocateReceipt.out.ok.address
-        }
-      }
-      // if not already allocated, schedule `blob/allocate`
-      else {
-        // Execute allocate invocation
-        const allocateRes = await blobAllocate.execute(getServiceConnection())
-        if (allocateRes.out.error) {
-          return {
-            error: new AwaitError({
-              cause: allocateRes.out.error,
-              at: 'ucan/wait',
-              reference: ['.out.ok', allocatefx.cid],
-            }),
-          }
-        }
-        // If this is a new allocation, `http/put` effect should be returned with address
-        blobAllocateOutAddress = allocateRes.out.ok.address
-        blobAllocateReceipt = allocateRes
+      if (scheduleAllocateRes.error) {
+        return scheduleAllocateRes
       }
 
-      // Create `blob/allocate` receipt invocation to inline as effect
-      // TODO: needs ucanto to accept any block
-      const message = await Message.build({ receipts: [blobAllocateReceipt] })
-      const messageCar = await CAR.outbound.encode(message)
-      const bytes = new Uint8Array(messageCar.body)
-      const messageLink = await CAR.codec.link(bytes)
-
-      const allocateUcanConcludefx = await UCAN.conclude
-        .invoke({
-          issuer: id,
-          audience: id,
-          with: id.toDIDKey(),
-          nb: {
-            receipt: messageLink,
-          },
-          expiration: Infinity,
-        })
-        .delegate()
-      allocateUcanConcludefx.attach({
-        bytes,
-        cid: messageLink,
+      // Schedule put
+      const schedulePutRes = await schedulePut({
+        context,
+        putfx: next.putfx,
       })
+      if (schedulePutRes.error) {
+        return schedulePutRes
+      }
 
       // Create result object
       /** @type {API.OkBuilder<API.BlobAddSuccess, API.BlobAddFailure>} */
       const result = Server.ok({
         site: {
-          'ucan/await': ['.out.ok.site', acceptfx.link()],
+          'ucan/await': ['.out.ok.site', next.acceptfx.link()],
         },
       })
 
-      // In case blob allocate provided an address to write
-      // the blob is still not stored
-      if (blobAllocateOutAddress) {
-        const blobPut = HTTP.put.invoke({
-          issuer: blobProvider,
-          audience: blobProvider,
-          with: blobProvider.toDIDKey(),
-          nb: {
-            body: blob,
-            url: blobAllocateOutAddress.url,
-            headers: blobAllocateOutAddress.headers,
-          },
-          facts,
-          expiration: Infinity,
-        })
-
-        const putfx = await blobPut.delegate()
-
-        // store `http/put` invocation
-        // TODO: store implementation
-        // const archiveDelegationRes = await putfx.archive()
-        // if (archiveDelegationRes.error) {
-        //   return {
-        //     error: archiveDelegationRes.error
-        //   }
-        // }
-        const invocationPutRes = await tasksStorage.put(putfx)
-        if (invocationPutRes.error) {
-          return {
-            error: invocationPutRes.error,
-          }
-        }
-
+      // In case there is no receipt for concludePutfx, we can return
+      if (!schedulePutRes.ok.concludePutfx) {
         return (
           result
             // 1. System attempts to allocate memory in user space for the blob.
-            .fork(allocatefx)
-            .fork(allocateUcanConcludefx)
+            .fork(next.allocatefx)
+            .fork(scheduleAllocateRes.ok.concludeAllocatefx)
             // 2. System requests user agent (or anyone really) to upload the content
             // corresponding to the blob
             // via HTTP PUT to given location.
-            .fork(putfx)
+            .fork(next.putfx)
             // 3. System will attempt to accept uploaded content that matches blob
             // multihash and size.
-            .join(acceptfx)
+            .join(next.acceptfx)
         )
       }
 
-      // Add allocate receipt if allocate was executed
-      if (allocateUcanConcludefx) {
-        return (
-          result
+      // schedule accept if there is http/put receipt available
+      const scheduleAcceptRes = await scheduleAccept({
+        context,
+        accept: next.accept,
+        acceptfx: next.acceptfx,
+      })
+      if (scheduleAcceptRes.error) {
+        return scheduleAcceptRes
+      }
+
+      return scheduleAcceptRes.ok.concludeAcceptfx
+        ? result
             // 1. System attempts to allocate memory in user space for the blob.
-            .fork(allocatefx)
-            .fork(allocateUcanConcludefx)
+            .fork(next.allocatefx)
+            .fork(scheduleAllocateRes.ok.concludeAllocatefx)
+            // 2. System requests user agent (or anyone really) to upload the content
+            // corresponding to the blob
+            // via HTTP PUT to given location.
+            .fork(next.putfx)
+            .fork(schedulePutRes.ok.concludePutfx)
             // 3. System will attempt to accept uploaded content that matches blob
             // multihash and size.
-            .join(acceptfx)
-        )
-      }
-
-      // Blob was already allocated and is already stored in the system
-      return (
-        result
-          // 1. System allocated memory in user space for the blob.
-          .fork(allocatefx)
-          .fork(allocateUcanConcludefx)
-          // 3. System will attempt to accept uploaded content that matches blob
-          // multihash and size.
-          .join(acceptfx)
-      )
+            .join(next.acceptfx)
+            .fork(scheduleAcceptRes.ok.concludeAcceptfx)
+        : result
+            // 1. System attempts to allocate memory in user space for the blob.
+            .fork(next.allocatefx)
+            .fork(scheduleAllocateRes.ok.concludeAllocatefx)
+            // 2. System requests user agent (or anyone really) to upload the content
+            // corresponding to the blob
+            // via HTTP PUT to given location.
+            .fork(next.putfx)
+            .fork(schedulePutRes.ok.concludePutfx)
+            // 3. System will attempt to accept uploaded content that matches blob
+            // multihash and size.
+            .join(next.acceptfx)
     },
   })
+}
+
+/**
+ * Schedule Put task to be run by agent.
+ * A `http/put` task is stored by the service, if it does not exist
+ * and a receipt is fetched if already available.
+ *
+ * @param {object} scheduleAcceptProps
+ * @param {API.BlobServiceContext} scheduleAcceptProps.context
+ * @param {API.IssuedInvocationView<API.BlobAccept>} scheduleAcceptProps.accept
+ * @param {API.Invocation<API.BlobAccept>} scheduleAcceptProps.acceptfx
+ */
+async function scheduleAccept({ context, accept, acceptfx }) {
+  let blobAcceptReceipt
+
+  // Get receipt for `blob/accept` if available, otherwise schedule invocation
+  const receiptGet = await context.receiptsStorage.get(acceptfx.link())
+  if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
+    return {
+      error: receiptGet.error,
+    }
+  } else if (receiptGet.ok) {
+    blobAcceptReceipt = receiptGet.ok
+  }
+
+  // if not already accepted schedule `blob/accept`
+  if (!blobAcceptReceipt) {
+    // Execute accept invocation
+    const acceptRes = await accept.execute(context.getServiceConnection())
+    if (acceptRes.out.error) {
+      return {
+        error: new AwaitError({
+          cause: acceptRes.out.error,
+          at: 'ucan/wait',
+          reference: ['.out.ok', acceptfx.cid],
+        }),
+      }
+    }
+    blobAcceptReceipt = acceptRes
+  }
+
+  // Create `blob/accept` receipt as conclude invocation to inline as effect
+  const concludeAccept = createConcludeInvocation(
+    context.id,
+    context.id,
+    blobAcceptReceipt
+  )
+  return {
+    ok: {
+      concludeAcceptfx: await concludeAccept.delegate(),
+    },
+  }
+}
+
+/**
+ * Schedule Put task to be run by agent.
+ * A `http/put` task is stored by the service, if it does not exist
+ * and a receipt is fetched if already available.
+ *
+ * @param {object} schedulePutProps
+ * @param {API.BlobServiceContext} schedulePutProps.context
+ * @param {API.Invocation<API.HTTPPut>} schedulePutProps.putfx
+ */
+async function schedulePut({ context, putfx }) {
+  // Get receipt for `http/put` if available
+  const receiptGet = await context.receiptsStorage.get(putfx.link())
+  if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
+    return {
+      error: receiptGet.error,
+    }
+  } else if (receiptGet.ok) {
+    // Create `blob/allocate` receipt as conclude invocation to inline as effect
+    const concludePut = createConcludeInvocation(
+      context.id,
+      context.id,
+      receiptGet.ok
+    )
+    return {
+      ok: {
+        concludePutfx: await concludePut.delegate(),
+      },
+    }
+  }
+
+  // store `http/put` invocation
+  const invocationPutRes = await context.tasksStorage.put(putfx)
+  if (invocationPutRes.error) {
+    // TODO: If already available, do not error?
+    return {
+      error: invocationPutRes.error,
+    }
+  }
+
+  // TODO: store implementation
+  // const archiveDelegationRes = await putfx.archive()
+  // if (archiveDelegationRes.error) {
+  //   return {
+  //     error: archiveDelegationRes.error
+  //   }
+  // }
+
+  return {
+    ok: {},
+  }
+}
+
+/**
+ * Schedule allocate task to be run.
+ * If there is a non expired receipt, it is returned insted of runing the task again.
+ * Otherwise, allocation task is scheduled.
+ *
+ * @param {object} scheduleAllocateProps
+ * @param {API.BlobServiceContext} scheduleAllocateProps.context
+ * @param {API.IssuedInvocationView<API.BlobAllocate>} scheduleAllocateProps.allocate
+ * @param {API.Invocation<API.BlobAllocate>} scheduleAllocateProps.allocatefx
+ */
+async function scheduleAllocate({ context, allocate, allocatefx }) {
+  let blobAllocateReceipt
+
+  // Get receipt for `blob/allocate` if available, otherwise schedule invocation
+  const receiptGet = await context.receiptsStorage.get(allocatefx.link())
+  if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
+    return {
+      error: receiptGet.error,
+    }
+  } else if (receiptGet.ok) {
+    // TODO: check expired by adding to receipt?
+    blobAllocateReceipt = receiptGet.ok
+  }
+
+  // if not already allocated (or expired) schedule `blob/allocate`
+  if (!blobAllocateReceipt) {
+    // Execute allocate invocation
+    const allocateRes = await allocate.execute(context.getServiceConnection())
+    if (allocateRes.out.error) {
+      return {
+        error: new AwaitError({
+          cause: allocateRes.out.error,
+          at: 'ucan/wait',
+          reference: ['.out.ok', allocatefx.cid],
+        }),
+      }
+    }
+    blobAllocateReceipt = allocateRes
+  }
+
+  // Create `blob/allocate` receipt as conclude invocation to inline as effect
+  const concludeAllocate = createConcludeInvocation(
+    context.id,
+    context.id,
+    blobAllocateReceipt
+  )
+  return {
+    ok: {
+      concludeAllocatefx: await concludeAllocate.delegate(),
+    },
+  }
+}
+
+/**
+ * Create `blob/add` next tasks.
+ *
+ * @param {object} nextProps
+ * @param {API.BlobServiceContext} nextProps.context
+ * @param {API.BlobModel} nextProps.blob
+ * @param {API.DIDKey} nextProps.space
+ * @param {API.Link} nextProps.cause
+ */
+async function createNextTasks({ context, blob, space, cause }) {
+  // 1. Create web3.storage/blob/allocate invocation and task
+  const allocate = W3sBlob.allocate.invoke({
+    issuer: context.id,
+    audience: context.id,
+    with: context.id.did(),
+    nb: {
+      blob,
+      cause: cause,
+      space,
+    },
+    expiration: Infinity,
+  })
+  const allocatefx = await allocate.delegate()
+
+  // 2. Create http/put invocation ans task
+
+  // We derive principal from the blob multihash to be an audience
+  // of the `http/put` invocation. That way anyone with blob digest
+  // could perform the invocation and issue receipt by deriving same
+  // principal
+  const blobProvider = await ed25519.derive(
+    blob.digest.slice(blob.digest.length - 32)
+  )
+  const facts = [
+    {
+      keys: blobProvider.toArchive(),
+    },
+  ]
+  const put = HTTP.put.invoke({
+    issuer: blobProvider,
+    audience: blobProvider,
+    with: blobProvider.toDIDKey(),
+    nb: {
+      body: blob,
+      url: {
+        'ucan/await': ['.out.ok.address.url', allocatefx.cid],
+      },
+      headers: {
+        'ucan/await': ['.out.ok.address.headers', allocatefx.cid],
+      },
+    },
+    facts,
+    expiration: Infinity,
+  })
+  const putfx = await put.delegate()
+
+  // 3. Create web3.storage/blob/accept invocation and task
+  const accept = W3sBlob.accept.invoke({
+    issuer: context.id,
+    audience: context.id,
+    with: context.id.toDIDKey(),
+    nb: {
+      blob,
+      exp: Number.MAX_SAFE_INTEGER,
+      space,
+      _put: { 'ucan/await': ['.out.ok', putfx.link()] },
+    },
+    expiration: Infinity,
+  })
+  const acceptfx = await accept.delegate()
+
+  return {
+    allocate,
+    allocatefx,
+    put,
+    putfx,
+    accept,
+    acceptfx,
+  }
 }

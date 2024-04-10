@@ -1,6 +1,5 @@
 import { provide } from '@ucanto/server'
-import { Message } from '@ucanto/core'
-import { CAR } from '@ucanto/transport'
+import { Receipt } from '@ucanto/core'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import * as HTTP from '@web3-storage/capabilities/http'
 import { conclude } from '@web3-storage/capabilities/ucan'
@@ -17,24 +16,18 @@ export const ucanConcludeProvider = ({
   tasksStorage,
   tasksScheduler,
 }) =>
-  provide(conclude, async ({ capability, invocation }) => {
-    const receiptGet = await getReceipt(
-      capability.nb.receipt,
-      invocation.iterateIPLDBlocks()
-    )
-    if (receiptGet.error) {
-      return receiptGet
-    }
+  provide(conclude, async ({ invocation }) => {
+    const receipt = getConcludeReceipt(invocation)
 
     // Verify invocation exists failing with ReceiptInvocationNotFound
-    const ranInvocation = receiptGet.ok.ran
+    const ranInvocation = receipt.ran
     const httpPutTaskGetRes = await tasksStorage.get(ranInvocation.link())
     if (httpPutTaskGetRes.error) {
       return httpPutTaskGetRes
     }
 
     // Store receipt
-    const receiptPutRes = await receiptsStorage.put(receiptGet.ok)
+    const receiptPutRes = await receiptsStorage.put(receipt)
     if (receiptPutRes.error) {
       return {
         error: receiptPutRes.error,
@@ -56,7 +49,11 @@ export const ucanConcludeProvider = ({
                 // @ts-expect-error body exists in `http/put` but unknown type here
                 blob: cap.nb.body,
                 exp: Number.MAX_SAFE_INTEGER,
-                // TODO: space
+                // TODO: corect space
+                space: id.toDIDKey(),
+                _put: {
+                  'ucan/await': ['.out.ok', ranInvocation.link()],
+                },
               },
               expiration: Infinity,
             })
@@ -79,43 +76,6 @@ export const ucanConcludeProvider = ({
   })
 
 /**
- * @param {import('multiformats').UnknownLink} receiptLink
- * @param {IterableIterator<import('@ucanto/interface').Block<unknown, number, number, 1>>} blocks
- */
-export const getReceipt = async (receiptLink, blocks) => {
-  const getBlockRes = await findBlock(receiptLink, blocks)
-  if (getBlockRes.error) {
-    return getBlockRes
-  }
-
-  const messageCar = CAR.codec.decode(getBlockRes.ok)
-  const message = Message.view({
-    root: messageCar.roots[0].cid,
-    store: messageCar.blocks,
-  })
-
-  const receiptKeys = Array.from(message.receipts.keys())
-  if (receiptKeys.length !== 1) {
-    return {
-      error: {
-        name: 'UnexpectedNumberOfReceipts',
-        message: `${receiptKeys.length} receipts received`,
-      },
-    }
-  }
-
-  const receiptId = receiptKeys[0]
-  const receipt = message.receipts.get(receiptId)
-  if (!receipt) {
-    throw new Error('receipt must exist given a key exists for it')
-  }
-
-  return {
-    ok: receipt
-  }
-}
-
-/**
  * @param {import('multiformats').UnknownLink} cid
  * @param {IterableIterator<import('@ucanto/interface').Block<unknown, number, number, 1>>} blocks
  * @returns {Promise<import('@ucanto/interface').Result<Uint8Array, DecodeBlockOperationFailed>>}
@@ -135,4 +95,50 @@ export const findBlock = async (cid, blocks) => {
   return {
     ok: bytes,
   }
+}
+
+/**
+ * @param {import('@ucanto/interface').Invocation} concludeFx
+ */
+export function getConcludeReceipt(concludeFx) {
+  const receiptBlocks = new Map()
+  for (const block of concludeFx.iterateIPLDBlocks()) {
+    receiptBlocks.set(`${block.cid}`, block)
+  }
+  return Receipt.view({
+    // @ts-expect-error object of type unknown
+    root: concludeFx.capabilities[0].nb.receipt,
+    blocks: receiptBlocks,
+  })
+}
+
+/**
+ * @param {API.Signer} id
+ * @param {API.Verifier} serviceDid
+ * @param {API.Receipt} receipt
+ */
+export function createConcludeInvocation(id, serviceDid, receipt) {
+  const receiptBlocks = []
+  for (const block of receipt.iterateIPLDBlocks()) {
+    receiptBlocks.push(block)
+  }
+  const concludeAllocatefx = conclude.invoke({
+    issuer: id,
+    audience: serviceDid,
+    with: id.toDIDKey(),
+    nb: {
+      receipt: receipt.link(),
+    },
+    expiration: Infinity,
+    facts: [
+      {
+        ...receiptBlocks.map((b) => b.cid),
+      },
+    ],
+  })
+  for (const block of receipt.iterateIPLDBlocks()) {
+    concludeAllocatefx.attach(block)
+  }
+
+  return concludeAllocatefx
 }

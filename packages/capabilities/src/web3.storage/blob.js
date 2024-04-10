@@ -1,4 +1,4 @@
-import { capability, Schema, Link, ok, fail } from '@ucanto/validator'
+import { capability, Schema, Link, ok } from '@ucanto/validator'
 import { content } from '../blob.js'
 import {
   equalBlob,
@@ -7,6 +7,7 @@ import {
   and,
   equal,
   checkLink,
+  Await,
 } from '../utils.js'
 
 /**
@@ -85,22 +86,20 @@ export const accept = capability({
     /**
      * DID of the user space where allocation took place
      */
-    // TODO: space
-    // space: SpaceDID,
-    // TODO: _put?
-    // TODO: _allocate?
+    space: SpaceDID,
+    /**
+     * This task is blocked on `http/put` receipt available
+     */
+    _put: Await,
   }),
   derives: (claim, from) => {
-    const result = equalBlob(claim, from)
-    if (result.error) {
-      return result
-    } else if (claim.nb.exp !== undefined && from.nb.exp !== undefined) {
-      return claim.nb.exp > from.nb.exp
-        ? fail(`exp constraint violation: ${claim.nb.exp} > ${from.nb.exp}`)
-        : ok({})
-    } else {
-      return ok({})
-    }
+    return (
+      and(equalWith(claim, from)) ||
+      and(equalBlob(claim, from)) ||
+      and(equal(claim.nb.exp, from.nb.exp, 'exp')) ||
+      and(equal(claim.nb.space, from.nb.space, 'space')) ||
+      ok({})
+    )
   },
 })
 

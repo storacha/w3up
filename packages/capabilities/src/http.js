@@ -10,7 +10,7 @@
  */
 import { capability, Schema, ok } from '@ucanto/validator'
 import { content } from './blob.js'
-import { equal, equalBody, equalWith, SpaceDID, and } from './utils.js'
+import { equal, equalBody, equalWith, SpaceDID, Await, and } from './utils.js'
 
 /**
  * `http/put` capability invocation MAY be performed by any agent on behalf of the subject.
@@ -29,27 +29,14 @@ export const put = capability({
      * Description of body to send (digest/size).
      */
     body: content,
-    // TODO: what should be used?
     /**
      * HTTP(S) location that can receive blob content via HTTP PUT request.
      */
-    // url: Schema.struct({
-    //   'ucan/await': Schema.unknown(),
-    // }).optional(),
-    // /**
-    //  * HTTP headers.
-    //  */
-    // headers: Schema.struct({
-    //   'ucan/await': Schema.unknown(),
-    // }).optional(),
-    /**
-     * HTTP(S) location that can receive blob content via HTTP PUT request.
-     */
-    url: Schema.string(),
+    url: Schema.string().or(Await),
     /**
      * HTTP headers.
      */
-    headers: Schema.dictionary({ value: Schema.string() }),
+    headers: Schema.dictionary({ value: Schema.string() }).or(Await),
   }),
   derives: (claim, from) => {
     return (

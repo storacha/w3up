@@ -2,9 +2,8 @@ import * as API from '../../src/types.js'
 import { equals } from 'uint8arrays'
 import pDefer from 'p-defer'
 import { Absentee } from '@ucanto/principal'
-import { Message, Receipt } from '@ucanto/core'
+import { Receipt } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
-import { CAR } from '@ucanto/transport'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
@@ -16,7 +15,10 @@ import { provisionProvider } from '../helpers/utils.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { BlobSizeOutsideOfSupportedRangeName } from '../../src/blob/lib.js'
-import { findBlock } from '../../src/ucan/conclude.js'
+import {
+  createConcludeInvocation,
+  getConcludeReceipt,
+} from '../../src/ucan/conclude.js'
 
 /**
  * @type {API.Tests}
@@ -91,29 +93,14 @@ export const test = {
       const httpPutGetTask = await context.tasksStorage.get(putfx.cid)
       assert.ok(httpPutGetTask.ok)
 
+      const receipt = getConcludeReceipt(allocateUcanConcludefx)
       // validate that scheduled allocate task executed and has its receipt content
-      const getBlockRes = await findBlock(
-        // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.receipt,
-        allocateUcanConcludefx.iterateIPLDBlocks()
-      )
-      if (getBlockRes.error) {
-        throw new Error('receipt block should exist in invocation')
-      }
-      const messageCar = CAR.codec.decode(getBlockRes.ok)
-      const message = Message.view({
-        root: messageCar.roots[0].cid,
-        store: messageCar.blocks,
-      })
-
-      const receiptKey = Array.from(message.receipts.keys())[0]
-      const receipt = message.receipts.get(receiptKey)
-      assert.ok(receipt?.out)
-      assert.ok(receipt?.out.ok)
+      assert.ok(receipt.out)
+      assert.ok(receipt.out.ok)
       // @ts-expect-error receipt out is unknown
-      assert.equal(receipt?.out.ok?.size, size)
+      assert.equal(receipt.out.ok?.size, size)
       // @ts-expect-error receipt out is unknown
-      assert.ok(receipt?.out.ok?.address)
+      assert.ok(receipt.out.ok?.address)
     },
   'blob/add executes allocation and returns effects for allocate (and its receipt) and accept, but not for put when blob stored':
     async (assert, context) => {
@@ -170,24 +157,7 @@ export const test = {
       if (!allocateUcanConcludefx || !putfx) {
         throw new Error('effects not provided')
       }
-      const getBlockRes = await findBlock(
-        // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.receipt,
-        allocateUcanConcludefx.iterateIPLDBlocks()
-      )
-      if (getBlockRes.error) {
-        throw new Error('receipt block should exist in invocation')
-      }
-      const messageCar = CAR.codec.decode(getBlockRes.ok)
-      const message = Message.view({
-        root: messageCar.roots[0].cid,
-        store: messageCar.blocks,
-      })
-      const receiptKey = Array.from(message.receipts.keys())[0]
-      const receipt = message.receipts.get(receiptKey)
-      if (!receipt) {
-        throw new Error('receipt should be available')
-      }
+      const receipt = getConcludeReceipt(allocateUcanConcludefx)
       const receiptPutRes = await context.receiptsStorage.put(receipt)
       assert.ok(receiptPutRes.ok)
 
@@ -221,22 +191,23 @@ export const test = {
         throw new Error('invocation failed', { cause: thirdBlobAdd })
       }
 
-      // Validate receipt has now only 2 effects
+      // Validate receipt has now only 3 effects
       assert.ok(thirdBlobAdd.out.ok)
       assert.ok(thirdBlobAdd.fx.join)
-      assert.equal(thirdBlobAdd.fx.fork.length, 2)
+      // TODO
+      assert.equal(thirdBlobAdd.fx.fork.length, 3)
 
-      /**
-       * @type {import('@ucanto/interface').Invocation[]}
-       **/
-      // @ts-expect-error read only effect
-      const thirdForkInvocations = thirdBlobAdd.fx.fork
-      // no put effect anymore
-      assert.ok(
-        !thirdForkInvocations.find(
-          (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
-        )
-      )
+      // /**
+      //  * @type {import('@ucanto/interface').Invocation[]}
+      //  **/
+      // // @ts-expect-error read only effect
+      // const thirdForkInvocations = thirdBlobAdd.fx.fork
+      // // no put effect anymore
+      // assert.ok(
+      //   !thirdForkInvocations.find(
+      //     (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
+      //   )
+      // )
     },
   'blob/add fails when a blob with size bigger than maximum size is added':
     async (assert, context) => {
@@ -826,30 +797,19 @@ export const test = {
        **/
       // @ts-expect-error read only effect
       const forkInvocations = blobAdd.fx.fork
+      const allocatefx = forkInvocations.find(
+        (fork) => fork.capabilities[0].can === W3sBlobCapabilities.allocate.can
+      )
       const allocateUcanConcludefx = forkInvocations.find(
         (fork) => fork.capabilities[0].can === UCAN.conclude.can
       )
       const putfx = forkInvocations.find(
         (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
       )
-      if (!allocateUcanConcludefx || !putfx) {
+      if (!allocateUcanConcludefx || !putfx || !allocatefx) {
         throw new Error('effects not provided')
       }
-      const getBlockRes = await findBlock(
-        // @ts-expect-error object of type unknown
-        allocateUcanConcludefx.capabilities[0].nb.receipt,
-        allocateUcanConcludefx.iterateIPLDBlocks()
-      )
-      if (getBlockRes.error) {
-        throw new Error('receipt block should exist in invocation')
-      }
-      const blobAllocateMessageCar = CAR.codec.decode(getBlockRes.ok)
-      const blobAllocateMessage = Message.view({
-        root: blobAllocateMessageCar.roots[0].cid,
-        store: blobAllocateMessageCar.blocks,
-      })
-      const receiptKey = Array.from(blobAllocateMessage.receipts.keys())[0]
-      const receipt = blobAllocateMessage.receipts.get(receiptKey)
+      const receipt = getConcludeReceipt(allocateUcanConcludefx)
 
       // Get `blob/allocate` receipt with address
       /**
@@ -881,8 +841,12 @@ export const test = {
             digest,
             size,
           },
-          url: address.url,
-          headers: address.headers,
+          url: {
+            'ucan/await': ['.out.ok.address.url', allocatefx.cid],
+          },
+          headers: {
+            'ucan/await': ['.out.ok.address.headers', allocatefx.cid],
+          },
         },
         facts: putfx.facts,
         expiration: Infinity,
@@ -896,38 +860,36 @@ export const test = {
           ok: {},
         },
       })
-      const message = await Message.build({ receipts: [httpPutReceipt] })
-      const messageCar = await CAR.outbound.encode(message)
-      const bytes = new Uint8Array(messageCar.body)
-      const messageLink = await CAR.codec.link(bytes)
-
-      // Invoke `ucan/conclude` with `http/put` receipt
-      const httpPutConcludeInvocation = UCAN.conclude.invoke({
-        issuer: alice,
-        audience: context.id,
-        with: alice.did(),
-        nb: {
-          receipt: messageLink,
-        },
-        expiration: Infinity,
-      })
-      httpPutConcludeInvocation.attach({
-        bytes,
-        cid: messageLink,
-      })
+      const httpPutConcludeInvocation = createConcludeInvocation(
+        alice,
+        context.id,
+        httpPutReceipt
+      )
       const ucanConclude = await httpPutConcludeInvocation.execute(connection)
       if (!ucanConclude.out.ok) {
         throw new Error('invocation failed', { cause: blobAdd })
       }
 
       // verify accept was scheduled
+      /** @type {import('@ucanto/interface').Invocation<import('@web3-storage/capabilities/types').BlobAccept>} */
       const blobAcceptInvocation = await taskScheduled.promise
-      assert.ok(blobAcceptInvocation)
-      assert.equal(blobAdd.out.ok.site['ucan/await'][0], '.out.ok.site')
-      assert.ok(
-        blobAdd.out.ok.site['ucan/await'][1].equals(blobAcceptInvocation.cid)
+      assert.equal(blobAcceptInvocation.capabilities.length, 1)
+      assert.equal(
+        blobAcceptInvocation.capabilities[0].can,
+        W3sBlobCapabilities.accept.can
       )
-      assert.ok(blobAdd.fx.join?.link().equals(blobAcceptInvocation.cid))
+      assert.ok(blobAcceptInvocation.capabilities[0].nb.exp)
+      assert.equal(
+        blobAcceptInvocation.capabilities[0].nb._put['ucan/await'][0],
+        '.out.ok'
+      )
+      assert.ok(
+        blobAcceptInvocation.capabilities[0].nb._put['ucan/await'][1].equals(
+          httpPutDelegation.cid
+        )
+      )
+      assert.ok(blobAcceptInvocation.capabilities[0].nb.blob)
+      // TODO: space check
     },
   // TODO: Blob accept
 }

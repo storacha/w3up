@@ -1,4 +1,4 @@
-import { DID, fail, ok } from '@ucanto/validator'
+import { DID, Schema, fail, ok } from '@ucanto/validator'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
 
@@ -10,6 +10,10 @@ export const ProviderDID = DID.match({ method: 'web' })
 export const SpaceDID = DID.match({ method: 'key' })
 
 export const AccountDID = DID.match({ method: 'mailto' })
+
+export const Await = Schema.struct({
+  'ucan/await': Schema.tuple([Schema.string(), Schema.link()]),
+})
 
 /**
  * Check URI can be delegated
