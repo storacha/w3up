@@ -17,7 +17,7 @@
     "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.12.2",
+    "@arethetypeswrong/cli": "^0.15.3",
     "@docusaurus/core": "^3.0.0",
     "@docusaurus/preset-classic": "^3.0.0",
     "docusaurus-plugin-typedoc": "^0.21.0",
