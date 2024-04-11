@@ -31,7 +31,7 @@ export interface AllocationsStorage {
   ) => Promise<Result<ListResponse<BlobListItem>, Failure>>
 }
 
-export interface Blob {
+export interface BlobModel {
   digest: BlobMultihash
   size: number
 }
@@ -39,7 +39,7 @@ export interface Blob {
 export interface BlobAddInput {
   space: DID
   invocation: UnknownLink
-  blob: Blob
+  blob: BlobModel
 }
 
 export interface BlobAddOutput

@@ -53,7 +53,7 @@ export const ucanConcludeProvider = ({
           // Get triggering task (blob/allocate) by checking blocking task from `url`
           /** @type {API.UnknownLink} */
           // @ts-expect-error ts does not know how to get this
-          const blobAllocateTaskCid = cap.nb.url['ucan/await'][1]
+          const [,blobAllocateTaskCid] = cap.nb.url['ucan/await']
           const blobAllocateTaskGet = await tasksStorage.get(
             blobAllocateTaskCid
           )
@@ -124,8 +124,10 @@ export function getConcludeReceipt(concludeFx) {
  */
 export function createConcludeInvocation(id, serviceDid, receipt) {
   const receiptBlocks = []
+  const receiptCids = []
   for (const block of receipt.iterateIPLDBlocks()) {
     receiptBlocks.push(block)
+    receiptCids.push(block.cid)
   }
   const concludeAllocatefx = conclude.invoke({
     issuer: id,
@@ -137,11 +139,11 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
     expiration: Infinity,
     facts: [
       {
-        ...receiptBlocks.map((b) => b.cid),
+        ...receiptCids,
       },
     ],
   })
-  for (const block of receipt.iterateIPLDBlocks()) {
+  for (const block of receiptBlocks) {
     concludeAllocatefx.attach(block)
   }
 

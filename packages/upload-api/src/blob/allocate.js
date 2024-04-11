@@ -1,7 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import * as API from '../types.js'
-import { ensureRateLimitAbove } from '../utils/rate-limits.js'
 
 /**
  * @param {API.W3ServiceContext} context
@@ -14,23 +13,9 @@ export function blobAllocateProvider(context) {
       const { blob, cause, space } = capability.nb
       let size = blob.size
 
-      // Rate limiting validation
-      // TODO: we should not produce rate limit error but rather suspend / queue task to be run after enforcing a limit without erroring
-      const rateLimitResult = await ensureRateLimitAbove(
-        context.rateLimitsStorage,
-        [space],
-        0
-      )
-      if (rateLimitResult.error) {
-        return {
-          error: {
-            name: 'RateLimited',
-            message: `${space} is blocked`,
-          },
-        }
-      }
-
-      // Has Storage provider validation
+      // We check if space has storage provider associated. If it does not
+      // we return `InsufficientStorage` error as storage capacity is considered
+      // to be 0.
       const result = await context.provisionsStorage.hasStorageProvider(space)
       if (result.error) {
         return result
@@ -45,7 +30,8 @@ export function blobAllocateProvider(context) {
         }
       }
 
-      // Allocate in space, ignoring if already allocated
+      // Allocate memory space for the blob. If memory for this blob is
+      // already allocated, this allocates 0 bytes.
       const allocationInsert = await context.allocationsStorage.insert({
         space,
         blob,

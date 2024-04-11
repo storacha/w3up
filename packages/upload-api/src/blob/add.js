@@ -18,14 +18,12 @@ export function blobAddProvider(context) {
     handler: async ({ capability, invocation }) => {
       // Prepare context
       const { blob } = capability.nb
-      const space = /** @type {import('@ucanto/interface').DIDKey} */ (
-        Server.DID.parse(capability.with).did()
-      )
+      const space = capability.with
 
       // Verify blob is within accept size
       if (blob.size > context.maxUploadSize) {
         return {
-          error: new BlobSizeOutsideOfSupportedRange(context.maxUploadSize),
+          error: new BlobSizeOutsideOfSupportedRange(blob.size, context.maxUploadSize),
         }
       }
 

@@ -5,7 +5,7 @@ import { Assert } from '@web3-storage/content-claims/capability'
 import { create as createLink } from 'multiformats/link'
 import { Digest } from 'multiformats/hashes/digest'
 import { sha256 } from 'multiformats/hashes/sha2'
-import { CAR } from '@ucanto/core'
+import { code as rawCode } from 'multiformats/codecs/raw'
 import * as API from '../types.js'
 import { AllocatedMemoryHadNotBeenWrittenTo } from './lib.js'
 
@@ -31,11 +31,11 @@ export function blobAcceptProvider(context) {
 
       // TODO: we need to support multihash in claims, or specify hardcoded codec
       const digest = new Digest(sha256.code, 32, blob.digest, blob.digest)
-      const content = createLink(CAR.code, digest)
+      const content = createLink(rawCode, digest)
       const w3link = `https://w3s.link/ipfs/${content.toString()}?origin=r2://${R2_REGION}/${R2_BUCKET}`
 
       const locationClaim = await Assert.location
-        .invoke({
+        .delegate({
           issuer: context.id,
           audience: DID.parse(space),
           with: context.id.toDIDKey(),
@@ -48,7 +48,6 @@ export function blobAcceptProvider(context) {
           },
           expiration: Infinity,
         })
-        .delegate()
 
       // Create result object
       /** @type {API.OkBuilder<API.BlobAcceptSuccess, API.BlobAcceptFailure>} */

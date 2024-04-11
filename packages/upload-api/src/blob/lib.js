@@ -3,30 +3,13 @@ import { Failure } from '@ucanto/server'
 export const AllocatedMemoryHadNotBeenWrittenToName =
   'AllocatedMemoryHadNotBeenWrittenTo'
 export class AllocatedMemoryHadNotBeenWrittenTo extends Failure {
-  /**
-   * @param {import('@ucanto/interface').DID} [space]
-   */
-  constructor(space) {
-    super()
-    this.space = space
-  }
 
   get name() {
     return AllocatedMemoryHadNotBeenWrittenToName
   }
 
   describe() {
-    if (this.space) {
-      return `Blob not found in ${this.space}`
-    }
     return `Blob not found`
-  }
-
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      space: this.space,
-    }
   }
 }
 
@@ -34,10 +17,12 @@ export const BlobSizeOutsideOfSupportedRangeName =
   'BlobSizeOutsideOfSupportedRange'
 export class BlobSizeOutsideOfSupportedRange extends Failure {
   /**
+   * @param {Number} blobSize
    * @param {Number} maxUploadSize
    */
-  constructor(maxUploadSize) {
+  constructor(blobSize, maxUploadSize) {
     super()
+    this.blobSize = blobSize
     this.maxUploadSize = maxUploadSize
   }
 
@@ -46,13 +31,14 @@ export class BlobSizeOutsideOfSupportedRange extends Failure {
   }
 
   describe() {
-    return `Blob exceeded maximum size limit: ${this.maxUploadSize}, consider splitting it into blobs that fit limit.`
+    return `Blob size ${this.blobSize} exceeded maximum size limit: ${this.maxUploadSize}, consider splitting it into blobs that fit limit.`
   }
 
   toJSON() {
     return {
       ...super.toJSON(),
       maxUploadSize: this.maxUploadSize,
+      blobSize: this.blobSize,
     }
   }
 }
