@@ -6,6 +6,8 @@ import * as HTTP from '@web3-storage/capabilities/http'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import { equals } from 'uint8arrays/equals'
 
+import { ReferencedInvocationNotFound } from './lib.js'
+
 /**
  * @param {API.ConcludeServiceContext} context
  * @returns {API.ServiceMethod<API.UCANConclude, API.UCANConcludeSuccess, API.UCANConcludeFailure>}
@@ -23,6 +25,11 @@ export const ucanConcludeProvider = ({
     const ranInvocation = receipt.ran
     const httpPutTaskGetRes = await tasksStorage.get(ranInvocation.link())
     if (httpPutTaskGetRes.error) {
+      if (httpPutTaskGetRes.error.name === 'RecordNotFound') {
+        return {
+          error: new ReferencedInvocationNotFound(ranInvocation.link())
+        }
+      }
       return httpPutTaskGetRes
     }
 

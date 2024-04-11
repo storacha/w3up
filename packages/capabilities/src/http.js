@@ -13,9 +13,8 @@ import { content } from './blob.js'
 import { equal, equalBody, equalWith, SpaceDID, Await, and } from './utils.js'
 
 /**
- * `http/put` capability invocation MAY be performed by any agent on behalf of the subject.
- * The `blob/add` provider MUST add `/http/put` effect and capture private key of the
- * `subject` in the `meta` field so that any agent could perform it.
+ * `http/put` capability invocation MAY be performed by any authorized agent on behalf of the subject
+ * as long as they have referenced `body` content to do so.
  */
 export const put = capability({
   can: 'http/put',

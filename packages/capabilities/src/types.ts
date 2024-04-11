@@ -44,6 +44,10 @@ export type ISO8601Date = string
 
 export type { Unit, PieceLink }
 
+export interface UCANAwait<Selector extends string = string, Task = unknown> {
+  'ucan/await': [Selector, Link<Task>]
+}
+
 /**
  * An IPLD Link that has the CAR codec code.
  */
@@ -460,9 +464,7 @@ export interface BlobModel {
 
 // Blob add
 export interface BlobAddSuccess {
-  site: {
-    'ucan/await': ['.out.ok.site', Link]
-  }
+  site: UCANAwait<'.out.ok.site'>
 }
 
 export interface BlobSizeOutsideOfSupportedRange extends Ucanto.Failure {
@@ -497,42 +499,40 @@ export interface BlobAddress {
   expiresAt: ISO8601Date
 }
 
-// If space has not enough space to allocate the blob.
-export interface BlobNotAllocableToSpace extends Ucanto.Failure {
-  name: 'BlobNotAllocableToSpace'
+// If user space has not enough space to allocate the blob.
+export interface NotEnoughStorageCapacity extends Ucanto.Failure {
+  name: 'NotEnoughStorageCapacity'
 }
 
-export type BlobAllocateFailure = BlobNotAllocableToSpace | Ucanto.Failure
+export type BlobAllocateFailure = NotEnoughStorageCapacity | Ucanto.Failure
 
 // Blob accept
 export interface BlobAcceptSuccess {
+  // A Link for a delegation with site commiment for the added blob.
   site: Link
 }
 
-export interface BlobNotFound extends Ucanto.Failure {
-  name: 'BlobNotFound'
+export interface AllocatedMemoryHadNotBeenWrittenTo extends Ucanto.Failure {
+  name: 'AllocatedMemoryHadNotBeenWrittenTo'
 }
 
 // TODO: We should type the store errors and add them here, instead of Ucanto.Failure
-export type BlobAcceptFailure = BlobNotFound | Ucanto.Failure
+export type BlobAcceptFailure =
+  | AllocatedMemoryHadNotBeenWrittenTo
+  | Ucanto.Failure
 
 // Storage errors
-export type StoragePutError = StorageOperationError | EncodeRecordFailed
-export type StorageGetError =
-  | StorageOperationError
-  | EncodeRecordFailed
-  | RecordNotFound
+export type StoragePutError = StorageOperationError
+export type StorageGetError = StorageOperationError | RecordNotFound
 
+// Operation on a storage failed with unexpected error
 export interface StorageOperationError extends Error {
   name: 'StorageOperationFailed'
 }
 
+// Record requested not found in the storage
 export interface RecordNotFound extends Error {
   name: 'RecordNotFound'
-}
-
-export interface EncodeRecordFailed extends Error {
-  name: 'EncodeRecordFailed'
 }
 
 // Store
@@ -680,11 +680,11 @@ export type UCANRevokeFailure =
 /**
  * Error is raised when receipt is received for unknown invocation
  */
-export interface ReceiptInvocationNotFound extends Ucanto.Failure {
-  name: 'ReceiptInvocationNotFound'
+export interface ReferencedInvocationNotFound extends Ucanto.Failure {
+  name: 'ReferencedInvocationNotFound'
 }
 
-export type UCANConcludeFailure = ReceiptInvocationNotFound | Ucanto.Failure
+export type UCANConcludeFailure = ReferencedInvocationNotFound | Ucanto.Failure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>

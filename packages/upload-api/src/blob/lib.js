@@ -1,7 +1,8 @@
 import { Failure } from '@ucanto/server'
 
-export const BlobItemNotFoundName = 'BlobItemNotFound'
-export class BlobItemNotFound extends Failure {
+export const AllocatedMemoryHadNotBeenWrittenToName =
+  'AllocatedMemoryHadNotBeenWrittenTo'
+export class AllocatedMemoryHadNotBeenWrittenTo extends Failure {
   /**
    * @param {import('@ucanto/interface').DID} [space]
    */
@@ -11,7 +12,7 @@ export class BlobItemNotFound extends Failure {
   }
 
   get name() {
-    return BlobItemNotFoundName
+    return AllocatedMemoryHadNotBeenWrittenToName
   }
 
   describe() {

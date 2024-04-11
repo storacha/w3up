@@ -7,7 +7,7 @@ import { Digest } from 'multiformats/hashes/digest'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { CAR } from '@ucanto/core'
 import * as API from '../types.js'
-import { BlobItemNotFound } from './lib.js'
+import { AllocatedMemoryHadNotBeenWrittenTo } from './lib.js'
 
 const R2_REGION = 'auto'
 const R2_BUCKET = 'carpark-prod-0'
@@ -25,7 +25,7 @@ export function blobAcceptProvider(context) {
       const hasBlob = await context.blobsStorage.has(blob.digest)
       if (hasBlob.error) {
         return {
-          error: new BlobItemNotFound(),
+          error: new AllocatedMemoryHadNotBeenWrittenTo(),
         }
       }
 

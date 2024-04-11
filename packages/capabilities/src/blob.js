@@ -42,7 +42,7 @@ export const content = Schema.struct({
    */
   digest: Schema.bytes(),
   /**
-   * Size of the Blob file to be stored. Service will provision write target
+   * Number of bytes contained by this blob. Service will provision write target
    * for this exact size. Attempt to write a larger Blob file will fail.
    */
   size: Schema.integer(),
@@ -50,10 +50,9 @@ export const content = Schema.struct({
 
 /**
  * `blob/add` capability allows agent to store a Blob into a (memory) space
- * identified by did:key in the `with` field. Agent must precompute Blob locally
- * and provide it's multihash and size using `nb.blob` field, allowing
- * a service to provision a write location for the agent to PUT or POST desired
- * Blob into.
+ * identified by did:key in the `with` field. Agent should compute blob multihash
+ * and size and provide it under `nb.blob` field, allowing a service to provision
+ * a write location for the agent to PUT desired Blob into.
  */
 export const add = capability({
   can: 'blob/add',
@@ -64,7 +63,7 @@ export const add = capability({
   with: SpaceDID,
   nb: Schema.struct({
     /**
-     * Blob to allocate on the space.
+     * Blob to be added on the space.
      */
     blob: content,
   }),
