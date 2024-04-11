@@ -439,7 +439,6 @@ export const test = {
       const address = receipt?.out.ok?.address
       assert.ok(address)
 
-      
       // Store allocate task to be fetchable from allocate
       await context.tasksStorage.put(allocatefx)
 
@@ -502,7 +501,6 @@ export const test = {
         blobAcceptInvocation.capabilities[0].can,
         W3sBlobCapabilities.accept.can
       )
-      assert.ok(blobAcceptInvocation.capabilities[0].nb.exp)
       assert.equal(
         blobAcceptInvocation.capabilities[0].nb._put['ucan/await'][0],
         '.out.ok'

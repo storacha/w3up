@@ -83,74 +83,80 @@ export const test = {
       assert.equal(receipt.out.ok?.size, size)
       assert.ok(receipt.out.ok?.address)
     },
-  'blob/add schedules allocation only on first blob/add':
-    async (assert, context) => {
-      const { proof, spaceDid } = await registerSpace(alice, context)
+  'blob/add schedules allocation only on first blob/add': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
 
-      // prepare data
-      const data = new Uint8Array([11, 22, 34, 44, 55])
-      const multihash = await sha256.digest(data)
-      const digest = multihash.bytes
-      const size = data.byteLength
+    // prepare data
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const multihash = await sha256.digest(data)
+    const digest = multihash.bytes
+    const size = data.byteLength
 
-      // create service connection
-      const connection = connect({
-        id: context.id,
-        channel: createServer(context),
-      })
+    // create service connection
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
 
-      // create `blob/add` invocation
-      const invocation = BlobCapabilities.add.invoke({
-        issuer: alice,
-        audience: context.id,
-        with: spaceDid,
-        nb: {
-          blob: {
-            digest,
-            size,
-          },
+    // create `blob/add` invocation
+    const invocation = BlobCapabilities.add.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: {
+        blob: {
+          digest,
+          size,
         },
-        proofs: [proof],
-      })
-      // Invoke `blob/add` for the first time
-      const firstBlobAdd = await invocation.execute(connection)
-      if (!firstBlobAdd.out.ok) {
-        throw new Error('invocation failed', { cause: firstBlobAdd })
-      }
+      },
+      proofs: [proof],
+    })
+    // Invoke `blob/add` for the first time
+    const firstBlobAdd = await invocation.execute(connection)
+    if (!firstBlobAdd.out.ok) {
+      throw new Error('invocation failed', { cause: firstBlobAdd })
+    }
 
-      // parse first receipt next
-      const firstNext = parseBlobAddReceiptNext(firstBlobAdd)
-      assert.ok(firstNext.allocatefx)
-      assert.ok(firstNext.putfx)
-      assert.ok(firstNext.acceptfx)
-      assert.equal(firstNext.concludefxs.length, 1)
-      assert.ok(firstNext.allocateReceipt)
-      assert.ok(!firstNext.putReceipt)
-      assert.ok(!firstNext.acceptReceipt)
+    // parse first receipt next
+    const firstNext = parseBlobAddReceiptNext(firstBlobAdd)
+    assert.ok(firstNext.allocatefx)
+    assert.ok(firstNext.putfx)
+    assert.ok(firstNext.acceptfx)
+    assert.equal(firstNext.concludefxs.length, 1)
+    assert.ok(firstNext.allocateReceipt)
+    assert.ok(!firstNext.putReceipt)
+    assert.ok(!firstNext.acceptReceipt)
 
-      // Store allocate receipt to not re-schedule
+    // Store allocate receipt to not re-schedule
+    const receiptPutRes = await context.receiptsStorage.put(
       // @ts-expect-error types unknown for next
-      const receiptPutRes = await context.receiptsStorage.put(firstNext.allocateReceipt)
-      assert.ok(receiptPutRes.ok)
+      firstNext.allocateReceipt
+    )
+    assert.ok(receiptPutRes.ok)
 
-      // Invoke `blob/add` for the second time (without storing the blob)
-      const secondBlobAdd = await invocation.execute(connection)
-      if (!secondBlobAdd.out.ok) {
-        throw new Error('invocation failed', { cause: secondBlobAdd })
-      }
+    // Invoke `blob/add` for the second time (without storing the blob)
+    const secondBlobAdd = await invocation.execute(connection)
+    if (!secondBlobAdd.out.ok) {
+      throw new Error('invocation failed', { cause: secondBlobAdd })
+    }
 
-      // parse second receipt next
-      const secondNext = parseBlobAddReceiptNext(secondBlobAdd)
-      assert.ok(secondNext.allocatefx)
-      assert.ok(secondNext.putfx)
-      assert.ok(secondNext.acceptfx)
-      assert.equal(secondNext.concludefxs.length, 1)
-      assert.ok(secondNext.allocateReceipt)
-      assert.ok(!secondNext.putReceipt)
-      assert.ok(!secondNext.acceptReceipt)
-      // allocate receipt is from same invocation CID
-      assert.ok(firstNext.concludefxs[0].cid.equals(secondNext.concludefxs[0].cid))
-    },
+    // parse second receipt next
+    const secondNext = parseBlobAddReceiptNext(secondBlobAdd)
+    assert.ok(secondNext.allocatefx)
+    assert.ok(secondNext.putfx)
+    assert.ok(secondNext.acceptfx)
+    assert.equal(secondNext.concludefxs.length, 1)
+    assert.ok(secondNext.allocateReceipt)
+    assert.ok(!secondNext.putReceipt)
+    assert.ok(!secondNext.acceptReceipt)
+    // allocate receipt is from same invocation CID
+    assert.ok(
+      firstNext.concludefxs[0].cid.equals(secondNext.concludefxs[0].cid)
+    )
+  },
   'blob/add schedules allocation and returns effects for allocate, accept and put together with their receipts (when stored)':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
@@ -197,8 +203,10 @@ export const test = {
       assert.ok(!firstNext.acceptReceipt)
 
       // Store allocate receipt to not re-schedule
-      // @ts-expect-error types unknown for next
-      const receiptPutRes = await context.receiptsStorage.put(firstNext.allocateReceipt)
+      const receiptPutRes = await context.receiptsStorage.put(
+        // @ts-expect-error types unknown for next
+        firstNext.allocateReceipt
+      )
       assert.ok(receiptPutRes.ok)
 
       /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
@@ -233,7 +241,7 @@ export const test = {
       // Store blob/allocate given conclude needs it to schedule blob/accept
       // Store allocate task to be fetchable from allocate
       await context.tasksStorage.put(secondNext.allocatefx)
- 
+
       // Invoke `conclude` with `http/put` receipt
       const keys = secondNext.putfx.facts[0]['keys']
       // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
@@ -251,7 +259,10 @@ export const test = {
             'ucan/await': ['.out.ok.address.url', secondNext.allocatefx.cid],
           },
           headers: {
-            'ucan/await': ['.out.ok.address.headers', secondNext.allocatefx.cid],
+            'ucan/await': [
+              '.out.ok.address.headers',
+              secondNext.allocatefx.cid,
+            ],
           },
         },
         facts: secondNext.putfx.facts,

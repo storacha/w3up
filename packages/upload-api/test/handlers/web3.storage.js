@@ -14,107 +14,105 @@ import { alice, bob, createSpace, registerSpace } from '../util.js'
  * @type {API.Tests}
  */
 export const test = {
-  'web3.storage/blob/allocate allocates to space and returns presigned url': async (
-    assert,
-    context
-  ) => {
-    const { proof, spaceDid } = await registerSpace(alice, context)
+  'web3.storage/blob/allocate allocates to space and returns presigned url':
+    async (assert, context) => {
+      const { proof, spaceDid } = await registerSpace(alice, context)
 
-    // prepare data
-    const data = new Uint8Array([11, 22, 34, 44, 55])
-    const multihash = await sha256.digest(data)
-    const digest = multihash.bytes
-    const size = data.byteLength
+      // prepare data
+      const data = new Uint8Array([11, 22, 34, 44, 55])
+      const multihash = await sha256.digest(data)
+      const digest = multihash.bytes
+      const size = data.byteLength
 
-    // create service connection
-    const connection = connect({
-      id: context.id,
-      channel: createServer(context),
-    })
+      // create service connection
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
 
-    // create `blob/add` invocation
-    const blobAddInvocation = BlobCapabilities.add.invoke({
-      issuer: alice,
-      audience: context.id,
-      with: spaceDid,
-      nb: {
-        blob: {
-          digest,
-          size,
+      // create `blob/add` invocation
+      const blobAddInvocation = BlobCapabilities.add.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: {
+          blob: {
+            digest,
+            size,
+          },
         },
-      },
-      proofs: [proof],
-    })
+        proofs: [proof],
+      })
 
-    // invoke `web3.storage/blob/allocate`
-    const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-      issuer: alice,
-      audience: context.id,
-      with: spaceDid,
-      nb: {
-        blob: {
-          digest,
-          size,
+      // invoke `web3.storage/blob/allocate`
+      const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: {
+          blob: {
+            digest,
+            size,
+          },
+          cause: (await blobAddInvocation.delegate()).cid,
+          space: spaceDid,
         },
-        cause: (await blobAddInvocation.delegate()).cid,
-        space: spaceDid,
-      },
-      proofs: [proof],
-    })
-    const blobAllocate = await serviceBlobAllocate.execute(connection)
-    if (!blobAllocate.out.ok) {
-      throw new Error('invocation failed', { cause: blobAllocate })
-    }
+        proofs: [proof],
+      })
+      const blobAllocate = await serviceBlobAllocate.execute(connection)
+      if (!blobAllocate.out.ok) {
+        throw new Error('invocation failed', { cause: blobAllocate })
+      }
 
-    // Validate response
-    assert.equal(blobAllocate.out.ok.size, size)
-    assert.ok(blobAllocate.out.ok.address)
-    assert.ok(blobAllocate.out.ok.address?.headers)
-    assert.ok(blobAllocate.out.ok.address?.url)
-    assert.equal(
-      blobAllocate.out.ok.address?.headers?.['content-length'],
-      String(size)
-    )
-    assert.deepEqual(
-      blobAllocate.out.ok.address?.headers?.['x-amz-checksum-sha256'],
-      base64pad.baseEncode(multihash.digest)
-    )
+      // Validate response
+      assert.equal(blobAllocate.out.ok.size, size)
+      assert.ok(blobAllocate.out.ok.address)
+      assert.ok(blobAllocate.out.ok.address?.headers)
+      assert.ok(blobAllocate.out.ok.address?.url)
+      assert.equal(
+        blobAllocate.out.ok.address?.headers?.['content-length'],
+        String(size)
+      )
+      assert.deepEqual(
+        blobAllocate.out.ok.address?.headers?.['x-amz-checksum-sha256'],
+        base64pad.baseEncode(multihash.digest)
+      )
 
-    const url =
-      blobAllocate.out.ok.address?.url &&
-      new URL(blobAllocate.out.ok.address?.url)
-    if (!url) {
-      throw new Error('Expected presigned url in response')
-    }
-    const signedHeaders = url.searchParams.get('X-Amz-SignedHeaders')
+      const url =
+        blobAllocate.out.ok.address?.url &&
+        new URL(blobAllocate.out.ok.address?.url)
+      if (!url) {
+        throw new Error('Expected presigned url in response')
+      }
+      const signedHeaders = url.searchParams.get('X-Amz-SignedHeaders')
 
-    assert.equal(
-      signedHeaders,
-      'content-length;host;x-amz-checksum-sha256',
-      'content-length and checksum must be part of the signature'
-    )
+      assert.equal(
+        signedHeaders,
+        'content-length;host;x-amz-checksum-sha256',
+        'content-length and checksum must be part of the signature'
+      )
 
-    // Validate allocation state
-    const spaceAllocations = await context.allocationsStorage.list(spaceDid)
-    assert.ok(spaceAllocations.ok)
-    assert.equal(spaceAllocations.ok?.size, 1)
-    const allocatedEntry = spaceAllocations.ok?.results[0]
-    if (!allocatedEntry) {
-      throw new Error('Expected presigned allocatedEntry in response')
-    }
-    assert.ok(equals(allocatedEntry.blob.digest, digest))
-    assert.equal(allocatedEntry.blob.size, size)
+      // Validate allocation state
+      const spaceAllocations = await context.allocationsStorage.list(spaceDid)
+      assert.ok(spaceAllocations.ok)
+      assert.equal(spaceAllocations.ok?.size, 1)
+      const allocatedEntry = spaceAllocations.ok?.results[0]
+      if (!allocatedEntry) {
+        throw new Error('Expected presigned allocatedEntry in response')
+      }
+      assert.ok(equals(allocatedEntry.blob.digest, digest))
+      assert.equal(allocatedEntry.blob.size, size)
 
-    // Validate presigned url usage
-    const goodPut = await fetch(url, {
-      method: 'PUT',
-      mode: 'cors',
-      body: data,
-      headers: blobAllocate.out.ok.address?.headers,
-    })
+      // Validate presigned url usage
+      const goodPut = await fetch(url, {
+        method: 'PUT',
+        mode: 'cors',
+        body: data,
+        headers: blobAllocate.out.ok.address?.headers,
+      })
 
-    assert.equal(goodPut.status, 200, await goodPut.text())
-  },
+      assert.equal(goodPut.status, 200, await goodPut.text())
+    },
   'web3.storage/blob/allocate does not allocate more space to already allocated content':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
@@ -450,70 +448,70 @@ export const test = {
         'should fail to upload any other data.'
       )
     },
-  'web3.storage/blob/allocate disallowed if invocation fails access verification': async (
-    assert,
-    context
-  ) => {
-    const { proof, space, spaceDid } = await createSpace(alice)
+  'web3.storage/blob/allocate disallowed if invocation fails access verification':
+    async (assert, context) => {
+      const { proof, space, spaceDid } = await createSpace(alice)
 
-    // prepare data
-    const data = new Uint8Array([11, 22, 34, 44, 55])
-    const multihash = await sha256.digest(data)
-    const digest = multihash.bytes
-    const size = data.byteLength
+      // prepare data
+      const data = new Uint8Array([11, 22, 34, 44, 55])
+      const multihash = await sha256.digest(data)
+      const digest = multihash.bytes
+      const size = data.byteLength
 
-    // create service connection
-    const connection = connect({
-      id: context.id,
-      channel: createServer(context),
-    })
+      // create service connection
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
 
-    // create `blob/add` invocation
-    const blobAddInvocation = BlobCapabilities.add.invoke({
-      issuer: alice,
-      audience: context.id,
-      with: spaceDid,
-      nb: {
-        blob: {
-          digest,
-          size,
+      // create `blob/add` invocation
+      const blobAddInvocation = BlobCapabilities.add.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: {
+          blob: {
+            digest,
+            size,
+          },
         },
-      },
-      proofs: [proof],
-    })
+        proofs: [proof],
+      })
 
-    // invoke `web3.storage/blob/allocate`
-    const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-      issuer: alice,
-      audience: context.id,
-      with: spaceDid,
-      nb: {
-        blob: {
-          digest,
-          size,
+      // invoke `web3.storage/blob/allocate`
+      const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: {
+          blob: {
+            digest,
+            size,
+          },
+          cause: (await blobAddInvocation.delegate()).cid,
+          space: spaceDid,
         },
-        cause: (await blobAddInvocation.delegate()).cid,
-        space: spaceDid,
-      },
-      proofs: [proof],
-    })
-    const blobAllocate = await serviceBlobAllocate.execute(connection)
-    assert.ok(blobAllocate.out.error)
-    assert.equal(blobAllocate.out.error?.message.includes('no storage'), true)
+        proofs: [proof],
+      })
+      const blobAllocate = await serviceBlobAllocate.execute(connection)
+      assert.ok(blobAllocate.out.error)
+      assert.equal(blobAllocate.out.error?.message.includes('no storage'), true)
 
-    // Register space and retry
-    const account = Absentee.from({ id: 'did:mailto:test.web3.storage:alice' })
-    const providerAdd = await provisionProvider({
-      service: /** @type {API.Signer<API.DID<'web'>>} */ (context.signer),
-      agent: alice,
-      space,
-      account,
-      connection,
-    })
-    assert.ok(providerAdd.out.ok)
+      // Register space and retry
+      const account = Absentee.from({
+        id: 'did:mailto:test.web3.storage:alice',
+      })
+      const providerAdd = await provisionProvider({
+        service: /** @type {API.Signer<API.DID<'web'>>} */ (context.signer),
+        agent: alice,
+        space,
+        account,
+        connection,
+      })
+      assert.ok(providerAdd.out.ok)
 
-    const retryBlobAllocate = await serviceBlobAllocate.execute(connection)
-    assert.equal(retryBlobAllocate.out.error, undefined)
-  },
+      const retryBlobAllocate = await serviceBlobAllocate.execute(connection)
+      assert.equal(retryBlobAllocate.out.error, undefined)
+    },
   // TODO: Blob accept
 }

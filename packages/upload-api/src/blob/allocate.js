@@ -79,7 +79,7 @@ export function blobAllocateProvider(context) {
 
       // Get presigned URL for the write target
       const expiresIn = 60 * 60 * 24 // 1 day
-      const expiresAt = (new Date(Date.now() + expiresIn)).toISOString()
+      const expiresAt = new Date(Date.now() + expiresIn).toISOString()
       const createUploadUrl = await context.blobsStorage.createUploadUrl(
         blob.digest,
         blob.size,
@@ -92,7 +92,7 @@ export function blobAllocateProvider(context) {
       const address = {
         url: createUploadUrl.ok.url.toString(),
         headers: createUploadUrl.ok.headers,
-        expiresAt
+        expiresAt,
       }
 
       return {

@@ -5,7 +5,6 @@ import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import * as HTTP from '@web3-storage/capabilities/http'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import { equals } from 'uint8arrays/equals'
-import { DecodeBlockOperationFailed } from '../errors.js'
 
 /**
  * @param {API.ConcludeServiceContext} context
@@ -48,7 +47,9 @@ export const ucanConcludeProvider = ({
           /** @type {API.UnknownLink} */
           // @ts-expect-error ts does not know how to get this
           const blobAllocateTaskCid = cap.nb.url['ucan/await'][1]
-          const blobAllocateTaskGet = await tasksStorage.get(blobAllocateTaskCid)
+          const blobAllocateTaskGet = await tasksStorage.get(
+            blobAllocateTaskCid
+          )
           if (blobAllocateTaskGet.error) {
             return blobAllocateTaskGet
           }
@@ -58,9 +59,10 @@ export const ucanConcludeProvider = ({
           const allocateCapability = blobAllocateTaskGet.ok.capabilities.find(
             // @ts-expect-error ts does not know how to get this
             (/** @type {API.BlobAllocate} */ allocateCap) =>
-              equals(allocateCap.nb.blob.digest, cap.nb.body.digest) && allocateCap.can === W3sBlob.allocate.can
+              equals(allocateCap.nb.blob.digest, cap.nb.body.digest) &&
+              allocateCap.can === W3sBlob.allocate.can
           )
-          
+
           const blobAccept = await W3sBlob.accept
             .invoke({
               issuer: id,
@@ -68,7 +70,6 @@ export const ucanConcludeProvider = ({
               with: id.toDIDKey(),
               nb: {
                 blob: cap.nb.body,
-                exp: Number.MAX_SAFE_INTEGER,
                 space: allocateCapability.nb.space,
                 _put: {
                   'ucan/await': ['.out.ok', ranInvocation.link()],
@@ -93,28 +94,6 @@ export const ucanConcludeProvider = ({
       ok: { time: Date.now() },
     }
   })
-
-/**
- * @param {import('multiformats').UnknownLink} cid
- * @param {IterableIterator<import('@ucanto/interface').Block<unknown, number, number, 1>>} blocks
- * @returns {Promise<import('@ucanto/interface').Result<Uint8Array, DecodeBlockOperationFailed>>}
- */
-export const findBlock = async (cid, blocks) => {
-  let bytes
-  for (const b of blocks) {
-    if (b.cid.equals(cid)) {
-      bytes = b.bytes
-    }
-  }
-  if (!bytes) {
-    return {
-      error: new DecodeBlockOperationFailed(`missing block: ${cid}`),
-    }
-  }
-  return {
-    ok: bytes,
-  }
-}
 
 /**
  * @param {import('@ucanto/interface').Invocation} concludeFx

@@ -80,9 +80,9 @@ export const accept = capability({
      */
     blob: content,
     /**
-     * Expiration of location site.
+     * Content location commitment time to live, which will be encoded as expiry of the issued location claim.
      */
-    exp: Schema.integer(),
+    ttl: Schema.integer().optional(),
     /**
      * DID of the user space where allocation took place
      */
@@ -96,7 +96,7 @@ export const accept = capability({
     return (
       and(equalWith(claim, from)) ||
       and(equalBlob(claim, from)) ||
-      and(equal(claim.nb.exp, from.nb.exp, 'exp')) ||
+      and(equal(claim.nb.ttl, from.nb.ttl, 'ttl')) ||
       and(equal(claim.nb.space, from.nb.space, 'space')) ||
       ok({})
     )

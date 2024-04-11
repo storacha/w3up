@@ -254,7 +254,7 @@ async function scheduleAllocate({ context, blob, allocate, allocatefx }) {
     // Verify if allocation is expired before "accepting" this receipt.
     // Note that if there is no address, means it was already allocated successfully before
     const expiresAt = blobAllocateReceipt?.out.ok?.address?.expiresAt
-    if (expiresAt && (new Date()).getTime() > (new Date(expiresAt)).getTime()) {
+    if (expiresAt && new Date().getTime() > new Date(expiresAt).getTime()) {
       // if expired, we must see if blob was written to avoid allocating one more time
       const hasBlobStore = await context.blobsStorage.has(blob.digest)
       if (hasBlobStore.error) {
@@ -357,7 +357,6 @@ async function createNextTasks({ context, blob, space, cause }) {
     with: context.id.did(),
     nb: {
       blob,
-      exp: Number.MAX_SAFE_INTEGER,
       space,
       _put: { 'ucan/await': ['.out.ok', putfx.link()] },
     },
