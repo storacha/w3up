@@ -26,7 +26,7 @@ export class UploadClient extends Base {
    * @param {import('../types.js').RequestOptions} [options]
    */
   async get(root, options = {}) {
-    const conf = await this._invocationConfig([UploadCapabilities.add.can])
+    const conf = await this._invocationConfig([UploadCapabilities.get.can])
     options.connection = this._serviceConf.upload
     return Upload.get(conf, root, options)
   }
