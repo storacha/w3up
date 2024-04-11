@@ -16,17 +16,17 @@ export function parseBlobAddReceiptNext(receipt) {
    **/
   // @ts-expect-error read only effect
   const forkInvocations = receipt.fx.fork
-  const allocatefx = forkInvocations.find(
+  const allocateTask = forkInvocations.find(
     (fork) => fork.capabilities[0].can === W3sBlobCapabilities.allocate.can
   )
   const concludefxs = forkInvocations.filter(
     (fork) => fork.capabilities[0].can === UCAN.conclude.can
   )
-  const putfx = forkInvocations.find(
+  const putTask = forkInvocations.find(
     (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
   )
-  const acceptfx = receipt.fx.join
-  if (!allocatefx || !concludefxs.length || !putfx || !acceptfx) {
+  const acceptTask = receipt.fx.join
+  if (!allocateTask || !concludefxs.length || !putTask || !acceptTask) {
     throw new Error('mandatory effects not received')
   }
 
@@ -35,17 +35,17 @@ export function parseBlobAddReceiptNext(receipt) {
   /** @type {API.Receipt<API.BlobAllocateSuccess, API.BlobAllocateFailure> | undefined} */
   // @ts-expect-error types unknown for next
   const allocateReceipt = nextReceipts.find((receipt) =>
-    receipt.ran.link().equals(allocatefx.cid)
+    receipt.ran.link().equals(allocateTask.cid)
   )
   /** @type {API.Receipt<{}, API.Failure> | undefined} */
   // @ts-expect-error types unknown for next
   const putReceipt = nextReceipts.find((receipt) =>
-    receipt.ran.link().equals(putfx.cid)
+    receipt.ran.link().equals(putTask.cid)
   )
   /** @type {API.Receipt<API.BlobAcceptSuccess, API.BlobAcceptFailure> | undefined} */
   // @ts-expect-error types unknown for next
   const acceptReceipt = nextReceipts.find((receipt) =>
-    receipt.ran.link().equals(acceptfx.link())
+    receipt.ran.link().equals(acceptTask.link())
   )
 
   if (!allocateReceipt) {
@@ -53,12 +53,17 @@ export function parseBlobAddReceiptNext(receipt) {
   }
 
   return {
-    allocatefx,
-    allocateReceipt,
-    concludefxs,
-    putfx,
-    putReceipt,
-    acceptfx,
-    acceptReceipt,
+    allocate: {
+      task: allocateTask,
+      receipt: allocateReceipt,
+    },
+    put: {
+      task: putTask,
+      receipt: putReceipt
+    },
+    accept: {
+      task: acceptTask,
+      receipt: acceptReceipt
+    }
   }
 }

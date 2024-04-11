@@ -60,24 +60,23 @@ export const test = {
 
       // validate receipt next
       const next = parseBlobAddReceiptNext(blobAdd)
-      assert.ok(next.allocatefx)
-      assert.ok(next.putfx)
-      assert.ok(next.acceptfx)
-      assert.equal(next.concludefxs.length, 1)
-      assert.ok(next.allocateReceipt)
-      assert.ok(!next.putReceipt)
-      assert.ok(!next.acceptReceipt)
+      assert.ok(next.allocate.task)
+      assert.ok(next.put.task)
+      assert.ok(next.accept.task)
+      assert.ok(next.allocate.receipt)
+      assert.ok(!next.put.receipt)
+      assert.ok(!next.accept.receipt)
 
       // validate facts exist for `http/put`
-      assert.ok(next.putfx.facts.length)
-      assert.ok(next.putfx.facts[0]['keys'])
+      assert.ok(next.put.task.facts.length)
+      assert.ok(next.put.task.facts[0]['keys'])
 
       // Validate `http/put` invocation was stored
-      const httpPutGetTask = await context.tasksStorage.get(next.putfx.cid)
+      const httpPutGetTask = await context.tasksStorage.get(next.put.task.cid)
       assert.ok(httpPutGetTask.ok)
 
       // validate that scheduled allocate task executed and has its receipt content
-      const receipt = next.allocateReceipt
+      const receipt = next.allocate.receipt
       assert.ok(receipt.out)
       assert.ok(receipt.out.ok)
       assert.equal(receipt.out.ok?.size, size)
@@ -122,18 +121,17 @@ export const test = {
 
     // parse first receipt next
     const firstNext = parseBlobAddReceiptNext(firstBlobAdd)
-    assert.ok(firstNext.allocatefx)
-    assert.ok(firstNext.putfx)
-    assert.ok(firstNext.acceptfx)
-    assert.equal(firstNext.concludefxs.length, 1)
-    assert.ok(firstNext.allocateReceipt)
-    assert.ok(!firstNext.putReceipt)
-    assert.ok(!firstNext.acceptReceipt)
+    assert.ok(firstNext.allocate.task)
+    assert.ok(firstNext.put.task)
+    assert.ok(firstNext.accept.task)
+    assert.ok(firstNext.allocate.receipt)
+    assert.ok(!firstNext.put.receipt)
+    assert.ok(!firstNext.accept.receipt)
 
     // Store allocate receipt to not re-schedule
     const receiptPutRes = await context.receiptsStorage.put(
       // @ts-expect-error types unknown for next
-      firstNext.allocateReceipt
+      firstNext.allocate.receipt
     )
     assert.ok(receiptPutRes.ok)
 
@@ -145,16 +143,15 @@ export const test = {
 
     // parse second receipt next
     const secondNext = parseBlobAddReceiptNext(secondBlobAdd)
-    assert.ok(secondNext.allocatefx)
-    assert.ok(secondNext.putfx)
-    assert.ok(secondNext.acceptfx)
-    assert.equal(secondNext.concludefxs.length, 1)
-    assert.ok(secondNext.allocateReceipt)
-    assert.ok(!secondNext.putReceipt)
-    assert.ok(!secondNext.acceptReceipt)
+    assert.ok(secondNext.allocate.task)
+    assert.ok(secondNext.put.task)
+    assert.ok(secondNext.accept.task)
+    assert.ok(secondNext.allocate.receipt)
+    assert.ok(!secondNext.put.receipt)
+    assert.ok(!secondNext.accept.receipt)
     // allocate receipt is from same invocation CID
     assert.ok(
-      firstNext.concludefxs[0].cid.equals(secondNext.concludefxs[0].cid)
+      firstNext.allocate.task.link().equals(secondNext.allocate.task.link())
     )
   },
   'blob/add schedules allocation and returns effects for allocate, accept and put together with their receipts (when stored)':
@@ -194,24 +191,23 @@ export const test = {
 
       // parse first receipt next
       const firstNext = parseBlobAddReceiptNext(firstBlobAdd)
-      assert.ok(firstNext.allocatefx)
-      assert.ok(firstNext.putfx)
-      assert.ok(firstNext.acceptfx)
-      assert.equal(firstNext.concludefxs.length, 1)
-      assert.ok(firstNext.allocateReceipt)
-      assert.ok(!firstNext.putReceipt)
-      assert.ok(!firstNext.acceptReceipt)
+      assert.ok(firstNext.allocate.task)
+      assert.ok(firstNext.put.task)
+      assert.ok(firstNext.accept.task)
+      assert.ok(firstNext.allocate.receipt)
+      assert.ok(!firstNext.put.receipt)
+      assert.ok(!firstNext.accept.receipt)
 
       // Store allocate receipt to not re-schedule
       const receiptPutRes = await context.receiptsStorage.put(
         // @ts-expect-error types unknown for next
-        firstNext.allocateReceipt
+        firstNext.allocate.receipt
       )
       assert.ok(receiptPutRes.ok)
 
       /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
       // @ts-expect-error receipt type is unknown
-      const address = firstNext.allocateReceipt.out.ok.address
+      const address = firstNext.allocate.receipt.out.ok.address
 
       // Store the blob to the address
       const goodPut = await fetch(address.url, {
@@ -230,20 +226,19 @@ export const test = {
 
       // parse second receipt next
       const secondNext = parseBlobAddReceiptNext(secondBlobAdd)
-      assert.ok(secondNext.allocatefx)
-      assert.ok(secondNext.putfx)
-      assert.ok(secondNext.acceptfx)
-      assert.equal(secondNext.concludefxs.length, 1)
-      assert.ok(secondNext.allocateReceipt)
-      assert.ok(!secondNext.putReceipt)
-      assert.ok(!secondNext.acceptReceipt)
+      assert.ok(secondNext.allocate.task)
+      assert.ok(secondNext.put.task)
+      assert.ok(secondNext.accept.task)
+      assert.ok(secondNext.allocate.receipt)
+      assert.ok(!secondNext.put.receipt)
+      assert.ok(!secondNext.accept.receipt)
 
       // Store blob/allocate given conclude needs it to schedule blob/accept
       // Store allocate task to be fetchable from allocate
-      await context.tasksStorage.put(secondNext.allocatefx)
+      await context.tasksStorage.put(secondNext.allocate.task)
 
       // Invoke `conclude` with `http/put` receipt
-      const keys = secondNext.putfx.facts[0]['keys']
+      const keys = secondNext.put.task.facts[0]['keys']
       // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
       const blobProvider = ed25519.from(keys)
       const httpPut = HTTPCapabilities.put.invoke({
@@ -256,16 +251,16 @@ export const test = {
             size,
           },
           url: {
-            'ucan/await': ['.out.ok.address.url', secondNext.allocatefx.cid],
+            'ucan/await': ['.out.ok.address.url', secondNext.allocate.task.cid],
           },
           headers: {
             'ucan/await': [
               '.out.ok.address.headers',
-              secondNext.allocatefx.cid,
+              secondNext.allocate.task.cid,
             ],
           },
         },
-        facts: secondNext.putfx.facts,
+        facts: secondNext.put.task.facts,
         expiration: Infinity,
       })
 
@@ -284,7 +279,6 @@ export const test = {
       )
       const ucanConclude = await httpPutConcludeInvocation.execute(connection)
       if (!ucanConclude.out.ok) {
-        console.log('ucan conclude', ucanConclude.out.error)
         throw new Error('invocation failed', { cause: ucanConclude.out })
       }
 
@@ -296,17 +290,16 @@ export const test = {
 
       // parse third receipt next
       const thirdNext = parseBlobAddReceiptNext(thirdBlobAdd)
-      assert.ok(thirdNext.allocatefx)
-      assert.ok(thirdNext.putfx)
-      assert.ok(thirdNext.acceptfx)
-      assert.equal(thirdNext.concludefxs.length, 3)
-      assert.ok(thirdNext.allocateReceipt)
-      assert.ok(thirdNext.putReceipt)
-      assert.ok(thirdNext.acceptReceipt)
+      assert.ok(thirdNext.allocate.task)
+      assert.ok(thirdNext.put.task)
+      assert.ok(thirdNext.accept.task)
+      assert.ok(thirdNext.allocate.receipt)
+      assert.ok(thirdNext.put.receipt)
+      assert.ok(thirdNext.accept.receipt)
 
-      assert.ok(thirdNext.allocateReceipt.out.ok?.address)
-      assert.deepEqual(thirdNext.putReceipt?.out.ok, {})
-      assert.ok(thirdNext.acceptReceipt?.out.ok?.site)
+      assert.ok(thirdNext.allocate.receipt.out.ok?.address)
+      assert.deepEqual(thirdNext.put.receipt?.out.ok, {})
+      assert.ok(thirdNext.accept.receipt?.out.ok?.site)
     },
   'blob/add fails when a blob with size bigger than maximum size is added':
     async (assert, context) => {
