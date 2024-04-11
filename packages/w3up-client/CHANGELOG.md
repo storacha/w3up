@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.1](https://github.com/web3-storage/w3up/compare/w3up-client-v12.5.0...w3up-client-v12.5.1) (2024-04-11)
+
+
+### Fixes
+
+* look for the correct capability in `client.capability.upload.get` ([#1357](https://github.com/web3-storage/w3up/issues/1357)) ([77199fe](https://github.com/web3-storage/w3up/commit/77199fe2261355f9c24fa06ab6aa5aad419e649a))
+
 ## [12.5.0](https://github.com/web3-storage/w3up/compare/w3up-client-v12.4.1...w3up-client-v12.5.0) (2024-03-21)
 
 
