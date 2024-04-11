@@ -464,6 +464,7 @@ export interface UcantoServerContext extends ServiceContext, RevocationChecker {
 export interface UcantoServerTestContext
   extends UcantoServerContext,
     StoreTestContext,
+    BlobServiceContext,
     UploadTestContext {
   connection: ConnectionView<Service>
   mail: DebugEmail

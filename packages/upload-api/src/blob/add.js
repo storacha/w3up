@@ -143,7 +143,6 @@ async function allocate({ context, blob, space, cause }) {
       error: receiptGet.error,
     }
   } else if (receiptGet.ok) {
-    // @ts-expect-error ts not able to cast receipt
     blobAllocateReceipt = receiptGet.ok
 
     // Verify if allocation is expired before "accepting" this receipt.
@@ -258,19 +257,10 @@ async function put({ context, blob, allocateTask }) {
   // 3. store `http/put` invocation
   const invocationPutRes = await context.tasksStorage.put(task)
   if (invocationPutRes.error) {
-    // TODO: If already available, do not error?
     return {
       error: invocationPutRes.error,
     }
   }
-
-  // TODO: store implementation
-  // const archiveDelegationRes = await task.archive()
-  // if (archiveDelegationRes.error) {
-  //   return {
-  //     error: archiveDelegationRes.error
-  //   }
-  // }
 
   return {
     ok: {

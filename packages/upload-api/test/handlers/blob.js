@@ -130,7 +130,6 @@ export const test = {
 
     // Store allocate receipt to not re-schedule
     const receiptPutRes = await context.receiptsStorage.put(
-      // @ts-expect-error types unknown for next
       firstNext.allocate.receipt
     )
     assert.ok(receiptPutRes.ok)
@@ -200,7 +199,6 @@ export const test = {
 
       // Store allocate receipt to not re-schedule
       const receiptPutRes = await context.receiptsStorage.put(
-        // @ts-expect-error types unknown for next
         firstNext.allocate.receipt
       )
       assert.ok(receiptPutRes.ok)

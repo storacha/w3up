@@ -13,6 +13,17 @@ export class StoreOperationFailed extends Server.Failure {
   }
 }
 
+export const RecordKeyConflictName = /** @type {const} */ ('RecordKeyConflict')
+export class RecordKeyConflict extends Server.Failure {
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return RecordKeyConflictName
+  }
+}
+
 export const RecordNotFoundErrorName = /** @type {const} */ ('RecordNotFound')
 export class RecordNotFound extends Server.Failure {
   get reason() {
@@ -21,18 +32,5 @@ export class RecordNotFound extends Server.Failure {
 
   get name() {
     return RecordNotFoundErrorName
-  }
-}
-
-export const DecodeBlockOperationErrorName = /** @type {const} */ (
-  'DecodeBlockOperationFailed'
-)
-export class DecodeBlockOperationFailed extends Server.Failure {
-  get reason() {
-    return this.message
-  }
-
-  get name() {
-    return DecodeBlockOperationErrorName
   }
 }

@@ -25,6 +25,14 @@ export class TasksStorage {
   async put(record) {
     this.items.set(record.cid.toString(), record)
 
+    // TODO: store implementation
+    // const archiveDelegationRes = await task.archive()
+    // if (archiveDelegationRes.error) {
+    //   return {
+    //     error: archiveDelegationRes.error
+    //   }
+    // }
+
     return Promise.resolve({
       ok: {},
     })
@@ -38,7 +46,7 @@ export class TasksStorage {
     const record = this.items.get(link.toString())
     if (!record) {
       return {
-        error: new RecordNotFound('not found'),
+        error: new RecordNotFound(),
       }
     }
     return {

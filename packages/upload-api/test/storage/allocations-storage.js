@@ -1,5 +1,6 @@
 import * as Types from '../../src/types.js'
 import { equals } from 'uint8arrays/equals'
+import { RecordKeyConflict, RecordNotFound } from '../../src/errors.js'
 
 /**
  * @implements {Types.AllocationsStorage}
@@ -21,7 +22,7 @@ export class AllocationsStorage {
       )
     ) {
       return {
-        error: { name: 'RecordKeyConflict', message: 'record key conflict' },
+        error: new RecordKeyConflict(),
       }
     }
     this.items.unshift({
@@ -43,7 +44,7 @@ export class AllocationsStorage {
       (i) => i.space === space && equals(i.blob.digest, blobMultihash)
     )
     if (!item) {
-      return { error: { name: 'RecordNotFound', message: 'record not found' } }
+      return { error: new RecordNotFound() }
     }
     return { ok: item }
   }
