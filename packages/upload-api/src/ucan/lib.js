@@ -1,7 +1,6 @@
 import { Failure } from '@ucanto/server'
 
-export const ReferencedInvocationNotFoundName =
-  'ReferencedInvocationNotFound'
+export const ReferencedInvocationNotFoundName = 'ReferencedInvocationNotFound'
 export class ReferencedInvocationNotFound extends Failure {
   /**
    * @param {import('@ucanto/interface').Link} [invocation]

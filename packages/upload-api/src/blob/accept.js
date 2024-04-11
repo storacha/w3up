@@ -24,6 +24,8 @@ export function blobAcceptProvider(context) {
       // If blob is not stored, we must fail
       const hasBlob = await context.blobsStorage.has(blob.digest)
       if (hasBlob.error) {
+        return hasBlob
+      } else if (!hasBlob.ok) {
         return {
           error: new AllocatedMemoryHadNotBeenWrittenTo(),
         }
@@ -34,20 +36,19 @@ export function blobAcceptProvider(context) {
       const content = createLink(rawCode, digest)
       const w3link = `https://w3s.link/ipfs/${content.toString()}?origin=r2://${R2_REGION}/${R2_BUCKET}`
 
-      const locationClaim = await Assert.location
-        .delegate({
-          issuer: context.id,
-          audience: DID.parse(space),
-          with: context.id.toDIDKey(),
-          nb: {
-            content,
-            location: [
-              // @ts-expect-error Type 'string' is not assignable to type '`${string}:${string}`'
-              w3link,
-            ],
-          },
-          expiration: Infinity,
-        })
+      const locationClaim = await Assert.location.delegate({
+        issuer: context.id,
+        audience: DID.parse(space),
+        with: context.id.toDIDKey(),
+        nb: {
+          content,
+          location: [
+            // @ts-expect-error Type 'string' is not assignable to type '`${string}:${string}`'
+            w3link,
+          ],
+        },
+        expiration: Infinity,
+      })
 
       // Create result object
       /** @type {API.OkBuilder<API.BlobAcceptSuccess, API.BlobAcceptFailure>} */

@@ -23,7 +23,10 @@ export function blobAddProvider(context) {
       // Verify blob is within accept size
       if (blob.size > context.maxUploadSize) {
         return {
-          error: new BlobSizeOutsideOfSupportedRange(blob.size, context.maxUploadSize),
+          error: new BlobSizeOutsideOfSupportedRange(
+            blob.size,
+            context.maxUploadSize
+          ),
         }
       }
 
@@ -42,7 +45,7 @@ export function blobAddProvider(context) {
       const putRes = await put({
         context,
         blob,
-        allocateTask: allocateRes.ok.task
+        allocateTask: allocateRes.ok.task,
       })
       if (putRes.error) {
         return putRes
@@ -54,7 +57,7 @@ export function blobAddProvider(context) {
         blob,
         space,
         putTask: putRes.ok.task,
-        putReceipt: putRes.ok.receipt
+        putReceipt: putRes.ok.receipt,
       })
       if (acceptRes.error) {
         return acceptRes
@@ -85,20 +88,22 @@ export function blobAddProvider(context) {
         )
       }
 
-      return result
-        // 1. System attempts to allocate memory in user space for the blob.
-        .fork(allocateRes.ok.task)
-        .fork(allocateRes.ok.receipt)
-        // 2. System requests user agent (or anyone really) to upload the content
-        // corresponding to the blob
-        // via HTTP PUT to given location.
-        .fork(putRes.ok.task)
-        .fork(putRes.ok.receipt)
-        // 3. System will attempt to accept uploaded content that matches blob
-        // multihash and size.
-        .join(acceptRes.ok.task)
-        .fork(acceptRes.ok.receipt)
-    }
+      return (
+        result
+          // 1. System attempts to allocate memory in user space for the blob.
+          .fork(allocateRes.ok.task)
+          .fork(allocateRes.ok.receipt)
+          // 2. System requests user agent (or anyone really) to upload the content
+          // corresponding to the blob
+          // via HTTP PUT to given location.
+          .fork(putRes.ok.task)
+          .fork(putRes.ok.receipt)
+          // 3. System will attempt to accept uploaded content that matches blob
+          // multihash and size.
+          .join(acceptRes.ok.task)
+          .fork(acceptRes.ok.receipt)
+      )
+    },
   })
 }
 
@@ -181,7 +186,7 @@ async function allocate({ context, blob, space, cause }) {
   return {
     ok: {
       task,
-      receipt: await concludeAllocate.delegate()
+      receipt: await concludeAllocate.delegate(),
     },
   }
 }
@@ -270,7 +275,7 @@ async function put({ context, blob, allocateTask }) {
   return {
     ok: {
       task,
-      receipt: undefined
+      receipt: undefined,
     },
   }
 }
@@ -306,8 +311,8 @@ async function accept({ context, blob, space, putTask, putReceipt }) {
     return {
       ok: {
         task,
-        receipt: undefined
-      }
+        receipt: undefined,
+      },
     }
   }
 

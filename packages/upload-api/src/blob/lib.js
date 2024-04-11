@@ -3,7 +3,6 @@ import { Failure } from '@ucanto/server'
 export const AllocatedMemoryHadNotBeenWrittenToName =
   'AllocatedMemoryHadNotBeenWrittenTo'
 export class AllocatedMemoryHadNotBeenWrittenTo extends Failure {
-
   get name() {
     return AllocatedMemoryHadNotBeenWrittenToName
   }

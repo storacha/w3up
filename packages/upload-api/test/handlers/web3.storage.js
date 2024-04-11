@@ -1,14 +1,20 @@
 import * as API from '../../src/types.js'
 import { equals } from 'uint8arrays'
+import { create as createLink } from 'multiformats/link'
 import { Absentee } from '@ucanto/principal'
+import { Digest } from 'multiformats/hashes/digest'
 import { sha256 } from 'multiformats/hashes/sha2'
+import { code as rawCode } from 'multiformats/codecs/raw'
+import { Assert } from '@web3-storage/content-claims/capability'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import { base64pad } from 'multiformats/bases/base64'
 
+import { AllocatedMemoryHadNotBeenWrittenToName } from '../../src/blob/lib.js'
 import { provisionProvider } from '../helpers/utils.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
+import { parseBlobAddReceiptNext } from '../helpers/blob.js'
 
 /**
  * @type {API.Tests}
@@ -69,6 +75,7 @@ export const test = {
       assert.ok(blobAllocate.out.ok.address)
       assert.ok(blobAllocate.out.ok.address?.headers)
       assert.ok(blobAllocate.out.ok.address?.url)
+      assert.ok(blobAllocate.out.ok.address?.expiresAt)
       assert.equal(
         blobAllocate.out.ok.address?.headers?.['content-length'],
         String(size)
@@ -513,5 +520,161 @@ export const test = {
       const retryBlobAllocate = await serviceBlobAllocate.execute(connection)
       assert.equal(retryBlobAllocate.out.error, undefined)
     },
-  // TODO: Blob accept
+  'web3.storage/blob/accept returns site delegation': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+
+    // prepare data
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const multihash = await sha256.digest(data)
+    const digest = multihash.bytes
+    const size = data.byteLength
+    const content = createLink(
+      rawCode,
+      new Digest(sha256.code, 32, digest, digest)
+    )
+
+    // create service connection
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // create `blob/add` invocation
+    const blobAddInvocation = BlobCapabilities.add.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: {
+        blob: {
+          digest,
+          size,
+        },
+      },
+      proofs: [proof],
+    })
+    const blobAdd = await blobAddInvocation.execute(connection)
+    if (!blobAdd.out.ok) {
+      throw new Error('invocation failed', { cause: blobAdd })
+    }
+
+    // parse receipt next
+    const next = parseBlobAddReceiptNext(blobAdd)
+
+    /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
+    // @ts-expect-error receipt type is unknown
+    const address = next.allocate.receipt.out.ok.address
+
+    // Store the blob to the address
+    const goodPut = await fetch(address.url, {
+      method: 'PUT',
+      mode: 'cors',
+      body: data,
+      headers: address.headers,
+    })
+    assert.equal(goodPut.status, 200, await goodPut.text())
+
+    // invoke `web3.storage/blob/accept`
+    const serviceBlobAccept = W3sBlobCapabilities.accept.invoke({
+      issuer: context.id,
+      audience: context.id,
+      with: context.id.did(),
+      nb: {
+        blob: {
+          digest,
+          size,
+        },
+        space: spaceDid,
+        _put: { 'ucan/await': ['.out.ok', next.put.task.link()] },
+      },
+      proofs: [proof],
+    })
+    const blobAccept = await serviceBlobAccept.execute(connection)
+    if (!blobAccept.out.ok) {
+      throw new Error('invocation failed', { cause: blobAccept })
+    }
+    // Validate out
+    assert.ok(blobAccept.out.ok)
+    assert.ok(blobAccept.out.ok.site)
+
+    // Validate effect
+    assert.equal(blobAccept.fx.fork.length, 1)
+    /** @type {import('@ucanto/interface').Delegation} */
+    // @ts-expect-error delegation not assignable to Effect per TS understanding
+    const delegation = blobAccept.fx.fork[0]
+    assert.equal(delegation.capabilities.length, 1)
+    assert.ok(delegation.capabilities[0].can, Assert.location.can)
+    // @ts-expect-error nb unknown
+    assert.ok(delegation.capabilities[0].nb.content.equals(content))
+    // @ts-expect-error nb unknown
+    const locations = delegation.capabilities[0].nb.location
+    assert.equal(locations.length, 1)
+    assert.ok(
+      locations[0].includes(
+        `https://w3s.link/ipfs/${content.toString()}?origin`
+      )
+    )
+  },
+  'web3.storage/blob/accept fails to provide site delegation when blob was not stored':
+    async (assert, context) => {
+      const { proof, spaceDid } = await registerSpace(alice, context)
+
+      // prepare data
+      const data = new Uint8Array([11, 22, 34, 44, 55])
+      const multihash = await sha256.digest(data)
+      const digest = multihash.bytes
+      const size = data.byteLength
+
+      // create service connection
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
+
+      // create `blob/add` invocation
+      const blobAddInvocation = BlobCapabilities.add.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: {
+          blob: {
+            digest,
+            size,
+          },
+        },
+        proofs: [proof],
+      })
+      const blobAdd = await blobAddInvocation.execute(connection)
+      if (!blobAdd.out.ok) {
+        throw new Error('invocation failed', { cause: blobAdd })
+      }
+
+      // parse receipt next
+      const next = parseBlobAddReceiptNext(blobAdd)
+
+      // invoke `web3.storage/blob/accept`
+      const serviceBlobAccept = W3sBlobCapabilities.accept.invoke({
+        issuer: context.id,
+        audience: context.id,
+        with: context.id.did(),
+        nb: {
+          blob: {
+            digest,
+            size,
+          },
+          space: spaceDid,
+          _put: { 'ucan/await': ['.out.ok', next.put.task.link()] },
+        },
+        proofs: [proof],
+      })
+      const blobAccept = await serviceBlobAccept.execute(connection)
+      // Validate out error
+      assert.ok(blobAccept.out.error)
+      assert.equal(
+        blobAccept.out.error?.name,
+        AllocatedMemoryHadNotBeenWrittenToName
+      )
+    },
 }

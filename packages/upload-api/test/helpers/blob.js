@@ -59,11 +59,11 @@ export function parseBlobAddReceiptNext(receipt) {
     },
     put: {
       task: putTask,
-      receipt: putReceipt
+      receipt: putReceipt,
     },
     accept: {
       task: acceptTask,
-      receipt: acceptReceipt
-    }
+      receipt: acceptReceipt,
+    },
   }
 }

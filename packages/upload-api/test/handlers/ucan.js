@@ -10,10 +10,9 @@ import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, mallory, registerSpace } from '../util.js'
-import {
-  createConcludeInvocation,
-  getConcludeReceipt,
-} from '../../src/ucan/conclude.js'
+import { createConcludeInvocation } from '../../src/ucan/conclude.js'
+import { ReferencedInvocationNotFoundName } from '../../src/ucan/lib.js'
+import { parseBlobAddReceiptNext } from '../helpers/blob.js'
 
 /**
  * @type {API.Tests}
@@ -365,6 +364,55 @@ export const test = {
 
     assert.ok(String(revoke.out.error?.message).match(/Constrain violation/))
   },
+  'ucan/conclude writes a receipt for a task previously scheduled': async (
+    assert,
+    context
+  ) => {
+    // create service connection
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+    // Invoke something
+    const proof = await Console.log.delegate({
+      issuer: context.id,
+      audience: alice,
+      with: context.id.did(),
+    })
+    const invocation = Console.log.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: context.id.did(),
+      nb: { value: 'hello' },
+      proofs: [proof],
+    })
+
+    const success = await invocation.execute(connection)
+
+    if (!success.out.ok) {
+      throw new Error('invocation failed', { cause: success })
+    }
+
+    // Create conclude invocation
+    const concludeInvocation = createConcludeInvocation(
+      alice,
+      context.id,
+      success
+    )
+    const ucanConcludeFail = await concludeInvocation.execute(connection)
+    assert.ok(ucanConcludeFail.out.error)
+    assert.equal(
+      ucanConcludeFail.out.error?.name,
+      ReferencedInvocationNotFoundName
+    )
+
+    // Store scheduled task
+    await context.tasksStorage.put(await invocation.delegate())
+
+    const ucanConcludeSuccess = await concludeInvocation.execute(connection)
+    assert.ok(ucanConcludeSuccess.out.ok)
+    assert.ok(ucanConcludeSuccess.out.ok?.time)
+  },
   'ucan/conclude schedules web3.storage/blob/accept if invoked with the blob put receipt':
     async (assert, context) => {
       const taskScheduled = pDefer()
@@ -412,35 +460,17 @@ export const test = {
       }
 
       // Get receipt relevant content
-      /**
-       * @type {import('@ucanto/interface').Invocation[]}
-       **/
-      // @ts-expect-error read only effect
-      const forkInvocations = blobAdd.fx.fork
-      const allocatefx = forkInvocations.find(
-        (fork) => fork.capabilities[0].can === W3sBlobCapabilities.allocate.can
-      )
-      const allocateUcanConcludefx = forkInvocations.find(
-        (fork) => fork.capabilities[0].can === UCAN.conclude.can
-      )
-      const putfx = forkInvocations.find(
-        (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
-      )
-      if (!allocateUcanConcludefx || !putfx || !allocatefx) {
-        throw new Error('effects not provided')
-      }
-      const receipt = getConcludeReceipt(allocateUcanConcludefx)
+      const next = parseBlobAddReceiptNext(blobAdd)
 
-      // Get `web3.storage/blob/allocate` receipt with address
       /**
        * @type {import('@web3-storage/capabilities/types').BlobAddress}
        **/
       // @ts-expect-error receipt out is unknown
-      const address = receipt?.out.ok?.address
+      const address = next.allocate.receipt.out.ok?.address
       assert.ok(address)
 
       // Store allocate task to be fetchable from allocate
-      await context.tasksStorage.put(allocatefx)
+      await context.tasksStorage.put(next.allocate.task)
 
       // Write blob
       const goodPut = await fetch(address.url, {
@@ -452,7 +482,7 @@ export const test = {
       assert.equal(goodPut.status, 200, await goodPut.text())
 
       // Create `http/put` receipt
-      const keys = putfx.facts[0]['keys']
+      const keys = next.put.task.facts[0]['keys']
       // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
       const blobProvider = ed25519.from(keys)
       const httpPut = HTTPCapabilities.put.invoke({
@@ -465,13 +495,16 @@ export const test = {
             size,
           },
           url: {
-            'ucan/await': ['.out.ok.address.url', allocatefx.cid],
+            'ucan/await': ['.out.ok.address.url', next.allocate.task.link()],
           },
           headers: {
-            'ucan/await': ['.out.ok.address.headers', allocatefx.cid],
+            'ucan/await': [
+              '.out.ok.address.headers',
+              next.allocate.task.link(),
+            ],
           },
         },
-        facts: putfx.facts,
+        facts: next.put.task.facts,
         expiration: Infinity,
       })
 

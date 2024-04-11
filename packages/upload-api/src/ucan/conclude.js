@@ -27,7 +27,7 @@ export const ucanConcludeProvider = ({
     if (httpPutTaskGetRes.error) {
       if (httpPutTaskGetRes.error.name === 'RecordNotFound') {
         return {
-          error: new ReferencedInvocationNotFound(ranInvocation.link())
+          error: new ReferencedInvocationNotFound(ranInvocation.link()),
         }
       }
       return httpPutTaskGetRes
@@ -53,7 +53,7 @@ export const ucanConcludeProvider = ({
           // Get triggering task (blob/allocate) by checking blocking task from `url`
           /** @type {API.UnknownLink} */
           // @ts-expect-error ts does not know how to get this
-          const [,blobAllocateTaskCid] = cap.nb.url['ucan/await']
+          const [, blobAllocateTaskCid] = cap.nb.url['ucan/await']
           const blobAllocateTaskGet = await tasksStorage.get(
             blobAllocateTaskCid
           )
