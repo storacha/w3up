@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.1](https://github.com/web3-storage/w3up/compare/upload-client-v13.2.0...upload-client-v13.2.1) (2024-04-12)
+
+
+### Fixes
+
+* upgrade ucanto libs and format filecoin api ([#1359](https://github.com/web3-storage/w3up/issues/1359)) ([87ca098](https://github.com/web3-storage/w3up/commit/87ca098186fe204ff3409a2684719f1c54148c97))
+
 ## [13.2.0](https://github.com/web3-storage/w3up/compare/upload-client-v13.1.0...upload-client-v13.2.0) (2024-04-01)
 
 
