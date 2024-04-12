@@ -19,6 +19,9 @@ import * as DealTracker from './filecoin/deal-tracker.js'
 import * as UCAN from './ucan.js'
 import * as Plan from './plan.js'
 import * as Usage from './usage.js'
+import * as Blob from './blob.js'
+import * as W3sBlob from './web3.storage/blob.js'
+import * as HTTP from './http.js'
 
 export {
   Access,
@@ -63,6 +66,7 @@ export const abilitiesAsStrings = [
   Access.access.can,
   Access.authorize.can,
   UCAN.attest.can,
+  UCAN.conclude.can,
   Customer.get.can,
   Consumer.has.can,
   Consumer.get.can,
@@ -86,4 +90,10 @@ export const abilitiesAsStrings = [
   Plan.get.can,
   Usage.usage.can,
   Usage.report.can,
+  Blob.blob.can,
+  Blob.add.can,
+  W3sBlob.blob.can,
+  W3sBlob.allocate.can,
+  W3sBlob.accept.can,
+  HTTP.put.can,
 ]

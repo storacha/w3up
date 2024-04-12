@@ -21,6 +21,9 @@ import {
 import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
+import * as BlobCaps from './blob.js'
+import * as W3sBlobCaps from './web3.storage/blob.js'
+import * as HTTPCaps from './http.js'
 import * as StoreCaps from './store.js'
 import * as UploadCaps from './upload.js'
 import * as AccessCaps from './access.js'
@@ -40,6 +43,10 @@ import * as UsageCaps from './usage.js'
 export type ISO8601Date = string
 
 export type { Unit, PieceLink }
+
+export interface UCANAwait<Selector extends string = string, Task = unknown> {
+  'ucan/await': [Selector, Link<Task>]
+}
 
 /**
  * An IPLD Link that has the CAR codec code.
@@ -439,6 +446,95 @@ export interface UploadNotFound extends Ucanto.Failure {
 
 export type UploadGetFailure = UploadNotFound | Ucanto.Failure
 
+// HTTP
+export type HTTPPut = InferInvokedCapability<typeof HTTPCaps.put>
+
+// Blob
+export type Blob = InferInvokedCapability<typeof BlobCaps.blob>
+export type BlobAdd = InferInvokedCapability<typeof BlobCaps.add>
+export type ServiceBlob = InferInvokedCapability<typeof W3sBlobCaps.blob>
+export type BlobAllocate = InferInvokedCapability<typeof W3sBlobCaps.allocate>
+export type BlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
+
+export type BlobMultihash = Uint8Array
+export interface BlobModel {
+  digest: BlobMultihash
+  size: number
+}
+
+// Blob add
+export interface BlobAddSuccess {
+  site: UCANAwait<'.out.ok.site'>
+}
+
+export interface BlobSizeOutsideOfSupportedRange extends Ucanto.Failure {
+  name: 'BlobSizeOutsideOfSupportedRange'
+}
+
+export interface AwaitError extends Ucanto.Failure {
+  name: 'AwaitError'
+}
+
+// TODO: We need Ucanto.Failure because provideAdvanced can't handle errors without it
+export type BlobAddFailure =
+  | BlobSizeOutsideOfSupportedRange
+  | AwaitError
+  | StorageGetError
+  | Ucanto.Failure
+
+export interface BlobListItem {
+  blob: BlobModel
+  insertedAt: ISO8601Date
+}
+
+// Blob allocate
+export interface BlobAllocateSuccess {
+  size: number
+  address?: BlobAddress
+}
+
+export interface BlobAddress {
+  url: ToString<URL>
+  headers: Record<string, string>
+  expiresAt: ISO8601Date
+}
+
+// If user space has not enough space to allocate the blob.
+export interface NotEnoughStorageCapacity extends Ucanto.Failure {
+  name: 'NotEnoughStorageCapacity'
+}
+
+export type BlobAllocateFailure = NotEnoughStorageCapacity | Ucanto.Failure
+
+// Blob accept
+export interface BlobAcceptSuccess {
+  // A Link for a delegation with site commiment for the added blob.
+  site: Link
+}
+
+export interface AllocatedMemoryHadNotBeenWrittenTo extends Ucanto.Failure {
+  name: 'AllocatedMemoryHadNotBeenWrittenTo'
+}
+
+// TODO: We should type the store errors and add them here, instead of Ucanto.Failure
+export type BlobAcceptFailure =
+  | AllocatedMemoryHadNotBeenWrittenTo
+  | Ucanto.Failure
+
+// Storage errors
+export type StoragePutError = StorageOperationError
+export type StorageGetError = StorageOperationError | RecordNotFound
+
+// Operation on a storage failed with unexpected error
+export interface StorageOperationError extends Error {
+  name: 'StorageOperationFailed'
+}
+
+// Record requested not found in the storage
+export interface RecordNotFound extends Error {
+  name: 'RecordNotFound'
+}
+
 // Store
 export type Store = InferInvokedCapability<typeof StoreCaps.store>
 export type StoreAdd = InferInvokedCapability<typeof StoreCaps.add>
@@ -530,6 +626,7 @@ export interface UploadListSuccess extends ListResponse<UploadListItem> {}
 
 export type UCANRevoke = InferInvokedCapability<typeof UCANCaps.revoke>
 export type UCANAttest = InferInvokedCapability<typeof UCANCaps.attest>
+export type UCANConclude = InferInvokedCapability<typeof UCANCaps.conclude>
 
 export interface Timestamp {
   /**
@@ -539,6 +636,8 @@ export interface Timestamp {
 }
 
 export type UCANRevokeSuccess = Timestamp
+
+export type UCANConcludeSuccess = Timestamp
 
 /**
  * Error is raised when `UCAN` being revoked is not supplied or it's proof chain
@@ -577,6 +676,15 @@ export type UCANRevokeFailure =
   | InvalidRevocationScope
   | UnauthorizedRevocation
   | RevocationsStoreFailure
+
+/**
+ * Error is raised when receipt is received for unknown invocation
+ */
+export interface ReferencedInvocationNotFound extends Ucanto.Failure {
+  name: 'ReferencedInvocationNotFound'
+}
+
+export type UCANConcludeFailure = ReferencedInvocationNotFound | Ucanto.Failure
 
 // Admin
 export type Admin = InferInvokedCapability<typeof AdminCaps.admin>
@@ -686,6 +794,7 @@ export type ServiceAbilityArray = [
   Access['can'],
   AccessAuthorize['can'],
   UCANAttest['can'],
+  UCANConclude['can'],
   CustomerGet['can'],
   ConsumerHas['can'],
   ConsumerGet['can'],
@@ -708,7 +817,13 @@ export type ServiceAbilityArray = [
   AdminStoreInspect['can'],
   PlanGet['can'],
   Usage['can'],
-  UsageReport['can']
+  UsageReport['can'],
+  Blob['can'],
+  BlobAdd['can'],
+  ServiceBlob['can'],
+  BlobAllocate['can'],
+  BlobAccept['can'],
+  HTTPPut['can']
 ]
 
 /**

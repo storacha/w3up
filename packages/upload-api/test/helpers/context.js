@@ -2,26 +2,18 @@ import * as Signer from '@ucanto/principal/ed25519'
 import {
   getConnection,
   getMockService,
-  getStoreImplementations,
-  getQueueImplementations,
+  getStoreImplementations as getFilecoinStoreImplementations,
+  getQueueImplementations as getFilecoinQueueImplementations,
 } from '@web3-storage/filecoin-api/test/context/service'
+import { BlobsStorage } from '../storage/blobs-storage.js'
 import { CarStoreBucket } from '../storage/car-store-bucket.js'
-import { StoreTable } from '../storage/store-table.js'
-import { UploadTable } from '../storage/upload-table.js'
-import { DudewhereBucket } from '../storage/dude-where-bucket.js'
-import { ProvisionsStorage } from '../storage/provisions-storage.js'
-import { DelegationsStorage } from '../storage/delegations-storage.js'
-import { RateLimitsStorage } from '../storage/rate-limits-storage.js'
-import { RevocationsStorage } from '../storage/revocations-storage.js'
 import * as Email from '../../src/utils/email.js'
 import { create as createRevocationChecker } from '../../src/utils/revocation.js'
 import { createServer, connect } from '../../src/lib.js'
 import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
 import { confirmConfirmationUrl } from './utils.js'
-import { PlansStorage } from '../storage/plans-storage.js'
-import { UsageStorage } from '../storage/usage-storage.js'
-import { SubscriptionsStorage } from '../storage/subscriptions-storage.js'
+import { getServiceStorageImplementations } from '../storage/index.js'
 
 /**
  * @param {object} options
@@ -35,15 +27,6 @@ export const createContext = async (
   options = { requirePaymentPlan: false }
 ) => {
   const requirePaymentPlan = options.requirePaymentPlan
-  const storeTable = new StoreTable()
-  const uploadTable = new UploadTable()
-  const carStoreBucket = await CarStoreBucket.activate(options)
-  const dudewhereBucket = new DudewhereBucket()
-  const revocationsStorage = new RevocationsStorage()
-  const plansStorage = new PlansStorage()
-  const usageStorage = new UsageStorage(storeTable)
-  const provisionsStorage = new ProvisionsStorage(options.providers)
-  const subscriptionsStorage = new SubscriptionsStorage(provisionsStorage)
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
   const dealTrackerSigner = await Signer.generate()
@@ -55,14 +38,16 @@ export const createContext = async (
     service
   ).connection
 
+  const serviceStores = await getServiceStorageImplementations(options)
+
   /** @type {Map<string, unknown[]>} */
   const queuedMessages = new Map()
   const {
     storefront: { filecoinSubmitQueue, pieceOfferQueue },
-  } = getQueueImplementations(queuedMessages)
+  } = getFilecoinQueueImplementations(queuedMessages)
   const {
     storefront: { pieceStore, receiptStore, taskStore },
-  } = getStoreImplementations()
+  } = getFilecoinStoreImplementations()
   const email = Email.debug()
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
@@ -71,14 +56,19 @@ export const createContext = async (
     aggregatorId: aggregatorSigner,
     signer: id,
     email,
+    requirePaymentPlan,
     url: new URL('http://localhost:8787'),
-    provisionsStorage,
-    subscriptionsStorage,
-    delegationsStorage: new DelegationsStorage(),
-    rateLimitsStorage: new RateLimitsStorage(),
-    plansStorage,
-    usageStorage,
-    revocationsStorage,
+    ...serviceStores,
+    tasksScheduler: {
+      schedule: () =>
+        Promise.resolve({
+          ok: {},
+        }),
+    },
+    getServiceConnection: () => connection,
+    ...createRevocationChecker({
+      revocationsStorage: serviceStores.revocationsStorage,
+    }),
     errorReporter: {
       catch(error) {
         if (options.assert) {
@@ -88,17 +78,13 @@ export const createContext = async (
         }
       },
     },
+    // Filecoin
     maxUploadSize: 5_000_000_000,
-    storeTable,
-    uploadTable,
-    carStoreBucket,
-    dudewhereBucket,
     filecoinSubmitQueue,
     pieceOfferQueue,
     pieceStore,
     receiptStore,
     taskStore,
-    requirePaymentPlan,
     dealTrackerService: {
       connection: dealTrackerConnection,
       invocationConfig: {
@@ -107,7 +93,6 @@ export const createContext = async (
         audience: dealTrackerSigner,
       },
     },
-    ...createRevocationChecker({ revocationsStorage }),
   }
 
   const connection = connect({
@@ -132,7 +117,11 @@ export const createContext = async (
 export const cleanupContext = async (context) => {
   /** @type {CarStoreBucket & {  deactivate: () => Promise<void> }}} */
   // @ts-ignore type misses S3 bucket properties like accessKey
-  const store = context.carStoreBucket
+  const carStoreBucket = context.carStoreBucket
+  await carStoreBucket.deactivate()
 
-  await store.deactivate()
+  /** @type {BlobsStorage & {  deactivate: () => Promise<void> }}} */
+  // @ts-ignore type misses S3 bucket properties like accessKey
+  const blobsStorage = context.blobsStorage
+  await blobsStorage.deactivate()
 }

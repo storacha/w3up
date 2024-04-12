@@ -56,6 +56,10 @@
       "types": "./dist/src/filecoin/dealer.d.ts",
       "import": "./src/filecoin/dealer.js"
     },
+    "./web3.storage/blob": {
+      "types": "./dist/src/web3.storage/blob.d.ts",
+      "import": "./src/web3.storage/blob.js"
+    },
     "./types": {
       "types": "./dist/src/types.d.ts",
       "import": "./src/types.js"
@@ -88,7 +92,8 @@
     "@ucanto/principal": "^9.0.1",
     "@ucanto/transport": "^9.1.1",
     "@ucanto/validator": "^9.0.2",
-    "@web3-storage/data-segment": "^3.2.0"
+    "@web3-storage/data-segment": "^3.2.0",
+    "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
     "@web3-storage/eslint-config-w3up": "workspace:^",

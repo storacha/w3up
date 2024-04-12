@@ -1,6 +1,8 @@
-import { DID, fail, ok } from '@ucanto/validator'
+import { DID, Schema, fail, ok } from '@ucanto/validator'
 // eslint-disable-next-line no-unused-vars
 import * as Types from '@ucanto/interface'
+
+import { equals } from 'uint8arrays/equals'
 
 // e.g. did:web:web3.storage or did:web:staging.web3.storage
 export const ProviderDID = DID.match({ method: 'web' })
@@ -8,6 +10,10 @@ export const ProviderDID = DID.match({ method: 'web' })
 export const SpaceDID = DID.match({ method: 'key' })
 
 export const AccountDID = DID.match({ method: 'mailto' })
+
+export const Await = Schema.struct({
+  'ucan/await': Schema.tuple([Schema.string(), Schema.link()]),
+})
 
 /**
  * Check URI can be delegated
@@ -79,6 +85,99 @@ export const equalLink = (claimed, delegated) => {
       `Link ${claimed.nb.link ? `${claimed.nb.link}` : ''} violates imposed ${
         delegated.nb.link
       } constraint.`
+    )
+  } else {
+    return ok({})
+  }
+}
+
+/**
+ * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept", Types.URI<'did:'>, {blob: { digest: Uint8Array, size: number }}>} T
+ * @param {T} claimed
+ * @param {T} delegated
+ * @returns {Types.Result<{}, Types.Failure>}
+ */
+export const equalBlob = (claimed, delegated) => {
+  if (claimed.with !== delegated.with) {
+    return fail(
+      `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
+    )
+  } else if (
+    delegated.nb.blob.digest &&
+    !equals(delegated.nb.blob.digest, claimed.nb.blob.digest)
+  ) {
+    return fail(
+      `Link ${
+        claimed.nb.blob.digest ? `${claimed.nb.blob.digest}` : ''
+      } violates imposed ${delegated.nb.blob.digest} constraint.`
+    )
+  } else if (
+    claimed.nb.blob.size !== undefined &&
+    delegated.nb.blob.size !== undefined
+  ) {
+    return claimed.nb.blob.size > delegated.nb.blob.size
+      ? fail(
+          `Size constraint violation: ${claimed.nb.blob.size} > ${delegated.nb.blob.size}`
+        )
+      : ok({})
+  } else {
+    return ok({})
+  }
+}
+
+/**
+ * @template {Types.ParsedCapability<"http/put", Types.URI<'did:'>, {body: { digest: Uint8Array, size: number }}>} T
+ * @param {T} claimed
+ * @param {T} delegated
+ * @returns {Types.Result<{}, Types.Failure>}
+ */
+export const equalBody = (claimed, delegated) => {
+  if (claimed.with !== delegated.with) {
+    return fail(
+      `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
+    )
+  } else if (
+    delegated.nb.body.digest &&
+    !equals(delegated.nb.body.digest, claimed.nb.body.digest)
+  ) {
+    return fail(
+      `Link ${
+        claimed.nb.body.digest ? `${claimed.nb.body.digest}` : ''
+      } violates imposed ${delegated.nb.body.digest} constraint.`
+    )
+  } else if (
+    claimed.nb.body.size !== undefined &&
+    delegated.nb.body.size !== undefined
+  ) {
+    return claimed.nb.body.size > delegated.nb.body.size
+      ? fail(
+          `Size constraint violation: ${claimed.nb.body.size} > ${delegated.nb.body.size}`
+        )
+      : ok({})
+  } else {
+    return ok({})
+  }
+}
+
+/**
+ * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"blob/allocate"|"blob/accept"|"http/put", Types.URI<'did:'>, {content: Uint8Array}>} T
+ * @param {T} claimed
+ * @param {T} delegated
+ * @returns {Types.Result<{}, Types.Failure>}
+ */
+export const equalContent = (claimed, delegated) => {
+  if (claimed.with !== delegated.with) {
+    return fail(
+      `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
+    )
+  } else if (
+    delegated.nb.content &&
+    !equals(delegated.nb.content, claimed.nb.content)
+  ) {
+    return fail(
+      `Link ${
+        claimed.nb.content ? `${claimed.nb.content}` : ''
+      } violates imposed ${delegated.nb.content} constraint.`
     )
   } else {
     return ok({})

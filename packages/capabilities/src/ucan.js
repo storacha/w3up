@@ -2,7 +2,7 @@
  * UCAN core capabilities.
  */
 
-import { capability, Schema } from '@ucanto/validator'
+import { capability, Schema, ok } from '@ucanto/validator'
 import * as API from '@ucanto/interface'
 import { equalWith, equal, and, checkLink } from './utils.js'
 
@@ -72,6 +72,34 @@ export const revoke = capability({
       (from.nb.proof ?? []).join('/'),
       'nb.proof'
     ),
+})
+
+/**
+ * `ucan/conclude` capability represents a receipt using a special UCAN capability.
+ *
+ * The UCAN invocation specification defines receipt record, that is cryptographically
+ * signed description of the invocation output and requested effects. Receipt
+ * structure is very similar to UCAN except it has no notion of expiry nor it is
+ * possible to delegate ability to issue receipt to another principal.
+ */
+export const conclude = capability({
+  can: 'ucan/conclude',
+  /**
+   * DID of the principal representing the Conclusion Authority.
+   * MUST be the DID of the audience of the ran invocation.
+   */
+  with: Schema.did(),
+  nb: Schema.struct({
+    /**
+     * CID of the content with the Receipt.
+     */
+    receipt: Schema.link(),
+  }),
+  derives: (claim, from) =>
+    // With field MUST be the same
+    and(equalWith(claim, from)) ||
+    and(checkLink(claim.nb.receipt, from.nb.receipt, 'nb.receipt')) ||
+    ok({}),
 })
 
 /**
