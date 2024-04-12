@@ -124,7 +124,9 @@ export interface ClaimsClientContext {
    */
   claimsService: {
     invocationConfig: ClaimsInvocationConfig
-    connection: ConnectionView<import('@web3-storage/content-claims/server/service/api').Service>
+    connection: ConnectionView<
+      import('@web3-storage/content-claims/server/service/api').Service
+    >
   }
 }
 

@@ -54,10 +54,10 @@
   ],
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.0",
-    "@ucanto/client": "^9.0.0",
-    "@ucanto/core": "^9.0.1",
-    "@ucanto/interface": "^9.0.0",
-    "@ucanto/transport": "^9.1.0",
+    "@ucanto/client": "^9.0.1",
+    "@ucanto/core": "^10.0.1",
+    "@ucanto/interface": "^10.0.1",
+    "@ucanto/transport": "^9.1.1",
     "@web3-storage/capabilities": "workspace:^"
   },
   "devDependencies": {
@@ -65,8 +65,8 @@
     "@ipld/dag-json": "^10.1.4",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
-    "@ucanto/principal": "^9.0.0",
-    "@ucanto/server": "^9.0.1",
+    "@ucanto/principal": "^9.0.1",
+    "@ucanto/server": "^10.0.0",
     "@web3-storage/data-segment": "^4.0.0",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "assert": "^2.0.0",
