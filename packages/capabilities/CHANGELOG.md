@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v13.2.1...capabilities-v13.3.0) (2024-04-12)
+
+
+### Features
+
+* blob, web3.storage and ucan conclude capabilities together with api handlers  ([#1342](https://github.com/web3-storage/w3up/issues/1342)) ([00735a8](https://github.com/web3-storage/w3up/commit/00735a80dfddbe86359af78ed9bd182f4804691f))
+
 ## [13.2.1](https://github.com/web3-storage/w3up/compare/capabilities-v13.2.0...capabilities-v13.2.1) (2024-04-12)
 
 
