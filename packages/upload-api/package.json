@@ -36,6 +36,9 @@
       "customer": [
         "dist/src/customer.d.ts"
       ],
+      "errors": [
+        "dist/src/errors.d.ts"
+      ],
       "plan": [
         "dist/src/plan.d.ts"
       ],
@@ -108,6 +111,10 @@
     "./customer": {
       "types": "./dist/src/customer.d.ts",
       "import": "./src/customer.js"
+    },
+    "./errors": {
+      "types": "./dist/src/errors.d.ts",
+      "import": "./src/errors.js"
     },
     "./plan": {
       "types": "./dist/src/plan.d.ts",
