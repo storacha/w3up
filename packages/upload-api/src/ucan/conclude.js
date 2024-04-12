@@ -82,6 +82,8 @@ export const ucanConcludeProvider = ({
                   'ucan/await': ['.out.ok', ranInvocation.link()],
                 },
               },
+              // Expiry is set to `Infinity` so that CID will come out the same
+              // as returned in effect on `blob/add`
               expiration: Infinity,
             })
             .delegate()

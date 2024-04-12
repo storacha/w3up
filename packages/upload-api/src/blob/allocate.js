@@ -51,12 +51,15 @@ export function blobAllocateProvider(context) {
       }
 
       // Check if blob already exists
+      // TODO: this may depend on the region we want to allocate and will need changes in the future.
       const hasBlobStore = await context.blobsStorage.has(blob.digest)
       if (hasBlobStore.error) {
         return hasBlobStore
       }
 
       // If blob is stored, we can just allocate it to the space with the allocated size
+      // TODO: this code path MAY lead to await failures - awaited http/put and blob/accept tasks
+      // are supposed to fail if path does not exists.
       if (hasBlobStore.ok) {
         return {
           ok: { size },

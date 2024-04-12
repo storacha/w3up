@@ -159,7 +159,7 @@ async function allocate({ context, blob, space, cause }) {
     }
   }
 
-  // 3. if not already allocated (or expired) schedule `blob/allocate`
+  // 3. if not already allocated (or expired) execute `blob/allocate`
   if (!blobAllocateReceipt) {
     // Execute allocate invocation
     const allocateRes = await allocate.execute(context.getServiceConnection())
@@ -208,7 +208,7 @@ async function put({ context, blob, allocateTask }) {
   // could perform the invocation and issue receipt by deriving same
   // principal
   const blobProvider = await ed25519.derive(
-    blob.digest.slice(blob.digest.length - 32)
+    blob.digest.subarray(-32)
   )
   const facts = [
     {
@@ -235,6 +235,8 @@ async function put({ context, blob, allocateTask }) {
 
   // 2. Get receipt for `http/put` if available
   const receiptGet = await context.receiptsStorage.get(task.link())
+  // Storage get can fail with `RecordNotFound` or other unexpected errors.
+  // If 'RecordNotFound' we proceed, otherwise we fail with the received error.
   if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
     return {
       error: receiptGet.error,
@@ -306,7 +308,7 @@ async function accept({ context, blob, space, putTask, putReceipt }) {
     }
   }
 
-  // 3. Get receipt for `blob/accept` if available, otherwise schedule invocation
+  // 3. Get receipt for `blob/accept` if available, otherwise execute invocation
   let blobAcceptReceipt
   const receiptGet = await context.receiptsStorage.get(task.link())
   if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
@@ -317,7 +319,7 @@ async function accept({ context, blob, space, putTask, putReceipt }) {
     blobAcceptReceipt = receiptGet.ok
   }
 
-  // 4. if not already accepted schedule `blob/accept`
+  // 4. if not already accepted execute `blob/accept`
   if (!blobAcceptReceipt) {
     // Execute accept invocation
     const acceptRes = await accept.execute(context.getServiceConnection())
