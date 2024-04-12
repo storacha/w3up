@@ -54,6 +54,15 @@ export interface DebugEmail extends Email {
 }
 
 import {
+  BlobAdd,
+  BlobAddSuccess,
+  BlobAddFailure,
+  BlobAllocate,
+  BlobAllocateSuccess,
+  BlobAllocateFailure,
+  BlobAccept,
+  BlobAcceptSuccess,
+  BlobAcceptFailure,
   StoreAdd,
   StoreGet,
   StoreAddSuccess,
@@ -123,6 +132,9 @@ import {
   CARLink,
   StoreGetSuccess,
   UploadGetSuccess,
+  UCANConclude,
+  UCANConcludeSuccess,
+  UCANConcludeFailure,
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
@@ -161,8 +173,20 @@ import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
+import { ReceiptsStorage, TasksScheduler } from './types/service.js'
+export type { ReceiptsStorage, TasksScheduler }
+import {
+  AllocationsStorage,
+  BlobsStorage,
+  TasksStorage,
+  BlobAddInput,
+} from './types/blob.js'
+export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
 
-export interface Service extends StorefrontService {
+export interface Service extends StorefrontService, W3sService {
+  blob: {
+    add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+  }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
@@ -239,6 +263,11 @@ export interface Service extends StorefrontService {
   }
 
   ucan: {
+    conclude: ServiceMethod<
+      UCANConclude,
+      UCANConcludeSuccess,
+      UCANConcludeFailure
+    >
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
   }
 
@@ -273,16 +302,51 @@ export interface Service extends StorefrontService {
   }
 }
 
+export interface W3sService {
+  ['web3.storage']: {
+    blob: {
+      allocate: ServiceMethod<
+        BlobAllocate,
+        BlobAllocateSuccess,
+        BlobAllocateFailure
+      >
+      accept: ServiceMethod<BlobAccept, BlobAcceptSuccess, BlobAcceptFailure>
+    }
+  }
+}
+
+export type BlobServiceContext = SpaceServiceContext & {
+  /**
+   * Service signer
+   */
+  id: Signer
+  maxUploadSize: number
+  allocationsStorage: AllocationsStorage
+  blobsStorage: BlobsStorage
+  tasksStorage: TasksStorage
+  receiptsStorage: ReceiptsStorage
+  getServiceConnection: () => ConnectionView<Service>
+}
+
+export type W3ServiceContext = SpaceServiceContext & {
+  /**
+   * Service signer
+   */
+  id: Signer
+  allocationsStorage: AllocationsStorage
+  blobsStorage: BlobsStorage
+}
+
 export type StoreServiceContext = SpaceServiceContext & {
   maxUploadSize: number
-
   storeTable: StoreTable
   carStoreBucket: CarStoreBucket
 }
 
 export type UploadServiceContext = ConsumerServiceContext &
   SpaceServiceContext &
-  RevocationServiceContext & {
+  RevocationServiceContext &
+  ConcludeServiceContext & {
     signer: EdSigner.Signer
     uploadTable: UploadTable
     dudewhereBucket: DudewhereBucket
@@ -345,6 +409,25 @@ export interface RevocationServiceContext {
   revocationsStorage: RevocationsStorage
 }
 
+export interface ConcludeServiceContext {
+  /**
+   * Service signer
+   */
+  id: Signer
+  /**
+   * Stores receipts for tasks.
+   */
+  receiptsStorage: ReceiptsStorage
+  /**
+   * Stores tasks.
+   */
+  tasksStorage: TasksStorage
+  /**
+   * Task scheduler.
+   */
+  tasksScheduler: TasksScheduler
+}
+
 export interface PlanServiceContext {
   plansStorage: PlansStorage
 }
@@ -362,6 +445,8 @@ export interface ServiceContext
     ProviderServiceContext,
     SpaceServiceContext,
     StoreServiceContext,
+    BlobServiceContext,
+    ConcludeServiceContext,
     SubscriptionServiceContext,
     RateLimitServiceContext,
     RevocationServiceContext,
@@ -379,6 +464,7 @@ export interface UcantoServerContext extends ServiceContext, RevocationChecker {
 export interface UcantoServerTestContext
   extends UcantoServerContext,
     StoreTestContext,
+    BlobServiceContext,
     UploadTestContext {
   connection: ConnectionView<Service>
   mail: DebugEmail

@@ -1,6 +1,18 @@
 import * as API from '../../src/types.js'
-import { alice, bob, mallory } from '../util.js'
 import { UCAN, Console } from '@web3-storage/capabilities'
+import pDefer from 'p-defer'
+import { Receipt } from '@ucanto/core'
+import { ed25519 } from '@ucanto/principal'
+import { sha256 } from 'multiformats/hashes/sha2'
+import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
+import * as HTTPCapabilities from '@web3-storage/capabilities/http'
+
+import { createServer, connect } from '../../src/lib.js'
+import { alice, bob, mallory, registerSpace } from '../util.js'
+import { createConcludeInvocation } from '../../src/ucan/conclude.js'
+import { ReferencedInvocationNotFoundName } from '../../src/ucan/lib.js'
+import { parseBlobAddReceiptNext } from '../helpers/blob.js'
 
 /**
  * @type {API.Tests}
@@ -352,4 +364,186 @@ export const test = {
 
     assert.ok(String(revoke.out.error?.message).match(/Constrain violation/))
   },
+  'ucan/conclude writes a receipt for a task previously scheduled': async (
+    assert,
+    context
+  ) => {
+    // create service connection
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+    // Invoke something
+    const proof = await Console.log.delegate({
+      issuer: context.id,
+      audience: alice,
+      with: context.id.did(),
+    })
+    const invocation = Console.log.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: context.id.did(),
+      nb: { value: 'hello' },
+      proofs: [proof],
+    })
+
+    const success = await invocation.execute(connection)
+
+    if (!success.out.ok) {
+      throw new Error('invocation failed', { cause: success })
+    }
+
+    // Create conclude invocation
+    const concludeInvocation = createConcludeInvocation(
+      alice,
+      context.id,
+      success
+    )
+    const ucanConcludeFail = await concludeInvocation.execute(connection)
+    assert.ok(ucanConcludeFail.out.error)
+    assert.equal(
+      ucanConcludeFail.out.error?.name,
+      ReferencedInvocationNotFoundName
+    )
+
+    // Store scheduled task
+    await context.tasksStorage.put(await invocation.delegate())
+
+    const ucanConcludeSuccess = await concludeInvocation.execute(connection)
+    assert.ok(ucanConcludeSuccess.out.ok)
+    assert.ok(ucanConcludeSuccess.out.ok?.time)
+  },
+  'ucan/conclude schedules web3.storage/blob/accept if invoked with the blob put receipt':
+    async (assert, context) => {
+      const taskScheduled = pDefer()
+      const { proof, spaceDid } = await registerSpace(alice, context)
+
+      // prepare data
+      const data = new Uint8Array([11, 22, 34, 44, 55])
+      const multihash = await sha256.digest(data)
+      const digest = multihash.bytes
+      const size = data.byteLength
+
+      // create service connection
+      const connection = connect({
+        id: context.id,
+        channel: createServer({
+          ...context,
+          tasksScheduler: {
+            schedule: (invocation) => {
+              taskScheduled.resolve(invocation)
+
+              return Promise.resolve({
+                ok: {},
+              })
+            },
+          },
+        }),
+      })
+
+      // invoke `blob/add`
+      const blobAddInvocation = BlobCapabilities.add.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: {
+          blob: {
+            digest,
+            size,
+          },
+        },
+        proofs: [proof],
+      })
+      const blobAdd = await blobAddInvocation.execute(connection)
+      if (!blobAdd.out.ok) {
+        throw new Error('invocation failed', { cause: blobAdd })
+      }
+
+      // Get receipt relevant content
+      const next = parseBlobAddReceiptNext(blobAdd)
+
+      /**
+       * @type {import('@web3-storage/capabilities/types').BlobAddress}
+       **/
+      // @ts-expect-error receipt out is unknown
+      const address = next.allocate.receipt.out.ok?.address
+      assert.ok(address)
+
+      // Store allocate task to be fetchable from allocate
+      await context.tasksStorage.put(next.allocate.task)
+
+      // Write blob
+      const goodPut = await fetch(address.url, {
+        method: 'PUT',
+        mode: 'cors',
+        body: data,
+        headers: address?.headers,
+      })
+      assert.equal(goodPut.status, 200, await goodPut.text())
+
+      // Create `http/put` receipt
+      const keys = next.put.task.facts[0]['keys']
+      // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
+      const blobProvider = ed25519.from(keys)
+      const httpPut = HTTPCapabilities.put.invoke({
+        issuer: blobProvider,
+        audience: blobProvider,
+        with: blobProvider.toDIDKey(),
+        nb: {
+          body: {
+            digest,
+            size,
+          },
+          url: {
+            'ucan/await': ['.out.ok.address.url', next.allocate.task.link()],
+          },
+          headers: {
+            'ucan/await': [
+              '.out.ok.address.headers',
+              next.allocate.task.link(),
+            ],
+          },
+        },
+        facts: next.put.task.facts,
+        expiration: Infinity,
+      })
+
+      const httpPutDelegation = await httpPut.delegate()
+      const httpPutReceipt = await Receipt.issue({
+        issuer: blobProvider,
+        ran: httpPutDelegation.cid,
+        result: {
+          ok: {},
+        },
+      })
+      const httpPutConcludeInvocation = createConcludeInvocation(
+        alice,
+        context.id,
+        httpPutReceipt
+      )
+      const ucanConclude = await httpPutConcludeInvocation.execute(connection)
+      if (!ucanConclude.out.ok) {
+        throw new Error('invocation failed', { cause: blobAdd })
+      }
+
+      // verify accept was scheduled
+      /** @type {import('@ucanto/interface').Invocation<import('@web3-storage/capabilities/types').BlobAccept>} */
+      const blobAcceptInvocation = await taskScheduled.promise
+      assert.equal(blobAcceptInvocation.capabilities.length, 1)
+      assert.equal(
+        blobAcceptInvocation.capabilities[0].can,
+        W3sBlobCapabilities.accept.can
+      )
+      assert.equal(
+        blobAcceptInvocation.capabilities[0].nb._put['ucan/await'][0],
+        '.out.ok'
+      )
+      assert.ok(
+        blobAcceptInvocation.capabilities[0].nb._put['ucan/await'][1].equals(
+          httpPutDelegation.cid
+        )
+      )
+      assert.ok(blobAcceptInvocation.capabilities[0].nb.blob)
+      assert.equal(blobAcceptInvocation.capabilities[0].nb.space, spaceDid)
+    },
 }

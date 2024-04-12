@@ -1,5 +1,19 @@
 # Changelog
 
+## [9.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v9.0.1...upload-api-v9.1.0) (2024-04-12)
+
+
+### Features
+
+* blob, web3.storage and ucan conclude capabilities together with api handlers  ([#1342](https://github.com/web3-storage/w3up/issues/1342)) ([00735a8](https://github.com/web3-storage/w3up/commit/00735a80dfddbe86359af78ed9bd182f4804691f))
+
+## [9.0.1](https://github.com/web3-storage/w3up/compare/upload-api-v9.0.0...upload-api-v9.0.1) (2024-04-12)
+
+
+### Fixes
+
+* upgrade ucanto libs and format filecoin api ([#1359](https://github.com/web3-storage/w3up/issues/1359)) ([87ca098](https://github.com/web3-storage/w3up/commit/87ca098186fe204ff3409a2684719f1c54148c97))
+
 ## [9.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v8.4.1...upload-api-v9.0.0) (2024-03-26)
 
 

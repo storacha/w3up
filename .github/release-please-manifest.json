@@ -1,10 +1,10 @@
 {
   "packages/access-client": "18.3.0",
-  "packages/filecoin-api": "4.6.0",
-  "packages/filecoin-client": "3.3.0",
-  "packages/capabilities": "13.2.0",
-  "packages/upload-api": "9.0.0",
-  "packages/upload-client": "13.2.0",
-  "packages/w3up-client": "12.5.1",
+  "packages/filecoin-api": "4.6.1",
+  "packages/filecoin-client": "3.3.1",
+  "packages/capabilities": "13.3.0",
+  "packages/upload-api": "9.1.0",
+  "packages/upload-client": "13.2.1",
+  "packages/w3up-client": "12.5.2",
   "packages/did-mailto": "2.0.2"
 }
