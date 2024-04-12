@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.1](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.0...upload-api-v9.1.1) (2024-04-12)
+
+
+### Fixes
+
+* add errors to exports ([#1368](https://github.com/web3-storage/w3up/issues/1368)) ([27619c5](https://github.com/web3-storage/w3up/commit/27619c517e66321012f1c9ba0d8edb9c0037d6ff))
+
 ## [9.1.0](https://github.com/web3-storage/w3up/compare/upload-api-v9.0.1...upload-api-v9.1.0) (2024-04-12)
 
 
