@@ -9,7 +9,7 @@ import * as StorefrontEvents from '../../src/storefront/events.js'
 import {
   StoreOperationErrorName,
   UnexpectedStateErrorName,
-  BlobNotFoundErrorName
+  BlobNotFoundErrorName,
 } from '../../src/errors.js'
 
 import { randomCargo, randomAggregate } from '../utils.js'
@@ -53,23 +53,24 @@ export const test = {
     assert.ok(hasStoredPiece.ok)
     assert.equal(hasStoredPiece.ok?.status, 'submitted')
   },
-  'handles filecoin submit messages with error if blob of content is not stored': async (assert, context) => {
-    // Generate piece for test
-    const [cargo] = await randomCargo(1, 128)
+  'handles filecoin submit messages with error if blob of content is not stored':
+    async (assert, context) => {
+      // Generate piece for test
+      const [cargo] = await randomCargo(1, 128)
 
-    // Store piece into store
-    const message = {
-      piece: cargo.link.link(),
-      content: cargo.content.link(),
-      group: context.id.did(),
-    }
+      // Store piece into store
+      const message = {
+        piece: cargo.link.link(),
+        content: cargo.content.link(),
+        group: context.id.did(),
+      }
 
-    // Handle message
-    const handledMessageRes =
-      await StorefrontEvents.handleFilecoinSubmitMessage(context, message)
-    assert.ok(handledMessageRes.error)
-    assert.equal(handledMessageRes.error?.name, BlobNotFoundErrorName)
-  },
+      // Handle message
+      const handledMessageRes =
+        await StorefrontEvents.handleFilecoinSubmitMessage(context, message)
+      assert.ok(handledMessageRes.error)
+      assert.equal(handledMessageRes.error?.name, BlobNotFoundErrorName)
+    },
   'handles filecoin submit messages deduping when stored': async (
     assert,
     context
@@ -255,7 +256,10 @@ export const test = {
       )
     )
   },
-  'handles piece insert event to issue equivalency claims successfully': async (assert, context) => {
+  'handles piece insert event to issue equivalency claims successfully': async (
+    assert,
+    context
+  ) => {
     // Generate piece for test
     const [cargo] = await randomCargo(1, 128)
 
@@ -274,10 +278,11 @@ export const test = {
     }
 
     // Handle message
-    const handledMessageRes = await StorefrontEvents.handlePieceInsertToEquivalencyClaim(
-      context,
-      pieceRecord
-    )
+    const handledMessageRes =
+      await StorefrontEvents.handlePieceInsertToEquivalencyClaim(
+        context,
+        pieceRecord
+      )
     assert.ok(handledMessageRes.ok)
     // Verify invocation
     // @ts-expect-error not typed hooks
@@ -294,7 +299,6 @@ export const test = {
         context.service.assert?.equals?._params[0].nb.equals
       )
     )
-
   },
   'handles piece status update event successfully': async (assert, context) => {
     // Generate piece for test

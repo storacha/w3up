@@ -217,12 +217,15 @@ export function getMockService() {
       }),
     },
     assert: {
-      equals: Server.provide(Assert.equals, async ({ capability, invocation }) => {
-        return {
-          ok: {}
+      equals: Server.provide(
+        Assert.equals,
+        async ({ capability, invocation }) => {
+          return {
+            ok: {},
+          }
         }
-      })
-    }
+      ),
+    },
   })
 }
 

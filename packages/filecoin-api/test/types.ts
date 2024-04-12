@@ -48,6 +48,8 @@ export interface StorefrontTestEventsContext
     piece: Partial<import('../src/types.js').AggregatorService['piece']>
     aggregate: Partial<import('../src/types.js').DealerService['aggregate']>
     deal: Partial<import('../src/types.js').DealTrackerService['deal']>
-    assert: Partial<import('@web3-storage/content-claims/server/service/api').AssertService>
+    assert: Partial<
+      import('@web3-storage/content-claims/server/service/api').AssertService
+    >
   }>
 }

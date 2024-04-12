@@ -208,7 +208,7 @@ async function findDataAggregationProof({ taskStore, receiptStore }, task) {
       aggregateAcceptReceipt = receiptRes.ok.out.ok
     }
     if (!receiptRes.ok.fx.join) break
-    task = receiptRes.ok.fx.join
+    task = receiptRes.ok.fx.join.link()
   }
   if (!inclusion) {
     return {

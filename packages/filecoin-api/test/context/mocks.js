@@ -32,8 +32,8 @@ export function mockService(impl) {
       info: withCallParams(impl.deal?.info ?? notImplemented),
     },
     assert: {
-      equals: withCallParams(impl.assert?.equals ?? notImplemented)
-    }
+      equals: withCallParams(impl.assert?.equals ?? notImplemented),
+    },
   }
 }
 
