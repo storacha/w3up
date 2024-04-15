@@ -34,13 +34,6 @@ export type DataStore = StreammableStore<UnknownLink, Uint8Array>
 export type TaskStore = Store<UnknownLink, Invocation>
 export type ReceiptStore = Store<UnknownLink, Receipt>
 
-export interface ServiceOptions {
-  /**
-   * Implementer MAY handle submission without user request.
-   */
-  skipFilecoinSubmitQueue?: boolean
-}
-
 export interface ServiceContext {
   /**
    * Service signer
@@ -74,10 +67,6 @@ export interface ServiceContext {
    * Deal tracker connection to find out available deals for an aggregate.
    */
   dealTrackerService: ServiceConfig<DealTrackerService>
-  /**
-   * Service options.
-   */
-  options?: ServiceOptions
 }
 
 export interface FilecoinSubmitMessageContext
