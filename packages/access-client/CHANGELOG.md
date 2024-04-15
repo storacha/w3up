@@ -1,5 +1,17 @@
 # Changelog
 
+## [18.3.0](https://github.com/web3-storage/w3up/compare/access-v18.2.0...access-v18.3.0) (2024-04-12)
+
+
+### Features
+
+* upgrade ucanto/transport to 9.1.0 in all packages to get more verbose errors from HTTP transport on non-ok response ([#1312](https://github.com/web3-storage/w3up/issues/1312)) ([d6978d7](https://github.com/web3-storage/w3up/commit/d6978d7ab299be76987c6533d18e6857f6998fe6))
+
+
+### Fixes
+
+* upgrade ucanto libs and format filecoin api ([#1359](https://github.com/web3-storage/w3up/issues/1359)) ([87ca098](https://github.com/web3-storage/w3up/commit/87ca098186fe204ff3409a2684719f1c54148c97))
+
 ## [18.2.0](https://github.com/web3-storage/w3up/compare/access-v18.1.1...access-v18.2.0) (2024-01-29)
 
 
