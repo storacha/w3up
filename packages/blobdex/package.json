@@ -1,0 +1,68 @@
+{
+  "name": "@web3-storage/blobdex",
+  "version": "0.0.1",
+  "description": "blobdex",
+  "homepage": "https://web3.storage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web3-storage/w3up.git",
+    "directory": "packages/blobdex"
+  },
+  "license": "(Apache-2.0 OR MIT)",
+  "type": "module",
+  "types": "dist/src/index.d.ts",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "test",
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./types": "./dist/src/types.js"
+  },
+  "typesVersions": {
+    "*": {
+      "types": [
+        "dist/src/types"
+      ]
+    }
+  },
+  "scripts": {
+    "attw": "attw --pack .",
+    "build": "tsc --build",
+    "check": "tsc --build",
+    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
+    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
+  },
+  "dependencies": {
+    "multiformats": "^13.0.1"
+  },
+  "devDependencies": {
+    "@types/assert": "^1.5.6",
+    "@types/mocha": "^10.0.1",
+    "@web3-storage/eslint-config-w3up": "workspace:^",
+    "mocha": "^10.2.0",
+    "typescript": "5.2.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@web3-storage/eslint-config-w3up"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist",
+      "coverage",
+      "src/types.js"
+    ]
+  },
+  "engines": {
+    "node": ">=16.15"
+  }
+}
