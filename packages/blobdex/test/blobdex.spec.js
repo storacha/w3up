@@ -7,6 +7,7 @@ describe('blob-index', async () => {
 
 /**
  * @param {typeof blobdex} blobdex - blobdex module to test
+ * @param {import("./test-types.js").TestAdder} test - function to call to add a named test
  */
 async function testBlobdex(blobdex, test) {
   await test('module is an object', async () => {
@@ -21,7 +22,6 @@ async function testBlobdex(blobdex, test) {
       const [retOffset, retSize] = bd.posStr(keyMH)
       assert.strictEqual(retOffset, offset)
       assert.strictEqual(retSize, length)
-      console.log('Len:', bd.len())
       assert.strictEqual(bd.len(), i)
     })
   }
@@ -33,7 +33,6 @@ async function testBlobdex(blobdex, test) {
     assert.strictEqual(itemMap.size, i)
     let prevKey = ''
     itemMap.forEach((val, key) => {
-      console.log('key:', key, 'prev:', prevKey)
       assert.ok(key >= prevKey)
       prevKey = key
     })
