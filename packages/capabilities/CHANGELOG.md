@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.3.1](https://github.com/web3-storage/w3up/compare/capabilities-v13.3.0...capabilities-v13.3.1) (2024-04-16)
+
+
+### Fixes
+
+* capabilities should export blob caps ([#1376](https://github.com/web3-storage/w3up/issues/1376)) ([460729e](https://github.com/web3-storage/w3up/commit/460729ec296ac2656b264af442b6d3bc25aa8847))
+
 ## [13.3.0](https://github.com/web3-storage/w3up/compare/capabilities-v13.2.1...capabilities-v13.3.0) (2024-04-12)
 
 
