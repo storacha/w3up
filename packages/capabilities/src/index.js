@@ -45,6 +45,9 @@ export {
   UCAN,
   Plan,
   Usage,
+  Blob,
+  W3sBlob,
+  HTTP,
 }
 
 /** @type {import('./types.js').AbilitiesArray} */
