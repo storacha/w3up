@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.3](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.2...upload-api-v9.1.3) (2024-04-16)
+
+
+### Fixes
+
+* storage operation failed type name instead of store ([#1374](https://github.com/web3-storage/w3up/issues/1374)) ([a99251e](https://github.com/web3-storage/w3up/commit/a99251efc712888bf76270a4fe372163f938eddf))
+
 ## [9.1.2](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.1...upload-api-v9.1.2) (2024-04-15)
 
 
