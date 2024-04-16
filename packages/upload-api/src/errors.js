@@ -1,15 +1,15 @@
 import * as Server from '@ucanto/server'
 
-export const StoreOperationErrorName = /** @type {const} */ (
-  'StoreOperationFailed'
+export const StorageOperationErrorName = /** @type {const} */ (
+  'StorageOperationFailed'
 )
-export class StoreOperationFailed extends Server.Failure {
+export class StorageOperationFailed extends Server.Failure {
   get reason() {
     return this.message
   }
 
   get name() {
-    return StoreOperationErrorName
+    return StorageOperationErrorName
   }
 }
 
