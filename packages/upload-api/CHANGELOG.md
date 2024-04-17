@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.4](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.3...upload-api-v9.1.4) (2024-04-17)
+
+
+### Fixes
+
+* ucan conclude scheduler invocation type and improve test ([#1379](https://github.com/web3-storage/w3up/issues/1379)) ([11e0864](https://github.com/web3-storage/w3up/commit/11e0864bfdc49852127d2d55ef08954d775d7901))
+
 ## [9.1.3](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.2...upload-api-v9.1.3) (2024-04-16)
 
 
