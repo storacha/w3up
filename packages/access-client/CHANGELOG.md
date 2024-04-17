@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.3.1](https://github.com/web3-storage/w3up/compare/access-v18.3.0...access-v18.3.1) (2024-04-17)
+
+
+### Fixes
+
+* access client should request blob namespace capabilities ([#1378](https://github.com/web3-storage/w3up/issues/1378)) ([fc5bb4a](https://github.com/web3-storage/w3up/commit/fc5bb4a83d50374e0e1a6006a8dbd655173ec498))
+
 ## [18.3.0](https://github.com/web3-storage/w3up/compare/access-v18.2.0...access-v18.3.0) (2024-04-12)
 
 
