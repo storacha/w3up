@@ -430,12 +430,33 @@ export const test = {
         channel: createServer({
           ...context,
           tasksScheduler: {
-            schedule: (invocation) => {
-              taskScheduled.resolve(invocation)
+            schedule: async (invocation) => {
+              assert.equal(invocation.capabilities.length, 1)
+              assert.equal(
+                invocation.capabilities[0].can,
+                W3sBlobCapabilities.accept.can
+              )
+              assert.equal(
+                invocation.capabilities[0].nb._put['ucan/await'][0],
+                '.out.ok'
+              )
+              assert.ok(
+                invocation.capabilities[0].nb._put['ucan/await'][1].equals(
+                  httpPutDelegation.cid
+                )
+              )
+              assert.ok(invocation.capabilities[0].nb.blob)
+              assert.equal(invocation.capabilities[0].nb.space, spaceDid)
+              const [blobAcceptRes] = await connection.execute(invocation)
 
-              return Promise.resolve({
+              taskScheduled.resolve(blobAcceptRes)
+              if (blobAcceptRes.out.error) {
+                return blobAcceptRes.out
+              }
+
+              return {
                 ok: {},
-              })
+              }
             },
           },
         }),
@@ -527,23 +548,9 @@ export const test = {
       }
 
       // verify accept was scheduled
-      /** @type {import('@ucanto/interface').Invocation<import('@web3-storage/capabilities/types').BlobAccept>} */
-      const blobAcceptInvocation = await taskScheduled.promise
-      assert.equal(blobAcceptInvocation.capabilities.length, 1)
-      assert.equal(
-        blobAcceptInvocation.capabilities[0].can,
-        W3sBlobCapabilities.accept.can
-      )
-      assert.equal(
-        blobAcceptInvocation.capabilities[0].nb._put['ucan/await'][0],
-        '.out.ok'
-      )
-      assert.ok(
-        blobAcceptInvocation.capabilities[0].nb._put['ucan/await'][1].equals(
-          httpPutDelegation.cid
-        )
-      )
-      assert.ok(blobAcceptInvocation.capabilities[0].nb.blob)
-      assert.equal(blobAcceptInvocation.capabilities[0].nb.space, spaceDid)
+      /** @type {import('@ucanto/interface').Receipt<import('@web3-storage/capabilities/types').BlobAcceptSuccess>} */
+      const blobAcceptReceipt = await taskScheduled.promise
+      assert.ok(blobAcceptReceipt.out.ok)
+      assert.ok(blobAcceptReceipt.out.ok?.site)
     },
 }
