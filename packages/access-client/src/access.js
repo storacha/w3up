@@ -324,6 +324,7 @@ export const toCapabilities = (access) => {
  */
 export const spaceAccess = {
   'space/*': {},
+  'blob/*': {},
   'store/*': {},
   'upload/*': {},
   'access/*': {},
