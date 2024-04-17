@@ -74,7 +74,7 @@ export const ucanConcludeProvider = ({
             .invoke({
               issuer: id,
               audience: id,
-              with: id.toDIDKey(),
+              with: id.did(),
               nb: {
                 blob: cap.nb.body,
                 space: allocateCapability.nb.space,
