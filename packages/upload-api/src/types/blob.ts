@@ -38,16 +38,16 @@ export interface BlobModel {
 
 export interface BlobAddInput {
   space: DID
-  invocation: UnknownLink
+  cause: UnknownLink
   blob: BlobModel
 }
 
 export interface BlobAddOutput
-  extends Omit<BlobAddInput, 'space' | 'invocation'> {}
+  extends Omit<BlobAddInput, 'space' | 'cause'> {}
 
 export interface BlobGetOutput {
   blob: { digest: Uint8Array; size: number }
-  invocation: UnknownLink
+  cause: UnknownLink
 }
 
 export interface BlobsStorage {
