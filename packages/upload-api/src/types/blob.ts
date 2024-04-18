@@ -5,7 +5,11 @@ import type {
   Failure,
   DID,
 } from '@ucanto/interface'
-import { BlobMultihash, BlobListItem } from '@web3-storage/capabilities/types'
+import {
+  BlobMultihash,
+  BlobListItem,
+  BlobRemoveSuccess,
+} from '@web3-storage/capabilities/types'
 
 import { RecordKeyConflict, ListOptions, ListResponse } from '../types.js'
 import { Storage } from './storage.js'
@@ -29,6 +33,11 @@ export interface AllocationsStorage {
     space: DID,
     options?: ListOptions
   ) => Promise<Result<ListResponse<BlobListItem>, Failure>>
+  /** Removes an item from the table but fails if the item does not exist. */
+  remove: (
+    space: DID,
+    digest: BlobMultihash
+  ) => Promise<Result<BlobRemoveSuccess, Failure>>
 }
 
 export interface BlobModel {
@@ -42,8 +51,7 @@ export interface BlobAddInput {
   blob: BlobModel
 }
 
-export interface BlobAddOutput
-  extends Omit<BlobAddInput, 'space' | 'cause'> {}
+export interface BlobAddOutput extends Omit<BlobAddInput, 'space' | 'cause'> {}
 
 export interface BlobGetOutput {
   blob: { digest: Uint8Array; size: number }

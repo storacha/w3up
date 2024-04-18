@@ -95,6 +95,8 @@ export const abilitiesAsStrings = [
   Usage.report.can,
   Blob.blob.can,
   Blob.add.can,
+  Blob.remove.can,
+  Blob.list.can,
   W3sBlob.blob.can,
   W3sBlob.allocate.can,
   W3sBlob.accept.can,

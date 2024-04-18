@@ -57,6 +57,12 @@ import {
   BlobAdd,
   BlobAddSuccess,
   BlobAddFailure,
+  BlobList,
+  BlobListSuccess,
+  BlobListFailure,
+  BlobRemove,
+  BlobRemoveSuccess,
+  BlobRemoveFailure,
   BlobAllocate,
   BlobAllocateSuccess,
   BlobAllocateFailure,
@@ -186,6 +192,8 @@ export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
 export interface Service extends StorefrontService, W3sService {
   blob: {
     add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+    remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+    list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
   }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
