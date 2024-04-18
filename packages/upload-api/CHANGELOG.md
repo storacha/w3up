@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.5](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.4...upload-api-v9.1.5) (2024-04-18)
+
+
+### Fixes
+
+* allocation interface rename invocation to cause ([#1382](https://github.com/web3-storage/w3up/issues/1382)) ([2d13042](https://github.com/web3-storage/w3up/commit/2d1304243c2f21de449090261001a625008c5607))
+
 ## [9.1.4](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.3...upload-api-v9.1.4) (2024-04-17)
 
 
