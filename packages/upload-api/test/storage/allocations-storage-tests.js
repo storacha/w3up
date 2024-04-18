@@ -36,15 +36,14 @@ export const test = {
       },
       proofs: [proof],
     })
-    const invocation = (await blobAdd.delegate()).link()
-
+    const cause = (await blobAdd.delegate()).link()
     const allocationInsert = await allocationsStorage.insert({
       space: spaceDid,
       blob: {
         digest,
         size,
       },
-      invocation,
+      cause,
     })
 
     assert.ok(allocationInsert.ok)
@@ -72,15 +71,14 @@ export const test = {
       },
       proofs: [proof],
     })
-    const invocation = (await blobAdd.delegate()).link()
-
+    const cause = (await blobAdd.delegate()).link()
     const allocationInsert0 = await allocationsStorage.insert({
       space: spaceDid,
       blob: {
         digest,
         size,
       },
-      invocation,
+      cause,
     })
     assert.ok(allocationInsert0.ok)
 
@@ -90,7 +88,7 @@ export const test = {
         digest,
         size,
       },
-      invocation,
+      cause,
     })
     assert.ok(allocationInsert1.error)
     assert.equal(allocationInsert1.error?.name, RecordKeyConflictName)
@@ -121,15 +119,14 @@ export const test = {
       },
       proofs: [proof],
     })
-    const invocation = (await blobAdd.delegate()).link()
-
+    const cause = (await blobAdd.delegate()).link()
     const allocationInsert = await allocationsStorage.insert({
       space: spaceDid,
       blob: {
         digest,
         size,
       },
-      invocation,
+      cause,
     })
 
     assert.ok(allocationInsert.ok)
@@ -142,7 +139,7 @@ export const test = {
     assert.ok(
       equals(digest, allocationGet1.ok?.blob.digest || new Uint8Array())
     )
-    assert.ok(allocationGet1.ok?.invocation)
+    assert.ok(allocationGet1.ok?.cause)
   },
   'should verify allocations exist': async (assert, context) => {
     const { proof, spaceDid } = await registerSpace(alice, context)
@@ -170,15 +167,14 @@ export const test = {
       },
       proofs: [proof],
     })
-    const invocation = (await blobAdd.delegate()).link()
-
+    const cause = (await blobAdd.delegate()).link()
     const allocationInsert = await allocationsStorage.insert({
       space: spaceDid,
       blob: {
         digest,
         size,
       },
-      invocation,
+      cause,
     })
 
     assert.ok(allocationInsert.ok)
@@ -240,7 +236,7 @@ export const test = {
     const aliceAllocationInsert0 = await allocationsStorage.insert({
       space: aliceSpaceDid,
       blob: blob0,
-      invocation: aliceInvocation,
+      cause: aliceInvocation,
     })
     assert.ok(aliceAllocationInsert0.ok)
 
@@ -254,13 +250,13 @@ export const test = {
       },
       proofs: [bobProof],
     })
-    const invocation = (await bobBlobAdd.delegate()).link()
+    const cause = (await bobBlobAdd.delegate()).link()
 
     // Add bob allocations
     const bobAllocationInsert = await allocationsStorage.insert({
       space: bobSpaceDid,
       blob: blob1,
-      invocation,
+      cause,
     })
     assert.ok(bobAllocationInsert.ok)
 
@@ -291,7 +287,7 @@ export const test = {
     const aliceAllocationInsert1 = await allocationsStorage.insert({
       space: aliceSpaceDid,
       blob: blob1,
-      invocation: aliceInvocation1,
+      cause: aliceInvocation1,
     })
     assert.ok(aliceAllocationInsert1.ok)
 

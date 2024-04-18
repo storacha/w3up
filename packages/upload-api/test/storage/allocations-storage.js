@@ -15,7 +15,7 @@ export class AllocationsStorage {
    * @param {Types.BlobAddInput} input
    * @returns {ReturnType<Types.AllocationsStorage['insert']>}
    */
-  async insert({ space, invocation, ...output }) {
+  async insert({ space, cause, ...output }) {
     if (
       this.items.some(
         (i) => i.space === space && equals(i.blob.digest, output.blob.digest)
@@ -27,7 +27,7 @@ export class AllocationsStorage {
     }
     this.items.unshift({
       space,
-      invocation,
+      cause,
       ...output,
       insertedAt: new Date().toISOString(),
     })

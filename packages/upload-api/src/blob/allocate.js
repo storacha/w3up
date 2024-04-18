@@ -35,7 +35,7 @@ export function blobAllocateProvider(context) {
       const allocationInsert = await context.allocationsStorage.insert({
         space,
         blob,
-        invocation: cause,
+        cause,
       })
       if (allocationInsert.error) {
         // if the insert failed with conflict then this item has already been
