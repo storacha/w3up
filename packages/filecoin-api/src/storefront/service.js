@@ -20,27 +20,24 @@ import {
 export const filecoinOffer = async ({ capability }, context) => {
   const { piece, content } = capability.nb
 
-  // Queue offer for filecoin submission
-  // We need to identify new client here...
-  if (!context.options?.skipFilecoinSubmitQueue) {
-    // dedupe
-    const hasRes = await context.pieceStore.has({ piece })
-    if (hasRes.error) {
-      return { error: new StoreOperationFailed(hasRes.error.message) }
-    }
+  // dedupe
+  const hasRes = await context.pieceStore.has({ piece })
+  if (hasRes.error) {
+    return { error: new StoreOperationFailed(hasRes.error.message) }
+  }
 
-    const group = context.id.did()
-    if (!hasRes.ok) {
-      // Queue the piece for validation etc.
-      const queueRes = await context.filecoinSubmitQueue.add({
-        piece,
-        content,
-        group,
-      })
-      if (queueRes.error) {
-        return {
-          error: new QueueOperationFailed(queueRes.error.message),
-        }
+  // Queue offer for filecoin submission
+  const group = context.id.did()
+  if (!hasRes.ok) {
+    // Queue the piece for validation etc.
+    const queueRes = await context.filecoinSubmitQueue.add({
+      piece,
+      content,
+      group,
+    })
+    if (queueRes.error) {
+      return {
+        error: new QueueOperationFailed(queueRes.error.message),
       }
     }
   }
