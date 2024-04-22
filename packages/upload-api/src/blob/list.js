@@ -9,7 +9,7 @@ import * as API from '../types.js'
 export function blobListProvider(context) {
   return Server.provide(Blob.list, async ({ capability }) => {
     const space = capability.with
-    const { cursor, size, pre } = capability.nb
-    return await context.allocationsStorage.list(space, { size, cursor, pre })
+    const { cursor, size } = capability.nb
+    return await context.allocationsStorage.list(space, { size, cursor })
   })
 }

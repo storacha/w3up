@@ -11,7 +11,7 @@ import {
   BlobRemoveSuccess,
 } from '@web3-storage/capabilities/types'
 
-import { RecordKeyConflict, ListOptions, ListResponse } from '../types.js'
+import { RecordKeyConflict, ListResponse } from '../types.js'
 import { Storage } from './storage.js'
 
 export type TasksStorage = Storage<UnknownLink, Invocation>
@@ -38,6 +38,11 @@ export interface AllocationsStorage {
     space: DID,
     digest: BlobMultihash
   ) => Promise<Result<BlobRemoveSuccess, Failure>>
+}
+
+export interface ListOptions {
+  size?: number
+  cursor?: string
 }
 
 export interface BlobModel {
