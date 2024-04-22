@@ -631,6 +631,7 @@ export type PlanGet = InferInvokedCapability<typeof PlanCaps.get>
 export interface PlanGetSuccess {
   updatedAt: ISO8601Date
   product: DID
+  billingEmail?: string
 }
 
 export interface PlanNotFound extends Ucanto.Failure {
@@ -662,6 +663,14 @@ export type PlanSetFailure =
   | CustomerNotFound
   | PlanUpdateError
   | UnexpectedError
+
+export type PlanSetEmail = InferInvokedCapability<typeof PlanCaps.setEmail>
+
+export type PlanSetEmailSuccess = Unit
+export type PlanSetEmailFailure =   
+| CustomerNotFound
+| PlanUpdateError
+| UnexpectedError
 
 // Top
 export type Top = InferInvokedCapability<typeof top>
@@ -707,6 +716,8 @@ export type ServiceAbilityArray = [
   AdminUploadInspect['can'],
   AdminStoreInspect['can'],
   PlanGet['can'],
+  PlanSet['can'],
+  PlanSetEmail['can'],
   Usage['can'],
   UsageReport['can']
 ]

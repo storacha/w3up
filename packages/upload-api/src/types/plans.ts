@@ -6,6 +6,8 @@ import {
   PlanGetSuccess,
   PlanSetFailure,
   PlanSetSuccess,
+  PlanSetEmailFailure,
+  PlanSetEmailSuccess,
   UnexpectedError,
 } from '../types.js'
 
@@ -57,4 +59,15 @@ export interface PlansStorage {
     account: AccountDID,
     plan: PlanID
   ) => Promise<Ucanto.Result<PlanSetSuccess, PlanSetFailure>>
+
+    /**
+   * Set a customer's billing email. Update our systems and any third party billing systems.
+   *
+   * @param account account DID
+   * @param email the new billing email
+   */
+    setEmail: (
+      account: AccountDID,
+      email: string
+    ) => Promise<Ucanto.Result<PlanSetEmailSuccess, PlanSetEmailFailure>>
 }

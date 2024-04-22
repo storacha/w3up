@@ -63,4 +63,13 @@ export class PlansStorage {
     this.plans[account].updatedAt = new Date().toISOString()
     return { ok: {} }
   }
+
+  /**
+   * @param {Types.AccountDID} account
+   * @param {string} email
+   * @returns {Promise<import('@ucanto/interface').Result<import('../types.js').PlanSetEmailSuccess, import('../types.js').PlanSetEmailFailure>>}
+   */
+  async setEmail(account, email) {
+    return { ok: {} }
+  }
 }
