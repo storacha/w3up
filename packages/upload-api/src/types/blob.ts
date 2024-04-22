@@ -33,7 +33,7 @@ export interface AllocationsStorage {
     space: DID,
     options?: ListOptions
   ) => Promise<Result<ListResponse<BlobListItem>, Failure>>
-  /** Removes an item from the table but fails if the item does not exist. */
+  /** Removes an item from the table, returning zero on size if non existent. */
   remove: (
     space: DID,
     digest: BlobMultihash
