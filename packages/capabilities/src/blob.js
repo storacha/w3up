@@ -126,10 +126,6 @@ export const list = capability({
      * Maximum number of items per page.
      */
     size: Schema.integer().optional(),
-    /**
-     * If true, return page of results preceding cursor. Defaults to false.
-     */
-    pre: Schema.boolean().optional(),
   }),
   derives: (claimed, delegated) => {
     if (claimed.with !== delegated.with) {
