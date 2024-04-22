@@ -11,8 +11,8 @@ import { RecordNotFoundErrorName } from '../errors.js'
 export function blobRemoveProvider(context) {
   return Server.provide(Blob.remove, async ({ capability }) => {
     const space = capability.with
-    const { content } = capability.nb
-    const res = await context.allocationsStorage.remove(space, content)
+    const { digest } = capability.nb
+    const res = await context.allocationsStorage.remove(space, digest)
     if (res.error && res.error.name === RecordNotFoundErrorName) {
       return {
         ok: {

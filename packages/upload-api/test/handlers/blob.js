@@ -375,7 +375,7 @@ export const test = {
         audience: context.id,
         with: spaceDid,
         nb: {
-          content: digest,
+          digest,
         },
         proofs: [proof],
       })
@@ -408,7 +408,7 @@ export const test = {
         audience: context.id,
         with: spaceDid,
         nb: {
-          content: digest,
+          digest,
         },
         proofs: [proof],
       })

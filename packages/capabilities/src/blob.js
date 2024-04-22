@@ -85,7 +85,7 @@ export const remove = capability({
     /**
      * A multihash digest of the blob payload bytes, uniquely identifying blob.
      */
-    content: Schema.bytes(),
+    digest: Schema.bytes(),
   }),
   derives: (claimed, delegated) => {
     if (claimed.with !== delegated.with) {
@@ -93,13 +93,13 @@ export const remove = capability({
         `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
       )
     } else if (
-      delegated.nb.content &&
-      !equals(delegated.nb.content, claimed.nb.content)
+      delegated.nb.digest &&
+      !equals(delegated.nb.digest, claimed.nb.digest)
     ) {
       return fail(
         `Link ${
-          claimed.nb.content ? `${claimed.nb.content}` : ''
-        } violates imposed ${delegated.nb.content} constraint.`
+          claimed.nb.digest ? `${claimed.nb.digest}` : ''
+        } violates imposed ${delegated.nb.digest} constraint.`
       )
     }
     return ok({})
