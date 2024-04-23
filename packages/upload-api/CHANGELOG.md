@@ -1,5 +1,16 @@
 # Changelog
 
+## [10.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.5...upload-api-v10.0.0) (2024-04-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* allocations storage interface now requires remove to be implemented
+
+### Features
+
+* add blob list and remove ([#1385](https://github.com/web3-storage/w3up/issues/1385)) ([2f69946](https://github.com/web3-storage/w3up/commit/2f6994600e8cc0f70cedc5afe06003a2a0b70af3))
+
 ## [9.1.5](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.4...upload-api-v9.1.5) (2024-04-18)
 
 
