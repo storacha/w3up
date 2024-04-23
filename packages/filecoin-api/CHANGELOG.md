@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.6.1...filecoin-api-v5.0.0) (2024-04-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* not possible to skip submit queue on storefront service anymore
+
+### Fixes
+
+* drop filecoin storefront skip submit queue option ([#1371](https://github.com/web3-storage/w3up/issues/1371)) ([1114383](https://github.com/web3-storage/w3up/commit/111438395dbd4530fade17b0d216ff056df7d832))
+
 ## [4.6.1](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.6.0...filecoin-api-v4.6.1) (2024-04-12)
 
 
