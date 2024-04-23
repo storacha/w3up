@@ -23,6 +23,8 @@ on:
 jobs:
   deploy-access-client:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: github.event.inputs.package == 'access-client'
     steps:
       - uses: actions/checkout@v3
@@ -45,6 +47,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   deploy-upload-client:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: github.event.inputs.package == 'upload-client'
     steps:
       - uses: actions/checkout@v3
