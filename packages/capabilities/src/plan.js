@@ -1,4 +1,4 @@
-import { DID, capability, ok, struct } from '@ucanto/validator'
+import { DID, Schema, capability, ok, struct } from '@ucanto/validator'
 import { AccountDID, equal, equalWith, and } from './utils.js'
 
 /**
@@ -40,9 +40,13 @@ export const set = capability({
 export const createAdminSession = capability({
   can: 'plan/create-admin-session',
   with: AccountDID,
+  nb: struct({
+    returnURL: Schema.string(),
+  }),
   derives: (child, parent) => {
     return (
       and(equalWith(child, parent)) ||
+      and(equal(child.nb.returnURL, parent.nb.returnURL, 'returnURL')) ||
       ok({})
     )
   },

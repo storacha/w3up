@@ -269,6 +269,9 @@ describe('plan/create-admin-session', function () {
       issuer: agent,
       audience: service,
       with: account,
+      nb: {
+        returnURL: 'http://example.com/return'
+      },
       proofs: await createAuthorization({ agent, service, account }),
     })
     const result = await access(await auth.delegate(), {
@@ -292,6 +295,9 @@ describe('plan/create-admin-session', function () {
       issuer: agent,
       audience: service,
       with: account,
+      nb: {
+        returnURL: 'http://example.com/return'
+      },
     })
 
     const result = await access(await auth.delegate(), {
@@ -309,6 +315,9 @@ describe('plan/create-admin-session', function () {
       issuer: bob,
       audience: service,
       with: account,
+      nb: {
+        returnURL: 'http://example.com/return'
+      },
       proofs: await createAuthorization({ agent, service, account }),
     })
 
@@ -326,11 +335,17 @@ describe('plan/create-admin-session', function () {
       issuer: bob,
       audience: service,
       with: account,
+      nb: {
+        returnURL: 'http://example.com/return'
+      },
       proofs: [
         await Plan.createAdminSession.delegate({
           issuer: agent,
           audience: bob,
           with: account,
+          nb: {
+            returnURL: 'http://example.com/return'
+          },
           proofs: await createAuthorization({ agent, service, account }),
         }),
       ],
@@ -348,5 +363,69 @@ describe('plan/create-admin-session', function () {
       assert.equal(result.ok.capability.can, 'plan/create-admin-session')
       assert.deepEqual(result.ok.capability.with, account)
     }
+  })
+
+  it('can invoke plan/create-admin-session with the return URL that its delegation specifies', async function () {
+    const invocation = Plan.createAdminSession.invoke({
+      issuer: bob,
+      audience: service,
+      with: account,
+      nb: {
+        returnURL: 'http://example.com/return',
+      },
+      proofs: [
+        await Plan.createAdminSession.delegate({
+          issuer: agent,
+          audience: bob,
+          with: account,
+          nb: {
+            returnURL: 'http://example.com/return',
+          },
+          proofs: await createAuthorization({ agent, service, account }),
+        }),
+      ],
+    })
+    const result = await access(await invocation.delegate(), {
+      capability: Plan.createAdminSession,
+      principal: Verifier,
+      authority: service,
+      validateAuthorization,
+    })
+    if (result.error) {
+      assert.fail(`error in self issue: ${result.error.message}`)
+    } else {
+      assert.deepEqual(result.ok.audience.did(), service.did())
+      assert.equal(result.ok.capability.can, 'plan/create-admin-session')
+      assert.deepEqual(result.ok.capability.with, account)
+    }
+  })
+
+  it('cannot invoke plan/create-admin-session with a different product than its delegation specifies', async function () {
+    const invocation = Plan.createAdminSession.invoke({
+      issuer: bob,
+      audience: service,
+      with: account,
+      nb: {
+        returnURL: 'http://example.com/bad-return',
+      },
+      proofs: [
+        await Plan.createAdminSession.delegate({
+          issuer: agent,
+          audience: bob,
+          with: account,
+          nb: {
+            returnURL: 'http://example.com/return',
+          },
+          proofs: await createAuthorization({ agent, service, account }),
+        }),
+      ],
+    })
+    const result = await access(await invocation.delegate(), {
+      capability: Plan.createAdminSession,
+      principal: Verifier,
+      authority: service,
+      validateAuthorization,
+    })
+    assert.equal(result.error?.message.includes('not authorized'), true)
   })
 })

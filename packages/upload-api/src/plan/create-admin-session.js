@@ -13,6 +13,6 @@ export const provide = (context) =>
  * @param {API.PlanServiceContext} context
  * @returns {Promise<API.Result<API.PlanCreateAdminSessionSuccess, API.PlanCreateAdminSessionFailure>>}
  */
-const createAdminSession = async ({ capability }, context) => {
-  return context.plansStorage.createAdminSession(capability.with)
-}
+const createAdminSession = async ({ capability }, context) =>
+  context.plansStorage.createAdminSession(capability.with, capability.nb.returnURL)
+

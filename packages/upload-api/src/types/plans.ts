@@ -69,6 +69,7 @@ export interface PlansStorage {
    * @param account account DID
    */
     createAdminSession: (
-      account: AccountDID
+      account: AccountDID,
+      returnURL: string
     ) => Promise<Ucanto.Result<PlanCreateAdminSessionSuccess, PlanCreateAdminSessionFailure>>
 }

@@ -41,12 +41,16 @@ export const set = async ({ agent }, { account, product, proofs = [] }) => {
  * @param {{agent: API.Agent}} client
  * @param {object} options
  * @param {API.AccountDID} options.account
+ * @param {string} options.returnURL
  * @param {API.Delegation[]} [options.proofs]
  */
-export const createAdminSession = async ({ agent }, { account, proofs = [] }) => {
+export const createAdminSession = async ({ agent }, { account, returnURL, proofs = [] }) => {
   const receipt = await agent.invokeAndExecute(Plan.createAdminSession, {
     with: account,
     proofs,
+    nb: {
+      returnURL
+    }
   })
   return receipt.out
 }
