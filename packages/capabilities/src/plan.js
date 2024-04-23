@@ -30,3 +30,20 @@ export const set = capability({
     )
   },
 })
+
+/**
+ * Capability can be invoked by an account to generate a billing admin session.
+ * 
+ * May not be possible with all billing providers - this is designed with
+ * https://docs.stripe.com/api/customer_portal/sessions/create in mind.
+ */
+export const createAdminSession = capability({
+  can: 'plan/create-admin-session',
+  with: AccountDID,
+  derives: (child, parent) => {
+    return (
+      and(equalWith(child, parent)) ||
+      ok({})
+    )
+  },
+})

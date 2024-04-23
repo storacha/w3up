@@ -91,6 +91,8 @@ export const abilitiesAsStrings = [
   Admin.upload.inspect.can,
   Admin.store.inspect.can,
   Plan.get.can,
+  Plan.set.can,
+  Plan.createAdminSession.can,
   Usage.usage.can,
   Usage.report.can,
   Blob.blob.can,

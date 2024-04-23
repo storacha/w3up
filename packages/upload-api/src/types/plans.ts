@@ -6,6 +6,8 @@ import {
   PlanGetSuccess,
   PlanSetFailure,
   PlanSetSuccess,
+  PlanCreateAdminSessionFailure,
+  PlanCreateAdminSessionSuccess,
   UnexpectedError,
 } from '../types.js'
 
@@ -57,4 +59,16 @@ export interface PlansStorage {
     account: AccountDID,
     plan: PlanID
   ) => Promise<Ucanto.Result<PlanSetSuccess, PlanSetFailure>>
+
+  /**
+   * Set a customer's billing email. Update our systems and any third party billing systems.
+   * 
+   * May not be possible with all billing providers - this is designed with
+   * https://docs.stripe.com/api/customer_portal/sessions/create in mind.
+   *
+   * @param account account DID
+   */
+    createAdminSession: (
+      account: AccountDID
+    ) => Promise<Ucanto.Result<PlanCreateAdminSessionSuccess, PlanCreateAdminSessionFailure>>
 }

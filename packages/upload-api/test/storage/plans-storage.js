@@ -63,4 +63,12 @@ export class PlansStorage {
     this.plans[account].updatedAt = new Date().toISOString()
     return { ok: {} }
   }
+
+  /**
+   * @param {Types.AccountDID} account
+   * @returns {Promise<import('@ucanto/interface').Result<import('../types.js').PlanCreateAdminSessionSuccess, import('../types.js').PlanCreateAdminSessionFailure>>}
+   */
+  async createAdminSession(account) {
+    return { ok: { url: 'https://example.com/admin-session' } }
+  }
 }

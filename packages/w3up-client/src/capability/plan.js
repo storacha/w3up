@@ -34,3 +34,19 @@ export const set = async ({ agent }, { account, product, proofs = [] }) => {
   })
   return receipt.out
 }
+
+/**
+ * Sets the plan billing email currently associated with the account.
+ *
+ * @param {{agent: API.Agent}} client
+ * @param {object} options
+ * @param {API.AccountDID} options.account
+ * @param {API.Delegation[]} [options.proofs]
+ */
+export const createAdminSession = async ({ agent }, { account, proofs = [] }) => {
+  const receipt = await agent.invokeAndExecute(Plan.createAdminSession, {
+    with: account,
+    proofs,
+  })
+  return receipt.out
+}
