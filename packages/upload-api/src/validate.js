@@ -7,6 +7,7 @@ import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from './utils/delegations-response.js'
 import * as accessConfirm from './access/confirm.js'
 import * as Types from './types.js'
+
 /**
  * @param {string | URL} url
  * @param {Types.AccessServiceContext} env
