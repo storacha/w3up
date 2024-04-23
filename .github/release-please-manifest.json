@@ -2,7 +2,7 @@
   "packages/access-client": "18.3.1",
   "packages/filecoin-api": "4.6.1",
   "packages/filecoin-client": "3.3.1",
-  "packages/capabilities": "13.3.1",
+  "packages/capabilities": "14.0.0",
   "packages/upload-api": "9.1.5",
   "packages/upload-client": "13.2.1",
   "packages/w3up-client": "12.5.2",

@@ -1,5 +1,16 @@
 # Changelog
 
+## [14.0.0](https://github.com/web3-storage/w3up/compare/capabilities-v13.3.1...capabilities-v14.0.0) (2024-04-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* allocations storage interface now requires remove to be implemented
+
+### Features
+
+* add blob list and remove ([#1385](https://github.com/web3-storage/w3up/issues/1385)) ([2f69946](https://github.com/web3-storage/w3up/commit/2f6994600e8cc0f70cedc5afe06003a2a0b70af3))
+
 ## [13.3.1](https://github.com/web3-storage/w3up/compare/capabilities-v13.3.0...capabilities-v13.3.1) (2024-04-16)
 
 
