@@ -306,4 +306,57 @@ export const test = {
       )
     )
   },
+  'should fail to remove non existent allocations on a space': async (
+    assert,
+    context
+  ) => {
+    const { spaceDid } = await registerSpace(alice, context)
+    const allocationsStorage = context.allocationsStorage
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const multihash = await sha256.digest(data)
+    const digest = multihash.bytes
+
+    const removeResult = await allocationsStorage.remove(spaceDid, digest)
+
+    assert.ok(removeResult.error)
+    assert.equal(removeResult.error?.name, RecordNotFoundErrorName)
+  },
+  'should remove existent allocations on a space': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const allocationsStorage = context.allocationsStorage
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const multihash = await sha256.digest(data)
+    const digest = multihash.bytes
+    const size = data.byteLength
+
+    // invoke `blob/add`
+    const blobAdd = BlobCapabilities.add.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: {
+        blob: {
+          digest,
+          size,
+        },
+      },
+      proofs: [proof],
+    })
+    const cause = (await blobAdd.delegate()).link()
+    const allocationInsert0 = await allocationsStorage.insert({
+      space: spaceDid,
+      blob: {
+        digest,
+        size,
+      },
+      cause,
+    })
+    assert.ok(allocationInsert0.ok)
+
+    const removeResult = await allocationsStorage.remove(spaceDid, digest)
+    assert.ok(removeResult.ok)
+    assert.equal(removeResult.ok?.size, size)
+  },
 }

@@ -63,6 +63,26 @@ export class AllocationsStorage {
 
   /**
    * @param {Types.DID} space
+   * @param {Uint8Array} blobMultihash
+   * @returns {ReturnType<Types.AllocationsStorage['remove']>}
+   */
+  async remove(space, blobMultihash) {
+    const item = this.items.find(
+      (i) => i.space === space && equals(i.blob.digest, blobMultihash)
+    )
+    if (!item) {
+      return { error: new RecordNotFound() }
+    }
+    this.items = this.items.filter((i) => i !== item)
+    return {
+      ok: {
+        size: item.blob.size,
+      },
+    }
+  }
+
+  /**
+   * @param {Types.DID} space
    * @param {Types.ListOptions} options
    * @returns {ReturnType<Types.AllocationsStorage['list']>}
    */

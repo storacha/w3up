@@ -33,7 +33,7 @@ export const test = {
   ...Blob.test,
   ...Upload.test,
   ...Web3Storage.test,
-  ...Ucan.test
+  ...Ucan.test,
 }
 
 export const storageTests = {
@@ -45,7 +45,7 @@ export const storageTests = {
   ...allocationsStorageTests,
   ...blobsStorageTests,
   ...tasksStorageTests,
-  ...receiptsStorageTests
+  ...receiptsStorageTests,
 }
 
 export const handlerTests = {

@@ -11,7 +11,8 @@
  *
  * @module
  */
-import { capability, Schema } from '@ucanto/validator'
+import { equals } from 'uint8arrays/equals'
+import { capability, Schema, fail, ok } from '@ucanto/validator'
 import { equalBlob, equalWith, SpaceDID } from './utils.js'
 
 /**
@@ -68,6 +69,72 @@ export const add = capability({
     blob: content,
   }),
   derives: equalBlob,
+})
+
+/**
+ * Capability can be used to remove the stored Blob from the (memory)
+ * space identified by `with` field.
+ */
+export const remove = capability({
+  can: 'blob/remove',
+  /**
+   * DID of the (memory) space where Blob is stored.
+   */
+  with: SpaceDID,
+  nb: Schema.struct({
+    /**
+     * A multihash digest of the blob payload bytes, uniquely identifying blob.
+     */
+    digest: Schema.bytes(),
+  }),
+  derives: (claimed, delegated) => {
+    if (claimed.with !== delegated.with) {
+      return fail(
+        `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
+      )
+    } else if (
+      delegated.nb.digest &&
+      !equals(delegated.nb.digest, claimed.nb.digest)
+    ) {
+      return fail(
+        `Link ${
+          claimed.nb.digest ? `${claimed.nb.digest}` : ''
+        } violates imposed ${delegated.nb.digest} constraint.`
+      )
+    }
+    return ok({})
+  },
+})
+
+/**
+ * Capability can be invoked to request a list of stored Blobs in the
+ * (memory) space identified by `with` field.
+ */
+export const list = capability({
+  can: 'blob/list',
+  /**
+   * DID of the (memory) space where Blobs to be listed are stored.
+   */
+  with: SpaceDID,
+  nb: Schema.struct({
+    /**
+     * A pointer that can be moved back and forth on the list.
+     * It can be used to paginate a list for instance.
+     */
+    cursor: Schema.string().optional(),
+    /**
+     * Maximum number of items per page.
+     */
+    size: Schema.integer().optional(),
+  }),
+  derives: (claimed, delegated) => {
+    if (claimed.with !== delegated.with) {
+      return fail(
+        `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
+      )
+    }
+    return ok({})
+  },
 })
 
 // ⚠️ We export imports here so they are not omitted in generated typedefs
