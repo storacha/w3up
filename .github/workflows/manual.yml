@@ -70,5 +70,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   deploy-docs:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     if: github.event.inputs.package == 'docs'
     uses: './.github/workflows/reusable-deploy-docs.yml'
