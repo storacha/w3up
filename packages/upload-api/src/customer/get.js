@@ -40,6 +40,9 @@ class UnknownProvider extends Provider.Failure {
     this.name = /** @type {const} */ ('UnknownProvider')
   }
 
+  /**
+   *
+   */
   describe() {
     return `Provider ${this.did} not found`
   }
