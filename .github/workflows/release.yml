@@ -52,6 +52,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
   docs:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     needs: release
     if: |
       contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
