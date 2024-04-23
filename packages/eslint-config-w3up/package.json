@@ -5,7 +5,7 @@
   "homepage": "https://web3.storage",
   "repository": {
     "type": "git",
-    "url": "https://github.com/web3-storage/w3up.git",
+    "url": "https://github.com/w3s-project/w3up.git",
     "directory": "packages/eslint-config-w3up"
   },
   "main": "index.js",
