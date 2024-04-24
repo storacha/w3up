@@ -117,8 +117,10 @@
     "@ucanto/transport": "^9.1.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
+    "@web3-storage/clock": "^0.4.1",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-client": "workspace:^",
+    "@web3-storage/pail": "^0.6.0",
     "@web3-storage/upload-client": "workspace:^"
   },
   "devDependencies": {

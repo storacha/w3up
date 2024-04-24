@@ -46,3 +46,6 @@ export const serviceConf = {
 }
 
 export const receiptsEndpoint = 'https://up.web3.storage/receipt/'
+
+export const clockServiceURL = new URL('https://clock.web3.storage')
+export const clockServicePrincipal = DID.parse('did:web:clock.web3.storage')
