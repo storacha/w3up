@@ -16,7 +16,7 @@ export const Await = Schema.struct({
 })
 
 /**
- * Check URI can be delegated
+ * Check URI can be delegated.
  *
  * @param {string} [child]
  * @param {string} [parent]
