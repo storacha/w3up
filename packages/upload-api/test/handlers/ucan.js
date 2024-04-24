@@ -1,4 +1,5 @@
 import * as API from '../../src/types.js'
+import { conclude } from '@web3-storage/capabilities/ucan'
 import { UCAN, Console } from '@web3-storage/capabilities'
 import pDefer from 'p-defer'
 import { Receipt } from '@ucanto/core'
@@ -553,4 +554,56 @@ export const test = {
       assert.ok(blobAcceptReceipt.out.ok)
       assert.ok(blobAcceptReceipt.out.ok?.site)
     },
+    'ucan/conclude allows attach of blocs to receipt': 
+    async (assert, context) => {
+      // create service connection
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
+      // Invoke something
+      const proof = await Console.log.delegate({
+        issuer: context.id,
+        audience: alice,
+        with: context.id.did(),
+      })
+      const invocation = Console.log.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: context.id.did(),
+        nb: { value: 'hello' },
+        proofs: [proof],
+      })
+  
+      const receipt = await invocation.execute(connection)
+      if (!receipt.out.ok) {
+        throw new Error('invocation failed', { cause: receipt })
+      }
+
+      const receiptBlocks = []
+      const receiptCids = []
+      for (const block of receipt.iterateIPLDBlocks()) {
+        receiptBlocks.push(block)
+        receiptCids.push(block.cid)
+      }
+      const concludeAllocatefx = conclude.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.toDIDKey(),
+        nb: {
+          receipt: receipt.link(),
+        },
+        expiration: Infinity,
+        facts: [
+          {
+            ...receiptCids,
+            // TODO: add CIDs of extra blocks
+          },
+        ],
+      })
+      for (const block of receiptBlocks) {
+        concludeAllocatefx.attach(block)
+      }
+      // TODO: add extra blocks
+    }
 }
