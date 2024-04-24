@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/w3s-project/w3up/compare/filecoin-api-v5.0.0...filecoin-api-v5.0.1) (2024-04-24)
+
+
+### Fixes
+
+* migrate repo ([#1389](https://github.com/w3s-project/w3up/issues/1389)) ([475a287](https://github.com/w3s-project/w3up/commit/475a28743ff9f7138b46dfe4227d3c80ed75a6a2))
+
 ## [5.0.0](https://github.com/web3-storage/w3up/compare/filecoin-api-v4.6.1...filecoin-api-v5.0.0) (2024-04-23)
 
 
