@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.3.2](https://github.com/w3s-project/w3up/compare/access-v18.3.1...access-v18.3.2) (2024-04-24)
+
+
+### Fixes
+
+* migrate repo ([#1389](https://github.com/w3s-project/w3up/issues/1389)) ([475a287](https://github.com/w3s-project/w3up/commit/475a28743ff9f7138b46dfe4227d3c80ed75a6a2))
+
 ## [18.3.1](https://github.com/web3-storage/w3up/compare/access-v18.3.0...access-v18.3.1) (2024-04-17)
 
 
