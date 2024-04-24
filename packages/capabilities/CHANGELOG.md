@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.0.2](https://github.com/w3s-project/w3up/compare/capabilities-v14.0.1...capabilities-v14.0.2) (2024-04-24)
+
+
+### Fixes
+
+* trigger capabilities release ([#1399](https://github.com/w3s-project/w3up/issues/1399)) ([7d9ab35](https://github.com/w3s-project/w3up/commit/7d9ab354d194b751bb7f34ffa2f74e7465cb40e2))
+
 ## [14.0.1](https://github.com/w3s-project/w3up/compare/capabilities-v14.0.0...capabilities-v14.0.1) (2024-04-23)
 
 
