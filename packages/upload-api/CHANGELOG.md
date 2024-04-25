@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v10.0.0...upload-api-v10.0.1) (2024-04-25)
+
+
+### Fixes
+
+* add whitespace to trigger a release ([#1390](https://github.com/w3s-project/w3up/issues/1390)) ([ec95a0e](https://github.com/w3s-project/w3up/commit/ec95a0e5cf1bc08c6eabba1214b9803fda723393))
+* migrate repo ([#1388](https://github.com/w3s-project/w3up/issues/1388)) ([10b7742](https://github.com/w3s-project/w3up/commit/10b7742d3f568f4b2dc1e2f435916a9e23480952))
+* migrate repo ([#1389](https://github.com/w3s-project/w3up/issues/1389)) ([475a287](https://github.com/w3s-project/w3up/commit/475a28743ff9f7138b46dfe4227d3c80ed75a6a2))
+
 ## [10.0.0](https://github.com/web3-storage/w3up/compare/upload-api-v9.1.5...upload-api-v10.0.0) (2024-04-23)
 
 
