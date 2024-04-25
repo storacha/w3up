@@ -121,7 +121,7 @@ describe('index capabilities', function () {
     })
   })
 
-  it('index/add sholud fail when escalating index constraint', async () => {
+  it('index/add should fail when escalating index constraint', async () => {
     const delegation = await Index.add.delegate({
       issuer: alice,
       audience: bob,
