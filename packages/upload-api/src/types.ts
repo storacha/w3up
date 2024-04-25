@@ -154,6 +154,9 @@ import {
   PlanSetSuccess,
   PlanSetFailure,
   PlanSet,
+  PlanCreateAdminSession,
+  PlanCreateAdminSessionSuccess,
+  PlanCreateAdminSessionFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -304,6 +307,7 @@ export interface Service extends StorefrontService, W3sService {
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
     set: ServiceMethod<PlanSet, PlanSetSuccess, PlanSetFailure>
+    'create-admin-session': ServiceMethod<PlanCreateAdminSession, PlanCreateAdminSessionSuccess, PlanCreateAdminSessionFailure>
   }
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>

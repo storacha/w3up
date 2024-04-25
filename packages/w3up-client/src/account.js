@@ -228,6 +228,19 @@ export class AccountPlan {
     })
   }
 
+  /**
+   * 
+   * @param {import('@web3-storage/access').AccountDID} accountDID 
+   * @param {string} returnURL 
+   * @returns 
+   */
+  async createAdminSession(accountDID, returnURL){
+    return await Plan.createAdminSession(this.model, {
+      account: accountDID,
+      returnURL
+    })
+  }
+
   async subscriptions() {
     return await Subscription.list(this.model, {
       account: this.model.id,
