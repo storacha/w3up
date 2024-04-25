@@ -35,6 +35,7 @@ import * as StorefrontCaps from './filecoin/storefront.js'
 import * as AggregatorCaps from './filecoin/aggregator.js'
 import * as DealTrackerCaps from './filecoin/deal-tracker.js'
 import * as DealerCaps from './filecoin/dealer.js'
+import * as IndexCaps from './index/index.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 import * as PlanCaps from './plan.js'
@@ -52,6 +53,8 @@ export interface UCANAwait<Selector extends string = string, Task = unknown> {
  * An IPLD Link that has the CAR codec code.
  */
 export type CARLink = Link<unknown, typeof CAR.codec.code>
+
+export type Multihash = Uint8Array
 
 export type AccountDID = DID<'mailto'>
 export type SpaceDID = DID<'key'>
@@ -449,6 +452,37 @@ export type UploadGetFailure = UploadNotFound | Ucanto.Failure
 // HTTP
 export type HTTPPut = InferInvokedCapability<typeof HTTPCaps.put>
 
+// Index
+export type Index = InferInvokedCapability<typeof IndexCaps.index>
+export type IndexAdd = InferInvokedCapability<typeof IndexCaps.add>
+
+export type IndexAddSuccess = Unit
+
+export type IndexAddFailure =
+  | UnknownFormat
+  | ShardNotFound
+  | SliceNotFound
+  | Failure
+
+/** The index is not in a format understood by the service. */
+export interface UnknownFormat extends Failure {
+  name: 'UnknownFormat'
+}
+
+/** A shard referenced by the index is not stored in the referenced space. */
+export interface ShardNotFound extends Failure {
+  name: 'ShardNotFound'
+  /** Multihash digest of the shard that could not be found. */
+  digest: Multihash
+}
+
+/** A slice referenced by the index was not found in the specified shard. */
+export interface SliceNotFound extends Failure {
+  name: 'SliceNotFound'
+  /** Multihash digest of the slice that could not be found. */
+  digest: Multihash
+}
+
 // Blob
 export type Blob = InferInvokedCapability<typeof BlobCaps.blob>
 export type BlobAdd = InferInvokedCapability<typeof BlobCaps.add>
@@ -458,9 +492,8 @@ export type ServiceBlob = InferInvokedCapability<typeof W3sBlobCaps.blob>
 export type BlobAllocate = InferInvokedCapability<typeof W3sBlobCaps.allocate>
 export type BlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
 
-export type BlobMultihash = Uint8Array
 export interface BlobModel {
-  digest: BlobMultihash
+  digest: Multihash
   size: number
 }
 
@@ -841,7 +874,9 @@ export type ServiceAbilityArray = [
   ServiceBlob['can'],
   BlobAllocate['can'],
   BlobAccept['can'],
-  HTTPPut['can']
+  HTTPPut['can'],
+  Index['can'],
+  IndexAdd['can']
 ]
 
 /**
