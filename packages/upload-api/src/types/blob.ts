@@ -6,7 +6,7 @@ import type {
   DID,
 } from '@ucanto/interface'
 import {
-  BlobMultihash,
+  Multihash,
   BlobListItem,
   BlobRemoveSuccess,
 } from '@web3-storage/capabilities/types'
@@ -19,11 +19,11 @@ export type TasksStorage = Storage<UnknownLink, Invocation>
 export interface AllocationsStorage {
   get: (
     space: DID,
-    blobMultihash: BlobMultihash
+    blobMultihash: Multihash
   ) => Promise<Result<BlobGetOutput, Failure>>
   exists: (
     space: DID,
-    blobMultihash: BlobMultihash
+    blobMultihash: Multihash
   ) => Promise<Result<boolean, Failure>>
   /** Inserts an item in the table if it does not already exist. */
   insert: (
@@ -36,7 +36,7 @@ export interface AllocationsStorage {
   /** Removes an item from the table, returning zero on size if non existent. */
   remove: (
     space: DID,
-    digest: BlobMultihash
+    digest: Multihash
   ) => Promise<Result<BlobRemoveSuccess, Failure>>
 }
 
@@ -46,7 +46,7 @@ export interface ListOptions {
 }
 
 export interface BlobModel {
-  digest: BlobMultihash
+  digest: Multihash
   size: number
 }
 
@@ -64,9 +64,9 @@ export interface BlobGetOutput {
 }
 
 export interface BlobsStorage {
-  has: (content: BlobMultihash) => Promise<Result<boolean, Failure>>
+  has: (content: Multihash) => Promise<Result<boolean, Failure>>
   createUploadUrl: (
-    content: BlobMultihash,
+    content: Multihash,
     size: number,
     /**
      * The number of seconds before the presigned URL expires
