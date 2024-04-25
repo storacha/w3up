@@ -77,7 +77,7 @@ export const getStoreImplementations = (
         return Array.from(items).find((i) => i.ran.link().equals(record))
       },
     }),
-    dataStore: new StreammableStore({
+    contentStore: new StreammableStore({
       streamFn: (
         /** @type {Set<Uint8Array>} */ items,
         /** @type {import('@ucanto/interface').UnknownLink} */ record
