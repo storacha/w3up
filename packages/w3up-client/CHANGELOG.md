@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.5.3](https://github.com/w3s-project/w3up/compare/w3up-client-v12.5.2...w3up-client-v12.5.3) (2024-04-25)
+
+
+### Fixes
+
+* migrate repo ([#1389](https://github.com/w3s-project/w3up/issues/1389)) ([475a287](https://github.com/w3s-project/w3up/commit/475a28743ff9f7138b46dfe4227d3c80ed75a6a2))
+
 ## [12.5.2](https://github.com/web3-storage/w3up/compare/w3up-client-v12.5.1...w3up-client-v12.5.2) (2024-04-12)
 
 
