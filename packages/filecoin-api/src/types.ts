@@ -52,7 +52,7 @@ export interface UpdatableStore<RecKey, Rec> extends Store<RecKey, Rec> {
   ) => Promise<Result<Rec, StoreGetError>>
 }
 
-export interface StreammableStore<RecKey, Rec> {
+export interface ReadableStreamStore<RecKey, Rec> {
   /**
    * Puts a record in the store.
    */
@@ -60,7 +60,7 @@ export interface StreammableStore<RecKey, Rec> {
   /**
    * Gets a record from the store.
    */
-  stream: (key: RecKey) => Promise<Result<AsyncIterable<Rec>, StoreGetError>>
+  stream: (key: RecKey) => Promise<Result<ReadableStream<Rec>, StoreGetError>>
 }
 
 export interface QueryableStore<RecKey, Rec, Query> extends Store<RecKey, Rec> {

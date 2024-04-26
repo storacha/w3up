@@ -39,7 +39,7 @@ export const test = {
     }
 
     // Store bytes on datastore
-    await context.dataStore.put(cargo.bytes)
+    await context.testContentStore.put(cargo.bytes)
 
     // Handle message
     const handledMessageRes =

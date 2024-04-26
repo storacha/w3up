@@ -103,7 +103,7 @@ describe('storefront', () => {
 
         // context
         const {
-          storefront: { pieceStore, taskStore, receiptStore, dataStore },
+          storefront: { pieceStore, taskStore, receiptStore, contentStore },
         } = getStoreImplementations()
 
         await test(
@@ -118,7 +118,8 @@ describe('storefront', () => {
             pieceStore,
             receiptStore,
             taskStore,
-            dataStore,
+            contentStore,
+            testContentStore: contentStore,
             storefrontService: {
               connection: storefrontConnection,
               invocationConfig: {
