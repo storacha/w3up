@@ -11,6 +11,11 @@
 import { capability, Link, Schema, ok, fail } from '@ucanto/validator'
 import { equalLink, equalWith, SpaceDID } from './utils.js'
 
+// @see https://github.com/multiformats/multicodec/blob/master/table.csv#L140
+export const code = 0x0202
+
+export const CARLink = Schema.link({ code, version: 1 })
+
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
  * derived any `store/` prefixed capability for the (memory) space identified
@@ -46,7 +51,7 @@ export const add = capability({
      * for this exact CAR file for agent to PUT or POST it. Attempt to write
      * any other content will fail.
      */
-    link: Link,
+    link: CARLink,
     /**
      * Size of the CAR file to be stored. Service will provision write target
      * for this exact size. Attempt to write a larger CAR file will fail.
@@ -94,7 +99,7 @@ export const get = capability({
     /**
      * shard CID to fetch info about.
      */
-    link: Link.optional(),
+    link: CARLink.optional(),
   }),
   derives: equalLink,
 })
@@ -114,7 +119,7 @@ export const remove = capability({
     /**
      * CID of the CAR file to be removed from the store.
      */
-    link: Link,
+    link: CARLink,
   }),
   derives: equalLink,
 })

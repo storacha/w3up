@@ -606,7 +606,7 @@ export type AdminUploadInspectResult = Result<
 
 export interface StoreAddInput {
   space: DID
-  link: UnknownLink
+  link: CARLink
   size: number
   origin?: UnknownLink
   issuer: DID

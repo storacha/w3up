@@ -611,7 +611,7 @@ export interface StoreAddSuccessResult {
   /** DID of the space this item will be stored in. */
   with: DID
   /** CID of the item. */
-  link: UnknownLink
+  link: CARLink
 }
 
 export interface StoreAddSuccessDone extends StoreAddSuccessResult {
@@ -649,7 +649,7 @@ export interface ListResponse<R> {
 }
 
 export interface StoreListItem {
-  link: UnknownLink
+  link: CARLink
   size: number
   origin?: UnknownLink
   insertedAt: ISO8601Date
