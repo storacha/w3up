@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/w3s-project/w3up/compare/filecoin-api-v5.0.1...filecoin-api-v6.0.0) (2024-04-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* dataStore in storefront renamed to contentStore
+
+### Fixes
+
+* storefront content store rename and separation for test ([#1409](https://github.com/w3s-project/w3up/issues/1409)) ([05e5db3](https://github.com/w3s-project/w3up/commit/05e5db35544c935a6c8e65e8f27583cffcf224e1))
+
 ## [5.0.1](https://github.com/w3s-project/w3up/compare/filecoin-api-v5.0.0...filecoin-api-v5.0.1) (2024-04-24)
 
 
