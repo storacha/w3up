@@ -40,7 +40,7 @@ export const handleFilecoinSubmitMessage = async (context, message) => {
 
   // read and compute piece for content
   // TODO: needs to be hooked with location claims
-  const contentStreamRes = await context.dataStore.stream(message.content)
+  const contentStreamRes = await context.contentStore.stream(message.content)
   if (contentStreamRes.error) {
     return { error: new BlobNotFound(contentStreamRes.error.message) }
   }
