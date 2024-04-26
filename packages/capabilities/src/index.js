@@ -16,6 +16,7 @@ import * as Storefront from './filecoin/storefront.js'
 import * as Aggregator from './filecoin/aggregator.js'
 import * as Dealer from './filecoin/dealer.js'
 import * as DealTracker from './filecoin/deal-tracker.js'
+import * as Index from './index/index.js'
 import * as UCAN from './ucan.js'
 import * as Plan from './plan.js'
 import * as Usage from './usage.js'
@@ -37,6 +38,7 @@ export {
   RateLimit,
   Subscription,
   Filecoin,
+  Index,
   Storefront,
   Aggregator,
   Dealer,
@@ -50,7 +52,7 @@ export {
   HTTP,
 }
 
-/** @type {import('./types.js').AbilitiesArray} */
+/** @type {import('./types.js').ServiceAbility[]} */
 export const abilitiesAsStrings = [
   Top.top.can,
   Provider.add.can,
@@ -101,4 +103,6 @@ export const abilitiesAsStrings = [
   W3sBlob.allocate.can,
   W3sBlob.accept.can,
   HTTP.put.can,
+  Index.index.can,
+  Index.add.can,
 ]
