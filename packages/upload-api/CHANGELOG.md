@@ -1,5 +1,16 @@
 # Changelog
 
+## [11.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v10.0.1...upload-api-v11.0.0) (2024-04-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **capabilities:** `BlobMultihash` type in `@web3-storage/capabilities` renamed to `Multihash`.
+
+### Features
+
+* **capabilities:** add `index/add` capability ([#1410](https://github.com/w3s-project/w3up/issues/1410)) ([1b71b89](https://github.com/w3s-project/w3up/commit/1b71b89ed989cde8ef4bf35c1ebc333872cbc54c))
+
 ## [10.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v10.0.0...upload-api-v10.0.1) (2024-04-25)
 
 
