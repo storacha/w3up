@@ -163,7 +163,7 @@ export async function add(
  * has the capability to perform the action.
  *
  * The issuer needs the `store/get` delegated capability.
- * @param {import('multiformats/link').UnknownLink} link CID of stored CAR file.
+ * @param {import('multiformats/link').Link<unknown, CAR.codec.code>} link CID of stored CAR file.
  * @param {import('./types.js').RequestOptions} [options]
  * @returns {Promise<import('./types.js').StoreGetSuccess>}
  */

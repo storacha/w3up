@@ -13,6 +13,10 @@ import {
 } from '../helpers/fixtures.js'
 import { createCarCid, validateAuthorization } from '../helpers/utils.js'
 
+const CAR_LINK = parseLink(
+  'bagbaierale63ypabqutmxxbz3qg2yzcp2xhz2yairorogfptwdd5n4lsz5xa'
+)
+
 const top = async () =>
   Capability.top.delegate({
     issuer: account,
@@ -35,7 +39,7 @@ describe('store capabilities', function () {
       audience: w3,
       with: account.did(),
       nb: {
-        link: parseLink('bafkqaaa'),
+        link: CAR_LINK,
         size: 0,
       },
       proofs: [await top()],
@@ -55,7 +59,7 @@ describe('store capabilities', function () {
     assert.deepEqual(result.ok.audience.did(), w3.did())
     assert.equal(result.ok.capability.can, 'store/add')
     assert.deepEqual(result.ok.capability.nb, {
-      link: parseLink('bafkqaaa'),
+      link: CAR_LINK,
       size: 0,
     })
   })
@@ -66,7 +70,7 @@ describe('store capabilities', function () {
       audience: w3,
       with: account.did(),
       nb: {
-        link: parseLink('bafkqaaa'),
+        link: CAR_LINK,
         size: 0,
       },
       proofs: [await store()],
@@ -86,7 +90,7 @@ describe('store capabilities', function () {
     assert.deepEqual(result.ok.audience.did(), w3.did())
     assert.equal(result.ok.capability.can, 'store/add')
     assert.deepEqual(result.ok.capability.nb, {
-      link: parseLink('bafkqaaa'),
+      link: CAR_LINK,
       size: 0,
     })
   })
@@ -104,7 +108,7 @@ describe('store capabilities', function () {
       audience: w3,
       with: account.did(),
       nb: {
-        link: parseLink('bafkqaaa'),
+        link: CAR_LINK,
         size: 0,
       },
       proofs: [store],
@@ -124,7 +128,7 @@ describe('store capabilities', function () {
     assert.deepEqual(result.ok.audience.did(), w3.did())
     assert.equal(result.ok.capability.can, 'store/add')
     assert.deepEqual(result.ok.capability.nb, {
-      link: parseLink('bafkqaaa'),
+      link: CAR_LINK,
       size: 0,
     })
   })
@@ -147,7 +151,7 @@ describe('store capabilities', function () {
         with: account.did(),
         nb: {
           size: 1000,
-          link: parseLink('bafkqaaa'),
+          link: CAR_LINK,
         },
         proofs: [delegation],
       })
@@ -166,7 +170,7 @@ describe('store capabilities', function () {
       assert.deepEqual(result.ok.audience.did(), w3.did())
       assert.equal(result.ok.capability.can, 'store/add')
       assert.deepEqual(result.ok.capability.nb, {
-        link: parseLink('bafkqaaa'),
+        link: CAR_LINK,
         size: 1000,
       })
     }
@@ -178,7 +182,7 @@ describe('store capabilities', function () {
         with: account.did(),
         nb: {
           size: 2048,
-          link: parseLink('bafkqaaa'),
+          link: CAR_LINK,
         },
         proofs: [delegation],
       })
@@ -206,7 +210,7 @@ describe('store capabilities', function () {
           audience: w3,
           with: account.did(),
           nb: {
-            link: parseLink('bafkqaaa'),
+            link: CAR_LINK,
             // @ts-expect-error
             size,
           },
@@ -252,7 +256,7 @@ describe('store capabilities', function () {
         audience: w3,
         with: account.did(),
         nb: {
-          link: parseLink('bafkqaaa'),
+          link: CAR_LINK,
           size: 1024.2,
         },
         proofs,
