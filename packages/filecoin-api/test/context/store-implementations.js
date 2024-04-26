@@ -1,4 +1,4 @@
-import { UpdatableStore, StreammableStore } from './store.js'
+import { UpdatableStore, ReadableStreamStore } from './store.js'
 
 /**
  * @typedef {import('@ucanto/interface').Link} Link
@@ -19,7 +19,7 @@ import { UpdatableStore, StreammableStore } from './store.js'
  */
 export const getStoreImplementations = (
   StoreImplementation = UpdatableStore,
-  StreammableStoreImplementation = StreammableStore
+  ReadableStreamStoreImplementation = ReadableStreamStore
 ) => ({
   storefront: {
     pieceStore: new StoreImplementation({
@@ -77,7 +77,7 @@ export const getStoreImplementations = (
         return Array.from(items).find((i) => i.ran.link().equals(record))
       },
     }),
-    contentStore: new StreammableStore({
+    contentStore: new ReadableStreamStore({
       streamFn: (
         /** @type {Set<Uint8Array>} */ items,
         /** @type {import('@ucanto/interface').UnknownLink} */ record
@@ -86,15 +86,14 @@ export const getStoreImplementations = (
         if (!item) {
           return undefined
         }
-        const asyncIterableRes = {
-          [Symbol.asyncIterator]: async function* () {
-            // Yield the Uint8Array asynchronously
-            if (item) {
-              yield item
-            }
-          },
-        }
-        return asyncIterableRes
+        return new ReadableStream({
+            start(controller) {
+              // Push the data into the stream
+              controller.enqueue(item)
+              // Close the stream
+              controller.close()
+          }
+        })
       },
     }),
   },

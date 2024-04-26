@@ -7,13 +7,14 @@ import { ComputePieceFailed } from '../errors.js'
 /**
  * Compute PieceCid for provided async iterable.
  *
- * @param {AsyncIterable<Uint8Array>} stream
+ * @param {ReadableStream<Uint8Array>} stream
  */
 export async function computePieceCid(stream) {
   /** @type {import('../types.js').PieceLink} */
   let piece
   try {
     const hasher = Hasher.create()
+    // @ts-ignore Readable stream is Aync Iterator
     for await (const chunk of stream) {
       hasher.write(chunk)
     }

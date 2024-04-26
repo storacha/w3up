@@ -194,5 +194,5 @@ export interface ContentStore<RecKey, Rec> {
   /**
    * Gets a record from the store.
    */
-  stream: (key: RecKey) => Promise<Result<AsyncIterable<Rec>, StoreGetError>>
+  stream: (key: RecKey) => Promise<Result<ReadableStream<Rec>, StoreGetError>>
 }

@@ -97,11 +97,11 @@ export class Store {
 /**
  * @template K
  * @template V
- * @implements {API.StreammableStore<K,V>}
+ * @implements {API.ReadableStreamStore<K,V>}
  */
-export class StreammableStore {
+export class ReadableStreamStore {
   /**
-   * @param {import('./types.js').StreammableStoreOptions<K, V>} options
+   * @param {import('./types.js').ReadableStreamStoreOptions<K, V>} options
    */
   constructor(options) {
     /** @type {Set<V>} */
@@ -123,7 +123,7 @@ export class StreammableStore {
 
   /**
    * @param {K} item
-   * @returns {Promise<import('@ucanto/interface').Result<AsyncIterable<V>, StoreGetError>>}
+   * @returns {Promise<import('@ucanto/interface').Result<ReadableStream<V>, StoreGetError>>}
    */
   async stream(item) {
     if (!this.streamFn) {
