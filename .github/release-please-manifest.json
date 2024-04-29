@@ -5,6 +5,6 @@
   "packages/capabilities": "16.0.0",
   "packages/upload-api": "11.0.0",
   "packages/upload-client": "13.2.2",
-  "packages/w3up-client": "12.5.3",
+  "packages/w3up-client": "13.0.0",
   "packages/did-mailto": "2.0.2"
 }
