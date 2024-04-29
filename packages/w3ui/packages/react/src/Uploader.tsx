@@ -41,7 +41,7 @@ export interface UploaderContextState {
   files?: File[]
   /**
    * A callback that can be passed to an `onSubmit` handler to
-   * upload `file` to web3.storage via the w3up API
+   * upload `file` to web3.storage via the w3up API.
    */
   handleUploadSubmit?: (e: Event) => Promise<void>
   /**
