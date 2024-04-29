@@ -1,5 +1,16 @@
 # Changelog
 
+## [13.0.0](https://github.com/w3s-project/w3up/compare/w3up-client-v12.5.3...w3up-client-v13.0.0) (2024-04-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415))
+
+### Features
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415)) ([e53aa87](https://github.com/w3s-project/w3up/commit/e53aa87780446458ef9a19c88877073c1470d50e))
+
 ## [12.5.3](https://github.com/w3s-project/w3up/compare/w3up-client-v12.5.2...w3up-client-v12.5.3) (2024-04-25)
 
 
