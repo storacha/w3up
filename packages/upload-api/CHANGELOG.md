@@ -1,5 +1,16 @@
 # Changelog
 
+## [12.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v11.0.0...upload-api-v12.0.0) (2024-04-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415))
+
+### Features
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415)) ([e53aa87](https://github.com/w3s-project/w3up/commit/e53aa87780446458ef9a19c88877073c1470d50e))
+
 ## [11.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v10.0.1...upload-api-v11.0.0) (2024-04-26)
 
 
