@@ -154,6 +154,9 @@ import {
   PlanSetSuccess,
   PlanSetFailure,
   PlanSet,
+  IndexAdd,
+  IndexAddSuccess,
+  IndexAddFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -188,6 +191,8 @@ import {
   BlobAddInput,
 } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
+import { IndexServiceContext } from './types/index.js'
+export type { IndexServiceContext, IPNIService, ShardedDAGIndex, ShardDigest, SliceDigest } from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
   blob: {
@@ -307,6 +312,9 @@ export interface Service extends StorefrontService, W3sService {
   }
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
+  }
+  index: {
+    add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
   }
 }
 
@@ -461,6 +469,7 @@ export interface ServiceContext
     PlanServiceContext,
     UploadServiceContext,
     FilecoinServiceContext,
+    IndexServiceContext,
     UsageServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {
