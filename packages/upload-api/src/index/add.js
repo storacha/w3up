@@ -31,7 +31,15 @@ const add = async ({ capability }, context) => {
 
   // fetch the index from the network
   const idxBlobRes = await context.blobRetriever.stream(idxLink.multihash)
-  if (!idxBlobRes.ok) return idxBlobRes
+  if (!idxBlobRes.ok) {
+    if (idxBlobRes.error.name === 'BlobNotFound') {
+      return error(
+        /** @type {API.IndexNotFound} */
+        ({ name: 'IndexNotFound', digest: idxLink.multihash.bytes })
+      )
+    }
+    return idxBlobRes
+  }
 
   const idxRes = await ShardedDAGIndex.extract(idxBlobRes.ok)
   if (!idxRes.ok) return idxAllocRes

@@ -460,12 +460,18 @@ export type IndexAddSuccess = Unit
 
 export type IndexAddFailure =
   | IndexNotFound
+  | DecodeFailure
   | UnknownFormat
   | ShardNotFound
   | SliceNotFound
   | Failure
 
-/** The index is not in a format understood by the service. */
+/** An error occurred when decoding the data. */
+export interface DecodeFailure extends Failure {
+  name: 'DecodeFailure'
+}
+
+/** The data is not in a format understood by the service. */
 export interface UnknownFormat extends Failure {
   name: 'UnknownFormat'
 }
