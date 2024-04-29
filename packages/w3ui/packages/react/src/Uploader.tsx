@@ -49,7 +49,7 @@ export interface UploaderContextState {
    */
   dataCID?: AnyLink
   /**
-   * Shards of a DAG uploaded to web3.storage
+   * Shards of a DAG uploaded to web3.storage.
    */
   storedDAGShards: CARMetadata[]
   /**
