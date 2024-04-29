@@ -192,7 +192,13 @@ import {
 } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
 import { IndexServiceContext } from './types/index.js'
-export type { IndexServiceContext, IPNIService, ShardedDAGIndex, ShardDigest, SliceDigest } from './types/index.js'
+export type {
+  IndexServiceContext,
+  IPNIService,
+  ShardedDAGIndex,
+  ShardDigest,
+  SliceDigest,
+} from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
   blob: {

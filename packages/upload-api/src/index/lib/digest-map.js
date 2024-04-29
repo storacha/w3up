@@ -4,7 +4,7 @@ import { base58btc } from 'multiformats/bases/base58'
 const cache = new WeakMap()
 
 /** @param {import('multiformats').MultihashDigest} digest */
-const toBase58String = digest => {
+const toBase58String = (digest) => {
   let str = cache.get(digest)
   if (!str) {
     str = base58btc.encode(digest.bytes)
@@ -25,7 +25,7 @@ export class DigestMap extends Map {
   /**
    * @param {Array<[Key, Value]>} [entries]
    */
-  constructor (entries) {
+  constructor(entries) {
     super()
     this.#keys = new Map()
     for (const [k, v] of entries ?? []) {
@@ -33,7 +33,7 @@ export class DigestMap extends Map {
     }
   }
 
-  clear () {
+  clear() {
     super.clear()
     this.#keys.clear()
   }
@@ -42,7 +42,7 @@ export class DigestMap extends Map {
    * @param {Key} key
    * @returns {boolean}
    */
-  delete (key) {
+  delete(key) {
     const mhstr = toBase58String(key)
     super.delete(mhstr)
     return this.#keys.delete(mhstr)
@@ -52,7 +52,7 @@ export class DigestMap extends Map {
    * @param {(value: Value, key: Key, map: Map<Key, Value>) => void} callbackfn
    * @param {any} [thisArg]
    */
-  forEach (callbackfn, thisArg) {
+  forEach(callbackfn, thisArg) {
     super.forEach((v, k) => {
       const key = this.#keys.get(k)
       /* c8 ignore next line */
@@ -65,7 +65,7 @@ export class DigestMap extends Map {
    * @param {Key} key
    * @returns {Value|undefined}
    */
-  get (key) {
+  get(key) {
     return super.get(toBase58String(key))
   }
 
@@ -73,7 +73,7 @@ export class DigestMap extends Map {
    * @param {Key} key
    * @returns {boolean}
    */
-  has (key) {
+  has(key) {
     return super.has(toBase58String(key))
   }
 
@@ -81,24 +81,24 @@ export class DigestMap extends Map {
    * @param {Key} key
    * @param {Value} value
    */
-  set (key, value) {
+  set(key, value) {
     const mhstr = toBase58String(key)
     this.#keys.set(mhstr, key)
     return super.set(mhstr, value)
   }
 
   /** @returns {number} */
-  get size () {
+  get size() {
     return super.size
   }
 
   /** @returns */
-  [Symbol.iterator] () {
+  [Symbol.iterator]() {
     return this.entries()
   }
 
   /** @returns {IterableIterator<[Key, Value]>} */
-  * entries () {
+  *entries() {
     for (const [k, v] of super.entries()) {
       const key = this.#keys.get(k)
       /* c8 ignore next line */
@@ -108,12 +108,12 @@ export class DigestMap extends Map {
   }
 
   /** @returns {IterableIterator<Key>} */
-  keys () {
+  keys() {
     return this.#keys.values()
   }
 
   /** @returns {IterableIterator<Value>} */
-  values () {
+  values() {
     return super.values()
   }
 }

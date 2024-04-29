@@ -10,7 +10,7 @@ export const ShardedDAGIndexSchema = Schema.variant({
     /** DAG root. */
     content: Schema.link(),
     /** Shards the DAG can be found in. */
-    shards: Schema.array(Schema.link())
+    shards: Schema.array(Schema.link()),
   }),
 })
 
@@ -27,12 +27,16 @@ export const BlobIndexSchema = Schema.tuple([
  * @param {ReadableStream<Uint8Array>} archive
  * @returns {Promise<API.Result<API.ShardedDAGIndex, API.DecodeFailure|API.UnknownFormat>>}
  */
-export const extract = async archive => {
+export const extract = async (archive) => {
   const blocks = new DigestMap()
   const reader = new CARReaderStream()
-  await archive.pipeThrough(reader).pipeTo(new WritableStream({
-    write: block => { blocks.set(block.cid.multihash, block.bytes) },
-  }))
+  await archive.pipeThrough(reader).pipeTo(
+    new WritableStream({
+      write: (block) => {
+        blocks.set(block.cid.multihash, block.bytes)
+      },
+    })
+  )
 
   const header = await reader.getHeader()
   if (header.roots[0].code !== dagCBOR.code) {
@@ -44,21 +48,36 @@ export const extract = async archive => {
 
   const rootBlock = blocks.get(header.roots[0])
   if (!rootBlock) {
-    return error(new DecodeFailure(`failed to find root block in archive: ${header.roots[0]}`))
+    return error(
+      new DecodeFailure(
+        `failed to find root block in archive: ${header.roots[0]}`
+      )
+    )
   }
 
-  const [version, dagIndexData] = ShardedDAGIndexSchema.match(dagCBOR.decode(rootBlock.bytes))
+  const [version, dagIndexData] = ShardedDAGIndexSchema.match(
+    dagCBOR.decode(rootBlock.bytes)
+  )
   switch (version) {
     case 'index/sharded/dag@0.1':
       const dagIndex = {
         content: dagIndexData.content,
-        shards: new DigestMap()
+        shards: new DigestMap(),
       }
       for (const shard of dagIndexData.shards) {
         const shardBlock = blocks.get(shard.multihash)
-        if (!shardBlock) return error(new DecodeFailure(`failed to find shard block in archive: ${base58btc.encode(shard.multihash.digest)}`))
+        if (!shardBlock)
+          return error(
+            new DecodeFailure(
+              `failed to find shard block in archive: ${base58btc.encode(
+                shard.multihash.digest
+              )}`
+            )
+          )
 
-        const blobIndexData = BlobIndexSchema.from(dagCBOR.decode(shardBlock.bytes))
+        const blobIndexData = BlobIndexSchema.from(
+          dagCBOR.decode(shardBlock.bytes)
+        )
         const blobIndex = new DigestMap()
         for (const [digest, offset, length] of blobIndexData[1]) {
           blobIndex.set(Digest.decode(digest), [offset, length])
@@ -78,13 +97,13 @@ class DecodeFailure extends Failure {
   #reason
 
   /** @param {string} [reason] */
-  constructor (reason) {
+  constructor(reason) {
     super()
     this.name = /** @type {const} */ ('DecodeFailure')
     this.#reason = reason
   }
 
-  describe () {
+  describe() {
     return this.#reason ?? 'failed to decode'
   }
 }

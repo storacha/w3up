@@ -9,7 +9,7 @@ import * as API from '../types.js'
  * @returns {API.ServiceMethod<API.IndexAdd, API.IndexAddSuccess, API.IndexAddFailure>}
  */
 export const provide = (context) =>
-  Server.provide(Index.add, input => add(input, context))
+  Server.provide(Index.add, (input) => add(input, context))
 
 /**
  * @param {API.Input<Index.add>} input
@@ -21,9 +21,14 @@ const add = async ({ capability }, context) => {
   const idxLink = capability.nb.index
 
   // ensure the index was stored in the agent's space
-  const idxAllocRes = await assertAllocated(context, space, idxLink.multihash, 'IndexNotFound')
+  const idxAllocRes = await assertAllocated(
+    context,
+    space,
+    idxLink.multihash,
+    'IndexNotFound'
+  )
   if (!idxAllocRes.ok) return idxAllocRes
-  
+
   // fetch the index from the network
   const idxBlobRes = await context.blobRetriever.stream(idxLink.multihash)
   if (!idxBlobRes.ok) return idxBlobRes
@@ -44,18 +49,19 @@ const add = async ({ capability }, context) => {
 }
 
 /**
- * @param {{ allocationsStorage: import('../types.js').AllocationsStorage }} context 
+ * @param {{ allocationsStorage: import('../types.js').AllocationsStorage }} context
  * @param {API.SpaceDID} space
- * @param {import('multiformats').MultihashDigest} digest 
+ * @param {import('multiformats').MultihashDigest} digest
  * @param {'IndexNotFound'|'ShardNotFound'|'SliceNotFound'} errorName
  * @returns {Promise<API.Result<API.Unit, API.IndexNotFound|API.ShardNotFound|API.SliceNotFound|API.Failure>>}
  */
 const assertAllocated = async (context, space, digest, errorName) => {
   const result = await context.allocationsStorage.exists(space, digest.bytes)
   if (result.ok == null) return result
-  if (!result.ok) return error(
-    /** @type {API.IndexNotFound|API.ShardNotFound|API.SliceNotFound} */
-    ({ name: errorName, digest: digest.bytes })
-  )
+  if (!result.ok)
+    return error(
+      /** @type {API.IndexNotFound|API.ShardNotFound|API.SliceNotFound} */
+      ({ name: errorName, digest: digest.bytes })
+    )
   return ok({})
 }
