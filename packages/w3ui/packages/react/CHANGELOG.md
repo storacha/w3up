@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/w3s-project/w3ui/compare/react-v2.2.0...react-v2.2.1) (2024-04-29)
+
+
+### Bug Fixes
+
+* migrate repo ([#626](https://github.com/w3s-project/w3ui/issues/626)) ([94f933c](https://github.com/w3s-project/w3ui/commit/94f933c4e07bb0307103d9e2f8bc9e3ae7fbba00))
+
 ## [2.2.0](https://github.com/web3-storage/w3ui/compare/react-v2.1.0...react-v2.2.0) (2024-01-11)
 
 
