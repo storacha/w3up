@@ -6,6 +6,7 @@ const notImplemented = () => {
 
 /**
  * @param {Partial<{
+ *   blob: Partial<import('../../src/types.js').Service['blob']>
  *   store: Partial<import('../../src/types.js').Service['store']>
  *   upload: Partial<import('../../src/types.js').Service['upload']>
  *   usage: Partial<import('../../src/types.js').Service['usage']>
@@ -14,6 +15,9 @@ const notImplemented = () => {
  */
 export function mockService(impl) {
   return {
+    blob: {
+      add: withCallCount(impl.blob?.add ?? notImplemented),
+    },
     store: {
       add: withCallCount(impl.store?.add ?? notImplemented),
       get: withCallCount(impl.store?.get ?? notImplemented),

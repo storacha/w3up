@@ -14,6 +14,9 @@ import {
   Failure,
 } from '@ucanto/interface'
 import {
+  BlobAdd,
+  BlobAddSuccess,
+  BlobAddFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -95,6 +98,9 @@ export interface ProgressStatus extends XHRProgressStatus {
 export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service extends StorefrontService {
+  blob: {
+    add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+  }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
