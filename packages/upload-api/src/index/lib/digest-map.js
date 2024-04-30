@@ -1,14 +1,14 @@
 import { base58btc } from 'multiformats/bases/base58'
 
-/** @type {WeakMap<import('multiformats').MultihashDigest, string>} */
+/** @type {WeakMap<Uint8Array, string>} */
 const cache = new WeakMap()
 
 /** @param {import('multiformats').MultihashDigest} digest */
 const toBase58String = (digest) => {
-  let str = cache.get(digest)
+  let str = cache.get(digest.bytes)
   if (!str) {
     str = base58btc.encode(digest.bytes)
-    cache.set(digest, str)
+    cache.set(digest.bytes, str)
   }
   return str
 }
@@ -18,24 +18,26 @@ const toBase58String = (digest) => {
  * @template Value
  * @implements {Map<Key, Value>}
  */
-export class DigestMap extends Map {
-  /** @type {Map<string, Key>} */
-  #keys
+export class DigestMap {
+  /** @type {Map<string, [Key, Value]>} */
+  #data
 
   /**
    * @param {Array<[Key, Value]>} [entries]
    */
   constructor(entries) {
-    super()
-    this.#keys = new Map()
+    this.#data = new Map()
     for (const [k, v] of entries ?? []) {
       this.set(k, v)
     }
   }
 
+  get [Symbol.toStringTag] () {
+    return 'DigestMap'
+  }
+
   clear() {
-    super.clear()
-    this.#keys.clear()
+    this.#data.clear()
   }
 
   /**
@@ -44,8 +46,7 @@ export class DigestMap extends Map {
    */
   delete(key) {
     const mhstr = toBase58String(key)
-    super.delete(mhstr)
-    return this.#keys.delete(mhstr)
+    return this.#data.delete(mhstr)
   }
 
   /**
@@ -53,12 +54,9 @@ export class DigestMap extends Map {
    * @param {any} [thisArg]
    */
   forEach(callbackfn, thisArg) {
-    super.forEach((v, k) => {
-      const key = this.#keys.get(k)
-      /* c8 ignore next line */
-      if (!key) throw new Error('internal inconsistency')
-      callbackfn.call(thisArg, v, key, this)
-    })
+    for (const [k, v] of this.#data.values()) {
+      callbackfn.call(thisArg, v, k, this)
+    }
   }
 
   /**
@@ -66,7 +64,8 @@ export class DigestMap extends Map {
    * @returns {Value|undefined}
    */
   get(key) {
-    return super.get(toBase58String(key))
+    const data = this.#data.get(toBase58String(key))
+    if (data) return data[1]
   }
 
   /**
@@ -74,7 +73,7 @@ export class DigestMap extends Map {
    * @returns {boolean}
    */
   has(key) {
-    return super.has(toBase58String(key))
+    return this.#data.has(toBase58String(key))
   }
 
   /**
@@ -82,14 +81,13 @@ export class DigestMap extends Map {
    * @param {Value} value
    */
   set(key, value) {
-    const mhstr = toBase58String(key)
-    this.#keys.set(mhstr, key)
-    return super.set(mhstr, value)
+    this.#data.set(toBase58String(key), [key, value])
+    return this
   }
 
   /** @returns {number} */
   get size() {
-    return super.size
+    return this.#data.size
   }
 
   /** @returns */
@@ -99,21 +97,20 @@ export class DigestMap extends Map {
 
   /** @returns {IterableIterator<[Key, Value]>} */
   *entries() {
-    for (const [k, v] of super.entries()) {
-      const key = this.#keys.get(k)
-      /* c8 ignore next line */
-      if (!key) throw new Error('internal inconsistency')
-      yield [key, v]
-    }
+    yield * this.#data.values()
   }
 
   /** @returns {IterableIterator<Key>} */
-  keys() {
-    return this.#keys.values()
+  *keys() {
+    for (const [k] of this.#data.values()) {
+      yield k
+    }
   }
 
   /** @returns {IterableIterator<Value>} */
-  values() {
-    return super.values()
+  *values() {
+    for (const [,v] of this.#data.values()) {
+      yield v
+    }
   }
 }

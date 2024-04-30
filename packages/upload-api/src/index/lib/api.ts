@@ -3,6 +3,7 @@ import { MultihashDigest, UnknownLink } from 'multiformats'
 
 export type { Result } from '@ucanto/interface'
 export type { UnknownFormat } from '@web3-storage/capabilities/types'
+export type { MultihashDigest, UnknownLink }
 
 export type ShardDigest = MultihashDigest
 export type SliceDigest = MultihashDigest
