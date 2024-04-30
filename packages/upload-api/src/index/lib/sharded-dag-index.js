@@ -14,12 +14,13 @@ export const ShardedDAGIndexSchema = Schema.variant({
   }),
 })
 
+export const MultihashSchema = Schema.bytes()
+
 export const BlobIndexSchema = Schema.tuple([
-  /** multihash bytes. */
-  Schema.bytes(),
+  MultihashSchema,
   Schema.array(
     /** multihash bytes, offset, length. */
-    Schema.tuple([Schema.bytes(), Schema.number(), Schema.number()])
+    Schema.tuple([MultihashSchema, Schema.number(), Schema.number()])
   ),
 ])
 
