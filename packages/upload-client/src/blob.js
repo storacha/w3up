@@ -81,11 +81,8 @@ export async function add(
     })
   }
 
-  // Return early if it was already uploaded.
-  if (result.out.ok.status === 'done') {
-    return link
-  }
-
+  // TODO I'm definitely missing something here
+  // I suppose it's something alike https://github.com/w3s-project/w3up/pull/1421/files#diff-f1d31e4f2617054f785fab0c186ab965b2fdd3a9ed7873a955d3e3c74bb6e186R100
   const responseAddUpload = result.out.ok
 
   const fetchWithUploadProgress =

@@ -174,7 +174,7 @@ describe('uploadFile', () => {
       blob: {
         add: provide(BlobCapabilities.add, ({ capability }) => Server.ok({
           site: {
-            // TODO unsure what to place here as site value
+            // FIXME unsure what to place here as site value
             'ucan/await': ['.out.ok.site', piece],
           },
         })),
