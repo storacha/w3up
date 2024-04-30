@@ -65,7 +65,7 @@ const add = async ({ capability }, context) => {
  */
 const assertAllocated = async (context, space, digest, errorName) => {
   const result = await context.allocationsStorage.exists(space, digest.bytes)
-  if (result.ok == null) return result
+  if (result.error) return result
   if (!result.ok)
     return error(
       /** @type {API.IndexNotFound|API.ShardNotFound|API.SliceNotFound} */
