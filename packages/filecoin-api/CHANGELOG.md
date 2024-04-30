@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.0.1](https://github.com/w3s-project/w3up/compare/filecoin-api-v6.0.0...filecoin-api-v6.0.1) (2024-04-30)
+
+
+### Fixes
+
+* filecoin test use blob ([#1422](https://github.com/w3s-project/w3up/issues/1422)) ([359c0b7](https://github.com/w3s-project/w3up/commit/359c0b736cad8e4375d75af4f60e97e20057e7aa))
+
 ## [6.0.0](https://github.com/w3s-project/w3up/compare/filecoin-api-v5.0.1...filecoin-api-v6.0.0) (2024-04-26)
 
 
