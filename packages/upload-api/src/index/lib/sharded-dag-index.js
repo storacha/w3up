@@ -24,10 +24,7 @@ export const BlobIndexSchema = Schema.tuple([
   ),
 ])
 
-/**
- * @param {ReadableStream<Uint8Array>} archive
- * @returns {Promise<API.Result<API.ShardedDAGIndex, API.DecodeFailure|API.UnknownFormat>>}
- */
+/** @param {ReadableStream<Uint8Array>} archive */
 export const extract = async (archive) => {
   const blocks = new DigestMap()
   const reader = new CARReaderStream()
@@ -77,9 +74,7 @@ export const view = ({ root, blocks }) => {
           return error(new DecodeFailure(`missing shard block: ${shard}`))
         }
 
-        const blobIndexData = BlobIndexSchema.from(
-          dagCBOR.decode(shardBytes)
-        )
+        const blobIndexData = BlobIndexSchema.from(dagCBOR.decode(shardBytes))
         const blobIndex = new DigestMap()
         for (const [digest, offset, length] of blobIndexData[1]) {
           blobIndex.set(Digest.decode(digest), [offset, length])

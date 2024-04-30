@@ -45,8 +45,11 @@ const add = async ({ capability }, context) => {
   if (!idxRes.ok) return idxAllocRes
 
   // ensure indexed shards are allocated in the agent's space
-  for await (const digest of idxRes.ok.shards.keys()) {
-    const res = await assertAllocated(context, space, digest, 'ShardNotFound')
+  const shardDigests = [...idxRes.ok.shards.keys()]
+  const shardAllocRes = await Promise.all(
+    shardDigests.map((s) => assertAllocated(context, space, s, 'ShardNotFound'))
+  )
+  for (const res of shardAllocRes) {
     if (!res.ok) return res
   }
 

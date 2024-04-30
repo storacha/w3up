@@ -32,7 +32,7 @@ export class DigestMap {
     }
   }
 
-  get [Symbol.toStringTag] () {
+  get [Symbol.toStringTag]() {
     return 'DigestMap'
   }
 
@@ -97,7 +97,7 @@ export class DigestMap {
 
   /** @returns {IterableIterator<[Key, Value]>} */
   *entries() {
-    yield * this.#data.values()
+    yield* this.#data.values()
   }
 
   /** @returns {IterableIterator<Key>} */
@@ -109,7 +109,7 @@ export class DigestMap {
 
   /** @returns {IterableIterator<Value>} */
   *values() {
-    for (const [,v] of this.#data.values()) {
+    for (const [, v] of this.#data.values()) {
       yield v
     }
   }
