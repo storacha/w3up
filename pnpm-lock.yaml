@@ -416,8 +416,8 @@ importers:
         specifier: workspace:^
         version: link:../filecoin-api
       carstream:
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.1.0
+        version: 2.1.0
       multiformats:
         specifier: ^12.1.2
         version: 12.1.3
@@ -5278,8 +5278,8 @@ packages:
       uint8arraylist: 2.4.8
     dev: false
 
-  /carstream@2.0.0:
-    resolution: {integrity: sha512-vmxqp4Quj4rVdkoXBzcQ3UzeH0JR7aXLr9rkx07pLp0gtPJyRxIU+9HZb94lKsaXxogM6EFRApEHusINPjsUuw==}
+  /carstream@2.1.0:
+    resolution: {integrity: sha512-4kYIT1Y+GW/+o6wxS2tZlKnnINcgm4ceODBmyoLNaiQ17G2FNmzvUnQnVQkugC4NORTMCzD6KZEMT534XMJ4Yw==}
     dependencies:
       '@ipld/dag-cbor': 9.0.6
       multiformats: 13.1.0

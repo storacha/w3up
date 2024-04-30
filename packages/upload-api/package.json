@@ -190,7 +190,7 @@
     "@web3-storage/content-claims": "^4.0.4",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-api": "workspace:^",
-    "carstream": "^2.0.0",
+    "carstream": "^2.1.0",
     "multiformats": "^12.1.2",
     "p-retry": "^5.1.2",
     "uint8arrays": "^5.0.3"

@@ -1,6 +1,6 @@
 import { CARReaderStream } from 'carstream'
 import * as dagCBOR from '@ipld/dag-cbor'
-import { ok, error, Schema, Failure, base58btc } from '@ucanto/server'
+import { ok, error, Schema, Failure } from '@ucanto/server'
 import * as Digest from 'multiformats/hashes/digest'
 import * as API from './api.js'
 import { DigestMap } from './digest-map.js'

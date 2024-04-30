@@ -15,6 +15,7 @@ import type {
   RevocationChecker,
   ToString,
   UnknownLink,
+  MultihashDigest,
   Unit,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
@@ -191,7 +192,7 @@ import {
   BlobAddInput,
 } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
-import { IndexServiceContext } from './types/index.js'
+import { IPNIService, IndexServiceContext } from './types/index.js'
 export type {
   IndexServiceContext,
   IPNIService,
@@ -495,6 +496,10 @@ export interface UcantoServerTestContext
   fetch: typeof fetch
 
   grantAccess: (mail: { url: string | URL }) => Promise<void>
+
+  ipniService: IPNIService & {
+    query (digest: MultihashDigest): Promise<Result<Unit, RecordNotFound>>
+  }
 }
 
 export interface StoreTestContext {}
