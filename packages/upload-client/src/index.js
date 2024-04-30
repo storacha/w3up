@@ -3,6 +3,7 @@ import { Storefront } from '@web3-storage/filecoin-client'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
+import * as Blob from './blob.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
@@ -130,8 +131,8 @@ async function uploadBlockStream(
       new TransformStream({
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
-          // Invoke store/add and write bytes to write target
-          const cid = await Store.add(conf, bytes, options)
+          // Invoke blob/add and write bytes to write target
+          const cid = await Blob.add(conf, bytes, options)
           let piece
           if (pieceHasher) {
             const multihashDigest = await pieceHasher.digest(bytes)
