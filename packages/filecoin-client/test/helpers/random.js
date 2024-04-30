@@ -1,6 +1,7 @@
 import { Aggregate, Piece } from '@web3-storage/data-segment'
-
-import { toCAR } from './car.js'
+import { sha256 } from 'multiformats/hashes/sha2'
+import * as raw from 'multiformats/codecs/raw'
+import { CID } from 'multiformats'
 
 /** @param {number} size */
 export async function randomBytes(size) {
@@ -9,6 +10,7 @@ export async function randomBytes(size) {
     const chunk = new Uint8Array(Math.min(size, 65_536))
     if (!globalThis.crypto) {
       try {
+        // @ts-expect-error no types for webcrypto
         const { webcrypto } = await import('node:crypto')
         webcrypto.getRandomValues(chunk)
       } catch (error) {
@@ -27,22 +29,13 @@ export async function randomBytes(size) {
 }
 
 /** @param {number} size */
-export async function randomCAR(size) {
+export async function randomBlob(size) {
   const bytes = await randomBytes(size)
-  return toCAR(bytes)
-}
+  const hash = await sha256.digest(bytes)
+  const cid = CID.create(1, raw.code, hash)
 
-/**
- * @param {number} length
- * @param {number} size
- */
-export async function randomCARs(length, size) {
-  return (
-    await Promise.all(Array.from({ length }).map(() => randomCAR(size)))
-  ).map((car) => ({
-    link: car.cid,
-    size: car.size,
-  }))
+  const blob = new Blob([bytes])
+  return Object.assign(blob, { cid, bytes })
 }
 
 /**
@@ -50,19 +43,19 @@ export async function randomCARs(length, size) {
  * @param {number} size
  */
 export async function randomCargo(length, size) {
-  const cars = await Promise.all(
-    Array.from({ length }).map(() => randomCAR(size))
+  const blobs = await Promise.all(
+    Array.from({ length }).map(() => randomBlob(size))
   )
 
-  return cars.map((car) => {
-    const piece = Piece.fromPayload(car.bytes)
+  return blobs.map((blob) => {
+    const piece = Piece.fromPayload(blob.bytes)
 
     return {
       link: piece.link,
       height: piece.height,
       root: piece.root,
       padding: piece.padding,
-      content: car.cid,
+      content: blob.cid,
     }
   })
 }

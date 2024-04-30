@@ -273,9 +273,9 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
     devDependencies:
-      '@ipld/car':
-        specifier: ^5.1.1
-        version: 5.2.4
+      '@types/assert':
+        specifier: ^1.5.10
+        version: 1.5.10
       '@types/mocha':
         specifier: ^10.0.1
         version: 10.0.4
@@ -328,9 +328,6 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
     devDependencies:
-      '@ipld/car':
-        specifier: ^5.1.1
-        version: 5.2.4
       '@ipld/dag-json':
         specifier: ^10.1.4
         version: 10.1.5
@@ -3818,6 +3815,10 @@ packages:
     resolution: {integrity: sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==}
     dependencies:
       '@types/estree': 1.0.5
+    dev: true
+
+  /@types/assert@1.5.10:
+    resolution: {integrity: sha512-qEO+AUgYab7GVbeDDgUNCU3o0aZUoIMpNAe+w5LDbRxfxQX7vQAdDgwj1AroX+i8KaV56FWg0srXlSZROnsrIQ==}
     dev: true
 
   /@types/assert@1.5.9:
