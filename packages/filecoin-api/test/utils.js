@@ -3,7 +3,6 @@ import { CID } from 'multiformats'
 import { webcrypto } from 'one-webcrypto'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as raw from 'multiformats/codecs/raw'
-import { Blob } from '@web-std/blob'
 
 /** @param {number} size */
 export async function randomBytes(size) {
@@ -24,8 +23,10 @@ export async function randomBlob(size) {
   const hash = await sha256.digest(bytes)
   const cid = CID.create(1, raw.code, hash)
 
-  const blob = new Blob([bytes])
-  return Object.assign(blob, { cid, bytes })
+  return {
+    cid,
+    bytes,
+  }
 }
 
 /**

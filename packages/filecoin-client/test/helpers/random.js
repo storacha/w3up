@@ -34,8 +34,10 @@ export async function randomBlob(size) {
   const hash = await sha256.digest(bytes)
   const cid = CID.create(1, raw.code, hash)
 
-  const blob = new Blob([bytes])
-  return Object.assign(blob, { cid, bytes })
+  return {
+    cid,
+    bytes,
+  }
 }
 
 /**
