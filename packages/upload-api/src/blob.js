@@ -3,6 +3,8 @@ import { blobListProvider } from './blob/list.js'
 import { blobRemoveProvider } from './blob/remove.js'
 import * as API from './types.js'
 
+export { BlobNotFound } from './blob/lib.js'
+
 /**
  * @param {API.BlobServiceContext} context
  */

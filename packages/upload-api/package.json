@@ -27,6 +27,9 @@
       "admin": [
         "dist/src/admin.d.ts"
       ],
+      "blob": [
+        "dist/src/blob.d.ts"
+      ],
       "console": [
         "dist/src/console.d.ts"
       ],
@@ -38,6 +41,9 @@
       ],
       "errors": [
         "dist/src/errors.d.ts"
+      ],
+      "index": [
+        "dist/src/index.d.ts"
       ],
       "plan": [
         "dist/src/plan.d.ts"
@@ -100,6 +106,10 @@
       "types": "./dist/src/admin.d.ts",
       "import": "./src/admin.js"
     },
+    "./blob": {
+      "types": "./dist/src/blob.d.ts",
+      "import": "./src/blob.js"
+    },
     "./console": {
       "types": "./dist/src/console.d.ts",
       "import": "./src/console.js"
@@ -115,6 +125,10 @@
     "./errors": {
       "types": "./dist/src/errors.d.ts",
       "import": "./src/errors.js"
+    },
+    "./index": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
     },
     "./plan": {
       "types": "./dist/src/plan.d.ts",
