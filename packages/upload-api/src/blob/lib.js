@@ -17,8 +17,8 @@ export const BlobSizeOutsideOfSupportedRangeName =
   'BlobSizeOutsideOfSupportedRange'
 export class BlobSizeOutsideOfSupportedRange extends Failure {
   /**
-   * @param {Number} blobSize
-   * @param {Number} maxUploadSize
+   * @param {number} blobSize
+   * @param {number} maxUploadSize
    */
   constructor(blobSize, maxUploadSize) {
     super()

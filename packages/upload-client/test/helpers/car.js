@@ -7,6 +7,7 @@ import { toBlock } from './block.js'
  */
 export async function toCAR(bytes) {
   const block = await toBlock(bytes)
+  // @ts-expect-error old multiformats in @ipld/car
   const { writer, out } = CarWriter.create(block.cid)
   writer.put(block)
   writer.close()

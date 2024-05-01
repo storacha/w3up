@@ -63,7 +63,7 @@ export const view = ({ root, blocks }) => {
     dagCBOR.decode(rootBytes)
   )
   switch (version) {
-    case 'index/sharded/dag@0.1':
+    case 'index/sharded/dag@0.1': {
       const dagIndex = {
         content: dagIndexData.content,
         shards: new DigestMap(),
@@ -82,6 +82,7 @@ export const view = ({ root, blocks }) => {
         dagIndex.shards.set(Digest.decode(blobIndexData[0]), blobIndex)
       }
       return ok(dagIndex)
+    }
     default:
       return error(
         /** @type {import('@web3-storage/capabilities/types').UnknownFormat} */
