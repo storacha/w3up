@@ -459,14 +459,28 @@ export type IndexAdd = InferInvokedCapability<typeof IndexCaps.add>
 export type IndexAddSuccess = Unit
 
 export type IndexAddFailure =
+  | IndexNotFound
+  | DecodeFailure
   | UnknownFormat
   | ShardNotFound
   | SliceNotFound
   | Failure
 
-/** The index is not in a format understood by the service. */
+/** An error occurred when decoding the data. */
+export interface DecodeFailure extends Failure {
+  name: 'DecodeFailure'
+}
+
+/** The data is not in a format understood by the service. */
 export interface UnknownFormat extends Failure {
   name: 'UnknownFormat'
+}
+
+/** The index is not stored in the referenced space. */
+export interface IndexNotFound extends Failure {
+  name: 'IndexNotFound'
+  /** Multihash digest of the index that could not be found. */
+  digest: Multihash
 }
 
 /** A shard referenced by the index is not stored in the referenced space. */

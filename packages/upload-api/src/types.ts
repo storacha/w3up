@@ -15,6 +15,7 @@ import type {
   RevocationChecker,
   ToString,
   UnknownLink,
+  MultihashDigest,
   Unit,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
@@ -154,6 +155,9 @@ import {
   PlanSetSuccess,
   PlanSetFailure,
   PlanSet,
+  IndexAdd,
+  IndexAddSuccess,
+  IndexAddFailure,
 } from '@web3-storage/capabilities/types'
 import * as Capabilities from '@web3-storage/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -188,6 +192,16 @@ import {
   BlobAddInput,
 } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
+import { IPNIService, IndexServiceContext } from './types/index.js'
+export type {
+  IndexServiceContext,
+  IPNIService,
+  BlobRetriever,
+  BlobNotFound,
+  ShardedDAGIndex,
+  ShardDigest,
+  SliceDigest,
+} from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
   blob: {
@@ -307,6 +321,9 @@ export interface Service extends StorefrontService, W3sService {
   }
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
+  }
+  index: {
+    add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
   }
 }
 
@@ -461,6 +478,7 @@ export interface ServiceContext
     PlanServiceContext,
     UploadServiceContext,
     FilecoinServiceContext,
+    IndexServiceContext,
     UsageServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {
@@ -480,6 +498,10 @@ export interface UcantoServerTestContext
   fetch: typeof fetch
 
   grantAccess: (mail: { url: string | URL }) => Promise<void>
+
+  ipniService: IPNIService & {
+    query (digest: MultihashDigest): Promise<Result<Unit, RecordNotFound>>
+  }
 }
 
 export interface StoreTestContext {}

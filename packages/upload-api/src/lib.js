@@ -12,6 +12,7 @@ import { createService as createAccessService } from './access.js'
 import { createService as createConsumerService } from './consumer.js'
 import { createService as createCustomerService } from './customer.js'
 import { createService as createSpaceService } from './space.js'
+import { createService as createIndexService } from './index.js'
 import { createService as createProviderService } from './provider.js'
 import { createService as createSubscriptionService } from './subscription.js'
 import { createService as createAdminService } from './admin.js'
@@ -49,6 +50,7 @@ export const createService = (context) => ({
   console: createConsoleService(context),
   consumer: createConsumerService(context),
   customer: createCustomerService(context),
+  index: createIndexService(context),
   provider: createProviderService(context),
   'rate-limit': createRateLimitService(context),
   admin: createAdminService(context),

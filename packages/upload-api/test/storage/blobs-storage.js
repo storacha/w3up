@@ -5,9 +5,18 @@ import { decode as digestDecode } from 'multiformats/hashes/digest'
 import { SigV4 } from '@web3-storage/sigv4'
 import { base58btc } from 'multiformats/bases/base58'
 import { sha256 } from 'multiformats/hashes/sha2'
+import { ok, error } from '@ucanto/core'
+import { BlobNotFound } from '../../src/blob/lib.js'
+
+/** @param {import('multiformats').MultihashDigest} digest */
+const contentKey = digest => {
+  const encodedMultihash = base58btc.encode(digest.bytes)
+  return `${encodedMultihash}/${encodedMultihash}.blob`
+}
 
 /**
  * @implements {Types.BlobsStorage}
+ * @implements {Types.BlobRetriever}
  */
 export class BlobsStorage {
   /**
@@ -109,16 +118,32 @@ export class BlobsStorage {
     this.content = content
   }
 
+  /** @param {import('multiformats').MultihashDigest} digest */
+  #bucketPath(digest) {
+    return `/${this.bucket}/${contentKey(digest)}`
+  }
+
   /**
    * @param {Uint8Array} multihash
    */
   async has(multihash) {
-    const encodedMultihash = base58btc.encode(multihash)
-    return {
-      ok: this.content.has(
-        `/${this.bucket}/${encodedMultihash}/${encodedMultihash}.blob`
-      ),
-    }
+    return ok(this.content.has(this.#bucketPath(digestDecode(multihash))))
+  }
+
+  /**
+   * @param {import('multiformats').MultihashDigest} digest 
+   */
+  async stream(digest) {
+    const key = this.#bucketPath(digest)
+    const bytes = this.content.get(key)
+    if (!bytes) return error(new BlobNotFound(digest))
+
+    return ok(new ReadableStream({
+      pull (controller) {
+        controller.enqueue(bytes)
+        controller.close()
+      }
+    }))
   }
 
   /**
@@ -128,7 +153,6 @@ export class BlobsStorage {
    */
   async createUploadUrl(multihash, size, expiresIn) {
     const { bucket, accessKeyId, secretAccessKey, region, baseURL } = this
-    const encodedMultihash = base58btc.encode(multihash)
     const multihashDigest = digestDecode(multihash)
     // sigv4
     const sig = new SigV4({
@@ -138,8 +162,8 @@ export class BlobsStorage {
     })
 
     const checksum = base64pad.baseEncode(multihashDigest.digest)
-    const { pathname, search, hash } = sig.sign({
-      key: `${encodedMultihash}/${encodedMultihash}.blob`,
+    const { search, hash } = sig.sign({
+      key: contentKey(multihashDigest),
       checksum,
       bucket,
       expires: expiresIn,
@@ -147,7 +171,7 @@ export class BlobsStorage {
 
     const url = new URL(baseURL)
     url.search = search
-    url.pathname = `/${bucket}${pathname}`
+    url.pathname = this.#bucketPath(multihashDigest)
     url.hash = hash
     url.searchParams.set(
       'X-Amz-SignedHeaders',

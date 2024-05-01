@@ -14,6 +14,7 @@ import * as Types from '../../src/types.js'
 import * as TestTypes from '../types.js'
 import { confirmConfirmationUrl } from './utils.js'
 import { getServiceStorageImplementations } from '../storage/index.js'
+import { getExternalServiceImplementations } from '../external-service/index.js'
 
 /**
  * @param {object} options
@@ -50,6 +51,8 @@ export const createContext = async (
   } = getFilecoinStoreImplementations()
   const email = Email.debug()
 
+  const externalServices = await getExternalServiceImplementations()
+
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
     id,
@@ -59,6 +62,7 @@ export const createContext = async (
     requirePaymentPlan,
     url: new URL('http://localhost:8787'),
     ...serviceStores,
+    ...externalServices,
     tasksScheduler: {
       schedule: () =>
         Promise.resolve({
@@ -102,6 +106,7 @@ export const createContext = async (
 
   return {
     ...serviceContext,
+    ...externalServices,
     mail: /** @type {TestTypes.DebugEmail} */ (serviceContext.email),
     service: /** @type {TestTypes.ServiceSigner} */ (serviceContext.id),
     connection,
