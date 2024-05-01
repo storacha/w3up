@@ -9,7 +9,7 @@ import * as Result from '../helpers/result.js'
 
 /** @type {API.Tests} */
 export const test = {
-  'index/add submits index to IPNI service':
+  'index/add should publish index to IPNI service':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
       const contentCAR = await randomCAR(32)
@@ -67,5 +67,81 @@ export const test = {
           assert.ok(Result.unwrap(await context.ipniService.query(slice[0])))
         }
       }
+    },
+  'index/add should fail if index is not stored in agent space':
+    async (assert, context) => {
+      const { proof, spaceDid } = await registerSpace(alice, context)
+      const contentCAR = await randomCAR(32)
+      const contentCARBytes = new Uint8Array(await contentCAR.arrayBuffer())
+
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
+
+      // upload the content CAR to the space
+      await uploadBlob(context, {
+        connection,
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        proofs: [proof]
+      }, {
+        cid: contentCAR.cid,
+        bytes: contentCARBytes,
+      })
+
+      const index = await ShardedDAGIndex.fromShardArchives(contentCAR.roots[0], [contentCARBytes])
+      const indexCAR = Result.unwrap(await index.toArchive())
+      const indexLink = await CAR.link(indexCAR)
+
+      const indexAdd = IndexCapabilities.add.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: { index: indexLink },
+        proofs: [proof],
+      })
+      const receipt = await indexAdd.execute(connection)
+      assert.ok(receipt.out.error)
+      assert.equal(receipt.out.error?.name, 'IndexNotFound')
+    },
+  'index/add should fail if shard(s) are not stored in agent space':
+    async (assert, context) => {
+      const { proof, spaceDid } = await registerSpace(alice, context)
+      const contentCAR = await randomCAR(32)
+      const contentCARBytes = new Uint8Array(await contentCAR.arrayBuffer())
+
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
+
+      const index = await ShardedDAGIndex.fromShardArchives(contentCAR.roots[0], [contentCARBytes])
+      const indexCAR = Result.unwrap(await index.toArchive())
+      const indexLink = await CAR.link(indexCAR)
+
+      // upload the index CAR to the space
+      await uploadBlob(context, {
+        connection,
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        proofs: [proof]
+      }, {
+        cid: indexLink,
+        bytes: indexCAR,
+      })
+
+      const indexAdd = IndexCapabilities.add.invoke({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        nb: { index: indexLink },
+        proofs: [proof],
+      })
+      const receipt = await indexAdd.execute(connection)
+      assert.ok(receipt.out.error)
+      assert.equal(receipt.out.error?.name, 'ShardNotFound')
     },
 }

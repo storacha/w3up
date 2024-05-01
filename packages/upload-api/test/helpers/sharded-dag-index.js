@@ -21,14 +21,14 @@ class ShardedDAGIndex {
     const shards = [...this.shards.entries()].sort((a, b) => compare(a[0].digest, b[0].digest))
     const index = { content: this.content, shards: /** @type {API.Link[]} */ ([]) }
     for (const s of shards) {
-      const slices = [...s[1].entries()].sort((a, b) => compare(a[0].digest, b[0].digest))
+      const slices = [...s[1].entries()].sort((a, b) => compare(a[0].digest, b[0].digest)).map(e => [e[0].bytes, e[1]])
       const bytes = dagCBOR.encode([s[0].bytes, slices])
       const digest = await sha256.digest(bytes)
       const cid = Link.create(dagCBOR.code, digest)
       blocks.set(cid.toString(), { cid, bytes })
       index.shards.push(cid)
     }
-    const bytes = dagCBOR.encode(index)
+    const bytes = dagCBOR.encode({ 'index/sharded/dag@0.1': index })
     const digest = await sha256.digest(bytes)
     const cid = Link.create(dagCBOR.code, digest)
     return ok(CAR.encode({ roots: [{ cid, bytes }], blocks }))

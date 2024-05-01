@@ -196,6 +196,8 @@ import { IPNIService, IndexServiceContext } from './types/index.js'
 export type {
   IndexServiceContext,
   IPNIService,
+  BlobRetriever,
+  BlobNotFound,
   ShardedDAGIndex,
   ShardDigest,
   SliceDigest,

@@ -1,4 +1,5 @@
 import { Failure } from '@ucanto/server'
+import { base58btc } from 'multiformats/bases/base58'
 
 export const AllocatedMemoryHadNotBeenWrittenToName =
   'AllocatedMemoryHadNotBeenWrittenTo'
@@ -67,5 +68,25 @@ export class AwaitError extends Failure {
     return {
       ...super.toJSON(),
     }
+  }
+}
+
+export class BlobNotFound extends Failure {
+  static name = /** @type {const} */ ('BlobNotFound')
+  #digest
+
+  /** @param {import('multiformats').MultihashDigest} digest */
+  constructor(digest) {
+    super()
+    this.#digest = digest
+  }
+  describe() {
+    return `blob not found: ${base58btc.encode(this.#digest.bytes)}`
+  }
+  get name() {
+    return BlobNotFound.name
+  }
+  get digest () {
+    return this.#digest.bytes
   }
 }

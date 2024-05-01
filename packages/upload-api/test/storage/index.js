@@ -43,6 +43,7 @@ export async function getServiceStorageImplementations(options) {
     allocationsStorage,
     uploadTable,
     blobsStorage,
+    blobRetriever: blobsStorage,
     carStoreBucket,
     dudewhereBucket,
     revocationsStorage,

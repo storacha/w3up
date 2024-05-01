@@ -20,7 +20,7 @@ export const BlobIndexSchema = Schema.tuple([
   MultihashSchema,
   Schema.array(
     /** multihash bytes, offset, length. */
-    Schema.tuple([MultihashSchema, Schema.number(), Schema.number()])
+    Schema.tuple([MultihashSchema, Schema.tuple([Schema.number(), Schema.number()])])
   ),
 ])
 
@@ -76,7 +76,7 @@ export const view = ({ root, blocks }) => {
 
         const blobIndexData = BlobIndexSchema.from(dagCBOR.decode(shardBytes))
         const blobIndex = new DigestMap()
-        for (const [digest, offset, length] of blobIndexData[1]) {
+        for (const [digest, [offset, length]] of blobIndexData[1]) {
           blobIndex.set(Digest.decode(digest), [offset, length])
         }
         dagIndex.shards.set(Digest.decode(blobIndexData[0]), blobIndex)
