@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.0...upload-api-v13.0.1) (2024-05-01)
+
+
+### Fixes
+
+* missing exports ([dec43e5](https://github.com/w3s-project/w3up/commit/dec43e51ee3b22a960a3769537c04f3de55d7097))
+
+
+### Other Changes
+
+* appease linter ([782c6d0](https://github.com/w3s-project/w3up/commit/782c6d0b3ca93ee801b38126339a262bcd713ede))
+
 ## [13.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v12.0.0...upload-api-v13.0.0) (2024-05-01)
 
 
