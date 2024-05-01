@@ -1,5 +1,16 @@
 # Changelog
 
+## [13.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v12.0.0...upload-api-v13.0.0) (2024-05-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* add `index/add` handler ([#1421](https://github.com/w3s-project/w3up/issues/1421))
+
+### Features
+
+* add `index/add` handler ([#1421](https://github.com/w3s-project/w3up/issues/1421)) ([cbe9524](https://github.com/w3s-project/w3up/commit/cbe952451b719fe7ae2f7480d26865eca80aba55))
+
 ## [12.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v11.0.0...upload-api-v12.0.0) (2024-04-29)
 
 
