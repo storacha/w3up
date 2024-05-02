@@ -4,24 +4,25 @@ import * as IndexCapabilities from '@web3-storage/capabilities/index'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, randomCAR, registerSpace } from '../util.js'
 import { uploadBlob } from '../helpers/blob.js'
-import * as ShardedDAGIndex from '../helpers/sharded-dag-index.js'
+import * as blobIndex from '@web3-storage/blob-index'
 import * as Result from '../helpers/result.js'
 
 /** @type {API.Tests} */
 export const test = {
-  'index/add should publish index to IPNI service':
-    async (assert, context) => {
-      const { proof, spaceDid } = await registerSpace(alice, context)
-      const contentCAR = await randomCAR(32)
-      const contentCARBytes = new Uint8Array(await contentCAR.arrayBuffer())
+  'index/add should publish index to IPNI service': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const contentCAR = await randomCAR(32)
+    const contentCARBytes = new Uint8Array(await contentCAR.arrayBuffer())
 
-      const connection = connect({
-        id: context.id,
-        channel: createServer(context),
-      })
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
 
-      // upload the content CAR to the space
-      await uploadBlob(context, {
+    // upload the content CAR to the space
+    await uploadBlob(
+      context,
+      {
         connection,
         issuer: alice,
         audience: context.id,
@@ -32,12 +33,16 @@ export const test = {
         bytes: contentCARBytes,
       })
 
-      const index = await ShardedDAGIndex.fromShardArchives(contentCAR.roots[0], [contentCARBytes])
-      const indexCAR = Result.unwrap(await index.toArchive())
-      const indexLink = await CAR.link(indexCAR)
+    const index = await blobIndex.fromShardArchives(contentCAR.roots[0], [
+      contentCARBytes,
+    ])
+    const indexCAR = Result.unwrap(await index.toArchive())
+    const indexLink = await CAR.link(indexCAR)
 
-      // upload the index CAR to the space
-      await uploadBlob(context, {
+    // upload the index CAR to the space
+    await uploadBlob(
+      context,
+      {
         connection,
         issuer: alice,
         audience: context.id,
@@ -59,7 +64,9 @@ export const test = {
       Result.try(receipt.out)
 
       // ensure a result exists for the content root
-      assert.ok(Result.unwrap(await context.ipniService.query(index.content.multihash)))
+      assert.ok(
+        Result.unwrap(await context.ipniService.query(index.content.multihash))
+      )
 
       for (const shard of index.shards.values()) {
         for (const slice of shard.entries()) {
@@ -91,7 +98,7 @@ export const test = {
         bytes: contentCARBytes,
       })
 
-      const index = await ShardedDAGIndex.fromShardArchives(contentCAR.roots[0], [contentCARBytes])
+      const index = await blobIndex.fromShardArchives(contentCAR.roots[0], [contentCARBytes])
       const indexCAR = Result.unwrap(await index.toArchive())
       const indexLink = await CAR.link(indexCAR)
 
@@ -117,7 +124,7 @@ export const test = {
         channel: createServer(context),
       })
 
-      const index = await ShardedDAGIndex.fromShardArchives(contentCAR.roots[0], [contentCARBytes])
+      const index = await blobIndex.fromShardArchives(contentCAR.roots[0], [contentCARBytes])
       const indexCAR = Result.unwrap(await index.toArchive())
       const indexLink = await CAR.link(indexCAR)
 

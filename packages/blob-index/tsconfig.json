@@ -6,12 +6,7 @@
   },
   "include": ["src", "test"],
   "exclude": ["**/node_modules/**", "dist"],
-  "references": [
-    { "path": "../blob-index" },
-    { "path": "../capabilities" },
-    { "path": "../access-client" },
-    { "path": "../filecoin-api" }
-  ],
+  "references": [],
   "typedocOptions": {
     "entryPoints": ["./src"]
   }
