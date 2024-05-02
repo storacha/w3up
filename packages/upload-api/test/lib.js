@@ -32,10 +32,10 @@ export * from './util.js'
 export const test = {
   ...Store.test,
   ...Blob.test,
+  ...Index.test,
   ...Upload.test,
   ...Web3Storage.test,
   ...Ucan.test,
-  ...Index.test,
 }
 
 export const storageTests = {
@@ -61,19 +61,20 @@ export const handlerTests = {
   ...RateLimitRemove,
   ...Store.test,
   ...Blob.test,
+  ...Index.test,
   ...Web3Storage.test,
   ...Ucan.test,
   ...Subscription.test,
   ...Upload.test,
   ...Plan.test,
   ...Usage.test,
-  ...Index.test,
 }
 
 export {
   Store,
   Upload,
   Blob,
+  Index,
   Web3Storage,
   Ucan,
   delegationsStorageTests,
