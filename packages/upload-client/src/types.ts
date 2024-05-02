@@ -17,6 +17,10 @@ import {
   BlobAdd,
   BlobAddSuccess,
   BlobAddFailure,
+  BlobAllocateSuccess,
+  BlobAllocateFailure,
+  BlobAcceptSuccess,
+  BlobAcceptFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -62,6 +66,10 @@ type FetchOptions = Override<
 
 export type {
   FetchOptions,
+  BlobAllocateSuccess,
+  BlobAllocateFailure,
+  BlobAcceptSuccess,
+  BlobAcceptFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
