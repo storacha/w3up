@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.0.2](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.1...upload-api-v13.0.2) (2024-05-02)
+
+
+### Fixes
+
+* missing test export ([1fc6808](https://github.com/w3s-project/w3up/commit/1fc68087ccca5798cd9c633580025bef034bcadf))
+
 ## [13.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.0...upload-api-v13.0.1) (2024-05-01)
 
 
