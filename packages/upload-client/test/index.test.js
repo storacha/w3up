@@ -2,7 +2,9 @@ import assert from 'assert'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
+import * as Link from 'multiformats/link'
 import * as CAR from '@ucanto/transport/car'
+import * as Raw from 'multiformats/codecs/raw'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
@@ -14,8 +16,8 @@ import {
   uploadCAR,
   defaultFileComparator,
 } from '../src/index.js'
-import { serviceSigner } from './fixtures.js'
-import { randomBlock, randomBytes } from './helpers/random.js'
+import { serviceSigner, blobAddReceipt } from './fixtures.js'
+import { randomBlock, randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
@@ -55,15 +57,7 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'allocated'>} */
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-      link: expectedCar.cid,
-      with: space.did(),
-    }
-
+    const { cid } = await randomCAR(128)
     const service = mockService({
       blob: {
         add: provide(BlobCapabilities.add, ({ invocation, capability }) => {
@@ -71,7 +65,15 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return { ok: { ...res, allocated: capability.nb.blob.size } }
+
+          return {
+            ok: {
+              site: {
+                // FIXME unsure what to place here as site value
+                'ucan/await': ['.out.ok.site', cid],
+              },
+            }
+          }
         }),
       },
       filecoin: {
@@ -162,22 +164,18 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-      with: space.did(),
-    }
-
     const service = mockService({
       blob: {
-        add: provide(BlobCapabilities.add, ({ capability }) => Server.ok({
-          site: {
-            // FIXME unsure what to place here as site value
-            'ucan/await': ['.out.ok.site', piece],
-          },
-        })),
+        add: provide(BlobCapabilities.add, function({ invocation, capability }) {
+          return {
+            ok: {
+              site: {
+                // FIXME unsure what to place here as site value
+                'ucan/await': ['.out.ok.site', piece],
+              },
+            },
+          }
+        }),
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -252,15 +250,6 @@ describe('uploadFile', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'allocated'>} */
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-      link: expectedCar.cid,
-      with: space.did(),
-    }
-
     const service = mockService({
       blob: {
         add: provide(BlobCapabilities.add, ({ invocation, capability }) => {
@@ -268,7 +257,15 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return { ok: { ...res, allocated: capability.nb.blob.size } }
+          // TODO same 'ucan/await' res?
+          return {
+            ok: {
+              site: {
+                // FIXME unsure what to place here as site value
+                'ucan/await': ['.out.ok.site', expectedCar.cid],
+              },
+            },
+          }
         }),
       },
       filecoin: {
@@ -339,17 +336,9 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-      with: space.did(),
-    }
-
     const service = mockService({
       blob: {
-        add: provide(BlobCapabilities.add, ({ capability, invocation }) => {
+        add: provide(BlobCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
@@ -357,11 +346,10 @@ describe('uploadDirectory', () => {
           assert.equal(invCap.with, space.did())
           return {
             ok: {
-              ...res,
-              link: /** @type {import('../src/types.js').CARLink} */ (
-                capability.nb.link
-              ),
-              allocated: capability.nb.size,
+              site: {
+                // FIXME unsure what to place here as site value
+                'ucan/await': ['.out.ok.site', pieces[0]],
+              },
             },
           }
         }),
@@ -452,23 +440,14 @@ describe('uploadDirectory', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-      with: space.did(),
-    }
-
     const service = mockService({
       blob: {
         add: provide(BlobCapabilities.add, ({ capability }) => ({
           ok: {
-            ...res,
-            link: /** @type {import('../src/types.js').CARLink} */ (
-              capability.nb.link
-            ),
-            allocated: capability.nb.size,
+            site: {
+              // FIXME unsure what to place here as site value
+              'ucan/await': ['.out.ok.site', carCIDs[0]],
+            },
           },
         })),
       },
@@ -551,10 +530,10 @@ describe('uploadDirectory', () => {
                 headers: { 'x-test': 'true' },
                 url: 'http://localhost:9200',
                 with: invocation.capability.with,
-                link: /** @type {import('../src/types.js').CARLink} */ (
-                  invocation.capability.nb.link
-                ),
-                allocated: invocation.capability.nb.size,
+                site: {
+                  // FIXME unsure what to place here as site value
+                  'ucan/await': ['.out.ok.site', piece],
+                },
               },
             }
           }),
@@ -705,14 +684,6 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-      with: space.did(),
-    }
-
     const service = mockService({
       blob: {
         add: provide(BlobCapabilities.add, ({ capability, invocation }) => {
@@ -723,11 +694,10 @@ describe('uploadCAR', () => {
           assert.equal(invCap.with, space.did())
           return {
             ok: {
-              ...res,
-              link: /** @type {import('../src/types.js').CARLink} */ (
-                capability.nb.link
-              ),
-              allocated: capability.nb.size,
+              site: {
+                // FIXME unsure what to place here as site value
+                'ucan/await': ['.out.ok.site', carCIDs[0]],
+              },
             },
           }
         }),
@@ -823,14 +793,6 @@ describe('uploadCAR', () => {
       }),
     ])
 
-    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
-    const res = {
-      status: 'upload',
-      headers: { 'x-test': 'true' },
-      url: 'http://localhost:9200',
-      with: space.did(),
-    }
-
     const service = mockService({
       blob: {
         add: provide(BlobCapabilities.add, ({ capability, invocation }) => {
@@ -840,11 +802,10 @@ describe('uploadCAR', () => {
           assert.equal(capability.with, space.did())
           return {
             ok: {
-              ...res,
-              link: /** @type {import('../src/types.js').CARLink} */ (
-                capability.nb.link
-              ),
-              allocated: capability.nb.size,
+              site: {
+                // FIXME unsure what to place here as site value
+                'ucan/await': ['.out.ok.site', piece],
+              },
             },
           }
         }),
