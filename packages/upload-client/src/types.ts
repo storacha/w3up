@@ -66,6 +66,8 @@ type FetchOptions = Override<
 
 export type {
   FetchOptions,
+  BlobAddSuccess,
+  BlobAddFailure,
   BlobAllocateSuccess,
   BlobAllocateFailure,
   BlobAcceptSuccess,
