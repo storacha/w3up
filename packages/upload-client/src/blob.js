@@ -1,3 +1,4 @@
+import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import * as UCAN from '@web3-storage/capabilities/ucan'
@@ -145,31 +146,35 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * The issuer needs the `blob/add` delegated capability.
  * @param {Blob|Uint8Array} car CAR file data.
  * @param {import('./types.js').RequestOptions} [options]
- * @returns {Promise<import('./types.js').CARLink>}
+ * @returns {Promise<import('multiformats').MultihashDigest>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
   car,
   options = {}
 ) {
-  // TODO: validate blob contains CAR data
   const bytes =
     car instanceof Uint8Array ? car : new Uint8Array(await car.arrayBuffer())
-  const link = await CAR.codec.link(bytes)
-  /* c8 ignore next */
+  const hash = await sha256.digest(bytes)
+  const { digest } = hash
+  const size = bytes.length
   const conn = options.connection ?? connection
+
   const result = await retry(
     async () => {
       return await BlobCapabilities.add
         .invoke({
           issuer,
-          /* c8 ignore next */
           audience: audience ?? servicePrincipal,
           with: SpaceDID.from(resource),
-          nb: { blob: { digest: link.multihash.bytes, size: bytes.length } },
+          nb: {
+            blob: {
+              digest,
+              size,
+            }
+          },
           proofs,
         })
-        // @ts-ignore
         .execute(conn)
     },
     {
@@ -215,8 +220,8 @@ export async function add(
     with: derivedSigner.toDIDKey(),
     nb: {
       body: {
-        digest: bytes,
-        size: bytes.length,
+        digest,
+        size,
       },
       url: {
         'ucan/await': ['.out.ok.address.url', nextTasks.allocate.task.cid],
@@ -249,5 +254,5 @@ export async function add(
     })
   }
 
-  return link
+  return hash
 }

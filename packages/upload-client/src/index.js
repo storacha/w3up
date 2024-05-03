@@ -1,5 +1,6 @@
 import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import { Storefront } from '@web3-storage/filecoin-client'
+import { CID } from 'multiformats/cid'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
@@ -132,7 +133,8 @@ async function uploadBlockStream(
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
           // Invoke blob/add and write bytes to write target
-          const cid = await Blob.add(conf, bytes, options)
+          const hash = await Blob.add(conf, bytes, options)
+          const cid = CID.create(1, raw.code, hash)
           let piece
           if (pieceHasher) {
             const multihashDigest = await pieceHasher.digest(bytes)
