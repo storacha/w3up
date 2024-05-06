@@ -7,8 +7,12 @@ import { createConcludeInvocation } from '../../../upload-client/src/blob.js'
 
 export const validateAuthorization = () => ({ ok: {} })
 
-// @ts-ignore
-export const setupBlobAddResponse = async function({ issuer, with: space, proofs, audience }, invocation) {
+export const setupBlobAddResponse = async function (
+  // @ts-ignore
+  { issuer, with: space, proofs, audience },
+  // @ts-ignore
+  invocation
+) {
   const blob = invocation.capabilities[0].nb.blob
   const blobAllocateTask = await W3sBlob.allocate
     .invoke({
@@ -28,7 +32,11 @@ export const setupBlobAddResponse = async function({ issuer, with: space, proofs
     ran: blobAllocateTask.cid,
     result: { ok: {} },
   })
-  const blobConcludeAllocate = await createConcludeInvocation(issuer, audience, blobAllocateReceipt).delegate()
+  const blobConcludeAllocate = await createConcludeInvocation(
+    issuer,
+    audience,
+    blobAllocateReceipt
+  ).delegate()
 
   const blobPutTask = await HTTP.put
     .invoke({
@@ -72,14 +80,17 @@ export const setupBlobAddResponse = async function({ issuer, with: space, proofs
     ran: blobAcceptTask.cid,
     result: { ok: {} },
   })
-  const blobConcludeAccept = await createConcludeInvocation(issuer, audience, blobAcceptReceipt).delegate()
+  const blobConcludeAccept = await createConcludeInvocation(
+    issuer,
+    audience,
+    blobAcceptReceipt
+  ).delegate()
 
-  return Server
-    .ok({
-      site: {
-        'ucan/await': ['.out.ok.site', blobAcceptTask.link()],
-      },
-    })
+  return Server.ok({
+    site: {
+      'ucan/await': ['.out.ok.site', blobAcceptTask.link()],
+    },
+  })
     .fork(blobAllocateTask)
     .fork(blobConcludeAllocate)
     .fork(blobPutTask)

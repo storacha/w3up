@@ -56,17 +56,23 @@ describe('uploadFile', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
-        })
+        }),
       },
       blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, async function({ invocation, capability }) {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          assert.equal(capability.can, BlobCapabilities.add.can)
-          assert.equal(capability.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
-        }),
+        add: provide(
+          BlobCapabilities.add,
+          // @ts-ignore Argument of type
+          async function ({ invocation, capability }) {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            assert.equal(capability.can, BlobCapabilities.add.can)
+            assert.equal(capability.with, space.did())
+            return setupBlobAddResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }
+        ),
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -160,12 +166,15 @@ describe('uploadFile', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
-        })
+        }),
       },
       blob: {
         // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+          return setupBlobAddResponse(
+            { issuer: space, audience: agent, with: space, proofs },
+            invocation
+          )
         }),
       },
       filecoin: {
@@ -244,7 +253,7 @@ describe('uploadFile', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
-        })
+        }),
       },
       blob: {
         // @ts-ignore Argument of type
@@ -253,13 +262,16 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+          return setupBlobAddResponse(
+            { issuer: space, audience: agent, with: space, proofs },
+            invocation
+          )
         }),
       },
       filecoin: {
         offer: Server.provideAdvanced({
           capability: StorefrontCapabilities.filecoinOffer,
-          handler: async function() {
+          handler: async function () {
             return {
               error: new Server.Failure('did not find piece'),
             }
@@ -328,7 +340,7 @@ describe('uploadDirectory', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
-        })
+        }),
       },
       blob: {
         // @ts-ignore Argument of type
@@ -338,7 +350,10 @@ describe('uploadDirectory', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+          return setupBlobAddResponse(
+            { issuer: space, audience: agent, with: space, proofs },
+            invocation
+          )
         }),
       },
       filecoin: {
@@ -431,12 +446,15 @@ describe('uploadDirectory', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
-        })
+        }),
       },
       blob: {
         // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+          return setupBlobAddResponse(
+            { issuer: space, audience: agent, with: space, proofs },
+            invocation
+          )
         }),
       },
       filecoin: {
@@ -512,14 +530,17 @@ describe('uploadDirectory', () => {
         ucan: {
           conclude: provide(UCAN.conclude, () => {
             return { ok: { time: Date.now() } }
-          })
+          }),
         },
         blob: {
           // @ts-ignore Argument of type
           add: provide(BlobCapabilities.add, ({ invocation }) => {
             // @ts-ignore Argument of type
             invocations.push(invocation)
-            return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+            return setupBlobAddResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
           }),
         },
         filecoin: {
@@ -592,13 +613,19 @@ describe('uploadDirectory', () => {
     const shardsForUnordered = uploadServiceForUnordered.invocations
       .flatMap((i) =>
         // @ts-ignore Property
-        i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
+        i.capabilities[0].can === 'upload/add'
+          ? // @ts-ignore Property
+            i.capabilities[0].nb.shards ?? []
+          : []
       )
       .map((cid) => cid.toString())
     const shardsForOrdered = uploadServiceForOrdered.invocations
       .flatMap((i) =>
         // @ts-ignore Property
-        i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
+        i.capabilities[0].can === 'upload/add'
+          ? // @ts-ignore Property
+            i.capabilities[0].nb.shards ?? []
+          : []
       )
       .map((cid) => cid.toString())
     assert.deepEqual(
@@ -618,7 +645,10 @@ describe('uploadDirectory', () => {
     const shardsForCustomOrder = uploadServiceForCustomOrder.invocations
       .flatMap((i) =>
         // @ts-ignore Property
-        i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
+        i.capabilities[0].can === 'upload/add'
+          ? // @ts-ignore Property
+            i.capabilities[0].nb.shards ?? []
+          : []
       )
       .map((cid) => cid.toString())
     assert.notDeepEqual(
@@ -676,7 +706,7 @@ describe('uploadCAR', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
-        })
+        }),
       },
       blob: {
         // @ts-ignore Argument of type
@@ -686,7 +716,10 @@ describe('uploadCAR', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+          return setupBlobAddResponse(
+            { issuer: space, audience: agent, with: space, proofs },
+            invocation
+          )
         }),
       },
       filecoin: {
@@ -784,7 +817,7 @@ describe('uploadCAR', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
-        })
+        }),
       },
       blob: {
         // @ts-ignore Argument of type
@@ -793,7 +826,10 @@ describe('uploadCAR', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+          return setupBlobAddResponse(
+            { issuer: space, audience: agent, with: space, proofs },
+            invocation
+          )
         }),
       },
       filecoin: {

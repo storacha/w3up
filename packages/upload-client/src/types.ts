@@ -112,8 +112,12 @@ export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service extends StorefrontService {
   ucan: {
-    conclude: ServiceMethod<UCANConclude, UCANConcludeSuccess, UCANConcludeFailure>,
-  },
+    conclude: ServiceMethod<
+      UCANConclude,
+      UCANConcludeSuccess,
+      UCANConcludeFailure
+    >
+  }
   blob: {
     add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
   }

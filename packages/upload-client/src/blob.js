@@ -186,7 +186,7 @@ export async function add(
             blob: {
               digest,
               size,
-            }
+            },
           },
           proofs,
         })
@@ -287,10 +287,7 @@ export async function add(
         'ucan/await': ['.out.ok.address.url', nextTasks.allocate.task.cid],
       },
       headers: {
-        'ucan/await': [
-          '.out.ok.address.headers',
-          nextTasks.allocate.task.cid,
-        ],
+        'ucan/await': ['.out.ok.address.headers', nextTasks.allocate.task.cid],
       },
     },
     facts: nextTasks.put.task.facts,
@@ -303,8 +300,12 @@ export async function add(
     ran: httpPutDelegation.cid,
     result: { ok: {} },
   })
-  // @ts-expect-error object of type unknown
-  const httpPutConcludeInvocation = createConcludeInvocation(issuer, audience, httpPutReceipt)
+  const httpPutConcludeInvocation = createConcludeInvocation(
+    issuer,
+    // @ts-expect-error object of type unknown
+    audience,
+    httpPutReceipt
+  )
   const ucanConclude = await httpPutConcludeInvocation.execute(conn)
 
   if (!ucanConclude.out.ok) {

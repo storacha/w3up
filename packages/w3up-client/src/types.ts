@@ -3,9 +3,7 @@ import {
   type Service as AccessService,
   type AgentDataExport,
 } from '@web3-storage/access/types'
-import {
-  type Service as UploadService,
-} from '@web3-storage/upload-client/types'
+import { type Service as UploadService } from '@web3-storage/upload-client/types'
 import type {
   ConnectionView,
   Signer,

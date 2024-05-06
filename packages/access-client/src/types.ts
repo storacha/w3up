@@ -135,7 +135,11 @@ export interface Service {
   }
   ucan: {
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
-    conclude: ServiceMethod<UCANConclude, UCANConcludeSuccess, UCANConcludeFailure>,
+    conclude: ServiceMethod<
+      UCANConclude,
+      UCANConcludeSuccess,
+      UCANConcludeFailure
+    >
   }
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
