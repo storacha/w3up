@@ -257,6 +257,16 @@ export async function add(
       }
     )
     if (status !== 200) throw new Error(`unexpected status: ${status}`)
+
+    if (!fetchDidCallUploadProgressCb && options.onUploadProgress) {
+      // the fetch implementation didn't support onUploadProgress
+      const carBlob = new Blob([car])
+      options.onUploadProgress({
+        total: carBlob.size,
+        loaded: carBlob.size,
+        lengthComputable: false,
+      })
+    }
   }
 
   // Invoke `conclude` with `http/put` receipt
