@@ -9,7 +9,7 @@ import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
 import { Piece } from '@web3-storage/data-segment'
-import * as indexJs from '../src/index.js'
+import { uploadFile, uploadDirectory, uploadCAR } from '../src/index.js'
 import { serviceSigner } from './fixtures.js'
 import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
@@ -109,7 +109,7 @@ describe('uploadFile', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    const dataCID = await indexJs.uploadFile(
+    const dataCID = await uploadFile(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       file,
       {
@@ -198,7 +198,7 @@ describe('uploadFile', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    await indexJs.uploadFile(
+    await uploadFile(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       file,
       {
@@ -279,7 +279,7 @@ describe('uploadFile', () => {
       channel: server,
     })
     await assert.rejects(async () =>
-      indexJs.uploadFile(
+      uploadFile(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
         file,
         {
@@ -378,7 +378,7 @@ describe('uploadDirectory', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    const dataCID = await indexJs.uploadDirectory(
+    const dataCID = await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       files,
       {
@@ -469,7 +469,7 @@ describe('uploadDirectory', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    await indexJs.uploadDirectory(
+    await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       files,
       {
@@ -566,7 +566,7 @@ describe('uploadDirectory', () => {
 
     const uploadServiceForUnordered = createSimpleMockUploadServer()
     // uploading unsorted files should work because they should be sorted by `uploadDirectory`
-    const uploadedDirUnsorted = await indexJs.uploadDirectory(
+    const uploadedDirUnsorted = await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       unsortedFiles,
       { connection: uploadServiceForUnordered.connection }
@@ -574,9 +574,9 @@ describe('uploadDirectory', () => {
 
     const uploadServiceForOrdered = createSimpleMockUploadServer()
     // uploading sorted files should also work
-    const uploadedDirSorted = await indexJs.uploadDirectory(
+    const uploadedDirSorted = await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
-      [...unsortedFiles].sort(indexJs.defaultFileComparator),
+      [...unsortedFiles].sort(defaultFileComparator),
       { connection: uploadServiceForOrdered.connection }
     )
 
@@ -609,7 +609,7 @@ describe('uploadDirectory', () => {
     // but if options.customOrder is truthy, the caller is indicating
     // they have customized the order of files, so `uploadDirectory` will not sort them
     const uploadServiceForCustomOrder = createSimpleMockUploadServer()
-    const uploadedDirCustomOrder = await indexJs.uploadDirectory(
+    const uploadedDirCustomOrder = await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       [...unsortedFiles],
       { connection: uploadServiceForCustomOrder.connection, customOrder: true }
@@ -731,7 +731,7 @@ describe('uploadCAR', () => {
       channel: server,
     })
 
-    await indexJs.uploadCAR(
+    await uploadCAR(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {
@@ -835,7 +835,7 @@ describe('uploadCAR', () => {
       channel: server,
     })
 
-    await indexJs.uploadCAR(
+    await uploadCAR(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {
