@@ -1,4 +1,5 @@
 import { Receipt } from '@ucanto/core'
+import { conclude } from '@web3-storage/capabilities/ucan'
 import * as Server from '@ucanto/server'
 import { UCAN } from '@web3-storage/capabilities'
 import * as HTTP from '@web3-storage/capabilities/http'
