@@ -245,7 +245,6 @@ export async function add(
   // @ts-expect-error object of type unknown
   const httpPutConcludeInvocation = createConcludeInvocation(issuer, audience, httpPutReceipt)
   const ucanConclude = await httpPutConcludeInvocation.execute(conn)
-  console.log("FOO", ucanConclude.out)
 
   if (!ucanConclude.out.ok) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {

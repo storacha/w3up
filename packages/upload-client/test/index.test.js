@@ -1,5 +1,4 @@
 import assert from 'assert'
-import * as UnixFS from '../src/unixfs.js'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
@@ -25,8 +24,6 @@ import {
 } from '../src/car.js'
 import { toBlock } from './helpers/block.js'
 import { getFilecoinOfferResponse } from './helpers/filecoin.js'
-import { ShardingStream, defaultFileComparator } from '../src/sharding.js'
-import { CarReader } from '@ipld/car'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -36,12 +33,6 @@ describe('uploadFile', () => {
     const file = new Blob([bytes])
     const expectedCar = await toCAR(bytes)
     const piece = Piece.fromPayload(bytes).link
-
-    const hash = await sha256.digest(bytes)
-    const blob = {
-      digest: hash.digest,
-      size: bytes.length,
-    }
 
     /** @type {import('../src/types.js').CARLink|undefined} */
     let carCID
@@ -74,8 +65,7 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
         }),
       },
       filecoin: {
@@ -151,12 +141,6 @@ describe('uploadFile', () => {
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
-    const hash = await sha256.digest(bytes)
-    const blob = {
-      digest: hash.digest,
-      size: bytes.length,
-    }
-
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -181,7 +165,7 @@ describe('uploadFile', () => {
       blob: {
         // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
         }),
       },
       filecoin: {
@@ -241,12 +225,6 @@ describe('uploadFile', () => {
     const bytes = await randomBytes(128)
     const file = new Blob([bytes])
 
-    const hash = await sha256.digest(bytes)
-    const blob = {
-      digest: hash.digest,
-      size: bytes.length,
-    }
-
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -275,7 +253,7 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
         }),
       },
       filecoin: {
@@ -331,14 +309,6 @@ describe('uploadDirectory', () => {
     /** @type {import('../src/types.js').CARLink?} */
     let carCID = null
 
-    const options = {}
-    // FIXME this is wrong
-    const { cid, blocks } = await UnixFS.encodeDirectory(files, options)
-    const blob = {
-      digest: cid.multihash.bytes,
-      size: blocks,
-    }
-
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -368,7 +338,7 @@ describe('uploadDirectory', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
         }),
       },
       filecoin: {
@@ -464,14 +434,10 @@ describe('uploadDirectory', () => {
         })
       },
       blob: {
-        add: provide(BlobCapabilities.add, ({ capability }) => ({
-          ok: {
-            site: {
-              // FIXME unsure what to place here as site value
-              'ucan/await': ['.out.ok.site', carCIDs[0]],
-            },
-          },
-        })),
+        // @ts-ignore Argument of type
+        add: provide(BlobCapabilities.add, ({ invocation }) => {
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
+        }),
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -543,21 +509,16 @@ describe('uploadDirectory', () => {
        */
       const invocations = []
       const service = mockService({
+        ucan: {
+          conclude: provide(UCAN.conclude, () => {
+            return { ok: { time: Date.now() } }
+          })
+        },
         blob: {
-          add: provide(BlobCapabilities.add, (invocation) => {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
             invocations.push(invocation)
-            return {
-              ok: {
-                status: 'upload',
-                headers: { 'x-test': 'true' },
-                url: 'http://localhost:9200',
-                with: invocation.capability.with,
-                site: {
-                  // FIXME unsure what to place here as site value
-                  'ucan/await': ['.out.ok.site', piece],
-                },
-              },
-            }
+            return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
           }),
         },
         filecoin: {
@@ -573,11 +534,11 @@ describe('uploadDirectory', () => {
           }),
         },
         upload: {
-          add: provide(UploadCapabilities.add, (invocation) => {
+          add: provide(UploadCapabilities.add, ({ invocation }) => {
             invocations.push(invocation)
-            const { capability } = invocation
-            if (!capability.nb) throw new Error('nb must be present')
-            return { ok: capability.nb }
+            const { capabilities } = invocation
+            if (!capabilities[0].nb) throw new Error('nb must be present')
+            return { ok: capabilities[0].nb }
           }),
         },
       })
@@ -628,12 +589,12 @@ describe('uploadDirectory', () => {
     // We also need to make sure the underlying shards are the same.
     const shardsForUnordered = uploadServiceForUnordered.invocations
       .flatMap((i) =>
-        i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+        i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
       )
       .map((cid) => cid.toString())
     const shardsForOrdered = uploadServiceForOrdered.invocations
       .flatMap((i) =>
-        i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+        i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
       )
       .map((cid) => cid.toString())
     assert.deepEqual(
@@ -652,7 +613,7 @@ describe('uploadDirectory', () => {
     )
     const shardsForCustomOrder = uploadServiceForCustomOrder.invocations
       .flatMap((i) =>
-        i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+        i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
       )
       .map((cid) => cid.toString())
     assert.notDeepEqual(
@@ -691,12 +652,6 @@ describe('uploadCAR', () => {
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
-    const hash = await sha256.digest(someBytes)
-    const blob = {
-      digest: hash.digest,
-      size: someBytes.length,
-    }
-
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -726,7 +681,7 @@ describe('uploadCAR', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
         }),
       },
       filecoin: {
@@ -805,12 +760,6 @@ describe('uploadCAR', () => {
     /** @type {import('../src/types.js').PieceLink[]} */
     const pieceCIDs = []
 
-    const hash = await sha256.digest(someBytes)
-    const blob = {
-      digest: hash.digest,
-      size: someBytes.length,
-    }
-
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -839,7 +788,7 @@ describe('uploadCAR', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
         }),
       },
       filecoin: {
