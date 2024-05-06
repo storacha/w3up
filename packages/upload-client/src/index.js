@@ -133,8 +133,7 @@ async function uploadBlockStream(
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
           // Invoke blob/add and write bytes to write target
-          const hash = await Blob.add(conf, bytes, options)
-          const cid = CID.create(1, raw.code, hash)
+          const cid = await Blob.add(conf, bytes, options)
           let piece
           if (pieceHasher) {
             const multihashDigest = await pieceHasher.digest(bytes)

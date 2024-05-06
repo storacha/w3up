@@ -6,6 +6,7 @@ const notImplemented = () => {
 
 /**
  * @param {Partial<{
+ *   ucan: Partial<import('../../src/types.js').Service['ucan']>
  *   blob: Partial<import('../../src/types.js').Service['blob']>
  *   store: Partial<import('../../src/types.js').Service['store']>
  *   upload: Partial<import('../../src/types.js').Service['upload']>
@@ -15,6 +16,9 @@ const notImplemented = () => {
  */
 export function mockService(impl) {
   return {
+    ucan: {
+      conclude: withCallCount(impl.ucan?.conclude ?? notImplemented),
+    },
     blob: {
       add: withCallCount(impl.blob?.add ?? notImplemented),
     },

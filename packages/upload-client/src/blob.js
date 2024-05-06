@@ -1,4 +1,3 @@
-import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import * as UCAN from '@web3-storage/capabilities/ucan'
@@ -146,7 +145,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * The issuer needs the `blob/add` delegated capability.
  * @param {Blob|Uint8Array} car CAR file data.
  * @param {import('./types.js').RequestOptions} [options]
- * @returns {Promise<import('multiformats').MultihashDigest>}
+ * @returns {Promise<import('./types.js').CARLink>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
@@ -155,8 +154,8 @@ export async function add(
 ) {
   const bytes =
     car instanceof Uint8Array ? car : new Uint8Array(await car.arrayBuffer())
-  const hash = await sha256.digest(bytes)
-  const { digest } = hash
+  const link = await CAR.codec.link(bytes)
+  const digest = link.bytes
   const size = bytes.length
   const conn = options.connection ?? connection
 
@@ -245,8 +244,8 @@ export async function add(
   })
   // @ts-expect-error object of type unknown
   const httpPutConcludeInvocation = createConcludeInvocation(issuer, audience, httpPutReceipt)
-  // @ts-expect-error object of type unknown
-  const ucanConclude = await httpPutConcludeInvocation.execute(connection)
+  const ucanConclude = await httpPutConcludeInvocation.execute(conn)
+  console.log("FOO", ucanConclude.out)
 
   if (!ucanConclude.out.ok) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
@@ -254,5 +253,5 @@ export async function add(
     })
   }
 
-  return hash
+  return link
 }

@@ -1,27 +1,23 @@
 import assert from 'assert'
+import * as UnixFS from '../src/unixfs.js'
+import { sha256 } from 'multiformats/hashes/sha2'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
-import * as Link from 'multiformats/link'
 import * as CAR from '@ucanto/transport/car'
-import * as Raw from 'multiformats/codecs/raw'
 import * as Signer from '@ucanto/principal/ed25519'
+import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
 import { Piece } from '@web3-storage/data-segment'
-import {
-  uploadFile,
-  uploadDirectory,
-  uploadCAR,
-  defaultFileComparator,
-} from '../src/index.js'
-import { serviceSigner, blobAddReceipt } from './fixtures.js'
-import { randomBlock, randomBytes, randomCAR } from './helpers/random.js'
+import * as indexJs from '../src/index.js'
+import { serviceSigner } from './fixtures.js'
+import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
-import { validateAuthorization } from './helpers/utils.js'
+import { validateAuthorization, setupBlobAddResponse } from './helpers/utils.js'
 import {
   blockEncodingLength,
   encode,
@@ -29,6 +25,8 @@ import {
 } from '../src/car.js'
 import { toBlock } from './helpers/block.js'
 import { getFilecoinOfferResponse } from './helpers/filecoin.js'
+import { ShardingStream, defaultFileComparator } from '../src/sharding.js'
+import { CarReader } from '@ipld/car'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
@@ -38,6 +36,12 @@ describe('uploadFile', () => {
     const file = new Blob([bytes])
     const expectedCar = await toCAR(bytes)
     const piece = Piece.fromPayload(bytes).link
+
+    const hash = await sha256.digest(bytes)
+    const blob = {
+      digest: hash.digest,
+      size: bytes.length,
+    }
 
     /** @type {import('../src/types.js').CARLink|undefined} */
     let carCID
@@ -57,23 +61,21 @@ describe('uploadFile', () => {
       }),
     ])
 
-    const { cid } = await randomCAR(128)
     const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        })
+      },
       blob: {
-        add: provide(BlobCapabilities.add, ({ invocation, capability }) => {
+        // @ts-ignore Argument of type
+        add: provide(BlobCapabilities.add, async function({ invocation, capability }) {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
 
-          return {
-            ok: {
-              site: {
-                // FIXME unsure what to place here as site value
-                'ucan/await': ['.out.ok.site', cid],
-              },
-            }
-          }
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
         }),
       },
       filecoin: {
@@ -118,7 +120,7 @@ describe('uploadFile', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    const dataCID = await uploadFile(
+    const dataCID = await indexJs.uploadFile(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       file,
       {
@@ -149,6 +151,12 @@ describe('uploadFile', () => {
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
+    const hash = await sha256.digest(bytes)
+    const blob = {
+      digest: hash.digest,
+      size: bytes.length,
+    }
+
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -165,16 +173,15 @@ describe('uploadFile', () => {
     ])
 
     const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        })
+      },
       blob: {
-        add: provide(BlobCapabilities.add, function({ invocation, capability }) {
-          return {
-            ok: {
-              site: {
-                // FIXME unsure what to place here as site value
-                'ucan/await': ['.out.ok.site', piece],
-              },
-            },
-          }
+        // @ts-ignore Argument of type
+        add: provide(BlobCapabilities.add, ({ invocation }) => {
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
         }),
       },
       filecoin: {
@@ -208,7 +215,7 @@ describe('uploadFile', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    await uploadFile(
+    await indexJs.uploadFile(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       file,
       {
@@ -233,7 +240,12 @@ describe('uploadFile', () => {
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const bytes = await randomBytes(128)
     const file = new Blob([bytes])
-    const expectedCar = await toCAR(bytes)
+
+    const hash = await sha256.digest(bytes)
+    const blob = {
+      digest: hash.digest,
+      size: bytes.length,
+    }
 
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
@@ -251,27 +263,25 @@ describe('uploadFile', () => {
     ])
 
     const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        })
+      },
       blob: {
+        // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ invocation, capability }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          // TODO same 'ucan/await' res?
-          return {
-            ok: {
-              site: {
-                // FIXME unsure what to place here as site value
-                'ucan/await': ['.out.ok.site', expectedCar.cid],
-              },
-            },
-          }
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
         }),
       },
       filecoin: {
         offer: Server.provideAdvanced({
           capability: StorefrontCapabilities.filecoinOffer,
-          handler: async ({ invocation, context }) => {
+          handler: async function() {
             return {
               error: new Server.Failure('did not find piece'),
             }
@@ -292,7 +302,7 @@ describe('uploadFile', () => {
       channel: server,
     })
     await assert.rejects(async () =>
-      uploadFile(
+      indexJs.uploadFile(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
         file,
         {
@@ -321,6 +331,14 @@ describe('uploadDirectory', () => {
     /** @type {import('../src/types.js').CARLink?} */
     let carCID = null
 
+    const options = {}
+    // FIXME this is wrong
+    const { cid, blocks } = await UnixFS.encodeDirectory(files, options)
+    const blob = {
+      digest: cid.multihash.bytes,
+      size: blocks,
+    }
+
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -337,21 +355,20 @@ describe('uploadDirectory', () => {
     ])
 
     const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        })
+      },
       blob: {
+        // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return {
-            ok: {
-              site: {
-                // FIXME unsure what to place here as site value
-                'ucan/await': ['.out.ok.site', pieces[0]],
-              },
-            },
-          }
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
         }),
       },
       filecoin: {
@@ -392,7 +409,7 @@ describe('uploadDirectory', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    const dataCID = await uploadDirectory(
+    const dataCID = await indexJs.uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       files,
       {
@@ -441,6 +458,11 @@ describe('uploadDirectory', () => {
     ])
 
     const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        })
+      },
       blob: {
         add: provide(BlobCapabilities.add, ({ capability }) => ({
           ok: {
@@ -482,7 +504,7 @@ describe('uploadDirectory', () => {
       codec: CAR.outbound,
       channel: server,
     })
-    await uploadDirectory(
+    await indexJs.uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       files,
       {
@@ -582,7 +604,7 @@ describe('uploadDirectory', () => {
 
     const uploadServiceForUnordered = createSimpleMockUploadServer()
     // uploading unsorted files should work because they should be sorted by `uploadDirectory`
-    const uploadedDirUnsorted = await uploadDirectory(
+    const uploadedDirUnsorted = await indexJs.uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       unsortedFiles,
       { connection: uploadServiceForUnordered.connection }
@@ -590,9 +612,9 @@ describe('uploadDirectory', () => {
 
     const uploadServiceForOrdered = createSimpleMockUploadServer()
     // uploading sorted files should also work
-    const uploadedDirSorted = await uploadDirectory(
+    const uploadedDirSorted = await indexJs.uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
-      [...unsortedFiles].sort(defaultFileComparator),
+      [...unsortedFiles].sort(indexJs.defaultFileComparator),
       { connection: uploadServiceForOrdered.connection }
     )
 
@@ -623,7 +645,7 @@ describe('uploadDirectory', () => {
     // but if options.customOrder is truthy, the caller is indicating
     // they have customized the order of files, so `uploadDirectory` will not sort them
     const uploadServiceForCustomOrder = createSimpleMockUploadServer()
-    const uploadedDirCustomOrder = await uploadDirectory(
+    const uploadedDirCustomOrder = await indexJs.uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       [...unsortedFiles],
       { connection: uploadServiceForCustomOrder.connection, customOrder: true }
@@ -669,6 +691,12 @@ describe('uploadCAR', () => {
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
 
+    const hash = await sha256.digest(someBytes)
+    const blob = {
+      digest: hash.digest,
+      size: someBytes.length,
+    }
+
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -685,21 +713,20 @@ describe('uploadCAR', () => {
     ])
 
     const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        })
+      },
       blob: {
-        add: provide(BlobCapabilities.add, ({ capability, invocation }) => {
+        // @ts-ignore Argument of type
+        add: provide(BlobCapabilities.add, ({ invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return {
-            ok: {
-              site: {
-                // FIXME unsure what to place here as site value
-                'ucan/await': ['.out.ok.site', carCIDs[0]],
-              },
-            },
-          }
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
         }),
       },
       filecoin: {
@@ -745,7 +772,7 @@ describe('uploadCAR', () => {
       channel: server,
     })
 
-    await uploadCAR(
+    await indexJs.uploadCAR(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {
@@ -778,6 +805,12 @@ describe('uploadCAR', () => {
     /** @type {import('../src/types.js').PieceLink[]} */
     const pieceCIDs = []
 
+    const hash = await sha256.digest(someBytes)
+    const blob = {
+      digest: hash.digest,
+      size: someBytes.length,
+    }
+
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
         issuer: space,
@@ -794,20 +827,19 @@ describe('uploadCAR', () => {
     ])
 
     const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        })
+      },
       blob: {
+        // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ capability, invocation }) => {
           assert.equal(invocation.issuer.did(), agent.did())
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return {
-            ok: {
-              site: {
-                // FIXME unsure what to place here as site value
-                'ucan/await': ['.out.ok.site', piece],
-              },
-            },
-          }
+          return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation, blob)
         }),
       },
       filecoin: {
@@ -850,7 +882,7 @@ describe('uploadCAR', () => {
       channel: server,
     })
 
-    await uploadCAR(
+    await indexJs.uploadCAR(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {

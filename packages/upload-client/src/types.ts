@@ -14,6 +14,9 @@ import {
   Failure,
 } from '@ucanto/interface'
 import {
+  UCANConclude,
+  UCANConcludeSuccess,
+  UCANConcludeFailure,
   BlobAdd,
   BlobAddSuccess,
   BlobAddFailure,
@@ -108,6 +111,9 @@ export interface ProgressStatus extends XHRProgressStatus {
 export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service extends StorefrontService {
+  ucan: {
+    conclude: ServiceMethod<UCANConclude, UCANConcludeSuccess, UCANConcludeFailure>,
+  },
   blob: {
     add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
   }
