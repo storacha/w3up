@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { sha256 } from 'multiformats/hashes/sha2'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
@@ -517,6 +516,7 @@ describe('uploadDirectory', () => {
         blob: {
           // @ts-ignore Argument of type
           add: provide(BlobCapabilities.add, ({ invocation }) => {
+            // @ts-ignore Argument of type
             invocations.push(invocation)
             return setupBlobAddResponse({ issuer: space, audience: agent, with: space, proofs }, invocation)
           }),
@@ -535,6 +535,7 @@ describe('uploadDirectory', () => {
         },
         upload: {
           add: provide(UploadCapabilities.add, ({ invocation }) => {
+            // @ts-ignore Argument of type
             invocations.push(invocation)
             const { capabilities } = invocation
             if (!capabilities[0].nb) throw new Error('nb must be present')
@@ -589,11 +590,13 @@ describe('uploadDirectory', () => {
     // We also need to make sure the underlying shards are the same.
     const shardsForUnordered = uploadServiceForUnordered.invocations
       .flatMap((i) =>
+        // @ts-ignore Property
         i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
       )
       .map((cid) => cid.toString())
     const shardsForOrdered = uploadServiceForOrdered.invocations
       .flatMap((i) =>
+        // @ts-ignore Property
         i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
       )
       .map((cid) => cid.toString())
@@ -613,6 +616,7 @@ describe('uploadDirectory', () => {
     )
     const shardsForCustomOrder = uploadServiceForCustomOrder.invocations
       .flatMap((i) =>
+        // @ts-ignore Property
         i.capabilities[0].can === 'upload/add' ? i.capabilities[0].nb.shards ?? [] : []
       )
       .map((cid) => cid.toString())

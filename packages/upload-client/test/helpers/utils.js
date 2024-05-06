@@ -7,6 +7,7 @@ import { createConcludeInvocation } from '../../src/blob.js'
 
 export const validateAuthorization = () => ({ ok: {} })
 
+// @ts-ignore
 export const setupBlobAddResponse = async function({ issuer, with: space, proofs, audience }, invocation) {
   const blob = invocation.capabilities[0].nb.blob
   const blobAllocateTask = await W3sBlob.allocate

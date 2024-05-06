@@ -1,6 +1,5 @@
 import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import { Storefront } from '@web3-storage/filecoin-client'
-import { CID } from 'multiformats/cid'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
