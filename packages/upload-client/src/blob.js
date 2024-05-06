@@ -7,9 +7,25 @@ import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/bl
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 import { SpaceDID } from '@web3-storage/capabilities/utils'
-import retry from 'p-retry'
+import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
+
+/**
+ *
+ * @param {string} url
+ * @param {import('./types.js').ProgressFn} handler
+ */
+function createUploadProgressHandler(url, handler) {
+  /**
+   *
+   * @param {import('./types.js').ProgressStatus} status
+   */
+  function onUploadProgress({ total, loaded, lengthComputable }) {
+    return handler({ total, loaded, lengthComputable, url })
+  }
+  return onUploadProgress
+}
 
 // FIXME this code has been copied over from upload-api
 /**
@@ -199,12 +215,47 @@ export async function add(
 
   const { address } = receipt.out.ok
   if (address) {
-    const { status } = await fetch(address.url, {
-      method: 'PUT',
-      mode: 'cors',
-      body: bytes,
-      headers: address.headers,
-    })
+    const fetchWithUploadProgress =
+      options.fetchWithUploadProgress ||
+      options.fetch ||
+      globalThis.fetch.bind(globalThis)
+
+    let fetchDidCallUploadProgressCb = false
+    const { status } = await retry(
+      async () => {
+        try {
+          const res = await fetchWithUploadProgress(address.url, {
+            method: 'PUT',
+            mode: 'cors',
+            body: bytes,
+            headers: address.headers,
+            signal: options.signal,
+            onUploadProgress: (status) => {
+              fetchDidCallUploadProgressCb = true
+              if (options.onUploadProgress)
+                createUploadProgressHandler(
+                  address.url,
+                  options.onUploadProgress
+                )(status)
+            },
+            // @ts-expect-error - this is needed by recent versions of node - see https://github.com/bluesky-social/atproto/pull/470 for more info
+            duplex: 'half',
+          })
+          if (res.status >= 400 && res.status < 500) {
+            throw new AbortError(`upload failed: ${res.status}`)
+          }
+          return res
+        } catch (err) {
+          if (options.signal?.aborted === true) {
+            throw new AbortError('upload aborted')
+          }
+          throw err
+        }
+      },
+      {
+        retries: options.retries ?? REQUEST_RETRIES,
+      }
+    )
     if (status !== 200) throw new Error(`unexpected status: ${status}`)
   }
 
