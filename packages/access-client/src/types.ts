@@ -46,6 +46,9 @@ import type {
   UCANRevoke,
   UCANRevokeSuccess,
   UCANRevokeFailure,
+  UCANConclude,
+  UCANConcludeSuccess,
+  UCANConcludeFailure,
   AccountDID,
   ProviderDID,
   SpaceDID,
@@ -132,6 +135,7 @@ export interface Service {
   }
   ucan: {
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
+    conclude: ServiceMethod<UCANConclude, UCANConcludeSuccess, UCANConcludeFailure>,
   }
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>

@@ -3,7 +3,9 @@ import {
   type Service as AccessService,
   type AgentDataExport,
 } from '@web3-storage/access/types'
-import { type Service as UploadService } from '@web3-storage/upload-client/types'
+import {
+  type Service as UploadService,
+} from '@web3-storage/upload-client/types'
 import type {
   ConnectionView,
   Signer,
@@ -31,6 +33,7 @@ export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 export type Service = AccessService & UploadService & StorefrontService
 
 export interface ServiceConf {
+  blob: ConnectionView<UploadService>
   access: ConnectionView<AccessService>
   upload: ConnectionView<UploadService>
   filecoin: ConnectionView<StorefrontService>

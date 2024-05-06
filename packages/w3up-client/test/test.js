@@ -79,6 +79,7 @@ export const setup = async () => {
     Client.create({
       store: new StoreMemory(),
       serviceConf: {
+        blob: context.connection,
         access: context.connection,
         upload: context.connection,
         filecoin: context.connection,

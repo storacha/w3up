@@ -31,7 +31,7 @@ function createUploadProgressHandler(url, handler) {
 /**
  * @param {import('@ucanto/interface').Invocation} concludeFx
  */
-export function getConcludeReceipt(concludeFx) {
+function getConcludeReceipt(concludeFx) {
   const receiptBlocks = new Map()
   for (const block of concludeFx.iterateIPLDBlocks()) {
     receiptBlocks.set(`${block.cid}`, block)
@@ -47,7 +47,7 @@ export function getConcludeReceipt(concludeFx) {
 /**
  * @param {import('@ucanto/interface').Receipt} receipt
  */
-export function parseBlobAddReceiptNext(receipt) {
+function parseBlobAddReceiptNext(receipt) {
   // Get invocations next
   /**
    * @type {import('@ucanto/interface').Invocation[]}
