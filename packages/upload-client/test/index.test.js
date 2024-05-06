@@ -23,6 +23,7 @@ import {
 } from '../src/car.js'
 import { toBlock } from './helpers/block.js'
 import { getFilecoinOfferResponse } from './helpers/filecoin.js'
+import { defaultFileComparator } from '../src/sharding.js'
 
 describe('uploadFile', () => {
   it('uploads a file to the service', async () => {
