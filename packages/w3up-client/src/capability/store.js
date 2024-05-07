@@ -21,7 +21,7 @@ export class StoreClient extends Base {
   /**
    * Get details of a stored item.
    *
-   * @param {import('../types.js').UnknownLink} link - Root data CID for the DAG that was stored.
+   * @param {import('../types.js').CARLink} link - Root data CID for the DAG that was stored.
    * @param {import('../types.js').RequestOptions} [options]
    */
   async get(link, options = {}) {

@@ -1,5 +1,38 @@
 # Changelog
 
+## [17.0.0](https://github.com/w3s-project/w3up/compare/capabilities-v16.0.0...capabilities-v17.0.0) (2024-05-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* add `index/add` handler ([#1421](https://github.com/w3s-project/w3up/issues/1421))
+
+### Features
+
+* add `index/add` handler ([#1421](https://github.com/w3s-project/w3up/issues/1421)) ([cbe9524](https://github.com/w3s-project/w3up/commit/cbe952451b719fe7ae2f7480d26865eca80aba55))
+
+## [16.0.0](https://github.com/w3s-project/w3up/compare/capabilities-v15.0.0...capabilities-v16.0.0) (2024-04-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415))
+
+### Features
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415)) ([e53aa87](https://github.com/w3s-project/w3up/commit/e53aa87780446458ef9a19c88877073c1470d50e))
+
+## [15.0.0](https://github.com/w3s-project/w3up/compare/capabilities-v14.0.2...capabilities-v15.0.0) (2024-04-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **capabilities:** `BlobMultihash` type in `@web3-storage/capabilities` renamed to `Multihash`.
+
+### Features
+
+* **capabilities:** add `index/add` capability ([#1410](https://github.com/w3s-project/w3up/issues/1410)) ([1b71b89](https://github.com/w3s-project/w3up/commit/1b71b89ed989cde8ef4bf35c1ebc333872cbc54c))
+
 ## [14.0.2](https://github.com/w3s-project/w3up/compare/capabilities-v14.0.1...capabilities-v14.0.2) (2024-04-24)
 
 

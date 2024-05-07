@@ -11,6 +11,7 @@ export async function toCAR(bytes) {
   const hash = await sha256.digest(bytes)
   const root = CID.create(1, raw.code, hash)
 
+  // @ts-expect-error old multiformats in @ipld/car
   const { writer, out } = CarWriter.create(root)
   writer.put({ cid: root, bytes })
   writer.close()

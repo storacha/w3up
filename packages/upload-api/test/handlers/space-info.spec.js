@@ -96,7 +96,9 @@ describe('space/info', function () {
             proofs: [delegation],
             nb: {
               size: 1000,
-              link: parseLink('bafkqaaa'),
+              link: parseLink(
+                'bagbaierale63ypabqutmxxbz3qg2yzcp2xhz2yairorogfptwdd5n4lsz5xa'
+              ),
             },
           }),
         ],
@@ -165,7 +167,9 @@ describe('space/info', function () {
             with: space.did(),
             proofs: [delegation],
             nb: {
-              link: parseLink('bafkqaaa'),
+              link: parseLink(
+                'bagbaierale63ypabqutmxxbz3qg2yzcp2xhz2yairorogfptwdd5n4lsz5xa'
+              ),
             },
           }),
         ],

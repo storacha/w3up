@@ -99,6 +99,7 @@ export async function randomCAR(size) {
   const hash = await sha256.digest(bytes)
   const root = CID.create(1, raw.code, hash)
 
+  // @ts-expect-error old multiformats in @ipld/car
   const { writer, out } = CarWriter.create(root)
   writer.put({ cid: root, bytes })
   writer.close()
@@ -113,6 +114,7 @@ export async function randomCAR(size) {
   return Object.assign(blob, { cid, roots: [root] })
 }
 
+// eslint-disable-next-line
 export async function randomCID() {
   const bytes = await randomBytes(10)
   const hash = await sha256.digest(bytes)

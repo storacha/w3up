@@ -1,7 +1,10 @@
+import * as API from '../../src/types.js'
 import { Queue } from './queue.js'
 
 /**
+ * @template T
  * @param {Map<string, unknown[]>} queuedMessages
+ * @param {{ new (config: { onMessage: (msg: T) => void }): API.Queue<T> }} [QueueImplementation]
  */
 export const getQueueImplementations = (
   queuedMessages,

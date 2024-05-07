@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/capabilities",
-  "version": "14.0.2",
+  "version": "17.0.0",
   "description": "UCAN Capabilities provided by web3.storage",
   "homepage": "https://web3.storage",
   "repository": {
@@ -55,6 +55,10 @@
     "./filecoin/dealer": {
       "types": "./dist/src/filecoin/dealer.d.ts",
       "import": "./src/filecoin/dealer.js"
+    },
+    "./index": {
+      "types": "./dist/src/index/index.d.ts",
+      "import": "./src/index/index.js"
     },
     "./web3.storage/blob": {
       "types": "./dist/src/web3.storage/blob.d.ts",

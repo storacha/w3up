@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/upload-api",
   "description": "The upload api for web3.storage",
-  "version": "10.0.1",
+  "version": "13.0.2",
   "type": "module",
   "main": "./src/lib.js",
   "homepage": "https://web3.storage",
@@ -27,6 +27,9 @@
       "admin": [
         "dist/src/admin.d.ts"
       ],
+      "blob": [
+        "dist/src/blob.d.ts"
+      ],
       "console": [
         "dist/src/console.d.ts"
       ],
@@ -38,6 +41,9 @@
       ],
       "errors": [
         "dist/src/errors.d.ts"
+      ],
+      "index": [
+        "dist/src/index.d.ts"
       ],
       "plan": [
         "dist/src/plan.d.ts"
@@ -100,6 +106,10 @@
       "types": "./dist/src/admin.d.ts",
       "import": "./src/admin.js"
     },
+    "./blob": {
+      "types": "./dist/src/blob.d.ts",
+      "import": "./src/blob.js"
+    },
     "./console": {
       "types": "./dist/src/console.d.ts",
       "import": "./src/console.js"
@@ -115,6 +125,10 @@
     "./errors": {
       "types": "./dist/src/errors.d.ts",
       "import": "./src/errors.js"
+    },
+    "./index": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./src/index.js"
     },
     "./plan": {
       "types": "./dist/src/plan.d.ts",
@@ -178,6 +192,7 @@
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "dependencies": {
+    "@ipld/dag-cbor": "^9.0.6",
     "@ucanto/client": "^9.0.1",
     "@ucanto/interface": "^10.0.1",
     "@ucanto/principal": "^9.0.1",
@@ -189,9 +204,10 @@
     "@web3-storage/content-claims": "^4.0.4",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-api": "workspace:^",
+    "carstream": "^2.1.0",
     "multiformats": "^12.1.2",
-    "uint8arrays": "^5.0.3",
-    "p-retry": "^5.1.2"
+    "p-retry": "^5.1.2",
+    "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",

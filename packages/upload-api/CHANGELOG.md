@@ -1,5 +1,57 @@
 # Changelog
 
+## [13.0.2](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.1...upload-api-v13.0.2) (2024-05-02)
+
+
+### Fixes
+
+* missing test export ([1fc6808](https://github.com/w3s-project/w3up/commit/1fc68087ccca5798cd9c633580025bef034bcadf))
+
+## [13.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.0...upload-api-v13.0.1) (2024-05-01)
+
+
+### Fixes
+
+* missing exports ([dec43e5](https://github.com/w3s-project/w3up/commit/dec43e51ee3b22a960a3769537c04f3de55d7097))
+
+
+### Other Changes
+
+* appease linter ([782c6d0](https://github.com/w3s-project/w3up/commit/782c6d0b3ca93ee801b38126339a262bcd713ede))
+
+## [13.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v12.0.0...upload-api-v13.0.0) (2024-05-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* add `index/add` handler ([#1421](https://github.com/w3s-project/w3up/issues/1421))
+
+### Features
+
+* add `index/add` handler ([#1421](https://github.com/w3s-project/w3up/issues/1421)) ([cbe9524](https://github.com/w3s-project/w3up/commit/cbe952451b719fe7ae2f7480d26865eca80aba55))
+
+## [12.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v11.0.0...upload-api-v12.0.0) (2024-04-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415))
+
+### Features
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415)) ([e53aa87](https://github.com/w3s-project/w3up/commit/e53aa87780446458ef9a19c88877073c1470d50e))
+
+## [11.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v10.0.1...upload-api-v11.0.0) (2024-04-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **capabilities:** `BlobMultihash` type in `@web3-storage/capabilities` renamed to `Multihash`.
+
+### Features
+
+* **capabilities:** add `index/add` capability ([#1410](https://github.com/w3s-project/w3up/issues/1410)) ([1b71b89](https://github.com/w3s-project/w3up/commit/1b71b89ed989cde8ef4bf35c1ebc333872cbc54c))
+
 ## [10.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v10.0.0...upload-api-v10.0.1) (2024-04-25)
 
 

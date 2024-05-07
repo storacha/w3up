@@ -1,5 +1,30 @@
 # Changelog
 
+## [13.0.1](https://github.com/w3s-project/w3up/compare/w3up-client-v13.0.0...w3up-client-v13.0.1) (2024-05-07)
+
+
+### Fixes
+
+* c8 issue ([f5055b7](https://github.com/w3s-project/w3up/commit/f5055b7ff4ee9974611805a58dd274974e69c56e))
+* missing export ([d72d083](https://github.com/w3s-project/w3up/commit/d72d083f8815245be2562a7d7e6aabe0c4cc4b45))
+
+
+### Other Changes
+
+* appease linter ([782c6d0](https://github.com/w3s-project/w3up/commit/782c6d0b3ca93ee801b38126339a262bcd713ede))
+* c8 fix ([049170d](https://github.com/w3s-project/w3up/commit/049170d45678257161ac22b55068b2adf96a7ebb))
+
+## [13.0.0](https://github.com/w3s-project/w3up/compare/w3up-client-v12.5.3...w3up-client-v13.0.0) (2024-04-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415))
+
+### Features
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415)) ([e53aa87](https://github.com/w3s-project/w3up/commit/e53aa87780446458ef9a19c88877073c1470d50e))
+
 ## [12.5.3](https://github.com/w3s-project/w3up/compare/w3up-client-v12.5.2...w3up-client-v12.5.3) (2024-04-25)
 
 

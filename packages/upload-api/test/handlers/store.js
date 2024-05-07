@@ -2,7 +2,11 @@ import { createServer, connect } from '../../src/lib.js'
 import * as API from '../../src/types.js'
 import * as CAR from '@ucanto/transport/car'
 import { base64pad } from 'multiformats/bases/base64'
+import * as Raw from 'multiformats/codecs/raw'
+import { sha256 } from 'multiformats/hashes/sha2'
+import * as Link from 'multiformats/link'
 import * as StoreCapabilities from '@web3-storage/capabilities/store'
+import { invoke } from '@ucanto/core'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { Absentee } from '@ucanto/principal'
 import { provisionProvider } from '../helpers/utils.js'
@@ -447,6 +451,57 @@ export const test = {
       storeAdd.out.error?.message.startsWith('Maximum size exceeded:'),
       true
     )
+  },
+
+  'store/add fails with non-car link': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    /** @type {API.Link<unknown, any>} */
+    const link = Link.create(Raw.code, await sha256.digest(data))
+    const size = context.maxUploadSize + 1
+
+    // Throws because invocation builder expects CAR link
+    try {
+      StoreCapabilities.add.invoke({
+        issuer: alice,
+        audience: connection.id,
+        with: spaceDid,
+        nb: {
+          link,
+          size,
+        },
+        proofs: [proof],
+      })
+      assert.ok(false, 'should have throw exception')
+    } catch (error) {
+      assert.ok(String(error).match(/0x202 codec/))
+    }
+
+    // Going around client validation will still fail because server handler
+    // expects CAR link.
+    const invocation = await invoke({
+      issuer: alice,
+      audience: connection.id,
+      capability: {
+        can: 'store/add',
+        with: spaceDid,
+        nb: {
+          link,
+          size,
+        },
+      },
+
+      proofs: [proof],
+    }).delegate()
+
+    const [storeAdd] = await connection.execute(invocation)
+    assert.ok(storeAdd.out.error)
+    assert.ok(storeAdd.out.error?.message.match('0x202 codec'))
   },
 
   'store/remove fails for non existent link': async (assert, context) => {

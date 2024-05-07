@@ -14,6 +14,7 @@ import * as Subscription from './handlers/subscription.js'
 import * as Upload from './handlers/upload.js'
 import * as Plan from './handlers/plan.js'
 import * as Usage from './handlers/usage.js'
+import * as Index from './handlers/index.js'
 import { test as allocationsStorageTests } from './storage/allocations-storage-tests.js'
 import { test as blobsStorageTests } from './storage/blobs-storage-tests.js'
 import { test as tasksStorageTests } from './storage/tasks-storage-tests.js'
@@ -31,6 +32,7 @@ export * from './util.js'
 export const test = {
   ...Store.test,
   ...Blob.test,
+  ...Index.test,
   ...Upload.test,
   ...Web3Storage.test,
   ...Ucan.test,
@@ -59,6 +61,7 @@ export const handlerTests = {
   ...RateLimitRemove,
   ...Store.test,
   ...Blob.test,
+  ...Index.test,
   ...Web3Storage.test,
   ...Ucan.test,
   ...Subscription.test,
@@ -71,6 +74,7 @@ export {
   Store,
   Upload,
   Blob,
+  Index,
   Web3Storage,
   Ucan,
   delegationsStorageTests,

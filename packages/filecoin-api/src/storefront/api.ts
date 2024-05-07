@@ -8,6 +8,7 @@ import type {
   DID,
   Proof,
   ConnectionView,
+  Result,
 } from '@ucanto/interface'
 import { PieceLink } from '@web3-storage/data-segment'
 import {
@@ -18,9 +19,9 @@ import {
 import {
   Store,
   UpdatableAndQueryableStore,
-  StreammableStore,
   Queue,
   ServiceConfig,
+  StoreGetError
 } from '../types.js'
 
 export type PieceStore = UpdatableAndQueryableStore<
@@ -30,7 +31,6 @@ export type PieceStore = UpdatableAndQueryableStore<
 >
 export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
 export type PieceOfferQueue = Queue<PieceOfferMessage>
-export type DataStore = StreammableStore<UnknownLink, Uint8Array>
 export type TaskStore = Store<UnknownLink, Invocation>
 export type ReceiptStore = Store<UnknownLink, Receipt>
 
@@ -71,7 +71,7 @@ export interface ServiceContext {
 
 export interface FilecoinSubmitMessageContext
   extends Pick<ServiceContext, 'pieceStore'> {
-  dataStore: DataStore
+  contentStore: ContentStore<UnknownLink, Uint8Array>
 }
 
 export interface PieceOfferMessageContext {
@@ -188,4 +188,11 @@ export interface PieceOfferMessage {
 
 export interface DataAggregationProofNotFound extends Failure {
   name: 'DataAggregationProofNotFound'
+}
+
+export interface ContentStore<RecKey, Rec> {
+  /**
+   * Gets a record from the store.
+   */
+  stream: (key: RecKey) => Promise<Result<ReadableStream<Rec>, StoreGetError>>
 }

@@ -33,6 +33,7 @@ import * as Filecoin from '@web3-storage/capabilities/filecoin'
 import * as Aggregator from '@web3-storage/capabilities/filecoin/aggregator'
 import * as DealTracker from '@web3-storage/capabilities/filecoin/deal-tracker'
 import * as Dealer from '@web3-storage/capabilities/filecoin/dealer'
+import * as Index from '@web3-storage/capabilities/index'
 
 // This package has a "main" entrypoint but we recommend the usage of the specific imports above
 ```

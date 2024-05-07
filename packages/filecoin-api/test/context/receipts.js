@@ -13,7 +13,7 @@ import * as API from '../../src/types.js'
  * @param {API.PieceLink} context.aggregate
  * @param {string} context.group
  * @param {API.PieceLink} context.piece
- * @param {API.CARLink} context.content
+ * @param {import('@ucanto/interface').UnknownLink} context.content
  * @param {import('@ucanto/interface').Block} context.piecesBlock
  * @param {API.InclusionProof} context.inclusionProof
  * @param {API.AggregateAcceptSuccess} context.aggregateAcceptStatus

@@ -1,5 +1,16 @@
 # Changelog
 
+## [14.0.0](https://github.com/w3s-project/w3up/compare/upload-client-v13.2.2...upload-client-v14.0.0) (2024-04-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415))
+
+### Features
+
+* restrict store API to CARs ([#1415](https://github.com/w3s-project/w3up/issues/1415)) ([e53aa87](https://github.com/w3s-project/w3up/commit/e53aa87780446458ef9a19c88877073c1470d50e))
+
 ## [13.2.2](https://github.com/w3s-project/w3up/compare/upload-client-v13.2.1...upload-client-v13.2.2) (2024-04-25)
 
 

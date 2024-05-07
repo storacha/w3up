@@ -485,7 +485,7 @@ export const test = {
 
       /**
        * @type {import('@web3-storage/capabilities/types').BlobAddress}
-       **/
+       */
       // @ts-expect-error receipt out is unknown
       const address = next.allocate.receipt.out.ok?.address
       assert.ok(address)
