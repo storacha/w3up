@@ -62,14 +62,16 @@ export interface PlansStorage {
 
   /**
    * Set a customer's billing email. Update our systems and any third party billing systems.
-   * 
+   *
    * May not be possible with all billing providers - this is designed with
    * https://docs.stripe.com/api/customer_portal/sessions/create in mind.
    *
    * @param account account DID
    */
-    createAdminSession: (
-      account: AccountDID,
-      returnURL: string
-    ) => Promise<Ucanto.Result<PlanCreateAdminSessionSuccess, PlanCreateAdminSessionFailure>>
+  createAdminSession: (
+    account: AccountDID,
+    returnURL: string
+  ) => Promise<
+    Ucanto.Result<PlanCreateAdminSessionSuccess, PlanCreateAdminSessionFailure>
+  >
 }

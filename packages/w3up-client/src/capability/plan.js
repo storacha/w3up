@@ -4,55 +4,49 @@ import * as Plan from '@web3-storage/capabilities/plan'
 
 export class PlanClient extends Base {
   /**
-   * 
-   * @param {import('@web3-storage/access').AccountDID} account 
+   *
+   * @param {import('@web3-storage/access').AccountDID} account
    */
   async get(account) {
     const out = await get({ agent: this.agent }, { account })
 
     if (!out.ok) {
-      throw new Error(
-        `failed ${Plan.get.can} invocation`,
-        {
-          cause: out.error,
-        }
-      )
+      throw new Error(`failed ${Plan.get.can} invocation`, {
+        cause: out.error,
+      })
     }
     return out.ok
   }
 
   /**
-   * 
-   * @param {API.AccountDID} account 
-   * @param {API.DID} product 
+   *
+   * @param {API.AccountDID} account
+   * @param {API.DID} product
    */
   async set(account, product) {
     const out = await set({ agent: this.agent }, { account, product })
     if (!out.ok) {
-      throw new Error(
-        `failed ${Plan.set.can} invocation`,
-        {
-          cause: out.error,
-        }
-      )
+      throw new Error(`failed ${Plan.set.can} invocation`, {
+        cause: out.error,
+      })
     }
     return out.ok
   }
 
-/**
- * 
- * @param {API.AccountDID} account 
- * @param {string} returnURL
- */
+  /**
+   *
+   * @param {API.AccountDID} account
+   * @param {string} returnURL
+   */
   async createAdminSession(account, returnURL) {
-    const out = await createAdminSession({ agent: this.agent }, { account, returnURL })
+    const out = await createAdminSession(
+      { agent: this.agent },
+      { account, returnURL }
+    )
     if (!out.ok) {
-      throw new Error(
-        `failed ${Plan.createAdminSession.can} invocation`,
-        {
-          cause: out.error,
-        }
-      )
+      throw new Error(`failed ${Plan.createAdminSession.can} invocation`, {
+        cause: out.error,
+      })
     }
     return out.ok
   }
@@ -94,7 +88,7 @@ export const set = async ({ agent }, { account, product, proofs = [] }) => {
 
 /**
  * Creates an admin session for the given account.
- * 
+ *
  * Returns a URL that a user can resolve to enter the
  * admin billing portal for this account.
  *
@@ -104,13 +98,16 @@ export const set = async ({ agent }, { account, product, proofs = [] }) => {
  * @param {string} options.returnURL
  * @param {API.Delegation[]} [options.proofs]
  */
-export const createAdminSession = async ({ agent }, { account, returnURL, proofs = [] }) => {
+export const createAdminSession = async (
+  { agent },
+  { account, returnURL, proofs = [] }
+) => {
   const receipt = await agent.invokeAndExecute(Plan.createAdminSession, {
     with: account,
     proofs,
     nb: {
-      returnURL
-    }
+      returnURL,
+    },
   })
   return receipt.out
 }

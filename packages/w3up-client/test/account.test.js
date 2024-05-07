@@ -263,8 +263,11 @@ export const testAccount = {
 
     // TODO: we shouldn't need to do this manually! I think this might be a bug!
     await account.model.agent.addProofs(account.proofs)
-    
-    const { ok } = await account.plan.createAdminSession(accountDID, 'https://example.com')
+
+    const { ok } = await account.plan.createAdminSession(
+      accountDID,
+      'https://example.com'
+    )
     assert.ok(ok)
     assert.ok(ok?.url)
   },

@@ -321,7 +321,11 @@ export interface Service extends StorefrontService, W3sService {
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
     set: ServiceMethod<PlanSet, PlanSetSuccess, PlanSetFailure>
-    'create-admin-session': ServiceMethod<PlanCreateAdminSession, PlanCreateAdminSessionSuccess, PlanCreateAdminSessionFailure>
+    'create-admin-session': ServiceMethod<
+      PlanCreateAdminSession,
+      PlanCreateAdminSessionSuccess,
+      PlanCreateAdminSessionFailure
+    >
   }
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>

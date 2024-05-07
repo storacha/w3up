@@ -49,12 +49,11 @@ export class CustomerExists extends Failure {
 
 /**
  * @param {Types.PlanServiceContext} context
-*/
+ */
 export const createService = (context) => {
-
-  return ({
+  return {
     get: Get.provide(context),
     set: Set.provide(context),
-    'create-admin-session': CreateAdminSession.provide(context)
-  })
+    'create-admin-session': CreateAdminSession.provide(context),
+  }
 }

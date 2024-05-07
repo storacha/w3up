@@ -6,7 +6,9 @@ import { Plan } from '@web3-storage/capabilities'
  * @param {API.PlanServiceContext} context
  */
 export const provide = (context) =>
-  Provider.provide(Plan.createAdminSession, (input) => createAdminSession(input, context))
+  Provider.provide(Plan.createAdminSession, (input) =>
+    createAdminSession(input, context)
+  )
 
 /**
  * @param {API.Input<Plan.createAdminSession>} input
@@ -14,5 +16,7 @@ export const provide = (context) =>
  * @returns {Promise<API.Result<API.PlanCreateAdminSessionSuccess, API.PlanCreateAdminSessionFailure>>}
  */
 const createAdminSession = async ({ capability }, context) =>
-  context.plansStorage.createAdminSession(capability.with, capability.nb.returnURL)
-
+  context.plansStorage.createAdminSession(
+    capability.with,
+    capability.nb.returnURL
+  )

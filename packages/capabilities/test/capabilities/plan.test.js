@@ -270,7 +270,7 @@ describe('plan/create-admin-session', function () {
       audience: service,
       with: account,
       nb: {
-        returnURL: 'http://example.com/return'
+        returnURL: 'http://example.com/return',
       },
       proofs: await createAuthorization({ agent, service, account }),
     })
@@ -296,7 +296,7 @@ describe('plan/create-admin-session', function () {
       audience: service,
       with: account,
       nb: {
-        returnURL: 'http://example.com/return'
+        returnURL: 'http://example.com/return',
       },
     })
 
@@ -316,7 +316,7 @@ describe('plan/create-admin-session', function () {
       audience: service,
       with: account,
       nb: {
-        returnURL: 'http://example.com/return'
+        returnURL: 'http://example.com/return',
       },
       proofs: await createAuthorization({ agent, service, account }),
     })
@@ -336,7 +336,7 @@ describe('plan/create-admin-session', function () {
       audience: service,
       with: account,
       nb: {
-        returnURL: 'http://example.com/return'
+        returnURL: 'http://example.com/return',
       },
       proofs: [
         await Plan.createAdminSession.delegate({
@@ -344,7 +344,7 @@ describe('plan/create-admin-session', function () {
           audience: bob,
           with: account,
           nb: {
-            returnURL: 'http://example.com/return'
+            returnURL: 'http://example.com/return',
           },
           proofs: await createAuthorization({ agent, service, account }),
         }),

@@ -51,7 +51,9 @@ export function mockService(impl) {
     plan: {
       get: withCallCount(impl.plan?.get ?? notImplemented),
       set: withCallCount(impl.plan?.set ?? notImplemented),
-      'create-admin-session': withCallCount(impl.plan?.['create-admin-session'] ?? notImplemented),
+      'create-admin-session': withCallCount(
+        impl.plan?.['create-admin-session'] ?? notImplemented
+      ),
     },
     ucan: {
       revoke: withCallCount(impl.ucan?.revoke ?? notImplemented),

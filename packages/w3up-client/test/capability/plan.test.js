@@ -1,9 +1,5 @@
 import assert from 'assert'
-import {
-  create as createServer,
-  provide,
-  ok,
-} from '@ucanto/server'
+import { create as createServer, provide, ok } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 
@@ -32,7 +28,7 @@ describe('PlanClient', () => {
             if (!error) {
               return ok({
                 product: exampleProduct,
-                updatedAt: Date.now().toString()
+                updatedAt: Date.now().toString(),
               })
             } else {
               return { error: { name: 'PlanNotFound', message: '' } }
@@ -60,16 +56,14 @@ describe('PlanClient', () => {
       })
       await alice.agent.addProofs(auths)
       const res = await alice.capability.plan.get(account.did())
-      
+
       assert(service.plan.get.called)
       assert.equal(service.plan.get.callCount, 1)
       assert.equal(res.product, exampleProduct)
       assert(res.updatedAt)
 
       error = true
-      await assert.rejects(
-        alice.capability.plan.get(account.did())
-      )
+      await assert.rejects(alice.capability.plan.get(account.did()))
     })
   })
 
@@ -82,7 +76,10 @@ describe('PlanClient', () => {
           set: provide(PlanCapabilities.set, ({ invocation }) => {
             if (!error) {
               assert(invocation.capabilities[0].nb)
-              assert.equal(invocation.capabilities[0].nb.product, exampleProduct)
+              assert.equal(
+                invocation.capabilities[0].nb.product,
+                exampleProduct
+              )
               return ok({})
             } else {
               return { error: { name: 'CustomerNotFound', message: '' } }
@@ -110,7 +107,7 @@ describe('PlanClient', () => {
       })
       await alice.agent.addProofs(auths)
       const res = await alice.capability.plan.set(account.did(), exampleProduct)
-      
+
       assert(service.plan.set.called)
       assert.equal(service.plan.set.callCount, 1)
       assert(res)
@@ -128,13 +125,16 @@ describe('PlanClient', () => {
       let error = false
       const service = mockService({
         plan: {
-          "create-admin-session": provide(PlanCapabilities.createAdminSession, ({ invocation }) => {
-            if (!error) {
-              return ok({ url: 'https://example.com/authorize/user' })
-            } else {
-              return { error: { name: 'CustomerNotFound', message: '' } }
+          'create-admin-session': provide(
+            PlanCapabilities.createAdminSession,
+            ({ invocation }) => {
+              if (!error) {
+                return ok({ url: 'https://example.com/authorize/user' })
+              } else {
+                return { error: { name: 'CustomerNotFound', message: '' } }
+              }
             }
-          }),
+          ),
         },
       })
       const serviceSigner = await Signer.generate()
@@ -156,15 +156,21 @@ describe('PlanClient', () => {
         agent: alice.agent.issuer,
       })
       await alice.agent.addProofs(auths)
-      
-      const res = await alice.capability.plan.createAdminSession(account.did(), 'https://example.com/return-url')
+
+      const res = await alice.capability.plan.createAdminSession(
+        account.did(),
+        'https://example.com/return-url'
+      )
       assert(service.plan['create-admin-session'].called)
       assert.equal(service.plan['create-admin-session'].callCount, 1)
       assert(res)
 
       error = true
       await assert.rejects(
-        alice.capability.plan.createAdminSession(account.did(), 'https://example.com/return-url')
+        alice.capability.plan.createAdminSession(
+          account.did(),
+          'https://example.com/return-url'
+        )
       )
     })
   })

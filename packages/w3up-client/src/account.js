@@ -229,15 +229,15 @@ export class AccountPlan {
   }
 
   /**
-   * 
-   * @param {import('@web3-storage/access').AccountDID} accountDID 
-   * @param {string} returnURL 
-   * @returns 
+   *
+   * @param {import('@web3-storage/access').AccountDID} accountDID
+   * @param {string} returnURL
+   * @returns
    */
-  async createAdminSession(accountDID, returnURL){
+  async createAdminSession(accountDID, returnURL) {
     return await Plan.createAdminSession(this.model, {
       account: accountDID,
-      returnURL
+      returnURL,
     })
   }
 
