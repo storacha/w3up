@@ -2,6 +2,7 @@ import * as Test from './test.js'
 import * as Account from '../src/account.js'
 import * as Space from '../src/space.js'
 import * as Result from '../src/result.js'
+import { DIDMailto } from '../src/capability/access.js'
 
 /**
  * @type {Test.Suite}
@@ -248,6 +249,24 @@ export const testAccount = {
     const { ok: newPlan } = await account.plan.get()
 
     assert.ok(newPlan?.product, 'did:web:lite.web3.storage')
+  },
+
+  'create plan admin session': async (
+    assert,
+    { client, mail, grantAccess, plansStorage }
+  ) => {
+    const accountEmail = 'alice@web.mail'
+    const accountDID = DIDMailto.fromEmail(accountEmail)
+    const login = Account.login(client, accountEmail)
+    await grantAccess(await mail.take())
+    const account = Result.try(await login)
+
+    // TODO: we shouldn't need to do this manually! I think this might be a bug!
+    await account.model.agent.addProofs(account.proofs)
+    
+    const { ok } = await account.plan.createAdminSession(accountDID, 'https://example.com')
+    assert.ok(ok)
+    assert.ok(ok?.url)
   },
 
   'check account subscriptions': async (

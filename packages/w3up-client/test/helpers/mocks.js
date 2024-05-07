@@ -9,6 +9,7 @@ const notImplemented = () => {
 /**
  * @param {Partial<{
  * access: Partial<import('@web3-storage/access/types').Service['access']>
+ * plan: Partial<import('@web3-storage/access/types').Service['plan']>
  * provider: Partial<import('@web3-storage/access/types').Service['provider']>
  * store: Partial<import('@web3-storage/upload-client/types').Service['store']>
  * subscription: Partial<import('@web3-storage/access/types').Service['subscription']>
@@ -46,6 +47,11 @@ export function mockService(impl) {
     },
     provider: {
       add: withCallCount(impl.provider?.add ?? notImplemented),
+    },
+    plan: {
+      get: withCallCount(impl.plan?.get ?? notImplemented),
+      set: withCallCount(impl.plan?.set ?? notImplemented),
+      'create-admin-session': withCallCount(impl.plan?.['create-admin-session'] ?? notImplemented),
     },
     ucan: {
       revoke: withCallCount(impl.ucan?.revoke ?? notImplemented),
