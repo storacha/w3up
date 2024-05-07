@@ -103,7 +103,7 @@ export class Client extends Base {
    */
   async uploadFile(file, options = {}) {
     const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
+      BlobCapabilities.add.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -120,7 +120,7 @@ export class Client extends Base {
    */
   async uploadDirectory(files, options = {}) {
     const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
+      BlobCapabilities.add.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -141,7 +141,7 @@ export class Client extends Base {
    */
   async uploadCAR(car, options = {}) {
     const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
+      BlobCapabilities.add.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload

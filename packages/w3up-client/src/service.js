@@ -40,7 +40,6 @@ export const filecoinServiceConnection = client.connect({
 
 /** @type {import('./types.js').ServiceConf} */
 export const serviceConf = {
-  blob: uploadServiceConnection,
   access: accessServiceConnection,
   upload: uploadServiceConnection,
   filecoin: filecoinServiceConnection,
