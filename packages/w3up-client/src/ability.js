@@ -1,5 +1,7 @@
 import { abilitiesAsStrings } from '@web3-storage/capabilities'
 
+const setOfAbilities = new Set(abilitiesAsStrings)
+
 /**
  * Verify and return Abilities.
  *
@@ -12,8 +14,8 @@ import { abilitiesAsStrings } from '@web3-storage/capabilities'
  * @param {string[]} abilities
  * @returns {import('@web3-storage/capabilities/types').ServiceAbility[]}
  */
+/* c8 ignore next */
 export function asAbilities(abilities) {
-  const setOfAbilities = new Set(abilitiesAsStrings)
   for (const ability of abilities) {
     if (
       !setOfAbilities.has(
