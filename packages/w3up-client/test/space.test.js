@@ -9,7 +9,7 @@ import { randomCAR } from './helpers/random.js'
 /**
  * @type {Test.Suite}
  */
-export const testSpace = {
+export const testSpace = Test.withContext({
   'should get meta': async (assert, { client }) => {
     const signer = await Signer.generate()
     const name = `space-${Date.now()}`
@@ -51,6 +51,6 @@ export const testSpace = {
     const usage = Result.unwrap(await found.usage.get())
     assert.equal(usage, BigInt(size))
   },
-}
+})
 
 Test.test({ Space: testSpace })

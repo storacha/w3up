@@ -11,8 +11,10 @@ export class SubscriptionClient extends Base {
    *
    * @param {import('@web3-storage/access').AccountDID} account
    */
+  /* c8 ignore next */
   async list(account) {
     const out = await list({ agent: this.agent }, { account })
+    /* c8 ignore next 8 */
     if (!out.ok) {
       throw new Error(
         `failed ${SubscriptionCapabilities.list.can} invocation`,

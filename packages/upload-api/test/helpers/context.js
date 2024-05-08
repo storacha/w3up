@@ -92,8 +92,8 @@ export const createContext = async (
     dealTrackerService: {
       connection: dealTrackerConnection,
       invocationConfig: {
-        issuer: id,
-        with: id.did(),
+        issuer: signer,
+        with: signer.did(),
         audience: dealTrackerSigner,
       },
     },

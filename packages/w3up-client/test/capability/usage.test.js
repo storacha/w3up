@@ -1,96 +1,70 @@
-import assert from 'assert'
-import { create as createServer, provide } from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as Signer from '@ucanto/principal/ed25519'
-import * as UsageCapabilities from '@web3-storage/capabilities/usage'
 import { AgentData } from '@web3-storage/access/agent'
-import { mockService, mockServiceConf } from '../helpers/mocks.js'
 import { Client } from '../../src/client.js'
-import { validateAuthorization } from '../helpers/utils.js'
+import * as Test from '../test.js'
 
-describe('UsageClient', () => {
-  describe('report', () => {
-    it('should fetch usage report', async () => {
-      const service = mockService({
-        usage: {
-          report: provide(UsageCapabilities.report, () => {
-            return { ok: { [report.provider]: report } }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
+export const UsageClient = Test.withContext({
+  report: {
+    'should fetch usage report': async (
+      assert,
+      { connection, provisionsStorage, uploadTable }
+    ) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
+
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
+      const content = new Blob(['hello world'])
+      await alice.uploadFile(content)
 
       const period = { from: new Date(0), to: new Date() }
-      /** @type {import('@web3-storage/capabilities/types').UsageData} */
-      const report = {
-        provider: 'did:web:web3.storage',
-        space: space.did(),
-        size: { initial: 0, final: 0 },
-        period: {
-          from: period.from.toISOString(),
-          to: period.to.toISOString(),
-        },
-        events: [],
-      }
 
-      const subs = await alice.capability.usage.report(space.did(), period)
+      const report = await alice.capability.usage.report(space.did(), period)
 
-      assert(service.usage.report.called)
-      assert.equal(service.usage.report.callCount, 1)
-      assert.deepEqual(subs, { [report.provider]: report })
-    })
+      const [[id, record]] = Object.entries(report)
+      assert.equal(id, connection.id.did())
 
-    it('should throw on service failure', async () => {
-      const service = mockService({
-        usage: {
-          report: provide(UsageCapabilities.report, ({ capability }) => {
-            return { error: new Error('boom') }
-          }),
-        },
-      })
+      assert.equal(record.provider, connection.id.did())
+      assert.equal(record.space, space.did())
+      assert.equal(record.period.from, period.from.toISOString())
+      assert.ok(record.period.to > period.to.toISOString())
+      assert.equal(record.size.initial, 0)
+      assert.ok(record.size.final >= content.size)
+      assert.ok(record.events.length > 0)
+    },
 
-      const serviceSigner = await Signer.generate()
-      const server = createServer({
-        id: serviceSigner,
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
+    'should be empty on unknown space': async (assert, { connection }) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 
-      await assert.rejects(
-        () => {
-          const period = { from: new Date(), to: new Date() }
-          return alice.capability.usage.report(space.did(), period)
-        },
-        { message: 'failed usage/report invocation' }
-      )
-
-      assert(service.usage.report.called)
-      assert.equal(service.usage.report.callCount, 1)
-    })
-  })
+      const period = { from: new Date(), to: new Date() }
+      const report = await alice.capability.usage.report(space.did(), period)
+      assert.deepEqual(report, {})
+    },
+  },
 })
+
+Test.test({ UsageClient })

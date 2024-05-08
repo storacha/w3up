@@ -28,3 +28,4 @@ const server = createServer((req, res) => {
 })
 
 server.listen(port, () => console.log(`Listening on :${port}`))
+process.on('SIGTERM', () => process.exit(0))

@@ -4,7 +4,7 @@ import * as Account from '../src/account.js'
 /**
  * @type {Test.Suite}
  */
-export const testClientAccounts = {
+export const testClientAccounts = Test.withContext({
   'list accounts': async (assert, { client, mail, grantAccess }) => {
     const email = 'alice@web.mail'
 
@@ -32,6 +32,6 @@ export const testClientAccounts = {
     assert.equal(account.did(), Account.fromEmail(email))
     assert.equal(account.proofs.length, 2)
   },
-}
+})
 
 Test.test({ 'Client accounts': testClientAccounts })
