@@ -9,6 +9,35 @@ export const validateAuthorization = () => ({ ok: {} })
 
 export const setupBlobAddSuccessResponse = async function (
   // @ts-ignore
+  options,
+  // @ts-ignore
+  invocation
+) {
+  return setupBlobAddResponse('http://localhost:9200', options, invocation)
+}
+
+export const setupBlobAdd4xxResponse = async function (
+  // @ts-ignore
+  options,
+  // @ts-ignore
+  invocation
+) {
+  return setupBlobAddResponse('http://localhost:9400', options, invocation)
+}
+
+export const setupBlobAdd5xxResponse = async function (
+  // @ts-ignore
+  options,
+  // @ts-ignore
+  invocation
+) {
+  return setupBlobAddResponse('http://localhost:9500', options, invocation)
+}
+
+const setupBlobAddResponse = async function (
+  // @ts-ignore
+  url,
+  // @ts-ignore
   { issuer, with: space, proofs, audience },
   // @ts-ignore
   invocation
@@ -33,7 +62,7 @@ export const setupBlobAddSuccessResponse = async function (
     result: {
       ok: {
         address: {
-          url: 'http://localhost:9200',
+          url,
         },
       },
     },

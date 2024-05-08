@@ -246,13 +246,11 @@ export async function add(
             // @ts-expect-error - this is needed by recent versions of node - see https://github.com/bluesky-social/atproto/pull/470 for more info
             duplex: 'half',
           })
-          // TODO test
           if (res.status >= 400 && res.status < 500) {
             throw new AbortError(`upload failed: ${res.status}`)
           }
           return res
         } catch (err) {
-          // TODO test
           if (options.signal?.aborted === true) {
             throw new AbortError('upload aborted')
           }
@@ -263,7 +261,7 @@ export async function add(
         retries: options.retries ?? REQUEST_RETRIES,
       }
     )
-    if (status !== 200) throw new Error(`unexpected status: ${status}`)
+    if (status !== 200) throw new Error(`upload failed: ${status}`)
 
     if (!fetchDidCallUploadProgressCb && options.onUploadProgress) {
       // the fetch implementation didn't support onUploadProgress
@@ -316,7 +314,7 @@ export async function add(
   const ucanConclude = await httpPutConcludeInvocation.execute(conn)
 
   if (!ucanConclude.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.add.can} invocation 5`, {
+    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
       cause: result.out.error,
     })
   }
