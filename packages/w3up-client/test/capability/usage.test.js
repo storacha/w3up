@@ -1,10 +1,5 @@
-import { create as createServer, provide } from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as Signer from '@ucanto/principal/ed25519'
-import * as UsageCapabilities from '@web3-storage/capabilities/usage'
 import { AgentData } from '@web3-storage/access/agent'
 import { Client } from '../../src/client.js'
-import { validateAuthorization } from '../helpers/utils.js'
 import * as Test from '../test.js'
 
 export const UsageClient = Test.withContext({
