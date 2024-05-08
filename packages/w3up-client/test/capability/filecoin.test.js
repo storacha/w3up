@@ -64,7 +64,7 @@ export const FilecoinClient = Test.withContext({
         .delegate()
 
       // @ts-ignore
-      receiptStore.put({
+      await receiptStore.put({
         ran: pieceAcceptInvocation.link(),
         out: {
           ok: {
