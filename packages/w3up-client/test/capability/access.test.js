@@ -1,6 +1,6 @@
 import { AgentData } from '@web3-storage/access/agent'
 import { Client } from '../../src/client.js'
-import * as Upload from '@web3-storage/capabilities/Upload'
+import * as Upload from '@web3-storage/capabilities/upload'
 import * as Test from '../test.js'
 
 export const AccessClient = Test.withContext({
