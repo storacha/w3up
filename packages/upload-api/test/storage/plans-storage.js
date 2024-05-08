@@ -69,6 +69,10 @@ export class PlansStorage {
    * @returns {Promise<import('@ucanto/interface').Result<import('../types.js').PlanCreateAdminSessionSuccess, import('../types.js').PlanCreateAdminSessionFailure>>}
    */
   async createAdminSession(account) {
-    return { ok: { url: 'https://example.com/admin-session' } }
+    if (this.plans[account]) {
+      return { ok: { url: 'https://example.com/admin-session' } }
+    } else {
+      return { error: {name: 'CustomerNotFound', message: `${account} not found`} }
+    }
   }
 }

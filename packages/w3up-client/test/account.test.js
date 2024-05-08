@@ -260,10 +260,12 @@ export const testAccount = Test.withContext({
     const login = Account.login(client, accountEmail)
     await grantAccess(await mail.take())
     const account = Result.try(await login)
-
-    // TODO: we shouldn't need to do this manually! I think this might be a bug!
-    await account.model.agent.addProofs(account.proofs)
-
+    await account.save()
+    Result.try(await plansStorage.initialize(
+      account.did(),
+      'stripe:123xyz',
+      'did:web:example.com'
+    ))
     const { ok } = await account.plan.createAdminSession(
       accountDID,
       'https://example.com'

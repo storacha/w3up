@@ -1,177 +1,105 @@
-import assert from 'assert'
-import { create as createServer, provide, ok } from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as Signer from '@ucanto/principal/ed25519'
-
-import { Plan as PlanCapabilities } from '@web3-storage/capabilities'
-import { AgentData } from '@web3-storage/access/agent'
-
-import { mockService, mockServiceConf } from '../helpers/mocks.js'
-import { Client } from '../../src/client.js'
-import { createAuthorization, validateAuthorization } from '../helpers/utils.js'
-import { Absentee } from '@ucanto/principal'
+import * as Test from '../test.js'
+import * as Account from '../../src/account.js'
+import * as Result from '../../src/result.js'
 
 /**
- * @type {import('@ipld/dag-ucan').DID}
+ * 
+ * @param {*} client 
+ * @param {import('@web3-storage/upload-api').DebugEmail} mail 
+ * @param {(email: {url: string | URL}) => Promise<void>} grantAccess 
  */
-const exampleProduct = 'did:web:example.com'
-const aliceDID = 'did:mailto:example.com:alice'
+async function initializeAccount(client, mail, grantAccess) {
+  const email = 'alice@web.mail'
+  const login = Account.login(client, email)
+  const message = await mail.take()
+  await grantAccess(message)
+  const account = Result.try(await login)
+  await account.save()
+  return account
+}
 
-describe('PlanClient', () => {
-  describe('get', () => {
-    it('should get a plan', async () => {
-      const account = Absentee.from({ id: aliceDID })
-      let error = false
-      const service = mockService({
-        plan: {
-          get: provide(PlanCapabilities.get, ({ invocation }) => {
-            if (!error) {
-              return ok({
-                product: exampleProduct,
-                updatedAt: Date.now().toString(),
-              })
-            } else {
-              return { error: { name: 'PlanNotFound', message: '' } }
-            }
-          }),
-        },
-      })
-      const serviceSigner = await Signer.generate()
+export const PlanClient = Test.withContext({
+  get: {
+    'should get a plan': async (
+      assert,
+      { client, plansStorage, grantAccess, mail }
+    ) => {
+      const account = await initializeAccount(client, mail, grantAccess)
 
-      const server = createServer({
-        id: serviceSigner,
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
+      await assert.rejects(client.capability.plan.get(account.did()))
 
-      const alice = new Client(await AgentData.create(), {
-        // @ts-ignore
-        serviceConf: await mockServiceConf(server),
-      })
-      const auths = await createAuthorization({
-        account,
-        service: serviceSigner,
-        agent: alice.agent.issuer,
-      })
-      await alice.agent.addProofs(auths)
-      const res = await alice.capability.plan.get(account.did())
+      const exampleProduct = 'did:web:example.com'
+      Result.try(await plansStorage.initialize(
+        account.did(),
+        'stripe:123xyz',
+        exampleProduct
+      ))
 
-      assert(service.plan.get.called)
-      assert.equal(service.plan.get.callCount, 1)
+      const res = await client.capability.plan.get(account.did())
+
       assert.equal(res.product, exampleProduct)
-      assert(res.updatedAt)
+      assert.ok(res.updatedAt)
 
-      error = true
-      await assert.rejects(alice.capability.plan.get(account.did()))
-    })
-  })
+      await assert.rejects(client.capability.plan.get('did:mailto:example.com:notauser'))
+    }
+  },
 
-  describe('set', () => {
-    it('should set a plan', async () => {
-      const account = Absentee.from({ id: aliceDID })
-      let error = false
-      const service = mockService({
-        plan: {
-          set: provide(PlanCapabilities.set, ({ invocation }) => {
-            if (!error) {
-              assert(invocation.capabilities[0].nb)
-              assert.equal(
-                invocation.capabilities[0].nb.product,
-                exampleProduct
-              )
-              return ok({})
-            } else {
-              return { error: { name: 'CustomerNotFound', message: '' } }
-            }
-          }),
-        },
-      })
-      const serviceSigner = await Signer.generate()
+  set: {
+    'should set a plan': async (
+      assert,
+      { client, plansStorage, grantAccess, mail }
+    ) => {
+      const account = await initializeAccount(client, mail, grantAccess)
+      
+      const initialProduct = 'did:web:example.com'
+      const updatedProduct = 'did:web:example.com:updated'
 
-      const server = createServer({
-        id: serviceSigner,
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
+      await assert.rejects(client.capability.plan.set(account.did(), updatedProduct))
 
-      const alice = new Client(await AgentData.create(), {
-        // @ts-ignore
-        serviceConf: await mockServiceConf(server),
-      })
-      const auths = await createAuthorization({
-        account,
-        service: serviceSigner,
-        agent: alice.agent.issuer,
-      })
-      await alice.agent.addProofs(auths)
-      const res = await alice.capability.plan.set(account.did(), exampleProduct)
+      Result.try(await plansStorage.initialize(
+        account.did(),
+        'stripe:123xyz',
+        initialProduct
+      ))
+      assert.equal((await client.capability.plan.get(account.did())).product, initialProduct)
+      assert.ok((await client.capability.plan.set(account.did(), updatedProduct)))
+      assert.equal((await client.capability.plan.get(account.did())).product, updatedProduct)
 
-      assert(service.plan.set.called)
-      assert.equal(service.plan.set.callCount, 1)
-      assert(res)
+      await assert.rejects(client.capability.plan.set('did:mailto:example.com:notauser', initialProduct))
+    }
+  },
 
-      error = true
-      await assert.rejects(
-        alice.capability.plan.set(account.did(), exampleProduct)
-      )
-    })
-  })
+  createAdminSession: {
+    'should create an admin session': async (
+      assert,
+      { client, plansStorage, grantAccess, mail }
+    ) => {
+      const account = await initializeAccount(client, mail, grantAccess)
 
-  describe('createAdminSession', () => {
-    it('should create an admin session', async () => {
-      const account = Absentee.from({ id: 'did:mailto:example.com:alice' })
-      let error = false
-      const service = mockService({
-        plan: {
-          'create-admin-session': provide(
-            PlanCapabilities.createAdminSession,
-            ({ invocation }) => {
-              if (!error) {
-                return ok({ url: 'https://example.com/authorize/user' })
-              } else {
-                return { error: { name: 'CustomerNotFound', message: '' } }
-              }
-            }
-          ),
-        },
-      })
-      const serviceSigner = await Signer.generate()
+      await assert.rejects(client.capability.plan.createAdminSession(
+        account.did(),
+        'https://example.com/return-url'
+      ))
 
-      const server = createServer({
-        id: serviceSigner,
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
+      const initialProduct = 'did:web:example.com'
+      Result.try(await plansStorage.initialize(
+        account.did(),
+        'stripe:123xyz',
+        initialProduct
+      ))
 
-      const alice = new Client(await AgentData.create(), {
-        // @ts-ignore
-        serviceConf: await mockServiceConf(server),
-      })
-      const auths = await createAuthorization({
-        account,
-        service: serviceSigner,
-        agent: alice.agent.issuer,
-      })
-      await alice.agent.addProofs(auths)
-
-      const res = await alice.capability.plan.createAdminSession(
+      const session = await client.capability.plan.createAdminSession(
         account.did(),
         'https://example.com/return-url'
       )
-      assert(service.plan['create-admin-session'].called)
-      assert.equal(service.plan['create-admin-session'].callCount, 1)
-      assert(res)
+      assert.ok(session.url)
 
-      error = true
-      await assert.rejects(
-        alice.capability.plan.createAdminSession(
-          account.did(),
-          'https://example.com/return-url'
-        )
-      )
-    })
-  })
+      assert.rejects(client.capability.plan.createAdminSession(
+        'did:mailto:example.com:notauser',
+        'https://example.com/return-url'
+      ))
+    }
+  }
 })
+
+Test.test({ PlanClient })
