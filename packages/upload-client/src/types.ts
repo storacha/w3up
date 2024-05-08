@@ -27,6 +27,9 @@ import {
   BlobRemove,
   BlobRemoveSuccess,
   BlobRemoveFailure,
+  BlobList,
+  BlobListSuccess,
+  BlobListFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -81,6 +84,9 @@ export type {
   BlobRemove,
   BlobRemoveSuccess,
   BlobRemoveFailure,
+  BlobList,
+  BlobListSuccess,
+  BlobListFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -127,6 +133,7 @@ export interface Service extends StorefrontService {
   blob: {
     add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
     remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+    list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
   }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
