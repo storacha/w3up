@@ -1,4 +1,4 @@
-import { asAbilities } from '../src/ability.js'
+import { asAbilities } from '@web3-storage/w3up-client'
 import * as Test from './test.js'
 
 /**
