@@ -21,6 +21,7 @@ export function mockService(impl) {
     },
     blob: {
       add: withCallCount(impl.blob?.add ?? notImplemented),
+      remove: withCallCount(impl.blob?.remove ?? notImplemented),
     },
     store: {
       add: withCallCount(impl.store?.add ?? notImplemented),
