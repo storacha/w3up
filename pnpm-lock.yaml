@@ -434,9 +434,6 @@ importers:
 
   packages/upload-api:
     dependencies:
-      '@ipld/dag-cbor':
-        specifier: ^9.0.6
-        version: 9.2.0
       '@ucanto/client':
         specifier: ^9.0.1
         version: 9.0.1
@@ -473,9 +470,6 @@ importers:
       '@web3-storage/filecoin-api':
         specifier: workspace:^
         version: link:../filecoin-api
-      carstream:
-        specifier: ^2.1.0
-        version: 2.1.0
       multiformats:
         specifier: ^12.1.2
         version: 12.1.3
