@@ -359,7 +359,7 @@ export const testClient = {
       assert.equal(typeof client.capability.access.authorize, 'function')
       assert.equal(typeof client.capability.access.claim, 'function')
       assert.equal(typeof client.capability.space.info, 'function')
-      assert.equal(typeof client.capability.store.add, 'function')
+      assert.equal(typeof client.capability.blob.add, 'function')
       assert.equal(typeof client.capability.store.list, 'function')
       assert.equal(typeof client.capability.store.remove, 'function')
       assert.equal(typeof client.capability.upload.add, 'function')

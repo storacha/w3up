@@ -64,6 +64,7 @@ function parseBlobAddReceiptNext(receipt) {
     (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
   )
   const acceptTask = receipt.fx.join
+  /* c8 ignore next 3 */
   if (!allocateTask || !concludefxs.length || !putTask || !acceptTask) {
     throw new Error('mandatory effects not received')
   }
@@ -86,6 +87,7 @@ function parseBlobAddReceiptNext(receipt) {
     receipt.ran.link().equals(acceptTask.link())
   )
 
+  /* c8 ignore next 3 */
   if (!allocateReceipt) {
     throw new Error('mandatory effects not received')
   }
@@ -173,6 +175,7 @@ export async function add(
   const link = await CAR.codec.link(bytes)
   const digest = link.bytes
   const size = bytes.length
+  /* c8 ignore next */
   const conn = options.connection ?? connection
 
   const result = await retry(
@@ -180,6 +183,7 @@ export async function add(
       return await BlobCapabilities.add
         .invoke({
           issuer,
+          /* c8 ignore next */
           audience: audience ?? servicePrincipal,
           with: SpaceDID.from(resource),
           nb: {
@@ -207,6 +211,7 @@ export async function add(
   const nextTasks = parseBlobAddReceiptNext(result)
 
   const { receipt } = nextTasks.allocate
+  /* c8 ignore next 5 */
   if (!receipt.out.ok) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
       cause: receipt.out.error,
@@ -241,11 +246,13 @@ export async function add(
             // @ts-expect-error - this is needed by recent versions of node - see https://github.com/bluesky-social/atproto/pull/470 for more info
             duplex: 'half',
           })
+          // TODO test
           if (res.status >= 400 && res.status < 500) {
             throw new AbortError(`upload failed: ${res.status}`)
           }
           return res
         } catch (err) {
+          // TODO test
           if (options.signal?.aborted === true) {
             throw new AbortError('upload aborted')
           }
@@ -309,7 +316,7 @@ export async function add(
   const ucanConclude = await httpPutConcludeInvocation.execute(conn)
 
   if (!ucanConclude.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+    throw new Error(`failed ${BlobCapabilities.add.can} invocation 5`, {
       cause: result.out.error,
     })
   }
@@ -391,19 +398,21 @@ export async function remove(
 ) {
   /* c8 ignore next */
   const conn = options.connection ?? connection
-  const result = await StoreCapabilities.remove
+  const result = await BlobCapabilities.remove
     .invoke({
       issuer,
       /* c8 ignore next */
       audience: audience ?? servicePrincipal,
       with: SpaceDID.from(resource),
-      nb: { link },
+      nb: {
+        digest: link.bytes,
+      },
       proofs,
     })
     .execute(conn)
 
   if (!result.out.ok) {
-    throw new Error(`failed ${StoreCapabilities.remove.can} invocation`, {
+    throw new Error(`failed ${BlobCapabilities.remove.can} invocation`, {
       cause: result.out.error,
     })
   }

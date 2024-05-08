@@ -7,7 +7,7 @@ import { createConcludeInvocation } from '../../../upload-client/src/blob.js'
 
 export const validateAuthorization = () => ({ ok: {} })
 
-export const setupBlobAddResponse = async function (
+export const setupBlobAddSuccessResponse = async function (
   // @ts-ignore
   { issuer, with: space, proofs, audience },
   // @ts-ignore
@@ -30,7 +30,13 @@ export const setupBlobAddResponse = async function (
   const blobAllocateReceipt = await Receipt.issue({
     issuer,
     ran: blobAllocateTask.cid,
-    result: { ok: {} },
+    result: {
+      ok: {
+        address: {
+          url: 'http://localhost:9200',
+        },
+      },
+    },
   })
   const blobConcludeAllocate = await createConcludeInvocation(
     issuer,

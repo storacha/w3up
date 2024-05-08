@@ -15,7 +15,10 @@ import { randomBlock, randomBytes } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { mockService } from './helpers/mocks.js'
-import { validateAuthorization, setupBlobAddResponse } from './helpers/utils.js'
+import {
+  validateAuthorization,
+  setupBlobAddSuccessResponse,
+} from './helpers/utils.js'
 import {
   blockEncodingLength,
   encode,
@@ -67,7 +70,7 @@ describe('uploadFile', () => {
             assert.equal(invocation.capabilities.length, 1)
             assert.equal(capability.can, BlobCapabilities.add.can)
             assert.equal(capability.with, space.did())
-            return setupBlobAddResponse(
+            return setupBlobAddSuccessResponse(
               { issuer: space, audience: agent, with: space, proofs },
               invocation
             )
@@ -171,7 +174,7 @@ describe('uploadFile', () => {
       blob: {
         // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddResponse(
+          return setupBlobAddSuccessResponse(
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
@@ -262,7 +265,7 @@ describe('uploadFile', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return setupBlobAddResponse(
+          return setupBlobAddSuccessResponse(
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
@@ -350,7 +353,7 @@ describe('uploadDirectory', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return setupBlobAddResponse(
+          return setupBlobAddSuccessResponse(
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
@@ -451,7 +454,7 @@ describe('uploadDirectory', () => {
       blob: {
         // @ts-ignore Argument of type
         add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddResponse(
+          return setupBlobAddSuccessResponse(
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
@@ -537,7 +540,7 @@ describe('uploadDirectory', () => {
           add: provide(BlobCapabilities.add, ({ invocation }) => {
             // @ts-ignore Argument of type
             invocations.push(invocation)
-            return setupBlobAddResponse(
+            return setupBlobAddSuccessResponse(
               { issuer: space, audience: agent, with: space, proofs },
               invocation
             )
@@ -716,7 +719,7 @@ describe('uploadCAR', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          return setupBlobAddResponse(
+          return setupBlobAddSuccessResponse(
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
@@ -826,7 +829,7 @@ describe('uploadCAR', () => {
           assert.equal(invocation.capabilities.length, 1)
           assert.equal(capability.can, BlobCapabilities.add.can)
           assert.equal(capability.with, space.did())
-          return setupBlobAddResponse(
+          return setupBlobAddSuccessResponse(
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
