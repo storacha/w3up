@@ -14,6 +14,7 @@ export class UsageClient extends Base {
    */
   async report(space, period) {
     const out = await report({ agent: this.agent }, { space, period })
+    /* c8 ignore next 7 */
     if (!out.ok) {
       throw new Error(`failed ${UsageCapabilities.report.can} invocation`, {
         cause: out.error,

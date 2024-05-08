@@ -1,6 +1,6 @@
 import { createServer } from 'http'
 
-const port = process.env.PORT ?? 9000
+const port = process.env.PORT ?? 8989
 const status = process.env.STATUS ? parseInt(process.env.STATUS) : 200
 
 const server = createServer((req, res) => {
@@ -14,3 +14,5 @@ const server = createServer((req, res) => {
 
 // eslint-disable-next-line no-console
 server.listen(port, () => console.log(`Listening on :${port}`))
+
+process.on('SIGTERM', () => process.exit(0))

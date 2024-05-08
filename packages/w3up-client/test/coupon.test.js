@@ -4,7 +4,7 @@ import * as Result from '../src/result.js'
 /**
  * @type {Test.Suite}
  */
-export const testCoupon = {
+export const testCoupon = Test.withContext({
   'account.coupon': async (
     assert,
     { client, mail, connect, grantAccess, plansStorage }
@@ -85,6 +85,6 @@ export const testCoupon = {
 
     assert.match(fail.message, /Invalid CAR header format/)
   },
-}
+})
 
 Test.test({ Access: testCoupon })

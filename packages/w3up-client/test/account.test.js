@@ -7,7 +7,7 @@ import { DIDMailto } from '../src/capability/access.js'
 /**
  * @type {Test.Suite}
  */
-export const testAccount = {
+export const testAccount = Test.withContext({
   'list accounts': async (assert, { client, mail, grantAccess }) => {
     const email = 'alice@web.mail'
 
@@ -308,6 +308,6 @@ export const testAccount = {
 
     assert.deepEqual(client.currentSpace()?.did(), space.did())
   },
-}
+})
 
 Test.test({ Account: testAccount })

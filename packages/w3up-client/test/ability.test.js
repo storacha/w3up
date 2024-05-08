@@ -1,13 +1,20 @@
-import assert from 'assert'
-import { asAbilities } from '../src/ability.js'
+import { asAbilities } from '@web3-storage/w3up-client'
+import * as Test from './test.js'
 
-describe('abilities', () => {
-  it('should return the passed argument if all abilities are valid', async () => {
+/**
+ * @type {Test.Suite}
+ */
+export const testAbilities = {
+  'should return the passed argument if all abilities are valid': async (
+    assert
+  ) => {
     const abilities = ['store/add', 'upload/add']
     assert.equal(asAbilities(abilities), abilities)
-  })
+  },
 
-  it('should throw an error if one of the abilities is not supported', async () => {
+  'should throw an error if one of the abilities is not supported': async (
+    assert
+  ) => {
     assert.throws(
       () => {
         asAbilities(['foo/bar'])
@@ -17,5 +24,7 @@ describe('abilities', () => {
         message: 'foo/bar is not a supported capability',
       }
     )
-  })
-})
+  },
+}
+
+Test.test({ Abilities: testAbilities })

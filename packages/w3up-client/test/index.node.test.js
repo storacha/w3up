@@ -1,18 +1,21 @@
-import assert from 'assert'
+import * as Test from './test.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { EdDSA } from '@ipld/dag-ucan/signature'
 import { StoreConf } from '@web3-storage/access/stores/store-conf'
 import { create } from '../src/index.node.js'
 
-describe('create', () => {
-  it('should create Ed25519 key', async () => {
+/**
+ * @type {Test.Suite}
+ */
+export const testEd25519Key = {
+  'should create Ed25519 key': async (assert) => {
     const client = await create()
     const signer = client.agent.issuer
     assert.equal(signer.signatureAlgorithm, 'EdDSA')
     assert.equal(signer.signatureCode, EdDSA)
-  })
+  },
 
-  it('should load from existing store', async () => {
+  'should load from existing store': async (assert) => {
     const store = new StoreConf({ profile: 'w3up-client-test' })
     await store.reset()
 
@@ -20,9 +23,9 @@ describe('create', () => {
     const client1 = await create({ store })
 
     assert.equal(client0.agent.did(), client1.agent.did())
-  })
+  },
 
-  it('should allow BYO principal', async () => {
+  'should allow BYO principal': async (assert) => {
     const store = new StoreConf({ profile: 'w3up-client-test' })
     await store.reset()
 
@@ -30,9 +33,9 @@ describe('create', () => {
     const client = await create({ principal, store })
 
     assert.equal(client.agent.did(), principal.did())
-  })
+  },
 
-  it('should throw for mismatched BYO principal', async () => {
+  'should throw for mismatched BYO principal': async (assert) => {
     const store = new StoreConf({ profile: 'w3up-client-test' })
     await store.reset()
 
@@ -43,5 +46,7 @@ describe('create', () => {
     await assert.rejects(create({ principal: principal1, store }), {
       message: `store cannot be used with ${principal1.did()}, stored principal and passed principal must match`,
     })
-  })
-})
+  },
+}
+
+Test.test({ Ed25519: testEd25519Key })
