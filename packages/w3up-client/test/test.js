@@ -52,11 +52,6 @@ export const group =
  */
 
 /**
- * @template [Context=undefined]
-
- */
-
-/**
  * @param {Suite<void>|Record<string, Suite>} suite
  */
 export const test = (suite) => {
