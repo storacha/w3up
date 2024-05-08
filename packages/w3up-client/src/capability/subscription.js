@@ -14,7 +14,7 @@ export class SubscriptionClient extends Base {
   /* c8 ignore next */
   async list(account) {
     const out = await list({ agent: this.agent }, { account })
-    /* c8 ignore next 6 */
+    /* c8 ignore next 8 */
     if (!out.ok) {
       throw new Error(
         `failed ${SubscriptionCapabilities.list.can} invocation`,
