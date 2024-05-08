@@ -261,11 +261,13 @@ export const testAccount = Test.withContext({
     await grantAccess(await mail.take())
     const account = Result.try(await login)
     await account.save()
-    Result.try(await plansStorage.initialize(
-      account.did(),
-      'stripe:123xyz',
-      'did:web:example.com'
-    ))
+    Result.try(
+      await plansStorage.initialize(
+        account.did(),
+        'stripe:123xyz',
+        'did:web:example.com'
+      )
+    )
     const { ok } = await account.plan.createAdminSession(
       accountDID,
       'https://example.com'

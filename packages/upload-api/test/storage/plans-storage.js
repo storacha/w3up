@@ -72,7 +72,9 @@ export class PlansStorage {
     if (this.plans[account]) {
       return { ok: { url: 'https://example.com/admin-session' } }
     } else {
-      return { error: {name: 'CustomerNotFound', message: `${account} not found`} }
+      return {
+        error: { name: 'CustomerNotFound', message: `${account} not found` },
+      }
     }
   }
 }
