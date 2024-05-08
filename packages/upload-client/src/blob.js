@@ -173,7 +173,7 @@ export async function add(
   const bytes =
     car instanceof Uint8Array ? car : new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
-  const digest = link.bytes
+  const digest = link.multihash.bytes
   const size = bytes.length
   /* c8 ignore next */
   const conn = options.connection ?? connection
