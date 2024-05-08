@@ -1,44 +1,19 @@
-import assert from 'assert'
-import { create as createServer, provide } from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as Signer from '@ucanto/principal/ed25519'
-import * as SpaceCapabilities from '@web3-storage/capabilities/space'
 import { AgentData } from '@web3-storage/access/agent'
-import { mockService, mockServiceConf } from '../helpers/mocks.js'
 import { Client } from '../../src/client.js'
-import { validateAuthorization } from '../helpers/utils.js'
+import * as Test from '../test.js'
 
-describe('SpaceClient', () => {
-  describe('info', () => {
-    it('should retrieve space info', async () => {
-      const service = mockService({
-        space: {
-          info: provide(SpaceCapabilities.info, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, SpaceCapabilities.info.can)
-            assert.equal(invCap.with, space.did())
-            return {
-              ok: {
-                did: /** @type {`did:key:${string}`} */ (space.did()),
-                providers: [],
-              },
-            }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
+export const SpaceClient = Test.withContext({
+  info: {
+    'should retrieve space info': async (
+      assert,
+      { connection, provisionsStorage }
+    ) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const space = await alice.createSpace('test')
@@ -48,14 +23,20 @@ describe('SpaceClient', () => {
       })
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
 
       const info = await alice.capability.space.info(space.did())
 
-      assert(service.space.info.called)
-      assert.equal(service.space.info.callCount, 1)
-
       assert.equal(info.did, space.did())
-      assert.deepEqual(info.providers, [])
-    })
-  })
+      assert.deepEqual(info.providers, [connection.id.did()])
+    },
+  },
 })
+
+Test.test({ SpaceClient })

@@ -1,49 +1,71 @@
-import assert from 'assert'
-import { create as createServer, provide } from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as Signer from '@ucanto/principal/ed25519'
-import * as AccessCapabilities from '@web3-storage/capabilities/access'
 import { AgentData } from '@web3-storage/access/agent'
-import { mockService, mockServiceConf } from '../helpers/mocks.js'
 import { Client } from '../../src/client.js'
-import { validateAuthorization } from '../helpers/utils.js'
+import * as Upload from '@web3-storage/capabilities/Upload'
+import * as Test from '../test.js'
 
-describe('AccessClient', () => {
-  describe('claim', () => {
-    it('should claim delegations', async () => {
-      const service = mockService({
-        access: {
-          claim: provide(AccessCapabilities.claim, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, AccessCapabilities.claim.can)
-            return {
-              ok: {
-                delegations: {},
-              },
-            }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
+export const AccessClient = Test.withContext({
+  claim: {
+    'should claim delegations': async (assert, { connection }) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const delegations = await alice.capability.access.claim()
 
-      assert(service.access.claim.called)
-      assert.equal(service.access.claim.callCount, 1)
       assert.deepEqual(delegations, [])
-    })
-  })
+    },
+    'should delegate and then claim': async (
+      assert,
+      { connection, provisionsStorage }
+    ) => {
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
+      })
+      const space = await alice.createSpace('upload-test')
+      const auth = await space.createAuthorization(alice)
+      await alice.addSpace(auth)
+      await alice.setCurrentSpace(space.did())
+
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
+      const bob = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
+      })
+
+      const uploadList = await Upload.list.delegate({
+        issuer: alice.agent.issuer,
+        audience: bob,
+        with: space.did(),
+      })
+
+      const result = await alice.capability.access.delegate({
+        delegations: [uploadList],
+      })
+
+      assert.ok(result.ok)
+
+      const delegations = await bob.capability.access.claim()
+      assert.deepEqual(delegations, [uploadList])
+    },
+  },
 })
+
+Test.test({ AccessClient })

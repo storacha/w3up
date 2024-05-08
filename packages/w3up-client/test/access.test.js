@@ -2,10 +2,7 @@ import * as Test from './test.js'
 import * as Access from '../src/capability/access.js'
 import * as Result from '../src/result.js'
 
-/**
- * @type {Test.Suite}
- */
-export const testAccess = {
+export const testAccess = Test.withContext({
   'capability.access.request': async (
     assert,
     { client, mail, grantAccess }
@@ -32,6 +29,6 @@ export const testAccess = {
     await access.save()
     assert.ok(client.proofs().length > 0)
   },
-}
+})
 
 Test.test({ Access: testAccess })

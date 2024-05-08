@@ -1,102 +1,44 @@
-import assert from 'assert'
-import { create as createServer, provide } from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as Signer from '@ucanto/principal/ed25519'
-import { Absentee } from '@ucanto/principal'
-import * as SubscriptionCapabilities from '@web3-storage/capabilities/subscription'
-import { AgentData } from '@web3-storage/access/agent'
-import { mockService, mockServiceConf } from '../helpers/mocks.js'
-import { Client } from '../../src/client.js'
-import { createAuthorization, validateAuthorization } from '../helpers/utils.js'
+import * as Test from '../test.js'
+import * as Account from '../../src/account.js'
+import * as Result from '../../src/result.js'
 
-describe('SubscriptionClient', () => {
-  describe('list', () => {
-    it('should list subscriptions', async () => {
-      const space = await Signer.generate()
-      /** @type {import('@web3-storage/capabilities/types').SubscriptionListItem} */
-      const subscription = {
-        provider: 'did:web:web3.storage',
-        subscription: 'test',
-        consumers: [space.did()],
-      }
-      const account = Absentee.from({ id: 'did:mailto:example.com:alice' })
-      const service = mockService({
-        subscription: {
-          list: provide(SubscriptionCapabilities.list, ({ capability }) => {
-            assert.equal(capability.with, account.did())
-            return {
-              ok: {
-                results: [subscription],
-              },
-            }
-          }),
-        },
-      })
+export const SubscriptionClient = Test.withContext({
+  list: {
+    'should list subscriptions': async (
+      assert,
+      { client, connection, service, plansStorage, grantAccess, mail }
+    ) => {
+      const space = await client.createSpace('test')
+      const email = 'alice@web.mail'
+      const login = Account.login(client, email)
+      const message = await mail.take()
+      assert.deepEqual(message.to, email)
+      await grantAccess(message)
+      const account = Result.try(await login)
+      await account.save()
 
-      const serviceSigner = await Signer.generate()
-      const server = createServer({
-        id: serviceSigner,
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
+      assert.deepEqual(
+        await client.capability.subscription.list(account.did()),
+        { results: [] }
+      )
 
-      const alice = new Client(await AgentData.create(), {
-        // @ts-ignore
-        serviceConf: await mockServiceConf(server),
-      })
+      const result = await account.provision(space.did())
+      assert.ok(result.ok)
 
-      const auths = await createAuthorization({
-        account,
-        service: serviceSigner,
-        agent: alice.agent.issuer,
-      })
-      await alice.agent.addProofs(auths)
-
-      const subs = await alice.capability.subscription.list(account.did())
-
-      assert(service.subscription.list.called)
-      assert.equal(service.subscription.list.callCount, 1)
-      assert.deepEqual(subs, { results: [subscription] })
-    })
-
-    it('should throw on service failure', async () => {
-      const account = Absentee.from({ id: 'did:mailto:example.com:alice' })
-      const service = mockService({
-        subscription: {
-          list: provide(SubscriptionCapabilities.list, ({ capability }) => {
-            assert.equal(capability.with, account.did())
-            return { error: new Error('boom') }
-          }),
-        },
-      })
-
-      const serviceSigner = await Signer.generate()
-      const server = createServer({
-        id: serviceSigner,
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
-      const alice = new Client(await AgentData.create(), {
-        // @ts-ignore
-        serviceConf: await mockServiceConf(server),
-      })
-
-      const auths = await createAuthorization({
-        account,
-        service: serviceSigner,
-        agent: alice.agent.issuer,
-      })
-      await alice.agent.addProofs(auths)
-
-      await assert.rejects(alice.capability.subscription.list(account.did()), {
-        message: 'failed subscription/list invocation',
-      })
-
-      assert(service.subscription.list.called)
-      assert.equal(service.subscription.list.callCount, 1)
-    })
-  })
+      assert.deepEqual(
+        await client.capability.subscription.list(account.did()),
+        {
+          results: [
+            {
+              provider: connection.id.did(),
+              consumers: [space.did()],
+              subscription: `${account.did()}:${space.did()}@${connection.id.did()}`,
+            },
+          ],
+        }
+      )
+    },
+  },
 })
+
+Test.test({ SubscriptionClient })

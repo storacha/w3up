@@ -1,102 +1,31 @@
 import assert from 'assert'
-import {
-  Delegation,
-  create as createServer,
-  parseLink,
-  provide,
-  provideAdvanced,
-  error,
-} from '@ucanto/server'
-import * as CAR from '@ucanto/transport/car'
-import * as Signer from '@ucanto/principal/ed25519'
-import * as StoreCapabilities from '@web3-storage/capabilities/store'
-import * as UploadCapabilities from '@web3-storage/capabilities/upload'
-import * as UCANCapabilities from '@web3-storage/capabilities/ucan'
-import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
-import { Piece } from '@web3-storage/data-segment'
+import { parseLink } from '@ucanto/server'
 import { AgentData } from '@web3-storage/access/agent'
-import { StoreItemNotFound } from '../../upload-api/src/store/lib.js'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
-import { mockService, mockServiceConf } from './helpers/mocks.js'
 import { File } from './helpers/shims.js'
 import { Client } from '../src/client.js'
-import { validateAuthorization } from './helpers/utils.js'
-import { getFilecoinOfferResponse } from './helpers/filecoin.js'
+import * as Test from './test.js'
 
-describe('Client', () => {
-  describe('uploadFile', () => {
-    it('should upload a file to the service', async () => {
+/** @type {Test.Suite} */
+export const testClient = {
+  uploadFile: Test.withContext({
+    'should upload a file to the service': async (
+      assert,
+      { connection, provisionsStorage, uploadTable, storeTable }
+    ) => {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
       const expectedCar = await toCAR(bytes)
-      const piece = Piece.fromPayload(bytes).link
       /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
       let carCID
 
-      const service = mockService({
-        store: {
-          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            assert.equal(capability.can, StoreCapabilities.add.can)
-            assert.equal(capability.with, alice.currentSpace()?.did())
-
-            return {
-              ok: {
-                status: 'upload',
-                headers: { 'x-test': 'true' },
-                url: 'http://localhost:9200',
-                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
-                  invocation.capabilities[0].nb?.link
-                ),
-                with: space.did(),
-                allocated: capability.nb.size,
-              },
-            }
-          }),
-        },
-        filecoin: {
-          offer: provideAdvanced({
-            capability: StorefrontCapabilities.filecoinOffer,
-            handler: async ({ invocation, context }) => {
-              const invCap = invocation.capabilities[0]
-              if (!invCap.nb) {
-                throw new Error('no params received')
-              }
-              return getFilecoinOfferResponse(context.id, piece, invCap.nb)
-            },
-          }),
-        },
-        upload: {
-          add: provide(UploadCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, UploadCapabilities.add.can)
-            assert.equal(invCap.with, alice.currentSpace()?.did())
-            assert.equal(invCap.nb?.shards?.length, 1)
-            assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
-            return {
-              ok: {
-                root: expectedCar.roots[0],
-                shards: [expectedCar.cid],
-              },
-            }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const space = await alice.createSpace('upload-test')
@@ -104,23 +33,43 @@ describe('Client', () => {
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
       const dataCID = await alice.uploadFile(file, {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
       })
 
-      assert(service.store.add.called)
-      assert.equal(service.store.add.callCount, 1)
-      assert(service.upload.add.called)
-      assert.equal(service.upload.add.callCount, 1)
+      assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
+        ok: true,
+      })
+
+      assert.deepEqual(await storeTable.exists(space.did(), expectedCar.cid), {
+        ok: true,
+      })
 
       assert.equal(carCID?.toString(), expectedCar.cid.toString())
       assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
-    })
+    },
 
-    it('should not allow upload without a current space', async () => {
-      const alice = new Client(await AgentData.create())
+    'should not allow upload without a current space': async (
+      assert,
+      { connection }
+    ) => {
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
+      })
 
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
@@ -129,79 +78,28 @@ describe('Client', () => {
         message:
           'missing current space: use createSpace() or setCurrentSpace()',
       })
-    })
-  })
+    },
+  }),
 
-  describe('uploadDirectory', () => {
-    it('should upload a directory to the service', async () => {
+  uploadDirectory: Test.withContext({
+    'should upload a directory to the service': async (
+      assert,
+      { connection, provisionsStorage, uploadTable }
+    ) => {
       const bytesList = [await randomBytes(128), await randomBytes(32)]
       const files = bytesList.map(
         (bytes, index) => new File([bytes], `${index}.txt`)
       )
-      const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
 
       /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
       let carCID
 
-      const service = mockService({
-        store: {
-          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            assert.equal(capability.can, StoreCapabilities.add.can)
-            assert.equal(capability.with, alice.currentSpace()?.did())
-            return {
-              ok: {
-                status: 'upload',
-                headers: { 'x-test': 'true' },
-                url: 'http://localhost:9200',
-                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
-                  invocation.capabilities[0].nb?.link
-                ),
-                with: space.did(),
-                allocated: capability.nb.size,
-              },
-            }
-          }),
-        },
-        filecoin: {
-          offer: provideAdvanced({
-            capability: StorefrontCapabilities.filecoinOffer,
-            handler: async ({ invocation, context }) => {
-              const invCap = invocation.capabilities[0]
-              if (!invCap.nb) {
-                throw new Error('no params received')
-              }
-              return getFilecoinOfferResponse(context.id, pieces[0], invCap.nb)
-            },
-          }),
-        },
-        upload: {
-          add: provide(UploadCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, UploadCapabilities.add.can)
-            assert.equal(invCap.with, alice.currentSpace()?.did())
-            assert.equal(invCap.nb?.shards?.length, 1)
-            if (!invCap.nb) throw new Error('nb must be present')
-            return {
-              ok: invCap.nb,
-            }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const space = await alice.createSpace('upload-dir-test')
@@ -210,145 +108,114 @@ describe('Client', () => {
 
       await alice.setCurrentSpace(space.did())
 
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
       const dataCID = await alice.uploadDirectory(files, {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
       })
 
-      assert(service.store.add.called)
-      assert.equal(service.store.add.callCount, 1)
-      assert(service.upload.add.called)
-      assert.equal(service.upload.add.callCount, 1)
-
-      assert(carCID)
-      assert(dataCID)
-    })
-  })
-
-  describe('uploadCAR', () => {
-    it('uploads a CAR file to the service', async () => {
+      assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
+        ok: true,
+      })
+      assert.ok(carCID)
+      assert.ok(dataCID)
+    },
+  }),
+  uploadCar: Test.withContext({
+    'uploads a CAR file to the service': async (
+      assert,
+      { connection, provisionsStorage, uploadTable, storeTable }
+    ) => {
       const car = await randomCAR(32)
-      const someBytes = new Uint8Array(await car.arrayBuffer())
-      const piece = Piece.fromPayload(someBytes).link
 
-      /** @type {import('../src/types.js').CARLink?} */
-      let carCID
-
-      const service = mockService({
-        store: {
-          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            assert.equal(capability.can, StoreCapabilities.add.can)
-            assert.equal(capability.with, space.did())
-            return {
-              ok: {
-                status: 'upload',
-                headers: { 'x-test': 'true' },
-                url: 'http://localhost:9200',
-                link: /** @type {import('@web3-storage/upload-client/types').CARLink} */ (
-                  invocation.capabilities[0].nb?.link
-                ),
-                with: space.did(),
-                allocated: capability.nb.size,
-              },
-            }
-          }),
-        },
-        filecoin: {
-          offer: provideAdvanced({
-            capability: StorefrontCapabilities.filecoinOffer,
-            handler: async ({ invocation, context }) => {
-              const invCap = invocation.capabilities[0]
-              if (!invCap.nb) {
-                throw new Error('no params received')
-              }
-              return getFilecoinOfferResponse(context.id, piece, invCap.nb)
-            },
-          }),
-        },
-        upload: {
-          add: provide(UploadCapabilities.add, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), alice.agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, UploadCapabilities.add.can)
-            assert.equal(invCap.with, space.did())
-            if (!invCap.nb) throw new Error('nb must be present')
-            assert.equal(invCap.nb.shards?.length, 1)
-            assert.ok(carCID)
-            assert.equal(invCap.nb.shards?.[0].toString(), carCID.toString())
-            return {
-              ok: invCap.nb,
-            }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
+      /** @type {import('../src/types.js').CARLink|null} */
+      let carCID = null
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const space = await alice.createSpace('car-space')
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
-      await alice.uploadCAR(car, {
+
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
+      const root = await alice.uploadCAR(car, {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
       })
 
-      assert(service.store.add.called)
-      assert.equal(service.store.add.callCount, 1)
-      assert(service.upload.add.called)
-      assert.equal(service.upload.add.callCount, 1)
-    })
-  })
+      assert.deepEqual(await uploadTable.exists(space.did(), root), {
+        ok: true,
+      })
 
-  describe('getReceipt', () => {
-    it('should find a receipt', async () => {
+      if (carCID == null) {
+        return assert.ok(carCID)
+      }
+
+      assert.deepEqual(await storeTable.exists(space.did(), carCID), {
+        ok: true,
+      })
+    },
+  }),
+  getRecipt: Test.withContext({
+    'should find a receipt': async (assert, { connection }) => {
       const taskCid = parseLink(
         'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
       )
       const alice = new Client(await AgentData.create(), {
         receiptsEndpoint: new URL('http://localhost:9201'),
+        // @ts-ignore
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
       const receipt = await alice.getReceipt(taskCid)
       // This is a real `piece/accept` receipt exported as fixture
-      assert(receipt)
-      assert.ok(receipt.ran.link().equals(taskCid))
-      assert.ok(receipt.out.ok)
-    })
-  })
-
-  describe('currentSpace', () => {
-    it('should return undefined or space', async () => {
+      assert.ok(receipt)
+      assert.ok(receipt?.ran.link().equals(taskCid))
+      assert.ok(receipt?.out.ok)
+    },
+  }),
+  currentSpace: {
+    'should return undefined or space': async (assert) => {
       const alice = new Client(await AgentData.create())
 
       const current0 = alice.currentSpace()
-      assert(current0 === undefined)
+      assert.equal(current0, undefined)
 
       const space = await alice.createSpace('new-space')
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
       const current1 = alice.currentSpace()
-      assert(current1)
-      assert.equal(current1.did(), space.did())
-    })
-  })
-
-  describe('spaces', () => {
-    it('should get agent spaces', async () => {
+      assert.ok(current1)
+      assert.equal(current1?.did(), space.did())
+    },
+  },
+  spaces: {
+    'should get agent spaces': async (assert) => {
       const alice = new Client(await AgentData.create())
 
       const name = `space-${Date.now()}`
@@ -360,9 +227,9 @@ describe('Client', () => {
       assert.equal(spaces.length, 1)
       assert.equal(spaces[0].did(), space.did())
       assert.equal(spaces[0].name, name)
-    })
+    },
 
-    it('should add space', async () => {
+    'should add space': async () => {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
@@ -384,11 +251,10 @@ describe('Client', () => {
       const spaces = bob.spaces()
       assert.equal(spaces.length, 1)
       assert.equal(spaces[0].did(), space.did())
-    })
-  })
-
-  describe('proofs', () => {
-    it('should get proofs', async () => {
+    },
+  },
+  proofs: {
+    'should get proofs': async (assert) => {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
@@ -403,11 +269,10 @@ describe('Client', () => {
       const proofs = bob.proofs()
       assert.equal(proofs.length, 1)
       assert.equal(proofs[0].cid.toString(), delegation.cid.toString())
-    })
-  })
-
-  describe('delegations', () => {
-    it('should get delegations', async () => {
+    },
+  },
+  delegations: {
+    'should get delegations': async (assert) => {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
@@ -427,48 +292,24 @@ describe('Client', () => {
       assert.equal(delegations.length, 1)
       assert.equal(delegations[0].cid.toString(), delegation.cid.toString())
       assert.equal(delegations[0].meta()?.audience?.name, name)
-    })
-  })
+    },
+  },
 
-  describe('revokeDelegation', () => {
-    it('should revoke a delegation by CID', async () => {
-      const service = mockService({
-        ucan: {
-          revoke: provide(
-            UCANCapabilities.revoke,
-            ({ capability, invocation }) => {
-              // copy a bit of the production revocation handler to do basic validation
-              const { nb: input } = capability
-              const ucan = Delegation.view(
-                { root: input.ucan, blocks: invocation.blocks },
-                null
-              )
-              return ucan
-                ? { ok: { time: Date.now() } }
-                : {
-                    error: {
-                      name: 'UCANNotFound',
-                      message: 'Could not find delegation in invocation blocks',
-                    },
-                  }
-            }
-          ),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
+  revokeDelegation: Test.withContext({
+    'should revoke a delegation by CID': async (assert, { connection }) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
       const bob = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       const space = await alice.createSpace('test')
@@ -485,9 +326,11 @@ describe('Client', () => {
 
       const result = await alice.revokeDelegation(delegation.cid)
       assert.ok(result.ok)
-    })
+    },
 
-    it('should fail to revoke a delegation it does not know about', async () => {
+    'should fail to revoke a delegation it does not know about': async (
+      assert
+    ) => {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
@@ -501,18 +344,17 @@ describe('Client', () => {
 
       const result = await bob.revokeDelegation(delegation.cid)
       assert.ok(result.error, 'revoke succeeded when it should not have')
-    })
-  })
-
-  describe('defaultProvider', () => {
-    it('should return the connection ID', async () => {
+    },
+  }),
+  defaultProvider: {
+    'should return the connection ID': async (assert) => {
       const alice = new Client(await AgentData.create())
       assert.equal(alice.defaultProvider(), 'did:web:web3.storage')
-    })
-  })
+    },
+  },
 
-  describe('capability', () => {
-    it('should allow typed access to capability specific clients', async () => {
+  capability: {
+    'should allow typed access to capability specific clients': async () => {
       const client = new Client(await AgentData.create())
       assert.equal(typeof client.capability.access.authorize, 'function')
       assert.equal(typeof client.capability.access.claim, 'function')
@@ -523,53 +365,22 @@ describe('Client', () => {
       assert.equal(typeof client.capability.upload.add, 'function')
       assert.equal(typeof client.capability.upload.list, 'function')
       assert.equal(typeof client.capability.upload.remove, 'function')
-    })
-  })
+    },
+  },
 
-  describe('remove', () => {
-    it('should remove an uploaded file from the service with its shards', async () => {
+  remove: Test.withContext({
+    'should remove an uploaded file from the service with its shards': async (
+      assert,
+      { connection, provisionsStorage, uploadTable }
+    ) => {
       const bytes = await randomBytes(128)
-      const uploadedCar = await toCAR(bytes)
-      const contentCID = uploadedCar.roots[0]
-
-      const service = mockService({
-        store: {
-          remove: provide(StoreCapabilities.remove, ({ invocation }) => {
-            return { ok: { size: uploadedCar.size } }
-          }),
-        },
-        upload: {
-          get: provide(UploadCapabilities.get, ({ invocation }) => {
-            return {
-              ok: {
-                root: uploadedCar.roots[0],
-                shards: [uploadedCar.cid],
-                insertedAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              },
-            }
-          }),
-          remove: provide(UploadCapabilities.remove, ({ invocation }) => {
-            return {
-              ok: {
-                root: uploadedCar.roots[0],
-                shards: [uploadedCar.cid],
-              },
-            }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       // setup space
@@ -578,99 +389,96 @@ describe('Client', () => {
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
-      await assert.doesNotReject(() =>
-        alice.remove(contentCID, { shards: true })
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
+      const root = await alice.uploadFile(new Blob([bytes]))
+
+      assert.deepEqual(await uploadTable.exists(space.did(), root), {
+        ok: true,
+      })
+
+      assert.deepEqual(
+        await alice
+          .remove(root, { shards: true })
+          .then((ok) => ({ ok: {} }))
+          .catch((error) => {
+            error
+          }),
+        { ok: {} }
       )
 
-      assert(service.upload.get.called)
-      assert.equal(service.upload.get.callCount, 1)
-      assert(service.upload.remove.called)
-      assert.equal(service.upload.remove.callCount, 1)
-      assert(service.store.remove.called)
-      assert.equal(service.store.remove.callCount, 1)
-    })
+      assert.deepEqual(await uploadTable.exists(space.did(), root), {
+        ok: false,
+      })
+    },
 
-    it('should remove an uploaded file from the service without its shards by default', async () => {
+    'should remove an uploaded file from the service without its shards by default':
+      async (assert, { connection, provisionsStorage, uploadTable }) => {
+        const bytes = await randomBytes(128)
+
+        const alice = new Client(await AgentData.create(), {
+          // @ts-ignore
+          serviceConf: {
+            access: connection,
+            upload: connection,
+          },
+        })
+
+        // setup space
+        const space = await alice.createSpace('upload-test')
+        const auth = await space.createAuthorization(alice)
+        await alice.addSpace(auth)
+        await alice.setCurrentSpace(space.did())
+
+        // Then we setup a billing for this account
+        await provisionsStorage.put({
+          // @ts-expect-error
+          provider: connection.id.did(),
+          account: alice.agent.did(),
+          consumer: space.did(),
+        })
+
+        const root = await alice.uploadFile(new Blob([bytes]))
+
+        assert.deepEqual(await uploadTable.exists(space.did(), root), {
+          ok: true,
+        })
+
+        assert.deepEqual(
+          await alice
+            .remove(root)
+            .then((ok) => ({ ok: {} }))
+            .catch((error) => {
+              error
+            }),
+          { ok: {} }
+        )
+
+        assert.deepEqual(await uploadTable.exists(space.did(), root), {
+          ok: false,
+        })
+      },
+
+    'should fail to remove uploaded shards if upload is not found': async (
+      assert,
+      { connection }
+    ) => {
       const bytes = await randomBytes(128)
       const uploadedCar = await toCAR(bytes)
       const contentCID = uploadedCar.roots[0]
 
-      const service = mockService({
-        upload: {
-          get: provide(UploadCapabilities.get, ({ invocation }) => {
-            return {
-              ok: {
-                root: uploadedCar.roots[0],
-                shards: [uploadedCar.cid],
-                insertedAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              },
-            }
-          }),
-          remove: provide(UploadCapabilities.remove, ({ invocation }) => {
-            return {
-              ok: {
-                root: uploadedCar.roots[0],
-                shards: [uploadedCar.cid],
-              },
-            }
-          }),
-        },
-        store: {
-          remove: provide(StoreCapabilities.remove, ({ invocation }) => {
-            return { ok: { size: uploadedCar.size } }
-          }),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
-      })
-
-      // setup space
-      const space = await alice.createSpace('upload-test')
-      const auth = await space.createAuthorization(alice)
-      await alice.addSpace(auth)
-      await alice.setCurrentSpace(space.did())
-
-      await assert.doesNotReject(() => alice.remove(contentCID))
-
-      assert(service.upload.remove.called)
-      assert.equal(service.upload.remove.callCount, 1)
-      assert.equal(service.store.remove.callCount, 0)
-    })
-
-    it('should fail to remove uploaded shards if upload is not found', async () => {
-      const bytes = await randomBytes(128)
-      const uploadedCar = await toCAR(bytes)
-      const contentCID = uploadedCar.roots[0]
-
-      const service = mockService({
-        upload: {
-          get: provide(UploadCapabilities.get, ({ invocation }) => {
-            return error(new StoreItemNotFound('did:web:any', uploadedCar.cid))
-          }),
+        serviceConf: {
+          access: connection,
+          upload: connection,
         },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
-
-      const alice = new Client(await AgentData.create(), {
-        // @ts-ignore
-        serviceConf: await mockServiceConf(server),
       })
 
       // setup space
@@ -680,67 +488,20 @@ describe('Client', () => {
       await alice.setCurrentSpace(space.did())
 
       await assert.rejects(alice.remove(contentCID, { shards: true }))
+    },
 
-      assert(service.upload.get.called)
-      assert.equal(service.upload.get.callCount, 1)
-      assert.equal(service.store.remove.callCount, 0)
-      assert.equal(service.upload.remove.callCount, 0)
-    })
-
-    it('should not fail to remove if shard is not found', async () => {
+    'should not fail to remove if shard is not found': async (
+      assert,
+      { connection, provisionsStorage, uploadTable }
+    ) => {
       const bytesArray = [await randomBytes(128), await randomBytes(128)]
-      const uploadedCars = await Promise.all(
-        bytesArray.map((bytes) => toCAR(bytes))
-      )
-      const contentCID = uploadedCars[0].roots[0]
-
-      const service = mockService({
-        upload: {
-          get: provide(UploadCapabilities.get, ({ invocation }) => {
-            return {
-              ok: {
-                root: uploadedCars[0].roots[0],
-                shards: uploadedCars.map((car) => car.cid),
-                insertedAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              },
-            }
-          }),
-          remove: provide(UploadCapabilities.remove, ({ invocation }) => {
-            return {
-              ok: {
-                root: uploadedCars[0].roots[0],
-                shards: uploadedCars.map((car) => car.cid),
-              },
-            }
-          }),
-        },
-        store: {
-          remove: provide(
-            StoreCapabilities.remove,
-            ({ invocation, capability }) => {
-              // Fail for first as not found)
-              if (capability.nb.link.equals(uploadedCars[0].cid)) {
-                return error(
-                  new StoreItemNotFound('did:web:any', uploadedCars[0].cid)
-                )
-              }
-              return { ok: { size: uploadedCars[1].size } }
-            }
-          ),
-        },
-      })
-
-      const server = createServer({
-        id: await Signer.generate(),
-        service,
-        codec: CAR.inbound,
-        validateAuthorization,
-      })
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
-        serviceConf: await mockServiceConf(server),
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
       })
 
       // setup space
@@ -749,16 +510,36 @@ describe('Client', () => {
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
 
-      await assert.doesNotReject(() =>
-        alice.remove(contentCID, { shards: true })
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
+      const root = await alice.uploadFile(new Blob(bytesArray))
+
+      const upload = await uploadTable.get(space.did(), root)
+
+      const shard = upload.ok?.shards?.[0]
+      if (!shard) {
+        return assert.ok(shard)
+      }
+
+      // delete shard
+      assert.ok((await alice.capability.store.remove(shard)).ok)
+
+      assert.deepEqual(
+        await alice
+          .remove(root, { shards: true })
+          .then(() => ({ ok: {} }))
+          .catch((error) => ({ error })),
+        { ok: {} }
       )
+    },
 
-      assert(service.upload.remove.called)
-      assert.equal(service.upload.remove.callCount, 1)
-      assert.equal(service.store.remove.callCount, 2)
-    })
-
-    it('should not allow remove without a current space', async () => {
+    'should not allow remove without a current space': async (assert) => {
       const alice = new Client(await AgentData.create())
 
       const bytes = await randomBytes(128)
@@ -766,6 +547,8 @@ describe('Client', () => {
       const contentCID = uploadedCar.roots[0]
 
       await assert.rejects(alice.remove(contentCID, { shards: true }))
-    })
-  })
-})
+    },
+  }),
+}
+
+Test.test({ Client: testClient })
