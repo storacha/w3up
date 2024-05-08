@@ -4,7 +4,7 @@ import {
   uploadCAR,
 } from '@web3-storage/upload-client'
 import {
-  Store as StoreCapabilities,
+  Blob as BlobCapabilities,
   Upload as UploadCapabilities,
 } from '@web3-storage/capabilities'
 import { CAR } from '@ucanto/transport'
@@ -12,6 +12,7 @@ import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
 import { Delegation as AgentDelegation } from './delegation.js'
+import { BlobClient } from './capability/blob.js'
 import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
@@ -46,6 +47,7 @@ export class Client extends Base {
       access: new AccessClient(agentData, options),
       filecoin: new FilecoinClient(agentData, options),
       space: new SpaceClient(agentData, options),
+      blob: new BlobClient(agentData, options),
       store: new StoreClient(agentData, options),
       subscription: new SubscriptionClient(agentData, options),
       upload: new UploadClient(agentData, options),

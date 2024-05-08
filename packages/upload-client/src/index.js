@@ -9,7 +9,7 @@ import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
 
-export { Store, Upload, UnixFS, CAR }
+export { Blob, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 /**
