@@ -47,7 +47,7 @@ export const extract = async (archive) => {
   )
 
   const header = await reader.getHeader()
-  if (header.roots[0].code !== dagCBOR.code) {
+  if (header.roots[0]?.code !== dagCBOR.code) {
     return error(
       /** @type {import('@web3-storage/capabilities/types').UnknownFormat} */
       ({ name: 'UnknownFormat' })
