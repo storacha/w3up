@@ -365,12 +365,12 @@ export async function list(
  * has the capability to perform the action.
  *
  * The issuer needs the `store/remove` delegated capability.
- * @param {import('multiformats').MultihashDigest} multihashDigest of the blob.
+ * @param {import('multiformats').MultihashDigest} multihash of the blob
  * @param {import('./types.js').RequestOptions} [options]
  */
 export async function remove(
   { issuer, with: resource, proofs, audience },
-  multihashDigest,
+  multihash,
   options = {}
 ) {
   /* c8 ignore next */
@@ -382,7 +382,7 @@ export async function remove(
       audience: audience ?? servicePrincipal,
       with: SpaceDID.from(resource),
       nb: {
-        digest: multihashDigest.bytes,
+        digest: multihash.bytes,
       },
       proofs,
     })

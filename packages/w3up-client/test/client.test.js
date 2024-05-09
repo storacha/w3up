@@ -536,7 +536,7 @@ export const testClient = {
       }
 
       // delete shard
-      assert.ok((await alice.capability.blob.remove(shard)).ok)
+      assert.ok((await alice.capability.blob.remove(shard.multihash)).ok)
 
       assert.deepEqual(
         await alice
