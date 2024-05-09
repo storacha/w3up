@@ -64,7 +64,6 @@ export const testClient = {
       assert.equal(carCID?.toString(), expectedCar.cid.toString())
       assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
     },
-
     'should not allow upload without a current space': async (
       assert,
       { connection }
@@ -86,7 +85,6 @@ export const testClient = {
       })
     },
   }),
-
   uploadDirectory: Test.withContext({
     'should upload a directory to the service': async (
       assert,
@@ -368,8 +366,8 @@ export const testClient = {
       assert.equal(typeof client.capability.access.claim, 'function')
       assert.equal(typeof client.capability.space.info, 'function')
       assert.equal(typeof client.capability.blob.add, 'function')
-      assert.equal(typeof client.capability.store.list, 'function')
-      assert.equal(typeof client.capability.store.remove, 'function')
+      assert.equal(typeof client.capability.blob.list, 'function')
+      assert.equal(typeof client.capability.blob.remove, 'function')
       assert.equal(typeof client.capability.upload.add, 'function')
       assert.equal(typeof client.capability.upload.list, 'function')
       assert.equal(typeof client.capability.upload.remove, 'function')
