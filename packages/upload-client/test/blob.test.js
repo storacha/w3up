@@ -70,7 +70,7 @@ describe('Blob.add', () => {
 
     /** @type {import('../src/types.js').ProgressStatus[]} */
     const progress = []
-    const carCID = await Blob.add(
+    const multihash = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       car,
       {
@@ -90,8 +90,8 @@ describe('Blob.add', () => {
       225
     )
 
-    assert(carCID)
-    assert.equal(carCID.toString(), car.cid.toString())
+    assert(multihash)
+    assert.deepEqual(multihash.digest, car.cid.multihash.digest)
 
     // make sure it can also work without fetchWithUploadProgress
     /** @type {import('../src/types.js').ProgressStatus[]} */
@@ -106,7 +106,10 @@ describe('Blob.add', () => {
         },
       }
     )
-    assert.equal(addedWithoutUploadProgress.toString(), car.cid.toString())
+    assert.deepEqual(
+      addedWithoutUploadProgress.digest,
+      car.cid.multihash.digest
+    )
     assert.equal(
       progressWithoutUploadProgress.reduce(
         (max, { loaded }) => Math.max(max, loaded),
@@ -625,7 +628,7 @@ describe('Blob.remove', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb?.digest), car.cid.bytes)
+          assert.equal(String(invCap.nb?.digest), car.cid.multihash.digest)
           return { ok: { size: car.size } }
         }),
       },
@@ -645,7 +648,7 @@ describe('Blob.remove', () => {
 
     const result = await Blob.remove(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
-      car.cid,
+      car.cid.multihash,
       { connection }
     )
 
@@ -693,7 +696,7 @@ describe('Blob.remove', () => {
     await assert.rejects(
       Blob.remove(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
-        car.cid,
+        car.cid.multihash,
         { connection }
       ),
       { message: 'failed blob/remove invocation' }

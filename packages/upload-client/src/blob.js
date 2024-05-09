@@ -1,7 +1,7 @@
+import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import * as UCAN from '@web3-storage/capabilities/ucan'
-import { CAR } from '@ucanto/transport'
 import { Receipt } from '@ucanto/core'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
@@ -143,7 +143,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
 }
 
 /**
- * Store a DAG encoded as a CAR file. The issuer needs the `blob/add`
+ * Store a blob as a CAR file. The issuer needs the `blob/add`
  * delegated capability.
  *
  * Required delegated capability proofs: `blob/add`
@@ -161,19 +161,19 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * has the capability to perform the action.
  *
  * The issuer needs the `blob/add` delegated capability.
- * @param {Blob|Uint8Array} car CAR file data.
+ * @param {Blob|Uint8Array} data Blob file data.
  * @param {import('./types.js').RequestOptions} [options]
- * @returns {Promise<import('./types.js').CARLink>}
+ * @returns {Promise<import('multiformats').MultihashDigest>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
-  car,
+  data,
   options = {}
 ) {
   const bytes =
-    car instanceof Uint8Array ? car : new Uint8Array(await car.arrayBuffer())
-  const link = await CAR.codec.link(bytes)
-  const digest = link.multihash.bytes
+    data instanceof Uint8Array ? data : new Uint8Array(await data.arrayBuffer())
+  const multihash = await sha256.digest(bytes)
+  const { digest } = multihash
   const size = bytes.length
   /* c8 ignore next */
   const conn = options.connection ?? connection
@@ -265,10 +265,10 @@ export async function add(
 
     if (!fetchDidCallUploadProgressCb && options.onUploadProgress) {
       // the fetch implementation didn't support onUploadProgress
-      const carBlob = new Blob([car])
+      const blob = new Blob([bytes])
       options.onUploadProgress({
-        total: carBlob.size,
-        loaded: carBlob.size,
+        total: blob.size,
+        loaded: blob.size,
         lengthComputable: false,
       })
     }
@@ -299,11 +299,11 @@ export async function add(
     })
   }
 
-  return link
+  return multihash
 }
 
 /**
- * List CAR files stored by the issuer.
+ * List Blob files stored by the issuer.
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
@@ -351,7 +351,7 @@ export async function list(
 }
 
 /**
- * Remove a stored CAR file by CAR CID.
+ * Remove a stored Blob file by digest.
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
@@ -366,12 +366,12 @@ export async function list(
  * has the capability to perform the action.
  *
  * The issuer needs the `store/remove` delegated capability.
- * @param {import('./types.js').CARLink} link CID of CAR file to remove.
+ * @param {import('multiformats').MultihashDigest} multihashDigest of the blob.
  * @param {import('./types.js').RequestOptions} [options]
  */
 export async function remove(
   { issuer, with: resource, proofs, audience },
-  link,
+  { digest },
   options = {}
 ) {
   /* c8 ignore next */
@@ -383,7 +383,7 @@ export async function remove(
       audience: audience ?? servicePrincipal,
       with: SpaceDID.from(resource),
       nb: {
-        digest: link.bytes,
+        digest,
       },
       proofs,
     })

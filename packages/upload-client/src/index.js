@@ -8,6 +8,7 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
+import { codec as carCodec } from '@ucanto/transport/car'
 
 export { Blob, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -132,7 +133,8 @@ async function uploadBlockStream(
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
           // Invoke blob/add and write bytes to write target
-          const cid = await Blob.add(conf, bytes, options)
+          const multihash = await Blob.add(conf, bytes, options)
+          const cid = Link.create(carCodec.code, multihash)
           let piece
           if (pieceHasher) {
             const multihashDigest = await pieceHasher.digest(bytes)
