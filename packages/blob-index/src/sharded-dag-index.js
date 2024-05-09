@@ -216,7 +216,7 @@ export const fromArchive = async (carData) => {
 }
 
 /**
- * Create a sharded DAG index by indexing blocks in the the passed CAR shards.
+ * Create a sharded DAG index by indexing blocks in the passed CAR shards.
  *
  * @param {API.UnknownLink} content
  * @param {Uint8Array[]} shards
