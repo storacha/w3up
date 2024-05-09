@@ -6,7 +6,7 @@ import * as Test from '../test.js'
 export const BlobClient = Test.withContext({
   'should store a CAR file': async (
     assert,
-    { connection, provisionsStorage, blobsStorage }
+    { connection, provisionsStorage, allocationsStorage }
   ) => {
     const alice = new Client(await AgentData.create(), {
       // @ts-ignore
@@ -32,9 +32,13 @@ export const BlobClient = Test.withContext({
     const car = await randomCAR(128)
     const multihash = await alice.capability.blob.add(car)
 
-    assert.deepEqual(await blobsStorage.has(car.cid.multihash.bytes), {
-      ok: true,
-    })
+    // TODO we should blobsStorage as well
+    assert.deepEqual(
+      await allocationsStorage.exists(space.did(), multihash.bytes),
+      {
+        ok: true,
+      }
+    )
 
     assert.deepEqual(multihash, car.cid.multihash)
   },
