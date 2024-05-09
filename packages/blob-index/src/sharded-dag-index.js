@@ -121,7 +121,7 @@ class DecodeFailure extends Failure {
  * @param {API.UnknownLink} content
  * @returns {API.ShardedDAGIndex}
  */
-export function makeShardedDAGINdex(content) {
+export function createShardedDAGIndex(content) {
   return new ShardedDAGIndex(content)
 }
 
