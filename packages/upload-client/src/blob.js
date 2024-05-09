@@ -173,7 +173,7 @@ export async function add(
   const bytes =
     car instanceof Uint8Array ? car : new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)
-  const digest = link.bytes
+  const digest = link.multihash.bytes
   const size = bytes.length
   /* c8 ignore next */
   const conn = options.connection ?? connection
@@ -279,30 +279,10 @@ export async function add(
     /** @type {import('@ucanto/interface').SignerArchive<import('@ucanto/interface').DID, typeof ed25519.signatureCode>} */
     (nextTasks.put.task.facts[0]['keys'])
   )
-  const httpPut = HTTPCapabilities.put.invoke({
-    issuer: derivedSigner,
-    audience: derivedSigner,
-    with: derivedSigner.toDIDKey(),
-    nb: {
-      body: {
-        digest,
-        size,
-      },
-      url: {
-        'ucan/await': ['.out.ok.address.url', nextTasks.allocate.task.cid],
-      },
-      headers: {
-        'ucan/await': ['.out.ok.address.headers', nextTasks.allocate.task.cid],
-      },
-    },
-    facts: nextTasks.put.task.facts,
-    expiration: Infinity,
-  })
 
-  const httpPutDelegation = await httpPut.delegate()
   const httpPutReceipt = await Receipt.issue({
     issuer: derivedSigner,
-    ran: httpPutDelegation.cid,
+    ran: nextTasks.put.task.cid,
     result: { ok: {} },
   })
   const httpPutConcludeInvocation = createConcludeInvocation(

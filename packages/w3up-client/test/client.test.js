@@ -12,7 +12,7 @@ export const testClient = {
   uploadFile: Test.withContext({
     'should upload a file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, storeTable }
+      { connection, provisionsStorage, uploadTable, allocationsStorage }
     ) => {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
@@ -51,9 +51,15 @@ export const testClient = {
         ok: true,
       })
 
-      assert.deepEqual(await storeTable.exists(space.did(), expectedCar.cid), {
-        ok: true,
-      })
+      assert.deepEqual(
+        await allocationsStorage.exists(
+          space.did(),
+          expectedCar.cid.multihash.bytes
+        ),
+        {
+          ok: true,
+        }
+      )
 
       assert.equal(carCID?.toString(), expectedCar.cid.toString())
       assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
@@ -132,12 +138,11 @@ export const testClient = {
   uploadCar: Test.withContext({
     'uploads a CAR file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, storeTable }
+      { connection, provisionsStorage, uploadTable, allocationsStorage }
     ) => {
       const car = await randomCAR(32)
 
-      /** @type {import('../src/types.js').CARLink|null} */
-      let carCID = null
+      let carCID = /** @type {import('../src/types.js').CARLink|null} */ (null)
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
@@ -173,9 +178,12 @@ export const testClient = {
         return assert.ok(carCID)
       }
 
-      assert.deepEqual(await storeTable.exists(space.did(), carCID), {
-        ok: true,
-      })
+      assert.deepEqual(
+        await allocationsStorage.exists(space.did(), carCID.multihash.bytes),
+        {
+          ok: true,
+        }
+      )
     },
   }),
   getRecipt: Test.withContext({
@@ -528,7 +536,7 @@ export const testClient = {
       }
 
       // delete shard
-      assert.ok((await alice.capability.store.remove(shard)).ok)
+      assert.ok((await alice.capability.blob.remove(shard)).ok)
 
       assert.deepEqual(
         await alice

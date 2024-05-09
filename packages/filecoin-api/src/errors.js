@@ -43,6 +43,10 @@ export class RecordNotFound extends Server.Failure {
     return this.message
   }
 
+  describe() {
+    return `Record not found`
+  }
+
   get name() {
     return RecordNotFoundErrorName
   }

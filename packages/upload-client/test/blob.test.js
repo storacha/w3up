@@ -47,7 +47,7 @@ describe('Blob.add', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.add.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb?.blob.digest), car.cid.bytes)
+          assert.deepEqual(invCap.nb?.blob.digest, car.cid.multihash.bytes)
           return setupBlobAddSuccessResponse(
             { issuer: space, audience: agent, with: space, proofs },
             invocation
