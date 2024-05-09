@@ -342,8 +342,8 @@ export class Client extends Base {
         upload.shards.map(async (shard) => {
           try {
             await this.capability.store.remove(shard)
-          } catch (/** @type {any} */ error) {
             /* c8 ignore start */
+          } catch (/** @type {any} */ error) {
             // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
             if (error?.cause?.name !== 'StoreItemNotFound') {
               throw new Error(`failed to remove shard: ${shard}`, {
