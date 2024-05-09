@@ -173,7 +173,6 @@ export async function add(
   const bytes =
     data instanceof Uint8Array ? data : new Uint8Array(await data.arrayBuffer())
   const multihash = await sha256.digest(bytes)
-  const { digest } = multihash
   const size = bytes.length
   /* c8 ignore next */
   const conn = options.connection ?? connection
@@ -188,7 +187,7 @@ export async function add(
           with: SpaceDID.from(resource),
           nb: {
             blob: {
-              digest,
+              digest: multihash.bytes,
               size,
             },
           },
@@ -371,7 +370,7 @@ export async function list(
  */
 export async function remove(
   { issuer, with: resource, proofs, audience },
-  { digest },
+  multihashDigest,
   options = {}
 ) {
   /* c8 ignore next */
@@ -383,7 +382,7 @@ export async function remove(
       audience: audience ?? servicePrincipal,
       with: SpaceDID.from(resource),
       nb: {
-        digest,
+        digest: multihashDigest.bytes,
       },
       proofs,
     })

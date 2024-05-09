@@ -91,7 +91,7 @@ describe('Blob.add', () => {
     )
 
     assert(multihash)
-    assert.deepEqual(multihash.digest, car.cid.multihash.digest)
+    assert.deepEqual(multihash.bytes, car.cid.multihash.bytes)
 
     // make sure it can also work without fetchWithUploadProgress
     /** @type {import('../src/types.js').ProgressStatus[]} */
@@ -106,10 +106,7 @@ describe('Blob.add', () => {
         },
       }
     )
-    assert.deepEqual(
-      addedWithoutUploadProgress.digest,
-      car.cid.multihash.digest
-    )
+    assert.deepEqual(addedWithoutUploadProgress.bytes, car.cid.multihash.bytes)
     assert.equal(
       progressWithoutUploadProgress.reduce(
         (max, { loaded }) => Math.max(max, loaded),
@@ -628,7 +625,7 @@ describe('Blob.remove', () => {
           const invCap = invocation.capabilities[0]
           assert.equal(invCap.can, BlobCapabilities.remove.can)
           assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb?.digest), car.cid.multihash.digest)
+          assert.equal(String(invCap.nb?.digest), car.cid.multihash.bytes)
           return { ok: { size: car.size } }
         }),
       },
