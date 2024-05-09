@@ -30,7 +30,7 @@ export async function getServiceStorageImplementations(options) {
   const dudewhereBucket = new DudewhereBucket()
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
-  const usageStorage = new UsageStorage(storeTable)
+  const usageStorage = new UsageStorage(storeTable, allocationsStorage)
   const provisionsStorage = new ProvisionsStorage(options.providers)
   const subscriptionsStorage = new SubscriptionsStorage(provisionsStorage)
   const delegationsStorage = new DelegationsStorage()

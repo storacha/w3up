@@ -2,9 +2,26 @@
 
 /** @implements {UsageStore} */
 export class UsageStorage {
-  /** @param {import('./store-table.js').StoreTable} storeTable */
-  constructor(storeTable) {
+  /**
+   * @param {import('./store-table.js').StoreTable} storeTable
+   * @param {import('./allocations-storage.js').AllocationsStorage} allocationsStorage
+   */
+  constructor(storeTable, allocationsStorage) {
     this.storeTable = storeTable
+    this.allocationsStorage = allocationsStorage
+  }
+
+  get items() {
+    return [
+      ...this.storeTable.items.map((item) => ({
+        ...item,
+        cause: item.invocation,
+      })),
+      ...this.allocationsStorage.items.map((item) => ({
+        ...item,
+        size: item.blob.size,
+      })),
+    ]
   }
 
   /**
@@ -13,11 +30,11 @@ export class UsageStorage {
    * @param {{ from: Date, to: Date }} period
    */
   async report(provider, space, period) {
-    const before = this.storeTable.items.filter((item) => {
+    const before = this.items.filter((item) => {
       const insertTime = new Date(item.insertedAt).getTime()
       return item.space === space && insertTime < period.from.getTime()
     })
-    const during = this.storeTable.items.filter((item) => {
+    const during = this.items.filter((item) => {
       const insertTime = new Date(item.insertedAt).getTime()
       return (
         item.space === space &&
@@ -39,7 +56,7 @@ export class UsageStorage {
         size: { initial, final },
         events: during.map((item) => {
           return {
-            cause: item.invocation.link(),
+            cause: /** @type {import('../types.js').Link} */ (item.cause),
             delta: item.size,
             receiptAt: item.insertedAt,
           }
