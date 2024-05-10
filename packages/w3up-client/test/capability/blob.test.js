@@ -32,7 +32,7 @@ export const BlobClient = Test.withContext({
     const car = await randomCAR(128)
     const multihash = await alice.capability.blob.add(car)
 
-    // TODO we should blobsStorage as well
+    // TODO we should check blobsStorage as well
     assert.deepEqual(
       await allocationsStorage.exists(space.did(), multihash.bytes),
       {
