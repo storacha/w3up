@@ -142,7 +142,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
 }
 
 /**
- * Store a blob as a CAR file. The issuer needs the `blob/add`
+ * Store a blob to the service. The issuer needs the `blob/add`
  * delegated capability.
  *
  * Required delegated capability proofs: `blob/add`
