@@ -12,7 +12,6 @@ import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
 
 /**
- *
  * @param {string} url
  * @param {import('./types.js').ProgressFn} handler
  */
