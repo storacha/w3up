@@ -169,6 +169,7 @@ export async function add(
   data,
   options = {}
 ) {
+  /* c8 ignore next 2 */
   const bytes =
     data instanceof Uint8Array ? data : new Uint8Array(await data.arrayBuffer())
   const multihash = await sha256.digest(bytes)

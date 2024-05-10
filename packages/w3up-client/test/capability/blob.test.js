@@ -1,10 +1,11 @@
+import { sha256 } from 'multiformats/hashes/sha2'
 import { AgentData } from '@web3-storage/access/agent'
-import { randomCAR } from '../helpers/random.js'
+import { randomBytes } from '../helpers/random.js'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 
 export const BlobClient = Test.withContext({
-  'should store a CAR file': async (
+  'should store a blob': async (
     assert,
     { connection, provisionsStorage, allocationsStorage }
   ) => {
@@ -29,8 +30,9 @@ export const BlobClient = Test.withContext({
       consumer: space.did(),
     })
 
-    const car = await randomCAR(128)
-    const multihash = await alice.capability.blob.add(car)
+    const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
+    const multihash = await alice.capability.blob.add(new Blob([bytes]))
 
     // TODO we should check blobsStorage as well
     assert.deepEqual(
@@ -40,10 +42,9 @@ export const BlobClient = Test.withContext({
       }
     )
 
-    assert.deepEqual(multihash, car.cid.multihash)
+    assert.deepEqual(multihash, bytesHash)
   },
-
-  'should list stored CARs': async (
+  'should list stored blobs': async (
     assert,
     { connection, provisionsStorage }
   ) => {
@@ -68,18 +69,19 @@ export const BlobClient = Test.withContext({
       consumer: space.did(),
     })
 
-    const car = await randomCAR(128)
-    const multihash = await alice.capability.blob.add(car)
-    assert.deepEqual(multihash, car.cid.multihash)
+    const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
+    const multihash = await alice.capability.blob.add(new Blob([bytes]))
+    assert.deepEqual(multihash, bytesHash)
 
     const {
       results: [entry],
     } = await alice.capability.blob.list()
 
-    assert.deepEqual(entry.blob.digest, car.cid.multihash.bytes)
-    assert.deepEqual(entry.blob.size, car.size)
+    assert.deepEqual(entry.blob.digest, bytesHash.bytes)
+    assert.deepEqual(entry.blob.size, bytes.length)
   },
-  'should remove a stored CAR': async (
+  'should remove a stored blob': async (
     assert,
     { connection, provisionsStorage }
   ) => {
@@ -104,10 +106,10 @@ export const BlobClient = Test.withContext({
       consumer: space.did(),
     })
 
-    const car = await randomCAR(128)
-    const cid = await alice.capability.blob.add(car)
+    const bytes = await randomBytes(128)
+    const multihash = await alice.capability.blob.add(new Blob([bytes]))
 
-    const result = await alice.capability.blob.remove(cid)
+    const result = await alice.capability.blob.remove(multihash)
     assert.ok(result.ok)
   },
 })
