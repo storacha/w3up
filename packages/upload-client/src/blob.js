@@ -160,7 +160,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * has the capability to perform the action.
  *
  * The issuer needs the `blob/add` delegated capability.
- * @param {Blob|Uint8Array} data Blob file data.
+ * @param {Blob|Uint8Array} data Blob data.
  * @param {import('./types.js').RequestOptions} [options]
  * @returns {Promise<import('multiformats').MultihashDigest>}
  */
