@@ -301,7 +301,7 @@ export async function add(
 }
 
 /**
- * List Blob files stored by the issuer.
+ * List Blobs stored in the space.
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
