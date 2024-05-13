@@ -613,7 +613,7 @@ export const test = {
     assert.equal(locations.length, 1)
     assert.ok(
       locations[0].includes(
-        `https://w3s.link/ipfs/${content.toString()}?origin`
+        `https://w3s.link/ipfs/${content}?format=raw&origin=`
       )
     )
   },
