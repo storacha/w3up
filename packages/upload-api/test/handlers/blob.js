@@ -72,7 +72,9 @@ export const test = {
       assert.ok(next.put.task.facts[0]['keys'])
 
       // Validate `http/put` invocation was stored
-      const httpPutGetTask = await context.tasksStorage.get(next.put.task.cid)
+      const httpPutGetTask = await context.agentStore.invocations.get(
+        next.put.task.cid
+      )
       assert.ok(httpPutGetTask.ok)
 
       // validate that scheduled allocate task executed and has its receipt content
@@ -128,12 +130,6 @@ export const test = {
     assert.ok(!firstNext.put.receipt)
     assert.ok(!firstNext.accept.receipt)
 
-    // Store allocate receipt to not re-schedule
-    const receiptPutRes = await context.receiptsStorage.put(
-      firstNext.allocate.receipt
-    )
-    assert.ok(receiptPutRes.ok)
-
     // Invoke `blob/add` for the second time (without storing the blob)
     const secondBlobAdd = await invocation.execute(connection)
     if (!secondBlobAdd.out.ok) {
@@ -153,7 +149,7 @@ export const test = {
       firstNext.allocate.task.link().equals(secondNext.allocate.task.link())
     )
   },
-  'blob/add schedules allocation and returns effects for allocate, accept and put together with their receipts (when stored)':
+  'only blob/add schedules allocation and returns effects for allocate, accept and put together with their receipts (when stored)':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -169,8 +165,7 @@ export const test = {
         channel: createServer(context),
       })
 
-      // create `blob/add` invocation
-      const invocation = BlobCapabilities.add.invoke({
+      const task = {
         issuer: alice,
         audience: context.id,
         with: spaceDid,
@@ -181,7 +176,10 @@ export const test = {
           },
         },
         proofs: [proof],
-      })
+      }
+
+      // create `blob/add` invocation
+      const invocation = BlobCapabilities.add.invoke(task)
       // Invoke `blob/add` for the first time
       const firstBlobAdd = await invocation.execute(connection)
       if (!firstBlobAdd.out.ok) {
@@ -197,12 +195,6 @@ export const test = {
       assert.ok(!firstNext.put.receipt)
       assert.ok(!firstNext.accept.receipt)
 
-      // Store allocate receipt to not re-schedule
-      const receiptPutRes = await context.receiptsStorage.put(
-        firstNext.allocate.receipt
-      )
-      assert.ok(receiptPutRes.ok)
-
       /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
       // @ts-expect-error receipt type is unknown
       const address = firstNext.allocate.receipt.out.ok.address
@@ -214,14 +206,20 @@ export const test = {
         body: data,
         headers: address.headers,
       })
+
       assert.equal(goodPut.status, 200, await goodPut.text())
 
       // Invoke `blob/add` for the second time (after storing the blob but not invoking conclude)
-      const secondBlobAdd = await invocation.execute(connection)
+      const secondBlobAdd = await BlobCapabilities.add
+        .invoke({ ...task, nonce: 'second' })
+        .execute(connection)
       if (!secondBlobAdd.out.ok) {
         throw new Error('invocation failed', { cause: secondBlobAdd })
       }
 
+      assert.ok(
+        firstBlobAdd.link().toString() !== secondBlobAdd.link().toString()
+      )
       // parse second receipt next
       const secondNext = parseBlobAddReceiptNext(secondBlobAdd)
       assert.ok(secondNext.allocate.task)
@@ -230,10 +228,6 @@ export const test = {
       assert.ok(secondNext.allocate.receipt)
       assert.ok(!secondNext.put.receipt)
       assert.ok(!secondNext.accept.receipt)
-
-      // Store blob/allocate given conclude needs it to schedule blob/accept
-      // Store allocate task to be fetchable from allocate
-      await context.tasksStorage.put(secondNext.allocate.task)
 
       // Invoke `conclude` with `http/put` receipt
       const keys = secondNext.put.task.facts[0]['keys']
@@ -281,10 +275,19 @@ export const test = {
       }
 
       // Invoke `blob/add` for the third time (after invoking conclude)
-      const thirdBlobAdd = await invocation.execute(connection)
+      const thirdBlobAdd = await BlobCapabilities.add
+        .invoke({ ...task, nonce: 'third' })
+        .execute(connection)
       if (!thirdBlobAdd.out.ok) {
         throw new Error('invocation failed', { cause: thirdBlobAdd })
       }
+
+      assert.ok(
+        thirdBlobAdd.link().toString() !== firstBlobAdd.link().toString()
+      )
+      assert.ok(
+        thirdBlobAdd.link().toString() !== secondBlobAdd.link().toString()
+      )
 
       // parse third receipt next
       const thirdNext = parseBlobAddReceiptNext(thirdBlobAdd)

@@ -3,7 +3,7 @@ import { blobAcceptProvider } from './blob/accept.js'
 import * as API from './types.js'
 
 /**
- * @param {API.W3ServiceContext} context
+ * @param {API.BlobServiceContext} context
  */
 export function createService(context) {
   return {

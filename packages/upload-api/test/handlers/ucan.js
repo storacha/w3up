@@ -5,7 +5,6 @@ import { Receipt } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 
 import { createServer, connect } from '../../src/lib.js'
@@ -406,9 +405,6 @@ export const test = {
       ReferencedInvocationNotFoundName
     )
 
-    // Store scheduled task
-    await context.tasksStorage.put(await invocation.delegate())
-
     const ucanConcludeSuccess = await concludeInvocation.execute(connection)
     assert.ok(ucanConcludeSuccess.out.ok)
     assert.ok(ucanConcludeSuccess.out.ok?.time)
@@ -427,39 +423,7 @@ export const test = {
       // create service connection
       const connection = connect({
         id: context.id,
-        channel: createServer({
-          ...context,
-          tasksScheduler: {
-            schedule: async (invocation) => {
-              assert.equal(invocation.capabilities.length, 1)
-              assert.equal(
-                invocation.capabilities[0].can,
-                W3sBlobCapabilities.accept.can
-              )
-              assert.equal(
-                invocation.capabilities[0].nb._put['ucan/await'][0],
-                '.out.ok'
-              )
-              assert.ok(
-                invocation.capabilities[0].nb._put['ucan/await'][1].equals(
-                  httpPutDelegation.cid
-                )
-              )
-              assert.ok(invocation.capabilities[0].nb.blob)
-              assert.equal(invocation.capabilities[0].nb.space, spaceDid)
-              const [blobAcceptRes] = await connection.execute(invocation)
-
-              taskScheduled.resolve(blobAcceptRes)
-              if (blobAcceptRes.out.error) {
-                return blobAcceptRes.out
-              }
-
-              return {
-                ok: {},
-              }
-            },
-          },
-        }),
+        channel: createServer(context),
       })
 
       // invoke `blob/add`
@@ -489,9 +453,6 @@ export const test = {
       // @ts-expect-error receipt out is unknown
       const address = next.allocate.receipt.out.ok?.address
       assert.ok(address)
-
-      // Store allocate task to be fetchable from allocate
-      await context.tasksStorage.put(next.allocate.task)
 
       // Write blob
       const goodPut = await fetch(address.url, {

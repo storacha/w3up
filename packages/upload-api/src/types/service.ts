@@ -6,7 +6,9 @@ import type {
   Failure,
   ServiceInvocation,
 } from '@ucanto/interface'
-import { Storage } from './storage.js'
+import type { Storage, StorageGetError, StoragePutError } from './storage.js'
+
+export type { StorageGetError, StoragePutError }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ReceiptsStorage = Storage<UnknownLink, Receipt<any, any>>

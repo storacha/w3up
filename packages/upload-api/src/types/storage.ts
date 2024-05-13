@@ -4,6 +4,8 @@ import {
   StoragePutError,
 } from '@web3-storage/capabilities/types'
 
+export type { StorageGetError, StoragePutError }
+
 export interface Storage<RecKey, Rec> {
   /**
    * Puts a record in the store.

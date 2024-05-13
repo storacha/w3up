@@ -10,7 +10,7 @@ import { RecordNotFound } from '../../src/errors.js'
  */
 
 /**
- * @implements {API.TasksStorage}
+ * @implements {API.Accessor<API.UnknownLink, API.Invocation>}
  */
 export class TasksStorage {
   constructor() {

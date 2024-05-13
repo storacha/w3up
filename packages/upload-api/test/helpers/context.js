@@ -47,7 +47,7 @@ export const createContext = async (
     storefront: { filecoinSubmitQueue, pieceOfferQueue },
   } = getFilecoinQueueImplementations(queuedMessages)
   const {
-    storefront: { pieceStore, receiptStore, taskStore },
+    storefront: { pieceStore },
   } = getFilecoinStoreImplementations()
   const email = Email.debug()
 
@@ -63,12 +63,6 @@ export const createContext = async (
     url: new URL('http://localhost:8787'),
     ...serviceStores,
     ...externalServices,
-    tasksScheduler: {
-      schedule: () =>
-        Promise.resolve({
-          ok: {},
-        }),
-    },
     getServiceConnection: () => connection,
     ...createRevocationChecker({
       revocationsStorage: serviceStores.revocationsStorage,
@@ -87,8 +81,6 @@ export const createContext = async (
     filecoinSubmitQueue,
     pieceOfferQueue,
     pieceStore,
-    receiptStore,
-    taskStore,
     dealTrackerService: {
       connection: dealTrackerConnection,
       invocationConfig: {

@@ -1,4 +1,5 @@
 import * as Server from '@ucanto/server'
+import { Message } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import * as Blob from '@web3-storage/capabilities/blob'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
@@ -133,17 +134,17 @@ async function allocate({ context, blob, space, cause }) {
   })
   const task = await allocate.delegate()
 
-  /** @type {import('@ucanto/interface').Receipt<import('@web3-storage/capabilities/types').BlobAllocateSuccess> | undefined} */
-  let blobAllocateReceipt
+  /** @type {API.Receipt<API.BlobAllocateSuccess> | null} */
+  let blobAllocateReceipt = null
 
   // 2. Get receipt for `blob/allocate` if available, otherwise schedule invocation
-  const receiptGet = await context.receiptsStorage.get(task.link())
+  const receiptGet = await context.agentStore.receipts.get(task.link())
   if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
     return {
       error: receiptGet.error,
     }
   } else if (receiptGet.ok) {
-    blobAllocateReceipt = receiptGet.ok
+    blobAllocateReceipt = /** @type {API.Receipt<any>} */ (receiptGet.ok)
 
     // Verify if allocation is expired before "accepting" this receipt.
     // Note that if there is no address, means it was already allocated successfully before
@@ -154,18 +155,13 @@ async function allocate({ context, blob, space, cause }) {
       if (hasBlobStore.error) {
         return hasBlobStore
       } else if (!hasBlobStore.ok) {
-        blobAllocateReceipt = undefined
+        blobAllocateReceipt = null
       }
     }
   }
 
   // 3. if not already allocated (or expired) execute `blob/allocate`
   if (!blobAllocateReceipt) {
-    // Create allocation task and save it
-    const saveTask = await context.tasksStorage.put(task)
-    if (!saveTask.ok) {
-      return saveTask
-    }
     // Execute allocate invocation
     const allocateRes = await allocate.execute(context.getServiceConnection())
     if (allocateRes.out.error) {
@@ -237,7 +233,7 @@ async function put({ context, blob, allocateTask }) {
   const task = await put.delegate()
 
   // 2. Get receipt for `http/put` if available
-  const receiptGet = await context.receiptsStorage.get(task.link())
+  const receiptGet = await context.agentStore.receipts.get(task.link())
   // Storage get can fail with `RecordNotFound` or other unexpected errors.
   // If 'RecordNotFound' we proceed, otherwise we fail with the received error.
   if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
@@ -260,7 +256,8 @@ async function put({ context, blob, allocateTask }) {
   }
 
   // 3. store `http/put` invocation
-  const invocationPutRes = await context.tasksStorage.put(task)
+  const putMessage = await Message.build({ invocations: [task] })
+  const invocationPutRes = await context.agentStore.messages.write(putMessage)
   if (invocationPutRes.error) {
     return {
       error: invocationPutRes.error,
@@ -313,7 +310,7 @@ async function accept({ context, blob, space, putTask, putReceipt }) {
 
   // 3. Get receipt for `blob/accept` if available, otherwise execute invocation
   let blobAcceptReceipt
-  const receiptGet = await context.receiptsStorage.get(task.link())
+  const receiptGet = await context.agentStore.receipts.get(task.link())
   if (receiptGet.error && receiptGet.error.name !== 'RecordNotFound') {
     return {
       error: receiptGet.error,
