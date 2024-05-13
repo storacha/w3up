@@ -1,4 +1,4 @@
-import { DID, capability, ok, struct } from '@ucanto/validator'
+import { DID, Schema, capability, ok, struct } from '@ucanto/validator'
 import { AccountDID, equal, equalWith, and } from './utils.js'
 
 /**
@@ -26,6 +26,27 @@ export const set = capability({
     return (
       and(equalWith(child, parent)) ||
       and(equal(child.nb.product, parent.nb.product, 'product')) ||
+      ok({})
+    )
+  },
+})
+
+/**
+ * Capability can be invoked by an account to generate a billing admin session.
+ *
+ * May not be possible with all billing providers - this is designed with
+ * https://docs.stripe.com/api/customer_portal/sessions/create in mind.
+ */
+export const createAdminSession = capability({
+  can: 'plan/create-admin-session',
+  with: AccountDID,
+  nb: struct({
+    returnURL: Schema.string(),
+  }),
+  derives: (child, parent) => {
+    return (
+      and(equalWith(child, parent)) ||
+      and(equal(child.nb.returnURL, parent.nb.returnURL, 'returnURL')) ||
       ok({})
     )
   },
