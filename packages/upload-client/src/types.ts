@@ -14,6 +14,23 @@ import {
   Failure,
 } from '@ucanto/interface'
 import {
+  UCANConclude,
+  UCANConcludeSuccess,
+  UCANConcludeFailure,
+  BlobModel,
+  BlobAdd,
+  BlobAddSuccess,
+  BlobAddFailure,
+  BlobAllocateSuccess,
+  BlobAllocateFailure,
+  BlobAcceptSuccess,
+  BlobAcceptFailure,
+  BlobRemove,
+  BlobRemoveSuccess,
+  BlobRemoveFailure,
+  BlobList,
+  BlobListSuccess,
+  BlobListFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -59,6 +76,19 @@ type FetchOptions = Override<
 
 export type {
   FetchOptions,
+  BlobModel,
+  BlobAddSuccess,
+  BlobAddFailure,
+  BlobAllocateSuccess,
+  BlobAllocateFailure,
+  BlobAcceptSuccess,
+  BlobAcceptFailure,
+  BlobRemove,
+  BlobRemoveSuccess,
+  BlobRemoveFailure,
+  BlobList,
+  BlobListSuccess,
+  BlobListFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -95,6 +125,18 @@ export interface ProgressStatus extends XHRProgressStatus {
 export type ProgressFn = (status: ProgressStatus) => void
 
 export interface Service extends StorefrontService {
+  ucan: {
+    conclude: ServiceMethod<
+      UCANConclude,
+      UCANConcludeSuccess,
+      UCANConcludeFailure
+    >
+  }
+  blob: {
+    add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+    remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+    list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+  }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>

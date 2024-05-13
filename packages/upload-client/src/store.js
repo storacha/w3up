@@ -50,6 +50,7 @@ export async function add(
   options = {}
 ) {
   // TODO: validate blob contains CAR data
+  /* c8 ignore next 2 */
   const bytes =
     car instanceof Uint8Array ? car : new Uint8Array(await car.arrayBuffer())
   const link = await CAR.codec.link(bytes)

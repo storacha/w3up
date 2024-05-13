@@ -4,7 +4,7 @@ import {
   uploadCAR,
 } from '@web3-storage/upload-client'
 import {
-  Store as StoreCapabilities,
+  Blob as BlobCapabilities,
   Upload as UploadCapabilities,
 } from '@web3-storage/capabilities'
 import { CAR } from '@ucanto/transport'
@@ -12,6 +12,7 @@ import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
 import { Delegation as AgentDelegation } from './delegation.js'
+import { BlobClient } from './capability/blob.js'
 import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
@@ -49,6 +50,7 @@ export class Client extends Base {
       filecoin: new FilecoinClient(agentData, options),
       plan: new PlanClient(agentData, options),
       space: new SpaceClient(agentData, options),
+      blob: new BlobClient(agentData, options),
       store: new StoreClient(agentData, options),
       subscription: new SubscriptionClient(agentData, options),
       upload: new UploadClient(agentData, options),
@@ -106,7 +108,7 @@ export class Client extends Base {
    */
   async uploadFile(file, options = {}) {
     const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
+      BlobCapabilities.add.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -123,7 +125,7 @@ export class Client extends Base {
    */
   async uploadDirectory(files, options = {}) {
     const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
+      BlobCapabilities.add.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -144,7 +146,7 @@ export class Client extends Base {
    */
   async uploadCAR(car, options = {}) {
     const conf = await this._invocationConfig([
-      StoreCapabilities.add.can,
+      BlobCapabilities.add.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -343,8 +345,8 @@ export class Client extends Base {
         upload.shards.map(async (shard) => {
           try {
             await this.capability.store.remove(shard)
-          } catch (/** @type {any} */ error) {
             /* c8 ignore start */
+          } catch (/** @type {any} */ error) {
             // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
             if (error?.cause?.name !== 'StoreItemNotFound') {
               throw new Error(`failed to remove shard: ${shard}`, {

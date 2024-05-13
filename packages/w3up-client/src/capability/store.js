@@ -36,7 +36,7 @@ export class StoreClient extends Base {
    * @param {import('../types.js').ListRequestOptions} [options]
    */
   async list(options = {}) {
-    const conf = await this._invocationConfig([StoreCapabilities.add.can])
+    const conf = await this._invocationConfig([StoreCapabilities.list.can])
     options.connection = this._serviceConf.upload
     return Store.list(conf, options)
   }

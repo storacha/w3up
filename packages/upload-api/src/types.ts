@@ -639,7 +639,12 @@ export interface StoreAddInput {
   link: CARLink
   size: number
   origin?: UnknownLink
-  issuer: DID
+
+  /**
+   * @deprecated - Issuer of the invocation is irrelevant as long as
+   * they have authorization to invoke on subject `space`.
+   */
+  issuer?: DID
   invocation: UCANLink
 }
 
