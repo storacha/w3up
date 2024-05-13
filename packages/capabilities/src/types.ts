@@ -571,7 +571,7 @@ export type BlobAllocateFailure = NotEnoughStorageCapacity | Ucanto.Failure
 
 // Blob accept
 export interface BlobAcceptSuccess {
-  // A Link for a delegation with site commiment for the added blob.
+  // A Link for a delegation with site commitment for the added blob.
   site: Link
 }
 

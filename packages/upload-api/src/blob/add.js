@@ -161,6 +161,11 @@ async function allocate({ context, blob, space, cause }) {
 
   // 3. if not already allocated (or expired) execute `blob/allocate`
   if (!blobAllocateReceipt) {
+    // Create allocation task and save it
+    const saveTask = await context.tasksStorage.put(task)
+    if (!saveTask.ok) {
+      return saveTask
+    }
     // Execute allocate invocation
     const allocateRes = await allocate.execute(context.getServiceConnection())
     if (allocateRes.out.error) {

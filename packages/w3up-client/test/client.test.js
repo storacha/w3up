@@ -12,7 +12,7 @@ export const testClient = {
   uploadFile: Test.withContext({
     'should upload a file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, storeTable }
+      { connection, provisionsStorage, uploadTable, allocationsStorage }
     ) => {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
@@ -51,14 +51,19 @@ export const testClient = {
         ok: true,
       })
 
-      assert.deepEqual(await storeTable.exists(space.did(), expectedCar.cid), {
-        ok: true,
-      })
+      assert.deepEqual(
+        await allocationsStorage.exists(
+          space.did(),
+          expectedCar.cid.multihash.bytes
+        ),
+        {
+          ok: true,
+        }
+      )
 
       assert.equal(carCID?.toString(), expectedCar.cid.toString())
       assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
     },
-
     'should not allow upload without a current space': async (
       assert,
       { connection }
@@ -80,7 +85,6 @@ export const testClient = {
       })
     },
   }),
-
   uploadDirectory: Test.withContext({
     'should upload a directory to the service': async (
       assert,
@@ -132,12 +136,11 @@ export const testClient = {
   uploadCar: Test.withContext({
     'uploads a CAR file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, storeTable }
+      { connection, provisionsStorage, uploadTable, allocationsStorage }
     ) => {
       const car = await randomCAR(32)
 
-      /** @type {import('../src/types.js').CARLink|null} */
-      let carCID = null
+      let carCID = /** @type {import('../src/types.js').CARLink|null} */ (null)
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
@@ -173,9 +176,12 @@ export const testClient = {
         return assert.ok(carCID)
       }
 
-      assert.deepEqual(await storeTable.exists(space.did(), carCID), {
-        ok: true,
-      })
+      assert.deepEqual(
+        await allocationsStorage.exists(space.did(), carCID.multihash.bytes),
+        {
+          ok: true,
+        }
+      )
     },
   }),
   getRecipt: Test.withContext({
@@ -359,9 +365,9 @@ export const testClient = {
       assert.equal(typeof client.capability.access.authorize, 'function')
       assert.equal(typeof client.capability.access.claim, 'function')
       assert.equal(typeof client.capability.space.info, 'function')
-      assert.equal(typeof client.capability.store.add, 'function')
-      assert.equal(typeof client.capability.store.list, 'function')
-      assert.equal(typeof client.capability.store.remove, 'function')
+      assert.equal(typeof client.capability.blob.add, 'function')
+      assert.equal(typeof client.capability.blob.list, 'function')
+      assert.equal(typeof client.capability.blob.remove, 'function')
       assert.equal(typeof client.capability.upload.add, 'function')
       assert.equal(typeof client.capability.upload.list, 'function')
       assert.equal(typeof client.capability.upload.remove, 'function')
@@ -528,7 +534,7 @@ export const testClient = {
       }
 
       // delete shard
-      assert.ok((await alice.capability.store.remove(shard)).ok)
+      assert.ok((await alice.capability.blob.remove(shard.multihash)).ok)
 
       assert.deepEqual(
         await alice

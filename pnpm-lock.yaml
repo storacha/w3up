@@ -479,6 +479,9 @@ importers:
       '@ucanto/client':
         specifier: ^9.0.1
         version: 9.0.1
+      '@ucanto/core':
+        specifier: ^10.0.1
+        version: 10.0.1
       '@ucanto/interface':
         specifier: ^10.0.1
         version: 10.0.1
