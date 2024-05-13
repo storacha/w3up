@@ -425,6 +425,9 @@ We created a `esbuild-plugin` [esbuild-plugin-w3up-client-wasm-import](https://g
   - [`remove`](#remove)
   - [`capability.access.authorize`](#capabilityaccessauthorize)
   - [`capability.access.claim`](#capabilityaccessclaim)
+  - [`capability.plan.get`](#capabilityplanget)
+  - [`capability.plan.set`](#capabilityplanset)
+  - [`capability.plan.createAdminSession`](#capabilityplancreateadminsession)    
   - [`capability.space.info`](#capabilityspaceinfo)
   - [`capability.store.add`](#capabilitystoreadd)
   - [`capability.store.list`](#capabilitystorelist)
@@ -666,6 +669,42 @@ function claim (): Promise<Delegation<Capabilities>[]>
 ```
 
 Claim delegations granted to the account associated with this agent. Note: the received delegations are added to the agent's persistent store.
+
+### `capability.plan.get`
+
+```ts
+function get (
+  account: AccountDID
+): Promise<PlanGetSuccess>
+```
+
+Get information about an account's billing plan.
+
+### `capability.plan.set`
+
+```ts
+function set (
+  account: AccountDID,
+  product: DID
+): Promise<{}>
+```
+
+Switch an account's "plan" to the given product. **This may result in
+changes to your billing or unexpected billing cycles depending on the
+type of change.**
+
+### `capability.plan.createAdminSession`
+
+```ts
+function createAdminSession (
+  account: AccountDID,
+  returnURL: string
+): Promise<{url: string}>
+```
+
+Create a billing customer portal admin session. Returns a URL that 
+the customer can visit to administer `account`. Design and implementation driven 
+by our Stripe integration and may not be supported by all billing providers.
 
 ### `capability.store.add`
 
