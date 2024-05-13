@@ -3,8 +3,7 @@ import * as DID from '@ipld/dag-ucan/did'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import { Assert } from '@web3-storage/content-claims/capability'
 import { create as createLink } from 'multiformats/link'
-import { Digest } from 'multiformats/hashes/digest'
-import { sha256 } from 'multiformats/hashes/sha2'
+import * as Digest from 'multiformats/hashes/digest'
 import { code as rawCode } from 'multiformats/codecs/raw'
 import * as API from '../types.js'
 import { AllocatedMemoryHadNotBeenWrittenTo } from './lib.js'
@@ -31,10 +30,11 @@ export function blobAcceptProvider(context) {
         }
       }
 
-      // TODO: we need to support multihash in claims, or specify hardcoded codec
-      const digest = new Digest(sha256.code, 32, blob.digest, blob.digest)
+      const digest = Digest.decode(blob.digest)
       const content = createLink(rawCode, digest)
-      const w3link = `https://w3s.link/ipfs/${content.toString()}?origin=r2://${R2_REGION}/${R2_BUCKET}`
+      const url = 
+        /** @type {API.URI<'https:'>} */
+        (`https://w3s.link/ipfs/${content}?format=raw&origin=r2://${R2_REGION}/${R2_BUCKET}`)
 
       const locationClaim = await Assert.location.delegate({
         issuer: context.id,
@@ -42,10 +42,7 @@ export function blobAcceptProvider(context) {
         with: context.id.toDIDKey(),
         nb: {
           content,
-          location: [
-            // @ts-expect-error Type 'string' is not assignable to type '`${string}:${string}`'
-            w3link,
-          ],
+          location: [url],
         },
         expiration: Infinity,
       })
