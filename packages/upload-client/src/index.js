@@ -134,45 +134,47 @@ async function uploadBlockStream(
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(
       /** @type {TransformStream<import('./types.js').IndexedCARFile, import('./types.js').CARMetadata>} */
-      (new TransformStream({
-        async transform(car, controller) {
-          const bytes = new Uint8Array(await car.arrayBuffer())
-          // Invoke blob/add and write bytes to write target
-          const multihash = await Blob.add(conf, bytes, options)
-          // Should this be raw instead?
-          const cid = Link.create(carCodec.code, multihash)
-          let piece
-          if (pieceHasher) {
-            const multihashDigest = await pieceHasher.digest(bytes)
-            /** @type {import('@web3-storage/capabilities/types').PieceLink} */
-            piece = Link.create(raw.code, multihashDigest)
-            const content = Link.create(raw.code, multihash)
+      (
+        new TransformStream({
+          async transform(car, controller) {
+            const bytes = new Uint8Array(await car.arrayBuffer())
+            // Invoke blob/add and write bytes to write target
+            const multihash = await Blob.add(conf, bytes, options)
+            // Should this be raw instead?
+            const cid = Link.create(carCodec.code, multihash)
+            let piece
+            if (pieceHasher) {
+              const multihashDigest = await pieceHasher.digest(bytes)
+              /** @type {import('@web3-storage/capabilities/types').PieceLink} */
+              piece = Link.create(raw.code, multihashDigest)
+              const content = Link.create(raw.code, multihash)
 
-            // Invoke filecoin/offer for data
-            const result = await Storefront.filecoinOffer(
-              {
-                issuer: conf.issuer,
-                audience: conf.audience,
-                // Resource of invocation is the issuer did for being self issued
-                with: conf.issuer.did(),
-                proofs: conf.proofs,
-              },
-              content,
-              piece,
-              options
-            )
-
-            if (result.out.error) {
-              throw new Error(
-                'failed to offer piece for aggregation into filecoin deal',
-                { cause: result.out.error }
+              // Invoke filecoin/offer for data
+              const result = await Storefront.filecoinOffer(
+                {
+                  issuer: conf.issuer,
+                  audience: conf.audience,
+                  // Resource of invocation is the issuer did for being self issued
+                  with: conf.issuer.did(),
+                  proofs: conf.proofs,
+                },
+                content,
+                piece,
+                options
               )
+
+              if (result.out.error) {
+                throw new Error(
+                  'failed to offer piece for aggregation into filecoin deal',
+                  { cause: result.out.error }
+                )
+              }
             }
-          }
-          const { version, roots, size, slices } = car
-          controller.enqueue({ version, roots, size, cid, piece, slices })
-        },
-      }))
+            const { version, roots, size, slices } = car
+            controller.enqueue({ version, roots, size, cid, piece, slices })
+          },
+        })
+      )
     )
     .pipeTo(
       new WritableStream({

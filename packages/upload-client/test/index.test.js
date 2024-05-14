@@ -256,7 +256,7 @@ describe('uploadFile', () => {
         // so, at least 2 shards, but 2 encoded blocks (_without_ CAR header) = 2_097_230
         // ...which is > shard size of 2_097_153
         // so we actually end up with a shard for each block - 5 CARs!
-        shardSize: (1024 * 1024 * 2) + 1,
+        shardSize: 1024 * 1024 * 2 + 1,
         onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )

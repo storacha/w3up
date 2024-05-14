@@ -66,7 +66,12 @@ import {
 } from '@web3-storage/capabilities/types'
 import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
 import { code as pieceHashCode } from '@web3-storage/data-segment/multihash'
-import { ShardedDAGIndex, ShardDigest, SliceDigest, Position } from '@web3-storage/blob-index/types'
+import {
+  ShardedDAGIndex,
+  ShardDigest,
+  SliceDigest,
+  Position,
+} from '@web3-storage/blob-index/types'
 
 type Override<T, R> = Omit<T, keyof R> & R
 
@@ -126,7 +131,7 @@ export type {
   ShardedDAGIndex,
   ShardDigest,
   SliceDigest,
-  Position
+  Position,
 }
 
 export interface ProgressStatus extends XHRProgressStatus {

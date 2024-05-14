@@ -1,5 +1,10 @@
 import { DigestMap } from '@web3-storage/blob-index'
-import { blockEncodingLength, blockHeaderEncodingLength, encode, headerEncodingLength } from './car.js'
+import {
+  blockEncodingLength,
+  blockHeaderEncodingLength,
+  encode,
+  headerEncodingLength,
+} from './car.js'
 
 /**
  * @typedef {import('./types.js').FileLike} FileLike
@@ -56,7 +61,10 @@ export class ShardingStream extends TransformStream {
           currentLength = 0
         }
         blocks.push(block)
-        slices.set(block.cid.multihash, [headerEncodingLength() + currentLength + blockHeaderLength, block.bytes.length])
+        slices.set(block.cid.multihash, [
+          headerEncodingLength() + currentLength + blockHeaderLength,
+          block.bytes.length,
+        ])
         currentLength += blockLength
       },
 
@@ -99,10 +107,16 @@ export class ShardingStream extends TransformStream {
           const overflowSlices = new DigestMap()
           for (const block of blocks) {
             const overflowBlockHeaderLength = blockHeaderEncodingLength(block)
-            overflowSlices.set(block.cid.multihash, [headerLength + overflowCurrentLength + overflowBlockHeaderLength, block.bytes.length])
-            overflowCurrentLength += overflowBlockHeaderLength + block.bytes.length
+            overflowSlices.set(block.cid.multihash, [
+              headerLength + overflowCurrentLength + overflowBlockHeaderLength,
+              block.bytes.length,
+            ])
+            overflowCurrentLength +=
+              overflowBlockHeaderLength + block.bytes.length
           }
-          controller.enqueue(await encodeCAR(overflowBlocks, overflowSlices, rootCID))
+          controller.enqueue(
+            await encodeCAR(overflowBlocks, overflowSlices, rootCID)
+          )
         } else {
           // adjust offsets for longer header in final shard
           const diff = headerLength - headerEncodingLength()
@@ -153,4 +167,5 @@ function ascending(a, b, getComparedValue) {
  * @param {import('./types.js').AnyLink} [root]
  * @returns {Promise<import('./types.js').IndexedCARFile>}
  */
-const encodeCAR = async (blocks, slices, root) => Object.assign(await encode(blocks, root), { slices })
+const encodeCAR = async (blocks, slices, root) =>
+  Object.assign(await encode(blocks, root), { slices })
