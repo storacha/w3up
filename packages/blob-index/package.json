@@ -35,7 +35,8 @@
     "build": "tsc --build",
     "check": "tsc --build",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
-    "test": "entail test/*.spec.js"
+    "test": "entail test/*.spec.js",
+    "coverage": "c8 --reporter text --reporter html npm run test"
   },
   "dependencies": {
     "@ipld/dag-cbor": "^9.0.6",
