@@ -11,7 +11,7 @@ import * as BlobAccept from '../blob/accept.js'
 export const ucanConcludeProvider = (context) =>
   provide(conclude, async ({ invocation }) => {
     const receipt = getConcludeReceipt(invocation)
-    // If palling errors we propagate errors that is because referenced
+    // If polling errors we propagate errors that is because referenced
     // blob/allocate can not be found and we want to make sure that such
     // corresponding http/put receipt does land without any notice.
     const result = await BlobAccept.poll(context, receipt)

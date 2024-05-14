@@ -93,7 +93,7 @@ export const poll = async (context, receipt) => {
     return { ok: {} }
   }
 
-  // Detect if this is a receipt is for an `http/put` invocation
+  // Detect if this receipt is for an `http/put` invocation
   const put = /** @type {?API.HTTPPut} */ (
     ran.ok.capabilities.find(({ can }) => can === HTTP.put.can)
   )
@@ -111,7 +111,7 @@ export const poll = async (context, receipt) => {
   // the system and we return error so it could be propagated to the user. It is
   // not a proper solution as user can not really do anything, but still seems
   // better than silently ignoring, this way user has a chance to report a
-  // problem. Clint test could potentially also catch errors.
+  // problem. Client test could potentially also catch errors.
   if (result.error) {
     return result
   }
