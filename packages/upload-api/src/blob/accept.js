@@ -107,7 +107,7 @@ export const poll = async (context, receipt) => {
   // in order to issue blob/accept.
   const [, allocation] = /** @type {API.UCANAwait} */ (put.nb.url)['ucan/await']
   const result = await context.agentStore.invocations.get(allocation)
-  // If count not lookup blob/allocate invocation there is something wrong in
+  // If could not find blob/allocate invocation there is something wrong in
   // the system and we return error so it could be propagated to the user. It is
   // not a proper solution as user can not really do anything, but still seems
   // better than silently ignoring, this way user has a chance to report a

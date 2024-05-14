@@ -1,7 +1,7 @@
 import * as API from '../../src/types.js'
 import { TasksStorage } from './tasks-storage.js'
 import { ReceiptsStorage } from './receipts-storage.js'
-import { Invocation } from '@ucanto/core'
+import { Invocation, Receipt } from '@ucanto/core'
 
 export const memory = () => new AgentStore()
 
@@ -23,8 +23,35 @@ class AgentStore {
    */
   async write(message) {
     const promises = []
+    const blocks = new Map(
+      [...message.iterateIPLDBlocks()].map((block) => [`${block.cid}`, block])
+    )
+
     for (const invocation of message.invocations) {
       promises.push(this.invocations.put(invocation))
+
+      // If this a conclude invocation, we do index receipt
+      if (invocation.capabilities[0].can === 'ucan/conclude') {
+        const { receipt: root } = Object(invocation.capabilities[0].nb)
+
+        const receipt = root
+          ? Receipt.view(
+              {
+                root,
+                blocks,
+              },
+              null
+            )
+          : null
+
+        if (receipt) {
+          promises.push(this.receipts.put(receipt))
+
+          if (Invocation.isInvocation(receipt.ran)) {
+            promises.push(this.invocations.put(receipt.ran))
+          }
+        }
+      }
     }
 
     for (const receipt of message.receipts.values()) {

@@ -11,15 +11,6 @@ import * as BlobAccept from '../blob/accept.js'
 export const ucanConcludeProvider = (context) =>
   provide(conclude, async ({ invocation }) => {
     const receipt = getConcludeReceipt(invocation)
-
-    // First of all that we create a message and save it to agent store, that
-    // way even if invocation occurs later we will have receipt already.
-    const message = await Message.build({ receipts: [receipt] })
-    const save = await context.agentStore.messages.write(message)
-    if (save.error) {
-      return save
-    }
-
     // If palling errors we propagate errors that is because referenced
     // blob/allocate can not be found and we want to make sure that such
     // corresponding http/put receipt does land without any notice.

@@ -363,7 +363,7 @@ export const test = {
 
     assert.ok(String(revoke.out.error?.message).match(/Constrain violation/))
   },
-  'skip ucan/conclude writes a receipt for a task previously scheduled': async (
+  'ucan/conclude writes a receipt for unknown tasks': async (
     assert,
     context
   ) => {
@@ -378,36 +378,45 @@ export const test = {
       audience: alice,
       with: context.id.did(),
     })
-    const invocation = Console.log.invoke({
+
+    const invocation = await Console.log
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.did(),
+        nb: { value: 'hello' },
+        proofs: [proof],
+      })
+      .delegate()
+
+    const receipt = await Receipt.issue({
       issuer: alice,
-      audience: context.id,
-      with: context.id.did(),
-      nb: { value: 'hello' },
-      proofs: [proof],
+      ran: invocation,
+      result: { ok: 'hello' },
     })
-
-    const success = await invocation.execute(connection)
-
-    if (!success.out.ok) {
-      throw new Error('invocation failed', { cause: success })
-    }
 
     // Create conclude invocation
     const concludeInvocation = createConcludeInvocation(
       alice,
       context.id,
-      success
-    )
-    const ucanConcludeFail = await concludeInvocation.execute(connection)
-    assert.ok(ucanConcludeFail.out.error)
-    assert.equal(
-      ucanConcludeFail.out.error?.name,
-      ReferencedInvocationNotFoundName
+      receipt
     )
 
-    const ucanConcludeSuccess = await concludeInvocation.execute(connection)
-    assert.ok(ucanConcludeSuccess.out.ok)
-    assert.ok(ucanConcludeSuccess.out.ok?.time)
+    const conclude = await concludeInvocation.execute(connection)
+    assert.ok(conclude.out.ok)
+    assert.ok(conclude.out.ok?.time)
+
+    assert.deepEqual(
+      await context.agentStore.invocations.get(invocation.link()),
+      { ok: invocation }
+    )
+
+    const storedReceipt = await context.agentStore.receipts.get(
+      invocation.link()
+    )
+    assert.ok(storedReceipt.ok)
+    assert.deepEqual(storedReceipt.ok?.link(), receipt.link())
+    assert.deepEqual(storedReceipt.ok?.ran, invocation)
   },
   'skip ucan/conclude schedules web3.storage/blob/accept if invoked with the blob put receipt':
     async (assert, context) => {
