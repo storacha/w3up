@@ -117,6 +117,7 @@
     "@ucanto/principal": "^9.0.1",
     "@ucanto/transport": "^9.1.1",
     "@web3-storage/access": "workspace:^",
+    "@web3-storage/blob-index": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-client": "workspace:^",

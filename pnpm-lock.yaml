@@ -634,6 +634,9 @@ importers:
       '@web3-storage/access':
         specifier: workspace:^
         version: link:../access-client
+      '@web3-storage/blob-index':
+        specifier: workspace:^
+        version: link:../blob-index
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities
