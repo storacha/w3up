@@ -47,7 +47,7 @@ export const createContext = async (
     storefront: { filecoinSubmitQueue, pieceOfferQueue },
   } = getFilecoinQueueImplementations(queuedMessages)
   const {
-    storefront: { pieceStore },
+    storefront: { pieceStore, receiptStore, taskStore },
   } = getFilecoinStoreImplementations()
   const email = Email.debug()
 
@@ -81,6 +81,8 @@ export const createContext = async (
     filecoinSubmitQueue,
     pieceOfferQueue,
     pieceStore,
+    receiptStore,
+    taskStore,
     dealTrackerService: {
       connection: dealTrackerConnection,
       invocationConfig: {

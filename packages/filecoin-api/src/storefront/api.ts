@@ -21,7 +21,7 @@ import {
   UpdatableAndQueryableStore,
   Queue,
   ServiceConfig,
-  StoreGetError
+  StoreGetError,
 } from '../types.js'
 
 export type PieceStore = UpdatableAndQueryableStore<
