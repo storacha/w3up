@@ -1,13 +1,40 @@
-import { Receipt } from '@ucanto/core'
 import { conclude } from '@web3-storage/capabilities/ucan'
+import * as base32 from 'multiformats/bases/base32'
+import { CID } from 'multiformats'
+import { Receipt, Message } from '@ucanto/core'
+import * as CAR from '@ucanto/transport/car'
 import * as Server from '@ucanto/server'
 import { UCAN } from '@web3-storage/capabilities'
 import * as HTTP from '@web3-storage/capabilities/http'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import { W3sBlob } from '@web3-storage/capabilities'
 import * as Types from '../../src/types.js'
+import * as Signer from '@ucanto/principal/ed25519'
 
 export const validateAuthorization = () => ({ ok: {} })
+
+// @ts-ignore Parameter
+export const setupGetReceipt = async (url) => {
+  // need to handle using regular fetch when not actually getting a receipt
+  if (!url.pathname) {
+    return await fetch(url)
+  }
+
+  const cid = url.pathname.replace('/receipt/', '')
+  const receipt = await Receipt.issue({
+    issuer: await Signer.generate(),
+    // @ts-ignore Type
+    ran: CID.parse(cid, base32.base32),
+    result: { ok: {} },
+  })
+  const message = await Message.build({
+    // @ts-ignore
+    invocations: [],
+    receipts: [receipt],
+  })
+  const request = CAR.request.encode(message)
+  return new Response(request.body.buffer)
+}
 
 /**
  * Utility function that creates a delegation from account to agent and an

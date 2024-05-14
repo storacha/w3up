@@ -3,6 +3,7 @@ import { AgentData } from '@web3-storage/access/agent'
 import { randomBytes } from '../helpers/random.js'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
+import { setupGetReceipt } from '../helpers/utils.js'
 
 export const BlobClient = Test.withContext({
   'should store a blob': async (
@@ -32,7 +33,9 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const multihash = await alice.capability.blob.add(new Blob([bytes]))
+    const multihash = await alice.capability.blob.add(new Blob([bytes]), {
+      fetch: setupGetReceipt,
+    })
 
     // TODO we should check blobsStorage as well
     assert.deepEqual(
@@ -71,7 +74,9 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const multihash = await alice.capability.blob.add(new Blob([bytes]))
+    const multihash = await alice.capability.blob.add(new Blob([bytes]), {
+      fetch: setupGetReceipt,
+    })
     assert.deepEqual(multihash, bytesHash)
 
     const {
@@ -107,7 +112,9 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const multihash = await alice.capability.blob.add(new Blob([bytes]))
+    const multihash = await alice.capability.blob.add(new Blob([bytes]), {
+      fetch: setupGetReceipt,
+    })
 
     const result = await alice.capability.blob.remove(multihash)
     assert.ok(result.ok)

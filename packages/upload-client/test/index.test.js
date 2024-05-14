@@ -19,6 +19,7 @@ import { mockService } from './helpers/mocks.js'
 import {
   validateAuthorization,
   setupBlobAddSuccessResponse,
+  setupGetReceipt,
 } from './helpers/utils.js'
 import {
   blockEncodingLength,
@@ -143,6 +144,7 @@ describe('uploadFile', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        fetch: setupGetReceipt,
       }
     )
 
@@ -258,6 +260,7 @@ describe('uploadFile', () => {
         // so we actually end up with a shard for each block - 5 CARs!
         shardSize: 1024 * 1024 * 2 + 1,
         onShardStored: (meta) => carCIDs.push(meta.cid),
+        fetch: setupGetReceipt,
       }
     )
 
@@ -333,6 +336,7 @@ describe('uploadFile', () => {
         file,
         {
           connection,
+          fetch: setupGetReceipt,
         }
       )
     )
@@ -453,6 +457,7 @@ describe('uploadDirectory', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        fetch: setupGetReceipt,
       }
     )
 
@@ -563,6 +568,7 @@ describe('uploadDirectory', () => {
         connection,
         shardSize: 500_057, // should end up with 2 CAR files
         onShardStored: (meta) => carCIDs.push(meta.cid),
+        fetch: setupGetReceipt,
       }
     )
 
@@ -674,7 +680,10 @@ describe('uploadDirectory', () => {
     const uploadedDirUnsorted = await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       unsortedFiles,
-      { connection: uploadServiceForUnordered.connection }
+      {
+        connection: uploadServiceForUnordered.connection,
+        fetch: setupGetReceipt,
+      }
     )
 
     const uploadServiceForOrdered = createSimpleMockUploadServer()
@@ -682,7 +691,10 @@ describe('uploadDirectory', () => {
     const uploadedDirSorted = await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       [...unsortedFiles].sort(defaultFileComparator),
-      { connection: uploadServiceForOrdered.connection }
+      {
+        connection: uploadServiceForOrdered.connection,
+        fetch: setupGetReceipt,
+      }
     )
 
     // upload/add roots should be the same.
@@ -723,7 +735,12 @@ describe('uploadDirectory', () => {
     const uploadedDirCustomOrder = await uploadDirectory(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       [...unsortedFiles],
-      { connection: uploadServiceForCustomOrder.connection, customOrder: true }
+      {
+        connection: uploadServiceForCustomOrder.connection,
+        customOrder: true,
+        // @ts-ignore
+        fetch: setupGetReceipt,
+      }
     )
     const shardsForCustomOrder = uploadServiceForCustomOrder.invocations
       .flatMap((i) =>
@@ -870,6 +887,7 @@ describe('uploadCAR', () => {
         connection,
         onShardStored: (meta) => carCIDs.push(meta.cid),
         shardSize,
+        fetch: setupGetReceipt,
       }
     )
 
@@ -995,6 +1013,7 @@ describe('uploadCAR', () => {
         onShardStored: (meta) => {
           if (meta.piece) pieceCIDs.push(meta.piece)
         },
+        fetch: setupGetReceipt,
       }
     )
 

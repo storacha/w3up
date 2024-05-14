@@ -1,3 +1,4 @@
+import { CAR } from '@ucanto/transport'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
@@ -24,6 +25,38 @@ function createUploadProgressHandler(url, handler) {
     return handler({ total, loaded, lengthComputable, url })
   }
   return onUploadProgress
+}
+
+// FIXME this code was copied over from w3up-client and modified to parameterise receiptsEndpoint
+export const receiptsEndpoint = 'https://up.web3.storage/receipt/'
+/**
+ * Get a receipt for an executed task by its CID.
+ *
+ * @param {import('multiformats').UnknownLink} taskCid
+ * @param {import('./types.js').RequestOptions} [options]
+ */
+async function getReceipt(taskCid, options = {}) {
+  // Fetch receipt from endpoint
+  // FIXME handle config
+  const url = new URL(taskCid.toString(), 'https://localhost/receipt/')
+  const fetchReceipt = options.fetch ?? globalThis.fetch.bind(globalThis)
+  const workflowResponse = await fetchReceipt(url)
+  /* c8 ignore start */
+  if (!workflowResponse.ok) {
+    throw new Error(
+      `no receipt available for requested task ${taskCid.toString()}`
+    )
+  }
+  /* c8 ignore stop */
+  // Get receipt from Message Archive
+  const agentMessageBytes = new Uint8Array(await workflowResponse.arrayBuffer())
+  // Decode message
+  const agentMessage = await CAR.request.decode({
+    body: agentMessageBytes,
+    headers: {},
+  })
+  // Get receipt from the potential multiple receipts in the message
+  return agentMessage.receipts.get(taskCid.toString())
 }
 
 // FIXME this code has been copied over from upload-api
@@ -300,6 +333,30 @@ export async function add(
   if (!ucanConclude.out.ok) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
       cause: result.out.error,
+    })
+  }
+
+  // Ensure the blob has been accepted
+  const acceptReceipt = await retry(
+    async () => {
+      try {
+        return await getReceipt(nextTasks.accept.task.link(), options)
+      } catch (err) {
+        throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+          cause: err,
+        })
+      }
+    },
+    {
+      onFailedAttempt: console.warn,
+      retries: options.retries ?? REQUEST_RETRIES,
+    }
+  )
+
+  // TODO cover this
+  if (!acceptReceipt) {
+    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+      cause: 'failed to get blob/accept receipt',
     })
   }
 

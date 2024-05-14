@@ -16,6 +16,7 @@ import {
   setupBlobAddSuccessResponse,
   setupBlobAdd4xxResponse,
   setupBlobAdd5xxResponse,
+  setupGetReceipt,
 } from './helpers/utils.js'
 import { fetchWithUploadProgress } from '../src/fetch-with-upload-progress.js'
 
@@ -82,6 +83,7 @@ describe('Blob.add', () => {
           progress.push(status)
         },
         fetchWithUploadProgress,
+        fetch: setupGetReceipt,
       }
     )
 
@@ -106,6 +108,7 @@ describe('Blob.add', () => {
         onUploadProgress: (status) => {
           progressWithoutUploadProgress.push(status)
         },
+        fetch: setupGetReceipt,
       }
     )
     assert.deepEqual(addedWithoutUploadProgress.bytes, bytesHash.bytes)
@@ -166,6 +169,71 @@ describe('Blob.add', () => {
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
         bytes,
         { connection }
+      ),
+      {
+        message: 'failed blob/add invocation',
+      }
+    )
+  })
+
+  it('throws when it cannot get the blob/accept receipt', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const bytes = await randomBytes(128)
+
+    const proofs = [
+      await BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        }),
+      },
+      blob: {
+        // @ts-ignore Argument of type
+        add: provide(BlobCapabilities.add, ({ invocation }) => {
+          return setupBlobAddSuccessResponse(
+            { issuer: space, audience: agent, with: space, proofs },
+            invocation
+          )
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Blob.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytes,
+        {
+          connection,
+          retries: 0,
+          fetch: async (url) => {
+            // @ts-ignore Parameter
+            if (!url.pathname) {
+              return await fetch(url)
+            }
+            throw new Server.Failure('boom')
+          },
+        }
       ),
       {
         message: 'failed blob/add invocation',

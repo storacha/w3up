@@ -6,6 +6,7 @@ import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { Client } from '../src/client.js'
 import * as Test from './test.js'
+import { setupGetReceipt } from './helpers/utils.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -45,6 +46,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        fetch: setupGetReceipt,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -124,6 +126,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        fetch: setupGetReceipt,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -166,6 +169,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        fetch: setupGetReceipt,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -184,7 +188,7 @@ export const testClient = {
       )
     },
   }),
-  getRecipt: Test.withContext({
+  getReceipt: Test.withContext({
     'should find a receipt': async (assert, { connection }) => {
       const taskCid = parseLink(
         'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
@@ -403,7 +407,9 @@ export const testClient = {
         consumer: space.did(),
       })
 
-      const root = await alice.uploadFile(new Blob([bytes]))
+      const root = await alice.uploadFile(new Blob([bytes]), {
+        fetch: setupGetReceipt,
+      })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
         ok: true,
@@ -450,7 +456,9 @@ export const testClient = {
           consumer: space.did(),
         })
 
-        const root = await alice.uploadFile(new Blob([bytes]))
+        const root = await alice.uploadFile(new Blob([bytes]), {
+          fetch: setupGetReceipt,
+        })
 
         assert.deepEqual(await uploadTable.exists(space.did(), root), {
           ok: true,
@@ -524,7 +532,9 @@ export const testClient = {
         consumer: space.did(),
       })
 
-      const root = await alice.uploadFile(new Blob(bytesArray))
+      const root = await alice.uploadFile(new Blob(bytesArray), {
+        fetch: setupGetReceipt,
+      })
 
       const upload = await uploadTable.get(space.did(), root)
 
