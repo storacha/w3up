@@ -35,7 +35,7 @@ export function blobAcceptProvider(context) {
       const url =
         /** @type {API.URI<'https:'>} */
         (
-          `https://w3s.link/ipfs/${content}?format=raw&origin=r2://${R2_REGION}/${R2_BUCKET}`
+          `https://w3s.link/ipfs/${content}?format=raw&origin=${encodeURIComponent(`r2://${R2_REGION}/${R2_BUCKET}`)}`
         )
 
       const locationClaim = await Assert.location.delegate({
