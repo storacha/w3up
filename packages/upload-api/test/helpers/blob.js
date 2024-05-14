@@ -5,7 +5,10 @@ import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/bl
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 import * as UCAN from '@web3-storage/capabilities/ucan'
-import { createConcludeInvocation, getConcludeReceipt } from '../../src/ucan/conclude.js'
+import {
+  createConcludeInvocation,
+  getConcludeReceipt,
+} from '../../src/ucan/conclude.js'
 import * as Result from './result.js'
 
 /**
@@ -80,7 +83,11 @@ export function parseBlobAddReceiptNext(receipt) {
  * @param {API.Delegation[]} config.proofs
  * @param {{ cid: API.UnknownLink, bytes: Uint8Array }} content
  */
-export const uploadBlob = async (context, { connection, issuer, audience, with: resource, proofs }, content) => {
+export const uploadBlob = async (
+  context,
+  { connection, issuer, audience, with: resource, proofs },
+  content
+) => {
   const blobAdd = BlobCapabilities.add.invoke({
     issuer,
     audience,
@@ -89,7 +96,7 @@ export const uploadBlob = async (context, { connection, issuer, audience, with: 
       blob: {
         digest: content.cid.multihash.bytes,
         size: content.bytes.length,
-      }
+      },
     },
     proofs,
   })
@@ -132,10 +139,7 @@ export const uploadBlob = async (context, { connection, issuer, audience, with: 
         'ucan/await': ['.out.ok.address.url', nextTasks.allocate.task.cid],
       },
       headers: {
-        'ucan/await': [
-          '.out.ok.address.headers',
-          nextTasks.allocate.task.cid,
-        ],
+        'ucan/await': ['.out.ok.address.headers', nextTasks.allocate.task.cid],
       },
     },
     facts: nextTasks.put.task.facts,
@@ -148,7 +152,11 @@ export const uploadBlob = async (context, { connection, issuer, audience, with: 
     ran: httpPutDelegation.cid,
     result: { ok: {} },
   })
-  const httpPutConcludeInvocation = createConcludeInvocation(issuer, audience, httpPutReceipt)
+  const httpPutConcludeInvocation = createConcludeInvocation(
+    issuer,
+    audience,
+    httpPutReceipt
+  )
   const ucanConclude = await httpPutConcludeInvocation.execute(connection)
   Result.try(ucanConclude.out)
 }

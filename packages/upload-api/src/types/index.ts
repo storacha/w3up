@@ -1,13 +1,7 @@
 import { MultihashDigest } from 'multiformats'
 import { Failure, Result, Unit } from '@ucanto/interface'
-import { ShardedDAGIndex } from '../index/lib/api.js'
+import { ShardedDAGIndex } from '@web3-storage/blob-index/types'
 import { AllocationsStorage } from './blob.js'
-
-export type {
-  ShardDigest,
-  SliceDigest,
-  ShardedDAGIndex,
-} from '../index/lib/api.js'
 
 /**
  * Service that allows publishing a set of multihashes to IPNI for a

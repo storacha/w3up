@@ -1,7 +1,8 @@
 import * as Server from '@ucanto/server'
 import { ok, error } from '@ucanto/server'
 import * as Index from '@web3-storage/capabilities/index'
-import * as ShardedDAGIndex from './lib/sharded-dag-index.js'
+import { ShardedDAGIndex } from '@web3-storage/blob-index'
+import { concat } from 'uint8arrays'
 import * as API from '../types.js'
 
 /**
@@ -41,7 +42,17 @@ const add = async ({ capability }, context) => {
     return idxBlobRes
   }
 
-  const idxRes = await ShardedDAGIndex.extract(idxBlobRes.ok)
+  /** @type {Uint8Array[]} */
+  const chunks = []
+  await idxBlobRes.ok.pipeTo(
+    new WritableStream({
+      write: (chunk) => {
+        chunks.push(chunk)
+      },
+    })
+  )
+
+  const idxRes = ShardedDAGIndex.extract(concat(chunks))
   if (!idxRes.ok) return idxAllocRes
 
   // ensure indexed shards are allocated in the agent's space

@@ -8,6 +8,7 @@
   ],
   "packages": {
     "packages/access-client": {},
+    "packages/blob-index": {},
     "packages/filecoin-api": {},
     "packages/filecoin-client": {},
     "packages/capabilities": {},
