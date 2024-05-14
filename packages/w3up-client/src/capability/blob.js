@@ -7,15 +7,15 @@ import { Base } from '../base.js'
  */
 export class BlobClient extends Base {
   /**
-   * Store a DAG encoded as a CAR file.
+   * Store a Blob as a CAR file.
    *
-   * @param {Blob} car - CAR file data.
+   * @param {Blob} blob - blob data.
    * @param {import('../types.js').RequestOptions} [options]
    */
-  async add(car, options = {}) {
+  async add(blob, options = {}) {
     const conf = await this._invocationConfig([BlobCapabilities.add.can])
     options.connection = this._serviceConf.upload
-    return Blob.add(conf, car, options)
+    return Blob.add(conf, blob, options)
   }
 
   /**
@@ -30,14 +30,14 @@ export class BlobClient extends Base {
   }
 
   /**
-   * Remove a stored CAR file by CAR CID.
+   * Remove a stored CAR file by digest.
    *
-   * @param {import('../types.js').CARLink} link - CID of CAR file to remove.
+   * @param {import('multiformats').MultihashDigest} digest - digest of blob to remove.
    * @param {import('../types.js').RequestOptions} [options]
    */
-  async remove(link, options = {}) {
+  async remove(digest, options = {}) {
     const conf = await this._invocationConfig([BlobCapabilities.remove.can])
     options.connection = this._serviceConf.upload
-    return Blob.remove(conf, link, options)
+    return Blob.remove(conf, digest, options)
   }
 }

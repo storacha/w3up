@@ -36,8 +36,7 @@ export class StoreClient extends Base {
    * @param {import('../types.js').ListRequestOptions} [options]
    */
   async list(options = {}) {
-    // FIXME is this capability correct? shouldn't it be a `store/list`?
-    const conf = await this._invocationConfig([StoreCapabilities.add.can])
+    const conf = await this._invocationConfig([StoreCapabilities.list.can])
     options.connection = this._serviceConf.upload
     return Store.list(conf, options)
   }

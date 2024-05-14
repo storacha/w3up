@@ -158,6 +158,9 @@ import {
   PlanSetSuccess,
   PlanSetFailure,
   PlanSet,
+  PlanCreateAdminSession,
+  PlanCreateAdminSessionSuccess,
+  PlanCreateAdminSessionFailure,
   IndexAdd,
   IndexAddSuccess,
   IndexAddFailure,
@@ -196,9 +199,6 @@ export type {
   IPNIService,
   BlobRetriever,
   BlobNotFound,
-  ShardedDAGIndex,
-  ShardDigest,
-  SliceDigest,
 } from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
@@ -316,6 +316,11 @@ export interface Service extends StorefrontService, W3sService {
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
     set: ServiceMethod<PlanSet, PlanSetSuccess, PlanSetFailure>
+    'create-admin-session': ServiceMethod<
+      PlanCreateAdminSession,
+      PlanCreateAdminSessionSuccess,
+      PlanCreateAdminSessionFailure
+    >
   }
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
@@ -670,7 +675,12 @@ export interface StoreAddInput {
   link: CARLink
   size: number
   origin?: UnknownLink
-  issuer: DID
+
+  /**
+   * @deprecated - Issuer of the invocation is irrelevant as long as
+   * they have authorization to invoke on subject `space`.
+   */
+  issuer?: DID
   invocation: UCANLink
 }
 

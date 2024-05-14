@@ -834,6 +834,21 @@ export type PlanSetFailure =
   | PlanUpdateError
   | UnexpectedError
 
+export type PlanCreateAdminSession = InferInvokedCapability<
+  typeof PlanCaps.createAdminSession
+>
+
+export interface PlanCreateAdminSessionSuccess {
+  url: string
+}
+export interface AdminSessionNotSupported extends Ucanto.Failure {
+  name: 'AdminSessionNotSupported'
+}
+export type PlanCreateAdminSessionFailure =
+  | AdminSessionNotSupported
+  | CustomerNotFound
+  | UnexpectedError
+
 // Top
 export type Top = InferInvokedCapability<typeof top>
 
@@ -879,6 +894,8 @@ export type ServiceAbilityArray = [
   AdminUploadInspect['can'],
   AdminStoreInspect['can'],
   PlanGet['can'],
+  PlanSet['can'],
+  PlanCreateAdminSession['can'],
   Usage['can'],
   UsageReport['can'],
   Blob['can'],

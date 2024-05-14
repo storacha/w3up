@@ -43,10 +43,15 @@ export function blobAcceptProvider(context) {
         }
       }
 
-      // TODO: we need to support multihash in claims, or specify hardcoded codec
-      const digest = new Digest(sha256.code, 32, blob.digest, blob.digest)
+      const digest = Digest.decode(blob.digest)
       const content = createLink(rawCode, digest)
-      const w3link = `https://w3s.link/ipfs/${content.toString()}?origin=r2://${R2_REGION}/${R2_BUCKET}`
+      const url =
+        /** @type {API.URI<'https:'>} */
+        (
+          `https://w3s.link/ipfs/${content}?format=raw&origin=${encodeURIComponent(
+            `r2://${R2_REGION}/${R2_BUCKET}`
+          )}`
+        )
 
       const locationClaim = await Assert.location.delegate({
         issuer: context.id,
@@ -54,10 +59,7 @@ export function blobAcceptProvider(context) {
         with: context.id.toDIDKey(),
         nb: {
           content,
-          location: [
-            // @ts-expect-error Type 'string' is not assignable to type '`${string}:${string}`'
-            w3link,
-          ],
+          location: [url],
         },
         expiration: Infinity,
       })

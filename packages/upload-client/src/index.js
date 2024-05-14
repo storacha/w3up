@@ -8,6 +8,7 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
+import { codec as carCodec } from '@ucanto/transport/car'
 
 export { Blob, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -132,12 +133,16 @@ async function uploadBlockStream(
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
           // Invoke blob/add and write bytes to write target
-          const cid = await Blob.add(conf, bytes, options)
+          const multihash = await Blob.add(conf, bytes, options)
+          // Should this be raw instead?
+          const cid = Link.create(carCodec.code, multihash)
           let piece
           if (pieceHasher) {
             const multihashDigest = await pieceHasher.digest(bytes)
             /** @type {import('@web3-storage/capabilities/types').PieceLink} */
             piece = Link.create(raw.code, multihashDigest)
+            const content = Link.create(raw.code, multihash)
+
             // Invoke filecoin/offer for data
             const result = await Storefront.filecoinOffer(
               {
@@ -147,7 +152,7 @@ async function uploadBlockStream(
                 with: conf.issuer.did(),
                 proofs: conf.proofs,
               },
-              cid,
+              content,
               piece,
               options
             )

@@ -61,6 +61,9 @@ import type {
   PlanSet,
   PlanSetSuccess,
   PlanSetFailure,
+  PlanCreateAdminSession,
+  PlanCreateAdminSessionSuccess,
+  PlanCreateAdminSessionFailure,
 } from '@web3-storage/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
@@ -144,6 +147,11 @@ export interface Service {
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
     set: ServiceMethod<PlanSet, PlanSetSuccess, PlanSetFailure>
+    'create-admin-session': ServiceMethod<
+      PlanCreateAdminSession,
+      PlanCreateAdminSessionSuccess,
+      PlanCreateAdminSessionFailure
+    >
   }
 }
 

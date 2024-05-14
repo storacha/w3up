@@ -1,6 +1,7 @@
 import * as Types from './types.js'
 import * as Get from './plan/get.js'
 import * as Set from './plan/set.js'
+import * as CreateAdminSession from './plan/create-admin-session.js'
 
 import { Failure } from '@ucanto/server'
 
@@ -49,7 +50,10 @@ export class CustomerExists extends Failure {
 /**
  * @param {Types.PlanServiceContext} context
  */
-export const createService = (context) => ({
-  get: Get.provide(context),
-  set: Set.provide(context),
-})
+export const createService = (context) => {
+  return {
+    get: Get.provide(context),
+    set: Set.provide(context),
+    'create-admin-session': CreateAdminSession.provide(context),
+  }
+}

@@ -19,6 +19,7 @@ import { SpaceClient } from './capability/space.js'
 import { SubscriptionClient } from './capability/subscription.js'
 import { UsageClient } from './capability/usage.js'
 import { AccessClient } from './capability/access.js'
+import { PlanClient } from './capability/plan.js'
 import { FilecoinClient } from './capability/filecoin.js'
 import { CouponAPI } from './coupon.js'
 export * as Access from './capability/access.js'
@@ -27,6 +28,7 @@ import * as Result from './result.js'
 export {
   AccessClient,
   FilecoinClient,
+  PlanClient,
   StoreClient,
   SpaceClient,
   SubscriptionClient,
@@ -46,6 +48,7 @@ export class Client extends Base {
     this.capability = {
       access: new AccessClient(agentData, options),
       filecoin: new FilecoinClient(agentData, options),
+      plan: new PlanClient(agentData, options),
       space: new SpaceClient(agentData, options),
       blob: new BlobClient(agentData, options),
       store: new StoreClient(agentData, options),
@@ -342,8 +345,8 @@ export class Client extends Base {
         upload.shards.map(async (shard) => {
           try {
             await this.capability.store.remove(shard)
-          } catch (/** @type {any} */ error) {
             /* c8 ignore start */
+          } catch (/** @type {any} */ error) {
             // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
             if (error?.cause?.name !== 'StoreItemNotFound') {
               throw new Error(`failed to remove shard: ${shard}`, {

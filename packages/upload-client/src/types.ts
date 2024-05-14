@@ -17,6 +17,7 @@ import {
   UCANConclude,
   UCANConcludeSuccess,
   UCANConcludeFailure,
+  BlobModel,
   BlobAdd,
   BlobAddSuccess,
   BlobAddFailure,
@@ -75,6 +76,7 @@ type FetchOptions = Override<
 
 export type {
   FetchOptions,
+  BlobModel,
   BlobAddSuccess,
   BlobAddFailure,
   BlobAllocateSuccess,
