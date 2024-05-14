@@ -27,6 +27,7 @@ jobs:
     needs: release
     if: |
       contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/blob-index') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/capabilities') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/did-mailto') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client') ||
@@ -58,6 +59,7 @@ jobs:
     needs: release
     if: |
       contains(fromJson(needs.release.outputs.paths_released), 'packages/access-client') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/blob-index') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/capabilities') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/did-mailto') ||
       contains(fromJson(needs.release.outputs.paths_released), 'packages/upload-client') ||
