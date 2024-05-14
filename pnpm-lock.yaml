@@ -540,6 +540,9 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
+      '@web3-storage/blob-index':
+        specifier: workspace:^
+        version: link:../blob-index
       '@web3-storage/capabilities':
         specifier: workspace:^
         version: link:../capabilities

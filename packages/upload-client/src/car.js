@@ -7,7 +7,7 @@ import varint from 'varint'
  */
 
 /** Byte length of a CBOR encoded CAR header with zero roots. */
-const NO_ROOTS_HEADER_LENGTH = 17
+const NO_ROOTS_HEADER_LENGTH = 18
 
 /** @param {import('./types.js').AnyLink} [root] */
 export function headerEncodingLength(root) {
@@ -18,10 +18,15 @@ export function headerEncodingLength(root) {
 }
 
 /** @param {Block} block */
-export function blockEncodingLength(block) {
+export function blockHeaderEncodingLength(block) {
   const payloadLength = block.cid.bytes.length + block.bytes.length
   const varintLength = varint.encodingLength(payloadLength)
-  return varintLength + payloadLength
+  return varintLength + block.cid.bytes.length
+}
+
+/** @param {Block} block */
+export function blockEncodingLength(block) {
+  return blockHeaderEncodingLength(block) + block.bytes.length
 }
 
 /**
