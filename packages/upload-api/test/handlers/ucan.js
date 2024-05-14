@@ -1,11 +1,9 @@
 import * as API from '../../src/types.js'
 import { UCAN, Console } from '@web3-storage/capabilities'
-import pDefer from 'p-defer'
 import { Receipt } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, mallory, registerSpace } from '../util.js'
@@ -417,9 +415,8 @@ export const test = {
     assert.deepEqual(storedReceipt.ok?.link(), receipt.link())
     assert.deepEqual(storedReceipt.ok?.ran, invocation)
   },
-  'skip ucan/conclude schedules web3.storage/blob/accept if invoked with the blob put receipt':
+  'ucan/conclude schedules web3.storage/blob/accept if invoked with the http/put receipt':
     async (assert, context) => {
-      const taskScheduled = pDefer()
       const { proof, spaceDid } = await registerSpace(alice, context)
 
       // prepare data
@@ -475,33 +472,10 @@ export const test = {
       const keys = next.put.task.facts[0]['keys']
       // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
       const blobProvider = ed25519.from(keys)
-      const httpPut = HTTPCapabilities.put.invoke({
-        issuer: blobProvider,
-        audience: blobProvider,
-        with: blobProvider.toDIDKey(),
-        nb: {
-          body: {
-            digest,
-            size,
-          },
-          url: {
-            'ucan/await': ['.out.ok.address.url', next.allocate.task.link()],
-          },
-          headers: {
-            'ucan/await': [
-              '.out.ok.address.headers',
-              next.allocate.task.link(),
-            ],
-          },
-        },
-        facts: next.put.task.facts,
-        expiration: Infinity,
-      })
 
-      const httpPutDelegation = await httpPut.delegate()
       const httpPutReceipt = await Receipt.issue({
         issuer: blobProvider,
-        ran: httpPutDelegation.cid,
+        ran: next.put.task.link(),
         result: {
           ok: {},
         },
@@ -516,10 +490,12 @@ export const test = {
         throw new Error('invocation failed', { cause: blobAdd })
       }
 
-      // verify accept was scheduled
-      /** @type {import('@ucanto/interface').Receipt<import('@web3-storage/capabilities/types').BlobAcceptSuccess>} */
-      const blobAcceptReceipt = await taskScheduled.promise
-      assert.ok(blobAcceptReceipt.out.ok)
-      assert.ok(blobAcceptReceipt.out.ok?.site)
+      const accepted = await context.agentStore.receipts.get(
+        next.accept.task.link()
+      )
+      assert.ok(accepted.ok)
+      assert.ok(
+        /** @type {API.BlobAcceptSuccess} */ (accepted.ok?.out.ok)?.site
+      )
     },
 }

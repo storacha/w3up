@@ -162,10 +162,7 @@ export const test = {
     const accountProofs = [delegationFromAccountToSession, attestation]
     assert.ok(accountProofs)
   },
-  'skip same agent, multiple accounts, provider/add': async (
-    assert,
-    context
-  ) => {
+  'same agent, multiple accounts, provider/add': async (assert, context) => {
     const { connection, mail } = context
 
     const accounts = /** @type {const} */ ([
