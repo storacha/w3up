@@ -1,9 +1,8 @@
 import * as API from '../../src/types.js'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
-import { Delegation, Receipt } from '@ucanto/core'
+import { Receipt } from '@ucanto/core'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 
 import { createServer, connect } from '../../src/lib.js'
 import { alice, registerSpace } from '../util.js'

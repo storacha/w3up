@@ -10,7 +10,6 @@ import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, mallory, registerSpace } from '../util.js'
 import { createConcludeInvocation } from '../../src/ucan/conclude.js'
-import { ReferencedInvocationNotFoundName } from '../../src/ucan/lib.js'
 import { parseBlobAddReceiptNext } from '../helpers/blob.js'
 
 /**

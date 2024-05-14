@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import { Message, Receipt } from '@ucanto/core'
+import { Receipt } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import * as Blob from '@web3-storage/capabilities/blob'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
@@ -7,10 +7,7 @@ import * as HTTP from '@web3-storage/capabilities/http'
 import * as API from '../types.js'
 
 import { createConcludeInvocation } from '../ucan/conclude.js'
-import { BlobSizeOutsideOfSupportedRange, AwaitError } from './lib.js'
-import { all } from '@web3-storage/capabilities/store'
-import { issue } from '@ipld/dag-ucan'
-import { poll } from './accept.js'
+import { AwaitError } from './lib.js'
 
 /**
  * Derives did:key principal from (blob) multihash that can be used to
