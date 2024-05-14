@@ -192,7 +192,6 @@
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "dependencies": {
-    "@ipld/dag-cbor": "^9.0.6",
     "@ucanto/client": "^9.0.1",
     "@ucanto/interface": "^10.0.1",
     "@ucanto/principal": "^9.0.1",
@@ -200,11 +199,11 @@
     "@ucanto/transport": "^9.1.1",
     "@ucanto/validator": "^9.0.2",
     "@web3-storage/access": "workspace:^",
+    "@web3-storage/blob-index": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/content-claims": "^4.0.4",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-api": "workspace:^",
-    "carstream": "^2.1.0",
     "multiformats": "^12.1.2",
     "p-retry": "^5.1.2",
     "uint8arrays": "^5.0.3"
@@ -215,6 +214,7 @@
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^10.0.1",
     "@web-std/blob": "^3.0.5",
+    "@web3-storage/blob-index": "workspace:^",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "@web3-storage/sigv4": "^1.0.2",
     "is-subset": "^0.1.1",

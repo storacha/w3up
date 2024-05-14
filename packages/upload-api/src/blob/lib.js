@@ -86,7 +86,7 @@ export class BlobNotFound extends Failure {
   get name() {
     return BlobNotFound.name
   }
-  get digest () {
+  get digest() {
     return this.#digest.bytes
   }
 }

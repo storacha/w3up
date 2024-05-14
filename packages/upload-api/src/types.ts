@@ -201,9 +201,6 @@ export type {
   IPNIService,
   BlobRetriever,
   BlobNotFound,
-  ShardedDAGIndex,
-  ShardDigest,
-  SliceDigest,
 } from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
@@ -508,7 +505,7 @@ export interface UcantoServerTestContext
   grantAccess: (mail: { url: string | URL }) => Promise<void>
 
   ipniService: IPNIService & {
-    query (digest: MultihashDigest): Promise<Result<Unit, RecordNotFound>>
+    query(digest: MultihashDigest): Promise<Result<Unit, RecordNotFound>>
   }
 }
 
