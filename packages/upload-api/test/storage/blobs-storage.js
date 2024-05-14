@@ -9,7 +9,7 @@ import { ok, error } from '@ucanto/core'
 import { BlobNotFound } from '../../src/blob/lib.js'
 
 /** @param {import('multiformats').MultihashDigest} digest */
-const contentKey = digest => {
+const contentKey = (digest) => {
   const encodedMultihash = base58btc.encode(digest.bytes)
   return `${encodedMultihash}/${encodedMultihash}.blob`
 }
@@ -131,19 +131,21 @@ export class BlobsStorage {
   }
 
   /**
-   * @param {import('multiformats').MultihashDigest} digest 
+   * @param {import('multiformats').MultihashDigest} digest
    */
   async stream(digest) {
     const key = this.#bucketPath(digest)
     const bytes = this.content.get(key)
     if (!bytes) return error(new BlobNotFound(digest))
 
-    return ok(new ReadableStream({
-      pull (controller) {
-        controller.enqueue(bytes)
-        controller.close()
-      }
-    }))
+    return ok(
+      new ReadableStream({
+        pull(controller) {
+          controller.enqueue(bytes)
+          controller.close()
+        },
+      })
+    )
   }
 
   /**

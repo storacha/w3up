@@ -32,9 +32,11 @@ export function blobAcceptProvider(context) {
 
       const digest = Digest.decode(blob.digest)
       const content = createLink(rawCode, digest)
-      const url = 
+      const url =
         /** @type {API.URI<'https:'>} */
-        (`https://w3s.link/ipfs/${content}?format=raw&origin=r2://${R2_REGION}/${R2_BUCKET}`)
+        (
+          `https://w3s.link/ipfs/${content}?format=raw&origin=r2://${R2_REGION}/${R2_BUCKET}`
+        )
 
       const locationClaim = await Assert.location.delegate({
         issuer: context.id,

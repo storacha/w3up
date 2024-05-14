@@ -1,19 +1,16 @@
 import * as API from './api.js'
-import { CAR, ok } from '@ucanto/core'
-import * as UI from '@ucanto/interface'
-import { CARReaderStream } from 'carstream'
+import { CAR, ok, error, Schema, Failure } from '@ucanto/core'
 import { compare } from 'uint8arrays'
 import * as dagCBOR from '@ipld/dag-cbor'
 import * as Digest from 'multiformats/hashes/digest'
-import { DigestMap } from './digest-map.js'
 import * as Link from 'multiformats/link'
-import { error, Schema, Failure } from '@ucanto/server'
 import { sha256 } from 'multiformats/hashes/sha2'
+import { DigestMap } from './digest-map.js'
 
-const indexVersion = 'index/sharded/dag@0.1'
+export const version = 'index/sharded/dag@0.1'
 
 export const ShardedDAGIndexSchema = Schema.variant({
-  'index/sharded/dag@0.1': Schema.struct({
+  [version]: Schema.struct({
     /** DAG root. */
     content: Schema.link(),
     /** Shards the DAG can be found in. */
@@ -34,57 +31,47 @@ export const BlobIndexSchema = Schema.tuple([
   ),
 ])
 
-/** @param {ReadableStream<Uint8Array>} archive */
-export const extract = async (archive) => {
-  const blocks = new DigestMap()
-  const reader = new CARReaderStream()
-  await archive.pipeThrough(reader).pipeTo(
-    new WritableStream({
-      write: (block) => {
-        blocks.set(block.cid.multihash, block.bytes)
-      },
-    })
-  )
+/**
+ * @param {Uint8Array} archive
+ * @returns {API.Result<API.ShardedDAGIndexView, API.DecodeFailure|API.UnknownFormat>}
+ */
+export const extract = (archive) => {
+  const { roots, blocks } = CAR.decode(archive)
 
-  const header = await reader.getHeader()
-  if (header.roots[0]?.code !== dagCBOR.code) {
+  if (!roots.length) {
+    return error(new UnknownFormat('missing root block'))
+  }
+
+  const { code } = roots[0].cid
+  if (code !== dagCBOR.code) {
     return error(
-      /** @type {import('@web3-storage/capabilities/types').UnknownFormat} */
-      ({ name: 'UnknownFormat' })
+      new UnknownFormat(`unexpected root CID codec: 0x${code.toString(16)}`)
     )
   }
 
-  return view({ root: header.roots[0], blocks })
+  return view({ root: roots[0], blocks })
 }
 
 /**
  * @param {object} source
- * @param {API.UnknownLink} source.root
- * @param {Map<API.MultihashDigest, Uint8Array>} source.blocks
- * @returns {API.Result<API.ShardedDAGIndex, API.DecodeFailure|API.UnknownFormat>}
+ * @param {API.IPLDBlock} source.root
+ * @param {Map<string, API.IPLDBlock>} source.blocks
+ * @returns {API.Result<API.ShardedDAGIndexView, API.DecodeFailure|API.UnknownFormat>}
  */
 export const view = ({ root, blocks }) => {
-  const rootBytes = blocks.get(root.multihash)
-  if (!rootBytes) {
-    return error(new DecodeFailure(`missing root block: ${root}`))
-  }
-
   const [version, dagIndexData] = ShardedDAGIndexSchema.match(
-    dagCBOR.decode(rootBytes)
+    dagCBOR.decode(root.bytes)
   )
   switch (version) {
-    case 'index/sharded/dag@0.1': {
-      const dagIndex = {
-        content: dagIndexData.content,
-        shards: new DigestMap(),
-      }
-      for (const shard of dagIndexData.shards) {
-        const shardBytes = blocks.get(shard.multihash)
-        if (!shardBytes) {
-          return error(new DecodeFailure(`missing shard block: ${shard}`))
+    case version: {
+      const dagIndex = create(dagIndexData.content)
+      for (const shardLink of dagIndexData.shards) {
+        const shard = blocks.get(shardLink.toString())
+        if (!shard) {
+          return error(new DecodeFailure(`missing shard block: ${shardLink}`))
         }
 
-        const blobIndexData = BlobIndexSchema.from(dagCBOR.decode(shardBytes))
+        const blobIndexData = BlobIndexSchema.from(dagCBOR.decode(shard.bytes))
         const blobIndex = new DigestMap()
         for (const [digest, [offset, length]] of blobIndexData[1]) {
           blobIndex.set(Digest.decode(digest), [offset, length])
@@ -94,14 +81,65 @@ export const view = ({ root, blocks }) => {
       return ok(dagIndex)
     }
     default:
-      return error(
-        /** @type {import('@web3-storage/capabilities/types').UnknownFormat} */
-        ({ name: 'UnknownFormat' })
-      )
+      return error(new UnknownFormat(`unknown index version: ${version}`))
   }
 }
 
-class DecodeFailure extends Failure {
+/** @implements {API.ShardedDAGIndexView} */
+class ShardedDAGIndex {
+  #content
+  #shards
+
+  /** @param {API.UnknownLink} content */
+  constructor(content) {
+    this.#content = content
+    /** @type {DigestMap<API.ShardDigest, API.Position>} */
+    this.#shards = new DigestMap()
+  }
+
+  get content() {
+    return this.#content
+  }
+
+  get shards() {
+    return this.#shards
+  }
+
+  /**
+   * @param {API.ShardDigest} shard
+   * @param {API.SliceDigest} slice
+   * @param {API.Position} pos
+   */
+  setSlice(shard, slice, pos) {
+    let index = this.#shards.get(shard)
+    if (!index) {
+      index = new DigestMap()
+      this.#shards.set(shard, index)
+    }
+    index.set(slice, pos)
+  }
+
+  archive() {
+    return archive(this)
+  }
+}
+
+export class UnknownFormat extends Failure {
+  #reason
+
+  /** @param {string} [reason] */
+  constructor(reason) {
+    super()
+    this.name = /** @type {const} */ ('UnknownFormat')
+    this.#reason = reason
+  }
+
+  describe() {
+    return this.#reason ?? 'unknown format'
+  }
+}
+
+export class DecodeFailure extends Failure {
   #reason
 
   /** @param {string} [reason] */
@@ -117,135 +155,36 @@ class DecodeFailure extends Failure {
 }
 
 /**
- *
  * @param {API.UnknownLink} content
- * @returns {API.ShardedDAGIndex}
+ * @returns {API.ShardedDAGIndexView}
  */
-export function createShardedDAGIndex(content) {
-  return new ShardedDAGIndex(content)
-}
+export const create = (content) => new ShardedDAGIndex(content)
 
-/** @implements {API.ShardedDAGIndex} */
-class ShardedDAGIndex {
-  /** @param {API.UnknownLink} content */
-  constructor(content) {
-    this.content = content
-    this.shards = /** @type {API.ShardedDAGIndex['shards']} */ (new DigestMap())
+/**
+ * @param {API.ShardedDAGIndex} model
+ * @returns {Promise<API.Result<Uint8Array>>}
+ */
+export const archive = async (model) => {
+  const blocks = new Map()
+  const shards = [...model.shards.entries()].sort((a, b) =>
+    compare(a[0].digest, b[0].digest)
+  )
+  const index = {
+    content: model.content,
+    shards: /** @type {API.Link[]} */ ([]),
   }
-
-  /** @returns {Promise<API.Result<Uint8Array>>} */
-  async toArchive() {
-    const blocks = new Map()
-    const shards = [...this.shards.entries()].sort((a, b) =>
-      compare(a[0].digest, b[0].digest)
-    )
-    const index = {
-      content: this.content,
-      shards: /** @type {UI.Link[]} */ ([]),
-    }
-    for (const s of shards) {
-      const slices = [...s[1].entries()]
-        .sort((a, b) => compare(a[0].digest, b[0].digest))
-        .map((e) => [e[0].bytes, e[1]])
-      const bytes = dagCBOR.encode([s[0].bytes, slices])
-      const digest = await sha256.digest(bytes)
-      const cid = Link.create(dagCBOR.code, digest)
-      blocks.set(cid.toString(), { cid, bytes })
-      index.shards.push(cid)
-    }
-    const bytes = dagCBOR.encode({ 'index/sharded/dag@0.1': index })
+  for (const s of shards) {
+    const slices = [...s[1].entries()]
+      .sort((a, b) => compare(a[0].digest, b[0].digest))
+      .map((e) => [e[0].bytes, e[1]])
+    const bytes = dagCBOR.encode([s[0].bytes, slices])
     const digest = await sha256.digest(bytes)
     const cid = Link.create(dagCBOR.code, digest)
-    return ok(CAR.encode({ roots: [{ cid, bytes }], blocks }))
+    blocks.set(cid.toString(), { cid, bytes })
+    index.shards.push(cid)
   }
-}
-
-/**
- * @param {Uint8Array} carData
- * @returns {Promise<ShardedDAGIndex>}
- */
-export const fromArchive = async (carData) => {
-  const carContent = CAR.decode(carData)
-  //console.log('Decoded CAR data:', carContent)
-  const root0 = carContent.roots[0]
-  const rootCID = root0.cid
-  const rootBytes = root0.bytes
-  const newCID = Link.create(dagCBOR.code, await sha256.digest(rootBytes))
-  if (!newCID.equals(rootCID)) {
-    throw new Error('bad index cid')
-  }
-  const dec = dagCBOR.decode(rootBytes)
-  const indexData = dec[indexVersion]
-  if (indexData === undefined) {
-    throw new Error('no data for version ' + indexVersion)
-  }
-  const content = indexData.content
-  //const shardLinks = indexData.shards
-  const dagIndex = new ShardedDAGIndex(content)
-
-  const blocks = carContent.blocks
-  const rootCIDStr = rootCID.toString()
-
-  // Get block that holds root shard and remove it.
-  const shardBlock = blocks.get(rootCIDStr)
-  if (shardBlock === undefined) {
-    throw new Error('missing shard slice')
-  }
-  blocks.delete(rootCIDStr)
-
-  // Read remaining blocks into slices for each shard.
-  for (const [shardCIDStr, block] of blocks.entries()) {
-    if (shardCIDStr !== block.cid.toString()) {
-      throw new Error('bad block cid')
-    }
-    // Decode block into [[shard-mh-bytes], [ [[slice-mh-bytes], [offset,length]] ]]
-    const slicesData = dagCBOR.decode(block.bytes)
-    //console.log('Decoded shard data:', slicesData)
-    const shardMh = Digest.decode(slicesData[0])
-    const slices = new DigestMap()
-    dagIndex.shards.set(shardMh, slices)
-    for (const s of slicesData[1]) {
-      const mh = Digest.decode(s[0])
-      // Store slice in current shard.
-      slices.set(mh, s[1])
-      //const [offset, length] = s[1]
-      //console.log('multihash:', mh, 'offset:', offset, 'lenght:', length)
-    }
-  }
-  return dagIndex
-}
-
-/**
- * Create a sharded DAG index by indexing blocks in the passed CAR shards.
- *
- * @param {API.UnknownLink} content
- * @param {Uint8Array[]} shards
- * @returns {Promise<ShardedDAGIndex>}
- */
-export const fromShardArchives = async (content, shards) => {
-  const index = new ShardedDAGIndex(content)
-  for (const s of shards) {
-    const slices = new DigestMap()
-    const digest = await sha256.digest(s)
-    index.shards.set(digest, slices)
-
-    await new ReadableStream({
-      pull: (c) => {
-        c.enqueue(s)
-        c.close()
-      },
-    })
-      .pipeThrough(new CARReaderStream())
-      .pipeTo(
-        new WritableStream({
-          write(block) {
-            slices.set(block.cid.multihash, [
-              block.blockOffset,
-              block.blockLength,
-            ])
-          },
-        })
-      )
-  }
-  return index
+  const bytes = dagCBOR.encode({ [version]: index })
+  const digest = await sha256.digest(bytes)
+  const cid = Link.create(dagCBOR.code, digest)
+  return ok(CAR.encode({ roots: [{ cid, bytes }], blocks }))
 }

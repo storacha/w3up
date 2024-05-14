@@ -1,9 +1,10 @@
+import * as API from './api.js'
 import { base58btc } from 'multiformats/bases/base58'
 
 /** @type {WeakMap<Uint8Array, string>} */
 const cache = new WeakMap()
 
-/** @param {import('multiformats').MultihashDigest} digest */
+/** @param {API.MultihashDigest} digest */
 const toBase58String = (digest) => {
   let str = cache.get(digest.bytes)
   if (!str) {
@@ -14,7 +15,7 @@ const toBase58String = (digest) => {
 }
 
 /**
- * @template {import('multiformats').MultihashDigest} Key
+ * @template {API.MultihashDigest} Key
  * @template Value
  * @implements {Map<Key, Value>}
  */
