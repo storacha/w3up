@@ -1,6 +1,6 @@
 import * as API from '../types.js'
 import { provide } from '@ucanto/server'
-import { Receipt, Message } from '@ucanto/core'
+import { Receipt } from '@ucanto/core'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import * as BlobAccept from '../blob/accept.js'
 
@@ -10,11 +10,21 @@ import * as BlobAccept from '../blob/accept.js'
  */
 export const ucanConcludeProvider = (context) =>
   provide(conclude, async ({ invocation }) => {
-    const receipt = getConcludeReceipt(invocation)
-    // If polling errors we propagate errors that is because referenced
-    // blob/allocate can not be found and we want to make sure that such
-    // corresponding http/put receipt does land without any notice.
-    const result = await BlobAccept.poll(context, receipt)
+    // 🚧 THIS IS A TEMPORARY HACK 🚧
+    // When we receive a receipt for the invocation we want to resume the tasks
+    // that were awaiting in the background. In the future task scheduler is
+    // expected to handle coordination of tasks and their dependencies. In the
+    // meantime we poll `blob/allocate` tasks that were awaiting for the
+    // `http/put` receipt.
+    const result = await BlobAccept.poll(
+      context,
+      getConcludeReceipt(invocation)
+    )
+
+    // If polling failed we propagate the error to the caller, while this is
+    // not ideal it's a better option than silently failing. We do not expect
+    // this to happen, however, if it does this will propagate to the user and
+    // they will be able to complain about it.
     if (result.error) {
       return result
     } else {
