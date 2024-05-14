@@ -11,6 +11,7 @@
   },
   "references": [
     { "path": "../access-client" },
+    { "path": "../blob-index" },
     { "path": "../capabilities" },
     { "path": "../upload-client" },
     { "path": "../filecoin-client" },

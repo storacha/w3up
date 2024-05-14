@@ -8,6 +8,7 @@
   "exclude": ["**/node_modules/**"],
   "references": [
     { "path": "../access-client" },
+    { "path": "../blob-index" },
     { "path": "../filecoin-client" },
     { "path": "../capabilities" }
   ],
