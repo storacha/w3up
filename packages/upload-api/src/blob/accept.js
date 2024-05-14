@@ -8,7 +8,10 @@ import { Digest } from 'multiformats/hashes/digest'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { code as rawCode } from 'multiformats/codecs/raw'
 import * as API from '../types.js'
-import { AllocatedMemoryHadNotBeenWrittenTo } from './lib.js'
+import {
+  AllocatedMemoryHadNotBeenWrittenTo,
+  UnsupportedCapability,
+} from './lib.js'
 import * as HTTP from '@web3-storage/capabilities/http'
 
 const R2_REGION = 'auto'
@@ -22,6 +25,13 @@ export function blobAcceptProvider(context) {
   return Server.provideAdvanced({
     capability: W3sBlob.accept,
     handler: async ({ capability }) => {
+      // Only service principal can perform an allocation
+      if (capability.with !== context.id.did()) {
+        return {
+          error: new UnsupportedCapability({ capability }),
+        }
+      }
+
       const { blob, space } = capability.nb
       // If blob is not stored, we must fail
       const hasBlob = await context.blobsStorage.has(blob.digest)

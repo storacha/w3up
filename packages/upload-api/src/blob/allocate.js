@@ -1,6 +1,10 @@
 import * as Server from '@ucanto/server'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import * as API from '../types.js'
+import {
+  BlobSizeOutsideOfSupportedRange,
+  UnsupportedCapability,
+} from './lib.js'
 
 /**
  * @param {API.BlobServiceContext} context
@@ -42,6 +46,24 @@ export const allocate = async (context, { capability }) => {
     }
   }
 
+  // Verify blob is within the max upload size.
+  if (capability.nb.blob.size > context.maxUploadSize) {
+    // While blob may exceed current maxUploadSize limit it could be that limit
+    // was higher in the past and user had this blob uploaded already in which
+    // case we should not error.
+    const exists = await context.allocationsStorage.exists(space, blob.digest)
+    if (exists.ok) {
+      return { ok: { size: 0 } }
+    } else {
+      return {
+        error: new BlobSizeOutsideOfSupportedRange(
+          capability.nb.blob.size,
+          context.maxUploadSize
+        ),
+      }
+    }
+  }
+
   // Allocate memory space for the blob. If memory for this blob is
   // already allocated, this allocates 0 bytes.
   const allocationInsert = await context.allocationsStorage.insert({
@@ -63,7 +85,7 @@ export const allocate = async (context, { capability }) => {
     }
   }
 
-  // Check if blob already exists
+  // Check if we already have blob stored
   // TODO: this may depend on the region we want to allocate and will need
   // changes in the future.
   const hasBlobStore = await context.blobsStorage.has(blob.digest)
@@ -103,20 +125,5 @@ export const allocate = async (context, { capability }) => {
       size,
       address,
     },
-  }
-}
-
-class UnsupportedCapability extends Server.Failure {
-  /**
-   * @param {object} source
-   * @param {API.Capability} source.capability
-   */
-  constructor({ capability: { with: subject, can } }) {
-    super()
-
-    this.capability = { with: subject, can }
-  }
-  describe() {
-    return `${this.capability.with} does not have a "${this.capability.can}" capability provider`
   }
 }

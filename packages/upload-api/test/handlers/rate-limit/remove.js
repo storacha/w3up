@@ -83,6 +83,7 @@ export const test = {
         nb: {
           subject: space.did(),
         },
+        nonce: '2',
         proofs: [
           await delegate({
             issuer: service,

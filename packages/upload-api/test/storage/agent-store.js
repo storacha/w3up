@@ -1,6 +1,7 @@
 import * as API from '../../src/types.js'
 import { TasksStorage } from './tasks-storage.js'
 import { ReceiptsStorage } from './receipts-storage.js'
+import { Invocation } from '@ucanto/core'
 
 export const memory = () => new AgentStore()
 
@@ -28,6 +29,16 @@ class AgentStore {
 
     for (const receipt of message.receipts.values()) {
       promises.push(this.receipts.put(receipt))
+
+      // Also index all the invocations that were scheduled as effects
+      const fx = [
+        ...receipt.fx.fork,
+        ...(receipt.fx.join ? [receipt.fx.join] : []),
+      ]
+
+      for (const effect of fx.filter(Invocation.isInvocation)) {
+        promises.push(this.invocations.put(effect))
+      }
     }
 
     const results = await Promise.all(promises)

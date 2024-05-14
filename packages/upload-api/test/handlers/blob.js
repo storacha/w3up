@@ -1,7 +1,7 @@
 import * as API from '../../src/types.js'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
-import { Receipt } from '@ucanto/core'
+import { Delegation, Receipt } from '@ucanto/core'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 
@@ -49,17 +49,18 @@ export const test = {
         throw new Error('invocation failed', { cause: blobAdd })
       }
 
+      const next = parseBlobAddReceiptNext(blobAdd)
+
       // Validate receipt structure
       assert.ok(blobAdd.out.ok.site)
       assert.equal(blobAdd.out.ok.site['ucan/await'][0], '.out.ok.site')
-      assert.ok(
-        blobAdd.out.ok.site['ucan/await'][1].equals(blobAdd.fx.join?.link())
+      assert.deepEqual(
+        blobAdd.out.ok.site['ucan/await'][1],
+        next.accept.task.cid
       )
-      assert.ok(blobAdd.fx.join)
-      assert.equal(blobAdd.fx.fork.length, 3)
+      assert.equal(blobAdd.fx.fork.length, 4)
 
       // validate receipt next
-      const next = parseBlobAddReceiptNext(blobAdd)
       assert.ok(next.allocate.task)
       assert.ok(next.put.task)
       assert.ok(next.accept.task)
@@ -149,7 +150,7 @@ export const test = {
       firstNext.allocate.task.link().equals(secondNext.allocate.task.link())
     )
   },
-  'only blob/add schedules allocation and returns effects for allocate, accept and put together with their receipts (when stored)':
+  'blob/add schedules allocation and returns effects for allocate, accept and put together with their receipts (when stored)':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -188,16 +189,59 @@ export const test = {
 
       // parse first receipt next
       const firstNext = parseBlobAddReceiptNext(firstBlobAdd)
-      assert.ok(firstNext.allocate.task)
-      assert.ok(firstNext.put.task)
-      assert.ok(firstNext.accept.task)
-      assert.ok(firstNext.allocate.receipt)
-      assert.ok(!firstNext.put.receipt)
-      assert.ok(!firstNext.accept.receipt)
+
+      // got allocation task and receipt
+      assert.ok(firstNext.allocate.task, 'allocation task was dispatched')
+      assert.ok(
+        firstNext.allocate.receipt.out.ok?.size ?? 0 > 0,
+        'allocated memory is greater than 0 bytes'
+      )
+      assert.ok(
+        firstNext.allocate.receipt.out.ok?.address,
+        'allocated memory has an address'
+      )
+
+      assert.ok(firstNext.put.task, 'put task was dispatched')
+      assert.ok(!firstNext.put.receipt, 'put receipt was not received')
+
+      assert.ok(firstNext.accept.task, 'accept task was dispatched')
+      assert.ok(!firstNext.accept.receipt, 'accept receipt was not received')
 
       /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
       // @ts-expect-error receipt type is unknown
       const address = firstNext.allocate.receipt.out.ok.address
+
+      // Invoke `blob/add` for the second time
+      const secondBlobAdd = await BlobCapabilities.add
+        .invoke({ ...task, nonce: 'second' })
+        .execute(connection)
+      if (!secondBlobAdd.out.ok) {
+        throw new Error('invocation failed', { cause: secondBlobAdd })
+      }
+
+      assert.ok(
+        firstBlobAdd.link().toString() !== secondBlobAdd.link().toString(),
+        'second invocation has different link'
+      )
+
+      // parse second receipt next
+      const secondNext = parseBlobAddReceiptNext(secondBlobAdd)
+      assert.ok(secondNext.allocate.task, 'allocate task received')
+      assert.equal(
+        secondNext.allocate.receipt.out.ok?.size,
+        0,
+        'no more bytes were allocated'
+      )
+      assert.ok(
+        secondNext.allocate.receipt.out.ok?.address,
+        'allocated memory was given an address'
+      )
+
+      assert.ok(secondNext.put.task, 'put task was dispatched')
+      assert.ok(!secondNext.put.receipt, 'put receipt was not received')
+
+      assert.ok(secondNext.accept.task, 'accept task was dispatched')
+      assert.ok(!secondNext.accept.receipt, 'accept receipt was not received')
 
       // Store the blob to the address
       const goodPut = await fetch(address.url, {
@@ -209,57 +253,14 @@ export const test = {
 
       assert.equal(goodPut.status, 200, await goodPut.text())
 
-      // Invoke `blob/add` for the second time (after storing the blob but not invoking conclude)
-      const secondBlobAdd = await BlobCapabilities.add
-        .invoke({ ...task, nonce: 'second' })
-        .execute(connection)
-      if (!secondBlobAdd.out.ok) {
-        throw new Error('invocation failed', { cause: secondBlobAdd })
-      }
-
-      assert.ok(
-        firstBlobAdd.link().toString() !== secondBlobAdd.link().toString()
-      )
-      // parse second receipt next
-      const secondNext = parseBlobAddReceiptNext(secondBlobAdd)
-      assert.ok(secondNext.allocate.task)
-      assert.ok(secondNext.put.task)
-      assert.ok(secondNext.accept.task)
-      assert.ok(secondNext.allocate.receipt)
-      assert.ok(!secondNext.put.receipt)
-      assert.ok(!secondNext.accept.receipt)
-
       // Invoke `conclude` with `http/put` receipt
       const keys = secondNext.put.task.facts[0]['keys']
       // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
       const blobProvider = ed25519.from(keys)
-      const httpPut = HTTPCapabilities.put.invoke({
-        issuer: blobProvider,
-        audience: blobProvider,
-        with: blobProvider.toDIDKey(),
-        nb: {
-          body: {
-            digest,
-            size,
-          },
-          url: {
-            'ucan/await': ['.out.ok.address.url', secondNext.allocate.task.cid],
-          },
-          headers: {
-            'ucan/await': [
-              '.out.ok.address.headers',
-              secondNext.allocate.task.cid,
-            ],
-          },
-        },
-        facts: secondNext.put.task.facts,
-        expiration: Infinity,
-      })
 
-      const httpPutDelegation = await httpPut.delegate()
       const httpPutReceipt = await Receipt.issue({
         issuer: blobProvider,
-        ran: httpPutDelegation.cid,
+        ran: secondNext.put.task.link(),
         result: {
           ok: {},
         },
@@ -291,17 +292,128 @@ export const test = {
 
       // parse third receipt next
       const thirdNext = parseBlobAddReceiptNext(thirdBlobAdd)
-      assert.ok(thirdNext.allocate.task)
-      assert.ok(thirdNext.put.task)
-      assert.ok(thirdNext.accept.task)
-      assert.ok(thirdNext.allocate.receipt)
-      assert.ok(thirdNext.put.receipt)
-      assert.ok(thirdNext.accept.receipt)
+      assert.ok(thirdNext.allocate.task, 'allocate task received')
+      assert.equal(
+        thirdNext.allocate.receipt.out.ok?.size,
+        0,
+        'no more bytes were allocated'
+      )
+      assert.ok(
+        !thirdNext.allocate.receipt.out.ok?.address,
+        'allocated memory has no address'
+      )
 
-      assert.ok(thirdNext.allocate.receipt.out.ok?.address)
-      assert.deepEqual(thirdNext.put.receipt?.out.ok, {})
-      assert.ok(thirdNext.accept.receipt?.out.ok?.site)
+      assert.ok(thirdNext.put.task, 'put task was dispatched')
+      assert.ok(thirdNext.put.receipt?.out.ok, 'put receipt was received')
+
+      assert.ok(thirdNext.accept.task, 'accept task was dispatched')
+      assert.ok(
+        thirdNext.accept.receipt?.out.ok,
+        'accept receipt was not received'
+      )
+
+      assert.ok(
+        thirdNext.accept.receipt?.out.ok?.site,
+        'accept receipt has a site'
+      )
+
+      assert.ok(thirdNext.accept.site, 'accept site commitment was embedded')
     },
+  'blob/accept fails if http/put receipt issued without upload': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+
+    // prepare data
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const multihash = await sha256.digest(data)
+    const digest = multihash.bytes
+    const size = data.byteLength
+
+    // create service connection
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    const task = {
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: {
+        blob: {
+          digest,
+          size,
+        },
+      },
+      proofs: [proof],
+    }
+
+    // create `blob/add` invocation
+    const invocation = BlobCapabilities.add.invoke(task)
+    // Invoke `blob/add` for the first time
+    const receipt = await invocation.execute(connection)
+    if (!receipt.out.ok) {
+      throw new Error('invocation failed', { cause: receipt })
+    }
+
+    const workflow = parseBlobAddReceiptNext(receipt)
+
+    // got allocation task and receipt
+    assert.ok(workflow.allocate.task, 'allocation task was dispatched')
+    assert.ok(
+      workflow.allocate.receipt.out.ok?.size ?? 0 > 0,
+      'allocated memory is greater than 0 bytes'
+    )
+    assert.ok(
+      workflow.allocate.receipt.out.ok?.address,
+      'allocated memory has an address'
+    )
+
+    assert.ok(workflow.put.task, 'put task was dispatched')
+    assert.ok(!workflow.put.receipt, 'put receipt was not received')
+
+    assert.ok(workflow.accept.task, 'accept task was dispatched')
+    assert.ok(!workflow.accept.receipt, 'accept receipt was not received')
+
+    /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
+    // @ts-expect-error receipt type is unknown
+    const address = workflow.allocate.receipt.out.ok.address
+
+    // Invoke `conclude` with `http/put` receipt
+    const keys = workflow.put.task.facts[0]['keys']
+    // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
+    const blobProvider = ed25519.from(keys)
+    const httpPutReceipt = await Receipt.issue({
+      issuer: blobProvider,
+      ran: workflow.put.task.link(),
+      result: {
+        ok: {},
+      },
+    })
+    const httpPutConcludeInvocation = createConcludeInvocation(
+      alice,
+      context.id,
+      httpPutReceipt
+    )
+    const ucanConclude = await httpPutConcludeInvocation.execute(connection)
+    if (!ucanConclude.out.ok) {
+      throw new Error('invocation failed', { cause: ucanConclude.out })
+    }
+
+    const accept = await context.agentStore.receipts.get(
+      workflow.accept.task.link()
+    )
+    if (accept.error) {
+      throw new Error('accept receipt not found', { cause: accept.error })
+    }
+
+    assert.ok(
+      String(accept.ok.out.error).match(/Blob not found/),
+      'accept was not successful'
+    )
+  },
   'blob/add fails when a blob with size bigger than maximum size is added':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
@@ -331,11 +443,26 @@ export const test = {
         proofs: [proof],
       })
       const blobAdd = await invocation.execute(connection)
-      if (!blobAdd.out.error) {
-        throw new Error('invocation should have failed')
+      if (blobAdd.out.error) {
+        throw new Error('invocation should not have failed')
       }
-      assert.ok(blobAdd.out.error, 'invocation should have failed')
-      assert.equal(blobAdd.out.error.name, BlobSizeOutsideOfSupportedRangeName)
+
+      const work = parseBlobAddReceiptNext(blobAdd)
+      assert.ok(work.allocate.task)
+      assert.ok(work.allocate.receipt.out.error, 'allocation has failed')
+      assert.equal(
+        work.allocate.receipt.out.error?.name,
+        BlobSizeOutsideOfSupportedRangeName,
+        'allocation failed with BlobSizeOutsideOfSupportedRange error'
+      )
+      assert.ok(work.put.task, 'put task was scheduled')
+      assert.ok(work.put.receipt, 'put receipt was received')
+      assert.ok(work.put.receipt?.out.error, 'put receipt has an error')
+      assert.ok(
+        String(work.put.receipt?.out.error?.message).match(
+          /Awaited bafy.* at .out.ok.address.url/
+        )
+      )
     },
   'blob/remove returns receipt with blob size for content allocated in space':
     async (assert, context) => {

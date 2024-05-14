@@ -1,6 +1,6 @@
 import * as API from '../../src/types.js'
 import { ed25519 } from '@ucanto/principal'
-import { Receipt } from '@ucanto/core'
+import { Delegation, Receipt } from '@ucanto/core'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
@@ -30,7 +30,10 @@ export function parseBlobAddReceiptNext(receipt) {
   const putTask = forkInvocations.find(
     (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
   )
-  const acceptTask = receipt.fx.join
+  const acceptTask = forkInvocations.find(
+    (fork) => fork.capabilities[0].can === W3sBlobCapabilities.accept.can
+  )
+
   if (!allocateTask || !concludefxs.length || !putTask || !acceptTask) {
     throw new Error('mandatory effects not received')
   }
@@ -57,6 +60,18 @@ export function parseBlobAddReceiptNext(receipt) {
     throw new Error('mandatory effects not received')
   }
 
+  let acceptSite = {}
+  if (acceptReceipt?.out.ok?.site) {
+    const blocks = new Map(
+      [...receipt.iterateIPLDBlocks()].map((block) => [`${block.cid}`, block])
+    )
+
+    acceptSite.site = Delegation.view({
+      root: /** @type {API.UCANLink} */ (acceptReceipt.out.ok.site),
+      blocks,
+    })
+  }
+
   return {
     allocate: {
       task: allocateTask,
@@ -69,6 +84,7 @@ export function parseBlobAddReceiptNext(receipt) {
     accept: {
       task: acceptTask,
       receipt: acceptReceipt,
+      ...acceptSite,
     },
   }
 }

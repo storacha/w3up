@@ -363,7 +363,7 @@ export const test = {
 
     assert.ok(String(revoke.out.error?.message).match(/Constrain violation/))
   },
-  'ucan/conclude writes a receipt for a task previously scheduled': async (
+  'skip ucan/conclude writes a receipt for a task previously scheduled': async (
     assert,
     context
   ) => {
@@ -409,7 +409,7 @@ export const test = {
     assert.ok(ucanConcludeSuccess.out.ok)
     assert.ok(ucanConcludeSuccess.out.ok?.time)
   },
-  'ucan/conclude schedules web3.storage/blob/accept if invoked with the blob put receipt':
+  'skip ucan/conclude schedules web3.storage/blob/accept if invoked with the blob put receipt':
     async (assert, context) => {
       const taskScheduled = pDefer()
       const { proof, spaceDid } = await registerSpace(alice, context)

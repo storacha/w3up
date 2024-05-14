@@ -1,5 +1,6 @@
 import { Failure } from '@ucanto/server'
 import { base58btc } from 'multiformats/bases/base58'
+import * as API from '../types.js'
 
 export const AllocatedMemoryHadNotBeenWrittenToName =
   'AllocatedMemoryHadNotBeenWrittenTo'
@@ -44,11 +45,15 @@ export class BlobSizeOutsideOfSupportedRange extends Failure {
 }
 
 export const AwaitErrorName = 'AwaitError'
+
+/**
+ * @implements {API.AwaitError}
+ */
 export class AwaitError extends Failure {
   /**
    * @param {object} source
    * @param {string} source.at - argument path that referenced failed `await`
-   * @param {[selector: string, task: import('@ucanto/interface').UnknownLink]} source.reference - awaited reference that failed
+   * @param {import('@ucanto/interface').UnknownLink} source.reference - awaited reference that failed
    * @param {import('@ucanto/interface').Failure} source.cause - error that caused referenced `await` to fail
    */
   constructor({ at, reference, cause }) {
@@ -58,9 +63,12 @@ export class AwaitError extends Failure {
     this.cause = cause
   }
   describe() {
-    const [selector, task] = this.reference
-    return `Awaited (${selector} ${task}) reference at ${this.at} has failed:\n${this.cause}`
+    return `Awaited ${this.reference} reference at ${this.at} has failed:\n${this.cause}`
   }
+
+  /**
+   * @type {'AwaitError'}
+   */
   get name() {
     return AwaitErrorName
   }
@@ -86,7 +94,25 @@ export class BlobNotFound extends Failure {
   get name() {
     return BlobNotFound.name
   }
-  get digest () {
+  get digest() {
     return this.#digest.bytes
+  }
+}
+
+export class UnsupportedCapability extends Failure {
+  /**
+   * @param {object} source
+   * @param {API.Capability} source.capability
+   */
+  constructor({ capability: { with: subject, can } }) {
+    super()
+
+    this.capability = { with: subject, can }
+  }
+  get name() {
+    return /** @type {const} */ ('UnsupportedCapability')
+  }
+  describe() {
+    return `${this.capability.with} does not have a "${this.capability.can}" capability provider`
   }
 }

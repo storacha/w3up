@@ -351,6 +351,7 @@ export const test = {
       audience: connection.id,
       with: spaceDid,
       nb: { link, size: data.byteLength },
+      nonce: '0',
       proofs: [proof],
     })
 
@@ -365,6 +366,7 @@ export const test = {
       audience: connection.id,
       with: spaceDid,
       nb: { link, size: data.byteLength },
+      nonce: '1',
       proofs: [proof],
     })
 
@@ -420,6 +422,7 @@ export const test = {
         with: spaceDid,
         nb: { link, size: data.byteLength },
         proofs: [proof],
+        nonce: 'retry',
       })
       .execute(connection)
 
