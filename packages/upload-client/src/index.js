@@ -134,12 +134,15 @@ async function uploadBlockStream(
           const bytes = new Uint8Array(await car.arrayBuffer())
           // Invoke blob/add and write bytes to write target
           const multihash = await Blob.add(conf, bytes, options)
+          // Should this be raw instead?
           const cid = Link.create(carCodec.code, multihash)
           let piece
           if (pieceHasher) {
             const multihashDigest = await pieceHasher.digest(bytes)
             /** @type {import('@web3-storage/capabilities/types').PieceLink} */
             piece = Link.create(raw.code, multihashDigest)
+            const content = Link.create(raw.code, multihash)
+
             // Invoke filecoin/offer for data
             const result = await Storefront.filecoinOffer(
               {
@@ -149,7 +152,7 @@ async function uploadBlockStream(
                 with: conf.issuer.did(),
                 proofs: conf.proofs,
               },
-              cid,
+              content,
               piece,
               options
             )

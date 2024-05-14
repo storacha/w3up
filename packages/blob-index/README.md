@@ -4,8 +4,8 @@ An index for slices that may be sharded across multiple blobs.
 
 ## Install
 
-```
-npm i @web3-storage/blob-index
+```sh
+npm install @web3-storage/blob-index
 ```
 
 ## Usage
