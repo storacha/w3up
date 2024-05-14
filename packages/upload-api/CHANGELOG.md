@@ -1,5 +1,27 @@
 # Changelog
 
+## [14.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.2...upload-api-v14.0.0) (2024-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* deprecate issuer ([#1344](https://github.com/w3s-project/w3up/issues/1344))
+
+### Features
+
+* add "plan/create-admin-session" capability ([#1411](https://github.com/w3s-project/w3up/issues/1411)) ([50eeeb5](https://github.com/w3s-project/w3up/commit/50eeeb502335ba0413318b5047869a275901824b))
+* add blob protocol to upload-client ([#1425](https://github.com/w3s-project/w3up/issues/1425)) ([49aef56](https://github.com/w3s-project/w3up/commit/49aef564a726d34dbbedbd83f5366d9320180f99))
+* deprecate issuer ([#1344](https://github.com/w3s-project/w3up/issues/1344)) ([afbbde3](https://github.com/w3s-project/w3up/commit/afbbde340d974792699dc56946cc1c72f74c09e3))
+* move blob index logic from upload-api to blob-index lib ([#1434](https://github.com/w3s-project/w3up/issues/1434)) ([797f628](https://github.com/w3s-project/w3up/commit/797f6285c1b000af9eaf0240f85deca6a0b83e06))
+* remove issuer row ([#1345](https://github.com/w3s-project/w3up/issues/1345)) ([cf5b0db](https://github.com/w3s-project/w3up/commit/cf5b0db276ffe3b9926dbf1d8e2cd04ef7b607c9))
+
+
+### Fixes
+
+* `encodeURIComponent` on bucket origin ([#1448](https://github.com/w3s-project/w3up/issues/1448)) ([5618644](https://github.com/w3s-project/w3up/commit/561864422db2ec3eaddc2d790cc4ea0406eebf32))
+* add format specifier to blob location claim URL ([#1445](https://github.com/w3s-project/w3up/issues/1445)) ([9982d12](https://github.com/w3s-project/w3up/commit/9982d12b0a1f9a6da3f0d4264b9a35348e189dfb))
+* test against actual api ([#1438](https://github.com/w3s-project/w3up/issues/1438)) ([f8132ca](https://github.com/w3s-project/w3up/commit/f8132ca1fced72a4addc7e9f0a2162e823c1ea5f))
+
 ## [13.0.2](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.1...upload-api-v13.0.2) (2024-05-02)
 
 
