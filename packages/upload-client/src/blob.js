@@ -62,7 +62,10 @@ function parseBlobAddReceiptNext(receipt) {
   const putTask = forkInvocations.find(
     (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
   )
-  const acceptTask = receipt.fx.join
+  const acceptTask = forkInvocations.find(
+    (fork) => fork.capabilities[0].can === W3sBlobCapabilities.accept.can
+  )
+
   /* c8 ignore next 3 */
   if (!allocateTask || !concludefxs.length || !putTask || !acceptTask) {
     throw new Error('mandatory effects not received')
@@ -80,10 +83,11 @@ function parseBlobAddReceiptNext(receipt) {
   const putReceipt = nextReceipts.find((receipt) =>
     receipt.ran.link().equals(putTask.cid)
   )
+
   /** @type {import('@ucanto/interface').Receipt<import('./types.js').BlobAcceptSuccess, import('./types.js').BlobAcceptFailure> | undefined} */
   // @ts-expect-error types unknown for next
   const acceptReceipt = nextReceipts.find((receipt) =>
-    receipt.ran.link().equals(acceptTask.link())
+    receipt.ran.link().equals(acceptTask.cid)
   )
 
   /* c8 ignore next 3 */
