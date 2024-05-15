@@ -37,8 +37,10 @@ export const receiptsEndpoint = 'https://up.web3.storage/receipt/'
  */
 async function getReceipt(taskCid, options = {}) {
   // Fetch receipt from endpoint
-  // FIXME handle config
-  const url = new URL(taskCid.toString(), 'https://localhost/receipt/')
+  const url = new URL(
+    taskCid.toString(),
+    options.receiptsEndpoint ?? receiptsEndpoint
+  )
   const fetchReceipt = options.fetch ?? globalThis.fetch.bind(globalThis)
   const workflowResponse = await fetchReceipt(url)
   /* c8 ignore start */
