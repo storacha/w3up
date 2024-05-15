@@ -7,6 +7,7 @@ import {
   Blob as BlobCapabilities,
   Index as IndexCapabilities,
   Upload as UploadCapabilities,
+  Filecoin as FilecoinCapabilities
 } from '@web3-storage/capabilities'
 import { CAR } from '@ucanto/transport'
 import { Base } from './base.js'
@@ -114,6 +115,7 @@ export class Client extends Base {
     const conf = await this._invocationConfig([
       BlobCapabilities.add.can,
       IndexCapabilities.add.can,
+      FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -132,6 +134,7 @@ export class Client extends Base {
     const conf = await this._invocationConfig([
       BlobCapabilities.add.can,
       IndexCapabilities.add.can,
+      FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -141,9 +144,10 @@ export class Client extends Base {
   /**
    * Uploads a CAR file to the service.
    *
-   * The difference between this function and `capability.store.add` is that the
-   * CAR file is automatically sharded and an "upload" is registered, linking
-   * the individual shards (see `capability.upload.add`).
+   * The difference between this function and `capability.store.add` is that
+   * the CAR file is automatically sharded, an index is generated, uploaded and
+   * registered (see `capability.index.add`) and finally an an "upload" is
+   * registered, linking the individual shards (see `capability.upload.add`).
    *
    * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
    *
@@ -154,6 +158,7 @@ export class Client extends Base {
     const conf = await this._invocationConfig([
       BlobCapabilities.add.can,
       IndexCapabilities.add.can,
+      FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload

@@ -19,7 +19,8 @@ export * from './sharding.js'
  * Uploads a file to the service and returns the root data CID for the
  * generated DAG.
  *
- * Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`
+ * Required delegated capability proofs: `blob/add`, `index/add`,
+ * `filecoin/offer`, `upload/add`
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
@@ -33,7 +34,8 @@ export * from './sharding.js'
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
  *
- * The issuer needs the `blob/add`, `index/add` and `upload/add` delegated capability.
+ * The issuer needs the `blob/add`, `index/add`, `filecoin/offer` and
+ * `upload/add` delegated capability.
  * @param {import('./types.js').BlobLike} file File data.
  * @param {import('./types.js').UploadOptions} [options]
  */
@@ -50,7 +52,8 @@ export async function uploadFile(conf, file, options = {}) {
  * for the generated DAG. All files are added to a container directory, with
  * paths in file names preserved.
  *
- * Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`
+ * Required delegated capability proofs: `blob/add`, `index/add`, 
+ * `filecoin/offer`, `upload/add`
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
@@ -64,7 +67,8 @@ export async function uploadFile(conf, file, options = {}) {
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
  *
- * The issuer needs the `blob/add`, `index/add` and `upload/add` delegated capability.
+ * The issuer needs the `blob/add`, `index/add`, `filecoin/offer` and
+ * `upload/add` delegated capability.
  * @param {import('./types.js').FileLike[]} files  Files that should be in the directory.
  * To ensure determinism in the IPLD encoding, files are automatically sorted by `file.name`.
  * To retain the order of the files as passed in the array, set `customOrder` option to `true`.
@@ -89,7 +93,8 @@ export async function uploadDirectory(conf, files, options = {}) {
  *
  * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
  *
- * Required delegated capability proofs: `blob/add`, `index/add`, `filecoin/offer`, `upload/add`
+ * Required delegated capability proofs: `blob/add`, `index/add`,
+ * `filecoin/offer`, `upload/add`
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
