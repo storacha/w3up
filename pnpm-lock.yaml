@@ -169,9 +169,6 @@ importers:
       multiformats:
         specifier: ^13.0.1
         version: 13.1.0
-      one-webcrypto:
-        specifier: github:web3-storage/one-webcrypto
-        version: github.com/web3-storage/one-webcrypto/5148cd14d5489a8ac4cd38223870e02db15a2382
       uint8arrays:
         specifier: ^5.0.3
         version: 5.1.0
@@ -188,6 +185,9 @@ importers:
       entail:
         specifier: ^2.1.2
         version: 2.1.2
+      one-webcrypto:
+        specifier: git://github.com/web3-storage/one-webcrypto
+        version: github.com/web3-storage/one-webcrypto/5148cd14d5489a8ac4cd38223870e02db15a2382
       typescript:
         specifier: 5.2.2
         version: 5.2.2
