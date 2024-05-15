@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/w3s-project/w3ui/compare/core-v2.1.0...core-v2.2.0) (2024-05-15)
+
+
+### Features
+
+* upgrade w3up-client deps ([#630](https://github.com/w3s-project/w3ui/issues/630)) ([9bca4a1](https://github.com/w3s-project/w3ui/commit/9bca4a1c4d5d4d24cc8cbd4741a05fb8bc5422f2))
+
 ## [2.1.0](https://github.com/web3-storage/w3ui/compare/core-v2.0.2...core-v2.1.0) (2024-02-01)
 
 
