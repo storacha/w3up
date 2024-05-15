@@ -205,7 +205,7 @@ function uploadDirectory(
 
 Uploads a directory of files to the service and returns the root data CID for the generated DAG. All files are added to a container directory, with paths in file names preserved.
 
-Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`
+Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
 More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
 
@@ -227,7 +227,7 @@ function uploadFile(
 
 Uploads a file to the service and returns the root data CID for the generated DAG.
 
-Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`
+Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
 More information: [`InvocationConfig`](#invocationconfig)
 
@@ -250,7 +250,7 @@ function uploadCAR(
 
 Uploads a CAR file to the service. The difference between this function and [Blob.add](#blobadd) is that the CAR file is automatically sharded, an index is generated, uploaded and registered (see [`Index.add`](#indexadd)) and finally an "upload" is registered (see [`Upload.add`](#uploadadd)), linking the individual shards. Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
 
-Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`
+Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
 More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
 

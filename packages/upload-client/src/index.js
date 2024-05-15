@@ -89,7 +89,7 @@ export async function uploadDirectory(conf, files, options = {}) {
  *
  * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
  *
- * Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`
+ * Required delegated capability proofs: `blob/add`, `index/add`, `filecoin/offer`, `upload/add`
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
@@ -103,7 +103,7 @@ export async function uploadDirectory(conf, files, options = {}) {
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
  *
- * The issuer needs the `blob/add`, `index/add` and `upload/add` delegated capability.
+ * The issuer needs the `blob/add`, `index/add`, `filecoin/offer` and `upload/add` delegated capability.
  * @param {import('./types.js').BlobLike} car CAR file.
  * @param {import('./types.js').UploadOptions} [options]
  */
