@@ -48,6 +48,14 @@
       "types": "./dist/src/capability/access.d.ts",
       "import": "./dist/src/capability/access.js"
     },
+    "./capability/blob": {
+      "types": "./dist/src/capability/blob.d.ts",
+      "import": "./dist/src/capability/blob.js"
+    },
+    "./capability/index": {
+      "types": "./dist/src/capability/index.d.ts",
+      "import": "./dist/src/capability/index.js"
+    },
     "./capability/space": {
       "types": "./dist/src/capability/space.d.ts",
       "import": "./dist/src/capability/space.js"
