@@ -8,8 +8,7 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
-// TODO: enable Blob
-// import { codec as carCodec } from '@ucanto/transport/car'
+import { codec as carCodec } from '@ucanto/transport/car'
 
 export { Blob, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -133,20 +132,16 @@ async function uploadBlockStream(
       new TransformStream({
         async transform(car, controller) {
           const bytes = new Uint8Array(await car.arrayBuffer())
-          //  Invoke blob/add and write bytes to write target
-          // TODO: enable Blob
-          // const multihash = await Blob.add(conf, bytes, options)
-          const cid = await Store.add(conf, bytes, options)
-          // TODO: enable Blob
-          // const cid = Link.create(carCodec.code, multihash)
+          // Invoke blob/add and write bytes to write target
+          const multihash = await Blob.add(conf, bytes, options)
+          // Should this be raw instead?
+          const cid = Link.create(carCodec.code, multihash)
           let piece
           if (pieceHasher) {
             const multihashDigest = await pieceHasher.digest(bytes)
             /** @type {import('@web3-storage/capabilities/types').PieceLink} */
             piece = Link.create(raw.code, multihashDigest)
-            // TODO: enable Blob
-            // const content = Link.create(raw.code, multihash)
-            const content = Link.create(raw.code, cid.multihash)
+            const content = Link.create(raw.code, multihash)
 
             // Invoke filecoin/offer for data
             const result = await Storefront.filecoinOffer(
