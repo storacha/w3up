@@ -45,6 +45,7 @@
     "@web3-storage/capabilities": "workspace:^",
     "carstream": "^2.1.0",
     "multiformats": "^13.0.1",
+    "one-webcrypto": "github:web3-storage/one-webcrypto",
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
