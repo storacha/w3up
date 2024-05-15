@@ -135,6 +135,18 @@ export class BlobsStorage {
    */
   async stream(digest) {
     const key = this.#bucketPath(digest)
+    if (!this.server) {
+      const url = new URL(key, this.baseURL)
+      const res = await fetch(url.toString())
+      if (res.status === 404) return error(new BlobNotFound(digest))
+      if (!res.ok || !res.body) {
+        throw new Error(
+          `serverless blob storage failed to fetch from: ${url} status: ${res.status}`
+        )
+      }
+      return ok(res.body)
+    }
+
     const bytes = this.content.get(key)
     if (!bytes) return error(new BlobNotFound(digest))
 

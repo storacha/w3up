@@ -19,7 +19,7 @@ export async function randomBytes(size) {
     } else {
       crypto.getRandomValues(chunk)
     }
-    size -= bytes.length
+    size -= chunk.length
     bytes.set(chunk, size)
   }
   return bytes

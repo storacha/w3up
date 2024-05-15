@@ -37,6 +37,7 @@
     "entryPointStrategy": "packages",
     "entryPoints": [
       "packages/access-client",
+      "packages/blob-index",
       "packages/capabilities",
       "packages/upload-client",
       "packages/filecoin-client",

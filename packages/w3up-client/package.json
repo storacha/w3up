@@ -48,6 +48,14 @@
       "types": "./dist/src/capability/access.d.ts",
       "import": "./dist/src/capability/access.js"
     },
+    "./capability/blob": {
+      "types": "./dist/src/capability/blob.d.ts",
+      "import": "./dist/src/capability/blob.js"
+    },
+    "./capability/index": {
+      "types": "./dist/src/capability/index.d.ts",
+      "import": "./dist/src/capability/index.js"
+    },
     "./capability/space": {
       "types": "./dist/src/capability/space.d.ts",
       "import": "./dist/src/capability/space.js"
@@ -117,6 +125,7 @@
     "@ucanto/principal": "^9.0.1",
     "@ucanto/transport": "^9.1.1",
     "@web3-storage/access": "workspace:^",
+    "@web3-storage/blob-index": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-client": "workspace:^",

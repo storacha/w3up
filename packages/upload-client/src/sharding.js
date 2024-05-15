@@ -1,4 +1,10 @@
-import { blockEncodingLength, encode, headerEncodingLength } from './car.js'
+import { DigestMap } from '@web3-storage/blob-index'
+import {
+  blockEncodingLength,
+  blockHeaderEncodingLength,
+  encode,
+  headerEncodingLength,
+} from './car.js'
 
 /**
  * @typedef {import('./types.js').FileLike} FileLike
@@ -12,7 +18,7 @@ const SHARD_SIZE = 133_169_152
  * received is assumed to be the DAG root and becomes the CAR root CID for the
  * last CAR output. Set the `rootCID` option to override.
  *
- * @extends {TransformStream<import('@ipld/unixfs').Block, import('./types.js').CARFile>}
+ * @extends {TransformStream<import('@ipld/unixfs').Block, import('./types.js').IndexedCARFile>}
  */
 export class ShardingStream extends TransformStream {
   /**
@@ -25,16 +31,22 @@ export class ShardingStream extends TransformStream {
     let blocks = []
     /** @type {import('@ipld/unixfs').Block[] | null} */
     let readyBlocks = null
+    /** @type {Map<import('./types.js').SliceDigest, import('./types.js').Position>} */
+    let slices = new DigestMap()
+    /** @type {Map<import('./types.js').SliceDigest, import('./types.js').Position> | null} */
+    let readySlices = null
     let currentLength = 0
 
     super({
       async transform(block, controller) {
-        if (readyBlocks != null) {
-          controller.enqueue(await encode(readyBlocks))
+        if (readyBlocks != null && readySlices != null) {
+          controller.enqueue(await encodeCAR(readyBlocks, readySlices))
           readyBlocks = null
+          readySlices = null
         }
 
-        const blockLength = blockEncodingLength(block)
+        const blockHeaderLength = blockHeaderEncodingLength(block)
+        const blockLength = blockHeaderLength + block.bytes.length
         if (blockLength > maxBlockLength) {
           throw new Error(
             `block will cause CAR to exceed shard size: ${block.cid}`
@@ -43,16 +55,22 @@ export class ShardingStream extends TransformStream {
 
         if (blocks.length && currentLength + blockLength > maxBlockLength) {
           readyBlocks = blocks
+          readySlices = slices
           blocks = []
+          slices = new DigestMap()
           currentLength = 0
         }
         blocks.push(block)
+        slices.set(block.cid.multihash, [
+          headerEncodingLength() + currentLength + blockHeaderLength,
+          block.bytes.length,
+        ])
         currentLength += blockLength
       },
 
       async flush(controller) {
-        if (readyBlocks != null) {
-          controller.enqueue(await encode(readyBlocks))
+        if (readyBlocks != null && readySlices != null) {
+          controller.enqueue(await encodeCAR(readyBlocks, readySlices))
         }
 
         const rootBlock = blocks.at(-1)
@@ -62,7 +80,7 @@ export class ShardingStream extends TransformStream {
         const headerLength = headerEncodingLength(rootCID)
 
         // if adding CAR root overflows the shard limit we move overflowing
-        // blocks into a another CAR.
+        // blocks into another CAR.
         if (headerLength + currentLength > shardSize) {
           const overage = headerLength + currentLength - shardSize
           const overflowBlocks = []
@@ -70,6 +88,7 @@ export class ShardingStream extends TransformStream {
           while (overflowCurrentLength < overage) {
             const block = blocks[blocks.length - 1]
             blocks.pop()
+            slices.delete(block.cid.multihash)
             overflowBlocks.unshift(block)
             overflowCurrentLength += blockEncodingLength(block)
 
@@ -79,10 +98,32 @@ export class ShardingStream extends TransformStream {
                 `block will cause CAR to exceed shard size: ${block.cid}`
               )
           }
-          controller.enqueue(await encode(blocks))
-          controller.enqueue(await encode(overflowBlocks, rootCID))
+          controller.enqueue(await encodeCAR(blocks, slices))
+
+          // Finally, re-calc block positions from blocks we moved out of the
+          // CAR that was too big.
+          overflowCurrentLength = 0
+          /** @type {Map<import('./types.js').SliceDigest, import('./types.js').Position>} */
+          const overflowSlices = new DigestMap()
+          for (const block of blocks) {
+            const overflowBlockHeaderLength = blockHeaderEncodingLength(block)
+            overflowSlices.set(block.cid.multihash, [
+              headerLength + overflowCurrentLength + overflowBlockHeaderLength,
+              block.bytes.length,
+            ])
+            overflowCurrentLength +=
+              overflowBlockHeaderLength + block.bytes.length
+          }
+          controller.enqueue(
+            await encodeCAR(overflowBlocks, overflowSlices, rootCID)
+          )
         } else {
-          controller.enqueue(await encode(blocks, rootCID))
+          // adjust offsets for longer header in final shard
+          const diff = headerLength - headerEncodingLength()
+          for (const slice of slices.values()) {
+            slice[0] += diff
+          }
+          controller.enqueue(await encodeCAR(blocks, slices, rootCID))
         }
       },
     })
@@ -119,3 +160,12 @@ function ascending(a, b, getComparedValue) {
   else if (ask < bsk) return -1
   return 1
 }
+
+/**
+ * @param {Iterable<import('@ipld/unixfs').Block>} blocks
+ * @param {Map<import('./types.js').SliceDigest, import('./types.js').Position>} slices
+ * @param {import('./types.js').AnyLink} [root]
+ * @returns {Promise<import('./types.js').IndexedCARFile>}
+ */
+const encodeCAR = async (blocks, slices, root) =>
+  Object.assign(await encode(blocks, root), { slices })
