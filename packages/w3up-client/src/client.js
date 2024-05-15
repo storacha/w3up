@@ -156,7 +156,7 @@ export class Client extends Base {
   /**
    * Get a receipt for an executed task by its CID.
    *
-   * @param {import('multiformats').UnknownLink} taskCid
+   * @param {import('multiformats').UnknownLink} taskCid - Task CID for receipt.
    */
   async getReceipt(taskCid) {
     // Fetch receipt from endpoint
@@ -353,8 +353,8 @@ export class Client extends Base {
                 cause: error,
               })
             }
-            /* c8 ignore stop */
           }
+          /* c8 ignore stop */
         })
       )
     }

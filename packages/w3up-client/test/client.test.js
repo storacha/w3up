@@ -12,7 +12,7 @@ export const testClient = {
   uploadFile: Test.withContext({
     'should upload a file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, allocationsStorage }
+      { connection, provisionsStorage, uploadTable, storeTable }
     ) => {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
@@ -51,15 +51,9 @@ export const testClient = {
         ok: true,
       })
 
-      assert.deepEqual(
-        await allocationsStorage.exists(
-          space.did(),
-          expectedCar.cid.multihash.bytes
-        ),
-        {
-          ok: true,
-        }
-      )
+      assert.deepEqual(await storeTable.exists(space.did(), expectedCar.cid), {
+        ok: true,
+      })
 
       assert.equal(carCID?.toString(), expectedCar.cid.toString())
       assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
@@ -136,7 +130,7 @@ export const testClient = {
   uploadCar: Test.withContext({
     'uploads a CAR file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, allocationsStorage }
+      { connection, provisionsStorage, uploadTable, storeTable }
     ) => {
       const car = await randomCAR(32)
 
@@ -176,12 +170,9 @@ export const testClient = {
         return assert.ok(carCID)
       }
 
-      assert.deepEqual(
-        await allocationsStorage.exists(space.did(), carCID.multihash.bytes),
-        {
-          ok: true,
-        }
-      )
+      assert.deepEqual(await storeTable.exists(space.did(), carCID), {
+        ok: true,
+      })
     },
   }),
   getRecipt: Test.withContext({

@@ -6,6 +6,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as StoreCapabilities from '@web3-storage/capabilities/store'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
 import { Piece } from '@web3-storage/data-segment'
@@ -41,6 +42,12 @@ describe('uploadFile', () => {
     let carCID
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -59,6 +66,24 @@ describe('uploadFile', () => {
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
+        }),
+      },
+      store: {
+        add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          assert.equal(capability.can, StoreCapabilities.add.can)
+          assert.equal(capability.with, space.did())
+          /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'allocated'>} */
+          const res = {
+            status: 'upload',
+            headers: { 'x-test': 'true' },
+            url: 'http://localhost:9200',
+            link: expectedCar.cid,
+            with: space.did(),
+          }
+
+          return { ok: { ...res, allocated: capability.nb.size } }
         }),
       },
       blob: {
@@ -130,8 +155,11 @@ describe('uploadFile', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    // TODO: Blob Enable
+    // assert(service.blob.add.called)
+    // assert.equal(service.blob.add.callCount, 1)
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
@@ -151,6 +179,12 @@ describe('uploadFile', () => {
     const carCIDs = []
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -164,6 +198,14 @@ describe('uploadFile', () => {
         expiration: Infinity,
       }),
     ])
+
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
 
     const service = mockService({
       ucan: {
@@ -179,6 +221,17 @@ describe('uploadFile', () => {
             invocation
           )
         }),
+      },
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability }) => ({
+          ok: {
+            ...res,
+            link: /** @type {import('../src/types.js').CARLink} */ (
+              capability.nb.link
+            ),
+            allocated: capability.nb.size,
+          },
+        })),
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -238,6 +291,12 @@ describe('uploadFile', () => {
     const file = new Blob([bytes])
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -270,6 +329,29 @@ describe('uploadFile', () => {
             invocation
           )
         }),
+      },
+      store: {
+        add: provide(
+          StoreCapabilities.add,
+          async ({ invocation, capability }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            assert.equal(capability.can, StoreCapabilities.add.can)
+            assert.equal(capability.with, space.did())
+
+            const expectedCar = await toCAR(bytes)
+            /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'allocated'>} */
+            const res = {
+              status: 'upload',
+              headers: { 'x-test': 'true' },
+              url: 'http://localhost:9200',
+              link: expectedCar.cid,
+              with: space.did(),
+            }
+
+            return { ok: { ...res, allocated: capability.nb.size } }
+          }
+        ),
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -304,8 +386,11 @@ describe('uploadFile', () => {
       )
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
+    // assert(service.blob.add.called)
+    // assert.equal(service.blob.add.callCount, 1)
+
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
   })
@@ -325,6 +410,12 @@ describe('uploadDirectory', () => {
     let carCID = null
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -340,6 +431,33 @@ describe('uploadDirectory', () => {
     ])
 
     const service = mockService({
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, StoreCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
+
+          /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
+          const res = {
+            status: 'upload',
+            headers: { 'x-test': 'true' },
+            url: 'http://localhost:9200',
+            with: space.did(),
+          }
+
+          return {
+            ok: {
+              ...res,
+              link: /** @type {import('../src/types.js').CARLink} */ (
+                capability.nb.link
+              ),
+              allocated: capability.nb.size,
+            },
+          }
+        }),
+      },
       ucan: {
         conclude: provide(UCAN.conclude, () => {
           return { ok: { time: Date.now() } }
@@ -408,8 +526,10 @@ describe('uploadDirectory', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    // assert(service.blob.add.called)
+    // assert.equal(service.blob.add.callCount, 1)
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
@@ -431,6 +551,12 @@ describe('uploadDirectory', () => {
     const carCIDs = []
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -445,6 +571,13 @@ describe('uploadDirectory', () => {
       }),
     ])
 
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
     const service = mockService({
       ucan: {
         conclude: provide(UCAN.conclude, () => {
@@ -459,6 +592,17 @@ describe('uploadDirectory', () => {
             invocation
           )
         }),
+      },
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability }) => ({
+          ok: {
+            ...res,
+            link: /** @type {import('../src/types.js').CARLink} */ (
+              capability.nb.link
+            ),
+            allocated: capability.nb.size,
+          },
+        })),
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -511,6 +655,12 @@ describe('uploadDirectory', () => {
     const piece = Piece.fromPayload(someBytes).link
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -544,6 +694,24 @@ describe('uploadDirectory', () => {
               { issuer: space, audience: agent, with: space, proofs },
               invocation
             )
+          }),
+        },
+        store: {
+          add: provide(StoreCapabilities.add, ({ invocation, capability }) => {
+            // @ts-expect-error blob invocation
+            invocations.push(invocation)
+            return {
+              ok: {
+                status: 'upload',
+                headers: { 'x-test': 'true' },
+                url: 'http://localhost:9200',
+                with: capability.with,
+                link: /** @type {import('../src/types.js').CARLink} */ (
+                  capability.nb.link
+                ),
+                allocated: capability.nb.size,
+              },
+            }
           }),
         },
         filecoin: {
@@ -631,6 +799,16 @@ describe('uploadDirectory', () => {
           : []
       )
       .map((cid) => cid.toString())
+    // const shardsForUnordered = uploadServiceForUnordered.invocations
+    //   .flatMap((i) =>
+    //     i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+    //   )
+    //   .map((cid) => cid.toString())
+    // const shardsForOrdered = uploadServiceForOrdered.invocations
+    //   .flatMap((i) =>
+    //     i.capability.can === 'upload/add' ? i.capability.nb.shards ?? [] : []
+    //   )
+    //   .map((cid) => cid.toString())
     assert.deepEqual(
       shardsForUnordered,
       shardsForOrdered,
@@ -691,6 +869,12 @@ describe('uploadCAR', () => {
     const carCIDs = []
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -704,6 +888,14 @@ describe('uploadCAR', () => {
         expiration: Infinity,
       }),
     ])
+
+    /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
+    const res = {
+      status: 'upload',
+      headers: { 'x-test': 'true' },
+      url: 'http://localhost:9200',
+      with: space.did(),
+    }
 
     const service = mockService({
       ucan: {
@@ -723,6 +915,24 @@ describe('uploadCAR', () => {
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
+        }),
+      },
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, StoreCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
+          return {
+            ok: {
+              ...res,
+              link: /** @type {import('../src/types.js').CARLink} */ (
+                capability.nb.link
+              ),
+              allocated: capability.nb.size,
+            },
+          }
         }),
       },
       filecoin: {
@@ -778,8 +988,10 @@ describe('uploadCAR', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 2)
+    // assert(service.blob.add.called)
+    // assert.equal(service.blob.add.callCount, 2)
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 2)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 2)
     assert(service.upload.add.called)
@@ -802,6 +1014,12 @@ describe('uploadCAR', () => {
     const pieceCIDs = []
 
     const proofs = await Promise.all([
+      StoreCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       BlobCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -833,6 +1051,30 @@ describe('uploadCAR', () => {
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
+        }),
+      },
+      store: {
+        add: provide(StoreCapabilities.add, ({ capability, invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          assert.equal(capability.can, StoreCapabilities.add.can)
+          assert.equal(capability.with, space.did())
+          /** @type {Omit<import('../src/types.js').StoreAddSuccessUpload, 'link'|'allocated'>} */
+          const res = {
+            status: 'upload',
+            headers: { 'x-test': 'true' },
+            url: 'http://localhost:9200',
+            with: space.did(),
+          }
+          return {
+            ok: {
+              ...res,
+              link: /** @type {import('../src/types.js').CARLink} */ (
+                capability.nb.link
+              ),
+              allocated: capability.nb.size,
+            },
+          }
         }),
       },
       filecoin: {
@@ -886,8 +1128,10 @@ describe('uploadCAR', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    // assert(service.blob.add.called)
+    // assert.equal(service.blob.add.callCount, 1)
+    assert(service.store.add.called)
+    assert.equal(service.store.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
