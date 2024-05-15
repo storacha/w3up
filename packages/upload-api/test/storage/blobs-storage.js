@@ -140,7 +140,9 @@ export class BlobsStorage {
       const res = await fetch(url.toString())
       if (res.status === 404) return error(new BlobNotFound(digest))
       if (!res.ok || !res.body) {
-        throw new Error(`serverless blob storage failed to fetch from: ${url} status: ${res.status}`)
+        throw new Error(
+          `serverless blob storage failed to fetch from: ${url} status: ${res.status}`
+        )
       }
       return ok(res.body)
     }

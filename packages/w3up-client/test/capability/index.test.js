@@ -23,12 +23,16 @@ export const IndexClient = Test.withContext({
         customer: 'did:mailto:alice@web.mail',
         consumer: space.did(),
       })
-      
+
       const index = ShardedDAGIndex.create(car.cid)
       const indexBytes = Result.unwrap(await index.archive())
 
-      const indexDigest = await alice.capability.blob.add(new Blob([indexBytes]))
-      assert.ok(await alice.capability.index.add(Link.create(0x0202, indexDigest)))
+      const indexDigest = await alice.capability.blob.add(
+        new Blob([indexBytes])
+      )
+      assert.ok(
+        await alice.capability.index.add(Link.create(0x0202, indexDigest))
+      )
     },
   },
 })

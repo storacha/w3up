@@ -23,7 +23,6 @@ const server = createServer(async (req, res) => {
         res.write(body)
       }
     } else if (req.method === 'PUT') {
-      
       const body = Buffer.concat(await collect(req))
       data.set(key, body)
     }
@@ -32,13 +31,15 @@ const server = createServer(async (req, res) => {
 })
 
 /** @param {import('node:stream').Readable} stream */
-const collect = stream => {
-  return /** @type {Promise<Buffer[]>} */ (new Promise((resolve, reject) => {
-    const chunks = /** @type {Buffer[]} */ ([])
-    stream.on('data', chunk => chunks.push(Buffer.from(chunk)))
-    stream.on('error', err => reject(err))
-    stream.on('end', () => resolve(chunks))
-  }))
+const collect = (stream) => {
+  return /** @type {Promise<Buffer[]>} */ (
+    new Promise((resolve, reject) => {
+      const chunks = /** @type {Buffer[]} */ ([])
+      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+      stream.on('error', (err) => reject(err))
+      stream.on('end', () => resolve(chunks))
+    })
+  )
 }
 
 // eslint-disable-next-line no-console
