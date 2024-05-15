@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.1.1](https://github.com/w3s-project/w3up/compare/upload-client-v14.1.0...upload-client-v14.1.1) (2024-05-15)
+
+
+### Fixes
+
+* revert blob add by default ([#1456](https://github.com/w3s-project/w3up/issues/1456)) ([b77ec75](https://github.com/w3s-project/w3up/commit/b77ec750c3911f6f47fa32a5e1560858b347985c))
+* upload client export blob ([#1454](https://github.com/w3s-project/w3up/issues/1454)) ([5e55900](https://github.com/w3s-project/w3up/commit/5e55900870dcb72d7f53d0cd37990c8279b89b15))
+
 ## [14.1.0](https://github.com/w3s-project/w3up/compare/upload-client-v14.0.0...upload-client-v14.1.0) (2024-05-14)
 
 
