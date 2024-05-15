@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v15.0.0...upload-api-v15.0.1) (2024-05-15)
+
+
+### Fixes
+
+* export ShardedDAGIndex type ([979e2c3](https://github.com/w3s-project/w3up/commit/979e2c3b070025e952e7bb490701aabb5e660e39))
+
 ## [15.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v14.0.0...upload-api-v15.0.0) (2024-05-15)
 
 
