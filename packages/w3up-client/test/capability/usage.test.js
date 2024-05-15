@@ -6,7 +6,7 @@ export const UsageClient = Test.withContext({
   report: {
     'should fetch usage report': async (
       assert,
-      { connection, provisionsStorage, uploadTable }
+      { connection, provisionsStorage }
     ) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore

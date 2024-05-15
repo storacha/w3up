@@ -12,7 +12,7 @@ import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
 import { codec as carCodec } from '@ucanto/transport/car'
 
-export { Blob, Store, Upload, UnixFS, CAR }
+export { Blob, Index, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 
 /**
@@ -194,8 +194,6 @@ async function uploadBlockStream(
   /* c8 ignore next */
   if (!root) throw new Error('missing root CID')
 
-  await Upload.add(conf, root, shards, options)
-
   const index = ShardedDAGIndex.create(root)
   for (const [i, shard] of shards.entries()) {
     const slices = shardIndexes[i]
@@ -213,6 +211,8 @@ async function uploadBlockStream(
 
   // Register the index with the service
   await Index.add(conf, indexLink, options)
+  // Register an upload with the service
+  await Upload.add(conf, root, shards, options)
 
   return root
 }

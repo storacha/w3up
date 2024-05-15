@@ -78,6 +78,10 @@ export type {
 
 export type {
   Abilities,
+  ServiceAbility,
+  BlobAdd,
+  BlobList,
+  BlobRemove,
   StoreAdd,
   StoreList,
   StoreRemove,
@@ -115,6 +119,14 @@ export type {
 } from '@web3-storage/access/types'
 
 export type {
+  BlobAddSuccess,
+  BlobAddFailure,
+  BlobListSuccess,
+  BlobListFailure,
+  BlobRemoveSuccess,
+  BlobRemoveFailure,
+  IndexAddSuccess,
+  IndexAddFailure,
   StoreAddSuccess,
   StoreGetSuccess,
   StoreGetFailure,

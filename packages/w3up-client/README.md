@@ -68,13 +68,13 @@ UCAN-based APIs are centered around _capabilities_, which are comprised of an _a
 
 When you upload data to w3up, your uploads are linked to a unique _Space_ that acts as a "namespace" for the data you upload. Each Space corresponds to a _DID_, or [Decentralized Identity Document](https://www.w3.org/TR/did-core/). In web3.storage's implementation of w3up, these Space DIDs generally use the key DID method, of the form `did:key:publicKey` with a corresponding private signing key.
 
-When creating a Space using `w3up-client`, it generates this private key and `did:key` for you locally. To use web3.storage, you then register a Space by associating it with your email address. From there, when invoking storage capabilities with web3.storage, the Space `did:key` is the "resource" portion of the capability, while the ability is an action like `store/add` or `store/remove`. (A Space registered with web3.storage is imperfectly analogous to an "account" with web3.storage.)
+When creating a Space using `w3up-client`, it generates this private key and `did:key` for you locally. To use web3.storage, you then register a Space by associating it with your email address. From there, when invoking storage capabilities with web3.storage, the Space `did:key` is the "resource" portion of the capability, while the ability is an action like `blob/add` or `blob/remove`. (A Space registered with web3.storage is imperfectly analogous to an "account" with web3.storage.)
 
 Under the hood in the email registration process, your Space delegates the capabilities needed to use w3up to your email address, and this delegation is stored by web3.storage. If you need access to your Space in the future from any device, web3.storage allows you to reclaim those capabilities the same way you would reset a password in other services - using an email verification process. This means you don't need to store or manage Space private keys to use w3up - just create a new space, register it with w3up and use it from as many devices as you like. More on this "sign in" process is detailed in the next section on Agents.
 
 #### Agent
 
-To invoke a capability like `store/add` on a Space using `w3up-client`, the client must have an _Agent_. Like a Space, an Agent corresponds to a `did:key` whose private key is generated locally. An Agent is useful once `w3up-client` has a UCAN delegation where a registered Space(s) delegates the Agent its capabilities. (An imperfect analogy is Agent with login session.)
+To invoke a capability like `blob/add` on a Space using `w3up-client`, the client must have an _Agent_. Like a Space, an Agent corresponds to a `did:key` whose private key is generated locally. An Agent is useful once `w3up-client` has a UCAN delegation where a registered Space(s) delegates the Agent its capabilities. (An imperfect analogy is Agent with login session.)
 
 The first time `w3up-client` is instantiated on a device, it creates an Agent automatically. Alternatively, if you have your own Agent corresponding to a specific private key locally available, you can pass it to the client.
 
@@ -208,7 +208,7 @@ async function main () {
   // from "bring your own Agent" example in `Creating a client object" section`
   // used command line to generate KEY and PROOF (stored in env variables)
   // KEY: `npx ucan-key ed --json` in command line, which returns private key and DID for Agent (the private key is stored in KEY)
-  // PROOF: w3cli used to run `w3 delegation create <did_from_ucan-key_command_above> --can 'store/add' --can 'upload/add' | base64`, which returns the delegation from Space to the Agent we're using (stored in PROOF)
+  // PROOF: w3cli used to run `w3 delegation create <did_from_ucan-key_command_above> --can 'blob/add' --can 'index/add' --can 'upload/add' | base64`, which returns the delegation from Space to the Agent we're using (stored in PROOF)
   const principal = Signer.parse(process.env.KEY)
   const store = new StoreMemory()
   const client = await Client.create({ principal, store })
@@ -309,7 +309,7 @@ sequenceDiagram
 - Your user does not need a registered Space - just an Agent with a delegation from your Space
   - `w3up-client` in the end user environment should have a unique Agent for each user, which should happen by default (since when `w3up-client` is instantiated it creates a new Agent anyway, or uses the one in local Store)
   - From there, when your end user is ready to upload, they should request from your backend a delegation from your developer-owned Space to their Agent (which can be derived via [`client.agent`](docs-Client#agent))
-    - In your backend, you can call [`client.createDelegation()`](docs-Client#createDelegation) passing in the Agent object from `client.agent()` in your end user's instance, and passing through `options?` params to limit the scope of the delegation (e.g., `store/add`, `upload/add`, expiration time)
+    - In your backend, you can call [`client.createDelegation()`](docs-Client#createDelegation) passing in the Agent object from `client.agent()` in your end user's instance, and passing through `options?` params to limit the scope of the delegation (e.g., `blob/add`, `upload/add`, expiration time)
     - You can serialize this using `delegation.archive()` and send it to your user
     - The end user instance of the client should not need to call `client.login(email)`, as it is not claiming any delegations via email address (but rather getting the delegation directly from your backend)
 - Once your user receives the delegation, they can deserialize it using [`ucanto.Delegation.extract()`](https://github.com/web3-storage/ucanto/blob/c8999a59852b61549d163532a83bac62290b629d/packages/core/src/delegation.js#L399) and pass it in using `client.addSpace()`, and from there they can run any of the `upload` methods
@@ -336,7 +336,7 @@ async function backend(did: string) {
 
   // Create a delegation for a specific DID
   const audience = DID.parse(did);
-  const abilities = ['store/add', 'upload/add'];
+  const abilities = ['blob/add', 'index/add', 'upload/add'];
   const expiration = Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24 hours from now
   const delegation = await client.createDelegation(audience, abilities, {
     expiration,
@@ -425,19 +425,21 @@ We created a `esbuild-plugin` [esbuild-plugin-w3up-client-wasm-import](https://g
   - [`remove`](#remove)
   - [`capability.access.authorize`](#capabilityaccessauthorize)
   - [`capability.access.claim`](#capabilityaccessclaim)
+  - [`capability.blob.add`](#capabilityblobadd)
+  - [`capability.blob.list`](#capabilitybloblist)
+  - [`capability.blob.remove`](#capabilityblobremove)
+  - [`capability.index.add`](#capabilityindexadd)
   - [`capability.plan.get`](#capabilityplanget)
   - [`capability.plan.set`](#capabilityplanset)
   - [`capability.plan.createAdminSession`](#capabilityplancreateadminsession)    
   - [`capability.space.info`](#capabilityspaceinfo)
-  - [`capability.store.add`](#capabilitystoreadd)
-  - [`capability.store.list`](#capabilitystorelist)
-  - [`capability.store.remove`](#capabilitystoreremove)
   - [`capability.upload.add`](#capabilityuploadadd)
   - [`capability.upload.list`](#capabilityuploadlist)
   - [`capability.upload.remove`](#capabilityuploadremove)
   - [`capability.filecoin.offer`](#capabilityfilecoinoffer)
   - [`capability.filecoin.info`](#capabilityfilecoininfo)
 - [Types](#types)
+  - [`BlobListResult`](#bloblistresult)
   - [`Capability`](#capability)
   - [`CARMetadata`](#carmetadata)
   - [`ClientFactoryOptions`](#clientfactoryoptions)
@@ -447,7 +449,6 @@ We created a `esbuild-plugin` [esbuild-plugin-w3up-client-wasm-import](https://g
   - [`ServiceConf`](#serviceconf)
   - [`ShardStoredCallback`](#shardstoredcallback)
   - [`Space`](#space)
-  - [`StoreListResult`](#storelistresult)
   - [`UploadListResult`](#uploadlistresult)
 
 ---
@@ -670,6 +671,53 @@ function claim (): Promise<Delegation<Capabilities>[]>
 
 Claim delegations granted to the account associated with this agent. Note: the received delegations are added to the agent's persistent store.
 
+### `capability.blob.add`
+
+```ts
+function add (
+  blob: Blob,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<MultihashDigest>
+```
+
+Store a blob to the service.
+
+### `capability.blob.list`
+
+```ts
+function list (
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<ListResponse<BlobListResult>>
+```
+
+List blobs stored in the current space.
+
+More information: [`BlobListResult`](#bloblistresult), [`ListResponse`](#listresponse)
+
+### `capability.blob.remove`
+
+```ts
+function remove (
+  digest: MultihashDigest,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<void>
+```
+
+Remove a stored blob by multihash digest.
+
+### `capability.index.add`
+
+```ts
+function add(
+  index: CID,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<IndexAddResponse>
+```
+
+Register an "index" with the service. The `index` CID should be the CID of a CAR file, containing an index ad defined by [w3-index](https://github.com/w3s-project/specs/blob/main/w3-index.md).
+
+Required delegated capability proofs: `index/add`
+
 ### `capability.plan.get`
 
 ```ts
@@ -705,40 +753,6 @@ function createAdminSession (
 Create a billing customer portal admin session. Returns a URL that 
 the customer can visit to administer `account`. Design and implementation driven 
 by our Stripe integration and may not be supported by all billing providers.
-
-### `capability.store.add`
-
-```ts
-function add (
-  car: Blob,
-  options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<CID>
-```
-
-Store a CAR file to the service.
-
-### `capability.store.list`
-
-```ts
-function list (
-  options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<ListResponse<StoreListResult>>
-```
-
-List CAR files stored in the current space.
-
-More information: [`StoreListResult`](#storelistresult), [`ListResponse`](#listresponse)
-
-### `capability.store.remove`
-
-```ts
-function remove (
-  link: CID,
-  options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<void>
-```
-
-Remove a stored CAR file by CAR CID.
 
 ### `capability.upload.add`
 
@@ -798,6 +812,17 @@ Get know deals and aggregate info of a Filecoin "piece" previously offered.
 
 ## Types
 
+### `BlobListResult`
+
+```ts
+interface BlobListResult {
+  blob: {
+    digest: Uint8Array
+    size: number
+  }
+}
+```
+
 ### `Capability`
 
 An object describing a UCAN capability, which specifies what action the UCAN holder `can` perform `with` some resource.
@@ -820,7 +845,7 @@ export type Ability = `${string}/${string}` | "*"
 export type Resource = `${string}:${string}`
 ```
 
-The `can` field contains a string ability identifier, e.g. `store/add` or `space/info`.
+The `can` field contains a string ability identifier, e.g. `blob/add` or `space/info`.
 
 The `with` field contains a resource URI, often a `did:key` URI that identifies a Space.
 
@@ -955,16 +980,6 @@ interface Space {
    * User defined space metadata.
    */  
   meta(): Record<string, any>
-}
-```
-
-### `StoreListResult`
-
-```ts
-interface StoreListResult {
-  link: CID
-  size: number
-  origin?: CID
 }
 ```
 

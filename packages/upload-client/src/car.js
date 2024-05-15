@@ -6,6 +6,8 @@ import varint from 'varint'
  * @typedef {import('@ipld/unixfs').Block} Block
  */
 
+export const code = 0x0202
+
 /** Byte length of a CBOR encoded CAR header with zero roots. */
 const NO_ROOTS_HEADER_LENGTH = 18
 
