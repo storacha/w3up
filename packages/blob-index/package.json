@@ -43,20 +43,15 @@
     "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
     "@web3-storage/capabilities": "workspace:^",
+    "carstream": "^2.1.0",
     "multiformats": "^13.0.1",
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
-    "@ipld/car": "^5.1.1",
-    "@types/assert": "^1.5.6",
-    "@types/mocha": "^10.0.1",
     "@ucanto/transport": "^9.1.1",
-    "@web-std/blob": "^3.0.5",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "c8": "^7.14.0",
-    "carstream": "^2.1.0",
     "entail": "^2.1.2",
-    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
     "typescript": "5.2.2"
   },
   "eslintConfig": {
