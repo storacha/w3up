@@ -1,10 +1,9 @@
+/* global crypto */
 import { CID } from 'multiformats'
-import { webcrypto } from 'one-webcrypto'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as CAR from '@ucanto/transport/car'
 import * as raw from 'multiformats/codecs/raw'
-import { CarWriter } from '@ipld/car'
-import { Blob } from '@web-std/blob'
+import { webcrypto } from 'one-webcrypto'
 
 /** @param {number} size */
 export async function randomBytes(size) {
@@ -13,7 +12,7 @@ export async function randomBytes(size) {
     const chunk = new Uint8Array(Math.min(size, 65_536))
     webcrypto.getRandomValues(chunk)
 
-    size -= bytes.length
+    size -= chunk.length
     bytes.set(chunk, size)
   }
   return bytes
@@ -24,18 +23,9 @@ export async function randomCAR(size) {
   const bytes = await randomBytes(size)
   const hash = await sha256.digest(bytes)
   const root = CID.create(1, raw.code, hash)
-
-  const { writer, out } = CarWriter.create(root)
-  writer.put({ cid: root, bytes })
-  writer.close()
-
-  const chunks = []
-  for await (const chunk of out) {
-    chunks.push(chunk)
-  }
-  const blob = new Blob(chunks)
-  const cid = await CAR.codec.link(new Uint8Array(await blob.arrayBuffer()))
-
+  const carBytes = CAR.codec.encode({ roots: [{ cid: root, bytes }] })
+  const blob = new Blob([carBytes])
+  const cid = await CAR.codec.link(carBytes)
   return Object.assign(blob, { cid, roots: [root] })
 }
 
