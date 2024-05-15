@@ -336,7 +336,7 @@ async function backend(did: string) {
 
   // Create a delegation for a specific DID
   const audience = DID.parse(did);
-  const abilities = ['blob/add', 'index/add', 'upload/add'];
+  const abilities = ['blob/add', 'index/add', 'filecoin/offer', 'upload/add'];
   const expiration = Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24 hours from now
   const delegation = await client.createDelegation(audience, abilities, {
     expiration,
