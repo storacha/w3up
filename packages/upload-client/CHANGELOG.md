@@ -1,5 +1,30 @@
 # Changelog
 
+## [14.1.1](https://github.com/w3s-project/w3up/compare/upload-client-v14.1.0...upload-client-v14.1.1) (2024-05-15)
+
+
+### Fixes
+
+* revert blob add by default ([#1456](https://github.com/w3s-project/w3up/issues/1456)) ([b77ec75](https://github.com/w3s-project/w3up/commit/b77ec750c3911f6f47fa32a5e1560858b347985c))
+* upload client export blob ([#1454](https://github.com/w3s-project/w3up/issues/1454)) ([5e55900](https://github.com/w3s-project/w3up/commit/5e55900870dcb72d7f53d0cd37990c8279b89b15))
+
+## [14.1.0](https://github.com/w3s-project/w3up/compare/upload-client-v14.0.0...upload-client-v14.1.0) (2024-05-14)
+
+
+### Features
+
+* add blob protocol to upload-client ([#1425](https://github.com/w3s-project/w3up/issues/1425)) ([49aef56](https://github.com/w3s-project/w3up/commit/49aef564a726d34dbbedbd83f5366d9320180f99))
+
+
+### Fixes
+
+* cid for filecoin offer must be raw ([#1450](https://github.com/w3s-project/w3up/issues/1450)) ([c3dd7b5](https://github.com/w3s-project/w3up/commit/c3dd7b58e0f88f2d89d5ba12435339d839765e8c))
+
+
+### Other Changes
+
+* appease linter ([782c6d0](https://github.com/w3s-project/w3up/commit/782c6d0b3ca93ee801b38126339a262bcd713ede))
+
 ## [14.0.0](https://github.com/w3s-project/w3up/compare/upload-client-v13.2.2...upload-client-v14.0.0) (2024-04-29)
 
 

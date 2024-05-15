@@ -1,5 +1,13 @@
 # Changelog
 
+## [18.4.0](https://github.com/w3s-project/w3up/compare/access-v18.3.2...access-v18.4.0) (2024-05-14)
+
+
+### Features
+
+* add "plan/create-admin-session" capability ([#1411](https://github.com/w3s-project/w3up/issues/1411)) ([50eeeb5](https://github.com/w3s-project/w3up/commit/50eeeb502335ba0413318b5047869a275901824b))
+* add blob protocol to upload-client ([#1425](https://github.com/w3s-project/w3up/issues/1425)) ([49aef56](https://github.com/w3s-project/w3up/commit/49aef564a726d34dbbedbd83f5366d9320180f99))
+
 ## [18.3.2](https://github.com/w3s-project/w3up/compare/access-v18.3.1...access-v18.3.2) (2024-04-24)
 
 

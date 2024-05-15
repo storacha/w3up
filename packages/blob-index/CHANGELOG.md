@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/w3s-project/w3up/compare/blob-index-v1.0.0...blob-index-v1.0.1) (2024-05-14)
+
+
+### Fixes
+
+* trigger release ([0bf74f4](https://github.com/w3s-project/w3up/commit/0bf74f44183e38d298308ccd469589c07cd760b0))
+
 ## 1.0.0 (2024-05-14)
 
 
