@@ -1,5 +1,16 @@
 # Changelog
 
+## [19.0.0](https://github.com/w3s-project/w3up/compare/access-v18.4.0...access-v19.0.0) (2024-05-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* delegated capabilities required to use `uploadFile`, `uploadDirectory` and `uploadCAR` have changed. In order to use these methods your agent will now need to be delegated `blob/add`, `index/add`, `filecoin/offer` and `upload/add` capabilities. Note: no code changes are required.
+
+### Features
+
+* generate sharded DAG index on client and invoke w `index/add` ([#1451](https://github.com/w3s-project/w3up/issues/1451)) ([a6d9026](https://github.com/w3s-project/w3up/commit/a6d9026536e60c0ce93b613acc6e337f2a21aeb2))
+
 ## [18.4.0](https://github.com/w3s-project/w3up/compare/access-v18.3.2...access-v18.4.0) (2024-05-14)
 
 
