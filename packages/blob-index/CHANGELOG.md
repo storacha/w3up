@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/w3s-project/w3up/compare/blob-index-v1.0.1...blob-index-v1.0.2) (2024-05-15)
+
+
+### Fixes
+
+* missing blob-index deps ([#1467](https://github.com/w3s-project/w3up/issues/1467)) ([deb8cc9](https://github.com/w3s-project/w3up/commit/deb8cc97b6e21db9e863a6ae2b457cf13af5454b))
+
 ## [1.0.1](https://github.com/w3s-project/w3up/compare/blob-index-v1.0.0...blob-index-v1.0.1) (2024-05-14)
 
 
