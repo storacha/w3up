@@ -162,10 +162,7 @@ export const test = {
     const accountProofs = [delegationFromAccountToSession, attestation]
     assert.ok(accountProofs)
   },
-  'skip: same agent, multiple accounts, provider/add': async (
-    assert,
-    context
-  ) => {
+  'same agent, multiple accounts, provider/add': async (assert, context) => {
     const { connection, mail } = context
 
     const accounts = /** @type {const} */ ([
@@ -188,6 +185,7 @@ export const test = {
     for (const account of accounts) {
       // request agent authorization from account
       await requestAccess(agent, account, [{ can: '*' }])
+
       // confirm authorization
       const confirmationEmail = await mail.take()
 
@@ -195,6 +193,7 @@ export const test = {
       // claim delegations after confirmation
       await claimAccess(agent, agent.issuer.did(), {
         addProofs: true,
+        nonce: account.did(),
       })
       // expect two new delegations, [delegationFromAccount, attestationFromService]
       expectedDataDelegations += 2
