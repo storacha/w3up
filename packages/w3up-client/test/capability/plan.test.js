@@ -37,7 +37,9 @@ export const PlanClient = Test.withContext({
         )
       )
 
-      const res = await client.capability.plan.get(account.did())
+      const res = await client.capability.plan.get(account.did(), {
+        nonce: 'retry',
+      })
 
       assert.equal(res.product, exampleProduct)
       assert.ok(res.updatedAt)
@@ -73,16 +75,22 @@ export const PlanClient = Test.withContext({
         (await client.capability.plan.get(account.did())).product,
         initialProduct
       )
-      assert.ok(await client.capability.plan.set(account.did(), updatedProduct))
+      assert.ok(
+        await client.capability.plan.set(account.did(), updatedProduct, {
+          nonce: '2',
+        })
+      )
       assert.equal(
-        (await client.capability.plan.get(account.did())).product,
+        (await client.capability.plan.get(account.did(), { nonce: '2' }))
+          .product,
         updatedProduct
       )
 
       await assert.rejects(
         client.capability.plan.set(
           'did:mailto:example.com:notauser',
-          initialProduct
+          initialProduct,
+          { nonce: '3' }
         )
       )
     },
@@ -113,14 +121,16 @@ export const PlanClient = Test.withContext({
 
       const session = await client.capability.plan.createAdminSession(
         account.did(),
-        'https://example.com/return-url'
+        'https://example.com/return-url',
+        { nonce: '2' }
       )
       assert.ok(session.url)
 
       await assert.rejects(
         client.capability.plan.createAdminSession(
           'did:mailto:example.com:notauser',
-          'https://example.com/return-url'
+          'https://example.com/return-url',
+          { nonce: '3' }
         )
       )
     },

@@ -6,9 +6,11 @@ export class PlanClient extends Base {
   /**
    *
    * @param {import('@web3-storage/access').AccountDID} account
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async get(account) {
-    const out = await get({ agent: this.agent }, { account })
+  async get(account, options) {
+    const out = await get({ agent: this.agent }, { ...options, account })
 
     if (!out.ok) {
       throw new Error(`failed ${Plan.get.can} invocation`, {
@@ -22,9 +24,14 @@ export class PlanClient extends Base {
    *
    * @param {API.AccountDID} account
    * @param {API.DID} product
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async set(account, product) {
-    const out = await set({ agent: this.agent }, { account, product })
+  async set(account, product, options) {
+    const out = await set(
+      { agent: this.agent },
+      { ...options, account, product }
+    )
     if (!out.ok) {
       throw new Error(`failed ${Plan.set.can} invocation`, {
         cause: out.error,
@@ -37,11 +44,13 @@ export class PlanClient extends Base {
    *
    * @param {API.AccountDID} account
    * @param {string} returnURL
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async createAdminSession(account, returnURL) {
+  async createAdminSession(account, returnURL, options) {
     const out = await createAdminSession(
       { agent: this.agent },
-      { account, returnURL }
+      { ...options, account, returnURL }
     )
     if (!out.ok) {
       throw new Error(`failed ${Plan.createAdminSession.can} invocation`, {
@@ -58,12 +67,14 @@ export class PlanClient extends Base {
  * @param {{agent: API.Agent}} client
  * @param {object} options
  * @param {API.AccountDID} options.account
+ * @param {string} [options.nonce]
  * @param {API.Delegation[]} [options.proofs]
  */
-export const get = async ({ agent }, { account, proofs = [] }) => {
+export const get = async ({ agent }, { account, nonce, proofs = [] }) => {
   const receipt = await agent.invokeAndExecute(Plan.get, {
     with: account,
     proofs,
+    nonce,
   })
   return receipt.out
 }
@@ -75,12 +86,17 @@ export const get = async ({ agent }, { account, proofs = [] }) => {
  * @param {object} options
  * @param {API.DID} options.product
  * @param {API.AccountDID} options.account
+ * @param {string} [options.nonce]
  * @param {API.Delegation[]} [options.proofs]
  */
-export const set = async ({ agent }, { account, product, proofs = [] }) => {
+export const set = async (
+  { agent },
+  { account, product, nonce, proofs = [] }
+) => {
   const receipt = await agent.invokeAndExecute(Plan.set, {
     with: account,
     nb: { product },
+    nonce,
     proofs,
   })
   return receipt.out
@@ -96,15 +112,17 @@ export const set = async ({ agent }, { account, product, proofs = [] }) => {
  * @param {object} options
  * @param {API.AccountDID} options.account
  * @param {string} options.returnURL
+ * @param {string} [options.nonce]
  * @param {API.Delegation[]} [options.proofs]
  */
 export const createAdminSession = async (
   { agent },
-  { account, returnURL, proofs = [] }
+  { account, returnURL, nonce, proofs = [] }
 ) => {
   const receipt = await agent.invokeAndExecute(Plan.createAdminSession, {
     with: account,
     proofs,
+    nonce,
     nb: {
       returnURL,
     },

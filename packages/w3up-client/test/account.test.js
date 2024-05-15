@@ -240,13 +240,13 @@ export const testAccount = Test.withContext({
       )
     )
 
-    const { ok: plan } = await account.plan.get()
+    const { ok: plan } = await account.plan.get({ nonce: '2' })
 
     assert.ok(plan?.product, 'did:web:free.web3.storage')
 
     Result.unwrap(await account.plan.set('did:web:lite.web3.storage'))
 
-    const { ok: newPlan } = await account.plan.get()
+    const { ok: newPlan } = await account.plan.get({ nonce: '3' })
 
     assert.ok(newPlan?.product, 'did:web:lite.web3.storage')
   },

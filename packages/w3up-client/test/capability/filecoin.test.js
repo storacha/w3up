@@ -1,6 +1,5 @@
 import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
 import { randomAggregate, randomCAR, randomCargo } from '../helpers/random.js'
-import { Receipt, Message } from '@ucanto/core'
 import * as Test from '../test.js'
 
 export const FilecoinClient = Test.withContext({
@@ -26,7 +25,7 @@ export const FilecoinClient = Test.withContext({
   info: {
     'should get piece info': async (
       assert,
-      { client: alice, pieceStore, service, agentStore }
+      { client: alice, pieceStore, service, receiptStore }
     ) => {
       const { pieces, aggregate } = await randomAggregate(10, 100)
       const content = await randomCAR(100)
@@ -65,26 +64,19 @@ export const FilecoinClient = Test.withContext({
         .delegate()
 
       // @ts-ignore
-      await agentStore.messages.write(
-        await Message.build({
-          receipts: [
-            await Receipt.issue({
-              issuer: service.signer,
-              ran: pieceAcceptInvocation.link(),
-              result: {
-                ok: {
-                  piece: cargo.link,
-                  aggregate: aggregate.link,
-                  inclusion: {
-                    subtree: proof.ok[0],
-                    index: proof.ok[1],
-                  },
-                },
-              },
-            }),
-          ],
-        })
-      )
+      await receiptStore.put({
+        ran: pieceAcceptInvocation.link(),
+        out: {
+          ok: {
+            piece: cargo.link,
+            aggregate: aggregate.link,
+            inclusion: {
+              subtree: proof.ok[0],
+              index: proof.ok[1],
+            },
+          },
+        },
+      })
 
       const res = await alice.capability.filecoin.info(cargo.link)
       assert.deepEqual(res.out.ok?.piece.toString(), cargo.link.toString())

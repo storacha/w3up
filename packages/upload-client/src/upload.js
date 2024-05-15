@@ -46,6 +46,7 @@ export async function add(
           with: SpaceDID.from(resource),
           nb: { root, shards },
           proofs,
+          nonce: options.nonce,
         })
         .execute(conn)
     },
@@ -103,6 +104,7 @@ export async function get(
           with: SpaceDID.from(resource),
           nb: { root },
           proofs,
+          nonce: options.nonce,
         })
         .execute(conn)
     },
@@ -159,6 +161,7 @@ export async function list(
         size: options.size,
         pre: options.pre,
       },
+      nonce: options.nonce,
     })
     .execute(conn)
 
@@ -205,6 +208,7 @@ export async function remove(
       with: SpaceDID.from(resource),
       nb: { root },
       proofs,
+      nonce: options.nonce,
     })
     .execute(conn)
 

@@ -196,6 +196,7 @@ export async function add(
             },
           },
           proofs,
+          nonce: options.nonce,
         })
         .execute(conn)
     },
@@ -341,6 +342,7 @@ export async function list(
         cursor: options.cursor,
         size: options.size,
       },
+      nonce: options.nonce,
     })
     .execute(conn)
 
@@ -389,6 +391,7 @@ export async function remove(
         digest: multihash.bytes,
       },
       proofs,
+      nonce: options.nonce,
     })
     .execute(conn)
 

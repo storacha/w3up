@@ -272,6 +272,7 @@ export interface RequestOptions
     Connectable,
     UploadProgressTrackable {
   fetch?: typeof globalThis.fetch
+  nonce?: string
 }
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}

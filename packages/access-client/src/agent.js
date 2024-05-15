@@ -581,6 +581,7 @@ export class Agent {
       }),
       issuer: this.issuer,
       proofs: [...proofs],
+      nonce: options.nonce,
     })
 
     return /** @type {API.IssuedInvocationView<API.InferInvokedCapability<CAP>>} */ (
@@ -592,13 +593,16 @@ export class Agent {
    * Get Space information from Access service
    *
    * @param {API.URI<"did:">} [space]
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async getSpaceInfo(space) {
+  async getSpaceInfo(space, options) {
     const _space = space || this.currentSpace()
     if (!_space) {
       throw new Error('No space selected, you need pass a resource.')
     }
     const inv = await this.invokeAndExecute(Capabilities.info, {
+      ...options,
       with: _space,
     })
 

@@ -8,8 +8,10 @@ export class SpaceClient extends Base {
    * Get information about a space.
    *
    * @param {import('../types.js').DID} space - DID of the space to retrieve info about.
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async info(space) {
-    return await this._agent.getSpaceInfo(space)
+  async info(space, options) {
+    return await this._agent.getSpaceInfo(space, options)
   }
 }
