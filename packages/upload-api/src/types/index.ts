@@ -3,6 +3,8 @@ import { Failure, Result, Unit } from '@ucanto/interface'
 import { ShardedDAGIndex } from '@web3-storage/blob-index/types'
 import { AllocationsStorage } from './blob.js'
 
+export type { ShardedDAGIndex }
+
 /**
  * Service that allows publishing a set of multihashes to IPNI for a
  * pre-configured provider.
