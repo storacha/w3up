@@ -507,9 +507,6 @@ importers:
       one-webcrypto:
         specifier: git://github.com/web3-storage/one-webcrypto
         version: https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/5148cd14d5489a8ac4cd38223870e02db15a2382
-      p-defer:
-        specifier: ^4.0.1
-        version: 4.0.1
       typescript:
         specifier: 5.2.2
         version: 5.2.2

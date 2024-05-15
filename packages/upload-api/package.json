@@ -220,7 +220,6 @@
     "is-subset": "^0.1.1",
     "mocha": "^10.2.0",
     "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
-    "p-defer": "^4.0.1",
     "typescript": "5.2.2"
   },
   "eslintConfig": {
