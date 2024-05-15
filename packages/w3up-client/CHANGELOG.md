@@ -1,5 +1,25 @@
 # Changelog
 
+## [13.1.1](https://github.com/w3s-project/w3up/compare/w3up-client-v13.1.0...w3up-client-v13.1.1) (2024-05-15)
+
+
+### Fixes
+
+* revert blob add by default ([#1456](https://github.com/w3s-project/w3up/issues/1456)) ([b77ec75](https://github.com/w3s-project/w3up/commit/b77ec750c3911f6f47fa32a5e1560858b347985c))
+
+## [13.1.0](https://github.com/w3s-project/w3up/compare/w3up-client-v13.0.1...w3up-client-v13.1.0) (2024-05-14)
+
+
+### Features
+
+* add "plan/create-admin-session" capability ([#1411](https://github.com/w3s-project/w3up/issues/1411)) ([50eeeb5](https://github.com/w3s-project/w3up/commit/50eeeb502335ba0413318b5047869a275901824b))
+* add blob protocol to upload-client ([#1425](https://github.com/w3s-project/w3up/issues/1425)) ([49aef56](https://github.com/w3s-project/w3up/commit/49aef564a726d34dbbedbd83f5366d9320180f99))
+
+
+### Fixes
+
+* test against actual api ([#1438](https://github.com/w3s-project/w3up/issues/1438)) ([f8132ca](https://github.com/w3s-project/w3up/commit/f8132ca1fced72a4addc7e9f0a2162e823c1ea5f))
+
 ## [13.0.1](https://github.com/w3s-project/w3up/compare/w3up-client-v13.0.0...w3up-client-v13.0.1) (2024-05-07)
 
 
