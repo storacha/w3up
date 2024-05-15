@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/w3s-project/w3ui/compare/react-v2.2.1...react-v2.3.0) (2024-05-15)
+
+
+### Features
+
+* upgrade w3up-client deps ([#630](https://github.com/w3s-project/w3ui/issues/630)) ([9bca4a1](https://github.com/w3s-project/w3ui/commit/9bca4a1c4d5d4d24cc8cbd4741a05fb8bc5422f2))
+
 ## [2.2.1](https://github.com/w3s-project/w3ui/compare/react-v2.2.0...react-v2.2.1) (2024-04-29)
 
 
