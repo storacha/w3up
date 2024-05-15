@@ -52,7 +52,7 @@ export async function uploadFile(conf, file, options = {}) {
  * for the generated DAG. All files are added to a container directory, with
  * paths in file names preserved.
  *
- * Required delegated capability proofs: `blob/add`, `index/add`, 
+ * Required delegated capability proofs: `blob/add`, `index/add`,
  * `filecoin/offer`, `upload/add`
  *
  * @param {import('./types.js').InvocationConfig} conf Configuration

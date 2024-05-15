@@ -7,7 +7,7 @@ import {
   Blob as BlobCapabilities,
   Index as IndexCapabilities,
   Upload as UploadCapabilities,
-  Filecoin as FilecoinCapabilities
+  Filecoin as FilecoinCapabilities,
 } from '@web3-storage/capabilities'
 import { CAR } from '@ucanto/transport'
 import { Base } from './base.js'
