@@ -129,6 +129,6 @@ const setupBlobAddResponse = async function (
     .fork(blobAllocateTask)
     .fork(blobConcludeAllocate)
     .fork(blobPutTask)
-    .join(blobAcceptTask)
+    .fork(blobAcceptTask)
     .fork(blobConcludeAccept)
 }

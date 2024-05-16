@@ -11,10 +11,13 @@ export class FilecoinClient extends Base {
    *
    * @param {import('multiformats').UnknownLink} content
    * @param {import('@web3-storage/capabilities/types').PieceLink} piece
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async offer(content, piece) {
+  async offer(content, piece, options) {
     const conf = await this._invocationConfig([FilecoinCapabilities.offer.can])
     return Storefront.filecoinOffer(conf, content, piece, {
+      ...options,
       connection: this._serviceConf.filecoin,
     })
   }
@@ -23,10 +26,13 @@ export class FilecoinClient extends Base {
    * Request info about a content piece in Filecoin deals
    *
    * @param {import('@web3-storage/capabilities/types').PieceLink} piece
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async info(piece) {
+  async info(piece, options) {
     const conf = await this._invocationConfig([FilecoinCapabilities.info.can])
     return Storefront.filecoinInfo(conf, piece, {
+      ...options,
       connection: this._serviceConf.filecoin,
     })
   }

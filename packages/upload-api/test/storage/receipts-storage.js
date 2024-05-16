@@ -10,7 +10,7 @@ import { RecordNotFound } from '../../src/errors.js'
  */
 
 /**
- * @implements {API.ReceiptsStorage}
+ * @implements {API.Accessor<API.UnknownLink, API.Receipt>}
  */
 export class ReceiptsStorage {
   constructor() {

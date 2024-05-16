@@ -63,12 +63,6 @@ export const createContext = async (
     url: new URL('http://localhost:8787'),
     ...serviceStores,
     ...externalServices,
-    tasksScheduler: {
-      schedule: () =>
-        Promise.resolve({
-          ok: {},
-        }),
-    },
     getServiceConnection: () => connection,
     ...createRevocationChecker({
       revocationsStorage: serviceStores.revocationsStorage,

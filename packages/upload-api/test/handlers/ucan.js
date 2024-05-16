@@ -1,17 +1,13 @@
 import * as API from '../../src/types.js'
 import { UCAN, Console } from '@web3-storage/capabilities'
-import pDefer from 'p-defer'
 import { Receipt } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
-import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, mallory, registerSpace } from '../util.js'
 import { createConcludeInvocation } from '../../src/ucan/conclude.js'
-import { ReferencedInvocationNotFoundName } from '../../src/ucan/lib.js'
 import { parseBlobAddReceiptNext } from '../helpers/blob.js'
 
 /**
@@ -364,7 +360,7 @@ export const test = {
 
     assert.ok(String(revoke.out.error?.message).match(/Constrain violation/))
   },
-  'ucan/conclude writes a receipt for a task previously scheduled': async (
+  'ucan/conclude writes a receipt for unknown tasks': async (
     assert,
     context
   ) => {
@@ -379,43 +375,48 @@ export const test = {
       audience: alice,
       with: context.id.did(),
     })
-    const invocation = Console.log.invoke({
+
+    const invocation = await Console.log
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.did(),
+        nb: { value: 'hello' },
+        proofs: [proof],
+      })
+      .delegate()
+
+    const receipt = await Receipt.issue({
       issuer: alice,
-      audience: context.id,
-      with: context.id.did(),
-      nb: { value: 'hello' },
-      proofs: [proof],
+      ran: invocation,
+      result: { ok: 'hello' },
     })
-
-    const success = await invocation.execute(connection)
-
-    if (!success.out.ok) {
-      throw new Error('invocation failed', { cause: success })
-    }
 
     // Create conclude invocation
     const concludeInvocation = createConcludeInvocation(
       alice,
       context.id,
-      success
-    )
-    const ucanConcludeFail = await concludeInvocation.execute(connection)
-    assert.ok(ucanConcludeFail.out.error)
-    assert.equal(
-      ucanConcludeFail.out.error?.name,
-      ReferencedInvocationNotFoundName
+      receipt
     )
 
-    // Store scheduled task
-    await context.tasksStorage.put(await invocation.delegate())
+    const conclude = await concludeInvocation.execute(connection)
+    assert.ok(conclude.out.ok)
+    assert.ok(conclude.out.ok?.time)
 
-    const ucanConcludeSuccess = await concludeInvocation.execute(connection)
-    assert.ok(ucanConcludeSuccess.out.ok)
-    assert.ok(ucanConcludeSuccess.out.ok?.time)
+    assert.deepEqual(
+      await context.agentStore.invocations.get(invocation.link()),
+      { ok: invocation }
+    )
+
+    const storedReceipt = await context.agentStore.receipts.get(
+      invocation.link()
+    )
+    assert.ok(storedReceipt.ok)
+    assert.deepEqual(storedReceipt.ok?.link(), receipt.link())
+    assert.deepEqual(storedReceipt.ok?.ran, invocation)
   },
-  'ucan/conclude schedules web3.storage/blob/accept if invoked with the blob put receipt':
+  'ucan/conclude schedules web3.storage/blob/accept if invoked with the http/put receipt':
     async (assert, context) => {
-      const taskScheduled = pDefer()
       const { proof, spaceDid } = await registerSpace(alice, context)
 
       // prepare data
@@ -427,39 +428,7 @@ export const test = {
       // create service connection
       const connection = connect({
         id: context.id,
-        channel: createServer({
-          ...context,
-          tasksScheduler: {
-            schedule: async (invocation) => {
-              assert.equal(invocation.capabilities.length, 1)
-              assert.equal(
-                invocation.capabilities[0].can,
-                W3sBlobCapabilities.accept.can
-              )
-              assert.equal(
-                invocation.capabilities[0].nb._put['ucan/await'][0],
-                '.out.ok'
-              )
-              assert.ok(
-                invocation.capabilities[0].nb._put['ucan/await'][1].equals(
-                  httpPutDelegation.cid
-                )
-              )
-              assert.ok(invocation.capabilities[0].nb.blob)
-              assert.equal(invocation.capabilities[0].nb.space, spaceDid)
-              const [blobAcceptRes] = await connection.execute(invocation)
-
-              taskScheduled.resolve(blobAcceptRes)
-              if (blobAcceptRes.out.error) {
-                return blobAcceptRes.out
-              }
-
-              return {
-                ok: {},
-              }
-            },
-          },
-        }),
+        channel: createServer(context),
       })
 
       // invoke `blob/add`
@@ -490,9 +459,6 @@ export const test = {
       const address = next.allocate.receipt.out.ok?.address
       assert.ok(address)
 
-      // Store allocate task to be fetchable from allocate
-      await context.tasksStorage.put(next.allocate.task)
-
       // Write blob
       const goodPut = await fetch(address.url, {
         method: 'PUT',
@@ -506,33 +472,10 @@ export const test = {
       const keys = next.put.task.facts[0]['keys']
       // @ts-expect-error Argument of type 'unknown' is not assignable to parameter of type 'SignerArchive<`did:${string}:${string}`, SigAlg>'
       const blobProvider = ed25519.from(keys)
-      const httpPut = HTTPCapabilities.put.invoke({
-        issuer: blobProvider,
-        audience: blobProvider,
-        with: blobProvider.toDIDKey(),
-        nb: {
-          body: {
-            digest,
-            size,
-          },
-          url: {
-            'ucan/await': ['.out.ok.address.url', next.allocate.task.link()],
-          },
-          headers: {
-            'ucan/await': [
-              '.out.ok.address.headers',
-              next.allocate.task.link(),
-            ],
-          },
-        },
-        facts: next.put.task.facts,
-        expiration: Infinity,
-      })
 
-      const httpPutDelegation = await httpPut.delegate()
       const httpPutReceipt = await Receipt.issue({
         issuer: blobProvider,
-        ran: httpPutDelegation.cid,
+        ran: next.put.task.link(),
         result: {
           ok: {},
         },
@@ -547,10 +490,12 @@ export const test = {
         throw new Error('invocation failed', { cause: blobAdd })
       }
 
-      // verify accept was scheduled
-      /** @type {import('@ucanto/interface').Receipt<import('@web3-storage/capabilities/types').BlobAcceptSuccess>} */
-      const blobAcceptReceipt = await taskScheduled.promise
-      assert.ok(blobAcceptReceipt.out.ok)
-      assert.ok(blobAcceptReceipt.out.ok?.site)
+      const accepted = await context.agentStore.receipts.get(
+        next.accept.task.link()
+      )
+      assert.ok(accepted.ok)
+      assert.ok(
+        /** @type {API.BlobAcceptSuccess} */ (accepted.ok?.out.ok)?.site
+      )
     },
 }

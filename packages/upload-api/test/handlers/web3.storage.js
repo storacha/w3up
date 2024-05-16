@@ -21,6 +21,60 @@ import * as Result from '../helpers/result.js'
  * @type {API.Tests}
  */
 export const test = {
+  'web3.storage/blob/allocate must be invoked on service did': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+
+    // prepare data
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const multihash = await sha256.digest(data)
+    const digest = multihash.bytes
+    const size = data.byteLength
+
+    // create service connection
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // create `blob/add` invocation
+    const blobAddInvocation = BlobCapabilities.add.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: {
+        blob: {
+          digest,
+          size,
+        },
+      },
+      proofs: [proof],
+    })
+
+    // invoke `web3.storage/blob/allocate`
+    const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: {
+        blob: {
+          digest,
+          size,
+        },
+        cause: (await blobAddInvocation.delegate()).cid,
+        space: spaceDid,
+      },
+      proofs: [proof],
+    })
+    const blobAllocate = await serviceBlobAllocate.execute(connection)
+    assert.ok(
+      String(blobAllocate.out.error?.message).match(
+        /did:key:.*does not have.*capability provider/
+      )
+    )
+  },
   'web3.storage/blob/allocate allocates to space and returns presigned url':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
@@ -53,9 +107,9 @@ export const test = {
 
       // invoke `web3.storage/blob/allocate`
       const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-        issuer: alice,
+        issuer: context.id,
         audience: context.id,
-        with: spaceDid,
+        with: context.id.did(),
         nb: {
           blob: {
             digest,
@@ -64,7 +118,6 @@ export const test = {
           cause: (await blobAddInvocation.delegate()).cid,
           space: spaceDid,
         },
-        proofs: [proof],
       })
       const blobAllocate = await serviceBlobAllocate.execute(connection)
       if (!blobAllocate.out.ok) {
@@ -151,34 +204,50 @@ export const test = {
       })
 
       // invoke `web3.storage/blob/allocate`
-      const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-        issuer: alice,
-        audience: context.id,
-        with: spaceDid,
-        nb: {
-          blob: {
-            digest,
-            size,
+      const allocation = await W3sBlobCapabilities.allocate
+        .invoke({
+          issuer: context.id,
+          audience: context.id,
+          with: context.id.did(),
+          nb: {
+            blob: {
+              digest,
+              size,
+            },
+            cause: (await blobAddInvocation.delegate()).cid,
+            space: spaceDid,
           },
-          cause: (await blobAddInvocation.delegate()).cid,
-          space: spaceDid,
-        },
-        proofs: [proof],
-      })
-      const blobAllocate = await serviceBlobAllocate.execute(connection)
-      if (!blobAllocate.out.ok) {
-        throw new Error('invocation failed', { cause: blobAllocate })
+        })
+        .execute(connection)
+
+      if (!allocation.out.ok) {
+        throw new Error('invocation failed', { cause: allocation.out.error })
       }
 
       // second blob allocate invocation
-      const secondBlobAllocate = await serviceBlobAllocate.execute(connection)
-      if (!secondBlobAllocate.out.ok) {
-        throw new Error('invocation failed', { cause: secondBlobAllocate })
+      const reallocation = await await W3sBlobCapabilities.allocate
+        .invoke({
+          issuer: context.id,
+          audience: context.id,
+          with: context.id.did(),
+          nb: {
+            blob: {
+              digest,
+              size,
+            },
+            cause: (await blobAddInvocation.delegate()).cid,
+            space: spaceDid,
+          },
+          nonce: 'retry',
+        })
+        .execute(connection)
+      if (!reallocation.out.ok) {
+        throw new Error('invocation failed', { cause: reallocation.out.error })
       }
 
       // Validate response
-      assert.equal(secondBlobAllocate.out.ok.size, 0)
-      assert.ok(!!blobAllocate.out.ok.address)
+      assert.equal(reallocation.out.ok.size, 0)
+      assert.ok(!!reallocation.out.ok.address)
     },
   'web3.storage/blob/allocate can allocate to different space after write to one space':
     async (assert, context) => {
@@ -230,9 +299,9 @@ export const test = {
 
       // invoke `web3.storage/blob/allocate` capabilities on alice space
       const aliceServiceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-        issuer: alice,
+        issuer: context.id,
         audience: context.id,
-        with: aliceSpaceDid,
+        with: context.id.did(),
         nb: {
           blob: {
             digest,
@@ -241,7 +310,6 @@ export const test = {
           cause: (await aliceBlobAddInvocation.delegate()).cid,
           space: aliceSpaceDid,
         },
-        proofs: [aliceProof],
       })
       const aliceBlobAllocate = await aliceServiceBlobAllocate.execute(
         connection
@@ -271,9 +339,9 @@ export const test = {
 
       // invoke `web3.storage/blob/allocate` capabilities on bob space
       const bobServiceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-        issuer: bob,
+        issuer: context.id,
         audience: context.id,
-        with: bobSpaceDid,
+        with: context.id.did(),
         nb: {
           blob: {
             digest,
@@ -282,7 +350,6 @@ export const test = {
           cause: (await bobBlobAddInvocation.delegate()).cid,
           space: bobSpaceDid,
         },
-        proofs: [bobProof],
       })
       const bobBlobAllocate = await bobServiceBlobAllocate.execute(connection)
       if (!bobBlobAllocate.out.ok) {
@@ -338,9 +405,9 @@ export const test = {
 
       // invoke `web3.storage/blob/allocate`
       const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-        issuer: alice,
+        issuer: context.id,
         audience: context.id,
-        with: spaceDid,
+        with: context.id.did(),
         nb: {
           blob: {
             digest,
@@ -349,7 +416,6 @@ export const test = {
           cause: (await blobAddInvocation.delegate()).cid,
           space: spaceDid,
         },
-        proofs: [proof],
       })
       const blobAllocate = await serviceBlobAllocate.execute(connection)
       if (!blobAllocate.out.ok) {
@@ -382,7 +448,7 @@ export const test = {
         'should fail to upload as content-length differs from that used to sign the url'
       )
     },
-  'web3.storage/blob/allocate creates presigned url that can only PUT a payload with exact bytes':
+  'web3.storage/blob/allocate creates presigned url that can PUT a payload with exact bytes':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -415,9 +481,9 @@ export const test = {
 
       // invoke `web3.storage/blob/allocate`
       const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-        issuer: alice,
+        issuer: context.id,
         audience: context.id,
-        with: spaceDid,
+        with: context.id.did(),
         nb: {
           blob: {
             digest,
@@ -426,7 +492,6 @@ export const test = {
           cause: (await blobAddInvocation.delegate()).cid,
           space: spaceDid,
         },
-        proofs: [proof],
       })
       const blobAllocate = await serviceBlobAllocate.execute(connection)
       if (!blobAllocate.out.ok) {
@@ -487,10 +552,10 @@ export const test = {
       })
 
       // invoke `web3.storage/blob/allocate`
-      const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
-        issuer: alice,
+      const task = {
+        issuer: context.id,
         audience: context.id,
-        with: spaceDid,
+        with: context.id.did(),
         nb: {
           blob: {
             digest,
@@ -499,9 +564,11 @@ export const test = {
           cause: (await blobAddInvocation.delegate()).cid,
           space: spaceDid,
         },
-        proofs: [proof],
-      })
-      const blobAllocate = await serviceBlobAllocate.execute(connection)
+      }
+      const blobAllocate = await W3sBlobCapabilities.allocate
+        .invoke(task)
+        .execute(connection)
+
       assert.ok(blobAllocate.out.error)
       assert.equal(blobAllocate.out.error?.message.includes('no storage'), true)
 
@@ -518,7 +585,12 @@ export const test = {
       })
       assert.ok(providerAdd.out.ok)
 
-      const retryBlobAllocate = await serviceBlobAllocate.execute(connection)
+      const retryBlobAllocate = await W3sBlobCapabilities.allocate
+        .invoke({
+          ...task,
+          nonce: 'retry',
+        })
+        .execute(connection)
       assert.equal(retryBlobAllocate.out.error, undefined)
     },
   'web3.storage/blob/accept returns site delegation': async (
@@ -590,7 +662,6 @@ export const test = {
         space: spaceDid,
         _put: { 'ucan/await': ['.out.ok', next.put.task.link()] },
       },
-      proofs: [proof],
     })
     const blobAccept = await serviceBlobAccept.execute(connection)
     if (!blobAccept.out.ok) {

@@ -26,7 +26,9 @@ export const SubscriptionClient = Test.withContext({
       assert.ok(result.ok)
 
       assert.deepEqual(
-        await client.capability.subscription.list(account.did()),
+        await client.capability.subscription.list(account.did(), {
+          nonce: 'retry',
+        }),
         {
           results: [
             {

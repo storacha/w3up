@@ -10,10 +10,12 @@ export class SubscriptionClient extends Base {
    * List subscriptions for the passed account.
    *
    * @param {import('@web3-storage/access').AccountDID} account
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
   /* c8 ignore next */
-  async list(account) {
-    const out = await list({ agent: this.agent }, { account })
+  async list(account, options) {
+    const out = await list({ agent: this.agent }, { ...options, account })
     /* c8 ignore next 8 */
     if (!out.ok) {
       throw new Error(
@@ -34,13 +36,15 @@ export class SubscriptionClient extends Base {
  * @param {{agent: API.Agent}} client
  * @param {object} options
  * @param {API.AccountDID} options.account
+ * @param {string} [options.nonce]
  * @param {API.Delegation[]} [options.proofs]
  */
-export const list = async ({ agent }, { account, proofs = [] }) => {
+export const list = async ({ agent }, { account, nonce, proofs = [] }) => {
   const receipt = await agent.invokeAndExecute(SubscriptionCapabilities.list, {
     with: account,
     proofs,
     nb: {},
+    nonce,
   })
   return receipt.out
 }

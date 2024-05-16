@@ -17,6 +17,9 @@ import type {
   UnknownLink,
   MultihashDigest,
   Unit,
+  AgentMessage,
+  Invocation,
+  Receipt,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
@@ -186,15 +189,10 @@ import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
-import { ReceiptsStorage, TasksScheduler } from './types/service.js'
-export type { ReceiptsStorage, TasksScheduler }
-import {
-  AllocationsStorage,
-  BlobsStorage,
-  TasksStorage,
-  BlobAddInput,
-} from './types/blob.js'
-export type { AllocationsStorage, BlobsStorage, TasksStorage, BlobAddInput }
+import { StorageGetError, TasksScheduler } from './types/service.js'
+export type { TasksScheduler }
+import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
+export type { AllocationsStorage, BlobsStorage, BlobAddInput }
 import { IPNIService, IndexServiceContext } from './types/index.js'
 export type {
   IndexServiceContext,
@@ -354,8 +352,7 @@ export type BlobServiceContext = SpaceServiceContext & {
   maxUploadSize: number
   allocationsStorage: AllocationsStorage
   blobsStorage: BlobsStorage
-  tasksStorage: TasksStorage
-  receiptsStorage: ReceiptsStorage
+  agentStore: AgentStore
   getServiceConnection: () => ConnectionView<Service>
 }
 
@@ -387,7 +384,7 @@ export interface AccessClaimContext {
   delegationsStorage: Delegations
 }
 
-export type AccessServiceContext = AccessClaimContext & {
+export interface AccessServiceContext extends AccessClaimContext, AgentContext {
   signer: EdSigner.Signer
   email: Email
   url: URL
@@ -413,7 +410,7 @@ export interface AdminServiceContext {
 
 export interface ConsoleServiceContext {}
 
-export interface SpaceServiceContext {
+export interface SpaceServiceContext extends AgentContext {
   provisionsStorage: Provisions
   delegationsStorage: Delegations
   rateLimitsStorage: RateLimits
@@ -445,18 +442,13 @@ export interface ConcludeServiceContext {
    * Service signer
    */
   id: Signer
+
   /**
-   * Stores receipts for tasks.
+   * Store for invocations & receipts.
    */
-  receiptsStorage: ReceiptsStorage
-  /**
-   * Stores tasks.
-   */
-  tasksStorage: TasksStorage
-  /**
-   * Task scheduler.
-   */
-  tasksScheduler: TasksScheduler
+  agentStore: AgentStore
+
+  getServiceConnection: () => ConnectionView<Service>
 }
 
 export interface PlanServiceContext {
@@ -469,7 +461,8 @@ export interface UsageServiceContext {
 }
 
 export interface ServiceContext
-  extends AccessServiceContext,
+  extends AgentContext,
+    AccessServiceContext,
     ConsoleServiceContext,
     ConsumerServiceContext,
     CustomerServiceContext,
@@ -491,6 +484,52 @@ export interface UcantoServerContext extends ServiceContext, RevocationChecker {
   id: Signer
   codec?: InboundCodec
   errorReporter: ErrorReporter
+}
+
+export interface AgentContext {
+  agentStore: AgentStore
+}
+
+/**
+ * An agent store used for storing ucanto {@link AgentMessage}s and
+ * {@link Invocation} and {@link Receipt} lookups.
+ */
+export interface AgentStore {
+  messages: Writer<AgentMessage>
+  invocations: Accessor<UnknownLink, Invocation>
+  receipts: Accessor<UnknownLink, Receipt>
+}
+
+/**
+ * Read interface for the key value store.
+ */
+export interface Accessor<Key, Value> {
+  get(key: Key): Promise<Result<Value, StorageGetError>>
+}
+
+/**
+ * Write interface of some values.
+ */
+export interface Writer<Value> {
+  write(value: Value): Promise<Result<Unit, WriteError<Value>>>
+}
+
+export interface NotFoundError {
+  name: 'NotFoundError'
+  key: unknown
+}
+
+export interface WriteError<Payload = unknown> extends Failure {
+  name: 'WriteError'
+
+  /**
+   * Payload writing which caused an error.
+   */
+  payload: Payload
+  /**
+   * Destination writing into which caused an error.
+   */
+  writer: Writer<Payload>
 }
 
 export interface UcantoServerTestContext
@@ -515,7 +554,7 @@ export interface StoreTestContext {}
 export interface UploadTestContext {}
 
 export interface ErrorReporter {
-  catch: (error: HandlerExecutionError) => void
+  catch: (error: HandlerExecutionError | WriteError) => void
 }
 
 export interface CarStoreBucket {

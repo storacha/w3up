@@ -185,6 +185,7 @@ export const test = {
     for (const account of accounts) {
       // request agent authorization from account
       await requestAccess(agent, account, [{ can: '*' }])
+
       // confirm authorization
       const confirmationEmail = await mail.take()
 
@@ -192,6 +193,7 @@ export const test = {
       // claim delegations after confirmation
       await claimAccess(agent, agent.issuer.did(), {
         addProofs: true,
+        nonce: account.did(),
       })
       // expect two new delegations, [delegationFromAccount, attestationFromService]
       expectedDataDelegations += 2

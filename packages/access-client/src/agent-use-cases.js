@@ -38,17 +38,19 @@ export async function requestAccess(access, account, capabilities) {
  * @param {AccessAgent} access
  * @param {API.DID} [audienceOfClaimedDelegations] - audience of claimed delegations. defaults to access.connection.id.did()
  * @param {object} opts
+ * @param {string} [opts.nonce] - nonce to use for the claim
  * @param {boolean} [opts.addProofs] - whether to addProof to access agent
  * @returns
  */
 export async function claimAccess(
   access,
   audienceOfClaimedDelegations = access.connection.id.did(),
-  { addProofs = false } = {}
+  { addProofs = false, nonce } = {}
 ) {
   const res = await access.invokeAndExecute(Access.claim, {
     audience: access.connection.id,
     with: audienceOfClaimedDelegations,
+    nonce,
   })
   if (res.out.error) {
     throw res.out.error

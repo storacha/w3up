@@ -34,7 +34,7 @@ export const UploadClient = Test.withContext({
   list: {
     'should list uploads': async (
       assert,
-      { client: alice, service, provisionsStorage }
+      { client: alice, service, provisionsStorage, uploadTable }
     ) => {
       const car = await randomCAR(128)
 
@@ -57,9 +57,13 @@ export const UploadClient = Test.withContext({
 
       await alice.capability.upload.add(car.roots[0], [car.cid])
 
-      const {
-        results: [entry],
-      } = await alice.capability.upload.list()
+      assert.deepEqual(await uploadTable.exists(space.did(), car.roots[0]), {
+        ok: true,
+      })
+
+      const list = await alice.capability.upload.list({ nonce: 'retry' })
+
+      const [entry] = list.results
 
       assert.deepEqual(entry.root, car.roots[0])
       assert.deepEqual(entry.shards, [car.cid])

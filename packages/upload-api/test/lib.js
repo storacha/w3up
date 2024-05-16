@@ -17,8 +17,7 @@ import * as Usage from './handlers/usage.js'
 import * as Index from './handlers/index.js'
 import { test as allocationsStorageTests } from './storage/allocations-storage-tests.js'
 import { test as blobsStorageTests } from './storage/blobs-storage-tests.js'
-import { test as tasksStorageTests } from './storage/tasks-storage-tests.js'
-import { test as receiptsStorageTests } from './storage/receipts-storage-tests.js'
+import { test as agentStoreTests } from './storage/agent-store-tests.js'
 import { test as delegationsStorageTests } from './storage/delegations-storage-tests.js'
 import { test as provisionsStorageTests } from './storage/provisions-storage-tests.js'
 import { test as rateLimitsStorageTests } from './storage/rate-limits-storage-tests.js'
@@ -46,8 +45,7 @@ export const storageTests = {
   ...plansStorageTests,
   ...allocationsStorageTests,
   ...blobsStorageTests,
-  ...tasksStorageTests,
-  ...receiptsStorageTests,
+  ...agentStoreTests,
 }
 
 export const handlerTests = {
@@ -84,7 +82,6 @@ export {
   plansStorageTests,
   allocationsStorageTests,
   blobsStorageTests,
-  tasksStorageTests,
-  receiptsStorageTests,
+  agentStoreTests,
   DebugEmail,
 }

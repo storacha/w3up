@@ -207,9 +207,13 @@ export class AccountPlan {
 
   /**
    * Gets information about the plan associated with this account.
+   *
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async get() {
+  async get(options) {
     return await Plan.get(this.model, {
+      ...options,
       account: this.model.id,
       proofs: this.model.proofs,
     })
@@ -219,9 +223,12 @@ export class AccountPlan {
    * Sets the plan associated with this account.
    *
    * @param {import('@ucanto/interface').DID} productDID
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async set(productDID) {
+  async set(productDID, options) {
     return await Plan.set(this.model, {
+      ...options,
       account: this.model.id,
       product: productDID,
       proofs: this.model.proofs,
@@ -232,17 +239,25 @@ export class AccountPlan {
    *
    * @param {import('@web3-storage/access').AccountDID} accountDID
    * @param {string} returnURL
-   * @returns
+   * @param {object} [options]
+   * @param {string} [options.nonce]
    */
-  async createAdminSession(accountDID, returnURL) {
+  async createAdminSession(accountDID, returnURL, options) {
     return await Plan.createAdminSession(this.model, {
+      ...options,
       account: accountDID,
       returnURL,
     })
   }
 
-  async subscriptions() {
+  /**
+   *
+   * @param {object} [options]
+   * @param {string} [options.nonce]
+   */
+  async subscriptions(options) {
     return await Subscription.list(this.model, {
+      ...options,
       account: this.model.id,
       proofs: this.model.proofs,
     })

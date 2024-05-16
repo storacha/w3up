@@ -66,6 +66,7 @@ export async function add(
           with: SpaceDID.from(resource),
           nb: { link, size: bytes.length },
           proofs,
+          nonce: options.nonce,
         })
         .execute(conn)
     },
@@ -185,6 +186,7 @@ export async function get(
           with: SpaceDID.from(resource),
           nb: { link },
           proofs,
+          nonce: options.nonce,
         })
         .execute(conn)
     },
@@ -240,6 +242,7 @@ export async function list(
         size: options.size,
         pre: options.pre,
       },
+      nonce: options.nonce,
     })
     .execute(conn)
 
@@ -286,6 +289,7 @@ export async function remove(
       with: SpaceDID.from(resource),
       nb: { link },
       proofs,
+      nonce: options.nonce,
     })
     .execute(conn)
 

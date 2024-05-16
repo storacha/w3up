@@ -187,6 +187,7 @@ export const test = {
           iss: account.did(),
           att: [{ can: '*' }],
         },
+        nonce: 'second-try',
       })
       .execute(connection)
 
@@ -249,6 +250,7 @@ export const test = {
           iss: account.did(),
           att: [{ can: '*' }],
         },
+        nonce: 'errorAccessResult',
       })
       .execute(connection)
 
