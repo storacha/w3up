@@ -410,6 +410,7 @@ export const test = {
     await context.tasksStorage.put(await invocation.delegate())
 
     const ucanConcludeSuccess = await concludeInvocation.execute(connection)
+    console.log(ucanConcludeSuccess.out)
     assert.ok(ucanConcludeSuccess.out.ok)
     assert.ok(ucanConcludeSuccess.out.ok?.time)
   },
