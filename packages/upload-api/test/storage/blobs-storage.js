@@ -134,9 +134,8 @@ export class BlobsStorage {
    * @param {import('multiformats').MultihashDigest} digest
    */
   async stream(digest) {
-    const key = this.#bucketPath(digest)
     if (!this.server) {
-      const url = new URL(key, this.baseURL)
+      const url = await this.createDownloadUrl(digest.bytes)
       const res = await fetch(url.toString())
       if (res.status === 404) return error(new BlobNotFound(digest))
       if (!res.ok || !res.body) {
@@ -147,7 +146,7 @@ export class BlobsStorage {
       return ok(res.body)
     }
 
-    const bytes = this.content.get(key)
+    const bytes = this.content.get(this.#bucketPath(digest))
     if (!bytes) return error(new BlobNotFound(digest))
 
     return ok(
@@ -201,5 +200,12 @@ export class BlobsStorage {
         },
       },
     }
+  }
+
+  /** @param {Uint8Array} multihash */
+  async createDownloadUrl (multihash) {
+    const digest = digestDecode(multihash)
+    const url = new URL(this.#bucketPath(digest), this.baseURL)
+    return ok(/** @type {Types.URI} */ (url.toString()))
   }
 }

@@ -4,6 +4,7 @@ import type {
   Result,
   Failure,
   DID,
+  URI,
 } from '@ucanto/interface'
 import {
   Multihash,
@@ -84,4 +85,5 @@ export interface BlobsStorage {
       Failure
     >
   >
+  createDownloadUrl: (content: Multihash) => Promise<Result<URI, Failure>>
 }

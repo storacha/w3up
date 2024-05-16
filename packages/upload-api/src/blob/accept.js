@@ -8,9 +8,6 @@ import { code as rawCode } from 'multiformats/codecs/raw'
 import * as API from '../types.js'
 import { AllocatedMemoryHadNotBeenWrittenTo } from './lib.js'
 
-const R2_REGION = 'auto'
-const R2_BUCKET = 'carpark-prod-0'
-
 /**
  * @param {API.W3ServiceContext} context
  * @returns {API.ServiceMethod<API.BlobAccept, API.BlobAcceptSuccess, API.BlobAcceptFailure>}
@@ -32,13 +29,10 @@ export function blobAcceptProvider(context) {
 
       const digest = Digest.decode(blob.digest)
       const content = createLink(rawCode, digest)
-      const url =
-        /** @type {API.URI<'https:'>} */
-        (
-          `https://w3s.link/ipfs/${content}?format=raw&origin=${encodeURIComponent(
-            `r2://${R2_REGION}/${R2_BUCKET}`
-          )}`
-        )
+      const createUrl = await context.blobsStorage.createDownloadUrl(digest.bytes)
+      if (createUrl.error) {
+        return createUrl
+      }
 
       const locationClaim = await Assert.location.delegate({
         issuer: context.id,
@@ -46,7 +40,7 @@ export function blobAcceptProvider(context) {
         with: context.id.toDIDKey(),
         nb: {
           content,
-          location: [url],
+          location: [createUrl.ok],
         },
         expiration: Infinity,
       })
