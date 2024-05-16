@@ -1,5 +1,16 @@
 # Changelog
 
+## [16.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v15.0.1...upload-api-v16.0.0) (2024-05-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* add download URL method to `BlobsStorage` ([#1469](https://github.com/w3s-project/w3up/issues/1469))
+
+### Features
+
+* add download URL method to `BlobsStorage` ([#1469](https://github.com/w3s-project/w3up/issues/1469)) ([4a2c994](https://github.com/w3s-project/w3up/commit/4a2c99478fdcb129da260c1fc14da0ba1842e5ff))
+
 ## [15.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v15.0.0...upload-api-v15.0.1) (2024-05-15)
 
 
