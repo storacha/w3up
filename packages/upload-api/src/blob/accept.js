@@ -75,7 +75,7 @@ export function blobAcceptProvider(context) {
 }
 
 /**
- * Polls `blob/accept` whenever we receive a receipt. It may error if passed
+ * Polls `blob/accept` task whenever we receive a receipt. It may error if passed
  * receipt is for `http/put` task that refers to the `blob/allocate` that we
  * are unable to find.
  *

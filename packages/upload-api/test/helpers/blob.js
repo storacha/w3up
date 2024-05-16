@@ -134,8 +134,6 @@ export const uploadBlob = async (
   }
 
   // Simulate server storing allocation receipt and task
-  // Result.try(await context.receiptsStorage.put(nextTasks.allocate.receipt))
-  // Result.try(await context.tasksStorage.put(nextTasks.allocate.task))
 
   // Invoke `conclude` with `http/put` receipt
   const derivedSigner = ed25519.from(
