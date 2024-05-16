@@ -2,9 +2,11 @@ import * as API from '../../src/types.js'
 
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import { Console } from '@web3-storage/capabilities'
+import { Console, UCAN } from '@web3-storage/capabilities'
 
 import { alice, registerSpace } from '../util.js'
+import { Message, Receipt } from '@ucanto/core'
+import { createConcludeInvocation } from '../../src/ucan/conclude.js'
 
 /**
  * @type {API.Tests}
@@ -131,5 +133,116 @@ export const test = {
 
     const restoredBye = await context.agentStore.receipts.get(bye.link())
     assert.equal(restoredBye.ok?.ran.link().toString(), bye.link().toString())
+  },
+
+  'invocations embedded in receipts should be indexed': async (
+    assert,
+    context
+  ) => {
+    const hi = await Console.log
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.did(),
+        nb: {
+          value: 'hi',
+        },
+      })
+      .delegate()
+
+    const receipt = await Receipt.issue({
+      issuer: context.id,
+      ran: hi,
+      result: { ok: {} },
+    })
+
+    const message = await Message.build({
+      receipts: [receipt],
+    })
+
+    const result = await context.agentStore.messages.write(message)
+    assert.ok(result.ok)
+
+    const storedReceipt = await context.agentStore.receipts.get(
+      receipt.ran.link()
+    )
+    assert.deepEqual(
+      storedReceipt.ok?.link(),
+      receipt.link(),
+      'receipt was stored and indexed by invocation'
+    )
+
+    const storedInvocation = await context.agentStore.invocations.get(
+      receipt.ran.link()
+    )
+
+    console.log(storedInvocation)
+
+    assert.deepEqual(
+      storedInvocation.ok?.link(),
+      hi.link(),
+      'invocation was stored and indexed by invocation'
+    )
+  },
+
+  'receipt in the ucan/conclude should be indexed': async (assert, context) => {
+    const hi = await Console.log
+      .invoke({
+        issuer: alice,
+        audience: context.id,
+        with: alice.did(),
+        nb: {
+          value: 'hi',
+        },
+      })
+      .delegate()
+
+    const receipt = await Receipt.issue({
+      issuer: context.id,
+      ran: hi,
+      result: { ok: {} },
+    })
+
+    const conclude = await createConcludeInvocation(
+      context.id,
+      context.id,
+      receipt
+    ).delegate()
+
+    const message = await Message.build({
+      invocations: [conclude],
+    })
+
+    const result = await context.agentStore.messages.write(message)
+    assert.ok(result.ok)
+
+    const storedReceipt = await context.agentStore.receipts.get(
+      receipt.ran.link()
+    )
+    assert.deepEqual(
+      storedReceipt.ok?.link(),
+      receipt.link(),
+      'receipt was stored and indexed by invocation'
+    )
+
+    const storedInvocation = await context.agentStore.invocations.get(
+      receipt.ran.link()
+    )
+
+    assert.deepEqual(
+      storedInvocation.ok?.link(),
+      hi.link(),
+      'invocation was stored and indexed by invocation'
+    )
+
+    const storedConclude = await context.agentStore.invocations.get(
+      conclude.link()
+    )
+
+    assert.deepEqual(
+      storedConclude.ok?.link(),
+      conclude.link(),
+      'store conclude invocation was stored and indexed by invocation'
+    )
   },
 }
