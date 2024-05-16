@@ -369,7 +369,7 @@ export class Client extends Base {
                 cause: error,
               })
             }
-            /* c8 ignore stop */
+            /* c8 ignore next 4 */
           }
         })
       )
