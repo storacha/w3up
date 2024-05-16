@@ -26,6 +26,7 @@ export class BlobsStorage {
     const content = new Map()
     if (http) {
       const server = http.createServer(async (request, response) => {
+        const { pathname } = new URL(request.url || '/', url)
         if (request.method === 'PUT') {
           const buffer = new Uint8Array(
             parseInt(request.headers['content-length'] || '0')
@@ -41,9 +42,16 @@ export class BlobsStorage {
           if (checksum !== request.headers['x-amz-checksum-sha256']) {
             response.writeHead(400, `checksum mismatch`)
           } else {
-            const { pathname } = new URL(request.url || '/', url)
             content.set(pathname, buffer)
             response.writeHead(200)
+          }
+        } else if (request.method === 'GET') {
+          const data = content.get(pathname)
+          if (data) {
+            response.writeHead(200)
+            response.write(data)
+          } else {
+            response.writeHead(404)
           }
         } else {
           response.writeHead(405)

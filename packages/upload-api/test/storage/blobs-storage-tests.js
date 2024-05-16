@@ -1,6 +1,7 @@
 import * as API from '../../src/types.js'
-
 import { sha256 } from 'multiformats/hashes/sha2'
+import * as Result from '../helpers/result.js'
+import { equals } from 'multiformats/bytes'
 
 /**
  * @type {API.Tests}
@@ -43,4 +44,29 @@ export const test = {
       const hasBlob = await blobsStorage.has(blob.digest)
       assert.ok(hasBlob.ok)
     },
+
+  'should create valid download URL for blobs that can be used to read':
+    async (assert, { blobsStorage }) => {
+      const data = new Uint8Array([11, 22, 34, 44, 55])
+      const digest = await sha256.digest(data)
+      const expires = 60 * 60 * 24 // 1 day
+
+      const upload = Result.unwrap(
+        await blobsStorage.createUploadUrl(digest.bytes, data.length, expires)
+      )
+
+      await fetch(upload.url, {
+        method: 'PUT',
+        mode: 'cors',
+        body: data,
+        headers: upload.headers,
+      })
+      
+      const downloadUrl = Result.unwrap(
+        await blobsStorage.createDownloadUrl(digest.bytes)
+      )
+
+      const res = await fetch(downloadUrl)
+      assert.ok(equals(new Uint8Array(await res.arrayBuffer()), data))
+    }
 }
