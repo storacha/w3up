@@ -1,5 +1,34 @@
 # Changelog
 
+## [16.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v15.0.1...upload-api-v16.0.0) (2024-05-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* add download URL method to `BlobsStorage` ([#1469](https://github.com/w3s-project/w3up/issues/1469))
+
+### Features
+
+* add download URL method to `BlobsStorage` ([#1469](https://github.com/w3s-project/w3up/issues/1469)) ([4a2c994](https://github.com/w3s-project/w3up/commit/4a2c99478fdcb129da260c1fc14da0ba1842e5ff))
+
+## [15.0.1](https://github.com/w3s-project/w3up/compare/upload-api-v15.0.0...upload-api-v15.0.1) (2024-05-15)
+
+
+### Fixes
+
+* export ShardedDAGIndex type ([979e2c3](https://github.com/w3s-project/w3up/commit/979e2c3b070025e952e7bb490701aabb5e660e39))
+
+## [15.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v14.0.0...upload-api-v15.0.0) (2024-05-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* delegated capabilities required to use `uploadFile`, `uploadDirectory` and `uploadCAR` have changed. In order to use these methods your agent will now need to be delegated `blob/add`, `index/add`, `filecoin/offer` and `upload/add` capabilities. Note: no code changes are required.
+
+### Features
+
+* generate sharded DAG index on client and invoke w `index/add` ([#1451](https://github.com/w3s-project/w3up/issues/1451)) ([a6d9026](https://github.com/w3s-project/w3up/commit/a6d9026536e60c0ce93b613acc6e337f2a21aeb2))
+
 ## [14.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v13.0.2...upload-api-v14.0.0) (2024-05-14)
 
 

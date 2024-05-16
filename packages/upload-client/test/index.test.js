@@ -6,6 +6,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as IndexCapabilities from '@web3-storage/capabilities/index'
 import * as UploadCapabilities from '@web3-storage/capabilities/upload'
 import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
 import { Piece } from '@web3-storage/data-segment'
@@ -47,6 +48,12 @@ describe('uploadFile', () => {
         with: space.did(),
         expiration: Infinity,
       }),
+      IndexCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       UploadCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -76,6 +83,15 @@ describe('uploadFile', () => {
             )
           }
         ),
+      },
+      index: {
+        add: Server.provideAdvanced({
+          capability: IndexCapabilities.add,
+          handler: async ({ capability }) => {
+            assert(capability.nb.index)
+            return Server.ok({})
+          },
+        }),
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -131,9 +147,11 @@ describe('uploadFile', () => {
     )
 
     assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    assert.equal(service.blob.add.callCount, 2)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
+    assert(service.index.add.called)
+    assert.equal(service.index.add.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
 
@@ -152,6 +170,12 @@ describe('uploadFile', () => {
 
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      IndexCapabilities.add.delegate({
         issuer: space,
         audience: agent,
         with: space.did(),
@@ -178,6 +202,15 @@ describe('uploadFile', () => {
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
+        }),
+      },
+      index: {
+        add: Server.provideAdvanced({
+          capability: IndexCapabilities.add,
+          handler: async ({ capability }) => {
+            assert(capability.nb.index)
+            return Server.ok({})
+          },
         }),
       },
       filecoin: {
@@ -218,12 +251,12 @@ describe('uploadFile', () => {
         connection,
         // chunk size = 1_048_576
         // encoded block size = 1_048_615
-        // shard size = 2_097_152 (as configured below)
+        // shard size = 2_097_153 (as configured below)
         // total file size = 5_242_880 (as above)
         // so, at least 2 shards, but 2 encoded blocks (_without_ CAR header) = 2_097_230
-        // ...which is > shard size of 2_097_152
+        // ...which is > shard size of 2_097_153
         // so we actually end up with a shard for each block - 5 CARs!
-        shardSize: 1024 * 1024 * 2,
+        shardSize: 1024 * 1024 * 2 + 1,
         onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )
@@ -331,6 +364,12 @@ describe('uploadDirectory', () => {
         with: space.did(),
         expiration: Infinity,
       }),
+      IndexCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       UploadCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -357,6 +396,15 @@ describe('uploadDirectory', () => {
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
+        }),
+      },
+      index: {
+        add: Server.provideAdvanced({
+          capability: IndexCapabilities.add,
+          handler: async ({ capability }) => {
+            assert(capability.nb.index)
+            return Server.ok({})
+          },
         }),
       },
       filecoin: {
@@ -409,7 +457,9 @@ describe('uploadDirectory', () => {
     )
 
     assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    assert.equal(service.blob.add.callCount, 2)
+    assert(service.index.add.called)
+    assert.equal(service.index.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
@@ -437,6 +487,12 @@ describe('uploadDirectory', () => {
         with: space.did(),
         expiration: Infinity,
       }),
+      IndexCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       UploadCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -458,6 +514,15 @@ describe('uploadDirectory', () => {
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
+        }),
+      },
+      index: {
+        add: Server.provideAdvanced({
+          capability: IndexCapabilities.add,
+          handler: async ({ capability }) => {
+            assert(capability.nb.index)
+            return Server.ok({})
+          },
         }),
       },
       filecoin: {
@@ -496,7 +561,7 @@ describe('uploadDirectory', () => {
       files,
       {
         connection,
-        shardSize: 500_056, // should end up with 2 CAR files
+        shardSize: 500_057, // should end up with 2 CAR files
         onShardStored: (meta) => carCIDs.push(meta.cid),
       }
     )
@@ -512,6 +577,12 @@ describe('uploadDirectory', () => {
 
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      IndexCapabilities.add.delegate({
         issuer: space,
         audience: agent,
         with: space.did(),
@@ -544,6 +615,15 @@ describe('uploadDirectory', () => {
               { issuer: space, audience: agent, with: space, proofs },
               invocation
             )
+          }),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
           }),
         },
         filecoin: {
@@ -697,6 +777,12 @@ describe('uploadCAR', () => {
         with: space.did(),
         expiration: Infinity,
       }),
+      IndexCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
       UploadCapabilities.add.delegate({
         issuer: space,
         audience: agent,
@@ -723,6 +809,15 @@ describe('uploadCAR', () => {
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
+        }),
+      },
+      index: {
+        add: Server.provideAdvanced({
+          capability: IndexCapabilities.add,
+          handler: async ({ capability }) => {
+            assert(capability.nb.index)
+            return Server.ok({})
+          },
         }),
       },
       filecoin: {
@@ -779,7 +874,9 @@ describe('uploadCAR', () => {
     )
 
     assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 2)
+    assert.equal(service.blob.add.callCount, 3)
+    assert(service.index.add.called)
+    assert.equal(service.index.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 2)
     assert(service.upload.add.called)
@@ -803,6 +900,12 @@ describe('uploadCAR', () => {
 
     const proofs = await Promise.all([
       BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+      IndexCapabilities.add.delegate({
         issuer: space,
         audience: agent,
         with: space.did(),
@@ -833,6 +936,15 @@ describe('uploadCAR', () => {
             { issuer: space, audience: agent, with: space, proofs },
             invocation
           )
+        }),
+      },
+      index: {
+        add: Server.provideAdvanced({
+          capability: IndexCapabilities.add,
+          handler: async ({ capability }) => {
+            assert(capability.nb.index)
+            return Server.ok({})
+          },
         }),
       },
       filecoin: {
@@ -887,7 +999,9 @@ describe('uploadCAR', () => {
     )
 
     assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    assert.equal(service.blob.add.callCount, 2)
+    assert(service.index.add.called)
+    assert.equal(service.index.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)

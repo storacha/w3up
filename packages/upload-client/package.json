@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/upload-client",
-  "version": "14.1.0",
+  "version": "15.0.0",
   "description": "The web3.storage upload client",
   "homepage": "https://web3.storage",
   "repository": {
@@ -30,6 +30,7 @@
   },
   "exports": {
     ".": "./dist/src/index.js",
+    "./blob": "./dist/src/blob.js",
     "./car": "./dist/src/car.js",
     "./fetch-with-upload-progress": "./dist/src/fetch-with-upload-progress.js",
     "./sharding": "./dist/src/sharding.js",
@@ -40,6 +41,9 @@
   },
   "typesVersions": {
     "*": {
+      "blob": [
+        "dist/src/blob.d.ts"
+      ],
       "car": [
         "dist/src/car.d.ts"
       ],
@@ -71,10 +75,11 @@
     "@ipld/dag-cbor": "^9.0.6",
     "@ipld/dag-ucan": "^3.4.0",
     "@ipld/unixfs": "^2.1.1",
-    "@ucanto/core": "^10.0.1",
     "@ucanto/client": "^9.0.1",
+    "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
     "@ucanto/transport": "^9.1.1",
+    "@web3-storage/blob-index": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/data-segment": "^5.1.0",
     "@web3-storage/filecoin-client": "workspace:^",

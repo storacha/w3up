@@ -5,7 +5,9 @@ import {
 } from '@web3-storage/upload-client'
 import {
   Blob as BlobCapabilities,
+  Index as IndexCapabilities,
   Upload as UploadCapabilities,
+  Filecoin as FilecoinCapabilities,
 } from '@web3-storage/capabilities'
 import { CAR } from '@ucanto/transport'
 import { Base } from './base.js'
@@ -13,6 +15,7 @@ import * as Account from './account.js'
 import { Space } from './space.js'
 import { Delegation as AgentDelegation } from './delegation.js'
 import { BlobClient } from './capability/blob.js'
+import { IndexClient } from './capability/index.js'
 import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
@@ -28,6 +31,7 @@ import * as Result from './result.js'
 export {
   AccessClient,
   FilecoinClient,
+  IndexClient,
   PlanClient,
   StoreClient,
   SpaceClient,
@@ -48,6 +52,7 @@ export class Client extends Base {
     this.capability = {
       access: new AccessClient(agentData, options),
       filecoin: new FilecoinClient(agentData, options),
+      index: new IndexClient(agentData, options),
       plan: new PlanClient(agentData, options),
       space: new SpaceClient(agentData, options),
       blob: new BlobClient(agentData, options),
@@ -109,6 +114,8 @@ export class Client extends Base {
   async uploadFile(file, options = {}) {
     const conf = await this._invocationConfig([
       BlobCapabilities.add.can,
+      IndexCapabilities.add.can,
+      FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -126,6 +133,8 @@ export class Client extends Base {
   async uploadDirectory(files, options = {}) {
     const conf = await this._invocationConfig([
       BlobCapabilities.add.can,
+      IndexCapabilities.add.can,
+      FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -135,9 +144,10 @@ export class Client extends Base {
   /**
    * Uploads a CAR file to the service.
    *
-   * The difference between this function and `capability.store.add` is that the
-   * CAR file is automatically sharded and an "upload" is registered, linking
-   * the individual shards (see `capability.upload.add`).
+   * The difference between this function and `capability.store.add` is that
+   * the CAR file is automatically sharded, an index is generated, uploaded and
+   * registered (see `capability.index.add`) and finally an an "upload" is
+   * registered, linking the individual shards (see `capability.upload.add`).
    *
    * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
    *
@@ -147,6 +157,8 @@ export class Client extends Base {
   async uploadCAR(car, options = {}) {
     const conf = await this._invocationConfig([
       BlobCapabilities.add.can,
+      IndexCapabilities.add.can,
+      FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
     options.connection = this._serviceConf.upload
@@ -282,7 +294,7 @@ export class Client extends Base {
    * the _current_ space as the resource.
    *
    * @param {import('./types.js').Principal} audience
-   * @param {import('./types.js').Abilities[]} abilities
+   * @param {import('./types.js').ServiceAbility[]} abilities
    * @param {Omit<import('./types.js').UCANOptions, 'audience'> & { audienceMeta?: import('./types.js').AgentMeta }} [options]
    */
   async createDelegation(audience, abilities, options = {}) {
@@ -344,8 +356,12 @@ export class Client extends Base {
       await Promise.allSettled(
         upload.shards.map(async (shard) => {
           try {
-            await this.capability.store.remove(shard)
+            const res = await this.capability.blob.remove(shard.multihash)
             /* c8 ignore start */
+            // if no size, the blob was not found, try delete from store
+            if (res.ok && res.ok.size === 0) {
+              await this.capability.store.remove(shard)
+            }
           } catch (/** @type {any} */ error) {
             // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
             if (error?.cause?.name !== 'StoreItemNotFound') {

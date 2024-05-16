@@ -77,16 +77,23 @@ const cid = await uploadDirectory(conf, [
 The buffering API loads all data into memory so is suitable only for small files. The root data CID is derived from the data before any transfer to the service takes place.
 
 ```js
-import { UnixFS, CAR, Store, Upload } from '@web3-storage/upload-client'
+import { UnixFS, CAR, Blob, Index, Upload } from '@web3-storage/upload-client'
+import * as BlobIndexUtil from '@web3-storage/blob-index/util'
+import * as Link from 'multiformats/link'
 
 // Encode a file as a DAG, get back a root data CID and a set of blocks
 const { cid, blocks } = await UnixFS.encodeFile(file)
 // Encode the DAG as a CAR file
 const car = await CAR.encode(blocks, cid)
 // Store the CAR file to the service
-const carCID = await Store.add(conf, car)
+const carDigest = await Blob.add(conf, car)
+// Create an index
+const index = await BlobIndexUtil.fromShardArchives(cid, [new Uint8Array(await car.arrayBuffer())])
+// Store the index to the service
+const indexDigest = await Blob.add(conf, (await index.archive()).ok)
+await Index.add(conf, Link.create(CAR.code, indexDigest))
 // Register an "upload" - a root CID contained within the passed CAR file(s)
-await Upload.add(conf, cid, [carCID])
+await Upload.add(conf, cid, [Link.create(CAR.code, carDigest)])
 ```
 
 #### Streaming API
@@ -97,11 +104,14 @@ This API offers streaming DAG generation, allowing CAR "shards" to be sent to th
 import {
   UnixFS,
   ShardingStream,
-  Store,
+  Blob,
+  Index,
   Upload,
 } from '@web3-storage/upload-client'
+import { ShardedDAGIndex } from '@web3-storage/blob-index'
 
 let rootCID, carCIDs
+const shardIndexes = []
 // Encode a file as a DAG, get back a readable stream of blocks.
 await UnixFS.createFileEncoderStream(file)
   // Pipe blocks to a stream that yields CARs files - shards of the DAG.
@@ -111,12 +121,28 @@ await UnixFS.createFileEncoderStream(file)
   .pipeTo(
     new WritableStream({
       async write (car) {
-        const carCID = await Store.add(conf, car)
-        carCIDs.push(carCID)
+        const carDigest = await Blob.add(conf, car)
+        carCIDs.push(Link.create(CAR.code, carDigest))
+
+        // add the CAR shard itself to the slices
+        meta.slices.set(carDigest, [0, car.size])
+        shardIndexes.push(car.slices)
+
         rootCID = rootCID || car.roots[0]
       },
     })
   )
+
+// Combine the shard indexes to create the complete DAG index
+const index = ShardedDAGIndex.create(rootCID)
+for (const [i, shard] of carCIDs.entries()) {
+  const slices = shardIndexes[i]
+  index.shards.set(shard.multihash, slices)
+}
+
+// Store the index to the service
+const indexDigest = await Blob.add(conf, (await index.archive()).ok)
+await Index.add(conf, Link.create(CAR.code, indexDigest))
 
 // Register an "upload" - a root CID contained within the passed CAR file(s)
 await Upload.add(conf, rootCID, carCIDs)
@@ -135,12 +161,13 @@ await Upload.add(conf, rootCID, carCIDs)
   - [`uploadDirectory`](#uploaddirectory)
   - [`uploadFile`](#uploadfile)
   - [`uploadCAR`](#uploadcar)
+  - [`Blob.add`](#blobadd)
+  - [`Blob.list`](#bloblist)
+  - [`Blob.remove`](#blobremove)
   - [`CAR.BlockStream`](#carblockstream)
   - [`CAR.encode`](#carencode)
+  - [`Index.add`](#indexadd)
   - [`ShardingStream`](#shardingstream)
-  - [`Store.add`](#storeadd)
-  - [`Store.list`](#storelist)
-  - [`Store.remove`](#storeremove)
   - [`UnixFS.createDirectoryEncoderStream`](#unixfscreatedirectoryencoderstream)
   - [`UnixFS.createFileEncoderStream`](#unixfscreatefileencoderstream)
   - [`UnixFS.encodeDirectory`](#unixfsencodedirectory)
@@ -178,7 +205,7 @@ function uploadDirectory(
 
 Uploads a directory of files to the service and returns the root data CID for the generated DAG. All files are added to a container directory, with paths in file names preserved.
 
-Required delegated capability proofs: `store/add`, `upload/add`
+Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
 More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
 
@@ -200,7 +227,7 @@ function uploadFile(
 
 Uploads a file to the service and returns the root data CID for the generated DAG.
 
-Required delegated capability proofs: `store/add`, `upload/add`
+Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
 More information: [`InvocationConfig`](#invocationconfig)
 
@@ -221,11 +248,57 @@ function uploadCAR(
 ): Promise<CID>
 ```
 
-Uploads a CAR file to the service. The difference between this function and [Store.add](#storeadd) is that the CAR file is automatically sharded and an "upload" is registered (see [`Upload.add`](#uploadadd)), linking the individual shards. Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
+Uploads a CAR file to the service. The difference between this function and [Blob.add](#blobadd) is that the CAR file is automatically sharded, an index is generated, uploaded and registered (see [`Index.add`](#indexadd)) and finally an "upload" is registered (see [`Upload.add`](#uploadadd)), linking the individual shards. Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
 
-Required delegated capability proofs: `store/add`, `upload/add`
+Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
 More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
+
+### `Blob.add`
+
+```ts
+function add(
+  blob: Blob,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<MultihashDigest>
+```
+
+Store a blob to the service.
+
+Required delegated capability proofs: `blob/add`
+
+More information: [`InvocationConfig`](#invocationconfig)
+
+### `Blob.list`
+
+```ts
+function list(
+  conf: InvocationConfig,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<ListResponse<BlobListResult>>
+```
+
+List blobs stored in the space.
+
+Required delegated capability proofs: `blob/list`
+
+More information: [`InvocationConfig`](#invocationconfig)
+
+### `Blob.remove`
+
+```ts
+function remove(
+  conf: InvocationConfig,
+  digest: MultihashDigest,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<void>
+```
+
+Remove a stored blob by multihash digest.
+
+Required delegated capability proofs: `blob/remove`
+
+More information: [`InvocationConfig`](#invocationconfig)
 
 ### `CAR.BlockStream`
 
@@ -252,6 +325,22 @@ const { cid, blocks } = await UnixFS.encodeFile(new Blob(['data']))
 const car = await CAR.encode(blocks, cid)
 ```
 
+### `Index.add`
+
+```ts
+function add(
+  conf: InvocationConfig,
+  index: CID,
+  options: { retries?: number; signal?: AbortSignal } = {}
+): Promise<IndexAddResponse>
+```
+
+Register an "index" with the service. The `index` CID should be the CID of a CAR file, containing an index ad defined by [w3-index](https://github.com/w3s-project/specs/blob/main/w3-index.md).
+
+Required delegated capability proofs: `index/add`
+
+More information: [`InvocationConfig`](#invocationconfig)
+
 ### `ShardingStream`
 
 ```ts
@@ -261,37 +350,6 @@ class ShardingStream extends TransformStream<Block, CARFile>
 Shard a set of blocks into a set of CAR files. The last block written to the stream is assumed to be the DAG root and becomes the CAR root CID for the last CAR output.
 
 More information: [`CARFile`](#carfile)
-
-### `Store.list`
-
-```ts
-function list(
-  conf: InvocationConfig,
-  options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<ListResponse<StoreListResult>>
-```
-
-List CAR files stored by the issuer.
-
-Required delegated capability proofs: `store/list`
-
-More information: [`InvocationConfig`](#invocationconfig)
-
-### `Store.remove`
-
-```ts
-function remove(
-  conf: InvocationConfig,
-  link: CID,
-  options: { retries?: number; signal?: AbortSignal } = {}
-): Promise<void>
-```
-
-Remove a stored CAR file by CAR CID.
-
-Required delegated capability proofs: `store/remove`
-
-More information: [`InvocationConfig`](#invocationconfig)
 
 ### `UnixFS.createDirectoryEncoderStream`
 

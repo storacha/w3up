@@ -7,7 +7,7 @@ import { Base } from '../base.js'
  */
 export class BlobClient extends Base {
   /**
-   * Store a Blob as a CAR file.
+   * Store a Blob to the resource.
    *
    * @param {Blob} blob - blob data.
    * @param {import('../types.js').RequestOptions} [options]
@@ -19,7 +19,7 @@ export class BlobClient extends Base {
   }
 
   /**
-   * List CAR files stored to the resource.
+   * List blobs stored to the resource.
    *
    * @param {import('../types.js').ListRequestOptions} [options]
    */
@@ -30,7 +30,7 @@ export class BlobClient extends Base {
   }
 
   /**
-   * Remove a stored CAR file by digest.
+   * Remove a stored blob by multihash digest.
    *
    * @param {import('multiformats').MultihashDigest} digest - digest of blob to remove.
    * @param {import('../types.js').RequestOptions} [options]

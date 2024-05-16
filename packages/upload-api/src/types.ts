@@ -199,6 +199,7 @@ export type {
   IPNIService,
   BlobRetriever,
   BlobNotFound,
+  ShardedDAGIndex
 } from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {

@@ -31,6 +31,9 @@ import {
   BlobList,
   BlobListSuccess,
   BlobListFailure,
+  IndexAdd,
+  IndexAddSuccess,
+  IndexAddFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -63,6 +66,12 @@ import {
 } from '@web3-storage/capabilities/types'
 import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
 import { code as pieceHashCode } from '@web3-storage/data-segment/multihash'
+import {
+  ShardedDAGIndex,
+  ShardDigest,
+  SliceDigest,
+  Position,
+} from '@web3-storage/blob-index/types'
 
 type Override<T, R> = Omit<T, keyof R> & R
 
@@ -89,6 +98,9 @@ export type {
   BlobList,
   BlobListSuccess,
   BlobListFailure,
+  IndexAdd,
+  IndexAddSuccess,
+  IndexAddFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -116,6 +128,10 @@ export type {
   ListResponse,
   CARLink,
   PieceLink,
+  ShardedDAGIndex,
+  ShardDigest,
+  SliceDigest,
+  Position,
 }
 
 export interface ProgressStatus extends XHRProgressStatus {
@@ -136,6 +152,9 @@ export interface Service extends StorefrontService {
     add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
     remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
     list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+  }
+  index: {
+    add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
   }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
@@ -204,6 +223,19 @@ export interface CARHeaderInfo {
 export interface CARFile extends CARHeaderInfo, Blob {}
 
 /**
+ * An indexed blob.
+ */
+export interface BlobIndex {
+  /** Slices and their offset/length within the blob. */
+  slices: Map<SliceDigest, Position>
+}
+
+/**
+ * A DAG encoded as a CAR with added index information.
+ */
+export interface IndexedCARFile extends CARFile, BlobIndex {}
+
+/**
  * Any IPLD link.
  */
 export type AnyLink = Link<unknown, number, number, Version>
@@ -211,7 +243,7 @@ export type AnyLink = Link<unknown, number, number, Version>
 /**
  * Metadata pertaining to a CAR file.
  */
-export interface CARMetadata extends CARHeaderInfo {
+export interface CARMetadata extends CARHeaderInfo, BlobIndex {
   /**
    * CID of the CAR file (not the data it contains).
    */

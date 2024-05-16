@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.1.1](https://github.com/w3s-project/w3up/compare/w3up-client-v13.1.0...w3up-client-v13.1.1) (2024-05-15)
+
+
+### Fixes
+
+* revert blob add by default ([#1456](https://github.com/w3s-project/w3up/issues/1456)) ([b77ec75](https://github.com/w3s-project/w3up/commit/b77ec750c3911f6f47fa32a5e1560858b347985c))
+
 ## [13.1.0](https://github.com/w3s-project/w3up/compare/w3up-client-v13.0.1...w3up-client-v13.1.0) (2024-05-14)
 
 

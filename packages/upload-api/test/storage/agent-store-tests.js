@@ -2,7 +2,7 @@ import * as API from '../../src/types.js'
 
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import { Console, UCAN } from '@web3-storage/capabilities'
+import { Console } from '@web3-storage/capabilities'
 
 import { alice, registerSpace } from '../util.js'
 import { Message, Receipt } from '@ucanto/core'

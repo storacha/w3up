@@ -15,6 +15,7 @@ import { provisionProvider } from '../helpers/utils.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { parseBlobAddReceiptNext } from '../helpers/blob.js'
+import * as Result from '../helpers/result.js'
 
 /**
  * @type {API.Tests}
@@ -682,11 +683,9 @@ export const test = {
     // @ts-expect-error nb unknown
     const locations = delegation.capabilities[0].nb.location
     assert.equal(locations.length, 1)
-    assert.ok(
-      locations[0].includes(
-        `https://w3s.link/ipfs/${content}?format=raw&origin=`
-      )
-    )
+
+    const loc = Result.unwrap(await context.blobsStorage.createDownloadUrl(digest))
+    assert.ok(locations.includes(loc))
   },
   'web3.storage/blob/accept fails to provide site delegation when blob was not stored':
     async (assert, context) => {

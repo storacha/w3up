@@ -26,6 +26,7 @@ export class BlobsStorage {
     const content = new Map()
     if (http) {
       const server = http.createServer(async (request, response) => {
+        const { pathname } = new URL(request.url || '/', url)
         if (request.method === 'PUT') {
           const buffer = new Uint8Array(
             parseInt(request.headers['content-length'] || '0')
@@ -41,9 +42,16 @@ export class BlobsStorage {
           if (checksum !== request.headers['x-amz-checksum-sha256']) {
             response.writeHead(400, `checksum mismatch`)
           } else {
-            const { pathname } = new URL(request.url || '/', url)
             content.set(pathname, buffer)
             response.writeHead(200)
+          }
+        } else if (request.method === 'GET') {
+          const data = content.get(pathname)
+          if (data) {
+            response.writeHead(200)
+            response.write(data)
+          } else {
+            response.writeHead(404)
           }
         } else {
           response.writeHead(405)
@@ -135,6 +143,18 @@ export class BlobsStorage {
    */
   async stream(digest) {
     const key = this.#bucketPath(digest)
+    if (!this.server) {
+      const url = new URL(key, this.baseURL)
+      const res = await fetch(url.toString())
+      if (res.status === 404) return error(new BlobNotFound(digest))
+      if (!res.ok || !res.body) {
+        throw new Error(
+          `serverless blob storage failed to fetch from: ${url} status: ${res.status}`
+        )
+      }
+      return ok(res.body)
+    }
+
     const bytes = this.content.get(key)
     if (!bytes) return error(new BlobNotFound(digest))
 
@@ -189,5 +209,12 @@ export class BlobsStorage {
         },
       },
     }
+  }
+
+  /** @param {Uint8Array} multihash */
+  async createDownloadUrl (multihash) {
+    const digest = digestDecode(multihash)
+    const url = new URL(this.#bucketPath(digest), this.baseURL)
+    return ok(/** @type {Types.URI} */ (url.toString()))
   }
 }
