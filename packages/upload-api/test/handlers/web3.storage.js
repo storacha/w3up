@@ -683,7 +683,7 @@ export const test = {
     assert.equal(locations.length, 1)
 
     const loc = Result.unwrap(
-      await context.blobsStorage.createDownloadUrl(digest)
+      await context.blobsStorage.createDownloadUrl(multihash)
     )
     assert.ok(locations.includes(loc))
   },

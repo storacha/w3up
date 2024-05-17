@@ -1,5 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
+import * as Digest from 'multiformats/hashes/digest'
 import * as API from '../types.js'
 import {
   BlobSizeOutsideOfSupportedRange,
@@ -26,6 +27,7 @@ export const allocate = async (context, { capability }) => {
   }
 
   const { blob, cause, space } = capability.nb
+  const digest = Digest.decode(blob.digest)
   let { size } = blob
 
   // We check if space has storage provider associated. If it does not
@@ -51,7 +53,7 @@ export const allocate = async (context, { capability }) => {
     // While blob may exceed current maxUploadSize limit it could be that limit
     // was higher in the past and user had this blob uploaded already in which
     // case we should not error.
-    const exists = await context.allocationsStorage.exists(space, blob.digest)
+    const exists = await context.allocationsStorage.exists(space, digest)
     if (exists.ok) {
       return { ok: { size: 0 } }
     } else {
@@ -88,7 +90,7 @@ export const allocate = async (context, { capability }) => {
   // Check if we already have blob stored
   // TODO: this may depend on the region we want to allocate and will need
   // changes in the future.
-  const hasBlobStore = await context.blobsStorage.has(blob.digest)
+  const hasBlobStore = await context.blobsStorage.has(digest)
   if (hasBlobStore.error) {
     return hasBlobStore
   }
@@ -106,7 +108,7 @@ export const allocate = async (context, { capability }) => {
   const expiresIn = 60 * 60 * 24 // 1 day
   const expiresAt = new Date(Date.now() + expiresIn).toISOString()
   const createUploadUrl = await context.blobsStorage.createUploadUrl(
-    blob.digest,
+    digest,
     blob.size,
     expiresIn
   )
