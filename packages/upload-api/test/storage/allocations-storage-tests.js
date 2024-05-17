@@ -150,7 +150,10 @@ export const test = {
     const digest = multihash.bytes
     const size = data.byteLength
 
-    const allocationExist0 = await allocationsStorage.exists(spaceDid, multihash)
+    const allocationExist0 = await allocationsStorage.exists(
+      spaceDid,
+      multihash
+    )
     assert.ok(!allocationExist0.error)
     assert.ok(!allocationExist0.ok)
 
@@ -180,7 +183,10 @@ export const test = {
     assert.ok(allocationInsert.ok)
     assert.ok(allocationInsert.ok?.blob)
 
-    const allocationExist1 = await allocationsStorage.exists(spaceDid, multihash)
+    const allocationExist1 = await allocationsStorage.exists(
+      spaceDid,
+      multihash
+    )
     assert.ok(allocationExist1.ok)
     assert.ok(!allocationExist1.error)
   },

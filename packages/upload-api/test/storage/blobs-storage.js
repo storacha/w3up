@@ -206,7 +206,7 @@ export class BlobsStorage {
   }
 
   /** @param {Types.MultihashDigest} digest */
-  async createDownloadUrl (digest) {
+  async createDownloadUrl(digest) {
     const url = new URL(this.#bucketPath(digest), this.baseURL)
     return ok(/** @type {Types.URI} */ (url.toString()))
   }

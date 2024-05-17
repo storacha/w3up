@@ -54,10 +54,7 @@ export const testClient = {
       })
 
       assert.deepEqual(
-        await allocationsStorage.exists(
-          space.did(),
-          expectedCar.cid.multihash
-        ),
+        await allocationsStorage.exists(space.did(), expectedCar.cid.multihash),
         {
           ok: true,
         }

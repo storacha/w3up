@@ -38,12 +38,9 @@ export const BlobClient = Test.withContext({
     })
 
     // TODO we should check blobsStorage as well
-    assert.deepEqual(
-      await allocationsStorage.exists(space.did(), multihash),
-      {
-        ok: true,
-      }
-    )
+    assert.deepEqual(await allocationsStorage.exists(space.did(), multihash), {
+      ok: true,
+    })
 
     assert.deepEqual(multihash.bytes, bytesHash.bytes)
   },
