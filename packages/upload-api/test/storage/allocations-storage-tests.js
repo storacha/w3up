@@ -315,7 +315,6 @@ export const test = {
 
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const multihash = await sha256.digest(data)
-    const digest = multihash.bytes
 
     const removeResult = await allocationsStorage.remove(spaceDid, multihash)
 
