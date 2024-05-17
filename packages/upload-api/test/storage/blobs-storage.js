@@ -177,7 +177,7 @@ export class BlobsStorage {
       region,
     })
 
-    const checksum = base64pad.baseEncode(digest.bytes)
+    const checksum = base64pad.baseEncode(digest.digest)
     const { search, hash } = sig.sign({
       key: contentKey(digest),
       checksum,
