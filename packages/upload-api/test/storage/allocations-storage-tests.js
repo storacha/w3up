@@ -102,7 +102,7 @@ export const test = {
     const digest = multihash.bytes
     const size = data.byteLength
 
-    const allocationGet0 = await allocationsStorage.get(spaceDid, digest)
+    const allocationGet0 = await allocationsStorage.get(spaceDid, multihash)
     assert.ok(allocationGet0.error)
     assert.equal(allocationGet0.error?.name, RecordNotFoundErrorName)
 
@@ -132,7 +132,7 @@ export const test = {
     assert.ok(allocationInsert.ok)
     assert.ok(allocationInsert.ok?.blob)
 
-    const allocationGet1 = await allocationsStorage.get(spaceDid, digest)
+    const allocationGet1 = await allocationsStorage.get(spaceDid, multihash)
     assert.ok(allocationGet1.ok)
     assert.ok(allocationGet1.ok?.blob)
     assert.equal(allocationGet1.ok?.blob.size, size)
@@ -150,7 +150,7 @@ export const test = {
     const digest = multihash.bytes
     const size = data.byteLength
 
-    const allocationExist0 = await allocationsStorage.exists(spaceDid, digest)
+    const allocationExist0 = await allocationsStorage.exists(spaceDid, multihash)
     assert.ok(!allocationExist0.error)
     assert.ok(!allocationExist0.ok)
 
@@ -180,7 +180,7 @@ export const test = {
     assert.ok(allocationInsert.ok)
     assert.ok(allocationInsert.ok?.blob)
 
-    const allocationExist1 = await allocationsStorage.exists(spaceDid, digest)
+    const allocationExist1 = await allocationsStorage.exists(spaceDid, multihash)
     assert.ok(allocationExist1.ok)
     assert.ok(!allocationExist1.error)
   },
@@ -317,7 +317,7 @@ export const test = {
     const multihash = await sha256.digest(data)
     const digest = multihash.bytes
 
-    const removeResult = await allocationsStorage.remove(spaceDid, digest)
+    const removeResult = await allocationsStorage.remove(spaceDid, multihash)
 
     assert.ok(removeResult.error)
     assert.equal(removeResult.error?.name, RecordNotFoundErrorName)
@@ -355,7 +355,7 @@ export const test = {
     })
     assert.ok(allocationInsert0.ok)
 
-    const removeResult = await allocationsStorage.remove(spaceDid, digest)
+    const removeResult = await allocationsStorage.remove(spaceDid, multihash)
     assert.ok(removeResult.ok)
     assert.equal(removeResult.ok?.size, size)
   },

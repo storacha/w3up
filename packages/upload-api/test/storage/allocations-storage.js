@@ -36,12 +36,12 @@ export class AllocationsStorage {
 
   /**
    * @param {Types.DID} space
-   * @param {Uint8Array} blobMultihash
+   * @param {Types.MultihashDigest} digest
    * @returns {ReturnType<Types.AllocationsStorage['get']>}
    */
-  async get(space, blobMultihash) {
+  async get(space, digest) {
     const item = this.items.find(
-      (i) => i.space === space && equals(i.blob.digest, blobMultihash)
+      (i) => i.space === space && equals(i.blob.digest, digest.bytes)
     )
     if (!item) {
       return { error: new RecordNotFound() }
@@ -51,24 +51,24 @@ export class AllocationsStorage {
 
   /**
    * @param {Types.DID} space
-   * @param {Uint8Array} blobMultihash
+   * @param {Types.MultihashDigest} digest
    * @returns {ReturnType<Types.AllocationsStorage['exists']>}
    */
-  async exists(space, blobMultihash) {
+  async exists(space, digest) {
     const item = this.items.find(
-      (i) => i.space === space && equals(i.blob.digest, blobMultihash)
+      (i) => i.space === space && equals(i.blob.digest, digest.bytes)
     )
     return { ok: !!item }
   }
 
   /**
    * @param {Types.DID} space
-   * @param {Uint8Array} blobMultihash
+   * @param {Types.MultihashDigest} digest
    * @returns {ReturnType<Types.AllocationsStorage['remove']>}
    */
-  async remove(space, blobMultihash) {
+  async remove(space, digest) {
     const item = this.items.find(
-      (i) => i.space === space && equals(i.blob.digest, blobMultihash)
+      (i) => i.space === space && equals(i.blob.digest, digest.bytes)
     )
     if (!item) {
       return { error: new RecordNotFound() }
