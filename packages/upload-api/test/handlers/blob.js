@@ -243,6 +243,7 @@ export const test = {
       assert.ok(!secondNext.accept.receipt, 'accept receipt was not received')
 
       // Store the blob to the address
+      console.log(address.url)
       const goodPut = await fetch(address.url, {
         method: 'PUT',
         mode: 'cors',
