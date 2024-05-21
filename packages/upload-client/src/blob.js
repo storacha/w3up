@@ -3,7 +3,7 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import * as UCAN from '@web3-storage/capabilities/ucan'
-import { Receipt } from '@ucanto/core'
+import { Delegation, Receipt } from '@ucanto/core'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
@@ -355,14 +355,27 @@ export async function add(
     }
   )
 
-  // TODO cover this
-  if (!acceptReceipt) {
+  // @ts-ignore Property
+  if (!acceptReceipt?.out.ok?.site) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
       cause: 'failed to get blob/accept receipt',
     })
   }
 
-  return multihash
+  let acceptSite = {}
+  const blocks = new Map(
+    [...receipt.iterateIPLDBlocks()].map((block) => [`${block.cid}`, block])
+  )
+
+  acceptSite.site = Delegation.view({
+    root: /** @type {import('@ucanto/interface').UCANLink} */ (
+      // @ts-ignore Property
+      acceptReceipt.out.ok.site
+    ),
+    blocks,
+  })
+
+  return acceptSite.site.asCID.multihash
 }
 
 /**
