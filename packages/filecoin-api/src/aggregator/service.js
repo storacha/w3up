@@ -9,6 +9,7 @@ import {
   QueueOperationFailed,
   StoreOperationFailed,
   UnexpectedState,
+  UnsupportedCapability,
 } from '../errors.js'
 
 /**
@@ -17,6 +18,12 @@ import {
  * @returns {Promise<API.UcantoInterface.Result<API.PieceOfferSuccess, API.PieceOfferFailure> | API.UcantoInterface.JoinBuilder<API.PieceOfferSuccess>>}
  */
 export const pieceOffer = async ({ capability }, context) => {
+  // Only service principal can perform offer
+  if (capability.with !== context.id.did()) {
+    return {
+      error: new UnsupportedCapability({ capability }),
+    }
+  }
   const { piece, group } = capability.nb
 
   // dedupe
@@ -60,6 +67,12 @@ export const pieceOffer = async ({ capability }, context) => {
  * @returns {Promise<API.UcantoInterface.Result<API.PieceAcceptSuccess, API.PieceAcceptFailure> | API.UcantoInterface.JoinBuilder<API.PieceAcceptSuccess>>}
  */
 export const pieceAccept = async ({ capability }, context) => {
+  // Only service principal can perform accept
+  if (capability.with !== context.id.did()) {
+    return {
+      error: new UnsupportedCapability({ capability }),
+    }
+  }
   const { piece, group } = capability.nb
 
   // Get inclusion proof for piece associated with this group

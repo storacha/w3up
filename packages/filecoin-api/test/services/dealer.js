@@ -13,7 +13,10 @@ import { FailingStore } from '../context/store.js'
 import { mockService } from '../context/mocks.js'
 import { getConnection } from '../context/service.js'
 import { getStoreImplementations } from '../context/store-implementations.js'
-import { StoreOperationErrorName } from '../../src/errors.js'
+import {
+  StoreOperationErrorName,
+  UnsupportedCapabilityErrorName,
+} from '../../src/errors.js'
 
 /**
  * @typedef {import('../../src/dealer/api.js').AggregateRecord} AggregateRecord
@@ -26,7 +29,7 @@ import { StoreOperationErrorName } from '../../src/errors.js'
  */
 export const test = {
   'aggregate/offer inserts aggregate into stores': async (assert, context) => {
-    const { storefront } = await getServiceContext()
+    const { aggregator } = await getServiceContext(context.id)
     const connection = connect({
       id: context.id,
       channel: createServer(context),
@@ -39,9 +42,9 @@ export const test = {
 
     // aggregator invocation
     const pieceAddInv = Dealer.aggregateOffer.invoke({
-      issuer: storefront,
+      issuer: aggregator,
       audience: connection.id,
-      with: storefront.did(),
+      with: aggregator.did(),
       nb: {
         aggregate: aggregate.link,
         pieces: piecesBlock.cid,
@@ -87,16 +90,47 @@ export const test = {
     const storedOffer = await context.offerStore.get(piecesBlock.cid.toString())
     assert.ok(storedOffer.ok)
     assert.ok(storedOffer.ok?.value.aggregate.equals(aggregate.link.link()))
-    assert.equal(storedOffer.ok?.value.issuer, storefront.did())
+    assert.equal(storedOffer.ok?.value.issuer, aggregator.did())
     assert.deepEqual(
       storedOffer.ok?.value.pieces.map((p) => p.toString()),
       offer.map((p) => p.toString())
     )
   },
+  'aggregator/offer must be invoked on service did': async (
+    assert,
+    context
+  ) => {
+    const { agent } = await getServiceContext(context.id)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // Generate piece for test
+    const { pieces, aggregate } = await randomAggregate(100, 128)
+    const offer = pieces.map((p) => p.link)
+    const piecesBlock = await CBOR.write(offer)
+
+    // agent invocation instead of dealer
+    const pieceAddInv = Dealer.aggregateOffer.invoke({
+      issuer: agent,
+      audience: connection.id,
+      with: agent.did(),
+      nb: {
+        aggregate: aggregate.link,
+        pieces: piecesBlock.cid,
+      },
+    })
+    pieceAddInv.attach(piecesBlock)
+
+    const response = await pieceAddInv.execute(connection)
+    assert.ok(response.out.error)
+    assert.equal(response.out.error?.name, UnsupportedCapabilityErrorName)
+  },
   'aggregate/offer fails if not able to check aggregate store':
     withMockableContext(
       async (assert, context) => {
-        const { storefront } = await getServiceContext()
+        const { aggregator } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -109,9 +143,9 @@ export const test = {
 
         // aggregator invocation
         const pieceAddInv = Dealer.aggregateOffer.invoke({
-          issuer: storefront,
+          issuer: aggregator,
           audience: connection.id,
-          with: storefront.did(),
+          with: aggregator.did(),
           nb: {
             aggregate: aggregate.link,
             pieces: piecesBlock.cid,
@@ -132,7 +166,7 @@ export const test = {
   'aggregate/offer fails if not able to put to offer store':
     withMockableContext(
       async (assert, context) => {
-        const { storefront } = await getServiceContext()
+        const { aggregator } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -145,9 +179,9 @@ export const test = {
 
         // aggregator invocation
         const pieceAddInv = Dealer.aggregateOffer.invoke({
-          issuer: storefront,
+          issuer: aggregator,
           audience: connection.id,
-          with: storefront.did(),
+          with: aggregator.did(),
           nb: {
             aggregate: aggregate.link,
             pieces: piecesBlock.cid,
@@ -168,7 +202,7 @@ export const test = {
     assert,
     context
   ) => {
-    const { storefront } = await getServiceContext()
+    const { dealer } = await getServiceContext(context.id)
     const connection = connect({
       id: context.id,
       channel: createServer(context),
@@ -195,11 +229,11 @@ export const test = {
     })
     assert.ok(putRes.ok)
 
-    // aggregator invocation
+    // dealer invocation
     const pieceAddInv = Dealer.aggregateAccept.invoke({
-      issuer: storefront,
+      issuer: dealer,
       audience: connection.id,
-      with: storefront.did(),
+      with: dealer.did(),
       nb: {
         aggregate: aggregate.link,
         pieces: piecesBlock.cid,
@@ -218,9 +252,40 @@ export const test = {
     )
     assert.equal(BigInt(response.out.ok.dataType), BigInt(deal.dataType))
   },
+  'aggregator/accept must be invoked on service did': async (
+    assert,
+    context
+  ) => {
+    const { agent } = await getServiceContext(context.id)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // Generate piece for test
+    const { pieces, aggregate } = await randomAggregate(100, 128)
+    const offer = pieces.map((p) => p.link)
+    const piecesBlock = await CBOR.write(offer)
+
+    // agent invocation instead of service
+    const pieceAddInv = Dealer.aggregateAccept.invoke({
+      issuer: agent,
+      audience: connection.id,
+      with: agent.did(),
+      nb: {
+        aggregate: aggregate.link,
+        pieces: piecesBlock.cid,
+      },
+    })
+    pieceAddInv.attach(piecesBlock)
+
+    const response = await pieceAddInv.execute(connection)
+    assert.ok(response.out.error)
+    assert.equal(response.out.error?.name, UnsupportedCapabilityErrorName)
+  },
   'aggregate/accept fails if not able to invoke deal info': withMockableContext(
     async (assert, context) => {
-      const { storefront } = await getServiceContext()
+      const { dealer } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -233,9 +298,9 @@ export const test = {
 
       // aggregator invocation
       const pieceAddInv = Dealer.aggregateAccept.invoke({
-        issuer: storefront,
+        issuer: dealer,
         audience: connection.id,
-        with: storefront.did(),
+        with: dealer.did(),
         nb: {
           aggregate: aggregate.link,
           pieces: piecesBlock.cid,
@@ -284,11 +349,16 @@ export const test = {
   ),
 }
 
-async function getServiceContext() {
-  const dealer = await Signer.generate()
-  const storefront = await Signer.generate()
+/**
+ * @param {Signer.Signer.Signer<`did:${string}:${string}`, Signer.Signer.Crypto.SigAlg>} serviceSigner
+ */
+async function getServiceContext(serviceSigner) {
+  const agent = await Signer.generate()
+  // Dealer and aggregator are today the same DID
+  const dealer = serviceSigner
+  const aggregator = serviceSigner
 
-  return { dealer, storefront }
+  return { agent, dealer, aggregator }
 }
 
 /**

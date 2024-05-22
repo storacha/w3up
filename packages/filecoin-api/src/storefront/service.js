@@ -10,6 +10,7 @@ import {
   QueueOperationFailed,
   StoreOperationFailed,
   RecordNotFoundErrorName,
+  UnsupportedCapability,
 } from '../errors.js'
 
 /**
@@ -82,6 +83,13 @@ export const filecoinOffer = async ({ capability }, context) => {
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinSubmitSuccess, API.FilecoinSubmitFailure> | API.UcantoInterface.JoinBuilder<API.FilecoinSubmitSuccess>>}
  */
 export const filecoinSubmit = async ({ capability }, context) => {
+  // Only service principal can perform submit
+  if (capability.with !== context.id.did()) {
+    return {
+      error: new UnsupportedCapability({ capability }),
+    }
+  }
+
   const { piece, content } = capability.nb
   const group = context.id.did()
 
@@ -123,6 +131,12 @@ export const filecoinSubmit = async ({ capability }, context) => {
  * @returns {Promise<API.UcantoInterface.Result<API.FilecoinAcceptSuccess, API.FilecoinAcceptFailure>>}
  */
 export const filecoinAccept = async ({ capability }, context) => {
+  // Only service principal can perform accept
+  if (capability.with !== context.id.did()) {
+    return {
+      error: new UnsupportedCapability({ capability }),
+    }
+  }
   const { piece } = capability.nb
   const getPieceRes = await context.pieceStore.get({ piece })
   if (getPieceRes.error) {
