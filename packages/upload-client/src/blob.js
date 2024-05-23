@@ -368,7 +368,6 @@ export async function add(
       block,
     ])
   )
-
   const site = Delegation.view(
     {
       root: /** @type {import('@ucanto/interface').UCANLink} */ (
@@ -379,14 +378,13 @@ export async function add(
     },
     null
   )
-
   if (!site) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
       cause: 'failed to get blob/accept receipt',
     })
   }
 
-  // @ts-ignore
+  // @ts-ignore Type
   return site
 }
 

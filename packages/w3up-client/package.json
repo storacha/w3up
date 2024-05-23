@@ -137,6 +137,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.8.4",
     "@ucanto/server": "^10.0.0",
+    "@web3-storage/content-claims": "^4.0.4",
     "@web3-storage/data-segment": "^5.0.0",
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "@web3-storage/upload-api": "workspace:^",

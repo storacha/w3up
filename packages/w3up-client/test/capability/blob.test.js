@@ -1,3 +1,5 @@
+import { create as createLink } from 'multiformats/link'
+import { codec as car } from '@ucanto/transport/car'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { AgentData } from '@web3-storage/access/agent'
 import { randomBytes } from '../helpers/random.js'
@@ -33,19 +35,31 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const multihash = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt,
+    const link = createLink(car.code, bytesHash)
+    const commitment = await alice.capability.blob.add(new Blob([bytes]), {
+      fetch: setupGetReceipt(link),
     })
 
+    // @ts-ignore Element
+    console.log(commitment.capabilities[0].nb.content)
+    console.log(allocationsStorage)
     // TODO we should check blobsStorage as well
     assert.deepEqual(
-      await allocationsStorage.exists(space.did(), multihash.bytes),
+      await allocationsStorage.exists(
+        space.did(),
+        // @ts-ignore Element
+        commitment.capabilities[0].nb.content.bytes.slice(3)
+      ),
       {
         ok: true,
       }
     )
 
-    assert.deepEqual(multihash, bytesHash)
+    assert.deepEqual(
+      // @ts-ignore Element
+      commitment.capabilities[0].nb.content.bytes.slice(3),
+      bytesHash.bytes
+    )
   },
   'should list stored blobs': async (
     assert,
@@ -74,10 +88,15 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const multihash = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt,
+    const link = createLink(car.code, bytesHash)
+    const commitment = await alice.capability.blob.add(new Blob([bytes]), {
+      fetch: setupGetReceipt(link),
     })
-    assert.deepEqual(multihash, bytesHash)
+    assert.deepEqual(
+      // @ts-ignore Element
+      commitment.capabilities[0].nb.content.bytes.slice(3),
+      bytesHash.bytes
+    )
 
     const {
       results: [entry],
@@ -112,11 +131,16 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const multihash = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt,
+    const bytesHash = await sha256.digest(bytes)
+    const link = createLink(car.code, bytesHash)
+    const commitment = await alice.capability.blob.add(new Blob([bytes]), {
+      fetch: setupGetReceipt(link),
     })
 
-    const result = await alice.capability.blob.remove(multihash)
+    const result = await alice.capability.blob.remove(
+      // @ts-ignore Element
+      commitment.capabilities[0].nb.content
+    )
     assert.ok(result.ok)
   },
 })

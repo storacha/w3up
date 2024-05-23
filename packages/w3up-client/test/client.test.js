@@ -1,4 +1,7 @@
 import assert from 'assert'
+import { create as createLink } from 'multiformats/link'
+import * as raw from 'multiformats/codecs/raw'
+import { sha256 } from 'multiformats/hashes/sha2'
 import { parseLink } from '@ucanto/server'
 import { AgentData } from '@web3-storage/access/agent'
 import { randomBytes, randomCAR } from './helpers/random.js'
@@ -46,7 +49,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(expectedCar.cid),
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -93,6 +96,12 @@ export const testClient = {
       { connection, provisionsStorage, uploadTable }
     ) => {
       const bytesList = [await randomBytes(128), await randomBytes(32)]
+      const bytesHash = await Promise.all(
+        bytesList.map(async (bytes) => await sha256.digest(bytes))
+      )
+      const links = await Promise.all(
+        bytesHash.map((hash) => createLink(raw.code, hash))
+      )
       const files = bytesList.map(
         (bytes, index) => new File([bytes], `${index}.txt`)
       )
@@ -126,7 +135,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(links[0]),
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -169,7 +178,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(car.cid),
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -384,6 +393,8 @@ export const testClient = {
       { connection, provisionsStorage, uploadTable }
     ) => {
       const bytes = await randomBytes(128)
+      const bytesHash = await sha256.digest(bytes)
+      const link = createLink(raw.code, bytesHash)
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
@@ -408,7 +419,7 @@ export const testClient = {
       })
 
       const root = await alice.uploadFile(new Blob([bytes]), {
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(link),
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -433,6 +444,8 @@ export const testClient = {
     'should remove an uploaded file from the service without its shards by default':
       async (assert, { connection, provisionsStorage, uploadTable }) => {
         const bytes = await randomBytes(128)
+        const bytesHash = await sha256.digest(bytes)
+        const link = createLink(raw.code, bytesHash)
 
         const alice = new Client(await AgentData.create(), {
           // @ts-ignore
@@ -457,7 +470,7 @@ export const testClient = {
         })
 
         const root = await alice.uploadFile(new Blob([bytes]), {
-          fetch: setupGetReceipt,
+          fetch: setupGetReceipt(link),
         })
 
         assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -509,6 +522,12 @@ export const testClient = {
       { connection, provisionsStorage, uploadTable }
     ) => {
       const bytesArray = [await randomBytes(128), await randomBytes(128)]
+      const bytesHash = await Promise.all(
+        bytesArray.map(async (bytes) => await sha256.digest(bytes))
+      )
+      const links = await Promise.all(
+        bytesHash.map(async (hash) => createLink(raw.code, hash))
+      )
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
@@ -533,7 +552,7 @@ export const testClient = {
       })
 
       const root = await alice.uploadFile(new Blob(bytesArray), {
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(links[0]),
       })
 
       const upload = await uploadTable.get(space.did(), root)

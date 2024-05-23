@@ -1,3 +1,6 @@
+import { create as createLink } from 'multiformats/link'
+import * as car from 'multiformats/codecs/raw'
+import { sha256 } from 'multiformats/hashes/sha2'
 import { AgentData } from '@web3-storage/access/agent'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
@@ -30,8 +33,12 @@ export const UsageClient = Test.withContext({
       })
 
       const content = new Blob(['hello world'])
+      const bytesHash = await sha256.digest(
+        new Uint8Array(await content.arrayBuffer())
+      )
+      const link = createLink(car.code, bytesHash)
       await alice.uploadFile(content, {
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(link),
       })
 
       const period = { from: new Date(0), to: new Date() }
