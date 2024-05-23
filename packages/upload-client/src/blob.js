@@ -41,6 +41,7 @@ async function getReceipt(taskCid, options = {}) {
     taskCid.toString(),
     options.receiptsEndpoint ?? receiptsEndpoint
   )
+  /* c8 ignore next */
   const fetchReceipt = options.fetch ?? globalThis.fetch.bind(globalThis)
   const workflowResponse = await fetchReceipt(url)
   /* c8 ignore start */
@@ -378,6 +379,7 @@ export async function add(
     },
     null
   )
+  /* c8 ignore next 5 */
   if (!site) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
       cause: 'failed to get blob/accept receipt',

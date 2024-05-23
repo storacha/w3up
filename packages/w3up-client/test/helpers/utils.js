@@ -18,10 +18,13 @@ export const validateAuthorization = () => ({ ok: {} })
  */
 export const setupGetReceipt = (content) => {
   // @ts-ignore Parameter
-  return async (url) => {
+  return async (url, options) => {
     // need to handle using regular fetch when not actually getting a receipt
-    if (!url.pathname) {
-      return await fetch(url)
+    if (
+      !url.pathname ||
+      (url.pathname.contains && !url.pathname.contains('/receipt/'))
+    ) {
+      return await fetch(url, options)
     }
 
     const taskID = url.pathname.replace('/receipt/', '')

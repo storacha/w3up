@@ -4,7 +4,6 @@ import { Storefront } from '@web3-storage/filecoin-client'
 import { ShardedDAGIndex } from '@web3-storage/blob-index'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
-import { create as createLink } from 'multiformats/link'
 import * as Store from './store.js'
 import * as Blob from './blob.js'
 import * as Index from './dag-index.js'
@@ -139,45 +138,50 @@ async function uploadBlockStream(
   await blocks
     .pipeThrough(new ShardingStream(options))
     .pipeThrough(
-      new TransformStream({
-        async transform(car, controller) {
-          const bytes = new Uint8Array(await car.arrayBuffer())
-          // Invoke blob/add and write bytes to write target
-          const commitment = await Blob.add(conf, bytes, options)
-          // @ts-ignore Element
-          const { multihash } = commitment.capabilities[0].nb.content
-          // Should this be raw instead?
-          const cid = createLink(carCodec.code, multihash)
-          let piece
-          if (pieceHasher) {
-            const multihashDigest = await pieceHasher.digest(bytes)
-            /** @type {import('@web3-storage/capabilities/types').PieceLink} */
-            piece = createLink(raw.code, multihashDigest)
-            // Invoke filecoin/offer for data
-            const result = await Storefront.filecoinOffer(
-              {
-                issuer: conf.issuer,
-                audience: conf.audience,
-                // Resource of invocation is the issuer did for being self issued
-                with: conf.issuer.did(),
-                proofs: conf.proofs,
-              },
-              cid,
-              piece,
-              options
-            )
+      /** @type {TransformStream<import('./types.js').IndexedCARFile, import('./types.js').CARMetadata>} */
+      (
+        new TransformStream({
+          async transform(car, controller) {
+            const bytes = new Uint8Array(await car.arrayBuffer())
+            // Invoke blob/add and write bytes to write target
+            const commitment = await Blob.add(conf, bytes, options)
+            // @ts-ignore Element
+            const { multihash } = commitment.capabilities[0].nb.content
+            // Should this be raw instead?
+            const cid = Link.create(carCodec.code, multihash)
+            let piece
+            if (pieceHasher) {
+              const multihashDigest = await pieceHasher.digest(bytes)
+              /** @type {import('@web3-storage/capabilities/types').PieceLink} */
+              piece = Link.create(raw.code, multihashDigest)
+              const content = Link.create(raw.code, multihash)
 
-            if (result.out.error) {
-              throw new Error(
-                'failed to offer piece for aggregation into filecoin deal',
-                { cause: result.out.error }
+              // Invoke filecoin/offer for data
+              const result = await Storefront.filecoinOffer(
+                {
+                  issuer: conf.issuer,
+                  audience: conf.audience,
+                  // Resource of invocation is the issuer did for being self issued
+                  with: conf.issuer.did(),
+                  proofs: conf.proofs,
+                },
+                content,
+                piece,
+                options
               )
+
+              if (result.out.error) {
+                throw new Error(
+                  'failed to offer piece for aggregation into filecoin deal',
+                  { cause: result.out.error }
+                )
+              }
             }
-          }
-          const { version, roots, size, slices } = car
-          controller.enqueue({ version, roots, size, cid, piece, slices })
-        },
-      })
+            const { version, roots, size, slices } = car
+            controller.enqueue({ version, roots, size, cid, piece, slices })
+          },
+        })
+      )
     )
     .pipeTo(
       new WritableStream({
@@ -209,8 +213,12 @@ async function uploadBlockStream(
   }
 
   // Store the index in the space
-  const indexDigest = await Blob.add(conf, indexBytes.ok, options)
-  const indexLink = Link.create(carCodec.code, indexDigest)
+  const commitment = await Blob.add(conf, indexBytes.ok, options)
+  const indexLink = Link.create(
+    carCodec.code,
+    // @ts-ignore Element
+    commitment.capabilities[0].nb.content.multihash
+  )
 
   // Register the index with the service
   await Index.add(conf, indexLink, options)

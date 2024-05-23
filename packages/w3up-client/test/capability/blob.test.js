@@ -40,15 +40,12 @@ export const BlobClient = Test.withContext({
       fetch: setupGetReceipt(link),
     })
 
-    // @ts-ignore Element
-    console.log(commitment.capabilities[0].nb.content)
-    console.log(allocationsStorage)
     // TODO we should check blobsStorage as well
     assert.deepEqual(
       await allocationsStorage.exists(
         space.did(),
         // @ts-ignore Element
-        commitment.capabilities[0].nb.content.bytes.slice(3)
+        commitment.capabilities[0].nb.content.multihash.bytes
       ),
       {
         ok: true,

@@ -3,6 +3,7 @@ import * as Link from 'multiformats/link'
 import * as Result from '../../src/result.js'
 import { randomCAR } from '../helpers/random.js'
 import * as Test from '../test.js'
+import { setupGetReceipt } from '../helpers/utils.js'
 
 export const IndexClient = Test.withContext({
   add: {
@@ -27,11 +28,21 @@ export const IndexClient = Test.withContext({
       const index = ShardedDAGIndex.create(car.cid)
       const indexBytes = Result.unwrap(await index.archive())
 
-      const indexDigest = await alice.capability.blob.add(
-        new Blob([indexBytes])
+      const commitment = await alice.capability.blob.add(
+        new Blob([indexBytes]),
+        {
+          fetch: setupGetReceipt(car.cid),
+        }
       )
+
       assert.ok(
-        await alice.capability.index.add(Link.create(0x0202, indexDigest))
+        await alice.capability.index.add(
+          Link.create(
+            0x0202,
+            // @ts-ignore Element
+            commitment.capabilities[0].nb.content.multihash
+          )
+        )
       )
     },
   },
