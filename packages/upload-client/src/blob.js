@@ -201,7 +201,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * The issuer needs the `blob/add` delegated capability.
  * @param {Blob|Uint8Array} data Blob data.
  * @param {import('./types.js').RequestOptions} [options]
- * @returns {Promise<import('multiformats').MultihashDigest>}
+ * @returns {Promise<import('@ucanto/interface').Delegation<import('@web3-storage/capabilities/types').BlobAcceptSuccess>>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
@@ -362,20 +362,32 @@ export async function add(
     })
   }
 
-  let acceptSite = {}
   const blocks = new Map(
-    [...receipt.iterateIPLDBlocks()].map((block) => [`${block.cid}`, block])
+    [...acceptReceipt.iterateIPLDBlocks()].map((block) => [
+      `${block.cid}`,
+      block,
+    ])
   )
 
-  acceptSite.site = Delegation.view({
-    root: /** @type {import('@ucanto/interface').UCANLink} */ (
-      // @ts-ignore Property
-      acceptReceipt.out.ok.site
-    ),
-    blocks,
-  })
+  const site = Delegation.view(
+    {
+      root: /** @type {import('@ucanto/interface').UCANLink} */ (
+        // @ts-ignore Property
+        acceptReceipt.out.ok.site
+      ),
+      blocks,
+    },
+    null
+  )
 
-  return acceptSite.site.asCID.multihash
+  if (!site) {
+    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+      cause: 'failed to get blob/accept receipt',
+    })
+  }
+
+  // @ts-ignore
+  return site
 }
 
 /**

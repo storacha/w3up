@@ -1,4 +1,6 @@
 import assert from 'assert'
+import { create as createLink } from 'multiformats/link'
+import { sha256 } from 'multiformats/hashes/sha2'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
@@ -144,7 +146,7 @@ describe('uploadFile', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(expectedCar.cid),
       }
     )
 
@@ -165,6 +167,8 @@ describe('uploadFile', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const bytes = await randomBytes(1024 * 1024 * 5)
+    const bytesHash = await sha256.digest(bytes)
+    const link = createLink(CAR.codec.code, bytesHash)
     const file = new Blob([bytes])
     const piece = Piece.fromPayload(bytes).link
     /** @type {import('../src/types.js').CARLink[]} */
@@ -260,7 +264,7 @@ describe('uploadFile', () => {
         // so we actually end up with a shard for each block - 5 CARs!
         shardSize: 1024 * 1024 * 2 + 1,
         onShardStored: (meta) => carCIDs.push(meta.cid),
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(link),
       }
     )
 
@@ -271,6 +275,8 @@ describe('uploadFile', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
+    const link = createLink(CAR.codec.code, bytesHash)
     const file = new Blob([bytes])
 
     const proofs = await Promise.all([
@@ -336,7 +342,7 @@ describe('uploadFile', () => {
         file,
         {
           connection,
-          fetch: setupGetReceipt,
+          fetch: setupGetReceipt(link),
         }
       )
     )
@@ -357,6 +363,10 @@ describe('uploadDirectory', () => {
       (bytes, index) => new File([bytes], `${index}.txt`)
     )
     const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
+    const links = bytesList.map(async (bytes) => {
+      const bytesHash = await sha256.digest(bytes)
+      return createLink(CAR.codec.code, bytesHash)
+    })
 
     /** @type {import('../src/types.js').CARLink?} */
     let carCID = null
@@ -457,7 +467,7 @@ describe('uploadDirectory', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(await links[0]),
       }
     )
 
@@ -481,6 +491,10 @@ describe('uploadDirectory', () => {
     const files = bytesList.map(
       (bytes, index) => new File([bytes], `${index}.txt`)
     )
+    const links = bytesList.map(async (bytes) => {
+      const bytesHash = await sha256.digest(bytes)
+      return createLink(CAR.codec.code, bytesHash)
+    })
     const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
@@ -568,7 +582,7 @@ describe('uploadDirectory', () => {
         connection,
         shardSize: 500_057, // should end up with 2 CAR files
         onShardStored: (meta) => carCIDs.push(meta.cid),
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(await links[0]),
       }
     )
 
@@ -668,12 +682,22 @@ describe('uploadDirectory', () => {
       return { invocations, service, server, connection }
     }
 
-    const unsortedFiles = [
-      new File([await randomBytes(32)], '/b.txt'),
-      new File([await randomBytes(32)], '/b.txt'),
-      new File([await randomBytes(32)], 'c.txt'),
-      new File([await randomBytes(32)], 'a.txt'),
+    const bytesList = [
+      await randomBytes(32),
+      await randomBytes(32),
+      await randomBytes(32),
+      await randomBytes(32),
     ]
+    const unsortedFiles = [
+      new File([bytesList[0]], '/b.txt'),
+      new File([bytesList[1]], '/b.txt'),
+      new File([bytesList[2]], 'c.txt'),
+      new File([bytesList[3]], 'a.txt'),
+    ]
+    const links = bytesList.map(async (bytes) => {
+      const bytesHash = await sha256.digest(bytes)
+      return createLink(CAR.codec.code, bytesHash)
+    })
 
     const uploadServiceForUnordered = createSimpleMockUploadServer()
     // uploading unsorted files should work because they should be sorted by `uploadDirectory`
@@ -682,7 +706,7 @@ describe('uploadDirectory', () => {
       unsortedFiles,
       {
         connection: uploadServiceForUnordered.connection,
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(await links[0]),
       }
     )
 
@@ -693,7 +717,7 @@ describe('uploadDirectory', () => {
       [...unsortedFiles].sort(defaultFileComparator),
       {
         connection: uploadServiceForOrdered.connection,
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(await links[0]),
       }
     )
 
@@ -738,8 +762,7 @@ describe('uploadDirectory', () => {
       {
         connection: uploadServiceForCustomOrder.connection,
         customOrder: true,
-        // @ts-ignore
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(await links[1]),
       }
     )
     const shardsForCustomOrder = uploadServiceForCustomOrder.invocations
@@ -887,7 +910,7 @@ describe('uploadCAR', () => {
         connection,
         onShardStored: (meta) => carCIDs.push(meta.cid),
         shardSize,
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(car.roots[0].toV1()),
       }
     )
 
@@ -1013,7 +1036,7 @@ describe('uploadCAR', () => {
         onShardStored: (meta) => {
           if (meta.piece) pieceCIDs.push(meta.piece)
         },
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(car.roots[0].toV1()),
       }
     )
 

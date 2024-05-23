@@ -1,4 +1,5 @@
 import assert from 'assert'
+import { create as createLink } from 'multiformats/link'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
@@ -26,6 +27,7 @@ describe('Blob.add', () => {
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
+    const link = createLink(CAR.codec.code, bytesHash)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -73,7 +75,7 @@ describe('Blob.add', () => {
 
     /** @type {import('../src/types.js').ProgressStatus[]} */
     const progress = []
-    const multihash = await Blob.add(
+    const commitment = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       bytes,
       {
@@ -83,7 +85,7 @@ describe('Blob.add', () => {
           progress.push(status)
         },
         fetchWithUploadProgress,
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(link),
       }
     )
 
@@ -94,8 +96,9 @@ describe('Blob.add', () => {
       128
     )
 
-    assert(multihash)
-    assert.deepEqual(multihash.bytes, bytesHash.bytes)
+    assert(commitment)
+    // @ts-ignore Element
+    assert.deepEqual(commitment.capabilities[0].nb.content.multihash, bytesHash)
 
     // make sure it can also work without fetchWithUploadProgress
     /** @type {import('../src/types.js').ProgressStatus[]} */
@@ -108,10 +111,14 @@ describe('Blob.add', () => {
         onUploadProgress: (status) => {
           progressWithoutUploadProgress.push(status)
         },
-        fetch: setupGetReceipt,
+        fetch: setupGetReceipt(link),
       }
     )
-    assert.deepEqual(addedWithoutUploadProgress.bytes, bytesHash.bytes)
+    assert.deepEqual(
+      // @ts-ignore Element
+      addedWithoutUploadProgress.capabilities[0].nb.content.multihash,
+      bytesHash
+    )
     assert.equal(
       progressWithoutUploadProgress.reduce(
         (max, { loaded }) => Math.max(max, loaded),

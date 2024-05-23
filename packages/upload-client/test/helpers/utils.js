@@ -1,6 +1,5 @@
-import { base32 } from 'multiformats/bases/base32'
+import { parseLink } from '@ucanto/server'
 import * as Signer from '@ucanto/principal/ed25519'
-import { CID } from 'multiformats'
 import { Receipt, Message } from '@ucanto/core'
 import * as CAR from '@ucanto/transport/car'
 import * as Server from '@ucanto/server'
@@ -8,30 +7,54 @@ import * as HTTP from '@web3-storage/capabilities/http'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import { W3sBlob } from '@web3-storage/capabilities'
 import { createConcludeInvocation } from '../../../upload-client/src/blob.js'
+import { Assert } from '@web3-storage/content-claims/capability'
 
 export const validateAuthorization = () => ({ ok: {} })
 
-// @ts-ignore Parameter
-export const setupGetReceipt = async (url) => {
-  // need to handle using regular fetch when not actually getting a receipt
-  if (!url.pathname) {
-    return await fetch(url)
-  }
+/**
+ * @param {import('multiformats').Link} content
+ */
+export const setupGetReceipt = (content) => {
+  // @ts-ignore Parameter
+  return async (url) => {
+    // need to handle using regular fetch when not actually getting a receipt
+    if (!url.pathname) {
+      return await fetch(url)
+    }
 
-  const cid = url.pathname.replace('/receipt/', '')
-  const receipt = await Receipt.issue({
-    issuer: await Signer.generate(),
-    // @ts-ignore Type
-    ran: CID.parse(cid, base32),
-    result: { ok: {} },
-  })
-  const message = await Message.build({
-    // @ts-ignore
-    invocations: [],
-    receipts: [receipt],
-  })
-  const request = CAR.request.encode(message)
-  return new Response(request.body.buffer)
+    const taskID = url.pathname.replace('/receipt/', '')
+    const issuer = await Signer.generate()
+
+    const locationClaim = await Assert.location.delegate({
+      issuer,
+      audience: issuer,
+      with: issuer.toDIDKey(),
+      nb: {
+        content,
+        location: ['http://localhost'],
+      },
+      expiration: Infinity,
+    })
+
+    const receipt = await Receipt.issue({
+      issuer,
+      fx: {
+        fork: [locationClaim],
+      },
+      ran: parseLink(taskID),
+      result: {
+        ok: {
+          site: locationClaim.link(),
+        },
+      },
+    })
+
+    const message = await Message.build({
+      receipts: [receipt],
+    })
+    const request = CAR.request.encode(message)
+    return new Response(request.body.buffer)
+  }
 }
 
 export const setupBlobAddSuccessResponse = async function (
