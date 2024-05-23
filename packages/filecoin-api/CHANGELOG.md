@@ -1,5 +1,27 @@
 # Changelog
 
+## [7.0.0](https://github.com/w3s-project/w3up/compare/filecoin-api-v6.0.1...filecoin-api-v7.0.0) (2024-05-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444))
+
+### Features
+
+* add blob protocol to upload-client ([#1425](https://github.com/w3s-project/w3up/issues/1425)) ([49aef56](https://github.com/w3s-project/w3up/commit/49aef564a726d34dbbedbd83f5366d9320180f99))
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444)) ([c9bf33e](https://github.com/w3s-project/w3up/commit/c9bf33e5512397a654db933a5e6b5db0c7c22da5))
+
+
+### Fixes
+
+* check service did in w3filecoin ([#1476](https://github.com/w3s-project/w3up/issues/1476)) ([11b00bf](https://github.com/w3s-project/w3up/commit/11b00bf880dbbbc40b657d2417a4b13aa8c60a7d))
+
+
+### Other Changes
+
+* appease linter ([782c6d0](https://github.com/w3s-project/w3up/commit/782c6d0b3ca93ee801b38126339a262bcd713ede))
+
 ## [6.0.1](https://github.com/w3s-project/w3up/compare/filecoin-api-v6.0.0...filecoin-api-v6.0.1) (2024-04-30)
 
 
