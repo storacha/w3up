@@ -15,6 +15,7 @@ import { getStoreImplementations } from '../context/store-implementations.js'
 import {
   QueueOperationErrorName,
   StoreOperationErrorName,
+  UnsupportedCapabilityErrorName,
 } from '../../src/errors.js'
 
 /**
@@ -36,7 +37,7 @@ import {
 export const test = {
   'piece/offer inserts piece into piece queue if not in piece store and returns effects':
     async (assert, context) => {
-      const { storefront } = await getServiceContext()
+      const { storefront } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -95,7 +96,7 @@ export const test = {
     },
   'piece/offer dedupes piece and returns effects without propagating message':
     async (assert, context) => {
-      const { storefront } = await getServiceContext()
+      const { storefront } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -157,7 +158,7 @@ export const test = {
     },
   'piece/offer fails if not able to verify piece store': wichMockableContext(
     async (assert, context) => {
-      const { storefront } = await getServiceContext()
+      const { storefront } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -190,7 +191,7 @@ export const test = {
   ),
   'piece/offer fails if not able to add to piece queue': wichMockableContext(
     async (assert, context) => {
-      const { storefront } = await getServiceContext()
+      const { storefront } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -221,11 +222,42 @@ export const test = {
       pieceQueue: new FailingQueue(),
     })
   ),
+  'piece/accept must be invoked on service did': async (
+    assert,
+    context
+  ) => {
+    const { agent, storefront } = await getServiceContext(context.id)
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // Generate piece for test
+    const group = storefront.did()
+    const { pieces } = await randomAggregate(100, 128)
+    const piece = pieces[0].link
+
+    // agent invocation instead of storefront
+    const pieceAcceptInv = Aggregator.pieceAccept.invoke({
+      issuer: agent,
+      audience: connection.id,
+      with: agent.did(),
+      nb: {
+        piece,
+        group,
+      },
+    })
+
+    const response = await pieceAcceptInv.execute(connection)
+    // Validate receipt
+    assert.ok(response.out.error)
+    assert.equal(response.out.error?.name, UnsupportedCapabilityErrorName)
+  },
   'piece/accept issues receipt with data aggregation proof': async (
     assert,
     context
   ) => {
-    const { storefront } = await getServiceContext()
+    const { storefront, aggregator } = await getServiceContext(context.id)
     const connection = connect({
       id: context.id,
       channel: createServer(context),
@@ -278,11 +310,11 @@ export const test = {
     })
     assert.ok(inclusionPutRes.ok)
 
-    // storefront invocation
+    // aggregator invocation
     const pieceAcceptInv = Aggregator.pieceAccept.invoke({
-      issuer: storefront,
+      issuer: aggregator,
       audience: connection.id,
-      with: storefront.did(),
+      with: aggregator.did(),
       nb: {
         piece,
         group,
@@ -328,7 +360,7 @@ export const test = {
   'piece/accept fails if not able to query inclusion store':
     wichMockableContext(
       async (assert, context) => {
-        const { storefront } = await getServiceContext()
+        const { storefront, aggregator } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -339,11 +371,11 @@ export const test = {
         const { pieces } = await randomAggregate(100, 128)
         const piece = pieces[0].link
 
-        // storefront invocation
+        // aggregator invocation
         const pieceAcceptInv = Aggregator.pieceAccept.invoke({
-          issuer: storefront,
+          issuer: aggregator,
           audience: connection.id,
-          with: storefront.did(),
+          with: aggregator.did(),
           nb: {
             piece,
             group,
@@ -364,7 +396,7 @@ export const test = {
   'piece/accept fails if not able to read from aggregate store':
     wichMockableContext(
       async (assert, context) => {
-        const { storefront } = await getServiceContext()
+        const { storefront, aggregator } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -394,11 +426,11 @@ export const test = {
         })
         assert.ok(inclusionPutRes.ok)
 
-        // storefront invocation
+        // aggregator invocation
         const pieceAcceptInv = Aggregator.pieceAccept.invoke({
-          issuer: storefront,
+          issuer: aggregator,
           audience: connection.id,
-          with: storefront.did(),
+          with: aggregator.did(),
           nb: {
             piece,
             group,
@@ -418,10 +450,16 @@ export const test = {
     ),
 }
 
-async function getServiceContext() {
-  const storefront = await Signer.generate()
+/**
+ * @param {Signer.Signer.Signer<`did:${string}:${string}`, Signer.Signer.Crypto.SigAlg>} serviceSigner
+ */
+async function getServiceContext(serviceSigner) {
+  const agent = await Signer.generate()
+  // Storefront and aggregator are today the same DID
+  const storefront = serviceSigner
+  const aggregator = serviceSigner
 
-  return { storefront }
+  return { agent, storefront, aggregator }
 }
 
 /**

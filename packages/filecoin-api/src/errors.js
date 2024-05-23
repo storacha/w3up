@@ -108,3 +108,22 @@ export class UnexpectedPiece extends Error {
     return UnexpectedPieceErrorName
   }
 }
+
+export const UnsupportedCapabilityErrorName = /** @type {const} */ ('UnsupportedCapability')
+export class UnsupportedCapability extends Server.Failure {
+  /**
+   * @param {object} source
+   * @param {import('@ucanto/interface').Capability} source.capability
+   */
+  constructor({ capability: { with: subject, can } }) {
+    super()
+
+    this.capability = { with: subject, can }
+  }
+  get name() {
+    return UnsupportedCapabilityErrorName
+  }
+  describe() {
+    return `${this.capability.with} does not have a "${this.capability.can}" capability provider`
+  }
+}

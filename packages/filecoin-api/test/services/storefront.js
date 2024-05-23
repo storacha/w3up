@@ -12,6 +12,7 @@ import { createServer, connect } from '../../src/storefront/service.js'
 import {
   QueueOperationErrorName,
   StoreOperationErrorName,
+  UnsupportedCapabilityErrorName
 } from '../../src/errors.js'
 import { randomCargo, randomAggregate } from '../utils.js'
 import { createInvocationsAndReceiptsForDealDataProofChain } from '../context/receipts.js'
@@ -32,7 +33,7 @@ import { getConnection } from '../context/service.js'
 export const test = {
   'filecoin/offer inserts piece into submission queue if not in piece store and returns effects':
     async (assert, context) => {
-      const { agent } = await getServiceContext()
+      const { agent } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -103,7 +104,7 @@ export const test = {
     },
   'filecoin/offer dedupes piece and returns effects without propagating message':
     async (assert, context) => {
-      const { agent } = await getServiceContext()
+      const { agent } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -180,7 +181,7 @@ export const test = {
   'filecoin/offer invocation fails if fails to write to submission queue':
     wichMockableContext(
       async (assert, context) => {
-        const { agent } = await getServiceContext()
+        const { agent } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -212,7 +213,7 @@ export const test = {
   'filecoin/offer invocation fails if fails to check piece store':
     wichMockableContext(
       async (assert, context) => {
-        const { agent } = await getServiceContext()
+        const { agent } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -241,9 +242,9 @@ export const test = {
         pieceStore: getStoreImplementations(FailingStore).storefront.pieceStore,
       })
     ),
-  'filecoin/submit inserts piece into piece offer queue and returns effect':
+  'filecoin/submit must be invoked on service did':
     async (assert, context) => {
-      const { agent } = await getServiceContext()
+      const { agent } = await getServiceContext(context.id)
       const connection = connect({
         id: context.id,
         channel: createServer(context),
@@ -255,6 +256,30 @@ export const test = {
         issuer: agent,
         audience: connection.id,
         with: agent.did(),
+        nb: {
+          piece: cargo.link.link(),
+          content: cargo.content.link(),
+        },
+      })
+
+      const response = await filecoinSubmitInv.execute(connection)
+      assert.ok(response.out.error)
+      assert.equal(response.out.error?.name, UnsupportedCapabilityErrorName)
+    },
+  'filecoin/submit inserts piece into piece offer queue and returns effect':
+    async (assert, context) => {
+      const { storefront } = await getServiceContext(context.id)
+      const connection = connect({
+        id: context.id,
+        channel: createServer(context),
+      })
+
+      // Generate piece for test
+      const [cargo] = await randomCargo(1, 128)
+      const filecoinSubmitInv = Filecoin.submit.invoke({
+        issuer: storefront,
+        audience: connection.id,
+        with: storefront.did(),
         nb: {
           piece: cargo.link.link(),
           content: cargo.content.link(),
@@ -288,7 +313,7 @@ export const test = {
   'filecoin/submit fails if fails to write to submission queue':
     wichMockableContext(
       async (assert, context) => {
-        const { agent } = await getServiceContext()
+        const { storefront } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -297,9 +322,9 @@ export const test = {
         // Generate piece for test
         const [cargo] = await randomCargo(1, 128)
         const filecoinSubmitInv = Filecoin.submit.invoke({
-          issuer: agent,
+          issuer: storefront,
           audience: connection.id,
-          with: agent.did(),
+          with: storefront.did(),
           nb: {
             piece: cargo.link.link(),
             content: cargo.content.link(),
@@ -319,7 +344,7 @@ export const test = {
     assert,
     context
   ) => {
-    const { agent, aggregator, dealer } = await getServiceContext()
+    const { storefront, aggregator, dealer } = await getServiceContext(context.id)
     const group = context.id.did()
     const connection = connect({
       id: context.id,
@@ -339,7 +364,7 @@ export const test = {
     const putRes = await context.pieceStore.put({
       piece: piece.link,
       content: piece.content,
-      group: context.id.did(),
+      group: storefront.did(),
       status: 'submitted',
       insertedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -361,7 +386,7 @@ export const test = {
     }
     const { invocations, receipts } =
       await createInvocationsAndReceiptsForDealDataProofChain({
-        storefront: context.id,
+        storefront,
         aggregator,
         dealer,
         aggregate: aggregate.link,
@@ -388,9 +413,9 @@ export const test = {
     assert.ok(storedInvocationsAndReceiptsRes.ok)
 
     const filecoinAddInv = Filecoin.accept.invoke({
-      issuer: agent,
+      issuer: storefront,
       audience: connection.id,
-      with: agent.did(),
+      with: storefront.did(),
       nb: {
         piece: piece.link.link(),
         content: piece.content.link(),
@@ -427,10 +452,9 @@ export const test = {
       BigInt(dealMetadata.dataSource.dealID)
     )
   },
-  'filecoin/accept fails if fails to read from piece store':
-    wichMockableContext(
-      async (assert, context) => {
-        const { agent } = await getServiceContext()
+  'filecoin/accept must be invoked on service did':
+    async (assert, context) => {
+        const { agent } = await getServiceContext(context.id)
         const connection = connect({
           id: context.id,
           channel: createServer(context),
@@ -450,6 +474,31 @@ export const test = {
 
         const response = await filecoinSubmitInv.execute(connection)
         assert.ok(response.out.error)
+        assert.equal(response.out.error?.name, UnsupportedCapabilityErrorName)
+    },
+  'filecoin/accept fails if fails to read from piece store':
+    wichMockableContext(
+      async (assert, context) => {
+        const { storefront } = await getServiceContext(context.id)
+        const connection = connect({
+          id: context.id,
+          channel: createServer(context),
+        })
+
+        // Generate piece for test
+        const [cargo] = await randomCargo(1, 128)
+        const filecoinSubmitInv = Filecoin.accept.invoke({
+          issuer: storefront,
+          audience: connection.id,
+          with: storefront.did(),
+          nb: {
+            piece: cargo.link.link(),
+            content: cargo.content.link(),
+          },
+        })
+
+        const response = await filecoinSubmitInv.execute(connection)
+        assert.ok(response.out.error)
         assert.equal(response.out.error?.name, StoreOperationErrorName)
       },
       async (context) => ({
@@ -460,7 +509,7 @@ export const test = {
   'filecoin/info gets aggregate where piece was included together with deals and inclusion proof':
     wichMockableContext(
       async (assert, context) => {
-        const { agent, aggregator, dealer } = await getServiceContext()
+        const { agent, storefront, aggregator, dealer } = await getServiceContext(context.id)
         const group = context.id.did()
         const connection = connect({
           id: context.id,
@@ -499,7 +548,7 @@ export const test = {
         }
         const { invocations, receipts } =
           await createInvocationsAndReceiptsForDealDataProofChain({
-            storefront: context.id,
+            storefront,
             aggregator,
             dealer,
             aggregate: aggregate.link,
@@ -602,7 +651,7 @@ export const test = {
       }
     ),
   'filecoin/info fails if content is not known': async (assert, context) => {
-    const { agent } = await getServiceContext()
+    const { agent } = await getServiceContext(context.id)
     const connection = connect({
       id: context.id,
       channel: createServer(context),
@@ -664,12 +713,16 @@ async function storeInvocationsAndReceipts({
   }
 }
 
-async function getServiceContext() {
+/**
+ * @param {Signer.Signer.Signer<`did:${string}:${string}`, Signer.Signer.Crypto.SigAlg>} serviceSigner
+ */
+async function getServiceContext(serviceSigner) {
   const agent = await Signer.generate()
+  const storefront = serviceSigner
   const aggregator = await Signer.generate()
   const dealer = await Signer.generate()
 
-  return { agent, dealer, aggregator }
+  return { agent, storefront, dealer, aggregator }
 }
 
 /**

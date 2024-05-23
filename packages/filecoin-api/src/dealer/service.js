@@ -8,7 +8,11 @@ import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
 import { DealTracker } from '@web3-storage/filecoin-client'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
-import { StoreOperationFailed, DecodeBlockOperationFailed } from '../errors.js'
+import {
+  StoreOperationFailed,
+  DecodeBlockOperationFailed,
+  UnsupportedCapability,
+} from '../errors.js'
 
 /**
  * @param {API.Input<DealerCaps.aggregateOffer>} input
@@ -16,6 +20,12 @@ import { StoreOperationFailed, DecodeBlockOperationFailed } from '../errors.js'
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateOfferSuccess, API.AggregateOfferFailure> | API.UcantoInterface.JoinBuilder<API.AggregateOfferSuccess>>}
  */
 export const aggregateOffer = async ({ capability, invocation }, context) => {
+  // Only service principal can perform offer
+  if (capability.with !== context.id.did()) {
+    return {
+      error: new UnsupportedCapability({ capability }),
+    }
+  }
   const issuer = invocation.issuer.did()
   const { aggregate, pieces } = capability.nb
 
@@ -90,6 +100,12 @@ export const aggregateOffer = async ({ capability, invocation }, context) => {
  * @returns {Promise<API.UcantoInterface.Result<API.AggregateAcceptSuccess, API.AggregateAcceptFailure>>}
  */
 export const aggregateAccept = async ({ capability }, context) => {
+  // Only service principal can perform accept
+  if (capability.with !== context.id.did()) {
+    return {
+      error: new UnsupportedCapability({ capability }),
+    }
+  }
   const { aggregate } = capability.nb
 
   // Query current state
