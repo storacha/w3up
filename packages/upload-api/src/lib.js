@@ -6,7 +6,6 @@ import * as Types from './types.js'
 import * as Legacy from '@ucanto/transport/legacy'
 import * as CAR from '@ucanto/transport/car'
 import { create as createRevocationChecker } from './utils/revocation.js'
-import { createService as createBlobService } from './blob.js'
 import { createService as createStoreService } from './store.js'
 import { createService as createUploadService } from './upload.js'
 import { createService as createConsoleService } from './console.js'
@@ -14,7 +13,6 @@ import { createService as createAccessService } from './access.js'
 import { createService as createConsumerService } from './consumer.js'
 import { createService as createCustomerService } from './customer.js'
 import { createService as createSpaceService } from './space.js'
-import { createService as createIndexService } from './index.js'
 import { createService as createProviderService } from './provider.js'
 import { createService as createSubscriptionService } from './subscription.js'
 import { createService as createAdminService } from './admin.js'
@@ -160,11 +158,9 @@ export const run = async (agent, invocation) => {
  */
 export const createService = (context) => ({
   access: createAccessService(context),
-  blob: createBlobService(context),
   console: createConsoleService(context),
   consumer: createConsumerService(context),
   customer: createCustomerService(context),
-  index: createIndexService(context),
   provider: createProviderService(context),
   'rate-limit': createRateLimitService(context),
   admin: createAdminService(context),

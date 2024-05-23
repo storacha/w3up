@@ -26,14 +26,16 @@ describe('Index.add', () => {
     ]
 
     const service = mockService({
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async ({ capability }) => {
-            assert.equal(capability.nb.index.toString(), car.cid.toString())
-            return Server.ok({})
-          },
-        }),
+      space: {
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert.equal(capability.nb.index.toString(), car.cid.toString())
+              return Server.ok({})
+            },
+          }),
+        },
       },
     })
 
@@ -71,13 +73,15 @@ describe('Index.add', () => {
     ]
 
     const service = mockService({
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async () => {
-            throw new Server.Failure('boom')
-          },
-        }),
+      space: {
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async () => {
+              throw new Server.Failure('boom')
+            },
+          }),
+        },
       },
     })
 
@@ -99,7 +103,7 @@ describe('Index.add', () => {
         car.cid,
         { connection }
       ),
-      { message: 'failed index/add invocation' }
+      { message: 'failed space/index/add invocation' }
     )
   })
 })

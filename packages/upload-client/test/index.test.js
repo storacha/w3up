@@ -68,30 +68,32 @@ describe('uploadFile', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        add: provide(
-          BlobCapabilities.add,
-          // @ts-ignore Argument of type
-          async function ({ invocation, capability }) {
-            assert.equal(invocation.issuer.did(), agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            assert.equal(capability.can, BlobCapabilities.add.can)
-            assert.equal(capability.with, space.did())
-            return setupBlobAddSuccessResponse(
-              { issuer: space, audience: agent, with: space, proofs },
-              invocation
-            )
-          }
-        ),
-      },
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async ({ capability }) => {
-            assert(capability.nb.index)
-            return Server.ok({})
-          },
-        }),
+      space: {
+        blob: {
+          add: provide(
+            BlobCapabilities.add,
+            // @ts-ignore Argument of type
+            async function ({ invocation, capability }) {
+              assert.equal(invocation.issuer.did(), agent.did())
+              assert.equal(invocation.capabilities.length, 1)
+              assert.equal(capability.can, BlobCapabilities.add.can)
+              assert.equal(capability.with, space.did())
+              return setupBlobAddSuccessResponse(
+                { issuer: space, audience: agent, with: space, proofs },
+                invocation
+              )
+            }
+          ),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
+          }),
+        },
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -146,12 +148,12 @@ describe('uploadFile', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 2)
+    assert(service.space.blob.add.called)
+    assert.equal(service.space.blob.add.callCount, 2)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
-    assert(service.index.add.called)
-    assert.equal(service.index.add.callCount, 1)
+    assert(service.space.index.add.called)
+    assert.equal(service.space.index.add.callCount, 1)
     assert(service.upload.add.called)
     assert.equal(service.upload.add.callCount, 1)
 
@@ -195,23 +197,25 @@ describe('uploadFile', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
-      },
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async ({ capability }) => {
-            assert(capability.nb.index)
-            return Server.ok({})
-          },
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
+          }),
+        },
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -291,18 +295,20 @@ describe('uploadFile', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation, capability }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          assert.equal(capability.can, BlobCapabilities.add.can)
-          assert.equal(capability.with, space.did())
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation, capability }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            assert.equal(capability.can, BlobCapabilities.add.can)
+            assert.equal(capability.with, space.did())
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -337,8 +343,8 @@ describe('uploadFile', () => {
       )
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    assert(service.space.blob.add.called)
+    assert.equal(service.space.blob.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
   })
@@ -384,28 +390,30 @@ describe('uploadDirectory', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, BlobCapabilities.add.can)
-          assert.equal(invCap.with, space.did())
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
-      },
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async ({ capability }) => {
-            assert(capability.nb.index)
-            return Server.ok({})
-          },
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, BlobCapabilities.add.can)
+            assert.equal(invCap.with, space.did())
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
+          }),
+        },
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -456,10 +464,10 @@ describe('uploadDirectory', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 2)
-    assert(service.index.add.called)
-    assert.equal(service.index.add.callCount, 1)
+    assert(service.space.blob.add.called)
+    assert.equal(service.space.blob.add.callCount, 2)
+    assert(service.space.index.add.called)
+    assert.equal(service.space.index.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)
@@ -507,23 +515,25 @@ describe('uploadDirectory', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
-      },
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async ({ capability }) => {
-            assert(capability.nb.index)
-            return Server.ok({})
-          },
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
+          }),
+        },
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -606,25 +616,27 @@ describe('uploadDirectory', () => {
             return { ok: { time: Date.now() } }
           }),
         },
-        blob: {
-          // @ts-ignore Argument of type
-          add: provide(BlobCapabilities.add, ({ invocation }) => {
+        space: {
+          blob: {
             // @ts-ignore Argument of type
-            invocations.push(invocation)
-            return setupBlobAddSuccessResponse(
-              { issuer: space, audience: agent, with: space, proofs },
-              invocation
-            )
-          }),
-        },
-        index: {
-          add: Server.provideAdvanced({
-            capability: IndexCapabilities.add,
-            handler: async ({ capability }) => {
-              assert(capability.nb.index)
-              return Server.ok({})
-            },
-          }),
+            add: provide(BlobCapabilities.add, ({ invocation }) => {
+              // @ts-ignore Argument of type
+              invocations.push(invocation)
+              return setupBlobAddSuccessResponse(
+                { issuer: space, audience: agent, with: space, proofs },
+                invocation
+              )
+            }),
+          },
+          index: {
+            add: Server.provideAdvanced({
+              capability: IndexCapabilities.add,
+              handler: async ({ capability }) => {
+                assert(capability.nb.index)
+                return Server.ok({})
+              },
+            }),
+          },
         },
         filecoin: {
           offer: Server.provideAdvanced({
@@ -797,28 +809,30 @@ describe('uploadCAR', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, BlobCapabilities.add.can)
-          assert.equal(invCap.with, space.did())
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
-      },
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async ({ capability }) => {
-            assert(capability.nb.index)
-            return Server.ok({})
-          },
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, BlobCapabilities.add.can)
+            assert.equal(invCap.with, space.did())
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
+          }),
+        },
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -873,10 +887,10 @@ describe('uploadCAR', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 3)
-    assert(service.index.add.called)
-    assert.equal(service.index.add.callCount, 1)
+    assert(service.space.blob.add.called)
+    assert.equal(service.space.blob.add.callCount, 3)
+    assert(service.space.index.add.called)
+    assert.equal(service.space.index.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 2)
     assert(service.upload.add.called)
@@ -925,27 +939,29 @@ describe('uploadCAR', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ capability, invocation }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          assert.equal(capability.can, BlobCapabilities.add.can)
-          assert.equal(capability.with, space.did())
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
-      },
-      index: {
-        add: Server.provideAdvanced({
-          capability: IndexCapabilities.add,
-          handler: async ({ capability }) => {
-            assert(capability.nb.index)
-            return Server.ok({})
-          },
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ capability, invocation }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            assert.equal(capability.can, BlobCapabilities.add.can)
+            assert.equal(capability.with, space.did())
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
+          }),
+        },
       },
       filecoin: {
         offer: Server.provideAdvanced({
@@ -998,10 +1014,10 @@ describe('uploadCAR', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 2)
-    assert(service.index.add.called)
-    assert.equal(service.index.add.callCount, 1)
+    assert(service.space.blob.add.called)
+    assert.equal(service.space.blob.add.callCount, 2)
+    assert(service.space.index.add.called)
+    assert.equal(service.space.index.add.callCount, 1)
     assert(service.filecoin.offer.called)
     assert.equal(service.filecoin.offer.callCount, 1)
     assert(service.upload.add.called)

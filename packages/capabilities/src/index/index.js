@@ -18,23 +18,23 @@ import { equalWith, SpaceDID, and, equal } from '../utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
- * derive any `index/` prefixed capability for the space identified by the DID
+ * derive any `space/index/` prefixed capability for the space identified by the DID
  * in the `with` field.
  */
 export const index = capability({
-  can: 'index/*',
+  can: 'space/index/*',
   /** DID of the space where indexed data is stored. */
   with: SpaceDID,
   derives: equalWith,
 })
 
 /**
- * `index/add` capability allows an agent to submit verifiable claims
+ * `space/index/add` capability allows an agent to submit verifiable claims
  * about content-addressed data to be published on the InterPlanetary Network
  * Indexer (IPNI), making it publicly queryable.
  */
 export const add = capability({
-  can: 'index/add',
+  can: 'space/index/add',
   /** DID of the space where indexed data is stored. */
   with: SpaceDID,
   nb: Schema.struct({

@@ -7,8 +7,10 @@ const notImplemented = () => {
 /**
  * @param {Partial<{
  *   ucan: Partial<import('../../src/types.js').Service['ucan']>
- *   blob: Partial<import('../../src/types.js').Service['blob']>
- *   index: Partial<import('../../src/types.js').Service['index']>
+ *   space: Partial<{
+ *    blob: Partial<import('../../src/types.js').Service['space']['blob']>
+ *    index: Partial<import('../../src/types.js').Service['space']['index']>
+ *   }>
  *   store: Partial<import('../../src/types.js').Service['store']>
  *   upload: Partial<import('../../src/types.js').Service['upload']>
  *   usage: Partial<import('../../src/types.js').Service['usage']>
@@ -20,13 +22,15 @@ export function mockService(impl) {
     ucan: {
       conclude: withCallCount(impl.ucan?.conclude ?? notImplemented),
     },
-    blob: {
-      add: withCallCount(impl.blob?.add ?? notImplemented),
-      list: withCallCount(impl.blob?.list ?? notImplemented),
-      remove: withCallCount(impl.blob?.remove ?? notImplemented),
-    },
-    index: {
-      add: withCallCount(impl.index?.add ?? notImplemented),
+    space: {
+      blob: {
+        add: withCallCount(impl.space?.blob?.add ?? notImplemented),
+        list: withCallCount(impl.space?.blob?.list ?? notImplemented),
+        remove: withCallCount(impl.space?.blob?.remove ?? notImplemented),
+      },
+      index: {
+        add: withCallCount(impl.space?.index?.add ?? notImplemented),
+      },
     },
     store: {
       add: withCallCount(impl.store?.add ?? notImplemented),

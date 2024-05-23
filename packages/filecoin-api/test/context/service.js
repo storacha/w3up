@@ -203,9 +203,10 @@ export function getMockService() {
           return Server.ok({
             piece: invCap.nb.piece,
             aggregates: [],
-            deals: []
+            deals: [],
           })
-        }})
+        },
+      }),
     },
     deal: {
       info: Server.provideAdvanced({

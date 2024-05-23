@@ -199,15 +199,10 @@ export type {
   IPNIService,
   BlobRetriever,
   BlobNotFound,
-  ShardedDAGIndex
+  ShardedDAGIndex,
 } from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
-  blob: {
-    add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
-    remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
-    list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
-  }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
@@ -313,6 +308,14 @@ export interface Service extends StorefrontService, W3sService {
   }
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
+    index: {
+      add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
+    }
+    blob: {
+      add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+      remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+      list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+    }
   }
   plan: {
     get: ServiceMethod<PlanGet, PlanGetSuccess, PlanGetFailure>
@@ -325,9 +328,6 @@ export interface Service extends StorefrontService, W3sService {
   }
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
-  }
-  index: {
-    add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
   }
 }
 

@@ -1,9 +1,4 @@
-import type { 
-  Signer,
-  Result,
-  Unit,
-  UnknownLink
-} from '@ucanto/interface'
+import type { Signer, Result, Unit, UnknownLink } from '@ucanto/interface'
 import * as AggregatorInterface from '../src/aggregator/api.js'
 import * as DealerInterface from '../src/dealer/api.js'
 import * as StorefrontInterface from '../src/storefront/api.js'
@@ -61,7 +56,8 @@ export interface StorefrontTestEventsContext
   }>
 }
 
-export interface TestContentStore<RecKey, Rec> extends StorefrontInterface.ContentStore<RecKey, Rec> {
+export interface TestContentStore<RecKey, Rec>
+  extends StorefrontInterface.ContentStore<RecKey, Rec> {
   /**
    * Puts a record in the store.
    */

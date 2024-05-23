@@ -8,7 +8,7 @@ export const testAbilities = {
   'should return the passed argument if all abilities are valid': async (
     assert
   ) => {
-    const abilities = ['blob/add', 'upload/add']
+    const abilities = ['space/blob/add', 'upload/add']
     assert.equal(asAbilities(abilities), abilities)
   },
 
