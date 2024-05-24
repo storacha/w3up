@@ -86,7 +86,9 @@ describe('Blob.add', () => {
           progress.push(status)
         },
         fetchWithUploadProgress,
-        fetch: setupGetReceipt(link),
+        fetch: setupGetReceipt(function* () {
+          yield link
+        }),
       }
     )
 
@@ -112,7 +114,9 @@ describe('Blob.add', () => {
         onUploadProgress: (status) => {
           progressWithoutUploadProgress.push(status)
         },
-        fetch: setupGetReceipt(link),
+        fetch: setupGetReceipt(function* () {
+          yield link
+        }),
       }
     )
     assert.deepEqual(
@@ -315,6 +319,7 @@ describe('Blob.add', () => {
       }
     )
   })
+
   it('throws for bucket URL client error 4xx', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()

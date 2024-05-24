@@ -11,23 +11,27 @@ import { Assert } from '@web3-storage/content-claims/capability'
 
 export const validateAuthorization = () => ({ ok: {} })
 
-/**
- * @param {import('multiformats').Link} content
- */
-export const setupGetReceipt = (content) => {
+// @ts-ignore Parameter
+export const setupGetReceipt = (contentGenFn) => {
+  // @type {Generator<import('multiformats').Link,void,unknown>} contentGenFn
+  const contentGen = contentGenFn()
   // @ts-ignore Parameter
   return async (url, options) => {
     // need to handle using regular fetch when not actually getting a receipt
     if (
+      options ||
       !url.pathname ||
       (url.pathname.contains && !url.pathname.contains('/receipt/'))
     ) {
       return await fetch(url, options)
     }
+    console.log(options?.method, url)
 
     const taskID = url.pathname.replace('/receipt/', '')
     const issuer = await Signer.generate()
 
+    const { value: content } = contentGen.next()
+    console.log(content)
     const locationClaim = await Assert.location.delegate({
       issuer,
       audience: issuer,

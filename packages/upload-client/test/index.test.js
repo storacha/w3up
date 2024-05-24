@@ -146,7 +146,10 @@ describe('uploadFile', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt(expectedCar.cid),
+        fetch: setupGetReceipt(function* () {
+          yield expectedCar.cid
+          yield expectedCar.cid
+        }),
       }
     )
 
@@ -264,7 +267,14 @@ describe('uploadFile', () => {
         // so we actually end up with a shard for each block - 5 CARs!
         shardSize: 1024 * 1024 * 2 + 1,
         onShardStored: (meta) => carCIDs.push(meta.cid),
-        fetch: setupGetReceipt(link),
+        fetch: setupGetReceipt(function* () {
+          yield link
+          yield link
+          yield link
+          yield link
+          yield link
+          yield link
+        }),
       }
     )
 
@@ -342,7 +352,9 @@ describe('uploadFile', () => {
         file,
         {
           connection,
-          fetch: setupGetReceipt(link),
+          fetch: setupGetReceipt(function* () {
+            yield link
+          }),
         }
       )
     )
@@ -363,10 +375,12 @@ describe('uploadDirectory', () => {
       (bytes, index) => new File([bytes], `${index}.txt`)
     )
     const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
-    const links = bytesList.map(async (bytes) => {
-      const bytesHash = await sha256.digest(bytes)
-      return createLink(CAR.codec.code, bytesHash)
-    })
+    const links = await Promise.all(
+      bytesList.map(async (bytes) => {
+        const bytesHash = await sha256.digest(bytes)
+        return createLink(CAR.codec.code, bytesHash)
+      })
+    )
 
     /** @type {import('../src/types.js').CARLink?} */
     let carCID = null
@@ -467,7 +481,10 @@ describe('uploadDirectory', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt(await links[0]),
+        fetch: setupGetReceipt(function* () {
+          yield links[0]
+          yield links[1]
+        }),
       }
     )
 
@@ -491,10 +508,12 @@ describe('uploadDirectory', () => {
     const files = bytesList.map(
       (bytes, index) => new File([bytes], `${index}.txt`)
     )
-    const links = bytesList.map(async (bytes) => {
-      const bytesHash = await sha256.digest(bytes)
-      return createLink(CAR.codec.code, bytesHash)
-    })
+    const links = await Promise.all(
+      bytesList.map(async (bytes) => {
+        const bytesHash = await sha256.digest(bytes)
+        return createLink(CAR.codec.code, bytesHash)
+      })
+    )
     const pieces = bytesList.map((bytes) => Piece.fromPayload(bytes).link)
     /** @type {import('../src/types.js').CARLink[]} */
     const carCIDs = []
@@ -582,7 +601,11 @@ describe('uploadDirectory', () => {
         connection,
         shardSize: 500_057, // should end up with 2 CAR files
         onShardStored: (meta) => carCIDs.push(meta.cid),
-        fetch: setupGetReceipt(await links[0]),
+        fetch: setupGetReceipt(function* () {
+          yield links[0]
+          yield links[0]
+          yield links[0]
+        }),
       }
     )
 
@@ -694,10 +717,12 @@ describe('uploadDirectory', () => {
       new File([bytesList[2]], 'c.txt'),
       new File([bytesList[3]], 'a.txt'),
     ]
-    const links = bytesList.map(async (bytes) => {
-      const bytesHash = await sha256.digest(bytes)
-      return createLink(CAR.codec.code, bytesHash)
-    })
+    const links = await Promise.all(
+      bytesList.map(async (bytes) => {
+        const bytesHash = await sha256.digest(bytes)
+        return createLink(CAR.codec.code, bytesHash)
+      })
+    )
 
     const uploadServiceForUnordered = createSimpleMockUploadServer()
     // uploading unsorted files should work because they should be sorted by `uploadDirectory`
@@ -706,7 +731,12 @@ describe('uploadDirectory', () => {
       unsortedFiles,
       {
         connection: uploadServiceForUnordered.connection,
-        fetch: setupGetReceipt(await links[0]),
+        fetch: setupGetReceipt(function* () {
+          yield links[0]
+          yield links[1]
+          yield links[2]
+          yield links[3]
+        }),
       }
     )
 
@@ -717,7 +747,12 @@ describe('uploadDirectory', () => {
       [...unsortedFiles].sort(defaultFileComparator),
       {
         connection: uploadServiceForOrdered.connection,
-        fetch: setupGetReceipt(await links[0]),
+        fetch: setupGetReceipt(function* () {
+          yield links[0]
+          yield links[1]
+          yield links[2]
+          yield links[3]
+        }),
       }
     )
 
@@ -762,7 +797,12 @@ describe('uploadDirectory', () => {
       {
         connection: uploadServiceForCustomOrder.connection,
         customOrder: true,
-        fetch: setupGetReceipt(await links[1]),
+        fetch: setupGetReceipt(function* () {
+          yield links[1]
+          yield links[0]
+          yield links[2]
+          yield links[3]
+        }),
       }
     )
     const shardsForCustomOrder = uploadServiceForCustomOrder.invocations
@@ -910,7 +950,11 @@ describe('uploadCAR', () => {
         connection,
         onShardStored: (meta) => carCIDs.push(meta.cid),
         shardSize,
-        fetch: setupGetReceipt(car.roots[0].toV1()),
+        fetch: setupGetReceipt(function* () {
+          yield car.roots[0]
+          yield car.roots[0]
+          yield car.roots[0]
+        }),
       }
     )
 
@@ -1036,7 +1080,10 @@ describe('uploadCAR', () => {
         onShardStored: (meta) => {
           if (meta.piece) pieceCIDs.push(meta.piece)
         },
-        fetch: setupGetReceipt(car.roots[0].toV1()),
+        fetch: setupGetReceipt(function* () {
+          yield car.roots[0]
+          yield car.roots[0]
+        }),
       }
     )
 
