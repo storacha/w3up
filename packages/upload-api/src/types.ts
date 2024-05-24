@@ -2,6 +2,7 @@ import type {
   Failure,
   ServiceMethod,
   UCANLink,
+  Link,
   HandlerExecutionError,
   Signer,
   DID,
@@ -20,6 +21,11 @@ import type {
   AgentMessage,
   Invocation,
   Receipt,
+  AgentMessageModel,
+  UCAN,
+  Capability,
+  ReceiptModel,
+  Variant,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
@@ -199,7 +205,7 @@ export type {
   IPNIService,
   BlobRetriever,
   BlobNotFound,
-  ShardedDAGIndex
+  ShardedDAGIndex,
 } from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
@@ -495,10 +501,40 @@ export interface AgentContext {
  * {@link Invocation} and {@link Receipt} lookups.
  */
 export interface AgentStore {
-  messages: Writer<AgentMessage>
+  messages: Writer<ParsedAgentMessage>
   invocations: Accessor<UnknownLink, Invocation>
   receipts: Accessor<UnknownLink, Receipt>
 }
+
+export type TaskLink = Link
+
+export type InvocationLink = Link<UCAN.UCAN<[Capability]>>
+export type ReceiptLink = Link<ReceiptModel>
+export type AgentMessageLink = Link<AgentMessageModel<unknown>>
+
+export interface ParsedAgentMessage {
+  data: AgentMessage
+  source: Uint8Array
+
+  index: Iterable<AgentMessageIndexRecord>
+}
+
+export interface InvocationSource {
+  task: TaskLink
+  invocation: InvocationLink
+  message: AgentMessageLink
+}
+
+export interface ReceiptSource {
+  task: TaskLink
+  receipt: ReceiptLink
+  message: AgentMessageLink
+}
+
+export type AgentMessageIndexRecord = Variant<{
+  invocation: InvocationSource
+  receipt: ReceiptSource
+}>
 
 /**
  * Read interface for the key value store.

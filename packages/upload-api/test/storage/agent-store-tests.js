@@ -6,7 +6,9 @@ import { Console } from '@web3-storage/capabilities'
 
 import { alice, registerSpace } from '../util.js'
 import { Message, Receipt } from '@ucanto/core'
+import * as CAR from '@ucanto/transport/car'
 import { createConcludeInvocation } from '../../src/ucan/conclude.js'
+import * as AgentMessage from '../../src/utils/agent-message.js'
 
 /**
  * @type {API.Tests}
@@ -160,7 +162,13 @@ export const test = {
       receipts: [receipt],
     })
 
-    const result = await context.agentStore.messages.write(message)
+    const { body: source } = CAR.request.encode(message)
+
+    const result = await context.agentStore.messages.write({
+      data: message,
+      source,
+      index: AgentMessage.index(message),
+    })
     assert.ok(result.ok)
 
     const storedReceipt = await context.agentStore.receipts.get(
@@ -213,7 +221,13 @@ export const test = {
       invocations: [conclude],
     })
 
-    const result = await context.agentStore.messages.write(message)
+    const { body: source } = CAR.request.encode(message)
+
+    const result = await context.agentStore.messages.write({
+      data: message,
+      source,
+      index: AgentMessage.index(message),
+    })
     assert.ok(result.ok)
 
     const storedReceipt = await context.agentStore.receipts.get(
