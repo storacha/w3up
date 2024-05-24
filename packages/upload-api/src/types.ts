@@ -521,13 +521,13 @@ export interface ParsedAgentMessage {
 
 export interface InvocationSource {
   task: TaskLink
-  invocation: InvocationLink
+  invocation: Invocation
   message: AgentMessageLink
 }
 
 export interface ReceiptSource {
   task: TaskLink
-  receipt: ReceiptLink
+  receipt: Receipt
   message: AgentMessageLink
 }
 

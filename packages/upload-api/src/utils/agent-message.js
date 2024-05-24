@@ -132,7 +132,7 @@ export const index = function* (message) {
       yield {
         invocation: {
           task,
-          invocation: invocation.link(),
+          invocation,
           message: source,
         },
       }
@@ -142,7 +142,7 @@ export const index = function* (message) {
       yield {
         receipt: {
           task: receipt.ran.link(),
-          receipt: receipt.link(),
+          receipt,
           message: source,
         },
       }
