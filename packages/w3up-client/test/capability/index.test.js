@@ -1,9 +1,11 @@
 import { ShardedDAGIndex } from '@web3-storage/blob-index'
+import { codec as CAR } from '@ucanto/transport/car'
 import * as Link from 'multiformats/link'
 import * as Result from '../../src/result.js'
 import { randomCAR } from '../helpers/random.js'
 import * as Test from '../test.js'
 import { setupGetReceipt } from '../helpers/utils.js'
+import { sha256 } from '@ucanto/server'
 
 export const IndexClient = Test.withContext({
   add: {
@@ -28,17 +30,21 @@ export const IndexClient = Test.withContext({
       const index = ShardedDAGIndex.create(car.cid)
       const indexBytes = Result.unwrap(await index.archive())
 
+      const bytesHash = await sha256.digest(indexBytes)
+      const link = Link.create(CAR.code, bytesHash)
       const commitment = await alice.capability.blob.add(
         new Blob([indexBytes]),
         {
-          fetch: setupGetReceipt(car.cid),
+          fetch: setupGetReceipt(function* () {
+            yield link
+          }),
         }
       )
 
       assert.ok(
         await alice.capability.index.add(
           Link.create(
-            0x0202,
+            CAR.code,
             // @ts-ignore Element
             commitment.capabilities[0].nb.content.multihash
           )

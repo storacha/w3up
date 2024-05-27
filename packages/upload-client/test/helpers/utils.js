@@ -25,13 +25,11 @@ export const setupGetReceipt = (contentGenFn) => {
     ) {
       return await fetch(url, options)
     }
-    console.log(options?.method, url)
 
     const taskID = url.pathname.replace('/receipt/', '')
     const issuer = await Signer.generate()
 
-    const { value: content } = contentGen.next()
-    console.log(content)
+    const { value: content } = await contentGen.next()
     const locationClaim = await Assert.location.delegate({
       issuer,
       audience: issuer,

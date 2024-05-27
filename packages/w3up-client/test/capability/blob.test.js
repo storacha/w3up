@@ -37,7 +37,9 @@ export const BlobClient = Test.withContext({
     const bytesHash = await sha256.digest(bytes)
     const link = createLink(car.code, bytesHash)
     const commitment = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt(link),
+      fetch: setupGetReceipt(function* () {
+        yield link
+      }),
     })
 
     // TODO we should check blobsStorage as well
@@ -87,7 +89,9 @@ export const BlobClient = Test.withContext({
     const bytesHash = await sha256.digest(bytes)
     const link = createLink(car.code, bytesHash)
     const commitment = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt(link),
+      fetch: setupGetReceipt(function* () {
+        yield link
+      }),
     })
     assert.deepEqual(
       // @ts-ignore Element
@@ -131,7 +135,9 @@ export const BlobClient = Test.withContext({
     const bytesHash = await sha256.digest(bytes)
     const link = createLink(car.code, bytesHash)
     const commitment = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt(link),
+      fetch: setupGetReceipt(function* () {
+        yield link
+      }),
     })
 
     const result = await alice.capability.blob.remove(
