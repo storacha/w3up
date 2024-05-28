@@ -1,17 +1,19 @@
 import * as Link from 'multiformats/link'
-import * as car from 'multiformats/codecs/raw'
+import * as UnixFS from '@web3-storage/upload-client/unixfs'
+import { codec as CAR } from '@ucanto/transport/car'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { AgentData } from '@web3-storage/access/agent'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { setupGetReceipt } from '../helpers/utils.js'
-import { CID } from 'multiformats'
+import { indexShardedDAG } from '@web3-storage/upload-client'
+import { encode } from '@web3-storage/upload-client/car'
 
 export const UsageClient = Test.withContext({
   report: {
     'should fetch usage report': async (
       assert,
-      { connection, provisionsStorage, allocationsStorage }
+      { connection, provisionsStorage }
     ) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
@@ -33,34 +35,31 @@ export const UsageClient = Test.withContext({
         consumer: space.did(),
       })
 
-      const bytes = Buffer.from('hello world')
-      const bytesHash = await sha256.digest(bytes)
-      const link = Link.create(car.code, bytesHash)
+      /** @type {Array<Map<import('@web3-storage/blob-index/types').SliceDigest, import('@web3-storage/blob-index/types').Position>>} */
+      const shardIndexes = []
+      /** @type {import('@web3-storage/capabilities/types').CARLink[]} */
+      const shards = []
+      /** @type {import('@web3-storage/upload-client/types').AnyLink?} */
+      let root = null
 
-      // hardcoded the index shards so as not to reimplement sharding logic
-      // TODO there's probably a better way to do this
-      const digest = new Uint8Array([
-        18, 32, 185, 77, 39, 185, 147, 77, 62, 8, 165, 46, 82, 215, 218, 125,
-        171, 250, 196, 132, 239, 227, 122, 83, 128, 238, 144, 136, 247, 172,
-        226, 239, 205, 233,
-      ])
-      // @ts-ignore Argument
-      await allocationsStorage.insert({
-        space: space.did(),
-        blob: {
-          digest: digest,
-          size: digest.length,
-        },
-      })
-
-      const content = new Blob([bytes])
+      const content = new Blob(['hello world'])
       await alice.uploadFile(content, {
+        onShardStored: (meta) => {
+          root = meta.roots[0]
+          shards.push(meta.cid)
+          shardIndexes.push(meta.slices)
+        },
         fetch: setupGetReceipt(async function* () {
-          yield link
-          // hardcoded the CID so as not to reimplement index logic
-          yield CID.parse(
-            'bagbaiera34t5e64wf7evi3fagz5kspk7p5fnjjvfauyrziy6npvos2mpzdzq'
+          const { cid, blocks } = await UnixFS.encodeFile(content)
+          const car = await encode(blocks, cid)
+          yield Link.create(
+            CAR.code,
+            await sha256.digest(new Uint8Array(await car.arrayBuffer()))
           )
+          // @ts-ignore Argument
+          const index = await indexShardedDAG(root, shards, shardIndexes)
+          // @ts-ignore Argument
+          yield Link.create(CAR.code, await sha256.digest(index.ok))
         }),
       })
 

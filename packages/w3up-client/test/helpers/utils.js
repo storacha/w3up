@@ -32,7 +32,6 @@ export const setupGetReceipt = (contentGenFn) => {
     const issuer = await Signer.generate()
 
     const { value: content } = await contentGen.next()
-    console.log('get receipt content', content.multihash.bytes)
     const locationClaim = await Assert.location.delegate({
       issuer,
       audience: issuer,

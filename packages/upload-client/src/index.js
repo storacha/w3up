@@ -10,7 +10,6 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
-import { sha256 } from '@ucanto/core'
 
 export { Blob, Index, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
