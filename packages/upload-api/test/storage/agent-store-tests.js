@@ -111,7 +111,7 @@ export const test = {
     assert.ok(hiReceipt.out.ok)
 
     const storedHi = await context.agentStore.invocations.get(hi.link())
-    assert.deepEqual(storedHi.ok?.link(), hi.link())
+    assert.deepEqual(storedHi.ok?.link().toString(), hi.link().toString())
 
     const storedHiReceipt = await context.agentStore.receipts.get(hi.link())
     assert.equal(
@@ -121,11 +121,11 @@ export const test = {
 
     const [byeReceipt, hiReceipt2] = await context.connection.execute(bye, hi)
 
-    assert.deepEqual(hiReceipt2.ran.link(), hi.link())
+    assert.deepEqual(hiReceipt2.ran.link().toString(), hi.link().toString())
     assert.ok(byeReceipt.out.ok)
 
     const storedBye = await context.agentStore.invocations.get(bye.link())
-    assert.deepEqual(storedBye.ok?.link(), bye.link())
+    assert.deepEqual(storedBye.ok?.link().toString(), bye.link().toString())
 
     const storedByeReceipt = await context.agentStore.receipts.get(bye.link())
     assert.equal(
@@ -162,11 +162,9 @@ export const test = {
       receipts: [receipt],
     })
 
-    const { body: source } = CAR.request.encode(message)
-
     const result = await context.agentStore.messages.write({
       data: message,
-      source,
+      source: CAR.request.encode(message),
       index: AgentMessage.index(message),
     })
     assert.ok(result.ok)
@@ -175,8 +173,8 @@ export const test = {
       receipt.ran.link()
     )
     assert.deepEqual(
-      storedReceipt.ok?.link(),
-      receipt.link(),
+      storedReceipt.ok?.link().toString(),
+      receipt.link().toString(),
       'receipt was stored and indexed by invocation'
     )
 
@@ -184,11 +182,9 @@ export const test = {
       receipt.ran.link()
     )
 
-    console.log(storedInvocation)
-
     assert.deepEqual(
-      storedInvocation.ok?.link(),
-      hi.link(),
+      storedInvocation.ok?.link().toString(),
+      hi.link().toString(),
       'invocation was stored and indexed by invocation'
     )
   },
@@ -221,11 +217,9 @@ export const test = {
       invocations: [conclude],
     })
 
-    const { body: source } = CAR.request.encode(message)
-
     const result = await context.agentStore.messages.write({
       data: message,
-      source,
+      source: CAR.request.encode(message),
       index: AgentMessage.index(message),
     })
     assert.ok(result.ok)
@@ -234,8 +228,8 @@ export const test = {
       receipt.ran.link()
     )
     assert.deepEqual(
-      storedReceipt.ok?.link(),
-      receipt.link(),
+      storedReceipt.ok?.link().toString(),
+      receipt.link().toString(),
       'receipt was stored and indexed by invocation'
     )
 
@@ -244,8 +238,8 @@ export const test = {
     )
 
     assert.deepEqual(
-      storedInvocation.ok?.link(),
-      hi.link(),
+      storedInvocation.ok?.link().toString(),
+      hi.link().toString(),
       'invocation was stored and indexed by invocation'
     )
 
@@ -254,8 +248,8 @@ export const test = {
     )
 
     assert.deepEqual(
-      storedConclude.ok?.link(),
-      conclude.link(),
+      storedConclude.ok?.link().toString(),
+      conclude.link().toString(),
       'store conclude invocation was stored and indexed by invocation'
     )
   },

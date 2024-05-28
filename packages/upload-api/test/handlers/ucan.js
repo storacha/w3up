@@ -403,17 +403,21 @@ export const test = {
     assert.ok(conclude.out.ok)
     assert.ok(conclude.out.ok?.time)
 
-    assert.deepEqual(
-      await context.agentStore.invocations.get(invocation.link()),
-      { ok: invocation }
-    )
+    const stored = await context.agentStore.invocations.get(invocation.link())
+    assert.equal(stored.ok?.link().toString(), invocation.link().toString())
 
     const storedReceipt = await context.agentStore.receipts.get(
       invocation.link()
     )
     assert.ok(storedReceipt.ok)
-    assert.deepEqual(storedReceipt.ok?.link(), receipt.link())
-    assert.deepEqual(storedReceipt.ok?.ran, invocation)
+    assert.deepEqual(
+      storedReceipt.ok?.link().toString(),
+      receipt.link().toString()
+    )
+    assert.deepEqual(
+      storedReceipt.ok?.ran.link().toString(),
+      invocation.link().toString()
+    )
   },
   'ucan/conclude schedules web3.storage/blob/accept if invoked with the http/put receipt':
     async (assert, context) => {

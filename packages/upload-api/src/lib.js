@@ -32,10 +32,14 @@ export * from './types.js'
  * @param {Omit<Types.UcantoServerContext, 'validateAuthorization'>} options
  * @returns {Agent<Types.Service>}
  */
-export const createServer = ({ codec = Legacy.inbound, ...context }) => {
+export const createServer = ({ codec = Legacy.inbound, ...options }) => {
+  const context = {
+    ...options,
+    ...createRevocationChecker(options),
+  }
+
   const server = Server.create({
-    ...createRevocationChecker(context),
-    id: context.id,
+    ...context,
     codec,
     service: createService(context),
     catch: (error) => context.errorReporter.catch(error),
@@ -70,6 +74,7 @@ export const createServer = ({ codec = Legacy.inbound, ...context }) => {
  * @template {Types.Tuple<Types.ServiceInvocation<Types.Capability, S>>} I
  * @param {Agent<S>} agent
  * @param {Types.HTTPRequest<Types.AgentMessage<{ In: Types.InferInvocations<I>, Out: Types.Tuple<Types.Receipt> }>>} request
+ * @returns {Promise<Types.HTTPResponse<Types.AgentMessage<{ Out: Types.InferReceipts<I, S>, In: Types.Tuple<Types.Invocation> }>>>}
  */
 export const handle = async (agent, request) => {
   const selection = agent.codec.accept(request)
@@ -89,7 +94,7 @@ export const handle = async (agent, request) => {
     // we are unable to service.
     const save = await agent.context.agentStore.messages.write({
       data: input,
-      source: request.body,
+      source: request,
       index: AgentMessage.index(input),
     })
 
@@ -106,7 +111,7 @@ export const handle = async (agent, request) => {
 
     const { error } = await agent.context.agentStore.messages.write({
       data: output,
-      source: response.body,
+      source: response,
       index: AgentMessage.index(output),
     })
 

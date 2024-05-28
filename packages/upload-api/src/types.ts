@@ -26,6 +26,8 @@ import type {
   Capability,
   ReceiptModel,
   Variant,
+  HTTPRequest,
+  HTTPResponse,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
@@ -195,8 +197,7 @@ import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
-import { StorageGetError, TasksScheduler } from './types/service.js'
-export type { TasksScheduler }
+import { StorageGetError } from './types/storage.js'
 import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, BlobAddInput }
 import { IPNIService, IndexServiceContext } from './types/index.js'
@@ -513,9 +514,8 @@ export type ReceiptLink = Link<ReceiptModel>
 export type AgentMessageLink = Link<AgentMessageModel<unknown>>
 
 export interface ParsedAgentMessage {
+  source: HTTPRequest | HTTPResponse
   data: AgentMessage
-  source: Uint8Array
-
   index: Iterable<AgentMessageIndexRecord>
 }
 

@@ -36,7 +36,7 @@ class AgentStore {
   async write(message) {
     const { index, store } = this.model
     const at = message.data.root.cid.toString()
-    store[at] = CAR.decode(message.source)
+    store[at] = CAR.decode(/** @type {Uint8Array} */ (message.source.body))
 
     for (const { invocation, receipt } of message.index) {
       if (invocation) {
