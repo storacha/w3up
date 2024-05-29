@@ -1,5 +1,16 @@
 # Changelog
 
+## [16.0.0](https://github.com/w3s-project/w3up/compare/upload-client-v15.0.0...upload-client-v16.0.0) (2024-05-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444))
+
+### Features
+
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444)) ([c9bf33e](https://github.com/w3s-project/w3up/commit/c9bf33e5512397a654db933a5e6b5db0c7c22da5))
+
 ## [15.0.0](https://github.com/w3s-project/w3up/compare/upload-client-v14.1.1...upload-client-v15.0.0) (2024-05-15)
 
 
