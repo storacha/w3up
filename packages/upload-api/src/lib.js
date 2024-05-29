@@ -27,6 +27,7 @@ import { createService as createFilecoinService } from '@web3-storage/filecoin-a
 import * as AgentMessage from './utils/agent-message.js'
 
 export * from './types.js'
+export { AgentMessage }
 
 /**
  * @param {Omit<Types.UcantoServerContext, 'validateAuthorization'>} options
