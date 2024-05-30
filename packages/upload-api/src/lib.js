@@ -24,17 +24,23 @@ import { createService as createW3sService } from './service.js'
 import { createService as createPlanService } from './plan.js'
 import { createService as createUsageService } from './usage.js'
 import { createService as createFilecoinService } from '@web3-storage/filecoin-api/storefront/service'
+import * as AgentMessage from './utils/agent-message.js'
 
 export * from './types.js'
+export { AgentMessage }
 
 /**
  * @param {Omit<Types.UcantoServerContext, 'validateAuthorization'>} options
  * @returns {Agent<Types.Service>}
  */
-export const createServer = ({ codec = Legacy.inbound, ...context }) => {
+export const createServer = ({ codec = Legacy.inbound, ...options }) => {
+  const context = {
+    ...options,
+    ...createRevocationChecker(options),
+  }
+
   const server = Server.create({
-    ...createRevocationChecker(context),
-    id: context.id,
+    ...context,
     codec,
     service: createService(context),
     catch: (error) => context.errorReporter.catch(error),
@@ -69,6 +75,7 @@ export const createServer = ({ codec = Legacy.inbound, ...context }) => {
  * @template {Types.Tuple<Types.ServiceInvocation<Types.Capability, S>>} I
  * @param {Agent<S>} agent
  * @param {Types.HTTPRequest<Types.AgentMessage<{ In: Types.InferInvocations<I>, Out: Types.Tuple<Types.Receipt> }>>} request
+ * @returns {Promise<Types.HTTPResponse<Types.AgentMessage<{ Out: Types.InferReceipts<I, S>, In: Types.Tuple<Types.Invocation> }>>>}
  */
 export const handle = async (agent, request) => {
   const selection = agent.codec.accept(request)
@@ -86,7 +93,12 @@ export const handle = async (agent, request) => {
     // Save invocation inside agent store so we can find it later. If we fail
     // to save it we return 500 as we do not want to run the invocation that
     // we are unable to service.
-    const save = await agent.context.agentStore.messages.write(input)
+    const save = await agent.context.agentStore.messages.write({
+      data: input,
+      source: request,
+      index: AgentMessage.index(input),
+    })
+
     if (save.error) {
       return {
         status: 500,
@@ -96,8 +108,14 @@ export const handle = async (agent, request) => {
     }
 
     const output = await execute(agent, input)
+    const response = await encoder.encode(output)
 
-    const { error } = await agent.context.agentStore.messages.write(output)
+    const { error } = await agent.context.agentStore.messages.write({
+      data: output,
+      source: response,
+      index: AgentMessage.index(output),
+    })
+
     // Failure to write a receipt is not something we can recover from. Throwing
     // or returning HTTP 500 is also a not a great option because invocation may
     // have change state and we would not want to rerun it. Which is why we
@@ -106,7 +124,6 @@ export const handle = async (agent, request) => {
       agent.catch(error)
     }
 
-    const response = await encoder.encode(output)
     return response
   }
 }

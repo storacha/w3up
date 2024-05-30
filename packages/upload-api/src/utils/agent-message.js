@@ -118,3 +118,34 @@ export class Iterator {
 export function* iterate(message, options) {
   yield* new Iterator(message, options)
 }
+
+/**
+ * @param {API.AgentMessage} message
+ * @returns {Iterable<API.AgentMessageIndexRecord>}
+ */
+export const index = function* (message) {
+  const source = message.root.cid
+  for (const { receipt, invocation } of iterate(message)) {
+    if (invocation) {
+      // TODO: actually derive task CID
+      const task = invocation.link()
+      yield {
+        invocation: {
+          task,
+          invocation,
+          message: source,
+        },
+      }
+    }
+
+    if (receipt) {
+      yield {
+        receipt: {
+          task: receipt.ran.link(),
+          receipt,
+          message: source,
+        },
+      }
+    }
+  }
+}

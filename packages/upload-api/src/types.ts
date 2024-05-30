@@ -2,6 +2,7 @@ import type {
   Failure,
   ServiceMethod,
   UCANLink,
+  Link,
   HandlerExecutionError,
   Signer,
   DID,
@@ -20,6 +21,13 @@ import type {
   AgentMessage,
   Invocation,
   Receipt,
+  AgentMessageModel,
+  UCAN,
+  Capability,
+  ReceiptModel,
+  Variant,
+  HTTPRequest,
+  HTTPResponse,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
@@ -189,8 +197,7 @@ import { SubscriptionsStorage } from './types/subscriptions.js'
 export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
-import { StorageGetError, TasksScheduler } from './types/service.js'
-export type { TasksScheduler }
+import { StorageGetError } from './types/storage.js'
 import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, BlobAddInput }
 import { IPNIService, IndexServiceContext } from './types/index.js'
@@ -199,7 +206,7 @@ export type {
   IPNIService,
   BlobRetriever,
   BlobNotFound,
-  ShardedDAGIndex
+  ShardedDAGIndex,
 } from './types/index.js'
 
 export interface Service extends StorefrontService, W3sService {
@@ -495,10 +502,39 @@ export interface AgentContext {
  * {@link Invocation} and {@link Receipt} lookups.
  */
 export interface AgentStore {
-  messages: Writer<AgentMessage>
+  messages: Writer<ParsedAgentMessage>
   invocations: Accessor<UnknownLink, Invocation>
   receipts: Accessor<UnknownLink, Receipt>
 }
+
+export type TaskLink = Link
+
+export type InvocationLink = Link<UCAN.UCAN<[Capability]>>
+export type ReceiptLink = Link<ReceiptModel>
+export type AgentMessageLink = Link<AgentMessageModel<unknown>>
+
+export interface ParsedAgentMessage {
+  source: HTTPRequest | HTTPResponse
+  data: AgentMessage
+  index: Iterable<AgentMessageIndexRecord>
+}
+
+export interface InvocationSource {
+  task: TaskLink
+  invocation: Invocation
+  message: AgentMessageLink
+}
+
+export interface ReceiptSource {
+  task: TaskLink
+  receipt: Receipt
+  message: AgentMessageLink
+}
+
+export type AgentMessageIndexRecord = Variant<{
+  invocation: InvocationSource
+  receipt: ReceiptSource
+}>
 
 /**
  * Read interface for the key value store.
