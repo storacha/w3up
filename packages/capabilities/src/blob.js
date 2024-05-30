@@ -137,6 +137,41 @@ export const list = capability({
   },
 })
 
+/**
+ * Capability can be used to get the stored Blob from the (memory)
+ * space identified by `with` field.
+ */
+export const get = capability({
+  can: 'space/blob/get',
+  /**
+   * DID of the (memory) space where Blob is stored.
+   */
+  with: SpaceDID,
+  nb: Schema.struct({
+    /**
+     * A multihash digest of the blob payload bytes, uniquely identifying blob.
+     */
+    digest: Schema.bytes(),
+  }),
+  derives: (claimed, delegated) => {
+    if (claimed.with !== delegated.with) {
+      return fail(
+        `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
+      )
+    } else if (
+      delegated.nb.digest &&
+      !equals(delegated.nb.digest, claimed.nb.digest)
+    ) {
+      return fail(
+        `Link ${
+          claimed.nb.digest ? `${claimed.nb.digest}` : ''
+        } violates imposed ${delegated.nb.digest} constraint.`
+      )
+    }
+    return ok({})
+  },
+})
+
 // ⚠️ We export imports here so they are not omitted in generated typedefs
 // @see https://github.com/microsoft/TypeScript/issues/51548
 export { Schema }

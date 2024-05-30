@@ -502,6 +502,7 @@ export type Blob = InferInvokedCapability<typeof BlobCaps.blob>
 export type BlobAdd = InferInvokedCapability<typeof BlobCaps.add>
 export type BlobRemove = InferInvokedCapability<typeof BlobCaps.remove>
 export type BlobList = InferInvokedCapability<typeof BlobCaps.list>
+export type BlobGet = InferInvokedCapability<typeof BlobCaps.get>
 export type ServiceBlob = InferInvokedCapability<typeof W3sBlobCaps.blob>
 export type BlobAllocate = InferInvokedCapability<typeof W3sBlobCaps.allocate>
 export type BlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
@@ -549,6 +550,15 @@ export interface BlobListSuccess extends ListResponse<BlobListItem> {}
 
 // TODO: make types more specific
 export type BlobListFailure = Ucanto.Failure
+
+// Blob get
+export interface BlobGetSuccess {
+  blob: { digest: Uint8Array; size: number }
+  cause: UnknownLink
+}
+
+// TODO: make types more specific
+export type BlobGetFailure = Ucanto.Failure
 
 // Blob allocate
 export interface BlobAllocateSuccess {
@@ -902,6 +912,7 @@ export type ServiceAbilityArray = [
   BlobAdd['can'],
   BlobRemove['can'],
   BlobList['can'],
+  BlobGet['can'],
   ServiceBlob['can'],
   BlobAllocate['can'],
   BlobAccept['can'],

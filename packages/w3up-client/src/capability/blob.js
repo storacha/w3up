@@ -49,4 +49,16 @@ export class BlobClient extends Base {
     options.connection = this._serviceConf.upload
     return Blob.remove(conf, digest, options)
   }
+
+  /**
+   * Gets a stored blob by multihash digest.
+   *
+   * @param {import('multiformats').MultihashDigest} digest - digest of blob to get.
+   * @param {import('../types.js').RequestOptions} [options]
+   */
+  async get(digest, options = {}) {
+    const conf = await this._invocationConfig([BlobCapabilities.get.can])
+    options.connection = this._serviceConf.upload
+    return Blob.get(conf, digest, options)
+  }
 }

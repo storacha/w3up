@@ -75,6 +75,9 @@ import {
   BlobRemove,
   BlobRemoveSuccess,
   BlobRemoveFailure,
+  BlobGet,
+  BlobGetSuccess,
+  BlobGetFailure,
   BlobAllocate,
   BlobAllocateSuccess,
   BlobAllocateFailure,
@@ -322,6 +325,7 @@ export interface Service extends StorefrontService, W3sService {
       add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
       remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
       list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+      get: ServiceMethod<BlobGet, BlobGetSuccess, BlobGetFailure>
     }
   }
   plan: {
