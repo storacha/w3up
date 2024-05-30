@@ -86,8 +86,8 @@ describe('Blob.add', () => {
           progress.push(status)
         },
         fetchWithUploadProgress,
-        fetch: setupGetReceipt(function* () {
-          yield link
+        fetch: setupGetReceipt(() => {
+          return link
         }),
       }
     )
@@ -114,8 +114,8 @@ describe('Blob.add', () => {
         onUploadProgress: (status) => {
           progressWithoutUploadProgress.push(status)
         },
-        fetch: setupGetReceipt(function* () {
-          yield link
+        fetch: setupGetReceipt(() => {
+          return link
         }),
       }
     )

@@ -146,9 +146,8 @@ describe('uploadFile', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt(function* () {
-          yield expectedCar.cid
-          yield expectedCar.cid
+        fetch: setupGetReceipt(() => {
+          return expectedCar.cid
         }),
       }
     )
@@ -267,13 +266,8 @@ describe('uploadFile', () => {
         // so we actually end up with a shard for each block - 5 CARs!
         shardSize: 1024 * 1024 * 2 + 1,
         onShardStored: (meta) => carCIDs.push(meta.cid),
-        fetch: setupGetReceipt(function* () {
-          yield link
-          yield link
-          yield link
-          yield link
-          yield link
-          yield link
+        fetch: setupGetReceipt(() => {
+          return link
         }),
       }
     )
@@ -352,8 +346,8 @@ describe('uploadFile', () => {
         file,
         {
           connection,
-          fetch: setupGetReceipt(function* () {
-            yield link
+          fetch: setupGetReceipt(() => {
+            return link
           }),
         }
       )
@@ -481,9 +475,8 @@ describe('uploadDirectory', () => {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt(function* () {
-          yield links[0]
-          yield links[1]
+        fetch: setupGetReceipt(() => {
+          return links[0]
         }),
       }
     )
@@ -601,10 +594,8 @@ describe('uploadDirectory', () => {
         connection,
         shardSize: 500_057, // should end up with 2 CAR files
         onShardStored: (meta) => carCIDs.push(meta.cid),
-        fetch: setupGetReceipt(function* () {
-          yield links[0]
-          yield links[0]
-          yield links[0]
+        fetch: setupGetReceipt(() => {
+          return links[0]
         }),
       }
     )
@@ -731,11 +722,8 @@ describe('uploadDirectory', () => {
       unsortedFiles,
       {
         connection: uploadServiceForUnordered.connection,
-        fetch: setupGetReceipt(function* () {
-          yield links[0]
-          yield links[1]
-          yield links[2]
-          yield links[3]
+        fetch: setupGetReceipt(() => {
+          return links[0]
         }),
       }
     )
@@ -747,11 +735,8 @@ describe('uploadDirectory', () => {
       [...unsortedFiles].sort(defaultFileComparator),
       {
         connection: uploadServiceForOrdered.connection,
-        fetch: setupGetReceipt(function* () {
-          yield links[0]
-          yield links[1]
-          yield links[2]
-          yield links[3]
+        fetch: setupGetReceipt(() => {
+          return links[0]
         }),
       }
     )
@@ -797,11 +782,8 @@ describe('uploadDirectory', () => {
       {
         connection: uploadServiceForCustomOrder.connection,
         customOrder: true,
-        fetch: setupGetReceipt(function* () {
-          yield links[1]
-          yield links[0]
-          yield links[2]
-          yield links[3]
+        fetch: setupGetReceipt(() => {
+          return links[1]
         }),
       }
     )
@@ -950,10 +932,8 @@ describe('uploadCAR', () => {
         connection,
         onShardStored: (meta) => carCIDs.push(meta.cid),
         shardSize,
-        fetch: setupGetReceipt(function* () {
-          yield car.roots[0]
-          yield car.roots[0]
-          yield car.roots[0]
+        fetch: setupGetReceipt(() => {
+          return car.roots[0]
         }),
       }
     )
@@ -1080,9 +1060,8 @@ describe('uploadCAR', () => {
         onShardStored: (meta) => {
           if (meta.piece) pieceCIDs.push(meta.piece)
         },
-        fetch: setupGetReceipt(function* () {
-          yield car.roots[0]
-          yield car.roots[0]
+        fetch: setupGetReceipt(() => {
+          return car.roots[0]
         }),
       }
     )
