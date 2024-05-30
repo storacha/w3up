@@ -1,5 +1,24 @@
 # Changelog
 
+## [17.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v16.0.0...upload-api-v17.0.0) (2024-05-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* updates agent-store api to unblock integration with w3infra ([#1479](https://github.com/w3s-project/w3up/issues/1479))
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444))
+
+### Features
+
+* updates agent-store api to unblock integration with w3infra ([#1479](https://github.com/w3s-project/w3up/issues/1479)) ([2998a93](https://github.com/w3s-project/w3up/commit/2998a938628a924361450d24c5fc7be572acef3e))
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444)) ([c9bf33e](https://github.com/w3s-project/w3up/commit/c9bf33e5512397a654db933a5e6b5db0c7c22da5))
+* use digest in `blob/accept` location commitment ([#1480](https://github.com/w3s-project/w3up/issues/1480)) ([ade45eb](https://github.com/w3s-project/w3up/commit/ade45eb6f9b71f4bb4fcc771345ad21e966db730))
+
+
+### Fixes
+
+* rename blob and index client capabilities ([#1478](https://github.com/w3s-project/w3up/issues/1478)) ([17e3a31](https://github.com/w3s-project/w3up/commit/17e3a3161c6585b1844abcf7ed27252fa8580870))
+
 ## [16.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v15.0.1...upload-api-v16.0.0) (2024-05-16)
 
 
