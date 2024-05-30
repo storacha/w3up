@@ -11,9 +11,6 @@ import { decode } from 'multiformats/hashes/digest'
 export function blobGetProvider(context) {
   return Server.provide(Blob.get, async ({ capability }) => {
     const { digest } = capability.nb
-    if (!digest) {
-      return Server.fail('nb.digest must be set')
-    }
     const space = Server.DID.parse(capability.with).did()
     const res = await context.allocationsStorage.get(space, digest)
     if (res.error && res.error.name === 'RecordNotFound') {

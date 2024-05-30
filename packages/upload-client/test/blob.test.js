@@ -884,7 +884,6 @@ describe('Blob.get', () => {
     const service = mockService({
       space: {
         blob: {
-          // @ts-ignore Argument of type
           get: provide(BlobCapabilities.get, ({ invocation }) => {
             assert.equal(invocation.issuer.did(), agent.did())
             assert.equal(invocation.capabilities.length, 1)
@@ -894,6 +893,7 @@ describe('Blob.get', () => {
             assert.equal(String(invCap.nb?.digest), bytesHash.bytes)
             return {
               ok: {
+                cause: invocation.link(),
                 blob: { digest: bytesHash.bytes, size: bytes.length },
               },
             }
