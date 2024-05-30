@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -566,8 +566,8 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0
       '@web3-storage/content-claims':
-        specifier: ^4.0.4
-        version: 4.0.5
+        specifier: ^5.0.0
+        version: 5.0.0
       '@web3-storage/eslint-config-w3up':
         specifier: workspace:^
         version: link:../eslint-config-w3up
@@ -4459,6 +4459,17 @@ packages:
       carstream: 1.1.1
       multiformats: 12.1.3
 
+  /@web3-storage/content-claims@5.0.0:
+    resolution: {integrity: sha512-HJFRFsR0qHCe0cOERsb3AjAxxzohYMMoIWaGJgrShDycnl6yqXHrGcdua1BWUDu5pmvKzwD9D7VmI8aSfrCcRA==}
+    dependencies:
+      '@ucanto/client': 9.0.1
+      '@ucanto/interface': 10.0.1
+      '@ucanto/server': 10.0.0
+      '@ucanto/transport': 9.1.1
+      carstream: 2.1.0
+      multiformats: 13.1.0
+    dev: true
+
   /@web3-storage/data-segment@3.2.0:
     resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}
     dependencies:
@@ -5279,7 +5290,6 @@ packages:
       '@ipld/dag-cbor': 9.2.0
       multiformats: 13.1.0
       uint8arraylist: 2.4.8
-    dev: false
 
   /cborg@4.2.0:
     resolution: {integrity: sha512-q6cFW5m3KxfP/9xGI3yGLaC1l5DP6DWM9IvjiJojnIwohL5CQDl02EXViPV852mOfQo+7PJGPN01MI87vFGzyA==}
