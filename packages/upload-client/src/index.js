@@ -144,9 +144,7 @@ async function uploadBlockStream(
           async transform(car, controller) {
             const bytes = new Uint8Array(await car.arrayBuffer())
             // Invoke blob/add and write bytes to write target
-            const commitment = await Blob.add(conf, bytes, options)
-            // @ts-ignore Element
-            const { multihash } = commitment.capabilities[0].nb.content
+            const { multihash } = await Blob.add(conf, bytes, options)
             // Should this be raw instead?
             const cid = Link.create(CAR.code, multihash)
             let piece
@@ -208,12 +206,8 @@ async function uploadBlockStream(
   }
 
   // Store the index in the space
-  const commitment = await Blob.add(conf, indexBytes.ok, options)
-  const indexLink = Link.create(
-    CAR.code,
-    // @ts-ignore Element
-    commitment.capabilities[0].nb.content.multihash
-  )
+  const { multihash } = await Blob.add(conf, indexBytes.ok, options)
+  const indexLink = Link.create(CAR.code, multihash)
 
   // Register the index with the service
   await Index.add(conf, indexLink, options)

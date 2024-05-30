@@ -11,7 +11,7 @@ export const IndexClient = Test.withContext({
   add: {
     'should register an index': async (
       assert,
-      { client: alice, service, provisionsStorage, uploadTable }
+      { client: alice, service, provisionsStorage }
     ) => {
       const car = await randomCAR(128)
 
@@ -32,7 +32,7 @@ export const IndexClient = Test.withContext({
 
       const bytesHash = await sha256.digest(indexBytes)
       const link = Link.create(CAR.code, bytesHash)
-      const commitment = await alice.capability.blob.add(
+      const { multihash } = await alice.capability.blob.add(
         new Blob([indexBytes]),
         {
           fetch: setupGetReceipt(function* () {
@@ -42,13 +42,7 @@ export const IndexClient = Test.withContext({
       )
 
       assert.ok(
-        await alice.capability.index.add(
-          Link.create(
-            CAR.code,
-            // @ts-ignore Element
-            commitment.capabilities[0].nb.content.multihash
-          )
-        )
+        await alice.capability.index.add(Link.create(CAR.code, multihash))
       )
     },
   },

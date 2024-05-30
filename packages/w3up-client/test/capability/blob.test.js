@@ -36,7 +36,7 @@ export const BlobClient = Test.withContext({
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
     const link = createLink(car.code, bytesHash)
-    const commitment = await alice.capability.blob.add(new Blob([bytes]), {
+    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
       fetch: setupGetReceipt(function* () {
         yield link
       }),
@@ -44,21 +44,13 @@ export const BlobClient = Test.withContext({
 
     // TODO we should check blobsStorage as well
     assert.deepEqual(
-      await allocationsStorage.exists(
-        space.did(),
-        // @ts-ignore Element
-        commitment.capabilities[0].nb.content.multihash.bytes
-      ),
+      await allocationsStorage.exists(space.did(), multihash.bytes),
       {
         ok: true,
       }
     )
 
-    assert.deepEqual(
-      // @ts-ignore Element
-      commitment.capabilities[0].nb.content.bytes.slice(3),
-      bytesHash.bytes
-    )
+    assert.deepEqual(multihash.bytes, bytesHash.bytes)
   },
   'should list stored blobs': async (
     assert,
@@ -88,16 +80,12 @@ export const BlobClient = Test.withContext({
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
     const link = createLink(car.code, bytesHash)
-    const commitment = await alice.capability.blob.add(new Blob([bytes]), {
+    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
       fetch: setupGetReceipt(function* () {
         yield link
       }),
     })
-    assert.deepEqual(
-      // @ts-ignore Element
-      commitment.capabilities[0].nb.content.bytes.slice(3),
-      bytesHash.bytes
-    )
+    assert.deepEqual(multihash.bytes, bytesHash.bytes)
 
     const {
       results: [entry],
@@ -134,16 +122,13 @@ export const BlobClient = Test.withContext({
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
     const link = createLink(car.code, bytesHash)
-    const commitment = await alice.capability.blob.add(new Blob([bytes]), {
+    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
       fetch: setupGetReceipt(function* () {
         yield link
       }),
     })
 
-    const result = await alice.capability.blob.remove(
-      // @ts-ignore Element
-      commitment.capabilities[0].nb.content
-    )
+    const result = await alice.capability.blob.remove(multihash)
     assert.ok(result.ok)
   },
 })

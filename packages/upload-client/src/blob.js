@@ -201,7 +201,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * The issuer needs the `blob/add` delegated capability.
  * @param {Blob|Uint8Array} data Blob data.
  * @param {import('./types.js').RequestOptions} [options]
- * @returns {Promise<import('@ucanto/interface').Delegation<import('@web3-storage/capabilities/types').BlobAcceptSuccess>>}
+ * @returns {Promise<import('./types.js').BlobAddOk>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
@@ -385,8 +385,10 @@ export async function add(
     })
   }
 
-  // @ts-ignore Type
-  return site
+  return {
+    multihash,
+    site: site.link(),
+  }
 }
 
 /**

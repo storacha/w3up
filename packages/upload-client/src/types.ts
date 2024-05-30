@@ -2,7 +2,13 @@ import type {
   FetchOptions as IpfsUtilsFetchOptions,
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types.js'
-import { Link, UnknownLink, Version, MultihashHasher } from 'multiformats'
+import {
+  MultihashDigest,
+  Link,
+  UnknownLink,
+  Version,
+  MultihashHasher,
+} from 'multiformats'
 import { Block } from '@ipld/unixfs'
 import {
   ServiceMethod,
@@ -12,6 +18,7 @@ import {
   DID,
   Principal,
   Failure,
+  UCANLink,
 } from '@ucanto/interface'
 import {
   UCANConclude,
@@ -372,4 +379,9 @@ export interface FileLike extends BlobLike {
    * Name of the file. May include path information.
    */
   name: string
+}
+
+export interface BlobAddOk {
+  multihash: MultihashDigest
+  site: UCANLink
 }

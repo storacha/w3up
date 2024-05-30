@@ -76,7 +76,7 @@ describe('Blob.add', () => {
 
     /** @type {import('../src/types.js').ProgressStatus[]} */
     const progress = []
-    const commitment = await Blob.add(
+    const { multihash } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       bytes,
       {
@@ -99,14 +99,13 @@ describe('Blob.add', () => {
       128
     )
 
-    assert(commitment)
-    // @ts-ignore Element
-    assert.deepEqual(commitment.capabilities[0].nb.content.multihash, bytesHash)
+    assert(multihash)
+    assert.deepEqual(multihash, bytesHash)
 
     // make sure it can also work without fetchWithUploadProgress
     /** @type {import('../src/types.js').ProgressStatus[]} */
     let progressWithoutUploadProgress = []
-    const addedWithoutUploadProgress = await Blob.add(
+    const { multihash: multihashWithoutUploadProgress } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       bytes,
       {
@@ -119,11 +118,7 @@ describe('Blob.add', () => {
         }),
       }
     )
-    assert.deepEqual(
-      // @ts-ignore Element
-      addedWithoutUploadProgress.capabilities[0].nb.content.multihash,
-      bytesHash
-    )
+    assert.deepEqual(multihashWithoutUploadProgress, bytesHash)
     assert.equal(
       progressWithoutUploadProgress.reduce(
         (max, { loaded }) => Math.max(max, loaded),
