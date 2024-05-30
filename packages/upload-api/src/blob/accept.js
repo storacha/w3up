@@ -2,10 +2,8 @@ import * as Server from '@ucanto/server'
 import * as DID from '@ipld/dag-ucan/did'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
 import { Assert } from '@web3-storage/content-claims/capability'
-import { create as createLink } from 'multiformats/link'
 import { Invocation } from '@ucanto/core'
 import * as Digest from 'multiformats/hashes/digest'
-import { code as rawCode } from 'multiformats/codecs/raw'
 import * as API from '../types.js'
 import {
   AllocatedMemoryHadNotBeenWrittenTo,
@@ -40,7 +38,6 @@ export function blobAcceptProvider(context) {
       }
 
       const digest = Digest.decode(blob.digest)
-      const content = createLink(rawCode, digest)
       const createUrl = await context.blobsStorage.createDownloadUrl(
         digest.bytes
       )
@@ -53,7 +50,7 @@ export function blobAcceptProvider(context) {
         audience: DID.parse(space),
         with: context.id.toDIDKey(),
         nb: {
-          content,
+          content: { digest: digest.bytes },
           location: [createUrl.ok],
         },
         expiration: Infinity,

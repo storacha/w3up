@@ -679,7 +679,7 @@ export const test = {
     assert.equal(delegation.capabilities.length, 1)
     assert.ok(delegation.capabilities[0].can, Assert.location.can)
     // @ts-expect-error nb unknown
-    assert.ok(delegation.capabilities[0].nb.content.equals(content))
+    assert.ok(equals(delegation.capabilities[0].nb.content.digest, content.multihash.bytes))
     // @ts-expect-error nb unknown
     const locations = delegation.capabilities[0].nb.location
     assert.equal(locations.length, 1)
