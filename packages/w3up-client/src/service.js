@@ -1,6 +1,7 @@
 import * as client from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
 import * as DID from '@ipld/dag-ucan/did'
+import { receiptsEndpoint } from '@web3-storage/upload-client'
 
 export const accessServiceURL = new URL('https://up.web3.storage')
 export const accessServicePrincipal = DID.parse('did:web:web3.storage')
@@ -45,4 +46,4 @@ export const serviceConf = {
   filecoin: filecoinServiceConnection,
 }
 
-export const receiptsEndpoint = 'https://up.web3.storage/receipt/'
+export { receiptsEndpoint }

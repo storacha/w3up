@@ -9,7 +9,7 @@ import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
-import { servicePrincipal, connection } from './service.js'
+import { receiptsEndpoint, servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
 
 /**
@@ -28,7 +28,6 @@ function createUploadProgressHandler(url, handler) {
 }
 
 // FIXME this code was copied over from w3up-client and modified to parameterise receiptsEndpoint
-export const receiptsEndpoint = 'https://up.web3.storage/receipt/'
 /**
  * Get a receipt for an executed task by its CID.
  *
