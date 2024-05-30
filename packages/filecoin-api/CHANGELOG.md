@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.1.0](https://github.com/w3s-project/w3up/compare/filecoin-api-v7.0.0...filecoin-api-v7.1.0) (2024-05-30)
+
+
+### Features
+
+* use digest in `blob/accept` location commitment ([#1480](https://github.com/w3s-project/w3up/issues/1480)) ([ade45eb](https://github.com/w3s-project/w3up/commit/ade45eb6f9b71f4bb4fcc771345ad21e966db730))
+
+
+### Fixes
+
+* rename blob and index client capabilities ([#1478](https://github.com/w3s-project/w3up/issues/1478)) ([17e3a31](https://github.com/w3s-project/w3up/commit/17e3a3161c6585b1844abcf7ed27252fa8580870))
+
 ## [7.0.0](https://github.com/w3s-project/w3up/compare/filecoin-api-v6.0.1...filecoin-api-v7.0.0) (2024-05-23)
 
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## [20.0.0](https://github.com/w3s-project/w3up/compare/access-v19.0.0...access-v20.0.0) (2024-05-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444))
+
+### Features
+
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444)) ([c9bf33e](https://github.com/w3s-project/w3up/commit/c9bf33e5512397a654db933a5e6b5db0c7c22da5))
+
 ## [19.0.0](https://github.com/w3s-project/w3up/compare/access-v18.4.0...access-v19.0.0) (2024-05-15)
 
 
