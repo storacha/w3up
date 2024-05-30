@@ -21,11 +21,11 @@ import { equalBlob, equalWith, SpaceDID } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
- * derived any `blob/` prefixed capability for the (memory) space identified
+ * derived any `space/blob/` prefixed capability for the (memory) space identified
  * by DID in the `with` field.
  */
 export const blob = capability({
-  can: 'blob/*',
+  can: 'space/blob/*',
   /**
    * DID of the (memory) space where Blob is intended to
    * be stored.
@@ -50,13 +50,13 @@ export const content = Schema.struct({
 })
 
 /**
- * `blob/add` capability allows agent to store a Blob into a (memory) space
+ * `space/blob/add` capability allows agent to store a Blob into a (memory) space
  * identified by did:key in the `with` field. Agent should compute blob multihash
  * and size and provide it under `nb.blob` field, allowing a service to provision
  * a write location for the agent to PUT desired Blob into.
  */
 export const add = capability({
-  can: 'blob/add',
+  can: 'space/blob/add',
   /**
    * DID of the (memory) space where Blob is intended to
    * be stored.
@@ -76,7 +76,7 @@ export const add = capability({
  * space identified by `with` field.
  */
 export const remove = capability({
-  can: 'blob/remove',
+  can: 'space/blob/remove',
   /**
    * DID of the (memory) space where Blob is stored.
    */
@@ -111,7 +111,7 @@ export const remove = capability({
  * (memory) space identified by `with` field.
  */
 export const list = capability({
-  can: 'blob/list',
+  can: 'space/blob/list',
   /**
    * DID of the (memory) space where Blobs to be listed are stored.
    */

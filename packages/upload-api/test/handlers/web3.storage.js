@@ -684,7 +684,9 @@ export const test = {
     const locations = delegation.capabilities[0].nb.location
     assert.equal(locations.length, 1)
 
-    const loc = Result.unwrap(await context.blobsStorage.createDownloadUrl(digest))
+    const loc = Result.unwrap(
+      await context.blobsStorage.createDownloadUrl(digest)
+    )
     assert.ok(locations.includes(loc))
   },
   'web3.storage/blob/accept fails to provide site delegation when blob was not stored':
