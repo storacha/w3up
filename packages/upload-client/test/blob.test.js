@@ -866,7 +866,7 @@ describe('Blob.remove', () => {
 })
 
 describe('Blob.get', () => {
-  it('get a stored CAR file', async () => {
+  it('get a stored Blob', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
