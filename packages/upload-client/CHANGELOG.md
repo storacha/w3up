@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.1](https://github.com/w3s-project/w3up/compare/upload-client-v16.0.0...upload-client-v16.0.1) (2024-05-30)
+
+
+### Fixes
+
+* rename blob and index client capabilities ([#1478](https://github.com/w3s-project/w3up/issues/1478)) ([17e3a31](https://github.com/w3s-project/w3up/commit/17e3a3161c6585b1844abcf7ed27252fa8580870))
+
 ## [16.0.0](https://github.com/w3s-project/w3up/compare/upload-client-v15.0.0...upload-client-v16.0.0) (2024-05-23)
 
 
