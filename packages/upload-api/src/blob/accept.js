@@ -1,3 +1,5 @@
+import * as Link from 'multiformats/link'
+import { code as rawCode } from 'multiformats/codecs/raw'
 import * as Server from '@ucanto/server'
 import * as DID from '@ipld/dag-ucan/did'
 import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
@@ -50,7 +52,7 @@ export function blobAcceptProvider(context) {
         audience: DID.parse(space),
         with: context.id.toDIDKey(),
         nb: {
-          content: { digest: digest.bytes },
+          content: Link.create(rawCode, digest),
           location: [createUrl.ok],
         },
         expiration: Infinity,

@@ -225,7 +225,7 @@ export const test = {
       }
 
       // second blob allocate invocation
-      const reallocation = await await W3sBlobCapabilities.allocate
+      const reallocation = await W3sBlobCapabilities.allocate
         .invoke({
           issuer: context.id,
           audience: context.id,
@@ -682,7 +682,7 @@ export const test = {
       equals(
         // @ts-expect-error nb unknown
         delegation.capabilities[0].nb.content.digest,
-        content.multihash.bytes
+        digest
       )
     )
     // @ts-expect-error nb unknown
