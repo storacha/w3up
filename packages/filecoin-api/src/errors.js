@@ -109,7 +109,9 @@ export class UnexpectedPiece extends Error {
   }
 }
 
-export const UnsupportedCapabilityErrorName = /** @type {const} */ ('UnsupportedCapability')
+export const UnsupportedCapabilityErrorName = /** @type {const} */ (
+  'UnsupportedCapability'
+)
 export class UnsupportedCapability extends Server.Failure {
   /**
    * @param {object} source

@@ -155,13 +155,15 @@ export interface Service extends StorefrontService {
       UCANConcludeFailure
     >
   }
-  blob: {
-    add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
-    remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
-    list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
-  }
-  index: {
-    add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
+  space: {
+    blob: {
+      add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
+      remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+      list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+    }
+    index: {
+      add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
+    }
   }
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>

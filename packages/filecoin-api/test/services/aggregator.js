@@ -222,10 +222,7 @@ export const test = {
       pieceQueue: new FailingQueue(),
     })
   ),
-  'piece/accept must be invoked on service did': async (
-    assert,
-    context
-  ) => {
+  'piece/accept must be invoked on service did': async (assert, context) => {
     const { agent, storefront } = await getServiceContext(context.id)
     const connection = connect({
       id: context.id,

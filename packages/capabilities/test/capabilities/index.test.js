@@ -27,7 +27,7 @@ const index = async () =>
   })
 
 describe('index capabilities', function () {
-  it('index/add can be derived from *', async () => {
+  it('space/index/add can be derived from *', async () => {
     const add = Index.add.invoke({
       issuer: alice,
       audience: w3,
@@ -50,13 +50,13 @@ describe('index capabilities', function () {
     }
 
     assert.deepEqual(result.ok.audience.did(), w3.did())
-    assert.equal(result.ok.capability.can, 'index/add')
+    assert.equal(result.ok.capability.can, 'space/index/add')
     assert.deepEqual(result.ok.capability.nb, {
       index: await createCarCid('test'),
     })
   })
 
-  it('index/add can be derived from index/*', async () => {
+  it('space/index/add can be derived from index/*', async () => {
     const add = Index.add.invoke({
       issuer: alice,
       audience: w3,
@@ -79,13 +79,13 @@ describe('index capabilities', function () {
     }
 
     assert.deepEqual(result.ok.audience.did(), w3.did())
-    assert.equal(result.ok.capability.can, 'index/add')
+    assert.equal(result.ok.capability.can, 'space/index/add')
     assert.deepEqual(result.ok.capability.nb, {
       index: await createCarCid('test'),
     })
   })
 
-  it('index/add can be derived from index/* derived from *', async () => {
+  it('space/index/add can be derived from index/* derived from *', async () => {
     const index = await Index.index.delegate({
       issuer: alice,
       audience: bob,
@@ -115,13 +115,13 @@ describe('index capabilities', function () {
     }
 
     assert.deepEqual(result.ok.audience.did(), w3.did())
-    assert.equal(result.ok.capability.can, 'index/add')
+    assert.equal(result.ok.capability.can, 'space/index/add')
     assert.deepEqual(result.ok.capability.nb, {
       index: await createCarCid('test'),
     })
   })
 
-  it('index/add should fail when escalating index constraint', async () => {
+  it('space/index/add should fail when escalating index constraint', async () => {
     const delegation = await Index.add.delegate({
       issuer: alice,
       audience: bob,

@@ -409,7 +409,9 @@ export const test = {
     }
 
     assert.ok(
-      String(accept.ok.out.error).match(/Blob not found/),
+      /** @type {{message:string}} */ (accept.ok.out.error).message.match(
+        /Blob not found/
+      ),
       'accept was not successful'
     )
   },

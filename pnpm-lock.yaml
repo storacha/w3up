@@ -304,8 +304,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/content-claims':
-        specifier: ^4.0.4
-        version: 4.0.5
+        specifier: ^5.0.0
+        version: 5.0.0
       '@web3-storage/data-segment':
         specifier: ^4.0.0
         version: 4.0.0
@@ -447,8 +447,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/content-claims':
-        specifier: ^4.0.4
-        version: 4.0.5
+        specifier: ^5.0.0
+        version: 5.0.0
       '@web3-storage/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto
@@ -4458,6 +4458,7 @@ packages:
       '@ucanto/transport': 9.1.1
       carstream: 1.1.1
       multiformats: 12.1.3
+    dev: true
 
   /@web3-storage/content-claims@5.0.0:
     resolution: {integrity: sha512-HJFRFsR0qHCe0cOERsb3AjAxxzohYMMoIWaGJgrShDycnl6yqXHrGcdua1BWUDu5pmvKzwD9D7VmI8aSfrCcRA==}
@@ -4468,7 +4469,6 @@ packages:
       '@ucanto/transport': 9.1.1
       carstream: 2.1.0
       multiformats: 13.1.0
-    dev: true
 
   /@web3-storage/data-segment@3.2.0:
     resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}
@@ -5283,6 +5283,7 @@ packages:
       '@ipld/dag-cbor': 9.2.0
       multiformats: 12.1.3
       uint8arraylist: 2.4.8
+    dev: true
 
   /carstream@2.1.0:
     resolution: {integrity: sha512-4kYIT1Y+GW/+o6wxS2tZlKnnINcgm4ceODBmyoLNaiQ17G2FNmzvUnQnVQkugC4NORTMCzD6KZEMT534XMJ4Yw==}

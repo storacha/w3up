@@ -87,12 +87,12 @@ export const getStoreImplementations = (
           return undefined
         }
         return new ReadableStream({
-            start(controller) {
-              // Push the data into the stream
-              controller.enqueue(item)
-              // Close the stream
-              controller.close()
-          }
+          start(controller) {
+            // Push the data into the stream
+            controller.enqueue(item)
+            // Close the stream
+            controller.close()
+          },
         })
       },
     }),

@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/upload-api",
   "description": "The upload api for web3.storage",
-  "version": "16.0.0",
+  "version": "17.0.0",
   "type": "module",
   "main": "./src/lib.js",
   "homepage": "https://web3.storage",
@@ -201,7 +201,7 @@
     "@web3-storage/access": "workspace:^",
     "@web3-storage/blob-index": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/content-claims": "^4.0.4",
+    "@web3-storage/content-claims": "^5.0.0",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-api": "workspace:^",
     "multiformats": "^12.1.2",

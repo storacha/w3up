@@ -45,20 +45,22 @@ describe('Blob.add', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, async ({ invocation }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, BlobCapabilities.add.can)
-          assert.equal(invCap.with, space.did())
-          assert.deepEqual(invCap.nb?.blob.digest, bytesHash.bytes)
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, async ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, BlobCapabilities.add.can)
+            assert.equal(invCap.with, space.did())
+            assert.deepEqual(invCap.nb?.blob.digest, bytesHash.bytes)
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
     })
 
@@ -92,8 +94,8 @@ describe('Blob.add', () => {
       }
     )
 
-    assert(service.blob.add.called)
-    assert.equal(service.blob.add.callCount, 1)
+    assert(service.space.blob.add.called)
+    assert.equal(service.space.blob.add.callCount, 1)
     assert.equal(
       progress.reduce((max, { loaded }) => Math.max(max, loaded), 0),
       128
@@ -148,14 +150,16 @@ describe('Blob.add', () => {
           return Server.fail('ouch')
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
     })
 
@@ -178,7 +182,7 @@ describe('Blob.add', () => {
         { connection }
       ),
       {
-        message: 'failed blob/add invocation',
+        message: 'failed space/blob/add invocation',
       }
     )
   })
@@ -335,14 +339,16 @@ describe('Blob.add', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAdd4xxResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAdd4xxResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
     })
 
@@ -390,14 +396,16 @@ describe('Blob.add', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAdd5xxResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAdd5xxResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
     })
 
@@ -436,14 +444,16 @@ describe('Blob.add', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
     })
 
@@ -504,10 +514,12 @@ describe('Blob.add', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        add: provide(BlobCapabilities.add, () => {
-          throw new Server.Failure('boom')
-        }),
+      space: {
+        blob: {
+          add: provide(BlobCapabilities.add, () => {
+            throw new Server.Failure('boom')
+          }),
+        },
       },
     })
 
@@ -529,7 +541,7 @@ describe('Blob.add', () => {
         bytes,
         { connection }
       ),
-      { message: 'failed blob/add invocation' }
+      { message: 'failed space/blob/add invocation' }
     )
   })
 })
@@ -565,15 +577,17 @@ describe('Blob.list', () => {
     ]
 
     const service = mockService({
-      blob: {
-        list: provide(BlobCapabilities.list, ({ invocation }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, BlobCapabilities.list.can)
-          assert.equal(invCap.with, space.did())
-          return { ok: res }
-        }),
+      space: {
+        blob: {
+          list: provide(BlobCapabilities.list, ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, BlobCapabilities.list.can)
+            assert.equal(invCap.with, space.did())
+            return { ok: res }
+          }),
+        },
       },
     })
 
@@ -594,8 +608,8 @@ describe('Blob.list', () => {
       { connection }
     )
 
-    assert(service.blob.list.called)
-    assert.equal(service.blob.list.callCount, 1)
+    assert(service.space.blob.list.called)
+    assert.equal(service.space.blob.list.callCount, 1)
 
     assert.equal(list.cursor, res.cursor)
     assert.equal(list.size, res.size)
@@ -654,16 +668,18 @@ describe('Blob.list', () => {
     ]
 
     const service = mockService({
-      blob: {
-        list: provide(BlobCapabilities.list, ({ invocation }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, BlobCapabilities.list.can)
-          assert.equal(invCap.with, space.did())
-          assert.equal(invCap.nb?.size, 1)
-          return { ok: invCap.nb?.cursor === cursor ? page1 : page0 }
-        }),
+      space: {
+        blob: {
+          list: provide(BlobCapabilities.list, ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, BlobCapabilities.list.can)
+            assert.equal(invCap.with, space.did())
+            assert.equal(invCap.nb?.size, 1)
+            return { ok: invCap.nb?.cursor === cursor ? page1 : page0 }
+          }),
+        },
       },
     })
 
@@ -688,8 +704,8 @@ describe('Blob.list', () => {
       { size: 1, cursor: results0.cursor, connection }
     )
 
-    assert(service.blob.list.called)
-    assert.equal(service.blob.list.callCount, 2)
+    assert(service.space.blob.list.called)
+    assert.equal(service.space.blob.list.callCount, 2)
 
     assert.equal(results0.cursor, cursor)
     assert(results0.results)
@@ -722,10 +738,12 @@ describe('Blob.list', () => {
     ]
 
     const service = mockService({
-      blob: {
-        list: provide(BlobCapabilities.list, () => {
-          throw new Server.Failure('boom')
-        }),
+      space: {
+        blob: {
+          list: provide(BlobCapabilities.list, () => {
+            throw new Server.Failure('boom')
+          }),
+        },
       },
     })
 
@@ -747,7 +765,7 @@ describe('Blob.list', () => {
         { connection }
       ),
       {
-        message: 'failed blob/list invocation',
+        message: 'failed space/blob/list invocation',
       }
     )
   })
@@ -770,16 +788,18 @@ describe('Blob.remove', () => {
     ]
 
     const service = mockService({
-      blob: {
-        remove: provide(BlobCapabilities.remove, ({ invocation }) => {
-          assert.equal(invocation.issuer.did(), agent.did())
-          assert.equal(invocation.capabilities.length, 1)
-          const invCap = invocation.capabilities[0]
-          assert.equal(invCap.can, BlobCapabilities.remove.can)
-          assert.equal(invCap.with, space.did())
-          assert.equal(String(invCap.nb?.digest), bytesHash.bytes)
-          return { ok: { size: bytes.length } }
-        }),
+      space: {
+        blob: {
+          remove: provide(BlobCapabilities.remove, ({ invocation }) => {
+            assert.equal(invocation.issuer.did(), agent.did())
+            assert.equal(invocation.capabilities.length, 1)
+            const invCap = invocation.capabilities[0]
+            assert.equal(invCap.can, BlobCapabilities.remove.can)
+            assert.equal(invCap.with, space.did())
+            assert.equal(String(invCap.nb?.digest), bytesHash.bytes)
+            return { ok: { size: bytes.length } }
+          }),
+        },
       },
     })
 
@@ -801,8 +821,8 @@ describe('Blob.remove', () => {
       { connection }
     )
 
-    assert(service.blob.remove.called)
-    assert.equal(service.blob.remove.callCount, 1)
+    assert(service.space.blob.remove.called)
+    assert.equal(service.space.blob.remove.callCount, 1)
 
     assert(result.ok)
     assert.equal(result.ok.size, bytes.length)
@@ -824,10 +844,12 @@ describe('Blob.remove', () => {
     ]
 
     const service = mockService({
-      blob: {
-        remove: provide(BlobCapabilities.remove, () => {
-          throw new Server.Failure('boom')
-        }),
+      space: {
+        blob: {
+          remove: provide(BlobCapabilities.remove, () => {
+            throw new Server.Failure('boom')
+          }),
+        },
       },
     })
 
@@ -849,7 +871,7 @@ describe('Blob.remove', () => {
         bytesHash,
         { connection }
       ),
-      { message: 'failed blob/remove invocation' }
+      { message: 'failed space/blob/remove invocation' }
     )
   })
 })
