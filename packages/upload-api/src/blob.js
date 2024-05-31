@@ -14,6 +14,10 @@ export function createService(context) {
     add: blobAddProvider(context),
     list: blobListProvider(context),
     remove: blobRemoveProvider(context),
-    get: blobGetProvider(context),
+    get: {
+      0: {
+        1: blobGetProvider(context),
+      },
+    },
   }
 }

@@ -439,7 +439,7 @@ export async function remove(
  * The `proofs` are a set of capability delegations that prove the issuer
  * has the capability to perform the action.
  *
- * The issuer needs the `blob/get` delegated capability.
+ * The issuer needs the `blob/get/0/1` delegated capability.
  * @param {import('multiformats').MultihashDigest} multihash of the blob
  * @param {import('./types.js').RequestOptions} [options]
  */

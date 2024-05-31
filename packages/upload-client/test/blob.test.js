@@ -884,20 +884,24 @@ describe('Blob.get', () => {
     const service = mockService({
       space: {
         blob: {
-          get: provide(BlobCapabilities.get, ({ invocation }) => {
-            assert.equal(invocation.issuer.did(), agent.did())
-            assert.equal(invocation.capabilities.length, 1)
-            const invCap = invocation.capabilities[0]
-            assert.equal(invCap.can, BlobCapabilities.get.can)
-            assert.equal(invCap.with, space.did())
-            assert.equal(String(invCap.nb?.digest), bytesHash.bytes)
-            return {
-              ok: {
-                cause: invocation.link(),
-                blob: { digest: bytesHash.bytes, size: bytes.length },
-              },
-            }
-          }),
+          get: {
+            0: {
+              1: provide(BlobCapabilities.get, ({ invocation }) => {
+                assert.equal(invocation.issuer.did(), agent.did())
+                assert.equal(invocation.capabilities.length, 1)
+                const invCap = invocation.capabilities[0]
+                assert.equal(invCap.can, BlobCapabilities.get.can)
+                assert.equal(invCap.with, space.did())
+                assert.equal(String(invCap.nb?.digest), bytesHash.bytes)
+                return {
+                  ok: {
+                    cause: invocation.link(),
+                    blob: { digest: bytesHash.bytes, size: bytes.length },
+                  },
+                }
+              }),
+            },
+          },
         },
       },
     })
@@ -920,8 +924,8 @@ describe('Blob.get', () => {
       { connection }
     )
 
-    assert(service.space.blob.get.called)
-    assert.equal(service.space.blob.get.callCount, 1)
+    assert(service.space.blob.get[0][1].called)
+    assert.equal(service.space.blob.get[0][1].callCount, 1)
 
     assert(result.ok)
     assert.deepEqual(result.ok.blob.digest, bytesHash.bytes)
@@ -945,9 +949,13 @@ describe('Blob.get', () => {
     const service = mockService({
       space: {
         blob: {
-          get: provide(BlobCapabilities.get, () => {
-            throw new Server.Failure('boom')
-          }),
+          get: {
+            0: {
+              1: provide(BlobCapabilities.get, () => {
+                throw new Server.Failure('boom')
+              }),
+            },
+          },
         },
       },
     })
@@ -970,7 +978,7 @@ describe('Blob.get', () => {
         bytesHash,
         { connection }
       ),
-      { message: 'failed space/blob/get invocation' }
+      { message: 'failed space/blob/get/0/1 invocation' }
     )
   })
 })

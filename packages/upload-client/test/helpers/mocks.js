@@ -18,6 +18,7 @@ const notImplemented = () => {
  * }>} impl
  */
 export function mockService(impl) {
+  const get = impl.space?.blob?.get
   return {
     ucan: {
       conclude: withCallCount(impl.ucan?.conclude ?? notImplemented),
@@ -27,7 +28,11 @@ export function mockService(impl) {
         add: withCallCount(impl.space?.blob?.add ?? notImplemented),
         list: withCallCount(impl.space?.blob?.list ?? notImplemented),
         remove: withCallCount(impl.space?.blob?.remove ?? notImplemented),
-        get: withCallCount(impl.space?.blob?.get ?? notImplemented),
+        get: {
+          0: {
+            1: withCallCount(get ? get[0][1] : notImplemented),
+          },
+        },
       },
       index: {
         add: withCallCount(impl.space?.index?.add ?? notImplemented),

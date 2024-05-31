@@ -167,7 +167,11 @@ export interface Service extends StorefrontService {
       add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
       remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
       list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
-      get: ServiceMethod<BlobGet, BlobGetSuccess, BlobGetFailure>
+      get: {
+        0: {
+          1: ServiceMethod<BlobGet, BlobGetSuccess, BlobGetFailure>
+        }
+      }
     }
     index: {
       add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
