@@ -142,7 +142,7 @@ export const list = capability({
  * space identified by `with` field.
  */
 export const get = capability({
-  can: 'space/blob/get',
+  can: 'space/blob/get/0/1',
   /**
    * DID of the (memory) space where Blob is stored.
    */
