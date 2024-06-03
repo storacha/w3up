@@ -207,14 +207,16 @@ describe('Blob.add', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
     })
 
@@ -247,7 +249,7 @@ describe('Blob.add', () => {
         }
       ),
       {
-        message: 'failed blob/add invocation',
+        message: 'failed space/blob/add invocation',
       }
     )
   })
@@ -272,14 +274,16 @@ describe('Blob.add', () => {
           return { ok: { time: Date.now() } }
         }),
       },
-      blob: {
-        // @ts-ignore Argument of type
-        add: provide(BlobCapabilities.add, ({ invocation }) => {
-          return setupBlobAddSuccessResponse(
-            { issuer: space, audience: agent, with: space, proofs },
-            invocation
-          )
-        }),
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
       },
     })
 
@@ -314,7 +318,7 @@ describe('Blob.add', () => {
         }
       ),
       {
-        message: 'failed blob/add invocation',
+        message: 'failed space/blob/add invocation',
       }
     )
   })
