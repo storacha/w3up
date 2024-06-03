@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { Message } from '@ucanto/core'
 import { create as createLink } from 'multiformats/link'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Client from '@ucanto/client'
@@ -239,86 +238,11 @@ describe('Blob.add', () => {
         {
           connection,
           retries: 0,
-          fetch: async (url) => {
-            // @ts-ignore Parameter
-            if (!url.pathname) {
-              return await fetch(url)
-            }
-            throw new Server.Failure('boom')
-          },
+          receiptsEndpoint: new URL('http://localhost:9201'),
         }
       ),
       {
-        message: 'failed space/blob/add invocation',
-      }
-    )
-  })
-
-  it('throws when it there is no blob/accept receipt', async () => {
-    const space = await Signer.generate()
-    const agent = await Signer.generate()
-    const bytes = await randomBytes(128)
-
-    const proofs = [
-      await BlobCapabilities.add.delegate({
-        issuer: space,
-        audience: agent,
-        with: space.did(),
-        expiration: Infinity,
-      }),
-    ]
-
-    const service = mockService({
-      ucan: {
-        conclude: provide(UCAN.conclude, () => {
-          return { ok: { time: Date.now() } }
-        }),
-      },
-      space: {
-        blob: {
-          // @ts-ignore Argument of type
-          add: provide(BlobCapabilities.add, ({ invocation }) => {
-            return setupBlobAddSuccessResponse(
-              { issuer: space, audience: agent, with: space, proofs },
-              invocation
-            )
-          }),
-        },
-      },
-    })
-
-    const server = Server.create({
-      id: serviceSigner,
-      service,
-      codec: CAR.inbound,
-      validateAuthorization,
-    })
-    const connection = Client.connect({
-      id: serviceSigner,
-      codec: CAR.outbound,
-      channel: server,
-    })
-
-    await assert.rejects(
-      Blob.add(
-        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
-        bytes,
-        {
-          connection,
-          retries: 0,
-          fetch: async (url) => {
-            // @ts-ignore Parameter
-            if (!url.pathname) {
-              return await fetch(url)
-            }
-            const message = await Message.build({})
-            const request = CAR.request.encode(message)
-            return new Response(request.body.buffer)
-          },
-        }
-      ),
-      {
-        message: 'failed space/blob/add invocation',
+        message: 'blob/accept receipt not yet available',
       }
     )
   })
