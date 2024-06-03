@@ -314,7 +314,7 @@ export interface RequestOptions
     UploadProgressTrackable {
   fetch?: typeof globalThis.fetch
   nonce?: string
-  receiptsEndpoint?: URL
+  receiptsEndpoint?: string
 }
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}

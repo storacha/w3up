@@ -238,7 +238,7 @@ describe('Blob.add', () => {
         {
           connection,
           retries: 0,
-          receiptsEndpoint: new URL('http://localhost:9201'),
+          receiptsEndpoint: 'http://localhost:9201',
         }
       ),
       {

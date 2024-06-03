@@ -10,7 +10,7 @@ import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
-import { getReceipt } from './index.js'
+import { Receipt as ReceiptPoller } from './receipts.js'
 
 /**
  * @param {string} url
@@ -305,20 +305,8 @@ export async function add(
   }
 
   // Ensure the blob has been accepted
-  const acceptReceipt = await retry(
-    async () => {
-      try {
-        return await getReceipt(nextTasks.accept.task.link(), options)
-      } catch (err) {
-        throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
-          cause: err,
-        })
-      }
-    },
-    {
-      onFailedAttempt: console.warn,
-      retries: options.retries ?? REQUEST_RETRIES,
-    }
+  const acceptReceipt = await new ReceiptPoller(options).poll(
+    nextTasks.accept.task.link()
   )
 
   // @ts-ignore Property

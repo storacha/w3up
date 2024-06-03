@@ -9,9 +9,7 @@ import * as Index from './dag-index.js'
 import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
-import { CAR as carTransport } from '@ucanto/transport'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
-import { receiptsEndpoint } from './service.js'
 
 export { Blob, Index, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -233,37 +231,4 @@ export async function indexShardedDAG(root, shards, shardIndexes) {
     index.shards.set(shard.multihash, slices)
   }
   return await index.archive()
-}
-
-/**
- * Get a receipt for an executed task by its CID.
- *
- * @param {import('multiformats').UnknownLink} taskCid
- * @param {import('./types.js').RequestOptions} [options]
- */
-export async function getReceipt(taskCid, options = {}) {
-  // Fetch receipt from endpoint
-  const url = new URL(
-    taskCid.toString(),
-    options.receiptsEndpoint ?? receiptsEndpoint
-  )
-  /* c8 ignore next */
-  const fetchReceipt = options.fetch ?? globalThis.fetch.bind(globalThis)
-  const workflowResponse = await fetchReceipt(url)
-  /* c8 ignore start */
-  if (!workflowResponse.ok) {
-    throw new Error(
-      `no receipt available for requested task ${taskCid.toString()}`
-    )
-  }
-  /* c8 ignore stop */
-  // Get receipt from Message Archive
-  const agentMessageBytes = new Uint8Array(await workflowResponse.arrayBuffer())
-  // Decode message
-  const agentMessage = await carTransport.request.decode({
-    body: agentMessageBytes,
-    headers: {},
-  })
-  // Get receipt from the potential multiple receipts in the message
-  return agentMessage.receipts.get(taskCid.toString())
 }
