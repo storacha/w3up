@@ -180,7 +180,68 @@ describe('Blob.add', () => {
     )
   })
 
-  it('throws when it cannot get the blob/accept receipt', async () => {
+  it('throws when it cannot get blob/accept receipt', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const bytes = await randomBytes(128)
+
+    const proofs = [
+      await BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        }),
+      },
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Blob.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytes,
+        {
+          connection,
+          retries: 0,
+          receiptsEndpoint: 'http://localhost:9201/failed/',
+        }
+      ),
+      {
+        message: 'failed to fetch blob/accept receipt',
+      }
+    )
+  })
+
+  it('throws when the blob/accept receipt is not yet available', async () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
@@ -236,7 +297,7 @@ describe('Blob.add', () => {
         }
       ),
       {
-        message: 'failed to fetch blob/accept receipt',
+        message: 'blob/accept receipt not yet available',
       }
     )
   })

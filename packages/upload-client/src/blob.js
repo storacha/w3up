@@ -310,6 +310,7 @@ export async function add(
   )
 
   // @ts-ignore Property
+  /* c8 ignore next 5 */
   if (!acceptReceipt?.out.ok?.site) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
       cause: 'failed to get blob/accept receipt',
