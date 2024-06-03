@@ -30,6 +30,7 @@ import * as Result from './result.js'
 
 export {
   AccessClient,
+  BlobClient,
   FilecoinClient,
   IndexClient,
   PlanClient,
