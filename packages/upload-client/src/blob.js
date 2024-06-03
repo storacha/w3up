@@ -1,4 +1,3 @@
-import { CAR } from '@ucanto/transport'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
@@ -9,8 +8,9 @@ import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
-import { receiptsEndpoint, servicePrincipal, connection } from './service.js'
+import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
+import { getReceipt } from './index.js'
 
 /**
  * @param {string} url
@@ -25,40 +25,6 @@ function createUploadProgressHandler(url, handler) {
     return handler({ total, loaded, lengthComputable, url })
   }
   return onUploadProgress
-}
-
-// FIXME this code was copied over from w3up-client and modified to parameterise receiptsEndpoint
-/**
- * Get a receipt for an executed task by its CID.
- *
- * @param {import('multiformats').UnknownLink} taskCid
- * @param {import('./types.js').RequestOptions} [options]
- */
-async function getReceipt(taskCid, options = {}) {
-  // Fetch receipt from endpoint
-  const url = new URL(
-    taskCid.toString(),
-    options.receiptsEndpoint ?? receiptsEndpoint
-  )
-  /* c8 ignore next */
-  const fetchReceipt = options.fetch ?? globalThis.fetch.bind(globalThis)
-  const workflowResponse = await fetchReceipt(url)
-  /* c8 ignore start */
-  if (!workflowResponse.ok) {
-    throw new Error(
-      `no receipt available for requested task ${taskCid.toString()}`
-    )
-  }
-  /* c8 ignore stop */
-  // Get receipt from Message Archive
-  const agentMessageBytes = new Uint8Array(await workflowResponse.arrayBuffer())
-  // Decode message
-  const agentMessage = await CAR.request.decode({
-    body: agentMessageBytes,
-    headers: {},
-  })
-  // Get receipt from the potential multiple receipts in the message
-  return agentMessage.receipts.get(taskCid.toString())
 }
 
 // FIXME this code has been copied over from upload-api
