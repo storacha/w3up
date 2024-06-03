@@ -1,11 +1,9 @@
-import { create as createLink } from 'multiformats/link'
-import { codec as car } from '@ucanto/transport/car'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { AgentData } from '@web3-storage/access/agent'
 import { randomBytes } from '../helpers/random.js'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
-import { setupGetReceipt } from '../helpers/utils.js'
+import { receiptsEndpoint } from '../helpers/utils.js'
 
 export const BlobClient = Test.withContext({
   'should store a blob': async (
@@ -35,11 +33,8 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const link = createLink(car.code, bytesHash)
     const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt(function* () {
-        yield link
-      }),
+      receiptsEndpoint,
     })
 
     // TODO we should check blobsStorage as well
@@ -79,11 +74,8 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const link = createLink(car.code, bytesHash)
     const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt(function* () {
-        yield link
-      }),
+      receiptsEndpoint,
     })
     assert.deepEqual(multihash.bytes, bytesHash.bytes)
 
@@ -120,12 +112,8 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const bytesHash = await sha256.digest(bytes)
-    const link = createLink(car.code, bytesHash)
     const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
-      fetch: setupGetReceipt(function* () {
-        yield link
-      }),
+      receiptsEndpoint,
     })
 
     const result = await alice.capability.blob.remove(multihash)

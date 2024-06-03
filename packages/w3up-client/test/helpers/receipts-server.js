@@ -2,29 +2,76 @@ import { createServer } from 'http'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { parseLink } from '@ucanto/server'
+import * as Signer from '@ucanto/principal/ed25519'
+import { Receipt, Message } from '@ucanto/core'
+import * as CAR from '@ucanto/transport/car'
+import { Assert } from '@web3-storage/content-claims/capability'
+import { randomCAR } from './random.js'
 
 const port = process.env.PORT ?? 9201
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtureName = process.env.FIXTURE_NAME || 'workflow.car'
 
-const server = createServer((req, res) => {
+const server = createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', '*')
   res.setHeader('Access-Control-Allow-Headers', '*')
 
-  fs.readFile(
-    path.resolve(`${__dirname}`, '..', 'fixtures', fixtureName),
-    (error, content) => {
-      if (error) {
-        res.writeHead(500)
-        res.end()
+  const taskID = req.url?.split('/')[1] ?? ''
+  if (taskID === 'unavailable') {
+    res.writeHead(404)
+    return res.end()
+  } else if (
+    taskID === 'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
+  ) {
+    return fs.readFile(
+      path.resolve(`${__dirname}`, '..', 'fixtures', fixtureName),
+      (error, content) => {
+        if (error) {
+          res.writeHead(500)
+          res.end()
+        }
+        res.writeHead(200, {
+          'Content-disposition': 'attachment; filename=' + fixtureName,
+        })
+        res.end(content)
       }
-      res.writeHead(200, {
-        'Content-disposition': 'attachment; filename=' + fixtureName,
-      })
-      res.end(content)
-    }
-  )
+    )
+  }
+
+  const issuer = await Signer.generate()
+  const content = (await randomCAR(128)).cid
+  const locationClaim = await Assert.location.delegate({
+    issuer,
+    audience: issuer,
+    with: issuer.toDIDKey(),
+    nb: {
+      content,
+      location: ['http://localhost'],
+    },
+    expiration: Infinity,
+  })
+
+  const receipt = await Receipt.issue({
+    issuer,
+    fx: {
+      fork: [locationClaim],
+    },
+    ran: parseLink(taskID),
+    result: {
+      ok: {
+        site: locationClaim.link(),
+      },
+    },
+  })
+
+  const message = await Message.build({
+    receipts: [receipt],
+  })
+  const request = CAR.request.encode(message)
+  res.writeHead(200)
+  res.end(request.body)
 })
 
 server.listen(port, () => console.log(`Listening on :${port}`))

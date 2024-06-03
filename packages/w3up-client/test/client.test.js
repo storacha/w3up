@@ -1,8 +1,4 @@
 import assert from 'assert'
-import * as UnixFS from '@web3-storage/upload-client/unixfs'
-import { codec as CAR } from '@ucanto/transport/car'
-import * as Link from 'multiformats/link'
-import { sha256 } from 'multiformats/hashes/sha2'
 import { parseLink } from '@ucanto/server'
 import { AgentData } from '@web3-storage/access/agent'
 import { randomBytes, randomCAR } from './helpers/random.js'
@@ -10,9 +6,7 @@ import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { Client } from '../src/client.js'
 import * as Test from './test.js'
-import { setupGetReceipt } from './helpers/utils.js'
-import { indexShardedDAG } from '@web3-storage/upload-client'
-import { encode } from '@web3-storage/upload-client/car'
+import { receiptsEndpoint } from './helpers/utils.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -52,10 +46,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt(function* () {
-          yield expectedCar.cid
-          yield expectedCar.cid
-        }),
+        receiptsEndpoint,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -108,12 +99,6 @@ export const testClient = {
 
       /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
       let carCID
-      /** @type {Array<Map<import('@web3-storage/blob-index/types').SliceDigest, import('@web3-storage/blob-index/types').Position>>} */
-      const shardIndexes = []
-      /** @type {import('@web3-storage/capabilities/types').CARLink[]} */
-      const shards = []
-      /** @type {import('@web3-storage/upload-client/types').AnyLink?} */
-      let root = null
 
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
@@ -140,23 +125,8 @@ export const testClient = {
       const dataCID = await alice.uploadDirectory(files, {
         onShardStored: (meta) => {
           carCID = meta.cid
-
-          root = meta.roots[0]
-          shards.push(meta.cid)
-          shardIndexes.push(meta.slices)
         },
-        fetch: setupGetReceipt(async function* () {
-          const { cid, blocks } = await UnixFS.encodeDirectory(files)
-          const car = await encode(blocks, cid)
-          yield Link.create(
-            CAR.code,
-            await sha256.digest(new Uint8Array(await car.arrayBuffer()))
-          )
-          // @ts-ignore Argument
-          const index = await indexShardedDAG(root, shards, shardIndexes)
-          // @ts-ignore Argument
-          yield Link.create(CAR.code, await sha256.digest(index.ok))
-        }),
+        receiptsEndpoint,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -199,10 +169,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
-        fetch: setupGetReceipt(function* () {
-          yield car.cid
-          yield car.cid
-        }),
+        receiptsEndpoint,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -418,13 +385,6 @@ export const testClient = {
     ) => {
       const bytes = await randomBytes(128)
 
-      /** @type {Array<Map<import('@web3-storage/blob-index/types').SliceDigest, import('@web3-storage/blob-index/types').Position>>} */
-      const shardIndexes = []
-      /** @type {import('@web3-storage/capabilities/types').CARLink[]} */
-      const shards = []
-      /** @type {import('@web3-storage/upload-client/types').AnyLink?} */
-      let root = null
-
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
         serviceConf: {
@@ -449,23 +409,7 @@ export const testClient = {
 
       const content = new Blob([bytes])
       const fileLink = await alice.uploadFile(content, {
-        onShardStored: (meta) => {
-          root = meta.roots[0]
-          shards.push(meta.cid)
-          shardIndexes.push(meta.slices)
-        },
-        fetch: setupGetReceipt(async function* () {
-          const { cid, blocks } = await UnixFS.encodeFile(content)
-          const car = await encode(blocks, cid)
-          yield Link.create(
-            CAR.code,
-            await sha256.digest(new Uint8Array(await car.arrayBuffer()))
-          )
-          // @ts-ignore Argument
-          const index = await indexShardedDAG(root, shards, shardIndexes)
-          // @ts-ignore Argument
-          yield Link.create(CAR.code, await sha256.digest(index.ok))
-        }),
+        receiptsEndpoint,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
@@ -491,13 +435,6 @@ export const testClient = {
       async (assert, { connection, provisionsStorage, uploadTable }) => {
         const bytes = await randomBytes(128)
 
-        /** @type {Array<Map<import('@web3-storage/blob-index/types').SliceDigest, import('@web3-storage/blob-index/types').Position>>} */
-        const shardIndexes = []
-        /** @type {import('@web3-storage/capabilities/types').CARLink[]} */
-        const shards = []
-        /** @type {import('@web3-storage/upload-client/types').AnyLink?} */
-        let root = null
-
         const alice = new Client(await AgentData.create(), {
           // @ts-ignore
           serviceConf: {
@@ -522,23 +459,7 @@ export const testClient = {
 
         const content = new Blob([bytes])
         const fileLink = await alice.uploadFile(content, {
-          onShardStored: (meta) => {
-            root = meta.roots[0]
-            shards.push(meta.cid)
-            shardIndexes.push(meta.slices)
-          },
-          fetch: setupGetReceipt(async function* () {
-            const { cid, blocks } = await UnixFS.encodeFile(content)
-            const car = await encode(blocks, cid)
-            yield Link.create(
-              CAR.code,
-              await sha256.digest(new Uint8Array(await car.arrayBuffer()))
-            )
-            // @ts-ignore Argument
-            const index = await indexShardedDAG(root, shards, shardIndexes)
-            // @ts-ignore Argument
-            yield Link.create(CAR.code, await sha256.digest(index.ok))
-          }),
+          receiptsEndpoint,
         })
 
         assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
@@ -591,13 +512,6 @@ export const testClient = {
     ) => {
       const bytesArray = [await randomBytes(128), await randomBytes(128)]
 
-      /** @type {Array<Map<import('@web3-storage/blob-index/types').SliceDigest, import('@web3-storage/blob-index/types').Position>>} */
-      const shardIndexes = []
-      /** @type {import('@web3-storage/capabilities/types').CARLink[]} */
-      const shards = []
-      /** @type {import('@web3-storage/upload-client/types').AnyLink?} */
-      let root = null
-
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
         serviceConf: {
@@ -622,23 +536,7 @@ export const testClient = {
 
       const content = new Blob(bytesArray)
       const fileLink = await alice.uploadFile(content, {
-        onShardStored: (meta) => {
-          root = meta.roots[0]
-          shards.push(meta.cid)
-          shardIndexes.push(meta.slices)
-        },
-        fetch: setupGetReceipt(async function* () {
-          const { cid, blocks } = await UnixFS.encodeFile(content)
-          const car = await encode(blocks, cid)
-          yield Link.create(
-            CAR.code,
-            await sha256.digest(new Uint8Array(await car.arrayBuffer()))
-          )
-          // @ts-ignore Argument
-          const index = await indexShardedDAG(root, shards, shardIndexes)
-          // @ts-ignore Argument
-          yield Link.create(CAR.code, await sha256.digest(index.ok))
-        }),
+        receiptsEndpoint,
       })
 
       const upload = await uploadTable.get(space.did(), fileLink)

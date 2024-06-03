@@ -16,8 +16,7 @@ const server = createServer(async (req, res) => {
   const taskID = req.url?.split('/')[1] ?? ''
   if (taskID === 'unavailable') {
     res.writeHead(404)
-    res.end()
-    return
+    return res.end()
   }
 
   const issuer = await Signer.generate()

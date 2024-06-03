@@ -2,7 +2,7 @@ import {
   uploadFile,
   uploadDirectory,
   uploadCAR,
-  getReceipt,
+  Receipt,
 } from '@web3-storage/upload-client'
 import {
   Blob as BlobCapabilities,
@@ -171,8 +171,9 @@ export class Client extends Base {
    * @param {import('multiformats').UnknownLink} taskCid
    */
   async getReceipt(taskCid) {
-    const receiptsEndpoint = new URL(this._receiptsEndpoint)
-    return getReceipt(taskCid, { receiptsEndpoint })
+    const receiptsEndpoint = new URL(this._receiptsEndpoint).toString()
+    const poller = new Receipt({ receiptsEndpoint })
+    return poller.poll(taskCid)
   }
 
   /**

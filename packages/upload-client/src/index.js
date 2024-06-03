@@ -14,6 +14,7 @@ import { ShardingStream, defaultFileComparator } from './sharding.js'
 export { Blob, Index, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
 export { receiptsEndpoint } from './service.js'
+export { Receipt } from './receipts.js'
 
 /**
  * Uploads a file to the service and returns the root data CID for the
