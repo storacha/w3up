@@ -1,64 +1,13 @@
-import { parseLink } from '@ucanto/server'
-import * as Signer from '@ucanto/principal/ed25519'
-import { Receipt, Message } from '@ucanto/core'
-import * as CAR from '@ucanto/transport/car'
+import { Receipt } from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import * as HTTP from '@web3-storage/capabilities/http'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import { W3sBlob } from '@web3-storage/capabilities'
 import { createConcludeInvocation } from '../../../upload-client/src/blob.js'
-import { Assert } from '@web3-storage/content-claims/capability'
 
 export const validateAuthorization = () => ({ ok: {} })
 
-// @ts-ignore Parameter
-export const setupGetReceipt = (contentGen) => {
-  // @ts-ignore Parameter
-  return async (url, options) => {
-    // need to handle using regular fetch when not actually getting a receipt
-    if (
-      options ||
-      !url.pathname ||
-      (url.pathname.contains && !url.pathname.contains('/receipt/'))
-    ) {
-      return await fetch(url, options)
-    }
-
-    const taskID = url.pathname.replace('/receipt/', '')
-    const issuer = await Signer.generate()
-
-    const content = contentGen(taskID)
-    const locationClaim = await Assert.location.delegate({
-      issuer,
-      audience: issuer,
-      with: issuer.toDIDKey(),
-      nb: {
-        content,
-        location: ['http://localhost'],
-      },
-      expiration: Infinity,
-    })
-
-    const receipt = await Receipt.issue({
-      issuer,
-      fx: {
-        fork: [locationClaim],
-      },
-      ran: parseLink(taskID),
-      result: {
-        ok: {
-          site: locationClaim.link(),
-        },
-      },
-    })
-
-    const message = await Message.build({
-      receipts: [receipt],
-    })
-    const request = CAR.request.encode(message)
-    return new Response(request.body.buffer)
-  }
-}
+export const receiptsEndpoint = 'http://localhost:9201'
 
 export const setupBlobAddSuccessResponse = async function (
   // @ts-ignore

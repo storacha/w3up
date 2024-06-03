@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { create as createLink } from 'multiformats/link'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
@@ -17,7 +16,7 @@ import {
   setupBlobAddSuccessResponse,
   setupBlobAdd4xxResponse,
   setupBlobAdd5xxResponse,
-  setupGetReceipt,
+  receiptsEndpoint,
 } from './helpers/utils.js'
 import { fetchWithUploadProgress } from '../src/fetch-with-upload-progress.js'
 
@@ -27,7 +26,6 @@ describe('Blob.add', () => {
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const link = createLink(CAR.codec.code, bytesHash)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -87,9 +85,7 @@ describe('Blob.add', () => {
           progress.push(status)
         },
         fetchWithUploadProgress,
-        fetch: setupGetReceipt(() => {
-          return link
-        }),
+        receiptsEndpoint,
       }
     )
 
@@ -114,9 +110,7 @@ describe('Blob.add', () => {
         onUploadProgress: (status) => {
           progressWithoutUploadProgress.push(status)
         },
-        fetch: setupGetReceipt(() => {
-          return link
-        }),
+        receiptsEndpoint,
       }
     )
     assert.deepEqual(multihashWithoutUploadProgress, bytesHash)
@@ -238,11 +232,11 @@ describe('Blob.add', () => {
         {
           connection,
           retries: 0,
-          receiptsEndpoint: 'http://localhost:9201',
+          receiptsEndpoint: 'http://localhost:9201/unavailable/',
         }
       ),
       {
-        message: 'blob/accept receipt not yet available',
+        message: 'failed to fetch blob/accept receipt',
       }
     )
   })
@@ -797,7 +791,7 @@ describe('Blob.remove', () => {
       Blob.remove(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
         bytesHash,
-        { connection }
+        { connection, receiptsEndpoint }
       ),
       { message: 'failed space/blob/remove invocation' }
     )
