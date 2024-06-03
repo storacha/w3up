@@ -52,16 +52,16 @@ const server = createServer(async (req, res) => {
   const taskCid = req.url?.split('/')[1] ?? ''
   if (taskCid === 'unavailable') {
     res.writeHead(404)
-    return res.end()
+    res.end()
   } else if (taskCid === 'failed') {
     const body = await generateReceipt((await randomCAR(128)).cid.toString())
     res.writeHead(200)
-    return res.end(body)
+    res.end(body)
+  } else {
+    const body = await generateReceipt(taskCid)
+    res.writeHead(200)
+    res.end(body)
   }
-
-  const body = await generateReceipt(taskCid)
-  res.writeHead(200)
-  res.end(body)
 })
 
 server.listen(port, () => console.log(`Listening on :${port}`))

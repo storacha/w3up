@@ -12,32 +12,23 @@ import { randomCAR } from './random.js'
 const port = process.env.PORT ?? 9201
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtureName = process.env.FIXTURE_NAME || 'workflow.car'
+const fixtureContent = fs.readFileSync(
+  path.resolve(`${__dirname}`, '..', 'fixtures', fixtureName)
+)
 
 const server = createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', '*')
   res.setHeader('Access-Control-Allow-Headers', '*')
 
-  const taskID = req.url?.split('/')[1] ?? ''
-  if (taskID === 'unavailable') {
-    res.writeHead(404)
-    return res.end()
-  } else if (
-    taskID === 'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
+  const taskCid = req.url?.split('/')[1] ?? ''
+  if (
+    taskCid === 'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
   ) {
-    return fs.readFile(
-      path.resolve(`${__dirname}`, '..', 'fixtures', fixtureName),
-      (error, content) => {
-        if (error) {
-          res.writeHead(500)
-          res.end()
-        }
-        res.writeHead(200, {
-          'Content-disposition': 'attachment; filename=' + fixtureName,
-        })
-        res.end(content)
-      }
-    )
+    res.writeHead(200, {
+      'Content-disposition': 'attachment; filename=' + fixtureName,
+    })
+    return res.end(fixtureContent)
   }
 
   const issuer = await Signer.generate()
@@ -58,7 +49,7 @@ const server = createServer(async (req, res) => {
     fx: {
       fork: [locationClaim],
     },
-    ran: parseLink(taskID),
+    ran: parseLink(taskCid),
     result: {
       ok: {
         site: locationClaim.link(),
