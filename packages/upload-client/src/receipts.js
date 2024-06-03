@@ -62,6 +62,7 @@ export class Receipt {
       },
       {
         onFailedAttempt: console.warn,
+        /* c8 ignore next */
         retries: this.retries ?? REQUEST_RETRIES,
       }
     )
