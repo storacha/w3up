@@ -108,7 +108,7 @@ export class Client extends Base {
   /**
    * Uploads a file to the service and returns the root data CID for the
    * generated DAG.
-   * 
+   *
    * Required delegated capabilities:
    * - `filecoin/offer`
    * - `space/blob/add`
@@ -163,7 +163,7 @@ export class Client extends Base {
    * registered, linking the individual shards (see `capability.upload.add`).
    *
    * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
-   * 
+   *
    * Required delegated capabilities:
    * - `filecoin/offer`
    * - `space/blob/add`
@@ -354,7 +354,7 @@ export class Client extends Base {
    *
    * ⚠️ If `shards` option is `true` all shards will be deleted even if there is another upload(s) that
    * reference same shards, which in turn could corrupt those uploads.
-   * 
+   *
    * Required delegated capabilities:
    * - `space/blob/remove`
    * - `store/remove`

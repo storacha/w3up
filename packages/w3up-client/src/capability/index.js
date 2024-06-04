@@ -8,7 +8,7 @@ import { Base } from '../base.js'
 export class IndexClient extends Base {
   /**
    * Register an "index" to the resource.
-   * 
+   *
    * Required delegated capabilities:
    * - `space/index/add`
    *

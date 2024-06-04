@@ -8,7 +8,7 @@ import { Base } from '../base.js'
 export class BlobClient extends Base {
   /**
    * Store a Blob to the resource.
-   * 
+   *
    * Required delegated capabilities:
    * - `space/blob/add`
    *
@@ -23,7 +23,7 @@ export class BlobClient extends Base {
 
   /**
    * List blobs stored to the resource.
-   * 
+   *
    * Required delegated capabilities:
    * - `space/blob/list`
    *
@@ -37,7 +37,7 @@ export class BlobClient extends Base {
 
   /**
    * Remove a stored blob by multihash digest.
-   * 
+   *
    * Required delegated capabilities:
    * - `space/blob/remove`
    *

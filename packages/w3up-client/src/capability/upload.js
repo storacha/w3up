@@ -53,7 +53,7 @@ export class UploadClient extends Base {
 
   /**
    * Remove an upload by root data CID.
-   * 
+   *
    * Required delegated capabilities:
    * - `upload/remove`
    *
