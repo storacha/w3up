@@ -336,7 +336,7 @@ export async function add(
   /* c8 ignore next 5 */
   if (!site) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
-      cause: 'failed to get blob/accept receipt',
+      cause: 'failed to get blob/accept receipt delegation view',
     })
   }
 
