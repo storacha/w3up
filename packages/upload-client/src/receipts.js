@@ -23,6 +23,26 @@ export class ReceiptNotFound extends Error {
   }
 }
 
+export class ReceiptMissing extends Error {
+  /**
+   * @param {import('multiformats').UnknownLink} taskCid
+   */
+  constructor(taskCid) {
+    super()
+    this.taskCid = taskCid
+  }
+
+  /* c8 ignore start */
+  get reason() {
+    return `receipt missing for task ${this.taskCid}`
+  }
+  /* c8 ignore end */
+
+  get name() {
+    return 'ReceiptMissing'
+  }
+}
+
 export class Receipt {
   /**
    * @param {import('./types.js').RequestOptions} [options]
@@ -98,9 +118,7 @@ export class Receipt {
     const receipt = agentMessage.receipts.get(taskCid.toString())
     if (!receipt) {
       return {
-        error: new Error(
-          `no receipt available for requested task ${taskCid.toString()}`
-        ),
+        error: new ReceiptMissing(taskCid),
       }
     }
     return {
