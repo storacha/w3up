@@ -145,7 +145,9 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const multihash = await alice.capability.blob.add(new Blob([bytes]))
+    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
+      receiptsEndpoint,
+    })
 
     const result = await alice.capability.blob.get(multihash)
     assert.ok(result.ok)
