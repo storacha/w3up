@@ -680,17 +680,11 @@ describe('uploadDirectory', () => {
       return { invocations, service, server, connection }
     }
 
-    const bytesList = [
-      await randomBytes(32),
-      await randomBytes(32),
-      await randomBytes(32),
-      await randomBytes(32),
-    ]
     const unsortedFiles = [
-      new File([bytesList[0]], '/b.txt'),
-      new File([bytesList[1]], '/b.txt'),
-      new File([bytesList[2]], 'c.txt'),
-      new File([bytesList[3]], 'a.txt'),
+      new File([await randomBytes(32)], '/b.txt'),
+      new File([await randomBytes(32)], '/b.txt'),
+      new File([await randomBytes(32)], 'c.txt'),
+      new File([await randomBytes(32)], 'a.txt'),
     ]
 
     const uploadServiceForUnordered = createSimpleMockUploadServer()
