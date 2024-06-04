@@ -1,7 +1,4 @@
 import { createServer } from 'http'
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
 import { parseLink } from '@ucanto/server'
 import * as Signer from '@ucanto/principal/ed25519'
 import { Receipt, Message } from '@ucanto/core'
@@ -10,27 +7,11 @@ import { Assert } from '@web3-storage/content-claims/capability'
 import { randomCAR } from './random.js'
 
 const port = process.env.PORT ?? 9201
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const fixtureName = process.env.FIXTURE_NAME || 'workflow.car'
-const fixtureContent = fs.readFileSync(
-  path.resolve(`${__dirname}`, '..', 'fixtures', fixtureName)
-)
 
-const server = createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', '*')
-  res.setHeader('Access-Control-Allow-Headers', '*')
-
-  const taskCid = req.url?.split('/')[1] ?? ''
-  if (
-    taskCid === 'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
-  ) {
-    res.writeHead(200, {
-      'Content-disposition': 'attachment; filename=' + fixtureName,
-    })
-    return res.end(fixtureContent)
-  }
-
+/**
+ * @param {string} taskCid
+ */
+const generateReceipt = async (taskCid) => {
   const issuer = await Signer.generate()
   const content = (await randomCAR(128)).cid
   const locationClaim = await Assert.location.delegate({
@@ -60,9 +41,27 @@ const server = createServer(async (req, res) => {
   const message = await Message.build({
     receipts: [receipt],
   })
-  const request = CAR.request.encode(message)
-  res.writeHead(200)
-  res.end(request.body)
+  return CAR.request.encode(message).body
+}
+
+const server = createServer(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', '*')
+  res.setHeader('Access-Control-Allow-Headers', '*')
+
+  const taskCid = req.url?.split('/')[1] ?? ''
+  if (taskCid === 'unavailable') {
+    res.writeHead(404)
+    res.end()
+  } else if (taskCid === 'failed') {
+    const body = await generateReceipt((await randomCAR(128)).cid.toString())
+    res.writeHead(200)
+    res.end(body)
+  } else {
+    const body = await generateReceipt(taskCid)
+    res.writeHead(200)
+    res.end(body)
+  }
 })
 
 server.listen(port, () => console.log(`Listening on :${port}`))

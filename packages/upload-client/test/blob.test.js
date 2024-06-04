@@ -16,8 +16,11 @@ import {
   setupBlobAddSuccessResponse,
   setupBlobAdd4xxResponse,
   setupBlobAdd5xxResponse,
+  receiptsEndpoint,
 } from './helpers/utils.js'
 import { fetchWithUploadProgress } from '../src/fetch-with-upload-progress.js'
+import { ReceiptNotFound } from '../src/receipts.js'
+import { Assert } from '@web3-storage/content-claims/capability'
 
 describe('Blob.add', () => {
   it('stores bytes with the service', async () => {
@@ -74,7 +77,7 @@ describe('Blob.add', () => {
 
     /** @type {import('../src/types.js').ProgressStatus[]} */
     const progress = []
-    const multihash = await Blob.add(
+    const { site, multihash } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       bytes,
       {
@@ -84,8 +87,15 @@ describe('Blob.add', () => {
           progress.push(status)
         },
         fetchWithUploadProgress,
+        receiptsEndpoint,
       }
     )
+
+    assert(site)
+    assert.equal(site.capabilities[0].can, Assert.location.can)
+    // we're not verifying this as it's a mocked value
+    // @ts-ignore nb unknown
+    assert.ok(site.capabilities[0].nb.content.multihash.bytes)
 
     assert(service.space.blob.add.called)
     assert.equal(service.space.blob.add.callCount, 1)
@@ -95,12 +105,12 @@ describe('Blob.add', () => {
     )
 
     assert(multihash)
-    assert.deepEqual(multihash.bytes, bytesHash.bytes)
+    assert.deepEqual(multihash, bytesHash)
 
     // make sure it can also work without fetchWithUploadProgress
     /** @type {import('../src/types.js').ProgressStatus[]} */
     let progressWithoutUploadProgress = []
-    const addedWithoutUploadProgress = await Blob.add(
+    const { multihash: multihashWithoutUploadProgress } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       bytes,
       {
@@ -108,9 +118,10 @@ describe('Blob.add', () => {
         onUploadProgress: (status) => {
           progressWithoutUploadProgress.push(status)
         },
+        receiptsEndpoint,
       }
     )
-    assert.deepEqual(addedWithoutUploadProgress.bytes, bytesHash.bytes)
+    assert.deepEqual(multihashWithoutUploadProgress, bytesHash)
     assert.equal(
       progressWithoutUploadProgress.reduce(
         (max, { loaded }) => Math.max(max, loaded),
@@ -174,6 +185,126 @@ describe('Blob.add', () => {
       {
         message: 'failed space/blob/add invocation',
       }
+    )
+  })
+
+  it('throws when it cannot get blob/accept receipt', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const bytes = await randomBytes(128)
+
+    const proofs = [
+      await BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        }),
+      },
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Blob.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytes,
+        {
+          connection,
+          retries: 0,
+          receiptsEndpoint: 'http://localhost:9201/failed/',
+        }
+      ),
+      {
+        message: 'failed to fetch blob/accept receipt',
+      }
+    )
+  })
+
+  it('throws when the blob/accept receipt is not yet available', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const bytes = await randomBytes(128)
+
+    const proofs = [
+      await BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        }),
+      },
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    await assert.rejects(
+      Blob.add(
+        { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytes,
+        {
+          connection,
+          retries: 0,
+          receiptsEndpoint: 'http://localhost:9201/unavailable/',
+        }
+      ),
+      ReceiptNotFound
     )
   })
 
@@ -727,7 +858,7 @@ describe('Blob.remove', () => {
       Blob.remove(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
         bytesHash,
-        { connection }
+        { connection, receiptsEndpoint }
       ),
       { message: 'failed space/blob/remove invocation' }
     )

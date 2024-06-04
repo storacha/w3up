@@ -1,6 +1,5 @@
 import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import { Storefront } from '@web3-storage/filecoin-client'
-import { ShardedDAGIndex } from '@web3-storage/blob-index'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
@@ -10,10 +9,12 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
-import { codec as carCodec } from '@ucanto/transport/car'
+import { indexShardedDAG } from '@web3-storage/blob-index'
 
 export { Blob, Index, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
+export { receiptsEndpoint } from './service.js'
+export * as Receipt from './receipts.js'
 
 /**
  * Uploads a file to the service and returns the root data CID for the
@@ -144,9 +145,9 @@ async function uploadBlockStream(
           async transform(car, controller) {
             const bytes = new Uint8Array(await car.arrayBuffer())
             // Invoke blob/add and write bytes to write target
-            const multihash = await Blob.add(conf, bytes, options)
+            const { multihash } = await Blob.add(conf, bytes, options)
             // Should this be raw instead?
-            const cid = Link.create(carCodec.code, multihash)
+            const cid = Link.create(CAR.code, multihash)
             let piece
             if (pieceHasher) {
               const multihashDigest = await pieceHasher.digest(bytes)
@@ -199,20 +200,15 @@ async function uploadBlockStream(
   /* c8 ignore next */
   if (!root) throw new Error('missing root CID')
 
-  const index = ShardedDAGIndex.create(root)
-  for (const [i, shard] of shards.entries()) {
-    const slices = shardIndexes[i]
-    index.shards.set(shard.multihash, slices)
-  }
-  const indexBytes = await index.archive()
+  const indexBytes = await indexShardedDAG(root, shards, shardIndexes)
   /* c8 ignore next 3 */
   if (!indexBytes.ok) {
     throw new Error('failed to archive DAG index', { cause: indexBytes.error })
   }
 
   // Store the index in the space
-  const indexDigest = await Blob.add(conf, indexBytes.ok, options)
-  const indexLink = Link.create(carCodec.code, indexDigest)
+  const { multihash } = await Blob.add(conf, indexBytes.ok, options)
+  const indexLink = Link.create(CAR.code, multihash)
 
   // Register the index with the service
   await Index.add(conf, indexLink, options)

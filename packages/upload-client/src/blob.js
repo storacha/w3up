@@ -2,7 +2,7 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import * as UCAN from '@web3-storage/capabilities/ucan'
-import { Receipt } from '@ucanto/core'
+import { Delegation, Receipt } from '@ucanto/core'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
@@ -10,6 +10,7 @@ import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
+import { poll } from './receipts.js'
 
 /**
  * @param {string} url
@@ -166,7 +167,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * The issuer needs the `blob/add` delegated capability.
  * @param {Blob|Uint8Array} data Blob data.
  * @param {import('./types.js').RequestOptions} [options]
- * @returns {Promise<import('multiformats').MultihashDigest>}
+ * @returns {Promise<import('./types.js').BlobAddOk>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
@@ -303,7 +304,26 @@ export async function add(
     })
   }
 
-  return multihash
+  // Ensure the blob has been accepted
+  const acceptReceipt = await poll(nextTasks.accept.task.link(), options)
+
+  const blocks = new Map(
+    [...acceptReceipt.iterateIPLDBlocks()].map((block) => [
+      `${block.cid}`,
+      block,
+    ])
+  )
+  const site = Delegation.view({
+    root: /** @type {import('@ucanto/interface').UCANLink} */ (
+      acceptReceipt.out.ok.site
+    ),
+    blocks,
+  })
+
+  return {
+    multihash,
+    site,
+  }
 }
 
 /**

@@ -1,14 +1,16 @@
 import { ShardedDAGIndex } from '@web3-storage/blob-index'
+import { codec as CAR } from '@ucanto/transport/car'
 import * as Link from 'multiformats/link'
 import * as Result from '../../src/result.js'
 import { randomCAR } from '../helpers/random.js'
 import * as Test from '../test.js'
+import { receiptsEndpoint } from '../helpers/utils.js'
 
 export const IndexClient = Test.withContext({
   add: {
     'should register an index': async (
       assert,
-      { client: alice, service, provisionsStorage, uploadTable }
+      { client: alice, service, provisionsStorage }
     ) => {
       const car = await randomCAR(128)
 
@@ -27,11 +29,15 @@ export const IndexClient = Test.withContext({
       const index = ShardedDAGIndex.create(car.cid)
       const indexBytes = Result.unwrap(await index.archive())
 
-      const indexDigest = await alice.capability.blob.add(
-        new Blob([indexBytes])
+      const { multihash } = await alice.capability.blob.add(
+        new Blob([indexBytes]),
+        {
+          receiptsEndpoint,
+        }
       )
+
       assert.ok(
-        await alice.capability.index.add(Link.create(0x0202, indexDigest))
+        await alice.capability.index.add(Link.create(CAR.code, multihash))
       )
     },
   },

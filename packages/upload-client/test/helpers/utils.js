@@ -7,6 +7,8 @@ import { createConcludeInvocation } from '../../../upload-client/src/blob.js'
 
 export const validateAuthorization = () => ({ ok: {} })
 
+export const receiptsEndpoint = 'http://localhost:9201'
+
 export const setupBlobAddSuccessResponse = async function (
   // @ts-ignore
   options,
