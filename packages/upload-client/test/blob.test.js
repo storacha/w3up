@@ -19,6 +19,7 @@ import {
   receiptsEndpoint,
 } from './helpers/utils.js'
 import { fetchWithUploadProgress } from '../src/fetch-with-upload-progress.js'
+import { ReceiptNotFound } from '../src/receipts.js'
 
 describe('Blob.add', () => {
   it('stores bytes with the service', async () => {
@@ -296,9 +297,7 @@ describe('Blob.add', () => {
           receiptsEndpoint: 'http://localhost:9201/unavailable/',
         }
       ),
-      {
-        message: 'blob/accept receipt not yet available',
-      }
+      ReceiptNotFound
     )
   })
 
