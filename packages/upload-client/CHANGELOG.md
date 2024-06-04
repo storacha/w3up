@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.1.0](https://github.com/w3s-project/w3up/compare/upload-client-v16.0.2...upload-client-v16.1.0) (2024-06-04)
+
+
+### Features
+
+* add blob/get ([#1484](https://github.com/w3s-project/w3up/issues/1484)) ([328039d](https://github.com/w3s-project/w3up/commit/328039d8a29fec3c1bbab28d1bb9de1643f54f71))
+
 ## [16.0.2](https://github.com/w3s-project/w3up/compare/upload-client-v16.0.1...upload-client-v16.0.2) (2024-06-04)
 
 
