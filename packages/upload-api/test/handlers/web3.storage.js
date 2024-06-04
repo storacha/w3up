@@ -678,9 +678,9 @@ export const test = {
     const delegation = blobAccept.fx.fork[0]
     assert.equal(delegation.capabilities.length, 1)
     assert.ok(delegation.capabilities[0].can, Assert.location.can)
-    // @ts-expect-error nb unknown
     assert.ok(
       equals(
+        // @ts-expect-error nb unknown
         delegation.capabilities[0].nb.content.digest,
         content.multihash.bytes
       )
