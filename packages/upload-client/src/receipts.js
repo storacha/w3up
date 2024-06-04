@@ -14,7 +14,7 @@ export class ReceiptNotFound extends Error {
 
   /* c8 ignore start */
   get reason() {
-    return `receipt not found for task ${this.taskCid}`
+    return `receipt not found for task ${this.taskCid} in the indexed workflow`
   }
   /* c8 ignore end */
 
