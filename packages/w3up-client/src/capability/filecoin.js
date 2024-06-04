@@ -9,6 +9,9 @@ export class FilecoinClient extends Base {
   /**
    * Offer a Filecoin "piece" to the resource.
    *
+   * Required delegated capabilities:
+   * - `filecoin/offer`
+   *
    * @param {import('multiformats').UnknownLink} content
    * @param {import('@web3-storage/capabilities/types').PieceLink} piece
    * @param {object} [options]
@@ -24,6 +27,9 @@ export class FilecoinClient extends Base {
 
   /**
    * Request info about a content piece in Filecoin deals
+   *
+   * Required delegated capabilities:
+   * - `filecoin/info`
    *
    * @param {import('@web3-storage/capabilities/types').PieceLink} piece
    * @param {object} [options]

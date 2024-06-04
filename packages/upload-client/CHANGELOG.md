@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.0.2](https://github.com/w3s-project/w3up/compare/upload-client-v16.0.1...upload-client-v16.0.2) (2024-06-04)
+
+
+### Fixes
+
+* check for blob/accept receipts before blob/add is concluded ([#1459](https://github.com/w3s-project/w3up/issues/1459)) ([462518c](https://github.com/w3s-project/w3up/commit/462518ca832515c65cc674e8aef3c28f2228797d))
+
 ## [16.0.1](https://github.com/w3s-project/w3up/compare/upload-client-v16.0.0...upload-client-v16.0.1) (2024-05-30)
 
 
