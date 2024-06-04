@@ -1,6 +1,5 @@
 import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import { Storefront } from '@web3-storage/filecoin-client'
-import { ShardedDAGIndex } from '@web3-storage/blob-index'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import * as Store from './store.js'
@@ -10,6 +9,7 @@ import * as Upload from './upload.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
+import { indexShardedDAG } from '@web3-storage/blob-index'
 
 export { Blob, Index, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -216,20 +216,4 @@ async function uploadBlockStream(
   await Upload.add(conf, root, shards, options)
 
   return root
-}
-
-/**
- * Indexes a sharded DAG
- *
- * @param {import('multiformats').Link} root
- * @param {import('./types.js').CARLink[]} shards
- * @param {Array<Map<import('./types.js').SliceDigest, import('./types.js').Position>>} shardIndexes
- */
-export async function indexShardedDAG(root, shards, shardIndexes) {
-  const index = ShardedDAGIndex.create(root)
-  for (const [i, shard] of shards.entries()) {
-    const slices = shardIndexes[i]
-    index.shards.set(shard.multihash, slices)
-  }
-  return await index.archive()
 }

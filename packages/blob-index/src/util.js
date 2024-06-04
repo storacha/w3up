@@ -32,3 +32,19 @@ export const fromShardArchives = async (content, shards) => {
   }
   return index
 }
+
+/**
+ * Indexes a sharded DAG
+ *
+ * @param {import('multiformats').Link} root
+ * @param {import('@web3-storage/capabilities/types').CARLink[]} shards
+ * @param {Array<Map<API.SliceDigest, API.Position>>} shardIndexes
+ */
+export async function indexShardedDAG(root, shards, shardIndexes) {
+  const index = create(root)
+  for (const [i, shard] of shards.entries()) {
+    const slices = shardIndexes[i]
+    index.shards.set(shard.multihash, slices)
+  }
+  return await index.archive()
+}
