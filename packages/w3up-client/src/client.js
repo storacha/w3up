@@ -172,8 +172,7 @@ export class Client extends Base {
    */
   async getReceipt(taskCid) {
     const receiptsEndpoint = new URL(this._receiptsEndpoint).toString()
-    const poller = new Receipt({ receiptsEndpoint })
-    return poller.poll(taskCid)
+    return Receipt.poll(taskCid, { receiptsEndpoint })
   }
 
   /**

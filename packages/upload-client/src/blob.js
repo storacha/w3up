@@ -10,7 +10,7 @@ import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
-import { Receipt as ReceiptPoller } from './receipts.js'
+import { poll } from './receipts.js'
 
 /**
  * @param {string} url
@@ -305,9 +305,7 @@ export async function add(
   }
 
   // Ensure the blob has been accepted
-  const acceptReceipt = await new ReceiptPoller(options).poll(
-    nextTasks.accept.task.link()
-  )
+  const acceptReceipt = await poll(nextTasks.accept.task.link(), options)
 
   const blocks = new Map(
     [...acceptReceipt.iterateIPLDBlocks()].map((block) => [
