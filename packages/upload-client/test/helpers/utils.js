@@ -1,9 +1,13 @@
+import { parseLink } from '@ucanto/server'
+import * as Signer from '@ucanto/principal/ed25519'
 import { Receipt } from '@ucanto/core'
+import { Assert } from '@web3-storage/content-claims/capability'
 import * as Server from '@ucanto/server'
 import * as HTTP from '@web3-storage/capabilities/http'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import { W3sBlob } from '@web3-storage/capabilities'
 import { createConcludeInvocation } from '../../../upload-client/src/blob.js'
+import { randomCAR } from './random.js'
 
 export const validateAuthorization = () => ({ ok: {} })
 
@@ -15,7 +19,12 @@ export const setupBlobAddSuccessResponse = async function (
   // @ts-ignore
   invocation
 ) {
-  return setupBlobAddResponse('http://localhost:9200', options, invocation)
+  return setupBlobAddResponse(
+    'http://localhost:9200',
+    options,
+    invocation,
+    false
+  )
 }
 
 export const setupBlobAdd4xxResponse = async function (
@@ -24,7 +33,12 @@ export const setupBlobAdd4xxResponse = async function (
   // @ts-ignore
   invocation
 ) {
-  return setupBlobAddResponse('http://localhost:9400', options, invocation)
+  return setupBlobAddResponse(
+    'http://localhost:9400',
+    options,
+    invocation,
+    false
+  )
 }
 
 export const setupBlobAdd5xxResponse = async function (
@@ -33,16 +47,39 @@ export const setupBlobAdd5xxResponse = async function (
   // @ts-ignore
   invocation
 ) {
-  return setupBlobAddResponse('http://localhost:9500', options, invocation)
+  return setupBlobAddResponse(
+    'http://localhost:9500',
+    options,
+    invocation,
+    false
+  )
 }
 
-const setupBlobAddResponse = async function (
+export const setupBlobAddWithAcceptReceiptSuccessResponse = async function (
   // @ts-ignore
+  options,
+  // @ts-ignore
+  invocation
+) {
+  return setupBlobAddResponse(
+    'http://localhost:9200',
+    options,
+    invocation,
+    true
+  )
+}
+
+/**
+ * @param {string} url
+ * @param {boolean} hasAcceptReceipt
+ */
+const setupBlobAddResponse = async function (
   url,
   // @ts-ignore
   { issuer, with: space, proofs, audience },
   // @ts-ignore
-  invocation
+  invocation,
+  hasAcceptReceipt
 ) {
   const blob = invocation.capabilities[0].nb.blob
   const blobAllocateTask = await W3sBlob.allocate
@@ -112,11 +149,13 @@ const setupBlobAddResponse = async function (
     })
     .delegate()
 
-  const blobAcceptReceipt = await Receipt.issue({
-    issuer,
-    ran: blobAcceptTask.cid,
-    result: { ok: {} },
-  })
+  const blobAcceptReceipt = hasAcceptReceipt
+    ? await Receipt.issue({
+        issuer,
+        ran: blobAcceptTask.cid,
+        result: { error: new Error() },
+      })
+    : await generateAcceptReceipt(invocation.cid.toString())
   const blobConcludeAccept = await createConcludeInvocation(
     issuer,
     audience,
@@ -133,4 +172,36 @@ const setupBlobAddResponse = async function (
     .fork(blobPutTask)
     .fork(blobAcceptTask)
     .fork(blobConcludeAccept)
+}
+
+/**
+ * @param {string} taskCid
+ * @returns {Promise<import('@ucanto/interface').Receipt>}
+ */
+export const generateAcceptReceipt = async (taskCid) => {
+  const issuer = await Signer.generate()
+  const content = (await randomCAR(128)).cid
+  const locationClaim = await Assert.location.delegate({
+    issuer,
+    audience: issuer,
+    with: issuer.toDIDKey(),
+    nb: {
+      content,
+      location: ['http://localhost'],
+    },
+    expiration: Infinity,
+  })
+
+  return await Receipt.issue({
+    issuer,
+    fx: {
+      fork: [locationClaim],
+    },
+    ran: parseLink(taskCid),
+    result: {
+      ok: {
+        site: locationClaim.link(),
+      },
+    },
+  })
 }

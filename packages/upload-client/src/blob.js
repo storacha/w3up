@@ -215,15 +215,15 @@ export async function add(
 
   const nextTasks = parseBlobAddReceiptNext(result)
 
-  const { receipt } = nextTasks.allocate
+  const { receipt: allocateReceipt } = nextTasks.allocate
   /* c8 ignore next 5 */
-  if (!receipt.out.ok) {
+  if (!allocateReceipt.out.ok) {
     throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
-      cause: receipt.out.error,
+      cause: allocateReceipt.out.error,
     })
   }
 
-  const { address } = receipt.out.ok
+  const { address } = allocateReceipt.out.ok
   if (address) {
     const fetchWithUploadProgress =
       options.fetchWithUploadProgress ||
@@ -305,7 +305,10 @@ export async function add(
   }
 
   // Ensure the blob has been accepted
-  const acceptReceipt = await poll(nextTasks.accept.task.link(), options)
+  let { receipt: acceptReceipt } = nextTasks.accept
+  if (!acceptReceipt?.out.ok) {
+    acceptReceipt = await poll(nextTasks.accept.task.link(), options)
+  }
 
   const blocks = new Map(
     [...acceptReceipt.iterateIPLDBlocks()].map((block) => [
@@ -315,7 +318,7 @@ export async function add(
   )
   const site = Delegation.view({
     root: /** @type {import('@ucanto/interface').UCANLink} */ (
-      acceptReceipt.out.ok.site
+      acceptReceipt.out.ok?.site
     ),
     blocks,
   })
