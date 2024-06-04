@@ -315,22 +315,12 @@ export async function add(
       block,
     ])
   )
-  const site = Delegation.view(
-    {
-      root: /** @type {import('@ucanto/interface').UCANLink} */ (
-        // @ts-ignore Property
-        acceptReceipt.out.ok.site
-      ),
-      blocks,
-    },
-    null
-  )
-  /* c8 ignore next 5 */
-  if (!site) {
-    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
-      cause: 'failed to get blob/accept receipt delegation view',
-    })
-  }
+  const site = Delegation.view({
+    root: /** @type {import('@ucanto/interface').UCANLink} */ (
+      acceptReceipt.out.ok.site
+    ),
+    blocks,
+  })
 
   return {
     multihash,
