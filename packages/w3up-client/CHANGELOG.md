@@ -1,5 +1,25 @@
 # Changelog
 
+## [14.0.0](https://github.com/w3s-project/w3up/compare/w3up-client-v13.1.1...w3up-client-v14.0.0) (2024-06-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444))
+* delegated capabilities required to use `uploadFile`, `uploadDirectory` and `uploadCAR` have changed. In order to use these methods your agent will now need to be delegated `blob/add`, `index/add`, `filecoin/offer` and `upload/add` capabilities. Note: no code changes are required.
+
+### Features
+
+* generate sharded DAG index on client and invoke w `index/add` ([#1451](https://github.com/w3s-project/w3up/issues/1451)) ([a6d9026](https://github.com/w3s-project/w3up/commit/a6d9026536e60c0ce93b613acc6e337f2a21aeb2))
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/w3s-project/w3up/issues/1444)) ([c9bf33e](https://github.com/w3s-project/w3up/commit/c9bf33e5512397a654db933a5e6b5db0c7c22da5))
+
+
+### Fixes
+
+* check for blob/accept receipts before blob/add is concluded ([#1459](https://github.com/w3s-project/w3up/issues/1459)) ([462518c](https://github.com/w3s-project/w3up/commit/462518ca832515c65cc674e8aef3c28f2228797d))
+* export blob client ([#1485](https://github.com/w3s-project/w3up/issues/1485)) ([7944077](https://github.com/w3s-project/w3up/commit/7944077d91d5dd154bac2760dff831a41d4f814b))
+* rename blob and index client capabilities ([#1478](https://github.com/w3s-project/w3up/issues/1478)) ([17e3a31](https://github.com/w3s-project/w3up/commit/17e3a3161c6585b1844abcf7ed27252fa8580870))
+
 ## [13.1.1](https://github.com/w3s-project/w3up/compare/w3up-client-v13.1.0...w3up-client-v13.1.1) (2024-05-15)
 
 
