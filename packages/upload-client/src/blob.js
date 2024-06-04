@@ -280,28 +280,29 @@ export async function add(
   }
 
   // Invoke `conclude` with `http/put` receipt
-  const derivedSigner = ed25519.from(
-    /** @type {import('@ucanto/interface').SignerArchive<import('@ucanto/interface').DID, typeof ed25519.signatureCode>} */
-    (nextTasks.put.task.facts[0]['keys'])
-  )
-
-  const httpPutReceipt = await Receipt.issue({
-    issuer: derivedSigner,
-    ran: nextTasks.put.task.cid,
-    result: { ok: {} },
-  })
-  const httpPutConcludeInvocation = createConcludeInvocation(
-    issuer,
-    // @ts-expect-error object of type unknown
-    audience,
-    httpPutReceipt
-  )
-  const ucanConclude = await httpPutConcludeInvocation.execute(conn)
-
-  if (!ucanConclude.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
-      cause: result.out.error,
+  let { receipt: httpPutReceipt } = nextTasks.put
+  if (!httpPutReceipt?.out.ok) {
+    const derivedSigner = ed25519.from(
+      /** @type {import('@ucanto/interface').SignerArchive<import('@ucanto/interface').DID, typeof ed25519.signatureCode>} */
+      (nextTasks.put.task.facts[0]['keys'])
+    )
+    httpPutReceipt = await Receipt.issue({
+      issuer: derivedSigner,
+      ran: nextTasks.put.task.cid,
+      result: { ok: {} },
     })
+    const httpPutConcludeInvocation = createConcludeInvocation(
+      issuer,
+      // @ts-expect-error object of type unknown
+      audience,
+      httpPutReceipt
+    )
+    const ucanConclude = await httpPutConcludeInvocation.execute(conn)
+    if (!ucanConclude.out.ok) {
+      throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+        cause: result.out.error,
+      })
+    }
   }
 
   // Ensure the blob has been accepted

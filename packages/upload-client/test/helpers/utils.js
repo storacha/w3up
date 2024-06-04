@@ -23,6 +23,7 @@ export const setupBlobAddSuccessResponse = async function (
     'http://localhost:9200',
     options,
     invocation,
+    false,
     false
   )
 }
@@ -37,6 +38,7 @@ export const setupBlobAdd4xxResponse = async function (
     'http://localhost:9400',
     options,
     invocation,
+    false,
     false
   )
 }
@@ -51,6 +53,7 @@ export const setupBlobAdd5xxResponse = async function (
     'http://localhost:9500',
     options,
     invocation,
+    false,
     false
   )
 }
@@ -65,12 +68,29 @@ export const setupBlobAddWithAcceptReceiptSuccessResponse = async function (
     'http://localhost:9200',
     options,
     invocation,
+    false,
     true
+  )
+}
+
+export const setupBlobAddWithHttpPutReceiptSuccessResponse = async function (
+  // @ts-ignore
+  options,
+  // @ts-ignore
+  invocation
+) {
+  return setupBlobAddResponse(
+    'http://localhost:9200',
+    options,
+    invocation,
+    true,
+    false
   )
 }
 
 /**
  * @param {string} url
+ * @param {boolean} hasHttpPutReceipt
  * @param {boolean} hasAcceptReceipt
  */
 const setupBlobAddResponse = async function (
@@ -79,6 +99,7 @@ const setupBlobAddResponse = async function (
   { issuer, with: space, proofs, audience },
   // @ts-ignore
   invocation,
+  hasHttpPutReceipt,
   hasAcceptReceipt
 ) {
   const blob = invocation.capabilities[0].nb.blob
@@ -134,6 +155,18 @@ const setupBlobAddResponse = async function (
       expiration: Infinity,
     })
     .delegate()
+  const blobPutReceipt = !hasHttpPutReceipt
+    ? await Receipt.issue({
+        issuer,
+        ran: blobPutTask.cid,
+        result: { error: new Error() },
+      })
+    : await generateAcceptReceipt(blobPutTask.cid.toString())
+  const blobConcludePut = await createConcludeInvocation(
+    issuer,
+    audience,
+    blobPutReceipt
+  ).delegate()
 
   const blobAcceptTask = await W3sBlobCapabilities.accept
     .invoke({
@@ -149,13 +182,14 @@ const setupBlobAddResponse = async function (
     })
     .delegate()
 
-  const blobAcceptReceipt = hasAcceptReceipt
+  // FIXME not generating the right kind of receipt here, but it should be enough for mocking
+  const blobAcceptReceipt = !hasAcceptReceipt
     ? await Receipt.issue({
         issuer,
         ran: blobAcceptTask.cid,
         result: { error: new Error() },
       })
-    : await generateAcceptReceipt(invocation.cid.toString())
+    : await generateAcceptReceipt(blobAcceptTask.cid.toString())
   const blobConcludeAccept = await createConcludeInvocation(
     issuer,
     audience,
@@ -170,6 +204,7 @@ const setupBlobAddResponse = async function (
     .fork(blobAllocateTask)
     .fork(blobConcludeAllocate)
     .fork(blobPutTask)
+    .fork(blobConcludePut)
     .fork(blobAcceptTask)
     .fork(blobConcludeAccept)
 }
