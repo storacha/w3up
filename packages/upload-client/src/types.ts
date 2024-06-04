@@ -2,7 +2,13 @@ import type {
   FetchOptions as IpfsUtilsFetchOptions,
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types.js'
-import { Link, UnknownLink, Version, MultihashHasher } from 'multiformats'
+import {
+  MultihashDigest,
+  Link,
+  UnknownLink,
+  Version,
+  MultihashHasher,
+} from 'multiformats'
 import { Block } from '@ipld/unixfs'
 import {
   ServiceMethod,
@@ -12,6 +18,8 @@ import {
   DID,
   Principal,
   Failure,
+  Delegation,
+  Capabilities,
 } from '@ucanto/interface'
 import {
   UCANConclude,
@@ -307,6 +315,7 @@ export interface RequestOptions
     UploadProgressTrackable {
   fetch?: typeof globalThis.fetch
   nonce?: string
+  receiptsEndpoint?: string
 }
 
 export interface ListRequestOptions extends RequestOptions, Pageable {}
@@ -373,4 +382,9 @@ export interface FileLike extends BlobLike {
    * Name of the file. May include path information.
    */
   name: string
+}
+
+export interface BlobAddOk {
+  multihash: MultihashDigest
+  site: Delegation<Capabilities>
 }

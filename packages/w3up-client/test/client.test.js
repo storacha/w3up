@@ -6,6 +6,7 @@ import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { Client } from '../src/client.js'
 import * as Test from './test.js'
+import { receiptsEndpoint } from './helpers/utils.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -45,6 +46,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        receiptsEndpoint,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -124,6 +126,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        receiptsEndpoint,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -166,6 +169,7 @@ export const testClient = {
         onShardStored: (meta) => {
           carCID = meta.cid
         },
+        receiptsEndpoint,
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -184,7 +188,7 @@ export const testClient = {
       )
     },
   }),
-  getRecipt: Test.withContext({
+  getReceipt: Test.withContext({
     'should find a receipt': async (assert, { connection }) => {
       const taskCid = parseLink(
         'bafyreibo6nqtvp67daj7dkmeb5c2n6bg5bunxdmxq3lghtp3pmjtzpzfma'
@@ -403,15 +407,18 @@ export const testClient = {
         consumer: space.did(),
       })
 
-      const root = await alice.uploadFile(new Blob([bytes]))
+      const content = new Blob([bytes])
+      const fileLink = await alice.uploadFile(content, {
+        receiptsEndpoint,
+      })
 
-      assert.deepEqual(await uploadTable.exists(space.did(), root), {
+      assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
         ok: true,
       })
 
       assert.deepEqual(
         await alice
-          .remove(root, { shards: true })
+          .remove(fileLink, { shards: true })
           .then((ok) => ({ ok: {} }))
           .catch((error) => {
             error
@@ -419,7 +426,7 @@ export const testClient = {
         { ok: {} }
       )
 
-      assert.deepEqual(await uploadTable.exists(space.did(), root), {
+      assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
         ok: false,
       })
     },
@@ -450,15 +457,18 @@ export const testClient = {
           consumer: space.did(),
         })
 
-        const root = await alice.uploadFile(new Blob([bytes]))
+        const content = new Blob([bytes])
+        const fileLink = await alice.uploadFile(content, {
+          receiptsEndpoint,
+        })
 
-        assert.deepEqual(await uploadTable.exists(space.did(), root), {
+        assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
           ok: true,
         })
 
         assert.deepEqual(
           await alice
-            .remove(root)
+            .remove(fileLink)
             .then((ok) => ({ ok: {} }))
             .catch((error) => {
               error
@@ -466,7 +476,7 @@ export const testClient = {
           { ok: {} }
         )
 
-        assert.deepEqual(await uploadTable.exists(space.did(), root), {
+        assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
           ok: false,
         })
       },
@@ -524,9 +534,12 @@ export const testClient = {
         consumer: space.did(),
       })
 
-      const root = await alice.uploadFile(new Blob(bytesArray))
+      const content = new Blob(bytesArray)
+      const fileLink = await alice.uploadFile(content, {
+        receiptsEndpoint,
+      })
 
-      const upload = await uploadTable.get(space.did(), root)
+      const upload = await uploadTable.get(space.did(), fileLink)
 
       const shard = upload.ok?.shards?.[0]
       if (!shard) {
@@ -538,7 +551,7 @@ export const testClient = {
 
       assert.deepEqual(
         await alice
-          .remove(root, { shards: true })
+          .remove(fileLink, { shards: true })
           .then(() => ({ ok: {} }))
           .catch((error) => ({ error })),
         { ok: {} }

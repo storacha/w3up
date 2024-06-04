@@ -2,6 +2,7 @@ import {
   uploadFile,
   uploadDirectory,
   uploadCAR,
+  Receipt,
 } from '@web3-storage/upload-client'
 import {
   Blob as BlobCapabilities,
@@ -9,7 +10,6 @@ import {
   Upload as UploadCapabilities,
   Filecoin as FilecoinCapabilities,
 } from '@web3-storage/capabilities'
-import { CAR } from '@ucanto/transport'
 import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
@@ -190,28 +190,8 @@ export class Client extends Base {
    * @param {import('multiformats').UnknownLink} taskCid
    */
   async getReceipt(taskCid) {
-    // Fetch receipt from endpoint
-    const workflowResponse = await fetch(
-      new URL(taskCid.toString(), this._receiptsEndpoint)
-    )
-    /* c8 ignore start */
-    if (!workflowResponse.ok) {
-      throw new Error(
-        `no receipt available for requested task ${taskCid.toString()}`
-      )
-    }
-    /* c8 ignore stop */
-    // Get receipt from Message Archive
-    const agentMessageBytes = new Uint8Array(
-      await workflowResponse.arrayBuffer()
-    )
-    // Decode message
-    const agentMessage = await CAR.request.decode({
-      body: agentMessageBytes,
-      headers: {},
-    })
-    // Get receipt from the potential multiple receipts in the message
-    return agentMessage.receipts.get(taskCid.toString())
+    const receiptsEndpoint = new URL(this._receiptsEndpoint).toString()
+    return Receipt.poll(taskCid, { receiptsEndpoint })
   }
 
   /**

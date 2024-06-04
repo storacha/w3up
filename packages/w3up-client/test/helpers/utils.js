@@ -1,5 +1,5 @@
-import { Receipt } from '@ucanto/core'
 import { conclude } from '@web3-storage/capabilities/ucan'
+import { Receipt } from '@ucanto/core'
 import * as Server from '@ucanto/server'
 import { UCAN } from '@web3-storage/capabilities'
 import * as HTTP from '@web3-storage/capabilities/http'
@@ -8,6 +8,8 @@ import { W3sBlob } from '@web3-storage/capabilities'
 import * as Types from '../../src/types.js'
 
 export const validateAuthorization = () => ({ ok: {} })
+
+export const receiptsEndpoint = 'http://localhost:9201'
 
 /**
  * Utility function that creates a delegation from account to agent and an

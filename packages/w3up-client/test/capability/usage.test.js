@@ -1,6 +1,7 @@
 import { AgentData } from '@web3-storage/access/agent'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
+import { receiptsEndpoint } from '../helpers/utils.js'
 
 export const UsageClient = Test.withContext({
   report: {
@@ -29,7 +30,9 @@ export const UsageClient = Test.withContext({
       })
 
       const content = new Blob(['hello world'])
-      await alice.uploadFile(content)
+      await alice.uploadFile(content, {
+        receiptsEndpoint,
+      })
 
       const period = { from: new Date(0), to: new Date() }
 

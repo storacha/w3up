@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/w3s-project/w3up/compare/blob-index-v1.0.2...blob-index-v1.0.3) (2024-06-04)
+
+
+### Fixes
+
+* check for blob/accept receipts before blob/add is concluded ([#1459](https://github.com/w3s-project/w3up/issues/1459)) ([462518c](https://github.com/w3s-project/w3up/commit/462518ca832515c65cc674e8aef3c28f2228797d))
+
 ## [1.0.2](https://github.com/w3s-project/w3up/compare/blob-index-v1.0.1...blob-index-v1.0.2) (2024-05-15)
 
 
