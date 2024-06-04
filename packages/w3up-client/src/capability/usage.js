@@ -9,6 +9,9 @@ export class UsageClient extends Base {
   /**
    * Get a usage report for the passed space in the given time period.
    *
+   * Required delegated capabilities:
+   * - `usage/report`
+   *
    * @param {import('../types.js').SpaceDID} space
    * @param {{ from: Date, to: Date }} period
    * @param {object} [options]

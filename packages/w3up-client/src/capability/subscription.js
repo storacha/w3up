@@ -9,6 +9,9 @@ export class SubscriptionClient extends Base {
   /**
    * List subscriptions for the passed account.
    *
+   * Required delegated capabilities:
+   * - `subscription/list`
+   *
    * @param {import('@web3-storage/access').AccountDID} account
    * @param {object} [options]
    * @param {string} [options.nonce]
