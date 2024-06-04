@@ -108,6 +108,12 @@ export class Client extends Base {
   /**
    * Uploads a file to the service and returns the root data CID for the
    * generated DAG.
+   * 
+   * Required delegated capabilities:
+   * - `filecoin/offer`
+   * - `space/blob/add`
+   * - `space/index/add`
+   * - `upload/add`
    *
    * @param {import('./types.js').BlobLike} file - File data.
    * @param {import('./types.js').UploadOptions} [options]
@@ -128,6 +134,12 @@ export class Client extends Base {
    * for the generated DAG. All files are added to a container directory, with
    * paths in file names preserved.
    *
+   * Required delegated capabilities:
+   * - `filecoin/offer`
+   * - `space/blob/add`
+   * - `space/index/add`
+   * - `upload/add`
+   *
    * @param {import('./types.js').FileLike[]} files - File data.
    * @param {import('./types.js').UploadDirectoryOptions} [options]
    */
@@ -145,12 +157,18 @@ export class Client extends Base {
   /**
    * Uploads a CAR file to the service.
    *
-   * The difference between this function and `capability.store.add` is that
+   * The difference between this function and `capability.blob.add` is that
    * the CAR file is automatically sharded, an index is generated, uploaded and
    * registered (see `capability.index.add`) and finally an an "upload" is
    * registered, linking the individual shards (see `capability.upload.add`).
    *
    * Use the `onShardStored` callback to obtain the CIDs of the CAR file shards.
+   * 
+   * Required delegated capabilities:
+   * - `filecoin/offer`
+   * - `space/blob/add`
+   * - `space/index/add`
+   * - `upload/add`
    *
    * @param {import('./types.js').BlobLike} car - CAR file.
    * @param {import('./types.js').UploadOptions} [options]
@@ -336,6 +354,12 @@ export class Client extends Base {
    *
    * ⚠️ If `shards` option is `true` all shards will be deleted even if there is another upload(s) that
    * reference same shards, which in turn could corrupt those uploads.
+   * 
+   * Required delegated capabilities:
+   * - `space/blob/remove`
+   * - `store/remove`
+   * - `upload/get`
+   * - `upload/remove`
    *
    * @param {import('multiformats').UnknownLink} contentCID
    * @param {object} [options]

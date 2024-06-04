@@ -4,6 +4,8 @@ import * as Plan from '@web3-storage/capabilities/plan'
 
 export class PlanClient extends Base {
   /**
+   * Required delegated capabilities:
+   * - `plan/get`
    *
    * @param {import('@web3-storage/access').AccountDID} account
    * @param {object} [options]
@@ -21,6 +23,8 @@ export class PlanClient extends Base {
   }
 
   /**
+   * Required delegated capabilities:
+   * - `plan/set`
    *
    * @param {API.AccountDID} account
    * @param {API.DID} product

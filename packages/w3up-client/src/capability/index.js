@@ -8,6 +8,9 @@ import { Base } from '../base.js'
 export class IndexClient extends Base {
   /**
    * Register an "index" to the resource.
+   * 
+   * Required delegated capabilities:
+   * - `space/index/add`
    *
    * @param {import('../types.js').CARLink} index - CID of the CAR file that contains the index data.
    * @param {import('../types.js').RequestOptions} [options]
