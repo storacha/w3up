@@ -20,6 +20,7 @@ import {
 } from './helpers/utils.js'
 import { fetchWithUploadProgress } from '../src/fetch-with-upload-progress.js'
 import { ReceiptNotFound } from '../src/receipts.js'
+import { Assert } from '@web3-storage/content-claims/capability'
 
 describe('Blob.add', () => {
   it('stores bytes with the service', async () => {
@@ -76,7 +77,7 @@ describe('Blob.add', () => {
 
     /** @type {import('../src/types.js').ProgressStatus[]} */
     const progress = []
-    const { multihash } = await Blob.add(
+    const { site, multihash } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
       bytes,
       {
@@ -89,6 +90,12 @@ describe('Blob.add', () => {
         receiptsEndpoint,
       }
     )
+
+    assert(site)
+    assert.equal(site.capabilities[0].can, Assert.location.can)
+    // we're not verifying this as it's a mocked value
+    // @ts-ignore nb unknown
+    assert.ok(site.capabilities[0].nb.content.multihash.bytes)
 
     assert(service.space.blob.add.called)
     assert.equal(service.space.blob.add.callCount, 1)
