@@ -10,6 +10,7 @@ import {
   Multihash,
   BlobListItem,
   BlobRemoveSuccess,
+  BlobGetSuccess,
 } from '@web3-storage/capabilities/types'
 
 import { RecordKeyConflict, ListResponse } from '../types.js'
@@ -21,7 +22,7 @@ export interface AllocationsStorage {
   get: (
     space: DID,
     blobMultihash: Multihash
-  ) => Promise<Result<BlobGetOutput, Failure>>
+  ) => Promise<Result<BlobGetSuccess, Failure>>
   exists: (
     space: DID,
     blobMultihash: Multihash
@@ -58,11 +59,6 @@ export interface BlobAddInput {
 }
 
 export interface BlobAddOutput extends Omit<BlobAddInput, 'space' | 'cause'> {}
-
-export interface BlobGetOutput {
-  blob: { digest: Uint8Array; size: number }
-  cause: UnknownLink
-}
 
 export interface BlobsStorage {
   has: (content: Multihash) => Promise<Result<boolean, Failure>>

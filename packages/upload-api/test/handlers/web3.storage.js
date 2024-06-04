@@ -1,10 +1,7 @@
 import * as API from '../../src/types.js'
 import { equals } from 'uint8arrays'
-import { create as createLink } from 'multiformats/link'
 import { Absentee } from '@ucanto/principal'
-import { Digest } from 'multiformats/hashes/digest'
 import { sha256 } from 'multiformats/hashes/sha2'
-import { code as rawCode } from 'multiformats/codecs/raw'
 import { Assert } from '@web3-storage/content-claims/capability'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
@@ -225,7 +222,7 @@ export const test = {
       }
 
       // second blob allocate invocation
-      const reallocation = await await W3sBlobCapabilities.allocate
+      const reallocation = await W3sBlobCapabilities.allocate
         .invoke({
           issuer: context.id,
           audience: context.id,
@@ -604,10 +601,6 @@ export const test = {
     const multihash = await sha256.digest(data)
     const digest = multihash.bytes
     const size = data.byteLength
-    const content = createLink(
-      rawCode,
-      new Digest(sha256.code, 32, digest, digest)
-    )
 
     // create service connection
     const connection = connect({
@@ -682,7 +675,7 @@ export const test = {
       equals(
         // @ts-expect-error nb unknown
         delegation.capabilities[0].nb.content.digest,
-        content.multihash.bytes
+        digest
       )
     )
     // @ts-expect-error nb unknown
