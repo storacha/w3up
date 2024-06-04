@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.0](https://github.com/w3s-project/w3up/compare/w3up-client-v14.0.0...w3up-client-v14.1.0) (2024-06-04)
+
+
+### Features
+
+* add blob/get ([#1484](https://github.com/w3s-project/w3up/issues/1484)) ([328039d](https://github.com/w3s-project/w3up/commit/328039d8a29fec3c1bbab28d1bb9de1643f54f71))
+
 ## [14.0.0](https://github.com/w3s-project/w3up/compare/w3up-client-v13.1.1...w3up-client-v14.0.0) (2024-06-04)
 
 
