@@ -69,7 +69,7 @@ export class Receipt {
           // @ts-ignore
           if (res.error.name === 'ReceiptNotFound') {
             // throw an error that will cause `p-retry` to retry with
-            throw new ReceiptNotFound(taskCid)
+            throw res.error
           } else {
             throw new AbortError(
               new Error('failed to fetch blob/accept receipt', {
