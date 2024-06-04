@@ -211,6 +211,11 @@ export type {
   BlobNotFound,
   ShardedDAGIndex,
 } from './types/index.js'
+export type {
+ClaimsInvocationConfig,
+ClaimsClientContext,
+Service as ClaimsService
+} from './types/content-claims.js'
 
 export interface Service extends StorefrontService, W3sService {
   store: {
