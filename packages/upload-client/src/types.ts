@@ -18,7 +18,8 @@ import {
   DID,
   Principal,
   Failure,
-  UCANLink,
+  Delegation,
+  Capabilities,
 } from '@ucanto/interface'
 import {
   UCANConclude,
@@ -385,5 +386,5 @@ export interface FileLike extends BlobLike {
 
 export interface BlobAddOk {
   multihash: MultihashDigest
-  site: UCANLink
+  site: Delegation<Capabilities>
 }

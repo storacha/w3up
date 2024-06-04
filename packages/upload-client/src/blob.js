@@ -334,7 +334,7 @@ export async function add(
 
   return {
     multihash,
-    site: site.link(),
+    site,
   }
 }
 
