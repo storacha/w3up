@@ -79,7 +79,7 @@ export class Receipt {
     const url = new URL(taskCid.toString(), this.receiptsEndpoint)
     const workflowResponse = await this.fetch(url)
     /* c8 ignore start */
-    if (!workflowResponse.ok) {
+    if (!workflowResponse.ok && workflowResponse.status === 404) {
       return {
         error: new ReceiptNotFound(taskCid),
       }
