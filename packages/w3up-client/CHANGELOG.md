@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.1](https://github.com/w3s-project/w3up/compare/w3up-client-v14.1.0...w3up-client-v14.1.1) (2024-06-05)
+
+
+### Fixes
+
+* trigger w3up client release with new client ([#1497](https://github.com/w3s-project/w3up/issues/1497)) ([9616f0d](https://github.com/w3s-project/w3up/commit/9616f0d64d342e2e1c9524e900549ff94471a10e))
+
 ## [14.1.0](https://github.com/w3s-project/w3up/compare/w3up-client-v14.0.0...w3up-client-v14.1.0) (2024-06-04)
 
 
