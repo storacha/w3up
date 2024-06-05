@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.1.1](https://github.com/w3s-project/w3up/compare/upload-client-v16.1.0...upload-client-v16.1.1) (2024-06-05)
+
+
+### Fixes
+
+* reuse http/put and blob/accept receipts when available ([#1495](https://github.com/w3s-project/w3up/issues/1495)) ([416802e](https://github.com/w3s-project/w3up/commit/416802e458734d638476078235526830dfdc21ca))
+
 ## [16.1.0](https://github.com/w3s-project/w3up/compare/upload-client-v16.0.2...upload-client-v16.1.0) (2024-06-04)
 
 
