@@ -16,6 +16,8 @@ import {
   setupBlobAddSuccessResponse,
   setupBlobAdd4xxResponse,
   setupBlobAdd5xxResponse,
+  setupBlobAddWithAcceptReceiptSuccessResponse,
+  setupBlobAddWithHttpPutReceiptSuccessResponse,
   receiptsEndpoint,
 } from './helpers/utils.js'
 import { fetchWithUploadProgress } from '../src/fetch-with-upload-progress.js'
@@ -306,6 +308,136 @@ describe('Blob.add', () => {
       ),
       ReceiptNotFound
     )
+  })
+
+  it('reuses the blob/accept receipt when it is already available', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
+
+    const proofs = [
+      await BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        }),
+      },
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddWithAcceptReceiptSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    const { site, multihash } = await Blob.add(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      bytes,
+      {
+        connection,
+        receiptsEndpoint,
+      }
+    )
+
+    assert(multihash)
+    assert.deepEqual(multihash, bytesHash)
+
+    assert(site)
+    assert.equal(site.capabilities[0].can, Assert.location.can)
+    // we're not verifying this as it's a mocked value
+    // @ts-ignore nb unknown
+    assert.ok(site.capabilities[0].nb.content.multihash.bytes)
+  })
+
+  it('reuses the http/put receipt when it is already available', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate()
+    const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
+
+    const proofs = [
+      await BlobCapabilities.add.delegate({
+        issuer: space,
+        audience: agent,
+        with: space.did(),
+        expiration: Infinity,
+      }),
+    ]
+
+    const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        }),
+      },
+      space: {
+        blob: {
+          // @ts-ignore Argument of type
+          add: provide(BlobCapabilities.add, ({ invocation }) => {
+            return setupBlobAddWithHttpPutReceiptSuccessResponse(
+              { issuer: space, audience: agent, with: space, proofs },
+              invocation
+            )
+          }),
+        },
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+
+    const { site, multihash } = await Blob.add(
+      { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      bytes,
+      {
+        connection,
+        receiptsEndpoint,
+      }
+    )
+
+    assert(multihash)
+    assert.deepEqual(multihash, bytesHash)
+
+    assert(site)
+    assert.equal(site.capabilities[0].can, Assert.location.can)
+    // we're not verifying this as it's a mocked value
+    // @ts-ignore nb unknown
+    assert.ok(site.capabilities[0].nb.content.multihash.bytes)
   })
 
   it('throws for bucket URL client error 4xx', async () => {
