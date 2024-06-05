@@ -132,7 +132,7 @@ export class Client extends Base {
   /**
    * Uploads a directory of files to the service and returns the root data CID
    * for the generated DAG. All files are added to a container directory, with
-   * paths in file names preserved.
+   * paths in the file names preserved.
    *
    * Required delegated capabilities:
    * - `filecoin/offer`
