@@ -1,4 +1,10 @@
-import { ConnectionView, DID, Principal, Proof, Signer } from '@ucanto/interface'
+import {
+  ConnectionView,
+  DID,
+  Principal,
+  Proof,
+  Signer,
+} from '@ucanto/interface'
 import { Service } from '@web3-storage/content-claims/server/service/api'
 
 export type { ConnectionView, DID, Principal, Proof, Signer }
@@ -15,9 +21,11 @@ export interface ClaimsInvocationConfig {
   proofs?: Proof[]
 }
 
+export interface ClaimsClientConfig {
+  invocationConfig: ClaimsInvocationConfig
+  connection: ConnectionView<Service>
+}
+
 export interface ClaimsClientContext {
-  claimsService: {
-    invocationConfig: ClaimsInvocationConfig
-    connection: ConnectionView<Service>
-  }
+  claimsService: ClaimsClientConfig
 }

@@ -71,7 +71,7 @@ const add = async ({ capability }, context) => {
     // publish the index data to IPNI
     context.ipniService.publish(idxRes.ok),
     // publish a content claim for the index
-    publishIndexClaim(context, { content: idxRes.ok.content, index: idxLink })
+    publishIndexClaim(context, { content: idxRes.ok.content, index: idxLink }),
   ])
   for (const res of publishRes) {
     if (res.error) return res
@@ -99,7 +99,7 @@ const assertAllocated = async (context, space, digest, errorName) => {
 
 /**
  * @param {API.ClaimsClientContext} ctx
- * @param {{ content: API.UnknownLink, index: API.CARLink }} params 
+ * @param {{ content: API.UnknownLink, index: API.CARLink }} params
  */
 const publishIndexClaim = async (ctx, { content, index }) => {
   const { invocationConfig, connection } = ctx.claimsService
