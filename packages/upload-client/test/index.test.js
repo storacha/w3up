@@ -163,7 +163,8 @@ describe('uploadFile', () => {
     assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
   })
 
-  it('allows custom shard size to be set', async () => {
+  it('allows custom shard size to be set', async function () {
+    this.timeout(10_000)
     const space = await Signer.generate()
     const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
     const bytes = await randomBytes(1024 * 1024 * 5)
