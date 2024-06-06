@@ -392,7 +392,6 @@ export type UploadServiceContext = ConsumerServiceContext &
   ConcludeServiceContext & {
     signer: EdSigner.Signer
     uploadTable: UploadTable
-    dudewhereBucket: DudewhereBucket
   }
 
 export interface AccessClaimContext {
@@ -626,10 +625,6 @@ export interface CarStoreBucketOptions {
 
 export interface CarStoreBucketService {
   use(options?: CarStoreBucketOptions): Promise<CarStoreBucket>
-}
-
-export interface DudewhereBucket {
-  put: (dataCid: string, carCid: string) => Promise<void>
 }
 
 /**
