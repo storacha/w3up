@@ -104,9 +104,13 @@ const assertAllocated = async (context, space, digest, errorName) => {
 const publishIndexClaim = async (ctx, { content, index }) => {
   const { invocationConfig, connection } = ctx.claimsService
   const { issuer, audience, with: resource, proofs } = invocationConfig
-  const expiration = Infinity
-  const nb = { content, index }
-  const conf = { issuer, audience, with: resource, nb, expiration, proofs }
-  const res = await Assert.index.invoke(conf).execute(connection)
+  const res = await Assert.index.invoke({
+    issuer,
+    audience,
+    with: resource,
+    nb: { content, index },
+    expiration: Infinity,
+    proofs,
+  }).execute(connection)
   return res.out
 }
