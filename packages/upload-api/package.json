@@ -205,7 +205,6 @@
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-api": "workspace:^",
     "multiformats": "^12.1.2",
-    "p-retry": "^5.1.2",
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
