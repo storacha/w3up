@@ -1,5 +1,22 @@
 # Changelog
 
+## [18.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v17.1.0...upload-api-v18.0.0) (2024-06-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* `AllocationsStorage` and `BlobsStorage` methods not take `MultihashDigest` types instead of `Uint8Array`s.
+
+### Features
+
+* publish index claim ([#1487](https://github.com/w3s-project/w3up/issues/1487)) ([237b0c6](https://github.com/w3s-project/w3up/commit/237b0c6cda70ae3e156bac8a011a2739b346ae4b))
+
+
+### Fixes
+
+* stop writing to DUDEWHERE ([#1500](https://github.com/w3s-project/w3up/issues/1500)) ([cf0a1d6](https://github.com/w3s-project/w3up/commit/cf0a1d6e08d515854080899e57d16dca420f81e6))
+* use MultihashDigest type in stores ([#1474](https://github.com/w3s-project/w3up/issues/1474)) ([6c6a3bd](https://github.com/w3s-project/w3up/commit/6c6a3bdcb924cf6f9a4723f710a27f1ae34ca560))
+
 ## [17.1.0](https://github.com/w3s-project/w3up/compare/upload-api-v17.0.0...upload-api-v17.1.0) (2024-06-04)
 
 
