@@ -12,6 +12,7 @@ import {
   BlobRemoveSuccess,
   BlobGetSuccess,
 } from '@web3-storage/capabilities/types'
+import { MultihashDigest } from 'multiformats'
 
 import { RecordKeyConflict, ListResponse } from '../types.js'
 import { Storage } from './storage.js'
@@ -21,11 +22,11 @@ export type TasksStorage = Storage<UnknownLink, Invocation>
 export interface AllocationsStorage {
   get: (
     space: DID,
-    blobMultihash: Multihash
+    digest: MultihashDigest
   ) => Promise<Result<BlobGetSuccess, Failure>>
   exists: (
     space: DID,
-    blobMultihash: Multihash
+    digest: MultihashDigest
   ) => Promise<Result<boolean, Failure>>
   /** Inserts an item in the table if it does not already exist. */
   insert: (
@@ -38,7 +39,7 @@ export interface AllocationsStorage {
   /** Removes an item from the table, returning zero on size if non existent. */
   remove: (
     space: DID,
-    digest: Multihash
+    digest: MultihashDigest
   ) => Promise<Result<BlobRemoveSuccess, Failure>>
 }
 
@@ -61,9 +62,9 @@ export interface BlobAddInput {
 export interface BlobAddOutput extends Omit<BlobAddInput, 'space' | 'cause'> {}
 
 export interface BlobsStorage {
-  has: (content: Multihash) => Promise<Result<boolean, Failure>>
+  has: (content: MultihashDigest) => Promise<Result<boolean, Failure>>
   createUploadUrl: (
-    content: Multihash,
+    content: MultihashDigest,
     size: number,
     /**
      * The number of seconds before the presigned URL expires
@@ -81,5 +82,5 @@ export interface BlobsStorage {
       Failure
     >
   >
-  createDownloadUrl: (content: Multihash) => Promise<Result<URI, Failure>>
+  createDownloadUrl: (content: MultihashDigest) => Promise<Result<URI, Failure>>
 }

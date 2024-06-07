@@ -20,7 +20,7 @@ export const test = {
         size: size,
       }
       const createUploadUrl = await blobsStorage.createUploadUrl(
-        blob.digest,
+        multihash0,
         blob.size,
         expiresIn
       )
@@ -41,7 +41,7 @@ export const test = {
       assert.equal(goodPut.status, 200, await goodPut.text())
 
       // check it exists
-      const hasBlob = await blobsStorage.has(blob.digest)
+      const hasBlob = await blobsStorage.has(multihash0)
       assert.ok(hasBlob.ok)
     },
 
@@ -54,7 +54,7 @@ export const test = {
     const expires = 60 * 60 * 24 // 1 day
 
     const upload = Result.unwrap(
-      await blobsStorage.createUploadUrl(digest.bytes, data.length, expires)
+      await blobsStorage.createUploadUrl(digest, data.length, expires)
     )
 
     await fetch(upload.url, {
@@ -65,7 +65,7 @@ export const test = {
     })
 
     const downloadUrl = Result.unwrap(
-      await blobsStorage.createDownloadUrl(digest.bytes)
+      await blobsStorage.createDownloadUrl(digest)
     )
 
     const res = await fetch(downloadUrl)

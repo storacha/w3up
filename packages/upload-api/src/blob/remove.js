@@ -1,5 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as Blob from '@web3-storage/capabilities/blob'
+import * as Digest from 'multiformats/hashes/digest'
 import * as API from '../types.js'
 
 import { RecordNotFoundErrorName } from '../errors.js'
@@ -11,7 +12,8 @@ import { RecordNotFoundErrorName } from '../errors.js'
 export function blobRemoveProvider(context) {
   return Server.provide(Blob.remove, async ({ capability }) => {
     const space = capability.with
-    const { digest } = capability.nb
+    const digest = Digest.decode(capability.nb.digest)
+
     const res = await context.allocationsStorage.remove(space, digest)
     if (res.error && res.error.name === RecordNotFoundErrorName) {
       return {

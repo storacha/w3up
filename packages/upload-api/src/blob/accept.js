@@ -27,8 +27,9 @@ export function blobAcceptProvider(context) {
       }
 
       const { blob, space } = capability.nb
+      const digest = Digest.decode(blob.digest)
       // If blob is not stored, we must fail
-      const hasBlob = await context.blobsStorage.has(blob.digest)
+      const hasBlob = await context.blobsStorage.has(digest)
       if (hasBlob.error) {
         return hasBlob
       } else if (!hasBlob.ok) {
@@ -37,10 +38,7 @@ export function blobAcceptProvider(context) {
         }
       }
 
-      const digest = Digest.decode(blob.digest)
-      const createUrl = await context.blobsStorage.createDownloadUrl(
-        digest.bytes
-      )
+      const createUrl = await context.blobsStorage.createDownloadUrl(digest)
       if (createUrl.error) {
         return createUrl
       }

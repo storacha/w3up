@@ -87,7 +87,7 @@ const add = async ({ capability }, context) => {
  * @returns {Promise<API.Result<API.Unit, API.IndexNotFound|API.ShardNotFound|API.SliceNotFound|API.Failure>>}
  */
 const assertAllocated = async (context, space, digest, errorName) => {
-  const result = await context.allocationsStorage.exists(space, digest.bytes)
+  const result = await context.allocationsStorage.exists(space, digest)
   if (result.error) return result
   if (!result.ok)
     return error(
