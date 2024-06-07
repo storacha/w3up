@@ -204,6 +204,8 @@ import { StorageGetError } from './types/storage.js'
 import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, BlobAddInput }
 import { IPNIService, IndexServiceContext } from './types/index.js'
+import { ClaimsClientConfig } from './types/content-claims.js'
+import { Claim } from '@web3-storage/content-claims/client/api'
 export type {
   IndexServiceContext,
   IPNIService,
@@ -211,6 +213,12 @@ export type {
   BlobNotFound,
   ShardedDAGIndex,
 } from './types/index.js'
+export type {
+  ClaimsInvocationConfig,
+  ClaimsClientConfig,
+  ClaimsClientContext,
+  Service as ClaimsService,
+} from './types/content-claims.js'
 
 export interface Service extends StorefrontService, W3sService {
   store: {
@@ -590,6 +598,18 @@ export interface UcantoServerTestContext
   ipniService: IPNIService & {
     query(digest: MultihashDigest): Promise<Result<Unit, RecordNotFound>>
   }
+
+  carStoreBucket: CarStoreBucket & Deactivator
+  blobsStorage: BlobsStorage & Deactivator
+  claimsService: ClaimsClientConfig & ClaimReader & Deactivator
+}
+
+export interface ClaimReader {
+  read(digest: MultihashDigest): Promise<Result<Claim[], Failure>>
+}
+
+export interface Deactivator {
+  deactivate: () => Promise<void>
 }
 
 export interface StoreTestContext {}

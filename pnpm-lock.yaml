@@ -447,8 +447,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/content-claims':
-        specifier: ^5.0.0
-        version: 5.0.0
+        specifier: ^5.1.0
+        version: 5.1.0
       '@web3-storage/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto
@@ -4466,6 +4466,17 @@ packages:
       '@ucanto/transport': 9.1.1
       carstream: 2.1.0
       multiformats: 13.1.0
+
+  /@web3-storage/content-claims@5.1.0:
+    resolution: {integrity: sha512-3VStFKoeieRpRU7brFjKTsAuAffQzYDIZ8F3Gh0+niw+MgzBK72osW+fftdquT8neWir34Ndu3mBUKKJ3ck1RQ==}
+    dependencies:
+      '@ucanto/client': 9.0.1
+      '@ucanto/interface': 10.0.1
+      '@ucanto/server': 10.0.0
+      '@ucanto/transport': 9.1.1
+      carstream: 2.1.0
+      multiformats: 13.1.0
+    dev: false
 
   /@web3-storage/data-segment@3.2.0:
     resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}

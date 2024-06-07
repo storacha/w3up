@@ -39,7 +39,7 @@ export const add = capability({
   with: SpaceDID,
   nb: Schema.struct({
     /** Content Archive (CAR) containing the `Index`. */
-    index: Schema.link({ code: CAR.code }),
+    index: Schema.link({ code: CAR.code, version: 1 }),
   }),
   derives: (claimed, delegated) =>
     and(equalWith(claimed, delegated)) ||

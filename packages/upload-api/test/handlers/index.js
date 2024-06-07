@@ -171,4 +171,78 @@ export const test = {
     assert.ok(receipt.out.error)
     assert.equal(receipt.out.error?.name, 'ShardNotFound')
   },
+  'index/add should publish index claim': async (assert, context) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+    const contentCAR = await randomCAR(32)
+    const contentCARBytes = new Uint8Array(await contentCAR.arrayBuffer())
+
+    const connection = connect({
+      id: context.id,
+      channel: createServer(context),
+    })
+
+    // upload the content CAR to the space
+    await uploadBlob(
+      context,
+      {
+        connection,
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        proofs: [proof],
+      },
+      {
+        cid: contentCAR.cid,
+        bytes: contentCARBytes,
+      }
+    )
+
+    const index = await fromShardArchives(contentCAR.roots[0], [
+      contentCARBytes,
+    ])
+    const indexCAR = Result.unwrap(await index.archive())
+    const indexLink = await CAR.link(indexCAR)
+
+    // upload the index CAR to the space
+    await uploadBlob(
+      context,
+      {
+        connection,
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        proofs: [proof],
+      },
+      {
+        cid: indexLink,
+        bytes: indexCAR,
+      }
+    )
+
+    const indexAdd = IndexCapabilities.add.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: { index: indexLink },
+      proofs: [proof],
+    })
+    const receipt = await indexAdd.execute(connection)
+    Result.try(receipt.out)
+
+    // ensure an index claim exists for the content root
+    const claims = Result.unwrap(
+      await context.claimsService.read(contentCAR.roots[0].multihash)
+    )
+
+    let found = false
+    for (const c of claims) {
+      if (
+        c.type === 'assert/index' &&
+        c.index.toString() === indexLink.toString()
+      ) {
+        found = true
+      }
+    }
+    assert.ok(found, 'did not found index claim')
+  },
 }
