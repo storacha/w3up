@@ -3,7 +3,6 @@ import { BlobsStorage } from './blobs-storage.js'
 import { CarStoreBucket } from './car-store-bucket.js'
 import { StoreTable } from './store-table.js'
 import { UploadTable } from './upload-table.js'
-import { DudewhereBucket } from './dude-where-bucket.js'
 import { ProvisionsStorage } from './provisions-storage.js'
 import { DelegationsStorage } from './delegations-storage.js'
 import { RateLimitsStorage } from './rate-limits-storage.js'
@@ -26,7 +25,6 @@ export async function getServiceStorageImplementations(options) {
   const uploadTable = new UploadTable()
   const blobsStorage = await BlobsStorage.activate(options)
   const carStoreBucket = await CarStoreBucket.activate(options)
-  const dudewhereBucket = new DudewhereBucket()
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
   const usageStorage = new UsageStorage(storeTable, allocationsStorage)
@@ -43,7 +41,6 @@ export async function getServiceStorageImplementations(options) {
     blobsStorage,
     blobRetriever: blobsStorage,
     carStoreBucket,
-    dudewhereBucket,
     revocationsStorage,
     plansStorage,
     usageStorage,

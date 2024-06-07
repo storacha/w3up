@@ -5,8 +5,6 @@ import {
   getStoreImplementations as getFilecoinStoreImplementations,
   getQueueImplementations as getFilecoinQueueImplementations,
 } from '@web3-storage/filecoin-api/test/context/service'
-import { BlobsStorage } from '../storage/blobs-storage.js'
-import { CarStoreBucket } from '../storage/car-store-bucket.js'
 import * as Email from '../../src/utils/email.js'
 import { create as createRevocationChecker } from '../../src/utils/revocation.js'
 import { createServer, connect } from '../../src/lib.js'
@@ -51,7 +49,7 @@ export const createContext = async (
   } = getFilecoinStoreImplementations()
   const email = Email.debug()
 
-  const externalServices = await getExternalServiceImplementations()
+  const externalServices = await getExternalServiceImplementations(options)
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
@@ -100,6 +98,7 @@ export const createContext = async (
 
   return {
     ...serviceContext,
+    ...serviceStores,
     ...externalServices,
     mail: /** @type {TestTypes.DebugEmail} */ (serviceContext.email),
     service: /** @type {TestTypes.ServiceSigner} */ (serviceContext.id),
@@ -113,14 +112,9 @@ export const createContext = async (
  *
  * @param {Types.UcantoServerTestContext} context
  */
-export const cleanupContext = async (context) => {
-  /** @type {CarStoreBucket & {  deactivate: () => Promise<void> }}} */
-  // @ts-ignore type misses S3 bucket properties like accessKey
-  const carStoreBucket = context.carStoreBucket
-  await carStoreBucket.deactivate()
-
-  /** @type {BlobsStorage & {  deactivate: () => Promise<void> }}} */
-  // @ts-ignore type misses S3 bucket properties like accessKey
-  const blobsStorage = context.blobsStorage
-  await blobsStorage.deactivate()
-}
+export const cleanupContext = (context) =>
+  Promise.all([
+    context.carStoreBucket.deactivate(),
+    context.blobsStorage.deactivate(),
+    context.claimsService.deactivate(),
+  ])

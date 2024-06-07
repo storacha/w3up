@@ -2,6 +2,7 @@ import * as Server from '@ucanto/server'
 import { ok, error } from '@ucanto/server'
 import * as Index from '@web3-storage/capabilities/index'
 import { ShardedDAGIndex } from '@web3-storage/blob-index'
+import { Assert } from '@web3-storage/content-claims/capability'
 import { concat } from 'uint8arrays'
 import * as API from '../types.js'
 
@@ -61,13 +62,21 @@ const add = async ({ capability }, context) => {
     shardDigests.map((s) => assertAllocated(context, space, s, 'ShardNotFound'))
   )
   for (const res of shardAllocRes) {
-    if (!res.ok) return res
+    if (res.error) return res
   }
 
   // TODO: randomly validate slices in the index correspond to slices in the blob
 
-  // publish the index data to IPNI
-  return context.ipniService.publish(idxRes.ok)
+  const publishRes = await Promise.all([
+    // publish the index data to IPNI
+    context.ipniService.publish(idxRes.ok),
+    // publish a content claim for the index
+    publishIndexClaim(context, { content: idxRes.ok.content, index: idxLink }),
+  ])
+  for (const res of publishRes) {
+    if (res.error) return res
+  }
+  return ok({})
 }
 
 /**
@@ -86,4 +95,24 @@ const assertAllocated = async (context, space, digest, errorName) => {
       ({ name: errorName, digest: digest.bytes })
     )
   return ok({})
+}
+
+/**
+ * @param {API.ClaimsClientContext} ctx
+ * @param {{ content: API.UnknownLink, index: API.CARLink }} params
+ */
+const publishIndexClaim = async (ctx, { content, index }) => {
+  const { invocationConfig, connection } = ctx.claimsService
+  const { issuer, audience, with: resource, proofs } = invocationConfig
+  const res = await Assert.index
+    .invoke({
+      issuer,
+      audience,
+      with: resource,
+      nb: { content, index },
+      expiration: Infinity,
+      proofs,
+    })
+    .execute(connection)
+  return res.out
 }
