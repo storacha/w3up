@@ -13,7 +13,7 @@ import {
 import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
-import { Delegation as AgentDelegation } from './delegation.js'
+import { AgentDelegation } from './delegation.js'
 import { BlobClient } from './capability/blob.js'
 import { IndexClient } from './capability/index.js'
 import { StoreClient } from './capability/store.js'
