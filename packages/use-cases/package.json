@@ -1,0 +1,19 @@
+{
+  "name": "@web3-storage/use-cases",
+  "description": "Use cases for w3up-client",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./main.js",
+  "homepage": "https://web3.storage",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/w3s-project/w3up.git",
+    "directory": "packages/upload-api"
+  },
+  "dependencies": {
+    "@ucanto/core": "^10.0.1",
+    "@ucanto/principal": "^9.0.1",
+    "@web3-storage/did-mailto": "workspace:^",
+    "@web3-storage/w3up-client": "workspace:^"
+  }
+}
