@@ -4,7 +4,7 @@ import { CarReader } from '@ipld/car'
 import * as Link from 'multiformats/link'
 import { base64 } from 'multiformats/bases/base64'
 import { identity } from 'multiformats/hashes/identity'
- 
+
 /**
  * Parses a base64 encoded CIDv1 CAR of proofs (delegations).
  *
@@ -17,12 +17,15 @@ export const parse = async (str) => {
       throw new Error(`non CAR codec found: 0x${cid.code.toString(16)}`)
     }
     if (cid.multihash.code !== identity.code) {
-      throw new Error(`non identity multihash: 0x${cid.multihash.code.toString(16)}`)
+      throw new Error(
+        `non identity multihash: 0x${cid.multihash.code.toString(16)}`
+      )
     }
 
     try {
       const { ok, error } = await extract(cid.multihash.digest)
-      if (error) throw new Error('failed to extract delegation', { cause: error })
+      if (error)
+        throw new Error('failed to extract delegation', { cause: error })
       return ok
     } catch {
       // Before `delegation.archive()` we used `delegation.export()` to create
@@ -36,7 +39,7 @@ export const parse = async (str) => {
   }
 }
 
-/** 
+/**
  * Reads a plain CAR file, assuming the last block is the delegation root.
  *
  * @param {Uint8Array} bytes

@@ -19,11 +19,13 @@ export const testProof = {
     const delegation = await delegate({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'test/thing', with: alice.did() }]
+      capabilities: [{ can: 'test/thing', with: alice.did() }],
     })
 
     const bytes = Result.unwrap(await delegation.archive())
-    const str = Link.create(CAR.codec.code, identity.digest(bytes)).toString(base64)
+    const str = Link.create(CAR.codec.code, identity.digest(bytes)).toString(
+      base64
+    )
 
     const proof = await parse(str)
     assert.equal(proof.issuer.did(), delegation.issuer.did())
@@ -38,7 +40,7 @@ export const testProof = {
     const delegation = await delegate({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'test/thing', with: alice.did() }]
+      capabilities: [{ can: 'test/thing', with: alice.did() }],
     })
 
     const bytes = Result.unwrap(await delegation.archive())
@@ -53,22 +55,27 @@ export const testProof = {
     const delegation = await delegate({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'test/thing', with: alice.did() }]
+      capabilities: [{ can: 'test/thing', with: alice.did() }],
     })
 
     const bytes = Result.unwrap(await delegation.archive())
-    const str = Link.create(CAR.codec.code, await sha256.digest(bytes)).toString(base64)
+    const str = Link.create(
+      CAR.codec.code,
+      await sha256.digest(bytes)
+    ).toString(base64)
 
     await assert.rejects(parse(str))
   },
 
-  'should parse a base64 encoded CIDv1 "proof" as plain CAR (legacy)': async (assert) => {
+  'should parse a base64 encoded CIDv1 "proof" as plain CAR (legacy)': async (
+    assert
+  ) => {
     const alice = await Signer.generate()
     const bob = await Signer.generate()
     const delegation = await delegate({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'test/thing', with: alice.did() }]
+      capabilities: [{ can: 'test/thing', with: alice.did() }],
     })
 
     const blocks = new Map()
@@ -77,7 +84,9 @@ export const testProof = {
     }
 
     const bytes = CAR.codec.encode({ blocks })
-    const str = Link.create(CAR.codec.code, identity.digest(bytes)).toString(base64)
+    const str = Link.create(CAR.codec.code, identity.digest(bytes)).toString(
+      base64
+    )
 
     const proof = await parse(str)
     assert.equal(proof.issuer.did(), delegation.issuer.did())
@@ -86,13 +95,15 @@ export const testProof = {
     assert.equal(proof.capabilities[0].with, delegation.capabilities[0].with)
   },
 
-  'should parse a base64 encoded "proof" as plain CAR (legacy)': async (assert) => {
+  'should parse a base64 encoded "proof" as plain CAR (legacy)': async (
+    assert
+  ) => {
     const alice = await Signer.generate()
     const bob = await Signer.generate()
     const delegation = await delegate({
       issuer: alice,
       audience: bob,
-      capabilities: [{ can: 'test/thing', with: alice.did() }]
+      capabilities: [{ can: 'test/thing', with: alice.did() }],
     })
 
     const blocks = new Map()
@@ -108,7 +119,7 @@ export const testProof = {
     assert.equal(proof.audience.did(), delegation.audience.did())
     assert.equal(proof.capabilities[0].can, delegation.capabilities[0].can)
     assert.equal(proof.capabilities[0].with, delegation.capabilities[0].with)
-  }
+  },
 }
 
 Test.test({ Proof: testProof })
