@@ -1,5 +1,21 @@
 # Changelog
 
+## [15.0.0](https://github.com/storacha-network/w3up/compare/w3up-client-v14.1.1...w3up-client-v15.0.0) (2024-06-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* `AllocationsStorage` and `BlobsStorage` methods not take `MultihashDigest` types instead of `Uint8Array`s.
+
+### Features
+
+* utility exports for better UX ([#1505](https://github.com/storacha-network/w3up/issues/1505)) ([54b0d93](https://github.com/storacha-network/w3up/commit/54b0d93eb1994022c935b30a0b238d825e9e93a0))
+
+
+### Fixes
+
+* use MultihashDigest type in stores ([#1474](https://github.com/storacha-network/w3up/issues/1474)) ([6c6a3bd](https://github.com/storacha-network/w3up/commit/6c6a3bdcb924cf6f9a4723f710a27f1ae34ca560))
+
 ## [14.1.1](https://github.com/w3s-project/w3up/compare/w3up-client-v14.1.0...w3up-client-v14.1.1) (2024-06-05)
 
 
