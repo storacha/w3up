@@ -1,11 +1,13 @@
-import { Delegation as CoreDelegation } from '@ucanto/core/delegation'
+import { Delegation } from '@ucanto/core/delegation'
+
+export * from '@ucanto/core/delegation'
 
 /* c8 ignore start */
 /**
  * @template {import('./types.js').Capabilities} C
- * @extends {CoreDelegation<C>}
+ * @extends {Delegation<C>}
  */
-export class Delegation extends CoreDelegation {
+export class AgentDelegation extends Delegation {
   /* c8 ignore stop */
   /** @type {Record<string, any>} */
   #meta

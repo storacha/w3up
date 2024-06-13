@@ -32,6 +32,26 @@
       "types": "./dist/src/account.d.ts",
       "import": "./dist/src/account.js"
     },
+    "./delegation": {
+      "types": "./dist/src/delegation.d.ts",
+      "import": "./dist/src/delegation.js"
+    },
+    "./principal": {
+      "types": "./dist/src/principal/index.d.ts",
+      "import": "./dist/src/principal/index.js"
+    },
+    "./principal/ed25519": {
+      "types": "./dist/src/principal/ed25519.d.ts",
+      "import": "./dist/src/principal/ed25519.js"
+    },
+    "./principal/rsa": {
+      "types": "./dist/src/principal/rsa.d.ts",
+      "import": "./dist/src/principal/rsa.js"
+    },
+    "./proof": {
+      "types": "./dist/src/proof.d.ts",
+      "import": "./dist/src/proof.js"
+    },
     "./space": {
       "types": "./dist/src/space.d.ts",
       "import": "./dist/src/space.js"
