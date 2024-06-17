@@ -1139,32 +1139,49 @@ describe('uploadCAR', () => {
         const proofs = []
         for (const { can, nb } of caps) {
           if (can === BlobCapabilities.add.can) {
-            proofs.push(await BlobCapabilities.add.delegate({
-              issuer: space,
-              audience: agent,
-              with: space.did(),
-              nb: /** @type {import('@web3-storage/capabilities/types').BlobAdd['nb']} */ (nb),
-              expiration: Infinity,
-            }))
+            proofs.push(
+              await BlobCapabilities.add.delegate({
+                issuer: space,
+                audience: agent,
+                with: space.did(),
+                nb: /** @type {import('@web3-storage/capabilities/types').BlobAdd['nb']} */ (
+                  nb
+                ),
+                expiration: Infinity,
+              })
+            )
           } else if (can === IndexCapabilities.add.can) {
-            proofs.push(await IndexCapabilities.add.delegate({
-              issuer: space,
-              audience: agent,
-              with: space.did(),
-              nb: /** @type {import('@web3-storage/capabilities/types').IndexAdd['nb']} */ (nb),
-              expiration: Infinity,
-            }))
+            proofs.push(
+              await IndexCapabilities.add.delegate({
+                issuer: space,
+                audience: agent,
+                with: space.did(),
+                nb: /** @type {import('@web3-storage/capabilities/types').IndexAdd['nb']} */ (
+                  nb
+                ),
+                expiration: Infinity,
+              })
+            )
           } else if (can === UploadCapabilities.add.can) {
-            proofs.push(await UploadCapabilities.add.delegate({
-              issuer: space,
-              audience: agent,
-              with: space.did(),
-              nb: /** @type {import('@web3-storage/capabilities/types').UploadAdd['nb']} */ (nb),
-              expiration: Infinity,
-            }))
+            proofs.push(
+              await UploadCapabilities.add.delegate({
+                issuer: space,
+                audience: agent,
+                with: space.did(),
+                nb: /** @type {import('@web3-storage/capabilities/types').UploadAdd['nb']} */ (
+                  nb
+                ),
+                expiration: Infinity,
+              })
+            )
           }
         }
-        return { issuer: agent, with: space.did(), proofs, audience: serviceSigner }
+        return {
+          issuer: agent,
+          with: space.did(),
+          proofs,
+          audience: serviceSigner,
+        }
       },
       file,
       {

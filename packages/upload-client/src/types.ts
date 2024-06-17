@@ -2,12 +2,7 @@ import type {
   FetchOptions as IpfsUtilsFetchOptions,
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types.js'
-import {
-  Link,
-  UnknownLink,
-  Version,
-  MultihashHasher,
-} from 'multiformats'
+import { Link, UnknownLink, Version, MultihashHasher } from 'multiformats'
 import { Block } from '@ipld/unixfs'
 import {
   ServiceMethod,

@@ -154,10 +154,12 @@ async function uploadBlockStream(
           async transform(car, controller) {
             const bytes = new Uint8Array(await car.arrayBuffer())
             const digest = await sha256.digest(bytes)
-            const conf = await configure([{
-              can: BlobAdd.ability,
-              nb: BlobAdd.input(digest, bytes.length)
-            }])
+            const conf = await configure([
+              {
+                can: BlobAdd.ability,
+                nb: BlobAdd.input(digest, bytes.length),
+              },
+            ])
             // Invoke blob/add and write bytes to write target
             await Blob.add(conf, digest, bytes, options)
             const cid = Link.create(CAR.code, digest)
@@ -224,18 +226,24 @@ async function uploadBlockStream(
   const indexLink = Link.create(CAR.code, indexDigest)
 
   const [blobAddConf, indexAddConf, uploadAddConf] = await Promise.all([
-    configure([{
-      can: BlobAdd.ability,
-      nb: BlobAdd.input(indexDigest, indexBytes.ok.length)
-    }]),
-    configure([{
-      can: IndexAdd.ability,
-      nb: IndexAdd.input(indexLink)
-    }]),
-    configure([{
-      can: UploadAdd.ability,
-      nb: UploadAdd.input(root, shards)
-    }]),
+    configure([
+      {
+        can: BlobAdd.ability,
+        nb: BlobAdd.input(indexDigest, indexBytes.ok.length),
+      },
+    ]),
+    configure([
+      {
+        can: IndexAdd.ability,
+        nb: IndexAdd.input(indexLink),
+      },
+    ]),
+    configure([
+      {
+        can: UploadAdd.ability,
+        nb: UploadAdd.input(root, shards),
+      },
+    ]),
   ])
 
   // Store the index in the space
