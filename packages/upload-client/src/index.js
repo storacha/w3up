@@ -2,10 +2,11 @@ import * as PieceHasher from '@web3-storage/data-segment/multihash'
 import { Storefront } from '@web3-storage/filecoin-client'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
+import { sha256 } from 'multiformats/hashes/sha2'
 import * as Store from './store.js'
-import * as Blob from './blob.js'
-import * as Index from './dag-index.js'
-import * as Upload from './upload.js'
+import * as Blob from './blob/add.js'
+import * as Index from './index/add.js'
+import * as Upload from './upload/add.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
@@ -23,8 +24,9 @@ export * as Receipt from './receipts.js'
  * Required delegated capability proofs: `blob/add`, `index/add`,
  * `filecoin/offer`, `upload/add`
  *
- * @param {import('./types.js').InvocationConfig} conf Configuration
- * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
+ * @param {import('./types.js').InvocationConfig|import('./types.js').InvocationConfigurator} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`, or a
+ * function that generates this object.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
@@ -56,8 +58,9 @@ export async function uploadFile(conf, file, options = {}) {
  * Required delegated capability proofs: `blob/add`, `index/add`,
  * `filecoin/offer`, `upload/add`
  *
- * @param {import('./types.js').InvocationConfig} conf Configuration
- * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
+ * @param {import('./types.js').InvocationConfig|import('./types.js').InvocationConfigurator} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`, or a
+ * function that generates this object
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
@@ -97,8 +100,9 @@ export async function uploadDirectory(conf, files, options = {}) {
  * Required delegated capability proofs: `blob/add`, `index/add`,
  * `filecoin/offer`, `upload/add`
  *
- * @param {import('./types.js').InvocationConfig} conf Configuration
- * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
+ * @param {import('./types.js').InvocationConfig|import('./types.js').InvocationConfigurator} conf Configuration
+ * for the UCAN invocation. An object with `issuer`, `with` and `proofs`, or a
+ * function that generates this object
  *
  * The `issuer` is the signing authority that is issuing the UCAN
  * invocation(s). It is typically the user _agent_.
@@ -120,7 +124,7 @@ export async function uploadCAR(conf, car, options = {}) {
 }
 
 /**
- * @param {import('./types.js').InvocationConfig} conf
+ * @param {import('./types.js').InvocationConfig|import('./types.js').InvocationConfigurator} conf
  * @param {ReadableStream<import('@ipld/unixfs').Block>} blocks
  * @param {import('./types.js').UploadOptions} [options]
  * @returns {Promise<import('./types.js').AnyLink>}
@@ -130,6 +134,8 @@ async function uploadBlockStream(
   blocks,
   { pieceHasher = PieceHasher, ...options } = {}
 ) {
+  /** @type {import('./types.js').InvocationConfigurator} */
+  const configure = typeof conf === 'function' ? conf : () => conf
   /** @type {Array<Map<import('./types.js').SliceDigest, import('./types.js').Position>>} */
   const shardIndexes = []
   /** @type {import('./types.js').CARLink[]} */
@@ -144,16 +150,21 @@ async function uploadBlockStream(
         new TransformStream({
           async transform(car, controller) {
             const bytes = new Uint8Array(await car.arrayBuffer())
+            const digest = await sha256.digest(bytes)
+            const conf = await configure([{
+              can: Blob.ability,
+              nb: Blob.input(digest, bytes.length)
+            }])
             // Invoke blob/add and write bytes to write target
-            const { multihash } = await Blob.add(conf, bytes, options)
-            // Should this be raw instead?
-            const cid = Link.create(CAR.code, multihash)
+            await Blob.add(conf, digest, bytes, options)
+            const cid = Link.create(CAR.code, digest)
+
             let piece
             if (pieceHasher) {
               const multihashDigest = await pieceHasher.digest(bytes)
               /** @type {import('@web3-storage/capabilities/types').PieceLink} */
               piece = Link.create(raw.code, multihashDigest)
-              const content = Link.create(raw.code, multihash)
+              const content = Link.create(raw.code, digest)
 
               // Invoke filecoin/offer for data
               const result = await Storefront.filecoinOffer(
@@ -206,14 +217,30 @@ async function uploadBlockStream(
     throw new Error('failed to archive DAG index', { cause: indexBytes.error })
   }
 
-  // Store the index in the space
-  const { multihash } = await Blob.add(conf, indexBytes.ok, options)
-  const indexLink = Link.create(CAR.code, multihash)
+  const indexDigest = await sha256.digest(indexBytes.ok)
+  const indexLink = Link.create(CAR.code, indexDigest)
 
+  const [blobAddConf, indexAddConf, uploadAddConf] = await Promise.all([
+    configure([{
+      can: Blob.ability,
+      nb: Blob.input(indexDigest, indexBytes.ok.length)
+    }]),
+    configure([{
+      can: Index.ability,
+      nb: Index.input(indexLink)
+    }]),
+    configure([{
+      can: Upload.ability,
+      nb: Upload.input(root, shards)
+    }]),
+  ])
+
+  // Store the index in the space
+  await Blob.add(blobAddConf, indexDigest, indexBytes.ok, options)
   // Register the index with the service
-  await Index.add(conf, indexLink, options)
+  await Index.add(indexAddConf, indexLink, options)
   // Register an upload with the service
-  await Upload.add(conf, root, shards, options)
+  await Upload.add(uploadAddConf, root, shards, options)
 
   return root
 }

@@ -6,7 +6,7 @@ import * as Server from '@ucanto/server'
 import * as HTTP from '@web3-storage/capabilities/http'
 import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
 import { W3sBlob } from '@web3-storage/capabilities'
-import { createConcludeInvocation } from '../../../upload-client/src/blob.js'
+import { createConcludeInvocation } from '../../src/blob/add.js'
 import { randomCAR } from './random.js'
 
 export const validateAuthorization = () => ({ ok: {} })

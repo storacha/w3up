@@ -3,7 +3,6 @@ import type {
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types.js'
 import {
-  MultihashDigest,
   Link,
   UnknownLink,
   Version,
@@ -20,6 +19,7 @@ import {
   Failure,
   Delegation,
   Capabilities,
+  Await,
 } from '@ucanto/interface'
 import {
   UCANConclude,
@@ -74,6 +74,7 @@ import {
   UsageReport,
   UsageReportSuccess,
   UsageReportFailure,
+  ServiceAbility,
 } from '@web3-storage/capabilities/types'
 import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
 import { code as pieceHashCode } from '@web3-storage/data-segment/multihash'
@@ -211,6 +212,16 @@ export interface InvocationConfig {
    * Proof(s) the issuer has the capability to perform the action.
    */
   proofs: Proof[]
+}
+
+export interface CapabilityQuery {
+  can: ServiceAbility
+  nb?: unknown
+}
+
+/** Generates invocation configuration for the requested capabilities. */
+export interface InvocationConfigurator {
+  (caps: CapabilityQuery[]): Await<InvocationConfig>
 }
 
 export interface UnixFSEncodeResult {
@@ -396,6 +407,5 @@ export interface FileLike extends BlobLike {
 }
 
 export interface BlobAddOk {
-  multihash: MultihashDigest
   site: Delegation<Capabilities>
 }

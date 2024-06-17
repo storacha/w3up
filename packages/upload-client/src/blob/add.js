@@ -1,4 +1,3 @@
-import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@web3-storage/capabilities/ucan'
 import * as UCAN from '@web3-storage/capabilities/ucan'
@@ -8,20 +7,17 @@ import * as BlobCapabilities from '@web3-storage/capabilities/blob'
 import * as HTTPCapabilities from '@web3-storage/capabilities/http'
 import { SpaceDID } from '@web3-storage/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
-import { servicePrincipal, connection } from './service.js'
-import { REQUEST_RETRIES } from './constants.js'
-import { poll } from './receipts.js'
+import { servicePrincipal, connection } from '../service.js'
+import { REQUEST_RETRIES } from '../constants.js'
+import { poll } from '../receipts.js'
 
 /**
  * @param {string} url
- * @param {import('./types.js').ProgressFn} handler
+ * @param {import('../types.js').ProgressFn} handler
  */
 function createUploadProgressHandler(url, handler) {
-  /**
-   *
-   * @param {import('./types.js').ProgressStatus} status
-   */
-  function onUploadProgress({ total, loaded, lengthComputable }) {
+  /** @param {import('../types.js').ProgressStatus} status */
+  const onUploadProgress = ({ total, loaded, lengthComputable }) => {
     return handler({ total, loaded, lengthComputable, url })
   }
   return onUploadProgress
@@ -74,7 +70,7 @@ function parseBlobAddReceiptNext(receipt) {
 
   // Decode receipts available
   const nextReceipts = concludefxs.map((fx) => getConcludeReceipt(fx))
-  /** @type {import('@ucanto/interface').Receipt<import('./types.js').BlobAllocateSuccess, import('./types.js').BlobAllocateFailure> | undefined} */
+  /** @type {import('@ucanto/interface').Receipt<import('../types.js').BlobAllocateSuccess, import('../types.js').BlobAllocateFailure> | undefined} */
   // @ts-expect-error types unknown for next
   const allocateReceipt = nextReceipts.find((receipt) =>
     receipt.ran.link().equals(allocateTask.cid)
@@ -85,7 +81,7 @@ function parseBlobAddReceiptNext(receipt) {
     receipt.ran.link().equals(putTask.cid)
   )
 
-  /** @type {import('@ucanto/interface').Receipt<import('./types.js').BlobAcceptSuccess, import('./types.js').BlobAcceptFailure> | undefined} */
+  /** @type {import('@ucanto/interface').Receipt<import('../types.js').BlobAcceptSuccess, import('../types.js').BlobAcceptFailure> | undefined} */
   // @ts-expect-error types unknown for next
   const acceptReceipt = nextReceipts.find((receipt) =>
     receipt.ran.link().equals(acceptTask.cid)
@@ -152,7 +148,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  *
  * Required delegated capability proofs: `blob/add`
  *
- * @param {import('./types.js').InvocationConfig} conf Configuration
+ * @param {import('../types.js').InvocationConfig} conf Configuration
  * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
  *
  * The `issuer` is the signing authority that is issuing the UCAN
@@ -165,19 +161,20 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
  * has the capability to perform the action.
  *
  * The issuer needs the `blob/add` delegated capability.
+ * @param {import('multiformats').MultihashDigest} digest
  * @param {Blob|Uint8Array} data Blob data.
- * @param {import('./types.js').RequestOptions} [options]
- * @returns {Promise<import('./types.js').BlobAddOk>}
+ * @param {import('../types.js').RequestOptions} [options]
+ * @returns {Promise<import('../types.js').BlobAddOk>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },
+  digest,
   data,
   options = {}
 ) {
   /* c8 ignore next 2 */
   const bytes =
     data instanceof Uint8Array ? data : new Uint8Array(await data.arrayBuffer())
-  const multihash = await sha256.digest(bytes)
   const size = bytes.length
   /* c8 ignore next */
   const conn = options.connection ?? connection
@@ -190,12 +187,7 @@ export async function add(
           /* c8 ignore next */
           audience: audience ?? servicePrincipal,
           with: SpaceDID.from(resource),
-          nb: {
-            blob: {
-              digest: multihash.bytes,
-              size,
-            },
-          },
+          nb: input(digest, size),
           proofs,
           nonce: options.nonce,
         })
@@ -324,155 +316,21 @@ export async function add(
     blocks,
   })
 
-  return {
-    multihash,
-    site,
-  }
+  return { site }
 }
+
+/** Returns the ability used by an invocation. */
+export const ability = BlobCapabilities.add.can
 
 /**
- * List Blobs stored in the space.
+ * Returns required input to the invocation.
  *
- * @param {import('./types.js').InvocationConfig} conf Configuration
- * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
- *
- * The `issuer` is the signing authority that is issuing the UCAN
- * invocation(s). It is typically the user _agent_.
- *
- * The `with` is the resource the invocation applies to. It is typically the
- * DID of a space.
- *
- * The `proofs` are a set of capability delegations that prove the issuer
- * has the capability to perform the action.
- *
- * The issuer needs the `blob/list` delegated capability.
- * @param {import('./types.js').ListRequestOptions} [options]
- * @returns {Promise<import('./types.js').BlobListSuccess>}
+ * @param {import('multiformats').MultihashDigest} digest
+ * @param {number} size
  */
-export async function list(
-  { issuer, with: resource, proofs, audience },
-  options = {}
-) {
-  /* c8 ignore next */
-  const conn = options.connection ?? connection
-  const result = await BlobCapabilities.list
-    .invoke({
-      issuer,
-      /* c8 ignore next */
-      audience: audience ?? servicePrincipal,
-      with: SpaceDID.from(resource),
-      proofs,
-      nb: {
-        cursor: options.cursor,
-        size: options.size,
-      },
-      nonce: options.nonce,
-    })
-    .execute(conn)
-
-  if (!result.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.list.can} invocation`, {
-      cause: result.out.error,
-    })
-  }
-
-  return result.out.ok
-}
-
-/**
- * Remove a stored Blob file by digest.
- *
- * @param {import('./types.js').InvocationConfig} conf Configuration
- * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
- *
- * The `issuer` is the signing authority that is issuing the UCAN
- * invocation(s). It is typically the user _agent_.
- *
- * The `with` is the resource the invocation applies to. It is typically the
- * DID of a space.
- *
- * The `proofs` are a set of capability delegations that prove the issuer
- * has the capability to perform the action.
- *
- * The issuer needs the `blob/remove` delegated capability.
- * @param {import('multiformats').MultihashDigest} multihash of the blob
- * @param {import('./types.js').RequestOptions} [options]
- */
-export async function remove(
-  { issuer, with: resource, proofs, audience },
-  multihash,
-  options = {}
-) {
-  /* c8 ignore next */
-  const conn = options.connection ?? connection
-  const result = await BlobCapabilities.remove
-    .invoke({
-      issuer,
-      /* c8 ignore next */
-      audience: audience ?? servicePrincipal,
-      with: SpaceDID.from(resource),
-      nb: {
-        digest: multihash.bytes,
-      },
-      proofs,
-      nonce: options.nonce,
-    })
-    .execute(conn)
-
-  if (!result.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.remove.can} invocation`, {
-      cause: result.out.error,
-    })
-  }
-
-  return result.out
-}
-
-/**
- * Gets a stored Blob file by digest.
- *
- * @param {import('./types.js').InvocationConfig} conf Configuration
- * for the UCAN invocation. An object with `issuer`, `with` and `proofs`.
- *
- * The `issuer` is the signing authority that is issuing the UCAN
- * invocation(s). It is typically the user _agent_.
- *
- * The `with` is the resource the invocation applies to. It is typically the
- * DID of a space.
- *
- * The `proofs` are a set of capability delegations that prove the issuer
- * has the capability to perform the action.
- *
- * The issuer needs the `blob/get/0/1` delegated capability.
- * @param {import('multiformats').MultihashDigest} multihash of the blob
- * @param {import('./types.js').RequestOptions} [options]
- */
-export async function get(
-  { issuer, with: resource, proofs, audience },
-  multihash,
-  options = {}
-) {
-  /* c8 ignore next */
-  const conn = options.connection ?? connection
-  const result = await BlobCapabilities.get
-    .invoke({
-      issuer,
-      /* c8 ignore next */
-      audience: audience ?? servicePrincipal,
-      with: SpaceDID.from(resource),
-      nb: {
-        digest: multihash.bytes,
-      },
-      proofs,
-      nonce: options.nonce,
-    })
-    .execute(conn)
-
-  if (!result.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.get.can} invocation`, {
-      cause: result.out.error,
-    })
-  }
-
-  return result.out
-}
+export const input = (digest, size) => ({
+  blob: {
+    digest: digest.bytes,
+    size,
+  },
+})

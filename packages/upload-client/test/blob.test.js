@@ -7,7 +7,7 @@ import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as UCAN from '@web3-storage/capabilities/ucan'
 import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import * as Blob from '../src/blob.js'
+import * as Blob from '../src/blob/index.js'
 import { serviceSigner } from './fixtures.js'
 import { randomBytes } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -79,8 +79,9 @@ describe('Blob.add', () => {
 
     /** @type {import('../src/types.js').ProgressStatus[]} */
     const progress = []
-    const { site, multihash } = await Blob.add(
+    const { site } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      bytesHash,
       bytes,
       {
         connection,
@@ -106,14 +107,12 @@ describe('Blob.add', () => {
       128
     )
 
-    assert(multihash)
-    assert.deepEqual(multihash, bytesHash)
-
     // make sure it can also work without fetchWithUploadProgress
     /** @type {import('../src/types.js').ProgressStatus[]} */
     let progressWithoutUploadProgress = []
-    const { multihash: multihashWithoutUploadProgress } = await Blob.add(
+    await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      bytesHash,
       bytes,
       {
         connection,
@@ -123,7 +122,6 @@ describe('Blob.add', () => {
         receiptsEndpoint,
       }
     )
-    assert.deepEqual(multihashWithoutUploadProgress, bytesHash)
     assert.equal(
       progressWithoutUploadProgress.reduce(
         (max, { loaded }) => Math.max(max, loaded),
@@ -137,6 +135,7 @@ describe('Blob.add', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -181,6 +180,7 @@ describe('Blob.add', () => {
     await assert.rejects(
       Blob.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytesHash,
         bytes,
         { connection }
       ),
@@ -194,6 +194,7 @@ describe('Blob.add', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -238,6 +239,7 @@ describe('Blob.add', () => {
     await assert.rejects(
       Blob.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytesHash,
         bytes,
         {
           connection,
@@ -255,6 +257,7 @@ describe('Blob.add', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -299,6 +302,7 @@ describe('Blob.add', () => {
     await assert.rejects(
       Blob.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytesHash,
         bytes,
         {
           connection,
@@ -356,17 +360,15 @@ describe('Blob.add', () => {
       channel: server,
     })
 
-    const { site, multihash } = await Blob.add(
+    const { site } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      bytesHash,
       bytes,
       {
         connection,
         receiptsEndpoint,
       }
     )
-
-    assert(multihash)
-    assert.deepEqual(multihash, bytesHash)
 
     assert(site)
     assert.equal(site.capabilities[0].can, Assert.location.can)
@@ -421,17 +423,15 @@ describe('Blob.add', () => {
       channel: server,
     })
 
-    const { site, multihash } = await Blob.add(
+    const { site } = await Blob.add(
       { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+      bytesHash,
       bytes,
       {
         connection,
         receiptsEndpoint,
       }
     )
-
-    assert(multihash)
-    assert.deepEqual(multihash, bytesHash)
 
     assert(site)
     assert.equal(site.capabilities[0].can, Assert.location.can)
@@ -444,6 +444,7 @@ describe('Blob.add', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -488,6 +489,7 @@ describe('Blob.add', () => {
     await assert.rejects(
       Blob.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytesHash,
         bytes,
         { connection }
       ),
@@ -501,6 +503,7 @@ describe('Blob.add', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -545,6 +548,7 @@ describe('Blob.add', () => {
     await assert.rejects(
       Blob.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytesHash,
         bytes,
         { connection }
       ),
@@ -558,6 +562,7 @@ describe('Blob.add', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
 
     const service = mockService({
       ucan: {
@@ -605,6 +610,7 @@ describe('Blob.add', () => {
     await assert.rejects(
       Blob.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytesHash,
         bytes,
         {
           connection,
@@ -619,6 +625,7 @@ describe('Blob.add', () => {
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
+    const bytesHash = await sha256.digest(bytes)
 
     const proofs = [
       await BlobCapabilities.add.delegate({
@@ -659,6 +666,7 @@ describe('Blob.add', () => {
     await assert.rejects(
       Blob.add(
         { issuer: agent, with: space.did(), proofs, audience: serviceSigner },
+        bytesHash,
         bytes,
         { connection }
       ),
