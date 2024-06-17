@@ -36,9 +36,7 @@ export const IndexClient = Test.withContext({
         }
       )
 
-      assert.ok(
-        await alice.capability.index.add(Link.create(CAR.code, digest))
-      )
+      assert.ok(await alice.capability.index.add(Link.create(CAR.code, digest)))
     },
   },
 })
