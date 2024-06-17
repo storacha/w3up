@@ -286,7 +286,7 @@ export async function add(
     const httpPutConcludeInvocation = createConcludeInvocation(
       issuer,
       // @ts-expect-error object of type unknown
-      audience,
+      audience ?? servicePrincipal,
       httpPutReceipt
     )
     const ucanConclude = await httpPutConcludeInvocation.execute(conn)
