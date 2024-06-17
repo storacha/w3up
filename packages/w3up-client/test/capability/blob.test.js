@@ -33,16 +33,16 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
       receiptsEndpoint,
     })
 
     // TODO we should check blobsStorage as well
-    assert.deepEqual(await allocationsStorage.exists(space.did(), multihash), {
+    assert.deepEqual(await allocationsStorage.exists(space.did(), digest), {
       ok: true,
     })
 
-    assert.deepEqual(multihash.bytes, bytesHash.bytes)
+    assert.deepEqual(digest.bytes, bytesHash.bytes)
   },
   'should list stored blobs': async (
     assert,
@@ -71,10 +71,10 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
       receiptsEndpoint,
     })
-    assert.deepEqual(multihash.bytes, bytesHash.bytes)
+    assert.deepEqual(digest.bytes, bytesHash.bytes)
 
     const {
       results: [entry],
@@ -109,11 +109,11 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
       receiptsEndpoint,
     })
 
-    const result = await alice.capability.blob.remove(multihash)
+    const result = await alice.capability.blob.remove(digest)
     assert.ok(result.ok)
   },
   'should get a stored blob': async (
@@ -142,11 +142,11 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const { multihash } = await alice.capability.blob.add(new Blob([bytes]), {
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
       receiptsEndpoint,
     })
 
-    const result = await alice.capability.blob.get(multihash)
+    const result = await alice.capability.blob.get(digest)
     assert.ok(result.ok)
   },
 })

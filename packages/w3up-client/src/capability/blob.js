@@ -21,7 +21,7 @@ export class BlobClient extends Base {
     options.connection = this._serviceConf.upload
     const bytes = new Uint8Array(await blob.arrayBuffer())
     const digest = await sha256.digest(bytes)
-    return Blob.add(conf, digest, bytes, options)
+    return { digest, ...(await Blob.add(conf, digest, bytes, options)) }
   }
 
   /**
