@@ -4,9 +4,12 @@ import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Store from './store.js'
-import * as Blob from './blob/add.js'
-import * as Index from './index/add.js'
-import * as Upload from './upload/add.js'
+import * as Blob from './blob/index.js'
+import * as BlobAdd from './blob/add.js'
+import * as Index from './index/index.js'
+import * as IndexAdd from './index/add.js'
+import * as Upload from './upload/index.js'
+import * as UploadAdd from './upload/add.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
@@ -152,8 +155,8 @@ async function uploadBlockStream(
             const bytes = new Uint8Array(await car.arrayBuffer())
             const digest = await sha256.digest(bytes)
             const conf = await configure([{
-              can: Blob.ability,
-              nb: Blob.input(digest, bytes.length)
+              can: BlobAdd.ability,
+              nb: BlobAdd.input(digest, bytes.length)
             }])
             // Invoke blob/add and write bytes to write target
             await Blob.add(conf, digest, bytes, options)
@@ -222,16 +225,16 @@ async function uploadBlockStream(
 
   const [blobAddConf, indexAddConf, uploadAddConf] = await Promise.all([
     configure([{
-      can: Blob.ability,
-      nb: Blob.input(indexDigest, indexBytes.ok.length)
+      can: BlobAdd.ability,
+      nb: BlobAdd.input(indexDigest, indexBytes.ok.length)
     }]),
     configure([{
-      can: Index.ability,
-      nb: Index.input(indexLink)
+      can: IndexAdd.ability,
+      nb: IndexAdd.input(indexLink)
     }]),
     configure([{
-      can: Upload.ability,
-      nb: Upload.input(root, shards)
+      can: UploadAdd.ability,
+      nb: UploadAdd.input(root, shards)
     }]),
   ])
 
