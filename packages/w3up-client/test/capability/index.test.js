@@ -29,16 +29,14 @@ export const IndexClient = Test.withContext({
       const index = ShardedDAGIndex.create(car.cid)
       const indexBytes = Result.unwrap(await index.archive())
 
-      const { multihash } = await alice.capability.blob.add(
+      const { digest } = await alice.capability.blob.add(
         new Blob([indexBytes]),
         {
           receiptsEndpoint,
         }
       )
 
-      assert.ok(
-        await alice.capability.index.add(Link.create(CAR.code, multihash))
-      )
+      assert.ok(await alice.capability.index.add(Link.create(CAR.code, digest)))
     },
   },
 })

@@ -180,6 +180,7 @@ await Upload.add(conf, rootCID, carCIDs)
   - [`CARMetadata`](#carmetadata)
   - [`DirectoryEntryLinkCallback`](#directoryentrylinkcallback)
   - [`InvocationConfig`](#invocationconfig)
+  - [`InvocationConfigurator`](#invocationconfigurator)
   - [`ShardStoredCallback`](#shardstoredcallback)
 - [Contributing](#contributing)
 - [License](#license)
@@ -190,7 +191,7 @@ await Upload.add(conf, rootCID, carCIDs)
 
 ```ts
 function uploadDirectory(
-  conf: InvocationConfig,
+  conf: InvocationConfig | InvocationConfigurator,
   files: File[],
   options: {
     retries?: number
@@ -207,13 +208,13 @@ Uploads a directory of files to the service and returns the root data CID for th
 
 Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
-More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
+More information: [`InvocationConfig`](#invocationconfig), [`InvocationConfigurator`](#invocationconfigurator), [`ShardStoredCallback`](#shardstoredcallback)
 
 ### `uploadFile`
 
 ```ts
 function uploadFile(
-  conf: InvocationConfig,
+  conf: InvocationConfig | InvocationConfigurator,
   file: Blob,
   options: {
     retries?: number
@@ -229,13 +230,13 @@ Uploads a file to the service and returns the root data CID for the generated DA
 
 Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
-More information: [`InvocationConfig`](#invocationconfig)
+More information: [`InvocationConfig`](#invocationconfig), [`InvocationConfigurator`](#invocationconfigurator)
 
 ### `uploadCAR`
 
 ```ts
 function uploadCAR(
-  conf: InvocationConfig,
+  conf: InvocationConfig | InvocationConfigurator,
   car: Blob,
   options: {
     retries?: number
@@ -252,7 +253,7 @@ Uploads a CAR file to the service. The difference between this function and [Blo
 
 Required delegated capability proofs: `blob/add`, `index/add`, `upload/add`, `filecoin/offer`
 
-More information: [`InvocationConfig`](#invocationconfig), [`ShardStoredCallback`](#shardstoredcallback)
+More information: [`InvocationConfig`](#invocationconfig), [`InvocationConfigurator`](#invocationconfigurator), [`ShardStoredCallback`](#shardstoredcallback)
 
 ### `Blob.add`
 
@@ -511,6 +512,52 @@ This is the configuration for the UCAN invocation. It's values can be obtained f
 
 - The `issuer` is the signing authority that is issuing the UCAN invocation(s). It is typically the user _agent_.
 - The `proofs` are a set of capability delegations that prove the issuer has the capability to perform the action.
+
+### `InvocationConfigurator`
+
+A function that generates [invocation configuration](#invocationconfig) for the requested capabilities. The intention is for the client to be able to [request, on demand, delegated capabilities from an application server](https://github.com/storacha-network/w3up-examples/tree/main/delegated-upload).
+
+```ts
+interface InvocationConfigurator {
+  (caps: CapabilityQuery[]): Await<InvocationConfig>
+}
+
+interface CapabilityQuery {
+  can: ServiceAbility
+  nb?: unknown
+}
+
+// "space/blob/add", "space/index/add" etc.
+type ServiceAbility = string
+```
+
+The function may be called multiple times with different requested capabilities.
+
+Example:
+
+```js
+import { Agent } from '@web3-storage/access'
+import * as Space from '@web3-storage/access/space'
+
+const agent = await Agent.create()
+const space = await Space.generate({ name: 'myspace' })
+
+const configure = async (caps) => ({
+  issuer: agent.issuer,
+  with: space.did(),
+  proofs: [
+    // delegate from the space to the agent the requested capabilities
+    await Delegation.delegate({
+      issuer: space.signer,
+      audience: agent.did(),
+      capabilities: caps.map(c => ({ can: c.can, with: space.did(), nb: c.nb })),
+      expiration: Math.floor(Date.now() / 1000) + (60 * 60) // 1h in seconds
+    })
+  ]
+})
+
+await uploadFile(configure, new Blob(['Hello World!']))
+```
 
 ### `ShardStoredCallback`
 

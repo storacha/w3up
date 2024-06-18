@@ -31,11 +31,12 @@
   },
   "exports": {
     ".": "./dist/src/index.js",
-    "./blob": "./dist/src/blob.js",
+    "./blob": "./dist/src/blob/index.js",
     "./car": "./dist/src/car.js",
     "./fetch-with-upload-progress": "./dist/src/fetch-with-upload-progress.js",
+    "./index": "./dist/src/index/index.js",
     "./sharding": "./dist/src/sharding.js",
-    "./upload": "./dist/src/upload.js",
+    "./upload": "./dist/src/upload/index.js",
     "./store": "./dist/src/store.js",
     "./unixfs": "./dist/src/unixfs.js",
     "./types": "./dist/src/types.js"
@@ -43,16 +44,19 @@
   "typesVersions": {
     "*": {
       "blob": [
-        "dist/src/blob.d.ts"
+        "dist/src/blob/index.d.ts"
       ],
       "car": [
         "dist/src/car.d.ts"
+      ],
+      "index": [
+        "dist/src/index/index.d.ts"
       ],
       "sharding": [
         "dist/src/sharding.d.ts"
       ],
       "upload": [
-        "dist/src/upload.d.ts"
+        "dist/src/upload/index.d.ts"
       ],
       "store": [
         "dist/src/store.d.ts"

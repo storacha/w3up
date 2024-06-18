@@ -1,5 +1,6 @@
 import { Blob } from '@web3-storage/upload-client'
 import { Blob as BlobCapabilities } from '@web3-storage/capabilities'
+import { sha256 } from 'multiformats/hashes/sha2'
 import { Base } from '../base.js'
 
 /**
@@ -18,7 +19,9 @@ export class BlobClient extends Base {
   async add(blob, options = {}) {
     const conf = await this._invocationConfig([BlobCapabilities.add.can])
     options.connection = this._serviceConf.upload
-    return Blob.add(conf, blob, options)
+    const bytes = new Uint8Array(await blob.arrayBuffer())
+    const digest = await sha256.digest(bytes)
+    return { digest, ...(await Blob.add(conf, digest, bytes, options)) }
   }
 
   /**

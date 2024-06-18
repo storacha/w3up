@@ -1047,4 +1047,162 @@ describe('uploadCAR', () => {
       'bafkzcibcoibrsisrq3nrfmsxvynduf4kkf7qy33ip65w7ttfk7guyqod5w5mmei'
     )
   })
+
+  it('generates invocation configuration on demand', async () => {
+    const space = await Signer.generate()
+    const agent = await Signer.generate() // The "user" that will ask the service to accept the upload
+    const bytes = await randomBytes(128)
+    const file = new Blob([bytes])
+    const expectedCar = await toCAR(bytes)
+    const piece = Piece.fromPayload(bytes).link
+
+    /** @type {import('../src/types.js').CARLink|undefined} */
+    let carCID
+
+    const service = mockService({
+      ucan: {
+        conclude: provide(UCAN.conclude, () => {
+          return { ok: { time: Date.now() } }
+        }),
+      },
+      space: {
+        blob: {
+          add: provide(
+            BlobCapabilities.add,
+            // @ts-ignore Argument of type
+            async function ({ invocation, capability }) {
+              assert.equal(invocation.issuer.did(), agent.did())
+              assert.equal(invocation.capabilities.length, 1)
+              assert.equal(capability.can, BlobCapabilities.add.can)
+              assert.equal(capability.with, space.did())
+              return setupBlobAddSuccessResponse(
+                { issuer: space, audience: agent, with: space },
+                invocation
+              )
+            }
+          ),
+        },
+        index: {
+          add: Server.provideAdvanced({
+            capability: IndexCapabilities.add,
+            handler: async ({ capability }) => {
+              assert(capability.nb.index)
+              return Server.ok({})
+            },
+          }),
+        },
+      },
+      filecoin: {
+        offer: Server.provideAdvanced({
+          capability: StorefrontCapabilities.filecoinOffer,
+          handler: async ({ invocation, context }) => {
+            const invCap = invocation.capabilities[0]
+            if (!invCap.nb) {
+              throw new Error('no params received')
+            }
+            return getFilecoinOfferResponse(context.id, piece, invCap.nb)
+          },
+        }),
+      },
+      upload: {
+        add: provide(UploadCapabilities.add, ({ invocation }) => {
+          assert.equal(invocation.issuer.did(), agent.did())
+          assert.equal(invocation.capabilities.length, 1)
+          const invCap = invocation.capabilities[0]
+          assert.equal(invCap.can, UploadCapabilities.add.can)
+          assert.equal(invCap.with, space.did())
+          assert.equal(invCap.nb?.shards?.length, 1)
+          assert.equal(String(invCap.nb?.shards?.[0]), carCID?.toString())
+          return {
+            ok: {
+              root: expectedCar.roots[0],
+              shards: [expectedCar.cid],
+            },
+          }
+        }),
+      },
+    })
+
+    const server = Server.create({
+      id: serviceSigner,
+      service,
+      codec: CAR.inbound,
+      validateAuthorization,
+    })
+    const connection = Client.connect({
+      id: serviceSigner,
+      codec: CAR.outbound,
+      channel: server,
+    })
+    const dataCID = await uploadFile(
+      async (caps) => {
+        const proofs = []
+        for (const { can, nb } of caps) {
+          if (can === BlobCapabilities.add.can) {
+            proofs.push(
+              await BlobCapabilities.add.delegate({
+                issuer: space,
+                audience: agent,
+                with: space.did(),
+                nb: /** @type {import('@web3-storage/capabilities/types').BlobAdd['nb']} */ (
+                  nb
+                ),
+                expiration: Infinity,
+              })
+            )
+          } else if (can === IndexCapabilities.add.can) {
+            proofs.push(
+              await IndexCapabilities.add.delegate({
+                issuer: space,
+                audience: agent,
+                with: space.did(),
+                nb: /** @type {import('@web3-storage/capabilities/types').IndexAdd['nb']} */ (
+                  nb
+                ),
+                expiration: Infinity,
+              })
+            )
+          } else if (can === UploadCapabilities.add.can) {
+            proofs.push(
+              await UploadCapabilities.add.delegate({
+                issuer: space,
+                audience: agent,
+                with: space.did(),
+                nb: /** @type {import('@web3-storage/capabilities/types').UploadAdd['nb']} */ (
+                  nb
+                ),
+                expiration: Infinity,
+              })
+            )
+          }
+        }
+        return {
+          issuer: agent,
+          with: space.did(),
+          proofs,
+          audience: serviceSigner,
+        }
+      },
+      file,
+      {
+        connection,
+        onShardStored: (meta) => {
+          carCID = meta.cid
+        },
+        receiptsEndpoint,
+      }
+    )
+
+    assert(service.space.blob.add.called)
+    assert.equal(service.space.blob.add.callCount, 2)
+    assert(service.filecoin.offer.called)
+    assert.equal(service.filecoin.offer.callCount, 1)
+    assert(service.space.index.add.called)
+    assert.equal(service.space.index.add.callCount, 1)
+    assert(service.upload.add.called)
+    assert.equal(service.upload.add.callCount, 1)
+
+    assert.equal(carCID?.toString(), expectedCar.cid.toString())
+    assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
+  })
 })
