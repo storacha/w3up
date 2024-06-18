@@ -388,8 +388,7 @@ export interface UploadOptions
 
 export interface UploadFileOptions
   extends UploadOptions,
-    UnixFSEncoderSettingsOptions {
-}
+    UnixFSEncoderSettingsOptions {}
 
 export interface UploadDirectoryOptions
   extends UploadOptions,

@@ -113,9 +113,9 @@ describe('UnixFS', () => {
         ...defaults(),
         linker: {
           // @ts-expect-error
-          createLink: (_, digest) => Link.createLegacy(digest)
-        }
-      }
+          createLink: (_, digest) => Link.createLegacy(digest),
+        },
+      },
     })
     assert.equal(cid.version, 0)
   })
