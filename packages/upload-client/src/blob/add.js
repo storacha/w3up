@@ -111,7 +111,7 @@ function parseBlobAddReceiptNext(receipt) {
 // FIXME this code has been copied over from upload-api
 /**
  * @param {import('@ucanto/interface').Signer} id
- * @param {import('@ucanto/interface').Verifier} serviceDid
+ * @param {import('@ucanto/interface').Principal} serviceDid
  * @param {import('@ucanto/interface').Receipt} receipt
  */
 export function createConcludeInvocation(id, serviceDid, receipt) {
@@ -285,7 +285,7 @@ export async function add(
     })
     const httpPutConcludeInvocation = createConcludeInvocation(
       issuer,
-      // @ts-expect-error object of type unknown
+      /* c8 ignore next */
       audience ?? servicePrincipal,
       httpPutReceipt
     )
