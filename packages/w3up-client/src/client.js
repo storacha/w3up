@@ -116,7 +116,7 @@ export class Client extends Base {
    * - `upload/add`
    *
    * @param {import('./types.js').BlobLike} file - File data.
-   * @param {import('./types.js').UploadOptions} [options]
+   * @param {import('./types.js').UploadFileOptions} [options]
    */
   async uploadFile(file, options = {}) {
     const conf = await this._invocationConfig([

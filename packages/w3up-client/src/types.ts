@@ -155,6 +155,7 @@ export type {
   ShardingOptions,
   ShardStoringOptions,
   UploadOptions,
+  UploadFileOptions,
   UploadDirectoryOptions,
   FileLike,
   BlobLike,

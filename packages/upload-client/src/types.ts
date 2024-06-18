@@ -3,7 +3,7 @@ import type {
   ProgressStatus as XHRProgressStatus,
 } from 'ipfs-utils/src/types.js'
 import { Link, UnknownLink, Version, MultihashHasher } from 'multiformats'
-import { Block } from '@ipld/unixfs'
+import { Block, EncoderSettings } from '@ipld/unixfs'
 import {
   ServiceMethod,
   ConnectionView,
@@ -347,6 +347,13 @@ export interface UnixFSDirectoryEncoderOptions {
   onDirectoryEntryLink?: (link: DirectoryEntryLink) => void
 }
 
+export interface UnixFSEncoderSettingsOptions {
+  /**
+   * Settings for UnixFS encoding.
+   */
+  settings?: EncoderSettings
+}
+
 export interface ShardingOptions {
   /**
    * The target shard size. Actual size of CAR output may be bigger due to CAR
@@ -379,11 +386,20 @@ export interface UploadOptions
   pieceHasher?: MultihashHasher<typeof pieceHashCode>
 }
 
+export interface UploadFileOptions
+  extends UploadOptions,
+    UnixFSEncoderSettingsOptions {
+}
+
 export interface UploadDirectoryOptions
   extends UploadOptions,
-    UnixFSDirectoryEncoderOptions,
-    UploadProgressTrackable {
-  /** whether the directory files have already been ordered in a custom way. indicates that the upload must not use a different order than the one provided. */
+    UnixFSEncoderSettingsOptions,
+    UnixFSDirectoryEncoderOptions {
+  /**
+   * Whether the directory files have already been ordered in a custom way.
+   * Indicates that the upload must not use a different order than the one
+   * provided.
+   */
   customOrder?: boolean
 }
 
