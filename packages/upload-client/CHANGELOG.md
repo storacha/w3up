@@ -1,5 +1,22 @@
 # Changelog
 
+## [17.0.0](https://github.com/storacha-network/w3up/compare/upload-client-v16.1.1...upload-client-v17.0.0) (2024-06-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* allow invocation configuration to be generated on demand ([#1507](https://github.com/storacha-network/w3up/issues/1507))
+
+### Features
+
+* allow invocation configuration to be generated on demand ([#1507](https://github.com/storacha-network/w3up/issues/1507)) ([fd74cbb](https://github.com/storacha-network/w3up/commit/fd74cbb9a59c10f1688a5994dd2cdc6722be00be))
+* configure UnixFS encoder ([#1509](https://github.com/storacha-network/w3up/issues/1509)) ([1a5e648](https://github.com/storacha-network/w3up/commit/1a5e64817d20525c456b78eea22da8189b5748b1))
+
+
+### Fixes
+
+* stop writing to DUDEWHERE ([#1500](https://github.com/storacha-network/w3up/issues/1500)) ([cf0a1d6](https://github.com/storacha-network/w3up/commit/cf0a1d6e08d515854080899e57d16dca420f81e6))
+
 ## [16.1.1](https://github.com/w3s-project/w3up/compare/upload-client-v16.1.0...upload-client-v16.1.1) (2024-06-05)
 
 
