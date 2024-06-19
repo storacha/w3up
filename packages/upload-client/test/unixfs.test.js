@@ -1,9 +1,10 @@
 import assert from 'assert'
-import { decode, NodeType } from '@ipld/unixfs'
+import { decode, NodeType, defaults } from '@ipld/unixfs'
 import { exporter } from 'ipfs-unixfs-exporter'
 // @ts-expect-error this version of blockstore-core doesn't point to correct types file in package.json, and upgrading to latest version that fixes that leads to api changes
 import { MemoryBlockstore } from 'blockstore-core/memory'
 import * as raw from 'multiformats/codecs/raw'
+import * as Link from 'multiformats/link'
 import path from 'path'
 import { encodeFile, encodeDirectory } from '../src/unixfs.js'
 import { File } from './helpers/shims.js'
@@ -103,6 +104,20 @@ describe('UnixFS', () => {
     const file = new Blob(['test'])
     const { cid } = await encodeFile(file)
     assert.equal(cid.code, raw.code)
+  })
+
+  it('configured to output v0 CIDs', async () => {
+    const file = new Blob(['test'])
+    const { cid } = await encodeFile(file, {
+      settings: {
+        ...defaults(),
+        linker: {
+          // @ts-expect-error
+          createLink: (_, digest) => Link.createLegacy(digest),
+        },
+      },
+    })
+    assert.equal(cid.version, 0)
   })
 
   it('callback for each directory entry link', async () => {

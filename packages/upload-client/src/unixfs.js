@@ -6,7 +6,7 @@ import { withWidth } from '@ipld/unixfs/file/layout/balanced'
 const SHARD_THRESHOLD = 1000 // shard directory after > 1,000 items
 const queuingStrategy = UnixFS.withCapacity()
 
-const settings = UnixFS.configure({
+const defaultSettings = UnixFS.configure({
   fileChunkEncoder: raw,
   smallFileEncoder: raw,
   chunker: withMaxChunkSize(1024 * 1024),
@@ -15,10 +15,11 @@ const settings = UnixFS.configure({
 
 /**
  * @param {import('./types.js').BlobLike} blob
+ * @param {import('./types.js').UnixFSEncoderSettingsOptions} [options]
  * @returns {Promise<import('./types.js').UnixFSEncodeResult>}
  */
-export async function encodeFile(blob) {
-  const readable = createFileEncoderStream(blob)
+export async function encodeFile(blob, options) {
+  const readable = createFileEncoderStream(blob, options)
   const blocks = await collect(readable)
   // @ts-expect-error There is always a root block
   return { cid: blocks.at(-1).cid, blocks }
@@ -26,11 +27,13 @@ export async function encodeFile(blob) {
 
 /**
  * @param {import('./types.js').BlobLike} blob
+ * @param {import('./types.js').UnixFSEncoderSettingsOptions} [options]
  * @returns {ReadableStream<import('@ipld/unixfs').Block>}
  */
-export function createFileEncoderStream(blob) {
+export function createFileEncoderStream(blob, options) {
   /** @type {TransformStream<import('@ipld/unixfs').Block, import('@ipld/unixfs').Block>} */
   const { readable, writable } = new TransformStream({}, queuingStrategy)
+  const settings = options?.settings ?? defaultSettings
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
   const fileBuilder = new UnixFSFileBuilder('', blob)
   void (async () => {
@@ -101,7 +104,7 @@ class UnixFSDirectoryBuilder {
 
 /**
  * @param {Iterable<import('./types.js').FileLike>} files
- * @param {import('./types.js').UnixFSDirectoryEncoderOptions} [options]
+ * @param {import('./types.js').UnixFSEncoderSettingsOptions & import('./types.js').UnixFSDirectoryEncoderOptions} [options]
  * @returns {Promise<import('./types.js').UnixFSEncodeResult>}
  */
 export async function encodeDirectory(files, options) {
@@ -113,7 +116,7 @@ export async function encodeDirectory(files, options) {
 
 /**
  * @param {Iterable<import('./types.js').FileLike>} files
- * @param {import('./types.js').UnixFSDirectoryEncoderOptions} [options]
+ * @param {import('./types.js').UnixFSEncoderSettingsOptions & import('./types.js').UnixFSDirectoryEncoderOptions} [options]
  * @returns {ReadableStream<import('@ipld/unixfs').Block>}
  */
 export function createDirectoryEncoderStream(files, options) {
@@ -145,6 +148,7 @@ export function createDirectoryEncoderStream(files, options) {
 
   /** @type {TransformStream<import('@ipld/unixfs').Block, import('@ipld/unixfs').Block>} */
   const { readable, writable } = new TransformStream({}, queuingStrategy)
+  const settings = options?.settings ?? defaultSettings
   const unixfsWriter = UnixFS.createWriter({ writable, settings })
   void (async () => {
     const link = await rootDir.finalize(unixfsWriter)

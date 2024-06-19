@@ -43,12 +43,12 @@ export * as Receipt from './receipts.js'
  * The issuer needs the `blob/add`, `index/add`, `filecoin/offer` and
  * `upload/add` delegated capability.
  * @param {import('./types.js').BlobLike} file File data.
- * @param {import('./types.js').UploadOptions} [options]
+ * @param {import('./types.js').UploadFileOptions} [options]
  */
 export async function uploadFile(conf, file, options = {}) {
   return await uploadBlockStream(
     conf,
-    UnixFS.createFileEncoderStream(file),
+    UnixFS.createFileEncoderStream(file, options),
     options
   )
 }
