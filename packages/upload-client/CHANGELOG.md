@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.0.1](https://github.com/storacha-network/w3up/compare/upload-client-v17.0.0...upload-client-v17.0.1) (2024-06-20)
+
+
+### Fixes
+
+* missing typesVersions for fetch-with-upload-progress export ([b2f4508](https://github.com/storacha-network/w3up/commit/b2f4508727e4311fc626fc3c21b8a56a30caa3a0))
+
 ## [17.0.0](https://github.com/storacha-network/w3up/compare/upload-client-v16.1.1...upload-client-v17.0.0) (2024-06-19)
 
 
