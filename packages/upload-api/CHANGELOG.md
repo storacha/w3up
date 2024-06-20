@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.1](https://github.com/storacha-network/w3up/compare/upload-api-v18.0.0...upload-api-v18.0.1) (2024-06-20)
+
+
+### Fixes
+
+* return correct response for index extract error ([67ef2b0](https://github.com/storacha-network/w3up/commit/67ef2b02ab2d745e4a2f023cf03f58c2a6ee1e2f))
+
 ## [18.0.0](https://github.com/w3s-project/w3up/compare/upload-api-v17.1.0...upload-api-v18.0.0) (2024-06-07)
 
 
