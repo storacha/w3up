@@ -49,6 +49,9 @@
       "car": [
         "dist/src/car.d.ts"
       ],
+      "fetch-with-upload-progress": [
+        "dist/src/fetch-with-upload-progress.d.ts"
+      ],
       "index": [
         "dist/src/index/index.d.ts"
       ],
