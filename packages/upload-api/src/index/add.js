@@ -54,7 +54,7 @@ const add = async ({ capability }, context) => {
   )
 
   const idxRes = ShardedDAGIndex.extract(concat(chunks))
-  if (!idxRes.ok) return idxAllocRes
+  if (!idxRes.ok) return idxRes
 
   // ensure indexed shards are allocated in the agent's space
   const shardDigests = [...idxRes.ok.shards.keys()]
