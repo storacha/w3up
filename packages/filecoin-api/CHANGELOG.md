@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.1.1](https://github.com/storacha-network/w3up/compare/filecoin-api-v7.1.0...filecoin-api-v7.1.1) (2024-06-21)
+
+
+### Fixes
+
+* return piece accept receipt error ([#1512](https://github.com/storacha-network/w3up/issues/1512)) ([05283cf](https://github.com/storacha-network/w3up/commit/05283cfc8ace5e8716d6557a8e29402ef4a2e3c0))
+
 ## [7.1.0](https://github.com/w3s-project/w3up/compare/filecoin-api-v7.0.0...filecoin-api-v7.1.0) (2024-05-30)
 
 
