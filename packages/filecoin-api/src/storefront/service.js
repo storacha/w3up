@@ -288,14 +288,19 @@ export const filecoinInfo = async ({ capability }, context) => {
     return processingResult
   }
 
-  const pieceAcceptOut = /** @type {API.FilecoinAcceptSuccess} */ (
-    pieceAcceptReceiptGet.ok?.out.ok
-  )
+  const pieceAcceptOut =
+    /** @type {API.Result<API.FilecoinAcceptSuccess, API.FilecoinAcceptFailure>} */
+    (pieceAcceptReceiptGet.ok.out)
+
+  // If piece accept receipt was in error, return the error so user can remedy.
+  if (pieceAcceptOut.error) {
+    return pieceAcceptOut
+  }
 
   // Query current info of aggregate from deal tracker
   const info = await DealTracker.dealInfo(
     context.dealTrackerService.invocationConfig,
-    pieceAcceptOut.aggregate,
+    pieceAcceptOut.ok.aggregate,
     { connection: context.dealTrackerService.connection }
   )
 
@@ -308,12 +313,12 @@ export const filecoinInfo = async ({ capability }, context) => {
     piece,
     aggregates: [
       {
-        aggregate: pieceAcceptOut.aggregate,
-        inclusion: pieceAcceptOut.inclusion,
+        aggregate: pieceAcceptOut.ok.aggregate,
+        inclusion: pieceAcceptOut.ok.inclusion,
       },
     ],
     deals: deals.map(([dealId, dealDetails]) => ({
-      aggregate: pieceAcceptOut.aggregate,
+      aggregate: pieceAcceptOut.ok.aggregate,
       provider: dealDetails.provider,
       aux: {
         dataType: 0n,
