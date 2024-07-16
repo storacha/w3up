@@ -144,9 +144,20 @@ export const test = {
     assert.ok(secondNext.allocate.receipt)
     assert.ok(!secondNext.put.receipt)
     assert.ok(!secondNext.accept.receipt)
+
+    const firstAllocateTaskLink = firstNext.allocate.task.link()
+    const secondAllocateTaskLink = secondNext.allocate.task.link()
+
+    if (firstAllocateTaskLink.toString() !== secondAllocateTaskLink.toString()) {
+      console.error('allocate receipts not equal:')
+      console.error(firstNext.allocate.receipt)
+      console.error(secondNext.allocate.receipt)
+    }
+
     // allocate receipt is from same invocation CID
-    assert.ok(
-      firstNext.allocate.task.link().equals(secondNext.allocate.task.link())
+    assert.equal(
+      firstAllocateTaskLink.toString(),
+      secondAllocateTaskLink.toString()
     )
   },
   'blob/add schedules allocation and returns effects for allocate, accept and put together with their receipts (when stored)':
