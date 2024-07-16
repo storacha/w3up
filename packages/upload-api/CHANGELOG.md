@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.2](https://github.com/storacha-network/w3up/compare/upload-api-v18.0.1...upload-api-v18.0.2) (2024-07-16)
+
+
+### Fixes
+
+* add debugging for allocate receipt ([315f761](https://github.com/storacha-network/w3up/commit/315f76194d029fd72b1f5776a0194494af82b2e4))
+
 ## [18.0.1](https://github.com/storacha-network/w3up/compare/upload-api-v18.0.0...upload-api-v18.0.1) (2024-06-20)
 
 
