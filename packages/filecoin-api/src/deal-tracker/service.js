@@ -22,7 +22,7 @@ export const dealInfo = async ({ capability }, context) => {
   const records = []
   /** @type {string|undefined} */
   let cursor
-  while (true) {
+  do {
     const storeQuery = await context.dealStore.query({ piece }, { cursor })
     if (storeQuery.error) {
       return { error: new StoreOperationFailed(storeQuery.error.message) }
@@ -30,8 +30,7 @@ export const dealInfo = async ({ capability }, context) => {
 
     records.push(...storeQuery.ok.results)
     cursor = storeQuery.ok.cursor
-    if (!cursor) break
-  }
+  } while (cursor)
 
   return {
     ok: {

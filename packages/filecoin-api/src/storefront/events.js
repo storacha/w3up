@@ -191,7 +191,7 @@ export const handleCronTick = async (context) => {
   let updatedPiecesCount = 0
   /** @type {string|undefined} */
   let cursor
-  while (true) {
+  do {
     const submittedPieces = await context.pieceStore.query(
       {
         status: 'submitted',
@@ -230,8 +230,7 @@ export const handleCronTick = async (context) => {
 
     updatedPiecesCount += updatedResponses.filter((r) => r.ok?.updated).length
     cursor = submittedPieces.ok.cursor
-    if (!cursor) break
-  }
+  } while (cursor)
 
   // Return successful update operation
   // Include in response the ones that were Updated, and the ones still pending response.

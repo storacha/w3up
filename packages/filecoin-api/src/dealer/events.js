@@ -62,7 +62,7 @@ export const handleCronTick = async (context) => {
   let updatedDealsCount = 0
   /** @type {string|undefined} */
   let cursor
-  while (true) {
+  do {
     // Get offered deals pending approval/rejection
     const offeredDeals = await context.aggregateStore.query(
       {
@@ -101,8 +101,7 @@ export const handleCronTick = async (context) => {
 
     updatedDealsCount += updatedResponses.filter((r) => r.ok?.updated).length
     cursor = offeredDeals.ok.cursor
-    if (!cursor) break
-  }
+  } while (cursor)
 
   // Return successful update operation
   // Include in response the ones that were Updated, and the ones still pending response.
