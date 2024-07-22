@@ -42,7 +42,7 @@ export interface Store<RecKey, Rec> {
   has: (key: RecKey) => Promise<Result<boolean, StoreGetError>>
 }
 
-export interface UpdatableStore<RecKey, Rec> extends Store<RecKey, Rec> {
+export interface UpdatableStore<RecKey, Rec> {
   /**
    * Updates a record from the store.
    */
@@ -63,16 +63,36 @@ export interface ReadableStreamStore<RecKey, Rec> {
   stream: (key: RecKey) => Promise<Result<ReadableStream<Rec>, StoreGetError>>
 }
 
-export interface QueryableStore<RecKey, Rec, Query> extends Store<RecKey, Rec> {
+export interface ListSuccess<R> {
   /**
-   * Queries for record matching a given criterium.
+   * Opaque string specifying where to start retrival of the next page of
+   * results.
    */
-  query: (search: Query) => Promise<Result<Rec[], StoreGetError>>
+  cursor?: string
+  results: R[]
 }
 
-export interface UpdatableAndQueryableStore<RecKey, Rec, Query>
-  extends UpdatableStore<RecKey, Rec>,
-    QueryableStore<RecKey, Rec, Query> {}
+export interface Pageable {
+  /**
+   * Opaque string specifying where to start retrival of the next page of
+   * results.
+   */
+  cursor?: string
+  /**
+   * Maximum number of items to return.
+   */
+  size?: number
+}
+
+export interface QueryableStore<Query, Rec> {
+  /**
+   * Queries for record matching a given criteria.
+   */
+  query: (
+    search: Query,
+    options?: Pageable
+  ) => Promise<Result<ListSuccess<Rec>, StoreGetError>>
+}
 
 export interface QueueMessageOptions {
   messageGroupId?: string

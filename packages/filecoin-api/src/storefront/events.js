@@ -1,4 +1,3 @@
-import pMap from 'p-map'
 import { Storefront, Aggregator } from '@web3-storage/filecoin-client'
 import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
 import { Assert } from '@web3-storage/content-claims/capability'
@@ -17,8 +16,11 @@ import {
 /**
  * @typedef {import('./api.js').PieceRecord} PieceRecord
  * @typedef {import('./api.js').PieceRecordKey} PieceRecordKey
- * @typedef {import('../types.js').UpdatableAndQueryableStore<PieceRecordKey, PieceRecord, Pick<PieceRecord, 'status'>>} PieceStore
+ * @typedef {import('./api.js').PieceStore} PieceStore
  */
+
+/** Max items per page of query. */
+const MAX_PAGE_SIZE = 20
 
 /**
  * On filecoin submit queue messages, validate piece for given content and store it in store.
@@ -185,49 +187,58 @@ export const handlePieceStatusUpdate = async (context, record) => {
  * @param {import('./api.js').CronContext} context
  */
 export const handleCronTick = async (context) => {
-  const submittedPieces = await context.pieceStore.query({
-    status: 'submitted',
-  })
-  if (submittedPieces.error) {
-    return {
-      error: submittedPieces.error,
+  let totalPiecesCount = 0
+  let updatedPiecesCount = 0
+  /** @type {string|undefined} */
+  let cursor
+  while (true) {
+    const submittedPieces = await context.pieceStore.query(
+      {
+        status: 'submitted',
+      },
+      { cursor, size: MAX_PAGE_SIZE }
+    )
+    if (submittedPieces.error) {
+      return {
+        error: submittedPieces.error,
+      }
     }
-  }
-  // Update approved pieces from the ones resolved
-  const updatedResponses = await pMap(
-    submittedPieces.ok,
-    (pieceRecord) =>
-      updatePiecesWithDeal({
-        id: context.id,
-        aggregatorId: context.aggregatorId,
-        pieceRecord,
-        pieceStore: context.pieceStore,
-        taskStore: context.taskStore,
-        receiptStore: context.receiptStore,
-      }),
-    {
-      concurrency: 20,
-    }
-  )
+    totalPiecesCount += submittedPieces.ok.results.length
 
-  // Fail if one or more update operations did not succeed.
-  // The successful ones are still valid, but we should keep track of errors for monitoring/alerting.
-  const updateErrorResponse = updatedResponses.find((r) => r.error)
-  if (updateErrorResponse) {
-    return {
-      error: updateErrorResponse.error,
+    // Update approved pieces from the ones resolved
+    const updatedResponses = await Promise.all(
+      submittedPieces.ok.results.map((pieceRecord) =>
+        updatePiecesWithDeal({
+          id: context.id,
+          aggregatorId: context.aggregatorId,
+          pieceRecord,
+          pieceStore: context.pieceStore,
+          taskStore: context.taskStore,
+          receiptStore: context.receiptStore,
+        })
+      )
+    )
+
+    // Fail if one or more update operations did not succeed.
+    // The successful ones are still valid, but we should keep track of errors for monitoring/alerting.
+    const updateErrorResponse = updatedResponses.find((r) => r.error)
+    if (updateErrorResponse) {
+      return {
+        error: updateErrorResponse.error,
+      }
     }
+
+    updatedPiecesCount += updatedResponses.filter((r) => r.ok?.updated).length
+    cursor = submittedPieces.ok.cursor
+    if (!cursor) break
   }
 
   // Return successful update operation
   // Include in response the ones that were Updated, and the ones still pending response.
-  const updatedPiecesCount = updatedResponses.filter(
-    (r) => r.ok?.updated
-  ).length
   return {
     ok: {
       updatedCount: updatedPiecesCount,
-      pendingCount: updatedResponses.length - updatedPiecesCount,
+      pendingCount: totalPiecesCount - updatedPiecesCount,
     },
   }
 }

@@ -1,265 +1,234 @@
-import { UpdatableStore, ReadableStreamStore } from './store.js'
+import * as API from '../../src/types.js'
+import * as StorefrontAPI from '../../src/storefront/api.js'
+import * as AggregatorAPI from '../../src/aggregator/api.js'
+import * as DealerAPI from '../../src/dealer/api.js'
+import * as DealTrackerAPI from '../../src/deal-tracker/api.js'
+import { Store } from './store.js'
 
-/**
- * @typedef {import('@ucanto/interface').Link} Link
- * @typedef {import('../../src/storefront/api.js').PieceRecord} PieceRecord
- * @typedef {import('../../src/storefront/api.js').PieceRecordKey} PieceRecordKey
- * @typedef {import('../../src/aggregator/api.js').PieceRecord} AggregatorPieceRecord
- * @typedef {import('../../src/aggregator/api.js').PieceRecordKey} AggregatorPieceRecordKey
- * @typedef {import('../../src/aggregator/api.js').BufferRecord} BufferRecord
- * @typedef {import('../../src/aggregator/api.js').AggregateRecord} AggregateRecord
- * @typedef {import('../../src/aggregator/api.js').AggregateRecordKey} AggregateRecordKey
- * @typedef {import('../../src/aggregator/api.js').InclusionRecord} InclusionRecord
- * @typedef {import('../../src/aggregator/api.js').InclusionRecordKey} InclusionRecordKey
- * @typedef {import('../../src/dealer/api.js').AggregateRecord} DealerAggregateRecord
- * @typedef {import('../../src/dealer/api.js').AggregateRecordKey} DealerAggregateRecordKey
- * @typedef {import('../../src/dealer/api.js').OfferDocument} OfferDocument
- * @typedef {import('../../src/deal-tracker/api.js').DealRecord} DealRecord
- * @typedef {import('../../src/deal-tracker/api.js').DealRecordKey} DealRecordKey
- */
-export const getStoreImplementations = (
-  StoreImplementation = UpdatableStore,
-  ReadableStreamStoreImplementation = ReadableStreamStore
-) => ({
+export const getStoreImplementations = () => ({
   storefront: {
-    pieceStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<PieceRecord | undefined>} */ items,
-        /** @type {PieceRecordKey} */ record
-      ) => {
-        return Array.from(items).find((i) => i?.piece.equals(record.piece))
-      },
-      queryFn: (
-        /** @type {Set<PieceRecord>} */ items,
-        /** @type {Partial<PieceRecord>} */ search
-      ) => {
-        const filteredItems = Array.from(items).filter((i) => {
-          if (i.status === search.status) {
-            return true
-          }
-          return true
-        })
-        return filteredItems
-      },
-      updateFn: (
-        /** @type {Set<PieceRecord>} */ items,
-        /** @type {PieceRecordKey} */ key,
-        /** @type {Partial<PieceRecord>} */ item
-      ) => {
-        const itemToUpdate = Array.from(items).find((i) =>
-          i?.piece.equals(key.piece)
-        )
-        if (!itemToUpdate) {
-          throw new Error('not found')
-        }
-        const updatedItem = {
-          ...itemToUpdate,
-          ...item,
-        }
-        items.delete(itemToUpdate)
-        items.add(updatedItem)
-        return updatedItem
-      },
-    }),
-    taskStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<import('@ucanto/interface').Invocation>} */ items,
-        /** @type {import('@ucanto/interface').UnknownLink} */ record
-      ) => {
-        return Array.from(items).find((i) => i.cid.equals(record))
-      },
-    }),
-    receiptStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<import('@ucanto/interface').Receipt>} */ items,
-        /** @type {import('@ucanto/interface').UnknownLink} */ record
-      ) => {
-        return Array.from(items).find((i) => i.ran.link().equals(record))
-      },
-    }),
-    contentStore: new ReadableStreamStore({
-      streamFn: (
-        /** @type {Set<Uint8Array>} */ items,
-        /** @type {import('@ucanto/interface').UnknownLink} */ record
-      ) => {
-        const item = Array.from(items).pop()
-        if (!item) {
-          return undefined
-        }
-        return new ReadableStream({
-          start(controller) {
-            // Push the data into the stream
-            controller.enqueue(item)
-            // Close the stream
-            controller.close()
+    pieceStore:
+      /** @type {StorefrontAPI.PieceStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find((i) => i?.piece.equals(record.piece))
+          },
+          queryFn: (items, search, options) => {
+            const results = Array.from(items)
+              .filter((i) => i.insertedAt > (options?.cursor ?? ''))
+              .filter((i) => search.status ? i.status === search.status : true)
+              .sort((a, b) => (a.insertedAt > b.insertedAt ? 1 : -1))
+              .slice(0, options?.size ?? items.size)
+            return { results, cursor: results.at(-1)?.insertedAt }
+          },
+          updateFn: (items, key, item) => {
+            const itemToUpdate = Array.from(items).find((i) =>
+              i?.piece.equals(key.piece)
+            )
+            if (!itemToUpdate) {
+              throw new Error('not found')
+            }
+            const updatedItem = {
+              ...itemToUpdate,
+              ...item,
+            }
+            items.delete(itemToUpdate)
+            items.add(updatedItem)
+            return updatedItem
           },
         })
-      },
-    }),
+      ),
+    taskStore:
+      /** @type {StorefrontAPI.TaskStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find((i) => i.cid.equals(record))
+          },
+        })
+      ),
+    receiptStore:
+      /** @type {StorefrontAPI.ReceiptStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find((i) => i.ran.link().equals(record))
+          },
+        })
+      ),
+    contentStore:
+      /** @type {API.ReadableStreamStore<import('@ucanto/interface').UnknownLink, Uint8Array>} */
+      (
+        new Store({
+          getFn: (items) => Array.from(items).pop(),
+          streamFn: (items, record) => {
+            const item = Array.from(items).pop()
+            if (!item) {
+              return undefined
+            }
+            return new ReadableStream({
+              start(controller) {
+                // Push the data into the stream
+                controller.enqueue(item)
+                // Close the stream
+                controller.close()
+              },
+            })
+          },
+        })
+      ),
   },
   aggregator: {
-    pieceStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<AggregatorPieceRecord>} */ items,
-        /** @type {AggregatorPieceRecordKey} */ record
-      ) => {
-        return Array.from(items).find((i) => i?.piece.equals(record.piece))
-      },
-      updateFn: (
-        /** @type {Set<AggregatorPieceRecord>} */ items,
-        /** @type {AggregatorPieceRecordKey} */ key,
-        /** @type {Partial<AggregatorPieceRecord>} */ item
-      ) => {
-        const itemToUpdate = Array.from(items).find(
-          (i) => i?.piece.equals(key.piece) && i.group === key.group
-        )
-        if (!itemToUpdate) {
-          throw new Error('not found')
-        }
-        const updatedItem = {
-          ...itemToUpdate,
-          ...item,
-        }
-        items.delete(itemToUpdate)
-        items.add(updatedItem)
-        return updatedItem
-      },
-    }),
-    bufferStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<BufferRecord>} */ items,
-        /** @type {Link} */ record
-      ) => {
-        // Return first item
-        return Array.from(items).find((i) => i.block.equals(record))
-      },
-    }),
-    aggregateStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<AggregateRecord>} */ items,
-        /** @type {AggregateRecordKey} */ record
-      ) => {
-        return Array.from(items).find((i) =>
-          i?.aggregate.equals(record.aggregate)
-        )
-      },
-    }),
-    inclusionStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<InclusionRecord>} */ items,
-        /** @type {InclusionRecordKey} */ record
-      ) => {
-        return Array.from(items).find(
-          (i) =>
-            i?.aggregate.equals(record.aggregate) &&
-            i?.piece.equals(record.piece)
-        )
-      },
-      queryFn: (
-        /** @type {Set<InclusionRecord>} */ items,
-        /** @type {Partial<InclusionRecord>} */ search
-      ) => {
-        const filteredItems = Array.from(items).filter((i) => {
-          if (search.piece && !i.piece.equals(search.piece)) {
-            return false
-          } else if (
-            search.aggregate &&
-            !i.aggregate.equals(search.aggregate)
-          ) {
-            return false
-          } else if (search.group && i.group !== search.group) {
-            return false
-          }
-          return true
+    pieceStore:
+      /** @type {AggregatorAPI.PieceStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find((i) => i?.piece.equals(record.piece))
+          },
+          updateFn: (items, key, item) => {
+            const itemToUpdate = Array.from(items).find(
+              (i) => i?.piece.equals(key.piece) && i.group === key.group
+            )
+            if (!itemToUpdate) {
+              throw new Error('not found')
+            }
+            const updatedItem = {
+              ...itemToUpdate,
+              ...item,
+            }
+            items.delete(itemToUpdate)
+            items.add(updatedItem)
+            return updatedItem
+          },
         })
-        return filteredItems
-      },
-    }),
+      ),
+    bufferStore:
+      /** @type {AggregatorAPI.BufferStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            // Return first item
+            return Array.from(items).find((i) => i.block.equals(record))
+          },
+        })
+      ),
+    aggregateStore:
+      /** @type {AggregatorAPI.AggregateStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find((i) =>
+              i?.aggregate.equals(record.aggregate)
+            )
+          },
+        })
+      ),
+    inclusionStore:
+      /** @type {AggregatorAPI.InclusionStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find(
+              (i) =>
+                i?.aggregate.equals(record.aggregate) &&
+                i?.piece.equals(record.piece)
+            )
+          },
+          queryFn: (items, search) => {
+            const filteredItems = Array.from(items).filter((i) => {
+              if (search.piece && !i.piece.equals(search.piece)) {
+                return false
+              } else if (search.group && i.group !== search.group) {
+                return false
+              }
+              return true
+            })
+            return { results: filteredItems }
+          },
+        })
+      ),
   },
   dealer: {
-    aggregateStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<DealerAggregateRecord>} */ items,
-        /** @type {DealerAggregateRecordKey} */ record
-      ) => {
-        return Array.from(items).find((i) =>
-          i?.aggregate.equals(record.aggregate)
-        )
-      },
-      queryFn: (
-        /** @type {Set<DealerAggregateRecord>} */ items,
-        /** @type {Partial<DealerAggregateRecord>} */ search
-      ) => {
-        return Array.from(items).filter(
-          (i) =>
-            i.status === search.status || i.aggregate.equals(search.aggregate)
-        )
-      },
-      updateFn: (
-        /** @type {Set<DealerAggregateRecord>} */ items,
-        /** @type {DealerAggregateRecordKey} */ key,
-        /** @type {Partial<DealerAggregateRecord>} */ item
-      ) => {
-        const itemToUpdate = Array.from(items).find((i) =>
-          i.aggregate.equals(key.aggregate)
-        )
-        if (!itemToUpdate) {
-          throw new Error('not found')
-        }
-        const updatedItem = {
-          ...itemToUpdate,
-          ...item,
-        }
-        items.delete(itemToUpdate)
-        items.add(updatedItem)
-        return updatedItem
-      },
-    }),
-    offerStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<OfferDocument>} */ items,
-        /** @type {string} */ record
-      ) => {
-        return Array.from(items).find((i) => i.key === record)
-      },
-      updateFn: (
-        /** @type {Set<OfferDocument>} */ items,
-        /** @type {string} */ key,
-        /** @type {Partial<OfferDocument>} */ item
-      ) => {
-        const lastItem = Array.from(items).pop()
-        if (!lastItem) {
-          throw new Error('not found')
-        }
+    aggregateStore:
+      /** @type {DealerAPI.AggregateStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find((i) =>
+              i?.aggregate.equals(record.aggregate)
+            )
+          },
+          queryFn: (items, search) => {
+            return {
+              results: Array.from(items).filter(
+                (i) => i.status === search.status
+              ),
+            }
+          },
+          updateFn: (items, key, item) => {
+            const itemToUpdate = Array.from(items).find((i) =>
+              i.aggregate.equals(key.aggregate)
+            )
+            if (!itemToUpdate) {
+              throw new Error('not found')
+            }
+            const updatedItem = {
+              ...itemToUpdate,
+              ...item,
+            }
+            items.delete(itemToUpdate)
+            items.add(updatedItem)
+            return updatedItem
+          },
+        })
+      ),
+    offerStore: Object.assign(
+      /** @type {DealerAPI.OfferStore<DealerAPI.OfferDocument>} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find((i) => i.key === record)
+          },
+          updateFn: (items, key, item) => {
+            const lastItem = Array.from(items).pop()
+            if (!lastItem) {
+              throw new Error('not found')
+            }
 
-        const nItem = {
-          ...lastItem,
-          ...item,
-        }
+            const nItem = {
+              ...lastItem,
+              ...item,
+            }
 
-        items.delete(lastItem)
-        items.add(nItem)
+            items.delete(lastItem)
+            items.add(nItem)
 
-        return nItem
-      },
-    }),
+            return nItem
+          },
+        })
+      ),
+    ),
   },
   dealTracker: {
-    dealStore: new StoreImplementation({
-      getFn: (
-        /** @type {Set<DealRecord>} */ items,
-        /** @type {DealRecordKey} */ record
-      ) => {
-        return Array.from(items).find(
-          (i) => i?.piece.equals(record.piece) && i.dealId === record.dealId
-        )
-      },
-      queryFn: (
-        /** @type {Set<DealRecord>} */ items,
-        /** @type {Partial<DealRecord>} */ search
-      ) => {
-        return Array.from(items).filter((i) => i.piece.equals(search.piece))
-      },
-    }),
+    dealStore:
+      /** @type {DealTrackerAPI.DealStore} */
+      (
+        new Store({
+          getFn: (items, record) => {
+            return Array.from(items).find(
+              (i) => i?.piece.equals(record.piece) && i.dealId === record.dealId
+            )
+          },
+          queryFn: (items, search) => {
+            return {
+              results: Array.from(items).filter((i) =>
+                i.piece.equals(search.piece)
+              ),
+            }
+          },
+        })
+      ),
   },
 })

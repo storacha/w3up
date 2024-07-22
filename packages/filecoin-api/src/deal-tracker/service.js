@@ -19,16 +19,23 @@ import { StoreOperationFailed } from '../errors.js'
 export const dealInfo = async ({ capability }, context) => {
   const { piece } = capability.nb
 
-  const storeGet = await context.dealStore.query({ piece })
-  if (storeGet.error) {
-    return {
-      error: new StoreOperationFailed(storeGet.error.message),
+  const records = []
+  /** @type {string|undefined} */
+  let cursor
+  while (true) {
+    const storeQuery = await context.dealStore.query({ piece }, { cursor })
+    if (storeQuery.error) {
+      return { error: new StoreOperationFailed(storeQuery.error.message) }
     }
+
+    records.push(...storeQuery.ok.results)
+    cursor = storeQuery.ok.cursor
+    if (!cursor) break
   }
 
   return {
     ok: {
-      deals: storeGet.ok.reduce((acc, curr) => {
+      deals: records.reduce((acc, curr) => {
         acc[`${curr.dealId}`] = {
           provider: curr.provider,
         }

@@ -18,17 +18,16 @@ import {
 } from '@web3-storage/filecoin-client/types'
 import {
   Store,
-  UpdatableAndQueryableStore,
+  UpdatableStore,
+  QueryableStore,
   Queue,
   ServiceConfig,
   StoreGetError,
 } from '../types.js'
 
-export type PieceStore = UpdatableAndQueryableStore<
-  PieceRecordKey,
-  PieceRecord,
-  Pick<PieceRecord, 'status'>
->
+export type PieceStore = Store<PieceRecordKey, PieceRecord> &
+  UpdatableStore<PieceRecordKey, PieceRecord> &
+  QueryableStore<Pick<PieceRecord, 'status'>, PieceRecord>
 export type FilecoinSubmitQueue = Queue<FilecoinSubmitMessage>
 export type PieceOfferQueue = Queue<PieceOfferMessage>
 export type TaskStore = Store<UnknownLink, Invocation>

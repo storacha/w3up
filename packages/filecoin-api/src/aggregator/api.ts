@@ -13,17 +13,15 @@ import {
   ServiceConfig,
 } from '../types.js'
 
-export type PieceStore = UpdatableStore<PieceRecordKey, PieceRecord>
+export type PieceStore = Store<PieceRecordKey, PieceRecord> &
+  UpdatableStore<PieceRecordKey, PieceRecord>
 export type PieceQueue = Queue<PieceMessage>
 export type BufferQueue = Queue<BufferMessage>
 export type BufferStore = Store<Link, BufferRecord>
 export type AggregateStore = Store<AggregateRecordKey, AggregateRecord>
 export type PieceAcceptQueue = Queue<PieceAcceptMessage>
-export type InclusionStore = QueryableStore<
-  InclusionRecordKey,
-  InclusionRecord,
-  InclusionRecordQueryByGroup
->
+export type InclusionStore = Store<InclusionRecordKey, InclusionRecord> &
+  QueryableStore<InclusionRecordQueryByGroup, InclusionRecord>
 export type AggregateOfferQueue = Queue<AggregateOfferMessage>
 
 export interface ServiceContext {

@@ -5,17 +5,17 @@ import {
   DealTrackerService,
 } from '@web3-storage/filecoin-client/types'
 import {
+  Store,
   UpdatableStore,
-  UpdatableAndQueryableStore,
+  QueryableStore,
   ServiceConfig,
 } from '../types.js'
 
-export type OfferStore<OfferDoc> = UpdatableStore<string, OfferDoc>
-export type AggregateStore = UpdatableAndQueryableStore<
-  AggregateRecordKey,
-  AggregateRecord,
-  Pick<AggregateRecord, 'status'>
->
+export type OfferStore<OfferDoc> = Store<string, OfferDoc> &
+  UpdatableStore<string, OfferDoc>
+export type AggregateStore = Store<AggregateRecordKey, AggregateRecord> &
+  UpdatableStore<AggregateRecordKey, AggregateRecord> &
+  QueryableStore<Pick<AggregateRecord, 'status'>, AggregateRecord>
 
 export interface ServiceContext<OfferDoc = OfferDocument> {
   id: Signer

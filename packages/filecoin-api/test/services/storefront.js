@@ -16,7 +16,6 @@ import {
 } from '../../src/errors.js'
 import { randomCargo, randomAggregate } from '../utils.js'
 import { createInvocationsAndReceiptsForDealDataProofChain } from '../context/receipts.js'
-import { getStoreImplementations } from '../context/store-implementations.js'
 import { FailingStore } from '../context/store.js'
 import { FailingQueue } from '../context/queue.js'
 import { mockService } from '../context/mocks.js'
@@ -239,7 +238,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        pieceStore: getStoreImplementations(FailingStore).storefront.pieceStore,
+        pieceStore: new FailingStore(),
       })
     ),
   'filecoin/submit must be invoked on service did': async (assert, context) => {
@@ -503,7 +502,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        pieceStore: getStoreImplementations(FailingStore).storefront.pieceStore,
+        pieceStore: new FailingStore(),
       })
     ),
   'filecoin/info gets aggregate where piece was included together with deals and inclusion proof':
