@@ -22,7 +22,7 @@ import { StoreOperationFailed, RecordNotFound } from '../../src/errors.js'
  */
 export class Store {
   /**
-   * @param {import('./types.js').StoreOptions<K, V> & Partial<import('./types.js').UpdatableStoreOptions<K, V>> & Partial<import('./types.js').QueryableStoreOptions<Q, V>> & Partial<import('./types.js').ReadableStreamStoreOptions<K, V>>} options
+   * @param {import('./types.js').StoreOptions<K, V> & import('./types.js').UpdatableStoreOptions<K, V> & import('./types.js').QueryableStoreOptions<Q, V> & import('./types.js').ReadableStreamStoreOptions<K, V>} options
    */
   constructor(options) {
     /** @type {Set<V>} */
@@ -51,6 +51,9 @@ export class Store {
    * @returns {Promise<import('@ucanto/interface').Result<V, StoreGetError>>}
    */
   async get(item) {
+    if (!this.getFn) {
+      throw new Error('get not supported')
+    }
     const t = this.getFn(this.items, item)
     if (!t) {
       return {
@@ -67,6 +70,9 @@ export class Store {
    * @returns {Promise<import('@ucanto/interface').Result<boolean, StoreGetError>>}
    */
   async has(item) {
+    if (!this.getFn) {
+      throw new Error('has not supported')
+    }
     const t = this.getFn(this.items, item)
     if (!t) {
       return {
