@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.0](https://github.com/storacha-network/w3up/compare/filecoin-api-v7.1.1...filecoin-api-v7.2.0) (2024-07-23)
+
+
+### Features
+
+* **filecoin-api:** paginated queries ([#1521](https://github.com/storacha-network/w3up/issues/1521)) ([25ed7d7](https://github.com/storacha-network/w3up/commit/25ed7d7e5208d85c49c18585adb5d8667b81f085))
+
 ## [7.1.1](https://github.com/storacha-network/w3up/compare/filecoin-api-v7.1.0...filecoin-api-v7.1.1) (2024-06-21)
 
 
