@@ -11,7 +11,6 @@ import * as DealerEvents from '../../src/dealer/events.js'
 import { FailingStore } from '../context/store.js'
 import { mockService } from '../context/mocks.js'
 import { getConnection } from '../context/service.js'
-import { getStoreImplementations } from '../context/store-implementations.js'
 import { randomAggregate } from '../utils.js'
 import { StoreOperationErrorName } from '../../src/errors.js'
 
@@ -111,7 +110,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        offerStore: getStoreImplementations(FailingStore).dealer.offerStore,
+        offerStore: new FailingStore(),
       })
     ),
   'handles aggregate update status event successfully': async (
@@ -357,8 +356,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        aggregateStore:
-          getStoreImplementations(FailingStore).dealer.aggregateStore,
+        aggregateStore: new FailingStore(),
       })
     ),
   'handles cron tick errors when deal tracker fails to respond':

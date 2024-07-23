@@ -82,7 +82,7 @@ export const pieceAccept = async ({ capability }, context) => {
       error: new StoreOperationFailed(getInclusionRes.error?.message),
     }
   }
-  if (!getInclusionRes.ok.length) {
+  if (!getInclusionRes.ok.results.length) {
     return {
       error: new UnexpectedState(
         `no inclusion proof found for pair {${piece}, ${group}}`
@@ -91,7 +91,7 @@ export const pieceAccept = async ({ capability }, context) => {
   }
 
   // Get buffered pieces
-  const [{ aggregate, inclusion }] = getInclusionRes.ok
+  const [{ aggregate, inclusion }] = getInclusionRes.ok.results
   const getAggregateRes = await context.aggregateStore.get({ aggregate })
   if (getAggregateRes.error) {
     return {

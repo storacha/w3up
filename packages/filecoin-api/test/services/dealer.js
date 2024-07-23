@@ -12,7 +12,6 @@ import { randomAggregate } from '../utils.js'
 import { FailingStore } from '../context/store.js'
 import { mockService } from '../context/mocks.js'
 import { getConnection } from '../context/service.js'
-import { getStoreImplementations } from '../context/store-implementations.js'
 import {
   StoreOperationErrorName,
   UnsupportedCapabilityErrorName,
@@ -159,8 +158,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        aggregateStore:
-          getStoreImplementations(FailingStore).dealer.aggregateStore,
+        aggregateStore: new FailingStore(),
       })
     ),
   'aggregate/offer fails if not able to put to offer store':
@@ -195,7 +193,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        offerStore: getStoreImplementations(FailingStore).dealer.offerStore,
+        offerStore: new FailingStore(),
       })
     ),
   'aggregate/accept issues receipt with data aggregation proof': async (

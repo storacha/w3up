@@ -11,7 +11,6 @@ import { createServer, connect } from '../../src/aggregator/service.js'
 import { randomAggregate, randomCargo } from '../utils.js'
 import { FailingStore } from '../context/store.js'
 import { FailingQueue } from '../context/queue.js'
-import { getStoreImplementations } from '../context/store-implementations.js'
 import {
   QueueOperationErrorName,
   StoreOperationErrorName,
@@ -186,7 +185,7 @@ export const test = {
     },
     (context) => ({
       ...context,
-      pieceStore: getStoreImplementations(FailingStore).aggregator.pieceStore,
+      pieceStore: new FailingStore(),
     })
   ),
   'piece/offer fails if not able to add to piece queue': wichMockableContext(
@@ -386,8 +385,7 @@ export const test = {
       },
       (context) => ({
         ...context,
-        inclusionStore:
-          getStoreImplementations(FailingStore).aggregator.inclusionStore,
+        inclusionStore: new FailingStore(),
       })
     ),
   'piece/accept fails if not able to read from aggregate store':
@@ -441,8 +439,7 @@ export const test = {
       },
       (context) => ({
         ...context,
-        aggregateStore:
-          getStoreImplementations(FailingStore).aggregator.aggregateStore,
+        aggregateStore: new FailingStore(),
       })
     ),
 }

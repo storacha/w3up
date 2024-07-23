@@ -12,7 +12,6 @@ import { FailingStore } from '../context/store.js'
 import { FailingQueue } from '../context/queue.js'
 import { mockService } from '../context/mocks.js'
 import { getConnection } from '../context/service.js'
-import { getStoreImplementations } from '../context/store-implementations.js'
 import { randomAggregate, randomCargo } from '../utils.js'
 import {
   QueueOperationErrorName,
@@ -81,7 +80,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        pieceStore: getStoreImplementations(FailingStore).aggregator.pieceStore,
+        pieceStore: new FailingStore(),
       })
     ),
   'handles pieces insert batch successfully': async (assert, context) => {
@@ -143,8 +142,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        bufferStore:
-          getStoreImplementations(FailingStore).aggregator.bufferStore,
+        bufferStore: new FailingStore(),
       })
     ),
   'handles piece insert event errors when fails to access buffer queue':
@@ -568,8 +566,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        bufferStore:
-          getStoreImplementations(FailingStore).aggregator.bufferStore,
+        bufferStore: new FailingStore(),
       })
     ),
   'handles buffer queue message errors when fails to put message in buffer queue':
@@ -732,8 +729,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        aggregateStore:
-          getStoreImplementations(FailingStore).aggregator.aggregateStore,
+        aggregateStore: new FailingStore(),
       })
     ),
   'handles aggregate insert to queue piece accept successfully': async (
@@ -859,8 +855,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        bufferStore:
-          getStoreImplementations(FailingStore).aggregator.bufferStore,
+        bufferStore: new FailingStore(),
       })
     ),
   'handles aggregate insert event to piece accept queue errors when fails to add to piece accept queue':
@@ -1015,8 +1010,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        inclusionStore:
-          getStoreImplementations(FailingStore).aggregator.inclusionStore,
+        inclusionStore: new FailingStore(),
       })
     ),
   'handles inclusion insert to update piece store entry successfully': async (
@@ -1113,7 +1107,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        pieceStore: getStoreImplementations(FailingStore).aggregator.pieceStore,
+        pieceStore: new FailingStore(),
       })
     ),
   'handles inclusion insert to issue piece accept receipt successfully': async (
@@ -1346,8 +1340,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        bufferStore:
-          getStoreImplementations(FailingStore).aggregator.bufferStore,
+        bufferStore: new FailingStore(),
       })
     ),
 }

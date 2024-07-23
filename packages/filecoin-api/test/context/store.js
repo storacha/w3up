@@ -4,23 +4,33 @@ import { StoreOperationFailed, RecordNotFound } from '../../src/errors.js'
 /**
  * @typedef {import('../../src/types.js').StorePutError} StorePutError
  * @typedef {import('../../src/types.js').StoreGetError} StoreGetError
+ * @typedef {import('../../src/types.js').Pageable} Pageable
+ */
+
+/**
+ * @template T
+ * @typedef {import('../../src/types.js').ListSuccess<T>} ListSuccess
  */
 
 /**
  * @template K
  * @template V
+ * @template Q
  * @implements {API.Store<K, V>}
+ * @implements {API.UpdatableStore<K, V>}
+ * @implements {API.QueryableStore<Q, V>}
  */
 export class Store {
   /**
-   * @param {import('./types.js').StoreOptions<K, V>} options
+   * @param {import('./types.js').StoreOptions<K, V> & import('./types.js').UpdatableStoreOptions<K, V> & import('./types.js').QueryableStoreOptions<Q, V> & import('./types.js').ReadableStreamStoreOptions<K, V>} options
    */
   constructor(options) {
     /** @type {Set<V>} */
     this.items = new Set()
-
     this.getFn = options.getFn
+    this.updateFn = options.updateFn
     this.queryFn = options.queryFn
+    this.streamFn = options.streamFn
   }
 
   /**
@@ -75,14 +85,30 @@ export class Store {
   }
 
   /**
-   * @param {Partial<V>} search
-   * @returns {Promise<import('@ucanto/interface').Result<V[], StoreGetError>>}
+   * @param {Q} search
+   * @param {Pageable} [options]
+   * @returns {Promise<import('@ucanto/interface').Result<ListSuccess<V>, StoreGetError>>}
    */
-  async query(search) {
+  async query(search, options) {
     if (!this.queryFn) {
       throw new Error('query not supported')
     }
-    const t = this.queryFn(this.items, search)
+    const t = this.queryFn(this.items, search, options)
+    return {
+      ok: t,
+    }
+  }
+
+  /**
+   * @param {K} key
+   * @param {Partial<V>} item
+   * @returns {Promise<import('@ucanto/interface').Result<V, StoreGetError>>}
+   */
+  async update(key, item) {
+    if (!this.updateFn) {
+      throw new Error('update not supported')
+    }
+    const t = this.updateFn(this.items, key, item)
     if (!t) {
       return {
         error: new RecordNotFound('not found'),
@@ -92,34 +118,6 @@ export class Store {
       ok: t,
     }
   }
-}
-
-/**
- * @template K
- * @template V
- * @implements {API.ReadableStreamStore<K,V>}
- */
-export class ReadableStreamStore {
-  /**
-   * @param {import('./types.js').ReadableStreamStoreOptions<K, V>} options
-   */
-  constructor(options) {
-    /** @type {Set<V>} */
-    this.items = new Set()
-    this.streamFn = options.streamFn
-  }
-
-  /**
-   * @param {V} record
-   * @returns {Promise<import('@ucanto/interface').Result<{}, StorePutError>>}
-   */
-  async put(record) {
-    this.items.add(record)
-
-    return Promise.resolve({
-      ok: {},
-    })
-  }
 
   /**
    * @param {K} item
@@ -127,7 +125,7 @@ export class ReadableStreamStore {
    */
   async stream(item) {
     if (!this.streamFn) {
-      throw new Error('get not supported')
+      throw new Error('stream not supported')
     }
     const t = this.streamFn(this.items, item)
     if (!t) {
@@ -144,47 +142,12 @@ export class ReadableStreamStore {
 /**
  * @template K
  * @template V
- * @implements {API.UpdatableStore<K,V>}
- * @extends {Store<K, V>}
+ * @template Q
+ * @implements {API.Store<K, V>}
+ * @implements {API.UpdatableStore<K, V>}
+ * @implements {API.QueryableStore<Q, V>}
  */
-export class UpdatableStore extends Store {
-  /**
-   * @param {import('./types.js').UpdatableStoreOptions<K, V>} options
-   */
-  constructor(options) {
-    super(options)
-
-    this.updateFn = options.updateFn
-  }
-
-  /**
-   * @param {K} key
-   * @param {Partial<V>} item
-   * @returns {Promise<import('@ucanto/interface').Result<V, StoreGetError>>}
-   */
-  async update(key, item) {
-    if (!this.updateFn) {
-      throw new Error('query not supported')
-    }
-
-    const t = this.updateFn(this.items, key, item)
-    if (!t) {
-      return {
-        error: new RecordNotFound('not found'),
-      }
-    }
-    return {
-      ok: t,
-    }
-  }
-}
-
-/**
- * @template K
- * @template V
- * @extends {UpdatableStore<K, V>}
- */
-export class FailingStore extends UpdatableStore {
+export class FailingStore {
   /**
    * @param {V} record
    */
@@ -215,8 +178,8 @@ export class FailingStore extends UpdatableStore {
   }
 
   /**
-   * @param {Partial<V>} search
-   * @returns {Promise<import('@ucanto/interface').Result<V[], StoreGetError>>}
+   * @param {Q} search
+   * @returns {Promise<import('@ucanto/interface').Result<ListSuccess<V>, StoreGetError>>}
    */
   async query(search) {
     return {

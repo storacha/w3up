@@ -16,7 +16,6 @@ import { randomCargo, randomAggregate } from '../utils.js'
 import { FailingStore } from '../context/store.js'
 import { mockService } from '../context/mocks.js'
 import { getConnection } from '../context/service.js'
-import { getStoreImplementations } from '../context/store-implementations.js'
 import { createInvocationsAndReceiptsForDealDataProofChain } from '../context/receipts.js'
 
 /**
@@ -128,7 +127,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        pieceStore: getStoreImplementations(FailingStore).storefront.pieceStore,
+        pieceStore: new FailingStore(),
       })
     ),
   'handles piece offer messages successfully': async (assert, context) => {
@@ -501,7 +500,7 @@ export const test = {
       },
       async (context) => ({
         ...context,
-        pieceStore: getStoreImplementations(FailingStore).storefront.pieceStore,
+        pieceStore: new FailingStore(),
       })
     ),
 }

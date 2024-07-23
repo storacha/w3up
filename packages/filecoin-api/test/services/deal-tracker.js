@@ -7,7 +7,6 @@ import * as DealTrackerApi from '../../src/deal-tracker/api.js'
 import { createServer, connect } from '../../src/deal-tracker/service.js'
 import { randomCargo } from '../utils.js'
 import { FailingStore } from '../context/store.js'
-import { getStoreImplementations } from '../context/store-implementations.js'
 import { StoreOperationErrorName } from '../../src/errors.js'
 
 /**
@@ -118,7 +117,7 @@ export const test = {
     },
     (context) => ({
       ...context,
-      dealStore: getStoreImplementations(FailingStore).dealTracker.dealStore,
+      dealStore: new FailingStore(),
     })
   ),
 }

@@ -7,6 +7,9 @@ import { StoreOperationFailed } from '../errors.js'
  * @typedef {import('./api.js').AggregateRecordKey} AggregateRecordKey
  */
 
+/** Max items per page of query. */
+const MAX_PAGE_SIZE = 20
+
 /**
  * On aggregate insert event, update offer key with date to be retrievable by broker.
  *
@@ -55,45 +58,57 @@ export const handleAggregateUpdatedStatus = async (context, record) => {
  * @param {import('./api.js').CronContext} context
  */
 export const handleCronTick = async (context) => {
-  // Get offered deals pending approval/rejection
-  const offeredDeals = await context.aggregateStore.query({
-    status: 'offered',
-  })
-  if (offeredDeals.error) {
-    return {
-      error: offeredDeals.error,
-    }
-  }
-
-  // Update approved deals from the ones resolved
-  const updatedResponses = await Promise.all(
-    offeredDeals.ok.map((deal) =>
-      updateApprovedDeals({
-        deal,
-        aggregateStore: context.aggregateStore,
-        dealTrackerServiceConnection: context.dealTrackerService.connection,
-        dealTrackerInvocationConfig:
-          context.dealTrackerService.invocationConfig,
-      })
+  let totalDealsCount = 0
+  let updatedDealsCount = 0
+  /** @type {string|undefined} */
+  let cursor
+  do {
+    // Get offered deals pending approval/rejection
+    const offeredDeals = await context.aggregateStore.query(
+      {
+        status: 'offered',
+      },
+      { cursor, size: MAX_PAGE_SIZE }
     )
-  )
-
-  // Fail if one or more update operations did not succeed.
-  // The successful ones are still valid, but we should keep track of errors for monitoring/alerting.
-  const updateErrorResponse = updatedResponses.find((r) => r.error)
-  if (updateErrorResponse) {
-    return {
-      error: updateErrorResponse.error,
+    if (offeredDeals.error) {
+      return {
+        error: offeredDeals.error,
+      }
     }
-  }
+    totalDealsCount += offeredDeals.ok.results.length
+
+    // Update approved deals from the ones resolved
+    const updatedResponses = await Promise.all(
+      offeredDeals.ok.results.map((deal) =>
+        updateApprovedDeals({
+          deal,
+          aggregateStore: context.aggregateStore,
+          dealTrackerServiceConnection: context.dealTrackerService.connection,
+          dealTrackerInvocationConfig:
+            context.dealTrackerService.invocationConfig,
+        })
+      )
+    )
+
+    // Fail if one or more update operations did not succeed.
+    // The successful ones are still valid, but we should keep track of errors for monitoring/alerting.
+    const updateErrorResponse = updatedResponses.find((r) => r.error)
+    if (updateErrorResponse) {
+      return {
+        error: updateErrorResponse.error,
+      }
+    }
+
+    updatedDealsCount += updatedResponses.filter((r) => r.ok?.updated).length
+    cursor = offeredDeals.ok.cursor
+  } while (cursor)
 
   // Return successful update operation
   // Include in response the ones that were Updated, and the ones still pending response.
-  const updatedDealsCount = updatedResponses.filter((r) => r.ok?.updated).length
   return {
     ok: {
       updatedCount: updatedDealsCount,
-      pendingCount: updatedResponses.length - updatedDealsCount,
+      pendingCount: totalDealsCount - updatedDealsCount,
     },
   }
 }
@@ -103,7 +118,7 @@ export const handleCronTick = async (context) => {
  *
  * @param {object} context
  * @param {AggregateRecord} context.deal
- * @param {import('../types.js').UpdatableAndQueryableStore<AggregateRecordKey, AggregateRecord, Pick<AggregateRecord, 'status'>>} context.aggregateStore
+ * @param {import('../types.js').UpdatableStore<AggregateRecordKey, AggregateRecord>} context.aggregateStore
  * @param {import('@ucanto/interface').ConnectionView<any>} context.dealTrackerServiceConnection
  * @param {import('@web3-storage/filecoin-client/types').InvocationConfig} context.dealTrackerInvocationConfig
  */
