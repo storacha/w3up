@@ -176,7 +176,7 @@
     "c8": "^10.1.2",
     "mocha": "^10.2.0",
     "multiformats": "^12.1.2",
-    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
+    "one-webcrypto": "git+https://git@github.com/web3-storage/one-webcrypto.git",
     "p-wait-for": "^5.0.2",
     "typescript": "5.2.2"
   },

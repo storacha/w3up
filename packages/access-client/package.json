@@ -110,7 +110,7 @@
     "bigint-mod-arith": "^3.1.2",
     "conf": "11.0.2",
     "multiformats": "^12.1.2",
-    "one-webcrypto": "https://github.com/web3-storage/one-webcrypto",
+    "one-webcrypto": "git+https://git@github.com/web3-storage/one-webcrypto.git",
     "p-defer": "^4.0.0",
     "type-fest": "^4.9.0",
     "uint8arrays": "^4.0.6",

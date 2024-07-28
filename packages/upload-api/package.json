@@ -218,7 +218,7 @@
     "@web3-storage/sigv4": "^1.0.2",
     "is-subset": "^0.1.1",
     "mocha": "^10.2.0",
-    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
+    "one-webcrypto": "git+https://git@github.com/web3-storage/one-webcrypto.git",
     "typescript": "5.2.2"
   },
   "eslintConfig": {
