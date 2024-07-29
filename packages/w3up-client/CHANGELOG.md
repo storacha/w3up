@@ -1,5 +1,22 @@
 # Changelog
 
+## [16.0.0](https://github.com/storacha-network/w3up/compare/w3up-client-v15.0.0...w3up-client-v16.0.0) (2024-07-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* allow invocation configuration to be generated on demand ([#1507](https://github.com/storacha-network/w3up/issues/1507))
+
+### Features
+
+* allow invocation configuration to be generated on demand ([#1507](https://github.com/storacha-network/w3up/issues/1507)) ([fd74cbb](https://github.com/storacha-network/w3up/commit/fd74cbb9a59c10f1688a5994dd2cdc6722be00be))
+* configure UnixFS encoder ([#1509](https://github.com/storacha-network/w3up/issues/1509)) ([1a5e648](https://github.com/storacha-network/w3up/commit/1a5e64817d20525c456b78eea22da8189b5748b1))
+
+
+### Fixes
+
+* badgers on README ([ffe49f2](https://github.com/storacha-network/w3up/commit/ffe49f2be3f0a550d7561bc5ebb124de1b913735))
+
 ## [15.0.0](https://github.com/storacha-network/w3up/compare/w3up-client-v14.1.1...w3up-client-v15.0.0) (2024-06-13)
 
 
