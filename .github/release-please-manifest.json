@@ -1,5 +1,5 @@
 {
-  "packages/access-client": "20.0.0",
+  "packages/access-client": "20.0.1",
   "packages/blob-index": "1.0.4",
   "packages/filecoin-api": "7.2.0",
   "packages/filecoin-client": "3.3.3",
