@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/blob-index",
   "description": "An index for slices that may be sharded across multiple blobs.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "homepage": "https://web3.storage",
   "repository": {
     "type": "git",
