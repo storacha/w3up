@@ -1,5 +1,12 @@
 # Changelog
 
+## [20.0.1](https://github.com/storacha-network/w3up/compare/access-v20.0.0...access-v20.0.1) (2024-07-29)
+
+
+### Fixes
+
+* use one-webcrypto from npm ([#1525](https://github.com/storacha-network/w3up/issues/1525)) ([9345c54](https://github.com/storacha-network/w3up/commit/9345c5415bc0b0d6ce8ccdbe92eb155b11835fd8))
+
 ## [20.0.0](https://github.com/w3s-project/w3up/compare/access-v19.0.0...access-v20.0.0) (2024-05-30)
 
 
