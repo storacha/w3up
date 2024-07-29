@@ -1,9 +1,9 @@
 <h1 align="center"><img src="https://bafybeia4luuns6dgymy5kau5rm7r4qzrrzg6cglpzpogussprpy42cmcn4.ipfs.w3s.link/w3up-logo.png" width="352" /></h1>
 <p align="center">The main JavaScript client for the w3up platform by <a href="https://web3.storage">https://web3.storage</a></p>
 <p align="center">
-  <a href="https://github.com/web3-storage/w3up-client/actions/workflows/test.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/web3-storage/w3up-client/test.yml?branch=main&style=for-the-badge" /></a>
+  <a href="https://github.com/storacha-network/w3up/actions/workflows/w3up-client.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/storacha-network/w3up/w3up-client.yml?branch=main&style=for-the-badge" /></a>
   <a href="https://discord.com/channels/806902334369824788/864892166470893588"><img src="https://img.shields.io/badge/chat-discord?style=for-the-badge&logo=discord&label=discord&logoColor=ffffff&color=7389D8" /></a>
-  <a href="https://twitter.com/web3storage"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/web3storage?color=00aced&label=twitter&logo=twitter&style=for-the-badge" /></a>
+  <a href="https://x.com/web3storage"><img alt="X Follow" src="https://img.shields.io/badge/follow-web3storage-black?style=for-the-badge&logo=x" /></a>
   <a href="https://github.com/web3-storage/w3up-client/blob/main/LICENSE.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
 </p>
 
