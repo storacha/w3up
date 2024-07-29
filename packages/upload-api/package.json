@@ -210,6 +210,7 @@
   "devDependencies": {
     "@ipld/car": "^5.1.1",
     "@ipld/dag-ucan": "^3.4.0",
+    "@storacha/one-webcrypto": "^1.0.1",
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^10.0.1",
     "@web-std/blob": "^3.0.5",
@@ -218,7 +219,6 @@
     "@web3-storage/sigv4": "^1.0.2",
     "is-subset": "^0.1.1",
     "mocha": "^10.2.0",
-    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
     "typescript": "5.2.2"
   },
   "eslintConfig": {
