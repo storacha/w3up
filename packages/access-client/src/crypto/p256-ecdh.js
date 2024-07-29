@@ -1,4 +1,4 @@
-import { webcrypto } from 'one-webcrypto'
+import { webcrypto } from '@storacha/one-webcrypto'
 import * as uint8arrays from 'uint8arrays'
 import * as DID from '@ipld/dag-ucan/did'
 import { AesKey } from './aes-key.js'

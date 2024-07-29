@@ -3,7 +3,7 @@ import { CID } from 'multiformats'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as CAR from '@ucanto/transport/car'
 import * as raw from 'multiformats/codecs/raw'
-import { webcrypto } from 'one-webcrypto'
+import { webcrypto } from '@storacha/one-webcrypto'
 
 /** @param {number} size */
 export async function randomBytes(size) {

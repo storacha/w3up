@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@ipld/dag-cbor": "^9.0.6",
+    "@storacha/one-webcrypto": "^1.0.1",
     "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
     "@web3-storage/capabilities": "workspace:^",
@@ -52,7 +53,6 @@
     "@web3-storage/eslint-config-w3up": "workspace:^",
     "c8": "^7.14.0",
     "entail": "^2.1.2",
-    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
     "typescript": "5.2.2"
   },
   "eslintConfig": {

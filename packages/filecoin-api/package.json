@@ -166,6 +166,7 @@
     "p-map": "^6.0.0"
   },
   "devDependencies": {
+    "@storacha/one-webcrypto": "^1.0.1",
     "@types/assert": "^1.5.10",
     "@types/mocha": "^10.0.1",
     "@ucanto/client": "^9.0.1",
@@ -176,7 +177,6 @@
     "c8": "^10.1.2",
     "mocha": "^10.2.0",
     "multiformats": "^12.1.2",
-    "one-webcrypto": "git://github.com/web3-storage/one-webcrypto",
     "p-wait-for": "^5.0.2",
     "typescript": "5.2.2"
   },

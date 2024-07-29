@@ -1,6 +1,6 @@
 import { Aggregate, Piece } from '@web3-storage/data-segment'
 import { CID } from 'multiformats'
-import { webcrypto } from 'one-webcrypto'
+import { webcrypto } from '@storacha/one-webcrypto'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as raw from 'multiformats/codecs/raw'
 
