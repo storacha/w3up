@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.3](https://github.com/storacha-network/w3up/compare/upload-api-v18.0.2...upload-api-v18.0.3) (2024-07-29)
+
+
+### Fixes
+
+* use one-webcrypto from npm ([#1525](https://github.com/storacha-network/w3up/issues/1525)) ([9345c54](https://github.com/storacha-network/w3up/commit/9345c5415bc0b0d6ce8ccdbe92eb155b11835fd8))
+
 ## [18.0.2](https://github.com/storacha-network/w3up/compare/upload-api-v18.0.1...upload-api-v18.0.2) (2024-07-16)
 
 
