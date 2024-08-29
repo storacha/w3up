@@ -16,6 +16,7 @@
     "attw": "attw --pack .",
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
+    "dev": "tsc --build --watch",
     "check": "tsc --build",
     "test": "pnpm run test:node && pnpm run test:browser",
     "test:node": "mocha 'test/**/*.test.js' -n experimental-vm-modules -n no-warnings",
