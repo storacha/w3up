@@ -406,7 +406,7 @@ export interface BlobLike {
   /**
    * Returns a ReadableStream which yields the Blob data.
    */
-  stream: () => ReadableStream
+  stream: Blob['stream']
 }
 
 export interface FileLike extends BlobLike {

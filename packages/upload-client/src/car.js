@@ -98,11 +98,16 @@ export class BlockStream extends ReadableStream {
   }
 }
 
-/* c8 ignore next 20 */
+/* c8 ignore start */
 /**
+ * {@link ReadableStream} is an async iterable in newer environments, but it's
+ * not standard yet. This function normalizes a {@link ReadableStream} to a
+ * definite async iterable.
+ *
  * @template T
- * @param {{ getReader: () => ReadableStreamDefaultReader<T> } | AsyncIterable<T>} stream
- * @returns {AsyncIterable<T>}
+ * @param {ReadableStream<T> | AsyncIterable<T>} stream
+ * @returns {AsyncIterable<T>} An async iterable of the contents of the
+ *                             {@link stream} (possibly {@link stream} itself).
  */
 function toIterable(stream) {
   return Symbol.asyncIterator in stream
@@ -120,3 +125,4 @@ function toIterable(stream) {
         }
       })()
 }
+/* c8 ignore end */
