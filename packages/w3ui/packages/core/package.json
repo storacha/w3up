@@ -32,9 +32,9 @@
     "@ucanto/interface": "^10.0.1",
     "@ucanto/principal": "^9.0.1",
     "@ucanto/transport": "^9.1.1",
-    "@web3-storage/access": "^18.4.0",
+    "@web3-storage/access": "^20.0.1",
     "@web3-storage/did-mailto": "^2.1.0",
-    "@web3-storage/w3up-client": "13.1.0"
+    "@web3-storage/w3up-client": "16.0.0"
   },
   "eslintConfig": {
     "extends": [

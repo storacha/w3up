@@ -279,14 +279,14 @@ importers:
         specifier: ^9.1.1
         version: 9.1.1
       '@web3-storage/access':
-        specifier: ^18.4.0
-        version: 18.4.0
+        specifier: ^20.0.1
+        version: 20.0.1
       '@web3-storage/did-mailto':
         specifier: ^2.1.0
         version: 2.1.0
       '@web3-storage/w3up-client':
-        specifier: 13.1.0
-        version: 13.1.0(encoding@0.1.13)
+        specifier: 16.0.0
+        version: 16.0.0(encoding@0.1.13)
     devDependencies:
       bunchee:
         specifier: ^3.9.3
@@ -1004,6 +1004,9 @@ packages:
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
+  '@storacha/one-webcrypto@1.0.1':
+    resolution: {integrity: sha512-bD+vWmcgsEBqU0Dz04BR43SA03bBoLTAY29vaKasY9Oe8cb6XIP0/vkm0OS2UwKC13c8uRgFW4rjJUgDCNLejQ==}
+
   '@swc/core-darwin-arm64@1.3.100':
     resolution: {integrity: sha512-XVWFsKe6ei+SsDbwmsuRkYck1SXRpO60Hioa4hoLwR8fxbA9eVp6enZtMxzVVMBi8ej5seZ4HZQeAWepbukiBw==}
     engines: {node: '>=10'}
@@ -1259,14 +1262,18 @@ packages:
   '@vitest/utils@1.0.1':
     resolution: {integrity: sha512-MGPCHkzXbbAyscrhwGzh8uP1HPrTYLWaj1WTDtWSGrpe2yJWLRN9mF9ooKawr6NMOg9vTBtg2JqWLfuLC7Dknw==}
 
-  '@web3-storage/access@18.4.0':
-    resolution: {integrity: sha512-EQQxSCip9FNgiNGwpKTnpff7/5A6MSn/Etf1Xpei3Au2oQkUe25DHwRJd/mbUzjnhcYh6UMGk2f0dIJ4Me00LA==}
+  '@web3-storage/access@20.0.1':
+    resolution: {integrity: sha512-JlCTp1BlFmxrxpkkLo73tytHIv7J+l8++dP5ghYk5oEo2Om3mUq+T3KkkkjZ8d3omoWam6tGiTQXbc/awHJjDw==}
+
+  '@web3-storage/blob-index@1.0.4':
+    resolution: {integrity: sha512-04+PrmVHFT+xzRhyIPdcvGc8Y2NDffUe8R1gJOyErVzEVz5N1I9Q/BrlFHYt/A4HrjM5JBsxqSrZgTIkjfPmLA==}
+    engines: {node: '>=16.15'}
 
   '@web3-storage/capabilities@16.0.0':
     resolution: {integrity: sha512-wCjLpYc6t8tFRZrF2k2vBteJDWzHkmQjoJG0Yy/fjA04IjNN48iVZaCMQIANHXZxDGlYRGxhwzDwl4dovAdSTQ==}
 
-  '@web3-storage/capabilities@17.1.0':
-    resolution: {integrity: sha512-p5Wn2O3TSEZ7JFSph2KY9OuFnofbkhKi7Tp+1zcPEYAUsEvDWGabd1NvSPDDMpFBE74UX4ZljE8aQzDAtI3qRw==}
+  '@web3-storage/capabilities@17.2.0':
+    resolution: {integrity: sha512-hnJGIQcCAMBbR8sfgkEwnjBVcpNpNRBnzSEB2E/wKkKIjHKimw3ClsVznu6jjFExCXFaKHd6r1eAU4NcTYsueg==}
 
   '@web3-storage/data-segment@3.2.0':
     resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}
@@ -1281,11 +1288,11 @@ packages:
   '@web3-storage/filecoin-client@3.3.3':
     resolution: {integrity: sha512-xFL8odr5PpTjQvpfw/4jphcm7ZvcBRMSKHn3ReEaVcFjxQL45Rojjleuq/QEdMwrNfsLCqqAxC54jk55o5/ERQ==}
 
-  '@web3-storage/upload-client@14.1.0':
-    resolution: {integrity: sha512-Rs1LBd/Eb5d9CyoQTH7o6VeYJMtJJWqQ8vyFayQR+lLbM8MxJPnvBiPurE7aUL2znxcXjEefmUv2y2M13Qm1Mw==}
+  '@web3-storage/upload-client@17.0.1':
+    resolution: {integrity: sha512-+ELz3y32YmiMvuPD/fZgCEqn/KvvoUKcZ2ao+9wosfs6GJ8/j6lhxkEkwnICiwU2tLEB+FUsOuCDFquOSW1rKg==}
 
-  '@web3-storage/w3up-client@13.1.0':
-    resolution: {integrity: sha512-XxdWUqIGaeBsuqX9C5FHLD4vIq0DAytMs8NP6AlCwK1wgMYqsjw1dCzNGCFM60gQGzYgoRBn8+CTJ1ftDnv0PA==}
+  '@web3-storage/w3up-client@16.0.0':
+    resolution: {integrity: sha512-WHhmBp3xLnVA3MJ6lBVZ7TgQSNA73Wi5CZ+SI3LQDWzQkHr4cfTsXtAdqancNWq28M6D8a/BOcY4FUvKS5+CtA==}
     engines: {node: '>=18'}
 
   '@zeit/schemas@2.29.0':
@@ -1529,6 +1536,9 @@ packages:
 
   caniuse-lite@1.0.30001566:
     resolution: {integrity: sha512-ggIhCsTxmITBAMmK8yZjEhCO5/47jKXPu6Dha/wuCS4JePVL+3uiDEBuhu2aIoT+bqTOR8L76Ip1ARL9xYsEJA==}
+
+  carstream@2.2.0:
+    resolution: {integrity: sha512-/gHkK0lQjmGM45fhdx8JD+x7a1XS1qUk3T9xWWSt3oZiWPLq4u/lnDstp+N55K7hqTKKlb0CCr43EHTrlbmJSQ==}
 
   cborg@4.0.5:
     resolution: {integrity: sha512-q8TAjprr8pn9Fp53rOIGp/UFDdFY6os2Nq62YogPSIzczJD9M6g2b6igxMkpCiZZKJ0kn/KzDLDvG+EqBIEeCg==}
@@ -2833,10 +2843,6 @@ packages:
   one-webcrypto@1.0.3:
     resolution: {integrity: sha512-fu9ywBVBPx0gS9K0etIROTiCkvI5S1TDjFsYFb3rC1ewFxeOqsbzq7aIMBHsYfrTHBcGXJaONXXjTl8B01cW1Q==}
 
-  one-webcrypto@https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/5148cd14d5489a8ac4cd38223870e02db15a2382:
-    resolution: {tarball: https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/5148cd14d5489a8ac4cd38223870e02db15a2382}
-    version: 1.0.3
-
   onetime@5.1.2:
     resolution: {integrity: sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==}
     engines: {node: '>=6'}
@@ -3581,6 +3587,9 @@ packages:
 
   ufo@1.3.2:
     resolution: {integrity: sha512-o+ORpgGwaYQXgqGDwd+hkS4PuZ3QnmqMMxRuajK/a38L6fTpcE5GPIfrf+L/KemFzfUpeUQc1rRS1iDBozvnFA==}
+
+  uint8arraylist@2.4.8:
+    resolution: {integrity: sha512-vc1PlGOzglLF0eae1M8mLRTBivsvrGsdmJ5RbK3e+QRvRLOZfZhQROTwH/OfyF3+ZVUg9/8hE8bmKP2CvP9quQ==}
 
   uint8arrays@4.0.9:
     resolution: {integrity: sha512-iHU8XJJnfeijILZWzV7RgILdPHqe0mjJvyzY4mO8aUUtHsDbPa2Gc8/02Kc4zeokp2W6Qq8z9Ap1xkQ1HfbKwg==}
@@ -4379,6 +4388,8 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
+  '@storacha/one-webcrypto@1.0.1': {}
+
   '@swc/core-darwin-arm64@1.3.100':
     optional: true
 
@@ -4690,26 +4701,37 @@ snapshots:
       loupe: 2.3.7
       pretty-format: 29.7.0
 
-  '@web3-storage/access@18.4.0':
+  '@web3-storage/access@20.0.1':
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-ucan': 3.4.0
       '@scure/bip39': 1.2.1
+      '@storacha/one-webcrypto': 1.0.1
       '@ucanto/client': 9.0.1
       '@ucanto/core': 10.0.1
       '@ucanto/interface': 10.0.1
       '@ucanto/principal': 9.0.1
       '@ucanto/transport': 9.1.1
       '@ucanto/validator': 9.0.2
-      '@web3-storage/capabilities': 17.1.0
+      '@web3-storage/capabilities': 17.2.0
       '@web3-storage/did-mailto': 2.1.0
       bigint-mod-arith: 3.3.1
       conf: 11.0.2
       multiformats: 12.1.3
-      one-webcrypto: https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/5148cd14d5489a8ac4cd38223870e02db15a2382
       p-defer: 4.0.0
       type-fest: 4.10.1
       uint8arrays: 4.0.9
+
+  '@web3-storage/blob-index@1.0.4':
+    dependencies:
+      '@ipld/dag-cbor': 9.0.6
+      '@storacha/one-webcrypto': 1.0.1
+      '@ucanto/core': 10.0.1
+      '@ucanto/interface': 10.0.1
+      '@web3-storage/capabilities': 17.2.0
+      carstream: 2.2.0
+      multiformats: 13.1.0
+      uint8arrays: 5.1.0
 
   '@web3-storage/capabilities@16.0.0':
     dependencies:
@@ -4721,7 +4743,7 @@ snapshots:
       '@web3-storage/data-segment': 3.2.0
       uint8arrays: 5.1.0
 
-  '@web3-storage/capabilities@17.1.0':
+  '@web3-storage/capabilities@17.2.0':
     dependencies:
       '@ucanto/core': 10.0.1
       '@ucanto/interface': 10.0.1
@@ -4754,7 +4776,7 @@ snapshots:
       '@ucanto/transport': 9.1.1
       '@web3-storage/capabilities': 16.0.0
 
-  '@web3-storage/upload-client@14.1.0(encoding@0.1.13)':
+  '@web3-storage/upload-client@17.0.1(encoding@0.1.13)':
     dependencies:
       '@ipld/car': 5.2.4
       '@ipld/dag-cbor': 9.0.6
@@ -4764,7 +4786,8 @@ snapshots:
       '@ucanto/core': 10.0.1
       '@ucanto/interface': 10.0.1
       '@ucanto/transport': 9.1.1
-      '@web3-storage/capabilities': 17.1.0
+      '@web3-storage/blob-index': 1.0.4
+      '@web3-storage/capabilities': 17.2.0
       '@web3-storage/data-segment': 5.1.0
       '@web3-storage/filecoin-client': 3.3.3
       ipfs-utils: 9.0.14(encoding@0.1.13)
@@ -4774,7 +4797,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@web3-storage/w3up-client@13.1.0(encoding@0.1.13)':
+  '@web3-storage/w3up-client@16.0.0(encoding@0.1.13)':
     dependencies:
       '@ipld/dag-ucan': 3.4.0
       '@ucanto/client': 9.0.1
@@ -4782,11 +4805,12 @@ snapshots:
       '@ucanto/interface': 10.0.1
       '@ucanto/principal': 9.0.1
       '@ucanto/transport': 9.1.1
-      '@web3-storage/access': 18.4.0
-      '@web3-storage/capabilities': 17.1.0
+      '@web3-storage/access': 20.0.1
+      '@web3-storage/blob-index': 1.0.4
+      '@web3-storage/capabilities': 17.2.0
       '@web3-storage/did-mailto': 2.1.0
       '@web3-storage/filecoin-client': 3.3.3
-      '@web3-storage/upload-client': 14.1.0(encoding@0.1.13)
+      '@web3-storage/upload-client': 17.0.1(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
 
@@ -5059,6 +5083,12 @@ snapshots:
   camelcase@7.0.1: {}
 
   caniuse-lite@1.0.30001566: {}
+
+  carstream@2.2.0:
+    dependencies:
+      '@ipld/dag-cbor': 9.0.6
+      multiformats: 13.1.0
+      uint8arraylist: 2.4.8
 
   cborg@4.0.5: {}
 
@@ -6574,8 +6604,6 @@ snapshots:
 
   one-webcrypto@1.0.3: {}
 
-  one-webcrypto@https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/5148cd14d5489a8ac4cd38223870e02db15a2382: {}
-
   onetime@5.1.2:
     dependencies:
       mimic-fn: 2.1.0
@@ -7353,6 +7381,10 @@ snapshots:
   typescript@5.3.2: {}
 
   ufo@1.3.2: {}
+
+  uint8arraylist@2.4.8:
+    dependencies:
+      uint8arrays: 5.1.0
 
   uint8arrays@4.0.9:
     dependencies:
