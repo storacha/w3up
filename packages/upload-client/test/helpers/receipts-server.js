@@ -22,8 +22,11 @@ const server = createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', '*')
   res.setHeader('Access-Control-Allow-Headers', '*')
 
-  const taskCid = req.url?.split('/')[1] ?? ''
-  if (taskCid === 'unavailable') {
+  const taskCid = req.url?.split('/')[1]
+  if (!taskCid) {
+    res.writeHead(204)
+    res.end()
+  } else if (taskCid === 'unavailable') {
     res.writeHead(404)
     res.end()
   } else if (taskCid === 'failed') {

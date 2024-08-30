@@ -12,6 +12,22 @@ import { randomCAR } from './random.js'
 export const validateAuthorization = () => ({ ok: {} })
 
 export const receiptsEndpoint = 'http://localhost:9201'
+export const bucket200Endpoint = 'http://localhost:9200'
+export const bucket400Endpoint = 'http://localhost:9400'
+export const bucket500Endpoint = 'http://localhost:9500'
+
+Object.entries({
+  receiptsEndpoint,
+  bucket200Endpoint,
+  bucket400Endpoint,
+  bucket500Endpoint,
+}).forEach(([name, url]) => {
+  fetch(url).catch((error) => {
+    console.warn(
+      `${name} is unreachable at ${url}. If tests are failing, try running \`pnpm --filter=@web3-storage/upload-client mock\`.`
+    )
+  })
+})
 
 export const setupBlobAddSuccessResponse = async function (
   // @ts-ignore
@@ -20,7 +36,7 @@ export const setupBlobAddSuccessResponse = async function (
   invocation
 ) {
   return setupBlobAddResponse(
-    'http://localhost:9200',
+    bucket200Endpoint,
     options,
     invocation,
     false,
@@ -35,7 +51,7 @@ export const setupBlobAdd4xxResponse = async function (
   invocation
 ) {
   return setupBlobAddResponse(
-    'http://localhost:9400',
+    bucket400Endpoint,
     options,
     invocation,
     false,
@@ -50,7 +66,7 @@ export const setupBlobAdd5xxResponse = async function (
   invocation
 ) {
   return setupBlobAddResponse(
-    'http://localhost:9500',
+    bucket500Endpoint,
     options,
     invocation,
     false,
@@ -65,7 +81,7 @@ export const setupBlobAddWithAcceptReceiptSuccessResponse = async function (
   invocation
 ) {
   return setupBlobAddResponse(
-    'http://localhost:9200',
+    bucket200Endpoint,
     options,
     invocation,
     false,
@@ -80,7 +96,7 @@ export const setupBlobAddWithHttpPutReceiptSuccessResponse = async function (
   invocation
 ) {
   return setupBlobAddResponse(
-    'http://localhost:9200',
+    bucket200Endpoint,
     options,
     invocation,
     true,
