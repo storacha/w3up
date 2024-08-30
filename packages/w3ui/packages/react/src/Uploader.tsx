@@ -1,5 +1,5 @@
 import type { As, Component, Props, Options, HTMLProps } from 'ariakit-react-utils'
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, FormEventHandler } from 'react'
 import type { AnyLink, CARMetadata, ProgressStatus } from '@w3ui/core'
 
 import React, {
@@ -43,7 +43,7 @@ export interface UploaderContextState {
    * A callback that can be passed to an `onSubmit` handler to
    * upload `file` to web3.storage via the w3up API.
    */
-  handleUploadSubmit?: (e: Event) => Promise<void>
+  handleUploadSubmit?: FormEventHandler<HTMLFormElement>
   /**
    * The CID of a successful upload
    */
@@ -158,7 +158,7 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
     const [uploadAsCAR, setUploadAsCAR] = useState(defaultUploadAsCAR)
     const [dataCID, setDataCID] = useState<AnyLink>()
     const [status, setStatus] = useState(UploadStatus.Idle)
-    const [error, setError] = useState()
+    const [error, setError] = useState<Error>()
     const [storedDAGShards, setStoredDAGShards] = useState<UploaderContextState['storedDAGShards']>([])
     const [uploadProgress, setUploadProgress] = useState<UploadProgress>({})
 
@@ -167,42 +167,55 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
       setStatus(UploadStatus.Idle)
     }
 
-    const handleUploadSubmit = async (e: Event): Promise<void> => {
+    const handleUploadSubmit: FormEventHandler<HTMLFormElement> = (e) => {
       e.preventDefault()
-      // file !== undefined should be unecessary but is here to make tsc happy
-      if ((client !== undefined) && (files !== undefined) && (file !== undefined)) {
-        try {
-          setError(undefined)
-          setStatus(UploadStatus.Uploading)
-          const storedShards: CARMetadata[] = []
-          setStoredDAGShards(storedShards)
-          const uploadOptions = {
-            onShardStored (meta: CARMetadata) {
-              storedShards.push(meta)
-              setStoredDAGShards([...storedShards])
-            },
-            onUploadProgress (status: ProgressStatus) {
-              setUploadProgress(statuses => ({ ...statuses, [status.url ?? '']: status }))
-            }
-          }
-          const cid = files.length > 1
-            ? await client.uploadDirectory(files, uploadOptions)
-            : (uploadAsCAR
-                ? await client.uploadCAR(file, uploadOptions)
-                : (wrapInDirectory
-                    ? await client.uploadDirectory(files, uploadOptions)
-                    : await client.uploadFile(file, uploadOptions)))
+      if ((client === undefined)) {
+        // eslint-disable-next-line no-console
+        console.error('No client available for upload. Ignoring upload attempt.')
+        return
+      }
 
-          setDataCID(cid)
-          setStatus(UploadStatus.Succeeded)
-          if (onUploadComplete !== undefined) {
-            onUploadComplete({ file, files, dataCID: cid })
+      // The application should only attempt to submit once files are selected.
+      if ((files === undefined) || (file === undefined)) {
+        // eslint-disable-next-line no-console
+        console.error('No no files given to upload. Ignoring upload attempt.')
+        return
+      }
+
+      const doUpload = async (): Promise<void> => {
+        setError(undefined)
+        setStatus(UploadStatus.Uploading)
+        const storedShards: CARMetadata[] = []
+        setStoredDAGShards(storedShards)
+        const uploadOptions = {
+          onShardStored (meta: CARMetadata) {
+            storedShards.push(meta)
+            setStoredDAGShards([...storedShards])
+          },
+          onUploadProgress (status: ProgressStatus) {
+            setUploadProgress(statuses => ({ ...statuses, [status.url ?? '']: status }))
           }
-        } catch (error_: any) {
-          setError(error_)
-          setStatus(UploadStatus.Failed)
+        }
+        const cid = files.length > 1
+          ? await client.uploadDirectory(files, uploadOptions)
+          : (uploadAsCAR
+              ? await client.uploadCAR(file, uploadOptions)
+              : (wrapInDirectory
+                  ? await client.uploadDirectory(files, uploadOptions)
+                  : await client.uploadFile(file, uploadOptions)))
+
+        setDataCID(cid)
+        setStatus(UploadStatus.Succeeded)
+        if (onUploadComplete !== undefined) {
+          onUploadComplete({ file, files, dataCID: cid })
         }
       }
+
+      doUpload().catch((error_: unknown) => {
+        const error = (error_ instanceof Error) ? error_ : new Error(String(error_))
+        setError(error)
+        setStatus(UploadStatus.Failed)
+      })
     }
 
     const uploaderContextValue =
@@ -307,7 +320,7 @@ export type UploaderFormProps<T extends As = 'form'> = Props<UploaderFormOptions
  */
 export const UploaderForm: Component<UploaderFormProps> = createComponent((props) => {
   const [{ handleUploadSubmit }] = useContext(UploaderContext)
-  return createElement('form', { ...props, onSubmit: handleUploadSubmit })
+  return createElement('form', { ...props, onSubmit: handleUploadSubmit satisfies React.ComponentProps<'form'>['onSubmit'] })
 })
 
 /**
