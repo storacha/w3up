@@ -45,10 +45,6 @@ function getConcludeReceipt(concludeFx) {
  */
 function parseBlobAddReceiptNext(receipt) {
   // Get invocations next
-  /**
-   * @type {import('@ucanto/interface').Invocation[]}
-   */
-  // @ts-expect-error read only effect
   const forkInvocations = receipt.fx.fork
   const allocateTask = forkInvocations.find(
     (fork) => fork.capabilities[0].can === W3sBlobCapabilities.allocate.can
