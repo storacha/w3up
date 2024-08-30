@@ -5,6 +5,7 @@
   "workspaces": [
     "packages/*"
   ],
+  "packageManager": "pnpm@9.8.0+sha256.56a9e76b51796ca7f73b85e44cf83712862091f4d498c0ce4d5b7ecdc6ba18f7",
   "scripts": {
     "format": "prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "format:check": "prettier --check '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
