@@ -13,6 +13,7 @@
     "test": "pnpm -r --if-present run test",
     "check": "pnpm -r --if-present run check",
     "build": "pnpm -r --if-present run build",
+    "dev": "pnpm -r --if-present --parallel run dev --preserveWatchOutput",
     "docs": "pnpm run build && typedoc --plugin typedoc-plugin-missing-exports --out docs",
     "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
   },

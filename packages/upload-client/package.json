@@ -17,6 +17,7 @@
     "attw": "attw --pack .",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
+    "dev": "tsc --build --watch",
     "check": "tsc --build",
     "test": "npm-run-all -p -r mock test:all",
     "test:all": "run-s test:node test:browser",

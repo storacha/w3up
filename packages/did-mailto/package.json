@@ -31,6 +31,7 @@
   "scripts": {
     "attw": "attw --pack .",
     "build": "tsc --build",
+    "dev": "tsc --build --watch",
     "check": "tsc --build",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
