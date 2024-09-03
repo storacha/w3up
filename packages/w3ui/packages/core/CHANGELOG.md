@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/storacha-network/w3ui/compare/core-v2.2.0...core-v2.3.0) (2024-08-30)
+
+
+### Features
+
+* Use client v16.0.0 and the Blob protocol ([#634](https://github.com/storacha-network/w3ui/issues/634)) ([3e6d07d](https://github.com/storacha-network/w3ui/commit/3e6d07deb94a740c28de52928f107850a78eb8af))
+
 ## [2.2.0](https://github.com/w3s-project/w3ui/compare/core-v2.1.0...core-v2.2.0) (2024-05-15)
 
 
