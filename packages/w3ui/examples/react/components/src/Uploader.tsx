@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { Uploader, useUploader, UploadStatus, CARMetadata, UploadProgress, AnyLink } from '@w3ui/react'
 import { UploadLoader } from './Loader'
 
@@ -30,6 +30,13 @@ function Uploading ({ file, files, storedDAGShards, uploadProgress }: UploadingP
 }
 
 function Errored ({ error }: { error?: Error }): ReactNode {
+  useEffect(() => {
+    if (error != null) {
+      // eslint-disable-next-line no-console
+      console.error('Uploader Error:', error)
+    }
+  }, [error])
+
   return (
     <div className='flex flex-col items-center'>
       <h1>
@@ -136,7 +143,7 @@ export function UploaderForm ({ multiple, allowDirectory }: UploaderFormProps): 
   return (
     <Uploader.Form className="m-12">
       <div className='relative shadow h-52 p-8 rounded-md bg-white/5 hover:bg-white/20 border-2 border-dotted border-zinc-950 flex flex-col justify-center items-center text-center'>
-        <label className={`${hasFile ? 'hidden' : 'block h-px w-px overflow-hidden absolute whitespace-nowrap'}`}>File:</label>
+      <label className={`${hasFile ? 'hidden' : 'block h-px w-px overflow-hidden absolute whitespace-nowrap'}`}>File:</label>
         <Uploader.Input multiple={multiple} allowDirectory={allowDirectory} className={`${hasFile ? 'hidden' : 'block absolute inset-0 cursor-pointer w-full opacity-0'}`} />
         <UploaderContents />
         {hasFile ? '' : <span>Drag files or Click to Browse</span>}

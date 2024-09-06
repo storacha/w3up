@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['./node_modules/hd-scripts/eslint/ts.js'],
   parserOptions: {
-    project: ['./tsconfig.json', 'packages/*/tsconfig.json'],
+    project: ['./tsconfig.json', 'packages/*/tsconfig.json', 'examples/*/*/tsconfig.json'],
     ecmaFeatures: {
       jsx: true,
     },
