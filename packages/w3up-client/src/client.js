@@ -10,6 +10,7 @@ import {
   Upload as UploadCapabilities,
   Filecoin as FilecoinCapabilities,
 } from '@web3-storage/capabilities'
+import * as DIDMailto from '@web3-storage/did-mailto'
 import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
@@ -98,8 +99,9 @@ export class Client extends Base {
   /* c8 ignore stop */
 
   /**
-   * List all accounts that agent has stored access to. Returns a dictionary
-   * of accounts keyed by their `did:mailto` identifier.
+   * List all accounts that agent has stored access to.
+   * 
+   * @returns {Record<DIDMailto, Account>} A dictionary with `did:mailto` as keys and `Account` instances as values.
    */
   accounts() {
     return Account.list(this)
@@ -233,12 +235,39 @@ export class Client extends Base {
 
   /**
    * Create a new space with a given name.
-   *
+   * If an account is provided in the options argument, then it creates a delegated recovery account.
+   * 
+   * @typedef {object} CreateOptions
+   * @property {string|false} [account]
+   * 
    * @param {string} name
+   * @param {CreateOptions} options
    */
-  async createSpace(name) {
-    return await this._agent.createSpace(name)
+  async createSpace(name, options = {}) {
+    const space = await this._agent.createSpace(name)
+    
+    const account = Object.entries(this.accounts())
+    .filter(([did, account]) => {
+      const email = did.split(':')[2] // Extract the email from the DID
+      return email === options.account
+    })
+    .map(([did, account]) => account)[0] || null
+
+    if (account) {
+      const recovery = await space.createRecovery(account)
+
+      const result = await this.capability.access.delegate({
+        space: space.did(),
+        delegations: [recovery],
+      })
+      
+      if (result.error) {
+        throw new Error(`⚠️ Failed to authorize recovery account: ${result.error.name}:${result.error.message}`)
+      }
+    }
+    return space;
   }
+
   /* c8 ignore stop */
 
   /**
