@@ -1,5 +1,5 @@
 import * as ED25519 from '@ucanto/principal/ed25519'
-import { delegate, Schema, UCAN, error, fail } from '@ucanto/core'
+import { delegate, Schema, UCAN, error, fail, DID } from '@ucanto/core'
 import * as BIP39 from '@scure/bip39'
 import { wordlist } from '@scure/bip39/wordlists/english'
 import * as API from './types.js'
@@ -67,7 +67,7 @@ export const toMnemonic = ({ signer }) => {
  */
 export const createRecovery = (space, account) =>
   createAuthorization(space, {
-    agent: space.signer.withDID(account),
+    audience: DID.parse(account),
     access: Access.accountAccess,
     expiration: Infinity,
   })
@@ -85,21 +85,21 @@ export const SESSION_LIFETIME = 60 * 60 * 24 * 365
  *
  * @param {Model} space
  * @param {object} options
- * @param {API.Principal} options.agent
+ * @param {API.Principal} options.audience
  * @param {API.Access} [options.access]
  * @param {API.UTCUnixTimestamp} [options.expiration]
  */
 export const createAuthorization = async (
   { signer, name },
   {
-    agent,
+    audience,
     access = Access.spaceAccess,
     expiration = UCAN.now() + SESSION_LIFETIME,
   }
 ) => {
   return await delegate({
     issuer: signer,
-    audience: agent,
+    audience: audience,
     capabilities: toCapabilities({
       [signer.did()]: access,
     }),
@@ -174,7 +174,7 @@ export class OwnedSpace {
       return fail('Please provide an agent to save the space into')
     }
 
-    const proof = await createAuthorization(this, { agent })
+    const proof = await createAuthorization(this, { audience: agent })
     await agent.importSpaceFromDelegation(proof)
     await agent.setCurrentSpace(this.did())
 
@@ -210,13 +210,13 @@ export class OwnedSpace {
    * specified ability (passed as `access.can` field) on the this space.
    * Optionally, you can specify `access.expiration` field to set the
    *
-   * @param {API.Principal} agent
+   * @param {API.Principal} principal
    * @param {object} [input]
    * @param {API.Access} [input.access]
    * @param {API.UCAN.UTCUnixTimestamp} [input.expiration]
    */
-  createAuthorization(agent, input) {
-    return createAuthorization(this, { ...input, agent })
+  createAuthorization(principal, input) {
+    return createAuthorization(this, { ...input, audience: principal })
   }
 
   /**
