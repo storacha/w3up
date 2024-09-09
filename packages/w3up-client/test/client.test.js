@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { parseLink } from '@ucanto/server'
-import { AgentData } from '@web3-storage/access/agent'
+import { Access, AgentData } from '@web3-storage/access/agent'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
@@ -221,7 +221,7 @@ export const testClient = {
       assert.equal(current1?.did(), space.did())
     },
   },
-  spaces: {
+  spaces: Test.withContext({
     'should get agent spaces': async (assert) => {
       const alice = new Client(await AgentData.create())
 
@@ -259,7 +259,33 @@ export const testClient = {
       assert.equal(spaces.length, 1)
       assert.equal(spaces[0].did(), space.did())
     },
-  },
+
+    'should create a space with recovery account': async (assert, { client, mail, grantAccess }) => {
+      const account = client.login('alice@web.mail')
+
+      await grantAccess(await mail.take())
+
+      const alice = await account
+
+      const space = await client.createSpace('recovery-space', {
+        account: alice,
+      })
+      assert.ok(space)
+
+      const proof = alice.agent.proofs()
+      .find(p => p.issuer.did() === alice.did())
+      if (!proof) {
+        throw new Error('Recovery Proof not found')
+      }
+      
+      assert.ok(proof)
+      assert.equal(proof.audience.did(), alice.did())
+      //FIXME how to check that there is a recovery delegation/account?
+    },
+    'should create a space without a recovery account': async (assert, { client, mail, grantAccess }) => {
+      //TODO
+    }
+  }),
   proofs: {
     'should get proofs': async (assert) => {
       const alice = new Client(await AgentData.create())

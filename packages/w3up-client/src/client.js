@@ -238,23 +238,17 @@ export class Client extends Base {
    * If an account is provided in the options argument, then it creates a delegated recovery account.
    * 
    * @typedef {object} CreateOptions
-   * @property {string|false} [account]
+   * @property {Account.Account} [account]
    * 
    * @param {string} name
    * @param {CreateOptions} options
+   * @returns {Promise<import("./space.js").OwnedSpace>} The created space owned by the agent.
    */
   async createSpace(name, options = {}) {
     const space = await this._agent.createSpace(name)
     
-    const account = Object.entries(this.accounts())
-    .filter(([did, account]) => {
-      const email = did.split(':')[2] // Extract the email from the DID
-      return email === options.account
-    })
-    .map(([did, account]) => account)[0] || null
-
-    if (account) {
-      const recovery = await space.createRecovery(account)
+    if (options.account) {
+      const recovery = await space.createRecovery(options.account.did())
 
       const result = await this.capability.access.delegate({
         space: space.did(),
@@ -264,6 +258,7 @@ export class Client extends Base {
       if (result.error) {
         throw new Error(`⚠️ Failed to authorize recovery account: ${result.error.name}:${result.error.message}`)
       }
+      
     }
     return space;
   }
