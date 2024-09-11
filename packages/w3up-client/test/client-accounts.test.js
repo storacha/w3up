@@ -25,8 +25,10 @@ export const testClientAccounts = Test.withContext({
     const accounts = client.accounts()
 
     assert.deepEqual(Object.values(accounts).length, 1)
+    // @ts-ignore FIXME (fforbeck)
     assert.ok(accounts[Account.fromEmail(email)])
 
+    // @ts-ignore FIXME (fforbeck)
     const account = accounts[Account.fromEmail(email)]
     assert.equal(account.toEmail(), email)
     assert.equal(account.did(), Account.fromEmail(email))

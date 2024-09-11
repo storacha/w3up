@@ -100,7 +100,7 @@ export class Client extends Base {
 
   /**
    * List all accounts that agent has stored access to.
-   * 
+   *
    * @returns {Record<DIDMailto, Account>} A dictionary with `did:mailto` as keys and `Account` instances as values.
    */
   accounts() {
@@ -235,32 +235,48 @@ export class Client extends Base {
 
   /**
    * Create a new space with a given name.
-   * If an account is provided in the options argument, then it creates a delegated recovery account.
-   * 
+   * If an account is provided in the options argument, then it creates a delegated recovery account
+   * by provisioning the space and then delegating access to the recovery account.
+   *
    * @typedef {object} CreateOptions
    * @property {Account.Account} [account]
-   * 
+   *
    * @param {string} name
    * @param {CreateOptions} options
    * @returns {Promise<import("./space.js").OwnedSpace>} The created space owned by the agent.
    */
   async createSpace(name, options = {}) {
     const space = await this._agent.createSpace(name)
-    
-    if (options.account) {
-      const recovery = await space.createRecovery(options.account.did())
 
+    const account = options.account
+    if (account) {
+      // Provision the account with the space
+      const provisionResult = await account.provision(space.did())
+      if (provisionResult.error) {
+        throw new Error(
+          `⚠️ Failed to provision account: ${provisionResult.error.name}:${provisionResult.error.message}`
+        )
+      }
+
+      // Save the space to authorize the client to use the space
+      await space.save()
+
+      // Create a recovery for the account
+      const recovery = await space.createRecovery(account.did())
+
+      // Delegate space access to the recovery
       const result = await this.capability.access.delegate({
         space: space.did(),
         delegations: [recovery],
       })
-      
+
       if (result.error) {
-        throw new Error(`⚠️ Failed to authorize recovery account: ${result.error.name}:${result.error.message}`)
+        throw new Error(
+          `⚠️ Failed to authorize recovery account: ${result.error.name}:${result.error.message}`
+        )
       }
-      
     }
-    return space;
+    return space
   }
 
   /* c8 ignore stop */

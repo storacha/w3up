@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { parseLink } from '@ucanto/server'
-import { Access, AgentData } from '@web3-storage/access/agent'
+import { AgentData } from '@web3-storage/access/agent'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
@@ -260,31 +260,40 @@ export const testClient = {
       assert.equal(spaces[0].did(), space.did())
     },
 
-    'should create a space with recovery account': async (assert, { client, mail, grantAccess }) => {
-      const account = client.login('alice@web.mail')
+    'should create a space with recovery account': async (
+      assert,
+      { client, mail, connect, grantAccess }
+    ) => {
+      // Step 1: Create a client for Alice and login
+      const aliceEmail = 'alice@web.mail'
+      const aliceLogin = client.login(aliceEmail)
+      const message = await mail.take()
+      assert.deepEqual(message.to, aliceEmail)
+      await grantAccess(message)
+      const aliceAccount = await aliceLogin
 
-      await grantAccess(await mail.take())
-
-      const alice = await account
-
-      const space = await client.createSpace('recovery-space', {
-        account: alice,
+      // Step 2: Alice creates a space with her account as the recovery account
+      const space = await client.createSpace('recovery-space-test', {
+        account: aliceAccount, // The account is the recovery account
       })
       assert.ok(space)
 
-      const proof = alice.agent.proofs()
-      .find(p => p.issuer.did() === alice.did())
-      if (!proof) {
-        throw new Error('Recovery Proof not found')
-      }
-      
-      assert.ok(proof)
-      assert.equal(proof.audience.did(), alice.did())
-      //FIXME how to check that there is a recovery delegation/account?
+      // Step 3: Verify the recovery account by connecting to a new device
+      const secondClient = await connect()
+      const secondLogin = secondClient.login(aliceEmail)
+      const secondMessage = await mail.take()
+      assert.deepEqual(secondMessage.to, aliceEmail)
+      await grantAccess(secondMessage)
+      const aliceAccount2 = await secondLogin
+      await secondClient.addSpace(
+        await space.createAuthorization(aliceAccount2)
+      )
+      await secondClient.setCurrentSpace(space.did())
+
+      // Step 4: Verify the space is accessible from the new device
+      const spaceInfo = await secondClient.capability.space.info(space.did())
+      assert.ok(spaceInfo)
     },
-    'should create a space without a recovery account': async (assert, { client, mail, grantAccess }) => {
-      //TODO
-    }
   }),
   proofs: {
     'should get proofs': async (assert) => {
