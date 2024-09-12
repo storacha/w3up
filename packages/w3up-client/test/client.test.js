@@ -294,6 +294,106 @@ export const testClient = {
       const spaceInfo = await secondClient.capability.space.info(space.did())
       assert.ok(spaceInfo)
     },
+
+    'should create a space without recovery account and fail access from another device':
+      async (assert, { client, mail, connect, grantAccess }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = client.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        await aliceLogin
+
+        // Step 2: Alice creates a space without providing a recovery account
+        const space = await client.createSpace('no-recovery-space-test')
+        assert.ok(space)
+
+        // Step 3: Attempt to access the space from a new device
+        const secondClient = await connect()
+        const secondLogin = secondClient.login(aliceEmail)
+        const secondMessage = await mail.take()
+        assert.deepEqual(secondMessage.to, aliceEmail)
+        await grantAccess(secondMessage)
+        const aliceAccount2 = await secondLogin
+
+        // Step 4: Add the space to the new device and set it as current space
+        await secondClient.addSpace(
+          await space.createAuthorization(aliceAccount2)
+        )
+        await secondClient.setCurrentSpace(space.did())
+
+        // Step 5: Verify the space is accessible from the new device
+        await assert.rejects(secondClient.capability.space.info(space.did()), {
+          message: `no proofs available for resource ${space.did()} and ability space/info`,
+        })
+      },
+
+    'should fail to create a space due to provisioning error': async (
+      assert,
+      { client, mail, grantAccess }
+    ) => {
+      // Step 1: Create a client for Alice and login
+      const aliceEmail = 'alice@web.mail'
+      const aliceLogin = client.login(aliceEmail)
+      const message = await mail.take()
+      assert.deepEqual(message.to, aliceEmail)
+      await grantAccess(message)
+      const aliceAccount = await aliceLogin
+
+      // Step 2: Mock the provisioning to fail
+      const originalProvision = aliceAccount.provision
+      aliceAccount.provision = async () => ({
+        error: { name: 'ProvisionError', message: 'Provisioning failed' },
+      })
+
+      // Step 3: Attempt to create a space with the account
+      await assert.rejects(
+        client.createSpace('provision-fail-space-test', {
+          account: aliceAccount,
+        }),
+        {
+          message:
+            '⚠️ Failed to provision account: ProvisionError:Provisioning failed',
+        }
+      )
+
+      // Restore the original provision method
+      aliceAccount.provision = originalProvision
+    },
+
+    'should fail to create a space due to delegate access error': async (
+      assert,
+      { client, mail, connect, grantAccess }
+    ) => {
+      // Step 1: Create a client for Alice and login
+      const aliceEmail = 'alice@web.mail'
+      const aliceLogin = client.login(aliceEmail)
+      const message = await mail.take()
+      assert.deepEqual(message.to, aliceEmail)
+      await grantAccess(message)
+      const aliceAccount = await aliceLogin
+
+      // Step 2: Mock the delegate access to fail
+      const originalDelegate = client.capability.access.delegate
+      client.capability.access.delegate = async () => ({
+        error: { name: 'DelegateError', message: 'Delegation failed' },
+      })
+
+      // Step 3: Attempt to create a space with the account
+      await assert.rejects(
+        client.createSpace('delegate-fail-space-test', {
+          account: aliceAccount,
+        }),
+        {
+          message:
+            '⚠️ Failed to authorize recovery account: DelegateError:Delegation failed',
+        }
+      )
+
+      // Restore the original delegate method
+      client.capability.access.delegate = originalDelegate
+    },
   }),
   proofs: {
     'should get proofs': async (assert) => {
