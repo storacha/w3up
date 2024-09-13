@@ -31,8 +31,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Install
         uses: pnpm/action-setup@v4
-        with:
-          version: 9.x.x
       - name: Setup
         uses: actions/setup-node@v3
         with:
