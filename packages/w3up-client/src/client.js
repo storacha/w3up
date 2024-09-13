@@ -271,9 +271,7 @@ export class Client extends Base {
       })
 
       if (result.error) {
-        throw new Error(
-          `⚠️ Failed to authorize recovery account: ${result.error.name}:${result.error.message}`
-        )
+        throw new Error(`failed to authorize recovery account: ${result.error.message}`, { cause: result.error })
       }
     }
     return space
