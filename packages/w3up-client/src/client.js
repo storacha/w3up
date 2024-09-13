@@ -253,9 +253,7 @@ export class Client extends Base {
       // Provision the account with the space
       const provisionResult = await account.provision(space.did())
       if (provisionResult.error) {
-        throw new Error(
-          `⚠️ Failed to provision account: ${provisionResult.error.name}:${provisionResult.error.message}`
-        )
+        throw new Error(`failed to provision account: ${provisionResult.error.message}`, { cause: provisionResult.error })
       }
 
       // Save the space to authorize the client to use the space
