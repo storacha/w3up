@@ -353,8 +353,7 @@ export const testClient = {
           account: aliceAccount,
         }),
         {
-          message:
-            '⚠️ Failed to provision account: ProvisionError:Provisioning failed',
+          message: 'failed to provision account: Provisioning failed',
         }
       )
 
@@ -386,8 +385,7 @@ export const testClient = {
           account: aliceAccount,
         }),
         {
-          message:
-            '⚠️ Failed to authorize recovery account: DelegateError:Delegation failed',
+          message: 'failed to authorize recovery account: Delegation failed',
         }
       )
 
