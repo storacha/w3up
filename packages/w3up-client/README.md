@@ -9,15 +9,16 @@
 
 ## About
 
+
 `@web3-storage/w3up-client` is a JavaScript library that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
 
 This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@web3-storage/access`][access-client-github] and [`@web3-storage/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `w3up-client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
 
 **`w3up-client` requires Node 18 or higher**.
 
-> ⚠️❗ **Public Data** 🌎: All data uploaded to w3up is available to anyone who requests it using the correct CID. Do not store any private or sensitive information in an unencrypted form using w3up.
+> ⚠️❗ __Public Data__ 🌎: All data uploaded to w3up is available to anyone who requests it using the correct CID. Do not store any private or sensitive information in an unencrypted form using w3up.
 
-> ⚠️❗ **Permanent Data** ♾️: Removing files from w3up will remove them from the file listing for your account, but that doesn’t prevent nodes on the decentralized storage network from retaining copies of the data indefinitely. Do not use w3up for data that may need to be permanently deleted in the future.
+> ⚠️❗ __Permanent Data__ ♾️: Removing files from w3up will remove them from the file listing for your account, but that doesn’t prevent nodes on the decentralized storage network from retaining copies of the data indefinitely. Do not use w3up for data that may need to be permanently deleted in the future.
 
 - [Install](#install)
 - [Usage](#usage)
@@ -91,11 +92,11 @@ flowchart TD
 
 All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3cli` package][w3cli-github], which uses `w3up-client` throughout.
 
-> By you or your users registering a w3up Space via email confirmation with [web3.storage](http://web3.storage), you agree to the [Terms of Service](https://web3.storage/docs/terms/).
+> By you or your users registering a w3up Space via email confirmation with [web3.storage](http://web3.storage), you agree to the [Terms of Service](https://web3.storage/docs/terms/). 
 
 #### Creating a client object
 
-The package provides a [static `create` function][docs-create] that returns a [`Client` object][docs-Client].
+The package provides a [static `create` function][docs-create] that returns a [`Client` object][docs-Client]. 
 
 ```js
 import { create } from '@web3-storage/w3up-client'
@@ -185,7 +186,7 @@ import { CarReader } from '@ipld/car'
 import * as Client from '@web3-storage/w3up-client'
 import { StoreMemory } from '@web3-storage/w3up-client/stores/memory'
 
-async function main() {
+async function main () {
   // from "bring your own Agent" example in `Creating a client object" section`
   // used command line to generate KEY and PROOF (stored in env variables)
   // KEY: `npx ucan-key ed --json` in command line, which returns private key and DID for Agent (the private key is stored in KEY)
@@ -193,17 +194,17 @@ async function main() {
   const principal = Signer.parse(process.env.KEY)
   const store = new StoreMemory()
   const client = await Client.create({ principal, store })
-
+  
   // now give Agent the delegation from the Space
   const proof = await parseProof(process.env.PROOF)
   const space = await client.addSpace(proof)
   await client.setCurrentSpace(space.did())
-
+  
   // READY to go!
 }
 
 /** @param {string} data Base64 encoded CAR file */
-async function parseProof(data) {
+async function parseProof (data) {
   const blocks = []
   const reader = await CarReader.fromBytes(Buffer.from(data, 'base64'))
   for await (const block of reader.blocks()) {
@@ -221,7 +222,7 @@ Call [`uploadFile`][docs-Client#uploadFile] to upload a single file, or [`upload
 
 `uploadFile` expects a "Blob like" input, which can be a [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) or [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) when running in a browser. On node.js, see the [`filesFromPath` library](https://github.com/web3-storage/files-from-path), which can load compatible objects from the local filesystem.
 
-`uploadDirectory` requires `File`-like objects instead of `Blob`s, as the file's `name` property is used to build the directory hierarchy.
+`uploadDirectory` requires `File`-like objects instead of `Blob`s, as the file's `name` property is used to build the directory hierarchy. 
 
 You can control the directory layout and create nested directory structures by using `/` delimited paths in your filenames:
 
@@ -246,10 +247,10 @@ In the example above, `directoryCid` resolves to an IPFS directory with the foll
     └── main.py
 ```
 
+
 ### Integration options
 
 As mentioned, UCAN opens up a number of options in how to integrate with w3up: Should you, the developer, own the Space? Should you delegate permissions to your users? Or should your user own their own Space? Broadly, there are three ways to integrate:
-
 - (Simplest) Client-server: You (the developer) own the Space, and your user uploads to your backend infra before you upload it to the service
 - (More complex) Delegated: You own the Space, but you give a delegated UCAN token to your user's Agent to upload directly to the service (rather than needing to touch the upload in your backend)
 - (Most complex) User-owned: Your user owns the Space and registers it and they use it to upload directly with the service; if you want to instrument visibility into what they’re uploading, you’ll have to write separate code in your app for it
@@ -257,7 +258,6 @@ As mentioned, UCAN opens up a number of options in how to integrate with w3up: S
 You can implement each of these in a number of ways, but we talk through some considerations when implementing a given option.
 
 #### Client-server
-
 ```mermaid
 sequenceDiagram
     participant User
@@ -265,7 +265,6 @@ sequenceDiagram
     User->>w3up-client in backend: Upload data
     w3up-client in backend->>web3.storage w3up service: Upload data
 ```
-
 - For your backend to be scalable, you might consider using serverless workers or a queue in front of a server
 - In either case, you'll need a registered Space, and your client instance in your backend to have an Agent with a delegation from this Space
   - (Recommended) It's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so (especially if your backend isn't persistent); you can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](#bringing-your-own-agent-and-delegation)
@@ -273,7 +272,6 @@ sequenceDiagram
 - After this, once your user uploads data to your backend, you can run any of the `upload` methods
 
 #### Delegated
-
 ```mermaid
 sequenceDiagram
     participant w3up-client in user
@@ -285,11 +283,10 @@ sequenceDiagram
     w3up-client in backend->>w3up-client in user: Send delegation from Space to user's Agent DID
     w3up-client in user->>web3.storage w3up service: Upload data
 ```
-
 - You will likely have `w3up-client` running in your end-user's client code, as well as backend code that's able to generate UCANs that delegate the ability to upload and pass them to your users (e.g., `w3up-client` running in a serverless worker)
 - For your backend to be scalable, you might consider using serverless workers or a queue in front of a server
 - As the developer, you'll need a registered Space, and your client instance in your backend to have an Agent with a delegation from this Space
-  - (Recommended) It's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so (especially if your backend isn't persistent); you can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](#bringing-your-own-agent-and-delegation)
+    - (Recommended) It's likely easiest to create and register your Space using [w3cli](https://github.com/web3-storage/w3cli) rather than using `w3up-client` to do so (especially if your backend isn't persistent); you can then generate your own Agent and delegate the ability to upload to your Space using something like [this example](#bringing-your-own-agent-and-delegation)
   - If your backend is persistent, you can do this or do everything in the client directly ([create Space](#creating-and-registering-spaces) and [get delegation](#delegating-from-space-to-agent))
 - Your user does not need a registered Space - just an Agent with a delegation from your Space
   - `w3up-client` in the end user environment should have a unique Agent for each user, which should happen by default (since when `w3up-client` is instantiated it creates a new Agent anyway, or uses the one in local Store)
@@ -298,75 +295,74 @@ sequenceDiagram
     - You can serialize this using `delegation.archive()` and send it to your user
     - The end user instance of the client should not need to call `client.login(email)`, as it is not claiming any delegations via email address (but rather getting the delegation directly from your backend)
 - Once your user receives the delegation, they can deserialize it using [`ucanto.Delegation.extract()`](https://github.com/web3-storage/ucanto/blob/c8999a59852b61549d163532a83bac62290b629d/packages/core/src/delegation.js#L399) and pass it in using `client.addSpace()`, and from there they can run any of the `upload` methods
-  - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
+    - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
 - A code example that does this can be found below
 
 ```js
-import { CarReader } from '@ipld/car'
-import * as DID from '@ipld/dag-ucan/did'
-import * as Delegation from '@ucanto/core/delegation'
-import { importDAG } from '@ucanto/core/delegation'
-import * as Signer from '@ucanto/principal/ed25519'
-import * as Client from '@web3-storage/w3up-client'
+import { CarReader } from '@ipld/car';
+import * as DID from '@ipld/dag-ucan/did';
+import * as Delegation from '@ucanto/core/delegation';
+import { importDAG } from '@ucanto/core/delegation';
+import * as Signer from '@ucanto/principal/ed25519';
+import * as Client from '@web3-storage/w3up-client';
 
 async function backend(did: string) {
   // Load client with specific private key
-  const principal = Signer.parse(process.env.KEY)
-  const client = await Client.create({ principal })
+  const principal = Signer.parse(process.env.KEY);
+  const client = await Client.create({ principal });
 
   // Add proof that this agent has been delegated capabilities on the space
-  const proof = await parseProof(process.env.PROOF)
-  const space = await client.addSpace(proof)
-  await client.setCurrentSpace(space.did())
+  const proof = await parseProof(process.env.PROOF);
+  const space = await client.addSpace(proof);
+  await client.setCurrentSpace(space.did());
 
   // Create a delegation for a specific DID
-  const audience = DID.parse(did)
-  const abilities = ['blob/add', 'index/add', 'filecoin/offer', 'upload/add']
-  const expiration = Math.floor(Date.now() / 1000) + 60 * 60 * 24 // 24 hours from now
+  const audience = DID.parse(did);
+  const abilities = ['blob/add', 'index/add', 'filecoin/offer', 'upload/add'];
+  const expiration = Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24 hours from now
   const delegation = await client.createDelegation(audience, abilities, {
     expiration,
-  })
+  });
 
   // Serialize the delegation and send it to the client
-  const archive = await delegation.archive()
-  return archive.ok
+  const archive = await delegation.archive();
+  return archive.ok;
 }
 
 /** @param {string} data Base64 encoded CAR file */
 async function parseProof(data) {
-  const blocks = []
-  const reader = await CarReader.fromBytes(Buffer.from(data, 'base64'))
+  const blocks = [];
+  const reader = await CarReader.fromBytes(Buffer.from(data, 'base64'));
   for await (const block of reader.blocks()) {
-    blocks.push(block)
+    blocks.push(block);
   }
-  return importDAG(blocks)
+  return importDAG(blocks);
 }
 
 async function frontend() {
   // Create a new client
-  const client = await Client.create()
+  const client = await Client.create();
 
   // Fetch the delegation from the backend
-  const apiUrl = `/api/w3up-delegation/${client.agent().did()}`
-  const response = await fetch(apiUrl)
-  const data = await response.arrayBuffer()
+  const apiUrl = `/api/w3up-delegation/${client.agent().did()}`;
+  const response = await fetch(apiUrl);
+  const data = await response.arrayBuffer();
 
   // Deserialize the delegation
-  const delegation = await Delegation.extract(new Uint8Array(data))
+  const delegation = await Delegation.extract(new Uint8Array(data));
   if (!delegation.ok) {
-    throw new Error('Failed to extract delegation')
+    throw new Error('Failed to extract delegation');
   }
 
   // Add proof that this agent has been delegated capabilities on the space
-  const space = await client.addSpace(delegation.ok)
-  client.setCurrentSpace(space.did())
+  const space = await client.addSpace(delegation.ok);
+  client.setCurrentSpace(space.did());
 
   // READY to go!
 }
 ```
 
 #### User-owned
-
 ```mermaid
 sequenceDiagram
     participant User
@@ -377,10 +373,9 @@ sequenceDiagram
     User->>web3.storage w3up service: (If needed) Use Agent email verification to "log in" to Space
     User->>web3.storage w3up service: Upload data using w3up-client
 ```
-
 - If you want your user to own their own Space, you'll likely be relying on the `w3up-client` methods to create a Space, authorize the Space, and authorize the Agent on the end user-side; from there they can run any of the `upload` methods
-  - Doing this does take some of the UX out of your control; for instance, when web3.storage fully launches with w3up, your users will have to set up their payment methods with web3.storage
-  - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
+    - Doing this does take some of the UX out of your control; for instance, when web3.storage fully launches with w3up, your users will have to set up their payment methods with web3.storage
+    - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
 - There is a world of possibilities with your users "bringing their own identity" for their Space; you could explore how crypto wallet private keys, Apple Passkey, and more might map to Space DIDs and have the client use those
 - If you have code snippet(s) that works for you, please share them in a PR or [Github issue](https://github.com/web3-storage/w3up/issues) and we'll link them here!
 
@@ -418,7 +413,7 @@ We created a `esbuild-plugin` [esbuild-plugin-w3up-client-wasm-import](https://g
   - [`capability.index.add`](#capabilityindexadd)
   - [`capability.plan.get`](#capabilityplanget)
   - [`capability.plan.set`](#capabilityplanset)
-  - [`capability.plan.createAdminSession`](#capabilityplancreateadminsession)
+  - [`capability.plan.createAdminSession`](#capabilityplancreateadminsession)    
   - [`capability.space.info`](#capabilityspaceinfo)
   - [`capability.upload.add`](#capabilityuploadadd)
   - [`capability.upload.list`](#capabilityuploadlist)
@@ -443,7 +438,7 @@ We created a `esbuild-plugin` [esbuild-plugin-w3up-client-wasm-import](https://g
 ### `create`
 
 ```ts
-function create(options?: ClientFactoryOptions): Promise<Client>
+function create (options?: ClientFactoryOptions): Promise<Client>
 ```
 
 Create a new w3up client.
@@ -459,7 +454,7 @@ More information: [`ClientFactoryOptions`](#clientfactoryoptions)
 ### `uploadDirectory`
 
 ```ts
-function uploadDirectory(
+function uploadDirectory (
   files: File[],
   options: {
     retries?: number
@@ -478,7 +473,7 @@ More information: [`ShardStoredCallback`](#shardstoredcallback)
 ### `uploadFile`
 
 ```ts
-function uploadFile(
+function uploadFile (
   file: Blob,
   options: {
     retries?: number
@@ -497,7 +492,7 @@ More information: [`ShardStoredCallback`](#shardstoredcallback)
 ### `uploadCAR`
 
 ```ts
-function uploadCAR(
+function uploadCAR (
   car: Blob,
   options: {
     retries?: number
@@ -517,7 +512,7 @@ More information: [`ShardStoredCallback`](#shardstoredcallback)
 ### `agent`
 
 ```ts
-function agent(): Signer
+function agent (): Signer
 ```
 
 The user agent. The agent is a signer - an entity that can sign UCANs with keys from a `Principal` using a signing algorithm.
@@ -525,10 +520,7 @@ The user agent. The agent is a signer - an entity that can sign UCANs with keys 
 ### `authorize`
 
 ```ts
-function authorize(
-  email: string,
-  options?: { signal?: AbortSignal }
-): Promise<void>
+function authorize (email: string, options?: { signal?: AbortSignal }): Promise<void>
 ```
 
 Authorize the current agent to use capabilities granted to the passed email account.
@@ -536,7 +528,7 @@ Authorize the current agent to use capabilities granted to the passed email acco
 ### `accounts`
 
 ```ts
-function accounts(): Record<DID, Account>
+function accounts (): Record<DID, Account>
 ```
 
 List all accounts the agent has stored access to.
@@ -544,7 +536,7 @@ List all accounts the agent has stored access to.
 ### `currentSpace`
 
 ```ts
-function currentSpace(): Space | undefined
+function currentSpace (): Space|undefined
 ```
 
 The current space in use by the agent.
@@ -552,7 +544,7 @@ The current space in use by the agent.
 ### `setCurrentSpace`
 
 ```ts
-function setCurrentSpace(did: DID): Promise<void>
+function setCurrentSpace (did: DID): Promise<void>
 ```
 
 Use a specific space.
@@ -560,7 +552,7 @@ Use a specific space.
 ### `spaces`
 
 ```ts
-function spaces(): Space[]
+function spaces (): Space[]
 ```
 
 Spaces available to this agent.
@@ -568,7 +560,7 @@ Spaces available to this agent.
 ### `createSpace`
 
 ```ts
-async function createSpace(name?: string): Promise<Space>
+async function createSpace(name?: string, options?: {account: Account}): Promise<Space>
 ```
 
 Create a new space with an optional name.
@@ -576,7 +568,7 @@ Create a new space with an optional name.
 ### `addSpace`
 
 ```ts
-async function addSpace(proof: Delegation): Promise<Space>
+async function addSpace (proof: Delegation): Promise<Space>
 ```
 
 Add a space from a received proof. Proofs are delegations with an _audience_ matching the agent DID.
@@ -584,7 +576,7 @@ Add a space from a received proof. Proofs are delegations with an _audience_ mat
 ### `proofs`
 
 ```ts
-function proofs(capabilities?: Capability[]): Delegation[]
+function proofs (capabilities?: Capability[]): Delegation[]
 ```
 
 Get all the proofs matching the capabilities. Proofs are delegations with an _audience_ matching the agent DID.
@@ -592,7 +584,7 @@ Get all the proofs matching the capabilities. Proofs are delegations with an _au
 ### `addProof`
 
 ```ts
-function addProof(proof: Delegation): Promise<void>
+function addProof (proof: Delegation): Promise<void>
 ```
 
 Add a proof to the agent. Proofs are delegations with an _audience_ matching the agent DID. Note: `addSpace` should be used for delegating from `Space` to `Agent` (i.e., you want the Agent to fully be able to act on behalf of the Space), as it calls `addProof` with some additional client logic. `addProof` is for more generically adding delegations to the Agent (e.g., delegation targets a resource _other_ than a Space).
@@ -600,7 +592,7 @@ Add a proof to the agent. Proofs are delegations with an _audience_ matching the
 ### `delegations`
 
 ```ts
-function delegations(capabilities?: Capability[]): Delegation[]
+function delegations (capabilities?: Capability[]): Delegation[]
 ```
 
 Get delegations created by the agent for others. Filtered optionally by capability.
@@ -608,7 +600,7 @@ Get delegations created by the agent for others. Filtered optionally by capabili
 ### `createDelegation`
 
 ```ts
-function createDelegation(
+function createDelegation (
   audience: Principal,
   abilities: string[],
   options?: UCANOptions
@@ -635,7 +627,9 @@ Removes association of a content CID with the space. Optionally, also removes as
 ### `getReceipt`
 
 ```ts
-function getReceipt(taskCid: CID): Promise<Receipt>
+function getReceipt (
+  taskCid: CID
+): Promise<Receipt>
 ```
 
 Get a receipt for an executed task by its CID.
@@ -643,7 +637,7 @@ Get a receipt for an executed task by its CID.
 ### `capability.access.authorize`
 
 ```ts
-function authorize(
+function authorize (
   email: string,
   options: { signal?: AbortSignal } = {}
 ): Promise<void>
@@ -654,7 +648,7 @@ Authorize the current agent to use capabilities granted to the passed email acco
 ### `capability.access.claim`
 
 ```ts
-function claim(): Promise<Delegation<Capabilities>[]>
+function claim (): Promise<Delegation<Capabilities>[]>
 ```
 
 Claim delegations granted to the account associated with this agent. Note: the received delegations are added to the agent's persistent store.
@@ -662,7 +656,7 @@ Claim delegations granted to the account associated with this agent. Note: the r
 ### `capability.blob.add`
 
 ```ts
-function add(
+function add (
   blob: Blob,
   options: { retries?: number; signal?: AbortSignal } = {}
 ): Promise<MultihashDigest>
@@ -673,7 +667,7 @@ Store a blob to the service.
 ### `capability.blob.list`
 
 ```ts
-function list(
+function list (
   options: { retries?: number; signal?: AbortSignal } = {}
 ): Promise<ListResponse<BlobListResult>>
 ```
@@ -685,7 +679,7 @@ More information: [`BlobListResult`](#bloblistresult), [`ListResponse`](#listres
 ### `capability.blob.remove`
 
 ```ts
-function remove(
+function remove (
   digest: MultihashDigest,
   options: { retries?: number; signal?: AbortSignal } = {}
 ): Promise<void>
@@ -709,7 +703,9 @@ Required delegated capability proofs: `index/add`
 ### `capability.plan.get`
 
 ```ts
-function get(account: AccountDID): Promise<PlanGetSuccess>
+function get (
+  account: AccountDID
+): Promise<PlanGetSuccess>
 ```
 
 Get information about an account's billing plan.
@@ -717,7 +713,10 @@ Get information about an account's billing plan.
 ### `capability.plan.set`
 
 ```ts
-function set(account: AccountDID, product: DID): Promise<{}>
+function set (
+  account: AccountDID,
+  product: DID
+): Promise<{}>
 ```
 
 Switch an account's "plan" to the given product. **This may result in
@@ -727,20 +726,20 @@ type of change.**
 ### `capability.plan.createAdminSession`
 
 ```ts
-function createAdminSession(
+function createAdminSession (
   account: AccountDID,
   returnURL: string
-): Promise<{ url: string }>
+): Promise<{url: string}>
 ```
 
-Create a billing customer portal admin session. Returns a URL that
-the customer can visit to administer `account`. Design and implementation driven
+Create a billing customer portal admin session. Returns a URL that 
+the customer can visit to administer `account`. Design and implementation driven 
 by our Stripe integration and may not be supported by all billing providers.
 
 ### `capability.upload.add`
 
 ```ts
-function add(
+function add (
   root: CID,
   shards: CID[],
   options: { retries?: number; signal?: AbortSignal } = {}
@@ -775,7 +774,10 @@ Remove a upload by root data CID.
 ### `capability.filecoin.offer`
 
 ```ts
-function offer(content: CID, piece: PieceLink): Promise<FilecoinOfferResponse>
+function offer (
+  content: CID,
+  piece: PieceLink,
+): Promise<FilecoinOfferResponse>
 ```
 
 Offer a Filecoin "piece" to be added to an aggregate that will be offered for Filecoin deal(s).
@@ -783,7 +785,9 @@ Offer a Filecoin "piece" to be added to an aggregate that will be offered for Fi
 ### `capability.filecoin.info`
 
 ```ts
-function info(piece: PieceLink): Promise<FilecoinInfoResponse>
+function info (
+  piece: PieceLink
+): Promise<FilecoinInfoResponse>
 ```
 
 Get know deals and aggregate info of a Filecoin "piece" previously offered.
@@ -818,7 +822,7 @@ export interface Capability<
   nb?: Caveats
 }
 
-export type Ability = `${string}/${string}` | '*'
+export type Ability = `${string}/${string}` | "*"
 
 export type Resource = `${string}:${string}`
 ```
@@ -867,7 +871,7 @@ export interface Delegation extends CoreDelegation {
    * User defined delegation metadata.
    */
   meta(): Record<string, any>
-}
+} 
 ```
 
 The `Delegation` type in `w3up-client` extends the `Delegation` type defined by [`ucanto`][ucanto]:
@@ -937,24 +941,26 @@ An object representing a storage location. Spaces must be [registered](#register
 
 ```ts
 interface Space {
+  
   /**
    * The given space name.
-   */
+   */  
   name(): string
-
+  
   /**
    * The DID of the space.
-   */
+   */  
   did(): string
-
+  
   /**
    * Whether the space has been registered with the service.
-   */
+   */  
   registered(): boolean
-
+  
+  
   /**
    * User defined space metadata.
-   */
+   */  
   meta(): Record<string, any>
 }
 ```
@@ -983,6 +989,7 @@ Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up/blob
 [ucanto]: https://github.com/web3-storage/ucanto
 [car-spec]: https://ipld.io/specs/transport/car/
 [web3storage-docs-cars]: https://web3.storage/docs/concepts/car/
+
 [docs]: https://web3-storage.github.io/w3up/modules/_web3_storage_w3up_client.html
 [docs-Client]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html
 [docs-Client#agent]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#agent
@@ -992,6 +999,8 @@ Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up/blob
 [docs-Client#uploadFile]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#uploadFile
 [docs-Client#uploadDirectory]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html#uploadDirectory
 [docs-Space]: https://web3-storage.github.io/w3up/modules/_web3_storage_access.Space.html
+
 [docs-create]: #create
 [docs-ClientFactoryOptions]: https://web3-storage.github.io/w3up/interfaces/_web3_storage_w3up_client.unknown.ClientFactoryOptions.html
+
 [access-docs-Agent]: https://web3-storage.github.io/w3up/classes/_web3_storage_access.Agent.html
