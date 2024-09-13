@@ -235,8 +235,9 @@ export class Client extends Base {
 
   /**
    * Create a new space with a given name.
-   * If an account is provided in the options argument, then it creates a delegated recovery account
-   * by provisioning the space and then delegating access to the recovery account.
+   * If an account is not provided, the space is created without any delegation and is not saved, hence it is a temporary space.
+   * When an account is provided in the options argument, then it creates a delegated recovery account
+   * by provisioning the space, saving it and then delegating access to the recovery account.
    *
    * @typedef {object} CreateOptions
    * @property {Account.Account} [account]
@@ -253,7 +254,10 @@ export class Client extends Base {
       // Provision the account with the space
       const provisionResult = await account.provision(space.did())
       if (provisionResult.error) {
-        throw new Error(`failed to provision account: ${provisionResult.error.message}`, { cause: provisionResult.error })
+        throw new Error(
+          `failed to provision account: ${provisionResult.error.message}`,
+          { cause: provisionResult.error }
+        )
       }
 
       // Save the space to authorize the client to use the space
@@ -269,7 +273,10 @@ export class Client extends Base {
       })
 
       if (result.error) {
-        throw new Error(`failed to authorize recovery account: ${result.error.message}`, { cause: result.error })
+        throw new Error(
+          `failed to authorize recovery account: ${result.error.message}`,
+          { cause: result.error }
+        )
       }
     }
     return space
