@@ -1,5 +1,18 @@
 # Changelog
 
+## [16.1.0](https://github.com/storacha/w3up/compare/w3up-client-v16.0.0...w3up-client-v16.1.0) (2024-09-16)
+
+
+### Features
+
+* **client:** optional account recovery ([#1546](https://github.com/storacha/w3up/issues/1546)) ([ea02adb](https://github.com/storacha/w3up/commit/ea02adb77cfe207a5823e24d886d28b6650ecc03))
+* wait for plan selection ([#1547](https://github.com/storacha/w3up/issues/1547)) ([7fdee77](https://github.com/storacha/w3up/commit/7fdee77cb35326807a59f368c2276f945c256874))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+
 ## [16.0.0](https://github.com/storacha-network/w3up/compare/w3up-client-v15.0.0...w3up-client-v16.0.0) (2024-07-29)
 
 
