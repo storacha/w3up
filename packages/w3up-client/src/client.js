@@ -282,6 +282,40 @@ export class Client extends Base {
     return space
   }
 
+  /**
+   * Share an existing space with another Storacha account.
+   * Delegates access to the space to the specified email account.
+   *
+   * @typedef {object} ShareOptions
+   * @property {import("./space.js").OwnedSpace} space - The space to share.
+   * @property {import("./types.js").EmailAddress} delegateEmail - Email of the account to share the space with.
+   *
+   * @param {ShareOptions} options
+   * @returns {Promise<void>} Resolves once the space is successfully shared.
+   * @throws {Error} - Throws an error if there is an issue delegating access to the space.
+   */
+  async shareSpace(options) {
+    const { space, delegateEmail } = options
+
+    // Create a recovery for the delegate account
+    const recovery = await space.createRecovery(
+      Account.fromEmail(delegateEmail)
+    )
+
+    // Delegate space access to the delegate account
+    const result = await this.capability.access.delegate({
+      space: space.did(),
+      delegations: [recovery],
+    })
+
+    if (result.error) {
+      throw new Error(
+        `failed to share space with account ${delegateEmail}: ${result.error.message}`,
+        { cause: result.error }
+      )
+    }
+  }
+
   /* c8 ignore stop */
 
   /**
