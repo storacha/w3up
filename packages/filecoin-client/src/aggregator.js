@@ -30,7 +30,7 @@ export const connection = connect({
  * Otherwise the task is failed and the receipt will contain details of the
  * reason behind the failure.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#pieceoffer
+ * @see https://github.com/storacha/specs/blob/main/w3-filecoin.md#pieceoffer
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece
@@ -76,7 +76,7 @@ export async function pieceOffer(
  * Otherwise the task is failed and the receipt will contain details of the
  * reason behind the failure.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#pieceaccept
+ * @see https://github.com/storacha/specs/blob/main/w3-filecoin.md#pieceaccept
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} piece

@@ -31,7 +31,7 @@ export const connection = connect({
  * Otherwise the task is failed and the receipt will contain details of the
  * reason behind the failure.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateoffer
+ * @see https://github.com/storacha/specs/blob/main/w3-filecoin.md#aggregateoffer
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} aggregate
@@ -79,7 +79,7 @@ export async function aggregateOffer(
  * `piece/offer` tasks that will retry _valid_ pieces and complete
  * asynchronously.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateaccept
+ * @see https://github.com/storacha/specs/blob/main/w3-filecoin.md#aggregateaccept
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('@web3-storage/data-segment').PieceLink} aggregate

@@ -199,7 +199,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/w3s-project/w3up.git",
+    "url": "https://github.com/storacha/w3up.git",
     "directory": "packages/w3up-client"
   },
   "keywords": [
@@ -214,7 +214,7 @@
   ],
   "author": "DAG House",
   "bugs": {
-    "url": "https://github.com/w3s-project/w3up/issues"
+    "url": "https://github.com/storacha/w3up/issues"
   },
   "homepage": "https://web3.storage",
   "depcheck": {

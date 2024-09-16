@@ -28,7 +28,7 @@ export const connection = connect({
  * Otherwise the task is failed and the receipt will contain details of the
  * reason behind the failure.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinoffer
+ * @see https://github.com/storacha/specs/blob/main/w3-filecoin.md#filecoinoffer
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('multiformats').UnknownLink} content
@@ -72,7 +72,7 @@ export async function filecoinOffer(
  * Otherwise the task is failed and the receipt will contain details of the
  * reason behind the failure.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinsubmit
+ * @see https://github.com/storacha/specs/blob/main/w3-filecoin.md#filecoinsubmit
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('multiformats').UnknownLink} content
@@ -116,7 +116,7 @@ export async function filecoinSubmit(
  * Otherwise the task is failed and the receipt will contain details of the
  * reason behind the failure.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinaccept
+ * @see https://github.com/storacha/specs/blob/main/w3-filecoin.md#filecoinaccept
  *
  * @param {import('./types.js').InvocationConfig} conf - Configuration
  * @param {import('multiformats').UnknownLink} content

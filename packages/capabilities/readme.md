@@ -4,11 +4,11 @@
 
 ## About
 
-The w3up platform by [web3.storage](https://web3.storage) is implemented as a set of capabilities that can be invoked using the [ucanto](https://github.com/web3-storage/ucanto) RPC framework.
+The w3up platform by [web3.storage](https://web3.storage) is implemented as a set of capabilities that can be invoked using the [ucanto](https://github.com/storacha/ucanto) RPC framework.
 
 The `@web3-storage/capabilities` package contains capability definitions, which are used by clients to create invocations and by services to validate and parse invocations and route requests to the correct capability handler.
 
-See the [capabilities spec](https://github.com/web3-storage/w3protocol/tree/main/spec/capabilities.md) for more information about each capability included in this package.
+See the [capabilities spec](https://github.com/storacha/w3up/tree/main/spec/capabilities.md) for more information about each capability included in this package.
 
 ## Install
 
@@ -19,8 +19,6 @@ npm install @web3-storage/capabilities
 ```
 
 ## Usage
-
-[API Reference](https://web3-storage.github.io/w3protocol/modules/_web3_storage_capabilities.html)
 
 ```js
 import * as Space from '@web3-storage/capabilities/space'
@@ -117,7 +115,7 @@ interface UCANOptions {
 }
 ```
 
-In the example below, we're generating a new `Signer` to act as the issuer of the invocation using the `@ucanto/principal/ed25519` package. Note that in a real application, the service would likely reject an invocation from this signer, as it does not have any delegated permissions. See the [access client package](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client) for more about key management and delegation in practice.
+In the example below, we're generating a new `Signer` to act as the issuer of the invocation using the `@ucanto/principal/ed25519` package. Note that in a real application, the service would likely reject an invocation from this signer, as it does not have any delegated permissions. See the [access client package](https://github.com/storacha/w3up/tree/main/packages/access-client) for more about key management and delegation in practice.
 
 ```ts
 import * as DID from '@ipld/dag-ucan/did'

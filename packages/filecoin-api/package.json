@@ -6,7 +6,7 @@
   "homepage": "https://web3.storage",
   "repository": {
     "type": "git",
-    "url": "https://github.com/w3s-project/w3up.git",
+    "url": "https://github.com/storacha/w3up.git",
     "directory": "packages/filecoin-api"
   },
   "files": [

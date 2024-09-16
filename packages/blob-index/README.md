@@ -55,8 +55,8 @@ for (const [shard, slices] of index.shards.entries()) {
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/web3-storage/w3up/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/w3up/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up/blob/main/license.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/w3up/blob/main/license.md)
