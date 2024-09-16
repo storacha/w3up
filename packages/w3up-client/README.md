@@ -129,13 +129,8 @@ const account = await client.login('zaphod@beeblebrox.galaxy')
 If your account doesn't have a payment plan yet, you'll be prompted to select one after verifying your email. A payment plan is required to provision a space. You can use the following loop to wait until a payment plan is selected:
 
 ```js
-// wait for payment plan to be selected
-while (true) {
-  const res = await account.plan.get()
-  if (res.ok) break
-  console.log('Waiting for payment plan to be selected...')
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-}
+// Wait for a payment plan with a 1-second polling interval and 15-minute timeout
+await account.plan.wait()
 ```
 
 Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
