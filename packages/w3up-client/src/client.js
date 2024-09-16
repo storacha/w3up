@@ -10,6 +10,7 @@ import {
   Upload as UploadCapabilities,
   Filecoin as FilecoinCapabilities,
 } from '@web3-storage/capabilities'
+import * as DIDMailto from '@web3-storage/did-mailto'
 import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
@@ -98,8 +99,9 @@ export class Client extends Base {
   /* c8 ignore stop */
 
   /**
-   * List all accounts that agent has stored access to. Returns a dictionary
-   * of accounts keyed by their `did:mailto` identifier.
+   * List all accounts that agent has stored access to.
+   *
+   * @returns {Record<DIDMailto, Account>} A dictionary with `did:mailto` as keys and `Account` instances as values.
    */
   accounts() {
     return Account.list(this)
@@ -233,12 +235,53 @@ export class Client extends Base {
 
   /**
    * Create a new space with a given name.
+   * If an account is not provided, the space is created without any delegation and is not saved, hence it is a temporary space.
+   * When an account is provided in the options argument, then it creates a delegated recovery account
+   * by provisioning the space, saving it and then delegating access to the recovery account.
+   *
+   * @typedef {object} CreateOptions
+   * @property {Account.Account} [account]
    *
    * @param {string} name
+   * @param {CreateOptions} options
+   * @returns {Promise<import("./space.js").OwnedSpace>} The created space owned by the agent.
    */
-  async createSpace(name) {
-    return await this._agent.createSpace(name)
+  async createSpace(name, options = {}) {
+    const space = await this._agent.createSpace(name)
+
+    const account = options.account
+    if (account) {
+      // Provision the account with the space
+      const provisionResult = await account.provision(space.did())
+      if (provisionResult.error) {
+        throw new Error(
+          `failed to provision account: ${provisionResult.error.message}`,
+          { cause: provisionResult.error }
+        )
+      }
+
+      // Save the space to authorize the client to use the space
+      await space.save()
+
+      // Create a recovery for the account
+      const recovery = await space.createRecovery(account.did())
+
+      // Delegate space access to the recovery
+      const result = await this.capability.access.delegate({
+        space: space.did(),
+        delegations: [recovery],
+      })
+
+      if (result.error) {
+        throw new Error(
+          `failed to authorize recovery account: ${result.error.message}`,
+          { cause: result.error }
+        )
+      }
+    }
+    return space
   }
+
   /* c8 ignore stop */
 
   /**

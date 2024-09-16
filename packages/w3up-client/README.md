@@ -126,7 +126,7 @@ A [`Space`][docs-Space] acts as a namespace for your uploads, and what your Agen
 const account = await client.login('zaphod@beeblebrox.galaxy')
 ```
 
-If your account does not yet have a payment plan, you'll be prompted to choose one after your email address has been verified. You will need a payment plan in order to provision your space. You can use the following code to wait for a payment plan to be selected:
+If your account doesn't have a payment plan yet, you'll be prompted to select one after verifying your email. A payment plan is required to provision a space. You can use the following loop to wait until a payment plan is selected:
 
 ```js
 // wait for payment plan to be selected
@@ -134,47 +134,29 @@ while (true) {
   const res = await account.plan.get()
   if (res.ok) break
   console.log('Waiting for payment plan to be selected...')
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  await new Promise((resolve) => setTimeout(resolve, 1000))
 }
 ```
 
 Spaces can be created using the [`createSpace` client method][docs-client#createSpace]:
 
 ```js
-const space = await client.createSpace('my-awesome-space')
+const space = await client.createSpace('my-awesome-space', { account })
 ```
 
-or using the w3cli's [`w3 space create`](https://github.com/web3-storage/w3cli#w3-space-create-name).
+Alternatively, you can use the w3cli command [`w3 space create`](https://github.com/web3-storage/w3cli#w3-space-create-name).
 
-The name parameter is optional. If provided, it will be stored in your client's local state store and can be used to provide a friendly name for user interfaces.
+The `name` parameter is optional. If provided, it will be stored in your client's local state store and can be used to provide a friendly name for user interfaces.
 
-Before anything can be stored with a space using web3.storage, the space must also be provisioned by a specific account that is responsible for the stored data. Note: after this succeeds, `account`'s payment method will be charged for data stored in `space`.
+If an `account` is provided in the options, a delegated recovery account is automatically created and provisioned, allowing you to store data and delegate access to the recovery account. This means you can access your space from other devices, as long as you have access to your account.
 
-```js
-await account.provision(space.did())
-```
-
-If provisioning succeeds, you're ready to use the Space. Save your space to your agent's state store:
-
-```js
-await space.save()
-```
-
-If your agent has no other spaces, saving the space will set it as the "current space" in your agent. If you already have other spaces, you may want to set it as the current:
+If this is your Agent's first space, it will automatically be set as the "current space." If you already have spaces and want to set the new one as current, you can do so manually:
 
 ```js
 await client.setCurrentSpace(space.did())
 ```
 
-One last thing - now that you've saved your space locally, it's a good idea to setup recovery, so that when you move to a different device you can still access your space: 
-
-```js
-const recovery = await space.createRecovery(account.did())
-await client.capability.access.delegate({
-  space: space.did(),
-  delegations: [recovery],
-})
-```
+ℹ️ Note: If you do not create the space passing the account parameter you run the risk of losing access to your space!
 
 #### Delegating from Space to Agent
 
@@ -578,7 +560,7 @@ Spaces available to this agent.
 ### `createSpace`
 
 ```ts
-async function createSpace (name?: string): Promise<Space>
+async function createSpace(name?: string, options?: {account: Account}): Promise<Space>
 ```
 
 Create a new space with an optional name.
