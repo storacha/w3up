@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.1.1](https://github.com/storacha/w3up/compare/w3up-client-v16.1.0...w3up-client-v16.1.1) (2024-09-16)
+
+
+### Fixes
+
+* trigger release ([9eadccc](https://github.com/storacha/w3up/commit/9eadcccb7aac944ea571acf5f39e9880b2914168))
+
 ## [16.1.0](https://github.com/storacha/w3up/compare/w3up-client-v16.0.0...w3up-client-v16.1.0) (2024-09-16)
 
 
