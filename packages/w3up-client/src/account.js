@@ -243,7 +243,7 @@ export class AccountPlan {
    *
    * @param {object} [options]
    * @param {number} [options.interval=1000] - The polling interval in milliseconds (default is 1000ms).
-   * @param {number} [options.timeout=300000] - The maximum time to wait in milliseconds before throwing a timeout error (default is 5 minutes).
+   * @param {number} [options.timeout=900000] - The maximum time to wait in milliseconds before throwing a timeout error (default is 15 minutes).
    * @param {AbortSignal} [options.signal] - An optional AbortSignal to cancel the waiting process.
    * @returns {Promise<import('@web3-storage/access').PlanGetSuccess>} - Resolves once a payment plan is selected within the timeout.
    * @throws {Error} - Throws an error if there is an issue retrieving the payment plan or if the timeout is exceeded.
@@ -251,7 +251,7 @@ export class AccountPlan {
   async wait(options) {
     const startTime = Date.now()
     const interval = options?.interval || 1000 // 1 second
-    const timeout = options?.timeout || 300000 // 5 minutes
+    const timeout = options?.timeout || 60 * 15 * 1000 // 15 minutes
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
