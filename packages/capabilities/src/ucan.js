@@ -106,7 +106,7 @@ export const conclude = capability({
  * Issued by trusted authority (usually the one handling invocation) that attest
  * that specific UCAN delegation has been considered authentic.
  *
- * @see https://github.com/web3-storage/specs/blob/main/w3-session.md#authorization-session
+ * @see https://github.com/storacha/specs/blob/main/w3-session.md#authorization-session
  * 
  * @example
  * ```js

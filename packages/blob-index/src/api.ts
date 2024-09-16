@@ -12,7 +12,7 @@ export type Position = [offset: number, length: number]
 /**
  * A sharded DAG index.
  *
- * @see https://github.com/w3s-project/specs/blob/main/w3-index.md
+ * @see https://github.com/storacha/specs/blob/main/w3-index.md
  */
 export interface ShardedDAGIndex {
   /** DAG root CID that the index pertains to. */

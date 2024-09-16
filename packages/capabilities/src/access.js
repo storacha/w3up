@@ -115,13 +115,13 @@ export const claim = capability({
   with: DID.match({ method: 'key' }).or(DID.match({ method: 'mailto' })),
 })
 
-// https://github.com/web3-storage/specs/blob/main/w3-access.md#accessdelegate
+// https://github.com/storacha/specs/blob/main/w3-access.md#accessdelegate
 export const delegate = capability({
   can: 'access/delegate',
   /**
    * Field MUST be a space DID with a storage provider. Delegation will be stored just like any other DAG stored using store/add capability.
    *
-   * @see https://github.com/web3-storage/specs/blob/main/w3-access.md#delegate-with
+   * @see https://github.com/storacha/specs/blob/main/w3-access.md#delegate-with
    */
   with: SpaceDID,
   nb: Schema.struct({

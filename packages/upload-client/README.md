@@ -5,9 +5,9 @@
 
 The `@web3-storage/upload-client` package provides the "low level" client API for uploading data to [web3.storage](https://web3.storage) using the w3up platform.
 
-Most users will be better served by the higher-level [`@web3-storage/w3up-client` package](https://github.com/web3-storage/w3up-client), which presents a simpler API and supports creating agents and registering spaces.
+Most users will be better served by the higher-level [`@web3-storage/w3up-client` package](https://github.com/storacha/w3up-client), which presents a simpler API and supports creating agents and registering spaces.
 
-If you are using this package directly instead of `w3up-client`, you will also need to use the [`@web3-storage/access` client](https://github.com/web3-storage/w3protocol/tree/main/packages/access-client) for agent and space management. The `@web3-storage/capabilities` package referenced in the examples below is a transitive dependency of both `@web3-storage/upload-client` and `@web3-storage/access`, so you shouldn't need to install it explicitly.
+If you are using this package directly instead of `w3up-client`, you will also need to use the [`@web3-storage/access` client](https://github.com/storacha/w3up/tree/main/packages/access-client) for agent and space management. The `@web3-storage/capabilities` package referenced in the examples below is a transitive dependency of both `@web3-storage/upload-client` and `@web3-storage/access`, so you shouldn't need to install it explicitly.
 
 ## Install
 
@@ -47,7 +47,7 @@ const conf = {
 }
 ```
 
-See the [`@web3-storage/access` docs](https://web3-storage.github.io/w3protocol/modules/_web3_storage_access.html) for more about creating and registering spaces.
+See the [`@web3-storage/access` docs](https://web3-storage.github.io/w3up/modules/_web3_storage_access.html) for more about creating and registering spaces.
 
 ### Uploading files
 
@@ -336,7 +336,7 @@ function add(
 ): Promise<IndexAddResponse>
 ```
 
-Register an "index" with the service. The `index` CID should be the CID of a CAR file, containing an index ad defined by [w3-index](https://github.com/w3s-project/specs/blob/main/w3-index.md).
+Register an "index" with the service. The `index` CID should be the CID of a CAR file, containing an index ad defined by [w3-index](https://github.com/storacha/specs/blob/main/w3-index.md).
 
 Required delegated capability proofs: `index/add`
 
@@ -515,7 +515,7 @@ This is the configuration for the UCAN invocation. It's values can be obtained f
 
 ### `InvocationConfigurator`
 
-A function that generates [invocation configuration](#invocationconfig) for the requested capabilities. The intention is for the client to be able to [request, on demand, delegated capabilities from an application server](https://github.com/storacha-network/w3up-examples/tree/main/delegated-upload).
+A function that generates [invocation configuration](#invocationconfig) for the requested capabilities. The intention is for the client to be able to [request, on demand, delegated capabilities from an application server](https://github.com/storacha/w3up-examples/tree/main/delegated-upload).
 
 ```ts
 interface InvocationConfigurator {
@@ -571,8 +571,8 @@ More information: [`CARMetadata`](#carmetadata)
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/web3-storage/w3up/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/w3up/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3up/blob/main/license.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/w3up/blob/main/license.md)

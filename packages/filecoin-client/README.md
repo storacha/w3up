@@ -3,7 +3,7 @@
 
 ## About
 
-The `@web3-storage/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [web3-storage/specs/w3-filecoin.md](https://github.com/web3-storage/specs/blob/feat/filecoin-spec/w3-filecoin.md) and is not intended for web3.storage end users.
+The `@web3-storage/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [storacha/specs/w3-filecoin.md](https://github.com/storacha/specs/blob/main/w3-filecoin.md) and is not intended for web3.storage end users.
 
 ## Install
 
@@ -17,7 +17,7 @@ npm install @web3-storage/filecoin-client
 
 ### `Storefront.filecoinOffer`
 
-The [`filecoin/offer`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinoffer) task can be executed to request storing a content piece in Filecoin. It issues a signed receipt of the execution result.
+The [`filecoin/offer`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#filecoinoffer) task can be executed to request storing a content piece in Filecoin. It issues a signed receipt of the execution result.
 
 A receipt for successful execution will contain an effect, linking to a `filecoin/submit` task that will complete asynchronously.
 
@@ -45,7 +45,7 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Storefront.filecoinSubmit`
 
-The [`filecoin/submit`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinsubmit) task is an _effect_ linked from successful execution of a `filecoin/offer` task, it is executed to issue a receipt for the success or failure of the task.
+The [`filecoin/submit`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#filecoinsubmit) task is an _effect_ linked from successful execution of a `filecoin/offer` task, it is executed to issue a receipt for the success or failure of the task.
 
 A receipt for successful execution indicates that the offered piece has been submitted to the pipeline. In this case the receipt will contain an effect, linking to a `piece/offer` task that will complete asynchronously.
 
@@ -73,7 +73,7 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Storefront.filecoinAccept`
 
-The [`filecoin/accept`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#filecoinsubmit) task is an _effect_ linked from successful execution of a `filecoin/offer` task, it is executed to issue a receipt for the success or failure of the task.
+The [`filecoin/accept`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#filecoinsubmit) task is an _effect_ linked from successful execution of a `filecoin/offer` task, it is executed to issue a receipt for the success or failure of the task.
 
 A receipt for successful execution indicates that the offered piece has been accepted in a Filecoin deal. In this case the receipt will contain proofs that the piece was included in an aggregate and deal.
 
@@ -101,7 +101,7 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Aggregator.pieceOffer`
 
-The [`piece/offer`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#pieceoffer) task can be executed to request that a piece be aggregated for inclusion in an upcoming an Filecoin deal. It issues a signed receipt of the execution result. It is _also_ an effect linked from successful execution of a `filecoin/submit` task.
+The [`piece/offer`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#pieceoffer) task can be executed to request that a piece be aggregated for inclusion in an upcoming an Filecoin deal. It issues a signed receipt of the execution result. It is _also_ an effect linked from successful execution of a `filecoin/submit` task.
 
 A receipt for successful execution will contain an effect, linking to a `piece/accept` task that will complete asynchronously.
 
@@ -129,7 +129,7 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Aggregator.pieceAccept`
 
-The [`piece/accept`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#pieceaccept) task is an _effect_ linked from successful execution of a `piece/offer` task, it is executed to issue a receipt for the success or failure of the task.
+The [`piece/accept`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#pieceaccept) task is an _effect_ linked from successful execution of a `piece/offer` task, it is executed to issue a receipt for the success or failure of the task.
 
 A receipt for successful execution indicates that the offered piece was included in an aggregate. In this case the receipt will contain the aggregate piece CID and a proof that the piece was included in the aggregate. It also includes an effect, linking to an `aggregate/offer` task that will complete asynchronously.
 
@@ -157,7 +157,7 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Dealer.aggregateOffer`
 
-The [`aggregate/offer`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateoffer) task can be executed to request an aggregate be added to a deal with a Storage Provider. It issues a signed receipt of the execution result. It is _also_ an effect linked from successful execution of a `piece/accept` task.
+The [`aggregate/offer`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#aggregateoffer) task can be executed to request an aggregate be added to a deal with a Storage Provider. It issues a signed receipt of the execution result. It is _also_ an effect linked from successful execution of a `piece/accept` task.
 
 A receipt for successful execution will contain an effect, linking to an `aggregate/accept` task that will complete asynchronously.
 
@@ -185,7 +185,7 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `Dealer.aggregateAccept`
 
-The [`aggregate/accept`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#aggregateaccept) task is an _effect_ linked from successful execution of a `aggregate/offer` task, it is executed to issue a receipt for the success or failure of the task.
+The [`aggregate/accept`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#aggregateaccept) task is an _effect_ linked from successful execution of a `aggregate/offer` task, it is executed to issue a receipt for the success or failure of the task.
 
 A receipt for successful execution indicates that an aggregate has been accepted for inclusion in a Filecoin deal. In this case the receipt will contain proofs that the piece was included in an aggregate and deal.
 
@@ -213,7 +213,7 @@ More information: [`InvocationConfig`](#invocationconfig)
 
 ### `DealTracker.dealInfo`
 
-The [`deal/info`](https://github.com/web3-storage/specs/blob/main/w3-filecoin.md#dealinfo) task can be executed to request deal information for a given piece. It issues a signed receipt of the execution result.
+The [`deal/info`](https://github.com/storacha/specs/blob/main/w3-filecoin.md#dealinfo) task can be executed to request deal information for a given piece. It issues a signed receipt of the execution result.
 
 A receipt for successful execution will contain details of deals the provided piece CID is currently active in.
 
@@ -250,9 +250,9 @@ This is the configuration for the UCAN invocation. It is an object with `issuer`
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/web3-storage/w3protocol/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/w3up/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3protocol/blob/main/license.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/w3up/blob/main/license.md)
 

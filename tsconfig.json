@@ -46,7 +46,7 @@
     "excludeExternals": true,
     "darkHighlightTheme": "github-dark",
     "navigationLinks": {
-      "Github": "https://github.com/web3-storage/w3up"
+      "Github": "https://github.com/storacha/w3up"
     },
     "customCss": "./packages/w3up-typedoc-config/static/docs.css"
   }

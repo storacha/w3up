@@ -1,6 +1,6 @@
 # `w3up`
 
-This repo implements the web3.storage UCAN protocol [specifications](https://github.com/web3-storage/specs).
+This repo implements the web3.storage UCAN protocol [specifications](https://github.com/storacha/specs).
 
 It's the core of the web3.storage server and client implementations.
 
@@ -18,7 +18,7 @@ Once uploaded you can fetch your data from any IPFS gateway via [`https://w3s.li
 
 ### Command Line
 
-Install [`@web3-storage/w3cli`](https://github.com/web3-storage/w3cli#readme) globally, authorize it to act on your behalf, create a space and upload your files. It calculates the root CID for your files locally before sending them to web3.storage.
+Install [`@web3-storage/w3cli`](https://github.com/storacha/w3cli#readme) globally, authorize it to act on your behalf, create a space and upload your files. It calculates the root CID for your files locally before sending them to web3.storage.
 
 **shell**
 ```shell
@@ -34,11 +34,11 @@ $ w3 up ~/Pictures/ayy-lamo.jpg
 ⁂ https://w3s.link/ipfs/bafybeid6gpbsqkpfrsx6b6ywrt24je4xqe4eo4y2wldisl6sk7byny5uky
 ```
 
-Run `w3 --help` or have a look at https://github.com/web3-storage/w3cli to find out everything it can do.
+Run `w3 --help` or have a look at https://github.com/storacha/w3cli to find out everything it can do.
 
 ### JS Client
 
-Add the [`@web3-storage/w3up-client`](https://www.npmjs.com/package/@web3-storage/w3up-client) module into your project with `npm i @web3-storage/w3up-client` and upload a single file with [`client.uploadFile`](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#uploadfile) or many with [`client.uploadDirectory`](https://github.com/web3-storage/w3up/blob/main/packages/w3up-client/README.md#uploaddirectory).
+Add the [`@web3-storage/w3up-client`](https://www.npmjs.com/package/@web3-storage/w3up-client) module into your project with `npm i @web3-storage/w3up-client` and upload a single file with [`client.uploadFile`](https://github.com/storacha/w3up/blob/main/packages/w3up-client/README.md#uploadfile) or many with [`client.uploadDirectory`](https://github.com/storacha/w3up/blob/main/packages/w3up-client/README.md#uploaddirectory).
 
 If you've already got a space you can upload like this:
  
@@ -63,11 +63,11 @@ console.log(`Gateway URL: https://w3s.link/ipfs/${cid}`)
 
 See https://web3.storage/docs/w3up-client for a guide to using the js client for the first time.
 
-For an interactive command line adventure into the using w3up check out `learnyouw3up` here https://github.com/web3-storage/learnyouw3up
+For an interactive command line adventure into the using w3up check out `learnyouw3up` here https://github.com/storacha/learnyouw3up
 
 ### GitHub Action 
 
-The Action [`add-to-web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/web3-storage/w3cli) to let you add files to web3.storage from your GitHub Workflows.
+The Action [`add-to-web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/storacha/w3cli) to let you add files to web3.storage from your GitHub Workflows.
 
 **github-workflow.yaml**
 ```yaml
@@ -86,13 +86,13 @@ The Action [`add-to-web3`](https://github.com/marketplace/actions/add-to-web3) w
 # "https://dweb.link/ipfs/bafkreicysg23kiwv34eg2d7qweipxwosdo2py4ldv42nbauguluen5v6am"
 ```
 
-To generate a `secret_key` and delegate permissions to it as a `proof` to use in CI see: https://github.com/web3-storage/add-to-web3#generating-a-secret_key-and-proof
+To generate a `secret_key` and delegate permissions to it as a `proof` to use in CI see: https://github.com/storacha/add-to-web3#generating-a-secret_key-and-proof
 
 ## Contributing
 
 All welcome! web3.storage is open-source. See the [contributing guide](./CONTRIBUTING.md)
 
-This project uses node v18 and `pnpm`. It's a monorepo that uses [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local [`packages`](https://github.com/web3-storage/w3up/tree/main/packages)
+This project uses node v18 and `pnpm`. It's a monorepo that uses [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local [`packages`](https://github.com/storacha/w3up/tree/main/packages)
 
 ## License
 
