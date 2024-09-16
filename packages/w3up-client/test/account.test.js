@@ -312,6 +312,91 @@ export const testAccount = Test.withContext({
 
     assert.deepEqual(client.currentSpace()?.did(), space.did())
   },
+
+  waitForPaymentPlan: {
+    'should wait for a payment plan to be selected': async (
+      assert,
+      { client, mail, grantAccess }
+    ) => {
+      const email = 'alice@web.mail'
+      const login = Account.login(client, email)
+      await grantAccess(await mail.take())
+      const account = Result.try(await login)
+
+      let callCount = 0
+      // Mock the get method to simulate a plan being selected after some time
+      // @ts-expect-error
+      account.plan.get = async () => {
+        callCount++
+        if (callCount > 2) {
+          return { ok: { product: 'did:web:example.com' } }
+        }
+        return { ok: false }
+      }
+
+      const result = await account.plan.wait({ interval: 100, timeout: 1000 })
+      assert.deepEqual(result.product, 'did:web:example.com')
+    },
+
+    'should throw an error if there is an issue retrieving the payment plan':
+      async (assert, { client, mail, grantAccess }) => {
+        const email = 'alice@web.mail'
+        const login = Account.login(client, email)
+        await grantAccess(await mail.take())
+        const account = Result.try(await login)
+
+        // @ts-expect-error
+        account.plan.get = async () => Promise.resolve({ error: 'Some error' })
+
+        await assert.rejects(
+          account.plan.wait({ interval: 100, timeout: 1000 }),
+          {
+            message: 'Error retrieving payment plan: Some error',
+          }
+        )
+      },
+
+    'should throw a timeout error if the payment plan selection takes too long':
+      async (assert, { client, mail, grantAccess }) => {
+        const email = 'alice@web.mail'
+        const login = Account.login(client, email)
+        await grantAccess(await mail.take())
+        const account = Result.try(await login)
+
+        // @ts-expect-error
+        account.plan.get = async () => Promise.resolve({ ok: false })
+
+        await assert.rejects(
+          account.plan.wait({ interval: 100, timeout: 500 }),
+          {
+            message: 'Timeout: Payment plan selection took too long.',
+          }
+        )
+      },
+
+    'should throw an error when the abort signal is aborted': async (
+      assert,
+      { client, mail, grantAccess }
+    ) => {
+      const abortController = new AbortController()
+      const signal = abortController.signal
+
+      const email = 'alice@web.mail'
+      const login = Account.login(client, email)
+      await grantAccess(await mail.take())
+      const account = Result.try(await login)
+
+      // @ts-expect-error
+      account.plan.get = async () => Promise.resolve({ ok: false })
+
+      // Abort the signal after a short delay
+      setTimeout(() => abortController.abort(), 100)
+
+      await assert.rejects(account.plan.wait({ signal }), {
+        message: 'Aborted: Payment plan selection was aborted.',
+      })
+    },
+  },
 })
 
 Test.test({ Account: testAccount })

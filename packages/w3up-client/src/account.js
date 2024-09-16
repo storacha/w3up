@@ -236,6 +236,46 @@ export class AccountPlan {
   }
 
   /**
+   * Waits for a payment plan to be selected.
+   * This method continuously checks the account's payment plan status
+   * at a specified interval until a valid plan is selected, or when the timeout is reached,
+   * or when the abort signal is aborted.
+   *
+   * @param {object} [options]
+   * @param {number} [options.interval=1000] - The polling interval in milliseconds (default is 1000ms).
+   * @param {number} [options.timeout=300000] - The maximum time to wait in milliseconds before throwing a timeout error (default is 5 minutes).
+   * @param {AbortSignal} [options.signal] - An optional AbortSignal to cancel the waiting process.
+   * @returns {Promise<import('@web3-storage/access').PlanGetSuccess>} - Resolves once a payment plan is selected within the timeout.
+   * @throws {Error} - Throws an error if there is an issue retrieving the payment plan or if the timeout is exceeded.
+   */
+  async wait(options) {
+    const startTime = Date.now()
+    const interval = options?.interval || 1000 // 1 second
+    const timeout = options?.timeout || 300000 // 5 minutes
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const res = await this.get()
+      if (res.ok) return res.ok
+
+      if (res.error) {
+        throw new Error(`Error retrieving payment plan: ${res.error}`)
+      }
+
+      if (Date.now() - startTime > timeout) {
+        throw new Error('Timeout: Payment plan selection took too long.')
+      }
+
+      if (options?.signal?.aborted) {
+        throw new Error('Aborted: Payment plan selection was aborted.')
+      }
+
+      console.log('Waiting for payment plan to be selected...')
+      await new Promise((resolve) => setTimeout(resolve, interval))
+    }
+  }
+
+  /**
    *
    * @param {import('@web3-storage/access').AccountDID} accountDID
    * @param {string} returnURL
