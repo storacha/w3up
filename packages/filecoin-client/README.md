@@ -3,7 +3,7 @@
 
 ## About
 
-The `@web3-storage/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [web3-storage/specs/w3-filecoin.md](https://github.com/storacha/specs/blob/feat/filecoin-spec/w3-filecoin.md) and is not intended for web3.storage end users.
+The `@web3-storage/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [storacha/specs/w3-filecoin.md](https://github.com/storacha/specs/blob/main/w3-filecoin.md) and is not intended for web3.storage end users.
 
 ## Install
 
