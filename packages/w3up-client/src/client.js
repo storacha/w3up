@@ -283,20 +283,23 @@ export class Client extends Base {
   }
 
   /**
-   * Share an existing space with another Storacha account via email address delegate.
+   * Share an existing space with another Storacha account via email address delegation.
    * Delegates access to the space to the specified email account with the following permissions:
-   * - space/* - for uploading blobs
+   * - space/* - for managing space metadata
+   * - blob/* - for managing blobs
+   * - store/* - for managing stores
    * - upload/*- for registering uploads
-   * - filecoin/* - for submitting to the filecoin pipeline
    * - access/* - for re-delegating access to other devices
+   * - filecoin/* - for submitting to the filecoin pipeline
    * - usage/* - for querying usage
    * The default expiration is set to infinity.
    *
-   * @typedef {Omit<import('./types.js').UCANOptions, 'audience'> & { audienceMeta?: import('./types.js').AgentMeta }} ShareOptions
-   *
+   * @typedef {object} ShareOptions
+   * @property {import('./types.js').ServiceAbility[]} abilities - Abilities to delegate to the delegate account.
+   * @property {number} expiration - Expiration time in seconds.
+   
    * @param {import("./types.js").EmailAddress} delegateEmail - Email of the account to share the space with.
    * @param {import('./types.js').SpaceDID} spaceDID - The DID of the space to share.
-   * @param {import('./types.js').ServiceAbility[]} abilities - Abilities to delegate to the delegate account.
    * @param {ShareOptions} [options] - Options for the delegation.
    *
    * @returns {Promise<import('./delegation.js').AgentDelegation<any>>} Resolves with the AgentDelegation instance once the space is successfully shared.
@@ -305,30 +308,35 @@ export class Client extends Base {
   async shareSpace(
     delegateEmail,
     spaceDID,
-    abilities = [
-      'space/*',
-      'upload/*',
-      'access/*',
-      'usage/*',
-      'filecoin/offer',
-      'filecoin/submit',
-      'filecoin/accept',
-      'filecoin/info',
-    ],
-    options = { expiration: Infinity }
+    options = {
+      abilities: [
+        'space/*',
+        'store/*',
+        'upload/*',
+        'access/*',
+        'usage/*',
+        'filecoin/offer',
+        'filecoin/info',
+        'filecoin/accept',
+        'filecoin/submit',
+      ],
+      expiration: Infinity,
+    }
   ) {
+    const { abilities, ...restOptions } = options
+
     // Make sure the agent is using the space before delegating
     await this.agent.setCurrentSpace(spaceDID)
 
     // Delegate capabilities to the delegate account to access the **current space**
     const { root, blocks } = await this.agent.delegate({
-      ...options,
+      ...restOptions,
       abilities,
       audience: {
         did: () => DIDMailto.fromEmail(DIDMailto.email(delegateEmail)),
       },
-      // @ts-ignore
-      audienceMeta: options.audienceMeta ? options.audienceMeta : {},
+      // @ts-expect-error audienceMeta is not defined in ShareOptions
+      audienceMeta: options.audienceMeta ?? {},
     })
 
     const delegation = new AgentDelegation(root, blocks, {
@@ -336,7 +344,6 @@ export class Client extends Base {
     })
 
     const sharingResult = await this.capability.access.delegate({
-      // @ts-ignore
       space: spaceDID,
       delegations: [delegation],
     })

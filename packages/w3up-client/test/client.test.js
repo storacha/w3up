@@ -404,7 +404,7 @@ export const testClient = {
   shareSpace: Test.withContext({
     'should share the space with another account': async (
       assert,
-      { client: aliceClient, mail, grantAccess, connect, connection }
+      { client: aliceClient, mail, grantAccess, connection }
     ) => {
       // Step 1: Create a client for Alice and login
       const aliceEmail = 'alice@web.mail'
