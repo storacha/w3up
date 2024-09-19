@@ -1,12 +1,20 @@
 import assert from 'assert'
 import { parseLink } from '@ucanto/server'
-import { AgentData } from '@web3-storage/access/agent'
+import {
+  Agent,
+  AgentData,
+  claimAccess,
+  requestAccess,
+} from '@web3-storage/access/agent'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
 import { Client } from '../src/client.js'
 import * as Test from './test.js'
 import { receiptsEndpoint } from './helpers/utils.js'
+import { Absentee } from '@ucanto/principal'
+import { DIDMailto } from '../src/capability/access.js'
+import { confirmConfirmationUrl } from '../../upload-api/test/helpers/utils.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -393,6 +401,95 @@ export const testClient = {
       client.capability.access.delegate = originalDelegate
     },
   }),
+  shareSpace: Test.withContext({
+    'should share the space with another account': async (
+      assert,
+      { client: aliceClient, mail, grantAccess, connect, connection }
+    ) => {
+      // Step 1: Create a client for Alice and login
+      const aliceEmail = 'alice@web.mail'
+      const aliceLogin = aliceClient.login(aliceEmail)
+      const message = await mail.take()
+      assert.deepEqual(message.to, aliceEmail)
+      await grantAccess(message)
+      const aliceAccount = await aliceLogin
+
+      // Step 2: Alice creates a space
+      const space = await aliceClient.createSpace('share-space-test', {
+        account: aliceAccount,
+      })
+      assert.ok(space)
+
+      // Step 3: Alice shares the space with Bob
+      const bobEmail = 'bob@web.mail'
+      await aliceClient.shareSpace(bobEmail, space.did())
+
+      // Step 4: Bob access his device and his device gets authorized
+      const bobAccount = Absentee.from({ id: DIDMailto.fromEmail(bobEmail) })
+      const bobAgentData = await AgentData.create()
+      const bobClient = await Agent.create(bobAgentData, {
+        connection,
+      })
+
+      // Authorization
+      await requestAccess(bobClient, bobAccount, [{ can: '*' }])
+      await confirmConfirmationUrl(bobClient.connection, await mail.take())
+
+      // Step 5: Claim Access to the shared space
+      await claimAccess(bobClient, bobClient.issuer.did(), {
+        addProofs: true,
+      })
+
+      // Step 6: Bob verifies access to the space
+      const spaceInfo = await bobClient.getSpaceInfo(space.did())
+      assert.ok(spaceInfo)
+      assert.equal(spaceInfo.did, space.did())
+
+      // Step 7: The shared space should be part of Bob's spaces
+      const spaces = bobClient.spaces
+      assert.equal(spaces.size, 1)
+      assert.equal(spaces.get(space.did())?.name, space.name)
+
+      // Step 8: Make sure Alice and Bob's clients/devices are different
+      assert.notEqual(aliceClient.did(), bobClient.did())
+    },
+
+    'should fail to share the space if the delegate call returns an error':
+      async (assert, { client, mail, grantAccess }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = client.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        // Step 2: Alice creates a space
+        const space = await client.createSpace(
+          'share-space-delegate-fail-test',
+          {
+            account: aliceAccount,
+          }
+        )
+        assert.ok(space)
+
+        // Step 3: Mock the delegate call to return an error
+        const originalDelegate = client.capability.access.delegate
+        // @ts-ignore
+        client.capability.access.delegate = async () => {
+          return { error: { message: 'Delegate failed' } }
+        }
+
+        // Step 4: Attempt to share the space with Bob and expect failure
+        const bobEmail = 'bob@web.mail'
+        await assert.rejects(client.shareSpace(bobEmail, space.did()), {
+          message: `failed to share space with ${bobEmail}: Delegate failed`,
+        })
+
+        // Restore the original delegate method
+        client.capability.access.delegate = originalDelegate
+      },
+  }),
   proofs: {
     'should get proofs': async (assert) => {
       const alice = new Client(await AgentData.create())
@@ -697,86 +794,6 @@ export const testClient = {
 
       await assert.rejects(alice.remove(contentCID, { shards: true }))
     },
-  }),
-
-  shareSpace: Test.withContext({
-    'should share the space with another account': async (
-      assert,
-      { client, mail, grantAccess, connect }
-    ) => {
-      // Step 1: Create a client for Alice and login
-      const aliceEmail = 'alice@web.mail'
-      const aliceLogin = client.login(aliceEmail)
-      const message = await mail.take()
-      assert.deepEqual(message.to, aliceEmail)
-      await grantAccess(message)
-      const aliceAccount = await aliceLogin
-
-      // Step 2: Alice creates a space
-      const space = await client.createSpace('share-space-test', {
-        account: aliceAccount,
-      })
-      assert.ok(space)
-
-      // Step 3: Alice shares the space with Bob
-      const bobEmail = 'bob@web.mail'
-      await client.shareSpace({ space, delegateEmail: bobEmail })
-
-      // Step 4: Bob logs in
-      const bobClient = await connect()
-      const bobLogin = bobClient.login(bobEmail)
-      const bobMessage = await mail.take()
-      assert.deepEqual(bobMessage.to, bobEmail)
-      await grantAccess(bobMessage)
-      const bobAccount = await bobLogin
-
-      // Step 5: Bob adds the space to his agent and sets it as current
-      await bobClient.addSpace(await space.createAuthorization(bobAccount))
-      await bobClient.setCurrentSpace(space.did())
-
-      // Step 6: Bob verifies access to the space
-      const spaceInfo = await bobClient.capability.space.info(space.did())
-      assert.ok(spaceInfo)
-    },
-
-    'should fail to share the space if the delegate call returns an error':
-      async (assert, { client, mail, grantAccess }) => {
-        // Step 1: Create a client for Alice and login
-        const aliceEmail = 'alice@web.mail'
-        const aliceLogin = client.login(aliceEmail)
-        const message = await mail.take()
-        assert.deepEqual(message.to, aliceEmail)
-        await grantAccess(message)
-        const aliceAccount = await aliceLogin
-
-        // Step 2: Alice creates a space
-        const space = await client.createSpace(
-          'share-space-delegate-fail-test',
-          {
-            account: aliceAccount,
-          }
-        )
-        assert.ok(space)
-
-        // Step 3: Mock the delegate call to return an error
-        const originalDelegate = client.capability.access.delegate
-        // @ts-ignore
-        client.capability.access.delegate = async () => {
-          return { error: { message: 'Delegate failed' } }
-        }
-
-        // Step 4: Attempt to share the space with Bob and expect failure
-        const bobEmail = 'bob@web.mail'
-        await assert.rejects(
-          client.shareSpace({ space, delegateEmail: bobEmail }),
-          {
-            message: `failed to share space with account ${bobEmail}: Delegate failed`,
-          }
-        )
-
-        // Restore the original delegate method
-        client.capability.access.delegate = originalDelegate
-      },
   }),
 }
 
