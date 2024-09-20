@@ -1,5 +1,17 @@
 # Changelog
 
+## [16.2.0](https://github.com/storacha/w3up/compare/w3up-client-v16.1.1...w3up-client-v16.2.0) (2024-09-20)
+
+
+### Features
+
+* sharing spaces ([#1551](https://github.com/storacha/w3up/issues/1551)) ([7deb9a4](https://github.com/storacha/w3up/commit/7deb9a47fa0e37da0cf12a8d89214e45cf09bcbb))
+
+
+### Fixes
+
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+
 ## [16.1.1](https://github.com/storacha/w3up/compare/w3up-client-v16.1.0...w3up-client-v16.1.1) (2024-09-16)
 
 
