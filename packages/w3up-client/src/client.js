@@ -282,6 +282,92 @@ export class Client extends Base {
     return space
   }
 
+  /**
+   * Share an existing space with another Storacha account via email address delegation.
+   * Delegates access to the space to the specified email account with the following permissions:
+   * - space/* - for managing space metadata
+   * - blob/* - for managing blobs
+   * - store/* - for managing stores
+   * - upload/*- for registering uploads
+   * - access/* - for re-delegating access to other devices
+   * - filecoin/* - for submitting to the filecoin pipeline
+   * - usage/* - for querying usage
+   * The default expiration is set to infinity.
+   *
+   * @typedef {object} ShareOptions
+   * @property {import('./types.js').ServiceAbility[]} abilities - Abilities to delegate to the delegate account.
+   * @property {number} expiration - Expiration time in seconds.
+   
+   * @param {import("./types.js").EmailAddress} delegateEmail - Email of the account to share the space with.
+   * @param {import('./types.js').SpaceDID} spaceDID - The DID of the space to share.
+   * @param {ShareOptions} [options] - Options for the delegation.
+   *
+   * @returns {Promise<import('./delegation.js').AgentDelegation<any>>} Resolves with the AgentDelegation instance once the space is successfully shared.
+   * @throws {Error} - Throws an error if there is an issue delegating access to the space.
+   */
+  async shareSpace(
+    delegateEmail,
+    spaceDID,
+    options = {
+      abilities: [
+        'space/*',
+        'store/*',
+        'upload/*',
+        'access/*',
+        'usage/*',
+        'filecoin/offer',
+        'filecoin/info',
+        'filecoin/accept',
+        'filecoin/submit',
+      ],
+      expiration: Infinity,
+    }
+  ) {
+    const { abilities, ...restOptions } = options
+    const currentSpace = this.agent.currentSpace()
+
+    try {
+      // Make sure the agent is using the shared space before delegating
+      await this.agent.setCurrentSpace(spaceDID)
+
+      // Delegate capabilities to the delegate account to access the **current space**
+      const { root, blocks } = await this.agent.delegate({
+        ...restOptions,
+        abilities,
+        audience: {
+          did: () => DIDMailto.fromEmail(DIDMailto.email(delegateEmail)),
+        },
+        // @ts-expect-error audienceMeta is not defined in ShareOptions
+        audienceMeta: options.audienceMeta ?? {},
+      })
+
+      const delegation = new AgentDelegation(root, blocks, {
+        audience: delegateEmail,
+      })
+
+      const sharingResult = await this.capability.access.delegate({
+        space: spaceDID,
+        delegations: [delegation],
+      })
+
+      if (sharingResult.error) {
+        throw new Error(
+          `failed to share space with ${delegateEmail}: ${sharingResult.error.message}`,
+          {
+            cause: sharingResult.error,
+          }
+        )
+      }
+
+      return delegation
+    } finally {
+      // Reset to the original space if it was different
+      if (currentSpace && currentSpace !== spaceDID) {
+        await this.agent.setCurrentSpace(currentSpace)
+      }
+    }
+  }
+
   /* c8 ignore stop */
 
   /**
