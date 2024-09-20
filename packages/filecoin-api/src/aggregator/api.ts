@@ -1,6 +1,6 @@
 import type { Signer, Principal, Link } from '@ucanto/interface'
 import { InclusionProof } from '@web3-storage/capabilities/types'
-import { PieceLink } from '@web3-storage/data-segment'
+import { PieceLink, API as DataSegmentAPI } from '@web3-storage/data-segment'
 import {
   AggregatorService,
   DealerService,
@@ -327,6 +327,7 @@ export interface AggregateConfig {
   minAggregateSize: number
   minUtilizationFactor: number
   prependBufferedPieces?: BufferedPiece[]
+  hasher?: DataSegmentAPI.SyncMultihashHasher<DataSegmentAPI.SHA256_CODE>
 }
 
 // Enums
