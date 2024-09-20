@@ -162,7 +162,7 @@
     "@ucanto/transport": "^9.1.1",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/content-claims": "^5.0.0",
-    "@web3-storage/data-segment": "^4.0.0",
+    "@web3-storage/data-segment": "^5.2.0",
     "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^3.3.0",
     "p-map": "^6.0.0"
   },

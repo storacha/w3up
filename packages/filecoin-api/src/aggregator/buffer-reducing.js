@@ -152,11 +152,7 @@ export async function handleBufferReducingWithoutAggregate({
  * Attempt to build an aggregate with buffered pieces within ranges.
  *
  * @param {BufferedPiece[]} bufferedPieces
- * @param {object} config
- * @param {number} config.maxAggregateSize
- * @param {number} config.minAggregateSize
- * @param {number} config.minUtilizationFactor
- * @param {BufferedPiece[]} [config.prependBufferedPieces]
+ * @param {import('./api.js').AggregateConfig} config
  */
 export function aggregatePieces(bufferedPieces, config) {
   // Guarantee buffered pieces total size is bigger than the minimum utilization
@@ -175,6 +171,7 @@ export function aggregatePieces(bufferedPieces, config) {
   // Create builder with maximum size and try to fill it up
   const builder = Aggregate.createBuilder({
     size: Aggregate.Size.from(config.maxAggregateSize),
+    hasher: config.hasher,
   })
 
   // add pieces to an aggregate until there is no more space, or no more pieces
