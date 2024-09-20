@@ -489,6 +489,43 @@ export const testClient = {
         // Restore the original delegate method
         client.capability.access.delegate = originalDelegate
       },
+
+    'should reset current space when sharing': async (
+      assert,
+      { client, mail, grantAccess }
+    ) => {
+      // Step 1: Create a client for Alice and login
+      const aliceEmail = 'alice@web.mail'
+      const aliceLogin = client.login(aliceEmail)
+      const message = await mail.take()
+      assert.deepEqual(message.to, aliceEmail)
+      await grantAccess(message)
+      const aliceAccount = await aliceLogin
+
+      // Step 2: Alice creates a space
+      const spaceA = await client.createSpace('test-space-a', {
+        account: aliceAccount,
+      })
+      assert.ok(spaceA)
+
+      // Step 3: Alice creates another space to share with a friend
+      const spaceB = await client.createSpace('test-space-b', {
+        account: aliceAccount,
+      })
+      assert.ok(spaceB)
+
+      // Step 4: Alice set the current space to space A and shares the space B with Bob
+      await client.setCurrentSpace(spaceA.did())
+      await client.shareSpace('bob@web.mail', spaceB.did())
+
+      // Step 5: Check that current space from Alice is still space A
+      const currentSpace = client.currentSpace()
+      assert.equal(
+        currentSpace?.did(),
+        spaceA.did(),
+        'current space is not space A'
+      )
+    },
   }),
   proofs: {
     'should get proofs': async (assert) => {

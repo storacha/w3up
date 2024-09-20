@@ -324,39 +324,48 @@ export class Client extends Base {
     }
   ) {
     const { abilities, ...restOptions } = options
+    const currentSpace = this.agent.currentSpace()
 
-    // Make sure the agent is using the space before delegating
-    await this.agent.setCurrentSpace(spaceDID)
+    try {
+      // Make sure the agent is using the shared space before delegating
+      await this.agent.setCurrentSpace(spaceDID)
 
-    // Delegate capabilities to the delegate account to access the **current space**
-    const { root, blocks } = await this.agent.delegate({
-      ...restOptions,
-      abilities,
-      audience: {
-        did: () => DIDMailto.fromEmail(DIDMailto.email(delegateEmail)),
-      },
-      // @ts-expect-error audienceMeta is not defined in ShareOptions
-      audienceMeta: options.audienceMeta ?? {},
-    })
+      // Delegate capabilities to the delegate account to access the **current space**
+      const { root, blocks } = await this.agent.delegate({
+        ...restOptions,
+        abilities,
+        audience: {
+          did: () => DIDMailto.fromEmail(DIDMailto.email(delegateEmail)),
+        },
+        // @ts-expect-error audienceMeta is not defined in ShareOptions
+        audienceMeta: options.audienceMeta ?? {},
+      })
 
-    const delegation = new AgentDelegation(root, blocks, {
-      audience: delegateEmail,
-    })
+      const delegation = new AgentDelegation(root, blocks, {
+        audience: delegateEmail,
+      })
 
-    const sharingResult = await this.capability.access.delegate({
-      space: spaceDID,
-      delegations: [delegation],
-    })
+      const sharingResult = await this.capability.access.delegate({
+        space: spaceDID,
+        delegations: [delegation],
+      })
 
-    if (sharingResult.error) {
-      throw new Error(
-        `failed to share space with ${delegateEmail}: ${sharingResult.error.message}`,
-        {
-          cause: sharingResult.error,
-        }
-      )
+      if (sharingResult.error) {
+        throw new Error(
+          `failed to share space with ${delegateEmail}: ${sharingResult.error.message}`,
+          {
+            cause: sharingResult.error,
+          }
+        )
+      }
+
+      return delegation
+    } finally {
+      // Reset to the original space if it was different
+      if (currentSpace && currentSpace !== spaceDID) {
+        await this.agent.setCurrentSpace(currentSpace)
+      }
     }
-    return delegation
   }
 
   /* c8 ignore stop */
