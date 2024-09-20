@@ -1,5 +1,22 @@
 # Changelog
 
+## [7.3.0](https://github.com/storacha/w3up/compare/filecoin-api-v7.2.1...filecoin-api-v7.3.0) (2024-09-20)
+
+
+### Features
+
+* **filecoin-api:** allow custom hashing function to be passed to aggregate builder ([#1553](https://github.com/storacha/w3up/issues/1553)) ([e2653d4](https://github.com/storacha/w3up/commit/e2653d40c45070e2ccdc5cbda4eb4a35dab302e5))
+
+
+### Fixes
+
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+
 ## [7.2.1](https://github.com/storacha-network/w3up/compare/filecoin-api-v7.2.0...filecoin-api-v7.2.1) (2024-07-29)
 
 
