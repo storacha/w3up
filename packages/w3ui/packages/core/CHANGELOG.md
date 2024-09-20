@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/storacha/w3ui/compare/core-v2.3.0...core-v2.3.1) (2024-09-20)
+
+
+### Bug Fixes
+
+* **core:** bump w3up client version ([#641](https://github.com/storacha/w3ui/issues/641)) ([87b3caa](https://github.com/storacha/w3ui/commit/87b3caa9e9cfb8da4d05a7d962765ef6aea05b57))
+
 ## [2.3.0](https://github.com/storacha-network/w3ui/compare/core-v2.2.0...core-v2.3.0) (2024-08-30)
 
 
