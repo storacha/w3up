@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/storacha/w3ui/compare/react-v2.3.0...react-v2.4.0) (2024-09-20)
+
+
+### Features
+
+* Force a release of `@w3ui/react` ([#639](https://github.com/storacha/w3ui/issues/639)) ([f19d9d3](https://github.com/storacha/w3ui/commit/f19d9d361b3f23e8f95dbba51bb8a7077d1a632b))
+
 ## [2.3.0](https://github.com/w3s-project/w3ui/compare/react-v2.2.1...react-v2.3.0) (2024-05-15)
 
 
