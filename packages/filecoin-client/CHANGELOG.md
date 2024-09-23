@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.4](https://github.com/storacha/w3up/compare/filecoin-client-v3.3.3...filecoin-client-v3.3.4) (2024-09-23)
+
+
+### Fixes
+
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+
 ## [3.3.3](https://github.com/w3s-project/w3up/compare/filecoin-client-v3.3.2...filecoin-client-v3.3.3) (2024-04-30)
 
 
