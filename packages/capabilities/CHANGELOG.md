@@ -1,5 +1,23 @@
 # Changelog
 
+## [17.3.0](https://github.com/storacha/w3up/compare/capabilities-v17.2.0...capabilities-v17.3.0) (2024-09-23)
+
+
+### Features
+
+* publish index claim ([#1487](https://github.com/storacha/w3up/issues/1487)) ([237b0c6](https://github.com/storacha/w3up/commit/237b0c6cda70ae3e156bac8a011a2739b346ae4b))
+
+
+### Fixes
+
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+* update data-segment dep ([228ff79](https://github.com/storacha/w3up/commit/228ff7933219a0bf9ead371bb845d20a4859fda5))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+
 ## [17.2.0](https://github.com/w3s-project/w3up/compare/capabilities-v17.1.1...capabilities-v17.2.0) (2024-06-04)
 
 
