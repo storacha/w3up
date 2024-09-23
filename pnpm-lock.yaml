@@ -210,8 +210,8 @@ importers:
         specifier: ^9.0.2
         version: 9.0.2
       '@web3-storage/data-segment':
-        specifier: ^3.2.0
-        version: 3.2.0
+        specifier: ^5.2.0
+        version: 5.2.0
       uint8arrays:
         specifier: ^5.0.3
         version: 5.0.3
@@ -2373,9 +2373,6 @@ packages:
 
   '@web3-storage/content-claims@5.1.0':
     resolution: {integrity: sha512-3VStFKoeieRpRU7brFjKTsAuAffQzYDIZ8F3Gh0+niw+MgzBK72osW+fftdquT8neWir34Ndu3mBUKKJ3ck1RQ==}
-
-  '@web3-storage/data-segment@3.2.0':
-    resolution: {integrity: sha512-SM6eNumXzrXiQE2/J59+eEgCRZNYPxKhRoHX2QvV3/scD4qgcf4g+paWBc3UriLEY1rCboygGoPsnqYJNyZyfA==}
 
   '@web3-storage/data-segment@4.0.0':
     resolution: {integrity: sha512-AnNyJp3wHMa7LBzguQzm4rmXSi8vQBz4uFs+jiXnSNtLR5dAqHfhMvi9XdWonWPYvxNvT5ZhYCSF0mpDjymqKg==}
@@ -9540,12 +9537,6 @@ snapshots:
       '@ucanto/transport': 9.1.1
       carstream: 2.1.0
       multiformats: 13.1.0
-
-  '@web3-storage/data-segment@3.2.0':
-    dependencies:
-      '@ipld/dag-cbor': 9.2.1
-      multiformats: 11.0.2
-      sync-multihash-sha2: 1.0.0
 
   '@web3-storage/data-segment@4.0.0':
     dependencies:
