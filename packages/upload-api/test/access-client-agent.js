@@ -245,80 +245,99 @@ export const test = {
       connection,
     })
 
+    /**
+     * @param {Agent} device
+     */
+    const createSpace = async (device) => {
+      const space = await device.createSpace(
+        `space-test-${Math.random().toString().slice(2)}`
+      )
+
+      assert.ok(space.did())
+      // provision space with an account so it can store delegations
+      const provisionResult = await Provider.add(device, {
+        account: account.did(),
+        consumer: space.did(),
+      })
+      assert.ok(provisionResult.ok)
+
+      // authorize device
+      const auth = await space.createAuthorization(device, {
+        access: AgentAccess.spaceAccess,
+        expiration: Infinity,
+      })
+      await device.importSpaceFromDelegation(auth)
+
+      // make space current
+      await device.setCurrentSpace(space.did())
+
+      const recovery = await space.createRecovery(account.did())
+      const delegateResult = await AgentAccess.delegate(device, {
+        delegations: [recovery],
+      })
+      assert.ok(delegateResult.ok)
+      return space
+    }
+
+    /**
+     * @param {Agent} device
+     */
+    const claimDelegations = async (device) => {
+      await claimAccess(device, device.issuer.did(), {
+        addProofs: true,
+        nonce: Math.random().toString(),
+      })
+      }
+
+    /**
+     * @param {import('@web3-storage/access/agent').OwnedSpace} space
+     */
+    async function assertDeviceBCanSpaceInfo(space) {
+      const spaceInfoResult = await deviceB.invokeAndExecute(Space.info, {
+        with: space.did(),
+      })
+
+      assert.equal(spaceInfoResult.out.error, undefined)
+
+      assert.ok(spaceInfoResult.out.ok)
+      const result =
+        /** @type {import('@web3-storage/access/types').SpaceInfoResult} */ (
+          spaceInfoResult.out.ok
+        )
+      assert.deepEqual(result.did, space.did())
+    }
+
     // deviceA authorization
     await requestAccess(deviceA, account, [{ can: '*' }])
-
     await confirmConfirmationUrl(deviceA.connection, await mail.take())
-
-    await claimAccess(deviceA, deviceA.issuer.did(), {
-      addProofs: true,
-    })
+    await claimDelegations(deviceA)
 
     // deviceA creates a space
-    const spaceCreation = await deviceA.createSpace(
-      `space-test-${Math.random().toString().slice(2)}`
-    )
-
-    assert.ok(spaceCreation.did())
-    // provision space with an account so it can store delegations
-    const provisionResult = await Provider.add(deviceA, {
-      account: account.did(),
-      consumer: spaceCreation.did(),
-    })
-    assert.ok(provisionResult.ok)
-
-    // authorize deviceA
-    const auth = await spaceCreation.createAuthorization(deviceA, {
-      access: AgentAccess.spaceAccess,
-      expiration: Infinity,
-    })
-    await deviceA.importSpaceFromDelegation(auth)
-
-    // make space current
-    await deviceA.setCurrentSpace(spaceCreation.did())
-
-    const recovery = await spaceCreation.createRecovery(account.did())
-    const delegateResult = await AgentAccess.delegate(deviceA, {
-      delegations: [recovery],
-    })
-    assert.ok(delegateResult.ok)
+    const space = await createSpace(deviceA)
 
     // second device - deviceB
     const deviceBData = await AgentData.create()
+
     const deviceB = await Agent.create(deviceBData, {
       connection,
     })
+
     // authorize deviceB
     await requestAccess(deviceB, account, [{ can: '*' }])
     await confirmConfirmationUrl(deviceB.connection, await mail.take())
-
-    // claim delegations aud=deviceB.issuer
-    const deviceBIssuerClaimed = await claimAccess(
-      deviceB,
-      deviceB.issuer.did(),
-      {
-        addProofs: true,
-      }
-    )
-    assert.equal(
-      deviceBIssuerClaimed.length,
-      2,
-      'deviceBIssuerClaimed delegations'
-    )
+    await claimDelegations(deviceB)
 
     // issuer + account proofs should authorize deviceB to invoke space/info
-    const spaceInfoResult = await deviceB.invokeAndExecute(Space.info, {
-      with: spaceCreation.did(),
-    })
+    await assertDeviceBCanSpaceInfo(space)
 
-    assert.equal(spaceInfoResult.out.error, undefined)
+    // deviceA creates another space
+    const space2 = await createSpace(deviceA)
 
-    assert.ok(spaceInfoResult.out.ok)
-    const result =
-      /** @type {import('@web3-storage/access/types').SpaceInfoResult} */ (
-        spaceInfoResult.out.ok
-      )
-    assert.deepEqual(result.did, spaceCreation.did())
+    // deviceB claims delegations again
+    await claimDelegations(deviceB)
+
+    // now deviceB should be able to invoke space/info on space2
+    await assertDeviceBCanSpaceInfo(space2)
   },
   'can addSpacesFromDelegations': async (assert, context) => {
     const { agent } = await setup(context)
