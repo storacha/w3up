@@ -26,6 +26,15 @@ const isUcanStar = (delegation) =>
   delegation.capabilities.some((capability) => capability.with === 'ucan:*')
 
 /**
+ * Returns true when the capability is a `ucan/attest` capability for the given
+ * signer.
+ *
+ * @param {API.Capability} capability
+ * @returns {capability is API.UCANAttest}
+ */
+const isUCANAttest = (capability) => capability.can === 'ucan/attest'
+
+/**
  * @param {API.Input<Access.claim>} input
  * @param {API.AccessClaimContext} ctx
  * @returns {Promise<API.Result<API.AccessClaimSuccess, API.AccessClaimFailure>>}
@@ -46,25 +55,32 @@ export const claim = async ({ invocation }, { delegationsStorage, signer }) => {
     }
   }
 
-  /** @type {API.Result<API.Delegation[], API.AccessClaimFailure>} */
-  const delegationsResult = await Promise.all(
-    storedDelegationsResult.ok.map(async (delegation) => {
-      // If this Agent has been confirmed by any Accounts, we'll find `*`/`ucan:*`
-      // delegations for them. But they won't have any proofs on them. They're proof
-      // of login, but don't serve to give the Agent any actual capabilities. That's
-      // our job.
-      if (isUcanStar(delegation)) {
-        // These delegations will actually have proofs granting access to the spaces.
-        // This collection also includes the attestation delegations which validate
-        // prove those delegations.
+  const delegationsToReturnByCid = Object.fromEntries(
+    storedDelegationsResult.ok.map((delegation) => [delegation.cid, delegation])
+  )
+
+  // Find any attested ucan:* delegations and replace them with fresh ones.
+  for (const delegation of storedDelegationsResult.ok) {
+    const attestCap = delegation.capabilities.find(isUCANAttest)
+
+    // If it's an attestation, and one of ours
+    if (attestCap && attestCap.with === signer.did()) {
+      const attestedCid = attestCap.nb.proof
+      const attestedDelegation =
+        delegationsToReturnByCid[attestedCid.toString()]
+
+      if (attestedDelegation && isUcanStar(attestedDelegation)) {
+        delete delegationsToReturnByCid[delegation.cid.toString()]
+        delete delegationsToReturnByCid[attestedCid.toString()]
+
         const sessionProofsResult = await createSessionProofsForLogin(
-          delegation,
+          attestedDelegation,
           delegationsStorage,
           signer
         )
 
         if (sessionProofsResult.error) {
-          throw {
+          return {
             error: {
               name: 'AccessClaimFailure',
               message: 'error creating session proofs',
@@ -73,22 +89,18 @@ export const claim = async ({ invocation }, { delegationsStorage, signer }) => {
           }
         }
 
-        return sessionProofsResult.ok
-      } else {
-        return [delegation]
+        for (const proof of sessionProofsResult.ok) {
+          delegationsToReturnByCid[proof.cid.toString()] = proof
+        }
       }
-    })
-  )
-    .then((delegations) => ({ ok: delegations.flat() }))
-    .catch((error) => ({ error }))
-
-  if (delegationsResult.error) {
-    return delegationsResult
+    }
   }
 
   return {
     ok: {
-      delegations: delegationsResponse.encode(delegationsResult.ok),
+      delegations: delegationsResponse.encode(
+        Object.values(delegationsToReturnByCid)
+      ),
     },
   }
 }
