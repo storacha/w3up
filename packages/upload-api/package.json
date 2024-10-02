@@ -189,8 +189,8 @@
     "dev": "tsc --build --watch",
     "check": "tsc --build",
     "lint": "tsc --build && eslint '**/*.{js,ts}'",
-    "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch 'test/**/*.spec.js'",
-    "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
+    "test": "mocha --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch -n watch 'test/**/*.spec.js'",
+    "test-watch": "pnpm build && mocha --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "dependencies": {
     "@ucanto/client": "^9.0.1",
@@ -209,6 +209,7 @@
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.0.3",
     "@ipld/car": "^5.1.1",
     "@ipld/dag-ucan": "^3.4.0",
     "@storacha/one-webcrypto": "^1.0.1",
@@ -220,7 +221,8 @@
     "@web3-storage/sigv4": "^1.0.2",
     "is-subset": "^0.1.1",
     "mocha": "^10.2.0",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "unicode-emoji-json": "^0.8.0"
   },
   "eslintConfig": {
     "extends": [

@@ -1,3 +1,5 @@
+import { Faker, en } from '@faker-js/faker'
+import * as util from 'node:util'
 import * as API from './types.js'
 import { Absentee } from '@ucanto/principal'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
@@ -23,6 +25,85 @@ import {
   requestAccess,
 } from '@web3-storage/access/agent'
 import * as Provider from '@web3-storage/access/provider'
+import { Delegation, DID } from '@ucanto/core'
+
+/**
+ * @param {string} did
+ * @returns {string}
+ */
+const formatDid = (did) => {
+  if (did.startsWith('did:key:')) {
+    const keyBytes = DID.parse(did)
+
+    const components = did.split(':')
+    const key = components[components.length - 1]
+
+    const abbreviatedKey = `${key.slice(0, 4)}...${key.slice(-4)}`
+    const abbreviatedDid = [...components.slice(0, -1), abbreviatedKey].join(
+      ':'
+    )
+
+    const faker = new Faker({ locale: en })
+    const hashValue = keyBytes.reduce((acc, byte) => {
+      return byte + ((acc << 5) - acc)
+    }, 0)
+    faker.seed(hashValue)
+    return `<${abbreviatedDid}> ${util.styleText(
+      'gray',
+      `[${faker.food.dish()}]`
+    )}`
+  } else {
+    return `<${did}>`
+  }
+}
+
+/**
+ * @this {API.Delegation}
+ * @param {number} depth
+ * @param {util.InspectOptions} inspectOptions
+ */
+const inspectDelegation = function (depth, inspectOptions) {
+  const s = util.styleText
+  const capabilityLines = this.capabilities.flatMap((capability) => {
+    const nbLines = !capability.nb
+      ? []
+      : util.inspect(capability.nb, inspectOptions).split('\n')
+
+    return [
+      `${s('gray', `-`)} ${s('cyanBright', capability.can)} ${s(
+        'magenta',
+        `${formatDid(capability.with)}`
+      )}`,
+      ...nbLines.map((l) => `  ${s('gray', `!`)} ${l}`),
+      ,
+    ]
+  })
+  const issuer = formatDid(this.issuer.did())
+  const audience = formatDid(this.audience.did())
+  const lines = [
+    s('blueBright', audience),
+    `${s('gray', `⬑`)} ${s('blue', issuer)}`,
+    ...capabilityLines,
+    ...this.facts.flatMap((fact) => {
+      const [first, ...rest] = util.inspect(fact, inspectOptions).split('\n')
+      return [`${s('gray', `✴`)} ${first}`, ...rest.map((l) => `  ${l}`)]
+    }),
+    ...this.proofs.flatMap((proof) =>
+      util.inspect(proof, inspectOptions).split('\n')
+    ),
+  ]
+  return [
+    s('gray', `╭`),
+    ...lines.map((line, i) => {
+      return `${s('gray', `│`)} ${line}`
+    }),
+    s('gray', `╰`),
+  ].join('\n')
+}
+
+Object.defineProperty(Delegation.Delegation.prototype, util.inspect.custom, {
+  value: inspectDelegation,
+})
 
 /**
  * @type {API.Tests}
@@ -287,7 +368,7 @@ export const test = {
         addProofs: true,
         nonce: Math.random().toString(),
       })
-      }
+    }
 
     /**
      * @param {import('@web3-storage/access/agent').OwnedSpace} space
