@@ -9,7 +9,7 @@
  * @module
  */
 
-import { capability, URI } from '@ucanto/validator'
+import { capability, Schema } from '@ucanto/validator'
 import { equalWith } from './utils.js'
 
 /**
@@ -20,6 +20,6 @@ import { equalWith } from './utils.js'
  */
 export const top = capability({
   can: '*',
-  with: URI.match({ protocol: 'did:' }),
+  with: Schema.or(Schema.did(), Schema.literal('ucan:*')),
   derives: equalWith,
 })

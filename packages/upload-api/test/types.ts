@@ -1,4 +1,5 @@
 import * as API from '../src/types.js'
+import assert from 'node:assert'
 
 export * from '../src/types.js'
 
@@ -19,13 +20,14 @@ export interface Assert {
     actual: Actual,
     expected: Expected,
     message?: string
-  ) => unknown
+  ) => void
   deepEqual: <Actual, Expected extends Actual>(
     actual: Actual,
     expected: Expected,
     message?: string
-  ) => unknown
-  ok: <Actual>(actual: Actual, message?: string) => unknown
+  ) => void
+  ok: <Actual>(actual: Actual, message?: string) => void
+  rejects: typeof assert.rejects
 }
 
 export type Test = (assert: Assert, context: TestContext) => unknown
