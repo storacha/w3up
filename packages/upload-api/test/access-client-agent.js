@@ -288,20 +288,6 @@ export const test = {
         nonce: Math.random().toString(),
       })
       }
-      }
-    )
-    assert.equal(
-      deviceBIssuerClaimed.length,
-      2,
-      'deviceBIssuerClaimed delegations'
-    )
-    }
-    )
-    assert.equal(
-      deviceBIssuerClaimed.length,
-      2,
-      'deviceBIssuerClaimed delegations'
-    )
 
     /**
      * @param {import('@web3-storage/access/agent').OwnedSpace} space
