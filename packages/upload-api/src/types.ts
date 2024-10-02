@@ -403,6 +403,7 @@ export type UploadServiceContext = ConsumerServiceContext &
   }
 
 export interface AccessClaimContext {
+  signer: EdSigner.Signer
   delegationsStorage: Delegations
 }
 
