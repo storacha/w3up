@@ -2,7 +2,7 @@ import * as API from './types.js'
 import { Absentee } from '@ucanto/principal'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import * as DidMailto from '@web3-storage/did-mailto'
-import { Access, Space, Top } from '@web3-storage/capabilities'
+import { Access, Space, Top, UCAN } from '@web3-storage/capabilities'
 import { AgentData } from '@web3-storage/access'
 import { alice } from './helpers/utils.js'
 import { stringToDelegations } from '@web3-storage/access/encoding'
@@ -345,7 +345,7 @@ export const test = {
     await assertCanSpaceInfo(deviceB, space2, assert)
   },
   'cannot gain unattested access': async (assert, context) => {
-    const { connection, mail } = context
+    const { connection, mail, service } = context
     const email = 'example@dag.house'
     const account = Absentee.from({ id: DidMailto.fromEmail(email) })
 
@@ -407,6 +407,43 @@ export const test = {
     await claimDelegations(deviceCheater)
 
     // Assert that they still can't do anything to the space.
+    await assert.rejects(
+      deviceCheater.invokeAndExecute(Space.info, {
+        with: space.did(),
+      }),
+      {
+        message: `no proofs available for resource ${space.did()} and ability space/info`,
+      }
+    )
+
+    // But what if they create a fake attestation? Will we notice before we
+    // recreate it, giving them access to everything?
+    const fakeAttestation = await UCAN.attest.delegate({
+      issuer: Absentee.from({ id: service.did() }),
+      audience: deviceCheater,
+      with: service.did(),
+      nb: { proof: unattestedDelegation.cid },
+      expiration: Infinity,
+    })
+
+    const fakeAttestationDelegateResult = await AgentAccess.delegate(
+      deviceCheater,
+      {
+        delegations: [fakeAttestation],
+        space: spaceCheater.did(),
+      }
+    )
+
+    // They can store the fake attestation on the server
+    assert.ok(
+      fakeAttestationDelegateResult.ok,
+      `delegateResult2.error: ${fakeAttestationDelegateResult.error}`
+    )
+
+    // And they'll get it back, but we won't recreate it and sign it
+    await claimDelegations(deviceCheater)
+
+    // ...so they still won't have access to the space.
     await assert.rejects(
       deviceCheater.invokeAndExecute(Space.info, {
         with: space.did(),

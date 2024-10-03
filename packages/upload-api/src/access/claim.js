@@ -1,5 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as Access from '@web3-storage/capabilities/access'
+import * as UCAN from '@ipld/dag-ucan'
 import * as API from '../types.js'
 import * as delegationsResponse from '../utils/delegations-response.js'
 import { createSessionProofs } from './confirm.js'
@@ -65,32 +66,40 @@ export const claim = async ({ invocation }, { delegationsStorage, signer }) => {
 
     // If it's an attestation, and one of ours
     if (attestCap && attestCap.with === signer.did()) {
-      const attestedCid = attestCap.nb.proof
-      const attestedDelegation =
-        delegationsToReturnByCid[attestedCid.toString()]
+      const valid =
+        (await UCAN.verifySignature(delegation.data, signer)) &&
+        !UCAN.isTooEarly(delegation.data) &&
+        !UCAN.isExpired(delegation.data)
 
-      if (attestedDelegation && isUcanStar(attestedDelegation)) {
-        delete delegationsToReturnByCid[delegation.cid.toString()]
-        delete delegationsToReturnByCid[attestedCid.toString()]
+      // And if it's valid
+      if (valid) {
+        const attestedCid = attestCap.nb.proof
+        const attestedDelegation =
+          delegationsToReturnByCid[attestedCid.toString()]
 
-        const sessionProofsResult = await createSessionProofsForLogin(
-          attestedDelegation,
-          delegationsStorage,
-          signer
-        )
+        if (attestedDelegation && isUcanStar(attestedDelegation)) {
+          delete delegationsToReturnByCid[delegation.cid.toString()]
+          delete delegationsToReturnByCid[attestedCid.toString()]
 
-        if (sessionProofsResult.error) {
-          return {
-            error: {
-              name: 'AccessClaimFailure',
-              message: 'error creating session proofs',
-              cause: sessionProofsResult.error,
-            },
+          const sessionProofsResult = await createSessionProofsForLogin(
+            attestedDelegation,
+            delegationsStorage,
+            signer
+          )
+
+          if (sessionProofsResult.error) {
+            return {
+              error: {
+                name: 'AccessClaimFailure',
+                message: 'error creating session proofs',
+                cause: sessionProofsResult.error,
+              },
+            }
           }
-        }
 
-        for (const proof of sessionProofsResult.ok) {
-          delegationsToReturnByCid[proof.cid.toString()] = proof
+          for (const proof of sessionProofsResult.ok) {
+            delegationsToReturnByCid[proof.cid.toString()] = proof
+          }
         }
       }
     }
