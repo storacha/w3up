@@ -62,46 +62,49 @@ export const claim = async ({ invocation }, { delegationsStorage, signer }) => {
 
   // Find any attested ucan:* delegations and replace them with fresh ones.
   for (const delegation of storedDelegationsResult.ok) {
+    // Ignore delegations that aren't attestations, and ours.
     const attestCap = delegation.capabilities.find(isUCANAttest)
+    if (!(attestCap && attestCap.with === signer.did())) continue
 
-    // If it's an attestation, and one of ours
-    if (attestCap && attestCap.with === signer.did()) {
-      const valid =
-        (await UCAN.verifySignature(delegation.data, signer)) &&
-        !UCAN.isTooEarly(delegation.data) &&
-        !UCAN.isExpired(delegation.data)
+    // Ignore invalid attestations.
+    const valid =
+      (await UCAN.verifySignature(delegation.data, signer)) &&
+      !UCAN.isTooEarly(delegation.data) &&
+      !UCAN.isExpired(delegation.data)
+    if (!valid) continue
 
-      // And if it's valid
-      if (valid) {
-        const attestedCid = attestCap.nb.proof
-        const attestedDelegation =
-          delegationsToReturnByCid[attestedCid.toString()]
+    // Ignore attestations of delegations we don't have.
+    const attestedCid = attestCap.nb.proof
+    const attestedDelegation = delegationsToReturnByCid[attestedCid.toString()]
+    if (!(attestedDelegation && isUcanStar(attestedDelegation))) continue
 
-        if (attestedDelegation && isUcanStar(attestedDelegation)) {
-          delete delegationsToReturnByCid[delegation.cid.toString()]
-          delete delegationsToReturnByCid[attestedCid.toString()]
+    // Create new session proofs for the attested delegation.
+    const sessionProofsResult = await createSessionProofsForLogin(
+      attestedDelegation,
+      delegationsStorage,
+      signer
+    )
 
-          const sessionProofsResult = await createSessionProofsForLogin(
-            attestedDelegation,
-            delegationsStorage,
-            signer
-          )
-
-          if (sessionProofsResult.error) {
-            return {
-              error: {
-                name: 'AccessClaimFailure',
-                message: 'error creating session proofs',
-                cause: sessionProofsResult.error,
-              },
-            }
-          }
-
-          for (const proof of sessionProofsResult.ok) {
-            delegationsToReturnByCid[proof.cid.toString()] = proof
-          }
-        }
+    // If something went wrong, bail on the entire invocation with the error.
+    // NB: This breaks out of the loop, because if this fails at all, we don't
+    // need to keep looking.
+    if (sessionProofsResult.error) {
+      return {
+        error: {
+          name: 'AccessClaimFailure',
+          message: 'error creating session proofs',
+          cause: sessionProofsResult.error,
+        },
       }
+    }
+
+    // Delete the ones we're replacing...
+    delete delegationsToReturnByCid[delegation.cid.toString()]
+    delete delegationsToReturnByCid[attestedCid.toString()]
+
+    // ...and add the new ones.
+    for (const proof of sessionProofsResult.ok) {
+      delegationsToReturnByCid[proof.cid.toString()] = proof
     }
   }
 
