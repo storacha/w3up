@@ -13,6 +13,7 @@
   "scripts": {
     "prepare": "pnpm run build && pnpm run compile",
     "build": "pnpm run --recursive --if-present build",
+    "dev": "pnpm run --filter './packages/*' --if-present --parallel dev",
     "clean": "rm -rf node_modules coverage packages/*/{dist,build,node_modules}",
     "compile": "pnpm run --recursive --if-present compile",
     "format": "pnpm --recursive --if-present run lint --fix",
