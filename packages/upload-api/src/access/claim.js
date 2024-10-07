@@ -23,7 +23,7 @@ const isAccount = (principal) => principal.did().startsWith('did:mailto:')
  * @param {API.Delegation} delegation
  * @returns boolean
  */
-const isUcanStar = (delegation) =>
+const isUCANStar = (delegation) =>
   delegation.capabilities.some((capability) => capability.with === 'ucan:*')
 
 /**
@@ -76,7 +76,7 @@ export const claim = async ({ invocation }, { delegationsStorage, signer }) => {
     // Ignore attestations of delegations we don't have.
     const attestedCid = attestCap.nb.proof
     const attestedDelegation = delegationsToReturnByCid[attestedCid.toString()]
-    if (!(attestedDelegation && isUcanStar(attestedDelegation))) continue
+    if (!(attestedDelegation && isUCANStar(attestedDelegation))) continue
 
     // Create new session proofs for the attested delegation.
     const sessionProofsResult = await createSessionProofsForLogin(
