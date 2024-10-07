@@ -31,6 +31,7 @@ export function useDatamodel ({ servicePrincipal, connection }: DatamodelProps):
       setEvents(events)
       setAccounts(Object.values(client.accounts()))
       setSpaces(client.spaces())
+      await client.capability.access.claim()
     },
     [servicePrincipal, connection]
   )
