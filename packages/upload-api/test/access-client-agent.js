@@ -2,7 +2,7 @@ import * as API from './types.js'
 import { Absentee } from '@ucanto/principal'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
 import * as DidMailto from '@web3-storage/did-mailto'
-import { Access, Space } from '@web3-storage/capabilities'
+import { Access, Space, Top, UCAN } from '@web3-storage/capabilities'
 import { AgentData } from '@web3-storage/access'
 import { alice } from './helpers/utils.js'
 import { stringToDelegations } from '@web3-storage/access/encoding'
@@ -23,6 +23,80 @@ import {
   requestAccess,
 } from '@web3-storage/access/agent'
 import * as Provider from '@web3-storage/access/provider'
+
+/**
+ * Create and return a space, delegated to the device agent and to the account,
+ * and provisioned for the account.
+ *
+ * @param {Agent} device
+ * @param {API.Principal<import('@ucanto/interface').DID<"mailto">>} account
+ * @param {API.Assert} assert
+ */
+const createSpace = async (device, account, assert) => {
+  const space = await device.createSpace(
+    `space-test-${Math.random().toString().slice(2)}`
+  )
+
+  assert.ok(space.did())
+  // provision space with an account so it can store delegations
+  const provisionResult = await Provider.add(device, {
+    account: account.did(),
+    consumer: space.did(),
+  })
+  assert.ok(provisionResult.ok)
+
+  // authorize device
+  const auth = await space.createAuthorization(device, {
+    access: AgentAccess.spaceAccess,
+    expiration: Infinity,
+  })
+  await device.importSpaceFromDelegation(auth)
+
+  // make space current
+  await device.setCurrentSpace(space.did())
+
+  const recovery = await space.createRecovery(account.did())
+  const delegateResult = await AgentAccess.delegate(device, {
+    delegations: [recovery],
+  })
+  assert.ok(delegateResult.ok)
+  return space
+}
+
+/**
+ * Claim (`access/claim`) delegations for the device agent, and add them to the
+ * agent's proofs.
+ *
+ * @param {Agent} device
+ */
+const claimDelegations = async (device) => {
+  await claimAccess(device, device.issuer.did(), {
+    addProofs: true,
+    nonce: Math.random().toString(),
+  })
+}
+
+/**
+ * Assert that the device agent can invoke `space/info` on the given space.
+ *
+ * @param {Agent} device
+ * @param {import('@web3-storage/access/agent').OwnedSpace} space
+ * @param {API.Assert} assert
+ */
+async function assertCanSpaceInfo(device, space, assert) {
+  const spaceInfoResult = await device.invokeAndExecute(Space.info, {
+    with: space.did(),
+  })
+
+  assert.equal(spaceInfoResult.out.error, undefined)
+
+  assert.ok(spaceInfoResult.out.ok)
+  const result =
+    /** @type {import('@web3-storage/access/types').SpaceInfoResult} */ (
+      spaceInfoResult.out.ok
+    )
+  assert.deepEqual(result.did, space.did())
+}
 
 /**
  * @type {API.Tests}
@@ -240,85 +314,144 @@ export const test = {
     const account = Absentee.from({ id: DidMailto.fromEmail(email) })
 
     // first device
-    const deviceAAgentData = await AgentData.create()
-    const deviceA = await Agent.create(deviceAAgentData, {
+    const deviceA = await Agent.create(await AgentData.create(), {
       connection,
     })
-
-    // deviceA authorization
     await requestAccess(deviceA, account, [{ can: '*' }])
-
     await confirmConfirmationUrl(deviceA.connection, await mail.take())
-
-    await claimAccess(deviceA, deviceA.issuer.did(), {
-      addProofs: true,
-    })
+    await claimDelegations(deviceA)
 
     // deviceA creates a space
-    const spaceCreation = await deviceA.createSpace(
-      `space-test-${Math.random().toString().slice(2)}`
-    )
+    const space1 = await createSpace(deviceA, account, assert)
 
-    assert.ok(spaceCreation.did())
-    // provision space with an account so it can store delegations
-    const provisionResult = await Provider.add(deviceA, {
-      account: account.did(),
-      consumer: spaceCreation.did(),
-    })
-    assert.ok(provisionResult.ok)
-
-    // authorize deviceA
-    const auth = await spaceCreation.createAuthorization(deviceA, {
-      access: AgentAccess.spaceAccess,
-      expiration: Infinity,
-    })
-    await deviceA.importSpaceFromDelegation(auth)
-
-    // make space current
-    await deviceA.setCurrentSpace(spaceCreation.did())
-
-    const recovery = await spaceCreation.createRecovery(account.did())
-    const delegateResult = await AgentAccess.delegate(deviceA, {
-      delegations: [recovery],
-    })
-    assert.ok(delegateResult.ok)
-
-    // second device - deviceB
-    const deviceBData = await AgentData.create()
-    const deviceB = await Agent.create(deviceBData, {
+    // second device
+    const deviceB = await Agent.create(await AgentData.create(), {
       connection,
     })
-    // authorize deviceB
     await requestAccess(deviceB, account, [{ can: '*' }])
     await confirmConfirmationUrl(deviceB.connection, await mail.take())
-
-    // claim delegations aud=deviceB.issuer
-    const deviceBIssuerClaimed = await claimAccess(
-      deviceB,
-      deviceB.issuer.did(),
-      {
-        addProofs: true,
-      }
-    )
-    assert.equal(
-      deviceBIssuerClaimed.length,
-      2,
-      'deviceBIssuerClaimed delegations'
-    )
+    await claimDelegations(deviceB)
 
     // issuer + account proofs should authorize deviceB to invoke space/info
-    const spaceInfoResult = await deviceB.invokeAndExecute(Space.info, {
-      with: spaceCreation.did(),
+    await assertCanSpaceInfo(deviceB, space1, assert)
+
+    // deviceA creates another space
+    const space2 = await createSpace(deviceA, account, assert)
+
+    // deviceB claims delegations again
+    await claimDelegations(deviceB)
+
+    // now deviceB should be able to invoke space/info on space2
+    await assertCanSpaceInfo(deviceB, space2, assert)
+  },
+  'cannot gain unattested access': async (assert, context) => {
+    const { connection, mail, service } = context
+    const email = 'example@dag.house'
+    const account = Absentee.from({ id: DidMailto.fromEmail(email) })
+
+    // first device
+    const deviceA = await Agent.create(await AgentData.create(), {
+      connection,
+    })
+    await requestAccess(deviceA, account, [{ can: '*' }])
+    await confirmConfirmationUrl(deviceA.connection, await mail.take())
+    await claimDelegations(deviceA)
+
+    // deviceA creates a space
+    const space = await createSpace(deviceA, account, assert)
+
+    const accountCheater = Absentee.from({
+      id: DidMailto.fromEmail('cheater@example.com'),
     })
 
-    assert.equal(spaceInfoResult.out.error, undefined)
+    // second device is unrelated
+    const deviceCheater = await Agent.create(await AgentData.create(), {
+      connection,
+    })
 
-    assert.ok(spaceInfoResult.out.ok)
-    const result =
-      /** @type {import('@web3-storage/access/types').SpaceInfoResult} */ (
-        spaceInfoResult.out.ok
-      )
-    assert.deepEqual(result.did, spaceCreation.did())
+    await requestAccess(deviceCheater, accountCheater, [{ can: '*' }])
+    await confirmConfirmationUrl(deviceCheater.connection, await mail.take())
+    await claimDelegations(deviceCheater)
+
+    const spaceCheater = await createSpace(
+      deviceCheater,
+      accountCheater,
+      assert
+    )
+
+    // deviceCheater shouldn't have access to the space
+    deviceCheater.setCurrentSpace(space.did())
+
+    // deviceCheater tries to craft a delegation to gain access to the account
+    const unattestedDelegation = await Top.top.delegate({
+      issuer: Absentee.from({ id: account.did() }),
+      audience: deviceCheater,
+      with: 'ucan:*',
+      expiration: Infinity,
+      proofs: [],
+    })
+
+    // Then they store the delegation on the server
+    const delegateResult = await AgentAccess.delegate(deviceCheater, {
+      delegations: [unattestedDelegation],
+      space: spaceCheater.did(),
+    })
+
+    assert.ok(
+      delegateResult.ok,
+      `delegateResult.error: ${delegateResult.error}`
+    )
+
+    // Then they claim their delegations. If their attack is successful, they,
+    // now have access to the account and all its spaces.
+    await claimDelegations(deviceCheater)
+
+    // Assert that they still can't do anything to the space.
+    await assert.rejects(
+      deviceCheater.invokeAndExecute(Space.info, {
+        with: space.did(),
+      }),
+      {
+        message: `no proofs available for resource ${space.did()} and ability space/info`,
+      }
+    )
+
+    // But what if they create a fake attestation? Will we notice before we
+    // recreate it, giving them access to everything?
+    const fakeAttestation = await UCAN.attest.delegate({
+      issuer: Absentee.from({ id: service.did() }),
+      audience: deviceCheater,
+      with: service.did(),
+      nb: { proof: unattestedDelegation.cid },
+      expiration: Infinity,
+    })
+
+    const fakeAttestationDelegateResult = await AgentAccess.delegate(
+      deviceCheater,
+      {
+        delegations: [fakeAttestation],
+        space: spaceCheater.did(),
+      }
+    )
+
+    // They can store the fake attestation on the server
+    assert.ok(
+      fakeAttestationDelegateResult.ok,
+      `delegateResult2.error: ${fakeAttestationDelegateResult.error}`
+    )
+
+    // And they'll get it back, but we won't recreate it and sign it
+    await claimDelegations(deviceCheater)
+
+    // ...so they still won't have access to the space.
+    await assert.rejects(
+      deviceCheater.invokeAndExecute(Space.info, {
+        with: space.did(),
+      }),
+      {
+        message: `no proofs available for resource ${space.did()} and ability space/info`,
+      }
+    )
   },
   'can addSpacesFromDelegations': async (assert, context) => {
     const { agent } = await setup(context)

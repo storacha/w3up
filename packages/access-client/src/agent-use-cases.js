@@ -40,7 +40,6 @@ export async function requestAccess(access, account, capabilities) {
  * @param {object} opts
  * @param {string} [opts.nonce] - nonce to use for the claim
  * @param {boolean} [opts.addProofs] - whether to addProof to access agent
- * @returns
  */
 export async function claimAccess(
   access,

@@ -57,6 +57,8 @@ export async function confirm({ capability, invocation }, ctx) {
     return delegationsResult
   }
 
+  // Create session proofs, but containing no Space proofs. We'll store these,
+  // and generate the Space proofs on access/claim.
   const [delegation, attestation] = await createSessionProofs({
     service: ctx.signer,
     account,
@@ -72,16 +74,11 @@ export async function confirm({ capability, invocation }, ctx) {
       },
     ],
     capabilities,
-    // We include all the delegations to the account so that the agent will
-    // have delegation chains to all the delegated resources.
-    // We should actually filter out only delegations that support delegated
-    // capabilities, but for now we just include all of them since we only
-    // implement sudo access anyway.
-    delegationProofs: delegationsResult.ok,
+    delegationProofs: [],
     expiration: Infinity,
   })
 
-  // Store the delegations so that they can be pulled with access/claim.
+  // Store the delegations so that they can be pulled during access/claim.
   // Since there is no invocation that contains these delegations, don't pass
   // a `cause` parameter.
   // TODO: we should invoke access/delegate here rather than interacting with
