@@ -31,7 +31,6 @@ import type {
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
-import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { StorefrontService } from '@web3-storage/filecoin-api/types'
 import { ServiceContext as FilecoinServiceContext } from '@web3-storage/filecoin-api/storefront/api'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
@@ -398,17 +397,16 @@ export type UploadServiceContext = ConsumerServiceContext &
   SpaceServiceContext &
   RevocationServiceContext &
   ConcludeServiceContext & {
-    signer: EdSigner.Signer
+    signer: Signer
     uploadTable: UploadTable
   }
 
 export interface AccessClaimContext {
-  signer: EdSigner.Signer
+  signer: Signer
   delegationsStorage: Delegations
 }
 
 export interface AccessServiceContext extends AccessClaimContext, AgentContext {
-  signer: EdSigner.Signer
   email: Email
   url: URL
   provisionsStorage: Provisions
@@ -416,17 +414,17 @@ export interface AccessServiceContext extends AccessClaimContext, AgentContext {
 }
 
 export interface ConsumerServiceContext {
-  signer: EdSigner.Signer
+  signer: Signer
   provisionsStorage: Provisions
 }
 
 export interface CustomerServiceContext {
-  signer: EdSigner.Signer
+  signer: Signer
   provisionsStorage: Provisions
 }
 
 export interface AdminServiceContext {
-  signer: EdSigner.Signer
+  signer: Signer
   uploadTable: UploadTable
   storeTable: StoreTable
 }
@@ -447,7 +445,7 @@ export interface ProviderServiceContext {
 }
 
 export interface SubscriptionServiceContext {
-  signer: EdSigner.Signer
+  signer: Signer
   provisionsStorage: Provisions
   subscriptionsStorage: SubscriptionsStorage
 }
