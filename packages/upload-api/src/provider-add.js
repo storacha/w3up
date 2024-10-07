@@ -32,7 +32,7 @@ export const add = async (
     return {
       error: {
         name: 'Unauthorized',
-        message: 'Issuer must be a mailto DID',
+        message: 'Resource must be a mailto DID',
       },
     }
   }
