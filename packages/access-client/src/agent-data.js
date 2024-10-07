@@ -112,7 +112,6 @@ export class AgentData {
   }
 
   /**
-   * @deprecated
    * @param {import('@ucanto/interface').DID} did
    * @param {import('./types.js').SpaceMeta} meta
    * @param {import('@ucanto/interface').Delegation} [proof]
