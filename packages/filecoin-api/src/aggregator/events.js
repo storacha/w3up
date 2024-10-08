@@ -246,7 +246,7 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
 
       return { ok: {} }
     },
-    { concurrency: 25 }
+    { concurrency: 10 }
   )
   for (const r of results) {
     if (r.error) return r
