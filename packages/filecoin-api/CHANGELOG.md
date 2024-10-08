@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.1](https://github.com/storacha/w3up/compare/filecoin-api-v7.3.0...filecoin-api-v7.3.1) (2024-10-08)
+
+
+### Fixes
+
+* **filecoin-api:** parallel put to piece accept queue ([#1560](https://github.com/storacha/w3up/issues/1560)) ([e7cbb6d](https://github.com/storacha/w3up/commit/e7cbb6dc7930b7b19335286bf1908d2ed3cb9437))
+
 ## [7.3.0](https://github.com/storacha/w3up/compare/filecoin-api-v7.2.1...filecoin-api-v7.3.0) (2024-09-20)
 
 
