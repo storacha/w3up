@@ -1,6 +1,7 @@
 import { Aggregator, Dealer } from '@web3-storage/filecoin-client'
 import { Aggregate, Piece } from '@web3-storage/data-segment'
 import { CBOR } from '@ucanto/core'
+import map from 'p-map'
 
 import {
   getBufferedPieces,
@@ -225,24 +226,30 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
   }
 
   // TODO: Batch per a maximum to queue
-  for (const piece of pieces) {
-    const inclusionProof = aggregateBuilder.resolveProof(piece.link)
-    if (inclusionProof.error) {
-      return inclusionProof
-    }
-    const addMessage = await context.pieceAcceptQueue.add({
-      piece: piece.link,
-      aggregate: aggregateBuilder.link,
-      group: bufferStoreRes.ok.buffer.group,
-      inclusion: {
-        subtree: inclusionProof.ok[0],
-        index: inclusionProof.ok[1],
-      },
-    })
+  const results = await map(
+    pieces,
+    /** @returns {Promise<import('@ucanto/interface').Result<import('@ucanto/interface').Unit, RangeError|import('../types.js').QueueAddError>>} */
+    async piece => {
+      const inclusionProof = aggregateBuilder.resolveProof(piece.link)
+      if (inclusionProof.error) return inclusionProof
 
-    if (addMessage.error) {
-      return addMessage
-    }
+      const addMessage = await context.pieceAcceptQueue.add({
+        piece: piece.link,
+        aggregate: aggregateBuilder.link,
+        group: bufferStoreRes.ok.buffer.group,
+        inclusion: {
+          subtree: inclusionProof.ok[0],
+          index: inclusionProof.ok[1],
+        },
+      })
+      if (addMessage.error) return addMessage
+
+      return { ok: {} }
+    },
+    { concurrency: 25 }
+  )
+  for (const r of results) {
+    if (r.error) return r
   }
 
   return {
