@@ -69,6 +69,10 @@ import {
   UsageReport,
   UsageReportSuccess,
   UsageReportFailure,
+  EgressData,
+  EgressRecord,
+  EgressRecordSuccess,
+  EgressRecordFailure,
   ServiceAbility,
 } from '@web3-storage/capabilities/types'
 import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
@@ -135,6 +139,10 @@ export type {
   UsageReport,
   UsageReportSuccess,
   UsageReportFailure,
+  EgressData,
+  EgressRecord,
+  EgressRecordSuccess,
+  EgressRecordFailure,
   ListResponse,
   CARLink,
   PieceLink,
