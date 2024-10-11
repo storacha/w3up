@@ -31,6 +31,32 @@ export class UsageClient extends Base {
 
     return out.ok
   }
+
+  /**
+   * Record egress data for the customer and served resource.
+   *
+   * Required delegated capabilities:
+   * - `usage/record`
+   *
+   * @param {import('../types.js').SpaceDID} space
+   * @param {API.EgressData} egressData
+   * @param {object} [options]
+   * @param {string} [options.nonce]
+   */
+  async record(space, egressData, options) {
+    const out = await record(
+      { agent: this.agent },
+      { ...options, space, egressData }
+    )
+    /* c8 ignore next 7 */
+    if (!out.ok) {
+      throw new Error(`failed ${UsageCapabilities.record.can} invocation`, {
+        cause: out.error,
+      })
+    }
+
+    return out.ok
+  }
 }
 
 /**
@@ -57,6 +83,35 @@ export const report = async (
         from: Math.floor(period.from.getTime() / 1000),
         to: Math.ceil(period.to.getTime() / 1000),
       },
+    },
+  })
+  return receipt.out
+}
+
+/**
+ * Record egress data for the customer and served resource.
+ *
+ * @param {{agent: API.Agent}} client
+ * @param {object} options
+ * @param {API.SpaceDID} options.space
+ * @param {API.EgressData} options.egressData -
+ * @param {string} [options.nonce]
+ * @param {API.Delegation[]} [options.proofs]
+ * @returns {Promise<API.Result<API.Unit, API.EgressRecordFailure>>}
+ */
+export const record = async (
+  { agent },
+  { space, egressData, nonce, proofs = [] }
+) => {
+  const receipt = await agent.invokeAndExecute(UsageCapabilities.record, {
+    with: space,
+    proofs,
+    nonce,
+    nb: {
+      customer: egressData.customer,
+      resourceCID: egressData.resourceCID,
+      bytes: egressData.bytes,
+      servedAt: Math.floor(new Date(egressData.servedAt).getTime() / 1000),
     },
   })
   return receipt.out

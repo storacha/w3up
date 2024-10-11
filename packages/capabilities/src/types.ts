@@ -131,6 +131,10 @@ export type UsageReport = InferInvokedCapability<typeof UsageCaps.report>
 export type UsageReportSuccess = Record<ProviderDID, UsageData>
 export type UsageReportFailure = Ucanto.Failure
 
+export type EgressRecord = InferInvokedCapability<typeof UsageCaps.record>
+export type EgressRecordSuccess = Unit
+export type EgressRecordFailure = Ucanto.Failure
+
 export interface UsageData {
   /** Provider the report concerns, e.g. `did:web:web3.storage` */
   provider: ProviderDID
@@ -159,6 +163,17 @@ export interface UsageData {
     /** ISO datetime that the receipt was issued for the change. */
     receiptAt: ISO8601Date
   }>
+}
+
+export interface EgressData {
+  /** Id of the customer that is being billed. */
+  customer: AccountDID
+  /** CID of the resource that was served. */
+  resourceCID: string
+  /** Amount of bytes served. */
+  bytes: number
+  /** ISO datetime that the bytes were served at. */
+  servedAt: ISO8601Date
 }
 
 // Provider
