@@ -380,7 +380,10 @@ export const test = {
     )
 
     // deviceCheater shouldn't have access to the space
-    deviceCheater.setCurrentSpace(space.did())
+    await assert.rejects(deviceCheater.setCurrentSpace(space.did()), {
+      name: 'Error',
+      message: `Agent has no proofs for ${space.did()}.`,
+    })
 
     // deviceCheater tries to craft a delegation to gain access to the account
     const unattestedDelegation = await Top.top.delegate({
