@@ -51,7 +51,7 @@ export const record = capability({
     /** MailTo DID of the customer that is being billed. */
     customer: AccountDID,
     /** CID of the resource that was served. */
-    resourceCID: Schema.string(),
+    resource: Schema.link(),
     /** Amount of bytes served. */
     bytes: Schema.integer().greaterThan(0),
     /** Timestamp of the event in seconds after Unix epoch. */

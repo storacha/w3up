@@ -95,15 +95,15 @@ export const UsageClient = Test.withContext({
       })
 
       const car = await randomCAR(128)
-      const resourceCID = car.cid
-      await alice.capability.upload.add(car.roots[0], [resourceCID])
+      const resource = car.cid
+      await alice.capability.upload.add(car.roots[0], [resource])
 
       const result = await alice.capability.upload.get(car.roots[0])
       assert.ok(result)
 
       const record = await alice.capability.usage.record(space.did(), {
         customer: 'did:mailto:alice@web.mail',
-        resourceCID: resourceCID.link().toString(),
+        resource: resource.link(),
         bytes: car.size,
         servedAt: new Date().toISOString(),
       })

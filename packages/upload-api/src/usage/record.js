@@ -14,7 +14,7 @@ export const provide = (context) =>
 const record = async ({ capability }, context) => {
   const res = await context.usageStorage.record(
     capability.nb.customer,
-    capability.nb.resourceCID,
+    capability.nb.resource,
     capability.nb.bytes,
     new Date(capability.nb.servedAt * 1000)
   )
