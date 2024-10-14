@@ -1,5 +1,18 @@
 # Changelog
 
+## [17.0.2](https://github.com/storacha/w3up/compare/upload-client-v17.0.1...upload-client-v17.0.2) (2024-10-14)
+
+
+### Fixes
+
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+* Warn if mocks aren't running ([#1534](https://github.com/storacha/w3up/issues/1534)) ([fb2fd66](https://github.com/storacha/w3up/commit/fb2fd66f906bde9dda7e49bb1ab214e5e980e7c5))
+
 ## [17.0.1](https://github.com/storacha-network/w3up/compare/upload-client-v17.0.0...upload-client-v17.0.1) (2024-06-20)
 
 
