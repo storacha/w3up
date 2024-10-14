@@ -48,7 +48,7 @@ export class UsageClient extends Base {
       { agent: this.agent },
       { ...options, space, egressData }
     )
-    /* c8 ignore next 7 */
+    /* c8 ignore next 5 */
     if (!out.ok) {
       throw new Error(`failed ${UsageCapabilities.record.can} invocation`, {
         cause: out.error,
@@ -109,7 +109,7 @@ export const record = async (
     nonce,
     nb: {
       customer: egressData.customer,
-      resourceCID: egressData.resourceCID,
+      resource: egressData.resource,
       bytes: egressData.bytes,
       servedAt: Math.floor(new Date(egressData.servedAt).getTime() / 1000),
     },

@@ -169,7 +169,7 @@ export interface EgressData {
   /** Id of the customer that is being billed. */
   customer: AccountDID
   /** CID of the resource that was served. */
-  resourceCID: string
+  resource: UnknownLink
   /** Amount of bytes served. */
   bytes: number
   /** ISO datetime that the bytes were served at. */

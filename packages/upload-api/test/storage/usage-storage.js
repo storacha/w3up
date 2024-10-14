@@ -73,14 +73,14 @@ export class UsageStorage {
    * Simulate a record of egress data for a customer.
    *
    * @param {import('../types.js').AccountDID} customer
-   * @param {string} resourceCID
+   * @param {import('../types.js').UnknownLink} resource
    * @param {number} bytes
    * @param {Date} servedAt
    */
-  async record(customer, resourceCID, bytes, servedAt) {
+  async record(customer, resource, bytes, servedAt) {
     const egressData = {
       customer,
-      resourceCID,
+      resource,
       bytes,
       servedAt: servedAt.toISOString(),
     }

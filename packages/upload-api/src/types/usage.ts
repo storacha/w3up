@@ -1,4 +1,4 @@
-import { Failure, Result } from '@ucanto/interface'
+import { Failure, Result, UnknownLink } from '@ucanto/interface'
 import {
   ProviderDID,
   SpaceDID,
@@ -17,7 +17,7 @@ export interface UsageStorage {
   ) => Promise<Result<UsageData, Failure>>
   record: (
     customer: AccountDID,
-    resourceCID: string,
+    resource: UnknownLink,
     bytes: number,
     servedAt: Date
   ) => Promise<Result<EgressData, Failure>>
