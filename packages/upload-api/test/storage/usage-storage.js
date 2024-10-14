@@ -9,6 +9,10 @@ export class UsageStorage {
   constructor(storeTable, allocationsStorage) {
     this.storeTable = storeTable
     this.allocationsStorage = allocationsStorage
+    /**
+     * @type {Record<import('../types.js').AccountDID, import('../types.js').EgressData>}
+     */
+    this._egressRecords = {}
   }
 
   get items() {
@@ -63,5 +67,30 @@ export class UsageStorage {
         }),
       },
     }
+  }
+
+  /**
+   * Simulate a record of egress data for a customer.
+   *
+   * @param {import('../types.js').AccountDID} customer
+   * @param {import('../types.js').UnknownLink} resource
+   * @param {number} bytes
+   * @param {Date} servedAt
+   */
+  async record(customer, resource, bytes, servedAt) {
+    const egressData = {
+      customer,
+      resource,
+      bytes,
+      servedAt: servedAt.toISOString(),
+    }
+    this._egressRecords[customer] = egressData
+    return Promise.resolve({
+      ok: egressData,
+    })
+  }
+
+  get egressRecords() {
+    return this._egressRecords
   }
 }
