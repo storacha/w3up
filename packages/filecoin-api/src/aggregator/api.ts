@@ -328,6 +328,13 @@ export interface AggregateConfig {
   minUtilizationFactor: number
   prependBufferedPieces?: BufferedPiece[]
   hasher?: DataSegmentAPI.SyncMultihashHasher<DataSegmentAPI.SHA256_CODE>
+  /**
+   * The maximum number of pieces per aggregate. If set, it takes precedence
+   * over `minAggregateSize` because it is typically a hard limit related to
+   * the number of hashes that can be performed within the maximum lambda
+   * execution time limit.
+   */
+  maxAggregatePieces?: number
 }
 
 // Enums

@@ -189,6 +189,7 @@
       "project": "./tsconfig.json"
     },
     "env": {
+      "browser": true,
       "mocha": true
     },
     "ignorePatterns": [
