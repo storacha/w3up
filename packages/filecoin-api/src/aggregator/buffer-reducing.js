@@ -1,6 +1,5 @@
 import { Aggregate, Piece, NODE_SIZE, Index } from '@web3-storage/data-segment'
 import { CBOR } from '@ucanto/core'
-
 import { UnexpectedState } from '../errors.js'
 
 /**
@@ -192,11 +191,15 @@ export function aggregatePieces(bufferedPieces, config) {
     addedBufferedPieces.push(bufferedPiece)
   }
 
-  for (const bufferedPiece of bufferedPieces) {
+  for (const [i, bufferedPiece] of bufferedPieces.entries()) {
     const p = Piece.fromLink(bufferedPiece.piece)
     if (builder.estimate(p).error) {
       remainingBufferedPieces.push(bufferedPiece)
       continue
+    }
+    if (addedBufferedPieces.length === config.maxAggregatePieces) {
+      remainingBufferedPieces.push(...bufferedPieces.slice(i))
+      break
     }
     builder.write(p)
     addedBufferedPieces.push(bufferedPiece)
@@ -205,9 +208,16 @@ export function aggregatePieces(bufferedPieces, config) {
     builder.offset * BigInt(NODE_SIZE) +
     BigInt(builder.limit) * BigInt(Index.EntrySize)
 
+  console.log(`Used ${totalUsedSpace} bytes in ${addedBufferedPieces.length} pieces (min ${config.minAggregateSize} bytes)`)
+
   // If not enough space return undefined
   if (totalUsedSpace < BigInt(config.minAggregateSize)) {
-    return
+    // ...but only if not exceeded max aggregate pieces
+    if (addedBufferedPieces.length === config.maxAggregatePieces) {
+      console.warn(`Building aggregate: max allowed pieces reached (${config.maxAggregatePieces})`)
+    } else {
+      return console.log('Not enough data for aggregate.')
+    }
   }
 
   const aggregate = builder.build()

@@ -546,6 +546,83 @@ export const test = {
         totalPieces
       )
     },
+  'handles buffer queue messages successfully when max aggregate pieces is exceeded':
+    async (assert, context) => {
+      const group = context.id.did()
+      const totalBuffers = 2
+      const piecesPerBuffer = 16
+      const pieceSize = 66_666
+      const totalPieces = totalBuffers * piecesPerBuffer
+
+      const { buffers, blocks } = await getBuffers(totalBuffers, group, {
+        length: piecesPerBuffer,
+        size: pieceSize,
+      })
+
+      // Store buffers
+      for (let i = 0; i < blocks.length; i++) {
+        const putBufferRes = await context.bufferStore.put({
+          buffer: buffers[i],
+          block: blocks[i].cid,
+        })
+        assert.ok(putBufferRes.ok)
+      }
+
+      const config = {
+        minAggregateSize: 2 ** 21, // 2,097,152
+        maxAggregateSize: 2 ** 22, // 4,194,304
+        // 15 (padded) pieces of 66,666 bytes results in an aggregate of size
+        // 1,968,128 which is below the `minAggregateSize` of 2,097,152 bytes.
+        // i.e. it wouldn't normally result in an aggregate.
+        maxAggregatePieces: 15,
+        minUtilizationFactor: 10,
+      }
+
+      const handledMessageRes = await AggregatorEvents.handleBufferQueueMessage(
+        { ...context, config },
+        blocks.map((b) => ({
+          pieces: b.cid,
+          group,
+        }))
+      )
+      assert.ok(handledMessageRes.ok)
+      assert.equal(handledMessageRes.ok?.aggregatedPieces, config.maxAggregatePieces)
+
+      await pWaitFor(
+        () =>
+          // there should still be an item of remaining pieces in the queue
+          context.queuedMessages.get('bufferQueue')?.length === 1 &&
+          // there should be 1 new aggregate in the queue
+          context.queuedMessages.get('aggregateOfferQueue')?.length === 1
+      )
+      /** @type {AggregateOfferMessage} */
+      // @ts-expect-error cannot infer buffer message
+      const aggregateOfferMessage = context.queuedMessages.get(
+        'aggregateOfferQueue'
+      )?.[0]
+      /** @type {BufferMessage} */
+      // @ts-expect-error cannot infer buffer message
+      const bufferMessage = context.queuedMessages.get('bufferQueue')?.[0]
+
+      const aggregateBufferGet = await context.bufferStore.get(
+        aggregateOfferMessage.buffer
+      )
+      assert.ok(aggregateBufferGet.ok)
+      assert.equal(
+        aggregateBufferGet.ok?.buffer.pieces.length,
+        handledMessageRes.ok?.aggregatedPieces
+      )
+
+      const remainingBufferGet = await context.bufferStore.get(
+        bufferMessage.pieces
+      )
+      assert.ok(remainingBufferGet.ok)
+      assert.equal(
+        (aggregateBufferGet.ok?.buffer.pieces.length || 0) +
+          (remainingBufferGet.ok?.buffer.pieces.length || 0),
+        totalPieces
+      )
+    },
   'handles buffer queue message errors when fails to access buffer store':
     wichMockableContext(
       async (assert, context) => {
