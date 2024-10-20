@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.4.0](https://github.com/storacha/w3up/compare/capabilities-v17.3.0...capabilities-v17.4.0) (2024-10-20)
+
+
+### Features
+
+* Generate Space proofs on the fly, on `access/claim` ([#1555](https://github.com/storacha/w3up/issues/1555)) ([9e2b1d4](https://github.com/storacha/w3up/commit/9e2b1d4dc721d3e61cea008719d172909c984344))
+
 ## [17.3.0](https://github.com/storacha/w3up/compare/capabilities-v17.2.0...capabilities-v17.3.0) (2024-09-23)
 
 
