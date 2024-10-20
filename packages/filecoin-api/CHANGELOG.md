@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.2](https://github.com/storacha/w3up/compare/filecoin-api-v7.3.1...filecoin-api-v7.3.2) (2024-10-20)
+
+
+### Fixes
+
+* configure max pieces ([#1566](https://github.com/storacha/w3up/issues/1566)) ([71674ed](https://github.com/storacha/w3up/commit/71674ed90022f499a144bcc201416e2568bd4d24))
+
 ## [7.3.1](https://github.com/storacha/w3up/compare/filecoin-api-v7.3.0...filecoin-api-v7.3.1) (2024-10-08)
 
 

@@ -1,7 +1,7 @@
 {
   "packages/access-client": "20.0.1",
   "packages/blob-index": "1.0.4",
-  "packages/filecoin-api": "7.3.1",
+  "packages/filecoin-api": "7.3.2",
   "packages/filecoin-client": "3.3.4",
   "packages/capabilities": "17.3.0",
   "packages/upload-api": "18.0.3",
