@@ -208,6 +208,7 @@ export interface ConsumerGetSuccess {
   allocated: number
   limit: number
   subscription: string
+  customer: AccountDID
 }
 export interface ConsumerNotFound extends Ucanto.Failure {
   name: 'ConsumerNotFound'

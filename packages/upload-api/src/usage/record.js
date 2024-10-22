@@ -11,9 +11,25 @@ export const provide = (context) =>
  * @param {API.UsageServiceContext} context
  * @returns {Promise<API.Result<API.EgressRecordSuccess, API.EgressRecordFailure>>}
  */
-const record = async ({ capability }, context) => {
+const record = async ({ capability, invocation }, context) => {
+  const provider = /** @type {`did:web:${string}`} */ (
+    invocation.audience.did()
+  )
+  const consumerResponse = await context.provisionsStorage.getConsumer(
+    provider,
+    capability.with
+  )
+  if (consumerResponse.error) {
+    return {
+      error: {
+        name: 'EgressRecordFailure',
+        message: `Failed to get consumer`,
+      },
+    }
+  }
+  const consumer = consumerResponse.ok
   const res = await context.usageStorage.record(
-    capability.nb.customer,
+    consumer.customer,
     capability.nb.resource,
     capability.nb.bytes,
     new Date(capability.nb.servedAt * 1000)
