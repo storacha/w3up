@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/storacha/w3ui/compare/react-v2.4.0...react-v2.5.0) (2024-10-07)
+
+
+### Features
+
+* Re-`claim` delegations during client setup ([#644](https://github.com/storacha/w3ui/issues/644)) ([83cc125](https://github.com/storacha/w3ui/commit/83cc125ca562f34c1bbcbd9fc986667fe0547b92))
+
 ## [2.4.0](https://github.com/storacha/w3ui/compare/react-v2.3.0...react-v2.4.0) (2024-09-20)
 
 

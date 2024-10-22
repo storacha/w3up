@@ -1,6 +1,6 @@
 {
   "packages/core": "2.3.1",
-  "packages/react": "2.4.0",
+  "packages/react": "2.5.0",
   "packages/keyring-core": "6.0.0",
   "packages/uploader-core": "7.0.0",
   "packages/uploads-list-core": "5.0.0",

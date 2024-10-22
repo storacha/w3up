@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/react",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "React adapter for w3ui.",
   "type": "module",
   "main": "./dist/index.js",
