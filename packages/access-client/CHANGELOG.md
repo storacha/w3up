@@ -1,5 +1,22 @@
 # Changelog
 
+## [20.1.0](https://github.com/storacha/w3up/compare/access-v20.0.1...access-v20.1.0) (2024-10-20)
+
+
+### Features
+
+* Generate Space proofs on the fly, on `access/claim` ([#1555](https://github.com/storacha/w3up/issues/1555)) ([9e2b1d4](https://github.com/storacha/w3up/commit/9e2b1d4dc721d3e61cea008719d172909c984344))
+
+
+### Fixes
+
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+
 ## [20.0.1](https://github.com/storacha-network/w3up/compare/access-v20.0.0...access-v20.0.1) (2024-07-29)
 
 
