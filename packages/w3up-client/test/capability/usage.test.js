@@ -102,7 +102,6 @@ export const UsageClient = Test.withContext({
       assert.ok(result)
 
       const record = await alice.capability.usage.record(space.did(), {
-        customer: 'did:mailto:alice@web.mail',
         resource: resource.link(),
         bytes: car.size,
         servedAt: new Date().toISOString(),

@@ -1,5 +1,5 @@
 import { capability, ok, Schema } from '@ucanto/validator'
-import { AccountDID, and, equal, equalWith, SpaceDID } from './utils.js'
+import { and, equal, equalWith, SpaceDID } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
@@ -48,8 +48,6 @@ export const record = capability({
   can: 'usage/record',
   with: SpaceDID,
   nb: Schema.struct({
-    /** MailTo DID of the customer that is being billed. */
-    customer: AccountDID,
     /** CID of the resource that was served. */
     resource: Schema.link(),
     /** Amount of bytes served. */

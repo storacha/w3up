@@ -72,17 +72,21 @@ export class UsageStorage {
   /**
    * Simulate a record of egress data for a customer.
    *
+   * @param {import('../types.js').SpaceDID} space
    * @param {import('../types.js').AccountDID} customer
    * @param {import('../types.js').UnknownLink} resource
    * @param {number} bytes
    * @param {Date} servedAt
+   * @param {import('../types.js').UnknownLink} cause
    */
-  async record(customer, resource, bytes, servedAt) {
+  async record(space, customer, resource, bytes, servedAt, cause) {
     const egressData = {
+      space,
       customer,
       resource,
       bytes,
       servedAt: servedAt.toISOString(),
+      cause,
     }
     this._egressRecords[customer] = egressData
     return Promise.resolve({

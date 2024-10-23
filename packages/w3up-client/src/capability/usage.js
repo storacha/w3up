@@ -33,20 +33,25 @@ export class UsageClient extends Base {
   }
 
   /**
-   * Record egress data for the customer and served resource.
+   * Record egress data for a served resource.
+   * It will execute the capability invocation to find the customer and then record the egress data for the resource.
    *
    * Required delegated capabilities:
    * - `usage/record`
    *
    * @param {import('../types.js').SpaceDID} space
-   * @param {API.EgressData} egressData
+   * @param {object} egressData
+   * @param {API.UnknownLink} egressData.resource
+   * @param {number} egressData.bytes
+   * @param {string} egressData.servedAt
    * @param {object} [options]
    * @param {string} [options.nonce]
    */
   async record(space, egressData, options) {
     const out = await record(
       { agent: this.agent },
-      { ...options, space, egressData }
+      { space, ...egressData },
+      { ...options }
     )
     /* c8 ignore next 5 */
     if (!out.ok) {
@@ -89,29 +94,32 @@ export const report = async (
 }
 
 /**
- * Record egress data for the customer and served resource.
+ * Record egress data for a resource from a given space.
  *
  * @param {{agent: API.Agent}} client
+ * @param {object} egressData
+ * @param {API.SpaceDID} egressData.space
+ * @param {API.UnknownLink} egressData.resource
+ * @param {number} egressData.bytes
+ * @param {string} egressData.servedAt
  * @param {object} options
- * @param {API.SpaceDID} options.space
- * @param {API.EgressData} options.egressData -
  * @param {string} [options.nonce]
  * @param {API.Delegation[]} [options.proofs]
  * @returns {Promise<API.Result<API.Unit, API.EgressRecordFailure>>}
  */
 export const record = async (
   { agent },
-  { space, egressData, nonce, proofs = [] }
+  { space, resource, bytes, servedAt },
+  { nonce, proofs = [] }
 ) => {
   const receipt = await agent.invokeAndExecute(UsageCapabilities.record, {
     with: space,
     proofs,
     nonce,
     nb: {
-      customer: egressData.customer,
-      resource: egressData.resource,
-      bytes: egressData.bytes,
-      servedAt: Math.floor(new Date(egressData.servedAt).getTime() / 1000),
+      resource,
+      bytes,
+      servedAt: Math.floor(new Date(servedAt).getTime() / 1000),
     },
   })
   return receipt.out

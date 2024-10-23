@@ -133,7 +133,7 @@ export type UsageReportFailure = Ucanto.Failure
 
 export type EgressRecord = InferInvokedCapability<typeof UsageCaps.record>
 export type EgressRecordSuccess = Unit
-export type EgressRecordFailure = Ucanto.Failure
+export type EgressRecordFailure = ConsumerNotFound | Ucanto.Failure
 
 export interface UsageData {
   /** Provider the report concerns, e.g. `did:web:web3.storage` */
@@ -166,14 +166,18 @@ export interface UsageData {
 }
 
 export interface EgressData {
-  /** Id of the customer that is being billed. */
+  /** The space which contains the resource that was served. */
+  space: SpaceDID
+  /** The customer that is being billed for the egress traffic. */
   customer: AccountDID
-  /** CID of the resource that was served. */
+  /** CID of the resource that was served it's the CID of some gateway accessible content. It is not the CID of a blob/shard.*/
   resource: UnknownLink
   /** Amount of bytes served. */
   bytes: number
   /** ISO datetime that the bytes were served at. */
   servedAt: ISO8601Date
+  /** Identifier of the invocation that caused the egress traffic. */
+  cause: UnknownLink
 }
 
 // Provider

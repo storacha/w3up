@@ -20,21 +20,22 @@ const record = async ({ capability, invocation }, context) => {
     capability.with
   )
   if (consumerResponse.error) {
-    return {
-      error: {
-        name: 'EgressRecordFailure',
-        message: `Failed to get consumer`,
-      },
-    }
+    return consumerResponse
   }
   const consumer = consumerResponse.ok
   const res = await context.usageStorage.record(
+    // The space which contains the resource that was served.
+    capability.with,
+    // The customer that is being billed for the egress traffic.
     consumer.customer,
+    // CID of the resource that was served.
     capability.nb.resource,
+    // Number of bytes that were served.
     capability.nb.bytes,
-    new Date(capability.nb.servedAt * 1000)
+    // Date and time when the resource was served.
+    new Date(capability.nb.servedAt * 1000),
+    // Link to the invocation that caused the egress traffic.
+    invocation.cid
   )
-  if (res.error) return res
-
   return res
 }
