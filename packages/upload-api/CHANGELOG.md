@@ -1,5 +1,25 @@
 # Changelog
 
+## [18.1.0](https://github.com/storacha/w3up/compare/upload-api-v18.0.3...upload-api-v18.1.0) (2024-10-24)
+
+
+### Features
+
+* Generate Space proofs on the fly, on `access/claim` ([#1555](https://github.com/storacha/w3up/issues/1555)) ([9e2b1d4](https://github.com/storacha/w3up/commit/9e2b1d4dc721d3e61cea008719d172909c984344))
+* usage/record capability definition ([#1562](https://github.com/storacha/w3up/issues/1562)) ([98c8a87](https://github.com/storacha/w3up/commit/98c8a87c52ef88da728225259e77f65733d2d7e6))
+
+
+### Fixes
+
+* Error should refer to Resource, not Issuer ([#1558](https://github.com/storacha/w3up/issues/1558)) ([25e35e3](https://github.com/storacha/w3up/commit/25e35e3c3ae86be549f11861f10894c86c46cbdd))
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+* **test:** await promise and check error ([#1563](https://github.com/storacha/w3up/issues/1563)) ([86e7a46](https://github.com/storacha/w3up/commit/86e7a46e289ee176fcfa6827827302510434ffb5))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+
 ## [18.0.3](https://github.com/storacha-network/w3up/compare/upload-api-v18.0.2...upload-api-v18.0.3) (2024-07-29)
 
 
