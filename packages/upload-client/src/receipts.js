@@ -1,6 +1,6 @@
 import retry, { AbortError } from 'p-retry'
 import { CAR } from '@ucanto/transport'
-import { receiptsEndpoint } from './service.js'
+import { receiptsEndpoint as defaultReceiptsEndpoint } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'
 
 export class ReceiptNotFound extends Error {
@@ -78,6 +78,20 @@ export async function poll(taskCid, options = {}) {
 }
 
 /**
+ * Calculate a receipt endpoint from the URL of a channel, if it has one.
+ *
+ * @param {import('@ucanto/interface').Channel<Record<string, any>>} channel
+ */
+function receiptEndpointFromChannel(channel) {
+  if ('url' in channel && channel.url instanceof URL) {
+    const url = channel.url
+    return new URL('/receipt/', url.toString())
+  } else {
+    return null
+  }
+}
+
+/**
  * Get a receipt for an executed task by its CID.
  *
  * @param {import('multiformats').UnknownLink} taskCid
@@ -85,11 +99,13 @@ export async function poll(taskCid, options = {}) {
  * @returns {Promise<import('@ucanto/client').Result<import('@ucanto/interface').Receipt, Error>>}
  */
 async function get(taskCid, options = {}) {
+  const channel = options.connection?.channel
+  const receiptsEndpoint =
+    options.receiptsEndpoint ??
+    (channel && receiptEndpointFromChannel(channel)) ??
+    defaultReceiptsEndpoint
   // Fetch receipt from endpoint
-  const url = new URL(
-    taskCid.toString(),
-    options.receiptsEndpoint ?? receiptsEndpoint
-  )
+  const url = new URL(taskCid.toString(), receiptsEndpoint)
   const fetchReceipt = options.fetch ?? globalThis.fetch.bind(globalThis)
   const workflowResponse = await fetchReceipt(url)
   /* c8 ignore start */
