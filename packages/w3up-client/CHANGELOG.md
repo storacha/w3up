@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.4.0](https://github.com/storacha/w3up/compare/w3up-client-v16.3.0...w3up-client-v16.4.0) (2024-10-24)
+
+
+### Features
+
+* w3up-client new release ([#1569](https://github.com/storacha/w3up/issues/1569)) ([6989e6e](https://github.com/storacha/w3up/commit/6989e6ecb334dcbf79c5a5cf7f4854ac452c6ef4))
+
 ## [16.3.0](https://github.com/storacha/w3up/compare/w3up-client-v16.2.0...w3up-client-v16.3.0) (2024-10-24)
 
 
