@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.5](https://github.com/storacha/w3up/compare/blob-index-v1.0.4...blob-index-v1.0.5) (2024-10-24)
+
+
+### Fixes
+
+* repo URLs ([#1550](https://github.com/storacha/w3up/issues/1550)) ([e02ddf3](https://github.com/storacha/w3up/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/w3up/issues/1533)) ([07970ef](https://github.com/storacha/w3up/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+
 ## [1.0.4](https://github.com/storacha-network/w3up/compare/blob-index-v1.0.3...blob-index-v1.0.4) (2024-07-29)
 
 
