@@ -31,6 +31,37 @@ export class UsageClient extends Base {
 
     return out.ok
   }
+
+  /**
+   * Record egress data for a served resource.
+   * It will execute the capability invocation to find the customer and then record the egress data for the resource.
+   *
+   * Required delegated capabilities:
+   * - `usage/record`
+   *
+   * @param {import('../types.js').SpaceDID} space
+   * @param {object} egressData
+   * @param {API.UnknownLink} egressData.resource
+   * @param {number} egressData.bytes
+   * @param {string} egressData.servedAt
+   * @param {object} [options]
+   * @param {string} [options.nonce]
+   */
+  async record(space, egressData, options) {
+    const out = await record(
+      { agent: this.agent },
+      { space, ...egressData },
+      { ...options }
+    )
+    /* c8 ignore next 5 */
+    if (!out.ok) {
+      throw new Error(`failed ${UsageCapabilities.record.can} invocation`, {
+        cause: out.error,
+      })
+    }
+
+    return out.ok
+  }
 }
 
 /**
@@ -57,6 +88,38 @@ export const report = async (
         from: Math.floor(period.from.getTime() / 1000),
         to: Math.ceil(period.to.getTime() / 1000),
       },
+    },
+  })
+  return receipt.out
+}
+
+/**
+ * Record egress data for a resource from a given space.
+ *
+ * @param {{agent: API.Agent}} client
+ * @param {object} egressData
+ * @param {API.SpaceDID} egressData.space
+ * @param {API.UnknownLink} egressData.resource
+ * @param {number} egressData.bytes
+ * @param {string} egressData.servedAt
+ * @param {object} options
+ * @param {string} [options.nonce]
+ * @param {API.Delegation[]} [options.proofs]
+ * @returns {Promise<API.Result<API.Unit, API.EgressRecordFailure>>}
+ */
+export const record = async (
+  { agent },
+  { space, resource, bytes, servedAt },
+  { nonce, proofs = [] }
+) => {
+  const receipt = await agent.invokeAndExecute(UsageCapabilities.record, {
+    with: space,
+    proofs,
+    nonce,
+    nb: {
+      resource,
+      bytes,
+      servedAt: Math.floor(new Date(servedAt).getTime() / 1000),
     },
   })
   return receipt.out

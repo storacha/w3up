@@ -2,6 +2,7 @@ import { AgentData } from '@web3-storage/access/agent'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { receiptsEndpoint } from '../helpers/utils.js'
+import { randomCAR } from '../helpers/random.js'
 
 export const UsageClient = Test.withContext({
   report: {
@@ -66,6 +67,46 @@ export const UsageClient = Test.withContext({
       const period = { from: new Date(), to: new Date() }
       const report = await alice.capability.usage.report(space.did(), period)
       assert.deepEqual(report, {})
+    },
+  },
+  record: {
+    'should record egress': async (
+      assert,
+      { connection, provisionsStorage }
+    ) => {
+      const alice = new Client(await AgentData.create(), {
+        // @ts-ignore
+        serviceConf: {
+          access: connection,
+          upload: connection,
+        },
+      })
+
+      const space = await alice.createSpace('test')
+      const auth = await space.createAuthorization(alice)
+      await alice.addSpace(auth)
+
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: alice.agent.did(),
+        consumer: space.did(),
+      })
+
+      const car = await randomCAR(128)
+      const resource = car.cid
+      await alice.capability.upload.add(car.roots[0], [resource])
+
+      const result = await alice.capability.upload.get(car.roots[0])
+      assert.ok(result)
+
+      const record = await alice.capability.usage.record(space.did(), {
+        resource: resource.link(),
+        bytes: car.size,
+        servedAt: new Date().toISOString(),
+      })
+      assert.ok(record)
     },
   },
 })
