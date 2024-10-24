@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.3.0](https://github.com/storacha/w3up/compare/w3up-client-v16.2.0...w3up-client-v16.3.0) (2024-10-24)
+
+
+### Features
+
+* usage/record capability definition ([#1562](https://github.com/storacha/w3up/issues/1562)) ([98c8a87](https://github.com/storacha/w3up/commit/98c8a87c52ef88da728225259e77f65733d2d7e6))
+
 ## [16.2.0](https://github.com/storacha/w3up/compare/w3up-client-v16.1.1...w3up-client-v16.2.0) (2024-09-20)
 
 
