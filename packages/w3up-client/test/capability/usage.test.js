@@ -106,6 +106,7 @@ export const UsageClient = Test.withContext({
         bytes: car.size,
         servedAt: new Date().toISOString(),
       })
+
       assert.ok(record)
     },
   },
