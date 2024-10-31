@@ -203,7 +203,7 @@ import { StorageGetError } from './types/storage.js'
 import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, BlobAddInput }
 import { IPNIService, IndexServiceContext } from './types/index.js'
-import { ClaimsClientConfig } from './types/content-claims.js'
+import { ClaimsClientConfig, ClaimsClientContext } from './types/content-claims.js'
 import { Claim } from '@web3-storage/content-claims/client/api'
 export type {
   IndexServiceContext,
@@ -378,7 +378,7 @@ export type BlobServiceContext = SpaceServiceContext & {
   getServiceConnection: () => ConnectionView<Service>
 }
 
-export type W3ServiceContext = SpaceServiceContext & {
+export type W3ServiceContext = SpaceServiceContext & ClaimsClientContext & {
   /**
    * Service signer
    */

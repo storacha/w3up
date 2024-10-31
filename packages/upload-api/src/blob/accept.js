@@ -54,6 +54,12 @@ export function blobAcceptProvider(context) {
         expiration: Infinity,
       })
 
+      // Publish this claim to the content claims service
+      const pubClaim = await publishLocationClaim(context, { digest, location: createUrl.ok })
+      if (pubClaim.error) {
+        return pubClaim
+      }
+
       // Create result object
       /** @type {API.OkBuilder<API.BlobAcceptSuccess, API.BlobAcceptFailure>} */
       const result = Server.ok({
@@ -136,4 +142,24 @@ export const poll = async (context, receipt) => {
   await blobAccept.execute(context.getServiceConnection())
 
   return { ok: {} }
+}
+
+/**
+ * @param {API.ClaimsClientContext} ctx
+ * @param {{ digest: API.MultihashDigest, location: API.URI }} params
+ */
+const publishLocationClaim = async (ctx, { digest, location }) => {
+  const { invocationConfig, connection } = ctx.claimsService
+  const { issuer, audience, with: resource, proofs } = invocationConfig
+  const res = await Assert.location
+    .invoke({
+      issuer,
+      audience,
+      with: resource,
+      nb: { content: { digest: digest.bytes }, location: [location] },
+      expiration: Infinity,
+      proofs,
+    })
+    .execute(connection)
+  return res.out
 }

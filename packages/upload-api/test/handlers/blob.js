@@ -9,6 +9,7 @@ import { alice, registerSpace } from '../util.js'
 import { BlobSizeOutsideOfSupportedRangeName } from '../../src/blob/lib.js'
 import { createConcludeInvocation } from '../../src/ucan/conclude.js'
 import { parseBlobAddReceiptNext } from '../helpers/blob.js'
+import * as Result from '../helpers/result.js'
 
 /**
  * @type {API.Tests}
@@ -427,6 +428,67 @@ export const test = {
         /Blob not found/
       ),
       'accept was not successful'
+    )
+  },
+  'blob/accept publishes location claim to claims service': async (
+    assert,
+    context
+  ) => {
+    const { proof, spaceDid } = await registerSpace(alice, context)
+
+    const data = new Uint8Array([11, 22, 34, 44, 55])
+    const digest = await sha256.digest(data)
+    const size = data.byteLength
+
+    const service = createServer(context)
+    const connection = connect({ id: context.id, channel: service })
+
+    const blobAddInvocation = BlobCapabilities.add.invoke({
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      nb: { blob: { digest: digest.bytes, size } },
+      proofs: [proof],
+    })
+    const receipt = await blobAddInvocation.execute(connection)
+    assert.ok(receipt.out.ok)
+
+    const nextTasks = parseBlobAddReceiptNext(receipt)
+    const { address } = Result.unwrap(nextTasks.allocate.receipt.out)
+    assert.ok(address)
+
+    if (address) {
+      const httpPut = await fetch(address.url, {
+        method: 'PUT',
+        mode: 'cors',
+        body: data,
+        headers: address.headers,
+      })
+      assert.equal(httpPut.status, 200, await httpPut.text())
+    }
+
+    const keys =
+      /** @type {API.SignerArchive<API.DID, typeof ed25519.signatureCode>} */
+      (nextTasks.put.task.facts[0]['keys'])
+    const blobProvider = ed25519.from(keys)
+    const httpPutReceipt = await Receipt.issue({
+      issuer: blobProvider,
+      ran: nextTasks.put.task.link(),
+      result: { ok: {} },
+    })
+    const httpPutConcludeInvocation = createConcludeInvocation(
+      alice,
+      context.id,
+      httpPutReceipt
+    )
+    const ucanConclude = await httpPutConcludeInvocation.execute(connection)
+    assert.ok(ucanConclude.out.ok)
+
+    // ensure a location claim exists for the content root
+    const claims = Result.unwrap(await context.claimsService.read(digest))
+    assert.ok(
+      claims.some(c => c.type === 'assert/location'),
+      'did not find location claim'
     )
   },
   'blob/add fails when a blob with size bigger than maximum size is added':
