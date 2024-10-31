@@ -17,7 +17,7 @@ const record = async ({ capability, invocation }, context) => {
   )
   const consumerResponse = await context.provisionsStorage.getConsumer(
     provider,
-    capability.with
+    capability.nb.space
   )
   if (consumerResponse.error) {
     return consumerResponse
@@ -25,7 +25,7 @@ const record = async ({ capability, invocation }, context) => {
   const consumer = consumerResponse.ok
   const res = await context.usageStorage.record(
     // The space which contains the resource that was served.
-    capability.with,
+    capability.nb.space,
     // The customer that is being billed for the egress traffic.
     consumer.customer,
     // CID of the resource that was served.

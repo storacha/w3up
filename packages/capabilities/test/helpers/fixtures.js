@@ -36,3 +36,7 @@ export const service = Signer.parse(
 export const readmeCID = parseLink(
   'bafybeihqfdg2ereoijjoyrqzr2x2wsasqm2udurforw7pa3tvbnxhojao4'
 )
+
+export const gateway = Absentee.from({
+  id: 'did:web:freeway.storacha.network:gateway',
+})

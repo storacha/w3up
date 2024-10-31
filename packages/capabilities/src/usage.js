@@ -1,5 +1,7 @@
-import { capability, ok, Schema } from '@ucanto/validator'
+import { DID, capability, ok, Schema } from '@ucanto/validator'
 import { and, equal, equalWith, SpaceDID } from './utils.js'
+
+export const ProviderDID = DID.match({ method: 'web' })
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
@@ -46,8 +48,10 @@ export const report = capability({
  */
 export const record = capability({
   can: 'usage/record',
-  with: SpaceDID,
+  with: ProviderDID,
   nb: Schema.struct({
+    /** DID of the space where the resource is served from. */
+    space: SpaceDID,
     /** CID of the resource that was served. */
     resource: Schema.link(),
     /** Amount of bytes served. */

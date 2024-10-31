@@ -8,6 +8,9 @@ import {
   service as w3,
   mallory as account,
   bob,
+  gateway,
+  readmeCID,
+  mallory,
 } from '../helpers/fixtures.js'
 import { validateAuthorization } from '../helpers/utils.js'
 
@@ -199,5 +202,70 @@ describe('usage capabilities', function () {
         proofs,
       })
     }, /Expected value of type integer instead got 6\.6/)
+  })
+
+  it('usage/record should fail to be derived from *', async () => {
+    const data = {
+      space: mallory.did(),
+      resource: readmeCID,
+      bytes: 100,
+      servedAt: 1714204800,
+    }
+    const record = Usage.record.invoke({
+      issuer: alice,
+      audience: w3,
+      with: gateway.did(),
+      nb: { ...data },
+      proofs: [await top()],
+    })
+
+    const result = await access(await record.delegate(), {
+      capability: Usage.record,
+      principal: Verifier,
+      authority: w3,
+      validateAuthorization,
+    })
+
+    assert.ok(result.error, 'Expected an error but none was found')
+  })
+
+  it('usage/record can be derived from usage/record', async () => {
+    const data = {
+      space: mallory.did(),
+      resource: readmeCID,
+      bytes: 100,
+      servedAt: 1714204800,
+    }
+
+    const usageRecordDelegationProof = await Usage.record.delegate({
+      issuer: alice,
+      audience: bob,
+      with: gateway.did(),
+      nb: { ...data },
+      proofs: [await top()],
+    })
+
+    const record = Usage.record.invoke({
+      issuer: bob,
+      audience: w3,
+      with: gateway.did(),
+      nb: { ...data },
+      proofs: [usageRecordDelegationProof],
+    })
+
+    const result = await access(await record.delegate(), {
+      capability: Usage.record,
+      principal: Verifier,
+      authority: w3,
+      validateAuthorization,
+    })
+
+    if (result.error) {
+      assert.fail(result.error.message)
+    }
+
+    assert.deepEqual(result.ok.audience.did(), w3.did())
+    assert.equal(result.ok.capability.can, 'usage/record')
+    assert.deepEqual(result.ok.capability.nb, { data })
   })
 })
