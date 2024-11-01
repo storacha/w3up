@@ -1,1 +1,1 @@
-export { StoreMemory } from '@web3-storage/access/stores/store-memory'
+export { StoreMemory } from '@storacha/access/stores/store-memory'

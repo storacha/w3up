@@ -1,6 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as DID from '@ipld/dag-ucan/did'
-import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
+import * as W3sBlob from '@storacha/capabilities/web3.storage/blob'
 import { Assert } from '@web3-storage/content-claims/capability'
 import { Invocation } from '@ucanto/core'
 import * as Digest from 'multiformats/hashes/digest'
@@ -9,7 +9,7 @@ import {
   AllocatedMemoryHadNotBeenWrittenTo,
   UnsupportedCapability,
 } from './lib.js'
-import * as HTTP from '@web3-storage/capabilities/http'
+import * as HTTP from '@storacha/capabilities/http'
 
 /**
  * @param {API.W3ServiceContext} context

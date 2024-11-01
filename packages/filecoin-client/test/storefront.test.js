@@ -3,7 +3,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
+import * as StorefrontCaps from '@storacha/capabilities/filecoin/storefront'
 import * as dagJSON from '@ipld/dag-json'
 import {
   filecoinOffer,
@@ -21,7 +21,7 @@ describe('storefront', () => {
     const { agent } = await getContext()
     const [cargo] = await randomCargo(1, 100)
 
-    /** @type {import('@web3-storage/capabilities/types').FilecoinOfferSuccess} */
+    /** @type {import('@storacha/capabilities/types').FilecoinOfferSuccess} */
     const filecoinOfferResponse = {
       piece: cargo.link,
     }
@@ -93,7 +93,7 @@ describe('storefront', () => {
   it('storefront submits a filecoin piece', async () => {
     const [cargo] = await randomCargo(1, 100)
 
-    /** @type {import('@web3-storage/capabilities/types').FilecoinSubmitSuccess} */
+    /** @type {import('@storacha/capabilities/types').FilecoinSubmitSuccess} */
     const filecoinSubmitResponse = {
       piece: cargo.link,
     }
@@ -144,7 +144,7 @@ describe('storefront', () => {
       throw new Error('could not compute proof')
     }
 
-    /** @type {import('@web3-storage/capabilities/types').FilecoinAcceptSuccess} */
+    /** @type {import('@storacha/capabilities/types').FilecoinAcceptSuccess} */
     const filecoinAcceptResponse = {
       aggregate: aggregate.link,
       piece: cargo.link,
@@ -210,7 +210,7 @@ describe('storefront', () => {
   it('storefront rejects a filecoin piece', async () => {
     const [cargo] = await randomCargo(1, 100)
 
-    /** @type {import('@web3-storage/capabilities/types').FilecoinAcceptFailure} */
+    /** @type {import('@storacha/capabilities/types').FilecoinAcceptFailure} */
     const filecoinAcceptResponse = {
       name: 'InvalidContentPiece',
       message: 'Piece is a bad one.',
@@ -267,7 +267,7 @@ describe('storefront', () => {
     const { agent } = await getContext()
     const [cargo] = await randomCargo(1, 100)
 
-    /** @type {import('@web3-storage/capabilities/types').FilecoinOfferSuccess} */
+    /** @type {import('@storacha/capabilities/types').FilecoinOfferSuccess} */
     const filecoinOfferResponse = {
       piece: cargo.link,
     }

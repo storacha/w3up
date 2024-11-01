@@ -2,7 +2,7 @@ import { Result, Failure } from '@ucanto/interface'
 import { MultihashDigest, Link, UnknownLink } from 'multiformats'
 
 export type { IPLDBlock } from '@ucanto/interface'
-export type { UnknownFormat } from '@web3-storage/capabilities/types'
+export type { UnknownFormat } from '@storacha/capabilities/types'
 export type { Result, MultihashDigest, Link, UnknownLink }
 
 export type ShardDigest = MultihashDigest

@@ -3,7 +3,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
+import * as DealTrackerCaps from '@storacha/capabilities/filecoin/deal-tracker'
 import { dealInfo } from '../src/deal-tracker.js'
 import { randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -17,7 +17,7 @@ describe('deal tracker', () => {
     // Generate cargo to get info
     const [cargo] = await randomCargo(1, 100)
 
-    /** @type {import('@web3-storage/capabilities/types').DealInfoSuccess} */
+    /** @type {import('@storacha/capabilities/types').DealInfoSuccess} */
     const dealInfoResponse = {
       deals: {
         12_345: {

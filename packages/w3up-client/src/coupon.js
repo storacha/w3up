@@ -1,8 +1,8 @@
-import * as API from '@web3-storage/access/types'
+import * as API from '@storacha/access/types'
 import { sha256, delegate, Delegation } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import * as Result from './result.js'
-import { GrantedAccess } from '@web3-storage/access/access'
+import { GrantedAccess } from '@storacha/access/access'
 import { Base } from './base.js'
 
 export class CouponAPI extends Base {

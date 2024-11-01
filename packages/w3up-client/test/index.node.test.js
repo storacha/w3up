@@ -1,7 +1,7 @@
 import * as Test from './test.js'
 import { Signer } from '@ucanto/principal/ed25519'
 import { EdDSA } from '@ipld/dag-ucan/signature'
-import { StoreConf } from '@web3-storage/access/stores/store-conf'
+import { StoreConf } from '@storacha/access/stores/store-conf'
 import { create } from '../src/index.node.js'
 
 /**

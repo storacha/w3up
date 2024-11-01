@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as Blob from '@web3-storage/capabilities/blob'
+import * as Blob from '@storacha/capabilities/blob'
 import * as Digest from 'multiformats/hashes/digest'
 import * as API from '../types.js'
 import { BlobNotFound } from './lib.js'

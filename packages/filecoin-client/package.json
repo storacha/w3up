@@ -1,11 +1,11 @@
 {
-  "name": "@web3-storage/filecoin-client",
-  "version": "3.3.4",
-  "description": "The w3filecoin client for web3.storage",
-  "homepage": "https://web3.storage",
+  "name": "@storacha/filecoin-client",
+  "version": "0.0.0",
+  "description": "The w3filecoin client for storacha.network",
+  "homepage": "https://storacha.network",
   "repository": {
     "type": "git",
-    "url": "https://github.com/storacha/w3up.git",
+    "url": "https://github.com/storacha/upload-service.git",
     "directory": "packages/w3filecoin-client"
   },
   "author": "Vasco Santos",
@@ -59,7 +59,7 @@
     "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
     "@ucanto/transport": "^9.1.1",
-    "@web3-storage/capabilities": "workspace:^"
+    "@storacha/capabilities": "workspace:^"
   },
   "devDependencies": {
     "@ipld/dag-json": "^10.1.4",
@@ -68,7 +68,7 @@
     "@ucanto/principal": "^9.0.1",
     "@ucanto/server": "^10.0.0",
     "@web3-storage/data-segment": "^4.0.0",
-    "@web3-storage/eslint-config-w3up": "workspace:^",
+    "@storacha/eslint-config": "workspace:^",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "hundreds": "^0.0.9",
@@ -80,7 +80,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
@@ -104,7 +104,7 @@
       "@types/*",
       "assert",
       "c8",
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ]
   }
 }

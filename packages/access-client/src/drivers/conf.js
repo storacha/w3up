@@ -12,7 +12,7 @@ import * as JSON from '../utils/json.js'
  * Usage:
  *
  * ```js
- * import { ConfDriver } from '@web3-storage/access/drivers/conf'
+ * import { ConfDriver } from '@storacha/access/drivers/conf'
  * ```
  *
  * @template {Record<string, any>} T

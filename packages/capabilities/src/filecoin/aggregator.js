@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Aggregator from '@web3-storage/capabilities/filecoin/aggregator'
+ * import * as Aggregator from '@storacha/capabilities/filecoin/aggregator'
  * ```
  *
  * @module

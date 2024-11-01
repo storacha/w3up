@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as RateLimit from '@web3-storage/capabilities/rate-limit'
+ * import * as RateLimit from '@storacha/capabilities/rate-limit'
  * ```
  *
  * @module
@@ -11,7 +11,7 @@
 import { capability, DID, struct, Schema, ok } from '@ucanto/validator'
 import { equalWith, and, equal } from './utils.js'
 
-// e.g. did:web:web3.storage or did:web:staging.web3.storage
+// e.g. did:web:storacha.network or did:web:staging.storacha.network
 export const Provider = DID
 
 /**

@@ -2,7 +2,7 @@
 import * as Ucanto from '@ucanto/interface'
 import { parseLink } from '@ucanto/core'
 import * as Server from '@ucanto/server'
-import * as Space from '@web3-storage/capabilities/space'
+import * as Space from '@storacha/capabilities/space'
 import * as CAR from '@ucanto/transport/car'
 import * as CBOR from '@ucanto/core/cbor'
 import { service } from './fixtures.js'

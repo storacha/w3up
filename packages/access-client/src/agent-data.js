@@ -3,7 +3,7 @@ import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import { importDAG } from '@ucanto/core/delegation'
 import * as Ucanto from '@ucanto/interface'
 import { CID } from 'multiformats'
-import { UCAN } from '@web3-storage/capabilities'
+import { UCAN } from '@storacha/capabilities'
 import { isExpired } from './delegations.js'
 import { uint8ArrayToArrayBuffer } from './utils/buffers.js'
 

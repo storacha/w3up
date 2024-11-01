@@ -1,8 +1,8 @@
 import * as API from '../types.js'
 import * as Provider from '@ucanto/server'
 import { Absentee, Verifier } from '@ucanto/principal'
-import * as Access from '@web3-storage/capabilities/access'
-import * as UCAN from '@web3-storage/capabilities/ucan'
+import * as Access from '@storacha/capabilities/access'
+import * as UCAN from '@storacha/capabilities/ucan'
 import * as delegationsResponse from '../utils/delegations-response.js'
 
 /**

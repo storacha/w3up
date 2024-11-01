@@ -2,9 +2,9 @@ import type {
   AccountDID,
   ConsumerGetSuccess,
   ProviderDID,
-} from '@web3-storage/capabilities/types'
+} from '@storacha/capabilities/types'
 import * as Ucanto from '@ucanto/interface'
-import { ProviderAdd } from '@web3-storage/capabilities/types'
+import { ProviderAdd } from '@storacha/capabilities/types'
 import { SpaceDID } from '../types.js'
 
 /**

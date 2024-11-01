@@ -1,13 +1,13 @@
 import * as API from '../../types.js'
 import { Absentee } from '@ucanto/principal'
 import { delegate, parseLink } from '@ucanto/core'
-import { Access, Space } from '@web3-storage/capabilities'
+import { Access, Space } from '@storacha/capabilities'
 import { alice, bob, provisionProvider } from '../../helpers/utils.js'
-import * as DidMailto from '@web3-storage/did-mailto'
+import * as DidMailto from '@storacha/did-mailto'
 import {
   stringToDelegation,
   bytesToDelegations,
-} from '@web3-storage/access/encoding'
+} from '@storacha/access/encoding'
 import { authorizeFromUrl } from '../../../src/validate.js'
 
 /**
@@ -36,7 +36,7 @@ export const test = {
 
     const url = new URL(email.url)
     const encoded =
-      /** @type {import('@web3-storage/access/types').EncodedDelegation<[import('@web3-storage/capabilities/types').AccessConfirm]>} */ (
+      /** @type {import('@storacha/access/types').EncodedDelegation<[import('@storacha/capabilities/types').AccessConfirm]>} */ (
         url.searchParams.get('ucan')
       )
     const delegation = stringToDelegation(encoded)

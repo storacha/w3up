@@ -1,7 +1,7 @@
 import { capability, DID, struct, ok } from '@ucanto/validator'
 import { equalWith, and, equal, SpaceDID } from './utils.js'
 
-// e.g. did:web:web3.storage or did:web:staging.web3.storage
+// e.g. did:web:storacha.network or did:web:staging.storacha.network
 export const ProviderDID = DID.match({ method: 'web' })
 
 /**

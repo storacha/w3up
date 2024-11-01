@@ -1,6 +1,6 @@
 import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
-import * as DealTracker from '@web3-storage/capabilities/filecoin/deal-tracker'
+import * as DealTracker from '@storacha/capabilities/filecoin/deal-tracker'
 import { services } from './service.js'
 
 /**

@@ -6,7 +6,7 @@ import { ConfDriver } from '../drivers/conf.js'
  * Usage:
  *
  * ```js
- * import { StoreConf } from '@web3-storage/access/stores/store-conf'
+ * import { StoreConf } from '@storacha/access/stores/store-conf'
  * ```
  *
  * @extends {ConfDriver<import('../types.js').AgentDataExport>}

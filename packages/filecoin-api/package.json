@@ -1,12 +1,12 @@
 {
-  "name": "@web3-storage/filecoin-api",
-  "version": "7.3.2",
+  "name": "@storacha/filecoin-api",
+  "version": "0.0.0",
   "type": "module",
   "main": "./src/lib.js",
-  "homepage": "https://web3.storage",
+  "homepage": "https://storacha.network",
   "repository": {
     "type": "git",
-    "url": "https://github.com/storacha/w3up.git",
+    "url": "https://github.com/storacha/upload-service.git",
     "directory": "packages/filecoin-api"
   },
   "files": [
@@ -160,7 +160,7 @@
     "@ucanto/interface": "^10.0.1",
     "@ucanto/server": "^10.0.0",
     "@ucanto/transport": "^9.1.1",
-    "@web3-storage/capabilities": "workspace:^",
+    "@storacha/capabilities": "workspace:^",
     "@web3-storage/content-claims": "^5.0.0",
     "@web3-storage/data-segment": "^5.2.0",
     "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^3.3.0",
@@ -173,8 +173,8 @@
     "@ucanto/client": "^9.0.1",
     "@ucanto/principal": "^9.0.1",
     "@web-std/blob": "^3.0.5",
-    "@web3-storage/eslint-config-w3up": "workspace:^",
-    "@web3-storage/filecoin-client": "workspace:^",
+    "@storacha/eslint-config": "workspace:^",
+    "@storacha/filecoin-client": "workspace:^",
     "c8": "^10.1.2",
     "mocha": "^10.2.0",
     "multiformats": "^12.1.2",
@@ -183,7 +183,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
@@ -213,7 +213,7 @@
     "ignores": [
       "dist",
       "@types/*",
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ]
   },
   "engines": {

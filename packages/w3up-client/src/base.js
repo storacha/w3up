@@ -1,4 +1,4 @@
-import { Agent } from '@web3-storage/access/agent'
+import { Agent } from '@storacha/access/agent'
 import { serviceConf, receiptsEndpoint } from './service.js'
 
 export class Base {
@@ -15,7 +15,7 @@ export class Base {
   _serviceConf
 
   /**
-   * @param {import('@web3-storage/access').AgentData} agentData
+   * @param {import('@storacha/access').AgentData} agentData
    * @param {object} [options]
    * @param {import('./types.js').ServiceConf} [options.serviceConf]
    * @param {URL} [options.receiptsEndpoint]

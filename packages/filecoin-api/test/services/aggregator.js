@@ -1,5 +1,5 @@
-import { Aggregator } from '@web3-storage/capabilities'
-import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
+import { Aggregator } from '@storacha/capabilities'
+import * as DealerCaps from '@storacha/capabilities/filecoin/dealer'
 import * as Signer from '@ucanto/principal/ed25519'
 import { CBOR } from '@ucanto/core'
 import pWaitFor from 'p-wait-for'
@@ -44,7 +44,7 @@ export const test = {
 
       // Generate piece for test
       const [cargo] = await randomCargo(1, 128)
-      const group = 'did:web:free.web3.storage'
+      const group = 'did:web:free.storacha.network'
 
       // storefront invocation
       const pieceAddInv = Aggregator.pieceOffer.invoke({
@@ -103,7 +103,7 @@ export const test = {
 
       // Generate piece for test
       const [cargo] = await randomCargo(1, 128)
-      const group = 'did:web:free.web3.storage'
+      const group = 'did:web:free.storacha.network'
 
       // Store piece into store
       const putRes = await context.pieceStore.put({
@@ -165,7 +165,7 @@ export const test = {
 
       // Generate piece for test
       const [cargo] = await randomCargo(1, 128)
-      const group = 'did:web:free.web3.storage'
+      const group = 'did:web:free.storacha.network'
 
       // storefront invocation
       const pieceAddInv = Aggregator.pieceOffer.invoke({
@@ -198,7 +198,7 @@ export const test = {
 
       // Generate piece for test
       const [cargo] = await randomCargo(1, 128)
-      const group = 'did:web:free.web3.storage'
+      const group = 'did:web:free.storacha.network'
 
       // storefront invocation
       const pieceAddInv = Aggregator.pieceOffer.invoke({

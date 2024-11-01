@@ -44,6 +44,6 @@ jobs:
           pnpm run --if-present build
 
       - name: Lint
-        run: pnpm -r --filter @web3-storage/filecoin-api run lint
+        run: pnpm -r --filter @storacha/filecoin-api run lint
       - name: Test
-        run: pnpm -r --filter @web3-storage/filecoin-api run test
+        run: pnpm -r --filter @storacha/filecoin-api run test

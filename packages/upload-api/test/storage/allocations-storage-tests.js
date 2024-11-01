@@ -1,7 +1,7 @@
 import * as API from '../../src/types.js'
 
 import { sha256 } from 'multiformats/hashes/sha2'
-import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as BlobCapabilities from '@storacha/capabilities/blob'
 import { equals } from 'uint8arrays'
 
 import {

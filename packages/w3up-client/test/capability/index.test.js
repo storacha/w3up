@@ -1,4 +1,4 @@
-import { ShardedDAGIndex } from '@web3-storage/blob-index'
+import { ShardedDAGIndex } from '@storacha/blob-index'
 import { codec as CAR } from '@ucanto/transport/car'
 import * as Link from 'multiformats/link'
 import * as Result from '../../src/result.js'

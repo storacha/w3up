@@ -1,10 +1,10 @@
 import * as API from '../../src/types.js'
 import { ed25519 } from '@ucanto/principal'
 import { Delegation, Receipt } from '@ucanto/core'
-import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
-import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import * as HTTPCapabilities from '@web3-storage/capabilities/http'
-import * as UCAN from '@web3-storage/capabilities/ucan'
+import * as W3sBlobCapabilities from '@storacha/capabilities/web3.storage/blob'
+import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as HTTPCapabilities from '@storacha/capabilities/http'
+import * as UCAN from '@storacha/capabilities/ucan'
 import {
   createConcludeInvocation,
   getConcludeReceipt,

@@ -1,5 +1,5 @@
-import { Storefront, Aggregator } from '@web3-storage/filecoin-client'
-import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
+import { Storefront, Aggregator } from '@storacha/filecoin-client'
+import * as AggregatorCaps from '@storacha/capabilities/filecoin/aggregator'
 import { Assert } from '@web3-storage/content-claims/capability'
 
 import { computePieceCid } from './piece.js'

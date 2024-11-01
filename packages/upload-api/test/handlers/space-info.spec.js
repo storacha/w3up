@@ -1,11 +1,11 @@
-import * as Space from '@web3-storage/capabilities/space'
+import * as Space from '@storacha/capabilities/space'
 import assert from 'assert'
 import { cleanupContext, createContext } from '../helpers/context.js'
 import { createSpace } from '../helpers/utils.js'
 import { parseLink } from '@ucanto/core'
 import * as principal from '@ucanto/principal'
-import * as Store from '@web3-storage/capabilities/store'
-import * as Upload from '@web3-storage/capabilities/upload'
+import * as Store from '@storacha/capabilities/store'
+import * as Upload from '@storacha/capabilities/upload'
 
 // @ts-ignore
 import isSubset from 'is-subset'

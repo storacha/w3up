@@ -1,6 +1,6 @@
 import * as API from '../../types.js'
 import * as Provider from '@ucanto/server'
-import { Admin } from '@web3-storage/capabilities'
+import { Admin } from '@storacha/capabilities'
 
 /**
  * @param {API.AdminServiceContext} context

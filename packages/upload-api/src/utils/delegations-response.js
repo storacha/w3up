@@ -7,7 +7,7 @@ import * as Ucanto from '@ucanto/interface'
 import {
   bytesToDelegations,
   delegationsToBytes,
-} from '@web3-storage/access/encoding'
+} from '@storacha/access/encoding'
 
 /**
  * @template D
@@ -37,7 +37,7 @@ export function encode(delegations) {
 export function* decode(encoded) {
   for (const carBytes of Object.values(encoded)) {
     const delegations = bytesToDelegations(
-      /** @type {import('@web3-storage/access/types').BytesDelegation<Ucanto.Capabilities>} */ (
+      /** @type {import('@storacha/access/types').BytesDelegation<Ucanto.Capabilities>} */ (
         carBytes
       )
     )

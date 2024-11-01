@@ -34,7 +34,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run build
-      - run: pnpm -r --filter @web3-storage/access run lint
-      - run: pnpm -r --filter @web3-storage/access run test
-      - run: pnpm -r --filter @web3-storage/access exec depcheck
-      - run: pnpm --filter '@web3-storage/access' attw
+      - run: pnpm -r --filter @storacha/access run lint
+      - run: pnpm -r --filter @storacha/access run test
+      - run: pnpm -r --filter @storacha/access exec depcheck
+      - run: pnpm --filter '@storacha/access' attw

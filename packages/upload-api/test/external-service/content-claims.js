@@ -5,7 +5,7 @@ import { CAR, HTTP } from '@ucanto/transport'
 import { Assert } from '@web3-storage/content-claims/capability'
 import * as Client from '@web3-storage/content-claims/client'
 import * as Server from '@web3-storage/content-claims/server'
-import { DigestMap } from '@web3-storage/blob-index'
+import { DigestMap } from '@storacha/blob-index'
 
 /**
  * @param {object} params

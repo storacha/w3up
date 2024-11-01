@@ -1,6 +1,6 @@
 import { MultihashDigest } from 'multiformats'
 import { Failure, Result, Unit } from '@ucanto/interface'
-import { ShardedDAGIndex } from '@web3-storage/blob-index/types'
+import { ShardedDAGIndex } from '@storacha/blob-index/types'
 import { AllocationsStorage } from './blob.js'
 import { ClaimsClientContext } from './content-claims.js'
 

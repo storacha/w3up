@@ -1,9 +1,9 @@
 import assert from 'assert'
 import { AgentData, getSessionProofs } from '../src/agent-data.js'
 import * as ed25519 from '@ucanto/principal/ed25519'
-import { UCAN } from '@web3-storage/capabilities'
+import { UCAN } from '@storacha/capabilities'
 import { Absentee } from '@ucanto/principal'
-import * as DidMailto from '@web3-storage/did-mailto'
+import * as DidMailto from '@storacha/did-mailto'
 import * as ucanto from '@ucanto/core'
 
 describe('AgentData', () => {
@@ -35,9 +35,9 @@ describe('AgentData', () => {
     )
     const agentData = await AgentData.create()
     const serviceA = await ed25519.Signer.generate()
-    const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
+    const serviceAWeb = serviceA.withDID('did:web:a.up.storacha.network')
     const serviceB = await ed25519.Signer.generate()
-    const serviceBWeb = serviceB.withDID('did:web:b.up.web3.storage')
+    const serviceBWeb = serviceB.withDID('did:web:b.up.storacha.network')
     const services = [serviceAWeb, serviceBWeb]
 
     // note: this delegation has same CID in all loops since nothing service-specific is in the delegation

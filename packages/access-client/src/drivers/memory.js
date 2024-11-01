@@ -9,7 +9,7 @@
  * Usage:
  *
  * ```js
- * import { MemoryDriver } from '@web3-storage/access/drivers/memory'
+ * import { MemoryDriver } from '@storacha/access/drivers/memory'
  * ```
  *
  * @template {Record<string, any>} T

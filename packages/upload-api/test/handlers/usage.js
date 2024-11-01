@@ -1,5 +1,5 @@
 import * as CAR from '@ucanto/transport/car'
-import { Store, Usage } from '@web3-storage/capabilities'
+import { Store, Usage } from '@storacha/capabilities'
 import * as API from '../../src/types.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, registerSpace } from '../util.js'

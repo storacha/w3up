@@ -1,4 +1,4 @@
-export * from '@web3-storage/access/space'
+export * from '@storacha/access/space'
 import * as Usage from './capability/usage.js'
 import * as API from './types.js'
 

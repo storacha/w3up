@@ -34,6 +34,6 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run build
-      - run: pnpm -r --filter @web3-storage/upload-client run lint
-      - run: pnpm -r --filter @web3-storage/upload-client run test
-      - run: pnpm -r --filter @web3-storage/upload-client exec depcheck
+      - run: pnpm -r --filter @storacha/upload-client run lint
+      - run: pnpm -r --filter @storacha/upload-client run test
+      - run: pnpm -r --filter @storacha/upload-client exec depcheck

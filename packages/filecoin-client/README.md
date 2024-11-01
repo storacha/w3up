@@ -1,16 +1,16 @@
-<h1 align="center">⁂<br/>web3.storage</h1>
-<p align="center">The w3filecoin client for <a href="https://web3.storage">https://web3.storage</a></p>
+<h1 align="center">⁂<br/>storacha.network</h1>
+<p align="center">The w3filecoin client for <a href="https://storacha.network">https://storacha.network</a></p>
 
 ## About
 
-The `@web3-storage/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [storacha/specs/w3-filecoin.md](https://github.com/storacha/specs/blob/main/w3-filecoin.md) and is not intended for web3.storage end users.
+The `@storacha/filecoin-client` package provides the "low level" client API to make data uploaded with the w3up platform available in Filecoin Storage providers. It is based on [storacha/specs/w3-filecoin.md](https://github.com/storacha/specs/blob/main/w3-filecoin.md) and is not intended for storacha.network end users.
 
 ## Install
 
 Install the package using npm:
 
 ```bash
-npm install @web3-storage/filecoin-client
+npm install @storacha/filecoin-client
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ A receipt for successful execution will contain an effect, linking to a `filecoi
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
-import { Storefront } from '@web3-storage/filecoin-client'
+import { Storefront } from '@storacha/filecoin-client'
 
 const res = await Storefront.filecoinOffer(
   invocationConfig,
@@ -52,7 +52,7 @@ A receipt for successful execution indicates that the offered piece has been sub
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
-import { Storefront } from '@web3-storage/filecoin-client'
+import { Storefront } from '@storacha/filecoin-client'
 
 const res = await Storefront.filecoinSubmit(
   invocationConfig,
@@ -80,7 +80,7 @@ A receipt for successful execution indicates that the offered piece has been acc
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
-import { Storefront } from '@web3-storage/filecoin-client'
+import { Storefront } from '@storacha/filecoin-client'
 
 const res = await Storefront.filecoinAccept(
   invocationConfig,
@@ -108,7 +108,7 @@ A receipt for successful execution will contain an effect, linking to a `piece/a
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
-import { Aggregator } from '@web3-storage/filecoin-client'
+import { Aggregator } from '@storacha/filecoin-client'
 
 const res = await Aggregator.pieceOffer(
   invocationConfig,
@@ -136,7 +136,7 @@ A receipt for successful execution indicates that the offered piece was included
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
-import { Aggregator } from '@web3-storage/filecoin-client'
+import { Aggregator } from '@storacha/filecoin-client'
 
 const res = await Aggregator.pieceAccept(
   invocationConfig,
@@ -164,7 +164,7 @@ A receipt for successful execution will contain an effect, linking to an `aggreg
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
-import { Dealer } from '@web3-storage/filecoin-client'
+import { Dealer } from '@storacha/filecoin-client'
 
 const res = await Dealer.aggregateOffer(
   invocationConfig,
@@ -192,7 +192,7 @@ A receipt for successful execution indicates that an aggregate has been accepted
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure, as well as multiple effects, linking to `piece/offer` tasks that will retry _valid_ pieces and complete asynchronously.
 
 ```js
-import { Dealer } from '@web3-storage/filecoin-client'
+import { Dealer } from '@storacha/filecoin-client'
 
 const res = await Dealer.aggregateAccept(
   invocationConfig,
@@ -220,7 +220,7 @@ A receipt for successful execution will contain details of deals the provided pi
 Otherwise the task is failed and the receipt will contain details of the reason behind the failure.
 
 ```js
-import { DealTracker } from '@web3-storage/filecoin-client'
+import { DealTracker } from '@storacha/filecoin-client'
 
 const add = await DealTracker.dealInfo(
   invocationConfig,
@@ -250,9 +250,9 @@ This is the configuration for the UCAN invocation. It is an object with `issuer`
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/w3up/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/upload-service/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/w3up/blob/main/license.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/upload-service/blob/main/license.md)
 

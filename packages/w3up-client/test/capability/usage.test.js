@@ -1,4 +1,4 @@
-import { AgentData } from '@web3-storage/access/agent'
+import { AgentData } from '@storacha/access/agent'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { receiptsEndpoint } from '../helpers/utils.js'

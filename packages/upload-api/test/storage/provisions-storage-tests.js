@@ -1,7 +1,7 @@
 import * as API from '../../src/types.js'
 import * as Types from '../types.js'
 import * as principal from '@ucanto/principal'
-import { Provider } from '@web3-storage/capabilities'
+import { Provider } from '@storacha/capabilities'
 
 /**
  * @type {API.Tests}
@@ -14,7 +14,7 @@ export const test = {
     const issuerKey = await principal.ed25519.generate()
     const issuerDID = 'did:mailto:example.com:foo'
     const issuer = issuerKey.withDID(issuerDID)
-    const provider = 'did:web:web3.storage:providers:w3up-alpha'
+    const provider = 'did:web:storacha.network:providers:w3up-alpha'
     const invocation = await Provider.add
       .invoke({
         issuer,

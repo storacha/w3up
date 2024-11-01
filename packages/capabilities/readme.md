@@ -1,38 +1,38 @@
-# ⁂ `@web3-storage/capabilities`
+# ⁂ `@storacha/capabilities`
 
-[Capabilities](https://en.wikipedia.org/wiki/Capability-based_security) for interacting with [web3.storage](https://web3.storage)
+[Capabilities](https://en.wikipedia.org/wiki/Capability-based_security) for interacting with [storacha.network](https://storacha.network)
 
 ## About
 
-The w3up platform by [web3.storage](https://web3.storage) is implemented as a set of capabilities that can be invoked using the [ucanto](https://github.com/storacha/ucanto) RPC framework.
+The w3up platform by [storacha.network](https://storacha.network) is implemented as a set of capabilities that can be invoked using the [ucanto](https://github.com/storacha/ucanto) RPC framework.
 
-The `@web3-storage/capabilities` package contains capability definitions, which are used by clients to create invocations and by services to validate and parse invocations and route requests to the correct capability handler.
+The `@storacha/capabilities` package contains capability definitions, which are used by clients to create invocations and by services to validate and parse invocations and route requests to the correct capability handler.
 
-See the [capabilities spec](https://github.com/storacha/w3up/tree/main/spec/capabilities.md) for more information about each capability included in this package.
+See the [capabilities spec](https://github.com/storacha/upload-service/tree/main/spec/capabilities.md) for more information about each capability included in this package.
 
 ## Install
 
 Install the package:
 
 ```bash
-npm install @web3-storage/capabilities
+npm install @storacha/capabilities
 ```
 
 ## Usage
 
 ```js
-import * as Space from '@web3-storage/capabilities/space'
-import * as Store from '@web3-storage/capabilities/store'
-import * as Top from '@web3-storage/capabilities/top'
-import * as Types from '@web3-storage/capabilities/types'
-import * as Upload from '@web3-storage/capabilities/upload'
-import * as Utils from '@web3-storage/capabilities/utils'
-import * as Plan from '@web3-storage/capabilities/plan'
-import * as Filecoin from '@web3-storage/capabilities/filecoin'
-import * as Aggregator from '@web3-storage/capabilities/filecoin/aggregator'
-import * as DealTracker from '@web3-storage/capabilities/filecoin/deal-tracker'
-import * as Dealer from '@web3-storage/capabilities/filecoin/dealer'
-import * as Index from '@web3-storage/capabilities/index'
+import * as Space from '@storacha/capabilities/space'
+import * as Store from '@storacha/capabilities/store'
+import * as Top from '@storacha/capabilities/top'
+import * as Types from '@storacha/capabilities/types'
+import * as Upload from '@storacha/capabilities/upload'
+import * as Utils from '@storacha/capabilities/utils'
+import * as Plan from '@storacha/capabilities/plan'
+import * as Filecoin from '@storacha/capabilities/filecoin'
+import * as Aggregator from '@storacha/capabilities/filecoin/aggregator'
+import * as DealTracker from '@storacha/capabilities/filecoin/deal-tracker'
+import * as Dealer from '@storacha/capabilities/filecoin/dealer'
+import * as Index from '@storacha/capabilities/index'
 
 // This package has a "main" entrypoint but we recommend the usage of the specific imports above
 ```
@@ -115,14 +115,14 @@ interface UCANOptions {
 }
 ```
 
-In the example below, we're generating a new `Signer` to act as the issuer of the invocation using the `@ucanto/principal/ed25519` package. Note that in a real application, the service would likely reject an invocation from this signer, as it does not have any delegated permissions. See the [access client package](https://github.com/storacha/w3up/tree/main/packages/access-client) for more about key management and delegation in practice.
+In the example below, we're generating a new `Signer` to act as the issuer of the invocation using the `@ucanto/principal/ed25519` package. Note that in a real application, the service would likely reject an invocation from this signer, as it does not have any delegated permissions. See the [access client package](https://github.com/storacha/upload-service/tree/main/packages/access-client) for more about key management and delegation in practice.
 
 ```ts
 import * as DID from '@ipld/dag-ucan/did'
 import * as ed25519 from '@ucanto/principal/ed25519'
 
 const issuer = await ed25519.generate()
-const audience = DID.parse('did:web:web3.storage')
+const audience = DID.parse('did:web:storacha.network')
 
 const invocation = Store.add.invoke({
   issuer,
@@ -152,7 +152,7 @@ import * as DID from '@ipld/dag-ucan/did'
 import * as ed25519 from '@ucanto/principal/ed25519'
 
 const issuer = await ed25519.generate()
-const audience = DID.parse('did:web:web3.storage')
+const audience = DID.parse('did:web:storacha.network')
 
 const delegation = await Store.add.delegate({
   issuer,

@@ -1,5 +1,5 @@
-import { Blob } from '@web3-storage/upload-client'
-import { Blob as BlobCapabilities } from '@web3-storage/capabilities'
+import { Blob } from '@storacha/upload-client'
+import { Blob as BlobCapabilities } from '@storacha/capabilities'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { Base } from '../base.js'
 

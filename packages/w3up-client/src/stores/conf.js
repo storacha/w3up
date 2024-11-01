@@ -1,1 +1,1 @@
-export { StoreConf } from '@web3-storage/access/stores/store-conf'
+export { StoreConf } from '@storacha/access/stores/store-conf'

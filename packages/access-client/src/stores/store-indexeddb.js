@@ -6,7 +6,7 @@ import { IndexedDBDriver } from '../drivers/indexeddb.js'
  * Usage:
  *
  * ```js
- * import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
+ * import { StoreIndexedDB } from '@storacha/access/stores/store-indexeddb'
  * ```
  *
  * @extends {IndexedDBDriver<import('../types.js').AgentDataExport>}

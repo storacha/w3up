@@ -1,7 +1,7 @@
 import * as Server from '@ucanto/server'
 import * as Signer from '@ucanto/principal/ed25519'
 import { CBOR } from '@ucanto/core'
-import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
+import * as AggregatorCaps from '@storacha/capabilities/filecoin/aggregator'
 
 import * as API from '../../src/types.js'
 import * as TestAPI from '../types.js'

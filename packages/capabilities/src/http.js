@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as HTTP from '@web3-storage/capabilities/http'
+ * import * as HTTP from '@storacha/capabilities/http'
  * ```
  *
  * @module

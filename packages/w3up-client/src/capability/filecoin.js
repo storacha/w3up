@@ -1,5 +1,5 @@
-import { Storefront } from '@web3-storage/filecoin-client'
-import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
+import { Storefront } from '@storacha/filecoin-client'
+import { Filecoin as FilecoinCapabilities } from '@storacha/capabilities'
 import { Base } from '../base.js'
 
 /**
@@ -13,7 +13,7 @@ export class FilecoinClient extends Base {
    * - `filecoin/offer`
    *
    * @param {import('multiformats').UnknownLink} content
-   * @param {import('@web3-storage/capabilities/types').PieceLink} piece
+   * @param {import('@storacha/capabilities/types').PieceLink} piece
    * @param {object} [options]
    * @param {string} [options.nonce]
    */
@@ -31,7 +31,7 @@ export class FilecoinClient extends Base {
    * Required delegated capabilities:
    * - `filecoin/info`
    *
-   * @param {import('@web3-storage/capabilities/types').PieceLink} piece
+   * @param {import('@storacha/capabilities/types').PieceLink} piece
    * @param {object} [options]
    * @param {string} [options.nonce]
    */

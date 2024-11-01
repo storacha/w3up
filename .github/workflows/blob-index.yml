@@ -32,6 +32,6 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
-      - run: pnpm --filter '@web3-storage/blob-index...' install
-      - run: pnpm --filter '@web3-storage/blob-index' lint
-      - run: pnpm --filter '@web3-storage/blob-index' test
+      - run: pnpm --filter '@storacha/blob-index...' install
+      - run: pnpm --filter '@storacha/blob-index' lint
+      - run: pnpm --filter '@storacha/blob-index' test

@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { top } from '@web3-storage/capabilities/top'
+import { top } from '@storacha/capabilities/top'
 import { Signer as EdSigner } from '@ucanto/principal/ed25519'
 import * as RSASigner from '@ucanto/principal/rsa'
 import { AgentData } from '../../src/agent-data.js'

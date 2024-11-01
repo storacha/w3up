@@ -31,8 +31,8 @@ import type {
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
-import { StorefrontService } from '@web3-storage/filecoin-api/types'
-import { ServiceContext as FilecoinServiceContext } from '@web3-storage/filecoin-api/storefront/api'
+import { StorefrontService } from '@storacha/filecoin-api/types'
+import { ServiceContext as FilecoinServiceContext } from '@storacha/filecoin-api/storefront/api'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
@@ -174,11 +174,11 @@ import {
   IndexAdd,
   IndexAddSuccess,
   IndexAddFailure,
-} from '@web3-storage/capabilities/types'
-import * as Capabilities from '@web3-storage/capabilities'
+} from '@storacha/capabilities/types'
+import * as Capabilities from '@storacha/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
 
-export * from '@web3-storage/capabilities/types'
+export * from '@storacha/capabilities/types'
 export * from '@ucanto/interface'
 
 export type { ProvisionsStorage, Provision } from './types/provisions.js'
@@ -354,7 +354,7 @@ export interface Service extends StorefrontService, W3sService {
 }
 
 export interface W3sService {
-  ['web3.storage']: {
+  ['storacha.network']: {
     blob: {
       allocate: ServiceMethod<
         BlobAllocate,

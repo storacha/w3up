@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as Store from '@web3-storage/capabilities/store'
+import * as Store from '@storacha/capabilities/store'
 import * as API from '../types.js'
 import { StoreItemNotFound } from './lib.js'
 

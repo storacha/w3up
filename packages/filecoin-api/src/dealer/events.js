@@ -1,4 +1,4 @@
-import { Dealer, DealTracker } from '@web3-storage/filecoin-client'
+import { Dealer, DealTracker } from '@storacha/filecoin-client'
 
 import { StoreOperationFailed } from '../errors.js'
 
@@ -120,7 +120,7 @@ export const handleCronTick = async (context) => {
  * @param {AggregateRecord} context.deal
  * @param {import('../types.js').UpdatableStore<AggregateRecordKey, AggregateRecord>} context.aggregateStore
  * @param {import('@ucanto/interface').ConnectionView<any>} context.dealTrackerServiceConnection
- * @param {import('@web3-storage/filecoin-client/types').InvocationConfig} context.dealTrackerInvocationConfig
+ * @param {import('@storacha/filecoin-client/types').InvocationConfig} context.dealTrackerInvocationConfig
  */
 async function updateApprovedDeals({
   deal,

@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Dealer from '@web3-storage/capabilities/filecoin/dealer'
+ * import * as Dealer from '@storacha/capabilities/filecoin/dealer'
  * ```
  *
  * @module

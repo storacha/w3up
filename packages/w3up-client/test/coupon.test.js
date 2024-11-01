@@ -10,13 +10,13 @@ export const testCoupon = Test.withContext({
     { client, mail, connect, grantAccess, plansStorage }
   ) => {
     // First we login to the workshop account
-    const login = client.login('workshop@web3.storage')
+    const login = client.login('workshop@storacha.network')
     const message = await mail.take()
     await grantAccess(message)
     const account = await login
 
     // Then we setup a billing for this account
-    await plansStorage.set(account.did(), 'did:web:test.web3.storage')
+    await plansStorage.set(account.did(), 'did:web:test.storacha.network')
 
     // Then we use the account to issue a coupon for the workshop
     const coupon = await client.coupon.issue({
@@ -45,7 +45,7 @@ export const testCoupon = Test.withContext({
 
     const info = await alice.capability.space.info(space.did())
     assert.deepEqual(info.did, space.did())
-    assert.deepEqual(info.providers, ['did:web:test.web3.storage'])
+    assert.deepEqual(info.providers, ['did:web:test.storacha.network'])
   },
 
   'coupon with password': async (

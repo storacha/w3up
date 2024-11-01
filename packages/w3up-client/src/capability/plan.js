@@ -1,13 +1,13 @@
 import { Base } from '../base.js'
 import * as API from '../types.js'
-import * as Plan from '@web3-storage/capabilities/plan'
+import * as Plan from '@storacha/capabilities/plan'
 
 export class PlanClient extends Base {
   /**
    * Required delegated capabilities:
    * - `plan/get`
    *
-   * @param {import('@web3-storage/access').AccountDID} account
+   * @param {import('@storacha/access').AccountDID} account
    * @param {object} [options]
    * @param {string} [options.nonce]
    */

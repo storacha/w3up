@@ -1,6 +1,6 @@
 import * as API from '../types.js'
 import * as Provider from '@ucanto/server'
-import { Usage } from '@web3-storage/capabilities'
+import { Usage } from '@storacha/capabilities'
 
 /** @param {API.UsageServiceContext} context */
 export const provide = (context) =>

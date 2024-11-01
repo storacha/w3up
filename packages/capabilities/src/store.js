@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Store from '@web3-storage/capabilities/store'
+ * import * as Store from '@storacha/capabilities/store'
  * ```
  *
  * @module

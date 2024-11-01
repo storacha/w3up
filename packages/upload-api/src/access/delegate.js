@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as Access from '@web3-storage/capabilities/access'
+import * as Access from '@storacha/capabilities/access'
 import * as API from '../types.js'
 import * as Allocator from '../space-allocate.js'
 

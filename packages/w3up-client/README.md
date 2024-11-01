@@ -1,17 +1,17 @@
 <h1 align="center"><img src="https://bafybeia4luuns6dgymy5kau5rm7r4qzrrzg6cglpzpogussprpy42cmcn4.ipfs.w3s.link/w3up-logo.png" width="352" /></h1>
-<p align="center">The main JavaScript client for the w3up platform by <a href="https://web3.storage">https://web3.storage</a></p>
+<p align="center">The main JavaScript client for the <a href="https://storacha.network">Storacha Network</a></p>
 <p align="center">
-  <a href="https://github.com/storacha/w3up/actions/workflows/w3up-client.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/storacha/w3up/w3up-client.yml?branch=main&style=for-the-badge" /></a>
+  <a href="https://github.com/storacha/upload-service/actions/workflows/w3up-client.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/storacha/w3up/w3up-client.yml?branch=main&style=for-the-badge" /></a>
   <a href="https://discord.com/channels/806902334369824788/864892166470893588"><img src="https://img.shields.io/badge/chat-discord?style=for-the-badge&logo=discord&label=discord&logoColor=ffffff&color=7389D8" /></a>
   <a href="https://x.com/web3storage"><img alt="X Follow" src="https://img.shields.io/badge/follow-web3storage-black?style=for-the-badge&logo=x" /></a>
-  <a href="https://github.com/storacha/w3up/blob/main/packages/w3up-client/LICENSE.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
+  <a href="https://github.com/storacha/upload-service/blob/main/packages/w3up-client/LICENSE.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
 </p>
 
 ## About
 
-`@web3-storage/w3up-client` is a JavaScript library that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
+`@storacha/client` is a JavaScript library that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
 
-This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@web3-storage/access`][access-client-github] and [`@web3-storage/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `w3up-client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
+This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@storacha/access`][access-client-github] and [`@storacha/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `w3up-client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
 
 **`w3up-client` requires Node 18 or higher**.
 
@@ -24,7 +24,7 @@ This library is the user-facing "porcelain" client for interacting with w3up ser
   - [How w3up and w3up-client use UCANs](#how-w3up-and-w3up-client-use-ucans)
     - [Space](#space)
     - [Agent](#agent)
-  - [Basic usage with web3.storage](#basic-usage-with-web3-storage)
+  - [Basic usage with storacha.network](#basic-usage-with-web3-storage)
     - [Creating a client object](#creating-a-client-object)
     - [Creating and registering Spaces](#creating-and-registering-spaces)
     - [Delegating from Space to Agent](#delegating-from-space-to-agent)
@@ -41,19 +41,19 @@ This library is the user-facing "porcelain" client for interacting with w3up ser
 
 ## Install
 
-You can add the `@web3-storage/w3up-client` package to your JavaScript or TypeScript project with `npm`:
+You can add the `@storacha/client` package to your JavaScript or TypeScript project with `npm`:
 
 ```sh
-npm install @web3-storage/w3up-client
+npm install @storacha/client
 ```
 
 ## Usage
 
 [API Reference](#api)
 
-Most users' usage of `w3up-client` will be for interacting with web3.storage, a hosted storage product that developed w3up for their upload APIs. However, any user that has an implementation of w3up ([specs](https://github.com/storacha/specs), [protocol](https://github.com/storacha/w3up)) can configure `w3up-client` for their usage.
+Most users' usage of `w3up-client` will be for interacting with storacha.network, a hosted storage product that developed w3up for their upload APIs. However, any user that has an implementation of w3up ([specs](https://github.com/storacha/specs), [protocol](https://github.com/storacha/upload-service)) can configure `w3up-client` for their usage.
 
-For authorization, w3up services use [ucanto][ucanto], a Remote Procedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_ on top of [public key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography). See our [intro to UCAN blog post](https://blog.web3.storage/posts/intro-to-ucan) for an overview of UCAN.
+For authorization, w3up services use [ucanto][ucanto], a Remote Procedure Call (RPC) framework built around [UCAN](https://ucan.xzy), or User Controlled Authorization Networks. UCANs are a powerful capability-based authorization system that allows fine-grained sharing of permissions through a process called _delegation_ on top of [public key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography). See our [intro to UCAN blog post](https://blog.storacha.network/posts/intro-to-ucan) for an overview of UCAN.
 
 You can think about UCAN replacing bearer tokens in traditional APIs for authorization with w3up. Since any actor can be represented by a cryptographic keypair and permissions can be delegated to them, users can interact with w3up directly in cases where a developer might have needed to previously run additional back-end infrastructure to keep API keys secure. This can be extended even to have end users using applications integrated with w3up using their own keypair-based identity.
 
@@ -65,11 +65,11 @@ UCAN-based APIs are centered around _capabilities_, which are comprised of an _a
 
 #### Space
 
-When you upload data to w3up, your uploads are linked to a unique _Space_ that acts as a "namespace" for the data you upload. Each Space corresponds to a _DID_, or [Decentralized Identity Document](https://www.w3.org/TR/did-core/). In web3.storage's implementation of w3up, these Space DIDs generally use the key DID method, of the form `did:key:publicKey` with a corresponding private signing key.
+When you upload data to w3up, your uploads are linked to a unique _Space_ that acts as a "namespace" for the data you upload. Each Space corresponds to a _DID_, or [Decentralized Identity Document](https://www.w3.org/TR/did-core/). In storacha.network's implementation of w3up, these Space DIDs generally use the key DID method, of the form `did:key:publicKey` with a corresponding private signing key.
 
-When creating a Space using `w3up-client`, it generates this private key and `did:key` for you locally. To use web3.storage, you then register a Space by associating it with your email address. From there, when invoking storage capabilities with web3.storage, the Space `did:key` is the "resource" portion of the capability, while the ability is an action like `blob/add` or `blob/remove`. (A Space registered with web3.storage is imperfectly analogous to an "account" with web3.storage.)
+When creating a Space using `w3up-client`, it generates this private key and `did:key` for you locally. To use storacha.network, you then register a Space by associating it with your email address. From there, when invoking storage capabilities with storacha.network, the Space `did:key` is the "resource" portion of the capability, while the ability is an action like `blob/add` or `blob/remove`. (A Space registered with storacha.network is imperfectly analogous to an "account" with storacha.network.)
 
-Under the hood in the email registration process, your Space delegates the capabilities needed to use w3up to your email address, and this delegation is stored by web3.storage. If you need access to your Space in the future from any device, web3.storage allows you to reclaim those capabilities the same way you would reset a password in other services - using an email verification process. This means you don't need to store or manage Space private keys to use w3up - just create a new space, register it with w3up and use it from as many devices as you like. More on this "sign in" process is detailed in the next section on Agents.
+Under the hood in the email registration process, your Space delegates the capabilities needed to use w3up to your email address, and this delegation is stored by storacha.network. If you need access to your Space in the future from any device, storacha.network allows you to reclaim those capabilities the same way you would reset a password in other services - using an email verification process. This means you don't need to store or manage Space private keys to use w3up - just create a new space, register it with w3up and use it from as many devices as you like. More on this "sign in" process is detailed in the next section on Agents.
 
 #### Agent
 
@@ -79,36 +79,36 @@ The first time `w3up-client` is instantiated on a device, it creates an Agent au
 
 The delegation from a Space to your Agent that `w3up-client` needs can be passed either by verifying the email address the Space is registered to and claiming the UCAN delegation (`login(email)` then `capability.access.claim`) or directly if you have the UCAN delegation available locally (`addSpace(delegation)`).
 
-### Basic usage with web3.storage
+### Basic usage with storacha.network
 
 ```mermaid
 flowchart TD
     A[w3up-client instance] -->|Automatic if specific Agent is not passed when client object created|B(Create local Agent DID and key)
-    B --> |If Space has not yet been created|S(Create local Space, login client with your email address, and register Space + email address with web3.storage)
+    B --> |If Space has not yet been created|S(Create local Space, login client with your email address, and register Space + email address with storacha.network)
     S --> C(Get UCAN delegation from Space to Agent)
     C --> D(Upload to Space using Agent)
 ```
 
-All uses of `w3up-client` to upload with web3.storage follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/storacha/w3up/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3cli` package][w3cli-github], which uses `w3up-client` throughout.
+All uses of `w3up-client` to upload with storacha.network follow the flow above. This section shows the most basic way to use the client to start storing data. For more complex integration options, check out the [integration options][https://github.com/storacha/upload-service/blob/main/packages/w3up-client/README.md#integration-options] docs. For reference, check out the [API reference docs][docs] or the source code of the [`w3cli` package][w3cli-github], which uses `w3up-client` throughout.
 
-> By you or your users registering a w3up Space via email confirmation with [web3.storage](http://web3.storage), you agree to the [Terms of Service](https://web3.storage/docs/terms/). 
+> By you or your users registering a w3up Space via email confirmation with [storacha.network](http://storacha.network), you agree to the [Terms of Service](https://docs.storacha.network/terms/). 
 
 #### Creating a client object
 
 The package provides a [static `create` function][docs-create] that returns a [`Client` object][docs-Client]. 
 
 ```js
-import { create } from '@web3-storage/w3up-client'
+import { create } from '@storacha/client'
 
 const client = await create()
 ```
 
-By default, clients will create a new [`Agent`][access-docs-Agent] and put it in a persistent local [`Store`](https://github.com/storacha/w3up/tree/main/packages/access-client) if it can't find an existing one to load (so the next time the client is initialized on the same device, it will use the same `Agent`).
+By default, clients will create a new [`Agent`][access-docs-Agent] and put it in a persistent local [`Store`](https://github.com/storacha/upload-service/tree/main/packages/access-client) if it can't find an existing one to load (so the next time the client is initialized on the same device, it will use the same `Agent`).
 
-`create` accepts an optional [`ClientFactoryOptions` object][docs-ClientFactoryOptions] that can be used configured to use a non-default persistent `Store`. See the [`@web3-storage/access` docs](https://github.com/storacha/w3up/tree/main/packages/access-client) for more about `Store` configuration. If you'd like to bring your own Agent, you can initialize the client with your own storage [Driver](https://github.com/storacha/w3up/blob/main/packages/w3up-client/README.md#driver). An example would be using `Signer` from the [ucanto][ucanto] package.
+`create` accepts an optional [`ClientFactoryOptions` object][docs-ClientFactoryOptions] that can be used configured to use a non-default persistent `Store`. See the [`@storacha/access` docs](https://github.com/storacha/upload-service/tree/main/packages/access-client) for more about `Store` configuration. If you'd like to bring your own Agent, you can initialize the client with your own storage [Driver](https://github.com/storacha/upload-service/blob/main/packages/w3up-client/README.md#driver). An example would be using `Signer` from the [ucanto][ucanto] package.
 
 ```js
-import { create } from '@web3-storage/w3up-client'
+import { create } from '@storacha/client'
 import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use Ed25519 keys
 
 const principal = Signer.parse(agentPrivateKey) // created by `npx ucan-key ed --json` in command line
@@ -163,10 +163,10 @@ await client.setCurrentSpace(space.did()) # select the relevant Space DID that i
 
 ```mermaid
 sequenceDiagram
-    Client->>web3.storage w3up service: Here is my email address and Agent DID
-    web3.storage w3up service-->>Client: Please click the link to validate
-    Client-->>web3.storage w3up service: Email address validated
-    web3.storage w3up service->>Client: Here is a UCAN delegating permission from Space DID to Agent DID
+    Client->>storacha.network w3up service: Here is my email address and Agent DID
+    storacha.network w3up service-->>Client: Please click the link to validate
+    Client-->>storacha.network w3up service: Email address validated
+    storacha.network w3up service->>Client: Here is a UCAN delegating permission from Space DID to Agent DID
 ```
 
 ##### Bringing your own Agent and delegation
@@ -177,8 +177,8 @@ For uses of `w3up-client` in environments where the Agent is not persisted and/o
 import * as Signer from '@ucanto/principal/ed25519' // Agents on Node should use Ed25519 keys
 import { importDAG } from '@ucanto/core/delegation'
 import { CarReader } from '@ipld/car'
-import * as Client from '@web3-storage/w3up-client'
-import { StoreMemory } from '@web3-storage/w3up-client/stores/memory'
+import * as Client from '@storacha/client'
+import { StoreMemory } from '@storacha/client/stores/memory'
 
 async function main () {
   // from "bring your own Agent" example in `Creating a client object" section`
@@ -257,7 +257,7 @@ sequenceDiagram
     participant User
     w3up-client in backend->>w3up-client in backend: Client set with Agent with delegation from Space
     User->>w3up-client in backend: Upload data
-    w3up-client in backend->>web3.storage w3up service: Upload data
+    w3up-client in backend->>storacha.network w3up service: Upload data
 ```
 - For your backend to be scalable, you might consider using serverless workers or a queue in front of a server
 - In either case, you'll need a registered Space, and your client instance in your backend to have an Agent with a delegation from this Space
@@ -270,12 +270,12 @@ sequenceDiagram
 sequenceDiagram
     participant w3up-client in user
     participant w3up-client in backend
-    participant web3.storage w3up service
+    participant storacha.network w3up service
     w3up-client in backend->>w3up-client in backend: Client created with Agent and delegation from Space
     w3up-client in user->>w3up-client in user: Client instantiated with default Agent
     w3up-client in user->>w3up-client in backend: Request delegation with user's Agent DID
     w3up-client in backend->>w3up-client in user: Send delegation from Space to user's Agent DID
-    w3up-client in user->>web3.storage w3up service: Upload data
+    w3up-client in user->>storacha.network w3up service: Upload data
 ```
 - You will likely have `w3up-client` running in your end-user's client code, as well as backend code that's able to generate UCANs that delegate the ability to upload and pass them to your users (e.g., `w3up-client` running in a serverless worker)
 - For your backend to be scalable, you might consider using serverless workers or a queue in front of a server
@@ -298,7 +298,7 @@ import * as DID from '@ipld/dag-ucan/did';
 import * as Delegation from '@ucanto/core/delegation';
 import { importDAG } from '@ucanto/core/delegation';
 import * as Signer from '@ucanto/principal/ed25519';
-import * as Client from '@web3-storage/w3up-client';
+import * as Client from '@storacha/client';
 
 async function backend(did: string) {
   // Load client with specific private key
@@ -361,17 +361,17 @@ async function frontend() {
 sequenceDiagram
     participant User
     participant Application backend
-    participant web3.storage w3up service
+    participant storacha.network w3up service
     Application backend->>User: Front end code that includes w3up-client
-    User->>web3.storage w3up service: (If needed) Create Space and register it
-    User->>web3.storage w3up service: (If needed) Use Agent email verification to "log in" to Space
-    User->>web3.storage w3up service: Upload data using w3up-client
+    User->>storacha.network w3up service: (If needed) Create Space and register it
+    User->>storacha.network w3up service: (If needed) Use Agent email verification to "log in" to Space
+    User->>storacha.network w3up service: Upload data using w3up-client
 ```
 - If you want your user to own their own Space, you'll likely be relying on the `w3up-client` methods to create a Space, authorize the Space, and authorize the Agent on the end user-side; from there they can run any of the `upload` methods
-    - Doing this does take some of the UX out of your control; for instance, when web3.storage fully launches with w3up, your users will have to set up their payment methods with web3.storage
+    - Doing this does take some of the UX out of your control; for instance, when storacha.network fully launches with w3up, your users will have to set up their payment methods with storacha.network
     - Note that this alone does not give visibility into which of your end users are uploading what; to track this, you'll probably need them to send you that information separately (e.g., once they've run `upload` and get back a content CID, you can have them send that CID to you for tracking)
 - There is a world of possibilities with your users "bringing their own identity" for their Space; you could explore how crypto wallet private keys, Apple Passkey, and more might map to Space DIDs and have the client use those
-- If you have code snippet(s) that works for you, please share them in a PR or [Github issue](https://github.com/storacha/w3up/issues) and we'll link them here!
+- If you have code snippet(s) that works for you, please share them in a PR or [Github issue](https://github.com/storacha/upload-service/issues) and we'll link them here!
 
 ### Environments requiring wasm import
 
@@ -827,7 +827,7 @@ The `with` field contains a resource URI, often a `did:key` URI that identifies 
 
 The optional `nb` (_nota bene_) field contains "caveats" that add supplemental information to a UCAN invocation or delegation.
 
-See [the `@web3-storage/capabilities` package](https://github.com/storacha/w3up/tree/main/packages/capabilities) for more information about capabilities and how they are defined in w3up services.
+See [the `@storacha/capabilities` package](https://github.com/storacha/upload-service/tree/main/packages/capabilities) for more information about capabilities and how they are defined in w3up services.
 
 ### `CARMetadata`
 
@@ -901,7 +901,7 @@ Delegations can be serialized by calling `export()` and piping the returned `Blo
 
 ### `Driver`
 
-Storage drivers can be obtained from [`@web3-storage/access/stores`](https://github.com/storacha/w3up/tree/main/packages/access-client). They persist data created and managed by an agent.
+Storage drivers can be obtained from [`@storacha/access/stores`](https://github.com/storacha/upload-service/tree/main/packages/access-client). They persist data created and managed by an agent.
 
 ### `ListResponse`
 
@@ -970,19 +970,19 @@ interface UploadListResult {
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/w3up/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/upload-service/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/w3up/blob/main/packages/w3up-client/LICENSE.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/upload-service/blob/main/packages/w3up-client/LICENSE.md)
 
 [w3cli-github]: https://github.com/storacha/w3cli
-[access-client-github]: https://github.com/storacha/w3up/tree/main/packages/access-client
-[upload-client-github]: https://github.com/storacha/w3up/tree/main/packages/upload-client
+[access-client-github]: https://github.com/storacha/upload-service/tree/main/packages/access-client
+[upload-client-github]: https://github.com/storacha/upload-service/tree/main/packages/upload-client
 [elastic-ipfs]: https://github.com/elastic-ipfs/elastic-ipfs
 [ucanto]: https://github.com/storacha/ucanto
 [car-spec]: https://ipld.io/specs/transport/car/
-[web3storage-docs-cars]: https://web3.storage/docs/concepts/car/
+[web3storage-docs-cars]: https://docs.storacha.network/concepts/car/
 
 [docs]: https://web3-storage.github.io/w3up/modules/_web3_storage_w3up_client.html
 [docs-Client]: https://web3-storage.github.io/w3up/classes/_web3_storage_w3up_client.Client.html

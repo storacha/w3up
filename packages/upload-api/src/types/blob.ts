@@ -11,7 +11,7 @@ import {
   BlobListItem,
   BlobRemoveSuccess,
   BlobGetSuccess,
-} from '@web3-storage/capabilities/types'
+} from '@storacha/capabilities/types'
 import { MultihashDigest } from 'multiformats'
 
 import { RecordKeyConflict, ListResponse } from '../types.js'

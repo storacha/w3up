@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Access from '@web3-storage/capabilities/access'
+ * import * as Access from '@storacha/capabilities/access'
  * ```
  *
  * @module

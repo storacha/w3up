@@ -16,7 +16,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         },
       })
@@ -33,7 +33,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/authorize')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         })
       }
@@ -47,7 +47,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         },
         proofs: [
@@ -56,7 +56,7 @@ describe('access capabilities', function () {
             audience: agent2,
             with: agent1.did(),
             nb: {
-              iss: 'did:mailto:web3.storage:test',
+              iss: 'did:mailto:storacha.network:test',
             },
           }),
         ],
@@ -75,7 +75,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/authorize')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         })
       }
@@ -89,7 +89,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         },
         proofs: [
@@ -114,7 +114,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/authorize')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         })
       }
@@ -128,7 +128,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         },
         proofs: [
@@ -153,7 +153,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/authorize')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         })
       }
@@ -167,7 +167,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:ANOTHER_TEST',
+          iss: 'did:mailto:storacha.network:ANOTHER_TEST',
           att: [{ can: '*' }],
         },
         proofs: [
@@ -176,7 +176,7 @@ describe('access capabilities', function () {
             audience: agent2,
             with: agent1.did(),
             nb: {
-              iss: 'did:mailto:web3.storage:test',
+              iss: 'did:mailto:storacha.network:test',
             },
           }),
         ],
@@ -304,7 +304,7 @@ describe('access capabilities', function () {
         audience: service,
         with: alice.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           att: [{ can: '*' }],
         },
         proofs: [
@@ -338,11 +338,11 @@ describe('access capabilities', function () {
           with: bob.did(),
           nb: {
             // @ts-expect-error
-            iss: 'did:NOT_MAILTO:web3.storage:test',
+            iss: 'did:NOT_MAILTO:storacha.network:test',
             att: [{ can: '*' }],
           },
         })
-      }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)
+      }, /Expected a did:mailto: but got "did:NOT_MAILTO:storacha.network:test" instead/)
     })
   })
 
@@ -354,7 +354,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -373,7 +373,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/confirm')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -389,7 +389,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -400,7 +400,7 @@ describe('access capabilities', function () {
             audience: agent2,
             with: agent1.did(),
             nb: {
-              iss: 'did:mailto:web3.storage:test',
+              iss: 'did:mailto:storacha.network:test',
             },
           }),
         ],
@@ -419,7 +419,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/confirm')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -435,7 +435,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -462,7 +462,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/confirm')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -478,7 +478,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -505,7 +505,7 @@ describe('access capabilities', function () {
         assert.deepEqual(result.ok.audience.did(), service.did())
         assert.equal(result.ok.capability.can, 'access/confirm')
         assert.deepEqual(result.ok.capability.nb, {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -521,7 +521,7 @@ describe('access capabilities', function () {
         audience: service,
         with: agent1.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:ANOTHER_TEST',
+          iss: 'did:mailto:storacha.network:ANOTHER_TEST',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -532,7 +532,7 @@ describe('access capabilities', function () {
             audience: agent2,
             with: agent1.did(),
             nb: {
-              iss: 'did:mailto:web3.storage:test',
+              iss: 'did:mailto:storacha.network:test',
             },
           }),
         ],
@@ -666,7 +666,7 @@ describe('access capabilities', function () {
         audience: service,
         with: alice.did(),
         nb: {
-          iss: 'did:mailto:web3.storage:test',
+          iss: 'did:mailto:storacha.network:test',
           aud: agent2.did(),
           att: [{ can: '*' }],
           cause: parseLink('bafkqaaa'),
@@ -702,20 +702,20 @@ describe('access capabilities', function () {
           with: bob.did(),
           nb: {
             // @ts-expect-error
-            iss: 'did:NOT_MAILTO:web3.storage:test',
+            iss: 'did:NOT_MAILTO:storacha.network:test',
             aud: bob.did(),
             att: [{ can: '*' }],
             cause: parseLink('bafkqaaa'),
           },
         })
-      }, /Expected a did:mailto: but got "did:NOT_MAILTO:web3.storage:test" instead/)
+      }, /Expected a did:mailto: but got "did:NOT_MAILTO:storacha.network:test" instead/)
     })
   })
 
   describe('access/claim', () => {
     // ensure we can use the capability to produce the invocations from the spec at https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md
     it('can create/access delegations from spec', async () => {
-      const audience = service.withDID('did:web:web3.storage')
+      const audience = service.withDID('did:web:storacha.network')
 
       const examples = [
         // https://github.com/web3-storage/specs/blob/576b988fb7cfa60049611963179277c420605842/w3-access.md#accessclaim

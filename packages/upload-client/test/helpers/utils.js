@@ -3,9 +3,9 @@ import * as Signer from '@ucanto/principal/ed25519'
 import { Receipt } from '@ucanto/core'
 import { Assert } from '@web3-storage/content-claims/capability'
 import * as Server from '@ucanto/server'
-import * as HTTP from '@web3-storage/capabilities/http'
-import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
-import { W3sBlob } from '@web3-storage/capabilities'
+import * as HTTP from '@storacha/capabilities/http'
+import * as W3sBlobCapabilities from '@storacha/capabilities/web3.storage/blob'
+import { W3sBlob } from '@storacha/capabilities'
 import { createConcludeInvocation } from '../../src/blob/add.js'
 import { randomCAR } from './random.js'
 
@@ -24,7 +24,7 @@ Object.entries({
 }).forEach(([name, url]) => {
   fetch(url).catch((error) => {
     console.warn(
-      `${name} is unreachable at ${url}. If tests are failing, try running \`pnpm --filter=@web3-storage/upload-client mock\`.`
+      `${name} is unreachable at ${url}. If tests are failing, try running \`pnpm --filter=@storacha/upload-client mock\`.`
     )
   })
 })

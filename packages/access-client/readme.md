@@ -1,9 +1,9 @@
-<h1 align="center">⁂<br/>web3.storage</h1>
-<p align="center">The access client for <a href="https://web3.storage">https://web3.storage</a></p>
+<h1 align="center">⁂<br/>storacha.network</h1>
+<p align="center">The access client for <a href="https://storacha.network">https://storacha.network</a></p>
 
 ## About
 
-The `@web3-storage/access` package provides an API for creating and managing "agents," which are software entities that control private signing keys and can invoke capabilities on behalf of a user (or another agent).
+The `@storacha/access` package provides an API for creating and managing "agents," which are software entities that control private signing keys and can invoke capabilities on behalf of a user (or another agent).
 
 Agents are used to invoke capabilities provided by the w3up service layer, using the [ucanto](https://github.com/storacha/ucanto) RPC framework. Agents are created locally on an end-user's device, and users are encouraged to create new agents for each device (or browser) that they want to use, rather than sharing agent keys between devices.
 
@@ -11,14 +11,14 @@ An Agent can create "spaces," which are namespaces for content stored on the w3u
 
 Although agents (and spaces) are created locally by generating keypairs, the w3up services will only act upon spaces that have been registered with the w3up access service. By default, a newly-created agent will be configured to use the production access service for remote operations, including registration.
 
-Please note that the `@web3-storage/access` package is a fairly "low level" component of the w3up JavaScript stack, and most users will be better served by [`@web3-storage/w3up-client`](https://github.com/storacha/w3up-client), which combines this package with a client for the upload and storage service and presents a simpler API.
+Please note that the `@storacha/access` package is a fairly "low level" component of the w3up JavaScript stack, and most users will be better served by [`@storacha/client`](https://github.com/storacha/upload-service/tree/main/packages/w3up-client), which combines this package with a client for the upload and storage service and presents a simpler API.
 
 ## Install
 
 Install the package:
 
 ```bash
-npm install @web3-storage/access
+npm install @storacha/access
 ```
 
 ## Usage
@@ -34,8 +34,8 @@ If you're running in a web browser, use [`StoreIndexedDB`](https://web3-storage.
 Agents in a browser use RSA keys, which can be generated using the async `generate` function from `@ucanto/principal/rsa`.
 
 ```js
-import { Agent } from '@web3-storage/access/agent'
-import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
+import { Agent } from '@storacha/access/agent'
+import { StoreIndexedDB } from '@storacha/access/stores/store-indexeddb'
 import { generate } from '@ucanto/principal/rsa'
 
 async function createAgent() {
@@ -63,8 +63,8 @@ On node.js, use [`StoreConf`](https://web3-storage.github.io/w3up/classes/_web3_
 Agents on node should use Ed25519 keys:
 
 ```js
-import { Agent } from '@web3-storage/access/agent'
-import { StoreConf } from '@web3-storage/access/stores/store-conf'
+import { Agent } from '@storacha/access/agent'
+import { StoreConf } from '@storacha/access/stores/store-conf'
 import { generate } from '@ucanto/principal/ed25519'
 
 async function createAgent() {
@@ -164,9 +164,9 @@ The [`importSpaceFromDelegation` method](https://web3-storage.github.io/w3up/cla
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/w3up/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/upload-service/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/w3up/blob/main/license.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/upload-service/blob/main/license.md)
 

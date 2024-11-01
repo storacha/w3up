@@ -1,4 +1,4 @@
-import { Console } from '@web3-storage/capabilities'
+import { Console } from '@storacha/capabilities'
 import * as Provider from '@ucanto/server'
 import * as API from './types.js'
 

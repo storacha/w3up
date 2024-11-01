@@ -1,9 +1,9 @@
 import * as API from '../../src/types.js'
-import { UCAN, Console } from '@web3-storage/capabilities'
+import { UCAN, Console } from '@storacha/capabilities'
 import { Receipt } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import { sha256 } from 'multiformats/hashes/sha2'
-import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as BlobCapabilities from '@storacha/capabilities/blob'
 
 import { createServer, connect } from '../../src/lib.js'
 import { alice, bob, mallory, registerSpace } from '../util.js'
@@ -419,7 +419,7 @@ export const test = {
       invocation.link().toString()
     )
   },
-  'ucan/conclude schedules web3.storage/blob/accept if invoked with the http/put receipt':
+  'ucan/conclude schedules storacha.network/blob/accept if invoked with the http/put receipt':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -457,7 +457,7 @@ export const test = {
       const next = parseBlobAddReceiptNext(blobAdd)
 
       /**
-       * @type {import('@web3-storage/capabilities/types').BlobAddress}
+       * @type {import('@storacha/capabilities/types').BlobAddress}
        */
       // @ts-expect-error receipt out is unknown
       const address = next.allocate.receipt.out.ok?.address

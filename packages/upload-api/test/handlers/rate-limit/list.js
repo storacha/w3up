@@ -2,7 +2,7 @@ import * as API from '../../types.js'
 import { alice, bob } from '../../helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
-import { RateLimit } from '@web3-storage/capabilities'
+import { RateLimit } from '@storacha/capabilities'
 
 /**
  * @type {API.Tests}

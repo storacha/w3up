@@ -1,6 +1,6 @@
 import * as API from './types.js'
 import * as Server from '@ucanto/server'
-import { Provider } from '@web3-storage/capabilities'
+import { Provider } from '@storacha/capabilities'
 import * as validator from '@ucanto/validator'
 import { mailtoDidToDomain, mailtoDidToEmail } from './utils/did-mailto.js'
 import { ensureRateLimitAbove } from './utils/rate-limits.js'
@@ -37,7 +37,7 @@ export const add = async (
     }
   }
   const accountMailtoDID =
-    /** @type {import('@web3-storage/did-mailto/types').DidMailto} */ (
+    /** @type {import('@storacha/did-mailto/types').DidMailto} */ (
       accountDID
     )
   const rateLimitResult = await ensureRateLimitAbove(

@@ -8,7 +8,7 @@ export const alice = Signer.parse(
 )
 
 export const aliceAccount = Absentee.from({
-  id: 'did:mailto:test.web3.storage:alice',
+  id: 'did:mailto:test.storacha.network:alice',
 })
 
 /** did:key:z6MkffDZCkCTWreg8868fG1FGFogcJj5X6PY93pPcWDn9bob */
@@ -17,7 +17,7 @@ export const bob = Signer.parse(
 )
 
 export const bobAccount = Absentee.from({
-  id: 'did:mailto:test.web3.storage:bob',
+  id: 'did:mailto:test.storacha.network:bob',
 })
 
 /** did:key:z6MktafZTREjJkvV5mfJxcLpNBoVPwDLhTuMg9ng7dY4zMAL */
@@ -26,12 +26,12 @@ export const mallory = Signer.parse(
 )
 
 export const malloryAccount = Absentee.from({
-  id: 'did:mailto:test.web3.storage:mallory',
+  id: 'did:mailto:test.storacha.network:mallory',
 })
 
 export const service = Signer.parse(
   'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
-).withDID('did:web:test.web3.storage')
+).withDID('did:web:test.storacha.network')
 
 export const readmeCID = parseLink(
   'bafybeihqfdg2ereoijjoyrqzr2x2wsasqm2udurforw7pa3tvbnxhojao4'

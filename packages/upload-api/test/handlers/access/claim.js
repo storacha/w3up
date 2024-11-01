@@ -1,6 +1,6 @@
 import * as API from '../../types.js'
 import { Absentee } from '@ucanto/principal'
-import { Access } from '@web3-storage/capabilities'
+import { Access } from '@storacha/capabilities'
 import { alice, bob } from '../../helpers/utils.js'
 
 /**

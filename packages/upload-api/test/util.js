@@ -29,7 +29,7 @@ export const service = ed25519
   .parse(
     'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
   )
-  .withDID('did:web:test.web3.storage')
+  .withDID('did:web:test.storacha.network')
 
 /**
  * @param {import('@ucanto/interface').Principal} audience
@@ -61,7 +61,7 @@ export const registerSpace = async (audience, context, username = 'alice') => {
     channel: createServer(context),
   })
   const account = Absentee.from({
-    id: `did:mailto:test.web3.storage:${username}`,
+    id: `did:mailto:test.storacha.network:${username}`,
   })
 
   const provisionResult = await provisionProvider({

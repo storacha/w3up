@@ -236,19 +236,19 @@ export const testAccount = Test.withContext({
       await plansStorage.initialize(
         account.did(),
         'stripe:123xyz',
-        'did:web:free.web3.storage'
+        'did:web:free.storacha.network'
       )
     )
 
     const { ok: plan } = await account.plan.get({ nonce: '2' })
 
-    assert.ok(plan?.product, 'did:web:free.web3.storage')
+    assert.ok(plan?.product, 'did:web:free.storacha.network')
 
-    Result.unwrap(await account.plan.set('did:web:lite.web3.storage'))
+    Result.unwrap(await account.plan.set('did:web:lite.storacha.network'))
 
     const { ok: newPlan } = await account.plan.get({ nonce: '3' })
 
-    assert.ok(newPlan?.product, 'did:web:lite.web3.storage')
+    assert.ok(newPlan?.product, 'did:web:lite.storacha.network')
   },
 
   'create plan admin session': async (

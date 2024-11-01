@@ -5,7 +5,7 @@ import { base64pad } from 'multiformats/bases/base64'
 import * as Raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Link from 'multiformats/link'
-import * as StoreCapabilities from '@web3-storage/capabilities/store'
+import * as StoreCapabilities from '@storacha/capabilities/store'
 import { invoke } from '@ucanto/core'
 import { alice, bob, createSpace, registerSpace } from '../util.js'
 import { Absentee } from '@ucanto/principal'
@@ -405,7 +405,7 @@ export const test = {
     assert.equal(storeAdd.out.error?.message.includes('no storage'), true)
 
     // Register space and retry
-    const account = Absentee.from({ id: 'did:mailto:test.web3.storage:alice' })
+    const account = Absentee.from({ id: 'did:mailto:test.storacha.network:alice' })
     const providerAdd = await provisionProvider({
       service: /** @type {API.Signer<API.DID<'web'>>} */ (context.signer),
       agent: alice,

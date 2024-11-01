@@ -1,4 +1,4 @@
-import { DigestMap } from '@web3-storage/blob-index'
+import { DigestMap } from '@storacha/blob-index'
 import {
   blockEncodingLength,
   blockHeaderEncodingLength,

@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Space from '@web3-storage/capabilities/space'
+ * import * as Space from '@storacha/capabilities/space'
  * ```
  *
  * @module

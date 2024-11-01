@@ -1,4 +1,4 @@
-import * as Access from '@web3-storage/capabilities/access'
+import * as Access from '@storacha/capabilities/access'
 import * as API from './types.js'
 import { Failure, fail, DID } from '@ucanto/core'
 import { Agent, importAuthorization } from './agent.js'

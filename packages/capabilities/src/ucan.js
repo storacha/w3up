@@ -111,10 +111,10 @@ export const conclude = capability({
  * @example
  * ```js
  * {
-    iss: "did:web:web3.storage",
+    iss: "did:web:storacha.network",
     aud: "did:key:z6Mkk89bC3JrVqKie71YEcc5M1SMVxuCgNx6zLZ8SYJsxALi",
     att: [{
-      "with": "did:web:web3.storage",
+      "with": "did:web:storacha.network",
       "can": "ucan/attest",
       "nb": {
         "proof": {
@@ -129,7 +129,7 @@ export const conclude = capability({
  */
 export const attest = capability({
   can: 'ucan/attest',
-  // Should be web3.storage DID
+  // Should be storacha.network DID
   with: Schema.did(),
   nb: Schema.struct({
     // UCAN delegation that is being attested.

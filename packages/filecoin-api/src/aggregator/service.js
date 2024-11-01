@@ -1,8 +1,8 @@
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
-import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
-import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
+import * as AggregatorCaps from '@storacha/capabilities/filecoin/aggregator'
+import * as DealerCaps from '@storacha/capabilities/filecoin/dealer'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
 import {

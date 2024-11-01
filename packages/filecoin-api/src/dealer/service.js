@@ -4,8 +4,8 @@ import * as CAR from '@ucanto/transport/car'
 import { CBOR } from '@ucanto/core'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Block from 'multiformats/block'
-import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
-import { DealTracker } from '@web3-storage/filecoin-client'
+import * as DealerCaps from '@storacha/capabilities/filecoin/dealer'
+import { DealTracker } from '@storacha/filecoin-client'
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
 import {

@@ -64,16 +64,16 @@ import type {
   PlanCreateAdminSession,
   PlanCreateAdminSessionSuccess,
   PlanCreateAdminSessionFailure,
-} from '@web3-storage/capabilities/types'
+} from '@storacha/capabilities/types'
 import type { SetRequired } from 'type-fest'
 import { Driver } from './drivers/types.js'
 import { SpaceUnknown } from './errors.js'
 
 // export other types
 export * from '@ucanto/interface'
-export * from '@web3-storage/capabilities/types'
+export * from '@storacha/capabilities/types'
 export * from './errors.js'
-export * from '@web3-storage/did-mailto'
+export * from '@storacha/did-mailto'
 export type { Agent } from './agent.js'
 export type { OwnedSpace, SharedSpace } from './space.js'
 

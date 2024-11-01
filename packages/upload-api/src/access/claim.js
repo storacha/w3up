@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as Access from '@web3-storage/capabilities/access'
+import * as Access from '@storacha/capabilities/access'
 import * as UCAN from '@ipld/dag-ucan'
 import * as API from '../types.js'
 import * as delegationsResponse from '../utils/delegations-response.js'

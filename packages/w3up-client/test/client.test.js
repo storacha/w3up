@@ -5,7 +5,7 @@ import {
   AgentData,
   claimAccess,
   requestAccess,
-} from '@web3-storage/access/agent'
+} from '@storacha/access/agent'
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
@@ -26,7 +26,7 @@ export const testClient = {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
       const expectedCar = await toCAR(bytes)
-      /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
+      /** @type {import('@storacha/upload-client/types').CARLink|undefined} */
       let carCID
 
       const alice = new Client(await AgentData.create(), {
@@ -102,7 +102,7 @@ export const testClient = {
         (bytes, index) => new File([bytes], `${index}.txt`)
       )
 
-      /** @type {import('@web3-storage/upload-client/types').CARLink|undefined} */
+      /** @type {import('@storacha/upload-client/types').CARLink|undefined} */
       let carCID
 
       const alice = new Client(await AgentData.create(), {
@@ -623,7 +623,7 @@ export const testClient = {
   defaultProvider: {
     'should return the connection ID': async (assert) => {
       const alice = new Client(await AgentData.create())
-      assert.equal(alice.defaultProvider(), 'did:web:web3.storage')
+      assert.equal(alice.defaultProvider(), 'did:web:storacha.network')
     },
   },
 

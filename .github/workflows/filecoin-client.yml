@@ -34,6 +34,6 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run build
-      - run: pnpm -r --filter @web3-storage/filecoin-client run lint
-      - run: pnpm -r --filter @web3-storage/filecoin-client run test
-      - run: pnpm -r --filter @web3-storage/filecoin-client run attw
+      - run: pnpm -r --filter @storacha/filecoin-client run lint
+      - run: pnpm -r --filter @storacha/filecoin-client run test
+      - run: pnpm -r --filter @storacha/filecoin-client run attw

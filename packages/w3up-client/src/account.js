@@ -2,14 +2,14 @@ import * as API from './types.js'
 import * as Access from './capability/access.js'
 import * as Plan from './capability/plan.js'
 import * as Subscription from './capability/subscription.js'
-import { Delegation, importAuthorization } from '@web3-storage/access/agent'
-import { add as provision, AccountDID } from '@web3-storage/access/provider'
-import { fromEmail, toEmail } from '@web3-storage/did-mailto'
+import { Delegation, importAuthorization } from '@storacha/access/agent'
+import { add as provision, AccountDID } from '@storacha/access/provider'
+import { fromEmail, toEmail } from '@storacha/did-mailto'
 
 export { fromEmail }
 
 /**
- * @typedef {import('@web3-storage/did-mailto').EmailAddress} EmailAddress
+ * @typedef {import('@storacha/did-mailto').EmailAddress} EmailAddress
  */
 
 /**
@@ -245,7 +245,7 @@ export class AccountPlan {
    * @param {number} [options.interval=1000] - The polling interval in milliseconds (default is 1000ms).
    * @param {number} [options.timeout=900000] - The maximum time to wait in milliseconds before throwing a timeout error (default is 15 minutes).
    * @param {AbortSignal} [options.signal] - An optional AbortSignal to cancel the waiting process.
-   * @returns {Promise<import('@web3-storage/access').PlanGetSuccess>} - Resolves once a payment plan is selected within the timeout.
+   * @returns {Promise<import('@storacha/access').PlanGetSuccess>} - Resolves once a payment plan is selected within the timeout.
    * @throws {Error} - Throws an error if there is an issue retrieving the payment plan or if the timeout is exceeded.
    */
   async wait(options) {
@@ -277,7 +277,7 @@ export class AccountPlan {
 
   /**
    *
-   * @param {import('@web3-storage/access').AccountDID} accountDID
+   * @param {import('@storacha/access').AccountDID} accountDID
    * @param {string} returnURL
    * @param {object} [options]
    * @param {string} [options.nonce]

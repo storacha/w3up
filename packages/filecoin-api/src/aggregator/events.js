@@ -1,4 +1,4 @@
-import { Aggregator, Dealer } from '@web3-storage/filecoin-client'
+import { Aggregator, Dealer } from '@storacha/filecoin-client'
 import { Aggregate, Piece } from '@web3-storage/data-segment'
 import { CBOR } from '@ucanto/core'
 import map from 'p-map'

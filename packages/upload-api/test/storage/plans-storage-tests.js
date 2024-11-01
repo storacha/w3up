@@ -2,7 +2,7 @@ import * as API from '../../src/types.js'
 
 const account = 'did:mailto:example.com:alice'
 const billingID = 'stripe:abc123'
-const product = 'did:web:free.web3.storage'
+const product = 'did:web:free.storacha.network'
 
 /**
  * @type {API.Tests}
@@ -52,7 +52,7 @@ export const test = {
     const getResult = await storage.get(account)
     assert.equal(getResult.ok?.product, product)
 
-    const newProduct = 'did:web:expensive.web3.storage'
+    const newProduct = 'did:web:expensive.storacha.network'
 
     const setResult = await storage.set(account, newProduct)
 

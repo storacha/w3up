@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Provider from '@web3-storage/capabilities/provider'
+ * import * as Provider from '@storacha/capabilities/provider'
  * ```
  *
  * @module
@@ -11,7 +11,7 @@
 import { capability, DID, struct, ok } from '@ucanto/validator'
 import { AccountDID, equalWith, and, equal, SpaceDID } from './utils.js'
 
-// e.g. did:web:web3.storage or did:web:staging.web3.storage
+// e.g. did:web:storacha.network or did:web:staging.storacha.network
 export const Provider = DID.match({ method: 'web' })
 
 export { AccountDID }

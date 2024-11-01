@@ -1,10 +1,10 @@
 import type { Signer, Principal, Link } from '@ucanto/interface'
-import { InclusionProof } from '@web3-storage/capabilities/types'
+import { InclusionProof } from '@storacha/capabilities/types'
 import { PieceLink, API as DataSegmentAPI } from '@web3-storage/data-segment'
 import {
   AggregatorService,
   DealerService,
-} from '@web3-storage/filecoin-client/types'
+} from '@storacha/filecoin-client/types'
 import {
   Store,
   UpdatableStore,

@@ -1,8 +1,8 @@
 import {
   delegationsToString,
   stringToDelegation,
-} from '@web3-storage/access/encoding'
-import * as DidMailto from '@web3-storage/did-mailto'
+} from '@storacha/access/encoding'
+import * as DidMailto from '@storacha/did-mailto'
 import { Verifier } from '@ucanto/principal'
 import * as delegationsResponse from './utils/delegations-response.js'
 import * as accessConfirm from './access/confirm.js'
@@ -30,7 +30,7 @@ export async function authorizeFromUrl(url, env) {
 export async function authorize(encodedUcan, env) {
   try {
     /**
-     * @type {import('@ucanto/interface').Delegation<[import('@web3-storage/capabilities/types').AccessConfirm]>}
+     * @type {import('@ucanto/interface').Delegation<[import('@storacha/capabilities/types').AccessConfirm]>}
      */
     const request = stringToDelegation(encodedUcan)
 

@@ -1,4 +1,4 @@
-import { DealTracker } from '@web3-storage/capabilities'
+import { DealTracker } from '@storacha/capabilities'
 import * as Signer from '@ucanto/principal/ed25519'
 
 import * as API from '../../src/types.js'

@@ -1,20 +1,20 @@
-<h1 align="center">⁂<br/>web3.storage</h1>
-<p align="center">The upload client for <a href="https://web3.storage">https://web3.storage</a></p>
+<h1 align="center">⁂<br/>storacha.network</h1>
+<p align="center">The upload client for <a href="https://storacha.network">https://storacha.network</a></p>
 
 ## About
 
-The `@web3-storage/upload-client` package provides the "low level" client API for uploading data to [web3.storage](https://web3.storage) using the w3up platform.
+The `@storacha/upload-client` package provides the "low level" client API for uploading data to [storacha.network](https://storacha.network) using the w3up platform.
 
-Most users will be better served by the higher-level [`@web3-storage/w3up-client` package](https://github.com/storacha/w3up-client), which presents a simpler API and supports creating agents and registering spaces.
+Most users will be better served by the higher-level [`@storacha/client` package](https://github.com/storacha/upload-service/tree/main/packages/w3up-client), which presents a simpler API and supports creating agents and registering spaces.
 
-If you are using this package directly instead of `w3up-client`, you will also need to use the [`@web3-storage/access` client](https://github.com/storacha/w3up/tree/main/packages/access-client) for agent and space management. The `@web3-storage/capabilities` package referenced in the examples below is a transitive dependency of both `@web3-storage/upload-client` and `@web3-storage/access`, so you shouldn't need to install it explicitly.
+If you are using this package directly instead of `w3up-client`, you will also need to use the [`@storacha/access` client](https://github.com/storacha/upload-service/tree/main/packages/access-client) for agent and space management. The `@storacha/capabilities` package referenced in the examples below is a transitive dependency of both `@storacha/upload-client` and `@storacha/access`, so you shouldn't need to install it explicitly.
 
 ## Install
 
 Install the package using npm:
 
 ```bash
-npm install @web3-storage/upload-client
+npm install @storacha/upload-client
 ```
 
 ## Usage
@@ -30,9 +30,9 @@ An agent provides:
 3. Proof showing your `issuer` has been delegated capabilities to store data and register uploads to the "space" (`proofs`).
 
 ```js
-import { Agent } from '@web3-storage/access'
-import { store } from '@web3-storage/capabilities/store'
-import { upload } from '@web3-storage/capabilities/upload'
+import { Agent } from '@storacha/access'
+import { store } from '@storacha/capabilities/store'
+import { upload } from '@storacha/capabilities/upload'
 
 const agent = await Agent.create()
 
@@ -47,7 +47,7 @@ const conf = {
 }
 ```
 
-See the [`@web3-storage/access` docs](https://web3-storage.github.io/w3up/modules/_web3_storage_access.html) for more about creating and registering spaces.
+See the [`@storacha/access` docs](https://web3-storage.github.io/w3up/modules/_web3_storage_access.html) for more about creating and registering spaces.
 
 ### Uploading files
 
@@ -56,13 +56,13 @@ Once you have the `issuer`, `with` and `proofs`, you can upload a directory of f
 You can get your list of Files from a [`<input type="file">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file) element in the browser or using [`files-from-path`](https://npm.im/files-from-path) in Node.js
 
 ```js
-import { uploadFile } from '@web3-storage/upload-client'
+import { uploadFile } from '@storacha/upload-client'
 
 const cid = await uploadFile(conf, new Blob(['Hello World!']))
 ```
 
 ```js
-import { uploadDirectory } from '@web3-storage/upload-client'
+import { uploadDirectory } from '@storacha/upload-client'
 
 const cid = await uploadDirectory(conf, [
   new File(['doc0'], 'doc0.txt'),
@@ -77,8 +77,8 @@ const cid = await uploadDirectory(conf, [
 The buffering API loads all data into memory so is suitable only for small files. The root data CID is derived from the data before any transfer to the service takes place.
 
 ```js
-import { UnixFS, CAR, Blob, Index, Upload } from '@web3-storage/upload-client'
-import * as BlobIndexUtil from '@web3-storage/blob-index/util'
+import { UnixFS, CAR, Blob, Index, Upload } from '@storacha/upload-client'
+import * as BlobIndexUtil from '@storacha/blob-index/util'
 import * as Link from 'multiformats/link'
 
 // Encode a file as a DAG, get back a root data CID and a set of blocks
@@ -107,8 +107,8 @@ import {
   Blob,
   Index,
   Upload,
-} from '@web3-storage/upload-client'
-import { ShardedDAGIndex } from '@web3-storage/blob-index'
+} from '@storacha/upload-client'
+import { ShardedDAGIndex } from '@storacha/blob-index'
 
 let rootCID, carCIDs
 const shardIndexes = []
@@ -536,8 +536,8 @@ The function may be called multiple times with different requested capabilities.
 Example:
 
 ```js
-import { Agent } from '@web3-storage/access'
-import * as Space from '@web3-storage/access/space'
+import { Agent } from '@storacha/access'
+import * as Space from '@storacha/access/space'
 
 const agent = await Agent.create()
 const space = await Space.generate({ name: 'myspace' })
@@ -571,8 +571,8 @@ More information: [`CARMetadata`](#carmetadata)
 
 ## Contributing
 
-Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/w3up/issues)!
+Feel free to join in. All welcome. Please [open an issue](https://github.com/storacha/upload-service/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/w3up/blob/main/license.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/upload-service/blob/main/license.md)

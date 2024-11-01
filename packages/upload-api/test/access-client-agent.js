@@ -1,11 +1,11 @@
 import * as API from './types.js'
 import { Absentee } from '@ucanto/principal'
 import * as delegationsResponse from '../src/utils/delegations-response.js'
-import * as DidMailto from '@web3-storage/did-mailto'
-import { Access, Space, Top, UCAN } from '@web3-storage/capabilities'
-import { AgentData } from '@web3-storage/access'
+import * as DidMailto from '@storacha/did-mailto'
+import { Access, Space, Top, UCAN } from '@storacha/capabilities'
+import { AgentData } from '@storacha/access'
 import { alice } from './helpers/utils.js'
-import { stringToDelegations } from '@web3-storage/access/encoding'
+import { stringToDelegations } from '@storacha/access/encoding'
 import {
   confirmConfirmationUrl,
   extractConfirmInvocation,
@@ -21,8 +21,8 @@ import {
   delegationsIncludeSessionProof,
   addSpacesFromDelegations,
   requestAccess,
-} from '@web3-storage/access/agent'
-import * as Provider from '@web3-storage/access/provider'
+} from '@storacha/access/agent'
+import * as Provider from '@storacha/access/provider'
 
 /**
  * Create and return a space, delegated to the device agent and to the account,
@@ -80,7 +80,7 @@ const claimDelegations = async (device) => {
  * Assert that the device agent can invoke `space/info` on the given space.
  *
  * @param {Agent} device
- * @param {import('@web3-storage/access/agent').OwnedSpace} space
+ * @param {import('@storacha/access/agent').OwnedSpace} space
  * @param {API.Assert} assert
  */
 async function assertCanSpaceInfo(device, space, assert) {
@@ -92,7 +92,7 @@ async function assertCanSpaceInfo(device, space, assert) {
 
   assert.ok(spaceInfoResult.out.ok)
   const result =
-    /** @type {import('@web3-storage/access/types').SpaceInfoResult} */ (
+    /** @type {import('@storacha/access/types').SpaceInfoResult} */ (
       spaceInfoResult.out.ok
     )
   assert.deepEqual(result.did, space.did())
@@ -146,7 +146,7 @@ export const test = {
     )
     assert.deepEqual(confirmationInvocations.length, 1)
     const serviceSaysAccountCanConfirm =
-      /** @type {API.Invocation<import('@web3-storage/capabilities/types').AccessConfirm>} */ (
+      /** @type {API.Invocation<import('@storacha/capabilities/types').AccessConfirm>} */ (
         confirmationInvocations[0]
       )
 

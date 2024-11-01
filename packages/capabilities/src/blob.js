@@ -6,7 +6,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Blob from '@web3-storage/capabilities/blob'
+ * import * as Blob from '@storacha/capabilities/blob'
  * ```
  *
  * @module

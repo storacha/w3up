@@ -1,5 +1,5 @@
-import * as IndexCapabilities from '@web3-storage/capabilities/index'
-import { SpaceDID } from '@web3-storage/capabilities/utils'
+import * as IndexCapabilities from '@storacha/capabilities/index'
+import { SpaceDID } from '@storacha/capabilities/utils'
 import retry from 'p-retry'
 import { servicePrincipal, connection } from '../service.js'
 import { REQUEST_RETRIES } from '../constants.js'

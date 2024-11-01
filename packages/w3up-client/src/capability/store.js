@@ -1,5 +1,5 @@
-import { Store } from '@web3-storage/upload-client'
-import { Store as StoreCapabilities } from '@web3-storage/capabilities'
+import { Store } from '@storacha/upload-client'
+import { Store as StoreCapabilities } from '@storacha/capabilities'
 import { Base } from '../base.js'
 
 /**

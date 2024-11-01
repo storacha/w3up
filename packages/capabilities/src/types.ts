@@ -136,7 +136,7 @@ export type EgressRecordSuccess = Unit
 export type EgressRecordFailure = ConsumerNotFound | Ucanto.Failure
 
 export interface UsageData {
-  /** Provider the report concerns, e.g. `did:web:web3.storage` */
+  /** Provider the report concerns, e.g. `did:web:storacha.network` */
   provider: ProviderDID
   /** Space the report concerns. */
   space: SpaceDID

@@ -1,8 +1,8 @@
-import { Filecoin, Aggregator } from '@web3-storage/capabilities'
+import { Filecoin, Aggregator } from '@storacha/capabilities'
 import * as Server from '@ucanto/server'
 import { CBOR } from '@ucanto/core'
 import * as Signer from '@ucanto/principal/ed25519'
-import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
+import * as DealTrackerCaps from '@storacha/capabilities/filecoin/deal-tracker'
 import pWaitFor from 'p-wait-for'
 
 import * as API from '../../src/types.js'

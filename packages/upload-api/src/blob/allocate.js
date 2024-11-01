@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as W3sBlob from '@web3-storage/capabilities/web3.storage/blob'
+import * as W3sBlob from '@storacha/capabilities/web3.storage/blob'
 import * as Digest from 'multiformats/hashes/digest'
 import * as API from '../types.js'
 import {

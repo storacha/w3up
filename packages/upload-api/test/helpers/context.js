@@ -4,7 +4,7 @@ import {
   getMockService,
   getStoreImplementations as getFilecoinStoreImplementations,
   getQueueImplementations as getFilecoinQueueImplementations,
-} from '@web3-storage/filecoin-api/test/context/service'
+} from '@storacha/filecoin-api/test/context/service'
 import * as Email from '../../src/utils/email.js'
 import { create as createRevocationChecker } from '../../src/utils/revocation.js'
 import { createServer, connect } from '../../src/lib.js'
@@ -29,7 +29,7 @@ export const createContext = async (
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
   const dealTrackerSigner = await Signer.generate()
-  const id = signer.withDID('did:web:test.web3.storage')
+  const id = signer.withDID('did:web:test.storacha.network')
 
   const service = getMockService()
   const dealTrackerConnection = getConnection(

@@ -21,7 +21,7 @@ import { createService as createUcanService } from './ucan.js'
 import { createService as createW3sService } from './service.js'
 import { createService as createPlanService } from './plan.js'
 import { createService as createUsageService } from './usage.js'
-import { createService as createFilecoinService } from '@web3-storage/filecoin-api/storefront/service'
+import { createService as createFilecoinService } from '@storacha/filecoin-api/storefront/service'
 import * as AgentMessage from './utils/agent-message.js'
 
 export * from './types.js'
@@ -187,7 +187,7 @@ export const createService = (context) => ({
   upload: createUploadService(context),
   ucan: createUcanService(context),
   plan: createPlanService(context),
-  ['web3.storage']: createW3sService(context),
+  ['storacha.network']: createW3sService(context),
   // storefront of filecoin pipeline
   filecoin: createFilecoinService(context).filecoin,
   usage: createUsageService(context),

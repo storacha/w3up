@@ -3,11 +3,11 @@
  *
  * It is recommended that you import directly with:
  * ```js
- * import * as Encoding from '@web3-storage/access/encoding'
+ * import * as Encoding from '@storacha/access/encoding'
  *
  * // or
  *
- * import { encodeDelegations } from '@web3-storage/access/encoding'
+ * import { encodeDelegations } from '@storacha/access/encoding'
  * ```
  *
  * @module

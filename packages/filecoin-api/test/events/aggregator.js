@@ -1,5 +1,5 @@
 import * as Server from '@ucanto/server'
-import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
+import * as AggregatorCaps from '@storacha/capabilities/filecoin/aggregator'
 import pWaitFor from 'p-wait-for'
 import { CBOR } from '@ucanto/core'
 

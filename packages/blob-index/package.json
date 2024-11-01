@@ -1,11 +1,11 @@
 {
-  "name": "@web3-storage/blob-index",
+  "name": "@storacha/blob-index",
   "description": "An index for slices that may be sharded across multiple blobs.",
-  "version": "1.0.4",
-  "homepage": "https://web3.storage",
+  "version": "0.0.0",
+  "homepage": "https://storacha.network",
   "repository": {
     "type": "git",
-    "url": "https://github.com/storacha/w3up.git",
+    "url": "https://github.com/storacha/upload-service.git",
     "directory": "packages/blob-index"
   },
   "license": "Apache-2.0 OR MIT",
@@ -44,21 +44,21 @@
     "@storacha/one-webcrypto": "^1.0.1",
     "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
-    "@web3-storage/capabilities": "workspace:^",
+    "@storacha/capabilities": "workspace:^",
     "carstream": "^2.1.0",
     "multiformats": "^13.0.1",
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
     "@ucanto/transport": "^9.1.1",
-    "@web3-storage/eslint-config-w3up": "workspace:^",
+    "@storacha/eslint-config": "workspace:^",
     "c8": "^7.14.0",
     "entail": "^2.1.2",
     "typescript": "5.2.2"
   },
   "eslintConfig": {
     "extends": [
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"

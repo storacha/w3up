@@ -1,7 +1,7 @@
 import * as API from '../../src/types.js'
 import { base58btc } from 'multiformats/bases/base58'
 import { ok, error } from '@ucanto/core'
-import { DigestMap } from '@web3-storage/blob-index'
+import { DigestMap } from '@storacha/blob-index'
 import { RecordNotFound } from '../../src/errors.js'
 
 /** @implements {API.IPNIService} */
@@ -12,7 +12,7 @@ export class IPNIService {
     this.#data = new DigestMap()
   }
 
-  /** @param {import('@web3-storage/blob-index/types').ShardedDAGIndex} index */
+  /** @param {import('@storacha/blob-index/types').ShardedDAGIndex} index */
   async publish(index) {
     for (const [, slices] of index.shards) {
       for (const [digest] of slices) {

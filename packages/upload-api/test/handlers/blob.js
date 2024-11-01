@@ -2,7 +2,7 @@ import * as API from '../../src/types.js'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { Receipt } from '@ucanto/core'
-import * as BlobCapabilities from '@web3-storage/capabilities/blob'
+import * as BlobCapabilities from '@storacha/capabilities/blob'
 
 import { createServer, connect } from '../../src/lib.js'
 import { alice, registerSpace } from '../util.js'
@@ -217,7 +217,7 @@ export const test = {
       assert.ok(firstNext.accept.task, 'accept task was dispatched')
       assert.ok(!firstNext.accept.receipt, 'accept receipt was not received')
 
-      /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
+      /** @type {import('@storacha/capabilities/types').BlobAddress} */
       // @ts-expect-error receipt type is unknown
       const address = firstNext.allocate.receipt.out.ok.address
 
@@ -387,7 +387,7 @@ export const test = {
     assert.ok(workflow.accept.task, 'accept task was dispatched')
     assert.ok(!workflow.accept.receipt, 'accept receipt was not received')
 
-    /** @type {import('@web3-storage/capabilities/types').BlobAddress} */
+    /** @type {import('@storacha/capabilities/types').BlobAddress} */
     // @ts-expect-error receipt type is unknown
     const address = workflow.allocate.receipt.out.ok.address
 

@@ -3,10 +3,10 @@ import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 
 import { Assert } from '@web3-storage/content-claims/capability'
-import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
-import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
-import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
-import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
+import * as StorefrontCaps from '@storacha/capabilities/filecoin/storefront'
+import * as AggregatorCaps from '@storacha/capabilities/filecoin/aggregator'
+import * as DealerCaps from '@storacha/capabilities/filecoin/dealer'
+import * as DealTrackerCaps from '@storacha/capabilities/filecoin/deal-tracker'
 
 // eslint-disable-next-line no-unused-vars
 import * as API from '../../src/types.js'

@@ -1,6 +1,6 @@
 # Contributing
 
-Join in. All welcome! web3.storage is open-source. The code is dual-licensed under [MIT + Apache 2.0](license.md)
+Join in. All welcome! storacha.network is open-source. The code is dual-licensed under [MIT + Apache 2.0](license.md)
 
 This project uses node v18 and `pnpm`. It's a monorepo that use [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local `packages/*` folders.
 
@@ -13,8 +13,6 @@ We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
 ```bash
 # install all dependencies in the mono-repo
 pnpm install
-# setup git hooks
-npx simple-git-hooks
 # setup environment variables
 cp .env.tpl .env
 ```

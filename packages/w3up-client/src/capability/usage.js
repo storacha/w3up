@@ -1,4 +1,4 @@
-import { Usage as UsageCapabilities } from '@web3-storage/capabilities'
+import { Usage as UsageCapabilities } from '@storacha/capabilities'
 import * as API from '../types.js'
 import { Base } from '../base.js'
 

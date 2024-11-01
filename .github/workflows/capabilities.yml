@@ -29,6 +29,6 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run build
-      - run: pnpm -r --filter @web3-storage/capabilities run lint
-      - run: pnpm -r --filter @web3-storage/capabilities run test
-      - run: pnpm -r --filter @web3-storage/capabilities exec depcheck
+      - run: pnpm -r --filter @storacha/capabilities run lint
+      - run: pnpm -r --filter @storacha/capabilities run test
+      - run: pnpm -r --filter @storacha/capabilities exec depcheck

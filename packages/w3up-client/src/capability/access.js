@@ -1,6 +1,6 @@
 import { Base } from '../base.js'
-import * as Agent from '@web3-storage/access/agent'
-import * as DIDMailto from '@web3-storage/did-mailto'
+import * as Agent from '@storacha/access/agent'
+import * as DIDMailto from '@storacha/did-mailto'
 import * as Result from '../result.js'
 
 import * as API from '../types.js'

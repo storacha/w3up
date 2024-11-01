@@ -74,15 +74,15 @@ import {
   EgressRecordSuccess,
   EgressRecordFailure,
   ServiceAbility,
-} from '@web3-storage/capabilities/types'
-import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
+} from '@storacha/capabilities/types'
+import { StorefrontService } from '@storacha/filecoin-client/storefront'
 import { code as pieceHashCode } from '@web3-storage/data-segment/multihash'
 import {
   ShardedDAGIndex,
   ShardDigest,
   SliceDigest,
   Position,
-} from '@web3-storage/blob-index/types'
+} from '@storacha/blob-index/types'
 
 type Override<T, R> = Omit<T, keyof R> & R
 

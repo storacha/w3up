@@ -73,7 +73,7 @@ jobs:
           pnpm run --if-present build
 
       - name: Test
-        run: pnpm -r --filter @web3-storage/upload-api run test
+        run: pnpm -r --filter @storacha/upload-api run test
 
       - name: Dependency check
-        run: pnpm -r --filter @web3-storage/upload-api exec depcheck
+        run: pnpm -r --filter @storacha/upload-api exec depcheck

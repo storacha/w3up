@@ -1,8 +1,8 @@
 import * as Server from '@ucanto/server'
 import * as API from '../types.js'
-import * as Access from '@web3-storage/capabilities/access'
-import * as DidMailto from '@web3-storage/did-mailto'
-import { delegationToString } from '@web3-storage/access/encoding'
+import * as Access from '@storacha/capabilities/access'
+import * as DidMailto from '@storacha/did-mailto'
+import { delegationToString } from '@storacha/access/encoding'
 import { mailtoDidToDomain, mailtoDidToEmail } from '../utils/did-mailto.js'
 import { ensureRateLimitAbove } from '../utils/rate-limits.js'
 
@@ -22,7 +22,7 @@ export const provide = (ctx) =>
  */
 export const authorize = async ({ capability, invocation }, ctx) => {
   const accountMailtoDID =
-    /** @type {import('@web3-storage/did-mailto/types').DidMailto} */ (
+    /** @type {import('@storacha/did-mailto/types').DidMailto} */ (
       capability.nb.iss
     )
   const rateLimitResult = await ensureRateLimitAbove(

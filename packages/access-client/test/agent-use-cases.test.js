@@ -2,11 +2,11 @@ import assert from 'assert'
 import sinon from 'sinon'
 import * as Server from '@ucanto/server'
 import * as Ucanto from '@ucanto/interface'
-import * as Access from '@web3-storage/capabilities/access'
-import * as Ucan from '@web3-storage/capabilities/ucan'
-import * as Space from '@web3-storage/capabilities/space'
-import * as Plan from '@web3-storage/capabilities/plan'
-import { createAuthorization } from '@web3-storage/capabilities/test/helpers/utils'
+import * as Access from '@storacha/capabilities/access'
+import * as Ucan from '@storacha/capabilities/ucan'
+import * as Space from '@storacha/capabilities/space'
+import * as Plan from '@storacha/capabilities/plan'
+import { createAuthorization } from '@storacha/capabilities/test/helpers/utils'
 import { Agent, connection } from '../src/agent.js'
 import {
   delegationsIncludeSessionProof,
@@ -197,7 +197,7 @@ describe('authorizeWaitAndClaim', async function () {
 describe('getAccountPlan', async function () {
   const accountWithAPlan = 'did:mailto:example.com:i-have-a-plan'
   const accountWithoutAPlan = 'did:mailto:example.com:i-have-no-plan'
-  const product = 'did:web:test.web3.storage'
+  const product = 'did:web:test.storacha.network'
   /** @type {Record<Ucanto.DID, {product: Ucanto.DID, updatedAt: string}>} */
   const plans = {
     [accountWithAPlan]: {

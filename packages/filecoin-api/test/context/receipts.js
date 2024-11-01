@@ -1,7 +1,7 @@
 import { Receipt } from '@ucanto/core'
-import * as StorefrontCaps from '@web3-storage/capabilities/filecoin/storefront'
-import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
-import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
+import * as StorefrontCaps from '@storacha/capabilities/filecoin/storefront'
+import * as AggregatorCaps from '@storacha/capabilities/filecoin/aggregator'
+import * as DealerCaps from '@storacha/capabilities/filecoin/dealer'
 
 import * as API from '../../src/types.js'
 

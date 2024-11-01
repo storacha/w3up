@@ -1,11 +1,11 @@
 {
-  "packages/access-client": "20.1.0",
-  "packages/blob-index": "1.0.4",
-  "packages/filecoin-api": "7.3.2",
-  "packages/filecoin-client": "3.3.4",
-  "packages/capabilities": "17.4.0",
-  "packages/upload-api": "18.1.0",
-  "packages/upload-client": "17.1.0",
-  "packages/w3up-client": "16.4.0",
-  "packages/did-mailto": "2.0.2"
+  "packages/access-client": "0.0.0",
+  "packages/blob-index": "0.0.0",
+  "packages/filecoin-api": "0.0.0",
+  "packages/filecoin-client": "0.0.0",
+  "packages/capabilities": "0.0.0",
+  "packages/upload-api": "0.0.0",
+  "packages/upload-client": "0.0.0",
+  "packages/w3up-client": "0.0.0",
+  "packages/did-mailto": "0.0.0"
 }

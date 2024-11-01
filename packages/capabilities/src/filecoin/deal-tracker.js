@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as DealTracker from '@web3-storage/capabilities/filecoin/deal-tracker'
+ * import * as DealTracker from '@storacha/capabilities/filecoin/deal-tracker'
  * ```
  *
  * @module

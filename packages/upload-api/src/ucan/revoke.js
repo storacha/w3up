@@ -1,5 +1,5 @@
 import { provide, Delegation, Failure } from '@ucanto/server'
-import { revoke } from '@web3-storage/capabilities/ucan'
+import { revoke } from '@storacha/capabilities/ucan'
 import * as API from '../types.js'
 
 /**

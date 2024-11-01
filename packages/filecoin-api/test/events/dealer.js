@@ -1,8 +1,8 @@
 import { CBOR } from '@ucanto/core'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as Server from '@ucanto/server'
-import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
-import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
+import * as DealerCaps from '@storacha/capabilities/filecoin/dealer'
+import * as DealTrackerCaps from '@storacha/capabilities/filecoin/deal-tracker'
 
 import * as API from '../../src/types.js'
 import * as TestAPI from '../types.js'

@@ -1,7 +1,7 @@
 import * as API from '../types.js'
 import { provide } from '@ucanto/server'
 import { Receipt } from '@ucanto/core'
-import { conclude } from '@web3-storage/capabilities/ucan'
+import { conclude } from '@storacha/capabilities/ucan'
 import * as BlobAccept from '../blob/accept.js'
 
 /**

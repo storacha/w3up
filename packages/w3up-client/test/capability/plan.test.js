@@ -5,7 +5,7 @@ import * as Result from '../../src/result.js'
 /**
  *
  * @param {*} client
- * @param {import('@web3-storage/upload-api').DebugEmail} mail
+ * @param {import('@storacha/upload-api').DebugEmail} mail
  * @param {(email: {url: string | URL}) => Promise<void>} grantAccess
  */
 async function initializeAccount(client, mail, grantAccess) {

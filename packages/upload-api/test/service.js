@@ -1,6 +1,6 @@
 import * as API from './types.js'
 import { alice } from './helpers/utils.js'
-import { Space } from '@web3-storage/capabilities'
+import { Space } from '@storacha/capabilities'
 import { parseLink } from '@ucanto/core'
 
 /**

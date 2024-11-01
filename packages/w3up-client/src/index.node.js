@@ -2,8 +2,8 @@
  * @hidden
  * @module
  */
-import { AgentData } from '@web3-storage/access/agent'
-import { StoreConf } from '@web3-storage/access/stores/store-conf'
+import { AgentData } from '@storacha/access/agent'
+import { StoreConf } from '@storacha/access/stores/store-conf'
 import { generate } from '@ucanto/principal/ed25519'
 import { Client } from './client.js'
 export * as Result from './result.js'

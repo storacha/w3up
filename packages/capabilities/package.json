@@ -1,11 +1,11 @@
 {
-  "name": "@web3-storage/capabilities",
-  "version": "17.4.0",
-  "description": "UCAN Capabilities provided by web3.storage",
-  "homepage": "https://web3.storage",
+  "name": "@storacha/capabilities",
+  "version": "0.0.0",
+  "description": "UCAN Capabilities provided by storacha.network",
+  "homepage": "https://storacha.network",
   "repository": {
     "type": "git",
-    "url": "https://github.com/storacha/w3up.git",
+    "url": "https://github.com/storacha/upload-service.git",
     "directory": "packages/capabilities"
   },
   "license": "(Apache-2.0 OR MIT)",
@@ -61,9 +61,9 @@
       "types": "./dist/src/index/index.d.ts",
       "import": "./src/index/index.js"
     },
-    "./web3.storage/blob": {
-      "types": "./dist/src/web3.storage/blob.d.ts",
-      "import": "./src/web3.storage/blob.js"
+    "./storacha.network/blob": {
+      "types": "./dist/src/storacha.network/blob.d.ts",
+      "import": "./src/storacha.network/blob.js"
     },
     "./types": {
       "types": "./dist/src/types.d.ts",
@@ -104,7 +104,7 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.4",
-    "@web3-storage/eslint-config-w3up": "workspace:^",
+    "@storacha/eslint-config": "workspace:^",
     "assert": "^2.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
@@ -114,7 +114,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
@@ -139,7 +139,7 @@
     "ignores": [
       "@types/*",
       "assert",
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ]
   }
 }

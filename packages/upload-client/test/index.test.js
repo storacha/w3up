@@ -4,11 +4,11 @@ import * as Server from '@ucanto/server'
 import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
-import * as UCAN from '@web3-storage/capabilities/ucan'
-import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import * as IndexCapabilities from '@web3-storage/capabilities/index'
-import * as UploadCapabilities from '@web3-storage/capabilities/upload'
-import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
+import * as UCAN from '@storacha/capabilities/ucan'
+import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as IndexCapabilities from '@storacha/capabilities/index'
+import * as UploadCapabilities from '@storacha/capabilities/upload'
+import * as StorefrontCapabilities from '@storacha/capabilities/filecoin/storefront'
 import { Piece } from '@web3-storage/data-segment'
 import { uploadFile, uploadDirectory, uploadCAR } from '../src/index.js'
 import { serviceSigner } from './fixtures.js'
@@ -614,7 +614,7 @@ describe('uploadDirectory', () => {
     ])
     function createSimpleMockUploadServer() {
       /**
-       * @type {Array<Server.ProviderInput<import('@ucanto/interface').InferInvokedCapability<import('@web3-storage/capabilities').Blob['add']|import('@web3-storage/capabilities').Upload['add']>>>}
+       * @type {Array<Server.ProviderInput<import('@ucanto/interface').InferInvokedCapability<import('@storacha/capabilities').Blob['add']|import('@storacha/capabilities').Upload['add']>>>}
        */
       const invocations = []
       const service = mockService({
@@ -1144,7 +1144,7 @@ describe('uploadCAR', () => {
                 issuer: space,
                 audience: agent,
                 with: space.did(),
-                nb: /** @type {import('@web3-storage/capabilities/types').BlobAdd['nb']} */ (
+                nb: /** @type {import('@storacha/capabilities/types').BlobAdd['nb']} */ (
                   nb
                 ),
                 expiration: Infinity,
@@ -1156,7 +1156,7 @@ describe('uploadCAR', () => {
                 issuer: space,
                 audience: agent,
                 with: space.did(),
-                nb: /** @type {import('@web3-storage/capabilities/types').IndexAdd['nb']} */ (
+                nb: /** @type {import('@storacha/capabilities/types').IndexAdd['nb']} */ (
                   nb
                 ),
                 expiration: Infinity,
@@ -1168,7 +1168,7 @@ describe('uploadCAR', () => {
                 issuer: space,
                 audience: agent,
                 with: space.did(),
-                nb: /** @type {import('@web3-storage/capabilities/types').UploadAdd['nb']} */ (
+                nb: /** @type {import('@storacha/capabilities/types').UploadAdd['nb']} */ (
                   nb
                 ),
                 expiration: Infinity,

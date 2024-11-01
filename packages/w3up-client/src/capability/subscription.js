@@ -1,4 +1,4 @@
-import { Subscription as SubscriptionCapabilities } from '@web3-storage/capabilities'
+import { Subscription as SubscriptionCapabilities } from '@storacha/capabilities'
 import * as API from '../types.js'
 import { Base } from '../base.js'
 
@@ -12,7 +12,7 @@ export class SubscriptionClient extends Base {
    * Required delegated capabilities:
    * - `subscription/list`
    *
-   * @param {import('@web3-storage/access').AccountDID} account
+   * @param {import('@storacha/access').AccountDID} account
    * @param {object} [options]
    * @param {string} [options.nonce]
    */

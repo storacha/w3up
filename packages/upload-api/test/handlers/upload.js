@@ -8,7 +8,7 @@ import {
   service,
 } from '../util.js'
 import { createServer, connect } from '../../src/lib.js'
-import { Upload } from '@web3-storage/capabilities'
+import { Upload } from '@storacha/capabilities'
 import * as Result from '../helpers/result.js'
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/batchwriteitemcommand.html

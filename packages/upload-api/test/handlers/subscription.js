@@ -1,4 +1,4 @@
-import { Subscription } from '@web3-storage/capabilities'
+import { Subscription } from '@storacha/capabilities'
 import * as API from '../../src/types.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, registerSpace } from '../util.js'

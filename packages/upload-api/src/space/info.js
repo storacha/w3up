@@ -1,4 +1,4 @@
-import { Space } from '@web3-storage/capabilities'
+import { Space } from '@storacha/capabilities'
 import { DID } from '@ucanto/validator'
 import * as API from '../types.js'
 
@@ -33,7 +33,7 @@ export const info = async ({ capability }, ctx) => {
     }
   }
 
-  /** @type {import('@web3-storage/access/types').SpaceUnknown} */
+  /** @type {import('@storacha/access/types').SpaceUnknown} */
   const spaceUnknownFailure = {
     name: 'SpaceUnknown',
     message: `Space not found.`,

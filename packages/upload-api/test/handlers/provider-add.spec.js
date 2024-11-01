@@ -4,7 +4,7 @@ import * as ucanto from '@ucanto/core'
 import * as API from '../../src/types.js'
 import * as Types from '../types.js'
 import { cleanupContext, createContext } from '../helpers/context.js'
-import { Access, Provider, Consumer } from '@web3-storage/capabilities'
+import { Access, Provider, Consumer } from '@storacha/capabilities'
 import * as delegationsResponse from '../../src/utils/delegations-response.js'
 import { NON_STANDARD } from '@ipld/dag-ucan/signature'
 import { createAuthorization } from '../helpers/utils.js'
@@ -176,7 +176,7 @@ describe(`provider/add`, () => {
 
   it('add providers set in env', async () => {
     const { space, agent, account, ...context } = await setup({
-      providers: ['did:web:nft.storage', 'did:web:web3.storage'],
+      providers: ['did:web:nft.storage', 'did:web:storacha.network'],
     })
     const { service } = context
     try {
@@ -203,7 +203,7 @@ describe(`provider/add`, () => {
           audience: service,
           with: account.did(),
           nb: {
-            provider: 'did:web:web3.storage',
+            provider: 'did:web:storacha.network',
             consumer: w3space.did(),
           },
           proofs,
@@ -218,7 +218,7 @@ describe(`provider/add`, () => {
 
   it('provider/add can not add two diff providers to the same space', async () => {
     const { space, agent, account, ...context } = await setup({
-      providers: ['did:web:nft.storage', 'did:web:web3.storage'],
+      providers: ['did:web:nft.storage', 'did:web:storacha.network'],
     })
     const { service } = context
 
@@ -245,7 +245,7 @@ describe(`provider/add`, () => {
           audience: service,
           with: account.did(),
           nb: {
-            provider: 'did:web:web3.storage',
+            provider: 'did:web:storacha.network',
             consumer: space.did(),
           },
           proofs,
@@ -273,7 +273,7 @@ describe(`provider/add`, () => {
           audience: service,
           with: account.did(),
           nb: {
-            provider: 'did:web:web3.storage',
+            provider: 'did:web:storacha.network',
             consumer: space.did(),
           },
           proofs,
@@ -318,7 +318,7 @@ const setup = async (options = {}) => {
  * @param {API.Signer<API.DID<'key'>>} options.deviceA
  * @param {API.Signer<API.SpaceDID>} options.space
  * @param {API.Principal<API.DID<'mailto'>>} options.accountA
- * @param {API.Signer<API.DID<'web'>>} options.service - web3.storage service
+ * @param {API.Signer<API.DID<'web'>>} options.service - storacha.network service
  * @param {API.ConnectionView<API.Service>} options.conn
  * @param {API.AccessServiceContext} options.context
  * @param {API.DebugEmail} options.emails

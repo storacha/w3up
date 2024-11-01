@@ -14,7 +14,7 @@ const DATA_ID = 1
  * Usage:
  *
  * ```js
- * import { IndexedDBDriver } from '@web3-storage/access/drivers/indexeddb'
+ * import { IndexedDBDriver } from '@storacha/access/drivers/indexeddb'
  * ```
  *
  * @template T

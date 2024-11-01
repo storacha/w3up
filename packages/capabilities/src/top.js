@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Account from '@web3-storage/capabilities/top'
+ * import * as Account from '@storacha/capabilities/top'
  * ```
  *
  * @module

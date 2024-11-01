@@ -2,9 +2,9 @@ import * as API from '../../types.js'
 import { alice, bob } from '../../helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
-import { Access, RateLimit, Store } from '@web3-storage/capabilities'
+import { Access, RateLimit, Store } from '@storacha/capabilities'
 import * as CAR from '@ucanto/transport/car'
-import * as DidMailto from '@web3-storage/did-mailto'
+import * as DidMailto from '@storacha/did-mailto'
 
 /**
  * @type {API.Tests}

@@ -1,5 +1,5 @@
 import { sha256 } from 'multiformats/hashes/sha2'
-import { AgentData } from '@web3-storage/access/agent'
+import { AgentData } from '@storacha/access/agent'
 import { randomBytes } from '../helpers/random.js'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'

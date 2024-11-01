@@ -1,4 +1,4 @@
-import * as StorefrontCapabilities from '@web3-storage/capabilities/filecoin/storefront'
+import * as StorefrontCapabilities from '@storacha/capabilities/filecoin/storefront'
 import * as Server from '@ucanto/server'
 
 /**

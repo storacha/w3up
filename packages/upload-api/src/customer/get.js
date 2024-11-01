@@ -1,6 +1,6 @@
 import * as API from '../types.js'
 import * as Provider from '@ucanto/server'
-import { Customer } from '@web3-storage/capabilities'
+import { Customer } from '@storacha/capabilities'
 
 /**
  * @param {API.CustomerServiceContext} context

@@ -1,6 +1,6 @@
 import * as Server from '@ucanto/server'
 import * as API from '../types.js'
-import * as RateLimit from '@web3-storage/capabilities/rate-limit'
+import * as RateLimit from '@storacha/capabilities/rate-limit'
 
 /**
  * @param {API.RateLimitServiceContext} ctx

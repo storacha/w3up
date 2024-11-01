@@ -1,7 +1,7 @@
 import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
 import { CBOR } from '@ucanto/core'
-import * as Dealer from '@web3-storage/capabilities/filecoin/dealer'
+import * as Dealer from '@storacha/capabilities/filecoin/dealer'
 import { services } from './service.js'
 
 /**

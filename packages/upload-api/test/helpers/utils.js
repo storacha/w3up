@@ -5,10 +5,10 @@ import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as Context from './context.js'
-import { Provider, UCAN, Space } from '@web3-storage/capabilities'
-import * as DidMailto from '@web3-storage/did-mailto'
+import { Provider, UCAN, Space } from '@storacha/capabilities'
+import * as DidMailto from '@storacha/did-mailto'
 import * as API from '../types.js'
-import { stringToDelegation } from '@web3-storage/access/encoding'
+import { stringToDelegation } from '@storacha/access/encoding'
 
 export { Context }
 
@@ -41,7 +41,7 @@ export const w3 = ed25519
   .parse(
     'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
   )
-  .withDID('did:web:test.web3.storage')
+  .withDID('did:web:test.storacha.network')
 
 /**
  * Creates a server for the given service.
@@ -202,7 +202,7 @@ export const queue = (buffer = []) => {
 /**
  * @param {Types.Signer} issuer
  * @param {Types.Signer<Types.ServiceDID>} service
- * @param {Types.ConnectionView<import('@web3-storage/access/types').Service>} conn
+ * @param {Types.ConnectionView<import('@storacha/access/types').Service>} conn
  * @param {`${string}@${string}`} email
  */
 export async function createSpace(issuer, service, conn, email) {
@@ -254,7 +254,7 @@ export async function extractConfirmInvocation(confirmationUrl) {
 }
 
 /**
- * @param {API.ConnectionView<import('@web3-storage/access').Service>} connection
+ * @param {API.ConnectionView<import('@storacha/access').Service>} connection
  * @param {{ url: string|URL }} confirmation
  */
 export async function confirmConfirmationUrl(connection, confirmation) {

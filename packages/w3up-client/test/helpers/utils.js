@@ -1,10 +1,10 @@
-import { conclude } from '@web3-storage/capabilities/ucan'
+import { conclude } from '@storacha/capabilities/ucan'
 import { Receipt } from '@ucanto/core'
 import * as Server from '@ucanto/server'
-import { UCAN } from '@web3-storage/capabilities'
-import * as HTTP from '@web3-storage/capabilities/http'
-import * as W3sBlobCapabilities from '@web3-storage/capabilities/web3.storage/blob'
-import { W3sBlob } from '@web3-storage/capabilities'
+import { UCAN } from '@storacha/capabilities'
+import * as HTTP from '@storacha/capabilities/http'
+import * as W3sBlobCapabilities from '@storacha/capabilities/web3.storage/blob'
+import { W3sBlob } from '@storacha/capabilities'
 import * as Types from '../../src/types.js'
 
 export const validateAuthorization = () => ({ ok: {} })

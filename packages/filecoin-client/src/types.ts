@@ -34,7 +34,7 @@ import {
   DealInfo,
   DealInfoSuccess,
   DealInfoFailure,
-} from '@web3-storage/capabilities/types'
+} from '@storacha/capabilities/types'
 
 export type SERVICE = 'STOREFRONT' | 'AGGREGATOR' | 'DEALER' | 'DEAL_TRACKER'
 export interface ServiceConfig {

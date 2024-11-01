@@ -14,7 +14,7 @@ const notImplemented = () => {
  *   store: Partial<import('../../src/types.js').Service['store']>
  *   upload: Partial<import('../../src/types.js').Service['upload']>
  *   usage: Partial<import('../../src/types.js').Service['usage']>
- *   filecoin: Partial<import('@web3-storage/filecoin-client/storefront').StorefrontService['filecoin']>
+ *   filecoin: Partial<import('@storacha/filecoin-client/storefront').StorefrontService['filecoin']>
  * }>} impl
  */
 export function mockService(impl) {

@@ -3,14 +3,14 @@ import {
   uploadDirectory,
   uploadCAR,
   Receipt,
-} from '@web3-storage/upload-client'
+} from '@storacha/upload-client'
 import {
   Blob as BlobCapabilities,
   Index as IndexCapabilities,
   Upload as UploadCapabilities,
   Filecoin as FilecoinCapabilities,
-} from '@web3-storage/capabilities'
-import * as DIDMailto from '@web3-storage/did-mailto'
+} from '@storacha/capabilities'
+import * as DIDMailto from '@storacha/did-mailto'
 import { Base } from './base.js'
 import * as Account from './account.js'
 import { Space } from './space.js'
@@ -44,7 +44,7 @@ export {
 
 export class Client extends Base {
   /**
-   * @param {import('@web3-storage/access').AgentData} agentData
+   * @param {import('@storacha/access').AgentData} agentData
    * @param {object} [options]
    * @param {import('./types.js').ServiceConf} [options.serviceConf]
    * @param {URL} [options.receiptsEndpoint]

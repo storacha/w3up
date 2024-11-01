@@ -1,4 +1,4 @@
-import { Filecoin as FilecoinCapabilities } from '@web3-storage/capabilities'
+import { Filecoin as FilecoinCapabilities } from '@storacha/capabilities'
 import { randomAggregate, randomCAR, randomCargo } from '../helpers/random.js'
 import * as Test from '../test.js'
 

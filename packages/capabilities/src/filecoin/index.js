@@ -6,7 +6,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Filecoin from '@web3-storage/capabilities/filecoin'
+ * import * as Filecoin from '@storacha/capabilities/filecoin'
  * ```
  *
  * @module

@@ -1,6 +1,6 @@
 import { CAR } from '@ucanto/transport'
-import * as StoreCapabilities from '@web3-storage/capabilities/store'
-import { SpaceDID } from '@web3-storage/capabilities/utils'
+import * as StoreCapabilities from '@storacha/capabilities/store'
+import { SpaceDID } from '@storacha/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from './service.js'
 import { REQUEST_RETRIES } from './constants.js'

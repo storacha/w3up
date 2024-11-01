@@ -4,7 +4,7 @@ import { createServer, connect } from '../../../../src/lib.js'
 
 import { delegate } from '@ucanto/core'
 import * as CAR from '@ucanto/transport/car'
-import { Admin, Store } from '@web3-storage/capabilities'
+import { Admin, Store } from '@storacha/capabilities'
 
 /**
  * @type {API.Tests}

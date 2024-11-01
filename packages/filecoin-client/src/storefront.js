@@ -1,6 +1,6 @@
 import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
-import * as Storefront from '@web3-storage/capabilities/filecoin/storefront'
+import * as Storefront from '@storacha/capabilities/filecoin/storefront'
 import { services } from './service.js'
 
 /**

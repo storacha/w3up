@@ -104,7 +104,7 @@ describe('plan/set', function () {
       audience: service,
       with: account,
       nb: {
-        product: 'did:web:lite.web3.storage',
+        product: 'did:web:lite.storacha.network',
       },
       proofs: await createAuthorization({ agent, service, account }),
     })
@@ -130,7 +130,7 @@ describe('plan/set', function () {
       audience: service,
       with: account,
       nb: {
-        product: 'did:web:lite.web3.storage',
+        product: 'did:web:lite.storacha.network',
       },
     })
 
@@ -150,7 +150,7 @@ describe('plan/set', function () {
       audience: service,
       with: account,
       nb: {
-        product: 'did:web:lite.web3.storage',
+        product: 'did:web:lite.storacha.network',
       },
       proofs: await createAuthorization({ agent, service, account }),
     })
@@ -170,7 +170,7 @@ describe('plan/set', function () {
       audience: service,
       with: account,
       nb: {
-        product: 'did:web:lite.web3.storage',
+        product: 'did:web:lite.storacha.network',
       },
       proofs: [
         await Plan.set.delegate({
@@ -202,7 +202,7 @@ describe('plan/set', function () {
       audience: service,
       with: account,
       nb: {
-        product: 'did:web:lite.web3.storage',
+        product: 'did:web:lite.storacha.network',
       },
       proofs: [
         await Plan.set.delegate({
@@ -210,7 +210,7 @@ describe('plan/set', function () {
           audience: bob,
           with: account,
           nb: {
-            product: 'did:web:lite.web3.storage',
+            product: 'did:web:lite.storacha.network',
           },
           proofs: await createAuthorization({ agent, service, account }),
         }),
@@ -237,7 +237,7 @@ describe('plan/set', function () {
       audience: service,
       with: account,
       nb: {
-        product: 'did:web:lite.web3.storage',
+        product: 'did:web:lite.storacha.network',
       },
       proofs: [
         await Plan.set.delegate({
@@ -245,7 +245,7 @@ describe('plan/set', function () {
           audience: bob,
           with: account,
           nb: {
-            product: 'did:web:starter.web3.storage',
+            product: 'did:web:starter.storacha.network',
           },
           proofs: await createAuthorization({ agent, service, account }),
         }),

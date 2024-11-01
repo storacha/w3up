@@ -2,8 +2,8 @@ import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
 import * as HTTP from '@ucanto/transport/http'
 import * as ucanto from '@ucanto/core'
-import * as Capabilities from '@web3-storage/capabilities/space'
-import { attest } from '@web3-storage/capabilities/ucan'
+import * as Capabilities from '@storacha/capabilities/space'
+import { attest } from '@storacha/capabilities/ucan'
 import * as Access from './access.js'
 import * as Space from './space.js'
 
@@ -17,7 +17,7 @@ import {
 } from '@ucanto/core'
 import { isExpired, isTooEarly, canDelegateCapability } from './delegations.js'
 import { AgentData, getSessionProofs } from './agent-data.js'
-import { UCAN } from '@web3-storage/capabilities'
+import { UCAN } from '@storacha/capabilities'
 
 import * as API from './types.js'
 
@@ -26,8 +26,8 @@ export * from './delegations.js'
 export { AgentData, Access, Space, Delegation, Schema }
 export * from './agent-use-cases.js'
 
-const HOST = 'https://up.web3.storage'
-const PRINCIPAL = DID.parse('did:web:web3.storage')
+const HOST = 'https://up.storacha.network'
+const PRINCIPAL = DID.parse('did:web:storacha.network')
 
 /**
  * Keeps track of AgentData for all Agents constructed.
@@ -50,7 +50,7 @@ const agentToData = new WeakMap()
  * Usage:
  *
  * ```js
- * import { connection } from '@web3-storage/access/agent'
+ * import { connection } from '@storacha/access/agent'
  * ```
  *
  * @template {API.DID} T - DID method
@@ -82,7 +82,7 @@ export function connection(options = {}) {
  * Usage:
  *
  * ```js
- * import { Agent } from '@web3-storage/access/agent'
+ * import { Agent } from '@storacha/access/agent'
  * ```
  *
  * @template {Record<string, any>} [S=Service]
@@ -239,7 +239,7 @@ export class Agent {
       }
     }
     const receipt = await this.invokeAndExecute(UCAN.revoke, {
-      // per https://github.com/storacha/w3up/blob/main/packages/capabilities/src/ucan.js#L38C6-L38C6 the resource here should be
+      // per https://github.com/storacha/upload-service/blob/main/packages/capabilities/src/ucan.js#L38C6-L38C6 the resource here should be
       // the current issuer - using the space DID here works for simple cases but falls apart when a delegee tries to revoke a delegation
       // they have re-delegated, since they don't have "ucan/revoke" capabilities on the space
       with: this.issuer.did(),
@@ -505,7 +505,7 @@ export class Agent {
    * const i1 = await agent.invoke(Space.info, {})
    * const i2 = await agent.invoke(Space.recover, {
    *   nb: {
-   *     identity: 'mailto:hello@web3.storage',
+   *     identity: 'mailto:hello@storacha.network',
    *   },
    * })
    *

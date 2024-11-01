@@ -1,4 +1,4 @@
-import { abilitiesAsStrings } from '@web3-storage/capabilities'
+import { abilitiesAsStrings } from '@storacha/capabilities'
 
 const setOfAbilities = new Set(abilitiesAsStrings)
 
@@ -12,13 +12,13 @@ const setOfAbilities = new Set(abilitiesAsStrings)
  * nice with Typescript.
  *
  * @param {string[]} abilities
- * @returns {import('@web3-storage/capabilities/types').ServiceAbility[]}
+ * @returns {import('@storacha/capabilities/types').ServiceAbility[]}
  */
 export function asAbilities(abilities) {
   for (const ability of abilities) {
     if (
       !setOfAbilities.has(
-        /** @type {import('@web3-storage/capabilities/types').ServiceAbility} */ (
+        /** @type {import('@storacha/capabilities/types').ServiceAbility} */ (
           ability
         )
       )
@@ -26,7 +26,7 @@ export function asAbilities(abilities) {
       throw new Error(`${ability} is not a supported capability`)
     }
   }
-  return /** @type {import('@web3-storage/capabilities/types').ServiceAbility[]} */ (
+  return /** @type {import('@storacha/capabilities/types').ServiceAbility[]} */ (
     abilities
   )
 }

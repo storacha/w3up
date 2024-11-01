@@ -1,14 +1,14 @@
-import * as DidMailto from '@web3-storage/did-mailto'
+import * as DidMailto from '@storacha/did-mailto'
 
 /**
- * @param {import("@web3-storage/did-mailto/types").DidMailto} mailtoDid
+ * @param {import("@storacha/did-mailto/types").DidMailto} mailtoDid
  */
 export function mailtoDidToEmail(mailtoDid) {
   return DidMailto.toEmail(DidMailto.fromString(mailtoDid))
 }
 
 /**
- * @param {import("@web3-storage/did-mailto/types").DidMailto} mailtoDid
+ * @param {import("@storacha/did-mailto/types").DidMailto} mailtoDid
  */
 export function mailtoDidToDomain(mailtoDid) {
   const accountEmail = mailtoDidToEmail(mailtoDid)

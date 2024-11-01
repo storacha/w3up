@@ -15,7 +15,7 @@ import {
   AggregatorService,
   StorefrontService,
   DealTrackerService,
-} from '@web3-storage/filecoin-client/types'
+} from '@storacha/filecoin-client/types'
 import {
   Store,
   UpdatableStore,

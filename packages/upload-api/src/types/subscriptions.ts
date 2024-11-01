@@ -3,7 +3,7 @@ import {
   AccountDID,
   SubscriptionListSuccess,
   SubscriptionListFailure,
-} from '@web3-storage/capabilities/types'
+} from '@storacha/capabilities/types'
 
 export interface SubscriptionsStorage {
   list: (

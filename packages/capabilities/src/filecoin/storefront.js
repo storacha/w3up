@@ -3,7 +3,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Storefront from '@web3-storage/capabilities/filecoin/storefront'
+ * import * as Storefront from '@storacha/capabilities/filecoin/storefront'
  * ```
  *
  * @module

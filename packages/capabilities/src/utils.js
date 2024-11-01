@@ -4,7 +4,7 @@ import * as Types from '@ucanto/interface'
 
 import { equals } from 'uint8arrays/equals'
 
-// e.g. did:web:web3.storage or did:web:staging.web3.storage
+// e.g. did:web:storacha.network or did:web:staging.storacha.network
 export const ProviderDID = DID.match({ method: 'web' })
 
 export const SpaceDID = DID.match({ method: 'key' })
@@ -92,7 +92,7 @@ export const equalLink = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"space/blob/add"|"space/blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept", Types.URI<'did:'>, {blob: { digest: Uint8Array, size: number }}>} T
+ * @template {Types.ParsedCapability<"space/blob/add"|"space/blob/remove"|"storacha.network/blob/allocate"|"storacha.network/blob/accept", Types.URI<'did:'>, {blob: { digest: Uint8Array, size: number }}>} T
  * @param {T} claimed
  * @param {T} delegated
  * @returns {Types.Result<{}, Types.Failure>}

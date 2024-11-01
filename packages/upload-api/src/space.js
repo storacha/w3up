@@ -1,4 +1,4 @@
-import { Space } from '@web3-storage/capabilities'
+import { Space } from '@storacha/capabilities'
 import * as Provider from '@ucanto/server'
 import * as API from './types.js'
 

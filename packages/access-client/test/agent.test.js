@@ -3,13 +3,13 @@ import * as ucanto from '@ucanto/core'
 import { URI } from '@ucanto/validator'
 import { Delegation, provide } from '@ucanto/server'
 import { Agent, Access, AgentData, connection } from '../src/agent.js'
-import * as Space from '@web3-storage/capabilities/space'
+import * as Space from '@storacha/capabilities/space'
 import { createServer } from './helpers/utils.js'
 import * as fixtures from './helpers/fixtures.js'
 import * as ed25519 from '@ucanto/principal/ed25519'
-import { UCAN, Provider } from '@web3-storage/capabilities'
+import { UCAN, Provider } from '@storacha/capabilities'
 import { Absentee } from '@ucanto/principal'
-import * as DidMailto from '@web3-storage/did-mailto'
+import * as DidMailto from '@storacha/did-mailto'
 import * as API from '../src/types.js'
 
 describe('Agent', function () {
@@ -415,9 +415,9 @@ describe('Agent', function () {
       `test-${Math.random().toString().slice(2)}@dag.house`
     )
     const serviceA = await ed25519.Signer.generate()
-    const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
+    const serviceAWeb = serviceA.withDID('did:web:a.up.storacha.network')
     const serviceB = await ed25519.Signer.generate()
-    const serviceBWeb = serviceB.withDID('did:web:b.up.web3.storage')
+    const serviceBWeb = serviceB.withDID('did:web:b.up.storacha.network')
 
     const server = createServer()
     const agentData = await AgentData.create()
@@ -469,9 +469,9 @@ describe('Agent', function () {
       `test-${Math.random().toString().slice(2)}@dag.house`
     )
     const serviceA = await ed25519.Signer.generate()
-    const serviceAWeb = serviceA.withDID('did:web:a.up.web3.storage')
+    const serviceAWeb = serviceA.withDID('did:web:a.up.storacha.network')
     const serviceB = await ed25519.Signer.generate()
-    const serviceBWeb = serviceB.withDID('did:web:b.up.web3.storage')
+    const serviceBWeb = serviceB.withDID('did:web:b.up.storacha.network')
 
     const server = createServer()
     const agentData = await AgentData.create()

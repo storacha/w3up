@@ -12,12 +12,12 @@ import type {
   ConnectionView,
 } from '@ucanto/interface'
 import type { ProviderInput } from '@ucanto/server'
-import { InvocationConfig } from '@web3-storage/filecoin-client/types'
+import { InvocationConfig } from '@storacha/filecoin-client/types'
 
 export * as UcantoInterface from '@ucanto/interface'
 export type { Result, Variant } from '@ucanto/interface'
-export * from '@web3-storage/filecoin-client/types'
-export * from '@web3-storage/capabilities/types'
+export * from '@storacha/filecoin-client/types'
+export * from '@storacha/capabilities/types'
 
 // Resources
 export interface Queue<Message> {

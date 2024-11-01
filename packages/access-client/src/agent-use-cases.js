@@ -1,11 +1,11 @@
 import { addSpacesFromDelegations, Agent as AccessAgent } from './agent.js'
-import * as Access from '@web3-storage/capabilities/access'
+import * as Access from '@storacha/capabilities/access'
 import { bytesToDelegations } from './encoding.js'
-import { Provider, Plan } from '@web3-storage/capabilities'
-import * as w3caps from '@web3-storage/capabilities'
+import { Provider, Plan } from '@storacha/capabilities'
+import * as w3caps from '@storacha/capabilities'
 import { Schema, delegate } from '@ucanto/core'
 import { AgentData, isSessionProof } from './agent-data.js'
-import * as DidMailto from '@web3-storage/did-mailto'
+import * as DidMailto from '@storacha/did-mailto'
 import * as API from './types.js'
 
 const DIDWeb = Schema.DID.match({ method: 'web' })
@@ -73,7 +73,7 @@ export async function claimAccess(
  * @param {AccessAgent} opts.access
  * @param {API.SpaceDID} opts.space
  * @param {API.Principal<API.AccountDID>} opts.account
- * @param {API.ProviderDID} opts.provider - e.g. 'did:web:staging.web3.storage'
+ * @param {API.ProviderDID} opts.provider - e.g. 'did:web:staging.storacha.network'
  */
 export async function addProvider({ access, space, account, provider }) {
   const result = await access.invokeAndExecute(Provider.add, {
@@ -255,7 +255,7 @@ export async function addProviderAndDelegateToAccount(
   }
 
   if (spaceMeta) {
-    throw new Error('Space already registered with web3.storage.')
+    throw new Error('Space already registered with storacha.network.')
   }
   const account = { did: () => DidMailto.fromEmail(DidMailto.email(email)) }
   await addProvider({ access, space, account, provider })

@@ -2,9 +2,9 @@
 // to generate docusaurus-compatible markdown from typedoc output.
 
 const config = {
-  title: 'Web3.Storage Documentation',
+  title: 'Storacha Documentation',
   tagline: 'The simple file storage service for IPFS and Filecoin',
-  url: 'https://docs.web3.storage',
+  url: 'https://docs.storacha.network',
   baseUrl: '/',
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',

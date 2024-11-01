@@ -1,6 +1,6 @@
 import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
-import * as Aggregator from '@web3-storage/capabilities/filecoin/aggregator'
+import * as Aggregator from '@storacha/capabilities/filecoin/aggregator'
 import { services } from './service.js'
 
 /**

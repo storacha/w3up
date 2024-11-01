@@ -3,7 +3,7 @@ import { PieceLink } from '@web3-storage/data-segment'
 import {
   DealerService,
   DealTrackerService,
-} from '@web3-storage/filecoin-client/types'
+} from '@storacha/filecoin-client/types'
 import {
   Store,
   UpdatableStore,

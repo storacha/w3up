@@ -1,11 +1,11 @@
 {
-  "name": "@web3-storage/access",
-  "version": "20.1.0",
-  "description": "w3access client",
-  "homepage": "https://web3.storage",
+  "name": "@storacha/access",
+  "version": "0.0.0",
+  "description": "access client",
+  "homepage": "https://storacha.network",
   "repository": {
     "type": "git",
-    "url": "https://github.com/storacha/w3up.git",
+    "url": "https://github.com/storacha/upload-service.git",
     "directory": "packages/access-client"
   },
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
@@ -108,8 +108,8 @@
     "@ucanto/principal": "^9.0.1",
     "@ucanto/transport": "^9.1.1",
     "@ucanto/validator": "^9.0.2",
-    "@web3-storage/capabilities": "workspace:^",
-    "@web3-storage/did-mailto": "workspace:^",
+    "@storacha/capabilities": "workspace:^",
+    "@storacha/did-mailto": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "11.0.2",
     "multiformats": "^12.1.2",
@@ -126,7 +126,7 @@
     "@types/varint": "^6.0.1",
     "@types/ws": "^8.5.4",
     "@ucanto/server": "^10.0.0",
-    "@web3-storage/eslint-config-w3up": "workspace:^",
+    "@storacha/eslint-config": "workspace:^",
     "assert": "^2.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
@@ -136,7 +136,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
@@ -158,7 +158,7 @@
     "ignores": [
       "@types/*",
       "assert",
-      "@web3-storage/eslint-config-w3up"
+      "@storacha/eslint-config"
     ]
   }
 }

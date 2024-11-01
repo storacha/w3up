@@ -1,4 +1,4 @@
-import { asAbilities } from '@web3-storage/w3up-client'
+import { asAbilities } from '@storacha/client'
 import * as Test from './test.js'
 
 /**

@@ -78,10 +78,10 @@ importers:
       '@ucanto/validator':
         specifier: ^9.0.2
         version: 9.0.2
-      '@web3-storage/capabilities':
+      '@storacha/capabilities':
         specifier: workspace:^
         version: link:../capabilities
-      '@web3-storage/did-mailto':
+      '@storacha/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto
       bigint-mod-arith:
@@ -127,7 +127,7 @@ importers:
       '@ucanto/server':
         specifier: ^10.0.0
         version: 10.0.0
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
       assert:
@@ -163,7 +163,7 @@ importers:
       '@ucanto/interface':
         specifier: ^10.0.1
         version: 10.0.1
-      '@web3-storage/capabilities':
+      '@storacha/capabilities':
         specifier: workspace:^
         version: link:../capabilities
       carstream:
@@ -179,7 +179,7 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
       c8:
@@ -225,7 +225,7 @@ importers:
       '@types/node':
         specifier: ^20.8.4
         version: 20.12.10
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
       assert:
@@ -255,7 +255,7 @@ importers:
       '@types/mocha':
         specifier: ^10.0.1
         version: 10.0.6
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
       mocha:
@@ -300,7 +300,7 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@web3-storage/capabilities':
+      '@storacha/capabilities':
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/content-claims':
@@ -331,10 +331,10 @@ importers:
       '@web-std/blob':
         specifier: ^3.0.5
         version: 3.0.5
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
-      '@web3-storage/filecoin-client':
+      '@storacha/filecoin-client':
         specifier: workspace:^
         version: link:../filecoin-client
       c8:
@@ -370,7 +370,7 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@web3-storage/capabilities':
+      '@storacha/capabilities':
         specifier: workspace:^
         version: link:../capabilities
     devDependencies:
@@ -392,7 +392,7 @@ importers:
       '@web3-storage/data-segment':
         specifier: ^4.0.0
         version: 4.0.0
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
       assert:
@@ -440,22 +440,22 @@ importers:
       '@ucanto/validator':
         specifier: ^9.0.2
         version: 9.0.2
-      '@web3-storage/access':
+      '@storacha/access':
         specifier: workspace:^
         version: link:../access-client
-      '@web3-storage/blob-index':
+      '@storacha/blob-index':
         specifier: workspace:^
         version: link:../blob-index
-      '@web3-storage/capabilities':
+      '@storacha/capabilities':
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/content-claims':
         specifier: ^5.1.0
         version: 5.1.0
-      '@web3-storage/did-mailto':
+      '@storacha/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto
-      '@web3-storage/filecoin-api':
+      '@storacha/filecoin-api':
         specifier: workspace:^
         version: link:../filecoin-api
       multiformats:
@@ -483,7 +483,7 @@ importers:
       '@web-std/blob':
         specifier: ^3.0.5
         version: 3.0.5
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
       '@web3-storage/sigv4':
@@ -525,16 +525,16 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@web3-storage/blob-index':
+      '@storacha/blob-index':
         specifier: workspace:^
         version: link:../blob-index
-      '@web3-storage/capabilities':
+      '@storacha/capabilities':
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/data-segment':
         specifier: ^5.1.0
         version: 5.1.0
-      '@web3-storage/filecoin-client':
+      '@storacha/filecoin-client':
         specifier: workspace:^
         version: link:../filecoin-client
       ipfs-utils:
@@ -568,7 +568,7 @@ importers:
       '@web3-storage/content-claims':
         specifier: ^5.0.0
         version: 5.0.0
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
       assert:
@@ -619,22 +619,22 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@web3-storage/access':
+      '@storacha/access':
         specifier: workspace:^
         version: link:../access-client
-      '@web3-storage/blob-index':
+      '@storacha/blob-index':
         specifier: workspace:^
         version: link:../blob-index
-      '@web3-storage/capabilities':
+      '@storacha/capabilities':
         specifier: workspace:^
         version: link:../capabilities
-      '@web3-storage/did-mailto':
+      '@storacha/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto
-      '@web3-storage/filecoin-client':
+      '@storacha/filecoin-client':
         specifier: workspace:^
         version: link:../filecoin-client
-      '@web3-storage/upload-client':
+      '@storacha/upload-client':
         specifier: workspace:^
         version: link:../upload-client
     devDependencies:
@@ -662,10 +662,10 @@ importers:
       '@web3-storage/data-segment':
         specifier: ^5.0.0
         version: 5.1.0
-      '@web3-storage/eslint-config-w3up':
+      '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
-      '@web3-storage/upload-api':
+      '@storacha/upload-api':
         specifier: workspace:^
         version: link:../upload-api
       assert:

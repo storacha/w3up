@@ -3,7 +3,7 @@ import * as Signer from '@ucanto/principal/ed25519'
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
-import * as AggregatorCaps from '@web3-storage/capabilities/filecoin/aggregator'
+import * as AggregatorCaps from '@storacha/capabilities/filecoin/aggregator'
 import { pieceOffer, pieceAccept } from '../src/aggregator.js'
 import { randomAggregate, randomCargo } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
@@ -16,9 +16,9 @@ describe('aggregator', () => {
 
     // Generate cargo to add
     const [cargo] = await randomCargo(1, 100)
-    const group = 'did:web:free.web3.storage'
+    const group = 'did:web:free.storacha.network'
 
-    /** @type {import('@web3-storage/capabilities/types').PieceOfferSuccess} */
+    /** @type {import('@storacha/capabilities/types').PieceOfferSuccess} */
     const pieceOfferResponse = {
       piece: cargo.link,
     }
@@ -79,7 +79,7 @@ describe('aggregator', () => {
   it('aggregator accepts a filecoin piece', async () => {
     const { pieces, aggregate } = await randomAggregate(100, 100)
     const piece = pieces[0].link
-    const group = 'did:web:free.web3.storage'
+    const group = 'did:web:free.storacha.network'
 
     // compute proof for piece in aggregate
     const proof = aggregate.resolveProof(piece)
@@ -87,7 +87,7 @@ describe('aggregator', () => {
       throw new Error('could not compute proof')
     }
 
-    /** @type {import('@web3-storage/capabilities/types').PieceAcceptSuccess} */
+    /** @type {import('@storacha/capabilities/types').PieceAcceptSuccess} */
     const pieceAcceptResponse = {
       piece,
       aggregate: aggregate.link,

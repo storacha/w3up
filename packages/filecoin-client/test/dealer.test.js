@@ -4,7 +4,7 @@ import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import { CBOR } from '@ucanto/core'
-import * as DealerCaps from '@web3-storage/capabilities/filecoin/dealer'
+import * as DealerCaps from '@storacha/capabilities/filecoin/dealer'
 import * as dagJSON from '@ipld/dag-json'
 import { aggregateOffer, aggregateAccept } from '../src/dealer.js'
 import { randomAggregate } from './helpers/random.js'
@@ -18,7 +18,7 @@ describe('dealer', () => {
     const { pieces, aggregate } = await randomAggregate(100, 100)
     const offer = pieces.map((p) => p.link)
     const piecesBlock = await CBOR.write(offer)
-    /** @type {import('@web3-storage/capabilities/types').AggregateOfferSuccess} */
+    /** @type {import('@storacha/capabilities/types').AggregateOfferSuccess} */
     const aggregateOfferResponse = {
       aggregate: aggregate.link,
     }
@@ -85,7 +85,7 @@ describe('dealer', () => {
     const offer = pieces.map((p) => p.link)
     const piecesBlock = await CBOR.write(offer)
 
-    /** @type {import('@web3-storage/capabilities/types').AggregateAcceptSuccess} */
+    /** @type {import('@storacha/capabilities/types').AggregateAcceptSuccess} */
     const aggregateAcceptResponse = {
       dataType: 0n,
       dataSource: {
@@ -143,7 +143,7 @@ describe('dealer', () => {
     const offer = pieces.map((p) => p.link)
     const piecesBlock = await CBOR.write(offer)
 
-    /** @type {import('@web3-storage/capabilities/types').AggregateAcceptFailure} */
+    /** @type {import('@storacha/capabilities/types').AggregateAcceptFailure} */
     const aggregateAcceptResponse = {
       name: 'InvalidPiece',
       message: 'Aggregate is not a valid piece.',

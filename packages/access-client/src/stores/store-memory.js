@@ -6,7 +6,7 @@ import { MemoryDriver } from '../drivers/memory.js'
  * Usage:
  *
  * ```js
- * import { StoreMemory } from '@web3-storage/access/stores/store-memory'
+ * import { StoreMemory } from '@storacha/access/stores/store-memory'
  * ```
  *
  * @extends {MemoryDriver<import('../types.js').AgentDataExport>}

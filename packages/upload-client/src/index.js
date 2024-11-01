@@ -1,5 +1,5 @@
 import * as PieceHasher from '@web3-storage/data-segment/multihash'
-import { Storefront } from '@web3-storage/filecoin-client'
+import { Storefront } from '@storacha/filecoin-client'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
@@ -13,7 +13,7 @@ import * as UploadAdd from './upload/add.js'
 import * as UnixFS from './unixfs.js'
 import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
-import { indexShardedDAG } from '@web3-storage/blob-index'
+import { indexShardedDAG } from '@storacha/blob-index'
 
 export { Blob, Index, Store, Upload, UnixFS, CAR }
 export * from './sharding.js'
@@ -167,7 +167,7 @@ async function uploadBlockStream(
             let piece
             if (pieceHasher) {
               const multihashDigest = await pieceHasher.digest(bytes)
-              /** @type {import('@web3-storage/capabilities/types').PieceLink} */
+              /** @type {import('@storacha/capabilities/types').PieceLink} */
               piece = Link.create(raw.code, multihashDigest)
               const content = Link.create(raw.code, digest)
 

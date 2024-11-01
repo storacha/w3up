@@ -2,7 +2,7 @@ import type { Unit, Result } from '@ucanto/interface'
 import {
   StorageGetError,
   StoragePutError,
-} from '@web3-storage/capabilities/types'
+} from '@storacha/capabilities/types'
 
 export type { StorageGetError, StoragePutError }
 

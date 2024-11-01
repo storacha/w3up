@@ -1,24 +1,24 @@
-# `w3up`
+# Upload Service
 
-This repo implements the web3.storage UCAN protocol [specifications](https://github.com/storacha/specs).
+This repo implements the storacha.network UCAN protocol [specifications](https://github.com/storacha/specs).
 
-It's the core of the web3.storage server and client implementations.
+It's the core of the storacha.network server and client implementations.
 
 ## Usage
 
-Store your files with web3.storage and retrieve them via their unique Content ID. Our tools make it simple to hash your content locally, so you can verify the service only ever stores the exact bytes you asked us to. Pick the method of using web3.storage that works for you!
+Store your files with storacha.network and retrieve them via their unique Content ID. Our tools make it simple to hash your content locally, so you can verify the service only ever stores the exact bytes you asked us to. Pick the method of using storacha.network that works for you!
 
 ### Website
 
-Visit https://console.web3.storage and upload right from the website. 
+Visit https://console.storacha.network and upload right from the website. 
 
-Under the hood it uses the web3.storage client that we publish to npm to chunk and hash your files to calculate the root IPFS CID **in your browser** before sending them to https://up.web3.storage.
+Under the hood it uses the storacha.network client that we publish to npm to chunk and hash your files to calculate the root IPFS CID **in your browser** before sending them to https://up.storacha.network.
 
 Once uploaded you can fetch your data from any IPFS gateway via [`https://w3s.link/ipfs/<root cid>`](https://w3s.link/ipfs/bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy)
 
 ### Command Line
 
-Install [`@web3-storage/w3cli`](https://github.com/storacha/w3cli#readme) globally, authorize it to act on your behalf, create a space and upload your files. It calculates the root CID for your files locally before sending them to web3.storage.
+Install [`@web3-storage/w3cli`](https://github.com/storacha/w3cli#readme) globally, authorize it to act on your behalf, create a space and upload your files. It calculates the root CID for your files locally before sending them to storacha.network.
 
 **shell**
 ```shell
@@ -38,14 +38,14 @@ Run `w3 --help` or have a look at https://github.com/storacha/w3cli to find out 
 
 ### JS Client
 
-Add the [`@web3-storage/w3up-client`](https://www.npmjs.com/package/@web3-storage/w3up-client) module into your project with `npm i @web3-storage/w3up-client` and upload a single file with [`client.uploadFile`](https://github.com/storacha/w3up/blob/main/packages/w3up-client/README.md#uploadfile) or many with [`client.uploadDirectory`](https://github.com/storacha/w3up/blob/main/packages/w3up-client/README.md#uploaddirectory).
+Add the [`@storacha/client`](https://www.npmjs.com/package/@storacha/client) module into your project with `npm i @storacha/client` and upload a single file with [`client.uploadFile`](https://github.com/storacha/upload-service/blob/main/packages/w3up-client/README.md#uploadfile) or many with [`client.uploadDirectory`](https://github.com/storacha/upload-service/blob/main/packages/w3up-client/README.md#uploaddirectory).
 
 If you've already got a space you can upload like this:
  
 **node.js**
 ```js
 import { filesFromPaths } from 'files-from-path'
-import * as Client from '@web3-storage/w3up-client'
+import * as Client from '@storacha/client'
 
 const [,,yourEmail, pathToAdd] = process.argv
 
@@ -61,13 +61,13 @@ console.log(`IPFS CID: ${cid}`)
 console.log(`Gateway URL: https://w3s.link/ipfs/${cid}`)
 ```
 
-See https://web3.storage/docs/w3up-client for a guide to using the js client for the first time.
+See https://docs.storacha.network/w3up-client for a guide to using the js client for the first time.
 
 For an interactive command line adventure into the using w3up check out `learnyouw3up` here https://github.com/storacha/learnyouw3up
 
 ### GitHub Action 
 
-The Action [`add-to-web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/storacha/w3cli) to let you add files to web3.storage from your GitHub Workflows.
+The Action [`add-to-web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/storacha/w3cli) to let you add files to storacha.network from your GitHub Workflows.
 
 **github-workflow.yaml**
 ```yaml
@@ -90,9 +90,9 @@ To generate a `secret_key` and delegate permissions to it as a `proof` to use in
 
 ## Contributing
 
-All welcome! web3.storage is open-source. See the [contributing guide](./CONTRIBUTING.md)
+All welcome! storacha.network is open-source. See the [contributing guide](./CONTRIBUTING.md)
 
-This project uses node v18 and `pnpm`. It's a monorepo that uses [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local [`packages`](https://github.com/storacha/w3up/tree/main/packages)
+This project uses node v18 and `pnpm`. It's a monorepo that uses [pnpm workspaces](https://pnpm.io/workspaces) to handle resolving dependencies between the local [`packages`](https://github.com/storacha/upload-service/tree/main/packages)
 
 ## License
 

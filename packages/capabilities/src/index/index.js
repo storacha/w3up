@@ -7,7 +7,7 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Index from '@web3-storage/capabilities/index'
+ * import * as Index from '@storacha/capabilities/index'
  * ```
  *
  * @module

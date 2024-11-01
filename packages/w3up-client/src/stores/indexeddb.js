@@ -1,1 +1,1 @@
-export { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
+export { StoreIndexedDB } from '@storacha/access/stores/store-indexeddb'

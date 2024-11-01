@@ -1,9 +1,9 @@
-import { type Driver } from '@web3-storage/access/drivers/types'
+import { type Driver } from '@storacha/access/drivers/types'
 import {
   type Service as AccessService,
   type AgentDataExport,
-} from '@web3-storage/access/types'
-import { type Service as UploadService } from '@web3-storage/upload-client/types'
+} from '@storacha/access/types'
+import { type Service as UploadService } from '@storacha/upload-client/types'
 import type {
   ConnectionView,
   Signer,
@@ -13,10 +13,10 @@ import type {
   Unit,
 } from '@ucanto/interface'
 import { type Client } from './client.js'
-import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
+import { StorefrontService } from '@storacha/filecoin-client/storefront'
 export * from '@ucanto/interface'
-export * from '@web3-storage/did-mailto'
-export type { Agent, CapabilityQuery } from '@web3-storage/access/agent'
+export * from '@storacha/did-mailto'
+export type { Agent, CapabilityQuery } from '@storacha/access/agent'
 export type {
   Access,
   AccountDID,
@@ -24,7 +24,7 @@ export type {
   SpaceDID,
   OwnedSpace,
   SharedSpace,
-} from '@web3-storage/access/types'
+} from '@storacha/access/types'
 
 export type ProofQuery = Record<Resource, Record<Ability, Unit>>
 
@@ -109,14 +109,14 @@ export type {
   FilecoinInfo,
   FilecoinInfoSuccess,
   FilecoinInfoFailure,
-} from '@web3-storage/capabilities/types'
+} from '@storacha/capabilities/types'
 
 export type {
   AgentDataModel,
   AgentDataExport,
   AgentMeta,
   DelegationMeta,
-} from '@web3-storage/access/types'
+} from '@storacha/access/types'
 
 export type {
   BlobAddSuccess,
@@ -164,4 +164,4 @@ export type {
   FileLike,
   BlobLike,
   ProgressStatus,
-} from '@web3-storage/upload-client/types'
+} from '@storacha/upload-client/types'

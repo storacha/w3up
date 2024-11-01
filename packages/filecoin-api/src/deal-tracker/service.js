@@ -1,14 +1,14 @@
 import * as Server from '@ucanto/server'
 import * as Client from '@ucanto/client'
 import * as CAR from '@ucanto/transport/car'
-import * as DealTrackerCaps from '@web3-storage/capabilities/filecoin/deal-tracker'
+import * as DealTrackerCaps from '@storacha/capabilities/filecoin/deal-tracker'
 
 // eslint-disable-next-line no-unused-vars
 import * as API from '../types.js'
 import { StoreOperationFailed } from '../errors.js'
 
 /**
- * @typedef {import('@web3-storage/capabilities/types').DealDetails} DealDetails
+ * @typedef {import('@storacha/capabilities/types').DealDetails} DealDetails
  */
 
 /**

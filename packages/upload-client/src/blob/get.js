@@ -1,5 +1,5 @@
-import * as BlobCapabilities from '@web3-storage/capabilities/blob'
-import { SpaceDID } from '@web3-storage/capabilities/utils'
+import * as BlobCapabilities from '@storacha/capabilities/blob'
+import { SpaceDID } from '@storacha/capabilities/utils'
 import { servicePrincipal, connection } from '../service.js'
 
 /**

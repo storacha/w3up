@@ -1,5 +1,5 @@
-import { Index } from '@web3-storage/upload-client'
-import { Index as IndexCapabilities } from '@web3-storage/capabilities'
+import { Index } from '@storacha/upload-client'
+import { Index as IndexCapabilities } from '@storacha/capabilities'
 import { Base } from '../base.js'
 
 /**
