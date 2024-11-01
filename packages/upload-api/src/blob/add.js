@@ -89,7 +89,7 @@ export function blobAddProvider(context) {
  * @param {API.Link} allocate.cause
  */
 async function allocate({ context, blob, space, cause }) {
-  // 1. Create storacha.network/blob/allocate invocation and task
+  // 1. Create web3.storage/blob/allocate invocation and task
   const allocate = W3sBlob.allocate.invoke({
     issuer: context.id,
     audience: context.id,
@@ -213,7 +213,7 @@ async function put({ blob, allocation }) {
  * @param {API.Receipt|null} input.delivery.receipt
  */
 async function accept({ context, blob, space, delivery }) {
-  // 1. Create storacha.network/blob/accept invocation and task
+  // 1. Create web3.storage/blob/accept invocation and task
   const accept = W3sBlob.accept.invoke({
     issuer: context.id,
     audience: context.id,

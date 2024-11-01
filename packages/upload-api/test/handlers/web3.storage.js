@@ -18,7 +18,7 @@ import * as Result from '../helpers/result.js'
  * @type {API.Tests}
  */
 export const test = {
-  'storacha.network/blob/allocate must be invoked on service did': async (
+  'web3.storage/blob/allocate must be invoked on service did': async (
     assert,
     context
   ) => {
@@ -50,7 +50,7 @@ export const test = {
       proofs: [proof],
     })
 
-    // invoke `storacha.network/blob/allocate`
+    // invoke `web3.storage/blob/allocate`
     const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
       issuer: alice,
       audience: context.id,
@@ -72,7 +72,7 @@ export const test = {
       )
     )
   },
-  'storacha.network/blob/allocate allocates to space and returns presigned url':
+  'web3.storage/blob/allocate allocates to space and returns presigned url':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -102,7 +102,7 @@ export const test = {
         proofs: [proof],
       })
 
-      // invoke `storacha.network/blob/allocate`
+      // invoke `web3.storage/blob/allocate`
       const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: context.id,
         audience: context.id,
@@ -171,7 +171,7 @@ export const test = {
 
       assert.equal(goodPut.status, 200, await goodPut.text())
     },
-  'storacha.network/blob/allocate does not allocate more space to already allocated content':
+  'web3.storage/blob/allocate does not allocate more space to already allocated content':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
       // prepare data
@@ -200,7 +200,7 @@ export const test = {
         proofs: [proof],
       })
 
-      // invoke `storacha.network/blob/allocate`
+      // invoke `web3.storage/blob/allocate`
       const allocation = await W3sBlobCapabilities.allocate
         .invoke({
           issuer: context.id,
@@ -246,7 +246,7 @@ export const test = {
       assert.equal(reallocation.out.ok.size, 0)
       assert.ok(!!reallocation.out.ok.address)
     },
-  'storacha.network/blob/allocate can allocate to different space after write to one space':
+  'web3.storage/blob/allocate can allocate to different space after write to one space':
     async (assert, context) => {
       const { proof: aliceProof, spaceDid: aliceSpaceDid } =
         await registerSpace(alice, context)
@@ -294,7 +294,7 @@ export const test = {
         proofs: [bobProof],
       })
 
-      // invoke `storacha.network/blob/allocate` capabilities on alice space
+      // invoke `web3.storage/blob/allocate` capabilities on alice space
       const aliceServiceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: context.id,
         audience: context.id,
@@ -334,7 +334,7 @@ export const test = {
 
       assert.equal(goodPut.status, 200, await goodPut.text())
 
-      // invoke `storacha.network/blob/allocate` capabilities on bob space
+      // invoke `web3.storage/blob/allocate` capabilities on bob space
       const bobServiceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: context.id,
         audience: context.id,
@@ -369,7 +369,7 @@ export const test = {
       assert.ok(bobSpaceAllocations.ok)
       assert.equal(bobSpaceAllocations.ok?.size, 1)
     },
-  'storacha.network/blob/allocate creates presigned url that can only PUT a payload with right length':
+  'web3.storage/blob/allocate creates presigned url that can only PUT a payload with right length':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -400,7 +400,7 @@ export const test = {
         proofs: [proof],
       })
 
-      // invoke `storacha.network/blob/allocate`
+      // invoke `web3.storage/blob/allocate`
       const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: context.id,
         audience: context.id,
@@ -445,7 +445,7 @@ export const test = {
         'should fail to upload as content-length differs from that used to sign the url'
       )
     },
-  'storacha.network/blob/allocate creates presigned url that can PUT a payload with exact bytes':
+  'web3.storage/blob/allocate creates presigned url that can PUT a payload with exact bytes':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -476,7 +476,7 @@ export const test = {
         proofs: [proof],
       })
 
-      // invoke `storacha.network/blob/allocate`
+      // invoke `web3.storage/blob/allocate`
       const serviceBlobAllocate = W3sBlobCapabilities.allocate.invoke({
         issuer: context.id,
         audience: context.id,
@@ -518,7 +518,7 @@ export const test = {
         'should fail to upload any other data.'
       )
     },
-  'storacha.network/blob/allocate disallowed if invocation fails access verification':
+  'web3.storage/blob/allocate disallowed if invocation fails access verification':
     async (assert, context) => {
       const { proof, space, spaceDid } = await createSpace(alice)
 
@@ -548,7 +548,7 @@ export const test = {
         proofs: [proof],
       })
 
-      // invoke `storacha.network/blob/allocate`
+      // invoke `web3.storage/blob/allocate`
       const task = {
         issuer: context.id,
         audience: context.id,
@@ -590,7 +590,7 @@ export const test = {
         .execute(connection)
       assert.equal(retryBlobAllocate.out.error, undefined)
     },
-  'storacha.network/blob/accept returns site delegation': async (
+  'web3.storage/blob/accept returns site delegation': async (
     assert,
     context
   ) => {
@@ -642,7 +642,7 @@ export const test = {
     })
     assert.equal(goodPut.status, 200, await goodPut.text())
 
-    // invoke `storacha.network/blob/accept`
+    // invoke `web3.storage/blob/accept`
     const serviceBlobAccept = W3sBlobCapabilities.accept.invoke({
       issuer: context.id,
       audience: context.id,
@@ -687,7 +687,7 @@ export const test = {
     )
     assert.ok(locations.includes(loc))
   },
-  'storacha.network/blob/accept fails to provide site delegation when blob was not stored':
+  'web3.storage/blob/accept fails to provide site delegation when blob was not stored':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 
@@ -724,7 +724,7 @@ export const test = {
       // parse receipt next
       const next = parseBlobAddReceiptNext(blobAdd)
 
-      // invoke `storacha.network/blob/accept`
+      // invoke `web3.storage/blob/accept`
       const serviceBlobAccept = W3sBlobCapabilities.accept.invoke({
         issuer: context.id,
         audience: context.id,

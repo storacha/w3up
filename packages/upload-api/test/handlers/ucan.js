@@ -419,7 +419,7 @@ export const test = {
       invocation.link().toString()
     )
   },
-  'ucan/conclude schedules storacha.network/blob/accept if invoked with the http/put receipt':
+  'ucan/conclude schedules web3.storage/blob/accept if invoked with the http/put receipt':
     async (assert, context) => {
       const { proof, spaceDid } = await registerSpace(alice, context)
 

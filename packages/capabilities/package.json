@@ -61,9 +61,9 @@
       "types": "./dist/src/index/index.d.ts",
       "import": "./src/index/index.js"
     },
-    "./storacha.network/blob": {
-      "types": "./dist/src/storacha.network/blob.d.ts",
-      "import": "./src/storacha.network/blob.js"
+    "./web3.storage/blob": {
+      "types": "./dist/src/web3.storage/blob.d.ts",
+      "import": "./src/web3.storage/blob.js"
     },
     "./types": {
       "types": "./dist/src/types.d.ts",

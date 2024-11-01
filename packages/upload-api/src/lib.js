@@ -187,7 +187,7 @@ export const createService = (context) => ({
   upload: createUploadService(context),
   ucan: createUcanService(context),
   plan: createPlanService(context),
-  ['storacha.network']: createW3sService(context),
+  ['web3.storage']: createW3sService(context),
   // storefront of filecoin pipeline
   filecoin: createFilecoinService(context).filecoin,
   usage: createUsageService(context),

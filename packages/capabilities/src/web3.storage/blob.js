@@ -15,11 +15,11 @@ import {
  */
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
- * derived any `storacha.network/blob/` prefixed capability for the (memory) space identified
+ * derived any `web3.storage/blob/` prefixed capability for the (memory) space identified
  * by DID in the `with` field.
  */
 export const blob = capability({
-  can: 'storacha.network/blob/*',
+  can: 'web3.storage/blob/*',
   /**
    * DID of the (memory) space where Blob is intended to
    * be stored.
@@ -29,11 +29,11 @@ export const blob = capability({
 })
 
 /**
- * `storacha.network/blob//allocate` capability can be invoked to create a memory
+ * `web3.storage/blob//allocate` capability can be invoked to create a memory
  * address where blob content can be written via HTTP PUT request.
  */
 export const allocate = capability({
-  can: 'storacha.network/blob/allocate',
+  can: 'web3.storage/blob/allocate',
   /**
    * Provider DID.
    */
@@ -69,7 +69,7 @@ export const allocate = capability({
  * without content being delivered.
  */
 export const accept = capability({
-  can: 'storacha.network/blob/accept',
+  can: 'web3.storage/blob/accept',
   /**
    * Provider DID.
    */

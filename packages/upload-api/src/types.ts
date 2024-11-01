@@ -354,7 +354,7 @@ export interface Service extends StorefrontService, W3sService {
 }
 
 export interface W3sService {
-  ['storacha.network']: {
+  ['web3.storage']: {
     blob: {
       allocate: ServiceMethod<
         BlobAllocate,
