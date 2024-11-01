@@ -1,5 +1,5 @@
 import { capability, Schema, Link, ok } from '@ucanto/validator'
-import { content } from '../blob.js'
+import { content } from '../space/blob.js'
 import {
   equalBlob,
   equalWith,
@@ -17,6 +17,8 @@ import {
  * Capability can only be delegated (but not invoked) allowing audience to
  * derived any `web3.storage/blob/` prefixed capability for the (memory) space identified
  * by DID in the `with` field.
+ *
+ * @deprecated These capabilities were used by w3up to invoke on itself.
  */
 export const blob = capability({
   can: 'web3.storage/blob/*',
@@ -31,6 +33,8 @@ export const blob = capability({
 /**
  * `web3.storage/blob//allocate` capability can be invoked to create a memory
  * address where blob content can be written via HTTP PUT request.
+ *
+ * @deprecated These capabilities were used by w3up to invoke on itself.
  */
 export const allocate = capability({
   can: 'web3.storage/blob/allocate',
@@ -67,6 +71,8 @@ export const allocate = capability({
  * `blob/accept` capability invocation should either succeed when content is
  * delivered on allocated address or fail if no content is allocation expires
  * without content being delivered.
+ *
+ * @deprecated These capabilities were used by w3up to invoke on itself.
  */
 export const accept = capability({
   can: 'web3.storage/blob/accept',

@@ -2,12 +2,14 @@ import * as Server from '@ucanto/server'
 import { Receipt } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import * as Blob from '@storacha/capabilities/blob'
+import * as SpaceBlob from '@storacha/capabilities/space/blob'
 import * as W3sBlob from '@storacha/capabilities/web3.storage/blob'
 import * as HTTP from '@storacha/capabilities/http'
 import * as API from '../types.js'
 
 import { createConcludeInvocation } from '../ucan/conclude.js'
 import { AwaitError } from './lib.js'
+import * as Digest from 'multiformats/hashes/digest'
 
 /**
  * Derives did:key principal from (blob) multihash that can be used to
@@ -27,25 +29,50 @@ const conclude = (receipt, issuer, audience = issuer) =>
 
 /**
  * @param {API.BlobServiceContext} context
- * @returns {API.ServiceMethod<API.BlobAdd, API.BlobAddSuccess, API.BlobAddFailure>}
+ * @returns {API.ServiceMethod<API.SpaceBlobAdd, API.BlobAddSuccess, API.BlobAddFailure>}
  */
 export function blobAddProvider(context) {
+  const { routingService } = context
+
   return Server.provideAdvanced({
-    capability: Blob.add,
+    capability: SpaceBlob.add,
     handler: async ({ capability, invocation }) => {
       const { with: space, nb } = capability
       const { blob } = nb
 
-      const allocation = await allocate({
-        context,
-        blob,
-        space,
-        cause: invocation.link(),
+      const digest = Digest.decode(blob.digest)
+
+      const candidateRes = await routingService.selectBlobAllocationCandidate(digest, blob.size)
+      if (candidateRes.error) {
+        return candidateRes
+      }
+
+      const candidate = candidateRes.ok
+      const cap = Blob.allocate.create({
+        with: candidate,
+        nb: {
+          blob: {
+            digest: blob.digest,
+            size: blob.size,
+          },
+          space,
+          cause: invocation.link()
+        }
       })
+
+      const confRes = await routingService.configureInvocation(candidate, cap)
+      if (confRes.error) {
+        return confRes
+      }
+
+      const allocReceipt = await confRes.ok.invocation.execute(confRes.ok.connection)
+      if (allocReceipt.out.error) {
+        return allocReceipt.out
+      }
 
       const delivery = await put({
         blob,
-        allocation,
+        allocation: { receipt: allocReceipt },
       })
 
       const acceptance = await accept({

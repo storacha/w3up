@@ -23,9 +23,16 @@ export async function createCborCid(data) {
 /**
  * @param {string} source
  */
-export async function createCarCid(source) {
+export async function createCar(source) {
   const cbor = await CBOR.write({ hello: source })
-  const shard = await CAR.codec.write({ roots: [cbor] })
+  return await CAR.codec.write({ roots: [cbor] })
+}
+
+/**
+ * @param {string} source
+ */
+export async function createCarCid(source) {
+  const shard = await createCar(source)
   return shard.cid
 }
 

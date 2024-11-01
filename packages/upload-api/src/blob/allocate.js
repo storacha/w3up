@@ -9,14 +9,14 @@ import {
 
 /**
  * @param {API.BlobServiceContext} context
- * @returns {API.ServiceMethod<API.BlobAllocate, API.BlobAllocateSuccess, API.BlobAllocateFailure>}
+ * @returns {API.ServiceMethod<API.W3sBlobAllocate, API.BlobAllocateSuccess, API.BlobAllocateFailure>}
  */
 export const blobAllocateProvider = (context) =>
   Server.provide(W3sBlob.allocate, (input) => allocate(context, input))
 
 /**
  * @param {API.BlobServiceContext} context
- * @param {API.ProviderInput<API.BlobAllocate>} input
+ * @param {API.ProviderInput<API.W3sBlobAllocate>} input
  */
 export const allocate = async (context, { capability }) => {
   // Only service principal can perform an allocation

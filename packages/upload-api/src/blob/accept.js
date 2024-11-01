@@ -13,7 +13,7 @@ import * as HTTP from '@storacha/capabilities/http'
 
 /**
  * @param {API.W3ServiceContext} context
- * @returns {API.ServiceMethod<API.BlobAccept, API.BlobAcceptSuccess, API.BlobAcceptFailure>}
+ * @returns {API.ServiceMethod<API.W3sBlobAccept, API.BlobAcceptSuccess, API.BlobAcceptFailure>}
  */
 export function blobAcceptProvider(context) {
   return Server.provideAdvanced({
@@ -108,7 +108,7 @@ export const poll = async (context, receipt) => {
     return result
   }
 
-  const [allocate] = /** @type {[API.BlobAllocate]} */ (result.ok.capabilities)
+  const [allocate] = /** @type {[API.W3sBlobAllocate]} */ (result.ok.capabilities)
 
   // If this is a receipt for the http/put we will perform blob/accept.
   const blobAccept = await W3sBlob.accept.invoke({

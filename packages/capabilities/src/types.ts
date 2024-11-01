@@ -22,6 +22,7 @@ import { space, info } from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
 import * as BlobCaps from './blob.js'
+import * as SpaceBlobCaps from './space/blob.js'
 import * as W3sBlobCaps from './web3.storage/blob.js'
 import * as HTTPCaps from './http.js'
 import * as StoreCaps from './store.js'
@@ -35,7 +36,7 @@ import * as StorefrontCaps from './filecoin/storefront.js'
 import * as AggregatorCaps from './filecoin/aggregator.js'
 import * as DealTrackerCaps from './filecoin/deal-tracker.js'
 import * as DealerCaps from './filecoin/dealer.js'
-import * as IndexCaps from './index/index.js'
+import * as SpaceIndexCaps from './space/index.js'
 import * as AdminCaps from './admin.js'
 import * as UCANCaps from './ucan.js'
 import * as PlanCaps from './plan.js'
@@ -473,12 +474,12 @@ export type UploadGetFailure = UploadNotFound | Ucanto.Failure
 export type HTTPPut = InferInvokedCapability<typeof HTTPCaps.put>
 
 // Index
-export type Index = InferInvokedCapability<typeof IndexCaps.index>
-export type IndexAdd = InferInvokedCapability<typeof IndexCaps.add>
+export type SpaceIndex = InferInvokedCapability<typeof SpaceIndexCaps.index>
+export type SpaceIndexAdd = InferInvokedCapability<typeof SpaceIndexCaps.add>
 
-export type IndexAddSuccess = Unit
+export type SpaceIndexAddSuccess = Unit
 
-export type IndexAddFailure =
+export type SpaceIndexAddFailure =
   | IndexNotFound
   | DecodeFailure
   | UnknownFormat
@@ -519,13 +520,16 @@ export interface SliceNotFound extends Failure {
 
 // Blob
 export type Blob = InferInvokedCapability<typeof BlobCaps.blob>
-export type BlobAdd = InferInvokedCapability<typeof BlobCaps.add>
-export type BlobRemove = InferInvokedCapability<typeof BlobCaps.remove>
-export type BlobList = InferInvokedCapability<typeof BlobCaps.list>
-export type BlobGet = InferInvokedCapability<typeof BlobCaps.get>
-export type ServiceBlob = InferInvokedCapability<typeof W3sBlobCaps.blob>
-export type BlobAllocate = InferInvokedCapability<typeof W3sBlobCaps.allocate>
-export type BlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
+export type BlobAllocate = InferInvokedCapability<typeof BlobCaps.allocate>
+export type BlobAccept = InferInvokedCapability<typeof BlobCaps.accept>
+export type SpaceBlob = InferInvokedCapability<typeof SpaceBlobCaps.blob>
+export type SpaceBlobAdd = InferInvokedCapability<typeof SpaceBlobCaps.add>
+export type SpaceBlobRemove = InferInvokedCapability<typeof SpaceBlobCaps.remove>
+export type SpaceBlobList = InferInvokedCapability<typeof SpaceBlobCaps.list>
+export type SpaceBlobGet = InferInvokedCapability<typeof SpaceBlobCaps.get>
+export type W3sBlob = InferInvokedCapability<typeof W3sBlobCaps.blob>
+export type W3sBlobAllocate = InferInvokedCapability<typeof W3sBlobCaps.allocate>
+export type W3sBlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
 
 export interface BlobModel {
   digest: Multihash
@@ -929,16 +933,19 @@ export type ServiceAbilityArray = [
   Usage['can'],
   UsageReport['can'],
   Blob['can'],
-  BlobAdd['can'],
-  BlobRemove['can'],
-  BlobList['can'],
-  BlobGet['can'],
-  ServiceBlob['can'],
   BlobAllocate['can'],
   BlobAccept['can'],
+  SpaceBlob['can'],
+  SpaceBlobAdd['can'],
+  SpaceBlobRemove['can'],
+  SpaceBlobList['can'],
+  SpaceBlobGet['can'],
+  W3sBlob['can'],
+  W3sBlobAllocate['can'],
+  W3sBlobAccept['can'],
   HTTPPut['can'],
-  Index['can'],
-  IndexAdd['can']
+  SpaceIndex['can'],
+  SpaceIndexAdd['can']
 ]
 
 /**

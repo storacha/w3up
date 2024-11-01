@@ -16,11 +16,11 @@ import * as Storefront from './filecoin/storefront.js'
 import * as Aggregator from './filecoin/aggregator.js'
 import * as Dealer from './filecoin/dealer.js'
 import * as DealTracker from './filecoin/deal-tracker.js'
-import * as Index from './index/index.js'
+import * as SpaceIndex from './space/index.js'
 import * as UCAN from './ucan.js'
 import * as Plan from './plan.js'
 import * as Usage from './usage.js'
-import * as Blob from './blob.js'
+import * as SpaceBlob from './space/blob.js'
 import * as W3sBlob from './web3.storage/blob.js'
 import * as HTTP from './http.js'
 
@@ -38,7 +38,7 @@ export {
   RateLimit,
   Subscription,
   Filecoin,
-  Index,
+  SpaceIndex,
   Storefront,
   Aggregator,
   Dealer,
@@ -47,7 +47,7 @@ export {
   UCAN,
   Plan,
   Usage,
-  Blob,
+  SpaceBlob,
   W3sBlob,
   HTTP,
 }
@@ -97,14 +97,14 @@ export const abilitiesAsStrings = [
   Plan.createAdminSession.can,
   Usage.usage.can,
   Usage.report.can,
-  Blob.blob.can,
-  Blob.add.can,
-  Blob.remove.can,
-  Blob.list.can,
+  SpaceBlob.blob.can,
+  SpaceBlob.add.can,
+  SpaceBlob.remove.can,
+  SpaceBlob.list.can,
   W3sBlob.blob.can,
   W3sBlob.allocate.can,
   W3sBlob.accept.can,
   HTTP.put.can,
-  Index.index.can,
-  Index.add.can,
+  SpaceIndex.index.can,
+  SpaceIndex.add.can,
 ]

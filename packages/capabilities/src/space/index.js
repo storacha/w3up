@@ -7,12 +7,12 @@
  *
  * These can be imported directly with:
  * ```js
- * import * as Index from '@storacha/capabilities/index'
+ * import * as Index from '@storacha/capabilities/space/index'
  * ```
  *
  * @module
  */
-import { CAR } from '@ucanto/core'
+import { CAR as SpaceIndex } from '@ucanto/core'
 import { capability, Schema, ok } from '@ucanto/validator'
 import { equalWith, SpaceDID, and, equal } from '../utils.js'
 
@@ -39,7 +39,7 @@ export const add = capability({
   with: SpaceDID,
   nb: Schema.struct({
     /** Content Archive (CAR) containing the `Index`. */
-    index: Schema.link({ code: CAR.code, version: 1 }),
+    index: Schema.link({ code: SpaceIndex.code, version: 1 }),
   }),
   derives: (claimed, delegated) =>
     and(equalWith(claimed, delegated)) ||

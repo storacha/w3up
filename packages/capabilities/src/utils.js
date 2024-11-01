@@ -1,8 +1,7 @@
 import { DID, Schema, fail, ok } from '@ucanto/validator'
-// eslint-disable-next-line no-unused-vars
-import * as Types from '@ucanto/interface'
-
 import { equals } from 'uint8arrays/equals'
+
+/** @import * as API from '@ucanto/interface' */
 
 // e.g. did:web:storacha.network or did:web:staging.storacha.network
 export const ProviderDID = DID.match({ method: 'web' })
@@ -40,8 +39,8 @@ export function canDelegateURI(child, parent) {
  * Checks that `with` on claimed capability is the same as `with`
  * in delegated capability. Note this will ignore `can` field.
  *
- * @param {Types.ParsedCapability} child
- * @param {Types.ParsedCapability} parent
+ * @param {API.ParsedCapability} child
+ * @param {API.ParsedCapability} parent
  */
 export function equalWith(child, parent) {
   return child.with === parent.with
@@ -67,10 +66,10 @@ export function equal(child, parent, constraint) {
 }
 
 /**
- * @template {Types.ParsedCapability<"store/add"|"store/get"|"store/remove", Types.URI<'did:'>, {link?: Types.Link<unknown, number, number, 0|1>}>} T
+ * @template {API.ParsedCapability<"store/add"|"store/get"|"store/remove", API.URI<'did:'>, {link?: API.Link<unknown, number, number, 0|1>}>} T
  * @param {T} claimed
  * @param {T} delegated
- * @returns {Types.Result<{}, Types.Failure>}
+ * @returns {API.Result<{}, API.Failure>}
  */
 export const equalLink = (claimed, delegated) => {
   if (claimed.with !== delegated.with) {
@@ -92,10 +91,10 @@ export const equalLink = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"space/blob/add"|"space/blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept", Types.URI<'did:'>, {blob: { digest: Uint8Array, size: number }}>} T
+ * @template {API.ParsedCapability<"space/blob/add"|"space/blob/remove"|"web3.storage/blob/allocate"|"web3.storage/blob/accept"|"blob/allocate"|"blob/accept", API.URI<'did:'>, {blob: { digest: Uint8Array, size: number }}>} T
  * @param {T} claimed
  * @param {T} delegated
- * @returns {Types.Result<{}, Types.Failure>}
+ * @returns {API.Result<{}, API.Failure>}
  */
 export const equalBlob = (claimed, delegated) => {
   if (claimed.with !== delegated.with) {
@@ -126,10 +125,10 @@ export const equalBlob = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"http/put", Types.URI<'did:'>, {body: { digest: Uint8Array, size: number }}>} T
+ * @template {API.ParsedCapability<"http/put", API.URI<'did:'>, {body: { digest: Uint8Array, size: number }}>} T
  * @param {T} claimed
  * @param {T} delegated
- * @returns {Types.Result<{}, Types.Failure>}
+ * @returns {API.Result<{}, API.Failure>}
  */
 export const equalBody = (claimed, delegated) => {
   if (claimed.with !== delegated.with) {
@@ -160,10 +159,10 @@ export const equalBody = (claimed, delegated) => {
 }
 
 /**
- * @template {Types.ParsedCapability<"blob/add"|"blob/remove"|"blob/allocate"|"blob/accept"|"http/put", Types.URI<'did:'>, {content: Uint8Array}>} T
+ * @template {API.ParsedCapability<"blob/add"|"blob/remove"|"blob/allocate"|"blob/accept"|"http/put", API.URI<'did:'>, {content: Uint8Array}>} T
  * @param {T} claimed
  * @param {T} delegated
- * @returns {Types.Result<{}, Types.Failure>}
+ * @returns {API.Result<{}, API.Failure>}
  */
 export const equalContent = (claimed, delegated) => {
   if (claimed.with !== delegated.with) {
@@ -185,12 +184,12 @@ export const equalContent = (claimed, delegated) => {
 }
 
 /**
- * Checks that `claimed` {@link Types.Link} meets an `imposed` constraint.
+ * Checks that `claimed` {@link API.Link} meets an `imposed` constraint.
  *
- * @param {Types.UnknownLink} claimed
- * @param {Types.UnknownLink|undefined} imposed
+ * @param {API.UnknownLink} claimed
+ * @param {API.UnknownLink|undefined} imposed
  * @param {string} at
- * @returns {Types.Result<{}, Types.Failure>}
+ * @returns {API.Result<{}, API.Failure>}
  */
 export const checkLink = (claimed, imposed, at) => {
   return equal(
@@ -202,8 +201,8 @@ export const checkLink = (claimed, imposed, at) => {
 
 /**
  * @template T
- * @param {Types.Result<T , Types.Failure>} result
- * @returns {{error: Types.Failure, ok?:undefined}|undefined}
+ * @param {API.Result<T , API.Failure>} result
+ * @returns {{error: API.Failure, ok?:undefined}|undefined}
  */
 export const and = (result) => (result.error ? result : undefined)
 

@@ -8,7 +8,7 @@ import * as API from '../types.js'
 
 /**
  * @param {API.IndexServiceContext} context
- * @returns {API.ServiceMethod<API.IndexAdd, API.IndexAddSuccess, API.IndexAddFailure>}
+ * @returns {API.ServiceMethod<API.SpaceIndexAdd, API.SpaceIndexAddSuccess, API.SpaceIndexAddFailure>}
  */
 export const provide = (context) =>
   Server.provide(Index.add, (input) => add(input, context))
@@ -16,7 +16,7 @@ export const provide = (context) =>
 /**
  * @param {API.Input<Index.add>} input
  * @param {API.IndexServiceContext} context
- * @returns {Promise<API.Result<API.IndexAddSuccess, API.IndexAddFailure>>}
+ * @returns {Promise<API.Result<API.SpaceIndexAddSuccess, API.SpaceIndexAddFailure>>}
  */
 const add = async ({ capability }, context) => {
   const space = capability.with

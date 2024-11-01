@@ -5,12 +5,22 @@ import type {
   Failure,
   DID,
   URI,
+  Capability,
+  Connection,
+  ServiceMethod,
+  UCANOptions,
+  IssuedInvocationView,
+  ConnectionView,
 } from '@ucanto/interface'
 import {
   Multihash,
   BlobListItem,
   BlobRemoveSuccess,
   BlobGetSuccess,
+  BlobAllocate,
+  BlobAccept,
+  BlobAllocateSuccess,
+  BlobAcceptSuccess,
 } from '@storacha/capabilities/types'
 import { MultihashDigest } from 'multiformats'
 
@@ -83,4 +93,53 @@ export interface BlobsStorage {
     >
   >
   createDownloadUrl: (content: MultihashDigest) => Promise<Result<URI, Failure>>
+}
+
+export interface BlobService {
+  blob: {
+    allocate: ServiceMethod<BlobAllocate, BlobAllocateSuccess, Failure>
+    accept: ServiceMethod<BlobAccept, BlobAcceptSuccess, Failure>
+  }
+}
+
+export interface Configuration<C extends Capability> extends UCANOptions {
+  /** Connection to the storage node. */
+  connection: ConnectionView<BlobService>,
+  /** Invocation to execute. */
+  invocation: IssuedInvocationView<C>
+}
+
+/**
+ * An unavailable proof error is returned when the routing does not have a 
+ * valid unexpired and unrevoked proof available.
+ */
+export interface ProofUnavailable extends Failure {
+  name: 'ProofUnavailable'
+}
+
+/**
+ * An unavailable candidate error is returned when there are no candidates
+ * willing to allocate space for the given blob.
+ */
+export interface CandidateUnavailable extends Failure {
+  name: 'CandidateUnavailable'
+}
+
+/**
+ * The routing service is responsible for selecting storage nodes to allocate
+ * blobs with.
+ */
+export interface RoutingService {
+  /**
+   * Selects a candidate for blob allocation from the current list of available
+   * storage nodes.
+   */
+  selectBlobAllocationCandidate(digest: MultihashDigest, size: number):
+    Promise<Result<DID, CandidateUnavailable|Failure>>
+  /**
+   * Returns information required to make an invocation to the requested storage
+   * node.
+   */
+  configureInvocation<C extends BlobAllocate|BlobAccept>(storageNode: DID, capability: C):
+    Promise<Result<Configuration<C>, ProofUnavailable|Failure>>
 }

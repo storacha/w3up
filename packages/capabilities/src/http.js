@@ -9,7 +9,7 @@
  * @module
  */
 import { capability, Schema, ok } from '@ucanto/validator'
-import { content } from './blob.js'
+import { content } from './space/blob.js'
 import { equal, equalBody, equalWith, SpaceDID, Await, and } from './utils.js'
 
 /**

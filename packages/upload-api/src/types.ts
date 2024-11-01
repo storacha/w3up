@@ -65,22 +65,22 @@ export interface DebugEmail extends Email {
 }
 
 import {
-  BlobAdd,
+  SpaceBlobAdd,
   BlobAddSuccess,
   BlobAddFailure,
-  BlobList,
+  SpaceBlobList,
   BlobListSuccess,
   BlobListFailure,
-  BlobRemove,
+  SpaceBlobRemove,
   BlobRemoveSuccess,
   BlobRemoveFailure,
-  BlobGet,
+  SpaceBlobGet,
   BlobGetSuccess,
   BlobGetFailure,
-  BlobAllocate,
+  W3sBlobAllocate,
   BlobAllocateSuccess,
   BlobAllocateFailure,
-  BlobAccept,
+  W3sBlobAccept,
   BlobAcceptSuccess,
   BlobAcceptFailure,
   StoreAdd,
@@ -171,9 +171,9 @@ import {
   PlanCreateAdminSession,
   PlanCreateAdminSessionSuccess,
   PlanCreateAdminSessionFailure,
-  IndexAdd,
-  IndexAddSuccess,
-  IndexAddFailure,
+  SpaceIndexAdd,
+  SpaceIndexAddSuccess,
+  SpaceIndexAddFailure,
 } from '@storacha/capabilities/types'
 import * as Capabilities from '@storacha/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -200,7 +200,7 @@ export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
 import { StorageGetError } from './types/storage.js'
-import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
+import { AllocationsStorage, BlobsStorage, BlobAddInput, RoutingService } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, BlobAddInput }
 import { IPNIService, IndexServiceContext } from './types/index.js'
 import { ClaimsClientConfig } from './types/content-claims.js'
@@ -326,15 +326,15 @@ export interface Service extends StorefrontService, W3sService {
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
     index: {
-      add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
+      add: ServiceMethod<SpaceIndexAdd, SpaceIndexAddSuccess, SpaceIndexAddFailure>
     }
     blob: {
-      add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
-      remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
-      list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+      add: ServiceMethod<SpaceBlobAdd, BlobAddSuccess, BlobAddFailure>
+      remove: ServiceMethod<SpaceBlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
+      list: ServiceMethod<SpaceBlobList, BlobListSuccess, BlobListFailure>
       get: {
         0: {
-          1: ServiceMethod<BlobGet, BlobGetSuccess, BlobGetFailure>
+          1: ServiceMethod<SpaceBlobGet, BlobGetSuccess, BlobGetFailure>
         }
       }
     }
@@ -357,11 +357,11 @@ export interface W3sService {
   ['web3.storage']: {
     blob: {
       allocate: ServiceMethod<
-        BlobAllocate,
+        W3sBlobAllocate,
         BlobAllocateSuccess,
         BlobAllocateFailure
       >
-      accept: ServiceMethod<BlobAccept, BlobAcceptSuccess, BlobAcceptFailure>
+      accept: ServiceMethod<W3sBlobAccept, BlobAcceptSuccess, BlobAcceptFailure>
     }
   }
 }
@@ -376,6 +376,7 @@ export type BlobServiceContext = SpaceServiceContext & {
   blobsStorage: BlobsStorage
   agentStore: AgentStore
   getServiceConnection: () => ConnectionView<Service>
+  routingService: RoutingService
 }
 
 export type W3ServiceContext = SpaceServiceContext & {
