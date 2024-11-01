@@ -55,7 +55,7 @@ export class UsageClient extends Base {
       { provider, ...egressData },
       { ...options }
     )
-    /* c8 ignore next 5 */
+
     if (!out.ok) {
       throw new Error(`failed ${UsageCapabilities.record.can} invocation`, {
         cause: out.error,

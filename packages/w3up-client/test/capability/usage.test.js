@@ -3,19 +3,8 @@ import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { receiptsEndpoint } from '../helpers/utils.js'
 import { randomCAR } from '../helpers/random.js'
-import {
-  freeway,
-  freewaySigner,
-  mallory,
-  w3,
-  w3Signer,
-} from '../../../upload-api/test/helpers/utils.js'
-import {
-  alice,
-  gateway,
-} from '@web3-storage/capabilities/test/helpers/fixtures'
+import { freewaySigner } from '../../../upload-api/test/helpers/utils.js'
 import { Usage } from '@web3-storage/capabilities'
-import { claim } from '../../src/capability/access.js'
 import { Signer } from '@ucanto/principal/ed25519'
 
 export const UsageClient = Test.withContext({
@@ -86,12 +75,13 @@ export const UsageClient = Test.withContext({
   record: {
     'should record egress': async (
       assert,
-      { connection, provisionsStorage }
+      { id: w3, signer: w3Signer, connection, provisionsStorage }
     ) => {
       // Creates a new agent using w3Signer as the principal
       const w3Service = new Client(
         await AgentData.create({
-          principal: w3Signer,
+          // @ts-ignore
+          principal: w3,
         }),
         {
           // @ts-ignore
@@ -105,6 +95,7 @@ export const UsageClient = Test.withContext({
       const space = await w3Service.createSpace('test')
       const auth = await space.createAuthorization(w3Service)
       await w3Service.addSpace(auth)
+      await w3Service.setCurrentSpace(space.did())
 
       // Then we setup a billing for this account
       await provisionsStorage.put({
@@ -135,7 +126,8 @@ export const UsageClient = Test.withContext({
       // w3Service delegates ability to record usage to freewayService
       const recordEgress = await Usage.record.delegate({
         issuer: w3Service.agent.issuer,
-        audience: freewayService,
+        audience: freewaySigner,
+        // @ts-ignore
         with: w3.did(),
         expiration: Infinity,
       })
@@ -165,11 +157,95 @@ export const UsageClient = Test.withContext({
           bytes: car.size,
           servedAt: new Date().toISOString(),
         },
-        w3.did(),
+        // @ts-ignore
+        w3.did(), // did:web:string
         { proofs: delegations }
       )
 
       assert.ok(record)
+    },
+    'should fail to record egress if the capability was not delegated': async (
+      assert,
+      { id: w3, connection, provisionsStorage }
+    ) => {
+      // Creates a new agent using w3Signer as the principal
+      const w3Service = new Client(
+        await AgentData.create({
+          // @ts-ignore
+          principal: w3,
+        }),
+        {
+          // @ts-ignore
+          serviceConf: {
+            access: connection,
+            upload: connection,
+          },
+        }
+      )
+
+      const space = await w3Service.createSpace('test')
+      const auth = await space.createAuthorization(w3Service)
+      await w3Service.addSpace(auth)
+      await w3Service.setCurrentSpace(space.did())
+
+      // Then we setup a billing for this account
+      await provisionsStorage.put({
+        // @ts-expect-error
+        provider: connection.id.did(),
+        account: w3Service.agent.did(),
+        consumer: space.did(),
+      })
+
+      // Creates a new agent using freewaySigner as the principal
+      const freewayService = new Client(
+        await AgentData.create({
+          principal: freewaySigner,
+        }),
+        {
+          // @ts-ignore
+          serviceConf: {
+            access: connection,
+            upload: connection,
+          },
+        }
+      )
+
+      // Random resource to record egress
+      const car = await randomCAR(128)
+      const resource = car.cid
+
+      // w3Service creates a delegation to a random service
+      const recordEgress = await Usage.record.delegate({
+        issuer: w3Service.agent.issuer,
+        audience: await Signer.generate(),
+        // @ts-ignore
+        with: w3.did(),
+        expiration: Infinity,
+      })
+
+      // FreewayService attempts to invoke usage/record without performing the delegation
+      try {
+        await freewayService.capability.usage.record(
+          {
+            space: space.did(),
+            resource: resource.link(),
+            bytes: car.size,
+            servedAt: new Date().toISOString(),
+          },
+          // @ts-ignore
+          w3.did(), // did:web:string
+          { proofs: [recordEgress] }
+        )
+        assert.fail('Expected an error due to missing delegation')
+      } catch (error) {
+        assert.ok(
+          // @ts-ignore
+          error.cause.message.startsWith(
+            'Claim {"can":"usage/record"} is not authorized\n  - Capability {"can":"usage/record","with":"did:web:test.web3.storage",'
+          ),
+          'Error was thrown as expected'
+        )
+      }
     },
   },
 })
