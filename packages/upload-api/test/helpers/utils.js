@@ -37,11 +37,15 @@ export const mallory = ed25519.parse(
   'MgCYtH0AvYxiQwBG6+ZXcwlXywq9tI50G2mCAUJbwrrahkO0B0elFYkl3Ulf3Q3A/EvcVY0utb4etiSE8e6pi4H0FEmU='
 )
 
-export const w3 = ed25519
-  .parse(
-    'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
-  )
-  .withDID('did:web:test.web3.storage')
+export const w3Signer = ed25519.parse(
+  'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
+)
+export const w3 = w3Signer.withDID('did:web:test.web3.storage')
+
+export const freewaySigner = ed25519.parse(
+  'MgCaNpGXCEX0+BxxE4SjSStrxU9Ru/Im+HGNQ/JJx3lDoI+0B3NWjWW3G8OzjbazZjanjM3kgfcZbvpyxv20jHtmcTtg='
+)
+export const freeway = freewaySigner.withDID('did:web:freeway.web3.storage')
 
 /**
  * Creates a server for the given service.

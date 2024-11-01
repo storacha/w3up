@@ -1,4 +1,4 @@
-import { DID, parseLink } from '@ucanto/core'
+import { parseLink } from '@ucanto/core'
 import { Absentee } from '@ucanto/principal'
 import { Signer } from '@ucanto/principal/ed25519'
 

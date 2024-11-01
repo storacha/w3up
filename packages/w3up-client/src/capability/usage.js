@@ -47,6 +47,7 @@ export class UsageClient extends Base {
    * @param {API.ProviderDID} provider
    * @param {object} [options]
    * @param {string} [options.nonce]
+   * @param {API.Delegation[]} [options.proofs]
    */
   async record(egressData, provider, options) {
     const out = await record(
