@@ -95,6 +95,8 @@ export const poll = async (context, receipt) => {
     return { ok: {} }
   }
 
+  // TODO: LOOKUP IN ALLOCATIONS STORAGE AS WE DON"T HAVE THIS INVOCATION
+
   // Otherwise we are going to lookup allocation corresponding to this http/put
   // in order to issue blob/accept.
   const [, allocation] = /** @type {API.UCANAwait} */ (put.nb.url)['ucan/await']

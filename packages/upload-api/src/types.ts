@@ -376,7 +376,7 @@ export type BlobServiceContext = SpaceServiceContext & {
   blobsStorage: BlobsStorage
   agentStore: AgentStore
   getServiceConnection: () => ConnectionView<Service>
-  routingService: RoutingService
+  router: RoutingService
 }
 
 export type W3ServiceContext = SpaceServiceContext & {

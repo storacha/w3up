@@ -11,6 +11,7 @@ import type {
   UCANOptions,
   IssuedInvocationView,
   ConnectionView,
+  Principal,
 } from '@ucanto/interface'
 import {
   Multihash,
@@ -135,11 +136,11 @@ export interface RoutingService {
    * storage nodes.
    */
   selectBlobAllocationCandidate(digest: MultihashDigest, size: number):
-    Promise<Result<DID, CandidateUnavailable|Failure>>
+    Promise<Result<Principal, CandidateUnavailable|Failure>>
   /**
    * Returns information required to make an invocation to the requested storage
    * node.
    */
-  configureInvocation<C extends BlobAllocate|BlobAccept>(storageNode: DID, capability: C):
+  configureInvocation<C extends BlobAllocate|BlobAccept>(storageNode: Principal, capability: C, options?: Omit<UCANOptions, 'audience'>):
     Promise<Result<Configuration<C>, ProofUnavailable|Failure>>
 }
