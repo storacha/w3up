@@ -1,7 +1,5 @@
-import { DID, capability, ok, Schema } from '@ucanto/validator'
-import { and, equal, equalWith, SpaceDID } from './utils.js'
-
-export const ProviderDID = DID.match({ method: 'web' })
+import { capability, DID, ok, Schema } from '@ucanto/validator'
+import { and, equal, equalWith, ProviderDID, SpaceDID } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to

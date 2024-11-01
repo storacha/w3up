@@ -1,4 +1,4 @@
-import { parseLink } from '@ucanto/core'
+import { DID, parseLink } from '@ucanto/core'
 import { Absentee } from '@ucanto/principal'
 import { Signer } from '@ucanto/principal/ed25519'
 
@@ -37,6 +37,6 @@ export const readmeCID = parseLink(
   'bafybeihqfdg2ereoijjoyrqzr2x2wsasqm2udurforw7pa3tvbnxhojao4'
 )
 
-export const gateway = Absentee.from({
-  id: 'did:web:freeway.storacha.network:gateway',
-})
+export const gateway = Signer.parse(
+  'MgCaNpGXCEX0+BxxE4SjSStrxU9Ru/Im+HGNQ/JJx3lDoI+0B3NWjWW3G8OzjbazZjanjM3kgfcZbvpyxv20jHtmcTtg=' // random key
+).withDID('did:web:dag.haus:freeway.com:test')

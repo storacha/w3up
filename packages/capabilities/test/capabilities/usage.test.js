@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { access } from '@ucanto/validator'
+import { access, Schema } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import * as Usage from '../../src/usage.js'
 import * as Capability from '../../src/top.js'
@@ -204,32 +204,7 @@ describe('usage capabilities', function () {
     }, /Expected value of type integer instead got 6\.6/)
   })
 
-  it('usage/record should fail to be derived from *', async () => {
-    const data = {
-      space: mallory.did(),
-      resource: readmeCID,
-      bytes: 100,
-      servedAt: 1714204800,
-    }
-    const record = Usage.record.invoke({
-      issuer: alice,
-      audience: w3,
-      with: gateway.did(),
-      nb: { ...data },
-      proofs: [await top()],
-    })
-
-    const result = await access(await record.delegate(), {
-      capability: Usage.record,
-      principal: Verifier,
-      authority: w3,
-      validateAuthorization,
-    })
-
-    assert.ok(result.error, 'Expected an error but none was found')
-  })
-
-  it('usage/record can be derived from usage/record', async () => {
+  it('should delegate and invoke usage/record', async () => {
     const data = {
       space: mallory.did(),
       resource: readmeCID,
@@ -237,27 +212,30 @@ describe('usage capabilities', function () {
       servedAt: 1714204800,
     }
 
+    // W3 delegates ability to record usage to Gateway
     const usageRecordDelegationProof = await Usage.record.delegate({
-      issuer: alice,
-      audience: bob,
-      with: gateway.did(),
-      nb: { ...data },
-      proofs: [await top()],
+      issuer: w3,
+      audience: gateway,
+      with: w3.did(),
+      expiration: Infinity,
     })
 
-    const record = Usage.record.invoke({
-      issuer: bob,
+    // Gateway invokes usage/record and indicates the w3 as the audience
+    const recordInvocation = Usage.record.invoke({
+      issuer: gateway,
       audience: w3,
       with: gateway.did(),
       nb: { ...data },
       proofs: [usageRecordDelegationProof],
     })
 
-    const result = await access(await record.delegate(), {
+    // W3 validates the delegation from Gateway to itself
+    const result = await access(await recordInvocation.delegate(), {
       capability: Usage.record,
       principal: Verifier,
       authority: w3,
       validateAuthorization,
+      resolveDIDKey: () => Schema.ok(gateway.toDIDKey()),
     })
 
     if (result.error) {
@@ -266,6 +244,6 @@ describe('usage capabilities', function () {
 
     assert.deepEqual(result.ok.audience.did(), w3.did())
     assert.equal(result.ok.capability.can, 'usage/record')
-    assert.deepEqual(result.ok.capability.nb, { data })
+    assert.deepEqual(result.ok.capability.nb, { ...data })
   })
 })

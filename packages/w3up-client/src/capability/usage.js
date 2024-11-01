@@ -39,18 +39,19 @@ export class UsageClient extends Base {
    * Required delegated capabilities:
    * - `usage/record`
    *
-   * @param {import('../types.js').SpaceDID} space
    * @param {object} egressData
+   * @param {import('../types.js').SpaceDID} egressData.space
    * @param {API.UnknownLink} egressData.resource
    * @param {number} egressData.bytes
    * @param {string} egressData.servedAt
+   * @param {API.ProviderDID} provider
    * @param {object} [options]
    * @param {string} [options.nonce]
    */
-  async record(space, egressData, options) {
+  async record(egressData, provider, options) {
     const out = await record(
       { agent: this.agent },
-      { space, ...egressData },
+      { provider, ...egressData },
       { ...options }
     )
     /* c8 ignore next 5 */
@@ -98,6 +99,7 @@ export const report = async (
  *
  * @param {{agent: API.Agent}} client
  * @param {object} egressData
+ * @param {API.ProviderDID} egressData.provider
  * @param {API.SpaceDID} egressData.space
  * @param {API.UnknownLink} egressData.resource
  * @param {number} egressData.bytes
@@ -109,14 +111,15 @@ export const report = async (
  */
 export const record = async (
   { agent },
-  { space, resource, bytes, servedAt },
+  { provider, space, resource, bytes, servedAt },
   { nonce, proofs = [] }
 ) => {
   const receipt = await agent.invokeAndExecute(UsageCapabilities.record, {
-    with: space,
+    with: provider,
     proofs,
     nonce,
     nb: {
+      space,
       resource,
       bytes,
       servedAt: Math.floor(new Date(servedAt).getTime() / 1000),

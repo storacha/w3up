@@ -3,6 +3,7 @@ import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { receiptsEndpoint } from '../helpers/utils.js'
 import { randomCAR } from '../helpers/random.js'
+import { Absentee } from '@ucanto/principal'
 
 export const UsageClient = Test.withContext({
   report: {
@@ -74,6 +75,9 @@ export const UsageClient = Test.withContext({
       assert,
       { connection, provisionsStorage }
     ) => {
+      const gateway = Absentee.from({
+        id: 'did:web:freeway.storacha.network',
+      })
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
         serviceConf: {
@@ -85,7 +89,6 @@ export const UsageClient = Test.withContext({
       const space = await alice.createSpace('test')
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
-
       // Then we setup a billing for this account
       await provisionsStorage.put({
         // @ts-expect-error
@@ -101,11 +104,15 @@ export const UsageClient = Test.withContext({
       const result = await alice.capability.upload.get(car.roots[0])
       assert.ok(result)
 
-      const record = await alice.capability.usage.record(space.did(), {
-        resource: resource.link(),
-        bytes: car.size,
-        servedAt: new Date().toISOString(),
-      })
+      const record = await alice.capability.usage.record(
+        {
+          space: space.did(),
+          resource: resource.link(),
+          bytes: car.size,
+          servedAt: new Date().toISOString(),
+        },
+        gateway.did()
+      )
 
       assert.ok(record)
     },
