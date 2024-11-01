@@ -55,7 +55,7 @@ export function blobAcceptProvider(context) {
       })
 
       // Publish this claim to the content claims service
-      const pubClaim = await publishLocationClaim(context, { digest, location: createUrl.ok })
+      const pubClaim = await publishLocationClaim(context, { space, digest, location: createUrl.ok })
       if (pubClaim.error) {
         return pubClaim
       }
@@ -146,7 +146,7 @@ export const poll = async (context, receipt) => {
 
 /**
  * @param {API.ClaimsClientContext} ctx
- * @param {{ digest: API.MultihashDigest, location: API.URI }} params
+ * @param {{ space: API.SpaceDID, digest: API.MultihashDigest, location: API.URI }} params
  */
 const publishLocationClaim = async (ctx, { digest, location }) => {
   const { invocationConfig, connection } = ctx.claimsService
