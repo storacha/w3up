@@ -135,12 +135,12 @@ export interface RoutingService {
    * Selects a candidate for blob allocation from the current list of available
    * storage nodes.
    */
-  selectBlobAllocationCandidate(digest: MultihashDigest, size: number):
+  selectStorageProvider(digest: MultihashDigest, size: number):
     Promise<Result<Principal, CandidateUnavailable|Failure>>
   /**
    * Returns information required to make an invocation to the requested storage
    * node.
    */
-  configureInvocation<C extends BlobAllocate|BlobAccept>(storageNode: Principal, capability: C, options?: Omit<UCANOptions, 'audience'>):
+  configureInvocation<C extends BlobAllocate|BlobAccept>(provider: Principal, capability: C, options?: Omit<UCANOptions, 'audience'>):
     Promise<Result<Configuration<C>, ProofUnavailable|Failure>>
 }

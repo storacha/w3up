@@ -122,7 +122,7 @@ async function allocate({ context, blob, space, cause }) {
   const { router } = context
   const digest = Digest.decode(blob.digest)
 
-  const candidate = await router.selectBlobAllocationCandidate(digest, blob.size)
+  const candidate = await router.selectStorageProvider(digest, blob.size)
   if (candidate.error) {
     return candidate
   }
